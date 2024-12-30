@@ -18,11 +18,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout the latest code
-      uses: actions/checkout@v3
+      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       with:
         fetch-depth: 0
     - name: Post rebase started comment to pull request
-      uses: actions/github-script@v6
+      uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
       continue-on-error: true
       with:
         script: |
@@ -34,6 +34,6 @@ jobs:
             body: backport_start_body
           });
     - name: Automatic Rebase
-      uses: cirrus-actions/rebase@1.8
+      uses: cirrus-actions/rebase@b87d48154a87a85666003575337e27b8cd65f691 # 1.8
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

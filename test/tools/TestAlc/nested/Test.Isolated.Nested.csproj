@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="..\..\..\Test.Common.props"/>
+  <Import Project="..\..\..\Test.Common.props" />
 
   <PropertyGroup>
     <!-- Disable PDB generation -->
@@ -9,14 +9,15 @@
 
     <!-- Disable deps.json generation -->
     <GenerateDependencyFile>false</GenerateDependencyFile>
+    <NoWarn>NU1901;NU1902;NU1903;NU1904</NoWarn>
 
     <!-- Deploy the produced assembly -->
     <PublishDir>..\..\Modules\IsolatedModule\Dependencies</PublishDir>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="PowerShellStandard.Library" Version="5.1.0" PrivateAssets="All" />
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.1" />
+    <PackageReference Include="PowerShellStandard.Library" Version="5.1.1" PrivateAssets="All" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
 </Project>

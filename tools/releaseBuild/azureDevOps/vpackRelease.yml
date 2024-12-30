@@ -15,11 +15,13 @@ variables:
     value: 1
   - name: POWERSHELL_TELEMETRY_OPTOUT
     value: 1
+  - name: nugetMultiFeedWarnLevel
+    value: none
+
   - group: Azure Blob variable group
   # adds the pat to publish the vPack
   # instructions to create are in the description of the library
   - group: vPack
-
 
 stages:
 - stage: prep
@@ -43,6 +45,12 @@ stages:
         ReleaseTagVar: $(ReleaseTagVar)
         CreateJson: yes
         UseJson: no
+        
+    - powershell: |
+        if($env:RELEASETAGVAR -match '-') {
+            throw "Don't release a preview build without coordinating with Windows Engineering Build Tools Team"
+        }
+      displayName: Stop any preview release
 
     - powershell:  Write-Host "##vso[build.updatebuildnumber]$env:BUILD_SOURCEBRANCHNAME-$env:BUILD_SOURCEVERSION-$((get-date).ToString("yyyyMMddhhss"))"
       displayName: Set Build Name for Non-PR
@@ -58,10 +66,6 @@ stages:
   - template: ./templates/vpackReleaseJob.yml
     parameters:
       architecture: x86
-
-  - template: ./templates/vpackReleaseJob.yml
-    parameters:
-      architecture: arm32
 
   - template: ./templates/vpackReleaseJob.yml
     parameters:

@@ -7,17 +7,16 @@ steps:
 - template: release-SetReleaseTagAndContainerName.yml
 
 - pwsh: |
-    Import-module '$(BUILD.SOURCESDIRECTORY)/build.psm1'
+    Import-module '$(BUILD.SOURCESDIRECTORY)/PowerShell/build.psm1'
     Install-AzCopy
   displayName: Install AzCopy
   retryCountOnTaskFailure: 2
 
 - pwsh: |
-    Import-module '$(BUILD.SOURCESDIRECTORY)/build.psm1'
+    Import-module '$(BUILD.SOURCESDIRECTORY)/PowerShell/build.psm1'
     $azcopy = Find-AzCopy
     Write-Verbose -Verbose "Found AzCopy: $azcopy"
 
-    & $azcopy login --service-principal --application-id $(PowerShellReleaseSPN)
     & $azcopy cp https://$(StorageAccount).blob.core.windows.net/$(AzureVersion) $(System.ArtifactsDirectory) --recursive
 
     $packagesPath = Get-ChildItem -Path $(System.ArtifactsDirectory)\*.deb -Recurse -File | Select-Object -First 1 -ExpandProperty DirectoryName
@@ -27,7 +26,7 @@ steps:
   displayName: Download Azure Artifacts
   retryCountOnTaskFailure: 2
   env:
-    AZCOPY_SPA_CLIENT_SECRET: $(PowerShellReleaseSPNSecret)
+    AZCOPY_AUTO_LOGIN_TYPE: MSI
 
 - pwsh: |
     Get-ChildItem $(System.ArtifactsDirectory)\* -recurse | Select-Object -ExpandProperty FullName
@@ -55,6 +54,24 @@ steps:
     Write-Verbose -Verbose -Message $fileContent
   displayName: Add sha256 hashes
 
+- checkout: ComplianceRepo
+
+- pwsh: |
+    $releaseVersion = '$(ReleaseTag)' -replace '^v',''
+    $vstsCommandString = "vso[task.setvariable variable=ReleaseVersion]$releaseVersion"
+    Write-Host "sending " + $vstsCommandString
+    Write-Host "##$vstsCommandString"
+  displayName: 'Set release version'
+
+- template: Sbom.yml@ComplianceRepo
+  parameters:
+    BuildDropPath: '$(PackagesRoot)'
+    Build_Repository_Uri: 'https://github.com/powershell/powershell.git'
+    displayName: PowerShell Hashes SBOM
+    packageName: PowerShell Artifact Hashes
+    packageVersion: $(ReleaseVersion)
+    sourceScanPath: '$(PackagesRoot)'
+
 - pwsh: |
     Import-module '$(Pipeline.Workspace)/tools/Scripts/GitHubRelease.psm1'
     $releaseVersion = '$(ReleaseTag)' -replace '^v',''
@@ -69,7 +86,7 @@ steps:
       $semanticVersion.Major.ToString() + "." + $semanticVersion.Minor.ToString() + ".md"
     }
 
-    $filePath = "$env:BUILD_SOURCESDIRECTORY/CHANGELOG/$fileName"
+    $filePath = "$env:BUILD_SOURCESDIRECTORY/PowerShell/CHANGELOG/$fileName"
     Write-Verbose -Verbose "Selected Log file: $filePath"
 
     if (-not (Test-Path $filePath)) {

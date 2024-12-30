@@ -48,7 +48,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Configuration file schema version.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [ValidateNotNull]
         public Version SchemaVersion
         {
@@ -68,7 +68,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Configuration file GUID.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public Guid Guid
         {
             get
@@ -87,7 +87,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Author of the configuration file.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public string Author
         {
             get
@@ -106,7 +106,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Description.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public string Description
         {
             get
@@ -125,7 +125,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Company name.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public string CompanyName
         {
             get
@@ -144,7 +144,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Copyright information.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public string Copyright
         {
             get
@@ -163,7 +163,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Specifies type of initial session state to use.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SessionType SessionType
         {
             get
@@ -182,7 +182,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Specifies the directory for transcripts to be placed.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public string TranscriptDirectory
         {
             get
@@ -201,13 +201,13 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Specifies whether to run this configuration under a virtual account.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter RunAsVirtualAccount { get; set; }
 
         /// <summary>
         /// Specifies groups a virtual account is part of.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] RunAsVirtualAccountGroups { get; set; }
 
@@ -216,7 +216,7 @@ namespace Microsoft.PowerShell.Commands
         /// The User drive is used with Copy-Item for file transfer when the FileSystem provider is
         /// not visible in the session.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter MountUserDrive
         {
             get;
@@ -228,7 +228,7 @@ namespace Microsoft.PowerShell.Commands
         /// MountUserDrive parameter.
         /// If no maximum size is specified then the default drive maximum size is 50MB.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public long UserDriveMaximumSize { get; set; }
 
         // Temporarily removed until script input parameter validation is implemented.
@@ -239,7 +239,7 @@ namespace Microsoft.PowerShell.Commands
         /// If a MountUserDrive is specified for the PSSession then input parameter validation will be
         /// enabled automatically.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter EnforceInputParameterValidation { get; set; }
         */
 
@@ -247,13 +247,13 @@ namespace Microsoft.PowerShell.Commands
         /// Optional parameter that specifies a Group Managed Service Account name in which the configuration
         /// is run.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public string GroupManagedServiceAccount { get; set; }
 
         /// <summary>
         /// Scripts to process.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] ScriptsToProcess
         {
@@ -273,7 +273,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Role definitions for this session configuration (Role name -> Role capability)
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public IDictionary RoleDefinitions
         {
@@ -293,7 +293,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Specifies account groups that are membership requirements for this session.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public IDictionary RequiredGroups
         {
@@ -307,7 +307,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Language mode.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public PSLanguageMode LanguageMode
         {
             get
@@ -328,7 +328,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Execution policy.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public ExecutionPolicy ExecutionPolicy
         {
             get
@@ -347,7 +347,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// PowerShell version.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public Version PowerShellVersion
         {
             get
@@ -366,7 +366,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// A list of modules to import.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public object[] ModulesToImport
         {
@@ -386,7 +386,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// A list of visible aliases.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] VisibleAliases
         {
@@ -406,7 +406,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// A list of visible cmdlets.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public object[] VisibleCmdlets
         {
@@ -426,7 +426,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// A list of visible functions.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public object[] VisibleFunctions
         {
@@ -446,7 +446,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// A list of visible external commands (scripts and applications)
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] VisibleExternalCommands
         {
@@ -466,7 +466,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// A list of providers.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] VisibleProviders
         {
@@ -486,7 +486,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// A list of aliases.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public IDictionary[] AliasDefinitions
         {
@@ -506,7 +506,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// A list of functions.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public IDictionary[] FunctionDefinitions
         {
@@ -526,7 +526,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// A list of variables.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public object VariableDefinitions
         {
@@ -546,7 +546,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// A list of environment variables.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public IDictionary EnvironmentVariables
@@ -567,7 +567,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// A list of types to process.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] TypesToProcess
         {
@@ -587,7 +587,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// A list of format data to process.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] FormatsToProcess
         {
@@ -607,7 +607,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// A list of assemblies to load.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] AssembliesToLoad
         {
@@ -628,7 +628,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets whether to include a full expansion of all possible session configuration
         /// keys as comments when creating the session configuration file.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Full { get; set; }
 
         #endregion
@@ -1159,7 +1159,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Configuration file GUID.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public Guid Guid
         {
             get
@@ -1178,7 +1178,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Author of the configuration file.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public string Author
         {
             get
@@ -1197,7 +1197,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Description.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public string Description
         {
             get
@@ -1216,7 +1216,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Company name.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public string CompanyName
         {
             get
@@ -1235,7 +1235,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Copyright information.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public string Copyright
         {
             get
@@ -1254,7 +1254,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// A list of modules to import.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public object[] ModulesToImport
         {
@@ -1274,7 +1274,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// A list of visible aliases.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] VisibleAliases
         {
@@ -1294,7 +1294,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// A list of visible cmdlets.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public object[] VisibleCmdlets
         {
@@ -1314,7 +1314,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// A list of visible functions.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public object[] VisibleFunctions
         {
@@ -1334,7 +1334,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// A list of visible external commands (scripts and applications)
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] VisibleExternalCommands
         {
@@ -1354,7 +1354,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// A list of providers.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] VisibleProviders
         {
@@ -1374,7 +1374,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Scripts to process.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] ScriptsToProcess
         {
@@ -1394,7 +1394,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// A list of aliases.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public IDictionary[] AliasDefinitions
         {
@@ -1414,7 +1414,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// A list of functions.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public IDictionary[] FunctionDefinitions
         {
@@ -1434,7 +1434,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// A list of variables.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public object VariableDefinitions
         {
@@ -1454,7 +1454,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// A list of environment variables.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public IDictionary EnvironmentVariables
@@ -1475,7 +1475,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// A list of types to process.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] TypesToProcess
         {
@@ -1495,7 +1495,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// A list of format data to process.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] FormatsToProcess
         {
@@ -1515,7 +1515,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// A list of assemblies to load.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] AssembliesToLoad
         {

@@ -8,11 +8,6 @@
 Describe 'Native command byte piping tests' -Tags 'CI' {
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-        if (-not [ExperimentalFeature]::IsEnabled('PSNativeCommandPreserveBytePipe'))
-        {
-            $PSDefaultParameterValues['It:Skip'] = $true
-            return
-        }
 
         # Without this the test would otherwise be hard coded to a specific set
         # of [Console]::OutputEncoding/$OutputEncoding settings.
@@ -62,5 +57,19 @@ Describe 'Native command byte piping tests' -Tags 'CI' {
         } finally {
             ($pipe)?.Dispose()
         }
+    }
+
+    It 'Bytes are retained when redirecting to a file' {
+        testexe -writebytes FF > $TestDrive/content.bin | Should -BeNullOrEmpty
+        Get-Content -LiteralPath $TestDrive/content.bin -AsByteStream | Should -Be 0xFFuy
+    }
+
+    It 'Bytes are retained when redirecting to a file and Out-Default is downstream' {
+        testexe -writebytes FF > $TestDrive/content2.bin | Out-Default
+        Get-Content -LiteralPath $TestDrive/content2.bin -AsByteStream | Should -Be 0xFFuy
+    }
+
+    It 'Redirecting to $null should emit no output' {
+        testexe -writebytes FF > $null | Should -BeNullOrEmpty
     }
 }

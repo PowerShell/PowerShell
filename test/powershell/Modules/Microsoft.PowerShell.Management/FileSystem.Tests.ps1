@@ -1,5 +1,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+
+Import-Module HelpersCommon
+
 Describe "Basic FileSystem Provider Tests" -Tags "CI" {
     BeforeAll {
         $testDir = "TestDir"
@@ -199,6 +202,25 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
             $src = "$TestDrive$trailingChar"
 
             { Move-Item -Path $src -Destination $dest -ErrorAction Stop } | Should -Throw -ErrorId 'MoveItemArgumentError,Microsoft.PowerShell.Commands.MoveItemCommand'
+        }
+
+        It 'Verify Move-Item fails when destination is same as source w/wo directory separator: <source>' -TestCases @(
+            @{ source = './Empty/' }
+            @{ source = './Empty' }
+            @{ source = '.\Empty\' }
+            @{ source = '.\Empty' }
+        ) {
+            param($source)
+
+            try {
+                Push-Location $TestDrive
+                New-Item -ItemType Directory -Path 'Empty'
+                { Move-Item -Path $source -ErrorAction Stop } | Should -Throw -ErrorId 'MoveItemArgumentError,Microsoft.PowerShell.Commands.MoveItemCommand'
+            }
+            finally {
+                Pop-Location
+                Remove-Item 'Empty' -Force
+            }
         }
 
         It "Verify Move-Item throws correct error for non-existent source" {
@@ -529,6 +551,43 @@ Describe "Handling of globbing patterns" -Tags "CI" {
             Test-Path -LiteralPath $testPath2 | Should -BeTrue
         }
     }
+
+    Context "Device paths" {
+        # The globber is overly greedy somewhere so you need to escape the escape backtick to preserve the question mark issue https://github.com/PowerShell/PowerShell/issues/19627
+        It "Handle device paths: <path>" -Skip:(!$IsWindows) -TestCases @(
+            @{ path = "\\.\${env:SystemDrive}\" }
+            @{ path = "\\.\${env:SystemDrive}\*" }
+            @{ path = "\\``?\${env:SystemDrive}\" }
+            @{ path = "\\``?\${env:SystemDrive}\*" }
+        ) {
+            param($path)
+            $expected = Get-ChildItem -Path ${env:SystemDrive}\
+            $result = Get-ChildItem -Path $path
+            $result.Count | Should -Be $expected.Count
+        }
+
+        It "Handle folders within a device path: <path>" -Skip:(!$IsWindows) -TestCases @(
+            @{ path = "\\.\${env:SystemRoot}\" }
+            @{ path = "\\.\${env:SystemRoot}\*" }
+            @{ path = "\\``?\${env:SystemRoot}\" }
+            @{ path = "\\``?\${env:SystemRoot}\*" }
+        ) {
+            param($path)
+            $expected = Get-ChildItem -Path ${env:SystemRoot}
+            $result = Get-ChildItem -Path $path
+            $result.Count | Should -Be $expected.Count
+        }
+
+        It "Fails for invalid device path: <path>" -Skip:(!$IsWindows) -TestCases @(
+            @{ path = "\\.\INVALID0\" }
+            @{ path = "\\``?\INVALID0\" }
+            # @{ path = "\\.\INVALID0\*" }  // problem in globber where this fails but is ignored issue https://github.com/PowerShell/PowerShell/issues/19626
+            # @{ path = "\\``?\INVALID0\*" }
+        ) {
+            param($path)
+            { Get-ChildItem -Path $path -ErrorAction Stop } | Should -Throw -ErrorId 'PathNotFound,Microsoft.PowerShell.Commands.GetChildItemCommand'
+        }
+    }
 }
 
 Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows" {
@@ -565,6 +624,11 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
     }
 
     Context "New-Item and hard/symbolic links" {
+        AfterEach {
+            # clean up created links after each test
+            Remove-Item -Exclude (Split-Path -Leaf $realFile, $realDir, $realDir2) -Recurse $TestPath/*
+        }
+
         It "New-Item can create a hard link to a file" {
             New-Item -ItemType HardLink -Path $hardLinkToFile -Value $realFile > $null
             Test-Path $hardLinkToFile | Should -BeTrue
@@ -608,6 +672,31 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             $link.LinkType | Should -BeExactly "SymbolicLink"
             $link.Target | Should -BeExactly $real.ToString()
         }
+
+        It "New-Item can create a directory symbolic link to a directory using a relative path" -Skip:(-Not $IsWindows) {
+            $target = Split-Path -Leaf $realDir
+            New-Item -ItemType SymbolicLink -Path $symLinkToDir -Value $target > $null
+            Test-Path $symLinkToDir | Should -BeTrue
+            $real = Get-Item -Path $realDir
+            $link = Get-Item -Path $symLinkToDir
+            $link | Should -BeOfType System.IO.DirectoryInfo
+            $link.LinkType | Should -BeExactly "SymbolicLink"
+            $link.ResolvedTarget | Should -BeExactly $real.ToString()
+            $link.Target | Should -BeExactly $target
+        }
+
+        It "New-Item can create a directory symbolic link to a directory using a relative path with .\" -Skip:(-Not $IsWindows) {
+            $target = ".\$(Split-Path -Leaf $realDir)"
+            New-Item -ItemType SymbolicLink -Path $symLinkToDir -Value $target > $null
+            Test-Path $symLinkToDir | Should -BeTrue
+            $real = Get-Item -Path $realDir
+            $link = Get-Item -Path $symLinkToDir
+            $link | Should -BeOfType System.IO.DirectoryInfo
+            $link.LinkType | Should -BeExactly "SymbolicLink"
+            $link.ResolvedTarget | Should -BeExactly $real.ToString()
+            $link.Target | Should -BeExactly $target
+        }
+
         It "New-Item can create a directory junction to a directory" -Skip:(-Not $IsWindows) {
             New-Item -ItemType Junction -Path $junctionToDir -Value $realDir > $null
             Test-Path $junctionToDir | Should -BeTrue

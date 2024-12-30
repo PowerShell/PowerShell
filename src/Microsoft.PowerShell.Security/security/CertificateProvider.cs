@@ -724,16 +724,11 @@ namespace Microsoft.PowerShell.Commands
                 ThrowInvalidOperation(errorId, message);
             }
 
-            if (DynamicParameters != null)
+            if (DynamicParameters != null && DynamicParameters is ProviderRemoveItemDynamicParameters dp)
             {
-                ProviderRemoveItemDynamicParameters dp =
-                    DynamicParameters as ProviderRemoveItemDynamicParameters;
-                if (dp != null)
+                if (dp.DeleteKey)
                 {
-                    if (dp.DeleteKey)
-                    {
-                        fDeleteKey = true;
-                    }
+                    fDeleteKey = true;
                 }
             }
 
@@ -888,9 +883,8 @@ namespace Microsoft.PowerShell.Commands
                 object store = GetItemAtPath(destination, false, out isDestContainer);
 
                 X509Certificate2 certificate = cert as X509Certificate2;
-                X509NativeStore certstore = store as X509NativeStore;
 
-                if (certstore != null)
+                if (store is X509NativeStore certstore)
                 {
                     certstore.Open(true);
 
@@ -1068,23 +1062,18 @@ namespace Microsoft.PowerShell.Commands
 
             if ((item != null) && isContainer)
             {
-                X509StoreLocation storeLocation = item as X509StoreLocation;
-                if (storeLocation != null)
+                if (item is X509StoreLocation storeLocation)
                 {
                     result = storeLocation.StoreNames.Count > 0;
                 }
-                else
+                else if (item is X509NativeStore store)
                 {
-                    X509NativeStore store = item as X509NativeStore;
-                    if (store != null)
+                    store.Open(IncludeArchivedCerts());
+                    IntPtr certContext = store.GetFirstCert();
+                    if (certContext != IntPtr.Zero)
                     {
-                        store.Open(IncludeArchivedCerts());
-                        IntPtr certContext = store.GetFirstCert();
-                        if (certContext != IntPtr.Zero)
-                        {
-                            store.FreeCert(certContext);
-                            result = true;
-                        }
+                        store.FreeCert(certContext);
+                        result = true;
                     }
                 }
             }
@@ -1259,20 +1248,15 @@ namespace Microsoft.PowerShell.Commands
                         return;
                     }
 
-                    X509StoreLocation storeLocation = item as X509StoreLocation;
-                    if (storeLocation != null)  // store location
+                    if (item is X509StoreLocation storeLocation)  // store location
                     {
                         WriteItemObject(item, path, isContainer);
                     }
-                    else // store
+                    else if (item is X509NativeStore store) // store
                     {
-                        X509NativeStore store = item as X509NativeStore;
-                        if (store != null)
-                        {
-                            // create X509Store
-                            X509Store outStore = new(store.StoreName, store.Location.Location);
-                            WriteItemObject(outStore, path, isContainer);
-                        }
+                        // create X509Store
+                        X509Store outStore = new(store.StoreName, store.Location.Location);
+                        WriteItemObject(outStore, path, isContainer);
                     }
                 }
             }
@@ -2644,51 +2628,46 @@ namespace Microsoft.PowerShell.Commands
         {
             CertificateFilterInfo filter = null;
 
-            if (DynamicParameters != null)
+            if (DynamicParameters != null && DynamicParameters is CertificateProviderDynamicParameters dp)
             {
-                CertificateProviderDynamicParameters dp =
-                    DynamicParameters as CertificateProviderDynamicParameters;
-                if (dp != null)
+                if (dp.CodeSigningCert)
                 {
-                    if (dp.CodeSigningCert)
-                    {
-                        filter = new CertificateFilterInfo();
-                        filter.Purpose = CertificatePurpose.CodeSigning;
-                    }
+                    filter = new CertificateFilterInfo();
+                    filter.Purpose = CertificatePurpose.CodeSigning;
+                }
 
-                    if (dp.DocumentEncryptionCert)
-                    {
-                        filter ??= new CertificateFilterInfo();
-                        filter.Purpose = CertificatePurpose.DocumentEncryption;
-                    }
+                if (dp.DocumentEncryptionCert)
+                {
+                    filter ??= new CertificateFilterInfo();
+                    filter.Purpose = CertificatePurpose.DocumentEncryption;
+                }
 
-                    if (dp.DnsName != null)
-                    {
-                        filter ??= new CertificateFilterInfo();
-                        filter.DnsName = new WildcardPattern(dp.DnsName, WildcardOptions.IgnoreCase);
-                    }
+                if (dp.DnsName != null)
+                {
+                    filter ??= new CertificateFilterInfo();
+                    filter.DnsName = new WildcardPattern(dp.DnsName, WildcardOptions.IgnoreCase);
+                }
 
-                    if (dp.Eku != null)
+                if (dp.Eku != null)
+                {
+                    filter ??= new CertificateFilterInfo();
+                    filter.Eku = new List<WildcardPattern>();
+                    foreach (var pattern in dp.Eku)
                     {
-                        filter ??= new CertificateFilterInfo();
-                        filter.Eku = new List<WildcardPattern>();
-                        foreach (var pattern in dp.Eku)
-                        {
-                            filter.Eku.Add(new WildcardPattern(pattern, WildcardOptions.IgnoreCase));
-                        }
+                        filter.Eku.Add(new WildcardPattern(pattern, WildcardOptions.IgnoreCase));
                     }
+                }
 
-                    if (dp.ExpiringInDays >= 0)
-                    {
-                        filter ??= new CertificateFilterInfo();
-                        filter.Expiring = DateTime.Now.AddDays(dp.ExpiringInDays);
-                    }
+                if (dp.ExpiringInDays >= 0)
+                {
+                    filter ??= new CertificateFilterInfo();
+                    filter.Expiring = DateTime.Now.AddDays(dp.ExpiringInDays);
+                }
 
-                    if (dp.SSLServerAuthentication)
-                    {
-                        filter ??= new CertificateFilterInfo();
-                        filter.SSLServerAuthentication = true;
-                    }
+                if (dp.SSLServerAuthentication)
+                {
+                    filter ??= new CertificateFilterInfo();
+                    filter.SSLServerAuthentication = true;
                 }
             }
 
@@ -3311,17 +3290,13 @@ namespace Microsoft.PowerShell.Commands
             foreach (X509Extension extension in cert.Extensions)
             {
                 // Filter to the OID for EKU
-                if (extension.Oid.Value == "2.5.29.37")
+                if (extension.Oid.Value == "2.5.29.37" && extension is X509EnhancedKeyUsageExtension ext)
                 {
-                    X509EnhancedKeyUsageExtension ext = extension as X509EnhancedKeyUsageExtension;
-                    if (ext != null)
+                    OidCollection oids = ext.EnhancedKeyUsages;
+                    foreach (Oid oid in oids)
                     {
-                        OidCollection oids = ext.EnhancedKeyUsages;
-                        foreach (Oid oid in oids)
-                        {
-                            EnhancedKeyUsageRepresentation ekuString = new(oid.FriendlyName, oid.Value);
-                            _ekuList.Add(ekuString);
-                        }
+                        EnhancedKeyUsageRepresentation ekuString = new(oid.FriendlyName, oid.Value);
+                        _ekuList.Add(ekuString);
                     }
                 }
             }
@@ -3334,20 +3309,30 @@ namespace Microsoft.PowerShell.Commands
     public sealed class DnsNameProperty
     {
         private readonly List<DnsNameRepresentation> _dnsList = new();
-        private readonly System.Globalization.IdnMapping idnMapping = new();
+        private readonly IdnMapping idnMapping = new();
 
-        private const string dnsNamePrefix = "DNS Name=";
         private const string distinguishedNamePrefix = "CN=";
 
         /// <summary>
         /// Get property of DnsNameList.
         /// </summary>
-        public List<DnsNameRepresentation> DnsNameList
+        public List<DnsNameRepresentation> DnsNameList => _dnsList;
+
+        private DnsNameRepresentation GetDnsNameRepresentation(string dnsName)
         {
-            get
+            string unicodeName;
+
+            try
             {
-                return _dnsList;
+                unicodeName = idnMapping.GetUnicode(dnsName);
             }
+            catch (ArgumentException)
+            {
+                // The name is not valid Punycode, assume it's valid ASCII.
+                unicodeName = dnsName;
+            }
+
+            return new DnsNameRepresentation(dnsName, unicodeName);
         }
 
         /// <summary>
@@ -3355,61 +3340,32 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public DnsNameProperty(X509Certificate2 cert)
         {
-            string name;
-            string unicodeName;
-            DnsNameRepresentation dnsName;
             _dnsList = new List<DnsNameRepresentation>();
 
             // extract DNS name from subject distinguish name
             // if it exists and does not contain a comma
             // a comma, indicates it is not a DNS name
-            if (cert.Subject.StartsWith(distinguishedNamePrefix, System.StringComparison.OrdinalIgnoreCase) &&
+            if (cert.Subject.StartsWith(distinguishedNamePrefix, StringComparison.OrdinalIgnoreCase) &&
                 !cert.Subject.Contains(','))
             {
-                name = cert.Subject.Substring(distinguishedNamePrefix.Length);
-                try
-                {
-                    unicodeName = idnMapping.GetUnicode(name);
-                }
-                catch (System.ArgumentException)
-                {
-                    // The name is not valid punyCode, assume it's valid ascii.
-                    unicodeName = name;
-                }
-
-                dnsName = new DnsNameRepresentation(name, unicodeName);
+                string parsedSubjectDistinguishedDnsName = cert.Subject.Substring(distinguishedNamePrefix.Length);
+                DnsNameRepresentation dnsName = GetDnsNameRepresentation(parsedSubjectDistinguishedDnsName);
                 _dnsList.Add(dnsName);
             }
 
+            // Extract DNS names from SAN extensions
             foreach (X509Extension extension in cert.Extensions)
             {
-                // Filter to the OID for Subject Alternative Name
-                if (extension.Oid.Value == "2.5.29.17")
+                if (extension is X509SubjectAlternativeNameExtension sanExtension)
                 {
-                    string[] names = extension.Format(true).Split(Environment.NewLine);
-                    foreach (string nameLine in names)
+                    foreach (string dnsNameEntry in sanExtension.EnumerateDnsNames())
                     {
-                        // Get the part after 'DNS Name='
-                        if (nameLine.StartsWith(dnsNamePrefix, System.StringComparison.InvariantCultureIgnoreCase))
+                        DnsNameRepresentation dnsName = GetDnsNameRepresentation(dnsNameEntry);
+
+                        // Only add the name if it is not the same as an existing name.
+                        if (!_dnsList.Contains(dnsName))
                         {
-                            name = nameLine.Substring(dnsNamePrefix.Length);
-                            try
-                            {
-                                unicodeName = idnMapping.GetUnicode(name);
-                            }
-                            catch (System.ArgumentException)
-                            {
-                                // The name is not valid punyCode, assume it's valid ascii.
-                                unicodeName = name;
-                            }
-
-                            dnsName = new DnsNameRepresentation(name, unicodeName);
-
-                            // Only add the name if it is not the same as an existing name.
-                            if (!_dnsList.Contains(dnsName))
-                            {
-                                _dnsList.Add(dnsName);
-                            }
+                            _dnsList.Add(dnsName);
                         }
                     }
                 }

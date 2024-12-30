@@ -268,7 +268,6 @@ try {
     if ($Daily) {
         $metadata = Invoke-RestMethod 'https://aka.ms/pwsh-buildinfo-daily'
         $release = $metadata.ReleaseTag -replace '^v'
-        $blobName = $metadata.BlobName
 
         # Get version from currently installed PowerShell Daily if available.
         $pwshPath = if ($IsWinEnv) {Join-Path $Destination "pwsh.exe"} else {Join-Path $Destination "pwsh"}
@@ -297,8 +296,7 @@ try {
             throw "The OS architecture is '$architecture'. However, we currently only support daily package for x64."
         }
 
-
-        $downloadURL = "https://pscoretestdata.blob.core.windows.net/${blobName}/${packageName}"
+        $downloadURL = "https://powershellinfraartifacts-gkhedzdeaghdezhr.z01.azurefd.net/install/$($metadata.ReleaseTag)/$packageName"
         Write-Verbose "About to download package from '$downloadURL'" -Verbose
 
         $packagePath = Join-Path -Path $tempDir -ChildPath $packageName
@@ -352,11 +350,7 @@ try {
 
         if ($IsWinEnv) {
             if ($UseMSI) {
-                if ($architecture -eq "arm64") {
-                    $packageName = "PowerShell-${release}-win-${architecture}.msix"
-                } else {
-                    $packageName = "PowerShell-${release}-win-${architecture}.msi"
-                }
+                $packageName = "PowerShell-${release}-win-${architecture}.msi"
             } else {
                 $packageName = "PowerShell-${release}-win-${architecture}.zip"
             }
@@ -388,9 +382,7 @@ try {
 
         $null = New-Item -ItemType Directory -Path $contentPath -ErrorAction SilentlyContinue
         if ($IsWinEnv) {
-            if ($UseMSI -and $architecture -eq "arm64") {
-                Add-AppxPackage -Path $packagePath
-            } elseif ($UseMSI -and $Quiet) {
+            if ($UseMSI -and $Quiet) {
                 Write-Verbose "Performing quiet install"
                 $ArgumentList=@("/i", $packagePath, "/quiet")
                 if($MSIArguments) {

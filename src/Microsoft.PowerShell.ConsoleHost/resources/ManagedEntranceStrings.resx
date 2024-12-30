@@ -123,6 +123,9 @@
   <data name="ShellBannerCLMode" xml:space="preserve">
     <value>[Constrained Language Mode]</value>
   </data>
+  <data name="ShellBannerCLAuditMode" xml:space="preserve">
+    <value>[Constrained Language AUDIT Mode : No Restrictions]</value>
+  </data>
   <data name="ShellBannerNLMode" xml:space="preserve">
     <value>[No Language Mode]</value>
   </data>

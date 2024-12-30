@@ -14,7 +14,7 @@ jobs:
 
   steps:
   - pwsh: |
-      Get-ChildItem -Path env:
+      Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
     displayName: Capture Environment
     condition: succeededOrFailed()
 
@@ -90,3 +90,4 @@ jobs:
         Write-Host "##vso[artifact.upload containerfolder=rpm;artifactname=rpm]$packagePath"
       }
     displayName: Upload packages
+    retryCountOnTaskFailure: 2

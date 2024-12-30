@@ -9,11 +9,12 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Management.Automation.Runspaces;
+using System.Management.Automation.Security;
+using System.Management.Automation.Subsystem;
+using System.Management.Automation.Subsystem.DSC;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using System.Management.Automation.Subsystem;
-using System.Management.Automation.Subsystem.DSC;
 using Dsc = Microsoft.PowerShell.DesiredStateConfiguration.Internal;
 
 namespace System.Management.Automation.Language
@@ -280,7 +281,7 @@ namespace System.Management.Automation.Language
             var result = parser.TypeNameRule(allowAssemblyQualifiedNames: true, firstTypeNameToken: out _);
 
             SemanticChecks.CheckArrayTypeNameDepth(result, PositionUtilities.EmptyExtent, parser);
-            if (!ignoreErrors && parser.ErrorList.Count > 0)
+            if (!ignoreErrors && result is not null && (parser.ErrorList.Count > 0 || !result.Extent.Text.Equals(typename, StringComparison.OrdinalIgnoreCase)))
             {
                 result = null;
             }
@@ -2983,13 +2984,34 @@ namespace System.Management.Automation.Language
                     Runspaces.Runspace.DefaultRunspace = localRunspace;
                 }
 
-                // Configuration is not supported on ARM or in ConstrainedLanguage
-                if (PsUtils.IsRunningOnProcessorArchitectureARM() || Runspace.DefaultRunspace.ExecutionContext.LanguageMode == PSLanguageMode.ConstrainedLanguage)
+                // Configuration is not supported in ConstrainedLanguage
+                if (Runspace.DefaultRunspace?.ExecutionContext?.LanguageMode == PSLanguageMode.ConstrainedLanguage)
                 {
-                    ReportError(configurationToken.Extent,
-                                nameof(ParserStrings.ConfigurationNotAllowedInConstrainedLanguage),
-                                ParserStrings.ConfigurationNotAllowedInConstrainedLanguage,
-                                configurationToken.Kind.Text());
+                    if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
+                    {
+                        ReportError(configurationToken.Extent,
+                                    nameof(ParserStrings.ConfigurationNotAllowedInConstrainedLanguage),
+                                    ParserStrings.ConfigurationNotAllowedInConstrainedLanguage,
+                                    configurationToken.Kind.Text());
+                        return null;
+                    }
+
+                    SystemPolicy.LogWDACAuditMessage(
+                        context: Runspace.DefaultRunspace?.ExecutionContext,
+                        title: ParserStrings.WDACParserConfigKeywordLogTitle,
+                        message: ParserStrings.WDACParserConfigKeywordLogMessage,
+                        fqid: "ConfigurationLanguageKeywordNotAllowed",
+                        dropIntoDebugger: true);
+                }
+
+                // Configuration is not supported on ARM64
+                if (PsUtils.IsRunningOnProcessorArchitectureARM())
+                {
+                    ReportError(
+                        configurationToken.Extent,
+                        nameof(ParserStrings.ConfigurationNotAllowedOnArm64),
+                        ParserStrings.ConfigurationNotAllowedOnArm64,
+                        configurationToken.Kind.Text());
                     return null;
                 }
 
@@ -4203,12 +4225,22 @@ namespace System.Management.Automation.Language
             // PowerShell classes are not supported in ConstrainedLanguage
             if (Runspace.DefaultRunspace?.ExecutionContext?.LanguageMode == PSLanguageMode.ConstrainedLanguage)
             {
-                ReportError(classToken.Extent,
-                            nameof(ParserStrings.ClassesNotAllowedInConstrainedLanguage),
-                            ParserStrings.ClassesNotAllowedInConstrainedLanguage,
-                            classToken.Kind.Text());
+                if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
+                {
+                    ReportError(classToken.Extent,
+                                nameof(ParserStrings.ClassesNotAllowedInConstrainedLanguage),
+                                ParserStrings.ClassesNotAllowedInConstrainedLanguage,
+                                classToken.Kind.Text());
 
-                return null;
+                    return null;
+                }
+
+                SystemPolicy.LogWDACAuditMessage(
+                    context: Runspace.DefaultRunspace?.ExecutionContext,
+                    title: ParserStrings.WDACParserClassKeywordLogTitle,
+                    message: ParserStrings.WDACParserClassKeywordLogMessage,
+                    fqid: "ClassLanguageKeywordNotAllowed",
+                    dropIntoDebugger: true);
             }
 
             SkipNewlines();
@@ -5112,7 +5144,7 @@ namespace System.Management.Automation.Language
                             workingDirectory = Path.GetDirectoryName(scriptFileName);
                         }
 
-                        assemblyFileName = workingDirectory + @"\" + assemblyFileName;
+                        assemblyFileName = Path.Combine(workingDirectory, assemblyFileName);
                     }
                 }
                 catch
@@ -7941,7 +7973,18 @@ namespace System.Management.Automation.Language
             // G      primary-expression   '['   new-lines:opt   expression   new-lines:opt   ']'
 
             SkipNewlines();
-            ExpressionAst indexExpr = ExpressionRule();
+            bool oldDisableCommaOperator = _disableCommaOperator;
+            _disableCommaOperator = false;
+            ExpressionAst indexExpr = null;
+            try
+            {
+                indexExpr = ExpressionRule();
+            }
+            finally
+            {
+                _disableCommaOperator = oldDisableCommaOperator;
+            }
+
             if (indexExpr == null)
             {
                 // ErrorRecovery: hope we see a closing bracket.  If we don't, we'll pretend we saw

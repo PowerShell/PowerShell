@@ -241,10 +241,10 @@ function ExecuteRequestWithCustomUserAgent {
 
     try {
         $Params = @{
-            Uri                  = $Uri
-            TimeoutSec           = 5
-            UserAgent            = $UserAgent
-            SkipHeaderValidation = $SkipHeaderValidation.IsPresent
+            Uri                         = $Uri
+            ConnectionTimeoutSeconds    = 5
+            UserAgent                   = $UserAgent
+            SkipHeaderValidation        = $SkipHeaderValidation.IsPresent
         }
         if ($Cmdlet -eq 'Invoke-WebRequest') {
             $result.Output = Invoke-WebRequest @Params
@@ -369,7 +369,7 @@ function GetMultipartBody {
 <#
     Defines the list of redirect codes to test as well as the
     expected Method when the redirection is handled.
-    See https://docs.microsoft.com/previous-versions/windows/apps/f92ssyy1(v=vs.105)
+    See https://learn.microsoft.com/dotnet/api/system.net.httpstatuscode
     for additonal details.
 #>
 $redirectTests = @(
@@ -505,6 +505,12 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         @{ httpVersion = '2'}
     ) {
         param($httpVersion)
+
+        if(Test-IsWinServer2012R2 -and $httpVersion -eq '2') {
+            Set-ItResult -Skipped -Because "HTTP/2 is not supported on Windows Server 2012R2"
+            return
+        }
+
         # Operation options
         $uri = Get-WebListenerUrl -Test 'Get' -Https
         $command = "Invoke-WebRequest -Uri $uri -HttpVersion $httpVersion -SkipCertificateCheck"
@@ -608,12 +614,20 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $Result.Output.Content | Should -Match '测试123'
     }
 
-    It "Invoke-WebRequest validate timeout option" {
+    It "Invoke-WebRequest validate ConnectionTimeoutSeconds option" {
+        $uri = Get-WebListenerUrl -Test 'Delay' -TestValue '5'
+        $command = "Invoke-WebRequest -Uri '$uri' -ConnectionTimeoutSeconds 2"
+
+        $result = ExecuteWebCommand -command $command
+        $result.Error.FullyQualifiedErrorId | Should -Be "ConnectionTimeoutReached,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+    }
+
+    It "Invoke-WebRequest validate TimeoutSec alias" {
         $uri = Get-WebListenerUrl -Test 'Delay' -TestValue '5'
         $command = "Invoke-WebRequest -Uri '$uri' -TimeoutSec 2"
 
         $result = ExecuteWebCommand -command $command
-        $result.Error.FullyQualifiedErrorId | Should -Be "System.Threading.Tasks.TaskCanceledException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+        $result.Error.FullyQualifiedErrorId | Should -Be "ConnectionTimeoutReached,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
     }
 
     It "Validate Invoke-WebRequest error with -Proxy and -NoProxy option" {
@@ -678,8 +692,9 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $uri = Get-WebListenerUrl -Test $method
             $body = GetTestData -contentType $contentType
             $command = "Invoke-WebRequest -Uri $uri -Body '$body' -Method $method -ContentType $contentType"
+            $commandNoContentType = "Invoke-WebRequest -Uri $uri -Body '$body' -Method $method"
 
-            It "Invoke-WebRequest -Uri $uri  -Method $method -ContentType $contentType -Body [body data]" {
+            It "Invoke-WebRequest -Uri $uri -Method $method -ContentType $contentType -Body [body data]" {
 
                 $result = ExecuteWebCommand -command $command
                 ValidateResponse -response $result
@@ -690,6 +705,29 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
                 $jsonContent.headers.'Content-Type' | Should -Match $contentType
                 # Validate that the response Content.data field is the same as what we sent.
                 $jsonContent.data | Should -Be $body
+            }
+
+            It "Invoke-WebRequest -Uri $uri -Method $method -Body [body data]" {
+
+                $result = ExecuteWebCommand -command $commandNoContentType
+                ValidateResponse -response $result
+
+                # Validate response content
+                $jsonContent = $result.Output.Content | ConvertFrom-Json
+                $jsonContent.url | Should -Match $uri
+                if ($method -eq "POST")
+                {
+                    $jsonContent.headers.'Content-Type' | Should -Match "application/x-www-form-urlencoded"
+                    # Validate that the response Content.form field is the same as what we sent.
+                    [string]$jsonContent.form | Should -Be ([string][PSCustomObject]@{$body.Split("=")[0] = [System.Object[]]})
+                    $jsonContent.data | Should -BeNullOrEmpty
+                }
+                else
+                {
+                    # Validate that the response Content.data field is the same as what we sent.
+                    $jsonContent.data | Should -Be $body
+                }
+
             }
         }
     }
@@ -748,6 +786,28 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $content.Content.Length
     }
 
+    It "Invoke-WebRequest -PassThru -OutFile <directory> saves the downloaded file path as a property in WebResponseObject"{
+        $uri = Get-WebListenerUrl -Test 'Get'
+        $content = Invoke-WebRequest -Uri $uri -PassThru -OutFile $TestDrive
+        $content.OutFile | Should -exist
+        $content.OutFile | Should -Be (Join-Path $TestDrive 'Get')
+    }
+
+    It "Invoke-WebRequest -PassThru -OutFile <file> saves the downloaded file path as a property in WebResponseObject"{
+        $uri = Get-WebListenerUrl -Test 'Get'
+        $filePath = Join-Path $TestDrive "pestertest-outfile"
+        $content = Invoke-WebRequest -Uri $uri -PassThru -OutFile $filePath
+        $content.OutFile | Should -exist
+        $content.OutFile | Should -Be $filePath
+    }
+
+    It "Invoke-WebRequest -PassThru -OutFile -Verbose File Name reflects the downloaded file name" {
+        $uri = Get-WebListenerUrl -Test 'Get'
+        $filePath = Join-Path $TestDrive "pestertest-outfile"
+        $content = Invoke-WebRequest -Verbose -Uri $uri -PassThru -OutFile $filePath 4>variable:verbo
+        $verbo[-1].Message | Should -Match "pestertest-outfile"
+    }
+
     It "Invoke-WebRequest should fail if -OutFile is <Name>." -TestCases @(
         @{ Name = "empty"; Value = [string]::Empty }
         @{ Name = "null"; Value = $null }
@@ -781,14 +841,9 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         ($result.Output.Content | ConvertFrom-Json).method | Should -Be "TEST"
     }
 
-    It "Validate Invoke-WebRequest default ContentType for CustomMethod <method>" -TestCases @(
-        @{method = "POST"}
-        @{method = "PUT"}
-    ) {
-        param($method)
-
-        $uri = Get-WebListenerUrl -Test $method
-        $command = "Invoke-WebRequest -Uri '$uri' -CustomMethod $method -Body 'testparam=testvalue'"
+    It "Validate Invoke-WebRequest default ContentType for CustomMethod POST" {
+        $uri = Get-WebListenerUrl -Test 'Post'
+        $command = "Invoke-WebRequest -Uri '$uri' -CustomMethod POST -Body 'testparam=testvalue'"
         $result = ExecuteWebCommand -command $command
         $jsonResult = $result.Output.Content | ConvertFrom-Json
         $jsonResult.form.testparam | Should -Be "testvalue"
@@ -1590,6 +1645,11 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $file2Path = Join-Path $testdrive $file2Name
             $file2Contents = "Test456"
             $file2Contents | Set-Content $file2Path -Force
+
+            $file3Name = "Kündigung_Mustermann_Max.TTA_2023_01_30.txt"
+            $file3Path = Join-Path $testdrive $file3Name
+            $file3Contents = "Test789"
+            $file3Contents | Set-Content $file3Path -Force
         }
 
         It "Verifies Invoke-WebRequest Supports Multipart String Values" {
@@ -1663,6 +1723,23 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $result.Files[0].FileName | Should -BeExactly $file1Name
             $result.Files[0].ContentType | Should -BeExactly 'application/octet-stream'
             $result.Files[0].Content | Should -Match $file1Contents
+        }
+
+        It "Verifies Invoke-WebRequest -Form sets Content-Disposition FileName and FileNameStar." {
+            $ContentDisposition = [System.Net.Http.Headers.ContentDispositionHeaderValue]::new("attachment")
+            $ContentDisposition.FileName = $fileName
+            $ContentDisposition.FileNameStar = $fileName
+
+            $form = @{TestFile = [System.IO.FileInfo]$file3Path}
+            $uri = Get-WebListenerUrl -Test 'Multipart'
+            $response = Invoke-WebRequest -Uri $uri -Form $form -Method 'POST'
+            $result = $response.Content | ConvertFrom-Json
+
+            $result.Headers.'Content-Type' | Should -Match 'multipart/form-data'
+            $result.Files.Count | Should -Be 1
+
+            $result.Files[0].ContentDisposition.FileName | Should -Be $ContentDisposition.FileName
+            $result.Files[0].ContentDisposition.FileNameStar | Should -Be $ContentDisposition.FileNameStar
         }
 
         It "Verifies Invoke-WebRequest -Form supports a collection of file values" {
@@ -2542,6 +2619,12 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         @{ httpVersion = '2'}
     ) {
         param($httpVersion)
+
+        if(Test-IsWinServer2012R2 -and $httpVersion -eq '2') {
+            Set-ItResult -Skipped -Because "HTTP/2 is not supported on Windows Server 2012R2"
+            return
+        }
+
         # Operation options
         $uri = Get-WebListenerUrl -Test 'Get' -Https
         $command = "Invoke-RestMethod -Uri $uri -HttpVersion $httpVersion -SkipCertificateCheck"
@@ -2628,12 +2711,20 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $Result.Output | Should -Match '测试123'
     }
 
-    It "Invoke-RestMethod validate timeout option" {
+    It "Invoke-RestMethod validate ConnectionTimeoutSeconds option" {
+        $uri = Get-WebListenerUrl -Test 'Delay' -TestValue '5'
+        $command = "Invoke-RestMethod -Uri '$uri' -ConnectionTimeoutSeconds 2"
+
+        $result = ExecuteWebCommand -command $command
+        $result.Error.FullyQualifiedErrorId | Should -Be "ConnectionTimeoutReached,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+    }
+
+    It "Invoke-RestMethod validate TimeoutSec alias" {
         $uri = Get-WebListenerUrl -Test 'Delay' -TestValue '5'
         $command = "Invoke-RestMethod -Uri '$uri' -TimeoutSec 2"
 
         $result = ExecuteWebCommand -command $command
-        $result.Error.FullyQualifiedErrorId | Should -Be "System.Threading.Tasks.TaskCanceledException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+        $result.Error.FullyQualifiedErrorId | Should -Be "ConnectionTimeoutReached,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
     }
 
     It "Validate Invoke-RestMethod error with -Proxy and -NoProxy option" {
@@ -2694,6 +2785,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
             $uri = Get-WebListenerUrl -Test $method
             $body = GetTestData -contentType $contentType
             $command = "Invoke-RestMethod -Uri $uri -Body '$body' -Method $method -ContentType $contentType"
+            $commandNoContentType = "Invoke-RestMethod -Uri $uri -Body '$body' -Method $method"
 
             It "Invoke-RestMethod -Uri $uri -Method $method -ContentType $contentType -Body [body data]" {
 
@@ -2705,6 +2797,27 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
 
                 # Validate that the response Content.data field is the same as what we sent.
                 $result.Output.data | Should -Be $body
+            }
+
+            It "Invoke-RestMethod -Uri $uri -Method $method -Body [body data]" {
+
+                $result = ExecuteWebCommand -command $commandNoContentType
+
+                # Validate response
+                $result.Output.url | Should -Match $uri
+
+                if ($method -eq "POST")
+                {
+                    $result.Output.headers.'Content-Type' | Should -Match "application/x-www-form-urlencoded"
+                    # Validate that the response Content.form field is the same as what we sent.
+                    [string]$result.Output.form | Should -Be ([string][PSCustomObject]@{$body.Split("=")[0] = [System.Object[]]})
+                    $result.Output.data | Should -BeNullOrEmpty
+                }
+                else
+                {
+                    # Validate that the response Content.data field is the same as what we sent.
+                    $result.Output.data | Should -Be $body
+                }
             }
         }
     }
@@ -2763,6 +2876,27 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $content.Content.Length
     }
 
+    It "Invoke-RestMethod -PassThru -OutFile Downloads the file and pipes it" {
+        $uri = Get-WebListenerUrl -Test 'Get'
+        $content = Invoke-WebRequest -Uri $uri
+        $outFile = Join-Path $TestDrive $content.BaseResponse.RequestMessage.RequestUri.Segments[-1]
+
+        # ensure the file does not exist
+        Remove-Item -Force -ErrorAction Ignore -Path $outFile
+        $response = Invoke-RestMethod -Uri $uri -PassThru -OutFile $outFile
+
+        # check if the file is downloaded.
+        Test-Path $outFile | Should -Be $true
+
+        # check if the file is correctly downloaded
+        Get-Content -Path $outFile | Should -BeExactly $content.Content
+
+        # check if the response stores the downloaded file contents
+        # response is a PSCustomObject so converted it string for comparison
+        $responseAsJsonString = $response | ConvertTo-Json -Compress
+        $responseAsJsonString | Should -BeExactly $content.Content
+    }
+
     It "Invoke-RestMethod should fail if -OutFile is <Name>." -TestCases @(
         @{ Name = "empty"; Value = [string]::Empty }
         @{ Name = "null"; Value = $null }
@@ -2795,13 +2929,9 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $result.Output.method | Should -Be "TEST"
     }
 
-    It "Validate Invoke-RestMethod default ContentType for CustomMethod <method>" -TestCases @(
-        @{method = "POST"}
-        @{method = "PUT"}
-    ) {
-        param($method)
-        $uri = Get-WebListenerUrl -Test $method
-        $command = "Invoke-RestMethod -Uri '$uri' -CustomMethod $method -Body 'testparam=testvalue'"
+    It "Validate Invoke-RestMethod default ContentType for CustomMethod POST" {
+        $uri = Get-WebListenerUrl -Test 'Post'
+        $command = "Invoke-RestMethod -Uri '$uri' -CustomMethod POST -Body 'testparam=testvalue'"
         $result = ExecuteWebCommand -command $command
         $result.Output.form.testparam | Should -Be "testvalue"
         $result.Output.Headers.'Content-Type' | Should -Be "application/x-www-form-urlencoded"
@@ -3362,6 +3492,11 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
             $file2Path = Join-Path $testdrive $file2Name
             $file2Contents = "Test456"
             $file2Contents | Set-Content $file2Path -Force
+
+            $file3Name = "Kündigung_Mustermann_Max.TTA_2023_01_30.txt"
+            $file3Path = Join-Path $testdrive $file3Name
+            $file3Contents = "Test789"
+            $file3Contents | Set-Content $file3Path -Force
         }
 
         It "Verifies Invoke-RestMethod Supports Multipart String Values" {
@@ -3429,6 +3564,22 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
             $result.Files[0].FileName | Should -Be $file1Name
             $result.Files[0].ContentType | Should -Be 'application/octet-stream'
             $result.Files[0].Content | Should -Match $file1Contents
+        }
+
+        It "Verifies Invoke-RestMethod -Form sets Content-Disposition FileName and FileNameStar." {
+            $ContentDisposition = [System.Net.Http.Headers.ContentDispositionHeaderValue]::new("attachment")
+            $ContentDisposition.FileName = $fileName
+            $ContentDisposition.FileNameStar = $fileName
+
+            $form = @{TestFile = [System.IO.FileInfo]$file3Path}
+            $uri = Get-WebListenerUrl -Test 'Multipart'
+            $result = Invoke-RestMethod -Uri $uri -Form $form -Method 'POST'
+
+            $result.Headers.'Content-Type' | Should -Match 'multipart/form-data'
+            $result.Files.Count | Should -Be 1
+
+            $result.Files[0].ContentDisposition.FileName | Should -Be $ContentDisposition.FileName
+            $result.Files[0].ContentDisposition.FileNameStar | Should -Be $ContentDisposition.FileNameStar
         }
 
         It "Verifies Invoke-RestMethod -Form supports a collection of file values" {
@@ -4330,7 +4481,12 @@ Describe 'Invoke-WebRequest and Invoke-RestMethod support Cancellation through C
         RunWithCancellation -Uri $uri
     }
 
-    It 'Invoke-WebRequest: Defalate Compression CTRL-C Cancels request after request headers' {
+    It 'Invoke-WebRequest: Gzip Compression CTRL-C Cancels request after request headers with Content-Length' {
+        $uri = Get-WebListenerUrl -Test StallGzip -TestValue '30/application%2fjson' -Query @{ contentLength = $true }
+        RunWithCancellation -Uri $uri
+    }
+
+    It 'Invoke-WebRequest: Deflate Compression CTRL-C Cancels request after request headers' {
         $uri = Get-WebListenerUrl -Test StallDeflate -TestValue '30/application%2fjson'
         RunWithCancellation -Uri $uri
     }
@@ -4345,7 +4501,7 @@ Describe 'Invoke-WebRequest and Invoke-RestMethod support Cancellation through C
         RunWithCancellation -Uri $uri -Arguments '-SkipCertificateCheck'
     }
 
-    It 'Invoke-WebRequest: HTTPS with Defalte compression CTRL-C Cancels request after request headers' {
+    It 'Invoke-WebRequest: HTTPS with Deflate compression CTRL-C Cancels request after request headers' {
         $uri = Get-WebListenerUrl -Https -Test StallDeflate -TestValue '30/application%2fjson'
         RunWithCancellation -Uri $uri -Arguments '-SkipCertificateCheck'
     }
@@ -4398,5 +4554,159 @@ Describe 'Invoke-WebRequest and Invoke-RestMethod support Cancellation through C
     It 'Invoke-RestMethod: CTRL-C Cancels request in XML atom processing' {
         $uri = Get-WebListenerUrl -test Stall -TestValue '30/application%2fxml'
         RunWithCancellation -Command 'Invoke-RestMethod' -Uri $uri
+    }
+}
+
+Describe "Web cmdlets Unix Sockets tests" -Tags "CI", "RequireAdminOnWindows" {
+    BeforeAll {
+        $isWin2016 = Test-IsWindows2016
+        $isWin2012 = Test-IsWinServer2012R2
+        $skipTests = $isWin2016 -or $isWin2012
+        Write-Verbose -Verbose -Message "IsWin2016: $isWin2016 - IsWin2012: $isWin2012 - SkipTests: $skipTests"
+        if ($skipTests){
+            return
+        }
+
+        try {
+            $unixSocket = Get-UnixSocketName -ErrorAction Stop
+            $WebListener = Start-UnixSocket $unixSocket -ErrorAction Stop
+        }
+        catch {
+            Write-Verbose -Verbose -Message "Exception: $_"
+            $WebListener = $null
+            $skipTests = $true
+        }
+    }
+
+    It "Execute Invoke-WebRequest with -UnixSocket" {
+        if ($skipTests) {
+            Set-ItResult -Skipped -Because "Unix sockets are not supported on this platform."
+            return
+        }
+
+        $uri = Get-UnixSocketUri
+        $result = Invoke-WebRequest $uri -UnixSocket $unixSocket
+        $result.StatusCode | Should -Be "200"
+        $result.Content | Should -Be "Hello World Unix Socket."
+    }
+
+    It "Execute Invoke-RestMethod with -UnixSocket" {
+        if ($skipTests) {
+            Set-ItResult -Skipped -Because "Unix sockets are not supported on this platform."
+            return
+        }
+
+        $uri = Get-UnixSocketUri
+        $result = Invoke-RestMethod  $uri -UnixSocket $unixSocket
+        $result | Should -Be "Hello World Unix Socket."
+    }
+}
+
+Describe 'Invoke-WebRequest and Invoke-RestMethod support OperationTimeoutSeconds' -Tags "CI", "RequireAdminOnWindows" {
+    BeforeAll {
+        $oldProgress = $ProgressPreference
+        $ProgressPreference = 'SilentlyContinue'
+        $WebListener = Start-WebListener
+    }
+
+    AfterAll {
+        $ProgressPreference = $oldProgress
+    }
+
+    function RunWithNetworkTimeout {
+        param(
+            [ValidateSet('Invoke-WebRequest', 'Invoke-RestMethod')]
+            [string]$Command = 'Invoke-WebRequest',
+            [string]$Arguments = '',
+            [uri]$Uri,
+            [int]$OperationTimeoutSeconds,
+            [switch]$WillTimeout
+        )
+
+        $invoke = "$Command -Uri `"$Uri`" $Arguments"
+        if ($PSBoundParameters.ContainsKey('OperationTimeoutSeconds')) {
+            $invoke = "$invoke -OperationTimeoutSeconds $OperationTimeoutSeconds"
+        }
+
+        $result = ExecuteWebCommand -command $invoke
+        if ($WillTimeout) {
+            $result.Error | Should -Not -BeNullOrEmpty
+            $fqErrorClass = if ($Command -eq 'Invoke-WebRequest') { 'InvokeWebRequestCommand'} else { 'InvokeRestMethodCommand'}
+            $result.Error.FullyQualifiedErrorId | Should -Be "OperationTimeoutReached,Microsoft.PowerShell.Commands.$fqErrorClass"
+            $result.Output | Should -BeNullOrEmpty
+        } else {
+            $result.Error | Should -BeNullOrEmpty
+            $result.Output | Should -Not -BeNullOrEmpty
+        }
+    }
+
+    It 'Invoke-WebRequest: OperationTimeoutSeconds does not cancel if stalls shorter than timeout but download takes longer than timeout' {
+        $uri = Get-WebListenerUrl -Test Stall -TestValue '2' -Query @{ chunks = 5 }
+        RunWithNetworkTimeout -Uri $uri -OperationTimeoutSeconds 4
+    }
+
+    It 'Invoke-WebRequest: OperationTimeoutSeconds cancels if stall lasts longer than OperationTimeoutSeconds value' {
+        $uri = Get-WebListenerUrl -Test Stall -TestValue 30
+        RunWithNetworkTimeout -Uri $uri -OperationTimeoutSeconds 3 -WillTimeout
+    }
+
+    It 'Invoke-WebRequest: OperationTimeoutSeconds cancels if stall lasts longer than OperationTimeoutSeconds value for HTTPS/gzip compression' {
+        $uri = Get-WebListenerUrl -Https -Test StallGzip -TestValue 30
+        RunWithNetworkTimeout -Uri $uri -OperationTimeoutSeconds 3 -WillTimeout -Arguments '-SkipCertificateCheck'
+    }
+
+    It 'Invoke-RestMethod: OperationTimeoutSeconds does not cancel if stalls shorter than timeout but download takes longer than timeout' {
+        $uri = Get-WebListenerUrl -Test Stall -TestValue '2' -Query @{ chunks = 5 }
+        RunWithNetworkTimeout -Command Invoke-RestMethod -Uri $uri -OperationTimeoutSeconds 4
+    }
+
+    It 'Invoke-RestMethod: OperationTimeoutSeconds cancels if stall lasts longer than OperationTimeoutSeconds value' {
+        $uri = Get-WebListenerUrl -Test Stall -TestValue 30
+        RunWithNetworkTimeout -Command Invoke-RestMethod -Uri $uri -OperationTimeoutSeconds 2 -WillTimeout
+    }
+
+    It 'Invoke-RestMethod: OperationTimeoutSeconds cancels when doing XML atom processing' {
+        $uri = Get-WebListenerUrl -Test Stall -TestValue '30/application%2fxml'
+        RunWithNetworkTimeout -Command Invoke-RestMethod -Uri $uri -OperationTimeoutSeconds 2 -WillTimeout
+    }
+
+    It 'Invoke-RestMethod: OperationTimeoutSeconds cancels when doing JSON processing' {
+        $uri = Get-WebListenerUrl -Test Stall -TestValue '30/application%2fjson'
+        RunWithNetworkTimeout -Command Invoke-RestMethod -Uri $uri -OperationTimeoutSeconds 2 -WillTimeout
+    }
+
+    It 'Invoke-RestMethod: OperationTimeoutSeconds cancels when doing XML atom processing for HTTPS/gzip compression' {
+        $uri = Get-WebListenerUrl -Https -Test StallGzip -TestValue 30/application%2fXML
+        RunWithNetworkTimeout -Command Invoke-RestMethod -Uri $uri -OperationTimeoutSeconds 2 -WillTimeout -Arguments '-SkipCertificateCheck'
+    }
+}
+
+Describe "Invoke-RestMethod should run in the default synchronization context (threadpool)" -Tag "CI" {
+    BeforeAll {
+        $oldProgress = $ProgressPreference
+        $ProgressPreference = 'SilentlyContinue'
+        $WebListener = Start-WebListener
+    }
+
+    AfterAll {
+        $ProgressPreference = $oldProgress
+    }
+
+    It "Invoke-RestMethod works after constructing a WindowsForm object" -Skip:(!$IsWindows) {
+        $env:URI_TO_TEST = Get-WebListenerUrl -Test 'Get'
+        $irmResult = $null
+        try {
+            $pwsh = Join-Path $PSHOME "pwsh"
+            $irmResult = & $pwsh -NoProfile {
+                Add-Type -AssemblyName System.Windows.Forms
+                $null = New-Object System.Windows.Forms.Form
+                Invoke-RestMethod $env:URI_TO_TEST
+            }
+        } finally {
+            $env:URI_TO_TEST = $null
+        }
+
+        # Simply making it this far is good enough to ensure we didn't hit a deadlock
+        $irmResult | Should -Not -BeNullOrEmpty
     }
 }

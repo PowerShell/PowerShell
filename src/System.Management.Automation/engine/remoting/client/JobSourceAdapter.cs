@@ -20,7 +20,6 @@ namespace System.Management.Automation
     /// </summary>
     /// <remarks>The actual implementation of this class will
     /// happen in M2</remarks>
-    [Serializable]
     public class JobDefinition : ISerializable
     {
         private string _name;
@@ -172,7 +171,6 @@ namespace System.Management.Automation
     /// CommandParameterCollection adds a public
     /// constructor.The actual implementation of
     /// this class will happen in M2</remarks>
-    [Serializable]
     public class JobInvocationInfo : ISerializable
     {
         /// <summary>

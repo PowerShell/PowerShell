@@ -6,7 +6,7 @@
   approving [RFCs][RFC-repo], and approving new maintainers/committee members
 * [**Repository maintainer**](#repository-maintainers): An individual responsible for merging pull requests (PRs) into `master` when all requirements are met (code review, tests, docs, and RFC approval as applicable).
   Repository Maintainers are the only people with write permissions for the `master` branch.
-* [**Working Groups (WGs)**](#working-groups-(wgs)) are collections of contributors responsible for
+* [**Working Groups (WGs)**](#working-groups) are collections of contributors responsible for
   providing expertise on a specific area of PowerShell in order to help establish consensus within
   the community and Committee.
 * **Corporation**: The Corporation owns the PowerShell repository and, under extreme circumstances,
@@ -58,15 +58,16 @@ If any Committee Members feels like this behavior is large enough to warrant an 
 
 As a PowerShell Committee Member:
 
+1. **DO** enforce the [Code of Conduct][coc] by taking reports of abuse and violations to the committee for resolution
 1. **DO** reply to issues and pull requests with design opinions
   (this could include offering support for good work or exciting new features)
 1. **DO** encourage healthy discussion about the direction of PowerShell
 1. **DO** raise "red flags" on PRs that haven't followed the proper RFC process when applicable
 1. **DO** contribute to documentation and best practices
-1. **DO** maintain a presence in the PowerShell community outside of GitHub (Twitter, blogs, StackOverflow, Reddit, Hacker News, etc.)
+1. **DO** maintain a presence in the PowerShell community outside of GitHub (Twitter, blogs, Stack Overflow, Reddit, Hacker News, etc.)
 1. **DO** heavily incorporate community feedback into the weight of your decisions
 1. **DO** be polite and respectful to a wide variety of opinions and perspectives
-1. **DO** make sure contributors are following the [contributor guidelines](../../.github/CONTRIBUTING.md)
+1. **DO** make sure contributors are following the [contributing guidelines](../../.github/CONTRIBUTING.md)
 
 1. **DON'T** constantly raise "red flags" for unimportant or minor problems to the point that the progress of the project is being slowed
 1. **DON'T** offer up your opinions as the absolute opinion of the PowerShell Committee.
@@ -82,6 +83,19 @@ At any point in time, a Committee Member can nominate a strong community member 
 Nominations should be submitted in the form of [RFCs][RFC-repo] detailing why that individual is qualified and how they will contribute.
 After the RFC has been discussed, a unanimous vote will be required for the new Committee Member to be confirmed.
 
+### PowerShell Committee Code of Conduct Enforcement
+
+As stated in the [contributing guidelines](../../.github/CONTRIBUTING.md#code-of-conduct-enforcement):
+
+Reports of abuse will be reviewed by the PowerShell Committee and if it has been determined that violations of the
+[Code of Conduct][coc] has occurred, then a temporary ban may be imposed.
+The duration of the temporary ban will depend on the impact and/or severity of the infraction.
+This can vary from 1 day, a few days, a week, and up to 30 days.
+Repeat offenses may result in a permanent ban from the PowerShell org.
+
+Microsoft employees on the PowerShell committee should review the available support at
+[aka.ms/opensource/moderation-support](https://aka.ms/opensource/moderation-support).
+
 ## Repository Maintainers
 
 Repository Maintainers are trusted stewards of the PowerShell community/repository responsible for maintaining consistency and quality of PowerShell code.
@@ -89,7 +103,7 @@ One of their primary responsibilities is merging pull requests after all require
 
 For more information on Repository Maintainers--their responsibilities, who they are, and how one becomes a Maintainer--see the [README for Repository Maintainers][maintainers].
 
-## Working Groups (WGs)
+## Working Groups
 
 [Working Groups (WGs)][wg] are collections of contributors with knowledge of specific components or
 technologies in the PowerShell domain.
@@ -143,8 +157,9 @@ See our [Pull Request Process][pull-request-process]
 [pester]: ../testing-guidelines/WritingPesterTests.md
 [breaking-changes]: ../dev-process/breaking-change-contract.md
 [issue-process]: ../maintainers/issue-management.md
+[coc]: ../../CODE_OF_CONDUCT.md
 [pull-request-process]: ../../.github/CONTRIBUTING.md#lifecycle-of-a-pull-request
 [docs-contributing]: https://github.com/PowerShell/PowerShell-Docs/blob/staging/CONTRIBUTING.md
 [maintainers]: ../maintainers/README.md
 [wg]: ./working-group.md
-[wg-defintions]: ./working-group-definitions.md
+[wg-definitions]: ./working-group-definitions.md

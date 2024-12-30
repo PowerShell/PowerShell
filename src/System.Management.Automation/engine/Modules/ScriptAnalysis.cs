@@ -14,7 +14,6 @@ namespace System.Management.Automation
     /// <summary>
     /// Class describing a PowerShell module...
     /// </summary>
-    [Serializable]
     internal class ScriptAnalysis
     {
         internal static ScriptAnalysis Analyze(string path, ExecutionContext context)
@@ -432,7 +431,7 @@ namespace System.Management.Automation
             return AstVisitAction.SkipChildren;
         }
 
-        private void ProcessCmdletArguments(object value, Action<string> onEachArgument)
+        private static void ProcessCmdletArguments(object value, Action<string> onEachArgument)
         {
             if (value == null)
             {
@@ -573,7 +572,6 @@ namespace System.Management.Automation
 
     // Class to keep track of modules we need to import, and commands that should
     // be filtered out of them.
-    [Serializable]
     internal class RequiredModuleInfo
     {
         internal string Name { get; set; }

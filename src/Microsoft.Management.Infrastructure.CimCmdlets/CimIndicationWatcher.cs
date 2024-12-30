@@ -221,14 +221,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             if (temp != null)
             {
                 // raise the event
-                CimSubscriptionResultEventArgs resultArgs = args as CimSubscriptionResultEventArgs;
-                if (resultArgs != null)
+                if (args is CimSubscriptionResultEventArgs resultArgs)
                     temp(this, new CimIndicationEventInstanceEventArgs(resultArgs.Result));
-                else
+                else if (args is CimSubscriptionExceptionEventArgs exceptionArgs)
                 {
-                    CimSubscriptionExceptionEventArgs exceptionArgs = args as CimSubscriptionExceptionEventArgs;
-                    if (exceptionArgs != null)
-                        temp(this, new CimIndicationEventExceptionEventArgs(exceptionArgs.Exception));
+                    temp(this, new CimIndicationEventExceptionEventArgs(exceptionArgs.Exception));
                 }
             }
         }

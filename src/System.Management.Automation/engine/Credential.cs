@@ -85,7 +85,7 @@ namespace System.Management.Automation
     /// Offers a centralized way to manage usernames, passwords, and
     /// credentials.
     /// </summary>
-    [Serializable()]
+    [Serializable]
     public sealed class PSCredential : ISerializable
     {
         /// <summary>

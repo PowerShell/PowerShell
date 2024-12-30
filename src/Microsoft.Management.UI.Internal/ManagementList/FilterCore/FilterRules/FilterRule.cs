@@ -2,15 +2,14 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.Management.UI.Internal
 {
     /// <summary>
     /// The base class for all filtering rules.
     /// </summary>
-    [Serializable]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
+    [Serializable]
     public abstract class FilterRule : IEvaluate
     {
         /// <summary>
@@ -39,11 +38,6 @@ namespace Microsoft.Management.UI.Internal
         /// </summary>
         protected FilterRule()
         {
-            // HACK : Is there a way to statically enforce this? No... not ISerializable...
-            if (!this.GetType().IsSerializable)
-            {
-                throw new InvalidOperationException("FilterRules must be serializable.");
-            }
         }
 
         /// <summary>
@@ -67,14 +61,12 @@ namespace Microsoft.Management.UI.Internal
         /// </summary>
         protected void NotifyEvaluationResultInvalidated()
         {
-            #pragma warning disable IDE1005 // IDE1005: Delegate invocation can be simplified.
             var eh = this.EvaluationResultInvalidated;
 
             if (eh != null)
             {
                 eh(this, new EventArgs());
             }
-            #pragma warning restore IDE1005
         }
 
         #endregion

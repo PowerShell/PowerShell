@@ -46,7 +46,7 @@ namespace Microsoft.PowerShell.Commands
     [OutputType(typeof(FileSecurity), typeof(DirectorySecurity), ProviderCmdlet = ProviderCmdlet.GetAcl)]
     [OutputType(typeof(bool), typeof(string), typeof(FileInfo), typeof(DirectoryInfo), ProviderCmdlet = ProviderCmdlet.GetItem)]
     [OutputType(typeof(bool), typeof(string), typeof(DateTime), typeof(System.IO.FileInfo), typeof(System.IO.DirectoryInfo), ProviderCmdlet = ProviderCmdlet.GetItemProperty)]
-    [OutputType(typeof(string), typeof(System.IO.FileInfo), ProviderCmdlet = ProviderCmdlet.NewItem)]
+    [OutputType(typeof(string), typeof(System.IO.FileInfo), typeof(DirectoryInfo), ProviderCmdlet = ProviderCmdlet.NewItem)]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "This coupling is required")]
     public sealed partial class FileSystemProvider : NavigationCmdletProvider,
                                                      IContentCmdletProvider,
@@ -61,6 +61,7 @@ namespace Microsoft.PowerShell.Commands
         private const int FILETRANSFERSIZE = 4 * 1024 * 1024;
 
         private const int COPY_FILE_ACTIVITY_ID = 0;
+        private const int REMOVE_FILE_ACTIVITY_ID = 0;
 
         // The name of the key in an exception's Data dictionary when attempting
         // to copy an item onto itself.
@@ -105,7 +106,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>
         /// The path with all / normalized to \
         /// </returns>
-        private static string NormalizePath(string path)
+        internal static string NormalizePath(string path)
         {
             return GetCorrectCasedPath(path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator));
         }
@@ -1077,6 +1078,21 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     throw;
+                }
+            }
+
+            // .NET introduced a change where invalid characters are accepted https://learn.microsoft.com/en-us/dotnet/core/compatibility/2.1#path-apis-dont-throw-an-exception-for-invalid-characters
+            // We need to check for invalid characters ourselves.  `Path.GetInvalidFileNameChars()` is a supserset of `Path.GetInvalidPathChars()`
+
+            // Remove drive root first
+            string pathWithoutDriveRoot = path.Substring(Path.GetPathRoot(path).Length);
+            char[] invalidFileChars = Path.GetInvalidFileNameChars();
+
+            foreach (string segment in pathWithoutDriveRoot.Split(Path.DirectorySeparatorChar))
+            {
+                if (segment.IndexOfAny(invalidFileChars) != -1)
+                {
+                    return false;
                 }
             }
 
@@ -2242,16 +2258,14 @@ namespace Microsoft.PowerShell.Commands
                         {
                             exists = true;
 
-                            var normalizedTargetPath = strTargetPath;
-                            if (strTargetPath.StartsWith(".\\", StringComparison.OrdinalIgnoreCase) ||
-                                strTargetPath.StartsWith("./", StringComparison.OrdinalIgnoreCase))
-                            {
-                                normalizedTargetPath = Path.Join(SessionState.Internal.CurrentLocation.ProviderPath, strTargetPath.AsSpan(2));
-                            }
-
-                            GetFileSystemInfo(normalizedTargetPath, out isDirectory);
-
+                            // unify directory separators to be consistent with the rest of PowerShell even on non-Windows platforms;
+                            // do this before resolving the target, otherwise e.g. `.\test` would break on Linux, since the combined
+                            // path below would be something like `/path/to/cwd/.\test`
                             strTargetPath = strTargetPath.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
+
+                            // check if the target is a file or directory
+                            var normalizedTargetPath = Path.Combine(Path.GetDirectoryName(path), strTargetPath);
+                            GetFileSystemInfo(normalizedTargetPath, out isDirectory);
                         }
                         else
                         {
@@ -2860,6 +2874,19 @@ namespace Microsoft.PowerShell.Commands
                     return;
                 }
 
+                if (Context != null
+                    && Context.ExecutionContext.SessionState.PSVariable.Get(SpecialVariables.ProgressPreferenceVarPath.UserPath).Value is ActionPreference progressPreference
+                    && progressPreference == ActionPreference.Continue)
+                {
+                    {
+                        Task.Run(() =>
+                        {
+                            GetTotalFiles(path, recurse);
+                        });
+                        _removeStopwatch.Start();
+                    }
+                }
+
 #if UNIX
                 if (iscontainer)
                 {
@@ -2922,6 +2949,16 @@ namespace Microsoft.PowerShell.Commands
                     {
                         RemoveFileInfoItem((FileInfo)fsinfo, Force);
                     }
+                }
+
+                if (Stopping || _removedFiles == _totalFiles)
+                {
+                    _removeStopwatch.Stop();
+                    var progress = new ProgressRecord(REMOVE_FILE_ACTIVITY_ID, " ", " ")
+                    {
+                        RecordType = ProgressRecordType.Completed
+                    };
+                    WriteProgress(progress);
                 }
 #endif
             }
@@ -3057,6 +3094,8 @@ namespace Microsoft.PowerShell.Commands
 
                     if (file != null)
                     {
+                        long fileBytesSize = file.Length;
+
                         if (recurse)
                         {
                             // When recurse is specified we need to confirm each
@@ -3068,6 +3107,25 @@ namespace Microsoft.PowerShell.Commands
                             // When recurse is not specified just delete all the
                             // subitems without confirming with the user.
                             RemoveFileSystemItem(file, force);
+                        }
+
+                        if (_totalFiles > 0)
+                        {
+                            _removedFiles++;
+                            _removedBytes += fileBytesSize;
+                            if (_removeStopwatch.Elapsed.TotalSeconds > ProgressBarDurationThreshold)
+                            {
+                                double speed = _removedBytes / 1024 / 1024 / _removeStopwatch.Elapsed.TotalSeconds;
+                                var progress = new ProgressRecord(
+                                    REMOVE_FILE_ACTIVITY_ID,
+                                    StringUtil.Format(FileSystemProviderStrings.RemovingLocalFileActivity, _removedFiles, _totalFiles),
+                                    StringUtil.Format(FileSystemProviderStrings.RemovingLocalBytesStatus, Utils.DisplayHumanReadableFileSize(_removedBytes), Utils.DisplayHumanReadableFileSize(_totalBytes), speed)
+                                );
+                                var percentComplete = _totalBytes != 0 ? (int)Math.Min(_removedBytes * 100 / _totalBytes, 100) : 100;
+                                progress.PercentComplete = percentComplete;
+                                progress.RecordType = ProgressRecordType.Processing;
+                                WriteProgress(progress);
+                            }
                         }
                     }
                 }
@@ -3319,12 +3377,12 @@ namespace Microsoft.PowerShell.Commands
 
                     if (itemExistsDynamicParameters.OlderThan.HasValue)
                     {
-                        result = lastWriteTime < itemExistsDynamicParameters.OlderThan.Value;
+                        result &= lastWriteTime < itemExistsDynamicParameters.OlderThan.Value;
                     }
 
                     if (itemExistsDynamicParameters.NewerThan.HasValue)
                     {
-                        result = lastWriteTime > itemExistsDynamicParameters.NewerThan.Value;
+                        result &= lastWriteTime > itemExistsDynamicParameters.NewerThan.Value;
                     }
                 }
             }
@@ -3569,7 +3627,7 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     CopyItemLocalOrToSession(path, destinationPath, recurse, Force, null);
-                    if (_totalFiles > 0)
+                    if (Stopping || _copiedFiles == _totalFiles)
                     {
                         _copyStopwatch.Stop();
                         var progress = new ProgressRecord(COPY_FILE_ACTIVITY_ID, " ", " ");
@@ -3937,16 +3995,19 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 _copiedFiles++;
                                 _copiedBytes += file.Length;
-                                double speed = (double)(_copiedBytes / 1024 / 1024) / _copyStopwatch.Elapsed.TotalSeconds;
-                                var progress = new ProgressRecord(
-                                    COPY_FILE_ACTIVITY_ID,
-                                    StringUtil.Format(FileSystemProviderStrings.CopyingLocalFileActivity, _copiedFiles, _totalFiles),
-                                    StringUtil.Format(FileSystemProviderStrings.CopyingLocalBytesStatus, Utils.DisplayHumanReadableFileSize(_copiedBytes), Utils.DisplayHumanReadableFileSize(_totalBytes), speed)
-                                );
-                                var percentComplete = _totalBytes != 0 ? (int)Math.Min(_copiedBytes * 100 / _totalBytes, 100) : 100;
-                                progress.PercentComplete = percentComplete;
-                                progress.RecordType = ProgressRecordType.Processing;
-                                WriteProgress(progress);
+                                if (_copyStopwatch.Elapsed.TotalSeconds > ProgressBarDurationThreshold)
+                                {
+                                    double speed = (double)(_copiedBytes / 1024 / 1024) / _copyStopwatch.Elapsed.TotalSeconds;
+                                    var progress = new ProgressRecord(
+                                        COPY_FILE_ACTIVITY_ID,
+                                        StringUtil.Format(FileSystemProviderStrings.CopyingLocalFileActivity, _copiedFiles, _totalFiles),
+                                        StringUtil.Format(FileSystemProviderStrings.CopyingLocalBytesStatus, Utils.DisplayHumanReadableFileSize(_copiedBytes), Utils.DisplayHumanReadableFileSize(_totalBytes), speed)
+                                    );
+                                    var percentComplete = _totalBytes != 0 ? (int)Math.Min(_copiedBytes * 100 / _totalBytes, 100) : 100;
+                                    progress.PercentComplete = percentComplete;
+                                    progress.RecordType = ProgressRecordType.Processing;
+                                    WriteProgress(progress);
+                                }
                             }
                         }
                         else
@@ -4884,6 +4945,11 @@ namespace Microsoft.PowerShell.Commands
         private long _copiedBytes;
         private readonly Stopwatch _copyStopwatch = new Stopwatch();
 
+        private long _removedBytes;
+        private long _removedFiles;
+        private readonly Stopwatch _removeStopwatch = new();
+
+        private const double ProgressBarDurationThreshold = 2.0;
         #endregion CopyItem
 
         #endregion ContainerCmdletProvider members
@@ -4915,30 +4981,30 @@ namespace Microsoft.PowerShell.Commands
                 // make sure we return two backslashes so it still results in a UNC path
                 parentPath = "\\\\";
             }
+
+            if (!parentPath.EndsWith(StringLiterals.DefaultPathSeparator)
+                && Utils.PathIsDevicePath(parentPath)
+                && parentPath.Length - parentPath.Replace(StringLiterals.DefaultPathSeparatorString, string.Empty).Length == 3)
+            {
+                // Device paths start with either "\\.\" or "\\?\"
+                // When referring to the root, like: "\\.\CDROM0\" then it needs the trailing separator to be valid.
+                parentPath += StringLiterals.DefaultPathSeparator;
+            }
 #endif
+            s_tracer.WriteLine("GetParentPath returning '{0}'", parentPath);
             return parentPath;
         }
 
         // Note: we don't use IO.Path.IsPathRooted as this deals with "invalid" i.e. unnormalized paths
         private static bool IsAbsolutePath(string path)
         {
-            bool result = false;
-
             // check if we're on a single root filesystem and it's an absolute path
             if (LocationGlobber.IsSingleFileSystemAbsolutePath(path))
             {
                 return true;
             }
 
-            // Find the drive separator
-            int index = path.IndexOf(':');
-
-            if (index != -1)
-            {
-                result = true;
-            }
-
-            return result;
+            return path.Contains(':');
         }
 
         /// <summary>
@@ -5777,8 +5843,10 @@ namespace Microsoft.PowerShell.Commands
                         destination = MakePath(destination, dir.Name);
                     }
 
-                    // Don't allow moving a directory into itself
-                    if (destination.StartsWith(Path.TrimEndingDirectorySeparator(path) + Path.DirectorySeparatorChar))
+                    // Don't allow moving a directory into itself or its sub-directory.
+                    string pathWithoutEndingSeparator = Path.TrimEndingDirectorySeparator(path);
+                    if (destination.StartsWith(pathWithoutEndingSeparator + Path.DirectorySeparatorChar)
+                        || destination.Equals(pathWithoutEndingSeparator, StringComparison.OrdinalIgnoreCase))
                     {
                         string error = StringUtil.Format(FileSystemProviderStrings.TargetCannotBeSubdirectoryOfSource, destination);
                         var e = new IOException(error);
@@ -7378,7 +7446,7 @@ namespace Microsoft.PowerShell.Commands
             set
             {
                 // Check for UTF-7 by checking for code page 65000
-                // See: https://docs.microsoft.com/en-us/dotnet/core/compatibility/corefx#utf-7-code-paths-are-obsolete
+                // See: https://learn.microsoft.com/dotnet/core/compatibility/corefx#utf-7-code-paths-are-obsolete
                 if (value != null && value.CodePage == 65000)
                 {
                     _provider.WriteWarning(PathUtilsStrings.Utf7EncodingObsolete);
@@ -7870,7 +7938,7 @@ namespace Microsoft.PowerShell.Commands
                     return false;
                 }
 
-                // The name surrogate bit 0x20000000 is defined in https://docs.microsoft.com/windows/win32/fileio/reparse-point-tags
+                // The name surrogate bit 0x20000000 is defined in https://learn.microsoft.com/windows/win32/fileio/reparse-point-tags
                 // Name surrogates (0x20000000) are reparse points that point to other named entities local to the filesystem
                 // (like symlinks and mount points).
                 // In the case of OneDrive, they are not name surrogates and would be safe to recurse into.
@@ -8103,7 +8171,7 @@ namespace System.Management.Automation.Internal
 
                 // Directories don't normally have alternate streams, so this is not an exceptional state.
                 // If a directory has no alternate data streams, FindFirstStreamW returns ERROR_HANDLE_EOF.
-                // If the file system (such as FAT32) does not support alternate streams, then 
+                // If the file system (such as FAT32) does not support alternate streams, then
                 // ERROR_INVALID_PARAMETER is returned by FindFirstStreamW. See documentation:
                 // https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-findfirststreamw
                 if (error == NativeMethods.ERROR_HANDLE_EOF || error == NativeMethods.ERROR_INVALID_PARAMETER)

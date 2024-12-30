@@ -28,13 +28,15 @@ namespace System.Management.Automation
     public enum ErrorCategory
     {
         /// <summary>
+        /// <para>
         /// No error category is specified, or the error category is invalid.
-        /// </summary>
-        /// <remarks>
+        /// </para>
+        /// <para>
         /// Do not specify ErrorCategory.NotSpecified when creating an
         /// <see cref="System.Management.Automation.ErrorRecord"/>.
         /// Choose the best match from among the other values.
-        /// </remarks>
+        /// </para>
+        /// </summary>
         NotSpecified = 0,
 
         /// <summary>
@@ -132,14 +134,16 @@ namespace System.Management.Automation
         WriteError = 23,
 
         /// <summary>
+        /// <para>
         /// A native command reported an error to its STDERR pipe.
-        /// </summary>
-        /// <remarks>
+        /// </para>
+        /// <para>
         /// The Engine uses this ErrorCategory when it executes a native
         /// console applications and captures the errors reported by the
         /// native application.  Avoid using ErrorCategory.FromStdErr
         /// in other circumstances.
-        /// </remarks>
+        /// </para>
+        /// </summary>
         FromStdErr = 24,
 
         /// <summary>
@@ -523,7 +527,6 @@ namespace System.Management.Automation
     /// It is permitted to subclass <see cref="ErrorDetails"/>
     /// but there is no established scenario for doing this, nor has it been tested.
     /// </remarks>
-    [Serializable]
     public class ErrorDetails : ISerializable
     {
         #region Constructor
@@ -982,7 +985,6 @@ namespace System.Management.Automation
     /// <see cref="System.Management.Automation.ParentContainsErrorRecordException"/>.
     /// rather than the actual exception, to avoid the mutual references.
     /// </remarks>
-    [Serializable]
     public class ErrorRecord : ISerializable
     {
         #region Constructor

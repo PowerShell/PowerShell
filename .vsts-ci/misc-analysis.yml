@@ -46,8 +46,3 @@ stages:
     - checkout: ComplianceRepo
 
     - template: ci-compliance.yml@ComplianceRepo
-- stage: markdown_spelling_lint
-  displayName: Markdown Spelling and Lint
-  dependsOn: []
-  jobs:
-  - template: ./misc-analysis/mdSpell.yml

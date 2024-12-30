@@ -5,19 +5,20 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.RegularExpressions;
 
 using Microsoft.PowerShell;
+using System.Management.Automation.Security;
 using System.Management.Automation.Subsystem;
 using System.Management.Automation.Subsystem.DSC;
 using Microsoft.PowerShell.DesiredStateConfiguration.Internal;
 
 namespace System.Management.Automation.Language
 {
-    internal sealed class SemanticChecks : AstVisitor2, IAstPostVisitHandler
+    internal sealed partial class SemanticChecks : AstVisitor2, IAstPostVisitHandler
     {
         private readonly Parser _parser;
 
@@ -89,16 +90,12 @@ namespace System.Management.Automation.Language
                 foreach (var parameter in parameters)
                 {
                     string parameterName = parameter.Name.VariablePath.UserPath;
-                    if (parametersSet.Contains(parameterName))
+                    if (!parametersSet.Add(parameterName))
                     {
                         _parser.ReportError(parameter.Name.Extent,
                             nameof(ParserStrings.DuplicateFormalParameter),
                             ParserStrings.DuplicateFormalParameter,
                             parameterName);
-                    }
-                    else
-                    {
-                        parametersSet.Add(parameterName);
                     }
 
                     var voidConstraint =
@@ -241,7 +238,7 @@ namespace System.Management.Automation.Language
             foreach (var namedArg in attributeAst.NamedArguments)
             {
                 string name = namedArg.ArgumentName;
-                if (names.Contains(name))
+                if (!names.Add(name))
                 {
                     _parser.ReportError(namedArg.Extent,
                         nameof(ParserStrings.DuplicateNamedArgument),
@@ -250,8 +247,6 @@ namespace System.Management.Automation.Language
                 }
                 else
                 {
-                    names.Add(name);
-
                     if (!namedArg.ExpressionOmitted && !IsValidAttributeArgument(namedArg.Argument, constantValueVisitor))
                     {
                         var error = GetNonConstantAttributeArgErrorExpr(constantValueVisitor);
@@ -553,7 +548,7 @@ namespace System.Management.Automation.Language
                         break;
                     }
 
-                    if (block2.IsCatchAll) 
+                    if (block2.IsCatchAll)
                     {
                         continue;
                     }
@@ -1033,7 +1028,7 @@ namespace System.Management.Automation.Language
             return AstVisitAction.Continue;
         }
 
-        private ExpressionAst CheckUsingExpression(ExpressionAst exprAst)
+        private static ExpressionAst CheckUsingExpression(ExpressionAst exprAst)
         {
             RuntimeHelpers.EnsureSufficientExecutionStack();
             if (exprAst is VariableExpressionAst)
@@ -1123,7 +1118,7 @@ namespace System.Management.Automation.Language
                 if (keyStrAst != null)
                 {
                     var keyStr = keyStrAst.Value.ToString();
-                    if (keys.Contains(keyStr))
+                    if (!keys.Add(keyStr))
                     {
                         string errorId;
                         string errorMsg;
@@ -1139,10 +1134,6 @@ namespace System.Management.Automation.Language
                         }
 
                         _parser.ReportError(entry.Item1.Extent, errorId, errorMsg, keyStr);
-                    }
-                    else
-                    {
-                        keys.Add(keyStr);
                     }
                 }
             }
@@ -1319,19 +1310,49 @@ namespace System.Management.Automation.Language
 
         public override AstVisitAction VisitUsingStatement(UsingStatementAst usingStatementAst)
         {
-            bool usingKindSupported = usingStatementAst.UsingStatementKind == UsingStatementKind.Namespace ||
-                                      usingStatementAst.UsingStatementKind == UsingStatementKind.Assembly ||
-                                      usingStatementAst.UsingStatementKind == UsingStatementKind.Module;
-            if (!usingKindSupported ||
-                usingStatementAst.Alias != null)
+            UsingStatementKind kind = usingStatementAst.UsingStatementKind;
+            bool usingKindSupported = kind is UsingStatementKind.Namespace or UsingStatementKind.Assembly or UsingStatementKind.Module;
+            if (!usingKindSupported || usingStatementAst.Alias != null)
             {
-                _parser.ReportError(usingStatementAst.Extent,
+                _parser.ReportError(
+                    usingStatementAst.Extent,
                     nameof(ParserStrings.UsingStatementNotSupported),
                     ParserStrings.UsingStatementNotSupported);
             }
 
+            if (kind is UsingStatementKind.Namespace)
+            {
+                Regex nsPattern = NamespacePattern();
+                if (!nsPattern.IsMatch(usingStatementAst.Name.Value))
+                {
+                    _parser.ReportError(
+                        usingStatementAst.Name.Extent,
+                        nameof(ParserStrings.InvalidNamespaceValue),
+                        ParserStrings.InvalidNamespaceValue);
+                }
+            }
+
             return AstVisitAction.Continue;
         }
+
+        /// <summary>
+        /// This regular expression is for validating if a namespace string is valid.
+        ///
+        /// In C#, a legit namespace is defined as `identifier ('.' identifier)*` [see https://learn.microsoft.com/dotnet/csharp/language-reference/language-specification/namespaces#143-namespace-declarations].
+        /// And `identifier` is defined in https://learn.microsoft.com/dotnet/csharp/fundamentals/coding-style/identifier-names#naming-rules, summarized below:
+        ///   - Identifiers must start with a letter or underscore (_).
+        ///   - Identifiers can contain
+        ///     * Unicode letter characters (categories: Lu, Ll, Lt, Lm, Lo or Nl);
+        ///     * decimal digit characters (category: Nd);
+        ///     * Unicode connecting characters (category: Pc);
+        ///     * Unicode combining characters (categories: Mn, Mc);
+        ///     * Unicode formatting characters (category: Cf).
+        ///
+        /// For details about how Unicode categories are represented in regular expression, see the "Unicode Categories" section in the following article:
+        ///   - https://www.regular-expressions.info/unicode.html
+        /// </summary>
+        [GeneratedRegex(@"^[\p{L}\p{Nl}_][\p{L}\p{Nl}\p{Nd}\p{Pc}\p{Mn}\p{Mc}\p{Cf}_]*(?:\.[\p{L}\p{Nl}_][\p{L}\p{Nl}\p{Nd}\p{Pc}\p{Mn}\p{Mc}\p{Cf}_]*)*$")]
+        private static partial Regex NamespacePattern();
 
         public override AstVisitAction VisitConfigurationDefinition(ConfigurationDefinitionAst configurationDefinitionAst)
         {
@@ -1832,11 +1853,21 @@ namespace System.Management.Automation.Language
             // we only need to check the language mode.
             if (executionContext.LanguageMode == PSLanguageMode.ConstrainedLanguage)
             {
-                var parser = new Parser();
-                parser.ReportError(dataStatementAst.CommandsAllowed[0].Extent,
-                    nameof(ParserStrings.DataSectionAllowedCommandDisallowed),
-                    ParserStrings.DataSectionAllowedCommandDisallowed);
-                throw new ParseException(parser.ErrorList.ToArray());
+                if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
+                {
+                    var parser = new Parser();
+                    parser.ReportError(dataStatementAst.CommandsAllowed[0].Extent,
+                        nameof(ParserStrings.DataSectionAllowedCommandDisallowed),
+                        ParserStrings.DataSectionAllowedCommandDisallowed);
+                    throw new ParseException(parser.ErrorList.ToArray());
+                }
+
+                SystemPolicy.LogWDACAuditMessage(
+                    context: executionContext,
+                    title: ParserStrings.WDACParserDSSupportedCommandLogTitle,
+                    message: ParserStrings.WDACParserDSSupportedCommandLogMessage,
+                    fqid: "SupportedCommandInDataSectionNotSupported",
+                    dropIntoDebugger: true);
             }
         }
 
