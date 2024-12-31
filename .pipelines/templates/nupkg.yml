@@ -1,0 +1,304 @@
+jobs:
+- job: build_nupkg
+  displayName: Package NuPkgs
+  condition: succeeded()
+  pool:
+    type: windows
+
+  variables:
+    - name: runCodesignValidationInjection
+      value: false
+    - name: nugetMultiFeedWarnLevel
+      value: none
+    - name: NugetSecurityAnalysisWarningLevel
+      value: none
+    - name: skipNugetSecurityAnalysis
+      value: true
+    - name: ob_outputDirectory
+      value: '$(Build.ArtifactStagingDirectory)\ONEBRANCH_ARTIFACT'
+    - name: ob_sdl_binskim_enabled
+      value: true
+    - name: ob_sdl_tsa_configFile
+      value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+    - name: ob_sdl_credscan_suppressionsFile
+      value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+    - group: mscodehub-feed-read-general
+    - group: mscodehub-feed-read-akv
+    - group: DotNetPrivateBuildAccess
+
+  steps:
+  - checkout: self
+    clean: true
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
+  - pwsh: |
+      Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
+    displayName: Capture environment
+    env:
+      ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
+
+  - template: SetVersionVariables.yml@self
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+      CreateJson: yes
+      UseJson: no
+
+  - template: shouldSign.yml
+
+  - template: cloneToOfficialPath.yml
+    parameters:
+      nativePathRoot: '$(Agent.TempDirectory)'
+
+  - download: CoOrdinatedBuildPipeline
+    artifact: drop_windows_build_windows_fxdependent_release
+    displayName: 'Download drop_windows_build_windows_fxdependent_release'
+    env:
+      ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
+
+  - download: CoOrdinatedBuildPipeline
+    artifact: drop_windows_build_windows_fxdependentWinDesktop_release
+    displayName: 'Download drop_windows_build_windows_fxdependentWinDesktop_release'
+    env:
+      ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
+
+  - download: CoOrdinatedBuildPipeline
+    artifact: drop_linux_sign_linux_fxd
+    displayName: 'Download drop_linux_sign_linux_fxd'
+    env:
+      ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
+
+  - download: CoOrdinatedBuildPipeline
+    artifact: drop_linux_sign_linux_fxd_x64_alpine
+    displayName: 'Download drop_linux_sign_linux_fxd_x64_alpine'
+    env:
+      ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
+
+  - pwsh: |
+      Write-Verbose -Verbose "drop_windows_build_windows_fxdependent_release"
+      Get-ChildItem -Path $(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_fxdependent_release -Recurse | Out-String | Write-Verbose -Verbose
+
+      Write-Verbose -Verbose "drop_windows_build_windows_fxdependentWinDesktop_release"
+      Get-ChildItem -Path $(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_fxdependentWinDesktop_release -Recurse | Out-String | Write-Verbose -Verbose
+
+      Write-Verbose -Verbose "drop_linux_sign_linux_fxd"
+      Get-ChildItem -Path $(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_linux_sign_linux_fxd -Recurse | Out-String | Write-Verbose -Verbose
+
+      Write-Verbose -Verbose "drop_linux_sign_linux_fxd_x64_alpine"
+      Get-ChildItem -Path $(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_linux_sign_linux_fxd_x64_alpine -Recurse | Out-String | Write-Verbose -Verbose
+    displayName: 'Capture download artifacts'
+    env:
+      ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
+
+  - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
+    parameters:
+      repoRoot: $(PowerShellRoot)
+
+  - task: NuGetToolInstaller@1
+    displayName: 'Install NuGet.exe'
+
+  - pwsh: |
+      Set-Location -Path '$(PowerShellRoot)'
+      Import-Module "$(PowerShellRoot)/build.psm1" -Force
+
+      Start-PSBootstrap -Verbose
+
+      $sharedModules = @('Microsoft.PowerShell.Commands.Management',
+                        'Microsoft.PowerShell.Commands.Utility',
+                        'Microsoft.PowerShell.ConsoleHost',
+                        'Microsoft.PowerShell.Security',
+                        'System.Management.Automation'
+                        )
+
+      $winOnlyModules = @('Microsoft.Management.Infrastructure.CimCmdlets',
+                          'Microsoft.PowerShell.Commands.Diagnostics',
+                          'Microsoft.PowerShell.CoreCLR.Eventing',
+                          'Microsoft.WSMan.Management',
+                          'Microsoft.WSMan.Runtime'
+                          )
+
+      $refAssemblyFolder = Join-Path '$(System.ArtifactsDirectory)' 'RefAssembly'
+      $null = New-Item -Path $refAssemblyFolder -Force -Verbose -Type Directory
+
+      Start-PSBuild -Clean -Runtime linux-x64 -Configuration Release
+
+      $sharedModules | Foreach-Object {
+        $refFile = Get-ChildItem -Path "$(PowerShellRoot)\src\$_\obj\Release\net9.0\refint\$_.dll"
+        Write-Verbose -Verbose "RefAssembly: $refFile"
+        Copy-Item -Path $refFile -Destination "$refAssemblyFolder\$_.dll" -Verbose
+        $refDoc = "$(PowerShellRoot)\src\$_\bin\Release\net9.0\$_.xml"
+        if (-not (Test-Path $refDoc)) {
+          Write-Warning "$refDoc not found"
+          Get-ChildItem -Path "$(PowerShellRoot)\src\$_\bin\Release\net9.0\" | Out-String | Write-Verbose -Verbose
+        }
+        else {
+          Copy-Item -Path $refDoc -Destination "$refAssemblyFolder\$_.xml" -Verbose
+        }
+      }
+
+      Start-PSBuild -Clean -Runtime win7-x64 -Configuration Release
+
+      $winOnlyModules | Foreach-Object {
+        $refFile = Get-ChildItem -Path "$(PowerShellRoot)\src\$_\obj\Release\net9.0\refint\*.dll"
+        Write-Verbose -Verbose 'RefAssembly: $refFile'
+        Copy-Item -Path $refFile -Destination "$refAssemblyFolder\$_.dll" -Verbose
+        $refDoc = "$(PowerShellRoot)\src\$_\bin\Release\net9.0\$_.xml"
+        if (-not (Test-Path $refDoc)) {
+          Write-Warning "$refDoc not found"
+          Get-ChildItem -Path "$(PowerShellRoot)\src\$_\bin\Release\net9.0" | Out-String | Write-Verbose -Verbose
+        }
+        else {
+          Copy-Item -Path $refDoc -Destination "$refAssemblyFolder\$_.xml" -Verbose
+        }
+      }
+
+      Get-ChildItem $refAssemblyFolder -Recurse | Out-String | Write-Verbose -Verbose
+
+      # Set RefAssemblyPath path variable
+      $vstsCommandString = "vso[task.setvariable variable=RefAssemblyPath]${refAssemblyFolder}"
+      Write-Host "sending " + $vstsCommandString
+      Write-Host "##$vstsCommandString"
+    displayName: Build reference assemblies
+    env:
+      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+
+  - task: onebranch.pipeline.signing@1
+    displayName: Sign ref assemblies
+    inputs:
+      command: 'sign'
+      signing_profile: external_distribution
+      files_to_sign: '**\*.dll'
+      search_root: '$(System.ArtifactsDirectory)\RefAssembly'
+
+  - pwsh: |
+      $files = @(
+        "Microsoft.Management.Infrastructure.CimCmdlets.dll"
+        "Microsoft.PowerShell.Commands.Diagnostics.dll"
+        "Microsoft.PowerShell.Commands.Management.dll"
+        "Microsoft.PowerShell.Commands.Utility.dll"
+        "Microsoft.PowerShell.ConsoleHost.dll"
+        "Microsoft.PowerShell.CoreCLR.Eventing.dll"
+        "Microsoft.PowerShell.Security.dll"
+        "Microsoft.PowerShell.SDK.dll"
+        "Microsoft.WSMan.Management.dll"
+        "Microsoft.WSMan.Runtime.dll"
+        "System.Management.Automation.dll"
+      )
+
+      Import-Module -Name '$(PowerShellRoot)\build.psm1'
+      Import-Module -Name '$(PowerShellRoot)\tools\packaging'
+      Find-DotNet
+
+      Write-Verbose -Verbose "Version == $(Version)"
+
+      $winFxdPath = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_fxdependent_release\Signed-fxdependent"
+      Write-Verbose -Verbose "winFxdPath == $winFxdPath"
+
+      $linuxFxdPath = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_linux_sign_linux_fxd\Signed-fxdependent"
+      Write-Verbose -Verbose "linuxFxdPath == $linuxFxdPath"
+
+      $nupkgOutputPath = Join-Path -Path '$(Pipeline.Workspace)' -ChildPath 'nupkg'
+      New-Item -Path $nupkgOutputPath -ItemType Directory -Force
+
+      $files | Foreach-Object {
+        $FileBaseName = [System.IO.Path]::GetFileNameWithoutExtension($_)
+        $FilePackagePath = Join-Path -Path $nupkgOutputPath -ChildPath $FileBaseName
+        Write-Verbose -Verbose "FileName to package: $_"
+        Write-Verbose -Verbose "FilePackage path: $FilePackagePath"
+        New-ILNugetPackageSource -File $_ -PackagePath $FilePackagePath -PackageVersion '$(Version)' -WinFxdBinPath $winFxdPath -LinuxFxdBinPath $linuxFxdPath -RefAssemblyPath $(RefAssemblyPath)
+        New-ILNugetPackageFromSource -FileName $_ -PackageVersion '$(Version)' -PackagePath $FilePackagePath
+      }
+    displayName: 'Create NuGet Package for single file'
+
+  - task: onebranch.pipeline.signing@1
+    displayName: Sign nupkg files
+    inputs:
+      command: 'sign'
+      cp_code: 'CP-401405'
+      files_to_sign: '**\*.nupkg'
+      search_root: '$(Pipeline.Workspace)\nupkg'
+
+  ### Create global tools
+
+  - pwsh: |
+      $winFxdPath = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_fxdependent_release\Signed-fxdependent"
+      $winDesktopFxdPath = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_fxdependentWinDesktop_release\Signed-fxdependent-win-desktop"
+      $linuxFxdPath = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_linux_sign_linux_fxd\Signed-fxdependent"
+      $alpineFxdPath = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_linux_sign_linux_fxd_x64_alpine\Signed-fxdependent-noopt-linux-musl-x64"
+
+      Import-Module -Name '$(PowerShellRoot)\build.psm1'
+      Import-Module -Name '$(PowerShellRoot)\tools\packaging'
+
+      Start-PrepForGlobalToolNupkg -LinuxBinPath $linuxFxdPath -WindowsBinPath $winFxdPath -WindowsDesktopBinPath $winDesktopFxdPath -AlpineBinPath $alpineFxdPath
+    displayName: 'Prepare for global tool packages'
+
+  - pwsh: |
+      Import-Module -Name '$(PowerShellRoot)\build.psm1'
+      Import-Module -Name '$(PowerShellRoot)\tools\packaging'
+      Find-DotNet
+
+      $gblToolOutputPath = Join-Path -Path '$(Pipeline.Workspace)' -ChildPath 'globaltools'
+      New-Item -Path $gblToolOutputPath -ItemType Directory -Force
+
+      $winFxdPath = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_fxdependent_release\Signed-fxdependent"
+      $winDesktopFxdPath = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_fxdependentWinDesktop_release\Signed-fxdependent-win-desktop"
+      $linuxFxdPath = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_linux_sign_linux_fxd\Signed-fxdependent"
+      $alpineFxdPath = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_linux_sign_linux_fxd_x64_alpine\Signed-fxdependent-noopt-linux-musl-x64"
+
+      # Build global tools which do not have the shims exe generated in build.
+      $packageTypes = @('Unified', 'PowerShell.Linux.Alpine', 'PowerShell.Linux.x64', 'PowerShell.Linux.arm32', 'PowerShell.Linux.arm64')
+
+      $packageTypes | Foreach-Object {
+        $PackageType = $_
+        Write-Verbose -Verbose "PackageType: $PackageType"
+
+        New-GlobalToolNupkgSource -PackageType $PackageType -PackageVersion '$(Version)' -LinuxBinPath $linuxFxdPath -WindowsBinPath $winFxdPath -WindowsDesktopBinPath $winDesktopFxdPath -AlpineBinPath $alpineFxdPath -SkipCGManifest
+
+        Write-Verbose -Verbose "GlobalToolNuspecSourcePath = $global:GlobalToolNuSpecSourcePath"
+        Write-Verbose -Verbose "GlobalToolPkgName = $global:GlobalToolPkgName"
+
+        Write-Verbose -Verbose "Starting global tool package creation for $PackageType"
+        New-GlobalToolNupkgFromSource -PackageNuSpecPath "$global:GlobalToolNuSpecSourcePath" -PackageName "$global:GlobalToolPkgName" -DestinationPath $gblToolOutputPath
+        Write-Verbose -Verbose "Global tool package created for $PackageType"
+        $global:GlobalToolNuSpecSourcePath = $null
+        $global:GlobalToolPkgName = $null
+      }
+    displayName: 'Create global tools'
+
+  - pwsh: |
+      $gblToolOutputPath = Join-Path -Path '$(Pipeline.Workspace)' -ChildPath 'globaltools'
+      Get-ChildItem -Path $gblToolOutputPath
+    displayName: Capture global tools
+
+  - task: onebranch.pipeline.signing@1
+    displayName: Sign nupkg files
+    inputs:
+      command: 'sign'
+      cp_code: 'CP-401405'
+      files_to_sign: '**\*.nupkg'
+      search_root: '$(Pipeline.Workspace)\globaltools'
+
+  - pwsh: |
+      if (-not (Test-Path '$(ob_outputDirectory)')) {
+        New-Item -ItemType Directory -Path '$(ob_outputDirectory)' -Force
+      }
+
+      Write-Verbose -Verbose "Copying nupkgs to output directory"
+      $nupkgOutputPath = Join-Path -Path '$(Pipeline.Workspace)' -ChildPath 'nupkg'
+      Get-ChildItem -Path $nupkgOutputPath -Filter *.nupkg -Recurse | Copy-Item -Destination '$(ob_outputDirectory)' -Force -Verbose
+
+      # Copy Windows.x86 global tool from build to output directory
+      $winX64GlobalTool = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_fxdependent_release\globaltool\powershell*.nupkg"
+      Write-Verbose -Verbose "Finding Windows.x64 global tool at $winX64GlobalTool"
+      $globalToolPath = Get-Item $winX64GlobalTool
+      Copy-Item -Path $globalToolPath -Destination '$(ob_outputDirectory)' -Force -Verbose
+
+      Write-Verbose -Verbose "Copying global tools to output directory"
+      $gblToolOutputPath = Join-Path -Path '$(Pipeline.Workspace)' -ChildPath 'globaltools'
+      Get-ChildItem -Path $gblToolOutputPath -Filter *.nupkg -Recurse | Copy-Item -Destination '$(ob_outputDirectory)' -Force -Verbose
+    displayName: Copy artifacts to output directory
+
+  - pwsh: |
+      $nupkgOutputPath = '$(ob_outputDirectory)'
+      Get-ChildItem -Path $nupkgOutputPath | Out-String | Write-Verbose -Verbose
+    displayName: List artifacts

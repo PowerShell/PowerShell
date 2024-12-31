@@ -417,6 +417,12 @@ Describe "Validate 'Update-Help' shows 'HelpCultureNotSupported' when thrown" -T
         @{ 'name' = 'explicit culture de-DE'; 'culture' = 'de-DE' }
     ) {
         param ($name, $culture)
+
+        # if running in Linux as an invariant culture => force Spanish
+        if ($IsLinux && $culture -eq $null && (Get-Culture).LCID -eq 127 ){
+            $culture = 'es-ES'
+        }
+
         # Cannot pass null, have to splat to skip argument entirely
         $cultureArg = $culture ? @{ 'UICulture' = $culture } : @{}
         $cultureUsed = $culture ?? (Get-Culture)

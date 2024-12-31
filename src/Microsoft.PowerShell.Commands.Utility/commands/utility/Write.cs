@@ -222,7 +222,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = "ErrorRecord", Mandatory = true)]
         public ErrorRecord ErrorRecord { get; set; }
-        
+
         /// <summary>
         /// ErrorRecord.CategoryInfo.Category.
         /// </summary>
@@ -409,7 +409,6 @@ namespace Microsoft.PowerShell.Commands
     /// when the user only specifies a string and not
     /// an Exception or ErrorRecord.
     /// </summary>
-    [Serializable]
     public class WriteErrorException : SystemException
     {
         #region ctor
@@ -452,10 +451,11 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
         /// <returns>Constructed object.</returns>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected WriteErrorException(SerializationInfo info,
                                       StreamingContext context)
-            : base(info, context)
         {
+            throw new NotSupportedException();
         }
         #endregion Serialization
     }

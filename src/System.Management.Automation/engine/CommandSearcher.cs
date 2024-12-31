@@ -951,24 +951,13 @@ namespace System.Management.Automation
 
             if (result != null)
             {
-                if (result is FilterInfo)
+                var formatString = result switch 
                 {
-                    CommandDiscovery.discoveryTracer.WriteLine(
-                        "Filter found: {0}",
-                        function);
-                }
-                else if (result is ConfigurationInfo)
-                {
-                    CommandDiscovery.discoveryTracer.WriteLine(
-                        "Configuration found: {0}",
-                        function);
-                }
-                else
-                {
-                    CommandDiscovery.discoveryTracer.WriteLine(
-                        "Function found: {0}  {1}",
-                        function);
-                }
+                    FilterInfo => "Filter found: {0}",
+                    ConfigurationInfo => "Configuration found: {0}",
+                    _ => "Function found: {0}",
+                };
+                CommandDiscovery.discoveryTracer.WriteLine(formatString, function);
             }
             else
             {

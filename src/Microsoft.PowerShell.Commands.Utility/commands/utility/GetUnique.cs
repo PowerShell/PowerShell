@@ -50,6 +50,13 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private bool _onType = false;
+
+        /// <summary>
+        /// Gets or sets case insensitive switch for string comparison.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter CaseInsensitive { get; set; }
+
         #endregion Parameters
 
         #region Overrides
@@ -77,7 +84,7 @@ namespace Microsoft.PowerShell.Commands
                 if (string.Equals(
                     inputString,
                     _lastObjectAsString,
-                    StringComparison.CurrentCulture))
+                    CaseInsensitive.IsPresent ? StringComparison.CurrentCultureIgnoreCase : StringComparison.CurrentCulture))
                 {
                     isUnique = false;
                 }
@@ -89,9 +96,9 @@ namespace Microsoft.PowerShell.Commands
             else // compare as objects
             {
                 _comparer ??= new ObjectCommandComparer(
-                    true, // ascending (doesn't matter)
+                    ascending: true,
                     CultureInfo.CurrentCulture,
-                    true); // case-sensitive
+                    caseSensitive: !CaseInsensitive.IsPresent);
 
                 isUnique = (_comparer.Compare(InputObject, _lastObject) != 0);
             }

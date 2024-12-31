@@ -469,7 +469,6 @@ namespace System.Management.Automation
     /// <summary>
     /// Thrown when a wildcard pattern is invalid.
     /// </summary>
-    [Serializable]
     public class WildcardPatternException : RuntimeException
     {
         /// <summary>
@@ -525,10 +524,11 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
         protected WildcardPatternException(SerializationInfo info,
                                         StreamingContext context)
-            : base(info, context)
         {
+            throw new NotSupportedException();
         }
     }
 

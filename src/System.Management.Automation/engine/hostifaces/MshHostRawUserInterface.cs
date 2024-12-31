@@ -1784,7 +1784,7 @@ namespace System.Management.Automation.Host
 
         /// <summary>
         /// Creates a 2D array of BufferCells by examining <paramref name="contents"/>.Character.
-        /// <seealso cref="PSHostRawUserInterface"/>
+        /// <see cref="PSHostRawUserInterface"/>
         /// </summary>
         /// <param name="width">
         /// The number of columns of the resulting array

@@ -189,6 +189,9 @@
   <data name="InvalidCastException" xml:space="preserve">
     <value>Cannot convert the "{0}" value of type "{1}" to type "{2}".</value>
   </data>
+  <data name="InvalidCastExceptionWithoutValue" xml:space="preserve">
+    <value>Cannot convert the value of type "{0}" to type "{1}".</value>
+  </data>
   <data name="InvalidCastExceptionWithInnerException" xml:space="preserve">
     <value>Cannot convert value "{0}" to type "{1}". Error: "{2}"</value>
   </data>

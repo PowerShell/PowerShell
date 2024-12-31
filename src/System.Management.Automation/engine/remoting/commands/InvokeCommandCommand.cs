@@ -198,7 +198,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = InvokeCommandCommand.FilePathVMIdParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true, Mandatory = true,
                    ParameterSetName = InvokeCommandCommand.FilePathVMNameParameterSet)]
-        [Credential()]
+        [Credential]
         public override PSCredential Credential
         {
             get
@@ -702,7 +702,7 @@ namespace Microsoft.PowerShell.Commands
             ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
         [Parameter(Mandatory = true,
             ParameterSetName = InvokeCommandCommand.FilePathSSHHostParameterSet)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         public override string[] HostName
         {
             get { return base.HostName; }
@@ -715,7 +715,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathSSHHostParameterSet)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         public override string UserName
         {
             get { return base.UserName; }
@@ -728,7 +728,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathSSHHostParameterSet)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         [Alias("IdentityFilePath")]
         public override string KeyFilePath
         {
@@ -785,7 +785,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostHashParameterSet, Mandatory = true)]
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathSSHHostHashParameterSet, Mandatory = true)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         public override Hashtable[] SSHConnection
         {
             get;

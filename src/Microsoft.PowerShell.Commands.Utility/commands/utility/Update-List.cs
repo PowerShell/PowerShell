@@ -26,7 +26,7 @@ namespace Microsoft.PowerShell.Commands
         /// Objects to add to the list.
         /// </summary>
         [Parameter(ParameterSetName = "AddRemoveSet")]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public object[] Add { get; set; }
 
@@ -35,7 +35,7 @@ namespace Microsoft.PowerShell.Commands
         /// Objects to be removed from the list.
         /// </summary>
         [Parameter(ParameterSetName = "AddRemoveSet")]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public object[] Remove { get; set; }
 
@@ -44,7 +44,7 @@ namespace Microsoft.PowerShell.Commands
         /// Objects in this list replace the objects in the target list.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "ReplaceSet")]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public object[] Replace { get; set; }
 
@@ -55,7 +55,7 @@ namespace Microsoft.PowerShell.Commands
         // [Parameter(ValueFromPipeline = true, ParameterSetName = "AddRemoveSet")]
         // [Parameter(ValueFromPipeline = true, ParameterSetName = "ReplaceSet")]
         [Parameter(ValueFromPipeline = true)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         public PSObject InputObject { get; set; }
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace Microsoft.PowerShell.Commands
         // [Parameter(Position = 0, ParameterSetName = "AddRemoveSet")]
         // [Parameter(Position = 0, ParameterSetName = "ReplaceSet")]
         [Parameter(Position = 0)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         public string Property { get; set; }
 
         private PSListModifier _listModifier;

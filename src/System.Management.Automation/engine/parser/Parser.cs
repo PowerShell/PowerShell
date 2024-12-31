@@ -281,7 +281,7 @@ namespace System.Management.Automation.Language
             var result = parser.TypeNameRule(allowAssemblyQualifiedNames: true, firstTypeNameToken: out _);
 
             SemanticChecks.CheckArrayTypeNameDepth(result, PositionUtilities.EmptyExtent, parser);
-            if (!ignoreErrors && parser.ErrorList.Count > 0)
+            if (!ignoreErrors && result is not null && (parser.ErrorList.Count > 0 || !result.Extent.Text.Equals(typename, StringComparison.OrdinalIgnoreCase)))
             {
                 result = null;
             }
@@ -2984,8 +2984,8 @@ namespace System.Management.Automation.Language
                     Runspaces.Runspace.DefaultRunspace = localRunspace;
                 }
 
-                // Configuration is not supported on ARM or in ConstrainedLanguage
-                if (PsUtils.IsRunningOnProcessorArchitectureARM() || Runspace.DefaultRunspace?.ExecutionContext?.LanguageMode == PSLanguageMode.ConstrainedLanguage)
+                // Configuration is not supported in ConstrainedLanguage
+                if (Runspace.DefaultRunspace?.ExecutionContext?.LanguageMode == PSLanguageMode.ConstrainedLanguage)
                 {
                     if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
                     {
@@ -3002,6 +3002,17 @@ namespace System.Management.Automation.Language
                         message: ParserStrings.WDACParserConfigKeywordLogMessage,
                         fqid: "ConfigurationLanguageKeywordNotAllowed",
                         dropIntoDebugger: true);
+                }
+
+                // Configuration is not supported on ARM64
+                if (PsUtils.IsRunningOnProcessorArchitectureARM())
+                {
+                    ReportError(
+                        configurationToken.Extent,
+                        nameof(ParserStrings.ConfigurationNotAllowedOnArm64),
+                        ParserStrings.ConfigurationNotAllowedOnArm64,
+                        configurationToken.Kind.Text());
+                    return null;
                 }
 
                 // Configuration is not supported on WinPE
@@ -5133,7 +5144,7 @@ namespace System.Management.Automation.Language
                             workingDirectory = Path.GetDirectoryName(scriptFileName);
                         }
 
-                        assemblyFileName = workingDirectory + @"\" + assemblyFileName;
+                        assemblyFileName = Path.Combine(workingDirectory, assemblyFileName);
                     }
                 }
                 catch
@@ -7962,7 +7973,18 @@ namespace System.Management.Automation.Language
             // G      primary-expression   '['   new-lines:opt   expression   new-lines:opt   ']'
 
             SkipNewlines();
-            ExpressionAst indexExpr = ExpressionRule();
+            bool oldDisableCommaOperator = _disableCommaOperator;
+            _disableCommaOperator = false;
+            ExpressionAst indexExpr = null;
+            try
+            {
+                indexExpr = ExpressionRule();
+            }
+            finally
+            {
+                _disableCommaOperator = oldDisableCommaOperator;
+            }
+
             if (indexExpr == null)
             {
                 // ErrorRecovery: hope we see a closing bracket.  If we don't, we'll pretend we saw

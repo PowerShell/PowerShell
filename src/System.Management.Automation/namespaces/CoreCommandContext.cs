@@ -551,7 +551,7 @@ namespace System.Management.Automation
         /// <param name="target">
         /// Name of the target resource being acted upon
         /// </param>
-        /// <remarks>true iff the action should be performed</remarks>
+        /// <remarks>true if-and-only-if the action should be performed</remarks>
         /// <exception cref="PipelineStoppedException">
         /// The ActionPreference.Stop or ActionPreference.Inquire policy
         /// triggered a terminating error.  The pipeline failure will be
@@ -577,7 +577,7 @@ namespace System.Management.Automation
         /// Name of the target resource being acted upon
         /// </param>
         /// <param name="action">What action was being performed.</param>
-        /// <remarks>true iff the action should be performed</remarks>
+        /// <remarks>true if-and-only-if the action should be performed</remarks>
         /// <exception cref="PipelineStoppedException">
         /// The ActionPreference.Stop or ActionPreference.Inquire policy
         /// triggered a terminating error.  The pipeline failure will be
@@ -616,7 +616,7 @@ namespace System.Management.Automation
         /// if the user is prompted whether or not to perform the action.
         /// It may be displayed by some hosts, but not all.
         /// </param>
-        /// <remarks>true iff the action should be performed</remarks>
+        /// <remarks>true if-and-only-if the action should be performed</remarks>
         /// <exception cref="PipelineStoppedException">
         /// The ActionPreference.Stop or ActionPreference.Inquire policy
         /// triggered a terminating error.  The pipeline failure will be
@@ -665,7 +665,7 @@ namespace System.Management.Automation
         /// <see cref="System.Management.Automation.ShouldProcessReason"/>
         /// are returned.
         /// </param>
-        /// <remarks>true iff the action should be performed</remarks>
+        /// <remarks>true if-and-only-if the action should be performed</remarks>
         /// <exception cref="PipelineStoppedException">
         /// The ActionPreference.Stop or ActionPreference.Inquire policy
         /// triggered a terminating error.  The pipeline failure will be

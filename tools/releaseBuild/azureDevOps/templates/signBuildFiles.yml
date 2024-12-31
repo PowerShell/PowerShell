@@ -185,3 +185,5 @@ steps:
 
       Write-Host "##vso[artifact.upload containerfolder=$containerName;artifactname=$containerName]$uploadTarFilePath"
   displayName: ${{ parameters.buildPrefixName }} - Upload signed files to artifacts
+  retryCountOnTaskFailure: 2
+

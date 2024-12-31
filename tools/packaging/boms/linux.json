@@ -468,6 +468,34 @@
     "FileType": "NonProduct"
   },
   {
+    "Pattern": "Modules/PSResourceGet/*.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/PSResourceGet/*.ps?1",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/PSResourceGet/*.ps1xml",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/PSResourceGet/LICENSE",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/PSResourceGet/Notice.txt",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/PSResourceGet/_manifest/spdx_2.2/*.json*",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/PSResourceGet/_manifest/spdx_2.2/*.cat",
+    "FileType": "NonProduct"
+  },
+  {
     "Pattern": "Modules/ThreadJob/*.dll",
     "FileType": "NonProduct"
   },

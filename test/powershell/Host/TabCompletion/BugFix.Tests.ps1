@@ -87,4 +87,21 @@ Describe "Tab completion bug fix" -Tags "CI" {
         $result.CompletionMatches[0].CompletionText | Should -BeExactly 'Ascending'
         $result.CompletionMatches[1].CompletionText | Should -BeExactly 'Descending'
     }
+
+    It "Issue#19912 - Tab completion should not crash" {
+        $ISS = [initialsessionstate]::CreateDefault()
+        $Runspace = [runspacefactory]::CreateRunspace($ISS)
+        $Runspace.Open()
+        $OldRunspace = [runspace]::DefaultRunspace
+        try
+        {
+            [runspace]::DefaultRunspace = $Runspace
+            {[System.Management.Automation.CommandCompletion]::CompleteInput('Get-', 3, $null)} | Should -Not -Throw
+        }
+        finally
+        {
+            [runspace]::DefaultRunspace = $OldRunspace
+            $Runspace.Dispose()
+        }
+    }
 }

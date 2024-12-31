@@ -80,7 +80,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the number of the matching line.
         /// </summary>
         /// <value>The number of the matching line.</value>
-        public int LineNumber { get; set; }
+        public ulong LineNumber { get; set; }
 
         /// <summary>
         /// Gets or sets the text of the matching line.
@@ -127,11 +127,11 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Gets the base name of the file containing the matching line.
+        /// </summary>
         /// <remarks>
         /// It will be the string "InputStream" if the object came from the input stream.
         /// This is a readonly property calculated from the path <see cref="Path"/>.
         /// </remarks>
-        /// </summary>
         /// <value>The file name.</value>
         public string Filename
         {
@@ -150,10 +150,10 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Gets or sets the full path of the file containing the matching line.
+        /// </summary>
         /// <remarks>
         /// It will be "InputStream" if the object came from the input stream.
         /// </remarks>
-        /// </summary>
         /// <value>The path name.</value>
         public string Path
         {
@@ -182,11 +182,11 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Returns the path of the matching file truncated relative to the <paramref name="directory"/> parameter.
+        /// </summary>
         /// <remarks>
         /// For example, if the matching path was c:\foo\bar\baz.c and the directory argument was c:\foo
         /// the routine would return bar\baz.c .
         /// </remarks>
-        /// </summary>
         /// <param name="directory">The directory base the truncation on.</param>
         /// <returns>The relative path that was produced.</returns>
         public string RelativePath(string directory)
@@ -232,12 +232,12 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Returns the string representation of this object. The format
         /// depends on whether a path has been set for this object or not.
+        /// </summary>
         /// <remarks>
         /// If the path component is set, as would be the case when matching
         /// in a file, ToString() would return the path, line number and line text.
         /// If path is not set, then just the line text is presented.
         /// </remarks>
-        /// </summary>
         /// <returns>The string representation of the match object.</returns>
         public override string ToString()
         {
@@ -277,7 +277,7 @@ namespace Microsoft.PowerShell.Commands
             // Otherwise, render the full context.
             List<string> lines = new(Context.DisplayPreContext.Length + Context.DisplayPostContext.Length + 1);
 
-            int displayLineNumber = this.LineNumber - Context.DisplayPreContext.Length;
+            ulong displayLineNumber = this.LineNumber - (ulong)Context.DisplayPreContext.Length;
             foreach (string contextLine in Context.DisplayPreContext)
             {
                 lines.Add(FormatLine(contextLine, displayLineNumber++, displayPath, ContextPrefix));
@@ -356,7 +356,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="displayPath">The file path, formatted for display.</param>
         /// <param name="prefix">The match prefix.</param>
         /// <returns>The formatted line as a string.</returns>
-        private string FormatLine(string lineStr, int displayLineNumber, string displayPath, string prefix)
+        private string FormatLine(string lineStr, ulong displayLineNumber, string displayPath, string prefix)
         {
             return _pathSet
                        ? StringUtil.Format(MatchFormat, prefix, displayPath, displayLineNumber, lineStr)
@@ -428,10 +428,7 @@ namespace Microsoft.PowerShell.Commands
             /// <exception cref="ArgumentOutOfRangeException">If <paramref name="capacity"/> is negative.</exception>
             public CircularBuffer(int capacity)
             {
-                if (capacity < 0)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(capacity));
-                }
+                ArgumentOutOfRangeException.ThrowIfNegative(capacity);
 
                 _items = new T[capacity];
                 Clear();
@@ -532,12 +529,8 @@ namespace Microsoft.PowerShell.Commands
 
             public void CopyTo(T[] array, int arrayIndex)
             {
-                ArgumentNullException.ThrowIfNull(array); 
-
-                if (arrayIndex < 0)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(arrayIndex));
-                }
+                ArgumentNullException.ThrowIfNull(array);
+                ArgumentOutOfRangeException.ThrowIfNegative(arrayIndex);
 
                 if (Count > (array.Length - arrayIndex))
                 {
@@ -1343,7 +1336,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the text encoding to process each file as.
         /// </summary>
         [Parameter]
-        [ArgumentToEncodingTransformationAttribute()]
+        [ArgumentToEncodingTransformationAttribute]
         [ArgumentEncodingCompletionsAttribute]
         [ValidateNotNullOrEmpty]
         public Encoding Encoding
@@ -1424,7 +1417,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private bool _doneProcessing;
 
-        private int _inputRecordNumber;
+        private ulong _inputRecordNumber;
 
         /// <summary>
         /// Read command line parameters.
@@ -1602,7 +1595,7 @@ namespace Microsoft.PowerShell.Commands
                     using (StreamReader sr = new(fs, Encoding))
                     {
                         string line;
-                        int lineNo = 0;
+                        ulong lineNo = 0;
 
                         // Read and display lines from the file until the end of
                         // the file is reached.

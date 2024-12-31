@@ -1,0 +1,56 @@
+parameters:
+  - name: skipPublish
+    default: false
+    type: boolean
+
+jobs:
+- job: NuGetPublish
+  displayName: Publish to NuGet
+  condition: succeeded()
+  pool:
+    type: release
+    os: windows
+  templateContext:
+    inputs:
+      - input: pipelineArtifact
+        pipeline: PSPackagesOfficial
+        artifactName: drop_upload_upload_packages
+  variables:
+  - template: ./variable/release-shared.yml@self
+    parameters:
+      VERSION: $[ stageDependencies.setReleaseTagAndUploadTools.SetTagAndTools.outputs['OutputVersion.Version'] ]
+
+  steps:
+  - template: release-install-pwsh.yml
+
+  - pwsh: |
+      Write-Verbose -Verbose "Version: $(Version)"
+      Get-ChildItem Env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
+    displayName: 'Capture Environment Variables'
+
+  - pwsh: |
+      #Exclude all global tool packages. Their names start with 'PowerShell.'
+      $null = New-Item -ItemType Directory -Path "$(Pipeline.Workspace)/release"
+      Copy-Item "$(Pipeline.Workspace)/NuGetPackages/*.nupkg" -Destination "$(Pipeline.Workspace)/release" -Exclude "PowerShell.*.nupkg" -Force -Verbose
+
+      $releaseVersion = '$(Version)'
+      $globalToolPath = "$(Pipeline.Workspace)/NuGetPackages/PowerShell.$releaseVersion.nupkg"
+
+      if ($releaseVersion -notlike '*-*') {
+          # Copy the global tool package for stable releases
+          Copy-Item $globalToolPath -Destination "$(Pipeline.Workspace)/release"
+      }
+
+      Write-Verbose -Verbose "The .nupkgs below will be pushed:"
+      Get-ChildItem "$(Pipeline.Workspace)/release" -recurse
+    displayName: Download and capture nupkgs
+    condition: and(ne('${{ parameters.skipPublish }}', 'false'), succeeded())
+
+  - task: NuGetCommand@2
+    displayName: 'NuGet push'
+    condition: and(ne('${{ parameters.skipPublish }}', 'false'), succeeded())
+    inputs:
+      command: push
+      packagesToPush: '$(Pipeline.Workspace)/release/*.nupkg'
+      nuGetFeedType: external
+      publishFeedCredentials: PowerShellNuGetOrgPush

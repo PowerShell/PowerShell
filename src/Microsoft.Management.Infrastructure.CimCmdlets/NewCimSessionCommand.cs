@@ -54,7 +54,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// The default is the current user.
         /// </summary>
         [Parameter(Position = 1, ParameterSetName = CredentialParameterSet)]
-        [Credential()]
+        [Credential]
         public PSCredential Credential { get; set; }
 
         /// <summary>
