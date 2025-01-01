@@ -165,6 +165,11 @@ namespace System.Management.Automation
                     powershell.AddParameter("CommandType", types);
                 }
 
+                if (context.ExecutionContext.CompletionOptions.ExcludedModules?.Length > 0)
+                {
+                    powershell.AddParameter("ExcludeModule", context.ExecutionContext.CompletionOptions.ExcludedModules);
+                }
+
                 // Exception is ignored, the user simply does not get any completion results if the pipeline fails
                 Exception exceptionThrown;
                 var commandInfos = context.Helper.ExecuteCurrentPowerShell(out exceptionThrown);
@@ -186,6 +191,11 @@ namespace System.Management.Automation
                     if (!types.Equals(CommandTypes.All))
                     {
                         powershell.AddParameter("CommandType", types);
+                    }
+
+                    if (context.ExecutionContext.CompletionOptions.ExcludedModules?.Length > 0)
+                    {
+                        powershell.AddParameter("ExcludeModule", context.ExecutionContext.CompletionOptions.ExcludedModules);
                     }
 
                     commandInfos = context.Helper.ExecuteCurrentPowerShell(out exceptionThrown);
@@ -2468,6 +2478,16 @@ namespace System.Management.Automation
                         }
 
                         NativeCompletionCimCommands(parameterName, boundArguments, result, commandAst, context, excludedValues, commandName);
+                        break;
+                    }
+
+                case "Set-CompletionOptions":
+                    {
+                        if (parameterName.EqualsOrdinalIgnoreCase("ExcludedModules"))
+                        {
+                            NativeCompletionModuleCommands(context, paramName: "Name", result);
+                        }
+
                         break;
                     }
 
