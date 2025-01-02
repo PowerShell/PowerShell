@@ -129,10 +129,12 @@ function Get-EnvironmentInformation
         $environment += @{'IsCoreCLR' = [System.Management.Automation.Platform]::IsCoreCLR}
         $environment += @{'IsLinux' = [System.Management.Automation.Platform]::IsLinux}
         $environment += @{'IsMacOS' = [System.Management.Automation.Platform]::IsMacOS}
+        $environment += @{'IsFreeBSD' = [System.Management.Automation.Platform]::IsFreeBSD}
     } else {
         $environment += @{'IsCoreCLR' = $false}
         $environment += @{'IsLinux' = $false}
         $environment += @{'IsMacOS' = $false}
+        $environment += @{'IsFreeBSD' = $false}
     }
 
     if ($environment.IsWindows)
@@ -157,6 +159,10 @@ function Get-EnvironmentInformation
         if (-not($environment.UsingHomebrew -or $environment.UsingMacports)) {
             throw "Neither Homebrew nor MacPorts is installed on this system, visit https://brew.sh/ or https://www.macports.org/ to continue"
         }
+    }
+
+    if ($environment.IsFreeBSD) {
+        $environment += @{ 'OSArchitecture' = [System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture }
     }
 
     if ($environment.IsLinux) {
@@ -276,7 +282,7 @@ function Test-IsReleaseCandidate
     return $false
 }
 
-$optimizedFddRegex = 'fxdependent-(linux|win|win7|osx)-(x64|x86|arm64|arm)'
+$optimizedFddRegex = 'fxdependent-(linux|win|win7|osx|freebsd)-(x64|x86|arm64|arm)'
 
 function Start-PSBuild {
     [CmdletBinding(DefaultParameterSetName="Default")]
@@ -322,6 +328,7 @@ function Start-PSBuild {
                      "linux-arm",
                      "linux-arm64",
                      "linux-x64",
+                     "freebsd-x64",
                      "osx-arm64",
                      "osx-x64",
                      "win-arm",
@@ -360,7 +367,7 @@ function Start-PSBuild {
     }
 
     if ($ForMinimalSize) {
-        if ($Runtime -and "linux-x64", "win7-x64", "osx-x64" -notcontains $Runtime) {
+        if ($Runtime -and "linux-x64", "win7-x64", "osx-x64", "freebsd-x64" -notcontains $Runtime) {
             throw "Build for the minimal size is enabled only for following runtimes: 'linux-x64', 'win7-x64', 'osx-x64'"
         }
     }
@@ -814,6 +821,10 @@ function Test-ShouldGenerateExperimentalFeatures
         $runtimePattern = '^linux.*-'
     }
 
+    if ($environment.IsFreeBSD) {
+        $runtimePattern = '^freebsd.*-'
+    }
+
     $runtimePattern += $environment.OSArchitecture.ToString()
     Write-Verbose "runtime pattern check: $Runtime -match $runtimePattern" -Verbose
     if ($Runtime -match $runtimePattern) {
@@ -999,6 +1010,7 @@ function New-PSOptions {
                      "linux-arm",
                      "linux-arm64",
                      "linux-x64",
+                     "freebsd-x64",
                      "osx-arm64",
                      "osx-x64",
                      "win-arm",
@@ -1051,6 +1063,10 @@ function New-PSOptions {
             'Darwin' {
                 $Runtime = "osx-${Architecture}"
             }
+
+            'FreeBSD' {
+                $Runtime = "freebsd-${Architecture}"
+            }
         }
 
         if (-not $Runtime) {
@@ -1071,7 +1087,7 @@ function New-PSOptions {
 
     $Executable = if ($Runtime -like 'fxdependent*') {
         "pwsh.dll"
-    } elseif ($environment.IsLinux -or $environment.IsMacOS) {
+    } elseif ($environment.IsLinux -or $environment.IsMacOS -or $environment.IsFreeBSD) {
         "pwsh"
     } elseif ($environment.IsWindows) {
         "pwsh.exe"
@@ -2035,15 +2051,15 @@ function Install-Dotnet {
     $installObtainUrl = "https://dotnet.microsoft.com/download/dotnet/scripts/v1"
     $uninstallObtainUrl = "https://raw.githubusercontent.com/dotnet/cli/master/scripts/obtain"
 
-    # Install for Linux and OS X
-    if ($environment.IsLinux -or $environment.IsMacOS) {
+    # Install for Linux, OS X, and FreeBSD
+    if ($environment.IsLinux -or $environment.IsMacOS -or $environment.IsFreeBSD) {
         $wget = Get-Command -Name wget -CommandType Application -TotalCount 1 -ErrorAction Stop
 
         # Attempt to uninstall previous dotnet packages if requested
         if ($RemovePreviousVersion) {
             $uninstallScript = if ($environment.IsLinux -and $environment.IsUbuntu) {
                 "dotnet-uninstall-debian-packages.sh"
-            } elseif ($environment.IsMacOS) {
+            } elseif ($environment.IsMacOS -or $environment.IsFreeBSD) {
                 "dotnet-uninstall-pkgs.sh"
             }
 
@@ -2053,7 +2069,7 @@ function Install-Dotnet {
                     Invoke-Expression "$sudo bash ./$uninstallScript"
                 }
             } else {
-                Write-Warning "This script only removes prior versions of dotnet for Ubuntu and OS X"
+                Write-Warning "This script only removes prior versions of dotnet for Ubuntu, OS X, and FreeBSD"
             }
         }
 
@@ -2231,7 +2247,7 @@ function Start-PSBootstrap {
     }
 
     try {
-        if ($environment.IsLinux -or $environment.IsMacOS) {
+        if ($environment.IsLinux -or $environment.IsMacOS -or $environment.IsFreeBSD) {
             # This allows sudo install to be optional; needed when running in containers / as root
             # Note that when it is null, Invoke-Expression (but not &) must be used to interpolate properly
             $sudo = if (!$NoSudo) { "sudo" }
@@ -2333,6 +2349,18 @@ function Start-PSBootstrap {
 
                 Start-NativeExecution {
                     Invoke-Expression "apk add $Deps"
+                }
+            } elseif ($environment.IsFreeBSD) {
+                $Deps += 'libunwind', 'curl', 'bash', 'git'
+                $PackageManager = "pkg install --yes"
+                $baseCommand = "$sudo $PackageManager"
+
+                if($NoSudo)
+                {
+                    $baseCommand = $PackageManager
+                }
+                Start-NativeExecution {
+                    Invoke-Expression "$baseCommand $Deps"
                 }
             }
 
