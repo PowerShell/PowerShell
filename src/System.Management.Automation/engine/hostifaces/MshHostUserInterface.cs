@@ -112,10 +112,10 @@ namespace System.Management.Automation.Host
 
         /// <summary>
         /// The default implementation writes a carriage return to the screen buffer.
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.Write(string)"/>
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.Write(System.ConsoleColor, System.ConsoleColor, string)"/>
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.WriteLine(string)"/>
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.WriteLine(System.ConsoleColor, System.ConsoleColor, string)"/>
+        /// <see cref="System.Management.Automation.Host.PSHostUserInterface.Write(string)"/>
+        /// <see cref="System.Management.Automation.Host.PSHostUserInterface.Write(System.ConsoleColor, System.ConsoleColor, string)"/>
+        /// <see cref="System.Management.Automation.Host.PSHostUserInterface.WriteLine(string)"/>
+        /// <see cref="System.Management.Automation.Host.PSHostUserInterface.WriteLine(System.ConsoleColor, System.ConsoleColor, string)"/>
         /// </summary>
         public virtual void WriteLine()
         {
@@ -170,10 +170,10 @@ namespace System.Management.Automation.Host
         /// <summary>
         /// Writes a line to the "error display" of the host, as opposed to the "output display," which is
         /// written to by the variants of
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.Write(string)"/>
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.Write(System.ConsoleColor, System.ConsoleColor, string)"/>
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.WriteLine()"/> and
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.WriteLine(string)"/>
+        /// <see cref="System.Management.Automation.Host.PSHostUserInterface.Write(string)"/>
+        /// <see cref="System.Management.Automation.Host.PSHostUserInterface.Write(System.ConsoleColor, System.ConsoleColor, string)"/>
+        /// <see cref="System.Management.Automation.Host.PSHostUserInterface.WriteLine()"/> and
+        /// <see cref="System.Management.Automation.Host.PSHostUserInterface.WriteLine(string)"/>
         /// </summary>
         /// <param name="value">
         /// The characters to be written.
@@ -314,7 +314,7 @@ namespace System.Management.Automation.Host
                 return string.Empty;
             }
 
-            PSStyle psstyle = PSStyle.Instance;                
+            PSStyle psstyle = PSStyle.Instance;
             switch (formatStyle)
             {
                 case FormatStyle.Reset:
@@ -892,7 +892,7 @@ namespace System.Management.Automation.Host
                     {
                         // System transcripts can have high contention. Do exponential back-off on writing
                         // if needed.
-                        int delay = new Random().Next(10) + 1;
+                        int delay = Random.Shared.Next(10) + 1;
                         bool written = false;
 
                         while (!written)
@@ -1167,8 +1167,8 @@ namespace System.Management.Automation.Host
             // bytes of randomness (2^48 = 2.8e14) would take an attacker about 891 years to guess
             // a filename (assuming they knew the time the transcript was started).
             // (5 bytes = 3 years, 4 bytes = about a month)
-            byte[] randomBytes = new byte[6];
-            System.Security.Cryptography.RandomNumberGenerator.Create().GetBytes(randomBytes);
+            Span<byte> randomBytes = stackalloc byte[6];
+            System.Security.Cryptography.RandomNumberGenerator.Fill(randomBytes);
             string filename = string.Format(
                         Globalization.CultureInfo.InvariantCulture,
                         "PowerShell_transcript.{0}.{1}.{2:yyyyMMddHHmmss}.txt",
@@ -1243,7 +1243,7 @@ namespace System.Management.Automation.Host
         {
             static Encoding GetPathEncoding(string path)
             {
-                using StreamReader reader = new StreamReader(path, Utils.utf8NoBom, detectEncodingFromByteOrderMarks: true);
+                using StreamReader reader = new StreamReader(path, Encoding.Default, detectEncodingFromByteOrderMarks: true);
                 _ = reader.Read();
                 return reader.CurrentEncoding;
             }
@@ -1271,7 +1271,7 @@ namespace System.Management.Automation.Host
                             // file permissions.
                             _contentWriter = new StreamWriter(
                                 new FileStream(this.Path, FileMode.Append, FileAccess.Write, FileShare.Read),
-                                Utils.utf8NoBom);
+                                Encoding.Default);
                         }
 
                         _contentWriter.AutoFlush = true;
@@ -1294,7 +1294,10 @@ namespace System.Management.Automation.Host
         /// </summary>
         public void Dispose()
         {
-            if (_disposed) { return; }
+            if (_disposed)
+            {
+                return;
+            }
 
             // Wait for any pending output to be flushed to disk so that Stop-Transcript
             // can be trusted to immediately have all content from that session in the file)
@@ -1413,7 +1416,7 @@ namespace System.Management.Automation.Host
                 if (string.Equals(hotkeysAndPlainLabels[0, i], "?", StringComparison.Ordinal))
                 {
                     Exception e = PSTraceSource.NewArgumentException(
-                        string.Format(Globalization.CultureInfo.InvariantCulture, "choices[{0}].Label", i),
+                        string.Create(Globalization.CultureInfo.InvariantCulture, $"choices[{i}].Label"),
                         InternalHostUserInterfaceStrings.InvalidChoiceHotKeyError);
                     throw e;
                 }
@@ -1430,7 +1433,7 @@ namespace System.Management.Automation.Host
         /// <param name="hotkeysAndPlainLabels"></param>
         /// <returns>
         /// Returns the index into the choices array matching the response string, or -1 if there is no match.
-        ///</returns>
+        /// </returns>
         internal static int DetermineChoicePicked(string response, Collection<ChoiceDescription> choices, string[,] hotkeysAndPlainLabels)
         {
             Diagnostics.Assert(choices != null, "choices: expected a value");

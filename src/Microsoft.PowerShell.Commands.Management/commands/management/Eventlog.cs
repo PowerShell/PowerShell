@@ -48,8 +48,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Read eventlog entries from this computer.
         /// </summary>
-        [Parameter()]
-        [ValidateNotNullOrEmpty()]
+        [Parameter]
+        [ValidateNotNullOrEmpty]
         [Alias("Cn")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] ComputerName { get; set; } = Array.Empty<string>();
@@ -123,7 +123,7 @@ namespace Microsoft.PowerShell.Commands
         /// gets or sets an array of instanceIds.
         /// </summary>
         [Parameter(Position = 1, ParameterSetName = "LogName")]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         [ValidateRangeAttribute((long)0, long.MaxValue)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public long[] InstanceId
@@ -144,7 +144,7 @@ namespace Microsoft.PowerShell.Commands
         /// gets or sets an array of indexes.
         /// </summary>
         [Parameter(ParameterSetName = "LogName")]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         [ValidateRangeAttribute((int)1, int.MaxValue)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public int[] Index
@@ -165,7 +165,7 @@ namespace Microsoft.PowerShell.Commands
         /// gets or sets an array of EntryTypes.
         /// </summary>
         [Parameter(ParameterSetName = "LogName")]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         [ValidateSetAttribute(new string[] { "Error", "Information", "FailureAudit", "SuccessAudit", "Warning" })]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         [Alias("ET")]
@@ -186,7 +186,7 @@ namespace Microsoft.PowerShell.Commands
         /// Get or sets an array of Source.
         /// </summary>
         [Parameter(ParameterSetName = "LogName")]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         [Alias("ABO")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] Source
@@ -207,7 +207,7 @@ namespace Microsoft.PowerShell.Commands
         /// Get or Set Message string to searched in EventLog.
         /// </summary>
         [Parameter(ParameterSetName = "LogName")]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         [Alias("MSG")]
         public string Message
         {
@@ -360,7 +360,11 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (InvalidOperationException e)
             {
-                if (processing) throw;
+                if (processing)
+                {
+                    throw;
+                }
+
                 ThrowTerminatingError(new ErrorRecord(
                     e, // default exception text is OK
                     "EventLogNotFound",
@@ -490,7 +494,10 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                if (!entrymatch) return entrymatch;
+                if (!entrymatch)
+                {
+                    return entrymatch;
+                }
             }
 
             if (_sources != null)
@@ -511,7 +518,10 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                if (!sourcematch) return sourcematch;
+                if (!sourcematch)
+                {
+                    return sourcematch;
+                }
             }
 
             if (_message != null)
@@ -545,7 +555,10 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                if (!usernamematch) return usernamematch;
+                if (!usernamematch) 
+                {
+                    return usernamematch;
+                }
             }
 
             if (_isDateSpecified)
@@ -582,7 +595,10 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                if (!datematch) return datematch;
+                if (!datematch) 
+                {
+                    return datematch;
+                }
             }
 
             return true;

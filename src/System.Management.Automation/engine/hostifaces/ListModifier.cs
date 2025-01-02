@@ -212,10 +212,7 @@ namespace System.Management.Automation
         /// <param name="collectionToUpdate">The collection to update.</param>
         public void ApplyTo(object collectionToUpdate)
         {
-            if (collectionToUpdate == null)
-            {
-                throw new ArgumentNullException(nameof(collectionToUpdate));
-            }
+            ArgumentNullException.ThrowIfNull(collectionToUpdate);
 
             collectionToUpdate = PSObject.Base(collectionToUpdate);
 

@@ -14,7 +14,7 @@ jobs:
   condition: succeeded()
   dependsOn: ${{ parameters.parentJob }}
   pool:
-    name: PowerShell1ES
+    name: $(windowsPool)
     demands:
     - ImageOverride -equals PSMMS2019-Secure
   variables:
@@ -30,6 +30,7 @@ jobs:
       value: ${{ parameters.Architecture }}
     - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
       value: 1
+    - group: DotNetPrivateBuildAccess
 
   steps:
 
@@ -52,7 +53,6 @@ jobs:
         {
           "x64" { "win7-x64" }
           "x86" { "win7-x86" }
-          "arm" { "win-arm"}
           "arm64" { "win-arm64" }
           "fxdependent" { "fxdependent" }
           "fxdependentWinDesktop" { "fxdependent-win-desktop" }
@@ -65,6 +65,8 @@ jobs:
 
       tools/releaseBuild/Images/microsoft_powershell_windowsservercore/PowerShellPackage.ps1 -location '$(PowerShellRoot)' -destination '$(Build.ArtifactStagingDirectory)/Symbols_$(Architecture)' -Runtime $runtime -ReleaseTag '$(ReleaseTagVar)' -Symbols @params
     displayName: 'Build Windows Universal - $(Architecture)-$(BuildConfiguration) Symbols zip'
+    env:
+      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
   - pwsh: |
       $packageName = (Get-ChildItem '$(Build.ArtifactStagingDirectory)\Symbols_$(Architecture)').FullName

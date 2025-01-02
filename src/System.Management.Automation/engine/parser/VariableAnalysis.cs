@@ -1302,10 +1302,7 @@ namespace System.Management.Automation.Language
 
         public object VisitForStatement(ForStatementAst forStatementAst)
         {
-            if (forStatementAst.Initializer != null)
-            {
-                forStatementAst.Initializer.Accept(this);
-            }
+            forStatementAst.Initializer?.Accept(this);
 
             var generateCondition = forStatementAst.Condition != null
                 ? () => forStatementAst.Condition.Accept(this)
@@ -1453,10 +1450,7 @@ namespace System.Management.Automation.Language
 
         private Block ControlFlowStatement(PipelineBaseAst pipelineAst)
         {
-            if (pipelineAst != null)
-            {
-                pipelineAst.Accept(this);
-            }
+            pipelineAst?.Accept(this);
 
             _currentBlock.FlowsTo(_exitBlock);
             var lastBlockInStatement = _currentBlock;
@@ -1627,11 +1621,7 @@ namespace System.Management.Automation.Language
 
         public object VisitCommandParameter(CommandParameterAst commandParameterAst)
         {
-            if (commandParameterAst.Argument != null)
-            {
-                commandParameterAst.Argument.Accept(this);
-            }
-
+            commandParameterAst.Argument?.Accept(this);
             return null;
         }
 

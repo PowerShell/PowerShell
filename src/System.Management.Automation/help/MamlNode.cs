@@ -321,7 +321,7 @@ namespace System.Management.Automation
         /// <param name="xmlNode">
         /// Node whose children are verified for maml.
         /// </param>
-        private void RemoveUnsupportedNodes(XmlNode xmlNode)
+        private static void RemoveUnsupportedNodes(XmlNode xmlNode)
         {
             // Start with the first child..
             // We want to modify only children..
@@ -1109,7 +1109,7 @@ namespace System.Management.Automation
             // It is discouraged to use tab in preformatted text.
 
             string noTabText = text.Replace("\t", "    ");
-            string[] lines = noTabText.Split(Utils.Separators.Newline);
+            string[] lines = noTabText.Split('\n');
             string[] trimedLines = TrimLines(lines);
 
             if (trimedLines == null || trimedLines.Length == 0)
@@ -1212,7 +1212,7 @@ namespace System.Management.Automation
             if (IsEmptyLine(line))
                 return 0;
 
-            string leftTrimedLine = line.TrimStart(Utils.Separators.Space);
+            string leftTrimedLine = line.TrimStart(' ');
 
             return line.Length - leftTrimedLine.Length;
         }

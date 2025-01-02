@@ -3145,8 +3145,7 @@ namespace System.Management.Automation.SecurityAccountsManager
 
             internal OperatingSystem(Version version, string servicePack)
             {
-                if (version == null)
-                    throw new ArgumentNullException("version");
+                ArgumentNullException.ThrowIfNull(version);
 
                 _version = version;
                 _servicePack = servicePack;

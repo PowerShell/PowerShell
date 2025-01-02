@@ -126,9 +126,6 @@
   <data name="NotMoreThanOnceOne" xml:space="preserve">
     <value>Node "{0}" must occur only once under "{1}". The parent node, "{1}", will be ignored.</value>
   </data>
-  <data name="NotMoreThanOnceZeroOrOne" xml:space="preserve">
-    <value>Node "{0}" must have a maximum of one occurrence under "{1}". The parent node, "{1}", will be ignored.</value>
-  </data>
   <data name="UnknownNode" xml:space="preserve">
     <value>The node {0} is not allowed. The following nodes are allowed: {1}.</value>
   </data>
@@ -140,18 +137,6 @@
   </data>
   <data name="NodeNotFoundOnce" xml:space="preserve">
     <value>Node "{0}" was not found. It should occur only once under "{1}". The parent node, "{1}", will be ignored.</value>
-  </data>
-  <data name="NodeNotFoundAtLeastOnce" xml:space="preserve">
-    <value>Node "{0}" was not found. It should occur at least once under "{1}". The parent node, "{1}", will be ignored.</value>
-  </data>
-  <data name="ExpectedNodeTypeInstead" xml:space="preserve">
-    <value>Expected XML tag "{0}" instead of node of type "{1}".</value>
-  </data>
-  <data name="UnexpectedNodeType" xml:space="preserve">
-    <value>Node of type "{0}" was not expected.</value>
-  </data>
-  <data name="ExpectedNodeNameInstead" xml:space="preserve">
-    <value>Expected XML tag "{0}" instead of "{1}".</value>
   </data>
   <data name="TypeNodeShouldHaveMembersOrTypeConverters" xml:space="preserve">
     <value>The "Type" node must have "Members", "TypeConverters", or "TypeAdapters".</value>
@@ -200,9 +185,6 @@
   </data>
   <data name="IsHiddenNotSupported" xml:space="preserve">
     <value>Node "{0}" should not have "{1}" attribute.</value>
-  </data>
-  <data name="IsHiddenValueShouldBeTrueOrFalse" xml:space="preserve">
-    <value>Value should be "true" or "false" instead of "{0}" for "{1}" attribute.</value>
   </data>
   <data name="FileNotFound" xml:space="preserve">
     <value>{0}, {1}: The file was not found.</value>
@@ -260,12 +242,6 @@
   </data>
   <data name="TypeDataShouldNotBeNullOrEmpty" xml:space="preserve">
     <value>"{0}" should not have null or an empty string in its property "{1}".</value>
-  </data>
-  <data name="DuplicateMembersDefinedInType" xml:space="preserve">
-    <value>More than one member with the name "{0}" is defined in the type file.</value>
-  </data>
-  <data name="DuplicateFileInInitialSessionState" xml:space="preserve">
-    <value>{0}: The file was skipped because it already occurred.</value>
   </data>
   <data name="TypeNotFound" xml:space="preserve">
     <value>The type "{0}" was not found. The type name value must be the full name of the type. Verify the type name and run the command again.</value>

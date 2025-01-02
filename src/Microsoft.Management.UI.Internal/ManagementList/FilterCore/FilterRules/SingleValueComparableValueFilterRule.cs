@@ -12,8 +12,8 @@ namespace Microsoft.Management.UI.Internal
     /// that take a single input and evaluate against IComparable values.
     /// </summary>
     /// <typeparam name="T">The generic parameter.</typeparam>
-    [Serializable]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
+    [Serializable]
     public abstract class SingleValueComparableValueFilterRule<T> : ComparableValueFilterRule<T> where T : IComparable
     {
         #region Properties

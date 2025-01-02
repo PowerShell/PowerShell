@@ -13,7 +13,7 @@ namespace System.Management.Automation
     /// <summary>
     /// These are platform abstractions and platform specific implementations.
     /// </summary>
-    public static class Platform
+    public static partial class Platform
     {
         /// <summary>
         /// True if the current platform is Linux.
@@ -69,7 +69,10 @@ namespace System.Management.Automation
 #if UNIX
                 return false;
 #else
-                if (_isNanoServer.HasValue) { return _isNanoServer.Value; }
+                if (_isNanoServer.HasValue)
+                {
+                    return _isNanoServer.Value;
+                }
 
                 _isNanoServer = false;
                 using (RegistryKey regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Server\ServerLevels"))
@@ -99,7 +102,10 @@ namespace System.Management.Automation
 #if UNIX
                 return false;
 #else
-                if (_isIoT.HasValue) { return _isIoT.Value; }
+                if (_isIoT.HasValue)
+                {
+                    return _isIoT.Value;
+                }
 
                 _isIoT = false;
                 using (RegistryKey regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion"))
@@ -129,7 +135,10 @@ namespace System.Management.Automation
 #if UNIX
                 return false;
 #else
-                if (_isWindowsDesktop.HasValue) { return _isWindowsDesktop.Value; }
+                if (_isWindowsDesktop.HasValue)
+                {
+                    return _isWindowsDesktop.Value;
+                }
 
                 _isWindowsDesktop = !IsNanoServer && !IsIoT;
                 return _isWindowsDesktop.Value;
@@ -163,19 +172,16 @@ namespace System.Management.Automation
 
         private static readonly Lazy<bool> _isStaSupported = new Lazy<bool>(() =>
         {
-            // See objbase.h
-            const int COINIT_APARTMENTTHREADED = 0x2;
-            const int E_NOTIMPL = unchecked((int)0X80004001);
-            int result = Windows.NativeMethods.CoInitializeEx(IntPtr.Zero, COINIT_APARTMENTTHREADED);
+            int result = Interop.Windows.CoInitializeEx(IntPtr.Zero, Interop.Windows.COINIT_APARTMENTTHREADED);
 
             // If 0 is returned the thread has been initialized for the first time
             // as an STA and thus supported and needs to be uninitialized.
             if (result > 0)
             {
-                Windows.NativeMethods.CoUninitialize();
+                Interop.Windows.CoUninitialize();
             }
 
-            return result != E_NOTIMPL;
+            return result != Interop.Windows.E_NOTIMPL;
         });
 
         private static bool? _isNanoServer = null;
@@ -216,7 +222,7 @@ namespace System.Management.Automation
         private static string s_tempHome = null;
 
         /// <summary>
-        /// Get the 'HOME' environment variable or create a temporary home diretory if the environment variable is not set.
+        /// Get the 'HOME' environment variable or create a temporary home directory if the environment variable is not set.
         /// </summary>
         private static string GetHomeOrCreateTempHome()
         {
@@ -368,11 +374,6 @@ namespace System.Management.Automation
         // - only to be used with the IsWindows feature query, and only if
         //   no other more specific feature query makes sense
 
-        internal static bool NonWindowsIsHardLink(ref IntPtr handle)
-        {
-            return Unix.IsHardLink(ref handle);
-        }
-
         internal static bool NonWindowsIsHardLink(FileSystemInfo fileInfo)
         {
             return Unix.IsHardLink(fileInfo);
@@ -453,21 +454,6 @@ namespace System.Management.Automation
             return Unix.NativeMethods.WaitPid(pid, nohang);
         }
 
-        internal static class Windows
-        {
-            /// <summary>The native methods class.</summary>
-            internal static class NativeMethods
-            {
-                private const string ole32Lib = "api-ms-win-core-com-l1-1-0.dll";
-
-                [DllImport(ole32Lib)]
-                internal static extern int CoInitializeEx(IntPtr reserve, int coinit);
-
-                [DllImport(ole32Lib)]
-                internal static extern void CoUninitialize();
-            }
-        }
-
         // Please note that `Win32Exception(Marshal.GetLastWin32Error())`
         // works *correctly* on Linux in that it creates an exception with
         // the string perror would give you for the last set value of errno.
@@ -475,7 +461,7 @@ namespace System.Management.Automation
         // to a PAL value and calls strerror_r underneath to generate the message.
 
         /// <summary>Unix specific implementations of required functionality.</summary>
-        internal static class Unix
+        internal static partial class Unix
         {
             private static readonly Dictionary<int, string> usernameCache = new();
             private static readonly Dictionary<int, string> groupnameCache = new();
@@ -608,81 +594,68 @@ namespace System.Management.Automation
                 private const char CanRead = 'r';
                 private const char CanWrite = 'w';
                 private const char CanExecute = 'x';
-
-                // helper for getting unix mode
-                private readonly Dictionary<StatMask, char> modeMap = new()
-                {
-                        { StatMask.OwnerRead, CanRead },
-                        { StatMask.OwnerWrite, CanWrite },
-                        { StatMask.OwnerExecute, CanExecute },
-                        { StatMask.GroupRead, CanRead },
-                        { StatMask.GroupWrite, CanWrite },
-                        { StatMask.GroupExecute, CanExecute },
-                        { StatMask.OtherRead, CanRead },
-                        { StatMask.OtherWrite, CanWrite },
-                        { StatMask.OtherExecute, CanExecute },
-                };
-
-                private readonly StatMask[] permissions = new StatMask[]
-                {
-                    StatMask.OwnerRead,
-                    StatMask.OwnerWrite,
-                    StatMask.OwnerExecute,
-                    StatMask.GroupRead,
-                    StatMask.GroupWrite,
-                    StatMask.GroupExecute,
-                    StatMask.OtherRead,
-                    StatMask.OtherWrite,
-                    StatMask.OtherExecute
-                };
+                private const char NoPerm = '-';
+                private const char SetAndExec = 's';
+                private const char SetAndNotExec = 'S';
+                private const char StickyAndExec = 't';
+                private const char StickyAndNotExec = 'T';
 
                 // The item type and the character representation for the first element in the stat string
-                private readonly Dictionary<ItemType, char> itemTypeTable = new()
+                private static readonly Dictionary<ItemType, char> itemTypeTable = new()
                 {
-                    { ItemType.BlockDevice, 'b' },
+                    { ItemType.BlockDevice,     'b' },
                     { ItemType.CharacterDevice, 'c' },
-                    { ItemType.Directory, 'd' },
-                    { ItemType.File, '-' },
-                    { ItemType.NamedPipe, 'p' },
-                    { ItemType.Socket, 's' },
-                    { ItemType.SymbolicLink, 'l' },
+                    { ItemType.Directory,       'd' },
+                    { ItemType.File,            '-' },
+                    { ItemType.NamedPipe,       'p' },
+                    { ItemType.Socket,          's' },
+                    { ItemType.SymbolicLink,    'l' },
                 };
+
+                // We'll create a few common mode strings here to reduce allocations and improve performance a bit.
+                private const string OwnerReadGroupReadOtherRead = "-r--r--r--";
+                private const string OwnerReadWriteGroupReadOtherRead = "-rw-r--r--";
+                private const string DirectoryOwnerFullGroupReadExecOtherReadExec = "drwxr-xr-x";
 
                 /// <summary>Convert the mode to a string which is usable in our formatting.</summary>
                 /// <returns>The mode converted into a Unix style string similar to the output of ls.</returns>
                 public string GetModeString()
                 {
-                    int offset = 0;
-                    char[] modeCharacters = new char[10];
-                    modeCharacters[offset++] = itemTypeTable[ItemType];
-
-                    foreach (StatMask permission in permissions)
+                    // On an Ubuntu system (docker), these 3 are roughly 70% of all the permissions
+                    if ((Mode & 0xFFF) == 292)
                     {
-                        // determine whether we are setuid, sticky, or the usual rwx.
-                        if ((Mode & (int)permission) == (int)permission)
-                        {
-                            if ((permission == StatMask.OwnerExecute && IsSetUid) || (permission == StatMask.GroupExecute && IsSetGid))
-                            {
-                                // Check for setuid and add 's'
-                                modeCharacters[offset] = 's';
-                            }
-                            else if (permission == StatMask.OtherExecute && IsSticky && (ItemType == ItemType.Directory))
-                            {
-                                // Directories are sticky, rather than setuid
-                                modeCharacters[offset] = 't';
-                            }
-                            else
-                            {
-                                modeCharacters[offset] = modeMap[permission];
-                            }
-                        }
-                        else
-                        {
-                            modeCharacters[offset] = '-';
-                        }
-
-                        offset++;
+                        return OwnerReadGroupReadOtherRead;
                     }
+
+                    if ((Mode & 0xFFF) == 420)
+                    {
+                       return OwnerReadWriteGroupReadOtherRead;
+                    }
+
+                    if (ItemType == ItemType.Directory & (Mode & 0xFFF) == 493)
+                    {
+                        return DirectoryOwnerFullGroupReadExecOtherReadExec;
+                    }
+
+                    Span<char> modeCharacters = stackalloc char[10];
+                    modeCharacters[0] = itemTypeTable[ItemType];
+                    bool isExecutable;
+
+                    UnixFileMode modeInfo = (UnixFileMode)Mode;
+                    modeCharacters[1] = modeInfo.HasFlag(UnixFileMode.UserRead) ? CanRead : NoPerm;
+                    modeCharacters[2] = modeInfo.HasFlag(UnixFileMode.UserWrite) ? CanWrite : NoPerm;
+                    isExecutable = modeInfo.HasFlag(UnixFileMode.UserExecute);
+                    modeCharacters[3] = modeInfo.HasFlag(UnixFileMode.SetUser) ? (isExecutable ? SetAndExec : SetAndNotExec) : (isExecutable ? CanExecute : NoPerm);
+
+                    modeCharacters[4] = modeInfo.HasFlag(UnixFileMode.GroupRead) ? CanRead : NoPerm;
+                    modeCharacters[5] = modeInfo.HasFlag(UnixFileMode.GroupWrite) ? CanWrite : NoPerm;
+                    isExecutable = modeInfo.HasFlag(UnixFileMode.GroupExecute);
+                    modeCharacters[6] = modeInfo.HasFlag(UnixFileMode.SetGroup) ? (isExecutable ? SetAndExec : SetAndNotExec) : (isExecutable ? CanExecute : NoPerm);
+
+                    modeCharacters[7] = modeInfo.HasFlag(UnixFileMode.OtherRead) ? CanRead : NoPerm;
+                    modeCharacters[8] = modeInfo.HasFlag(UnixFileMode.OtherWrite) ? CanWrite : NoPerm;
+                    isExecutable = modeInfo.HasFlag(UnixFileMode.OtherExecute);
+                    modeCharacters[9] = modeInfo.HasFlag(UnixFileMode.StickyBit) ? (isExecutable ? StickyAndExec : StickyAndNotExec) : (isExecutable ? CanExecute : NoPerm);
 
                     return new string(modeCharacters);
                 }
@@ -732,15 +705,6 @@ namespace System.Management.Automation
             internal static ErrorCategory GetErrorCategory(int errno)
             {
                 return (ErrorCategory)Unix.NativeMethods.GetErrorCategory(errno);
-            }
-
-            /// <summary>Is this a hardlink.</summary>
-            /// <param name="handle">The handle to a file.</param>
-            /// <returns>A boolean that represents whether the item is a hardlink.</returns>
-            public static bool IsHardLink(ref IntPtr handle)
-            {
-                // TODO:PSL implement using fstat to query inode refcount to see if it is a hard link
-                return false;
             }
 
             /// <summary>Determine if the item is a hardlink.</summary>
@@ -883,20 +847,40 @@ namespace System.Management.Automation
             {
                 const int invalidPid = -1;
 
-                // read /proc/<pid>/stat
-                // 4th column will contain the ppid, 92 in the example below
-                // ex: 93 (bash) S 92 93 2 4294967295 ...
-                var path = $"/proc/{pid}/stat";
+                // read /proc/<pid>/status
+                // Row beginning with PPid: \d is the parent process id.
+                // This used to check /proc/<pid>/stat but that file was meant
+                // to be a space delimited line but it contains a value which
+                // could contain spaces itself. Using the status file is a lot
+                // simpler because each line contains a record with a simple
+                // label.
+                // https://github.com/PowerShell/PowerShell/issues/17541#issuecomment-1159911577
+                var path = $"/proc/{pid}/status";
                 try
                 {
-                    var stat = System.IO.File.ReadAllText(path);
-                    var parts = stat.Split(' ', 5);
-                    if (parts.Length < 5)
+                    using FileStream fs = File.OpenRead(path);
+                    using StreamReader sr = new(fs);
+                    string line;
+                    while ((line = sr.ReadLine()) != null)
                     {
-                        return invalidPid;
+                        if (!line.StartsWith("PPid:\t", StringComparison.OrdinalIgnoreCase))
+                        {
+                            continue;
+                        }
+
+                        string[] lineSplit = line.Split('\t', 2, StringSplitOptions.RemoveEmptyEntries);
+                        if (lineSplit.Length != 2)
+                        {
+                            continue;
+                        }
+
+                        if (int.TryParse(lineSplit[1].Trim(), out var ppid))
+                        {
+                            return ppid;
+                        }
                     }
 
-                    return int.Parse(parts[3]);
+                    return invalidPid;
                 }
                 catch (Exception)
                 {
@@ -905,38 +889,40 @@ namespace System.Management.Automation
             }
 
             /// <summary>The native methods class.</summary>
-            internal static class NativeMethods
+            internal static partial class NativeMethods
             {
                 private const string psLib = "libpsl-native";
 
                 // Ansi is a misnomer, it is hardcoded to UTF-8 on Linux and macOS
-                // C bools are 1 byte and so must be marshaled as I1
+                // C bools are 1 byte and so must be marshalled as I1
 
-                [DllImport(psLib, CharSet = CharSet.Ansi)]
-                internal static extern int GetErrorCategory(int errno);
+                [LibraryImport(psLib)]
+                internal static partial int GetErrorCategory(int errno);
 
-                [DllImport(psLib)]
-                internal static extern int GetPPid(int pid);
+                [LibraryImport(psLib)]
+                internal static partial int GetPPid(int pid);
 
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                internal static extern int GetLinkCount([MarshalAs(UnmanagedType.LPStr)] string filePath, out int linkCount);
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8, SetLastError = true)]
+                internal static partial int GetLinkCount(string filePath, out int linkCount);
 
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
                 [return: MarshalAs(UnmanagedType.I1)]
-                internal static extern bool IsExecutable([MarshalAs(UnmanagedType.LPStr)] string filePath);
+                internal static partial bool IsExecutable(string filePath);
 
-                [DllImport(psLib, CharSet = CharSet.Ansi)]
-                internal static extern uint GetCurrentThreadId();
+                [LibraryImport(psLib)]
+                internal static partial uint GetCurrentThreadId();
 
-                [DllImport(psLib)]
+                [LibraryImport(psLib)]
                 [return: MarshalAs(UnmanagedType.Bool)]
-                internal static extern bool KillProcess(int pid);
+                internal static partial bool KillProcess(int pid);
 
-                [DllImport(psLib)]
-                internal static extern int WaitPid(int pid, bool nohang);
+                [LibraryImport(psLib)]
+                internal static partial int WaitPid(int pid, [MarshalAs(UnmanagedType.Bool)] bool nohang);
 
-                // This is a struct tm from <time.h>.
-                [StructLayout(LayoutKind.Sequential)]
+                // This is the struct `private_tm` from setdate.h in libpsl-native.
+                // Packing is set to 4 to match the unmanaged declaration.
+                // https://github.com/PowerShell/PowerShell-Native/blob/c5575ceb064e60355b9fee33eabae6c6d2708d14/src/libpsl-native/src/setdate.h#L23
+                [StructLayout(LayoutKind.Sequential, Pack = 4)]
                 internal unsafe struct UnixTm
                 {
                     /// <summary>Seconds (0-60).</summary>
@@ -983,29 +969,25 @@ namespace System.Management.Automation
                     return tm;
                 }
 
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                internal static extern unsafe int SetDate(UnixTm* tm);
+                [LibraryImport(psLib, SetLastError = true)]
+                internal static unsafe partial int SetDate(UnixTm* tm);
 
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                internal static extern int CreateSymLink([MarshalAs(UnmanagedType.LPStr)] string filePath,
-                                                         [MarshalAs(UnmanagedType.LPStr)] string target);
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
+                internal static partial int CreateSymLink(string filePath, string target);
 
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                internal static extern int CreateHardLink([MarshalAs(UnmanagedType.LPStr)] string filePath,
-                                                          [MarshalAs(UnmanagedType.LPStr)] string target);
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
+                internal static partial int CreateHardLink(string filePath, string target);
 
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
+                [LibraryImport(psLib)]
                 [return: MarshalAs(UnmanagedType.LPStr)]
-                internal static extern string GetUserFromPid(int pid);
+                internal static partial string GetUserFromPid(int pid);
 
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
                 [return: MarshalAs(UnmanagedType.I1)]
-                internal static extern bool IsSameFileSystemItem([MarshalAs(UnmanagedType.LPStr)] string filePathOne,
-                                                                 [MarshalAs(UnmanagedType.LPStr)] string filePathTwo);
+                internal static partial bool IsSameFileSystemItem(string filePathOne, string filePathTwo);
 
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                internal static extern int GetInodeData([MarshalAs(UnmanagedType.LPStr)] string path,
-                                                        out ulong device, out ulong inode);
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
+                internal static partial int GetInodeData(string path, out ulong device, out ulong inode);
 
                 /// <summary>
                 /// This is a struct from getcommonstat.h in the native library.
@@ -1083,17 +1065,17 @@ namespace System.Management.Automation
                     internal int IsSticky;
                 }
 
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                internal static extern unsafe int GetCommonLStat(string filePath, [Out] out CommonStatStruct cs);
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8, SetLastError = true)]
+                internal static unsafe partial int GetCommonLStat(string filePath, out CommonStatStruct cs);
 
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                internal static extern unsafe int GetCommonStat(string filePath, [Out] out CommonStatStruct cs);
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8, SetLastError = true)]
+                internal static unsafe partial int GetCommonStat(string filePath, out CommonStatStruct cs);
 
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                internal static extern string GetPwUid(int id);
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
+                internal static partial string GetPwUid(int id);
 
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                internal static extern string GetGrGid(int id);
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
+                internal static partial string GetGrGid(int id);
             }
         }
     }

@@ -320,20 +320,20 @@ namespace System.Management.Automation.Language
 
             while (current != null && !stopScanning)
             {
-                ScriptBlockAst scriptBlock = current as ScriptBlockAst;
-                if (scriptBlock != null)
+                if (current is ScriptBlockAst scriptBlock)
                 {
                     // See if this uses the workflow keyword
-                    FunctionDefinitionAst functionDefinition = scriptBlock.Parent as FunctionDefinitionAst;
-                    if ((functionDefinition != null))
+                    if (scriptBlock.Parent is FunctionDefinitionAst functionDefinition)
                     {
                         stopScanning = true;
-                        if (functionDefinition.IsWorkflow) { return true; }
+                        if (functionDefinition.IsWorkflow)
+                        {
+                            return true;
+                        }
                     }
                 }
 
-                CommandAst commandAst = current as CommandAst;
-                if (commandAst != null &&
+                if (current is CommandAst commandAst &&
                     string.Equals(TokenKind.InlineScript.Text(), commandAst.GetCommandName(), StringComparison.OrdinalIgnoreCase) &&
                     this != commandAst)
                 {
@@ -388,8 +388,7 @@ namespace System.Management.Automation.Language
 
                 // Nested function isn't really a member of the type so stop looking
                 // Anonymous script blocks are though
-                var functionDefinitionAst = ast as FunctionDefinitionAst;
-                if (functionDefinitionAst != null && functionDefinitionAst.Parent is not FunctionMemberAst)
+                if (ast is FunctionDefinitionAst functionDefinitionAst && functionDefinitionAst.Parent is not FunctionMemberAst)
                     break;
                 ast = ast.Parent;
             }
@@ -521,7 +520,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Indicate the kind of the ErrorStatement. e.g. Kind == Switch means that this error statment is generated
+        /// Indicate the kind of the ErrorStatement. e.g. Kind == Switch means that this error statement is generated
         /// when parsing a switch statement.
         /// </summary>
         public Token Kind { get; }
@@ -755,14 +754,6 @@ namespace System.Management.Automation.Language
         public ReadOnlyCollection<ModuleSpecification> RequiredModules { get; internal set; }
 
         /// <summary>
-        /// The snapins this script requires, specified like:
-        ///     <code>#requires -PSSnapin Snapin</code>
-        ///     <code>#requires -PSSnapin Snapin -Version 2</code>
-        /// If no snapins are required, this property is an empty collection.
-        /// </summary>
-        public ReadOnlyCollection<PSSnapInSpecification> RequiresPSSnapIns { get; internal set; }
-
-        /// <summary>
         /// The assemblies this script requires, specified like:
         ///     <code>#requires -Assembly path\to\foo.dll</code>
         ///     <code>#requires -Assembly "System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"</code>
@@ -799,7 +790,7 @@ namespace System.Management.Automation.Language
         /// Construct a ScriptBlockAst that uses explicitly named begin/process/end blocks.
         /// </summary>
         /// <param name="extent">The extent of the script block.</param>
-        /// <param name="usingStatements">The list of using statments, may be null.</param>
+        /// <param name="usingStatements">The list of using statements, may be null.</param>
         /// <param name="attributes">The set of attributes for the script block.</param>
         /// <param name="paramBlock">The ast for the param block, may be null.</param>
         /// <param name="beginBlock">The ast for the begin block, may be null.</param>
@@ -836,7 +827,7 @@ namespace System.Management.Automation.Language
         /// This construction uses explicitly named begin/process/end/clean blocks.
         /// </summary>
         /// <param name="extent">The extent of the script block.</param>
-        /// <param name="usingStatements">The list of using statments, may be null.</param>
+        /// <param name="usingStatements">The list of using statements, may be null.</param>
         /// <param name="attributes">The set of attributes for the script block.</param>
         /// <param name="paramBlock">The ast for the param block, may be null.</param>
         /// <param name="beginBlock">The ast for the begin block, may be null.</param>
@@ -913,7 +904,7 @@ namespace System.Management.Automation.Language
         /// Construct a ScriptBlockAst that uses explicitly named begin/process/end blocks.
         /// </summary>
         /// <param name="extent">The extent of the script block.</param>
-        /// <param name="usingStatements">The list of using statments, may be null.</param>
+        /// <param name="usingStatements">The list of using statements, may be null.</param>
         /// <param name="paramBlock">The ast for the param block, may be null.</param>
         /// <param name="beginBlock">The ast for the begin block, may be null.</param>
         /// <param name="processBlock">The ast for the process block, may be null.</param>
@@ -939,7 +930,7 @@ namespace System.Management.Automation.Language
         /// This construction uses explicitly named begin/process/end/clean blocks.
         /// </summary>
         /// <param name="extent">The extent of the script block.</param>
-        /// <param name="usingStatements">The list of using statments, may be null.</param>
+        /// <param name="usingStatements">The list of using statements, may be null.</param>
         /// <param name="paramBlock">The ast for the param block, may be null.</param>
         /// <param name="beginBlock">The ast for the begin block, may be null.</param>
         /// <param name="processBlock">The ast for the process block, may be null.</param>
@@ -1017,7 +1008,7 @@ namespace System.Management.Automation.Language
         /// Construct a ScriptBlockAst that does not use explicitly named blocks.
         /// </summary>
         /// <param name="extent">The extent of the script block.</param>
-        /// <param name="usingStatements">The list of using statments, may be null.</param>
+        /// <param name="usingStatements">The list of using statements, may be null.</param>
         /// <param name="paramBlock">The ast for the param block, may be null.</param>
         /// <param name="statements">
         /// The statements that go in the end block if <paramref name="isFilter"/> is false, or the
@@ -1076,7 +1067,7 @@ namespace System.Management.Automation.Language
         /// Construct a ScriptBlockAst that does not use explicitly named blocks.
         /// </summary>
         /// <param name="extent">The extent of the script block.</param>
-        /// <param name="usingStatements">The list of using statments, may be null.</param>
+        /// <param name="usingStatements">The list of using statements, may be null.</param>
         /// <param name="paramBlock">The ast for the param block, may be null.</param>
         /// <param name="statements">
         /// The statements that go in the end block if <paramref name="isFilter"/> is false, or the
@@ -1118,7 +1109,7 @@ namespace System.Management.Automation.Language
         /// Construct a ScriptBlockAst that does not use explicitly named blocks.
         /// </summary>
         /// <param name="extent">The extent of the script block.</param>
-        /// <param name="usingStatements">The list of using statments, may be null.</param>
+        /// <param name="usingStatements">The list of using statements, may be null.</param>
         /// <param name="attributes">The attributes for the script block.</param>
         /// <param name="paramBlock">The ast for the param block, may be null.</param>
         /// <param name="statements">
@@ -1373,8 +1364,7 @@ namespace System.Management.Automation.Language
                 // We are done processing the section that we care about
                 if (astStartOffset >= endOffset) { break; }
 
-                var varAst = ast as VariableExpressionAst;
-                if (varAst != null)
+                if (ast is VariableExpressionAst varAst)
                 {
                     VariablePath varPath = varAst.VariablePath;
                     string varName = varPath.IsDriveQualified ? $"{varPath.DriveName}_{varPath.UnqualifiedPath}" : $"{varPath.UnqualifiedPath}";
@@ -1454,8 +1444,7 @@ namespace System.Management.Automation.Language
             if (action == AstVisitAction.SkipChildren)
                 return visitor.CheckForPostAction(this, AstVisitAction.Continue);
 
-            var visitor2 = visitor as AstVisitor2;
-            if (visitor2 != null)
+            if (visitor is AstVisitor2 visitor2)
             {
                 if (action == AstVisitAction.Continue)
                 {
@@ -1943,8 +1932,7 @@ namespace System.Management.Automation.Language
 
             if (!unnamed)
             {
-                var statementsExtent = statementBlock.Extent as InternalScriptExtent;
-                if (statementsExtent != null)
+                if (statementBlock.Extent is InternalScriptExtent statementsExtent)
                 {
                     this.OpenCurlyExtent = new InternalScriptExtent(statementsExtent.PositionHelper, statementsExtent.StartOffset, statementsExtent.StartOffset + 1);
                     this.CloseCurlyExtent = new InternalScriptExtent(statementsExtent.PositionHelper, statementsExtent.EndOffset - 1, statementsExtent.EndOffset);
@@ -2820,8 +2808,7 @@ namespace System.Management.Automation.Language
         internal override AstVisitAction InternalVisit(AstVisitor visitor)
         {
             var action = AstVisitAction.Continue;
-            var visitor2 = visitor as AstVisitor2;
-            if (visitor2 != null)
+            if (visitor is AstVisitor2 visitor2)
             {
                 action = visitor2.VisitTypeDefinition(this);
                 if (action == AstVisitAction.SkipChildren)
@@ -3068,8 +3055,7 @@ namespace System.Management.Automation.Language
         internal override AstVisitAction InternalVisit(AstVisitor visitor)
         {
             var action = AstVisitAction.Continue;
-            var visitor2 = visitor as AstVisitor2;
-            if (visitor2 != null)
+            if (visitor is AstVisitor2 visitor2)
             {
                 action = visitor2.VisitUsingStatement(this);
                 if (action != AstVisitAction.Continue)
@@ -3296,8 +3282,7 @@ namespace System.Management.Automation.Language
         internal override AstVisitAction InternalVisit(AstVisitor visitor)
         {
             var action = AstVisitAction.Continue;
-            var visitor2 = visitor as AstVisitor2;
-            if (visitor2 != null)
+            if (visitor is AstVisitor2 visitor2)
             {
                 action = visitor2.VisitPropertyMember(this);
                 if (action == AstVisitAction.SkipChildren)
@@ -3312,7 +3297,10 @@ namespace System.Management.Automation.Language
                     {
                         var attributeAst = Attributes[index];
                         action = attributeAst.InternalVisit(visitor);
-                        if (action != AstVisitAction.Continue) break;
+                        if (action != AstVisitAction.Continue)
+                        {
+                            break;
+                        }
                     }
                 }
 
@@ -3546,8 +3534,7 @@ namespace System.Management.Automation.Language
         internal override AstVisitAction InternalVisit(AstVisitor visitor)
         {
             var action = AstVisitAction.Continue;
-            var visitor2 = visitor as AstVisitor2;
-            if (visitor2 != null)
+            if (visitor is AstVisitor2 visitor2)
             {
                 action = visitor2.VisitFunctionMember(this);
                 if (action == AstVisitAction.SkipChildren)
@@ -3558,7 +3545,10 @@ namespace System.Management.Automation.Language
                     {
                         var attributeAst = Attributes[index];
                         action = attributeAst.InternalVisit(visitor);
-                        if (action != AstVisitAction.Continue) break;
+                        if (action != AstVisitAction.Continue)
+                        {
+                            break;
+                        }
                     }
                 }
 
@@ -3884,10 +3874,7 @@ namespace System.Management.Automation.Language
         /// <returns></returns>
         public CommentHelpInfo GetHelpContent(Dictionary<Ast, Token[]> scriptBlockTokenCache)
         {
-            if (scriptBlockTokenCache == null)
-            {
-                throw new ArgumentNullException(nameof(scriptBlockTokenCache));
-            }
+            ArgumentNullException.ThrowIfNull(scriptBlockTokenCache);
 
             var commentTokens = HelpCommentsParser.GetHelpCommentTokens(this, scriptBlockTokenCache);
             if (commentTokens != null)
@@ -4591,7 +4578,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Construct a do/while statement.
         /// </summary>
-        /// <param name="extent">The extent of the do/while statment from the label or do keyword to the closing curly brace.</param>
+        /// <param name="extent">The extent of the do/while statement from the label or do keyword to the closing curly brace.</param>
         /// <param name="label">The optionally null label.</param>
         /// <param name="condition">The condition tested on each iteration of the loop.</param>
         /// <param name="body">The body executed on each iteration of the loop.</param>
@@ -5577,15 +5564,9 @@ namespace System.Management.Automation.Language
             bool background = false)
             : base(extent)
         {
-            if (lhsChain == null)
-            {
-                throw new ArgumentNullException(nameof(lhsChain));
-            }
+            ArgumentNullException.ThrowIfNull(lhsChain);
 
-            if (rhsPipeline == null)
-            {
-                throw new ArgumentNullException(nameof(rhsPipeline));
-            }
+            ArgumentNullException.ThrowIfNull(rhsPipeline);
 
             if (chainOperator != TokenKind.AndAnd && chainOperator != TokenKind.OrOr)
             {
@@ -6057,8 +6038,8 @@ namespace System.Management.Automation.Language
         /// <para>Returns the name of the command invoked by this ast.</para>
         /// <para>This command name may not be known statically, in which case null is returned.</para>
         /// <para>
-        /// For example, if the command name is in a variable: <example>&amp; $foo</example>, then the parser cannot know which command is executed.
-        /// Similarly, if the command is being invoked in a module: <example>&amp; (gmo SomeModule) Bar</example>, then the parser does not know the
+        /// For example, if the command name is in a variable: <code>&amp; $foo</code>, then the parser cannot know which command is executed.
+        /// Similarly, if the command is being invoked in a module: <code>&amp; (gmo SomeModule) Bar</code>, then the parser does not know the
         /// command name is Bar because the parser can't determine that the expression <code>(gmo SomeModule)</code> returns a module instead
         /// of a string.
         /// </para>
@@ -6424,19 +6405,13 @@ namespace System.Management.Automation.Language
 
             // If the assignment is just an expression and the expression is not backgrounded then
             // remove the pipeline wrapping the expression.
-            var pipelineAst = right as PipelineAst;
-            if (pipelineAst != null && !pipelineAst.Background)
+            if (right is PipelineAst pipelineAst
+                && !pipelineAst.Background
+                && pipelineAst.PipelineElements.Count == 1
+                && pipelineAst.PipelineElements[0] is CommandExpressionAst commandExpressionAst)
             {
-                if (pipelineAst.PipelineElements.Count == 1)
-                {
-                    var commandExpressionAst = pipelineAst.PipelineElements[0] as CommandExpressionAst;
-
-                    if (commandExpressionAst != null)
-                    {
-                        right = commandExpressionAst;
-                        right.ClearParent();
-                    }
-                }
+                right = commandExpressionAst;
+                right.ClearParent();
             }
 
             this.Operator = @operator;
@@ -6485,8 +6460,7 @@ namespace System.Management.Automation.Language
         /// <returns>All of the expressions assigned by the assignment statement.</returns>
         public IEnumerable<ExpressionAst> GetAssignmentTargets()
         {
-            var arrayExpression = Left as ArrayLiteralAst;
-            if (arrayExpression != null)
+            if (Left is ArrayLiteralAst arrayExpression)
             {
                 foreach (var element in arrayExpression.Elements)
                 {
@@ -6625,8 +6599,7 @@ namespace System.Management.Automation.Language
         internal override AstVisitAction InternalVisit(AstVisitor visitor)
         {
             var action = AstVisitAction.Continue;
-            var visitor2 = visitor as AstVisitor2;
-            if (visitor2 != null)
+            if (visitor is AstVisitor2 visitor2)
             {
                 action = visitor2.VisitConfigurationDefinition(this);
                 if (action == AstVisitAction.SkipChildren)
@@ -7094,8 +7067,7 @@ namespace System.Management.Automation.Language
         internal override AstVisitAction InternalVisit(AstVisitor visitor)
         {
             var action = AstVisitAction.Continue;
-            var visitor2 = visitor as AstVisitor2;
-            if (visitor2 != null)
+            if (visitor is AstVisitor2 visitor2)
             {
                 action = visitor2.VisitDynamicKeywordStatement(this);
                 if (action == AstVisitAction.SkipChildren)
@@ -7197,7 +7169,6 @@ namespace System.Management.Automation.Language
             }
 
             ExpressionAst expr = BodyExpression;
-            HashtableAst hashtable = expr as HashtableAst;
             if (Keyword.DirectCall)
             {
                 // If this keyword takes a name, then add it as the parameter -InstanceName
@@ -7216,7 +7187,7 @@ namespace System.Management.Automation.Language
                 // in the hash literal expression and map them to parameters.
                 // We've already checked to make sure that they're all valid names.
                 //
-                if (hashtable != null)
+                if (expr is HashtableAst hashtable)
                 {
                     bool isHashtableValid = true;
                     //
@@ -7400,10 +7371,7 @@ namespace System.Management.Automation.Language
         /// <returns></returns>
         internal virtual bool ShouldPreserveOutputInCaseOfException()
         {
-            var parenExpr = this as ParenExpressionAst;
-            var subExpr = this as SubExpressionAst;
-
-            if (parenExpr == null && subExpr == null)
+            if (this is not ParenExpressionAst and not SubExpressionAst)
             {
                 PSTraceSource.NewInvalidOperationException();
             }
@@ -7419,8 +7387,7 @@ namespace System.Management.Automation.Language
                 return false;
             }
 
-            var parenExpressionAst = pipelineAst.Parent as ParenExpressionAst;
-            if (parenExpressionAst != null)
+            if (pipelineAst.Parent is ParenExpressionAst parenExpressionAst)
             {
                 return parenExpressionAst.ShouldPreserveOutputInCaseOfException();
             }
@@ -7473,9 +7440,9 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Copy the TernaryExpressionAst instance.
         /// </summary>
-        /// <return>
-        /// Retirns a copy of the ast.
-        /// </return>
+        /// <returns>
+        /// Returns a copy of the ast.
+        /// </returns>
         public override Ast Copy()
         {
             ExpressionAst newCondition = CopyElement(this.Condition);
@@ -8002,8 +7969,7 @@ namespace System.Management.Automation.Language
 
         IAssignableValue ISupportsAssignment.GetAssignableValue()
         {
-            var varExpr = Child as VariableExpressionAst;
-            if (varExpr != null && varExpr.TupleIndex >= 0)
+            if (Child is VariableExpressionAst varExpr && varExpr.TupleIndex >= 0)
             {
                 // In the common case of a single cast on the lhs of an assignment, we may have saved the type of the
                 // variable in the mutable tuple, so conversions will get generated elsewhere, and we can just use
@@ -8375,8 +8341,7 @@ namespace System.Management.Automation.Language
         internal override AstVisitAction InternalVisit(AstVisitor visitor)
         {
             AstVisitAction action = AstVisitAction.Continue;
-            var visitor2 = visitor as AstVisitor2;
-            if (visitor2 != null)
+            if (visitor is AstVisitor2 visitor2)
             {
                 action = visitor2.VisitBaseCtorInvokeMemberExpression(this);
                 if (action == AstVisitAction.SkipChildren)
@@ -8486,8 +8451,7 @@ namespace System.Management.Automation.Language
                 throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
-            int backtick = name.IndexOf('`');
-            if (backtick != -1)
+            if (name.Contains('`'))
             {
                 name = name.Replace("``", "`");
             }
@@ -8566,8 +8530,7 @@ namespace System.Management.Automation.Language
             bool hasExplicitCtor = false;
             foreach (var member in _typeDefinitionAst.Members)
             {
-                var function = member as FunctionMemberAst;
-                if (function != null)
+                if (member is FunctionMemberAst function)
                 {
                     if (function.IsConstructor)
                     {
@@ -8926,7 +8889,7 @@ namespace System.Management.Automation.Language
                 if (!TypeName.FullName.Contains('`'))
                 {
                     var newTypeName = new TypeName(Extent,
-                        string.Format(CultureInfo.InvariantCulture, "{0}`{1}", TypeName.FullName, GenericArguments.Count));
+                        string.Create(CultureInfo.InvariantCulture, $"{TypeName.FullName}`{GenericArguments.Count}"));
                     generic = newTypeName.GetReflectionType();
                 }
             }
@@ -8953,7 +8916,7 @@ namespace System.Management.Automation.Language
                     if (!TypeName.FullName.Contains('`'))
                     {
                         var newTypeName = new TypeName(Extent,
-                            string.Format(CultureInfo.InvariantCulture, "{0}Attribute`{1}", TypeName.FullName, GenericArguments.Count));
+                            string.Create(CultureInfo.InvariantCulture, $"{TypeName.FullName}Attribute`{GenericArguments.Count}"));
                         generic = newTypeName.GetReflectionType();
                     }
                 }
@@ -9840,8 +9803,7 @@ namespace System.Management.Automation.Language
             }
 
             var ast = Language.Parser.ScanString(value);
-            var expandableStringAst = ast as ExpandableStringExpressionAst;
-            if (expandableStringAst != null)
+            if (ast is ExpandableStringExpressionAst expandableStringAst)
             {
                 this.FormatExpression = expandableStringAst.FormatExpression;
                 this.NestedExpressions = expandableStringAst.NestedExpressions;
@@ -10462,10 +10424,7 @@ namespace System.Management.Automation.Language
         [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters", Justification = "We want to get the underlying variable only for the UsingExpressionAst.")]
         public static VariableExpressionAst ExtractUsingVariable(UsingExpressionAst usingExpressionAst)
         {
-            if (usingExpressionAst == null)
-            {
-                throw new ArgumentNullException(nameof(usingExpressionAst));
-            }
+            ArgumentNullException.ThrowIfNull(usingExpressionAst);
 
             return ExtractUsingVariableImpl(usingExpressionAst);
         }
@@ -10477,10 +10436,9 @@ namespace System.Management.Automation.Language
         /// <returns></returns>
         private static VariableExpressionAst ExtractUsingVariableImpl(ExpressionAst expression)
         {
-            var usingExpr = expression as UsingExpressionAst;
             VariableExpressionAst variableExpr;
 
-            if (usingExpr != null)
+            if (expression is UsingExpressionAst usingExpr)
             {
                 variableExpr = usingExpr.SubExpression as VariableExpressionAst;
                 if (variableExpr != null)
@@ -10491,8 +10449,7 @@ namespace System.Management.Automation.Language
                 return ExtractUsingVariableImpl(usingExpr.SubExpression);
             }
 
-            var indexExpr = expression as IndexExpressionAst;
-            if (indexExpr != null)
+            if (expression is IndexExpressionAst indexExpr)
             {
                 variableExpr = indexExpr.Target as VariableExpressionAst;
                 if (variableExpr != null)
@@ -10503,8 +10460,7 @@ namespace System.Management.Automation.Language
                 return ExtractUsingVariableImpl(indexExpr.Target);
             }
 
-            var memberExpr = expression as MemberExpressionAst;
-            if (memberExpr != null)
+            if (expression is MemberExpressionAst memberExpr)
             {
                 variableExpr = memberExpr.Expression as VariableExpressionAst;
                 if (variableExpr != null)

@@ -1496,16 +1496,8 @@ namespace System.Management.Automation.Internal
                 _writeHandle.Dispose();
                 _writeClosedHandle.Dispose();
                 _readClosedHandle.Dispose();
-
-                if (_readWaitHandle != null)
-                {
-                    _readWaitHandle.Dispose();
-                }
-
-                if (_writeWaitHandle != null)
-                {
-                    _writeWaitHandle.Dispose();
-                }
+                _readWaitHandle?.Dispose();
+                _writeWaitHandle?.Dispose();
 
                 if (_reader != null)
                 {

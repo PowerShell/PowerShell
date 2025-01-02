@@ -155,8 +155,13 @@ namespace System.Management.Automation
                 ast => IsCursorWithinOrJustAfterExtent(positionForAstSearch, ast.Extent),
                 searchNestedScriptBlocks: true).ToList();
 
+            if (relatedAsts.Count == 0)
+            {
+                relatedAsts.Add(inputAst);
+            }
+
             // If the last ast is an unnamed block that starts with "param" the cursor is inside a param block.
-            // To avoid adding special handling to all the completers that look at the last ast, we remove it here because it's not useful for completion. 
+            // To avoid adding special handling to all the completers that look at the last ast, we remove it here because it's not useful for completion.
             if (relatedAsts[^1].Extent.Text.StartsWith("param", StringComparison.OrdinalIgnoreCase)
                 && relatedAsts[^1] is NamedBlockAst namedBlock && namedBlock.Unnamed)
             {
@@ -382,7 +387,7 @@ namespace System.Management.Automation
                     completionContext.ExecutionContext.LanguageMode = PSLanguageMode.ConstrainedLanguage;
                 }
 
-                return GetResultHelper(completionContext, out replacementIndex, out replacementLength, false);
+                return GetResultHelper(completionContext, out replacementIndex, out replacementLength);
             }
             finally
             {
@@ -393,7 +398,7 @@ namespace System.Management.Automation
             }
         }
 
-        internal List<CompletionResult> GetResultHelper(CompletionContext completionContext, out int replacementIndex, out int replacementLength, bool isQuotedString)
+        internal List<CompletionResult> GetResultHelper(CompletionContext completionContext, out int replacementIndex, out int replacementLength)
         {
             replacementIndex = -1;
             replacementLength = -1;
@@ -423,16 +428,18 @@ namespace System.Management.Automation
                     case TokenKind.Identifier:
                         if (!tokenAtCursor.TokenFlags.HasFlag(TokenFlags.TypeName))
                         {
-                            result = GetResultForIdentifier(completionContext, ref replacementIndex, ref replacementLength, isQuotedString);
+                            result = CompleteUsingKeywords(completionContext.CursorPosition.Offset, _tokens, ref replacementIndex, ref replacementLength);
+                            if (result is not null)
+                            {
+                                return result;
+                            }
+
+                            result = GetResultForIdentifier(completionContext, ref replacementIndex, ref replacementLength);
                         }
 
                         break;
 
                     case TokenKind.Parameter:
-                        // When it's the content of a quoted string, we only handle variable/member completion
-                        if (isQuotedString)
-                            break;
-
                         completionContext.WordToComplete = tokenAtCursor.Text;
                         var cmdAst = lastAst.Parent as CommandAst;
                         if (lastAst is StringConstantExpressionAst && cmdAst != null && cmdAst.CommandElements.Count == 1)
@@ -480,10 +487,6 @@ namespace System.Management.Automation
                         break;
 
                     case TokenKind.Comment:
-                        // When it's the content of a quoted string, we only handle variable/member completion
-                        if (isQuotedString)
-                            break;
-
                         completionContext.WordToComplete = tokenAtCursor.Text;
                         result = CompletionCompleters.CompleteComment(completionContext, ref replacementIndex, ref replacementLength);
                         break;
@@ -500,6 +503,15 @@ namespace System.Management.Automation
                                 return completions;
                             }
                         }
+                        else if (lastAst.Parent is BinaryExpressionAst binaryExpression)
+                        {
+                            completionContext.WordToComplete = (tokenAtCursor as StringToken).Value;
+                            result = CompletionCompleters.CompleteComparisonOperatorValues(completionContext, binaryExpression.Left);
+                            if (result.Count > 0)
+                            {
+                                return result;
+                            }
+                        }
                         else if (lastAst.Parent is IndexExpressionAst indexExpressionAst)
                         {
                             // Handles quoted string inside index expression like: $PSVersionTable["<Tab>"]
@@ -507,7 +519,7 @@ namespace System.Management.Automation
                             return CompletionCompleters.CompleteIndexExpression(completionContext, indexExpressionAst.Target);
                         }
 
-                        result = GetResultForString(completionContext, ref replacementIndex, ref replacementLength, isQuotedString);
+                        result = GetResultForString(completionContext, ref replacementIndex, ref replacementLength);
                         break;
 
                     case TokenKind.RBracket:
@@ -765,6 +777,12 @@ namespace System.Management.Automation
                         }
                         break;
                     default:
+                        result = CompleteUsingKeywords(completionContext.CursorPosition.Offset, _tokens, ref replacementIndex, ref replacementLength);
+                        if (result is not null)
+                        {
+                            return result;
+                        }
+
                         if ((tokenAtCursor.TokenFlags & TokenFlags.Keyword) != 0)
                         {
                             completionContext.WordToComplete = tokenAtCursor.Text;
@@ -813,8 +831,7 @@ namespace System.Management.Automation
 
                 bool skipAutoCompleteForCommandCall = isCursorLineEmpty && !isLineContinuationBeforeCursor;
                 bool lastAstIsExpressionAst = lastAst is ExpressionAst;
-                if (!isQuotedString &&
-                    !skipAutoCompleteForCommandCall &&
+                if (!skipAutoCompleteForCommandCall &&
                     (lastAst is CommandParameterAst || lastAst is CommandAst ||
                     (lastAstIsExpressionAst && lastAst.Parent is CommandAst) ||
                     (lastAstIsExpressionAst && lastAst.Parent is CommandParameterAst) ||
@@ -853,7 +870,7 @@ namespace System.Management.Automation
                         replacementLength = completionContext.ReplacementLength;
                     }
                 }
-                else if (!isQuotedString)
+                else
                 {
                     //
                     // Handle completion of empty line within configuration statement
@@ -896,7 +913,7 @@ namespace System.Management.Automation
                         {
                             switch (completionContext.TokenBeforeCursor.Kind)
                             {
-                               
+
                                 case TokenKind.Dot:
                                 case TokenKind.ColonColon:
                                 case TokenKind.QuestionDot:
@@ -911,8 +928,27 @@ namespace System.Management.Automation
                                     {
                                         result = GetResultForAttributeArgument(completionContext, ref replacementIndex, ref replacementLength);
                                     }
-
                                     break;
+
+                                case TokenKind.Ieq:
+                                case TokenKind.Ceq:
+                                case TokenKind.Ine:
+                                case TokenKind.Cne:
+                                case TokenKind.Ilike:
+                                case TokenKind.Clike:
+                                case TokenKind.Inotlike:
+                                case TokenKind.Cnotlike:
+                                case TokenKind.Imatch:
+                                case TokenKind.Cmatch:
+                                case TokenKind.Inotmatch:
+                                case TokenKind.Cnotmatch:
+                                    if (lastAst is BinaryExpressionAst binaryExpression)
+                                    {
+                                        completionContext.WordToComplete = string.Empty;
+                                        result = CompletionCompleters.CompleteComparisonOperatorValues(completionContext, binaryExpression.Left);
+                                    }
+                                    break;
+
                                 case TokenKind.LBracket:
                                     if (lastAst.Parent is IndexExpressionAst indexExpression)
                                     {
@@ -921,6 +957,7 @@ namespace System.Management.Automation
                                         result = CompletionCompleters.CompleteIndexExpression(completionContext, indexExpression.Target);
                                     }
                                     break;
+
                                 default:
                                     break;
                             }
@@ -969,6 +1006,7 @@ namespace System.Management.Automation
                                         result = GetResultForEnumPropertyValueOfDSCResource(completionContext, string.Empty, ref replacementIndex, ref replacementLength, out _);
                                         break;
                                     }
+
                                 case TokenKind.Break:
                                 case TokenKind.Continue:
                                     {
@@ -979,6 +1017,10 @@ namespace System.Management.Automation
                                         }
                                         break;
                                     }
+
+                                case TokenKind.Using:
+                                    return CompleteUsingKeywords(completionContext.CursorPosition.Offset, _tokens, ref replacementIndex, ref replacementLength);
+
                                 case TokenKind.Dot:
                                 case TokenKind.ColonColon:
                                 case TokenKind.QuestionDot:
@@ -991,6 +1033,26 @@ namespace System.Management.Automation
                                         return result;
                                     }
                                     break;
+
+                                case TokenKind.Ieq:
+                                case TokenKind.Ceq:
+                                case TokenKind.Ine:
+                                case TokenKind.Cne:
+                                case TokenKind.Ilike:
+                                case TokenKind.Clike:
+                                case TokenKind.Inotlike:
+                                case TokenKind.Cnotlike:
+                                case TokenKind.Imatch:
+                                case TokenKind.Cmatch:
+                                case TokenKind.Inotmatch:
+                                case TokenKind.Cnotmatch:
+                                    if (lastAst is BinaryExpressionAst binaryExpression)
+                                    {
+                                        completionContext.WordToComplete = string.Empty;
+                                        result = CompletionCompleters.CompleteComparisonOperatorValues(completionContext, binaryExpression.Left);
+                                    }
+                                    break;
+
                                 case TokenKind.LBracket:
                                     if (lastAst.Parent is IndexExpressionAst indexExpression)
                                     {
@@ -999,6 +1061,7 @@ namespace System.Management.Automation
                                         result = CompletionCompleters.CompleteIndexExpression(completionContext, indexExpression.Target);
                                     }
                                     break;
+
                                 default:
                                     break;
                             }
@@ -1052,7 +1115,7 @@ namespace System.Management.Automation
                         typeNameToComplete = FindTypeNameToComplete(typeConstraintAst.TypeName, _cursorPosition);
                     }
                 }
-                
+
                 if (typeNameToComplete is null && tokenAtCursor?.TokenFlags.HasFlag(TokenFlags.TypeName) == true)
                 {
                     typeNameToComplete = new TypeName(tokenAtCursor.Extent, tokenAtCursor.Text);
@@ -1065,7 +1128,7 @@ namespace System.Management.Automation
                     replacementIndex = typeNameToComplete.Extent.StartOffset;
                     replacementLength = typeNameToComplete.Extent.EndOffset - replacementIndex;
                     completionContext.WordToComplete = typeNameToComplete.FullName;
-                    result = CompletionCompleters.CompleteType(completionContext);
+                    return CompletionCompleters.CompleteType(completionContext);
                 }
             }
 
@@ -1213,7 +1276,7 @@ namespace System.Management.Automation
             hasNewLine = false;
             if (!string.IsNullOrEmpty(stringToComplete))
             {
-                var index = stringToComplete.IndexOfAny(Utils.Separators.CrLf);
+                var index = stringToComplete.AsSpan().IndexOfAny('\r', '\n');
                 if (index >= 0)
                 {
                     stringToComplete = stringToComplete.Substring(0, index);
@@ -1354,6 +1417,24 @@ namespace System.Management.Automation
             return typeConstraint != null || setConstraint != null;
         }
 
+        private static List<CompletionResult> CompletePropertyAssignment(MemberExpressionAst memberExpression, CompletionContext context)
+        {
+            if (SafeExprEvaluator.TrySafeEval(memberExpression, context.ExecutionContext, out var evalValue))
+            {
+                if (evalValue is null)
+                {
+                    return null;
+                }
+
+                Type type = evalValue.GetType();
+                if (type.IsEnum)
+                {
+                    return GetResultForEnum(type, context);
+                }
+            }
+            return null;
+        }
+
         private static bool TryGetCompletionsForVariableAssignment(
             CompletionContext completionContext,
             AssignmentStatementAst assignmentAst,
@@ -1383,6 +1464,12 @@ namespace System.Management.Automation
                 }
 
                 return false;
+            }
+
+            if (assignmentAst.Left is MemberExpressionAst member)
+            {
+                completions = CompletePropertyAssignment(member, completionContext);
+                return completions is not null;
             }
 
             completions = null;
@@ -1600,7 +1687,7 @@ namespace System.Management.Automation
                                 Diagnostics.Assert(isCursorInString || (!hasNewLine), "hasNoQuote and hasNewLine cannot be true at the same time");
                                 if (property.ValueMap != null && property.ValueMap.Count > 0)
                                 {
-                                    IEnumerable<string> orderedValues = property.ValueMap.Keys.OrderBy(static x => x).Where(v => !existingValues.Contains(v, StringComparer.OrdinalIgnoreCase));
+                                    IEnumerable<string> orderedValues = property.ValueMap.Keys.Order().Where(v => !existingValues.Contains(v, StringComparer.OrdinalIgnoreCase));
                                     var matchedResults = orderedValues.Where(v => wildcardPattern.IsMatch(v));
                                     if (matchedResults == null || !matchedResults.Any())
                                     {
@@ -1682,111 +1769,50 @@ namespace System.Management.Automation
             return result;
         }
 
-        private List<CompletionResult> GetResultForString(CompletionContext completionContext, ref int replacementIndex, ref int replacementLength, bool isQuotedString)
+        private static List<CompletionResult> GetResultForString(CompletionContext completionContext, ref int replacementIndex, ref int replacementLength)
         {
-            // When it's the content of a quoted string, we only handle variable/member completion
-            if (isQuotedString) { return null; }
-
-            var tokenAtCursor = completionContext.TokenAtCursor;
             var lastAst = completionContext.RelatedAsts.Last();
-
-            List<CompletionResult> result = null;
             var expandableString = lastAst as ExpandableStringExpressionAst;
             var constantString = lastAst as StringConstantExpressionAst;
             if (constantString == null && expandableString == null) { return null; }
 
             string strValue = constantString != null ? constantString.Value : expandableString.Value;
-            StringConstantType strType = constantString != null ? constantString.StringConstantType : expandableString.StringConstantType;
-            string subInput = null;
 
             bool shouldContinue;
-            result = GetResultForEnumPropertyValueOfDSCResource(completionContext, strValue, ref replacementIndex, ref replacementLength, out shouldContinue);
+            List<CompletionResult> result = GetResultForEnumPropertyValueOfDSCResource(completionContext, strValue, ref replacementIndex, ref replacementLength, out shouldContinue);
             if (!shouldContinue || (result != null && result.Count > 0))
             {
                 return result;
             }
 
-            if (strType == StringConstantType.DoubleQuoted)
+            var commandElementAst = lastAst as CommandElementAst;
+            string wordToComplete =
+                CompletionCompleters.ConcatenateStringPathArguments(commandElementAst, string.Empty, completionContext);
+
+            if (wordToComplete != null)
             {
-                var match = Regex.Match(strValue, @"(\$[\w\d]+\.[\w\d\*]*)$");
-                if (match.Success)
+                completionContext.WordToComplete = wordToComplete;
+
+                // Handle scenarios like this: cd 'c:\windows\win'<tab>
+                if (lastAst.Parent is CommandAst || lastAst.Parent is CommandParameterAst)
                 {
-                    subInput = match.Groups[1].Value;
+                    result = CompletionCompleters.CompleteCommandArgument(completionContext);
+                    replacementIndex = completionContext.ReplacementIndex;
+                    replacementLength = completionContext.ReplacementLength;
                 }
-                else if ((match = Regex.Match(strValue, @"(\[[\w\d\.]+\]::[\w\d\*]*)$")).Success)
+                // Handle scenarios like this: "c:\wind"<tab>. Treat the StringLiteral/StringExpandable as path/command
+                else
                 {
-                    subInput = match.Groups[1].Value;
-                }
-            }
+                    // Handle path/commandname completion for quoted string
+                    result = new List<CompletionResult>(CompletionCompleters.CompleteFilename(completionContext));
 
-            // Handle variable/member completion
-            if (subInput != null)
-            {
-                int stringStartIndex = tokenAtCursor.Extent.StartScriptPosition.Offset;
-                int cursorIndexInString = _cursorPosition.Offset - stringStartIndex - 1;
-                if (cursorIndexInString >= strValue.Length)
-                    cursorIndexInString = strValue.Length;
-
-                var analysis = new CompletionAnalysis(_ast, _tokens, _cursorPosition, _options);
-                var subContext = analysis.CreateCompletionContext(completionContext.TypeInferenceContext);
-
-                var subResult = analysis.GetResultHelper(subContext, out int subReplaceIndex, out _, true);
-
-                if (subResult != null && subResult.Count > 0)
-                {
-                    result = new List<CompletionResult>();
-                    replacementIndex = stringStartIndex + 1 + (cursorIndexInString - subInput.Length);
-                    replacementLength = subInput.Length;
-                    ReadOnlySpan<char> prefix = subInput.AsSpan(0, subReplaceIndex);
-
-                    foreach (CompletionResult entry in subResult)
+                    // Try command name completion only if the text contains '-'
+                    if (wordToComplete.Contains('-'))
                     {
-                        string completionText = string.Concat(prefix, entry.CompletionText.AsSpan());
-                        if (entry.ResultType == CompletionResultType.Property)
+                        var commandNameResult = CompletionCompleters.CompleteCommand(completionContext);
+                        if (commandNameResult != null && commandNameResult.Count > 0)
                         {
-                            completionText = TokenKind.DollarParen.Text() + completionText + TokenKind.RParen.Text();
-                        }
-                        else if (entry.ResultType == CompletionResultType.Method)
-                        {
-                            completionText = TokenKind.DollarParen.Text() + completionText;
-                        }
-
-                        completionText += "\"";
-                        result.Add(new CompletionResult(completionText, entry.ListItemText, entry.ResultType, entry.ToolTip));
-                    }
-                }
-            }
-            else
-            {
-                var commandElementAst = lastAst as CommandElementAst;
-                string wordToComplete =
-                    CompletionCompleters.ConcatenateStringPathArguments(commandElementAst, string.Empty, completionContext);
-
-                if (wordToComplete != null)
-                {
-                    completionContext.WordToComplete = wordToComplete;
-
-                    // Handle scenarios like this: cd 'c:\windows\win'<tab>
-                    if (lastAst.Parent is CommandAst || lastAst.Parent is CommandParameterAst)
-                    {
-                        result = CompletionCompleters.CompleteCommandArgument(completionContext);
-                        replacementIndex = completionContext.ReplacementIndex;
-                        replacementLength = completionContext.ReplacementLength;
-                    }
-                    // Handle scenarios like this: "c:\wind"<tab>. Treat the StringLiteral/StringExpandable as path/command
-                    else
-                    {
-                        // Handle path/commandname completion for quoted string
-                        result = new List<CompletionResult>(CompletionCompleters.CompleteFilename(completionContext));
-
-                        // Try command name completion only if the text contains '-'
-                        if (wordToComplete.Contains('-'))
-                        {
-                            var commandNameResult = CompletionCompleters.CompleteCommand(completionContext);
-                            if (commandNameResult != null && commandNameResult.Count > 0)
-                            {
-                                result.AddRange(commandNameResult);
-                            }
+                            result.AddRange(commandNameResult);
                         }
                     }
                 }
@@ -1904,12 +1930,12 @@ namespace System.Management.Automation
             return results;
         }
 
-        private static List<CompletionResult> GetResultForIdentifier(CompletionContext completionContext, ref int replacementIndex, ref int replacementLength, bool isQuotedString)
+        private static List<CompletionResult> GetResultForIdentifier(CompletionContext completionContext, ref int replacementIndex, ref int replacementLength)
         {
+            List<CompletionResult> result = null;
             var tokenAtCursor = completionContext.TokenAtCursor;
             var lastAst = completionContext.RelatedAsts.Last();
 
-            List<CompletionResult> result = null;
             var tokenAtCursorText = tokenAtCursor.Text;
             completionContext.WordToComplete = tokenAtCursorText;
 
@@ -1972,7 +1998,7 @@ namespace System.Management.Automation
                     }
                 }
             }
-            if (completionContext.TokenAtCursor.TokenFlags == TokenFlags.MemberName)
+            if (completionContext.TokenAtCursor.TokenFlags == TokenFlags.MemberName && (lastAst is NamedAttributeArgumentAst || lastAst.Parent is NamedAttributeArgumentAst))
             {
                 result = GetResultForAttributeArgument(completionContext, ref replacementIndex, ref replacementLength);
                 if (result is not null)
@@ -1986,13 +2012,16 @@ namespace System.Management.Automation
                 // Handle completion for a path with variable, such as: $PSHOME\ty<tab>
                 if (completionContext.RelatedAsts.Count > 0 && completionContext.RelatedAsts[0] is ScriptBlockAst)
                 {
-                    Ast cursorAst = completionContext.RelatedAsts[0].FindAll(ast => ast.Extent.EndOffset <= tokenAtCursor.Extent.StartOffset, true).LastOrDefault();
+                    Ast cursorAst = completionContext.RelatedAsts[0].FindAll(
+                        ast => ast.Extent.EndOffset <= tokenAtCursor.Extent.StartOffset
+                            && ast.Extent is not EmptyScriptExtent,
+                        searchNestedScriptBlocks: true).LastOrDefault();
 
                     if (cursorAst is not null)
                     {
                         if (cursorAst.Extent.EndOffset == tokenAtCursor.Extent.StartOffset)
                         {
-                            if (tokenAtCursorText.IndexOfAny(Utils.Separators.Directory) == 0)
+                            if (tokenAtCursorText.AsSpan().IndexOfAny('\\', '/') == 0)
                             {
                                 string wordToComplete =
                                     CompletionCompleters.ConcatenateStringPathArguments(cursorAst as CommandElementAst, tokenAtCursorText, completionContext);
@@ -2048,9 +2077,6 @@ namespace System.Management.Automation
                         }
                     }
                 }
-
-                // When it's the content of a quoted string, we only handle variable/member completion
-                if (isQuotedString) { return result; }
 
                 // Handle the StringExpandableToken;
                 var strToken = tokenAtCursor as StringExpandableToken;
@@ -2121,8 +2147,6 @@ namespace System.Management.Automation
                 // When it's the content of a quoted string, we only handle variable/member completion
                 if (isSingleDash)
                 {
-                    if (isQuotedString) { return result; }
-
                     var res = CompletionCompleters.CompleteCommandParameter(completionContext);
                     if (res.Count != 0)
                     {
@@ -2228,9 +2252,6 @@ namespace System.Management.Automation
                 }
             }
 
-            // When it's the content of a quoted string, we only handle variable/member completion
-            if (isQuotedString) { return result; }
-
             bool needFileCompletion = false;
             if (lastAst.Parent is FileRedirectionAst || CompleteAgainstSwitchFile(lastAst, completionContext.TokenBeforeCursor))
             {
@@ -2242,7 +2263,7 @@ namespace System.Management.Automation
                     completionContext.WordToComplete = wordToComplete;
                 }
             }
-            else if (tokenAtCursorText.IndexOfAny(Utils.Separators.Directory) == 0)
+            else if (tokenAtCursorText.AsSpan().IndexOfAny('\\', '/') == 0)
             {
                 var command = lastAst.Parent as CommandBaseAst;
                 if (command != null && command.Redirections.Count > 0)
@@ -2334,7 +2355,7 @@ namespace System.Management.Automation
                     // Ignore getter-only properties and properties that have already been set.
                     if (!property.CanWrite || existingArguments.Contains(property.Name))
                     {
-                        continue; 
+                        continue;
                     }
 
                     if (property.Name.StartsWith(argName, StringComparison.OrdinalIgnoreCase))
@@ -2434,5 +2455,81 @@ namespace System.Management.Automation
 
             return result;
         }
+      
+        private static List<CompletionResult> CompleteUsingKeywords(int cursorOffset, Token[] tokens, ref int replacementIndex, ref int replacementLength)
+        {
+            var result = new List<CompletionResult>();
+            Token tokenBeforeCursor = null;
+            Token tokenAtCursor = null;
+
+            for (int i = tokens.Length - 1; i >= 0; i--)
+            {
+                if (tokens[i].Extent.EndOffset < cursorOffset && tokens[i].Kind != TokenKind.LineContinuation)
+                {
+                    tokenBeforeCursor = tokens[i];
+                    break;
+                }
+                else if (tokens[i].Extent.StartOffset <= cursorOffset && tokens[i].Extent.EndOffset >= cursorOffset && tokens[i].Kind != TokenKind.LineContinuation)
+                {
+                    tokenAtCursor = tokens[i];
+                }
+            }
+
+            if (tokenBeforeCursor is not null && tokenBeforeCursor.Kind == TokenKind.Using)
+            {
+                string wordToComplete = null;
+                if (tokenAtCursor is not null)
+                {
+                    replacementIndex = tokenAtCursor.Extent.StartOffset;
+                    replacementLength = tokenAtCursor.Extent.Text.Length;
+                    wordToComplete = tokenAtCursor.Text;
+                }
+                else
+                {
+                    replacementIndex = cursorOffset;
+                    replacementLength = 0;
+                }
+
+                foreach (var keyword in s_usingKeywords)
+                {
+                    if (string.IsNullOrEmpty(wordToComplete) || keyword.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
+                    {
+                        result.Add(new CompletionResult(keyword, keyword, CompletionResultType.Keyword, GetUsingKeywordToolTip(keyword)));
+                    }
+                }
+            }
+
+            if (result.Count > 0)
+            {
+                return result;
+            }
+
+            return null;
+        }
+
+        private static string GetUsingKeywordToolTip(string keyword)
+        {
+            switch (keyword)
+            {
+                case "assembly":
+                    return TabCompletionStrings.AssemblyKeywordDescription;
+                case "module":
+                    return TabCompletionStrings.ModuleKeywordDescription;
+                case "namespace":
+                    return TabCompletionStrings.NamespaceKeywordDescription;
+                case "type":
+                    return TabCompletionStrings.TypeKeywordDescription;
+                default:
+                    return null;
+            }
+        }
+
+        private static readonly string[] s_usingKeywords = new string[]
+        {
+            "assembly",
+            "module",
+            "namespace",
+            "type"
+        };
     }
 }

@@ -83,11 +83,6 @@ namespace Microsoft.PowerShell.Commands
         public static string FormatHexPathPrefix { get { return UtilityCommonStrings.FormatHexPathPrefix; } }
 
         /// <summary>
-        /// Error message to indicate that requested algorithm is not supported on the target platform.
-        /// </summary>
-        public static string AlgorithmTypeNotSupported { get { return UtilityCommonStrings.AlgorithmTypeNotSupported; } }
-
-        /// <summary>
         /// The file '{0}' could not be parsed as a PowerShell Data File.
         /// </summary>
         public static string CouldNotParseAsPowerShellDataFile { get { return UtilityCommonStrings.CouldNotParseAsPowerShellDataFile; } }
@@ -220,7 +215,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the hexadecimal representation of the <see cref="Offset64"/> value.
         /// </summary>
-        public string HexOffset { get => string.Format(CultureInfo.CurrentCulture, "{0:X16}", Offset64); }
+        public string HexOffset => string.Create(CultureInfo.CurrentCulture, $"{Offset64:X16}");
 
         /// <summary>
         /// Gets the type of the input objects used to create the <see cref="ByteCollection"/>.

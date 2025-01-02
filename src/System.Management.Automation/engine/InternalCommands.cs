@@ -11,6 +11,7 @@ using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Management.Automation.PSTasks;
+using System.Management.Automation.Security;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
@@ -385,10 +386,11 @@ namespace Microsoft.PowerShell.Commands
         private void InitParallelParameterSet()
         {
             // The following common parameters are not (yet) supported in this parameter set.
-            //  ErrorAction, WarningAction, InformationAction, PipelineVariable.
+            //  ErrorAction, WarningAction, InformationAction, ProgressAction, PipelineVariable.
             if (MyInvocation.BoundParameters.ContainsKey(nameof(CommonParamSet.ErrorAction)) ||
                 MyInvocation.BoundParameters.ContainsKey(nameof(CommonParamSet.WarningAction)) ||
                 MyInvocation.BoundParameters.ContainsKey(nameof(CommonParamSet.InformationAction)) ||
+                MyInvocation.BoundParameters.ContainsKey(nameof(CommonParamSet.ProgressAction)) ||
                 MyInvocation.BoundParameters.ContainsKey(nameof(CommonParamSet.PipelineVariable)))
             {
                 ThrowTerminatingError(
@@ -684,7 +686,10 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 // if inputObject is of IDictionary, get the value
-                if (GetValueFromIDictionaryInput()) { return; }
+                if (GetValueFromIDictionaryInput())
+                {
+                    return;
+                }
 
                 PSMemberInfo member = null;
                 if (WildcardPattern.ContainsWildcardCharacters(_propertyOrMethodName))
@@ -700,7 +705,7 @@ namespace Microsoft.PowerShell.Commands
                         StringBuilder possibleMatches = new StringBuilder();
                         foreach (PSMemberInfo item in members)
                         {
-                            possibleMatches.AppendFormat(CultureInfo.InvariantCulture, " {0}", item.Name);
+                            possibleMatches.Append(CultureInfo.InvariantCulture, $" {item.Name}");
                         }
 
                         WriteError(GenerateNameParameterError("Name", InternalCommandStrings.AmbiguousPropertyOrMethodName,
@@ -919,17 +924,14 @@ namespace Microsoft.PowerShell.Commands
                 // because it allows you to parameterize a command - for example you might allow
                 // for actions before and after the main processing script. They could be null
                 // by default and therefore ignored then filled in later...
-                if (_scripts[i] != null)
-                {
-                    _scripts[i].InvokeUsingCmdlet(
-                        contextCmdlet: this,
-                        useLocalScope: false,
-                        errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
-                        dollarUnder: InputObject,
-                        input: new object[] { InputObject },
-                        scriptThis: AutomationNull.Value,
-                        args: Array.Empty<object>());
-                }
+                _scripts[i]?.InvokeUsingCmdlet(
+                    contextCmdlet: this,
+                    useLocalScope: false,
+                    errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
+                    dollarUnder: InputObject,
+                    input: new object[] { InputObject },
+                    scriptThis: AutomationNull.Value,
+                    args: Array.Empty<object>());
             }
         }
 
@@ -1021,7 +1023,7 @@ namespace Microsoft.PowerShell.Commands
                 StringBuilder possibleMatches = new StringBuilder();
                 foreach (PSMemberInfo item in methods)
                 {
-                    possibleMatches.AppendFormat(CultureInfo.InvariantCulture, " {0}", item.Name);
+                    possibleMatches.Append(CultureInfo.InvariantCulture, $" {item.Name}");
                 }
 
                 WriteError(GenerateNameParameterError(
@@ -1051,7 +1053,7 @@ namespace Microsoft.PowerShell.Commands
                 StringBuilder arglist = new StringBuilder(GetStringRepresentation(_arguments[0]));
                 for (int i = 1; i < _arguments.Length; i++)
                 {
-                    arglist.AppendFormat(CultureInfo.InvariantCulture, ", {0}", GetStringRepresentation(_arguments[i]));
+                    arglist.Append(CultureInfo.InvariantCulture, $", {GetStringRepresentation(_arguments[i])}");
                 }
 
                 string methodAction = string.Format(CultureInfo.InvariantCulture,
@@ -1204,14 +1206,25 @@ namespace Microsoft.PowerShell.Commands
             if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
             {
                 object baseObject = PSObject.Base(inputObject);
+                var objectType = baseObject.GetType();
 
-                if (!CoreTypes.Contains(baseObject.GetType()))
+                if (!CoreTypes.Contains(objectType))
                 {
-                    PSInvalidOperationException exception =
-                        new PSInvalidOperationException(ParserStrings.InvokeMethodConstrainedLanguage);
+                    if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
+                    {
+                        PSInvalidOperationException exception =
+                            new PSInvalidOperationException(ParserStrings.InvokeMethodConstrainedLanguage);
 
-                    WriteError(new ErrorRecord(exception, "MethodInvocationNotSupportedInConstrainedLanguage", ErrorCategory.InvalidOperation, null));
-                    return true;
+                        WriteError(new ErrorRecord(exception, "MethodInvocationNotSupportedInConstrainedLanguage", ErrorCategory.InvalidOperation, null));
+                        return true;
+                    }
+
+                    SystemPolicy.LogWDACAuditMessage(
+                        context: Context,
+                        title: InternalCommandStrings.WDACLogTitle,
+                        message: StringUtil.Format(InternalCommandStrings.WDACLogMessage, objectType.FullName),
+                        fqid: "ForEachObjectCmdletMethodInvocationNotAllowed",
+                        dropIntoDebugger: true);
                 }
             }
 
@@ -2357,7 +2370,7 @@ namespace Microsoft.PowerShell.Commands
                 StringBuilder possibleMatches = new StringBuilder();
                 foreach (PSMemberInfo item in members)
                 {
-                    possibleMatches.AppendFormat(CultureInfo.InvariantCulture, " {0}", item.Name);
+                    possibleMatches.Append(CultureInfo.InvariantCulture, $" {item.Name}");
                 }
 
                 WriteError(
@@ -2657,7 +2670,7 @@ namespace Microsoft.PowerShell.Commands
             protected override void Validate(object arguments, EngineIntrinsics engineIntrinsics)
             {
                 Version version = arguments as Version;
-                if (version == null || !PSVersionInfo.IsValidPSVersion(version))
+                if (!PSVersionInfo.IsValidPSVersion(version))
                 {
                     // No conversion succeeded so throw and exception...
                     throw new ValidationMetadataException(
@@ -2673,6 +2686,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets strict mode in the current scope.
         /// </summary>
         [Parameter(ParameterSetName = "Version", Mandatory = true)]
+        [ArgumentCompleter(typeof(StrictModeVersionArgumentCompleter))]
         [ArgumentToPSVersionTransformation]
         [ValidateVersion]
         [Alias("v")]
@@ -2704,6 +2718,42 @@ namespace Microsoft.PowerShell.Commands
             Context.EngineSessionState.CurrentScope.StrictModeVersion = _version;
         }
     }
+
+    /// <summary>
+    /// Provides argument completion for StrictMode Version parameter.
+    /// </summary>
+    public class StrictModeVersionArgumentCompleter : IArgumentCompleter
+    {
+        private static readonly string[] s_strictModeVersions = new string[] { "Latest", "3.0", "2.0", "1.0" };
+
+        /// <summary>
+        /// Returns completion results for version parameter.
+        /// </summary>
+        /// <param name="commandName">The command name.</param>
+        /// <param name="parameterName">The parameter name.</param>
+        /// <param name="wordToComplete">The word to complete.</param>
+        /// <param name="commandAst">The command AST.</param>
+        /// <param name="fakeBoundParameters">The fake bound parameters.</param>
+        /// <returns>List of Completion Results.</returns>
+        public IEnumerable<CompletionResult> CompleteArgument(
+            string commandName,
+            string parameterName,
+            string wordToComplete,
+            CommandAst commandAst,
+            IDictionary fakeBoundParameters)
+        {
+            var strictModeVersionPattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
+
+            foreach (string version in s_strictModeVersions)
+            {
+                if (strictModeVersionPattern.IsMatch(version))
+                {
+                    yield return new CompletionResult(version);
+                }
+            }
+        }
+    }
+
     #endregion Set-StrictMode
 
     #endregion Built-in cmdlets that are used by or require direct access to the engine.

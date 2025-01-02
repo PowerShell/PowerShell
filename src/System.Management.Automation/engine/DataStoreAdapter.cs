@@ -289,7 +289,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a drive that maps an MSH Path in
+        /// Constructs a drive that maps a PowerShell Path in
         /// the shell to a Cmdlet Provider.
         /// </summary>
         /// <param name="name">
@@ -366,7 +366,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a drive that maps an MSH Path in
+        /// Constructs a drive that maps a PowerShell Path in
         /// the shell to a Cmdlet Provider.
         /// </summary>
         /// <param name="name">
@@ -408,7 +408,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a drive that maps an MSH Path in
+        /// Constructs a drive that maps a PowerShell Path in
         /// the shell to a Cmdlet Provider.
         /// </summary>
         /// <param name="name">

@@ -24,10 +24,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="wildcardPatternsStrings">Array of pattern strings to use.</param>
         internal PSPropertyExpressionFilter(string[] wildcardPatternsStrings)
         {
-            if (wildcardPatternsStrings == null)
-            {
-                throw new ArgumentNullException(nameof(wildcardPatternsStrings));
-            }
+            ArgumentNullException.ThrowIfNull(wildcardPatternsStrings);
 
             _wildcardPatterns = new WildcardPattern[wildcardPatternsStrings.Length];
             for (int k = 0; k < wildcardPatternsStrings.Length; k++)
@@ -114,6 +111,13 @@ namespace Microsoft.PowerShell.Commands
         private bool _unique;
 
         /// <summary>
+        /// Gets or sets case insensitive switch for string comparison.
+        /// Used in combination with Unique switch parameter.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter CaseInsensitive { get; set; }
+
+        /// <summary>
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "DefaultParameter")]
@@ -147,10 +151,11 @@ namespace Microsoft.PowerShell.Commands
         private bool _firstOrLastSpecified;
 
         /// <summary>
-        /// Skips the specified number of items from top when used with First, from end when used with Last.
+        /// Skips the specified number of items from top when used with First, from end when used with Last or SkipLast.
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "DefaultParameter")]
+        [Parameter(ParameterSetName = "SkipLastParameter")]
         [ValidateRange(0, int.MaxValue)]
         public int Skip { get; set; }
 
@@ -437,7 +442,11 @@ namespace Microsoft.PowerShell.Commands
                 if (_exclusionFilter == null || !_exclusionFilter.IsMatch(resolvedName))
                 {
                     List<PSPropertyExpressionResult> tempExprResults = resolvedName.GetValues(inputObject);
-                    if (tempExprResults == null) continue;
+                    if (tempExprResults == null)
+                    {
+                        continue;
+                    }
+
                     foreach (PSPropertyExpressionResult mshExpRes in tempExprResults)
                     {
                         expressionResults.Add(mshExpRes);
@@ -528,7 +537,10 @@ namespace Microsoft.PowerShell.Commands
             if (r.Exception == null)
             {
                 // ignore the property value if it's null
-                if (r.Result == null) { return; }
+                if (r.Result == null)
+                {
+                    return;
+                }
 
                 System.Collections.IEnumerable results = LanguagePrimitives.GetEnumerable(r.Result);
                 if (results == null)
@@ -548,7 +560,10 @@ namespace Microsoft.PowerShell.Commands
                 foreach (object expandedValue in results)
                 {
                     // ignore the element if it's null
-                    if (expandedValue == null) { continue; }
+                    if (expandedValue == null)
+                    {
+                        continue;
+                    }
 
                     // add NoteProperties if there is any
                     // If expandedValue is a base object, we don't want to associate the NoteProperty
@@ -624,7 +639,11 @@ namespace Microsoft.PowerShell.Commands
                 bool isObjUnique = true;
                 foreach (UniquePSObjectHelper uniqueObj in _uniques)
                 {
-                    ObjectCommandComparer comparer = new(true, CultureInfo.CurrentCulture, true);
+                    ObjectCommandComparer comparer = new(
+                        ascending: true,
+                        CultureInfo.CurrentCulture,
+                        caseSensitive: !CaseInsensitive.IsPresent);
+
                     if ((comparer.Compare(obj.BaseObject, uniqueObj.WrittenObject.BaseObject) == 0) &&
                         (uniqueObj.NotePropertyCount == addedNoteProperties.Count))
                     {

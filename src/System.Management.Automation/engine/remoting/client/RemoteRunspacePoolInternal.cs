@@ -347,7 +347,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     return true;
                 }
 
-                // sending the message should be done withing the lock
+                // sending the message should be done within the lock
                 // to ensure that multiple calls to SetMaxRunspaces
                 // will be executed on the server in the order in which
                 // they were called in the client
@@ -410,7 +410,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     return true;
                 }
 
-                // sending the message should be done withing the lock
+                // sending the message should be done within the lock
                 // to ensure that multiple calls to SetMinRunspaces
                 // will be executed on the server in the order in which
                 // they were called in the client
@@ -452,7 +452,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 // return maxrunspaces
                 if (stateInfo.State == RunspacePoolState.Opened)
                 {
-                    // sending the message should be done withing the lock
+                    // sending the message should be done within the lock
                     // to ensure that multiple calls to GetAvailableRunspaces
                     // will be executed on the server in the order in which
                     // they were called in the client
@@ -1215,7 +1215,7 @@ namespace System.Management.Automation.Runspaces.Internal
             return psCollection;
         }
 
-        ///<summary>
+        /// <summary>
         /// Returns RunspacePool capabilities.
         /// </summary>
         /// <returns>RunspacePoolCapability.</returns>
@@ -1826,20 +1826,14 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             // Reset DisconnectedOn/ExpiresOn
             WSManConnectionInfo wsManConnectionInfo = _connectionInfo as WSManConnectionInfo;
-            if (wsManConnectionInfo != null)
-            {
-                wsManConnectionInfo.NullDisconnectedExpiresOn();
-            }
+            wsManConnectionInfo?.NullDisconnectedExpiresOn();
         }
 
         private void UpdateDisconnectedExpiresOn()
         {
             // Set DisconnectedOn/ExpiresOn for disconnected session.
             WSManConnectionInfo wsManConnectionInfo = _connectionInfo as WSManConnectionInfo;
-            if (wsManConnectionInfo != null)
-            {
-                wsManConnectionInfo.SetDisconnectedExpiresOnToNow();
-            }
+            wsManConnectionInfo?.SetDisconnectedExpiresOnToNow();
         }
 
         /// <summary>
@@ -2039,7 +2033,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 powerShell.AddCommand("Get-WSManInstance");
 
                 // Add parameters to enumerate commands.
-                string filterStr = string.Format(CultureInfo.InvariantCulture, "ShellId='{0}'", shellId.ToString().ToUpperInvariant());
+                string filterStr = string.Create(CultureInfo.InvariantCulture, $"ShellId='{shellId.ToString().ToUpperInvariant()}'");
                 powerShell.AddParameter("ResourceURI", @"Shell/Command");
                 powerShell.AddParameter("Enumerate", true);
                 powerShell.AddParameter("Dialect", "Selector");

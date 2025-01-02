@@ -13,7 +13,7 @@ namespace System.Management.Automation.Remoting
     /// <summary>
     /// Implements ServerRemoteSessionDataStructureHandler.
     /// </summary>
-    internal class ClientRemoteSessionDSHandlerImpl : ClientRemoteSessionDataStructureHandler, IDisposable
+    internal sealed class ClientRemoteSessionDSHandlerImpl : ClientRemoteSessionDataStructureHandler, IDisposable
     {
         [TraceSourceAttribute("CRSDSHdlerImpl", "ClientRemoteSessionDSHandlerImpl")]
         private static readonly PSTraceSource s_trace = PSTraceSource.GetTracer("CRSDSHdlerImpl", "ClientRemoteSessionDSHandlerImpl");
@@ -329,7 +329,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Clubing negotiation packet + runspace creation and then doing transportManager.ConnectAsync().
+        /// Clubbing negotiation packet + runspace creation and then doing transportManager.ConnectAsync().
         /// This will save us 2 network calls by doing all the work in one network call.
         /// </summary>
         private void HandleNegotiationSendingStateChange()
@@ -736,25 +736,11 @@ namespace System.Management.Automation.Remoting
         #region IDisposable
 
         /// <summary>
-        /// Public method for dispose.
+        /// Release all resources.
         /// </summary>
         public void Dispose()
         {
-            Dispose(true);
-
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Release all resources.
-        /// </summary>
-        /// <param name="disposing">If true, release all managed resources.</param>
-        protected void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                _transportManager.Dispose();
-            }
+            _transportManager.Dispose();
         }
 
         #endregion IDisposable

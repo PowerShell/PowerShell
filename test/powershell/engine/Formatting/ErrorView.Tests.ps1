@@ -15,7 +15,7 @@ Describe 'Tests for $ErrorView' -Tag CI {
 
     It 'Exceptions not thrown do not get formatted as ErrorRecord' {
         $exp = [System.Exception]::new('test') | Out-String
-        $exp | Should -BeLike "*Message        : *test*"
+        $exp | Should -BeLike '*Message        : *test*'
     }
 
     Context 'ConciseView tests' {
@@ -49,24 +49,24 @@ Describe 'Tests for $ErrorView' -Tag CI {
             $e | Should -BeLike '* 4 *'
         }
 
-        It "Remote errors show up correctly" {
+        It 'Remote errors show up correctly' {
             Start-Job -ScriptBlock { Get-Item (New-Guid) } | Wait-Job | Receive-Job -ErrorVariable e -ErrorAction SilentlyContinue
             ($e | Out-String).Trim().Count | Should -Be 1
         }
 
-        It "Activity shows up correctly for scriptblocks" {
+        It 'Activity shows up correctly for scriptblocks' {
             $e = & "$PSHOME/pwsh" -noprofile -command 'Write-Error 'myError' -ErrorAction SilentlyContinue; $error[0] | Out-String'
-            [string]::Join('', $e).Trim() | Should -BeLike "*Write-Error:*myError*" # wildcard due to VT100
+            [string]::Join('', $e).Trim() | Should -BeLike '*Write-Error:*myError*' # wildcard due to VT100
         }
 
-        It "Function shows up correctly" {
+        It 'Function shows up correctly' {
             function test-myerror { [cmdletbinding()] param() Write-Error 'myError' }
 
             $e = & "$PSHOME/pwsh" -noprofile -command 'function test-myerror { [cmdletbinding()] param() write-error "myError" }; test-myerror -ErrorAction SilentlyContinue; $error[0] | Out-String'
-            [string]::Join('', $e).Trim() | Should -BeLike "*test-myerror:*myError*" # wildcard due to VT100
+            [string]::Join('', $e).Trim() | Should -BeLike '*test-myerror:*myError*' # wildcard due to VT100
         }
 
-        It "Pester Should shows test file and not pester" {
+        It 'Pester Should shows test file and not pester' {
             $testScript = '1 + 1 | Should -Be 3'
 
             Set-Content -Path $testScriptPath -Value $testScript
@@ -75,7 +75,7 @@ Describe 'Tests for $ErrorView' -Tag CI {
             $e | Should -Not -BeLike '*pester*'
         }
 
-        It "Long lines should be rendered correctly with indentation" {
+        It 'Long lines should be rendered correctly with indentation' {
             $testscript = @'
                         $myerrors = [System.Collections.ArrayList]::new()
                         Copy-Item (New-Guid) (New-Guid) -ErrorVariable +myerrors -ErrorAction SilentlyContinue
@@ -89,11 +89,10 @@ Describe 'Tests for $ErrorView' -Tag CI {
             $e | Should -BeLike '* 2 *'
         }
 
-        It "Long exception message gets rendered" {
+        It 'Long exception message gets rendered' {
 
-            $msg = "1234567890"
-            while ($msg.Length -le $Host.UI.RawUI.WindowSize.Width)
-            {
+            $msg = '1234567890'
+            while ($msg.Length -le $Host.UI.RawUI.WindowSize.Width) {
                 $msg += $msg
             }
 
@@ -101,19 +100,19 @@ Describe 'Tests for $ErrorView' -Tag CI {
             $e | Should -BeLike "*$msg*"
         }
 
-        It "Position message does not contain line information" {
+        It 'Position message does not contain line information' {
 
-            $e = & "$PSHOME/pwsh" -noprofile -command "foreach abc" 2>&1 | Out-String
+            $e = & "$PSHOME/pwsh" -noprofile -command 'foreach abc' 2>&1 | Out-String
             $e | Should -Not -BeNullOrEmpty
-            $e | Should -Not -BeLike "*At line*"
+            $e | Should -Not -BeLike '*At line*'
         }
 
         It "Error shows if `$PSModuleAutoLoadingPreference is set to 'none'" {
-            $e = & "$PSHOME/pwsh" -noprofile -command '$PSModuleAutoLoadingPreference = ""none""; cmdletThatDoesntExist' 2>&1 | Out-String
-            $e | Should -BeLike "*cmdletThatDoesntExist*"
+            $e = & "$PSHOME/pwsh" -noprofile -command '$PSModuleAutoLoadingPreference = "none"; cmdletThatDoesntExist' 2>&1 | Out-String
+            $e | Should -BeLike '*cmdletThatDoesntExist*'
         }
 
-        It "Error shows for advanced function" {
+        It 'Error shows for advanced function' {
             # need to have it virtually interactive so that InvocationInfo.MyCommand is empty
             $e = '[cmdletbinding()]param()$pscmdlet.writeerror([System.Management.Automation.ErrorRecord]::new(([System.NotImplementedException]::new("myTest")),"stub","notimplemented","command"))' | pwsh -noprofile -file - 2>&1
             $e = $e | Where-Object { $_ -is [System.Management.Automation.ErrorRecord] } | Out-String
@@ -122,9 +121,8 @@ Describe 'Tests for $ErrorView' -Tag CI {
             # need to see if ANSI escape sequences are in the output as ANSI is disabled for CI
             if ($e.Contains("`e")) {
                 $e | Should -BeLike "*: `e*myTest*"
-            }
-            else {
-                $e | Should -BeLike "*: myTest*"
+            } else {
+                $e | Should -BeLike '*: myTest*'
             }
         }
 
@@ -134,12 +132,12 @@ Describe 'Tests for $ErrorView' -Tag CI {
         ) {
             param($newline)
 
-            Set-Content -path $testScriptPath -Value "throw 'hello${newline}there'"
+            Set-Content -Path $testScriptPath -Value "throw 'hello${newline}there'"
             $e = & "$PSHOME/pwsh" -noprofile -file $testScriptPath 2>&1 | Out-String
-            $e.Split("o${newline}t").Count | Should -Be 1 -Because "Error message should not contain newline"
+            $e.Split("o${newline}t").Count | Should -Be 1 -Because 'Error message should not contain newline'
         }
 
-        It "Script module error should not show line information" {
+        It 'Script module error should not show line information' {
             $testModule = @'
                 function Invoke-Error() {
                     throw 'oops'
@@ -149,7 +147,37 @@ Describe 'Tests for $ErrorView' -Tag CI {
             Set-Content -Path $testModulePath -Value $testModule
             $e = & "$PSHOME/pwsh" -noprofile -command "Import-Module '$testModulePath'; Invoke-Error" 2>&1 | Out-String
             $e | Should -Not -BeNullOrEmpty
-            $e | Should -Not -BeLike "*Line*"
+            $e | Should -Not -BeLike '*Line*'
+        }
+
+        It 'Parser error shows line information' {
+            $testScript = '$psstyle.outputrendering = "plaintext"; 1 ++ 1'
+            $e = & "$PSHOME/pwsh" -noprofile -command $testScript 2>&1 | Out-String
+            $e | Should -Not -BeNullOrEmpty
+            $e = $e.Split([Environment]::NewLine)
+            $e[0] | Should -BeLike 'ParserError:*'
+            $e[1] | Should -BeLike 'Line *' -Because ($e | Out-String)
+            $e[2] | Should -BeLike '*|*1 ++ 1*'
+        }
+
+        It 'Faux remote parser error shows concise message' {
+            Start-Job { [cmdletbinding()]param() $e = [System.Management.Automation.ErrorRecord]::new([System.Exception]::new('hello'), 1, 'ParserError', $null); $pscmdlet.ThrowTerminatingError($e) } | Wait-Job | Receive-Job -ErrorVariable e -ErrorAction SilentlyContinue
+            $e | Out-String | Should -BeLike '*ParserError*'
+        }
+
+        It 'Exception thrown from Enumerator.MoveNext in a pipeline shows information' {
+            $e = {
+                $l = [System.Collections.Generic.List[string]] @('one', 'two')
+                $l | ForEach-Object { $null = $l.Remove($_) }
+            } | Should -Throw -ErrorId 'BadEnumeration' -PassThru | Out-String
+
+            $e | Should -BeLike 'InvalidOperation:*'
+        }
+
+        It 'Displays a RecommendedAction if present in the ErrorRecord' {
+            $testScript = 'Write-Error -Message ''TestError'' -RecommendedAction ''TestAction'''
+            $e = & "$PSHOME/pwsh" -noprofile -command $testScript 2>&1 | Out-String
+            $e | Should -BeLike "*$([Environment]::NewLine)  Recommendation: TestAction*"
         }
     }
 
@@ -160,11 +188,9 @@ Describe 'Tests for $ErrorView' -Tag CI {
                 $ErrorView = 'NormalView'
                 Set-StrictMode -Version 2
                 throw 'Oops!'
-            }
-            catch {
+            } catch {
                 $e = $_ | Out-String
-            }
-            finally {
+            } finally {
                 Set-StrictMode -Off
             }
 
@@ -178,8 +204,7 @@ Describe 'Tests for $ErrorView' -Tag CI {
             try {
                 $ErrorView = 'DetailedView'
                 throw 'Oops!'
-            }
-            catch {
+            } catch {
                 # an extra newline gets added by the formatting system so we remove them
                 $e = ($_ | Out-String).Trim([Environment]::NewLine.ToCharArray())
             }

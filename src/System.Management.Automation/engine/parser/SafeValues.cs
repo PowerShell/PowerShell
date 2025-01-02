@@ -530,7 +530,8 @@ namespace System.Management.Automation.Language
             // Get the value of the index and value and call the compiler
             var index = indexExpressionAst.Index.Accept(this);
             var target = indexExpressionAst.Target.Accept(this);
-            if (index == null || target == null)
+
+            if (index is null || target is null)
             {
                 throw new ArgumentNullException(nameof(indexExpressionAst));
             }

@@ -1,60 +1,41 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
     /// WebResponseObject.
     /// </summary>
-    public partial class WebResponseObject
+    public class WebResponseObject
     {
         #region Properties
 
         /// <summary>
+        /// Gets or sets the BaseResponse property.
+        /// </summary>
+        public HttpResponseMessage BaseResponse { get; set; }
+
+        /// <summary>
         /// Gets or protected sets the response body content.
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public byte[] Content { get; protected set; }
+        public byte[]? Content { get; protected set; }
 
         /// <summary>
-        /// Gets the response status code.
+        /// Gets the Headers property.
         /// </summary>
-        public int StatusCode
-        {
-            get { return (WebResponseHelper.GetStatusCode(BaseResponse)); }
-        }
+        public Dictionary<string, IEnumerable<string>> Headers => _headers ??= WebResponseHelper.GetHeadersDictionary(BaseResponse);
 
-        /// <summary>
-        /// Gets the response status description.
-        /// </summary>
-        public string StatusDescription
-        {
-            get { return (WebResponseHelper.GetStatusDescription(BaseResponse)); }
-        }
-
-        private MemoryStream _rawContentStream;
-        /// <summary>
-        /// Gets the response body content as a <see cref="MemoryStream"/>.
-        /// </summary>
-        public MemoryStream RawContentStream
-        {
-            get { return (_rawContentStream); }
-        }
-
-        /// <summary>
-        /// Gets the length (in bytes) of <see cref="RawContentStream"/>.
-        /// </summary>
-        public long RawContentLength
-        {
-            get { return (RawContentStream == null ? -1 : RawContentStream.Length); }
-        }
+        private Dictionary<string, IEnumerable<string>>? _headers;
 
         /// <summary>
         /// Gets or protected sets the full response content.
@@ -62,9 +43,76 @@ namespace Microsoft.PowerShell.Commands
         /// <value>
         /// Full response content, including the HTTP status line, headers, and body.
         /// </value>
-        public string RawContent { get; protected set; }
+        public string? RawContent { get; protected set; }
+
+        /// <summary>
+        /// Gets the length (in bytes) of <see cref="RawContentStream"/>.
+        /// </summary>
+        public long RawContentLength => RawContentStream is null ? -1 : RawContentStream.Length;
+
+        /// <summary>
+        /// Gets or protected sets the response body content as a <see cref="MemoryStream"/>.
+        /// </summary>
+        public MemoryStream RawContentStream { get; protected set; }
+
+        /// <summary>
+        /// Gets the RelationLink property.
+        /// </summary>
+        public Dictionary<string, string>? RelationLink { get; internal set; }
+
+        /// <summary>
+        /// Gets the response status code.
+        /// </summary>
+        public int StatusCode => WebResponseHelper.GetStatusCode(BaseResponse);
+
+        /// <summary>
+        /// Gets the response status description.
+        /// </summary>
+        public string StatusDescription => WebResponseHelper.GetStatusDescription(BaseResponse);
+
+        /// <summary>
+        /// Gets or sets the output file path.
+        /// </summary>
+        public string? OutFile { get; internal set; }
 
         #endregion Properties
+
+        #region Protected Fields
+
+        /// <summary>
+        /// Time permitted between reads or Timeout.InfiniteTimeSpan for no timeout.
+        /// </summary>
+        protected TimeSpan perReadTimeout;
+
+        #endregion Protected Fields
+
+        #region Constructors
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WebResponseObject"/> class.
+        /// </summary>
+        /// <param name="response">The Http response.</param>
+        /// <param name="perReadTimeout">Time permitted between reads or Timeout.InfiniteTimeSpan for no timeout.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        public WebResponseObject(HttpResponseMessage response, TimeSpan perReadTimeout, CancellationToken cancellationToken) : this(response, null, perReadTimeout, cancellationToken) { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WebResponseObject"/> class
+        /// with the specified <paramref name="contentStream"/>.
+        /// </summary>
+        /// <param name="response">Http response.</param>
+        /// <param name="contentStream">The http content stream.</param>
+        /// <param name="perReadTimeout">Time permitted between reads or Timeout.InfiniteTimeSpan for no timeout.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        public WebResponseObject(HttpResponseMessage response, Stream? contentStream, TimeSpan perReadTimeout, CancellationToken cancellationToken)
+        {
+            this.perReadTimeout = perReadTimeout;
+            SetResponse(response, contentStream, cancellationToken);
+            InitializeContent();
+            InitializeRawContent(response);
+        }
+
+        #endregion Constructors
 
         #region Methods
 
@@ -73,12 +121,56 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void InitializeContent()
         {
-            this.Content = this.RawContentStream.ToArray();
+            Content = RawContentStream.ToArray();
         }
 
-        private static bool IsPrintable(char c)
+        private void InitializeRawContent(HttpResponseMessage baseResponse)
         {
-            return (char.IsLetterOrDigit(c) || char.IsPunctuation(c) || char.IsSeparator(c) || char.IsSymbol(c) || char.IsWhiteSpace(c));
+            StringBuilder raw = ContentHelper.GetRawContentHeader(baseResponse);
+
+            // Use ASCII encoding for the RawContent visual view of the content.
+            if (Content?.Length > 0)
+            {
+                raw.Append(ToString());
+            }
+
+            RawContent = raw.ToString();
+        }
+
+        private static bool IsPrintable(char c) => char.IsLetterOrDigit(c)
+                                                || char.IsPunctuation(c)
+                                                || char.IsSeparator(c)
+                                                || char.IsSymbol(c)
+                                                || char.IsWhiteSpace(c);
+
+        [MemberNotNull(nameof(RawContentStream))]
+        [MemberNotNull(nameof(BaseResponse))]
+        private void SetResponse(HttpResponseMessage response, Stream? contentStream, CancellationToken cancellationToken)
+        {
+            ArgumentNullException.ThrowIfNull(response);
+
+            BaseResponse = response;
+
+            if (contentStream is MemoryStream ms)
+            {
+                RawContentStream = ms;
+            }
+            else
+            {
+                Stream st = contentStream ?? StreamHelper.GetResponseStream(response, cancellationToken);
+
+                long contentLength = response.Content.Headers.ContentLength.GetValueOrDefault();
+                if (contentLength <= 0)
+                {
+                    contentLength = StreamHelper.DefaultReadBuffer;
+                }
+
+                int initialCapacity = (int)Math.Min(contentLength, StreamHelper.DefaultReadBuffer);
+                RawContentStream = new WebResponseContentMemoryStream(st, initialCapacity, cmdlet: null, response.Content.Headers.ContentLength.GetValueOrDefault(), perReadTimeout, cancellationToken);
+            }
+
+            // Set the position of the content stream to the beginning
+            RawContentStream.Position = 0;
         }
 
         /// <summary>
@@ -87,7 +179,12 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The string representation of this web response.</returns>
         public sealed override string ToString()
         {
-            char[] stringContent = System.Text.Encoding.ASCII.GetChars(Content);
+            if (Content is null)
+            {
+                return string.Empty;
+            }
+
+            char[] stringContent = Encoding.ASCII.GetChars(Content);
             for (int counter = 0; counter < stringContent.Length; counter++)
             {
                 if (!IsPrintable(stringContent[counter]))
@@ -100,115 +197,5 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion Methods
-    }
-
-    // TODO: Merge Partials
-
-    /// <summary>
-    /// WebResponseObject.
-    /// </summary>
-    public partial class WebResponseObject
-    {
-        #region Properties
-
-        /// <summary>
-        /// Gets or sets the BaseResponse property.
-        /// </summary>
-        public HttpResponseMessage BaseResponse { get; set; }
-
-        /// <summary>
-        /// Gets the Headers property.
-        /// </summary>
-        public Dictionary<string, IEnumerable<string>> Headers
-        {
-            get
-            {
-                _headers ??= WebResponseHelper.GetHeadersDictionary(BaseResponse);
-
-                return _headers;
-            }
-        }
-
-        private Dictionary<string, IEnumerable<string>> _headers = null;
-
-        /// <summary>
-        /// Gets the RelationLink property.
-        /// </summary>
-        public Dictionary<string, string> RelationLink { get; internal set; }
-
-        #endregion
-
-        #region Constructors
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="WebResponseObject"/> class.
-        /// </summary>
-        /// <param name="response"></param>
-        public WebResponseObject(HttpResponseMessage response)
-            : this(response, null)
-        { }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="WebResponseObject"/> class
-        /// with the specified <paramref name="contentStream"/>.
-        /// </summary>
-        /// <param name="response"></param>
-        /// <param name="contentStream"></param>
-        public WebResponseObject(HttpResponseMessage response, Stream contentStream)
-        {
-            SetResponse(response, contentStream);
-            InitializeContent();
-            InitializeRawContent(response);
-        }
-
-        #endregion Constructors
-
-        #region Methods
-
-        private void InitializeRawContent(HttpResponseMessage baseResponse)
-        {
-            StringBuilder raw = ContentHelper.GetRawContentHeader(baseResponse);
-
-            // Use ASCII encoding for the RawContent visual view of the content.
-            if (Content.Length > 0)
-            {
-                raw.Append(this.ToString());
-            }
-
-            this.RawContent = raw.ToString();
-        }
-
-        private void SetResponse(HttpResponseMessage response, Stream contentStream)
-        {
-            if (response == null) { throw new ArgumentNullException(nameof(response)); }
-
-            BaseResponse = response;
-
-            MemoryStream ms = contentStream as MemoryStream;
-            if (ms != null)
-            {
-                _rawContentStream = ms;
-            }
-            else
-            {
-                Stream st = contentStream;
-                if (contentStream == null)
-                {
-                    st = StreamHelper.GetResponseStream(response);
-                }
-
-                long contentLength = response.Content.Headers.ContentLength.Value;
-                if (contentLength <= 0)
-                {
-                    contentLength = StreamHelper.DefaultReadBuffer;
-                }
-
-                int initialCapacity = (int)Math.Min(contentLength, StreamHelper.DefaultReadBuffer);
-                _rawContentStream = new WebResponseContentMemoryStream(st, initialCapacity, null);
-            }
-            // set the position of the content stream to the beginning
-            _rawContentStream.Position = 0;
-        }
-        #endregion
     }
 }

@@ -23,10 +23,7 @@ namespace System.Management.Automation.Internal
         /// <exception cref="ArgumentNullException">Thrown if the specified stream is null.</exception>
         protected ObjectReaderBase([In, Out] ObjectStreamBase stream)
         {
-            if (stream == null)
-            {
-                throw new ArgumentNullException(nameof(stream), "stream may not be null");
-            }
+            ArgumentNullException.ThrowIfNull(stream);
 
             _stream = stream;
         }

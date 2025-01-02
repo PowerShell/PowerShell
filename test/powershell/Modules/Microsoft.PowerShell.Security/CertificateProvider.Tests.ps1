@@ -82,8 +82,13 @@ Describe "Certificate Provider tests" -Tags "Feature" {
     BeforeAll{
         if($IsWindows)
         {
-            Install-TestCertificates
-            Push-Location Cert:\
+            if (-not (Install-TestCertificates) ) {
+                $SetupFailure = $true
+            }
+            else {
+                Push-Location Cert:\
+                $SetupFailure = $false
+            }
         }
         else
         {
@@ -94,28 +99,45 @@ Describe "Certificate Provider tests" -Tags "Feature" {
     }
 
     AfterAll {
-        if($IsWindows)
+        if($IsWindows -and -not $SetupFailure)
         {
             Remove-TestCertificates
             Pop-Location
         }
         else
         {
-            $global:PSDefaultParameterValues = $defaultParamValues
+            if ($defaultParamValues -ne $null) {
+                $global:PSDefaultParameterValues = $defaultParamValues
+            }
         }
     }
 
     Context "Get-Item tests" {
         It "Should be able to get certifate by path: <path>" -TestCases $currentUserMyLocations {
             param([string] $path)
+            if ($SetupFailure) {
+                Set-ItResult -Inconclusive -Because "Test certificates are not installed"
+            }
+
+            if ($SetupFailure) {
+                Set-ItResult -Inconclusive -Because "Test certificates are not installed"
+            }
+
             $expectedThumbprint = (Get-GoodCertificateObject).Thumbprint
             $leafPath = Join-Path -Path $path -ChildPath $expectedThumbprint
             $cert = (Get-Item -LiteralPath $leafPath)
-            $cert | Should -Not -Be null
+            if ($SetupFailure) {
+                Set-ItResult -Inconclusive -Because "Test certificates are not installed"
+            }
             $cert.Thumbprint | Should -Be $expectedThumbprint
         }
         It "Should be able to get DnsNameList of certifate by path: <path>" -TestCases $currentUserMyLocations {
             param([string] $path)
+
+            if ($SetupFailure) {
+                Set-ItResult -Inconclusive -Because "Test certificates are not installed"
+            }
+
             $expectedThumbprint = (Get-GoodCertificateObject).Thumbprint
             $expectedName = (Get-GoodCertificateObject).DnsNameList
             $expectedEncodedName = (Get-GoodCertificateObject).DnsNameList
@@ -133,6 +155,11 @@ Describe "Certificate Provider tests" -Tags "Feature" {
         }
         it "Should be able to get EnhancedKeyUsageList of certifate by path: <path>" -TestCases $currentUserMyLocations {
             param([string] $path)
+
+            if ($SetupFailure) {
+                Set-ItResult -Inconclusive -Because "Test certificates are not installed"
+            }
+
             $expectedThumbprint = (Get-GoodCertificateObject).Thumbprint
             $expectedOid = (Get-GoodCertificateObject).EnhancedKeyUsageList[0].ObjectId
             $leafPath = Join-Path -Path $path -ChildPath $expectedThumbprint
@@ -144,6 +171,11 @@ Describe "Certificate Provider tests" -Tags "Feature" {
             $cert.EnhancedKeyUsageList[0].ObjectId | Should -Be $expectedOid
         }
         It "Should filter to codesign certificates" {
+
+            if ($SetupFailure) {
+                Set-ItResult -Inconclusive -Because "Test certificates are not installed"
+            }
+
             $allCerts = Get-Item cert:\CurrentUser\My\*
             $codeSignCerts = Get-Item cert:\CurrentUser\My\* -CodeSigningCert
             $codeSignCerts | Should -Not -Be null
@@ -152,6 +184,11 @@ Describe "Certificate Provider tests" -Tags "Feature" {
             $nonCodeSignCertCount | Should -Not -Be 0
         }
         It "Should be able to exclude by thumbprint" {
+
+            if ($SetupFailure) {
+                Set-ItResult -Inconclusive -Because "Test certificates are not installed"
+            }
+
             $allCerts = Get-Item cert:\CurrentUser\My\*
             $testThumbprint = (Get-GoodCertificateObject).Thumbprint
             $allCertsExceptOne = (Get-Item "cert:\currentuser\my\*" -Exclude $testThumbprint)
@@ -166,6 +203,11 @@ Describe "Certificate Provider tests" -Tags "Feature" {
             $cert = Get-GoodServerCertificateObject
         }
         it "Should filter to codesign certificates" {
+
+            if ($SetupFailure) {
+                Set-ItResult -Inconclusive -Because "Test certificates are not installed"
+            }
+
             $allCerts = get-ChildItem cert:\CurrentUser\My
             $codeSignCerts = get-ChildItem cert:\CurrentUser\My -CodeSigningCert
             $codeSignCerts | Should -Not -Be null
@@ -174,6 +216,11 @@ Describe "Certificate Provider tests" -Tags "Feature" {
             $nonCodeSignCertCount | Should -Not -Be 0
         }
         it "Should filter to ExpiringInDays certificates" {
+
+            if ($SetupFailure) {
+                Set-ItResult -Inconclusive -Because "Test certificates are not installed"
+            }
+
             $thumbprint = $cert.Thumbprint
             $NotAfter = $cert.NotAfter
             $before = ($NotAfter.AddDays(-1) - (Get-Date)).Days
@@ -186,6 +233,11 @@ Describe "Certificate Provider tests" -Tags "Feature" {
             $afterCerts.Thumbprint | Should -BeExactly $thumbprint
         }
         it "Should filter to DocumentEncryptionCert certificates" {
+
+            if ($SetupFailure) {
+                Set-ItResult -Inconclusive -Because "Test certificates are not installed"
+            }
+
             $thumbprint = $cert.Thumbprint
             $certs = Get-ChildItem cert:\CurrentUser\My\$thumbprint -DocumentEncryptionCert
 
@@ -199,6 +251,10 @@ Describe "Certificate Provider tests" -Tags "Feature" {
         ) {
             param($name, $searchName, $count, $thumbprint)
 
+            if ($SetupFailure) {
+                Set-ItResult -Inconclusive -Because "Test certificates are not installed"
+            }
+
             $certs = Get-ChildItem cert:\CurrentUser\My\$thumbprint -DNSName $searchName
 
             $certs.Count | Should -Be $count
@@ -206,6 +262,11 @@ Describe "Certificate Provider tests" -Tags "Feature" {
 
         }
         it "Should filter to SSLServerAuthentication certificates" {
+
+            if ($SetupFailure) {
+                Set-ItResult -Inconclusive -Because "Test certificates are not installed"
+            }
+
             $thumbprint = $cert.Thumbprint
 
             $certs = Get-ChildItem cert:\CurrentUser\My\$thumbprint -SSLServerAuthentication
@@ -221,10 +282,90 @@ Describe "Certificate Provider tests" -Tags "Feature" {
         ) {
             param($name, $ekuSearch, $count, $thumbprint)
 
+            if ($SetupFailure) {
+                Set-ItResult -Inconclusive -Because "Test certificates are not installed"
+            }
+
             $certs = Get-ChildItem cert:\CurrentUser\My\$thumbprint -EKU $ekuSearch
 
             $certs.Count | Should -Be $count
             $certs.Thumbprint | Should -BeExactly $thumbprint
+        }
+    }
+
+    Context "SAN DNS Name Tests" {
+        BeforeAll {
+            $configFilePath = Join-Path -Path $TestDrive -ChildPath 'openssl.cnf'
+            $keyFilePath = Join-Path -Path $TestDrive -ChildPath 'privateKey.key'
+            $certFilePath = Join-Path -Path $TestDrive -ChildPath 'certificate.crt'
+            $pfxFilePath = Join-Path -Path $TestDrive -ChildPath 'certificate.pfx'
+            $password = New-CertificatePassword | ConvertFrom-SecureString -AsPlainText
+
+            $config = @"
+            [ req ]
+            default_bits       = 2048
+            distinguished_name = req_distinguished_name
+            req_extensions     = v3_req
+            prompt             = no
+
+            [ req_distinguished_name ]
+            CN                 = yourdomain.com
+
+            [ v3_req ]
+            subjectAltName     = @alt_names
+
+            [ alt_names ]
+            DNS.1              = yourdomain.com
+            DNS.2              = www.yourdomain.com
+            DNS.3              = api.yourdomain.com
+            DNS.4              = xn--mnchen-3ya.com
+            DNS.5              = xn--80aaxitdbjr.com
+            DNS.6              = xn--caf-dma.com
+"@
+
+            # Write the configuration to the specified path
+            Set-Content -Path $configFilePath -Value $config
+
+            # Generate the self-signed certificate with SANs
+            openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout $keyFilePath -out $certFilePath -config $configFilePath -extensions v3_req
+
+            # Create the PFX file
+            openssl pkcs12 -export -out $pfxFilePath -inkey $keyFilePath -in $certFilePath -passout pass:$password
+        }
+
+        It "Should set DNSNameList from SAN extensions" {
+            $cert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2($pfxFilePath, $password)
+
+            $expectedDnsNameList = @(
+                [PSCustomObject]@{
+                    Punycode = "yourdomain.com"
+                    Unicode  = "yourdomain.com"
+                }
+                [PSCustomObject]@{
+                    Punycode = "www.yourdomain.com"
+                    Unicode  = "www.yourdomain.com"
+                }
+                [PSCustomObject]@{
+                    Punycode = "api.yourdomain.com"
+                    Unicode  = "api.yourdomain.com"
+                }
+                [PSCustomObject]@{
+                    Punycode = "xn--mnchen-3ya.com"
+                    Unicode  = "münchen.com"
+                }
+                [PSCustomObject]@{
+                    Punycode = "xn--80aaxitdbjr.com"
+                    Unicode  = "папитрока.com"
+                }
+                [PSCustomObject]@{
+                    Punycode = "xn--caf-dma.com"
+                    Unicode  = "café.com"
+                }
+            )
+
+            $cert | Should -Not -BeNullOrEmpty
+            $cert.DnsNameList | Should -HaveCount 6
+            ($cert.DnsNameList | ConvertTo-Json -Compress)  | Should -BeExactly ($expectedDnsNameList | ConvertTo-Json -Compress)
         }
     }
 }

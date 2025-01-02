@@ -347,10 +347,7 @@ namespace System.Management.Automation
                 {
                     Runspace runspaceToDispose = _remoteHost.PushedRunspace;
                     _remoteHost.PopRunspace();
-                    if (runspaceToDispose != null)
-                    {
-                        runspaceToDispose.Dispose();
-                    }
+                    runspaceToDispose?.Dispose();
                 }
 
                 DisposeRemoteDebugger();
@@ -475,7 +472,7 @@ namespace System.Management.Automation
             // Remote debugger is created only when client version is PSVersion (4.0)
             // or greater, and remote session supports debugging.
             if ((_driverNestedInvoker != null) &&
-                (_clientPSVersion != null && _clientPSVersion >= PSVersionInfo.PSV4Version) &&
+                (_clientPSVersion != null && _clientPSVersion.Major >= 4) &&
                 (runspace != null && runspace.Debugger != null))
             {
                 _serverRemoteDebugger = new ServerRemoteDebugger(this, runspace, runspace.Debugger);
@@ -483,13 +480,7 @@ namespace System.Management.Automation
             }
         }
 
-        private void DisposeRemoteDebugger()
-        {
-            if (_serverRemoteDebugger != null)
-            {
-                _serverRemoteDebugger.Dispose();
-            }
-        }
+        private void DisposeRemoteDebugger() => _serverRemoteDebugger?.Dispose();
 
         /// <summary>
         /// Invokes a script.
@@ -809,10 +800,7 @@ namespace System.Management.Automation
             {
                 // If we have a pushed runspace then execute there.
                 // Ensure debugger is enabled to the original mode it was set to.
-                if (_serverRemoteDebugger != null)
-                {
-                    _serverRemoteDebugger.CheckDebuggerState();
-                }
+                _serverRemoteDebugger?.CheckDebuggerState();
 
                 StartPowerShellCommandOnPushedRunspace(
                     powershell,
@@ -920,10 +908,7 @@ namespace System.Management.Automation
 
             // Invoke command normally.  Ensure debugger is enabled to the
             // original mode it was set to.
-            if (_serverRemoteDebugger != null)
-            {
-                _serverRemoteDebugger.CheckDebuggerState();
-            }
+            _serverRemoteDebugger?.CheckDebuggerState();
 
             // Invoke PowerShell on driver runspace pool.
             ServerPowerShellDriver driver = new ServerPowerShellDriver(
@@ -2025,10 +2010,7 @@ namespace System.Management.Automation
             }
 
             ThreadCommandProcessing threadCommandProcessing = _threadCommandProcessing;
-            if (threadCommandProcessing != null)
-            {
-                threadCommandProcessing.Stop();
-            }
+            threadCommandProcessing?.Stop();
         }
 
         /// <summary>
@@ -2226,15 +2208,8 @@ namespace System.Management.Automation
                 ExitDebugMode(DebuggerResumeAction.Stop);
             }
 
-            if (_nestedDebugStopCompleteEvent != null)
-            {
-                _nestedDebugStopCompleteEvent.Dispose();
-            }
-
-            if (_processCommandCompleteEvent != null)
-            {
-                _processCommandCompleteEvent.Dispose();
-            }
+            _nestedDebugStopCompleteEvent?.Dispose();
+            _processCommandCompleteEvent?.Dispose();
         }
 
         #endregion
@@ -2306,10 +2281,7 @@ namespace System.Management.Automation
             public void Stop()
             {
                 Debugger debugger = _wrappedDebugger;
-                if (debugger != null)
-                {
-                    debugger.StopProcessCommand();
-                }
+                debugger?.StopProcessCommand();
             }
 
             internal void DoInvoke()
@@ -2414,7 +2386,10 @@ namespace System.Management.Automation
         private void HandleDebuggerStop(object sender, DebuggerStopEventArgs e)
         {
             // Ignore if we are in restricted mode.
-            if (!IsDebuggingSupported()) { return; }
+            if (!IsDebuggingSupported())
+            {
+                return;
+            }
 
             if (LocalDebugMode)
             {
@@ -2470,7 +2445,10 @@ namespace System.Management.Automation
         private void HandleBreakpointUpdated(object sender, BreakpointUpdatedEventArgs e)
         {
             // Ignore if we are in restricted mode.
-            if (!IsDebuggingSupported()) { return; }
+            if (!IsDebuggingSupported())
+            {
+                return;
+            }
 
             if (LocalDebugMode)
             {
@@ -2790,7 +2768,10 @@ namespace System.Management.Automation
 
         internal void PopDebugger()
         {
-            if (!_wrappedDebugger.IsOverridden) { return; }
+            if (!_wrappedDebugger.IsOverridden)
+            {
+                return;
+            }
 
             // Swap wrapped debugger.
             UnsubscribeWrappedDebugger(_wrappedDebugger.Value);

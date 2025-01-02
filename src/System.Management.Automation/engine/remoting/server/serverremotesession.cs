@@ -706,13 +706,7 @@ namespace System.Management.Automation.Remoting
         }
 
         // pass on application private data when session is connected from new client
-        internal void HandlePostConnect()
-        {
-            if (_runspacePoolDriver != null)
-            {
-                _runspacePoolDriver.SendApplicationPrivateDataToClient();
-            }
-        }
+        internal void HandlePostConnect() => _runspacePoolDriver?.SendApplicationPrivateDataToClient();
 
         /// <summary>
         /// </summary>
@@ -808,32 +802,14 @@ namespace System.Management.Automation.Remoting
                     RemotingErrorIdStrings.PSSenderInfoDescription),
                 ScopedItemOptions.ReadOnly));
 
-            // check if the current scenario is Win7(client) to Win8(server). Add back the PSv2 version TabExpansion
-            // function if necessary.
+            // Get client PS version from PSSenderInfo.
             Version psClientVersion = null;
             if (_senderInfo.ApplicationArguments != null && _senderInfo.ApplicationArguments.ContainsKey("PSversionTable"))
             {
                 var value = PSObject.Base(_senderInfo.ApplicationArguments["PSversionTable"]) as PSPrimitiveDictionary;
-                if (value != null)
+                if (value != null && value.ContainsKey("PSVersion"))
                 {
-                    if (value.ContainsKey("WSManStackVersion"))
-                    {
-                        var wsmanStackVersion = PSObject.Base(value["WSManStackVersion"]) as Version;
-                        if (wsmanStackVersion != null && wsmanStackVersion.Major < 3)
-                        {
-                            // The client side is PSv2. This is the Win7 to Win8 scenario. We need to add the PSv2
-                            // TabExpansion function back in to keep the tab expansion functionable on the client side.
-                            rsSessionStateToUse.Commands.Add(
-                                new SessionStateFunctionEntry(
-                                    RemoteDataNameStrings.PSv2TabExpansionFunction,
-                                    RemoteDataNameStrings.PSv2TabExpansionFunctionText));
-                        }
-                    }
-
-                    if (value.ContainsKey("PSVersion"))
-                    {
-                        psClientVersion = PSObject.Base(value["PSVersion"]) as Version;
-                    }
+                    psClientVersion = PSObject.Base(value["PSVersion"]) as Version;
                 }
             }
 
@@ -945,10 +921,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="eventArgs"></param>
         private void HandleSessionDSHandlerClosing(object sender, EventArgs eventArgs)
         {
-            if (_runspacePoolDriver != null)
-            {
-                _runspacePoolDriver.Close();
-            }
+            _runspacePoolDriver?.Close();
 
             // dispose the session configuration object..this will let them
             // clean their resources.

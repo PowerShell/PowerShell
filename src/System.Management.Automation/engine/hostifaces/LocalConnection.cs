@@ -237,7 +237,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Gets the execution context.
         /// </summary>
-        internal override System.Management.Automation.ExecutionContext GetExecutionContext
+        internal override ExecutionContext GetExecutionContext
         {
             get
             {
@@ -834,18 +834,14 @@ namespace System.Management.Automation.Runspaces
                 if (executionContext != null)
                 {
                     PSHostUserInterface hostUI = executionContext.EngineHostInterface.UI;
-                    if (hostUI != null)
-                    {
-                        hostUI.StopAllTranscribing();
-                    }
+                    hostUI?.StopAllTranscribing();
                 }
 
                 AmsiUtils.Uninitialize();
             }
 
             // Generate the shutdown event
-            if (Events != null)
-                Events.GenerateEvent(PSEngineEvent.Exiting, null, Array.Empty<object>(), null, true, false);
+            Events?.GenerateEvent(PSEngineEvent.Exiting, null, Array.Empty<object>(), null, true, false);
 
             // Stop all running pipelines
             // Note:Do not perform the Cancel in lock. Reason is
@@ -938,7 +934,10 @@ namespace System.Management.Automation.Runspaces
         private static void CloseOrDisconnectAllRemoteRunspaces(Func<List<RemoteRunspace>> getRunspaces)
         {
             List<RemoteRunspace> runspaces = getRunspaces();
-            if (runspaces.Count == 0) { return; }
+            if (runspaces.Count == 0)
+            {
+                return;
+            }
 
             // whether the close of all remoterunspaces completed
             using (ManualResetEvent remoteRunspaceCloseCompleted = new ManualResetEvent(false))
@@ -963,7 +962,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         private void StopOrDisconnectAllJobs()
         {
-            if (JobRepository.Jobs.Count == 0) { return; }
+            if (JobRepository.Jobs.Count == 0)
+            {
+                return;
+            }
 
             List<RemoteRunspace> disconnectRunspaces = new List<RemoteRunspace>();
 
@@ -1266,10 +1268,7 @@ namespace System.Management.Automation.Runspaces
 
             base.Close(); // call base.Close() first to make it stop the pipeline
 
-            if (_pipelineThread != null)
-            {
-                _pipelineThread.Close();
-            }
+            _pipelineThread?.Close();
         }
 
         #endregion IDisposable Members
@@ -1492,7 +1491,6 @@ namespace System.Management.Automation.Runspaces
     /// Defines the exception thrown an error loading modules occurs while opening the runspace. It
     /// contains a list of all of the module errors that have occurred.
     /// </summary>
-    [Serializable]
     public class RunspaceOpenModuleLoadException : RuntimeException
     {
         #region ctor
@@ -1519,7 +1517,7 @@ namespace System.Management.Automation.Runspaces
         /// Initializes a new instance of ScriptBlockToPowerShellNotSupportedException setting the message and innerException.
         /// </summary>
         /// <param name="message">The exception's message.</param>
-        /// <param name="innerException">The exceptions's inner exception.</param>
+        /// <param name="innerException">The exception's inner exception.</param>
         public RunspaceOpenModuleLoadException(string message, Exception innerException)
             : base(message, innerException)
         {
@@ -1559,27 +1557,11 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
         protected RunspaceOpenModuleLoadException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
         {
-        }
-
-        /// <summary>
-        /// Populates a <see cref="SerializationInfo"/> with the
-        /// data needed to serialize the RunspaceOpenModuleLoadException object.
-        /// </summary>
-        /// <param name="info">The <see cref="SerializationInfo"/> to populate with data.</param>
-        /// <param name="context">The destination for this serialization.</param>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-            {
-                throw new PSArgumentNullException(nameof(info));
-            }
-
-            base.GetObjectData(info, context);
-        }
-
+            throw new NotSupportedException();
+        }        
         #endregion Serialization
     }
 

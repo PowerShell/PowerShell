@@ -166,7 +166,7 @@ open {0}
             <files include="**/*" buildAction="None" copyToOutput="true" flatten="false" />
         </contentFiles>
         <dependencies>
-            <group targetFramework="net7.0"></group>
+            <group targetFramework="net9.0"></group>
         </dependencies>
     </metadata>
 </package>
@@ -182,6 +182,29 @@ open {0}
         <owners>Microsoft,PowerShell</owners>
         <projectUrl>https://github.com/PowerShell/PowerShell</projectUrl>
         <icon>{2}</icon>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>PowerShell global tool</description>
+        <license type="expression">MIT</license>
+        <tags>PowerShell</tags>
+        <language>en-US</language>
+        <copyright>&#169; Microsoft Corporation. All rights reserved.</copyright>
+        <packageTypes>
+            <packageType name="DotnetTool" />
+        </packageTypes>
+    </metadata>
+</package>
+'@
+
+    WindowsX64GlobalToolNuspec = @'
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+    <metadata>
+        <id>PowerShelll.Windows.x64</id>
+        <version>{0}</version>
+        <authors>Microsoft</authors>
+        <owners>Microsoft,PowerShell</owners>
+        <projectUrl>https://github.com/PowerShell/PowerShell</projectUrl>
+        <icon>Powershell_64.png</icon>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>PowerShell global tool</description>
         <license type="expression">MIT</license>

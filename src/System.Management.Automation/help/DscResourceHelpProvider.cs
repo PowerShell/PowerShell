@@ -141,7 +141,7 @@ namespace System.Management.Automation
                 }
                 else if (!string.IsNullOrEmpty(moduleDir))
                 {
-                    string[] splitPath = moduleDir.Split(Utils.Separators.Backslash);
+                    string[] splitPath = moduleDir.Split('\\');
                     moduleName = splitPath[splitPath.Length - 1];
                 }
 

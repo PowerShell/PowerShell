@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
+using System.Management.Automation.Internal;
 
 namespace System.Management.Automation
 {
@@ -357,22 +358,22 @@ namespace System.Management.Automation
         // see an assignment to any of these variables so that they get handled properly (either throwing an exception
         // because they are constant/readonly, or having the value persist in parent scopes where the allscope variable
         // also exists.
-        internal static readonly string[] AllScopeVariables = {
-                                                                  SpecialVariables.Question,
-                                                                  SpecialVariables.ExecutionContext,
-                                                                  SpecialVariables.False,
-                                                                  SpecialVariables.Home,
-                                                                  SpecialVariables.Host,
-                                                                  SpecialVariables.PID,
-                                                                  SpecialVariables.PSCulture,
-                                                                  SpecialVariables.PSHome,
-                                                                  SpecialVariables.PSUICulture,
-                                                                  SpecialVariables.PSVersionTable,
-                                                                  SpecialVariables.PSEdition,
-                                                                  SpecialVariables.ShellId,
-                                                                  SpecialVariables.True,
-                                                                  SpecialVariables.EnabledExperimentalFeatures,
-                                                              };
+        internal static readonly Dictionary<string, Type> AllScopeVariables = new(StringComparer.OrdinalIgnoreCase) {
+            { Question, typeof(bool) },
+            { ExecutionContext, typeof(EngineIntrinsics) },
+            { False, typeof(bool) },
+            { Home, typeof(string) },
+            { Host, typeof(object) },
+            { PID, typeof(int) },
+            { PSCulture, typeof(string) },
+            { PSHome, typeof(string) },
+            { PSUICulture, typeof(string) },
+            { PSVersionTable, typeof(PSVersionHashTable) },
+            { PSEdition, typeof(string) },
+            { ShellId, typeof(string) },
+            { True, typeof(bool) },
+            { EnabledExperimentalFeatures, typeof(ReadOnlyBag<string>) }
+        };
 
         private static readonly HashSet<string> s_classMethodsAccessibleVariables = new HashSet<string>
             (
@@ -418,5 +419,6 @@ namespace System.Management.Automation
         Warning = 13,
         Information = 14,
         Confirm = 15,
+        Progress = 16,
     }
 }

@@ -137,7 +137,11 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (Job job in jobsToStop)
             {
-                if (this.Stopping) return;
+                if (this.Stopping)
+                {
+                    return;
+                }
+
                 if (job.IsFinishedState(job.JobStateInfo.State))
                 {
                     continue;
@@ -280,7 +284,11 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="disposing"></param>
         protected void Dispose(bool disposing)
         {
-            if (!disposing) return;
+            if (!disposing)
+            {
+                return;
+            }
+
             foreach (var pair in _cleanUpActions)
             {
                 pair.Key.StopJobCompleted -= pair.Value;

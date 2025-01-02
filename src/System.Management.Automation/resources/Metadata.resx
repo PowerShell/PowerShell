@@ -210,6 +210,12 @@
   <data name="ValidateNotNullOrEmptyCollectionFailure" xml:space="preserve">
     <value>The argument is null, empty, or an element of the argument collection contains a null value. Supply a collection that does not contain any null values and then try the command again.</value>
   </data>
+  <data name="ValidateNotNullOrWhiteSpaceFailure" xml:space="preserve">
+    <value>The argument is null, empty, or consists of only white-space characters. Provide an argument that contains non white-space characters, and then try the command again.</value>
+  </data>
+  <data name="ValidateNotNullOrWhiteSpaceCollectionFailure" xml:space="preserve">
+    <value>An element of the argument collection is null, empty, or consists of only white-space characters. Supply a collection that does not contain any those values and then try the command again.</value>
+  </data>
   <data name="ParameterNameAlreadyExistsForCommand" xml:space="preserve">
     <value>A parameter with the name '{0}' was defined multiple times for the command.</value>
   </data>
@@ -251,5 +257,11 @@
   </data>
   <data name="ValidateTrustedDataFailure" xml:space="preserve">
     <value>Cannot process input. The argument "{0}" is not trusted.</value>
+  </data>
+  <data name="WDACParameterArgNotTrustedLogTitle" xml:space="preserve">
+    <value>ValidateTrustedData Attribute Check Failure</value>
+  </data>
+  <data name="WDACParameterArgNotTrustedMessage" xml:space="preserve">
+    <value>The parameter argument '{0}' is not trusted and will fail the ValidateTrustedData parameter attribute check in Constrained Language mode.</value>
   </data>
 </root>

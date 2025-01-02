@@ -138,9 +138,6 @@
   <data name="ClearItemProviderException" xml:space="preserve">
     <value>Attempting to perform the ClearItem operation on the '{0}' provider failed for path '{1}'. {2}</value>
   </data>
-  <data name="ClearItemDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the ClearItem operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
-  </data>
   <data name="InvokeDefaultActionProviderException" xml:space="preserve">
     <value>Attempting to perform the InvokeDefaultAction operation on the '{0}' provider failed for path '{1}'. {2}</value>
   </data>
@@ -159,14 +156,8 @@
   <data name="IsItemContainerProviderException" xml:space="preserve">
     <value>Attempting to perform the IsItemContainer operation on the '{0}' provider failed for path '{1}'. {2}</value>
   </data>
-  <data name="IsItemContainerDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the IsItemContainer cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
-  </data>
   <data name="RemoveItemProviderException" xml:space="preserve">
     <value>Attempting to perform the RemoveItem operation on the '{0}' provider failed for path '{1}'. {2}</value>
-  </data>
-  <data name="RemoveItemDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the RemoveItem operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
   </data>
   <data name="GetChildrenProviderException" xml:space="preserve">
     <value>Attempting to perform the GetChildItems operation on the '{0}' provider failed for path '{1}'. {2}</value>
@@ -309,14 +300,8 @@
   <data name="SetSecurityDescriptorProviderException" xml:space="preserve">
     <value>Attempting to perform the SetSecurityDescriptor operation on the '{0}' provider failed for path '{1}'. {2}</value>
   </data>
-  <data name="SecurityDescriptorInterfaceNotSupported" xml:space="preserve">
-    <value>This provider does not support security descriptor related operations.</value>
-  </data>
   <data name="ProviderStartException" xml:space="preserve">
     <value>Attempting to perform the Start operation on the '{0}' provider failed. {1}</value>
-  </data>
-  <data name="StartDynamicParameterProviderException" xml:space="preserve">
-    <value>Attempting to perform the StartDynamicParameters operation on the '{0}' provider failed for the path '{1}'. {2}</value>
   </data>
   <data name="InitializeDefaultDrivesException" xml:space="preserve">
     <value>Attempting to perform the InitializeDefaultDrives operation on the '{0}' provider failed.</value>
@@ -332,9 +317,6 @@
   </data>
   <data name="DriveRemovalPreventedByProvider" xml:space="preserve">
     <value>Drive '{0}' cannot be removed because the provider '{1}' prevented it.</value>
-  </data>
-  <data name="NormalizeRelativePathLengthLessThanBase" xml:space="preserve">
-    <value>The path '{0}' is shorter than the base path '{1}'.</value>
   </data>
   <data name="NormalizeRelativePathOutsideBase" xml:space="preserve">
     <value>The path '{0}' referred to an item that was outside the base '{1}'.</value>
@@ -393,26 +375,14 @@
   <data name="AliasIsReadOnly" xml:space="preserve">
     <value>Alias {0} cannot be modified because it is read-only.</value>
   </data>
-  <data name="FilterIsConstant" xml:space="preserve">
-    <value>Filter {0} cannot be modified because it is constant.</value>
-  </data>
-  <data name="FilterIsReadOnly" xml:space="preserve">
-    <value>Filter {0} cannot be modified because it is read-only.</value>
-  </data>
   <data name="FunctionIsConstant" xml:space="preserve">
     <value>Cannot modify function {0} because it is constant.</value>
   </data>
   <data name="FunctionIsReadOnly" xml:space="preserve">
     <value>Cannot modify function {0} because it is read-only.</value>
   </data>
-  <data name="VariableIsConstant" xml:space="preserve">
-    <value>Cannot modify variable {0} because it is a constant.</value>
-  </data>
   <data name="AliasCannotBeMadeConstant" xml:space="preserve">
     <value>Alias {0} cannot be made constant after it has been created. Aliases can only be made constant at creation time.</value>
-  </data>
-  <data name="FilterCannotBeMadeConstant" xml:space="preserve">
-    <value>Existing filter {0} cannot be made constant. Filters can be made constant only at creation time.</value>
   </data>
   <data name="FunctionCannotBeMadeConstant" xml:space="preserve">
     <value>Existing function {0} cannot be made constant. Functions can be made constant only at creation time.</value>
@@ -422,9 +392,6 @@
   </data>
   <data name="AliasAllScopeOptionCannotBeRemoved" xml:space="preserve">
     <value>The AllScope option cannot be removed from the alias '{0}'.</value>
-  </data>
-  <data name="FilterAllScopeOptionCannotBeRemoved" xml:space="preserve">
-    <value>The AllScope option cannot be removed from the filter '{0}'.</value>
   </data>
   <data name="FunctionAllScopeOptionCannotBeRemoved" xml:space="preserve">
     <value>The AllScope option cannot be removed from the function '{0}'.</value>
@@ -506,9 +473,6 @@
   </data>
   <data name="GlobalScopeCannotRemove" xml:space="preserve">
     <value>Global scope cannot be removed.</value>
-  </data>
-  <data name="ScopeDepthOverflow" xml:space="preserve">
-    <value>Too many scopes have been created.</value>
   </data>
   <data name="ScopeIDExceedsAvailableScopes" xml:space="preserve">
     <value>The scope number '{0}' exceeds the number of active scopes.</value>
@@ -627,71 +591,17 @@
   <data name="TempDriveDescription" xml:space="preserve">
     <value>Drive that maps to the temporary directory path for the current user</value>
   </data>
-  <data name="ProviderProviderPathFormatException" xml:space="preserve">
-    <value>The path is not in the correct format. Paths can contain only provider and drive names separated by slashes or backslashes.</value>
-  </data>
-  <data name="ProviderProviderCannotRemoveProvider" xml:space="preserve">
-    <value>Cannot remove provider because removal of providers is not supported.</value>
-  </data>
-  <data name="ProviderProviderCannotCreateProvider" xml:space="preserve">
-    <value>Cannot create provider because creation of new providers is not supported.</value>
-  </data>
-  <data name="ProviderDriveDescription" xml:space="preserve">
-    <value>Drive that contains the list of loaded providers and their drives</value>
-  </data>
-  <data name="NewItemCannotModifyDriveRoot" xml:space="preserve">
-    <value>The root of the drive '{0}' cannot be modified.</value>
-  </data>
-  <data name="NewItemTypeProvider" xml:space="preserve">
-    <value>Cannot create a new provider because type '{0}' is not of type "provider".</value>
-  </data>
-  <data name="NewItemValueMustBeProviderInfo" xml:space="preserve">
-    <value>Cannot set the new item value because the parameter "value" must be of the type ProviderInfo when "type" is specified as "provider".</value>
-  </data>
-  <data name="NewItemTypeDrive" xml:space="preserve">
-    <value>Cannot create a new drive because type '{0}' is not of type "drive".</value>
-  </data>
-  <data name="NewItemValueMustBePSDriveInfo" xml:space="preserve">
-    <value>Cannot set new item value because the parameter "value" must be of type PSDriveInfo when "type" is specified as "drive".</value>
-  </data>
-  <data name="NewItemDriveNameConflict" xml:space="preserve">
-    <value>Cannot create new drive because the name specified in the PSDriveInfo '{0}' does not match the drive name specified in the path '{1}'.</value>
-  </data>
-  <data name="NewItemProviderNameConflict" xml:space="preserve">
-    <value>The provider name specified in the PSDriveInfo '{0}' does not match the provider name specified in the path '{1}'.</value>
-  </data>
-  <data name="RemoveDriveRoot" xml:space="preserve">
-    <value>Cannot remove the drive root in this way. Use "Remove-PSDrive" to remove this drive.</value>
-  </data>
   <data name="NewLinkTargetNotSpecified" xml:space="preserve">
-    <value>Link '{0}' cannot be created because Target was not specified.</value>
+    <value>Link '{0}' cannot be created because the target Value was not specified.</value>
   </data>
   <data name="DollarNullDescription" xml:space="preserve">
     <value>References to the null variable always return the null value. Assignments have no effect.</value>
-  </data>
-  <data name="MaxErrorCountDescription" xml:space="preserve">
-    <value>Maximum number of errors to retain in a session</value>
-  </data>
-  <data name="MaxDriveCountDescription" xml:space="preserve">
-    <value>Maximum number of drives allowed in a session</value>
-  </data>
-  <data name="MaxAliasCountDescription" xml:space="preserve">
-    <value>Maximum number of aliases allowed in a session</value>
-  </data>
-  <data name="MaxFunctionCountDescription" xml:space="preserve">
-    <value>Maximum number of functions allowed in a session</value>
-  </data>
-  <data name="MaxVariableCountDescription" xml:space="preserve">
-    <value>Maximum number of variables allowed in a session</value>
   </data>
   <data name="MaxHistoryCountDescription" xml:space="preserve">
     <value>Maximum number of history objects to retain in a session</value>
   </data>
   <data name="CannotRenameFunction" xml:space="preserve">
     <value>Cannot rename function because function {0} is read-only or constant.</value>
-  </data>
-  <data name="CannotRenameFilter" xml:space="preserve">
-    <value>Cannot rename filter because filter {0} is read-only or constant.</value>
   </data>
   <data name="CannotRenameAlias" xml:space="preserve">
     <value>Cannot rename alias because alias {0} is read-only or constant.</value>
@@ -737,5 +647,11 @@
   </data>
   <data name="CopyItemRemotelyPathIsNullOrEmpty" xml:space="preserve">
     <value>'{0}' parameter cannot be null or empty.</value>
+  </data>
+  <data name="WDACSessionStateVarLogTitle" xml:space="preserve">
+    <value>Session State Variables</value>
+  </data>
+  <data name="WDACSessionStateVarLogMessage" xml:space="preserve">
+    <value>Changing or creating the variable '{0}' scope to AllScope will be prevented in ConstrainedLanguage mode.</value>
   </data>
 </root>

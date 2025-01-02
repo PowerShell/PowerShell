@@ -113,15 +113,9 @@ namespace System.Management.Automation.Tracing
             /// <param name="callback"></param>
             public CorrelatedCallback(EtwActivity tracer, CallbackNoParameter callback)
             {
-                if (callback == null)
-                {
-                    throw new ArgumentNullException(nameof(callback));
-                }
+                ArgumentNullException.ThrowIfNull(callback);
 
-                if (tracer == null)
-                {
-                    throw new ArgumentNullException(nameof(tracer));
-                }
+                ArgumentNullException.ThrowIfNull(tracer);
 
                 this.tracer = tracer;
                 this.parentActivityId = EtwActivity.GetActivityId();
@@ -135,15 +129,9 @@ namespace System.Management.Automation.Tracing
             /// <param name="callback"></param>
             public CorrelatedCallback(EtwActivity tracer, CallbackWithState callback)
             {
-                if (callback == null)
-                {
-                    throw new ArgumentNullException(nameof(callback));
-                }
+                ArgumentNullException.ThrowIfNull(callback);
 
-                if (tracer == null)
-                {
-                    throw new ArgumentNullException(nameof(tracer));
-                }
+                ArgumentNullException.ThrowIfNull(tracer);
 
                 this.tracer = tracer;
                 this.parentActivityId = EtwActivity.GetActivityId();
@@ -157,15 +145,9 @@ namespace System.Management.Automation.Tracing
             /// <param name="callback"></param>
             public CorrelatedCallback(EtwActivity tracer, AsyncCallback callback)
             {
-                if (callback == null)
-                {
-                    throw new ArgumentNullException(nameof(callback));
-                }
+                ArgumentNullException.ThrowIfNull(callback);
 
-                if (tracer == null)
-                {
-                    throw new ArgumentNullException(nameof(tracer));
-                }
+                ArgumentNullException.ThrowIfNull(tracer);
 
                 this.tracer = tracer;
                 this.parentActivityId = EtwActivity.GetActivityId();
@@ -184,15 +166,9 @@ namespace System.Management.Automation.Tracing
             /// <param name="callback"></param>
             public CorrelatedCallback(EtwActivity tracer, CallbackWithStateAndArgs callback)
             {
-                if (callback == null)
-                {
-                    throw new ArgumentNullException(nameof(callback));
-                }
+                ArgumentNullException.ThrowIfNull(callback);
 
-                if (tracer == null)
-                {
-                    throw new ArgumentNullException(nameof(tracer));
-                }
+                ArgumentNullException.ThrowIfNull(tracer);
 
                 this.tracer = tracer;
                 this.parentActivityId = EtwActivity.GetActivityId();
@@ -300,7 +276,7 @@ namespace System.Management.Automation.Tracing
         public static Guid GetActivityId()
         {
             Guid activityId = Guid.Empty;
-            uint hresult = UnsafeNativeMethods.EventActivityIdControl(UnsafeNativeMethods.ActivityControlCode.Get, ref activityId);
+            Interop.Windows.GetEventActivityIdControl(ref activityId);
             return activityId;
         }
 
@@ -371,10 +347,7 @@ namespace System.Management.Automation.Tracing
         /// <returns></returns>
         public CallbackNoParameter Correlate(CallbackNoParameter callback)
         {
-            if (callback == null)
-            {
-                throw new ArgumentNullException(nameof(callback));
-            }
+            ArgumentNullException.ThrowIfNull(callback);
 
             return new CorrelatedCallback(this, callback).Callback;
         }
@@ -386,10 +359,7 @@ namespace System.Management.Automation.Tracing
         /// <returns></returns>
         public CallbackWithState Correlate(CallbackWithState callback)
         {
-            if (callback == null)
-            {
-                throw new ArgumentNullException(nameof(callback));
-            }
+            ArgumentNullException.ThrowIfNull(callback);
 
             return new CorrelatedCallback(this, callback).Callback;
         }
@@ -401,10 +371,7 @@ namespace System.Management.Automation.Tracing
         /// <returns></returns>
         public AsyncCallback Correlate(AsyncCallback callback)
         {
-            if (callback == null)
-            {
-                throw new ArgumentNullException(nameof(callback));
-            }
+            ArgumentNullException.ThrowIfNull(callback);
 
             return new CorrelatedCallback(this, callback).Callback;
         }
@@ -417,10 +384,7 @@ namespace System.Management.Automation.Tracing
         /// <returns></returns>
         public CallbackWithStateAndArgs Correlate(CallbackWithStateAndArgs callback)
         {
-            if (callback == null)
-            {
-                throw new ArgumentNullException(nameof(callback));
-            }
+            ArgumentNullException.ThrowIfNull(callback);
 
             return new CorrelatedCallback(this, callback).Callback;
         }
@@ -474,10 +438,7 @@ namespace System.Management.Automation.Tracing
             }
 
             bool success = provider.WriteEvent(in ed, payload);
-            if (EventWritten != null)
-            {
-                EventWritten.Invoke(this, new EtwEventArgs(ed, success, payload));
-            }
+            EventWritten?.Invoke(this, new EtwEventArgs(ed, success, payload));
         }
 
         private EventProvider GetProvider()
@@ -498,46 +459,6 @@ namespace System.Management.Automation.Tracing
             }
 
             return currentProvider;
-        }
-
-        private static class UnsafeNativeMethods
-        {
-            internal enum ActivityControlCode : uint
-            {
-                /// <summary>
-                /// Gets the ActivityId from thread local storage.
-                /// </summary>
-                Get = 1,
-
-                /// <summary>
-                /// Sets the ActivityId in the thread local storage.
-                /// </summary>
-                Set = 2,
-
-                /// <summary>
-                /// Creates a new activity id.
-                /// </summary>
-                Create = 3,
-
-                /// <summary>
-                /// Sets the activity id in thread local storage and returns the previous value.
-                /// </summary>
-                GetSet = 4,
-
-                /// <summary>
-                /// Creates a new activity id, sets thread local storage, and returns the previous value.
-                /// </summary>
-                CreateSet = 5
-            }
-
-            /// <summary>
-            /// Provides interop access to creating, querying and setting the current activity identifier.
-            /// </summary>
-            /// <param name="controlCode">The <see cref="ActivityControlCode"/> indicating the type of operation to perform.</param>
-            /// <param name="activityId">The activity id to set or retrieve.</param>
-            /// <returns>Zero on success.</returns>
-            [DllImport(PinvokeDllNames.EventActivityIdControlDllName, ExactSpelling = true, EntryPoint = "EventActivityIdControl", CharSet = CharSet.Unicode)]
-            internal static extern unsafe uint EventActivityIdControl([In] ActivityControlCode controlCode, [In][Out] ref Guid activityId);
         }
     }
 }

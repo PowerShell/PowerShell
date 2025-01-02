@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.Commands
         private const int BUFFERSIZE = 16;
 
         /// <summary>
-        /// For cases where a homogenous collection of bytes or other items are directly piped in, we collect all the
+        /// For cases where a homogeneous collection of bytes or other items are directly piped in, we collect all the
         /// bytes in a List&lt;byte&gt; and then output the formatted result all at once in EndProcessing().
         /// </summary>
         private readonly List<byte> _inputBuffer = new();
@@ -37,7 +37,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _groupInput = true;
 
         /// <summary>
-        /// Keep track of prior input types to determine if we're given a heterogenous collection.
+        /// Keep track of prior input types to determine if we're given a heterogeneous collection.
         /// </summary>
         private Type _lastInputType;
 
@@ -47,14 +47,14 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the path of file(s) to process.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Path")]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         public string[] Path { get; set; }
 
         /// <summary>
         /// Gets or sets the literal path of file to process.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "LiteralPath")]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         [Alias("PSPath", "LP")]
         public string[] LiteralPath { get; set; }
 
@@ -68,7 +68,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the type of character encoding for InputObject.
         /// </summary>
         [Parameter(ParameterSetName = "ByInputObject")]
-        [ArgumentToEncodingTransformationAttribute()]
+        [ArgumentToEncodingTransformationAttribute]
         [ArgumentEncodingCompletionsAttribute]
         [ValidateNotNullOrEmpty]
         public Encoding Encoding
@@ -85,7 +85,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private Encoding _encoding = ClrFacade.GetDefaultEncoding();
+        private Encoding _encoding = Encoding.Default;
 
         /// <summary>
         /// Gets or sets count of bytes to read from the input stream.

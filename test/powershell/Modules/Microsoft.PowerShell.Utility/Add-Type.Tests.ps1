@@ -260,4 +260,16 @@ public class AttributeTest$guid : PSCmdlet
         param($outputType)
         { Add-Type -TypeDefinition "Hello" -OutputType $outputType } | Should -Throw -ErrorId 'AssemblyTypeNotSupported,Microsoft.PowerShell.Commands.AddTypeCommand'
     }
+
+    It "Can run with the same C# code simultaneously from multiple Runspaces" {
+        $script = {
+            $source = 'public class BasicTest {}'
+            1..10 | ForEach-Object -ThrottleLimit 10 -Parallel {
+                Add-Type -TypeDefinition $using:source
+            }
+        }
+
+        pwsh -noprofile -command $script.ToString()
+        $LASTEXITCODE | Should -Be 0
+    }
 }

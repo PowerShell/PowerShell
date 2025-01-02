@@ -5,10 +5,11 @@
     <NoWarn>$(NoWarn);CS1570</NoWarn>
     <RootNamespace>Microsoft.Management.UI.Internal</RootNamespace>
     <AssemblyName>Microsoft.PowerShell.GraphicalHost</AssemblyName>
-    <UseWPF>True</UseWPF>
-    <TargetPlatformIdentifier>Windows</TargetPlatformIdentifier>
-    <TargetPlatformVersion>7.0</TargetPlatformVersion>
     <RunAnalyzers>false</RunAnalyzers>
+    <TargetPlatformIdentifier>Windows</TargetPlatformIdentifier>
+    <TargetPlatformVersion>8.0</TargetPlatformVersion>
+    <UseWindowsForms>true</UseWindowsForms>
+    <UseWPF>True</UseWPF>
   </PropertyGroup>
 
   <PropertyGroup>

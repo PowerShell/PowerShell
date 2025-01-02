@@ -1,69 +1,65 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 using System;
 using System.Net;
 
 namespace Microsoft.PowerShell.Commands
 {
-    internal class WebProxy : IWebProxy
+    internal class WebProxy : IWebProxy, IEquatable<WebProxy>
     {
-        private ICredentials _credentials;
+        private ICredentials? _credentials;
         private readonly Uri _proxyAddress;
 
         internal WebProxy(Uri address)
         {
-            if (address == null)
-            {
-                throw new ArgumentNullException(nameof(address));
-            }
+            ArgumentNullException.ThrowIfNull(address);
 
             _proxyAddress = address;
         }
 
-        public ICredentials Credentials
-        {
-            get { return _credentials; }
+        public override bool Equals(object? obj) => Equals(obj as WebProxy);
 
-            set { _credentials = value; }
+        public override int GetHashCode() => HashCode.Combine(_proxyAddress, _credentials, BypassProxyOnLocal);
+
+        public bool Equals(WebProxy? other)
+        {
+            if (other is null)
+            {
+                return false;
+            }
+
+            // _proxyAddress cannot be null as it is set in the constructor            
+            return other._credentials == _credentials
+                && _proxyAddress.Equals(other._proxyAddress)
+                && BypassProxyOnLocal == other.BypassProxyOnLocal;
         }
 
-        internal bool BypassProxyOnLocal
+        public ICredentials? Credentials
         {
-            get; set;
+            get => _credentials;
+
+            set => _credentials = value;
         }
+
+        internal bool BypassProxyOnLocal { get; set; }
 
         internal bool UseDefaultCredentials
         {
-            get
-            {
-                return _credentials == CredentialCache.DefaultCredentials;
-            }
+            get => _credentials == CredentialCache.DefaultCredentials;
 
-            set
-            {
-                _credentials = value ? CredentialCache.DefaultCredentials : null;
-            }
+            set => _credentials = value ? CredentialCache.DefaultCredentials : null;
         }
 
         public Uri GetProxy(Uri destination)
         {
-            if (destination == null)
-            {
-                throw new ArgumentNullException(nameof(destination));
-            }
+            ArgumentNullException.ThrowIfNull(destination);
 
-            if (destination.IsLoopback)
-            {
-                return destination;
-            }
-
-            return _proxyAddress;
+            return destination.IsLoopback ? destination : _proxyAddress;
         }
 
-        public bool IsBypassed(Uri host)
-        {
-            return host.IsLoopback;
-        }
+        public bool IsBypassed(Uri host) => host.IsLoopback;
     }
 }

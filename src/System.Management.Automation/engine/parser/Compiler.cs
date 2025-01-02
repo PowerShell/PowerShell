@@ -39,6 +39,9 @@ namespace System.Management.Automation.Language
         internal static readonly MethodInfo ObjectList_ToArray =
             typeof(List<object>).GetMethod(nameof(List<object>.ToArray), Type.EmptyTypes);
 
+        internal static readonly MethodInfo ArrayOps_AddObject =
+            typeof(ArrayOps).GetMethod(nameof(ArrayOps.AddObjectArray), StaticFlags);
+
         internal static readonly MethodInfo ArrayOps_GetMDArrayValue =
             typeof(ArrayOps).GetMethod(nameof(ArrayOps.GetMDArrayValue), StaticFlags);
 
@@ -435,8 +438,8 @@ namespace System.Management.Automation.Language
         internal static readonly MethodInfo PSInvokeMemberBinder_IsHeterogeneousArray =
             typeof(PSInvokeMemberBinder).GetMethod(nameof(PSInvokeMemberBinder.IsHeterogeneousArray), StaticFlags);
 
-        internal static readonly MethodInfo PSInvokeMemberBinder_IsHomogenousArray =
-            typeof(PSInvokeMemberBinder).GetMethod(nameof(PSInvokeMemberBinder.IsHomogenousArray), StaticFlags);
+        internal static readonly MethodInfo PSInvokeMemberBinder_IsHomogeneousArray =
+            typeof(PSInvokeMemberBinder).GetMethod(nameof(PSInvokeMemberBinder.IsHomogeneousArray), StaticFlags);
 
         internal static readonly MethodInfo PSInvokeMemberBinder_TryGetInstanceMethod =
             typeof(PSInvokeMemberBinder).GetMethod(nameof(PSInvokeMemberBinder.TryGetInstanceMethod), StaticFlags);
@@ -782,7 +785,7 @@ namespace System.Management.Automation.Language
         internal ExecutionContext _executionContext;
         internal Pipe _outputPipe;
         internal BitArray _breakPoints;
-        internal List<LineBreakpoint> _boundBreakpoints;
+        internal Dictionary<int, List<LineBreakpoint>> _boundBreakpoints;
         internal int _currentSequencePointIndex;
         internal MutableTuple _localsTuple;
         internal List<Tuple<Type[], Action<FunctionContext>[], Type[]>> _traps = new List<Tuple<Type[], Action<FunctionContext>[], Type[]>>();
@@ -1149,7 +1152,7 @@ namespace System.Management.Automation.Language
 
         internal ParameterExpression NewTemp(Type type, string name)
         {
-            return Expression.Variable(type, string.Format(CultureInfo.InvariantCulture, "{0}{1}", name, _tempCounter++));
+            return Expression.Variable(type, string.Create(CultureInfo.InvariantCulture, $"{name}{_tempCounter++}"));
         }
 
         internal static Type GetTypeConstraintForMethodResolution(ExpressionAst expr)
@@ -1565,7 +1568,15 @@ namespace System.Management.Automation.Language
 
                 if (args[0] is Type)
                 {
-                    result = new OutputTypeAttribute(LanguagePrimitives.ConvertTo<Type[]>(args));
+                    // We avoid `ConvertTo<Type[]>(args)` here as CLM would throw due to `Type[]`
+                    // being a "non-core" type. NOTE: This doesn't apply to `string[]`.
+                    Type[] types = new Type[args.Length];
+                    for (int i = 0; i < args.Length; i++)
+                    {
+                        types[i] = LanguagePrimitives.ConvertTo<Type>(args[i]);
+                    }
+
+                    result = new OutputTypeAttribute(types);
                 }
                 else
                 {
@@ -2285,17 +2296,17 @@ namespace System.Management.Automation.Language
                     if (context == CaptureAstContext.AssignmentWithoutResultPreservation)
                     {
                         var catchExprs = new List<Expression>
-                                         {
-                                             Expression.Call(CachedReflectionInfo.PipelineOps_ClearPipe, resultList),
-                                             Expression.Rethrow(),
-                                             Expression.Constant(null, typeof(object))
-                                         };
+                        {
+                            Expression.Call(CachedReflectionInfo.PipelineOps_ClearPipe, resultList),
+                            Expression.Rethrow(),
+                            Expression.Constant(null, typeof(object))
+                        };
 
                         catches.Add(Expression.Catch(typeof(RuntimeException), Expression.Block(typeof(object), catchExprs)));
                     }
 
-                    // PipelineResult might get skipped in some circumstances due to a FlowControlException thrown out, in which case
-                    // we write to the oldPipe. This can happen in cases like:
+                    // PipelineResult might get skipped in some circumstances due to an early return or a FlowControlException thrown out,
+                    // in which case we write to the oldPipe. This can happen in cases like:
                     //     $(1;2;return 3)
                     finallyExprs.Add(Expression.Call(CachedReflectionInfo.PipelineOps_FlushPipe, oldPipe, resultList));
                     break;
@@ -2802,15 +2813,9 @@ namespace System.Management.Automation.Language
             {
                 if (!string.IsNullOrEmpty(scriptFileName) && !Path.IsPathRooted(assemblyFileName))
                 {
-                    assemblyFileName = Path.GetDirectoryName(scriptFileName) + "\\" + assemblyFileName;
+                    assemblyFileName = Path.Combine(Path.GetDirectoryName(scriptFileName), assemblyFileName);
                 }
 
-#if !CORECLR
-                if (!File.Exists(assemblyFileName))
-                {
-                    Microsoft.CodeAnalysis.GlobalAssemblyCache.ResolvePartialName(assemblyName, out assemblyFileName);
-                }
-#endif
                 if (File.Exists(assemblyFileName))
                 {
                     assembly = Assembly.LoadFrom(assemblyFileName);
@@ -3608,7 +3613,7 @@ namespace System.Management.Automation.Language
             var dispatchTargets = new List<LabelTarget>();
             var tryBodyExprs = new List<Expression>()
             {
-                null, // Add a slot for the inital switch/case that we'll come back to
+                null, // Add a slot for the initial switch/case that we'll come back to
             };
 
             // L0: dispatchIndex = 1; pipeline1
@@ -6965,10 +6970,7 @@ namespace System.Management.Automation.Language
             compiler.PopLabelBlock(LabelScopeKind.Statement);
 
             // If enterLoop is null, we will never JIT compile the loop.
-            if (enterLoop != null)
-            {
-                enterLoop.FinishLoop(compiler.Instructions.Count);
-            }
+            enterLoop?.FinishLoop(compiler.Instructions.Count);
         }
     }
 

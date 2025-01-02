@@ -10,7 +10,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implements the stop-transcript cmdlet.
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Stop, "Transcript", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096798")]
+    [Cmdlet(VerbsLifecycle.Stop, "Transcript", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.None, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096798")]
     [OutputType(typeof(string))]
     public sealed class StopTranscriptCommand : PSCmdlet
     {
@@ -21,6 +21,11 @@ namespace Microsoft.PowerShell.Commands
         void
         BeginProcessing()
         {
+            if (!ShouldProcess(string.Empty))
+            {
+                return;
+            }
+            
             try
             {
                 string outFilename = Host.UI.StopTranscribing();

@@ -174,9 +174,6 @@
   <data name="GetDynamicParametersException" xml:space="preserve">
     <value>Cannot retrieve the dynamic parameters for the cmdlet. {6}</value>
   </data>
-  <data name="DynamicParametersCannotCreateParameterSets" xml:space="preserve">
-    <value>Cannot retrieve dynamic parameters for the cmdlet. Dynamic parameter '{1}' specified parameter set '{6}' which was not statically defined for this cmdlet. New parameter sets may not be defined as dynamic parameters, although dynamic parameters may join parameter sets which were statically defined.</value>
-  </data>
   <data name="PromptMessage" xml:space="preserve">
     <value>Supply values for the following parameters:</value>
   </data>
@@ -222,9 +219,6 @@
   <data name="DifferentValuesAssignedToSingleParameter" xml:space="preserve">
     <value>Multiple different default values are defined in $PSDefaultParameterValues for the parameter matching the following name or alias: {0}. These defaults have been ignored.</value>
   </data>
-  <data name="InvalidDefaultParameterHashTable" xml:space="preserve">
-    <value>The automatic variable $PSDefaultParameterValues was ignored because it is not a valid hashtable object. It must be of the type IDictionary.</value>
-  </data>
   <data name="MultipleParametersMatched" xml:space="preserve">
     <value>The following name or alias defined in $PSDefaultParameterValues for this cmdlet resolves to multiple parameters: {0}. The default has been ignored.</value>
   </data>
@@ -251,5 +245,17 @@
   </data>
   <data name="KeyAlreadyAdded" xml:space="preserve">
     <value>The key '{0}' has already been added to the dictionary.</value>
+  </data>
+  <data name="WDACBinderInvocationLogTitle" xml:space="preserve">
+    <value>Method or Property Invocation Not Allowed</value>
+  </data>
+  <data name="WDACBinderInvocationLogMessage" xml:space="preserve">
+    <value>Invocation of Method or Property '{0}' on type '{1}' will not be allowed in Constrained Language mode for untrusted scripts.</value>
+  </data>
+  <data name="WDACBinderTypeCreationLogTitle" xml:space="preserve">
+    <value>Type Creation Not Allowed</value>
+  </data>
+  <data name="WDACBinderTypeCreationLogMessage" xml:space="preserve">
+    <value>Creation of Type '{0}' will not be allowed during parameter binding in Constrained Language mode for untrusted scripts.</value>
   </data>
 </root>

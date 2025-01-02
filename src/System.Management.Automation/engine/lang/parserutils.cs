@@ -28,11 +28,6 @@ namespace System.Management.Automation
     public abstract class FlowControlException : SystemException
     {
         internal FlowControlException() { }
-
-        internal FlowControlException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-        }
     }
 
     /// <summary>
@@ -43,11 +38,6 @@ namespace System.Management.Automation
         internal LoopFlowException(string label)
         {
             this.Label = label ?? string.Empty;
-        }
-
-        internal LoopFlowException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
         }
 
         internal LoopFlowException() { }
@@ -95,11 +85,6 @@ namespace System.Management.Automation
             : base(label)
         {
         }
-
-        private BreakException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-        }
     }
 
     /// <summary>
@@ -119,11 +104,6 @@ namespace System.Management.Automation
         [SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors", Justification = "This exception should only be thrown from SMA.dll")]
         internal ContinueException(string label, Exception innerException)
             : base(label)
-        {
-        }
-
-        private ContinueException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
         {
         }
     }
@@ -156,12 +136,6 @@ namespace System.Management.Automation
 
         [SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors", Justification = "This exception should only be thrown from SMA.dll")]
         internal ExitException() { }
-
-        [SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors", Justification = "This exception should only be thrown from SMA.dll")]
-        private ExitException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-        }
     }
 
     /// <summary>
@@ -251,7 +225,7 @@ namespace System.Management.Automation
     internal delegate object PowerShellBinaryOperator(ExecutionContext context, IScriptExtent errorPosition, object lval, object rval);
 
     /// <summary>
-    /// A static class holding various operations specific to the msh interpreter such as
+    /// A static class holding various operations specific to the PowerShell interpreter such as
     /// various math operations, ToString() and a routine to extract the base object from an
     /// PSObject in a canonical fashion.
     /// </summary>
@@ -1510,7 +1484,7 @@ namespace System.Management.Automation
         /// methods and ScriptBlock notes. Native methods currently take precedence over notes...
         /// </summary>
         /// <param name="errorPosition">The position to use for error reporting.</param>
-        /// <param name="target">The object to call the method on. It shouldn't be an msh object.</param>
+        /// <param name="target">The object to call the method on. It shouldn't be a PSObject.</param>
         /// <param name="methodName">The name of the method to call.</param>
         /// <param name="invocationConstraints">Invocation constraints.</param>
         /// <param name="paramArray">The arguments to pass to the method.</param>
@@ -1972,6 +1946,22 @@ namespace System.Management.Automation
                     errorRecord.LockScriptStackTrace();
                 }
             }
+        }
+
+        internal static void UpdateExceptionErrorRecordHistoryId(RuntimeException exception, ExecutionContext context)
+        {
+            InvocationInfo invInfo = exception.ErrorRecord.InvocationInfo;
+            if (invInfo is not { HistoryId: -1 })
+            {
+                return;
+            }
+
+            if (context?.CurrentCommandProcessor is null)
+            {
+                return;
+            }
+
+            invInfo.HistoryId = context.CurrentCommandProcessor.Command.MyInvocation.HistoryId;
         }
     }
     #endregion InterpreterError

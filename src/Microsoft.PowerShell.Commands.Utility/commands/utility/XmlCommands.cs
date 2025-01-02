@@ -128,7 +128,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private Encoding _encoding = ClrFacade.GetDefaultEncoding();
+        private Encoding _encoding = Encoding.Default;
 
         #endregion Command Line Parameters
 
@@ -208,7 +208,10 @@ namespace Microsoft.PowerShell.Commands
         {
             Dbg.Assert(Path != null, "FileName is mandatory parameter");
 
-            if (!ShouldProcess(Path)) return;
+            if (!ShouldProcess(Path))
+            {
+                return;
+            }
 
             StreamWriter sw;
             PathUtils.MasterStreamOpen(
@@ -439,7 +442,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                WriteObject(string.Format(CultureInfo.InvariantCulture, "<?xml version=\"1.0\" encoding=\"{0}\"?>", Encoding.UTF8.WebName));
+                WriteObject(string.Create(CultureInfo.InvariantCulture, $"<?xml version=\"1.0\" encoding=\"{Encoding.UTF8.WebName}\"?>"));
                 WriteObject("<Objects>");
             }
         }
@@ -453,8 +456,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 CreateMemoryStream();
 
-                if (_serializer != null)
-                    _serializer.SerializeAsStream(InputObject);
+                _serializer?.SerializeAsStream(InputObject);
 
                 if (_serializer != null)
                 {
@@ -472,8 +474,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                if (_serializer != null)
-                    _serializer.Serialize(InputObject);
+                _serializer?.Serialize(InputObject);
             }
         }
 
@@ -632,6 +633,86 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
+    /// Implements ConvertTo-CliXml command.
+    /// </summary>
+    [Cmdlet(VerbsData.ConvertTo, "CliXml", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2280866")]
+    [OutputType(typeof(string))]
+    public sealed class ConvertToClixmlCommand : PSCmdlet
+    {
+        #region Parameters
+
+        /// <summary>
+        /// Gets or sets input objects to be converted to CliXml object.
+        /// </summary>
+        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
+        public PSObject InputObject { get; set; }
+
+        /// <summary>
+        /// Gets or sets depth of serialization.
+        /// </summary>
+        [Parameter]
+        [ValidateRange(1, int.MaxValue)]
+        public int Depth { get; set; } = 2;
+
+        #endregion Parameters
+
+        #region Private Members
+
+        private readonly List<object> _inputObjectBuffer = new();
+
+        #endregion Private Members
+
+        #region Overrides
+
+        /// <summary>
+        /// Process record.
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            _inputObjectBuffer.Add(InputObject);
+        }
+
+        /// <summary>
+        /// End Processing.
+        /// </summary>
+        protected override void EndProcessing()
+        {
+            WriteObject(PSSerializer.Serialize(_inputObjectBuffer, Depth, enumerate: true));
+        }
+
+        #endregion Overrides
+    }
+
+    /// <summary>
+    /// Implements ConvertFrom-CliXml command.
+    /// </summary>
+    [Cmdlet(VerbsData.ConvertFrom, "CliXml", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2280770")]
+    public sealed class ConvertFromClixmlCommand : PSCmdlet
+    {
+        #region Parameters
+
+        /// <summary>
+        /// Gets or sets input object which is written in CliXml format.
+        /// </summary>
+        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
+        public string InputObject { get; set; }
+
+        #endregion Parameters
+
+        #region Overrides
+
+        /// <summary>
+        /// Process record.
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            WriteObject(PSSerializer.Deserialize(InputObject));
+        }
+
+        #endregion Overrides
+    }
+
+    /// <summary>
     /// Helper class to import single XML file.
     /// </summary>
     internal class ImportXmlHelper : IDisposable
@@ -763,12 +844,10 @@ namespace Microsoft.PowerShell.Commands
                 while (!_deserializer.Done() && count < first)
                 {
                     object result = _deserializer.Deserialize();
-                    PSObject psObject = result as PSObject;
 
-                    if (psObject != null)
+                    if (result is PSObject psObject)
                     {
-                        ICollection c = psObject.BaseObject as ICollection;
-                        if (c != null)
+                        if (psObject.BaseObject is ICollection c)
                         {
                             foreach (object o in c)
                             {
@@ -801,19 +880,13 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        internal void Stop()
-        {
-            if (_deserializer != null)
-            {
-                _deserializer.Stop();
-            }
-        }
+        internal void Stop() => _deserializer?.Stop();
     }
 
     #region Select-Xml
-    ///<summary>
-    ///This cmdlet is used to search an xml document based on the XPath Query.
-    ///</summary>
+    /// <summary>
+    /// This cmdlet is used to search an xml document based on the XPath Query.
+    /// </summary>
     [Cmdlet(VerbsCommon.Select, "Xml", DefaultParameterSetName = "Xml", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097031")]
     [OutputType(typeof(SelectXmlInfo))]
     public class SelectXmlCommand : PSCmdlet

@@ -93,7 +93,6 @@ namespace System.Management.Automation
     /// Defines exception which is thrown when state of the PSJob is different
     /// from the expected state.
     /// </summary>
-    [Serializable]
     public class InvalidJobStateException : SystemException
     {
         /// <summary>
@@ -191,10 +190,11 @@ namespace System.Management.Automation
         /// The <see cref="StreamingContext"/> that contains contextual information
         /// about the source or destination.
         /// </param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
         protected
         InvalidJobStateException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
         {
+            throw new NotSupportedException();
         }
 
         #endregion
@@ -641,7 +641,7 @@ namespace System.Management.Automation
             }
         }
 
-        ///<summary>
+        /// <summary>
         /// Success status of the command execution.
         /// </summary>
         public abstract string StatusMessage { get; }
@@ -1011,11 +1011,17 @@ namespace System.Management.Automation
         /// </summary>
         public void LoadJobStreams()
         {
-            if (_jobStreamsLoaded) return;
+            if (_jobStreamsLoaded)
+            {
+                return;
+            }
 
             lock (syncObject)
             {
-                if (_jobStreamsLoaded) return;
+                if (_jobStreamsLoaded)
+                {
+                    return;
+                }
 
                 _jobStreamsLoaded = true;
             }
@@ -1448,10 +1454,7 @@ namespace System.Management.Automation
                 {
                     lock (syncObject)
                     {
-                        if (_finished != null)
-                        {
-                            _finished.Set();
-                        }
+                        _finished?.Set();
                     }
                 }
 #pragma warning restore 56500
@@ -3310,8 +3313,7 @@ namespace System.Management.Automation
                     errorId = "InvalidSessionState";
                     if (!string.IsNullOrEmpty(failureException.Source))
                     {
-                        errorId = string.Format(System.Globalization.CultureInfo.InvariantCulture,
-                            "{0},{1}", errorId, failureException.Source);
+                        errorId = string.Create(System.Globalization.CultureInfo.InvariantCulture, $"{errorId},{failureException.Source}");
                     }
                 }
 
@@ -4074,10 +4076,7 @@ namespace System.Management.Automation
         internal void CheckStateAndRaiseStopEvent()
         {
             RemoteDebugger remoteDebugger = _wrappedDebugger as RemoteDebugger;
-            if (remoteDebugger != null)
-            {
-                remoteDebugger.CheckStateAndRaiseStopEvent();
-            }
+            remoteDebugger?.CheckStateAndRaiseStopEvent();
         }
 
         /// <summary>
@@ -4125,13 +4124,7 @@ namespace System.Management.Automation
             return null;
         }
 
-        private static void RestoreRemoteOutput(Pipeline runningCmd)
-        {
-            if (runningCmd != null)
-            {
-                runningCmd.ResumeIncomingData();
-            }
-        }
+        private static void RestoreRemoteOutput(Pipeline runningCmd) => runningCmd?.ResumeIncomingData();
 
         private void HandleBreakpointUpdated(object sender, BreakpointUpdatedEventArgs e)
         {

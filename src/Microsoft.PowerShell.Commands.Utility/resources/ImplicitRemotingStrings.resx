@@ -129,9 +129,6 @@
   <data name="ErrorNoResultsFromRemoteEnd" xml:space="preserve">
     <value>Running the {0} command in a remote session returned no results.</value>
   </data>
-  <data name="ErrorCannotCreateTemporaryFile" xml:space="preserve">
-    <value>Cannot create temporary file for implicit remoting module.</value>
-  </data>
   <data name="ErrorNoRunspaceForThisModule" xml:space="preserve">
     <value>No session has been associated with this implicit remoting module.</value>
   </data>
@@ -146,15 +143,6 @@
   </data>
   <data name="ErrorSkippedUnsafeCommandName" xml:space="preserve">
     <value>Proxy creation has been skipped for the '{0}' command, because PowerShell could not verify the safety of the command name.</value>
-  </data>
-  <data name="ErrorSkippedUnsafeParameterName" xml:space="preserve">
-    <value>Proxy creation has been skipped for the '{0}' command, because PowerShell could not verify the safety of a parameter name: '{1}'.</value>
-  </data>
-  <data name="ErrorSkippedUnsafeParameterSetName" xml:space="preserve">
-    <value>Proxy creation has been skipped for the '{0}' command, because PowerShell could not verify the safety of a parameter set name: '{1}'.</value>
-  </data>
-  <data name="ErrorSkippedUnsafeAliasName" xml:space="preserve">
-    <value>Proxy creation has been skipped for the '{0}' command, because PowerShell could not verify the safety of a parameter alias name: '{1}'.</value>
   </data>
   <data name="ErrorCommandSkippedBecauseOfShadowing" xml:space="preserve">
     <value>Proxy creation has been skipped for the following command: '{0}', because it would shadow an existing local command.  Use the AllowClobber parameter if you want to shadow existing local commands.</value>
@@ -203,9 +191,6 @@
   </data>
   <data name="ProgressStatusGetFormatDataProgress" xml:space="preserve">
     <value>Getting formatting and output information from remote session ... {0} objects received</value>
-  </data>
-  <data name="ProgressStatusProxyGeneration" xml:space="preserve">
-    <value>Generating a proxy command for '{0}' ...</value>
   </data>
   <data name="ProgressStatusCompleted" xml:space="preserve">
     <value>Completed.</value>

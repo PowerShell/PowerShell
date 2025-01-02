@@ -17,10 +17,7 @@ namespace System.Management.Automation.Runspaces
 
         private static Func<string, PSMemberInfoInternalCollection<PSMemberInfo>> GetValueFactoryBasedOnInitCapacity(int capacity)
         {
-            if (capacity <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(capacity));
-            }
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(capacity);
 
             if (capacity > ValueFactoryCacheCount)
             {
@@ -1164,7 +1161,8 @@ namespace System.Management.Automation.Runspaces
                         if ($IsWindows) {
                             (Get-CimInstance Win32_Process -Filter ""ProcessId = $($this.Id)"").CommandLine
                         } elseif ($IsLinux) {
-                            Get-Content -LiteralPath ""/proc/$($this.Id)/cmdline""
+                            $rawCmd = Get-Content -LiteralPath ""/proc/$($this.Id)/cmdline""
+                            $rawCmd.Substring(0, $rawCmd.Length - 1) -replace ""`0"", "" ""
                         }
                     "),
                     setterScript: null,

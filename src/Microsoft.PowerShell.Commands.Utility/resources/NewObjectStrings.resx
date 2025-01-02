@@ -147,7 +147,16 @@
   <data name="CannotCreateTypeLanguageMode" xml:space="preserve">
     <value>Cannot create type. Only core types are supported in {0} language mode on a policy locked down machine.</value>
   </data>
-  <data name="ApartmentNotSupported" xml:space="preserve">
-    <value>{0} Please note that Single-Threaded Apartment is not supported in PowerShell.</value>
+  <data name="TypeWDACLogTitle" xml:space="preserve">
+    <value>New-Object Cmdlet Type Creation</value>
+  </data>
+  <data name="TypeWDACLogMessage" xml:space="preserve">
+    <value>The type '{0}' will not be created in ConstrainedLanguage mode.</value>
+  </data>
+  <data name="ComWDACLogTitle" xml:space="preserve">
+    <value>New-Object Cmdlet COM Object Creation</value>
+  </data>
+  <data name="ComWDACLogMessage" xml:space="preserve">
+    <value>The COM object '{0}' will not be created in ConstrainedLanguage mode.</value>
   </data>
 </root>

@@ -5,7 +5,7 @@
 $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
 $originalWarningPreference = $WarningPreference
 $WarningPreference = "SilentlyContinue"
-$skipTest = ! ($IsWindows -and $IsCoreCLR -and (Test-IsElevated))
+$skipTest = ! ($IsWindows -and $IsCoreCLR -and (Test-IsElevated)) -or (Test-IsWinWow64)
 $PSDefaultParameterValues["it:skip"] = $skipTest
 
 try

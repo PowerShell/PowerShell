@@ -180,8 +180,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            IDictionary dictionary = InputObject.BaseObject as IDictionary;
-            if (dictionary != null)
+            if (InputObject.BaseObject is IDictionary dictionary)
             {
                 // Dictionaries should be enumerated through because the pipeline does not enumerate through them.
                 foreach (DictionaryEntry entry in dictionary)

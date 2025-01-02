@@ -1827,10 +1827,7 @@ namespace System.Management.Automation
                 dottedScope.GetVariableTable(result, includePrivate);
             }
 
-            if (scope.LocalsTuple != null)
-            {
-                scope.LocalsTuple.GetVariableTable(result, includePrivate);
-            }
+            scope.LocalsTuple?.GetVariableTable(result, includePrivate);
         }
 
         /// <summary>

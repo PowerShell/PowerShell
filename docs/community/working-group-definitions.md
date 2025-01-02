@@ -22,6 +22,7 @@ Today, DSC is integrated into the PowerShell language, and we need to manage it 
 * @anmenaga
 * @gaelcolas
 * @michaeltlombardi
+* @SteveL-MSFT
 
 ## Developer Experience
 
@@ -37,6 +38,7 @@ Special consideration should be given to topics like **backwards compatibility**
 * @adityapatwardhan (SDK)
 * @michaeltlombardi
 * @SeeminglyScience
+* @bergmeister
 
 ## Engine
 
@@ -48,8 +50,8 @@ This includes (but is not limited to):
 * The language parser
 * The command and parameter binders
 * The module and provider systems
-    * `*-Item` cmdlets
-    * Providers
+  * `*-Item` cmdlets
+  * Providers
 * Performance
 * Componentization
 * AssemblyLoadContext
@@ -60,13 +62,14 @@ However, it's expected that many issues will require input from both WGs.
 
 ### Members
 
-* @BrucePay
 * @daxian-dbw
 * @JamesWTruher
 * @rkeithhill
 * @vexx32
 * @SeeminglyScience
 * @IISResetMe
+* @powercode
+* @kilasuit
 
 ## Interactive UX
 
@@ -83,11 +86,15 @@ These topics include (but are not limited to):
 
 ### Members
 
+* @theJasonHelmick
 * @daxian-dbw (PSReadline / IntelliSense)
 * @adityapatwardhan (Markdown / help system)
 * @JamesWTruher (cmdlet design)
 * @SeeminglyScience
+* @sdwheeler
 * @kilasuit
+* @FriedrichWeinmann
+* @StevenBucher98
 
 ## Language
 
@@ -101,7 +108,6 @@ particularly given the long-lasting effects of language decisions.
 
 * @JamesWTruher
 * @daxian-dbw
-* @BrucePay
 * @SeeminglyScience
 
 ## Remoting
@@ -115,15 +121,13 @@ Given the commonality of serialization boundaries, the Remoting WG should also f
 ### Members
 
 * @anmenaga
-* @jborean93
-* @PaulHigin
 * @TravisEz13
 
 ## Cmdlets and Modules
 
 The Cmdlet WG should focus on core/inbox modules whose source code lives within the
 `PowerShell/PowerShell` repository,
-including the proposal of new cmdlets and parameters, improvements and bug fixes to existing
+including the proposal of new cmdlets and parameters, improvements and bugfixes to existing
 cmdlets/parameters, and breaking changes.
 
 However, some modules that ship as part of the PowerShell package are managed in other source repositories.
@@ -141,11 +145,12 @@ These modules include:
 
 ### Members
 
-* PowerShell Committee as interim members
+* @JamesWTruher
+* @SteveL-MSFT
 * @jdhitsolutions
 * @TobiasPSP
 * @doctordns
-* @jhoneill
+* @kilasuit
 
 ## Security
 
@@ -155,7 +160,9 @@ in order to provide their expertise, concerns, and guidance.
 ### Members
 
 * @TravisEz13
-* @PaulHigin
+* @SydneySmithReal
+* @anamnavi
+* @SteveL-MSFT
 
 ## Explicitly not Working Groups
 
@@ -169,12 +176,12 @@ This bucket is also not oriented a customer-facing deliverable and is already so
 so we don't need to address it as part of the WGs.
 
 * Build
-    * `build.psm1`
-    * `install-powershell.ps1`
-    * Build infrastructure and automation
+  * `build.psm1`
+  * `install-powershell.ps1`
+  * Build infrastructure and automation
 * Packaging
-    * Scripts
-    * Infrastructure
+  * Scripts
+  * Infrastructure
 
 ### Quality
 
@@ -183,10 +190,10 @@ Similar to the topic of building PowerShell, quality
 should be managed by the PowerShell Maintainers.
 
 * Test code
-    * Pester unit tests
-    * xUnit unit tests
+  * Pester unit tests
+  * xUnit unit tests
 * Test infrastructure
-    * Nightlies
-    * CI
+  * Nightlies
+  * CI
 * Code coverage
 * Pester

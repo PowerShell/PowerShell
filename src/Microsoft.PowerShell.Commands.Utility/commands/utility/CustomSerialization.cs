@@ -170,10 +170,7 @@ namespace System.Management.Automation
         internal void Stop()
         {
             CustomInternalSerializer serializer = _serializer;
-            if (serializer != null)
-            {
-                serializer.Stop();
-            }
+            serializer?.Stop();
         }
 
         #endregion
@@ -341,8 +338,7 @@ namespace System.Management.Automation
             Dbg.Assert(source != null, "caller should validate the parameter");
 
             bool sourceHandled = false;
-            PSObject moSource = source as PSObject;
-            if (moSource != null && !moSource.ImmediateBaseObjectIsEmpty)
+            if (source is PSObject moSource && !moSource.ImmediateBaseObjectIsEmpty)
             {
                 // Check if baseObject is primitive known type
                 object baseObject = moSource.ImmediateBaseObject;

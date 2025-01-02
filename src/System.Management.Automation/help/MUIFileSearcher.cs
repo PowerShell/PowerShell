@@ -57,6 +57,14 @@ namespace System.Management.Automation
         /// </summary>
         internal SearchMode SearchMode { get; } = SearchMode.Unique;
 
+        private static readonly System.IO.EnumerationOptions _enumerationOptions = new()
+        {
+            IgnoreInaccessible = false,
+            AttributesToSkip = 0,
+            MatchType = MatchType.Win32,
+            MatchCasing = MatchCasing.CaseInsensitive,
+        };
+
         private Collection<string> _result = null;
 
         /// <summary>
@@ -113,52 +121,11 @@ namespace System.Management.Automation
             }
         }
 
-        private static string[] GetFiles(string path, string pattern)
-        {
-#if UNIX
-            // On Linux, file names are case sensitive, so we need to add
-            // extra logic to select the files that match the given pattern.
-            var result = new List<string>();
-            string[] files = Directory.GetFiles(path);
-
-            var wildcardPattern = WildcardPattern.ContainsWildcardCharacters(pattern)
-                ? WildcardPattern.Get(pattern, WildcardOptions.IgnoreCase)
-                : null;
-
-            foreach (string filePath in files)
-            {
-                if (filePath.Contains(pattern, StringComparison.OrdinalIgnoreCase))
-                {
-                    result.Add(filePath);
-                    break;
-                }
-
-                if (wildcardPattern != null)
-                {
-                    string fileName = Path.GetFileName(filePath);
-                    if (wildcardPattern.IsMatch(fileName))
-                    {
-                        result.Add(filePath);
-                    }
-                }
-            }
-
-            return result.ToArray();
-#else
-            return Directory.GetFiles(path, pattern);
-#endif
-        }
-
         private void AddFiles(string muiDirectory, string directory, string pattern)
         {
             if (Directory.Exists(muiDirectory))
             {
-                string[] files = GetFiles(muiDirectory, pattern);
-
-                if (files == null)
-                    return;
-
-                foreach (string file in files)
+                foreach (string file in Directory.EnumerateFiles(muiDirectory, pattern, _enumerationOptions))
                 {
                     string path = Path.Combine(muiDirectory, file);
 

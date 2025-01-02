@@ -559,15 +559,13 @@ namespace System.Management.Automation
                             parameterMetadata.ObsoleteAttribute.Message);
 
                         var mshCommandRuntime = this.Command.commandRuntime as MshCommandRuntime;
-                        if (mshCommandRuntime != null)
-                        {
-                            // Write out warning only if we are in the context of MshCommandRuntime.
-                            // This is because
-                            //  1. The overload method WriteWarning(WarningRecord) is only available in MshCommandRuntime;
-                            //  2. We write out warnings for obsolete commands and obsolete cmdlet parameters only when in
-                            //     the context of MshCommandRuntime. So we do it here to keep consistency.
-                            mshCommandRuntime.WriteWarning(new WarningRecord(FQIDParameterObsolete, obsoleteWarning));
-                        }
+
+                        // Write out warning only if we are in the context of MshCommandRuntime.
+                        // This is because
+                        //  1. The overload method WriteWarning(WarningRecord) is only available in MshCommandRuntime;
+                        //  2. We write out warnings for obsolete commands and obsolete cmdlet parameters only when in
+                        //     the context of MshCommandRuntime. So we do it here to keep consistency.
+                        mshCommandRuntime?.WriteWarning(new WarningRecord(FQIDParameterObsolete, obsoleteWarning));
                     }
 
                     // Finally bind the argument to the parameter
@@ -772,7 +770,10 @@ namespace System.Management.Automation
 
             // Note - we explicitly don't pass the context here because we don't want
             // the overhead of the calls that check for stopping.
-            if (ParserOps.MoveNext(null, null, ienum)) { isEmpty = false; }
+            if (ParserOps.MoveNext(null, null, ienum))
+            {
+                isEmpty = false;
+            }
 
             // If the element of the collection is of value type, then no need to check for null
             // because a value-type value cannot be null.
@@ -1243,8 +1244,9 @@ namespace System.Management.Automation
                         // However, we don't allow Hashtable-to-Object conversion (PSObject and IDictionary) because
                         // those can lead to property setters that probably aren't expected. This is enforced by
                         // setting 'Context.LanguageModeTransitionInParameterBinding' to true before the conversion.
+                        var currentLanguageMode = Context.LanguageMode;
                         bool changeLanguageModeForTrustedCommand =
-                            Context.LanguageMode == PSLanguageMode.ConstrainedLanguage &&
+                            currentLanguageMode == PSLanguageMode.ConstrainedLanguage &&
                             this.Command.CommandInfo.DefiningLanguageMode == PSLanguageMode.FullLanguage;
                         bool oldLangModeTransitionStatus = Context.LanguageModeTransitionInParameterBinding;
 
@@ -1262,7 +1264,7 @@ namespace System.Management.Automation
                         {
                             if (changeLanguageModeForTrustedCommand)
                             {
-                                Context.LanguageMode = PSLanguageMode.ConstrainedLanguage;
+                                Context.LanguageMode = currentLanguageMode;
                                 Context.LanguageModeTransitionInParameterBinding = oldLangModeTransitionStatus;
                             }
                         }
@@ -1449,7 +1451,7 @@ namespace System.Management.Automation
         /// could not be created.
         /// </exception>
         [SuppressMessage("Microsoft.Maintainability", "CA1505:AvoidUnmaintainableCode")]
-        [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Consider Simplyfing it")]
+        [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Consider Simplifying it")]
         private object EncodeCollection(
             CommandParameterInternal argument,
             string parameterName,

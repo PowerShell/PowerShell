@@ -44,7 +44,6 @@ namespace System.Management.Automation
     /// but there is no established scenario for doing this, nor has it been tested.
     /// </remarks>
     [TypeDescriptionProvider(typeof(PSObjectTypeDescriptionProvider))]
-    [Serializable]
     public class PSObject : IFormattable, IComparable, ISerializable, IDynamicMetaObjectProvider
     {
         #region constructors
@@ -490,6 +489,7 @@ namespace System.Management.Automation
 
             if (result == null)
             {
+#if !UNIX
                 if (objectType.IsCOMObject)
                 {
                     // All WinRT types are COM types.
@@ -526,6 +526,9 @@ namespace System.Management.Automation
                 {
                     result = PSObject.s_dotNetInstanceAdapterSet;
                 }
+#else
+                result = PSObject.s_dotNetInstanceAdapterSet;
+#endif
             }
 
             var existingOrNew = s_adapterMapping.GetOrAdd(objectType, result);
@@ -2044,7 +2047,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="value">Object which is set as core.</param>
         /// <param name="overrideTypeInfo">If true, overwrite the type information.</param>
-        ///<remarks>This method is to be used only by Serialization code</remarks>
+        /// <remarks>This method is to be used only by Serialization code</remarks>
         internal void SetCoreOnDeserialization(object value, bool overrideTypeInfo)
         {
             Diagnostics.Assert(this.ImmediateBaseObjectIsEmpty, "BaseObject should be PSCustomObject for deserialized objects");

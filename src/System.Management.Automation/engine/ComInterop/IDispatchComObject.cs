@@ -22,7 +22,7 @@ namespace System.Management.Automation.ComInterop
     ///    default arguments?). So obj.foo() is ambiguous as it could mean invoking method foo,
     ///    or it could mean invoking the function pointer returned by property foo.
     ///    We are attempting to find whether we need to call a method or a property by examining
-    ///    the ITypeInfo associated with the IDispatch. ITypeInfo tell's use what parameters the method
+    ///    the ITypeInfo associated with the IDispatch. ITypeInfo tells us what parameters the method
     ///    expects, is it a method or a property, what is the default property of the object, how to
     ///    create an enumerator for collections etc.
     ///
@@ -99,7 +99,7 @@ namespace System.Management.Automation.ComInterop
                 typeName = "IDispatch";
             }
 
-            return string.Format(CultureInfo.CurrentCulture, "{0} ({1})", RuntimeCallableWrapper.ToString(), typeName);
+            return $"{RuntimeCallableWrapper} ({typeName})";
         }
 
         public ComTypeDesc ComTypeDesc
@@ -222,7 +222,7 @@ namespace System.Management.Automation.ComInterop
                 return false;
             }
 
-            throw Error.CouldNotGetDispId(name, string.Format(CultureInfo.InvariantCulture, "0x{0:X})", hresult));
+            throw Error.CouldNotGetDispId(name, string.Create(CultureInfo.InvariantCulture, $"0x{hresult:X})"));
         }
 
         internal bool TryGetPropertySetterExplicit(string name, out ComMethodDesc method, Type limitType, bool holdsNull)
@@ -258,7 +258,7 @@ namespace System.Management.Automation.ComInterop
                 return false;
             }
 
-            throw Error.CouldNotGetDispId(name, string.Format(CultureInfo.InvariantCulture, "0x{0:X})", hresult));
+            throw Error.CouldNotGetDispId(name, string.Create(CultureInfo.InvariantCulture, $"0x{hresult:X})"));
         }
 
         internal override IList<string> GetMemberNames(bool dataOnly)

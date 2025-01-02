@@ -61,32 +61,12 @@ namespace Microsoft.PowerShell
         internal static int GetParentPid(Process process)
         {
             Diagnostics.Assert(process != null, "Ensure process is not null before calling");
-            PROCESS_BASIC_INFORMATION pbi;
+            Interop.Windows.PROCESS_BASIC_INFORMATION pbi;
             int size;
-            var res = NtQueryInformationProcess(process.Handle, 0, out pbi, Marshal.SizeOf<PROCESS_BASIC_INFORMATION>(), out size);
+            var res = Interop.Windows.NtQueryInformationProcess(process.Handle, 0, out pbi, Marshal.SizeOf<Interop.Windows.PROCESS_BASIC_INFORMATION>(), out size);
 
             return res != 0 ? InvalidProcessId : pbi.InheritedFromUniqueProcessId.ToInt32();
         }
-
-        [StructLayout(LayoutKind.Sequential)]
-        private struct PROCESS_BASIC_INFORMATION
-        {
-            public IntPtr ExitStatus;
-            public IntPtr PebBaseAddress;
-            public IntPtr AffinityMask;
-            public IntPtr BasePriority;
-            public IntPtr UniqueProcessId;
-            public IntPtr InheritedFromUniqueProcessId;
-        }
-
-        [DllImport("ntdll.dll", SetLastError = true)]
-        private static extern int NtQueryInformationProcess(
-                IntPtr processHandle,
-                int processInformationClass,
-                out PROCESS_BASIC_INFORMATION processInformation,
-                int processInformationLength,
-                out int returnLength);
 #endif
-
     }
 }

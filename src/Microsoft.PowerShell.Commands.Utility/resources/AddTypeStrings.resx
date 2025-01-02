@@ -120,26 +120,11 @@
   <data name="AlreadyCompiledandLoaded" xml:space="preserve">
     <value>The source code was already compiled and loaded.</value>
   </data>
-  <data name="MethodDefinitionNotPublic" xml:space="preserve">
-    <value>The generated type defines no public methods or properties.</value>
-  </data>
-  <data name="TypeDefinitionNotPublic" xml:space="preserve">
-    <value>The generated type is not public.</value>
-  </data>
-  <data name="FromMemberNotSupported" xml:space="preserve">
-    <value>Cannot add type. The -MemberDefinition parameter is not supported for this language.</value>
-  </data>
   <data name="FileExtensionNotSupported" xml:space="preserve">
     <value>Cannot add type. The "{0}" extension is not supported.</value>
   </data>
   <data name="MultipleExtensionsNotSupported" xml:space="preserve">
     <value>Cannot add type. Input files must all have the same file extension.</value>
-  </data>
-  <data name="LanguageAndProviderSpecified" xml:space="preserve">
-    <value>Cannot add type. Specify only the Language or CodeDomProvider parameters.</value>
-  </data>
-  <data name="AmbiguousAssemblyName" xml:space="preserve">
-    <value>Cannot add type. The assembly name {0} matches both {1} and {2}.</value>
   </data>
   <data name="AssemblyNotFound" xml:space="preserve">
     <value>Cannot add type. The assembly '{0}' could not be found.</value>
@@ -153,9 +138,6 @@
   <data name="CompilerErrors" xml:space="preserve">
     <value>Cannot add type. Compilation errors occurred.</value>
   </data>
-  <data name="AssemblyLoadErrors" xml:space="preserve">
-    <value>Cannot add type. One or more required assemblies are missing.</value>
-  </data>
   <data name="OutputTypeRequiresOutputAssembly" xml:space="preserve">
     <value>Cannot add type. The OutputType parameter requires that the OutputAssembly parameter be specified.</value>
   </data>
@@ -167,5 +149,11 @@
   </data>
   <data name="AssemblyTypeNotSupported" xml:space="preserve">
     <value>Both the assembly types 'ConsoleApplication' and 'WindowsApplication' are not currently supported.</value>
+  </data>
+  <data name="AddTypeLogTitle" xml:space="preserve">
+    <value>Add-Type Cmdlet</value>
+  </data>
+  <data name="AddTypeLogMessage" xml:space="preserve">
+    <value>Add-Type cmdlet will not be allowed in ConstrainedLanguage mode.</value>
   </data>
 </root>

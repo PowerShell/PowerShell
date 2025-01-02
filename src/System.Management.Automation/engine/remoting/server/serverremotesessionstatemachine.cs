@@ -913,10 +913,7 @@ namespace System.Management.Automation.Remoting
                         {
                             // reset the timer
                             Timer tmp = Interlocked.Exchange(ref _keyExchangeTimer, null);
-                            if (tmp != null)
-                            {
-                                tmp.Dispose();
-                            }
+                            tmp?.Dispose();
                         }
 
                         // the key import would have been done
@@ -984,10 +981,7 @@ namespace System.Management.Automation.Remoting
             Dbg.Assert(_state == RemoteSessionState.EstablishedAndKeyRequested, "timeout should only happen when waiting for a key");
 
             Timer tmp = Interlocked.Exchange(ref _keyExchangeTimer, null);
-            if (tmp != null)
-            {
-                tmp.Dispose();
-            }
+            tmp?.Dispose();
 
             PSRemotingDataStructureException exception =
                 new PSRemotingDataStructureException(RemotingErrorIdStrings.ServerKeyExchangeFailed);

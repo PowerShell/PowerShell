@@ -70,8 +70,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             foreach (object obj in fe.formatValueList)
             {
-                FormatEntry feChild = obj as FormatEntry;
-                if (feChild != null)
+                if (obj is FormatEntry feChild)
                 {
                     if (currentDepth < maxRecursionDepth)
                     {
@@ -100,15 +99,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     continue;
                 }
 
-                FormatTextField ftf = obj as FormatTextField;
-                if (ftf != null)
+                if (obj is FormatTextField ftf)
                 {
                     this.AddToBuffer(ftf.text);
                     continue;
                 }
 
-                FormatPropertyField fpf = obj as FormatPropertyField;
-                if (fpf != null)
+                if (obj is FormatPropertyField fpf)
                 {
                     this.AddToBuffer(fpf.propertyValue);
                 }
@@ -239,10 +236,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             public void Dispose()
             {
-                if (_mgr != null)
-                {
-                    _mgr.RemoveStackFrame();
-                }
+                _mgr?.RemoveStackFrame();
             }
 
             private readonly IndentationManager _mgr;
@@ -330,9 +324,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// </summary>
     internal sealed class StringManipulationHelper
     {
-        private static readonly char s_softHyphen = '\u00AD';
-        private static readonly char s_hardHyphen = '\u2011';
-        private static readonly char s_nonBreakingSpace = '\u00A0';
+        private const char SoftHyphen = '\u00AD';
+        private const char HardHyphen = '\u2011';
+        private const char NonBreakingSpace = '\u00A0';
+
         private static readonly Collection<string> s_cultureCollection = new Collection<string>();
 
         static StringManipulationHelper()
@@ -380,13 +375,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
 
                 string delimiter = null;
-                if (s[i] == ' ' || s[i] == '\t' || s[i] == s_softHyphen)
+                if (s[i] is ' ' or '\t' or SoftHyphen)
                 {
                     // Soft hyphen = \u00AD - Should break, and add a hyphen if needed.
                     // If not needed for a break, hyphen should be absent.
                     delimiter = new string(s[i], 1);
                 }
-                else if (s[i] == s_hardHyphen || s[i] == s_nonBreakingSpace)
+                else if (s[i] is HardHyphen or NonBreakingSpace)
                 {
                     // Non-breaking space = \u00A0 - ideally shouldn't wrap.
                     // Hard hyphen = \u2011 - Should not break.
@@ -599,9 +594,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     string suffix = null;
 
                     // Handle soft hyphen
-                    if (word.Delim.Length == 1 && word.Delim[0] == s_softHyphen)
+                    if (word.Delim.Length == 1 && word.Delim[0] is SoftHyphen)
                     {
-                        int wordWidthWithHyphen = displayCells.Length(wordToAdd) + displayCells.Length(s_softHyphen);
+                        int wordWidthWithHyphen = displayCells.Length(wordToAdd) + displayCells.Length(SoftHyphen);
 
                         // Add hyphen only if necessary
                         if (wordWidthWithHyphen == spacesLeft)
@@ -816,7 +811,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return string.Empty;
             }
 
-            int lineBreak = s.IndexOfAny(s_lineBreakChars);
+            int lineBreak = s.AsSpan().IndexOfAny('\n', '\r');
 
             if (lineBreak < 0)
             {
@@ -830,8 +825,5 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             return StringUtil.Padding(count) + val;
         }
-
-        private static readonly char[] s_newLineChar = new char[] { '\n' };
-        private static readonly char[] s_lineBreakChars = new char[] { '\n', '\r' };
     }
 }

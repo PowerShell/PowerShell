@@ -315,10 +315,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 this.ExceptionSafeWrapper(delegate
                 {
                     IObservable<T> observable = this.GetCimOperation();
-                    if (observable != null)
-                    {
-                        observable.Subscribe(this);
-                    }
+                    observable?.Subscribe(this);
                 });
             });
         }
@@ -522,10 +519,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             }
 
             CimCustomOptionsDictionary jobSpecificCustomOptions = this.GetJobSpecificCustomOptions();
-            if (jobSpecificCustomOptions != null)
-            {
-                jobSpecificCustomOptions.Apply(operationOptions, CimSensitiveValueConverter);
-            }
+            jobSpecificCustomOptions?.Apply(operationOptions, CimSensitiveValueConverter);
 
             return operationOptions;
         }
@@ -629,8 +623,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             }
             else
             {
-                CimJobException cje = exception as CimJobException;
-                if ((cje != null) && (cje.IsTerminatingError))
+                if ((exception is CimJobException cje) && (cje.IsTerminatingError))
                 {
                     terminatingErrorTracker.MarkSessionAsTerminated(this.JobContext.Session, out sessionWasAlreadyTerminated);
                     isThisTerminatingError = true;
@@ -1019,8 +1012,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         internal static void AddShowComputerNameMarker(PSObject pso)
         {
-            PSPropertyInfo psShowComputerNameProperty = pso.InstanceMembers[RemotingConstants.ShowComputerNameNoteProperty] as PSPropertyInfo;
-            if (psShowComputerNameProperty != null)
+            if (pso.InstanceMembers[RemotingConstants.ShowComputerNameNoteProperty] is PSPropertyInfo psShowComputerNameProperty)
             {
                 psShowComputerNameProperty.Value = true;
             }

@@ -12,7 +12,7 @@ namespace System.Management.Automation.SecurityAccountsManager
     internal class StringUtil
     {
         /// <summary>
-        /// Private constructor to precent auto-generation of a default constructor with greater accessability.
+        /// Private constructor to present auto-generation of a default constructor with greater accessibility.
         /// </summary>
         private StringUtil()
         {

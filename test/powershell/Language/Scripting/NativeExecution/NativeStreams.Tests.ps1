@@ -53,7 +53,11 @@ Describe "Native streams behavior with PowerShell" -Tags 'CI' {
             ($out | Out-String).Replace("`r", '') | Should -BeExactly "foo`n`nbar`n`nbazmiddlefoo`n`nbar`n`nbaz`n"
         }
 
-        It 'does not get truncated or split when redirected' {
+        It 'Does not get truncated or split when redirected' {
+            if (Test-IsWindowsArm64) {
+                Set-ItResult -Pending -Because "IOException: The handle is invalid."
+            }
+
             $longtext = "0123456789"
             while ($longtext.Length -lt [console]::WindowWidth) {
                 $longtext += $longtext

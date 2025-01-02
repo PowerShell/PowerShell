@@ -537,7 +537,10 @@ namespace System.Management.Automation.Internal.Host
         internal void RevertHostRef()
         {
             // nothing to revert if Host reference is not set.
-            if (!IsHostRefSet) { return; }
+            if (!IsHostRefSet)
+            {
+                return;
+            }
 
             _externalHostRef.Revert();
             _internalUIRef.Revert();

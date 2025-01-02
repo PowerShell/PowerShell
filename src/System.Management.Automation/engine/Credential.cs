@@ -16,7 +16,7 @@ using Microsoft.PowerShell;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Defines the valid types of MSH credentials.  Used by PromptForCredential calls.
+    /// Defines the valid types of PSCredentials.  Used by PromptForCredential calls.
     /// </summary>
     [Flags]
     public enum PSCredentialTypes
@@ -85,7 +85,7 @@ namespace System.Management.Automation
     /// Offers a centralized way to manage usernames, passwords, and
     /// credentials.
     /// </summary>
-    [Serializable()]
+    [Serializable]
     public sealed class PSCredential : ISerializable
     {
         /// <summary>

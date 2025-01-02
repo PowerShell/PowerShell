@@ -117,62 +117,8 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="MonadConsoleNotFound" xml:space="preserve">
-    <value>Required element "PSConsoleFile" in {0} is missing or incorrect.</value>
-  </data>
-  <data name="MonadVersionNotFound" xml:space="preserve">
-    <value>Required element "PSVersion" in {0} is missing or incorrect.</value>
-  </data>
-  <data name="BadConsoleVersion" xml:space="preserve">
-    <value>Required element "ConsoleSchemaVersion" in {0} is missing or incorrect.</value>
-  </data>
-  <data name="BadXMLFormat" xml:space="preserve">
-    <value>The console file is not valid. Multiple entries were found for the element PSConsoleFile. Only one entry is supported for this version.</value>
-  </data>
-  <data name="PSSnapInNotFound" xml:space="preserve">
-    <value>The console file is not valid because the element {0} is not valid.</value>
-  </data>
-  <data name="IDNotFound" xml:space="preserve">
-    <value>The console file is not valid because the PowerShell snap-in name is missing.</value>
-  </data>
-  <data name="SaveDefaultError" xml:space="preserve">
-    <value>Attempting to save a console file with no name. Use Export-Console with the Path parameter to save the console file.</value>
-  </data>
-  <data name="BadXMLElementFound" xml:space="preserve">
-    <value>Unknown element {0} found. "{1}" should have "{2}" and "{3}" elements only.</value>
-  </data>
-  <data name="MultipleMshSnapinsElementNotSupported" xml:space="preserve">
-    <value>The console file is not valid. Only one occurrence of the element "{0}" is allowed.</value>
-  </data>
-  <data name="PathNotAbsolute" xml:space="preserve">
-    <value>The path {0} is not an absolute path.</value>
-  </data>
-  <data name="BadConsoleExtension" xml:space="preserve">
-    <value>The console file name extension is not valid. A console file name extension must be psc1.</value>
-  </data>
   <data name="BadMonadVersion" xml:space="preserve">
     <value>Incorrect PowerShell version {0}. PowerShell version {1} is supported on this computer.</value>
-  </data>
-  <data name="PSSnapInDoesNotExist" xml:space="preserve">
-    <value>Cannot find any PowerShell snap-in information for {0}.</value>
-  </data>
-  <data name="CannotLoadDefault" xml:space="preserve">
-    <value>This is a system PowerShell snap-in that is loaded by PowerShell.</value>
-  </data>
-  <data name="PSSnapInAlreadyExists" xml:space="preserve">
-    <value>Cannot add PowerShell snap-in {0} because it is already added. Verify the name of the snap-in, and then try again.</value>
-  </data>
-  <data name="CannotRemovePSSnapIn" xml:space="preserve">
-    <value>Cannot remove the PowerShell snap-in {0} because it is not loaded. Verify the name of the snap-in that you want to remove, and then try again.</value>
-  </data>
-  <data name="CannotRemoveDefault" xml:space="preserve">
-    <value>Cannot remove the PowerShell snap-in {0} because it is a system snap-in. Verify the name of the snap-in that you want to remove, and then try again.</value>
-  </data>
-  <data name="PSSnapInReadError" xml:space="preserve">
-    <value>Cannot load the PowerShell snap-in because an error occurred while reading the registry information for the snap-in.</value>
-  </data>
-  <data name="CannotLoadDefaults" xml:space="preserve">
-    <value>An error occurred while attempting to load the system PowerShell snap-ins. Please contact Microsoft Customer Support Services.</value>
   </data>
   <data name="ConsoleLoadFailure" xml:space="preserve">
     <value>The following errors occurred when loading console {0}: {1}</value>
@@ -195,44 +141,8 @@
   <data name="AddPSSnapInBadMonadVersion" xml:space="preserve">
     <value>PowerShell {0} is not supported in the current console. PowerShell {1} is supported in the current console.</value>
   </data>
-  <data name="CmdletNotAvailable" xml:space="preserve">
-    <value>The cmdlet is not supported by the custom shell.</value>
-  </data>
-  <data name="ConsoleFileReadOnly" xml:space="preserve">
-    <value>Cannot export to this file because file {0} is read-only. Change the read-only attribute of the file to read-write, or export to a different file.</value>
-  </data>
   <data name="FileExistsNoClobber" xml:space="preserve">
     <value>File {0} already exists and {1} was specified.</value>
-  </data>
-  <data name="ConsoleFileNameNotResolved" xml:space="preserve">
-    <value>Cannot export to a console because no console is loaded or no name is specified.</value>
-  </data>
-  <data name="FileNameCaptionForExportConsole" xml:space="preserve">
-    <value>Cmdlet {0}</value>
-  </data>
-  <data name="FileNamePromptMessage" xml:space="preserve">
-    <value>Supply values for the following parameters:</value>
-  </data>
-  <data name="PromptForExportConsole" xml:space="preserve">
-    <value>Cannot export a console file because no console file has been specified. Do you want to continue with the export operation?</value>
-  </data>
-  <data name="ConsoleCannotBeConvertedToString" xml:space="preserve">
-    <value>Cannot save the file because the file name format is not valid. Specify a file name using the command: export-console -path.</value>
-  </data>
-  <data name="FileNameNotResolved" xml:space="preserve">
-    <value>Cannot save the specified file. The Save operation was canceled.</value>
-  </data>
-  <data name="ConsoleFileWildCardsNotSupported" xml:space="preserve">
-    <value>Cannot save the console file because wildcard characters were used. Specify a console file without wildcard characters.</value>
-  </data>
-  <data name="ProviderNotSupported" xml:space="preserve">
-    <value>You can only save a file when you are working in a file provider. The current provider '{0}' is not a file provider.</value>
-  </data>
-  <data name="ConsoleVariableCannotBeSet" xml:space="preserve">
-    <value>Cannot set the ConsoleFileName variable to {0}. File {0} was saved.</value>
-  </data>
-  <data name="ExportConsoleCannotDeleteFile" xml:space="preserve">
-    <value>The Save operation failed. Cannot remove the file {0}.</value>
   </data>
   <data name="ConfigurationFileDoesNotExist" xml:space="preserve">
     <value>The provided configuration file '{0}' does not exist.</value>

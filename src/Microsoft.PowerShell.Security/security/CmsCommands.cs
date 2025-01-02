@@ -35,8 +35,8 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the content of the CMS Message.
         /// </summary>
         [Parameter(Position = 1, Mandatory = true, ValueFromPipeline = true, ParameterSetName = "ByContent")]
-        [AllowNull()]
-        [AllowEmptyString()]
+        [AllowNull]
+        [AllowEmptyString]
         public PSObject Content
         {
             get;
@@ -202,8 +202,8 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the content of the CMS Message.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ParameterSetName = "ByContent")]
-        [AllowNull()]
-        [AllowEmptyString()]
+        [AllowNull]
+        [AllowEmptyString]
         public string Content
         {
             get;
@@ -308,8 +308,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Extract out the bytes and Base64 decode them
-            int startIndex, endIndex;
-            byte[] contentBytes = CmsUtils.RemoveAsciiArmor(actualContent, CmsUtils.BEGIN_CMS_SIGIL, CmsUtils.END_CMS_SIGIL, out startIndex, out endIndex);
+            byte[] contentBytes = CmsUtils.RemoveAsciiArmor(actualContent, CmsUtils.BEGIN_CMS_SIGIL, CmsUtils.END_CMS_SIGIL, out int _, out int _);
             if (contentBytes == null)
             {
                 ErrorRecord error = new(
@@ -351,8 +350,8 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the content of the CMS Message.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByContent")]
-        [AllowNull()]
-        [AllowEmptyString()]
+        [AllowNull]
+        [AllowEmptyString]
         public string Content
         {
             get;
@@ -398,7 +397,7 @@ namespace Microsoft.PowerShell.Commands
         /// Determines whether to include the decrypted content in its original context,
         /// rather than just output the decrypted content itself.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter IncludeContext
         {
             get;

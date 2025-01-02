@@ -236,7 +236,7 @@ Describe "Experimental Feature Basic Tests - Feature-Enabled" -Tag "CI" {
         $command = Get-Command $Name
         $command.CommandType | Should -Be $CommandType
         ## Common parameters + '-Name' + '-SwitchOne' + '-SwitchTwo'
-        $command.Parameters.Count | Should -Be ($CommonParameterCount + 3)
+        $command.Parameters.Count | Should -Be ($CommonParameterCount + 3) -Because ($command.Parameters.Keys -join ", ")
         $command.ParameterSets.Count | Should -Be 3
 
         & $Name -Name Joe | Should -BeExactly "Hello World Joe."
@@ -254,7 +254,7 @@ Describe "Experimental Feature Basic Tests - Feature-Enabled" -Tag "CI" {
 
         ## Common parameters + '-UserName', '-ComputerName', '-ConfigurationName', '-VMName', '-Port',
         ## '-Token', '-WebSocketUrl', '-ThrottleLimit' and '-Command'
-        $command.Parameters.Count | Should -Be ($CommonParameterCount + 9)
+        $command.Parameters.Count | Should -Be ($CommonParameterCount + 9) -Because ($command.Parameters.Keys -join ", ")
         $command.ParameterSets.Count | Should -Be 3
 
         $command.Parameters["UserName"].ParameterSets.Count | Should -Be 1
@@ -316,7 +316,7 @@ Describe "Experimental Feature Basic Tests - Feature-Enabled" -Tag "CI" {
         $command = Get-Command $Name
         $command.CommandType | Should -Be $CommandType
         ## Common parameters + '-ComputerName'
-        $command.Parameters.Count | Should -Be ($CommonParameterCount + 1)
+        $command.Parameters.Count | Should -Be ($CommonParameterCount + 1) -Because ($command.Parameters.Keys -join ", ")
         $command.Parameters["ComputerName"].ParameterType.FullName | Should -BeExactly "System.String"
         $command.Parameters.ContainsKey("SessionName") | Should -BeFalse
     }
@@ -329,7 +329,7 @@ Describe "Experimental Feature Basic Tests - Feature-Enabled" -Tag "CI" {
         $command = Get-Command $Name
         $command.CommandType | Should -Be $CommandType
         ## Common parameters + '-ByUrl', '-ByRadio', '-FileName', '-Destination'
-        $command.Parameters.Count | Should -Be ($CommonParameterCount + 4)
+        $command.Parameters.Count | Should -Be ($CommonParameterCount + 4) -Because ($command.Parameters.Keys -join ", ")
         $command.ParameterSets.Count | Should -Be 2
 
         $command.Parameters["ByUrl"].ParameterSets.Count | Should -Be 1
@@ -358,7 +358,7 @@ Describe "Experimental Feature Basic Tests - Feature-Enabled" -Tag "CI" {
         $command = Get-Command $Name
         $command.CommandType | Should -Be $CommandType
         ## Common parameters + '-Name' (dynamic parameters are not triggered)
-        $command.Parameters.Count | Should -Be ($CommonParameterCount + 1)
+        $command.Parameters.Count | Should -Be ($CommonParameterCount + 1) -Because ($command.Parameters.Keys -join ", ")
         $command.Parameters["Name"] | Should -Not -BeNullOrEmpty
 
         $command = Get-Command $Name -ArgumentList "Joe"

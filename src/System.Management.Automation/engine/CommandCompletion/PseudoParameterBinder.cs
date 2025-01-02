@@ -982,7 +982,7 @@ namespace System.Management.Automation.Language
                             executionContext.LanguageMode = PSLanguageMode.ConstrainedLanguage;
                         }
 
-                        _bindingEffective = PrepareCommandElements(executionContext);
+                        _bindingEffective = PrepareCommandElements(executionContext, paramAstAtCursor);
                     }
                     finally
                     {
@@ -1189,7 +1189,7 @@ namespace System.Management.Automation.Language
             _duplicateParameters.Clear();
         }
 
-        private bool PrepareCommandElements(ExecutionContext context)
+        private bool PrepareCommandElements(ExecutionContext context, CommandParameterAst paramAtCursor)
         {
             int commandIndex = 0;
             bool dotSource = _commandAst.InvocationOperator == TokenKind.Dot;
@@ -1211,20 +1211,46 @@ namespace System.Management.Automation.Language
             bool implementsDynamicParameters = commandProcessor != null &&
                                                commandProcessor.CommandInfo.ImplementsDynamicParameters;
 
-            var argumentsToGetDynamicParameters = implementsDynamicParameters
-                                                      ? new List<object>(_commandElements.Count)
-                                                      : null;
             if (commandProcessor != null || scriptProcessor != null)
             {
                 // Pre-processing the arguments -- command arguments
                 for (commandIndex++; commandIndex < _commandElements.Count; commandIndex++)
                 {
+                    if (implementsDynamicParameters && _commandElements[commandIndex] == paramAtCursor)
+                    {
+                        // Commands with dynamic parameters will try to bind the command elements.
+                        // A partially complete parameter will most likely cause a binding error and negatively affect the results.
+                        continue;
+                    }
+
                     var parameter = _commandElements[commandIndex] as CommandParameterAst;
                     if (parameter != null)
                     {
-                        if (argumentsToGetDynamicParameters != null)
+                        if (implementsDynamicParameters)
                         {
-                            argumentsToGetDynamicParameters.Add(parameter.Extent.Text);
+                            CommandParameterInternal paramToAdd;
+                            if (parameter.Argument is null)
+                            {
+                                paramToAdd = CommandParameterInternal.CreateParameter(parameter.ParameterName, parameter.Extent.Text);
+                            }
+                            else
+                            {
+                                object value;
+                                if (!SafeExprEvaluator.TrySafeEval(parameter.Argument, context, out value))
+                                {
+                                    value = parameter.Argument.Extent.Text;
+                                }
+
+                                paramToAdd = CommandParameterInternal.CreateParameterWithArgument(
+                                    parameterAst: null,
+                                    parameterName: parameter.ParameterName,
+                                    parameterText: parameter.Extent.Text,
+                                    argumentAst: null,
+                                    value: value,
+                                    spaceAfterParameter: false);
+                            }
+
+                            commandProcessor.AddParameter(paramToAdd);
                         }
 
                         AstPair parameterArg = parameter.Argument != null
@@ -1251,7 +1277,11 @@ namespace System.Management.Automation.Language
                         }
                         else if (_commandElements[commandIndex] is ExpressionAst expression)
                         {
-                            valueToAdd = expression.Extent.Text;
+                            if (!SafeExprEvaluator.TrySafeEval(expression, context, out valueToAdd))
+                            {
+                                valueToAdd = expression.Extent.Text;
+                            }
+
                             expressionToAdd = expression;
                         }
                         else
@@ -1259,7 +1289,11 @@ namespace System.Management.Automation.Language
                             continue;
                         }
 
-                        argumentsToGetDynamicParameters?.Add(valueToAdd);
+                        if (implementsDynamicParameters)
+                        {
+                            commandProcessor.AddParameter(CommandParameterInternal.CreateArgument(valueToAdd));
+                        }
+
                         _arguments.Add(new AstPair(null, expressionToAdd));
                     }
                 }
@@ -1270,7 +1304,6 @@ namespace System.Management.Automation.Language
                 _function = false;
                 if (implementsDynamicParameters)
                 {
-                    ParameterBinderController.AddArgumentsToCommandProcessor(commandProcessor, argumentsToGetDynamicParameters.ToArray());
                     bool retryWithNoArgs = false, alreadyRetried = false;
 
                     do

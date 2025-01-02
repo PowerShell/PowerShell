@@ -254,10 +254,7 @@ namespace System.Management.Automation.Remoting
                         if (_state == RemoteSessionState.EstablishedAndKeySent)
                         {
                             Timer tmp = Interlocked.Exchange(ref _keyExchangeTimer, null);
-                            if (tmp != null)
-                            {
-                                tmp.Dispose();
-                            }
+                            tmp?.Dispose();
 
                             _keyExchanged = true;
                             SetState(RemoteSessionState.Established, eventArgs.Reason);
@@ -339,10 +336,7 @@ namespace System.Management.Automation.Remoting
             Dbg.Assert(_state == RemoteSessionState.EstablishedAndKeySent, "timeout should only happen when waiting for a key");
 
             Timer tmp = Interlocked.Exchange(ref _keyExchangeTimer, null);
-            if (tmp != null)
-            {
-                tmp.Dispose();
-            }
+            tmp?.Dispose();
 
             PSRemotingDataStructureException exception =
                 new PSRemotingDataStructureException(RemotingErrorIdStrings.ClientKeyExchangeFailed);

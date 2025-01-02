@@ -427,7 +427,10 @@ namespace System.Management.Automation
                         if (LocalPowerShell.RunningExtraCommands)
                         {
                             // If completed successfully then allow extra commands to run.
-                            if (state == PSInvocationState.Completed) { return; }
+                            if (state == PSInvocationState.Completed)
+                            {
+                                return;
+                            }
 
                             // For failed or stopped state, extra commands cannot run and
                             // we allow this command invocation to finish.
@@ -798,11 +801,9 @@ namespace System.Management.Automation
         {
             // Close input if its active. no need to synchronize as input stream would have already been processed
             // when connect call came into PS plugin
-            if (InputCollection != null)
-            {
-                // TODO: Post an ETW event
-                InputCollection.Complete();
-            }
+
+            // TODO: Post an ETW event
+            InputCollection?.Complete();
         }
 
         /// <summary>

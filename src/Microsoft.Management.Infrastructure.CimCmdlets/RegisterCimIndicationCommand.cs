@@ -205,7 +205,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 case CimBaseCommand.ClassNameComputerSet:
                     // validate the classname
                     this.CheckArgument();
-                    tempQueryExpression = string.Format(CultureInfo.CurrentCulture, "Select * from {0}", this.ClassName);
+                    tempQueryExpression = string.Create(CultureInfo.CurrentCulture, $"Select * from {this.ClassName}");
                     break;
             }
 
@@ -227,10 +227,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     break;
             }
 
-            if (watcher != null)
-            {
-                watcher.SetCmdlet(this);
-            }
+            watcher?.SetCmdlet(this);
 
             return watcher;
         }
@@ -275,10 +272,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             DebugHelper.WriteLogEx();
 
             CimIndicationWatcher watcher = sender as CimIndicationWatcher;
-            if (watcher != null)
-            {
-                watcher.Stop();
-            }
+            watcher?.Stop();
         }
 
         #region private members

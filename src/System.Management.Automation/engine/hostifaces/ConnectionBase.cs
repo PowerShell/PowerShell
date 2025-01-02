@@ -26,6 +26,28 @@ namespace System.Management.Automation.Runspaces
         #region constructors
 
         /// <summary>
+        /// Initialize powershell AssemblyLoadContext and register the 'Resolving' event, if it's not done already.
+        /// If powershell is hosted by a native host such as DSC, then PS ALC may be initialized via 'SetPowerShellAssemblyLoadContext' before loading S.M.A.
+        /// </summary>
+        /// <remarks>
+        /// We do this both here and during the initialization of the 'ClrFacade' type.
+        /// This is because we want to make sure the assembly/library resolvers are:
+        ///  1. registered before any script/cmdlet can run.
+        ///  2. registered before 'ClrFacade' gets used for assembly related operations.
+        ///
+        /// The 'ClrFacade' type may be used without a Runspace created, for example, by calling type conversion methods in the 'LanguagePrimitive' type.
+        /// And at the mean time, script or cmdlet may run without the 'ClrFacade' type initialized.
+        /// That's why we attempt to create the singleton of 'PowerShellAssemblyLoadContext' at both places.
+        /// </remarks>
+        static RunspaceBase()
+        {
+            if (PowerShellAssemblyLoadContext.Instance is null)
+            {
+                PowerShellAssemblyLoadContext.InitializeSingleton(string.Empty, throwOnReentry: false);
+            }
+        }
+
+        /// <summary>
         /// Construct an instance of an Runspace using a custom
         /// implementation of PSHost.
         /// </summary>
@@ -237,7 +259,11 @@ namespace System.Management.Automation.Runspaces
         private void CoreOpen(bool syncCall)
         {
             bool etwEnabled = RunspaceEventSource.Log.IsEnabled();
-            if (etwEnabled) RunspaceEventSource.Log.OpenRunspaceStart();
+            if (etwEnabled)
+            {
+                RunspaceEventSource.Log.OpenRunspaceStart();
+            }
+
             lock (SyncRoot)
             {
                 // Call fails if RunspaceState is not BeforeOpen.
@@ -260,10 +286,13 @@ namespace System.Management.Automation.Runspaces
             RaiseRunspaceStateEvents();
 
             OpenHelper(syncCall);
-            if (etwEnabled) RunspaceEventSource.Log.OpenRunspaceStop();
+            if (etwEnabled)
+            {
+                RunspaceEventSource.Log.OpenRunspaceStop();
+            }
 
 #if LEGACYTELEMETRY
-            // We report startup telementry when opening the runspace - because this is the first time
+            // We report startup telemetry when opening the runspace - because this is the first time
             // we are really using PowerShell. This isn't the cleanest place though, because
             // sometimes there are many runspaces created - the callee ensures telemetry is only
             // reported once. Note that if the host implements IHostProvidesTelemetryData, we rely

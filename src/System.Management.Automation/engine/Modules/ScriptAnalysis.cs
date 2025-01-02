@@ -14,7 +14,6 @@ namespace System.Management.Automation
     /// <summary>
     /// Class describing a PowerShell module...
     /// </summary>
-    [Serializable]
     internal class ScriptAnalysis
     {
         internal static ScriptAnalysis Analyze(string path, ExecutionContext context)
@@ -94,10 +93,9 @@ namespace System.Management.Automation
         {
             using (FileStream readerStream = new FileStream(path, FileMode.Open, FileAccess.Read))
             {
-                Encoding defaultEncoding = ClrFacade.GetDefaultEncoding();
                 Microsoft.Win32.SafeHandles.SafeFileHandle safeFileHandle = readerStream.SafeFileHandle;
 
-                using (StreamReader scriptReader = new StreamReader(readerStream, defaultEncoding))
+                using (StreamReader scriptReader = new StreamReader(readerStream, Encoding.Default))
                 {
                     return scriptReader.ReadToEnd();
                 }
@@ -433,9 +431,12 @@ namespace System.Management.Automation
             return AstVisitAction.SkipChildren;
         }
 
-        private void ProcessCmdletArguments(object value, Action<string> onEachArgument)
+        private static void ProcessCmdletArguments(object value, Action<string> onEachArgument)
         {
-            if (value == null) return;
+            if (value == null)
+            {
+                return;
+            }
 
             var commandName = value as string;
             if (commandName != null)
@@ -571,7 +572,6 @@ namespace System.Management.Automation
 
     // Class to keep track of modules we need to import, and commands that should
     // be filtered out of them.
-    [Serializable]
     internal class RequiredModuleInfo
     {
         internal string Name { get; set; }

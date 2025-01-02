@@ -223,7 +223,7 @@ namespace System.Management.Automation.Provider
         /// </summary>
         /// <param name="cmdletProviderContext">
         /// The context under which this method is being called.
-        ///</param>
+        /// </param>
         internal void Stop(CmdletProviderContext cmdletProviderContext)
         {
             Context = cmdletProviderContext;
@@ -1352,7 +1352,7 @@ namespace System.Management.Automation.Provider
         /// </summary>
         public virtual char AltItemSeparator =>
 #if UNIX
-            Utils.Separators.Backslash[0];
+            '\\';
 #else
             Path.AltDirectorySeparatorChar;
 #endif

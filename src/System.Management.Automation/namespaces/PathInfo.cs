@@ -79,7 +79,7 @@ namespace System.Management.Automation
         private readonly SessionState _sessionState;
 
         /// <summary>
-        /// Gets the MSH path that this object represents.
+        /// Gets the PowerShell path that this object represents.
         /// </summary>
         public string Path
         {
@@ -94,10 +94,10 @@ namespace System.Management.Automation
         private readonly string _path = string.Empty;
 
         /// <summary>
-        /// Gets a string representing the MSH path.
+        /// Gets a string representing the PowerShell path.
         /// </summary>
         /// <returns>
-        /// A string representing the MSH path.
+        /// A string representing the PowerShell path.
         /// </returns>
         public override string ToString()
         {

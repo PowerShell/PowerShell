@@ -446,11 +446,7 @@ namespace System.Management.Automation.Remoting
             IntPtr pluginContext)
         {
             WSManPluginInstance.PerformShutdown(pluginContext);
-
-            if (workerPtrs != null)
-            {
-                workerPtrs.Dispose();
-            }
+            workerPtrs?.Dispose();
         }
 
         /// <summary>

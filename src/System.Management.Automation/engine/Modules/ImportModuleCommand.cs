@@ -619,7 +619,7 @@ namespace Microsoft.PowerShell.Commands
                 // avoid double reporting for WinCompat modules that go through CommandDiscovery\AutoloadSpecifiedModule
                 if (!foundModule.IsWindowsPowerShellCompatModule)
                 {
-                    ApplicationInsightsTelemetry.SendModuleTelemetryMetric(TelemetryType.ModuleLoad, foundModule.Name, foundModule.Version?.ToString());
+                    ApplicationInsightsTelemetry.SendModuleTelemetryMetric(TelemetryType.ModuleLoad, foundModule);
 #if LEGACYTELEMETRY
                     TelemetryAPI.ReportModuleLoad(foundModule);
 #endif
@@ -893,7 +893,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (foundModule != null)
             {
-                ApplicationInsightsTelemetry.SendModuleTelemetryMetric(TelemetryType.ModuleLoad, foundModule.Name, foundModule.Version?.ToString());
+                ApplicationInsightsTelemetry.SendModuleTelemetryMetric(TelemetryType.ModuleLoad, foundModule);
                 SetModuleBaseForEngineModules(foundModule.Name, this.Context);
             }
 
@@ -935,7 +935,7 @@ namespace Microsoft.PowerShell.Commands
             // Send telemetry on the imported modules
             foreach (PSModuleInfo moduleInfo in remotelyImportedModules)
             {
-                ApplicationInsightsTelemetry.SendModuleTelemetryMetric(usingWinCompat ? TelemetryType.WinCompatModuleLoad : TelemetryType.ModuleLoad, moduleInfo.Name, moduleInfo.Version?.ToString());
+                ApplicationInsightsTelemetry.SendModuleTelemetryMetric(usingWinCompat ? TelemetryType.WinCompatModuleLoad : TelemetryType.ModuleLoad, moduleInfo);
             }
 
             return remotelyImportedModules;
@@ -995,7 +995,7 @@ namespace Microsoft.PowerShell.Commands
                 string errorMessageTemplate = string.Format(
                     CultureInfo.InvariantCulture,
                     Modules.RemoteDiscoveryRemotePsrpCommandFailed,
-                    string.Format(CultureInfo.InvariantCulture, "Import-Module -Name '{0}'", moduleName));
+                    string.Create(CultureInfo.InvariantCulture, $"Import-Module -Name '{moduleName}'"));
                 remotelyImportedModules = RemoteDiscoveryHelper.InvokePowerShell(
                     powerShell,
                     this,
@@ -1866,7 +1866,7 @@ namespace Microsoft.PowerShell.Commands
                 // of doing Get-Module -list
                 foreach (PSModuleInfo module in ModuleInfo)
                 {
-                    ApplicationInsightsTelemetry.SendModuleTelemetryMetric(TelemetryType.ModuleLoad, module.Name, module.Version?.ToString());
+                    ApplicationInsightsTelemetry.SendModuleTelemetryMetric(TelemetryType.ModuleLoad, module);
                     RemoteDiscoveryHelper.DispatchModuleInfoProcessing(
                         module,
                         localAction: () =>
@@ -1926,7 +1926,7 @@ namespace Microsoft.PowerShell.Commands
                 ImportModule_RemotelyViaPsrpSession(importModuleOptions, null, FullyQualifiedName, this.PSSession);
                 foreach (ModuleSpecification modulespec in FullyQualifiedName)
                 {
-                    ApplicationInsightsTelemetry.SendModuleTelemetryMetric(TelemetryType.ModuleLoad, modulespec.Name, modulespec.Version?.ToString());
+                    ApplicationInsightsTelemetry.SendModuleTelemetryMetric(TelemetryType.ModuleLoad, modulespec.Name);
                 }
             }
             else if (this.ParameterSetName.Equals(ParameterSet_ViaWinCompat, StringComparison.OrdinalIgnoreCase)

@@ -141,13 +141,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return;
             }
             // check if we have a view with autosize checked
-            if (this.dataBaseInfo.view != null && this.dataBaseInfo.view.mainControl != null)
+            if (this.dataBaseInfo.view != null && this.dataBaseInfo.view.mainControl != null
+                && this.dataBaseInfo.view.mainControl is ControlBody controlBody && controlBody.autosize.HasValue)
             {
-                ControlBody controlBody = this.dataBaseInfo.view.mainControl as ControlBody;
-                if (controlBody != null && controlBody.autosize.HasValue)
-                {
-                    _autosize = controlBody.autosize.Value;
-                }
+                _autosize = controlBody.autosize.Value;
             }
         }
 
@@ -219,7 +216,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 if (formatErrorObject != null && formatErrorObject.exception != null)
                 {
-                    // if we did no thave any errors in the expression evaluation
+                    // if we did not have any errors in the expression evaluation
                     // we might have errors in the formatting, if present
                     _errorManager.LogStringFormatError(formatErrorObject);
                     if (_errorManager.DisplayFormatErrorString)
@@ -387,7 +384,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
                 else if (formatErrorObject != null && formatErrorObject.exception != null)
                 {
-                    // if we did no thave any errors in the expression evaluation
+                    // if we did not have any errors in the expression evaluation
                     // we might have errors in the formatting, if present
                     _errorManager.LogStringFormatError(formatErrorObject);
                     if (_errorManager.DisplayErrorStrings)
@@ -439,17 +436,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (formatTokenList.Count != 0)
             {
                 FormatToken token = formatTokenList[0];
-                FieldPropertyToken fpt = token as FieldPropertyToken;
-                if (fpt != null)
+                if (token is FieldPropertyToken fpt)
                 {
                     PSPropertyExpression ex = this.expressionFactory.CreateFromExpressionToken(fpt.expression, this.dataBaseInfo.view.loadingInfo);
                     fpf.propertyValue = this.GetExpressionDisplayValue(so, enumerationLimit, ex, fpt.fieldFormattingDirective, out result);
                 }
-                else
+                else if (token is TextToken tt)
                 {
-                    TextToken tt = token as TextToken;
-                    if (tt != null)
-                        fpf.propertyValue = this.dataBaseInfo.db.displayResourceManagerCache.GetTextTokenString(tt);
+                    fpf.propertyValue = this.dataBaseInfo.db.displayResourceManagerCache.GetTextTokenString(tt);
                 }
             }
             else

@@ -491,10 +491,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         protected override void EndProcessing()
         {
             CimGetInstance cimGetInstance = this.GetOperationAgent();
-            if (cimGetInstance != null)
-            {
-                cimGetInstance.ProcessRemainActions(this.CmdletOperation);
-            }
+            cimGetInstance?.ProcessRemainActions(this.CmdletOperation);
         }
 
         #endregion

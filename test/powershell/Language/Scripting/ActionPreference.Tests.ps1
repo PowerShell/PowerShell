@@ -194,6 +194,7 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
         @{ name = "ErrorAction";       argValue = "AutomationNull"; arguments = @{ ErrorAction = [System.Management.Automation.Internal.AutomationNull]::Value } }
         @{ name = "WarningAction";     argValue = "AutomationNull"; arguments = @{ WarningAction = [System.Management.Automation.Internal.AutomationNull]::Value } }
         @{ name = "InformationAction"; argValue = "AutomationNull"; arguments = @{ InformationAction = [System.Management.Automation.Internal.AutomationNull]::Value } }
+        @{ name = "ProgressAction";    argValue = "AutomationNull"; arguments = @{ ProgressAction = [System.Management.Automation.Internal.AutomationNull]::Value } }
     ) {
         param($arguments)
 

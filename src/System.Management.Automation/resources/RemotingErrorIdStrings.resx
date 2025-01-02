@@ -123,6 +123,9 @@
   <data name="OutOfMemory" xml:space="preserve">
     <value>Out of process memory.</value>
   </data>
+  <data name="UnsupportedOSForRemoteEnumeration" xml:space="preserve">
+    <value>Remote PSSession enumeration with -ComputerName is only supported on Windows and not "{0}".</value>
+  </data>
   <data name="PipelineIdsDoNotMatch" xml:space="preserve">
     <value>Pipeline ID "{0}" does not match the InstanceId of the pipeline that is currently running, "{1}".</value>
   </data>
@@ -1360,7 +1363,7 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
     <value>The remote session command is currently stopped in the debugger.  Use the Enter-PSSession cmdlet to connect interactively to the remote session and automatically enter into the console debugger.</value>
   </data>
   <data name="RemoteDebuggingEndpointVersionError" xml:space="preserve">
-    <value>The remote session to which you are connected does not support remote debugging. You must connect to a remote computer that is running PowerShell {0} or greater.</value>
+    <value>The remote session to which you are connected does not support remote debugging. You must connect to a remote computer that is running PowerShell 4.0 or greater.</value>
   </data>
   <data name="ICMInvalidSessionState" xml:space="preserve">
     <value>Because the session state for session {0}, {1}, {2} is not equal to Open, you cannot run a command in the session.  The session state is {3}.</value>
@@ -1713,5 +1716,14 @@ SSH client process terminated before connection could be established.</value>
   </data>
   <data name="DISCUnknownConfigName" xml:space="preserve">
     <value>The session configuration file contains an unknown configuration option: {0}.</value>
+  </data>
+  <data name="WDACGetPowerShellLogTitle" xml:space="preserve">
+    <value>Expression Evaluation May Fail</value>
+  </data>
+  <data name="WDACGetPowerShellLogMessage" xml:space="preserve">
+    <value>Creating a PowerShell object from a script block may require evaluating some expressions within the script block. The expression evaluation will silently fail and return 'null' in Constrained Language mode, unless the expression represents a constant value.</value>
+  </data>
+  <data name="HyperVFailedToGetStateUnknownType" xml:space="preserve">
+    <value>Failed to get Hyper-V VM State. The value was of the type {0} but was expected to be Microsoft.HyperV.PowerShell.VMState or System.String.</value>
   </data>
 </root>

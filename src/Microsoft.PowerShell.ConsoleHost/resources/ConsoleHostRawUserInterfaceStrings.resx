@@ -172,9 +172,6 @@
     <value>Window title cannot be longer than {0} characters.</value>
   </data>
   <data name="WindowTitleElevatedPrefix" xml:space="preserve">
-    <value>Administrator</value>
-  </data>
-  <data name="WindowTitleTemplate" xml:space="preserve">
-    <value>{0}: {1}</value>
+    <value>Administrator: </value>
   </data>
 </root>

@@ -3,13 +3,18 @@ parameters:
   displayName: ""
   imageName: ""
   packageNamePattern: ""
+  use1ES: false
 
 jobs:
 - job: ${{ parameters.jobName }}
   displayName: ${{ parameters.displayName }}
+  variables:
+  - group: DotNetPrivateBuildAccess
   pool:
-    # testing
-    vmImage: ${{ parameters.imageName }}
+    ${{ if eq(parameters.use1ES, 'false') }}:
+      vmImage: ${{ parameters.imageName }}
+    ${{ else }}:
+      name: 'PS-MSCodeHub-ARM' # add ImageOverride to select image
   steps:
     - checkout: self
       clean: true
@@ -25,6 +30,15 @@ jobs:
         artifact: finalResults
         patterns: '${{ parameters.packageNamePattern }}'
         path: '$(Pipeline.Workspace)/releasePipeline/finalResults'
+
+    - pwsh: |
+        $env:DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
+        Import-Module "$(Build.SourcesDirectory)/build.psm1" -Force
+        Start-PSBootstrap
+        Write-Verbose -Message "Installing .NET SDK completed." -Verbose
+      displayName: Install .NET
+      env:
+        __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
     - pwsh: |
         Get-ChildItem -Path '$(Pipeline.Workspace)/releasePipeline/finalResults' -Recurse
@@ -53,9 +67,24 @@ jobs:
       displayName: Expand fxd package
 
     - pwsh: |
+        $env:DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
+        Import-Module "$(Build.SourcesDirectory)/build.psm1" -Force
+        Find-Dotnet -SetDotnetRoot
+        Write-Verbose -Verbose "DOTNET_ROOT: $env:DOTNET_ROOT"
+        Write-Verbose -Verbose "Check dotnet install"
+        dotnet --info
+        Write-Verbose -Verbose "Start test"
         $packageNameFilter = '${{ parameters.packageNamePattern }}'
         $pwshExeName = if ($packageNameFilter.EndsWith('tar.gz')) { 'pwsh' } else { 'pwsh.exe' }
-        $actualOutput = & $pwshExeName -c 'Start-Job -ScriptBlock { "1" } | Wait-Job | Receive-Job'
+        $pwshPath = Join-Path '$(Pipeline.Workspace)/releasePipeline/finalResults/fxd' $pwshExeName
+
+        if ($IsLinux) {
+          chmod u+x $pwshPath
+        }
+
+        $pwshDllPath = Join-Path '$(Pipeline.Workspace)/releasePipeline/finalResults/fxd' 'pwsh.dll'
+
+        $actualOutput = & dotnet $pwshDllPath -c 'Start-ThreadJob -ScriptBlock { "1" } | Wait-Job | Receive-Job'
         Write-Verbose -Verbose "Actual output: $actualOutput"
         if ($actualOutput -ne 1) {
             throw "Actual output is not as expected"

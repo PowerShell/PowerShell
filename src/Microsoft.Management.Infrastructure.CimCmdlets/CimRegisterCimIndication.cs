@@ -149,10 +149,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             uint operationTimeout)
         {
             DebugHelper.WriteLogEx("queryDialect = '{0}'; queryExpression = '{1}'", 0, queryDialect, queryExpression);
-            if (cimSession == null)
-            {
-                throw new ArgumentNullException(string.Format(CultureInfo.CurrentUICulture, CimCmdletStrings.NullArgument, nameof(cimSession)));
-            }
+
+            ArgumentNullException.ThrowIfNull(cimSession, string.Format(CultureInfo.CurrentUICulture, CimCmdletStrings.NullArgument, nameof(cimSession)));
 
             this.TargetComputerName = cimSession.ComputerName;
             CimSessionProxy proxy = CreateSessionProxy(cimSession, operationTimeout);
@@ -198,8 +196,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             // NOTES: should move after this.Disposed, but need to log the exception
-            CimWriteError cimWriteError = actionArgs.Action as CimWriteError;
-            if (cimWriteError != null)
+            if (actionArgs.Action is CimWriteError cimWriteError)
             {
                 this.Exception = cimWriteError.Exception;
                 if (!this.ackedEvent.IsSet)
@@ -221,11 +218,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 DebugHelper.WriteLog("Got an exception: {0}", 2, Exception);
             }
 
-            CimWriteResultObject cimWriteResultObject = actionArgs.Action as CimWriteResultObject;
-            if (cimWriteResultObject != null)
+            if (actionArgs.Action is CimWriteResultObject cimWriteResultObject)
             {
-                CimSubscriptionResult result = cimWriteResultObject.Result as CimSubscriptionResult;
-                if (result != null)
+                if (cimWriteResultObject.Result is CimSubscriptionResult result)
                 {
                     EventHandler<CimSubscriptionEventArgs> temp = this.OnNewSubscriptionResult;
                     if (temp != null)

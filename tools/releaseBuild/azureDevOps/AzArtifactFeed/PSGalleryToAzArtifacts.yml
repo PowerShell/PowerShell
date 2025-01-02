@@ -4,8 +4,11 @@ resources:
 - repo: self
   clean: true
 
-queue:
-  name: Hosted VS2017
+pool:
+  name: 1es
+  demands:
+    - ImageOverride -equals PSMMS2019-Minimal
+
 steps:
   - pwsh: |
       $minVer = [version]"2.2.3"
@@ -14,12 +17,6 @@ steps:
         Install-Module -Name PowerShellGet -MinimumVersion 2.2.3 -Force
       }
     displayName: Update PSGet and PackageManagement
-    condition: succeededOrFailed()
-
-  - pwsh: |
-      Import-Module -Force "$(Build.SourcesDirectory)/tools/releaseBuild/azureDevOps/AzArtifactFeed/SyncGalleryToAzArtifacts.psm1"
-      SyncGalleryToAzArtifacts -AzDevOpsFeedUserName $(AzDevOpsFeedUserName) -AzDevOpsPAT $(AzDevOpsFeedPAT2) -Destination $(Build.ArtifactStagingDirectory)
-    displayName: Download packages from PSGallery that need to be updated
     condition: succeededOrFailed()
 
   - pwsh: |

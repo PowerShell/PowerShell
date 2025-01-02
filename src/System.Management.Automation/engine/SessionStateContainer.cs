@@ -1497,7 +1497,7 @@ namespace System.Management.Automation
                     // include and exclude filters
                     try
                     {
-                        // Temeporary set literal path as false to apply filter
+                        // Temporary set literal path as false to apply filter
                         context.SuppressWildcardExpansion = false;
                         ProcessPathItems(providerInstance, path, recurse, depth, context, out _, ProcessMode.Enumerate);
                     }

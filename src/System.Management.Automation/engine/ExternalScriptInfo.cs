@@ -14,7 +14,7 @@ using Microsoft.PowerShell.Commands;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Provides information for MSH scripts that are directly executable by MSH
+    /// Provides information for scripts that are directly executable by PowerShell
     /// but are not built into the runspace configuration.
     /// </summary>
     public class ExternalScriptInfo : CommandInfo, IScriptCommandInfo
@@ -103,14 +103,21 @@ namespace System.Management.Automation
                 // Get the lock down policy with no handle. This only impacts command discovery,
                 // as the real language mode assignment will be done when we read the script
                 // contents.
-                SystemEnforcementMode scriptSpecificPolicy = SystemPolicy.GetLockdownPolicy(_path, null);
-                if (scriptSpecificPolicy != SystemEnforcementMode.Enforce)
+                switch (SystemPolicy.GetLockdownPolicy(_path, null))
                 {
-                    this.DefiningLanguageMode = PSLanguageMode.FullLanguage;
-                }
-                else
-                {
-                    this.DefiningLanguageMode = PSLanguageMode.ConstrainedLanguage;
+                    case SystemEnforcementMode.None:
+                        DefiningLanguageMode = PSLanguageMode.FullLanguage;
+                        break;
+
+                    case SystemEnforcementMode.Audit:
+                        // For policy audit mode, language mode is set to CL but audit messages are emitted to log
+                        // instead of applying restrictions.
+                        DefiningLanguageMode = PSLanguageMode.ConstrainedLanguage;
+                        break;
+
+                    case SystemEnforcementMode.Enforce:
+                        DefiningLanguageMode = PSLanguageMode.ConstrainedLanguage;
+                        break;
                 }
             }
         }
@@ -188,7 +195,10 @@ namespace System.Management.Automation
         {
             get
             {
-                if (Context == null) return SessionStateEntryVisibility.Public;
+                if (Context == null)
+                {
+                    return SessionStateEntryVisibility.Public;
+                }
 
                 return Context.EngineSessionState.CheckScriptVisibility(_path);
             }
@@ -455,15 +465,6 @@ namespace System.Management.Automation
             get { return 0; }
         }
 
-        internal IEnumerable<PSSnapInSpecification> RequiresPSSnapIns
-        {
-            get
-            {
-                var data = GetRequiresData();
-                return data?.RequiresPSSnapIns;
-            }
-        }
-
         /// <summary>
         /// Gets the original contents of the script.
         /// </summary>
@@ -515,9 +516,7 @@ namespace System.Management.Automation
                 {
                     using (FileStream readerStream = new FileStream(_path, FileMode.Open, FileAccess.Read))
                     {
-                        Encoding defaultEncoding = ClrFacade.GetDefaultEncoding();
-
-                        using (StreamReader scriptReader = new StreamReader(readerStream, defaultEncoding))
+                        using (StreamReader scriptReader = new StreamReader(readerStream, Encoding.Default))
                         {
                             _scriptContents = scriptReader.ReadToEnd();
                             _originalEncoding = scriptReader.CurrentEncoding;
@@ -531,7 +530,6 @@ namespace System.Management.Automation
                                     {
                                         DefiningLanguageMode = Context.LanguageMode;
                                     }
-
                                     break;
 
                                 case SystemScriptFileEnforcement.Allow:
@@ -539,6 +537,17 @@ namespace System.Management.Automation
                                     break;
 
                                 case SystemScriptFileEnforcement.AllowConstrained:
+                                    DefiningLanguageMode = PSLanguageMode.ConstrainedLanguage;
+                                    break;
+
+                                case SystemScriptFileEnforcement.AllowConstrainedAudit:
+                                    SystemPolicy.LogWDACAuditMessage(
+                                        context: Context,
+                                        title: SecuritySupportStrings.ExternalScriptWDACLogTitle,
+                                        message: string.Format(Globalization.CultureInfo.CurrentUICulture, SecuritySupportStrings.ExternalScriptWDACLogMessage, _path),
+                                        fqid: "ScriptFileNotTrustedByPolicy");
+                                    // We set the language mode to Constrained Language, even though in policy audit mode no restrictions are applied
+                                    // and instead an audit log message is generated wherever a restriction would be applied.
                                     DefiningLanguageMode = PSLanguageMode.ConstrainedLanguage;
                                     break;
 
@@ -602,7 +611,6 @@ namespace System.Management.Automation
     /// <summary>
     /// Defines the name and version tuple of a PSSnapin.
     /// </summary>
-    [Serializable]
     public class PSSnapInSpecification
     {
         internal PSSnapInSpecification(string psSnapinName)

@@ -67,10 +67,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <param name="importedModules">All loaded modules.</param>
         public ModuleViewModel(string name, Dictionary<string, ShowCommandModuleInfo> importedModules)
         {
-            if (name == null)
-            {
-                throw new ArgumentNullException("name");
-            }
+            ArgumentNullException.ThrowIfNull(name);
 
             this.name = name;
             this.commands = new List<CommandViewModel>();

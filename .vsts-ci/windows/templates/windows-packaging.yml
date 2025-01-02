@@ -38,7 +38,7 @@ jobs:
     path: $(complianceRepoFolder)
 
   - powershell: |
-      Get-ChildItem -Path env:
+      Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
     displayName: Capture environment
     condition: succeededOrFailed()
 
@@ -49,6 +49,13 @@ jobs:
 
 
   - template: /tools/releaseBuild/azureDevOps/templates/insert-nuget-config-azfeed.yml
+
+  - pwsh: |
+      Import-Module .\tools\ci.psm1
+      Switch-PSNugetConfig -Source Public
+    displayName: Switch to public feeds
+    condition: succeeded()
+    workingDirectory: $(repoPath)
 
   - pwsh: |
       Import-Module .\tools\ci.psm1
@@ -70,6 +77,27 @@ jobs:
       Build_Repository_Uri: $(build.repository.uri)
       displayName: SBOM
       sourceScanPath: '$(repoPath)\tools'
+      signSBOM: false
+
+  # This is needed as SBOM task removed the installed .NET and installs .NET 3.1
+  - pwsh: |
+      Import-Module .\tools\ci.psm1
+      Invoke-CIInstall -SkipUser
+    displayName: Bootstrap
+    condition: succeeded()
+    workingDirectory: $(repoPath)
+
+  - pwsh: |
+      $manifestFolder = Join-Path -Path '$(System.ArtifactsDirectory)/mainBuild' -ChildPath '_manifest'
+
+      if (-not (Test-Path $manifestFolder)) {
+        throw "_manifest folder does not exist under $(System.ArtifactsDirectory)/mainBuild"
+      }
+
+      $null = New-Item -Path "$manifestFolder/spdx_2.2/bsi.json" -Verbose -Force
+      $null = New-Item -Path "$manifestFolder/spdx_2.2/manifest.cat" -Verbose -Force
+
+    displayName: Create fake SBOM manifest signed files
 
   - pwsh: |
       Import-Module .\tools\ci.psm1

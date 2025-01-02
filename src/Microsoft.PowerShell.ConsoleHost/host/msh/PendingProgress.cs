@@ -458,9 +458,7 @@ namespace Microsoft.PowerShell
         /// <returns>
         /// The found node, or null if no suitable node was located.
         /// </returns>
-        private
-        ProgressNode
-        FindOldestNodeOfGivenStyle(ArrayList nodes, int oldestSoFar, ProgressNode.RenderStyle style)
+        private static ProgressNode FindOldestNodeOfGivenStyle(ArrayList nodes, int oldestSoFar, ProgressNode.RenderStyle style)
         {
             if (nodes == null)
             {
@@ -573,7 +571,7 @@ namespace Microsoft.PowerShell
             int invisible = 0;
             if (TallyHeight(rawUI, maxHeight, maxWidth) > maxHeight)
             {
-                // This will smash down nodes until the tree will fit into the alloted number of lines.  If in the
+                // This will smash down nodes until the tree will fit into the allotted number of lines.  If in the
                 // process some nodes were made invisible, we will add a line to the display to say so.
 
                 invisible = CompressToFit(rawUI, maxHeight, maxWidth);
@@ -631,9 +629,7 @@ namespace Microsoft.PowerShell
         /// <param name="rawUI">
         /// The PSHostRawUserInterface used to gauge string widths in the rendering.
         /// </param>
-        private
-        void
-        RenderHelper(ArrayList strings, ArrayList nodes, int indentation, int maxWidth, PSHostRawUserInterface rawUI)
+        private static void RenderHelper(ArrayList strings, ArrayList nodes, int indentation, int maxWidth, PSHostRawUserInterface rawUI)
         {
             Dbg.Assert(strings != null, "strings should not be null");
             Dbg.Assert(nodes != null, "nodes should not be null");
@@ -721,9 +717,7 @@ namespace Microsoft.PowerShell
         /// <param name="nodes"></param>
         /// <param name="style"></param>
         /// <returns></returns>
-        private
-        bool
-        AllNodesHaveGivenStyle(ArrayList nodes, ProgressNode.RenderStyle style)
+        private static bool AllNodesHaveGivenStyle(ArrayList nodes, ProgressNode.RenderStyle style)
         {
             if (nodes == null)
             {
@@ -872,7 +866,7 @@ namespace Microsoft.PowerShell
         /// <returns>
         /// The number of nodes that were made invisible during the compression.
         ///
-        ///</returns>
+        /// </returns>
         private
         int
         CompressToFit(PSHostRawUserInterface rawUi, int maxHeight, int maxWidth)

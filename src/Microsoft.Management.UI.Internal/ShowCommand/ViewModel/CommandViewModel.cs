@@ -431,7 +431,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
 
             if (commandName.Contains(' '))
             {
-                builder.AppendFormat("& \"{0}\"", commandName);
+                builder.Append($"& \"{commandName}\"");
             }
             else
             {
@@ -457,7 +457,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Showing help information for current actived cmdlet.
+        /// Showing help information for current active cmdlet.
         /// </summary>
         public void OpenHelpWindow()
         {
@@ -490,10 +490,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <returns>The CommandViewModel corresponding to commandInfo.</returns>
         internal static CommandViewModel GetCommandViewModel(ModuleViewModel module, ShowCommandCommandInfo commandInfo, bool noCommonParameters)
         {
-            if (commandInfo == null)
-            {
-                throw new ArgumentNullException("commandInfo");
-            }
+            ArgumentNullException.ThrowIfNull(commandInfo);
 
             CommandViewModel returnValue = new CommandViewModel();
             returnValue.commandInfo = commandInfo;
@@ -552,8 +549,6 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
 
             return returnValue;
         }
-
-        #pragma warning disable IDE1005 // IDE1005: Delegate invocation can be simplified.
 
         /// <summary>
         /// Called to trigger the event fired when help is needed for the command.
@@ -629,8 +624,6 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
-
-        #pragma warning restore IDE1005
 
         /// <summary>
         /// Called when the PropertyChanged event is triggered on the SelectedParameterSet.

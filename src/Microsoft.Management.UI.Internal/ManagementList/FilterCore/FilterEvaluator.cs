@@ -145,10 +145,7 @@ namespace Microsoft.Management.UI.Internal
         /// </param>
         public void AddFilterExpressionProvider(IFilterExpressionProvider provider)
         {
-            if (provider == null)
-            {
-                throw new ArgumentNullException("provider");
-            }
+            ArgumentNullException.ThrowIfNull(provider);
 
             this.filterExpressionProviders.Add(provider);
             provider.FilterExpressionChanged += this.FilterProvider_FilterExpressionChanged;
@@ -162,10 +159,7 @@ namespace Microsoft.Management.UI.Internal
         /// </param>
         public void RemoveFilterExpressionProvider(IFilterExpressionProvider provider)
         {
-            if (provider == null)
-            {
-                throw new ArgumentNullException("provider");
-            }
+            ArgumentNullException.ThrowIfNull(provider);
 
             this.filterExpressionProviders.Remove(provider);
             provider.FilterExpressionChanged -= this.FilterProvider_FilterExpressionChanged;

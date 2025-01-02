@@ -9,7 +9,7 @@ using System.Text;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// The command information for MSH cmdlets that are directly executable by MSH.
+    /// The command information for cmdlets that are directly executable by PowerShell.
     /// </summary>
     public class CmdletInfo : CommandInfo
     {

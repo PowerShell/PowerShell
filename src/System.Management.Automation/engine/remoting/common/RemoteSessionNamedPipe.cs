@@ -190,26 +190,6 @@ namespace System.Management.Automation.Remoting
         internal const uint ERROR_IO_INCOMPLETE = 996;
         internal const uint ERROR_IO_PENDING = 997;
 
-        // File function constants
-        internal const uint GENERIC_READ = 0x80000000;
-        internal const uint GENERIC_WRITE = 0x40000000;
-        internal const uint GENERIC_EXECUTE = 0x20000000;
-        internal const uint GENERIC_ALL = 0x10000000;
-
-        internal const uint CREATE_NEW = 1;
-        internal const uint CREATE_ALWAYS = 2;
-        internal const uint OPEN_EXISTING = 3;
-        internal const uint OPEN_ALWAYS = 4;
-        internal const uint TRUNCATE_EXISTING = 5;
-
-        internal const uint SECURITY_IMPERSONATIONLEVEL_ANONYMOUS = 0;
-        internal const uint SECURITY_IMPERSONATIONLEVEL_IDENTIFICATION = 1;
-        internal const uint SECURITY_IMPERSONATIONLEVEL_IMPERSONATION = 2;
-        internal const uint SECURITY_IMPERSONATIONLEVEL_DELEGATION = 3;
-
-        // Infinite timeout
-        internal const uint INFINITE = 0xFFFFFFFF;
-
         #endregion
 
         #region Data structures
@@ -264,28 +244,6 @@ namespace System.Management.Automation.Remoting
             securityAttributes.LPSecurityDescriptor = securityDescriptorPinnedHandle.AddrOfPinnedObject();
             return securityAttributes;
         }
-
-        [DllImport(PinvokeDllNames.CreateFileDllName, SetLastError = true, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
-        internal static extern SafePipeHandle CreateFile(
-              string lpFileName,
-              uint dwDesiredAccess,
-              uint dwShareMode,
-              IntPtr SecurityAttributes,
-              uint dwCreationDisposition,
-              uint dwFlagsAndAttributes,
-              IntPtr hTemplateFile);
-
-        [DllImport(PinvokeDllNames.WaitNamedPipeDllName, SetLastError = true, CharSet = CharSet.Unicode)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool WaitNamedPipe(string lpNamedPipeName, uint nTimeOut);
-
-        [DllImport(PinvokeDllNames.ImpersonateNamedPipeClientDllName, SetLastError = true, CharSet = CharSet.Unicode)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool ImpersonateNamedPipeClient(IntPtr hNamedPipe);
-
-        [DllImport(PinvokeDllNames.RevertToSelfDllName, SetLastError = true, CharSet = CharSet.Unicode)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool RevertToSelf();
 
         #endregion
     }
@@ -504,10 +462,7 @@ namespace System.Management.Automation.Remoting
                 securityAttributes);
 
             int lastError = Marshal.GetLastWin32Error();
-            if (securityDescHandle != null)
-            {
-                securityDescHandle.Value.Free();
-            }
+            securityDescHandle?.Free();
 
             if (pipeHandle.IsInvalid)
             {
@@ -1102,13 +1057,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Closes the named pipe.
         /// </summary>
-        public void Close()
-        {
-            if (_clientPipeStream != null)
-            {
-                _clientPipeStream.Dispose();
-            }
-        }
+        public void Close() => _clientPipeStream?.Dispose();
 
         /// <summary>
         /// Abort connection attempt.
@@ -1301,30 +1250,34 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         protected override NamedPipeClientStream DoConnect(int timeout)
         {
+#if UNIX
+            // TODO: `CreateFileWithSafePipeHandle` pinvoke below clearly says
+            // that the code is only for Windows and we could exclude
+            // a lot of code from compilation on Unix.
+            throw new NotSupportedException(nameof(DoConnect));
+#else
             //
             // WaitNamedPipe API is not supported by Windows Server container now, so we need to repeatedly
             // attempt connection to pipe server until timeout expires.
             //
             int startTime = Environment.TickCount;
             int elapsedTime = 0;
-            SafePipeHandle pipeHandle = null;
+            nint handle;
 
             do
             {
                 // Get handle to pipe.
-                pipeHandle = NamedPipeNative.CreateFile(
+                handle = Interop.Windows.CreateFileWithPipeHandle(
                     lpFileName: PipeName,
-                    dwDesiredAccess: NamedPipeNative.GENERIC_READ | NamedPipeNative.GENERIC_WRITE,
-                    dwShareMode: 0,
-                    SecurityAttributes: IntPtr.Zero,
-                    dwCreationDisposition: NamedPipeNative.OPEN_EXISTING,
-                    dwFlagsAndAttributes: NamedPipeNative.FILE_FLAG_OVERLAPPED,
-                    hTemplateFile: IntPtr.Zero);
+                    FileAccess.ReadWrite,
+                    FileShare.None,
+                    FileMode.Open,
+                    Interop.Windows.FileAttributes.Overlapped);
 
-                int lastError = Marshal.GetLastWin32Error();
-                if (pipeHandle.IsInvalid)
+                if (handle == nint.Zero || handle == (nint)(-1))
                 {
-                    if (lastError == NamedPipeNative.ERROR_FILE_NOT_FOUND)
+                    int lastError = Marshal.GetLastPInvokeError();
+                    if (lastError == Interop.Windows.ERROR_FILE_NOT_FOUND)
                     {
                         elapsedTime = unchecked(Environment.TickCount - startTime);
                         Thread.Sleep(100);
@@ -1342,19 +1295,22 @@ namespace System.Management.Automation.Remoting
                 }
             } while (elapsedTime < timeout);
 
+            SafePipeHandle pipeHandle = null;
             try
             {
+                pipeHandle = new SafePipeHandle(handle, ownsHandle: true);
                 return new NamedPipeClientStream(
                     PipeDirection.InOut,
-                    true,
-                    true,
+                    isAsync: true,
+                    isConnected: true,
                     pipeHandle);
             }
             catch (Exception)
             {
-                pipeHandle.Dispose();
+                pipeHandle?.Dispose();
                 throw;
             }
+#endif
         }
 
         #endregion

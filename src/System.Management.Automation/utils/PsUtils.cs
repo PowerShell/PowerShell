@@ -105,14 +105,8 @@ namespace System.Management.Automation
 #if UNIX
             return Platform.NonWindowsGetThreadId();
 #else
-            return NativeMethods.GetCurrentThreadId();
+            return Interop.Windows.GetCurrentThreadId();
 #endif
-        }
-
-        private static class NativeMethods
-        {
-            [DllImport(PinvokeDllNames.GetCurrentThreadIdDllName)]
-            internal static extern uint GetCurrentThreadId();
         }
 
         #region ASTUtils
@@ -217,11 +211,20 @@ namespace System.Management.Automation
                                      bool allowEnvironmentVariables,
                                      bool skipPathValidation)
         {
-            if (!skipPathValidation && string.IsNullOrEmpty(parameterName)) { throw PSTraceSource.NewArgumentNullException(nameof(parameterName)); }
+            if (!skipPathValidation && string.IsNullOrEmpty(parameterName))
+            {
+                throw PSTraceSource.NewArgumentNullException(nameof(parameterName));
+            }
 
-            if (string.IsNullOrEmpty(psDataFilePath)) { throw PSTraceSource.NewArgumentNullException(nameof(psDataFilePath)); }
+            if (string.IsNullOrEmpty(psDataFilePath))
+            {
+                throw PSTraceSource.NewArgumentNullException(nameof(psDataFilePath));
+            }
 
-            if (context == null) { throw PSTraceSource.NewArgumentNullException(nameof(context)); }
+            if (context == null)
+            {
+                throw PSTraceSource.NewArgumentNullException(nameof(context));
+            }
 
             string resolvedPath;
             if (skipPathValidation)
@@ -351,33 +354,28 @@ namespace System.Management.Automation
             }
 
             var pipeline = ast.GetSimplePipeline(false, out _, out _);
-            if (pipeline != null)
+            if (pipeline?.GetPureExpression() is HashtableAst hashtableAst)
             {
-                var hashtableAst = pipeline.GetPureExpression() as HashtableAst;
-                if (hashtableAst != null)
+                var result = new Hashtable(StringComparer.OrdinalIgnoreCase);
+                foreach (var pair in hashtableAst.KeyValuePairs)
                 {
-                    var result = new Hashtable(StringComparer.OrdinalIgnoreCase);
-                    foreach (var pair in hashtableAst.KeyValuePairs)
+                    if (pair.Item1 is StringConstantExpressionAst key && keys.Contains(key.Value, StringComparer.OrdinalIgnoreCase))
                     {
-                        var key = pair.Item1 as StringConstantExpressionAst;
-                        if (key != null && keys.Contains(key.Value, StringComparer.OrdinalIgnoreCase))
+                        try
                         {
-                            try
-                            {
-                                var val = pair.Item2.SafeGetValue();
-                                result[key.Value] = val;
-                            }
-                            catch
-                            {
-                                throw PSTraceSource.NewInvalidOperationException(
-                                         ParserStrings.InvalidPowerShellDataFile,
-                                         psDataFilePath);
-                            }
+                            var val = pair.Item2.SafeGetValue();
+                            result[key.Value] = val;
+                        }
+                        catch
+                        {
+                            throw PSTraceSource.NewInvalidOperationException(
+                                        ParserStrings.InvalidPowerShellDataFile,
+                                        psDataFilePath);
                         }
                     }
-
-                    return result;
                 }
+
+                return result;
             }
 
             throw PSTraceSource.NewInvalidOperationException(
@@ -529,7 +527,7 @@ namespace System.Management.Automation
         internal static string ComputeHash(string input)
         {
             byte[] hashBytes = ComputeHash(Encoding.UTF8.GetBytes(input));
-            return BitConverter.ToString(hashBytes).Replace("-", string.Empty);
+            return Convert.ToHexString(hashBytes);
         }
     }
 

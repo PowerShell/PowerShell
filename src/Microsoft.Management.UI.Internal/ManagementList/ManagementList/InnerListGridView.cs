@@ -45,10 +45,7 @@ namespace Microsoft.Management.UI.Internal
         /// <exception cref="ArgumentNullException">The specified value is a null reference.</exception>
         internal InnerListGridView(ObservableCollection<InnerListColumn> availableColumns)
         {
-            if (availableColumns == null)
-            {
-                throw new ArgumentNullException("availableColumns");
-            }
+            ArgumentNullException.ThrowIfNull(availableColumns);
 
             // Setting the AvailableColumns property won't trigger CollectionChanged, so we have to do it manually \\
             this.AvailableColumns = availableColumns;

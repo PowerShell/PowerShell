@@ -70,7 +70,7 @@ namespace System.Management.Automation
         #region New
 
         /// <summary>
-        /// Creates a new MSH drive in session state.
+        /// Creates a new PSDrive in session state.
         /// </summary>
         /// <param name="drive">
         /// The drive to be created.

@@ -88,7 +88,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 1, ValueFromPipelineByPropertyName = true, ValueFromPipeline = true, ParameterSetName = LiteralPathParameterSetName)]
         [Alias("Name")]
         [ValidateNotNull]
-        [ArgumentToModuleTransformationAttribute()]
+        [ArgumentToModuleTransformationAttribute]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public PSModuleInfo[] Module { get; set; }
 
@@ -260,10 +260,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 finally
                 {
-                    if (helpInfoDrive != null)
-                    {
-                        helpInfoDrive.Dispose();
-                    }
+                    helpInfoDrive?.Dispose();
                 }
             }
 
@@ -407,10 +404,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         finally
                         {
-                            if (helpContentDrive != null)
-                            {
-                                helpContentDrive.Dispose();
-                            }
+                            helpContentDrive?.Dispose();
                         }
                     }
                 }

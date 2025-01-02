@@ -89,7 +89,7 @@ namespace System.Management.Automation
         internal const string PrivilegeCheckDllName = "api-ms-win-security-base-l1-1-0.dll";                 /*76*/
         internal const string ImpersonateNamedPipeClientDllName = "api-ms-win-core-namedpipe-l1-1-0.dll";    /*77*/
         internal const string RevertToSelfDllName = "api-ms-win-security-base-l1-1-0.dll";                   /*78*/
-        internal const string CreateProcessInComputeSystemDllName = "vmcompute.dll";                         /*79*/
+        internal const string CreateProcessInComputeSystemDllName = "ComputeCore.dll";                       /*79*/
         internal const string CLSIDFromProgIDDllName = "api-ms-win-core-com-l1-1-0.dll";                     /*80*/
         internal const string LoadLibraryEx = "api-ms-win-core-libraryloader-l1-1-0.dll";                    /*81*/
         internal const string FreeLibrary = "api-ms-win-core-libraryloader-l1-1-0.dll";                      /*82*/

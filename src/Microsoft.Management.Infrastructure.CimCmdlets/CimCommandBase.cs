@@ -470,10 +470,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 return;
             }
 
-            if (this.parameterBinder != null)
-            {
-                this.parameterBinder.SetParameter(parameterName, this.AtBeginProcess);
-            }
+            this.parameterBinder?.SetParameter(parameterName, this.AtBeginProcess);
         }
         #endregion
 
@@ -576,10 +573,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         protected virtual void DisposeInternal()
         {
             // Dispose managed resources.
-            if (this.operation != null)
-            {
-                this.operation.Dispose();
-            }
+            this.operation?.Dispose();
         }
         #endregion
 

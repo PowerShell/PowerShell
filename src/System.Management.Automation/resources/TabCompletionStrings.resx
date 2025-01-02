@@ -329,4 +329,49 @@
   <data name="shrOperatorDescription" xml:space="preserve">
     <value>Shift Right bit operator. Inserts zero in the left-most bit position. For signed values, sign bit is preserved.</value>
   </data>
+  <data name="AssemblyKeywordDescription" xml:space="preserve">
+    <value>Specifies the path to a .NET assembly to load.
+
+using assembly &lt;.NET-assembly-path&gt;</value>
+  </data>
+  <data name="ModuleKeywordDescription" xml:space="preserve">
+    <value>Specifies a PowerShell module to load classes from.
+
+using module &lt;ModuleName or Path&gt;
+
+using module &lt;ModuleSpecification hashtable&gt;</value>
+  </data>
+  <data name="NamespaceKeywordDescription" xml:space="preserve">
+    <value>Specifies a .NET namespace to resolve types from or a namespace alias.
+
+using namespace &lt;.NET-namespace&gt;
+
+using namespace &lt;AliasName&gt; = &lt;.NET-namespace&gt;</value>
+  </data>
+  <data name="TypeKeywordDescription" xml:space="preserve">
+    <value>Specifies an alias for a .NET Type.
+
+using type &lt;AliasName&gt; = &lt;.NET-type&gt;</value>
+  </data>
+  <data name="RegistryStringToolTip" xml:space="preserve">
+    <value>A normal string.</value>
+  </data>
+  <data name="RegistryExpandStringToolTip" xml:space="preserve">
+    <value>A string that contains unexpanded references to environment variables that are expanded when the value is retrieved.</value>
+  </data>
+  <data name="RegistryBinaryToolTip" xml:space="preserve">
+    <value>Binary data in any form.</value>
+  </data>
+  <data name="RegistryDWordToolTip" xml:space="preserve">
+    <value>A 32-bit binary number.</value>
+  </data>
+  <data name="RegistryMultiStringToolTip" xml:space="preserve">
+    <value>An array of strings.</value>
+  </data>
+  <data name="RegistryQWordToolTip" xml:space="preserve">
+    <value>A 64-bit binary number.</value>
+  </data>
+  <data name="RegistryUnknownToolTip" xml:space="preserve">
+    <value>An unsupported registry data type.</value>
+  </data>
 </root>

@@ -35,7 +35,6 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This exception is thrown when the timeout expires before a computer finishes restarting.
     /// </summary>
-    [Serializable]
     public sealed class RestartComputerTimeoutException : RuntimeException
     {
         /// <summary>
@@ -87,50 +86,6 @@ namespace Microsoft.PowerShell.Commands
         /// An exception that led to this exception.
         /// </param>
         public RestartComputerTimeoutException(string message, Exception innerException) : base(message, innerException) { }
-
-        #region Serialization
-        /// <summary>
-        /// Serialization constructor for class RestartComputerTimeoutException.
-        /// </summary>
-        /// <param name="info">
-        /// serialization information
-        /// </param>
-        /// <param name="context">
-        /// streaming context
-        /// </param>
-        private RestartComputerTimeoutException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-            if (info == null)
-            {
-                throw new PSArgumentNullException(nameof(info));
-            }
-
-            ComputerName = info.GetString("ComputerName");
-            Timeout = info.GetInt32("Timeout");
-        }
-
-        /// <summary>
-        /// Serializes the RestartComputerTimeoutException.
-        /// </summary>
-        /// <param name="info">
-        /// serialization information
-        /// </param>
-        /// <param name="context">
-        /// streaming context
-        /// </param>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-            {
-                throw new PSArgumentNullException(nameof(info));
-            }
-
-            base.GetObjectData(info, context);
-            info.AddValue("ComputerName", ComputerName);
-            info.AddValue("Timeout", Timeout);
-        }
-        #endregion Serialization
     }
 
     /// <summary>
@@ -306,7 +261,7 @@ foreach ($computerName in $array[1])
         ComputerName = $computerName
         ScriptBlock = { $true }
 
-        SessionOption = NewPSSessionOption -NoMachineProfile
+        SessionOption = New-PSSessionOption -NoMachineProfile
         ErrorAction = 'SilentlyContinue'
     }
 
@@ -393,17 +348,10 @@ $result
         {
             if (disposing)
             {
-                if (_timer != null)
-                {
-                    _timer.Dispose();
-                }
-
+                _timer?.Dispose();
                 _waitHandler.Dispose();
                 _cancel.Dispose();
-                if (_powershell != null)
-                {
-                    _powershell.Dispose();
-                }
+                _powershell?.Dispose();
             }
         }
 
@@ -540,7 +488,10 @@ $result
             {
                 try
                 {
-                    if (token.IsCancellationRequested) { break; }
+                    if (token.IsCancellationRequested)
+                    {
+                        break;
+                    }
 
                     using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(computer, Credential, WsmanAuthentication, isLocalHost: false, this, token))
                     {
@@ -682,7 +633,10 @@ $result
             {
                 try
                 {
-                    if (token.IsCancellationRequested) { break; }
+                    if (token.IsCancellationRequested)
+                    {
+                        break;
+                    }
 
                     using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(computer, credential, wsmanAuthentication, isLocalHost: false, cmdlet, token))
                     {
@@ -798,7 +752,7 @@ $result
 
             if (Wait)
             {
-                _activityId = (new Random()).Next();
+                _activityId = Random.Shared.Next();
                 if (_timeout == -1 || _timeout >= int.MaxValue / 1000)
                 {
                     _timeoutInMilliseconds = int.MaxValue;
@@ -837,7 +791,10 @@ $result
             ValidateComputerNames();
 
             object[] flags = new object[] { 2, 0 };
-            if (Force) flags[0] = forcedReboot;
+            if (Force)
+            {
+                flags[0] = forcedReboot;
+            }
 
             if (ParameterSetName.Equals(DefaultParameterSet, StringComparison.OrdinalIgnoreCase))
             {
@@ -912,14 +869,18 @@ $result
 
                     while (true)
                     {
-                        int loopCount = actualDelay * 4; // (delay * 1000)/250ms
+                        // (delay * 1000)/250ms
+                        int loopCount = actualDelay * 4;
                         while (loopCount > 0)
                         {
                             WriteProgress(_indicator[(indicatorIndex++) % 4] + _activity, _status, _percent, ProgressRecordType.Processing);
 
                             loopCount--;
                             _waitHandler.Wait(250);
-                            if (_exit) { break; }
+                            if (_exit)
+                            {
+                                break;
+                            }
                         }
 
                         if (first)
@@ -939,7 +900,10 @@ $result
                             // Test restart stage.
                             // We check if the target machine has already rebooted by querying the LastBootUpTime from the Win32_OperatingSystem object.
                             // So after this step, we are sure that both the Network and the WMI or WinRM service have already come up.
-                            if (_exit) { break; }
+                            if (_exit)
+                            {
+                                break;
+                            }
 
                             if (restartStageTestList.Count > 0)
                             {
@@ -955,7 +919,10 @@ $result
                             }
 
                             // Test WMI service
-                            if (_exit) { break; }
+                            if (_exit)
+                            {
+                                break;
+                            }
 
                             if (wmiTestList.Count > 0)
                             {
@@ -973,10 +940,16 @@ $result
                                 }
                             }
 
-                            if (isForWmi) { break; }
+                            if (isForWmi)
+                            {
+                                break;
+                            }
 
                             // Test WinRM service
-                            if (_exit) { break; }
+                            if (_exit)
+                            {
+                                break;
+                            }
 
                             if (winrmTestList.Count > 0)
                             {
@@ -1001,16 +974,25 @@ $result
 
                                             loopCount--;
                                             _waitHandler.Wait(250);
-                                            if (_exit) { break; }
+                                            if (_exit)
+                                            {
+                                                break;
+                                            }
                                         }
                                     }
                                 }
                             }
 
-                            if (isForWinRm) { break; }
+                            if (isForWinRm)
+                            {
+                                break;
+                            }
 
                             // Test PowerShell
-                            if (_exit) { break; }
+                            if (_exit)
+                            {
+                                break;
+                            }
 
                             if (psTestList.Count > 0)
                             {
@@ -1026,7 +1008,10 @@ $result
                         } while (false);
 
                         // if time is up or Ctrl+c is typed, break out
-                        if (_exit) { break; }
+                        if (_exit)
+                        {
+                            break;
+                        }
 
                         // Check if the restart completes
                         switch (_waitFor)
@@ -1070,18 +1055,38 @@ $result
                         // The timeout expires. Write out timeout error messages for the computers that haven't finished restarting
                         do
                         {
-                            if (restartStageTestList.Count > 0) { WriteOutTimeoutError(restartStageTestList); }
+                            if (restartStageTestList.Count > 0)
+                            {
+                                WriteOutTimeoutError(restartStageTestList);
+                            }
 
-                            if (wmiTestList.Count > 0) { WriteOutTimeoutError(wmiTestList); }
+                            if (wmiTestList.Count > 0)
+                            {
+                                WriteOutTimeoutError(wmiTestList);
+                            }
+
                             // Wait for WMI. All computers that finished restarting are put in "winrmTestList"
-                            if (isForWmi) { break; }
+                            if (isForWmi)
+                            {
+                                break;
+                            }
 
                             // Wait for WinRM. All computers that finished restarting are put in "psTestList"
-                            if (winrmTestList.Count > 0) { WriteOutTimeoutError(winrmTestList); }
+                            if (winrmTestList.Count > 0)
+                            {
+                                WriteOutTimeoutError(winrmTestList);
+                            }
 
-                            if (isForWinRm) { break; }
+                            if (isForWinRm)
+                            {
+                                break;
+                            }
 
-                            if (psTestList.Count > 0) { WriteOutTimeoutError(psTestList); }
+                            if (psTestList.Count > 0)
+                            {
+                                WriteOutTimeoutError(psTestList);
+                            }
+
                             // Wait for PowerShell. All computers that finished restarting are put in "allDoneList"
                         } while (false);
                     }
@@ -1098,10 +1103,7 @@ $result
             _cancel.Cancel();
             _waitHandler.Set();
 
-            if (_timer != null)
-            {
-                _timer.Change(System.Threading.Timeout.Infinite, System.Threading.Timeout.Infinite);
-            }
+            _timer?.Change(System.Threading.Timeout.Infinite, System.Threading.Timeout.Infinite);
 
             if (_powershell != null)
             {
@@ -1231,7 +1233,10 @@ $result
                 string strLocal = string.Empty;
                 bool isLocalHost = false;
 
-                if (_cancel.Token.IsCancellationRequested) { break; }
+                if (_cancel.Token.IsCancellationRequested)
+                {
+                    break;
+                }
 
                 if ((computer.Equals("localhost", StringComparison.OrdinalIgnoreCase)) || (computer.Equals(".", StringComparison.OrdinalIgnoreCase)))
                 {
@@ -1586,7 +1591,10 @@ $result
         protected override void ProcessRecord()
         {
             string targetComputer = ValidateComputerName();
-            if (targetComputer == null) return;
+            if (targetComputer == null)
+            {
+                return;
+            }
 
             bool isLocalhost = targetComputer.Equals("localhost", StringComparison.OrdinalIgnoreCase);
             if (isLocalhost)
@@ -1606,7 +1614,10 @@ $result
         /// </summary>
         protected override void EndProcessing()
         {
-            if (!_containsLocalHost) return;
+            if (!_containsLocalHost)
+            {
+                return;
+            }
 
             DoRenameComputerAction("localhost", _newNameForLocalHost, true);
         }

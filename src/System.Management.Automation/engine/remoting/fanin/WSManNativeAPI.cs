@@ -1404,7 +1404,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <summary>
         /// Managed to unmanaged representation of WSMAN_SHELL_STARTUP_INFO.
         /// It converts managed values into an unmanaged compatible WSManShellStartupInfoStruct that
-        /// is marshaled into unmanaged memory.
+        /// is marshalled into unmanaged memory.
         /// </summary>
         internal struct WSManShellStartupInfo_ManToUn : IDisposable
         {
@@ -2006,13 +2006,13 @@ namespace System.Management.Automation.Remoting.Client
         internal class WSManPluginRequest
         {
             /// <summary>
-            /// Unmarshaled WSMAN_SENDER_DETAILS struct.
+            /// Unmarshalled WSMAN_SENDER_DETAILS struct.
             /// </summary>
             internal WSManSenderDetails senderDetails;
             internal string locale;
             internal string resourceUri;
             /// <summary>
-            /// Unmarshaled WSMAN_OPERATION_INFO struct.
+            /// Unmarshalled WSMAN_OPERATION_INFO struct.
             /// </summary>
             internal WSManOperationInfo operationInfo;
 
@@ -2100,7 +2100,7 @@ namespace System.Management.Automation.Remoting.Client
             internal string senderName;
             internal string authenticationMechanism;
             internal WSManCertificateDetails certificateDetails;
-            internal IntPtr clientToken; // TODO: How should this be marshaled?????
+            internal IntPtr clientToken; // TODO: How should this be marshalled?????
             internal string httpUrl;
 
             /// <summary>

@@ -1,11 +1,29 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-Describe "Verify approved aliases list" -Tags "CI" {
+Describe "Verify aliases and cmdlets" -Tags "CI" {
     BeforeAll {
+        function ConvertTo-Hashtable {
+            [CmdletBinding()]
+            param ([Parameter(ValueFromPipeline=$true)][psobject]$o)
+            PROCESS {
+                $pNames = $o.psobject.properties.name
+                $ht = @{}
+                foreach($pName in $pNames) {
+                    $ht[$pName] = $o.$pName
+                }
+                $ht
+            }
+        }
+
         $FullCLR = !$IsCoreCLR
         $CoreWindows = $IsCoreCLR -and $IsWindows
         $CoreUnix = $IsCoreCLR -and !$IsWindows
-        $isPreview = $PSVersionTable.GitCommitId.Contains("preview")
+        # If psversion can be converted to [version], then it is not a preview version.
+        # We can't just use '$psversiontable.psversion -as [version]' because pwsh
+        # will succeed with the conversion and add note properties to the version object.
+        $psVersionAsVersion = $psversiontable.psversion.tostring() -as [version]
+        $isRC = $psversiontable.psversion.tostring() -match "rc"
+        $isPreview = -not ($isRC -or $psVersionAsVersion)
         if ($IsWindows) {
             $configPath = Join-Path -Path $env:USERPROFILE -ChildPath 'Documents' -AdditionalChildPath 'PowerShell'
         }
@@ -213,6 +231,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Cmdlet",       "Complete-Transaction",             "",                                 $($FullCLR                               ),     "",                     "",                     ""
 "Cmdlet",       "Connect-PSSession",                "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "Medium"
 "Cmdlet",       "Connect-WSMan",                    "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "None"
+"Cmdlet",       "ConvertFrom-CliXml",               "",                                 $($CoreWindows -or $CoreUnix),                  "",                     "",                     "None"
 "Cmdlet",       "ConvertFrom-Csv",                  "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "ConvertFrom-Json",                 "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "ConvertFrom-Markdown",             "",                                 $(             $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
@@ -222,6 +241,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Cmdlet",       "ConvertFrom-StringData",           "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Convert-Path",                     "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Convert-String",                   "",                                 $($FullCLR                               ),     "",                     "",                     ""
+"Cmdlet",       "ConvertTo-CliXml",                 "",                                 $($CoreWindows -or $CoreUnix),                  "",                     "",                     "None"
 "Cmdlet",       "ConvertTo-Csv",                    "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "ConvertTo-Html",                   "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "ConvertTo-Json",                   "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
@@ -320,6 +340,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Cmdlet",       "Get-Random",                       "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Get-Runspace",                     "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Get-RunspaceDebug",                "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
+"Cmdlet",       "Get-SecureRandom",                 "",                                 $(             $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Get-Service",                      "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "None"
 "Cmdlet",       "Get-TimeZone",                     "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Get-TraceSource",                  "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
@@ -368,8 +389,8 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Cmdlet",       "New-FileCatalog",                  "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "Medium"
 "Cmdlet",       "New-GUID",                         "",                                 $(             $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "New-Item",                         "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "Medium"
-"Cmdlet",       "New-ItemProperty",                 "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
-"Cmdlet",       "New-Module",                       "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "Medium"
+"Cmdlet",       "New-ItemProperty",                 "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "Medium"
+"Cmdlet",       "New-Module",                       "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "New-ModuleManifest",               "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "Low"
 "Cmdlet",       "New-Object",                       "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "New-PSDrive",                      "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "Low"
@@ -387,7 +408,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Cmdlet",       "New-WSManInstance",                "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "None"
 "Cmdlet",       "New-WSManSessionOption",           "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "None"
 "Cmdlet",       "Out-Default",                      "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
-"Cmdlet",       "Out-File",                         "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
+"Cmdlet",       "Out-File",                         "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "Medium"
 "Cmdlet",       "Out-GridView",                     "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "None"
 "Cmdlet",       "Out-Host",                         "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Out-LineOutput",                   "",                                 $($FullCLR                               ),     "",                     "",                     ""
@@ -458,7 +479,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Cmdlet",       "Set-Service",                      "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "Medium"
 "Cmdlet",       "Set-StrictMode",                   "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Set-TimeZone",                     "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "Medium"
-"Cmdlet",       "Set-TraceSource",                  "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "Medium"
+"Cmdlet",       "Set-TraceSource",                  "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Set-Variable",                     "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "Medium"
 "Cmdlet",       "Set-WmiInstance",                  "",                                 $($FullCLR                               ),     "",                     "",                     ""
 "Cmdlet",       "Set-WSManInstance",                "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "None"
@@ -474,7 +495,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Cmdlet",       "Start-Service",                    "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "Medium"
 "Cmdlet",       "Start-Sleep",                      "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Start-Transaction",                "",                                 $($FullCLR                               ),     "",                     "",                     ""
-"Cmdlet",       "Start-Transcript",                 "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
+"Cmdlet",       "Start-Transcript",                 "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "Medium"
 "Cmdlet",       "Stop-Computer",                    "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "Medium"
 "Cmdlet",       "Stop-Job",                         "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "Medium"
 "Cmdlet",       "Stop-Process",                     "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "Medium"
@@ -482,7 +503,8 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Cmdlet",       "Stop-Transcript",                  "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Suspend-Job",                      "",                                 $($FullCLR                               ),     "",                     "",                     ""
 "Cmdlet",       "Suspend-Service",                  "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "Medium"
-"Cmdlet",       "Tee-Object",                       "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "Medium"
+"Cmdlet",       "Switch-Process",                   "",                                 $(                              $CoreUnix),     "",                     "",                     "None"
+"Cmdlet",       "Tee-Object",                       "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Test-Connection",                  "",                                 $(             $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Test-ComputerSecureChannel",       "",                                 $($FullCLR                               ),     "",                     "",                     ""
 "Cmdlet",       "Test-FileCatalog",                 "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "Medium"
@@ -518,9 +540,18 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Cmdlet",       "Write-Warning",                    "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "@
 
-            # We control only default engine aliases (Source -eq "") and aliases from following default loaded modules
+            # We control only default engine aliases (Source -eq "") and aliases from following default loaded modules "
             # We control only default engine Cmdlets (Source -eq "") and Cmdlets from following default loaded modules
-            $moduleList = @("Microsoft.PowerShell.Utility", "Microsoft.PowerShell.Management", "Microsoft.PowerShell.Security", "Microsoft.PowerShell.Host", "Microsoft.PowerShell.Diagnostics", "Microsoft.WSMan.Management", "Microsoft.PowerShell.Core", "CimCmdlets")
+            $moduleList = @(
+                    "Microsoft.PowerShell.Utility",
+                    "Microsoft.PowerShell.Management",
+                    "Microsoft.PowerShell.Security",
+                    "Microsoft.PowerShell.Host",
+                    "Microsoft.PowerShell.Diagnostics",
+                    "Microsoft.WSMan.Management",
+                    "Microsoft.PowerShell.Core",
+                    "CimCmdlets"
+                    )
             $getAliases = {
                 param($moduleList)
 
@@ -556,7 +587,12 @@ Describe "Verify approved aliases list" -Tags "CI" {
             }
 
             $commandList  = $commandString | ConvertFrom-Csv -Delimiter ","
+            $commandHashTableList = $commandList.Where({$_.Present -eq "True" -and $_.CommandType -eq "Cmdlet"}) | ConvertTo-Hashtable
+
             $aliasFullList  = $commandList | Where-Object { $_.Present -eq "True" -and $_.CommandType -eq "Alias"  }
+
+            $AllScopeOption = [System.Management.Automation.ScopedItemOptions]::AllScope
+            $ReadOnlyOption = [System.Management.Automation.ScopedItemOptions]::ReadOnly
     }
 
     AfterAll {
@@ -566,68 +602,39 @@ Describe "Verify approved aliases list" -Tags "CI" {
     }
 
     It "All approved aliases present (no new aliases added, no aliases removed)" {
-        $currentDisplayNameAliasList = $currentAliasList | Select-Object -ExpandProperty DisplayName
-        $aliasDisplayNameAliasList  = $aliasFullList | ForEach-Object { "{0} -> {1}" -f $_.Name, $_.Definition}
-
-        $result = Compare-Object -ReferenceObject $currentDisplayNameAliasList -DifferenceObject $aliasDisplayNameAliasList
-
-        # Below 'Should Be' don't show full list wrong aliases so we output them explicitly
-        # if all aliases is Ok we output nothing
-        $result | Write-Host
-        $result | Should -BeNullOrEmpty
+        $observedAliases = $currentAliasList.ForEach({"{0}:{1}" -f $_.Name,$_.Definition}) | Sort-Object
+        $expectedAliases = $aliasFullList.ForEach({"{0}:{1}" -f $_.Name, $_.Definition}) | Sort-Object
+        $observedAliases | Should -Be $expectedAliases
     }
 
     It "All approved aliases have the correct 'AllScope' option" {
-        $aliasAllScopeOptionList = $aliasFullList | Where-Object { $_.AllScopeOption -eq "AllScope"} | ForEach-Object { "{0} -> {1}" -f $_.Name, $_.Definition}
-        $currentAllScopeOptionList = $currentAliasList | Where-Object { $_.Options -band [System.Management.Automation.ScopedItemOptions]::AllScope } | Select-Object -ExpandProperty DisplayName
-
-        $result = Compare-Object -ReferenceObject $currentAllScopeOptionList -DifferenceObject  $aliasAllScopeOptionList
-
-        # Below 'Should Be' don't show full list wrong aliases so we output them explicitly
-        # if all aliases is Ok we output nothing
-        $result | Write-Host
-        $result | Should -BeNullOrEmpty
+        $expectedAllScopeAliases = $aliasFullList.Where({$_.AllScopeOption -eq "AllScope"}).ForEach({"{0}:{1}" -f $_.Name, $_.Definition}) | Sort-Object
+        $observedAllScopeAliases = $currentAliasList.Where({($_.Options -as [System.Management.Automation.ScopedItemOptions]) -band $AllScopeOption}).Foreach({"{0}:{1}" -f $_.Name, $_.Definition}) | Sort-Object
+        $observedAllScopeAliases | Should -Be $expectedAllScopeAliases
     }
 
     It "All approved aliases have the correct 'ReadOnly' option" {
-        $aliasReadOnlyOptionList = $aliasFullList | Where-Object { $_.ReadOnlyOption -eq "ReadOnly"} | ForEach-Object { "{0} -> {1}" -f $_.Name, $_.Definition}
-        $currentReadOnlyOptionList = $currentAliasList | Where-Object { $_.Options -band [System.Management.Automation.ScopedItemOptions]::ReadOnly } | Select-Object -ExpandProperty DisplayName
-
-        $result = Compare-Object -ReferenceObject $currentReadOnlyOptionList -DifferenceObject  $aliasReadOnlyOptionList
-
-        # Below 'Should Be' don't show full list wrong aliases so we output them explicitly
-        # if all aliases is Ok we output nothing
-        $result | Write-Host
-        $result | Should -BeNullOrEmpty
+        $expectedReadOnlyAliases = $aliasFullList.Where({$_.ReadOnlyOption -eq "ReadOnly"}).ForEach({"{0}:{1}" -f $_.Name, $_.Definition}) | Sort-Object
+        $observedReadOnlyAliases = $currentAliasList.Where({($_.Options -as [System.Management.Automation.ScopedItemOptions]) -band $ReadOnlyOption}).ForEach({"{0}:{1}" -f $_.Name, $_.Definition}) | Sort-Object
+        $observedReadOnlyAliases | Should -Be $expectedReadOnlyAliases
     }
 
     It "All approved Cmdlets present (no new Cmdlets added, no Cmdlets removed)" {
-        $cmdletList = $commandList | Where-Object { $_.Present -eq "True" -and $_.CommandType -eq "Cmdlet" } | Select-Object -ExpandProperty Name
-
-        $result = (Compare-Object -ReferenceObject $currentCmdletList.Name -DifferenceObject $cmdletList).InputObject
-        $result | Should -BeNullOrEmpty
+        $observedCmdletNames = $currentCmdletList.ForEach({"{0}" -f $_.Name})
+        $expectedCmdletNames = $commandHashTableList.ForEach({"{0}" -f $_.Name})
+        $extraCmds = $observedCmdletNames.Where({$expectedCmdletNames -notcontains $_})
+        $missedCmds = $expectedCmdletNames.Where({$observedCmdletNames -notcontains $_})
+        $extraCmds | Should -HaveCount 0 -Because "Extra cmdlets $($extraCmds -join ',')"
+        $missedCmds | Should -HaveCount 0 -Because "Missed cmdlets $($missedCmds -join ',')"
     }
 
-    It "All present Cmdlets should have the correct ConfirmImpact" {
-        $CmdletList = $commandList |
-            Where-Object { $_.Present -eq "True" -and $_.CommandType -eq "Cmdlet"} |
-            Select-Object -Property Name, ConfirmImpact
-
-        # if Preview, $currentCmdletList is deserialized, so we re-hydrate them so comparison succeeds
-        $currentCmdletList = $currentCmdletList | ForEach-Object { Get-Command $_.Name } |
-            Where-Object { $moduleList -contains $_.Source -and $null -ne $_.ImplementingType } |
-            Select-Object -Property Name, @{
-                Name = 'ConfirmImpact'
-                Expression = {
-                    if (($t = $_.ImplementingType)) {
-                        $t.GetCustomAttributes($true).Where{$_.TypeId.Name -eq 'CmdletAttribute'}.ConfirmImpact
-                    }
-                }
-            }
-
-        # -PassThru is provided to give meaningful output when differences arise
-        $result = Compare-Object -ReferenceObject $currentCmdletList -DifferenceObject $CmdletList -Property ConfirmImpact -PassThru
-        $result | Should -BeNullOrEmpty
+    It "'<Name>' Cmdlet should have the correct ConfirmImpact '<ConfirmImpact>'" -TestCases $commandHashtableList {
+        param ( $Name, $ConfirmImpact )
+        # retrieve again because we may have serialized the commandinfo
+        $cmdlet = Get-Command $Name
+        $cmdletAttribute = $cmdlet.ImplementingType.GetCustomAttributes($true).Where({$_ -is [System.Management.Automation.CmdletAttribute]})
+        $impact = $cmdletAttribute.ConfirmImpact
+        $impact | Should -Be $ConfirmImpact
     }
 }
 

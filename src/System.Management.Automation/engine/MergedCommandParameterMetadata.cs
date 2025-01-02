@@ -164,6 +164,13 @@ namespace System.Management.Automation
         private uint _nextAvailableParameterSetIndex;
 
         /// <summary>
+        /// The maximum number of parameter sets allowed. Limit is set by the use
+        /// of a uint bitmask to store which parameter sets a parameter is included in.
+        /// See <see cref="ParameterSetSpecificMetadata.ParameterSetFlag"/>.
+        /// </summary>
+        private const uint MaxParameterSetCount = 32;
+
+        /// <summary>
         /// Gets the number of parameter sets that were declared for the command.
         /// </summary>
         internal int ParameterSetCount
@@ -228,7 +235,7 @@ namespace System.Management.Automation
                 // A parameter set name should only be added once
                 if (index == -1)
                 {
-                    if (_nextAvailableParameterSetIndex == uint.MaxValue)
+                    if (_nextAvailableParameterSetIndex >= MaxParameterSetCount)
                     {
                         // Don't let the parameter set index overflow
                         ParsingMetadataException parsingException =

@@ -202,7 +202,7 @@ namespace System.Management.Automation.Internal
                     }
 
                     // If the number of copied non-escape-sequence characters has reached the specified length, done copying.
-                    if (offset == length)
+                    if (copyStarted && offset == length)
                     {
                         break;
                     }

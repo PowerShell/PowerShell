@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using System.IO.Compression;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace mvc.Controllers
@@ -23,7 +24,7 @@ namespace mvc.Controllers
 
                 using (var compressedStream = new GZipStream(responseStream, CompressionLevel.Fastest))
                 {
-                    httpContext.Response.Headers.Add("Content-Encoding", new[] { "gzip" });
+                    httpContext.Response.Headers.Append("Content-Encoding", new[] { "gzip" });
                     memoryStream.Seek(0, SeekOrigin.Begin);
                     await memoryStream.CopyToAsync(compressedStream);
                 }

@@ -91,10 +91,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (_waitHandle != null)
-            {
-                _waitHandle.WaitOne(milliSecondsToSleep, true);
-            }
+            _waitHandle?.WaitOne(milliSecondsToSleep, true);
         }
 
         /// <summary>
@@ -150,10 +147,7 @@ namespace Microsoft.PowerShell.Commands
             lock (_syncObject)
             {
                 _stopping = true;
-                if (_waitHandle != null)
-                {
-                    _waitHandle.Set();
-                }
+                _waitHandle?.Set();
             }
         }
 

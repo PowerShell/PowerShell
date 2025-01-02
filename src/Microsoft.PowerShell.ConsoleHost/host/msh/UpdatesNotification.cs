@@ -353,7 +353,7 @@ namespace Microsoft.PowerShell
 
             using var client = new HttpClient();
 
-            string userAgent = string.Format(CultureInfo.InvariantCulture, "PowerShell {0}", PSVersionInfo.GitCommitId);
+            string userAgent = string.Create(CultureInfo.InvariantCulture, $"PowerShell {PSVersionInfo.GitCommitId}");
             client.DefaultRequestHeaders.Add("User-Agent", userAgent);
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 

@@ -33,7 +33,7 @@ namespace Microsoft.PowerShell.Commands
         /// The credential to use.
         /// </summary>
         [Parameter]
-        [Credential()]
+        [Credential]
         public PSCredential Credential { get; set; }
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace Microsoft.PowerShell.Commands
         {
             StringBuilder returnValue = new StringBuilder("\\\\");
             returnValue.Append(computer);
-            returnValue.Append("\\");
+            returnValue.Append('\\');
             returnValue.Append(namespaceParameter);
             return returnValue.ToString();
         }

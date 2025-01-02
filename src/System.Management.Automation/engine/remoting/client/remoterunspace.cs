@@ -634,11 +634,8 @@ namespace System.Management.Automation
                         //
                     }
 
-                    if (_remoteDebugger != null)
-                    {
-                        // Release RunspacePool event forwarding handlers.
-                        _remoteDebugger.Dispose();
-                    }
+                    // Release RunspacePool event forwarding handlers.
+                    _remoteDebugger?.Dispose();
 
                     try
                     {
@@ -1732,10 +1729,7 @@ namespace System.Management.Automation
             System.Management.Automation.Remoting.Client.NamedPipeClientSessionTransportManager transportManager =
                 RunspacePool.RemoteRunspacePoolInternal.DataStructureHandler.TransportManager as System.Management.Automation.Remoting.Client.NamedPipeClientSessionTransportManager;
 
-            if (transportManager != null)
-            {
-                transportManager.AbortConnect();
-            }
+            transportManager?.AbortConnect();
         }
 
         #endregion Internal Methods
@@ -2786,8 +2780,8 @@ namespace System.Management.Automation
             {
                 throw new PSInvalidOperationException(
                     // The remote session to which you are connected does not support remote debugging.
-                    // You must connect to a remote computer that is running PowerShell {0} or greater.
-                    StringUtil.Format(RemotingErrorIdStrings.RemoteDebuggingEndpointVersionError, PSVersionInfo.PSV4Version),
+                    // You must connect to a remote computer that is running PowerShell 4.0 or greater.
+                    RemotingErrorIdStrings.RemoteDebuggingEndpointVersionError,
                     null,
                     "RemoteDebugger:RemoteDebuggingNotSupported",
                     ErrorCategory.NotImplemented,

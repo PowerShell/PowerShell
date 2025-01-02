@@ -1,6 +1,6 @@
 # EditorConfig is awesome: https://EditorConfig.org
 # .NET coding convention settings for EditorConfig
-# https://docs.microsoft.com/visualstudio/ide/editorconfig-code-style-settings-reference
+# https://learn.microsoft.com/visualstudio/ide/editorconfig-code-style-settings-reference
 #
 # This file comes from dotnet repositories:
 # https://github.com/dotnet/runtime/blob/master/.editorconfig
@@ -114,8 +114,6 @@ dotnet_style_prefer_conditional_expression_over_return = true:silent
 dotnet_style_prefer_conditional_expression_over_assignment = true:silent
 dotnet_style_prefer_auto_properties = true:suggestion
 csharp_prefer_simple_default_expression = true:suggestion
-dotnet_style_prefer_compound_assignment = false:silent
-dotnet_diagnostic.IDE0031.severity = none
 
 dotnet_code_quality_unused_parameters = non_public:suggestion
 

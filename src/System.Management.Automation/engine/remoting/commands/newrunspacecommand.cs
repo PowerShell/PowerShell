@@ -88,7 +88,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true,
                    ValueFromPipelineByPropertyName = true,
                    ParameterSetName = PSRemotingBaseCmdlet.VMNameParameterSet)]
-        [Credential()]
+        [Credential]
         public override PSCredential Credential
         {
             get
@@ -129,7 +129,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Friendly names for the new PSSessions.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] Name { get; set; }
 
@@ -385,11 +385,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Adds forwarded events to the local queue.
         /// </summary>
-        private void OnRunspacePSEventReceived(object sender, PSEventArgs e)
-        {
-            if (this.Events != null)
-                this.Events.AddForwardedEvent(e);
-        }
+        private void OnRunspacePSEventReceived(object sender, PSEventArgs e) => this.Events?.AddForwardedEvent(e);
 
         /// <summary>
         /// When the client remote session reports a URI redirection, this method will report the
@@ -936,7 +932,7 @@ namespace Microsoft.PowerShell.Commands
                     //
                     // VM should be in running state.
                     //
-                    if ((VMState)results[0].Properties["State"].Value != VMState.Running)
+                    if (GetVMStateProperty(results[0]) != VMState.Running)
                     {
                         WriteError(
                             new ErrorRecord(
@@ -1389,7 +1385,7 @@ namespace Microsoft.PowerShell.Commands
         /// <remarks>
         /// There are two problems that need to be handled.
         /// 1) We need to make sure that the ThrottleManager StartComplete and StopComplete
-        ///    operation events are called or the ThrottleManager will never end (will stop reponding).
+        ///    operation events are called or the ThrottleManager will never end (will stop responding).
         /// 2) The HandleRunspaceStateChanged event handler remains in the Runspace
         ///    StateChanged event call chain until this object is disposed.  We have to
         ///    disallow the HandleRunspaceStateChanged event from running and throwing

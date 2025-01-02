@@ -8,7 +8,7 @@ using System.Diagnostics;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Provides information for applications that are not directly executable by Monad.
+    /// Provides information for applications that are not directly executable by PowerShell.
     /// </summary>
     /// <remarks>
     /// An application is any file that is executable by Windows either directly or through
