@@ -7705,9 +7705,7 @@ namespace System.Management.Automation
                     bool withColon = wordToComplete.EndsWith(':');
                     wordToComplete = withColon ? wordToComplete.Remove(wordToComplete.Length - 1) : wordToComplete;
 
-                    string enumString = LanguagePrimitives.EnumSingleTypeConverter.EnumValues(typeof(SwitchFlags));
-                    string separator = CultureInfo.CurrentUICulture.TextInfo.ListSeparator;
-                    string[] enumArray = enumString.Split(separator, StringSplitOptions.RemoveEmptyEntries);
+                    string[] enumArray = LanguagePrimitives.EnumSingleTypeConverter.GetEnumNames(typeof(SwitchFlags));
 
                     var pattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
                     var enumList = new List<string>();
