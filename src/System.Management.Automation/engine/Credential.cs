@@ -295,6 +295,8 @@ namespace System.Management.Automation
 #pragma warning restore 56506
         }
 
+        public override string ToString() => $"PSCredential {UserName}";
+
         /// <summary>
         /// Gets an empty PSCredential.  This is an PSCredential with both UserName
         /// and Password initialized to null.
