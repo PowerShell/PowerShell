@@ -329,6 +329,40 @@
   <data name="shrOperatorDescription" xml:space="preserve">
     <value>Shift Right bit operator. Inserts zero in the left-most bit position. For signed values, sign bit is preserved.</value>
   </data>
+  <data name="switchCaseSensitiveParam" xml:space="preserve">
+    <value>[switch]
+Performs a case-sensitive match.
+If the match clause is not a string, this parameter is ignored.</value>
+  </data>
+  <data name="switchExactParam" xml:space="preserve">
+    <value>[switch]
+(Default behavior) Indicates that the match clause, if it is a string, must match exactly.
+If the match clause is not a string, this parameter is ignored.
+Cannot be used with "Regex" and "Wildcard"</value>
+  </data>
+  <data name="switchFileParam" xml:space="preserve">
+    <value>[string]
+Takes input from a file rather than an expression.
+Each line of the file is read and evaluated by the switch statement.</value>
+  </data>
+  <data name="switchRegexParam" xml:space="preserve">
+    <value>[switch]
+Performs regular expression matching of the value to the condition.
+If the match clause is not a string, this parameter is ignored.
+The $matches automatic variable is available for use within the matching statement block.
+Cannot be used with "Exact" and "Wildcard"</value>
+  </data>
+  <data name="switchWildcardParam" xml:space="preserve">
+    <value>[switch]
+Indicates that the condition is a wildcard string.
+If the match clause is not a string, the parameter is ignored.
+Cannot be used with "Exact" and "Regex"</value>
+  </data>
+  <data name="dataSupportedCommandParam" xml:space="preserve">
+    <value>[string[]]
+Allows the specified commands to be used inside the data section.
+Each command name should be separated by a comma and should not be quoted.</value>
+  </data>
   <data name="AssemblyKeywordDescription" xml:space="preserve">
     <value>Specifies the path to a .NET assembly to load.
 
