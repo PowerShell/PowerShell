@@ -23,7 +23,7 @@ namespace System.Management.Automation.Runspaces.Internal
     /// Class which supports pooling remote powerShell runspaces
     /// on the client.
     /// </summary>
-    internal class RemoteRunspacePoolInternal : RunspacePoolInternal, IDisposable
+    internal sealed class RemoteRunspacePoolInternal : RunspacePoolInternal, IDisposable
     {
         #region Constructor
 
@@ -1894,16 +1894,6 @@ namespace System.Management.Automation.Runspaces.Internal
         #region IDisposable
 
         /// <summary>
-        /// Public method for Dispose.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
         /// Release all resources.
         /// </summary>
         /// <param name="disposing">If true, release all managed resources.</param>
@@ -1914,7 +1904,7 @@ namespace System.Management.Automation.Runspaces.Internal
             if (!_isDisposed)
             {
                 _isDisposed = true;
-                DataStructureHandler.Dispose(disposing);
+                DataStructureHandler.Dispose();
                 _applicationPrivateDataReceived.Dispose();
             }
         }

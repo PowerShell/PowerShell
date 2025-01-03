@@ -1199,13 +1199,11 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Dispose the current runspacepool.
+        /// Release all resources.
         /// </summary>
         public void Dispose()
         {
             _internalPool.Dispose(true);
-
-            GC.SuppressFinalize(this);
         }
 
         /// <summary>

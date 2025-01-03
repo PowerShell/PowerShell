@@ -16,7 +16,7 @@ namespace System.Management.Automation.Runspaces.Internal
     /// <summary>
     /// Class which supports pooling local powerShell runspaces.
     /// </summary>
-    internal class RunspacePoolInternal
+    internal class RunspacePoolInternal : IDisposable
     {
         #region Private data
 
@@ -811,6 +811,16 @@ namespace System.Management.Automation.Runspaces.Internal
                 // service any pending runspace requests.
                 EnqueueCheckAndStartRequestServicingThread(null, false);
             }
+        }
+        
+        /// <summary>
+        /// Release all resources.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+
+            GC.SuppressFinalize(this);
         }
 
         /// <summary>
