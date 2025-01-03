@@ -3311,7 +3311,7 @@ namespace Microsoft.PowerShell.Commands
         private readonly List<DnsNameRepresentation> _dnsList = new();
         private readonly IdnMapping idnMapping = new();
 
-        private const string distinguishedNamePrefix = "CN=";
+        private const string CommonNameOid = "2.5.4.3";
 
         /// <summary>
         /// Get property of DnsNameList.
@@ -3340,17 +3340,18 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public DnsNameProperty(X509Certificate2 cert)
         {
-            _dnsList = new List<DnsNameRepresentation>();
-
-            // extract DNS name from subject distinguish name
-            // if it exists and does not contain a comma
-            // a comma, indicates it is not a DNS name
-            if (cert.Subject.StartsWith(distinguishedNamePrefix, StringComparison.OrdinalIgnoreCase) &&
-                !cert.Subject.Contains(','))
+            // Extract DNS name from Subject distinguished name
+            foreach (X500RelativeDistinguishedName distinguishedName in cert.SubjectName.EnumerateRelativeDistinguishedNames())
             {
-                string parsedSubjectDistinguishedDnsName = cert.Subject.Substring(distinguishedNamePrefix.Length);
-                DnsNameRepresentation dnsName = GetDnsNameRepresentation(parsedSubjectDistinguishedDnsName);
-                _dnsList.Add(dnsName);
+                // Check distinguished name has single element and has Common Name (CN) OID
+                if (!distinguishedName.HasMultipleElements &&
+                     distinguishedName
+                        .GetSingleElementType().Value
+                        .Equals(CommonNameOid, StringComparison.OrdinalIgnoreCase))
+                {
+                    DnsNameRepresentation dnsName = GetDnsNameRepresentation(distinguishedName.GetSingleElementValue());
+                    _dnsList.Add(dnsName);
+                }
             }
 
             // Extract DNS names from SAN extensions
