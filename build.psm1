@@ -3724,7 +3724,7 @@ function Update-DotNetSdkVersion {
     $versionParts = $oldVersion -split '\.'
     $channel = $versionParts[0], $versionParts[1] -join '.'
     Write-Verbose "channel: $channel" -Verbose
-    $azure_feed = 'https://dotnetcli.azureedge.net/dotnet'
+    $azure_feed = 'https://builds.dotnet.microsoft.com/dotnet'
     $version_file_url = "$azure_feed/Sdk/$channel/latest.version"
     $version = Invoke-RestMethod $version_file_url
     Write-Verbose "updating from: $oldVersion to: $version" -Verbose
