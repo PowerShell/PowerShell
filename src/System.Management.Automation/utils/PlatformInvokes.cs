@@ -561,7 +561,7 @@ namespace System.Management.Automation
             /// Dispose.
             /// </summary>
             /// <param name="disposing"></param>
-            private void Dispose(bool disposing)
+            protected virtual void Dispose(bool disposing)
             {
                 if (disposing)
                 {
