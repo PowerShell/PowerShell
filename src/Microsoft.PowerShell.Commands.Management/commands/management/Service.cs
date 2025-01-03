@@ -610,146 +610,160 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            foreach (ServiceController service in MatchingServices())
+            nint scManagerHandle = nint.Zero;
+            if (!DependentServices && !RequiredServices)
             {
-                if (!DependentServices.IsPresent && !RequiredServices.IsPresent)
+                // As Get-Service only works on local services we get this once
+                // to retrieve extra properties added by PowerShell.
+                scManagerHandle = NativeMethods.OpenSCManagerW(
+                    lpMachineName: null,
+                    lpDatabaseName: null,
+                    dwDesiredAccess: NativeMethods.SC_MANAGER_CONNECT);
+                if (scManagerHandle == nint.Zero)
                 {
-                    WriteObject(AddProperties(service));
+                    Win32Exception exception = new();
+                    string message = StringUtil.Format(ServiceResources.FailToOpenServiceControlManager, exception.Message);
+                    ServiceCommandException serviceException = new ServiceCommandException(message, exception);
+                    ErrorRecord err = new ErrorRecord(
+                        serviceException,
+                        "FailToOpenServiceControlManager",
+                        ErrorCategory.PermissionDenied,
+                        null);
+                    ThrowTerminatingError(err);
                 }
-                else
-                {
-                    if (DependentServices.IsPresent)
-                    {
-                        foreach (ServiceController dependantserv in service.DependentServices)
-                        {
-                            WriteObject(dependantserv);
-                        }
-                    }
+            }
 
-                    if (RequiredServices.IsPresent)
+            try
+            {
+                foreach (ServiceController service in MatchingServices())
+                {
+                    if (!DependentServices.IsPresent && !RequiredServices.IsPresent)
                     {
-                        foreach (ServiceController servicedependedon in service.ServicesDependedOn)
+                        WriteObject(AddProperties(scManagerHandle, service));
+                    }
+                    else
+                    {
+                        if (DependentServices.IsPresent)
                         {
-                            WriteObject(servicedependedon);
+                            foreach (ServiceController dependantserv in service.DependentServices)
+                            {
+                                WriteObject(dependantserv);
+                            }
+                        }
+
+                        if (RequiredServices.IsPresent)
+                        {
+                            foreach (ServiceController servicedependedon in service.ServicesDependedOn)
+                            {
+                                WriteObject(servicedependedon);
+                            }
                         }
                     }
+                }
+            }
+            finally
+            {
+                if (scManagerHandle != nint.Zero)
+                {
+                    bool succeeded = NativeMethods.CloseServiceHandle(scManagerHandle);
+                    Diagnostics.Assert(succeeded, "SCManager handle close failed");
                 }
             }
         }
 
         #endregion Overrides
 
+#nullable enable
         /// <summary>
         /// Adds UserName, Description, BinaryPathName, DelayedAutoStart and StartupType to a ServiceController object.
         /// </summary>
+        /// <param name="scManagerHandle">Handle to the local SCManager instance.</param>
         /// <param name="service"></param>
         /// <returns>ServiceController as PSObject with UserName, Description and StartupType added.</returns>
-        private PSObject AddProperties(ServiceController service)
+        private static PSObject AddProperties(nint scManagerHandle, ServiceController service)
         {
-            NakedWin32Handle hScManager = IntPtr.Zero;
             NakedWin32Handle hService = IntPtr.Zero;
-            int lastError = 0;
-            PSObject serviceAsPSObj = PSObject.AsPSObject(service);
+
+            // As these are optional values, a failure due to permissions or
+            // other problem is ignored and the properties are set to null.
+            bool isDelayedAutoStart = false;
+            string? binPath = null;
+            string? description = null;
+            string? startName = null;
+            ServiceStartupType startupType = ServiceStartupType.InvalidValue;
             try
             {
-                hScManager = NativeMethods.OpenSCManagerW(
-                    lpMachineName: service.MachineName,
-                    lpDatabaseName: null,
-                    dwDesiredAccess: NativeMethods.SC_MANAGER_CONNECT
-                );
-                if (hScManager == IntPtr.Zero)
-                {
-                    lastError = Marshal.GetLastWin32Error();
-                    Win32Exception exception = new(lastError);
-                    WriteNonTerminatingError(
-                        service,
-                        exception,
-                        "FailToOpenServiceControlManager",
-                        ServiceResources.FailToOpenServiceControlManager,
-                        ErrorCategory.PermissionDenied);
-                }
-
+                // We don't use service.ServiceHandle as that requests
+                // SERVICE_ALL_ACCESS when we only need SERVICE_QUERY_CONFIG.
                 hService = NativeMethods.OpenServiceW(
-                    hScManager,
+                    scManagerHandle,
                     service.ServiceName,
                     NativeMethods.SERVICE_QUERY_CONFIG
                 );
-                if (hService == IntPtr.Zero)
+                if (hService != nint.Zero)
                 {
-                    lastError = Marshal.GetLastWin32Error();
-                    Win32Exception exception = new(lastError);
-                    WriteNonTerminatingError(
-                        service,
-                        exception,
-                        "CouldNotGetServiceInfo",
-                        ServiceResources.CouldNotGetServiceInfo,
-                        ErrorCategory.PermissionDenied);
+                    if (NativeMethods.QueryServiceConfig2(
+                        hService,
+                        NativeMethods.SERVICE_CONFIG_DESCRIPTION,
+                        out NativeMethods.SERVICE_DESCRIPTIONW descriptionInfo))
+                    {
+                        description = descriptionInfo.lpDescription;
+                    }
+
+                    if (NativeMethods.QueryServiceConfig2(
+                        hService,
+                        NativeMethods.SERVICE_CONFIG_DELAYED_AUTO_START_INFO,
+                        out NativeMethods.SERVICE_DELAYED_AUTO_START_INFO autostartInfo))
+                    {
+                        isDelayedAutoStart = autostartInfo.fDelayedAutostart;
+                    }
+
+                    if (NativeMethods.QueryServiceConfig(
+                        hService,
+                        out NativeMethods.QUERY_SERVICE_CONFIG serviceInfo))
+                    {
+                        binPath = serviceInfo.lpBinaryPathName;
+                        startName = serviceInfo.lpServiceStartName;
+                        startupType = NativeMethods.GetServiceStartupType(
+                            (ServiceStartMode)serviceInfo.dwStartType,
+                            isDelayedAutoStart);
+                    }
                 }
-
-                NativeMethods.SERVICE_DESCRIPTIONW description = new();
-                bool querySuccessful = NativeMethods.QueryServiceConfig2<NativeMethods.SERVICE_DESCRIPTIONW>(hService, NativeMethods.SERVICE_CONFIG_DESCRIPTION, out description);
-
-                NativeMethods.SERVICE_DELAYED_AUTO_START_INFO autostartInfo = new();
-                querySuccessful = querySuccessful && NativeMethods.QueryServiceConfig2<NativeMethods.SERVICE_DELAYED_AUTO_START_INFO>(hService, NativeMethods.SERVICE_CONFIG_DELAYED_AUTO_START_INFO, out autostartInfo);
-
-                NativeMethods.QUERY_SERVICE_CONFIG serviceInfo = new();
-                querySuccessful = querySuccessful && NativeMethods.QueryServiceConfig(hService, out serviceInfo);
-
-                if (!querySuccessful)
-                {
-                    WriteNonTerminatingError(
-                        service: service,
-                        innerException: null,
-                        errorId: "CouldNotGetServiceInfo",
-                        errorMessage: ServiceResources.CouldNotGetServiceInfo,
-                        category: ErrorCategory.PermissionDenied
-                        );
-                }
-
-                PSProperty noteProperty = new("UserName", serviceInfo.lpServiceStartName);
-                serviceAsPSObj.Properties.Add(noteProperty, true);
-                serviceAsPSObj.TypeNames.Insert(0, "System.Service.ServiceController#UserName");
-
-                noteProperty = new PSProperty("Description", description.lpDescription);
-                serviceAsPSObj.Properties.Add(noteProperty, true);
-                serviceAsPSObj.TypeNames.Insert(0, "System.Service.ServiceController#Description");
-
-                noteProperty = new PSProperty("DelayedAutoStart", autostartInfo.fDelayedAutostart);
-                serviceAsPSObj.Properties.Add(noteProperty, true);
-                serviceAsPSObj.TypeNames.Insert(0, "System.Service.ServiceController#DelayedAutoStart");
-
-                noteProperty = new PSProperty("BinaryPathName", serviceInfo.lpBinaryPathName);
-                serviceAsPSObj.Properties.Add(noteProperty, true);
-                serviceAsPSObj.TypeNames.Insert(0, "System.Service.ServiceController#BinaryPathName");
-
-                noteProperty = new PSProperty("StartupType", NativeMethods.GetServiceStartupType(service.StartType, autostartInfo.fDelayedAutostart));
-                serviceAsPSObj.Properties.Add(noteProperty, true);
-                serviceAsPSObj.TypeNames.Insert(0, "System.Service.ServiceController#StartupType");
             }
             finally
             {
                 if (hService != IntPtr.Zero)
                 {
                     bool succeeded = NativeMethods.CloseServiceHandle(hService);
-                    if (!succeeded)
-                    {
-                        Diagnostics.Assert(lastError != 0, "ErrorCode not success");
-                    }
-                }
-
-                if (hScManager != IntPtr.Zero)
-                {
-                    bool succeeded = NativeMethods.CloseServiceHandle(hScManager);
-                    if (!succeeded)
-                    {
-                        Diagnostics.Assert(lastError != 0, "ErrorCode not success");
-                    }
+                    Diagnostics.Assert(succeeded, "Failed to close service handle");
                 }
             }
+
+            PSObject serviceAsPSObj = PSObject.AsPSObject(service);
+            PSProperty noteProperty = new("UserName", startName);
+            serviceAsPSObj.Properties.Add(noteProperty, true);
+            serviceAsPSObj.TypeNames.Insert(0, "System.Service.ServiceController#UserName");
+
+            noteProperty = new PSProperty("Description", description);
+            serviceAsPSObj.Properties.Add(noteProperty, true);
+            serviceAsPSObj.TypeNames.Insert(0, "System.Service.ServiceController#Description");
+
+            noteProperty = new PSProperty("DelayedAutoStart", isDelayedAutoStart);
+            serviceAsPSObj.Properties.Add(noteProperty, true);
+            serviceAsPSObj.TypeNames.Insert(0, "System.Service.ServiceController#DelayedAutoStart");
+
+            noteProperty = new PSProperty("BinaryPathName", binPath);
+            serviceAsPSObj.Properties.Add(noteProperty, true);
+            serviceAsPSObj.TypeNames.Insert(0, "System.Service.ServiceController#BinaryPathName");
+
+            noteProperty = new PSProperty("StartupType", startupType);
+            serviceAsPSObj.Properties.Add(noteProperty, true);
+            serviceAsPSObj.TypeNames.Insert(0, "System.Service.ServiceController#StartupType");
 
             return serviceAsPSObj;
         }
     }
+#nullable disable
     #endregion GetServiceCommand
 
     #region ServiceOperationBaseCommand
