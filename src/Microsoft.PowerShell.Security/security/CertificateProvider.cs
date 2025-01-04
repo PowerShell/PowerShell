@@ -3343,9 +3343,9 @@ namespace Microsoft.PowerShell.Commands
             // Extract DNS name from Subject distinguished name
             foreach (X500RelativeDistinguishedName rdn in cert.SubjectName.EnumerateRelativeDistinguishedNames())
             {
-                // Check distinguished name has single element and has Common Name (CN) OID
-                // We skip multi value CN-ID RDNs since in RFC it is not clear how they are handled
-                // Given we have cases where Subject field is duplicated in SAN, we continue to add entries to DNS name list
+                // Given .NET implementation is designed for processing ASN encoded certificates
+                // Which ignores multi-value RDNs since it is an edge case, below code will do the same
+                // Reference: https://github.com/dotnet/runtime/blob/0f6c3d862b703528ffff099af40383ddc52853f8/src/libraries/System.Security.Cryptography/src/System/Security/Cryptography/X509Certificates/X500RelativeDistinguishedName.cs#L41-L59
                 if (!rdn.HasMultipleElements)
                 {
                     string oid = rdn.GetSingleElementType().Value;
