@@ -3353,7 +3353,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (!string.IsNullOrEmpty(oid) &&
                         !string.IsNullOrEmpty(rdnValue) &&
-                        oid.Equals(CommonNameOid, StringComparison.OrdinalIgnoreCase))
+                        oid.Equals(CommonNameOid, StringComparison.Ordinal))
                     {
                         DnsNameRepresentation dnsName = GetDnsNameRepresentation(rdnValue);
                         _dnsList.Add(dnsName);
