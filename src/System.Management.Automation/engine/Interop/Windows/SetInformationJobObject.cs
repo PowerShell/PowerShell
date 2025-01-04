@@ -19,12 +19,29 @@ internal static partial class Interop
             public nint CompletionPort;
         }
 
-        [LibraryImport("api-ms-win-core-job-l2-1-0.dll", SetLastError = true)]
+        [LibraryImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static partial bool SetInformationJobObject(
             nint hJob,
             int JobObjectInformationClass,
             nint lpJobObjectInformation,
             int cbJobObjectInformationLength);
+
+        internal static bool SetInformationJobObject(
+            nint jobHandle,
+            ref JOBOBJECT_ASSOCIATE_COMPLETION_PORT completionPort)
+        {
+            unsafe
+            {
+                fixed (JOBOBJECT_ASSOCIATE_COMPLETION_PORT* completionPortPtr = &completionPort)
+                {
+                    return SetInformationJobObject(
+                        jobHandle,
+                        JobObjectAssociateCompletionPortInformation,
+                        (nint)completionPortPtr,
+                        Marshal.SizeOf<JOBOBJECT_ASSOCIATE_COMPLETION_PORT>());
+                }
+            }
+        }
     }
 }

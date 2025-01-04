@@ -1604,7 +1604,7 @@ namespace Microsoft.PowerShell.Commands
     [OutputType(typeof(Process))]
     public sealed class StartProcessCommand : PSCmdlet, IDisposable
     {
-        private ManualResetEvent _waithandle = null;
+        private readonly CancellationTokenSource _cancellationTokenSource = new();
         private bool _isDefaultSetParameterSpecified = false;
 
         #region Parameters
@@ -2062,7 +2062,7 @@ namespace Microsoft.PowerShell.Commands
             Process process = null;
 
 #if !UNIX
-            using ProcessCollection jobObject = new();
+            using JobProcessCollection jobObject = new();
             bool? jobAssigned = null;
 #endif
             if (startInfo.UseShellExecute)
@@ -2150,22 +2150,20 @@ namespace Microsoft.PowerShell.Commands
                     if (!process.HasExited)
                     {
 #if UNIX
-                        process.WaitForExit();
+                        process.WaitForExitAsync(_cancellationTokenSource.Token).GetAwaiter().GetResult();
 #else
-                        _waithandle = new ManualResetEvent(false);
-
-                        // Create and start the job object. This may have
-                        // already been done in StartWithCreateProcess.
+                        // Add the process to the job, this may have already
+                        // been done in StartWithCreateProcess.
                         if (jobAssigned == true || (jobAssigned is null && jobObject.AssignProcessToJobObject(process.SafeHandle)))
                         {
                             // Wait for the job object to finish
-                            jobObject.WaitOne(_waithandle);
+                            jobObject.WaitForExit(_cancellationTokenSource.Token);
                         }
                         else
                         {
                             // WinBlue: 27537 Start-Process -Wait doesn't work in a remote session on Windows 7 or lower.
                             // A Remote session is in it's own job and nested job support was only added in Windows 8/Server 2012.
-                            process.WaitForExit();
+                            process.WaitForExitAsync(_cancellationTokenSource.Token).GetAwaiter().GetResult();
                         }
 #endif
                     }
@@ -2181,7 +2179,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Implements ^c, after creating a process.
         /// </summary>
-        protected override void StopProcessing() => _waithandle?.Set();
+        protected override void StopProcessing() => _cancellationTokenSource.Cancel();
 
         #endregion
 
@@ -2198,11 +2196,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void Dispose(bool isDisposing)
         {
-            if (_waithandle != null)
-            {
-                _waithandle.Dispose();
-                _waithandle = null;
-            }
+            _cancellationTokenSource.Dispose();
         }
 
         #endregion
@@ -2737,152 +2731,6 @@ namespace Microsoft.PowerShell.Commands
 
 #if !UNIX
     /// <summary>
-    /// ProcessCollection is a helper class used by Start-Process -Wait cmdlet to monitor the
-    /// child processes created by the main process hosted by the Start-process cmdlet.
-    /// </summary>
-    internal class ProcessCollection : IDisposable
-    {
-        /// <summary>
-        /// Stores the initialisation state of the job and completion port.
-        /// </summary>
-        private bool? _initStatus;
-
-        /// <summary>
-        /// JobObjectHandle is a reference to the job object used to track
-        /// the child processes created by the main process hosted by the Start-Process cmdlet.
-        /// </summary>
-        private nint _jobObjectHandle;
-
-        /// <summary>
-        /// The completion port handle that is used to monitor job events.
-        /// </summary>
-        private nint _completionPortHandle;
-
-        /// <summary>
-        /// ProcessCollection constructor.
-        /// </summary>
-        internal ProcessCollection()
-        {}
-
-        /// <summary>
-        /// Start API assigns the process to the JobObject and starts monitoring
-        /// the child processes hosted by the process created by Start-Process cmdlet.
-        /// </summary>
-        /// <returns>Whether the job and assignment worked or not.</returns>
-        internal bool AssignProcessToJobObject(SafeProcessHandle process)
-        {
-            if (!InitializeJob())
-            {
-                return false;
-            }
-
-            // // Add the process to the job object
-            return Interop.Windows.AssignProcessToJobObject(
-                this._jobObjectHandle,
-                process.DangerousGetHandle());
-        }
-
-        /// <summary>
-        /// WaitOne blocks the current thread until the job receives a
-        /// completion notification.
-        /// </summary>
-        /// <param name="waitHandleToUse">
-        /// WaitHandle to use for waiting on the job object.
-        /// </param>
-        internal void WaitOne(ManualResetEvent waitHandleToUse)
-        {
-            if (this._completionPortHandle == nint.Zero)
-            {
-                return;
-            }
-
-            const int INFINITE = -1;
-            int completionCode = 0;
-            do
-            {
-                Interop.Windows.GetQueuedCompletionStatus(
-                    this._completionPortHandle,
-                    out completionCode,
-                    out _,
-                    out _,
-                    INFINITE);
-            }
-            while (completionCode != Interop.Windows.JOB_OBJECT_MSG_ACTIVE_PROCESS_ZERO);
-        }
-
-        private bool InitializeJob()
-        {
-            if (this._initStatus is not null)
-            {
-                return (bool)this._initStatus;
-            }
-
-            if (this._jobObjectHandle == nint.Zero)
-            {
-                this._jobObjectHandle = Interop.Windows.CreateJobObject(nint.Zero, nint.Zero);
-                if (this._jobObjectHandle == nint.Zero)
-                {
-                    this._initStatus = false;
-                    return false;
-                }
-            }
-
-            if (this._completionPortHandle == nint.Zero)
-            {
-                this._completionPortHandle = Interop.Windows.CreateIoCompletionPort(
-                    -1,
-                    nint.Zero,
-                    nint.Zero,
-                    1);
-                if (this._completionPortHandle == nint.Zero)
-                {
-                    this._initStatus = false;
-                    return false;
-                }
-            }
-
-            var completionPort = new Interop.Windows.JOBOBJECT_ASSOCIATE_COMPLETION_PORT()
-            {
-                CompletionKey = this._jobObjectHandle,
-                CompletionPort = this._completionPortHandle,
-            };
-
-            unsafe
-            {
-                this._initStatus = Interop.Windows.SetInformationJobObject(
-                    this._jobObjectHandle,
-                    Interop.Windows.JobObjectAssociateCompletionPortInformation,
-                    (nint)(&completionPort),
-                    Marshal.SizeOf<Interop.Windows.JOBOBJECT_ASSOCIATE_COMPLETION_PORT>());
-            }
-
-            return (bool)this._initStatus;
-        }
-
-        ~ProcessCollection()
-        {
-            Dispose();
-        }
-
-        public void Dispose()
-        {
-            if (this._jobObjectHandle != nint.Zero)
-            {
-                Interop.Windows.CloseHandle(this._jobObjectHandle);
-                this._jobObjectHandle = nint.Zero;
-            }
-
-            if (this._completionPortHandle != nint.Zero)
-            {
-                Interop.Windows.CloseHandle(this._completionPortHandle);
-                this._completionPortHandle = nint.Zero;
-            }
-
-            GC.SuppressFinalize(this);
-        }
-    }
-
-    /// <summary>
     /// ProcessInformation is a helper class that wraps the native PROCESS_INFORMATION structure
     /// returned by CreateProcess or CreateProcessWithLogon. It ensures the process and thread
     /// HANDLEs are disposed once it's not needed.
@@ -2918,34 +2766,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         ~ProcessInformation() => Dispose();
-    }
-
-    /// <summary>
-    /// JOBOBJECT_BASIC_PROCESS_ID_LIST Contains the process identifier list for a job object.
-    /// If the job is nested, the process identifier list consists of all
-    /// processes associated with the job and its child jobs.
-    /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
-    internal struct JOBOBJECT_BASIC_PROCESS_ID_LIST
-    {
-        /// <summary>
-        /// The number of process identifiers to be stored in ProcessIdList.
-        /// </summary>
-        public uint NumberOfAssignedProcess;
-
-        /// <summary>
-        /// The number of process identifiers returned in the ProcessIdList buffer.
-        /// If this number is less than NumberOfAssignedProcesses, increase
-        /// the size of the buffer to accommodate the complete list.
-        /// </summary>
-        public uint NumberOfProcessIdsInList;
-
-        /// <summary>
-        /// A variable-length array of process identifiers returned by this call.
-        /// Array elements 0 through NumberOfProcessIdsInList minus 1
-        /// contain valid process identifiers.
-        /// </summary>
-        public IntPtr ProcessIdList;
     }
 
     internal static class ProcessNativeMethods
@@ -3104,21 +2924,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 Dispose(true);
             }
-        }
-    }
-
-    [SuppressUnmanagedCodeSecurity]
-    internal sealed class SafeJobHandle : SafeHandleZeroOrMinusOneIsInvalid
-    {
-        internal SafeJobHandle(IntPtr jobHandle)
-            : base(true)
-        {
-            base.SetHandle(jobHandle);
-        }
-
-        protected override bool ReleaseHandle()
-        {
-            return Interop.Windows.CloseHandle(base.handle);
         }
     }
 #endif

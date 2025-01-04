@@ -11,11 +11,10 @@ internal static partial class Interop
     {
         [LibraryImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        internal static partial bool GetQueuedCompletionStatus(
+        internal static partial bool PostQueuedCompletionStatus(
             nint CompletionPort,
-            out int lpNumberOfBytesTransferred,
-            out nint lpCompletionKey,
-            out nint lpOverlapped,
-            int dwMilliseconds);
+            int lpNumberOfBytesTransferred,
+            nint lpCompletionKey,
+            nint lpOverlapped);
     }
 }
