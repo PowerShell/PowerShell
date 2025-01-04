@@ -3341,16 +3341,23 @@ namespace Microsoft.PowerShell.Commands
         public DnsNameProperty(X509Certificate2 cert)
         {
             // Extract DNS name from Subject distinguished name
-            foreach (X500RelativeDistinguishedName distinguishedName in cert.SubjectName.EnumerateRelativeDistinguishedNames())
+            foreach (X500RelativeDistinguishedName rdn in cert.SubjectName.EnumerateRelativeDistinguishedNames())
             {
                 // Check distinguished name has single element and has Common Name (CN) OID
-                if (!distinguishedName.HasMultipleElements &&
-                     distinguishedName
-                        .GetSingleElementType().Value
-                        .Equals(CommonNameOid, StringComparison.OrdinalIgnoreCase))
+                // We skip multi value CN-ID RDNs since in RFC it is not clear how they are handled
+                // Given we have cases where Subject field is duplicated in SAN, we continue to add entries to DNS name list
+                if (!rdn.HasMultipleElements)
                 {
-                    DnsNameRepresentation dnsName = GetDnsNameRepresentation(distinguishedName.GetSingleElementValue());
-                    _dnsList.Add(dnsName);
+                    string oid = rdn.GetSingleElementType().Value;
+                    string rdnValue = rdn.GetSingleElementValue();
+
+                    if (!string.IsNullOrEmpty(oid) &&
+                        !string.IsNullOrEmpty(rdnValue) &&
+                        oid.Equals(CommonNameOid, StringComparison.OrdinalIgnoreCase))
+                    {
+                        DnsNameRepresentation dnsName = GetDnsNameRepresentation(rdnValue);
+                        _dnsList.Add(dnsName);
+                    }
                 }
             }
 
