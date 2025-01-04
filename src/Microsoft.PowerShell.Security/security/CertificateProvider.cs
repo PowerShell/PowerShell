@@ -3351,9 +3351,8 @@ namespace Microsoft.PowerShell.Commands
                     string oid = rdn.GetSingleElementType().Value;
                     string rdnValue = rdn.GetSingleElementValue();
 
-                    if (!string.IsNullOrEmpty(oid) &&
-                        !string.IsNullOrEmpty(rdnValue) &&
-                        oid.Equals(CommonNameOid, StringComparison.Ordinal))
+                    if (!string.IsNullOrEmpty(rdnValue) &&
+                        CommonNameOid.Equals(oid, StringComparison.Ordinal))
                     {
                         DnsNameRepresentation dnsName = GetDnsNameRepresentation(rdnValue);
                         _dnsList.Add(dnsName);
