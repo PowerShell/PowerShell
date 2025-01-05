@@ -1206,8 +1206,16 @@ Describe "Extended FileSystem Item/Content Cmdlet Provider Tests" -Tags "Feature
         }
 
         It "Verify Provider Root Directory + Force" {
-            $result = New-Item -Path . -ItemType Directory -Force
-            $result.FullName.TrimEnd('/\') | Should -BeExactly "$TestDrive"
+            try {
+                New-Item "NewDirectory" -ItemType Directory -Force
+                $newPSDrive = New-PSDrive -Name "NewPSDrive" -PSProvider FileSystem -Root "NewDirectory"
+
+                $result = New-Item -Path "NewPSDrive:\" -ItemType Directory -Force
+                $result.FullName.TrimEnd("/\") | Should -BeExactly $newPSDrive.Root
+            }
+            finally {
+                Remove-PSDrive -Name "NewPSDrive" -Force -ErrorAction SilentlyContinue
+            }
         }
 
         It "Verify File + Value" {
