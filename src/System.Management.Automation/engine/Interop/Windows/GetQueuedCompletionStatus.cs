@@ -12,7 +12,7 @@ internal static partial class Interop
         [LibraryImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static partial bool GetQueuedCompletionStatus(
-            nint CompletionPort,
+            SafeIoCompletionPort CompletionPort,
             out int lpNumberOfBytesTransferred,
             out nint lpCompletionKey,
             out nint lpOverlapped,

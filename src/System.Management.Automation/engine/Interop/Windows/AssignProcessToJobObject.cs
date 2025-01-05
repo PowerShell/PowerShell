@@ -4,6 +4,7 @@
 #nullable enable
 
 using System.Runtime.InteropServices;
+using Microsoft.Win32.SafeHandles;
 
 internal static partial class Interop
 {
@@ -11,6 +12,8 @@ internal static partial class Interop
     {
         [LibraryImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        internal static partial bool AssignProcessToJobObject(nint hJob, nint hProcess);
+        internal static partial bool AssignProcessToJobObject(
+            SafeJobHandle hJob,
+            SafeProcessHandle hProcess);
     }
 }

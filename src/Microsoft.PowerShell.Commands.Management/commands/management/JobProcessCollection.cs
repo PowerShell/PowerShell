@@ -4,7 +4,7 @@
 #nullable enable
 #if !UNIX
 using System;
-using System.Runtime.InteropServices;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using Microsoft.Win32.SafeHandles;
 
@@ -25,12 +25,12 @@ internal sealed class JobProcessCollection : IDisposable
     /// JobObjectHandle is a reference to the job object used to track
     /// the child processes created by the main process hosted by the Start-Process cmdlet.
     /// </summary>
-    private nint _jobObjectHandle;
+    private Interop.Windows.SafeJobHandle? _jobObject;
 
     /// <summary>
     /// The completion port handle that is used to monitor job events.
     /// </summary>
-    private nint _completionPortHandle;
+    private Interop.Windows.SafeIoCompletionPort? _completionPort;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="JobProcessCollection"/> class.
@@ -42,10 +42,10 @@ internal sealed class JobProcessCollection : IDisposable
     /// Initializes the job and IO completion port and adds the process to the
     /// job object.
     /// </summary>
-    /// <param name="process">The process to add ot the job.</param>
+    /// <param name="process">The process to add to the job.</param>
     /// <returns>Whether the job creation and assignment worked or not.</returns>
     public bool AssignProcessToJobObject(SafeProcessHandle process)
-        => InitializeJob() && Interop.Windows.AssignProcessToJobObject( _jobObjectHandle, process.DangerousGetHandle());
+        => InitializeJob() && Interop.Windows.AssignProcessToJobObject(_jobObject, process);
 
     /// <summary>
     /// Blocks the current thread until all processes in the job have exited.
@@ -53,7 +53,7 @@ internal sealed class JobProcessCollection : IDisposable
     /// <param name="cancellationToken">A token to cancel the operation.</param>
     public void WaitForExit(CancellationToken cancellationToken)
     {
-        if (_completionPortHandle == nint.Zero)
+        if (_completionPort is null)
         {
             return;
         }
@@ -61,10 +61,10 @@ internal sealed class JobProcessCollection : IDisposable
         using var cancellationRegistration = cancellationToken.Register(() =>
         {
             Interop.Windows.PostQueuedCompletionStatus(
-                _completionPortHandle,
+                _completionPort,
                 Interop.Windows.JOB_OBJECT_MSG_ACTIVE_PROCESS_ZERO,
-                nint.Zero,
-                nint.Zero);
+                lpCompletionKey: nint.Zero,
+                lpOverlapped: nint.Zero);
         });
 
         const int INFINITE = -1;
@@ -72,16 +72,17 @@ internal sealed class JobProcessCollection : IDisposable
         do
         {
             Interop.Windows.GetQueuedCompletionStatus(
-                _completionPortHandle,
+                _completionPort,
                 out completionCode,
-                out _,
-                out _,
+                lpCompletionKey: out _,
+                lpOverlapped: out _,
                 INFINITE);
         }
         while (completionCode != Interop.Windows.JOB_OBJECT_MSG_ACTIVE_PROCESS_ZERO);
         cancellationToken.ThrowIfCancellationRequested();
     }
 
+    [MemberNotNullWhen(true, [nameof(_jobObject), nameof(_completionPort)])]
     private bool InitializeJob()
     {
         if (_initStatus.HasValue)
@@ -89,25 +90,25 @@ internal sealed class JobProcessCollection : IDisposable
             return _initStatus.Value;
         }
 
-        if (_jobObjectHandle == nint.Zero)
+        if (_jobObject is null)
         {
-            _jobObjectHandle = Interop.Windows.CreateJobObject(nint.Zero, nint.Zero);
-            if (_jobObjectHandle == nint.Zero)
+            _jobObject = Interop.Windows.CreateJobObject(nint.Zero, nint.Zero);
+            if (_jobObject.IsInvalid)
             {
                 _initStatus = false;
                 return false;
             }
         }
 
-        if (_completionPortHandle == nint.Zero)
+        if (_completionPort is null)
         {
-            _completionPortHandle = Interop.Windows.CreateIoCompletionPort(
+            _completionPort = Interop.Windows.CreateIoCompletionPort(
                 FileHandle: -1,
                 ExistingCompletionPort: nint.Zero,
                 CompletionKey: nint.Zero,
                 NumberOfConcurrentThreads: 1);
 
-            if (_completionPortHandle == nint.Zero)
+            if (_completionPort.IsInvalid)
             {
                 _initStatus = false;
                 return false;
@@ -116,12 +117,12 @@ internal sealed class JobProcessCollection : IDisposable
 
         var completionPort = new Interop.Windows.JOBOBJECT_ASSOCIATE_COMPLETION_PORT()
         {
-            CompletionKey = _jobObjectHandle,
-            CompletionPort = _completionPortHandle,
+            CompletionKey = _jobObject.DangerousGetHandle(),
+            CompletionPort = _completionPort.DangerousGetHandle(),
         };
 
         _initStatus = Interop.Windows.SetInformationJobObject(
-            _jobObjectHandle,
+            _jobObject,
             ref completionPort);
 
         return _initStatus.Value;
@@ -134,18 +135,8 @@ internal sealed class JobProcessCollection : IDisposable
 
     public void Dispose()
     {
-        if (_jobObjectHandle != nint.Zero)
-        {
-            Interop.Windows.CloseHandle(_jobObjectHandle);
-            _jobObjectHandle = nint.Zero;
-        }
-
-        if (_completionPortHandle != nint.Zero)
-        {
-            Interop.Windows.CloseHandle(_completionPortHandle);
-            _completionPortHandle = nint.Zero;
-        }
-
+        _jobObject?.Dispose();
+        _completionPort?.Dispose();
         GC.SuppressFinalize(this);
     }
 }

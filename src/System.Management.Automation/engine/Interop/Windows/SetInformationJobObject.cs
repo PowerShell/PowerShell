@@ -22,13 +22,13 @@ internal static partial class Interop
         [LibraryImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static partial bool SetInformationJobObject(
-            nint hJob,
+            SafeJobHandle hJob,
             int JobObjectInformationClass,
             nint lpJobObjectInformation,
             int cbJobObjectInformationLength);
 
         internal static bool SetInformationJobObject(
-            nint jobHandle,
+            SafeJobHandle jobHandle,
             ref JOBOBJECT_ASSOCIATE_COMPLETION_PORT completionPort)
         {
             unsafe
