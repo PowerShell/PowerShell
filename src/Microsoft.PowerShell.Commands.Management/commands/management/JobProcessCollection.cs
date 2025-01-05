@@ -40,22 +40,12 @@ internal sealed class JobProcessCollection : IDisposable
 
     /// <summary>
     /// Initializes the job and IO completion port and adds the process to the
-    /// /// job object.
+    /// job object.
     /// </summary>
-    /// /// <param name="process">The process to add ot the job.</param>
+    /// <param name="process">The process to add ot the job.</param>
     /// <returns>Whether the job creation and assignment worked or not.</returns>
     public bool AssignProcessToJobObject(SafeProcessHandle process)
-    {
-        if (!InitializeJob())
-        {
-            return false;
-        }
-
-        // // Add the process to the job object
-        return Interop.Windows.AssignProcessToJobObject(
-            _jobObjectHandle,
-            process.DangerousGetHandle());
-    }
+        => InitializeJob() && Interop.Windows.AssignProcessToJobObject( _jobObjectHandle, process.DangerousGetHandle());
 
     /// <summary>
     /// Blocks the current thread until all processes in the job have exited.
@@ -94,9 +84,9 @@ internal sealed class JobProcessCollection : IDisposable
 
     private bool InitializeJob()
     {
-        if (_initStatus is not null)
+        if (_initStatus.HasValue)
         {
-            return (bool)_initStatus;
+            return _initStatus.Value;
         }
 
         if (_jobObjectHandle == nint.Zero)
@@ -112,10 +102,11 @@ internal sealed class JobProcessCollection : IDisposable
         if (_completionPortHandle == nint.Zero)
         {
             _completionPortHandle = Interop.Windows.CreateIoCompletionPort(
-                -1,
-                nint.Zero,
-                nint.Zero,
-                1);
+                FileHandle: -1,
+                ExistingCompletionPort: nint.Zero,
+                CompletionKey: nint.Zero,
+                NumberOfConcurrentThreads: 1);
+
             if (_completionPortHandle == nint.Zero)
             {
                 _initStatus = false;
@@ -133,7 +124,7 @@ internal sealed class JobProcessCollection : IDisposable
             _jobObjectHandle,
             ref completionPort);
 
-        return (bool)_initStatus;
+        return _initStatus.Value;
     }
 
     ~JobProcessCollection()
