@@ -304,118 +304,49 @@ Describe "Certificate Provider tests" -Tags "Feature" {
 
         It "<Title>" -TestCases @(
             @{
-                Title               = 'Should set DNSNameList from SAN extensions'
-                Config              = @"
-            [ req ]
-            default_bits       = 2048
-            distinguished_name = req_distinguished_name
-            req_extensions     = v3_req
-            prompt             = no
-
-            [ req_distinguished_name ]
-            CN                 = yourdomain.com
-
-            [ v3_req ]
-            subjectAltName     = @alt_names
-
-            [ alt_names ]
-            DNS.1              = yourdomain.com
-            DNS.2              = www.yourdomain.com
-            DNS.3              = api.yourdomain.com
-            DNS.4              = xn--mnchen-3ya.com
-            DNS.5              = xn--80aaxitdbjr.com
-            DNS.6              = xn--caf-dma.com
-"@
+                Title              = 'Should set DNSNameList from SAN extensions'
+                Commands           = @(
+                    "openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout $keyFilePath -out $certFilePath -subj '/CN=yourdomain.com' -addext 'subjectAltName=DNS:yourdomain.com,DNS:www.yourdomain.com,DNS:api.yourdomain.com,DNS:xn--mnchen-3ya.com,DNS:xn--80aaxitdbjr.com,DNS:xn--caf-dma.com'",
+                    "openssl pkcs12 -export -out $pfxFilePath -inkey $keyFilePath -in $certFilePath -passout pass:$password"
+                )
                 ExpectedDnsNameList = @(
-                    [PSCustomObject]@{
-                        Punycode = "yourdomain.com"
-                        Unicode  = "yourdomain.com"
-                    }
-                    [PSCustomObject]@{
-                        Punycode = "www.yourdomain.com"
-                        Unicode  = "www.yourdomain.com"
-                    }
-                    [PSCustomObject]@{
-                        Punycode = "api.yourdomain.com"
-                        Unicode  = "api.yourdomain.com"
-                    }
-                    [PSCustomObject]@{
-                        Punycode = "xn--mnchen-3ya.com"
-                        Unicode  = "münchen.com"
-                    }
-                    [PSCustomObject]@{
-                        Punycode = "xn--80aaxitdbjr.com"
-                        Unicode  = "папитрока.com"
-                    }
-                    [PSCustomObject]@{
-                        Punycode = "xn--caf-dma.com"
-                        Unicode  = "café.com"
-                    }
+                    [PSCustomObject]@{ Punycode = "yourdomain.com"; Unicode = "yourdomain.com" }
+                    [PSCustomObject]@{ Punycode = "www.yourdomain.com"; Unicode = "www.yourdomain.com" }
+                    [PSCustomObject]@{ Punycode = "api.yourdomain.com"; Unicode = "api.yourdomain.com" }
+                    [PSCustomObject]@{ Punycode = "xn--mnchen-3ya.com"; Unicode = "münchen.com" }
+                    [PSCustomObject]@{ Punycode = "xn--80aaxitdbjr.com"; Unicode = "папитрока.com" }
+                    [PSCustomObject]@{ Punycode = "xn--caf-dma.com"; Unicode = "café.com" }
                 )
             }
             @{
-                Title               = 'Should set DNSNameList from Subject Distinguished name'
-                Config              = @"
-            [ req ]
-            default_bits       = 2048
-            distinguished_name = req_distinguished_name
-            req_extensions     = v3_req
-            prompt             = no
-
-            [ req_distinguished_name ]
-            CN                 = yourdomain.com
-
-            [ v3_req ]
-            subjectAltName     = @alt_names
-
-            [ alt_names ]
-            DNS.1              = www.yourdomain.com
-"@
+                Title              = 'Should set DNSNameList from Subject Distinguished name'
+                Commands           = @(
+                    "openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout $keyFilePath -out $certFilePath -subj '/CN=yourdomain.com' -addext 'subjectAltName=DNS:www.yourdomain.com'",
+                    "openssl pkcs12 -export -out $pfxFilePath -inkey $keyFilePath -in $certFilePath -passout pass:$password"
+                )
                 ExpectedDnsNameList = @(
-                    [PSCustomObject]@{
-                        Punycode = "yourdomain.com"
-                        Unicode  = "yourdomain.com"
-                    }
-                    [PSCustomObject]@{
-                        Punycode = "www.yourdomain.com"
-                        Unicode  = "www.yourdomain.com"
-                    }
+                    [PSCustomObject]@{ Punycode = "yourdomain.com"; Unicode = "yourdomain.com" }
+                    [PSCustomObject]@{ Punycode = "www.yourdomain.com"; Unicode = "www.yourdomain.com" }
+                )
+            }
+            @{
+                Title              = 'Should set DNSNameList for multi-value RDN'
+                Commands           = @(
+                    "openssl req -x509 -nodes -keyout $keyFilePath -subj '/C=DK/O=Ingen organisatorisk tilknytning/CN=yourdomain.com+serialNumber=XYZ:1111-2222-3-444444444444' -out $certFilePath",
+                    "openssl pkcs12 -export -out $pfxFilePath -inkey $keyFilePath -in $certFilePath -passout pass:$password"
+                )
+                ExpectedDnsNameList = @(
+                    [PSCustomObject]@{ Punycode = "yourdomain.com"; Unicode = "yourdomain.com" }
                 )
             }
         ) {
-            param($Title, $Config, $ExpectedDnsNameList)
+            param($Commands, $ExpectedDnsNameList)
 
-            # Write the configuration to the specified path
-            Set-Content -Path $configFilePath -Value $Config
+            # Execute the OpenSSL commands in silent mode
+            Invoke-Expression -Command "& { $($Commands -join ';') } 2>&1 1>`$null"
 
-            # Generate the self-signed certificate with SANs using config file
-            & { openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout $keyFilePath -out $certFilePath -config $configFilePath -extensions v3_req } 2>&1 1>$null
-
-            # Create the PFX file and certificate
-            & { openssl pkcs12 -export -out $pfxFilePath -inkey $keyFilePath -in $certFilePath -passout pass:$password } 2>&1 1>$null
+            # Create the certificate object
             $cert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2($pfxFilePath, $password)
-
-            # Validate DnsNameList is correct
-            $cert | Should -Not -BeNullOrEmpty
-            $cert.DnsNameList | Should -HaveCount $ExpectedDnsNameList.Count
-            ($cert.DnsNameList | ConvertTo-Json -Compress)  | Should -BeExactly ($ExpectedDnsNameList | ConvertTo-Json -Compress)
-        }
-
-        It "Should set DNSNameList for multi-value RDN" {
-
-            # Generate Multi value RDN certificate
-            & { openssl req -x509 -nodes -keyout $keyFilePath -subj "/C=DK/O=Ingen organisatorisk tilknytning/CN=yourdomain.com+serialNumber=XYZ:1111-2222-3-444444444444" -out $certFilePath } 2>&1 1>$null
-
-            # Create the PFX file and certificate
-            & { openssl pkcs12 -export -out $pfxFilePath -inkey $keyFilePath -in $certFilePath -passout pass:$password } 2>&1 1>$null
-            $cert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2($pfxFilePath, $password)
-
-            $ExpectedDnsNameList = @(
-                [PSCustomObject]@{
-                    Punycode = "yourdomain.com"
-                    Unicode  = "yourdomain.com"
-                }
-            )
 
             # Validate DnsNameList is correct
             $cert | Should -Not -BeNullOrEmpty
