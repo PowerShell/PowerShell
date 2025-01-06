@@ -2034,13 +2034,6 @@ namespace Microsoft.PowerShell.Commands
                 {
                     _redirectstandarderror = ResolveFilePath(_redirectstandarderror);
                     _redirectstandardoutput = ResolveFilePath(_redirectstandardoutput);
-                    if (_redirectstandardoutput.Equals(_redirectstandarderror, StringComparison.OrdinalIgnoreCase))
-                    {
-                        message = StringUtil.Format(ProcessResources.DuplicateEntry, "RedirectStandardOutput", "RedirectStandardError");
-                        ErrorRecord er = new(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
-                        WriteError(er);
-                        return;
-                    }
                 }
             }
             else if (ParameterSetName.Equals("UseShellExecute"))
@@ -2317,8 +2310,12 @@ namespace Microsoft.PowerShell.Commands
                 _redirectstandarderror = ResolveFilePath(_redirectstandarderror);
                 p.ErrorDataReceived += new DataReceivedEventHandler(StdErrorHandler);
 
-                // Can't do StreamWriter(string) in coreCLR
-                _errorWriter = new StreamWriter(new FileStream(_redirectstandarderror, FileMode.Create));
+                if (_redirectstandardoutput != null && _redirectstandardoutput.Equals(_redirectstandarderror, StringComparison.OrdinalIgnoreCase)) {
+                    _errorWriter = _outputWriter;
+                } else {
+                    // Can't do StreamWriter(string) in coreCLR
+                    _errorWriter = new StreamWriter(new FileStream(_redirectstandarderror, FileMode.Create));
+                }
             }
             else
             {
@@ -2438,7 +2435,11 @@ namespace Microsoft.PowerShell.Commands
                 hasRedirection = true;
                 startinfo.RedirectStandardError = true;
                 _redirectstandarderror = ResolveFilePath(_redirectstandarderror);
-                lpStartupInfo.hStdError = GetSafeFileHandleForRedirection(_redirectstandarderror, FileMode.Create);
+                if (_redirectstandardoutput != null && _redirectstandardoutput.Equals(_redirectstandarderror, StringComparison.OrdinalIgnoreCase)) {
+                    lpStartupInfo.hStdError = lpStartupInfo.hStdOutput;
+                } else {
+                    lpStartupInfo.hStdError = GetSafeFileHandleForRedirection(_redirectstandarderror, FileMode.Create);
+                }
             }
 
             if (hasRedirection)
