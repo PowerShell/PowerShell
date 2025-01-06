@@ -401,6 +401,28 @@ Describe "Certificate Provider tests" -Tags "Feature" {
             ($cert.DnsNameList | ConvertTo-Json -Compress)  | Should -BeExactly ($ExpectedDnsNameList | ConvertTo-Json -Compress)
         }
 
+        It "Should set DNSNameList for multi-value RDN" {
+
+            # Generate Multi value RDN certificate
+            & { openssl req -x509 -nodes -keyout $keyFilePath -subj "/C=DK/O=Ingen organisatorisk tilknytning/CN=yourdomain.com+serialNumber=XYZ:1111-2222-3-444444444444" -out $certFilePath } 2>&1 1>$null
+
+            # Create the PFX file and certificate
+            & { openssl pkcs12 -export -out $pfxFilePath -inkey $keyFilePath -in $certFilePath -passout pass:$password } 2>&1 1>$null
+            $cert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2($pfxFilePath, $password)
+
+            $ExpectedDnsNameList = @(
+                [PSCustomObject]@{
+                    Punycode = "yourdomain.com"
+                    Unicode  = "yourdomain.com"
+                }
+            )
+
+            # Validate DnsNameList is correct
+            $cert | Should -Not -BeNullOrEmpty
+            $cert.DnsNameList | Should -HaveCount $ExpectedDnsNameList.Count
+            ($cert.DnsNameList | ConvertTo-Json -Compress) | Should -BeExactly ($ExpectedDnsNameList | ConvertTo-Json -Compress)
+        }
+
         AfterEach {
             Remove-Item -Path $configFilePath -Force -ErrorAction SilentlyContinue
             Remove-Item -Path $keyFilePath -Force -ErrorAction SilentlyContinue

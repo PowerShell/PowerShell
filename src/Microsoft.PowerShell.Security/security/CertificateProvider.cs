@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Formats.Asn1;
 using System.Globalization;
 using System.IO;
 using System.Management.Automation;
@@ -3343,9 +3344,8 @@ namespace Microsoft.PowerShell.Commands
             // Extract DNS name from Subject distinguished name
             foreach (X500RelativeDistinguishedName rdn in cert.SubjectName.EnumerateRelativeDistinguishedNames())
             {
-                // Given .NET implementation is designed for processing ASN encoded certificates
-                // Which ignores multi-value RDNs since it is an edge case, below code will do the same
-                // Reference: https://github.com/dotnet/runtime/blob/0f6c3d862b703528ffff099af40383ddc52853f8/src/libraries/System.Security.Cryptography/src/System/Security/Cryptography/X509Certificates/X500RelativeDistinguishedName.cs#L41-L59
+                // Extract Common Name directly if RDN has single attribute which we detect when HasMultipleElements == false
+                // This is the common case which .NET supports directly
                 if (!rdn.HasMultipleElements)
                 {
                     string oid = rdn.GetSingleElementType().Value;
@@ -3356,6 +3356,36 @@ namespace Microsoft.PowerShell.Commands
                     {
                         DnsNameRepresentation dnsName = GetDnsNameRepresentation(rdnValue);
                         _dnsList.Add(dnsName);
+                        break;
+                    }
+                }
+
+                // Handle edge case where we have multi-value RDN which we when HasMultipleElements == true
+                // We go back to AsnReader and parse the Common Name
+                // .NET does not support this directly but provides the raw data in the RDN so we can parse it ourselves
+                else
+                {
+                    AsnReader asnReader = new(rdn.RawData, AsnEncodingRules.DER);
+                    AsnReader setReader = asnReader.ReadSetOf(skipSortOrderValidation: true);
+
+                    while (setReader.HasData)
+                    {
+                        AsnReader elementReader = setReader.ReadSequence();
+                        string oid = elementReader.ReadObjectIdentifier();
+
+                        if (CommonNameOid.Equals(oid, StringComparison.Ordinal))
+                        {
+                            Asn1Tag tag = elementReader.PeekTag();
+
+                            if (tag.TagClass == TagClass.Universal)
+                            {
+                                string decodedValue = elementReader.ReadCharacterString((UniversalTagNumber)tag.TagValue);
+                                DnsNameRepresentation dnsName = GetDnsNameRepresentation(decodedValue);
+                                _dnsList.Add(dnsName);
+                            }
+
+                            break;
+                        }
                     }
                 }
             }
