@@ -295,7 +295,6 @@ Describe "Certificate Provider tests" -Tags "Feature" {
 
     Context "X509Certificate2 DnsNameList Property Tests" {
         BeforeAll {
-            $configFilePath = Join-Path -Path $TestDrive -ChildPath 'openssl.cnf'
             $keyFilePath = Join-Path -Path $TestDrive -ChildPath 'privateKey.key'
             $certFilePath = Join-Path -Path $TestDrive -ChildPath 'certificate.crt'
             $pfxFilePath = Join-Path -Path $TestDrive -ChildPath 'certificate.pfx'
@@ -355,7 +354,6 @@ Describe "Certificate Provider tests" -Tags "Feature" {
         }
 
         AfterEach {
-            Remove-Item -Path $configFilePath -Force -ErrorAction SilentlyContinue
             Remove-Item -Path $keyFilePath -Force -ErrorAction SilentlyContinue
             Remove-Item -Path $certFilePath -Force -ErrorAction SilentlyContinue
             Remove-Item -Path $pfxFilePath -Force -ErrorAction SilentlyContinue
