@@ -3360,7 +3360,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                // Handle edge case where we have multi-value RDN which we when HasMultipleElements == true
+                // Handle edge case with multi-value RDN when HasMultipleElements == true
                 // We go back to AsnReader and parse the Common Name
                 // .NET does not support this directly but provides the raw data in the RDN so we can parse it ourselves
                 else
