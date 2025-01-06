@@ -3380,8 +3380,12 @@ namespace Microsoft.PowerShell.Commands
                             if (tag.TagClass == TagClass.Universal)
                             {
                                 string decodedValue = elementReader.ReadCharacterString((UniversalTagNumber)tag.TagValue);
-                                DnsNameRepresentation dnsName = GetDnsNameRepresentation(decodedValue);
-                                _dnsList.Add(dnsName);
+
+                                if (!string.IsNullOrEmpty(decodedValue))
+                                {
+                                    DnsNameRepresentation dnsName = GetDnsNameRepresentation(decodedValue);
+                                    _dnsList.Add(dnsName);
+                                }
                             }
 
                             break;
