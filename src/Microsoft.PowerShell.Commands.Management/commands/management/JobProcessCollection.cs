@@ -121,7 +121,7 @@ internal sealed class JobProcessCollection : IDisposable
             CompletionPort = _completionPort.DangerousGetHandle(),
         };
 
-        _initStatus = Interop.Windows.SetInformationJobObject(
+        _initStatus = Interop.Windows.SetInformationJobObjectCompletionPort(
             _jobObject,
             ref completionPort);
 

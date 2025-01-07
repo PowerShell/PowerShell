@@ -21,27 +21,21 @@ internal static partial class Interop
 
         [LibraryImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        internal static partial bool SetInformationJobObject(
+        private static partial bool SetInformationJobObject(
             SafeJobHandle hJob,
             int JobObjectInformationClass,
-            nint lpJobObjectInformation,
+            ref JOBOBJECT_ASSOCIATE_COMPLETION_PORT lpJobObjectInformation,
             int cbJobObjectInformationLength);
 
-        internal static bool SetInformationJobObject(
+        internal static bool SetInformationJobObjectCompletionPort(
             SafeJobHandle jobHandle,
             ref JOBOBJECT_ASSOCIATE_COMPLETION_PORT completionPort)
         {
-            unsafe
-            {
-                fixed (JOBOBJECT_ASSOCIATE_COMPLETION_PORT* completionPortPtr = &completionPort)
-                {
-                    return SetInformationJobObject(
-                        jobHandle,
-                        JobObjectAssociateCompletionPortInformation,
-                        (nint)completionPortPtr,
-                        Marshal.SizeOf<JOBOBJECT_ASSOCIATE_COMPLETION_PORT>());
-                }
-            }
+            return SetInformationJobObject(
+                jobHandle,
+                JobObjectAssociateCompletionPortInformation,
+                ref completionPort,
+                Marshal.SizeOf<JOBOBJECT_ASSOCIATE_COMPLETION_PORT>());
         }
     }
 }
