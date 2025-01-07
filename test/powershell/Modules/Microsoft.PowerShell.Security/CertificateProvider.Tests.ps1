@@ -335,7 +335,7 @@ Describe "Certificate Provider tests" -Tags "Feature" {
                     "openssl pkcs12 -export -out $pfxFilePath -inkey $keyFilePath -in $certFilePath -passout pass:$password"
                 )
                 ExpectedDnsNameList = @(
-                    [PSCustomObject]@{ Punycode = "yourdomain.com"; Unicode = "yourdomain.com" }
+                    !$IsWindows ? [PSCustomObject]@{ Punycode = "yourdomain.com"; Unicode = "yourdomain.com" } : [PSCustomObject]@{ Punycode = "yourdomain.com+serialNumber=XYZ:1111-2222-3-444444444444"; Unicode = "yourdomain.com+serialNumber=XYZ:1111-2222-3-444444444444" }
                 )
             }
         ) {
