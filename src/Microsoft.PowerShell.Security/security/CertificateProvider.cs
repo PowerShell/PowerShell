@@ -3336,28 +3336,56 @@ namespace Microsoft.PowerShell.Commands
             return new DnsNameRepresentation(dnsName, unicodeName);
         }
 
-        /// <summary>
-        /// Constructor for DnsNameProperty.
-        /// </summary>
-        public DnsNameProperty(X509Certificate2 cert)
+        private static string ExtractSingleValueRdnCommonDnsName(X500RelativeDistinguishedName rdn)
         {
-            // Extract DNS name from Subject distinguished name
+            string oid = rdn.GetSingleElementType().Value;
+            string rdnValue = rdn.GetSingleElementValue();
+
+            if (!string.IsNullOrEmpty(rdnValue) &&
+                CommonNameOid.Equals(oid, StringComparison.Ordinal))
+            {
+                return rdnValue;
+            }
+
+            return null;
+        }
+
+        private static string ExtractMultiValueRdnCommonDnsName(X500RelativeDistinguishedName rdn)
+        {
+            AsnReader asnReader = new(rdn.RawData, AsnEncodingRules.DER);
+            AsnReader setReader = asnReader.ReadSetOf(skipSortOrderValidation: true);
+
+            while (setReader.HasData)
+            {
+                AsnReader elementReader = setReader.ReadSequence();
+                string oid = elementReader.ReadObjectIdentifier();
+
+                if (CommonNameOid.Equals(oid, StringComparison.Ordinal))
+                {
+                    Asn1Tag tag = elementReader.PeekTag();
+
+                    if (tag.TagClass == TagClass.Universal)
+                    {
+                        string decodedValue = elementReader.ReadCharacterString((UniversalTagNumber)tag.TagValue);
+                        return decodedValue;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        private void ExtractSubjectCommonDnsName(X509Certificate2 cert)
+        {
             foreach (X500RelativeDistinguishedName rdn in cert.SubjectName.EnumerateRelativeDistinguishedNames())
             {
+                string dnsName;
+
                 // Extract Common Name directly if RDN has single attribute when HasMultipleElements == false
                 // This is the common case which .NET supports directly
                 if (!rdn.HasMultipleElements)
                 {
-                    string oid = rdn.GetSingleElementType().Value;
-                    string rdnValue = rdn.GetSingleElementValue();
-
-                    if (!string.IsNullOrEmpty(rdnValue) &&
-                        CommonNameOid.Equals(oid, StringComparison.Ordinal))
-                    {
-                        DnsNameRepresentation dnsName = GetDnsNameRepresentation(rdnValue);
-                        _dnsList.Add(dnsName);
-                        break;
-                    }
+                    dnsName = ExtractSingleValueRdnCommonDnsName(rdn);
                 }
 
                 // Handle edge case with multi-value RDN when HasMultipleElements == true
@@ -3365,36 +3393,21 @@ namespace Microsoft.PowerShell.Commands
                 // .NET does not support this directly but provides the raw data in the RDN so we can parse it ourselves
                 else
                 {
-                    AsnReader asnReader = new(rdn.RawData, AsnEncodingRules.DER);
-                    AsnReader setReader = asnReader.ReadSetOf(skipSortOrderValidation: true);
+                    dnsName = ExtractMultiValueRdnCommonDnsName(rdn);
+                }
 
-                    while (setReader.HasData)
-                    {
-                        AsnReader elementReader = setReader.ReadSequence();
-                        string oid = elementReader.ReadObjectIdentifier();
+                if (!string.IsNullOrEmpty(dnsName))
+                {
+                    _dnsList.Add(GetDnsNameRepresentation(dnsName));
 
-                        if (CommonNameOid.Equals(oid, StringComparison.Ordinal))
-                        {
-                            Asn1Tag tag = elementReader.PeekTag();
-
-                            if (tag.TagClass == TagClass.Universal)
-                            {
-                                string decodedValue = elementReader.ReadCharacterString((UniversalTagNumber)tag.TagValue);
-
-                                if (!string.IsNullOrEmpty(decodedValue))
-                                {
-                                    DnsNameRepresentation dnsName = GetDnsNameRepresentation(decodedValue);
-                                    _dnsList.Add(dnsName);
-                                }
-                            }
-
-                            break;
-                        }
-                    }
+                    // Exit early since we found Common DNS name and don't need to scan more RDNs
+                    break;
                 }
             }
+        }
 
-            // Extract DNS names from SAN extensions
+        private void ExtractSubjectAlternativeExtensionDnsNames(X509Certificate2 cert)
+        {
             foreach (X509Extension extension in cert.Extensions)
             {
                 if (extension is X509SubjectAlternativeNameExtension sanExtension)
@@ -3411,6 +3424,15 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Constructor for DnsNameProperty.
+        /// </summary>
+        public DnsNameProperty(X509Certificate2 cert)
+        {
+            ExtractSubjectCommonDnsName(cert);
+            ExtractSubjectAlternativeExtensionDnsNames(cert);
         }
     }
 
