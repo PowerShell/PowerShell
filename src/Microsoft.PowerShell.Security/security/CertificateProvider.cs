@@ -3353,6 +3353,8 @@ namespace Microsoft.PowerShell.Commands
         private static string ExtractMultiValueRdnCommonDnsName(X500RelativeDistinguishedName rdn)
         {
             AsnReader asnReader = new(rdn.RawData, AsnEncodingRules.DER);
+
+            // Windows does not enforce the sort order on multi-value RDNs.
             AsnReader setReader = asnReader.ReadSetOf(skipSortOrderValidation: true);
 
             while (setReader.HasData)
@@ -3364,18 +3366,26 @@ namespace Microsoft.PowerShell.Commands
                 {
                     Asn1Tag tag = elementReader.PeekTag();
 
+                    // Ensure tag class is Universal (standard ASN.1 type)
                     if (tag.TagClass == TagClass.Universal)
                     {
                         string decodedValue = elementReader.ReadCharacterString((UniversalTagNumber)tag.TagValue);
-                        return decodedValue;
+
+                        if (!string.IsNullOrEmpty(decodedValue))
+                        {
+                            return decodedValue;
+                        }
                     }
+
+                    // Given CN was found we can exit early if tag value is not Universal class
+                    break;
                 }
             }
 
             return null;
         }
 
-        private void ExtractSubjectCommonDnsName(X509Certificate2 cert)
+        private void ExtractSubjectDistinguishedNameCommonDnsName(X509Certificate2 cert)
         {
             foreach (X500RelativeDistinguishedName rdn in cert.SubjectName.EnumerateRelativeDistinguishedNames())
             {
@@ -3398,7 +3408,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private void ExtractSubjectAlternativeExtensionDnsNames(X509Certificate2 cert)
+        private void ExtractSubjectAlternativeNameExtensionDnsNames(X509Certificate2 cert)
         {
             foreach (X509Extension extension in cert.Extensions)
             {
@@ -3423,8 +3433,8 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public DnsNameProperty(X509Certificate2 cert)
         {
-            ExtractSubjectCommonDnsName(cert);
-            ExtractSubjectAlternativeExtensionDnsNames(cert);
+            ExtractSubjectDistinguishedNameCommonDnsName(cert);
+            ExtractSubjectAlternativeNameExtensionDnsNames(cert);
         }
     }
 
