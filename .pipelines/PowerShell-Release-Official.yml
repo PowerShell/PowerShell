@@ -88,7 +88,7 @@ extends:
     featureFlags:
       WindowsHostVersion:
         Version: 2022
-        Network: Netlock
+        Network: KS3
     cloudvault:
       enabled: false
     globalSdl:
