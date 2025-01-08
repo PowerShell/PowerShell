@@ -3379,22 +3379,14 @@ namespace Microsoft.PowerShell.Commands
         {
             foreach (X500RelativeDistinguishedName rdn in cert.SubjectName.EnumerateRelativeDistinguishedNames())
             {
-                string dnsName;
-
                 // Extract Common Name directly if RDN has single attribute when HasMultipleElements == false
                 // This is the common case which .NET supports directly
-                if (!rdn.HasMultipleElements)
-                {
-                    dnsName = ExtractSingleValueRdnCommonDnsName(rdn);
-                }
-
                 // Handle edge case with multi-value RDN when HasMultipleElements == true
                 // We fallback to AsnReader and parse the Common Name
                 // .NET does not support this directly but provides the raw data in the RDN so we can parse it ourselves
-                else
-                {
-                    dnsName = ExtractMultiValueRdnCommonDnsName(rdn);
-                }
+                string dnsName = !rdn.HasMultipleElements
+                    ? ExtractSingleValueRdnCommonDnsName(rdn)
+                    : ExtractMultiValueRdnCommonDnsName(rdn);
 
                 if (!string.IsNullOrEmpty(dnsName))
                 {
