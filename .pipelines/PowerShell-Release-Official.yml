@@ -88,7 +88,8 @@ extends:
       LinuxHostVersion:
           Network: Monitor
       WindowsHostVersion:
-          Network: Monitor
+        Version: 2022
+        Network: KS3
     cloudvault:
       enabled: false
     globalSdl:
