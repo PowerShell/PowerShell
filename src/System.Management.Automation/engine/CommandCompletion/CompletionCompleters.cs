@@ -4853,7 +4853,7 @@ namespace System.Management.Automation
 
                 if (childNameList.Count == 0)
                 {
-                    continue;
+                    return results;
                 }
 
                 string basePath = providerPrefix.Length > 0
