@@ -43,6 +43,28 @@ Describe "Tab completion bug fix" -Tags "CI" {
         $result[0].CompletionText | Should -BeExactly '$ErrorActionPreference'
     }
 
+    It "Issue#24756 - Wildcard completions should not return early due to missing results in one container" -Skip:(!$IsWindows) {
+        try
+        {
+            $keys = New-Item -Path @(
+                'HKCU:\AB1'
+                'HKCU:\AB2'
+                'HKCU:\AB2\Test'
+            )
+
+            $res = TabExpansion2 -inputScript 'Get-ChildItem -Path HKCU:\AB?\'
+            $res.CompletionMatches.Count | Should -Be 1
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly "HKCU:\AB2\Test"
+        }
+        finally
+        {
+            if ($keys)
+            {
+                Remove-Item -Path HKCU:\AB? -Recurse
+            }
+        }
+    }
+
     Context "Issue#3416 - 'Select-Object'" {
         BeforeAll {
             $DatetimeProperties = @((Get-Date).psobject.baseobject.psobject.properties) | Sort-Object -Property Name
