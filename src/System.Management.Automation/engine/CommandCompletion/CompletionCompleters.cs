@@ -4845,7 +4845,7 @@ namespace System.Management.Automation
 
                 if (childNameList.Count == 0)
                 {
-                    return results;
+                    continue;
                 }
 
                 string basePath = providerPrefix.Length > 0

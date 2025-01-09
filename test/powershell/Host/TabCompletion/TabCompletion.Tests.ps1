@@ -2292,6 +2292,28 @@ dir -Recurse `
         }
     }
 
+    It "Fix https://github.com/PowerShell/PowerShell/issues/24756" {
+        try
+        {
+            $keys = New-Item -Path @(
+                'HKCU:\AB1'
+                'HKCU:\AB2'
+                'HKCU:\AB2\Test'
+            )
+
+            $res = TabExpansion2 -inputScript 'Get-ChildItem -Path HKCU:\AB?\'
+            $res.CompletionMatches.Count | Should -Be 1
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly "HKCU:\AB2\Test"
+        }
+        finally
+        {
+            if ($keys)
+            {
+                Remove-Item -Path HKCU:\AB? -Recurse
+            }
+        }
+    }
+
     Context "Completion on 'comma', 'redirection' and 'minus' tokens" {
         BeforeAll {
             $tempDir = Join-Path -Path $TestDrive -ChildPath "CommaTest"
