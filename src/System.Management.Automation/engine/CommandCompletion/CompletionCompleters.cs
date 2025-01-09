@@ -4810,6 +4810,14 @@ namespace System.Management.Automation
                 bool hadErrors;
                 var childItemOutput = context.Helper.ExecuteCurrentPowerShell(out _, out hadErrors);
 
+                if (childItemOutput.Count == 1 &&
+                    (pathInfo.Provider.FullName + "::" + pathInfo.ProviderPath).EqualsOrdinalIgnoreCase(childItemOutput[0].Properties["PSPath"].Value as string))
+                {
+                    // Get-ChildItem returned the item itself instead of the children so there must be no child items to complete.
+                    // The filesystem provider does this when pointing to files: Get-ChildItem C:\pagefile.sys -Force and other providers may follow this pattern.
+                    continue;
+                }
+
                 var childrenInfoTable = new Dictionary<string, bool>(childItemOutput.Count);
                 var childNameList = new List<string>(childItemOutput.Count);
 
@@ -4845,7 +4853,7 @@ namespace System.Management.Automation
 
                 if (childNameList.Count == 0)
                 {
-                    return results;
+                    continue;
                 }
 
                 string basePath = providerPrefix.Length > 0
