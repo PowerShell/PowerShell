@@ -3,6 +3,15 @@
 
 trigger: none
 
+parameters:
+  - name: FORCE_CODEQL
+    displayName: Debugging - Enable CodeQL and set cadence to 1 hour
+    type: boolean
+    default: false
+  - name: SkipVerifyPackages
+    type: boolean
+    default: false
+
 variables:
   - name: ob_outputDirectory
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
@@ -77,3 +86,4 @@ extends:
           - template: /.pipelines/templates/compliance/generateNotice.yml@self
             parameters:
               parentJobs: []
+              SkipVerifyPackages: ${{ parameters.SkipVerifyPackages }}
