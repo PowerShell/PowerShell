@@ -24,13 +24,13 @@
 
   <ItemGroup>
     <PackageReference Include="xunit" Version="2.9.2" />
-    <PackageReference Include="Xunit.SkippableFact" Version="1.4.13" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
+    <PackageReference Include="Xunit.SkippableFact" Version="1.5.23" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.0.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="XunitXml.TestLogger" Version="4.1.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="XunitXml.TestLogger" Version="5.0.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
   </ItemGroup>
 
   <ItemGroup>

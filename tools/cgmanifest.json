@@ -35,7 +35,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Json.More.Net",
-          "Version": "2.0.1.2"
+          "Version": "2.1.0"
         }
       },
       "DevelopmentDependency": false
@@ -45,7 +45,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "JsonPointer.Net",
-          "Version": "5.0.0"
+          "Version": "5.1.0"
         }
       },
       "DevelopmentDependency": false
@@ -55,7 +55,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "JsonSchema.Net",
-          "Version": "7.2.3"
+          "Version": "7.3.1"
         }
       },
       "DevelopmentDependency": false
@@ -65,7 +65,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Markdig.Signed",
-          "Version": "0.38.0"
+          "Version": "0.39.1"
         }
       },
       "DevelopmentDependency": false
@@ -85,7 +85,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Bcl.AsyncInterfaces",
-          "Version": "8.0.0"
+          "Version": "9.0.0"
         }
       },
       "DevelopmentDependency": false
@@ -105,7 +105,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.CodeAnalysis.Common",
-          "Version": "4.11.0"
+          "Version": "4.12.0"
         }
       },
       "DevelopmentDependency": false
@@ -115,7 +115,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.CodeAnalysis.CSharp",
-          "Version": "4.11.0"
+          "Version": "4.12.0"
         }
       },
       "DevelopmentDependency": false
@@ -125,7 +125,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Extensions.ObjectPool",
-          "Version": "8.0.11"
+          "Version": "9.0.0"
         }
       },
       "DevelopmentDependency": false
@@ -385,7 +385,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "runtime.native.System.Data.SqlClient.sni",
-          "Version": "4.7.0"
+          "Version": "4.4.0"
         }
       },
       "DevelopmentDependency": false
@@ -545,7 +545,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Data.SqlClient",
-          "Version": "4.8.6"
+          "Version": "4.9.0"
         }
       },
       "DevelopmentDependency": false
