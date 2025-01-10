@@ -95,7 +95,7 @@ jobs:
         </packageSources>
         "@
 
-        $releaseVersion = '$(Version)'
+        $releaseVersion = '$(OutputVersion.Version)'
 
         Write-Verbose -Message "Release Version: $releaseVersion" -Verbose
 
