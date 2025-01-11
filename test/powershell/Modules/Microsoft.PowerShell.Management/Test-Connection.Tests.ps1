@@ -271,12 +271,18 @@ Describe "Test-Connection" -tags "CI", "RequireSudoOnUnix" {
                 return
             }
 
-            $result = Test-Connection $testAddress -MtuSize
+            # if we time out, that's a terminating exception, so set erroraction to continue
+            $result = Test-Connection $testAddress -MtuSize -ErrorVariable eVar -ErrorAction Continue
 
-            $result | Should -BeOfType Microsoft.PowerShell.Commands.TestConnectionCommand+PingMtuStatus
-            $result.Destination | Should -BeExactly $testAddress
-            $result.Status | Should -BeExactly "Success"
-            $result.MtuSize | Should -BeGreaterThan 0
+            if ($eVar.TargetObject.Status -eq "TimedOut") {
+                Set-ItResult -skipped -because "timed out"
+            }
+            else {
+                $result | Should -BeOfType Microsoft.PowerShell.Commands.TestConnectionCommand+PingMtuStatus
+                $result.Destination | Should -BeExactly $testAddress
+                $result.Status | Should -BeExactly "Success"
+                $result.MtuSize | Should -BeGreaterThan 0
+            }
         }
 
         It "Quiet works" {

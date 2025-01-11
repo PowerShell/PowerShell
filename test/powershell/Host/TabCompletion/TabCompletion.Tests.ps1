@@ -23,6 +23,11 @@ Describe "TabCompletion" -Tags CI {
         $res | Should -BeExactly 'Test-AbbreviatedFunctionExpansion'
     }
 
+    It 'Should complete module by shortname' {
+        $res = TabExpansion2 -inputScript 'Get-Module -ListAvailable -Name Host'
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Microsoft.PowerShell.Host'
+    }
+
     It 'Should complete native exe' -Skip:(!$IsWindows) {
         $res = TabExpansion2 -inputScript 'notep' -cursorColumn 'notep'.Length
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'notepad.exe'
@@ -672,6 +677,11 @@ ConstructorTestClass(int i, bool b)
         $res.CompletionMatches[0].CompletionText | Should -BeExactly Cat
     }
 
+    It 'Should complete cim ETS member added by shortname' -Skip:(!$IsWindows -or (Test-IsWinServer2012R2) -or (Test-IsWindows2016)) {
+        $res = TabExpansion2 -inputScript '(Get-NetFirewallRule).Nam'
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Name'
+    }
+
     It 'Should complete variable assigned with Data statement' {
         $TestString = 'data MyDataVar {"Hello"};$MyDatav'
         $res = TabExpansion2 -inputScript $TestString
@@ -923,6 +933,87 @@ ConstructorTestClass(int i, bool b)
             $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
             $completionText = $res.CompletionMatches.CompletionText | Sort-Object -Unique
             $completionText -join ' ' | Should -BeExactly $ExpectedModules
+        }
+    }
+
+    Context 'New-ItemProperty -PropertyType parameter completion' {
+        BeforeAll {
+            if ($IsWindows) {
+                $allRegistryValueKinds = 'String ExpandString Binary DWord MultiString QWord Unknown'
+                $allRegistryValueKindsWithQuotes = "'String' 'ExpandString' 'Binary' 'DWord' 'MultiString' 'QWord' 'Unknown'"
+                $dwordValueKind = 'DWord'
+                $qwordValueKind = 'QWord'
+                $binaryValueKind = 'Binary'
+                $multiStringValueKind = 'MultiString'
+                $registryPath = "HKCU:\test1\sub"
+                New-Item -Path $registryPath -Force
+                $registryLiteralPath = "HKCU:\test2\*\sub"
+                New-Item -Path $registryLiteralPath -Force
+                $fileSystemPath = "TestDrive:\test1.txt"
+                New-Item -Path $fileSystemPath -Force
+                $fileSystemLiteralPathDir = "TestDrive:\[]"
+                $fileSystemLiteralPath = "$fileSystemLiteralPathDir\test2.txt"
+                New-Item -Path $fileSystemLiteralPath -Force
+            }
+        }
+
+        It "Should complete Property Type for '<TextInput>'" -Skip:(!$IsWindows) -TestCases @(
+            # -Path completions
+            @{ TextInput = "New-ItemProperty -Path $registryPath -PropertyType "; ExpectedPropertyTypes = $allRegistryValueKinds }
+            @{ TextInput = "New-ItemProperty -Path $registryPath -PropertyType d"; ExpectedPropertyTypes = $dwordValueKind }
+            @{ TextInput = "New-ItemProperty -Path $registryPath -PropertyType q"; ExpectedPropertyTypes = $qwordValueKind }
+            @{ TextInput = "New-ItemProperty -Path $registryPath -PropertyType bin"; ExpectedPropertyTypes = $binaryValueKind }
+            @{ TextInput = "New-ItemProperty -Path $registryPath -PropertyType multi"; ExpectedPropertyTypes = $multiStringValueKind }
+            @{ TextInput = "New-ItemProperty -Path $registryPath -PropertyType invalidproptype"; ExpectedPropertyTypes = '' }
+            @{ TextInput = "New-ItemProperty -Path $fileSystemPath -PropertyType "; ExpectedPropertyTypes = '' }
+
+            # -LiteralPath completions
+            @{ TextInput = "New-ItemProperty -LiteralPath $registryLiteralPath -PropertyType "; ExpectedPropertyTypes = $allRegistryValueKinds }
+            @{ TextInput = "New-ItemProperty -LiteralPath $registryLiteralPath -PropertyType d"; ExpectedPropertyTypes = $dwordValueKind }
+            @{ TextInput = "New-ItemProperty -LiteralPath $registryLiteralPath -PropertyType q"; ExpectedPropertyTypes = $qwordValueKind }
+            @{ TextInput = "New-ItemProperty -LiteralPath $registryLiteralPath -PropertyType bin"; ExpectedPropertyTypes = $binaryValueKind }
+            @{ TextInput = "New-ItemProperty -LiteralPath $registryLiteralPath -PropertyType multi"; ExpectedPropertyTypes = $multiStringValueKind }
+            @{ TextInput = "New-ItemProperty -LiteralPath $registryLiteralPath -PropertyType invalidproptype"; ExpectedPropertyTypes = '' }
+            @{ TextInput = "New-ItemProperty -LiteralPath $fileSystemLiteralPath -PropertyType "; ExpectedPropertyTypes = '' }
+
+            # All of these should return no completion since they don't specify -Path/-LiteralPath
+            @{ TextInput = "New-ItemProperty -PropertyType "; ExpectedPropertyTypes = '' }
+            @{ TextInput = "New-ItemProperty -PropertyType d"; ExpectedPropertyTypes = '' }
+            @{ TextInput = "New-ItemProperty -PropertyType q"; ExpectedPropertyTypes = '' }
+            @{ TextInput = "New-ItemProperty -PropertyType bin"; ExpectedPropertyTypes = '' }
+            @{ TextInput = "New-ItemProperty -PropertyType multi"; ExpectedPropertyTypes = '' }
+            @{ TextInput = "New-ItemProperty -PropertyType invalidproptype"; ExpectedPropertyTypes = '' }
+
+            # All of these should return completion even with quotes included
+            @{ TextInput = "New-ItemProperty -Path $registryPath -PropertyType '"; ExpectedPropertyTypes = $allRegistryValueKindsWithQuotes }
+            @{ TextInput = "New-ItemProperty -Path $registryPath -PropertyType 'bin"; ExpectedPropertyTypes = "'$binaryValueKind'" }
+        ) {
+            param($TextInput, $ExpectedPropertyTypes)
+            $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
+            $completionText = $res.CompletionMatches.CompletionText
+            $completionText -join ' ' | Should -BeExactly $ExpectedPropertyTypes
+        }
+
+        It "Test fallback to provider of current location if no path specified" -Skip:(!$IsWindows) {
+            try {
+                Push-Location HKCU:\
+                $textInput = "New-ItemProperty -PropertyType "
+                $res = TabExpansion2 -inputScript $textInput -cursorColumn $textInput.Length
+                $completionText = $res.CompletionMatches.CompletionText
+                $completionText -join ' ' | Should -BeExactly $allRegistryValueKinds
+            }
+            finally {
+                Pop-Location
+            }
+        }
+
+        AfterAll {
+            if ($IsWindows) {
+                Remove-Item -Path $registryPath -Force
+                Remove-Item -LiteralPath $registryLiteralPath -Force
+                Remove-Item -Path $fileSystemPath -Force
+                Remove-Item -LiteralPath $fileSystemLiteralPathDir -Recurse -Force
+            }
         }
     }
 
@@ -1583,6 +1674,7 @@ class InheritedClassTest : System.Attribute
                 @{ inputStr = 'gmo Microsoft.PowerShell.U'; expected = 'Microsoft.PowerShell.Utility'; setup = $null }
                 @{ inputStr = 'rmo Microsoft.PowerShell.U'; expected = 'Microsoft.PowerShell.Utility'; setup = $null }
                 @{ inputStr = 'gcm -Module Microsoft.PowerShell.U'; expected = 'Microsoft.PowerShell.Utility'; setup = $null }
+                @{ inputStr = 'gcm -ExcludeModule Microsoft.PowerShell.U'; expected = 'Microsoft.PowerShell.Utility'; setup = $null }
                 @{ inputStr = 'gmo -list PackageM'; expected = 'PackageManagement'; setup = $null }
                 @{ inputStr = 'gcm -Module PackageManagement Find-Pac'; expected = 'Find-Package'; setup = $null }
                 @{ inputStr = 'ipmo PackageM'; expected = 'PackageManagement'; setup = $null }

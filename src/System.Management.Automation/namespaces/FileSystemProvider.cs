@@ -2258,16 +2258,14 @@ namespace Microsoft.PowerShell.Commands
                         {
                             exists = true;
 
-                            var normalizedTargetPath = strTargetPath;
-                            if (strTargetPath.StartsWith(".\\", StringComparison.OrdinalIgnoreCase) ||
-                                strTargetPath.StartsWith("./", StringComparison.OrdinalIgnoreCase))
-                            {
-                                normalizedTargetPath = Path.Join(SessionState.Internal.CurrentLocation.ProviderPath, strTargetPath.AsSpan(2));
-                            }
-
-                            GetFileSystemInfo(normalizedTargetPath, out isDirectory);
-
+                            // unify directory separators to be consistent with the rest of PowerShell even on non-Windows platforms;
+                            // do this before resolving the target, otherwise e.g. `.\test` would break on Linux, since the combined
+                            // path below would be something like `/path/to/cwd/.\test`
                             strTargetPath = strTargetPath.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
+
+                            // check if the target is a file or directory
+                            var normalizedTargetPath = Path.Combine(Path.GetDirectoryName(path), strTargetPath);
+                            GetFileSystemInfo(normalizedTargetPath, out isDirectory);
                         }
                         else
                         {
@@ -3115,16 +3113,19 @@ namespace Microsoft.PowerShell.Commands
                         {
                             _removedFiles++;
                             _removedBytes += fileBytesSize;
-                            double speed = _removedBytes / 1024 / 1024 / _removeStopwatch.Elapsed.TotalSeconds;
-                            var progress = new ProgressRecord(
-                                REMOVE_FILE_ACTIVITY_ID,
-                                StringUtil.Format(FileSystemProviderStrings.RemovingLocalFileActivity, _removedFiles, _totalFiles),
-                                StringUtil.Format(FileSystemProviderStrings.RemovingLocalBytesStatus, Utils.DisplayHumanReadableFileSize(_removedBytes), Utils.DisplayHumanReadableFileSize(_totalBytes), speed)
-                            );
-                            var percentComplete = (int)Math.Min(_removedBytes * 100 / _totalBytes, 100);
-                            progress.PercentComplete = percentComplete;
-                            progress.RecordType = ProgressRecordType.Processing;
-                            WriteProgress(progress);
+                            if (_removeStopwatch.Elapsed.TotalSeconds > ProgressBarDurationThreshold)
+                            {
+                                double speed = _removedBytes / 1024 / 1024 / _removeStopwatch.Elapsed.TotalSeconds;
+                                var progress = new ProgressRecord(
+                                    REMOVE_FILE_ACTIVITY_ID,
+                                    StringUtil.Format(FileSystemProviderStrings.RemovingLocalFileActivity, _removedFiles, _totalFiles),
+                                    StringUtil.Format(FileSystemProviderStrings.RemovingLocalBytesStatus, Utils.DisplayHumanReadableFileSize(_removedBytes), Utils.DisplayHumanReadableFileSize(_totalBytes), speed)
+                                );
+                                var percentComplete = _totalBytes != 0 ? (int)Math.Min(_removedBytes * 100 / _totalBytes, 100) : 100;
+                                progress.PercentComplete = percentComplete;
+                                progress.RecordType = ProgressRecordType.Processing;
+                                WriteProgress(progress);
+                            }
                         }
                     }
                 }
@@ -3994,16 +3995,19 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 _copiedFiles++;
                                 _copiedBytes += file.Length;
-                                double speed = (double)(_copiedBytes / 1024 / 1024) / _copyStopwatch.Elapsed.TotalSeconds;
-                                var progress = new ProgressRecord(
-                                    COPY_FILE_ACTIVITY_ID,
-                                    StringUtil.Format(FileSystemProviderStrings.CopyingLocalFileActivity, _copiedFiles, _totalFiles),
-                                    StringUtil.Format(FileSystemProviderStrings.CopyingLocalBytesStatus, Utils.DisplayHumanReadableFileSize(_copiedBytes), Utils.DisplayHumanReadableFileSize(_totalBytes), speed)
-                                );
-                                var percentComplete = _totalBytes != 0 ? (int)Math.Min(_copiedBytes * 100 / _totalBytes, 100) : 100;
-                                progress.PercentComplete = percentComplete;
-                                progress.RecordType = ProgressRecordType.Processing;
-                                WriteProgress(progress);
+                                if (_copyStopwatch.Elapsed.TotalSeconds > ProgressBarDurationThreshold)
+                                {
+                                    double speed = (double)(_copiedBytes / 1024 / 1024) / _copyStopwatch.Elapsed.TotalSeconds;
+                                    var progress = new ProgressRecord(
+                                        COPY_FILE_ACTIVITY_ID,
+                                        StringUtil.Format(FileSystemProviderStrings.CopyingLocalFileActivity, _copiedFiles, _totalFiles),
+                                        StringUtil.Format(FileSystemProviderStrings.CopyingLocalBytesStatus, Utils.DisplayHumanReadableFileSize(_copiedBytes), Utils.DisplayHumanReadableFileSize(_totalBytes), speed)
+                                    );
+                                    var percentComplete = _totalBytes != 0 ? (int)Math.Min(_copiedBytes * 100 / _totalBytes, 100) : 100;
+                                    progress.PercentComplete = percentComplete;
+                                    progress.RecordType = ProgressRecordType.Processing;
+                                    WriteProgress(progress);
+                                }
                             }
                         }
                         else
@@ -4945,6 +4949,7 @@ namespace Microsoft.PowerShell.Commands
         private long _removedFiles;
         private readonly Stopwatch _removeStopwatch = new();
 
+        private const double ProgressBarDurationThreshold = 2.0;
         #endregion CopyItem
 
         #endregion ContainerCmdletProvider members
@@ -5838,8 +5843,10 @@ namespace Microsoft.PowerShell.Commands
                         destination = MakePath(destination, dir.Name);
                     }
 
-                    // Don't allow moving a directory into itself
-                    if (destination.StartsWith(Path.TrimEndingDirectorySeparator(path) + Path.DirectorySeparatorChar))
+                    // Don't allow moving a directory into itself or its sub-directory.
+                    string pathWithoutEndingSeparator = Path.TrimEndingDirectorySeparator(path);
+                    if (destination.StartsWith(pathWithoutEndingSeparator + Path.DirectorySeparatorChar)
+                        || destination.Equals(pathWithoutEndingSeparator, StringComparison.OrdinalIgnoreCase))
                     {
                         string error = StringUtil.Format(FileSystemProviderStrings.TargetCannotBeSubdirectoryOfSource, destination);
                         var e = new IOException(error);
@@ -8194,8 +8201,7 @@ namespace System.Management.Automation.Internal
                     AlternateStreamData data = new AlternateStreamData();
                     data.Stream = findStreamData.Name;
                     data.Length = findStreamData.Length;
-                    data.FileName = path.Replace(data.Stream, string.Empty);
-                    data.FileName = data.FileName.Trim(':');
+                    data.FileName = path;
 
                     alternateStreams.Add(data);
                     findStreamData = new AlternateStreamNativeData();

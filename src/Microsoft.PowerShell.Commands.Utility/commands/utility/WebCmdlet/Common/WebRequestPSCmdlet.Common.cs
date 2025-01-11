@@ -1575,9 +1575,8 @@ namespace Microsoft.PowerShell.Commands
             ArgumentNullException.ThrowIfNull(content);
 
             Encoding encoding = null;
-            string contentType = WebSession.ContentHeaders[HttpKnownHeaderNames.ContentType];
 
-            if (contentType is not null)
+            if (WebSession.ContentHeaders.TryGetValue(HttpKnownHeaderNames.ContentType, out string contentType) && contentType is not null)
             {
                 // If Content-Type contains the encoding format (as CharSet), use this encoding format
                 // to encode the Body of the WebRequest sent to the server. Default Encoding format

@@ -9,6 +9,8 @@
     <PackAsToolShimRuntimeIdentifiers>win-x64</PackAsToolShimRuntimeIdentifiers>
     <ToolCommandName>pwsh</ToolCommandName>
     <Version>$(PackageVersion)</Version>
+    <DelaySign>true</DelaySign>
+    <AssemblyOriginatorKeyFile>../../signing/visualstudiopublic.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup>

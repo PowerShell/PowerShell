@@ -71,6 +71,7 @@ Describe "Validate start of console host" -Tag CI {
         }
         else {
             $allowedAssemblies += @(
+                'System.Diagnostics.DiagnosticSource.dll'
                 'System.Net.Sockets.dll'
             )
         }

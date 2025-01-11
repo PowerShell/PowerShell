@@ -356,7 +356,8 @@ stages:
 
     variables:
     - group: 'Azure Blob variable group'
-    - group: 'AzDevOpsArtifacts'
+    - group: mscodehub-feed-read-general
+    - group: mscodehub-feed-read-akv
     - group: ReleasePipelineSecrets
     steps:
     - template: templates/release-CreateGitHubDraft.yml
@@ -398,9 +399,10 @@ stages:
       - ImageOverride -equals PSMMSUbuntu20.04-Secure
 
     variables:
-    - group: 'AzDevOpsArtifacts'
+    - group: mscodehub-feed-read-general
+    - group: mscodehub-feed-read-akv
     - group: 'packages.microsoft.com'
-    - group: 'mscodehub-feed-read-akv'
+    - group: 'mscodehub-code-read-akv'
     steps:
     - template: templates/release-PublishPackageMsftCom.yml
       parameters:

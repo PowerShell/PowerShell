@@ -33,9 +33,9 @@ jobs:
     value: ${{ parameters.Runtime }}
   - name: ob_sdl_sbom_packageName
     value: 'Microsoft.Powershell.Linux.${{ parameters.Runtime }}'
-  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
-    - name: ob_sdl_codeql_compiled_enabled
-      value: true
+  # We add this manually, so we need it disabled the OneBranch auto-injected one.
+  - name: ob_sdl_codeql_compiled_enabled
+    value: false
 
   steps:
   - checkout: self
@@ -54,12 +54,14 @@ jobs:
       repoRoot: $(PowerShellRoot)
 
   - task: CodeQL3000Init@0 # Add CodeQL Init task right before your 'Build' step.
-    condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+    condition: eq(variables['CODEQL_ENABLED'], 'true')
     env:
       ob_restore_phase: true # Set ob_restore_phase to run this step before '🔒 Setup Signing' step.
     inputs:
       Enabled: true
-      AnalyzeInPipeline: true
+      # AnalyzeInPipeline: false = upload results
+      # AnalyzeInPipeline: true = do not upload results
+      AnalyzeInPipeline: false
       Language: csharp
 
   - pwsh: |
@@ -77,7 +79,14 @@ jobs:
 
       Start-PSBootstrap
       $null = New-Item -ItemType Directory -Path $buildWithSymbolsPath -Force -Verbose
-      Start-PSBuild -Runtime $runtime -Configuration Release -Output $buildWithSymbolsPath @params -Clean -PSModuleRestore
+
+      $ReleaseTagParam = @{}
+
+      if ($env:RELEASETAGVAR) {
+        $ReleaseTagParam['ReleaseTag'] = $env:RELEASETAGVAR
+      }
+
+      Start-PSBuild -Runtime $runtime -Configuration Release -Output $buildWithSymbolsPath @params -Clean -PSModuleRestore @ReleaseTagParam
 
       $outputPath = Join-Path '$(ob_outputDirectory)' 'psoptions'
       $null = New-Item -ItemType Directory -Path $outputPath -Force
@@ -103,7 +112,7 @@ jobs:
       ob_restore_phase: true # Set ob_restore_phase to run this step before '🔒 Setup Signing' step.
 
   - task: CodeQL3000Finalize@0 # Add CodeQL Finalize task right after your 'Build' step.
-    condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+    condition: eq(variables['CODEQL_ENABLED'], 'true')
     env:
       ob_restore_phase: true # Set ob_restore_phase to run this step before '🔒 Setup Signing' step.
 
@@ -136,6 +145,7 @@ jobs:
   - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
     value: 1
   - group: DotNetPrivateBuildAccess
+  - group: certificate_logical_to_actual
   - name: ob_outputDirectory
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
   - name: ob_sdl_codeSignValidation_enabled

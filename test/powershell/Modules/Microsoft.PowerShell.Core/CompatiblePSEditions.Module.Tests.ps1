@@ -683,7 +683,7 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
 @"
 {"Microsoft.PowerShell:ExecutionPolicy": "RemoteSigned", "WindowsPowerShellCompatibilityNoClobberModuleList": ["$desktopModuleToUse"]}
 "@ | Out-File -Force $ConfigPath
-            $env:PSModulePath = ''
+            $env:PSModulePath = $null
 
             ## The desktop-edition module is listed in the no-clobber list, so we will first try loading a core-edition
             ## compatible version of the module before loading the remote one. The 'system32' module path will be skipped
@@ -1479,7 +1479,7 @@ Describe "WinCompat importing should check availablity of built-in modules" -Tag
         $_.Exception.Message
     }}
 '@
-        $env:PSModulePath = ''
+        $env:PSModulePath = $null
         $script = $template -f $Command
         $scriptBlock = [scriptblock]::Create($script)
 
@@ -1507,7 +1507,7 @@ Describe "WinCompat importing should check availablity of built-in modules" -Tag
         `$_.Exception.Message
     }
 "@
-        $env:PSModulePath = ''
+        $env:PSModulePath = $null
         $scriptBlock = [scriptblock]::Create($script)
         $result = & "$pwshDir\pwsh.exe" -NoProfile -NonInteractive -c $scriptBlock
         $result | Should -HaveCount 2
@@ -1516,7 +1516,7 @@ Describe "WinCompat importing should check availablity of built-in modules" -Tag
     }
 
     It "When built-in modules are available but not in `$PSHOME module path, things should work" {
-        $env:PSModulePath = ''
+        $env:PSModulePath = $null
         $result = & "$pwshDir\pwsh.exe" -NoProfile -NonInteractive -c @"
             `$env:PSModulePath += ';$moduleDir'
             Import-Module Microsoft.PowerShell.Utility -UseWindowsPowerShell -WarningAction Ignore

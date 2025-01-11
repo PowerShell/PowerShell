@@ -22,7 +22,8 @@ jobs:
       value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
     - name: ob_sdl_credscan_suppressionsFile
       value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
-    - group: 'AzDevOpsArtifacts'
+    - group: mscodehub-feed-read-general
+    - group: mscodehub-feed-read-akv
     - group: DotNetPrivateBuildAccess
 
   steps:
@@ -32,7 +33,7 @@ jobs:
       ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
   - pwsh: |
-      Get-ChildItem -Path env:
+      Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
     displayName: Capture environment
     env:
       ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
@@ -89,23 +90,9 @@ jobs:
     env:
       ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
 
-  - pwsh: |
-      $repoRoot = "$(PowerShellRoot)"
-      Write-Verbose -Verbose "repoRoot: $repoRoot"
-
-      $configPath = "$repoRoot/nuget.config"
-      Import-Module "$repoRoot/build.psm1" -Force
-      New-NugetConfigFile -NugetFeedUrl $(PowerShellCore_PublicPackages) -UserName $(AzDevOpsFeedUserName) -ClearTextPAT $(AzDevOpsFeedPAT2) -FeedName AzDevOpsFeed -Destination "$(PowerShellRoot)"
-
-      if(-not (Test-Path $configPath))
-      {
-          throw "nuget.config is not created"
-      }
-      Get-Content $configPath | Write-Verbose -Verbose
-    displayName: 'Add nuget.config for Azure DevOps feed for packages'
-    condition: and(succeededOrFailed(), ne(variables['PowerShellCore_PublicPackages'], ''))
-    env:
-      ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
+  - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
+    parameters:
+      repoRoot: $(PowerShellRoot)
 
   - task: NuGetToolInstaller@1
     displayName: 'Install NuGet.exe'
@@ -133,7 +120,7 @@ jobs:
       $refAssemblyFolder = Join-Path '$(System.ArtifactsDirectory)' 'RefAssembly'
       $null = New-Item -Path $refAssemblyFolder -Force -Verbose -Type Directory
 
-      Start-PSBuild -Clean -Runtime linux-x64 -Configuration Release
+      Start-PSBuild -Clean -Runtime linux-x64 -Configuration Release -ReleaseTag $(ReleaseTagVar)
 
       $sharedModules | Foreach-Object {
         $refFile = Get-ChildItem -Path "$(PowerShellRoot)\src\$_\obj\Release\net9.0\refint\$_.dll"
@@ -149,7 +136,7 @@ jobs:
         }
       }
 
-      Start-PSBuild -Clean -Runtime win7-x64 -Configuration Release
+      Start-PSBuild -Clean -Runtime win7-x64 -Configuration Release -ReleaseTag $(ReleaseTagVar)
 
       $winOnlyModules | Foreach-Object {
         $refFile = Get-ChildItem -Path "$(PowerShellRoot)\src\$_\obj\Release\net9.0\refint\*.dll"

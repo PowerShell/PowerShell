@@ -18,6 +18,7 @@ jobs:
     - name: skipNugetSecurityAnalysis
       value: true
     - group: DotNetPrivateBuildAccess
+    - group: certificate_logical_to_actual
     - name: ob_outputDirectory
       value: '$(Build.ArtifactStagingDirectory)\ONEBRANCH_ARTIFACT'
     - name: ob_sdl_binskim_enabled
@@ -37,7 +38,7 @@ jobs:
       ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
   - pwsh: |
-      Get-ChildItem -Path env:
+      Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
     displayName: Capture environment
     env:
       ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
@@ -199,11 +200,44 @@ jobs:
       Set-Location $repoRoot
 
       $exePath = New-ExePackage -ProductVersion $version -ProductTargetArchitecture $runtime -MsiLocationPath $msiLocation
+      Write-Verbose -Verbose "setting vso[task.setvariable variable=exePath]$exePath"
+      Write-Host "##vso[task.setvariable variable=exePath]$exePath"
       Write-Verbose -Verbose "exePath: $exePath"
-    displayName: 'Make exe package'
+
+      $enginePath = Join-Path -Path '$(System.ArtifactsDirectory)\unsignedEngine' -ChildPath engine.exe
+      Expand-ExePackageEngine -ExePath $exePath -EnginePath $enginePath -ProductTargetArchitecture $runtime
+    displayName: 'Make exe and expand package'
 
   - task: onebranch.pipeline.signing@1
-    displayName: Sign MSI packages
+    displayName: Sign exe engine
+    inputs:
+      command: 'sign'
+      signing_profile: $(msft_3rd_party_cert_id)
+      files_to_sign: '$(System.ArtifactsDirectory)\unsignedEngine\*.exe'
+      search_root: '$(Pipeline.Workspace)'
+
+  - pwsh: |
+      $runtime = '$(Runtime)'
+      Write-Verbose -Verbose "runtime = '$(Runtime)'"
+      $repoRoot = "$env:REPOROOT"
+      Import-Module "$repoRoot\build.psm1"
+      Import-Module "$repoRoot\tools\packaging"
+
+      $noExeRuntimes = @('fxdependent', 'fxdependentWinDesktop', 'minsize')
+
+      if ($runtime -in $noExeRuntimes) {
+        Write-Verbose -Verbose "No EXE generated for $runtime"
+        return
+      }
+
+      $exePath = '$(exePath)'
+      $enginePath = Join-Path -Path '$(System.ArtifactsDirectory)\unsignedEngine' -ChildPath engine.exe
+      $enginePath | Get-AuthenticodeSignature | out-string | Write-Verbose -verbose
+      Compress-ExePackageEngine -ExePath $exePath -EnginePath $enginePath -ProductTargetArchitecture $runtime
+    displayName: Compress signed exe package
+
+  - task: onebranch.pipeline.signing@1
+    displayName: Sign exe packages
     inputs:
       command: 'sign'
       signing_profile: external_distribution
