@@ -57,6 +57,7 @@ stages:
 
     - pwsh: |
         New-Item -Path '$(ev2ParametersFolder)' -ItemType Directory
+        Get-ChildItem '$(Agent.ToolsDirectory)'
       displayName: 'Create Parameters folder under EV2Specs folder'
 
     - task: UsePythonVersion@0
