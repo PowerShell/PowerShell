@@ -48,12 +48,12 @@
 
 <summary>
 
-<p>We thank the following contributors!</p>
+<p>Updated SDK to 9.0.101</p>
 
 </summary>
 
 <ul>
-<li>Update metadata.json (#24764)</li>
+<li>Update branch for release  - Transitive - false - none (#24754)</li>
 <li>Update <code>Microsoft.PowerShell.PSResourceGet</code> to <code>1.1.0</code> (#24767)</li>
 <li>Add a parameter that skips verify packages step (#24763)</li>
 <li>Make the <code>AssemblyVersion</code> not change for servicing releases (#24667)</li>
