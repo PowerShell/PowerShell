@@ -62,10 +62,10 @@ stages:
         Write-Verbose -Verbose "expected python path exists: $expectedPythonPathExists"
       displayName: 'Create Parameters folder under EV2Specs folder'
 
-    # - task: UsePythonVersion@0
-    #   displayName: 'Use Python 3.12.7'
-    #   inputs:
-    #     versionSpec: 3.12.7
+    - task: UsePythonVersion@0
+      displayName: 'Use Python 3.12.7'
+      inputs:
+        versionSpec: 3.9
 
     # - task: PipAuthenticate@1
     #   inputs:
