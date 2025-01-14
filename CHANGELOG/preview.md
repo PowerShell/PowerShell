@@ -1,6 +1,46 @@
 # Preview Changelog
 
-## [7.6.0-preview.1] - 2025-01-14
+## [7.6.0-preview.2] - 2025-01-14
+
+### General Cmdlet Updates and Fixes
+
+- Add the `AIShell` module to telemetry collection list (#24747)
+- Add helper in `EnumSingleTypeConverter` to get enum names as array (#17785) (Thanks @fflaten!)
+- Return correct FileName property for `Get-Item` when listing alternate data streams (#18019) (Thanks @kilasuit!)
+- Add `-ExcludeModule` parameter to `Get-Command` (#18955) (Thanks @MartinGC94!)
+- Update Named and Statement block type inference to not consider AssignmentStatements and Increment/decrement operators as part of their output (#21137) (Thanks @MartinGC94!)
+- Update `DnsNameList` for `X509Certificate2` to use `X509SubjectAlternativeNameExtension.EnumerateDnsNames` Method (#24714) (Thanks @ArmaanMcleod!)
+- Add completion of modules by their shortname (#20330) (Thanks @MartinGC94!)
+- Fix `Get-ItemProperty` to report non-terminating error for cast exception (#21115) (Thanks @ArmaanMcleod!)
+- Add `-PropertyType` argument completer for `New-ItemProperty` (#21117) (Thanks @ArmaanMcleod!)
+- Fix a bug in how `Write-Host` handles `XmlNode` object (#24669) (Thanks @brendandburns!)
+
+### Code Cleanup
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@xtqqczze</p>
+
+</summary>
+
+<ul>
+<li>Seal <code>ClientRemoteSessionDSHandlerImpl</code> (#21218) (Thanks @xtqqczze!)</li>
+<li>Seal internal type <code>ClientRemoteSessionDSHandlerImpl</code> (#24705) (Thanks @xtqqczze!)</li>
+<li>Seal classes in <code>RemotingProtocol2</code> (#21164) (Thanks @xtqqczze!)</li>
+</ul>
+
+</details>
+
+### Tools
+
+- Added Justin Chung as Powershell team memeber on releaseTools.psm1 (#24672)
+
+### Tests
+
+- Skip CIM ETS member test on older Windows platforms (#24681)
 
 ### Build and Packaging Improvements
 
@@ -9,7 +49,6 @@
 <summary>
 
 <p>We thank the following contributors!</p>
-<p>@</p>
 
 </summary>
 
@@ -19,32 +58,19 @@
 <li>Add a parameter that skips verify packages step (#24763)</li>
 <li>Make the <code>AssemblyVersion</code> not change for servicing releases (#24667)</li>
 <li>Fixed release pipeline errors and switched to KS3 (#24751)</li>
-<li>Add the <code>AIShell</code> module to telemetry collection list (#24747)</li>
 <li>Update outdated package references (#24580)</li>
 <li>Bump actions/upload-artifact from 4.4.3 to 4.5.0 (#24689)</li>
 <li>Update .NET feed with new domain as <code>azureedge</code> is retiring (#24703)</li>
-<li>Add helper in EnumSingleTypeConverter to get enum names as array (#17785) (Thanks @fflaten!)</li>
-<li>Return correct FileName property for Get-Item when listing alternate data streams (#18019) (Thanks @kilasuit!)</li>
-<li>Add ExcludeModule parameter to Get-Command (#18955) (Thanks @MartinGC94!)</li>
-<li>Update Named and Statement block type inference to not consider AssignmentStatements and Increment/decrement operators as part of their output (#21137) (Thanks @MartinGC84!)</li>
-<li>Update <code>DnsNameList</code> for <code>X509Certificate2</code> to use <code>X509SubjectAlternativeNameExtension.EnumerateDnsNames</code> Method (#24714) (Thanks @ArmaanMcleod!)</li>
-<li>Add completion of modules by their shortname (#20330) (Thanks @MartinGC94!)</li>
-<li>Seal <code>ClientRemoteSessionDSHandlerImpl</code> (#21218) (Thanks @xtqqczze!)</li>
-<li>Fix <code>Get-ItemProperty</code> to report non-terminating error for cast exception (#21115) (Thanks @ArmaanMcleod!)</li>
-<li>Add <code>-PropertyType</code> argument completer for <code>New-ItemProperty</code> (#21117) (Thanks @ArmaanMcleod!)</li>
-<li>Seal internal type <code>ClientRemoteSessionDSHandlerImpl</code> (#24705) (Thanks @xtqqczze!)</li>
-<li>Seal classes in <code>RemotingProtocol2</code> (#21164) (Thanks @xtqqczze!)</li>
-<li>Skip CIM ETS member test on older Windows platforms (#24681)</li>
 <li>Bump super-linter/super-linter from 7.2.0 to 7.2.1 (#24678)</li>
-<li>added justin chung as powershel team memeber on releaseTools.psm1 (#24672)</li>
-<li>Fix a bug in how <code>Write-Host</code> handles <code>XmlNode</code> object (#24669) (Thanks @brendanburns!)</li>
 <li>Bump github/codeql-action from 3.27.7 to 3.27.9 (#24674)</li>
-<li>Update cmdlets WG members (#24275) (Thanks @kilasuit!)</li>
 <li>Bump actions/dependency-review-action from 4.4.0 to 4.5.0 (#24607)</li>
-<li>updated tpn (#24666)</li>
 </ul>
 
 </details>
+
+### Documentation and Help Content
+
+- Update cmdlets WG members (#24275) (Thanks @kilasuit!)
 
 [7.6.0-preview.2]: https://github.com/PowerShell/PowerShell/compare/v7.6.0-preview.1...v7.6.0-preview.2
 
