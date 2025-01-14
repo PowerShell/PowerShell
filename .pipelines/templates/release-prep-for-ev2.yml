@@ -64,26 +64,26 @@ stages:
         Write-Verbose -Verbose "expected OB python path exists: $onebranchPythonPathExists"
       displayName: 'Create Parameters folder under EV2Specs folder'
 
-    - task: UsePythonVersion@0
-      displayName: 'Use Python 3.12.7'
-      inputs:
-        versionSpec: 3.10.14
-
-    # - task: PipAuthenticate@1
+    # - task: UsePythonVersion@0
+    #   displayName: 'Use Python 3.12.7'
     #   inputs:
-    #     artifactFeeds: 'PowerShellCore/PowerShellCore_PublicPackages'
-    #   displayName: 'Pip Authenticate'
+    #     versionSpec: 3.10.14
 
-    # - pwsh: |
-    #     python -m pip install --upgrade pip
-    #     pip --version --verbose
+    - task: PipAuthenticate@1
+      inputs:
+        artifactFeeds: 'PowerShellCore/PowerShellCore_PublicPackages'
+      displayName: 'Pip Authenticate'
 
-    #     Write-Verbose -Verbose "Download pmc-cli to folder without installing it"
-    #     $ev2SpecsFolder = "$(repoRoot)/.pipelines/EV2Specs"
-    #     $shellExtensionBundleDir = "$ev2SpecsFolder/ServiceGroupRoot/Shell/Run"
-    #     $pythonDlFolderPath = Join-Path -Path $shellExtensionBundleDir -ChildPath "python_dl"
-    #     pip download -d $pythonDlFolderPath pmc-cli --verbose
-    #   displayName: 'Download pmc-cli package'
+    - pwsh: |
+        python -m pip install --upgrade pip
+        pip --version --verbose
+
+        Write-Verbose -Verbose "Download pmc-cli to folder without installing it"
+        $ev2SpecsFolder = "$(repoRoot)/.pipelines/EV2Specs"
+        $shellExtensionBundleDir = "$ev2SpecsFolder/ServiceGroupRoot/Shell/Run"
+        $pythonDlFolderPath = Join-Path -Path $shellExtensionBundleDir -ChildPath "python_dl"
+        pip download -d $pythonDlFolderPath pmc-cli --verbose
+      displayName: 'Download pmc-cli package'
 
     - download: PSPackagesOfficial
       artifact: 'drop_linux_package_deb'
