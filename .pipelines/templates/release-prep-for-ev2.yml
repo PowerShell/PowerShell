@@ -63,7 +63,7 @@ stages:
     - task: UsePythonVersion@0
       displayName: 'Use Python 3.12.7'
       inputs:
-        versionSpec: 3.12.7
+        versionSpec: 3
 
     - task: PipAuthenticate@1
       inputs:
