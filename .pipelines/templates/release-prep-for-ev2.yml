@@ -58,6 +58,8 @@ stages:
     - pwsh: |
         New-Item -Path '$(ev2ParametersFolder)' -ItemType Directory
         Get-ChildItem '$(Agent.ToolsDirectory)' -Recurse
+        $expectedPythonPathExists = Test-Path "C:\__t\Python\"
+        Write-Verbose -Verbose "expected python path exists: $expectedPythonPathExists"
       displayName: 'Create Parameters folder under EV2Specs folder'
 
     - task: UsePythonVersion@0
