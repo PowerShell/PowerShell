@@ -57,11 +57,11 @@ stages:
 
     - pwsh: |
         New-Item -Path '$(ev2ParametersFolder)' -ItemType Directory
-        Get-ChildItem '$(Agent.ToolsDirectory)' -Recurse
+        # Get-ChildItem '$(Agent.ToolsDirectory)' -Recurse
         $expectedPythonPathExists = Test-Path "C:\__t\Python\"
         Write-Verbose -Verbose "expected python path exists: $expectedPythonPathExists"
         $onebranchPythonPathExists = Test-Path "C:\Program Files\Miniconda3\python.exe"
-        Write-Verbose -Verbose "expected OB python path exists"
+        Write-Verbose -Verbose "expected OB python path exists: $onebranchPythonPathExists"
       displayName: 'Create Parameters folder under EV2Specs folder'
 
     - task: UsePythonVersion@0
