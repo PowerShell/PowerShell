@@ -10,7 +10,8 @@ namespace System.Management.Automation.Remoting
     /// </summary>
     internal static class RemotingUtils
     {
-        private static readonly string s_LOCALHOST = "localhost";
+        private const string s_LOCALHOST = "localhost";
+        private const string s_SSHSCHEME = "ssh://";
 
         /// <summary>
         /// Parse a hostname used with SSH Transport to get embedded
@@ -28,14 +29,14 @@ namespace System.Management.Automation.Remoting
             port = cmdlet.Port;
             try
             {
-                Uri uri = new("ssh://" + hostname);
+                Uri uri = new(s_SSHSCHEME + hostname);
 
                 if (uri.HostNameType == UriHostNameType.Dns)
                 {
                     // Extract original host from URI with preserved case
                     // This is needed since System.Uri canonicalizes URI and makes host lowercase
                     int originalHostIndex = uri.OriginalString.IndexOf(uri.Host, StringComparison.OrdinalIgnoreCase);
-                    string originalHost = originalHostIndex != -1 
+                    string originalHost = originalHostIndex != -1
                         ? uri.OriginalString.Substring(originalHostIndex, uri.Host.Length)
                         : uri.Host;
 
@@ -75,8 +76,8 @@ namespace System.Management.Automation.Remoting
             foreach (string computerName in computerNames)
             {
                 UriHostNameType nametype = Uri.CheckHostName(computerName);
-                
-                if (!(nametype == UriHostNameType.Dns || 
+
+                if (!(nametype == UriHostNameType.Dns ||
                     nametype == UriHostNameType.IPv4 ||
                     nametype == UriHostNameType.IPv6))
                 {
