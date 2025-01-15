@@ -74,14 +74,12 @@ jobs:
 
         $changelog = Get-Content -Path $filePath
 
-        $startPattern = "^## \[" + ([regex]::Escape($releaseVersion)) + "\]"
-        $endPattern = "^## \[{0}\.{1}\.{2}*" -f $semanticVersion.Major, $semanticVersion.Minor, $semanticVersion.Patch
+        $headingPattern = "^## \[\d+\.\d+\.\d+"
+        $headingStartLines = $changelog | Select-String -Pattern $headingPattern | Select-Object -ExpandProperty LineNumber
+        $startLine = $headingStartLines[0]
+        $endLine = $headingStartLines[1] - 1
 
-        $clContent = $changelog | ForEach-Object {
-            if ($_ -match $startPattern) { $outputLine = $true }
-            elseif ($_ -match $endPattern) { $outputLine = $false }
-            if ($outputLine) { $_}
-          } | Out-String
+        $clContent = $changelog | Select-Object -Skip ($startLine-1) -First ($endLine - $startLine) | Out-String
 
         Write-Verbose -Verbose "Selected content: `n$clContent"
 
