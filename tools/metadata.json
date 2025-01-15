@@ -6,5 +6,5 @@
   "LTSReleaseTag" : ["v7.2.22", "v7.4.4"],
   "NextReleaseTag": "v7.5.0-preview.4",
   "LTSRelease": { "Latest": false, "Package": false },
-  "StableRelease":  { "Latest": false, "Package": false }
+  "StableRelease":  { "Latest": true, "Package": true }
 }
