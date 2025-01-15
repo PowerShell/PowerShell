@@ -13,6 +13,8 @@ jobs:
   templateContext:
     inputs:
       - input: pipelineArtifact
+        artifactName: drop_setReleaseTagAndUploadTools_SetTagAndTools
+      - input: pipelineArtifact
         pipeline: PSPackagesOfficial
         artifactName: drop_upload_upload_packages
   variables:
