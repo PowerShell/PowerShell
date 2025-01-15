@@ -76,6 +76,7 @@ stages:
       displayName: 'Download pmc-cli package'
 
     - pwsh: |
+        Get-ChildItem '$(Build.SourcesDirectory)'
         $repolistFile = Join-Path "$(Build.SourcesDirectory)/Internal-PowerShellTeam-Tools/packages.microsoft.com-v4" -ChildPath "repolist.json"
         Copy-Item -Path $repolistFile -Destination '$(ev2ParametersFolder)' -Verbose
       displayName: 'Copy repolist.json file from Internal-PowerShellTeam-Tools to EV2 folder'
