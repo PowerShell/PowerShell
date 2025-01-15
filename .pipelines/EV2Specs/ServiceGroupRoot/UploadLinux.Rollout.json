@@ -28,6 +28,13 @@
             }
           },
           {
+            "name": "REPO_LIST_FILE",
+            "reference":
+            {
+                "path": "Parameters\\repolist.json"
+            }
+          },
+          {
             "name": "PWSH_PACKAGES_TARGZIP",
             "reference":
             {

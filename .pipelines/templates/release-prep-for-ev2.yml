@@ -57,17 +57,7 @@ stages:
 
     - pwsh: |
         New-Item -Path '$(ev2ParametersFolder)' -ItemType Directory
-        # Get-ChildItem '$(Agent.ToolsDirectory)' -Recurse
-        $expectedPythonPathExists = Test-Path "C:\__t\Python\"
-        Write-Verbose -Verbose "expected python path exists: $expectedPythonPathExists"
-        $onebranchPythonPathExists = Test-Path "C:\Program Files\Miniconda3\python.exe"
-        Write-Verbose -Verbose "expected OB python path exists: $onebranchPythonPathExists"
       displayName: 'Create Parameters folder under EV2Specs folder'
-
-    # - task: UsePythonVersion@0
-    #   displayName: 'Use Python 3.12.7'
-    #   inputs:
-    #     versionSpec: 3.10.14
 
     - task: PipAuthenticate@1
       inputs:
@@ -84,6 +74,11 @@ stages:
         $pythonDlFolderPath = Join-Path -Path $shellExtensionBundleDir -ChildPath "python_dl"
         pip download -d $pythonDlFolderPath pmc-cli --verbose
       displayName: 'Download pmc-cli package'
+
+    - pwsh: |
+        $repolistFile = Join-Path "$(Build.SourcesDirectory)/Internal-PowerShellTeam-Tools/packages.microsoft.com-v4" -ChildPath "repolist.json"
+        Copy-Item -Path $repolistFile -Destination '$(ev2ParametersFolder)' -Verbose
+      displayName: 'Copy repolist.json file from Internal-PowerShellTeam-Tools to EV2 folder'
 
     - download: PSPackagesOfficial
       artifact: 'drop_linux_package_deb'
