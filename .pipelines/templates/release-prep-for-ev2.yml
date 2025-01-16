@@ -72,7 +72,7 @@ stages:
         $ev2SpecsFolder = "$(repoRoot)/.pipelines/EV2Specs"
         $shellExtensionBundleDir = "$ev2SpecsFolder/ServiceGroupRoot/Shell/Run"
         $pythonDlFolderPath = Join-Path -Path $shellExtensionBundleDir -ChildPath "python_dl"
-        pip download -d $pythonDlFolderPath pmc-cli --platform=manylinux1_x86_64 --verbose
+        pip download -d $pythonDlFolderPath pmc-cli --platform=manylinux1_x86_64 --only-binary=:all: --verbose
       displayName: 'Download pmc-cli package'
 
     - pwsh: |
