@@ -63,6 +63,7 @@ stages:
     - pwsh: |
         $attemptPath = Test-Path '$(Build.SourcesDirectory)/PowerShell/.pipelines'
         Write-Verbose -Verbose "attempt build src dir: $attemptPath"
+        Get-ChildItem '$(Build.SourcesDirectory)'
       displayName: 'Capture BuildDirectory'
       env:
         ob_restore_phase: true
@@ -70,6 +71,7 @@ stages:
     - pwsh: |
         $attemptPath = Test-Path '$(Pipeline.Workspace)/PowerShell/.pipelines'
         Write-Verbose -Verbose "attempt pipeline workspace: $attemptPath"
+        Get-ChildItem '$(Pipeline.Workspace)' -Recurse | Out-String -Stream | write-Verbose -Verbose
       displayName: 'Capture Workspace'
       env:
         ob_restore_phase: true
@@ -178,6 +180,14 @@ stages:
         ob_restore_phase: true
 
     - pwsh: |
+        $path = '$(Build.SourcesDirectory)/PowerShell/.pipelines'
+        $attemptPath = Test-Path $path
+        $path2 = '$(ev2ServiceGroupRootFolder)'
+        $attemptPath2 = Test-Path $path2
+        Write-Verbose -Verbose "attempt build src dir $path exists : $attemptPath"
+        Write-Verbose -Verbose "attempt path 2 $path2 exists: $attemptPath2"
+        Get-ChildItem '$(Build.SourcesDirectory)'
+
         $pathToJsonFile = Join-Path -Path '$(ev2ServiceGroupRootFolder)' -ChildPath 'RolloutSpec.json'
         $content = Get-Content -Path $pathToJsonFile | ConvertFrom-Json
         $content.RolloutMetadata.Notification.Email.To = '$(PmcEV2SupportEmail)'
