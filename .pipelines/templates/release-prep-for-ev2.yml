@@ -53,20 +53,28 @@ stages:
     - pwsh: |
         Get-ChildItem Env: | Out-String -Stream | write-Verbose -Verbose
       displayName: 'Capture Environment Variables'
+      env:
+        ob_restore_phase: true
 
     - pwsh: |
         Get-ChildItem '$(Pipeline.Workspace)' -Recurse | Out-String -Stream | write-Verbose -Verbose
         Get-ChildItem '$(Build.SourcesDirectory)'
       displayName: 'Capture Workspace'
+      env:
+        ob_restore_phase: true
 
     - pwsh: |
         New-Item -Path '$(ev2ParametersFolder)' -ItemType Directory
       displayName: 'Create Parameters folder under EV2Specs folder'
+      env:
+        ob_restore_phase: true
 
     - task: PipAuthenticate@1
       inputs:
         artifactFeeds: 'PowerShellCore/PowerShellCore_PublicPackages'
       displayName: 'Pip Authenticate'
+      env:
+        ob_restore_phase: true
 
     - pwsh: |
         python3 -m pip install --upgrade pip
@@ -78,28 +86,40 @@ stages:
         $pythonDlFolderPath = Join-Path -Path $shellExtensionBundleDir -ChildPath "python_dl"
         pip download -d $pythonDlFolderPath pmc-cli --platform=manylinux_2_17_x86_64 --only-binary=:all: --verbose
       displayName: 'Download pmc-cli package'
+      env:
+        ob_restore_phase: true
 
     - pwsh: |
         Get-ChildItem '$(Pipeline.Workspace)/tools'
         $repolistFile = Join-Path "$(Pipeline.Workspace)/tools/packages.microsoft.com-v4" -ChildPath "repolist.json"
         Copy-Item -Path $repolistFile -Destination '$(ev2ParametersFolder)' -Verbose
       displayName: 'Copy repolist.json file from Internal-PowerShellTeam-Tools to EV2 folder'
+      env:
+        ob_restore_phase: true
 
     - download: PSPackagesOfficial
       artifact: 'drop_linux_package_deb'
       displayName: 'Download artifact containing .deb_amd64.deb file from PSPackagesOfficial triggering pipeline'
+      env:
+        ob_restore_phase: true
 
     - download: PSPackagesOfficial
       artifact: 'drop_linux_package_rpm'
       displayName: 'Download artifact containing .rh.x64_86.rpm file from PSPackagesOfficial triggering pipeline'
+      env:
+        ob_restore_phase: true
 
     - download: PSPackagesOfficial
       artifact: 'drop_linux_package_mariner_x64'
       displayName: 'Download artifact containing .cm.x86_64.rpm file from PSPackagesOfficial triggering pipeline'
+      env:
+        ob_restore_phase: true
 
     - download: PSPackagesOfficial
       artifact: 'drop_linux_package_mariner_arm64'
       displayName: 'Download artifact containing .cm.aarch64.rpm file from PSPackagesOfficial triggering pipeline'
+      env:
+        ob_restore_phase: true
 
     - pwsh: |
         Write-Verbose -Verbose "Copy ESRP signed .deb and .rpm packages"
@@ -119,6 +139,8 @@ stages:
         $packagesTarGzDestination = Join-Path -Path '$(ev2ParametersFolder)' -ChildPath 'packages.tar.gz'
         tar -czvf $packagesTarGzDestination -C $packagesFolder .
       displayName: 'Copy signed .deb and .rpm packages to .tar.gz to pass as a file var to shell extension'
+      env:
+        ob_restore_phase: true
 
     - pwsh: |
         $pathToPMCMetadataFile = Join-Path -Path '$(ev2ParametersFolder)' -ChildPath 'pmcMetadata.json'
@@ -141,6 +163,8 @@ stages:
         $mappingFileEV2Path = Join-Path -Path '$(ev2ParametersFolder)' -ChildPath "mapping.json"
         Copy-Item -Path $mappingFilePath -Destination $mappingFileEV2Path
       displayName: 'Create pmcScriptMetadata.json and mapping.json file'
+      env:
+        ob_restore_phase: true
 
     - pwsh: |
         $pathToJsonFile = Join-Path -Path '$(ev2ServiceGroupRootFolder)' -ChildPath 'RolloutSpec.json'
@@ -149,6 +173,8 @@ stages:
         Remove-Item -Path $pathToJsonFile
         $content | ConvertTo-Json -Depth 4 | Out-File $pathToJsonFile
       displayName: 'Replace values in RolloutSpecPath.json'
+      env:
+        ob_restore_phase: true
 
     - pwsh: |
         $pathToJsonFile = Join-Path -Path '$(ev2ServiceGroupRootFolder)' -ChildPath 'UploadLinux.Rollout.json'
@@ -160,6 +186,8 @@ stages:
         Remove-Item -Path $pathToJsonFile
         $content | ConvertTo-Json -Depth 6 | Out-File $pathToJsonFile
       displayName: 'Replace values in UploadLinux.Rollout.json file'
+      env:
+        ob_restore_phase: true
 
     - pwsh: |
         $pathToJsonFile = Join-Path -Path '$(ev2ServiceGroupRootFolder)' -ChildPath 'ServiceModel.json'
@@ -170,6 +198,8 @@ stages:
         Remove-Item -Path $pathToJsonFile
         $content | ConvertTo-Json -Depth 9 | Out-File $pathToJsonFile
       displayName: 'Replace values in ServiceModel.json'
+      env:
+        ob_restore_phase: true
 
     - pwsh: |
         $settingFilePath = Join-Path '$(ev2ServiceGroupRootFolder)/Shell/Run' -ChildPath 'settings.toml'
