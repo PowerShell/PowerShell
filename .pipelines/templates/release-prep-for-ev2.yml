@@ -65,7 +65,7 @@ stages:
       displayName: 'Pip Authenticate'
 
     - pwsh: |
-        python -m pip install --upgrade pip
+        python3 -m pip install --upgrade pip
         pip --version --verbose
 
         Write-Verbose -Verbose "Download pmc-cli to folder without installing it"
