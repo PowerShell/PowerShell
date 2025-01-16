@@ -29,17 +29,17 @@ try {
     Invoke-WebRequest -Uri $env:PWSH_PACKAGES_TARGZIP -OutFile packages.tar.gz
     Invoke-WebRequest -Uri $env:PMC_METADATA -OutFile pmcMetadata.json
 
-    $settingsFile = Join-Path '/package/unarchive' -ChildPath 'settings.toml'
+    $settingsFile = Join-Path '/package/unarchive/Run' -ChildPath 'settings.toml'
     $settingsFileExists = Test-Path -Path $settingsFile
     Write-Verbose -Verbose "settings.toml exists: $settingsFileExists"
-    $pythonDlFolder = Join-Path '/package/unarchive' -ChildPath 'python_dl'
+    $pythonDlFolder = Join-Path '/package/unarchive/Run' -ChildPath 'python_dl'
     $pyPathExists = Test-Path -Path $pythonDlFolder
     Write-Verbose -Verbose "python_dl folder path exists: $pyPathExists"
 
     Write-Verbose -Verbose "Installing pmc-cli"
     python -m pip install --upgrade pip
     pip --version --verbose
-    pip install /package/unarchive/python_dl/*.whl
+    pip install /package/unarchive/Run/python_dl/*.whl
 
     Write-Verbose -Verbose "Test pmc-cli"
 
