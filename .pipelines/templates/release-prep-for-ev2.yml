@@ -22,12 +22,12 @@ stages:
     - name: ob_sdl_credscan_suppressionsFile
       value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
     steps:
+    - template: release-SetReleaseTagandContainerName.yml
+
     - checkout: self ## the global setting on lfs didn't work
       lfs: false
       env:
         ob_restore_phase: true
-
-    - template: release-SetReleaseTagandContainerName.yml
     
     - pwsh: |
         $packageVersion = '$(ReleaseTag)'.ToLowerInvariant() -replace '^v',''
