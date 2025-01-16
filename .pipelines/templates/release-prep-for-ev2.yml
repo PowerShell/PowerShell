@@ -177,6 +177,8 @@ stages:
         Remove-Item -Path $pathToJsonFile
         $content | ConvertTo-Json -Depth 4 | Out-File $pathToJsonFile
       displayName: 'Replace values in RolloutSpecPath.json'
+      env:
+        ob_restore_phase: true
 
     - pwsh: |
         $pathToJsonFile = Join-Path -Path '$(ev2ServiceGroupRootFolder)' -ChildPath 'UploadLinux.Rollout.json'
@@ -188,6 +190,8 @@ stages:
         Remove-Item -Path $pathToJsonFile
         $content | ConvertTo-Json -Depth 6 | Out-File $pathToJsonFile
       displayName: 'Replace values in UploadLinux.Rollout.json file'
+      env:
+        ob_restore_phase: true
 
     - pwsh: |
         $pathToJsonFile = Join-Path -Path '$(ev2ServiceGroupRootFolder)' -ChildPath 'ServiceModel.json'
@@ -198,6 +202,8 @@ stages:
         Remove-Item -Path $pathToJsonFile
         $content | ConvertTo-Json -Depth 9 | Out-File $pathToJsonFile
       displayName: 'Replace values in ServiceModel.json'
+      env:
+        ob_restore_phase: true
 
     - task: CopyFiles@2
       inputs:
