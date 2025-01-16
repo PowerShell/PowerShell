@@ -36,6 +36,8 @@ try {
     $pyPathExists = Test-Path -Path $pythonDlFolder
     Write-Verbose -Verbose "python_dl folder path exists: $pyPathExists"
 
+    Write-Verbose -Verbose "doing gci"
+    Get-ChildItem "/package" -Recurse
     Write-Verbose -Verbose "Installing pmc-cli"
     python -m pip install --upgrade pip
     pip --version --verbose

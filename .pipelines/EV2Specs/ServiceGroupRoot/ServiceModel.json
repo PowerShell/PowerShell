@@ -18,7 +18,7 @@
                   "type": "Run",
                   "properties": {
                     "imageName": "adm-mariner-20-l",
-                    "imageVersion": "v5"
+                    "imageVersion": "v11"
                   }
                 }
               ]
