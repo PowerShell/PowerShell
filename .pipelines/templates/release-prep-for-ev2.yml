@@ -5,7 +5,7 @@ stages:
   - job: CopyEV2FilesToArtifact
     displayName: 'Copy EV2 Files to Artifact'
     pool:
-      type: windows
+      type: linux
     variables:
     - name: ob_outputDirectory
       value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
@@ -24,6 +24,8 @@ stages:
     steps:
     - checkout: self ## the global setting on lfs didn't work
       lfs: false
+      env:
+        ob_restore_phase: true
 
     - template: release-SetReleaseTagandContainerName.yml
     
@@ -45,6 +47,8 @@ stages:
         $gitArgs | Write-Verbose -Verbose
         git $gitArgs
       displayName: Clone Internal-PowerShellTeam-Tools from MSCodeHub
+      env:
+        ob_restore_phase: true
 
     - pwsh: |
         Get-ChildItem Env: | Out-String -Stream | write-Verbose -Verbose
@@ -148,14 +152,16 @@ stages:
         Add-Content -Path $settingFilePath -Value "auth_type = `"msi`""
         Add-Content -Path $settingFilePath -Value "client_id = `"$pmcMIClientID`""
       displayName: 'Create settings.toml file with MI clientId populated'
+      env:
+        ob_restore_phase: true
 
-    # - task: onebranch.pipeline.signing@1
-    #   inputs:
-    #     command: 'sign'
-    #     signing_profile: 'tipsign' # external_distribution
-    #     files_to_sign: '*.ps1'
-    #     search_root: '$(repoRoot)/.pipelines/EV2Specs/ServiceGroupRoot/Shell/Run'
-    #   displayName: Sign Run.ps1
+    - task: onebranch.pipeline.signing@1
+      inputs:
+        command: 'sign'
+        signing_profile: 'tipsign' # external_distribution
+        files_to_sign: '*.ps1'
+        search_root: '$(repoRoot)/.pipelines/EV2Specs/ServiceGroupRoot/Shell/Run'
+      displayName: Sign Run.ps1
 
     - pwsh: |
         $srcPath = Join-Path '$(repoRoot)/.pipelines/EV2Specs/ServiceGroupRoot' -ChildPath 'Shell'
