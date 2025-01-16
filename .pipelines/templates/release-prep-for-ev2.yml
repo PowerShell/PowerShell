@@ -5,7 +5,7 @@ stages:
   - job: CopyEV2FilesToArtifact
     displayName: 'Copy EV2 Files to Artifact'
     pool:
-      type: windows
+      type: linux
     variables:
     - name: ob_outputDirectory
       value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
@@ -72,7 +72,7 @@ stages:
         $ev2SpecsFolder = "$(repoRoot)/.pipelines/EV2Specs"
         $shellExtensionBundleDir = "$ev2SpecsFolder/ServiceGroupRoot/Shell/Run"
         $pythonDlFolderPath = Join-Path -Path $shellExtensionBundleDir -ChildPath "python_dl"
-        pip download -d $pythonDlFolderPath pmc-cli --platform=manylinux_2_28_x86_64 --only-binary=:all: --verbose
+        pip download -d $pythonDlFolderPath pmc-cli --verbose
       displayName: 'Download pmc-cli package'
 
     - pwsh: |
@@ -149,13 +149,13 @@ stages:
         Add-Content -Path $settingFilePath -Value "client_id = `"$pmcMIClientID`""
       displayName: 'Create settings.toml file with MI clientId populated'
 
-    - task: onebranch.pipeline.signing@1
-      inputs:
-        command: 'sign'
-        signing_profile: 'tipsign' # external_distribution
-        files_to_sign: '*.ps1'
-        search_root: '$(repoRoot)/.pipelines/EV2Specs/ServiceGroupRoot/Shell/Run'
-      displayName: Sign Run.ps1
+    # - task: onebranch.pipeline.signing@1
+    #   inputs:
+    #     command: 'sign'
+    #     signing_profile: 'tipsign' # external_distribution
+    #     files_to_sign: '*.ps1'
+    #     search_root: '$(repoRoot)/.pipelines/EV2Specs/ServiceGroupRoot/Shell/Run'
+    #   displayName: Sign Run.ps1
 
     - pwsh: |
         $srcPath = Join-Path '$(repoRoot)/.pipelines/EV2Specs/ServiceGroupRoot' -ChildPath 'Shell'
