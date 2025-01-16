@@ -5,7 +5,7 @@ stages:
   - job: CopyEV2FilesToArtifact
     displayName: 'Copy EV2 Files to Artifact'
     pool:
-      type: linux
+      type: windows
     variables:
     - name: ob_outputDirectory
       value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
@@ -64,16 +64,16 @@ stages:
         artifactFeeds: 'PowerShellCore/PowerShellCore_PublicPackages'
       displayName: 'Pip Authenticate'
 
-    # - pwsh: |
-    #     python -m pip install --upgrade pip
-    #     pip --version --verbose
+    - pwsh: |
+        python -m pip install --upgrade pip
+        pip --version --verbose
 
-    #     Write-Verbose -Verbose "Download pmc-cli to folder without installing it"
-    #     $ev2SpecsFolder = "$(repoRoot)/.pipelines/EV2Specs"
-    #     $shellExtensionBundleDir = "$ev2SpecsFolder/ServiceGroupRoot/Shell/Run"
-    #     $pythonDlFolderPath = Join-Path -Path $shellExtensionBundleDir -ChildPath "python_dl"
-    #     pip download -d $pythonDlFolderPath pmc-cli --verbose
-    #   displayName: 'Download pmc-cli package'
+        Write-Verbose -Verbose "Download pmc-cli to folder without installing it"
+        $ev2SpecsFolder = "$(repoRoot)/.pipelines/EV2Specs"
+        $shellExtensionBundleDir = "$ev2SpecsFolder/ServiceGroupRoot/Shell/Run"
+        $pythonDlFolderPath = Join-Path -Path $shellExtensionBundleDir -ChildPath "python_dl"
+        pip download -d $pythonDlFolderPath pmc-cli --platform=manylinux1_x86_64 --verbose
+      displayName: 'Download pmc-cli package'
 
     - pwsh: |
         Get-ChildItem '$(Pipeline.Workspace)/tools'
@@ -148,8 +148,6 @@ stages:
         Add-Content -Path $settingFilePath -Value "auth_type = `"msi`""
         Add-Content -Path $settingFilePath -Value "client_id = `"$pmcMIClientID`""
       displayName: 'Create settings.toml file with MI clientId populated'
-      env:
-        ob_restore_phase: true # Set ob_restore_phase to true to mitigate file watcher issue: https://eng.ms/docs/products/onebranch/signing/troubleshooting/filewatcher
 
     - task: onebranch.pipeline.signing@1
       inputs:
