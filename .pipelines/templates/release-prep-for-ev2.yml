@@ -24,6 +24,8 @@ stages:
     steps:
     - checkout: self ## the global setting on lfs didn't work
       lfs: false
+      env:
+        ob_restore_phase: true
 
     - template: release-SetReleaseTagandContainerName.yml
       parameters:
@@ -59,8 +61,15 @@ stages:
         ob_restore_phase: true
 
     - pwsh: |
-        Get-ChildItem '$(Pipeline.Workspace)' -Recurse | Out-String -Stream | write-Verbose -Verbose
-        Get-ChildItem '$(Build.SourcesDirectory)'
+        $attemptPath = Test-Path '$(Build.SourcesDirectory)/PowerShell/.pipelines'
+        Write-Verbose -Verbose "attempt build src dir: $attemptPath"
+      displayName: 'Capture BuildDirectory'
+      env:
+        ob_restore_phase: true
+
+    - pwsh: |
+        $attemptPath = Test-Path '$(Pipeline.Workspace)/PowerShell/.pipelines'
+        Write-Verbose -Verbose "attempt pipeline workspace: $attemptPath"
       displayName: 'Capture Workspace'
       env:
         ob_restore_phase: true
