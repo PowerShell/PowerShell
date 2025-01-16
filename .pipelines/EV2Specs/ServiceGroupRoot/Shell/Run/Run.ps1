@@ -41,6 +41,7 @@ try {
     Write-Verbose -Verbose "Installing pmc-cli"
     crane version
     # python.exe -m pip install --upgrade pip
+    pip install --upgrade pip
     pip --version --verbose
     pip install /package/unarchive/Run/python_dl/*.whl
 
