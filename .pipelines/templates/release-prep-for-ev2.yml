@@ -24,8 +24,6 @@ stages:
     steps:
     - checkout: self ## the global setting on lfs didn't work
       lfs: false
-      env:
-        ob_restore_phase: true
 
     - template: release-SetReleaseTagandContainerName.yml
       parameters:
@@ -37,6 +35,8 @@ stages:
         Write-Host "sending " + $vstsCommandString
         Write-Host "##$vstsCommandString"
       displayName: Set Package version
+      env:
+        ob_restore_phase: true
     
     - pwsh: |
         $branch = 'mirror-target'
