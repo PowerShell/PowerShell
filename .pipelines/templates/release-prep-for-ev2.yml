@@ -5,7 +5,7 @@ stages:
   - job: CopyEV2FilesToArtifact
     displayName: 'Copy EV2 Files to Artifact'
     pool:
-      type: windows
+      type: linux
     variables:
     - name: ob_outputDirectory
       value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
