@@ -143,27 +143,12 @@ stages:
       displayName: 'Create pmcScriptMetadata.json and mapping.json file'
 
     - pwsh: |
-        $settingFilePath = Join-Path '$(ev2ServiceGroupRootFolder)/Shell/Run' -ChildPath 'settings.toml'
-        New-Item -Path $settingFilePath -ItemType File
-        $pmcMIClientID = '$(PmcMIClientID)'
-
-        Add-Content -Path $settingFilePath -Value "[default]"
-        Add-Content -Path $settingFilePath -Value "base_url = `"https://pmc-ingest.trafficmanager.net/api/v4`""
-        Add-Content -Path $settingFilePath -Value "auth_type = `"msi`""
-        Add-Content -Path $settingFilePath -Value "client_id = `"$pmcMIClientID`""
-      displayName: 'Create settings.toml file with MI clientId populated'
-      env:
-        ob_restore_phase: true
-
-    - pwsh: |
         $pathToJsonFile = Join-Path -Path '$(ev2ServiceGroupRootFolder)' -ChildPath 'RolloutSpec.json'
         $content = Get-Content -Path $pathToJsonFile | ConvertFrom-Json
         $content.RolloutMetadata.Notification.Email.To = '$(PmcEV2SupportEmail)'
         Remove-Item -Path $pathToJsonFile
         $content | ConvertTo-Json -Depth 4 | Out-File $pathToJsonFile
       displayName: 'Replace values in RolloutSpecPath.json'
-      env:
-        ob_restore_phase: true
 
     - pwsh: |
         $pathToJsonFile = Join-Path -Path '$(ev2ServiceGroupRootFolder)' -ChildPath 'UploadLinux.Rollout.json'
@@ -175,8 +160,6 @@ stages:
         Remove-Item -Path $pathToJsonFile
         $content | ConvertTo-Json -Depth 6 | Out-File $pathToJsonFile
       displayName: 'Replace values in UploadLinux.Rollout.json file'
-      env:
-        ob_restore_phase: true
 
     - pwsh: |
         $pathToJsonFile = Join-Path -Path '$(ev2ServiceGroupRootFolder)' -ChildPath 'ServiceModel.json'
@@ -187,6 +170,17 @@ stages:
         Remove-Item -Path $pathToJsonFile
         $content | ConvertTo-Json -Depth 9 | Out-File $pathToJsonFile
       displayName: 'Replace values in ServiceModel.json'
+
+    - pwsh: |
+        $settingFilePath = Join-Path '$(ev2ServiceGroupRootFolder)/Shell/Run' -ChildPath 'settings.toml'
+        New-Item -Path $settingFilePath -ItemType File
+        $pmcMIClientID = '$(PmcMIClientID)'
+
+        Add-Content -Path $settingFilePath -Value "[default]"
+        Add-Content -Path $settingFilePath -Value "base_url = `"https://pmc-ingest.trafficmanager.net/api/v4`""
+        Add-Content -Path $settingFilePath -Value "auth_type = `"msi`""
+        Add-Content -Path $settingFilePath -Value "client_id = `"$pmcMIClientID`""
+      displayName: 'Create settings.toml file with MI clientId populated'
       env:
         ob_restore_phase: true
 
