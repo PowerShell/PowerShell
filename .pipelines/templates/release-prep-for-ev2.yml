@@ -45,6 +45,8 @@ stages:
         $gitArgs | Write-Verbose -Verbose
         git $gitArgs
       displayName: Clone Internal-PowerShellTeam-Tools from MSCodeHub
+      env:
+        ob_restore_phase: true # Set ob_restore_phase to true to mitigate file watcher issue: https://eng.ms/docs/products/onebranch/signing/troubleshooting/filewatcher
 
     - pwsh: |
         Get-ChildItem Env: | Out-String -Stream | write-Verbose -Verbose
