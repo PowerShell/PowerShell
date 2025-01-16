@@ -40,7 +40,7 @@ try {
     Get-ChildItem "/package" -Recurse
     Write-Verbose -Verbose "Installing pmc-cli"
     crane version
-    python -m pip install --upgrade pip
+    python.exe -m pip install --upgrade pip
     pip --version --verbose
     pip install /package/unarchive/Run/python_dl/*.whl
 
