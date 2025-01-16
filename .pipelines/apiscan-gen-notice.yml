@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-
+name: apiscan-genNotice-$(BUILD.SOURCEBRANCHNAME)-$(Build.BuildId)
 trigger: none
 
 parameters:
@@ -26,6 +26,24 @@ variables:
     value: onebranch.azurecr.io/linux/ubuntu-2004:latest
   - name: WindowsContainerImage
     value: onebranch.azurecr.io/windows/ltsc2022/vse2022:latest
+  - ${{ if eq(parameters['FORCE_CODEQL'],'true') }}:
+    # Cadence is hours before CodeQL will allow a re-upload of the database
+    - name: CodeQL.Cadence
+      value: 0
+  - name: CODEQL_ENABLED
+    ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters['FORCE_CODEQL'],'true')) }}:
+      value: true
+    ${{ else }}:
+      value: false
+  - name: Codeql.TSAEnabled
+    value: $(CODEQL_ENABLED)
+  # AnalyzeInPipeline: false = upload results
+  # AnalyzeInPipeline: true = do not upload results
+  - name: Codeql.AnalyzeInPipeline
+    ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters['FORCE_CODEQL'],'true')) }}:
+      value: false
+    ${{ else }}:
+      value: true
 
 resources:
   repositories:
@@ -41,8 +59,10 @@ extends:
       WindowsHostVersion:
         Version: 2022
     globalSdl:
-      compiled:
-        enabled: true
+      codeql:
+        compiled:
+          enabled: $(CODEQL_ENABLED)
+        tsaEnabled: $(CODEQL_ENABLED) # This enables TSA bug filing only for CodeQL 3000
       armory:
         enabled: false
       sbom:
