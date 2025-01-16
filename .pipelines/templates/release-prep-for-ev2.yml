@@ -64,16 +64,16 @@ stages:
         artifactFeeds: 'PowerShellCore/PowerShellCore_PublicPackages'
       displayName: 'Pip Authenticate'
 
-    - pwsh: |
-        python -m pip install --upgrade pip
-        pip --version --verbose
+    # - pwsh: |
+    #     python -m pip install --upgrade pip
+    #     pip --version --verbose
 
-        Write-Verbose -Verbose "Download pmc-cli to folder without installing it"
-        $ev2SpecsFolder = "$(repoRoot)/.pipelines/EV2Specs"
-        $shellExtensionBundleDir = "$ev2SpecsFolder/ServiceGroupRoot/Shell/Run"
-        $pythonDlFolderPath = Join-Path -Path $shellExtensionBundleDir -ChildPath "python_dl"
-        pip download -d $pythonDlFolderPath pmc-cli --verbose
-      displayName: 'Download pmc-cli package'
+    #     Write-Verbose -Verbose "Download pmc-cli to folder without installing it"
+    #     $ev2SpecsFolder = "$(repoRoot)/.pipelines/EV2Specs"
+    #     $shellExtensionBundleDir = "$ev2SpecsFolder/ServiceGroupRoot/Shell/Run"
+    #     $pythonDlFolderPath = Join-Path -Path $shellExtensionBundleDir -ChildPath "python_dl"
+    #     pip download -d $pythonDlFolderPath pmc-cli --verbose
+    #   displayName: 'Download pmc-cli package'
 
     - pwsh: |
         Get-ChildItem '$(Pipeline.Workspace)/tools'
