@@ -5,14 +5,10 @@ parameters: # parameters are shown up in ADO UI in a build queue time
     displayName: 'Enable debug output'
     type: boolean
     default: false
-  - name: InternalSDKBlobURL
-    displayName: URL to the blob having internal .NET SDK
-    type: string
-    default: ' '
-  - name: ReleaseTagVar
-    displayName: Release Tag
-    type: string
-    default: 'fromBranch'
+  - name: skipPublish
+    displayName: Skip PMC Publish
+    type: boolean
+    default: false
   - name: SKIP_SIGNING
     displayName: Skip Signing
     type: string
@@ -47,8 +43,6 @@ variables:
     value: 'onebranch.azurecr.io/windows/ltsc2022/vse2022:latest'
   - name: LinuxContainerImage
     value: mcr.microsoft.com/onebranch/cbl-mariner/build:2.0
-  - name: ReleaseTagVar
-    value: ${{ parameters.ReleaseTagVar }}
   - group: PoolNames
 
 resources:
@@ -102,28 +96,8 @@ extends:
       tsaOptionsFile: .config\tsaoptions.json
     stages:
       - template: /.pipelines/templates/release-prep-for-ev2.yml@self
-      - template: /.pipelines/templates/release-publish-pmc.yml@self
-      # - stage: PrepForEV2
-      #   displayName: Prep for EV2
-      #   dependsOn: []
-      #   jobs:
-      #   - template: /.pipelines/templates/release-prep-for-ev2.yml@self
-      
-      # - stage: BlobPublic
-      #   displayName: Make Blob Public
-      #   dependsOn: PrepForEV2
-      #   jobs:
-      #   - template: /.pipelines/templates/release-MakeBlobPublic.yml@self
 
-      # - stage: Test_PublishPMC
-      #   displayName: Publish PMC
-      #   dependsOn: 
-      #     - PrepForEV2
-      #     # - BlobPublic
-      #   variables:
-      #     ob_release_environment: Test
-      #   jobs:
-      #   - template: /.pipelines/templates/release-publish-pmc.yml@self
+      - template: /.pipelines/templates/release-publish-pmc.yml@self
 
       # - stage: UploadBuildInfoJson
       #   dependsOn:
