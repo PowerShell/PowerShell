@@ -91,9 +91,6 @@ try {
     pip --version --verbose
     pip install /package/unarchive/Run/python_dl/*.whl
 
-    Write-Verbose -Verbose "Test pmc-cli"
-    # pmc -d -c $configPath repo list --accessible || exit 1
-
     # Get metadata
     $channel = ""
     $packageNames = @()
@@ -220,7 +217,6 @@ try {
     Write-Verbose -Verbose "count of repoPackageObjects: $($repoPackageObjects.Length)"
 
     # # BEGIN Publish-PackageFromBlob()
-    # $packagePaths = @() #TODO: why is this needed/collected??
     # $packages = @()
 
     # foreach ($pkgObj in $repoPackageObjects)
@@ -230,9 +226,7 @@ try {
     #         $pkgObjName = $PackageName.Replace($releaseVersion, $releaseVersion.Replace('-', '_'))
     #     }
 
-    #     $packagePath = "$TempDirPath/$pkgObjName" #TODO now: resolve correctly!
-
-    #     # For blob downloads they download each package once, not sure why line304 is happening-> $packagePaths += $packagePath
+    #     $packagePath = "$pwshPackagesFolder/$pkgObjName"
 
     #     $packages += @{
     #         PackagePath = $packagePath
@@ -289,7 +283,7 @@ try {
 
     #     if (!$SkipPublish)
     #     {
-    #         # TODO: important, do we even have this? need this?
+    #         # TODO: important, do we even have SkipPublish? need this?
     #         Write-Verbose "---Publishing package: $($finalPackage.PackageName) to $pkgRepo---" -Verbose
 
     #         if (($packageType -ne 'rpm') -and ($packageType -ne 'deb'))
@@ -344,14 +338,6 @@ try {
     # if ($errorMessage) {
     #     throw $errorMessage -join [Environment]::NewLine
     # }
-
-    # END Publish-PackageFromBlob()
-    # # Publish the packages based on the mapping file
-    # $publishedPackages = Get-PackageInfo -MappingFile $MappingFilePath -RepoList $repoList -Channel $channel |
-    # New-RepoPackageObject -ReleaseVersion $releaseVersion -PackageName $packageNames |
-    # Publish-PackageFromBlob -PwshVersion $releaseVersion -ConfigPath $configPath -BlobUriPrefix "$BlobBaseUri/$BlobFolderName" -WhatIf:$WhatIfPreference
-
-
 }
 catch {
     Write-Error -ErrorAction Stop $_.Exception.Message

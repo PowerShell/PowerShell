@@ -164,9 +164,8 @@ stages:
         $metadata = Get-Content -Path "$(repoRoot)/tools/metadata.json" -Raw | ConvertFrom-Json
         $skipPublishVar = '${{ parameters.skipPublish }}'
         $metadataHash = @{}
-        $metadataHash["ReleaseTag"] = "$(ReleaseTag)"
-        # $metadataHash["AadClientId"] = '$(PmcCliClientID)'
-        $metadataHash["BlobFolderName"] = "$(ReleaseTag)"
+        # $metadataHash["ReleaseTag"] = "$(ReleaseTag)" # TODO: UNCOMMENT
+        $metadataHash["ReleaseTag"] = "v7.5.0.1"
         $metadataHash["LTS"] = $metadata.LTSRelease.Latest
         $metadataHash["ForProduction"] = $true
         $metadataHash["SkipPublish"] = $skipPublishVar
