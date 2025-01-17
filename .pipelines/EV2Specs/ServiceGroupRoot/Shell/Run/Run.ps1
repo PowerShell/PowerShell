@@ -1,3 +1,12 @@
+function Get-Info {
+    param(
+        [string]
+        $PkgName
+    )
+
+    Write-Verbose -Verbose "pkg name: $pkgName"
+}
+
 if ($null -eq $env:MAPPING_FILE)
 {
     Write-Verbose -Verbose "MAPPING_FILE variable didn't get passed correctly"
@@ -84,6 +93,7 @@ try {
     $skipPublish = $metadataContent.SkipPublish
     $lts = $metadataContent.LTS
     Write-Verbose -Verbose "skip publish: $skipPublish" #TODO: remove
+    Get-Info -PkgName "testing"
 
     if ($releaseVersion.Contains('-')) {
         $channel = 'preview'
