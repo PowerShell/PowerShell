@@ -219,7 +219,7 @@ try {
     {
         # RHEL and CentOS packages have a tweak in the name...
         if ($pkgObj.PackageName.EndsWith('.rpm')) { #TODO: can I do this in the 1 condensed method
-            $pkgObjName = $PackageName.Replace($releaseVersion, $releaseVersion.Replace('-', '_'))
+            $pkgObjName = $pkgObj.PackageName.Replace($releaseVersion, $releaseVersion.Replace('-', '_'))
         }
 
         $packagePath = "$pwshPackagesFolder/$pkgObjName"
