@@ -31,7 +31,7 @@
   "serviceResourceGroups": [
     {
       "azureResourceGroupName": "default",
-      "location": "East US",
+      "location": "West US 3",
       "instanceOf": "OneBranch-PowerShellDocker-RGDef",
       "azureSubscriptionId": "default",
         "scopeTags": [
