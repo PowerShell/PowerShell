@@ -102,94 +102,89 @@ try {
         $packageNames = @('powershell')
     }
 
+    # TODO: figure out where this comes in
+    # if ($LTS) {
+    #     $packageNames += @('powershell-lts')
+    # }
+
     Write-Verbose -Verbose "---Getting repository list---"
-    #$repoList = Get-RepoList -RepoConfigPath $configPath -OutFile $repoListPath #TODO: seems to require repoclient cli tool
+    # tbh, I don't know if repoList.json is really needed- confused what the purpose of that is
+    $rawResponse = pmc --config $configPath repo list --limit 8 #TODO: actually 800
+    $response = $rawResponse | ConvertFrom-Json
+    $limit = $($response.limit)
+    $count = $($response.count)
+    Write-Verbose -Verbose "limit is: $limit and count is: $count"
+    $repoList = $response.results
 
-    # # Get-PackageInfo()
-    # $mappingFilePath = Join-Path -Path "/package/unarchive/" -ChildPath "mapping.json"
-    # $mappingPathExists = Test-Path $mappingFilePath
-    # if (!$mappingPathExists)
-    # {
-    #     Write-Verbose -Verbose "mapping.json expected at $mappingFilePath does not exist"
-    #     return 1
-    # }
+    Write-Verbose -Verbose "---Getting package info---" #TODO rename once I get what it really does
+    # start of method
+    Write-Verbose "Reading mapping file from '$mappingFilePath'" -Verbose
+    $mapping = Get-Content -Raw -LiteralPath $mappingFilePath | ConvertFrom-Json -AsHashtable
+    $mappedReposUsedByPwsh = @()
+    foreach ($package in $mapping.Packages)
+    {
+        Write-Verbose "package: $package"
+        $packageChannel = $package.channel
+        if (!$packageChannel) {
+            $packageChannel = 'all'
+        }
 
-    # $mapping = Get-Content -Raw -LiteralPath $mappingFilePath | ConvertFrom-Json -AsHashtable
-    # foreach ($package in $mapping.Packages)
-    # {
-    #     Write-Verbose "package: $package"
-    #     $packageChannel = $package.channel
-    #     if (!$packageChannel) {
-    #         $packageChannel = 'all'
-    #     }
+        Write-Verbose "package channel: $packageChannel"
+        if ($packageChannel -eq 'all' -or $packageChannel -eq $channel)
+        {
+            $repoIds = [System.Collections.Generic.List[string]]::new()
+            $packageFormat = $package.PackageFormat
+            Write-Verbose "package format: $packageFormat" -Verbose
+            $extension = [System.io.path]::GetExtension($packageFormat)
+            $packageType = $extension -replace '^\.'
 
-    #     Write-Verbose "package channel: $packageChannel"
-    #     if ($packageChannel -eq 'all' -or $packageChannel -eq $Channel) {
-    #         $repoIds = [System.Collections.Generic.List[string]]::new()
-    #         $packageFormat = $package.PackageFormat
-    #         Write-Verbose "package format: $packageFormat" -Verbose
-    #         $extension = [System.io.path]::GetExtension($packageFormat)
-    #         $packageType = $extension -replace '^\.'
+            if ($package.distribution.count -gt 1) { # TODO: do we want to remove distribution stuff rn? ask.
+                throw "Package $($package | out-string) has more than one Distribution."
+            }
 
-    #         if ($package.distribution.count -gt 1) {
-    #             throw "Package $($package | out-string) has more than one Distribution."
-    #         }
+            foreach ($distribution in package.distribution)
+            {
+                $urlGlob = $package.url
+                switch ($packageType)
+                {
+                    'deb' {
+                        $urlGlob = $urlGlob + '-apt'
+                    }
+                    'rpm' {
+                        $urlGlob = $urlGlob + '-yum'
+                    }
+                    default {
+                        throw "Unknown package type: $packageType"
+                    }
+                }
 
-    #         foreach ($distribution in $package.distribution) {
-    #             $urlGlob = $package.url
-    #             switch ($packageType) {
-    #                 'deb' {
-    #                     $urlGlob = $urlGlob + '-apt'
-    #                 }
-    #                 'rpm' {
-    #                     $urlGlob = $urlGlob + '-yum'
-    #                 }
-    #                 default {
-    #                     throw "Unknown package type: $packageType"
-    #                 }
-    #             }
+                Write-Verbose "---Finding repo id for: $urlGlob---" -Verbose
+                $repos = $RepoList | Where-Object { $_.name -eq $urlGlob }
 
-    #             Write-Verbose "---Finding repo id for: $urlGlob---" -Verbose
+                if ($repos.id) {
+                    Write-Verbose "Found repo id: $($repos.id)" -Verbose
+                    $repoIds.AddRange(([string[]]$repos.id))
+                }
+                else {
+                    Write-Failure "Could not find repo for $urlGlob"
+                }
 
-    #             $repos = $repoList | Where-Object { $_.name -eq $urlGlob }
+                if ($repoIds.Count -gt 0) {
+                    $mappedReposUsedByPwsh += ($package + @{ "RepoId" = $repoIds.ToArray() }) #TODO: adjust output type for this as needed
+                }
+            }
+        }
+    }
 
-    #             if ($repos.id) {
-    #                 Write-Verbose "Found repo id: $($repos.id)" -Verbose
-    #                 $repoIds.AddRange(([string[]]$repos.id))
-    #             }
-    #             else {
-    #                 Write-Failure "Could not find repo for $urlGlob"
-    #             }
-    #         }
+    Write-Verbose -Verbose "mapped repos length: $($mappedReposUsedByPwsh.Length)"
+    # END of Get-PackageInfo()
 
-    #         if ($repoIds.Count -le 0) {
-    #             Write-Verbose -Verbose "no repoIds found that match our packages"
-    #             # Write-Output ($package + @{ "RepoId" = $repoIds.ToArray() })
-    #         }
+    #TODO: Anam: have some sort of object to contain output of the for loop
 
-    #         foreach ($pkg in $Package) {
-    #             if ($pkg.RepoId.count -gt 1) {
-    #                 throw "Package $($pkg.name) has more than one repo id."
-    #             }
-    #             if ($pkg.Distribution.count -gt 1) {
-    #                 throw "Package $($pkg.name) has more than one Distribution."
-    #             }
-    #             $repo = $pkg.RepoId | Select-Object -First 1
-    #             $distribution = $pkg.Distribution | Select-Object -First 1
-    #             foreach ($name in $PackageName) {
-    #                     $pkgName = $pkg.PackageFormat.Replace('PACKAGE_NAME', $name).Replace('POWERSHELL_RELEASE', $ReleaseVersion)
-    #                     Write-Verbose "Creating info object for package '$pkgName' for repo '$repo'"
-    #                 $result = [pscustomobject]@{
-    #                     PackageName  = $pkgName
-    #                     RepoId       = $repo
-    #                     Distribution = $distribution
-    #                 }
-    #                 Write-Verbose $result -Verbose
-    #                 Write-Output $result
-    #             }
-    #         }
-    #     }
-    # }
+    # # Publish the packages based on the mapping file
+    # $publishedPackages = Get-PackageInfo -MappingFile $MappingFilePath -RepoList $repoList -Channel $channel |
+    # New-RepoPackageObject -ReleaseVersion $releaseVersion -PackageName $packageNames |
+    # Publish-PackageFromBlob -PwshVersion $releaseVersion -ConfigPath $configPath -BlobUriPrefix "$BlobBaseUri/$BlobFolderName" -WhatIf:$WhatIfPreference
 
 
 }
