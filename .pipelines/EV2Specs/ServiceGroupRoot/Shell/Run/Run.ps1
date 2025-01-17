@@ -85,7 +85,7 @@ try {
     pip install /package/unarchive/Run/python_dl/*.whl
 
     Write-Verbose -Verbose "Test pmc-cli"
-    pmc -d -c $configPath repo list --accessible || exit 1
+    # pmc -d -c $configPath repo list --accessible || exit 1
 
     # Get metadata
     $channel = ""
@@ -109,7 +109,7 @@ try {
 
     Write-Verbose -Verbose "---Getting repository list---"
     # tbh, I don't know if repoList.json is really needed- confused what the purpose of that is
-    $rawResponse = pmc --config $configPath repo list --limit 8 #TODO: actually 800
+    $rawResponse = pmc --config $configPath repo list --limit 800
     $response = $rawResponse | ConvertFrom-Json
     $limit = $($response.limit)
     $count = $($response.count)
@@ -142,7 +142,7 @@ try {
                 throw "Package $($package | out-string) has more than one Distribution."
             }
 
-            foreach ($distribution in package.distribution)
+            foreach ($distribution in $package.distribution)
             {
                 $urlGlob = $package.url
                 switch ($packageType)
@@ -179,7 +179,9 @@ try {
     Write-Verbose -Verbose "mapped repos length: $($mappedReposUsedByPwsh.Length)"
     # END of Get-PackageInfo()
 
-    #TODO: Anam: have some sort of object to contain output of the for loop
+    # BEGIN New-RepoPackageObject()
+
+
 
     # # Publish the packages based on the mapping file
     # $publishedPackages = Get-PackageInfo -MappingFile $MappingFilePath -RepoList $repoList -Channel $channel |
