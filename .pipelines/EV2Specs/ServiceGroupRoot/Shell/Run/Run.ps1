@@ -1,10 +1,269 @@
-function Get-Info {
+<#
+This function gets info from pmc's derived list of all repositories and from mapping.json (which contains info on just the repositories powershell publishes packages to, their package formats, etc)
+to create a list of repositories PowerShell cares about along with repository Ids, repository full Urls and associated package that will be published to it.
+#>
+function Get-MappedRepositoryIds {
     param(
-        [string]
-        $PkgName
+        [Parameter(Mandatory)]
+        [hashtable]
+        $Mapping,
+
+        [Parameter(Mandatory)]
+        $RepoList,
+
+        # LTS is not consider a package in this context.
+        # LTS is just another package name.
+        [Parameter(Mandatory)]
+        [ValidateSet('stable', 'preview')]
+        $Channel
     )
 
-    Write-Verbose -Verbose "pkg name: $pkgName"
+    $mappedReposUsedByPwsh = @()
+    foreach ($package in $Mapping.Packages)
+    {
+        Write-Verbose "package: $package"
+        $packageChannel = $package.channel
+        if (!$packageChannel) {
+            $packageChannel = 'all'
+        }
+
+        Write-Verbose "package channel: $packageChannel"
+        if ($packageChannel -eq 'all' -or $packageChannel -eq $Channel)
+        {
+            $repoIds = [System.Collections.Generic.List[string]]::new()
+            $packageFormat = $package.PackageFormat
+            Write-Verbose "package format: $packageFormat" -Verbose
+            $extension = [System.io.path]::GetExtension($packageFormat)
+            $packageType = $extension -replace '^\.'
+
+            if ($package.distribution.count -gt 1) {
+                throw "Package $($package | out-string) has more than one Distribution."
+            }
+
+            foreach ($distribution in $package.distribution)
+            {
+                $urlGlob = $package.url
+                switch ($packageType)
+                {
+                    'deb' {
+                        $urlGlob = $urlGlob + '-apt'
+                    }
+                    'rpm' {
+                        $urlGlob = $urlGlob + '-yum'
+                    }
+                    default {
+                        throw "Unknown package type: $packageType"
+                    }
+                }
+
+                Write-Verbose "---Finding repo id for: $urlGlob---" -Verbose
+                $repos = $RepoList | Where-Object { $_.name -eq $urlGlob }
+
+                if ($repos.id) {
+                    Write-Verbose "Found repo id: $($repos.id)" -Verbose
+                    $repoIds.AddRange(([string[]]$repos.id)) #TODO seems like a package should only have 1 repo Id
+                }
+                else {
+                    Write-Failure "Could not find repo for $urlGlob"
+                }
+
+                if ($repoIds.Count -gt 0) {
+                    $mappedReposUsedByPwsh += ($package + @{ "RepoId" = $repoIds.ToArray() })
+                }
+            }
+        }
+    }
+
+    Write-Verbose -Verbose "mapped repos length: $($mappedReposUsedByPwsh.Length)"
+    return $mappedReposUsedByPwsh
+}
+
+<#
+This function resolves the package name and powershell version in the package name format.
+#>
+function Get-RepositoryPackageObject() {
+    param(
+        [Parameter(Mandatory)]
+        [psobject[]]
+        $RepoObjects,
+
+        [Parameter(Mandatory)]
+        [string]
+        $ReleaseVersion,
+
+        [Parameter(Mandatory)]
+        [string[]]
+        $PackageName
+    )
+
+    $packageObjects = @()
+    foreach ($pkg in $RepoObjects)
+    {
+        if ($pkg.RepoId.count -gt 1) {
+            throw "Package $($pkg.name) has more than one repo id."
+        }
+
+        if ($pkg.Distribution.count -gt 1) {
+            throw "Package $($pkg.name) has more than one Distribution."
+        }
+
+        $pkgRepo = $pkg.RepoId | Select-Object -First 1
+        $pkgDistribution = $pkg.Distribution | Select-Object -First 1
+
+        foreach ($name in $PackageName) {
+            $pkgName = $pkg.PackageFormat.Replace('PACKAGE_NAME', $name).Replace('POWERSHELL_RELEASE', $ReleaseVersion)
+            Write-Verbose "Creating info object for package '$pkgName' for repo '$pkgRepo'"
+            $result = [pscustomobject]@{
+                PackageName  = $pkgName
+                RepoId       = $pkgRepo
+                Distribution = $pkgDistribution
+            }
+
+            Write-Verbose $result -Verbose
+            $packageObjects += $result
+        }
+    }
+
+    Write-Verbose -Verbose "count of repoPackageObjects: $($packageObjects.Length)"
+
+}
+
+<#
+This function stages, uploads and publishes the powershell packages to their associated repositories in PMC.
+#>
+function Publish-PackageToPMC() {
+    param(
+        [Parameter(Mandatory)]
+        [pscustomobject[]]
+        $PackageObject,
+
+        [Parameter(Mandatory)]
+        [string]
+        $ReleaseVersion,
+
+        [bool]
+        $SkipPublish
+    )
+
+    $packages = @()
+
+    foreach ($pkgObj in $PackageObject)
+    {
+        # RHEL and CentOS packages have a tweak in the name...
+        if ($pkgObj.PackageName.EndsWith('.rpm')) { #TODO: can I do this in the 1 condensed method
+            $pkgObjName = $pkgObj.PackageName.Replace($ReleaseVersion, $ReleaseVersion.Replace('-', '_'))
+        }
+
+        $packagePath = "$pwshPackagesFolder/$pkgObjName"
+
+        $packages += @{
+            PackagePath = $packagePath
+            PackageName = $pkgObjName
+            RepoId = $pkgObj.RepoId
+            Distribution = $pkgObj.Distribution
+        }
+    }
+
+    # end block of Publish-PackageFromBlob()
+
+    # Don't fail outright when an error occurs, but instead pool them until
+    # after attempting to publish every package. That way we can choose to
+    # proceed for a partial failure.
+    $errorMessage = [System.Collections.Generic.List[string]]::new()
+    foreach ($finalPackage in $packages)
+    {
+        Write-Verbose "---Staging package: $($finalPackage.PackageName)---" -Verbose
+        $packagePath = $finalPackage.PackagePath
+        $pkgRepo = $finalPackage.RepoId
+
+        #TODO: should process if/else here- needed or nah?
+        $extension = [System.io.path]::GetExtension($packagePath)
+        $packageType = $extension -replace '^\.'
+        Write-Verbose "packageType: $packageType" -Verbose
+
+        $packageListJson = pmc --config $ConfigPath package $packageType list --file $packagePath
+        $list = $packageListJson | ConvertFrom-Json
+
+        $packageId = @()
+        if ($list.count -ne 0)
+        {
+            Write-Verbose "Package '$packagePath' already exists, skipping upload" -Verbose
+            $packageId = $list.results.id | Select-Object -First 1
+        }
+        else {
+            # PMC UPDATE COMMAND
+            Write-Verbose -Verbose "Uploading package, config: '$ConfigPath' package: '$packagePath'"
+            $uploadResult = $null
+            try {
+                $uploadResult = pmc --config $ConfigPath package upload $packagePath --type $packageType
+            }
+            catch {
+                $errorMessage.Add("Uploading package $($finalPackage.PackageName) to $pkgRepo failed. See errors above for details.")
+                continue
+            }
+
+            $packageId = ($uploadResult | ConvertFrom-Json).id
+        }
+
+        Write-Verbose "Got package ID: '$packageId'" -Verbose
+        $distribution = $finalPackage.Distribution | select-object -First 1
+        Write-Verbose "distribution: $distribution" -Verbose
+
+        if (!$SkipPublish)
+        {
+            Write-Verbose "---Publishing package: $($finalPackage.PackageName) to $pkgRepo---" -Verbose
+
+            if (($packageType -ne 'rpm') -and ($packageType -ne 'deb'))
+            {
+                throw "Unsupported package type: $packageType"
+                return 1
+            }
+            else {
+                # UPDATE PMC COMMAND
+                $rawUpdateResponse = $null
+                try {
+                    if ($packageType -eq 'rpm') {
+                        $rawUpdateResponse = pmc --config $ConfigPath repo package update $pkgRepo --add-packages $packageId
+                    } elseif ($packageType -eq 'deb') {
+                        $rawUpdateResponse = pmc --config $ConfigPath repo package update $pkgRepo $distribution --add-packages $packageId
+                    }
+                }
+                catch {
+                    $errorMessage.Add("Invoking update for package $($finalPackage.PackageName) to $pkgRepo failed. See errors above for details.")
+                    continue
+                }
+
+                $state = $rawUpdateResponse.state
+                if ($state -ne 'Completed') {
+                    $errorMessage.Add("Publishing package $($finalPackage.PackageName) to $pkgRepo failed: $rawUpdateResponse")
+                    continue
+                }
+            }
+
+            # PUBLISH PMC COMMAND
+            # The CLI outputs messages and JSON in the same stream, so we must sift through it for now
+            # This is planned to be fixed with a switch in a later release
+            Write-Verbose -Verbose ([pscustomobject]($package + @{
+                PackageId = $packageId
+            }))
+
+            # At this point, the changes are staged and will eventually be publish.
+            # Running publish, causes them to go live "immediately"
+            try {
+                pmc --config $ConfigPath repo publish $pkgRepo
+            }
+            catch {
+                $errorMessage.Add("Running final publish for package $($finalPackage.PackageName) to $pkgRepo failed. See errors above for details.")
+                continue
+            }
+        } else {
+            Write-Verbose -Verbose "Skipping Uploading package --config-file '$ConfigPath' package add '$packagePath' --repoID '$pkgRepo'"
+        }
+    }
+
+    if ($errorMessage) {
+        throw $errorMessage -join [Environment]::NewLine
+    }
 }
 
 if ($null -eq $env:MAPPING_FILE)
@@ -117,222 +376,225 @@ try {
     $repoList = $response.results
 
     Write-Verbose -Verbose "---Getting package info---"
-    # BEGIN Get-PackageInfo()
-    # for the packages powershell publishes to, resolve it's mapping with the directory of repos and basically map our packages to their actual repo Ids
+
+
     Write-Verbose "Reading mapping file from '$mappingFilePath'" -Verbose
     $mapping = Get-Content -Raw -LiteralPath $mappingFilePath | ConvertFrom-Json -AsHashtable
-    $mappedReposUsedByPwsh = @()
-    foreach ($package in $mapping.Packages)
-    {
-        Write-Verbose "package: $package"
-        $packageChannel = $package.channel
-        if (!$packageChannel) {
-            $packageChannel = 'all'
-        }
+    $mappedReposUsedByPwsh = Get-MappedRepositoryIds -Mapping $mapping -RepoList $repoList -Channel $channel
+    $repoPackageObjects = Get-RepositoryPackageObject -RepoObjects $mappedReposUsedByPwsh -PackageName $packageNames -ReleaseVersion $releaseVersion
+    Write-Verbose -Verbose "skip publish $skipPublish"
+    # Publish-PackageToPMC -PackageObject $repoPackageObjects -ReleaseVersion $releaseVersion -ConfigPath $configPath -SkipPublish $skipPublish
+    # foreach ($package in $mapping.Packages)
+    # {
+    #     Write-Verbose "package: $package"
+    #     $packageChannel = $package.channel
+    #     if (!$packageChannel) {
+    #         $packageChannel = 'all'
+    #     }
 
-        Write-Verbose "package channel: $packageChannel"
-        if ($packageChannel -eq 'all' -or $packageChannel -eq $channel)
-        {
-            $repoIds = [System.Collections.Generic.List[string]]::new()
-            $packageFormat = $package.PackageFormat
-            Write-Verbose "package format: $packageFormat" -Verbose
-            $extension = [System.io.path]::GetExtension($packageFormat)
-            $packageType = $extension -replace '^\.'
+    #     Write-Verbose "package channel: $packageChannel"
+    #     if ($packageChannel -eq 'all' -or $packageChannel -eq $channel)
+    #     {
+    #         $repoIds = [System.Collections.Generic.List[string]]::new()
+    #         $packageFormat = $package.PackageFormat
+    #         Write-Verbose "package format: $packageFormat" -Verbose
+    #         $extension = [System.io.path]::GetExtension($packageFormat)
+    #         $packageType = $extension -replace '^\.'
 
-            if ($package.distribution.count -gt 1) {
-                throw "Package $($package | out-string) has more than one Distribution."
-            }
+    #         if ($package.distribution.count -gt 1) {
+    #             throw "Package $($package | out-string) has more than one Distribution."
+    #         }
 
-            foreach ($distribution in $package.distribution)
-            {
-                $urlGlob = $package.url
-                switch ($packageType)
-                {
-                    'deb' {
-                        $urlGlob = $urlGlob + '-apt'
-                    }
-                    'rpm' {
-                        $urlGlob = $urlGlob + '-yum'
-                    }
-                    default {
-                        throw "Unknown package type: $packageType"
-                    }
-                }
+    #         foreach ($distribution in $package.distribution)
+    #         {
+    #             $urlGlob = $package.url
+    #             switch ($packageType)
+    #             {
+    #                 'deb' {
+    #                     $urlGlob = $urlGlob + '-apt'
+    #                 }
+    #                 'rpm' {
+    #                     $urlGlob = $urlGlob + '-yum'
+    #                 }
+    #                 default {
+    #                     throw "Unknown package type: $packageType"
+    #                 }
+    #             }
 
-                Write-Verbose "---Finding repo id for: $urlGlob---" -Verbose
-                $repos = $repoList | Where-Object { $_.name -eq $urlGlob }
+    #             Write-Verbose "---Finding repo id for: $urlGlob---" -Verbose
+    #             $repos = $repoList | Where-Object { $_.name -eq $urlGlob }
 
-                if ($repos.id) {
-                    Write-Verbose "Found repo id: $($repos.id)" -Verbose
-                    $repoIds.AddRange(([string[]]$repos.id)) #tbh seems like a package should only have 1 repo Id
-                }
-                else {
-                    Write-Failure "Could not find repo for $urlGlob"
-                }
+    #             if ($repos.id) {
+    #                 Write-Verbose "Found repo id: $($repos.id)" -Verbose
+    #                 $repoIds.AddRange(([string[]]$repos.id)) #tbh seems like a package should only have 1 repo Id
+    #             }
+    #             else {
+    #                 Write-Failure "Could not find repo for $urlGlob"
+    #             }
 
-                if ($repoIds.Count -gt 0) {
-                    $mappedReposUsedByPwsh += ($package + @{ "RepoId" = $repoIds.ToArray() })
-                }
-            }
-        }
-    }
+    #             if ($repoIds.Count -gt 0) {
+    #                 $mappedReposUsedByPwsh += ($package + @{ "RepoId" = $repoIds.ToArray() })
+    #             }
+    #         }
+    #     }
+    # }
 
-    Write-Verbose -Verbose "mapped repos length: $($mappedReposUsedByPwsh.Length)"
-    # END of Get-PackageInfo()
+    # Write-Verbose -Verbose "mapped repos length: $($mappedReposUsedByPwsh.Length)"
+    # # END of Get-PackageInfo()
 
     # BEGIN New-RepoPackageObject()
-    $repoPackageObjects = @()
-    foreach ($pkg in $mappedReposUsedByPwsh)
-    {
-        if ($pkg.RepoId.count -gt 1) {
-            throw "Package $($pkg.name) has more than one repo id."
-        }
+    # $repoPackageObjects = @()
+    # foreach ($pkg in $mappedReposUsedByPwsh)
+    # {
+    #     if ($pkg.RepoId.count -gt 1) {
+    #         throw "Package $($pkg.name) has more than one repo id."
+    #     }
 
-        if ($pkg.Distribution.count -gt 1) {
-            throw "Package $($pkg.name) has more than one Distribution."
-        }
+    #     if ($pkg.Distribution.count -gt 1) {
+    #         throw "Package $($pkg.name) has more than one Distribution."
+    #     }
 
-        $pkgRepo = $pkg.RepoId | Select-Object -First 1
-        $pkgDistribution = $pkg.Distribution | Select-Object -First 1
+    #     $pkgRepo = $pkg.RepoId | Select-Object -First 1
+    #     $pkgDistribution = $pkg.Distribution | Select-Object -First 1
 
-        foreach ($name in $packageNames) {
-            $pkgName = $pkg.PackageFormat.Replace('PACKAGE_NAME', $name).Replace('POWERSHELL_RELEASE', $releaseVersion)
-            Write-Verbose "Creating info object for package '$pkgName' for repo '$pkgRepo'"
-            $result = [pscustomobject]@{
-                PackageName  = $pkgName
-                RepoId       = $pkgRepo
-                Distribution = $pkgDistribution
-            }
+    #     foreach ($name in $packageNames) {
+    #         $pkgName = $pkg.PackageFormat.Replace('PACKAGE_NAME', $name).Replace('POWERSHELL_RELEASE', $releaseVersion)
+    #         Write-Verbose "Creating info object for package '$pkgName' for repo '$pkgRepo'"
+    #         $result = [pscustomobject]@{
+    #             PackageName  = $pkgName
+    #             RepoId       = $pkgRepo
+    #             Distribution = $pkgDistribution
+    #         }
 
-            Write-Verbose $result -Verbose
-            $repoPackageObjects += $result
-        }
-    }
-    # END of New-RepoPackageObject() - I think this and the method before can be combined
+    #         Write-Verbose $result -Verbose
+    #         $repoPackageObjects += $result
+    #     }
+    # }
+    # # END of New-RepoPackageObject() - I think this and the method before can be combined
 
-    Write-Verbose -Verbose "count of repoPackageObjects: $($repoPackageObjects.Length)"
+    # Write-Verbose -Verbose "count of repoPackageObjects: $($repoPackageObjects.Length)"
 
-    # BEGIN Publish-PackageFromBlob()
-    $packages = @()
+    # # BEGIN Publish-PackageFromBlob()
+    # $packages = @()
 
-    foreach ($pkgObj in $repoPackageObjects)
-    {
-        # RHEL and CentOS packages have a tweak in the name...
-        if ($pkgObj.PackageName.EndsWith('.rpm')) { #TODO: can I do this in the 1 condensed method
-            $pkgObjName = $pkgObj.PackageName.Replace($releaseVersion, $releaseVersion.Replace('-', '_'))
-        }
+    # foreach ($pkgObj in $repoPackageObjects)
+    # {
+    #     # RHEL and CentOS packages have a tweak in the name...
+    #     if ($pkgObj.PackageName.EndsWith('.rpm')) { #TODO: can I do this in the 1 condensed method
+    #         $pkgObjName = $pkgObj.PackageName.Replace($releaseVersion, $releaseVersion.Replace('-', '_'))
+    #     }
 
-        $packagePath = "$pwshPackagesFolder/$pkgObjName"
+    #     $packagePath = "$pwshPackagesFolder/$pkgObjName"
 
-        $packages += @{
-            PackagePath = $packagePath
-            PackageName = $pkgObjName
-            RepoId = $pkgObj.RepoId
-            Distribution = $pkgObj.Distribution
-        }
-    }
+    #     $packages += @{
+    #         PackagePath = $packagePath
+    #         PackageName = $pkgObjName
+    #         RepoId = $pkgObj.RepoId
+    #         Distribution = $pkgObj.Distribution
+    #     }
+    # }
 
-    # end block of Publish-PackageFromBlob()
+    # # end block of Publish-PackageFromBlob()
 
-    # Don't fail outright when an error occurs, but instead pool them until
-    # after attempting to publish every package. That way we can choose to
-    # proceed for a partial failure.
-    $errorMessage = [System.Collections.Generic.List[string]]::new()
-    foreach ($finalPackage in $packages)
-    {
-        Write-Verbose "---Staging package: $($finalPackage.PackageName)---" -Verbose
-        $packagePath = $finalPackage.PackagePath
-        $pkgRepo = $finalPackage.RepoId
+    # # Don't fail outright when an error occurs, but instead pool them until
+    # # after attempting to publish every package. That way we can choose to
+    # # proceed for a partial failure.
+    # $errorMessage = [System.Collections.Generic.List[string]]::new()
+    # foreach ($finalPackage in $packages)
+    # {
+    #     Write-Verbose "---Staging package: $($finalPackage.PackageName)---" -Verbose
+    #     $packagePath = $finalPackage.PackagePath
+    #     $pkgRepo = $finalPackage.RepoId
 
-        #TODO: should process if/else here- needed or nah?
-        $extension = [System.io.path]::GetExtension($packagePath)
-        $packageType = $extension -replace '^\.'
-        Write-Verbose "packageType: $packageType" -Verbose
+    #     #TODO: should process if/else here- needed or nah?
+    #     $extension = [System.io.path]::GetExtension($packagePath)
+    #     $packageType = $extension -replace '^\.'
+    #     Write-Verbose "packageType: $packageType" -Verbose
 
-        $packageListJson = pmc --config $configPath package $packageType list --file $packagePath
-        $list = $packageListJson | ConvertFrom-Json
+    #     $packageListJson = pmc --config $configPath package $packageType list --file $packagePath
+    #     $list = $packageListJson | ConvertFrom-Json
 
-        $packageId = @()
-        if ($list.count -ne 0)
-        {
-            Write-Verbose "Package '$packagePath' already exists, skipping upload" -Verbose
-            $packageId = $list.results.id | Select-Object -First 1
-        }
-        else {
-            # PMC UPDATE COMMAND
-            Write-Verbose -Verbose "Uploading package, config: '$configPath' package: '$packagePath'"
-            $uploadResult = $null
-            try {
-                $uploadResult = pmc --config $configPath package upload $packagePath --type $packageType
-            }
-            catch {
-                $errorMessage.Add("Uploading package $($finalPackage.PackageName) to $pkgRepo failed. See errors above for details.")
-                continue
-            }
+    #     $packageId = @()
+    #     if ($list.count -ne 0)
+    #     {
+    #         Write-Verbose "Package '$packagePath' already exists, skipping upload" -Verbose
+    #         $packageId = $list.results.id | Select-Object -First 1
+    #     }
+    #     else {
+    #         # PMC UPDATE COMMAND
+    #         Write-Verbose -Verbose "Uploading package, config: '$configPath' package: '$packagePath'"
+    #         $uploadResult = $null
+    #         try {
+    #             $uploadResult = pmc --config $configPath package upload $packagePath --type $packageType
+    #         }
+    #         catch {
+    #             $errorMessage.Add("Uploading package $($finalPackage.PackageName) to $pkgRepo failed. See errors above for details.")
+    #             continue
+    #         }
 
-            $packageId = ($uploadResult | ConvertFrom-Json).id
-        }
+    #         $packageId = ($uploadResult | ConvertFrom-Json).id
+    #     }
 
-        Write-Verbose "Got package ID: '$packageId'" -Verbose
-        $distribution = $finalPackage.Distribution | select-object -First 1
-        Write-Verbose "distribution: $distribution" -Verbose
+    #     Write-Verbose "Got package ID: '$packageId'" -Verbose
+    #     $distribution = $finalPackage.Distribution | select-object -First 1
+    #     Write-Verbose "distribution: $distribution" -Verbose
 
-        if (!$skipPublish)
-        {
-            Write-Verbose "---Publishing package: $($finalPackage.PackageName) to $pkgRepo---" -Verbose
+    #     if (!$skipPublish)
+    #     {
+    #         Write-Verbose "---Publishing package: $($finalPackage.PackageName) to $pkgRepo---" -Verbose
 
-            if (($packageType -ne 'rpm') -and ($packageType -ne 'deb'))
-            {
-                throw "Unsupported package type: $packageType"
-                return 1
-            }
-            else {
-                # UPDATE PMC COMMAND
-                $rawUpdateResponse = $null
-                try {
-                    if ($packageType -eq 'rpm') {
-                        $rawUpdateResponse = pmc --config $configPath repo package update $pkgRepo --add-packages $packageId
-                    } elseif ($packageType -eq 'deb') {
-                        $rawUpdateResponse = pmc --config $configPath repo package update $pkgRepo $distribution --add-packages $packageId
-                    }
-                }
-                catch {
-                    $errorMessage.Add("Invoking update for package $($finalPackage.PackageName) to $pkgRepo failed. See errors above for details.")
-                    continue
-                }
+    #         if (($packageType -ne 'rpm') -and ($packageType -ne 'deb'))
+    #         {
+    #             throw "Unsupported package type: $packageType"
+    #             return 1
+    #         }
+    #         else {
+    #             # UPDATE PMC COMMAND
+    #             $rawUpdateResponse = $null
+    #             try {
+    #                 if ($packageType -eq 'rpm') {
+    #                     $rawUpdateResponse = pmc --config $configPath repo package update $pkgRepo --add-packages $packageId
+    #                 } elseif ($packageType -eq 'deb') {
+    #                     $rawUpdateResponse = pmc --config $configPath repo package update $pkgRepo $distribution --add-packages $packageId
+    #                 }
+    #             }
+    #             catch {
+    #                 $errorMessage.Add("Invoking update for package $($finalPackage.PackageName) to $pkgRepo failed. See errors above for details.")
+    #                 continue
+    #             }
 
-                $state = $rawUpdateResponse.state
-                if ($state -ne 'Completed') {
-                    $errorMessage.Add("Publishing package $($finalPackage.PackageName) to $pkgRepo failed: $rawUpdateResponse")
-                    continue
-                }
-            }
+    #             $state = $rawUpdateResponse.state
+    #             if ($state -ne 'Completed') {
+    #                 $errorMessage.Add("Publishing package $($finalPackage.PackageName) to $pkgRepo failed: $rawUpdateResponse")
+    #                 continue
+    #             }
+    #         }
 
-            # PUBLISH PMC COMMAND
-            # The CLI outputs messages and JSON in the same stream, so we must sift through it for now
-            # This is planned to be fixed with a switch in a later release
-            # TODO: Anam, figure out if this was fixed, and if so lets use this switch
-            Write-Verbose -Verbose ([pscustomobject]($package + @{
-                PackageId = $packageId
-            }))
+    #         # PUBLISH PMC COMMAND
+    #         # The CLI outputs messages and JSON in the same stream, so we must sift through it for now
+    #         # This is planned to be fixed with a switch in a later release
+    #         # TODO: Anam, figure out if this was fixed, and if so lets use this switch
+    #         Write-Verbose -Verbose ([pscustomobject]($package + @{
+    #             PackageId = $packageId
+    #         }))
 
-            # At this point, the changes are staged and will eventually be publish.
-            # Running publish, causes them to go live "immediately"
-            try {
-                pmc --config $configPath repo publish $pkgRepo
-            }
-            catch {
-                $errorMessage.Add("Running final publish for package $($finalPackage.PackageName) to $pkgRepo failed. See errors above for details.")
-                continue
-            }
-        } else {
-            Write-Verbose -Verbose "Skipping Uploading package --config-file '$configPath' package add '$packagePath' --repoID '$pkgRepo'"
-        }
-    }
+    #         # At this point, the changes are staged and will eventually be publish.
+    #         # Running publish, causes them to go live "immediately"
+    #         try {
+    #             pmc --config $configPath repo publish $pkgRepo
+    #         }
+    #         catch {
+    #             $errorMessage.Add("Running final publish for package $($finalPackage.PackageName) to $pkgRepo failed. See errors above for details.")
+    #             continue
+    #         }
+    #     } else {
+    #         Write-Verbose -Verbose "Skipping Uploading package --config-file '$configPath' package add '$packagePath' --repoID '$pkgRepo'"
+    #     }
+    # }
 
-    if ($errorMessage) {
-        throw $errorMessage -join [Environment]::NewLine
-    }
+    # if ($errorMessage) {
+    #     throw $errorMessage -join [Environment]::NewLine
+    # }
 }
 catch {
     Write-Error -ErrorAction Stop $_.Exception.Message
