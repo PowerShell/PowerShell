@@ -200,7 +200,7 @@ try {
             Write-Verbose "Creating info object for package '$pkgName' for repo '$pkgRepo'"
             $result = [pscustomobject]@{
                 PackageName  = $pkgName
-                RepoId       = $repo
+                RepoId       = $pkgRepo
                 Distribution = $pkgDistribution
             }
 
@@ -212,9 +212,133 @@ try {
 
     Write-Verbose -Verbose "count of repoPackageObjects: $($repoPackageObjects.Length)"
 
-    # BEGIN Publish-PackageFromBlob()
+    # # BEGIN Publish-PackageFromBlob()
+    # $packagePaths = @() #TODO: why is this needed/collected??
+    # $packages = @()
 
+    # foreach ($pkgObj in $repoPackageObjects)
+    # {
+    #     # RHEL and CentOS packages have a tweak in the name...
+    #     if ($pkgObj.PackageName.EndsWith('.rpm')) { #TODO: can I do this in the 1 condensed method
+    #         $pkgObjName = $PackageName.Replace($releaseVersion, $releaseVersion.Replace('-', '_'))
+    #     }
 
+    #     $packagePath = "$TempDirPath/$pkgObjName" #TODO now: resolve correctly!
+
+    #     # For blob downloads they download each package once, not sure why line304 is happening-> $packagePaths += $packagePath
+
+    #     $packages += @{
+    #         PackagePath = $packagePath
+    #         PackageName = $pkgObjName
+    #         RepoId = $pkgObj.RepoId
+    #         Distribution = $pkgObj.Distribution #TODO remove later
+    #     }
+    # }
+
+    # # end block of Publish-PackageFromBlob()
+
+    # # Don't fail outright when an error occurs, but instead pool them until
+    # # after attempting to publish every package. That way we can choose to
+    # # proceed for a partial failure.
+    # $errorMessage = [System.Collections.Generic.List[string]]::new()
+    # foreach ($finalPackage in $packages)
+    # {
+    #     Write-Verbose "---Staging package: $($finalPackage.PackageName)---" -Verbose
+    #     $packagePath = $finalPackage.PackagePath
+    #     $pkgRepo = $finalPackage.RepoId
+
+    #     #TODO: should process if/else here- needed or nah?
+    #     $extension = [System.io.path]::GetExtension($packagePath)
+    #     $packageType = $extension -replace '^\.'
+    #     Write-Verbose "packageType: $packageType" -Verbose
+
+    #     $packageListJson = pmc --config $configPath package $packageType list --file $packagePath
+    #     $list = $packageListJson | ConvertFrom-Json
+
+    #     $packageId = @() #TODO: powershell doesn't need it but for my sanity
+    #     if ($list.count -ne 0)
+    #     {
+    #         Write-Verbose "Package '$packagePath' already exists, skipping upload" -Verbose
+    #         $packageId = $list.results.id | Select-Object -First 1
+    #     }
+    #     else {
+    #         # PMC UPDATE COMMAND
+    #         Write-Verbose -Verbose "Uploading package, config: '$configPath' package: '$packagePath'"
+    #         $uploadResult = $null
+    #         try {
+    #             $uploadResult = pmc --config $configPath package upload $packagePath --type $packageType
+    #         }
+    #         catch {
+    #             $errorMessage.Add("Uploading package $($finalPackage.PackageName) to $pkgRepo failed. See errors above for details.")
+    #             continue
+    #         }
+
+    #         $packageId = ($uploadResult | ConvertFrom-Json).id
+    #     }
+
+    #     Write-Verbose "Got package ID: '$packageId'" -Verbose
+    #     $distribution = $finalPackage.Distribution | select-object -First 1
+    #     Write-Verbose "distribution: $distribution" -Verbose
+
+    #     if (!$SkipPublish)
+    #     {
+    #         # TODO: important, do we even have this? need this?
+    #         Write-Verbose "---Publishing package: $($finalPackage.PackageName) to $pkgRepo---" -Verbose
+
+    #         if (($packageType -ne 'rpm') -and ($packageType -ne 'deb'))
+    #         {
+    #             throw "Unsupported package type: $packageType"
+    #             return 1
+    #         }
+    #         else {
+    #             # UPDATE PMC COMMAND
+    #             $rawUpdateResponse = $null
+    #             try {
+    #                 if ($packageType -eq 'rpm') {
+    #                     $rawUpdateResponse = pmc --config $configPath repo package update $pkgRepo --add-packages $packageId
+    #                 } elseif ($packageType -eq 'deb') {
+    #                     $rawUpdateResponse = pmc --config $configPath repo package update $pkgRepo $distribution --add-packages $packageId #TODO: if the distribution is not needed, probs can be simplified
+    #                 }
+    #             }
+    #             catch {
+    #                 $errorMessage.Add("Invoking update for package $($finalPackage.PackageName) to $pkgRepo failed. See errors above for details.")
+    #                 continue
+    #             }
+
+    #             $state = $rawUpdateResponse.state
+    #             if ($state -ne 'Completed') {
+    #                 $errorMessage.Add("Publishing package $($finalPackage.PackageName) to $pkgRepo failed: $rawUpdateResponse")
+    #                 continue
+    #             }
+    #         }
+
+    #         # PUBLISH PMC COMMAND
+    #         # The CLI outputs messages and JSON in the same stream, so we must sift through it for now
+    #         # This is planned to be fixed with a switch in a later release
+    #         # TODO: Anam, figure out if this was fixed, and if so lets use this switch
+    #         Write-Output ([pscustomobject]($package + @{
+    #             PackageId = $packageId
+    #         }))
+
+    #         # At this point, the changes are staged and will eventually be publish.
+    #         # Running publish, causes them to go live "immediately"
+    #         try {
+    #             pmc --config $configPath repo publish $pkgRepo
+    #         }
+    #         catch {
+    #             $errorMessage.Add("Running final publish for package $($finalPackage.PackageName) to $pkgRepo failed. See errors above for details.")
+    #             continue
+    #         }
+    #     } else {
+    #         Write-Verbose -Verbose "Skipping Uploading package --config-file '$configPath' package add '$packagePath' --repoID '$pkgRepo'"
+    #     }
+    # }
+
+    # if ($errorMessage) {
+    #     throw $errorMessage -join [Environment]::NewLine
+    # }
+
+    # END Publish-PackageFromBlob()
     # # Publish the packages based on the mapping file
     # $publishedPackages = Get-PackageInfo -MappingFile $MappingFilePath -RepoList $repoList -Channel $channel |
     # New-RepoPackageObject -ReleaseVersion $releaseVersion -PackageName $packageNames |
