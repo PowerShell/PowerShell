@@ -1,3 +1,7 @@
+parameters:
+- name: skipPublish
+  default: false
+
 stages:
 - stage: PrepForEV2
   displayName: 'Copy and prep all files needed for EV2 stage'

@@ -4,12 +4,6 @@ if ($null -eq $env:MAPPING_FILE)
     return 1
 }
 
-if ($null -eq $env:REPO_LIST_FILE)
-{
-    Write-Verbose -Verbose "REPO_LIST_FILE variable didn't get passed correctly"
-    return 1
-}
-
 if ($null -eq $env:PWSH_PACKAGES_TARGZIP)
 {
     Write-Verbose -Verbose "PWSH_PACKAGES_TARGZIP variable didn't get passed correctly"
@@ -25,19 +19,10 @@ if ($null -eq $env:PMC_METADATA)
 try {
     Write-Verbose -Verbose "Downloading files"
     Invoke-WebRequest -Uri $env:MAPPING_FILE -OutFile mapping.json
-    Invoke-WebRequest -Uri $env:REPO_LIST_FILE -OutFile repoList.json
     Invoke-WebRequest -Uri $env:PWSH_PACKAGES_TARGZIP -OutFile packages.tar.gz
     Invoke-WebRequest -Uri $env:PMC_METADATA -OutFile pmcMetadata.json
 
     # create variables to those paths and test them
-    $repoListFilePath = Join-Path -Path "/package/unarchive/" -ChildPath "repoList.json"
-    $repoListPathExists = Test-Path $repoListFilePath
-    if (!$repoListPathExists)
-    {
-        Write-Verbose -Verbose "repoList.json expected at $repoListFilePath does not exist"
-        return 1
-    }
-
     $mappingFilePath = Join-Path "/package/unarchive/" -ChildPath "mapping.json"
     $mappingFilePathExists = Test-Path $mappingFilePath
     if (!$mappingFilePathExists)
@@ -96,6 +81,9 @@ try {
     $packageNames = @()
     $metadataContent = Get-Content -Path $metadataFilePath | ConvertFrom-Json
     $releaseVersion = $metadataContent.ReleaseTag
+    $skipPublish = $metadataContent.SkipPublish
+    $lts = $metadataContent.LTS
+    Write-Verbose -Verbose "skip publish: $skipPublish" #TODO: remove
 
     if ($releaseVersion.Contains('-')) {
         $channel = 'preview'
@@ -106,21 +94,19 @@ try {
         $packageNames = @('powershell')
     }
 
-    # TODO: figure out where this comes in
-    # if ($LTS) {
-    #     $packageNames += @('powershell-lts')
-    # }
+    if ($lts) {
+        $packageNames += @('powershell-lts')
+    }
 
     Write-Verbose -Verbose "---Getting repository list---"
-    # tbh, I don't know if repoList.json is really needed- confused what the purpose of that is
     $rawResponse = pmc --config $configPath repo list --limit 800
     $response = $rawResponse | ConvertFrom-Json
     $limit = $($response.limit)
     $count = $($response.count)
-    Write-Verbose -Verbose "limit is: $limit and count is: $count"
+    Write-Verbose -Verbose "'pmc repo list' limit is: $limit and count is: $count"
     $repoList = $response.results
 
-    Write-Verbose -Verbose "---Getting package info---" #TODO rename once I get what it really does
+    Write-Verbose -Verbose "---Getting package info---"
     # BEGIN Get-PackageInfo()
     # for the packages powershell publishes to, resolve it's mapping with the directory of repos and basically map our packages to their actual repo Ids
     Write-Verbose "Reading mapping file from '$mappingFilePath'" -Verbose
@@ -143,7 +129,7 @@ try {
             $extension = [System.io.path]::GetExtension($packageFormat)
             $packageType = $extension -replace '^\.'
 
-            if ($package.distribution.count -gt 1) { # TODO: do we want to remove distribution stuff rn? ask.
+            if ($package.distribution.count -gt 1) {
                 throw "Package $($package | out-string) has more than one Distribution."
             }
 
@@ -164,7 +150,7 @@ try {
                 }
 
                 Write-Verbose "---Finding repo id for: $urlGlob---" -Verbose
-                $repos = $RepoList | Where-Object { $_.name -eq $urlGlob }
+                $repos = $repoList | Where-Object { $_.name -eq $urlGlob }
 
                 if ($repos.id) {
                     Write-Verbose "Found repo id: $($repos.id)" -Verbose
@@ -175,7 +161,7 @@ try {
                 }
 
                 if ($repoIds.Count -gt 0) {
-                    $mappedReposUsedByPwsh += ($package + @{ "RepoId" = $repoIds.ToArray() }) #TODO: adjust output type for this as needed
+                    $mappedReposUsedByPwsh += ($package + @{ "RepoId" = $repoIds.ToArray() })
                 }
             }
         }
@@ -232,7 +218,7 @@ try {
     #         PackagePath = $packagePath
     #         PackageName = $pkgObjName
     #         RepoId = $pkgObj.RepoId
-    #         Distribution = $pkgObj.Distribution #TODO remove later
+    #         Distribution = $pkgObj.Distribution
     #     }
     # }
 
@@ -256,7 +242,7 @@ try {
     #     $packageListJson = pmc --config $configPath package $packageType list --file $packagePath
     #     $list = $packageListJson | ConvertFrom-Json
 
-    #     $packageId = @() #TODO: powershell doesn't need it but for my sanity
+    #     $packageId = @()
     #     if ($list.count -ne 0)
     #     {
     #         Write-Verbose "Package '$packagePath' already exists, skipping upload" -Verbose
@@ -281,9 +267,8 @@ try {
     #     $distribution = $finalPackage.Distribution | select-object -First 1
     #     Write-Verbose "distribution: $distribution" -Verbose
 
-    #     if (!$SkipPublish)
+    #     if (!$skipPublish)
     #     {
-    #         # TODO: important, do we even have SkipPublish? need this?
     #         Write-Verbose "---Publishing package: $($finalPackage.PackageName) to $pkgRepo---" -Verbose
 
     #         if (($packageType -ne 'rpm') -and ($packageType -ne 'deb'))
@@ -298,7 +283,7 @@ try {
     #                 if ($packageType -eq 'rpm') {
     #                     $rawUpdateResponse = pmc --config $configPath repo package update $pkgRepo --add-packages $packageId
     #                 } elseif ($packageType -eq 'deb') {
-    #                     $rawUpdateResponse = pmc --config $configPath repo package update $pkgRepo $distribution --add-packages $packageId #TODO: if the distribution is not needed, probs can be simplified
+    #                     $rawUpdateResponse = pmc --config $configPath repo package update $pkgRepo $distribution --add-packages $packageId
     #                 }
     #             }
     #             catch {

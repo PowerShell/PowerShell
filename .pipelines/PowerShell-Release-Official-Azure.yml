@@ -96,6 +96,8 @@ extends:
       tsaOptionsFile: .config\tsaoptions.json
     stages:
       - template: /.pipelines/templates/release-prep-for-ev2.yml@self
+        parameters:
+          skipPublish: ${{ parameters.skipPublish }}
 
       - template: /.pipelines/templates/release-publish-pmc.yml@self
 

@@ -1,5 +1,6 @@
 parameters:
-  restorePhase: false
+- name: restorePhase
+  default: false
 
 steps:
 - pwsh: |
