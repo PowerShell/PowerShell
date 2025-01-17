@@ -167,7 +167,7 @@ phases:
     jobName: InstallPowerShellWindowsVersion
     pool: windows-latest
     verification: |
-      $newVersion = &$env:LOCALAPPDATA\Microsoft\powershell-7.3.6\pwsh -v
+      $newVersion = &$env:LOCALAPPDATA\Microsoft\powershell-7.4.6\pwsh -v
       $newVersion -match '^PowerShell ((\d*\.\d*\.\d*)(-\w*(\.\d*)?)?){1}'
       $versionOnly = $Matches[2]
       Write-verbose "$newVersion; versionOnly: $versionOnly" -verbose
@@ -183,11 +183,11 @@ phases:
     jobName: InstallPowerShellWindowsVersionDestination
     pool: windows-latest
     verification: |
-      $newVersion = &$env:LOCALAPPDATA\Microsoft\pwsh-7.3.6\pwsh -v
+      $newVersion = &$env:LOCALAPPDATA\Microsoft\pwsh-7.4.6\pwsh -v
       $newVersion -match '^PowerShell ((\d*\.\d*\.\d*)(-\w*(\.\d*)?)?){1}'
       $versionOnly = $Matches[2]
       Write-verbose "$newVersion; versionOnly: $versionOnly" -verbose
-      if ([Version]$versionOnly -ne [version]"7.3.6")
+      if ([Version]$versionOnly -ne [version]"7.4.6")
       {
         throw "powershell $newVersion wasn't installed to custom destination"
       }
