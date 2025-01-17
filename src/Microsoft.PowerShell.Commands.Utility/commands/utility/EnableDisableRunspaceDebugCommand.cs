@@ -118,7 +118,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0,
                    ParameterSetName = CommonRunspaceCommandBase.RunspaceNameParameterSet)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] RunspaceName
         {
@@ -134,7 +134,7 @@ namespace Microsoft.PowerShell.Commands
                    ValueFromPipelineByPropertyName = true,
                    ValueFromPipeline = true,
                    ParameterSetName = CommonRunspaceCommandBase.RunspaceParameterSet)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public Runspace[] Runspace
         {
@@ -148,7 +148,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 0,
                    Mandatory = true,
                    ParameterSetName = CommonRunspaceCommandBase.RunspaceIdParameterSet)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public int[] RunspaceId
         {
@@ -161,7 +161,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 0,
                    Mandatory = true,
                    ParameterSetName = CommonRunspaceCommandBase.RunspaceInstanceIdParameterSet)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public System.Guid[] RunspaceInstanceId
         {
@@ -173,7 +173,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or Sets the ProcessName for which runspace debugging has to be enabled or disabled.
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = CommonRunspaceCommandBase.ProcessNameParameterSet)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         public string ProcessName
         {
             get;
@@ -184,7 +184,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or Sets the AppDomain Names for which runspace debugging has to be enabled or disabled.
         /// </summary>
         [Parameter(Position = 1, ParameterSetName = CommonRunspaceCommandBase.ProcessNameParameterSet)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Scope = "member",
             Target = "Microsoft.PowerShell.Commands.CommonRunspaceCommandBase.#AppDomainName")]
         public string[] AppDomainName

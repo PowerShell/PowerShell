@@ -220,9 +220,8 @@ namespace System.Management.Automation
                 relativePath = fileToHash.Name;
             }
 
-            if (!relativePaths.Contains(relativePath))
+            if (relativePaths.Add(relativePath))
             {
-                relativePaths.Add(relativePath);
                 if (fileToHash.Length != 0)
                 {
                     cdfFilesContent += "<HASH>" + fileToHash.FullName + "=" + fileToHash.FullName + Environment.NewLine;
@@ -423,7 +422,7 @@ namespace System.Management.Automation
             FileStream fileStream;
             try
             {
-                fileStream = File.Open(filePath, FileMode.Open, FileAccess.Read);
+                fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
             }
             catch (Exception e)
             {

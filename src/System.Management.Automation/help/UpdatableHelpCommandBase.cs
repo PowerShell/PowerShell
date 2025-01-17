@@ -78,8 +78,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the credential parameter.
         /// </summary>
-        [Parameter()]
-        [Credential()]
+        [Parameter]
+        [Credential]
         public PSCredential Credential
         {
             get { return _credential; }
@@ -179,13 +179,13 @@ namespace Microsoft.PowerShell.Commands
 
             // NOTE: The HelpInfoUri must be updated with each release.
 
-            s_metadataCache.Add("Microsoft.PowerShell.Diagnostics", "https://aka.ms/powershell73-help");
-            s_metadataCache.Add("Microsoft.PowerShell.Core", "https://aka.ms/powershell73-help");
-            s_metadataCache.Add("Microsoft.PowerShell.Utility", "https://aka.ms/powershell73-help");
-            s_metadataCache.Add("Microsoft.PowerShell.Host", "https://aka.ms/powershell73-help");
-            s_metadataCache.Add("Microsoft.PowerShell.Management", "https://aka.ms/powershell73-help");
-            s_metadataCache.Add("Microsoft.PowerShell.Security", "https://aka.ms/powershell73-help");
-            s_metadataCache.Add("Microsoft.WSMan.Management", "https://aka.ms/powershell73-help");
+            s_metadataCache.Add("Microsoft.PowerShell.Diagnostics", "https://aka.ms/powershell75-help");
+            s_metadataCache.Add("Microsoft.PowerShell.Core", "https://aka.ms/powershell75-help");
+            s_metadataCache.Add("Microsoft.PowerShell.Utility", "https://aka.ms/powershell75-help");
+            s_metadataCache.Add("Microsoft.PowerShell.Host", "https://aka.ms/powershell75-help");
+            s_metadataCache.Add("Microsoft.PowerShell.Management", "https://aka.ms/powershell75-help");
+            s_metadataCache.Add("Microsoft.PowerShell.Security", "https://aka.ms/powershell75-help");
+            s_metadataCache.Add("Microsoft.WSMan.Management", "https://aka.ms/powershell75-help");
         }
 
         /// <summary>
@@ -797,7 +797,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="path">Path to resolve.</param>
         /// <returns>A list of directories.</returns>
-        private IEnumerable<string> RecursiveResolvePathHelper(string path)
+        private static IEnumerable<string> RecursiveResolvePathHelper(string path)
         {
             if (System.IO.Directory.Exists(path))
             {

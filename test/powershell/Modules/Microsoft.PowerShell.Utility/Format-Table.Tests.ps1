@@ -879,6 +879,55 @@ A Name                                  B
                 $numDecimals | Should -Be $expectedDecimals -Because $num
             }
         }
+
+        It 'Works for empty column header label' {
+            $ps1xml = @'
+    <Configuration>
+        <ViewDefinitions>
+            <View>
+                <Name>Test.Header.Empty</Name>
+                <ViewSelectedBy>
+                    <TypeName>Test.Format</TypeName>
+                </ViewSelectedBy>
+                <TableControl>
+                    <TableHeaders>
+                        <TableColumnHeader>
+                            <Label></Label>
+                            <Width>4</Width>
+                        </TableColumnHeader>
+                    </TableHeaders>
+                    <TableRowEntries>
+                        <TableRowEntry>
+                            <TableColumnItems>
+                                <TableColumnItem>
+                                    <PropertyName>Prop</PropertyName>
+                                </TableColumnItem>
+                            </TableColumnItems>
+                        </TableRowEntry>
+                    </TableRowEntries>
+                </TableControl>
+            </View>
+        </ViewDefinitions>
+    </Configuration>
+'@
+
+            $ps1xmlPath = Join-Path -Path $TestDrive -ChildPath 'empty.format.ps1xml'
+            Set-Content -Path $ps1xmlPath -Value $ps1xml
+            $object = [pscustomobject]@{Prop = '123'}
+            # run in own runspace so not affect global sessionstate
+            $ps = [powershell]::Create()
+            $ps.AddScript( {
+                param($ps1xmlPath, $object)
+                Update-FormatData -AppendPath $ps1xmlPath
+                $object.PSObject.TypeNames.Insert(0, 'Test.Format')
+                $object | Format-Table | Out-String
+            } ).AddArgument($ps1xmlPath).AddArgument($object) | Out-Null
+            $output = $ps.Invoke()
+            $expected = @"
+Prop----123
+"@
+            $output.Replace("`n","").Replace("`r","") | Should -BeExactly $expected
+        }
     }
 
 Describe 'Table color tests' -Tag 'CI' {

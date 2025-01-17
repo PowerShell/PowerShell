@@ -88,7 +88,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true,
                    ValueFromPipelineByPropertyName = true,
                    ParameterSetName = PSRemotingBaseCmdlet.VMNameParameterSet)]
-        [Credential()]
+        [Credential]
         public override PSCredential Credential
         {
             get
@@ -129,7 +129,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Friendly names for the new PSSessions.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] Name { get; set; }
 
@@ -932,7 +932,7 @@ namespace Microsoft.PowerShell.Commands
                     //
                     // VM should be in running state.
                     //
-                    if ((VMState)results[0].Properties["State"].Value != VMState.Running)
+                    if (GetVMStateProperty(results[0]) != VMState.Running)
                     {
                         WriteError(
                             new ErrorRecord(

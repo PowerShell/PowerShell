@@ -384,14 +384,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 match = true;
             }
 
-            if (match && !allowAttributes)
+            if (match && !allowAttributes && n is XmlElement e && e.Attributes.Count > 0)
             {
-                XmlElement e = n as XmlElement;
-                if (e != null && e.Attributes.Count > 0)
-                {
-                    // Error at XPath {0} in file {1}: The XML Element {2} does not allow attributes.
-                    ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.AttributesNotAllowed, ComputeCurrentXPath(), FilePath, n.Name));
-                }
+                // Error at XPath {0} in file {1}: The XML Element {2} does not allow attributes.
+                ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.AttributesNotAllowed, ComputeCurrentXPath(), FilePath, n.Name));
             }
 
             return match;

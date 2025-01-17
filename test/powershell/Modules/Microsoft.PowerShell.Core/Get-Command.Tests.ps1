@@ -269,4 +269,9 @@ Describe "Get-Command Tests" -Tags "CI" {
         $result.Count | Should -Be 2
         $result.Name | Should -Be "Add-Content","Get-Content"
     }
+
+    It "Excluding modules works" {
+        $result = Get-Command -Name Get-Command -ExcludeModule Microsoft.PowerShell.Core
+        $result | Should -Be $null
+    }
 }

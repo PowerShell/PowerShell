@@ -41,6 +41,7 @@ function New-BuildInfoJson {
         ReleaseTag = $ReleaseTag
         ReleaseDate = $dateTime
         BlobName = $blobName
+        BaseUrl = 'https://powershellinfraartifacts-gkhedzdeaghdezhr.z01.azurefd.net/install'
     } | ConvertTo-Json | Out-File -Encoding ascii -Force -FilePath $filename
 
     $resolvedPath = (Resolve-Path -Path $filename).ProviderPath
@@ -48,7 +49,21 @@ function New-BuildInfoJson {
     Write-Verbose -Message "$vstsCommandString" -Verbose
     Write-Host -Object "##$vstsCommandString"
 
+    # Upload for ADO pipelines
     Write-Host "##vso[artifact.upload containerfolder=BuildInfoJson;artifactname=BuildInfoJson]$resolvedPath"
+
+    # Copy to location where OneBranch Pipelines uploads from
+
+    # if the environment variable does not exist, we are not in OneBranch. So just return.
+    if (-not $env:ob_outputDirectory) {
+        return
+    }
+
+    if (-not (Test-Path $env:ob_outputDirectory)) {
+        $null = New-Item -Path $env:ob_outputDirectory -ItemType Directory -Force -Verbose
+    }
+
+    Copy-Item $resolvedPath -Destination $env:ob_outputDirectory -Force -Verbose
 }
 
 # Script to set the release tag based on the branch name if it is not set or it is "fromBranch"

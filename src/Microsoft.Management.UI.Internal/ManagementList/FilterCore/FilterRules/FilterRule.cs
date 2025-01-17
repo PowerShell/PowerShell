@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.Management.UI.Internal
 {
@@ -10,6 +9,7 @@ namespace Microsoft.Management.UI.Internal
     /// The base class for all filtering rules.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
+    [Serializable]
     public abstract class FilterRule : IEvaluate
     {
         /// <summary>
@@ -61,14 +61,12 @@ namespace Microsoft.Management.UI.Internal
         /// </summary>
         protected void NotifyEvaluationResultInvalidated()
         {
-            #pragma warning disable IDE1005 // IDE1005: Delegate invocation can be simplified.
             var eh = this.EvaluationResultInvalidated;
 
             if (eh != null)
             {
                 eh(this, new EventArgs());
             }
-            #pragma warning restore IDE1005
         }
 
         #endregion

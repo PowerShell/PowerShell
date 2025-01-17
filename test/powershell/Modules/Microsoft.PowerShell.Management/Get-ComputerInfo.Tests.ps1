@@ -232,9 +232,9 @@ function Get-PropertyNamesForComputerInfoTest
         "WindowsVersion",
         "WindowsUBR")
 
-    if ([System.Management.Automation.Platform]::IsIoT)
+    if ([System.Management.Automation.Platform]::IsIoT -or (Test-IsWinWow64))
     {
-        Write-Verbose -Verbose -Message "WindowsInstallDateFromRegistry is not supported on IoT."
+        Write-Verbose -Verbose -Message "WindowsInstallDateFromRegistry is not supported on current platform."
     }
     else
     {

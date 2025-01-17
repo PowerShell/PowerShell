@@ -1,5 +1,5 @@
 # escape=`
-FROM mcr.microsoft.com/windows/servercore:ltsc2022
+FROM mcr.microsoft.com/windows/servercore:ltsc2022@sha256:5d09ffa90d91a46e2fe7652b0a37cbf5217f34a819c3d71cbe635dae8226061b
 
 SHELL ["pwsh.exe","-command"]
 

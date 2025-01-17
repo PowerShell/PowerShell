@@ -1,0 +1,201 @@
+parameters:
+  - name: SkipPSInfraInstallers
+    displayName: Skip Copying Archives and Installers to PSInfrastructure Public Location
+    type: boolean
+    default: false
+
+jobs:
+- template: /.pipelines/templates/approvalJob.yml@self
+  parameters:
+    displayName: Approve Copy release packages to PSInfra storage
+    jobName: CopyReleaseBlobApproval
+    instructions: |
+      Approval for Copy release packages to PSInfra storage
+
+- job: PSInfraReleaseBlobPublic
+  displayName: Copy release to PSInfra storage
+  dependsOn: CopyReleaseBlobApproval
+  condition: and(succeeded(), ne('${{ parameters.SkipPSInfraInstallers }}', true))
+  pool:
+    name: PowerShell1ES
+    type: windows
+    isCustom: true
+    demands:
+    - ImageOverride -equals PSMMS2019-Secure
+
+
+  variables:
+  - group: 'PSInfraStorage'
+  - group: 'Azure Blob variable group'
+  - name: ob_outputDirectory
+    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  - name: ob_sdl_tsa_configFile
+    value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+  - name: ob_sdl_credscan_suppressionsFile
+    value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+  - name: ob_sdl_codeql_compiled_enabled
+    value: false
+
+  steps:
+    - checkout: self
+      clean: true
+      env:
+        ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
+    - template: /.pipelines/templates/SetVersionVariables.yml@self
+      parameters:
+        ReleaseTagVar: $(ReleaseTagVar)
+        CreateJson: yes
+        UseJson: no
+
+    - pwsh: |
+        Get-ChildItem Env:
+      displayName: 'Capture Environment Variables'
+
+    - pwsh: |
+        $azureRmModule = Get-InstalledModule AzureRM -ErrorAction SilentlyContinue -Verbose
+        if ($azureRmModule) {
+          Write-Host 'AzureRM module exists. Removing it'
+          Uninstall-AzureRm
+          Write-Host 'AzureRM module removed'
+        }
+
+        Install-Module -Name Az.Storage -Force -AllowClobber -Scope CurrentUser -Verbose
+      displayName: Remove AzRM modules
+
+    - task: AzurePowerShell@5
+      displayName: Copy blobs to PSInfra storage
+      inputs:
+        azureSubscription: az-blob-cicd-infra
+        scriptType: inlineScript
+        azurePowerShellVersion: LatestVersion
+        pwsh: true
+        inline: |
+          $sourceStorageAccountName = '$(StorageAccount)'
+          $destinationStorageAccountName = '$(PSInfraStorageAccount)'
+          $destinationContainerName = '$web'
+          $destinationPrefix = 'install/$(ReleaseTagVar)'
+
+          $sourceContext = New-AzStorageContext -StorageAccountName $sourceStorageAccountName
+          Write-Verbose -Verbose "Source context: $($sourceContext.BlobEndPoint)"
+
+          $destinationContext = New-AzStorageContext -StorageAccountName $destinationStorageAccountName
+          Write-Verbose -Verbose "Destination context: $($destinationContext.BlobEndPoint)"
+
+          foreach ($sourceContainerName in '$(AzureVersion)', '$(AzureVersion)-gc') {
+            $blobs = Get-AzStorageBlob -Context $sourceContext -Container $sourceContainerName
+
+            Write-Verbose -Verbose "Blobs found in $sourceContainerName"
+            $blobs.Name | Write-Verbose -Verbose
+
+            Write-Verbose -Verbose "Copying blobs from $sourceContainerName to $destinationContainerName/$destinationPrefix"
+
+            foreach ($blob in $blobs) {
+              $sourceBlobName = $blob.Name
+              Write-Verbose -Verbose "sourceBlobName = $sourceBlobName"
+
+              $destinationBlobName = "$destinationPrefix/$sourceBlobName"
+              Write-Verbose -Verbose "destinationBlobName = $destinationBlobName"
+              $existingBlob = Get-AzStorageBlob -Blob $destinationBlobName -Container $destinationContainerName -Context $destinationContext -ErrorAction Ignore
+              if ($existingBlob) {
+                Write-Verbose -Verbose "Blob $destinationBlobName already exists in '$destinationStorageAccountName/$destinationContainerName', removing before copy."
+                $existingBlob | Remove-AzStorageBlob -ErrorAction Stop -Verbose
+              }
+
+              Copy-AzStorageBlob -SourceContext $sourceContext -DestinationContext $destinationContext -SrcContainer $sourceContainerName -SrcBlob $sourceBlobName -DestContainer $destinationContainerName -DestBlob $destinationBlobName -Force -Verbose -Confirm:$false
+            }
+          }
+
+
+- template: /.pipelines/templates/approvalJob.yml@self
+  parameters:
+    displayName: Approve Copy Global tool packages to PSInfra storage
+    jobName: CopyBlobApproval
+    instructions: |
+      Approval for Copy global tool packages to PSInfra storage
+
+- job: PSInfraBlobPublic
+  displayName: Copy global tools to PSInfra storage
+  dependsOn: CopyBlobApproval
+  pool:
+    name: PowerShell1ES
+    type: windows
+    isCustom: true
+    demands:
+    - ImageOverride -equals PSMMS2019-Secure
+
+  variables:
+    - group: 'PSInfraStorage'
+    - group: 'Azure Blob variable group'
+    - name: ob_outputDirectory
+      value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+    - name: ob_sdl_tsa_configFile
+      value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+    - name: ob_sdl_credscan_suppressionsFile
+      value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+
+  steps:
+    - checkout: self
+      clean: true
+      env:
+        ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
+    - template: /.pipelines/templates/SetVersionVariables.yml@self
+      parameters:
+        ReleaseTagVar: $(ReleaseTagVar)
+        CreateJson: yes
+        UseJson: no
+
+    - pwsh: |
+        Get-ChildItem Env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
+      displayName: 'Capture Environment Variables'
+
+    - pwsh: |
+        $azureRmModule = Get-InstalledModule AzureRM -ErrorAction SilentlyContinue -Verbose
+        if ($azureRmModule) {
+          Write-Host 'AzureRM module exists. Removing it'
+          Uninstall-AzureRm
+          Write-Host 'AzureRM module removed'
+        }
+
+        Install-Module -Name Az.Storage -Force -AllowClobber -Scope CurrentUser -Verbose
+      displayName: Remove AzRM modules
+
+    - task: AzurePowerShell@5
+      displayName: Copy blobs to PSInfra storage
+      inputs:
+        azureSubscription: az-blob-cicd-infra
+        scriptType: inlineScript
+        azurePowerShellVersion: LatestVersion
+        pwsh: true
+        inline: |
+          $sourceStorageAccountName = '$(StorageAccount)'
+          $sourceContainerName = '$(AzureVersion)-nuget'
+          $prefix = 'globaltool'
+
+          $destinationStorageAccountName = '$(PSInfraStorageAccount)'
+          $destinationContainerName = '$web'
+          $destinationPrefix = 'tool/$(Version)'
+
+          $sourceContext = New-AzStorageContext -StorageAccountName $sourceStorageAccountName
+          Write-Verbose -Verbose "Source context: $($sourceContext.BlobEndPoint)"
+
+          $destinationContext = New-AzStorageContext -StorageAccountName $destinationStorageAccountName
+          Write-Verbose -Verbose "Destination context: $($destinationContext.BlobEndPoint)"
+
+          $blobs = Get-AzStorageBlob -Context $sourceContext -Container $sourceContainerName -Prefix $prefix
+
+          Write-Verbose -Verbose "Blobs found in $sourceContainerName"
+          $blobs.Name | Write-Verbose -Verbose
+
+          Write-Verbose -Verbose "Copying blobs from $sourceContainerName to $destinationContainerName/$destinationPrefix"
+
+          foreach ($blob in $blobs) {
+            $sourceBlobName = $blob.Name
+            Write-Verbose -Verbose "sourceBlobName = $sourceBlobName"
+
+            $destinationBlobName = $sourceBlobName -replace "$prefix", $destinationPrefix
+            Write-Verbose -Verbose "destinationBlobName = $destinationBlobName"
+
+            Copy-AzStorageBlob -SourceContext $sourceContext -DestinationContext $destinationContext -SrcContainer $sourceContainerName -SrcBlob $sourceBlobName -DestContainer $destinationContainerName -DestBlob $destinationBlobName -Force -Verbose -Confirm:$false
+          }

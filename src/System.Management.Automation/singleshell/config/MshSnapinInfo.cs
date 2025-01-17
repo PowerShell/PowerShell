@@ -407,8 +407,9 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns true if the PSSnapIn Id is valid. A PSSnapIn is valid iff it contains only
-        /// "Alpha Numeric","-","_","." characters.
+        /// Returns true if the PSSnapIn Id is valid. A PSSnapIn is valid
+        /// if-and-only-if it contains only "Alpha Numeric","-","_","."
+        /// characters.
         /// </summary>
         /// <param name="psSnapinId">PSSnapIn Id to validate.</param>
         internal static bool IsPSSnapinIdValid(string psSnapinId)
@@ -422,8 +423,8 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Validates the PSSnapIn Id. A PSSnapIn is valid iff it contains only
-        /// "Alpha Numeric","-","_","." characters.
+        /// Validates the PSSnapIn Id. A PSSnapIn is valid if-and-only-if it
+        /// contains only "Alpha Numeric","-","_","." characters.
         /// </summary>
         /// <param name="psSnapinId">PSSnapIn Id to validate.</param>
         /// <exception cref="PSArgumentException">
@@ -761,8 +762,7 @@ namespace System.Management.Automation
             if (msv == null)
             {
                 // Check if the value is in string format
-                string singleValue = value as string;
-                if (singleValue != null)
+                if (value is string singleValue)
                 {
                     msv = new string[1];
                     msv[0] = singleValue;

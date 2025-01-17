@@ -58,6 +58,13 @@ Describe "Select-Object" -Tags "CI" {
         $result | Should -Be $expected
     }
 
+    It "Should work work correctly with Unique and CaseInsensitive parameter" {
+        $result = "abc", "Abc" | Select-Object -Unique -CaseInsensitive
+
+        $result.Count | Should -Be 1
+        $result | Should -Be "abc"
+    }
+
     It "Should return correct object with Skip parameter" {
         $result = $dirObject | Select-Object -Skip $TestLength
 

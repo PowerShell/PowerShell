@@ -646,8 +646,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             ErrorRecord errorRecord = null;
             string msg = null;
-            PSPropertyExpressionError psPropertyExpressionError = error as PSPropertyExpressionError;
-            if (psPropertyExpressionError != null)
+            if (error is PSPropertyExpressionError psPropertyExpressionError)
             {
                 errorRecord = new ErrorRecord(
                                 psPropertyExpressionError.result.Exception,
@@ -660,8 +659,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 errorRecord.ErrorDetails = new ErrorDetails(msg);
             }
 
-            StringFormatError formattingError = error as StringFormatError;
-            if (formattingError != null)
+            if (error is StringFormatError formattingError)
             {
                 errorRecord = new ErrorRecord(
                                 formattingError.exception,

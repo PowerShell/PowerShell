@@ -52,7 +52,8 @@ function Register-PSSessionConfiguration
       [system.security.securestring] $runAsPassword,
       [System.Management.Automation.Runspaces.PSSessionConfigurationAccessMode] $accessMode,
       [bool] $isSddlSpecified,
-      [string] $configTableSddl
+      [string] $configTableSddl,
+      [bool] $noRestart
     )
 
     begin
@@ -139,7 +140,7 @@ function Register-PSSessionConfiguration
         ## Replace the SDDL with any groups or restrictions defined in the PSSessionConfigurationFile
         if($? -and $configTableSddl -and (-not $isSddlSpecified))
         {{
-            $null = Set-PSSessionConfiguration -Name $pluginName -SecurityDescriptorSddl $configTableSddl -Force:$force
+            $null = Set-PSSessionConfiguration -Name $pluginName -SecurityDescriptorSddl $configTableSddl -NoServiceRestart:$noRestart -Force:$force
         }}
 
         if ($? -and $shouldShowUI)
@@ -227,11 +228,11 @@ function Register-PSSessionConfiguration
                 if ($runAsUserName)
                 {{
                     $runAsCredential = new-object system.management.automation.PSCredential($runAsUserName, $runAsPassword)
-                    $null = Set-PSSessionConfiguration -Name $pluginName -SecurityDescriptorSddl $newSDDL -NoServiceRestart -force -WarningAction 0 -RunAsCredential $runAsCredential
+                    $null = Set-PSSessionConfiguration -Name $pluginName -SecurityDescriptorSddl $newSDDL -NoServiceRestart:$noRestart -Force:$force -WarningAction 0 -RunAsCredential $runAsCredential
                 }}
                 else
                 {{
-                    $null = Set-PSSessionConfiguration -Name $pluginName -SecurityDescriptorSddl $newSDDL -NoServiceRestart -force -WarningAction 0
+                    $null = Set-PSSessionConfiguration -Name $pluginName -SecurityDescriptorSddl $newSDDL -NoServiceRestart:$noRestart -Force:$force -WarningAction 0
                 }}
 
             }} catch {{
@@ -262,13 +263,13 @@ function Register-PSSessionConfiguration
     }}
 }}
 
-if ($null -eq $args[14])
+if ($null -eq $args[15])
 {{
-    Register-PSSessionConfiguration -filepath $args[0] -pluginName $args[1] -shouldShowUI $args[2] -force $args[3] -whatif:$args[4] -confirm:$args[5] -restartWSManTarget $args[6] -restartWSManAction $args[7] -restartWSManRequired $args[8] -runAsUserName $args[9] -runAsPassword $args[10] -accessMode $args[11] -isSddlSpecified $args[12] -configTableSddl $args[13]
+    Register-PSSessionConfiguration -filepath $args[0] -pluginName $args[1] -shouldShowUI $args[2] -force $args[3] -whatif:$args[4] -confirm:$args[5] -restartWSManTarget $args[6] -restartWSManAction $args[7] -restartWSManRequired $args[8] -runAsUserName $args[9] -runAsPassword $args[10] -accessMode $args[11] -isSddlSpecified $args[12] -configTableSddl $args[13] -noRestart $args[14]
 }}
 else
 {{
-    Register-PSSessionConfiguration -filepath $args[0] -pluginName $args[1] -shouldShowUI $args[2] -force $args[3] -whatif:$args[4] -confirm:$args[5] -restartWSManTarget $args[6] -restartWSManAction $args[7] -restartWSManRequired $args[8] -runAsUserName $args[9] -runAsPassword $args[10] -accessMode $args[11] -isSddlSpecified $args[12] -configTableSddl $args[13] -erroraction $args[14]
+    Register-PSSessionConfiguration -filepath $args[0] -pluginName $args[1] -shouldShowUI $args[2] -force $args[3] -whatif:$args[4] -confirm:$args[5] -restartWSManTarget $args[6] -restartWSManAction $args[7] -restartWSManRequired $args[8] -runAsUserName $args[9] -runAsPassword $args[10] -accessMode $args[11] -isSddlSpecified $args[12] -configTableSddl $args[13] -noRestart $args[14] -erroraction $args[15]
 }}
 ";
 
@@ -592,6 +593,7 @@ else
                                             AccessMode,
                                             isSddlSpecified,
                                             _configTableSDDL,
+                                            noRestart,
                                             errorAction
                                        });
 

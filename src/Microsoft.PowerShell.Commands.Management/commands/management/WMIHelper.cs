@@ -1120,7 +1120,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "WQLQuery")]
         [Parameter(ParameterSetName = "query")]
         [Parameter(ParameterSetName = "list")]
-        [Credential()]
+        [Credential]
         public PSCredential Credential { get; set; }
 
         /// <summary>

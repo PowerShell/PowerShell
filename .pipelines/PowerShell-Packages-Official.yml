@@ -1,0 +1,247 @@
+trigger: none
+
+parameters: # parameters are shown up in ADO UI in a build queue time
+  - name: ForceAzureBlobDelete
+    displayName: Delete Azure Blob
+    type: string
+    values:
+    - true
+    - false
+    default: false
+  - name: 'debug'
+    displayName: 'Enable debug output'
+    type: boolean
+    default: false
+  - name: InternalSDKBlobURL
+    displayName: URL to the blob having internal .NET SDK
+    type: string
+    default: ' '
+  - name: ReleaseTagVar
+    displayName: Release Tag
+    type: string
+    default: 'fromBranch'
+  - name: SKIP_SIGNING
+    displayName: Skip Signing
+    type: string
+    default: 'NO'
+
+variables:
+  - name: CDP_DEFINITION_BUILD_COUNT
+    value: $[counter('', 0)] # needed for onebranch.pipeline.version task
+  - name: system.debug
+    value: ${{ parameters.debug }}
+  - name: ENABLE_PRS_DELAYSIGN
+    value: 1
+  - name: ROOT
+    value: $(Build.SourcesDirectory)
+  - name: ForceAzureBlobDelete
+    value: ${{ parameters.ForceAzureBlobDelete }}
+  - name: NUGET_XMLDOC_MODE
+    value: none
+  - name: nugetMultiFeedWarnLevel
+    value: none
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+  - name: skipNugetSecurityAnalysis
+    value: true
+  - name: ReleaseTagVar
+    value: ${{ parameters.ReleaseTagVar }}
+  - name: ob_outputDirectory
+    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  - name: WindowsContainerImage
+    value: 'onebranch.azurecr.io/windows/ltsc2019/vse2022:latest' # Docker image which is used to build the project
+  - name: LinuxContainerImage
+    value: mcr.microsoft.com/onebranch/cbl-mariner/build:2.0
+  - group: mscodehub-feed-read-general
+  - group: mscodehub-feed-read-akv
+  - name: branchCounterKey
+    value: $[format('{0:yyyyMMdd}-{1}', pipeline.startTime,variables['Build.SourceBranch'])]
+  - name: branchCounter
+    value: $[counter(variables['branchCounterKey'], 1)]
+
+resources:
+  pipelines:
+    - pipeline: CoOrdinatedBuildPipeline
+      source: 'PowerShell-Coordinated Packages-Official'
+      trigger:
+        branches:
+          include:
+            - master
+            - releases/*
+
+  repositories:
+    - repository: templates
+      type: git
+      name: OneBranch.Pipelines/GovernedTemplates
+      ref: refs/heads/main
+
+extends:
+  template: v2/OneBranch.Official.CrossPlat.yml@templates
+  parameters:
+    cloudvault:
+      enabled: false
+    featureFlags:
+      linuxEsrpSigning: true
+    globalSdl:
+      disableLegacyManifest: true
+      # disabled Armorty as we dont have any ARM templates to scan. It fails on some sample ARM templates.
+      armory:
+        enabled: false
+      sbom:
+        enabled: true
+      compiled:
+        enabled: false
+      credscan:
+        enabled: true
+        scanFolder:  $(Build.SourcesDirectory)
+        suppressionsFile: $(Build.SourcesDirectory)\.config\suppress.json
+      cg:
+        enabled: true
+        ignoreDirectories: '.devcontainer,demos,docker,docs,src,test,tools/packaging'
+      asyncSdl:
+        enabled: true
+        forStages: ['build']
+        credscan:
+          enabled: true
+          scanFolder:  $(Build.SourcesDirectory)
+          suppressionsFile: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+        binskim:
+          enabled: false
+        # APIScan requires a non-Ready-To-Run build
+        apiscan:
+          enabled: false
+        tsaOptionsFile: .config\tsaoptions.json
+    stages:
+    - stage: prep
+      jobs:
+      - template: /.pipelines/templates/checkAzureContainer.yml@self
+
+    - stage: mac_package
+      dependsOn: [prep]
+      jobs:
+      - template: /.pipelines/templates/mac-package-build.yml@self
+        parameters:
+          buildArchitecture: x64
+
+      - template: /.pipelines/templates/mac-package-build.yml@self
+        parameters:
+          buildArchitecture: arm64
+
+    - stage: windows_package
+      dependsOn: [prep]
+      jobs:
+      - template: /.pipelines/templates/windows-package-build.yml@self
+        parameters:
+          runtime: x64
+
+      - template: /.pipelines/templates/windows-package-build.yml@self
+        parameters:
+          runtime: arm64
+
+      - template: /.pipelines/templates/windows-package-build.yml@self
+        parameters:
+          runtime: x86
+
+      - template: /.pipelines/templates/windows-package-build.yml@self
+        parameters:
+          runtime: fxdependent
+
+      - template: /.pipelines/templates/windows-package-build.yml@self
+        parameters:
+          runtime: fxdependentWinDesktop
+
+      - template: /.pipelines/templates/windows-package-build.yml@self
+        parameters:
+          runtime: minsize
+
+    - stage: linux_package
+      dependsOn: [prep]
+      jobs:
+      - template: /.pipelines/templates/linux-package-build.yml@self
+        parameters:
+          unsignedDrop: 'drop_linux_build_linux_x64'
+          signedDrop: 'drop_linux_sign_linux_x64'
+          packageType: deb
+          jobName: deb
+
+      - template: /.pipelines/templates/linux-package-build.yml@self
+        parameters:
+          unsignedDrop: 'drop_linux_build_linux_fxd_x64_mariner'
+          signedDrop: 'drop_linux_sign_linux_fxd_x64_mariner'
+          packageType: rpm-fxdependent  #mariner-x64
+          jobName: mariner_x64
+          signingProfile: 'CP-459159-pgpdetached'
+
+      - template: /.pipelines/templates/linux-package-build.yml@self
+        parameters:
+          unsignedDrop: 'drop_linux_build_linux_fxd_arm64_mariner'
+          signedDrop: 'drop_linux_sign_linux_fxd_arm64_mariner'
+          packageType: rpm-fxdependent-arm64 #mariner-arm64
+          jobName: mariner_arm64
+          signingProfile: 'CP-459159-pgpdetached'
+
+      - template: /.pipelines/templates/linux-package-build.yml@self
+        parameters:
+          unsignedDrop: 'drop_linux_build_linux_x64'
+          signedDrop: 'drop_linux_sign_linux_x64'
+          packageType: rpm
+          jobName: rpm
+
+      - template: /.pipelines/templates/linux-package-build.yml@self
+        parameters:
+          unsignedDrop: 'drop_linux_build_linux_arm'
+          signedDrop: 'drop_linux_sign_linux_arm'
+          packageType: tar-arm
+          jobName: tar_arm
+
+      - template: /.pipelines/templates/linux-package-build.yml@self
+        parameters:
+          unsignedDrop: 'drop_linux_build_linux_arm64'
+          signedDrop: 'drop_linux_sign_linux_arm64'
+          packageType: tar-arm64
+          jobName: tar_arm64
+
+      - template: /.pipelines/templates/linux-package-build.yml@self
+        parameters:
+          unsignedDrop: 'drop_linux_build_linux_x64_alpine'
+          signedDrop: 'drop_linux_sign_linux_x64_alpine'
+          packageType: tar-alpine
+          jobName: tar_alpine
+
+      - template: /.pipelines/templates/linux-package-build.yml@self
+        parameters:
+          unsignedDrop: 'drop_linux_build_linux_fxd'
+          signedDrop: 'drop_linux_sign_linux_fxd'
+          packageType: fxdependent
+          jobName: fxdependent
+
+      - template: /.pipelines/templates/linux-package-build.yml@self
+        parameters:
+          unsignedDrop: 'drop_linux_build_linux_x64'
+          signedDrop: 'drop_linux_sign_linux_x64'
+          packageType: tar
+          jobName: tar
+
+      - template: /.pipelines/templates/linux-package-build.yml@self
+        parameters:
+          unsignedDrop: 'drop_linux_build_linux_fxd_x64_alpine'
+          signedDrop: 'drop_linux_sign_linux_fxd_x64_alpine'
+          packageType: tar-alpine-fxdependent
+          jobName: tar_alpine_fxd
+
+      - template: /.pipelines/templates/linux-package-build.yml@self
+        parameters:
+          unsignedDrop: 'drop_linux_build_linux_x64_minSize'
+          signedDrop: 'drop_linux_sign_linux_x64_minSize'
+          packageType: min-size
+          jobName: minSize
+
+    - stage: nupkg
+      dependsOn: [prep]
+      jobs:
+      - template: /.pipelines/templates/nupkg.yml@self
+
+    - stage: upload
+      dependsOn: [mac_package, windows_package, linux_package, nupkg]
+      jobs:
+      - template: /.pipelines/templates/uploadToAzure.yml@self

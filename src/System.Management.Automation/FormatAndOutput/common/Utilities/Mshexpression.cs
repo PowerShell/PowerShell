@@ -215,8 +215,7 @@ namespace Microsoft.PowerShell.Commands
             foreach (PSMemberInfo member in members)
             {
                 // it can be a property set
-                PSPropertySet propertySet = member as PSPropertySet;
-                if (propertySet != null)
+                if (member is PSPropertySet propertySet)
                 {
                     if (expand)
                     {

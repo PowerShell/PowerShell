@@ -14,5 +14,5 @@ CmdletsToExport= "Get-CimAssociatedInstance", "Get-CimClass", "Get-CimInstance",
     "Remove-CimSession","Set-CimInstance",
     "Export-BinaryMiLog","Import-BinaryMiLog"
 AliasesToExport = "gcim","scim","ncim", "rcim","icim","gcai","rcie","ncms","rcms","gcms","ncso","gcls"
-HelpInfoUri="https://aka.ms/powershell73-help"
+HelpInfoUri="https://aka.ms/powershell75-help"
 }

@@ -111,6 +111,13 @@ namespace Microsoft.PowerShell.Commands
         private bool _unique;
 
         /// <summary>
+        /// Gets or sets case insensitive switch for string comparison.
+        /// Used in combination with Unique switch parameter.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter CaseInsensitive { get; set; }
+
+        /// <summary>
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "DefaultParameter")]
@@ -632,7 +639,11 @@ namespace Microsoft.PowerShell.Commands
                 bool isObjUnique = true;
                 foreach (UniquePSObjectHelper uniqueObj in _uniques)
                 {
-                    ObjectCommandComparer comparer = new(true, CultureInfo.CurrentCulture, true);
+                    ObjectCommandComparer comparer = new(
+                        ascending: true,
+                        CultureInfo.CurrentCulture,
+                        caseSensitive: !CaseInsensitive.IsPresent);
+
                     if ((comparer.Compare(obj.BaseObject, uniqueObj.WrittenObject.BaseObject) == 0) &&
                         (uniqueObj.NotePropertyCount == addedNoteProperties.Count))
                     {

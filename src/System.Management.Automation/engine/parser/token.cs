@@ -1180,7 +1180,7 @@ namespace System.Management.Automation.Language
 #endif
 
         /// <summary>
-        /// Return all the flags for a given <ref>TokenKind</ref>.
+        /// Return all the flags for a given <see cref="TokenKind" />.
         /// </summary>
         public static TokenFlags GetTraits(this TokenKind kind)
         {
@@ -1188,7 +1188,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Return true if the <ref>TokenKind</ref> has the given trait.
+        /// Return true if the <see cref="TokenKind" /> has the given trait.
         /// </summary>
         public static bool HasTrait(this TokenKind kind, TokenFlags flag)
         {
@@ -1202,7 +1202,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Return the text for a given <ref>TokenKind</ref>.
+        /// Return the text for a given <see cref="TokenKind" />.
         /// </summary>
         public static string Text(this TokenKind kind)
         {

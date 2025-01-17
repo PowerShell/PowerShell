@@ -328,7 +328,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// On Windows, just append <paramref name="arg"/>.
+        /// On Windows, do tilde expansion, otherwise just append <paramref name="arg"/>.
         /// On Unix, do globbing as appropriate, otherwise just append <paramref name="arg"/>.
         /// </summary>
         /// <param name="arg">The argument that possibly needs expansion.</param>
@@ -400,29 +400,53 @@ namespace System.Management.Automation
             {
                 // Even if there are no wildcards, we still need to possibly
                 // expand ~ into the filesystem provider home directory path
-                ProviderInfo fileSystemProvider = Context.EngineSessionState.GetSingleProvider(FileSystemProvider.ProviderName);
-                string home = fileSystemProvider.Home;
-                if (string.Equals(arg, "~"))
+                if (ExpandTilde(arg, parameter))
                 {
-                    _arguments.Append(home);
-                    AddToArgumentList(parameter, home);
-                    argExpanded = true;
-                }
-                else if (arg.StartsWith("~/", StringComparison.OrdinalIgnoreCase))
-                {
-                    var replacementString = string.Concat(home, arg.AsSpan(1));
-                    _arguments.Append(replacementString);
-                    AddToArgumentList(parameter, replacementString);
                     argExpanded = true;
                 }
             }
-#endif // UNIX
+#else
+            if (!usedQuotes && ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeWindowsTildeExpansion))
+            {
+                if (ExpandTilde(arg, parameter))
+                {
+                    argExpanded = true;
+                }
+            }
+#endif
 
             if (!argExpanded)
             {
                 _arguments.Append(arg);
                 AddToArgumentList(parameter, arg);
             }
+        }
+
+        /// <summary>
+        /// Replace tilde for unquoted arguments in the form ~ and ~/. For windows, ~\ is also expanded.
+        /// </summary>
+        /// <param name="arg">The argument that possibly needs expansion.</param>
+        /// <param name="parameter">The parameter associated with the operation.</param>
+        /// <returns>True if tilde expansion occurred.</returns>
+        private bool ExpandTilde(string arg, CommandParameterInternal parameter)
+        {
+            var fileSystemProvider = Context.EngineSessionState.GetSingleProvider(FileSystemProvider.ProviderName);
+            var home = fileSystemProvider.Home;
+            if (string.Equals(arg, "~"))
+            {
+                _arguments.Append(home);
+                AddToArgumentList(parameter, home);
+                return true;
+            }
+            else if (arg.StartsWith("~/") || (OperatingSystem.IsWindows() && arg.StartsWith(@"~\")))
+            {
+                var replacementString = string.Concat(home, arg.AsSpan(1));
+                _arguments.Append(replacementString);
+                AddToArgumentList(parameter, replacementString);
+                return true;
+            }
+
+            return false;
         }
 
         /// <summary>

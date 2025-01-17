@@ -9,6 +9,15 @@
     <?else?>
       <?define UpgradeCode = $(var.UpgradeCodeRelease)?>
     <?endif?>
+  <?elseif $(sys.BUILDARCH) = "ARM64"?>
+    <?define ExplorerContextMenuDialogText = "&$(var.ProductName) $(var.SimpleProductVersion) ($(sys.BUILDARCH))"?>
+    <?define UpgradeCodePreview = "499e9123-48aa-41df-aa20-6f4d28b54722"?>
+    <?define UpgradeCodeRelease = "4cc0e36a-17db-4c84-b4f4-560a11e7ddb6"?>
+    <?if $(var.IsPreview)=True?>
+      <?define UpgradeCode = $(var.UpgradeCodePreview)?>
+    <?else?>
+      <?define UpgradeCode = $(var.UpgradeCodeRelease)?>
+    <?endif?>
   <?else?>
     <?define UpgradeCodePreview = "4A699A9C-E904-4024-BCD2-44E098A8C6BD"?>
     <?define UpgradeCodeRelease = "ED46CB02-64B3-43FD-A63E-6CF269D8C21C"?>

@@ -54,7 +54,7 @@ namespace Microsoft.PowerShell.Commands
         /// Process to enter.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ParameterSetName = EnterPSHostProcessCommand.ProcessParameterSet)]
-        [ValidateNotNull()]
+        [ValidateNotNull]
         public Process Process
         {
             get;
@@ -76,7 +76,7 @@ namespace Microsoft.PowerShell.Commands
         /// Name of process to enter.  An error will result if more than one such process exists.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = EnterPSHostProcessCommand.ProcessNameParameterSet)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         public string Name
         {
             get;
@@ -87,7 +87,7 @@ namespace Microsoft.PowerShell.Commands
         /// Host Process Info object that describes a connectible process.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ParameterSetName = EnterPSHostProcessCommand.PSHostProcessInfoParameterSet)]
-        [ValidateNotNull()]
+        [ValidateNotNull]
         public PSHostProcessInfo HostProcessInfo
         {
             get;
@@ -500,7 +500,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = GetPSHostProcessInfoCommand.ProcessNameParameterSet)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         public string[] Name
         {
             get;
@@ -512,7 +512,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ParameterSetName = GetPSHostProcessInfoCommand.ProcessParameterSet)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         public Process[] Process
         {
             get;
@@ -524,7 +524,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = GetPSHostProcessInfoCommand.ProcessIdParameterSet)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         public int[] Id
         {
             get;

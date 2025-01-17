@@ -3907,7 +3907,8 @@ namespace System.Management.Automation.Language
                     return ScanGenericToken(GetStringBuilder());
                 }
 
-                ReportError(_currentIndex,
+                ReportError(
+                    NewScriptExtent(_tokenStart, _currentIndex),
                     nameof(ParserStrings.BadNumericConstant),
                     ParserStrings.BadNumericConstant,
                     _script.Substring(_tokenStart, _currentIndex - _tokenStart));

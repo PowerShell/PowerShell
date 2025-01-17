@@ -5756,7 +5756,7 @@ namespace Microsoft.WSMan.Management
         /// Parameter for RunAs credentials for a Plugin.
         /// </summary>
         [ValidateNotNull]
-        [Parameter()]
+        [Parameter]
         public PSCredential RunAsCredential
         {
             get { return this.runAsCredentials; }
@@ -5769,7 +5769,7 @@ namespace Microsoft.WSMan.Management
         /// <summary>
         /// Parameter for Plugin Host Process configuration (Shared or Separate).
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter UseSharedProcess
         {
             get { return this.sharedHost; }
@@ -5782,7 +5782,7 @@ namespace Microsoft.WSMan.Management
         /// <summary>
         /// Parameter for Auto Restart configuration for Plugin.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter AutoRestart
         {
             get { return this.autoRestart; }
@@ -5795,7 +5795,7 @@ namespace Microsoft.WSMan.Management
         /// <summary>
         /// Parameter for Idle timeout for HostProcess.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public uint? ProcessIdleTimeoutSec
         {
             get
@@ -5936,7 +5936,7 @@ namespace Microsoft.WSMan.Management
         /// <summary>
         /// Parameter Subject.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [ValidateNotNullOrEmpty]
         public string Subject
         {
@@ -6181,7 +6181,7 @@ namespace Microsoft.WSMan.Management
         /// <summary>
         /// Parameter Concatenate.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Concatenate
         {
             get { return _concatenate; }

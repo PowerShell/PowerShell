@@ -46,7 +46,7 @@ Describe "Verify SBOMs" {
                     $skip = "rpm test is not stable"
                 }
                 Default {
-                    throw "Unkown extension $($case.Extension)"
+                    throw "Unknown extension $($case.Extension)"
                 }
             }
 

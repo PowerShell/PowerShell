@@ -1,6 +1,6 @@
 # EditorConfig is awesome: https://EditorConfig.org
 # .NET coding convention settings for EditorConfig
-# https://docs.microsoft.com/visualstudio/ide/editorconfig-code-style-settings-reference
+# https://learn.microsoft.com/visualstudio/ide/editorconfig-code-style-settings-reference
 #
 # This file comes from dotnet repositories:
 # https://github.com/dotnet/runtime/blob/master/.editorconfig

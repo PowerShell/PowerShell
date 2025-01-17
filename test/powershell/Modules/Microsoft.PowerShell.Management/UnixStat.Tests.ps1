@@ -37,6 +37,10 @@ Describe "UnixFileSystem additions" -Tag "CI" {
                         @{ Mode = '555';  Perm = '-r-xr-xr-x'; Item = "${testFile}" },
                         @{ Mode = '666';  Perm = '-rw-rw-rw-'; Item = "${testFile}" },
                         @{ Mode = '777';  Perm = '-rwxrwxrwx'; Item = "${testFile}" },
+                        @{ Mode = '4644'; Perm = '-rwSr--r--'; Item = "${testFile}" },
+                        @{ Mode = '1644'; Perm = '-rw-r--r-T'; Item = "${testFile}" },
+                        @{ Mode = '2644'; Perm = '-rw-r-Sr--'; Item = "${testFile}" },
+                        @{ Mode = '7644'; Perm = '-rwSr-Sr-T'; Item = "${testFile}" },
                         @{ Mode = '4777'; Perm = '-rwsrwxrwx'; Item = "${testFile}" },
                         @{ Mode = '1777'; Perm = 'drwxrwxrwt'; Item = "${testDir}"  }
         }
@@ -57,9 +61,16 @@ Describe "UnixFileSystem additions" -Tag "CI" {
 
         It "Should present filemode '<Mode>' string correctly as '<Perm>'" -testCase $testCase {
             param ($Mode, $Perm, $Item )
+            # chmod can fail for some modes so be sure to handle that here.
+            # specifically, when setting setgid chmod can fail if the group is privileged.
             chmod "$Mode" "${Item}"
-            $i = Get-Item $Item
-            $i.UnixMode | Should -Be $Perm
+            if ($LASTEXITCODE -ne 0) {
+                set-itresult -skip -because "chmod '$mode' failed"
+            }
+            else {
+                $i = Get-Item $Item
+                $i.UnixMode | Should -BeExactly $Perm
+            }
         }
 
         It "Should retrieve the user name for the file" {

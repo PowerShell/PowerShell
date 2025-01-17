@@ -265,7 +265,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (readTimeout == Timeout.InfiniteTimeSpan)
             {
-                return await stream.ReadAsync(buffer, cancellationToken);
+                return await stream.ReadAsync(buffer, cancellationToken).ConfigureAwait(false);
             }
 
             using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
@@ -292,7 +292,7 @@ namespace Microsoft.PowerShell.Commands
             if (perReadTimeout == Timeout.InfiniteTimeSpan)
             {
                 // No timeout - use fast path
-                await source.CopyToAsync(destination, cancellationToken);
+                await source.CopyToAsync(destination, cancellationToken).ConfigureAwait(false);
                 return;
             }
 

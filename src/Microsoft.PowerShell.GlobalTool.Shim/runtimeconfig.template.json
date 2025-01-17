@@ -1,4 +1,4 @@
-// This is required to roll forward to runtime 3.x when 2.x is not installed
+// This is required to roll forward to supported minor.patch versions of the runtime.
 {
-  "rollForwardOnNoCandidateFx": 2
+  "rollForwardOnNoCandidateFx": 1
 }

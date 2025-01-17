@@ -1,0 +1,477 @@
+trigger: none
+
+parameters: # parameters are shown up in ADO UI in a build queue time
+  - name: 'debug'
+    displayName: 'Enable debug output'
+    type: boolean
+    default: false
+  - name: InternalSDKBlobURL
+    displayName: URL to the blob having internal .NET SDK
+    type: string
+    default: ' '
+  - name: ReleaseTagVar
+    displayName: Release Tag
+    type: string
+    default: 'fromBranch'
+  - name: SKIP_SIGNING
+    displayName: Skip Signing
+    type: string
+    default: 'NO'
+  - name: SkipPMCPublish
+    displayName: Skip PMC Publish
+    type: boolean
+    default: false
+  - name: SkipPSInfraInstallers
+    displayName: Skip Copying Archives and Installers to PSInfrastructure Public Location
+    type: boolean
+    default: false
+
+variables:
+  - name: CDP_DEFINITION_BUILD_COUNT
+    value: $[counter('', 0)]
+  - name: system.debug
+    value: ${{ parameters.debug }}
+  - name: ENABLE_PRS_DELAYSIGN
+    value: 1
+  - name: ROOT
+    value: $(Build.SourcesDirectory)
+  - name: REPOROOT
+    value: $(Build.SourcesDirectory)
+  - name: OUTPUTROOT
+    value: $(REPOROOT)\out
+  - name: NUGET_XMLDOC_MODE
+    value: none
+  - name: nugetMultiFeedWarnLevel
+    value: none
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+  - name: skipNugetSecurityAnalysis
+    value: true
+  - name: ob_outputDirectory
+    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  - name: WindowsContainerImage
+    value: 'onebranch.azurecr.io/windows/ltsc2022/vse2022:latest'
+  - name: LinuxContainerImage
+    value: mcr.microsoft.com/onebranch/cbl-mariner/build:2.0
+  - name: ReleaseTagVar
+    value: ${{ parameters.ReleaseTagVar }}
+  - group: PoolNames
+
+resources:
+  repositories:
+    - repository: templates
+      type: git
+      name: OneBranch.Pipelines/GovernedTemplates
+      ref: refs/heads/main
+    - repository: PSInternalTools
+      type: git
+      name: PowerShellCore/Internal-PowerShellTeam-Tools
+      ref: refs/heads/master
+
+  pipelines:
+    - pipeline: CoOrdinatedBuildPipeline
+      source: 'PowerShell-Coordinated Packages-Official'
+
+    - pipeline: PSPackagesOfficial
+      source: 'PowerShell-Packages-Official'
+      trigger:
+        branches:
+          include:
+            - master
+            - releases/*
+
+extends:
+  template: v2/OneBranch.Official.CrossPlat.yml@templates
+  parameters:
+    release: 
+      category: NonAzure
+    featureFlags:
+      WindowsHostVersion:
+        Version: 2022
+        Network: KS3
+    cloudvault:
+      enabled: false
+    globalSdl:
+      disableLegacyManifest: true
+      # disabled Armory as we dont have any ARM templates to scan. It fails on some sample ARM templates.
+      armory:
+        enabled: false
+      asyncSdl:
+        enabled: true
+        tsaOptionsFile: .config/tsaoptions.json
+      tsa:
+        enabled: true
+      credscan:
+        enabled: true
+        scanFolder:  $(Build.SourcesDirectory)
+        suppressionsFile: $(Build.SourcesDirectory)\.config\suppress.json
+      binskim:
+        break: false # always break the build on binskim issues in addition to TSA upload
+      policheck:
+        break: true # always break the build on policheck issues. You can disable it by setting to 'false'
+      # suppression:
+      #   suppressionFile: $(Build.SourcesDirectory)\.gdn\global.gdnsuppress
+      tsaOptionsFile: .config\tsaoptions.json
+
+    stages:
+    - stage: setReleaseTagAndUploadTools
+      displayName: 'Set Release Tag and Upload Tools'
+      jobs:
+      - template: /.pipelines/templates/release-SetTagAndTools.yml@self
+
+    - stage: msixbundle
+      displayName: 'Create MSIX Bundle'
+      dependsOn: []
+      jobs:
+      - template: /.pipelines/templates/release-create-msix.yml@self
+
+    - stage: validateSdk
+      displayName: 'Validate SDK'
+      dependsOn: []
+      jobs:
+      - template: /.pipelines/templates/release-validate-sdk.yml@self
+        parameters:
+          jobName: "windowsSDK"
+          displayName: "Windows SDK Validation"
+          imageName: PSMMS2019-Secure
+          poolName: $(windowsPool)
+
+      - template: /.pipelines/templates/release-validate-sdk.yml@self
+        parameters:
+          jobName: "MacOSSDK"
+          displayName: "MacOS SDK Validation"
+          imageName: macOS-latest
+          poolName: Azure Pipelines
+
+      - template: /.pipelines/templates/release-validate-sdk.yml@self
+        parameters:
+          jobName: "LinuxSDK"
+          displayName: "Linux SDK Validation"
+          imageName: PSMMSUbuntu20.04-Secure
+          poolName: $(ubuntuPool)
+
+    - stage: gbltool
+      displayName: 'Validate Global tools'
+      dependsOn: []
+      jobs:
+      - template: /.pipelines/templates/release-validate-globaltools.yml@self
+        parameters:
+          jobName: "WindowsGlobalTools"
+          displayName: "Windows Global Tools Validation"
+          jobtype: windows
+
+      - template: /.pipelines/templates/release-validate-globaltools.yml@self
+        parameters:
+          jobName: "LinuxGlobalTools"
+          displayName: "Linux Global Tools Validation"
+          jobtype: linux
+          globalToolExeName: 'pwsh'
+          globalToolPackageName: 'PowerShell.Linux.x64'
+
+    - stage: fxdpackages
+      displayName: 'Validate FXD Packages'
+      dependsOn: []
+      jobs:
+      - template: /.pipelines/templates/release-validate-fxdpackages.yml@self
+        parameters:
+          jobName: 'winfxd'
+          displayName: 'Validate Win Fxd Packages'
+          jobtype: 'windows'
+          artifactName: 'drop_windows_package_package_win_fxdependent'
+          packageNamePattern: '**/*win-fxdependent.zip'
+
+      - template: /.pipelines/templates/release-validate-fxdpackages.yml@self
+        parameters:
+          jobName: 'winfxdDesktop'
+          displayName: 'Validate WinDesktop Fxd Packages'
+          jobtype: 'windows'
+          artifactName: 'drop_windows_package_package_win_fxdependentWinDesktop'
+          packageNamePattern: '**/*win-fxdependentwinDesktop.zip'
+
+      - template: /.pipelines/templates/release-validate-fxdpackages.yml@self
+        parameters:
+          jobName: 'linuxfxd'
+          displayName: 'Validate Linux Fxd Packages'
+          jobtype: 'linux'
+          artifactName: 'drop_linux_package_fxdependent'
+          packageNamePattern: '**/*linux-x64-fxdependent.tar.gz'
+
+      - template: /.pipelines/templates/release-validate-fxdpackages.yml@self
+        parameters:
+          jobName: 'linuxArm64fxd'
+          displayName: 'Validate Linux ARM64 Fxd Packages'
+          jobtype: 'linux'
+          artifactName: 'drop_linux_package_fxdependent'
+          packageNamePattern: '**/*linux-x64-fxdependent.tar.gz'
+          arm64: 'yes'
+
+    - stage: validatePackages
+      displayName: 'Validate Packages'
+      dependsOn: []
+      jobs:
+      - template: /.pipelines/templates/release-validate-packagenames.yml@self
+
+    - stage: ManualValidation
+      dependsOn: []
+      displayName: Manual Validation
+      jobs:
+      - template: /.pipelines/templates/approvalJob.yml@self
+        parameters:
+          displayName: Validate Windows Packages
+          jobName: ValidateWinPkg
+          instructions: |
+            Validate zip package on windows
+
+      - template: /.pipelines/templates/approvalJob.yml@self
+        parameters:
+          displayName: Validate OSX Packages
+          jobName: ValidateOsxPkg
+          instructions: |
+            Validate tar.gz package on osx-arm64
+
+    - stage: ReleaseAutomation
+      dependsOn: []
+      displayName: 'Release Automation'
+      jobs:
+      - template: /.pipelines/templates/approvalJob.yml@self
+        parameters:
+          displayName: Start Release Automation
+          jobName: StartRA
+          instructions: |
+            Kick off Release automation build at: https://dev.azure.com/powershell-rel/Release-Automation/_build?definitionId=10&_a=summary
+
+      - template: /.pipelines/templates/approvalJob.yml@self
+        parameters:
+          displayName: Triage results
+          jobName: TriageRA
+          dependsOnJob: StartRA
+          instructions: |
+            Triage ReleaseAutomation results
+
+      - template: /.pipelines/templates/approvalJob.yml@self
+        parameters:
+          displayName: Signoff Tests
+          dependsOnJob: TriageRA
+          jobName: SignoffTests
+          instructions: |
+            Signoff ReleaseAutomation results
+
+    - stage: UpdateChangeLog
+      displayName: Update the changelog
+      dependsOn:
+        - ManualValidation
+        - ReleaseAutomation
+        - validatePackages
+        - fxdpackages
+        - gbltool
+        - validateSdk
+        - msixbundle
+
+      jobs:
+      - template: /.pipelines/templates/approvalJob.yml@self
+        parameters:
+          displayName: Make sure the changelog is updated
+          jobName: MergeChangeLog
+          instructions: |
+            Update and merge the changelog for the release.
+            This step is required for creating GitHub draft release.
+
+    - stage: PublishGitHubRelease
+      displayName: Publish GitHub Release
+      dependsOn: 
+        - setReleaseTagAndUploadTools
+        - UpdateChangeLog
+      variables:
+        ob_release_environment: Production
+      jobs:
+      - template: /.pipelines/templates/release-githubtasks.yml@self
+    
+    - stage: PushGitTagAndMakeDraftPublic
+      displayName: Push Git Tag and Make Draft Public
+      dependsOn: PublishGitHubRelease
+      jobs:
+      - template: /.pipelines/templates/approvalJob.yml@self
+        parameters:
+          displayName: Push Git Tag
+          jobName: PushGitTag
+          instructions: |
+            Push the git tag to upstream  
+    
+      - template: /.pipelines/templates/approvalJob.yml@self
+        parameters:
+          displayName: Make Draft Public
+          dependsOnJob: PushGitTag
+          jobName: DraftPublic
+          instructions: |
+            Make the GitHub Release Draft Public
+  
+    - stage: BlobPublic
+      displayName: Make Blob Public
+      dependsOn: 
+        - UpdateChangeLog
+        - PushGitTagAndMakeDraftPublic
+      jobs:
+      - template: /.pipelines/templates/release-MakeBlobPublic.yml@self
+        parameters:
+          SkipPSInfraInstallers: ${{ parameters.SkipPSInfraInstallers }}         
+  
+    - stage: PublishNuGet
+      displayName: Publish NuGet
+      dependsOn:
+        - setReleaseTagAndUploadTools
+        - PushGitTagAndMakeDraftPublic
+      variables:
+        ob_release_environment: Production
+      jobs:
+      - template: /.pipelines/templates/release-publish-nuget.yml@self
+        parameters:
+          skipPublish: true
+
+    - stage: PublishPMC
+      displayName: Publish PMC
+      dependsOn: PushGitTagAndMakeDraftPublic
+      jobs:
+      - template: /.pipelines/templates/release-publish-pmc.yml@self
+        parameters:
+          skipPublish: ${{ parameters.SkipPMCPublish }}
+
+    - stage: ReleaseDocker
+      dependsOn: PushGitTagAndMakeDraftPublic
+      displayName: 'Docker Release'
+      jobs:
+      - template: /.pipelines/templates/approvalJob.yml@self
+        parameters:
+          displayName: Start Docker Build
+          jobName: StartDockerBuild
+          instructions: |
+            Kick off Docker build
+
+      - template: /.pipelines/templates/approvalJob.yml@self
+        parameters:
+          displayName: Start Docker Release
+          dependsOnJob: StartDockerBuild
+          jobName: StartDockerRelease
+          instructions: |
+            Kickoff docker release
+
+    - stage: UpdateDotnetDocker
+      dependsOn: PushGitTagAndMakeDraftPublic
+      displayName: Update DotNet SDK Docker images
+      jobs:
+      - template: /.pipelines/templates/approvalJob.yml@self
+        parameters:
+          displayName: Update .NET SDK docker images
+          jobName: DotnetDocker
+          instructions: |
+            Create PR for updating dotnet-docker images to use latest PowerShell version.
+            1. Fork and clone https://github.com/dotnet/dotnet-docker.git
+            2. git checkout upstream/nightly -b updatePS
+            3. dotnet run --project .\eng\update-dependencies\ -- <dotnetversion> --product-version powershell=<powershellversion> --compute-shas
+            4. create PR targeting nightly branch
+
+    - stage: UpdateWinGet
+      dependsOn: PushGitTagAndMakeDraftPublic
+      displayName: Add manifest entry to winget
+      jobs:
+      - template: /.pipelines/templates/approvalJob.yml@self
+        parameters:
+          displayName: Add manifest entry to winget
+          jobName: UpdateWinGet
+          instructions: |
+            This is typically done by the community 1-2 days after the release.
+
+    - stage: PublishMsix
+      dependsOn: PushGitTagAndMakeDraftPublic
+      displayName: Publish MSIX to store
+      jobs:
+      - template: /.pipelines/templates/approvalJob.yml@self
+        parameters:
+          displayName: Publish the MSIX Bundle package to store
+          jobName: PublishMsix
+          instructions: |
+            Ask Steve to release MSIX bundle package to Store
+
+    - stage: PublishVPack
+      dependsOn: PushGitTagAndMakeDraftPublic
+      displayName: Release vPack
+      jobs:
+      - template: /.pipelines/templates/approvalJob.yml@self
+        parameters:
+          displayName: Start vPack Release pipeline
+          jobName: PublishVPack
+          instructions: |
+            Kick off vPack release pipeline
+
+    # Need to verify if the Az PS / CLI team still uses this. Skippinng for this release.
+    # - stage: ReleaseDeps
+    #   dependsOn: GitHubTasks
+    #   displayName: Update pwsh.deps.json links
+    #   jobs:
+    #   - template: templates/release-UpdateDepsJson.yml
+
+    - stage: UploadBuildInfoJson
+      dependsOn: PushGitTagAndMakeDraftPublic
+      displayName: Upload BuildInfo.json
+      jobs:
+      - template: /.pipelines/templates/release-upload-buildinfo.yml@self
+
+    - stage: ReleaseSymbols
+      dependsOn: PushGitTagAndMakeDraftPublic
+      displayName: Release Symbols
+      jobs:
+      - template: /.pipelines/templates/release-symbols.yml@self
+
+    - stage: ChangesToMaster
+      displayName: Ensure changes are in GH master
+      dependsOn: 
+        - PublishNuGet 
+        - PublishPMC
+      jobs:
+      - template: /.pipelines/templates/approvalJob.yml@self
+        parameters:
+          displayName: Make sure changes are in master
+          jobName: MergeToMaster
+          instructions: |
+            Make sure that changes README.md and metadata.json are merged into master on GitHub.
+
+    - stage: ReleaseSnap
+      displayName: Release Snap
+      dependsOn: ChangesToMaster
+      jobs:
+      - template: /.pipelines/templates/approvalJob.yml@self
+        parameters:
+          displayName: Publish Snap
+          jobName: PublishSnapJob
+          instructions: |
+            Publish Snap
+
+    - stage: ReleaseToMU
+      displayName: Release to MU
+      dependsOn: PushGitTagAndMakeDraftPublic # This only needs the blob to be available
+      jobs:
+      - template: /.pipelines/templates/approvalJob.yml@self
+        parameters:
+          displayName: Release to MU
+          instructions: |
+            Notify the PM team to start the process of releasing to MU.
+
+    - stage: ReleaseClose
+      displayName: Finish Release
+      dependsOn: 
+        - ReleaseToMU
+        - ReleaseSymbols
+        - ReleaseSnap
+      jobs:
+      - template: /.pipelines/templates/approvalJob.yml@self
+        parameters:
+          displayName: Retain Build
+          jobName: RetainBuild
+          instructions: |
+            Retain the build
+
+      - template: /.pipelines/templates/approvalJob.yml@self
+        parameters:
+          displayName: Delete release branch
+          jobName: DeleteBranch
+          instructions: |
+            Delete release

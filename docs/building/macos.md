@@ -34,6 +34,6 @@ We cannot do this for you in the build module due to #[847][].
 
 ## Build using our module
 
-Start a PowerShell session by running `pwsh`, and then use `Start-PSBuild` from the module.
+Start a PowerShell session by running `pwsh`, and then use `Start-PSBuild -UseNuGetOrg` from the module.
 
 After building, PowerShell will be at `./src/powershell-unix/bin/Debug/net6.0/osx-x64/publish/pwsh`.

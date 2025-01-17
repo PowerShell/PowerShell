@@ -1,7 +1,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-if(-not ("netDumbster.smtp.SimpleSmtpServer" -as [type]))
+# the send-mailmessage cmdlet is obsolete and will be removed in a future release.
+# We will address no issues in this cmdlet, so these tests are marked as skipped.
+$script:SkipTest = $true
+
+if(-not ("netDumbster.smtp.SimpleSmtpServer" -as [type]) -and ! $script:SkipTest)
 {
     Register-PackageSource -Name nuget.org -Location https://api.nuget.org/v3/index.json -ProviderName NuGet -ErrorAction SilentlyContinue
 
@@ -22,6 +26,9 @@ $DefaultInputObject = @{
 
 Describe "Send-MailMessage DRT Unit Tests" -Tags CI, RequireSudoOnUnix {
     BeforeAll {
+        if ($script:SkipTest) {
+            return
+        }
         $server = [netDumbster.smtp.SimpleSmtpServer]::Start(25)
 
         function Read-Mail
@@ -37,6 +44,10 @@ Describe "Send-MailMessage DRT Unit Tests" -Tags CI, RequireSudoOnUnix {
     }
 
     BeforeEach {
+        if ($script:SkipTest) {
+            return
+        }
+
         if($server)
         {
             $server.ClearReceivedEmail()
@@ -44,6 +55,10 @@ Describe "Send-MailMessage DRT Unit Tests" -Tags CI, RequireSudoOnUnix {
     }
 
     AfterAll {
+        if ($script:SkipTest) {
+            return
+        }
+
         if($server)
         {
             $server.Stop()
@@ -109,7 +124,7 @@ Describe "Send-MailMessage DRT Unit Tests" -Tags CI, RequireSudoOnUnix {
         }
     )
 
-    It "Shows obsolete message for cmdlet" {
+    It "Shows obsolete message for cmdlet" -skip:$script:SkipTest {
         $server | Should -Not -Be $null
 
         $powershell = [PowerShell]::Create()
@@ -124,7 +139,7 @@ Describe "Send-MailMessage DRT Unit Tests" -Tags CI, RequireSudoOnUnix {
         $warnings[0].ToString() | Should -BeLike "The command 'Send-MailMessage' is obsolete. *"
     }
 
-    It "Can send mail message using named parameters <Name>" -TestCases $testCases {
+    It "Can send mail message using named parameters <Name>" -TestCases $testCases -skip:$script:SkipTest {
         param($InputObject)
 
         $server | Should -Not -Be $null
@@ -156,7 +171,7 @@ Describe "Send-MailMessage DRT Unit Tests" -Tags CI, RequireSudoOnUnix {
         $mail.MessageParts[0].BodyData | Should -BeExactly $InputObject.Body
     }
 
-    It "Can send mail message using pipline named parameters <Name>" -TestCases $testCases -Pending {
+    It "Can send mail message using pipline named parameters <Name>" -TestCases $testCases -skip:$script:SkipTest {
         param($InputObject)
 
         Set-TestInconclusive "As of right now the Send-MailMessage cmdlet does not support piping named parameters (see issue 7591)"
@@ -193,6 +208,10 @@ Describe "Send-MailMessage DRT Unit Tests" -Tags CI, RequireSudoOnUnix {
 
 Describe "Send-MailMessage Feature Tests" -Tags Feature, RequireSudoOnUnix {
     BeforeAll {
+        if ($script:SkipTest) {
+            return
+        }
+
         function Read-Mail
         {
             param()
@@ -206,6 +225,10 @@ Describe "Send-MailMessage Feature Tests" -Tags Feature, RequireSudoOnUnix {
     }
 
     BeforeEach {
+        if ($script:SkipTest) {
+            return
+        }
+
         if($server)
         {
             $server.ClearReceivedEmail()
@@ -214,17 +237,25 @@ Describe "Send-MailMessage Feature Tests" -Tags Feature, RequireSudoOnUnix {
 
     Context "Default Port 25" {
         BeforeAll {
+            if ($script:SkipTest) {
+                return
+            }
+
             $server = [netDumbster.smtp.SimpleSmtpServer]::Start(25)
         }
 
         AfterAll {
+            if ($script:SkipTest) {
+                return
+            }
+
             if($server)
             {
                 $server.Stop()
             }
         }
 
-        It "Can throw on wrong mail addresses" {
+        It "Can throw on wrong mail addresses" -skip:$script:SkipTest {
             $server | Should -Not -Be $null
 
             $obj = $DefaultInputObject.Clone()
@@ -233,7 +264,7 @@ Describe "Send-MailMessage Feature Tests" -Tags Feature, RequireSudoOnUnix {
             { Send-MailMessage @obj -ErrorAction Stop } | Should -Throw -ErrorId "FormatException,Microsoft.PowerShell.Commands.SendMailMessage"
         }
 
-        It "Can send mail with free-form email address" {
+        It "Can send mail with free-form email address" -skip:$script:SkipTest {
             $server | Should -Not -Be $null
 
             $obj = $DefaultInputObject.Clone()
@@ -248,7 +279,7 @@ Describe "Send-MailMessage Feature Tests" -Tags Feature, RequireSudoOnUnix {
             $mail.ToAddresses | Should -BeExactly "user02@example.com"
         }
 
-        It "Can send mail with high priority" {
+        It "Can send mail with high priority" -skip:$script:SkipTest {
             $server | Should -Not -Be $null
 
             Send-MailMessage @DefaultInputObject -Priority High -ErrorAction SilentlyContinue
@@ -257,7 +288,7 @@ Describe "Send-MailMessage Feature Tests" -Tags Feature, RequireSudoOnUnix {
             $mail.Priority | Should -BeExactly "urgent"
         }
 
-        It "Can send mail with HTML content as body" {
+        It "Can send mail with HTML content as body" -skip:$script:SkipTest {
             $server | Should -Not -Be $null
 
             $obj = $DefaultInputObject.Clone()
@@ -271,7 +302,7 @@ Describe "Send-MailMessage Feature Tests" -Tags Feature, RequireSudoOnUnix {
             $mail.MessageParts[0].BodyData | Should -Be $obj.Body
         }
 
-        It "Can send mail with UTF8 encoding" {
+        It "Can send mail with UTF8 encoding" -skip:$script:SkipTest {
             $server | Should -Not -Be $null
 
             $obj = $DefaultInputObject.Clone()
@@ -286,7 +317,7 @@ Describe "Send-MailMessage Feature Tests" -Tags Feature, RequireSudoOnUnix {
             $utf8Text | Should -Be $obj.Body
         }
 
-        It "Can send mail with attachments" {
+        It "Can send mail with attachments" -skip:$script:SkipTest {
             $attachment1 = "TestDrive:\attachment1.txt"
             $attachment2 = "TestDrive:\attachment2.txt"
 
@@ -311,17 +342,25 @@ Describe "Send-MailMessage Feature Tests" -Tags Feature, RequireSudoOnUnix {
 
     Context "Custom Port 2525" {
         BeforeAll {
+            if ($script:SkipTest) {
+                return
+            }
+
             $server = [netDumbster.smtp.SimpleSmtpServer]::Start(2525)
         }
 
         AfterAll {
+            if ($script:SkipTest) {
+                return
+            }
+
             if($server)
             {
                 $server.Stop()
             }
         }
 
-        It "Can send mail message using custom port 2525" {
+        It "Can send mail message using custom port 2525" -skip:$script:SkipTest {
             $server | Should -Not -Be $null
             $server.ReceivedEmailCount | Should -BeExactly 0
 

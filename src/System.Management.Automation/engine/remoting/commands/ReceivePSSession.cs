@@ -260,7 +260,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = ReceivePSSessionCommand.ComputerSessionNameParameterSet)]
         [Parameter(ParameterSetName = ReceivePSSessionCommand.ConnectionUriSessionNameParameterSet)]
         [Parameter(ParameterSetName = ReceivePSSessionCommand.ConnectionUriInstanceIdParameterSet)]
-        [Credential()]
+        [Credential]
         public PSCredential Credential
         {
             get
@@ -446,9 +446,9 @@ namespace Microsoft.PowerShell.Commands
             string shellUri = null;
             if (!string.IsNullOrEmpty(ConfigurationName))
             {
-                shellUri = (ConfigurationName.IndexOf(
-                            System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix, StringComparison.OrdinalIgnoreCase) != -1) ?
-                            ConfigurationName : System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix + ConfigurationName;
+                shellUri = ConfigurationName.Contains(WSManNativeApi.ResourceURIPrefix, StringComparison.OrdinalIgnoreCase)
+                    ? ConfigurationName
+                    : WSManNativeApi.ResourceURIPrefix + ConfigurationName;
             }
 
             // Connect selected runspace/command and direct command output to host

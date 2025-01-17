@@ -11,6 +11,7 @@ namespace Microsoft.Management.UI.Internal
     /// check if it starts with the rule's value.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
+    [Serializable]
     public class TextStartsWithFilterRule : TextFilterRule
     {
         private static readonly string TextStartsWithCharactersRegexPattern = "^{0}";

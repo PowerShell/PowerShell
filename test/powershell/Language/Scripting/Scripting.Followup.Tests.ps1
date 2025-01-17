@@ -81,28 +81,6 @@ Describe "Scripting.Followup.Tests" -Tags "CI" {
         $result | Should -BeOfType 'System.Collections.Specialized.OrderedDictionary'
     }
 
-    It "Don't preserve result when no need to do so in case of flow-control exception" {
-        function TestFunc1([switch]$p) {
-            ## No need to preserve and flush the results from the IF statement to the outer
-            ## pipeline, because the results are supposed to be assigned to a variable.
-            if ($p) {
-                $null = if ($true) { "one"; return "two" }
-            } else {
-                $a = foreach ($a in 1) { "one"; return; }
-            }
-        }
-
-        function TestFunc2 {
-            ## The results from the sub-expression need to be preserved and flushed to the outer pipeline.
-            $("1";return "2")
-        }
-
-        TestFunc1 | Should -Be $null
-        TestFunc1 -p | Should -Be $null
-
-        TestFunc2 | Should -Be @("1", "2")
-    }
-
     It "'[NullString]::Value' should be treated as string type when resolving .NET method" {
         $testType = 'NullStringTest' -as [type]
         if (-not $testType) {
@@ -145,5 +123,28 @@ public class NullStringTest {
         $powershell = Join-Path -Path $PSHOME -ChildPath "pwsh"
         $result = & $powershell -noprofile -c '[System.Text.Encoding]::GetEncoding("IBM437").WebName'
         $result | Should -BeExactly "ibm437"
+    }
+
+    It 'Return statement on the right side of an assignment should write the retrun value to outer pipe' {
+        function TestFunc1 {
+            ## The return value are not assigned to the variable but should be written to the outer pipe.
+            $Global:mylhsvar = if ($true) { return "one" }
+        }
+
+        function TestFunc2 {
+            ## The results from the sub-expression need to be preserved and flushed to the outer pipeline.
+            $("1";return "2")
+        }
+
+        try {
+            $Global:mylhsvar = $null
+            TestFunc1 | Should -BeExactly "one"
+            TestFunc2 | Should -Be @("1", "2")
+
+            $Global:mylhsvar | Should -Be $null
+        }
+        finally {
+            Remove-Variable -Name mylhsvar -Scope Global
+        }
     }
 }

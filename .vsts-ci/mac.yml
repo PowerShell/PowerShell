@@ -14,7 +14,9 @@ trigger:
     - tools/releaseBuild/**/*
     - .vsts-ci/misc-analysis.yml
     - .github/ISSUE_TEMPLATE/*
+    - .github/workflows/*
     - .dependabot/config.yml
+    - .pipelines/*
     - test/perf/*
 pr:
   branches:
@@ -28,6 +30,7 @@ pr:
     exclude:
     - .dependabot/config.yml
     - .github/ISSUE_TEMPLATE/*
+    - .github/workflows/*
     - .vsts-ci/misc-analysis.yml
     - .vsts-ci/windows.yml
     - .vsts-ci/windows/*
@@ -40,6 +43,7 @@ pr:
     - tools/releaseBuild/azureDevOps/templates/*
     - README.md
     - .spelling
+    - .pipelines/*
 
 variables:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
@@ -49,6 +53,7 @@ variables:
   # Turn off Homebrew analytics
   HOMEBREW_NO_ANALYTICS: 1
   __SuppressAnsiEscapeSequences: 1
+  nugetMultiFeedWarnLevel: none
 
 resources:
 - repo: self
@@ -91,3 +96,20 @@ stages:
     parameters:
       pool: macOS-latest
 
+- stage: PackageMac
+  dependsOn: ['BuildMac']
+  displayName: Package macOS (bootstrap only)
+  jobs:
+    - job: macos_packaging
+      pool:
+        vmImage: macOS-latest
+
+      displayName: macOS packaging (bootstrap only)
+      steps:
+        - checkout: self
+          clean: true
+        - pwsh: |
+            import-module ./build.psm1
+            start-psbootstrap -package
+          displayName: Bootstrap packaging
+          condition: succeededOrFailed()

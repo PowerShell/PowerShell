@@ -1,0 +1,90 @@
+parameters:
+  - name: skipPublish
+    default: false
+    type: boolean
+
+jobs:
+- job: PMCPublish
+  displayName: Publish to PMC
+  condition: succeeded()
+  pool:
+    type: linux
+    isCustom: true
+    name: PowerShell1ES
+    demands:
+    - ImageOverride -equals PSMMSUbuntu20.04-Secure
+  variables:
+  - name: runCodesignValidationInjection
+    value: false
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+  - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
+    value: 1
+  - group: 'mscodehub-code-read-akv'
+  - group: 'packages.microsoft.com'
+  - name: ob_outputDirectory
+    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  - name: ob_sdl_codeSignValidation_enabled
+    value: false
+  - name: ob_sdl_binskim_enabled
+    value: false
+  - name: ob_sdl_tsa_configFile
+    value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+  - name: ob_sdl_credscan_suppressionsFile
+    value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+
+  steps:
+  - checkout: self ## the global setting on lfs didn't work
+    lfs: false
+
+  - template: release-SetReleaseTagAndContainerName.yml
+
+  - pwsh: |
+      $packageVersion = '$(ReleaseTag)'.ToLowerInvariant() -replace '^v',''
+      $vstsCommandString = "vso[task.setvariable variable=packageVersion]$packageVersion"
+      Write-Host "sending " + $vstsCommandString
+      Write-Host "##$vstsCommandString"
+    displayName: Set Package version
+
+  - pwsh: |
+      $branch = 'mirror-target'
+      $gitArgs = "clone",
+      "--verbose",
+      "--branch",
+      "$branch",
+      "https://$(mscodehubCodeReadPat)@mscodehub.visualstudio.com/PowerShellCore/_git/Internal-PowerShellTeam-Tools",
+      '$(Pipeline.Workspace)/tools'
+      $gitArgs | Write-Verbose -Verbose
+      git $gitArgs
+    displayName: Clone Internal-PowerShellTeam-Tools from MSCodeHub
+
+  - task: PipAuthenticate@1
+    inputs:
+      artifactFeeds: 'pmc'
+      pythonDownloadServiceConnections: pmcDownload
+
+  - pwsh: |
+      pip install pmc-cli==1.12.0
+
+      $newPath = (resolve-path '~/.local/bin').providerpath
+      $vstsCommandString = "vso[task.setvariable variable=PATH]${env:PATH}:$newPath"
+      Write-Host "sending " + $vstsCommandString
+      Write-Host "##$vstsCommandString"
+    displayName: Install pmc cli
+
+  - pwsh: |
+      $metadata = Get-Content -Path "$(Build.SourcesDirectory)/tools/metadata.json" -Raw | ConvertFrom-Json
+      $params = @{
+          ReleaseTag = "$(ReleaseTag)"
+          AadClientId = "$(PmcCliClientID)"
+          BlobFolderName = "$(ReleaseTag)"
+          LTS = $metadata.LTSRelease.Latest
+          ForProduction = $true
+          SkipPublish = $${{ parameters.skipPublish }}
+          MappingFilePath = '$(System.DefaultWorkingDirectory)/tools/packages.microsoft.com/mapping.json'
+      }
+
+      $params | Out-String -width 9999 -Stream | write-Verbose -Verbose
+
+      & '$(Pipeline.Workspace)/tools/packages.microsoft.com-v4/releaseLinuxPackages.ps1' @params
+    displayName: Run release script

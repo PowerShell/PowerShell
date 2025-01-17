@@ -967,7 +967,7 @@ namespace System.Management.Automation
 #if UNIX
             return Platform.SelectProductNameForDirectory(Platform.XDG_Type.USER_MODULES);
 #else
-            string myDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            string myDocumentsPath = InternalTestHooks.SetMyDocumentsSpecialFolderToBlank ? string.Empty : Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             return string.IsNullOrEmpty(myDocumentsPath) ? null : Path.Combine(myDocumentsPath, Utils.ModuleDirectory);
 #endif
         }
@@ -1259,26 +1259,30 @@ namespace System.Management.Automation
                 // personalModulePath
                 // sharedModulePath
                 // systemModulePath
-                currentProcessModulePath = AddToPath(currentProcessModulePath, personalModulePathToUse, 0);
-                int insertIndex = currentProcessModulePath.IndexOf(Path.PathSeparator, PathContainsSubstring(currentProcessModulePath, personalModulePathToUse));
-                if (insertIndex != -1)
-                {
-                    // advance past the path separator
-                    insertIndex++;
-                }
 
-                currentProcessModulePath = AddToPath(currentProcessModulePath, sharedModulePath, insertIndex);
-                insertIndex = currentProcessModulePath.IndexOf(Path.PathSeparator, PathContainsSubstring(currentProcessModulePath, sharedModulePath));
-                if (insertIndex != -1)
-                {
-                    // advance past the path separator
-                    insertIndex++;
-                }
+                int insertIndex = 0;
 
-                currentProcessModulePath = AddToPath(currentProcessModulePath, systemModulePathToUse, insertIndex);
+                currentProcessModulePath = UpdatePath(currentProcessModulePath, personalModulePathToUse, ref insertIndex);
+                currentProcessModulePath = UpdatePath(currentProcessModulePath, sharedModulePath, ref insertIndex);
+                currentProcessModulePath = UpdatePath(currentProcessModulePath, systemModulePathToUse, ref insertIndex);
             }
 
             return currentProcessModulePath;
+        }
+
+        private static string UpdatePath(string path, string pathToAdd, ref int insertIndex)
+        {
+            if (!string.IsNullOrEmpty(pathToAdd))
+            {
+                path = AddToPath(path, pathToAdd, insertIndex);
+                insertIndex = path.IndexOf(Path.PathSeparator, PathContainsSubstring(path, pathToAdd));
+                if (insertIndex != -1)
+                {
+                    // advance past the path separator
+                    insertIndex++;
+                }
+            }
+            return path;
         }
 
         /// <summary>

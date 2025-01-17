@@ -81,11 +81,11 @@ namespace Microsoft.PowerShell.Commands
             ArgumentNullException.ThrowIfNull(_cancelToken);
 
             TimeSpan perReadTimeout = ConvertTimeoutSecondsToTimeSpan(OperationTimeoutSeconds);
-            Stream baseResponseStream = StreamHelper.GetResponseStream(response, _cancelToken.Token);
+            Stream responseStream = StreamHelper.GetResponseStream(response, _cancelToken.Token);
 
             if (ShouldWriteToPipeline)
             {
-                using BufferingStreamReader responseStream = new(baseResponseStream, perReadTimeout, _cancelToken.Token);
+                responseStream = new BufferingStreamReader(responseStream, perReadTimeout, _cancelToken.Token);
 
                 // First see if it is an RSS / ATOM feed, in which case we can
                 // stream it - unless the user has overridden it with a return type of "XML"
@@ -110,7 +110,7 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     // NOTE: Tests use this verbose output to verify the encoding.
-                    WriteVerbose(string.Create(System.Globalization.CultureInfo.InvariantCulture, $"Content encoding: {encodingVerboseName}"));
+                    WriteVerbose($"Content encoding: {encodingVerboseName}");
 
                     // Determine the response type
                     RestReturnType returnType = CheckReturnType(response);
@@ -137,14 +137,17 @@ namespace Microsoft.PowerShell.Commands
 
                     WriteObject(obj);
                 }
+
+                responseStream.Position = 0;
             }
-            else if (ShouldSaveToOutFile)
+            
+            if (ShouldSaveToOutFile)
             {
                 string outFilePath = WebResponseHelper.GetOutFilePath(response, _qualifiedOutFile);
 
-                WriteVerbose(string.Create(System.Globalization.CultureInfo.InvariantCulture, $"File Name: {Path.GetFileName(_qualifiedOutFile)}"));
+                WriteVerbose($"File Name: {Path.GetFileName(outFilePath)}");
 
-                StreamHelper.SaveStreamToFile(baseResponseStream, outFilePath, this, response.Content.Headers.ContentLength.GetValueOrDefault(), perReadTimeout, _cancelToken.Token);
+                StreamHelper.SaveStreamToFile(responseStream, outFilePath, this, response.Content.Headers.ContentLength.GetValueOrDefault(), perReadTimeout, _cancelToken.Token);
             }
 
             if (!string.IsNullOrEmpty(StatusCodeVariable))

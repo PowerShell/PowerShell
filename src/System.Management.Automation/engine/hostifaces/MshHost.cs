@@ -296,6 +296,11 @@ namespace System.Management.Automation.Host
         /// <summary>
         /// Called by the engine to notify the host that a runspace push has been requested.
         /// </summary>
+        /// <param name="runspace">
+        /// The runspace to push. This runspace must be a remote runspace and
+        /// not a locally created runspace.
+        /// </param>
+        /// <exception cref="ArgumentException">The specified runspace is not a remote runspace.</exception>
         /// <seealso cref="System.Management.Automation.Host.IHostSupportsInteractiveSession.PushRunspace"/>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Runspace")]
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "runspace")]

@@ -374,7 +374,9 @@ namespace Microsoft.PowerShell.Commands
                     ThrowTerminatingError(er);
                 }
 
-                path = pathInfos[0].Path;
+                // `Path` returns the PSProviderPath which is fully qualified to the provider and the filesystem APIs
+                // don't understand this.  Instead `ProviderPath` returns the path that the FileSystemProvider understands.
+                path = pathInfos[0].ProviderPath;
 
                 // First, we validate if the path does exist.
                 if (!File.Exists(path) && !Directory.Exists(path))

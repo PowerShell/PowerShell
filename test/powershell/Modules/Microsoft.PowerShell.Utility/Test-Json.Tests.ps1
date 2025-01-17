@@ -66,6 +66,26 @@ Describe "Test-Json" -Tags "CI" {
             }
 '@
 
+        $jsonWithComments = @'
+            {
+                // A Json comment
+                "string": "test"
+            }
+'@
+
+        $jsonWithTrailingComma = @'
+            {
+                "string": "test",
+            }
+'@
+
+        $jsonWithCommentsAndTrailingComma = @'
+            {
+                // A Json comment
+                "string": "test",
+            }
+'@
+
         $validJsonPath = Join-Path -Path $TestDrive -ChildPath 'validJson.json'
         $validLiteralJsonPath = Join-Path -Path $TestDrive -ChildPath "[valid]Json.json"
         $invalidNodeInJsonPath = Join-Path -Path $TestDrive -ChildPath 'invalidNodeInJson.json'
@@ -308,5 +328,19 @@ Describe "Test-Json" -Tags "CI" {
             $schema = "{ `"type`": `"$_`" }"
             Test-Json -Json $value -Schema $schema -ErrorAction SilentlyContinue
         } | Should -Be $expected
+    }
+
+    It "Test-Json returns True with document options '<options>'" -TestCases @(
+        @{ Json = $jsonWithComments; Options = 'IgnoreComments' }
+        @{ Json = $jsonWithTrailingComma; Options = 'AllowTrailingCommas'}
+        @{ Json = $jsonWithCommentsAndTrailingComma; Options = 'IgnoreComments', 'AllowTrailingCommas'}
+    ) {
+        param($Json, $Options)
+
+        # Without options should fail
+        ($Json | Test-Json -ErrorAction SilentlyContinue) | Should -BeFalse
+
+        # With options should pass
+        ($Json | Test-Json -Option $Options -ErrorAction SilentlyContinue) | Should -BeTrue
     }
 }

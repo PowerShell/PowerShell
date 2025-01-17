@@ -115,6 +115,11 @@ Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
         { Start-Process -FilePath $pingCommand -NoNewWindow -WindowStyle Normal -ErrorAction Stop } | Should -Throw -ErrorId "InvalidOperationException,Microsoft.PowerShell.Commands.StartProcessCommand"
     }
 
+    It "ExitCode returns with -NoNewWindow, -PassThru and -Wait" {
+        $process = Start-Process -FilePath $pingCommand -ArgumentList $pingParam -NoNewWindow -PassThru -Wait -ErrorAction Stop
+        $process.ExitCode | Should -Be 0
+    }
+
     It "Should start cmd.exe with Verb 'open' and WindowStyle 'Minimized'" -Skip:(!$isFullWin) {
         $fileToWrite = Join-Path $TestDrive "VerbTest.txt"
         $process = Start-Process cmd.exe -ArgumentList "/c echo abc > $fileToWrite" -Verb open -WindowStyle Minimized -PassThru

@@ -370,223 +370,275 @@ namespace System.Management.Automation
         /// <summary>
         /// Unknown token.
         /// </summary>
-        /// <remarks>
-        /// </remarks>
         Unknown,
 
         /// <summary>
+        /// <para>
         /// Command.
-        /// </summary>
-        /// <remarks>
+        /// </para>
+        /// </para>
         /// For example, 'get-process' in
         ///
-        ///     get-process -name foo
-        /// </remarks>
+        ///     <c><code>get-process -name foo</code></c>
+        /// </para>
+        /// </summary>
         Command,
 
         /// <summary>
+        /// <para>
         /// Command Parameter.
-        /// </summary>
-        /// <remarks>
+        /// </para>
+        /// <para>
         /// For example, '-name' in
         ///
-        ///     get-process -name foo
-        /// </remarks>
+        ///     <c><code>get-process -name foo</code></c>
+        /// </para>
+        /// </summary>
         CommandParameter,
 
         /// <summary>
+        /// <para>
         /// Command Argument.
-        /// </summary>
-        /// <remarks>
+        /// </para>
+        /// <para>
         /// For example, 'foo' in
         ///
-        ///     get-process -name foo
-        /// </remarks>
+        ///     <c><code>get-process -name foo</code></c>
+        /// </para>
+        /// </summary>
         CommandArgument,
 
         /// <summary>
+        /// <para>
         /// Number.
-        /// </summary>
-        /// <remarks>
+        /// </para>
+        /// <para>
         /// For example, 12 in
         ///
-        ///     $a=12
-        /// </remarks>
+        ///     <c><code>$a=12</code></c>
+        /// </para>
+        /// </summary>
         Number,
 
         /// <summary>
+        /// <para>
         /// String.
-        /// </summary>
-        /// <remarks>
+        /// </para>
+        /// <para>
         /// For example, "12" in
         ///
-        ///     $a="12"
-        /// </remarks>
+        ///     <c><code>$a="12"</code></c>
+        /// </para>
+        /// </summary>
         String,
 
         /// <summary>
+        /// <para>
         /// Variable.
-        /// </summary>
+        /// </para>
+        /// <para>
         /// <remarks>
         /// For example, $a in
         ///
-        ///     $a="12"
-        /// </remarks>
+        ///     <c><code>$a="12"</code></c>
+        /// <para>
+        /// </summary>
         Variable,
 
         /// <summary>
+        /// <para>
         /// Property name or method name.
-        /// </summary>
-        /// <remarks>
+        /// </para>
+        /// <para>
         /// For example, Name in
         ///
-        ///     $a.Name
-        /// </remarks>
+        ///     <c><code>$a.Name</code></c>
+        /// </para>
+        /// </summary>
         Member,
 
         /// <summary>
+        /// <para>
         /// Loop label.
-        /// </summary>
-        /// <remarks>
+        /// </para>
+        /// <para>
         /// For example, :loop in
         ///
+        /// <c><code>
         ///     :loop
         ///     foreach($a in $b)
         ///     {
         ///         $a
         ///     }
-        /// </remarks>
+        /// </code></c>
+        /// </summary>
         LoopLabel,
 
         /// <summary>
+        /// <para>
         /// Attributes.
-        /// </summary>
-        /// <remarks>
+        /// </para>
+        /// <para>
         /// For example, Mandatory in
         ///
-        ///     param([Mandatory] $a)
-        /// </remarks>
+        ///     <c><code>param([Mandatory] $a)</code></c>
+        /// </para>
+        /// </summary>
         Attribute,
 
         /// <summary>
+        /// <para>
         /// Types.
-        /// </summary>
-        /// <remarks>
+        /// </para>
+        /// <para>
         /// For example, [string] in
         ///
-        ///     $a = [string] 12
-        /// </remarks>
+        ///     <c><code>$a = [string] 12</code></c>
+        /// </para>
+        /// </summary>
         Type,
 
         /// <summary>
+        /// <para>
         /// Operators.
-        /// </summary>
-        /// <remarks>
+        /// </para>
+        /// <para>
         /// For example, + in
         ///
-        ///     $a = 1 + 2
-        /// </remarks>
+        ///     <c><code>$a = 1 + 2</code></c>
+        /// </para>
+        /// </summary>
         Operator,
 
         /// <summary>
+        /// <para>
         /// Group Starter.
-        /// </summary>
-        /// <remarks>
+        /// </para>
+        /// <para>
         /// For example, { in
         ///
+        /// <c><code>
         ///     if ($a -gt 4)
         ///     {
         ///         $a++;
         ///     }
-        /// </remarks>
+        /// </code></c>
+        /// </para>
+        /// </summary>
         GroupStart,
 
         /// <summary>
+        /// <para>
         /// Group Ender.
-        /// </summary>
-        /// <remarks>
+        /// </para>
+        /// <para>
         /// For example, } in
         ///
+        /// <c><code>
         ///     if ($a -gt 4)
         ///     {
         ///         $a++;
         ///     }
-        /// </remarks>
+        /// </code></c>
+        /// </para>
+        /// </summary>
         GroupEnd,
 
         /// <summary>
+        /// <para>
         /// Keyword.
-        /// </summary>
-        /// <remarks>
+        /// </para>
+        /// <para>
         /// For example, if in
         ///
+        /// <c><code>
         ///     if ($a -gt 4)
         ///     {
         ///         $a++;
         ///     }
-        /// </remarks>
+        /// </code></c>
+        /// </para>
+        /// </summary>
         Keyword,
 
         /// <summary>
+        /// <para>
         /// Comment.
-        /// </summary>
-        /// <remarks>
+        /// </para>
+        /// <para>
         /// For example, #here in
         ///
+        /// <c><code>
         ///     #here
         ///     if ($a -gt 4)
         ///     {
         ///         $a++;
         ///     }
-        /// </remarks>
+        /// </code></c>
+        /// </para>
+        /// </summary>
         Comment,
 
         /// <summary>
+        /// <para>
         /// Statement separator. This is ';'
-        /// </summary>
-        /// <remarks>
+        /// </para>
+        /// <para>
         /// For example, ; in
         ///
+        /// <c><code>
         ///     #here
         ///     if ($a -gt 4)
         ///     {
         ///         $a++;
         ///     }
-        /// </remarks>
+        /// </code></c>
+        /// </para>
+        /// </summary>
         StatementSeparator,
 
         /// <summary>
+        /// <para>
         /// New line. This is '\n'
-        /// </summary>
-        /// <remarks>
+        /// </para>
+        /// <para>
         /// For example, \n in
         ///
+        /// <c><code>
         ///     #here
         ///     if ($a -gt 4)
         ///     {
         ///         $a++;
         ///     }
-        /// </remarks>
+        /// </code></c>
+        /// </para>
+        /// </summary>
         NewLine,
 
         /// <summary>
+        /// <para>
         /// Line continuation.
-        /// </summary>
-        /// <remarks>
+        /// </para>
+        /// <para>
         /// For example, ` in
         ///
+        /// <c><code>
         ///     get-command -name `
         ///     foo
-        /// </remarks>
+        /// </code></c>
+        /// </para>
+        /// </summary>
         LineContinuation,
 
         /// <summary>
+        /// <para>
         /// Position token.
-        /// </summary>
-        /// <remarks>
-        /// Position token are bogus tokens generated for identifying a location
+        /// </para>
+        /// <para>
+        /// Position tokens are bogus tokens generated for identifying a location
         /// in the script.
-        /// </remarks>
+        /// </para>
+        /// </summary>
         Position
     }
 }

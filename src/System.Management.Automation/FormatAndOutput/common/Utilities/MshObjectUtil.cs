@@ -121,8 +121,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="obj">Object to extract the IEnumerable from.</param>
         internal static IEnumerable GetEnumerable(object obj)
         {
-            PSObject mshObj = obj as PSObject;
-            if (mshObj != null)
+            if (obj is PSObject mshObj)
             {
                 obj = mshObj.BaseObject;
             }
@@ -228,8 +227,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     IEnumerator enumerator = e.GetEnumerator();
                     if (enumerator != null)
                     {
-                        IBlockingEnumerator<object> be = enumerator as IBlockingEnumerator<object>;
-                        if (be != null)
+                        if (enumerator is IBlockingEnumerator<object> be)
                         {
                             while (be.MoveNext(false))
                             {
@@ -418,22 +416,18 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private static List<PSPropertyExpression> GetDefaultPropertySet(PSMemberSet standardMembersSet)
         {
-            if (standardMembersSet != null)
+            if (standardMembersSet != null && standardMembersSet.Members[TypeTable.DefaultDisplayPropertySet] is PSPropertySet defaultDisplayPropertySet)
             {
-                PSPropertySet defaultDisplayPropertySet = standardMembersSet.Members[TypeTable.DefaultDisplayPropertySet] as PSPropertySet;
-                if (defaultDisplayPropertySet != null)
+                List<PSPropertyExpression> retVal = new List<PSPropertyExpression>();
+                foreach (string prop in defaultDisplayPropertySet.ReferencedPropertyNames)
                 {
-                    List<PSPropertyExpression> retVal = new List<PSPropertyExpression>();
-                    foreach (string prop in defaultDisplayPropertySet.ReferencedPropertyNames)
+                    if (!string.IsNullOrEmpty(prop))
                     {
-                        if (!string.IsNullOrEmpty(prop))
-                        {
-                            retVal.Add(new PSPropertyExpression(prop));
-                        }
+                        retVal.Add(new PSPropertyExpression(prop));
                     }
-
-                    return retVal;
                 }
+
+                return retVal;
             }
 
             return new List<PSPropertyExpression>();
@@ -457,21 +451,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private static PSPropertyExpression GetDefaultNameExpression(PSMemberSet standardMembersSet)
         {
-            if (standardMembersSet != null)
+            if (standardMembersSet != null && standardMembersSet.Members[TypeTable.DefaultDisplayProperty] is PSNoteProperty defaultDisplayProperty)
             {
-                PSNoteProperty defaultDisplayProperty = standardMembersSet.Members[TypeTable.DefaultDisplayProperty] as PSNoteProperty;
-                if (defaultDisplayProperty != null)
+                string expressionString = defaultDisplayProperty.Value.ToString();
+                if (string.IsNullOrEmpty(expressionString))
                 {
-                    string expressionString = defaultDisplayProperty.Value.ToString();
-                    if (string.IsNullOrEmpty(expressionString))
-                    {
-                        // invalid data, the PSObject is empty
-                        return null;
-                    }
-                    else
-                    {
-                        return new PSPropertyExpression(expressionString);
-                    }
+                    // invalid data, the PSObject is empty
+                    return null;
+                }
+                else
+                {
+                    return new PSPropertyExpression(expressionString);
                 }
             }
 

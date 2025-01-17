@@ -9,6 +9,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Reflection;
 using System.Runtime.Loader;
+using Microsoft.PowerShell.Telemetry;
 
 namespace System.Management.Automation
 {
@@ -36,16 +37,19 @@ namespace System.Management.Automation
         /// <summary>
         /// Initialize a singleton of PowerShellAssemblyLoadContext.
         /// </summary>
-        internal static PowerShellAssemblyLoadContext InitializeSingleton(string basePaths)
+        internal static PowerShellAssemblyLoadContext InitializeSingleton(string basePaths, bool throwOnReentry)
         {
             lock (s_syncObj)
             {
-                if (Instance != null)
+                if (Instance is null)
+                {
+                    Instance = new PowerShellAssemblyLoadContext(basePaths);
+                }
+                else if (throwOnReentry)
                 {
                     throw new InvalidOperationException(SingletonAlreadyInitialized);
                 }
 
-                Instance = new PowerShellAssemblyLoadContext(basePaths);
                 return Instance;
             }
         }
@@ -581,7 +585,8 @@ namespace System.Management.Automation
         {
             ArgumentException.ThrowIfNullOrEmpty(basePaths);
 
-            PowerShellAssemblyLoadContext.InitializeSingleton(basePaths);
+            // Disallow calling this method from native code for more than once.
+            PowerShellAssemblyLoadContext.InitializeSingleton(basePaths, throwOnReentry: true);
         }
     }
 
@@ -603,16 +608,19 @@ namespace System.Management.Automation
         [UnmanagedCallersOnly]
         public static int LoadAssemblyFromNativeMemory(IntPtr data, int size)
         {
+            int result = 0;
             try
             {
                 using var stream = new UnmanagedMemoryStream((byte*)data, size);
                 AssemblyLoadContext.Default.LoadFromStream(stream);
-                return 0;
             }
             catch
             {
-                return -1;
+                result = -1;
             }
+
+            ApplicationInsightsTelemetry.SendUseTelemetry("PowerShellUnsafeAssemblyLoad", result == 0 ? "1" : "0");
+            return result;
         }
     }
 }

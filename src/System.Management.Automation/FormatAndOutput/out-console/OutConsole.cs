@@ -49,7 +49,7 @@ namespace Microsoft.PowerShell.Commands
         /// invoked via API. This ensures that the objects pass through the formatting and output
         /// system, but can still make it to the API consumer.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Transcript { get; set; }
 
         /// <summary>
@@ -69,9 +69,7 @@ namespace Microsoft.PowerShell.Commands
 
             ((OutputManagerInner)this.implementation).LineOutput = lineOutput;
 
-            MshCommandRuntime mrt = this.CommandRuntime as MshCommandRuntime;
-
-            if (mrt != null)
+            if (this.CommandRuntime is MshCommandRuntime mrt)
             {
                 mrt.MergeUnclaimedPreviousErrorResults = true;
             }

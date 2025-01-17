@@ -277,7 +277,7 @@ namespace Microsoft.Management.UI.Internal
         private void AddHighlight(int start, int length)
         {
             ArgumentOutOfRangeException.ThrowIfNegative(start);
-            ArgumentOutOfRangeException.ThrowIfGreaterThan(this.textBuilder.Length, start + length, nameof(length));
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(start + length, this.textBuilder.Length, nameof(length));
 
             this.highlightedSpans.Add(new TextSpan(start, length));
         }
@@ -318,7 +318,7 @@ namespace Microsoft.Management.UI.Internal
             internal TextSpan(int start, int length)
             {
                 ArgumentOutOfRangeException.ThrowIfNegative(start);
-                ArgumentOutOfRangeException.ThrowIfLessThan(1, length);
+                ArgumentOutOfRangeException.ThrowIfLessThan(length, 1);
 
                 this.start = start;
                 this.end = start + length - 1;

@@ -25,10 +25,11 @@ CmdletsToExport = @(
   'Get-TraceSource', 'Set-TraceSource', 'Add-Type', 'Get-TypeData', 'Remove-TypeData', 'Update-TypeData',
   'Get-UICulture', 'Get-Unique', 'Get-Uptime', 'Clear-Variable', 'Get-Variable', 'New-Variable',
   'Remove-Variable', 'Set-Variable', 'Get-Verb', 'Write-Verbose', 'Write-Warning', 'Invoke-WebRequest',
-  'Format-Wide', 'ConvertTo-Xml', 'Select-Xml', 'Get-Error', 'Update-List', 'Unblock-File'
+  'Format-Wide', 'ConvertTo-Xml', 'Select-Xml', 'Get-Error', 'Update-List', 'Unblock-File', 'ConvertTo-CliXml',
+  'ConvertFrom-CliXml'
 )
 FunctionsToExport = @()
 AliasesToExport = @('fhx')
 NestedModules = @("Microsoft.PowerShell.Commands.Utility.dll")
-HelpInfoURI = 'https://aka.ms/powershell73-help'
+HelpInfoURI = 'https://aka.ms/powershell75-help'
 }

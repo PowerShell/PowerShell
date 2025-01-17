@@ -321,7 +321,7 @@ namespace System.Management.Automation
         /// <param name="xmlNode">
         /// Node whose children are verified for maml.
         /// </param>
-        private void RemoveUnsupportedNodes(XmlNode xmlNode)
+        private static void RemoveUnsupportedNodes(XmlNode xmlNode)
         {
             // Start with the first child..
             // We want to modify only children..

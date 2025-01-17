@@ -283,7 +283,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the credential parameter.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
-        [Credential()]
+        [Credential]
         public PSCredential Credential { get; set; }
 
         #endregion Parameters
@@ -1129,6 +1129,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the scope identifier for the drive being created.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
+        [ArgumentCompleter(typeof(ScopeArgumentCompleter))]
         public string Scope { get; set; }
 
 #if !UNIX
@@ -1533,6 +1534,7 @@ namespace Microsoft.PowerShell.Commands
         /// global scope until a drive of the given name is found to remove.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
+        [ArgumentCompleter(typeof(ScopeArgumentCompleter))]
         public string Scope { get; set; }
 
         /// <summary>
@@ -1701,6 +1703,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the scope parameter to the command.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
+        [ArgumentCompleter(typeof(ScopeArgumentCompleter))]
         public string Scope { get; set; }
 
         /// <summary>
@@ -4128,7 +4131,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the provider that will be removed.
         /// </summary>
         [Parameter(Position = 0, ValueFromPipelineByPropertyName = true)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         public string[] PSProvider
         {
             get => _provider;

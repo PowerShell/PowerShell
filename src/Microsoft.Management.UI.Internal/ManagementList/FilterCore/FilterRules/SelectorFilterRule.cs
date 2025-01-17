@@ -10,6 +10,7 @@ namespace Microsoft.Management.UI.Internal
     /// The SelectorFilterRule represents a rule composed of other rules.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
+    [Serializable]
     public class SelectorFilterRule : FilterRule
     {
         #region Properties

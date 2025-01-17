@@ -141,7 +141,7 @@ namespace System.Management.Automation.Tracing
             int querySuccess,
             int queryResult)
         {
-            provider.LogWDACQueryEvent(queryName, fileName, querySuccess, queryResult);
+            provider.LogWDACQueryEvent(queryName, fileName ?? string.Empty, querySuccess, queryResult);
         }
 
         /// <summary>

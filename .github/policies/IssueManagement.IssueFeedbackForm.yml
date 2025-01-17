@@ -1,0 +1,22 @@
+id: IssueManagement.IssueFeedbackForm
+name: GitOps.PullRequestIssueManagement
+description: Bot to request the feedback for how we are doing in the repo, replies on closed PRs and issues that are NOT labeled with no activity
+owner:
+resource: repository
+disabled: false
+where:
+configuration:
+  resourceManagementConfiguration:
+    eventResponderTasks:
+      - if: 
+          - not:
+              hasLabel:
+                label: Resolution-No Activity
+          - isAction: 
+              action: Closed
+        then:
+          - addReply:
+              reply: " 📣 Hey @${issueAuthor}, how did we do? We would love to hear your feedback with the link below! 🗣️ \n\n🔗 https://aka.ms/PSRepoFeedback "
+        triggerOnOwnActions: true
+onFailure:
+onSuccess:

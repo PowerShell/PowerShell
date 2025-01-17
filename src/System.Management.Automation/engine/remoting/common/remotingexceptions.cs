@@ -18,6 +18,7 @@ namespace System.Management.Automation.Remoting
         // OS related 1-9
         DefaultRemotingExceptionMessage = 0,
         OutOfMemory = 1,
+        UnsupportedOSForRemoteEnumeration = 2,
 
         // Pipeline related range: 10-99
         PipelineIdsDoNotMatch = 10,
@@ -266,7 +267,7 @@ namespace System.Management.Automation.Remoting
         /// This parameter holds the string in the resource file.
         /// </param>
         /// <param name="args">
-        /// Optional parameters required by the resource string formating information.
+        /// Optional parameters required by the resource string formatting information.
         /// </param>
         /// <returns>
         /// The formatted localized string.

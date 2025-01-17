@@ -1357,7 +1357,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         // TODO: remove (replace by true fault support)
-        private bool EndsWithRethrow(Expression expr)
+        private static bool EndsWithRethrow(Expression expr)
         {
             if (expr.NodeType == ExpressionType.Throw)
             {

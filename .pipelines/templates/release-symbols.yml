@@ -1,0 +1,91 @@
+parameters:
+  - name: skipPublish
+    default: false
+    type: boolean
+
+jobs:
+- job: PublishSymbols
+  displayName: Publish Symbols
+  condition: succeeded()
+  pool:
+    type: windows
+  variables:
+  - name: runCodesignValidationInjection
+    value: false
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+  - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
+    value: 1
+  - name: ob_outputDirectory
+    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  - name: ob_sdl_codeSignValidation_enabled
+    value: false
+  - name: ob_sdl_binskim_enabled
+    value: false
+  - name: ob_sdl_tsa_configFile
+    value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+  - name: ob_sdl_credscan_suppressionsFile
+    value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+
+  steps:
+  - checkout: self
+    clean: true
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
+  - template: release-SetReleaseTagAndContainerName.yml
+
+  - pwsh: |
+      Get-ChildItem Env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
+    displayName: 'Capture Environment Variables'
+
+  - download: CoOrdinatedBuildPipeline
+    artifact: drop_windows_build_windows_x64_release
+    patterns: 'symbols.zip'
+    displayName: Download winx64
+
+  - download: CoOrdinatedBuildPipeline
+    artifact: drop_windows_build_windows_x86_release
+    patterns: 'symbols.zip'
+    displayName: Download winx86
+
+  - download: CoOrdinatedBuildPipeline
+    artifact: drop_windows_build_windows_arm64_release
+    patterns: 'symbols.zip'
+    displayName: Download winx64
+
+  - pwsh: |
+      Write-Verbose -Verbose "Enumerating $(Pipeline.Workspace)\CoOrdinatedBuildPipeline"
+      $downloadedArtifacts = Get-ChildItem -Path "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline" -Recurse -Filter 'symbols.zip'
+      $downloadedArtifacts
+      $expandedRoot = New-Item -Path "$(Pipeline.Workspace)/expanded" -ItemType Directory -Verbose
+      $symbolsRoot = New-Item -Path "$(Pipeline.Workspace)/symbols" -ItemType Directory -Verbose
+
+      $downloadedArtifacts | ForEach-Object {
+        $folderName = (Get-Item (Split-Path $_.FullName)).Name
+        Write-Verbose -Verbose "Expanding $($_.FullName) to $expandedRoot/$folderName/$($_.BaseName)"
+        $destFolder = New-Item -Path "$expandedRoot/$folderName/$($_.BaseName)/" -ItemType Directory -Verbose
+        Expand-Archive -Path $_.FullName -DestinationPath $destFolder -Force
+
+        $symbolsToPublish = New-Item -Path "$symbolsRoot/$folderName/$($_.BaseName)" -ItemType Directory -Verbose
+
+        Get-ChildItem -Path $destFolder -Recurse -Filter '*.pdb' | ForEach-Object {
+          Copy-Item -Path $_.FullName -Destination $symbolsToPublish -Verbose
+        }
+      }
+
+      Write-Verbose -Verbose "Enumerating $symbolsRoot"
+      Get-ChildItem -Path $symbolsRoot -Recurse
+      $vstsCommandString = "vso[task.setvariable variable=SymbolsPath]$symbolsRoot"
+      Write-Verbose -Message "$vstsCommandString" -Verbose
+      Write-Host -Object "##$vstsCommandString"
+    displayName: Expand and capture symbols folders
+
+  - task: PublishSymbols@2
+    inputs:
+      symbolsFolder: '$(SymbolsPath)'
+      searchPattern: '**/*.pdb'
+      indexSources: false
+      publishSymbols: true
+      symbolServerType: teamServices
+      detailedLog: true

@@ -260,7 +260,7 @@ namespace Microsoft.PowerShell.Commands
         /// The type name we want to update on.
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = DynamicTypeSet)]
-        [ArgumentToTypeNameTransformationAttribute()]
+        [ArgumentToTypeNameTransformationAttribute]
         [ValidateNotNullOrEmpty]
         public string TypeName
         {
@@ -792,9 +792,8 @@ namespace Microsoft.PowerShell.Commands
 
                     if (ShouldProcess(formattedTarget, action))
                     {
-                        if (!fullFileNameHash.Contains(resolvedPath))
+                        if (fullFileNameHash.Add(resolvedPath))
                         {
-                            fullFileNameHash.Add(resolvedPath);
                             newTypes.Add(new SessionStateTypeEntry(prependPathTotal[i]));
                         }
                     }
@@ -806,9 +805,8 @@ namespace Microsoft.PowerShell.Commands
                     if (entry.FileName != null)
                     {
                         string resolvedPath = ModuleCmdletBase.ResolveRootedFilePath(entry.FileName, Context) ?? entry.FileName;
-                        if (!fullFileNameHash.Contains(resolvedPath))
+                        if (fullFileNameHash.Add(resolvedPath))
                         {
-                            fullFileNameHash.Add(resolvedPath);
                             newTypes.Add(entry);
                         }
                     }
@@ -825,9 +823,8 @@ namespace Microsoft.PowerShell.Commands
 
                     if (ShouldProcess(formattedTarget, action))
                     {
-                        if (!fullFileNameHash.Contains(resolvedPath))
+                        if (fullFileNameHash.Add(resolvedPath))
                         {
-                            fullFileNameHash.Add(resolvedPath);
                             newTypes.Add(new SessionStateTypeEntry(appendPathTotalItem));
                         }
                     }
@@ -971,9 +968,8 @@ namespace Microsoft.PowerShell.Commands
 
                     if (ShouldProcess(formattedTarget, action))
                     {
-                        if (!fullFileNameHash.Contains(appendPathTotalItem))
+                        if (fullFileNameHash.Add(appendPathTotalItem))
                         {
-                            fullFileNameHash.Add(appendPathTotalItem);
                             newFormats.Add(new SessionStateFormatEntry(appendPathTotalItem));
                         }
                     }
@@ -1055,7 +1051,7 @@ namespace Microsoft.PowerShell.Commands
         /// The target type to remove.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = RemoveTypeSet)]
-        [ArgumentToTypeNameTransformationAttribute()]
+        [ArgumentToTypeNameTransformationAttribute]
         [ValidateNotNullOrEmpty]
         public string TypeName
         {
@@ -1339,7 +1335,6 @@ namespace Microsoft.PowerShell.Commands
             ValidateTypeName();
 
             Dictionary<string, TypeData> alltypes = Context.TypeTable.GetAllTypeData();
-            Collection<TypeData> typedefs = new();
 
             foreach (string type in alltypes.Keys)
             {
@@ -1347,16 +1342,10 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (pattern.IsMatch(type))
                     {
-                        typedefs.Add(alltypes[type]);
+                        WriteObject(alltypes[type]);
                         break;
                     }
                 }
-            }
-
-            // write out all the available type definitions
-            foreach (TypeData typedef in typedefs)
-            {
-                WriteObject(typedef);
             }
         }
     }

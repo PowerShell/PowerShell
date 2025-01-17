@@ -51,8 +51,8 @@ namespace Microsoft.PowerShell.Cim
             private unsafe void Copy(char* source, int offset, int charsToCopy)
             {
                 ArgumentOutOfRangeException.ThrowIfNegative(offset);
-                ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(_string.Length, offset);
-                ArgumentOutOfRangeException.ThrowIfGreaterThan(_string.Length, offset + charsToCopy, nameof(charsToCopy));
+                ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(offset, _string.Length);
+                ArgumentOutOfRangeException.ThrowIfGreaterThan(offset + charsToCopy, _string.Length, nameof(charsToCopy));
 
                 fixed (char* target = _string)
                 {
@@ -425,7 +425,9 @@ namespace Microsoft.PowerShell.Cim
                 var cimIntrinsicValue = (byte[])LanguagePrimitives.ConvertTo(cimObject, typeof(byte[]), CultureInfo.InvariantCulture);
                 return exceptionSafeReturn(delegate
                                                {
+                                                   #pragma warning disable SYSLIB0057
                                                    return new X509Certificate2(cimIntrinsicValue);
+                                                   #pragma warning restore SYSLIB0057
                                                });
             }
 

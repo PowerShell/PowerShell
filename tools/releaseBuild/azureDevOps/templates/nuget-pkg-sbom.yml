@@ -20,6 +20,10 @@ parameters:
 
 steps:
 
+- template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
+  parameters:
+    repoRoot: $(REPOROOT)
+
 - pwsh: |
     Import-Module "$env:REPOROOT/build.psm1" -Force
     Start-PSBootstrap
@@ -44,13 +48,13 @@ steps:
     Start-PSBuild -Clean -Runtime linux-x64 -Configuration Release
 
     $sharedModules | Foreach-Object {
-      $refFile = Get-ChildItem -Path "$env:REPOROOT\src\$_\obj\Release\net8.0\refint\$_.dll"
+      $refFile = Get-ChildItem -Path "$env:REPOROOT\src\$_\obj\Release\net9.0\refint\$_.dll"
       Write-Verbose -Verbose "RefAssembly: $refFile"
       Copy-Item -Path $refFile -Destination "$refAssemblyFolder\$_.dll" -Verbose
-      $refDoc = "$env:REPOROOT\src\$_\bin\Release\net8.0\$_.xml"
+      $refDoc = "$env:REPOROOT\src\$_\bin\Release\net9.0\$_.xml"
       if (-not (Test-Path $refDoc)) {
         Write-Warning "$refDoc not found"
-        Get-ChildItem -Path "$env:REPOROOT\src\$_\bin\Release\net8.0\" | Out-String | Write-Verbose -Verbose
+        Get-ChildItem -Path "$env:REPOROOT\src\$_\bin\Release\net9.0\" | Out-String | Write-Verbose -Verbose
       }
       else {
         Copy-Item -Path $refDoc -Destination "$refAssemblyFolder\$_.xml" -Verbose
@@ -60,13 +64,13 @@ steps:
     Start-PSBuild -Clean -Runtime win7-x64 -Configuration Release
 
     $winOnlyModules | Foreach-Object {
-      $refFile = Get-ChildItem -Path "$env:REPOROOT\src\$_\obj\Release\net8.0\refint\*.dll"
+      $refFile = Get-ChildItem -Path "$env:REPOROOT\src\$_\obj\Release\net9.0\refint\*.dll"
       Write-Verbose -Verbose 'RefAssembly: $refFile'
       Copy-Item -Path $refFile -Destination "$refAssemblyFolder\$_.dll" -Verbose
-      $refDoc = "$env:REPOROOT\src\$_\bin\Release\net8.0\$_.xml"
+      $refDoc = "$env:REPOROOT\src\$_\bin\Release\net9.0\$_.xml"
       if (-not (Test-Path $refDoc)) {
         Write-Warning "$refDoc not found"
-        Get-ChildItem -Path "$env:REPOROOT\src\$_\bin\Release\net8.0" | Out-String | Write-Verbose -Verbose
+        Get-ChildItem -Path "$env:REPOROOT\src\$_\bin\Release\net9.0" | Out-String | Write-Verbose -Verbose
       }
       else {
         Copy-Item -Path $refDoc -Destination "$refAssemblyFolder\$_.xml" -Verbose
@@ -81,6 +85,9 @@ steps:
     Write-Host "##$vstsCommandString"
 
   displayName: Build reference assemblies
+  env:
+      __DOTNET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
+      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
 - ${{ each value in parameters.ListOfFiles }}:
   - pwsh: |

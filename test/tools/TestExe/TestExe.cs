@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.IO;
 using System.Globalization;
+using System.Linq;
 
 namespace TestExe
 {
@@ -35,6 +36,10 @@ namespace TestExe
                         return int.Parse(args[1]);
                     case "-stderr":
                         Console.Error.WriteLine(args[1]);
+                        break;
+                    case "-stderrandout":
+                        Console.WriteLine(args[1]);
+                        Console.Error.WriteLine(new string(args[1].ToCharArray().Reverse().ToArray()));
                         break;
                     case "-readbytes":
                         ReadBytes();

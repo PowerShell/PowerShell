@@ -7,12 +7,6 @@
 Describe 'Native command error handling tests' -Tags 'CI' {
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-        if (-not [ExperimentalFeature]::IsEnabled('PSNativeCommandErrorActionPreference'))
-        {
-            $PSDefaultParameterValues['It:Skip'] = $true
-            return
-        }
-
         $exeName = $IsWindows ? 'testexe.exe' : 'testexe'
         $exePath = @(Get-Command $exeName -Type Application)[0].Path
 

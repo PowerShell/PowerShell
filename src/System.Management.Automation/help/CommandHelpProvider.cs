@@ -1081,10 +1081,7 @@ namespace System.Management.Automation
                         {
                             // this command is not visible to the user (from CommandOrigin) so
                             // dont show help topic for it.
-                            if (!hiddenCommands.Contains(helpName))
-                            {
-                                hiddenCommands.Add(helpName);
-                            }
+                            hiddenCommands.Add(helpName);
 
                             continue;
                         }

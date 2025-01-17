@@ -35,30 +35,23 @@ Describe "InvokeOnRunspace method as nested command" -tags "Feature" {
 Describe "InvokeOnRunspace method on remote runspace" -tags "Feature","RequireAdminOnWindows" {
 
     BeforeAll {
-        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+        $skipTest = (Test-IsWinWow64) -or !$IsWindows
 
-        $pendingTest = (Test-IsWinWow64)
-
-        if ($pendingTest) {
-            $global:PSDefaultParameterValues["it:pending"] = $true
+        if ($skipTest) {
             return
         }
 
-        if ($IsWindows) {
-            $script:remoteRunspace = New-RemoteRunspace
-        }
+        $script:remoteRunspace = New-RemoteRunspace
     }
 
     AfterAll {
-        if ($script:remoteRunspace -and -not $pendingTest)
+        if ($script:remoteRunspace)
         {
             $script:remoteRunspace.Dispose();
         }
-
-        $global:PSDefaultParameterValues = $originalDefaultParameterValues
     }
 
-    It "Method should successfully invoke command on remote runspace" -Skip:(!$IsWindows) {
+    It "Method should successfully invoke command on remote runspace" -Skip:$skipTest {
 
         $command = [System.Management.Automation.PSCommand]::new()
         $command.AddScript('"Hello!"')
@@ -86,5 +79,20 @@ Describe 'PromptForCredential' -Tags "CI" {
     It 'Should accept targetname as domain' {
         $out = $Host.UI.PromptForCredential('caption','message','myUser','myDomain')
         $out.UserName | Should -BeExactly 'myDomain\myUser'
+    }
+}
+
+Describe 'PushRunspaceLocalFailure' -Tags 'CI' {
+    It 'Should throw an exception when pushing a local runspace' {
+        $runspace = [RunspaceFactory]::CreateRunspace()
+        try {
+            $runspace.Open()
+            $exc = { $Host.PushRunspace($runspace) } | Should -Throw -PassThru
+            $exc.Exception.InnerException | Should -BeOfType ([System.ArgumentException])
+            [string]$exc | Should -BeLike "*PushRunspace can only push a remote runspace. (Parameter 'runspace')*"
+        }
+        finally {
+            $runspace.Dispose()
+        }
     }
 }

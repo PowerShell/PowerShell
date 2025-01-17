@@ -77,6 +77,31 @@ Describe "Acl cmdlets are available and operate properly" -Tag CI {
             $newrule | Should -Not -BeNullOrEmpty
         }
 
+        It "Can edit SD that contains an orphaned SID" {
+            $badSid = [System.Security.Principal.SecurityIdentifier]::new("S-1-5-1234-5678")
+            $currentUserSid = [System.Security.Principal.WindowsIdentity]::GetCurrent().User
+
+            $testFilePath = "TestDrive:\pwsh-acl-test.txt"
+            $testFile = New-Item -Path $testFilePath -ItemType File -Value 'foo' -Force
+
+            # We should be able to set an SD entry to an untranslatable SID
+            $fileSecurity = $testFilePath | Get-Acl
+            $fileSecurity.SetGroup($badSid)
+            Set-Acl -Path $testFile -AclObject $fileSecurity
+
+            # We should be able to get the SD with an untranslatable SID
+            $setSD = Get-Acl -Path $testFile
+            $setSD.GetGroup([System.Security.Principal.SecurityIdentifier]) | Should -Be $badSid
+
+            # We should be able to set it back to a known SID
+            $setSD.SetGroup($currentUserSid)
+            Set-Acl -Path $testFile -AclObject $setSD
+
+            $actual = Get-Acl -Path $testFile
+            $actualGroup = $actual.GetGroup([System.Security.Principal.SecurityIdentifier])
+            $actualGroup | Should -Be $currentUserSid
+        }
+
         AfterAll {
             $PSDefaultParameterValues.Remove("It:Skip")
         }

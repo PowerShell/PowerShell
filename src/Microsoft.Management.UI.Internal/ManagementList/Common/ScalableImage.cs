@@ -75,7 +75,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Override of <seealso cref="UIElement.GetLayoutClip"/>.
+        /// Override of <see cref="UIElement.GetLayoutClip"/>.
         /// Make this control to respect the ClipToBounds attribute value.
         /// </summary>
         /// <param name="layoutSlotSize">An instance of <see cref="System.Windows.Size"/> used for calculating an additional clip.</param>

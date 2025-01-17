@@ -11,7 +11,7 @@ using System.Windows.Data;
 namespace Microsoft.Management.UI.Internal
 {
     /// <summary>
-    /// The InputFieldBackgroundTextConverter is responsible for determing the
+    /// The InputFieldBackgroundTextConverter is responsible for determining the
     /// correct background text to display for a particular type of data.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]

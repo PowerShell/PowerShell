@@ -146,4 +146,14 @@ Describe 'ConvertTo-Json' -tags "CI" {
         $t = Add-Member -InputObject $text -MemberType NoteProperty -Name text -Value $text -PassThru
         $t | ConvertTo-Json -Compress | Should -BeExactly "`"$text`""
     }
+
+    It 'Should serialize BigInteger values' {
+        $obj = [Ordered]@{
+            Positive = 18446744073709551615n
+            Negative = -18446744073709551615n
+        }
+
+        $actual = ConvertTo-Json -Compress -InputObject $obj
+        $actual | Should -Be '{"Positive":18446744073709551615,"Negative":-18446744073709551615}'
+    }
 }
