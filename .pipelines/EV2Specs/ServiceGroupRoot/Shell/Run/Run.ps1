@@ -89,7 +89,7 @@ try {
     $channel = ""
     $packageNames = @()
     $metadataContent = Get-Content -Path $metadataFilePath | ConvertFrom-Json
-    $releaseVersion = $metadataContent.ReleaseTag
+    $releaseVersion = $metadataContent.ReleaseTag.TrimStart('v')
     $skipPublish = $metadataContent.SkipPublish
     $lts = $metadataContent.LTS
     Write-Verbose -Verbose "skip publish: $skipPublish" #TODO: remove
