@@ -25,6 +25,8 @@ stages:
       value: true # Enable TiP sign
     - name: ob_sdl_credscan_suppressionsFile
       value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+    - name: skipPublish
+      value: ${{ parameters.skipPublish }}
     steps:
     - checkout: self ## the global setting on lfs didn't work
       lfs: false
@@ -36,8 +38,7 @@ stages:
         restorePhase: true
     
     - pwsh: |
-        $skipPubValue = '${{ parameters.skipPublish }}'
-        Write-Verbose -Verbose "skip publish value: $skipPubValue"
+        Write-Verbose -Verbose "skip publish value: $skipPublish"
         $packageVersion = '$(ReleaseTag)'.ToLowerInvariant() -replace '^v',''
         $vstsCommandString = "vso[task.setvariable variable=packageVersion]$packageVersion"
         Write-Host "sending " + $vstsCommandString
@@ -168,14 +169,13 @@ stages:
         $pathToPMCMetadataFile = Join-Path -Path '$(ev2ParametersFolder)' -ChildPath 'pmcMetadata.json'
 
         $metadata = Get-Content -Path "$(repoRoot)/tools/metadata.json" -Raw | ConvertFrom-Json
-        $skipPublish = '${{ parameters.skipPublish }}'
-        Write-Verbose -Verbose "skip publish value: $skipPublish"
         $metadataHash = @{}
+        $skipPublishBoolean = '$(skipPublish)' -eq "false" ? false : true
         # $metadataHash["ReleaseTag"] = "$(ReleaseTag)" # TODO: UNCOMMENT
         $metadataHash["ReleaseTag"] = "v7.5.0.1"
         $metadataHash["LTS"] = $metadata.LTSRelease.Latest
         $metadataHash["ForProduction"] = $true
-        $metadataHash["SkipPublish"] = $skipPublish
+        $metadataHash["SkipPublish"] = $skipPublishBoolean
 
         $metadataHash | ConvertTo-Json | Out-File $pathToPMCMetadataFile
 
