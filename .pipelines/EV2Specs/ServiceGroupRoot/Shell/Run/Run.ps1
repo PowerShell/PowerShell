@@ -47,7 +47,7 @@ try {
 
     Write-Verbose -Verbose "Test pmc-cli"
 
-    pmc -d -c $settingsFile repo list --name "azurelinux-3.0-prod-ms-oss-x86_64-yum" || exit 1
+    pmc -d -c $settingsFile repo list --accessible || exit 1
 
     $metadataFilePath = Join-Path -Path "/package/unarchive/" -ChildPath "pmcMetadata.json"
     $metadataContent = Get-Content -Path $metadataFilePath | ConvertFrom-Json
