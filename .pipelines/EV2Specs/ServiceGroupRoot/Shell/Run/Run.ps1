@@ -54,6 +54,13 @@ try {
         return 1
     }
 
+    # Extract files from 'packages.tar.gz'
+    Write-Verbose -Verbose "---Extracting files from packages.tar.gz---"
+    $pwshPackagesFolder = Join-Path -Path "/package/unarchive/" -ChildPath "packages"
+    New-Item -Path $pwshPackagesFolder -ItemType Directory
+    tar -xzvf $packagesTarPath -C $pwshPackagesFolder --force-local
+    Get-ChildItem $pwshPackagesFolder -Recurse
+
     $metadataFilePath = Join-Path -Path "/package/unarchive/" -ChildPath "pmcMetadata.json"
     $metadataFilePathExists = Test-Path $metadataFilePath
     if (!$metadataFilePathExists)
