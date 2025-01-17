@@ -24,21 +24,17 @@ pr:
     - feature*
   paths:
     include:
-    - '*'
+    - src/*
+    - .vsts-ci/windows.yml
+    - .vsts-ci/templates/*
+    - test/*
+    - build.psm1
+    - tools/buildCommon/*
+    - tools/ci.psm1
+    - tools/WindowsCI.psm1
     exclude:
-    - .dependabot/config.yml
-    - .github/ISSUE_TEMPLATE/*
-    - .vsts-ci/misc-analysis.yml
-    - tools/cgmanifest.json
-    - LICENSE.txt
     - test/common/markdown/*
     - test/perf/*
-    - tools/packaging/*
-    - tools/releaseBuild/*
-    - tools/releaseBuild/azureDevOps/templates/*
-    - README.md
-    - .spelling
-    - .pipelines/*
 
 variables:
   GIT_CONFIG_PARAMETERS: "'core.autocrlf=false'"
