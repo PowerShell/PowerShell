@@ -37,8 +37,6 @@ stages:
         restorePhase: true
     
     - pwsh: |
-        $sPubValue = '${{ parameters.skipPublish }}'
-        Write-Verbose -Verbose "skip publish value: $sPubValue"
         $packageVersion = '$(ReleaseTag)'.ToLowerInvariant() -replace '^v',''
         $vstsCommandString = "vso[task.setvariable variable=packageVersion]$packageVersion"
         Write-Host "sending " + $vstsCommandString
@@ -172,7 +170,7 @@ stages:
         $metadataHash = @{}
         $skipPublishValue = '${{ parameters.skipPublish }}'
         # $metadataHash["ReleaseTag"] = "$(ReleaseTag)" # TODO: UNCOMMENT
-        $metadataHash["ReleaseTag"] = "v7.5.0.1"
+        $metadataHash["ReleaseTag"] = "v7.5.0"
         $metadataHash["LTS"] = $metadata.LTSRelease.Latest
         $metadataHash["ForProduction"] = $true
         $metadataHash["SkipPublish"] = [System.Convert]::ToBoolean($skipPublishValue)
