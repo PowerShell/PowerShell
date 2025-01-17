@@ -117,7 +117,8 @@ try {
     $repoList = $response.results
 
     Write-Verbose -Verbose "---Getting package info---" #TODO rename once I get what it really does
-    # start of method
+    # BEGIN Get-PackageInfo()
+    # for the packages powershell publishes to, resolve it's mapping with the directory of repos and basically map our packages to their actual repo Ids
     Write-Verbose "Reading mapping file from '$mappingFilePath'" -Verbose
     $mapping = Get-Content -Raw -LiteralPath $mappingFilePath | ConvertFrom-Json -AsHashtable
     $mappedReposUsedByPwsh = @()
@@ -163,7 +164,7 @@ try {
 
                 if ($repos.id) {
                     Write-Verbose "Found repo id: $($repos.id)" -Verbose
-                    $repoIds.AddRange(([string[]]$repos.id))
+                    $repoIds.AddRange(([string[]]$repos.id)) #tbh seems like a package should only have 1 repo Id
                 }
                 else {
                     Write-Failure "Could not find repo for $urlGlob"
@@ -180,7 +181,38 @@ try {
     # END of Get-PackageInfo()
 
     # BEGIN New-RepoPackageObject()
+    $repoPackageObjects = @()
+    foreach ($pkg in $mappedReposUsedByPwsh)
+    {
+        if ($pkg.RepoId.count -gt 1) {
+            throw "Package $($pkg.name) has more than one repo id."
+        }
 
+        if ($pkg.Distribution.count -gt 1) {
+            throw "Package $($pkg.name) has more than one Distribution."
+        }
+
+        $pkgRepo = $pkg.RepoId | Select-Object -First 1
+        $pkgDistribution = $pkg.Distribution | Select-Object -First 1
+
+        foreach ($name in $packageNames) {
+            $pkgName = $pkg.PackageFormat.Replace('PACKAGE_NAME', $name).Replace('POWERSHELL_RELEASE', $releaseVersion)
+            Write-Verbose "Creating info object for package '$pkgName' for repo '$pkgRepo'"
+            $result = [pscustomobject]@{
+                PackageName  = $pkgName
+                RepoId       = $repo
+                Distribution = $pkgDistribution
+            }
+
+            Write-Verbose $result -Verbose
+            $repoPackageObjects += $result
+        }
+    }
+    # END of New-RepoPackageObject() - I think this and the method before can be combined
+
+    Write-Verbose -Verbose "count of repoPackageObjects: $($repoPackageObjects.Length)"
+
+    # BEGIN Publish-PackageFromBlob()
 
 
     # # Publish the packages based on the mapping file
