@@ -391,7 +391,7 @@ try {
         } elseif ($version) {
             $release = $version
         } elseif ($LTS) {
-            $release = $metadata.LTSReleaseTag -replace '^v'
+            $release = $metadata.LTSReleaseTag[-1] -replace '^v'
         } else {
             $release = $metadata.ReleaseTag -replace '^v'
         }
