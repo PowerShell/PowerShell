@@ -77,6 +77,9 @@ stages:
         ob_restore_phase: true
 
     - pwsh: |
+        $path = '$(Build.SourcesDirectory)/PowerShell/.pipelines'
+        $attemptPath = Test-Path $path
+        Write-Verbose -Verbose "path exists pre: $path : $attemptPath"
         New-Item -Path '$(ev2ParametersFolder)' -ItemType Directory
       displayName: 'Create Parameters folder under EV2Specs folder'
       env:
@@ -186,7 +189,7 @@ stages:
         $attemptPath2 = Test-Path $path2
         Write-Verbose -Verbose "attempt build src dir $path exists : $attemptPath"
         Write-Verbose -Verbose "attempt path 2 $path2 exists: $attemptPath2"
-        Get-ChildItem '$(Build.SourcesDirectory)'
+        Get-ChildItem '$(Build.SourcesDirectory)' -Recurse
 
         $pathToJsonFile = Join-Path -Path '$(ev2ServiceGroupRootFolder)' -ChildPath 'RolloutSpec.json'
         $content = Get-Content -Path $pathToJsonFile | ConvertFrom-Json
