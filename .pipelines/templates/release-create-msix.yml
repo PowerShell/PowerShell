@@ -28,27 +28,24 @@ jobs:
       displayName: Download x86 msix
       patterns: '**/*.msix'
 
-    - pwsh: |
-        $cmd = Get-Command makeappx.exe -ErrorAction Ignore
-        if ($cmd) {
-            Write-Verbose -Verbose 'makeappx available in PATH'
-            $exePath = $cmd.Source
-        } else {
-            $toolsDir = '$(Pipeline.Workspace)\releasePipeline\tools'
-            New-Item $toolsDir -Type Directory -Force > $null
-            Invoke-RestMethod -Uri '$(makeappUrl)' -OutFile "$toolsDir\makeappx.zip"
-            Expand-Archive "$toolsDir\makeappx.zip" -DestinationPath "$toolsDir\makeappx" -Force
-            $exePath = "$toolsDir\makeappx\makeappx.exe"
-
-            Write-Verbose -Verbose 'makeappx was installed:'
-            Get-ChildItem -Path $toolsDir -Recurse
-        }
-
-        $vstsCommandString = "vso[task.setvariable variable=MakeAppxPath]$exePath"
-        Write-Host "sending " + $vstsCommandString
-        Write-Host "##$vstsCommandString"
+    - task: AzurePowerShell@5
       displayName: Install makeappx tool
       retryCountOnTaskFailure: 1
+      inputs:
+        azureSubscription: az-blob-cicd-infra
+        scriptType: inlineScript
+        azurePowerShellVersion: LatestVersion
+        pwsh: true
+        inline: |
+          $toolsDir = '$(Pipeline.Workspace)\releasePipeline\tools'
+          New-Item $toolsDir -Type Directory -Force > $null
+          Invoke-RestMethod -Uri '$(makeappUrlDirect)' -OutFile "$toolsDir\makeappx.zip"
+          Expand-Archive "$toolsDir\makeappx.zip" -DestinationPath "$toolsDir\makeappx" -Force
+          $exePath = "$toolsDir\makeappx\makeappx.exe"
+
+          $vstsCommandString = "vso[task.setvariable variable=MakeAppxPath]$exePath"
+          Write-Host "sending " + $vstsCommandString
+          Write-Host "##$vstsCommandString"
 
     - pwsh: |
         $sourceDir = '$(Pipeline.Workspace)\releasePipeline\msix'
