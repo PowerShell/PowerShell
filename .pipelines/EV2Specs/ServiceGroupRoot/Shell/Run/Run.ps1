@@ -125,6 +125,7 @@ function Get-RepositoryPackageObject() {
     }
 
     Write-Verbose -Verbose "count of repoPackageObjects: $($packageObjects.Length)"
+    return $packageObjects
 
 }
 
