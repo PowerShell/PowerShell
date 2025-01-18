@@ -60,9 +60,9 @@
       <PSCoreFileVersion Condition = "'$(PSCoreFileVersion)' == ''">$(ReleaseTagVersionPart).$(GAIncrementValue)</PSCoreFileVersion>
       <!-- Set 'FileVersion' and 'AssemblyVersion' explicitly:
            - make 'FileVersion' the same as 'PSCoreFileVersion'
-           - make 'AssemblyVersion' be the 'PSCoreFileVersion' with the 'Build' field set to 0, so the assembly version doesn't change for servicing releases -->
+           - make 'AssemblyVersion' be the 'PSCoreFileVersion' with the 'Build' field set to 6, so the assembly version doesn't change for servicing releases 7.4.7 and plus -->
       <FileVersion>$(PSCoreFileVersion)</FileVersion>
-      <AssemblyVersion>$([System.Version]::Parse($(PSCoreFileVersion)).Major).$([System.Version]::Parse($(PSCoreFileVersion)).Minor).0.$([System.Version]::Parse($(PSCoreFileVersion)).Revision)</AssemblyVersion>
+      <AssemblyVersion>$([System.Version]::Parse($(PSCoreFileVersion)).Major).$([System.Version]::Parse($(PSCoreFileVersion)).Minor).6.$([System.Version]::Parse($(PSCoreFileVersion)).Revision)</AssemblyVersion>
     </PropertyGroup>
 
     <PropertyGroup>
