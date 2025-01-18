@@ -382,7 +382,7 @@ try {
     $mappedReposUsedByPwsh = Get-MappedRepositoryIds -Mapping $mapping -RepoList $repoList -Channel $channel
     $repoPackageObjects = Get-RepositoryPackageObject -RepoObjects $mappedReposUsedByPwsh -PackageName $packageNames -ReleaseVersion $releaseVersion
     Write-Verbose -Verbose "skip publish $skipPublish"
-    # Publish-PackageToPMC -PackageObject $repoPackageObjects -ReleaseVersion $releaseVersion -ConfigPath $configPath -SkipPublish $skipPublish
+    Publish-PackageToPMC -PackageObject $repoPackageObjects -ReleaseVersion $releaseVersion -ConfigPath $configPath -SkipPublish $skipPublish
     # foreach ($package in $mapping.Packages)
     # {
     #     Write-Verbose "package: $package"
