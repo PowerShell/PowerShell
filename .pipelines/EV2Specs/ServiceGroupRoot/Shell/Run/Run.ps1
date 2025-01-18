@@ -140,8 +140,13 @@ function Publish-PackageToPMC() {
 
         [Parameter(Mandatory)]
         [string]
+        $ConfigPath,
+
+        [Parameter(Mandatory)]
+        [string]
         $ReleaseVersion,
 
+        [Parameter(Mandatory)]
         [bool]
         $SkipPublish
     )
