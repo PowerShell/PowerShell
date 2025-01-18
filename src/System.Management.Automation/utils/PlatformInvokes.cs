@@ -550,20 +550,32 @@ namespace System.Management.Automation
             }
 
             /// <summary>
-            /// Release all resources.
+            /// Dispose.
             /// </summary>
             public void Dispose()
             {
-                if (this.hProcess != IntPtr.Zero)
-                {
-                    CloseHandle(this.hProcess);
-                    this.hProcess = IntPtr.Zero;
-                }
+                Dispose(true);
+            }
 
-                if (this.hThread != IntPtr.Zero)
+            /// <summary>
+            /// Dispose.
+            /// </summary>
+            /// <param name="disposing"></param>
+            private void Dispose(bool disposing)
+            {
+                if (disposing)
                 {
-                    CloseHandle(this.hThread);
-                    this.hThread = IntPtr.Zero;
+                    if (this.hProcess != IntPtr.Zero)
+                    {
+                        CloseHandle(this.hProcess);
+                        this.hProcess = IntPtr.Zero;
+                    }
+
+                    if (this.hThread != IntPtr.Zero)
+                    {
+                        CloseHandle(this.hThread);
+                        this.hThread = IntPtr.Zero;
+                    }
                 }
             }
         }
@@ -602,28 +614,33 @@ namespace System.Management.Automation
                 this.cb = Marshal.SizeOf(this);
             }
 
-            /// <summary>
-            /// Release all resources.
-            /// </summary>
+            public void Dispose(bool disposing)
+            {
+                if (disposing)
+                {
+                    if ((this.hStdInput != null) && !this.hStdInput.IsInvalid)
+                    {
+                        this.hStdInput.Dispose();
+                        this.hStdInput = null;
+                    }
+
+                    if ((this.hStdOutput != null) && !this.hStdOutput.IsInvalid)
+                    {
+                        this.hStdOutput.Dispose();
+                        this.hStdOutput = null;
+                    }
+
+                    if ((this.hStdError != null) && !this.hStdError.IsInvalid)
+                    {
+                        this.hStdError.Dispose();
+                        this.hStdError = null;
+                    }
+                }
+            }
+
             public void Dispose()
             {
-                if ((this.hStdInput != null) && !this.hStdInput.IsInvalid)
-                {
-                    this.hStdInput.Dispose();
-                    this.hStdInput = null;
-                }
-
-                if ((this.hStdOutput != null) && !this.hStdOutput.IsInvalid)
-                {
-                    this.hStdOutput.Dispose();
-                    this.hStdOutput = null;
-                }
-
-                if ((this.hStdError != null) && !this.hStdError.IsInvalid)
-                {
-                    this.hStdError.Dispose();
-                    this.hStdError = null;
-                }
+                Dispose(true);
             }
         }
 
