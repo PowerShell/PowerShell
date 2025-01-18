@@ -11,7 +11,7 @@ namespace System.Management.Automation
     internal static class PlatformInvokes
     {
         [StructLayout(LayoutKind.Sequential)]
-        internal class FILETIME
+        internal sealed class FILETIME
         {
             internal uint dwLowDateTime;
             internal uint dwHighDateTime;
@@ -92,7 +92,7 @@ namespace System.Management.Automation
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        internal class SecurityAttributes
+        internal sealed class SecurityAttributes
         {
             internal int nLength;
             internal SafeLocalMemHandle lpSecurityDescriptor;
@@ -536,7 +536,7 @@ namespace System.Management.Automation
         internal static readonly UInt32 OPEN_EXISTING = 3;
 
         [StructLayout(LayoutKind.Sequential)]
-        internal class PROCESS_INFORMATION
+        internal sealed class PROCESS_INFORMATION
         {
             public IntPtr hProcess;
             public IntPtr hThread;
@@ -550,38 +550,26 @@ namespace System.Management.Automation
             }
 
             /// <summary>
-            /// Dispose.
+            /// Release all resources.
             /// </summary>
             public void Dispose()
             {
-                Dispose(true);
-            }
-
-            /// <summary>
-            /// Dispose.
-            /// </summary>
-            /// <param name="disposing"></param>
-            private void Dispose(bool disposing)
-            {
-                if (disposing)
+                if (this.hProcess != IntPtr.Zero)
                 {
-                    if (this.hProcess != IntPtr.Zero)
-                    {
-                        CloseHandle(this.hProcess);
-                        this.hProcess = IntPtr.Zero;
-                    }
+                    CloseHandle(this.hProcess);
+                    this.hProcess = IntPtr.Zero;
+                }
 
-                    if (this.hThread != IntPtr.Zero)
-                    {
-                        CloseHandle(this.hThread);
-                        this.hThread = IntPtr.Zero;
-                    }
+                if (this.hThread != IntPtr.Zero)
+                {
+                    CloseHandle(this.hThread);
+                    this.hThread = IntPtr.Zero;
                 }
             }
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        internal class STARTUPINFO
+        internal sealed class STARTUPINFO
         {
             public int cb;
             public IntPtr lpReserved;
@@ -614,38 +602,33 @@ namespace System.Management.Automation
                 this.cb = Marshal.SizeOf(this);
             }
 
-            public void Dispose(bool disposing)
-            {
-                if (disposing)
-                {
-                    if ((this.hStdInput != null) && !this.hStdInput.IsInvalid)
-                    {
-                        this.hStdInput.Dispose();
-                        this.hStdInput = null;
-                    }
-
-                    if ((this.hStdOutput != null) && !this.hStdOutput.IsInvalid)
-                    {
-                        this.hStdOutput.Dispose();
-                        this.hStdOutput = null;
-                    }
-
-                    if ((this.hStdError != null) && !this.hStdError.IsInvalid)
-                    {
-                        this.hStdError.Dispose();
-                        this.hStdError = null;
-                    }
-                }
-            }
-
+            /// <summary>
+            /// Release all resources.
+            /// </summary>
             public void Dispose()
             {
-                Dispose(true);
+                if ((this.hStdInput != null) && !this.hStdInput.IsInvalid)
+                {
+                    this.hStdInput.Dispose();
+                    this.hStdInput = null;
+                }
+
+                if ((this.hStdOutput != null) && !this.hStdOutput.IsInvalid)
+                {
+                    this.hStdOutput.Dispose();
+                    this.hStdOutput = null;
+                }
+
+                if ((this.hStdError != null) && !this.hStdError.IsInvalid)
+                {
+                    this.hStdError.Dispose();
+                    this.hStdError = null;
+                }
             }
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        internal class SECURITY_ATTRIBUTES
+        internal sealed class SECURITY_ATTRIBUTES
         {
             public int nLength;
             public SafeLocalMemHandle lpSecurityDescriptor;
