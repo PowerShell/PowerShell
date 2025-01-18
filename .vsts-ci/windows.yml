@@ -24,11 +24,12 @@ pr:
     - feature*
   paths:
     include:
-    - src/*
-    - .vsts-ci/windows.yml
     - .vsts-ci/templates/*
-    - test/*
+    - .vsts-ci/windows.yml
+    - '*.props'
     - build.psm1
+    - src/*
+    - test/*
     - tools/buildCommon/*
     - tools/ci.psm1
     - tools/WindowsCI.psm1
