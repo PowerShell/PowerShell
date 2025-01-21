@@ -36,8 +36,6 @@ stages:
     
     - pwsh: |
         $packageVersion = '$(OutputReleaseTag.ReleaseTag)'.ToLowerInvariant() -replace '^v',''
-        $pVersion2 = '$(OutputReleaseTag.ReleaseTag)'
-        Write-Verbose -Verbose "pVer2: $pVersion2"
         $vstsCommandString = "vso[task.setvariable variable=packageVersion]$packageVersion"
         Write-Host "sending " + $vstsCommandString
         Write-Host "##$vstsCommandString"
@@ -178,9 +176,9 @@ stages:
 
         $metadataHash | ConvertTo-Json | Out-File $pathToPMCMetadataFile
 
-        Write-Verbose -Verbose "Copy mapping.json file to EV2Specs folder. file path at path $mappingFilePath exists: $mappingFilePathExists"
         $mappingFilePath = Join-Path -Path '$(repoRoot)/tools/packages.microsoft.com' -ChildPath 'mapping.json'
         $mappingFilePathExists = Test-Path $mappingFilePath
+        Write-Verbose -Verbose "Copy mapping.json file to EV2Specs folder. file path at path $mappingFilePath exists: $mappingFilePathExists"
         $mappingFileEV2Path = Join-Path -Path '$(ev2ParametersFolder)' -ChildPath "mapping.json"
         Copy-Item -Path $mappingFilePath -Destination $mappingFileEV2Path
       displayName: 'Create pmcScriptMetadata.json and mapping.json file'
@@ -188,14 +186,6 @@ stages:
         ob_restore_phase: true
 
     - pwsh: |
-        $path = '$(Build.SourcesDirectory)/PowerShell/.pipelines'
-        $attemptPath = Test-Path $path
-        $path2 = '$(ev2ServiceGroupRootFolder)'
-        $attemptPath2 = Test-Path $path2
-        Write-Verbose -Verbose "attempt build src dir $path exists : $attemptPath"
-        Write-Verbose -Verbose "attempt path 2 $path2 exists: $attemptPath2"
-        Get-ChildItem '$(Build.SourcesDirectory)' -Recurse
-
         $pathToJsonFile = Join-Path -Path '$(ev2ServiceGroupRootFolder)' -ChildPath 'RolloutSpec.json'
         $content = Get-Content -Path $pathToJsonFile | ConvertFrom-Json
         $content.RolloutMetadata.Notification.Email.To = '$(PmcEV2SupportEmail)'
