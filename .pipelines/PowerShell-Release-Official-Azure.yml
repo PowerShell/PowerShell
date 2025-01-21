@@ -91,8 +91,6 @@ extends:
         break: false # always break the build on binskim issues in addition to TSA upload
       policheck:
         break: true # always break the build on policheck issues. You can disable it by setting to 'false'
-      # suppression:
-      #   suppressionFile: $(Build.SourcesDirectory)\.gdn\global.gdnsuppress
       tsaOptionsFile: .config\tsaoptions.json
     stages:
       - template: /.pipelines/templates/release-prep-for-ev2.yml@self
