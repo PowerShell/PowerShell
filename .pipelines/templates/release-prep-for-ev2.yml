@@ -167,7 +167,7 @@ stages:
         $metadata = Get-Content -Path "$(repoRoot)/tools/metadata.json" -Raw | ConvertFrom-Json
         $metadataHash = @{}
         $skipPublishValue = '${{ parameters.skipPublish }}'
-        $metadataHash["ReleaseTag"] = "$(ReleaseTag)"
+        $metadataHash["ReleaseTag"] = '$(ReleaseTag)'
         $metadataHash["LTS"] = $metadata.LTSRelease.Latest
         $metadataHash["ForProduction"] = $true
         $metadataHash["SkipPublish"] = [System.Convert]::ToBoolean($skipPublishValue)
