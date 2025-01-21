@@ -36,6 +36,8 @@ stages:
     
     - pwsh: |
         $packageVersion = '$(ReleaseTag)'.ToLowerInvariant() -replace '^v',''
+        $pVersion2 = '$(releaseTag)'
+        Write-Verbose -Verbose "pVer2: $pVersion2"
         $vstsCommandString = "vso[task.setvariable variable=packageVersion]$packageVersion"
         Write-Host "sending " + $vstsCommandString
         Write-Host "##$vstsCommandString"
