@@ -344,7 +344,6 @@ try {
     $releaseVersion = $metadataContent.ReleaseTag.TrimStart('v')
     $skipPublish = $metadataContent.SkipPublish
     $lts = $metadataContent.LTS
-    Write-Verbose -Verbose "skip publish: $skipPublish" #TODO: remove
 
     if ($releaseVersion.Contains('-')) {
         $channel = 'preview'
