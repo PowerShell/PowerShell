@@ -71,7 +71,7 @@ extends:
       WindowsHostVersion:
         Version: 2022
         Network: Netlock
-    linuxEsrpSigning: true
+      linuxEsrpSigning: true
     cloudvault:
       enabled: false
     globalSdl:
