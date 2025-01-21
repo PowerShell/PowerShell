@@ -35,8 +35,8 @@ stages:
         restorePhase: true
     
     - pwsh: |
-        $packageVersion = '$(ReleaseTag)'.ToLowerInvariant() -replace '^v',''
-        $pVersion2 = '$(releaseTag)'
+        $packageVersion = '$(OutputReleaseTag.ReleaseTag)'.ToLowerInvariant() -replace '^v',''
+        $pVersion2 = '$(OutputReleaseTag.ReleaseTag)'
         Write-Verbose -Verbose "pVer2: $pVersion2"
         $vstsCommandString = "vso[task.setvariable variable=packageVersion]$packageVersion"
         Write-Host "sending " + $vstsCommandString
@@ -164,14 +164,14 @@ stages:
         ob_restore_phase: true
 
     - pwsh: |
-        $ver = '$(ReleaseTag)'
+        $ver = '$(OutputReleaseTag.ReleaseTag)'
         Write-Verbose -Verbose "ver: $ver"
         $pathToPMCMetadataFile = Join-Path -Path '$(ev2ParametersFolder)' -ChildPath 'pmcMetadata.json'
 
         $metadata = Get-Content -Path "$(repoRoot)/tools/metadata.json" -Raw | ConvertFrom-Json
         $metadataHash = @{}
         $skipPublishValue = '${{ parameters.skipPublish }}'
-        $metadataHash["ReleaseTag"] = '$(ReleaseTag)'
+        $metadataHash["ReleaseTag"] = '$(OutputReleaseTag.ReleaseTag)'
         $metadataHash["LTS"] = $metadata.LTSRelease.Latest
         $metadataHash["ForProduction"] = $true
         $metadataHash["SkipPublish"] = [System.Convert]::ToBoolean($skipPublishValue)
