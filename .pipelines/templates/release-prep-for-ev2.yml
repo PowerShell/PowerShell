@@ -236,7 +236,7 @@ stages:
     - task: onebranch.pipeline.signing@1
       inputs:
         command: 'sign'
-        signing_profile: 'tipsign' # external_distribution
+        signing_profile: external_distribution
         files_to_sign: '*.ps1'
         search_root: '$(repoRoot)/.pipelines/EV2Specs/ServiceGroupRoot/Shell/Run'
       displayName: Sign Run.ps1
