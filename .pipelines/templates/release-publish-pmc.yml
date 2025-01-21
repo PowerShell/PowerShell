@@ -1,16 +1,15 @@
 stages:
-# - stage: 'Prod_Release'
-- stage: 'Test_Release'
+- stage: 'Prod_Release'
   displayName: 'Deploy packages to PMC with EV2'
   dependsOn:
   - PrepForEV2
   variables:
     - name: ob_release_environment
-      value: "Test"
+      value: "Production"
     - name: repoRoot
       value: $(Build.SourcesDirectory)
   jobs:
-  - job: Test_ReleaseJob
+  - job: Prod_ReleaseJob
     displayName: Publish to PMC
     pool:
       type: release
@@ -29,18 +28,10 @@ stages:
       displayName: 'Download to get EV2 Files'
 
     - task: vsrm-ev2.vss-services-ev2.adm-release-task.ExpressV2Internal@1
-      displayName: 'TEST Ev2: Push to PMC'
+      displayName: 'Ev2: Push to PMC'
       inputs:
         UseServerMonitorTask: true
-        ConnectedServiceName: 'pmc-ev2-deployment'
+        EndpointProviderType: ApprovalService
+        ApprovalServiceEnvironment: Production
         ServiceRootPath: '$(Pipeline.Workspace)/drop_PrepForEV2_CopyEV2FilesToArtifact/EV2Specs/ServiceGroupRoot'
         RolloutSpecPath: '$(Pipeline.Workspace)/drop_PrepForEV2_CopyEV2FilesToArtifact/EV2Specs/ServiceGroupRoot/RolloutSpec.json'
-
-    # - task: vsrm-ev2.vss-services-ev2.adm-release-task.ExpressV2Internal@1
-    #   displayName: 'Ev2: Push to PMC'
-    #   inputs:
-    #     UseServerMonitorTask: true
-    #     EndpointProviderType: ApprovalService
-    #     ApprovalServiceEnvironment: Production
-    #     ServiceRootPath: '$(Pipeline.Workspace)/drop_PrepForEV2_CopyEV2FilesToArtifact/EV2Specs/ServiceGroupRoot'
-    #     RolloutSpecPath: '$(Pipeline.Workspace)/drop_PrepForEV2_CopyEV2FilesToArtifact/EV2Specs/ServiceGroupRoot/RolloutSpec.json'

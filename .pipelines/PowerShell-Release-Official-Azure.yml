@@ -100,11 +100,3 @@ extends:
           skipPublish: ${{ parameters.skipPublish }}
 
       - template: /.pipelines/templates/release-publish-pmc.yml@self
-
-      # - stage: UploadBuildInfoJson
-      #   dependsOn:
-      #     - PrepForEV2
-      #     - BlobPublic
-      #   displayName: Upload BuildInfo.json
-      #   jobs:
-      #   - template: /.pipelines/templates/release-upload-buildinfo.yml@self
