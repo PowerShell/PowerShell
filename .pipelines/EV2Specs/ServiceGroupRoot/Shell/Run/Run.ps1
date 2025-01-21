@@ -375,7 +375,7 @@ try {
     $mappedReposUsedByPwsh = Get-MappedRepositoryIds -Mapping $mapping -RepoList $repoList -Channel $channel
     $packageObjects = Get-PackageObjects -RepoObjects $mappedReposUsedByPwsh -PackageName $packageNames -ReleaseVersion $releaseVersion
     Write-Verbose -Verbose "skip publish $skipPublish"
-    Publish-PackageToPMC -PackageObject $packageObjects -ReleaseVersion $releaseVersion -ConfigPath $configPath -SkipPublish $skipPublish
+    Publish-PackageToPMC -PackageObject $packageObjects -ConfigPath $configPath -SkipPublish $skipPublish
 }
 catch {
     Write-Error -ErrorAction Stop $_.Exception.Message
