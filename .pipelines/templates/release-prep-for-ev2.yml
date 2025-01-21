@@ -162,6 +162,8 @@ stages:
         ob_restore_phase: true
 
     - pwsh: |
+        $ver = '$(ReleaseTag)'
+        Write-Verbose -Verbose "ver: $ver"
         $pathToPMCMetadataFile = Join-Path -Path '$(ev2ParametersFolder)' -ChildPath 'pmcMetadata.json'
 
         $metadata = Get-Content -Path "$(repoRoot)/tools/metadata.json" -Raw | ConvertFrom-Json
