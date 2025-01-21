@@ -30,10 +30,6 @@ jobs:
       Get-ChildItem Env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
     displayName: 'Capture Environment Variables'
 
-  - download: PSPackagesOfficial
-    artifact: drop_nupkg_build_nupkg
-    displayName: Download nuget packages
-
   - pwsh: |
       #Exclude all global tool packages. Their names start with 'PowerShell.'
       $null = New-Item -ItemType Directory -Path "$(Pipeline.Workspace)/release"
