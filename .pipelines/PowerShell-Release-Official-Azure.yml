@@ -66,7 +66,7 @@ resources:
 
 extends:
   # template: v2/OneBranch.Official.CrossPlat.yml@templates
-    template: v2/OneBranch.NonOfficial.CrossPlat.yml@templates
+  template: v2/OneBranch.NonOfficial.CrossPlat.yml@templates
   parameters:
     featureFlags:
       WindowsHostVersion:
