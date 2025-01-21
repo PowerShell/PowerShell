@@ -65,8 +65,7 @@ resources:
             - releases/*
 
 extends:
-  # template: v2/OneBranch.Official.CrossPlat.yml@templates
-  template: v2/OneBranch.NonOfficial.CrossPlat.yml@templates
+  template: v2/OneBranch.Official.CrossPlat.yml@templates
   parameters:
     featureFlags:
       WindowsHostVersion:
@@ -98,4 +97,4 @@ extends:
         parameters:
           skipPublish: ${{ parameters.skipPublish }}
 
-      # - template: /.pipelines/templates/release-publish-pmc.yml@self
+      - template: /.pipelines/templates/release-publish-pmc.yml@self
