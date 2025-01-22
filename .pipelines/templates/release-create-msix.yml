@@ -41,6 +41,28 @@ jobs:
       displayName: Remove AzRM modules and install Az.Storage
 
     - pwsh: |
+        $cmd = Get-Command makeappx.exe -ErrorAction Ignore
+        if ($cmd) {
+            Write-Verbose -Verbose 'makeappx available in PATH'
+            $exePath = $cmd.Source
+        } else {
+            $toolsDir = '$(Pipeline.Workspace)\releasePipeline\tools'
+            New-Item $toolsDir -Type Directory -Force > $null
+            Invoke-RestMethod -Uri '$(makeappUrl)' -OutFile "$toolsDir\makeappx.zip"
+            Expand-Archive "$toolsDir\makeappx.zip" -DestinationPath "$toolsDir\makeappx" -Force
+            $exePath = "$toolsDir\makeappx\makeappx.exe"
+    
+            Write-Verbose -Verbose 'makeappx was installed:'
+            Get-ChildItem -Path $toolsDir -Recurse
+        }
+    
+        $vstsCommandString = "vso[task.setvariable variable=MakeAppxPath]$exePath"
+        Write-Host "sending " + $vstsCommandString
+        Write-Host "##$vstsCommandString"
+      displayName: Install makeappx tool
+      retryCountOnTaskFailure: 1
+
+    - pwsh: |
         $sourceDir = '$(Pipeline.Workspace)\releasePipeline\msix'
         $null = New-Item -Path $sourceDir -ItemType Directory -Force
 
