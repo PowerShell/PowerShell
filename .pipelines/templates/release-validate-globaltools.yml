@@ -109,7 +109,7 @@ jobs:
     - pwsh: |
         $repoRoot = "$(Build.SourcesDirectory)/PowerShell"
         Import-Module "$repoRoot/build.psm1" -Force
-        Start-PSBootstrap
+        Start-PSBootstrap -Force
 
         $exeName = if ($IsWindows) { "pwsh.exe" } else { "pwsh" }
 

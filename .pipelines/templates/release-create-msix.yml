@@ -42,16 +42,23 @@ jobs:
 
     - task: AzurePowerShell@5
       displayName: Install makeappx tool
-      retryCountOnTaskFailure: 1
       inputs:
         azureSubscription: az-blob-cicd-infra
         scriptType: inlineScript
         azurePowerShellVersion: LatestVersion
         pwsh: true
         inline: |
+          $storageAccount = Get-AzStorageAccount -ResourceGroupName '$(makeappResourceGroup)' -Name '$(makeappAccount)'
+          $ctx = $storageAccount.Context
+          $container = '$(makeappContainer)'
+  
+          $destinationPath = "$toolsDir\makeappx.zip"
+          $blobList = Get-AzStorageBlob -Container $container -Context $ctx
+          Get-AzStorageBlobContent -Container $container -Blob $(makeappBlobName) -Destination $destinationPath -Context $ctx -Force
+          Write-Verbose "Downloaded $(makeappBlobName) to $destinationPath" -Verbose
+
           $toolsDir = '$(Pipeline.Workspace)\releasePipeline\tools'
           New-Item $toolsDir -Type Directory -Force > $null
-          Invoke-RestMethod -Uri '$(makeappUrlDirect)' -OutFile "$toolsDir\makeappx.zip"
           Expand-Archive "$toolsDir\makeappx.zip" -DestinationPath "$toolsDir\makeappx" -Force
           $exePath = "$toolsDir\makeappx\makeappx.exe"
 
