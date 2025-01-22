@@ -28,43 +28,27 @@ jobs:
       displayName: Download x86 msix
       patterns: '**/*.msix'
 
-    # This needs to run before any AzurePowerShell@ task
     - pwsh: |
-        $azureRmModule = Get-InstalledModule AzureRM -ErrorAction SilentlyContinue -Verbose
-        if ($azureRmModule) {
-          Write-Host 'AzureRM module exists. Removing it'
-          Uninstall-AzureRm
-          Write-Host 'AzureRM module removed'
+        $cmd = Get-Command makeappx.exe -ErrorAction Ignore
+        if ($cmd) {
+            Write-Verbose -Verbose 'makeappx available in PATH'
+            $exePath = $cmd.Source
+        } else {
+            $toolsDir = '$(Pipeline.Workspace)\releasePipeline\tools'
+            New-Item $toolsDir -Type Directory -Force > $null
+            Invoke-RestMethod -Uri '$(makeappUrl)' -OutFile "$toolsDir\makeappx.zip"
+            Expand-Archive "$toolsDir\makeappx.zip" -DestinationPath "$toolsDir\makeappx" -Force
+            $exePath = "$toolsDir\makeappx\makeappx.exe"
+
+            Write-Verbose -Verbose 'makeappx was installed:'
+            Get-ChildItem -Path $toolsDir -Recurse
         }
 
-        Install-Module -Name Az.Storage -Force -AllowClobber -Scope CurrentUser -Verbose
-      displayName: Remove AzRM modules and install Az.Storage
-
-    - task: AzurePowerShell@5
+        $vstsCommandString = "vso[task.setvariable variable=MakeAppxPath]$exePath"
+        Write-Host "sending " + $vstsCommandString
+        Write-Host "##$vstsCommandString"
       displayName: Install makeappx tool
-      inputs:
-        azureSubscription: az-blob-cicd-infra
-        scriptType: inlineScript
-        azurePowerShellVersion: LatestVersion
-        pwsh: true
-        inline: |
-          $storageAccount = Get-AzStorageAccount -ResourceGroupName '$(makeappResourceGroup)' -Name '$(makeappAccount)'
-          $ctx = $storageAccount.Context
-          $container = '$(makeappContainer)'
-  
-          $destinationPath = "$toolsDir\makeappx.zip"
-          $blobList = Get-AzStorageBlob -Container $container -Context $ctx
-          Get-AzStorageBlobContent -Container $container -Blob $(makeappBlobName) -Destination $destinationPath -Context $ctx -Force
-          Write-Verbose "Downloaded $(makeappBlobName) to $destinationPath" -Verbose
-
-          $toolsDir = '$(Pipeline.Workspace)\releasePipeline\tools'
-          New-Item $toolsDir -Type Directory -Force > $null
-          Expand-Archive "$toolsDir\makeappx.zip" -DestinationPath "$toolsDir\makeappx" -Force
-          $exePath = "$toolsDir\makeappx\makeappx.exe"
-
-          $vstsCommandString = "vso[task.setvariable variable=MakeAppxPath]$exePath"
-          Write-Host "sending " + $vstsCommandString
-          Write-Host "##$vstsCommandString"
+      retryCountOnTaskFailure: 1
 
     - pwsh: |
         $sourceDir = '$(Pipeline.Workspace)\releasePipeline\msix'
