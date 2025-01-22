@@ -64,25 +64,18 @@ stages:
         ob_restore_phase: true
 
     - pwsh: |
-        $attemptPath = Test-Path '$(Build.SourcesDirectory)/PowerShell/.pipelines'
-        Write-Verbose -Verbose "attempt build src dir: $attemptPath"
         Get-ChildItem '$(Build.SourcesDirectory)'
       displayName: 'Capture BuildDirectory'
       env:
         ob_restore_phase: true
 
     - pwsh: |
-        $attemptPath = Test-Path '$(Pipeline.Workspace)/PowerShell/.pipelines'
-        Write-Verbose -Verbose "attempt pipeline workspace: $attemptPath"
         Get-ChildItem '$(Pipeline.Workspace)' -Recurse | Out-String -Stream | write-Verbose -Verbose
       displayName: 'Capture Workspace'
       env:
         ob_restore_phase: true
 
     - pwsh: |
-        $path = '$(Build.SourcesDirectory)/PowerShell/.pipelines'
-        $attemptPath = Test-Path $path
-        Write-Verbose -Verbose "path exists pre: $path : $attemptPath"
         New-Item -Path '$(ev2ParametersFolder)' -ItemType Directory
       displayName: 'Create Parameters folder under EV2Specs folder'
       env:
@@ -100,19 +93,9 @@ stages:
         pip --version --verbose
 
         Write-Verbose -Verbose "Download pmc-cli to folder without installing it"
-        $ev2SpecsFolder = "$(repoRoot)/.pipelines/EV2Specs"
-        $shellExtensionBundleDir = "$ev2SpecsFolder/ServiceGroupRoot/Shell/Run"
-        $pythonDlFolderPath = Join-Path -Path $shellExtensionBundleDir -ChildPath "python_dl"
+        $pythonDlFolderPath = Join-Path '$(ev2ServiceGroupRootFolder)/Shell/Run' -ChildPath "python_dl"
         pip download -d $pythonDlFolderPath pmc-cli --platform=manylinux_2_17_x86_64 --only-binary=:all: --verbose
       displayName: 'Download pmc-cli package'
-      env:
-        ob_restore_phase: true
-
-    - pwsh: |
-        Get-ChildItem '$(Pipeline.Workspace)/tools'
-        $repolistFile = Join-Path "$(Pipeline.Workspace)/tools/packages.microsoft.com-v4" -ChildPath "repolist.json"
-        Copy-Item -Path $repolistFile -Destination '$(ev2ParametersFolder)' -Verbose
-      displayName: 'Copy repolist.json file from Internal-PowerShellTeam-Tools to EV2 folder'
       env:
         ob_restore_phase: true
 
@@ -162,8 +145,6 @@ stages:
         ob_restore_phase: true
 
     - pwsh: |
-        $ver = '$(OutputReleaseTag.ReleaseTag)'
-        Write-Verbose -Verbose "ver: $ver"
         $pathToPMCMetadataFile = Join-Path -Path '$(ev2ParametersFolder)' -ChildPath 'pmcMetadata.json'
 
         $metadata = Get-Content -Path "$(repoRoot)/tools/metadata.json" -Raw | ConvertFrom-Json
@@ -178,8 +159,8 @@ stages:
 
         $mappingFilePath = Join-Path -Path '$(repoRoot)/tools/packages.microsoft.com' -ChildPath 'mapping.json'
         $mappingFilePathExists = Test-Path $mappingFilePath
-        Write-Verbose -Verbose "Copy mapping.json file to EV2Specs folder. file path at path $mappingFilePath exists: $mappingFilePathExists"
         $mappingFileEV2Path = Join-Path -Path '$(ev2ParametersFolder)' -ChildPath "mapping.json"
+        Write-Verbose -Verbose "Copy mapping.json file at: $mappingFilePath which exists: $mappingFilePathExists to: $mappingFileEV2Path"
         Copy-Item -Path $mappingFilePath -Destination $mappingFileEV2Path
       displayName: 'Create pmcScriptMetadata.json and mapping.json file'
       env:
@@ -243,8 +224,8 @@ stages:
   
     - pwsh: |
         # folder to tar must have: Run.ps1, settings.toml, python_dl
-        $srcPath = Join-Path '$(repoRoot)/.pipelines/EV2Specs/ServiceGroupRoot' -ChildPath 'Shell'
-        $pathToRunTarFile = Join-Path '$(repoRoot)/.pipelines/EV2Specs/ServiceGroupRoot/Shell' -ChildPath "Run.tar"
+        $srcPath = Join-Path '$(ev2ServiceGroupRootFolder)' -ChildPath 'Shell'
+        $pathToRunTarFile = Join-Path $srcPath -ChildPath "Run.tar"
         tar -cvf $pathToRunTarFile -C $srcPath ./Run
       displayName: 'Create archive for the shell extension'
 
