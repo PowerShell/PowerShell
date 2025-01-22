@@ -431,12 +431,12 @@ namespace System.Management.Automation
             // eg: Host<Tab> finds Microsoft.PowerShell.Host
             // If the user has entered a manual wildcard, or a module name that contains a "." we assume they only want results that matches the input exactly.
             bool shortNameSearch = wordToComplete.Length > 0 && !WildcardPattern.ContainsWildcardCharacters(wordToComplete) && !wordToComplete.Contains('.');
-            
+
             if (!wordToComplete.EndsWith('*'))
             {
                 wordToComplete += "*";
             }
-            
+
             string[] moduleNames;
             WildcardPattern shortNamePattern;
             if (shortNameSearch)
@@ -4743,7 +4743,7 @@ namespace System.Management.Automation
                     var resultType = isContainer
                         ? CompletionResultType.ProviderContainer
                         : CompletionResultType.ProviderItem;
-                    
+
                     bool leafQuotesNeeded;
                     var completionText = NewPathCompletionText(
                         basePath,
@@ -7972,7 +7972,7 @@ namespace System.Management.Automation
                 parentAst = parentAst.Parent;
             }
 
-            ExitWhileLoop:
+        ExitWhileLoop:
 
             bool hashtableIsNested = nestedHashtableKeys.Count > 0;
             int cursorOffset = completionContext.CursorPosition.Offset;
@@ -8378,6 +8378,46 @@ namespace System.Management.Automation
             }
 
             return quote;
+        }
+
+        /// <summary>
+        /// Enumerates quoted and unquoted completion text.
+        /// This makes it easier to handle different variations of completions with consideration of quotes.
+        /// </summary>
+        /// <param name="wordToComplete">The word to complete.</param>
+        /// <param name="possibleCompletionValues">The possible completion values to iterate.</param>
+        /// <param name="toolTipMapping">The optional tool tip mapping delegate.</param>
+        /// <returns></returns>
+        internal static IEnumerable<CompletionResult> EnumerateQuotedAndUnquotedCompletionText(
+            string wordToComplete,
+            IEnumerable<string> possibleCompletionValues,
+            Func<string, string> toolTipMapping = null)
+        {
+            string quote = HandleDoubleAndSingleQuote(ref wordToComplete);
+            var pattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
+
+            foreach (string value in possibleCompletionValues)
+            {
+                if (pattern.IsMatch(value))
+                {
+                    string completionText = quote == string.Empty
+                        ? value
+                        : quote + value + quote;
+
+                    if (toolTipMapping is not null)
+                    {
+                        yield return new CompletionResult(
+                            completionText,
+                            listItemText: value,
+                            resultType: CompletionResultType.ParameterValue,
+                            toolTip: toolTipMapping(value));
+                    }
+                    else
+                    {
+                        yield return new CompletionResult(completionText);
+                    }
+                }
+            }
         }
 
         internal static bool IsSplattedVariable(Ast targetExpr)
