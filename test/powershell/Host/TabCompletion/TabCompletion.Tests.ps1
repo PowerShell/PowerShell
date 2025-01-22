@@ -771,31 +771,50 @@ ConstructorTestClass(int i, bool b)
 
     Context 'Start-Process -Verb parameter completion' {
         BeforeAll {
-            function GetProcessInfoVerbs($path) {
-                (New-Object -TypeName System.Diagnostics.ProcessStartInfo -ArgumentList $path).Verbs
+            function GetProcessInfoVerbs([string]$path, [switch]$singleQuote, [switch]$doubleQuote) {
+                $verbs = (New-Object -TypeName System.Diagnostics.ProcessStartInfo -ArgumentList $path).Verbs
+
+                if ($singleQuote) {
+                    return ($verbs | ForEach-Object { "'$_'" })
+                }
+                elseif ($doubleQuote) {
+                    return ($verbs | ForEach-Object { """$_""" })
+                }
+
+                return $verbs
             }
 
             $cmdPath = Join-Path -Path $TestDrive -ChildPath 'test.cmd'
-            $cmdVerbs = GetProcessInfoVerbs $cmdPath
+            $cmdVerbs = GetProcessInfoVerbs -Path $cmdPath
+            $cmdVerbsSingleQuote = GetProcessInfoVerbs -Path $cmdPath -SingleQuote
+            $cmdVerbsDoubleQuote = GetProcessInfoVerbs -Path $cmdPath -DoubleQuote
             $exePath = Join-Path -Path $TestDrive -ChildPath 'test.exe'
-            $exeVerbs = GetProcessInfoVerbs $exePath
+            $exeVerbs = GetProcessInfoVerbs -Path $exePath
             $exeVerbsStartingWithRun = $exeVerbs | Where-Object { $_ -like 'run*' }
+            $exeVerbsSingleQuote = GetProcessInfoVerbs -Path $exePath -SingleQuote
+            $exeVerbsStartingWithRunSingleQuote = $exeVerbsSingleQuote | Where-Object { $_ -like "'run*" }
+            $exeVerbsDoubleQuote = GetProcessInfoVerbs -Path $exePath -DoubleQuote
+            $exeVerbsStartingWithRunDoubleQuote = $exeVerbsDoubleQuote | Where-Object { $_ -like """run*" }
             $powerShellExeWithNoExtension = 'powershell'
             $txtPath = Join-Path -Path $TestDrive -ChildPath 'test.txt'
-            $txtVerbs = GetProcessInfoVerbs $txtPath
+            $txtVerbs = GetProcessInfoVerbs -Path $txtPath
             $wavPath = Join-Path -Path $TestDrive -ChildPath 'test.wav'
-            $wavVerbs = GetProcessInfoVerbs $wavPath
+            $wavVerbs = GetProcessInfoVerbs -Path $wavPath
             $docxPath = Join-Path -Path $TestDrive -ChildPath 'test.docx'
-            $docxVerbs = GetProcessInfoVerbs $docxPath
+            $docxVerbs = GetProcessInfoVerbs -Path $docxPath
             $fileWithNoExtensionPath = Join-Path -Path $TestDrive -ChildPath 'test'
-            $fileWithNoExtensionVerbs = GetProcessInfoVerbs $fileWithNoExtensionPath
+            $fileWithNoExtensionVerbs = GetProcessInfoVerbs -Path $fileWithNoExtensionPath
         }
 
         It "Should complete Verb parameter for '<TextInput>'" -Skip:(!([System.Management.Automation.Platform]::IsWindowsDesktop)) -TestCases @(
             @{ TextInput = 'Start-Process -Verb '; ExpectedVerbs = '' }
             @{ TextInput = "Start-Process -FilePath $cmdPath -Verb "; ExpectedVerbs =  $cmdVerbs -join ' ' }
+            @{ TextInput = "Start-Process -FilePath $cmdPath -Verb '"; ExpectedVerbs =  $cmdVerbsSingleQuote -join ' ' }
+            @{ TextInput = "Start-Process -FilePath $cmdPath -Verb """; ExpectedVerbs =   $cmdVerbsDoubleQuote -join ' ' }
             @{ TextInput = "Start-Process -FilePath $exePath -Verb "; ExpectedVerbs = $exeVerbs -join ' ' }
             @{ TextInput = "Start-Process -FilePath $exePath -Verb run"; ExpectedVerbs = $exeVerbsStartingWithRun -join ' ' }
+            @{ TextInput = "Start-Process -FilePath $exePath -Verb 'run"; ExpectedVerbs = $exeVerbsStartingWithRunSingleQuote -join ' ' }
+            @{ TextInput = "Start-Process -FilePath $exePath -Verb ""run"; ExpectedVerbs = $exeVerbsStartingWithRunDoubleQuote -join ' ' }
             @{ TextInput = "Start-Process -FilePath $powerShellExeWithNoExtension -Verb "; ExpectedVerbs = $exeVerbs -join ' ' }
             @{ TextInput = "Start-Process -FilePath $txtPath -Verb "; ExpectedVerbs = $txtVerbs -join ' ' }
             @{ TextInput = "Start-Process -FilePath $wavPath -Verb "; ExpectedVerbs = $wavVerbs -join ' ' }
@@ -812,17 +831,33 @@ ConstructorTestClass(int i, bool b)
     Context 'Scope parameter completion' {
         BeforeAll {
             $allScopes = 'Global Local Script'
+            $allScopesSingleQuote = "'Global' 'Local' 'Script'"
+            $allScopesDoubleQuote = """Global"" ""Local"" ""Script"""
             $globalScope = 'Global'
+            $globalScopeSingleQuote = "'Global'"
+            $globalScopeDoubleQuote = """Global"""
             $localScope = 'Local'
+            $localScopeSingleQuote = "'Local'"
+            $localScopeDoubleQuote = """Local"""
             $scriptScope = 'Script'
+            $scriptScopeSingleQuote = "'Script'"
+            $scriptScopeDoubleQuote = """Script"""
             $allScopeCommands = 'Clear-Variable', 'Export-Alias', 'Get-Alias', 'Get-PSDrive', 'Get-Variable', 'Import-Alias', 'New-Alias', 'New-PSDrive', 'New-Variable', 'Remove-Alias', 'Remove-PSDrive', 'Remove-Variable', 'Set-Alias', 'Set-Variable'
         }
 
         It "Should complete '<ParameterInput>' for '<Commands>'" -TestCases @(
             @{ Commands = $allScopeCommands; ParameterInput = "-Scope "; ExpectedScopes = $allScopes }
+            @{ Commands = $allScopeCommands; ParameterInput = "-Scope '"; ExpectedScopes = $allScopesSingleQuote }
+            @{ Commands = $allScopeCommands; ParameterInput = "-Scope """; ExpectedScopes = $allScopesDoubleQuote }
             @{ Commands = $allScopeCommands; ParameterInput = "-Scope G"; ExpectedScopes = $globalScope }
+            @{ Commands = $allScopeCommands; ParameterInput = "-Scope 'G"; ExpectedScopes = $globalScopeSingleQuote }
+            @{ Commands = $allScopeCommands; ParameterInput = "-Scope ""G"; ExpectedScopes = $globalScopeDoubleQuote }
             @{ Commands = $allScopeCommands; ParameterInput = "-Scope Lo"; ExpectedScopes = $localScope }
+            @{ Commands = $allScopeCommands; ParameterInput = "-Scope 'Lo"; ExpectedScopes = $localScopeSingleQuote }
+            @{ Commands = $allScopeCommands; ParameterInput = "-Scope ""Lo"; ExpectedScopes = $localScopeDoubleQuote }
             @{ Commands = $allScopeCommands; ParameterInput = "-Scope Scr"; ExpectedScopes = $scriptScope }
+            @{ Commands = $allScopeCommands; ParameterInput = "-Scope 'Scr"; ExpectedScopes = $scriptScopeSingleQuote }
+            @{ Commands = $allScopeCommands; ParameterInput = "-Scope ""Scr"; ExpectedScopes = $scriptScopeDoubleQuote }
             @{ Commands = $allScopeCommands; ParameterInput = "-Scope NonExistentScope"; ExpectedScopes = '' }
         ) {
             param($Commands, $ParameterInput, $ExpectedScopes)
@@ -889,18 +924,26 @@ ConstructorTestClass(int i, bool b)
     Context 'StrictMode Version parameter completion' {
         BeforeAll {
             $allStrictModeVersions = '1.0 2.0 3.0 Latest'
+            $allStrictModeVersionsSingleQuote = "'1.0' '2.0' '3.0' 'Latest'"
+            $allStrictModeVersionsDoubleQuote = """1.0"" ""2.0"" ""3.0"" ""Latest"""
             $versionOne = '1.0'
             $versionTwo = '2.0'
             $versionThree = '3.0'
             $latestVersion = 'Latest'
+            $latestVersionSingleQuote = "'Latest'"
+            $latestVersionDoubleQuote = """Latest"""
         }
 
         It "Should complete Version for '<TextInput>'" -TestCases @(
             @{ TextInput = "Set-StrictMode -Version "; ExpectedVersions = $allStrictModeVersions }
+            @{ TextInput = "Set-StrictMode -Version '"; ExpectedVersions = $allStrictModeVersionsSingleQuote }
+            @{ TextInput = "Set-StrictMode -Version """; ExpectedVersions = $allStrictModeVersionsDoubleQuote }
             @{ TextInput = "Set-StrictMode -Version 1"; ExpectedVersions = $versionOne }
             @{ TextInput = "Set-StrictMode -Version 2"; ExpectedVersions = $versionTwo }
             @{ TextInput = "Set-StrictMode -Version 3"; ExpectedVersions = $versionThree }
             @{ TextInput = "Set-StrictMode -Version Lat"; ExpectedVersions = $latestVersion }
+            @{ TextInput = "Set-StrictMode -Version 'Lat"; ExpectedVersions = $latestVersionSingleQuote }
+            @{ TextInput = "Set-StrictMode -Version ""Lat"; ExpectedVersions = $latestVersionDoubleQuote }
             @{ TextInput = "Set-StrictMode -Version NonExistentVersion"; ExpectedVersions = '' }
         ) {
             param($TextInput, $ExpectedVersions)
