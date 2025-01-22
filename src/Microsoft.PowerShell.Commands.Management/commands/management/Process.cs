@@ -2684,9 +2684,9 @@ namespace Microsoft.PowerShell.Commands
                 // Complete file verbs if extension exists
                 if (Path.HasExtension(filePath))
                 {
-                    foreach (string verb in CompleteFileVerbs(filePath, wordToComplete))
+                    foreach (CompletionResult result in CompleteFileVerbs(filePath, wordToComplete))
                     {
-                        yield return new CompletionResult(verb);
+                        yield return result;
                     }
 
                     yield break;
@@ -2707,9 +2707,9 @@ namespace Microsoft.PowerShell.Commands
                 // Start-Process & Get-Command select first found application based on PATHEXT environment variable
                 if (commands.Count >= 1)
                 {
-                    foreach (string verb in CompleteFileVerbs(commands[0].Source, wordToComplete))
+                    foreach (CompletionResult result in CompleteFileVerbs(commands[0].Source, wordToComplete))
                     {
-                        yield return new CompletionResult(verb);
+                        yield return result;
                     }
                 }
             }
@@ -2721,18 +2721,15 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="filePath">The file path to get verbs.</param>
         /// <param name="wordToComplete">The word to complete.</param>
         /// <returns>List of file verbs to complete.</returns>
-        private static IEnumerable<string> CompleteFileVerbs(string filePath, string wordToComplete)
+        private static IEnumerable<CompletionResult> CompleteFileVerbs(string filePath, string wordToComplete)
         {
-            var verbPattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
-
             string[] verbs = new ProcessStartInfo(filePath).Verbs;
 
-            foreach (string verb in verbs)
+            foreach (CompletionResult result in CompletionCompleters.EnumerateQuotedAndUnquotedCompletionText(
+                wordToComplete,
+                possibleCompletionValues: verbs))
             {
-                if (verbPattern.IsMatch(verb))
-                {
-                    yield return verb;
-                }
+                yield return result;
             }
         }
     }

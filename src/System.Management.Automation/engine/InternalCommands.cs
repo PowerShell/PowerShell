@@ -2742,14 +2742,11 @@ namespace Microsoft.PowerShell.Commands
             CommandAst commandAst,
             IDictionary fakeBoundParameters)
         {
-            var strictModeVersionPattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
-
-            foreach (string version in s_strictModeVersions)
+            foreach (CompletionResult result in CompletionCompleters.EnumerateQuotedAndUnquotedCompletionText(
+                wordToComplete,
+                possibleCompletionValues: s_strictModeVersions))
             {
-                if (strictModeVersionPattern.IsMatch(version))
-                {
-                    yield return new CompletionResult(version);
-                }
+                yield return result;
             }
         }
     }

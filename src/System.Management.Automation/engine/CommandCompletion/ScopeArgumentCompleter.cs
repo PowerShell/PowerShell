@@ -30,14 +30,11 @@ namespace System.Management.Automation
             CommandAst commandAst,
             IDictionary fakeBoundParameters)
         {
-            var scopePattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
-
-            foreach (string scope in s_Scopes)
+            foreach (CompletionResult result in CompletionCompleters.EnumerateQuotedAndUnquotedCompletionText(
+                wordToComplete,
+                possibleCompletionValues: s_Scopes))
             {
-                if (scopePattern.IsMatch(scope))
-                {
-                    yield return new CompletionResult(scope);
-                }
+                yield return result;
             }
         }
     }

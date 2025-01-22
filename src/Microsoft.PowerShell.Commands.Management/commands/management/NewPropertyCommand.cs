@@ -232,23 +232,12 @@ namespace Microsoft.PowerShell.Commands
                 yield break;
             }
 
-            string quote = CompletionCompleters.HandleDoubleAndSingleQuote(ref wordToComplete);
-            var propertyTypePattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
-
-            foreach (string propertyType in s_RegistryPropertyTypes)
+            foreach (CompletionResult result in CompletionCompleters.EnumerateQuotedAndUnquotedCompletionText(
+                wordToComplete,
+                possibleCompletionValues: s_RegistryPropertyTypes,
+                toolTipMapping: GetRegistryPropertyTypeToolTip))
             {
-                if (propertyTypePattern.IsMatch(propertyType))
-                {
-                    string completionText = quote == string.Empty
-                        ? propertyType
-                        : quote + propertyType + quote;
-
-                    yield return new CompletionResult(
-                        completionText,
-                        propertyType,
-                        CompletionResultType.ParameterValue,
-                        GetRegistryPropertyTypeToolTip(propertyType));
-                }
+                yield return result;
             }
         }
 
