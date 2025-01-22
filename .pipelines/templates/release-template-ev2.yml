@@ -1,8 +1,3 @@
-parameters:
-- name: skipPublish
-  type: boolean
-  default: false
-
 stages:
 - stage: PrepForEV2
   displayName: 'Copy and prep all files needed for EV2 stage'
@@ -33,29 +28,6 @@ stages:
     - template: release-SetReleaseTagandContainerName.yml
       parameters:
         restorePhase: true
-    
-    - pwsh: |
-        $packageVersion = '$(OutputReleaseTag.ReleaseTag)'.ToLowerInvariant() -replace '^v',''
-        $vstsCommandString = "vso[task.setvariable variable=packageVersion]$packageVersion"
-        Write-Host "sending " + $vstsCommandString
-        Write-Host "##$vstsCommandString"
-      displayName: Set Package version
-      env:
-        ob_restore_phase: true
-    
-    - pwsh: |
-        $branch = 'mirror-target'
-        $gitArgs = "clone",
-        "--verbose",
-        "--branch",
-        "$branch",
-        "https://$(mscodehubCodeReadPat)@mscodehub.visualstudio.com/PowerShellCore/_git/Internal-PowerShellTeam-Tools",
-        '$(Pipeline.Workspace)/tools'
-        $gitArgs | Write-Verbose -Verbose
-        git $gitArgs
-      displayName: Clone Internal-PowerShellTeam-Tools from MSCodeHub
-      env:
-        ob_restore_phase: true
 
     - pwsh: |
         Get-ChildItem Env: | Out-String -Stream | write-Verbose -Verbose
@@ -70,12 +42,17 @@ stages:
         ob_restore_phase: true
 
     - pwsh: |
+        $attemptPath = Test-Path '$(Pipeline.Workspace)/PowerShell/.pipelines'
+        Write-Verbose -Verbose "attempt pipeline workspace: $attemptPath"
         Get-ChildItem '$(Pipeline.Workspace)' -Recurse | Out-String -Stream | write-Verbose -Verbose
       displayName: 'Capture Workspace'
       env:
         ob_restore_phase: true
 
     - pwsh: |
+        $path = '$(Build.SourcesDirectory)/PowerShell/.pipelines'
+        $attemptPath = Test-Path $path
+        Write-Verbose -Verbose "path exists pre: $path : $attemptPath"
         New-Item -Path '$(ev2ParametersFolder)' -ItemType Directory
       displayName: 'Create Parameters folder under EV2Specs folder'
       env:
@@ -93,7 +70,9 @@ stages:
         pip --version --verbose
 
         Write-Verbose -Verbose "Download pmc-cli to folder without installing it"
-        $pythonDlFolderPath = Join-Path '$(ev2ServiceGroupRootFolder)/Shell/Run' -ChildPath "python_dl"
+        $ev2SpecsFolder = "$(repoRoot)/.pipelines/EV2Specs"
+        $shellExtensionBundleDir = "$ev2SpecsFolder/ServiceGroupRoot/Shell/Run"
+        $pythonDlFolderPath = Join-Path -Path $shellExtensionBundleDir -ChildPath "python_dl"
         pip download -d $pythonDlFolderPath pmc-cli --platform=manylinux_2_17_x86_64 --only-binary=:all: --verbose
       displayName: 'Download pmc-cli package'
       env:
@@ -145,31 +124,9 @@ stages:
         ob_restore_phase: true
 
     - pwsh: |
-        $pathToPMCMetadataFile = Join-Path -Path '$(ev2ParametersFolder)' -ChildPath 'pmcMetadata.json'
-
-        $metadata = Get-Content -Path "$(repoRoot)/tools/metadata.json" -Raw | ConvertFrom-Json
-        $metadataHash = @{}
-        $skipPublishValue = '${{ parameters.skipPublish }}'
-        $metadataHash["ReleaseTag"] = '$(OutputReleaseTag.ReleaseTag)'
-        $metadataHash["LTS"] = $metadata.LTSRelease.Latest
-        $metadataHash["ForProduction"] = $true
-        $metadataHash["SkipPublish"] = [System.Convert]::ToBoolean($skipPublishValue)
-
-        $metadataHash | ConvertTo-Json | Out-File $pathToPMCMetadataFile
-
-        $mappingFilePath = Join-Path -Path '$(repoRoot)/tools/packages.microsoft.com' -ChildPath 'mapping.json'
-        $mappingFilePathExists = Test-Path $mappingFilePath
-        $mappingFileEV2Path = Join-Path -Path '$(ev2ParametersFolder)' -ChildPath "mapping.json"
-        Write-Verbose -Verbose "Copy mapping.json file at: $mappingFilePath which exists: $mappingFilePathExists to: $mappingFileEV2Path"
-        Copy-Item -Path $mappingFilePath -Destination $mappingFileEV2Path
-      displayName: 'Create pmcScriptMetadata.json and mapping.json file'
-      env:
-        ob_restore_phase: true
-
-    - pwsh: |
         $pathToJsonFile = Join-Path -Path '$(ev2ServiceGroupRootFolder)' -ChildPath 'RolloutSpec.json'
         $content = Get-Content -Path $pathToJsonFile | ConvertFrom-Json
-        $content.RolloutMetadata.Notification.Email.To = '$(PmcEV2SupportEmail)'
+        $content.RolloutMetadata.Notification.Email.To = '$(myEV2SupportEmail)'
         Remove-Item -Path $pathToJsonFile
         $content | ConvertTo-Json -Depth 4 | Out-File $pathToJsonFile
       displayName: 'Replace values in RolloutSpecPath.json'
@@ -180,7 +137,7 @@ stages:
         $pathToJsonFile = Join-Path -Path '$(ev2ServiceGroupRootFolder)' -ChildPath 'UploadLinux.Rollout.json'
         $content = Get-Content -Path $pathToJsonFile | ConvertFrom-Json
 
-        $identityString = "/subscriptions/$(PmcSubscription)/resourcegroups/$(PmcResourceGroup)/providers/Microsoft.ManagedIdentity/userAssignedIdentities/$(PmcMIName)"
+        $identityString = "/subscriptions/$(mySubscription)/resourcegroups/$(myResourceGroup)/providers/Microsoft.ManagedIdentity/userAssignedIdentities/$(myMIName)"
         $content.shellExtensions.launch.identity.userAssignedIdentities[0] = $identityString
 
         Remove-Item -Path $pathToJsonFile
@@ -190,28 +147,15 @@ stages:
         ob_restore_phase: true
 
     - pwsh: |
+        # TODO: ensure myResourceGroup and mySubscription are variables in library variable group
         $pathToJsonFile = Join-Path -Path '$(ev2ServiceGroupRootFolder)' -ChildPath 'ServiceModel.json'
         $content = Get-Content -Path $pathToJsonFile | ConvertFrom-Json
-        $content.ServiceResourceGroups[0].AzureResourceGroupName = '$(PmcResourceGroup)'
-        $content.ServiceResourceGroups[0].AzureSubscriptionId = '$(PmcSubscription)'
+        $content.ServiceResourceGroups[0].AzureResourceGroupName = '$(myResourceGroup)'
+        $content.ServiceResourceGroups[0].AzureSubscriptionId = '$(mySubscription)'
 
         Remove-Item -Path $pathToJsonFile
         $content | ConvertTo-Json -Depth 9 | Out-File $pathToJsonFile
       displayName: 'Replace values in ServiceModel.json'
-      env:
-        ob_restore_phase: true
-
-    - pwsh: |
-        $settingFilePath = Join-Path '$(ev2ServiceGroupRootFolder)/Shell/Run' -ChildPath 'settings.toml'
-        New-Item -Path $settingFilePath -ItemType File
-        $pmcMIClientID = '$(PmcMIClientID)'
-        $pmcEndpoint = '$(PmcEndpointUrl)'
-
-        Add-Content -Path $settingFilePath -Value "[default]"
-        Add-Content -Path $settingFilePath -Value "base_url = `"$pmcEndpoint`""
-        Add-Content -Path $settingFilePath -Value "auth_type = `"msi`""
-        Add-Content -Path $settingFilePath -Value "client_id = `"$pmcMIClientID`""
-      displayName: 'Create settings.toml file with MI clientId populated'
       env:
         ob_restore_phase: true
 
@@ -224,9 +168,9 @@ stages:
       displayName: Sign Run.ps1
   
     - pwsh: |
-        # folder to tar must have: Run.ps1, settings.toml, python_dl
-        $srcPath = Join-Path '$(ev2ServiceGroupRootFolder)' -ChildPath 'Shell'
-        $pathToRunTarFile = Join-Path $srcPath -ChildPath "Run.tar"
+        # folder to tar (ie /Run) must have: Run.ps1 and any other folders/files you want extracted
+        $srcPath = Join-Path '$(repoRoot)/.pipelines/EV2Specs/ServiceGroupRoot' -ChildPath 'Shell'
+        $pathToRunTarFile = Join-Path '$(repoRoot)/.pipelines/EV2Specs/ServiceGroupRoot/Shell' -ChildPath "Run.tar"
         tar -cvf $pathToRunTarFile -C $srcPath ./Run
       displayName: 'Create archive for the shell extension'
 
@@ -235,3 +179,76 @@ stages:
         SourceFolder: '$(repoRoot)/.pipelines'
         Contents: 'EV2Specs/**'
         TargetFolder: $(ob_outputDirectory)
+
+- stage: 'Test_Release'
+  displayName: 'Test deploy packages to PMC with EV2'
+  dependsOn:
+  - PrepForEV2
+  variables:
+    - name: ob_release_environment
+      value: "Test"
+    - name: repoRoot
+      value: $(Build.SourcesDirectory)
+  jobs:
+  - job: Test_ReleaseJob
+    displayName: Publish to PMC
+    pool:
+      type: release
+
+    steps:
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        targetPath: '$(Pipeline.Workspace)'
+        artifact: drop_PrepForEV2_CopyEv2FilesToArtifact
+      displayName: 'Download drop_PrepForEV2_CopyEv2FilesToArtifact artifact that has all files needed'
+
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        buildType: 'current'
+        targetPath: '$(Pipeline.Workspace)'
+      displayName: 'Download to get EV2 Files'
+
+    - task: vsrm-ev2.vss-services-ev2.adm-release-task.ExpressV2Internal@1
+      displayName: 'Ev2: Push to PMC'
+      inputs:
+        UseServerMonitorTask: true
+        ConnectedServiceName: 'pmc-ev2-deployment'
+        ServiceRootPath: '$(Pipeline.Workspace)/drop_PrepForEV2_CopyEV2FilesToArtifact/EV2Specs/ServiceGroupRoot'
+        RolloutSpecPath: '$(Pipeline.Workspace)/drop_PrepForEV2_CopyEV2FilesToArtifact/EV2Specs/ServiceGroupRoot/RolloutSpec.json'
+      
+- stage: 'Prod_Release'
+  displayName: 'Deploy packages to PMC with EV2'
+  dependsOn:
+  - PrepForEV2
+  variables:
+    - name: ob_release_environment
+      value: "Production"
+    - name: repoRoot
+      value: $(Build.SourcesDirectory)
+  jobs:
+  - job: Prod_ReleaseJob
+    displayName: Publish to PMC
+    pool:
+      type: release
+
+    steps:
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        targetPath: '$(Pipeline.Workspace)'
+        artifact: drop_PrepForEV2_CopyEv2FilesToArtifact
+      displayName: 'Download drop_PrepForEV2_CopyEv2FilesToArtifact artifact that has all files needed'
+
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        buildType: 'current'
+        targetPath: '$(Pipeline.Workspace)'
+      displayName: 'Download to get EV2 Files'
+
+    - task: vsrm-ev2.vss-services-ev2.adm-release-task.ExpressV2Internal@1
+      displayName: 'Ev2: Push to PMC'
+      inputs:
+        UseServerMonitorTask: true
+        EndpointProviderType: ApprovalService
+        ApprovalServiceEnvironment: Production
+        ServiceRootPath: '$(Pipeline.Workspace)/drop_PrepForEV2_CopyEV2FilesToArtifact/EV2Specs/ServiceGroupRoot'
+        RolloutSpecPath: '$(Pipeline.Workspace)/drop_PrepForEV2_CopyEV2FilesToArtifact/EV2Specs/ServiceGroupRoot/RolloutSpec.json'
