@@ -33,7 +33,7 @@ jobs:
   - pwsh: |
       #Exclude all global tool packages. Their names start with 'PowerShell.'
       $null = New-Item -ItemType Directory -Path "$(Pipeline.Workspace)/release"
-      Copy-Item "$ENV:PIPELINE_WORKSPACE/PSPackagesOfficial/drop_nupkg_build_nupkg/*.nupkg" -Destination "$(Pipeline.Workspace)/release" -Exclude "PowerShell.*.nupkg" -Force -Verbose
+      Copy-Item "$(Pipeline.Workspace)/NuGetPackages/*.nupkg" -Destination "$(Pipeline.Workspace)/release" -Exclude "PowerShell.*.nupkg" -Force -Verbose
 
       $releaseVersion = '$(Version)'
       $globalToolPath = "$(Pipeline.Workspace)/NuGetPackages/PowerShell.$releaseVersion.nupkg"
@@ -43,6 +43,7 @@ jobs:
           Copy-Item $globalToolPath -Destination "$(Pipeline.Workspace)/release"
       }
 
+      Write-Verbose -Verbose "The .nupkgs below will be pushed:"
       Get-ChildItem "$(Pipeline.Workspace)/release" -recurse
     displayName: Download and capture nupkgs
     condition: and(ne('${{ parameters.skipPublish }}', 'false'), succeeded())
