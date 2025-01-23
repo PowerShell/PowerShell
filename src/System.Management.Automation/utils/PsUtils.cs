@@ -74,7 +74,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Return true/false to indicate whether the processor architecture is ARM.
+        /// Return true/false to indicate whether the process architecture is ARM.
         /// </summary>
         /// <returns></returns>
         internal static bool IsRunningOnProcessArchitectureARM()
