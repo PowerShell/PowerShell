@@ -1567,11 +1567,9 @@ namespace System.Management.Automation
             /// <param name="commands">The list of commands.</param>
             /// <returns>List of completions for verb.</returns>
             private static IEnumerable<CompletionResult> CompleteVerbWithCommands(string wordToComplete, Collection<CmdletInfo> commands)
-            {
-                return CompletionCompleters.EnumerateQuotedAndUnquotedCompletionText(
+                => CompletionCompleters.EnumerateQuotedAndUnquotedCompletionText(
                     wordToComplete,
                     possibleCompletionValues: EnumerateCommandVerbNames(commands));
-            }
 
             /// <summary>
             /// Completes verb for all types.
@@ -1579,11 +1577,9 @@ namespace System.Management.Automation
             /// <param name="wordToComplete">The word to complete.</param>
             /// <returns>List of completions for verb.</returns>
             private static IEnumerable<CompletionResult> CompleteVerbForAllTypes(string wordToComplete)
-            {
-                return CompletionCompleters.EnumerateQuotedAndUnquotedCompletionText(
+                => CompletionCompleters.EnumerateQuotedAndUnquotedCompletionText(
                     wordToComplete,
                     possibleCompletionValues: EnumerateFieldNamesFromAllVerbTypes());
-            }
         }
 
         private static readonly Dictionary<string, bool> s_validVerbs = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);

@@ -2722,13 +2722,9 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="filePath">The file path to get verbs.</param>
         /// <returns>List of file verbs to complete.</returns>
         private static IEnumerable<CompletionResult> CompleteFileVerbs(string wordToComplete, string filePath)
-        {
-            string[] verbs = new ProcessStartInfo(filePath).Verbs;
-
-            return CompletionCompleters.EnumerateQuotedAndUnquotedCompletionText(
+            => CompletionCompleters.EnumerateQuotedAndUnquotedCompletionText(
                 wordToComplete,
-                possibleCompletionValues: verbs);
-        }
+                possibleCompletionValues: new ProcessStartInfo(filePath).Verbs);
     }
 
 #if !UNIX

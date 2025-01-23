@@ -226,20 +226,12 @@ namespace Microsoft.PowerShell.Commands
             string wordToComplete,
             CommandAst commandAst,
             IDictionary fakeBoundParameters)
-        {
-            if (!IsRegistryProvider(fakeBoundParameters))
-            {
-                yield break;
-            }
-
-            foreach (CompletionResult result in CompletionCompleters.EnumerateQuotedAndUnquotedCompletionText(
-                wordToComplete,
-                possibleCompletionValues: s_RegistryPropertyTypes,
-                toolTipMapping: GetRegistryPropertyTypeToolTip))
-            {
-                yield return result;
-            }
-        }
+                => IsRegistryProvider(fakeBoundParameters)
+                    ? CompletionCompleters.EnumerateQuotedAndUnquotedCompletionText(
+                        wordToComplete,
+                        possibleCompletionValues: s_RegistryPropertyTypes,
+                        toolTipMapping: GetRegistryPropertyTypeToolTip)
+                    : [];
 
         /// <summary>
         /// Checks if parameter paths are from Registry provider.

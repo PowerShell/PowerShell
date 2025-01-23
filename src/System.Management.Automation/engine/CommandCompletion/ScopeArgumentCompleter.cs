@@ -29,10 +29,8 @@ namespace System.Management.Automation
             string wordToComplete,
             CommandAst commandAst,
             IDictionary fakeBoundParameters)
-        {
-            return CompletionCompleters.EnumerateQuotedAndUnquotedCompletionText(
-                wordToComplete,
-                possibleCompletionValues: s_Scopes);
-        }
+                => CompletionCompleters.EnumerateQuotedAndUnquotedCompletionText(
+                    wordToComplete,
+                    possibleCompletionValues: s_Scopes);
     }
 }
