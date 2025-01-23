@@ -2684,7 +2684,7 @@ namespace Microsoft.PowerShell.Commands
                 // Complete file verbs if extension exists
                 if (Path.HasExtension(filePath))
                 {
-                    foreach (CompletionResult result in CompleteFileVerbs(filePath, wordToComplete))
+                    foreach (CompletionResult result in CompleteFileVerbs(wordToComplete, filePath))
                     {
                         yield return result;
                     }
