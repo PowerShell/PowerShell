@@ -2742,12 +2742,9 @@ namespace Microsoft.PowerShell.Commands
             CommandAst commandAst,
             IDictionary fakeBoundParameters)
         {
-            foreach (CompletionResult result in CompletionCompleters.EnumerateQuotedAndUnquotedCompletionText(
+            return CompletionCompleters.EnumerateQuotedAndUnquotedCompletionText(
                 wordToComplete,
-                possibleCompletionValues: s_strictModeVersions))
-            {
-                yield return result;
-            }
+                possibleCompletionValues: s_strictModeVersions);
         }
     }
 

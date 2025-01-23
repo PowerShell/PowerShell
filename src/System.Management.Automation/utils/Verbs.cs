@@ -1510,12 +1510,7 @@ namespace System.Management.Automation
                         groups = Array.ConvertAll((object[])groupParameterValue, group => group.ToString());
                     }
 
-                    foreach (CompletionResult result in CompleteVerbWithGroups(wordToComplete, groups))
-                    {
-                        yield return result;
-                    }
-
-                    yield break;
+                    return CompleteVerbWithGroups(wordToComplete, groups);
                 }
 
                 // Completion: Get-Command -Noun <noun> -Verb <wordToComplete>
@@ -1536,19 +1531,11 @@ namespace System.Management.Automation
 
                     Collection<CmdletInfo> commands = ps.Invoke<CmdletInfo>();
 
-                    foreach (CompletionResult result in CompleteVerbWithCommands(wordToComplete, commands))
-                    {
-                        yield return result;
-                    }
-
-                    yield break;
+                    return CompleteVerbWithCommands(wordToComplete, commands);
                 }
 
                 // Complete all verbs by default if above cases not completed
-                foreach (CompletionResult result in CompleteVerbForAllTypes(wordToComplete))
-                {
-                    yield return result;
-                }
+                return CompleteVerbForAllTypes(wordToComplete);
             }
 
             /// <summary>
@@ -1581,12 +1568,9 @@ namespace System.Management.Automation
             /// <returns>List of completions for verb.</returns>
             private static IEnumerable<CompletionResult> CompleteVerbWithCommands(string wordToComplete, Collection<CmdletInfo> commands)
             {
-                foreach (CompletionResult result in CompletionCompleters.EnumerateQuotedAndUnquotedCompletionText(
+                return CompletionCompleters.EnumerateQuotedAndUnquotedCompletionText(
                     wordToComplete,
-                    possibleCompletionValues: EnumerateCommandVerbNames(commands)))
-                {
-                    yield return result;
-                }
+                    possibleCompletionValues: EnumerateCommandVerbNames(commands));
             }
 
             /// <summary>
@@ -1596,12 +1580,9 @@ namespace System.Management.Automation
             /// <returns>List of completions for verb.</returns>
             private static IEnumerable<CompletionResult> CompleteVerbForAllTypes(string wordToComplete)
             {
-                foreach (CompletionResult result in CompletionCompleters.EnumerateQuotedAndUnquotedCompletionText(
+                return CompletionCompleters.EnumerateQuotedAndUnquotedCompletionText(
                     wordToComplete,
-                    possibleCompletionValues: EnumerateFieldNamesFromAllVerbTypes()))
-                {
-                    yield return result;
-                }
+                    possibleCompletionValues: EnumerateFieldNamesFromAllVerbTypes());
             }
         }
 

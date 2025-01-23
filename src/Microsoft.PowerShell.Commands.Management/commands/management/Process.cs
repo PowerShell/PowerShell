@@ -2707,7 +2707,7 @@ namespace Microsoft.PowerShell.Commands
                 // Start-Process & Get-Command select first found application based on PATHEXT environment variable
                 if (commands.Count >= 1)
                 {
-                    foreach (CompletionResult result in CompleteFileVerbs(commands[0].Source, wordToComplete))
+                    foreach (CompletionResult result in CompleteFileVerbs(wordToComplete, filePath: commands[0].Source))
                     {
                         yield return result;
                     }
@@ -2718,19 +2718,16 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Completes file verbs.
         /// </summary>
-        /// <param name="filePath">The file path to get verbs.</param>
         /// <param name="wordToComplete">The word to complete.</param>
+        /// <param name="filePath">The file path to get verbs.</param>
         /// <returns>List of file verbs to complete.</returns>
-        private static IEnumerable<CompletionResult> CompleteFileVerbs(string filePath, string wordToComplete)
+        private static IEnumerable<CompletionResult> CompleteFileVerbs(string wordToComplete, string filePath)
         {
             string[] verbs = new ProcessStartInfo(filePath).Verbs;
 
-            foreach (CompletionResult result in CompletionCompleters.EnumerateQuotedAndUnquotedCompletionText(
+            return CompletionCompleters.EnumerateQuotedAndUnquotedCompletionText(
                 wordToComplete,
-                possibleCompletionValues: verbs))
-            {
-                yield return result;
-            }
+                possibleCompletionValues: verbs);
         }
     }
 

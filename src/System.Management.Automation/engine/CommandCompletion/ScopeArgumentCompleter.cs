@@ -30,12 +30,9 @@ namespace System.Management.Automation
             CommandAst commandAst,
             IDictionary fakeBoundParameters)
         {
-            foreach (CompletionResult result in CompletionCompleters.EnumerateQuotedAndUnquotedCompletionText(
+            return CompletionCompleters.EnumerateQuotedAndUnquotedCompletionText(
                 wordToComplete,
-                possibleCompletionValues: s_Scopes))
-            {
-                yield return result;
-            }
+                possibleCompletionValues: s_Scopes);
         }
     }
 }
