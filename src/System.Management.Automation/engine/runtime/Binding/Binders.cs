@@ -7563,7 +7563,6 @@ namespace System.Management.Automation.Language
             }
         }
 
-#nullable enable
         private static Expression AddMemberInvocationLogging(
             Expression expr,
             string targetName,
@@ -7579,6 +7578,7 @@ namespace System.Management.Automation.Language
             {
                 invocationArgs[i] = args[i].Cast(typeof(object));
             }
+
             return Expression.Block(
                 Expression.Call(
                     CachedReflectionInfo.MemberInvocationLoggingOps_LogMemberInvocation,
@@ -7609,7 +7609,6 @@ namespace System.Management.Automation.Language
                 Expression.NewArrayInit(typeof(object), invocationArgs)));
 #endif
         }
-#nullable disable
 
         #endregion
     }
