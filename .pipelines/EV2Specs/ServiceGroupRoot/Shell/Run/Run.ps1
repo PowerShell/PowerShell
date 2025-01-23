@@ -226,8 +226,9 @@ function Publish-PackageToPMC() {
                     continue
                 }
 
-                $state = $rawUpdateResponse.state
-                if ($state -ne 'Completed') {
+                $state = ($rawUpdateResponse | ConvertFrom-Json).state
+                Write-Verbose -Verbose "update response state: $state"
+                if ($state -ne 'completed') {
                     $errorMessage.Add("Publishing package $($finalPackage.PackageName) to $pkgRepo failed: $rawUpdateResponse")
                     continue
                 }
@@ -242,11 +243,19 @@ function Publish-PackageToPMC() {
 
             # At this point, the changes are staged and will eventually be publish.
             # Running publish, causes them to go live "immediately"
+            $rawPublishResponse = $null
             try {
-                pmc --config $ConfigPath repo publish $pkgRepo
+                $rawPublishResponse = pmc --config $ConfigPath repo publish $pkgRepo
             }
             catch {
-                $errorMessage.Add("Running final publish for package $($finalPackage.PackageName) to $pkgRepo failed. See errors above for details.")
+                $errorMessage.Add("Invoking final publish for package $($finalPackage.PackageName) to $pkgRepo failed. See errors above for details.")
+                continue
+            }
+
+            $publishState = ($rawPublishResponse | ConvertFrom-Json).state
+            Write-Verbose -Verbose "publish response state: $publishState"
+            if ($publishState -ne 'completed') {
+                $errorMessage.Add("Final publishing of package $($finalPackage.PackageName) to $pkgRepo failed: $rawPublishResponse")
                 continue
             }
         } else {
