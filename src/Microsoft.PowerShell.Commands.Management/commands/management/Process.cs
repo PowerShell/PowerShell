@@ -2672,7 +2672,7 @@ namespace Microsoft.PowerShell.Commands
             // -Verb is not supported on non-Windows platforms as well as Windows headless SKUs
             if (!Platform.IsWindowsDesktop)
             {
-                yield break;
+                return [];
             }
 
             // Completion: Start-Process -FilePath <path> -Verb <wordToComplete>
@@ -2684,12 +2684,7 @@ namespace Microsoft.PowerShell.Commands
                 // Complete file verbs if extension exists
                 if (Path.HasExtension(filePath))
                 {
-                    foreach (CompletionResult result in CompleteFileVerbs(wordToComplete, filePath))
-                    {
-                        yield return result;
-                    }
-
-                    yield break;
+                    return CompleteFileVerbs(wordToComplete, filePath);
                 }
 
                 // Otherwise check if command is an Application to resolve executable full path with extension
@@ -2707,12 +2702,11 @@ namespace Microsoft.PowerShell.Commands
                 // Start-Process & Get-Command select first found application based on PATHEXT environment variable
                 if (commands.Count >= 1)
                 {
-                    foreach (CompletionResult result in CompleteFileVerbs(wordToComplete, filePath: commands[0].Source))
-                    {
-                        yield return result;
-                    }
+                    return CompleteFileVerbs(wordToComplete, filePath: commands[0].Source);
                 }
             }
+
+            return [];
         }
 
         /// <summary>
