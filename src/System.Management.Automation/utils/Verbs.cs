@@ -1381,8 +1381,8 @@ namespace System.Management.Automation
         /// Enumerates field names from a Verb Type.
         /// </summary>
         /// <param name="verbType">The verb type.</param>
-        /// <returns>List of fields.</returns>
-        private static IEnumerable<string> EnumerateVerbTypeFieldNames(Type verbType)
+        /// <returns>List of field names.</returns>
+        private static IEnumerable<string> EnumerateFieldNamesFromVerbType(Type verbType)
         {
             foreach (FieldInfo field in verbType.GetFields())
             {
@@ -1394,14 +1394,14 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Enumerates field names for all Verb Types.
+        /// Enumerates field names from all Verb Types.
         /// </summary>
-        /// <returns>List of fields.</returns>
-        private static IEnumerable<string> EnumerateVerbTypeFieldNames()
+        /// <returns>List of field names.</returns>
+        private static IEnumerable<string> EnumerateFieldNamesFromAllVerbTypes()
         {
             foreach (Type verbType in VerbTypes)
             {
-                foreach (string fieldName in EnumerateVerbTypeFieldNames(verbType))
+                foreach (string fieldName in EnumerateFieldNamesFromVerbType(verbType))
                 {
                     yield return fieldName;
                 }
@@ -1409,11 +1409,11 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Enumerates command verbs.
+        /// Enumerates command verb names.
         /// </summary>
         /// <param name="commands">The collection of commands.</param>
-        /// <returns>List of command verbs.</returns>
-        private static IEnumerable<string> EnumerateCommandVerbs(Collection<CmdletInfo> commands)
+        /// <returns>List of command verb names.</returns>
+        private static IEnumerable<string> EnumerateCommandVerbNames(Collection<CmdletInfo> commands)
         {
             foreach (CmdletInfo command in commands)
             {
@@ -1431,7 +1431,7 @@ namespace System.Management.Automation
         {
             if (verbs is null || verbs.Length == 0)
             {
-                foreach (string fieldName in EnumerateVerbTypeFieldNames(verbType))
+                foreach (string fieldName in EnumerateFieldNamesFromVerbType(verbType))
                 {
                     yield return CreateVerbFromField(fieldName, verbType);
                 }
@@ -1443,7 +1443,7 @@ namespace System.Management.Automation
                 verbs,
                 WildcardOptions.IgnoreCase);
 
-            foreach (string fieldName in EnumerateVerbTypeFieldNames(verbType))
+            foreach (string fieldName in EnumerateFieldNamesFromVerbType(verbType))
             {
                 if (SessionStateUtilities.MatchesAnyWildcardPattern(
                         fieldName,
@@ -1510,7 +1510,7 @@ namespace System.Management.Automation
                         groups = Array.ConvertAll((object[])groupParameterValue, group => group.ToString());
                     }
 
-                    foreach (CompletionResult result in CompleteVerb(wordToComplete, groups))
+                    foreach (CompletionResult result in CompleteVerbWithGroups(wordToComplete, groups))
                     {
                         yield return result;
                     }
@@ -1536,7 +1536,7 @@ namespace System.Management.Automation
 
                     Collection<CmdletInfo> commands = ps.Invoke<CmdletInfo>();
 
-                    foreach (CompletionResult result in CompleteVerb(wordToComplete, commands))
+                    foreach (CompletionResult result in CompleteVerbWithCommands(wordToComplete, commands))
                     {
                         yield return result;
                     }
@@ -1545,7 +1545,7 @@ namespace System.Management.Automation
                 }
 
                 // Complete all verbs by default if above cases not completed
-                foreach (CompletionResult result in CompleteVerb(wordToComplete))
+                foreach (CompletionResult result in CompleteVerbForAllTypes(wordToComplete))
                 {
                     yield return result;
                 }
@@ -1557,7 +1557,7 @@ namespace System.Management.Automation
             /// <param name="wordToComplete">The word to complete.</param>
             /// <param name="groups">The list of groups.</param>
             /// <returns>List of completions for verb.</returns>
-            private static IEnumerable<CompletionResult> CompleteVerb(string wordToComplete, string[] groups)
+            private static IEnumerable<CompletionResult> CompleteVerbWithGroups(string wordToComplete, string[] groups)
             {
                 foreach (Type verbType in VerbTypes)
                 {
@@ -1565,7 +1565,7 @@ namespace System.Management.Automation
                     {
                         foreach (CompletionResult result in CompletionCompleters.EnumerateQuotedAndUnquotedCompletionText(
                             wordToComplete,
-                            possibleCompletionValues: EnumerateVerbTypeFieldNames(verbType)))
+                            possibleCompletionValues: EnumerateFieldNamesFromVerbType(verbType)))
                         {
                             yield return result;
                         }
@@ -1579,26 +1579,26 @@ namespace System.Management.Automation
             /// <param name="wordToComplete">The word to complete.</param>
             /// <param name="commands">The list of commands.</param>
             /// <returns>List of completions for verb.</returns>
-            private static IEnumerable<CompletionResult> CompleteVerb(string wordToComplete, Collection<CmdletInfo> commands)
+            private static IEnumerable<CompletionResult> CompleteVerbWithCommands(string wordToComplete, Collection<CmdletInfo> commands)
             {
                 foreach (CompletionResult result in CompletionCompleters.EnumerateQuotedAndUnquotedCompletionText(
                     wordToComplete,
-                    possibleCompletionValues: EnumerateCommandVerbs(commands)))
+                    possibleCompletionValues: EnumerateCommandVerbNames(commands)))
                 {
                     yield return result;
                 }
             }
 
             /// <summary>
-            /// Completes verb using all types.
+            /// Completes verb for all types.
             /// </summary>
             /// <param name="wordToComplete">The word to complete.</param>
             /// <returns>List of completions for verb.</returns>
-            private static IEnumerable<CompletionResult> CompleteVerb(string wordToComplete)
+            private static IEnumerable<CompletionResult> CompleteVerbForAllTypes(string wordToComplete)
             {
                 foreach (CompletionResult result in CompletionCompleters.EnumerateQuotedAndUnquotedCompletionText(
                     wordToComplete,
-                    possibleCompletionValues: EnumerateVerbTypeFieldNames()))
+                    possibleCompletionValues: EnumerateFieldNamesFromAllVerbTypes()))
                 {
                     yield return result;
                 }
