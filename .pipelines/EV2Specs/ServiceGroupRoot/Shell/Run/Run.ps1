@@ -254,7 +254,7 @@ function Publish-PackageToPMC() {
 
             $publishState = ($rawPublishResponse | ConvertFrom-Json).state
             Write-Verbose -Verbose "publish response state: $publishState"
-            if ($state -ne 'completed') {
+            if ($publishState -ne 'completed') {
                 $errorMessage.Add("Final publishing of package $($finalPackage.PackageName) to $pkgRepo failed: $rawPublishResponse")
                 continue
             }
