@@ -3005,8 +3005,8 @@ namespace System.Management.Automation.Language
                         dropIntoDebugger: true);
                 }
 
-                // Configuration is not supported for ARM or ARM64 binaries
-                if (RuntimeInformation.ProcessArchitecture == Architecture.Arm || RuntimeInformation.ProcessArchitecture == Architecture.Arm64)
+                // Configuration is not supported for ARM or ARM64 process architecture.
+                if (PsUtils.IsRunningOnProcessArchitectureARM())
                 {
                     ReportError(
                         configurationToken.Extent,
