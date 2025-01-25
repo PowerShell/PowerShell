@@ -8387,11 +8387,13 @@ namespace System.Management.Automation
         /// <param name="wordToComplete">The word to complete.</param>
         /// <param name="possibleCompletionValues">The possible completion values to iterate.</param>
         /// <param name="toolTipMapping">The optional tool tip mapping delegate.</param>
+        /// <param name="resultType">The optional completion result type. Default is Text.</param>
         /// <returns></returns>
         internal static IEnumerable<CompletionResult> EnumerateQuotedAndUnquotedCompletionText(
             string wordToComplete,
             IEnumerable<string> possibleCompletionValues,
-            Func<string, string> toolTipMapping = null)
+            Func<string, string> toolTipMapping = null,
+            CompletionResultType resultType = CompletionResultType.Text)
         {
             string quote = HandleDoubleAndSingleQuote(ref wordToComplete);
             var pattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
@@ -8409,7 +8411,7 @@ namespace System.Management.Automation
                         yield return new CompletionResult(
                             completionText,
                             listItemText: value,
-                            resultType: CompletionResultType.ParameterValue,
+                            resultType,
                             toolTip: toolTipMapping(value));
                     }
                     else

@@ -230,7 +230,8 @@ namespace Microsoft.PowerShell.Commands
                     ? CompletionCompleters.EnumerateQuotedAndUnquotedCompletionText(
                         wordToComplete,
                         possibleCompletionValues: s_RegistryPropertyTypes,
-                        toolTipMapping: GetRegistryPropertyTypeToolTip)
+                        toolTipMapping: GetRegistryPropertyTypeToolTip,
+                        resultType: CompletionResultType.ParameterValue)
                     : [];
 
         /// <summary>
