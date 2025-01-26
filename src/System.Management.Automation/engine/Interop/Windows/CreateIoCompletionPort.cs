@@ -20,10 +20,19 @@ internal static partial class Interop
         }
 
         [LibraryImport("kernel32.dll", SetLastError = true)]
-        internal static partial SafeIoCompletionPort CreateIoCompletionPort(
+        private static partial SafeIoCompletionPort CreateIoCompletionPort(
             nint FileHandle,
             nint ExistingCompletionPort,
             nint CompletionKey,
             int NumberOfConcurrentThreads);
+
+        internal static SafeIoCompletionPort CreateIoCompletionPort()
+        {
+            return CreateIoCompletionPort(
+                FileHandle: -1,
+                ExistingCompletionPort: nint.Zero,
+                CompletionKey: nint.Zero,
+                NumberOfConcurrentThreads: 1);
+        }
     }
 }

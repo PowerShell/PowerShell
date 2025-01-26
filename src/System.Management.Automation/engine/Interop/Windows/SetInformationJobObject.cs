@@ -27,14 +27,19 @@ internal static partial class Interop
             ref JOBOBJECT_ASSOCIATE_COMPLETION_PORT lpJobObjectInformation,
             int cbJobObjectInformationLength);
 
-        internal static bool SetInformationJobObjectCompletionPort(
+        internal static bool SetInformationJobObject(
             SafeJobHandle jobHandle,
-            ref JOBOBJECT_ASSOCIATE_COMPLETION_PORT completionPort)
+            SafeIoCompletionPort completionPort)
         {
+            JOBOBJECT_ASSOCIATE_COMPLETION_PORT objectInfo = new()
+            {
+                CompletionKey = jobHandle.DangerousGetHandle(),
+                CompletionPort = completionPort.DangerousGetHandle(),
+            };
             return SetInformationJobObject(
                 jobHandle,
                 JobObjectAssociateCompletionPortInformation,
-                ref completionPort,
+                ref objectInfo,
                 Marshal.SizeOf<JOBOBJECT_ASSOCIATE_COMPLETION_PORT>());
         }
     }

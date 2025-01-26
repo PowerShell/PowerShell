@@ -11,10 +11,17 @@ internal static partial class Interop
     {
         [LibraryImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        internal static partial bool PostQueuedCompletionStatus(
+        private static partial bool PostQueuedCompletionStatus(
             SafeIoCompletionPort CompletionPort,
             int lpNumberOfBytesTransferred,
             nint lpCompletionKey,
             nint lpOverlapped);
+
+        internal static bool PostQueuedCompletionStatus(
+            SafeIoCompletionPort completionPort,
+            int status)
+        {
+            return PostQueuedCompletionStatus(completionPort, status, nint.Zero, nint.Zero);
+        }
     }
 }

@@ -20,8 +20,11 @@ internal static partial class Interop
         }
 
         [LibraryImport("kernel32.dll", EntryPoint = "CreateJobObjectW", SetLastError = true)]
-        internal static partial SafeJobHandle CreateJobObject(
+        private static partial SafeJobHandle CreateJobObject(
             nint lpJobAttributes,
             nint lpName);
+
+        internal static SafeJobHandle CreateJobObject()
+            => CreateJobObject(nint.Zero, nint.Zero);
     }
 }
