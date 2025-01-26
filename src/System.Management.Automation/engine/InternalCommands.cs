@@ -2741,9 +2741,10 @@ namespace Microsoft.PowerShell.Commands
             string wordToComplete,
             CommandAst commandAst,
             IDictionary fakeBoundParameters)
-                => CompletionCompleters.EnumerateQuotedAndUnquotedCompletionText(
+                => CompletionCompleters.GetMatchingResults(
                     wordToComplete,
-                    possibleCompletionValues: s_strictModeVersions);
+                    possibleCompletionValues: s_strictModeVersions,
+                    resultType: CompletionResultType.ParameterValue);
     }
 
     #endregion Set-StrictMode

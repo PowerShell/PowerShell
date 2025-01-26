@@ -8381,7 +8381,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Enumerates quoted and unquoted completion text.
+        /// Gets matching results from word to complete.
         /// This makes it easier to handle different variations of completions with consideration of quotes.
         /// </summary>
         /// <param name="wordToComplete">The word to complete.</param>
@@ -8389,7 +8389,7 @@ namespace System.Management.Automation
         /// <param name="toolTipMapping">The optional tool tip mapping delegate.</param>
         /// <param name="resultType">The optional completion result type. Default is Text.</param>
         /// <returns></returns>
-        internal static IEnumerable<CompletionResult> EnumerateQuotedAndUnquotedCompletionText(
+        internal static IEnumerable<CompletionResult> GetMatchingResults(
             string wordToComplete,
             IEnumerable<string> possibleCompletionValues,
             Func<string, string> toolTipMapping = null,
@@ -8406,18 +8406,11 @@ namespace System.Management.Automation
                         ? value
                         : quote + value + quote;
 
-                    if (toolTipMapping is not null)
-                    {
-                        yield return new CompletionResult(
-                            completionText,
-                            listItemText: value,
-                            resultType,
-                            toolTip: toolTipMapping(value));
-                    }
-                    else
-                    {
-                        yield return new CompletionResult(completionText);
-                    }
+                    string toolTip = toolTipMapping is not null 
+                        ? toolTipMapping(value) 
+                        : value;
+
+                    yield return new CompletionResult(completionText, value, resultType, toolTip);
                 }
             }
         }
