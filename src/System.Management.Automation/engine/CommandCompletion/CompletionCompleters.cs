@@ -8406,18 +8406,15 @@ namespace System.Management.Automation
                         ? value
                         : quote + value + quote;
 
-                    if (toolTipMapping is not null)
-                    {
-                        yield return new CompletionResult(
-                            completionText,
-                            listItemText: value,
-                            resultType,
-                            toolTip: toolTipMapping(value));
-                    }
-                    else
-                    {
-                        yield return new CompletionResult(completionText);
-                    }
+                    string listItemText = value;
+
+                    yield return new CompletionResult(
+                        completionText,
+                        listItemText,
+                        resultType,
+                        toolTip: toolTipMapping is null
+                            ? listItemText
+                            : toolTipMapping(value));
                 }
             }
         }
