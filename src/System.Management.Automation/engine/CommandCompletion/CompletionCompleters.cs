@@ -5286,7 +5286,7 @@ namespace System.Management.Automation
                         ? varName
                         : StringUtil.Format("[{0}]${1}", ToStringCodeMethods.Type(varType, dropNamespaces: true), varName);
 
-                    var completionText = !tokenAtCursorUsedBraces && ContainsCharactersRequiringQuotes(varName)
+                    var completionText = !tokenAtCursorUsedBraces && !ContainsCharactersRequiringQuotes(varName)
                         ? prefix + varName
                         : prefix + "{" + varName + "}";
                     AddUniqueVariable(hashedResults, results, completionText, varName, toolTip);
@@ -5306,7 +5306,7 @@ namespace System.Management.Automation
                         var toolTip = value is null
                             ? key
                             : StringUtil.Format("[{0}]${1}", ToStringCodeMethods.Type(value.GetType(), dropNamespaces: true), key);
-                        var completionText = !tokenAtCursorUsedBraces && ContainsCharactersRequiringQuotes(name)
+                        var completionText = !tokenAtCursorUsedBraces && !ContainsCharactersRequiringQuotes(name)
                             ? prefix + name
                             : prefix + "{" + name + "}";
                         AddUniqueVariable(hashedResults, tempResults, completionText, key, key);
@@ -5359,7 +5359,7 @@ namespace System.Management.Automation
                                 }
                             }
 
-                            var completedName = !tokenAtCursorUsedBraces && ContainsCharactersRequiringQuotes(name)
+                            var completedName = !tokenAtCursorUsedBraces && !ContainsCharactersRequiringQuotes(name)
                                                     ? prefix + provider + name
                                                     : prefix + "{" + provider + name + "}";
                             AddUniqueVariable(hashedResults, results, completedName, name, tooltip);
@@ -5374,7 +5374,7 @@ namespace System.Management.Automation
                 foreach (var key in envVars.Keys)
                 {
                     var name = "env:" + key;
-                    var completedName = !tokenAtCursorUsedBraces && ContainsCharactersRequiringQuotes(name)
+                    var completedName = !tokenAtCursorUsedBraces && !ContainsCharactersRequiringQuotes(name)
                         ? prefix + name
                         : prefix + "{" + name + "}";
                     AddUniqueVariable(hashedResults, tempResults, completedName, name, "[string]" + name);
@@ -5390,7 +5390,7 @@ namespace System.Management.Automation
             {
                 if (wildcardPattern.IsMatch(specialVariable))
                 {
-                    var completedName = !tokenAtCursorUsedBraces && ContainsCharactersRequiringQuotes(specialVariable)
+                    var completedName = !tokenAtCursorUsedBraces && !ContainsCharactersRequiringQuotes(specialVariable)
                                             ? prefix + specialVariable
                                             : prefix + "{" + specialVariable + "}";
 
@@ -5410,7 +5410,7 @@ namespace System.Management.Automation
                         continue;
                     }
 
-                    var completedName = !tokenAtCursorUsedBraces && ContainsCharactersRequiringQuotes(drive.Name)
+                    var completedName = !tokenAtCursorUsedBraces && !ContainsCharactersRequiringQuotes(drive.Name)
                         ? prefix + drive.Name + ":"
                         : prefix + "{" + drive.Name + ":}";
                     var tooltip = string.IsNullOrEmpty(drive.Description)
@@ -5428,7 +5428,7 @@ namespace System.Management.Automation
                 {
                     if (wildcardPattern.IsMatch(scope))
                     {
-                        var completedName = !tokenAtCursorUsedBraces && ContainsCharactersRequiringQuotes(scope)
+                        var completedName = !tokenAtCursorUsedBraces && !ContainsCharactersRequiringQuotes(scope)
                             ? prefix + scope
                             : prefix + "{" + scope + "}";
                         AddUniqueVariable(hashedResults, results, completedName, scope, scope);
