@@ -8400,17 +8400,34 @@ namespace System.Management.Automation
 
             foreach (string value in possibleCompletionValues)
             {
-                if (pattern.IsMatch(value))
+                string completionText = value;
+                string listItemText = value;
+
+                if (!string.IsNullOrEmpty(completionText) && pattern.IsMatch(completionText))
                 {
-                    string completionText = quote == string.Empty
-                        ? value
-                        : quote + value + quote;
+                    if (completionText.IndexOfAny(s_charactersRequiringQuotes) != -1)
+                    {
+                        string quoteInUse = quote == string.Empty ? "'" : quote;
 
-                    string toolTip = toolTipMapping is not null 
-                        ? toolTipMapping(value) 
-                        : value;
+                        if (quoteInUse == "'")
+                        {
+                            completionText = CodeGeneration.EscapeSingleQuotedStringContent(completionText);
+                        }
 
-                    yield return new CompletionResult(completionText, value, resultType, toolTip);
+                        completionText = quoteInUse + completionText + quoteInUse;
+                    }
+                    else
+                    {
+                        completionText = quote + completionText + quote;
+                    }
+
+                    yield return new CompletionResult(
+                        completionText,
+                        listItemText,
+                        resultType,
+                        toolTip: toolTipMapping is null
+                            ? listItemText
+                            : toolTipMapping(listItemText));
                 }
             }
         }
