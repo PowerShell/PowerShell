@@ -201,22 +201,6 @@ namespace System.Management.Automation.Security
             };
         }
 
-        private static SystemEnforcementMode ConvertToLegacyFileEnforcement(SystemScriptFileEnforcement modernMode)
-        {
-            Debug.Assert(
-                modernMode is not SystemScriptFileEnforcement.Block,
-                "Block should never be converted to legacy file enforcement.");
-
-            return modernMode switch
-            {
-                SystemScriptFileEnforcement.Block => SystemEnforcementMode.Enforce,
-                SystemScriptFileEnforcement.AllowConstrained => SystemEnforcementMode.Enforce,
-                SystemScriptFileEnforcement.AllowConstrainedAudit => SystemEnforcementMode.Audit,
-                SystemScriptFileEnforcement.Allow => SystemEnforcementMode.None,
-                _ => throw new ArgumentOutOfRangeException(nameof(modernMode)),
-            };
-        }
-
         private static bool TryGetWldpCanExecuteFileResult(string filePath, SafeHandle fileHandle, out SystemScriptFileEnforcement result)
         {
             try
