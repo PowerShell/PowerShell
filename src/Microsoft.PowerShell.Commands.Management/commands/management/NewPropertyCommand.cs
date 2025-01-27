@@ -227,7 +227,7 @@ namespace Microsoft.PowerShell.Commands
             CommandAst commandAst,
             IDictionary fakeBoundParameters)
                 => IsRegistryProvider(fakeBoundParameters)
-                    ? CompletionCompleters.EnumerateQuotedAndUnquotedCompletionText(
+                    ? CompletionCompleters.GetMatchingResults(
                         wordToComplete,
                         possibleCompletionValues: s_RegistryPropertyTypes,
                         toolTipMapping: GetRegistryPropertyTypeToolTip,
