@@ -65,13 +65,12 @@ internal sealed class JobProcessCollection : IDisposable
                 Interop.Windows.JOB_OBJECT_MSG_ACTIVE_PROCESS_ZERO);
         });
 
-        const int INFINITE = -1;
         int completionCode = 0;
         do
         {
             Interop.Windows.GetQueuedCompletionStatus(
                 _completionPort,
-                INFINITE,
+                Interop.Windows.INFINITE,
                 out completionCode);
         }
         while (completionCode != Interop.Windows.JOB_OBJECT_MSG_ACTIVE_PROCESS_ZERO);
@@ -92,8 +91,8 @@ internal sealed class JobProcessCollection : IDisposable
             if (_jobObject.IsInvalid)
             {
                 _initStatus = false;
-                jobObject.Dispose();
-                jobObject = null;
+                _jobObject.Dispose();
+                _jobObject = null;
                 return false;
             }
         }

@@ -9,6 +9,8 @@ internal static partial class Interop
 {
     internal static unsafe partial class Windows
     {
+        public const int INFINITE = -1;
+
         [LibraryImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static partial bool GetQueuedCompletionStatus(
