@@ -11,7 +11,7 @@ internal static partial class Interop
     {
         internal sealed class SafeIoCompletionPort : SafeHandle
         {
-            public SafeIoCompletionPort() : base(nint.Zero, true) { }
+            public SafeIoCompletionPort() : base(invalidHandleValue: nint.Zero, ownsHandle: true) { }
 
             public override bool IsInvalid => handle == nint.Zero;
 

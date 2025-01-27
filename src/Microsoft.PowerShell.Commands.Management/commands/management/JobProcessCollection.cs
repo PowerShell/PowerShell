@@ -92,6 +92,8 @@ internal sealed class JobProcessCollection : IDisposable
             if (_jobObject.IsInvalid)
             {
                 _initStatus = false;
+                jobObject.Dispose();
+                jobObject = null;
                 return false;
             }
         }
@@ -99,10 +101,11 @@ internal sealed class JobProcessCollection : IDisposable
         if (_completionPort is null)
         {
             _completionPort = Interop.Windows.CreateIoCompletionPort();
-
             if (_completionPort.IsInvalid)
             {
                 _initStatus = false;
+                _completionPort.Dispose();
+                _completionPort = null;
                 return false;
             }
         }

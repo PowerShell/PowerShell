@@ -11,7 +11,7 @@ internal static partial class Interop
     {
         internal sealed class SafeJobHandle : SafeHandle
         {
-            public SafeJobHandle() : base(nint.Zero, true) { }
+            public SafeJobHandle() : base(invalidHandleValue: nint.Zero, ownsHandle: true) { }
 
             public override bool IsInvalid => handle == nint.Zero;
 
