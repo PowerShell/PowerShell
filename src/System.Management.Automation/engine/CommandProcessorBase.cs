@@ -1034,8 +1034,6 @@ namespace System.Management.Automation
                 {
                     id.Dispose();
                 }
-
-                Command.InternalDispose(true);
             }
 
             _disposed = true;

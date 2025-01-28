@@ -265,7 +265,7 @@ namespace System.Management.Automation.Internal
         /// party cmdlets do not call base.Dispose (which is the case), we
         /// will still end up having this leak.
         /// </remarks>
-        internal virtual void InternalDispose(bool isDisposing)
+        internal void InternalDispose(bool isDisposing)
         {
             _myInvocation = null;
             _state = null;
@@ -411,9 +411,6 @@ namespace System.Management.Automation
         #region private_members
 
         private ProviderIntrinsics _invokeProvider = null;
-#nullable enable
-        private CancellationTokenSource? _pipelineStopTokenSource;
-#nullable disable
 
         #endregion private_members
 
@@ -517,7 +514,14 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the CancellationToken that is signaled when the pipeline is stopping.
         /// </summary>
-        public CancellationToken PipelineStopToken => (_pipelineStopTokenSource ??= new CancellationTokenSource()).Token;
+        public CancellationToken PipelineStopToken
+        {
+            get
+            {
+                Debug.Assert(CommandRuntime is MshCommandRuntime, "CommandRuntime is not MshCommandRuntime but {0}", CommandRuntime.GetType().FullName);
+                return ((MshCommandRuntime)CommandRuntime).PipelineProcessor.PipelineStopToken;
+            }
+        }
 
         #region Provider wrappers
 
@@ -602,22 +606,5 @@ namespace System.Management.Automation
         #endregion Parameter methods
 
         #endregion public_methods
-
-        internal override void DoStopProcessing()
-        {
-            _pipelineStopTokenSource?.Cancel();
-            base.DoStopProcessing();
-        }
-
-        internal override void InternalDispose(bool isDisposing)
-        {
-            if (isDisposing)
-            {
-                _pipelineStopTokenSource?.Dispose();
-                _pipelineStopTokenSource = null;
-            }
-
-            base.InternalDispose(isDisposing);
-        }
     }
 }

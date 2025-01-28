@@ -2542,6 +2542,7 @@ namespace System.Management.Automation
             currentObjectInPipeline = null;
             _input.Clear();
 
+            base.InternalDispose(true);
             _disposed = true;
         }
 
