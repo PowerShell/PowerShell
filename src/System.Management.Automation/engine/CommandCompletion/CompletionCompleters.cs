@@ -5223,7 +5223,7 @@ namespace System.Management.Automation
 
         private static readonly string[] s_variableScopes = new string[] { "Global:", "Local:", "Script:", "Private:" };
 
-        private static readonly SearchValues<char> s_charactersRequiringQuotes = SearchValues.Create("-`&@'\"#{}()$ ,;|<> .\\/ \t^");
+        private static readonly SearchValues<char> s_charactersRequiringQuotes = SearchValues.Create("-`&@'\"#{}()$,;|<> .\\/ \t^");
 
         private static bool ContainsCharactersRequiringQuotes(ReadOnlySpan<char> text)
             => text.ContainsAny(s_charactersRequiringQuotes);
