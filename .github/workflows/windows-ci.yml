@@ -45,12 +45,20 @@ jobs:
     name: ci_build
     runs-on: windows-latest
     steps:
+      - name: checkout
+        uses: actions/checkout@v4.1.0
+        with:
+          fetch-depth: 1000
       - uses: "./.github/actions/build/ci"
   windows_test:
     name: Windows Unelevated CI
     needs: ci_build
     runs-on: windows-latest
     steps:
+      - name: checkout
+        uses: actions/checkout@v4.1.0
+        with:
+          fetch-depth: 1000
       - uses: "./.github/actions/test/windows"
         with:
           purpose: UnelevatedPesterTests
@@ -60,6 +68,10 @@ jobs:
     needs: ci_build
     runs-on: windows-latest
     steps:
+      - name: checkout
+        uses: actions/checkout@v4.1.0
+        with:
+          fetch-depth: 1000
       - uses: "./.github/actions/test/windows"
         with:
           purpose: ElevatedPesterTests
@@ -69,6 +81,10 @@ jobs:
     needs: ci_build
     runs-on: windows-latest
     steps:
+      - name: checkout
+        uses: actions/checkout@v4.1.0
+        with:
+          fetch-depth: 1000
       - uses: "./.github/actions/test/windows"
         with:
           purpose: UnelevatedPesterTests
@@ -78,6 +94,10 @@ jobs:
     needs: ci_build
     runs-on: windows-latest
     steps:
+      - name: checkout
+        uses: actions/checkout@v4.1.0
+        with:
+          fetch-depth: 1000
       - uses: "./.github/actions/test/windows"
         with:
           purpose: ElevatedPesterTests
@@ -87,4 +107,8 @@ jobs:
     needs: ci_build
     runs-on: windows-latest
     steps:
+      - name: checkout
+        uses: actions/checkout@v4.1.0
+        with:
+          fetch-depth: 1000
       - uses: "./.github/actions/test/verify_xunit"

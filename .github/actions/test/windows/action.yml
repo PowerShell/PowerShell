@@ -14,8 +14,6 @@ inputs:
 runs:
   using: composite
   steps:
-  - name: checkout
-    uses: actions/checkout@v4.1.0
   - name: Install PowerShell if missing
     if: "'inputs.pool' != 'windows-2019'"
     run: |-

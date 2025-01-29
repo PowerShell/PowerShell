@@ -3,8 +3,6 @@ description: 'Builds PowerShell'
 runs:
   using: composite
   steps:
-  - name: checkout
-    uses: actions/checkout@v4.1.0
   - name: Install PowerShell
     run: |-
       [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12
@@ -18,9 +16,6 @@ runs:
         Write-Host "##$vstsCommandString"
       }
     shell: powershell
-  - uses: actions/checkout@v4.1.0
-    with:
-      fetch-depth: 1000
   - name: Capture Environment
     if: success() || failure()
     run: 'Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose'
