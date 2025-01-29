@@ -1,35 +1,37 @@
 name: Windows-CI
 on:
+  workflow_dispatch:
   push:
     branches:
-    - master
-    - release*
-    - feature*
+      - master
+      - release*
+      - feature*
     paths:
-    - "*"
-    - "!.vsts-ci/misc-analysis.yml"
-    - "!.github/ISSUE_TEMPLATE/*"
-    - "!.github/workflows/*"
-    - "!.dependabot/config.yml"
-    - "!test/perf/*"
-    - "!.pipelines/*"
+      - "*"
+      - "!.vsts-ci/misc-analysis.yml"
+      - "!.github/ISSUE_TEMPLATE/*"
+      - "!.github/workflows/*"
+      - "!.dependabot/config.yml"
+      - "!test/perf/*"
+      - "!.pipelines/*"
   pull_request:
     branches:
-    - master
-    - release*
-    - feature*
+      - master
+      - release*
+      - feature*
     paths:
-    - ".vsts-ci/templates/*"
-    - ".vsts-ci/windows.yml"
-    - "*.props"
-    - build.psm1
-    - src/*
-    - test/*
-    - tools/buildCommon/*
-    - tools/ci.psm1
-    - tools/WindowsCI.psm1
-    - "!test/common/markdown/*"
-    - "!test/perf/*"
+      - ".vsts-ci/templates/*"
+      - ".vsts-ci/windows.yml"
+      - "*.props"
+      - build.psm1
+      - src/*
+      - test/*
+      - tools/buildCommon/*
+      - tools/ci.psm1
+      - tools/WindowsCI.psm1
+      - "!test/common/markdown/*"
+      - "!test/perf/*"
+
 env:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
@@ -43,34 +45,34 @@ jobs:
     name: ci_build
     uses: "./.github/workflows/templates/build/ci.yml"
   windows_test:
-    name: windows_test
+    name: Windows Unelevated CI
     needs: ci_build
     uses: "./.github/workflows/templates/test/windows.yml"
     with:
       purpose: UnelevatedPesterTests
       tagSet: CI
   windows_test_2:
-    name: windows_test_2
+    name: windows Elevated CI
     needs: ci_build
     uses: "./.github/workflows/templates/test/windows.yml"
     with:
       purpose: ElevatedPesterTests
       tagSet: CI
   windows_test_3:
-    name: windows_test_3
+    name: Windows Unelevated Others
     needs: ci_build
     uses: "./.github/workflows/templates/test/windows.yml"
     with:
       purpose: UnelevatedPesterTests
       tagSet: Others
   windows_test_4:
-    name: windows_test_4
+    name: Windows Elevated Others
     needs: ci_build
     uses: "./.github/workflows/templates/test/windows.yml"
     with:
       purpose: ElevatedPesterTests
       tagSet: Others
   verify_xunit:
-    name: verify_xunit
+    name: Verify xUnit test results
     needs: ci_build
     uses: "./.github/workflows/templates/verify_xunit.yml"
