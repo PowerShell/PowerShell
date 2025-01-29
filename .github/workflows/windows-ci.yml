@@ -42,7 +42,7 @@ env:
   nugetMultiFeedWarnLevel: none
 jobs:
   ci_build:
-    name: ci_build
+    name: Build PowerShell
     runs-on: windows-latest
     steps:
       - name: checkout
