@@ -49,3 +49,13 @@ runs:
       Restore-PSOptions
       Invoke-CIxUnit -SkipFailing
     shell: pwsh
+  - name: Upload build artifact
+    uses: actions/upload-artifact@v4
+    with:
+      name: build
+      path: ${{ runner.workspace }}/build
+  - name: Upload xunit artifact
+    uses: actions/upload-artifact@v4
+    with:
+      name: xunit
+      path: ${{ runner.workspace }}/xunit

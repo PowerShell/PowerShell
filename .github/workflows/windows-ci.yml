@@ -49,7 +49,8 @@ jobs:
         uses: actions/checkout@v4.1.0
         with:
           fetch-depth: 1000
-      - uses: "./.github/actions/build/ci"
+      - name: Build
+        uses: "./.github/actions/build/ci"
   windows_test:
     name: Windows Unelevated CI
     needs: ci_build
@@ -59,7 +60,8 @@ jobs:
         uses: actions/checkout@v4.1.0
         with:
           fetch-depth: 1000
-      - uses: "./.github/actions/test/windows"
+      - name: Windows Unelevated CI
+        uses: "./.github/actions/test/windows"
         with:
           purpose: UnelevatedPesterTests
           tagSet: CI
@@ -72,7 +74,8 @@ jobs:
         uses: actions/checkout@v4.1.0
         with:
           fetch-depth: 1000
-      - uses: "./.github/actions/test/windows"
+      - name: Windows Elevated CI
+        uses: "./.github/actions/test/windows"
         with:
           purpose: ElevatedPesterTests
           tagSet: CI
@@ -85,7 +88,8 @@ jobs:
         uses: actions/checkout@v4.1.0
         with:
           fetch-depth: 1000
-      - uses: "./.github/actions/test/windows"
+      - name: Windows Unelevated Others
+        uses: "./.github/actions/test/windows"
         with:
           purpose: UnelevatedPesterTests
           tagSet: Others
@@ -98,7 +102,8 @@ jobs:
         uses: actions/checkout@v4.1.0
         with:
           fetch-depth: 1000
-      - uses: "./.github/actions/test/windows"
+      - name: Windows Elevated Others
+        uses: "./.github/actions/test/windows"
         with:
           purpose: ElevatedPesterTests
           tagSet: Others
@@ -111,4 +116,5 @@ jobs:
         uses: actions/checkout@v4.1.0
         with:
           fetch-depth: 1000
-      - uses: "./.github/actions/test/verify_xunit"
+      - name: Verify xUnit test results
+        uses: "./.github/actions/test/verify_xunit"
