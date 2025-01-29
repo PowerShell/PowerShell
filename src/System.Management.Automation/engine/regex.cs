@@ -60,6 +60,9 @@ namespace System.Management.Automation
         // chars that are considered special in a wildcard pattern
         private static readonly SearchValues<char> SpecialChars = SearchValues.Create("*?[]`");
 
+        // wildcard only chars.
+        private static readonly SearchValues<char> WildcardChars = SearchValues.Create("*?[]");
+
         // we convert a wildcard pattern to a predicate
         private Predicate<string> _isMatch;
 
@@ -238,9 +241,9 @@ namespace System.Management.Automation
                 char ch = pattern[i];
 
                 //
-                // if it is a wildcard char, escape it
+                // if it is a wildcard char or backtick, escape it
                 //
-                if (IsWildcardChar(ch) && !charsNotToEscape.Contains(ch))
+                if ((IsWildcardChar(ch) || ch == escapeChar) && !charsNotToEscape.Contains(ch))
                 {
                     temp[tempIndex++] = escapeChar;
                 }
@@ -435,7 +438,19 @@ namespace System.Management.Automation
             return s;
         }
 
-        private static bool IsWildcardChar(char ch) => SpecialChars.Contains(ch);
+        /// <summary>
+        /// Checks if the specified character is a wildcard character.
+        /// </summary>
+        /// <param name="ch">The character to check.</param>
+        /// <returns>True if the character is a wildcard character, otherwise false.</returns>
+        private static bool IsWildcardChar(char ch) => WildcardChars.Contains(ch);
+
+        /// <summary>
+        /// Checks if the specified character is a special character.
+        /// </summary>
+        /// <param name="ch">The character to check.</param>
+        /// <returns>True if the character is a special character, otherwise false.</returns>
+        private static bool IsSpecialChar(char ch) => SpecialChars.Contains(ch);
 
         /// <summary>
         /// Converts this wildcard to a string that can be used as a right-hand-side operand of the LIKE operator of WQL.
