@@ -70,7 +70,7 @@ jobs:
           purpose: UnelevatedPesterTests
           tagSet: CI
   windows_test_2:
-    name: windows Elevated CI
+    name: Windows Elevated CI
     needs: ci_build
     runs-on: windows-latest
     steps:
