@@ -56,5 +56,5 @@ runs:
   - name: Upload testResults artifact
     uses: actions/upload-artifact@v4
     with:
-      name: ${{ inputs.purpose }}-${{ inputs.tagSet }}-testResults
+      name: testResults-pester-${{ inputs.purpose }}-${{ inputs.tagSet }}
       path: ${{ runner.workspace }}/testResults

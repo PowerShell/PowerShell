@@ -1,0 +1,28 @@
+name: 'Test Report'
+on:
+  workflow_run:
+    workflows:
+      - windows-ci
+    types:
+      - completed
+permissions:
+  contents: read
+  actions: read
+  checks: write
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+    # no reporter for xUnit tests
+    # - uses: dorny/test-reporter@v1
+    #   with:
+    #     artifact: testResults-xunit
+    #     name: xUnit Tests
+    #     path: '*.xml'
+    #     reporter: dotnet-nunit
+    - uses: dorny/test-reporter@v1
+      with:
+        artifact: /testResults-pester-.*/
+        name: xUnit Tests
+        path: '*.xml'
+        reporter: dotnet-nunit
