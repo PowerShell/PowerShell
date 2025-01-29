@@ -24,8 +24,7 @@ runs:
       path: "${{ github.workspace }}"
   - name: Capture Artifacts Directory
     continue-on-error: true
-    run: |-
-      Get-ChildItem "${{ github.workspace }}\build\*" -Recurse
+    run: Get-ChildItem "${{ github.workspace }}\*" -Recurse
     shell: pwsh
   - name: Bootstrap
     run: |-
@@ -54,11 +53,8 @@ runs:
       Expand-Archive -Path '${{ github.workspace }}\build\build.zip' -DestinationPath $rootPath -Force
       Invoke-CITest -Purpose '${{ inputs.purpose }}' -TagSet '${{ inputs.tagSet }}'
     shell: pwsh
-  - name: Publish Test Results
-    uses: EnricoMi/publish-unit-test-result-action/windows@v2
-    if: always()
+  - name: Upload testResults artifact
+    uses: actions/upload-artifact@v4
     with:
-      files: |
-        ${{ github.workspace }}\testResults\**\*.xml
-      check_name: Windows ${{ inputs.purpose }} ${{ inputs.tagSet }}
-      comment_mode: changes
+      name: ${{ inputs.purpose }}-${{ inputs.tagSet }}-testResults
+      path: ${{ runner.workspace }}/testResults

@@ -10,7 +10,7 @@ runs:
       path: "${{ github.workspace }}"
   - name: Capture artifacts directory
     continue-on-error: true
-    run: dir "${{ github.workspace }}\xunit\*" -Recurse
+    run: dir "${{ github.workspace }}\*" -Recurse
     shell: pwsh
   - name: Test
     if: success()
@@ -19,11 +19,3 @@ runs:
       $xUnitTestResultsFile = "${{ github.workspace }}\xunit\xUnitTestResults.xml"
       Test-XUnitTestResults -TestResultsFile $xUnitTestResultsFile
     shell: pwsh
-  - name: Publish Test Results
-    uses: EnricoMi/publish-unit-test-result-action/windows@v2
-    if: always()
-    with:
-      files: |
-        ${{ github.workspace }}\xunit\xUnitTestResults.xml
-      check_name: ${{ runner.os }} ${{ runner.arch }} xUnit
-      comment_mode: failures
