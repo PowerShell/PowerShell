@@ -33,6 +33,8 @@ on:
       - "!test/perf/*"
 permissions:
   contents: read
+  checks: write
+  pull-requests: write
 
 run-name: "${{ github.ref_name }} - ${{ github.run_number }}"
 
