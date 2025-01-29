@@ -31,6 +31,8 @@ on:
       - tools/WindowsCI.psm1
       - "!test/common/markdown/*"
       - "!test/perf/*"
+permissions:
+  contents: read
 
 env:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1

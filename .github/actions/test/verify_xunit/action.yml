@@ -9,7 +9,6 @@ runs:
   - name: Download build artifacts
     uses: dawidd6/action-download-artifact@v3.0.0
     with:
-      github_token: "${{ secrets.GITHUB_TOKEN }}"
       path: "${{ github.workspace }}"
       repo: "${{ github.repository }}"
   - name: Capture artifacts directory
