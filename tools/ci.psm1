@@ -17,8 +17,15 @@ if(Test-Path $dotNetPath)
 
 # import build into the global scope so it can be used by packaging
 # argumentList $true says ignore tha we may not be able to build
-Import-Module (Join-Path $repoRoot 'build.psm1') -Verbose -Scope Global -ArgumentList $true
-Import-Module (Join-Path $repoRoot 'tools\packaging') -Verbose -Scope Global
+Write-Verbose "Importing build.psm1" -Verbose
+Import-Module (Join-Path $repoRoot 'build.psm1') -Scope Global -ArgumentList $true
+$buildCommands = Get-Command -Module build
+Write-Verbose "Imported build.psm1 commands: $($buildCommands.Count)" -Verbose
+
+Write-Verbose "Importing packaging.psm1" -Verbose
+Import-Module (Join-Path $repoRoot 'tools\packaging') -Scope Global
+$packagingCommands = Get-Command -Module packaging
+Write-Verbose "Imported packaging.psm1 commands: $($packagingCommands.Count)" -Verbose
 
 # import the windows specific functcion only in Windows PowerShell or on Windows
 if($PSVersionTable.PSEdition -eq 'Desktop' -or $IsWindows)
