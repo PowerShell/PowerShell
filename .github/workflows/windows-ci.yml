@@ -43,36 +43,48 @@ env:
 jobs:
   ci_build:
     name: ci_build
-    uses: "./.github/workflows/templates/build/ci.yml"
+    runs-on: windows-latest
+    steps:
+      - uses: "./.github/actions/build/ci"
   windows_test:
     name: Windows Unelevated CI
     needs: ci_build
-    uses: "./.github/workflows/templates/test/windows.yml"
-    with:
-      purpose: UnelevatedPesterTests
-      tagSet: CI
+    runs-on: windows-latest
+    steps:
+      - uses: "./.github/actions/test/windows"
+        with:
+          purpose: UnelevatedPesterTests
+          tagSet: CI
   windows_test_2:
     name: windows Elevated CI
     needs: ci_build
-    uses: "./.github/workflows/templates/test/windows.yml"
-    with:
-      purpose: ElevatedPesterTests
-      tagSet: CI
+    runs-on: windows-latest
+    steps:
+      - uses: "./.github/actions/test/windows"
+        with:
+          purpose: ElevatedPesterTests
+          tagSet: CI
   windows_test_3:
     name: Windows Unelevated Others
     needs: ci_build
-    uses: "./.github/workflows/templates/test/windows.yml"
-    with:
-      purpose: UnelevatedPesterTests
-      tagSet: Others
+    runs-on: windows-latest
+    steps:
+      - uses: "./.github/actions/test/windows"
+        with:
+          purpose: UnelevatedPesterTests
+          tagSet: Others
   windows_test_4:
     name: Windows Elevated Others
     needs: ci_build
-    uses: "./.github/workflows/templates/test/windows.yml"
-    with:
-      purpose: ElevatedPesterTests
-      tagSet: Others
+    runs-on: windows-latest
+    steps:
+      - uses: "./.github/actions/test/windows"
+        with:
+          purpose: ElevatedPesterTests
+          tagSet: Others
   verify_xunit:
     name: Verify xUnit test results
     needs: ci_build
-    uses: "./.github/workflows/templates/verify_xunit.yml"
+    runs-on: windows-latest
+    steps:
+      - uses: "./.github/actions/test/verify_xunit"

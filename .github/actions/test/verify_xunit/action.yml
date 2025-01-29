@@ -1,0 +1,27 @@
+name: verify_xunit
+description: 'Verify xUnit Results'
+
+runs:
+  using: composite
+  steps:
+  - name: checkout
+    uses: actions/checkout@v4.1.0
+    # This action relies on the workflow '.yml' being present in this repository (change the repository parameter if the workflow is in a different repository).
+    # Ensure the workflow exists and uploads an artifact for this to use.
+  - name: Download build artifacts
+    uses: dawidd6/action-download-artifact@v3.0.0
+    with:
+      github_token: "${{ secrets.GITHUB_TOKEN }}"
+      path: "${{ github.workspace }}"
+      repo: "${{ github.repository }}"
+  - name: Capture artifacts directory
+    continue-on-error: true
+    run: dir "${{ github.workspace }}\*" -Recurse
+    shell: pwsh
+  - name: Test
+    if: success()
+    run: |-
+      Import-Module .\tools\ci.psm1
+      $xUnitTestResultsFile = "${{ github.workspace }}\xunit\xUnitTestResults.xml"
+      Test-XUnitTestResults -TestResultsFile $xUnitTestResultsFile
+    shell: pwsh
