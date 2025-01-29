@@ -1,0 +1,77 @@
+# Environment variables defined in a calling workflow are not accessible to this reusable workflow. Refer to the documentation for further details on this limitation.
+name: vsts_ci_templates_ci_build
+on:
+  workflow_call:
+    inputs:
+      pool:
+        required: false
+        default: windows-latest
+      imageName:
+        required: false
+        default: PSWindows11-ARM64
+      jobName:
+        required: false
+        default: win_build
+      displayName:
+        required: false
+        default: Windows Build
+      PoolType:
+        required: false
+        default: AzDoHosted
+        type: string
+jobs:
+  ${{ parameters.jobName }}:
+    name: ${{ parameters.displayName }}
+    runs-on: windows-latest
+    steps:
+    - name: checkout
+      uses: actions/checkout@v4.1.0
+    - name: Install PowerShell
+      run: |-
+        [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12
+        $pwsh = Get-Command pwsh -ErrorAction SilentlyContinue -CommandType Application
+        if ($null -eq $pwsh) {
+          $powerShellPath = Join-Path -Path $env:AGENT_TEMPDIRECTORY -ChildPath 'powershell'
+          Invoke-WebRequest -Uri https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/install-powershell.ps1 -outfile ./install-powershell.ps1
+          ./install-powershell.ps1 -Destination $powerShellPath
+          $vstsCommandString = "vso[task.setvariable variable=PATH]$powerShellPath;$env:PATH"
+          Write-Host "sending " + $vstsCommandString
+          Write-Host "##$vstsCommandString"
+        }
+      shell: powershell
+    - uses: actions/checkout@v4.1.0
+      with:
+        fetch-depth: 1000
+    - name: Capture Environment
+      if: success() || failure()
+      run: 'Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose'
+      shell: pwsh
+    - name: Set Build Name for Non-PR
+      if: github.event_name != 'PullRequest'
+      run: Write-Host "##vso[build.updatebuildnumber]$env:BUILD_SOURCEBRANCHNAME-$env:BUILD_SOURCEVERSION-$((get-date).ToString("yyyyMMddhhmmss"))"
+      shell: pwsh
+    - uses: "./.github/actions/tools_releasebuild_azuredevops_templates_insert_nuget_config_azfeed"
+      if: env.UseAzDevOpsFeed != ''
+    - name: Bootstrap
+      if: success()
+      run: |-
+        Import-Module .\tools\ci.psm1
+        Invoke-CIInstall -SkipUser
+        Write-Verbose -Verbose "Start Sync-PSTags"
+        Sync-PSTags -AddRemoteIfMissing
+        Write-Verbose -Verbose "End Sync-PSTags"
+      shell: pwsh
+    - name: Build
+      if: success()
+      run: |-
+        Import-Module .\tools\ci.psm1
+        Invoke-CIBuild
+      shell: pwsh
+    - name: xUnit Tests
+      if: success()
+      continue-on-error: true
+      run: |-
+        Import-Module .\tools\ci.psm1
+        Restore-PSOptions
+        Invoke-CIxUnit -SkipFailing
+      shell: pwsh
