@@ -58,7 +58,7 @@ namespace System.Management.Automation
         private const int StackAllocThreshold = 256;
 
         // chars that are considered special in a wildcard pattern
-        private const string SpecialChars = "*?[]`";
+        private static readonly SearchValues<char> SpecialChars = SearchValues.Create("*?[]`");
 
         // we convert a wildcard pattern to a predicate
         private Predicate<string> _isMatch;
@@ -435,10 +435,7 @@ namespace System.Management.Automation
             return s;
         }
 
-        private static bool IsWildcardChar(char ch)
-        {
-            return (ch == '*') || (ch == '?') || (ch == '[') || (ch == ']');
-        }
+        private static bool IsWildcardChar(char ch) => SpecialChars.Contains(ch);
 
         /// <summary>
         /// Converts this wildcard to a string that can be used as a right-hand-side operand of the LIKE operator of WQL.
