@@ -1,4 +1,4 @@
-name: powershell/Convert/ForConversion-Windows-CI
+name: Windows-CI
 on:
   push:
     branches:
