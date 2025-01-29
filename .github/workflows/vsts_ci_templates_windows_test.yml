@@ -44,14 +44,14 @@ jobs:
       if: success() || failure()
       run: 'Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose'
       shell: pwsh
-#     # This action relies on the workflow '.yml' being present in this repository (change the repository parameter if the workflow is in a different repository).
-#     # Ensure the workflow exists and uploads an artifact for this to use.
-#     - name: Download Build Artifacts
-#       uses: dawidd6/action-download-artifact@v3.0.0
-#       with:
-#         github_token: "${{ secrets.GITHUB_TOKEN }}"
-#         path: "${{ github.workspace }}"
-#         repo: "${{ github.repository }}"
+     # This action relies on the workflow '.yml' being present in this repository (change the repository parameter if the workflow is in a different repository).
+     # Ensure the workflow exists and uploads an artifact for this to use.
+     - name: Download Build Artifacts
+       uses: dawidd6/action-download-artifact@v3.0.0
+       with:
+         github_token: "${{ secrets.GITHUB_TOKEN }}"
+         path: "${{ github.workspace }}"
+         repo: "${{ github.repository }}"
     - name: Capture Artifacts Directory
       continue-on-error: true
       run: Get-ChildItem "${{ github.workspace }}\*" -Recurse
