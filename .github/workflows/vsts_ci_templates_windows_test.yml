@@ -1,0 +1,85 @@
+# Environment variables defined in a calling workflow are not accessible to this reusable workflow. Refer to the documentation for further details on this limitation.
+name: vsts_ci_templates_windows_test
+on:
+  workflow_call:
+    inputs:
+      pool:
+        required: false
+        default: windows-2019
+        type: string
+      imageName:
+        required: false
+        default: PSWindows11-ARM64
+        type: string
+      purpose:
+        required: false
+        default: ''
+        type: string
+      tagSet:
+        required: false
+        default: CI
+        type: string
+jobs:
+  win_test_${{ parameters.purpose }}_${{ parameters.tagSet }}:
+    name: Windows Test - ${{ parameters.purpose }} - ${{ parameters.tagSet }}
+    runs-on: windows-latest
+    steps:
+    - name: checkout
+      uses: actions/checkout@v4.1.0
+    - name: Install PowerShell if missing
+      if: "'inputs.pool' != 'windows-2019'"
+      run: |-
+        [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12
+        $pwsh = Get-Command pwsh -ErrorAction SilentlyContinue -CommandType Application
+        if ($null -eq $pwsh) {
+          $powerShellPath = Join-Path -Path $env:AGENT_TEMPDIRECTORY -ChildPath 'powershell'
+          Invoke-WebRequest -Uri https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/install-powershell.ps1 -outfile ./install-powershell.ps1
+          ./install-powershell.ps1 -Destination $powerShellPath
+          $vstsCommandString = "vso[task.setvariable variable=PATH]$powerShellPath;$env:PATH"
+          Write-Host "sending " + $vstsCommandString
+          Write-Host "##$vstsCommandString"
+        }
+      shell: powershell
+    - name: Capture Environment
+      if: success() || failure()
+      run: 'Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose'
+      shell: pwsh
+#     # This action relies on the workflow '.yml' being present in this repository (change the repository parameter if the workflow is in a different repository).
+#     # Ensure the workflow exists and uploads an artifact for this to use.
+#     - name: Download Build Artifacts
+#       uses: dawidd6/action-download-artifact@v3.0.0
+#       with:
+#         github_token: "${{ secrets.GITHUB_TOKEN }}"
+#         path: "${{ github.workspace }}"
+#         repo: "${{ github.repository }}"
+    - name: Capture Artifacts Directory
+      continue-on-error: true
+      run: Get-ChildItem "${{ github.workspace }}\*" -Recurse
+      shell: pwsh
+    - name: Bootstrap
+      run: |-
+        # Remove "Program Files\dotnet" from the env variable PATH, so old SDKs won't affect us.
+        Write-Host "Old Path:"
+        Write-Host $env:Path
+        $dotnetPath = Join-Path $env:SystemDrive 'Program Files\dotnet'
+        $paths = $env:Path -split ";" | Where-Object { -not $_.StartsWith($dotnetPath) }
+        $env:Path = $paths -join ";"
+        Write-Host "New Path:"
+        Write-Host $env:Path
+        # Bootstrap
+        Import-Module .\tools\ci.psm1
+        Invoke-CIInstall
+      shell: powershell
+    - name: Test
+      if: success()
+      run: |-
+        Import-Module .\build.psm1 -force
+        Start-PSBootstrap
+        Import-Module .\tools\ci.psm1
+        Restore-PSOptions -PSOptionsPath '${{ github.workspace }}\build\psoptions.json'
+        $options = (Get-PSOptions)
+        $path = split-path -path $options.Output
+        $rootPath = split-Path -path $path
+        Expand-Archive -Path '${{ github.workspace }}\build\build.zip' -DestinationPath $rootPath -Force
+        Invoke-CITest -Purpose '${{ inputs.purpose }}' -TagSet '${{ inputs.tagSet }}'
+      shell: pwsh
