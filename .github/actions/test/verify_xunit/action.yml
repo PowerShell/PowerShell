@@ -4,13 +4,10 @@ description: 'Verify xUnit Results'
 runs:
   using: composite
   steps:
-    # This action relies on the workflow '.yml' being present in this repository (change the repository parameter if the workflow is in a different repository).
-    # Ensure the workflow exists and uploads an artifact for this to use.
   - name: Download build artifacts
-    uses: dawidd6/action-download-artifact@v3.0.0
+    uses: actions/download-artifact@v4
     with:
       path: "${{ github.workspace }}"
-      repo: "${{ github.repository }}"
   - name: Capture artifacts directory
     continue-on-error: true
     run: dir "${{ github.workspace }}\*" -Recurse
