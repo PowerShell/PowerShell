@@ -39,38 +39,38 @@ env:
   __SuppressAnsiEscapeSequences: 1
   nugetMultiFeedWarnLevel: none
 jobs:
-  vsts_ci_templates_ci_build:
-    name: vsts_ci_templates_ci_build
-    uses: "./.github/workflows/vsts_ci_templates_ci_build.yml"
-  vsts_ci_templates_windows_test:
-    name: vsts_ci_templates_windows_test
-    needs: vsts_ci_templates_ci_build
-    uses: "./.github/workflows/vsts_ci_templates_windows_test.yml"
+  ci_build:
+    name: ci_build
+    uses: "./.github/workflows/templates/build/ci.yml"
+  windows_test:
+    name: windows_test
+    needs: ci_build
+    uses: "./.github/workflows/templates/test/windows.yml"
     with:
       purpose: UnelevatedPesterTests
       tagSet: CI
-  vsts_ci_templates_windows_test_2:
-    name: vsts_ci_templates_windows_test_2
-    needs: vsts_ci_templates_ci_build
-    uses: "./.github/workflows/vsts_ci_templates_windows_test.yml"
+  windows_test_2:
+    name: windows_test_2
+    needs: ci_build
+    uses: "./.github/workflows/templates/test/windows.yml"
     with:
       purpose: ElevatedPesterTests
       tagSet: CI
-  vsts_ci_templates_windows_test_3:
-    name: vsts_ci_templates_windows_test_3
-    needs: vsts_ci_templates_ci_build
-    uses: "./.github/workflows/vsts_ci_templates_windows_test.yml"
+  windows_test_3:
+    name: windows_test_3
+    needs: ci_build
+    uses: "./.github/workflows/templates/test/windows.yml"
     with:
       purpose: UnelevatedPesterTests
       tagSet: Others
-  vsts_ci_templates_windows_test_4:
-    name: vsts_ci_templates_windows_test_4
-    needs: vsts_ci_templates_ci_build
-    uses: "./.github/workflows/vsts_ci_templates_windows_test.yml"
+  windows_test_4:
+    name: windows_test_4
+    needs: ci_build
+    uses: "./.github/workflows/templates/test/windows.yml"
     with:
       purpose: ElevatedPesterTests
       tagSet: Others
-  vsts_ci_templates_verify_xunit:
-    name: vsts_ci_templates_verify_xunit
-    needs: vsts_ci_templates_ci_build
-    uses: "./.github/workflows/vsts_ci_templates_verify_xunit.yml"
+  verify_xunit:
+    name: verify_xunit
+    needs: ci_build
+    uses: "./.github/workflows/templates/verify_xunit.yml"
