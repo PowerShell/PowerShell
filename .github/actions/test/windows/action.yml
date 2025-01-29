@@ -24,7 +24,7 @@ runs:
       path: "${{ github.workspace }}"
   - name: Capture Artifacts Directory
     continue-on-error: true
-    run: Get-ChildItem "${{ github.workspace }}\*" -Recurse
+    run: Get-ChildItem "${{ github.workspace }}\build\*" -Recurse
     shell: pwsh
   - name: Bootstrap
     run: |-
