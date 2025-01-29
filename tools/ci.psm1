@@ -439,7 +439,14 @@ function Push-Artifact
         Write-Host "##vso[artifact.upload containerfolder=$artifactName;artifactname=$artifactName;]$Path"
     } elseif ($env:GITHUB_WORKFLOW -and $env:RUNNER_WORKSPACE) {
         # In GitHub Actions
-        Join-Path -Path $env:RUNNER_WORKSPACE -ChildPath $artifactName | Copy-Item -Destination $Path -Force -Verbose
+        $destinationPath = Join-Path -Path $env:RUNNER_WORKSPACE -ChildPath $artifactName
+
+        # Create the folder if it does not exist
+        if (!(Test-Path -Path $destinationPath)) {
+            $null = New-Item -ItemType Directory -Path $destinationPath -Force
+        }
+
+        Copy-Item -Destination $Path -Force -Verbose
     } else {
         Write-Warning "Push-Artifact is not supported in this environment."
     }
