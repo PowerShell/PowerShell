@@ -446,7 +446,7 @@ function Push-Artifact
             $null = New-Item -ItemType Directory -Path $destinationPath -Force
         }
 
-        Copy-Item -Destination $Path -Force -Verbose
+        Copy-Item -Path $Path -Destination $destinationPath -Force -Verbose
     } else {
         Write-Warning "Push-Artifact is not supported in this environment."
     }
