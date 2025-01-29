@@ -446,13 +446,6 @@ namespace System.Management.Automation
         private static bool IsWildcardChar(char ch) => WildcardChars.Contains(ch);
 
         /// <summary>
-        /// Checks if the specified character is a special character.
-        /// </summary>
-        /// <param name="ch">The character to check.</param>
-        /// <returns>True if the character is a special character, otherwise false.</returns>
-        private static bool IsSpecialChar(char ch) => SpecialChars.Contains(ch);
-
-        /// <summary>
         /// Converts this wildcard to a string that can be used as a right-hand-side operand of the LIKE operator of WQL.
         /// For example: "a*" will be converted to "a%".
         /// </summary>
