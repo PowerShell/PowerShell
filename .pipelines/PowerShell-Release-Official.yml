@@ -202,6 +202,7 @@ extends:
           displayName: 'Validate Linux ARM64 Fxd Packages'
           jobtype: 'linux'
           artifactName: 'drop_linux_package_fxdependent'
+          # this is really an architecture independent package
           packageNamePattern: '**/*linux-x64-fxdependent.tar.gz'
           arm64: 'yes'
           enableCredScan: false
