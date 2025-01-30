@@ -13,16 +13,15 @@ jobs:
   report:
     runs-on: ubuntu-latest
     steps:
-    # no reporter for xUnit tests
-    # - uses: dorny/test-reporter@v1
-    #   with:
-    #     artifact: testResults-xunit
-    #     name: xUnit Tests
-    #     path: '*.xml'
-    #     reporter: dotnet-nunit
+    - uses: dorny/test-reporter@v1
+      with:
+        artifact: testResults-xunit
+        name: xUnit Tests
+        path: '*.xml'
+        reporter: swift-xunit
     - uses: dorny/test-reporter@main
       with:
         artifact: /testResults-pester-.*/
-        name: xUnit Tests
+        name: Pester Tests
         path: '*.xml'
-        reporter: dotnet-nunit
+        reporter: java-junit

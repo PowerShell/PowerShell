@@ -231,7 +231,8 @@ function Invoke-CITest
         [string] $Purpose,
         [ValidateSet('CI', 'Others')]
         [string] $TagSet,
-        [string] $TitlePrefix
+        [string] $TitlePrefix,
+        [string]$OutputFormat = "NUnitXml"
     )
 
     # Set locale correctly for Linux CIs
@@ -288,6 +289,7 @@ function Invoke-CITest
             Terse = $true
             Tag = @()
             ExcludeTag = $ExcludeTag + 'RequireAdminOnWindows'
+            OutputFormat = $OutputFormat
         }
 
         $title = "Pester Unelevated - $TagSet"
