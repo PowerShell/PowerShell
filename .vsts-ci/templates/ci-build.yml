@@ -62,7 +62,6 @@ jobs:
     inputs:
       useGlobalJson: true
       packageType: 'sdk'
-      workingDirectory: $(Build.SourcesDirectory)"
 
   - pwsh: |
       Import-Module .\tools\ci.psm1
