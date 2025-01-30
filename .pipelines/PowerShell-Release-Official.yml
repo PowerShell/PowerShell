@@ -195,7 +195,6 @@ extends:
           jobtype: 'linux'
           artifactName: 'drop_linux_package_fxdependent'
           packageNamePattern: '**/*linux-x64-fxdependent.tar.gz'
-          enableCredScan: false
 
       - template: /.pipelines/templates/release-validate-fxdpackages.yml@self
         parameters:
@@ -205,6 +204,7 @@ extends:
           artifactName: 'drop_linux_package_fxdependent'
           packageNamePattern: '**/*linux-x64-fxdependent.tar.gz'
           arm64: 'yes'
+          enableCredScan: false
 
     - stage: validatePackages
       displayName: 'Validate Packages'
