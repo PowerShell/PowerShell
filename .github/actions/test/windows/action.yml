@@ -10,7 +10,7 @@ inputs:
     required: false
     default: CI
     type: string
-  crtfFolder:
+  ctrfFolder:
     required: false
     default: .ctrf
     type: string
