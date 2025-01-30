@@ -1637,7 +1637,7 @@ function Get-PackageDependencies
 function Test-Dependencies
 {
     foreach ($Dependency in "fpm") {
-        if (!(precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Package")) {
+        if (!(precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Scenario Package")) {
             # These tools are not added to the path automatically on OpenSUSE 13.2
             # try adding them to the path and re-tesing first
             [string] $gemsPath = $null
@@ -1647,7 +1647,7 @@ function Test-Dependencies
                 $depenencyPath  = Get-ChildItem -Path (Join-Path -Path $gemsPath -ChildPath "gems" -AdditionalChildPath $Dependency) -Recurse | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty DirectoryName
                 $originalPath = $env:PATH
                 $env:PATH = $ENV:PATH +":" + $depenencyPath
-                if ((precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Package")) {
+                if ((precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Scenario Package")) {
                     continue
                 }
                 else {
