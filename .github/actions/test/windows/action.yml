@@ -62,7 +62,7 @@ runs:
   - name: Publish Test Report
     uses: ctrf-io/github-test-reporter@v1
     with:
-      report-path: './.ctrf/*.json'
+      report-path: '.\.ctrf\*.json'
     if: always()
   - name: Upload testResults artifact
     if: always()
