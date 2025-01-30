@@ -10,6 +10,10 @@ inputs:
     required: false
     default: CI
     type: string
+  crtfFolder:
+    required: false
+    default: .ctrf
+    type: string
 
 runs:
   using: composite
@@ -56,13 +60,13 @@ runs:
   - name: Convert JUnit to CTRF
     run: |-
       Get-ChildItem -Path "${{ runner.workspace }}/testResults/*.xml" -Recurse | ForEach-Object {
-        npx --yes junit-to-ctrf $_.FullName --output .crtf/$($_.BaseName).json --tool Pester --env 'Windows ${{ inputs.purpose }} ${{ inputs.tagSet }}'
+        npx --yes junit-to-ctrf $_.FullName --output ${{ inputs.ctrfFolder }}/$($_.BaseName).json --tool Pester --env 'Windows ${{ inputs.purpose }} ${{ inputs.tagSet }}'
       }
     shell: powershell
   - name: Publish Test Report
     uses: ctrf-io/github-test-reporter@v1
     with:
-      report-path: '.\.ctrf\*.json'
+      report-path: '.\${{ inputs.ctrfFolder }}\*.json'
     if: always()
   - name: Upload testResults artifact
     if: always()
@@ -75,4 +79,4 @@ runs:
     uses: actions/upload-artifact@v4
     with:
       name: ctrf-pester-${{ inputs.purpose }}-${{ inputs.tagSet }}
-      path: .crtf
+      path: ${{ inputs.ctrfFolder }}
