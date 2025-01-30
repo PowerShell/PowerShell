@@ -343,12 +343,15 @@ function Invoke-CITest
             OutputFile = $testResultsAdminFile
             Tag = @('RequireAdminOnWindows')
             ExcludeTag = $ExcludeTag
+            OutputFormat = $OutputFormat
         }
 
         $title = "Pester Elevated - $TagSet"
         if ($TitlePrefix) {
             $title = "$TitlePrefix - $title"
         }
+
+        Write-Verbose -Verbose "Starting Pester with output format $($arguments.OutputFormat)"
         Start-PSPester @arguments -Title $title
 
         # Fail the build, if tests failed
@@ -379,6 +382,8 @@ function Invoke-CITest
             if ($TitlePrefix) {
                 $title = "$TitlePrefix - $title"
             }
+
+            Write-Verbose -Verbose "Starting Pester with output format $($arguments.OutputFormat)"
             Start-PSPester @arguments -Title $title
 
             # Fail the build, if tests failed
