@@ -877,22 +877,22 @@ namespace System.Management.Automation
         /// <summary>
         /// Contains characters that are invalid in file names.
         /// </summary>
-        private static readonly SearchValues<char> InvalidFileNameChars
+        private static readonly SearchValues<char> s_invalidFileNameChars
             = SearchValues.Create(Path.GetInvalidFileNameChars());
 
         /// <summary>
         /// Contains characters that are invalid in path names.
         /// </summary>
-        private static readonly SearchValues<char> InvalidPathChars
+        private static readonly SearchValues<char> s_invalidPathChars
             = SearchValues.Create(Path.GetInvalidPathChars());
 
         /// <summary>
-        /// Checks if the specified path contains any characters that are invalid in file names.
+        /// Checks if the specified filename contains any characters that are invalid in file names.
         /// </summary>
-        /// <param name="path">The path to check.</param>
-        /// <returns>True if the path contains invalid file name characters, otherwise false.</returns>
-        internal static bool ContainsInvalidFileNameChars(ReadOnlySpan<char> path)
-            => path.ContainsAny(InvalidFileNameChars);
+        /// <param name="filename">The path to check.</param>
+        /// <returns>True if the filename contains invalid file name characters, otherwise false.</returns>
+        internal static bool ContainsInvalidFileNameChars(ReadOnlySpan<char> filename)
+            => filename.ContainsAny(s_invalidFileNameChars);
 
         /// <summary>
         /// Checks if the specified path contains any characters that are invalid in path names.
@@ -900,7 +900,7 @@ namespace System.Management.Automation
         /// <param name="path">The path to check.</param>
         /// <returns>True if the path contains invalid path characters, otherwise false.</returns>
         internal static bool ContainsInvalidPathChars(ReadOnlySpan<char> path)
-            => path.ContainsAny(InvalidPathChars);
+            => path.ContainsAny(s_invalidPathChars);
 
         #endregion
     }
