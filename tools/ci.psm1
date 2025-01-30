@@ -321,7 +321,9 @@ function Invoke-CITest
             if ($TitlePrefix) {
                 $title = "$TitlePrefix - $title"
             }
-            Start-PSPester @arguments -Title $title
+
+            # We just built the test tools, we don't need to rebuild them
+            Start-PSPester @arguments -Title $title -SkipTestToolBuild
 
             # Fail the build, if tests failed
             Test-PSPesterResults -TestResultsFile $expFeatureTestResultFile
