@@ -232,8 +232,10 @@ function Invoke-CITest
         [ValidateSet('CI', 'Others')]
         [string] $TagSet,
         [string] $TitlePrefix,
-        [string]$OutputFormat = "NUnitXml"
+        [string] $OutputFormat = "NUnitXml"
     )
+
+    Write-Verbose -Verbose "CI test: OutputFormat: $OutputFormat"
 
     # Set locale correctly for Linux CIs
     Set-CorrectLocale
@@ -296,6 +298,7 @@ function Invoke-CITest
         if ($TitlePrefix) {
             $title = "$TitlePrefix - $title"
         }
+        Write-Verbose -Verbose "Starting Pester with output format $($arguments.OutputFormat)"
         Start-PSPester @arguments -Title $title
 
         # Fail the build, if tests failed
@@ -325,6 +328,7 @@ function Invoke-CITest
             }
 
             # We just built the test tools, we don't need to rebuild them
+            Write-Verbose -Verbose "Starting Pester with output format $($arguments.OutputFormat)"
             Start-PSPester @arguments -Title $title -SkipTestToolBuild
 
             # Fail the build, if tests failed
