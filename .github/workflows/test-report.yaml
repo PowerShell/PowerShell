@@ -20,7 +20,7 @@ jobs:
     #     name: xUnit Tests
     #     path: '*.xml'
     #     reporter: dotnet-nunit
-    - uses: dorny/test-reporter@v1
+    - uses: dorny/test-reporter@main
       with:
         artifact: /testResults-pester-.*/
         name: xUnit Tests
