@@ -105,7 +105,7 @@ jobs:
       Import-Module "$repoRoot\build.psm1"
       Import-Module "$repoRoot\tools\packaging"
 
-      Start-PSBootstrap -Package
+      Start-PSBootstrap -Scenario Package
 
       $signedFilesPath, $psoptionsFilePath = if ($env:RUNTIME -eq 'minsize') {
           "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_x64_${runtime}\$signedFolder"
@@ -136,7 +136,7 @@ jobs:
         Write-Verbose -Message "LTS Release: $LTS"
       }
 
-      Start-PSBootstrap -Package
+      Start-PSBootstrap -Scenario Package
 
       $WindowsRuntime = switch ($runtime) {
         'x64' { 'win7-x64' }

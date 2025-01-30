@@ -41,7 +41,7 @@ jobs:
 
   - pwsh: |
       Import-Module $(PowerShellRoot)/build.psm1 -Force
-      Start-PSBootstrap -Package
+      Start-PSBootstrap -Scenario Package
     displayName: 'Bootstrap VM'
     env:
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)

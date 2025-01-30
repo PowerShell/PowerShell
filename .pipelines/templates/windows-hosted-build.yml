@@ -88,7 +88,7 @@ jobs:
       Import-Module -Name $(PowerShellRoot)/build.psm1 -Force
       $buildWithSymbolsPath = New-Item -ItemType Directory -Path $(Pipeline.Workspace)/Symbols_$(Architecture) -Force
 
-      Start-PSBootstrap -Package
+      Start-PSBootstrap -Scenario Package
       $null = New-Item -ItemType Directory -Path $buildWithSymbolsPath -Force -Verbose
 
       $ReleaseTagParam = @{}
@@ -137,7 +137,6 @@ jobs:
         }
 
       Import-Module -Name $(PowerShellRoot)/build.psm1 -Force
-      Start-PSBootstrap
 
       ## Build global tool
       Write-Verbose -Message "Building PowerShell global tool for Windows.x64" -Verbose
@@ -223,6 +222,13 @@ jobs:
       search_root: '$(GlobalToolArtifactPath)/obj/PowerShell.Windows.x64/release'
     condition: and(succeeded(), eq(variables['Architecture'], 'fxdependent'))
 
+  - task: UseDotNet@2
+    displayName: 'Use .NET Core sdk'
+    inputs:
+      useGlobalJson: true
+      packageType: 'sdk'
+      workingDirectory: $(PowerShellRoot)
+
   - pwsh: |
       <#  The way the packaging works is a bit tricky as when it is built, we cannot add the modules that come from gallery.
           We have to use dotnet pack to build the nupkg and then expand it as a zip.
@@ -231,8 +237,6 @@ jobs:
           After that, we repack using Compress-Archive and rename it back to a nupkg.
         #>
 
-      Import-Module -Name $(PowerShellRoot)/build.psm1 -Force
-      Start-PSBootstrap
       $packagingStrings = Import-PowerShellDataFile "$(PowerShellRoot)\tools\packaging\packaging.strings.psd1"
 
       $outputPath = Join-Path '$(ob_outputDirectory)' 'globaltool'

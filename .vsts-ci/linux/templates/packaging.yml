@@ -33,7 +33,7 @@ jobs:
 
   - pwsh: |
       Import-Module .\build.psm1
-      Start-PSBootstrap -Package
+      Start-PSBootstrap -Scenario Package
     displayName: Bootstrap
 
   - pwsh: |
