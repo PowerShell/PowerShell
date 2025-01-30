@@ -58,7 +58,7 @@ namespace System.Management.Automation
         private const int StackAllocThreshold = 256;
 
         // chars that are considered special in a wildcard pattern
-        private const string SpecialChars = "*?[]`";
+        private const string SpecialChars = "*?[]";
 
         // we convert a wildcard pattern to a predicate
         private Predicate<string> _isMatch;
@@ -238,9 +238,9 @@ namespace System.Management.Automation
                 char ch = pattern[i];
 
                 //
-                // if it is a wildcard char or backtick, escape it
+                // if it is a wildcard char, escape it
                 //
-                if ((IsWildcardChar(ch) || ch == escapeChar) && !charsNotToEscape.Contains(ch))
+                if (IsWildcardChar(ch) && !charsNotToEscape.Contains(ch))
                 {
                     temp[tempIndex++] = escapeChar;
                 }
