@@ -51,7 +51,7 @@ runs:
       $path = split-path -path $options.Output
       $rootPath = split-Path -path $path
       Expand-Archive -Path '${{ github.workspace }}\build\build.zip' -DestinationPath $rootPath -Force
-      Invoke-CITest -Purpose '${{ inputs.purpose }}' -TagSet '${{ inputs.tagSet }}'
+      Invoke-CITest -Purpose '${{ inputs.purpose }}' -TagSet '${{ inputs.tagSet }}' -OutputFormat JUnitXml
     shell: pwsh
   - name: Upload testResults artifact
     uses: actions/upload-artifact@v4
