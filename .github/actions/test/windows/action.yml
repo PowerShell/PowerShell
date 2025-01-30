@@ -53,8 +53,26 @@ runs:
       Expand-Archive -Path '${{ github.workspace }}\build\build.zip' -DestinationPath $rootPath -Force
       Invoke-CITest -Purpose '${{ inputs.purpose }}' -TagSet '${{ inputs.tagSet }}' -OutputFormat JUnitXml
     shell: pwsh
+  - name: Convert JUnit to CTRF
+    run: |-
+      Get-ChildItem -Path "${{ github.workspace }}/testResults/*.xml" -Recurse | ForEach-Object {
+        npx --yes junit-to-ctrf $_.FullName --output .crtf/$($_.BaseName).json --tool Pester --env 'Windows ${{ inputs.purpose }} ${{ inputs.tagSet }}'
+      }
+    shell: powershell
+  - name: Publish Test Report
+    uses: ctrf-io/github-test-reporter@v1
+    with:
+      report-path: './ctrf/*.json'
+    if: always()
   - name: Upload testResults artifact
+    if: always()
     uses: actions/upload-artifact@v4
     with:
       name: testResults-pester-${{ inputs.purpose }}-${{ inputs.tagSet }}
       path: ${{ runner.workspace }}/testResults
+  - name: Upload ctrf artifact
+    if: always()
+    uses: actions/upload-artifact@v4
+    with:
+      name: ctrf-pester-${{ inputs.purpose }}-${{ inputs.tagSet }}
+      path: .crtf
