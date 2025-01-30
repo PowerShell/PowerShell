@@ -55,7 +55,7 @@ runs:
     shell: pwsh
   - name: Convert JUnit to CTRF
     run: |-
-      Get-ChildItem -Path "${{ github.workspace }}/testResults/*.xml" -Recurse | ForEach-Object {
+      Get-ChildItem -Path "${{ runner.workspace }}/testResults/*.xml" -Recurse | ForEach-Object {
         npx --yes junit-to-ctrf $_.FullName --output .crtf/$($_.BaseName).json --tool Pester --env 'Windows ${{ inputs.purpose }} ${{ inputs.tagSet }}'
       }
     shell: powershell
