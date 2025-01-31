@@ -11,28 +11,28 @@ on:
       - release*
       - feature*
     paths:
-      - "*"
-      - "!.github/ISSUE_TEMPLATE/*"
+      - "**"
+      - "!.github/ISSUE_TEMPLATE/**"
       - "!.dependabot/config.yml"
-      - "!.pipelines/*"
-      - "!test/perf/*"
+      - "!.pipelines/**"
+      - "!test/perf/**"
   pull_request:
     branches:
       - master
       - release*
       - feature*
     paths:
-      - ".github/actions/*"
+      - ".github/actions/**"
       - ".github/workflows/windows-ci.yml"
-      - "*.props"
+      - "**.props"
       - build.psm1
-      - src/*
-      - test/*
-      - tools/buildCommon/*
+      - src/**
+      - test/**
+      - tools/buildCommon/**
       - tools/ci.psm1
       - tools/WindowsCI.psm1
-      - "!test/common/markdown/*"
-      - "!test/perf/*"
+      - "!test/common/markdown/**"
+      - "!test/perf/**"
 env:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1

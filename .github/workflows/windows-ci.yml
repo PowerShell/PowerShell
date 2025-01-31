@@ -7,29 +7,29 @@ on:
       - release*
       - feature*
     paths:
-      - "*"
+      - "**"
       - "!.vsts-ci/misc-analysis.yml"
-      - "!.github/ISSUE_TEMPLATE/*"
+      - "!.github/ISSUE_TEMPLATE/**"
       - "!.dependabot/config.yml"
-      - "!test/perf/*"
-      - "!.pipelines/*"
+      - "!test/perf/**"
+      - "!.pipelines/**"
   pull_request:
     branches:
       - master
       - release*
       - feature*
     paths:
-      - ".github/actions/*"
+      - ".github/actions/**"
       - ".github/workflows/windows-ci.yml"
-      - "*.props"
+      - "**.props"
       - build.psm1
-      - src/*
-      - test/*
-      - tools/buildCommon/*
+      - src/**
+      - test/**
+      - tools/buildCommon/**
       - tools/ci.psm1
       - tools/WindowsCI.psm1
-      - "!test/common/markdown/*"
-      - "!test/perf/*"
+      - "!test/common/markdown/**"
+      - "!test/perf/**"
 permissions:
   contents: read
 
