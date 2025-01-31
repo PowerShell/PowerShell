@@ -72,6 +72,7 @@ runs:
     uses: ctrf-io/github-test-reporter@v1
     with:
       report-path: './${{ inputs.ctrfFolder }}/*.json'
+      exit-on-fail: true
     if: always()
 
   - name: Upload testResults artifact
