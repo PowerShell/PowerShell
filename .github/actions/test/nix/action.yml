@@ -1,0 +1,133 @@
+name: nix_test
+description: 'Test PowerShell on non-Windows platforms'
+
+inputs:
+  purpose:
+    required: false
+    default: ''
+    type: string
+  tagSet:
+    required: false
+    default: CI
+    type: string
+  ctrfFolder:
+    required: false
+    default: ctrf
+    type: string
+
+runs:
+  using: composite
+  steps:
+  - name: Capture Environment
+    if: success() || failure()
+    run: 'Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose'
+    shell: pwsh
+  - name: Download Build Artifacts
+    uses: actions/download-artifact@v4
+    with:
+      path: "${{ github.workspace }}"
+  - name: Capture Artifacts Directory
+    continue-on-error: true
+    run: Get-ChildItem "${{ github.workspace }}/build/*" -Recurse
+    shell: pwsh
+
+  - name: Bootstrap
+    shell: powershell
+    run: |-
+      Import-Module ./tools/ci.psm1
+      Invoke-CIInstall -SkipUser
+
+  - name: Extract Files
+    uses: actions/github-script@v7.0.0
+    env:
+      DESTINATION_FOLDER: "${{ github.workspace }}/bins"
+      ARCHIVE_FILE_PATTERNS: "${{ github.workspace }}/build/build.zip"
+    with:
+      script: |-
+        const fs = require('fs').promises
+        const path = require('path')
+        const target = path.resolve(process.env.DESTINATION_FOLDER)
+        const patterns = process.env.ARCHIVE_FILE_PATTERNS
+        const globber = await glob.create(patterns)
+        await io.mkdirP(path.dirname(target))
+        for await (const file of globber.globGenerator()) {
+          if ((await fs.lstat(file)).isDirectory()) continue
+          await exec.exec(`7z x ${file} -o${target} -aoa`)
+        }
+
+  - name: Fix permissions
+    continue-on-error: true
+    run: |-
+      find "${{ github.workspace }}/bins" -type d -exec chmod +rwx {} \;
+      find "${{ github.workspace }}/bins" -type f -exec chmod +rw {} \;
+    shell: bash
+
+  - name: Capture Extracted Build ZIP
+    continue-on-error: true
+    run: Get-ChildItem "${{ github.workspace }}/bins/*" -Recurse -ErrorAction SilentlyContinue
+    shell: pwsh
+
+  - name: Test
+    if: success()
+    run: |-
+      Import-Module ./tools/ci.psm1
+      Restore-PSOptions -PSOptionsPath '${{ github.workspace }}/build/psoptions.json'
+      $options = (Get-PSOptions)
+      $rootPath = '${{ github.workspace }}/bins'
+      $originalRootPath = Split-Path -path $options.Output
+      $path = Join-Path -path $rootPath -ChildPath (split-path -leaf -path $originalRootPath)
+      $pwshPath = Join-Path -path $path -ChildPath 'pwsh'
+      chmod a+x $pwshPath
+      $options.Output = $pwshPath
+      Set-PSOptions $options
+      Invoke-CITest -Purpose '${{ inputs.purpose }}' -TagSet '${{ inputs.tagSet }}' -TitlePrefix '${{ inputs.buildName }}'
+    shell: pwsh
+
+  - name: Convert JUnit to CTRF
+    run: |-
+      Get-ChildItem -Path "${{ runner.workspace }}/testResults/*.xml" -Recurse | ForEach-Object {
+        npx --yes junit-to-ctrf $_.FullName --output ./${{ inputs.ctrfFolder }}/$($_.BaseName).json --tool Pester --env 'Windows ${{ inputs.purpose }} ${{ inputs.tagSet }}'
+      }
+    shell: powershell
+
+  # this task only takes / as directory separators
+  - name: Publish Test Report
+    uses: ctrf-io/github-test-reporter@v1
+    with:
+      report-path: './${{ inputs.ctrfFolder }}/*.json'
+      exit-on-fail: true
+      summary-report: true
+      test-report: false
+      test-list-report: false
+      failed-report: false
+      fail-rate-report: false
+      flaky-report: false
+      flaky-rate-report: false
+      failed-folded-report: true
+      previous-results-report: false
+      ai-report: true
+      skipped-report: false
+      suite-folded-report: false
+      suite-list-report: false
+      pull-request-report: false
+      commit-report: false
+      custom-report: false
+
+    if: always()
+
+  - name: Upload testResults artifact
+    if: always()
+    uses: actions/upload-artifact@v4
+    with:
+      name: junit-pester-${{ inputs.purpose }}-${{ inputs.tagSet }}
+      path: ${{ runner.workspace }}/testResults
+
+  - name: Upload ctrf artifact
+    if: always()
+    uses: actions/upload-artifact@v4
+    with:
+      name: ctrf-pester-${{ inputs.purpose }}-${{ inputs.tagSet }}
+      path: ${{ inputs.ctrfFolder }}
+
+
+
