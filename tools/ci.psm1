@@ -259,7 +259,7 @@ function Invoke-CITest
 
     if($IsLinux -or $IsMacOS)
     {
-        return Invoke-LinuxTestsCore -Purpose $Purpose -ExcludeTag $ExcludeTag -TagSet $TagSet -TitlePrefix $TitlePrefix
+        return Invoke-LinuxTestsCore -Purpose $Purpose -ExcludeTag $ExcludeTag -TagSet $TagSet -TitlePrefix $TitlePrefix -OutputFormat $OutputFormat
     }
 
     # CoreCLR
@@ -384,7 +384,8 @@ function Invoke-CITest
             }
 
             Write-Verbose -Verbose "Starting Pester with output format $($arguments.OutputFormat)"
-            Start-PSPester @arguments -Title $title
+            # We just built the test tools, we don't need to rebuild them
+            Start-PSPester @arguments -Title $title -SkipTestToolBuild
 
             # Fail the build, if tests failed
             Test-PSPesterResults -TestResultsFile $expFeatureTestResultFile
@@ -728,7 +729,8 @@ function Invoke-LinuxTestsCore
         [string] $Purpose = 'All',
         [string[]] $ExcludeTag = @('Slow', 'Feature', 'Scenario'),
         [string] $TagSet = 'CI',
-        [string] $TitlePrefix
+        [string] $TitlePrefix,
+        [string] $OutputFormat = "NUnitXml"
     )
 
     $output = Split-Path -Parent (Get-PSOutput -Options (Get-PSOptions))
@@ -741,12 +743,13 @@ function Invoke-LinuxTestsCore
     $sudoResultsWithExpFeatures = $null
 
     $noSudoPesterParam = @{
-        'BinDir'     = $output
-        'PassThru'   = $true
-        'Terse'      = $true
-        'Tag'        = @()
-        'ExcludeTag' = $testExcludeTag
-        'OutputFile' = $testResultsNoSudo
+        'BinDir'       = $output
+        'PassThru'     = $true
+        'Terse'        = $true
+        'Tag'          = @()
+        'ExcludeTag'   = $testExcludeTag
+        'OutputFile'   = $testResultsNoSudo
+        'OutputFormat' = $OutputFormat
     }
 
     # Get the experimental feature names and the tests associated with them
@@ -784,7 +787,7 @@ function Invoke-LinuxTestsCore
             if ($TitlePrefix) {
                 $title = "$TitlePrefix - $title"
             }
-            $passThruResult = Start-PSPester @noSudoPesterParam -Title $title
+            $passThruResult = Start-PSPester @noSudoPesterParam -Title $title -SkipTestToolBuild
 
             $noSudoResultsWithExpFeatures += $passThruResult
         }
@@ -799,6 +802,7 @@ function Invoke-LinuxTestsCore
         $sudoPesterParam['ExcludeTag'] = $ExcludeTag
         $sudoPesterParam['Sudo'] = $true
         $sudoPesterParam['OutputFile'] = $testResultsSudo
+        $sudoPesterParam['OutputFormat'] = $OutputFormat
 
         $title = "Pester Sudo - $TagSet"
         if ($TitlePrefix) {
@@ -831,7 +835,9 @@ function Invoke-LinuxTestsCore
             if ($TitlePrefix) {
                 $title = "$TitlePrefix - $title"
             }
-            $passThruResult = Start-PSPester @sudoPesterParam -Title $title
+
+            # We just built the test tools for the main test run, we don't need to rebuild them
+            $passThruResult = Start-PSPester @sudoPesterParam -Title $title -SkipTestToolBuild
 
             $sudoResultsWithExpFeatures += $passThruResult
         }
