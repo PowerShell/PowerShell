@@ -20,7 +20,7 @@ runs:
   steps:
   - name: Convert JUnit to CTRF
     run: |-
-      Get-ChildItem -Path "${{ inputs.testResultsFolder }}/testResults/*.xml" -Recurse | ForEach-Object {
+      Get-ChildItem -Path "${{ inputs.testResultsFolder }}/*.xml" -Recurse | ForEach-Object {
         npx --yes junit-to-ctrf $_.FullName --output ./${{ inputs.ctrfFolder }}/$($_.BaseName).json --tool Pester
       }
     shell: pwsh
