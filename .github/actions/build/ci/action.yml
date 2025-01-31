@@ -11,8 +11,6 @@ runs:
     if: github.event_name != 'PullRequest'
     run: Write-Host "##vso[build.updatebuildnumber]$env:BUILD_SOURCEBRANCHNAME-$env:BUILD_SOURCEVERSION-$((get-date).ToString("yyyyMMddhhmmss"))"
     shell: pwsh
-  - uses: "./.github/actions/tools_releasebuild_azuredevops_templates_insert_nuget_config_azfeed"
-    if: env.UseAzDevOpsFeed != ''
   - name: Bootstrap
     if: success()
     run: |-
