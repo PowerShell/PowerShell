@@ -15,7 +15,6 @@ using System.Management.Automation.Language;
 using System.Management.Automation.Provider;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
