@@ -82,7 +82,7 @@ runs:
       flaky-rate-report: false
       failed-folded-report: false
       previous-results-report: false
-      ai-report: false
+      ai-report: true
       skipped-report: false
       suite-folded-report: false
       suite-list-report: false
