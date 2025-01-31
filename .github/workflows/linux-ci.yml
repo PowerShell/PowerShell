@@ -4,40 +4,32 @@ on:
 
   push:
     branches:
-    - master
-    - release*
-    - feature*
+      - master
+      - release*
+      - feature*
     paths:
-    - "*"
-    - "!.vsts-ci/misc-analysis.yml"
-    - "!.github/ISSUE_TEMPLATE/*"
-    - "!.github/workflows/*"
-    - "!.dependabot/config.yml"
-    - "!.pipelines/*"
-    - "!test/perf/*"
+      - "*"
+      - "!.github/ISSUE_TEMPLATE/*"
+      - "!.dependabot/config.yml"
+      - "!.pipelines/*"
+      - "!test/perf/*"
   pull_request:
     branches:
-    - master
-    - release*
-    - feature*
+      - master
+      - release*
+      - feature*
     paths:
-    - "*"
-    - "!.dependabot/config.yml"
-    - "!.github/ISSUE_TEMPLATE/*"
-    - "!.github/workflows/*"
-    - "!.vsts-ci/misc-analysis.yml"
-    - "!.vsts-ci/windows.yml"
-    - "!.vsts-ci/windows/*"
-    - "!tools/cgmanifest.json"
-    - "!LICENSE.txt"
-    - "!test/common/markdown/*"
-    - "!test/perf/*"
-    - "!tools/releaseBuild/*"
-    - "!tools/install*"
-    - "!tools/releaseBuild/azureDevOps/templates/*"
-    - "!README.md"
-    - "!.spelling"
-    - "!.pipelines/*"
+      - ".github/actions/*"
+      - ".github/workflows/windows-ci.yml"
+      - "*.props"
+      - build.psm1
+      - src/*
+      - test/*
+      - tools/buildCommon/*
+      - tools/ci.psm1
+      - tools/WindowsCI.psm1
+      - "!test/common/markdown/*"
+      - "!test/perf/*"
 env:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1

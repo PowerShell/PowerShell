@@ -10,7 +10,6 @@ on:
       - "*"
       - "!.vsts-ci/misc-analysis.yml"
       - "!.github/ISSUE_TEMPLATE/*"
-      - "!.github/workflows/*"
       - "!.dependabot/config.yml"
       - "!test/perf/*"
       - "!.pipelines/*"
@@ -20,8 +19,8 @@ on:
       - release*
       - feature*
     paths:
-      - ".vsts-ci/templates/*"
-      - ".vsts-ci/windows.yml"
+      - ".github/actions/*"
+      - ".github/workflows/windows-ci.yml"
       - "*.props"
       - build.psm1
       - src/*
