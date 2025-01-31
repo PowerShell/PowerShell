@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<testsuites xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="junit_schema_4.xsd" name="Pester" tests="6" errors="0" failures="0" disabled="1" time="0.328">
+  <testsuite name="./test/powershell/Host/HostUtilities.Tests.ps1" tests="7" errors="0" failures="0" hostname="TravissBP142023" id="0" skipped="1" disabled="0" package="./test/powershell/Host/HostUtilities.Tests.ps1" time="0.328">
+    <properties>
+      <property name="cwd" value="/Users/travisplunk/git/PowerShell" />
+      <property name="junit-version" value="4" />
+      <property name="user-domain" value="" />
+      <property name="os-version" value="24.3.0" />
+      <property name="user" value="travisplunk" />
+      <property name="clr-version" value="Unknown" />
+      <property name="platform" value="Darwin" />
+      <property name="machine-name" value="TravissBP142023" />
+    </properties>
+    <testcase name="InvokeOnRunspace method argument error handling.Null argument exception should be thrown for null PSCommand argument" status="Passed" classname="./test/powershell/Host/HostUtilities.Tests.ps1" assertions="0" time="0.043" />
+    <testcase name="InvokeOnRunspace method argument error handling.Null argument exception should be thrown for null Runspace argument" status="Passed" classname="./test/powershell/Host/HostUtilities.Tests.ps1" assertions="0" time="0.003" />
+    <testcase name="InvokeOnRunspace method as nested command.Method should successfully invoke command as nested on busy runspace" status="Passed" classname="./test/powershell/Host/HostUtilities.Tests.ps1" assertions="0" time="0.013" />
+    <testcase name="InvokeOnRunspace method on remote runspace.Method should successfully invoke command on remote runspace" status="Skipped" classname="./test/powershell/Host/HostUtilities.Tests.ps1" assertions="0" time="0.000">
+      <skipped message="" />
+    </testcase>
+    <testcase name="PromptForCredential.Should accept no targetname" status="Passed" classname="./test/powershell/Host/HostUtilities.Tests.ps1" assertions="0" time="0.007" />
+    <testcase name="PromptForCredential.Should accept targetname as domain" status="Passed" classname="./test/powershell/Host/HostUtilities.Tests.ps1" assertions="0" time="0.002" />
+    <testcase name="PushRunspaceLocalFailure.Should throw an exception when pushing a local runspace" status="Passed" classname="./test/powershell/Host/HostUtilities.Tests.ps1" assertions="0" time="0.028" />
+  </testsuite>
+</testsuites>

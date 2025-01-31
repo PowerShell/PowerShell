@@ -73,6 +73,23 @@ runs:
     with:
       report-path: './${{ inputs.ctrfFolder }}/*.json'
       exit-on-fail: true
+      summary-report: true
+      test-report: false
+      test-list-report: false
+      failed-report: false
+      fail-rate-report: false
+      flaky-report: false
+      flaky-rate-report: false
+      failed-folded-report: false
+      previous-results-report: false
+      ai-report: false
+      skipped-report: false
+      suite-folded-report: false
+      suite-list-report: false
+      pull-request-report: false
+      commit-report: false
+      custom-report: false
+
     if: always()
 
   - name: Upload testResults artifact
