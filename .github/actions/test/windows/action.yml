@@ -31,6 +31,10 @@ runs:
     run: Get-ChildItem "${{ github.workspace }}\build\*" -Recurse
     shell: pwsh
 
+  - uses: actions/setup-dotnet@v4
+    with:
+      global-json-file: .\global.json
+
   - name: Bootstrap
     shell: powershell
     run: |-
@@ -50,7 +54,6 @@ runs:
     if: success()
     run: |-
       Import-Module .\build.psm1 -force
-      Start-PSBootstrap
       Import-Module .\tools\ci.psm1
       Restore-PSOptions -PSOptionsPath '${{ github.workspace }}\build\psoptions.json'
       $options = (Get-PSOptions)
