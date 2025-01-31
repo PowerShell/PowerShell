@@ -32,7 +32,7 @@ runs:
     shell: pwsh
 
   - name: Bootstrap
-    shell: powershell
+    shell: pwsh
     run: |-
       Import-Module ./tools/ci.psm1
       Invoke-CIInstall -SkipUser
@@ -88,7 +88,7 @@ runs:
       Get-ChildItem -Path "${{ runner.workspace }}/testResults/*.xml" -Recurse | ForEach-Object {
         npx --yes junit-to-ctrf $_.FullName --output ./${{ inputs.ctrfFolder }}/$($_.BaseName).json --tool Pester --env 'Windows ${{ inputs.purpose }} ${{ inputs.tagSet }}'
       }
-    shell: powershell
+    shell: pwsh
 
   # this task only takes / as directory separators
   - name: Publish Test Report
