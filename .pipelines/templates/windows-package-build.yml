@@ -78,6 +78,13 @@ jobs:
     env:
       ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
 
+  - task: UseDotNet@2
+    inputs:
+      useGlobalJson: true
+      workingDirectory: $(REPOROOT)
+    env:
+      ob_restore_phase: true
+
   - pwsh: |
       $msixUrl = '$(makeappUrl)'
       Invoke-RestMethod -Uri $msixUrl -OutFile '$(Pipeline.Workspace)\makeappx.zip'
