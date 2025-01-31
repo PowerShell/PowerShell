@@ -80,7 +80,7 @@ runs:
       fail-rate-report: false
       flaky-report: false
       flaky-rate-report: false
-      failed-folded-report: false
+      failed-folded-report: true
       previous-results-report: false
       ai-report: true
       skipped-report: false
