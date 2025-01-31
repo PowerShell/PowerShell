@@ -1,7 +1,6 @@
 name: linux_packaging
 description: 'Test very basic Linux packaging'
 
-
 # This isn't working yet
 # It fails with
 
@@ -94,6 +93,3 @@ runs:
         Write-Host "##vso[artifact.upload containerfolder=rpm;artifactname=rpm]$packagePath"
       }
     shell: pwsh
-
-
-
