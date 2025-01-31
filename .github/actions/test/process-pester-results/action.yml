@@ -47,7 +47,6 @@ runs:
       pull-request-report: false
       commit-report: false
       custom-report: false
-
     if: always()
 
   - name: Upload testResults artifact

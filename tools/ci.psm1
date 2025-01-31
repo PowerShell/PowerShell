@@ -384,6 +384,7 @@ function Invoke-CITest
             }
 
             Write-Verbose -Verbose "Starting Pester with output format $($arguments.OutputFormat)"
+            # We just built the test tools, we don't need to rebuild them
             Start-PSPester @arguments -Title $title -SkipTestToolBuild
 
             # Fail the build, if tests failed
@@ -808,6 +809,8 @@ function Invoke-LinuxTestsCore
             if ($TitlePrefix) {
                 $title = "$TitlePrefix - $title"
             }
+
+            # We just built the test tools for the main test run, we don't need to rebuild them
             $passThruResult = Start-PSPester @sudoPesterParam -Title $title -SkipTestToolBuild
 
             $sudoResultsWithExpFeatures += $passThruResult
