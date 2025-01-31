@@ -80,7 +80,7 @@ runs:
       chmod a+x $pwshPath
       $options.Output = $pwshPath
       Set-PSOptions $options
-      Invoke-CITest -Purpose '${{ inputs.purpose }}' -TagSet '${{ inputs.tagSet }}' -TitlePrefix '${{ inputs.buildName }}'
+      Invoke-CITest -Purpose '${{ inputs.purpose }}' -TagSet '${{ inputs.tagSet }}' -TitlePrefix '${{ inputs.buildName }}' -OutputFormat JUnitXml
     shell: pwsh
 
   - name: Convert JUnit to CTRF
