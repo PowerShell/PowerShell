@@ -2,6 +2,13 @@ name: linux_packaging
 description: 'Test very basic Linux packaging'
 
 
+# This isn't working yet
+# It fails with
+
+# ERROR:  While executing gem ... (Gem::FilePermissionError)
+# You don't have write permissions for the /var/lib/gems/2.7.0 directory.
+#   WARNING: Installation of gem dotenv 2.8.1 failed! Must resolve manually.
+
 runs:
   using: composite
   steps:
