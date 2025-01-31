@@ -384,7 +384,7 @@ function Invoke-CITest
             }
 
             Write-Verbose -Verbose "Starting Pester with output format $($arguments.OutputFormat)"
-            Start-PSPester @arguments -Title $title
+            Start-PSPester @arguments -Title $title -SkipTestToolBuild
 
             # Fail the build, if tests failed
             Test-PSPesterResults -TestResultsFile $expFeatureTestResultFile
@@ -760,7 +760,7 @@ function Invoke-LinuxTestsCore
             if ($TitlePrefix) {
                 $title = "$TitlePrefix - $title"
             }
-            $passThruResult = Start-PSPester @noSudoPesterParam -Title $title
+            $passThruResult = Start-PSPester @noSudoPesterParam -Title $title -SkipTestToolBuild
 
             $noSudoResultsWithExpFeatures += $passThruResult
         }
@@ -808,7 +808,7 @@ function Invoke-LinuxTestsCore
             if ($TitlePrefix) {
                 $title = "$TitlePrefix - $title"
             }
-            $passThruResult = Start-PSPester @sudoPesterParam -Title $title
+            $passThruResult = Start-PSPester @sudoPesterParam -Title $title -SkipTestToolBuild
 
             $sudoResultsWithExpFeatures += $passThruResult
         }
