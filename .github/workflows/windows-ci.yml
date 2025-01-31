@@ -24,7 +24,7 @@ on:
       - ".vsts-ci/windows.yml"
       - "*.props"
       - build.psm1
-      - src/*
+      - src/**
       - test/*
       - tools/buildCommon/*
       - tools/ci.psm1
