@@ -17,8 +17,15 @@ if(Test-Path $dotNetPath)
 
 # import build into the global scope so it can be used by packaging
 # argumentList $true says ignore tha we may not be able to build
-Import-Module (Join-Path $repoRoot 'build.psm1') -Verbose -Scope Global -ArgumentList $true
-Import-Module (Join-Path $repoRoot 'tools\packaging') -Verbose -Scope Global
+Write-Verbose "Importing build.psm1" -Verbose
+Import-Module (Join-Path $repoRoot 'build.psm1') -Scope Global -ArgumentList $true
+$buildCommands = Get-Command -Module build
+Write-Verbose "Imported build.psm1 commands: $($buildCommands.Count)" -Verbose
+
+Write-Verbose "Importing packaging.psm1" -Verbose
+Import-Module (Join-Path $repoRoot 'tools\packaging') -Scope Global
+$packagingCommands = Get-Command -Module packaging
+Write-Verbose "Imported packaging.psm1 commands: $($packagingCommands.Count)" -Verbose
 
 # import the windows specific functcion only in Windows PowerShell or on Windows
 if($PSVersionTable.PSEdition -eq 'Desktop' -or $IsWindows)
@@ -224,8 +231,11 @@ function Invoke-CITest
         [string] $Purpose,
         [ValidateSet('CI', 'Others')]
         [string] $TagSet,
-        [string] $TitlePrefix
+        [string] $TitlePrefix,
+        [string] $OutputFormat = "NUnitXml"
     )
+
+    Write-Verbose -Verbose "CI test: OutputFormat: $OutputFormat"
 
     # Set locale correctly for Linux CIs
     Set-CorrectLocale
@@ -281,12 +291,14 @@ function Invoke-CITest
             Terse = $true
             Tag = @()
             ExcludeTag = $ExcludeTag + 'RequireAdminOnWindows'
+            OutputFormat = $OutputFormat
         }
 
         $title = "Pester Unelevated - $TagSet"
         if ($TitlePrefix) {
             $title = "$TitlePrefix - $title"
         }
+        Write-Verbose -Verbose "Starting Pester with output format $($arguments.OutputFormat)"
         Start-PSPester @arguments -Title $title
 
         # Fail the build, if tests failed
@@ -314,7 +326,10 @@ function Invoke-CITest
             if ($TitlePrefix) {
                 $title = "$TitlePrefix - $title"
             }
-            Start-PSPester @arguments -Title $title
+
+            # We just built the test tools, we don't need to rebuild them
+            Write-Verbose -Verbose "Starting Pester with output format $($arguments.OutputFormat)"
+            Start-PSPester @arguments -Title $title -SkipTestToolBuild
 
             # Fail the build, if tests failed
             Test-PSPesterResults -TestResultsFile $expFeatureTestResultFile
@@ -328,12 +343,15 @@ function Invoke-CITest
             OutputFile = $testResultsAdminFile
             Tag = @('RequireAdminOnWindows')
             ExcludeTag = $ExcludeTag
+            OutputFormat = $OutputFormat
         }
 
         $title = "Pester Elevated - $TagSet"
         if ($TitlePrefix) {
             $title = "$TitlePrefix - $title"
         }
+
+        Write-Verbose -Verbose "Starting Pester with output format $($arguments.OutputFormat)"
         Start-PSPester @arguments -Title $title
 
         # Fail the build, if tests failed
@@ -364,6 +382,8 @@ function Invoke-CITest
             if ($TitlePrefix) {
                 $title = "$TitlePrefix - $title"
             }
+
+            Write-Verbose -Verbose "Starting Pester with output format $($arguments.OutputFormat)"
             Start-PSPester @arguments -Title $title
 
             # Fail the build, if tests failed
@@ -437,6 +457,18 @@ function Push-Artifact
     if ($env:TF_BUILD) {
         # In Azure DevOps
         Write-Host "##vso[artifact.upload containerfolder=$artifactName;artifactname=$artifactName;]$Path"
+    } elseif ($env:GITHUB_WORKFLOW -and $env:RUNNER_WORKSPACE) {
+        # In GitHub Actions
+        $destinationPath = Join-Path -Path $env:RUNNER_WORKSPACE -ChildPath $artifactName
+
+        # Create the folder if it does not exist
+        if (!(Test-Path -Path $destinationPath)) {
+            $null = New-Item -ItemType Directory -Path $destinationPath -Force
+        }
+
+        Copy-Item -Path $Path -Destination $destinationPath -Force -Verbose
+    } else {
+        Write-Warning "Push-Artifact is not supported in this environment."
     }
 }
 
