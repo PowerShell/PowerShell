@@ -770,7 +770,7 @@ function Switch-PSNugetConfig {
     } elseif ( $Source -eq 'NuGetOnly') {
         New-NugetConfigFile -NugetPackageSource $nugetorg   -Destination "$PSScriptRoot/" @extraParams
         New-NugetConfigFile -NugetPackageSource $gallery                -Destination "$PSScriptRoot/src/Modules/" @extraParams
-        New-NugetConfigFile -NugetPackageSource $gallery                -Destination "$PSScriptRoot/test/tools/Modules/" @extraParams        
+        New-NugetConfigFile -NugetPackageSource $gallery                -Destination "$PSScriptRoot/test/tools/Modules/" @extraParams
     } elseif ( $Source -eq 'Private') {
         $powerShellPackages = [NugetPackageSource] @{Url = 'https://pkgs.dev.azure.com/powershell/PowerShell/_packaging/PowerShell/nuget/v3/index.json'; Name = 'powershell' }
 
@@ -1758,6 +1758,16 @@ function Publish-TestResults
 
         $resolvedPath = (Resolve-Path -Path $Path).ProviderPath
         Write-Host "##vso[artifact.upload containerfolder=testResults;artifactname=testResults]$resolvedPath"
+    } elseif ($env:GITHUB_WORKFLOW -and $env:RUNNER_WORKSPACE) {
+        # In GitHub Actions
+        $destinationPath = Join-Path -Path $env:RUNNER_WORKSPACE -ChildPath 'testResults'
+
+        # Create the folder if it does not exist
+        if (!(Test-Path -Path $destinationPath)) {
+            $null = New-Item -ItemType Directory -Path $destinationPath -Force
+        }
+
+        Copy-Item -Path $Path -Destination $destinationPath -Force -Verbose
     }
 }
 
@@ -3724,7 +3734,7 @@ function Update-DotNetSdkVersion {
     $versionParts = $oldVersion -split '\.'
     $channel = $versionParts[0], $versionParts[1] -join '.'
     Write-Verbose "channel: $channel" -Verbose
-    $azure_feed = 'https://dotnetcli.azureedge.net/dotnet'
+    $azure_feed = 'https://builds.dotnet.microsoft.com/dotnet'
     $version_file_url = "$azure_feed/Sdk/$channel/latest.version"
     $version = Invoke-RestMethod $version_file_url
     Write-Verbose "updating from: $oldVersion to: $version" -Verbose
