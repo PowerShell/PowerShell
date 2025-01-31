@@ -63,7 +63,7 @@ jobs:
         uses: actions/checkout@v4.1.0
         with:
           fetch-depth: 1000
-      - name: Windows Unelevated CI
+      - name: Linux Unelevated CI
         uses: "./.github/actions/test/nix"
         with:
           purpose: UnelevatedPesterTests
@@ -77,7 +77,7 @@ jobs:
         uses: actions/checkout@v4.1.0
         with:
           fetch-depth: 1000
-      - name: Windows Elevated CI
+      - name: Linux Elevated CI
         uses: "./.github/actions/test/nix"
         with:
           purpose: ElevatedPesterTests
@@ -91,7 +91,7 @@ jobs:
         uses: actions/checkout@v4.1.0
         with:
           fetch-depth: 1000
-      - name: Windows Unelevated Others
+      - name: Linux Unelevated Others
         uses: "./.github/actions/test/nix"
         with:
           purpose: UnelevatedPesterTests
@@ -105,7 +105,7 @@ jobs:
         uses: actions/checkout@v4.1.0
         with:
           fetch-depth: 1000
-      - name: Windows Elevated Others
+      - name: Linux Elevated Others
         uses: "./.github/actions/test/nix"
         with:
           purpose: ElevatedPesterTests
