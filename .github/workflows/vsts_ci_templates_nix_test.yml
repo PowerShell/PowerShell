@@ -1,0 +1,32 @@
+# Environment variables defined in a calling workflow are not accessible to this reusable workflow. Refer to the documentation for further details on this limitation.
+name: vsts_ci_templates_nix_test
+on:
+  workflow_call:
+    inputs:
+      pool:
+        required: false
+        default: macOS-latest
+        type: string
+      purpose:
+        required: false
+        default: ''
+        type: string
+      tagSet:
+        required: false
+        default: CI
+        type: string
+      name:
+        required: false
+        default: mac
+        type: string
+jobs:
+  ${{ parameters.name }}_test_${{ parameters.purpose }}_${{ parameters.tagSet }}:
+    name: ${{ parameters.name }} Test - ${{ parameters.purpose }} - ${{ parameters.tagSet }}
+    runs-on: ${{ inputs.pool }}
+    steps:
+    - name: checkout
+      uses: actions/checkout@v4.1.0
+    - uses: "./.github/actions/vsts_ci_templates_test_nix_test_steps"
+      with:
+        purpose: "${{ inputs.purpose }}"
+        tagSet: "${{ inputs.tagSet }}"
