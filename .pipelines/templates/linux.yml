@@ -68,6 +68,8 @@ jobs:
     inputs:
       useGlobalJson: true
       workingDirectory: $(PowerShellRoot)
+    env:
+      ob_restore_phase: true
 
   - pwsh: |
       $runtime = $env:RUNTIME
