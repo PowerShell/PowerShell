@@ -84,7 +84,7 @@ runs:
     shell: pwsh
 
   - name: Convert, Publish, and Upload Pester Test Results
-    uses: "./.github/actions/test/process-pester-test-results"
+    uses: "./.github/actions/test/process-pester-results"
     with:
       name: "${{ inputs.purpose }}-${{ inputs.tagSet }}"
       testResultsFolder: "${{ runner.workspace }}/testResults"
