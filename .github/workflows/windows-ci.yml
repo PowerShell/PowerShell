@@ -55,20 +55,20 @@ jobs:
           fetch-depth: 1000
       - name: Build
         uses: "./.github/actions/build/ci"
-  # windows_test:
-  #   name: Windows Unelevated CI
-  #   needs: ci_build
-  #   runs-on: windows-latest
-  #   steps:
-  #     - name: checkout
-  #       uses: actions/checkout@v4.1.0
-  #       with:
-  #         fetch-depth: 1000
-  #     - name: Windows Unelevated CI
-  #       uses: "./.github/actions/test/windows"
-  #       with:
-  #         purpose: UnelevatedPesterTests
-  #         tagSet: CI
+  windows_test:
+    name: Windows Unelevated CI
+    needs: ci_build
+    runs-on: windows-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4.1.0
+        with:
+          fetch-depth: 1000
+      - name: Windows Unelevated CI
+        uses: "./.github/actions/test/windows"
+        with:
+          purpose: UnelevatedPesterTests
+          tagSet: CI
   windows_test_2:
     name: Windows Elevated CI
     needs: ci_build
@@ -83,20 +83,20 @@ jobs:
         with:
           purpose: ElevatedPesterTests
           tagSet: CI
-  # windows_test_3:
-  #   name: Windows Unelevated Others
-  #   needs: ci_build
-  #   runs-on: windows-latest
-  #   steps:
-  #     - name: checkout
-  #       uses: actions/checkout@v4.1.0
-  #       with:
-  #         fetch-depth: 1000
-  #     - name: Windows Unelevated Others
-  #       uses: "./.github/actions/test/windows"
-  #       with:
-  #         purpose: UnelevatedPesterTests
-  #         tagSet: Others
+  windows_test_3:
+    name: Windows Unelevated Others
+    needs: ci_build
+    runs-on: windows-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4.1.0
+        with:
+          fetch-depth: 1000
+      - name: Windows Unelevated Others
+        uses: "./.github/actions/test/windows"
+        with:
+          purpose: UnelevatedPesterTests
+          tagSet: Others
   windows_test_4:
     name: Windows Elevated Others
     needs: ci_build
