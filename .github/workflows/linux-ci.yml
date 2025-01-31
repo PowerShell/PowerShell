@@ -23,7 +23,7 @@ on:
       - feature*
     paths:
       - ".github/actions/**"
-      - ".github/workflows/windows-ci.yml"
+      - ".github/workflows/linux-ci.yml"
       - "**.props"
       - build.psm1
       - src/**
