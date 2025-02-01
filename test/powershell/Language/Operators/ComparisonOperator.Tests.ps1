@@ -82,6 +82,22 @@ Describe "ComparisonOperator" -Tag "CI" {
         param($lhs, $operator, $rhs)
         Invoke-Expression "$lhs $operator $rhs" | Should -BeFalse
     }
+
+    It "Should be <result> for <lhs> <operator> <rhs>" -TestCases @(
+        @{ lhs = 'abc`def'; operator = '-like'; rhs = 'abc`def'; result = $true }
+        @{ lhs = 'abc``def'; operator = '-like'; rhs = 'abc``def'; result = $true }
+        @{ lhs = '`abcdef'; operator = '-like'; rhs = '`abcdef'; result = $true }
+        @{ lhs = 'abcdef`'; operator = '-like'; rhs = 'abcdef`'; result = $true }
+    ) {
+        param($lhs, $operator, $rhs, $result)
+
+        # Test without WildcardPattern.Escape
+        Invoke-Expression "'$lhs' $operator '$rhs'" | Should -Be $result
+
+        # Test with WildcardPattern.Escape
+        $escapedRhs = [WildcardPattern]::Escape($rhs)
+        Invoke-Expression "'$lhs' $operator '$escapedRhs'" | Should -Be $result
+    }
 }
 
 Describe "Bytewise Operator" -Tag "CI" {
