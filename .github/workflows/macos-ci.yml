@@ -1,4 +1,7 @@
-name: powershell/PowerShell-CI-macos
+name: macOS-CI
+
+run-name: "${{ github.ref_name }} - ${{ github.run_number }}"
+
 on:
   push:
     branches:
