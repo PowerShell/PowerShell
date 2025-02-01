@@ -3382,7 +3382,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            return null;
+            return string.Empty;
         }
 
         private void ExtractSubjectDistinguishedNameCommonDnsName(X509Certificate2 cert)
