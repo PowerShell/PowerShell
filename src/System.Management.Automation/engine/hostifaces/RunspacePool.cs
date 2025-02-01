@@ -1203,9 +1203,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public void Dispose()
         {
-            _internalPool.Dispose(true);
-
-            GC.SuppressFinalize(this);
+            _internalPool.Dispose();
         }
 
         /// <summary>
