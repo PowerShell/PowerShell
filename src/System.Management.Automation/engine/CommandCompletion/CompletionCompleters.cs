@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System.Buffers;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -5222,9 +5223,10 @@ namespace System.Management.Automation
 
         private static readonly string[] s_variableScopes = new string[] { "Global:", "Local:", "Script:", "Private:" };
 
-        private static readonly char[] s_charactersRequiringQuotes = new char[] {
-            '-', '`', '&', '@', '\'', '"', '#', '{', '}', '(', ')', '$', ',', ';', '|', '<', '>', ' ', '.', '\\', '/', '\t', '^',
-        };
+        private static readonly SearchValues<char> s_charactersRequiringQuotes = SearchValues.Create("-`&@'\"#{}()$,;|<> .\\/ \t^");
+
+        private static bool ContainsCharactersRequiringQuotes(ReadOnlySpan<char> text)
+            => text.ContainsAny(s_charactersRequiringQuotes);
 
         internal static List<CompletionResult> CompleteVariable(CompletionContext context)
         {
@@ -5282,7 +5284,7 @@ namespace System.Management.Automation
                         ? varName
                         : StringUtil.Format("[{0}]${1}", ToStringCodeMethods.Type(varType, dropNamespaces: true), varName);
 
-                    var completionText = !tokenAtCursorUsedBraces && varName.IndexOfAny(s_charactersRequiringQuotes) == -1
+                    var completionText = !tokenAtCursorUsedBraces && !ContainsCharactersRequiringQuotes(varName)
                         ? prefix + varName
                         : prefix + "{" + varName + "}";
                     AddUniqueVariable(hashedResults, results, completionText, varName, toolTip);
@@ -5302,7 +5304,7 @@ namespace System.Management.Automation
                         var toolTip = value is null
                             ? key
                             : StringUtil.Format("[{0}]${1}", ToStringCodeMethods.Type(value.GetType(), dropNamespaces: true), key);
-                        var completionText = !tokenAtCursorUsedBraces && name.IndexOfAny(s_charactersRequiringQuotes) == -1
+                        var completionText = !tokenAtCursorUsedBraces && !ContainsCharactersRequiringQuotes(name)
                             ? prefix + name
                             : prefix + "{" + name + "}";
                         AddUniqueVariable(hashedResults, tempResults, completionText, key, key);
@@ -5355,7 +5357,7 @@ namespace System.Management.Automation
                                 }
                             }
 
-                            var completedName = !tokenAtCursorUsedBraces && name.IndexOfAny(s_charactersRequiringQuotes) == -1
+                            var completedName = !tokenAtCursorUsedBraces && !ContainsCharactersRequiringQuotes(name)
                                                     ? prefix + provider + name
                                                     : prefix + "{" + provider + name + "}";
                             AddUniqueVariable(hashedResults, results, completedName, name, tooltip);
@@ -5370,7 +5372,7 @@ namespace System.Management.Automation
                 foreach (var key in envVars.Keys)
                 {
                     var name = "env:" + key;
-                    var completedName = !tokenAtCursorUsedBraces && name.IndexOfAny(s_charactersRequiringQuotes) == -1
+                    var completedName = !tokenAtCursorUsedBraces && !ContainsCharactersRequiringQuotes(name)
                         ? prefix + name
                         : prefix + "{" + name + "}";
                     AddUniqueVariable(hashedResults, tempResults, completedName, name, "[string]" + name);
@@ -5386,7 +5388,7 @@ namespace System.Management.Automation
             {
                 if (wildcardPattern.IsMatch(specialVariable))
                 {
-                    var completedName = !tokenAtCursorUsedBraces && specialVariable.IndexOfAny(s_charactersRequiringQuotes) == -1
+                    var completedName = !tokenAtCursorUsedBraces && !ContainsCharactersRequiringQuotes(specialVariable)
                                             ? prefix + specialVariable
                                             : prefix + "{" + specialVariable + "}";
 
@@ -5406,7 +5408,7 @@ namespace System.Management.Automation
                         continue;
                     }
 
-                    var completedName = !tokenAtCursorUsedBraces && drive.Name.IndexOfAny(s_charactersRequiringQuotes) == -1
+                    var completedName = !tokenAtCursorUsedBraces && !ContainsCharactersRequiringQuotes(drive.Name)
                         ? prefix + drive.Name + ":"
                         : prefix + "{" + drive.Name + ":}";
                     var tooltip = string.IsNullOrEmpty(drive.Description)
@@ -5424,7 +5426,7 @@ namespace System.Management.Automation
                 {
                     if (wildcardPattern.IsMatch(scope))
                     {
-                        var completedName = !tokenAtCursorUsedBraces && scope.IndexOfAny(s_charactersRequiringQuotes) == -1
+                        var completedName = !tokenAtCursorUsedBraces && !ContainsCharactersRequiringQuotes(scope)
                             ? prefix + scope
                             : prefix + "{" + scope + "}";
                         AddUniqueVariable(hashedResults, results, completedName, scope, scope);
@@ -6749,7 +6751,7 @@ namespace System.Management.Automation
                             {
                                 string completionText = viewDefinition.name;
                                 // If the string is quoted or if it contains characters that need quoting, quote it in single quotes
-                                if (quote != string.Empty || viewDefinition.name.IndexOfAny(s_charactersRequiringQuotes) != -1)
+                                if (quote != string.Empty || ContainsCharactersRequiringQuotes(viewDefinition.name))
                                 {
                                     completionText = "'" + completionText.Replace("'", "''") + "'";
                                 }
@@ -6911,7 +6913,7 @@ namespace System.Management.Automation
             {
                 completionText = $"{memberName}(";
             }
-            else if (memberName.IndexOfAny(s_charactersRequiringQuotes) != -1)
+            else if (ContainsCharactersRequiringQuotes(memberName))
             {
                 completionText = $"'{memberName}'";
             }
@@ -8445,7 +8447,7 @@ namespace System.Management.Automation
                     var completionText = memberInfo.Name;
 
                     // Handle scenarios like this: $aa | add-member 'a b' 23; $aa.a<tab>
-                    if (completionText.IndexOfAny(s_charactersRequiringQuotes) != -1)
+                    if (ContainsCharactersRequiringQuotes(completionText))
                     {
                         completionText = completionText.Replace("'", "''");
                         completionText = "'" + completionText + "'";
@@ -8492,7 +8494,7 @@ namespace System.Management.Automation
                         if (pattern.IsMatch(key))
                         {
                             // Handle scenarios like this: $hashtable["abc#d"] = 100; $hashtable.ab<tab>
-                            if (key.IndexOfAny(s_charactersRequiringQuotes) != -1)
+                            if (ContainsCharactersRequiringQuotes(key))
                             {
                                 key = key.Replace("'", "''");
                                 key = "'" + key + "'";

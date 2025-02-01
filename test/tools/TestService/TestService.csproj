@@ -15,8 +15,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Windows.Compatibility" Version="9.0.0" />
-    <PackageReference Include="System.Formats.Asn1" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="9.0.1" />
+    <PackageReference Include="System.Formats.Asn1" Version="9.0.1" />
     <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
   </ItemGroup>
 
