@@ -8573,10 +8573,7 @@ namespace System.Management.Automation
             if ((!requireQuote && tokens[0] is StringToken) ||
                 (tokens.Length == 2 && (tokens[0].TokenFlags & TokenFlags.Keyword) != 0))
             {
-                requireQuote = false;
-                var value = tokens[0].Text;
-                if (ContainsCharsToCheck(value, escape))
-                    requireQuote = true;
+                requireQuote = ContainsCharsToCheck(tokens[0].Text, escape);
             }
 
             return requireQuote;
