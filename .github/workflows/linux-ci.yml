@@ -1,0 +1,141 @@
+name: Linux-CI
+
+run-name: "${{ github.ref_name }} - ${{ github.run_number }}"
+
+on:
+  workflow_dispatch:
+
+  push:
+    branches:
+      - master
+      - release*
+      - feature*
+    paths:
+      - "**"
+      - "!.github/ISSUE_TEMPLATE/**"
+      - "!.dependabot/config.yml"
+      - "!.pipelines/**"
+      - "!test/perf/**"
+  pull_request:
+    branches:
+      - master
+      - release*
+      - feature*
+    paths:
+      - ".github/actions/**"
+      - ".github/workflows/linux-ci.yml"
+      - "**.props"
+      - build.psm1
+      - src/**
+      - test/**
+      - tools/buildCommon/**
+      - tools/ci.psm1
+      - tools/WindowsCI.psm1
+      - "!test/common/markdown/**"
+      - "!test/perf/**"
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  FORCE_FEATURE: 'False'
+  FORCE_PACKAGE: 'False'
+  NUGET_KEY: none
+  POWERSHELL_TELEMETRY_OPTOUT: 1
+  __SuppressAnsiEscapeSequences: 1
+  nugetMultiFeedWarnLevel: none
+  system_debug: 'false'
+jobs:
+  ci_build:
+    name: Build PowerShell
+    runs-on: ubuntu-20.04
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4.1.0
+        with:
+          fetch-depth: 1000
+      - name: Build
+        uses: "./.github/actions/build/ci"
+  linux_test_unelevated_ci:
+    name: Linux Unelevated CI
+    needs: ci_build
+    runs-on: ubuntu-20.04
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4.1.0
+        with:
+          fetch-depth: 1000
+      - name: Linux Unelevated CI
+        uses: "./.github/actions/test/nix"
+        with:
+          purpose: UnelevatedPesterTests
+          tagSet: CI
+  linux_test_elevated_ci:
+    name: Linux Elevated CI
+    needs: ci_build
+    runs-on: ubuntu-20.04
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4.1.0
+        with:
+          fetch-depth: 1000
+      - name: Linux Elevated CI
+        uses: "./.github/actions/test/nix"
+        with:
+          purpose: ElevatedPesterTests
+          tagSet: CI
+  linux_test_unelevated_others:
+    name: Linux Unelevated Others
+    needs: ci_build
+    runs-on: ubuntu-20.04
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4.1.0
+        with:
+          fetch-depth: 1000
+      - name: Linux Unelevated Others
+        uses: "./.github/actions/test/nix"
+        with:
+          purpose: UnelevatedPesterTests
+          tagSet: Others
+  linux_test_elevated_others:
+    name: Linux Elevated Others
+    needs: ci_build
+    runs-on: ubuntu-20.04
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4.1.0
+        with:
+          fetch-depth: 1000
+      - name: Linux Elevated Others
+        uses: "./.github/actions/test/nix"
+        with:
+          purpose: ElevatedPesterTests
+          tagSet: Others
+  verify_xunit:
+    name: Verify xUnit test results
+    needs: ci_build
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4.1.0
+        with:
+          fetch-depth: 1000
+      - name: Verify xUnit test results
+        uses: "./.github/actions/test/verify_xunit"
+
+  # TODO: Enable this when we have a Linux packaging workflow
+
+  # ERROR:  While executing gem ... (Gem::FilePermissionError)
+  # You don't have write permissions for the /var/lib/gems/2.7.0 directory.
+  #   WARNING: Installation of gem dotenv 2.8.1 failed! Must resolve manually.
+
+  # linux_packaging:
+  #   name: Attempt Linux Packaging
+  #   needs: ci_build
+  #   runs-on: ubuntu-20.04
+  #   steps:
+  #     - name: checkout
+  #       uses: actions/checkout@v4.1.0
+  #       with:
+  #         fetch-depth: 1000
+  #     - name: Verify xUnit test results
+  #       uses: "./.github/actions/test/linux-packaging"
