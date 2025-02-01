@@ -28,24 +28,38 @@ jobs:
       displayName: Download x86 msix
       patterns: '**/*.msix'
 
-    - task: AzurePowerShell@5
-      displayName: Install makeappx tool
-      retryCountOnTaskFailure: 1
-      inputs:
-        azureSubscription: az-blob-cicd-infra
-        scriptType: inlineScript
-        azurePowerShellVersion: LatestVersion
-        pwsh: true
-        inline: |
-          $toolsDir = '$(Pipeline.Workspace)\releasePipeline\tools'
-          New-Item $toolsDir -Type Directory -Force > $null
-          Invoke-RestMethod -Uri '$(makeappUrlDirect)' -OutFile "$toolsDir\makeappx.zip"
-          Expand-Archive "$toolsDir\makeappx.zip" -DestinationPath "$toolsDir\makeappx" -Force
-          $exePath = "$toolsDir\makeappx\makeappx.exe"
+    - pwsh: |
+        $azureRmModule = Get-InstalledModule AzureRM -ErrorAction SilentlyContinue -Verbose
+        if ($azureRmModule) {
+          Write-Host 'AzureRM module exists. Removing it'
+          Uninstall-AzureRm
+          Write-Host 'AzureRM module removed'
+        }
 
-          $vstsCommandString = "vso[task.setvariable variable=MakeAppxPath]$exePath"
-          Write-Host "sending " + $vstsCommandString
-          Write-Host "##$vstsCommandString"
+        Install-Module -Name Az.Storage -Force -AllowClobber -Scope CurrentUser -Verbose
+      displayName: Remove AzRM modules and install Az.Storage
+
+    
+    # Finds the makeappx tool on the machine with image: 'onebranch.azurecr.io/windows/ltsc2022/vse2022:latest'
+    - pwsh: |
+        $cmd = Get-Command makeappx.exe -ErrorAction Ignore
+        if ($cmd) {
+            Write-Verbose -Verbose 'makeappx available in PATH'
+            $exePath = $cmd.Source
+        } else {
+            $toolsDir = '$(Pipeline.Workspace)\releasePipeline\tools'
+            New-Item $toolsDir -Type Directory -Force > $null
+            $makeappx = Get-ChildItem -Recurse 'C:\Program Files (x86)\Windows Kits\10\makeappx.exe' |
+              Where-Object { $_.DirectoryName -match 'x64' } |
+              Select-Object -Last 1
+            $exePath = $makeappx.FullName
+            Write-Verbose -Verbose 'makeappx was found:'
+        }
+        $vstsCommandString = "vso[task.setvariable variable=MakeAppxPath]$exePath"
+        Write-Host "sending " + $vstsCommandString
+        Write-Host "##$vstsCommandString"
+      displayName: Find makeappx tool
+      retryCountOnTaskFailure: 1
 
     - pwsh: |
         $sourceDir = '$(Pipeline.Workspace)\releasePipeline\msix'
@@ -72,18 +86,6 @@ jobs:
         Write-Host "##$vstsCommandString"
       displayName: Create MsixBundle
       retryCountOnTaskFailure: 1
-
-    - pwsh: |
-        $azureRmModule = Get-InstalledModule AzureRM -ErrorAction SilentlyContinue -Verbose
-        if ($azureRmModule) {
-          Write-Host 'AzureRM module exists. Removing it'
-          Uninstall-AzureRm
-          Write-Host 'AzureRM module removed'
-        }
-
-        Install-Module -Name Az.Storage -Force -AllowClobber -Scope CurrentUser -Verbose
-
-      displayName: Remove AzRM modules and install Az.Storage
 
     - task: AzurePowerShell@5
       displayName: Upload msix to blob
