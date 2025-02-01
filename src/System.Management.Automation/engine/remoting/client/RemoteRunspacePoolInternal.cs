@@ -1897,7 +1897,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// Release all resources.
         /// </summary>
         /// <param name="disposing">If true, release all managed resources.</param>
-        public override void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
             // dispose the base class before disposing dataStructure handler.
             base.Dispose(disposing);
