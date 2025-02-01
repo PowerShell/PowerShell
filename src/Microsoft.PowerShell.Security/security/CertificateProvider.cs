@@ -3347,7 +3347,7 @@ namespace Microsoft.PowerShell.Commands
                 return rdnValue;
             }
 
-            return null;
+            return string.Empty;
         }
 
         private static string ExtractMultiValueRdnCommonDnsName(X500RelativeDistinguishedName rdn)
