@@ -8382,6 +8382,45 @@ namespace System.Management.Automation
             return quote;
         }
 
+        /// <summary>
+        /// Get matching completions from word to complete.
+        /// This makes it easier to handle different variations of completions with consideration of quotes.
+        /// </summary>
+        /// <param name="wordToComplete">The word to complete.</param>
+        /// <param name="possibleCompletionValues">The possible completion values to iterate.</param>
+        /// <param name="toolTipMapping">The optional tool tip mapping delegate.</param>
+        /// <param name="resultType">The optional completion result type. Default is Text.</param>
+        /// <returns></returns>
+        internal static IEnumerable<CompletionResult> GetMatchingResults(
+            string wordToComplete,
+            IEnumerable<string> possibleCompletionValues,
+            Func<string, string> toolTipMapping = null,
+            CompletionResultType resultType = CompletionResultType.Text)
+        {
+            string quote = HandleDoubleAndSingleQuote(ref wordToComplete);
+            var pattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
+
+            foreach (string value in possibleCompletionValues)
+            {
+                if (pattern.IsMatch(value))
+                {
+                    string completionText = quote == string.Empty
+                        ? value
+                        : quote + value + quote;
+
+                    string listItemText = value;
+
+                    yield return new CompletionResult(
+                        completionText,
+                        listItemText,
+                        resultType,
+                        toolTip: toolTipMapping is null
+                            ? listItemText
+                            : toolTipMapping(value));
+                }
+            }
+        }
+
         internal static bool IsSplattedVariable(Ast targetExpr)
         {
             if (targetExpr is VariableExpressionAst && ((VariableExpressionAst)targetExpr).Splatted)
