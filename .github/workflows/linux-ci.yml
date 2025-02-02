@@ -21,6 +21,7 @@ on:
       - master
       - release*
       - feature*
+# Path filters for PRs need to go into the changes job
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -37,7 +38,6 @@ env:
   nugetMultiFeedWarnLevel: none
   system_debug: 'false'
 jobs:
-  # JOB to run change detection
   changes:
     name: Change Detection
     runs-on: ubuntu-latest
@@ -62,7 +62,6 @@ jobs:
             - test/**
             - tools/buildCommon/**
             - tools/ci.psm1
-            - tools/WindowsCI.psm1
             - "!test/common/markdown/**"
             - "!test/perf/**"
   ci_build:
@@ -79,7 +78,9 @@ jobs:
         uses: "./.github/actions/build/ci"
   linux_test_unelevated_ci:
     name: Linux Unelevated CI
-    needs: ci_build
+    needs:
+      - ci_build
+      - changes
     if: ${{ needs.changes.outputs.source == 'true' }}
     runs-on: ubuntu-20.04
     steps:
@@ -94,7 +95,9 @@ jobs:
           tagSet: CI
   linux_test_elevated_ci:
     name: Linux Elevated CI
-    needs: ci_build
+    needs:
+      - ci_build
+      - changes
     if: ${{ needs.changes.outputs.source == 'true' }}
     runs-on: ubuntu-20.04
     steps:
@@ -109,7 +112,9 @@ jobs:
           tagSet: CI
   linux_test_unelevated_others:
     name: Linux Unelevated Others
-    needs: ci_build
+    needs:
+      - ci_build
+      - changes
     if: ${{ needs.changes.outputs.source == 'true' }}
     runs-on: ubuntu-20.04
     steps:
@@ -124,7 +129,9 @@ jobs:
           tagSet: Others
   linux_test_elevated_others:
     name: Linux Elevated Others
-    needs: ci_build
+    needs:
+      - ci_build
+      - changes
     if: ${{ needs.changes.outputs.source == 'true' }}
     runs-on: ubuntu-20.04
     steps:
@@ -139,7 +146,9 @@ jobs:
           tagSet: Others
   verify_xunit:
     name: Verify xUnit test results
-    needs: ci_build
+    needs:
+      - ci_build
+      - changes
     if: ${{ needs.changes.outputs.source == 'true' }}
     runs-on: ubuntu-latest
     steps:
