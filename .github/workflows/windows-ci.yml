@@ -38,16 +38,6 @@ env:
   __SuppressAnsiEscapeSequences: 1
   nugetMultiFeedWarnLevel: none
 jobs:
-  ci_build:
-    name: Build PowerShell
-    runs-on: windows-latest
-    steps:
-      - name: checkout
-        uses: actions/checkout@v4.1.0
-        with:
-          fetch-depth: 1000
-      - name: Build
-        uses: "./.github/actions/build/ci"
   changes:
     name: Change Detection
     runs-on: ubuntu-latest
@@ -75,6 +65,18 @@ jobs:
             - tools/WindowsCI.psm1
             - "!test/common/markdown/**"
             - "!test/perf/**"
+  ci_build:
+    name: Build PowerShell
+    needs: changes
+    if: ${{ needs.changes.outputs.source == 'true' }}
+    runs-on: windows-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4.1.0
+        with:
+          fetch-depth: 1000
+      - name: Build
+        uses: "./.github/actions/build/ci"
   windows_test_unelevated_ci:
     name: Windows Unelevated CI
     needs:
