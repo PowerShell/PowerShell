@@ -25,7 +25,7 @@ on:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
-  
+
 env:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
@@ -149,6 +149,58 @@ jobs:
           fetch-depth: 1000
       - name: Verify xUnit test results
         uses: "./.github/actions/test/verify_xunit"
+
+  analyze:
+    permissions:
+      actions: read  # for github/codeql-action/init to get workflow details
+      contents: read  # for actions/checkout to fetch code
+      security-events: write  # for github/codeql-action/analyze to upload SARIF results
+    name: Analyze
+    runs-on: ubuntu-latest
+    needs: changes
+    if: ${{ needs.changes.outputs.source == 'true' }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        # Override automatic language detection by changing the below list
+        # Supported options are ['csharp', 'cpp', 'go', 'java', 'javascript', 'python']
+        language: ['csharp']
+        # Learn more...
+        # https://docs.github.com/en/github/finding-security-vulnerabilities-and-errors-in-your-code/configuring-code-scanning#overriding-automatic-language-detection
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      with:
+        fetch-depth: '0'
+
+    # Initializes the CodeQL tools for scanning.
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@df409f7d9260372bd5f19e5b04e83cb3c43714ae # v3.27.9
+      with:
+        languages: ${{ matrix.language }}
+        # If you wish to specify custom queries, you can do so here or in a config file.
+        # By default, queries listed here will override any specified in a config file.
+        # Prefix the list here with "+" to use these queries and those in the config file.
+        # queries: ./path/to/local/query, your-org/your-repo/queries@main
+
+    - run: |
+        Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
+      name: Capture Environment
+
+    - run: |
+        Import-Module .\tools\ci.psm1
+        Invoke-CIInstall -SkipUser
+      name: Bootstrap
+
+    - run: |
+        Import-Module .\tools\ci.psm1
+        Invoke-CIBuild
+      name: Build
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@df409f7d9260372bd5f19e5b04e83cb3c43714ae # v3.27.9
   ready_to_merge:
     name: Linux ready to merge
     needs:
@@ -157,6 +209,7 @@ jobs:
       - linux_test_elevated_others
       - linux_test_unelevated_ci
       - linux_test_unelevated_others
+      - analyze
     if: always()
     uses: PowerShell/compliance/.github/workflows/ready-to-merge.yml@master
     with:
