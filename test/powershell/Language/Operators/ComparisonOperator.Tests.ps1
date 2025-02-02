@@ -83,20 +83,43 @@ Describe "ComparisonOperator" -Tag "CI" {
         Invoke-Expression "$lhs $operator $rhs" | Should -BeFalse
     }
 
-    It "Should be <result> for <lhs> <operator> <rhs>" -TestCases @(
+    It "Should be <result> for backtick comparison <lhs> <operator> <rhs>" -TestCases @(
+        # Unescaped rhs test cases
         @{ lhs = 'abc`def'; operator = '-like'; rhs = 'abc`def'; result = $true }
+        @{ lhs = 'abc`def'; operator = '-like'; rhs = 'abc``def'; result = $false }
         @{ lhs = 'abc``def'; operator = '-like'; rhs = 'abc``def'; result = $true }
         @{ lhs = '`abcdef'; operator = '-like'; rhs = '`abcdef'; result = $true }
+        @{ lhs = '`ab``cdef'; operator = '-like'; rhs = '`ab``cdef'; result = $true }
+        @{ lhs = '``abcdef``'; operator = '-like'; rhs = '``abcdef``'; result = $true }
         @{ lhs = 'abcdef`'; operator = '-like'; rhs = 'abcdef`'; result = $true }
+        @{ lhs = 'abcdefn'; operator = '-like'; rhs = 'abcdef`n'; result = $false }
+
+        ## All return false because wildcard chars *, ?, [, ] are not escaped
+        @{ lhs = 'abc`*def'; operator = '-like'; rhs = 'abc`*def'; result = $false }
+        @{ lhs = 'abc`?def'; operator = '-like'; rhs = 'abc`?def'; result = $false }
+        @{ lhs = 'abc`[def'; operator = '-like'; rhs = 'abc`[def'; result = $false }
+        @{ lhs = 'abc`]def'; operator = '-like'; rhs = 'abc`]def'; result = $false }
+        @{ lhs = 'abc`[]def'; operator = '-like'; rhs = 'abc`[]def'; result = $false }
+
+        # Escaped rhs test cases
+        @{ lhs = 'abc`def'; operator = '-like'; rhs = [WildcardPattern]::Escape('abc`def'); result = $true }
+        @{ lhs = 'abc`def'; operator = '-like'; rhs = [WildcardPattern]::Escape('abc``def'); result = $false }
+        @{ lhs = 'abc``def'; operator = '-like'; rhs = [WildcardPattern]::Escape('abc``def'); result = $true }
+        @{ lhs = '`abcdef'; operator = '-like'; rhs = [WildcardPattern]::Escape('`abcdef'); result = $true }
+        @{ lhs = '`ab``cdef'; operator = '-like'; rhs = [WildcardPattern]::Escape('`ab``cdef'); result = $true }
+        @{ lhs = '``abcdef``'; operator = '-like'; rhs = [WildcardPattern]::Escape('``abcdef``'); result = $true }
+        @{ lhs = 'abcdef`'; operator = '-like'; rhs = [WildcardPattern]::Escape('abcdef`'); result = $true }
+        @{ lhs = 'abcdefn'; operator = '-like'; rhs = [WildcardPattern]::Escape('abcdef`n'); result = $false }
+
+        ## All return true because wildcard chars *, ?, [, ] are escaped
+        @{ lhs = 'abc`*def'; operator = '-like'; rhs = [WildcardPattern]::Escape('abc`*def'); result = $true }
+        @{ lhs = 'abc`?def'; operator = '-like'; rhs = [WildcardPattern]::Escape('abc`?def'); result = $true }
+        @{ lhs = 'abc`[def'; operator = '-like'; rhs = [WildcardPattern]::Escape('abc``[def'); result = $true }
+        @{ lhs = 'abc`]def'; operator = '-like'; rhs = [WildcardPattern]::Escape('abc`]def'); result = $true }
+        @{ lhs = 'abc`[]def'; operator = '-like'; rhs = [WildcardPattern]::Escape('abc``[]def'); result = $true }
     ) {
         param($lhs, $operator, $rhs, $result)
-
-        # Test without WildcardPattern.Escape
         Invoke-Expression "'$lhs' $operator '$rhs'" | Should -Be $result
-
-        # Test with WildcardPattern.Escape
-        $escapedRhs = [WildcardPattern]::Escape($rhs)
-        Invoke-Expression "'$lhs' $operator '$escapedRhs'" | Should -Be $result
     }
 }
 
