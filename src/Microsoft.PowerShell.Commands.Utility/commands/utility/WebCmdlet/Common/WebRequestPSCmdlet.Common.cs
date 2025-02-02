@@ -1954,7 +1954,7 @@ namespace Microsoft.PowerShell.Commands
                     if (field.FieldType == typeof(string))
                     {
                         string fieldValue = (string)field.GetValue(null);
-                        if (fieldValue is not null)
+                        if (!string.IsNullOrEmpty(fieldValue))
                         {
                             yield return fieldValue;
                         }
