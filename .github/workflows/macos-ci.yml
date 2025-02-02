@@ -133,3 +133,16 @@ jobs:
         import-module ./build.psm1
         start-psbootstrap -package
       shell: pwsh
+  ready_to_merge:
+    name: macos ready to merge
+    needs:
+      - verify_xunit
+      - PackageMac-macos_packaging
+      - macos_test_elevated_ci
+      - macos_test_elevated_others
+      - macos_test_unelevated_ci
+      - macos_test_unelevated_others
+    if: always()
+    uses: PowerShell/compliance/.github/workflows/ready-to-merge.yml@main
+    with:
+      needs_context: ${{ toJson(needs) }}
