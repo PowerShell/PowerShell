@@ -1915,7 +1915,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Provides argument completion for ContentType parameter.
     /// </summary>
-    public class ContentTypeArgumentCompleter : IArgumentCompleter 
+    public class ContentTypeArgumentCompleter : IArgumentCompleter
     {
         /// <summary>
         /// Returns completion results for ContentType parameter.
@@ -1931,11 +1931,11 @@ namespace Microsoft.PowerShell.Commands
             string parameterName,
             string wordToComplete,
             CommandAst commandAst,
-            IDictionary fakeBoundParameters) 
+            IDictionary fakeBoundParameters)
                 => CompletionCompleters.GetMatchingResults(
-                    wordToComplete, 
+                    wordToComplete,
                     possibleCompletionValues: EnumerateMediaTypeFieldValues(
-                        typeof(MediaTypeNames.Application), 
+                        typeof(MediaTypeNames.Application),
                         typeof(MediaTypeNames.Text)),
                     resultType: CompletionResultType.ParameterValue);
 
@@ -1943,7 +1943,7 @@ namespace Microsoft.PowerShell.Commands
         /// Enumerate media type field values.
         /// This uses reflection to extract the public field string values from an array of media types.
         /// </summary>
-        /// <param name="mediaTypes">The array of media types</param>
+        /// <param name="mediaTypes">The array of media types.</param>
         /// <returns>Enumerator of media type field value strings.</returns>
         private static IEnumerable<string> EnumerateMediaTypeFieldValues(params Type[] mediaTypes)
         {
@@ -1963,7 +1963,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
     }
-    
+
     /// <summary>
     /// Exception class for webcmdlets to enable returning HTTP error response.
     /// </summary>
