@@ -43,7 +43,7 @@ jobs:
       inputs:
         useGlobalJson: true
         packageType: 'sdk'
-        workingDirectory: $(Build.SourcesDirectory)/PowerShell"
+        workingDirectory: $(REPOROOT)
 
     - pwsh: |
         $repoRoot = "$(Build.SourcesDirectory)/PowerShell"
