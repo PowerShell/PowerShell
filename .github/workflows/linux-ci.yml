@@ -21,7 +21,7 @@ on:
       - master
       - release*
       - feature*
-      
+
 env:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
@@ -146,7 +146,7 @@ jobs:
       - name: Verify xUnit test results
         uses: "./.github/actions/test/verify_xunit"
   ready_to_merge:
-    name: macos ready to merge
+    name: Linux ready to merge
     needs:
       - verify_xunit
       - linux_test_elevated_ci
