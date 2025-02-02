@@ -197,19 +197,23 @@ jobs:
     - run: |
         Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
       name: Capture Environment
+      shell: pwsh
 
     - run: |
         Import-Module .\tools\ci.psm1
         Invoke-CIInstall -SkipUser
       name: Bootstrap
+      shell: pwsh
 
     - run: |
         Import-Module .\tools\ci.psm1
         Invoke-CIBuild
       name: Build
+      shell: pwsh
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@df409f7d9260372bd5f19e5b04e83cb3c43714ae # v3.27.9
+
   ready_to_merge:
     name: Linux ready to merge
     needs:
