@@ -22,7 +22,7 @@ on:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ !contains(github.ref, 'merge')}}')}}
+  cancel-in-progress: ${{ !contains(github.ref, 'merge')}}
 
 permissions:
   contents: read
