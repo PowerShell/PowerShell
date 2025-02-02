@@ -30,6 +30,11 @@ on:
       - tools/WindowsCI.psm1
       - "!test/common/markdown/**"
       - "!test/perf/**"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
