@@ -63,9 +63,9 @@ jobs:
           props: &props
             - '**.props'
           tests: &tests
-            - test/**
-            - '!test/common/markdown/**'
-            - '!test/perf/**'
+            - test/powershell/**
+            - test/tools/**
+            - test/xUnit/**
           mainSource: &mainSource
             - src/**
           buildModule: &buildModule
