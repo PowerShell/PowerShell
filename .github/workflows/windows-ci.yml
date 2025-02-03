@@ -4,8 +4,7 @@ on:
   push:
     branches:
       - master
-      - release*
-      - feature*
+      - release/**
     paths:
       - "**"
       - "!.vsts-ci/misc-analysis.yml"

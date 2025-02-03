@@ -6,8 +6,7 @@ on:
   push:
     branches:
       - master
-      - release*
-      - feature*
+      - release/**
     paths:
       - "**"
       - "!.github/ISSUE_TEMPLATE/**"
