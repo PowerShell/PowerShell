@@ -235,7 +235,7 @@ namespace System.Management.Automation.Security
 
                         default:
                             // Fall through to legacy system policy checks.
-                            Debug.Assert(false, $"Unknown execution policy returned from WldCanExecute: {canExecuteResult}");
+                            Debug.Assert(false, $"Unknown policy result returned from WldCanExecute: {canExecuteResult}");
                             break;
                     }
                 }
