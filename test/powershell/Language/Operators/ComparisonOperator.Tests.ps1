@@ -117,6 +117,16 @@ Describe "ComparisonOperator" -Tag "CI" {
         @{ lhs = 'abc`[def'; operator = '-like'; rhs = [WildcardPattern]::Escape('abc``[def'); result = $true }
         @{ lhs = 'abc`]def'; operator = '-like'; rhs = [WildcardPattern]::Escape('abc`]def'); result = $true }
         @{ lhs = 'abc`[]def'; operator = '-like'; rhs = [WildcardPattern]::Escape('abc``[]def'); result = $true }
+
+        ## Ensure -match also works
+        @{ lhs = 'abc`def'; operator = '-match'; rhs = 'abc`def'; result = $true }
+        @{ lhs = 'abc`def'; operator = '-match'; rhs = 'abc``def'; result = $false }
+        @{ lhs = 'abc``def'; operator = '-match'; rhs = 'abc``def'; result = $true }
+        @{ lhs = '`abcdef'; operator = '-match'; rhs = '`abcdef'; result = $true }
+        @{ lhs = '`ab``cdef'; operator = '-match'; rhs = '`ab``cdef'; result = $true }
+        @{ lhs = '``abcdef``'; operator = '-match'; rhs = '``abcdef``'; result = $true }
+        @{ lhs = 'abcdef`'; operator = '-match'; rhs = 'abcdef`'; result = $true }
+        @{ lhs = 'abcdefn'; operator = '-match'; rhs = 'abcdef`n'; result = $false }
     ) {
         param($lhs, $operator, $rhs, $result)
         Invoke-Expression "'$lhs' $operator '$rhs'" | Should -Be $result
