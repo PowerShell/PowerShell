@@ -2664,7 +2664,7 @@ namespace Microsoft.PowerShell.Commands
             // -Verb is not supported on non-Windows platforms as well as Windows headless SKUs
             if (!Platform.IsWindowsDesktop)
             {
-                yield break;
+                return [];
             }
 
             // Completion: Start-Process -FilePath <path> -Verb <wordToComplete>
@@ -2676,12 +2676,7 @@ namespace Microsoft.PowerShell.Commands
                 // Complete file verbs if extension exists
                 if (Path.HasExtension(filePath))
                 {
-                    foreach (string verb in CompleteFileVerbs(filePath, wordToComplete))
-                    {
-                        yield return new CompletionResult(verb);
-                    }
-
-                    yield break;
+                    return CompleteFileVerbs(wordToComplete, filePath);
                 }
 
                 // Otherwise check if command is an Application to resolve executable full path with extension
@@ -2699,34 +2694,23 @@ namespace Microsoft.PowerShell.Commands
                 // Start-Process & Get-Command select first found application based on PATHEXT environment variable
                 if (commands.Count >= 1)
                 {
-                    foreach (string verb in CompleteFileVerbs(commands[0].Source, wordToComplete))
-                    {
-                        yield return new CompletionResult(verb);
-                    }
+                    return CompleteFileVerbs(wordToComplete, filePath: commands[0].Source);
                 }
             }
+
+            return [];
         }
 
         /// <summary>
         /// Completes file verbs.
         /// </summary>
-        /// <param name="filePath">The file path to get verbs.</param>
         /// <param name="wordToComplete">The word to complete.</param>
+        /// <param name="filePath">The file path to get verbs.</param>
         /// <returns>List of file verbs to complete.</returns>
-        private static IEnumerable<string> CompleteFileVerbs(string filePath, string wordToComplete)
-        {
-            var verbPattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
-
-            string[] verbs = new ProcessStartInfo(filePath).Verbs;
-
-            foreach (string verb in verbs)
-            {
-                if (verbPattern.IsMatch(verb))
-                {
-                    yield return verb;
-                }
-            }
-        }
+        private static IEnumerable<CompletionResult> CompleteFileVerbs(string wordToComplete, string filePath)
+            => CompletionCompleters.GetMatchingResults(
+                wordToComplete,
+                possibleCompletionValues: new ProcessStartInfo(filePath).Verbs);
     }
 
 #if !UNIX
