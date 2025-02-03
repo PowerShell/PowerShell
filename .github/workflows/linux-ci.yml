@@ -78,10 +78,6 @@ jobs:
             - *mainSource
             - *tests
 
-    - name: Capture environment
-      run: |
-        dir env:
-      shell: pwsh
     - name: Capture outputs
       run: |
         "source: ${{ steps.filter.outputs.source }}"
