@@ -1,4 +1,3 @@
-#remove this comment
 id: PRManagement
 name: GitOps.PullRequestIssueManagement
 description: Collection of PR bot triaging behaviors
