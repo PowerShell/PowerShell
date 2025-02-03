@@ -17,7 +17,7 @@ on:
   pull_request:
     branches:
       - master
-      - release*
+      - release/**
       - feature*
     paths:
       - ".vsts-ci/templates/*"
