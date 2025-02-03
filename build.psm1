@@ -1758,6 +1758,16 @@ function Publish-TestResults
 
         $resolvedPath = (Resolve-Path -Path $Path).ProviderPath
         Write-Host "##vso[artifact.upload containerfolder=testResults;artifactname=testResults]$resolvedPath"
+    } elseif ($env:GITHUB_WORKFLOW -and $env:RUNNER_WORKSPACE) {
+        # In GitHub Actions
+        $destinationPath = Join-Path -Path $env:RUNNER_WORKSPACE -ChildPath 'testResults'
+
+        # Create the folder if it does not exist
+        if (!(Test-Path -Path $destinationPath)) {
+            $null = New-Item -ItemType Directory -Path $destinationPath -Force
+        }
+
+        Copy-Item -Path $Path -Destination $destinationPath -Force -Verbose
     }
 }
 
