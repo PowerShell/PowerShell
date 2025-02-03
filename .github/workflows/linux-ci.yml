@@ -48,22 +48,27 @@ jobs:
     outputs:
       source: ${{ steps.filter.outputs.source }}
     steps:
-    # For pull requests it's not necessary to checkout the code
-    - uses: dorny/paths-filter@v3
-      id: filter
-      with:
-        filters: |
-          source:
-            - ".github/actions/**"
-            - ".github/workflows/linux-ci.yml"
-            - "**.props"
-            - build.psm1
-            - src/**
-            - test/**
-            - tools/buildCommon/**
-            - tools/ci.psm1
-            - "!test/common/markdown/**"
-            - "!test/perf/**"
+      - name: checkout
+        uses: actions/checkout@v4.1.0
+
+        # For pull requests it's not necessary to checkout the code
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          list-files: json
+          filters: .github/action-filters.yml
+
+      - name: Capture outputs
+        run: |
+          "source: ${{ steps.filter.outputs.source }}"
+          "github: ${{ steps.filter.outputs.github }}"
+          "tools: ${{ steps.filter.outputs.tools }}"
+          "props: ${{ steps.filter.outputs.props }}"
+          "tests: ${{ steps.filter.outputs.tests }}"
+          "mainSource: ${{ steps.filter.outputs.mainSource }}"
+          "buildModule: ${{ steps.filter.outputs.buildModule }}"
+        shell: pwsh
+
   ci_build:
     name: Build PowerShell
     runs-on: ubuntu-20.04
@@ -74,6 +79,7 @@ jobs:
         uses: actions/checkout@v4.1.0
         with:
           fetch-depth: 1000
+
       - name: Build
         uses: "./.github/actions/build/ci"
   linux_test_unelevated_ci:
@@ -183,6 +189,10 @@ jobs:
       uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       with:
         fetch-depth: '0'
+
+    - uses: actions/setup-dotnet@v4
+      with:
+        global-json-file: ./global.json
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
