@@ -1,6 +1,6 @@
 github: &github
   - .github/actions/**
-  - .github/workflows/linux-ci.yml
+  - .github/workflows/**-ci.yml
 tools: &tools
   - tools/buildCommon/**
   - tools/ci.psm1
