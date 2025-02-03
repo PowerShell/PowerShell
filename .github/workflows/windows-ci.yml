@@ -16,18 +16,12 @@ on:
     branches:
       - master
       - release/**
-    paths:
-      - ".github/actions/**"
-      - ".github/workflows/windows-ci.yml"
-      - "**.props"
-      - build.psm1
-      - src/**
-      - test/**
-      - tools/buildCommon/**
-      - tools/ci.psm1
-      - tools/WindowsCI.psm1
-      - "!test/common/markdown/**"
-      - "!test/perf/**"
+# Path filters for PRs need to go into the changes job
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ contains(github.ref, 'merge')}}
+
 permissions:
   contents: read
 
@@ -42,8 +36,37 @@ env:
   __SuppressAnsiEscapeSequences: 1
   nugetMultiFeedWarnLevel: none
 jobs:
+  changes:
+    name: Change Detection
+    runs-on: ubuntu-latest
+    # Required permissions
+    permissions:
+      pull-requests: read
+    # Set job outputs to values from filter step
+    outputs:
+      source: ${{ steps.filter.outputs.source }}
+    steps:
+    # For pull requests it's not necessary to checkout the code
+    - uses: dorny/paths-filter@v3
+      id: filter
+      with:
+        filters: |
+          source:
+            - ".github/actions/**"
+            - ".github/workflows/windows-ci.yml"
+            - "**.props"
+            - build.psm1
+            - src/**
+            - test/**
+            - tools/buildCommon/**
+            - tools/ci.psm1
+            - tools/WindowsCI.psm1
+            - "!test/common/markdown/**"
+            - "!test/perf/**"
   ci_build:
     name: Build PowerShell
+    needs: changes
+    if: ${{ needs.changes.outputs.source == 'true' }}
     runs-on: windows-latest
     steps:
       - name: checkout
@@ -52,9 +75,12 @@ jobs:
           fetch-depth: 1000
       - name: Build
         uses: "./.github/actions/build/ci"
-  windows_test:
+  windows_test_unelevated_ci:
     name: Windows Unelevated CI
-    needs: ci_build
+    needs:
+      - ci_build
+      - changes
+    if: ${{ needs.changes.outputs.source == 'true' }}
     runs-on: windows-latest
     steps:
       - name: checkout
@@ -66,9 +92,12 @@ jobs:
         with:
           purpose: UnelevatedPesterTests
           tagSet: CI
-  windows_test_2:
+  windows_test_elevated_ci:
     name: Windows Elevated CI
-    needs: ci_build
+    needs:
+      - ci_build
+      - changes
+    if: ${{ needs.changes.outputs.source == 'true' }}
     runs-on: windows-latest
     steps:
       - name: checkout
@@ -80,9 +109,12 @@ jobs:
         with:
           purpose: ElevatedPesterTests
           tagSet: CI
-  windows_test_3:
+  windows_test_unelevated_others:
     name: Windows Unelevated Others
-    needs: ci_build
+    needs:
+      - ci_build
+      - changes
+    if: ${{ needs.changes.outputs.source == 'true' }}
     runs-on: windows-latest
     steps:
       - name: checkout
@@ -94,9 +126,12 @@ jobs:
         with:
           purpose: UnelevatedPesterTests
           tagSet: Others
-  windows_test_4:
+  windows_test_elevated_others:
     name: Windows Elevated Others
-    needs: ci_build
+    needs:
+      - ci_build
+      - changes
+    if: ${{ needs.changes.outputs.source == 'true' }}
     runs-on: windows-latest
     steps:
       - name: checkout
@@ -110,7 +145,10 @@ jobs:
           tagSet: Others
   verify_xunit:
     name: Verify xUnit test results
-    needs: ci_build
+    needs:
+      - ci_build
+      - changes
+    if: ${{ needs.changes.outputs.source == 'true' }}
     runs-on: windows-latest
     steps:
       - name: checkout
@@ -119,3 +157,15 @@ jobs:
           fetch-depth: 1000
       - name: Verify xUnit test results
         uses: "./.github/actions/test/verify_xunit"
+  ready_to_merge:
+    name: windows ready to merge
+    needs:
+      - verify_xunit
+      - windows_test_elevated_ci
+      - windows_test_elevated_others
+      - windows_test_unelevated_ci
+      - windows_test_unelevated_others
+    if: always()
+    uses: PowerShell/compliance/.github/workflows/ready-to-merge.yml@master
+    with:
+      needs_context: ${{ toJson(needs) }}
