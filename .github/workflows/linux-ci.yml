@@ -54,17 +54,38 @@ jobs:
       with:
         list-files: json
         filters: |
-          source:
-            - ".github/actions/**"
-            - ".github/workflows/linux-ci.yml"
-            - "**.props"
-            - build.psm1
-            - src/**
-            - test/**
+          github: &github
+            - .github/actions/**
+            - .github/workflows/linux-ci.yml
+          tools: &tools
             - tools/buildCommon/**
             - tools/ci.psm1
-            - "!test/common/markdown/**"
-            - "!test/perf/**"
+          props: &props
+            - **.props
+          tests: &tests
+            - test/**
+            - !test/common/markdown/**
+            - !test/perf/**
+          mainSource: &mainSource
+            - src/**
+          buildModule: &buildModule
+            - build.psm1
+          source:
+            - *github
+            - *tools
+            - *props
+            - *buildModule
+            - *mainSource
+
+    - name: Capture environment
+      run: |
+        dir env:
+      shell: pwsh
+    - name: Capture environment
+      run: |
+        dir env:
+      shell: pwsh
+
   ci_build:
     name: Build PowerShell
     runs-on: ubuntu-20.04
