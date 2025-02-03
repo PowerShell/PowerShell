@@ -16,8 +16,7 @@ on:
   pull_request:
     branches:
       - master
-      - release*
-      - feature*
+      - release/**
 # Path filters for PRs need to go into the changes job
 
 concurrency:
