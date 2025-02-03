@@ -4,8 +4,7 @@ on:
   push:
     branches:
       - master
-      - release*
-      - feature*
+      - release/**
     paths:
       - "*"
       - "!.vsts-ci/misc-analysis.yml"
@@ -17,8 +16,7 @@ on:
   pull_request:
     branches:
       - master
-      - release*
-      - feature*
+      - release/**
     paths:
       - ".vsts-ci/templates/*"
       - ".vsts-ci/windows.yml"
