@@ -64,8 +64,8 @@ jobs:
             - '**.props'
           tests: &tests
             - test/**
-            - !test/common/markdown/**
-            - !test/perf/**
+            - '!test/common/markdown/**'
+            - '!test/perf/**'
           mainSource: &mainSource
             - src/**
           buildModule: &buildModule
