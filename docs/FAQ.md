@@ -1,5 +1,5 @@
 # Frequently Asked Questions
-
+<!-- remove this-->
 ## Where can I learn PowerShell's syntax?
 
 - [What is PowerShell?][12]
