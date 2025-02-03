@@ -61,7 +61,7 @@ jobs:
             - tools/buildCommon/**
             - tools/ci.psm1
           props: &props
-            - **.props
+            - '**.props'
           tests: &tests
             - test/**
             - !test/common/markdown/**
@@ -76,14 +76,21 @@ jobs:
             - *props
             - *buildModule
             - *mainSource
+            - *tests
 
     - name: Capture environment
       run: |
         dir env:
       shell: pwsh
-    - name: Capture environment
+    - name: Capture outputs
       run: |
-        dir env:
+        "source: ${{ steps.filter.outputs.source }}"
+        "github: ${{ steps.filter.outputs.github }}"
+        "tools: ${{ steps.filter.outputs.tools }}"
+        "props: ${{ steps.filter.outputs.props }}"
+        "tests: ${{ steps.filter.outputs.tests }}"
+        "mainSource: ${{ steps.filter.outputs.mainSource }}"
+        "buildModule: ${{ steps.filter.outputs.buildModule }}"
       shell: pwsh
 
   ci_build:
