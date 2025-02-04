@@ -337,7 +337,8 @@ namespace System.Management.Automation
             this.GlobalScope.SetVariable(v.Name, v, asValue: false, force: true, this, CommandOrigin.Internal, fastPath: true);
 
             // $PID
-            v = new PSVariable(SpecialVariables.PID,
+            v = new PSVariable(
+                    SpecialVariables.PID,
                     Environment.ProcessId,
                     ScopedItemOptions.Constant | ScopedItemOptions.AllScope,
                     RunspaceInit.PIDDescription);
