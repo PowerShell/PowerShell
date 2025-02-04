@@ -387,7 +387,7 @@ Describe "New-Item -Force allows to create an item even if the directories in th
     }
 }
 
-Describe "New-Item -Force should throw an error for invalid characters in directory path" -Tags "CI" {
+Describe "New-Item -Force should throw an error for invalid characters in directory path" -Skip:(!$IsWindows) -Tags "CI" {
     BeforeAll {
         $invalidPath = Join-Path -Path $TestDrive -ChildPath 'Invalid?'
     }
