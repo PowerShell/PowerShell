@@ -27,7 +27,7 @@ namespace System.Management.Automation
         /// An instance of the PSTraceSource class used for trace output
         /// using "SessionState" as the category.
         /// </summary>
-        [Dbg.TraceSourceAttribute(
+        [Dbg.TraceSource(
              "SessionState",
              "SessionState Class")]
         private static readonly Dbg.PSTraceSource s_tracer =
