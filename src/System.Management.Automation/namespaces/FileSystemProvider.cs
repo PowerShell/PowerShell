@@ -2719,8 +2719,9 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (IOException ioException)
             {
-                // Do not suppress IOException if it has the specific HResult for invalid characters
-                if (ioException.HResult == ERROR_INVALID_NAME || !Force)
+                // Do not suppress IOException on Windows if it has the specific HResult for invalid characters
+                // even when -Force is specified
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && ioException.HResult == ERROR_INVALID_NAME || !Force)
                 {
                     // IOException contains specific message about the error occurred and so no need for errordetails.
                     WriteError(new ErrorRecord(ioException, "CreateDirectoryIOError", ErrorCategory.WriteError, path));
