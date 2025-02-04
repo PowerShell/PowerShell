@@ -62,6 +62,9 @@ namespace Microsoft.PowerShell.Commands
 
         private const int COPY_FILE_ACTIVITY_ID = 0;
         private const int REMOVE_FILE_ACTIVITY_ID = 0;
+        
+        // Windows error code for invalid characters
+        private const int ERROR_INVALID_NAME = unchecked((int)0x8007007B);
 
         // The name of the key in an exception's Data dictionary when attempting
         // to copy an item onto itself.
@@ -2716,8 +2719,8 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (IOException ioException)
             {
-                // Ignore the error if force was specified
-                if (!Force)
+                // Do not suppress IOException if it has the specific HResult for invalid characters
+                if (ioException.HResult == ERROR_INVALID_NAME || !Force)
                 {
                     // IOException contains specific message about the error occurred and so no need for errordetails.
                     WriteError(new ErrorRecord(ioException, "CreateDirectoryIOError", ErrorCategory.WriteError, path));
