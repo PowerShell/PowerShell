@@ -36,17 +36,6 @@ namespace System.Management.Automation
                 return OperatingSystem.IsBrowser();
             }
         }
-
-        /// <summary>
-        /// True if the current platform is FreeBSD.
-        /// </summary>
-        public static bool IsFreeBSD
-        {
-            get
-            {
-                return OperatingSystem.IsFreeBSD();
-            }
-        }
         
         /// <summary>
         /// True if the current platform is Linux.
@@ -81,7 +70,6 @@ namespace System.Management.Automation
             }
         }
 
-        
         /// <summary>
         /// True if the current platform is Windows.
         /// </summary>
@@ -210,7 +198,7 @@ namespace System.Management.Automation
             get
             {
                 // if SMA assembly location is null, PowerShell is published as a single file bundle
-                string.IsNullOrEmpty(typeof(PSObject).Assembly.Location);
+                return string.IsNullOrEmpty(typeof(PSObject).Assembly.Location);
             }
         }
 
