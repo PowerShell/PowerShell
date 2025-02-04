@@ -2229,7 +2229,6 @@ function Start-PSBootstrap {
         [switch]$NoSudo,
         [switch]$BuildLinuxArm,
         [switch]$Force,
-        [Parameter(Mandatory = $true)]
         [ValidateSet("Package", "DotNet", "Both")]
         [string]$Scenario = "Package"
     )
