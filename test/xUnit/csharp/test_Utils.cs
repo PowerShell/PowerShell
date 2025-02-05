@@ -163,5 +163,17 @@ namespace PSTests.Parallel
             string json = JsonObject.ConvertToJson(hash, in context);
             Assert.Null(json);
         }
+
+        [Fact]
+        public static void TestEmptyErrorRecordToString()
+        {
+            Assert.Equal("", new ErrorRecord(new Exception(""), null, ErrorCategory.NotSpecified, null).ToString());
+        }
+
+        [Fact]
+        public static void TestNonEmptyErrorRecordToString()
+        {
+            Assert.Equal("test", new ErrorRecord(new Exception("test"), null, ErrorCategory.NotSpecified, null).ToString());
+        }
     }
 }
