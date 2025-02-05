@@ -7,7 +7,6 @@ on:
     branches:
       - master
       - release/**
-      - feature*
     paths:
       - "**"
       - "!.github/ISSUE_TEMPLATE/**"
@@ -18,7 +17,6 @@ on:
     branches:
       - master
       - release/**
-      - feature*
 # Path filters for PRs need to go into the changes job
 
 concurrency:
