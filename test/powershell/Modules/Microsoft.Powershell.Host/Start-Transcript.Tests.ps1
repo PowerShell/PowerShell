@@ -86,6 +86,25 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         $outputFilePath = Join-Path $TestDrive "PowerShell_transcript*"
         ValidateTranscription -scriptToExecute $script -outputFilePath $outputFilePath
     }
+    It "Should create Transcript file with path stored in 'Transcript' preference variable" {
+        try {
+            $Global:Transcript = $transcriptFilePath
+
+            [String]$message = New-Guid
+            $script = {
+                Start-Transcript
+                Write-Host -Message $message -InformationAction Ignore
+                Stop-Transcript
+            }
+
+            & $script
+
+            $transcriptFilePath | Should -Exist
+            $transcriptFilePath | Should -Not -FileContentMatch $message
+        } finally {
+            $Global:Transcript = $null
+        }
+    }
     It "Should Append Transcript data in existing file if 'Append' parameter is used with Path parameter" {
         $script = "Start-Transcript -path $transcriptFilePath -Append"
         ValidateTranscription -scriptToExecute $script -outputFilePath $transcriptFilePath -append
