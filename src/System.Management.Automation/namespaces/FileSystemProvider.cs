@@ -7432,7 +7432,7 @@ namespace Microsoft.PowerShell.Commands
         /// reading data from the file.
         /// </summary>
         [Parameter]
-        [ArgumentToEncodingTransformation()]
+        [ArgumentToEncodingTransformation]
         [ArgumentEncodingCompletions]
         [ValidateNotNullOrEmpty]
         public Encoding Encoding

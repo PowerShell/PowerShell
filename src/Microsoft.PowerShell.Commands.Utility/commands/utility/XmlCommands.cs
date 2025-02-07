@@ -111,7 +111,7 @@ namespace Microsoft.PowerShell.Commands
         /// Encoding optional flag.
         /// </summary>
         [Parameter]
-        [ArgumentToEncodingTransformation()]
+        [ArgumentToEncodingTransformation]
         [ArgumentEncodingCompletions]
         [ValidateNotNullOrEmpty]
         public Encoding Encoding

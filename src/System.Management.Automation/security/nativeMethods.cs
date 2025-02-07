@@ -1090,10 +1090,10 @@ namespace System.Management.Automation.Security
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool SaferIdentifyLevel(
             uint dwNumProperties,
-            [In()]
+            [In]
             ref SAFER_CODE_PROPERTIES pCodeProperties,
             out IntPtr pLevelHandle,
-            [In()]
+            [In]
             [MarshalAs(UnmanagedType.LPWStr)]
             string bucket);
 
@@ -1106,9 +1106,9 @@ namespace System.Management.Automation.Security
         [DllImport("advapi32.dll", EntryPoint = "SaferComputeTokenFromLevel", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool SaferComputeTokenFromLevel(
-            [In()]
+            [In]
             IntPtr LevelHandle,
-            [In()]
+            [In]
             System.IntPtr InAccessToken,
             ref System.IntPtr OutAccessToken,
             uint dwFlags,
@@ -1118,13 +1118,13 @@ namespace System.Management.Automation.Security
         ///hLevelHandle: SAFER_LEVEL_HANDLE->SAFER_LEVEL_HANDLE__*
         [DllImport("advapi32.dll", EntryPoint = "SaferCloseLevel")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool SaferCloseLevel([In()] IntPtr hLevelHandle);
+        internal static extern bool SaferCloseLevel([In] IntPtr hLevelHandle);
 
         /// Return Type: BOOL->int
         ///hObject: HANDLE->void*
         [DllImport(PinvokeDllNames.CloseHandleDllName, EntryPoint = "CloseHandle")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool CloseHandle([In()] System.IntPtr hObject);
+        internal static extern bool CloseHandle([In] System.IntPtr hObject);
     }
 
     [StructLayout(LayoutKind.Sequential)]

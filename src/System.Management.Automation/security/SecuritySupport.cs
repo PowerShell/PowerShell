@@ -1706,7 +1706,7 @@ namespace System.Management.Automation
             [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
             [DllImport("amsi.dll", EntryPoint = "AmsiInitialize", CallingConvention = CallingConvention.StdCall)]
             internal static extern int AmsiInitialize(
-                [In()][MarshalAs(UnmanagedType.LPWStr)] string appName, ref System.IntPtr amsiContext);
+                [In][MarshalAs(UnmanagedType.LPWStr)] string appName, ref System.IntPtr amsiContext);
 
             /// Return Type: void
             ///amsiContext: HAMSICONTEXT->HAMSICONTEXT__*
@@ -1741,7 +1741,7 @@ namespace System.Management.Automation
             System.IntPtr amsiContext,
                 System.IntPtr buffer,
                 uint length,
-                [In()][MarshalAs(UnmanagedType.LPWStr)] string contentName,
+                [In][MarshalAs(UnmanagedType.LPWStr)] string contentName,
                 System.IntPtr amsiSession,
                 ref AMSI_RESULT result);
 
@@ -1757,7 +1757,7 @@ namespace System.Management.Automation
                 System.IntPtr amsiContext,
                 System.IntPtr buffer,
                 uint length,
-                [In()][MarshalAs(UnmanagedType.LPWStr)] string contentName,
+                [In][MarshalAs(UnmanagedType.LPWStr)] string contentName,
                 ref AMSI_RESULT result);
 
             /// Return Type: HRESULT->LONG->int
@@ -1769,8 +1769,8 @@ namespace System.Management.Automation
             [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
             [DllImport("amsi.dll", EntryPoint = "AmsiScanString", CallingConvention = CallingConvention.StdCall)]
             internal static extern int AmsiScanString(
-                System.IntPtr amsiContext, [In()][MarshalAs(UnmanagedType.LPWStr)] string @string,
-                [In()][MarshalAs(UnmanagedType.LPWStr)] string contentName, System.IntPtr amsiSession, ref AMSI_RESULT result);
+                System.IntPtr amsiContext, [In][MarshalAs(UnmanagedType.LPWStr)] string @string,
+                [In][MarshalAs(UnmanagedType.LPWStr)] string contentName, System.IntPtr amsiSession, ref AMSI_RESULT result);
         }
     }
 }
