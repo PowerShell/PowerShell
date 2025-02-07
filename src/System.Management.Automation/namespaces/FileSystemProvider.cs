@@ -2716,8 +2716,15 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (IOException ioException)
             {
-                // Ignore the error if force was specified
+#if UNIX
                 if (!Force)
+#else
+                // Windows error code for invalid characters in file or directory name
+                const int ERROR_INVALID_NAME = unchecked((int)0x8007007B);
+
+                // Do not suppress IOException on Windows if it has the specific HResult for invalid characters in directory name
+                if (ioException.HResult == ERROR_INVALID_NAME || !Force)
+#endif
                 {
                     // IOException contains specific message about the error occurred and so no need for errordetails.
                     WriteError(new ErrorRecord(ioException, "CreateDirectoryIOError", ErrorCategory.WriteError, path));
