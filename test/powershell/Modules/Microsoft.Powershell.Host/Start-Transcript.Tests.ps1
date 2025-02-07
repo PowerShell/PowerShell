@@ -86,24 +86,10 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         $outputFilePath = Join-Path $TestDrive "PowerShell_transcript*"
         ValidateTranscription -scriptToExecute $script -outputFilePath $outputFilePath
     }
-    It "Should create Transcript file with path stored in 'Transcript' preference variable" {
-        try {
-            $Global:Transcript = $transcriptFilePath
-
-            [String]$message = New-Guid
-            $script = {
-                Start-Transcript
-                Write-Host -Message $message -InformationAction Ignore
-                Stop-Transcript
-            }
-
-            & $script
-
-            $transcriptFilePath | Should -Exist
-            $transcriptFilePath | Should -Not -FileContentMatch $message
-        } finally {
-            $Global:Transcript = $null
-        }
+    It "Should create Transcript file with 'Transcript' preference variable" {
+        # Casting to PSObject is necessary because Set-Variable does not automatically wrap the value in a PSObject
+        $script = "Set-Variable -Scope Global -Name Transcript -Value ([PSObject]'$transcriptFilePath'); Start-Transcript"
+        ValidateTranscription -scriptToExecute $script -outputFilePath $transcriptFilePath
     }
     It "Should Append Transcript data in existing file if 'Append' parameter is used with Path parameter" {
         $script = "Start-Transcript -path $transcriptFilePath -Append"
