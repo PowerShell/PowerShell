@@ -334,7 +334,7 @@ else
         /// On a 64bit base OS, specifying a value of 32 means that the shell is configured
         /// to launch like a 32bit process (WOW64).
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [Alias("PA")]
         [ValidateNotNullOrEmpty]
         [ValidateSet("x86", "amd64")]
@@ -2049,7 +2049,7 @@ else
         /// <summary>
         /// ApartmentState of the Runspace created for the shell.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public ApartmentState ThreadApartmentState
         {
             get
@@ -2073,7 +2073,7 @@ else
         /// <summary>
         /// ThreadOptions of the Runspace created for the shell.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public PSThreadOptions ThreadOptions
         {
             get
@@ -2139,7 +2139,7 @@ else
         /// <summary>
         /// Initialization script to run upon Runspace creation for this shell.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public string StartupScript
         {
             get
@@ -2161,7 +2161,7 @@ else
         /// Total data (in MB) that can be received from a remote machine
         /// targeted towards a command.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [AllowNull]
         public double? MaximumReceivedDataSizePerCommandMB
         {
@@ -2191,7 +2191,7 @@ else
         /// <summary>
         /// Maximum size (in MB) of a deserialized object received from a remote machine.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [AllowNull]
         public double? MaximumReceivedObjectSizeMB
         {
@@ -2222,7 +2222,7 @@ else
         /// This enables the user to specify an SDDL on the shell.
         /// The default SDDL is the default used by Wsman.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public string SecurityDescriptorSddl
         {
             get
@@ -2255,7 +2255,7 @@ else
         /// <summary>
         /// Shows a UI to choose permissions/access rights for this session configuration.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter ShowSecurityDescriptorUI
         {
             get
@@ -2278,7 +2278,7 @@ else
         /// restarting the WinRM service after the changes were
         /// made.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Force
         {
             get { return force; }
@@ -2293,7 +2293,7 @@ else
         /// WinRM service after completion. Typically WinRM service
         /// need to be restarted for changes to take place.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter NoServiceRestart
         {
             get { return noRestart; }
@@ -2573,7 +2573,7 @@ else
         /// restarting the WinRM service after the changes were
         /// made.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Force
         {
             get
@@ -2594,7 +2594,7 @@ else
         /// WinRM service after completion. Typically WinRM service
         /// need to be restarted for changes to take place.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter NoServiceRestart
         {
             get
@@ -2848,13 +2848,13 @@ $args[0] | ForEach-Object {{
         /// <summary>
         /// </summary>
         [Parameter(Position = 0, Mandatory = false)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         public string[] Name { get; set; }
 
         /// <summary>
         /// Force parameter.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Force
         {
             get
@@ -4233,7 +4233,7 @@ $_ | Enable-PSSessionConfiguration -force $args[0] -sddl $args[1] -isSDDLSpecifi
         /// configuring the WinRM and enabling the session configurations
         /// without prompting the user.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Force
         {
             get
@@ -4253,7 +4253,7 @@ $_ | Enable-PSSessionConfiguration -force $args[0] -sddl $args[1] -isSDDLSpecifi
         /// This enables the user to specify an SDDL for whom the session
         /// configuration is enabled.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public string SecurityDescriptorSddl
         {
             get
@@ -4287,7 +4287,7 @@ $_ | Enable-PSSessionConfiguration -force $args[0] -sddl $args[1] -isSDDLSpecifi
         /// Property that will allow configuring WinRM with Public
         /// profile exception enabled.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter SkipNetworkProfileCheck
         {
             get { return _skipNetworkProfileCheck; }
@@ -4302,7 +4302,7 @@ $_ | Enable-PSSessionConfiguration -force $args[0] -sddl $args[1] -isSDDLSpecifi
         /// WinRM service after completion. Typically WinRM service
         /// needs to be restarted for changes to take place.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter NoServiceRestart
         {
             get { return _noRestart; }
@@ -4520,7 +4520,7 @@ $_ | Disable-PSSessionConfiguration -force $args[0] -whatif:$args[1] -confirm:$a
         /// configuring the WinRM and enabling the session configurations
         /// without prompting the user.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Force
         {
             get
@@ -4541,7 +4541,7 @@ $_ | Disable-PSSessionConfiguration -force $args[0] -whatif:$args[1] -confirm:$a
         /// WinRM service after completion. Typically WinRM service
         /// needs to be restarted for changes to take place.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter NoServiceRestart
         {
             get { return _noRestart; }
@@ -4918,7 +4918,7 @@ Enable-PSRemoting -force $args[0] -queryForRegisterDefault $args[1] -captionForR
         /// configuring the WinRM and enabling the session configurations
         /// without prompting the user.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Force
         {
             get
@@ -4938,7 +4938,7 @@ Enable-PSRemoting -force $args[0] -queryForRegisterDefault $args[1] -captionForR
         /// Property that will allow configuring WinRM with Public
         /// profile exception enabled.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter SkipNetworkProfileCheck
         {
             get { return _skipNetworkProfileCheck; }
@@ -5140,7 +5140,7 @@ Disable-PSRemoting -force:$args[0] -queryForSet $args[1] -captionForSet $args[2]
         /// <summary>
         /// Force parameter.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Force
         {
             get
@@ -5235,7 +5235,7 @@ Disable-PSRemoting -force:$args[0] -queryForSet $args[1] -captionForSet $args[2]
         /// Gets or sets the switch that determines whether just the commands should be returned,
         /// or the entire Initial Session State.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Full { get; set; }
 
         /// <summary>
