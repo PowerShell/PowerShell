@@ -64,6 +64,13 @@ jobs:
       AnalyzeInPipeline: false
       Language: csharp
 
+  - task: UseDotNet@2
+    inputs:
+      useGlobalJson: true
+      workingDirectory: $(PowerShellRoot)
+    env:
+      ob_restore_phase: true
+
   - pwsh: |
       $runtime = $env:RUNTIME
 
@@ -77,7 +84,6 @@ jobs:
       Import-Module -Name $(PowerShellRoot)/build.psm1 -Force
       $buildWithSymbolsPath = New-Item -ItemType Directory -Path $(Pipeline.Workspace)/Symbols_$(Runtime) -Force
 
-      Start-PSBootstrap
       $null = New-Item -ItemType Directory -Path $buildWithSymbolsPath -Force -Verbose
 
       $ReleaseTagParam = @{}

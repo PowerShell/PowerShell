@@ -179,7 +179,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "IndexParameter")]
-        [ValidateRangeAttribute(0, int.MaxValue)]
+        [ValidateRange(0, int.MaxValue)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public int[] Index
         {
@@ -202,7 +202,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "SkipIndexParameter")]
-        [ValidateRangeAttribute(0, int.MaxValue)]
+        [ValidateRange(0, int.MaxValue)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public int[] SkipIndex
         {

@@ -1,6 +1,6 @@
 name: Auto Assign PR Maintainer
 on:
-  pull_request:
+  issues:
     types: [opened, edited]
 permissions:
   contents: read
@@ -13,6 +13,7 @@ jobs:
       pull-requests: write
     steps:
       - uses: wow-actions/auto-assign@67fafa03df61d7e5f201734a2fa60d1ab111880d # v3.0.2
+        if: github.event.issue.pull_request
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # using the `org/team_slug` or `/team_slug` syntax to add git team as reviewers

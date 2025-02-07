@@ -8,6 +8,7 @@ using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Remoting;
 using System.Management.Automation.Runspaces;
+using System.Runtime.InteropServices;
 
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -341,8 +342,22 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            base.BeginProcessing();
+#if UNIX
+            if (ComputerName?.Length > 0)
+            {
+                ErrorRecord err = new(
+                    new NotImplementedException(
+                        PSRemotingErrorInvariants.FormatResourceString(
+                            RemotingErrorIdStrings.UnsupportedOSForRemoteEnumeration,
+                            RuntimeInformation.OSDescription)),
+                    "PSSessionComputerNameUnix",
+                    ErrorCategory.NotImplemented,
+                    null);
+                ThrowTerminatingError(err);
+            }
+#endif
 
+            base.BeginProcessing();
             ConfigurationName ??= string.Empty;
         }
 

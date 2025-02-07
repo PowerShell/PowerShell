@@ -68,8 +68,8 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the type of character encoding for InputObject.
         /// </summary>
         [Parameter(ParameterSetName = "ByInputObject")]
-        [ArgumentToEncodingTransformationAttribute]
-        [ArgumentEncodingCompletionsAttribute]
+        [ArgumentToEncodingTransformation]
+        [ArgumentEncodingCompletions]
         [ValidateNotNullOrEmpty]
         public Encoding Encoding
         {

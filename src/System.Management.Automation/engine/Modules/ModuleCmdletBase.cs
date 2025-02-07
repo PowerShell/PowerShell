@@ -6405,7 +6405,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // If this has an extension, and it's a relative path,
                 // then we need to ensure it's a fully-qualified path
-                if ((moduleToProcess.IndexOfAny(Path.GetInvalidPathChars()) == -1) &&
+                if ((!PathUtils.ContainsInvalidPathChars(moduleToProcess)) &&
                     Path.HasExtension(moduleToProcess) &&
                     (!Path.IsPathRooted(moduleToProcess)))
                 {

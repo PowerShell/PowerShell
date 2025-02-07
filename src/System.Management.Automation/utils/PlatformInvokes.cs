@@ -11,7 +11,7 @@ namespace System.Management.Automation
     internal static class PlatformInvokes
     {
         [StructLayout(LayoutKind.Sequential)]
-        internal class FILETIME
+        internal sealed class FILETIME
         {
             internal uint dwLowDateTime;
             internal uint dwHighDateTime;
@@ -92,7 +92,7 @@ namespace System.Management.Automation
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        internal class SecurityAttributes
+        internal sealed class SecurityAttributes
         {
             internal int nLength;
             internal SafeLocalMemHandle lpSecurityDescriptor;
@@ -536,7 +536,7 @@ namespace System.Management.Automation
         internal static readonly UInt32 OPEN_EXISTING = 3;
 
         [StructLayout(LayoutKind.Sequential)]
-        internal class PROCESS_INFORMATION
+        internal sealed class PROCESS_INFORMATION
         {
             public IntPtr hProcess;
             public IntPtr hThread;
@@ -581,7 +581,7 @@ namespace System.Management.Automation
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        internal class STARTUPINFO
+        internal sealed class STARTUPINFO
         {
             public int cb;
             public IntPtr lpReserved;
@@ -645,7 +645,7 @@ namespace System.Management.Automation
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        internal class SECURITY_ATTRIBUTES
+        internal sealed class SECURITY_ATTRIBUTES
         {
             public int nLength;
             public SafeLocalMemHandle lpSecurityDescriptor;

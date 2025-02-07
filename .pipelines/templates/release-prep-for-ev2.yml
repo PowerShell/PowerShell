@@ -1,0 +1,237 @@
+parameters:
+- name: skipPublish
+  type: boolean
+  default: false
+
+stages:
+- stage: PrepForEV2
+  displayName: 'Copy and prep all files needed for EV2 stage'
+  jobs:
+  - job: CopyEV2FilesToArtifact
+    displayName: 'Copy EV2 Files to Artifact'
+    pool:
+      type: linux
+    variables:
+    - name: ob_outputDirectory
+      value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+    - name: repoRoot
+      value: '$(Build.SourcesDirectory)/PowerShell'
+    - name: ev2ServiceGroupRootFolder
+      value: '$(Build.SourcesDirectory)/PowerShell/.pipelines/EV2Specs/ServiceGroupRoot'
+    - name: ev2ParametersFolder
+      value: '$(Build.SourcesDirectory)/PowerShell/.pipelines/EV2Specs/ServiceGroupRoot/Parameters'
+    - group: 'mscodehub-code-read-akv'
+    - group: 'packages.microsoft.com'
+    - name: ob_sdl_credscan_suppressionsFile
+      value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+    steps:
+    - checkout: self ## the global setting on lfs didn't work
+      lfs: false
+      env:
+        ob_restore_phase: true
+
+    - template: release-SetReleaseTagandContainerName.yml
+      parameters:
+        restorePhase: true
+    
+    - pwsh: |
+        $packageVersion = '$(OutputReleaseTag.ReleaseTag)'.ToLowerInvariant() -replace '^v',''
+        $vstsCommandString = "vso[task.setvariable variable=packageVersion]$packageVersion"
+        Write-Host "sending " + $vstsCommandString
+        Write-Host "##$vstsCommandString"
+      displayName: Set Package version
+      env:
+        ob_restore_phase: true
+    
+    - pwsh: |
+        $branch = 'mirror-target'
+        $gitArgs = "clone",
+        "--verbose",
+        "--branch",
+        "$branch",
+        "https://$(mscodehubCodeReadPat)@mscodehub.visualstudio.com/PowerShellCore/_git/Internal-PowerShellTeam-Tools",
+        '$(Pipeline.Workspace)/tools'
+        $gitArgs | Write-Verbose -Verbose
+        git $gitArgs
+      displayName: Clone Internal-PowerShellTeam-Tools from MSCodeHub
+      env:
+        ob_restore_phase: true
+
+    - pwsh: |
+        Get-ChildItem Env: | Out-String -Stream | write-Verbose -Verbose
+      displayName: 'Capture Environment Variables'
+      env:
+        ob_restore_phase: true
+
+    - pwsh: |
+        Get-ChildItem '$(Build.SourcesDirectory)'
+      displayName: 'Capture BuildDirectory'
+      env:
+        ob_restore_phase: true
+
+    - pwsh: |
+        Get-ChildItem '$(Pipeline.Workspace)' -Recurse | Out-String -Stream | write-Verbose -Verbose
+      displayName: 'Capture Workspace'
+      env:
+        ob_restore_phase: true
+
+    - pwsh: |
+        New-Item -Path '$(ev2ParametersFolder)' -ItemType Directory
+      displayName: 'Create Parameters folder under EV2Specs folder'
+      env:
+        ob_restore_phase: true
+
+    - task: PipAuthenticate@1
+      inputs:
+        artifactFeeds: 'PowerShellCore/PowerShellCore_PublicPackages'
+      displayName: 'Pip Authenticate'
+      env:
+        ob_restore_phase: true
+
+    - pwsh: |
+        python3 -m pip install --upgrade pip
+        pip --version --verbose
+
+        Write-Verbose -Verbose "Download pmc-cli to folder without installing it"
+        $pythonDlFolderPath = Join-Path '$(ev2ServiceGroupRootFolder)/Shell/Run' -ChildPath "python_dl"
+        pip download -d $pythonDlFolderPath pmc-cli --platform=manylinux_2_17_x86_64 --only-binary=:all: --verbose
+      displayName: 'Download pmc-cli package'
+      env:
+        ob_restore_phase: true
+
+    - download: PSPackagesOfficial
+      artifact: 'drop_linux_package_deb'
+      displayName: 'Download artifact containing .deb_amd64.deb file from PSPackagesOfficial triggering pipeline'
+      env:
+        ob_restore_phase: true
+
+    - download: PSPackagesOfficial
+      artifact: 'drop_linux_package_rpm'
+      displayName: 'Download artifact containing .rh.x64_86.rpm file from PSPackagesOfficial triggering pipeline'
+      env:
+        ob_restore_phase: true
+
+    - download: PSPackagesOfficial
+      artifact: 'drop_linux_package_mariner_x64'
+      displayName: 'Download artifact containing .cm.x86_64.rpm file from PSPackagesOfficial triggering pipeline'
+      env:
+        ob_restore_phase: true
+
+    - download: PSPackagesOfficial
+      artifact: 'drop_linux_package_mariner_arm64'
+      displayName: 'Download artifact containing .cm.aarch64.rpm file from PSPackagesOfficial triggering pipeline'
+      env:
+        ob_restore_phase: true
+
+    - pwsh: |
+        Write-Verbose -Verbose "Copy ESRP signed .deb and .rpm packages"
+        $downloadedPipelineFolder = Join-Path '$(Pipeline.Workspace)' -ChildPath 'PSPackagesOfficial'
+        $srcFilesFolder = Join-Path -Path '$(Pipeline.Workspace)' -ChildPath 'SourceFiles'
+        New-Item -Path $srcFilesFolder -ItemType Directory
+        $packagesFolder = Join-Path -Path $srcFilesFolder -ChildPath 'packages'
+        New-Item -Path $packagesFolder -ItemType Directory
+
+        $packageFiles = Get-ChildItem -Path $downloadedPipelineFolder -Recurse -Directory -Filter "drop_*" | Get-ChildItem -File -Include *.deb, *.rpm
+        foreach ($file in $packageFiles)
+        {
+          Write-Verbose -Verbose "copying file: $($file.FullName)"
+          Copy-Item -Path $($file.FullName) -Destination $packagesFolder -Verbose
+        }
+
+        $packagesTarGzDestination = Join-Path -Path '$(ev2ParametersFolder)' -ChildPath 'packages.tar.gz'
+        tar -czvf $packagesTarGzDestination -C $packagesFolder .
+      displayName: 'Copy signed .deb and .rpm packages to .tar.gz to pass as a file var to shell extension'
+      env:
+        ob_restore_phase: true
+
+    - pwsh: |
+        $pathToPMCMetadataFile = Join-Path -Path '$(ev2ParametersFolder)' -ChildPath 'pmcMetadata.json'
+
+        $metadata = Get-Content -Path "$(repoRoot)/tools/metadata.json" -Raw | ConvertFrom-Json
+        $metadataHash = @{}
+        $skipPublishValue = '${{ parameters.skipPublish }}'
+        $metadataHash["ReleaseTag"] = '$(OutputReleaseTag.ReleaseTag)'
+        $metadataHash["LTS"] = $metadata.LTSRelease.Latest
+        $metadataHash["ForProduction"] = $true
+        $metadataHash["SkipPublish"] = [System.Convert]::ToBoolean($skipPublishValue)
+
+        $metadataHash | ConvertTo-Json | Out-File $pathToPMCMetadataFile
+
+        $mappingFilePath = Join-Path -Path '$(repoRoot)/tools/packages.microsoft.com' -ChildPath 'mapping.json'
+        $mappingFilePathExists = Test-Path $mappingFilePath
+        $mappingFileEV2Path = Join-Path -Path '$(ev2ParametersFolder)' -ChildPath "mapping.json"
+        Write-Verbose -Verbose "Copy mapping.json file at: $mappingFilePath which exists: $mappingFilePathExists to: $mappingFileEV2Path"
+        Copy-Item -Path $mappingFilePath -Destination $mappingFileEV2Path
+      displayName: 'Create pmcScriptMetadata.json and mapping.json file'
+      env:
+        ob_restore_phase: true
+
+    - pwsh: |
+        $pathToJsonFile = Join-Path -Path '$(ev2ServiceGroupRootFolder)' -ChildPath 'RolloutSpec.json'
+        $content = Get-Content -Path $pathToJsonFile | ConvertFrom-Json
+        $content.RolloutMetadata.Notification.Email.To = '$(PmcEV2SupportEmail)'
+        Remove-Item -Path $pathToJsonFile
+        $content | ConvertTo-Json -Depth 4 | Out-File $pathToJsonFile
+      displayName: 'Replace values in RolloutSpecPath.json'
+      env:
+        ob_restore_phase: true
+
+    - pwsh: |
+        $pathToJsonFile = Join-Path -Path '$(ev2ServiceGroupRootFolder)' -ChildPath 'UploadLinux.Rollout.json'
+        $content = Get-Content -Path $pathToJsonFile | ConvertFrom-Json
+
+        $identityString = "/subscriptions/$(PmcSubscription)/resourcegroups/$(PmcResourceGroup)/providers/Microsoft.ManagedIdentity/userAssignedIdentities/$(PmcMIName)"
+        $content.shellExtensions.launch.identity.userAssignedIdentities[0] = $identityString
+
+        Remove-Item -Path $pathToJsonFile
+        $content | ConvertTo-Json -Depth 6 | Out-File $pathToJsonFile
+      displayName: 'Replace values in UploadLinux.Rollout.json file'
+      env:
+        ob_restore_phase: true
+
+    - pwsh: |
+        $pathToJsonFile = Join-Path -Path '$(ev2ServiceGroupRootFolder)' -ChildPath 'ServiceModel.json'
+        $content = Get-Content -Path $pathToJsonFile | ConvertFrom-Json
+        $content.ServiceResourceGroups[0].AzureResourceGroupName = '$(PmcResourceGroup)'
+        $content.ServiceResourceGroups[0].AzureSubscriptionId = '$(PmcSubscription)'
+
+        Remove-Item -Path $pathToJsonFile
+        $content | ConvertTo-Json -Depth 9 | Out-File $pathToJsonFile
+      displayName: 'Replace values in ServiceModel.json'
+      env:
+        ob_restore_phase: true
+
+    - pwsh: |
+        $settingFilePath = Join-Path '$(ev2ServiceGroupRootFolder)/Shell/Run' -ChildPath 'settings.toml'
+        New-Item -Path $settingFilePath -ItemType File
+        $pmcMIClientID = '$(PmcMIClientID)'
+        $pmcEndpoint = '$(PmcEndpointUrl)'
+
+        Add-Content -Path $settingFilePath -Value "[default]"
+        Add-Content -Path $settingFilePath -Value "base_url = `"$pmcEndpoint`""
+        Add-Content -Path $settingFilePath -Value "auth_type = `"msi`""
+        Add-Content -Path $settingFilePath -Value "client_id = `"$pmcMIClientID`""
+      displayName: 'Create settings.toml file with MI clientId populated'
+      env:
+        ob_restore_phase: true
+
+    - task: onebranch.pipeline.signing@1
+      inputs:
+        command: 'sign'
+        signing_profile: external_distribution
+        files_to_sign: '*.ps1'
+        search_root: '$(repoRoot)/.pipelines/EV2Specs/ServiceGroupRoot/Shell/Run'
+      displayName: Sign Run.ps1
+  
+    - pwsh: |
+        # folder to tar must have: Run.ps1, settings.toml, python_dl
+        $srcPath = Join-Path '$(ev2ServiceGroupRootFolder)' -ChildPath 'Shell'
+        $pathToRunTarFile = Join-Path $srcPath -ChildPath "Run.tar"
+        tar -cvf $pathToRunTarFile -C $srcPath ./Run
+      displayName: 'Create archive for the shell extension'
+
+    - task: CopyFiles@2
+      inputs:
+        SourceFolder: '$(repoRoot)/.pipelines'
+        Contents: 'EV2Specs/**'
+        TargetFolder: $(ob_outputDirectory)

@@ -6,7 +6,7 @@ jobs:
     type: windows
   variables:
   - name: ob_sdl_sbom_enabled
-    value: false
+    value: true
   - name: runCodesignValidationInjection
     value: false
   - name: NugetSecurityAnalysisWarningLevel
@@ -235,23 +235,21 @@ jobs:
       Get-ChildItem '$(Build.ArtifactStagingDirectory)/downloads' | Select-Object -ExpandProperty FullName
     displayName: 'Capture downloads'
 
-  # - pwsh: |
-  #     Write-Verbose -Verbose "Copying Github Release files in $(Build.ArtifactStagingDirectory)/downloads to use in Release Pipeline"
-  #     
-  #     Write-Verbose -Verbose "Creating output directory for GitHub Release files: $(ob_outputDirectory)/GitHubPackages"
-  #     New-Item -Path $(ob_outputDirectory)/GitHubPackages -ItemType Directory -Force
-  #     Get-ChildItem -Path "$(Build.ArtifactStagingDirectory)/downloads/*" -Recurse | 
-  #       Where-Object { $_.Extension -notin '.msix', '.nupkg' } | 
-  #       ForEach-Object { Write-Verbose -Verbose $_.FullName ; $_  } |
-  #       Copy-Item -Destination $(ob_outputDirectory)/GitHubPackages -Recurse
-  #     
-  #     Write-Verbose -Verbose "Creating output directory for NuGet packages: $(ob_outputDirectory)/NuGetPackages"
-  #     New-Item -Path $(ob_outputDirectory)/NuGetPackages -ItemType Directory -Force
-  #     Get-ChildItem -Path "$(Build.ArtifactStagingDirectory)/downloads/*" -Recurse | 
-  #       Where-Object { $_.Extension -eq '.nupkg' } | 
-  #       ForEach-Object { Write-Verbose -Verbose $_.FullName ; $_  } |
-  #       Copy-Item -Destination $(ob_outputDirectory)/NuGetPackages -Recurse
-  #   displayName: Copy downloads to Artifacts
+  - pwsh: |
+      Write-Verbose -Verbose "Copying Github Release files in $(Build.ArtifactStagingDirectory)/downloads to use in Release Pipeline"
+      
+      Write-Verbose -Verbose "Creating output directory for GitHub Release files: $(ob_outputDirectory)/GitHubPackages"
+      New-Item -Path $(ob_outputDirectory)/GitHubPackages -ItemType Directory -Force
+      Get-ChildItem -Path "$(Build.ArtifactStagingDirectory)/downloads/*" -Recurse | 
+        Where-Object { $_.Extension -notin '.msix', '.nupkg' -and $_.Name -notmatch '-gc'} | 
+        Copy-Item -Destination $(ob_outputDirectory)/GitHubPackages -Recurse -Verbose
+      
+      Write-Verbose -Verbose "Creating output directory for NuGet packages: $(ob_outputDirectory)/NuGetPackages"
+      New-Item -Path $(ob_outputDirectory)/NuGetPackages -ItemType Directory -Force
+      Get-ChildItem -Path "$(Build.ArtifactStagingDirectory)/downloads/*" -Recurse | 
+        Where-Object { $_.Extension -eq '.nupkg' } | 
+        Copy-Item -Destination $(ob_outputDirectory)/NuGetPackages -Recurse -Verbose
+    displayName: Copy downloads to Artifacts
 
   - pwsh: |
       # Create output directory for packages which have been uploaded to blob storage

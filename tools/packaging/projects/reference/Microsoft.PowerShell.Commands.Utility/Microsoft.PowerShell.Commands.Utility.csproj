@@ -5,7 +5,7 @@
     <DelaySign>true</DelaySign>
     <AssemblyOriginatorKeyFile>$(SnkFile)</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
-    <LangVersion>11.0</LangVersion>
+    <LangVersion>13.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System.Management.Automation">

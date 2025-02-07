@@ -2860,7 +2860,7 @@ namespace System.Management.Automation.Runspaces
             // Ensure that user name contains no invalid path characters.
             // MSDN indicates that logon names cannot contain any of these invalid characters,
             // but this check will ensure safety.
-            if (userName.IndexOfAny(System.IO.Path.GetInvalidPathChars()) > -1)
+            if (PathUtils.ContainsInvalidPathChars(userName))
             {
                 throw new PSInvalidOperationException(RemotingErrorIdStrings.InvalidUserDriveName);
             }

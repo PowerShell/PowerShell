@@ -205,6 +205,7 @@ namespace Microsoft.PowerShell.Telemetry
                         "adrms",
                         "adrmsadmin",
                         "agpm",
+                        "AIShell",
                         "appbackgroundtask",
                         "applocker",
                         "appv",

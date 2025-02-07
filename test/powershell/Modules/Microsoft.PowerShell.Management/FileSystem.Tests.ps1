@@ -1,5 +1,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+
+Import-Module HelpersCommon
+
 Describe "Basic FileSystem Provider Tests" -Tags "CI" {
     BeforeAll {
         $testDir = "TestDir"
@@ -621,6 +624,11 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
     }
 
     Context "New-Item and hard/symbolic links" {
+        AfterEach {
+            # clean up created links after each test
+            Remove-Item -Exclude (Split-Path -Leaf $realFile, $realDir, $realDir2) -Recurse $TestPath/*
+        }
+
         It "New-Item can create a hard link to a file" {
             New-Item -ItemType HardLink -Path $hardLinkToFile -Value $realFile > $null
             Test-Path $hardLinkToFile | Should -BeTrue
@@ -664,6 +672,31 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             $link.LinkType | Should -BeExactly "SymbolicLink"
             $link.Target | Should -BeExactly $real.ToString()
         }
+
+        It "New-Item can create a directory symbolic link to a directory using a relative path" -Skip:(-Not $IsWindows) {
+            $target = Split-Path -Leaf $realDir
+            New-Item -ItemType SymbolicLink -Path $symLinkToDir -Value $target > $null
+            Test-Path $symLinkToDir | Should -BeTrue
+            $real = Get-Item -Path $realDir
+            $link = Get-Item -Path $symLinkToDir
+            $link | Should -BeOfType System.IO.DirectoryInfo
+            $link.LinkType | Should -BeExactly "SymbolicLink"
+            $link.ResolvedTarget | Should -BeExactly $real.ToString()
+            $link.Target | Should -BeExactly $target
+        }
+
+        It "New-Item can create a directory symbolic link to a directory using a relative path with .\" -Skip:(-Not $IsWindows) {
+            $target = ".\$(Split-Path -Leaf $realDir)"
+            New-Item -ItemType SymbolicLink -Path $symLinkToDir -Value $target > $null
+            Test-Path $symLinkToDir | Should -BeTrue
+            $real = Get-Item -Path $realDir
+            $link = Get-Item -Path $symLinkToDir
+            $link | Should -BeOfType System.IO.DirectoryInfo
+            $link.LinkType | Should -BeExactly "SymbolicLink"
+            $link.ResolvedTarget | Should -BeExactly $real.ToString()
+            $link.Target | Should -BeExactly $target
+        }
+
         It "New-Item can create a directory junction to a directory" -Skip:(-Not $IsWindows) {
             New-Item -ItemType Junction -Path $junctionToDir -Value $realDir > $null
             Test-Path $junctionToDir | Should -BeTrue

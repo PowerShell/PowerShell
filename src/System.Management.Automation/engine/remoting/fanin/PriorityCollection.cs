@@ -301,7 +301,7 @@ namespace System.Management.Automation.Remoting
     {
         #region tracer
 
-        [TraceSourceAttribute("Transport", "Traces BaseWSManTransportManager")]
+        [TraceSource("Transport", "Traces BaseWSManTransportManager")]
         private static readonly PSTraceSource s_baseTracer = PSTraceSource.GetTracer("Transport", "Traces BaseWSManTransportManager");
 
         #endregion

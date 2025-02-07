@@ -2078,6 +2078,14 @@ namespace System.Management.Automation
             }
 
             /// <summary>
+            /// Returns all names for the provided enum type.
+            /// </summary>
+            /// <param name="enumType">The enum type to retrieve names from.</param>
+            /// <returns>Array of enum names for the specified type.</returns>
+            internal static string[] GetEnumNames(Type enumType)
+                => EnumSingleTypeConverter.GetEnumHashEntry(enumType).names;
+
+            /// <summary>
             /// Returns all values for the provided enum type.
             /// </summary>
             /// <param name="enumType">The enum type to retrieve values from.</param>

@@ -1877,7 +1877,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Allows a NULL as the argument to a mandatory parameter.
     /// </summary>
-    [AttributeUsageAttribute(AttributeTargets.Field | AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public sealed class AllowNullAttribute : CmdletMetadataAttribute
     {
         /// <summary>
@@ -1889,7 +1889,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Allows an empty string as the argument to a mandatory string parameter.
     /// </summary>
-    [AttributeUsageAttribute(AttributeTargets.Field | AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public sealed class AllowEmptyStringAttribute : CmdletMetadataAttribute
     {
         /// <summary>
@@ -1901,7 +1901,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Allows an empty collection as the argument to a mandatory collection parameter.
     /// </summary>
-    [AttributeUsageAttribute(AttributeTargets.Field | AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public sealed class AllowEmptyCollectionAttribute : CmdletMetadataAttribute
     {
         /// <summary>
