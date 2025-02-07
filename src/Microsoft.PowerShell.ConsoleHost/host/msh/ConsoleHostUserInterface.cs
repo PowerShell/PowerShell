@@ -2250,7 +2250,7 @@ namespace Microsoft.PowerShell
         private readonly ConsoleHostRawUserInterface _rawui;
         private readonly ConsoleHost _parent;
 
-        [TraceSourceAttribute("ConsoleHostUserInterface", "Console host's subclass of S.M.A.Host.Console")]
+        [TraceSource("ConsoleHostUserInterface", "Console host's subclass of S.M.A.Host.Console")]
         private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("ConsoleHostUserInterface", "Console host's subclass of S.M.A.Host.Console");
     }
 }   // namespace
