@@ -2653,15 +2653,18 @@ dir -Recurse `
     Context "Module cmdlet completion tests" {
         It "ArugmentCompleter for PSEdition should work for '<cmd>'" -TestCases @(
             @{cmd = "Get-Module -PSEdition "; expected = "Desktop", "Core"}
+            @{cmd = "Get-Module -PSEdition '"; expected = "'Desktop'", "'Core'"}
+            @{cmd = "Get-Module -PSEdition """; expected = """Desktop""", """Core"""}
+            @{cmd = "Get-Module -PSEdition 'Desk"; expected = "'Desktop'"}
+            @{cmd = "Get-Module -PSEdition ""Desk"; expected = """Desktop"""}
+            @{cmd = "Get-Module -PSEdition Co"; expected = "Core"}
+            @{cmd = "Get-Module -PSEdition 'Co"; expected = "'Core'"}
+            @{cmd = "Get-Module -PSEdition ""Co"; expected = """Core"""}
         ) {
             param($cmd, $expected)
             $res = TabExpansion2 -inputScript $cmd -cursorColumn $cmd.Length
-            $res.CompletionMatches | Should -HaveCount $expected.Count
-            $completionOptions = ""
-            foreach ($completion in $res.CompletionMatches) {
-                $completionOptions += $completion.ListItemText
-            }
-            $completionOptions | Should -BeExactly ([string]::Join("", $expected))
+            $completionText = $res.CompletionMatches.CompletionText
+            $completionText -join ' ' | Should -BeExactly ($expected -join ' ')
         }
     }
 
