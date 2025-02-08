@@ -605,6 +605,6 @@ namespace Microsoft.PowerShell.Commands
             string wordToComplete,
             CommandAst commandAst,
             IDictionary fakeBoundParameters) 
-                => CompletionCompleters.GetMatchingResults(wordToComplete, Utils.AllowedEditionValues);
+                => CompletionCompleters.GetMatchingResults(wordToComplete, possibleCompletionValues: Utils.AllowedEditionValues);
     }
 }
