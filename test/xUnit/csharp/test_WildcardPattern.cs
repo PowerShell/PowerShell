@@ -63,5 +63,18 @@ namespace PSTests.Parallel
         {
             Assert.Equal(WildcardPattern.Unescape(source), expected);
         }
+
+        [Theory]
+        [InlineData("`r*", "`r`n", true)]
+        [InlineData("``r*", "`r`n", false)]
+        [InlineData("`*", "`r`n", true)]
+        [InlineData("`r`*", "`r`n", true)]
+        [InlineData("`r``*", "`r`n", false)]
+        [InlineData("`r`n*", "`r`n", true)]
+        [InlineData("`r`n", "`r`n", true)]
+        public void TestIsMatch_String(string pattern, string input, bool result)
+        {
+            Assert.Equal(WildcardPattern.Get(pattern, WildcardOptions.IgnoreCase).IsMatch(input), result);
+        }
     }
 }
