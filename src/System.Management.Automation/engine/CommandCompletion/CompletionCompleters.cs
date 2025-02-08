@@ -8382,6 +8382,45 @@ namespace System.Management.Automation
             return quote;
         }
 
+        /// <summary>
+        /// Get matching completions from word to complete.
+        /// This makes it easier to handle different variations of completions with consideration of quotes.
+        /// </summary>
+        /// <param name="wordToComplete">The word to complete.</param>
+        /// <param name="possibleCompletionValues">The possible completion values to iterate.</param>
+        /// <param name="toolTipMapping">The optional tool tip mapping delegate.</param>
+        /// <param name="resultType">The optional completion result type. Default is Text.</param>
+        /// <returns></returns>
+        internal static IEnumerable<CompletionResult> GetMatchingResults(
+            string wordToComplete,
+            IEnumerable<string> possibleCompletionValues,
+            Func<string, string> toolTipMapping = null,
+            CompletionResultType resultType = CompletionResultType.Text)
+        {
+            string quote = HandleDoubleAndSingleQuote(ref wordToComplete);
+            var pattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
+
+            foreach (string value in possibleCompletionValues)
+            {
+                if (pattern.IsMatch(value))
+                {
+                    string completionText = quote == string.Empty
+                        ? value
+                        : quote + value + quote;
+
+                    string listItemText = value;
+
+                    yield return new CompletionResult(
+                        completionText,
+                        listItemText,
+                        resultType,
+                        toolTip: toolTipMapping is null
+                            ? listItemText
+                            : toolTipMapping(value));
+                }
+            }
+        }
+
         internal static bool IsSplattedVariable(Ast targetExpr)
         {
             if (targetExpr is VariableExpressionAst && ((VariableExpressionAst)targetExpr).Splatted)
@@ -8552,6 +8591,12 @@ namespace System.Management.Automation
             return false;
         }
 
+        private static readonly SearchValues<char> s_defaultCharsToCheck = SearchValues.Create("$`");
+        private static readonly SearchValues<char> s_escapeCharsToCheck = SearchValues.Create("$[]`");
+
+        private static bool ContainsCharsToCheck(ReadOnlySpan<char> text, bool escape) 
+            => text.ContainsAny(escape ? s_escapeCharsToCheck : s_defaultCharsToCheck);
+
         private static bool CompletionRequiresQuotes(string completion, bool escape)
         {
             // If the tokenizer sees the completion as more than two tokens, or if there is some error, then
@@ -8561,18 +8606,13 @@ namespace System.Management.Automation
             ParseError[] errors;
             Language.Parser.ParseInput(completion, out tokens, out errors);
 
-            char[] charToCheck = escape ? new[] { '$', '[', ']', '`' } : new[] { '$', '`' };
-
             // Expect no errors and 2 tokens (1 is for our completion, the other is eof)
             // Or if the completion is a keyword, we ignore the errors
             bool requireQuote = !(errors.Length == 0 && tokens.Length == 2);
             if ((!requireQuote && tokens[0] is StringToken) ||
                 (tokens.Length == 2 && (tokens[0].TokenFlags & TokenFlags.Keyword) != 0))
             {
-                requireQuote = false;
-                var value = tokens[0].Text;
-                if (value.IndexOfAny(charToCheck) != -1)
-                    requireQuote = true;
+                requireQuote = ContainsCharsToCheck(tokens[0].Text, escape);
             }
 
             return requireQuote;

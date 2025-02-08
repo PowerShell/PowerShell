@@ -19,7 +19,7 @@ namespace System.Management.Automation.Runspaces.Internal
     {
         #region Tracer
 
-        [TraceSourceAttribute("CRPS", "ClientRemotePowerShell")]
+        [TraceSource("CRPS", "ClientRemotePowerShell")]
         private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("CRPS", "ClientRemotePowerShellBase");
 
         #endregion Tracer

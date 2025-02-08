@@ -29,7 +29,7 @@ namespace System.Management.Automation
         /// An instance of the PSTraceSource class used for trace output
         /// using "CmdletProviderContext" as the category.
         /// </summary>
-        [Dbg.TraceSourceAttribute(
+        [Dbg.TraceSource(
              "CmdletProviderContext",
              "The context under which a core command is being run.")]
         private static readonly Dbg.PSTraceSource s_tracer =
