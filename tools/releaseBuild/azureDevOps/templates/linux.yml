@@ -57,7 +57,7 @@ jobs:
   - powershell: |
       Import-Module "$env:POWERSHELLROOT/build.psm1"
 
-      Start-PSBootstrap -Package
+      Start-PSBootstrap -Scenario Package
     displayName: 'Bootstrap'
     condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
     workingDirectory: $(PowerShellRoot)
