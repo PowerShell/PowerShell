@@ -598,7 +598,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="wordToComplete">The word to complete.</param>
         /// <param name="commandAst">The command AST.</param>
         /// <param name="fakeBoundParameters">The fake bound parameters.</param>
-        /// <returns>List of Completion Results.</returns>
+        /// <returns>List of completion results.</returns>
         public IEnumerable<CompletionResult> CompleteArgument(
             string commandName,
             string parameterName,
