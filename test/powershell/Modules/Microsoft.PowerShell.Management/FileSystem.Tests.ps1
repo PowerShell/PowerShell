@@ -1205,7 +1205,7 @@ Describe "Extended FileSystem Item/Content Cmdlet Provider Tests" -Tags "Feature
             $result.Name | Should -BeExactly $testDir
         }
 
-        It "Verify Provider Root Directory + Force" {
+        It "Verify Directory creation when path relative to current PSDrive is empty" {
             try {
                 New-Item "NewDirectory" -ItemType Directory -Force
                 $newPSDrive = New-PSDrive -Name "NewPSDrive" -PSProvider FileSystem -Root "NewDirectory"
