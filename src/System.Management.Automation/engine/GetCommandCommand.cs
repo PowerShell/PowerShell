@@ -1723,23 +1723,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>List of command nouns.</returns>
         private static HashSet<string> GetCommandNouns(IDictionary fakeBoundParameters)
         {
-            using var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
-
-            ps.AddCommand("Get-Command");
-
-            // Completion: Get-Command -Module <module> -Noun <wordToComplete>
-            if (fakeBoundParameters.Contains("Module"))
-            {
-                ps.AddParameter("Module", fakeBoundParameters["Module"]);
-            }
-
-            // Completion: Get-Command -Verb <verb> -Noun <wordToComplete>
-            if (fakeBoundParameters.Contains("Verb"))
-            {
-                ps.AddParameter("Verb", fakeBoundParameters["Verb"]);
-            }
-
-            Collection<CommandInfo> commands = ps.Invoke<CommandInfo>();
+            Collection<CommandInfo> commands = CompletionCompleters.GetCommandInfo(fakeBoundParameters, "Module", "Verb");
             HashSet<string> nouns = new(commands.Count, StringComparer.OrdinalIgnoreCase);
 
             foreach (CommandInfo command in commands)
