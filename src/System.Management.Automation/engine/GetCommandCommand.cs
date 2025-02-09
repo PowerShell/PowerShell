@@ -1714,17 +1714,17 @@ namespace Microsoft.PowerShell.Commands
             CommandAst commandAst,
             IDictionary fakeBoundParameters) => CompletionCompleters.GetMatchingResults(
                 wordToComplete,
-                possibleCompletionValues: GetCommandNouns(fakeBoundParameters).Order());
+                possibleCompletionValues: GetCommandNouns(fakeBoundParameters));
 
         /// <summary>
-        /// Get command nouns using Get-Command.
+        /// Get sorted set of command nouns using Get-Command.
         /// </summary>
         /// <param name="fakeBoundParameters">The fake bound parameters.</param>
-        /// <returns>List of command nouns.</returns>
-        private static HashSet<string> GetCommandNouns(IDictionary fakeBoundParameters)
+        /// <returns>Sorted set of command nouns.</returns>
+        private static SortedSet<string> GetCommandNouns(IDictionary fakeBoundParameters)
         {
             Collection<CommandInfo> commands = CompletionCompleters.GetCommandInfo(fakeBoundParameters, "Module", "Verb");
-            HashSet<string> nouns = new(commands.Count, StringComparer.OrdinalIgnoreCase);
+            SortedSet<string> nouns = new(StringComparer.OrdinalIgnoreCase);
 
             foreach (CommandInfo command in commands)
             {
