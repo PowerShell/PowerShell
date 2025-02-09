@@ -1078,6 +1078,43 @@ ConstructorTestClass(int i, bool b)
         }
     }
 
+    Context 'Get-Command -Noun parameter completion' {
+        BeforeAll {
+            $allUtilityCommandNouns = "Alias CliXml Command Csv Culture Custom Date Debug Debugger EngineEvent Error Event EventSubscriber Expression File FileHash FormatData GridView Guid Hex Host Html Information Json List LocalizedData MailMessage Markdown MarkdownOption Member Object ObjectEvent Output PowerShellDataFile Printer Progress PSBreakpoint PSCallStack PSSession Random RestMethod Runspace RunspaceDebug SddlString SecureRandom Sleep String StringData Table TemporaryFile TimeSpan TraceSource Type TypeData UICulture Unique Uptime Variable Verb Verbose Warning WebRequest Wide Xml"
+            $allUtilityCommandNounsSingleQuote = "'Alias' 'CliXml' 'Command' 'Csv' 'Culture' 'Custom' 'Date' 'Debug' 'Debugger' 'EngineEvent' 'Error' 'Event' 'EventSubscriber' 'Expression' 'File' 'FileHash' 'FormatData' 'GridView' 'Guid' 'Hex' 'Host' 'Html' 'Information' 'Json' 'List' 'LocalizedData' 'MailMessage' 'Markdown' 'MarkdownOption' 'Member' 'Object' 'ObjectEvent' 'Output' 'PowerShellDataFile' 'Printer' 'Progress' 'PSBreakpoint' 'PSCallStack' 'PSSession' 'Random' 'RestMethod' 'Runspace' 'RunspaceDebug' 'SddlString' 'SecureRandom' 'Sleep' 'String' 'StringData' 'Table' 'TemporaryFile' 'TimeSpan' 'TraceSource' 'Type' 'TypeData' 'UICulture' 'Unique' 'Uptime' 'Variable' 'Verb' 'Verbose' 'Warning' 'WebRequest' 'Wide' 'Xml'"
+            $allUtilityCommandNounsDoubleQuote = """Alias"" ""CliXml"" ""Command"" ""Csv"" ""Culture"" ""Custom"" ""Date"" ""Debug"" ""Debugger"" ""EngineEvent"" ""Error"" ""Event"" ""EventSubscriber"" ""Expression"" ""File"" ""FileHash"" ""FormatData"" ""GridView"" ""Guid"" ""Hex"" ""Host"" ""Html"" ""Information"" ""Json"" ""List"" ""LocalizedData"" ""MailMessage"" ""Markdown"" ""MarkdownOption"" ""Member"" ""Object"" ""ObjectEvent"" ""Output"" ""PowerShellDataFile"" ""Printer"" ""Progress"" ""PSBreakpoint"" ""PSCallStack"" ""PSSession"" ""Random"" ""RestMethod"" ""Runspace"" ""RunspaceDebug"" ""SddlString"" ""SecureRandom"" ""Sleep"" ""String"" ""StringData"" ""Table"" ""TemporaryFile"" ""TimeSpan"" ""TraceSource"" ""Type"" ""TypeData"" ""UICulture"" ""Unique"" ""Uptime"" ""Variable"" ""Verb"" ""Verbose"" ""Warning"" ""WebRequest"" ""Wide"" ""Xml"""
+            $utilityCommandNounsStartingWithF = "File FileHash FormatData"
+            $utilityCommandNounsStartingWithFSingleQuote = "'File' 'FileHash' 'FormatData'"
+            $utilityCommandNounsStartingWithFDoubleQuote = """File"" ""FileHash"" ""FormatData"""
+            $utilityCommandNounsWithConvertToVerb = "CliXml Csv Html Json Xml"
+            $utilityCommandNounsWithConvertToVerbSingleQuote = "'CliXml' 'Csv' 'Html' 'Json' 'Xml'"
+            $utilityCommandNounsWithConvertToVerbDoubleQuote = """CliXml"" ""Csv"" ""Html"" ""Json"" ""Xml"""
+            $utilityCommandNounsWithConvertToVerbStartingWithC = "CliXml Csv"
+            $utilityCommandNounsWithConvertToVerbStartingWithCSingleQuote = "'CliXml' 'Csv'"
+            $utilityCommandNounsWithConvertToVerbStartingWithCDoubleQuote = """CliXml"" ""Csv"""
+        }
+
+        It "Should complete Noun for '<TextInput>'" -TestCases @(
+            @{ TextInput = "Get-Command -Module Microsoft.PowerShell.Utility -Noun "; ExpectedNouns = $allUtilityCommandNouns }
+            @{ TextInput = "Get-Command -Module Microsoft.PowerShell.Utility -Noun '"; ExpectedNouns = $allUtilityCommandNounsSingleQuote }
+            @{ TextInput = "Get-Command -Module Microsoft.PowerShell.Utility -Noun """; ExpectedNouns = $allUtilityCommandNounsDoubleQuote }
+            @{ TextInput = "Get-Command -Module Microsoft.PowerShell.Utility -Noun F"; ExpectedNouns = $utilityCommandNounsStartingWithF  }
+            @{ TextInput = "Get-Command -Module Microsoft.PowerShell.Utility -Noun 'F"; ExpectedNouns = $utilityCommandNounsStartingWithFSingleQuote }
+            @{ TextInput = "Get-Command -Module Microsoft.PowerShell.Utility -Noun ""F"; ExpectedNouns = $utilityCommandNounsStartingWithFDoubleQuote }
+            @{ TextInput = "Get-Command -Module Microsoft.PowerShell.Utility -Verb ConvertTo -Noun "; ExpectedNouns = $utilityCommandNounsWithConvertToVerb  }
+            @{ TextInput = "Get-Command -Module Microsoft.PowerShell.Utility -Verb ConvertTo -Noun '"; ExpectedNouns = $utilityCommandNounsWithConvertToVerbSingleQuote }
+            @{ TextInput = "Get-Command -Module Microsoft.PowerShell.Utility -Verb ConvertTo -Noun """; ExpectedNouns = $utilityCommandNounsWithConvertToVerbDoubleQuote }
+            @{ TextInput = "Get-Command -Module Microsoft.PowerShell.Utility -Verb ConvertTo -Noun C"; ExpectedNouns = $utilityCommandNounsWithConvertToVerbStartingWithC  }
+            @{ TextInput = "Get-Command -Module Microsoft.PowerShell.Utility -Verb ConvertTo -Noun 'C"; ExpectedNouns = $utilityCommandNounsWithConvertToVerbStartingWithCSingleQuote }
+            @{ TextInput = "Get-Command -Module Microsoft.PowerShell.Utility -Verb ConvertTo -Noun ""C"; ExpectedNouns = $utilityCommandNounsWithConvertToVerbStartingWithCDoubleQuote }
+        ) {
+            param($TextInput, $ExpectedNouns)
+            $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
+            $completionText = $res.CompletionMatches.CompletionText
+            $completionText -join ' ' | Should -BeExactly $ExpectedNouns
+        }
+    }
+
     Context "Format cmdlet's View paramter completion" {
         BeforeAll {
             $viewDefinition = @'

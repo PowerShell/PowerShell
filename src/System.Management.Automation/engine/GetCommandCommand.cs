@@ -1694,40 +1694,66 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
+    /// Provides argument completion for Noun parameter. 
     /// </summary>
     public class NounArgumentCompleter : IArgumentCompleter
     {
-        /// <summary>
         /// </summary>
-        public IEnumerable<CompletionResult> CompleteArgument(string commandName, string parameterName, string wordToComplete, CommandAst commandAst, IDictionary fakeBoundParameters)
+        /// Returns completion results for Noun parameter.
+        /// </summary>
+        /// <param name="commandName">The command name.</param>
+        /// <param name="parameterName">The parameter name.</param>
+        /// <param name="wordToComplete">The word to complete.</param>
+        /// <param name="commandAst">The command AST.</param>
+        /// <param name="fakeBoundParameters">The fake bound parameters.</param>
+        /// <returns>List of completion results.</returns>
+        public IEnumerable<CompletionResult> CompleteArgument(
+            string commandName,
+            string parameterName,
+            string wordToComplete,
+            CommandAst commandAst,
+            IDictionary fakeBoundParameters) => CompletionCompleters.GetMatchingResults(
+                wordToComplete,
+                possibleCompletionValues: GetCommandNouns(fakeBoundParameters).Order());
+
+        /// <summary>
+        /// Get command nouns using Get-Command.
+        /// </summary>
+        /// <param name="fakeBoundParameters">The fake bound parameters.</param>
+        /// <returns>List of command nouns.</returns>
+        private static HashSet<string> GetCommandNouns(IDictionary fakeBoundParameters)
         {
-            if (fakeBoundParameters == null)
-            {
-                throw PSTraceSource.NewArgumentNullException(nameof(fakeBoundParameters));
-            }
+            using var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
 
-            var commandInfo = new CmdletInfo("Get-Command", typeof(GetCommandCommand));
-            var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace)
-                .AddCommand(commandInfo)
-                .AddParameter("Noun", wordToComplete + "*");
+            ps.AddCommand("Get-Command");
 
+            // Completion: Get-Command -Module <module> -Noun <wordToComplete>
             if (fakeBoundParameters.Contains("Module"))
             {
                 ps.AddParameter("Module", fakeBoundParameters["Module"]);
             }
 
-            HashSet<string> nouns = new HashSet<string>();
-            var results = ps.Invoke<CommandInfo>();
-            foreach (var result in results)
+            // Completion: Get-Command -Verb <verb> -Noun <wordToComplete>
+            if (fakeBoundParameters.Contains("Verb"))
             {
-                var dash = result.Name.IndexOf('-');
-                if (dash != -1)
+                ps.AddParameter("Verb", fakeBoundParameters["Verb"]);
+            }
+
+            Collection<CommandInfo> commands = ps.Invoke<CommandInfo>();
+            HashSet<string> nouns = new(commands.Count, StringComparer.OrdinalIgnoreCase);
+
+            foreach (CommandInfo command in commands)
+            {
+                string commandName = command.Name;
+                int dashIndex = commandName.IndexOf('-');
+                if (dashIndex != -1)
                 {
-                    nouns.Add(result.Name.Substring(dash + 1));
+                    string noun = commandName.Substring(dashIndex + 1);
+                    nouns.Add(noun);
                 }
             }
 
-            return nouns.Order().Select(static noun => new CompletionResult(noun, noun, CompletionResultType.Text, noun));
+            return nouns;
         }
     }
 }
