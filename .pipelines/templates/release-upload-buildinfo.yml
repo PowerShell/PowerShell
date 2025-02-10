@@ -8,7 +8,11 @@ jobs:
   displayName: Publish BuildInfo
   condition: succeeded()
   pool:
+    name: PowerShell1ES
     type: windows
+    isCustom: true
+    demands:
+    - ImageOverride -equals PSMMS2019-Secure
   variables:
   - name: runCodesignValidationInjection
     value: false
@@ -37,7 +41,7 @@ jobs:
   - template: release-SetReleaseTagAndContainerName.yml
 
   - pwsh: |
-      Get-ChildItem Env:
+      Get-ChildItem Env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
     displayName: 'Capture Environment Variables'
 
   - download: PSPackagesOfficial
@@ -45,14 +49,15 @@ jobs:
     displayName: Download build info artifact
 
   - pwsh: |
-      Import-Module '$(Build.SourcesDirectory)/tools/ci.psm1'
+      $toolsDirectory = '$(Build.SourcesDirectory)/tools'
+      Import-Module "$toolsDirectory/ci.psm1"
       $jsonFile = Get-Item "$ENV:PIPELINE_WORKSPACE/PSPackagesOfficial/BuildInfoJson/*.json"
       $fileName = Split-Path $jsonFile -Leaf
 
       $dateTime = [datetime]::UtcNow
       $dateTime = [datetime]::new($dateTime.Ticks - ($dateTime.Ticks % [timespan]::TicksPerSecond), $dateTime.Kind)
 
-      $metadata = Get-Content ./tools/metadata.json | ConvertFrom-Json
+      $metadata = Get-Content -LiteralPath "$toolsDirectory/metadata.json" -ErrorAction Stop | ConvertFrom-Json
       $stableRelease = $metadata.StableRelease.Latest
       $ltsRelease = $metadata.LTSRelease.Latest
 
@@ -118,29 +123,30 @@ jobs:
       azurePowerShellVersion: LatestVersion
       pwsh: true
       inline: |
-        $containerName = "buildinfo"
-        $storageAccount = '$(StorageAccount)'
+        $containerName = '$web'
+        $storageAccount = '$(PSInfraStorageAccount)'
+        $prefix = "buildinfo"
 
         $storageContext = New-AzStorageContext -StorageAccountName $storageAccount -UseConnectedAccount
 
         if ($env:CopyMainBuildInfo -eq 'YES') {
           $jsonFile = "$env:BuildInfoJsonFile"
           $blobName = Get-Item $jsonFile | Split-Path -Leaf
-          Write-Verbose -Verbose "Uploading $jsonFile to $containerName/$blobName"
-          Set-AzStorageBlobContent -File $jsonFile -Container $containerName -Blob $blobName -Context $storageContext -Force
+          Write-Verbose -Verbose "Uploading $jsonFile to $containerName/$prefix/$blobName"
+          Set-AzStorageBlobContent -File $jsonFile -Container $containerName -Blob "$prefix/$blobName" -Context $storageContext -Force
         }
 
         if ($env:CopyLTSBuildInfo -eq 'YES') {
           $jsonFile = "$env:LtsBuildInfoJsonFile"
           $blobName = Get-Item $jsonFile | Split-Path -Leaf
-          Write-Verbose -Verbose "Uploading $jsonFile to $containerName/$blobName"
-          Set-AzStorageBlobContent -File $jsonFile -Container $containerName -Blob $blobName -Context $storageContext -Force
+          Write-Verbose -Verbose "Uploading $jsonFile to $containerName/$prefix/$blobName"
+          Set-AzStorageBlobContent -File $jsonFile -Container $containerName -Blob "$prefix/$blobName" -Context $storageContext -Force
         }
 
         if ($env:CopyVersionBuildInfo -eq 'YES') {
           $jsonFile = "$env:VersionBuildInfoJsonFile"
           $blobName = Get-Item $jsonFile | Split-Path -Leaf
-          Write-Verbose -Verbose "Uploading $jsonFile to $containerName/$blobName"
-          Set-AzStorageBlobContent -File $jsonFile -Container $containerName -Blob $blobName -Context $storageContext -Force
+          Write-Verbose -Verbose "Uploading $jsonFile to $containerName/$prefix/$blobName"
+          Set-AzStorageBlobContent -File $jsonFile -Container $containerName -Blob "$prefix/$blobName" -Context $storageContext -Force
         }
     condition: and(succeeded(), eq(variables['CopyMainBuildInfo'], 'YES'))

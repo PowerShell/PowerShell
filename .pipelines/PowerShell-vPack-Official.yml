@@ -59,6 +59,15 @@ resources:
       name: OneBranch.Pipelines/GovernedTemplates
       ref: refs/heads/main
 
+  pipelines:
+    - pipeline: PSPackagesOfficial
+      source: 'PowerShell-Packages-Official'
+      trigger:
+        branches:
+          include:
+            - master
+            - releases/*
+
 extends:
   template: v2/Microsoft.Official.yml@templates
   parameters:
@@ -82,19 +91,14 @@ extends:
         enabled: true
         scanFolder:  $(Build.SourcesDirectory)
         suppressionsFile: $(Build.SourcesDirectory)\.config\suppress.json
-      asyncSdl:
-        enabled: true
-        forStages: ['main']
-        credscan:
-          enabled: true
-          scanFolder:  $(Build.SourcesDirectory)
-          suppressionsFile: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
-        binskim:
-          enabled: false
-        # APIScan requires a non-Ready-To-Run build
-        apiscan:
-          enabled: false
-        tsaOptionsFile: .config/tsaoptions.json
+      binskim:
+        enabled: false
+      # APIScan requires a non-Ready-To-Run build
+      apiscan:
+        enabled: false
+      asyncSDL:
+        enabled: false
+      tsaOptionsFile: .config/tsaoptions.json
     stages:
     - stage: main
       jobs:
@@ -134,21 +138,15 @@ extends:
               installationPath: $(Agent.ToolsDirectory)/dotnet
 
           - pwsh: |
-              Import-module '$(BUILD.SOURCESDIRECTORY)/build.psm1'
-              Install-AzCopy
-            displayName: Install AzCopy
-            retryCountOnTaskFailure: 2
+              $packageArtifactName = 'drop_windows_package_package_win_${{ parameters.architecture }}'
+              $vstsCommandString = "vso[task.setvariable variable=PackageArtifactName]$packageArtifactName"
+              Write-Host "sending " + $vstsCommandString
+              Write-Host "##$vstsCommandString"
+            displayName: 'Set package artifact name'
 
-          - pwsh: |
-              Import-module '$(BUILD.SOURCESDIRECTORY)/build.psm1'
-              $azcopy = Find-AzCopy
-              Write-Verbose -Verbose "Found AzCopy: $azcopy"
-              Write-Host "running: $azcopy cp https://$(StorageAccount).blob.core.windows.net/$(AzureVersion)/PowerShell-$(Version)-win-${{ parameters.architecture }}.zip $(System.ArtifactsDirectory)"
-              & $azcopy cp https://$(StorageAccount).blob.core.windows.net/$(AzureVersion)/PowerShell-$(Version)-win-${{ parameters.architecture }}.zip $(System.ArtifactsDirectory)
-            displayName: 'Download Azure Artifacts'
-            retryCountOnTaskFailure: 2
-            env:
-              AZCOPY_AUTO_LOGIN_TYPE: MSI
+          - download: PSPackagesOfficial
+            artifact: $(PackageArtifactName)
+            displayName: Download package
 
           - pwsh: 'Get-ChildItem $(System.ArtifactsDirectory)\* -recurse | Select-Object -ExpandProperty Name'
             displayName: 'Capture Artifact Listing'
@@ -193,7 +191,7 @@ extends:
             displayName: 'Set ob_createvpack_version with VPackPublishOverride'
 
           - pwsh: |
-              Get-ChildItem -Path env:
+              Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
             displayName: Capture Environment
             condition: succeededOrFailed()
 

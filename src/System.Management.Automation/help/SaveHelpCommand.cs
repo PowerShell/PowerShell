@@ -88,7 +88,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 1, ValueFromPipelineByPropertyName = true, ValueFromPipeline = true, ParameterSetName = LiteralPathParameterSetName)]
         [Alias("Name")]
         [ValidateNotNull]
-        [ArgumentToModuleTransformationAttribute]
+        [ArgumentToModuleTransformation]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public PSModuleInfo[] Module { get; set; }
 

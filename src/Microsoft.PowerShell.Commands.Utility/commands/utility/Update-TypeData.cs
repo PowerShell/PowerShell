@@ -260,7 +260,7 @@ namespace Microsoft.PowerShell.Commands
         /// The type name we want to update on.
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = DynamicTypeSet)]
-        [ArgumentToTypeNameTransformationAttribute]
+        [ArgumentToTypeNameTransformation]
         [ValidateNotNullOrEmpty]
         public string TypeName
         {
@@ -1051,7 +1051,7 @@ namespace Microsoft.PowerShell.Commands
         /// The target type to remove.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = RemoveTypeSet)]
-        [ArgumentToTypeNameTransformationAttribute]
+        [ArgumentToTypeNameTransformation]
         [ValidateNotNullOrEmpty]
         public string TypeName
         {
@@ -1335,7 +1335,6 @@ namespace Microsoft.PowerShell.Commands
             ValidateTypeName();
 
             Dictionary<string, TypeData> alltypes = Context.TypeTable.GetAllTypeData();
-            Collection<TypeData> typedefs = new();
 
             foreach (string type in alltypes.Keys)
             {
@@ -1343,16 +1342,10 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (pattern.IsMatch(type))
                     {
-                        typedefs.Add(alltypes[type]);
+                        WriteObject(alltypes[type]);
                         break;
                     }
                 }
-            }
-
-            // write out all the available type definitions
-            foreach (TypeData typedef in typedefs)
-            {
-                WriteObject(typedef);
             }
         }
     }

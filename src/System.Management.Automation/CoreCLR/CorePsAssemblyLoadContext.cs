@@ -9,6 +9,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Reflection;
 using System.Runtime.Loader;
+using Microsoft.PowerShell.Telemetry;
 
 namespace System.Management.Automation
 {
@@ -607,16 +608,19 @@ namespace System.Management.Automation
         [UnmanagedCallersOnly]
         public static int LoadAssemblyFromNativeMemory(IntPtr data, int size)
         {
+            int result = 0;
             try
             {
                 using var stream = new UnmanagedMemoryStream((byte*)data, size);
                 AssemblyLoadContext.Default.LoadFromStream(stream);
-                return 0;
             }
             catch
             {
-                return -1;
+                result = -1;
             }
+
+            ApplicationInsightsTelemetry.SendUseTelemetry("PowerShellUnsafeAssemblyLoad", result == 0 ? "1" : "0");
+            return result;
         }
     }
 }
