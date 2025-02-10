@@ -167,7 +167,7 @@ namespace PSTests.Parallel
         [Fact]
         public static void TestEmptyErrorRecordToString()
         {
-            Assert.Equal("", new ErrorRecord(new Exception(""), null, ErrorCategory.NotSpecified, null).ToString());
+            Assert.Equal(string.Empty, new ErrorRecord(new Exception(string.Empty), null, ErrorCategory.NotSpecified, null).ToString());
         }
 
         [Fact]
