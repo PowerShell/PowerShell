@@ -74,7 +74,7 @@ namespace PSTests.Parallel
         [InlineData("`r`n", "`r`n", true)]
         public void TestIsMatch_String(string pattern, string input, bool result)
         {
-            Assert.Equal(WildcardPattern.Get(pattern, WildcardOptions.IgnoreCase).IsMatch(input), result);
+            Assert.Equal(result, WildcardPattern.Get(pattern, WildcardOptions.IgnoreCase).IsMatch(input));
         }
     }
 }
