@@ -1143,11 +1143,10 @@ ConstructorTestClass(int i, bool b)
             @{ TextInput = "Get-Command -Module $utilityModuleName -Verb ConvertTo -Noun 'C"; ExpectedNouns = $utilityCommandNounsWithConvertToVerbStartingWithCSingleQuote }
             @{ TextInput = "Get-Command -Module $utilityModuleName -Verb ConvertTo -Noun ""C"; ExpectedNouns = $utilityCommandNounsWithConvertToVerbStartingWithCDoubleQuote }
         ) {
-            param($TextInput, $ExpectedNouns)
+            param($TextInput, [System.Collections.Generic.SortedSet[string]]$ExpectedNouns)
             $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
-            $sortedCompletionText = $res.CompletionMatches.CompletionText | Sort-Object -Unique -CaseSensitive
-            $sortedExpectedNouns = $ExpectedNouns | Sort-Object -Unique -CaseSensitive
-            $sortedCompletionText -join ' ' | Should -BeExactly ($sortedExpectedNouns -join ' ')
+            $completionText = $res.CompletionMatches.CompletionText
+            $completionText -join ' ' | Should -BeExactly ($ExpectedNouns -join ' ')
         }
     }
 
