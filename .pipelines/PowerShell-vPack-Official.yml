@@ -138,7 +138,7 @@ extends:
               installationPath: $(Agent.ToolsDirectory)/dotnet
 
           - pwsh: |
-              $packageArtifactName = 'drop_windows_package_package_${{ parameters.architecture }}'
+              $packageArtifactName = 'drop_windows_package_package_win_${{ parameters.architecture }}'
               $vstsCommandString = "vso[task.setvariable variable=PackageArtifactName]$packageArtifactName"
               Write-Host "sending " + $vstsCommandString
               Write-Host "##$vstsCommandString"
