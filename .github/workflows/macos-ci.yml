@@ -6,8 +6,7 @@ on:
   push:
     branches:
       - master
-      - release*
-      - feature*
+      - release/**
     paths:
       - "**"
       - "!.github/ISSUE_TEMPLATE/**"
@@ -17,8 +16,7 @@ on:
   pull_request:
     branches:
       - master
-      - release*
-      - feature*
+      - release/**
 # Path filters for PRs need to go into the changes job
 
 concurrency:
@@ -47,22 +45,27 @@ jobs:
     outputs:
       source: ${{ steps.filter.outputs.source }}
     steps:
-    # For pull requests it's not necessary to checkout the code
-    - uses: dorny/paths-filter@v3
-      id: filter
-      with:
-        filters: |
-          source:
-            - ".github/actions/**"
-            - ".github/workflows/macos-ci.yml"
-            - "**.props"
-            - build.psm1
-            - src/**
-            - test/**
-            - tools/buildCommon/**
-            - tools/ci.psm1
-            - "!test/common/markdown/**"
-            - "!test/perf/**"
+      - name: checkout
+        uses: actions/checkout@v4.1.0
+
+        # For pull requests it's not necessary to checkout the code
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          list-files: json
+          filters: .github/action-filters.yml
+
+      - name: Capture outputs
+        run: |
+          "source: ${{ steps.filter.outputs.source }}"
+          "github: ${{ steps.filter.outputs.github }}"
+          "tools: ${{ steps.filter.outputs.tools }}"
+          "props: ${{ steps.filter.outputs.props }}"
+          "tests: ${{ steps.filter.outputs.tests }}"
+          "mainSource: ${{ steps.filter.outputs.mainSource }}"
+          "buildModule: ${{ steps.filter.outputs.buildModule }}"
+        shell: pwsh
+
   ci_build:
     name: Build PowerShell
     runs-on: macos-latest
@@ -171,7 +174,7 @@ jobs:
       if: success() || failure()
       run: |-
         import-module ./build.psm1
-        start-psbootstrap -package
+        start-psbootstrap -Scenario package
       shell: pwsh
   ready_to_merge:
     name: macos ready to merge

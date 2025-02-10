@@ -61,38 +61,12 @@ jobs:
         Get-ChildItem "$(Pipeline.Workspace)/PSPackagesOfficial/$artifactName" -Recurse
       displayName: 'Capture Downloaded Artifacts'
 
-    - pwsh: |
-        $repoRoot = "$(Build.SourcesDirectory)/PowerShell"
-        $dotnetMetadataPath = "$repoRoot/DotnetRuntimeMetadata.json"
-        $dotnetMetadataJson = Get-Content $dotnetMetadataPath -Raw | ConvertFrom-Json
-
-        # Channel is like: $Channel = "5.0.1xx-preview2"
-        $Channel = $dotnetMetadataJson.sdk.channel
-
-        $sdkVersion = (Get-Content "$repoRoot/global.json" -Raw | ConvertFrom-Json).sdk.version
-        Import-Module "$repoRoot/build.psm1" -Force
-
-        Find-Dotnet
-
-        if(-not (Get-PackageSource -Name 'dotnet' -ErrorAction SilentlyContinue))
-        {
-            $nugetFeed = ([xml](Get-Content $repoRoot/nuget.config -Raw)).Configuration.packagesources.add | Where-Object { $_.Key -eq 'dotnet' } | Select-Object -ExpandProperty Value
-            if ($nugetFeed) {
-              Register-PackageSource -Name 'dotnet' -Location $nugetFeed -ProviderName NuGet
-              Write-Verbose -Message "Register new package source 'dotnet'" -verbose
-            }
-        }
-
-        ## Install latest version from the channel
-
-        #Install-Dotnet -Channel "$Channel" -Version $sdkVersion
-        Start-PSBootstrap
-
-        Write-Verbose -Message "Installing .NET SDK completed." -Verbose
-
-      displayName: Install .NET
-      env:
-        __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+    - task: UseDotNet@2
+      displayName: 'Use .NET Core sdk'
+      inputs:
+        useGlobalJson: true
+        packageType: 'sdk'
+        workingDirectory: $(Build.SourcesDirectory)/PowerShell"
 
     - pwsh: |
         $artifactName = '$(artifactName)'
