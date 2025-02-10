@@ -1143,10 +1143,18 @@ ConstructorTestClass(int i, bool b)
             @{ TextInput = "Get-Command -Module $utilityModuleName -Verb ConvertTo -Noun 'C"; ExpectedNouns = $utilityCommandNounsWithConvertToVerbStartingWithCSingleQuote }
             @{ TextInput = "Get-Command -Module $utilityModuleName -Verb ConvertTo -Noun ""C"; ExpectedNouns = $utilityCommandNounsWithConvertToVerbStartingWithCDoubleQuote }
         ) {
-            param($TextInput, [System.Collections.Generic.SortedSet[string]]$ExpectedNouns)
+            param($TextInput, $ExpectedNouns)
             $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
             $completionText = $res.CompletionMatches.CompletionText
-            $completionText -join ' ' | Should -BeExactly ($ExpectedNouns -join ' ')
+
+            # Avoid using Sort-Object -Unique because it generates different order than SortedSet on MacOS/Linux
+            $sortedSetExpectedNouns = [System.Collections.Generic.SortedSet[string]]::new([System.StringComparer]::OrdinalIgnoreCase)
+            foreach ($noun in $ExpectedNouns)
+            {
+                $sortedSetExpectedNouns.Add($noun) | Out-Null
+            }
+
+            $completionText -join ' ' | Should -BeExactly ($sortedSetExpectedNouns -join ' ')
         }
     }
 
