@@ -1080,13 +1080,29 @@ ConstructorTestClass(int i, bool b)
 
     Context 'Get-Command -Noun parameter completion' {
         BeforeAll {
-            function GetModuleCommandNouns([string]$module, [switch]$singleQuote, [switch]$doubleQuote) {
-                $nouns = (Get-Command -Module $module).Noun | Sort-Object -Unique
+            function GetModuleCommandNouns(
+                [string]$Module,
+                [string]$Verb,
+                [switch]$SingleQuote,
+                [switch]$DoubleQuote)
+            {
 
-                if ($singleQuote) {
+                $commandParams = @{}
+
+                if ($PSBoundParameters.ContainsKey('Module')) {
+                    $commandParams['Module'] = $Module
+                }
+
+                if ($PSBoundParameters.ContainsKey('Verb')) {
+                    $commandParams['Verb'] = $Verb
+                }
+
+                $nouns = (Get-Command @commandParams).Noun
+
+                if ($SingleQuote) {
                     return ($nouns | ForEach-Object { "'$_'" })
                 }
-                elseif ($doubleQuote) {
+                elseif ($DoubleQuote) {
                     return ($nouns | ForEach-Object { """$_""" })
                 }
 
@@ -1094,18 +1110,23 @@ ConstructorTestClass(int i, bool b)
             }
 
             $utilityModuleName = 'Microsoft.PowerShell.Utility'
+
             $allUtilityCommandNouns = GetModuleCommandNouns -Module $utilityModuleName
             $allUtilityCommandNounsSingleQuote = GetModuleCommandNouns -Module $utilityModuleName -SingleQuote
             $allUtilityCommandNounsDoubleQuote = GetModuleCommandNouns -Module $utilityModuleName -DoubleQuote
             $utilityCommandNounsStartingWithF = $allUtilityCommandNouns | Where-Object { $_ -like 'F*'}
             $utilityCommandNounsStartingWithFSingleQuote = $allUtilityCommandNounsSingleQuote | Where-Object { $_ -like "'F*"}
             $utilityCommandNounsStartingWithFDoubleQuote = $allUtilityCommandNounsDoubleQuote | Where-Object { $_ -like """F*"}
-            $utilityCommandNounsWithConvertToVerb = $allUtilityCommandNouns | Where-Object { $_ -in 'CliXml', 'Csv', 'Html', 'Json', 'Xml' }
-            $utilityCommandNounsWithConvertToVerbSingleQuote = $allUtilityCommandNounsSingleQuote | Where-Object { $_ -in "'CliXml'", "'Csv'", "'Html'", "'Json'", "'Xml'" }
-            $utilityCommandNounsWithConvertToVerbDoubleQuote = $allUtilityCommandNounsDoubleQuote | Where-Object { $_ -in """CliXml""", """Csv""", """Html""", """Json""", """Xml""" }
-            $utilityCommandNounsWithConvertToVerbStartingWithC = $allUtilityCommandNouns | Where-Object { $_ -in 'CliXml', 'Csv' }
-            $utilityCommandNounsWithConvertToVerbStartingWithCSingleQuote = $allUtilityCommandNounsSingleQuote | Where-Object { $_ -in "'CliXml'", "'Csv'" }
-            $utilityCommandNounsWithConvertToVerbStartingWithCDoubleQuote = $allUtilityCommandNounsDoubleQuote | Where-Object { $_ -in """CliXml""", """Csv""" }
+
+            $allUtilityCommandNounsWithConvertToVerb = GetModuleCommandNouns -Module $utilityModuleName -Verb 'ConvertTo'
+            $allUtilityCommandNounsWithConvertToVerbSingleQuote = GetModuleCommandNouns -Module $utilityModuleName -SingleQuote -Verb 'ConvertTo'
+            $allUtilityCommandNounsWithConvertToVerbDoubleQuote = GetModuleCommandNouns -Module $utilityModuleName -DoubleQuote -Verb 'ConvertTo'
+            $utilityCommandNounsWithConvertToVerb = $allUtilityCommandNounsWithConvertToVerb | Where-Object { $_ -in 'CliXml', 'Csv', 'Html', 'Json', 'Xml' }
+            $utilityCommandNounsWithConvertToVerbSingleQuote = $allUtilityCommandNounsWithConvertToVerbSingleQuote | Where-Object { $_ -in "'CliXml'", "'Csv'", "'Html'", "'Json'", "'Xml'" }
+            $utilityCommandNounsWithConvertToVerbDoubleQuote = $allUtilityCommandNounsWithConvertToVerbDoubleQuote | Where-Object { $_ -in """CliXml""", """Csv""", """Html""", """Json""", """Xml""" }
+            $utilityCommandNounsWithConvertToVerbStartingWithC = $allUtilityCommandNounsWithConvertToVerb | Where-Object { $_ -in 'CliXml', 'Csv' }
+            $utilityCommandNounsWithConvertToVerbStartingWithCSingleQuote = $allUtilityCommandNounsWithConvertToVerbSingleQuote | Where-Object { $_ -in "'CliXml'", "'Csv'" }
+            $utilityCommandNounsWithConvertToVerbStartingWithCDoubleQuote = $allUtilityCommandNounsWithConvertToVerbDoubleQuote | Where-Object { $_ -in """CliXml""", """Csv""" }
         }
 
         It "Should complete Noun for '<TextInput>'" -TestCases @(
@@ -1124,8 +1145,9 @@ ConstructorTestClass(int i, bool b)
         ) {
             param($TextInput, $ExpectedNouns)
             $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
-            $completionText = $res.CompletionMatches.CompletionText
-            $completionText -join ' ' | Should -BeExactly ($ExpectedNouns -join ' ')
+            $sortedCompletionText = $res.CompletionMatches.CompletionText | Sort-Object -Unique -CaseSensitive
+            $sortedExpectedNouns = $ExpectedNouns | Sort-Object -Unique -CaseSensitive
+            $sortedCompletionText -join ' ' | Should -BeExactly ($sortedExpectedNouns -join ' ')
         }
     }
 

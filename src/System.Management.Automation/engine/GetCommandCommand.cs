@@ -1724,7 +1724,7 @@ namespace Microsoft.PowerShell.Commands
         private static SortedSet<string> GetCommandNouns(IDictionary fakeBoundParameters)
         {
             Collection<CommandInfo> commands = CompletionCompleters.GetCommandInfo(fakeBoundParameters, "Module", "Verb");
-            SortedSet<string> nouns = new(StringComparer.OrdinalIgnoreCase);
+            SortedSet<string> nouns = new();
 
             foreach (CommandInfo command in commands)
             {
