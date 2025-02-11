@@ -683,7 +683,7 @@ Describe "Additional tests" -Tag CI {
         $result.EndBlock.Statements[0].PipelineElements[0].Expression.TypeName.FullName | Should -Be 'System.Tuple[System.String[],System.Int32[]]'
     }
 
-    It "Should correctly set the generic type definition to the 'TypeName' property of a 'GenericTypeName' instance" {
+    It "Should correctly set the cached type for 'GenericTypeName.TypeName' as needed when the generic type is found in cache" {
         $tks = $null
         $ers = $null
         $Script = '[System.Collections.Generic.List[string]]'
