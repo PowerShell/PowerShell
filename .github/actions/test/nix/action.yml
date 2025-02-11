@@ -30,7 +30,11 @@ runs:
     continue-on-error: true
     run: Get-ChildItem "${{ github.workspace }}/build/*" -Recurse
     shell: pwsh
-
+    
+  - uses: actions/setup-dotnet@v4
+    with:
+      global-json-file: ./global.json
+      
   - name: Bootstrap
     shell: pwsh
     run: |-
