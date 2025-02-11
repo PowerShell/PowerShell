@@ -171,15 +171,30 @@
     <DefineConstants>$(DefineConstants);UNIX</DefineConstants>
   </PropertyGroup>
 
-  <!-- Define all OS, debug configuration properties -->
-  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <DebugType>portable</DebugType>
+  <!-- Define non-windows, all configuration properties -->
+  <PropertyGroup Condition=" '$(IsWindows)' != 'true' ">
+    <DefineConstants>$(DefineConstants);UNIX</DefineConstants>
+  </PropertyGroup>
+
+  <!-- Define properties for Framework dependent deployments in Packages
+        Packages should not use DOTNET_ROOT so we set the search to Global
+  -->
+  <PropertyGroup Condition=" '$(AppDeployment)' == 'FddPackage' ">
+    <AppHostDotNetSearch>Global</AppHostDotNetSearch>
+  </PropertyGroup>
+
+  <!-- Define properties for releases except for Framework dependent deployments as tools
+        Including archives and dotnet tools.
+
+        These tools should use should not be Ready To Run because that will make them runtime specific
+  -->
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' and '$(AppDeployment)' != 'FddTool' ">
+    <PublishReadyToRun>true</PublishReadyToRun>
+    <PublishReadyToRunEmitSymbols>true</PublishReadyToRunEmitSymbols>
   </PropertyGroup>
 
   <!-- Define all OS, release configuration properties -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <PublishReadyToRun>true</PublishReadyToRun>
-    <PublishReadyToRunEmitSymbols>true</PublishReadyToRunEmitSymbols>
     <Optimize>true</Optimize>
     <DebugType>portable</DebugType>
   </PropertyGroup>
