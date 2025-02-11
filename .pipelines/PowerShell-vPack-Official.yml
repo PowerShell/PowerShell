@@ -1,5 +1,3 @@
-name: $(BuildDefinitionName)_$(date:yyMM).$(date:dd)$(rev:rrr)
-
 trigger: none
 
 parameters: # parameters are shown up in ADO UI in a build queue time
@@ -27,6 +25,8 @@ parameters: # parameters are shown up in ADO UI in a build queue time
   type: string
   displayName: 'Release Tag Var:'
   default: 'fromBranch'
+
+name: vPack_${{ parameters.architecture }}_$(date:yyMM).$(date:dd)$(rev:rrr)
 
 variables:
   - name: CDP_DEFINITION_BUILD_COUNT
