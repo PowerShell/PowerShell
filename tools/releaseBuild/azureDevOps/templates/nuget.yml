@@ -60,7 +60,6 @@ jobs:
       Start-PSBootStrap -Verbose
     displayName: Bootstrap
     env:
-      __DOTNET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
   - task: DownloadBuildArtifacts@0
@@ -111,7 +110,7 @@ jobs:
   - task: ExtractFiles@1
     displayName: 'Extract files alpine-fxdependent'
     inputs:
-      archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/powershell-*-linux-x64-alpine-fxdependent.tar.gz'
+      archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/powershell-*-linux-x64-musl-noopt-fxdependent.tar.gz'
       destinationFolder: '$(alpineFxdPath)'
 
   - template: SetVersionVariables.yml
@@ -280,7 +279,7 @@ jobs:
       azureSubscription: '$(GlobalToolSubscription)'
       Destination: AzureBlob
       storage: '$(GlobalToolStorageAccount)'
-      ContainerName: 'tool'
+      ContainerName: 'tool-private'
       blobPrefix: '$(Version)'
     condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
     retryCountOnTaskFailure: 2

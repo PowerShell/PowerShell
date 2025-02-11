@@ -145,15 +145,10 @@ Describe "PowerShellGet - Module tests" -tags "Feature" {
 
     It "Should install a module correctly to the required location with default CurrentUser scope" {
         Install-Module -Name $TestModule -Repository $RepositoryName
-        $installedModuleInfo = Get-InstalledModule -Name $TestModule
-
-        $installedModuleInfo | Should -Not -BeNullOrEmpty
-        $installedModuleInfo.Name | Should -Be $TestModule
-        $installedModuleInfo.InstalledLocation.StartsWith($script:MyDocumentsModulesPath, [System.StringComparison]::OrdinalIgnoreCase) | Should -BeTrue
-
-        $module = Get-Module $TestModule -ListAvailable
+        $module = Get-Module -Name $TestModule -ListAvailable
+        $module | Should -Not -BeNullOrEmpty
         $module.Name | Should -Be $TestModule
-        $module.ModuleBase | Should -Be $installedModuleInfo.InstalledLocation
+        $module.ModuleBase.StartsWith($script:MyDocumentsModulesPath, [System.StringComparison]::OrdinalIgnoreCase) | Should -BeTrue
     }
 
     AfterAll {

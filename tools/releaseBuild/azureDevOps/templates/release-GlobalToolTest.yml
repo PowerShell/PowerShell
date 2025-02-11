@@ -61,7 +61,6 @@ jobs:
 
       displayName: Install .NET
       env:
-        __DOTNET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
         __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
     - pwsh: |
@@ -85,7 +84,6 @@ jobs:
 
       displayName: Install global tool
       env:
-        __DOTNET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
         __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
     - pwsh: |
@@ -148,5 +146,4 @@ jobs:
         }
       displayName: Basic validation
       env:
-        __DOTNET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
         __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)

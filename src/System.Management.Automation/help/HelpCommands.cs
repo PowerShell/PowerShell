@@ -255,6 +255,17 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
+#if !UNIX
+            string fileSystemPath = SessionState.Path.GetUnresolvedProviderPathFromPSPath(this.Name);
+            string normalizedName = FileSystemProvider.NormalizePath(fileSystemPath);
+            // In a restricted session, do not allow help on network paths or device paths, because device paths can be used to bypass the restrictions.
+            if (Utils.IsSessionRestricted(this.Context) && (FileSystemProvider.PathIsNetworkPath(normalizedName) || Utils.PathIsDevicePath(normalizedName))) {
+                Exception e = new ArgumentException(HelpErrors.NoNetworkCommands, "Name");
+                ErrorRecord errorRecord = new ErrorRecord(e, "CommandNameNotAllowed", ErrorCategory.InvalidArgument, null);
+                this.ThrowTerminatingError(errorRecord);
+            }
+#endif
+
             HelpSystem helpSystem = this.Context.HelpSystem;
             try
             {
@@ -504,7 +515,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Validates input parameters.
+        /// Validates input parameters. 
         /// </summary>
         /// <param name="cat">Category specified by the user.</param>
         /// <exception cref="ArgumentException">
@@ -723,10 +734,8 @@ namespace Microsoft.PowerShell.Commands
         #endregion
 
         #region trace
-
-        [TraceSourceAttribute("GetHelpCommand ", "GetHelpCommand ")]
-        private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("GetHelpCommand ", "GetHelpCommand ");
-
+        [TraceSource("GetHelpCommand", "GetHelpCommand")]
+        private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("GetHelpCommand", "GetHelpCommand");
         #endregion
     }
 

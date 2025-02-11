@@ -13,8 +13,10 @@ trigger:
     exclude:
     - .vsts-ci/misc-analysis.yml
     - .github/ISSUE_TEMPLATE/*
+    - .github/workflows/*
     - .dependabot/config.yml
     - test/perf/*
+    - .pipelines/*
 pr:
   branches:
     include:
@@ -23,20 +25,18 @@ pr:
     - feature*
   paths:
     include:
-    - '*'
+    - .vsts-ci/templates/*
+    - .vsts-ci/windows.yml
+    - '*.props'
+    - build.psm1
+    - src/*
+    - test/*
+    - tools/buildCommon/*
+    - tools/ci.psm1
+    - tools/WindowsCI.psm1
     exclude:
-    - .dependabot/config.yml
-    - .github/ISSUE_TEMPLATE/*
-    - .vsts-ci/misc-analysis.yml
-    - tools/cgmanifest.json
-    - LICENSE.txt
     - test/common/markdown/*
     - test/perf/*
-    - tools/packaging/*
-    - tools/releaseBuild/*
-    - tools/releaseBuild/azureDevOps/templates/*
-    - README.md
-    - .spelling
 
 variables:
   GIT_CONFIG_PARAMETERS: "'core.autocrlf=false'"

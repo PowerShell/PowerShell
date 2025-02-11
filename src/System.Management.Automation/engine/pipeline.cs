@@ -1441,7 +1441,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="e">Error which terminated the pipeline.</param>
         /// <param name="command">Command against which to log SecondFailure.</param>
-        /// <returns>True iff the pipeline was not already stopped.</returns>
+        /// <returns>True if-and-only-if the pipeline was not already stopped.</returns>
         internal bool RecordFailure(Exception e, InternalCommand command)
         {
             bool wasStopping = false;

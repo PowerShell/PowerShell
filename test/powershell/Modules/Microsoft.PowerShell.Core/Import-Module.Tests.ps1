@@ -57,6 +57,7 @@ Describe "Import-Module" -Tags "CI" {
         (Get-Module TestModule).Version | Should -BeIn "1.1"
     }
 
+
     It 'Should override default command prefix if an empty string is provided' {
         $ModuleName = "PrefixTestModule"
         $ModulePath = Join-Path -Path $testdrive -ChildPath $ModuleName
@@ -66,6 +67,18 @@ Describe "Import-Module" -Tags "CI" {
         $ImportedModule = Import-Module -Name "$ModulePath\$ModuleName.psd1" -Prefix "" -PassThru
         $ImportedModule.ExportedCommands.ContainsKey('Use-Something') | Should -Be $true
         Remove-Module -ModuleInfo $ImportedModule
+    }
+
+    It 'ProcessorArchitecture should work' {
+        $currentProcessorArchitecture = switch ([System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture) {
+            'X86' { 'x86' }
+            'X64' { 'amd64' }
+            'Arm64' { 'arm' }
+            default { throw "Unknown processor architecture" }
+        }
+        New-ModuleManifest -Path "$TestDrive\TestModule.psd1" -ProcessorArchitecture $currentProcessorArchitecture
+        $module = Import-Module -Name "$TestDrive\TestModule.psd1" -PassThru
+        $module.ProcessorArchitecture | Should -Be $currentProcessorArchitecture
     }
 }
 

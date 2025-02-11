@@ -45,6 +45,12 @@ stages:
         ReleaseTagVar: $(ReleaseTagVar)
         CreateJson: yes
         UseJson: no
+        
+    - powershell: |
+        if($env:RELEASETAGVAR -match '-') {
+            throw "Don't release a preview build without coordinating with Windows Engineering Build Tools Team"
+        }
+      displayName: Stop any preview release
 
     - powershell:  Write-Host "##vso[build.updatebuildnumber]$env:BUILD_SOURCEBRANCHNAME-$env:BUILD_SOURCEVERSION-$((get-date).ToString("yyyyMMddhhss"))"
       displayName: Set Build Name for Non-PR

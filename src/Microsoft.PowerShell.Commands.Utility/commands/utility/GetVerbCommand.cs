@@ -1,10 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System;
-using System.Collections.ObjectModel;
 using System.Management.Automation;
-using System.Reflection;
+using static System.Management.Automation.Verbs;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -19,6 +17,7 @@ namespace Microsoft.PowerShell.Commands
         /// Optional Verb filter.
         /// </summary>
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, Position = 0)]
+        [ArgumentCompleter(typeof(VerbArgumentCompleter))]
         public string[] Verb
         {
             get; set;
@@ -39,45 +38,9 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            Type[] verbTypes = new Type[] { typeof(VerbsCommon), typeof(VerbsCommunications), typeof(VerbsData),
-                typeof(VerbsDiagnostic), typeof(VerbsLifecycle), typeof(VerbsOther), typeof(VerbsSecurity) };
-
-            Collection<WildcardPattern> matchingVerbs = SessionStateUtilities.CreateWildcardsFromStrings(
-                            this.Verb,
-                            WildcardOptions.IgnoreCase
-                        );
-
-            foreach (Type type in verbTypes)
+            foreach (VerbInfo verb in FilterByVerbsAndGroups(Verb, Group))
             {
-                string groupName = type.Name.Substring(5);
-                if (this.Group != null)
-                {
-                    if (!SessionStateUtilities.CollectionContainsValue(this.Group, groupName, StringComparer.OrdinalIgnoreCase))
-                    {
-                        continue;
-                    }
-                }
-
-                foreach (FieldInfo field in type.GetFields())
-                {
-                    if (field.IsLiteral)
-                    {
-                        if (this.Verb != null)
-                        {
-                            if (!SessionStateUtilities.MatchesAnyWildcardPattern(field.Name, matchingVerbs, false))
-                            {
-                                continue;
-                            }
-                        }
-
-                        VerbInfo verb = new();
-                        verb.Verb = field.Name;
-                        verb.AliasPrefix = VerbAliasPrefixes.GetVerbAliasPrefix(field.Name);
-                        verb.Group = groupName;
-                        verb.Description = VerbDescriptions.GetVerbDescription(field.Name);
-                        WriteObject(verb);
-                    }
-                }
+                WriteObject(verb);
             }
         }
     }
