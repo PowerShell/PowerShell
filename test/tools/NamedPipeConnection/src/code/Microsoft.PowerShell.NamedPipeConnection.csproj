@@ -27,7 +27,7 @@
     <PackageReference Include="System.Diagnostics.EventLog" Version="9.0.2" />
     <PackageReference Include="System.DirectoryServices" Version="9.0.2" />
     <PackageReference Include="System.Management" Version="9.0.2" />
-    <PackageReference Include="System.Management.Automation" Version="7.5.0" />
+    <PackageReference Include="System.Management.Automation" Version="7.5.0-preview.5" />
     <PackageReference Include="System.Security.Cryptography.Pkcs" Version="9.0.2" />
     <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="9.0.2" />
     <PackageReference Include="System.Security.Permissions" Version="9.0.2" />
