@@ -95,6 +95,12 @@ Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
         $dirEntry.Length | Should -BeGreaterThan 0
     }
 
+    It "Should handle stdout,stderr redirections to the same file without error" {
+        $process = Start-Process ping -ArgumentList $pingParam -Wait -RedirectStandardOutput $tempFile -RedirectStandardError $tempFile  @extraArgs
+        $dirEntry = Get-ChildItem $tempFile
+        $dirEntry.Length | Should -BeGreaterThan 0
+    }
+
     It "Should handle stdin redirection without error" {
         $process = Start-Process sort -Wait -RedirectStandardOutput $tempFile -RedirectStandardInput $assetsFile  @extraArgs
         $dirEntry = Get-ChildItem $tempFile
