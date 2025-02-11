@@ -220,5 +220,5 @@ extends:
               command: 'sign'
               signing_environment: 'azure-ado'
               cp_code: $(windows_build_tools_cert_id)
-              files_to_sign: '**/*.exe;**/*.dll;**/*.ps1;**/*.psm1'
+              files_to_sign: '**/*.exe;**/System.Management.Automation.dll'
               search_root: $(ob_outputDirectory)
