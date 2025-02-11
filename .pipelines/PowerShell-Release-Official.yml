@@ -26,6 +26,8 @@ parameters: # parameters are shown up in ADO UI in a build queue time
     type: boolean
     default: false
 
+name: release-$(BUILD.SOURCEBRANCHNAME)-$(Build.BuildId)
+
 variables:
   - name: CDP_DEFINITION_BUILD_COUNT
     value: $[counter('', 0)]
