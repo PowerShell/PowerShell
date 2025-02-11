@@ -13,7 +13,7 @@ runs:
     shell: pwsh
   - uses: actions/setup-dotnet@v4
     with:
-      global-json-file: ./powershell/global.json
+      global-json-file: ./global.json
   - name: Bootstrap
     if: success()
     run: |-
