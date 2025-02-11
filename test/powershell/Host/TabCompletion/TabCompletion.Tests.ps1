@@ -1078,6 +1078,86 @@ ConstructorTestClass(int i, bool b)
         }
     }
 
+    Context 'Get-Command -Noun parameter completion' {
+        BeforeAll {
+            function GetModuleCommandNouns(
+                [string]$Module,
+                [string]$Verb,
+                [switch]$SingleQuote,
+                [switch]$DoubleQuote)
+            {
+
+                $commandParams = @{}
+
+                if ($PSBoundParameters.ContainsKey('Module')) {
+                    $commandParams['Module'] = $Module
+                }
+
+                if ($PSBoundParameters.ContainsKey('Verb')) {
+                    $commandParams['Verb'] = $Verb
+                }
+
+                $nouns = (Get-Command @commandParams).Noun
+
+                if ($SingleQuote) {
+                    return ($nouns | ForEach-Object { "'$_'" })
+                }
+                elseif ($DoubleQuote) {
+                    return ($nouns | ForEach-Object { """$_""" })
+                }
+
+                return $nouns
+            }
+
+            $utilityModuleName = 'Microsoft.PowerShell.Utility'
+
+            $allUtilityCommandNouns = GetModuleCommandNouns -Module $utilityModuleName
+            $allUtilityCommandNounsSingleQuote = GetModuleCommandNouns -Module $utilityModuleName -SingleQuote
+            $allUtilityCommandNounsDoubleQuote = GetModuleCommandNouns -Module $utilityModuleName -DoubleQuote
+            $utilityCommandNounsStartingWithF = $allUtilityCommandNouns | Where-Object { $_ -like 'F*'}
+            $utilityCommandNounsStartingWithFSingleQuote = $allUtilityCommandNounsSingleQuote | Where-Object { $_ -like "'F*"}
+            $utilityCommandNounsStartingWithFDoubleQuote = $allUtilityCommandNounsDoubleQuote | Where-Object { $_ -like """F*"}
+
+            $allUtilityCommandNounsWithConvertToVerb = GetModuleCommandNouns -Module $utilityModuleName -Verb 'ConvertTo'
+            $allUtilityCommandNounsWithConvertToVerbSingleQuote = GetModuleCommandNouns -Module $utilityModuleName -SingleQuote -Verb 'ConvertTo'
+            $allUtilityCommandNounsWithConvertToVerbDoubleQuote = GetModuleCommandNouns -Module $utilityModuleName -DoubleQuote -Verb 'ConvertTo'
+            $utilityCommandNounsWithConvertToVerb = $allUtilityCommandNounsWithConvertToVerb | Where-Object { $_ -in 'CliXml', 'Csv', 'Html', 'Json', 'Xml' }
+            $utilityCommandNounsWithConvertToVerbSingleQuote = $allUtilityCommandNounsWithConvertToVerbSingleQuote | Where-Object { $_ -in "'CliXml'", "'Csv'", "'Html'", "'Json'", "'Xml'" }
+            $utilityCommandNounsWithConvertToVerbDoubleQuote = $allUtilityCommandNounsWithConvertToVerbDoubleQuote | Where-Object { $_ -in """CliXml""", """Csv""", """Html""", """Json""", """Xml""" }
+            $utilityCommandNounsWithConvertToVerbStartingWithC = $allUtilityCommandNounsWithConvertToVerb | Where-Object { $_ -in 'CliXml', 'Csv' }
+            $utilityCommandNounsWithConvertToVerbStartingWithCSingleQuote = $allUtilityCommandNounsWithConvertToVerbSingleQuote | Where-Object { $_ -in "'CliXml'", "'Csv'" }
+            $utilityCommandNounsWithConvertToVerbStartingWithCDoubleQuote = $allUtilityCommandNounsWithConvertToVerbDoubleQuote | Where-Object { $_ -in """CliXml""", """Csv""" }
+        }
+
+        It "Should complete Noun for '<TextInput>'" -TestCases @(
+            @{ TextInput = "Get-Command -Module $utilityModuleName -Noun "; ExpectedNouns = $allUtilityCommandNouns }
+            @{ TextInput = "Get-Command -Module $utilityModuleName -Noun '"; ExpectedNouns = $allUtilityCommandNounsSingleQuote }
+            @{ TextInput = "Get-Command -Module $utilityModuleName -Noun """; ExpectedNouns = $allUtilityCommandNounsDoubleQuote }
+            @{ TextInput = "Get-Command -Module $utilityModuleName -Noun F"; ExpectedNouns = $utilityCommandNounsStartingWithF  }
+            @{ TextInput = "Get-Command -Module $utilityModuleName -Noun 'F"; ExpectedNouns = $utilityCommandNounsStartingWithFSingleQuote }
+            @{ TextInput = "Get-Command -Module $utilityModuleName -Noun ""F"; ExpectedNouns = $utilityCommandNounsStartingWithFDoubleQuote }
+            @{ TextInput = "Get-Command -Module $utilityModuleName -Verb ConvertTo -Noun "; ExpectedNouns = $utilityCommandNounsWithConvertToVerb  }
+            @{ TextInput = "Get-Command -Module $utilityModuleName -Verb ConvertTo -Noun '"; ExpectedNouns = $utilityCommandNounsWithConvertToVerbSingleQuote }
+            @{ TextInput = "Get-Command -Module $utilityModuleName -Verb ConvertTo -Noun """; ExpectedNouns = $utilityCommandNounsWithConvertToVerbDoubleQuote }
+            @{ TextInput = "Get-Command -Module $utilityModuleName -Verb ConvertTo -Noun C"; ExpectedNouns = $utilityCommandNounsWithConvertToVerbStartingWithC  }
+            @{ TextInput = "Get-Command -Module $utilityModuleName -Verb ConvertTo -Noun 'C"; ExpectedNouns = $utilityCommandNounsWithConvertToVerbStartingWithCSingleQuote }
+            @{ TextInput = "Get-Command -Module $utilityModuleName -Verb ConvertTo -Noun ""C"; ExpectedNouns = $utilityCommandNounsWithConvertToVerbStartingWithCDoubleQuote }
+        ) {
+            param($TextInput, $ExpectedNouns)
+            $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
+            $completionText = $res.CompletionMatches.CompletionText
+
+            # Avoid using Sort-Object -Unique because it generates different order than SortedSet on MacOS/Linux
+            $sortedSetExpectedNouns = [System.Collections.Generic.SortedSet[string]]::new([System.StringComparer]::OrdinalIgnoreCase)
+            foreach ($noun in $ExpectedNouns)
+            {
+                $sortedSetExpectedNouns.Add($noun) | Out-Null
+            }
+
+            $completionText -join ' ' | Should -BeExactly ($sortedSetExpectedNouns -join ' ')
+        }
+    }
+
     Context "Format cmdlet's View paramter completion" {
         BeforeAll {
             $viewDefinition = @'
