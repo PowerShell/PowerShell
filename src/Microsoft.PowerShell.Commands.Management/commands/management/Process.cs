@@ -2683,9 +2683,9 @@ namespace Microsoft.PowerShell.Commands
                 // e.g if powershell was given, resolve to powershell.exe to get verbs
                 Collection<CommandInfo> commands = CompletionCompleters.InvokeCommand<CommandInfo>(
                     commandName: "Get-Command",
-                    commandParameters: new Dictionary<string, object> { 
-                        { "Name", filePath }, 
-                        { "CommandType", CommandTypes.Application } 
+                    commandParameters: new Dictionary<string, object> {
+                        { "Name", filePath },
+                        { "CommandType", CommandTypes.Application }
                     });
 
                 // Start-Process & Get-Command select first found application based on PATHEXT environment variable
