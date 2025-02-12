@@ -8422,7 +8422,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Invokes command by name to get command info objects.
+        /// Invokes command by name to get results of any type.
         /// Sets command parameters which exist in fake bound parameters.
         /// </summary>
         /// <param name="commandName">The command name.</param>
