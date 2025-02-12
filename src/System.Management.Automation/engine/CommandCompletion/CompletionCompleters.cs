@@ -8422,14 +8422,14 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Calls Get-Command to get command info objects.
+        /// Invokes Get-Command to get command info objects.
         /// </summary>
         /// <param name="fakeBoundParameters">The fake bound parameters.</param>
         /// <param name="parametersToAdd">The parameters to add.</param>
         /// <returns>Collection of command info objects.</returns>
-        internal static Collection<CommandInfo> GetCommandInfo(
+        internal static Collection<T> InvokeGetCommand<T>(
             IDictionary fakeBoundParameters, 
-            params string[] parametersToAdd)
+            params string[] parametersToAdd) where T : CommandInfo
         {
             using var ps = PowerShell.Create(RunspaceMode.CurrentRunspace);
 
@@ -8443,7 +8443,7 @@ namespace System.Management.Automation
                 }
             }
 
-            Collection<CommandInfo> commands = ps.Invoke<CommandInfo>();
+            Collection<T> commands = ps.Invoke<T>();
 
             return commands;
         }
