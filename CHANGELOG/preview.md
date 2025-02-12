@@ -1,5 +1,98 @@
 # Preview Changelog
 
+## [7.6.0-preview.3]
+
+### General Cmdlet Updates and Fixes
+
+- Add completion single/double quote support for `-Noun` parameter (#24977) (Thanks @ArmaanMcleod!)
+- Remove trailing space from event source name (#24192) (Thanks @MartinGC94!)
+- Stringify ErrorRecord with empty exception message to empty string (#24949) (Thanks @MatejKafka!)
+- Add completion single/double quote support for `-PSEdition` parameter (#24971) (Thanks @ArmaanMcleod!)
+- Fix `New-Item -Force` to error on invalid directory name (#24936) (Thanks @kborowinski!)
+- Fix `Start-Transcript` error when `$Transcript` is a `PSObject` wrapped string (#24963) (Thanks @kborowinski!)
+- Add quote handling in Verb, StrictModeVersion, Scope & PropertyType Argument Completers with single helper method (#24839) (Thanks @ArmaanMcleod!)
+- Fix Start-Process -Wait polling (#24711) (Thanks @jborean93!)
+- Convert `InvalidCommandNameCharacters` in AnalysisCache to `SearchValues<char>` for more efficient char searching (#24880) (Thanks @ArmaanMcleod!)
+- Convert `s_charactersRequiringQuotes` in Completion Completers to `SearchValues<char>` for more efficient char searching (#24879) (Thanks @ArmaanMcleod!)
+
+### Code Cleanup
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@xtqqczze, @fMichaleczek, @ArmaanMcleod</p>
+
+</summary>
+
+<ul>
+<li>Fix <code>RunspacePool</code>, <code>RunspacePoolInternal</code> and <code>RemoteRunspacePoolInternal</code> <code>IDisposable</code> implementation (#24720) (Thanks @xtqqczze!)</li>
+<li>Remove redundant <code>Attribute</code> suffix (#24940) (Thanks @xtqqczze!)</li>
+<li>Fix formatting of the XML comment for <code>SteppablePipeline.Clean()</code> (#24941)</li>
+<li>Use Environment.ProcessId in SpecialVariables.PID (#24926) (Thanks @fMichaleczek!)</li>
+<li>Replace char[] array in CompletionRequiresQuotes with cached SearchValues<char> (#24907) (Thanks @ArmaanMcleod!)</li>
+<li>Update <code>IndexOfAny</code> calls with invalid path/filename to <code>SearchValues&lt;char&gt;</code> for more efficient char searching (#24896) (Thanks @ArmaanMcleod!)</li>
+<li>Seal internal types in <code>PlatformInvokes</code> (#24826) (Thanks @xtqqczze!)</li>
+</ul>
+
+</details>
+
+### Tools
+
+- Update CODEOWNERS (#24989)
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@xtqqczze, @KyZy7</p>
+
+</summary>
+
+<ul>
+<li>Update branch for release  - Transitive - false - none (#24995)</li>
+<li>Add setup dotnet action to the build composite action (#24996)</li>
+<li>Give the pipeline runs meaningful names (#24987)</li>
+<li>Fix V-Pack download package name (#24866)</li>
+<li>Set <code>LangVersion</code> compiler option to <code>13.0</code> in Test.Common.props (#24621) (Thanks @xtqqczze!)</li>
+<li>Fix release branch filters (#24933)</li>
+<li>Fix GitHub Action filter overmatching (#24929)</li>
+<li>Add UseDotnet task for installing dotnet (#24905)</li>
+<li>Convert powershell/PowerShell-CI-macos to GitHub Actions (#24914)</li>
+<li>Convert powershell/PowerShell-CI-linux to GitHub Actions (#24913)</li>
+<li>Convert powershell/PowerShell-Windows-CI to GitHub Actions (#24899)</li>
+<li>Fix MSIX stage in release pipeline (#24900)</li>
+<li>Update .NET SDK (#24906)</li>
+<li>Update metadata.json (#24862)</li>
+<li>PMC parse state correctly from update command's response (#24850)</li>
+<li>Add EV2 support for publishing PowerShell packages to PMC (#24841)</li>
+<li>Remove AzDO credscan as it is now in GitHub (#24842)</li>
+<li>Add *.props and sort path filters for windows CI  (#24822)</li>
+<li>Use work load identity service connection to download makeappx tool from storage account (#24817)</li>
+<li>Update path filters for Windows CI (#24809)</li>
+<li>Update outdated package references (#24758)</li>
+<li>Update metadata.json (#24787) (Thanks @KyZy7!)</li>
+<li>Add tool package download in publish nuget stage (#24790)</li>
+<li>Fix Changelog content grab during GitHub Release (#24788)</li>
+<li>Update metadata.json (#24764)</li>
+<li>Update <code>Microsoft.PowerShell.PSResourceGet</code> to <code>1.1.0</code> (#24767)</li>
+<li>Add a parameter that skips verify packages step (#24763)</li>
+</ul>
+
+</details>
+
+### Documentation and Help Content
+
+- Add 7.4.7 Changelog (#24844)
+- Create changelog for v7.5.0 (#24808)
+- Update Changelog for v7.6.0-preview.2 (#24775)
+
+[7.6.0-preview.3]: https://github.com/PowerShell/PowerShell/compare/v7.6.0-preview.2...v7.6.0-preview.3
+
 ## [7.6.0-preview.2] - 2025-01-14
 
 ### General Cmdlet Updates and Fixes
