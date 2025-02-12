@@ -8423,24 +8423,24 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Invokes command by name to get results of any type.
-        /// Sets command parameters or includes specific parameters.
+        /// Sets command parameters or selects specific parameters.
         /// </summary>
         /// <param name="commandName">The command name.</param>
         /// <param name="commandParameters">The command parameters.</param>
-        /// <param name="parametersToInclude">The parameters to include in command.</param>
+        /// <param name="selectedParameters">The optional parameters to be selected in command..</param>
         /// <returns>Collection of results returned from invoked command.</returns>
         internal static Collection<T> InvokeCommand<T>(
             string commandName,
             IDictionary commandParameters,
-            params string[] parametersToInclude)
+            params string[] selectedParameters)
         {
             using var ps = PowerShell.Create(RunspaceMode.CurrentRunspace);
 
             ps.AddCommand(commandName);
 
-            if (parametersToInclude.Length > 0)
+            if (selectedParameters.Length > 0)
             {
-                foreach (string parameter in parametersToInclude)
+                foreach (string parameter in selectedParameters)
                 {
                     if (commandParameters.Contains(parameter))
                     {
