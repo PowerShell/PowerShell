@@ -266,16 +266,11 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="isLiteralPath">Specifies if path is literal path.</param>
         /// <returns>Collection of Pathinfo objects.</returns>
         private static Collection<PathInfo> ResolvePath(object path, bool isLiteralPath)
-        {
-            using var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
-
-            ps.AddCommand("Microsoft.PowerShell.Management\\Resolve-Path");
-            ps.AddParameter(isLiteralPath ? "LiteralPath" : "Path", path);
-
-            Collection<PathInfo> output = ps.Invoke<PathInfo>();
-
-            return output;
-        }
+            => CompletionCompleters.InvokeCommand<PathInfo>(
+                commandName: "Resolve-Path",
+                commandParameters: new Dictionary<string, object> {
+                    { isLiteralPath ? "LiteralPath" : "Path", path }
+                });
     }
 #endif
 }
