@@ -270,7 +270,7 @@ namespace Microsoft.PowerShell.Commands
                 commandName: "Resolve-Path",
                 commandParameters: new Dictionary<string, object>
                 {
-                    { isLiteralPath ? "LiteralPath" : "Path", path }
+                    { isLiteralPath ? "LiteralPath" : "Path", path },
                 });
     }
 #endif
