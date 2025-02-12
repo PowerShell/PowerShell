@@ -30,12 +30,13 @@ jobs:
       repoRoot: $(Build.SourcesDirectory)/PowerShell
       ob_restore_phase: true
 
-  - pwsh: |
-      Import-Module $(Build.SourcesDirectory)/PowerShell/build.psm1
-      Start-PSBootstrap
-    displayName: Bootstrap
+  - task: UseDotNet@2
+    displayName: 'Use .NET Core sdk'
+    inputs:
+      useGlobalJson: true
+      packageType: 'sdk'
+      workingDirectory: $(Build.SourcesDirectory)/PowerShell"
     env:
-      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
       ob_restore_phase: true
 
   - pwsh: |
@@ -97,12 +98,13 @@ jobs:
       repoRoot: $(Build.SourcesDirectory)/PowerShell
       ob_restore_phase: true
 
-  - pwsh: |
-      Import-Module $(Build.SourcesDirectory)/PowerShell/build.psm1
-      Start-PSBootstrap
-    displayName: Bootstrap
+  - task: UseDotNet@2
+    displayName: 'Use .NET Core sdk'
+    inputs:
+      useGlobalJson: true
+      packageType: 'sdk'
+      workingDirectory: $(Build.SourcesDirectory)/PowerShell"
     env:
-      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
       ob_restore_phase: true
 
   - pwsh: |

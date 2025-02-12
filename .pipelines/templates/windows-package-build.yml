@@ -78,6 +78,13 @@ jobs:
     env:
       ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
 
+  - task: UseDotNet@2
+    inputs:
+      useGlobalJson: true
+      workingDirectory: $(REPOROOT)
+    env:
+      ob_restore_phase: true
+
   - pwsh: |
       $msixUrl = '$(makeappUrl)'
       Invoke-RestMethod -Uri $msixUrl -OutFile '$(Pipeline.Workspace)\makeappx.zip'
@@ -105,7 +112,7 @@ jobs:
       Import-Module "$repoRoot\build.psm1"
       Import-Module "$repoRoot\tools\packaging"
 
-      Start-PSBootstrap -Package
+      Start-PSBootstrap -Scenario Package
 
       $signedFilesPath, $psoptionsFilePath = if ($env:RUNTIME -eq 'minsize') {
           "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_x64_${runtime}\$signedFolder"
@@ -146,7 +153,7 @@ jobs:
         Write-Verbose -Message "LTS Release: $LTS"
       }
 
-      Start-PSBootstrap -Package
+      Start-PSBootstrap -Scenario Package
 
       $WindowsRuntime = switch ($runtime) {
         'x64' { 'win7-x64' }
