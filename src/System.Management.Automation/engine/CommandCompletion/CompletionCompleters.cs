@@ -8423,26 +8423,36 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Invokes command by name to get results of any type.
-        /// Sets command parameters which exist in fake bound parameters.
+        /// Sets command parameters or includes specific parameters.
         /// </summary>
         /// <param name="commandName">The command name.</param>
-        /// <param name="fakeBoundParameters">The fake bound parameters.</param>
-        /// <param name="parametersToAdd">The parameters to add.</param>
-        /// <returns>Collection of command info objects.</returns>
+        /// <param name="commandParameters">The command parameters.</param>
+        /// <param name="parametersToInclude">The parameters to include in command.</param>
+        /// <returns>Collection of results returned from invoked command.</returns>
         internal static Collection<T> InvokeCommand<T>(
             string commandName,
-            IDictionary fakeBoundParameters, 
-            params string[] parametersToAdd)
+            IDictionary commandParameters,
+            params string[] parametersToInclude)
         {
             using var ps = PowerShell.Create(RunspaceMode.CurrentRunspace);
 
             ps.AddCommand(commandName);
 
-            foreach (string parameter in parametersToAdd)
+            if (parametersToInclude.Length > 0)
             {
-                if (fakeBoundParameters.Contains(parameter))
+                foreach (string parameter in parametersToInclude)
                 {
-                    ps.AddParameter(parameter, fakeBoundParameters[parameter]);
+                    if (commandParameters.Contains(parameter))
+                    {
+                        ps.AddParameter(parameter, commandParameters[parameter]);
+                    }
+                }
+            }
+            else
+            {
+                foreach (DictionaryEntry entry in commandParameters)
+                {
+                    ps.AddParameter(entry.Key.ToString(), entry.Value);
                 }
             }
 

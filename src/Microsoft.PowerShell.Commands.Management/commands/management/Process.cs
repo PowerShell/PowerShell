@@ -2681,15 +2681,12 @@ namespace Microsoft.PowerShell.Commands
 
                 // Otherwise check if command is an Application to resolve executable full path with extension
                 // e.g if powershell was given, resolve to powershell.exe to get verbs
-                using var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
-
-                var commandInfo = new CmdletInfo("Get-Command", typeof(GetCommandCommand));
-
-                ps.AddCommand(commandInfo);
-                ps.AddParameter("Name", filePath);
-                ps.AddParameter("CommandType", CommandTypes.Application);
-
-                Collection<CommandInfo> commands = ps.Invoke<CommandInfo>();
+                Collection<CommandInfo> commands = CompletionCompleters.InvokeCommand<CommandInfo>(
+                    commandName: "Get-Command",
+                    commandParameters: new Dictionary<string, object> { 
+                        { "Name", filePath }, 
+                        { "CommandType", CommandTypes.Application } 
+                    });
 
                 // Start-Process & Get-Command select first found application based on PATHEXT environment variable
                 if (commands.Count >= 1)
