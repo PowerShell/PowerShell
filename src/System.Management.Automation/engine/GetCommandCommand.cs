@@ -1726,8 +1726,7 @@ namespace Microsoft.PowerShell.Commands
             Collection<CommandInfo> commands = CompletionCompleters.InvokeCommand<CommandInfo>(
                 commandName: "Get-Command", 
                 commandParameters: fakeBoundParameters, 
-                "Module", 
-                "Verb");
+                "Module", "Verb");
 
             SortedSet<string> nouns = new(StringComparer.OrdinalIgnoreCase);
 

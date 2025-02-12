@@ -1520,8 +1520,7 @@ namespace System.Management.Automation
                     Collection<CmdletInfo> commands = CompletionCompleters.InvokeCommand<CmdletInfo>(
                         commandName: "Get-Command",
                         commandParameters: fakeBoundParameters,
-                         "Noun",
-                         "Module");
+                        "Noun", "Module");
 
                     return CompleteVerbWithCommands(wordToComplete, commands);
                 }
