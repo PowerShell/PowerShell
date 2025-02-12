@@ -268,7 +268,8 @@ namespace Microsoft.PowerShell.Commands
         private static Collection<PathInfo> ResolvePath(object path, bool isLiteralPath)
             => CompletionCompleters.InvokeCommand<PathInfo>(
                 commandName: "Resolve-Path",
-                commandParameters: new Dictionary<string, object> {
+                commandParameters: new Dictionary<string, object>
+                {
                     { isLiteralPath ? "LiteralPath" : "Path", path }
                 });
     }
