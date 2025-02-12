@@ -188,8 +188,6 @@ function Invoke-CIInstall
     }
 
     Set-BuildVariable -Name TestPassed -Value False
-    Write-Verbose -Verbose -Message "Calling Start-PSBootstrap from Invoke-CIInstall"
-    Start-PSBootstrap
 }
 
 function Invoke-CIxUnit
@@ -402,8 +400,6 @@ function New-CodeCoverageAndTestPackage
 
     if (Test-DailyBuild)
     {
-        Start-PSBootstrap -Verbose
-
         Start-PSBuild -Configuration 'CodeCoverage' -Clean
 
         $codeCoverageOutput = Split-Path -Parent (Get-PSOutput)
@@ -691,7 +687,7 @@ function Invoke-BootstrapStage
     Write-Log -Message "Executing ci.psm1 Bootstrap Stage"
     # Make sure we have all the tags
     Sync-PSTags -AddRemoteIfMissing
-    Start-PSBootstrap -Package:$createPackages
+    Start-PSBootstrap -Scenario Package:$createPackages
 }
 
 # Run pester tests for Linux and macOS

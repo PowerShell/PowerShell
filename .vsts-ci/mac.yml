@@ -110,6 +110,6 @@ stages:
           clean: true
         - pwsh: |
             import-module ./build.psm1
-            start-psbootstrap -package
+            start-psbootstrap -Scenario package
           displayName: Bootstrap packaging
           condition: succeededOrFailed()

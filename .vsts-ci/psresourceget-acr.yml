@@ -137,7 +137,6 @@ stages:
 
     - pwsh: |
         Import-Module .\build.psm1 -force
-        Start-PSBootstrap
         Import-Module .\tools\ci.psm1
         Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
         $options = (Get-PSOptions)
