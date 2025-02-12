@@ -8422,18 +8422,21 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Invokes Get-Command to get command info objects.
+        /// Invokes command by name to get command info objects.
+        /// Sets command parameters which exist in fake bound parameters.
         /// </summary>
+        /// <param name="commandName">The command name.</param>
         /// <param name="fakeBoundParameters">The fake bound parameters.</param>
         /// <param name="parametersToAdd">The parameters to add.</param>
         /// <returns>Collection of command info objects.</returns>
-        internal static Collection<T> InvokeGetCommand<T>(
+        internal static Collection<T> InvokeCommand<T>(
+            string commandName,
             IDictionary fakeBoundParameters, 
-            params string[] parametersToAdd) where T : CommandInfo
+            params string[] parametersToAdd)
         {
             using var ps = PowerShell.Create(RunspaceMode.CurrentRunspace);
 
-            ps.AddCommand("Get-Command");
+            ps.AddCommand(commandName);
 
             foreach (string parameter in parametersToAdd)
             {

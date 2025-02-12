@@ -1517,7 +1517,7 @@ namespace System.Management.Automation
                 else if (commandName.Equals("Get-Command", StringComparison.OrdinalIgnoreCase)
                          && fakeBoundParameters.Contains("Noun"))
                 {
-                    Collection<CmdletInfo> commands = CompletionCompleters.InvokeGetCommand<CmdletInfo>(fakeBoundParameters, "Noun", "Module");
+                    Collection<CmdletInfo> commands = CompletionCompleters.InvokeCommand<CmdletInfo>("Get-Command", fakeBoundParameters, "Noun", "Module");
                     return CompleteVerbWithCommands(wordToComplete, commands);
                 }
 
