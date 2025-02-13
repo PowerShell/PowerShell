@@ -2009,7 +2009,7 @@ namespace System.Management.Automation
         }
 
         public override int GetHashCode()
-            => HashCode.Combine(MethodTargetType, ParameterTypes, GenericTypeParameters);
+            => HashCode.Combine(MethodTargetType, ParameterTypes.SequenceGetHashCode(), GenericTypeParameters.SequenceGetHashCode());
 
         public override string ToString()
         {
