@@ -35,7 +35,7 @@ namespace Microsoft.PowerShell.Commands
         /// An instance of the PSTraceSource class used for trace output
         /// using "FileSystemContentStream" as the category.
         /// </summary>
-        [Dbg.TraceSourceAttribute(
+        [Dbg.TraceSource(
             "FileSystemContentStream",
             "The provider content reader and writer for the file system")]
         private static readonly Dbg.PSTraceSource s_tracer =

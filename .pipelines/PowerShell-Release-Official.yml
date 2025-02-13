@@ -26,6 +26,8 @@ parameters: # parameters are shown up in ADO UI in a build queue time
     type: boolean
     default: false
 
+name: release-$(BUILD.SOURCEBRANCHNAME)-$(Build.BuildId)
+
 variables:
   - name: CDP_DEFINITION_BUILD_COUNT
     value: $[counter('', 0)]
@@ -50,7 +52,7 @@ variables:
   - name: ob_outputDirectory
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
   - name: WindowsContainerImage
-    value: 'onebranch.azurecr.io/windows/ltsc2019/vse2022:latest'
+    value: 'onebranch.azurecr.io/windows/ltsc2022/vse2022:latest'
   - name: LinuxContainerImage
     value: mcr.microsoft.com/onebranch/cbl-mariner/build:2.0
   - name: ReleaseTagVar
@@ -63,6 +65,10 @@ resources:
       type: git
       name: OneBranch.Pipelines/GovernedTemplates
       ref: refs/heads/main
+    - repository: PSInternalTools
+      type: git
+      name: PowerShellCore/Internal-PowerShellTeam-Tools
+      ref: refs/heads/master
 
   pipelines:
     - pipeline: CoOrdinatedBuildPipeline
@@ -79,12 +85,12 @@ resources:
 extends:
   template: v2/OneBranch.Official.CrossPlat.yml@templates
   parameters:
-    # still using KS2 because we are not yet using a Box Product Deployment
+    release: 
+      category: NonAzure
     featureFlags:
-      LinuxHostVersion:
-          Network: KS2
       WindowsHostVersion:
-          Network: KS2
+        Version: 2022
+        Network: KS3
     cloudvault:
       enabled: false
     globalSdl:
@@ -110,13 +116,20 @@ extends:
       tsaOptionsFile: .config\tsaoptions.json
 
     stages:
+    - stage: setReleaseTagAndUploadTools
+      displayName: 'Set Release Tag and Upload Tools'
+      jobs:
+      - template: /.pipelines/templates/release-SetTagAndTools.yml@self
+
     - stage: msixbundle
       displayName: 'Create MSIX Bundle'
+      dependsOn: []
       jobs:
       - template: /.pipelines/templates/release-create-msix.yml@self
 
     - stage: validateSdk
       displayName: 'Validate SDK'
+      dependsOn: []
       jobs:
       - template: /.pipelines/templates/release-validate-sdk.yml@self
         parameters:
@@ -141,6 +154,7 @@ extends:
 
     - stage: gbltool
       displayName: 'Validate Global tools'
+      dependsOn: []
       jobs:
       - template: /.pipelines/templates/release-validate-globaltools.yml@self
         parameters:
@@ -158,6 +172,7 @@ extends:
 
     - stage: fxdpackages
       displayName: 'Validate FXD Packages'
+      dependsOn: []
       jobs:
       - template: /.pipelines/templates/release-validate-fxdpackages.yml@self
         parameters:
@@ -189,11 +204,14 @@ extends:
           displayName: 'Validate Linux ARM64 Fxd Packages'
           jobtype: 'linux'
           artifactName: 'drop_linux_package_fxdependent'
+          # this is really an architecture independent package
           packageNamePattern: '**/*linux-x64-fxdependent.tar.gz'
           arm64: 'yes'
+          enableCredScan: false
 
     - stage: validatePackages
       displayName: 'Validate Packages'
+      dependsOn: []
       jobs:
       - template: /.pipelines/templates/release-validate-packagenames.yml@self
 
@@ -262,23 +280,52 @@ extends:
             Update and merge the changelog for the release.
             This step is required for creating GitHub draft release.
 
+    - stage: PublishGitHubRelease
+      displayName: Publish GitHub Release
+      dependsOn: 
+        - setReleaseTagAndUploadTools
+        - UpdateChangeLog
+      variables:
+        ob_release_environment: Production
+      jobs:
+      - template: /.pipelines/templates/release-githubtasks.yml@self
+    
+    - stage: PushGitTagAndMakeDraftPublic
+      displayName: Push Git Tag and Make Draft Public
+      dependsOn: PublishGitHubRelease
+      jobs:
+      - template: /.pipelines/templates/approvalJob.yml@self
+        parameters:
+          displayName: Push Git Tag
+          jobName: PushGitTag
+          instructions: |
+            Push the git tag to upstream  
+    
+      - template: /.pipelines/templates/approvalJob.yml@self
+        parameters:
+          displayName: Make Draft Public
+          dependsOnJob: PushGitTag
+          jobName: DraftPublic
+          instructions: |
+            Make the GitHub Release Draft Public
+  
     - stage: BlobPublic
       displayName: Make Blob Public
-      dependsOn: UpdateChangeLog
+      dependsOn: 
+        - UpdateChangeLog
+        - PushGitTagAndMakeDraftPublic
       jobs:
       - template: /.pipelines/templates/release-MakeBlobPublic.yml@self
         parameters:
-          SkipPSInfraInstallers: ${{ parameters.SkipPSInfraInstallers }}
-
-    - stage: PublishGitHubRelease
-      displayName: Publish GitHub Release
-      dependsOn: BlobPublic
-      jobs:
-      - template: /.pipelines/templates/release-githubtasks.yml@self
-
+          SkipPSInfraInstallers: ${{ parameters.SkipPSInfraInstallers }}         
+  
     - stage: PublishNuGet
       displayName: Publish NuGet
-      dependsOn: PublishGitHubRelease
+      dependsOn:
+        - setReleaseTagAndUploadTools
+        - PushGitTagAndMakeDraftPublic
+      variables:
+        ob_release_environment: Production
       jobs:
       - template: /.pipelines/templates/release-publish-nuget.yml@self
         parameters:
@@ -286,33 +333,28 @@ extends:
 
     - stage: PublishPMC
       displayName: Publish PMC
-      dependsOn: PublishGitHubRelease
+      dependsOn: PushGitTagAndMakeDraftPublic
       jobs:
-      - template: /.pipelines/templates/release-publish-pmc.yml@self
+      - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
-          skipPublish: ${{ parameters.SkipPMCPublish }}
+          displayName: Publish to PMC
+          jobName: ReleaseToPMC
+          instructions: |
+            Run PowerShell-Release-Official-Azure.yml pipeline to publish to PMC
 
     - stage: ReleaseDocker
-      dependsOn: PublishGitHubRelease
+      dependsOn: PushGitTagAndMakeDraftPublic
       displayName: 'Docker Release'
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
-          displayName: Start Docker Build
-          jobName: StartDockerBuild
-          instructions: |
-            Kick off Docker build
-
-      - template: /.pipelines/templates/approvalJob.yml@self
-        parameters:
           displayName: Start Docker Release
-          dependsOnJob: StartDockerBuild
           jobName: StartDockerRelease
           instructions: |
             Kickoff docker release
 
     - stage: UpdateDotnetDocker
-      dependsOn: PublishGitHubRelease
+      dependsOn: PushGitTagAndMakeDraftPublic
       displayName: Update DotNet SDK Docker images
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
@@ -327,7 +369,7 @@ extends:
             4. create PR targeting nightly branch
 
     - stage: UpdateWinGet
-      dependsOn: PublishGitHubRelease
+      dependsOn: PushGitTagAndMakeDraftPublic
       displayName: Add manifest entry to winget
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
@@ -338,7 +380,7 @@ extends:
             This is typically done by the community 1-2 days after the release.
 
     - stage: PublishMsix
-      dependsOn: PublishGitHubRelease
+      dependsOn: PushGitTagAndMakeDraftPublic
       displayName: Publish MSIX to store
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
@@ -349,7 +391,7 @@ extends:
             Ask Steve to release MSIX bundle package to Store
 
     - stage: PublishVPack
-      dependsOn: PublishGitHubRelease
+      dependsOn: PushGitTagAndMakeDraftPublic
       displayName: Release vPack
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
@@ -367,20 +409,22 @@ extends:
     #   - template: templates/release-UpdateDepsJson.yml
 
     - stage: UploadBuildInfoJson
-      dependsOn: PublishGitHubRelease
+      dependsOn: PushGitTagAndMakeDraftPublic
       displayName: Upload BuildInfo.json
       jobs:
       - template: /.pipelines/templates/release-upload-buildinfo.yml@self
 
     - stage: ReleaseSymbols
-      dependsOn: PublishGitHubRelease
+      dependsOn: PushGitTagAndMakeDraftPublic
       displayName: Release Symbols
       jobs:
       - template: /.pipelines/templates/release-symbols.yml@self
 
     - stage: ChangesToMaster
       displayName: Ensure changes are in GH master
-      dependsOn: ['PublishNuGet', 'PublishPMC']
+      dependsOn: 
+        - PublishNuGet 
+        - PublishPMC
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
@@ -391,7 +435,7 @@ extends:
 
     - stage: ReleaseSnap
       displayName: Release Snap
-      dependsOn: 'ChangesToMaster'
+      dependsOn: ChangesToMaster
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
@@ -402,7 +446,7 @@ extends:
 
     - stage: ReleaseToMU
       displayName: Release to MU
-      dependsOn: ['PublishNuGet', 'PublishPMC', 'ChangesToMaster']
+      dependsOn: PushGitTagAndMakeDraftPublic # This only needs the blob to be available
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
@@ -412,7 +456,10 @@ extends:
 
     - stage: ReleaseClose
       displayName: Finish Release
-      dependsOn: ['ReleaseToMU', 'ReleaseSymbols', 'ReleaseSnap']
+      dependsOn: 
+        - ReleaseToMU
+        - ReleaseSymbols
+        - ReleaseSnap
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
