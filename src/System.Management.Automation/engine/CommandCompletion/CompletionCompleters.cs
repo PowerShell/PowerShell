@@ -8438,9 +8438,13 @@ namespace System.Management.Automation
 
             ps.AddCommand(commandName);
 
-            if (selectedParameters.Length > 0)
+            IEnumerable<string> parametersToAdd = selectedParameters.Length > 0
+                ? selectedParameters
+                : commandParameters?.Keys.Cast<string>();
+
+            if (parametersToAdd != null)
             {
-                foreach (string parameter in selectedParameters)
+                foreach (string parameter in parametersToAdd)
                 {
                     if (commandParameters.Contains(parameter))
                     {
@@ -8448,17 +8452,8 @@ namespace System.Management.Automation
                     }
                 }
             }
-            else
-            {
-                foreach (DictionaryEntry entry in commandParameters)
-                {
-                    ps.AddParameter(entry.Key.ToString(), entry.Value);
-                }
-            }
 
-            Collection<T> commands = ps.Invoke<T>();
-
-            return commands;
+            return ps.Invoke<T>();
         }
 
         internal static bool IsSplattedVariable(Ast targetExpr)
