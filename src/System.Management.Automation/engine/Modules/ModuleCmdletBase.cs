@@ -136,22 +136,12 @@ namespace Microsoft.PowerShell.Commands
 
         internal SessionState TargetSessionState
         {
-            get
-            {
-                if (BaseGlobal)
-                {
-                    return Context.TopLevelSessionState.PublicSessionState;
-                }
-                else
-                {
-                    // Module loading could happen during tab completion triggered by PSReadLine,
-                    // but that doesn't mean the module should be loaded targeting the PSReadLine
-                    // module's session state. In that case, use Global session state instead.
-                    return Context.EngineSessionState.Module?.Name is "PSReadLine"
-                        ? Context.TopLevelSessionState.PublicSessionState
-                        : Context.SessionState;
-                }
-            }
+            // Module loading could happen during tab completion triggered by PSReadLine,
+            // but that doesn't mean the module should be loaded targeting the PSReadLine
+            // module's session state. In that case, use Global session state instead.
+            get => BaseGlobal || Context.EngineSessionState.Module?.Name is "PSReadLine"
+                ? Context.TopLevelSessionState.PublicSessionState
+                : Context.SessionState;
         }
 
         /// <summary>
