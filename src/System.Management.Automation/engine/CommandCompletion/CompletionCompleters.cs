@@ -8442,7 +8442,7 @@ namespace System.Management.Automation
                 ? selectedParameters
                 : commandParameters?.Keys.Cast<string>();
 
-            if (parametersToAdd != null)
+            if (parametersToAdd is not null)
             {
                 foreach (string parameter in parametersToAdd)
                 {
