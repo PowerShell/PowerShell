@@ -1158,6 +1158,50 @@ ConstructorTestClass(int i, bool b)
         }
     }
 
+    Context "Get-ExperimentalFeature -Name parameter completion" {
+        BeforeAll {
+            function GetExperimentalFeatureNames([switch]$SingleQuote, [switch]$DoubleQuote) {
+                $features = (Get-ExperimentalFeature).Name
+
+                if ($SingleQuote) {
+                    return ($features | ForEach-Object { "'$_'" })
+                }
+                elseif ($DoubleQuote) {
+                    return ($features | ForEach-Object { """$_""" })
+                }
+
+                return $features
+            }
+
+            $allExperimentalFeatures = GetExperimentalFeatureNames
+            $allExperimentalFeaturesSingleQuote = GetExperimentalFeatureNames -SingleQuote
+            $allExperimentalFeaturesDoubleQuote = GetExperimentalFeatureNames -DoubleQuote
+            $experimentalFeaturesStartingWithPS = $allExperimentalFeatures | Where-Object { $_ -like 'PS*'}
+            $experimentalFeaturesStartingWithPSSingleQuote = $allExperimentalFeaturesSingleQuote | Where-Object { $_ -like "'PS*" }
+            $experimentalFeaturesStartingWithPSDoubleQuote = $allExperimentalFeaturesDoubleQuote | Where-Object { $_ -like """PS*" }
+            $experimentalFeaturesStartingWithPSNative = $allExperimentalFeatures | Where-Object { $_ -like 'PSNative*'}
+            $experimentalFeaturesStartingWithPSNativeSingleQuote = $allExperimentalFeaturesSingleQuote | Where-Object { $_ -like "'PSNative*" }
+            $experimentalFeaturesStartingWithPSNativeDoubleQuote = $allExperimentalFeaturesDoubleQuote | Where-Object { $_ -like """PSNative*" }
+        }
+
+        It "Should complete Name for '<TextInput>'" -TestCases @(
+            @{ TextInput = "Get-ExperimentalFeature -Name "; ExpectedExperimentalFeatureNames = $allExperimentalFeatures }
+            @{ TextInput = "Get-ExperimentalFeature -Name '"; ExpectedExperimentalFeatureNames = $allExperimentalFeaturesSingleQuote }
+            @{ TextInput = "Get-ExperimentalFeature -Name """; ExpectedExperimentalFeatureNames = $allExperimentalFeaturesDoubleQuote }
+            @{ TextInput = "Get-ExperimentalFeature -Name PS"; ExpectedExperimentalFeatureNames = $experimentalFeaturesStartingWithPS }
+            @{ TextInput = "Get-ExperimentalFeature -Name 'PS"; ExpectedExperimentalFeatureNames = $experimentalFeaturesStartingWithPSSingleQuote }
+            @{ TextInput = "Get-ExperimentalFeature -Name ""PS"; ExpectedExperimentalFeatureNames = $experimentalFeaturesStartingWithPSDoubleQuote }
+            @{ TextInput = "Get-ExperimentalFeature -Name PSNative"; ExpectedExperimentalFeatureNames = $experimentalFeaturesStartingWithPSNative }
+            @{ TextInput = "Get-ExperimentalFeature -Name 'PSNative"; ExpectedExperimentalFeatureNames = $experimentalFeaturesStartingWithPSNativeSingleQuote }
+            @{ TextInput = "Get-ExperimentalFeature -Name ""PSNative"; ExpectedExperimentalFeatureNames = $experimentalFeaturesStartingWithPSNativeDoubleQuote }
+        ) {
+            param($TextInput, $ExpectedExperimentalFeatureNames)
+            $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
+            $completionText = $res.CompletionMatches.CompletionText
+            $completionText -join ' ' | Should -BeExactly (($ExpectedExperimentalFeatureNames | Sort-Object -Unique) -join ' ')
+        }
+    }
+
     Context "Format cmdlet's View paramter completion" {
         BeforeAll {
             $viewDefinition = @'
