@@ -1625,23 +1625,9 @@ namespace Microsoft.PowerShell.Commands
                 if (bailOnFirstError) return null;
             }
 
-            string resolvedCommandPrefix = BasePrefix ??
-                !string.IsNullOrEmpty(defaultCommandPrefix)
-                    ? defaultCommandPrefix
-                    : string.Empty;
-
-            if (BasePrefix is not null)
-            {
-                resolvedCommandPrefix = BasePrefix;
-            }
-            else if (!string.IsNullOrEmpty(defaultCommandPrefix))
-            {
-                resolvedCommandPrefix = defaultCommandPrefix;
-            }
-            else
-            {
-                resolvedCommandPrefix = string.Empty;
-            }
+            string resolvedCommandPrefix = BasePrefix ?? (!string.IsNullOrEmpty(defaultCommandPrefix)
+                ? defaultCommandPrefix
+                : string.Empty);
 
             if (!string.IsNullOrEmpty(actualRootModule))
             {
