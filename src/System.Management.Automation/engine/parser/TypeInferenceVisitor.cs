@@ -1077,7 +1077,12 @@ namespace System.Management.Automation
 
         object ICustomAstVisitor.VisitAssignmentStatement(AssignmentStatementAst assignmentStatementAst)
         {
-            return assignmentStatementAst.Left.Accept(this);
+            if (assignmentStatementAst.Left is ConvertExpressionAst convertExpression)
+            {
+                return new List<PSTypeName>() { new(convertExpression.Type.TypeName) };
+            }
+
+            return assignmentStatementAst.Right.Accept(this);
         }
 
         object ICustomAstVisitor.VisitPipeline(PipelineAst pipelineAst)
