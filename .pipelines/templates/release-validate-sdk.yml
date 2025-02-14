@@ -86,18 +86,10 @@ jobs:
 
         Get-Content $nugetPath
 
-        # Add workaround to unblock xUnit testing see issue: https://github.com/dotnet/sdk/issues/26462
-
-        $possibleDotnetLocation = "$env:AGENT_TOOLSDIRECTORY\dotnet"
-
-        $dotnetPath = if ($IsWindows) {
-          if (Test-Path $possibleDotnetLocation) { $possibleDotnetLocation } else { "$env:LocalAppData\Microsoft\dotnet" }
-        }
-        else {
-          "$env:HOME/.dotnet"
-        }
-
-        $env:DOTNET_ROOT = $dotnetPath
+        Import-Module -Path "$repoRoot/build.psm1" -Force
+        Find-Dotnet -SetDotnetRoot
+        Write-Verbose -Verbose "DOTNET_ROOT: $env:DOTNET_ROOT"
+        Write-Verbose -Verbose "Check dotnet install"
 
         dotnet --info
         dotnet restore
