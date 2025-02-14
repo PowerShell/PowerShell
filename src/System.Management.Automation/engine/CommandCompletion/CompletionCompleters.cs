@@ -5587,16 +5587,40 @@ namespace System.Management.Automation
                     return AstVisitAction.StopVisit;
                 }
 
-                if (assignmentStatementAst.Left is ConvertExpressionAst convertExpression)
+                if (assignmentStatementAst.Left is AttributedExpressionAst attributedExpression)
                 {
-                    if (convertExpression.Child is VariableExpressionAst variableExpression)
+                    var firstConvertExpression = attributedExpression as ConvertExpressionAst;
+                    ExpressionAst child = attributedExpression.Child;
+                    while (child is AttributedExpressionAst attributeChild)
+                    {
+                        if (firstConvertExpression is null && attributeChild is ConvertExpressionAst convertExpression)
+                        {
+                            // Multiple type constraint can be set on a variable like this: [int] [string] $Var1 = 1
+                            // However, only the first one is actually applied to the variable.
+                            firstConvertExpression = convertExpression;
+                        }
+
+                        child = attributeChild.Child;
+                    }
+
+                    if (child is VariableExpressionAst variableExpression)
                     {
                         if (variableExpression == CompletionVariableAst || s_specialVariablesCache.Value.Contains(variableExpression.VariablePath.UserPath))
                         {
                             return AstVisitAction.Continue;
                         }
 
-                        SaveVariableInfo(variableExpression.VariablePath.UserPath, convertExpression.StaticType, isConstraint: true);
+                        if (firstConvertExpression is not null)
+                        {
+                            SaveVariableInfo(variableExpression.VariablePath.UserPath, firstConvertExpression.StaticType, isConstraint: true);
+                        }
+                        else
+                        {
+                            Type lastAssignedType = assignmentStatementAst.Right is CommandExpressionAst commandExpression
+                                ? GetInferredVarTypeFromAst(commandExpression.Expression)
+                                : null;
+                            SaveVariableInfo(variableExpression.VariablePath.UserPath, lastAssignedType, isConstraint: false);
+                        }
                     }
                 }
                 else if (assignmentStatementAst.Left is VariableExpressionAst variableExpression)
