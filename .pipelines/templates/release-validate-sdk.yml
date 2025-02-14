@@ -86,7 +86,7 @@ jobs:
 
         Get-Content $nugetPath
 
-        Import-Module -Path "$repoRoot/build.psm1" -Force
+        Import-Module "$repoRoot/build.psm1" -Force
         Find-Dotnet -SetDotnetRoot
         Write-Verbose -Verbose "DOTNET_ROOT: $env:DOTNET_ROOT"
         Write-Verbose -Verbose "Check dotnet install"
