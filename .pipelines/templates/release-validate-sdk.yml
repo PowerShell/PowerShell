@@ -86,11 +86,6 @@ jobs:
 
         Get-Content $nugetPath
 
-        Import-Module "$repoRoot/build.psm1" -Force
-        Find-Dotnet -SetDotnetRoot
-        Write-Verbose -Verbose "DOTNET_ROOT: $env:DOTNET_ROOT"
-        Write-Verbose -Verbose "Check dotnet install"
-
         dotnet --info
         dotnet restore
         dotnet test /property:RELEASE_VERSION=$releaseVersion --test-adapter-path:. "--logger:xunit;LogFilePath=$(System.DefaultWorkingDirectory)/test-hosting.xml"
