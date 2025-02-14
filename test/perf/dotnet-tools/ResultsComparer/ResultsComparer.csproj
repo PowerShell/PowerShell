@@ -11,7 +11,7 @@
     <PackageReference Include="Iced" Version="1.21.0" />
     <PackageReference Include="MarkdownLog.NS20" Version="0.10.1" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.11.0" />
-    <PackageReference Include="Microsoft.Diagnostics.NETCore.Client" Version="0.2.553101" />
+    <PackageReference Include="Microsoft.Diagnostics.NETCore.Client" Version="0.2.607501" />
     <PackageReference Include="Microsoft.Diagnostics.Runtime" Version="3.1.512801" />
     <PackageReference Include="Microsoft.Diagnostics.Tracing.TraceEvent" Version="3.1.19" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
