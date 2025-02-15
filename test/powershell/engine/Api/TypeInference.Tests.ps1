@@ -268,6 +268,56 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Name | Should -Be 'System.Management.ManagementObject#root\cimv2\Win32_Process'
     }
 
+    It "Infers type from binary expression with a bool operator as bool" {
+        $res = [AstTypeInference]::InferTypeOf( {
+                (1..10) -contains 5
+            }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.Boolean'
+    }
+
+    It "Infers type from binary expression with a string operator as string" {
+        $res = [AstTypeInference]::InferTypeOf( {
+                (1..10) -join ','
+            }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.String'
+    }
+
+    It "Infers type from binary expression with a split operator as string array" {
+        $res = [AstTypeInference]::InferTypeOf( {
+                "Test:Value" -split ':'
+            }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.String[]'
+    }
+
+    It "Infers type from binary expression with a comparison operator as bool + the left hand side type" {
+        $res = [AstTypeInference]::InferTypeOf( {
+                ("Hello", "World") -eq "Hello"
+            }.Ast)
+        $res.Count | Should -Be 2
+        $res.Name[0] | Should -Be 'System.Boolean'
+        $res.Name[1] | Should -Be 'System.String[]'
+    }
+
+    It "Infers type from binary expression with a null coalescing operator as left and right hand side types" {
+        $res = [AstTypeInference]::InferTypeOf( {
+                "NotNull" ?? 10
+            }.Ast)
+        $res.Count | Should -Be 2
+        $res.Name[0] | Should -Be 'System.String'
+        $res.Name[1] | Should -Be 'System.Int32'
+    }
+
+    It "Infers type from binary expression with an overridden operator" {
+        $res = [AstTypeInference]::InferTypeOf( {
+                (Get-Date) - (Get-Date)
+            }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.TimeSpan'
+    }
+
     It "Infers type from DATA statement" {
         $res = [AstTypeInference]::InferTypeOf( {
                 DATA {

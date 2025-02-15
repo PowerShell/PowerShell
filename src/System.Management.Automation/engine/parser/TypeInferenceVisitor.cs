@@ -725,7 +725,169 @@ namespace System.Management.Automation
                 var psTypeName = type != null ? new PSTypeName(type) : new PSTypeName(typeExpression.TypeName.FullName);
                 return new[] { psTypeName };
             }
-            return InferTypes(binaryExpressionAst.Left);
+
+            switch (binaryExpressionAst.Operator)
+            {
+                case TokenKind.Xor:
+                case TokenKind.And:
+                case TokenKind.Or:
+                case TokenKind.Icontains:
+                case TokenKind.Inotcontains:
+                case TokenKind.Ccontains:
+                case TokenKind.Cnotcontains:
+                case TokenKind.Iin:
+                case TokenKind.Inotin:
+                case TokenKind.Cin:
+                case TokenKind.Cnotin:
+                case TokenKind.Is:
+                case TokenKind.IsNot:
+                    // Always returns a bool
+                    return BinaryExpressionAst.BoolTypeNameArray;
+
+                case TokenKind.Format:
+                case TokenKind.Join:
+                case TokenKind.Ireplace:
+                case TokenKind.Creplace:
+                    // Always returns a string
+                    return new PSTypeName[] { new(typeof(string)) };
+
+                case TokenKind.Isplit:
+                case TokenKind.Csplit:
+                    // Always returns a string array
+                    return new PSTypeName[] { new(typeof(string[])) };
+
+                case TokenKind.Ieq:
+                case TokenKind.Ine:
+                case TokenKind.Ige:
+                case TokenKind.Igt:
+                case TokenKind.Ilt:
+                case TokenKind.Ile:
+                case TokenKind.Ilike:
+                case TokenKind.Inotlike:
+                case TokenKind.Imatch:
+                case TokenKind.Inotmatch:
+                case TokenKind.Ceq:
+                case TokenKind.Cne:
+                case TokenKind.Cge:
+                case TokenKind.Cgt:
+                case TokenKind.Clt:
+                case TokenKind.Cle:
+                case TokenKind.Clike:
+                case TokenKind.Cnotlike:
+                case TokenKind.Cmatch:
+                case TokenKind.Cnotmatch:
+                    // Returns a bool or filtered output from the left hand side if it's enumerable
+                    var comparisonOutput = new List<PSTypeName>() { new(typeof(bool)) };
+                    comparisonOutput.AddRange(InferTypes(binaryExpressionAst.Left));
+                    return comparisonOutput;
+
+                case TokenKind.QuestionQuestion:
+                    // Can return left or right hand side
+                    var nullCoalescingOutput = InferTypes(binaryExpressionAst.Left).ToList();
+                    nullCoalescingOutput.AddRange(InferTypes(binaryExpressionAst.Right));
+                    return nullCoalescingOutput.Distinct();
+
+                default:
+                    break;
+            }
+
+            List<PSTypeName> lhsTypes = InferTypes(binaryExpressionAst.Left).ToList();
+            if (lhsTypes.Count == 0)
+            {
+                return lhsTypes;
+            }
+
+            string methodName;
+            switch (binaryExpressionAst.Operator)
+            {
+                case TokenKind.Plus:
+                    methodName = "op_Addition";
+                    break;
+
+                case TokenKind.Minus:
+                    methodName = "op_Subtraction";
+                    break;
+
+                case TokenKind.Multiply:
+                    methodName = "op_Multiply";
+                    break;
+
+                case TokenKind.Divide:
+                    methodName = "op_Division";
+                    break;
+
+                case TokenKind.Rem:
+                    methodName = "op_Modulus";
+                    break;
+
+                case TokenKind.Shl:
+                    methodName = "op_LeftShift";
+                    break;
+
+                case TokenKind.Shr:
+                    methodName = "op_RightShift";
+                    break;
+
+                default:
+                    return lhsTypes;
+            }
+
+            List<PSTypeName> rhsTypes = InferTypes(binaryExpressionAst.Right).ToList();
+            var addedReturnTypes = new HashSet<string>();
+            var result = new List<PSTypeName>();
+            foreach (var lType in lhsTypes)
+            {
+                if (lType.Type is null)
+                {
+                    continue;
+                }
+
+                foreach (MethodInfo method in lType.Type.GetMethods(BindingFlags.Public | BindingFlags.Static))
+                {
+                    if (!method.Name.Equals(methodName, StringComparison.Ordinal))
+                    {
+                        continue;
+                    }
+
+                    if (rhsTypes.Count == 0)
+                    {
+                        if (addedReturnTypes.Add(method.ReturnType.FullName))
+                        {
+                            result.Add(new PSTypeName(method.ReturnType));
+                        }
+
+                        continue;
+                    }
+
+                    ParameterInfo[] methodParams = method.GetParameters();
+                    if (methodParams.Length != 2)
+                    {
+                        continue;
+                    }
+
+                    bool addType = false;
+                    foreach (PSTypeName rType in rhsTypes)
+                    {
+                        if (rType.Type is not null && rType.Type.IsAssignableTo(methodParams[1].ParameterType))
+                        {
+                            addType = true;
+                            break;
+                        }
+                    }
+
+                    if (addType && addedReturnTypes.Add(method.ReturnType.FullName))
+                    {
+                        result.Add(new PSTypeName(method.ReturnType));
+                    }
+                }
+            }
+
+            if (result.Count == 0)
+            {
+                result.AddRange(lhsTypes);
+            }
+
+            return result;
         }
 
         object ICustomAstVisitor.VisitUnaryExpression(UnaryExpressionAst unaryExpressionAst)
