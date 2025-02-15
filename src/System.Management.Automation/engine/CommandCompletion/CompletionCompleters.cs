@@ -4737,7 +4737,7 @@ namespace System.Management.Automation
                 {
                     basePath = null;
                 }
-                IEnumerable <FileSystemInfo> fileSystemObjects = containersOnly
+                IEnumerable<FileSystemInfo> fileSystemObjects = containersOnly
                     ? dirInfo.EnumerateDirectories(filterText, enumerationOptions)
                     : dirInfo.EnumerateFileSystemInfos(filterText, enumerationOptions);
 
