@@ -1569,13 +1569,9 @@ namespace System.Management.Automation.Runspaces
                 string assembly = ss.Assemblies[i].FileName;
                 if (!string.IsNullOrEmpty(assembly))
                 {
-                    if (assemblyList.Contains(assembly))
+                    if (!assemblyList.Add(assembly))
                     {
                         ss.Assemblies.RemoveItem(i);
-                    }
-                    else
-                    {
-                        assemblyList.Add(assembly);
                     }
                 }
             }
@@ -2864,7 +2860,7 @@ namespace System.Management.Automation.Runspaces
             // Ensure that user name contains no invalid path characters.
             // MSDN indicates that logon names cannot contain any of these invalid characters,
             // but this check will ensure safety.
-            if (userName.IndexOfAny(System.IO.Path.GetInvalidPathChars()) > -1)
+            if (PathUtils.ContainsInvalidPathChars(userName))
             {
                 throw new PSInvalidOperationException(RemotingErrorIdStrings.InvalidUserDriveName);
             }

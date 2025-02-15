@@ -83,6 +83,13 @@ namespace Microsoft.PowerShell.Telemetry
         /// Remote session creation.
         /// </summary>
         RemoteSessionOpen,
+
+        /// <summary>
+        /// Send telemetry for a stable feature when used.
+        /// By making a distinction between this and experimental feature use, it will make
+        /// queries much easier.
+        /// </summary>
+        FeatureUse,
     }
 
     /// <summary>
@@ -110,6 +117,9 @@ namespace Microsoft.PowerShell.Telemetry
     /// </summary>
     public static class ApplicationInsightsTelemetry
     {
+        // The string for SubsystermRegistration
+        internal const string s_subsystemRegistration = "Subsystem.Registration";
+
         // If this env var is true, yes, or 1, telemetry will NOT be sent.
         private const string _telemetryOptoutEnvVar = "POWERSHELL_TELEMETRY_OPTOUT";
 
@@ -152,6 +162,8 @@ namespace Microsoft.PowerShell.Telemetry
         private static readonly HashSet<string> s_knownModules;
         private static readonly HashSet<string> s_knownModuleTags;
 
+        private static readonly HashSet<string> s_knownSubsystemNames;
+
         /// <summary>Gets a value indicating whether telemetry can be sent.</summary>
         public static bool CanSendTelemetry { get; private set; } = false;
 
@@ -193,6 +205,7 @@ namespace Microsoft.PowerShell.Telemetry
                         "adrms",
                         "adrmsadmin",
                         "agpm",
+                        "AIShell",
                         "appbackgroundtask",
                         "applocker",
                         "appv",
@@ -620,6 +633,13 @@ namespace Microsoft.PowerShell.Telemetry
                     };
 
                 s_uniqueUserIdentifier = GetUniqueIdentifier().ToString();
+                s_knownSubsystemNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        "Completion",
+                        "general",
+                        "Windows Package Manager - WinGet",
+                        "Az Predictor"
+                    };
             }
         }
 
@@ -715,7 +735,7 @@ namespace Microsoft.PowerShell.Telemetry
 
                 s_telemetryClient.
                     GetMetric(new MetricIdentifier(string.Empty, telemetryType.ToString(), "uuid", "SessionId", "ModuleName", "Version", "Tag")).
-                    TrackValue(metricValue: 1.0, s_uniqueUserIdentifier, s_sessionId, allowedModuleName, allowedModuleVersion, allowedModuleTagString); 
+                    TrackValue(metricValue: 1.0, s_uniqueUserIdentifier, s_sessionId, allowedModuleName, allowedModuleVersion, allowedModuleTagString);
             }
             catch
             {
@@ -754,7 +774,8 @@ namespace Microsoft.PowerShell.Telemetry
         /// </summary>
         /// <param name="metricId">The type of telemetry that we'll be sending.</param>
         /// <param name="data">The specific details about the telemetry.</param>
-        internal static void SendTelemetryMetric(TelemetryType metricId, string data)
+        /// <param name="value">The count of instances for the telemetry payload.</param>
+        internal static void SendTelemetryMetric(TelemetryType metricId, string data, double value = 1.0)
         {
             if (!CanSendTelemetry)
             {
@@ -776,12 +797,13 @@ namespace Microsoft.PowerShell.Telemetry
                     case TelemetryType.ExperimentalEngineFeatureActivation:
                     case TelemetryType.ExperimentalEngineFeatureDeactivation:
                     case TelemetryType.ExperimentalFeatureUse:
-                        s_telemetryClient.GetMetric(metricName, "uuid", "SessionId", "Detail").TrackValue(metricValue: 1.0, s_uniqueUserIdentifier, s_sessionId, data);
+                    case TelemetryType.FeatureUse:
+                        s_telemetryClient.GetMetric(metricName, "uuid", "SessionId", "Detail").TrackValue(metricValue: value, s_uniqueUserIdentifier, s_sessionId, data);
                         break;
                     case TelemetryType.ExperimentalModuleFeatureActivation:
                     case TelemetryType.ExperimentalModuleFeatureDeactivation:
                         string experimentalFeatureName = GetExperimentalFeatureName(data);
-                        s_telemetryClient.GetMetric(metricName, "uuid", "SessionId", "Detail").TrackValue(metricValue: 1.0, s_uniqueUserIdentifier, s_sessionId, experimentalFeatureName);
+                        s_telemetryClient.GetMetric(metricName, "uuid", "SessionId", "Detail").TrackValue(metricValue: value, s_uniqueUserIdentifier, s_sessionId, experimentalFeatureName);
                         break;
                 }
             }
@@ -789,6 +811,35 @@ namespace Microsoft.PowerShell.Telemetry
             {
                 // do nothing, telemetry can't be sent
                 // don't send the panic telemetry as if we have failed above, it will likely fail here.
+            }
+        }
+
+        /// <summary>
+        /// Send additional information about an feature as it is used.
+        /// </summary>
+        /// <param name="featureName">The name of the feature.</param>
+        /// <param name="detail">The details about the feature use.</param>
+        /// <param name="value">The value to report when sending the payload.</param>
+        internal static void SendUseTelemetry(string featureName, string detail, double value = 1.0)
+        {
+            if (!CanSendTelemetry)
+            {
+                return;
+            }
+
+            // keep payload small
+            if (featureName is null || detail is null || featureName.Length > 33 || detail.Length > 33)
+            {
+                return;
+            }
+
+            if (string.Compare(featureName, s_subsystemRegistration, true) == 0)
+            {
+                ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.FeatureUse, string.Join(":", featureName, GetSubsystemName(detail)), value);
+            }
+            else
+            {
+                ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.FeatureUse, string.Join(":", featureName, detail), value);
             }
         }
 
@@ -822,7 +873,18 @@ namespace Microsoft.PowerShell.Telemetry
             return Anonymous;
         }
 
-        // Get the module name. If we can report it, we'll return the name, otherwise, we'll return "anonymous"
+        // Get the module name. If we can report it, we'll return the name, otherwise, we'll return the string "anonymous"
+        private static string GetSubsystemName(string subsystemNameToValidate)
+        {
+            if (s_knownSubsystemNames.Contains(subsystemNameToValidate))
+            {
+                return subsystemNameToValidate;
+            }
+
+            return Anonymous;
+        }
+
+        // Get the module name. If we can report it, we'll return the name, otherwise, we'll return anonymous.
         private static string GetModuleName(string moduleNameToValidate)
         {
             if (s_knownModules.Contains(moduleNameToValidate))
