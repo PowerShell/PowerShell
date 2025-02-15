@@ -49,7 +49,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = CommandParameterSetName)]
         [Parameter(ParameterSetName = VariableParameterSetName)]
         [Parameter(ParameterSetName = TypeParameterSetName)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         public string[] Script { get; set; }
 
         /// <summary>

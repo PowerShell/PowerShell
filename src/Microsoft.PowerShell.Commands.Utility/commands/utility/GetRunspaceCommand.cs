@@ -34,7 +34,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0,
                    ParameterSetName = GetRunspaceCommand.NameParameterSet)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] Name
         {
