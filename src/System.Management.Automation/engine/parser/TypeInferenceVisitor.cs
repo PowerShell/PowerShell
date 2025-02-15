@@ -2596,7 +2596,7 @@ namespace System.Management.Automation
             var types = new List<PSTypeName>();
             types.AddRange(InferTypes(pipelineChainAst.LhsPipelineChain));
             types.AddRange(InferTypes(pipelineChainAst.RhsPipeline));
-            return GetArrayType(types);
+            return types.Distinct();
         }
 
         private static CommandBaseAst GetPreviousPipelineCommand(CommandAst commandAst)

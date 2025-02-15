@@ -442,6 +442,14 @@ Describe "Type inference Tests" -tags "CI" {
         }
     }
 
+    It 'Infers typeof pipeline chain' {
+        $ast = {New-TimeSpan && New-Guid}.Ast
+        $typeNames = [AstTypeInference]::InferTypeof($ast, [TypeInferenceRuntimePermissions]::AllowSafeEval)
+        $typeNames.Count | Should -Be 2
+        $typeNames[0] | Should -Be 'System.TimeSpan'
+        $typeNames[1] | Should -Be 'System.Guid'
+    }
+
     It "Infers typeof pscustomobject" {
 
         $res = [AstTypeInference]::InferTypeOf( { [pscustomobject] @{
