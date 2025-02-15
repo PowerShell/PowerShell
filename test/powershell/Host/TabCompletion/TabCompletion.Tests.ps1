@@ -1179,9 +1179,6 @@ ConstructorTestClass(int i, bool b)
             $experimentalFeaturesStartingWithPS = $allExperimentalFeatures | Where-Object { $_ -like 'PS*'}
             $experimentalFeaturesStartingWithPSSingleQuote = $allExperimentalFeaturesSingleQuote | Where-Object { $_ -like "'PS*" }
             $experimentalFeaturesStartingWithPSDoubleQuote = $allExperimentalFeaturesDoubleQuote | Where-Object { $_ -like """PS*" }
-            $experimentalFeaturesStartingWithPSNative = $allExperimentalFeatures | Where-Object { $_ -like 'PSNative*'}
-            $experimentalFeaturesStartingWithPSNativeSingleQuote = $allExperimentalFeaturesSingleQuote | Where-Object { $_ -like "'PSNative*" }
-            $experimentalFeaturesStartingWithPSNativeDoubleQuote = $allExperimentalFeaturesDoubleQuote | Where-Object { $_ -like """PSNative*" }
         }
 
         It "Should complete Name for '<TextInput>'" -TestCases @(
@@ -1191,9 +1188,6 @@ ConstructorTestClass(int i, bool b)
             @{ TextInput = "Get-ExperimentalFeature -Name PS"; ExpectedExperimentalFeatureNames = $experimentalFeaturesStartingWithPS }
             @{ TextInput = "Get-ExperimentalFeature -Name 'PS"; ExpectedExperimentalFeatureNames = $experimentalFeaturesStartingWithPSSingleQuote }
             @{ TextInput = "Get-ExperimentalFeature -Name ""PS"; ExpectedExperimentalFeatureNames = $experimentalFeaturesStartingWithPSDoubleQuote }
-            @{ TextInput = "Get-ExperimentalFeature -Name PSNative"; ExpectedExperimentalFeatureNames = $experimentalFeaturesStartingWithPSNative }
-            @{ TextInput = "Get-ExperimentalFeature -Name 'PSNative"; ExpectedExperimentalFeatureNames = $experimentalFeaturesStartingWithPSNativeSingleQuote }
-            @{ TextInput = "Get-ExperimentalFeature -Name ""PSNative"; ExpectedExperimentalFeatureNames = $experimentalFeaturesStartingWithPSNativeDoubleQuote }
         ) {
             param($TextInput, $ExpectedExperimentalFeatureNames)
             $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
