@@ -471,11 +471,14 @@ namespace System.Management.Automation
                 // which should be filtered out below.
                 // When the completion is triggered from global session state, such as when running 'TabExpansion2' from command line,
                 // the module associated with engine session state will be null.
+                //
+                // Note that, it's intentional to not hard code the name 'PSReadLine' in the change, so that in case the tab completion
+                // is triggered from within a different module, its nested modules can also be filtered out.
                 HashSet<PSModuleInfo> nestedModulesToFilterOut = null;
-                PSModuleInfo curModule = context.ExecutionContext.EngineSessionState.Module;
-                if (loadedModulesOnly && curModule?.NestedModules.Count > 0)
+                PSModuleInfo currentModule = context.ExecutionContext.EngineSessionState.Module;
+                if (loadedModulesOnly && currentModule?.NestedModules.Count > 0)
                 {
-                    nestedModulesToFilterOut = new(curModule.NestedModules);
+                    nestedModulesToFilterOut = new(currentModule.NestedModules);
                 }
 
                 foreach (PSObject item in psObjects)
