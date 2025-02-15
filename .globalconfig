@@ -1614,7 +1614,7 @@ dotnet_diagnostic.SA1014.severity = warning
 
 # SA1015: Closing generic brackets should be spaced correctly
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1015.md
-dotnet_diagnostic.SA1015.severity = none
+dotnet_diagnostic.SA1015.severity = warning
 
 # SA1016: Opening attribute brackets should be spaced correctly
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1016.md
