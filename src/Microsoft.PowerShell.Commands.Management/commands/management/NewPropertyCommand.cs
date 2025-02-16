@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -187,20 +188,24 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Provides argument completion for PropertyType parameter.
     /// </summary>
-    public class PropertyTypeArgumentCompleter : IArgumentCompleter
+    public sealed class PropertyTypeArgumentCompleter : ArgumentCompleter
     {
-        private static readonly string[] s_RegistryPropertyTypes = new string[]
-        {
-            "String",
-            "ExpandString",
-            "Binary",
-            "DWord",
-            "MultiString",
-            "QWord",
-            "Unknown"
-        };
+        /// <summary>
+        /// Completes if registry provider.
+        /// </summary>
+        /// <returns>True if registry provider, False if not.</returns>
+        protected override bool ShouldComplete => IsRegistryProvider(FakeBoundParameters);
 
-        private static string GetRegistryPropertyTypeToolTip(string propertyTypeName) => propertyTypeName switch
+        /// <summary>
+        /// The completion result type.
+        /// </summary>
+        protected override CompletionResultType CompletionResultType => CompletionResultType.ParameterValue;
+
+        /// <summary>
+        /// The tooltip mapping.
+        /// </summary>
+        /// <value>Tooltip mapping delegate.</value>
+        protected override Func<string, string> ToolTipMapping => propertyTypeName => propertyTypeName switch
         {
             "String" => TabCompletionStrings.RegistryStringToolTip,
             "ExpandString" => TabCompletionStrings.RegistryExpandStringToolTip,
@@ -212,27 +217,18 @@ namespace Microsoft.PowerShell.Commands
         };
 
         /// <summary>
-        /// Returns completion results for PropertyType parameter.
+        /// Gets the possible completion values for PropertType parameter.
         /// </summary>
-        /// <param name="commandName">The command name.</param>
-        /// <param name="parameterName">The parameter name.</param>
-        /// <param name="wordToComplete">The word to complete.</param>
-        /// <param name="commandAst">The command AST.</param>
-        /// <param name="fakeBoundParameters">The fake bound parameters.</param>
-        /// <returns>List of Completion Results.</returns>
-        public IEnumerable<CompletionResult> CompleteArgument(
-            string commandName,
-            string parameterName,
-            string wordToComplete,
-            CommandAst commandAst,
-            IDictionary fakeBoundParameters)
-                => IsRegistryProvider(fakeBoundParameters)
-                    ? CompletionCompleters.GetMatchingResults(
-                        wordToComplete,
-                        possibleCompletionValues: s_RegistryPropertyTypes,
-                        toolTipMapping: GetRegistryPropertyTypeToolTip,
-                        resultType: CompletionResultType.ParameterValue)
-                    : [];
+        /// <returns>List of possible completion parameters.</returns>
+        protected override IEnumerable<string> GetPossibleCompletionValues() => [
+            "String",
+            "ExpandString",
+            "Binary",
+            "DWord",
+            "MultiString",
+            "QWord",
+            "Unknown"
+        ];
 
         /// <summary>
         /// Checks if parameter paths are from Registry provider.

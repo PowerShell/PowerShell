@@ -2722,28 +2722,13 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Provides argument completion for StrictMode Version parameter.
     /// </summary>
-    public class StrictModeVersionArgumentCompleter : IArgumentCompleter
+    public sealed class StrictModeVersionArgumentCompleter : ArgumentCompleter
     {
-        private static readonly string[] s_strictModeVersions = new string[] { "Latest", "3.0", "2.0", "1.0" };
-
         /// <summary>
-        /// Returns completion results for version parameter.
+        /// Gets possoble completion values for strict mode version parameter.
         /// </summary>
-        /// <param name="commandName">The command name.</param>
-        /// <param name="parameterName">The parameter name.</param>
-        /// <param name="wordToComplete">The word to complete.</param>
-        /// <param name="commandAst">The command AST.</param>
-        /// <param name="fakeBoundParameters">The fake bound parameters.</param>
-        /// <returns>List of Completion Results.</returns>
-        public IEnumerable<CompletionResult> CompleteArgument(
-            string commandName,
-            string parameterName,
-            string wordToComplete,
-            CommandAst commandAst,
-            IDictionary fakeBoundParameters)
-                => CompletionCompleters.GetMatchingResults(
-                    wordToComplete,
-                    possibleCompletionValues: s_strictModeVersions);
+        /// <returns>List of possible completion values.</returns>
+        protected override IEnumerable<string> GetPossibleCompletionValues() => ["Latest", "3.0", "2.0", "1.0"];
     }
 
     #endregion Set-StrictMode
