@@ -5497,6 +5497,8 @@ end {
                 { "Update-Help",                       new SessionStateCmdletEntry("Update-Help", typeof(UpdateHelpCommand), helpFile) },
                 { "Wait-Job",                          new SessionStateCmdletEntry("Wait-Job", typeof(WaitJobCommand), helpFile) },
                 { "Where-Object",                      new SessionStateCmdletEntry("Where-Object", typeof(WhereObjectCommand), helpFile) },
+                { "Get-CompletionOptions",             new SessionStateCmdletEntry("Get-CompletionOptions", typeof(GetCompletionOptionsCommand), helpFile) },
+                { "Set-CompletionOptions",             new SessionStateCmdletEntry("Set-CompletionOptions", typeof(SetCompletionOptionsCommand), helpFile) },
 #if !CORECLR
                 { "Add-PSSnapin",                      new SessionStateCmdletEntry("Add-PSSnapin", typeof(AddPSSnapinCommand), helpFile) },
                 { "Export-Console",                    new SessionStateCmdletEntry("Export-Console", typeof(ExportConsoleCommand), helpFile) },
