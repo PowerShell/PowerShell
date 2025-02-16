@@ -28,7 +28,7 @@ class R2RVerification {
     [System.Reflection.PortableExecutable.Machine]
     $Architecture = [System.Reflection.PortableExecutable.Machine]::Amd64
 
-    [ValidateSet('Linux','Apple','Windows')]
+    [ValidateSet('Linux','Apple','Windows','FreeBSD')]
     [string]
     $OperatingSystem = 'Windows'
 }
@@ -331,6 +331,8 @@ function Start-PSPackage {
                 }
             } elseif ($Environment.IsMacOS) {
                 "osxpkg", "tar"
+            } elseif ($Environment.IsFreeBSD) {
+                "tar"
             } elseif ($Environment.IsWindows) {
                 "msi", "msix"
             }
@@ -534,7 +536,7 @@ function Start-PSPackage {
                     $Arguments['Architecture'] = $architecture
                 }
 
-                if ($Script:Options.Runtime -match '(linux|osx).*') {
+                if ($Script:Options.Runtime -match '(linux|osx|freebsd).*') {
                     $os, $architecture = ($Script:Options.Runtime -split '-')
                     $peOS = ConvertTo-PEOperatingSystem -OperatingSystem $os
                     $peArch =  ConvertTo-PEArchitecture -Architecture $architecture
@@ -768,11 +770,13 @@ function New-TarballPackage {
     }
 
     if ($Environment.IsWindows) {
-        throw "Must be on Linux or macOS to build 'tar.gz' packages!"
+        throw "Must be on Linux, macOS, or FreeBSD to build 'tar.gz' packages!"
     } elseif ($Environment.IsLinux) {
         $packageName = $packageName -f "linux"
     } elseif ($Environment.IsMacOS) {
         $packageName = $packageName -f "osx"
+    } elseif ($Environment.IsFreeBSD) {
+        $packageName = $packageName -f "freebsd"
     }
 
     $packagePath = Join-Path -Path $CurrentLocation -ChildPath $packageName
@@ -984,7 +988,7 @@ function Expand-PSSignedBuild
     if ($SkipPwshExeCheck) {
         $executablePath = (Join-Path $buildPath -ChildPath 'pwsh.dll')
     } else {
-        if ($IsMacOS -or $IsLinux) {
+        if ($IsMacOS -or $IsLinux -or $IsFreeBSD) {
             $executablePath = (Join-Path $buildPath -ChildPath 'pwsh')
         } else {
             $executablePath = (Join-Path $buildPath -ChildPath 'pwsh.exe')
@@ -1161,10 +1165,12 @@ function New-UnixPackage {
             New-StagingFolder -StagingPath $Staging -PackageSourcePath $PackageSourcePath
         }
 
-        # Follow the Filesystem Hierarchy Standard for Linux and macOS
+        # Follow the Filesystem Hierarchy Standard for Linux, macOS, and FreeBSD
         $Destination = if ($Environment.IsLinux) {
             "/opt/microsoft/powershell/$Suffix"
         } elseif ($Environment.IsMacOS) {
+            "/usr/local/microsoft/powershell/$Suffix"
+        } elseif ($Environment.IsFreeBSD) {
             "/usr/local/microsoft/powershell/$Suffix"
         }
 
@@ -1841,6 +1847,8 @@ function Get-PwshExecutablePath
     if ($Environment.IsLinux) {
         "/usr/bin/$executableName"
     } elseif ($Environment.IsMacOS) {
+        "/usr/local/bin/$executableName"
+    } elseif ($Environment.IsFreeBSD) {
         "/usr/local/bin/$executableName"
     }
 }
@@ -4947,7 +4955,7 @@ function Send-AzdoFile {
     $logFolder = Join-Path -Path $PWD -ChildPath 'logfile'
     if (!(Test-Path -Path $logFolder)) {
         $null = New-Item -Path $logFolder -ItemType Directory
-        if ($IsMacOS -or $IsLinux) {
+        if ($IsMacOS -or $IsLinux -or $IsFreeBSD) {
             $null = chmod a+rw $logFolder
         }
     }
@@ -5017,7 +5025,7 @@ class BomRecord {
 # Use -Fix to update the BOM, Please review the file types.
 function Test-Bom {
     param(
-        [ValidateSet('mac','windows','linux')]
+        [ValidateSet('mac','windows','linux','freebsd')]
         [string]
         $BomName,
         [ValidateScript({ Test-Path $_ })]
