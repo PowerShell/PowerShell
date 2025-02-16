@@ -16,7 +16,7 @@ namespace System.Management.Automation
         /// Gets the name of the command.
         /// </summary>
         /// <value>
-        /// The name of the command as a <see cref="string"/>.
+        /// The name of the command as a string.
         /// </value>
         protected string CommandName { get; private set; }
 
@@ -24,7 +24,7 @@ namespace System.Management.Automation
         /// Gets the parameter name.
         /// </summary>
         /// <value>
-        /// The name of the parameter as a <see cref="string"/>.
+        /// The name of the parameter as a string.
         /// </value>
         protected string ParameterName { get; private set; }
 
@@ -32,15 +32,15 @@ namespace System.Management.Automation
         /// Gets the word to complete.
         /// </summary>
         /// <value>
-        /// The word to complete as a <see cref="string"/>.
+        /// The word to complete as a string.
         /// </value>
         protected string WordToComplete { get; private set; }
 
         /// <summary>
-        /// Gets the command AST.
+        /// Gets the command abstract syntax tree (AST).
         /// </summary>
         /// <value>
-        /// The command AST as a <see cref="Language.CommandAst"/>.
+        /// The command AST as a CommandAst.
         /// </value>
         protected CommandAst CommandAst { get; private set; }
 
@@ -48,7 +48,7 @@ namespace System.Management.Automation
         /// Gets the fake bound parameters.
         /// </summary>
         /// <value>
-        /// An <see cref="IDictionary"/> that contains the fake bound parameters.
+        /// An IDictionary that contains the fake bound parameters.
         /// </value>
         protected IDictionary FakeBoundParameters { get; private set; }
 
@@ -56,7 +56,7 @@ namespace System.Management.Automation
         /// Gets or sets a value indicating whether to perform completion.
         /// </summary>
         /// <value>
-        /// Indicates completion should be performed as a <see cref="bool"/>.
+        /// True if completion should be performed; otherwise, false.
         /// </value>
         protected virtual bool ShouldComplete { get; set; } = true;
 
@@ -64,7 +64,7 @@ namespace System.Management.Automation
         /// Gets or sets the type of the completion result.
         /// </summary>
         /// <value>
-        /// The type of the completion result as a <see cref="Automation.CompletionResultType"/>.
+        /// The type of the completion result as a CompletionResultType.
         /// </value>
         protected virtual CompletionResultType CompletionResultType { get; set; } = CompletionResultType.Text;
 
@@ -72,21 +72,23 @@ namespace System.Management.Automation
         /// Gets or sets the tool tip mapping delegate.
         /// </summary>
         /// <value>
-        /// A function that maps a <see cref="string"/> to a <see cref="string"/> for tool tips.
+        /// A function that maps a string to a string for tool tips.
         /// </value>
         protected virtual Func<string, string> ToolTipMapping { get; set; }
 
         /// <summary>
-        /// Gets or sets flag to escape globbing paths.
+        /// Gets or sets a flag to escape globbing paths.
         /// </summary>
-        /// <value>True if globbing paths need to be escaped, False if not.</value>
+        /// <value>
+        /// True if globbing paths need to be escaped; otherwise, false.
+        /// </value>
         protected virtual bool EscapeGlobbingPath { get; set; }
 
         /// <summary>
-        /// Get possible completion values.
+        /// Gets possible completion values.
         /// </summary>
         /// <returns>
-        /// An <see cref="IEnumerable"/> containing the possible completion values.
+        /// An IEnumerable containing the possible completion values.
         /// </returns>
         protected abstract IEnumerable<string> GetPossibleCompletionValues();
 
@@ -99,7 +101,7 @@ namespace System.Management.Automation
         /// <param name="commandAst">The command abstract syntax tree.</param>
         /// <param name="fakeBoundParameters">The fake bound parameters.</param>
         /// <returns>
-        /// An <see cref="IEnumerable"/> containing the completion results.
+        /// An IEnumerable containing the completion results.
         /// </returns>
         public virtual IEnumerable<CompletionResult> CompleteArgument(
             string commandName,
@@ -113,15 +115,17 @@ namespace System.Management.Automation
             WordToComplete = wordToComplete;
             CommandAst = commandAst;
             FakeBoundParameters = fakeBoundParameters;
-            return ShouldComplete ? GetMatchingResults(wordToComplete) : [];
+            return ShouldComplete ? GetMatchingResults(wordToComplete) : new List<CompletionResult>();
         }
 
         /// <summary>
-        /// Matches word to complete against value.
+        /// Matches the word to complete against a value.
         /// </summary>
         /// <param name="wordToComplete">The word to complete.</param>
         /// <param name="value">The value to match.</param>
-        /// <returns>True if value was matched, False if not matched.</returns>
+        /// <returns>
+        /// True if the value was matched; otherwise, false.
+        /// </returns>
         protected virtual bool IsMatch(string wordToComplete, string value)
             => WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase).IsMatch(value);
 
@@ -147,12 +151,14 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Quotes around completion text.
+        /// Quotes the completion text.
         /// </summary>
         /// <param name="quote">The quote to use.</param>
         /// <param name="completionText">The text to complete.</param>
-        /// <param name="escapeGlobbingPath">If globbing path needs to be escaped.</param>
-        /// <returns>A quoted string, if quoting is necessary.</returns>
+        /// <param name="escapeGlobbingPath">True if the globbing path needs to be escaped; otherwise, false.</param>
+        /// <returns>
+        /// A quoted string if quoting is necessary.
+        /// </returns>
         private static string QuoteCompletionText(string quote, string completionText, bool escapeGlobbingPath)
         {
             if (CompletionCompleters.CompletionRequiresQuotes(completionText, escapeGlobbingPath))
