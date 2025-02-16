@@ -8558,7 +8558,7 @@ namespace System.Management.Automation
         private static bool ContainsCharsToCheck(ReadOnlySpan<char> text, bool escape) 
             => text.ContainsAny(escape ? s_escapeCharsToCheck : s_defaultCharsToCheck);
 
-        private static bool CompletionRequiresQuotes(string completion, bool escape)
+        internal static bool CompletionRequiresQuotes(string completion, bool escape)
         {
             // If the tokenizer sees the completion as more than two tokens, or if there is some error, then
             // some form of quoting is necessary (if it's a variable, we'd need ${}, filenames would need [], etc.)

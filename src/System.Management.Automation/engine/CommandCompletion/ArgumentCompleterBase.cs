@@ -77,6 +77,12 @@ namespace System.Management.Automation
         protected virtual Func<string, string> ToolTipMapping { get; set; }
 
         /// <summary>
+        /// Gets or sets flag to escape globbing paths.
+        /// </summary>
+        /// <value>True if globbing paths need to be escaped, False if not.</value>
+        protected virtual bool EscapeGlobbingPath { get; set; }
+
+        /// <summary>
         /// Get possible completion values.
         /// </summary>
         /// <returns>
@@ -127,9 +133,7 @@ namespace System.Management.Automation
             {
                 if (IsMatch(wordToComplete, value))
                 {
-                    string completionText = quote == string.Empty
-                        ? value
-                        : quote + value + quote;
+                    string completionText = QuoteCompletionText(value, quote, EscapeGlobbingPath);
 
                     string listItemText = value;
 
@@ -140,6 +144,53 @@ namespace System.Management.Automation
                         toolTip: ToolTipMapping?.Invoke(value) ?? listItemText);
                 }
             }
+        }
+
+        /// <summary>
+        /// Quotes around completion text.
+        /// </summary>
+        /// <param name="quote">The quote to use.</param>
+        /// <param name="completionText">The text to complete.</param>
+        /// <param name="escapeGlobbingPath">If globbing path needs to be escaped.</param>
+        /// <returns>A quoted string, if quoting is necessary.</returns>
+        private static string QuoteCompletionText(string quote, string completionText, bool escapeGlobbingPath)
+        {
+            if (CompletionCompleters.CompletionRequiresQuotes(completionText, escapeGlobbingPath))
+            {
+                string quoteInUse = quote == string.Empty ? "'" : quote;
+
+                if (quoteInUse == "'")
+                {
+                    completionText = completionText.Replace("'", "''");
+                }
+                else
+                {
+                    completionText = completionText.Replace("`", "``");
+                    completionText = completionText.Replace("$", "`$");
+                }
+
+                if (escapeGlobbingPath)
+                {
+                    if (quoteInUse == "'")
+                    {
+                        completionText = completionText.Replace("[", "`[");
+                        completionText = completionText.Replace("]", "`]");
+                    }
+                    else
+                    {
+                        completionText = completionText.Replace("[", "``[");
+                        completionText = completionText.Replace("]", "``]");
+                    }
+                }
+
+                completionText = quoteInUse + completionText + quoteInUse;
+            }
+            else
+            {
+                completionText = quote + completionText + quote;
+            }
+
+            return completionText;
         }
     }
 }
