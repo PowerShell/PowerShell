@@ -110,14 +110,22 @@ namespace System.Management.Automation
             return ShouldComplete ? GetMatchingResults(wordToComplete) : [];
         }
 
+        /// <summary>
+        /// Matches word to complete against value.
+        /// </summary>
+        /// <param name="wordToComplete">The word to complete.</param>
+        /// <param name="value">The value to match.</param>
+        /// <returns>True if value was matched, False if not matched.</returns>
+        protected virtual bool IsMatch(string wordToComplete, string value)
+            => WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase).IsMatch(value);
+
         private IEnumerable<CompletionResult> GetMatchingResults(string wordToComplete)
         {
             string quote = CompletionCompleters.HandleDoubleAndSingleQuote(ref wordToComplete);
-            var pattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
 
             foreach (string value in GetPossibleCompletionValues())
             {
-                if (pattern.IsMatch(value))
+                if (IsMatch(wordToComplete, value))
                 {
                     string completionText = quote == string.Empty
                         ? value
