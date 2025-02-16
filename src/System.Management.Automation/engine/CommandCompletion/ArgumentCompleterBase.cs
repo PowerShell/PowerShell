@@ -77,6 +77,12 @@ namespace System.Management.Automation
         protected virtual Func<string, string> ToolTipMapping { get; set; }
 
         /// <summary>
+        /// Gets or sets the list item text mapping delegate.
+        /// </summary>
+        /// <value> function that maps a <see cref="string"/> to a <see cref="string"/> for list item text.</value>
+        protected virtual Func<string, string> ListItemTextMapping { get; set; }
+
+        /// <summary>
         /// Gets or sets a flag to escape globbing paths.
         /// </summary>
         /// <value>
@@ -103,7 +109,7 @@ namespace System.Management.Automation
         /// <returns>
         /// An <see cref="IEnumerable{CompletionResult}"/> containing the completion results.
         /// </returns>
-        public virtual IEnumerable<CompletionResult> CompleteArgument(
+        public IEnumerable<CompletionResult> CompleteArgument(
             string commandName,
             string parameterName,
             string wordToComplete,
@@ -115,19 +121,8 @@ namespace System.Management.Automation
             WordToComplete = wordToComplete;
             CommandAst = commandAst;
             FakeBoundParameters = fakeBoundParameters;
-            return ShouldComplete ? GetMatchingResults(wordToComplete) : new List<CompletionResult>();
+            return ShouldComplete ? GetMatchingResults(wordToComplete) : [];
         }
-
-        /// <summary>
-        /// Matches the word to complete against a value.
-        /// </summary>
-        /// <param name="wordToComplete">The word to complete.</param>
-        /// <param name="value">The value to match.</param>
-        /// <returns>
-        /// True if the value was matched; otherwise, false.
-        /// </returns>
-        protected virtual bool IsMatch(string wordToComplete, string value)
-            => WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase).IsMatch(value);
 
         /// <summary>
         /// Matches the possible completion values against the word to complete.
@@ -138,25 +133,21 @@ namespace System.Management.Automation
         /// </returns>
         /// <remarks>
         /// This method handles different variations of completions, including considerations for quotes and escaping globbing paths.
-        /// The <see cref="IsMatch(string, string)"/> method is used to determine if a possible value matches the word to complete.
         /// </remarks>
-        private IEnumerable<CompletionResult> GetMatchingResults(string wordToComplete)
+        protected virtual IEnumerable<CompletionResult> GetMatchingResults(string wordToComplete)
         {
             string quote = CompletionCompleters.HandleDoubleAndSingleQuote(ref wordToComplete);
 
             foreach (string value in GetPossibleCompletionValues())
             {
-                if (IsMatch(wordToComplete, value))
+                if (value.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
                 {
-                    string completionText = QuoteCompletionText(value, quote, EscapeGlobbingPath);
+                    string completionText = QuoteCompletionText(completionText: value, quote, EscapeGlobbingPath);
 
-                    string listItemText = value;
+                    string toolTip = ToolTipMapping?.Invoke(value) ?? value;
+                    string listItemText = ListItemTextMapping?.Invoke(value) ?? value;
 
-                    yield return new CompletionResult(
-                        completionText,
-                        listItemText,
-                        resultType: CompletionResultType,
-                        toolTip: ToolTipMapping?.Invoke(value) ?? listItemText);
+                    yield return new CompletionResult(completionText, listItemText, CompletionResultType, toolTip);
                 }
             }
         }
@@ -164,50 +155,33 @@ namespace System.Management.Automation
         /// <summary>
         /// Quotes the completion text.
         /// </summary>
-        /// <param name="quote">The quote to use.</param>
         /// <param name="completionText">The text to complete.</param>
+        /// <param name="quote">The quote to use.</param>
         /// <param name="escapeGlobbingPath">True if the globbing path needs to be escaped; otherwise, false.</param>
         /// <returns>
         /// A quoted string if quoting is necessary.
         /// </returns>
-        private static string QuoteCompletionText(string quote, string completionText, bool escapeGlobbingPath)
+        private static string QuoteCompletionText(string completionText, string quote, bool escapeGlobbingPath)
         {
             if (CompletionCompleters.CompletionRequiresQuotes(completionText, escapeGlobbingPath))
             {
-                string quoteInUse = quote == string.Empty ? "'" : quote;
+                string quoteInUse = string.IsNullOrEmpty(quote) ? "'" : quote;
 
-                if (quoteInUse == "'")
-                {
-                    completionText = completionText.Replace("'", "''");
-                }
-                else
-                {
-                    completionText = completionText.Replace("`", "``");
-                    completionText = completionText.Replace("$", "`$");
-                }
+                completionText = quoteInUse == "'"
+                    ? completionText.Replace("'", "''")
+                    : completionText.Replace("`", "``").Replace("$", "`$");
 
                 if (escapeGlobbingPath)
                 {
-                    if (quoteInUse == "'")
-                    {
-                        completionText = completionText.Replace("[", "`[");
-                        completionText = completionText.Replace("]", "`]");
-                    }
-                    else
-                    {
-                        completionText = completionText.Replace("[", "``[");
-                        completionText = completionText.Replace("]", "``]");
-                    }
+                    completionText = quoteInUse == "'"
+                        ? completionText.Replace("[", "`[").Replace("]", "`]")
+                        : completionText.Replace("[", "``[").Replace("]", "``]");
                 }
 
-                completionText = quoteInUse + completionText + quoteInUse;
-            }
-            else
-            {
-                completionText = quote + completionText + quote;
+                return quoteInUse + completionText + quoteInUse;
             }
 
-            return completionText;
+            return quote + completionText + quote;
         }
     }
 }
