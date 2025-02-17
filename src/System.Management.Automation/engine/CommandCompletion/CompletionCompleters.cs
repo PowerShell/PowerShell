@@ -5596,7 +5596,7 @@ namespace System.Management.Automation
                         if (firstConvertExpression is null && attributeChild is ConvertExpressionAst convertExpression)
                         {
                             // Multiple type constraint can be set on a variable like this: [int] [string] $Var1 = 1
-                            // However, only the first one is actually applied to the variable.
+                            // But it's the left most type constraint that determines the final type.
                             firstConvertExpression = convertExpression;
                         }
 
