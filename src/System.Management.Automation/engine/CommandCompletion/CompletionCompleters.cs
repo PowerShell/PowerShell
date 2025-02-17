@@ -8421,6 +8421,33 @@ namespace System.Management.Automation
             }
         }
 
+        /// <summary>
+        /// Calls Get-Command to get command info objects.
+        /// </summary>
+        /// <param name="fakeBoundParameters">The fake bound parameters.</param>
+        /// <param name="parametersToAdd">The parameters to add.</param>
+        /// <returns>Collection of command info objects.</returns>
+        internal static Collection<CommandInfo> GetCommandInfo(
+            IDictionary fakeBoundParameters, 
+            params string[] parametersToAdd)
+        {
+            using var ps = PowerShell.Create(RunspaceMode.CurrentRunspace);
+
+            ps.AddCommand("Get-Command");
+
+            foreach (string parameter in parametersToAdd)
+            {
+                if (fakeBoundParameters.Contains(parameter))
+                {
+                    ps.AddParameter(parameter, fakeBoundParameters[parameter]);
+                }
+            }
+
+            Collection<CommandInfo> commands = ps.Invoke<CommandInfo>();
+
+            return commands;
+        }
+
         internal static bool IsSplattedVariable(Ast targetExpr)
         {
             if (targetExpr is VariableExpressionAst && ((VariableExpressionAst)targetExpr).Splatted)

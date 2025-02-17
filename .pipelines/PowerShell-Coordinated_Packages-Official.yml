@@ -1,4 +1,4 @@
-name: UnifiedPackageBuild-$(BUILD.SOURCEBRANCHNAME)-$(Build.BuildId)
+name: bins-$(BUILD.SOURCEBRANCHNAME)-$(Build.BuildId)
 trigger: none
 
 parameters:
