@@ -835,8 +835,8 @@ namespace System.Management.Automation
             }
 
             List<PSTypeName> rhsTypes = InferTypes(binaryExpressionAst.Right).ToList();
-            var addedReturnTypes = new HashSet<string>();
-            var result = new List<PSTypeName>();
+            HashSet<string> addedReturnTypes = [];
+            List<PSTypeName> result = [];
             foreach (var lType in lhsTypes)
             {
                 if (lType.Type is null)
@@ -867,19 +867,17 @@ namespace System.Management.Automation
                         continue;
                     }
 
-                    bool addType = false;
                     foreach (PSTypeName rType in rhsTypes)
                     {
                         if (rType.Type is not null && rType.Type.IsAssignableTo(methodParams[1].ParameterType))
                         {
-                            addType = true;
+                            if (addedReturnTypes.Add(method.ReturnType.FullName))
+                            {
+                                result.Add(new PSTypeName(method.ReturnType));
+                            }
+
                             break;
                         }
-                    }
-
-                    if (addType && addedReturnTypes.Add(method.ReturnType.FullName))
-                    {
-                        result.Add(new PSTypeName(method.ReturnType));
                     }
                 }
             }
