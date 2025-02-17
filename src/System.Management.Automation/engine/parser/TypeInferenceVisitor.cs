@@ -718,16 +718,18 @@ namespace System.Management.Automation
 
         object ICustomAstVisitor.VisitBinaryExpression(BinaryExpressionAst binaryExpressionAst)
         {
-            // TODO: Handle other kinds of expressions on the right side.
-            if (binaryExpressionAst.Operator == TokenKind.As && binaryExpressionAst.Right is TypeExpressionAst typeExpression)
-            {
-                var type = typeExpression.TypeName.GetReflectionType();
-                var psTypeName = type != null ? new PSTypeName(type) : new PSTypeName(typeExpression.TypeName.FullName);
-                return new[] { psTypeName };
-            }
-
             switch (binaryExpressionAst.Operator)
             {
+                case TokenKind.As:
+                    // TODO: Handle other kinds of expressions on the right side.
+                    if (binaryExpressionAst.Right is TypeExpressionAst typeExpression)
+                    {
+                        var type = typeExpression.TypeName.GetReflectionType();
+                        var psTypeName = type != null ? new PSTypeName(type) : new PSTypeName(typeExpression.TypeName.FullName);
+                        return new[] { psTypeName };
+                    }
+                    break;
+
                 case TokenKind.Xor:
                 case TokenKind.And:
                 case TokenKind.Or:
@@ -749,12 +751,12 @@ namespace System.Management.Automation
                 case TokenKind.Ireplace:
                 case TokenKind.Creplace:
                     // Always returns a string
-                    return new PSTypeName[] { new(typeof(string)) };
+                    return BinaryExpressionAst.StringTypeNameArray;
 
                 case TokenKind.Isplit:
                 case TokenKind.Csplit:
                     // Always returns a string array
-                    return new PSTypeName[] { new(typeof(string[])) };
+                    return BinaryExpressionAst.StringArrayTypeNameArray;
 
                 case TokenKind.Ieq:
                 case TokenKind.Ine:
