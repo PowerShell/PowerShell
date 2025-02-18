@@ -1085,20 +1085,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private FormatToken LoadFormatTokenFromObjectModel(CustomItemBase item, int viewIndex, string typeName)
         {
-            var newline = item as CustomItemNewline;
-            if (newline != null)
+            if (item is CustomItemNewline newline)
             {
                 return new NewLineToken { count = newline.Count };
             }
 
-            var text = item as CustomItemText;
-            if (text != null)
+            if (item is CustomItemText text)
             {
                 return new TextToken { text = text.Text };
             }
 
-            var expr = item as CustomItemExpression;
-            if (expr != null)
+            if (item is CustomItemExpression expr)
             {
                 var cpt = new CompoundPropertyToken { enumerateCollection = expr.EnumerateCollection };
 
@@ -1766,9 +1763,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private bool LoadStringResourceReference(XmlNode n, out StringResourceReference resource)
         {
             resource = null;
-            XmlElement e = n as XmlElement;
 
-            if (e == null)
+            if (n is not XmlElement e)
             {
                 // Error at XPath {0} in file {1}: Node should be an XmlElement.
                 this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.NonXmlElementNode, ComputeCurrentXPath(), FilePath));

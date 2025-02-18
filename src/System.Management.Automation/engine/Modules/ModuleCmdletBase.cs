@@ -16,6 +16,7 @@ using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Security;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Xml;
 using System.Diagnostics;
@@ -1047,9 +1048,8 @@ namespace Microsoft.PowerShell.Commands
                             PSModuleInfo module = CreateModuleInfoForGetModule(resolvedModulePath, refresh);
                             if (module != null)
                             {
-                                if (!modules.Contains(resolvedModulePath))
+                                if (modules.Add(resolvedModulePath))
                                 {
-                                    modules.Add(resolvedModulePath);
                                     yield return module;
                                 }
                             }
@@ -1078,9 +1078,8 @@ namespace Microsoft.PowerShell.Commands
                                         foundModule = true;
                                         // We need to list all versions of the module.
                                         string subModulePath = Path.GetDirectoryName(file);
-                                        if (!modules.Contains(subModulePath))
+                                        if (modules.Add(subModulePath))
                                         {
-                                            modules.Add(subModulePath);
                                             yield return module;
                                         }
                                     }
@@ -1922,11 +1921,12 @@ namespace Microsoft.PowerShell.Commands
             else if ((requiredProcessorArchitecture != ProcessorArchitecture.None) &&
                      (requiredProcessorArchitecture != ProcessorArchitecture.MSIL))
             {
-                #pragma warning disable SYSLIB0037
-                ProcessorArchitecture currentArchitecture = typeof(object).Assembly.GetName().ProcessorArchitecture;
-                #pragma warning restore SYSLIB0037
+                Architecture currentArchitecture = RuntimeInformation.ProcessArchitecture;
 
-                if (currentArchitecture != requiredProcessorArchitecture)
+                if ((requiredProcessorArchitecture == ProcessorArchitecture.X86 && currentArchitecture != Architecture.X86) ||
+                    (requiredProcessorArchitecture == ProcessorArchitecture.Amd64 && currentArchitecture != Architecture.X64) ||
+                    (requiredProcessorArchitecture == ProcessorArchitecture.Arm && (currentArchitecture != Architecture.Arm && currentArchitecture != Architecture.Arm64)) ||
+                    requiredProcessorArchitecture == ProcessorArchitecture.IA64)
                 {
                     containedErrors = true;
                     if (writingErrors)
@@ -6405,7 +6405,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // If this has an extension, and it's a relative path,
                 // then we need to ensure it's a fully-qualified path
-                if ((moduleToProcess.IndexOfAny(Path.GetInvalidPathChars()) == -1) &&
+                if ((!PathUtils.ContainsInvalidPathChars(moduleToProcess)) &&
                     Path.HasExtension(moduleToProcess) &&
                     (!Path.IsPathRooted(moduleToProcess)))
                 {

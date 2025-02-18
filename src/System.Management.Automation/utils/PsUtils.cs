@@ -354,33 +354,28 @@ namespace System.Management.Automation
             }
 
             var pipeline = ast.GetSimplePipeline(false, out _, out _);
-            if (pipeline != null)
+            if (pipeline?.GetPureExpression() is HashtableAst hashtableAst)
             {
-                var hashtableAst = pipeline.GetPureExpression() as HashtableAst;
-                if (hashtableAst != null)
+                var result = new Hashtable(StringComparer.OrdinalIgnoreCase);
+                foreach (var pair in hashtableAst.KeyValuePairs)
                 {
-                    var result = new Hashtable(StringComparer.OrdinalIgnoreCase);
-                    foreach (var pair in hashtableAst.KeyValuePairs)
+                    if (pair.Item1 is StringConstantExpressionAst key && keys.Contains(key.Value, StringComparer.OrdinalIgnoreCase))
                     {
-                        var key = pair.Item1 as StringConstantExpressionAst;
-                        if (key != null && keys.Contains(key.Value, StringComparer.OrdinalIgnoreCase))
+                        try
                         {
-                            try
-                            {
-                                var val = pair.Item2.SafeGetValue();
-                                result[key.Value] = val;
-                            }
-                            catch
-                            {
-                                throw PSTraceSource.NewInvalidOperationException(
-                                         ParserStrings.InvalidPowerShellDataFile,
-                                         psDataFilePath);
-                            }
+                            var val = pair.Item2.SafeGetValue();
+                            result[key.Value] = val;
+                        }
+                        catch
+                        {
+                            throw PSTraceSource.NewInvalidOperationException(
+                                        ParserStrings.InvalidPowerShellDataFile,
+                                        psDataFilePath);
                         }
                     }
-
-                    return result;
                 }
+
+                return result;
             }
 
             throw PSTraceSource.NewInvalidOperationException(

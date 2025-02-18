@@ -15,7 +15,6 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
     /// <summary>
     /// Represents an error during execution of a CIM job.
     /// </summary>
-    [Serializable]
     public class CimJobException : SystemException, IContainsErrorRecord
     {
         #region Standard constructors and methods required for all exceptions
@@ -50,26 +49,12 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         /// </summary>
         /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
         /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
         protected CimJobException(
             SerializationInfo info,
-            StreamingContext context) : base(info, context)
+            StreamingContext context)
         {
-            ArgumentNullException.ThrowIfNull(info);
-
-            _errorRecord = (ErrorRecord)info.GetValue("errorRecord", typeof(ErrorRecord));
-        }
-
-        /// <summary>
-        /// Sets the SerializationInfo with information about the exception.
-        /// </summary>
-        /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
-        /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            ArgumentNullException.ThrowIfNull(info); 
-
-            base.GetObjectData(info, context);
-            info.AddValue("errorRecord", _errorRecord);
+            throw new NotSupportedException();
         }
 
         #endregion

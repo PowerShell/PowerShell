@@ -68,7 +68,7 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
 
     It "validate sxs module path" -Skip:$skipNoPwsh {
 
-        $env:PSModulePath = ""
+        $env:PSModulePath = $null
         $defaultModulePath = & $powershell -nopro -c '$env:PSModulePath'
         $pathSeparator = [System.IO.Path]::PathSeparator
 
@@ -180,7 +180,7 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
         try {
             $userConfig = '{ "PSModulePath": "myUserPath" }'
             Set-Content -Path $userConfigPath -Value $userConfig -Force
-            $out = & $powershell -noprofile -command 'powershell.exe -noprofile -command $env:PSModulePath'
+            $out = & $powershell -noprofile -command 'powershell.exe -noprofile -command `$env:PSModulePath'
             $out | Should -Not -BeLike 'myUserPath;*'
         }
         finally {
@@ -246,4 +246,22 @@ Describe "ModuleIntrinsics.GetPSModulePath API tests" -tag @('CI', 'RequireAdmin
         $mPath = (Resolve-Path ([System.Management.Automation.ModuleIntrinsics]::GetPSModulePath($name))).Path
         $currentModulePathElements | Should -Contain $mPath
     }
+}
+
+Describe 'ModuleIntrinsics.GetModulePath environment interaction' -tag @('CI') {
+
+    It "GetModulePath does not crash when MyDocuments special folder is empty" {
+        try {
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('SetMyDocumentsSpecialFolderToBlank', $true)
+            [System.Management.Automation.ModuleIntrinsics]::GetModulePath($null, $null, $null)
+        }
+        finally {
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('SetMyDocumentsSpecialFolderToBlank', $false)
+        }
+    }
+
+    It "GetModulePath does not crash when MyDocuments special folder is not empty" {
+        [System.Management.Automation.ModuleIntrinsics]::GetModulePath($null, $null, $null)
+    }
+
 }

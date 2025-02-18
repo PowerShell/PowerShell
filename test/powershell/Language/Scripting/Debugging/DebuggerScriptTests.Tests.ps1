@@ -643,3 +643,20 @@ Describe "Sometimes line breakpoints are ignored" -Tags "CI" {
         if (Test-Path -Path $tempFileName2) { Remove-Item $tempFileName2 -Force }
     }
 }
+
+Describe 'Breakpoints use case-insensitive match for script paths' -Tags 'CI' {
+    # https://github.com/PowerShell/PowerShell/issues/20044
+    # Running on Windows only as Set-PSBreakpoint does case sensitive check on provided path on Unix
+    It 'Hits breakpoint' -Skip:(!$IsWindows) {
+        $filePath = Join-Path -Path $TestDrive -ChildPath 'demoIssue20044.ps1'
+        Set-Content -Path $filePath -Value "'Hello World'"
+
+        $bp = Set-PSBreakpoint -Script $filePath.ToUpper() -Line 1 -Action { continue }
+
+        & $filePath
+
+        $bp.HitCount | Should -Be 1
+
+        if ($null -ne $bp) { Remove-PSBreakpoint $bp }
+    }
+}

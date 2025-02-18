@@ -58,6 +58,11 @@
       <PSCoreFileVersion Condition = "'$(ReleaseTagSemVersionPart)' != ''">$(ReleaseTagVersionPart).$(ReleaseTagSemVersionPart)</PSCoreFileVersion>
       <!-- Create the version if we have a release build -->
       <PSCoreFileVersion Condition = "'$(PSCoreFileVersion)' == ''">$(ReleaseTagVersionPart).$(GAIncrementValue)</PSCoreFileVersion>
+      <!-- Set 'FileVersion' and 'AssemblyVersion' explicitly:
+           - make 'FileVersion' the same as 'PSCoreFileVersion'
+           - make 'AssemblyVersion' be the 'PSCoreFileVersion' with the 'Build' field set to 0, so the assembly version doesn't change for servicing releases -->
+      <FileVersion>$(PSCoreFileVersion)</FileVersion>
+      <AssemblyVersion>$([System.Version]::Parse($(PSCoreFileVersion)).Major).$([System.Version]::Parse($(PSCoreFileVersion)).Minor).0.$([System.Version]::Parse($(PSCoreFileVersion)).Revision)</AssemblyVersion>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -84,7 +89,7 @@
       -->
 
       <!--
-            Here we define explicitly 'Version' to set 'FileVersion' and 'AssemblyVersion' by 'GetAssemblyVersion' target in 'Microsoft.NET.GenerateAssemblyInfo.targets'.
+            Here we define explicitly 'Version' to set 'FileVersion' and 'AssemblyVersion' when they are not explicitly set.
             Here we define explicitly 'InformationalVersion' because by default it is defined as 'Version' by 'GetAssemblyVersion' target in 'Microsoft.NET.GenerateAssemblyInfo.targets'.
       -->
       <Version>$(PSCoreFileVersion)</Version>
@@ -137,9 +142,10 @@
     <Product>PowerShell</Product>
     <Company>Microsoft Corporation</Company>
     <Copyright>(c) Microsoft Corporation.</Copyright>
+    <AssemblyTitle>PowerShell 7</AssemblyTitle>
 
-    <TargetFramework>net8.0</TargetFramework>
-    <LangVersion>11.0</LangVersion>
+    <TargetFramework>net9.0</TargetFramework>
+    <LangVersion>13.0</LangVersion>
 
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -183,14 +189,6 @@
     <Optimize>true</Optimize>
     <!-- This is required to be full for compliance tools !-->
     <DebugType>full</DebugType>
-  </PropertyGroup>
-
-  <!-- Define non-windows, release configuration properties -->
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release' And '$(IsWindows)' != 'true' ">
-    <!-- Set-Date fails with optimize enabled in NonWindowsSetDate
-         Debugging the issues resolves the problem
-     -->
-    <Optimize>false</Optimize>
   </PropertyGroup>
 
   <PropertyGroup>

@@ -103,7 +103,7 @@ namespace Microsoft.PowerShell.Commands
             string message = StringUtil.Format(errorMessage,
                 serviceName,
                 displayName,
-                (innerException == null) ? string.Empty : innerException.Message);
+                (innerException == null) ? category.ToString() : innerException.Message);
 
             var exception = new ServiceCommandException(message, innerException);
             exception.ServiceName = serviceName;
@@ -888,7 +888,7 @@ namespace Microsoft.PowerShell.Commands
         /// This will start the service.
         /// </summary>
         /// <param name="serviceController">Service to start.</param>
-        /// <returns>True iff the service was started.</returns>
+        /// <returns>True if-and-only-if the service was started.</returns>
         internal bool DoStartService(ServiceController serviceController)
         {
             Exception exception = null;
@@ -944,7 +944,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="serviceController">Service to stop.</param>
         /// <param name="force">Stop dependent services.</param>
         /// <param name="waitForServiceToStop"></param>
-        /// <returns>True iff the service was stopped.</returns>
+        /// <returns>True if-and-only-if the service was stopped.</returns>
         internal List<ServiceController> DoStopService(ServiceController serviceController, bool force, bool waitForServiceToStop)
         {
             // Ignore ServiceController.CanStop.  CanStop will be set false
@@ -1094,7 +1094,7 @@ namespace Microsoft.PowerShell.Commands
         /// This will pause the service.
         /// </summary>
         /// <param name="serviceController">Service to pause.</param>
-        /// <returns>True iff the service was paused.</returns>
+        /// <returns>True if-and-only-if the service was paused.</returns>
         internal bool DoPauseService(ServiceController serviceController)
         {
             Exception exception = null;
@@ -1174,7 +1174,7 @@ namespace Microsoft.PowerShell.Commands
         /// This will resume the service.
         /// </summary>
         /// <param name="serviceController">Service to resume.</param>
-        /// <returns>True iff the service was resumed.</returns>
+        /// <returns>True if-and-only-if the service was resumed.</returns>
         internal bool DoResumeService(ServiceController serviceController)
         {
             Exception exception = null;
@@ -2350,7 +2350,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements the Remove-Service command.
     /// </summary>
-    [Cmdlet(VerbsCommon.Remove, "Service", SupportsShouldProcess = true, DefaultParameterSetName = "Name")]
+    [Cmdlet(VerbsCommon.Remove, "Service", SupportsShouldProcess = true, DefaultParameterSetName = "Name", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2248980")]
     public class RemoveServiceCommand : ServiceBaseCommand
     {
         #region Parameters
@@ -2519,7 +2519,6 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Non-terminating errors occurring in the service noun commands.
     /// </summary>
-    [Serializable]
     public class ServiceCommandException : SystemException
     {
         #region ctors
@@ -2561,25 +2560,12 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="info"></param>
         /// <param name="context"></param>
         /// <returns>Constructed object.</returns>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8, hence this method is now marked as obsolete", DiagnosticId = "SYSLIB0051")]
         protected ServiceCommandException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
         {
-            ArgumentNullException.ThrowIfNull(info);
-
-            _serviceName = info.GetString("ServiceName");
+            throw new NotSupportedException();
         }
-        /// <summary>
-        /// Serializer.
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            ArgumentNullException.ThrowIfNull(info);
 
-            base.GetObjectData(info, context);
-            info.AddValue("ServiceName", _serviceName);
-        }
         #endregion Serialization
 
         #region Properties
@@ -2750,53 +2736,6 @@ namespace Microsoft.PowerShell.Commands
             System.Security.AccessControl.SecurityInfos dwSecurityInformation,
             byte[] lpSecurityDescriptor
             );
-
-        /// <summary>
-        /// CreateJobObject API creates or opens a job object.
-        /// </summary>
-        /// <param name="lpJobAttributes">
-        /// A pointer to a SECURITY_ATTRIBUTES structure that specifies the security descriptor for the
-        /// job object and determines whether child processes can inherit the returned handle.
-        /// If lpJobAttributes is NULL, the job object gets a default security descriptor
-        /// and the handle cannot be inherited.
-        /// </param>
-        /// <param name="lpName">
-        /// The name of the job.
-        /// </param>
-        /// <returns>
-        /// If the function succeeds, the return value is a handle to the job object.
-        /// If the object existed before the function call, the function
-        /// returns a handle to the existing job object.
-        /// </returns>
-        [DllImport("Kernel32.dll", CharSet = CharSet.Unicode)]
-        internal static extern IntPtr CreateJobObject(IntPtr lpJobAttributes, string lpName);
-
-        /// <summary>
-        /// Retrieves job state information from the job object.
-        /// </summary>
-        /// <param name="hJob">
-        /// A handle to the job whose information is being queried.
-        /// </param>
-        /// <param name="JobObjectInfoClass">
-        /// The information class for the limits to be queried.
-        /// </param>
-        /// <param name="lpJobObjectInfo">
-        /// The limit or job state information.
-        /// </param>
-        /// <param name="cbJobObjectLength">
-        /// The count of the job information being queried, in bytes.
-        /// </param>
-        /// <param name="lpReturnLength">
-        /// A pointer to a variable that receives the length of
-        /// data written to the structure pointed to by the lpJobObjectInfo parameter.
-        /// </param>
-        /// <returns>If the function succeeds, the return value is nonzero.
-        /// If the function fails, the return value is zero.
-        /// </returns>
-        [DllImport("Kernel32.dll", EntryPoint = "QueryInformationJobObject", SetLastError = true, CharSet = CharSet.Unicode)]
-        public static extern bool QueryInformationJobObject(SafeHandle hJob, int JobObjectInfoClass,
-                                    ref JOBOBJECT_BASIC_PROCESS_ID_LIST lpJobObjectInfo,
-                                    int cbJobObjectLength, IntPtr lpReturnLength);
 
         internal static bool QueryServiceConfig(NakedWin32Handle hService, out NativeMethods.QUERY_SERVICE_CONFIG configStructure)
         {

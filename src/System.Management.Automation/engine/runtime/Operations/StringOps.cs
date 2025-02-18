@@ -28,11 +28,8 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(s != null, "caller to verify argument is not null");
 
-            if (times < 0)
-            {
-                // TODO: this should be a runtime error.
-                throw new ArgumentOutOfRangeException(nameof(times));
-            }
+            // TODO: this should be a runtime error.
+            ArgumentOutOfRangeException.ThrowIfNegative(times);
 
             if (times == 0 || s.Length == 0)
             {

@@ -982,7 +982,7 @@ namespace System.Management.Automation.Language
                             executionContext.LanguageMode = PSLanguageMode.ConstrainedLanguage;
                         }
 
-                        _bindingEffective = PrepareCommandElements(executionContext);
+                        _bindingEffective = PrepareCommandElements(executionContext, paramAstAtCursor);
                     }
                     finally
                     {
@@ -1189,7 +1189,7 @@ namespace System.Management.Automation.Language
             _duplicateParameters.Clear();
         }
 
-        private bool PrepareCommandElements(ExecutionContext context)
+        private bool PrepareCommandElements(ExecutionContext context, CommandParameterAst paramAtCursor)
         {
             int commandIndex = 0;
             bool dotSource = _commandAst.InvocationOperator == TokenKind.Dot;
@@ -1216,6 +1216,13 @@ namespace System.Management.Automation.Language
                 // Pre-processing the arguments -- command arguments
                 for (commandIndex++; commandIndex < _commandElements.Count; commandIndex++)
                 {
+                    if (implementsDynamicParameters && _commandElements[commandIndex] == paramAtCursor)
+                    {
+                        // Commands with dynamic parameters will try to bind the command elements.
+                        // A partially complete parameter will most likely cause a binding error and negatively affect the results.
+                        continue;
+                    }
+
                     var parameter = _commandElements[commandIndex] as CommandParameterAst;
                     if (parameter != null)
                     {

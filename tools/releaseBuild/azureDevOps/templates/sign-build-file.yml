@@ -304,6 +304,8 @@ steps:
       Write-Host "##vso[artifact.upload containerfolder=$containerName;artifactname=$containerName]$uploadTarFilePath"
   displayName: Upload signed tar.gz files to artifacts
   condition: eq(variables['ArtifactPlatform'], 'linux')
+  retryCountOnTaskFailure: 2
+
 
 - pwsh: |
       $uploadFolder = '$(BinPath)'
@@ -320,5 +322,7 @@ steps:
       Write-Host "##vso[artifact.upload containerfolder=$containerName;artifactname=$containerName]$uploadZipFilePath"
   displayName: Upload signed zip files to artifacts
   condition: eq(variables['ArtifactPlatform'], 'windows')
+  retryCountOnTaskFailure: 2
+
 
 - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml

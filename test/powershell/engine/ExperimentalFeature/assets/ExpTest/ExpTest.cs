@@ -196,12 +196,12 @@ namespace ExperimentalFeatureTest
     public class DynamicParamTwo
     {
         [Experimental("ExpTest.FeatureOne", ExperimentAction.Show)]
-        [Parameter()]
+        [Parameter]
         [ValidateNotNullOrEmpty]
         public string ConfigFile { get; set; }
 
         [Experimental("ExpTest.FeatureOne", ExperimentAction.Hide)]
-        [Parameter()]
+        [Parameter]
         [ValidateNotNullOrEmpty]
         public string ConfigName { get; set; }
     }

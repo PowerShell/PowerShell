@@ -354,7 +354,7 @@ namespace Microsoft.PowerShell
         /// <param name="fieldEchoOnPrompt">True to echo user input.</param>
         /// <param name="listInput">True if the field is a list.</param>
         /// <param name="endListInput">Valid only if listInput is true. set to true if the input signals end of list input.</param>
-        /// <param name="cancelled">True iff the input is canceled, e.g., by Ctrl-C or Ctrl-Break.</param>
+        /// <param name="cancelled">True if-and-only-if the input is canceled, e.g., by Ctrl-C or Ctrl-Break.</param>
         /// <returns>Processed input string to be converted with LanguagePrimitives.ConvertTo.</returns>
         private string PromptReadInput(string fieldPrompt, FieldDescription desc, bool fieldEchoOnPrompt,
                         bool listInput, out bool endListInput, out bool cancelled)
@@ -484,7 +484,7 @@ namespace Microsoft.PowerShell
         /// !h  prints out field's Quick Help, returns null
         /// All others tilde comments are invalid and return null
         ///
-        /// returns null iff there's nothing the caller can process.
+        /// returns null if-and-only-if there's nothing the caller can process.
         /// </summary>
         /// <param name="input"></param>
         /// <param name="desc"></param>
