@@ -429,28 +429,28 @@ namespace System.Management.Automation
 
         #region DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell
 
-        [DataMemberAttribute]
+        [DataMember]
         private readonly int id;
 
-        [DataMemberAttribute]
+        [DataMember]
         private int parentId = -1;
 
-        [DataMemberAttribute]
+        [DataMember]
         private string activity;
 
-        [DataMemberAttribute]
+        [DataMember]
         private string status;
 
-        [DataMemberAttribute]
+        [DataMember]
         private string currentOperation;
 
-        [DataMemberAttribute]
+        [DataMember]
         private int percent = -1;
 
-        [DataMemberAttribute]
+        [DataMember]
         private int secondsRemaining = -1;
 
-        [DataMemberAttribute]
+        [DataMember]
         private ProgressRecordType type = ProgressRecordType.Processing;
 
         #endregion

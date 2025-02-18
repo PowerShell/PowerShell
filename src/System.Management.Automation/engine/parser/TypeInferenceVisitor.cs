@@ -195,7 +195,25 @@ namespace System.Management.Automation
                 // Look in the type table first.
                 if (!isStatic)
                 {
-                    var consolidatedString = new ConsolidatedString(new[] { typename.Name });
+                    // The Ciminstance type adapter adds the full typename with and without a namespace to the list of type names.
+                    // So if we see one with a full typename we need to also get the types for the short version.
+                    // For example: "CimInstance#root/standardcimv2/MSFT_NetFirewallRule" and "CimInstance#MSFT_NetFirewallRule"
+                    int namespaceSeparator = typename.Name.LastIndexOf('/');
+                    ConsolidatedString consolidatedString;
+                    if (namespaceSeparator != -1
+                        && typename.Name.StartsWith("Microsoft.Management.Infrastructure.CimInstance#", StringComparison.OrdinalIgnoreCase))
+                    {
+                        consolidatedString = new ConsolidatedString(new[]
+                        {
+                            typename.Name,
+                            string.Concat("Microsoft.Management.Infrastructure.CimInstance#", typename.Name.AsSpan(namespaceSeparator + 1))
+                        });
+                    }
+                    else
+                    {
+                        consolidatedString = new ConsolidatedString(new[] { typename.Name });
+                    }
+
                     results.AddRange(ExecutionContext.TypeTable.GetMembers<PSMemberInfo>(consolidatedString));
                 }
 
@@ -832,9 +850,20 @@ namespace System.Management.Automation
         object ICustomAstVisitor.VisitNamedBlock(NamedBlockAst namedBlockAst)
         {
             var inferredTypes = new List<PSTypeName>();
-            for (var index = 0; index < namedBlockAst.Statements.Count; index++)
+            for (int index = 0; index < namedBlockAst.Statements.Count; index++)
             {
-                var ast = namedBlockAst.Statements[index];
+                StatementAst ast = namedBlockAst.Statements[index];
+                if (ast is AssignmentStatementAst
+                    || (ast is PipelineAst pipe && pipe.PipelineElements.Count == 1 && pipe.PipelineElements[0] is CommandExpressionAst cmd
+                    && cmd.Redirections.Count == 0 && cmd.Expression is UnaryExpressionAst unary
+                    && unary.TokenKind is TokenKind.PostfixPlusPlus or TokenKind.PlusPlus or TokenKind.PostfixMinusMinus or TokenKind.MinusMinus))
+                {
+                    // Assignments don't output anything to the named block unless they are wrapped in parentheses.
+                    // When they are wrapped in parentheses, they are seen as PipelineAst.
+                    // Increment/decrement operators like $i++ also don't output anything unless there's a redirection, or they are wrapped in parentheses.
+                    continue;
+                }
+
                 inferredTypes.AddRange(InferTypes(ast));
             }
 
@@ -903,8 +932,19 @@ namespace System.Management.Automation
         object ICustomAstVisitor.VisitStatementBlock(StatementBlockAst statementBlockAst)
         {
             var inferredTypes = new List<PSTypeName>();
-            foreach (var ast in statementBlockAst.Statements)
+            foreach (StatementAst ast in statementBlockAst.Statements)
             {
+                if (ast is AssignmentStatementAst
+                    || (ast is PipelineAst pipe && pipe.PipelineElements.Count == 1 && pipe.PipelineElements[0] is CommandExpressionAst cmd
+                    && cmd.Redirections.Count == 0 && cmd.Expression is UnaryExpressionAst unary
+                    && unary.TokenKind is TokenKind.PostfixPlusPlus or TokenKind.PlusPlus or TokenKind.PostfixMinusMinus or TokenKind.MinusMinus))
+                {
+                    // Assignments don't output anything to the statement block unless they are wrapped in parentheses.
+                    // When they are wrapped in parentheses, they are seen as PipelineAst.
+                    // Increment operators like $i++ also don't output anything unless there's a redirection, or they are wrapped in parentheses.
+                    continue;
+                }
+
                 inferredTypes.AddRange(InferTypes(ast));
             }
 

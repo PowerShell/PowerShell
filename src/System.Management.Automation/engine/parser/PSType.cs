@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Management.Automation.Internal;
@@ -276,7 +277,7 @@ namespace System.Management.Automation.Language
             internal readonly TypeBuilder _staticHelpersTypeBuilder;
             private readonly Dictionary<string, PropertyMemberAst> _definedProperties;
             private readonly Dictionary<string, List<Tuple<FunctionMemberAst, Type[]>>> _definedMethods;
-            private HashSet<Tuple<string, Type>> _abstractProperties;
+            private Dictionary<Tuple<string, Type>, PropertyInfo> _abstractProperties;
             internal readonly List<(string fieldName, IParameterMetadataProvider bodyAst, bool isStatic)> _fieldsToInitForMemberFunctions;
             private bool _baseClassHasDefaultCtor;
 
@@ -444,11 +445,11 @@ namespace System.Management.Automation.Language
                 return baseClass ?? typeof(object);
             }
 
-            private bool ShouldImplementProperty(string name, Type type)
+            private bool ShouldImplementProperty(string name, Type type, [NotNullWhen(true)] out PropertyInfo interfaceProperty)
             {
                 if (_abstractProperties == null)
                 {
-                    _abstractProperties = new HashSet<Tuple<string, Type>>();
+                    _abstractProperties = new Dictionary<Tuple<string, Type>, PropertyInfo>();
                     var allInterfaces = new HashSet<Type>();
 
                     // TypeBuilder.GetInterfaces() returns only the interfaces that was explicitly passed to its constructor.
@@ -467,7 +468,7 @@ namespace System.Management.Automation.Language
                     {
                         foreach (var property in interfaceType.GetProperties())
                         {
-                            _abstractProperties.Add(Tuple.Create(property.Name, property.PropertyType));
+                            _abstractProperties.Add(Tuple.Create(property.Name, property.PropertyType), property);
                         }
                     }
 
@@ -477,13 +478,13 @@ namespace System.Management.Automation.Language
                         {
                             if (property.GetAccessors().Any(m => m.IsAbstract))
                             {
-                                _abstractProperties.Add(Tuple.Create(property.Name, property.PropertyType));
+                                _abstractProperties.Add(Tuple.Create(property.Name, property.PropertyType), property);
                             }
                         }
                     }
                 }
 
-                return _abstractProperties.Contains(Tuple.Create(name, type));
+                return _abstractProperties.TryGetValue(Tuple.Create(name, type), out interfaceProperty);
             }
 
             public void DefineMembers()
@@ -629,9 +630,19 @@ namespace System.Management.Automation.Language
                 // The property set and property get methods require a special set of attributes.
                 var getSetAttributes = Reflection.MethodAttributes.SpecialName | Reflection.MethodAttributes.HideBySig;
                 getSetAttributes |= propertyMemberAst.IsPublic ? Reflection.MethodAttributes.Public : Reflection.MethodAttributes.Private;
-                if (ShouldImplementProperty(propertyMemberAst.Name, type))
+                MethodInfo implementingGetter = null;
+                MethodInfo implementingSetter = null;
+                if (ShouldImplementProperty(propertyMemberAst.Name, type, out PropertyInfo interfaceProperty))
                 {
-                    getSetAttributes |= Reflection.MethodAttributes.Virtual;
+                    if (propertyMemberAst.IsStatic)
+                    {
+                        implementingGetter = interfaceProperty.GetGetMethod();
+                        implementingSetter = interfaceProperty.GetSetMethod();
+                    }
+                    else
+                    {
+                        getSetAttributes |= Reflection.MethodAttributes.Virtual;
+                    }
                 }
 
                 if (propertyMemberAst.IsStatic)
@@ -677,6 +688,11 @@ namespace System.Management.Automation.Language
                     getIlGen.Emit(OpCodes.Ret);
                 }
 
+                if (implementingGetter != null)
+                {
+                    _typeBuilder.DefineMethodOverride(getMethod, implementingGetter);
+                }
+
                 // Define the "set" accessor method.
                 MethodBuilder setMethod = _typeBuilder.DefineMethod(string.Concat("set_", propertyMemberAst.Name), getSetAttributes, null, new Type[] { type });
                 ILGenerator setIlGen = setMethod.GetILGenerator();
@@ -709,6 +725,11 @@ namespace System.Management.Automation.Language
                 }
 
                 setIlGen.Emit(OpCodes.Ret);
+
+                if (implementingSetter != null)
+                {
+                    _typeBuilder.DefineMethodOverride(setMethod, implementingSetter);
+                }
 
                 // Map the two methods created above to our PropertyBuilder to
                 // their corresponding behaviors, "get" and "set" respectively.
