@@ -435,6 +435,27 @@ export $envVarName='$guid'
             $out = $out.Split([Environment]::NewLine)[0]
             [System.Management.Automation.Internal.StringDecorated]::new($out).ToString("PlainText") | Should -BeExactly "Exception: boom"
         }
+
+        It "Progress is not emitted when stdout is redirected" {
+            $ps = [powershell]::Create()
+            $null = $ps.AddScript('$a = & ([Environment]::ProcessPath) -Command "Write-Progress -Activity progress"; $a')
+            $actual = $ps.Invoke()
+
+            $ps.HadErrors | Should -BeFalse
+            $actual | Should -BeNullOrEmpty
+            $ps.Streams.Progress | Should -BeNullOrEmpty
+        }
+
+        It "Progress is still emitted with redireciton with XML output" {
+            $ps = [powershell]::Create()
+            $null = $ps.AddScript('$a = & ([Environment]::ProcessPath) -OutputFormat xml -Command "Write-Progress -Activity progress"; $a')
+            $actual = $ps.Invoke()
+
+            $ps.HadErrors | Should -BeFalse
+            $actual | Should -BeNullOrEmpty
+            $ps.Streams.Progress.Count | Should -Be 1
+            $ps.Streams.Progress[0].Activity | Should -Be progress
+        }
     }
 
     Context "Redirected standard output" {
@@ -942,6 +963,12 @@ $powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDir
             $out = pwsh -nologo -noprofile -cwa 'param([switch]$switch) $switch.IsPresent' $param
             $out | Should -Be $expected
         }
+    }
+
+    It 'Errors for invalid ExecutionPolicy string' {
+        $out = pwsh -nologo -noprofile -executionpolicy NonExistingExecutionPolicy -c 'exit 0' 2>&1
+        $out | Should -Not -BeNullOrEmpty
+        $LASTEXITCODE | Should -Be $ExitCodeBadCommandLineParameter
     }
 }
 

@@ -160,7 +160,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         // Based on the Catalog version we will decide which hashing Algorithm to use
-        private int catalogVersion = 1;
+        private int catalogVersion = 2;
 
         /// <summary>
         /// Generate the Catalog for the Path.

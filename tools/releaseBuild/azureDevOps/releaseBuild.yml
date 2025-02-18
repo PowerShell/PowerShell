@@ -18,6 +18,10 @@ parameters:
       - true
       - false
     default: false
+  - name: InternalSDKBlobURL
+    displayName: URL to the blob having internal .NET SDK
+    type: string
+    default: ' '
 
 resources:
   repositories:
@@ -54,6 +58,8 @@ variables:
   - name: BUILDSECMON_OPT_IN
     value: true
   - group: PoolNames
+  - name: __DOTNET_RUNTIME_FEED
+    value: ${{ parameters.InternalSDKBlobURL }}
 
 stages:
   - stage: prep

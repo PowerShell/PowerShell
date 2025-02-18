@@ -8,7 +8,7 @@
     <TieredCompilation>true</TieredCompilation>
     <TieredCompilationQuickJit>true</TieredCompilationQuickJit>
     <TieredCompilationQuickJitForLoops>true</TieredCompilationQuickJitForLoops>
-    <RuntimeIdentifiers>win7-x86;win7-x64</RuntimeIdentifiers>
+    <RuntimeIdentifiers>win-x86;win-x64</RuntimeIdentifiers>
     <RootNamespace>Microsoft.PowerShell</RootNamespace>
     <ApplicationManifest>..\..\assets\pwsh.manifest</ApplicationManifest>
     <TargetPlatformIdentifier>Windows</TargetPlatformIdentifier>

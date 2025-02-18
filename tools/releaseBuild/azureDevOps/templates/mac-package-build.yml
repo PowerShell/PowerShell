@@ -119,7 +119,6 @@ jobs:
       }
     displayName: 'Bootstrap VM'
     env:
-      __DOTNET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
   - pwsh: |
@@ -133,7 +132,6 @@ jobs:
       }
     displayName: 'Package'
     env:
-      __DOTNET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0

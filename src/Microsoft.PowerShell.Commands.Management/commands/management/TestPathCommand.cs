@@ -136,7 +136,7 @@ namespace Microsoft.PowerShell.Commands
         {
             object result = null;
 
-            if (this.PathType == TestPathType.Any && !IsValid)
+            if (!IsValid)
             {
                 if (Path != null && Path.Length > 0 && Path[0] != null)
                 {
@@ -212,19 +212,15 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
+                        result = InvokeProvider.Item.Exists(path, currentContext);
+
                         if (this.PathType == TestPathType.Container)
                         {
-                            result = InvokeProvider.Item.IsContainer(path, currentContext);
+                            result &= InvokeProvider.Item.IsContainer(path, currentContext);
                         }
                         else if (this.PathType == TestPathType.Leaf)
                         {
-                            result =
-                                InvokeProvider.Item.Exists(path, currentContext) &&
-                                !InvokeProvider.Item.IsContainer(path, currentContext);
-                        }
-                        else
-                        {
-                            result = InvokeProvider.Item.Exists(path, currentContext);
+                            result &= !InvokeProvider.Item.IsContainer(path, currentContext);
                         }
                     }
                 }

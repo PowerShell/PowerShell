@@ -25,7 +25,6 @@ jobs:
       Start-PSBootstrap
     displayName: Bootstrap
     env:
-      __DOTNET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
   - pwsh: |
@@ -86,7 +85,6 @@ jobs:
       Start-PSBootstrap
     displayName: Bootstrap
     env:
-      __DOTNET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
   - pwsh: |

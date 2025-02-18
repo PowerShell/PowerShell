@@ -1569,13 +1569,9 @@ namespace System.Management.Automation.Runspaces
                 string assembly = ss.Assemblies[i].FileName;
                 if (!string.IsNullOrEmpty(assembly))
                 {
-                    if (assemblyList.Contains(assembly))
+                    if (!assemblyList.Add(assembly))
                     {
                         ss.Assemblies.RemoveItem(i);
-                    }
-                    else
-                    {
-                        assemblyList.Add(assembly);
                     }
                 }
             }
@@ -2864,7 +2860,7 @@ namespace System.Management.Automation.Runspaces
             // Ensure that user name contains no invalid path characters.
             // MSDN indicates that logon names cannot contain any of these invalid characters,
             // but this check will ensure safety.
-            if (userName.IndexOfAny(System.IO.Path.GetInvalidPathChars()) > -1)
+            if (PathUtils.ContainsInvalidPathChars(userName))
             {
                 throw new PSInvalidOperationException(RemotingErrorIdStrings.InvalidUserDriveName);
             }
@@ -4652,16 +4648,13 @@ end {
                 #endregion
             };
 
-            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandErrorActionPreferenceFeatureName))
-            {
-                builtinVariables.Add(
-                    new SessionStateVariableEntry(
-                        SpecialVariables.PSNativeCommandUseErrorActionPreference,
-                        value: true,    // when this feature is changed to stable, this should default to `false`
-                        RunspaceInit.PSNativeCommandUseErrorActionPreferenceDescription,
-                        ScopedItemOptions.None,
-                        new ArgumentTypeConverterAttribute(typeof(bool))));
-            }
+            builtinVariables.Add(
+                new SessionStateVariableEntry(
+                    SpecialVariables.PSNativeCommandUseErrorActionPreference,
+                    value: false,
+                    RunspaceInit.PSNativeCommandUseErrorActionPreferenceDescription,
+                    ScopedItemOptions.None,
+                    new ArgumentTypeConverterAttribute(typeof(bool))));
 
             builtinVariables.Add(
                 new SessionStateVariableEntry(
@@ -4677,20 +4670,14 @@ end {
         /// <summary>
         /// Assigns the default behavior for native argument passing.
         /// If the system is non-Windows, we will return Standard.
-        /// If the experimental feature is enabled, we will return Windows.
-        /// Otherwise, we will return Legacy.
+        /// Otherwise, we will return Windows.
         /// </summary>
         private static NativeArgumentPassingStyle GetPassingStyle()
         {
 #if UNIX
             return NativeArgumentPassingStyle.Standard;
 #else
-            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSWindowsNativeCommandArgPassing))
-            {
-                return NativeArgumentPassingStyle.Windows;
-            }
-
-            return NativeArgumentPassingStyle.Legacy;
+            return NativeArgumentPassingStyle.Windows;
 #endif
         }
 

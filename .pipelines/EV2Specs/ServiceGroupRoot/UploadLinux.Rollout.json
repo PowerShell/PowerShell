@@ -1,0 +1,54 @@
+{
+  "$schema": "https://ev2schema.azure.net/schemas/2020-01-01/rolloutParameters.json",
+  "contentVersion": "1.0.0.0",
+  "shellExtensions": [
+    {
+      "name": "Run",
+      "type": "Run",
+      "properties": {
+        "maxExecutionTime": "PT2H"
+      },
+      "package": {
+        "reference": {
+          "path": "Shell/Run.tar"
+        }
+      },
+      "launch": {
+        "command": [
+          "/bin/bash",
+          "-c",
+          "pwsh ./Run/Run.ps1"
+        ],
+        "environmentVariables": [
+          {
+            "name": "MAPPING_FILE",
+            "reference":
+            {
+                "path": "Parameters\\mapping.json"
+            }
+          },
+          {
+            "name": "PWSH_PACKAGES_TARGZIP",
+            "reference":
+            {
+                "path": "Parameters\\packages.tar.gz"
+            }
+          },
+          {
+            "name": "PMC_METADATA",
+            "reference":
+            {
+                "path": "Parameters\\pmcMetadata.json"
+            }
+          }
+        ],
+        "identity": {
+          "type": "userAssigned",
+          "userAssignedIdentities": [
+            "default"
+          ]
+        }
+      }
+    }
+  ]
+}

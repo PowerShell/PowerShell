@@ -69,6 +69,7 @@ function Get-RandomFileName
 $SCRIPT:TesthookType = [system.management.automation.internal.internaltesthooks]
 function Test-TesthookIsSet
 {
+	[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingEmptyCatchBlock", '')] # , Justification = "an error message is not appropriate for this function")]
     param (
         [ValidateNotNullOrEmpty()]
         [Parameter(Mandatory=$true)]
@@ -196,6 +197,7 @@ public class TestDynamic : DynamicObject
 # Upload an artifact in VSTS
 # On other systems will just log where the file was placed
 function Send-VstsLogFile {
+	[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingWriteHost', '', Justification = "needed for VSO")]
     param (
         [parameter(Mandatory,ParameterSetName='contents')]
         [string[]]
@@ -322,6 +324,8 @@ function New-RandomHexString
 $script:CanWriteToPsHome = $null
 function Test-CanWriteToPsHome
 {
+	[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingEmptyCatchBlock', '', Justification = "an error message is not appropriate for this function")]
+	param ()
     if ($null -ne $script:CanWriteToPsHome) {
         return $script:CanWriteToPsHome
     }
@@ -366,7 +370,7 @@ function Get-PlatformInfo {
         return @{Platform = "windows"; Version = '' }
     }
     if ( $IsMacOS ) {
-        return @{Platform = "macos"; Version = '' }
+        return @{Platform = "macos"; Version = sw_vers -productversion }
     }
     if ( $IsLinux ) {
         $osrelease = Get-Content /etc/os-release | ConvertFrom-StringData
@@ -382,7 +386,7 @@ function Get-PlatformInfo {
 
             return @{Platform = $platform; Version = $versionId }
         }
-        return "unknown"
+        return @{ Platform = "linux"; version = "unknown" }
     }
 }
 
@@ -533,3 +537,87 @@ function Pop-DefaultParameterValueStack {
 		return $false
 	}
 }
+
+function Get-HelpNetworkTestCases
+{
+    param(
+        [switch]
+        $PositiveCases
+    )
+    # .NET doesn't consider these path rooted and we won't go to the network:
+    # \\?
+    # \\.
+    # \??
+
+    # Command discovery does not follow symlinks to network locations for module qualified paths
+    $networkBlockedError = "CommandNameNotAllowed,Microsoft.PowerShell.Commands.GetHelpCommand"
+    $scriptBlockedError = "ScriptsNotAllowed"
+
+    $formats = @(
+        '//{0}/share/{1}'
+        '\\{0}\share\{1}'
+        '//{0}\share/{1}'
+        'Microsoft.PowerShell.Core\filesystem:://{0}/share/{1}'
+    )
+
+    if (!$PositiveCases) {
+        $formats += 'filesystem:://{0}/share/{1}'
+    }
+
+    $moduleQualifiedCommand = 'test.dll\fakecommand'
+    $lanManFormat = @(
+        '//;LanmanRedirector/{0}/share/{1}'
+    )
+
+    $hosts = @(
+        'fakehost'
+        'fakehost.pstest'
+    )
+
+    $commands = @(
+        'test.ps1'
+        'test.dll'
+        $moduleQualifiedCommand
+    )
+
+    $variants = @()
+    $cases = @()
+    foreach($command in $commands)  {
+        $hostName = $hosts[0]
+        $format = $formats[0]
+        $cases += @{
+            Command = $format -f $hostName, $command
+            ExpectedError = $networkBlockedError
+        }
+    }
+
+    foreach($hostName in $hosts) {
+        # chose the format with backslashes(\) to match the host with blackslashes
+        $format = $formats[1]
+        $command = $commands[0]
+        $cases += @{
+            Command = $format -f $hostName, $command
+            ExpectedError = $networkBlockedError
+        }
+    }
+    foreach($format in $formats) {
+        $hostName = $hosts[0]
+        $command = $commands[0]
+        $cases += @{
+            Command = $format -f $hostName, $command
+            ExpectedError = $networkBlockedError
+        }
+    }
+
+    foreach($format in $lanManFormat) {
+        $hostName = $hosts[0]
+        $command = $moduleQualifiedCommand
+        $cases += @{
+            Command = $format -f $hostName, $command
+            ExpectedError = $scriptBlockedError
+        }
+    }
+
+    return $cases | Sort-Object -Property ExpectedError, Command -Unique
+}
+
