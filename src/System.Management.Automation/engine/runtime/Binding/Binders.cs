@@ -7582,6 +7582,7 @@ namespace System.Management.Automation.Language
             }
         }
 
+#nullable enable
         private static Expression AddMemberInvocationLogging(
             Expression expr,
             string targetName,
@@ -7628,6 +7629,7 @@ namespace System.Management.Automation.Language
                 Expression.NewArrayInit(typeof(object), invocationArgs)));
 #endif
         }
+#nullable disable
 
         #endregion
     }
