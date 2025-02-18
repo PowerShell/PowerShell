@@ -46,7 +46,7 @@
     <PackageReference Include="Microsoft.Management.Infrastructure" Version="3.0.0" />
     <PackageReference Include="Microsoft.PowerShell.Native" Version="7.4.0" />
     <!-- Signing APIs -->
-    <PackageReference Include="Microsoft.Security.Extensions" Version="1.3.0" />
+    <PackageReference Include="Microsoft.Security.Extensions" Version="1.4.0" />
   </ItemGroup>
 
   <PropertyGroup>
