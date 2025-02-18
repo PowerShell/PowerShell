@@ -1696,34 +1696,30 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Provides argument completion for Noun parameter. 
     /// </summary>
-    public class NounArgumentCompleter : IArgumentCompleter
+    public sealed class NounArgumentCompleter : ArgumentCompleter
     {
-        /// </summary>
-        /// Returns completion results for Noun parameter.
-        /// </summary>
-        /// <param name="commandName">The command name.</param>
-        /// <param name="parameterName">The parameter name.</param>
-        /// <param name="wordToComplete">The word to complete.</param>
-        /// <param name="commandAst">The command AST.</param>
-        /// <param name="fakeBoundParameters">The fake bound parameters.</param>
-        /// <returns>List of completion results.</returns>
-        public IEnumerable<CompletionResult> CompleteArgument(
-            string commandName,
-            string parameterName,
-            string wordToComplete,
-            CommandAst commandAst,
-            IDictionary fakeBoundParameters) => CompletionCompleters.GetMatchingResults(
-                wordToComplete,
-                possibleCompletionValues: GetCommandNouns(fakeBoundParameters));
-
         /// <summary>
-        /// Get sorted set of command nouns using Get-Command.
+        /// Gets the possible completion values for Noun parameter.
         /// </summary>
-        /// <param name="fakeBoundParameters">The fake bound parameters.</param>
-        /// <returns>Sorted set of command nouns.</returns>
-        private static SortedSet<string> GetCommandNouns(IDictionary fakeBoundParameters)
+        /// <returns>List of possible completion values.</returns>
+        protected override IEnumerable<string> GetPossibleCompletionValues()
         {
-            Collection<CommandInfo> commands = CompletionCompleters.GetCommandInfo(fakeBoundParameters, "Module", "Verb");
+            using var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
+
+            ps.AddCommand("Get-Command");
+
+            if (FakeBoundParameters.Contains("Module"))
+            {
+                ps.AddParameter("Module", FakeBoundParameters["Module"]);
+            }
+
+            if (FakeBoundParameters.Contains("Verb"))
+            {
+                ps.AddParameter("Verb", FakeBoundParameters["Verb"]);
+            }
+
+            Collection<CommandInfo> commands = ps.Invoke<CommandInfo>();
+
             SortedSet<string> nouns = new(StringComparer.OrdinalIgnoreCase);
 
             foreach (CommandInfo command in commands)
