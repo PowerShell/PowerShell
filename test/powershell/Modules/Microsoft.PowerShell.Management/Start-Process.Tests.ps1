@@ -18,6 +18,8 @@ Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
         $tempDirectory = Join-Path -Path $TestDrive -ChildPath 'PSPath[]'
         New-Item $tempDirectory -ItemType Directory  -Force
         $assetsFile = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath assets) -ChildPath SortTest.txt
+        $PWSH = (Get-Process -Id $PID).MainModule.FileName
+        $pwshParam = "-NoProfile -Command &{ [Console]::Out.WriteLine('stdout'); [Console]::Error.WriteLine('stderr') }"
         if ($IsWindows) {
             $pingParam = "-n 2 localhost"
         }
@@ -82,23 +84,26 @@ Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
     }
 
     It "Should handle stderr redirection without error" {
-        $process = Start-Process ping -ArgumentList $pingParam -PassThru -RedirectStandardError $tempFile -RedirectStandardOutput "$TESTDRIVE/output"  @extraArgs
-
-        $process.Length      | Should -Be 1
-        $process.Id          | Should -BeGreaterThan 1
-        # $process.ProcessName | Should -Be "ping"
+        $output = & $PWSH -NoProfile -Command "&{ Start-Process $PWSH -ArgumentList `"$pwshParam`" -Wait -NoNewWindow -RedirectStandardError $tempFile }"
+        $output | Should -BeExactly "stdout"
+        Get-Content -Path $tempFile | Should -BeExactly "stderr"
     }
 
     It "Should handle stdout redirection without error" {
-        $process = Start-Process ping -ArgumentList $pingParam -Wait -RedirectStandardOutput $tempFile  @extraArgs
-        $dirEntry = Get-ChildItem $tempFile
-        $dirEntry.Length | Should -BeGreaterThan 0
+        $output = & $PWSH -NoProfile -Command "&{ Start-Process $PWSH -ArgumentList `"$pwshParam`" -Wait -NoNewWindow -RedirectStandardOutput $tempFile }" 2>&1
+        $output | Should -BeExactly "stderr"
+        Get-Content -Path $tempFile | Should -BeExactly "stdout"
+    }
+
+    It "Should handle stdout,stderr redirections without error" {
+        Start-Process $PWSH -ArgumentList $pwshParam -Wait -RedirectStandardError $tempFile -RedirectStandardOutput "$TESTDRIVE/output"
+        Get-Content -Path "$TESTDRIVE/output" | Should -BeExactly "stdout"
+        Get-Content -Path $tempFile | Should -BeExactly "stderr"
     }
 
     It "Should handle stdout,stderr redirections to the same file without error" {
-        $process = Start-Process ping -ArgumentList $pingParam -Wait -RedirectStandardOutput $tempFile -RedirectStandardError $tempFile  @extraArgs
-        $dirEntry = Get-ChildItem $tempFile
-        $dirEntry.Length | Should -BeGreaterThan 0
+        Start-Process $PWSH -ArgumentList $pwshParam -Wait -RedirectStandardError $tempFile -RedirectStandardOutput $tempFile
+        Get-Content -Path $tempFile | Should -BeExactly @('stdout', 'stderr')
     }
 
     It "Should handle stdin redirection without error" {
