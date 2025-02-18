@@ -8,7 +8,7 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Internal.Host;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
-
+using System.Threading;
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Internal
@@ -508,6 +508,18 @@ namespace System.Management.Automation
                 {
                     return _invokeProvider ??= new ProviderIntrinsics(this);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Gets the CancellationToken that is signaled when the pipeline is stopping.
+        /// </summary>
+        public CancellationToken PipelineStopToken
+        {
+            get
+            {
+                Debug.Assert(CommandRuntime is MshCommandRuntime, "CommandRuntime is not MshCommandRuntime but {0}", CommandRuntime.GetType().FullName);
+                return ((MshCommandRuntime)CommandRuntime).PipelineProcessor.PipelineStopToken;
             }
         }
 
