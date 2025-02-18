@@ -86,10 +86,13 @@ jobs:
 
         Get-Content $nugetPath
 
+<<<<<<< HEAD
         # Add workaround to unblock xUnit testing see issue: https://github.com/dotnet/sdk/issues/26462
         $dotnetPath = if ($IsWindows) { "$env:LocalAppData\Microsoft\dotnet" } else { "$env:HOME/.dotnet" }
         $env:DOTNET_ROOT = $dotnetPath
 
+=======
+>>>>>>> d62ff8a21 (Fix the expected path of .NET after using UseDotnet 2 task to install (#25020))
         dotnet --info
         dotnet restore
         dotnet test /property:RELEASE_VERSION=$releaseVersion --test-adapter-path:. "--logger:xunit;LogFilePath=$(System.DefaultWorkingDirectory)/test-hosting.xml"
