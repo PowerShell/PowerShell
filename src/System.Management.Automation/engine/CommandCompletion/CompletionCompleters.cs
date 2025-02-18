@@ -467,6 +467,21 @@ namespace System.Management.Automation
 
             if (psObjects != null)
             {
+                // When PowerShell is used interactively, completion is usually triggered by PSReadLine, with PSReadLine's SessionState
+                // as the engine session state. In that case, results from the module search may contain a nested module of PSReadLine,
+                // which should be filtered out below.
+                // When the completion is triggered from global session state, such as when running 'TabExpansion2' from command line,
+                // the module associated with engine session state will be null.
+                //
+                // Note that, it's intentional to not hard code the name 'PSReadLine' in the change, so that in case the tab completion
+                // is triggered from within a different module, its nested modules can also be filtered out.
+                HashSet<PSModuleInfo> nestedModulesToFilterOut = null;
+                PSModuleInfo currentModule = context.ExecutionContext.EngineSessionState.Module;
+                if (loadedModulesOnly && currentModule?.NestedModules.Count > 0)
+                {
+                    nestedModulesToFilterOut = new(currentModule.NestedModules);
+                }
+
                 foreach (PSObject item in psObjects)
                 {
                     var moduleInfo = (PSModuleInfo)item.BaseObject;
@@ -476,6 +491,14 @@ namespace System.Management.Automation
                         && completionText.Contains('.')
                         && !shortNamePattern.IsMatch(completionText.Substring(completionText.LastIndexOf('.') + 1))
                         && !shortNamePattern.IsMatch(completionText))
+                    {
+                        // This check is to make sure we don't return a module whose name only matches the user specified word in the middle.
+                        // For example, when user completes with 'gmo power', we should not return 'Microsoft.PowerShell.Utility'.
+                        continue;
+                    }
+
+                    if (nestedModulesToFilterOut is not null
+                        && nestedModulesToFilterOut.Contains(moduleInfo))
                     {
                         continue;
                     }
