@@ -683,6 +683,31 @@ Describe "Additional tests" -Tag CI {
         $result.EndBlock.Statements[0].PipelineElements[0].Expression.TypeName.FullName | Should -Be 'System.Tuple[System.String[],System.Int32[]]'
     }
 
+    It "Should correctly set the cached type for 'GenericTypeName.TypeName' as needed when the generic type is found in cache" {
+        $tks = $null
+        $ers = $null
+        $Script = '[System.Collections.Generic.List[string]]'
+
+        ## See https://github.com/PowerShell/PowerShell/issues/24982 for details about the issue.
+        $result = [System.Management.Automation.Language.Parser]::ParseInput($Script, [ref]$tks, [ref]$ers)
+        $typeExpr = $result.EndBlock.Statements[0].PipelineElements[0].Expression
+        $typeExpr.TypeName.FullName | Should -Be 'System.Collections.Generic.List[string]'
+        $typeExpr.TypeName.TypeName.FullName | Should -Be 'System.Collections.Generic.List'
+        $typeExpr.TypeName.TypeName.GetReflectionType() | Should -Not -BeNullOrEmpty
+        $typeExpr.TypeName.TypeName.GetReflectionType().FullName | Should -Be 'System.Collections.Generic.List`1'
+
+        $result2 = [System.Management.Automation.Language.Parser]::ParseInput($Script, [ref]$tks, [ref]$ers)
+        $typeExpr2 = $result2.EndBlock.Statements[0].PipelineElements[0].Expression
+        $typeExpr2.TypeName.FullName | Should -Be 'System.Collections.Generic.List[string]'
+        $typeExpr2.TypeName.TypeName.FullName | Should -Be 'System.Collections.Generic.List'
+        $typeExpr2.TypeName.TypeName.GetReflectionType() | Should -Not -BeNullOrEmpty
+        $typeExpr2.TypeName.TypeName.GetReflectionType().FullName | Should -Be 'System.Collections.Generic.List`1'
+
+        $Script = '[System.Tuple[System.String[],System.Int32[]]]'
+        $result3 = [System.Management.Automation.Language.Parser]::ParseInput($Script, [ref]$tks, [ref]$ers)
+        $result3.EndBlock.Statements[0].PipelineElements[0].Expression.TypeName.TypeName.GetReflectionType().FullName | Should -Be 'System.Tuple'
+    }
+
     It "Should get correct offsets for number constant parsing error" {
         $tks = $null
         $ers = $null
