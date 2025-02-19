@@ -7,9 +7,19 @@ $ProgressPreference = "SilentlyContinue"
 $RepositoryName = 'PSGallery'
 $ACRRepositoryName = "ACRRepo"
 $ACRRepoUri = "https://psresourcegettest.azurecr.io/"
+$LocalRepoName = 'LocalRepo'
+$TempDir = 'TempDir'
+$LocalRepoUri = Microsoft.PowerShell.Management\Join-Path -Path $TempDir -ChildPath 'TempLocalRepoUri'
 $TestModule = 'newTestModule'
 $TestScript = 'TestTestScript'
 $ACRTestModule = 'newTestMod'
+
+$PublishedNupkgs = Microsoft.PowerShell.Management\Join-Path -Path $TempDir -ChildPath 'PublishedNupkgs'
+$TestModuleNupkgName = "$TestModule.0.0.1.nupkg"
+$TestModuleNupkgPath = Microsoft.PowerShell.Management\Join-Path -Path $PublishedNupkgs -ChildPath $TestModuleNupkgName
+$TestScriptPath = "$TestScript.ps1"
+$TestScriptNupkgName = "$TestScript.0.0.1.nupkg"
+$TestScriptNupkgPath = Microsoft.PowerShell.Management\Join-Path -Path $PublishedNupkgs -ChildPath $TestScriptNupkgName
 
 $Initialized = $false
 
@@ -72,6 +82,11 @@ if (!(Test-Path $script:MyDocumentsScriptsPath)) {
 
 function Initialize
 {
+    if(!(Test-Path $TempDir))
+    {
+        New-Item -Path $TempDir -ItemType Directory
+    }
+
     $repo = Get-PSResourceRepository $RepositoryName -ErrorAction SilentlyContinue
     if($repo)
     {
@@ -97,11 +112,42 @@ function Initialize
     }
 }
 
+function Register-LocalRepo
+{
+    if (!(Test-Path $LocalRepoUri)) {
+        New-Item -Path $LocalRepoUri -ItemType Directory
+    }
+
+    Register-PSResourceRepository -Name $LocalRepoName -Uri $LocalRepoUri -Trusted -Force
+}
+
 #endregion
 
 function Remove-InstalledModules
 {
     Get-InstalledPSResource -Name $TestModule -Version '*' -ErrorAction SilentlyContinue | Microsoft.PowerShell.PSResourceGet\Uninstall-PSResource
+}
+
+function New-TestPackages
+{
+    if (!(Test-Path $PublishedNupkgs)) {
+        New-Item $PublishedNupkgs -ItemType Directory
+    }
+
+    if (!(Test-Path $TestModule)) {
+        New-Item $TestModule -ItemType Directory
+    }
+
+    $moduleManifestPath = Join-Path $TestModule -ChildPath "$TestModule.psd1"
+    if (!(Test-Path $moduleManifestPath))
+    {
+        New-ModuleManifest $moduleManifestPath -Description "Test module for PowerShell CI" -Author "PSGetAuthor"
+    }
+
+    if (!(Test-Path $TestScriptPath))
+    {
+        New-ScriptFileInfo -Path $TestScriptPath -Description "Test script for PowerShell CI" -Author "PSGetAuthor"
+    }
 }
 
 Describe "PSResourceGet - Module tests" -tags "Feature" {
@@ -111,6 +157,9 @@ Describe "PSResourceGet - Module tests" -tags "Feature" {
             Initialize
             $script:Initialized = $true
         }
+
+        Register-LocalRepo
+        New-TestPackages
     }
 
     BeforeEach {
@@ -136,6 +185,39 @@ Describe "PSResourceGet - Module tests" -tags "Feature" {
             $module.Name | Should -Be $TestModule
             $module.ModuleBase.StartsWith($script:MyDocumentsModulesPath, [System.StringComparison]::OrdinalIgnoreCase) | Should -BeTrue
         }
+    }
+
+    It "Should publish a module" {
+        Publish-PSResource -Path $TestModule -Repository $LocalRepoName
+
+        $foundModuleInfo = Find-PSResource $TestModule -Repository $LocalRepoName
+        $foundModuleInfo | Should -Not -BeNullOrEmpty
+        $foundModuleInfo.Count | Should -Be 1
+        $foundModuleInfo.Name | Should -Be $TestModule
+    }
+
+    It "Should compress a module into a .nupkg" {
+        Compress-PSResource -Path $TestModule -DestinationPath (Resolve-Path -Path $PublishedNupkgs)
+        
+        $modulePublished = Get-ChildItem $TestModuleNupkgPath
+        $modulePublished | Should -Not -BeNullOrEmpty
+        $modulePublished.Name | Should -Be $TestModuleNupkgName
+    }
+
+    It "Should publish compressed .nupkg" {
+        Compress-PSResource -Path $TestModule -DestinationPath (Resolve-Path -Path $PublishedNupkgs)
+
+        Publish-PSResource -NupkgPath $TestModuleNupkgPath -Repository $LocalRepoName
+
+        $foundModuleInfo = Find-PSResource $TestModule -Repository $LocalRepoName
+        $foundModuleInfo | Should -Not -BeNullOrEmpty
+        $foundModuleInfo.Count | Should -Be 1
+        $foundModuleInfo.Name | Should -Be $TestModule
+    }
+
+    AfterEach {
+        Get-ChildItem $PublishedNupkgs | Remove-Item -Recurse -Force
+        Get-ChildItem $LocalRepoUri | Remove-Item -Recurse -Force
     }
 
     AfterAll {
@@ -181,6 +263,9 @@ Describe "PSResourceGet - Script tests" -tags "Feature" {
             Initialize
             $script:Initialized = $true
         }
+
+        Register-LocalRepo
+        New-TestPackages
     }
 
     BeforeEach {
@@ -203,6 +288,20 @@ Describe "PSResourceGet - Script tests" -tags "Feature" {
             $installedScriptInfo.Name | Should -Be $TestScript
             $installedScriptInfo.InstalledLocation.StartsWith($script:MyDocumentsScriptsPath, [System.StringComparison]::OrdinalIgnoreCase) | Should -BeTrue
         }
+    }
+
+    It "Should publish a script" {
+        Publish-PSResource -Path $TestScriptPath -Repository $LocalRepoName
+
+        $foundScriptInfo = Find-PSResource $TestScript -Repository $LocalRepoName
+        $foundScriptInfo | Should -Not -BeNullOrEmpty
+        $foundScriptInfo.Count | Should -Be 1
+        $foundScriptInfo.Name | Should -Be $TestScript
+    }
+
+    AfterEach {
+        Get-ChildItem $PublishedNupkgs | Remove-Item -Recurse -Force
+        Get-ChildItem $LocalRepoUri | Remove-Item -Recurse -Force
     }
 
     AfterAll {
@@ -229,6 +328,14 @@ Describe "PSResourceGet - Script tests (Admin)" -Tags @('Feature', 'RequireAdmin
 
     AfterAll {
         Remove-InstalledScripts
+    }
+}
+
+function FinalCleanUp
+{
+    if(Test-Path $TempDir)
+    {
+        Remove-Item -Path $TempDir -Recurse -Force
     }
 }
 
@@ -294,5 +401,6 @@ Describe "PSResourceGet - ACR tests" -tags "Feature" {
         }
 
         Remove-InstalledModules
+        FinalCleanUp
     }
 }

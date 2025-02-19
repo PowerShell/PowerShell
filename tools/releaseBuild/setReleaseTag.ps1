@@ -41,6 +41,7 @@ function New-BuildInfoJson {
         ReleaseTag = $ReleaseTag
         ReleaseDate = $dateTime
         BlobName = $blobName
+        BaseUrl = 'https://powershellinfraartifacts-gkhedzdeaghdezhr.z01.azurefd.net/install'
     } | ConvertTo-Json | Out-File -Encoding ascii -Force -FilePath $filename
 
     $resolvedPath = (Resolve-Path -Path $filename).ProviderPath

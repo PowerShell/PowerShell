@@ -577,7 +577,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 Type t = obj.GetType();
 
-                if (t.IsPrimitive)
+                if (t.IsPrimitive || (t.IsEnum && ExperimentalFeature.IsEnabled(ExperimentalFeature.PSSerializeJSONLongEnumAsNumber)))
                 {
                     rv = obj;
                 }
