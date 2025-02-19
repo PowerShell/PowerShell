@@ -28,6 +28,7 @@ namespace System.Management.Automation.Language
     using SwitchClause = Tuple<ExpressionAst, StatementBlockAst>;
     using System.Runtime.CompilerServices;
     using System.Reflection.Emit;
+    using System.Diagnostics;
 
 #nullable enable
 
@@ -8420,12 +8421,13 @@ namespace System.Management.Automation.Language
     /// <summary>
     /// A simple type that is not an array or does not have generic arguments.
     /// </summary>
+#nullable enable
     public sealed class TypeName : ITypeName, ISupportsTypeCaching
     {
         internal readonly string _name;
-        internal Type _type;
+        internal Type? _type;
         internal readonly IScriptExtent _extent;
-        internal TypeDefinitionAst _typeDefinitionAst;
+        internal TypeDefinitionAst? _typeDefinitionAst;
 
         /// <summary>
         /// Construct a simple typename.
@@ -8496,7 +8498,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// The name of the assembly, if specified, otherwise null.
         /// </summary>
-        public string AssemblyName { get; internal set; }
+        public string? AssemblyName { get; internal set; }
 
         /// <summary>
         /// Always returns false, array typenames are instances of <see cref="ArrayTypeName"/>.
@@ -8517,7 +8519,7 @@ namespace System.Management.Automation.Language
         {
             if (_typeDefinitionAst == null)
             {
-                Type reflectionType = GetReflectionType();
+                Type? reflectionType = GetReflectionType();
                 if (reflectionType == null)
                 {
                     // we are pessimistic about default ctor presence.
@@ -8555,7 +8557,7 @@ namespace System.Management.Automation.Language
         /// The <see cref="Type"/> if possible, null otherwise.  Null may be returned for valid typenames if the assembly
         /// containing the type has not been loaded.
         /// </returns>
-        public Type GetReflectionType()
+        public Type? GetReflectionType()
         {
             if (_type == null)
             {
@@ -8590,7 +8592,7 @@ namespace System.Management.Automation.Language
         /// The <see cref="Type"/> if possible, null otherwise.  Null may be returned for valid typenames if the assembly
         /// containing the type has not been loaded.
         /// </returns>
-        public Type GetReflectionAttributeType()
+        public Type? GetReflectionAttributeType()
         {
             var result = GetReflectionType();
             if (result == null || !typeof(Attribute).IsAssignableFrom(result))
@@ -8622,7 +8624,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary/>
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (!(obj is TypeName other))
                 return false;
@@ -8661,7 +8663,8 @@ namespace System.Management.Automation.Language
         /// </remarks>
         internal bool IsType(Type type)
         {
-            string fullTypeName = type.FullName;
+            string? fullTypeName = type.FullName;
+            Debug.Assert(fullTypeName is not null);
             if (fullTypeName.Equals(Name, StringComparison.OrdinalIgnoreCase))
                 return true;
             int lastDotIndex = fullTypeName.LastIndexOf('.');
@@ -8673,7 +8676,7 @@ namespace System.Management.Automation.Language
             return false;
         }
 
-        Type ISupportsTypeCaching.CachedType
+        Type? ISupportsTypeCaching.CachedType
         {
             get { return _type; }
 
@@ -8686,8 +8689,8 @@ namespace System.Management.Automation.Language
     /// </summary>
     public sealed class GenericTypeName : ITypeName, ISupportsTypeCaching
     {
-        private string _cachedFullName;
-        private Type _cachedType;
+        private string? _cachedFullName;
+        private Type? _cachedType;
 
         /// <summary>
         /// Construct a generic type name.
@@ -8799,7 +8802,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// The name of the assembly, if specified, otherwise null.
         /// </summary>
-        public string AssemblyName { get { return TypeName.AssemblyName; } }
+        public string? AssemblyName { get { return TypeName.AssemblyName; } }
 
         /// <summary>
         /// Always returns false because this class does not represent arrays.
@@ -8829,11 +8832,11 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Returns the <see cref="System.Type"/> that this typename represents, if such a type exists, null otherwise.
         /// </summary>
-        public Type GetReflectionType()
+        public Type? GetReflectionType()
         {
             if (_cachedType == null)
             {
-                Type generic = GetGenericType(TypeName.GetReflectionType());
+                Type? generic = GetGenericType(TypeName.GetReflectionType());
 
                 if (generic != null && generic.ContainsGenericParameters)
                 {
@@ -8882,7 +8885,7 @@ namespace System.Management.Automation.Language
         /// </summary>
         /// <param name="generic"></param>
         /// <returns></returns>
-        internal Type GetGenericType(Type generic)
+        internal Type? GetGenericType(Type? generic)
         {
             if (generic == null || !generic.ContainsGenericParameters)
             {
@@ -8905,12 +8908,12 @@ namespace System.Management.Automation.Language
         /// The <see cref="Type"/> if possible, null otherwise.  Null may be returned for valid typenames if the assembly
         /// containing the type has not been loaded.
         /// </returns>
-        public Type GetReflectionAttributeType()
+        public Type? GetReflectionAttributeType()
         {
-            Type type = GetReflectionType();
+            Type? type = GetReflectionType();
             if (type == null)
             {
-                Type generic = TypeName.GetReflectionAttributeType();
+                Type? generic = TypeName.GetReflectionAttributeType();
                 if (generic == null || !generic.ContainsGenericParameters)
                 {
                     if (!TypeName.FullName.Contains('`'))
@@ -8940,7 +8943,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary/>
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (!(obj is GenericTypeName other))
                 return false;
@@ -8974,7 +8977,7 @@ namespace System.Management.Automation.Language
             return hash;
         }
 
-        Type ISupportsTypeCaching.CachedType
+        Type? ISupportsTypeCaching.CachedType
         {
             get { return _cachedType; }
 
@@ -8987,8 +8990,8 @@ namespace System.Management.Automation.Language
     /// </summary>
     public sealed class ArrayTypeName : ITypeName, ISupportsTypeCaching
     {
-        private string _cachedFullName;
-        private Type _cachedType;
+        private string? _cachedFullName;
+        private Type? _cachedType;
 
         /// <summary>
         /// Construct an ArrayTypeName.
@@ -9079,7 +9082,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// The name of the assembly, if specified, otherwise null.
         /// </summary>
-        public string AssemblyName { get { return ElementType.AssemblyName; } }
+        public string? AssemblyName { get { return ElementType.AssemblyName; } }
 
         /// <summary>
         /// Returns true always as this class represents arrays.
@@ -9109,14 +9112,14 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Returns the <see cref="System.Type"/> that this typename represents, if such a type exists, null otherwise.
         /// </summary>
-        public Type GetReflectionType()
+        public Type? GetReflectionType()
         {
             try
             {
                 RuntimeHelpers.EnsureSufficientExecutionStack();
                 if (_cachedType == null)
                 {
-                    Type elementType = ElementType.GetReflectionType();
+                    Type? elementType = ElementType.GetReflectionType();
                     if (elementType != null)
                     {
                         Type type = Rank == 1 ? elementType.MakeArrayType() : elementType.MakeArrayType(Rank);
@@ -9151,7 +9154,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Always return null, arrays can never be an attribute.
         /// </summary>
-        public Type GetReflectionAttributeType()
+        public Type? GetReflectionAttributeType()
         {
             return null;
         }
@@ -9165,7 +9168,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary/>
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (!(obj is ArrayTypeName other))
                 return false;
@@ -9179,7 +9182,7 @@ namespace System.Management.Automation.Language
             return Utils.CombineHashCodes(ElementType.GetHashCode(), Rank.GetHashCode());
         }
 
-        Type ISupportsTypeCaching.CachedType
+        Type? ISupportsTypeCaching.CachedType
         {
             get { return _cachedType; }
 
@@ -9224,7 +9227,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// The name of the assembly.
         /// </summary>
-        public string AssemblyName { get { return _type.Assembly.FullName; } }
+        public string? AssemblyName { get { return _type.Assembly.FullName; } }
 
         /// <summary>
         /// Returns true if the type is an array, false otherwise.
@@ -9266,7 +9269,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary/>
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (!(obj is ReflectionTypeName other))
                 return false;
@@ -9279,7 +9282,7 @@ namespace System.Management.Automation.Language
             return _type.GetHashCode();
         }
 
-        Type ISupportsTypeCaching.CachedType
+        Type? ISupportsTypeCaching.CachedType
         {
             get { return _type; }
 
@@ -9344,6 +9347,7 @@ namespace System.Management.Automation.Language
 
         #endregion Visitors
     }
+#nullable restore
 
     /// <summary>
     /// The ast representing a variable reference, either normal references, e.g. <c>$true</c>, or splatted references
