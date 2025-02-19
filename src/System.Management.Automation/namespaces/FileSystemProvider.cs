@@ -71,7 +71,7 @@ namespace Microsoft.PowerShell.Commands
         /// An instance of the PSTraceSource class used for trace output
         /// using "FileSystemProvider" as the category.
         /// </summary>
-        [Dbg.TraceSourceAttribute("FileSystemProvider", "The namespace navigation provider for the file system")]
+        [Dbg.TraceSource("FileSystemProvider", "The namespace navigation provider for the file system")]
         private static readonly Dbg.PSTraceSource s_tracer =
             Dbg.PSTraceSource.GetTracer("FileSystemProvider", "The namespace navigation provider for the file system");
 
@@ -1086,11 +1086,10 @@ namespace Microsoft.PowerShell.Commands
 
             // Remove drive root first
             string pathWithoutDriveRoot = path.Substring(Path.GetPathRoot(path).Length);
-            char[] invalidFileChars = Path.GetInvalidFileNameChars();
 
             foreach (string segment in pathWithoutDriveRoot.Split(Path.DirectorySeparatorChar))
             {
-                if (segment.IndexOfAny(invalidFileChars) != -1)
+                if (PathUtils.ContainsInvalidFileNameChars(segment))
                 {
                     return false;
                 }
@@ -2717,8 +2716,15 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (IOException ioException)
             {
-                // Ignore the error if force was specified
+#if UNIX
                 if (!Force)
+#else
+                // Windows error code for invalid characters in file or directory name
+                const int ERROR_INVALID_NAME = unchecked((int)0x8007007B);
+
+                // Do not suppress IOException on Windows if it has the specific HResult for invalid characters in directory name
+                if (ioException.HResult == ERROR_INVALID_NAME || !Force)
+#endif
                 {
                     // IOException contains specific message about the error occurred and so no need for errordetails.
                     WriteError(new ErrorRecord(ioException, "CreateDirectoryIOError", ErrorCategory.WriteError, path));
@@ -7433,8 +7439,8 @@ namespace Microsoft.PowerShell.Commands
         /// reading data from the file.
         /// </summary>
         [Parameter]
-        [ArgumentToEncodingTransformationAttribute()]
-        [ArgumentEncodingCompletionsAttribute]
+        [ArgumentToEncodingTransformation]
+        [ArgumentEncodingCompletions]
         [ValidateNotNullOrEmpty]
         public Encoding Encoding
         {

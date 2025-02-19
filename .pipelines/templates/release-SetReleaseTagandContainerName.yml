@@ -1,3 +1,7 @@
+parameters:
+- name: restorePhase
+  default: false
+
 steps:
 - pwsh: |
     $variable = 'releaseTag'
@@ -13,6 +17,8 @@ steps:
     Write-Host -Object "##$vstsCommandString"
   name: OutputReleaseTag
   displayName: Set Release Tag
+  env:
+    ob_restore_phase: ${{ parameters.restorePhase }}
 
 - pwsh: |
     $azureVersion = '$(OutputReleaseTag.ReleaseTag)'.ToLowerInvariant() -replace '\.', '-'
@@ -26,3 +32,5 @@ steps:
     Write-Host "##$vstsCommandString"
   name: OutputVersion
   displayName: Set container name
+  env:
+    ob_restore_phase: ${{ parameters.restorePhase }}
