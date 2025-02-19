@@ -720,6 +720,22 @@ namespace System.Management.Automation
         {
             switch (binaryExpressionAst.Operator)
             {
+                case TokenKind.And:
+                case TokenKind.Ccontains:
+                case TokenKind.Cin:
+                case TokenKind.Cnotcontains:
+                case TokenKind.Cnotin:
+                case TokenKind.Icontains:
+                case TokenKind.Iin:
+                case TokenKind.Inotcontains:
+                case TokenKind.Inotin:
+                case TokenKind.Is:
+                case TokenKind.IsNot:
+                case TokenKind.Or:
+                case TokenKind.Xor:
+                    // Always returns a bool
+                    return BinaryExpressionAst.BoolTypeNameArray;
+
                 case TokenKind.As:
                     // TODO: Handle other kinds of expressions on the right side.
                     if (binaryExpressionAst.Right is TypeExpressionAst typeExpression)
@@ -730,58 +746,42 @@ namespace System.Management.Automation
                     }
                     break;
 
-                case TokenKind.Xor:
-                case TokenKind.And:
-                case TokenKind.Or:
-                case TokenKind.Icontains:
-                case TokenKind.Inotcontains:
-                case TokenKind.Ccontains:
-                case TokenKind.Cnotcontains:
-                case TokenKind.Iin:
-                case TokenKind.Inotin:
-                case TokenKind.Cin:
-                case TokenKind.Cnotin:
-                case TokenKind.Is:
-                case TokenKind.IsNot:
-                    // Always returns a bool
-                    return BinaryExpressionAst.BoolTypeNameArray;
-
-                case TokenKind.Format:
-                case TokenKind.Join:
-                case TokenKind.Ireplace:
-                case TokenKind.Creplace:
-                    // Always returns a string
-                    return BinaryExpressionAst.StringTypeNameArray;
-
-                case TokenKind.Isplit:
-                case TokenKind.Csplit:
-                    // Always returns a string array
-                    return BinaryExpressionAst.StringArrayTypeNameArray;
-
-                case TokenKind.Ieq:
-                case TokenKind.Ine:
-                case TokenKind.Ige:
-                case TokenKind.Igt:
-                case TokenKind.Ilt:
-                case TokenKind.Ile:
-                case TokenKind.Ilike:
-                case TokenKind.Inotlike:
-                case TokenKind.Imatch:
-                case TokenKind.Inotmatch:
                 case TokenKind.Ceq:
-                case TokenKind.Cne:
                 case TokenKind.Cge:
                 case TokenKind.Cgt:
-                case TokenKind.Clt:
                 case TokenKind.Cle:
                 case TokenKind.Clike:
-                case TokenKind.Cnotlike:
+                case TokenKind.Clt:
                 case TokenKind.Cmatch:
+                case TokenKind.Cne:
+                case TokenKind.Cnotlike:
                 case TokenKind.Cnotmatch:
+                case TokenKind.Ieq:
+                case TokenKind.Ige:
+                case TokenKind.Igt:
+                case TokenKind.Ile:
+                case TokenKind.Ilike:
+                case TokenKind.Ilt:
+                case TokenKind.Imatch:
+                case TokenKind.Ine:
+                case TokenKind.Inotlike:
+                case TokenKind.Inotmatch:
                     // Returns a bool or filtered output from the left hand side if it's enumerable
                     var comparisonOutput = new List<PSTypeName>() { new(typeof(bool)) };
                     comparisonOutput.AddRange(InferTypes(binaryExpressionAst.Left));
                     return comparisonOutput;
+
+                case TokenKind.Creplace:
+                case TokenKind.Format:
+                case TokenKind.Ireplace:
+                case TokenKind.Join:
+                    // Always returns a string
+                    return BinaryExpressionAst.StringTypeNameArray;
+
+                case TokenKind.Csplit:
+                case TokenKind.Isplit:
+                    // Always returns a string array
+                    return BinaryExpressionAst.StringArrayTypeNameArray;
 
                 case TokenKind.QuestionQuestion:
                     // Can return left or right hand side
@@ -802,8 +802,8 @@ namespace System.Management.Automation
             string methodName;
             switch (binaryExpressionAst.Operator)
             {
-                case TokenKind.Plus:
-                    methodName = "op_Addition";
+                case TokenKind.Divide:
+                    methodName = "op_Division";
                     break;
 
                 case TokenKind.Minus:
@@ -814,8 +814,8 @@ namespace System.Management.Automation
                     methodName = "op_Multiply";
                     break;
 
-                case TokenKind.Divide:
-                    methodName = "op_Division";
+                case TokenKind.Plus:
+                    methodName = "op_Addition";
                     break;
 
                 case TokenKind.Rem:
