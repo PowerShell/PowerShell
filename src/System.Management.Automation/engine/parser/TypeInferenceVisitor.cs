@@ -837,7 +837,7 @@ namespace System.Management.Automation
             List<PSTypeName> rhsTypes = InferTypes(binaryExpressionAst.Right).ToList();
             HashSet<string> addedReturnTypes = new HashSet<string>();
             List<PSTypeName> result = new List<PSTypeName>();
-            foreach (var lType in lhsTypes)
+            foreach (PSTypeName lType in lhsTypes)
             {
                 if (lType.Type is null)
                 {
