@@ -1709,18 +1709,18 @@ namespace System.Management.Automation
                 yield break;
             }
 
-            foreach (var memberInfo in expressionClrType.GetMember(memberName))
+            foreach (MemberInfo memberInfo in expressionClrType.GetMember(memberName))
             {
                 if (memberInfo.MemberType == MemberTypes.Method)
                 {
                     var methodInfo = memberInfo as MethodInfo;
-                    var methodParams = methodInfo.GetParameters();
+                    ParameterInfo[] methodParams = methodInfo.GetParameters();
                     if (methodParams.Length < argumentIndex)
                     {
                         continue;
                     }
 
-                    var paramCandidate = methodParams[argumentIndex];
+                    ParameterInfo paramCandidate = methodParams[argumentIndex];
                     if (paramCandidate.IsOut)
                     {
                         yield return new PSTypeName(paramCandidate.ParameterType.GetElementType());
@@ -2145,7 +2145,7 @@ namespace System.Management.Automation
                 && (_context.CurrentTypeDefinitionAst is not null || _context.CurrentThisType is not null))
             {
                 // $this is special in script properties and in PowerShell classes
-                var typeName = _context.CurrentThisType ?? new PSTypeName(_context.CurrentTypeDefinitionAst);
+                PSTypeName typeName = _context.CurrentThisType ?? new PSTypeName(_context.CurrentTypeDefinitionAst);
                 inferredTypes.Add(typeName);
                 return;
             }
@@ -2175,7 +2175,7 @@ namespace System.Management.Automation
                         continue;
                     }
 
-                    var type = SpecialVariables.AutomaticVariableTypes[i];
+                    Type type = SpecialVariables.AutomaticVariableTypes[i];
                     if (type != typeof(object))
                     {
                         inferredTypes.Add(new PSTypeName(type));
@@ -2744,7 +2744,7 @@ namespace System.Management.Automation
                     return AstVisitAction.StopVisit;
                 }
 
-                var commandName = commandAst.GetCommandName();
+                string commandName = commandAst.GetCommandName();
                 if (commandName is not null && CompletionCompleters.s_varModificationCommands.Contains(commandName))
                 {
                     StaticBindingResult bindingResult = StaticParameterBinder.BindCommand(commandAst, resolve: false, CompletionCompleters.s_varModificationParameters);
@@ -2761,10 +2761,10 @@ namespace System.Management.Automation
                     }
                 }
 
-                var bindResult = StaticParameterBinder.BindCommand(commandAst, resolve: false);
+                StaticBindingResult bindResult = StaticParameterBinder.BindCommand(commandAst, resolve: false);
                 if (bindResult is not null)
                 {
-                    foreach (var parameterName in CompletionCompleters.s_outVarParameters)
+                    foreach (string parameterName in CompletionCompleters.s_outVarParameters)
                     {
                         if (bindResult.BoundParameters.TryGetValue(parameterName, out ParameterBindingResult outVarBind))
                         {
@@ -2806,7 +2806,7 @@ namespace System.Management.Automation
 
                     if (commandAst.Parent is PipelineAst pipeline && pipeline.Extent.EndOffset > VariableTarget.Extent.StartOffset)
                     {
-                        foreach (var parameterName in CompletionCompleters.s_pipelineVariableParameters)
+                        foreach (string parameterName in CompletionCompleters.s_pipelineVariableParameters)
                         {
                             if (bindResult.BoundParameters.TryGetValue(parameterName, out ParameterBindingResult pipeVarBind))
                             {
