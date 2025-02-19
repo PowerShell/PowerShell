@@ -1533,6 +1533,22 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Count | Should -Be 0
     }
 
+    It 'Infers variable assigned with an attribute' {
+        $res = [AstTypeInference]::InferTypeOf( ({
+            [ValidateNotNull()]$ValidatedVar1 = New-Guid
+            $ValidatedVar1
+        }.Ast.FindAll({param($Ast) $Ast -is [Language.VariableExpressionAst]}, $true) | Select-Object -Last 1 ))
+        $res.Name | Should -Be 'System.Guid'
+    }
+
+    It 'Infers variable assigned with multiple type constraints' {
+        $res = [AstTypeInference]::InferTypeOf( ({
+            [int] [string]$MultiConstraintVar1 = "10"
+            $MultiConstraintVar1
+        }.Ast.FindAll({param($Ast) $Ast -is [Language.VariableExpressionAst]}, $true) | Select-Object -Last 1 ))
+        $res.Name | Should -Be 'System.Int32'
+    }
+
     It 'Should only consider assignments wrapped in parentheses to be a part of the output in a Named block' {
         $res = [AstTypeInference]::InferTypeOf( { [string]$Assignment1 = "Hello"; ([int]$Assignment2 = 42) }.Ast)
         $res.Count | Should -Be 1

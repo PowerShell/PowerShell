@@ -2701,11 +2701,32 @@ namespace System.Management.Automation
                     return AstVisitAction.StopVisit;
                 }
 
-                if (assignmentStatementAst.Left is ConvertExpressionAst convertExpression)
+                if (assignmentStatementAst.Left is AttributedExpressionAst attributedExpression)
                 {
-                    if (convertExpression.Child is VariableExpressionAst variableExpression && AssignsToTargetVar(variableExpression))
+                    var firstConvertExpression = attributedExpression as ConvertExpressionAst;
+                    ExpressionAst child = attributedExpression.Child;
+                    while (child is AttributedExpressionAst attributeChild)
                     {
-                        LastConstraint = convertExpression.Type.TypeName;
+                        if (firstConvertExpression is null && attributeChild is ConvertExpressionAst convertExpression)
+                        {
+                            // Multiple type constraint can be set on a variable like this: [int] [string] $Var1 = 1
+                            // But it's the left most type constraint that determines the final type.
+                            firstConvertExpression = convertExpression;
+                        }
+
+                        child = attributeChild.Child;
+                    }
+
+                    if (child is VariableExpressionAst variableExpression && AssignsToTargetVar(variableExpression))
+                    {
+                        if (firstConvertExpression is not null)
+                        {
+                            LastConstraint = firstConvertExpression.Type.TypeName;
+                        }
+                        else
+                        {
+                            SetLastAssignment(assignmentStatementAst.Right);
+                        }
                     }
                 }
                 else if (assignmentStatementAst.Left is VariableExpressionAst variableExpression && AssignsToTargetVar(variableExpression))
