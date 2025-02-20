@@ -6,13 +6,13 @@
 
 - Add completion single/double quote support for `-Noun` parameter (#24977) (Thanks @ArmaanMcleod!)
 - Remove trailing space from event source name (#24192) (Thanks @MartinGC94!)
-- Stringify ErrorRecord with empty exception message to empty string (#24949) (Thanks @MatejKafka!)
+- Stringify `ErrorRecord` with empty exception message to empty string (#24949) (Thanks @MatejKafka!)
 - Add completion single/double quote support for `-PSEdition` parameter (#24971) (Thanks @ArmaanMcleod!)
 - Fix `New-Item -Force` to error on invalid directory name (#24936) (Thanks @kborowinski!)
 - Fix `Start-Transcript` error when `$Transcript` is a `PSObject` wrapped string (#24963) (Thanks @kborowinski!)
-- Add quote handling in Verb, StrictModeVersion, Scope & PropertyType Argument Completers with single helper method (#24839) (Thanks @ArmaanMcleod!)
-- Fix Start-Process -Wait polling (#24711) (Thanks @jborean93!)
-- Convert `InvalidCommandNameCharacters` in AnalysisCache to `SearchValues<char>` for more efficient char searching (#24880) (Thanks @ArmaanMcleod!)
+- Add quote handling in `Verb`, `StrictModeVersion`, `Scope` & `PropertyType` Argument Completers with single helper method (#24839) (Thanks @ArmaanMcleod!)
+- Fix `Start-Process -Wait` polling (#24711) (Thanks @jborean93!)
+- Convert `InvalidCommandNameCharacters` in `AnalysisCache` to `SearchValues<char>` for more efficient char searching (#24880) (Thanks @ArmaanMcleod!)
 - Convert `s_charactersRequiringQuotes` in Completion Completers to `SearchValues<char>` for more efficient char searching (#24879) (Thanks @ArmaanMcleod!)
 
 ### Code Cleanup
@@ -30,8 +30,8 @@
 <li>Fix <code>RunspacePool</code>, <code>RunspacePoolInternal</code> and <code>RemoteRunspacePoolInternal</code> <code>IDisposable</code> implementation (#24720) (Thanks @xtqqczze!)</li>
 <li>Remove redundant <code>Attribute</code> suffix (#24940) (Thanks @xtqqczze!)</li>
 <li>Fix formatting of the XML comment for <code>SteppablePipeline.Clean()</code> (#24941)</li>
-<li>Use Environment.ProcessId in SpecialVariables.PID (#24926) (Thanks @fMichaleczek!)</li>
-<li>Replace char[] array in CompletionRequiresQuotes with cached SearchValues<char> (#24907) (Thanks @ArmaanMcleod!)</li>
+<li>Use <code>Environment.ProcessId</code> in <code>SpecialVariables.PID</code> (#24926) (Thanks @fMichaleczek!)</li>
+<li>Replace char[] array in <code>CompletionRequiresQuotes</code> with cached SearchValues<char> (#24907) (Thanks @ArmaanMcleod!)</li>
 <li>Update <code>IndexOfAny</code> calls with invalid path/filename to <code>SearchValues&lt;char&gt;</code> for more efficient char searching (#24896) (Thanks @ArmaanMcleod!)</li>
 <li>Seal internal types in <code>PlatformInvokes</code> (#24826) (Thanks @xtqqczze!)</li>
 </ul>
