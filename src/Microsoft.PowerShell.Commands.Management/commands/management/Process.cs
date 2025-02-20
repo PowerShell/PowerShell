@@ -16,7 +16,6 @@ using System.Management.Automation.Language;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
-using System.Security;
 using System.Security.Principal;
 using System.Text;
 using System.Threading;
@@ -1677,7 +1676,7 @@ namespace Microsoft.PowerShell.Commands
         private SwitchParameter _loaduserprofile = SwitchParameter.Present;
 
         /// <summary>
-        /// Starts process in a new window.
+        /// Starts process in the current console window.
         /// </summary>
         [Parameter(ParameterSetName = "Default")]
         [Alias("nnw")]
@@ -1965,7 +1964,9 @@ namespace Microsoft.PowerShell.Commands
 
                 startInfo.WindowStyle = _windowstyle;
 
-                if (_nonewwindow)
+                // When starting a process as another user, the 'CreateNoWindow' property value is ignored and a new window is created.
+                // See details at https://learn.microsoft.com/dotnet/api/system.diagnostics.processstartinfo.createnowindow?view=net-9.0#remarks
+                if (_nonewwindow && _credential is null)
                 {
                     startInfo.CreateNoWindow = _nonewwindow;
                 }
@@ -2405,32 +2406,58 @@ namespace Microsoft.PowerShell.Commands
 
         private void SetStartupInfo(ProcessStartInfo startinfo, ref ProcessNativeMethods.STARTUPINFO lpStartupInfo, ref int creationFlags)
         {
-            bool hasRedirection = false;
+            // If we are starting a process using the current console window, we need to set its standard handlers
+            // explicitly when they are not redirected because otherwise they won't be set.
+            //
+            // However, if we are starting a process with a new cosnole window, we should not explicitly set those
+            // standard handlers when they are not redirected, but instead let Windows figure out the default to use
+            // when creating the process. Otherwise, the standard input handlers of the current window and the new
+            // window will get weirdly tied together and cause problems.
+            bool hasRedirection = startinfo.CreateNoWindow
+                || _redirectstandardinput is not null
+                || _redirectstandardoutput is not null
+                || _redirectstandarderror is not null;
+
             // RedirectionStandardInput
             if (_redirectstandardinput != null)
             {
-                hasRedirection = true;
                 startinfo.RedirectStandardInput = true;
                 _redirectstandardinput = ResolveFilePath(_redirectstandardinput);
                 lpStartupInfo.hStdInput = GetSafeFileHandleForRedirection(_redirectstandardinput, FileMode.Open);
+            }
+            else if (startinfo.CreateNoWindow)
+            {
+                lpStartupInfo.hStdInput = new SafeFileHandle(
+                    ProcessNativeMethods.GetStdHandle(-10),
+                    ownsHandle: false);
             }
 
             // RedirectionStandardOutput
             if (_redirectstandardoutput != null)
             {
-                hasRedirection = true;
                 startinfo.RedirectStandardOutput = true;
                 _redirectstandardoutput = ResolveFilePath(_redirectstandardoutput);
                 lpStartupInfo.hStdOutput = GetSafeFileHandleForRedirection(_redirectstandardoutput, FileMode.Create);
+            }
+            else if (startinfo.CreateNoWindow)
+            {
+                lpStartupInfo.hStdOutput = new SafeFileHandle(
+                    ProcessNativeMethods.GetStdHandle(-11),
+                    ownsHandle: false);
             }
 
             // RedirectionStandardError
             if (_redirectstandarderror != null)
             {
-                hasRedirection = true;
                 startinfo.RedirectStandardError = true;
                 _redirectstandarderror = ResolveFilePath(_redirectstandarderror);
                 lpStartupInfo.hStdError = GetSafeFileHandleForRedirection(_redirectstandarderror, FileMode.Create);
+            }
+            else if (startinfo.CreateNoWindow)
+            {
+                lpStartupInfo.hStdError = new SafeFileHandle(
+                    ProcessNativeMethods.GetStdHandle(-12),
+                    ownsHandle: false);
             }
 
             if (hasRedirection)
@@ -2754,6 +2781,9 @@ namespace Microsoft.PowerShell.Commands
 
     internal static class ProcessNativeMethods
     {
+        [DllImport(PinvokeDllNames.GetStdHandleDllName, SetLastError = true)]
+        public static extern IntPtr GetStdHandle(int whichHandle);
+
         [DllImport(PinvokeDllNames.CreateProcessWithLogonWDllName, CharSet = CharSet.Unicode, SetLastError = true, ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool CreateProcessWithLogonW(string userName,
