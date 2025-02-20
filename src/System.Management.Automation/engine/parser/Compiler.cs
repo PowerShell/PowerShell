@@ -6324,11 +6324,35 @@ namespace System.Management.Automation.Language
 
             // If the ?. operator is used for null conditional check, add the null conditional expression.
             var memberNameAst = memberExpressionAst.Member as StringConstantExpressionAst;
-            Expression memberAccessExpr = memberNameAst != null
-                ? DynamicExpression.Dynamic(PSGetMemberBinder.Get(memberNameAst.Value, _memberFunctionType, memberExpressionAst.Static), typeof(object), target)
-                : DynamicExpression.Dynamic(PSGetDynamicMemberBinder.Get(_memberFunctionType, memberExpressionAst.Static), typeof(object), target, Compile(memberExpressionAst.Member));
+            return MaybeWrapInNullConditionalExpression(
+                memberExpressionAst.NullConditional,
+                target,
+                (this, memberNameAst, memberExpressionAst, _memberFunctionType),
+                static (target, state) =>
+                {
+                    (
+                        Compiler compiler,
+                        StringConstantExpressionAst memberNameAst,
+                        MemberExpressionAst memberExpressionAst,
+                        TypeDefinitionAst memberFunctionType
+                    ) = state;
 
-            return memberExpressionAst.NullConditional ? GetNullConditionalWrappedExpression(target, memberAccessExpr) : memberAccessExpr;
+                    return memberNameAst != null
+                        ? DynamicExpression.Dynamic(
+                            PSGetMemberBinder.Get(
+                                memberNameAst.Value,
+                                memberFunctionType,
+                                memberExpressionAst.Static),
+                                typeof(object),
+                                target)
+                        : DynamicExpression.Dynamic(
+                            PSGetDynamicMemberBinder.Get(
+                                memberFunctionType,
+                                memberExpressionAst.Static),
+                                typeof(object),
+                                target,
+                                compiler.Compile(memberExpressionAst.Member));
+                });
         }
 
         internal static PSMethodInvocationConstraints GetInvokeMemberConstraints(InvokeMemberExpressionAst invokeMemberExpressionAst)
@@ -6403,9 +6427,15 @@ namespace System.Management.Automation.Language
                 ? (CallSiteBinder)PSCreateInstanceBinder.Get(callInfo, constraints, publicTypeOnly: true)
                 : PSInvokeMemberBinder.Get(name, callInfo, @static, propertySet, constraints, classScope);
 
-            var dynamicExprFromBinder = DynamicExpression.Dynamic(binder, typeof(object), args.Prepend(target));
-
-            return nullConditional ? GetNullConditionalWrappedExpression(target, dynamicExprFromBinder) : dynamicExprFromBinder;
+            return MaybeWrapInNullConditionalExpression(
+                nullConditional,
+                target,
+                (binder, args),
+                static (target, state) =>
+                {
+                    (CallSiteBinder binder, IEnumerable<Expression> args) = state;
+                    return DynamicExpression.Dynamic(binder, typeof(object), args.Prepend(target));
+                });
         }
 
         private static Expression InvokeBaseCtorMethod(PSMethodInvocationConstraints constraints, Expression target, IEnumerable<Expression> args)
@@ -6424,10 +6454,30 @@ namespace System.Management.Automation.Language
             bool propertySet,
             bool nullConditional = false)
         {
-            var binder = PSInvokeDynamicMemberBinder.Get(new CallInfo(args.Count()), _memberFunctionType, @static, propertySet, constraints);
-            var dynamicExprFromBinder = DynamicExpression.Dynamic(binder, typeof(object), args.Prepend(memberNameExpr).Prepend(target));
+            var binder = PSInvokeDynamicMemberBinder.Get(
+                new CallInfo(args.Count()),
+                _memberFunctionType,
+                @static,
+                propertySet,
+                constraints);
 
-            return nullConditional ? GetNullConditionalWrappedExpression(target, dynamicExprFromBinder) : dynamicExprFromBinder;
+            return MaybeWrapInNullConditionalExpression(
+                nullConditional,
+                target,
+                (binder, args, memberNameExpr),
+                static (target, state) =>
+                {
+                    (
+                        PSInvokeDynamicMemberBinder binder,
+                        IEnumerable<Expression> args,
+                        Expression memberNameExpr
+                    ) = state;
+
+                    return DynamicExpression.Dynamic(
+                        binder,
+                        typeof(object),
+                        args.Prepend(memberNameExpr).Prepend(target));
+                });
         }
 
         public object VisitInvokeMemberExpression(InvokeMemberExpressionAst invokeMemberExpressionAst)
@@ -6611,26 +6661,56 @@ namespace System.Management.Automation.Language
             // In the former case, the user is requesting an array slice.  In the latter case, they index expression is likely
             // an array (dynamically determined) and they don't want an array slice, they want to use the array as the index
             // expression.
-            Expression indexingExpr = arrayLiteral != null && arrayLiteral.Elements.Count > 1
-                ? DynamicExpression.Dynamic(
-                    PSGetIndexBinder.Get(arrayLiteral.Elements.Count, constraints),
-                    typeof(object),
-                    arrayLiteral.Elements.Select(CompileExpressionOperand).Prepend(targetExpr))
-                : DynamicExpression.Dynamic(
-                    PSGetIndexBinder.Get(argCount: 1, constraints),
-                    typeof(object),
-                    targetExpr,
-                    CompileExpressionOperand(index));
+            return MaybeWrapInNullConditionalExpression(
+                indexExpressionAst.NullConditional,
+                targetExpr,
+                (this, arrayLiteral, index, constraints),
+                static (targetExpr, state) =>
+                {
+                    (
+                        Compiler compiler,
+                        ArrayLiteralAst arrayLiteral,
+                        ExpressionAst index,
+                        PSMethodInvocationConstraints constraints
+                    ) = state;
 
-            return indexExpressionAst.NullConditional ? GetNullConditionalWrappedExpression(targetExpr, indexingExpr) : indexingExpr;
+                    return arrayLiteral is { Elements.Count: > 1 }
+                        ? DynamicExpression.Dynamic(
+                            PSGetIndexBinder.Get(arrayLiteral.Elements.Count, constraints),
+                            typeof(object),
+                            arrayLiteral.Elements.Select(compiler.CompileExpressionOperand).Prepend(targetExpr))
+                        : DynamicExpression.Dynamic(
+                            PSGetIndexBinder.Get(argCount: 1, constraints),
+                            typeof(object),
+                            targetExpr,
+                            compiler.CompileExpressionOperand(index));
+                });
         }
 
-        private static Expression GetNullConditionalWrappedExpression(Expression targetExpr, Expression memberAccessExpression)
+        private static Expression MaybeWrapInNullConditionalExpression<TState>(
+            bool isNullConditional,
+            Expression targetExpr,
+            TState state,
+            Func<Expression, TState, Expression> factory)
         {
-            return Expression.Condition(
-                Expression.Call(CachedReflectionInfo.LanguagePrimitives_IsNull, targetExpr.Cast(typeof(object))),
-                ExpressionCache.NullConstant,
-                memberAccessExpression);
+            if (!isNullConditional || targetExpr.Type.IsValueType)
+            {
+                return factory(targetExpr, state);
+            }
+
+            ParameterExpression temp = Expression.Parameter(targetExpr.Type);
+            return Expression.Block(
+                typeof(object),
+                [temp],
+                [
+                    Expression.Assign(temp, targetExpr),
+                    Expression.Condition(
+                        Expression.Call(
+                            CachedReflectionInfo.LanguagePrimitives_IsNull,
+                            temp.Cast(typeof(object))),
+                        ExpressionCache.NullConstant,
+                        factory(temp, state).Cast(typeof(object))),
+                ]);
         }
 
         public object VisitAttributedExpression(AttributedExpressionAst attributedExpressionAst)
