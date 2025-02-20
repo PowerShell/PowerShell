@@ -60,7 +60,7 @@ Describe "Tab completion bug fix" -Tags "CI" {
         {
             if ($keys)
             {
-                Remove-Item -Path HKCU:\AB? -Recurse
+                Remove-Item -Path HKCU:\AB? -Recurse -ErrorAction SilentlyContinue
             }
         }
     }
