@@ -1422,6 +1422,25 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Enumerates verb with groups.
+        /// </summary>
+        /// <param name="groups">The groups to filter verbs by.</param>
+        /// <returns>List of verbs filtered by groups.</returns>
+        private static IEnumerable<string> EnumerateVerbWithGroups(string[] groups)
+        {
+            foreach (Type verbType in VerbTypes)
+            {
+                if (GroupsContainVerbType(groups, verbType))
+                {
+                    foreach (string fieldName in EnumerateFieldNamesFromVerbType(verbType))
+                    {
+                        yield return fieldName;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Filters verbs by type.
         /// </summary>
         /// <param name="verbs">The array of verbs.</param>
@@ -1472,31 +1491,21 @@ namespace System.Management.Automation
         /// <summary>
         /// Provides argument completion for Verb parameter.
         /// </summary>
-        public class VerbArgumentCompleter : IArgumentCompleter
+        public sealed class VerbArgumentCompleter : ArgumentCompleter
         {
             /// <summary>
-            /// Returns completion results for verb parameter.
+            /// Gets possible completion values for Verb parameter.
             /// </summary>
-            /// <param name="commandName">The command name.</param>
-            /// <param name="parameterName">The parameter name.</param>
-            /// <param name="wordToComplete">The word to complete.</param>
-            /// <param name="commandAst">The command AST.</param>
-            /// <param name="fakeBoundParameters">The fake bound parameters.</param>
-            /// <returns>List of Completion Results.</returns>
-            public IEnumerable<CompletionResult> CompleteArgument(
-                string commandName,
-                string parameterName,
-                string wordToComplete,
-                CommandAst commandAst,
-                IDictionary fakeBoundParameters)
+            /// <returns>List of possible completion values.</returns>
+            protected override IEnumerable<string> GetPossibleCompletionValues()
             {
                 // Completion: Get-Verb -Group <group> -Verb <wordToComplete>
-                if (commandName.Equals("Get-Verb", StringComparison.OrdinalIgnoreCase)
-                    && fakeBoundParameters.Contains("Group"))
+                if (CommandName.Equals("Get-Verb", StringComparison.OrdinalIgnoreCase)
+                    && FakeBoundParameters.Contains("Group"))
                 {
                     string[] groups = null;
 
-                    object groupParameterValue = fakeBoundParameters["Group"];
+                    object groupParameterValue = FakeBoundParameters["Group"];
                     Type groupParameterValueType = groupParameterValue.GetType();
 
                     if (groupParameterValueType == typeof(string))
@@ -1510,76 +1519,33 @@ namespace System.Management.Automation
                         groups = Array.ConvertAll((object[])groupParameterValue, group => group.ToString());
                     }
 
-                    return CompleteVerbWithGroups(wordToComplete, groups);
+                    return EnumerateVerbWithGroups(groups);
                 }
 
                 // Completion: Get-Command -Noun <noun> -Verb <wordToComplete>
-                else if (commandName.Equals("Get-Command", StringComparison.OrdinalIgnoreCase)
-                         && fakeBoundParameters.Contains("Noun"))
+                else if (CommandName.Equals("Get-Command", StringComparison.OrdinalIgnoreCase)
+                         && FakeBoundParameters.Contains("Noun"))
                 {
                     using var ps = PowerShell.Create(RunspaceMode.CurrentRunspace);
 
                     var commandInfo = new CmdletInfo("Get-Command", typeof(GetCommandCommand));
 
                     ps.AddCommand(commandInfo);
-                    ps.AddParameter("Noun", fakeBoundParameters["Noun"]);
+                    ps.AddParameter("Noun", FakeBoundParameters["Noun"]);
 
-                    if (fakeBoundParameters.Contains("Module"))
+                    if (FakeBoundParameters.Contains("Module"))
                     {
-                        ps.AddParameter("Module", fakeBoundParameters["Module"]);
+                        ps.AddParameter("Module", FakeBoundParameters["Module"]);
                     }
 
                     Collection<CmdletInfo> commands = ps.Invoke<CmdletInfo>();
 
-                    return CompleteVerbWithCommands(wordToComplete, commands);
+                    return EnumerateCommandVerbNames(commands);
                 }
 
                 // Complete all verbs by default if above cases not completed
-                return CompleteVerbForAllTypes(wordToComplete);
+                return EnumerateFieldNamesFromAllVerbTypes();
             }
-
-            /// <summary>
-            /// Completes verb with list of groups.
-            /// </summary>
-            /// <param name="wordToComplete">The word to complete.</param>
-            /// <param name="groups">The list of groups.</param>
-            /// <returns>List of completions for verb.</returns>
-            private static IEnumerable<CompletionResult> CompleteVerbWithGroups(string wordToComplete, string[] groups)
-            {
-                foreach (Type verbType in VerbTypes)
-                {
-                    if (GroupsContainVerbType(groups, verbType))
-                    {
-                        foreach (CompletionResult result in CompletionCompleters.GetMatchingResults(
-                            wordToComplete,
-                            possibleCompletionValues: EnumerateFieldNamesFromVerbType(verbType)))
-                        {
-                            yield return result;
-                        }
-                    }
-                }
-            }
-
-            /// <summary>
-            /// Completes verb with list of commands.
-            /// </summary>
-            /// <param name="wordToComplete">The word to complete.</param>
-            /// <param name="commands">The list of commands.</param>
-            /// <returns>List of completions for verb.</returns>
-            private static IEnumerable<CompletionResult> CompleteVerbWithCommands(string wordToComplete, Collection<CmdletInfo> commands)
-                => CompletionCompleters.GetMatchingResults(
-                    wordToComplete,
-                    possibleCompletionValues: EnumerateCommandVerbNames(commands));
-
-            /// <summary>
-            /// Completes verb for all types.
-            /// </summary>
-            /// <param name="wordToComplete">The word to complete.</param>
-            /// <returns>List of completions for verb.</returns>
-            private static IEnumerable<CompletionResult> CompleteVerbForAllTypes(string wordToComplete)
-                => CompletionCompleters.GetMatchingResults(
-                    wordToComplete,
-                    possibleCompletionValues: EnumerateFieldNamesFromAllVerbTypes());
         }
 
         private static readonly Dictionary<string, bool> s_validVerbs = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
