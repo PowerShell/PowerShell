@@ -23,8 +23,12 @@ namespace PSTests.Parallel
 
         [Theory]
         [InlineData("a", "a")]
+        [InlineData("a`", "a`")]
         [InlineData("a*", "a`*")]
+        [InlineData("`a*", "`a`*")]
         [InlineData("*?[]", "`*`?`[`]")]
+        [InlineData("*?`[]", "`*`?``[`]")]
+        [InlineData("*?[]`", "`*`?`[`]`")]
         public void TestEscape_String(string source, string expected)
         {
             Assert.Equal(WildcardPattern.Escape(source), expected);
@@ -58,6 +62,19 @@ namespace PSTests.Parallel
         public void TestUnescape_String(string source, string expected)
         {
             Assert.Equal(WildcardPattern.Unescape(source), expected);
+        }
+
+        [Theory]
+        [InlineData("`r*", "`r`n", true)]
+        [InlineData("``r*", "`r`n", false)]
+        [InlineData("`*", "`r`n", true)]
+        [InlineData("`r`*", "`r`n", true)]
+        [InlineData("`r``*", "`r`n", false)]
+        [InlineData("`r`n*", "`r`n", true)]
+        [InlineData("`r`n", "`r`n", true)]
+        public void TestIsMatch_String(string pattern, string input, bool result)
+        {
+            Assert.Equal(result, WildcardPattern.Get(pattern, WildcardOptions.IgnoreCase).IsMatch(input));
         }
     }
 }
