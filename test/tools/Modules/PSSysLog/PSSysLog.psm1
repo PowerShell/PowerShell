@@ -97,6 +97,14 @@ function Test-Linux
     }
 }
 
+function Test-FreeBSD
+{
+    if (-not $IsFreeBSD)
+    {
+        throw "This command requires FreeBSD"
+    }
+}
+
 function Start-NativeExecution
 {
     param

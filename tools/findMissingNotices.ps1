@@ -179,6 +179,7 @@ function Get-CGRegistrations {
             "linux-arm",
             "linux-arm64",
             "linux-x64",
+            "freebsd-x64"
             "osx-arm64",
             "osx-x64",
             "win-arm64",
@@ -209,6 +210,10 @@ function Get-CGRegistrations {
             $target = "$dotnetTargetName|$Runtime"
         }
         "osx-.*" {
+            $folder = $unixProjectName
+            $target = "$dotnetTargetName|$Runtime"
+        }
+        "freebsd-.*" {
             $folder = $unixProjectName
             $target = "$dotnetTargetName|$Runtime"
         }
@@ -280,7 +285,7 @@ function Get-CGRegistrations {
 $registrations = [System.Collections.Generic.Dictionary[string, Registration]]::new()
 $lastCount = 0
 $registrationChanged = $false
-foreach ($runtime in "win-x64", "linux-x64", "osx-x64", "linux-musl-x64", "linux-arm", "linux-arm64", "osx-arm64", "win-arm64", "win-x86") {
+foreach ($runtime in "win-x64", "linux-x64", "osx-x64", "freebsd-x64", "linux-musl-x64", "linux-arm", "linux-arm64", "osx-arm64", "win-arm64", "win-x86") {
     $registrationChanged = (Get-CGRegistrations -Runtime $runtime -RegistrationTable $registrations) -or $registrationChanged
     $count = $registrations.Count
     $newCount = $count - $lastCount
