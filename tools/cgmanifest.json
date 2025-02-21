@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/component-detection-manifest.json",
   "Registrations": [
     {
       "Component": {
@@ -185,7 +186,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Security.Extensions",
-          "Version": "1.3.0"
+          "Version": "1.4.0"
         }
       },
       "DevelopmentDependency": false
@@ -910,6 +911,5 @@
       },
       "DevelopmentDependency": false
     }
-  ],
-  "$schema": "https://json.schemastore.org/component-detection-manifest.json"
+  ]
 }

@@ -84,6 +84,17 @@ Describe "TabCompletion" -Tags CI {
         $res.CompletionMatches[0].CompletionText | Should -BeExactly '$CurrentItem'
     }
 
+    It 'Should complete variables set with an attribute' {
+        $res = TabExpansion2 -inputScript '[ValidateNotNull()]$Var1 = 1; $Var'
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '$Var1'
+    }
+
+    It 'Should use the first type constraint in a variable assignment in the tooltip' {
+        $res = TabExpansion2 -inputScript '[int] [string] $Var1 = 1; $Var'
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '$Var1'
+        $res.CompletionMatches[0].ToolTip | Should -BeExactly '[int]$Var1'
+    }
+
     It 'Should not complete parameter name' {
         $res = TabExpansion2 -inputScript 'param($P'
         $res.CompletionMatches.Count | Should -Be 0
@@ -1155,6 +1166,44 @@ ConstructorTestClass(int i, bool b)
             }
 
             $completionText -join ' ' | Should -BeExactly ($sortedSetExpectedNouns -join ' ')
+        }
+    }
+
+    Context "Get-ExperimentalFeature -Name parameter completion" {
+        BeforeAll {
+            function GetExperimentalFeatureNames([switch]$SingleQuote, [switch]$DoubleQuote) {
+                $features = (Get-ExperimentalFeature).Name
+
+                if ($SingleQuote) {
+                    return ($features | ForEach-Object { "'$_'" })
+                }
+                elseif ($DoubleQuote) {
+                    return ($features | ForEach-Object { """$_""" })
+                }
+
+                return $features
+            }
+
+            $allExperimentalFeatures = GetExperimentalFeatureNames
+            $allExperimentalFeaturesSingleQuote = GetExperimentalFeatureNames -SingleQuote
+            $allExperimentalFeaturesDoubleQuote = GetExperimentalFeatureNames -DoubleQuote
+            $experimentalFeaturesStartingWithPS = $allExperimentalFeatures | Where-Object { $_ -like 'PS*'}
+            $experimentalFeaturesStartingWithPSSingleQuote = $allExperimentalFeaturesSingleQuote | Where-Object { $_ -like "'PS*" }
+            $experimentalFeaturesStartingWithPSDoubleQuote = $allExperimentalFeaturesDoubleQuote | Where-Object { $_ -like """PS*" }
+        }
+
+        It "Should complete Name for '<TextInput>'" -TestCases @(
+            @{ TextInput = "Get-ExperimentalFeature -Name "; ExpectedExperimentalFeatureNames = $allExperimentalFeatures }
+            @{ TextInput = "Get-ExperimentalFeature -Name '"; ExpectedExperimentalFeatureNames = $allExperimentalFeaturesSingleQuote }
+            @{ TextInput = "Get-ExperimentalFeature -Name """; ExpectedExperimentalFeatureNames = $allExperimentalFeaturesDoubleQuote }
+            @{ TextInput = "Get-ExperimentalFeature -Name PS"; ExpectedExperimentalFeatureNames = $experimentalFeaturesStartingWithPS }
+            @{ TextInput = "Get-ExperimentalFeature -Name 'PS"; ExpectedExperimentalFeatureNames = $experimentalFeaturesStartingWithPSSingleQuote }
+            @{ TextInput = "Get-ExperimentalFeature -Name ""PS"; ExpectedExperimentalFeatureNames = $experimentalFeaturesStartingWithPSDoubleQuote }
+        ) {
+            param($TextInput, $ExpectedExperimentalFeatureNames)
+            $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
+            $completionText = $res.CompletionMatches.CompletionText
+            $completionText -join ' ' | Should -BeExactly (($ExpectedExperimentalFeatureNames | Sort-Object -Unique) -join ' ')
         }
     }
 
