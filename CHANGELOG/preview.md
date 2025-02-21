@@ -11,7 +11,7 @@
 - Add completion single/double quote support for `-Noun` parameter for `Get-Command` (#24977) (Thanks @ArmaanMcleod!)
 - Stringify `ErrorRecord` with empty exception message to empty string (#24949) (Thanks @MatejKafka!)
 - Add completion single/double quote support for `-PSEdition` parameter for `Get-Module` (#24971) (Thanks @ArmaanMcleod!)
-- Fix error when `New-Item -Force` is passed an invalid directory name (#24936) (Thanks @kborowinski!)
+- Error when `New-Item -Force` is passed an invalid directory name (#24936) (Thanks @kborowinski!)
 - Allow `Start-Transcript`to use `$Transcript` which is a `PSObject` wrapped string to specify the transcript path (#24963) (Thanks @kborowinski!)
 - Add quote handling in `Verb`, `StrictModeVersion`, `Scope` & `PropertyType` Argument Completers with single helper method (#24839) (Thanks @ArmaanMcleod!)
 - Improve `Start-Process -Wait` polling efficiency (#24711) (Thanks @jborean93!)
