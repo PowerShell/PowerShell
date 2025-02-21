@@ -2,10 +2,13 @@
 
 ## [7.6.0-preview.3]
 
+### Breaking Changes
+
+- Remove trailing space from event source name (#24192) (Thanks @MartinGC94!)
+
 ### General Cmdlet Updates and Fixes
 
 - Add completion single/double quote support for `-Noun` parameter for `Get-Command` (#24977) (Thanks @ArmaanMcleod!)
-- Remove trailing space from event source name (#24192) (Thanks @MartinGC94!)
 - Stringify `ErrorRecord` with empty exception message to empty string (#24949) (Thanks @MatejKafka!)
 - Add completion single/double quote support for `-PSEdition` parameter for `Get-Module` (#24971) (Thanks @ArmaanMcleod!)
 - Fix error when `New-Item -Force` is passed an invalid directory name (#24936) (Thanks @kborowinski!)
