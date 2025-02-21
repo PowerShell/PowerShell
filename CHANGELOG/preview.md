@@ -11,7 +11,7 @@
 - Fix error when `New-Item -Force` is passed an invalid directory name (#24936) (Thanks @kborowinski!)
 - Allow `Start-Transcript`to use `$Transcript` which is a `PSObject` wrapped string to specify the transcript path (#24963) (Thanks @kborowinski!)
 - Add quote handling in `Verb`, `StrictModeVersion`, `Scope` & `PropertyType` Argument Completers with single helper method (#24839) (Thanks @ArmaanMcleod!)
-- Improve `Start-Process -Wait` polling efficency (#24711) (Thanks @jborean93!)
+- Improve `Start-Process -Wait` polling efficiency (#24711) (Thanks @jborean93!)
 - Convert `InvalidCommandNameCharacters` in `AnalysisCache` to `SearchValues<char>` for more efficient char searching (#24880) (Thanks @ArmaanMcleod!)
 - Convert `s_charactersRequiringQuotes` in Completion Completers to `SearchValues<char>` for more efficient char searching (#24879) (Thanks @ArmaanMcleod!)
 
