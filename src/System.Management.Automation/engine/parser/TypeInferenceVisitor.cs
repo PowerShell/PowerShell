@@ -2601,7 +2601,7 @@ namespace System.Management.Automation
             return i != 0 ? pipe.PipelineElements[i - 1] : null;
         }
 
-        private sealed class VariableAssignmentVisitor : AstVisitor
+        private sealed class VariableAssignmentVisitor : AstVisitor2
         {
             internal bool LocalScopeOnly;
             internal bool ScopeIsLocal;
@@ -2688,7 +2688,11 @@ namespace System.Management.Automation
             {
                 if (ast.Extent.StartOffset >= StopSearchOffset)
                 {
-                    return AstVisitAction.StopVisit;
+                    // When visiting do while/until statements, the condition will be visited before the statement block
+                    // The condition itself may not be interesting if it's after the cursor, but the statement block could be
+                    return ast is PipelineBaseAst && ast.Parent is DoUntilStatementAst or DoWhileStatementAst
+                        ? AstVisitAction.SkipChildren
+                        : AstVisitAction.StopVisit;
                 }
 
                 return AstVisitAction.Continue;
@@ -2698,7 +2702,9 @@ namespace System.Management.Automation
             {
                 if (assignmentStatementAst.Extent.StartOffset >= StopSearchOffset)
                 {
-                    return AstVisitAction.StopVisit;
+                    return assignmentStatementAst.Parent is DoUntilStatementAst or DoWhileStatementAst
+                        ? AstVisitAction.SkipChildren
+                        : AstVisitAction.StopVisit;
                 }
 
                 if (assignmentStatementAst.Left is AttributedExpressionAst attributedExpression)

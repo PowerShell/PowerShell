@@ -1429,6 +1429,30 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Name | Should -Be 'System.Management.Automation.Internal.Host.InternalHost'
     }
 
+    It 'Infers type of variable assigned inside do while loop' {
+        $res = [AstTypeInference]::InferTypeOf(({
+            do
+            {
+                $Test = 1
+                $Test
+            }
+            while (1)
+        }.Ast.FindAll({param($Ast) $Ast -is [Language.VariableExpressionAst]}, $true) | Select-Object -Last 1 ))
+        $res.Name | Should -Be 'System.Int32'
+    }
+
+    It 'Infers type of variable assigned inside do until loop' {
+        $res = [AstTypeInference]::InferTypeOf(({
+            do
+            {
+                $Test = 1
+                $Test
+            }
+            until ($null = gci)
+        }.Ast.FindAll({param($Ast) $Ast -is [Language.VariableExpressionAst] -and $Ast.VariablePath.UserPath -eq 'Test'}, $true) | Select-Object -Last 1 ))
+        $res.Name | Should -Be 'System.Int32'
+    }
+
     It 'Infers type of external applications' {
         $res = [AstTypeInference]::InferTypeOf( { pwsh }.Ast)
         $res.Name | Should -Be 'System.String'
