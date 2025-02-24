@@ -5258,13 +5258,9 @@ namespace System.Management.Automation
             List<CompletionResult> tempResults = new();
 
             var wordToComplete = context.WordToComplete;
+            string scopePrefix = string.Empty;
             var colon = wordToComplete.IndexOf(':');
-            string scopePrefix;
-            if (colon == -1)
-            {
-                scopePrefix = string.Empty;
-            }
-            else
+            if (colon >= 0)
             {
                 scopePrefix = wordToComplete.Remove(colon + 1);
                 wordToComplete = wordToComplete.Substring(colon + 1);
