@@ -27,7 +27,7 @@ runs:
   - name: Bootstrap
     run: |-
       Import-Module ./build.psm1
-      Start-PSBootstrap -Package
+      Start-PSBootstrap -Scenario Package
     shell: pwsh
   - name: Capture Artifacts Directory
     continue-on-error: true

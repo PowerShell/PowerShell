@@ -69,7 +69,7 @@ namespace System.Management.Automation.Remoting
     /// </summary>
     internal class ServerRemoteSession : RemoteSession
     {
-        [TraceSourceAttribute("ServerRemoteSession", "ServerRemoteSession")]
+        [TraceSource("ServerRemoteSession", "ServerRemoteSession")]
         private static readonly PSTraceSource s_trace = PSTraceSource.GetTracer("ServerRemoteSession", "ServerRemoteSession");
 
         private readonly PSSenderInfo _senderInfo;

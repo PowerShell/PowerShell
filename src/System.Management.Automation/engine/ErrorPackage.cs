@@ -1689,12 +1689,7 @@ namespace System.Management.Automation
 
             if (Exception != null)
             {
-                if (!string.IsNullOrEmpty(Exception.Message))
-                {
-                    return Exception.Message;
-                }
-
-                return Exception.ToString();
+                return Exception.Message ?? Exception.ToString();
             }
 
             return base.ToString();

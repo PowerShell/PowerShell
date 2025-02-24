@@ -12,7 +12,7 @@ using Dbg = System.Diagnostics.Debug;
 
 namespace System.Management.Automation.Remoting
 {
-    [SerializableAttribute]
+    [Serializable]
     internal class HyperVSocketEndPoint : EndPoint
     {
         #region Members

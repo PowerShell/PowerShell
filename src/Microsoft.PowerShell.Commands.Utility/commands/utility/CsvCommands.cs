@@ -218,8 +218,8 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets encoding optional flag.
         /// </summary>
         [Parameter]
-        [ArgumentToEncodingTransformationAttribute]
-        [ArgumentEncodingCompletionsAttribute]
+        [ArgumentToEncodingTransformation]
+        [ArgumentEncodingCompletions]
         [ValidateNotNullOrEmpty]
         public Encoding Encoding
         {
@@ -602,8 +602,8 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets encoding optional flag.
         /// </summary>
         [Parameter]
-        [ArgumentToEncodingTransformationAttribute]
-        [ArgumentEncodingCompletionsAttribute]
+        [ArgumentToEncodingTransformation]
+        [ArgumentEncodingCompletions]
         [ValidateNotNullOrEmpty]
         public Encoding Encoding
         {

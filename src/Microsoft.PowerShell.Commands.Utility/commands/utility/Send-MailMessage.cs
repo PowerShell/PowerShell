@@ -61,8 +61,8 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ValueFromPipelineByPropertyName = true)]
         [Alias("BE")]
         [ValidateNotNullOrEmpty]
-        [ArgumentEncodingCompletionsAttribute]
-        [ArgumentToEncodingTransformationAttribute]
+        [ArgumentEncodingCompletions]
+        [ArgumentToEncodingTransformation]
         public Encoding Encoding
         {
             get

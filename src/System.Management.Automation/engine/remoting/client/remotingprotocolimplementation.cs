@@ -15,7 +15,7 @@ namespace System.Management.Automation.Remoting
     /// </summary>
     internal sealed class ClientRemoteSessionDSHandlerImpl : ClientRemoteSessionDataStructureHandler, IDisposable
     {
-        [TraceSourceAttribute("CRSDSHdlerImpl", "ClientRemoteSessionDSHandlerImpl")]
+        [TraceSource("CRSDSHdlerImpl", "ClientRemoteSessionDSHandlerImpl")]
         private static readonly PSTraceSource s_trace = PSTraceSource.GetTracer("CRSDSHdlerImpl", "ClientRemoteSessionDSHandlerImpl");
 
         private const string resBaseName = "remotingerroridstrings";

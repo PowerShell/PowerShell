@@ -84,6 +84,17 @@ Describe "TabCompletion" -Tags CI {
         $res.CompletionMatches[0].CompletionText | Should -BeExactly '$CurrentItem'
     }
 
+    It 'Should complete variables set with an attribute' {
+        $res = TabExpansion2 -inputScript '[ValidateNotNull()]$Var1 = 1; $Var'
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '$Var1'
+    }
+
+    It 'Should use the first type constraint in a variable assignment in the tooltip' {
+        $res = TabExpansion2 -inputScript '[int] [string] $Var1 = 1; $Var'
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '$Var1'
+        $res.CompletionMatches[0].ToolTip | Should -BeExactly '[int]$Var1'
+    }
+
     It 'Should not complete parameter name' {
         $res = TabExpansion2 -inputScript 'param($P'
         $res.CompletionMatches.Count | Should -Be 0
@@ -1075,6 +1086,124 @@ ConstructorTestClass(int i, bool b)
                 Remove-Item -Path $fileSystemPath -Force
                 Remove-Item -LiteralPath $fileSystemLiteralPathDir -Recurse -Force
             }
+        }
+    }
+
+    Context 'Get-Command -Noun parameter completion' {
+        BeforeAll {
+            function GetModuleCommandNouns(
+                [string]$Module,
+                [string]$Verb,
+                [switch]$SingleQuote,
+                [switch]$DoubleQuote)
+            {
+
+                $commandParams = @{}
+
+                if ($PSBoundParameters.ContainsKey('Module')) {
+                    $commandParams['Module'] = $Module
+                }
+
+                if ($PSBoundParameters.ContainsKey('Verb')) {
+                    $commandParams['Verb'] = $Verb
+                }
+
+                $nouns = (Get-Command @commandParams).Noun
+
+                if ($SingleQuote) {
+                    return ($nouns | ForEach-Object { "'$_'" })
+                }
+                elseif ($DoubleQuote) {
+                    return ($nouns | ForEach-Object { """$_""" })
+                }
+
+                return $nouns
+            }
+
+            $utilityModuleName = 'Microsoft.PowerShell.Utility'
+
+            $allUtilityCommandNouns = GetModuleCommandNouns -Module $utilityModuleName
+            $allUtilityCommandNounsSingleQuote = GetModuleCommandNouns -Module $utilityModuleName -SingleQuote
+            $allUtilityCommandNounsDoubleQuote = GetModuleCommandNouns -Module $utilityModuleName -DoubleQuote
+            $utilityCommandNounsStartingWithF = $allUtilityCommandNouns | Where-Object { $_ -like 'F*'}
+            $utilityCommandNounsStartingWithFSingleQuote = $allUtilityCommandNounsSingleQuote | Where-Object { $_ -like "'F*"}
+            $utilityCommandNounsStartingWithFDoubleQuote = $allUtilityCommandNounsDoubleQuote | Where-Object { $_ -like """F*"}
+
+            $allUtilityCommandNounsWithConvertToVerb = GetModuleCommandNouns -Module $utilityModuleName -Verb 'ConvertTo'
+            $allUtilityCommandNounsWithConvertToVerbSingleQuote = GetModuleCommandNouns -Module $utilityModuleName -SingleQuote -Verb 'ConvertTo'
+            $allUtilityCommandNounsWithConvertToVerbDoubleQuote = GetModuleCommandNouns -Module $utilityModuleName -DoubleQuote -Verb 'ConvertTo'
+            $utilityCommandNounsWithConvertToVerb = $allUtilityCommandNounsWithConvertToVerb | Where-Object { $_ -in 'CliXml', 'Csv', 'Html', 'Json', 'Xml' }
+            $utilityCommandNounsWithConvertToVerbSingleQuote = $allUtilityCommandNounsWithConvertToVerbSingleQuote | Where-Object { $_ -in "'CliXml'", "'Csv'", "'Html'", "'Json'", "'Xml'" }
+            $utilityCommandNounsWithConvertToVerbDoubleQuote = $allUtilityCommandNounsWithConvertToVerbDoubleQuote | Where-Object { $_ -in """CliXml""", """Csv""", """Html""", """Json""", """Xml""" }
+            $utilityCommandNounsWithConvertToVerbStartingWithC = $allUtilityCommandNounsWithConvertToVerb | Where-Object { $_ -in 'CliXml', 'Csv' }
+            $utilityCommandNounsWithConvertToVerbStartingWithCSingleQuote = $allUtilityCommandNounsWithConvertToVerbSingleQuote | Where-Object { $_ -in "'CliXml'", "'Csv'" }
+            $utilityCommandNounsWithConvertToVerbStartingWithCDoubleQuote = $allUtilityCommandNounsWithConvertToVerbDoubleQuote | Where-Object { $_ -in """CliXml""", """Csv""" }
+        }
+
+        It "Should complete Noun for '<TextInput>'" -TestCases @(
+            @{ TextInput = "Get-Command -Module $utilityModuleName -Noun "; ExpectedNouns = $allUtilityCommandNouns }
+            @{ TextInput = "Get-Command -Module $utilityModuleName -Noun '"; ExpectedNouns = $allUtilityCommandNounsSingleQuote }
+            @{ TextInput = "Get-Command -Module $utilityModuleName -Noun """; ExpectedNouns = $allUtilityCommandNounsDoubleQuote }
+            @{ TextInput = "Get-Command -Module $utilityModuleName -Noun F"; ExpectedNouns = $utilityCommandNounsStartingWithF  }
+            @{ TextInput = "Get-Command -Module $utilityModuleName -Noun 'F"; ExpectedNouns = $utilityCommandNounsStartingWithFSingleQuote }
+            @{ TextInput = "Get-Command -Module $utilityModuleName -Noun ""F"; ExpectedNouns = $utilityCommandNounsStartingWithFDoubleQuote }
+            @{ TextInput = "Get-Command -Module $utilityModuleName -Verb ConvertTo -Noun "; ExpectedNouns = $utilityCommandNounsWithConvertToVerb  }
+            @{ TextInput = "Get-Command -Module $utilityModuleName -Verb ConvertTo -Noun '"; ExpectedNouns = $utilityCommandNounsWithConvertToVerbSingleQuote }
+            @{ TextInput = "Get-Command -Module $utilityModuleName -Verb ConvertTo -Noun """; ExpectedNouns = $utilityCommandNounsWithConvertToVerbDoubleQuote }
+            @{ TextInput = "Get-Command -Module $utilityModuleName -Verb ConvertTo -Noun C"; ExpectedNouns = $utilityCommandNounsWithConvertToVerbStartingWithC  }
+            @{ TextInput = "Get-Command -Module $utilityModuleName -Verb ConvertTo -Noun 'C"; ExpectedNouns = $utilityCommandNounsWithConvertToVerbStartingWithCSingleQuote }
+            @{ TextInput = "Get-Command -Module $utilityModuleName -Verb ConvertTo -Noun ""C"; ExpectedNouns = $utilityCommandNounsWithConvertToVerbStartingWithCDoubleQuote }
+        ) {
+            param($TextInput, $ExpectedNouns)
+            $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
+            $completionText = $res.CompletionMatches.CompletionText
+
+            # Avoid using Sort-Object -Unique because it generates different order than SortedSet on MacOS/Linux
+            $sortedSetExpectedNouns = [System.Collections.Generic.SortedSet[string]]::new([System.StringComparer]::OrdinalIgnoreCase)
+            foreach ($noun in $ExpectedNouns)
+            {
+                $sortedSetExpectedNouns.Add($noun) | Out-Null
+            }
+
+            $completionText -join ' ' | Should -BeExactly ($sortedSetExpectedNouns -join ' ')
+        }
+    }
+
+    Context "Get-ExperimentalFeature -Name parameter completion" {
+        BeforeAll {
+            function GetExperimentalFeatureNames([switch]$SingleQuote, [switch]$DoubleQuote) {
+                $features = (Get-ExperimentalFeature).Name
+
+                if ($SingleQuote) {
+                    return ($features | ForEach-Object { "'$_'" })
+                }
+                elseif ($DoubleQuote) {
+                    return ($features | ForEach-Object { """$_""" })
+                }
+
+                return $features
+            }
+
+            $allExperimentalFeatures = GetExperimentalFeatureNames
+            $allExperimentalFeaturesSingleQuote = GetExperimentalFeatureNames -SingleQuote
+            $allExperimentalFeaturesDoubleQuote = GetExperimentalFeatureNames -DoubleQuote
+            $experimentalFeaturesStartingWithPS = $allExperimentalFeatures | Where-Object { $_ -like 'PS*'}
+            $experimentalFeaturesStartingWithPSSingleQuote = $allExperimentalFeaturesSingleQuote | Where-Object { $_ -like "'PS*" }
+            $experimentalFeaturesStartingWithPSDoubleQuote = $allExperimentalFeaturesDoubleQuote | Where-Object { $_ -like """PS*" }
+        }
+
+        It "Should complete Name for '<TextInput>'" -TestCases @(
+            @{ TextInput = "Get-ExperimentalFeature -Name "; ExpectedExperimentalFeatureNames = $allExperimentalFeatures }
+            @{ TextInput = "Get-ExperimentalFeature -Name '"; ExpectedExperimentalFeatureNames = $allExperimentalFeaturesSingleQuote }
+            @{ TextInput = "Get-ExperimentalFeature -Name """; ExpectedExperimentalFeatureNames = $allExperimentalFeaturesDoubleQuote }
+            @{ TextInput = "Get-ExperimentalFeature -Name PS"; ExpectedExperimentalFeatureNames = $experimentalFeaturesStartingWithPS }
+            @{ TextInput = "Get-ExperimentalFeature -Name 'PS"; ExpectedExperimentalFeatureNames = $experimentalFeaturesStartingWithPSSingleQuote }
+            @{ TextInput = "Get-ExperimentalFeature -Name ""PS"; ExpectedExperimentalFeatureNames = $experimentalFeaturesStartingWithPSDoubleQuote }
+        ) {
+            param($TextInput, $ExpectedExperimentalFeatureNames)
+            $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
+            $completionText = $res.CompletionMatches.CompletionText
+            $completionText -join ' ' | Should -BeExactly (($ExpectedExperimentalFeatureNames | Sort-Object -Unique) -join ' ')
         }
     }
 
@@ -2653,15 +2782,18 @@ dir -Recurse `
     Context "Module cmdlet completion tests" {
         It "ArugmentCompleter for PSEdition should work for '<cmd>'" -TestCases @(
             @{cmd = "Get-Module -PSEdition "; expected = "Desktop", "Core"}
+            @{cmd = "Get-Module -PSEdition '"; expected = "'Desktop'", "'Core'"}
+            @{cmd = "Get-Module -PSEdition """; expected = """Desktop""", """Core"""}
+            @{cmd = "Get-Module -PSEdition 'Desk"; expected = "'Desktop'"}
+            @{cmd = "Get-Module -PSEdition ""Desk"; expected = """Desktop"""}
+            @{cmd = "Get-Module -PSEdition Co"; expected = "Core"}
+            @{cmd = "Get-Module -PSEdition 'Co"; expected = "'Core'"}
+            @{cmd = "Get-Module -PSEdition ""Co"; expected = """Core"""}
         ) {
             param($cmd, $expected)
             $res = TabExpansion2 -inputScript $cmd -cursorColumn $cmd.Length
-            $res.CompletionMatches | Should -HaveCount $expected.Count
-            $completionOptions = ""
-            foreach ($completion in $res.CompletionMatches) {
-                $completionOptions += $completion.ListItemText
-            }
-            $completionOptions | Should -BeExactly ([string]::Join("", $expected))
+            $completionText = $res.CompletionMatches.CompletionText
+            $completionText -join ' ' | Should -BeExactly ($expected -join ' ')
         }
     }
 

@@ -27,7 +27,7 @@ namespace System.Management.Automation
         /// An instance of the PSTraceSource class used for trace output
         /// using "SessionState" as the category.
         /// </summary>
-        [Dbg.TraceSourceAttribute(
+        [Dbg.TraceSource(
              "SessionState",
              "SessionState Class")]
         private static readonly Dbg.PSTraceSource s_tracer =
@@ -337,10 +337,9 @@ namespace System.Management.Automation
             this.GlobalScope.SetVariable(v.Name, v, asValue: false, force: true, this, CommandOrigin.Internal, fastPath: true);
 
             // $PID
-            Process currentProcess = Process.GetCurrentProcess();
             v = new PSVariable(
                     SpecialVariables.PID,
-                    currentProcess.Id,
+                    Environment.ProcessId,
                     ScopedItemOptions.Constant | ScopedItemOptions.AllScope,
                     RunspaceInit.PIDDescription);
             this.GlobalScope.SetVariable(v.Name, v, asValue: false, force: true, this, CommandOrigin.Internal, fastPath: true);

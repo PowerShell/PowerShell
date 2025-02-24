@@ -25,7 +25,7 @@ namespace Microsoft.PowerShell.Commands
         /// An instance of the PSTraceSource class used for trace output
         /// using "NavigationCommands" as the category.
         /// </summary>
-        [Dbg.TraceSourceAttribute("NavigationCommands", "The namespace navigation tracer")]
+        [Dbg.TraceSource("NavigationCommands", "The namespace navigation tracer")]
         internal static readonly Dbg.PSTraceSource tracer = Dbg.PSTraceSource.GetTracer("NavigationCommands", "The namespace navigation tracer");
 
         #endregion Tracer
