@@ -43,6 +43,7 @@ $Script:powershell_team = @(
     "Patrick Meinecke"
     "Steven Bucher"
     "PowerShell Team Bot"
+    "Justin Chung"
 )
 
 # They are very active contributors, so we keep their email-login mappings here to save a few queries to Github.
