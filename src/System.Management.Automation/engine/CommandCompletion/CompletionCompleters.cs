@@ -5522,7 +5522,7 @@ namespace System.Management.Automation
             internal Type LastAssignedType;
         }
 
-        private sealed class FindVariablesVisitor : AstVisitor
+        private sealed class FindVariablesVisitor : AstVisitor2
         {
             internal Ast Top;
             internal Ast CompletionVariableAst;
@@ -5597,7 +5597,11 @@ namespace System.Management.Automation
             {
                 if (ast.Extent.StartOffset > StopSearchOffset)
                 {
-                    return AstVisitAction.StopVisit;
+                    // When visiting do while/until statements, the condition will be visited before the statement block
+                    // The condition itself may not be interesting if it's after the cursor, but the statement block could be
+                    return ast is PipelineBaseAst && ast.Parent is DoUntilStatementAst or DoWhileStatementAst
+                        ? AstVisitAction.SkipChildren
+                        : AstVisitAction.StopVisit;
                 }
 
                 return AstVisitAction.Continue;
@@ -5607,7 +5611,9 @@ namespace System.Management.Automation
             {
                 if (assignmentStatementAst.Extent.StartOffset > StopSearchOffset)
                 {
-                    return AstVisitAction.StopVisit;
+                    return assignmentStatementAst.Parent is DoUntilStatementAst or DoWhileStatementAst ?
+                        AstVisitAction.SkipChildren
+                        : AstVisitAction.StopVisit;
                 }
 
                 if (assignmentStatementAst.Left is AttributedExpressionAst attributedExpression)
