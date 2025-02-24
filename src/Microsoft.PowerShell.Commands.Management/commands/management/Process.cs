@@ -2407,9 +2407,10 @@ namespace Microsoft.PowerShell.Commands
         private void SetStartupInfo(ProcessStartInfo startinfo, ref ProcessNativeMethods.STARTUPINFO lpStartupInfo, ref int creationFlags)
         {
             // If we are starting a process using the current console window, we need to set its standard handlers
-            // explicitly when they are not redirected because otherwise they won't be set.
+            // explicitly when they are not redirected because otherwise they won't be set and the new process will
+            // fail with the "invalid handler" error.
             //
-            // However, if we are starting a process with a new cosnole window, we should not explicitly set those
+            // However, if we are starting a process with a new console window, we should not explicitly set those
             // standard handlers when they are not redirected, but instead let Windows figure out the default to use
             // when creating the process. Otherwise, the standard input handlers of the current window and the new
             // window will get weirdly tied together and cause problems.
