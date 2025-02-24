@@ -1936,16 +1936,6 @@ class InheritedClassTest : System.Attribute
             $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Filesystem::\\localhost\ADMIN$'
         }
 
-        It "Tab completion UNC path with spaces" -Skip:(!$IsWindows) {
-            $Share = New-SmbShare -Temporary -ReadAccess (whoami.exe) -Path C:\ -Name "Test Share"
-            $res = TabExpansion2 -inputScript '\\localhost\test'
-            $res.CompletionMatches[0].CompletionText | Should -BeExactly "& '\\localhost\Test Share'"
-            if ($null -ne $Share)
-            {
-                Remove-SmbShare -InputObject $Share -Force -Confirm:$false
-            }
-        }
-
         It "Tab completion for registry" -Skip:(!$IsWindows) {
             $beforeTab = 'registry::HKEY_l'
             $afterTab = 'Registry::HKEY_LOCAL_MACHINE'
@@ -3126,6 +3116,18 @@ function MyFunction ($param1, $param2)
         $Text = '[abcdefghijklmnopqrstuvwxyz]'
         $res = TabExpansion2 -inputScript $Text -cursorColumn ($Text.Length - 1)
         $res.CompletionMatches | Should -HaveCount 0
+    }
+}
+
+Describe "TabCompletion elevated tests" -Tags CI, RequireAdminOnWindows {
+    It "Tab completion UNC path with spaces" -Skip:(!$IsWindows) {
+        $Share = New-SmbShare -Temporary -ReadAccess (whoami.exe) -Path C:\ -Name "Test Share"
+        $res = TabExpansion2 -inputScript '\\localhost\test'
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly "& '\\localhost\Test Share'"
+        if ($null -ne $Share)
+        {
+            Remove-SmbShare -InputObject $Share -Force -Confirm:$false
+        }
     }
 }
 
