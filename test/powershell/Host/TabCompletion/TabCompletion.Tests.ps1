@@ -652,7 +652,7 @@ using `
     }
 
     It 'Should complete variables assigned inside do until loop' {
-        $TestString =  'do{$Var1 = 1; $Var1^ }until ($null = Get-ChildItem)'
+        $TestString =  'do{$Var1 = 1; $Var^ }until ($null = Get-ChildItem)'
         $CursorIndex = $TestString.IndexOf('^')
         $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
         $res.CompletionMatches[0].CompletionText | Should -BeExactly '$Var1'
