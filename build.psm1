@@ -2219,10 +2219,12 @@ function Start-PSBootstrap {
         # we currently pin dotnet-cli version, and will
         # update it when more stable version comes out.
         [string]$Version = $dotnetCLIRequiredVersion,
-        [switch]$Package,
         [switch]$NoSudo,
         [switch]$BuildLinuxArm,
-        [switch]$Force
+        [switch]$Force,
+        [Parameter(Mandatory = $true)]
+        [ValidateSet("Package", "DotNet", "Both")]
+        [string]$Scenario = "Package"
     )
 
     Write-Log -message "Installing PowerShell build dependencies"
@@ -2255,7 +2257,7 @@ function Start-PSBootstrap {
                 elseif ($environment.IsUbuntu18) { $Deps += "libicu60"}
 
                 # Packaging tools
-                if ($Package) { $Deps += "ruby-dev", "groff", "libffi-dev", "rpm", "g++", "make" }
+                if ($Scenario -eq 'Both' -or $Scenario -eq 'Package') { $Deps += "ruby-dev", "groff", "libffi-dev", "rpm", "g++", "make" }
 
                 # Install dependencies
                 # change the fontend from apt-get to noninteractive
@@ -2279,7 +2281,7 @@ function Start-PSBootstrap {
                 $Deps += "libicu", "openssl-libs"
 
                 # Packaging tools
-                if ($Package) { $Deps += "ruby-devel", "rpm-build", "groff", 'libffi-devel', "gcc-c++" }
+                if ($Scenario -eq 'Both' -or $Scenario -eq 'Package') { $Deps += "ruby-devel", "rpm-build", "groff", 'libffi-devel', "gcc-c++" }
 
                 $PackageManager = Get-RedHatPackageManager
 
@@ -2300,7 +2302,7 @@ function Start-PSBootstrap {
                 $Deps += "wget"
 
                 # Packaging tools
-                if ($Package) { $Deps += "ruby-devel", "rpmbuild", "groff", 'libffi-devel', "gcc" }
+                if ($Scenario -eq 'Both' -or $Scenario -eq 'Package') { $Deps += "ruby-devel", "rpmbuild", "groff", 'libffi-devel', "gcc" }
 
                 $PackageManager = "zypper --non-interactive install"
                 $baseCommand = "$sudo $PackageManager"
@@ -2340,7 +2342,7 @@ function Start-PSBootstrap {
             }
 
             # Install [fpm](https://github.com/jordansissel/fpm)
-            if ($Package) {
+            if ($Scenario -eq 'Both' -or $Scenario -eq 'Package') {
                 Install-GlobalGem -Sudo $sudo -GemName "dotenv" -GemVersion "2.8.1"
                 Install-GlobalGem -Sudo $sudo -GemName "ffi" -GemVersion "1.16.3"
                 Install-GlobalGem -Sudo $sudo -GemName "fpm" -GemVersion "1.15.1"
@@ -2348,42 +2350,45 @@ function Start-PSBootstrap {
             }
         }
 
-        Write-Verbose -Verbose "Calling Find-Dotnet from Start-PSBootstrap"
+        if ($Scenario -eq 'DotNet' -or $Scenario -eq 'Both') {
 
-        # Try to locate dotnet-SDK before installing it
-        Find-Dotnet
+            Write-Verbose -Verbose "Calling Find-Dotnet from Start-PSBootstrap"
 
-        Write-Verbose -Verbose "Back from calling Find-Dotnet from Start-PSBootstrap"
+            # Try to locate dotnet-SDK before installing it
+            Find-Dotnet
 
-        # Install dotnet-SDK
-        $dotNetExists = precheck 'dotnet' $null
-        $dotNetVersion = [string]::Empty
-        if($dotNetExists) {
-            $dotNetVersion = Find-RequiredSDK $dotnetCLIRequiredVersion
-        }
+            Write-Verbose -Verbose "Back from calling Find-Dotnet from Start-PSBootstrap"
 
-        if(!$dotNetExists -or $dotNetVersion -ne $dotnetCLIRequiredVersion -or $Force.IsPresent) {
-            if($Force.IsPresent) {
-                Write-Log -message "Installing dotnet due to -Force."
+            # Install dotnet-SDK
+            $dotNetExists = precheck 'dotnet' $null
+            $dotNetVersion = [string]::Empty
+            if($dotNetExists) {
+                $dotNetVersion = Find-RequiredSDK $dotnetCLIRequiredVersion
             }
-            elseif(!$dotNetExists) {
-                Write-Log -message "dotnet not present.  Installing dotnet."
+
+            if(!$dotNetExists -or $dotNetVersion -ne $dotnetCLIRequiredVersion -or $Force.IsPresent) {
+                if($Force.IsPresent) {
+                    Write-Log -message "Installing dotnet due to -Force."
+                }
+                elseif(!$dotNetExists) {
+                    Write-Log -message "dotnet not present.  Installing dotnet."
+                }
+                else {
+                    Write-Log -message "dotnet out of date ($dotNetVersion).  Updating dotnet."
+                }
+
+                $DotnetArguments = @{ Channel=$Channel; Version=$Version; NoSudo=$NoSudo }
+
+                if ($dotnetAzureFeed) {
+                    $null = $DotnetArguments.Add("AzureFeed", $dotnetAzureFeed)
+                    $null = $DotnetArguments.Add("FeedCredential", $dotnetAzureFeedSecret)
+                }
+
+                Install-Dotnet @DotnetArguments
             }
             else {
-                Write-Log -message "dotnet out of date ($dotNetVersion).  Updating dotnet."
+                Write-Log -message "dotnet is already installed.  Skipping installation."
             }
-
-            $DotnetArguments = @{ Channel=$Channel; Version=$Version; NoSudo=$NoSudo }
-
-            if ($dotnetAzureFeed) {
-                $null = $DotnetArguments.Add("AzureFeed", $dotnetAzureFeed)
-                $null = $DotnetArguments.Add("FeedCredential", $dotnetAzureFeedSecret)
-            }
-
-            Install-Dotnet @DotnetArguments
-        }
-        else {
-            Write-Log -message "dotnet is already installed.  Skipping installation."
         }
 
         # Install Windows dependencies if `-Package` or `-BuildWindowsNative` is specified
@@ -2395,7 +2400,7 @@ function Start-PSBootstrap {
                 $psInstallFile = [System.IO.Path]::Combine($PSScriptRoot, "tools", "install-powershell.ps1")
                 & $psInstallFile -AddToPath
             }
-            if ($Package) {
+            if ($Scenario -eq 'Both' -or $Scenario -eq 'Package') {
                 Import-Module "$PSScriptRoot\tools\wix\wix.psm1"
                 $isArm64 = "$env:RUNTIME" -eq 'arm64'
                 Install-Wix -arm64:$isArm64
