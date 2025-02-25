@@ -1,5 +1,4 @@
 {
-  "$schema": "https://json.schemastore.org/component-detection-manifest.json",
   "Registrations": [
     {
       "Component": {
@@ -76,7 +75,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.ApplicationInsights",
-          "Version": "2.22.0"
+          "Version": "2.23.0"
         }
       },
       "DevelopmentDependency": false
@@ -911,5 +910,6 @@
       },
       "DevelopmentDependency": false
     }
-  ]
+  ],
+  "$schema": "https://json.schemastore.org/component-detection-manifest.json"
 }

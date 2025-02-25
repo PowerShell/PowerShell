@@ -699,6 +699,16 @@ ConstructorTestClass(int i, bool b)
         $res.CompletionMatches[0].CompletionText | Should -BeExactly '$MyDataVar'
     }
 
+    It 'Should complete global variable without scope' {
+        $res = TabExpansion2 -inputScript '$Global:MyTestVar = "Hello";$MyTestV'
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '$MyTestVar'
+    }
+
+    It 'Should complete previously assigned variable in using: scope' {
+        $res = TabExpansion2 -inputScript '$MyTestVar = "Hello";$Using:MyTestv'
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '$Using:MyTestVar'
+    }
+
     it 'Should complete "Value" parameter value in "Where-Object" for Enum property with no input' {
         $res = TabExpansion2 -inputScript 'Get-Command | where-Object CommandType -eq '
         $res.CompletionMatches[0].CompletionText | Should -BeExactly Alias
@@ -1931,6 +1941,10 @@ class InheritedClassTest : System.Attribute
             $res.CompletionMatches[0].CompletionText | Should -BeExactly $afterTab
         }
 
+        It "Tab completion UNC path with filesystem provider" -Skip:(!$IsWindows) {
+            $res = TabExpansion2 -inputScript 'Filesystem::\\localhost\admin'
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Filesystem::\\localhost\ADMIN$'
+        }
 
         It "Tab completion for registry" -Skip:(!$IsWindows) {
             $beforeTab = 'registry::HKEY_l'
@@ -3112,6 +3126,18 @@ function MyFunction ($param1, $param2)
         $Text = '[abcdefghijklmnopqrstuvwxyz]'
         $res = TabExpansion2 -inputScript $Text -cursorColumn ($Text.Length - 1)
         $res.CompletionMatches | Should -HaveCount 0
+    }
+}
+
+Describe "TabCompletion elevated tests" -Tags CI, RequireAdminOnWindows {
+    It "Tab completion UNC path with spaces" -Skip:(!$IsWindows) {
+        $Share = New-SmbShare -Temporary -ReadAccess (whoami.exe) -Path C:\ -Name "Test Share"
+        $res = TabExpansion2 -inputScript '\\localhost\test'
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly "& '\\localhost\Test Share'"
+        if ($null -ne $Share)
+        {
+            Remove-SmbShare -InputObject $Share -Force -Confirm:$false
+        }
     }
 }
 
