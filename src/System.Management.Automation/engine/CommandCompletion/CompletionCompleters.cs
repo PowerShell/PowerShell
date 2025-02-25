@@ -4814,8 +4814,6 @@ namespace System.Management.Automation
                     (pathInfo.Provider.FullName + "::" + pathInfo.ProviderPath).EqualsOrdinalIgnoreCase(childItemOutput[0].Properties["PSPath"].Value as string))
                 {
                     // Get-ChildItem returned the item itself instead of the children so there must be no child items to complete.
-                    // The filesystem provider does this when pointing to files: Get-ChildItem C:\pagefile.sys -Force and other providers may follow this pattern.
-                    // (The filesystem provider has its own completion method: GetFileSystemProviderResults)
                     continue;
                 }
 
