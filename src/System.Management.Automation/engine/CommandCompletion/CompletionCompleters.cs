@@ -5597,8 +5597,8 @@ namespace System.Management.Automation
             {
                 if (ast.Extent.StartOffset > StopSearchOffset)
                 {
-                    // When visiting do while/until statements, the condition will be visited before the statement block
-                    // The condition itself may not be interesting if it's after the cursor, but the statement block could be
+                    // When visiting do while/until statements, the condition will be visited before the statement block.
+                    // The condition itself may not be interesting if it's after the cursor, but the statement block could be.
                     return ast is PipelineBaseAst && ast.Parent is DoUntilStatementAst or DoWhileStatementAst
                         ? AstVisitAction.SkipChildren
                         : AstVisitAction.StopVisit;
