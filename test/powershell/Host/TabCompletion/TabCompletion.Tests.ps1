@@ -645,7 +645,7 @@ using `
     }
 
     It 'Should complete variables assigned inside do while loop' {
-        $TestString =  'do{$Var1 = 1; $Var1^ }while ($true)'
+        $TestString =  'do{$Var1 = 1; $Var^ }while ($true)'
         $CursorIndex = $TestString.IndexOf('^')
         $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
         $res.CompletionMatches[0].CompletionText | Should -BeExactly '$Var1'
