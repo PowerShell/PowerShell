@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -352,8 +353,7 @@ namespace System.Management.Automation
                 markUntrustedData = ExecutionContext.IsMarkedAsUntrusted(splattedValue);
             }
 
-            IDictionary splattedTable = splattedValue as IDictionary;
-            if (splattedTable != null)
+            if (splattedValue is IDictionary splattedTable)
             {
                 foreach (DictionaryEntry de in splattedTable)
                 {
@@ -376,43 +376,102 @@ namespace System.Management.Automation
                         fromSplatting: true);
                 }
             }
+            else if (splattedValue is IEnumerable enumerableValue)
+            {
+                foreach (CommandParameterInternal param in SplatIEnumerable(enumerableValue, splatAst, markUntrustedData))
+                {
+                    yield return param;
+                }
+            }
             else
             {
-                IEnumerable enumerableValue = splattedValue as IEnumerable;
-                if (enumerableValue != null)
-                {
-                    foreach (object obj in enumerableValue)
-                    {
-                        if (markUntrustedData)
-                        {
-                            ExecutionContext.MarkObjectAsUntrusted(obj);
-                        }
+                yield return CommandParameterInternal.CreateArgument(splattedValue, splatAst);
+            }
+        }
 
-                        yield return SplatEnumerableElement(obj, splatAst);
+#nullable enable
+        private static IEnumerable<CommandParameterInternal> SplatIEnumerable(
+            IEnumerable enumerable,
+            Ast splatAst,
+            bool markUntrustedData)
+        {
+            var enumerator = enumerable.GetEnumerator();
+            try
+            {
+                while (enumerator.MoveNext())
+                {
+                    object obj = enumerator.Current;
+                    if (markUntrustedData)
+                    {
+                        ExecutionContext.MarkObjectAsUntrusted(obj);
+                    }
+
+                    if (TryGetSplattedCommandParameterInfo(obj, out string? paramText, out string? paramName))
+                    {
+                        // Parameters that end with : and have a subsequent value should be treated as parameter
+                        // and argument. This allows passing through a splatted switch with an explicit value.
+                        // Without this the switch and switch value will be treated as separate arguments.
+                        if (paramText.EndsWith(':') && enumerator.MoveNext())
+                        {
+                            yield return CommandParameterInternal.CreateParameterWithArgument(
+                                parameterAst: splatAst,
+                                parameterName: paramName,
+                                parameterText: paramText,
+                                argumentAst: splatAst,
+                                value: enumerator.Current,
+                                spaceAfterParameter: false,
+                                fromSplatting: true);
+                        }
+                        else
+                        {
+                            yield return CommandParameterInternal.CreateParameter(paramName, paramText, splatAst);
+                        }
+                    }
+                    else
+                    {
+                        yield return CommandParameterInternal.CreateArgument(obj, splatAst);
                     }
                 }
-                else
-                {
-                    yield return SplatEnumerableElement(splattedValue, splatAst);
-                }
             }
-        }
-
-        private static CommandParameterInternal SplatEnumerableElement(object splattedArgument, Ast splatAst)
-        {
-            var psObject = splattedArgument as PSObject;
-            if (psObject != null)
+            finally
             {
-                var prop = psObject.Properties[ScriptParameterBinderController.NotePropertyNameForSplattingParametersInArgs];
-                var baseObj = psObject.BaseObject;
-                if (prop != null && prop.Value is string && baseObj is string)
-                {
-                    return CommandParameterInternal.CreateParameter((string)prop.Value, (string)baseObj, splatAst);
-                }
+                (enumerator as IDisposable)?.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Check if the splatted value contains the CommandParameter
+        /// information.
+        /// </summary>
+        /// <param name="splattedArgument">The argument to check</param>
+        /// <param name="paramText">The parameter value as it was provided in the splat</param>
+        /// <param name="paramName">The command parameter name</param>
+        /// <returns>True if the argument contains the command parameter info.</returns>
+        private static bool TryGetSplattedCommandParameterInfo(
+            object? splattedArgument,
+            [NotNullWhen(true)] out string? paramText,
+            [NotNullWhen(true)] out string? paramName)
+        {
+            paramText = null;
+            paramName = null;
+
+            PSObject? psObject = splattedArgument as PSObject;
+            if (psObject is null)
+            {
+                return false;
             }
 
-            return CommandParameterInternal.CreateArgument(splattedArgument, splatAst);
+            PSPropertyInfo? noteProp = psObject.Properties[ScriptParameterBinderController.NotePropertyNameForSplattingParametersInArgs];
+            if (noteProp is not null && noteProp.Value is string name && psObject.BaseObject is string text)
+            {
+                paramText = text;
+                paramName = name;
+                return true;
+            }
+
+            return false;
         }
+#nullable disable
 
         private static string GetParameterText(string parameterName)
         {

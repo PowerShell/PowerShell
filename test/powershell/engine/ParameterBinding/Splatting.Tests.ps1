@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-Describe "Hashtable Splatting Parameter Binding Tests" -Tags "CI" {
+Describe "Splatting Parameter Binding Tests" -Tags "CI" {
 
     BeforeAll {
         function SimpleTest {
@@ -12,6 +12,19 @@ Describe "Hashtable Splatting Parameter Binding Tests" -Tags "CI" {
             )
 
             "Key: $Name; Path: $Path; Args: $args"
+        }
+
+        function ArgCollector {
+            , $args
+        }
+
+        function FunctionWithSwitch {
+            param(
+                [switch]$Switch,
+                $Other = 'default'
+            )
+
+            "Switch: $($Switch.IsPresent), Other: $Other"
         }
     }
 
@@ -68,6 +81,73 @@ Describe "Hashtable Splatting Parameter Binding Tests" -Tags "CI" {
             } finally {
                 $sp.Dispose()
             }
+        }
+
+        It "splats switch value set to true" {
+            $splat = @{ Switch = $true }
+            $result = FunctionWithSwitch @splat
+            $result | Should -Be "Switch: True, Other: default"
+        }
+
+        It "splats switch value set to false" {
+            $splat = @{ Switch = $false }
+            $result = FunctionWithSwitch @splat
+            $result | Should -Be "Switch: False, Other: default"
+        }
+
+        It "splats switch value with extra parameter" {
+            $splat = @{ Switch = $false; Other = 'foo' }
+            $result = FunctionWithSwitch @splat
+            $result | Should -Be "Switch: False, Other: foo"
+        }
+    }
+
+    Context "Array Splatting" {
+        It "splats values positionally" {
+            $splat = 'name', 'path'
+            $result = SimpleTest @splat
+            $result | Should -Be "Key: name; Path: path; Args: "
+        }
+
+        It "splats parameter name and value" {
+            $splat = ArgCollector -Key name -Path path
+            $result = SimpleTest @splat
+            $result | Should -Be "Key: name; Path: path; Args: "
+        }
+
+        It "splats parameter switch with no extra arguments" {
+            $splat = ArgCollector -Switch
+            $result = FunctionWithSwitch @splat
+            $result | Should -Be "Switch: $true, Other: default"
+        }
+
+        It "splats parameter switch with no value" {
+            $splat = ArgCollector -Switch -Other foo
+            $result = FunctionWithSwitch @splat
+            $result | Should -Be "Switch: $true, Other: foo"
+        }
+
+        It "splats parameter switch with <Switch>" -TestCases @(
+            @{ Switch = $true }
+            @{ Switch = $false }
+        ) {
+            param ($Switch)
+
+            $splat = ArgCollector -Switch:$Switch -Other foo
+            $result = FunctionWithSwitch @splat
+            $result | Should -Be "Switch: $Switch, Other: foo"
+        }
+
+        It "splats hashtable into `$args with Switch <Switch> to then splat onto another function" -TestCases @(
+            @{ Switch = $true }
+            @{ Switch = $false }
+        ) {
+            param ($Switch)
+
+            $splat = @{ Switch = $Switch; Other = 'foo' }
+            $argSplat = ArgCollector @splat
+            $result = FunctionWithSwitch @argSplat
+            $result | Should -Be "Switch: $Switch, Other: foo"
         }
     }
 
