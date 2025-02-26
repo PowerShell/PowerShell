@@ -194,7 +194,7 @@ namespace System.Management.Automation.Security
         {
             return legacyMode switch
             {
-                SystemEnforcementMode.None => SystemScriptFileEnforcement.Allow,
+                SystemEnforcementMode.None => SystemScriptFileEnforcement.None,
                 SystemEnforcementMode.Audit => SystemScriptFileEnforcement.AllowConstrainedAudit,
                 SystemEnforcementMode.Enforce => SystemScriptFileEnforcement.AllowConstrained,
                 _ => SystemScriptFileEnforcement.Block,
@@ -270,6 +270,7 @@ namespace System.Management.Automation.Security
                 SystemScriptFileEnforcement.AllowConstrained => SystemEnforcementMode.Enforce,
                 SystemScriptFileEnforcement.AllowConstrainedAudit => SystemEnforcementMode.Audit,
                 SystemScriptFileEnforcement.Allow => SystemEnforcementMode.None,
+                SystemScriptFileEnforcement.None => SystemEnforcementMode.None,
                 _ => throw new ArgumentOutOfRangeException(nameof(modernMode)),
             };
         }
