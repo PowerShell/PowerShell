@@ -1380,7 +1380,6 @@ namespace Microsoft.PowerShell.Commands
             var prevalidated = false;
             var values = new List<string>(ValueCountGuestimate);
             var builder = new StringBuilder(LineLengthGuestimate);
-            bool hasValues = false;
 
             while (true)
             {
@@ -1388,29 +1387,9 @@ namespace Microsoft.PowerShell.Commands
                 if (values.Count == 0)
                     break;
 
-                if (values.Count == 1 && string.IsNullOrEmpty(values[0]))
-                {
-                    // skip the blank lines
-                    continue;
-                }
-
-                hasValues = true;
                 PSObject result = BuildMshobject(TypeName, Header, values, _delimiter, prevalidated);
                 prevalidated = true;
                 _cmdlet.WriteObject(result);
-            }
-
-            if (!hasValues)
-            {
-                // Output a custom object with only headers when there are no values
-                var headerValues = new List<string>(Header.Count);
-                for (int i = 0; i < Header.Count; i++)
-                {
-                    headerValues.Add(string.Empty);
-                }
-
-                PSObject headerOnlyObject = BuildMshobject(TypeName, Header, headerValues, _delimiter, prevalidated);
-                _cmdlet.WriteObject(headerOnlyObject);
             }
 
             alreadyWriteOutWarning = _alreadyWarnedUnspecifiedName;
