@@ -1389,7 +1389,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (values.Count == 1 && string.IsNullOrEmpty(values[0]) && !(_cmdlet is ConvertFromCsvCommand))
                 {
-                    // Skip empty lines when Import-CSV but keep empty lines when ConvertFromCSV 
+                    // Skip empty lines when Import-CSV but keep empty lines when ConvertFromCSV
                     continue;
                 }
 
