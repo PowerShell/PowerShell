@@ -818,10 +818,6 @@ ConstructorTestClass(int i, bool b)
         $res.CompletionMatches[0].CompletionText | Should -BeExactly Cat
     }
 
-    It 'Should complete parameter with invalid type' {
-        $res = TabExpansion2 -inputScript 'function MyFunction ([ThisTypeDoesNotExist]$Param1){};MyFunction -'
-        $res.CompletionMatches[0].CompletionText | Should -BeExactly "-Param1"
-    }
     It 'Should complete cim ETS member added by shortname' -Skip:(!$IsWindows -or (Test-IsWinServer2012R2) -or (Test-IsWindows2016)) {
         $res = TabExpansion2 -inputScript '(Get-NetFirewallRule).Nam'
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Name'
