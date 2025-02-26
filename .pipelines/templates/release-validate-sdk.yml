@@ -1,34 +1,36 @@
 parameters:
   jobName: ""
   displayName: ""
-  jobtype: "windows"
+  poolName: "windows"
+  imageName: 'none'
 
 jobs:
 - job: ${{ parameters.jobName }}
   displayName: ${{ parameters.displayName }}
   pool:
-    ${{ if eq(parameters.jobtype, 'macos') }}:
-      type: linux
-      isCustom: true
-      name: Azure Pipelines
-      vmImage: 'macOS-latest'
+    type: linux
+    isCustom: true
+    ${{ if eq( parameters.poolName, 'Azure Pipelines') }}:
+      name: ${{ parameters.poolName }}
+      vmImage: ${{ parameters.imageName }}
     ${{ else }}:
-      type: ${{ parameters.jobtype }}
+      name: ${{ parameters.poolName }}
+      demands:
+        - ImageOverride -equals ${{ parameters.imageName }}
 
   variables:
   - group: mscodehub-feed-read-general
   - group: mscodehub-feed-read-akv
   - group: DotNetPrivateBuildAccess
-  - name: ob_outputDirectory
-    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
-  - name: ob_sdl_credscan_suppressionsFile
-    value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
-  - name: ob_sdl_tsa_configFile
-    value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
 
   steps:
     - checkout: self
       clean: true
+      lfs: false
+
+    - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
+      parameters:
+        repoRoot: "$(Build.SourcesDirectory)"
 
     - template: release-SetReleaseTagandContainerName.yml@self
 
@@ -44,47 +46,17 @@ jobs:
         Get-ChildItem "$(Pipeline.Workspace)/PSPackagesOfficial/drop_nupkg_build_nupkg" -Recurse
       displayName: 'Capture Downloaded Artifacts'
 
-    - pwsh: |
-        $repoRoot = $isMacOS ? "$(Build.SourcesDirectory)" : "$(Build.SourcesDirectory)/PowerShell"
-
-        $dotnetMetadataPath = "$repoRoot/DotnetRuntimeMetadata.json"
-        $dotnetMetadataJson = Get-Content $dotnetMetadataPath -Raw | ConvertFrom-Json
-
-        # Channel is like: $Channel = "5.0.1xx-preview2"
-        $Channel = $dotnetMetadataJson.sdk.channel
-
-        $sdkVersion = (Get-Content "$repoRoot/global.json" -Raw | ConvertFrom-Json).sdk.version
-        Import-Module "$repoRoot/build.psm1" -Force
-
-        Find-Dotnet
-
-        if(-not (Get-PackageSource -Name 'dotnet' -ErrorAction SilentlyContinue))
-        {
-            $nugetFeed = ([xml](Get-Content $repoRoot/nuget.config -Raw)).Configuration.packagesources.add | Where-Object { $_.Key -eq 'dotnet' } | Select-Object -ExpandProperty Value
-
-            if ($nugetFeed) {
-              Register-PackageSource -Name 'dotnet' -Location $nugetFeed -ProviderName NuGet
-              Write-Verbose -Message "Register new package source 'dotnet'" -verbose
-            }
-        }
-
-        ## Install latest version from the channel
-        #Install-Dotnet -Channel "$Channel" -Version $sdkVersion
-
-        Start-PSBootstrap
-
-        Write-Verbose -Message "Installing .NET SDK completed." -Verbose
-
-      displayName: Install .NET
-      env:
-        __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+    - task: UseDotNet@2
+      displayName: 'Use .NET Core sdk'
+      inputs:
+        useGlobalJson: true
+        packageType: 'sdk'
+        workingDirectory: $(REPOROOT)
 
     - pwsh: |
-        $repoRoot = $isMacOS ? "$(Build.SourcesDirectory)" : "$(Build.SourcesDirectory)/PowerShell"
+        $repoRoot = "$(Build.SourcesDirectory)"
 
         $env:DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
-        Import-Module "$repoRoot/build.psm1" -Force
-        Start-PSBootstrap
 
         $localLocation = "$(Pipeline.Workspace)/PSPackagesOfficial/drop_nupkg_build_nupkg"
         $xmlElement = @"
@@ -93,7 +65,7 @@ jobs:
         </packageSources>
         "@
 
-        $releaseVersion = '$(Version)'
+        $releaseVersion = '$(OutputVersion.Version)'
 
         Write-Verbose -Message "Release Version: $releaseVersion" -Verbose
 
@@ -102,21 +74,21 @@ jobs:
         Get-ChildItem
 
         ## register the packages download directory in the nuget file
-        $nugetConfigContent = Get-Content ./NuGet.Config -Raw
+        $nugetPath = './NuGet.Config'
+        if(!(test-path $nugetPath)) {
+          $nugetPath = "$repoRoot/nuget.config"
+        }
+        Write-Verbose -Verbose "nugetPath: $nugetPath"
+        $nugetConfigContent = Get-Content $nugetPath -Raw
         $updateNugetContent = $nugetConfigContent.Replace("</packageSources>", $xmlElement)
 
-        $updateNugetContent | Out-File ./NuGet.Config -Encoding ascii
+        $updateNugetContent | Out-File $nugetPath -Encoding ascii
 
-        Get-Content ./NuGet.Config
-
-        # Add workaround to unblock xUnit testing see issue: https://github.com/dotnet/sdk/issues/26462
-        $dotnetPath = if ($IsWindows) { "$env:LocalAppData\Microsoft\dotnet" } else { "$env:HOME/.dotnet" }
-        $env:DOTNET_ROOT = $dotnetPath
+        Get-Content $nugetPath
 
         dotnet --info
         dotnet restore
         dotnet test /property:RELEASE_VERSION=$releaseVersion --test-adapter-path:. "--logger:xunit;LogFilePath=$(System.DefaultWorkingDirectory)/test-hosting.xml"
-
       displayName: Restore and execute tests
       env:
         __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)

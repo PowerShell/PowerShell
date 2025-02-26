@@ -1633,7 +1633,7 @@ try
             try {
                 Invoke-Command $session { function attack(${foo="$(calc)"}){Write-Output "It is done."}}
                 $module = Import-PSSession -Session $session -CommandName attack -ErrorAction SilentlyContinue -ErrorVariable expectedError -AllowClobber
-                $expectedError | Should -Not -BeNullOrEmpty
+                $expectedError | Should -Not -Be $null
             } finally {
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
             }

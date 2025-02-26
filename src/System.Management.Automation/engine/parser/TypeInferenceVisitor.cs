@@ -197,7 +197,25 @@ namespace System.Management.Automation
                 // Look in the type table first.
                 if (!isStatic)
                 {
-                    var consolidatedString = new ConsolidatedString(new[] { typename.Name });
+                    // The Ciminstance type adapter adds the full typename with and without a namespace to the list of type names.
+                    // So if we see one with a full typename we need to also get the types for the short version.
+                    // For example: "CimInstance#root/standardcimv2/MSFT_NetFirewallRule" and "CimInstance#MSFT_NetFirewallRule"
+                    int namespaceSeparator = typename.Name.LastIndexOf('/');
+                    ConsolidatedString consolidatedString;
+                    if (namespaceSeparator != -1
+                        && typename.Name.StartsWith("Microsoft.Management.Infrastructure.CimInstance#", StringComparison.OrdinalIgnoreCase))
+                    {
+                        consolidatedString = new ConsolidatedString(new[]
+                        {
+                            typename.Name,
+                            string.Concat("Microsoft.Management.Infrastructure.CimInstance#", typename.Name.AsSpan(namespaceSeparator + 1))
+                        });
+                    }
+                    else
+                    {
+                        consolidatedString = new ConsolidatedString(new[] { typename.Name });
+                    }
+
                     results.AddRange(ExecutionContext.TypeTable.GetMembers<PSMemberInfo>(consolidatedString));
                 }
 
@@ -702,14 +720,176 @@ namespace System.Management.Automation
 
         object ICustomAstVisitor.VisitBinaryExpression(BinaryExpressionAst binaryExpressionAst)
         {
-            // TODO: Handle other kinds of expressions on the right side.
-            if (binaryExpressionAst.Operator == TokenKind.As && binaryExpressionAst.Right is TypeExpressionAst typeExpression)
+            switch (binaryExpressionAst.Operator)
             {
-                var type = typeExpression.TypeName.GetReflectionType();
-                var psTypeName = type != null ? new PSTypeName(type) : new PSTypeName(typeExpression.TypeName.FullName);
-                return new[] { psTypeName };
+                case TokenKind.And:
+                case TokenKind.Ccontains:
+                case TokenKind.Cin:
+                case TokenKind.Cnotcontains:
+                case TokenKind.Cnotin:
+                case TokenKind.Icontains:
+                case TokenKind.Iin:
+                case TokenKind.Inotcontains:
+                case TokenKind.Inotin:
+                case TokenKind.Is:
+                case TokenKind.IsNot:
+                case TokenKind.Or:
+                case TokenKind.Xor:
+                    // Always returns a bool
+                    return BinaryExpressionAst.BoolTypeNameArray;
+
+                case TokenKind.As:
+                    // TODO: Handle other kinds of expressions on the right side.
+                    if (binaryExpressionAst.Right is TypeExpressionAst typeExpression)
+                    {
+                        var type = typeExpression.TypeName.GetReflectionType();
+                        var psTypeName = type != null ? new PSTypeName(type) : new PSTypeName(typeExpression.TypeName.FullName);
+                        return new[] { psTypeName };
+                    }
+                    break;
+
+                case TokenKind.Ceq:
+                case TokenKind.Cge:
+                case TokenKind.Cgt:
+                case TokenKind.Cle:
+                case TokenKind.Clike:
+                case TokenKind.Clt:
+                case TokenKind.Cmatch:
+                case TokenKind.Cne:
+                case TokenKind.Cnotlike:
+                case TokenKind.Cnotmatch:
+                case TokenKind.Ieq:
+                case TokenKind.Ige:
+                case TokenKind.Igt:
+                case TokenKind.Ile:
+                case TokenKind.Ilike:
+                case TokenKind.Ilt:
+                case TokenKind.Imatch:
+                case TokenKind.Ine:
+                case TokenKind.Inotlike:
+                case TokenKind.Inotmatch:
+                    // Returns a bool or filtered output from the left hand side if it's enumerable
+                    var comparisonOutput = new List<PSTypeName>() { new(typeof(bool)) };
+                    comparisonOutput.AddRange(InferTypes(binaryExpressionAst.Left));
+                    return comparisonOutput;
+
+                case TokenKind.Creplace:
+                case TokenKind.Format:
+                case TokenKind.Ireplace:
+                case TokenKind.Join:
+                    // Always returns a string
+                    return BinaryExpressionAst.StringTypeNameArray;
+
+                case TokenKind.Csplit:
+                case TokenKind.Isplit:
+                    // Always returns a string array
+                    return BinaryExpressionAst.StringArrayTypeNameArray;
+
+                case TokenKind.QuestionQuestion:
+                    // Can return left or right hand side
+                    var nullCoalescingOutput = InferTypes(binaryExpressionAst.Left).ToList();
+                    nullCoalescingOutput.AddRange(InferTypes(binaryExpressionAst.Right));
+                    return nullCoalescingOutput.Distinct();
+
+                default:
+                    break;
             }
-            return InferTypes(binaryExpressionAst.Left);
+
+            List<PSTypeName> lhsTypes = InferTypes(binaryExpressionAst.Left).ToList();
+            if (lhsTypes.Count == 0)
+            {
+                return lhsTypes;
+            }
+
+            string methodName;
+            switch (binaryExpressionAst.Operator)
+            {
+                case TokenKind.Divide:
+                    methodName = "op_Division";
+                    break;
+
+                case TokenKind.Minus:
+                    methodName = "op_Subtraction";
+                    break;
+
+                case TokenKind.Multiply:
+                    methodName = "op_Multiply";
+                    break;
+
+                case TokenKind.Plus:
+                    methodName = "op_Addition";
+                    break;
+
+                case TokenKind.Rem:
+                    methodName = "op_Modulus";
+                    break;
+
+                case TokenKind.Shl:
+                    methodName = "op_LeftShift";
+                    break;
+
+                case TokenKind.Shr:
+                    methodName = "op_RightShift";
+                    break;
+
+                default:
+                    return lhsTypes;
+            }
+
+            List<PSTypeName> rhsTypes = InferTypes(binaryExpressionAst.Right).ToList();
+            HashSet<string> addedReturnTypes = new HashSet<string>();
+            List<PSTypeName> result = new List<PSTypeName>();
+            foreach (PSTypeName lType in lhsTypes)
+            {
+                if (lType.Type is null)
+                {
+                    continue;
+                }
+
+                foreach (MethodInfo method in lType.Type.GetMethods(BindingFlags.Public | BindingFlags.Static))
+                {
+                    if (!method.Name.Equals(methodName, StringComparison.Ordinal))
+                    {
+                        continue;
+                    }
+
+                    if (rhsTypes.Count == 0)
+                    {
+                        if (addedReturnTypes.Add(method.ReturnType.FullName))
+                        {
+                            result.Add(new PSTypeName(method.ReturnType));
+                        }
+
+                        continue;
+                    }
+
+                    ParameterInfo[] methodParams = method.GetParameters();
+                    if (methodParams.Length != 2)
+                    {
+                        continue;
+                    }
+
+                    foreach (PSTypeName rType in rhsTypes)
+                    {
+                        if (rType.Type is not null && rType.Type.IsAssignableTo(methodParams[1].ParameterType))
+                        {
+                            if (addedReturnTypes.Add(method.ReturnType.FullName))
+                            {
+                                result.Add(new PSTypeName(method.ReturnType));
+                            }
+
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (result.Count == 0)
+            {
+                result.AddRange(lhsTypes);
+            }
+
+            return result;
         }
 
         object ICustomAstVisitor.VisitUnaryExpression(UnaryExpressionAst unaryExpressionAst)
@@ -834,9 +1014,20 @@ namespace System.Management.Automation
         object ICustomAstVisitor.VisitNamedBlock(NamedBlockAst namedBlockAst)
         {
             var inferredTypes = new List<PSTypeName>();
-            for (var index = 0; index < namedBlockAst.Statements.Count; index++)
+            for (int index = 0; index < namedBlockAst.Statements.Count; index++)
             {
-                var ast = namedBlockAst.Statements[index];
+                StatementAst ast = namedBlockAst.Statements[index];
+                if (ast is AssignmentStatementAst
+                    || (ast is PipelineAst pipe && pipe.PipelineElements.Count == 1 && pipe.PipelineElements[0] is CommandExpressionAst cmd
+                    && cmd.Redirections.Count == 0 && cmd.Expression is UnaryExpressionAst unary
+                    && unary.TokenKind is TokenKind.PostfixPlusPlus or TokenKind.PlusPlus or TokenKind.PostfixMinusMinus or TokenKind.MinusMinus))
+                {
+                    // Assignments don't output anything to the named block unless they are wrapped in parentheses.
+                    // When they are wrapped in parentheses, they are seen as PipelineAst.
+                    // Increment/decrement operators like $i++ also don't output anything unless there's a redirection, or they are wrapped in parentheses.
+                    continue;
+                }
+
                 inferredTypes.AddRange(InferTypes(ast));
             }
 
@@ -905,8 +1096,19 @@ namespace System.Management.Automation
         object ICustomAstVisitor.VisitStatementBlock(StatementBlockAst statementBlockAst)
         {
             var inferredTypes = new List<PSTypeName>();
-            foreach (var ast in statementBlockAst.Statements)
+            foreach (StatementAst ast in statementBlockAst.Statements)
             {
+                if (ast is AssignmentStatementAst
+                    || (ast is PipelineAst pipe && pipe.PipelineElements.Count == 1 && pipe.PipelineElements[0] is CommandExpressionAst cmd
+                    && cmd.Redirections.Count == 0 && cmd.Expression is UnaryExpressionAst unary
+                    && unary.TokenKind is TokenKind.PostfixPlusPlus or TokenKind.PlusPlus or TokenKind.PostfixMinusMinus or TokenKind.MinusMinus))
+                {
+                    // Assignments don't output anything to the statement block unless they are wrapped in parentheses.
+                    // When they are wrapped in parentheses, they are seen as PipelineAst.
+                    // Increment operators like $i++ also don't output anything unless there's a redirection, or they are wrapped in parentheses.
+                    continue;
+                }
+
                 inferredTypes.AddRange(InferTypes(ast));
             }
 
@@ -2576,7 +2778,7 @@ namespace System.Management.Automation
             var types = new List<PSTypeName>();
             types.AddRange(InferTypes(pipelineChainAst.LhsPipelineChain));
             types.AddRange(InferTypes(pipelineChainAst.RhsPipeline));
-            return GetArrayType(types);
+            return types.Distinct();
         }
 
         private static CommandBaseAst GetPreviousPipelineCommand(CommandAst commandAst)
