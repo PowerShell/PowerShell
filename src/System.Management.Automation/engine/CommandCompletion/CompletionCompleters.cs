@@ -7728,8 +7728,6 @@ namespace System.Management.Automation
 
         internal static List<CompletionResult> CompleteHelpTopics(CompletionContext context)
         {
-            List<CompletionResult> results = new();
-
             ArrayList helpProviders = context.ExecutionContext.HelpSystem.HelpProviders;
             HelpFileHelpProvider helpFileProvider = null;
             for (int i = helpProviders.Count - 1; i >= 0; i--)
@@ -7743,9 +7741,10 @@ namespace System.Management.Automation
 
             if (helpFileProvider is null)
             {
-                return results;
+                return null;
             }
 
+            List<CompletionResult> results = new();
             Collection<string> filesMatched = MUIFileSearcher.SearchFiles($"{context.WordToComplete}*.help.txt", helpFileProvider.GetExtendedSearchPaths());
             foreach (string path in filesMatched)
             {
