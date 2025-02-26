@@ -4842,6 +4842,13 @@ namespace System.Management.Automation
                 bool hadErrors;
                 var childItemOutput = context.Helper.ExecuteCurrentPowerShell(out _, out hadErrors);
 
+                if (childItemOutput.Count == 1 &&
+                    (pathInfo.Provider.FullName + "::" + pathInfo.ProviderPath).EqualsOrdinalIgnoreCase(childItemOutput[0].Properties["PSPath"].Value as string))
+                {
+                    // Get-ChildItem returned the item itself instead of the children so there must be no child items to complete.
+                    continue;
+                }
+
                 var childrenInfoTable = new Dictionary<string, bool>(childItemOutput.Count);
                 var childNameList = new List<string>(childItemOutput.Count);
 

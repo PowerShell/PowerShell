@@ -118,6 +118,122 @@ Describe "TabCompletion" -Tags CI {
         }
     }
 
+    context CustomProviderTests {
+        BeforeAll {
+            $testModulePath = Join-Path $TestDrive "ReproModule"
+            New-Item -Path $testModulePath -ItemType Directory > $null
+
+            New-ModuleManifest -Path "$testModulePath/ReproModule.psd1" -RootModule 'testmodule.dll'
+
+            $testBinaryModulePath = Join-Path $testModulePath "testmodule.dll"
+            $binaryModule = @'
+using System;
+using System.Linq;
+using System.Management.Automation;
+using System.Management.Automation.Provider;
+
+namespace BugRepro
+{
+    public class IntItemInfo
+    {
+        public string Name;
+        public IntItemInfo(string name) => Name = name;
+    }
+
+    [CmdletProvider("Int", ProviderCapabilities.None)]
+    public class IntProvider : NavigationCmdletProvider
+    {
+        public static string[] ToChunks(string path) => path.Split("/", StringSplitOptions.RemoveEmptyEntries);
+
+        protected string _ChildName(string path)
+        {
+            var name = ToChunks(path).LastOrDefault();
+            return name ?? string.Empty;
+        }
+
+        protected string Normalize(string path) => string.Join("/", ToChunks(path));
+
+        protected override string GetChildName(string path)
+        {
+            var name = _ChildName(path);
+            // if (!IsItemContainer(path)) { return string.Empty; }
+            return name;
+        }
+
+        protected override bool IsValidPath(string path) => int.TryParse(GetChildName(path), out int _);
+
+        protected override bool IsItemContainer(string path)
+        {
+            var name = _ChildName(path);
+            if (!int.TryParse(name, out int value))
+            {
+                return false;
+            }
+            if (ToChunks(path).Count() > 3)
+            {
+                return false;
+            }
+            return value % 2 == 0;
+        }
+
+        protected override bool ItemExists(string path)
+        {
+            foreach (var chunk in ToChunks(path))
+            {
+                if (!int.TryParse(chunk, out int value))
+                {
+                    return false;
+                }
+                if (value < 0 || value > 9)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        protected override void GetItem(string path)
+        {
+            var name = GetChildName(path);
+            if (!int.TryParse(name, out int _))
+            {
+                return;
+            }
+            WriteItemObject(new IntItemInfo(name), path, IsItemContainer(path));
+        }
+        protected override bool HasChildItems(string path) => IsItemContainer(path);
+
+        protected override void GetChildItems(string path, bool recurse)
+        {
+            if (!IsItemContainer(path)) { GetItem(path); return; }
+
+            for (var i = 0; i <= 9; i++)
+            {
+                var _path = $"{Normalize(path)}/{i}";
+                if (recurse)
+                {
+                    GetChildItems(_path, recurse);
+                }
+                else
+                {
+                    GetItem(_path);
+                }
+            }
+        }
+    }
+}
+'@
+            Add-Type -OutputAssembly $testBinaryModulePath -TypeDefinition $binaryModule
+
+            $pwsh = "$PSHOME\pwsh"
+        }
+
+        It "Should not complete invalid items when a provider path returns itself instead of its children" {
+            $result = & $pwsh -NoProfile -Command "Import-Module -Name $testModulePath; (TabExpansion2 'Get-ChildItem Int::/2/3/').CompletionMatches.Count"
+            $result | Should -BeExactly "0"
+        }
+    }
+
     It 'should complete index expression for <Intent>' -TestCases @(
         @{
             Intent = 'Hashtable with no user input'
