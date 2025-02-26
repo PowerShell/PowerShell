@@ -56,6 +56,18 @@ Describe "Import-Module" -Tags "CI" {
         Import-Module TestModule -RequiredVersion 1.1
         (Get-Module TestModule).Version | Should -BeIn "1.1"
     }
+
+    It 'ProcessorArchitecture should work' {
+        $currentProcessorArchitecture = switch ([System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture) {
+            'X86' { 'x86' }
+            'X64' { 'amd64' }
+            'Arm64' { 'arm' }
+            default { throw "Unknown processor architecture" }
+        }
+        New-ModuleManifest -Path "$TestDrive\TestModule.psd1" -ProcessorArchitecture $currentProcessorArchitecture
+        $module = Import-Module -Name "$TestDrive\TestModule.psd1" -PassThru
+        $module.ProcessorArchitecture | Should -Be $currentProcessorArchitecture
+    }
 }
 
 Describe "Import-Module with ScriptsToProcess" -Tags "CI" {

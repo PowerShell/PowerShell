@@ -565,6 +565,8 @@ namespace Microsoft.PowerShell.Commands
             int LowMTUSize = targetAddress.AddressFamily == AddressFamily.InterNetworkV6 ? 1280 : 68;
             int timeout = TimeoutSeconds * 1000;
 
+            PingReply? timeoutReply = null;
+
             try
             {
                 PingOptions pingOptions = new(MaxHops, true);
@@ -585,6 +587,7 @@ namespace Microsoft.PowerShell.Commands
                     if (reply.Status == IPStatus.PacketTooBig || reply.Status == IPStatus.TimedOut)
                     {
                         HighMTUSize = CurrentMTUSize;
+                        timeoutReply = reply;
                         retry = 1;
                     }
                     else if (reply.Status == IPStatus.Success)
@@ -643,13 +646,32 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                ArgumentNullException.ThrowIfNull(replyResult);
+                if (replyResult is null)
+                {
+                    if (timeoutReply is not null)
+                    {
+                        Exception timeoutException = new TimeoutException(targetAddress.ToString());
+                        ErrorRecord errorRecord = new(
+                            timeoutException,
+                            TestConnectionExceptionId,
+                            ErrorCategory.ResourceUnavailable,
+                            timeoutReply);
+                        WriteError(errorRecord);
+                    }
+                    else
+                    {
+                        ArgumentNullException.ThrowIfNull(replyResult);
+                    }
+                }
+                else
+                {
+                    WriteObject(new PingMtuStatus(
+                        Source,
+                        resolvedTargetName,
+                        replyResult,
+                        CurrentMTUSize));
+                }
 
-                WriteObject(new PingMtuStatus(
-                    Source,
-                    resolvedTargetName,
-                    replyResult,
-                    CurrentMTUSize));
             }
         }
 
