@@ -34,24 +34,16 @@ pr:
     - feature*
   paths:
     include:
-    - '*'
-    exclude:
-    - .dependabot/config.yml
-    - .github/ISSUE_TEMPLATE/*
-    - .github/workflows/*
-    - .vsts-ci/misc-analysis.yml
-    - .vsts-ci/windows.yml
-    - .vsts-ci/windows/*
-    - tools/cgmanifest.json
-    - LICENSE.txt
-    - test/common/markdown/*
-    - test/perf/*
-    - tools/releaseBuild/*
-    - tools/install*
-    - tools/releaseBuild/azureDevOps/templates/*
-    - README.md
-    - .spelling
-    - .pipelines/*
+    - .vsts-ci/linux.yml
+    - .vsts-ci/linux/templates/packaging.yml
+    - assets/manpage/*
+    - build.psm1
+    - global.json
+    - nuget.config
+    - PowerShell.Common.props
+    - src/*.csproj
+    - tools/ci.psm1
+    - tools/packaging/*
 
 variables:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
