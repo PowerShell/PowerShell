@@ -1387,6 +1387,11 @@ namespace Microsoft.PowerShell.Commands
                 if (values.Count == 0)
                     break;
 
+                if (values.Count == 1 && string.IsNullOrEmpty(values[0]) && !(_cmdlet is ConvertFromCsvCommand))
+                {
+                    continue;
+                }
+
                 PSObject result = BuildMshobject(TypeName, Header, values, _delimiter, prevalidated);
                 prevalidated = true;
                 _cmdlet.WriteObject(result);
