@@ -19,11 +19,11 @@ jobs:
   - template: release-SetReleaseTagAndContainerName.yml
 
   - pwsh: |
-       Get-ChildItem ENV:
+       Get-ChildItem ENV: | Out-String -width 9999 -Stream | write-Verbose -Verbose
     displayName: Capture environment
 
   - pwsh: |
-      $name = "{0}_{1:x}" -f '$(releaseTag)', (Get-Date).Ticks
+      $name = "{0}_{1:x}" -f '$(OutputReleaseTag.releaseTag)', (Get-Date).Ticks
       Write-Host $name
       Write-Host "##vso[build.updatebuildnumber]$name"
     displayName: Set Release Name
@@ -50,7 +50,7 @@ jobs:
       inline: |
         $storageAccount = Get-AzStorageAccount -ResourceGroupName '$(StorageResourceGroup)' -Name '$(StorageAccount)'
         $ctx = $storageAccount.Context
-        $container = '$(AzureVersion)'
+        $container = '$(OutputVersion.AzureVersion)'
 
         $destinationPath = '$(System.ArtifactsDirectory)'
         $blobList = Get-AzStorageBlob -Container $container -Context $ctx
@@ -150,7 +150,7 @@ jobs:
 #     clean: true
 
 #   - pwsh: |
-#       Get-ChildItem ENV:
+#       Get-ChildItem ENV: | Out-String -width 9999 -Stream | write-Verbose -Verbose
 #     displayName: Capture environment
 
 #   - template: release-SetReleaseTagAndContainerName.yml
