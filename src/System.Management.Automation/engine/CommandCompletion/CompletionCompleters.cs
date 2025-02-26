@@ -5672,11 +5672,11 @@ namespace System.Management.Automation
 
                         if (firstConvertExpression is not null)
                         {
-                            SaveVariableInfo(variableExpression.VariablePath.UnqualifiedPath, firstConvertExpression.StaticType, isConstraint: true);
+                            SaveVariableInfo(variableExpression.VariablePath.UnqualifiedPath, new PSTypeName(firstConvertExpression.Type.TypeName), isConstraint: true);
                         }
                         else
                         {
-                            Type lastAssignedType = assignmentStatementAst.Right is CommandExpressionAst commandExpression
+                            PSTypeName lastAssignedType = assignmentStatementAst.Right is CommandExpressionAst commandExpression
                                 ? GetInferredVarTypeFromAst(commandExpression.Expression)
                                 : null;
                             SaveVariableInfo(variableExpression.VariablePath.UnqualifiedPath, lastAssignedType, isConstraint: false);
@@ -5789,7 +5789,7 @@ namespace System.Management.Automation
                     return AstVisitAction.Continue;
                 }
 
-                SaveVariableInfo(variableExpression.VariablePath.UnqualifiedPath, parameterAst.StaticType, isConstraint: true);
+                SaveVariableInfo(variableExpression.VariablePath.UnqualifiedPath, new PSTypeName(parameterAst.StaticType), isConstraint: true);
 
                 return AstVisitAction.Continue;
             }
