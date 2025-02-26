@@ -7591,6 +7591,8 @@ namespace System.Management.Automation.Language
         }
 
         internal static readonly PSTypeName[] BoolTypeNameArray = new PSTypeName[] { new PSTypeName(typeof(bool)) };
+        internal static readonly PSTypeName[] StringTypeNameArray = new PSTypeName[] { new PSTypeName(typeof(string)) };
+        internal static readonly PSTypeName[] StringArrayTypeNameArray = new PSTypeName[] { new PSTypeName(typeof(string[])) };
 
         #region Visitors
 

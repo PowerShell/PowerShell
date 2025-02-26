@@ -136,17 +136,12 @@ namespace Microsoft.PowerShell.Commands
 
         internal SessionState TargetSessionState
         {
-            get
-            {
-                if (BaseGlobal)
-                {
-                    return this.Context.TopLevelSessionState.PublicSessionState;
-                }
-                else
-                {
-                    return this.Context.SessionState;
-                }
-            }
+            // Module loading could happen during tab completion triggered by PSReadLine,
+            // but that doesn't mean the module should be loaded targeting the PSReadLine
+            // module's session state. In that case, use Global session state instead.
+            get => BaseGlobal || Context.EngineSessionState.Module?.Name is "PSReadLine"
+                ? Context.TopLevelSessionState.PublicSessionState
+                : Context.SessionState;
         }
 
         /// <summary>
@@ -6405,7 +6400,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // If this has an extension, and it's a relative path,
                 // then we need to ensure it's a fully-qualified path
-                if ((moduleToProcess.IndexOfAny(Path.GetInvalidPathChars()) == -1) &&
+                if ((!PathUtils.ContainsInvalidPathChars(moduleToProcess)) &&
                     Path.HasExtension(moduleToProcess) &&
                     (!Path.IsPathRooted(moduleToProcess)))
                 {

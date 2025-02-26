@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System.Buffers;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -466,6 +467,21 @@ namespace System.Management.Automation
 
             if (psObjects != null)
             {
+                // When PowerShell is used interactively, completion is usually triggered by PSReadLine, with PSReadLine's SessionState
+                // as the engine session state. In that case, results from the module search may contain a nested module of PSReadLine,
+                // which should be filtered out below.
+                // When the completion is triggered from global session state, such as when running 'TabExpansion2' from command line,
+                // the module associated with engine session state will be null.
+                //
+                // Note that, it's intentional to not hard code the name 'PSReadLine' in the change, so that in case the tab completion
+                // is triggered from within a different module, its nested modules can also be filtered out.
+                HashSet<PSModuleInfo> nestedModulesToFilterOut = null;
+                PSModuleInfo currentModule = context.ExecutionContext.EngineSessionState.Module;
+                if (loadedModulesOnly && currentModule?.NestedModules.Count > 0)
+                {
+                    nestedModulesToFilterOut = new(currentModule.NestedModules);
+                }
+
                 foreach (PSObject item in psObjects)
                 {
                     var moduleInfo = (PSModuleInfo)item.BaseObject;
@@ -475,6 +491,14 @@ namespace System.Management.Automation
                         && completionText.Contains('.')
                         && !shortNamePattern.IsMatch(completionText.Substring(completionText.LastIndexOf('.') + 1))
                         && !shortNamePattern.IsMatch(completionText))
+                    {
+                        // This check is to make sure we don't return a module whose name only matches the user specified word in the middle.
+                        // For example, when user completes with 'gmo power', we should not return 'Microsoft.PowerShell.Utility'.
+                        continue;
+                    }
+
+                    if (nestedModulesToFilterOut is not null
+                        && nestedModulesToFilterOut.Contains(moduleInfo))
                     {
                         continue;
                     }
@@ -2173,6 +2197,12 @@ namespace System.Management.Automation
                             break;
                         }
 
+                        if (parameterName.Equals("ExcludeModule", StringComparison.OrdinalIgnoreCase))
+                        {
+                            NativeCompletionGetCommand(context, moduleName: null, parameterName, result);
+                            break;
+                        }
+
                         if (parameterName.Equals("Name", StringComparison.OrdinalIgnoreCase))
                         {
                             var moduleNames = NativeCommandArgumentCompletion_ExtractSecondaryArgument(boundArguments, "Module");
@@ -3072,7 +3102,9 @@ namespace System.Management.Automation
 
                 result.Add(CompletionResult.Null);
             }
-            else if (!string.IsNullOrEmpty(paramName) && paramName.Equals("Module", StringComparison.OrdinalIgnoreCase))
+            else if (!string.IsNullOrEmpty(paramName)
+                && (paramName.Equals("Module", StringComparison.OrdinalIgnoreCase)
+                || paramName.Equals("ExcludeModule", StringComparison.OrdinalIgnoreCase)))
             {
                 CompleteModule(context, result);
             }
@@ -4446,14 +4478,15 @@ namespace System.Management.Automation
             var wordToComplete = context.WordToComplete;
             var quote = HandleDoubleAndSingleQuote(ref wordToComplete);
 
-            // First, try to match \\server\share
-            // support both / and \ when entering UNC paths for typing convenience (#17111)
-            var shareMatch = Regex.Match(wordToComplete, @"^(?:\\\\|//)([^\\/]+)(?:\\|/)([^\\/]*)$");
+            // Matches file shares with and without the provider name and with either slash direction.
+            // Avoids matching Windows device paths like \\.\CDROM0 and \\?\Volume{b8f3fc1c-5cd6-4553-91e2-d6814c4cd375}\
+            var shareMatch = s_shareMatch.Match(wordToComplete);
             if (shareMatch.Success)
             {
                 // Only match share names, no filenames.
-                var server = shareMatch.Groups[1].Value;
-                var sharePattern = WildcardPattern.Get(shareMatch.Groups[2].Value + "*", WildcardOptions.IgnoreCase);
+                var provider = shareMatch.Groups[1].Value;
+                var server = shareMatch.Groups[2].Value;
+                var sharePattern = WildcardPattern.Get(shareMatch.Groups[3].Value + "*", WildcardOptions.IgnoreCase);
                 var ignoreHidden = context.GetOption("IgnoreHiddenShares", @default: false);
                 var shares = GetFileShares(server, ignoreHidden);
                 if (shares.Count == 0)
@@ -4466,13 +4499,20 @@ namespace System.Management.Automation
                 {
                     if (sharePattern.IsMatch(share))
                     {
-                        string shareFullPath = "\\\\" + server + "\\" + share;
-                        if (quote != string.Empty)
+                        string sharePath = $"\\\\{server}\\{share}";
+                        string completionText;
+                        if (quote == string.Empty)
                         {
-                            shareFullPath = quote + shareFullPath + quote;
+                            completionText = share.Contains(' ')
+                                ? $"'{provider}{sharePath}'"
+                                : $"{provider}{sharePath}";
+                        }
+                        else
+                        {
+                            completionText = $"{quote}{provider}{sharePath}{quote}";
                         }
 
-                        shareResults.Add(new CompletionResult(shareFullPath, shareFullPath, CompletionResultType.ProviderContainer, shareFullPath));
+                        shareResults.Add(new CompletionResult(completionText, share, CompletionResultType.ProviderContainer, sharePath));
                     }
                 }
 
@@ -4826,6 +4866,13 @@ namespace System.Management.Automation
                 bool hadErrors;
                 var childItemOutput = context.Helper.ExecuteCurrentPowerShell(out _, out hadErrors);
 
+                if (childItemOutput.Count == 1 &&
+                    (pathInfo.Provider.FullName + "::" + pathInfo.ProviderPath).EqualsOrdinalIgnoreCase(childItemOutput[0].Properties["PSPath"].Value as string))
+                {
+                    // Get-ChildItem returned the item itself instead of the children so there must be no child items to complete.
+                    continue;
+                }
+
                 var childrenInfoTable = new Dictionary<string, bool>(childItemOutput.Count);
                 var childNameList = new List<string>(childItemOutput.Count);
 
@@ -4861,7 +4908,7 @@ namespace System.Management.Automation
 
                 if (childNameList.Count == 0)
                 {
-                    return results;
+                    continue;
                 }
 
                 string basePath = providerPrefix.Length > 0
@@ -5147,6 +5194,10 @@ namespace System.Management.Automation
             return result;
         }
 
+        private static readonly Regex s_shareMatch = new(
+            @"(^Microsoft\.PowerShell\.Core\\FileSystem::|^FileSystem::|^)(?:\\\\|//)(?![.|?])([^\\/]+)(?:\\|/)([^\\/]*)$",
+            RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         private struct SHARE_INFO_1
         {
@@ -5236,11 +5287,12 @@ namespace System.Management.Automation
             return CompleteVariable(new CompletionContext { WordToComplete = variableName, Helper = helper, ExecutionContext = executionContext });
         }
 
-        private static readonly string[] s_variableScopes = new string[] { "Global:", "Local:", "Script:", "Private:" };
+        private static readonly string[] s_variableScopes = new string[] { "Global:", "Local:", "Script:", "Private:", "Using:" };
 
-        private static readonly char[] s_charactersRequiringQuotes = new char[] {
-            '-', '`', '&', '@', '\'', '"', '#', '{', '}', '(', ')', '$', ',', ';', '|', '<', '>', ' ', '.', '\\', '/', '\t', '^',
-        };
+        private static readonly SearchValues<char> s_charactersRequiringQuotes = SearchValues.Create("-`&@'\"#{}()$,;|<> .\\/ \t^");
+
+        private static bool ContainsCharactersRequiringQuotes(ReadOnlySpan<char> text)
+            => text.ContainsAny(s_charactersRequiringQuotes);
 
         internal static List<CompletionResult> CompleteVariable(CompletionContext context)
         {
@@ -5249,7 +5301,13 @@ namespace System.Management.Automation
             List<CompletionResult> tempResults = new();
 
             var wordToComplete = context.WordToComplete;
+            string scopePrefix = string.Empty;
             var colon = wordToComplete.IndexOf(':');
+            if (colon >= 0)
+            {
+                scopePrefix = wordToComplete.Remove(colon + 1);
+                wordToComplete = wordToComplete.Substring(colon + 1);
+            }
 
             var lastAst = context.RelatedAsts?[^1];
             var variableAst = lastAst as VariableExpressionAst;
@@ -5298,9 +5356,9 @@ namespace System.Management.Automation
                         ? varName
                         : StringUtil.Format("[{0}]${1}", ToStringCodeMethods.Type(varType, dropNamespaces: true), varName);
 
-                    var completionText = !tokenAtCursorUsedBraces && varName.IndexOfAny(s_charactersRequiringQuotes) == -1
-                        ? prefix + varName
-                        : prefix + "{" + varName + "}";
+                    var completionText = !tokenAtCursorUsedBraces && !ContainsCharactersRequiringQuotes(varName)
+                        ? prefix + scopePrefix + varName
+                        : prefix + "{" + scopePrefix + varName + "}";
                     AddUniqueVariable(hashedResults, results, completionText, varName, toolTip);
                 }
             }
@@ -5318,7 +5376,7 @@ namespace System.Management.Automation
                         var toolTip = value is null
                             ? key
                             : StringUtil.Format("[{0}]${1}", ToStringCodeMethods.Type(value.GetType(), dropNamespaces: true), key);
-                        var completionText = !tokenAtCursorUsedBraces && name.IndexOfAny(s_charactersRequiringQuotes) == -1
+                        var completionText = !tokenAtCursorUsedBraces && !ContainsCharactersRequiringQuotes(name)
                             ? prefix + name
                             : prefix + "{" + name + "}";
                         AddUniqueVariable(hashedResults, tempResults, completionText, key, key);
@@ -5333,15 +5391,14 @@ namespace System.Management.Automation
             }
             else
             {
-                string provider = wordToComplete.Substring(0, colon + 1);
                 string pattern;
-                if (s_variableScopes.Contains(provider, StringComparer.OrdinalIgnoreCase))
+                if (s_variableScopes.Contains(scopePrefix, StringComparer.OrdinalIgnoreCase))
                 {
-                    pattern = string.Concat("variable:", wordToComplete.AsSpan(colon + 1), "*");
+                    pattern = string.Concat("variable:", wordToComplete, "*");
                 }
                 else
                 {
-                    pattern = wordToComplete + "*";
+                    pattern = scopePrefix + wordToComplete + "*";
                 }
 
                 var powerShellExecutionHelper = context.Helper;
@@ -5371,9 +5428,9 @@ namespace System.Management.Automation
                                 }
                             }
 
-                            var completedName = !tokenAtCursorUsedBraces && name.IndexOfAny(s_charactersRequiringQuotes) == -1
-                                                    ? prefix + provider + name
-                                                    : prefix + "{" + provider + name + "}";
+                            var completedName = !tokenAtCursorUsedBraces && !ContainsCharactersRequiringQuotes(name)
+                                                    ? prefix + scopePrefix + name
+                                                    : prefix + "{" + scopePrefix + name + "}";
                             AddUniqueVariable(hashedResults, results, completedName, name, tooltip);
                         }
                     }
@@ -5386,7 +5443,7 @@ namespace System.Management.Automation
                 foreach (var key in envVars.Keys)
                 {
                     var name = "env:" + key;
-                    var completedName = !tokenAtCursorUsedBraces && name.IndexOfAny(s_charactersRequiringQuotes) == -1
+                    var completedName = !tokenAtCursorUsedBraces && !ContainsCharactersRequiringQuotes(name)
                         ? prefix + name
                         : prefix + "{" + name + "}";
                     AddUniqueVariable(hashedResults, tempResults, completedName, name, "[string]" + name);
@@ -5396,22 +5453,22 @@ namespace System.Management.Automation
                 tempResults.Clear();
             }
 
-            // Return variables already in session state first, because we can sometimes give better information,
-            // like the variables type.
-            foreach (var specialVariable in s_specialVariablesCache.Value)
-            {
-                if (wildcardPattern.IsMatch(specialVariable))
-                {
-                    var completedName = !tokenAtCursorUsedBraces && specialVariable.IndexOfAny(s_charactersRequiringQuotes) == -1
-                                            ? prefix + specialVariable
-                                            : prefix + "{" + specialVariable + "}";
-
-                    AddUniqueVariable(hashedResults, results, completedName, specialVariable, specialVariable);
-                }
-            }
-
             if (colon == -1)
             {
+                // Return variables already in session state first, because we can sometimes give better information,
+                // like the variables type.
+                foreach (var specialVariable in s_specialVariablesCache.Value)
+                {
+                    if (wildcardPattern.IsMatch(specialVariable))
+                    {
+                        var completedName = !tokenAtCursorUsedBraces && !ContainsCharactersRequiringQuotes(specialVariable)
+                                                ? prefix + specialVariable
+                                                : prefix + "{" + specialVariable + "}";
+
+                        AddUniqueVariable(hashedResults, results, completedName, specialVariable, specialVariable);
+                    }
+                }
+
                 var allDrives = context.ExecutionContext.SessionState.Drive.GetAll();
                 foreach (var drive in allDrives)
                 {
@@ -5422,7 +5479,7 @@ namespace System.Management.Automation
                         continue;
                     }
 
-                    var completedName = !tokenAtCursorUsedBraces && drive.Name.IndexOfAny(s_charactersRequiringQuotes) == -1
+                    var completedName = !tokenAtCursorUsedBraces && !ContainsCharactersRequiringQuotes(drive.Name)
                         ? prefix + drive.Name + ":"
                         : prefix + "{" + drive.Name + ":}";
                     var tooltip = string.IsNullOrEmpty(drive.Description)
@@ -5440,7 +5497,7 @@ namespace System.Management.Automation
                 {
                     if (wildcardPattern.IsMatch(scope))
                     {
-                        var completedName = !tokenAtCursorUsedBraces && scope.IndexOfAny(s_charactersRequiringQuotes) == -1
+                        var completedName = !tokenAtCursorUsedBraces && !ContainsCharactersRequiringQuotes(scope)
                             ? prefix + scope
                             : prefix + "{" + scope + "}";
                         AddUniqueVariable(hashedResults, results, completedName, scope, scope);
@@ -5513,7 +5570,7 @@ namespace System.Management.Automation
             internal Type LastAssignedType;
         }
 
-        private sealed class FindVariablesVisitor : AstVisitor
+        private sealed class FindVariablesVisitor : AstVisitor2
         {
             internal Ast Top;
             internal Ast CompletionVariableAst;
@@ -5588,7 +5645,11 @@ namespace System.Management.Automation
             {
                 if (ast.Extent.StartOffset > StopSearchOffset)
                 {
-                    return AstVisitAction.StopVisit;
+                    // When visiting do while/until statements, the condition will be visited before the statement block.
+                    // The condition itself may not be interesting if it's after the cursor, but the statement block could be.
+                    return ast is PipelineBaseAst && ast.Parent is DoUntilStatementAst or DoWhileStatementAst
+                        ? AstVisitAction.SkipChildren
+                        : AstVisitAction.StopVisit;
                 }
 
                 return AstVisitAction.Continue;
@@ -5598,19 +5659,45 @@ namespace System.Management.Automation
             {
                 if (assignmentStatementAst.Extent.StartOffset > StopSearchOffset)
                 {
-                    return AstVisitAction.StopVisit;
+                    return assignmentStatementAst.Parent is DoUntilStatementAst or DoWhileStatementAst ?
+                        AstVisitAction.SkipChildren
+                        : AstVisitAction.StopVisit;
                 }
 
-                if (assignmentStatementAst.Left is ConvertExpressionAst convertExpression)
+                if (assignmentStatementAst.Left is AttributedExpressionAst attributedExpression)
                 {
-                    if (convertExpression.Child is VariableExpressionAst variableExpression)
+                    var firstConvertExpression = attributedExpression as ConvertExpressionAst;
+                    ExpressionAst child = attributedExpression.Child;
+                    while (child is AttributedExpressionAst attributeChild)
+                    {
+                        if (firstConvertExpression is null && attributeChild is ConvertExpressionAst convertExpression)
+                        {
+                            // Multiple type constraint can be set on a variable like this: [int] [string] $Var1 = 1
+                            // But it's the left most type constraint that determines the final type.
+                            firstConvertExpression = convertExpression;
+                        }
+
+                        child = attributeChild.Child;
+                    }
+
+                    if (child is VariableExpressionAst variableExpression)
                     {
                         if (variableExpression == CompletionVariableAst || s_specialVariablesCache.Value.Contains(variableExpression.VariablePath.UserPath))
                         {
                             return AstVisitAction.Continue;
                         }
 
-                        SaveVariableInfo(variableExpression.VariablePath.UserPath, convertExpression.StaticType, isConstraint: true);
+                        if (firstConvertExpression is not null)
+                        {
+                            SaveVariableInfo(variableExpression.VariablePath.UnqualifiedPath, firstConvertExpression.StaticType, isConstraint: true);
+                        }
+                        else
+                        {
+                            Type lastAssignedType = assignmentStatementAst.Right is CommandExpressionAst commandExpression
+                                ? GetInferredVarTypeFromAst(commandExpression.Expression)
+                                : null;
+                            SaveVariableInfo(variableExpression.VariablePath.UnqualifiedPath, lastAssignedType, isConstraint: false);
+                        }
                     }
                 }
                 else if (assignmentStatementAst.Left is VariableExpressionAst variableExpression)
@@ -5630,7 +5717,7 @@ namespace System.Management.Automation
                         lastAssignedType = null;
                     }
 
-                    SaveVariableInfo(variableExpression.VariablePath.UserPath, lastAssignedType, isConstraint: false);
+                    SaveVariableInfo(variableExpression.VariablePath.UnqualifiedPath, lastAssignedType, isConstraint: false);
                 }
 
                 return AstVisitAction.Continue;
@@ -5719,7 +5806,7 @@ namespace System.Management.Automation
                     return AstVisitAction.Continue;
                 }
 
-                SaveVariableInfo(variableExpression.VariablePath.UserPath, parameterAst.StaticType, isConstraint: true);
+                SaveVariableInfo(variableExpression.VariablePath.UnqualifiedPath, parameterAst.StaticType, isConstraint: true);
 
                 return AstVisitAction.Continue;
             }
@@ -5731,7 +5818,7 @@ namespace System.Management.Automation
                     return AstVisitAction.StopVisit;
                 }
 
-                SaveVariableInfo(forEachStatementAst.Variable.VariablePath.UserPath, variableType: null, isConstraint: false);
+                SaveVariableInfo(forEachStatementAst.Variable.VariablePath.UnqualifiedPath, variableType: null, isConstraint: false);
                 return AstVisitAction.Continue;
             }
 
@@ -5791,7 +5878,7 @@ namespace System.Management.Automation
             }
         }
 
-        private static readonly Lazy<SortedSet<string>> s_specialVariablesCache = new Lazy<SortedSet<string>>(BuildSpecialVariablesCache);
+        private static readonly Lazy<SortedSet<string>> s_specialVariablesCache = new(BuildSpecialVariablesCache);
 
         private static SortedSet<string> BuildSpecialVariablesCache()
         {
@@ -6765,7 +6852,7 @@ namespace System.Management.Automation
                             {
                                 string completionText = viewDefinition.name;
                                 // If the string is quoted or if it contains characters that need quoting, quote it in single quotes
-                                if (quote != string.Empty || viewDefinition.name.IndexOfAny(s_charactersRequiringQuotes) != -1)
+                                if (quote != string.Empty || ContainsCharactersRequiringQuotes(viewDefinition.name))
                                 {
                                     completionText = "'" + completionText.Replace("'", "''") + "'";
                                 }
@@ -6927,7 +7014,7 @@ namespace System.Management.Automation
             {
                 completionText = $"{memberName}(";
             }
-            else if (memberName.IndexOfAny(s_charactersRequiringQuotes) != -1)
+            else if (ContainsCharactersRequiringQuotes(memberName))
             {
                 completionText = $"'{memberName}'";
             }
@@ -7721,9 +7808,7 @@ namespace System.Management.Automation
                     bool withColon = wordToComplete.EndsWith(':');
                     wordToComplete = withColon ? wordToComplete.Remove(wordToComplete.Length - 1) : wordToComplete;
 
-                    string enumString = LanguagePrimitives.EnumSingleTypeConverter.EnumValues(typeof(SwitchFlags));
-                    string separator = CultureInfo.CurrentUICulture.TextInfo.ListSeparator;
-                    string[] enumArray = enumString.Split(separator, StringSplitOptions.RemoveEmptyEntries);
+                    string[] enumArray = LanguagePrimitives.EnumSingleTypeConverter.GetEnumNames(typeof(SwitchFlags));
 
                     var pattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
                     var enumList = new List<string>();
@@ -8398,6 +8483,72 @@ namespace System.Management.Automation
             return quote;
         }
 
+        /// <summary>
+        /// Get matching completions from word to complete.
+        /// This makes it easier to handle different variations of completions with consideration of quotes.
+        /// </summary>
+        /// <param name="wordToComplete">The word to complete.</param>
+        /// <param name="possibleCompletionValues">The possible completion values to iterate.</param>
+        /// <param name="toolTipMapping">The optional tool tip mapping delegate.</param>
+        /// <param name="resultType">The optional completion result type. Default is Text.</param>
+        /// <returns></returns>
+        internal static IEnumerable<CompletionResult> GetMatchingResults(
+            string wordToComplete,
+            IEnumerable<string> possibleCompletionValues,
+            Func<string, string> toolTipMapping = null,
+            CompletionResultType resultType = CompletionResultType.Text)
+        {
+            string quote = HandleDoubleAndSingleQuote(ref wordToComplete);
+            var pattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
+
+            foreach (string value in possibleCompletionValues)
+            {
+                if (pattern.IsMatch(value))
+                {
+                    string completionText = quote == string.Empty
+                        ? value
+                        : quote + value + quote;
+
+                    string listItemText = value;
+
+                    yield return new CompletionResult(
+                        completionText,
+                        listItemText,
+                        resultType,
+                        toolTip: toolTipMapping is null
+                            ? listItemText
+                            : toolTipMapping(value));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Calls Get-Command to get command info objects.
+        /// </summary>
+        /// <param name="fakeBoundParameters">The fake bound parameters.</param>
+        /// <param name="parametersToAdd">The parameters to add.</param>
+        /// <returns>Collection of command info objects.</returns>
+        internal static Collection<CommandInfo> GetCommandInfo(
+            IDictionary fakeBoundParameters, 
+            params string[] parametersToAdd)
+        {
+            using var ps = PowerShell.Create(RunspaceMode.CurrentRunspace);
+
+            ps.AddCommand("Get-Command");
+
+            foreach (string parameter in parametersToAdd)
+            {
+                if (fakeBoundParameters.Contains(parameter))
+                {
+                    ps.AddParameter(parameter, fakeBoundParameters[parameter]);
+                }
+            }
+
+            Collection<CommandInfo> commands = ps.Invoke<CommandInfo>();
+
+            return commands;
+        }
+
         internal static bool IsSplattedVariable(Ast targetExpr)
         {
             if (targetExpr is VariableExpressionAst && ((VariableExpressionAst)targetExpr).Splatted)
@@ -8463,7 +8614,7 @@ namespace System.Management.Automation
                     var completionText = memberInfo.Name;
 
                     // Handle scenarios like this: $aa | add-member 'a b' 23; $aa.a<tab>
-                    if (completionText.IndexOfAny(s_charactersRequiringQuotes) != -1)
+                    if (ContainsCharactersRequiringQuotes(completionText))
                     {
                         completionText = completionText.Replace("'", "''");
                         completionText = "'" + completionText + "'";
@@ -8510,7 +8661,7 @@ namespace System.Management.Automation
                         if (pattern.IsMatch(key))
                         {
                             // Handle scenarios like this: $hashtable["abc#d"] = 100; $hashtable.ab<tab>
-                            if (key.IndexOfAny(s_charactersRequiringQuotes) != -1)
+                            if (ContainsCharactersRequiringQuotes(key))
                             {
                                 key = key.Replace("'", "''");
                                 key = "'" + key + "'";
@@ -8568,6 +8719,12 @@ namespace System.Management.Automation
             return false;
         }
 
+        private static readonly SearchValues<char> s_defaultCharsToCheck = SearchValues.Create("$`");
+        private static readonly SearchValues<char> s_escapeCharsToCheck = SearchValues.Create("$[]`");
+
+        private static bool ContainsCharsToCheck(ReadOnlySpan<char> text, bool escape) 
+            => text.ContainsAny(escape ? s_escapeCharsToCheck : s_defaultCharsToCheck);
+
         private static bool CompletionRequiresQuotes(string completion, bool escape)
         {
             // If the tokenizer sees the completion as more than two tokens, or if there is some error, then
@@ -8577,18 +8734,13 @@ namespace System.Management.Automation
             ParseError[] errors;
             Language.Parser.ParseInput(completion, out tokens, out errors);
 
-            char[] charToCheck = escape ? new[] { '$', '[', ']', '`' } : new[] { '$', '`' };
-
             // Expect no errors and 2 tokens (1 is for our completion, the other is eof)
             // Or if the completion is a keyword, we ignore the errors
             bool requireQuote = !(errors.Length == 0 && tokens.Length == 2);
             if ((!requireQuote && tokens[0] is StringToken) ||
                 (tokens.Length == 2 && (tokens[0].TokenFlags & TokenFlags.Keyword) != 0))
             {
-                requireQuote = false;
-                var value = tokens[0].Text;
-                if (value.IndexOfAny(charToCheck) != -1)
-                    requireQuote = true;
+                requireQuote = ContainsCharsToCheck(tokens[0].Text, escape);
             }
 
             return requireQuote;

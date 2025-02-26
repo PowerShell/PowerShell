@@ -22,7 +22,7 @@ namespace System.Management.Automation
         /// An instance of the PSTraceSource class used for trace output
         /// using "LocationGlobber" as the category.
         /// </summary>
-        [Dbg.TraceSourceAttribute(
+        [Dbg.TraceSource(
              "LocationGlobber",
              "The location globber converts PowerShell paths with glob characters to zero or more paths.")]
         private static readonly Dbg.PSTraceSource s_tracer =
@@ -32,7 +32,7 @@ namespace System.Management.Automation
         /// <summary>
         /// User level tracing for path resolution.
         /// </summary>
-        [Dbg.TraceSourceAttribute(
+        [Dbg.TraceSource(
              "PathResolution",
              "Traces the path resolution algorithm.")]
         private static readonly Dbg.PSTraceSource s_pathResolutionTracer =
