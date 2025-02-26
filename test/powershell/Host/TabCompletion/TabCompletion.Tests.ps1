@@ -118,6 +118,122 @@ Describe "TabCompletion" -Tags CI {
         }
     }
 
+    context CustomProviderTests {
+        BeforeAll {
+            $testModulePath = Join-Path $TestDrive "ReproModule"
+            New-Item -Path $testModulePath -ItemType Directory > $null
+
+            New-ModuleManifest -Path "$testModulePath/ReproModule.psd1" -RootModule 'testmodule.dll'
+
+            $testBinaryModulePath = Join-Path $testModulePath "testmodule.dll"
+            $binaryModule = @'
+using System;
+using System.Linq;
+using System.Management.Automation;
+using System.Management.Automation.Provider;
+
+namespace BugRepro
+{
+    public class IntItemInfo
+    {
+        public string Name;
+        public IntItemInfo(string name) => Name = name;
+    }
+
+    [CmdletProvider("Int", ProviderCapabilities.None)]
+    public class IntProvider : NavigationCmdletProvider
+    {
+        public static string[] ToChunks(string path) => path.Split("/", StringSplitOptions.RemoveEmptyEntries);
+
+        protected string _ChildName(string path)
+        {
+            var name = ToChunks(path).LastOrDefault();
+            return name ?? string.Empty;
+        }
+
+        protected string Normalize(string path) => string.Join("/", ToChunks(path));
+
+        protected override string GetChildName(string path)
+        {
+            var name = _ChildName(path);
+            // if (!IsItemContainer(path)) { return string.Empty; }
+            return name;
+        }
+
+        protected override bool IsValidPath(string path) => int.TryParse(GetChildName(path), out int _);
+
+        protected override bool IsItemContainer(string path)
+        {
+            var name = _ChildName(path);
+            if (!int.TryParse(name, out int value))
+            {
+                return false;
+            }
+            if (ToChunks(path).Count() > 3)
+            {
+                return false;
+            }
+            return value % 2 == 0;
+        }
+
+        protected override bool ItemExists(string path)
+        {
+            foreach (var chunk in ToChunks(path))
+            {
+                if (!int.TryParse(chunk, out int value))
+                {
+                    return false;
+                }
+                if (value < 0 || value > 9)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        protected override void GetItem(string path)
+        {
+            var name = GetChildName(path);
+            if (!int.TryParse(name, out int _))
+            {
+                return;
+            }
+            WriteItemObject(new IntItemInfo(name), path, IsItemContainer(path));
+        }
+        protected override bool HasChildItems(string path) => IsItemContainer(path);
+
+        protected override void GetChildItems(string path, bool recurse)
+        {
+            if (!IsItemContainer(path)) { GetItem(path); return; }
+
+            for (var i = 0; i <= 9; i++)
+            {
+                var _path = $"{Normalize(path)}/{i}";
+                if (recurse)
+                {
+                    GetChildItems(_path, recurse);
+                }
+                else
+                {
+                    GetItem(_path);
+                }
+            }
+        }
+    }
+}
+'@
+            Add-Type -OutputAssembly $testBinaryModulePath -TypeDefinition $binaryModule
+
+            $pwsh = "$PSHOME\pwsh"
+        }
+
+        It "Should not complete invalid items when a provider path returns itself instead of its children" {
+            $result = & $pwsh -NoProfile -Command "Import-Module -Name $testModulePath; (TabExpansion2 'Get-ChildItem Int::/2/3/').CompletionMatches.Count"
+            $result | Should -BeExactly "0"
+        }
+    }
+
     It 'should complete index expression for <Intent>' -TestCases @(
         @{
             Intent = 'Hashtable with no user input'
@@ -644,6 +760,20 @@ using `
         $completionText -join ' ' | Should -BeExactly 'Equals( new( ReferenceEquals('
     }
 
+    It 'Should complete variables assigned inside do while loop' {
+        $TestString =  'do{$Var1 = 1; $Var^ }while ($true)'
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '$Var1'
+    }
+
+    It 'Should complete variables assigned inside do until loop' {
+        $TestString =  'do{$Var1 = 1; $Var^ }until ($null = Get-ChildItem)'
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '$Var1'
+    }
+
     It 'Should show multiple constructors in the tooltip' {
         $res = TabExpansion2 -inputScript 'class ConstructorTestClass{ConstructorTestClass ([string] $s){}ConstructorTestClass ([int] $i){}ConstructorTestClass ([int] $i, [bool]$b){}};[ConstructorTestClass]::new'
         $res.CompletionMatches | Should -HaveCount 1
@@ -697,6 +827,16 @@ ConstructorTestClass(int i, bool b)
         $TestString = 'data MyDataVar {"Hello"};$MyDatav'
         $res = TabExpansion2 -inputScript $TestString
         $res.CompletionMatches[0].CompletionText | Should -BeExactly '$MyDataVar'
+    }
+
+    It 'Should complete global variable without scope' {
+        $res = TabExpansion2 -inputScript '$Global:MyTestVar = "Hello";$MyTestV'
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '$MyTestVar'
+    }
+
+    It 'Should complete previously assigned variable in using: scope' {
+        $res = TabExpansion2 -inputScript '$MyTestVar = "Hello";$Using:MyTestv'
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '$Using:MyTestVar'
     }
 
     it 'Should complete "Value" parameter value in "Where-Object" for Enum property with no input' {
@@ -1931,6 +2071,10 @@ class InheritedClassTest : System.Attribute
             $res.CompletionMatches[0].CompletionText | Should -BeExactly $afterTab
         }
 
+        It "Tab completion UNC path with filesystem provider" -Skip:(!$IsWindows) {
+            $res = TabExpansion2 -inputScript 'Filesystem::\\localhost\admin'
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Filesystem::\\localhost\ADMIN$'
+        }
 
         It "Tab completion for registry" -Skip:(!$IsWindows) {
             $beforeTab = 'registry::HKEY_l'
@@ -3112,6 +3256,18 @@ function MyFunction ($param1, $param2)
         $Text = '[abcdefghijklmnopqrstuvwxyz]'
         $res = TabExpansion2 -inputScript $Text -cursorColumn ($Text.Length - 1)
         $res.CompletionMatches | Should -HaveCount 0
+    }
+}
+
+Describe "TabCompletion elevated tests" -Tags CI, RequireAdminOnWindows {
+    It "Tab completion UNC path with spaces" -Skip:(!$IsWindows) {
+        $Share = New-SmbShare -Temporary -ReadAccess (whoami.exe) -Path C:\ -Name "Test Share"
+        $res = TabExpansion2 -inputScript '\\localhost\test'
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly "& '\\localhost\Test Share'"
+        if ($null -ne $Share)
+        {
+            Remove-SmbShare -InputObject $Share -Force -Confirm:$false
+        }
     }
 }
 
