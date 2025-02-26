@@ -80,3 +80,35 @@ Describe "ConvertFrom-Csv DRT Unit Tests" -Tags "CI" {
         $result[1].Header2 | Should -BeExactly "2"
     }
 }
+
+Describe "ConvertFrom-Csv with empty and null values" -Tags "CI" {
+    It "Should handle empty and null values correctly" {
+        $csvContent = @'
+"P1","P2"
+"",
+"",
+'@
+        $actualresult = $csvContent | ConvertFrom-Csv
+
+        $actualresult.Count | Should -Be 2
+
+        $actualresult[0].P1 | Should -BeExactly ""
+        $actualresult[0].P2 | Should -BeExactly ""
+        $actualresult[1].P1 | Should -BeExactly ""
+        $actualresult[1].P2 | Should -Be $null
+    }
+
+    It "Should handle empty values correctly" {
+        $csvContent = @'
+"P1"
+""
+""
+'@
+        $actualresult = $csvContent | ConvertFrom-Csv
+
+        $actualresult.Count | Should -Be 2
+
+        $actualresult[0].P1 | Should -BeExactly ""
+        $actualresult[1].P1 | Should -BeExactly ""
+    }
+}
