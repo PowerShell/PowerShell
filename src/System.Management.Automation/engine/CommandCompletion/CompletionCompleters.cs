@@ -7741,6 +7741,11 @@ namespace System.Management.Automation
                 }
             }
 
+            if (helpFileProvider is null)
+            {
+                return results;
+            }
+
             Collection<string> filesMatched = MUIFileSearcher.SearchFiles($"{context.WordToComplete}*.help.txt", helpFileProvider.GetExtendedSearchPaths());
             foreach (string path in filesMatched)
             {
