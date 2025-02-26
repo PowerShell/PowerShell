@@ -190,11 +190,13 @@ Describe "ConvertFrom-Csv with empty and null values" {
             }
         )
 
-        It 'ConvertFrom-Csv correctly deserializes Test <Test> input CSV' -ForEach $testCases {
-            $expectedResult = $Expected | ConvertTo-Csv
-            $actualResult   = $InputCsv | ConvertFrom-Csv | ConvertTo-Csv
-
-            $actualResult | Should -BeExactly $expectedResult
+        It 'ConvertFrom-Csv correctly deserializes input CSV' {
+            foreach ($testCase in $testCases) {
+                $expectedResult = $testCase.Expected | ConvertTo-Csv
+                $actualResult   = $testCase.InputCsv | ConvertFrom-Csv | ConvertTo-Csv
+        
+                $actualResult | Should -BeExactly $expectedResult
+            }
         }
     }
 }
