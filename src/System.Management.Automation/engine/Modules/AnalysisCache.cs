@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System.Buffers;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -35,11 +36,10 @@ namespace System.Management.Automation
         private static readonly ConcurrentDictionary<string, string> s_modulesBeingAnalyzed =
             new(concurrencyLevel: 1, capacity: 2, StringComparer.OrdinalIgnoreCase);
 
-        internal static readonly char[] InvalidCommandNameCharacters = new[]
-        {
-            '#', ',', '(', ')', '{', '}', '[', ']', '&', '/', '\\', '$', '^', ';', ':',
-            '"', '\'', '<', '>', '|', '?', '@', '`', '*', '%', '+', '=', '~'
-        };
+        internal static readonly SearchValues<char> InvalidCommandNameCharacters = SearchValues.Create("#,(){}[]&/\\$^;:\"'<>|?@`*%+=~");
+
+        internal static bool ContainsInvalidCommandNameCharacters(ReadOnlySpan<char> text)
+            => text.ContainsAny(InvalidCommandNameCharacters);
 
         internal static ConcurrentDictionary<string, CommandTypes> GetExportedCommands(string modulePath, bool testOnly, ExecutionContext context)
         {
@@ -345,7 +345,7 @@ namespace System.Management.Automation
             {
                 if (SessionStateUtilities.MatchesAnyWildcardPattern(command, scriptAnalysisPatterns, true))
                 {
-                    if (command.IndexOfAny(InvalidCommandNameCharacters) < 0)
+                    if (!ContainsInvalidCommandNameCharacters(command))
                     {
                         result[command] = CommandTypes.Function;
                     }
@@ -357,7 +357,7 @@ namespace System.Management.Automation
             {
                 var commandName = pair.Key;
                 // These are already filtered
-                if (commandName.IndexOfAny(InvalidCommandNameCharacters) < 0)
+                if (!ContainsInvalidCommandNameCharacters(commandName))
                 {
                     result.AddOrUpdate(commandName, CommandTypes.Alias,
                         static (_, existingCommandType) => existingCommandType | CommandTypes.Alias);

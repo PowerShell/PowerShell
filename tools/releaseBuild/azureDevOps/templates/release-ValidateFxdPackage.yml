@@ -38,8 +38,7 @@ jobs:
         Write-Verbose -Message "Installing .NET SDK completed." -Verbose
       displayName: Install .NET
       env:
-        __DONET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
-        __DONET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+        __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
     - pwsh: |
         Get-ChildItem -Path '$(Pipeline.Workspace)/releasePipeline/finalResults' -Recurse

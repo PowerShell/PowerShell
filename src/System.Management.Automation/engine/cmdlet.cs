@@ -1311,11 +1311,11 @@ namespace System.Management.Automation
         /// It may be displayed by some hosts, but not all.
         /// </param>
         /// <param name="yesToAll">
-        /// true iff user selects YesToAll.  If this is already true,
+        /// true if-and-only-if user selects YesToAll.  If this is already true,
         /// ShouldContinue will bypass the prompt and return true.
         /// </param>
         /// <param name="noToAll">
-        /// true iff user selects NoToAll.  If this is already true,
+        /// true if-and-only-if user selects NoToAll.  If this is already true,
         /// ShouldContinue will bypass the prompt and return false.
         /// </param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
@@ -1451,11 +1451,11 @@ namespace System.Management.Automation
         /// the default option selected in the selection menu is 'No'.
         /// </param>
         /// <param name="yesToAll">
-        /// true iff user selects YesToAll.  If this is already true,
+        /// true if-and-only-if user selects YesToAll.  If this is already true,
         /// ShouldContinue will bypass the prompt and return true.
         /// </param>
         /// <param name="noToAll">
-        /// true iff user selects NoToAll.  If this is already true,
+        /// true if-and-only-if user selects NoToAll.  If this is already true,
         /// ShouldContinue will bypass the prompt and return false.
         /// </param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
@@ -1820,14 +1820,16 @@ namespace System.Management.Automation
         None = 0x0,
 
         /// <summary>
+        /// <para>
         /// WhatIf behavior was requested.
-        /// </summary>
-        /// <remarks>
+        /// </para>
+        /// <para>
         /// In the host, WhatIf behavior can be requested explicitly
         /// for one cmdlet instance using the -WhatIf commandline parameter,
         /// or implicitly for all SupportsShouldProcess cmdlets with $WhatIfPreference.
         /// Other hosts may have other ways to request WhatIf behavior.
-        /// </remarks>
+        /// </para>
+        /// </summary>
         WhatIf = 0x1,
     }
 }

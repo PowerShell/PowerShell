@@ -71,8 +71,7 @@ namespace Microsoft.PowerShell.Commands
             catch (TargetInvocationException ex)
             {
                 // Verify if this is an error loading the System.Core dll.
-                FileNotFoundException fileNotFoundEx = ex.InnerException as FileNotFoundException;
-                if (fileNotFoundEx != null && fileNotFoundEx.FileName.Contains("System.Core"))
+                if (ex.InnerException is FileNotFoundException fileNotFoundEx && fileNotFoundEx.FileName.Contains("System.Core"))
                 {
                     _parentCmdlet.ThrowTerminatingError(
                         new ErrorRecord(new InvalidOperationException(

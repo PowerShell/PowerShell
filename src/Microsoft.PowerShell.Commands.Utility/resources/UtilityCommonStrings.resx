@@ -168,4 +168,10 @@
   <data name="InvalidSDDL" xml:space="preserve">
     <value>Cannot construct a security descriptor from the given SDDL due to the following error: {0}</value>
   </data>
+  <data name="IEXWDACLogTitle" xml:space="preserve">
+    <value>Invoke-Expression Cmdlet</value>
+  </data>
+  <data name="IEXWDACLogMessage" xml:space="preserve">
+    <value>Invoke-Expression cmdlet script block will be run in ConstrainedLanguage mode.</value>
+  </data>
 </root>

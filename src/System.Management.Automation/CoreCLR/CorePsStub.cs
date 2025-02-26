@@ -436,6 +436,23 @@ namespace System.Management.Automation.Security
         private SystemPolicy() { }
 
         /// <summary>
+        /// Writes to PowerShell WDAC Audit mode ETW log.
+        /// </summary>
+        /// <param name="context">Current execution context.</param>
+        /// <param name="title">Audit message title.</param>
+        /// <param name="message">Audit message message.</param>
+        /// <param name="fqid">Fully Qualified ID.</param>
+        /// <param name="dropIntoDebugger">Stops code execution and goes into debugger mode.</param>
+        internal static void LogWDACAuditMessage(
+            ExecutionContext context,
+            string title,
+            string message,
+            string fqid,
+            bool dropIntoDebugger = false)
+        {
+        }
+
+        /// <summary>
         /// Gets the system lockdown policy.
         /// </summary>
         /// <remarks>Always return SystemEnforcementMode.None in CSS (trusted)</remarks>
@@ -511,7 +528,12 @@ namespace System.Management.Automation.Security
         /// <summary>
         /// Script file is allowed to run in ConstrainedLanguage mode only.
         /// </summary>
-        AllowConstrained = 3
+        AllowConstrained = 3,
+
+        /// <summary>
+        /// Script file is allowed to run in FullLanguage mode but will emit ConstrainedLanguage restriction audit logs.
+        /// </summary>
+        AllowConstrainedAudit = 4
     }
 }
 

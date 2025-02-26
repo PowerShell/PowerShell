@@ -10,8 +10,8 @@ namespace Microsoft.Management.UI.Internal
     /// The TextEndsWithFilterRule class evaluates a string item to
     /// check if it ends with the rule's value.
     /// </summary>
-    [Serializable]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
+    [Serializable]
     public class TextEndsWithFilterRule : TextFilterRule
     {
         private static readonly string TextEndsWithCharactersRegexPattern = "{0}$";

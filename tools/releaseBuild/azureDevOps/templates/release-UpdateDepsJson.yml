@@ -68,3 +68,4 @@ jobs:
       storage: '$(StorageAccount)'
       ContainerName: ps-deps-json
       blobPrefix: '$(BlobPrefix)'
+    retryCountOnTaskFailure: 2

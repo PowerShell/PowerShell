@@ -204,8 +204,7 @@ namespace System.Management.Automation
 
         internal WideControlEntryItem(WideControlEntryDefinition definition) : this()
         {
-            FieldPropertyToken fpt = definition.formatTokenList[0] as FieldPropertyToken;
-            if (fpt != null)
+            if (definition.formatTokenList[0] is FieldPropertyToken fpt)
             {
                 DisplayEntry = new DisplayEntry(fpt.expression);
                 FormatString = fpt.fieldFormattingDirective.formatString;

@@ -228,4 +228,16 @@ Reviewed by TArcher on 2010-07-20
   <data name="NativeCommandNotFound" xml:space="preserve">
     <value>Command '{0}' was not found. The specified command must be an executable.</value>
   </data>
+  <data name="WDACLogTitle" xml:space="preserve">
+    <value>Script Block Processing Dot-Source Check</value>
+  </data>
+  <data name="WDACLogMessage" xml:space="preserve">
+    <value>Dot-Source processing for script block '{0}' will fail in Constrained Language mode because its language mode '{1}' does not match the current language mode '{2}'.</value>
+  </data>
+  <data name="SearcherWDACLogTitle" xml:space="preserve">
+    <value>Command Searcher</value>
+  </data>
+  <data name="SearcherWDACLogMessage" xml:space="preserve">
+    <value>Command '{0}' in module '{1}' is untrusted and will not be accessible in ConstrainedLanguage mode.</value>
+  </data>
 </root>

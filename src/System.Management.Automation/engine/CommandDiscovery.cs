@@ -306,7 +306,7 @@ namespace System.Management.Automation
                         ScriptRequiresException scriptRequiresException =
                             new ScriptRequiresException(
                                 scriptInfo.Name,
-                                new Collection<string> { requiredModule.Name },
+                                new Collection<string> { requiredModule.GetRequiredModuleNotFoundVersionMessage() },
                                 "ScriptRequiresMissingModules",
                                 false,
                                 error);
@@ -1157,10 +1157,8 @@ namespace System.Management.Automation
                 case "ActivePostCommand": currentActionSet = _activePostCommand; break;
             }
 
-            if (currentActionSet.Contains(command))
+            if (!currentActionSet.Add(command))
                 throw new InvalidOperationException();
-            else
-                currentActionSet.Add(command);
         }
 
         internal void UnregisterLookupCommandInfoAction(string currentAction, string command)
@@ -1174,8 +1172,7 @@ namespace System.Management.Automation
                 case "ActivePostCommand": currentActionSet = _activePostCommand; break;
             }
 
-            if (currentActionSet.Contains(command))
-                currentActionSet.Remove(command);
+            currentActionSet.Remove(command);
         }
 
         private readonly HashSet<string> _activePreLookup = new HashSet<string>(StringComparer.OrdinalIgnoreCase);

@@ -33,6 +33,7 @@ Describe "Validate start of console host" -Tag CI {
             'System.Net.Mail.dll'
             'System.Net.NetworkInformation.dll'
             'System.Net.Primitives.dll'
+            'System.Numerics.Vectors.dll'
             'System.ObjectModel.dll'
             'System.Private.CoreLib.dll'
             'System.Private.Uri.dll'
@@ -70,6 +71,7 @@ Describe "Validate start of console host" -Tag CI {
         }
         else {
             $allowedAssemblies += @(
+                'System.Diagnostics.DiagnosticSource.dll'
                 'System.Net.Sockets.dll'
             )
         }

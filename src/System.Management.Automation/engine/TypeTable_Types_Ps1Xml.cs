@@ -17,10 +17,7 @@ namespace System.Management.Automation.Runspaces
 
         private static Func<string, PSMemberInfoInternalCollection<PSMemberInfo>> GetValueFactoryBasedOnInitCapacity(int capacity)
         {
-            if (capacity <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(capacity));
-            }
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(capacity);
 
             if (capacity > ValueFactoryCacheCount)
             {

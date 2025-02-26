@@ -10,8 +10,8 @@ namespace Microsoft.Management.UI.Internal
     /// The TextStartsWithFilterRule class evaluates a string item to
     /// check if it starts with the rule's value.
     /// </summary>
-    [Serializable]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
+    [Serializable]
     public class TextStartsWithFilterRule : TextFilterRule
     {
         private static readonly string TextStartsWithCharactersRegexPattern = "^{0}";

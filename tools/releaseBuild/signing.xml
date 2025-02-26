@@ -21,6 +21,8 @@
 
     <!-- ****Begin**** AuthenticodeFormer ************* -->
 
+    <!-- be sure to sign the global tool shim -->
+    <file src="__INPATHROOT__\Microsoft.PowerShell.GlobalTool.Shim.exe" signType="AuthenticodeFormer" dest="__OUTPATHROOT__\Microsoft.PowerShell.GlobalTool.Shim.exe" />
     <file src="__INPATHROOT__\pwsh.exe" signType="AuthenticodeFormer" dest="__OUTPATHROOT__\pwsh.exe" />
 
 

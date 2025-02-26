@@ -18,7 +18,7 @@ switch ($TestHook) {
     default {
         $jobScript = {
             # This registers Microsoft Update via a predifened GUID with the Windows Update Agent.
-            # https://docs.microsoft.com/en-us/windows/win32/wua_sdk/opt-in-to-microsoft-update
+            # https://learn.microsoft.com/windows/win32/wua_sdk/opt-in-to-microsoft-update
 
             $serviceManager = (New-Object -ComObject Microsoft.Update.ServiceManager)
             $isRegistered = $serviceManager.QueryServiceRegistration('7971f918-a847-4430-9279-4a52d1efe18d').Service.IsRegisteredWithAu

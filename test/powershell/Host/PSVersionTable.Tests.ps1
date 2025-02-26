@@ -3,6 +3,7 @@
 Describe "PSVersionTable" -Tags "CI" {
 
     BeforeAll {
+        Set-StrictMode -Version 3
         $sma = Get-Item (Join-Path $PSHOME "System.Management.Automation.dll")
         $formattedVersion = $sma.VersionInfo.ProductVersion
 
@@ -22,10 +23,6 @@ Describe "PSVersionTable" -Tags "CI" {
             $expectedGitCommitIdPattern = "^$mainVersionPattern$"
             $unexpectectGitCommitIdPattern = $fullVersionPattern
         }
-
-        $powerShellVersions = "1.0", "2.0", "3.0", "4.0", "5.0", "5.1", "6.0", "6.1", "6.2", "7.0", "7.1", "7.2", "7.3", "7.4"
-        $powerShellCompatibleVersions = $PSVersionTable.PSCompatibleVersions |
-            ForEach-Object {$_.ToString(2).SubString(0,3)}
     }
 
     It "Should have version table entries" {
@@ -163,15 +160,31 @@ Describe "PSVersionTable" -Tags "CI" {
         }
     }
 
-    It "Verify PSCompatibleVersions has an entry for all known versions of PowerShell" {
-        foreach ($version in $powerShellVersions) {
-            $version | Should -BeIn $powerShellCompatibleVersions
+    Context "PSCompatibleVersions property" {
+        It "Is of type System.Version[]" {
+            Should -ActualValue $PSVersionTable.PSCompatibleVersions -BeOfType System.Version[]
         }
-    }
 
-    It "Verify PSCompatibleVersions has no unknown PowerShell entries" {
-        foreach ($version in $powerShellCompatibleVersions) {
-            $version | Should -BeIn $powerShellVersions
+        It "Is sorted in ascending order" {
+            $array = $PSVersionTable.PSCompatibleVersions
+            [array]::Sort($array)
+
+            $PSVersionTable.PSCompatibleVersions | Should -Be $array
+        }
+
+        It "Has no unexpected items present" {
+            $expectedItems = @(
+                [version]::new(1, 0)
+                [version]::new(2, 0)
+                [version]::new(3, 0)
+                [version]::new(4, 0)
+                [version]::new(5, 0)
+                [version]::new(5, 1)
+                [version]::new(6, 0)
+                [version]::new(7, 0)
+            )
+
+            Compare-Object $expectedItems $PSVersionTable.PSCompatibleVersions | Should -Be $null
         }
     }
 }
