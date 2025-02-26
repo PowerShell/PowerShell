@@ -760,6 +760,20 @@ using `
         $completionText -join ' ' | Should -BeExactly 'Equals( new( ReferenceEquals('
     }
 
+    It 'Should complete variables assigned inside do while loop' {
+        $TestString =  'do{$Var1 = 1; $Var^ }while ($true)'
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '$Var1'
+    }
+
+    It 'Should complete variables assigned inside do until loop' {
+        $TestString =  'do{$Var1 = 1; $Var^ }until ($null = Get-ChildItem)'
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '$Var1'
+    }
+
     It 'Should show multiple constructors in the tooltip' {
         $res = TabExpansion2 -inputScript 'class ConstructorTestClass{ConstructorTestClass ([string] $s){}ConstructorTestClass ([int] $i){}ConstructorTestClass ([int] $i, [bool]$b){}};[ConstructorTestClass]::new'
         $res.CompletionMatches | Should -HaveCount 1
