@@ -605,7 +605,7 @@ using `
         $res.CompletionMatches[0].CompletionText | Should -Be '"Classic"'
     }
 
-    It 'Should work for property assignment of enum type with type inference' {
+    It 'Should work for variable assignment of enum type with type inference' {
         $res = TabExpansion2 -inputScript '[System.Management.Automation.ProgressView]$MyUnassignedVar = $psstyle.Progress.View; $MyUnassignedVar = "Class'
         $res.CompletionMatches[0].CompletionText | Should -Be '"Classic"'
     }

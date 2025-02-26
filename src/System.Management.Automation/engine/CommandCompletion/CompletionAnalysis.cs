@@ -1433,17 +1433,13 @@ namespace System.Management.Automation
                 }
             }
 
-            if (!TryGetInferredCompletionsForAssignment(memberExpression, context, out List<CompletionResult> result))
-            {
-                result = null;
-            }
-
+            _ = TryGetInferredCompletionsForAssignment(memberExpression, context, out List<CompletionResult> result);
             return result;
         }
 
         private static bool TryGetInferredCompletionsForAssignment(Ast expression, CompletionContext context, out List<CompletionResult> result)
         {
-            result = new List<CompletionResult>();
+            result = null;
             IList<PSTypeName> inferredTypes;
             if (expression.Parent is ConvertExpressionAst convertExpression)
             {
@@ -1473,7 +1469,7 @@ namespace System.Management.Automation
                 return false;
             }
 
-            var values = new HashSet<string>();
+            var values = new SortedSet<string>();
             foreach (PSTypeName type in inferredTypes)
             {
                 Type loadedType = type.Type;
@@ -1481,7 +1477,7 @@ namespace System.Management.Automation
                 {
                     if (loadedType.IsEnum)
                     {
-                        foreach (var value in Enum.GetNames(loadedType))
+                        foreach (string value in Enum.GetNames(loadedType))
                         {
                             _ = values.Add(value);
                         }
@@ -1515,8 +1511,10 @@ namespace System.Management.Automation
             {
                 wordToComplete = context.WordToComplete + "*";
             }
+
+            result = new List<CompletionResult>();
             var pattern = new WildcardPattern(wordToComplete, WildcardOptions.IgnoreCase);
-            foreach (var name in values.Order())
+            foreach (string name in values)
             {
                 string quotedName = GetQuotedString(name, context);
                 if (pattern.IsMatch(quotedName))
@@ -1527,6 +1525,7 @@ namespace System.Management.Automation
 
             if (result.Count == 0)
             {
+                result = null;
                 return false;
             }
 
