@@ -4842,6 +4842,13 @@ namespace System.Management.Automation
                 bool hadErrors;
                 var childItemOutput = context.Helper.ExecuteCurrentPowerShell(out _, out hadErrors);
 
+                if (childItemOutput.Count == 1 &&
+                    (pathInfo.Provider.FullName + "::" + pathInfo.ProviderPath).EqualsOrdinalIgnoreCase(childItemOutput[0].Properties["PSPath"].Value as string))
+                {
+                    // Get-ChildItem returned the item itself instead of the children so there must be no child items to complete.
+                    continue;
+                }
+
                 var childrenInfoTable = new Dictionary<string, bool>(childItemOutput.Count);
                 var childNameList = new List<string>(childItemOutput.Count);
 
@@ -5539,7 +5546,7 @@ namespace System.Management.Automation
             internal Type LastAssignedType;
         }
 
-        private sealed class FindVariablesVisitor : AstVisitor
+        private sealed class FindVariablesVisitor : AstVisitor2
         {
             internal Ast Top;
             internal Ast CompletionVariableAst;
@@ -5614,7 +5621,11 @@ namespace System.Management.Automation
             {
                 if (ast.Extent.StartOffset > StopSearchOffset)
                 {
-                    return AstVisitAction.StopVisit;
+                    // When visiting do while/until statements, the condition will be visited before the statement block.
+                    // The condition itself may not be interesting if it's after the cursor, but the statement block could be.
+                    return ast is PipelineBaseAst && ast.Parent is DoUntilStatementAst or DoWhileStatementAst
+                        ? AstVisitAction.SkipChildren
+                        : AstVisitAction.StopVisit;
                 }
 
                 return AstVisitAction.Continue;
@@ -5624,7 +5635,9 @@ namespace System.Management.Automation
             {
                 if (assignmentStatementAst.Extent.StartOffset > StopSearchOffset)
                 {
-                    return AstVisitAction.StopVisit;
+                    return assignmentStatementAst.Parent is DoUntilStatementAst or DoWhileStatementAst ?
+                        AstVisitAction.SkipChildren
+                        : AstVisitAction.StopVisit;
                 }
 
                 if (assignmentStatementAst.Left is AttributedExpressionAst attributedExpression)
