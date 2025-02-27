@@ -31,8 +31,7 @@ jobs:
 
               // Add the label to the issue
               await github.issues.addLabels({
-                ...context.repo,
-                issue_number: context.issue.number,
+                ...context.issue,
                 labels: [label],
               });
             } else {
