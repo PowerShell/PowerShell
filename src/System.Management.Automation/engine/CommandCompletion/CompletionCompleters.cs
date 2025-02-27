@@ -7752,44 +7752,34 @@ namespace System.Management.Automation
 
         internal static List<CompletionResult> CompleteHelpTopics(CompletionContext context)
         {
-            var results = new List<CompletionResult>();
-            string userHelpDir = HelpUtils.GetUserHomeHelpSearchPath();
-            string appHelpDir = Utils.GetApplicationBase(Utils.DefaultPowerShellShellID);
-            string currentCulture = CultureInfo.CurrentCulture.Name;
-
-            //search for help files for the current culture + en-US as fallback
-            var searchPaths = new string[]
+            ArrayList helpProviders = context.ExecutionContext.HelpSystem.HelpProviders;
+            HelpFileHelpProvider helpFileProvider = null;
+            for (int i = helpProviders.Count - 1; i >= 0; i--)
             {
-                Path.Combine(userHelpDir, currentCulture),
-                Path.Combine(appHelpDir, currentCulture),
-                Path.Combine(userHelpDir, "en-US"),
-                Path.Combine(appHelpDir, "en-US")
-            }.Distinct();
-
-            string wordToComplete = context.WordToComplete + "*";
-            try
-            {
-                var wildcardPattern = WildcardPattern.Get(wordToComplete, WildcardOptions.IgnoreCase);
-
-                foreach (var dir in searchPaths)
+                if (helpProviders[i] is HelpFileHelpProvider provider)
                 {
-                    var currentDir = new DirectoryInfo(dir);
-                    if (currentDir.Exists)
-                    {
-                        foreach (var file in currentDir.EnumerateFiles("about_*.help.txt"))
-                        {
-                            if (wildcardPattern.IsMatch(file.Name))
-                            {
-                                string topicName = file.Name.Substring(0, file.Name.LastIndexOf(".help.txt"));
-                                results.Add(new CompletionResult(topicName));
-                            }
-                        }
-                    }
+                    helpFileProvider = provider;
+                    break;
                 }
             }
-            catch (Exception)
+
+            if (helpFileProvider is null)
             {
+                return null;
             }
+
+            List<CompletionResult> results = new();
+            Collection<string> filesMatched = MUIFileSearcher.SearchFiles($"{context.WordToComplete}*.help.txt", helpFileProvider.GetExtendedSearchPaths());
+            foreach (string path in filesMatched)
+            {
+                string fileName = Path.GetFileName(path);
+                if (fileName.StartsWith("about_", StringComparison.OrdinalIgnoreCase))
+                {
+                    string topicName = fileName.Substring(0, fileName.Length - ".help.txt".Length);
+                    results.Add(new CompletionResult(topicName, topicName, CompletionResultType.ParameterValue, topicName));
+                }
+            }
+
             return results;
         }
 
