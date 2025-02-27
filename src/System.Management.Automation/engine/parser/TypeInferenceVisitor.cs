@@ -1373,6 +1373,7 @@ namespace System.Management.Automation
             {
                 // This is a function without an output type defined (or it's too generic to be useful)
                 // We can analyze the code inside the function to find out what it actually outputs
+                // The purpose of the hashset is to avoid infinite loops with functions that call themselves.
                 inferredTypes.AddRange(InferTypes(scriptBlockWithParams.Body));
                 return;
             }
