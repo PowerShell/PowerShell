@@ -13,11 +13,37 @@ permissions:
   actions: write
 
 jobs:
+  label:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add Label
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const comment = context.payload.comment.body;
+            const match = comment.match(/\/backport to release\/v(.*)/);
+            
+            if (match) {
+              const version = match;
+              const result = `Backport-${version}.x-Consider`;
+              console.log(result);
+            } else {
+              throw new Error("No version found in comment");
+            }
+            
+            const label = "Backport-${version}.x-Consider";
+            github.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              labels: ["LABEL_NAME"]
+            })
   backport:
+    needs: label
     if: ${{ contains(github.event.comment.body, '/backport to') || github.event_name == 'schedule' }}
     uses: dotnet/arcade/.github/workflows/backport-base.yml@main
     with:
-      repository_owners: powershell
+      repository_owners: 'powershell,travisez13'
       pr_description_template: |
         Backport of #%source_pr_number% to %target_branch%
 
