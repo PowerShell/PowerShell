@@ -36,7 +36,7 @@ jobs:
                 labels: [label],
               });
             } else {
-              throw new Error("No version found in comment");
+              throw new Error("No version found in comment.  Expected: /backport to release/vN.N");
             }
   backport:
     if: ${{ contains(github.event.comment.body, '/backport to') || github.event_name == 'schedule' }}
