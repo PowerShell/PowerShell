@@ -20,7 +20,6 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const github = require('@actions/github');
             const context = github.context;
             const comment = context.payload.comment.body;
             const match = comment.match(/\/backport to release\/v(.*)/);
