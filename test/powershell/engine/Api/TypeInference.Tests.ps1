@@ -650,8 +650,10 @@ Describe "Type inference Tests" -tags "CI" {
     }
 
     It "Infers type from variable with AllowSafeEval" {
-        function Hide-GetProcess { Get-Process }
-        $p = Hide-GetProcess
+        # Invoke-Expression is used to "hide" Get-Process from the type inference.
+        # If the typeinference code is updated to handle Invoke-Expression, this test will need to find some other way to set $p
+        # so that the type inference can't figure it out without evaluating the variable value
+        $p = Invoke-Expression -Command 'Get-Process'
         $res = [AstTypeInference]::InferTypeOf( { $p }.Ast, [TypeInferenceRuntimePermissions]::AllowSafeEval)
         $res.Name | Should -Be 'System.Diagnostics.Process'
     }
