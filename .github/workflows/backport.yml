@@ -22,7 +22,7 @@ jobs:
           script: |
             const comment = context.payload.comment.body;
             const match = comment.match(/\/backport to release\/v(.*)/);
-            
+
             if (match) {
               const version = match[1];
               const label = `Backport-${version}.x-Consider`;
@@ -30,7 +30,7 @@ jobs:
             } else {
               throw new Error("No version found in comment");
             }
-            
+
             github.issues.addLabels({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -38,7 +38,6 @@ jobs:
               labels: [label]
             })
   backport:
-    needs: label
     if: ${{ contains(github.event.comment.body, '/backport to') || github.event_name == 'schedule' }}
     uses: dotnet/arcade/.github/workflows/backport-base.yml@main
     with:
