@@ -1510,13 +1510,25 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Count | Should -Be 0
     }
 
-    It 'Infers type of command with some stream redirected to success' {
+    It 'Infers type of command with some streams redirected to success' {
         $res = [AstTypeInference]::InferTypeOf( { Get-PSDrive 3>&1 4>&1 }.Ast)
         $res.Count | Should -Be 3
         $ExpectedTypeNames = @(
             [PSDriveInfo].FullName
             [VerboseRecord].FullName
             [WarningRecord].FullName
+        ) -join ';'
+        ($res.Name | Sort-Object) -join ';' | Should -Be $ExpectedTypeNames
+    }
+
+    It 'Infers type of command with other streams redirected to success' {
+        $res = [AstTypeInference]::InferTypeOf( { Get-PSDrive 2>&1 5>&1 6>&1 }.Ast)
+        $res.Count | Should -Be 4
+        $ExpectedTypeNames = @(
+            [DebugRecord].FullName
+            [ErrorRecord].FullName
+            [InformationRecord].FullName
+            [PSDriveInfo].FullName
         ) -join ';'
         ($res.Name | Sort-Object) -join ';' | Should -Be $ExpectedTypeNames
     }
