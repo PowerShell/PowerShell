@@ -30,7 +30,7 @@ jobs:
               console.log(label);
 
               // Add the label to the issue
-              await github.issues.addLabels({
+              await github.rest.issues.addLabels({
                 ...context.issue,
                 labels: [label],
               });
