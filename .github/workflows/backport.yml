@@ -42,7 +42,7 @@ jobs:
     if: ${{ contains(github.event.comment.body, '/backport to') || github.event_name == 'schedule' }}
     uses: dotnet/arcade/.github/workflows/backport-base.yml@main
     with:
-      repository_owners: 'powershell,travisez13'
+      repository_owners: 'powershell'
       pr_description_template: |
         Backport of #%source_pr_number% to %target_branch%
 
