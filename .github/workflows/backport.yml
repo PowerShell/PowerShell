@@ -24,7 +24,7 @@ jobs:
             const match = comment.match(/\/backport to release\/v(.*)/);
             
             if (match) {
-              const version = match;
+              const version = match[1];
               const result = `Backport-${version}.x-Consider`;
               console.log(result);
             } else {
