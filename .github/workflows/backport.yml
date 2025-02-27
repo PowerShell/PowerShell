@@ -14,6 +14,7 @@ permissions:
 
 jobs:
   label:
+    if: ${{ contains(github.event.comment.body, '/backport to') }}
     runs-on: ubuntu-latest
     steps:
       - name: Add Label
@@ -40,6 +41,8 @@ jobs:
             }
   backport:
     if: ${{ contains(github.event.comment.body, '/backport to') || github.event_name == 'schedule' }}
+    # validates our branch format and that the issue is labeled before backport
+    needs: label
     uses: dotnet/arcade/.github/workflows/backport-base.yml@main
     with:
       repository_owners: 'powershell,travisez13'
