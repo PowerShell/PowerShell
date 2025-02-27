@@ -20,6 +20,8 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
+            const github = require('@actions/github');
+            const context = github.context;
             const comment = context.payload.comment.body;
             const match = comment.match(/\/backport to release\/v(.*)/);
 
@@ -27,16 +29,16 @@ jobs:
               const version = match[1];
               const label = `Backport-${version}.x-Consider`;
               console.log(label);
+
+              github.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                labels: [label]
+              });
             } else {
               throw new Error("No version found in comment");
             }
-
-            github.issues.addLabels({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              labels: [label]
-            })
   backport:
     if: ${{ contains(github.event.comment.body, '/backport to') || github.event_name == 'schedule' }}
     uses: dotnet/arcade/.github/workflows/backport-base.yml@main
