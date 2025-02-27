@@ -110,7 +110,7 @@ jobs:
         Write-Verbose -Message "LTS Release: $LTS"
       }
 
-      Start-PSBootstrap -Package
+      Start-PSBootstrap -Scenario Package
 
       $macosRuntime = "osx-$buildArch"
 

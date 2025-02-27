@@ -10,11 +10,11 @@
     <InformationalVersion>1.0.0</InformationalVersion>
     <TargetFrameworks>net9.0</TargetFrameworks>
     <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
-    <LangVersion>11.0</LangVersion>
+    <LangVersion>13.0</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="System.Management.Automation" Version="7.4.0-preview.6" />
+    <PackageReference Include="System.Management.Automation" Version="7.6.0-preview.2" />
   </ItemGroup>
 </Project>

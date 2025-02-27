@@ -43,6 +43,7 @@ $Script:powershell_team = @(
     "Patrick Meinecke"
     "Steven Bucher"
     "PowerShell Team Bot"
+    "Justin Chung"
 )
 
 # They are very active contributors, so we keep their email-login mappings here to save a few queries to Github.
@@ -808,7 +809,7 @@ function Invoke-PRBackport {
         $PrNumber,
 
         [Parameter(Mandatory)]
-        [ValidateScript({$_ -match '^release/v\d+\.\d+\.\d+'})]
+        [ValidateScript({$_ -match '^release/v\d+\.\d+(\.\d+)?'})]
         [string]
         $Target,
 

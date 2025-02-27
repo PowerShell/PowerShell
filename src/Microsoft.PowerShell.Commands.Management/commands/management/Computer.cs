@@ -2055,25 +2055,6 @@ $result
         }
 
         /// <summary>
-        /// System Restore APIs are not supported on the ARM platform. Skip the system restore operation is necessary.
-        /// </summary>
-        /// <param name="cmdlet"></param>
-        /// <returns></returns>
-        internal static bool SkipSystemRestoreOperationForARMPlatform(PSCmdlet cmdlet)
-        {
-            bool retValue = false;
-            if (PsUtils.IsRunningOnProcessorArchitectureARM())
-            {
-                var ex = new InvalidOperationException(ComputerResources.SystemRestoreNotSupported);
-                var er = new ErrorRecord(ex, "SystemRestoreNotSupported", ErrorCategory.InvalidOperation, null);
-                cmdlet.WriteError(er);
-                retValue = true;
-            }
-
-            return retValue;
-        }
-
-        /// <summary>
         /// Invokes the Win32Shutdown command on provided target computer using WSMan
         /// over a CIMSession.  The flags parameter determines the type of shutdown operation
         /// such as shutdown, reboot, force etc.
