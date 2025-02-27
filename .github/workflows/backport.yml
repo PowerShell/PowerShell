@@ -25,13 +25,12 @@ jobs:
             
             if (match) {
               const version = match[1];
-              const result = `Backport-${version}.x-Consider`;
+              const label = `Backport-${version}.x-Consider`;
               console.log(result);
             } else {
               throw new Error("No version found in comment");
             }
             
-            const label = "Backport-${version}.x-Consider";
             github.issues.addLabels({
               owner: context.repo.owner,
               repo: context.repo.repo,
