@@ -45,7 +45,10 @@ jobs:
       pr_description_template: |
         Backport of #%source_pr_number% to %target_branch%
 
-        <!-- $$$originalpr:%source_pr_number$$$ -->
+        <!--
+        DO NOT MODIFY THIS COMMENT. IT IS AUTO-GENERATED.
+        $$$originalpr:%source_pr_number%$$$
+        -->
 
         /cc %cc_users%
 
