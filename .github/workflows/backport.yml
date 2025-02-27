@@ -1,0 +1,49 @@
+name: Backport PR to branch
+on:
+  issue_comment:
+    types: [created]
+  schedule:
+    # once a day at 13:00 UTC to cleanup old runs
+    - cron: '0 13 * * *'
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  actions: write
+
+jobs:
+  backport:
+    if: ${{ contains(github.event.comment.body, '/backport to') || github.event_name == 'schedule' }}
+    uses: dotnet/arcade/.github/workflows/backport-base.yml@main
+    with:
+      repository_owners: powershell
+      pr_description_template: |
+        Backport of #%source_pr_number% to %target_branch%
+
+        <-- $$$originalpr:%source_pr_number$$$ -->
+
+        /cc %cc_users%
+
+        ## Customer Impact
+
+        - [ ] Customer reported
+        - [ ] Found internally
+
+        [Select one or both of the boxes. Describe how this issue impacts customers, citing the expected and actual behaviors and scope of the issue. If customer-reported, provide the issue number.]
+
+        ## Regression
+
+        - [ ] Yes
+        - [ ] No
+
+        [If yes, specify when the regression was introduced. Provide the PR or commit if known.]
+
+        ## Testing
+
+        [How was the fix verified? How was the issue missed previously? What tests were added?]
+
+        ## Risk
+
+        [High/Medium/Low. Justify the indication by mentioning how risks were measured and addressed.]
+
