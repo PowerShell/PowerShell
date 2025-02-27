@@ -1276,6 +1276,7 @@ namespace System.Management.Automation
         {
             if (commandAst.CommandElements[0] is ScriptBlockExpressionAst scriptBlock)
             {
+                // An anonymous function like: & {"Do Something"}
                 inferredTypes.AddRange(InferTypes(scriptBlock.ScriptBlock));
                 return;
             }
@@ -1370,6 +1371,8 @@ namespace System.Management.Automation
                 && scriptCommandInfo.ScriptBlock.Ast is IParameterMetadataProvider scriptBlockWithParams
                 && _context.AnalyzedCommands.Add(scriptBlockWithParams))
             {
+                // This is a function without an output type defined (or it's too generic to be useful)
+                // We can analyze the code inside the function to find out what it actually outputs
                 inferredTypes.AddRange(InferTypes(scriptBlockWithParams.Body));
                 return;
             }
