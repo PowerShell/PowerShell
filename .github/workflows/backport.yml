@@ -45,7 +45,7 @@ jobs:
       pr_description_template: |
         Backport of #%source_pr_number% to %target_branch%
 
-        <-- $$$originalpr:%source_pr_number$$$ -->
+        <!-- $$$originalpr:%source_pr_number$$$ -->
 
         /cc %cc_users%
 
