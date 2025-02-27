@@ -5797,6 +5797,46 @@ namespace System.Management.Automation
                     }
                 }
 
+                foreach (RedirectionAst redirection in commandAst.Redirections)
+                {
+                    if (redirection is FileRedirectionAst fileRedirection
+                        && fileRedirection.Location is StringConstantExpressionAst redirectTarget
+                        && redirectTarget.Value.StartsWith("variable:", StringComparison.OrdinalIgnoreCase)
+                        && redirectTarget.Value.Length > "variable:".Length)
+                    {
+                        string varName = redirectTarget.Value.Substring("variable:".Length);
+                        PSTypeName varType;
+                        switch (fileRedirection.FromStream)
+                        {
+                            case RedirectionStream.Error:
+                                varType = new PSTypeName(typeof(ErrorRecord));
+                                break;
+
+                            case RedirectionStream.Warning:
+                                varType = new PSTypeName(typeof(WarningRecord));
+                                break;
+
+                            case RedirectionStream.Verbose:
+                                varType = new PSTypeName(typeof(VerboseRecord));
+                                break;
+
+                            case RedirectionStream.Debug:
+                                varType = new PSTypeName(typeof(DebugRecord));
+                                break;
+
+                            case RedirectionStream.Information:
+                                varType = new PSTypeName(typeof(InformationRecord));
+                                break;
+
+                            default:
+                                varType = null;
+                                break;
+                        }
+
+                        SaveVariableInfo(varName, varType, isConstraint: false);
+                    }
+                }
+
                 return AstVisitAction.Continue;
             }
 
