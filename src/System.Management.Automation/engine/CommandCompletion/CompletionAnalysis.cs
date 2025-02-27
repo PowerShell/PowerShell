@@ -1963,7 +1963,12 @@ namespace System.Management.Automation
                         switch (usingState.UsingStatementKind)
                         {
                             case UsingStatementKind.Assembly:
-                                break;
+                                HashSet<string> assemblyExtensions = new(StringComparer.OrdinalIgnoreCase)
+                                {
+                                    StringLiterals.PowerShellILAssemblyExtension
+                                };
+                                return CompletionCompleters.CompleteFilename(completionContext, containerOnly: false, assemblyExtensions).ToList();
+
                             case UsingStatementKind.Command:
                                 break;
                             case UsingStatementKind.Module:

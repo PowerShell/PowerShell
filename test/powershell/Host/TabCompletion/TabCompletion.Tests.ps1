@@ -1830,6 +1830,34 @@ class InheritedClassTest : System.Attribute
             $res.CompletionMatches[0].CompletionText | Should -Be "`"$expectedPath`""
         }
 
+        It "Relative path completion for using <UsingKind> statement when AST extent has file identity" -TestCases @(
+            @{UsingKind = "module";  ExpectedFileName = 'UsingFileCompletionModuleTest.psm1'}
+            @{UsingKind = "assembly";ExpectedFileName = 'UsingFileCompletionAssemblyTest.dll'}
+        ) -test {
+            param($UsingKind, $ExpectedFileName)
+            $scriptText = "using $UsingKind .\UsingFileCompletion"
+            $tokens = $null
+            $scriptAst = [System.Management.Automation.Language.Parser]::ParseInput(
+                $scriptText,
+                (Join-Path -Path $tempDir -ChildPath ScriptInEditor.ps1),
+                [ref] $tokens,
+                [ref] $null)
+
+            $cursorPosition = $scriptAst.Extent.StartScriptPosition.
+                GetType().
+                GetMethod('CloneWithNewOffset', [System.Reflection.BindingFlags]'NonPublic, Instance').
+                Invoke($scriptAst.Extent.StartScriptPosition, @($scriptText.Length - 1))
+
+            Push-Location -LiteralPath $PSHOME
+            $TestFile = Join-Path -Path $tempDir -ChildPath $ExpectedFileName
+            $null = New-Item -Path $TestFile
+            $res = TabExpansion2 -ast $scriptAst -tokens $tokens -positionOfCursor $cursorPosition
+            Pop-Location
+                        
+            $ExpectedPath = Join-Path -Path '.\' -ChildPath $ExpectedFileName
+            $res.CompletionMatches.CompletionText | Where-Object {$_ -Like "*$ExpectedFileName"} | Should -Be $ExpectedPath
+        }
+
         It "Should handle '~' in completiontext when it's used to refer to home in input" {
             $res = TabExpansion2 -inputScript "~$separator"
             # select the first answer which does not have a space in the completion (those completions look like & '3D Objects')
