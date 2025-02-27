@@ -29,11 +29,11 @@ jobs:
               const label = `Backport-${version}.x-Consider`;
               console.log(label);
 
-              github.issues.addLabels({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
+              // Add the label to the issue
+              await github.issues.addLabels({
+                ...context.repo,
                 issue_number: context.issue.number,
-                labels: [label]
+                labels: [label],
               });
             } else {
               throw new Error("No version found in comment");
