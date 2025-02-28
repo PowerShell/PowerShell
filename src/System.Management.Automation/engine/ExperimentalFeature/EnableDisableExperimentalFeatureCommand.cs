@@ -102,39 +102,28 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Provides argument completion for ExperimentalFeature names.
     /// </summary>
-    public class ExperimentalFeatureNameCompleter : IArgumentCompleter
+    public sealed class ExperimentalFeatureNameCompleter : ArgumentCompleter
     {
         /// <summary>
-        /// Returns completion results for experimental feature names used as arguments to experimental feature cmdlets.
+        /// Gets possible completion values for experimental feature names.
         /// </summary>
-        /// <param name="commandName">The command name.</param>
-        /// <param name="parameterName">The parameter name.</param>
-        /// <param name="wordToComplete">The word to complete.</param>
-        /// <param name="commandAst">The command AST.</param>
-        /// <param name="fakeBoundParameters">The fake bound parameters.</param>
-        /// <returns>List of Completion Results.</returns>
-        public IEnumerable<CompletionResult> CompleteArgument(
-            string commandName,
-            string parameterName,
-            string wordToComplete,
-            CommandAst commandAst,
-            IDictionary fakeBoundParameters)
-        {
-            SortedSet<string> expirmentalFeatures = new(StringComparer.OrdinalIgnoreCase);
-
-            foreach (ExperimentalFeature feature in GetExperimentalFeatures())
-            {
-                expirmentalFeatures.Add(feature.Name);
-            }
-
-            return CompletionCompleters.GetMatchingResults(wordToComplete, expirmentalFeatures);
-        }
-
-        private static Collection<ExperimentalFeature> GetExperimentalFeatures()
+        /// <returns>List of possible completion values.</returns>
+        protected override IEnumerable<string> GetPossibleCompletionValues()
         {
             using var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
+
             ps.AddCommand("Get-ExperimentalFeature");
-            return ps.Invoke<ExperimentalFeature>();
+
+            Collection<ExperimentalFeature> expirmentalFeatures = ps.Invoke<ExperimentalFeature>();
+
+            SortedSet<string> featureNames = new(StringComparer.OrdinalIgnoreCase);
+
+            foreach (ExperimentalFeature feature in expirmentalFeatures)
+            {
+                featureNames.Add(feature.Name);
+            }
+
+            return featureNames;
         }
     }
 }
