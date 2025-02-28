@@ -1380,15 +1380,16 @@ namespace Microsoft.PowerShell.Commands
             var prevalidated = false;
             var values = new List<string>(ValueCountGuestimate);
             var builder = new StringBuilder(LineLengthGuestimate);
+
             while (true)
             {
                 ParseNextRecord(values, builder);
                 if (values.Count == 0)
                     break;
 
-                if (values.Count == 1 && string.IsNullOrEmpty(values[0]))
+                if (values.Count == 1 && string.IsNullOrEmpty(values[0]) && !(_cmdlet is ConvertFromCsvCommand))
                 {
-                    // skip the blank lines
+                    // Skip empty lines when Import-CSV but keep empty lines when ConvertFromCSV
                     continue;
                 }
 

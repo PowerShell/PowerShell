@@ -80,3 +80,123 @@ Describe "ConvertFrom-Csv DRT Unit Tests" -Tags "CI" {
         $result[1].Header2 | Should -BeExactly "2"
     }
 }
+
+Describe "ConvertFrom-Csv with empty and null values" {
+
+    Context 'Empty CSV Fields' {
+        $testCases = @(
+            @{
+                Test     = '1a'
+                Expected = [pscustomobject] @{ P1 = '' }
+                InputCsv = @'
+"P1"
+""
+'@
+            }
+            @{
+                Test     = '1b'
+                Expected = [pscustomobject] @{ P1 = '' }, [pscustomobject] @{ P1 = '' }, [pscustomobject] @{ P1 = '' }
+                InputCsv = @'
+"P1"
+""
+""
+""
+'@
+            }
+            @{
+                Test     = '2a'
+                Expected = [pscustomobject] @{ P1 = ''; P2 = $null }
+                InputCsv = @'
+"P1","P2"
+"",
+'@
+            }
+            @{
+                Test     = '2b'
+                Expected = [pscustomobject] @{ P1 = ''; P2 = '' }, [pscustomobject] @{ P1 = ''; P2 = $null }
+                InputCsv = @'
+"P1","P2"
+"",
+"",
+'@
+            }
+            @{
+                Test     = '3a'
+                Expected = [pscustomobject] @{ P1 = ''; P2 = $null }
+                InputCsv = @'
+"P1","P2"
+,
+'@
+            }
+            @{
+                Test     = '3b'
+                Expected = [pscustomobject] @{ P1 = ''; P2 = '' }, [pscustomobject] @{ P1 = ''; P2 = $null }
+                InputCsv = @'
+"P1","P2"
+,
+,
+'@
+            }
+            @{
+                Test     = '4a'
+                Expected = [pscustomobject] @{ P1 = ''; P2 = '' }
+                InputCsv = @'
+"P1","P2"
+,""
+'@
+            }
+            @{
+                Test     = '4b'
+                Expected = [pscustomobject] @{ P1 = ''; P2 = '' }, [pscustomobject] @{ P1 = ''; P2 = '' }
+                InputCsv = @'
+"P1","P2"
+,""
+,""
+'@
+            }
+            @{
+                Test     = '5a'
+                Expected = [pscustomobject] @{ P1 = ''; P2 = '' }
+                InputCsv = @'
+"P1","P2"
+"",""
+'@
+            }
+            @{
+                Test     = '5b'
+                Expected = [pscustomobject] @{ P1 = ''; P2 = '' }, [pscustomobject] @{ P1 = ''; P2 = '' }
+                InputCsv = @'
+"P1","P2"
+"",""
+"",""
+'@
+            }
+            @{
+                Test     = '6a'
+                Expected = [pscustomobject] @{ P1 = ''; P2 = ''; P3 = $null }
+                InputCsv = @'
+"P1","P2","P3"
+,,
+'@
+            }
+            @{
+                Test     = '6b'
+                Expected = [pscustomobject] @{ P1 = ''; P2 = ''; P3 = '' }, [pscustomobject] @{ P1 = ''; P2 = ''; P3 = $null }
+                InputCsv = @'
+"P1","P2","P3"
+,,
+,,
+'@
+            }
+        )
+
+        It 'ConvertFrom-Csv correctly deserializes input CSV' {
+            foreach ($testCase in $testCases) {
+                $expectedResult = $testCase.Expected | ConvertTo-Csv
+                $actualResult   = $testCase.InputCsv | ConvertFrom-Csv | ConvertTo-Csv
+        
+                $actualResult | Should -BeExactly $expectedResult
+            }
+        }
+    }
+}
