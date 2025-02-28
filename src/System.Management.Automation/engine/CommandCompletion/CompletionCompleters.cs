@@ -658,6 +658,7 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(bindingInfo.InfoType.Equals(PseudoBindingInfoType.PseudoBindingSucceed), "The pseudo binding should succeed");
             List<CompletionResult> result = new List<CompletionResult>();
+            Assembly commandAssembly = bindingInfo.CommandInfo.CommandMetadata.CommandType.Assembly;
 
             if (parameterName == string.Empty)
             {
@@ -665,7 +666,8 @@ namespace System.Management.Automation
                     parameterName,
                     bindingInfo.ValidParameterSetsFlags,
                     bindingInfo.UnboundParameters,
-                    withColon);
+                    withColon,
+                    commandAssembly);
                 return result;
             }
 
@@ -687,7 +689,8 @@ namespace System.Management.Automation
                         parameterName,
                         bindingInfo.ValidParameterSetsFlags,
                         bindingInfo.UnboundParameters,
-                        withColon);
+                        withColon,
+                        commandAssembly);
                 }
 
                 return result;
@@ -702,7 +705,8 @@ namespace System.Management.Automation
                         parameterName,
                         bindingInfo.ValidParameterSetsFlags,
                         bindingInfo.BoundParameters.Values,
-                        withColon);
+                        withColon,
+                        commandAssembly);
                 }
 
                 return result;
@@ -766,7 +770,8 @@ namespace System.Management.Automation
                     parameterName,
                     bindingInfo.ValidParameterSetsFlags,
                     bindingInfo.UnboundParameters,
-                    withColon);
+                    withColon,
+                    commandAssembly);
                 return result;
             }
 
@@ -774,11 +779,31 @@ namespace System.Management.Automation
 
             WildcardPattern pattern = WildcardPattern.Get(parameterName + "*", WildcardOptions.IgnoreCase);
             string parameterType = "[" + ToStringCodeMethods.Type(param.Parameter.Type, dropNamespaces: true) + "] ";
+
+            string helpMessage = null;
+            if (param.Parameter.CompiledAttributes is not null)
+            {
+                foreach (Attribute attr in param.Parameter.CompiledAttributes)
+                {
+                    if (attr is ParameterAttribute pattr)
+                    {
+                        helpMessage = GetParameterHelpMessage(
+                            pattr,
+                            commandAssembly);
+                        break;
+                    }
+                }
+            }
+            if (!string.IsNullOrWhiteSpace(helpMessage))
+            {
+                helpMessage = $" - {helpMessage.Trim()}";
+            }
+
             string colonSuffix = withColon ? ":" : string.Empty;
             if (pattern.IsMatch(matchedParameterName))
             {
                 string completionText = "-" + matchedParameterName + colonSuffix;
-                string tooltip = parameterType + matchedParameterName;
+                string tooltip = parameterType + matchedParameterName + helpMessage;
                 result.Add(new CompletionResult(completionText, matchedParameterName, CompletionResultType.ParameterName, tooltip));
             }
             else
@@ -792,13 +817,45 @@ namespace System.Management.Automation
                             $"-{alias}{colonSuffix}",
                             alias,
                             CompletionResultType.ParameterName,
-                            parameterType + alias));
+                            parameterType + alias + helpMessage));
                     }
                 }
             }
 
             return result;
         }
+
+#nullable enable
+        /// <summary>
+        /// Gets the help message text for the parameter attribute.
+        /// </summary>
+        /// <param name="attr">The attribute to check for the help message.</param>
+        /// <param name="assembly">The assembly to lookup resources messages, this should be the assembly the cmdlet is defined in.</param>
+        /// <returns>The help message of the parameter or <c>null</c> if none is defined.></returns>
+        private static string? GetParameterHelpMessage(
+            ParameterAttribute attr,
+            Assembly? assembly = null)
+        {
+            if (!string.IsNullOrWhiteSpace(attr.HelpMessage))
+            {
+                return attr.HelpMessage.Trim();
+            }
+
+            if (assembly is null || string.IsNullOrWhiteSpace(attr.HelpMessageBaseName) || string.IsNullOrWhiteSpace(attr.HelpMessageResourceId))
+            {
+                return null;
+            }
+
+            try
+            {
+                return ResourceManagerCache.GetResourceString(assembly, attr.HelpMessageBaseName, attr.HelpMessageResourceId)?.Trim();
+            }
+            catch (Exception e)
+            {
+                return $"Failed to find the help message: {e.Message}";
+            }
+        }
+#nullable disable
 
         /// <summary>
         /// Get the parameter completion results by using the given valid parameter sets and available parameters.
@@ -807,12 +864,14 @@ namespace System.Management.Automation
         /// <param name="validParameterSetFlags"></param>
         /// <param name="parameters"></param>
         /// <param name="withColon"></param>
+        /// <param name="commandAssembly">Optional assembly used to lookup parameter help messages.</param>
         /// <returns></returns>
         private static List<CompletionResult> GetParameterCompletionResults(
             string parameterName,
             uint validParameterSetFlags,
             IEnumerable<MergedCompiledCommandParameter> parameters,
-            bool withColon)
+            bool withColon,
+            Assembly commandAssembly = null)
         {
             var result = new List<CompletionResult>();
             var commonParamResult = new List<CompletionResult>();
@@ -828,6 +887,7 @@ namespace System.Management.Automation
 
                 string name = param.Parameter.Name;
                 string type = "[" + ToStringCodeMethods.Type(param.Parameter.Type, dropNamespaces: true) + "] ";
+                string helpMessage = null;
                 bool isCommonParameter = Cmdlet.CommonParameters.Contains(name, StringComparer.OrdinalIgnoreCase);
                 List<CompletionResult> listInUse = isCommonParameter ? commonParamResult : result;
 
@@ -843,20 +903,27 @@ namespace System.Management.Automation
                     {
                         foreach (var attr in compiledAttributes)
                         {
-                            var pattr = attr as ParameterAttribute;
-                            if (pattr != null && pattr.DontShow)
+                            if (attr is not ParameterAttribute pattr)
+                            {
+                                continue;
+                            }
+
+                            helpMessage = GetParameterHelpMessage(pattr, commandAssembly);
+                            if (pattr.DontShow)
                             {
                                 showToUser = false;
                                 addCommonParameters = false;
-                                break;
                             }
+                            break;
                         }
                     }
 
                     if (showToUser)
                     {
                         string completionText = "-" + name + colonSuffix;
-                        string tooltip = type + name;
+                        string tooltip = string.IsNullOrWhiteSpace(helpMessage)
+                            ? $"{type}{name}"
+                            : $"{type}{name} - {helpMessage}";
                         listInUse.Add(new CompletionResult(completionText, name, CompletionResultType.ParameterName,
                                                            tooltip));
                     }
