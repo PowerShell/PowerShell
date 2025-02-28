@@ -6533,6 +6533,13 @@ namespace System.Management.Automation.Language
 
     internal sealed class PSInvokeMemberBinder : InvokeMemberBinder
     {
+        [TraceSource("MethodInvocation", "Traces the invocation of .NET methods.")]
+        internal static readonly PSTraceSource MethodInvocationTracer =
+            PSTraceSource.GetTracer(
+                "MethodInvocation",
+                "Traces the invocation of .NET methods.",
+                false);
+
         internal enum MethodInvocationType
         {
             Ordinary,
@@ -6941,6 +6948,17 @@ namespace System.Management.Automation.Language
                 if (expr.Type == typeof(void))
                 {
                     expr = Expression.Block(expr, ExpressionCache.AutomationNullConstant);
+                }
+
+                if (MethodInvocationTracer.IsEnabled)
+                {
+                    expr = Expression.Block(
+                        Expression.Call(
+                            Expression.Constant(MethodInvocationTracer),
+                            CachedReflectionInfo.PSTraceSource_WriteLine,
+                            Expression.Constant("Invoking method: {0}"),
+                            Expression.Constant(result.methodDefinition)),
+                        expr);
                 }
 
                 // Expression block runs two expressions in order:
