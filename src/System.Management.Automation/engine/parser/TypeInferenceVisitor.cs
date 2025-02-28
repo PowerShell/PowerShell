@@ -150,6 +150,8 @@ namespace System.Management.Automation
 
         public TypeDefinitionAst CurrentTypeDefinitionAst { get; set; }
 
+        public HashSet<IParameterMetadataProvider> AnalyzedCommands { get; } = new HashSet<IParameterMetadataProvider>();
+
         public TypeInferenceRuntimePermissions RuntimePermissions { get; set; }
 
         internal PowerShellExecutionHelper Helper { get; }
@@ -1339,6 +1341,13 @@ namespace System.Management.Automation
                 }
             }
 
+            if (commandAst.CommandElements[0] is ScriptBlockExpressionAst scriptBlock)
+            {
+                // An anonymous function like: & {"Do Something"}
+                inferredTypes.AddRange(InferTypes(scriptBlock.ScriptBlock));
+                return;
+            }
+
             PseudoBindingInfo pseudoBinding = new PseudoParameterBinder()
             .DoPseudoParameterBinding(commandAst, null, null, PseudoParameterBinder.BindingType.ParameterCompletion);
 
@@ -1419,6 +1428,21 @@ namespace System.Management.Automation
 
                     return;
                 }
+            }
+
+            if ((commandInfo.OutputType.Count == 0
+                || (commandInfo.OutputType.Count == 1
+                && (commandInfo.OutputType[0].Name.EqualsOrdinalIgnoreCase(typeof(PSObject).FullName)
+                || commandInfo.OutputType[0].Name.EqualsOrdinalIgnoreCase(typeof(object).FullName))))
+                && commandInfo is IScriptCommandInfo scriptCommandInfo
+                && scriptCommandInfo.ScriptBlock.Ast is IParameterMetadataProvider scriptBlockWithParams
+                && _context.AnalyzedCommands.Add(scriptBlockWithParams))
+            {
+                // This is a function without an output type defined (or it's too generic to be useful)
+                // We can analyze the code inside the function to find out what it actually outputs
+                // The purpose of the hashset is to avoid infinite loops with functions that call themselves.
+                inferredTypes.AddRange(InferTypes(scriptBlockWithParams.Body));
+                return;
             }
 
             // The OutputType property ignores the parameter set specified in the OutputTypeAttribute.
