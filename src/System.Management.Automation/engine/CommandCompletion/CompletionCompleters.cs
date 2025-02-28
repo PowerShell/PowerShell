@@ -4593,20 +4593,41 @@ namespace System.Management.Automation
                 basePath = EscapePath(basePath, stringType, useLiteralPath, out _);
             }
 
-            _ = context.Helper
+            PowerShell currentPS = context.Helper
                 .AddCommandWithPreferenceSetting("Microsoft.PowerShell.Management\\Resolve-Path")
                 .AddParameter("Path", basePath);
+
+            string relativeBasePath;
+            var useRelativePath = context.GetOption("RelativePaths", @default: defaultRelativePath);
+            if (useRelativePath)
+            {
+                if (providerSeparatorIndex != -1)
+                {
+                    // User must have requested relative paths but that's not valid with provider paths.
+                    return CommandCompletion.EmptyCompletionResult;
+                }
+
+                var lastAst = context.RelatedAsts[^1];
+                if (lastAst.Parent is UsingStatementAst usingStatement
+                    && usingStatement.UsingStatementKind is UsingStatementKind.Module or UsingStatementKind.Assembly
+                    && lastAst.Extent.File is not null)
+                {
+                    relativeBasePath = Directory.GetParent(lastAst.Extent.File).FullName;
+                    _ = currentPS.AddParameter("RelativeBasePath", relativeBasePath);
+                }
+                else
+                {
+                    relativeBasePath = context.ExecutionContext.SessionState.Internal.CurrentLocation.ProviderPath;
+                }
+            }
+            else
+            {
+                relativeBasePath = string.Empty;
+            }
 
             var resolvedPaths = context.Helper.ExecuteCurrentPowerShell(out _);
             if (resolvedPaths is null || resolvedPaths.Count == 0)
             {
-                return CommandCompletion.EmptyCompletionResult;
-            }
-
-            var useRelativePath = context.GetOption("RelativePaths", @default: defaultRelativePath);
-            if (useRelativePath && providerSeparatorIndex != -1)
-            {
-                // User must have requested relative paths but that's not valid with provider paths.
                 return CommandCompletion.EmptyCompletionResult;
             }
 
@@ -4640,7 +4661,8 @@ namespace System.Management.Automation
                         useLiteralPath,
                         inputUsedHomeChar,
                         providerPrefix,
-                        stringType);
+                        stringType,
+                        relativeBasePath);
                     break;
 
                 default:
@@ -4675,6 +4697,7 @@ namespace System.Management.Automation
         /// <param name="inputUsedHome"></param>
         /// <param name="providerPrefix"></param>
         /// <param name="stringType"></param>
+        /// <param name="relativeBasePath"></param>
         /// <returns></returns>
         private static List<CompletionResult> GetFileSystemProviderResults(
             CompletionContext context,
@@ -4687,7 +4710,8 @@ namespace System.Management.Automation
             bool literalPaths,
             bool inputUsedHome,
             string providerPrefix,
-            StringConstantType stringType)
+            StringConstantType stringType,
+            string relativeBasePath)
         {
 #if DEBUG
             Diagnostics.Assert(provider.Name.Equals(FileSystemProvider.ProviderName), "Provider should be filesystem provider.");
@@ -4762,7 +4786,7 @@ namespace System.Management.Automation
                     {
                         basePath = context.ExecutionContext.EngineSessionState.NormalizeRelativePath(
                             entry.FullName,
-                            context.ExecutionContext.SessionState.Internal.CurrentLocation.ProviderPath);
+                            relativeBasePath);
                         if (!basePath.StartsWith($"..{provider.ItemSeparator}", StringComparison.Ordinal))
                         {
                             basePath = $".{provider.ItemSeparator}{basePath}";
@@ -5326,11 +5350,19 @@ namespace System.Management.Automation
                         continue;
                     }
 
-                    var varInfo = findVariablesVisitor.VariableInfoTable[varName];
-                    var varType = varInfo.LastDeclaredConstraint ?? varInfo.LastAssignedType;
-                    var toolTip = varType is null
-                        ? varName
-                        : StringUtil.Format("[{0}]${1}", ToStringCodeMethods.Type(varType, dropNamespaces: true), varName);
+                    VariableInfo varInfo = findVariablesVisitor.VariableInfoTable[varName];
+                    PSTypeName varType = varInfo.LastDeclaredConstraint ?? varInfo.LastAssignedType;
+                    string toolTip;
+                    if (varType is null)
+                    {
+                        toolTip = varName;
+                    }
+                    else
+                    {
+                        toolTip = varType.Type is not null
+                            ? StringUtil.Format("[{0}]${1}", ToStringCodeMethods.Type(varType.Type, dropNamespaces: true), varName)
+                            : varType.Name;
+                    }
 
                     var completionText = !tokenAtCursorUsedBraces && !ContainsCharactersRequiringQuotes(varName)
                         ? prefix + scopePrefix + varName
@@ -5542,8 +5574,8 @@ namespace System.Management.Automation
 
         private sealed class VariableInfo
         {
-            internal Type LastDeclaredConstraint;
-            internal Type LastAssignedType;
+            internal PSTypeName LastDeclaredConstraint;
+            internal PSTypeName LastAssignedType;
         }
 
         private sealed class FindVariablesVisitor : AstVisitor2
@@ -5555,34 +5587,34 @@ namespace System.Management.Automation
             internal int StopSearchOffset;
             internal TypeInferenceContext Context;
 
-            private static Type GetInferredVarTypeFromAst(Ast ast)
+            private static PSTypeName GetInferredVarTypeFromAst(Ast ast)
             {
-                Type type;
+                PSTypeName type;
                 switch (ast)
                 {
                     case ConstantExpressionAst constant:
-                        type = constant.StaticType;
+                        type = new PSTypeName(constant.StaticType);
                         break;
 
                     case ExpandableStringExpressionAst:
-                        type = typeof(string);
+                        type = new PSTypeName(typeof(string));
                         break;
 
                     case ConvertExpressionAst convertExpression:
-                        type = convertExpression.StaticType;
+                        type = new PSTypeName(convertExpression.Type.TypeName);
                         break;
 
                     case HashtableAst:
-                        type = typeof(Hashtable);
+                        type = new PSTypeName(typeof(Hashtable));
                         break;
 
                     case ArrayExpressionAst:
                     case ArrayLiteralAst:
-                        type = typeof(object[]);
+                        type = new PSTypeName(typeof(object[]));
                         break;
 
                     case ScriptBlockExpressionAst:
-                        type = typeof(ScriptBlock);
+                        type = new PSTypeName(typeof(ScriptBlock));
                         break;
 
                     default:
@@ -5593,10 +5625,9 @@ namespace System.Management.Automation
                 return type;
             }
 
-            private void SaveVariableInfo(string variableName, Type variableType, bool isConstraint)
+            private void SaveVariableInfo(string variableName, PSTypeName variableType, bool isConstraint)
             {
-                VariableInfo varInfo;
-                if (VariableInfoTable.TryGetValue(variableName, out varInfo))
+                if (VariableInfoTable.TryGetValue(variableName, out VariableInfo varInfo))
                 {
                     if (isConstraint)
                     {
@@ -5665,11 +5696,11 @@ namespace System.Management.Automation
 
                         if (firstConvertExpression is not null)
                         {
-                            SaveVariableInfo(variableExpression.VariablePath.UnqualifiedPath, firstConvertExpression.StaticType, isConstraint: true);
+                            SaveVariableInfo(variableExpression.VariablePath.UnqualifiedPath, new PSTypeName(firstConvertExpression.Type.TypeName), isConstraint: true);
                         }
                         else
                         {
-                            Type lastAssignedType = assignmentStatementAst.Right is CommandExpressionAst commandExpression
+                            PSTypeName lastAssignedType = assignmentStatementAst.Right is CommandExpressionAst commandExpression
                                 ? GetInferredVarTypeFromAst(commandExpression.Expression)
                                 : null;
                             SaveVariableInfo(variableExpression.VariablePath.UnqualifiedPath, lastAssignedType, isConstraint: false);
@@ -5683,7 +5714,7 @@ namespace System.Management.Automation
                         return AstVisitAction.Continue;
                     }
 
-                    Type lastAssignedType;
+                    PSTypeName lastAssignedType;
                     if (assignmentStatementAst.Right is CommandExpressionAst commandExpression)
                     {
                         lastAssignedType = GetInferredVarTypeFromAst(commandExpression.Expression);
@@ -5716,7 +5747,7 @@ namespace System.Management.Automation
                         var nameValue = variableName.ConstantValue as string;
                         if (nameValue is not null)
                         {
-                            Type variableType;
+                            PSTypeName variableType;
                             if (bindingResult.BoundParameters.TryGetValue("Value", out ParameterBindingResult variableValue))
                             {
                                 variableType = GetInferredVarTypeFromAst(variableValue.Value);
@@ -5741,7 +5772,7 @@ namespace System.Management.Automation
                             var varName = outVarBind.ConstantValue as string;
                             if (varName is not null)
                             {
-                                SaveVariableInfo(varName, typeof(ArrayList), isConstraint: false);
+                                SaveVariableInfo(varName, new PSTypeName(typeof(ArrayList)), isConstraint: false);
                             }
                         }
                     }
@@ -5756,13 +5787,53 @@ namespace System.Management.Automation
                                 if (varName is not null)
                                 {
                                     var inferredTypes = AstTypeInference.InferTypeOf(commandAst, Context, TypeInferenceRuntimePermissions.AllowSafeEval);
-                                    Type varType = inferredTypes.Count == 0
+                                    PSTypeName varType = inferredTypes.Count == 0
                                         ? null
-                                        : inferredTypes[0].Type;
+                                        : inferredTypes[0];
                                     SaveVariableInfo(varName, varType, isConstraint: false);
                                 }
                             }
                         }
+                    }
+                }
+
+                foreach (RedirectionAst redirection in commandAst.Redirections)
+                {
+                    if (redirection is FileRedirectionAst fileRedirection
+                        && fileRedirection.Location is StringConstantExpressionAst redirectTarget
+                        && redirectTarget.Value.StartsWith("variable:", StringComparison.OrdinalIgnoreCase)
+                        && redirectTarget.Value.Length > "variable:".Length)
+                    {
+                        string varName = redirectTarget.Value.Substring("variable:".Length);
+                        PSTypeName varType;
+                        switch (fileRedirection.FromStream)
+                        {
+                            case RedirectionStream.Error:
+                                varType = new PSTypeName(typeof(ErrorRecord));
+                                break;
+
+                            case RedirectionStream.Warning:
+                                varType = new PSTypeName(typeof(WarningRecord));
+                                break;
+
+                            case RedirectionStream.Verbose:
+                                varType = new PSTypeName(typeof(VerboseRecord));
+                                break;
+
+                            case RedirectionStream.Debug:
+                                varType = new PSTypeName(typeof(DebugRecord));
+                                break;
+
+                            case RedirectionStream.Information:
+                                varType = new PSTypeName(typeof(InformationRecord));
+                                break;
+
+                            default:
+                                varType = null;
+                                break;
+                        }
+
+                        SaveVariableInfo(varName, varType, isConstraint: false);
                     }
                 }
 
@@ -5782,7 +5853,7 @@ namespace System.Management.Automation
                     return AstVisitAction.Continue;
                 }
 
-                SaveVariableInfo(variableExpression.VariablePath.UnqualifiedPath, parameterAst.StaticType, isConstraint: true);
+                SaveVariableInfo(variableExpression.VariablePath.UnqualifiedPath, new PSTypeName(parameterAst.StaticType), isConstraint: true);
 
                 return AstVisitAction.Continue;
             }
@@ -5868,6 +5939,35 @@ namespace System.Management.Automation
             }
 
             return result;
+        }
+
+        internal static PSTypeName GetLastDeclaredTypeConstraint(VariableExpressionAst variableAst, TypeInferenceContext typeInferenceContext)
+        {
+            Ast parent = variableAst.Parent;
+            var findVariablesVisitor = new FindVariablesVisitor()
+            {
+                CompletionVariableAst = variableAst,
+                StopSearchOffset = variableAst.Extent.StartOffset,
+                Context = typeInferenceContext
+            };
+            while (parent != null)
+            {
+                if (parent is IParameterMetadataProvider)
+                {
+                    findVariablesVisitor.Top = parent;
+                    parent.Visit(findVariablesVisitor);
+                }
+
+                if (findVariablesVisitor.VariableInfoTable.TryGetValue(variableAst.VariablePath.UserPath, out VariableInfo varInfo)
+                    && varInfo.LastDeclaredConstraint is not null)
+                {
+                    return varInfo.LastDeclaredConstraint;
+                }
+
+                parent = parent.Parent;
+            }
+
+            return null;
         }
 
         #endregion Variables
@@ -7728,44 +7828,34 @@ namespace System.Management.Automation
 
         internal static List<CompletionResult> CompleteHelpTopics(CompletionContext context)
         {
-            var results = new List<CompletionResult>();
-            string userHelpDir = HelpUtils.GetUserHomeHelpSearchPath();
-            string appHelpDir = Utils.GetApplicationBase(Utils.DefaultPowerShellShellID);
-            string currentCulture = CultureInfo.CurrentCulture.Name;
-
-            //search for help files for the current culture + en-US as fallback
-            var searchPaths = new string[]
+            ArrayList helpProviders = context.ExecutionContext.HelpSystem.HelpProviders;
+            HelpFileHelpProvider helpFileProvider = null;
+            for (int i = helpProviders.Count - 1; i >= 0; i--)
             {
-                Path.Combine(userHelpDir, currentCulture),
-                Path.Combine(appHelpDir, currentCulture),
-                Path.Combine(userHelpDir, "en-US"),
-                Path.Combine(appHelpDir, "en-US")
-            }.Distinct();
-
-            string wordToComplete = context.WordToComplete + "*";
-            try
-            {
-                var wildcardPattern = WildcardPattern.Get(wordToComplete, WildcardOptions.IgnoreCase);
-
-                foreach (var dir in searchPaths)
+                if (helpProviders[i] is HelpFileHelpProvider provider)
                 {
-                    var currentDir = new DirectoryInfo(dir);
-                    if (currentDir.Exists)
-                    {
-                        foreach (var file in currentDir.EnumerateFiles("about_*.help.txt"))
-                        {
-                            if (wildcardPattern.IsMatch(file.Name))
-                            {
-                                string topicName = file.Name.Substring(0, file.Name.LastIndexOf(".help.txt"));
-                                results.Add(new CompletionResult(topicName));
-                            }
-                        }
-                    }
+                    helpFileProvider = provider;
+                    break;
                 }
             }
-            catch (Exception)
+
+            if (helpFileProvider is null)
             {
+                return null;
             }
+
+            List<CompletionResult> results = new();
+            Collection<string> filesMatched = MUIFileSearcher.SearchFiles($"{context.WordToComplete}*.help.txt", helpFileProvider.GetExtendedSearchPaths());
+            foreach (string path in filesMatched)
+            {
+                string fileName = Path.GetFileName(path);
+                if (fileName.StartsWith("about_", StringComparison.OrdinalIgnoreCase))
+                {
+                    string topicName = fileName.Substring(0, fileName.Length - ".help.txt".Length);
+                    results.Add(new CompletionResult(topicName, topicName, CompletionResultType.ParameterValue, topicName));
+                }
+            }
+
             return results;
         }
 

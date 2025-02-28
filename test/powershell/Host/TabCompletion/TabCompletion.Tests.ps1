@@ -436,6 +436,21 @@ switch ($x)
         $res.CompletionMatches.Count | Should -Be 0
     }
 
+    It 'Should complete variable assigned in command redirection to variable' {
+        $res = TabExpansion2 -inputScript 'New-Guid 1>variable:Redir1 2>variable:Redir2 3>variable:Redir3 4>variable:Redir4 5>variable:Redir5 6>variable:Redir6; $Redir'
+        $res.CompletionMatches[0].CompletionText | Should -Be '$Redir1'
+        $res.CompletionMatches[1].CompletionText | Should -Be '$Redir2'
+        $res.CompletionMatches[1].ToolTip | Should -Be '[ErrorRecord]$Redir2'
+        $res.CompletionMatches[2].CompletionText | Should -Be '$Redir3'
+        $res.CompletionMatches[2].ToolTip | Should -Be '[WarningRecord]$Redir3'
+        $res.CompletionMatches[3].CompletionText | Should -Be '$Redir4'
+        $res.CompletionMatches[3].ToolTip | Should -Be '[VerboseRecord]$Redir4'
+        $res.CompletionMatches[4].CompletionText | Should -Be '$Redir5'
+        $res.CompletionMatches[4].ToolTip | Should -Be '[DebugRecord]$Redir5'
+        $res.CompletionMatches[5].CompletionText | Should -Be '$Redir6'
+        $res.CompletionMatches[5].ToolTip | Should -Be '[InformationRecord]$Redir6'
+    }
+
     context TypeConstructionWithHashtable {
         BeforeAll {
             class RandomTestType {
@@ -603,6 +618,21 @@ using `
     It 'Should work for property assignment of enum type:' {
         $res = TabExpansion2 -inputScript '$psstyle.Progress.View="Clas'
         $res.CompletionMatches[0].CompletionText | Should -Be '"Classic"'
+    }
+
+    It 'Should work for variable assignment of enum type with type inference' {
+        $res = TabExpansion2 -inputScript '[System.Management.Automation.ProgressView]$MyUnassignedVar = $psstyle.Progress.View; $MyUnassignedVar = "Class'
+        $res.CompletionMatches[0].CompletionText | Should -Be '"Classic"'
+    }
+
+    It 'Should work for property assignment of enum type with type inference with PowerShell class' {
+        $res = TabExpansion2 -inputScript 'enum Animals{Cat= 0;Dog= 1};class AnimalTestClass{[Animals] $Prop1};$Test1 = [AnimalTestClass]::new();$Test1.Prop1 = "C'
+        $res.CompletionMatches[0].CompletionText | Should -Be '"Cat"'
+    }
+
+    It 'Should work for variable assignment with type inference of PowerShell Enum' {
+        $res = TabExpansion2 -inputScript 'enum Animals{Cat= 0;Dog= 1}; [Animals]$TestVar1 = "D'
+        $res.CompletionMatches[0].CompletionText | Should -Be '"Dog"'
     }
 
     It 'Should work for variable assignment of enum type: <inputStr>' -TestCases @(
@@ -1828,6 +1858,34 @@ class InheritedClassTest : System.Attribute
             $res.CompletionMatches | Should -HaveCount 1
             $expectedPath = Join-Path $PSScriptRoot -ChildPath BugFix.Tests.ps1
             $res.CompletionMatches[0].CompletionText | Should -Be "`"$expectedPath`""
+        }
+
+        It "Relative path completion for using <UsingKind> statement when AST extent has file identity" -TestCases @(
+            @{UsingKind = "module";  ExpectedFileName = 'UsingFileCompletionModuleTest.psm1'}
+            @{UsingKind = "assembly";ExpectedFileName = 'UsingFileCompletionAssemblyTest.dll'}
+        ) -test {
+            param($UsingKind, $ExpectedFileName)
+            $scriptText = "using $UsingKind .\UsingFileCompletion"
+            $tokens = $null
+            $scriptAst = [System.Management.Automation.Language.Parser]::ParseInput(
+                $scriptText,
+                (Join-Path -Path $tempDir -ChildPath ScriptInEditor.ps1),
+                [ref] $tokens,
+                [ref] $null)
+
+            $cursorPosition = $scriptAst.Extent.StartScriptPosition.
+                GetType().
+                GetMethod('CloneWithNewOffset', [System.Reflection.BindingFlags]'NonPublic, Instance').
+                Invoke($scriptAst.Extent.StartScriptPosition, @($scriptText.Length - 1))
+
+            Push-Location -LiteralPath $PSHOME
+            $TestFile = Join-Path -Path $tempDir -ChildPath $ExpectedFileName
+            $null = New-Item -Path $TestFile
+            $res = TabExpansion2 -ast $scriptAst -tokens $tokens -positionOfCursor $cursorPosition
+            Pop-Location
+                        
+            $ExpectedPath = Join-Path -Path '.\' -ChildPath $ExpectedFileName
+            $res.CompletionMatches.CompletionText | Where-Object {$_ -Like "*$ExpectedFileName"} | Should -Be $ExpectedPath
         }
 
         It "Should handle '~' in completiontext when it's used to refer to home in input" {

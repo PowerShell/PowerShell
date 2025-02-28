@@ -1274,6 +1274,73 @@ namespace System.Management.Automation
 
         private void InferTypesFrom(CommandAst commandAst, List<PSTypeName> inferredTypes)
         {
+            if (commandAst.Redirections.Count > 0)
+            {
+                var mergedStreams = new HashSet<RedirectionStream>();
+                bool allStreamsMerged = false;
+                foreach (RedirectionAst streamRedirection in commandAst.Redirections)
+                {
+                    if (streamRedirection is FileRedirectionAst fileRedirection)
+                    {
+                        if (fileRedirection.FromStream is RedirectionStream.All or RedirectionStream.Output)
+                        {
+                            // command output is redirected so it returns nothing.
+                            return;
+                        }
+                    }
+                    else if (streamRedirection is MergingRedirectionAst mergeRedirection && mergeRedirection.ToStream == RedirectionStream.Output)
+                    {
+                        if (mergeRedirection.FromStream == RedirectionStream.All)
+                        {
+                            allStreamsMerged = true;
+                            continue;
+                        }
+
+                        _ = mergedStreams.Add(mergeRedirection.FromStream);
+                    }
+                }
+
+                if (allStreamsMerged)
+                {
+                    inferredTypes.Add(new PSTypeName(typeof(ErrorRecord)));
+                    inferredTypes.Add(new PSTypeName(typeof(WarningRecord)));
+                    inferredTypes.Add(new PSTypeName(typeof(VerboseRecord)));
+                    inferredTypes.Add(new PSTypeName(typeof(DebugRecord)));
+                    inferredTypes.Add(new PSTypeName(typeof(InformationRecord)));
+                }
+                else
+                {
+                    foreach (RedirectionStream value in mergedStreams)
+                    {
+                        switch (value)
+                        {
+                            case RedirectionStream.Error:
+                                inferredTypes.Add(new PSTypeName(typeof(ErrorRecord)));
+                                break;
+
+                            case RedirectionStream.Warning:
+                                inferredTypes.Add(new PSTypeName(typeof(WarningRecord)));
+                                break;
+
+                            case RedirectionStream.Verbose:
+                                inferredTypes.Add(new PSTypeName(typeof(VerboseRecord)));
+                                break;
+
+                            case RedirectionStream.Debug:
+                                inferredTypes.Add(new PSTypeName(typeof(DebugRecord)));
+                                break;
+
+                            case RedirectionStream.Information:
+                                inferredTypes.Add(new PSTypeName(typeof(InformationRecord)));
+                                break;
+
+                            default:
+                                break;
+                        }
+                    }
+                }
+            }
+
             if (commandAst.CommandElements[0] is ScriptBlockExpressionAst scriptBlock)
             {
                 // An anonymous function like: & {"Do Something"}
