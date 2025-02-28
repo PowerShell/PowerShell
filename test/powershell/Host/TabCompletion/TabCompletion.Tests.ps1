@@ -1228,6 +1228,52 @@ param([ValidatePattern(
         $res.CompletionText | Should -BeExactly '-Activity'
         $res.ToolTip | Should -BeExactly $expected
     }
+    
+    It 'Should use first valid HelpMessage with multiple parameter attributes by direct match' {
+        Function Test-Function {
+            [CmdletBinding(DefaultParameterSetName = 'Default')]
+            param (
+                [Parameter(ParameterSetName = 'Foo', HelpMessage = 'Foo')]
+                [Parameter(ParameterSetName = 'Default')]
+                [string]
+                $Param,
+                
+                [Parameter(ParameterSetName = 'Foo')]
+                [switch]
+                $Foo
+            )
+        }
+        
+        $expected = '[string] Param - Foo'
+        $Script = 'Test-Function -Param'
+        $res = (TabExpansion2 -inputScript $Script).CompletionMatches
+        $res.Count | Should -Be 1
+        $res.CompletionText | Should -BeExactly '-Param'
+        $res.ToolTip | Should -BeExactly $expected
+    }
+    
+    It 'Should use first valid HelpMessage with multiple parameter attributes by multiple match' {
+        Function Test-Function {
+            [CmdletBinding(DefaultParameterSetName = 'Default')]
+            param (
+                [Parameter(ParameterSetName = 'Foo', HelpMessage = 'Foo')]
+                [Parameter(ParameterSetName = 'Default')]
+                [string]
+                $Param,
+                
+                [Parameter(ParameterSetName = 'Foo')]
+                [switch]
+                $Foo
+            )
+        }
+        
+        $expected = '[string] Param - Foo'
+        $Script = 'Test-Function -'
+        $res = (TabExpansion2 -inputScript $Script).CompletionMatches | Where-Object CompletionText -eq '-Param'
+        $res.Count | Should -Be 1
+        $res.CompletionText | Should -BeExactly '-Param'
+        $res.ToolTip | Should -BeExactly $expected
+    }
 
     Context 'Start-Process -Verb parameter completion' {
         BeforeAll {
