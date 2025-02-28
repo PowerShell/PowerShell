@@ -1492,6 +1492,47 @@ Describe "Type inference Tests" -tags "CI" {
         $null = [AstTypeInference]::InferTypeOf($FoundAst)
     }
 
+    It 'Infers type of command with all streams redirected to Success stream' {
+        $res = [AstTypeInference]::InferTypeOf( { Get-PSDrive *>&1 }.Ast)
+        $ExpectedTypeNames = @(
+            [ErrorRecord].FullName
+            [WarningRecord].FullName
+            [VerboseRecord].FullName
+            [DebugRecord].FullName
+            [InformationRecord].FullName
+            [PSDriveInfo].FullName
+        ) -join ';'
+        $res.Name -join ';' | Should -Be $ExpectedTypeNames
+    }
+
+    It 'Infers type of command with success stream redirected' {
+        $res = [AstTypeInference]::InferTypeOf( { Get-PSDrive *>&1 1>$null }.Ast)
+        $res.Count | Should -Be 0
+    }
+
+    It 'Infers type of command with some streams redirected to success' {
+        $res = [AstTypeInference]::InferTypeOf( { Get-PSDrive 3>&1 4>&1 }.Ast)
+        $res.Count | Should -Be 3
+        $ExpectedTypeNames = @(
+            [PSDriveInfo].FullName
+            [VerboseRecord].FullName
+            [WarningRecord].FullName
+        ) -join ';'
+        ($res.Name | Sort-Object) -join ';' | Should -Be $ExpectedTypeNames
+    }
+
+    It 'Infers type of command with other streams redirected to success' {
+        $res = [AstTypeInference]::InferTypeOf( { Get-PSDrive 2>&1 5>&1 6>&1 }.Ast)
+        $res.Count | Should -Be 4
+        $ExpectedTypeNames = @(
+            [DebugRecord].FullName
+            [ErrorRecord].FullName
+            [InformationRecord].FullName
+            [PSDriveInfo].FullName
+        ) -join ';'
+        ($res.Name | Sort-Object) -join ';' | Should -Be $ExpectedTypeNames
+    }
+
     It 'Should only consider assignments wrapped in parentheses to be a part of the output in a Named block' {
         $res = [AstTypeInference]::InferTypeOf( { [string]$Assignment1 = "Hello"; ([int]$Assignment2 = 42) }.Ast)
         $res.Count | Should -Be 1
