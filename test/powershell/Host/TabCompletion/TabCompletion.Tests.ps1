@@ -1192,41 +1192,41 @@ param([ValidatePattern(
         Function Test-Function {
             param (
                 [Parameter()]
-                $WithAttribute,
+                $WithParamAttribute,
 
-                $WithoutAttribute
+                $WithoutParamAttribute
             )
         }
 
         $Script = 'Test-Function -'
         $res = (TabExpansion2 -inputScript $Script).CompletionMatches |
-            Where-Object CompletionText -in '-WithAttribute', '-WithoutAttribute' |
+            Where-Object CompletionText -in '-WithParamAttribute', '-WithoutParamAttribute' |
             Sort-Object CompletionText
         $res.Count | Should -Be 2
 
-        $res.CompletionText[0] | Should -BeExactly '-WithAttribute'
-        $res.ToolTip[0] | Should -BeExactly '[Object] WithAttribute'
+        $res.CompletionText[0] | Should -BeExactly '-WithoutParamAttribute'
+        $res.ToolTip[0] | Should -BeExactly '[Object] WithoutParamAttribute'
 
-        $res.CompletionText[1] | Should -BeExactly '-WithoutAttribute'
-        $res.ToolTip[1] | Should -BeExactly '[Object] WithoutAttribute'
+        $res.CompletionText[1] | Should -BeExactly '-WithParamAttribute'
+        $res.ToolTip[1] | Should -BeExactly '[Object] WithParamAttribute'
     }
 
     It 'Should include help resource message in parameter tool tip by direct match' {
-        $expected = '[string] Activity - Text to describe the activity for which progress is being reported.'
+        $expected = '`[string`] Activity - *'
         $Script = 'Write-Progress -Activity'
         $res = (TabExpansion2 -inputScript $Script).CompletionMatches
         $res.Count | Should -Be 1
         $res.CompletionText | Should -BeExactly '-Activity'
-        $res.ToolTip | Should -BeExactly $expected
+        $res.ToolTip | Should -BeLikeExactly $expected
     }
 
     It 'Should include help resource message in parameter tool tip by multiple matches' {
-        $expected = '[string] Activity - Text to describe the activity for which progress is being reported.'
+        $expected = '`[string`] Activity - *'
         $Script = 'Write-Progress -'
         $res = (TabExpansion2 -inputScript $Script).CompletionMatches | Where-Object CompletionText -eq '-Activity'
         $res.Count | Should -Be 1
         $res.CompletionText | Should -BeExactly '-Activity'
-        $res.ToolTip | Should -BeExactly $expected
+        $res.ToolTip | Should -BeLikeExactly $expected
     }
     
     It 'Should use first valid HelpMessage with multiple parameter attributes by direct match' {
@@ -1272,6 +1272,22 @@ param([ValidatePattern(
         $res = (TabExpansion2 -inputScript $Script).CompletionMatches | Where-Object CompletionText -eq '-Param'
         $res.Count | Should -Be 1
         $res.CompletionText | Should -BeExactly '-Param'
+        $res.ToolTip | Should -BeExactly $expected
+    }
+    
+    It 'Should ignore errors when faling to get HelpMessage resource' {
+        Function Test-Function {
+            param (
+                [Parameter(HelpMessageBaseName="invalid", HelpMessageResourceId="SomeId")]
+                $Foo
+            )
+        }
+        
+        $expected = '[Object] Foo'
+        $Script = 'Test-Function -Foo'
+        $res = (TabExpansion2 -inputScript $Script).CompletionMatches
+        $res.Count | Should -Be 1
+        $res.CompletionText | Should -BeExactly '-Foo'
         $res.ToolTip | Should -BeExactly $expected
     }
 

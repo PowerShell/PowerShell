@@ -865,9 +865,9 @@ namespace System.Management.Automation
             {
                 return ResourceManagerCache.GetResourceString(assembly, attr.HelpMessageBaseName, attr.HelpMessageResourceId)?.Trim();
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                return $"Failed to find the help message: {e.Message}";
+                return null;
             }
         }
 #nullable disable
