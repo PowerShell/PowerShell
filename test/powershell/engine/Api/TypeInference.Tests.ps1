@@ -1625,6 +1625,47 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Name | Should -Be 'System.Int32'
     }
 
+    It 'Infers variable assigned by redirection' {
+        $res = [AstTypeInference]::InferTypeOf( ({
+            New-Guid *>&1 1>variable:RedirVar1; $RedirVar1
+        }.Ast.FindAll({param($Ast) $Ast -is [Language.VariableExpressionAst]}, $true) | Select-Object -Last 1 ))
+        $ExpectedTypeNames = @(
+            [ErrorRecord].FullName
+            [WarningRecord].FullName
+            [VerboseRecord].FullName
+            [DebugRecord].FullName
+            [InformationRecord].FullName
+            [guid].FullName
+        ) -join ';'
+        $res.Name -join ';' | Should -Be $ExpectedTypeNames
+    }
+
+    It 'Infers variables assigned by redirection from specific streams' {
+        $VarAsts = [List[Language.Ast]]{
+            [void](New-Guid 1>variable:RedirSuccess 2>variable:RedirError 3>variable:RedirWarning 4>variable:RedirVerbose 5>variable:RedirDebug 6>variable:RedirInfo)
+            $RedirSuccess
+            $RedirError
+            $RedirWarning
+            $RedirVerbose
+            $RedirDebug
+            $RedirInfo
+        }.Ast.FindAll({param($Ast) $Ast -is [Language.VariableExpressionAst]}, $true)
+        $ExpectedTypeNames = @(
+            [guid].FullName
+            [ErrorRecord].FullName
+            [WarningRecord].FullName
+            [VerboseRecord].FullName
+            [DebugRecord].FullName
+            [InformationRecord].FullName
+        )
+
+        for ($i = 0; $i -lt $VarAsts.Count; $i++)
+        {
+            $res = [AstTypeInference]::InferTypeOf($VarAsts[$i])
+            $res.Name | Should -Be $ExpectedTypeNames[$i]
+        }
+    }
+
     It 'Should infer output from anonymous function' {
         $res = [AstTypeInference]::InferTypeOf( { & {"Hello"} }.Ast)
         $res.Name | Should -Be 'System.String'

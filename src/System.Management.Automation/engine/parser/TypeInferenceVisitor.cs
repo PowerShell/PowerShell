@@ -1272,7 +1272,7 @@ namespace System.Management.Automation
             return TypeInferenceContext.EmptyPSTypeNameArray;
         }
 
-        private void InferTypesFrom(CommandAst commandAst, List<PSTypeName> inferredTypes)
+        private void InferTypesFrom(CommandAst commandAst, List<PSTypeName> inferredTypes, bool forRedirection = false)
         {
             if (commandAst.Redirections.Count > 0)
             {
@@ -1282,7 +1282,7 @@ namespace System.Management.Automation
                 {
                     if (streamRedirection is FileRedirectionAst fileRedirection)
                     {
-                        if (fileRedirection.FromStream is RedirectionStream.All or RedirectionStream.Output)
+                        if (!forRedirection && fileRedirection.FromStream is RedirectionStream.All or RedirectionStream.Output)
                         {
                             // command output is redirected so it returns nothing.
                             return;
@@ -2489,6 +2489,10 @@ namespace System.Management.Automation
                                 inferredTypes.AddRange(InferTypeFromRef(memberInvoke, convertExpression));
                             }
                         }
+                        else if (assignmentVisitor.RedirectionAssignment && assignmentVisitor.LastAssignment is CommandAst cmdAst)
+                        {
+                            InferTypesFrom(cmdAst, inferredTypes, forRedirection: true);
+                        }
                         else
                         {
                             inferredTypes.AddRange(InferTypes(assignmentVisitor.LastAssignment));
@@ -2863,15 +2867,17 @@ namespace System.Management.Automation
             internal ITypeName LastConstraint;
             internal Ast LastAssignment;
             internal bool EnumerateAssignment;
+            internal bool RedirectionAssignment;
             internal PSTypeName LastAssignmentType;
             private int LastAssignmentOffset = -1;
 
-            private void SetLastAssignment(Ast ast, bool enumerate = false)
+            private void SetLastAssignment(Ast ast, bool enumerate = false, bool redirectionAssignment = false)
             {
                 if (LastAssignmentOffset < ast.Extent.StartOffset)
                 {
                     LastAssignment = ast;
                     EnumerateAssignment = enumerate;
+                    RedirectionAssignment = redirectionAssignment;
                     LastAssignmentOffset = ast.Extent.StartOffset;
                 }
             }
@@ -3076,6 +3082,48 @@ namespace System.Management.Automation
                                     return AstVisitAction.Continue;
                                 }
                             }
+                        }
+                    }
+                }
+
+                foreach (RedirectionAst redirection in commandAst.Redirections)
+                {
+                    if (redirection is FileRedirectionAst fileRedirection
+                        && fileRedirection.Location is StringConstantExpressionAst redirectTarget
+                        && redirectTarget.Value.StartsWith("variable:", StringComparison.OrdinalIgnoreCase)
+                        && redirectTarget.Value.Length > "variable:".Length)
+                    {
+                        string varName = redirectTarget.Value.Substring("variable:".Length);
+                        if (!AssignsToTargetVar(varName))
+                        {
+                            continue;
+                        }
+
+                        switch (fileRedirection.FromStream)
+                        {
+                            case RedirectionStream.Error:
+                                SetLastAssignmentType(new PSTypeName(typeof(ErrorRecord)), commandAst.Extent.StartOffset);
+                                break;
+
+                            case RedirectionStream.Warning:
+                                SetLastAssignmentType(new PSTypeName(typeof(WarningRecord)), commandAst.Extent.StartOffset);
+                                break;
+
+                            case RedirectionStream.Verbose:
+                                SetLastAssignmentType(new PSTypeName(typeof(VerboseRecord)), commandAst.Extent.StartOffset);
+                                break;
+
+                            case RedirectionStream.Debug:
+                                SetLastAssignmentType(new PSTypeName(typeof(DebugRecord)), commandAst.Extent.StartOffset);
+                                break;
+
+                            case RedirectionStream.Information:
+                                SetLastAssignmentType(new PSTypeName(typeof(InformationRecord)), commandAst.Extent.StartOffset);
+                                break;
+
+                            default:
+                                SetLastAssignment(commandAst, redirectionAssignment: true);
+                                break;
                         }
                     }
                 }
