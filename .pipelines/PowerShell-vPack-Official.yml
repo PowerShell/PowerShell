@@ -1,5 +1,3 @@
-name: $(BuildDefinitionName)_$(date:yyMM).$(date:dd)$(rev:rrr)
-
 trigger: none
 
 parameters: # parameters are shown up in ADO UI in a build queue time
@@ -27,6 +25,8 @@ parameters: # parameters are shown up in ADO UI in a build queue time
   type: string
   displayName: 'Release Tag Var:'
   default: 'fromBranch'
+
+name: vPack_${{ parameters.architecture }}_$(date:yyMM).$(date:dd)$(rev:rrr)
 
 variables:
   - name: CDP_DEFINITION_BUILD_COUNT
@@ -138,22 +138,31 @@ extends:
               installationPath: $(Agent.ToolsDirectory)/dotnet
 
           - pwsh: |
-              $packageArtifactName = 'drop_windows_package_package_${{ parameters.architecture }}'
+              $packageArtifactName = 'drop_windows_package_package_win_${{ parameters.architecture }}'
               $vstsCommandString = "vso[task.setvariable variable=PackageArtifactName]$packageArtifactName"
               Write-Host "sending " + $vstsCommandString
               Write-Host "##$vstsCommandString"
-            displayName: 'Set package artifact name'
+
+              $packageArtifactPath = '$(Pipeline.Workspace)\PSPackagesOfficial'
+              $vstsCommandString = "vso[task.setvariable variable=PackageArtifactPath]$packageArtifactPath"
+              Write-Host "sending " + $vstsCommandString
+              Write-Host "##$vstsCommandString"
+            displayName: 'Set package artifact variables'
 
           - download: PSPackagesOfficial
             artifact: $(PackageArtifactName)
             displayName: Download package
 
-          - pwsh: 'Get-ChildItem $(System.ArtifactsDirectory)\* -recurse | Select-Object -ExpandProperty Name'
+          - pwsh: 'Get-ChildItem $(PackageArtifactPath)\* -recurse | Select-Object -ExpandProperty Name'
             displayName: 'Capture Artifact Listing'
 
           - pwsh: |
               $message = @()
-              Get-ChildItem $(System.ArtifactsDirectory)\* -recurse -include *.zip, *.msi | ForEach-Object {
+              $packages = Get-ChildItem $(PackageArtifactPath)\* -recurse -include *.zip, *.msi
+
+              if($packages.count -eq 0) {throw "No packages found in $(PackageArtifactPath)"}
+
+              $packages | ForEach-Object {
                   if($_.Name -notmatch 'PowerShell-\d+\.\d+\.\d+\-([a-z]*.\d+\-)?win\-(fxdependent|x64|arm64|x86|fxdependentWinDesktop)\.(msi|zip){1}')
                   {
                         $messageInstance = "$($_.Name) is not a valid package name"
@@ -166,7 +175,7 @@ extends:
             displayName: 'Validate Zip and MSI Package Names'
 
           - pwsh: |
-              Get-ChildItem $(System.ArtifactsDirectory)\* -recurse -include *.zip, *.msi | ForEach-Object {
+              Get-ChildItem $(PackageArtifactPath)\* -recurse -include *.zip | ForEach-Object {
                   if($_.Name -match 'PowerShell-\d+\.\d+\.\d+\-([a-z]*.\d+\-)?win\-(${{ parameters.architecture }})\.(zip){1}')
                   {
                       Expand-Archive -Path $_.FullName -DestinationPath $(ob_outputDirectory)
@@ -197,7 +206,11 @@ extends:
 
           - pwsh: |
               Write-Verbose "VPack Version: $(ob_createvpack_version)" -Verbose
-              Get-ChildItem -Path $(ob_outputDirectory)\* -Recurse
+              $vpackFiles = Get-ChildItem -Path $(ob_outputDirectory)\* -Recurse
+              if($vpackFiles.Count -eq 0) {
+                  throw "No files found in $(ob_outputDirectory)"
+              }
+              $vpackFiles
             displayName: Debug Output Directory and Version
             condition: succeededOrFailed()
 
@@ -207,5 +220,5 @@ extends:
               command: 'sign'
               signing_environment: 'azure-ado'
               cp_code: $(windows_build_tools_cert_id)
-              files_to_sign: '**/*.exe;**/*.dll;**/*.ps1;**/*.psm1'
+              files_to_sign: '**/*.exe;**/System.Management.Automation.dll'
               search_root: $(ob_outputDirectory)
