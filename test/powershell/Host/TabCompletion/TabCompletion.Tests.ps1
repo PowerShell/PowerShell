@@ -436,6 +436,21 @@ switch ($x)
         $res.CompletionMatches.Count | Should -Be 0
     }
 
+    It 'Should complete variable assigned in command redirection to variable' {
+        $res = TabExpansion2 -inputScript 'New-Guid 1>variable:Redir1 2>variable:Redir2 3>variable:Redir3 4>variable:Redir4 5>variable:Redir5 6>variable:Redir6; $Redir'
+        $res.CompletionMatches[0].CompletionText | Should -Be '$Redir1'
+        $res.CompletionMatches[1].CompletionText | Should -Be '$Redir2'
+        $res.CompletionMatches[1].ToolTip | Should -Be '[ErrorRecord]$Redir2'
+        $res.CompletionMatches[2].CompletionText | Should -Be '$Redir3'
+        $res.CompletionMatches[2].ToolTip | Should -Be '[WarningRecord]$Redir3'
+        $res.CompletionMatches[3].CompletionText | Should -Be '$Redir4'
+        $res.CompletionMatches[3].ToolTip | Should -Be '[VerboseRecord]$Redir4'
+        $res.CompletionMatches[4].CompletionText | Should -Be '$Redir5'
+        $res.CompletionMatches[4].ToolTip | Should -Be '[DebugRecord]$Redir5'
+        $res.CompletionMatches[5].CompletionText | Should -Be '$Redir6'
+        $res.CompletionMatches[5].ToolTip | Should -Be '[InformationRecord]$Redir6'
+    }
+
     context TypeConstructionWithHashtable {
         BeforeAll {
             class RandomTestType {
