@@ -2862,13 +2862,32 @@ namespace System.Management.Automation
         {
             internal bool LocalScopeOnly;
             internal bool ScopeIsLocal;
+            /// <summary>
+            /// The variable that we are trying to determine the type of.
+            /// </summary>
             internal VariableExpressionAst VariableTarget;
             internal int StopSearchOffset;
+            /// <summary>
+            /// The last type constraint applied to the variable. This takes priority when determining the type of the variable.
+            /// </summary>
             internal ITypeName LastConstraint;
+            /// <summary>
+            /// The last ast that assigned a value to the variable. This determines the value of the variable unless a type constraint has been applied.
+            /// </summary>
             internal Ast LastAssignment;
-            internal bool EnumerateAssignment;
-            internal bool RedirectionAssignment;
+            /// <summary>
+            /// The inferred type from the most recent assignment. This is only used for stream redirections to variables, or the special OutVariable common parameters.
+            /// </summary>
             internal PSTypeName LastAssignmentType;
+            /// <summary>
+            /// Whether or not the types from the last assignment should be enumerated.
+            /// For assignments made by the PipelineVariable parameter or the foreach statement.
+            /// </summary>
+            internal bool EnumerateAssignment;
+            /// <summary>
+            /// Whether or not the last assignment was via command redirection.
+            /// </summary>
+            internal bool RedirectionAssignment;
             private int LastAssignmentOffset = -1;
 
             private void SetLastAssignment(Ast ast, bool enumerate = false, bool redirectionAssignment = false)
