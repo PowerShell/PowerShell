@@ -22,8 +22,7 @@ jobs:
         with:
           script: |
             const comment = context.payload.comment.body;
-            const match = comment.match(/\/backport to release\/v(.*)/);
-
+            const match = comment.match(/\/backport to release\/v(\d+\.\d+)/);
             if (match) {
               const version = match[1];
               const label = `Backport-${version}.x-Consider`;
