@@ -1124,6 +1124,110 @@ param([ValidatePattern(
         $res.CompletionMatches[0].CompletionText | Should -BeExactly '$DemoVar1'
         $res.CompletionMatches[1].CompletionText | Should -BeExactly '$DemoVar2'
     }
+    
+    It 'Should include help message in parameter tool tip by direct match' {
+        Function Test-Function {
+            param (
+                [Parameter(HelpMessage = 'Some help message')]
+                $Foo
+            )
+        }
+
+        $expected = '[Object] Foo - Some help message'
+        $Script = 'Test-Function -Foo'
+        $res = (TabExpansion2 -inputScript $Script).CompletionMatches
+        $res.Count | Should -Be 1
+        $res.CompletionText | Should -BeExactly '-Foo'
+        $res.ToolTip | Should -BeExactly $expected
+    }
+
+    It 'Should include help message in parameter tool tip by multiple match' {
+        Function Test-Function {
+            param (
+                [Parameter(HelpMessage = 'Some help message')]
+                $Foo,
+
+                $Bar
+            )
+        }
+
+        $expected = '[Object] Foo - Some help message'
+        $Script = 'Test-Function -'
+        $res = (TabExpansion2 -inputScript $Script).CompletionMatches | Where-Object CompletionText -eq '-Foo'
+        $res.Count | Should -Be 1
+        $res.CompletionText | Should -BeExactly '-Foo'
+        $res.ToolTip | Should -BeExactly $expected
+    }
+
+    It 'Should retrieve help message from dynamic parameter' {
+        Function Test-Function {
+            [CmdletBinding()]
+            param ()
+            dynamicparam {
+                $attr = [System.Management.Automation.ParameterAttribute]@{
+                    HelpMessage = "Howdy partner"
+                }
+                $attrCollection = [System.Collections.ObjectModel.Collection[System.Attribute]]::new()
+                $attrCollection.Add($attr)
+
+                $dynParam = [System.Management.Automation.RuntimeDefinedParameter]::new('Foo', [string], $attrCollection)
+
+                $paramDictionary = [System.Management.Automation.RuntimeDefinedParameterDictionary]::new()
+                $paramDictionary.Add('Foo', $dynParam)
+                $paramDictionary
+            }
+
+            end {}
+        }
+
+        $expected = '[string] Foo - Howdy partner'
+        $Script = 'Test-Function -'
+        $res = (TabExpansion2 -inputScript $Script).CompletionMatches | Where-Object CompletionText -eq '-Foo'
+        $res.Count | Should -Be 1
+        $res.CompletionText | Should -BeExactly '-Foo'
+        $res.ToolTip | Should -BeExactly $expected
+    }
+
+    It 'Should have type and name for parameter without help message' {
+        Function Test-Function {
+            param (
+                [Parameter()]
+                $WithAttribute,
+
+                $WithoutAttribute
+            )
+        }
+
+        $Script = 'Test-Function -'
+        $res = (TabExpansion2 -inputScript $Script).CompletionMatches |
+            Where-Object CompletionText -in '-WithAttribute', '-WithoutAttribute' |
+            Sort-Object CompletionText
+        $res.Count | Should -Be 2
+
+        $res.CompletionText[0] | Should -BeExactly '-WithAttribute'
+        $res.ToolTip[0] | Should -BeExactly '[Object] WithAttribute'
+
+        $res.CompletionText[1] | Should -BeExactly '-WithoutAttribute'
+        $res.ToolTip[1] | Should -BeExactly '[Object] WithoutAttribute'
+    }
+
+    It 'Should include help resource message in parameter tool tip by direct match' {
+        $expected = '[string] Activity - Text to describe the activity for which progress is being reported.'
+        $Script = 'Write-Progress -Activity'
+        $res = (TabExpansion2 -inputScript $Script).CompletionMatches
+        $res.Count | Should -Be 1
+        $res.CompletionText | Should -BeExactly '-Activity'
+        $res.ToolTip | Should -BeExactly $expected
+    }
+
+    It 'Should include help resource message in parameter tool tip by multiple matches' {
+        $expected = '[string] Activity - Text to describe the activity for which progress is being reported.'
+        $Script = 'Write-Progress -'
+        $res = (TabExpansion2 -inputScript $Script).CompletionMatches | Where-Object CompletionText -eq '-Activity'
+        $res.Count | Should -Be 1
+        $res.CompletionText | Should -BeExactly '-Activity'
+        $res.ToolTip | Should -BeExactly $expected
+    }
 
     Context 'Start-Process -Verb parameter completion' {
         BeforeAll {
