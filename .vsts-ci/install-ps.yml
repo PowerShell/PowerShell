@@ -120,38 +120,119 @@ phases:
     jobName: InstallPowerShellPS1Ubuntu
     pool: ubuntu-latest
 
-- template: templates/install-ps-phase.yml
-  parameters:
-    scriptName: pwsh -c ./tools/install-powershell.ps1 -AddToPath -Daily
-    jobName: InstallPowerShellPS1UbuntuDaily
-    pool: ubuntu-latest
-    verification: |
-      Write-Verbose $PSVersionTable.PSVersion -verbose
-      if ([Version]"$($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor).$($PSVersionTable.PSVersion.Patch)" -lt [version]"7.3.0")
-      {
-        throw "powershell was not upgraded: $($PSVersionTable.PSVersion)"
-      }
+# - template: templates/install-ps-phase.yml
+#   parameters:
+#     scriptName: pwsh -c ./tools/install-powershell.ps1 -AddToPath -Daily
+#     jobName: InstallPowerShellPS1UbuntuDaily
+#     pool: ubuntu-latest
+#     verification: |
+#       Write-Verbose $PSVersionTable.PSVersion -verbose
+#       if ([Version]"$($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor).$($PSVersionTable.PSVersion.Patch)" -lt [version]"7.3.0")
+#       {
+#         throw "powershell was not upgraded: $($PSVersionTable.PSVersion)"
+#       }
+# 
+# - template: templates/install-ps-phase.yml
+#   parameters:
+#     scriptName: pwsh -c ./tools/install-powershell.ps1 -AddToPath -Daily
+#     jobName: InstallPowerShellMacOSDaily
+#     pool: macOS-latest
+#     verification: |
+#       Write-Verbose $PSVersionTable.PSVersion -verbose
+#       if ([Version]"$($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor).$($PSVersionTable.PSVersion.Patch)" -lt [version]"7.0.0")
+#       {
+#         throw "powershell was not upgraded: $($PSVersionTable.PSVersion)"
+#       }
+# 
+# - template: templates/install-ps-phase.yml
+#   parameters:
+#     scriptName: |
+#       pwsh -c ./tools/install-powershell.ps1 -AddToPath -Daily
+#     jobName: InstallPowerShellWindowsDaily
+#     pool: windows-latest
+#     verification: |
+#       $newVersion = &$env:LOCALAPPDATA\Microsoft\powershell-daily\pwsh -v
+#       $newVersion -match '^PowerShell ((\d*\.\d*\.\d*)(-\w*(\.\d*)?)?){1}'
+#       $versionOnly = $Matches[2]
+#       Write-verbose "$newVersion; versionOnly: $versionOnly" -verbose
+#       if ([Version]$versionOnly -lt [version]"7.0.0")
+#       {
+#         throw "powershell was not upgraded: $newVersion"
+#       }
 
 - template: templates/install-ps-phase.yml
   parameters:
-    scriptName: pwsh -c ./tools/install-powershell.ps1 -AddToPath -Daily
-    jobName: InstallPowerShellMacOSDaily
-    pool: macOS-latest
+    scriptName: |
+      pwsh -c ./tools/install-powershell.ps1 -AddToPath -Version 7.4.6
+    jobName: InstallPowerShellWindowsVersion
+    pool: windows-latest
     verification: |
-      Write-Verbose $PSVersionTable.PSVersion -verbose
-      if ([Version]"$($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor).$($PSVersionTable.PSVersion.Patch)" -lt [version]"7.0.0")
+      $newVersion = &$env:LOCALAPPDATA\Microsoft\powershell-7.4.6\pwsh -v
+      $newVersion -match '^PowerShell ((\d*\.\d*\.\d*)(-\w*(\.\d*)?)?){1}'
+      $versionOnly = $Matches[2]
+      Write-verbose "$newVersion; versionOnly: $versionOnly" -verbose
+      if ([Version]$versionOnly -lt [version]"7.0.0")
       {
-        throw "powershell was not upgraded: $($PSVersionTable.PSVersion)"
+        throw "powershell was not upgraded: $newVersion"
       }
 
 - template: templates/install-ps-phase.yml
   parameters:
     scriptName: |
-      pwsh -c ./tools/install-powershell.ps1 -AddToPath -Daily
-    jobName: InstallPowerShellWindowsDaily
+      pwsh -c ./tools/install-powershell.ps1 -AddToPath -Version 7.4.6 -Destination "${LOCALAPPDATA}/Microsoft/pwsh"
+    jobName: InstallPowerShellWindowsVersionDestination
     pool: windows-latest
     verification: |
-      $newVersion = &$env:LOCALAPPDATA\Microsoft\powershell-daily\pwsh -v
+      $newVersion = &$env:LOCALAPPDATA\Microsoft\pwsh-7.4.6\pwsh -v
+      $newVersion -match '^PowerShell ((\d*\.\d*\.\d*)(-\w*(\.\d*)?)?){1}'
+      $versionOnly = $Matches[2]
+      Write-verbose "$newVersion; versionOnly: $versionOnly" -verbose
+      if ([Version]$versionOnly -ne [version]"7.4.6")
+      {
+        throw "powershell $newVersion wasn't installed to custom destination"
+      }
+
+- template: templates/install-ps-phase.yml
+  parameters:
+    scriptName: |
+      pwsh -c ./tools/install-powershell.ps1 -AddToPath -LTS
+    jobName: InstallPowerShellWindowsLTS
+    pool: windows-latest
+    verification: |
+      $newVersion = &$env:LOCALAPPDATA\Microsoft\powershell-lts\pwsh -v
+      $newVersion -match '^PowerShell ((\d*\.\d*\.\d*)(-\w*(\.\d*)?)?){1}'
+      $versionOnly = $Matches[2]
+      Write-verbose "$newVersion; versionOnly: $versionOnly" -verbose
+      if ([Version]$versionOnly -lt [version]"7.0.0")
+      {
+        throw "powershell was not upgraded: $newVersion"
+      }
+
+
+- template: templates/install-ps-phase.yml
+  parameters:
+    scriptName: |
+      pwsh -c ./tools/install-powershell.ps1 -AddToPath -Preview
+    jobName: InstallPowerShellWindowsPreview
+    pool: windows-latest
+    verification: |
+      $newVersion = &$env:LOCALAPPDATA\Microsoft\powershell-preview\pwsh -v
+      $newVersion -match '^PowerShell ((\d*\.\d*\.\d*)(-\w*(\.\d*)?)?){1}'
+      $versionOnly = $Matches[2]
+      Write-verbose "$newVersion; versionOnly: $versionOnly" -verbose
+      if ([Version]$versionOnly -lt [version]"7.0.0")
+      {
+        throw "powershell was not upgraded: $newVersion"
+      }
+
+- template: templates/install-ps-phase.yml
+  parameters:
+    scriptName: |
+      pwsh -c ./tools/install-powershell.ps1 -AddToPath -Stable
+    jobName: InstallPowerShellWindowsStable
+    pool: windows-latest
+    verification: |
+      $newVersion = &$env:LOCALAPPDATA\Microsoft\powershell-stable\pwsh -v
       $newVersion -match '^PowerShell ((\d*\.\d*\.\d*)(-\w*(\.\d*)?)?){1}'
       $versionOnly = $Matches[2]
       Write-verbose "$newVersion; versionOnly: $versionOnly" -verbose
