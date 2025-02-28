@@ -790,7 +790,10 @@ namespace System.Management.Automation
                         helpMessage = GetParameterHelpMessage(
                             pattr,
                             commandAssembly);
-                        break;
+                        if (!string.IsNullOrEmpty(helpMessage))
+                        {
+                            break;
+                        }
                     }
                 }
             }
@@ -907,14 +910,17 @@ namespace System.Management.Automation
                             {
                                 continue;
                             }
-
-                            helpMessage = GetParameterHelpMessage(pattr, commandAssembly);
                             if (pattr.DontShow)
                             {
                                 showToUser = false;
                                 addCommonParameters = false;
+                                break;
                             }
-                            break;
+
+                            if (string.IsNullOrWhiteSpace(helpMessage))
+                            {
+                                helpMessage = GetParameterHelpMessage(pattr, commandAssembly);    
+                            }
                         }
                     }
 
