@@ -478,6 +478,11 @@ namespace System.Management.Automation
         /// </summary>
         internal Dictionary<string, Assembly> AssemblyCache { get; private set; }
 
+        /// <summary>
+        /// Ignores script requirements that fail.
+        /// </summary>
+        internal bool IgnoreFailedScriptRequirements { get; set; }
+
         #endregion Properties
 
         #region Engine State

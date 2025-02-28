@@ -301,7 +301,7 @@ namespace System.Management.Automation
                         moduleManifestPath: null,
                         manifestProcessingFlags: ModuleCmdletBase.ManifestProcessingFlags.LoadElements | ModuleCmdletBase.ManifestProcessingFlags.WriteErrors,
                         error: out error);
-                    if (error != null)
+                    if (!context.IgnoreFailedScriptRequirements && error is not null)
                     {
                         ScriptRequiresException scriptRequiresException =
                             new ScriptRequiresException(
@@ -342,9 +342,15 @@ namespace System.Management.Automation
         // #Requires -Module
         internal static void VerifyScriptRequirements(ExternalScriptInfo scriptInfo, ExecutionContext context)
         {
-            VerifyElevatedPrivileges(scriptInfo);
-            VerifyPSVersion(scriptInfo);
-            VerifyPSEdition(scriptInfo);
+            // No point in checking these requirements if failures will be ignored
+            // VerifyRequiredModules will attempt to load the required modules which is useful.
+            if (!context.IgnoreFailedScriptRequirements)
+            {
+                VerifyElevatedPrivileges(scriptInfo);
+                VerifyPSVersion(scriptInfo);
+                VerifyPSEdition(scriptInfo);
+            }
+
             VerifyRequiredModules(scriptInfo, context);
         }
 

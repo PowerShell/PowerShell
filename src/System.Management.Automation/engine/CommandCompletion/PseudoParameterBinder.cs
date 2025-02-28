@@ -1198,12 +1198,17 @@ namespace System.Management.Automation.Language
             string commandName = null;
             try
             {
+                context.IgnoreFailedScriptRequirements = true;
                 processor = PrepareFromAst(context, out commandName) ?? context.CreateCommand(commandName, dotSource);
             }
             catch (RuntimeException)
             {
                 // Failed to create the CommandProcessor;
                 return false;
+            }
+            finally
+            {
+                context.IgnoreFailedScriptRequirements = false;
             }
 
             var commandProcessor = processor as CommandProcessor;
