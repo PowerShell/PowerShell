@@ -950,6 +950,172 @@ ConstructorTestClass(int i, bool b)
         $res.CompletionMatches[0].CompletionText | Should -BeExactly '$TestVar1'
     }
 
+    It 'Should include help message in parameter tool tip by direct match' {
+        Function Test-Function {
+            param (
+                [Parameter(HelpMessage = 'Some help message')]
+                $Foo
+            )
+        }
+
+        $expected = '[Object] Foo - Some help message'
+        $Script = 'Test-Function -Foo'
+        $res = (TabExpansion2 -inputScript $Script).CompletionMatches
+        $res.Count | Should -Be 1
+        $res.CompletionText | Should -BeExactly '-Foo'
+        $res.ToolTip | Should -BeExactly $expected
+    }
+
+    It 'Should include help message in parameter tool tip by multiple match' {
+        Function Test-Function {
+            param (
+                [Parameter(HelpMessage = 'Some help message')]
+                $Foo,
+
+                $Bar
+            )
+        }
+
+        $expected = '[Object] Foo - Some help message'
+        $Script = 'Test-Function -'
+        $res = (TabExpansion2 -inputScript $Script).CompletionMatches | Where-Object CompletionText -eq '-Foo'
+        $res.Count | Should -Be 1
+        $res.CompletionText | Should -BeExactly '-Foo'
+        $res.ToolTip | Should -BeExactly $expected
+    }
+
+    It 'Should retrieve help message from dynamic parameter' {
+        Function Test-Function {
+            [CmdletBinding()]
+            param ()
+            dynamicparam {
+                $attr = [System.Management.Automation.ParameterAttribute]@{
+                    HelpMessage = "Howdy partner"
+                }
+                $attrCollection = [System.Collections.ObjectModel.Collection[System.Attribute]]::new()
+                $attrCollection.Add($attr)
+
+                $dynParam = [System.Management.Automation.RuntimeDefinedParameter]::new('Foo', [string], $attrCollection)
+
+                $paramDictionary = [System.Management.Automation.RuntimeDefinedParameterDictionary]::new()
+                $paramDictionary.Add('Foo', $dynParam)
+                $paramDictionary
+            }
+
+            end {}
+        }
+
+        $expected = '[string] Foo - Howdy partner'
+        $Script = 'Test-Function -'
+        $res = (TabExpansion2 -inputScript $Script).CompletionMatches | Where-Object CompletionText -eq '-Foo'
+        $res.Count | Should -Be 1
+        $res.CompletionText | Should -BeExactly '-Foo'
+        $res.ToolTip | Should -BeExactly $expected
+    }
+
+    It 'Should have type and name for parameter without help message' {
+        Function Test-Function {
+            param (
+                [Parameter()]
+                $WithParamAttribute,
+
+                $WithoutParamAttribute
+            )
+        }
+
+        $Script = 'Test-Function -'
+        $res = (TabExpansion2 -inputScript $Script).CompletionMatches |
+            Where-Object CompletionText -in '-WithParamAttribute', '-WithoutParamAttribute' |
+            Sort-Object CompletionText
+        $res.Count | Should -Be 2
+
+        $res.CompletionText[0] | Should -BeExactly '-WithoutParamAttribute'
+        $res.ToolTip[0] | Should -BeExactly '[Object] WithoutParamAttribute'
+
+        $res.CompletionText[1] | Should -BeExactly '-WithParamAttribute'
+        $res.ToolTip[1] | Should -BeExactly '[Object] WithParamAttribute'
+    }
+
+    It 'Should include help resource message in parameter tool tip by direct match' {
+        $expected = '`[string`] Activity - *'
+        $Script = 'Write-Progress -Activity'
+        $res = (TabExpansion2 -inputScript $Script).CompletionMatches
+        $res.Count | Should -Be 1
+        $res.CompletionText | Should -BeExactly '-Activity'
+        $res.ToolTip | Should -BeLikeExactly $expected
+    }
+
+    It 'Should include help resource message in parameter tool tip by multiple matches' {
+        $expected = '`[string`] Activity - *'
+        $Script = 'Write-Progress -'
+        $res = (TabExpansion2 -inputScript $Script).CompletionMatches | Where-Object CompletionText -eq '-Activity'
+        $res.Count | Should -Be 1
+        $res.CompletionText | Should -BeExactly '-Activity'
+        $res.ToolTip | Should -BeLikeExactly $expected
+    }
+    
+    It 'Should use first valid HelpMessage with multiple parameter attributes by direct match' {
+        Function Test-Function {
+            [CmdletBinding(DefaultParameterSetName = 'Default')]
+            param (
+                [Parameter(ParameterSetName = 'Foo', HelpMessage = 'Foo')]
+                [Parameter(ParameterSetName = 'Default')]
+                [string]
+                $Param,
+                
+                [Parameter(ParameterSetName = 'Foo')]
+                [switch]
+                $Foo
+            )
+        }
+        
+        $expected = '[string] Param - Foo'
+        $Script = 'Test-Function -Param'
+        $res = (TabExpansion2 -inputScript $Script).CompletionMatches
+        $res.Count | Should -Be 1
+        $res.CompletionText | Should -BeExactly '-Param'
+        $res.ToolTip | Should -BeExactly $expected
+    }
+    
+    It 'Should use first valid HelpMessage with multiple parameter attributes by multiple match' {
+        Function Test-Function {
+            [CmdletBinding(DefaultParameterSetName = 'Default')]
+            param (
+                [Parameter(ParameterSetName = 'Foo', HelpMessage = 'Foo')]
+                [Parameter(ParameterSetName = 'Default')]
+                [string]
+                $Param,
+                
+                [Parameter(ParameterSetName = 'Foo')]
+                [switch]
+                $Foo
+            )
+        }
+        
+        $expected = '[string] Param - Foo'
+        $Script = 'Test-Function -'
+        $res = (TabExpansion2 -inputScript $Script).CompletionMatches | Where-Object CompletionText -eq '-Param'
+        $res.Count | Should -Be 1
+        $res.CompletionText | Should -BeExactly '-Param'
+        $res.ToolTip | Should -BeExactly $expected
+    }
+    
+    It 'Should ignore errors when faling to get HelpMessage resource' {
+        Function Test-Function {
+            param (
+                [Parameter(HelpMessageBaseName="invalid", HelpMessageResourceId="SomeId")]
+                $Foo
+            )
+        }
+        
+        $expected = '[Object] Foo'
+        $Script = 'Test-Function -Foo'
+        $res = (TabExpansion2 -inputScript $Script).CompletionMatches
+        $res.Count | Should -Be 1
+        $res.CompletionText | Should -BeExactly '-Foo'
+        $res.ToolTip | Should -BeExactly $expected
+    }
+
     Context 'Start-Process -Verb parameter completion' {
         BeforeAll {
             function GetProcessInfoVerbs([string]$path, [switch]$singleQuote, [switch]$doubleQuote) {
