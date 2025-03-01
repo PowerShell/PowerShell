@@ -959,7 +959,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Converted string.</returns>
         internal string ConvertPropertyNamesCSV(IList<string> propertyNames)
         {
-            ArgumentNullException.ThrowIfNull(propertyNames); 
+            ArgumentNullException.ThrowIfNull(propertyNames);
 
             _outputString.Clear();
             bool first = true;
@@ -994,7 +994,7 @@ namespace Microsoft.PowerShell.Commands
                             AppendStringWithEscapeAlways(_outputString, propertyName);
                             break;
                         case BaseCsvWritingCommand.QuoteKind.AsNeeded:
-                            
+
                             if (propertyName.AsSpan().IndexOfAny(_delimiter, '\n', '"') != -1)
                             {
                                 AppendStringWithEscapeAlways(_outputString, propertyName);
@@ -1023,7 +1023,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         internal string ConvertPSObjectToCSV(PSObject mshObject, IList<string> propertyNames)
         {
-            ArgumentNullException.ThrowIfNull(propertyNames); 
+            ArgumentNullException.ThrowIfNull(propertyNames);
 
             _outputString.Clear();
             bool first = true;
@@ -1109,7 +1109,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>ToString() value.</returns>
         internal static string GetToStringValueForProperty(PSPropertyInfo property)
         {
-            ArgumentNullException.ThrowIfNull(property); 
+            ArgumentNullException.ThrowIfNull(property);
 
             string value = null;
             try
@@ -1271,7 +1271,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal ImportCsvHelper(PSCmdlet cmdlet, char delimiter, IList<string> header, string typeName, StreamReader streamReader)
         {
-            ArgumentNullException.ThrowIfNull(cmdlet); 
+            ArgumentNullException.ThrowIfNull(cmdlet);
             ArgumentNullException.ThrowIfNull(streamReader);
 
             _cmdlet = cmdlet;
@@ -1380,15 +1380,12 @@ namespace Microsoft.PowerShell.Commands
             var prevalidated = false;
             var values = new List<string>(ValueCountGuestimate);
             var builder = new StringBuilder(LineLengthGuestimate);
-            while (true)
+            while (!EOF)
             {
                 ParseNextRecord(values, builder);
                 if (values.Count == 0)
-                    break;
-
-                if (values.Count == 1 && string.IsNullOrEmpty(values[0]))
                 {
-                    // skip the blank lines
+                    // Skip blank line in the input.
                     continue;
                 }
 
@@ -1531,11 +1528,13 @@ namespace Microsoft.PowerShell.Commands
                             // ->"foo bar"  <- is read as ->foo bar<-
                             // ->"foo bar" ab <- is read as ->"foo bar" ab <-
                             bool endofRecord = false;
-                            ReadTillNextDelimiter(current, ref endofRecord, true);
+                            ReadTillNextDelimiter(current, ref endofRecord, eatTrailingBlanks: true);
                             result.Add(current.ToString());
                             current.Remove(0, current.Length);
                             if (endofRecord)
-                                break;
+                            {
+                                return;
+                            }
                         }
                     }
                     else if (current.Length == 0)
@@ -1554,11 +1553,13 @@ namespace Microsoft.PowerShell.Commands
                         // Basically we read till next delimiter
                         bool endOfRecord = false;
                         current.Append(ch);
-                        ReadTillNextDelimiter(current, ref endOfRecord, false);
+                        ReadTillNextDelimiter(current, ref endOfRecord, eatTrailingBlanks: false);
                         result.Add(current.ToString());
                         current.Remove(0, current.Length);
                         if (endOfRecord)
-                            break;
+                        {
+                            return;
+                        }
                     }
                 }
                 else if (ch == ' ' || ch == '\t')
@@ -1605,11 +1606,14 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        result.Add(current.ToString());
-                        current.Remove(0, current.Length);
+                        if (current.Length != 0 || result.Count != 0)
+                        {
+                            result.Add(current.ToString());
+                            current.Remove(0, current.Length);
+                        }
 
                         // New line outside quote is end of word and end of record
-                        break;
+                        return;
                     }
                 }
                 else

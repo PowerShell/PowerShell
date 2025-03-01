@@ -171,7 +171,7 @@ Describe "Import-Csv with different newlines" -Tags "CI" {
         param($newline)
         $csvFile = Join-Path $TestDrive -ChildPath $((New-Guid).Guid)
         $delimiter = ','
-        "h1,h2,h3$($newline)11,12,13$($newline)21,22,23$($newline)" | Out-File -FilePath $csvFile
+        "h1,h2,h3$($newline)11,12,13$($newline)$($newline)21,22,23$($newline)" | Out-File -FilePath $csvFile
         $returnObject = Import-Csv -Path $csvFile -Delimiter $delimiter
         $returnObject.Count | Should -Be 2
         $returnObject[0].h1 | Should -Be 11
