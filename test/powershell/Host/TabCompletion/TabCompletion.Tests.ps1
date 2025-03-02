@@ -104,6 +104,34 @@ Describe "TabCompletion" -Tags CI {
         $res = TabExpansion2 -inputScript 'param($PS = $P'
         $res.CompletionMatches.Count | Should -BeGreaterThan 0
     }
+    
+    It 'Should complete variable with description and value <Value>' -TestCases @(
+        @{ Value = 1; Expected = '[int]$VariableWithDescription - Variable description' }
+        @{ Value = 'string'; Expected = '[string]$VariableWithDescription - Variable description' }
+        @{ Value = $null; Expected = 'VariableWithDescription - Variable description' }
+    ) {
+        param ($Value, $Expected)
+        
+        New-Variable -Name VariableWithDescription -Value $Value -Description 'Variable description' -Force
+        $res = TabExpansion2 -inputScript '$VariableWithDescription'
+        $res.CompletionMatches.Count | Should -Be 1
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '$VariableWithDescription'
+        $res.CompletionMatches[0].ToolTip | Should -BeExactly $Expected
+    }
+    
+    It 'Should complete scoped variable with description and value <Value>' -TestCases @(
+        @{ Value = 1; Expected = '[int]$VariableWithDescription - Variable description' }
+        @{ Value = 'string'; Expected = '[string]$VariableWithDescription - Variable description' }
+        @{ Value = $null; Expected = 'VariableWithDescription - Variable description' }
+    ) {
+        param ($Value, $Expected)
+        
+        New-Variable -Name VariableWithDescription -Value $Value -Description 'Variable description' -Force
+        $res = TabExpansion2 -inputScript '$local:VariableWithDescription'
+        $res.CompletionMatches.Count | Should -Be 1
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '$local:VariableWithDescription'
+        $res.CompletionMatches[0].ToolTip | Should -BeExactly $Expected
+    }
 
     It 'Should not complete property name in class definition' {
         $res = TabExpansion2 -inputScript 'class X {$P'
