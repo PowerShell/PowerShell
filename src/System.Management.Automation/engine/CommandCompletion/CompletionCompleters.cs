@@ -5388,6 +5388,7 @@ namespace System.Management.Automation
                         {
                             toolTip += $" - {variable.Description}";
                         }
+
                         var completionText = !tokenAtCursorUsedBraces && !ContainsCharactersRequiringQuotes(name)
                             ? prefix + name
                             : prefix + "{" + name + "}";
@@ -5439,6 +5440,7 @@ namespace System.Management.Automation
                                                                                          dropNamespaces: true), name);
                                 }
                             }
+
                             if (!string.IsNullOrEmpty(variable.Description))
                             {
                                 tooltip += $" - {variable.Description}";
