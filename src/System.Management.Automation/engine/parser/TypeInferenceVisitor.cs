@@ -2402,40 +2402,38 @@ namespace System.Management.Automation
                 inferredTypes.Add(typeName);
                 return;
             }
-            else
+
+            if (SpecialVariables.AllScopeVariables.TryGetValue(astVariablePath.UnqualifiedPath, out Type knownType))
             {
-                if (SpecialVariables.AllScopeVariables.TryGetValue(astVariablePath.UnqualifiedPath, out Type knownType))
+                if (knownType == typeof(object))
                 {
-                    if (knownType == typeof(object))
+                    if (_context.TryGetRepresentativeTypeNameFromExpressionSafeEval(variableExpressionAst, out var psType))
                     {
-                        if (_context.TryGetRepresentativeTypeNameFromExpressionSafeEval(variableExpressionAst, out var psType))
-                        {
-                            inferredTypes.Add(psType);
-                        }
+                        inferredTypes.Add(psType);
                     }
-                    else
-                    {
-                        inferredTypes.Add(new PSTypeName(knownType));
-                    }
-
-                    return;
+                }
+                else
+                {
+                    inferredTypes.Add(new PSTypeName(knownType));
                 }
 
-                for (int i = 0; i < SpecialVariables.AutomaticVariables.Length; i++)
+                return;
+            }
+
+            for (int i = 0; i < SpecialVariables.AutomaticVariables.Length; i++)
+            {
+                if (!astVariablePath.UnqualifiedPath.EqualsOrdinalIgnoreCase(SpecialVariables.AutomaticVariables[i]))
                 {
-                    if (!astVariablePath.UnqualifiedPath.EqualsOrdinalIgnoreCase(SpecialVariables.AutomaticVariables[i]))
-                    {
-                        continue;
-                    }
-
-                    Type type = SpecialVariables.AutomaticVariableTypes[i];
-                    if (type != typeof(object))
-                    {
-                        inferredTypes.Add(new PSTypeName(type));
-                    }
-
-                    return;
+                    continue;
                 }
+
+                Type type = SpecialVariables.AutomaticVariableTypes[i];
+                if (type != typeof(object))
+                {
+                    inferredTypes.Add(new PSTypeName(type));
+                }
+
+                return;
             }
 
             // This visitor + loop finds the start of the current scope and traverses top to bottom to find the nearest variable assignment.
