@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -187,7 +188,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Provides argument completion for PropertyType parameter.
     /// </summary>
-    public class PropertyTypeArgumentCompleter : IArgumentCompleter
+    public sealed class PropertyTypeArgumentCompleter : IArgumentCompleter
     {
         private static readonly string[] s_RegistryPropertyTypes =
         [
@@ -212,18 +213,25 @@ namespace Microsoft.PowerShell.Commands
         };
 
         /// <summary>
-        /// Configures argument completer options.
+        /// Gets or sets the possible PropertyType completion values.
         /// </summary>
-        /// <param name="options">The options to configure.</param>
-        /// <returns>Configured options.</returns>
-        public ArgumentCompleterOptions ConfigureArgumentCompleterOptions(ArgumentCompleterOptions options)
-        {
-            options.PossibleCompletionValues = s_RegistryPropertyTypes;
-            options.ShouldComplete = IsRegistryProvider(options.FakeBoundParameters);
-            options.ToolTipMapping = GetRegistryPropertyTypeToolTip;
-            options.CompletionResultType = CompletionResultType.ParameterValue;
-            return options;
-        }
+        public IEnumerable<string> PossibleCompletionValues => s_RegistryPropertyTypes;
+
+        /// <summary>
+        /// Gets the type of the completion result.
+        /// </summary>
+        public CompletionResultType CompletionResultType => CompletionResultType.ParameterValue;
+
+        /// <summary>
+        /// Gets the mapping function for tooltips.
+        /// </summary>
+        public Func<string, string> ToolTipMapping => GetRegistryPropertyTypeToolTip;
+
+        /// <summary>
+        /// Gets value indicating whether to perform completion.
+        /// </summary>
+        public bool ShouldComplete
+            => IsRegistryProvider(IArgumentCompleter.FakeBoundParameters);
 
         /// <summary>
         /// Checks if parameter paths are from Registry provider.

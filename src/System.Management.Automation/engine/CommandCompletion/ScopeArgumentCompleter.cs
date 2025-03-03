@@ -10,19 +10,13 @@ namespace System.Management.Automation
     /// <summary>
     /// Provides argument completion for Scope parameter.
     /// </summary>
-    public class ScopeArgumentCompleter : IArgumentCompleter
+    public sealed class ScopeArgumentCompleter : IArgumentCompleter
     {
         private static readonly string[] s_Scopes = new string[] { "Global", "Local", "Script" };
 
         /// <summary>
-        /// Configures argument completer options.
+        /// Gets all possible Scope completion values.
         /// </summary>
-        /// <param name="options">The options to configure.</param>
-        /// <returns>Configured options.</returns>
-        public ArgumentCompleterOptions ConfigureArgumentCompleterOptions(ArgumentCompleterOptions options)
-        {
-            options.PossibleCompletionValues = s_Scopes;
-            return options;
-        }
+        public IEnumerable<string> PossibleCompletionValues => s_Scopes;
     }
 }

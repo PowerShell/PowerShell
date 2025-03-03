@@ -588,17 +588,11 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Provides argument completion for PSEdition parameter.
     /// </summary>
-    public class PSEditionArgumentCompleter : IArgumentCompleter
+    public sealed class PSEditionArgumentCompleter : IArgumentCompleter
     {
         /// <summary>
-        /// Configures argument completer options.
+        /// Gets all possible PSEdition completion values.
         /// </summary>
-        /// <param name="options">The options to configure.</param>
-        /// <returns>Configured options.</returns>
-        public ArgumentCompleterOptions ConfigureArgumentCompleterOptions(ArgumentCompleterOptions options)
-        {
-            options.PossibleCompletionValues = Utils.AllowedEditionValues;
-            return options;
-        }
+        public IEnumerable<string> PossibleCompletionValues => Utils.AllowedEditionValues;
     }
 }

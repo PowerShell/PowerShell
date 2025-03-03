@@ -2643,18 +2643,13 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Provides argument completion for Verb parameter.
     /// </summary>
-    public class VerbArgumentCompleter : IArgumentCompleter
+    public sealed class VerbArgumentCompleter : IArgumentCompleter
     {
         /// <summary>
-        /// Configures argument completer options.
+        /// Gets all possible Verb completion values.
         /// </summary>
-        /// <param name="options">The options to configure.</param>
-        /// <returns>Configured options.</returns>
-        public ArgumentCompleterOptions ConfigureArgumentCompleterOptions(ArgumentCompleterOptions options)
-        {
-            options.PossibleCompletionValues = GetFileVerbs(options.CommandName, options.FakeBoundParameters);
-            return options;
-        }
+        public IEnumerable<string> PossibleCompletionValues
+            => GetFileVerbs(IArgumentCompleter.CommandName, IArgumentCompleter.FakeBoundParameters);
 
         /// <summary>
         /// Gets file verbs.

@@ -104,51 +104,102 @@ namespace System.Management.Automation
             CommandAst commandAst,
             IDictionary fakeBoundParameters)
         {
-            ArgumentCompleterOptions options = new(
-                commandName,
-                parameterName,
-                wordToComplete,
-                commandAst,
-                fakeBoundParameters);
-
-            return CompleteArgumentWithOptions(ConfigureArgumentCompleterOptions(options));
+            CommandName = commandName;
+            ParameterName = parameterName;
+            WordToComplete = wordToComplete;
+            CommandAst = commandAst;
+            FakeBoundParameters = fakeBoundParameters;
+            return ShouldComplete ? GetMatchingResults(wordToComplete) : [];
         }
 
         /// <summary>
-        /// Configures argument completer options.
+        /// Gets the name of the command that needs argument completion.
         /// </summary>
-        /// <param name="options">The options to configure.</param>
-        /// <returns>Configured options.</returns>
-        ArgumentCompleterOptions ConfigureArgumentCompleterOptions(ArgumentCompleterOptions options) => options;
+        protected static string? CommandName { get; private set; }
 
         /// <summary>
-        /// Complete argument with options.
+        /// Gets the name of the parameter that needs argument completion.
         /// </summary>
-        /// <param name="options">The options to complete arguments with.</param>
-        /// <returns>A collection of completion results.</returns>
-        IEnumerable<CompletionResult> CompleteArgumentWithOptions(ArgumentCompleterOptions options)
-        {
-            if (!options.ShouldComplete)
-            {
-                yield break;
-            }
+        protected static string? ParameterName { get; private set; }
 
-            string wordToComplete = options.WordToComplete;
+        /// <summary>
+        /// Gets the word being completed.
+        /// </summary>
+        protected static string? WordToComplete { get; private set; }
+
+        /// <summary>
+        /// Gets the command abstract syntax tree (AST).
+        /// </summary>
+        protected static CommandAst? CommandAst { get; private set; }
+
+        /// <summary>
+        /// Gets the fake bound parameters similar to $PSBoundParameters.
+        /// </summary>
+        protected static IDictionary? FakeBoundParameters { get; private set; }
+
+        /// <summary>
+        /// Gets value indicating whether to perform completion.
+        /// </summary>
+        protected bool ShouldComplete => true;
+
+        /// <summary>
+        /// Gets the type of the completion result.
+        /// </summary>
+        protected CompletionResultType CompletionResultType => CompletionResultType.Text;
+
+        /// <summary>
+        /// Gets the mapping function for tooltips.
+        /// </summary>
+        protected Func<string, string>? ToolTipMapping => null;
+
+        /// <summary>
+        /// Gets the mapping function for list item texts.
+        /// </summary>
+        protected Func<string, string>? ListItemTextMapping => null;
+
+        /// <summary>
+        /// Gets value indicating whether to escape globbing paths.
+        /// </summary>
+        protected bool EscapeGlobbingPath => false;
+
+        /// <summary>
+        /// Gets the possible completion values.
+        /// </summary>
+        protected IEnumerable<string> PossibleCompletionValues => [];
+
+        /// <summary>
+        /// Matches the possible completion values against the word to complete.
+        /// </summary>
+        /// <param name="wordToComplete">The word to complete, which is used as a pattern for matching possible values.</param>
+        /// <returns>An <see cref="IEnumerable{CompletionResult}"/> containing the matching completion results.</returns>
+        /// <remarks>This method handles different variations of completions, including considerations for quotes and escaping globbing paths.</remarks>
+        protected IEnumerable<CompletionResult> GetMatchingResults(string wordToComplete)
+        {
             string quote = CompletionCompleters.HandleDoubleAndSingleQuote(ref wordToComplete);
 
-            foreach (string value in options.PossibleCompletionValues)
+            foreach (string value in PossibleCompletionValues)
             {
                 if (value.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
                 {
-                    string completionText = QuoteCompletionText(value, quote, options.EscapeGlobbingPath);
-                    string toolTip = options.ToolTipMapping?.Invoke(value) ?? value;
-                    string listItemText = options.ListItemTextMapping?.Invoke(value) ?? value;
+                    string completionText = QuoteCompletionText(completionText: value, quote, EscapeGlobbingPath);
 
-                    yield return new CompletionResult(completionText, listItemText, options.CompletionResultType, toolTip);
+                    string toolTip = ToolTipMapping?.Invoke(value) ?? value;
+                    string listItemText = ListItemTextMapping?.Invoke(value) ?? value;
+
+                    yield return new CompletionResult(completionText, listItemText, CompletionResultType, toolTip);
                 }
             }
         }
 
+        /// <summary>
+        /// Quotes the completion text.
+        /// </summary>
+        /// <param name="completionText">The text to complete.</param>
+        /// <param name="quote">The quote to use.</param>
+        /// <param name="escapeGlobbingPath">True if the globbing path needs to be escaped; otherwise, false.</param>
+        /// <returns>
+        /// A quoted string if quoting is necessary.
+        /// </returns>
         private static string QuoteCompletionText(string completionText, string quote, bool escapeGlobbingPath)
         {
             if (CompletionCompleters.CompletionRequiresQuotes(completionText, escapeGlobbingPath))
@@ -174,100 +225,6 @@ namespace System.Management.Automation
 
     }
 #nullable restore
-
-    /// <summary>
-    /// Represents options for argument completers.
-    /// </summary>
-    public sealed class ArgumentCompleterOptions
-    {
-        /// <summary>
-        /// Gets the name of the command that needs argument completion.
-        /// </summary>
-        /// <value>The name of the command.</value>
-        public string CommandName { get; private set; }
-
-        /// <summary>
-        /// Gets the name of the parameter that needs argument completion.
-        /// </summary>
-        /// <value>The name of the parameter.</value>
-        public string ParameterName { get; private set; }
-
-        /// <summary>
-        /// Gets the word being completed.
-        /// </summary>
-        /// <value>The word being completed.</value>
-        public string WordToComplete { get; private set; }
-
-        /// <summary>
-        /// Gets the command abstract syntax tree (AST).
-        /// </summary>
-        /// <value>The command AST.</value>
-        public CommandAst CommandAst { get; private set; }
-
-        /// <summary>
-        /// Gets the fake bound parameters similar to $PSBoundParameters.
-        /// </summary>
-        /// <value>The fake bound parameters.</value>
-        public IDictionary FakeBoundParameters { get; private set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether the argument should be completed.
-        /// </summary>
-        /// <value><c>true</c> if the argument should be completed; otherwise, <c>false</c>.</value>
-        public bool ShouldComplete { get; set; } = true;
-
-        /// <summary>
-        /// Gets or sets the type of the completion result.
-        /// </summary>
-        /// <value>The type of the completion result.</value>
-        public CompletionResultType CompletionResultType { get; set; } = CompletionResultType.Text;
-
-        /// <summary>
-        /// Gets or sets the mapping function for tooltips.
-        /// </summary>
-        /// <value>The mapping function for tooltips.</value>
-        public Func<string, string> ToolTipMapping { get; set; }
-
-        /// <summary>
-        /// Gets or sets the mapping function for list item texts.
-        /// </summary>
-        /// <value>The mapping function for list item texts.</value>
-        public Func<string, string> ListItemTextMapping { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether to escape globbing paths.
-        /// </summary>
-        /// <value><c>true</c> if globbing paths should be escaped; otherwise, <c>false</c>.</value>
-        public bool EscapeGlobbingPath { get; set; }
-
-        /// <summary>
-        /// Gets or sets the possible completion values.
-        /// </summary>
-        /// <value>The possible completion values.</value>
-        public IEnumerable<string> PossibleCompletionValues { get; set; } = [];
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ArgumentCompleterOptions"/> class.
-        /// </summary>
-        /// <param name="commandName">The name of the command.</param>
-        /// <param name="parameterName">The name of the parameter.</param>
-        /// <param name="wordToComplete">The word being completed.</param>
-        /// <param name="commandAst">The command AST.</param>
-        /// <param name="fakeBoundParameters">The fake bound parameters.</param>
-        public ArgumentCompleterOptions(
-            string commandName,
-            string parameterName,
-            string wordToComplete,
-            CommandAst commandAst,
-            IDictionary fakeBoundParameters)
-        {
-            CommandName = commandName;
-            ParameterName = parameterName;
-            WordToComplete = wordToComplete;
-            CommandAst = commandAst;
-            FakeBoundParameters = fakeBoundParameters;
-        }
-    }
 
     /// <summary>
     /// Creates a new argument completer.

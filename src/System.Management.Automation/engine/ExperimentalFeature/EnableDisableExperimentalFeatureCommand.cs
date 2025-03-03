@@ -102,18 +102,12 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Provides argument completion for ExperimentalFeature names.
     /// </summary>
-    public class ExperimentalFeatureNameCompleter : IArgumentCompleter
+    public sealed class ExperimentalFeatureNameCompleter : IArgumentCompleter
     {
         /// <summary>
-        /// Configures argument completer options.
+        /// Gets all possible ExperimentalFeature name completion values.
         /// </summary>
-        /// <param name="options">The options to configure.</param>
-        /// <returns>Configured options.</returns>
-        public ArgumentCompleterOptions ConfigureArgumentCompleterOptions(ArgumentCompleterOptions options)
-        {
-            options.PossibleCompletionValues = GetExperimentalFeatureNames();
-            return options;
-        }
+        public IEnumerable<string> PossibleCompletionValues => GetExperimentalFeatureNames();
 
         /// <summary>
         /// Gets experimental feature names using Get-Command.
