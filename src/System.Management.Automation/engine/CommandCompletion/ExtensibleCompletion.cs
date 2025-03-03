@@ -178,7 +178,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Represents options for argument completers.
     /// </summary>
-    public class ArgumentCompleterOptions
+    public sealed class ArgumentCompleterOptions
     {
         /// <summary>
         /// Gets the name of the command that needs argument completion.
