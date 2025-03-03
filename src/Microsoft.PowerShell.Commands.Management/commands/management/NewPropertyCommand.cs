@@ -189,8 +189,8 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public class PropertyTypeArgumentCompleter : IArgumentCompleter
     {
-        private static readonly string[] s_RegistryPropertyTypes = new string[]
-        {
+        private static readonly string[] s_RegistryPropertyTypes =
+        [
             "String",
             "ExpandString",
             "Binary",
@@ -198,7 +198,7 @@ namespace Microsoft.PowerShell.Commands
             "MultiString",
             "QWord",
             "Unknown"
-        };
+        ];
 
         private static string GetRegistryPropertyTypeToolTip(string propertyTypeName) => propertyTypeName switch
         {
@@ -212,27 +212,17 @@ namespace Microsoft.PowerShell.Commands
         };
 
         /// <summary>
-        /// Returns completion results for PropertyType parameter.
+        /// Configures argument completer options.
         /// </summary>
-        /// <param name="commandName">The command name.</param>
-        /// <param name="parameterName">The parameter name.</param>
-        /// <param name="wordToComplete">The word to complete.</param>
-        /// <param name="commandAst">The command AST.</param>
-        /// <param name="fakeBoundParameters">The fake bound parameters.</param>
-        /// <returns>List of Completion Results.</returns>
-        public IEnumerable<CompletionResult> CompleteArgument(
-            string commandName,
-            string parameterName,
-            string wordToComplete,
-            CommandAst commandAst,
-            IDictionary fakeBoundParameters)
-                => IsRegistryProvider(fakeBoundParameters)
-                    ? CompletionCompleters.GetMatchingResults(
-                        wordToComplete,
-                        possibleCompletionValues: s_RegistryPropertyTypes,
-                        toolTipMapping: GetRegistryPropertyTypeToolTip,
-                        resultType: CompletionResultType.ParameterValue)
-                    : [];
+        /// <param name="options">The options to configure.</param>
+        /// <returns>Configured options.</returns>
+        public ArgumentCompleterOptions ConfigureArgumentCompleterOptions(ArgumentCompleterOptions options)
+        {
+            options.PossibleCompletionValues = s_RegistryPropertyTypes;
+            options.ShouldComplete = IsRegistryProvider(options.FakeBoundParameters);
+            options.ToolTipMapping = GetRegistryPropertyTypeToolTip;
+            return options;
+        }
 
         /// <summary>
         /// Checks if parameter paths are from Registry provider.

@@ -1698,23 +1698,16 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public class NounArgumentCompleter : IArgumentCompleter
     {
+        /// <summary>
+        /// Configures argument completer options.
         /// </summary>
-        /// Returns completion results for Noun parameter.
-        /// </summary>
-        /// <param name="commandName">The command name.</param>
-        /// <param name="parameterName">The parameter name.</param>
-        /// <param name="wordToComplete">The word to complete.</param>
-        /// <param name="commandAst">The command AST.</param>
-        /// <param name="fakeBoundParameters">The fake bound parameters.</param>
-        /// <returns>List of completion results.</returns>
-        public IEnumerable<CompletionResult> CompleteArgument(
-            string commandName,
-            string parameterName,
-            string wordToComplete,
-            CommandAst commandAst,
-            IDictionary fakeBoundParameters) => CompletionCompleters.GetMatchingResults(
-                wordToComplete,
-                possibleCompletionValues: GetCommandNouns(fakeBoundParameters));
+        /// <param name="options">The options to configure.</param>
+        /// <returns>Configured options.</returns>
+        public ArgumentCompleterOptions ConfigureArgumentCompleterOptions(ArgumentCompleterOptions options)
+        {
+            options.PossibleCompletionValues = GetCommandNouns(options.FakeBoundParameters);
+            return options;
+        }
 
         /// <summary>
         /// Get sorted set of command nouns using Get-Command.

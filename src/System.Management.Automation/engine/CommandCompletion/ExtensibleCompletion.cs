@@ -102,9 +102,172 @@ namespace System.Management.Automation
             string parameterName,
             string wordToComplete,
             CommandAst commandAst,
-            IDictionary fakeBoundParameters);
+            IDictionary fakeBoundParameters)
+        {
+            ArgumentCompleterOptions options = new(
+                commandName,
+                parameterName,
+                wordToComplete,
+                commandAst,
+                fakeBoundParameters);
+
+            return CompleteArgumentWithOptions(ConfigureArgumentCompleterOptions(options));
+        }
+
+        /// <summary>
+        /// Configures argument completer options.
+        /// </summary>
+        /// <param name="options">The options to configure.</param>
+        /// <returns>Configured options.</returns>
+        ArgumentCompleterOptions ConfigureArgumentCompleterOptions(ArgumentCompleterOptions options) => options;
+
+        /// <summary>
+        /// Complete argument with options.
+        /// </summary>
+        /// <param name="options">The options to complete arguments with.</param>
+        /// <returns>A collection of completion results.</returns>
+        IEnumerable<CompletionResult> CompleteArgumentWithOptions(ArgumentCompleterOptions options)
+        {
+            if (!options.ShouldComplete)
+            {
+                yield break;
+            }
+
+            string wordToComplete = options.WordToComplete;
+            string quote = CompletionCompleters.HandleDoubleAndSingleQuote(ref wordToComplete);
+
+            foreach (string value in options.PossibleCompletionValues)
+            {
+                if (value.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
+                {
+                    string completionText = QuoteCompletionText(value, quote, options.EscapeGlobbingPath);
+                    string toolTip = options.ToolTipMapping?.Invoke(value) ?? value;
+                    string listItemText = options.ListItemTextMapping?.Invoke(value) ?? value;
+
+                    yield return new CompletionResult(completionText, listItemText, options.CompletionResultType, toolTip);
+                }
+            }
+        }
+
+        private static string QuoteCompletionText(string completionText, string quote, bool escapeGlobbingPath)
+        {
+            if (CompletionCompleters.CompletionRequiresQuotes(completionText, escapeGlobbingPath))
+            {
+                string quoteInUse = string.IsNullOrEmpty(quote) ? "'" : quote;
+
+                completionText = quoteInUse == "'"
+                    ? completionText.Replace("'", "''")
+                    : completionText.Replace("`", "``").Replace("$", "`$");
+
+                if (escapeGlobbingPath)
+                {
+                    completionText = quoteInUse == "'"
+                        ? completionText.Replace("[", "`[").Replace("]", "`]")
+                        : completionText.Replace("[", "``[").Replace("]", "``]");
+                }
+
+                return quoteInUse + completionText + quoteInUse;
+            }
+
+            return quote + completionText + quote;
+        }
+
     }
 #nullable restore
+
+    /// <summary>
+    /// Represents options for argument completers.
+    /// </summary>
+    public class ArgumentCompleterOptions
+    {
+        /// <summary>
+        /// Gets the name of the command that needs argument completion.
+        /// </summary>
+        /// <value>The name of the command.</value>
+        public string CommandName { get; private set; }
+
+        /// <summary>
+        /// Gets the name of the parameter that needs argument completion.
+        /// </summary>
+        /// <value>The name of the parameter.</value>
+        public string ParameterName { get; private set; }
+
+        /// <summary>
+        /// Gets the word being completed.
+        /// </summary>
+        /// <value>The word being completed.</value>
+        public string WordToComplete { get; private set; }
+
+        /// <summary>
+        /// Gets the command abstract syntax tree (AST).
+        /// </summary>
+        /// <value>The command AST.</value>
+        public CommandAst CommandAst { get; private set; }
+
+        /// <summary>
+        /// Gets the fake bound parameters similar to $PSBoundParameters.
+        /// </summary>
+        /// <value>The fake bound parameters.</value>
+        public IDictionary FakeBoundParameters { get; private set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the argument should be completed.
+        /// </summary>
+        /// <value><c>true</c> if the argument should be completed; otherwise, <c>false</c>.</value>
+        public bool ShouldComplete { get; set; } = true;
+
+        /// <summary>
+        /// Gets or sets the type of the completion result.
+        /// </summary>
+        /// <value>The type of the completion result.</value>
+        public CompletionResultType CompletionResultType { get; set; } = CompletionResultType.Text;
+
+        /// <summary>
+        /// Gets or sets the mapping function for tooltips.
+        /// </summary>
+        /// <value>The mapping function for tooltips.</value>
+        public Func<string, string> ToolTipMapping { get; set; }
+
+        /// <summary>
+        /// Gets or sets the mapping function for list item texts.
+        /// </summary>
+        /// <value>The mapping function for list item texts.</value>
+        public Func<string, string> ListItemTextMapping { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether to escape globbing paths.
+        /// </summary>
+        /// <value><c>true</c> if globbing paths should be escaped; otherwise, <c>false</c>.</value>
+        public bool EscapeGlobbingPath { get; set; }
+
+        /// <summary>
+        /// Gets or sets the possible completion values.
+        /// </summary>
+        /// <value>The possible completion values.</value>
+        public IEnumerable<string> PossibleCompletionValues { get; set; } = [];
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ArgumentCompleterOptions"/> class.
+        /// </summary>
+        /// <param name="commandName">The name of the command.</param>
+        /// <param name="parameterName">The name of the parameter.</param>
+        /// <param name="wordToComplete">The word being completed.</param>
+        /// <param name="commandAst">The command AST.</param>
+        /// <param name="fakeBoundParameters">The fake bound parameters.</param>
+        public ArgumentCompleterOptions(
+            string commandName,
+            string parameterName,
+            string wordToComplete,
+            CommandAst commandAst,
+            IDictionary fakeBoundParameters)
+        {
+            CommandName = commandName;
+            ParameterName = parameterName;
+            WordToComplete = wordToComplete;
+            CommandAst = commandAst;
+            FakeBoundParameters = fakeBoundParameters;
+        }
+    }
 
     /// <summary>
     /// Creates a new argument completer.

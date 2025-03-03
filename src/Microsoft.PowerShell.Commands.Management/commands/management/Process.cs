@@ -2646,19 +2646,24 @@ namespace Microsoft.PowerShell.Commands
     public class VerbArgumentCompleter : IArgumentCompleter
     {
         /// <summary>
-        /// Returns completion results for verb parameter.
+        /// Configures argument completer options.
+        /// </summary>
+        /// <param name="options">The options to configure.</param>
+        /// <returns>Configured options.</returns>
+        public ArgumentCompleterOptions ConfigureArgumentCompleterOptions(ArgumentCompleterOptions options)
+        {
+            options.PossibleCompletionValues = GetFileVerbs(options.CommandName, options.FakeBoundParameters);
+            return options;
+        }
+
+        /// <summary>
+        /// Gets file verbs.
         /// </summary>
         /// <param name="commandName">The command name.</param>
-        /// <param name="parameterName">The parameter name.</param>
-        /// <param name="wordToComplete">The word to complete.</param>
-        /// <param name="commandAst">The command AST.</param>
         /// <param name="fakeBoundParameters">The fake bound parameters.</param>
-        /// <returns>List of Completion Results.</returns>
-        public IEnumerable<CompletionResult> CompleteArgument(
+        /// <returns>Array of file verbs.</returns>
+        private static string[] GetFileVerbs(
             string commandName,
-            string parameterName,
-            string wordToComplete,
-            CommandAst commandAst,
             IDictionary fakeBoundParameters)
         {
             // -Verb is not supported on non-Windows platforms as well as Windows headless SKUs
@@ -2676,7 +2681,7 @@ namespace Microsoft.PowerShell.Commands
                 // Complete file verbs if extension exists
                 if (Path.HasExtension(filePath))
                 {
-                    return CompleteFileVerbs(wordToComplete, filePath);
+                    return new ProcessStartInfo(filePath).Verbs;
                 }
 
                 // Otherwise check if command is an Application to resolve executable full path with extension
@@ -2694,23 +2699,12 @@ namespace Microsoft.PowerShell.Commands
                 // Start-Process & Get-Command select first found application based on PATHEXT environment variable
                 if (commands.Count >= 1)
                 {
-                    return CompleteFileVerbs(wordToComplete, filePath: commands[0].Source);
+                    return new ProcessStartInfo(commands[0].Source).Verbs;
                 }
             }
 
             return [];
         }
-
-        /// <summary>
-        /// Completes file verbs.
-        /// </summary>
-        /// <param name="wordToComplete">The word to complete.</param>
-        /// <param name="filePath">The file path to get verbs.</param>
-        /// <returns>List of file verbs to complete.</returns>
-        private static IEnumerable<CompletionResult> CompleteFileVerbs(string wordToComplete, string filePath)
-            => CompletionCompleters.GetMatchingResults(
-                wordToComplete,
-                possibleCompletionValues: new ProcessStartInfo(filePath).Verbs);
     }
 
 #if !UNIX

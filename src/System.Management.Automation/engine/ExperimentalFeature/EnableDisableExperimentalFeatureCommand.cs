@@ -105,36 +105,35 @@ namespace Microsoft.PowerShell.Commands
     public class ExperimentalFeatureNameCompleter : IArgumentCompleter
     {
         /// <summary>
-        /// Returns completion results for experimental feature names used as arguments to experimental feature cmdlets.
+        /// Configures argument completer options.
         /// </summary>
-        /// <param name="commandName">The command name.</param>
-        /// <param name="parameterName">The parameter name.</param>
-        /// <param name="wordToComplete">The word to complete.</param>
-        /// <param name="commandAst">The command AST.</param>
-        /// <param name="fakeBoundParameters">The fake bound parameters.</param>
-        /// <returns>List of Completion Results.</returns>
-        public IEnumerable<CompletionResult> CompleteArgument(
-            string commandName,
-            string parameterName,
-            string wordToComplete,
-            CommandAst commandAst,
-            IDictionary fakeBoundParameters)
+        /// <param name="options">The options to configure.</param>
+        /// <returns>Configured options.</returns>
+        public ArgumentCompleterOptions ConfigureArgumentCompleterOptions(ArgumentCompleterOptions options)
         {
-            SortedSet<string> expirmentalFeatures = new(StringComparer.OrdinalIgnoreCase);
-
-            foreach (ExperimentalFeature feature in GetExperimentalFeatures())
-            {
-                expirmentalFeatures.Add(feature.Name);
-            }
-
-            return CompletionCompleters.GetMatchingResults(wordToComplete, expirmentalFeatures);
+            options.PossibleCompletionValues = GetExperimentalFeatureNames();
+            return options;
         }
 
-        private static Collection<ExperimentalFeature> GetExperimentalFeatures()
+        /// <summary>
+        /// Gets experimental feature names using Get-Command.
+        /// </summary>
+        /// <returns>Sorted set of experimental feature names.</returns>
+        private static SortedSet<string> GetExperimentalFeatureNames()
         {
             using var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
             ps.AddCommand("Get-ExperimentalFeature");
-            return ps.Invoke<ExperimentalFeature>();
+
+            Collection<ExperimentalFeature> expirmentalFeatures = ps.Invoke<ExperimentalFeature>();
+
+            SortedSet<string> featureNames = new(StringComparer.OrdinalIgnoreCase);
+
+            foreach (ExperimentalFeature feature in expirmentalFeatures)
+            {
+                featureNames.Add(feature.Name);
+            }
+
+            return featureNames;
         }
     }
 }
