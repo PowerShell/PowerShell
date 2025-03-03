@@ -258,10 +258,12 @@ namespace System.Management.Automation
         /// </param>
         /// <param name="commandOrigin">Location where the command was dispatched from.</param>
         /// <param name="useLocalScope">
-        /// <param name="forCompletion">
         /// True if command processor should use local scope to execute the command,
         /// False if not.  Null if command discovery should default to something reasonable
         /// for the command discovered.
+        /// </param>
+        /// <param name="forCompletion">
+        /// True if this for parameter completion and script requirements should be ignored.
         /// </param>
         /// <returns>
         /// </returns>
@@ -344,8 +346,8 @@ namespace System.Management.Automation
         // #Requires -Module
         internal static void VerifyScriptRequirements(ExternalScriptInfo scriptInfo, ExecutionContext context, bool forCompletion = false)
         {
-            // No point in checking these requirements if failures will be ignored
-            // VerifyRequiredModules will attempt to load the required modules which is useful.
+            // When completing script parameters we don't care if these requirements are met.
+            // VerifyRequiredModules will attempt to load the required modules which is useful for completion (so the correct types are loaded).
             if (!forCompletion)
             {
                 VerifyElevatedPrivileges(scriptInfo);
@@ -434,7 +436,9 @@ namespace System.Management.Automation
         /// False if not.  Null if command discovery should default to something reasonable
         /// for the command discovered.
         /// </param>
-        /// <param name="forCompletion"></param>
+        /// <param name="forCompletion">
+        /// True if this for parameter completion and script requirements should be ignored.
+        /// </param>
         /// <param name="sessionState">The session state the commandInfo should be run in.</param>
         /// <returns>
         /// </returns>
