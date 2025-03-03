@@ -213,7 +213,7 @@ namespace Microsoft.PowerShell.Commands
         };
 
         /// <summary>
-        /// Gets or sets the possible PropertyType completion values.
+        /// Gets the possible PropertyType completion values.
         /// </summary>
         public IEnumerable<string> PossibleCompletionValues => s_RegistryPropertyTypes;
 
@@ -228,7 +228,7 @@ namespace Microsoft.PowerShell.Commands
         public Func<string, string> ToolTipMapping => GetRegistryPropertyTypeToolTip;
 
         /// <summary>
-        /// Gets value indicating whether to perform completion.
+        /// Gets a value indicating whether to perform completion.
         /// </summary>
         public bool ShouldComplete
             => IsRegistryProvider(IArgumentCompleter.FakeBoundParameters);
