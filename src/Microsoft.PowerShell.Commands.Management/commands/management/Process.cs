@@ -2412,7 +2412,7 @@ namespace Microsoft.PowerShell.Commands
             //
             // However, if we are starting a process with a new console window, we should not explicitly set those
             // standard handles when they are not redirected, but instead let Windows figure out the default to use
-            // when creating the process. Otherwise, the standard input handlers of the current window and the new
+            // when creating the process. Otherwise, the standard input handles of the current window and the new
             // window will get weirdly tied together and cause problems.
             bool hasRedirection = startinfo.CreateNoWindow
                 || _redirectstandardinput is not null
