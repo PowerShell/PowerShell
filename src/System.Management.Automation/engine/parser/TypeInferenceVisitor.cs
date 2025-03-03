@@ -2278,7 +2278,7 @@ namespace System.Management.Automation
                 return;
             }
 
-            Ast parent = variableExpressionAst.Parent;
+            Ast currentAst = variableExpressionAst.Parent;
             if (astVariablePath.IsUnqualified &&
                 (SpecialVariables.IsUnderbar(astVariablePath.UserPath)
                  || astVariablePath.UserPath.EqualsOrdinalIgnoreCase(SpecialVariables.PSItem)))
@@ -2291,65 +2291,65 @@ namespace System.Management.Automation
                 // The value in a Switch loop is whichever item is in the condition part of the statement.
                 // The value in Catch/Trap statements is always an error record.
                 bool hasSeenScriptBlock = false;
-                while (parent is not null)
+                while (currentAst is not null)
                 {
-                    if (parent is CatchClauseAst or TrapStatementAst)
+                    if (currentAst is CatchClauseAst or TrapStatementAst)
                     {
                         break;
                     }
-                    else if (parent is SwitchStatementAst switchStatement
+                    else if (currentAst is SwitchStatementAst switchStatement
                         && switchStatement.Condition.Extent.EndOffset < variableExpressionAst.Extent.StartOffset)
                     {
-                        parent = switchStatement.Condition;
+                        currentAst = switchStatement.Condition;
                         break;
                     }
-                    else if (parent is ErrorStatementAst switchErrorStatement && switchErrorStatement.Kind?.Kind == TokenKind.Switch)
+                    else if (currentAst is ErrorStatementAst switchErrorStatement && switchErrorStatement.Kind?.Kind == TokenKind.Switch)
                     {
                         if (switchErrorStatement.Conditions?.Count > 0)
                         {
                             if (switchErrorStatement.Conditions[0].Extent.EndOffset < variableExpressionAst.Extent.StartOffset)
                             {
-                                parent = switchErrorStatement.Conditions[0];
+                                currentAst = switchErrorStatement.Conditions[0];
                                 break;
                             }
                             else
                             {
                                 // $_ is inside the condition that is being declared, eg: Get-Process | Sort-Object -Property {switch ($_.Proc<Tab>
-                                parent = switchErrorStatement.Parent;
+                                currentAst = switchErrorStatement.Parent;
                                 continue;
                             }
                         }
 
                         break;
                     }
-                    else if (parent is ScriptBlockExpressionAst)
+                    else if (currentAst is ScriptBlockExpressionAst)
                     {
                         hasSeenScriptBlock = true;
                     }
                     else if (hasSeenScriptBlock)
                     {
-                        if (parent is InvokeMemberExpressionAst invokeMember)
+                        if (currentAst is InvokeMemberExpressionAst invokeMember)
                         {
-                            parent = invokeMember.Expression;
+                            currentAst = invokeMember.Expression;
                             break;
                         }
-                        else if (parent is CommandAst cmdAst && cmdAst.Parent is PipelineAst pipeline && pipeline.PipelineElements.Count > 1)
+                        else if (currentAst is CommandAst cmdAst && cmdAst.Parent is PipelineAst pipeline && pipeline.PipelineElements.Count > 1)
                         {
                             // We've found a pipeline with multiple commands, now we need to determine what command came before the command with the scriptblock:
                             // eg Get-Partition in this example: Get-Disk | Get-Partition | Where {$_}
                             var indexOfPreviousCommand = pipeline.PipelineElements.IndexOf(cmdAst) - 1;
                             if (indexOfPreviousCommand >= 0)
                             {
-                                parent = pipeline.PipelineElements[indexOfPreviousCommand];
+                                currentAst = pipeline.PipelineElements[indexOfPreviousCommand];
                                 break;
                             }
                         }
                     }
 
-                    parent = parent.Parent;
+                    currentAst = currentAst.Parent;
                 }
 
-                if (parent is CatchClauseAst catchBlock)
+                if (currentAst is CatchClauseAst catchBlock)
                 {
                     if (catchBlock.CatchTypes.Count > 0)
                     {
@@ -2369,7 +2369,7 @@ namespace System.Management.Automation
                         inferredTypes.Add(new PSTypeName(typeof(ErrorRecord)));
                     }
                 }
-                else if (parent is TrapStatementAst trap)
+                else if (currentAst is TrapStatementAst trap)
                 {
                     if (trap.TrapType is not null)
                     {
@@ -2384,15 +2384,15 @@ namespace System.Management.Automation
                         inferredTypes.Add(new PSTypeName(typeof(ErrorRecord)));
                     }
                 }
-                else if (parent is not null)
+                else if (currentAst is not null)
                 {
-                    inferredTypes.AddRange(GetInferredEnumeratedTypes(InferTypes(parent)));
+                    inferredTypes.AddRange(GetInferredEnumeratedTypes(InferTypes(currentAst)));
                 }
 
                 return;
             }
 
-            // Process well known variables like: $this and $true
+            // Process the well known variable $this
             if (astVariablePath.IsUnqualified
                 && astVariablePath.UnqualifiedPath.EqualsOrdinalIgnoreCase(SpecialVariables.This)
                 && (_context.CurrentTypeDefinitionAst is not null || _context.CurrentThisType is not null))
@@ -2403,6 +2403,7 @@ namespace System.Management.Automation
                 return;
             }
 
+            // Process other well known variables like $true and $pshome
             if (SpecialVariables.AllScopeVariables.TryGetValue(astVariablePath.UnqualifiedPath, out Type knownType))
             {
                 if (knownType == typeof(object))
@@ -2420,6 +2421,7 @@ namespace System.Management.Automation
                 return;
             }
 
+            // Process automatic variables like $MyInvocation and $PSBoundParameters
             for (int i = 0; i < SpecialVariables.AutomaticVariables.Length; i++)
             {
                 if (!astVariablePath.UnqualifiedPath.EqualsOrdinalIgnoreCase(SpecialVariables.AutomaticVariables[i]))
@@ -2445,16 +2447,16 @@ namespace System.Management.Automation
                 StopSearchOffset = variableExpressionAst.Extent.StartOffset,
                 VariableTarget = variableExpressionAst
             };
-            while (parent is not null)
+            while (currentAst is not null)
             {
-                if (parent is IParameterMetadataProvider)
+                if (currentAst is IParameterMetadataProvider)
                 {
-                    parent.Visit(assignmentVisitor);
+                    currentAst.Visit(assignmentVisitor);
 
                     if (assignmentVisitor.LocalScopeOnly
                         || assignmentVisitor.LastConstraint is not null
                         || ((assignmentVisitor.LastAssignment is not null || assignmentVisitor.LastAssignmentType is not null)
-                        && (parent.Parent is not ScriptBlockExpressionAst scriptBlock || !scriptBlock.IsDotsourced())))
+                        && (currentAst.Parent is not ScriptBlockExpressionAst scriptBlock || !scriptBlock.IsDotsourced())))
                     {
                         // We only care about the parent scopes if no assignment has been made in the current scope
                         // or if it's a dot sourced scriptblock where an earlier defined type constraint could influence the final type
@@ -2462,10 +2464,10 @@ namespace System.Management.Automation
                     }
 
                     assignmentVisitor.ScopeIsLocal = false;
-                    assignmentVisitor.StopSearchOffset = parent.Extent.StartOffset;
+                    assignmentVisitor.StopSearchOffset = currentAst.Extent.StartOffset;
                 }
 
-                parent = parent.Parent;
+                currentAst = currentAst.Parent;
             }
 
             // The visitor is done finding the last assignment, now we need to infer the type of that assignment.
