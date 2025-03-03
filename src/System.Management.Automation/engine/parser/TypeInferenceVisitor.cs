@@ -2394,7 +2394,7 @@ namespace System.Management.Automation
 
             // Process well known variables like: $this and $true
             if (astVariablePath.IsUnqualified
-                && astVariablePath.UserPath.EqualsOrdinalIgnoreCase(SpecialVariables.This)
+                && astVariablePath.UnqualifiedPath.EqualsOrdinalIgnoreCase(SpecialVariables.This)
                 && (_context.CurrentTypeDefinitionAst is not null || _context.CurrentThisType is not null))
             {
                 // $this is special in script properties and in PowerShell classes
@@ -2865,6 +2865,7 @@ namespace System.Management.Automation
             /// </summary>
             internal VariableExpressionAst VariableTarget;
             internal int StopSearchOffset;
+
             /// <summary>
             /// The last type constraint applied to the variable. This takes priority when determining the type of the variable.
             /// </summary>
@@ -3206,6 +3207,7 @@ namespace System.Management.Automation
             public override AstVisitAction VisitScriptBlockExpression(ScriptBlockExpressionAst scriptBlockExpressionAst)
             {
                 Ast parent = scriptBlockExpressionAst.Parent;
+
                 // This loop checks if the scriptblock is used as a command, or an argument for a command, eg: ForEach-Object -Process {$Var1 = "Hello"}, {Var2 = $true}
                 while (true)
                 {
