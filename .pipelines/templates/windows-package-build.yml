@@ -38,7 +38,7 @@ jobs:
       ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
   - pwsh: |
-      Get-ChildItem -Path env:
+      Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
     displayName: Capture environment
     env:
       ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
@@ -78,6 +78,13 @@ jobs:
     env:
       ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
 
+  - task: UseDotNet@2
+    inputs:
+      useGlobalJson: true
+      workingDirectory: $(REPOROOT)
+    env:
+      ob_restore_phase: true
+
   - pwsh: |
       $msixUrl = '$(makeappUrl)'
       Invoke-RestMethod -Uri $msixUrl -OutFile '$(Pipeline.Workspace)\makeappx.zip'
@@ -105,7 +112,7 @@ jobs:
       Import-Module "$repoRoot\build.psm1"
       Import-Module "$repoRoot\tools\packaging"
 
-      Start-PSBootstrap -Package
+      Start-PSBootstrap -Scenario Package
 
       $signedFilesPath, $psoptionsFilePath = if ($env:RUNTIME -eq 'minsize') {
           "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_x64_${runtime}\$signedFolder"
@@ -136,7 +143,7 @@ jobs:
         Write-Verbose -Message "LTS Release: $LTS"
       }
 
-      Start-PSBootstrap -Package
+      Start-PSBootstrap -Scenario Package
 
       $WindowsRuntime = switch ($runtime) {
         'x64' { 'win7-x64' }
@@ -205,7 +212,7 @@ jobs:
       Write-Verbose -Verbose "exePath: $exePath"
 
       $enginePath = Join-Path -Path '$(System.ArtifactsDirectory)\unsignedEngine' -ChildPath engine.exe
-      Expand-ExePackageEngine -ExePath $exePath -EnginePath $enginePath
+      Expand-ExePackageEngine -ExePath $exePath -EnginePath $enginePath -ProductTargetArchitecture $runtime
     displayName: 'Make exe and expand package'
 
   - task: onebranch.pipeline.signing@1
@@ -217,14 +224,23 @@ jobs:
       search_root: '$(Pipeline.Workspace)'
 
   - pwsh: |
+      $runtime = '$(Runtime)'
+      Write-Verbose -Verbose "runtime = '$(Runtime)'"
       $repoRoot = "$env:REPOROOT"
       Import-Module "$repoRoot\build.psm1"
       Import-Module "$repoRoot\tools\packaging"
 
+      $noExeRuntimes = @('fxdependent', 'fxdependentWinDesktop', 'minsize')
+
+      if ($runtime -in $noExeRuntimes) {
+        Write-Verbose -Verbose "No EXE generated for $runtime"
+        return
+      }
+
       $exePath = '$(exePath)'
       $enginePath = Join-Path -Path '$(System.ArtifactsDirectory)\unsignedEngine' -ChildPath engine.exe
       $enginePath | Get-AuthenticodeSignature | out-string | Write-Verbose -verbose
-      Compress-ExePackageEngine -ExePath $exePath -EnginePath $enginePath
+      Compress-ExePackageEngine -ExePath $exePath -EnginePath $enginePath -ProductTargetArchitecture $runtime
     displayName: Compress signed exe package
 
   - task: onebranch.pipeline.signing@1

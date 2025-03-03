@@ -268,6 +268,56 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Name | Should -Be 'System.Management.ManagementObject#root\cimv2\Win32_Process'
     }
 
+    It "Infers type from binary expression with a bool operator as bool" {
+        $res = [AstTypeInference]::InferTypeOf( {
+                (1..10) -contains 5
+            }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.Boolean'
+    }
+
+    It "Infers type from binary expression with a string operator as string" {
+        $res = [AstTypeInference]::InferTypeOf( {
+                (1..10) -join ','
+            }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.String'
+    }
+
+    It "Infers type from binary expression with a split operator as string array" {
+        $res = [AstTypeInference]::InferTypeOf( {
+                "Test:Value" -split ':'
+            }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.String[]'
+    }
+
+    It "Infers type from binary expression with a comparison operator as bool + the left hand side type" {
+        $res = [AstTypeInference]::InferTypeOf( {
+                ("Hello", "World") -eq "Hello"
+            }.Ast)
+        $res.Count | Should -Be 2
+        $res.Name[0] | Should -Be 'System.Boolean'
+        $res.Name[1] | Should -Be 'System.String[]'
+    }
+
+    It "Infers type from binary expression with a null coalescing operator as left and right hand side types" {
+        $res = [AstTypeInference]::InferTypeOf( {
+                "NotNull" ?? 10
+            }.Ast)
+        $res.Count | Should -Be 2
+        $res.Name[0] | Should -Be 'System.String'
+        $res.Name[1] | Should -Be 'System.Int32'
+    }
+
+    It "Infers type from binary expression with an overridden operator" {
+        $res = [AstTypeInference]::InferTypeOf( {
+                (Get-Date) - (Get-Date)
+            }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.TimeSpan'
+    }
+
     It "Infers type from DATA statement" {
         $res = [AstTypeInference]::InferTypeOf( {
                 DATA {
@@ -361,10 +411,8 @@ Describe "Type inference Tests" -tags "CI" {
 
     It "Infers type from foreach-object of integer" {
         $res = [AstTypeInference]::InferTypeOf( { [int[]] $i = 1..20; $i | ForEach-Object {$_ * 10} }.Ast)
-        $res.Count | Should -Be 2
-        foreach ($r in $res) {
-            $r.Name -In 'System.Int32', 'System.Int32[]' | Should -BeTrue
-        }
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.Int32'
     }
 
     It "Infers type from generic new" {
@@ -386,9 +434,9 @@ Describe "Type inference Tests" -tags "CI" {
 
     It "Infers type from foreach-object with begin/end" {
         $res = [AstTypeInference]::InferTypeOf( { [int[]] $i = 1..20; $i | ForEach-Object -Begin {"Hi"} {$_ * 10} -End {[int]} }.Ast)
-        $res.Count | Should -Be 4
+        $res.Count | Should -Be 3
         foreach ($r in $res) {
-            $r.Name -In 'System.Int32', 'System.Int32[]', 'System.String', 'System.Type' | Should -BeTrue
+            $r.Name -In 'System.Int32', 'System.String', 'System.Type' | Should -BeTrue
         }
     }
 
@@ -442,6 +490,14 @@ Describe "Type inference Tests" -tags "CI" {
             Remove-TypeData -TypeName InferScriptPropLevel1
             Remove-TypeData -TypeName InferScriptPropLevel2
         }
+    }
+
+    It 'Infers typeof pipeline chain' {
+        $ast = {New-TimeSpan && New-Guid}.Ast
+        $typeNames = [AstTypeInference]::InferTypeof($ast, [TypeInferenceRuntimePermissions]::AllowSafeEval)
+        $typeNames.Count | Should -Be 2
+        $typeNames[0] | Should -Be 'System.TimeSpan'
+        $typeNames[1] | Should -Be 'System.Guid'
     }
 
     It "Infers typeof pscustomobject" {
@@ -594,8 +650,10 @@ Describe "Type inference Tests" -tags "CI" {
     }
 
     It "Infers type from variable with AllowSafeEval" {
-        function Hide-GetProcess { Get-Process }
-        $p = Hide-GetProcess
+        # Invoke-Expression is used to "hide" Get-Process from the type inference.
+        # If the typeinference code is updated to handle Invoke-Expression, this test will need to find some other way to set $p
+        # so that the type inference can't figure it out without evaluating the variable value
+        $p = Invoke-Expression -Command 'Get-Process'
         $res = [AstTypeInference]::InferTypeOf( { $p }.Ast, [TypeInferenceRuntimePermissions]::AllowSafeEval)
         $res.Name | Should -Be 'System.Diagnostics.Process'
     }
@@ -616,16 +674,6 @@ Describe "Type inference Tests" -tags "CI" {
 
         $res = [AstTypeInference]::InferTypeOf( $ast.EndBlock.Statements[0])
         $res.Name | Should -Be 'System.Int32'
-    }
-
-    It 'Infers type from attributed expession' {
-        $res = [AstTypeInference]::InferTypeOf( {
-                [ValidateRange(1, 2)]
-                [int]$i = 1
-            }.Ast)
-
-        $res.Count | Should -Be 1
-        $res.Name | Should -Be System.Int32
     }
 
     It 'Infers type from if statement' {
@@ -1399,7 +1447,8 @@ Describe "Type inference Tests" -tags "CI" {
 
     It 'Infers closest variable type' {
         $res = [AstTypeInference]::InferTypeOf( { [string]$TestVar = "";[hashtable]$TestVar = @{};$TestVar }.Ast)
-        $res.Name | Select-Object -Last 1 | Should -Be "System.Collections.Hashtable"
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be "System.Collections.Hashtable"
     }
 
     It 'Infers closest variable type and ignores unrelated param blocks' {
@@ -1443,6 +1492,118 @@ Describe "Type inference Tests" -tags "CI" {
             $true
         )
         $null = [AstTypeInference]::InferTypeOf($FoundAst)
+    }
+
+    It 'Should infer output from anonymous function' {
+        $res = [AstTypeInference]::InferTypeOf( { & {"Hello"} }.Ast)
+        $res.Name | Should -Be 'System.String'
+    }
+
+    It 'Should infer output from function without OutputType attribute' {
+        function MyHello{"Hello"}
+        $res = [AstTypeInference]::InferTypeOf( { MyHello }.Ast)
+        $res.Name | Should -Be 'System.String'
+    }
+
+    It 'Infers type of command with all streams redirected to Success stream' {
+        $res = [AstTypeInference]::InferTypeOf( { Get-PSDrive *>&1 }.Ast)
+        $ExpectedTypeNames = @(
+            [ErrorRecord].FullName
+            [WarningRecord].FullName
+            [VerboseRecord].FullName
+            [DebugRecord].FullName
+            [InformationRecord].FullName
+            [PSDriveInfo].FullName
+        ) -join ';'
+        $res.Name -join ';' | Should -Be $ExpectedTypeNames
+    }
+
+    It 'Infers type of command with success stream redirected' {
+        $res = [AstTypeInference]::InferTypeOf( { Get-PSDrive *>&1 1>$null }.Ast)
+        $res.Count | Should -Be 0
+    }
+
+    It 'Infers type of command with some streams redirected to success' {
+        $res = [AstTypeInference]::InferTypeOf( { Get-PSDrive 3>&1 4>&1 }.Ast)
+        $res.Count | Should -Be 3
+        $ExpectedTypeNames = @(
+            [PSDriveInfo].FullName
+            [VerboseRecord].FullName
+            [WarningRecord].FullName
+        ) -join ';'
+        ($res.Name | Sort-Object) -join ';' | Should -Be $ExpectedTypeNames
+    }
+
+    It 'Infers type of command with other streams redirected to success' {
+        $res = [AstTypeInference]::InferTypeOf( { Get-PSDrive 2>&1 5>&1 6>&1 }.Ast)
+        $res.Count | Should -Be 4
+        $ExpectedTypeNames = @(
+            [DebugRecord].FullName
+            [ErrorRecord].FullName
+            [InformationRecord].FullName
+            [PSDriveInfo].FullName
+        ) -join ';'
+        ($res.Name | Sort-Object) -join ';' | Should -Be $ExpectedTypeNames
+    }
+
+    It 'Should only consider assignments wrapped in parentheses to be a part of the output in a Named block' {
+        $res = [AstTypeInference]::InferTypeOf( { [string]$Assignment1 = "Hello"; ([int]$Assignment2 = 42) }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.Int32'
+    }
+
+    It 'Should only consider assignments wrapped in parentheses to be a part of the output in a Statement block' {
+        $res = [AstTypeInference]::InferTypeOf( { if ($true){ [string]$Assignment1 = "Hello"; ([int]$Assignment2 = 42) }}.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.Int32'
+    }
+
+    It 'Should only consider increments/decrements wrapped in parentheses to be a part of the output in a Named block' {
+        $res = [AstTypeInference]::InferTypeOf( {
+            [Int16]$Int16 = 1; [Int32]$Int32 = 1; [Int64]$Int64 = 1; [System.Int128]$Int128 = 1;
+
+            $Int16++; $Int32--; ++$Int64; --$Int128}.Ast)
+        $res.Count | Should -Be 0
+
+        $res = [AstTypeInference]::InferTypeOf( {
+            [UInt16]$Uint16 = 1; [UInt32]$Uint32 = 1; [UInt64]$Uint64 = 1; [System.UInt128]$Uint128 = 1
+
+            ($Uint16++); ($Uint32--); (++$Uint64); (--$Uint128) }.Ast)
+        $res.Count | Should -Be 4
+        $res.Name -join ',' | Should -Be ('System.UInt16', 'System.UInt32', 'System.UInt64', 'System.UInt128' -join ',')
+    }
+
+    It 'Should only consider increments/decrements wrapped in parentheses to be a part of the output in a Statement block' {
+        $res = [AstTypeInference]::InferTypeOf( {if ($true){
+            [Int16]$Int16 = 1; [Int32]$Int32 = 1; [Int64]$Int64 = 1; [System.Int128]$Int128 = 1;
+
+            $Int16++; $Int32--; ++$Int64; --$Int128}}.Ast)
+        $res.Count | Should -Be 0
+
+        $res = [AstTypeInference]::InferTypeOf( {if ($true){
+            [UInt16]$Uint16 = 1; [UInt32]$Uint32 = 1; [UInt64]$Uint64 = 1; [System.UInt128]$Uint128 = 1
+
+            ($Uint16++); ($Uint32--); (++$Uint64); (--$Uint128) }}.Ast)
+        $res.Count | Should -Be 4
+        $res.Name -join ',' | Should -Be ('System.UInt16', 'System.UInt32', 'System.UInt64', 'System.UInt128' -join ',')
+    }
+
+    It 'Redirected increments/decrements should be considered part of the output in a Named block' {
+        $res = [AstTypeInference]::InferTypeOf( {
+            [Int16]$Int16 = 1; [Int32]$Int32 = 1; [Int64]$Int64 = 1; [System.Int128]$Int128 = 1;
+
+            $Int16++ *>&1; $Int32-- *>&1; ++$Int64 *>&1; --$Int128 *>&1}.Ast)
+        $res.Count | Should -Be 4
+        $res.Name -join ',' | Should -Be ('System.Int16', 'System.Int32', 'System.Int64', 'System.Int128' -join ',')
+    }
+
+    It 'Redirected increments/decrements should be considered part of the output in a Statement block' {
+        $res = [AstTypeInference]::InferTypeOf( {if ($true){
+            [Int16]$Int16 = 1; [Int32]$Int32 = 1; [Int64]$Int64 = 1; [System.Int128]$Int128 = 1;
+
+            $Int16++ *>&1; $Int32-- *>&1; ++$Int64 *>&1; --$Int128 *>&1}}.Ast)
+        $res.Count | Should -Be 4
+        $res.Name -join ',' | Should -Be ('System.Int16', 'System.Int32', 'System.Int64', 'System.Int128' -join ',')
     }
 }
 

@@ -16,6 +16,7 @@ using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Security;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Xml;
 using System.Diagnostics;
@@ -135,17 +136,12 @@ namespace Microsoft.PowerShell.Commands
 
         internal SessionState TargetSessionState
         {
-            get
-            {
-                if (BaseGlobal)
-                {
-                    return this.Context.TopLevelSessionState.PublicSessionState;
-                }
-                else
-                {
-                    return this.Context.SessionState;
-                }
-            }
+            // Module loading could happen during tab completion triggered by PSReadLine,
+            // but that doesn't mean the module should be loaded targeting the PSReadLine
+            // module's session state. In that case, use Global session state instead.
+            get => BaseGlobal || Context.EngineSessionState.Module?.Name is "PSReadLine"
+                ? Context.TopLevelSessionState.PublicSessionState
+                : Context.SessionState;
         }
 
         /// <summary>
@@ -1624,17 +1620,7 @@ namespace Microsoft.PowerShell.Commands
                 if (bailOnFirstError) return null;
             }
 
-            string resolvedCommandPrefix = string.Empty;
-
-            if (!string.IsNullOrEmpty(defaultCommandPrefix))
-            {
-                resolvedCommandPrefix = defaultCommandPrefix;
-            }
-
-            if (!string.IsNullOrEmpty(this.BasePrefix))
-            {
-                resolvedCommandPrefix = this.BasePrefix;
-            }
+            string resolvedCommandPrefix = BasePrefix ?? defaultCommandPrefix ?? string.Empty;
 
             if (!string.IsNullOrEmpty(actualRootModule))
             {
@@ -1920,11 +1906,12 @@ namespace Microsoft.PowerShell.Commands
             else if ((requiredProcessorArchitecture != ProcessorArchitecture.None) &&
                      (requiredProcessorArchitecture != ProcessorArchitecture.MSIL))
             {
-                #pragma warning disable SYSLIB0037
-                ProcessorArchitecture currentArchitecture = typeof(object).Assembly.GetName().ProcessorArchitecture;
-                #pragma warning restore SYSLIB0037
+                Architecture currentArchitecture = RuntimeInformation.ProcessArchitecture;
 
-                if (currentArchitecture != requiredProcessorArchitecture)
+                if ((requiredProcessorArchitecture == ProcessorArchitecture.X86 && currentArchitecture != Architecture.X86) ||
+                    (requiredProcessorArchitecture == ProcessorArchitecture.Amd64 && currentArchitecture != Architecture.X64) ||
+                    (requiredProcessorArchitecture == ProcessorArchitecture.Arm && (currentArchitecture != Architecture.Arm && currentArchitecture != Architecture.Arm64)) ||
+                    requiredProcessorArchitecture == ProcessorArchitecture.IA64)
                 {
                     containedErrors = true;
                     if (writingErrors)
@@ -6403,7 +6390,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // If this has an extension, and it's a relative path,
                 // then we need to ensure it's a fully-qualified path
-                if ((moduleToProcess.IndexOfAny(Path.GetInvalidPathChars()) == -1) &&
+                if ((!PathUtils.ContainsInvalidPathChars(moduleToProcess)) &&
                     Path.HasExtension(moduleToProcess) &&
                     (!Path.IsPathRooted(moduleToProcess)))
                 {

@@ -8,55 +8,42 @@ jobs:
   displayName: Publish to NuGet
   condition: succeeded()
   pool:
-    type: windows
+    type: release
+    os: windows
+  templateContext:
+    inputs:
+      - input: pipelineArtifact
+        artifactName: drop_setReleaseTagAndUploadTools_SetTagAndTools
+      - input: pipelineArtifact
+        pipeline: PSPackagesOfficial
+        artifactName: drop_upload_upload_packages
   variables:
-  - name: runCodesignValidationInjection
-    value: false
-  - name: NugetSecurityAnalysisWarningLevel
-    value: none
-  - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
-    value: 1
-  - group: 'mscodehub-code-read-akv'
-  - name: ob_outputDirectory
-    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
-  - name: ob_sdl_codeSignValidation_enabled
-    value: false
-  - name: ob_sdl_binskim_enabled
-    value: false
-  - name: ob_sdl_tsa_configFile
-    value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
-  - name: ob_sdl_credscan_suppressionsFile
-    value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+  - template: ./variable/release-shared.yml@self
+    parameters:
+      VERSION: $[ stageDependencies.setReleaseTagAndUploadTools.SetTagAndTools.outputs['OutputVersion.Version'] ]
 
   steps:
-  - checkout: self
-    clean: true
-    env:
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
-
-  - template: release-SetReleaseTagAndContainerName.yml
+  - template: release-install-pwsh.yml
 
   - pwsh: |
-      Get-ChildItem Env:
+      Write-Verbose -Verbose "Version: $(Version)"
+      Get-ChildItem Env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
     displayName: 'Capture Environment Variables'
-
-  - download: PSPackagesOfficial
-    artifact: drop_nupkg_build_nupkg
-    displayName: Download nuget packages
 
   - pwsh: |
       #Exclude all global tool packages. Their names start with 'PowerShell.'
       $null = New-Item -ItemType Directory -Path "$(Pipeline.Workspace)/release"
-      Copy-Item "$ENV:PIPELINE_WORKSPACE/PSPackagesOfficial/drop_nupkg_build_nupkg/*.nupkg" -Destination "$(Pipeline.Workspace)/release" -Exclude "PowerShell.*.nupkg" -Force -Verbose
+      Copy-Item "$(Pipeline.Workspace)/NuGetPackages/*.nupkg" -Destination "$(Pipeline.Workspace)/release" -Exclude "PowerShell.*.nupkg" -Force -Verbose
 
-      $releaseVersion = '$(VERSION)'
-      $globalToolPath = "$ENV:PIPELINE_WORKSPACE/PSPackagesOfficial/drop_nupkg_build_nupkg/PowerShell.$releaseVersion.nupkg"
+      $releaseVersion = '$(Version)'
+      $globalToolPath = "$(Pipeline.Workspace)/NuGetPackages/PowerShell.$releaseVersion.nupkg"
 
       if ($releaseVersion -notlike '*-*') {
           # Copy the global tool package for stable releases
           Copy-Item $globalToolPath -Destination "$(Pipeline.Workspace)/release"
       }
 
+      Write-Verbose -Verbose "The .nupkgs below will be pushed:"
       Get-ChildItem "$(Pipeline.Workspace)/release" -recurse
     displayName: Download and capture nupkgs
     condition: and(ne('${{ parameters.skipPublish }}', 'false'), succeeded())

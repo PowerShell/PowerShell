@@ -57,7 +57,7 @@ stages:
 
     steps:
     - pwsh: |
-        Get-ChildItem -Path env:
+        Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
       displayName: 'Capture Environment'
       condition: succeededOrFailed()
 
@@ -93,6 +93,13 @@ stages:
       displayName: Bootstrap
       condition: succeededOrFailed()
 
+    - task: UseDotNet@2
+      displayName: 'Use .NET Core sdk'
+      inputs:
+        useGlobalJson: true
+        packageType: 'sdk'
+        workingDirectory: $(Build.SourcesDirectory)"
+
     - pwsh: |
         Import-Module .\build.psm1
         Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
@@ -104,7 +111,6 @@ stages:
 
     - pwsh: |
         Import-Module .\build.psm1
-        Start-PSBootstrap
         Import-Module .\tools\ci.psm1
         Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
         Invoke-CITest -Purpose UnelevatedPesterTests -TagSet CI
@@ -113,7 +119,6 @@ stages:
 
     - pwsh: |
         Import-Module .\build.psm1
-        Start-PSBootstrap
         Import-Module .\tools\ci.psm1
         Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
         Invoke-CITest -Purpose ElevatedPesterTests -TagSet CI
@@ -122,7 +127,6 @@ stages:
 
     - pwsh: |
         Import-Module .\build.psm1
-        Start-PSBootstrap
         Import-Module .\tools\ci.psm1
         Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
         Invoke-CITest -Purpose UnelevatedPesterTests -TagSet Others
@@ -131,7 +135,6 @@ stages:
 
     - pwsh: |
         Import-Module .\build.psm1
-        Start-PSBootstrap
         Import-Module .\tools\ci.psm1
         Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
         Invoke-CITest -Purpose ElevatedPesterTests -TagSet Others

@@ -6947,15 +6947,7 @@ namespace System.Management.Automation.Language
                 //  - Log method invocation to AMSI Notifications (can throw PSSecurityException)
                 //  - Invoke method
                 string targetName = methodInfo.ReflectedType?.FullName ?? string.Empty;
-                expr = Expression.Block(
-                    Expression.Call(
-                        CachedReflectionInfo.MemberInvocationLoggingOps_LogMemberInvocation,
-                        Expression.Constant(targetName),
-                        Expression.Constant(name),
-                        Expression.NewArrayInit(
-                            typeof(object),
-                            args.Select(static e => e.Expression.Cast(typeof(object))))),
-                    expr);
+                expr = MaybeAddMemberInvocationLogging(expr, targetName, name, args);
 
                 // If we're calling SteppablePipeline.{Begin|Process|End}, we don't want
                 // to wrap exceptions - this is very much a special case to help error
@@ -7173,6 +7165,13 @@ namespace System.Management.Automation.Language
                     var argValue = parameters[i].DefaultValue;
                     if (argValue == null)
                     {
+                        argExprs[i] = Expression.Default(parameterType);
+                    }
+                    else if (!parameters[i].HasDefaultValue && parameterType != typeof(object) && argValue == Type.Missing)
+                    {
+                        // If the method contains just [Optional] without a default value set then we cannot use
+                        // Type.Missing as a placeholder. Instead we use the default value for that type. Only
+                        // exception to this rule is when the parameter type is object.
                         argExprs[i] = Expression.Default(parameterType);
                     }
                     else
@@ -7558,6 +7557,33 @@ namespace System.Management.Automation.Language
                 }
             }
         }
+
+#nullable enable
+        private static Expression MaybeAddMemberInvocationLogging(
+            Expression expr,
+            string targetName,
+            string name,
+            DynamicMetaObject[] args)
+        {
+#if UNIX && !DEBUG
+            // For efficiency this is a no-op on non-Windows platforms in release builds.
+            return expr;
+#else
+            Expression[] invocationArgs = new Expression[args.Length];
+            for (int i = 0; i < args.Length; i++)
+            {
+                invocationArgs[i] = args[i].Expression.Cast(typeof(object));
+            }
+            return Expression.Block(
+                Expression.Call(
+                    CachedReflectionInfo.MemberInvocationLoggingOps_LogMemberInvocation,
+                    Expression.Constant(targetName),
+                    Expression.Constant(name),
+                    Expression.NewArrayInit(typeof(object), invocationArgs)),
+                expr);
+#endif
+        }
+#nullable disable
 
         #endregion
     }
