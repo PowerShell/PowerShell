@@ -264,7 +264,7 @@ jobs:
         Write-Host 'AzureRM module removed'
       }
 
-      Install-Module -Name Az.Storage -Force -AllowClobber -Scope CurrentUser -Verbose
+      ./tools/installPSResource.ps1 -PSRepository CFS -Verbose
 
     displayName: Remove AzRM modules
 
