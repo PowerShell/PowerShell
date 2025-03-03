@@ -221,6 +221,7 @@ namespace Microsoft.PowerShell.Commands
             options.PossibleCompletionValues = s_RegistryPropertyTypes;
             options.ShouldComplete = IsRegistryProvider(options.FakeBoundParameters);
             options.ToolTipMapping = GetRegistryPropertyTypeToolTip;
+            options.CompletionResultType = CompletionResultType.ParameterValue;
             return options;
         }
 
