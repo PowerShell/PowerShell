@@ -280,6 +280,7 @@ namespace System.Management.Automation
             if (commandInfo != null)
             {
                 processor = LookupCommandProcessor(commandInfo, commandOrigin, useLocalScope, null, forCompletion);
+
                 // commandInfo.Name might be different than commandName - restore the original invocation name
                 processor.Command.MyInvocation.InvocationName = commandName;
             }
