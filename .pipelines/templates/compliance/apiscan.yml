@@ -79,15 +79,7 @@ jobs:
       retryCountOnTaskFailure: 2
 
     - pwsh: |
-        $modules = 'Az.Accounts', 'Az.Storage'
-        foreach($module in $modules) {
-          if(!(get-module $module -listavailable)) {
-            Write-Verbose "installing $module..." -verbose
-            Install-Module $module -force -AllowClobber
-          } else {
-            Write-Verbose "$module already installed." -verbose
-          }
-        }
+        ./tools/installPSResource.ps1 -PSRepository CFS -Verbose
       displayName: Install PowerShell modules
       workingDirectory: '$(repoRoot)'
 

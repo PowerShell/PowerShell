@@ -58,7 +58,7 @@ jobs:
       targetType: 'inline'
       script: |
         Get-PackageProvider -Name NuGet -ForceBootstrap
-        Install-Module -Name Az.Storage -Verbose -Force -AllowClobber
+        ./tools/installPSResource.ps1 -PSRepository CFS
         Uninstall-AzureRm -Verbose
 
   - task: AzurePowerShell@5
