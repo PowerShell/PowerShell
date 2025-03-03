@@ -258,6 +258,7 @@ namespace System.Management.Automation
         /// </param>
         /// <param name="commandOrigin">Location where the command was dispatched from.</param>
         /// <param name="useLocalScope">
+        /// <param name="forCompletion">
         /// True if command processor should use local scope to execute the command,
         /// False if not.  Null if command discovery should default to something reasonable
         /// for the command discovered.
@@ -271,14 +272,14 @@ namespace System.Management.Automation
         /// If the security manager is preventing the command from running.
         /// </exception>
         internal CommandProcessorBase LookupCommandProcessor(string commandName,
-            CommandOrigin commandOrigin, bool? useLocalScope)
+            CommandOrigin commandOrigin, bool? useLocalScope, bool forCompletion = false)
         {
             CommandProcessorBase processor = null;
             CommandInfo commandInfo = LookupCommandInfo(commandName, commandOrigin);
 
             if (commandInfo != null)
             {
-                processor = LookupCommandProcessor(commandInfo, commandOrigin, useLocalScope, null);
+                processor = LookupCommandProcessor(commandInfo, commandOrigin, useLocalScope, null, forCompletion);
                 // commandInfo.Name might be different than commandName - restore the original invocation name
                 processor.Command.MyInvocation.InvocationName = commandName;
             }
@@ -286,7 +287,7 @@ namespace System.Management.Automation
             return processor;
         }
 
-        internal static void VerifyRequiredModules(ExternalScriptInfo scriptInfo, ExecutionContext context)
+        internal static void VerifyRequiredModules(ExternalScriptInfo scriptInfo, ExecutionContext context, bool forCompletion = false)
         {
             // Check Required Modules
             if (scriptInfo.RequiresModules != null)
@@ -301,7 +302,7 @@ namespace System.Management.Automation
                         moduleManifestPath: null,
                         manifestProcessingFlags: ModuleCmdletBase.ManifestProcessingFlags.LoadElements | ModuleCmdletBase.ManifestProcessingFlags.WriteErrors,
                         error: out error);
-                    if (!context.IgnoreFailedScriptRequirements && error is not null)
+                    if (!forCompletion && error is not null)
                     {
                         ScriptRequiresException scriptRequiresException =
                             new ScriptRequiresException(
@@ -316,9 +317,9 @@ namespace System.Management.Automation
             }
         }
 
-        private CommandProcessorBase CreateScriptProcessorForSingleShell(ExternalScriptInfo scriptInfo, ExecutionContext context, bool useLocalScope, SessionStateInternal sessionState)
+        private CommandProcessorBase CreateScriptProcessorForSingleShell(ExternalScriptInfo scriptInfo, ExecutionContext context, bool useLocalScope, SessionStateInternal sessionState, bool forCompletion = false)
         {
-            VerifyScriptRequirements(scriptInfo, Context);
+            VerifyScriptRequirements(scriptInfo, Context, forCompletion);
 
             if (!string.IsNullOrEmpty(scriptInfo.RequiresApplicationID))
             {
@@ -340,18 +341,18 @@ namespace System.Management.Automation
         // #Requires -PSVersion
         // #Requires -PSEdition
         // #Requires -Module
-        internal static void VerifyScriptRequirements(ExternalScriptInfo scriptInfo, ExecutionContext context)
+        internal static void VerifyScriptRequirements(ExternalScriptInfo scriptInfo, ExecutionContext context, bool forCompletion = false)
         {
             // No point in checking these requirements if failures will be ignored
             // VerifyRequiredModules will attempt to load the required modules which is useful.
-            if (!context.IgnoreFailedScriptRequirements)
+            if (!forCompletion)
             {
                 VerifyElevatedPrivileges(scriptInfo);
                 VerifyPSVersion(scriptInfo);
                 VerifyPSEdition(scriptInfo);
             }
 
-            VerifyRequiredModules(scriptInfo, context);
+            VerifyRequiredModules(scriptInfo, context, forCompletion);
         }
 
         internal static void VerifyPSVersion(ExternalScriptInfo scriptInfo)
@@ -432,6 +433,7 @@ namespace System.Management.Automation
         /// False if not.  Null if command discovery should default to something reasonable
         /// for the command discovered.
         /// </param>
+        /// <param name="forCompletion"></param>
         /// <param name="sessionState">The session state the commandInfo should be run in.</param>
         /// <returns>
         /// </returns>
@@ -442,7 +444,7 @@ namespace System.Management.Automation
         /// If the security manager is preventing the command from running.
         /// </exception>
         internal CommandProcessorBase LookupCommandProcessor(CommandInfo commandInfo,
-            CommandOrigin commandOrigin, bool? useLocalScope, SessionStateInternal sessionState)
+            CommandOrigin commandOrigin, bool? useLocalScope, SessionStateInternal sessionState, bool forCompletion = false)
         {
             CommandProcessorBase processor = null;
 
@@ -488,7 +490,7 @@ namespace System.Management.Automation
                     scriptInfo.SignatureChecked = true;
                     try
                     {
-                        processor = CreateScriptProcessorForSingleShell(scriptInfo, Context, useLocalScope ?? true, sessionState);
+                        processor = CreateScriptProcessorForSingleShell(scriptInfo, Context, useLocalScope ?? true, sessionState, forCompletion);
                     }
                     catch (ScriptRequiresSyntaxException reqSyntaxException)
                     {
