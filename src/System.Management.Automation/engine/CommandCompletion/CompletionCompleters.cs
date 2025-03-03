@@ -5384,10 +5384,15 @@ namespace System.Management.Automation
                         var toolTip = value is null
                             ? key
                             : StringUtil.Format("[{0}]${1}", ToStringCodeMethods.Type(value.GetType(), dropNamespaces: true), key);
+                        if (!string.IsNullOrEmpty(variable.Description))
+                        {
+                            toolTip += $" - {variable.Description}";
+                        }
+
                         var completionText = !tokenAtCursorUsedBraces && !ContainsCharactersRequiringQuotes(name)
                             ? prefix + name
                             : prefix + "{" + name + "}";
-                        AddUniqueVariable(hashedResults, tempResults, completionText, key, key);
+                        AddUniqueVariable(hashedResults, tempResults, completionText, key, toolTip);
                     }
                 }
 
@@ -5434,6 +5439,11 @@ namespace System.Management.Automation
                                                                 ToStringCodeMethods.Type(value.GetType(),
                                                                                          dropNamespaces: true), name);
                                 }
+                            }
+
+                            if (!string.IsNullOrEmpty(variable.Description))
+                            {
+                                tooltip += $" - {variable.Description}";
                             }
 
                             var completedName = !tokenAtCursorUsedBraces && !ContainsCharactersRequiringQuotes(name)
