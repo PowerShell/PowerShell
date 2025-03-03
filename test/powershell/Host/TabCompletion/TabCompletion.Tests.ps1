@@ -61,10 +61,6 @@ Describe "TabCompletion" -Tags CI {
         finally
         {
             $env:PSModulePath = $OldModulePath
-            if (Test-Path -LiteralPath $tempDir)
-            {
-                Remove-Item $tempDir -Recurse -Force
-            }
         }
     }
 
