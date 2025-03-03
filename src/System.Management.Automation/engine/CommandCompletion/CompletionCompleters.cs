@@ -467,6 +467,21 @@ namespace System.Management.Automation
 
             if (psObjects != null)
             {
+                // When PowerShell is used interactively, completion is usually triggered by PSReadLine, with PSReadLine's SessionState
+                // as the engine session state. In that case, results from the module search may contain a nested module of PSReadLine,
+                // which should be filtered out below.
+                // When the completion is triggered from global session state, such as when running 'TabExpansion2' from command line,
+                // the module associated with engine session state will be null.
+                //
+                // Note that, it's intentional to not hard code the name 'PSReadLine' in the change, so that in case the tab completion
+                // is triggered from within a different module, its nested modules can also be filtered out.
+                HashSet<PSModuleInfo> nestedModulesToFilterOut = null;
+                PSModuleInfo currentModule = context.ExecutionContext.EngineSessionState.Module;
+                if (loadedModulesOnly && currentModule?.NestedModules.Count > 0)
+                {
+                    nestedModulesToFilterOut = new(currentModule.NestedModules);
+                }
+
                 foreach (PSObject item in psObjects)
                 {
                     var moduleInfo = (PSModuleInfo)item.BaseObject;
@@ -476,6 +491,14 @@ namespace System.Management.Automation
                         && completionText.Contains('.')
                         && !shortNamePattern.IsMatch(completionText.Substring(completionText.LastIndexOf('.') + 1))
                         && !shortNamePattern.IsMatch(completionText))
+                    {
+                        // This check is to make sure we don't return a module whose name only matches the user specified word in the middle.
+                        // For example, when user completes with 'gmo power', we should not return 'Microsoft.PowerShell.Utility'.
+                        continue;
+                    }
+
+                    if (nestedModulesToFilterOut is not null
+                        && nestedModulesToFilterOut.Contains(moduleInfo))
                     {
                         continue;
                     }
@@ -4455,14 +4478,15 @@ namespace System.Management.Automation
             var wordToComplete = context.WordToComplete;
             var quote = HandleDoubleAndSingleQuote(ref wordToComplete);
 
-            // First, try to match \\server\share
-            // support both / and \ when entering UNC paths for typing convenience (#17111)
-            var shareMatch = Regex.Match(wordToComplete, @"^(?:\\\\|//)([^\\/]+)(?:\\|/)([^\\/]*)$");
+            // Matches file shares with and without the provider name and with either slash direction.
+            // Avoids matching Windows device paths like \\.\CDROM0 and \\?\Volume{b8f3fc1c-5cd6-4553-91e2-d6814c4cd375}\
+            var shareMatch = s_shareMatch.Match(wordToComplete);
             if (shareMatch.Success)
             {
                 // Only match share names, no filenames.
-                var server = shareMatch.Groups[1].Value;
-                var sharePattern = WildcardPattern.Get(shareMatch.Groups[2].Value + "*", WildcardOptions.IgnoreCase);
+                var provider = shareMatch.Groups[1].Value;
+                var server = shareMatch.Groups[2].Value;
+                var sharePattern = WildcardPattern.Get(shareMatch.Groups[3].Value + "*", WildcardOptions.IgnoreCase);
                 var ignoreHidden = context.GetOption("IgnoreHiddenShares", @default: false);
                 var shares = GetFileShares(server, ignoreHidden);
                 if (shares.Count == 0)
@@ -4475,13 +4499,20 @@ namespace System.Management.Automation
                 {
                     if (sharePattern.IsMatch(share))
                     {
-                        string shareFullPath = "\\\\" + server + "\\" + share;
-                        if (quote != string.Empty)
+                        string sharePath = $"\\\\{server}\\{share}";
+                        string completionText;
+                        if (quote == string.Empty)
                         {
-                            shareFullPath = quote + shareFullPath + quote;
+                            completionText = share.Contains(' ')
+                                ? $"'{provider}{sharePath}'"
+                                : $"{provider}{sharePath}";
+                        }
+                        else
+                        {
+                            completionText = $"{quote}{provider}{sharePath}{quote}";
                         }
 
-                        shareResults.Add(new CompletionResult(shareFullPath, shareFullPath, CompletionResultType.ProviderContainer, shareFullPath));
+                        shareResults.Add(new CompletionResult(completionText, share, CompletionResultType.ProviderContainer, sharePath));
                     }
                 }
 
@@ -4562,20 +4593,41 @@ namespace System.Management.Automation
                 basePath = EscapePath(basePath, stringType, useLiteralPath, out _);
             }
 
-            _ = context.Helper
+            PowerShell currentPS = context.Helper
                 .AddCommandWithPreferenceSetting("Microsoft.PowerShell.Management\\Resolve-Path")
                 .AddParameter("Path", basePath);
+
+            string relativeBasePath;
+            var useRelativePath = context.GetOption("RelativePaths", @default: defaultRelativePath);
+            if (useRelativePath)
+            {
+                if (providerSeparatorIndex != -1)
+                {
+                    // User must have requested relative paths but that's not valid with provider paths.
+                    return CommandCompletion.EmptyCompletionResult;
+                }
+
+                var lastAst = context.RelatedAsts[^1];
+                if (lastAst.Parent is UsingStatementAst usingStatement
+                    && usingStatement.UsingStatementKind is UsingStatementKind.Module or UsingStatementKind.Assembly
+                    && lastAst.Extent.File is not null)
+                {
+                    relativeBasePath = Directory.GetParent(lastAst.Extent.File).FullName;
+                    _ = currentPS.AddParameter("RelativeBasePath", relativeBasePath);
+                }
+                else
+                {
+                    relativeBasePath = context.ExecutionContext.SessionState.Internal.CurrentLocation.ProviderPath;
+                }
+            }
+            else
+            {
+                relativeBasePath = string.Empty;
+            }
 
             var resolvedPaths = context.Helper.ExecuteCurrentPowerShell(out _);
             if (resolvedPaths is null || resolvedPaths.Count == 0)
             {
-                return CommandCompletion.EmptyCompletionResult;
-            }
-
-            var useRelativePath = context.GetOption("RelativePaths", @default: defaultRelativePath);
-            if (useRelativePath && providerSeparatorIndex != -1)
-            {
-                // User must have requested relative paths but that's not valid with provider paths.
                 return CommandCompletion.EmptyCompletionResult;
             }
 
@@ -4609,7 +4661,8 @@ namespace System.Management.Automation
                         useLiteralPath,
                         inputUsedHomeChar,
                         providerPrefix,
-                        stringType);
+                        stringType,
+                        relativeBasePath);
                     break;
 
                 default:
@@ -4644,6 +4697,7 @@ namespace System.Management.Automation
         /// <param name="inputUsedHome"></param>
         /// <param name="providerPrefix"></param>
         /// <param name="stringType"></param>
+        /// <param name="relativeBasePath"></param>
         /// <returns></returns>
         private static List<CompletionResult> GetFileSystemProviderResults(
             CompletionContext context,
@@ -4656,7 +4710,8 @@ namespace System.Management.Automation
             bool literalPaths,
             bool inputUsedHome,
             string providerPrefix,
-            StringConstantType stringType)
+            StringConstantType stringType,
+            string relativeBasePath)
         {
 #if DEBUG
             Diagnostics.Assert(provider.Name.Equals(FileSystemProvider.ProviderName), "Provider should be filesystem provider.");
@@ -4731,7 +4786,7 @@ namespace System.Management.Automation
                     {
                         basePath = context.ExecutionContext.EngineSessionState.NormalizeRelativePath(
                             entry.FullName,
-                            context.ExecutionContext.SessionState.Internal.CurrentLocation.ProviderPath);
+                            relativeBasePath);
                         if (!basePath.StartsWith($"..{provider.ItemSeparator}", StringComparison.Ordinal))
                         {
                             basePath = $".{provider.ItemSeparator}{basePath}";
@@ -4811,6 +4866,13 @@ namespace System.Management.Automation
                 bool hadErrors;
                 var childItemOutput = context.Helper.ExecuteCurrentPowerShell(out _, out hadErrors);
 
+                if (childItemOutput.Count == 1 &&
+                    (pathInfo.Provider.FullName + "::" + pathInfo.ProviderPath).EqualsOrdinalIgnoreCase(childItemOutput[0].Properties["PSPath"].Value as string))
+                {
+                    // Get-ChildItem returned the item itself instead of the children so there must be no child items to complete.
+                    continue;
+                }
+
                 var childrenInfoTable = new Dictionary<string, bool>(childItemOutput.Count);
                 var childNameList = new List<string>(childItemOutput.Count);
 
@@ -4846,7 +4908,7 @@ namespace System.Management.Automation
 
                 if (childNameList.Count == 0)
                 {
-                    return results;
+                    continue;
                 }
 
                 string basePath = providerPrefix.Length > 0
@@ -5132,6 +5194,10 @@ namespace System.Management.Automation
             return result;
         }
 
+        private static readonly Regex s_shareMatch = new(
+            @"(^Microsoft\.PowerShell\.Core\\FileSystem::|^FileSystem::|^)(?:\\\\|//)(?![.|?])([^\\/]+)(?:\\|/)([^\\/]*)$",
+            RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         private struct SHARE_INFO_1
         {
@@ -5221,7 +5287,7 @@ namespace System.Management.Automation
             return CompleteVariable(new CompletionContext { WordToComplete = variableName, Helper = helper, ExecutionContext = executionContext });
         }
 
-        private static readonly string[] s_variableScopes = new string[] { "Global:", "Local:", "Script:", "Private:" };
+        private static readonly string[] s_variableScopes = new string[] { "Global:", "Local:", "Script:", "Private:", "Using:" };
 
         private static readonly SearchValues<char> s_charactersRequiringQuotes = SearchValues.Create("-`&@'\"#{}()$,;|<> .\\/ \t^");
 
@@ -5235,7 +5301,13 @@ namespace System.Management.Automation
             List<CompletionResult> tempResults = new();
 
             var wordToComplete = context.WordToComplete;
+            string scopePrefix = string.Empty;
             var colon = wordToComplete.IndexOf(':');
+            if (colon >= 0)
+            {
+                scopePrefix = wordToComplete.Remove(colon + 1);
+                wordToComplete = wordToComplete.Substring(colon + 1);
+            }
 
             var lastAst = context.RelatedAsts?[^1];
             var variableAst = lastAst as VariableExpressionAst;
@@ -5278,15 +5350,23 @@ namespace System.Management.Automation
                         continue;
                     }
 
-                    var varInfo = findVariablesVisitor.VariableInfoTable[varName];
-                    var varType = varInfo.LastDeclaredConstraint ?? varInfo.LastAssignedType;
-                    var toolTip = varType is null
-                        ? varName
-                        : StringUtil.Format("[{0}]${1}", ToStringCodeMethods.Type(varType, dropNamespaces: true), varName);
+                    VariableInfo varInfo = findVariablesVisitor.VariableInfoTable[varName];
+                    PSTypeName varType = varInfo.LastDeclaredConstraint ?? varInfo.LastAssignedType;
+                    string toolTip;
+                    if (varType is null)
+                    {
+                        toolTip = varName;
+                    }
+                    else
+                    {
+                        toolTip = varType.Type is not null
+                            ? StringUtil.Format("[{0}]${1}", ToStringCodeMethods.Type(varType.Type, dropNamespaces: true), varName)
+                            : varType.Name;
+                    }
 
                     var completionText = !tokenAtCursorUsedBraces && !ContainsCharactersRequiringQuotes(varName)
-                        ? prefix + varName
-                        : prefix + "{" + varName + "}";
+                        ? prefix + scopePrefix + varName
+                        : prefix + "{" + scopePrefix + varName + "}";
                     AddUniqueVariable(hashedResults, results, completionText, varName, toolTip);
                 }
             }
@@ -5304,10 +5384,15 @@ namespace System.Management.Automation
                         var toolTip = value is null
                             ? key
                             : StringUtil.Format("[{0}]${1}", ToStringCodeMethods.Type(value.GetType(), dropNamespaces: true), key);
+                        if (!string.IsNullOrEmpty(variable.Description))
+                        {
+                            toolTip += $" - {variable.Description}";
+                        }
+
                         var completionText = !tokenAtCursorUsedBraces && !ContainsCharactersRequiringQuotes(name)
                             ? prefix + name
                             : prefix + "{" + name + "}";
-                        AddUniqueVariable(hashedResults, tempResults, completionText, key, key);
+                        AddUniqueVariable(hashedResults, tempResults, completionText, key, toolTip);
                     }
                 }
 
@@ -5319,15 +5404,14 @@ namespace System.Management.Automation
             }
             else
             {
-                string provider = wordToComplete.Substring(0, colon + 1);
                 string pattern;
-                if (s_variableScopes.Contains(provider, StringComparer.OrdinalIgnoreCase))
+                if (s_variableScopes.Contains(scopePrefix, StringComparer.OrdinalIgnoreCase))
                 {
-                    pattern = string.Concat("variable:", wordToComplete.AsSpan(colon + 1), "*");
+                    pattern = string.Concat("variable:", wordToComplete, "*");
                 }
                 else
                 {
-                    pattern = wordToComplete + "*";
+                    pattern = scopePrefix + wordToComplete + "*";
                 }
 
                 var powerShellExecutionHelper = context.Helper;
@@ -5357,9 +5441,14 @@ namespace System.Management.Automation
                                 }
                             }
 
+                            if (!string.IsNullOrEmpty(variable.Description))
+                            {
+                                tooltip += $" - {variable.Description}";
+                            }
+
                             var completedName = !tokenAtCursorUsedBraces && !ContainsCharactersRequiringQuotes(name)
-                                                    ? prefix + provider + name
-                                                    : prefix + "{" + provider + name + "}";
+                                                    ? prefix + scopePrefix + name
+                                                    : prefix + "{" + scopePrefix + name + "}";
                             AddUniqueVariable(hashedResults, results, completedName, name, tooltip);
                         }
                     }
@@ -5382,22 +5471,22 @@ namespace System.Management.Automation
                 tempResults.Clear();
             }
 
-            // Return variables already in session state first, because we can sometimes give better information,
-            // like the variables type.
-            foreach (var specialVariable in s_specialVariablesCache.Value)
-            {
-                if (wildcardPattern.IsMatch(specialVariable))
-                {
-                    var completedName = !tokenAtCursorUsedBraces && !ContainsCharactersRequiringQuotes(specialVariable)
-                                            ? prefix + specialVariable
-                                            : prefix + "{" + specialVariable + "}";
-
-                    AddUniqueVariable(hashedResults, results, completedName, specialVariable, specialVariable);
-                }
-            }
-
             if (colon == -1)
             {
+                // Return variables already in session state first, because we can sometimes give better information,
+                // like the variables type.
+                foreach (var specialVariable in s_specialVariablesCache.Value)
+                {
+                    if (wildcardPattern.IsMatch(specialVariable))
+                    {
+                        var completedName = !tokenAtCursorUsedBraces && !ContainsCharactersRequiringQuotes(specialVariable)
+                                                ? prefix + specialVariable
+                                                : prefix + "{" + specialVariable + "}";
+
+                        AddUniqueVariable(hashedResults, results, completedName, specialVariable, specialVariable);
+                    }
+                }
+
                 var allDrives = context.ExecutionContext.SessionState.Drive.GetAll();
                 foreach (var drive in allDrives)
                 {
@@ -5495,11 +5584,11 @@ namespace System.Management.Automation
 
         private sealed class VariableInfo
         {
-            internal Type LastDeclaredConstraint;
-            internal Type LastAssignedType;
+            internal PSTypeName LastDeclaredConstraint;
+            internal PSTypeName LastAssignedType;
         }
 
-        private sealed class FindVariablesVisitor : AstVisitor
+        private sealed class FindVariablesVisitor : AstVisitor2
         {
             internal Ast Top;
             internal Ast CompletionVariableAst;
@@ -5508,34 +5597,34 @@ namespace System.Management.Automation
             internal int StopSearchOffset;
             internal TypeInferenceContext Context;
 
-            private static Type GetInferredVarTypeFromAst(Ast ast)
+            private static PSTypeName GetInferredVarTypeFromAst(Ast ast)
             {
-                Type type;
+                PSTypeName type;
                 switch (ast)
                 {
                     case ConstantExpressionAst constant:
-                        type = constant.StaticType;
+                        type = new PSTypeName(constant.StaticType);
                         break;
 
                     case ExpandableStringExpressionAst:
-                        type = typeof(string);
+                        type = new PSTypeName(typeof(string));
                         break;
 
                     case ConvertExpressionAst convertExpression:
-                        type = convertExpression.StaticType;
+                        type = new PSTypeName(convertExpression.Type.TypeName);
                         break;
 
                     case HashtableAst:
-                        type = typeof(Hashtable);
+                        type = new PSTypeName(typeof(Hashtable));
                         break;
 
                     case ArrayExpressionAst:
                     case ArrayLiteralAst:
-                        type = typeof(object[]);
+                        type = new PSTypeName(typeof(object[]));
                         break;
 
                     case ScriptBlockExpressionAst:
-                        type = typeof(ScriptBlock);
+                        type = new PSTypeName(typeof(ScriptBlock));
                         break;
 
                     default:
@@ -5546,10 +5635,9 @@ namespace System.Management.Automation
                 return type;
             }
 
-            private void SaveVariableInfo(string variableName, Type variableType, bool isConstraint)
+            private void SaveVariableInfo(string variableName, PSTypeName variableType, bool isConstraint)
             {
-                VariableInfo varInfo;
-                if (VariableInfoTable.TryGetValue(variableName, out varInfo))
+                if (VariableInfoTable.TryGetValue(variableName, out VariableInfo varInfo))
                 {
                     if (isConstraint)
                     {
@@ -5574,7 +5662,11 @@ namespace System.Management.Automation
             {
                 if (ast.Extent.StartOffset > StopSearchOffset)
                 {
-                    return AstVisitAction.StopVisit;
+                    // When visiting do while/until statements, the condition will be visited before the statement block.
+                    // The condition itself may not be interesting if it's after the cursor, but the statement block could be.
+                    return ast is PipelineBaseAst && ast.Parent is DoUntilStatementAst or DoWhileStatementAst
+                        ? AstVisitAction.SkipChildren
+                        : AstVisitAction.StopVisit;
                 }
 
                 return AstVisitAction.Continue;
@@ -5584,7 +5676,9 @@ namespace System.Management.Automation
             {
                 if (assignmentStatementAst.Extent.StartOffset > StopSearchOffset)
                 {
-                    return AstVisitAction.StopVisit;
+                    return assignmentStatementAst.Parent is DoUntilStatementAst or DoWhileStatementAst ?
+                        AstVisitAction.SkipChildren
+                        : AstVisitAction.StopVisit;
                 }
 
                 if (assignmentStatementAst.Left is AttributedExpressionAst attributedExpression)
@@ -5612,14 +5706,14 @@ namespace System.Management.Automation
 
                         if (firstConvertExpression is not null)
                         {
-                            SaveVariableInfo(variableExpression.VariablePath.UserPath, firstConvertExpression.StaticType, isConstraint: true);
+                            SaveVariableInfo(variableExpression.VariablePath.UnqualifiedPath, new PSTypeName(firstConvertExpression.Type.TypeName), isConstraint: true);
                         }
                         else
                         {
-                            Type lastAssignedType = assignmentStatementAst.Right is CommandExpressionAst commandExpression
+                            PSTypeName lastAssignedType = assignmentStatementAst.Right is CommandExpressionAst commandExpression
                                 ? GetInferredVarTypeFromAst(commandExpression.Expression)
                                 : null;
-                            SaveVariableInfo(variableExpression.VariablePath.UserPath, lastAssignedType, isConstraint: false);
+                            SaveVariableInfo(variableExpression.VariablePath.UnqualifiedPath, lastAssignedType, isConstraint: false);
                         }
                     }
                 }
@@ -5630,7 +5724,7 @@ namespace System.Management.Automation
                         return AstVisitAction.Continue;
                     }
 
-                    Type lastAssignedType;
+                    PSTypeName lastAssignedType;
                     if (assignmentStatementAst.Right is CommandExpressionAst commandExpression)
                     {
                         lastAssignedType = GetInferredVarTypeFromAst(commandExpression.Expression);
@@ -5640,7 +5734,7 @@ namespace System.Management.Automation
                         lastAssignedType = null;
                     }
 
-                    SaveVariableInfo(variableExpression.VariablePath.UserPath, lastAssignedType, isConstraint: false);
+                    SaveVariableInfo(variableExpression.VariablePath.UnqualifiedPath, lastAssignedType, isConstraint: false);
                 }
 
                 return AstVisitAction.Continue;
@@ -5663,7 +5757,7 @@ namespace System.Management.Automation
                         var nameValue = variableName.ConstantValue as string;
                         if (nameValue is not null)
                         {
-                            Type variableType;
+                            PSTypeName variableType;
                             if (bindingResult.BoundParameters.TryGetValue("Value", out ParameterBindingResult variableValue))
                             {
                                 variableType = GetInferredVarTypeFromAst(variableValue.Value);
@@ -5688,7 +5782,7 @@ namespace System.Management.Automation
                             var varName = outVarBind.ConstantValue as string;
                             if (varName is not null)
                             {
-                                SaveVariableInfo(varName, typeof(ArrayList), isConstraint: false);
+                                SaveVariableInfo(varName, new PSTypeName(typeof(ArrayList)), isConstraint: false);
                             }
                         }
                     }
@@ -5703,13 +5797,53 @@ namespace System.Management.Automation
                                 if (varName is not null)
                                 {
                                     var inferredTypes = AstTypeInference.InferTypeOf(commandAst, Context, TypeInferenceRuntimePermissions.AllowSafeEval);
-                                    Type varType = inferredTypes.Count == 0
+                                    PSTypeName varType = inferredTypes.Count == 0
                                         ? null
-                                        : inferredTypes[0].Type;
+                                        : inferredTypes[0];
                                     SaveVariableInfo(varName, varType, isConstraint: false);
                                 }
                             }
                         }
+                    }
+                }
+
+                foreach (RedirectionAst redirection in commandAst.Redirections)
+                {
+                    if (redirection is FileRedirectionAst fileRedirection
+                        && fileRedirection.Location is StringConstantExpressionAst redirectTarget
+                        && redirectTarget.Value.StartsWith("variable:", StringComparison.OrdinalIgnoreCase)
+                        && redirectTarget.Value.Length > "variable:".Length)
+                    {
+                        string varName = redirectTarget.Value.Substring("variable:".Length);
+                        PSTypeName varType;
+                        switch (fileRedirection.FromStream)
+                        {
+                            case RedirectionStream.Error:
+                                varType = new PSTypeName(typeof(ErrorRecord));
+                                break;
+
+                            case RedirectionStream.Warning:
+                                varType = new PSTypeName(typeof(WarningRecord));
+                                break;
+
+                            case RedirectionStream.Verbose:
+                                varType = new PSTypeName(typeof(VerboseRecord));
+                                break;
+
+                            case RedirectionStream.Debug:
+                                varType = new PSTypeName(typeof(DebugRecord));
+                                break;
+
+                            case RedirectionStream.Information:
+                                varType = new PSTypeName(typeof(InformationRecord));
+                                break;
+
+                            default:
+                                varType = null;
+                                break;
+                        }
+
+                        SaveVariableInfo(varName, varType, isConstraint: false);
                     }
                 }
 
@@ -5729,7 +5863,7 @@ namespace System.Management.Automation
                     return AstVisitAction.Continue;
                 }
 
-                SaveVariableInfo(variableExpression.VariablePath.UserPath, parameterAst.StaticType, isConstraint: true);
+                SaveVariableInfo(variableExpression.VariablePath.UnqualifiedPath, new PSTypeName(parameterAst.StaticType), isConstraint: true);
 
                 return AstVisitAction.Continue;
             }
@@ -5741,7 +5875,7 @@ namespace System.Management.Automation
                     return AstVisitAction.StopVisit;
                 }
 
-                SaveVariableInfo(forEachStatementAst.Variable.VariablePath.UserPath, variableType: null, isConstraint: false);
+                SaveVariableInfo(forEachStatementAst.Variable.VariablePath.UnqualifiedPath, variableType: null, isConstraint: false);
                 return AstVisitAction.Continue;
             }
 
@@ -5801,7 +5935,7 @@ namespace System.Management.Automation
             }
         }
 
-        private static readonly Lazy<SortedSet<string>> s_specialVariablesCache = new Lazy<SortedSet<string>>(BuildSpecialVariablesCache);
+        private static readonly Lazy<SortedSet<string>> s_specialVariablesCache = new(BuildSpecialVariablesCache);
 
         private static SortedSet<string> BuildSpecialVariablesCache()
         {
@@ -5815,6 +5949,35 @@ namespace System.Management.Automation
             }
 
             return result;
+        }
+
+        internal static PSTypeName GetLastDeclaredTypeConstraint(VariableExpressionAst variableAst, TypeInferenceContext typeInferenceContext)
+        {
+            Ast parent = variableAst.Parent;
+            var findVariablesVisitor = new FindVariablesVisitor()
+            {
+                CompletionVariableAst = variableAst,
+                StopSearchOffset = variableAst.Extent.StartOffset,
+                Context = typeInferenceContext
+            };
+            while (parent != null)
+            {
+                if (parent is IParameterMetadataProvider)
+                {
+                    findVariablesVisitor.Top = parent;
+                    parent.Visit(findVariablesVisitor);
+                }
+
+                if (findVariablesVisitor.VariableInfoTable.TryGetValue(variableAst.VariablePath.UserPath, out VariableInfo varInfo)
+                    && varInfo.LastDeclaredConstraint is not null)
+                {
+                    return varInfo.LastDeclaredConstraint;
+                }
+
+                parent = parent.Parent;
+            }
+
+            return null;
         }
 
         #endregion Variables
@@ -7675,44 +7838,34 @@ namespace System.Management.Automation
 
         internal static List<CompletionResult> CompleteHelpTopics(CompletionContext context)
         {
-            var results = new List<CompletionResult>();
-            string userHelpDir = HelpUtils.GetUserHomeHelpSearchPath();
-            string appHelpDir = Utils.GetApplicationBase(Utils.DefaultPowerShellShellID);
-            string currentCulture = CultureInfo.CurrentCulture.Name;
-
-            //search for help files for the current culture + en-US as fallback
-            var searchPaths = new string[]
+            ArrayList helpProviders = context.ExecutionContext.HelpSystem.HelpProviders;
+            HelpFileHelpProvider helpFileProvider = null;
+            for (int i = helpProviders.Count - 1; i >= 0; i--)
             {
-                Path.Combine(userHelpDir, currentCulture),
-                Path.Combine(appHelpDir, currentCulture),
-                Path.Combine(userHelpDir, "en-US"),
-                Path.Combine(appHelpDir, "en-US")
-            }.Distinct();
-
-            string wordToComplete = context.WordToComplete + "*";
-            try
-            {
-                var wildcardPattern = WildcardPattern.Get(wordToComplete, WildcardOptions.IgnoreCase);
-
-                foreach (var dir in searchPaths)
+                if (helpProviders[i] is HelpFileHelpProvider provider)
                 {
-                    var currentDir = new DirectoryInfo(dir);
-                    if (currentDir.Exists)
-                    {
-                        foreach (var file in currentDir.EnumerateFiles("about_*.help.txt"))
-                        {
-                            if (wildcardPattern.IsMatch(file.Name))
-                            {
-                                string topicName = file.Name.Substring(0, file.Name.LastIndexOf(".help.txt"));
-                                results.Add(new CompletionResult(topicName));
-                            }
-                        }
-                    }
+                    helpFileProvider = provider;
+                    break;
                 }
             }
-            catch (Exception)
+
+            if (helpFileProvider is null)
             {
+                return null;
             }
+
+            List<CompletionResult> results = new();
+            Collection<string> filesMatched = MUIFileSearcher.SearchFiles($"{context.WordToComplete}*.help.txt", helpFileProvider.GetExtendedSearchPaths());
+            foreach (string path in filesMatched)
+            {
+                string fileName = Path.GetFileName(path);
+                if (fileName.StartsWith("about_", StringComparison.OrdinalIgnoreCase))
+                {
+                    string topicName = fileName.Substring(0, fileName.Length - ".help.txt".Length);
+                    results.Add(new CompletionResult(topicName, topicName, CompletionResultType.ParameterValue, topicName));
+                }
+            }
+
             return results;
         }
 
