@@ -1518,6 +1518,29 @@ Describe "Type inference Tests" -tags "CI" {
         $null = [AstTypeInference]::InferTypeOf($FoundAst)
     }
 
+    It 'Ignores type constraint defined outside of scope' {
+        $res = [AstTypeInference]::InferTypeOf(({
+            function Outer
+            {
+                [string] $Test = "Hello"
+                function Inner
+                {
+                    $Test = 2
+                    $Test
+                }
+            }
+        }.Ast.FindAll({param($Ast) $Ast -is [Language.VariableExpressionAst]}, $true) | Select-Object -Last 1 ))
+        $res.Name | Should -Be 'System.Int32'
+    }
+
+    It 'Considers the type constraint defined outside of scope when dot sourcing' {
+        $res = [AstTypeInference]::InferTypeOf(({
+            [string] $Test = "Hello"
+            . {$Test = 2; $Test}
+        }.Ast.FindAll({param($Ast) $Ast -is [Language.VariableExpressionAst]}, $true) | Select-Object -Last 1 ))
+        $res.Name | Should -Be 'System.String'
+    }
+
     It 'Infers type of ref assigned variable' {
         $res = [AstTypeInference]::InferTypeOf(({
             $MyRefVar = $null

@@ -2451,14 +2451,13 @@ namespace System.Management.Automation
                 {
                     parent.Visit(assignmentVisitor);
 
-                    if (assignmentVisitor.LastConstraint is not null)
+                    if (assignmentVisitor.LocalScopeOnly
+                        || assignmentVisitor.LastConstraint is not null
+                        || ((assignmentVisitor.LastAssignment is not null || assignmentVisitor.LastAssignmentType is not null)
+                        && (parent.Parent is not ScriptBlockExpressionAst scriptBlock || !scriptBlock.IsDotsourced())))
                     {
-                        inferredTypes.Add(new PSTypeName(assignmentVisitor.LastConstraint));
-                        break;
-                    }
-
-                    if (assignmentVisitor.LocalScopeOnly)
-                    {
+                        // We only care about the parent scopes if no assignment has been made in the current scope
+                        // or if it's a dot sourced scriptblock where an earlier defined type constraint could influence the final type
                         break;
                     }
 
@@ -2470,38 +2469,39 @@ namespace System.Management.Automation
             }
 
             // The visitor is done finding the last assignment, now we need to infer the type of that assignment.
-            if (assignmentVisitor.LastConstraint is null)
+            if (assignmentVisitor.LastConstraint is not null)
             {
-                if (assignmentVisitor.LastAssignment is not null)
+                inferredTypes.Add(new PSTypeName(assignmentVisitor.LastConstraint));
+            }
+            else if (assignmentVisitor.LastAssignment is not null)
+            {
+                if (assignmentVisitor.EnumerateAssignment)
                 {
-                    if (assignmentVisitor.EnumerateAssignment)
+                    inferredTypes.AddRange(GetInferredEnumeratedTypes(InferTypes(assignmentVisitor.LastAssignment)));
+                }
+                else
+                {
+                    if (assignmentVisitor.LastAssignment is ConvertExpressionAst convertExpression
+                        && convertExpression.IsRef())
                     {
-                        inferredTypes.AddRange(GetInferredEnumeratedTypes(InferTypes(assignmentVisitor.LastAssignment)));
+                        if (convertExpression.Parent is InvokeMemberExpressionAst memberInvoke)
+                        {
+                            inferredTypes.AddRange(InferTypeFromRef(memberInvoke, convertExpression));
+                        }
+                    }
+                    else if (assignmentVisitor.RedirectionAssignment && assignmentVisitor.LastAssignment is CommandAst cmdAst)
+                    {
+                        InferTypesFrom(cmdAst, inferredTypes, forRedirection: true);
                     }
                     else
                     {
-                        if (assignmentVisitor.LastAssignment is ConvertExpressionAst convertExpression
-                            && convertExpression.IsRef())
-                        {
-                            if (convertExpression.Parent is InvokeMemberExpressionAst memberInvoke)
-                            {
-                                inferredTypes.AddRange(InferTypeFromRef(memberInvoke, convertExpression));
-                            }
-                        }
-                        else if (assignmentVisitor.RedirectionAssignment && assignmentVisitor.LastAssignment is CommandAst cmdAst)
-                        {
-                            InferTypesFrom(cmdAst, inferredTypes, forRedirection: true);
-                        }
-                        else
-                        {
-                            inferredTypes.AddRange(InferTypes(assignmentVisitor.LastAssignment));
-                        }
+                        inferredTypes.AddRange(InferTypes(assignmentVisitor.LastAssignment));
                     }
                 }
-                else if (assignmentVisitor.LastAssignmentType is not null)
-                {
-                    inferredTypes.Add(assignmentVisitor.LastAssignmentType);
-                }
+            }
+            else if (assignmentVisitor.LastAssignmentType is not null)
+            {
+                inferredTypes.Add(assignmentVisitor.LastAssignmentType);
             }
 
             if (_context.TryGetRepresentativeTypeNameFromExpressionSafeEval(variableExpressionAst, out var evalTypeName))
@@ -3214,27 +3214,9 @@ namespace System.Management.Automation
 
             public override AstVisitAction VisitScriptBlockExpression(ScriptBlockExpressionAst scriptBlockExpressionAst)
             {
-                Ast parent = scriptBlockExpressionAst.Parent;
-
-                // This loop checks if the scriptblock is used as a command, or an argument for a command, eg: ForEach-Object -Process {$Var1 = "Hello"}, {Var2 = $true}
-                while (true)
-                {
-                    if (parent is CommandAst cmdAst)
-                    {
-                        string cmdName = cmdAst.GetCommandName();
-                        return CompletionCompleters.s_localScopeCommandNames.Contains(cmdName)
-                            || (cmdAst.CommandElements[0] is ScriptBlockExpressionAst && cmdAst.InvocationOperator == TokenKind.Dot)
-                            ? AstVisitAction.Continue
-                            : AstVisitAction.SkipChildren;
-                    }
-
-                    if (parent is not CommandExpressionAst and not PipelineAst and not StatementBlockAst and not ArrayExpressionAst and not ArrayLiteralAst)
-                    {
-                        return AstVisitAction.SkipChildren;
-                    }
-
-                    parent = parent.Parent;
-                }
+                return scriptBlockExpressionAst.IsDotsourced()
+                    ? AstVisitAction.Continue
+                    : AstVisitAction.SkipChildren;
             }
 
             public override AstVisitAction VisitDataStatement(DataStatementAst dataStatementAst)
@@ -3282,6 +3264,32 @@ namespace System.Management.Automation
             }
 
             return res;
+        }
+
+        public static bool IsDotsourced(this ScriptBlockExpressionAst scriptBlockExpressionAst)
+        {
+            Ast parent = scriptBlockExpressionAst.Parent;
+
+            // This loop checks if the scriptblock is used as a dot sourced command
+            // or an argument for a command that uses the local scope eg: ForEach-Object -Process {$Var1 = "Hello"}, {Var2 = $true}
+            while (parent is not null)
+            {
+                if (parent is CommandAst cmdAst)
+                {
+                    string cmdName = cmdAst.GetCommandName();
+                    return CompletionCompleters.s_localScopeCommandNames.Contains(cmdName)
+                        || (cmdAst.CommandElements[0] is ScriptBlockExpressionAst && cmdAst.InvocationOperator == TokenKind.Dot);
+                }
+
+                if (parent is not CommandExpressionAst and not PipelineAst and not StatementBlockAst and not ArrayExpressionAst and not ArrayLiteralAst)
+                {
+                    break;
+                }
+
+                parent = parent.Parent;
+            }
+
+            return false;
         }
     }
 }
