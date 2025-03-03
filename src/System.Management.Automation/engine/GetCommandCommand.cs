@@ -1716,7 +1716,22 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Sorted set of command nouns.</returns>
         private static SortedSet<string> GetCommandNouns(IDictionary fakeBoundParameters)
         {
-            Collection<CommandInfo> commands = CompletionCompleters.GetCommandInfo(fakeBoundParameters, "Module", "Verb");
+            using var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
+
+            ps.AddCommand("Get-Command");
+
+            if (fakeBoundParameters.Contains("Module"))
+            {
+                ps.AddParameter("Module", fakeBoundParameters["Module"]);
+            }
+
+            if (fakeBoundParameters.Contains("Verb"))
+            {
+                ps.AddParameter("Verb", fakeBoundParameters["Verb"]);
+            }
+
+            Collection<CommandInfo> commands = ps.Invoke<CommandInfo>();
+
             SortedSet<string> nouns = new(StringComparer.OrdinalIgnoreCase);
 
             foreach (CommandInfo command in commands)
