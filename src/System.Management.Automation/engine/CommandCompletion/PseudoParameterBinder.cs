@@ -1405,7 +1405,15 @@ namespace System.Management.Automation.Language
                 ast = ast.Parent;
             }
 
-            ast.Visit(exportVisitor);
+            try
+            {
+                ast.Visit(exportVisitor);
+            }
+            catch (ParseException)
+            {
+                resolvedCommandName = _commandAst.GetCommandName();
+                return null;
+            }
 
             CommandProcessorBase commandProcessor = null;
 

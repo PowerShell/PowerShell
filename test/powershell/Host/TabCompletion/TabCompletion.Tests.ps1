@@ -837,6 +837,11 @@ using `
         $res.CompletionMatches.CompletionText | Should -Contain "GetType"
     }
 
+    It 'Should complete variable member inferred from command inside scriptblock' {
+        $res = TabExpansion2 -inputScript '& {$Res = New-Guid; $Res.'
+        $res.CompletionMatches.Count | Should -BeGreaterThan 0
+    }
+
     It 'Should not complete void instance members' {
         $res = TabExpansion2 -inputScript '([void]("")).'
         $res.CompletionMatches | Should -BeNullOrEmpty
