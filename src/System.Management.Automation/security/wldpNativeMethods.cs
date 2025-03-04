@@ -194,7 +194,7 @@ namespace System.Management.Automation.Security
         {
             return legacyMode switch
             {
-                SystemEnforcementMode.None => SystemScriptFileEnforcement.None,
+                SystemEnforcementMode.None => SystemScriptFileEnforcement.Allow,
                 SystemEnforcementMode.Audit => SystemScriptFileEnforcement.AllowConstrainedAudit,
                 SystemEnforcementMode.Enforce => SystemScriptFileEnforcement.AllowConstrained,
                 _ => SystemScriptFileEnforcement.Block,
