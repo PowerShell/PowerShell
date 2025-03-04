@@ -838,7 +838,7 @@ using `
     }
 
     It 'Should complete variable member inferred from command inside scriptblock' {
-        $res = TabExpansion2 -inputScript '& {$Res = New-Guid; $Res.'
+        $res = TabExpansion2 -inputScript '& {(New-Guid).'
         $res.CompletionMatches.Count | Should -BeGreaterThan 0
     }
 
