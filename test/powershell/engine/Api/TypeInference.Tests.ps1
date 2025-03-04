@@ -1590,6 +1590,11 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Name | Should -Be 'System.String'
     }
 
+    It 'Infers type of well known variable with global scope' {
+        $res = [AstTypeInference]::InferTypeOf({$global:true}.Ast)
+        $res.Name | Should -Be 'System.Boolean'
+    }
+
     It 'Infers parameter type from closest parameter' {
         $res = [AstTypeInference]::InferTypeOf( ({
             param([string]$Param1)
