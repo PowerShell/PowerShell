@@ -431,7 +431,7 @@ namespace System.Management.Automation.Security
     /// <summary>
     /// Application white listing security policies only affect Windows OSs.
     /// </summary>
-    internal sealed class SystemPolicy
+    public sealed class SystemPolicy
     {
         private SystemPolicy() { }
 
@@ -455,7 +455,7 @@ namespace System.Management.Automation.Security
         /// <summary>
         /// Gets the system lockdown policy.
         /// </summary>
-        /// <remarks>Always return SystemEnforcementMode.None in CSS (trusted)</remarks>
+        /// <remarks>Always return SystemEnforcementMode.None on non-Windows platforms.</remarks>
         public static SystemEnforcementMode GetSystemLockdownPolicy()
         {
             return SystemEnforcementMode.None;
@@ -464,7 +464,7 @@ namespace System.Management.Automation.Security
         /// <summary>
         /// Gets lockdown policy as applied to a file.
         /// </summary>
-        /// <remarks>Always return SystemEnforcementMode.None in CSS (trusted)</remarks>
+        /// <remarks>Always return SystemEnforcementMode.None on non-Windows platforms.</remarks>
         public static SystemEnforcementMode GetLockdownPolicy(string path, System.Runtime.InteropServices.SafeHandle handle)
         {
             return SystemEnforcementMode.None;
@@ -493,7 +493,7 @@ namespace System.Management.Automation.Security
     /// <summary>
     /// How the policy is being enforced.
     /// </summary>
-    internal enum SystemEnforcementMode
+    public enum SystemEnforcementMode
     {
         /// Not enforced at all
         None = 0,
