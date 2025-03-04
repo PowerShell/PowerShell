@@ -84,6 +84,17 @@ Describe "TabCompletion" -Tags CI {
         $res.CompletionMatches[0].CompletionText | Should -BeExactly '$CurrentItem'
     }
 
+    It 'Should complete variables set with an attribute' {
+        $res = TabExpansion2 -inputScript '[ValidateNotNull()]$Var1 = 1; $Var'
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '$Var1'
+    }
+
+    It 'Should use the first type constraint in a variable assignment in the tooltip' {
+        $res = TabExpansion2 -inputScript '[int] [string] $Var1 = 1; $Var'
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '$Var1'
+        $res.CompletionMatches[0].ToolTip | Should -BeExactly '[int]$Var1'
+    }
+
     It 'Should not complete parameter name' {
         $res = TabExpansion2 -inputScript 'param($P'
         $res.CompletionMatches.Count | Should -Be 0
@@ -92,6 +103,34 @@ Describe "TabCompletion" -Tags CI {
     It 'Should complete variable in default value of a parameter' {
         $res = TabExpansion2 -inputScript 'param($PS = $P'
         $res.CompletionMatches.Count | Should -BeGreaterThan 0
+    }
+    
+    It 'Should complete variable with description and value <Value>' -TestCases @(
+        @{ Value = 1; Expected = '[int]$VariableWithDescription - Variable description' }
+        @{ Value = 'string'; Expected = '[string]$VariableWithDescription - Variable description' }
+        @{ Value = $null; Expected = 'VariableWithDescription - Variable description' }
+    ) {
+        param ($Value, $Expected)
+        
+        New-Variable -Name VariableWithDescription -Value $Value -Description 'Variable description' -Force
+        $res = TabExpansion2 -inputScript '$VariableWithDescription'
+        $res.CompletionMatches.Count | Should -Be 1
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '$VariableWithDescription'
+        $res.CompletionMatches[0].ToolTip | Should -BeExactly $Expected
+    }
+    
+    It 'Should complete scoped variable with description and value <Value>' -TestCases @(
+        @{ Value = 1; Expected = '[int]$VariableWithDescription - Variable description' }
+        @{ Value = 'string'; Expected = '[string]$VariableWithDescription - Variable description' }
+        @{ Value = $null; Expected = 'VariableWithDescription - Variable description' }
+    ) {
+        param ($Value, $Expected)
+        
+        New-Variable -Name VariableWithDescription -Value $Value -Description 'Variable description' -Force
+        $res = TabExpansion2 -inputScript '$local:VariableWithDescription'
+        $res.CompletionMatches.Count | Should -Be 1
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '$local:VariableWithDescription'
+        $res.CompletionMatches[0].ToolTip | Should -BeExactly $Expected
     }
 
     It 'Should not complete property name in class definition' {
@@ -104,6 +143,122 @@ Describe "TabCompletion" -Tags CI {
         It "Should complete $($Operator.CompletionText)" {
             $res = TabExpansion2 -inputScript "'' $($Operator.CompletionText)" -cursorColumn ($Operator.CompletionText.Length + 3)
             $res.CompletionMatches[0].CompletionText | Should -BeExactly $Operator.CompletionText
+        }
+    }
+
+    context CustomProviderTests {
+        BeforeAll {
+            $testModulePath = Join-Path $TestDrive "ReproModule"
+            New-Item -Path $testModulePath -ItemType Directory > $null
+
+            New-ModuleManifest -Path "$testModulePath/ReproModule.psd1" -RootModule 'testmodule.dll'
+
+            $testBinaryModulePath = Join-Path $testModulePath "testmodule.dll"
+            $binaryModule = @'
+using System;
+using System.Linq;
+using System.Management.Automation;
+using System.Management.Automation.Provider;
+
+namespace BugRepro
+{
+    public class IntItemInfo
+    {
+        public string Name;
+        public IntItemInfo(string name) => Name = name;
+    }
+
+    [CmdletProvider("Int", ProviderCapabilities.None)]
+    public class IntProvider : NavigationCmdletProvider
+    {
+        public static string[] ToChunks(string path) => path.Split("/", StringSplitOptions.RemoveEmptyEntries);
+
+        protected string _ChildName(string path)
+        {
+            var name = ToChunks(path).LastOrDefault();
+            return name ?? string.Empty;
+        }
+
+        protected string Normalize(string path) => string.Join("/", ToChunks(path));
+
+        protected override string GetChildName(string path)
+        {
+            var name = _ChildName(path);
+            // if (!IsItemContainer(path)) { return string.Empty; }
+            return name;
+        }
+
+        protected override bool IsValidPath(string path) => int.TryParse(GetChildName(path), out int _);
+
+        protected override bool IsItemContainer(string path)
+        {
+            var name = _ChildName(path);
+            if (!int.TryParse(name, out int value))
+            {
+                return false;
+            }
+            if (ToChunks(path).Count() > 3)
+            {
+                return false;
+            }
+            return value % 2 == 0;
+        }
+
+        protected override bool ItemExists(string path)
+        {
+            foreach (var chunk in ToChunks(path))
+            {
+                if (!int.TryParse(chunk, out int value))
+                {
+                    return false;
+                }
+                if (value < 0 || value > 9)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        protected override void GetItem(string path)
+        {
+            var name = GetChildName(path);
+            if (!int.TryParse(name, out int _))
+            {
+                return;
+            }
+            WriteItemObject(new IntItemInfo(name), path, IsItemContainer(path));
+        }
+        protected override bool HasChildItems(string path) => IsItemContainer(path);
+
+        protected override void GetChildItems(string path, bool recurse)
+        {
+            if (!IsItemContainer(path)) { GetItem(path); return; }
+
+            for (var i = 0; i <= 9; i++)
+            {
+                var _path = $"{Normalize(path)}/{i}";
+                if (recurse)
+                {
+                    GetChildItems(_path, recurse);
+                }
+                else
+                {
+                    GetItem(_path);
+                }
+            }
+        }
+    }
+}
+'@
+            Add-Type -OutputAssembly $testBinaryModulePath -TypeDefinition $binaryModule
+
+            $pwsh = "$PSHOME\pwsh"
+        }
+
+        It "Should not complete invalid items when a provider path returns itself instead of its children" {
+            $result = & $pwsh -NoProfile -Command "Import-Module -Name $testModulePath; (TabExpansion2 'Get-ChildItem Int::/2/3/').CompletionMatches.Count"
+            $result | Should -BeExactly "0"
         }
     }
 
@@ -309,6 +464,21 @@ switch ($x)
         $res.CompletionMatches.Count | Should -Be 0
     }
 
+    It 'Should complete variable assigned in command redirection to variable' {
+        $res = TabExpansion2 -inputScript 'New-Guid 1>variable:Redir1 2>variable:Redir2 3>variable:Redir3 4>variable:Redir4 5>variable:Redir5 6>variable:Redir6; $Redir'
+        $res.CompletionMatches[0].CompletionText | Should -Be '$Redir1'
+        $res.CompletionMatches[1].CompletionText | Should -Be '$Redir2'
+        $res.CompletionMatches[1].ToolTip | Should -Be '[ErrorRecord]$Redir2'
+        $res.CompletionMatches[2].CompletionText | Should -Be '$Redir3'
+        $res.CompletionMatches[2].ToolTip | Should -Be '[WarningRecord]$Redir3'
+        $res.CompletionMatches[3].CompletionText | Should -Be '$Redir4'
+        $res.CompletionMatches[3].ToolTip | Should -Be '[VerboseRecord]$Redir4'
+        $res.CompletionMatches[4].CompletionText | Should -Be '$Redir5'
+        $res.CompletionMatches[4].ToolTip | Should -Be '[DebugRecord]$Redir5'
+        $res.CompletionMatches[5].CompletionText | Should -Be '$Redir6'
+        $res.CompletionMatches[5].ToolTip | Should -Be '[InformationRecord]$Redir6'
+    }
+
     context TypeConstructionWithHashtable {
         BeforeAll {
             class RandomTestType {
@@ -478,6 +648,21 @@ using `
         $res.CompletionMatches[0].CompletionText | Should -Be '"Classic"'
     }
 
+    It 'Should work for variable assignment of enum type with type inference' {
+        $res = TabExpansion2 -inputScript '[System.Management.Automation.ProgressView]$MyUnassignedVar = $psstyle.Progress.View; $MyUnassignedVar = "Class'
+        $res.CompletionMatches[0].CompletionText | Should -Be '"Classic"'
+    }
+
+    It 'Should work for property assignment of enum type with type inference with PowerShell class' {
+        $res = TabExpansion2 -inputScript 'enum Animals{Cat= 0;Dog= 1};class AnimalTestClass{[Animals] $Prop1};$Test1 = [AnimalTestClass]::new();$Test1.Prop1 = "C'
+        $res.CompletionMatches[0].CompletionText | Should -Be '"Cat"'
+    }
+
+    It 'Should work for variable assignment with type inference of PowerShell Enum' {
+        $res = TabExpansion2 -inputScript 'enum Animals{Cat= 0;Dog= 1}; [Animals]$TestVar1 = "D'
+        $res.CompletionMatches[0].CompletionText | Should -Be '"Dog"'
+    }
+
     It 'Should work for variable assignment of enum type: <inputStr>' -TestCases @(
         @{ inputStr = '$ErrorActionPreference = '; filter = ''; doubleQuotes = $false }
         @{ inputStr = '$ErrorActionPreference='; filter = ''; doubleQuotes = $false }
@@ -633,6 +818,20 @@ using `
         $completionText -join ' ' | Should -BeExactly 'Equals( new( ReferenceEquals('
     }
 
+    It 'Should complete variables assigned inside do while loop' {
+        $TestString =  'do{$Var1 = 1; $Var^ }while ($true)'
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '$Var1'
+    }
+
+    It 'Should complete variables assigned inside do until loop' {
+        $TestString =  'do{$Var1 = 1; $Var^ }until ($null = Get-ChildItem)'
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '$Var1'
+    }
+
     It 'Should show multiple constructors in the tooltip' {
         $res = TabExpansion2 -inputScript 'class ConstructorTestClass{ConstructorTestClass ([string] $s){}ConstructorTestClass ([int] $i){}ConstructorTestClass ([int] $i, [bool]$b){}};[ConstructorTestClass]::new'
         $res.CompletionMatches | Should -HaveCount 1
@@ -686,6 +885,16 @@ ConstructorTestClass(int i, bool b)
         $TestString = 'data MyDataVar {"Hello"};$MyDatav'
         $res = TabExpansion2 -inputScript $TestString
         $res.CompletionMatches[0].CompletionText | Should -BeExactly '$MyDataVar'
+    }
+
+    It 'Should complete global variable without scope' {
+        $res = TabExpansion2 -inputScript '$Global:MyTestVar = "Hello";$MyTestV'
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '$MyTestVar'
+    }
+
+    It 'Should complete previously assigned variable in using: scope' {
+        $res = TabExpansion2 -inputScript '$MyTestVar = "Hello";$Using:MyTestv'
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '$Using:MyTestVar'
     }
 
     it 'Should complete "Value" parameter value in "Where-Object" for Enum property with no input' {
@@ -1155,6 +1364,44 @@ ConstructorTestClass(int i, bool b)
             }
 
             $completionText -join ' ' | Should -BeExactly ($sortedSetExpectedNouns -join ' ')
+        }
+    }
+
+    Context "Get-ExperimentalFeature -Name parameter completion" {
+        BeforeAll {
+            function GetExperimentalFeatureNames([switch]$SingleQuote, [switch]$DoubleQuote) {
+                $features = (Get-ExperimentalFeature).Name
+
+                if ($SingleQuote) {
+                    return ($features | ForEach-Object { "'$_'" })
+                }
+                elseif ($DoubleQuote) {
+                    return ($features | ForEach-Object { """$_""" })
+                }
+
+                return $features
+            }
+
+            $allExperimentalFeatures = GetExperimentalFeatureNames
+            $allExperimentalFeaturesSingleQuote = GetExperimentalFeatureNames -SingleQuote
+            $allExperimentalFeaturesDoubleQuote = GetExperimentalFeatureNames -DoubleQuote
+            $experimentalFeaturesStartingWithPS = $allExperimentalFeatures | Where-Object { $_ -like 'PS*'}
+            $experimentalFeaturesStartingWithPSSingleQuote = $allExperimentalFeaturesSingleQuote | Where-Object { $_ -like "'PS*" }
+            $experimentalFeaturesStartingWithPSDoubleQuote = $allExperimentalFeaturesDoubleQuote | Where-Object { $_ -like """PS*" }
+        }
+
+        It "Should complete Name for '<TextInput>'" -TestCases @(
+            @{ TextInput = "Get-ExperimentalFeature -Name "; ExpectedExperimentalFeatureNames = $allExperimentalFeatures }
+            @{ TextInput = "Get-ExperimentalFeature -Name '"; ExpectedExperimentalFeatureNames = $allExperimentalFeaturesSingleQuote }
+            @{ TextInput = "Get-ExperimentalFeature -Name """; ExpectedExperimentalFeatureNames = $allExperimentalFeaturesDoubleQuote }
+            @{ TextInput = "Get-ExperimentalFeature -Name PS"; ExpectedExperimentalFeatureNames = $experimentalFeaturesStartingWithPS }
+            @{ TextInput = "Get-ExperimentalFeature -Name 'PS"; ExpectedExperimentalFeatureNames = $experimentalFeaturesStartingWithPSSingleQuote }
+            @{ TextInput = "Get-ExperimentalFeature -Name ""PS"; ExpectedExperimentalFeatureNames = $experimentalFeaturesStartingWithPSDoubleQuote }
+        ) {
+            param($TextInput, $ExpectedExperimentalFeatureNames)
+            $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
+            $completionText = $res.CompletionMatches.CompletionText
+            $completionText -join ' ' | Should -BeExactly (($ExpectedExperimentalFeatureNames | Sort-Object -Unique) -join ' ')
         }
     }
 
@@ -1641,6 +1888,34 @@ class InheritedClassTest : System.Attribute
             $res.CompletionMatches[0].CompletionText | Should -Be "`"$expectedPath`""
         }
 
+        It "Relative path completion for using <UsingKind> statement when AST extent has file identity" -TestCases @(
+            @{UsingKind = "module";  ExpectedFileName = 'UsingFileCompletionModuleTest.psm1'}
+            @{UsingKind = "assembly";ExpectedFileName = 'UsingFileCompletionAssemblyTest.dll'}
+        ) -test {
+            param($UsingKind, $ExpectedFileName)
+            $scriptText = "using $UsingKind .\UsingFileCompletion"
+            $tokens = $null
+            $scriptAst = [System.Management.Automation.Language.Parser]::ParseInput(
+                $scriptText,
+                (Join-Path -Path $tempDir -ChildPath ScriptInEditor.ps1),
+                [ref] $tokens,
+                [ref] $null)
+
+            $cursorPosition = $scriptAst.Extent.StartScriptPosition.
+                GetType().
+                GetMethod('CloneWithNewOffset', [System.Reflection.BindingFlags]'NonPublic, Instance').
+                Invoke($scriptAst.Extent.StartScriptPosition, @($scriptText.Length - 1))
+
+            Push-Location -LiteralPath $PSHOME
+            $TestFile = Join-Path -Path $tempDir -ChildPath $ExpectedFileName
+            $null = New-Item -Path $TestFile
+            $res = TabExpansion2 -ast $scriptAst -tokens $tokens -positionOfCursor $cursorPosition
+            Pop-Location
+                        
+            $ExpectedPath = Join-Path -Path '.\' -ChildPath $ExpectedFileName
+            $res.CompletionMatches.CompletionText | Where-Object {$_ -Like "*$ExpectedFileName"} | Should -Be $ExpectedPath
+        }
+
         It "Should handle '~' in completiontext when it's used to refer to home in input" {
             $res = TabExpansion2 -inputScript "~$separator"
             # select the first answer which does not have a space in the completion (those completions look like & '3D Objects')
@@ -1882,6 +2157,10 @@ class InheritedClassTest : System.Attribute
             $res.CompletionMatches[0].CompletionText | Should -BeExactly $afterTab
         }
 
+        It "Tab completion UNC path with filesystem provider" -Skip:(!$IsWindows) {
+            $res = TabExpansion2 -inputScript 'Filesystem::\\localhost\admin'
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Filesystem::\\localhost\ADMIN$'
+        }
 
         It "Tab completion for registry" -Skip:(!$IsWindows) {
             $beforeTab = 'registry::HKEY_l'
@@ -3063,6 +3342,18 @@ function MyFunction ($param1, $param2)
         $Text = '[abcdefghijklmnopqrstuvwxyz]'
         $res = TabExpansion2 -inputScript $Text -cursorColumn ($Text.Length - 1)
         $res.CompletionMatches | Should -HaveCount 0
+    }
+}
+
+Describe "TabCompletion elevated tests" -Tags CI, RequireAdminOnWindows {
+    It "Tab completion UNC path with spaces" -Skip:(!$IsWindows) {
+        $Share = New-SmbShare -Temporary -ReadAccess (whoami.exe) -Path C:\ -Name "Test Share"
+        $res = TabExpansion2 -inputScript '\\localhost\test'
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly "& '\\localhost\Test Share'"
+        if ($null -ne $Share)
+        {
+            Remove-SmbShare -InputObject $Share -Force -Confirm:$false
+        }
     }
 }
 
