@@ -477,7 +477,7 @@ namespace System.Management.Automation.Security
 
         /// <summary>
         /// Gets the system wide script file policy enforcement for an open file.
-        /// Based on system WDAC (Windows Defender Application Control) or AppLocker policies.
+        /// Based on system WDAC (Windows Defender Application Control) policies.
         /// </summary>
         /// <param name="filePath">Script file path for policy check.</param>
         /// <param name="fileStream">FileStream object to script file path.</param>
