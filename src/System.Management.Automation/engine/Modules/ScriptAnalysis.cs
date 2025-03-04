@@ -277,9 +277,18 @@ namespace System.Management.Automation
         //  - Exporting module members
         public override AstVisitAction VisitCommand(CommandAst commandAst)
         {
-            string commandName =
-                commandAst.GetCommandName() ??
-                GetSafeValueVisitor.GetSafeValue(commandAst.CommandElements[0], null, GetSafeValueVisitor.SafeValueContext.ModuleAnalysis) as string;
+            string commandName = commandAst.GetCommandName();
+            if (commandName is null)
+            {
+                try
+                {
+                    commandName = GetSafeValueVisitor.GetSafeValue(commandAst.CommandElements[0], null, GetSafeValueVisitor.SafeValueContext.ModuleAnalysis) as string;
+                }
+                catch (ParseException)
+                {
+                    // The script is invalid so we can't use GetSafeValue to get the name either.
+                }
+            }
 
             if (commandName == null)
                 return AstVisitAction.SkipChildren;
