@@ -335,11 +335,15 @@ namespace System.Management.Automation
                 {
                     var modulesWithCommand = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                     var importedModules = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-                    var commandInfoArray = new CommandInfo[commandList.Count];
+                    var commandInfoList = new List<CommandInfo>(commandList.Count);
                     for (int i = 0; i < commandList.Count; i++)
                     {
-                        var commandInfo = (CommandInfo)commandList[i];
-                        commandInfoArray[i] = commandInfo;
+                        if (commandList[i] is not CommandInfo commandInfo)
+                        {
+                            continue;
+                        }
+
+                        commandInfoList.Add(commandInfo);
                         if (commandInfo.CommandType == CommandTypes.Application)
                         {
                             continue;
@@ -355,10 +359,15 @@ namespace System.Management.Automation
                         }
                     }
 
+                    if (commandInfoList.Count == 0)
+                    {
+                        continue;
+                    }
+
                     int moduleCount = modulesWithCommand.Count;
                     modulesWithCommand.Clear();
                     int index;
-                    if (commandInfoArray[0].CommandType == CommandTypes.Application
+                    if (commandInfoList[0].CommandType == CommandTypes.Application
                         || importedModules.Count == 1
                         || moduleCount < 2)
                     {
@@ -367,17 +376,17 @@ namespace System.Management.Automation
                         // If there's just 1 module imported then the short name refers to that module (and it will be the first element in the list)
                         // If there's less than 2 unique modules exporting that command then we can use the short name because it can only refer to that module.
                         index = 1;
-                        results.Add(GetCommandNameCompletionResult(keyValuePair.Key, commandInfoArray[0], addAmpersandIfNecessary, quote));
-                        modulesWithCommand.Add(commandInfoArray[0].ModuleName);
+                        results.Add(GetCommandNameCompletionResult(keyValuePair.Key, commandInfoList[0], addAmpersandIfNecessary, quote));
+                        modulesWithCommand.Add(commandInfoList[0].ModuleName);
                     }
                     else
                     {
                         index = 0;
                     }
 
-                    for (; index < commandInfoArray.Length; index++)
+                    for (; index < commandInfoList.Count; index++)
                     {
-                        CommandInfo commandInfo = commandInfoArray[index];
+                        CommandInfo commandInfo = commandInfoList[index];
                         if (commandInfo.CommandType == CommandTypes.Application)
                         {
                             results.Add(GetCommandNameCompletionResult(commandInfo.Definition, commandInfo, addAmpersandIfNecessary, quote));
