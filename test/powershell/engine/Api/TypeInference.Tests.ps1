@@ -1562,26 +1562,22 @@ Describe "Type inference Tests" -tags "CI" {
     }
 
     It 'Infers type of variable assigned with <ParameterName> common parameter' -TestCases @(
-        @{TestId = 1; ParameterName = "WarningVariable";     ExpectedType = [List[WarningRecord]]}
-        @{TestId = 1; ParameterName = "wv";                  ExpectedType = [List[WarningRecord]]}
-        @{TestId = 1; ParameterName = "ErrorVariable";       ExpectedType = [List[ErrorRecord]]}
-        @{TestId = 1; ParameterName = "ev";                  ExpectedType = [List[ErrorRecord]]}
-        @{TestId = 1; ParameterName = "InformationVariable"; ExpectedType = [List[InformationalRecord]]}
-        @{TestId = 1; ParameterName = "iv";                  ExpectedType = [List[InformationalRecord]]}
-        @{TestId = 1; ParameterName = "OutVariable";         ExpectedType = [guid]}
-        @{TestId = 1; ParameterName = "ov";                  ExpectedType = [guid]}
-        @{TestId = 2; ParameterName = "PipelineVariable";    ExpectedType = [guid]}
-        @{TestId = 2; ParameterName = "pv";                  ExpectedType = [guid]}
+        @{ParameterName = "WarningVariable";     ExpectedType = [List[WarningRecord]]}
+        @{ParameterName = "wv";                  ExpectedType = [List[WarningRecord]]}
+        @{ParameterName = "ErrorVariable";       ExpectedType = [List[ErrorRecord]]}
+        @{ParameterName = "ev";                  ExpectedType = [List[ErrorRecord]]}
+        @{ParameterName = "InformationVariable"; ExpectedType = [List[InformationalRecord]]}
+        @{ParameterName = "iv";                  ExpectedType = [List[InformationalRecord]]}
+        @{ParameterName = "OutVariable";         ExpectedType = [guid]}
+        @{ParameterName = "ov";                  ExpectedType = [guid]}
+        @{ParameterName = "PipelineVariable";    ExpectedType = [guid]}
+        @{ParameterName = "pv";                  ExpectedType = [guid]}
     ) -Test {
             param($TestId, $ParameterName, $ExpectedType)
-            $Ast = if ($TestId -eq 1)
-            {
-                [scriptblock]::Create("New-Guid -$ParameterName MyOutVar | Out-Null; `$MyOutVar").Ast
-            }
-            else
-            {
-                [scriptblock]::Create("New-Guid -$ParameterName MyOutVar | % {`$MyOutVar}").Ast
-            }
+            $Ast = [scriptblock]::Create("New-Guid -$ParameterName MyOutVar | % {`$MyOutVar}").Ast.FindAll({
+                param($Ast)
+                $Ast -is [Language.VariableExpressionAst]
+            }, $true) | Select-Object -Last 1
             $res = [AstTypeInference]::InferTypeOf($Ast)
             $res.Type | Should -Be $ExpectedType
         }
