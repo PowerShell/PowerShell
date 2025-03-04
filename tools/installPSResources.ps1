@@ -16,7 +16,7 @@ Install-PSResource -Verbose -TrustRepository -RequiredResource  @{
     "Az.Accounts" = @{
         version = "4.0.2"
         repository = $PSRepository
-      }
+    }
     "Az.Storage" = @{
         version = "8.1.0"
         repository = $PSRepository
