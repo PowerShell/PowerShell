@@ -95,8 +95,7 @@ jobs:
       Get-PackageProvider -Name NuGet -ForceBootstrap
     displayName: Initalize PowerShellGet
 
-  - powershell: |
-      ./tools/installPSResource.ps1 -PSRepository CFS
+  - pwsh: ./tools/installPSResource.ps1 -PSRepository CFS
     displayName: Install PowerShell modules
 
   - powershell: |

@@ -57,7 +57,6 @@ jobs:
     inputs:
       targetType: 'inline'
       script: |
-        Get-PackageProvider -Name NuGet -ForceBootstrap
         ./tools/installPSResource.ps1 -PSRepository CFS
         Uninstall-AzureRm -Verbose
 

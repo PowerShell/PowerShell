@@ -78,8 +78,7 @@ jobs:
       workingDirectory: '$(repoRoot)'
       retryCountOnTaskFailure: 2
 
-    - pwsh: |
-        ./tools/installPSResource.ps1 -PSRepository CFS -Verbose
+    - pwsh: ./tools/installPSResource.ps1 -PSRepository CFS
       displayName: Install PowerShell modules
       workingDirectory: '$(repoRoot)'
 
