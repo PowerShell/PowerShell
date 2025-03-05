@@ -2975,8 +2975,8 @@ namespace System.Management.Automation
             {
                 if (ast.Extent.StartOffset >= StopSearchOffset)
                 {
-                    // When visiting do while/until statements, the condition will be visited before the statement block
-                    // The condition itself may not be interesting if it's after the cursor, but the statement block could be
+                    // When visiting do while/until statements, the condition will be visited before the statement block.
+                    // The condition itself may not be interesting if it's after the cursor, but the statement block could be.
                     return ast is PipelineBaseAst && ast.Parent is DoUntilStatementAst or DoWhileStatementAst
                         ? AstVisitAction.SkipChildren
                         : AstVisitAction.StopVisit;
@@ -3044,8 +3044,7 @@ namespace System.Management.Automation
                     if (bindingResult is not null
                         && bindingResult.BoundParameters.TryGetValue("Name", out ParameterBindingResult variableName))
                     {
-                        var nameValue = variableName.ConstantValue as string;
-                        if (AssignsToTargetVar(nameValue)
+                        if (variableName.ConstantValue is string nameValue && AssignsToTargetVar(nameValue)
                             && bindingResult.BoundParameters.TryGetValue("Value", out ParameterBindingResult variableValue))
                         {
                             SetLastAssignment(variableValue.Value);
