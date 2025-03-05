@@ -8594,10 +8594,11 @@ namespace System.Management.Automation
             bool escapeGlobbingPathChars = false)
         {
             string quote = HandleDoubleAndSingleQuote(ref wordToComplete);
+            var pattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
 
             foreach (string value in possibleCompletionValues)
             {
-                if (value.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
+                if (pattern.IsMatch(value))
                 {
                     string completionText = QuoteCompletionText(completionText: value, quote, escapeGlobbingPathChars);
                     string listItemText = value;
