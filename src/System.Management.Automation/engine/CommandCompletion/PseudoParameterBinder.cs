@@ -1406,7 +1406,6 @@ namespace System.Management.Automation.Language
             }
 
             ast.Visit(exportVisitor);
-
             CommandProcessorBase commandProcessor = null;
 
             resolvedCommandName = _commandAst.GetCommandName();
