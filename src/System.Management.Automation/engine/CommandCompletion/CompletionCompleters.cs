@@ -8586,7 +8586,7 @@ namespace System.Management.Automation
         /// <param name="listItemTextMapping">The optional list item text mapping delegate.</param>
         /// <param name="resultType">The optional completion result type. Default is Text.</param>
         /// <param name="escapeGlobbingPathChars">The optional toggle to escape globbing path chars.</param>
-        /// <returns></returns>
+        /// <returns>Collection of matched completion results.</returns>
         internal static IEnumerable<CompletionResult> GetMatchingResults(
             string wordToComplete,
             IEnumerable<string> possibleCompletionValues,
