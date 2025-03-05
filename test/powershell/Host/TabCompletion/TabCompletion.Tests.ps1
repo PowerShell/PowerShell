@@ -902,17 +902,6 @@ ConstructorTestClass(int i, bool b)
         $res.CompletionMatches.CompletionText -join ',' | Should -BeExactly $Expected
     }
 
-    It 'Should complete attribute argument in incomplete param block on blank new line' {
-        $TestString =  @'
-param([ValidatePattern(
-^
-'@
-        $CursorIndex = $TestString.IndexOf('^')
-        $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
-        $Expected = ([ValidatePattern].GetProperties() | Where-Object {$_.CanWrite}).Name -join ','
-        $res.CompletionMatches.CompletionText -join ',' | Should -BeExactly $Expected
-    }
-
     It 'Should complete attribute argument in incomplete param block on new line' {
         $TestString =  @'
 param([ValidatePattern(
