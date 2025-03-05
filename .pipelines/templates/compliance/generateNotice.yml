@@ -95,17 +95,7 @@ jobs:
       Get-PackageProvider -Name NuGet -ForceBootstrap
     displayName: Initalize PowerShellGet
 
-  - powershell: |
-      $modules = 'Az.Accounts', 'Az.Storage'
-      foreach($module in $modules) {
-        if(!(get-module $module -listavailable)) {
-          Write-Verbose "installing $module..." -verbose
-          Install-Module $module -force -AllowClobber
-        } else {
-          Write-Verbose "$module already installed." -verbose
-          #Update-Module $module -verbose
-        }
-      }
+  - pwsh: ./tools/installPSResource.ps1 -PSRepository CFS
     displayName: Install PowerShell modules
 
   - powershell: |
