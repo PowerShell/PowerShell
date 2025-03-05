@@ -103,6 +103,7 @@ dotnet_naming_style.camel_case_underscore_style.capitalization = camel_case
 # Suggest more modern language features when available
 dotnet_style_object_initializer = true:suggestion
 dotnet_style_collection_initializer = true:suggestion
+# Background Info: https://github.com/dotnet/runtime/pull/100250
 dotnet_style_prefer_collection_expression = when_types_exactly_match
 dotnet_style_coalesce_expression = true:suggestion
 dotnet_style_null_propagation = true:suggestion
