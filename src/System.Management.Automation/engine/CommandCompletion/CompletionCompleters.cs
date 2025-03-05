@@ -8584,33 +8584,26 @@ namespace System.Management.Automation
         /// <param name="possibleCompletionValues">The possible completion values to iterate.</param>
         /// <param name="toolTipMapping">The optional tool tip mapping delegate.</param>
         /// <param name="resultType">The optional completion result type. Default is Text.</param>
+        /// <param name="escapeGlobbingPathChars">The optional toggle to escape globbing path chars.</param>
         /// <returns></returns>
         internal static IEnumerable<CompletionResult> GetMatchingResults(
             string wordToComplete,
             IEnumerable<string> possibleCompletionValues,
             Func<string, string> toolTipMapping = null,
-            CompletionResultType resultType = CompletionResultType.Text)
+            CompletionResultType resultType = CompletionResultType.Text,
+            bool escapeGlobbingPathChars = false)
         {
             string quote = HandleDoubleAndSingleQuote(ref wordToComplete);
-            var pattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
 
             foreach (string value in possibleCompletionValues)
             {
-                if (pattern.IsMatch(value))
+                if (value.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
                 {
-                    string completionText = quote == string.Empty
-                        ? value
-                        : quote + value + quote;
-
+                    string completionText = QuoteCompletionText(completionText: value, quote, escapeGlobbingPathChars);
                     string listItemText = value;
+                    string toolTip = toolTipMapping?.Invoke(value) ?? value;
 
-                    yield return new CompletionResult(
-                        completionText,
-                        listItemText,
-                        resultType,
-                        toolTip: toolTipMapping is null
-                            ? listItemText
-                            : toolTipMapping(value));
+                    yield return new CompletionResult(completionText, listItemText, resultType, toolTip);
                 }
             }
         }
@@ -8813,19 +8806,17 @@ namespace System.Management.Automation
         }
 
         private static readonly SearchValues<char> s_defaultCharsToCheck = SearchValues.Create("$`");
-        private static readonly SearchValues<char> s_escapeCharsToCheck = SearchValues.Create("$[]`");
+        private static readonly SearchValues<char> s_escapeGlobbingPathCharsToCheck = SearchValues.Create("$[]`");
 
-        private static bool ContainsCharsToCheck(ReadOnlySpan<char> text, bool escape) 
-            => text.ContainsAny(escape ? s_escapeCharsToCheck : s_defaultCharsToCheck);
+        private static bool ContainsCharsToCheck(ReadOnlySpan<char> text, bool escapeGlobbingPathChars)
+            => text.ContainsAny(escapeGlobbingPathChars ? s_escapeGlobbingPathCharsToCheck : s_defaultCharsToCheck);
 
-        private static bool CompletionRequiresQuotes(string completion, bool escape)
+        internal static bool CompletionRequiresQuotes(string completion, bool escapeGlobbingPathChars)
         {
             // If the tokenizer sees the completion as more than two tokens, or if there is some error, then
             // some form of quoting is necessary (if it's a variable, we'd need ${}, filenames would need [], etc.)
 
-            Language.Token[] tokens;
-            ParseError[] errors;
-            Language.Parser.ParseInput(completion, out tokens, out errors);
+            Parser.ParseInput(completion, out Token[] tokens, out ParseError[] errors);
 
             // Expect no errors and 2 tokens (1 is for our completion, the other is eof)
             // Or if the completion is a keyword, we ignore the errors
@@ -8833,10 +8824,53 @@ namespace System.Management.Automation
             if ((!requireQuote && tokens[0] is StringToken) ||
                 (tokens.Length == 2 && (tokens[0].TokenFlags & TokenFlags.Keyword) != 0))
             {
-                requireQuote = ContainsCharsToCheck(tokens[0].Text, escape);
+                requireQuote = ContainsCharsToCheck(tokens[0].Text, escapeGlobbingPathChars);
             }
 
             return requireQuote;
+        }
+
+        /// <summary>
+        /// Quotes and optionally escapes the specified completion text based on the provided parameters.
+        /// </summary>
+        /// <param name="completionText">
+        /// The text to be quoted and potentially escaped.
+        /// </param>
+        /// <param name="quote">
+        /// The quote character to use for quoting the completion text. If this is null or empty,
+        /// a single quote character (<c>'</c>) is used by default.
+        /// </param>
+        /// <param name="escapeGlobbingPathChars">
+        /// A boolean value indicating whether globbing path characters should be escaped.
+        /// If <c>true</c>, globbing-specific escape sequences will be applied to the text.
+        /// </param>
+        /// <returns>
+        /// The quoted (and optionally escaped) version of the provided completion text.
+        /// </returns>
+        internal static string QuoteCompletionText(
+            string completionText,
+            string quote,
+            bool escapeGlobbingPathChars)
+        {
+            if (CompletionRequiresQuotes(completionText, escapeGlobbingPathChars))
+            {
+                string quoteInUse = string.IsNullOrEmpty(quote) ? "'" : quote;
+
+                completionText = quoteInUse == "'"
+                    ? completionText.Replace("'", "''")
+                    : completionText.Replace("`", "``").Replace("$", "`$");
+
+                if (escapeGlobbingPathChars)
+                {
+                    completionText = quoteInUse == "'"
+                        ? completionText.Replace("[", "`[").Replace("]", "`]")
+                        : completionText.Replace("[", "``[").Replace("]", "``]");
+                }
+
+                return quoteInUse + completionText + quoteInUse;
+            }
+
+            return quote + completionText + quote;
         }
 
         private static bool ProviderSpecified(string path)
