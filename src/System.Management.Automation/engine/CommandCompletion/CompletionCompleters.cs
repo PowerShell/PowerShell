@@ -8583,6 +8583,7 @@ namespace System.Management.Automation
         /// <param name="wordToComplete">The word to complete.</param>
         /// <param name="possibleCompletionValues">The possible completion values to iterate.</param>
         /// <param name="toolTipMapping">The optional tool tip mapping delegate.</param>
+        /// <param name="listItemTextMapping">The optional list item text mapping delegate.</param>
         /// <param name="resultType">The optional completion result type. Default is Text.</param>
         /// <param name="escapeGlobbingPathChars">The optional toggle to escape globbing path chars.</param>
         /// <returns></returns>
@@ -8590,6 +8591,7 @@ namespace System.Management.Automation
             string wordToComplete,
             IEnumerable<string> possibleCompletionValues,
             Func<string, string> toolTipMapping = null,
+            Func<string, string> listItemTextMapping = null,
             CompletionResultType resultType = CompletionResultType.Text,
             bool escapeGlobbingPathChars = false)
         {
@@ -8601,7 +8603,7 @@ namespace System.Management.Automation
                 if (pattern.IsMatch(value))
                 {
                     string completionText = QuoteCompletionText(completionText: value, quote, escapeGlobbingPathChars);
-                    string listItemText = value;
+                    string listItemText = listItemTextMapping?.Invoke(value) ?? value;
                     string toolTip = toolTipMapping?.Invoke(value) ?? value;
 
                     yield return new CompletionResult(completionText, listItemText, resultType, toolTip);
