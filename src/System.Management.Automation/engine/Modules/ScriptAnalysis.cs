@@ -280,6 +280,7 @@ namespace System.Management.Automation
             string commandName = commandAst.GetCommandName();
             if (commandName is null)
             {
+                // GetCommandName only works if the name is a string constant. GetSafeValueVistor can evaluate some safe dynamic expressions
                 try
                 {
                     commandName = GetSafeValueVisitor.GetSafeValue(commandAst.CommandElements[0], null, GetSafeValueVisitor.SafeValueContext.ModuleAnalysis) as string;
@@ -290,6 +291,8 @@ namespace System.Management.Automation
                 }
             }
 
+            // We couldn't get the name of the command. Either it's an anonymous scriptblock: & {"Some script"}
+            // Or it's a dynamic expression we couldn't safely resolve.
             if (commandName == null)
                 return AstVisitAction.SkipChildren;
 
