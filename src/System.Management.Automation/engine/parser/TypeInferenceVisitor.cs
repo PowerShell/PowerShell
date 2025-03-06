@@ -2908,7 +2908,7 @@ namespace System.Management.Automation
             {
                 if (LastAssignmentOffset < ast.Extent.StartOffset)
                 {
-                    LastAssignment = ast;
+                    ClearAssignmentData();
                     EnumerateAssignment = enumerate;
                     RedirectionAssignment = redirectionAssignment;
                     LastAssignmentOffset = ast.Extent.StartOffset;
@@ -2919,10 +2919,18 @@ namespace System.Management.Automation
             {
                 if (LastAssignmentOffset < assignmentOffset)
                 {
-                    LastAssignment = null;
+                    ClearAssignmentData();
                     LastAssignmentType = typeName;
                     LastAssignmentOffset = assignmentOffset;
                 }
+            }
+
+            private void ClearAssignmentData()
+            {
+                LastAssignment = null;
+                LastAssignmentType = null;
+                EnumerateAssignment = false;
+                RedirectionAssignment = false;
             }
 
             private bool AssignsToTargetVar(VariableExpressionAst foundVar)
@@ -2977,6 +2985,13 @@ namespace System.Management.Automation
                 {
                     // When visiting do while/until statements, the condition will be visited before the statement block
                     // The condition itself may not be interesting if it's after the cursor, but the statement block could be
+                    // Example:
+                    // do
+                    // {
+                    //     $Var = gci
+                    //     $Var.<Tab>
+                    // }
+                    // until($false)
                     return ast is PipelineBaseAst && ast.Parent is DoUntilStatementAst or DoWhileStatementAst
                         ? AstVisitAction.SkipChildren
                         : AstVisitAction.StopVisit;
@@ -3042,15 +3057,13 @@ namespace System.Management.Automation
                 {
                     StaticBindingResult bindingResult = StaticParameterBinder.BindCommand(commandAst, resolve: false, CompletionCompleters.s_varModificationParameters);
                     if (bindingResult is not null
-                        && bindingResult.BoundParameters.TryGetValue("Name", out ParameterBindingResult variableName))
+                        && bindingResult.BoundParameters.TryGetValue("Name", out ParameterBindingResult variableName)
+                        && variableName.ConstantValue is string nameValue
+                        && AssignsToTargetVar(nameValue)
+                        && bindingResult.BoundParameters.TryGetValue("Value", out ParameterBindingResult variableValue))
                     {
-                        var nameValue = variableName.ConstantValue as string;
-                        if (AssignsToTargetVar(nameValue)
-                            && bindingResult.BoundParameters.TryGetValue("Value", out ParameterBindingResult variableValue))
-                        {
-                            SetLastAssignment(variableValue.Value);
-                            return AstVisitAction.Continue;
-                        }
+                        SetLastAssignment(variableValue.Value);
+                        return AstVisitAction.Continue;
                     }
                 }
 
@@ -3101,14 +3114,12 @@ namespace System.Management.Automation
                     {
                         foreach (string parameterName in CompletionCompleters.s_pipelineVariableParameters)
                         {
-                            if (bindResult.BoundParameters.TryGetValue(parameterName, out ParameterBindingResult pipeVarBind))
+                            if (bindResult.BoundParameters.TryGetValue(parameterName, out ParameterBindingResult pipeVarBind)
+                                && pipeVarBind.ConstantValue is string varName
+                                && AssignsToTargetVar(varName))
                             {
-                                var varName = pipeVarBind.ConstantValue as string;
-                                if (AssignsToTargetVar(varName))
-                                {
-                                    SetLastAssignment(commandAst, enumerate: true);
-                                    return AstVisitAction.Continue;
-                                }
+                                SetLastAssignment(commandAst, enumerate: true);
+                                return AstVisitAction.Continue;
                             }
                         }
                     }
