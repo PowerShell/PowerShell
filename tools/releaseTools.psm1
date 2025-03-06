@@ -373,12 +373,16 @@ function CheckForAuthToken {
     try {
         & gh --version > $null 2>&1
         $IsGHCLIInstalled = $true
-    } catch {}
+    } catch {
+        Write-Error -Message "GitHub CLI is not installed. Please install it from https://cli.github.com/"
+    }
 
     if ($IsGHCLIInstalled) {
         try {
             $Token = & gh auth token
-        } catch {}
+        } catch {
+            Write-Error -Message "Please login to GitHub CLI using 'gh auth login'"
+        }
     }
 
     if (-not $Token) {
