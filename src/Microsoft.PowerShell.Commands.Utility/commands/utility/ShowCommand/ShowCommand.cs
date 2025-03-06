@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading;
 
 using Microsoft.PowerShell.Commands.ShowCommandExtension;
+using Microsoft.Win32.SafeHandles;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -489,11 +490,6 @@ namespace Microsoft.PowerShell.Commands
         internal static class ConsoleInputWithNativeMethods
         {
             /// <summary>
-            /// Constant used in calls to GetStdHandle.
-            /// </summary>
-            internal const int STD_INPUT_HANDLE = -10;
-
-            /// <summary>
             /// Adds a string to the console input buffer.
             /// </summary>
             /// <param name="str">String to add to console input buffer.</param>
@@ -501,8 +497,8 @@ namespace Microsoft.PowerShell.Commands
             /// <returns>True if it was successful in adding all characters to console input buffer.</returns>
             internal static bool AddToConsoleInputBuffer(string str, bool newLine)
             {
-                IntPtr handle = ConsoleInputWithNativeMethods.GetStdHandle(ConsoleInputWithNativeMethods.STD_INPUT_HANDLE);
-                if (handle == IntPtr.Zero)
+                SafeFileHandle handle = Interop.Windows.GetStdHandle(Interop.Windows.STD_INPUT_HANDLE);
+                if (handle.IsInvalid)
                 {
                     return false;
                 }
@@ -546,14 +542,6 @@ namespace Microsoft.PowerShell.Commands
             }
 
             /// <summary>
-            /// Gets the console handle.
-            /// </summary>
-            /// <param name="nStdHandle">Which console handle to get.</param>
-            /// <returns>The console handle.</returns>
-            [DllImport("kernel32.dll", SetLastError = true)]
-            internal static extern IntPtr GetStdHandle(int nStdHandle);
-
-            /// <summary>
             /// Writes to the console input buffer.
             /// </summary>
             /// <param name="hConsoleInput">Console handle.</param>
@@ -564,7 +552,7 @@ namespace Microsoft.PowerShell.Commands
             [DllImport("kernel32.dll", SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
             internal static extern bool WriteConsoleInput(
-                IntPtr hConsoleInput,
+                SafeFileHandle hConsoleInput,
                 INPUT_RECORD[] lpBuffer,
                 uint nLength,
                 out uint lpNumberOfEventsWritten);

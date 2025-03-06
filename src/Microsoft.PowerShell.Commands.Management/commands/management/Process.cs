@@ -2428,9 +2428,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else if (startinfo.CreateNoWindow)
             {
-                lpStartupInfo.hStdInput = new SafeFileHandle(
-                    ProcessNativeMethods.GetStdHandle(-10),
-                    ownsHandle: false);
+                lpStartupInfo.hStdInput = Interop.Windows.GetStdHandle(Interop.Windows.STD_INPUT_HANDLE);
             }
 
             // RedirectionStandardOutput
@@ -2442,9 +2440,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else if (startinfo.CreateNoWindow)
             {
-                lpStartupInfo.hStdOutput = new SafeFileHandle(
-                    ProcessNativeMethods.GetStdHandle(-11),
-                    ownsHandle: false);
+                lpStartupInfo.hStdOutput = Interop.Windows.GetStdHandle(Interop.Windows.STD_OUTPUT_HANDLE);
             }
 
             // RedirectionStandardError
@@ -2456,9 +2452,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else if (startinfo.CreateNoWindow)
             {
-                lpStartupInfo.hStdError = new SafeFileHandle(
-                    ProcessNativeMethods.GetStdHandle(-12),
-                    ownsHandle: false);
+                lpStartupInfo.hStdError = Interop.Windows.GetStdHandle(Interop.Windows.STD_ERROR_HANDLE);
             }
 
             if (hasRedirection)
@@ -2782,9 +2776,6 @@ namespace Microsoft.PowerShell.Commands
 
     internal static class ProcessNativeMethods
     {
-        [DllImport(PinvokeDllNames.GetStdHandleDllName, SetLastError = true)]
-        public static extern IntPtr GetStdHandle(int whichHandle);
-
         [DllImport(PinvokeDllNames.CreateProcessWithLogonWDllName, CharSet = CharSet.Unicode, SetLastError = true, ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool CreateProcessWithLogonW(string userName,
