@@ -994,7 +994,7 @@ namespace Microsoft.PowerShell.Commands
                             AppendStringWithEscapeAlways(_outputString, propertyName);
                             break;
                         case BaseCsvWritingCommand.QuoteKind.AsNeeded:
- 
+
                             if (propertyName.AsSpan().IndexOfAny(_delimiter, '\n', '"') != -1)
                             {
                                 AppendStringWithEscapeAlways(_outputString, propertyName);
@@ -1385,8 +1385,10 @@ namespace Microsoft.PowerShell.Commands
             {
                 ParseNextRecord(values, builder);
                 if (values.Count == 0)
+                {
                     // Skip blank line in the input
                     continue;
+                }
 
                 PSObject result = BuildMshobject(TypeName, Header, values, _delimiter, prevalidated);
                 prevalidated = true;
