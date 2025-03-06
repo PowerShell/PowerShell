@@ -151,12 +151,19 @@ function Get-ChangeLog
         [Parameter(Mandatory = $true)]
         [string]$ThisReleaseTag,
 
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory = $false)]
         [string]$Token,
 
         [Parameter()]
         [switch]$HasCherryPick
     )
+
+    if(-not $Token) {
+        $Token = CheckForAuthToken
+        if(-not $Token) {
+            throw "No GitHub Auth Token provided"
+        }
+    }
 
     $tag_hash = git rev-parse "$LastReleaseTag^0"
     $format = '%H||%P||%aN||%aE||%s'
@@ -359,6 +366,26 @@ function Get-ChangeLog
     PrintChangeLog -clSection $clDocs -sectionTitle 'Documentation and Help Content'
 
     Write-Output "[${version}]: https://github.com/PowerShell/PowerShell/compare/${LastReleaseTag}...${ThisReleaseTag}`n"
+}
+
+function CheckForAuthToken {
+    $IsGHCLIInstalled = $false
+    try {
+        & gh --version > $null 2>&1
+        $IsGHCLIInstalled = $true
+    } catch {}
+
+    if ($IsGHCLIInstalled) {
+        try {
+            $Token = & gh auth token
+        } catch {}
+    }
+
+    if (-not $Token) {
+        $Token = Read-Host -Prompt "Enter GitHub Auth Token"
+    }
+
+    return $Token
 }
 
 function PrintChangeLog($clSection, $sectionTitle, [switch] $Compress) {
