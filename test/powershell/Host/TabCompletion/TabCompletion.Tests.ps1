@@ -901,6 +901,36 @@ ConstructorTestClass(int i, bool b)
         $diffs | Should -BeNullOrEmpty
     }
 
+    It 'Should complete attribute argument in incomplete param block' {
+        $res = TabExpansion2 -inputScript 'param([ValidatePattern('
+        $Expected = ([ValidatePattern].GetProperties() | Where-Object {$_.CanWrite}).Name -join ','
+        $res.CompletionMatches.CompletionText -join ',' | Should -BeExactly $Expected
+    }
+
+    It 'Should complete attribute argument in incomplete param block on new line' {
+        $TestString =  @'
+param([ValidatePattern(
+^)])
+'@
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
+        $Expected = ([ValidatePattern].GetProperties() | Where-Object {$_.CanWrite}).Name -join ','
+        $res.CompletionMatches.CompletionText -join ',' | Should -BeExactly $Expected
+    }
+
+    It 'Should complete attribute argument with partially written name in incomplete param block' {
+        $TestString =  'param([ValidatePattern(op^)]'
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Options'
+    }
+
+    It 'Should complete attribute argument for incomplete standalone attribute' {
+        $res = TabExpansion2 -inputScript '[ValidatePattern('
+        $Expected = ([ValidatePattern].GetProperties() | Where-Object {$_.CanWrite}).Name -join ','
+        $res.CompletionMatches.CompletionText -join ',' | Should -BeExactly $Expected
+    }
+
     It 'Should complete argument for second parameter' {
         $res = TabExpansion2 -inputScript 'Get-ChildItem -Path $HOME -ErrorAction '
         $res.CompletionMatches[0].CompletionText | Should -BeExactly Break

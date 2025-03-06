@@ -693,6 +693,19 @@ namespace System.Management.Automation
                                     return completions;
                                 }
                             }
+                            else if (lastAst is VariableExpressionAst && lastAst.Parent is ParameterAst paramAst && paramAst.Attributes.Count > 0)
+                            {
+                                foreach (AttributeBaseAst attribute in paramAst.Attributes)
+                                {
+                                    if (IsCursorWithinOrJustAfterExtent(_cursorPosition, attribute.Extent))
+                                    {
+                                        completionContext.ReplacementIndex = replacementIndex += tokenAtCursor.Text.Length;
+                                        completionContext.ReplacementLength = replacementLength = 0;
+                                        result = GetResultForAttributeArgument(completionContext, ref replacementIndex, ref replacementLength);
+                                        break;
+                                    }
+                                }
+                            }
                             else
                             {
                                 // Handle scenarios such as 'configuration foo { File ab { Attributes ='
@@ -928,6 +941,18 @@ namespace System.Management.Automation
                                     {
                                         result = GetResultForAttributeArgument(completionContext, ref replacementIndex, ref replacementLength);
                                     }
+
+                                    if (lastAst is VariableExpressionAst && lastAst.Parent is ParameterAst paramAst && paramAst.Attributes.Count > 0)
+                                    {
+                                        foreach (AttributeBaseAst attribute in paramAst.Attributes)
+                                        {
+                                            if (IsCursorWithinOrJustAfterExtent(_cursorPosition, attribute.Extent))
+                                            {
+                                                result = GetResultForAttributeArgument(completionContext, ref replacementIndex, ref replacementLength);
+                                                break;
+                                            }
+                                        }
+                                    }
                                     break;
 
                                 case TokenKind.Ieq:
@@ -1000,6 +1025,21 @@ namespace System.Management.Automation
                                         {
                                             completionContext.ReplacementLength = replacementLength = 0;
                                             result = GetResultForAttributeArgument(completionContext, ref replacementIndex, ref replacementLength);
+                                            break;
+                                        }
+
+                                        if (lastAst is VariableExpressionAst && lastAst.Parent is ParameterAst paramAst && paramAst.Attributes.Count > 0)
+                                        {
+                                            foreach (AttributeBaseAst attribute in paramAst.Attributes)
+                                            {
+                                                if (IsCursorWithinOrJustAfterExtent(_cursorPosition, attribute.Extent))
+                                                {
+                                                    completionContext.ReplacementLength = replacementLength = 0;
+                                                    result = GetResultForAttributeArgument(completionContext, ref replacementIndex, ref replacementLength);
+                                                    break;
+                                                }
+                                            }
+
                                             break;
                                         }
 
@@ -2100,9 +2140,25 @@ namespace System.Management.Automation
                     }
                 }
             }
-            if (completionContext.TokenAtCursor.TokenFlags == TokenFlags.MemberName && (lastAst is NamedAttributeArgumentAst || lastAst.Parent is NamedAttributeArgumentAst))
+
+            if (completionContext.TokenAtCursor.TokenFlags == TokenFlags.MemberName)
             {
-                result = GetResultForAttributeArgument(completionContext, ref replacementIndex, ref replacementLength);
+                if (lastAst is NamedAttributeArgumentAst || lastAst.Parent is NamedAttributeArgumentAst)
+                {
+                    result = GetResultForAttributeArgument(completionContext, ref replacementIndex, ref replacementLength);
+                }
+                else if (lastAst is VariableExpressionAst && lastAst.Parent is ParameterAst paramAst && paramAst.Attributes.Count > 0)
+                {
+                    foreach (AttributeBaseAst attribute in paramAst.Attributes)
+                    {
+                        if (IsCursorWithinOrJustAfterExtent(completionContext.CursorPosition, attribute.Extent))
+                        {
+                            result = GetResultForAttributeArgument(completionContext, ref replacementIndex, ref replacementLength);
+                            break;
+                        }
+                    }
+                }
+
                 if (result is not null)
                 {
                     return result;
