@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 param(
-    # Skips a check that prevents building PowerShell on unsupported Linux distributions
+    # Skips a check that prevents building PowerShell on unsupported Linux distributions.
     [parameter(Mandatory = $false)][switch]$SkipLinuxDistroCheck = $false
 )
 
