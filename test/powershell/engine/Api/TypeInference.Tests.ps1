@@ -1573,7 +1573,7 @@ Describe "Type inference Tests" -tags "CI" {
         @{ParameterName = "PipelineVariable";    ExpectedType = [guid]}
         @{ParameterName = "pv";                  ExpectedType = [guid]}
     ) -Test {
-            param($TestId, $ParameterName, $ExpectedType)
+            param($ParameterName, $ExpectedType)
             $Ast = [scriptblock]::Create("New-Guid -$ParameterName MyOutVar | % {`$MyOutVar}").Ast.FindAll({
                 param($Ast)
                 $Ast -is [Language.VariableExpressionAst]
