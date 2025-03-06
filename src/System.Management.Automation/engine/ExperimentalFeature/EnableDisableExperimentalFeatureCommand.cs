@@ -127,7 +127,7 @@ namespace Microsoft.PowerShell.Commands
                 expirmentalFeatures.Add(feature.Name);
             }
 
-            return CompletionCompleters.GetMatchingResults(wordToComplete, expirmentalFeatures);
+            return CompletionHelpers.GetMatchingResults(wordToComplete, expirmentalFeatures);
         }
 
         private static Collection<ExperimentalFeature> GetExperimentalFeatures()
