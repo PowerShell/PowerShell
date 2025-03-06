@@ -2909,6 +2909,7 @@ namespace System.Management.Automation
                 if (LastAssignmentOffset < ast.Extent.StartOffset)
                 {
                     ClearAssignmentData();
+                    LastAssignment = ast;
                     EnumerateAssignment = enumerate;
                     RedirectionAssignment = redirectionAssignment;
                     LastAssignmentOffset = ast.Extent.StartOffset;
