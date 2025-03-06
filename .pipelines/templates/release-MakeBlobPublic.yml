@@ -60,7 +60,7 @@ jobs:
           Write-Host 'AzureRM module removed'
         }
 
-        ./tools/installPSResource.ps1 -PSRepository CFS -Verbose
+        ./tools/installPSResource.ps1 -PSRepository CFS
       displayName: Remove AzRM modules
 
     - task: AzurePowerShell@5
@@ -158,7 +158,7 @@ jobs:
           Write-Host 'AzureRM module removed'
         }
 
-        ./tools/installPSResource.ps1 -PSRepository CFS -Verbose
+        ./tools/installPSResource.ps1 -PSRepository CFS
       displayName: Remove AzRM modules
 
     - task: AzurePowerShell@5
