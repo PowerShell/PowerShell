@@ -3073,41 +3073,39 @@ namespace System.Management.Automation
                 {
                     foreach (string parameterName in CompletionCompleters.s_outVarParameters)
                     {
-                        if (bindResult.BoundParameters.TryGetValue(parameterName, out ParameterBindingResult outVarBind))
+                        if (bindResult.BoundParameters.TryGetValue(parameterName, out ParameterBindingResult outVarBind)
+                            && outVarBind.ConstantValue is string varName
+                            && AssignsToTargetVar(varName))
                         {
-                            var varName = outVarBind.ConstantValue as string;
-                            if (AssignsToTargetVar(varName))
+                            // The *Variable parameters actually always results in an ArrayList
+                            // But to make type inference of individual elements better, we say it's a generic list.
+                            switch (parameterName)
                             {
-                                // The *Variable parameters actually always results in an ArrayList
-                                // But to make type inference of individual elements better, we say it's a generic list.
-                                switch (parameterName)
-                                {
-                                    case "ErrorVariable":
-                                    case "ev":
-                                        SetLastAssignmentType(new PSTypeName(typeof(List<ErrorRecord>)), commandAst.Extent.StartOffset);
-                                        break;
+                                case "ErrorVariable":
+                                case "ev":
+                                    SetLastAssignmentType(new PSTypeName(typeof(List<ErrorRecord>)), commandAst.Extent.StartOffset);
+                                    break;
 
-                                    case "WarningVariable":
-                                    case "wv":
-                                        SetLastAssignmentType(new PSTypeName(typeof(List<WarningRecord>)), commandAst.Extent.StartOffset);
-                                        break;
+                                case "WarningVariable":
+                                case "wv":
+                                    SetLastAssignmentType(new PSTypeName(typeof(List<WarningRecord>)), commandAst.Extent.StartOffset);
+                                    break;
 
-                                    case "InformationVariable":
-                                    case "iv":
-                                        SetLastAssignmentType(new PSTypeName(typeof(List<InformationalRecord>)), commandAst.Extent.StartOffset);
-                                        break;
+                                case "InformationVariable":
+                                case "iv":
+                                    SetLastAssignmentType(new PSTypeName(typeof(List<InformationalRecord>)), commandAst.Extent.StartOffset);
+                                    break;
 
-                                    case "OutVariable":
-                                    case "ov":
-                                        SetLastAssignment(commandAst);
-                                        break;
+                                case "OutVariable":
+                                case "ov":
+                                    SetLastAssignment(commandAst);
+                                    break;
 
-                                    default:
-                                        break;
-                                }
-
-                                return AstVisitAction.Continue;
+                                default:
+                                    break;
                             }
+
+                            return AstVisitAction.Continue;
                         }
                     }
 
