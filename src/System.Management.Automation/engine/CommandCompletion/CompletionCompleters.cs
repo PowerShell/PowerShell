@@ -8600,7 +8600,7 @@ namespace System.Management.Automation
 
             foreach (string value in possibleCompletionValues)
             {
-                if (pattern.IsMatch(value))
+                if (!string.IsNullOrEmpty(value) && pattern.IsMatch(value))
                 {
                     string completionText = QuoteCompletionText(completionText: value, quote, escapeGlobbingPathChars);
                     string listItemText = listItemTextMapping?.Invoke(value) ?? value;
