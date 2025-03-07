@@ -1550,7 +1550,7 @@ namespace System.Management.Automation
                 {
                     if (GroupsContainVerbType(groups, verbType))
                     {
-                        foreach (CompletionResult result in CompletionCompleters.GetMatchingResults(
+                        foreach (CompletionResult result in CompletionHelpers.GetMatchingResults(
                             wordToComplete,
                             possibleCompletionValues: EnumerateFieldNamesFromVerbType(verbType)))
                         {
@@ -1567,7 +1567,7 @@ namespace System.Management.Automation
             /// <param name="commands">The list of commands.</param>
             /// <returns>List of completions for verb.</returns>
             private static IEnumerable<CompletionResult> CompleteVerbWithCommands(string wordToComplete, Collection<CmdletInfo> commands)
-                => CompletionCompleters.GetMatchingResults(
+                => CompletionHelpers.GetMatchingResults(
                     wordToComplete,
                     possibleCompletionValues: EnumerateCommandVerbNames(commands));
 
@@ -1577,7 +1577,7 @@ namespace System.Management.Automation
             /// <param name="wordToComplete">The word to complete.</param>
             /// <returns>List of completions for verb.</returns>
             private static IEnumerable<CompletionResult> CompleteVerbForAllTypes(string wordToComplete)
-                => CompletionCompleters.GetMatchingResults(
+                => CompletionHelpers.GetMatchingResults(
                     wordToComplete,
                     possibleCompletionValues: EnumerateFieldNamesFromAllVerbTypes());
         }
