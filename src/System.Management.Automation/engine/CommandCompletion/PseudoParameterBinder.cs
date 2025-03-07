@@ -1198,7 +1198,7 @@ namespace System.Management.Automation.Language
             string commandName = null;
             try
             {
-                processor = PrepareFromAst(context, out commandName) ?? context.CreateCommand(commandName, dotSource);
+                processor = PrepareFromAst(context, out commandName) ?? context.CreateCommand(commandName, dotSource, forCompletion:true);
             }
             catch (RuntimeException)
             {
