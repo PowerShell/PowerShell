@@ -149,7 +149,7 @@ namespace System.Management.Automation.Security
             {
                 lock (s_systemLockdownPolicyLock)
                 {
-                    s_systemLockdownPolicy = GetDebugLockdownPolicy(path: null);
+                    s_systemLockdownPolicy = GetDebugLockdownPolicy(path: null, out _);
                 }
             }
 
@@ -316,7 +316,8 @@ namespace System.Management.Automation.Security
             }
 
             // If it's not set to 'Enforce' by the platform, allow debug overrides
-            return ConvertToModernFileEnforcement(GetDebugLockdownPolicy(path));
+            GetDebugLockdownPolicy(path, out SystemScriptFileEnforcement debugPolicy);
+            return debugPolicy;
         }
 
         [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods",
@@ -571,7 +572,7 @@ namespace System.Management.Automation.Security
             return result;
         }
 
-        private static SystemEnforcementMode GetDebugLockdownPolicy(string path)
+        private static SystemEnforcementMode GetDebugLockdownPolicy(string path, out SystemScriptFileEnforcement modernEnforcement)
         {
             s_allowDebugOverridePolicy = true;
 
@@ -582,10 +583,19 @@ namespace System.Management.Automation.Security
                 // check so that we can actually put it in the filename during testing.
                 if (path.Contains("System32", StringComparison.OrdinalIgnoreCase))
                 {
+                    modernEnforcement = SystemScriptFileEnforcement.Allow;
                     return SystemEnforcementMode.None;
                 }
 
                 // No explicit debug allowance for the file, so return the system policy if there is one.
+                modernEnforcement = s_systemLockdownPolicy switch
+                {
+                    SystemEnforcementMode.Enforce => SystemScriptFileEnforcement.AllowConstrained,
+                    SystemEnforcementMode.Audit => SystemScriptFileEnforcement.AllowConstrainedAudit,
+                    SystemEnforcementMode.None => SystemScriptFileEnforcement.None,
+                    _ => SystemScriptFileEnforcement.None,
+                };
+
                 return s_systemLockdownPolicy.GetValueOrDefault(SystemEnforcementMode.None);
             }
 
@@ -595,10 +605,13 @@ namespace System.Management.Automation.Security
             if (result != null)
             {
                 pdwLockdownState = LanguagePrimitives.ConvertTo<uint>(result);
-                return GetLockdownPolicyForResult(pdwLockdownState);
+                SystemEnforcementMode policy = GetLockdownPolicyForResult(pdwLockdownState);
+                modernEnforcement = ConvertToModernFileEnforcement(policy);
+                return policy;
             }
 
             // If the system-wide debug policy had no preference, then there is no enforcement.
+            modernEnforcement = SystemScriptFileEnforcement.None;
             return SystemEnforcementMode.None;
         }
 
