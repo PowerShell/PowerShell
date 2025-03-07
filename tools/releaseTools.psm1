@@ -375,6 +375,7 @@ function Get-GHDefaultAuthToken {
     } else {
         Write-Error -Message "GitHub CLI is not installed. Please install it from https://cli.github.com/" -ErrorAction Stop
     }
+
     if ($IsGHCLIInstalled) {
         try {
             $Token = & gh auth token
