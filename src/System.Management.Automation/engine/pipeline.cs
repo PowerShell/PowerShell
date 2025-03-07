@@ -904,6 +904,8 @@ namespace System.Management.Automation.Internal
                 return;
             }
 
+            _pipelineStopTokenSource.Cancel();
+
             // Call StopProcessing() for all the commands.
             foreach (CommandProcessorBase commandProcessor in commands)
             {
@@ -922,8 +924,6 @@ namespace System.Management.Automation.Internal
                     continue;
                 }
             }
-
-            _pipelineStopTokenSource.Cancel();
         }
 
         #endregion public_methods

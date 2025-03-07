@@ -11,6 +11,7 @@ using System.Reflection;
 using System.Resources;
 using System.Management.Automation.Internal;
 using Dbg = System.Management.Automation.Diagnostics;
+using System.Threading;
 
 namespace System.Management.Automation
 {
@@ -99,6 +100,11 @@ namespace System.Management.Automation
                 }
             }
         }
+
+        /// <summary>
+        /// Gets the CancellationToken that is signaled when the pipeline is stopping.
+        /// </summary>
+        public CancellationToken PipelineStopToken => StopToken;
 
         /// <summary>
         /// The name of the parameter set in effect.

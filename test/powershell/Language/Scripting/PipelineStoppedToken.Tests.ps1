@@ -72,15 +72,15 @@ using System.Threading.Tasks;
 namespace PipelineStoppedToken.Tests;
 
 [Cmdlet(VerbsDiagnostic.Test, "CmdletWithStop")]
-public sealed class TestCmdletWithStop : PSCmdlet
+public sealed class TestCmdletWithStop : Cmdlet
 {
-[Parameter]
-public int Timeout { get; set; }
+    [Parameter]
+    public int Timeout { get; set; }
 
-protected override void EndProcessing()
-{
-    Task.Delay(Timeout * 1000, PipelineStopToken).GetAwaiter().GetResult();
-}
+    protected override void EndProcessing()
+    {
+        Task.Delay(Timeout * 1000, PipelineStopToken).GetAwaiter().GetResult();
+    }
 }
 '@ -PassThru | ForEach-Object Assembly | Select-Object -First 1
 
