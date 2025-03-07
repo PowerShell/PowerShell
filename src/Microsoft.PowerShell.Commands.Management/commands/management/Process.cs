@@ -10,6 +10,7 @@ using System.ComponentModel; // Win32Exception
 using System.Diagnostics; // Process class
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
@@ -2692,7 +2693,7 @@ namespace Microsoft.PowerShell.Commands
             // -Verb is not supported on non-Windows platforms as well as Windows headless SKUs
             if (!Platform.IsWindowsDesktop)
             {
-                return [];
+                return Enumerable.Empty<CompletionResult>();
             }
 
             // Completion: Start-Process -FilePath <path> -Verb <wordToComplete>
@@ -2726,7 +2727,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            return [];
+            return Enumerable.Empty<CompletionResult>();
         }
 
         /// <summary>
