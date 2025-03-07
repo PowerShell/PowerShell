@@ -73,34 +73,40 @@ namespace System.Management.Automation
         /// </remarks>
         internal static string HandleDoubleAndSingleQuote(ref string wordToComplete)
         {
-            string quote = string.Empty;
-
-            if (!string.IsNullOrEmpty(wordToComplete) && (wordToComplete[0].IsSingleQuote() || wordToComplete[0].IsDoubleQuote()))
+            if (string.IsNullOrEmpty(wordToComplete))
             {
-                char frontQuote = wordToComplete[0];
-                int length = wordToComplete.Length;
-
-                if (length == 1)
-                {
-                    wordToComplete = string.Empty;
-                    quote = frontQuote.IsSingleQuote() ? "'" : "\"";
-                }
-                else if (length > 1)
-                {
-                    if ((wordToComplete[length - 1].IsDoubleQuote() && frontQuote.IsDoubleQuote()) || (wordToComplete[length - 1].IsSingleQuote() && frontQuote.IsSingleQuote()))
-                    {
-                        wordToComplete = wordToComplete.Substring(1, length - 2);
-                        quote = frontQuote.IsSingleQuote() ? "'" : "\"";
-                    }
-                    else if (!wordToComplete[length - 1].IsDoubleQuote() && !wordToComplete[length - 1].IsSingleQuote())
-                    {
-                        wordToComplete = wordToComplete.Substring(1);
-                        quote = frontQuote.IsSingleQuote() ? "'" : "\"";
-                    }
-                }
+                return string.Empty;
             }
 
-            return quote;
+            char frontQuote = wordToComplete[0];
+
+            bool hasFrontQuote = frontQuote.IsSingleQuote() || frontQuote.IsDoubleQuote();
+
+            if (!hasFrontQuote)
+            {
+                return string.Empty;
+            }
+
+            string quoteInUse = frontQuote.IsSingleQuote() ? "'" : "\"";
+
+            int length = wordToComplete.Length;
+
+            if (length == 1)
+            {
+                wordToComplete = string.Empty;
+                return quoteInUse;
+            }
+
+            char backQuote = wordToComplete[length - 1];
+
+            bool hasFrontAndBackSingleQuote = frontQuote.IsSingleQuote() && backQuote.IsSingleQuote();
+            bool hasFrontAndBackDoubleQuote = frontQuote.IsDoubleQuote() && backQuote.IsDoubleQuote();
+
+            wordToComplete = hasFrontAndBackSingleQuote || hasFrontAndBackDoubleQuote
+                ? wordToComplete.Substring(1, length - 2)
+                : wordToComplete.Substring(1);
+
+            return quoteInUse;
         }
 
         /// <summary>
