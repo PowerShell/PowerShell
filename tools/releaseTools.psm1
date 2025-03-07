@@ -159,7 +159,7 @@ function Get-ChangeLog
     )
 
     if(-not $Token) {
-        $Token = CheckForAuthToken
+        $Token = Get-GHDefaultAuthToken
         if(-not $Token) {
             throw "No GitHub Auth Token provided"
         }
@@ -368,15 +368,13 @@ function Get-ChangeLog
     Write-Output "[${version}]: https://github.com/PowerShell/PowerShell/compare/${LastReleaseTag}...${ThisReleaseTag}`n"
 }
 
-function CheckForAuthToken {
+function Get-GHDefaultAuthToken {
     $IsGHCLIInstalled = $false
-    try {
-        & gh --version > $null 2>&1
+    if (Get-command -CommandType Application -Name gh -ErrorAction SilentlyContinue) {
         $IsGHCLIInstalled = $true
-    } catch {
-        Write-Error -Message "GitHub CLI is not installed. Please install it from https://cli.github.com/"
+    } else {
+        Write-Error -Message "GitHub CLI is not installed. Please install it from https://cli.github.com/" -ErrorAction Stop
     }
-
     if ($IsGHCLIInstalled) {
         try {
             $Token = & gh auth token
