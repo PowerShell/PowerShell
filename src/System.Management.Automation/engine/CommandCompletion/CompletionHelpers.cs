@@ -110,31 +110,5 @@ namespace System.Management.Automation
 
         private static bool ContainsCharsToCheck(ReadOnlySpan<char> text, bool escape)
             => text.ContainsAny(escape ? s_escapeCharsToCheck : s_defaultCharsToCheck);
-
-        internal static string QuoteCompletionText(
-            string completionText,
-            string quote,
-            bool escape)
-        {
-            if (CompletionRequiresQuotes(completionText, escape))
-            {
-                string quoteInUse = string.IsNullOrEmpty(quote) ? "'" : quote;
-
-                completionText = quoteInUse == "'"
-                    ? completionText.Replace("'", "''")
-                    : completionText.Replace("`", "``").Replace("$", "`$");
-
-                if (escape)
-                {
-                    completionText = quoteInUse == "'"
-                        ? completionText.Replace("[", "`[").Replace("]", "`]")
-                        : completionText.Replace("[", "``[").Replace("]", "``]");
-                }
-
-                return quoteInUse + completionText + quoteInUse;
-            }
-
-            return quote + completionText + quote;
-        }
     }
 }
