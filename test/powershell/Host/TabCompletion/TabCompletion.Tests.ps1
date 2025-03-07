@@ -1783,6 +1783,36 @@ class InheritedClassTest : System.Attribute
         }
     }
 
+    Context "Script parameter completion" {
+        BeforeAll {
+            Setup -File -Path 'ModuleReqTest.ps1' -Content @'
+#requires -Modules ThisModuleDoesNotExist
+param ($Param1)
+'@
+            Setup -File -Path 'AdminReqTest.ps1' -Content @'
+#requires -RunAsAdministrator
+param ($Param1)
+'@
+            Push-Location ${TestDrive}\
+        }
+
+        AfterAll {
+            Pop-Location
+        }
+
+        It "Input should successfully complete script parameter for script with failed script requirements" {
+            $res = TabExpansion2 -inputScript '.\ModuleReqTest.ps1 -'
+            $res.CompletionMatches.Count | Should -BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly '-Param1'
+        }
+
+        It "Input should successfully complete script parameter for admin script while not elevated" {
+            $res = TabExpansion2 -inputScript '.\AdminReqTest.ps1 -'
+            $res.CompletionMatches.Count | Should -BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly '-Param1'
+        }
+    }
+
     Context "File name completion" {
         BeforeAll {
             $tempDir = Join-Path -Path $TestDrive -ChildPath "baseDir"
