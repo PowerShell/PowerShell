@@ -10,7 +10,6 @@ using System.Globalization;
 using System.Reflection;
 using System.Resources;
 using System.Management.Automation.Internal;
-using Dbg = System.Management.Automation.Diagnostics;
 using System.Threading;
 
 namespace System.Management.Automation
