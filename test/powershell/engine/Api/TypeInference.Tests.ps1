@@ -1481,6 +1481,30 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Name | Should -Be 'System.Management.Automation.Internal.Host.InternalHost'
     }
 
+    It 'Infers type of variable assigned inside do while loop' {
+        $res = [AstTypeInference]::InferTypeOf(({
+            do
+            {
+                $Test = 1
+                $Test
+            }
+            while (1)
+        }.Ast.FindAll({param($Ast) $Ast -is [Language.VariableExpressionAst]}, $true) | Select-Object -Last 1 ))
+        $res.Name | Should -Be 'System.Int32'
+    }
+
+    It 'Infers type of variable assigned inside do until loop' {
+        $res = [AstTypeInference]::InferTypeOf(({
+            do
+            {
+                $Test = 1
+                $Test
+            }
+            until ($null = gci)
+        }.Ast.FindAll({param($Ast) $Ast -is [Language.VariableExpressionAst] -and $Ast.VariablePath.UserPath -eq 'Test'}, $true) | Select-Object -Last 1 ))
+        $res.Name | Should -Be 'System.Int32'
+    }
+
     It 'Infers type of external applications' {
         $res = [AstTypeInference]::InferTypeOf( { pwsh }.Ast)
         $res.Name | Should -Be 'System.String'
@@ -1492,6 +1516,178 @@ Describe "Type inference Tests" -tags "CI" {
             $true
         )
         $null = [AstTypeInference]::InferTypeOf($FoundAst)
+    }
+
+    It 'Ignores type constraint defined outside of scope' {
+        $res = [AstTypeInference]::InferTypeOf(({
+            function Outer
+            {
+                [string] $Test = "Hello"
+                function Inner
+                {
+                    $Test = 2
+                    $Test
+                }
+            }
+        }.Ast.FindAll({param($Ast) $Ast -is [Language.VariableExpressionAst]}, $true) | Select-Object -Last 1 ))
+        $res.Name | Should -Be 'System.Int32'
+    }
+
+    It 'Considers the type constraint defined outside of scope when dot sourcing' {
+        $res = [AstTypeInference]::InferTypeOf(({
+            [string] $Test = "Hello"
+            . {$Test = 2; $Test}
+        }.Ast.FindAll({param($Ast) $Ast -is [Language.VariableExpressionAst]}, $true) | Select-Object -Last 1 ))
+        $res.Name | Should -Be 'System.String'
+    }
+
+    It 'Infers type of ref assigned variable' {
+        $res = [AstTypeInference]::InferTypeOf(({
+            $MyRefVar = $null
+            $null = [System.Management.Automation.Language.Parser]::ParseInput("", [ref] $MyRefVar, [ref] $null)
+            $MyRefVar
+        }.Ast.FindAll({param($Ast) $Ast -is [Language.VariableExpressionAst]}, $true) | Select-Object -Last 1 ))
+        $res.Name | Should -Be 'System.Management.Automation.Language.Token[]'
+    }
+
+    It 'Infers type of variable assigned with New/Set-Variable' {
+        $res = [AstTypeInference]::InferTypeOf( {
+            New-Variable -Name Var1 -Value $true | Out-Null
+            New-Variable -Name Var2 -Value "Hello" | Out-Null
+            $Var1
+            $Var2
+        }.Ast)
+        $res[0].Name | Should -Be 'System.Boolean'
+        $res[1].Name | Should -Be 'System.String'
+    }
+
+    It 'Infers type of variable assigned with <ParameterName> common parameter' -TestCases @(
+        @{ParameterName = "WarningVariable";     ExpectedType = [List[WarningRecord]]}
+        @{ParameterName = "wv";                  ExpectedType = [List[WarningRecord]]}
+        @{ParameterName = "ErrorVariable";       ExpectedType = [List[ErrorRecord]]}
+        @{ParameterName = "ev";                  ExpectedType = [List[ErrorRecord]]}
+        @{ParameterName = "InformationVariable"; ExpectedType = [List[InformationalRecord]]}
+        @{ParameterName = "iv";                  ExpectedType = [List[InformationalRecord]]}
+        @{ParameterName = "OutVariable";         ExpectedType = [guid]}
+        @{ParameterName = "ov";                  ExpectedType = [guid]}
+        @{ParameterName = "PipelineVariable";    ExpectedType = [guid]}
+        @{ParameterName = "pv";                  ExpectedType = [guid]}
+    ) -Test {
+            param($ParameterName, $ExpectedType)
+            $Ast = [scriptblock]::Create("New-Guid -$ParameterName MyOutVar | % {`$MyOutVar}").Ast.FindAll({
+                param($Ast)
+                $Ast -is [Language.VariableExpressionAst]
+            }, $true) | Select-Object -Last 1
+            $res = [AstTypeInference]::InferTypeOf($Ast)
+            $res.Type | Should -Be $ExpectedType
+        }
+
+    It 'Infers type of variable assigned via Data statement' {
+        $res = [AstTypeInference]::InferTypeOf(({
+            Data MyDataVar {"Hello"}
+            $MyDataVar
+        }.Ast.FindAll({param($Ast) $Ast -is [Language.VariableExpressionAst]}, $true) | Select-Object -Last 1 ))
+        $res.Name | Should -Be 'System.String'
+    }
+
+    It 'Infers type of well known variable with global scope' {
+        $res = [AstTypeInference]::InferTypeOf({$global:true}.Ast)
+        $res.Name | Should -Be 'System.Boolean'
+    }
+
+    It 'Infers parameter type from closest parameter' {
+        $res = [AstTypeInference]::InferTypeOf( ({
+            param([string]$Param1)
+            function TestFunction {param([bool]$Param1) $Param1}
+        }.Ast.FindAll({param($Ast) $Ast -is [Language.VariableExpressionAst]}, $true) | Select-Object -Last 1 ))
+        $res.Name | Should -Be 'System.Boolean'
+    }
+
+    It 'Infers variable type from closest foreach statement' {
+        $res = [AstTypeInference]::InferTypeOf( ({
+            foreach ($X in 1..10)
+            {
+                $X
+            }
+            foreach ($X in New-Guid)
+            {
+                $X
+            }
+        }.Ast.FindAll({param($Ast) $Ast -is [Language.VariableExpressionAst]}, $true) | Select-Object -Last 1 ))
+        $res.Name | Should -Be 'System.Guid'
+    }
+
+    It 'Infers global variable type in child scope' {
+        $res = [AstTypeInference]::InferTypeOf( ({
+            $Global:GlobalTest1 = "Hello"
+            function TestFunction {$GlobalTest1}
+        }.Ast.FindAll({param($Ast) $Ast -is [Language.VariableExpressionAst]}, $true) | Select-Object -Last 1 ))
+        $res.Name | Should -Be 'System.String'
+    }
+
+    It 'Does not infer private variable type in child scope' {
+        $res = [AstTypeInference]::InferTypeOf( ({
+            $Private:PrivateTest1 = "Hello"
+            function TestFunction {$PrivateTest1}
+        }.Ast.FindAll({param($Ast) $Ast -is [Language.VariableExpressionAst]}, $true) | Select-Object -Last 1 ))
+        $res.Count | Should -Be 0
+    }
+
+    It 'Infers variable assigned with an attribute' {
+        $res = [AstTypeInference]::InferTypeOf( ({
+            [ValidateNotNull()]$ValidatedVar1 = New-Guid
+            $ValidatedVar1
+        }.Ast.FindAll({param($Ast) $Ast -is [Language.VariableExpressionAst]}, $true) | Select-Object -Last 1 ))
+        $res.Name | Should -Be 'System.Guid'
+    }
+
+    It 'Infers variable assigned with multiple type constraints' {
+        $res = [AstTypeInference]::InferTypeOf( ({
+            [int] [string]$MultiConstraintVar1 = "10"
+            $MultiConstraintVar1
+        }.Ast.FindAll({param($Ast) $Ast -is [Language.VariableExpressionAst]}, $true) | Select-Object -Last 1 ))
+        $res.Name | Should -Be 'System.Int32'
+    }
+
+    It 'Infers variable assigned by redirection' {
+        $res = [AstTypeInference]::InferTypeOf( ({
+            New-Guid *>&1 1>variable:RedirVar1; $RedirVar1
+        }.Ast.FindAll({param($Ast) $Ast -is [Language.VariableExpressionAst]}, $true) | Select-Object -Last 1 ))
+        $ExpectedTypeNames = @(
+            [ErrorRecord].FullName
+            [WarningRecord].FullName
+            [VerboseRecord].FullName
+            [DebugRecord].FullName
+            [InformationRecord].FullName
+            [guid].FullName
+        ) -join ';'
+        $res.Name -join ';' | Should -Be $ExpectedTypeNames
+    }
+
+    It 'Infers variables assigned by redirection from specific streams' {
+        $VarAsts = [List[Language.Ast]]{
+            [void](New-Guid 1>variable:RedirSuccess 2>variable:RedirError 3>variable:RedirWarning 4>variable:RedirVerbose 5>variable:RedirDebug 6>variable:RedirInfo)
+            $RedirSuccess
+            $RedirError
+            $RedirWarning
+            $RedirVerbose
+            $RedirDebug
+            $RedirInfo
+        }.Ast.FindAll({param($Ast) $Ast -is [Language.VariableExpressionAst]}, $true)
+        $ExpectedTypeNames = @(
+            [guid].FullName
+            [ErrorRecord].FullName
+            [WarningRecord].FullName
+            [VerboseRecord].FullName
+            [DebugRecord].FullName
+            [InformationRecord].FullName
+        )
+
+        for ($i = 0; $i -lt $VarAsts.Count; $i++)
+        {
+            $res = [AstTypeInference]::InferTypeOf($VarAsts[$i])
+            $res.Name | Should -Be $ExpectedTypeNames[$i]
+        }
     }
 
     It 'Should infer output from anonymous function' {
