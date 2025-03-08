@@ -711,7 +711,6 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
                 $result = ExecuteWebCommand -command $commandNoContentType
                 ValidateResponse -response $result
-
                 # Validate response content
                 $jsonContent = $result.Output.Content | ConvertFrom-Json
                 $jsonContent.url | Should -Match $uri
@@ -719,7 +718,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
                 {
                     $jsonContent.headers.'Content-Type' | Should -Match "application/x-www-form-urlencoded"
                     # Validate that the response Content.form field is the same as what we sent.
-                    [string]$jsonContent.form | Should -Be ([string][PSCustomObject]@{$body.Split("=")[0] = [System.Object[]]})
+                    [string]$jsonContent.form | Should -Be ([string][PSCustomObject]@{$body.Split("=")[0] = 'System.Collections.Generic.List`1[System.Object]'})
                     $jsonContent.data | Should -BeNullOrEmpty
                 }
                 else
@@ -2810,7 +2809,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
                 {
                     $result.Output.headers.'Content-Type' | Should -Match "application/x-www-form-urlencoded"
                     # Validate that the response Content.form field is the same as what we sent.
-                    [string]$result.Output.form | Should -Be ([string][PSCustomObject]@{$body.Split("=")[0] = [System.Object[]]})
+                    [string]$result.Output.form | Should -Be ([string][PSCustomObject]@{$body.Split("=")[0] = 'System.Collections.Generic.List`1[System.Object]'})
                     $result.Output.data | Should -BeNullOrEmpty
                 }
                 else
