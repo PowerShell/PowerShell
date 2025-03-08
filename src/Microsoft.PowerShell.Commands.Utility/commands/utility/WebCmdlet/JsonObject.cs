@@ -329,7 +329,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         // This function is a clone of PopulateFromList using JArray as input.
-        private static ICollection<object> PopulateFromJArray(JArray list, out ErrorRecord error)
+        private static object[] PopulateFromJArray(JArray list, out ErrorRecord error)
         {
             error = null;
             var result = new object[list.Count];
@@ -375,7 +375,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         // This function is a clone of PopulateFromDictionary using JObject as an input.
-        private static Hashtable PopulateHashTableFromJDictionary(JObject entries, out ErrorRecord error)
+        private static OrderedHashtable PopulateHashTableFromJDictionary(JObject entries, out ErrorRecord error)
         {
             error = null;
             OrderedHashtable result = new(entries.Count);
@@ -432,7 +432,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         // This function is a clone of PopulateFromList using JArray as input.
-        private static ICollection<object> PopulateHashTableFromJArray(JArray list, out ErrorRecord error)
+        private static object[] PopulateHashTableFromJArray(JArray list, out ErrorRecord error)
         {
             error = null;
             var result = new object[list.Count];
@@ -744,7 +744,7 @@ namespace Microsoft.PowerShell.Commands
         /// Return an alternate representation of the specified dictionary that serializes the same JSON, except
         /// that any contained properties that cannot be evaluated are treated as having the value null.
         /// </summary>
-        private static object ProcessDictionary(IDictionary dict, int depth, in ConvertToJsonContext context)
+        private static Dictionary<string, object> ProcessDictionary(IDictionary dict, int depth, in ConvertToJsonContext context)
         {
             Dictionary<string, object> result = new(dict.Count);
 
@@ -781,7 +781,7 @@ namespace Microsoft.PowerShell.Commands
         /// Return an alternate representation of the specified collection that serializes the same JSON, except
         /// that any contained properties that cannot be evaluated are treated as having the value null.
         /// </summary>
-        private static object ProcessEnumerable(IEnumerable enumerable, int depth, in ConvertToJsonContext context)
+        private static List<object> ProcessEnumerable(IEnumerable enumerable, int depth, in ConvertToJsonContext context)
         {
             List<object> result = new();
 
@@ -801,7 +801,7 @@ namespace Microsoft.PowerShell.Commands
         /// are represented.  If any exception occurs while retrieving the value of a field or property, that entity
         /// is included in the output dictionary with a value of null.
         /// </summary>
-        private static object ProcessCustomObject<T>(object o, int depth, in ConvertToJsonContext context)
+        private static Dictionary<string, object> ProcessCustomObject<T>(object o, int depth, in ConvertToJsonContext context)
         {
             Dictionary<string, object> result = new();
             Type t = o.GetType();
