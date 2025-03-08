@@ -30,37 +30,52 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Context for convert-to-json operation.
         /// </summary>
-        public readonly struct ConvertToJsonContext
+        /// <remarks>
+        /// Initializes a new instance of the <see cref="ConvertToJsonContext"/> struct.
+        /// </remarks>
+        /// <param name="maxDepth">The maximum depth to visit the object.</param>
+        /// <param name="enumsAsStrings">Indicates whether to use enum names for the JSON conversion.</param>
+        /// <param name="compressOutput">Indicates whether to get the compressed output.</param>
+        /// <param name="stringEscapeHandling">Specifies how strings are escaped when writing JSON text.</param>
+        /// <param name="targetCmdlet">Specifies the cmdlet that is calling this method.</param>
+        /// <param name="cancellationToken">Specifies the cancellation token for cancelling the operation.</param>
+        public readonly struct ConvertToJsonContext(
+            int maxDepth,
+            bool enumsAsStrings,
+            bool compressOutput,
+            StringEscapeHandling stringEscapeHandling,
+            PSCmdlet targetCmdlet,
+            CancellationToken cancellationToken)
         {
             /// <summary>
             /// Gets the maximum depth for walking the object graph.
             /// </summary>
-            public readonly int MaxDepth;
+            public readonly int MaxDepth = maxDepth;
 
             /// <summary>
             /// Gets the cancellation token.
             /// </summary>
-            public readonly CancellationToken CancellationToken;
+            public readonly CancellationToken CancellationToken = cancellationToken;
 
             /// <summary>
             /// Gets the StringEscapeHandling setting.
             /// </summary>
-            public readonly StringEscapeHandling StringEscapeHandling;
+            public readonly StringEscapeHandling StringEscapeHandling = stringEscapeHandling;
 
             /// <summary>
             /// Gets the EnumsAsStrings setting.
             /// </summary>
-            public readonly bool EnumsAsStrings;
+            public readonly bool EnumsAsStrings = enumsAsStrings;
 
             /// <summary>
             /// Gets the CompressOutput setting.
             /// </summary>
-            public readonly bool CompressOutput;
+            public readonly bool CompressOutput = compressOutput;
 
             /// <summary>
             /// Gets the target cmdlet that is doing the convert-to-json operation.
             /// </summary>
-            public readonly PSCmdlet Cmdlet;
+            public readonly PSCmdlet Cmdlet = targetCmdlet;
 
             /// <summary>
             /// Initializes a new instance of the <see cref="ConvertToJsonContext"/> struct.
@@ -72,39 +87,10 @@ namespace Microsoft.PowerShell.Commands
                 : this(maxDepth, enumsAsStrings, compressOutput, StringEscapeHandling.Default, targetCmdlet: null, CancellationToken.None)
             {
             }
-
-            /// <summary>
-            /// Initializes a new instance of the <see cref="ConvertToJsonContext"/> struct.
-            /// </summary>
-            /// <param name="maxDepth">The maximum depth to visit the object.</param>
-            /// <param name="enumsAsStrings">Indicates whether to use enum names for the JSON conversion.</param>
-            /// <param name="compressOutput">Indicates whether to get the compressed output.</param>
-            /// <param name="stringEscapeHandling">Specifies how strings are escaped when writing JSON text.</param>
-            /// <param name="targetCmdlet">Specifies the cmdlet that is calling this method.</param>
-            /// <param name="cancellationToken">Specifies the cancellation token for cancelling the operation.</param>
-            public ConvertToJsonContext(
-                int maxDepth,
-                bool enumsAsStrings,
-                bool compressOutput,
-                StringEscapeHandling stringEscapeHandling,
-                PSCmdlet targetCmdlet,
-                CancellationToken cancellationToken)
-            {
-                this.MaxDepth = maxDepth;
-                this.CancellationToken = cancellationToken;
-                this.StringEscapeHandling = stringEscapeHandling;
-                this.EnumsAsStrings = enumsAsStrings;
-                this.CompressOutput = compressOutput;
-                this.Cmdlet = targetCmdlet;
-            }
         }
 
-        private sealed class DuplicateMemberHashSet : HashSet<string>
+        private sealed class DuplicateMemberHashSet(int capacity) : HashSet<string>(capacity, StringComparer.OrdinalIgnoreCase)
         {
-            public DuplicateMemberHashSet(int capacity)
-                : base(capacity, StringComparer.OrdinalIgnoreCase)
-            {
-            }
         }
 
         #endregion HelperTypes
