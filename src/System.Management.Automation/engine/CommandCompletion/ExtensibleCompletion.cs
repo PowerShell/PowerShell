@@ -102,7 +102,127 @@ namespace System.Management.Automation
             string parameterName,
             string wordToComplete,
             CommandAst commandAst,
-            IDictionary fakeBoundParameters);
+            IDictionary fakeBoundParameters)
+        {
+            CommandName = commandName;
+            ParameterName = parameterName;
+            WordToComplete = wordToComplete;
+            CommandAst = commandAst;
+            FakeBoundParameters = fakeBoundParameters;
+            return ShouldComplete ? GetMatchingResults(wordToComplete) : [];
+        }
+
+        /// <summary>
+        /// Gets the name of the command that needs argument completion.
+        /// </summary>
+        protected static string? CommandName { get; private set; }
+
+        /// <summary>
+        /// Gets the name of the parameter that needs argument completion.
+        /// </summary>
+        protected static string? ParameterName { get; private set; }
+
+        /// <summary>
+        /// Gets the word being completed.
+        /// </summary>
+        protected static string? WordToComplete { get; private set; }
+
+        /// <summary>
+        /// Gets the command abstract syntax tree (AST).
+        /// </summary>
+        protected static CommandAst? CommandAst { get; private set; }
+
+        /// <summary>
+        /// Gets the fake bound parameters similar to $PSBoundParameters.
+        /// </summary>
+        protected static IDictionary? FakeBoundParameters { get; private set; }
+
+        /// <summary>
+        /// Gets value indicating whether to perform completion.
+        /// </summary>
+        protected bool ShouldComplete => true;
+
+        /// <summary>
+        /// Gets the type of the completion result.
+        /// </summary>
+        protected CompletionResultType CompletionResultType => CompletionResultType.Text;
+
+        /// <summary>
+        /// Gets the mapping function for tooltips.
+        /// </summary>
+        protected Func<string, string>? ToolTipMapping => null;
+
+        /// <summary>
+        /// Gets the mapping function for list item texts.
+        /// </summary>
+        protected Func<string, string>? ListItemTextMapping => null;
+
+        /// <summary>
+        /// Gets value indicating whether to escape globbing paths.
+        /// </summary>
+        protected bool EscapeGlobbingPath => false;
+
+        /// <summary>
+        /// Gets the possible completion values.
+        /// </summary>
+        protected IEnumerable<string> PossibleCompletionValues => [];
+
+        /// <summary>
+        /// Matches the possible completion values against the word to complete.
+        /// </summary>
+        /// <param name="wordToComplete">The word to complete, which is used as a pattern for matching possible values.</param>
+        /// <returns>An <see cref="IEnumerable{CompletionResult}"/> containing the matching completion results.</returns>
+        /// <remarks>This method handles different variations of completions, including considerations for quotes and escaping globbing paths.</remarks>
+        protected IEnumerable<CompletionResult> GetMatchingResults(string wordToComplete)
+        {
+            string quote = CompletionCompleters.HandleDoubleAndSingleQuote(ref wordToComplete);
+
+            foreach (string value in PossibleCompletionValues)
+            {
+                if (value.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
+                {
+                    string completionText = QuoteCompletionText(completionText: value, quote, EscapeGlobbingPath);
+
+                    string toolTip = ToolTipMapping?.Invoke(value) ?? value;
+                    string listItemText = ListItemTextMapping?.Invoke(value) ?? value;
+
+                    yield return new CompletionResult(completionText, listItemText, CompletionResultType, toolTip);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Quotes the completion text.
+        /// </summary>
+        /// <param name="completionText">The text to complete.</param>
+        /// <param name="quote">The quote to use.</param>
+        /// <param name="escapeGlobbingPath">True if the globbing path needs to be escaped; otherwise, false.</param>
+        /// <returns>
+        /// A quoted string if quoting is necessary.
+        /// </returns>
+        private static string QuoteCompletionText(string completionText, string quote, bool escapeGlobbingPath)
+        {
+            if (CompletionCompleters.CompletionRequiresQuotes(completionText, escapeGlobbingPath))
+            {
+                string quoteInUse = string.IsNullOrEmpty(quote) ? "'" : quote;
+
+                completionText = quoteInUse == "'"
+                    ? completionText.Replace("'", "''")
+                    : completionText.Replace("`", "``").Replace("$", "`$");
+
+                if (escapeGlobbingPath)
+                {
+                    completionText = quoteInUse == "'"
+                        ? completionText.Replace("[", "`[").Replace("]", "`]")
+                        : completionText.Replace("[", "``[").Replace("]", "``]");
+                }
+
+                return quoteInUse + completionText + quoteInUse;
+            }
+
+            return quote + completionText + quote;
+        }
+
     }
 #nullable restore
 
