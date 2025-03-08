@@ -119,7 +119,7 @@ csharp_prefer_simple_default_expression = true:suggestion
 
 dotnet_code_quality_unused_parameters = non_public:suggestion
 
-# Dotnet diagnostic settings
+# Dotnet diagnostic settings:
 [*.cs]
 
 # CA1859: Use concrete types when possible for improved performance
