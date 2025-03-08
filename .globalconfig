@@ -1072,6 +1072,10 @@ dotnet_diagnostic.CA5402.severity = none
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca5403
 dotnet_diagnostic.CA5403.severity = none
 
+# CA1859: Use concrete types when possible for improved performance
+# https://learn.microsoft.com/en-gb/dotnet/fundamentals/code-analysis/quality-rules/ca1859
+dotnet_diagnostic.CA1859.severity = warning
+
 # IL3000: Avoid using accessing Assembly file path when publishing as a single-file
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/il3000
 dotnet_diagnostic.IL3000.severity = warning
