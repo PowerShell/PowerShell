@@ -12,7 +12,7 @@ param(
 Set-StrictMode -Version 3.0
 
 # On Unix paths is separated by colon.
-# On Windows paths is separated by semicolon
+# On Windows paths is separated by semicolon.
 $script:TestModulePathSeparator = [System.IO.Path]::PathSeparator
 $script:Options = $null
 
