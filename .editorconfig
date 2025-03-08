@@ -119,6 +119,7 @@ csharp_prefer_simple_default_expression = true:suggestion
 
 dotnet_code_quality_unused_parameters = non_public:suggestion
 
+# CA1859: Use concrete types when possible for improved performance
 # https://learn.microsoft.com/en-gb/dotnet/fundamentals/code-analysis/quality-rules/ca1859
 dotnet_diagnostic.CA1859.severity = suggestion
 
