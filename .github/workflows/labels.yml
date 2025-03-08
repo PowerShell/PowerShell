@@ -25,7 +25,7 @@ jobs:
       uses: actions/github-script@v6
       with:
         script: |
-          const labels = context.payload.pull_request.labels.map(label => label.name);
+          const labels = context.payload.pull_request.labels.map(label => label.name.toLowerCase());
           if (!labels.some(label => label.startsWith('cl-'))) {
             core.setFailed("Every PR must have at least one label starting with 'cl-'.");
           }
