@@ -89,7 +89,7 @@ namespace System.Management.Automation
             var addAmpersandIfNecessary = IsAmpersandNeeded(context, false);
 
             string commandName = context.WordToComplete;
-            string quote = HandleDoubleAndSingleQuote(ref commandName);
+            string quote = CompletionHelpers.HandleDoubleAndSingleQuote(ref commandName);
 
             List<CompletionResult> commandResults = null;
 
@@ -234,7 +234,7 @@ namespace System.Management.Automation
             syntax = string.IsNullOrEmpty(syntax) ? name : syntax;
             bool needAmpersand;
 
-            if (CompletionRequiresQuotes(name, false))
+            if (CompletionHelpers.CompletionRequiresQuotes(name, false))
             {
                 needAmpersand = quote == string.Empty && addAmpersandIfNecessary;
                 string quoteInUse = quote == string.Empty ? "'" : quote;
@@ -443,7 +443,7 @@ namespace System.Management.Automation
         {
             var wordToComplete = context.WordToComplete ?? string.Empty;
             var result = new List<CompletionResult>();
-            var quote = HandleDoubleAndSingleQuote(ref wordToComplete);
+            var quote = CompletionHelpers.HandleDoubleAndSingleQuote(ref wordToComplete);
 
             // Indicates if we should search for modules where the last part of the name matches the input text
             // eg: Host<Tab> finds Microsoft.PowerShell.Host
@@ -524,7 +524,7 @@ namespace System.Management.Automation
                                   + moduleInfo.ModuleType.ToString() + "\r\nPath: "
                                   + moduleInfo.Path;
 
-                    if (CompletionRequiresQuotes(completionText, false))
+                    if (CompletionHelpers.CompletionRequiresQuotes(completionText, false))
                     {
                         var quoteInUse = quote == string.Empty ? "'" : quote;
                         if (quoteInUse == "'")
@@ -1809,7 +1809,7 @@ namespace System.Management.Automation
                     RemoveLastNullCompletionResult(result);
 
                     string wordToComplete = context.WordToComplete ?? string.Empty;
-                    string quote = HandleDoubleAndSingleQuote(ref wordToComplete);
+                    string quote = CompletionHelpers.HandleDoubleAndSingleQuote(ref wordToComplete);
 
                     var pattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
                     var setList = new List<string>();
@@ -1846,7 +1846,7 @@ namespace System.Management.Automation
                         string completionText = entry;
                         if (quote == string.Empty)
                         {
-                            if (CompletionRequiresQuotes(entry, false))
+                            if (CompletionHelpers.CompletionRequiresQuotes(entry, false))
                             {
                                 realEntry = CodeGeneration.EscapeSingleQuotedStringContent(entry);
                                 completionText = "'" + realEntry + "'";
@@ -1886,7 +1886,7 @@ namespace System.Management.Automation
                 }
 
                 string wordToComplete = context.WordToComplete ?? string.Empty;
-                string quote = HandleDoubleAndSingleQuote(ref wordToComplete);
+                string quote = CompletionHelpers.HandleDoubleAndSingleQuote(ref wordToComplete);
 
                 var pattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
                 var enumList = new List<string>();
@@ -3198,7 +3198,7 @@ namespace System.Management.Automation
                 RemoveLastNullCompletionResult(result);
 
                 var logName = context.WordToComplete ?? string.Empty;
-                var quote = HandleDoubleAndSingleQuote(ref logName);
+                var quote = CompletionHelpers.HandleDoubleAndSingleQuote(ref logName);
 
                 if (!logName.EndsWith('*'))
                 {
@@ -3220,7 +3220,7 @@ namespace System.Management.Automation
                         var completionText = eventLog.Log.ToString();
                         var listItemText = completionText;
 
-                        if (CompletionRequiresQuotes(completionText, false))
+                        if (CompletionHelpers.CompletionRequiresQuotes(completionText, false))
                         {
                             var quoteInUse = quote == string.Empty ? "'" : quote;
                             if (quoteInUse == "'")
@@ -3249,7 +3249,7 @@ namespace System.Management.Automation
                 return;
 
             var wordToComplete = context.WordToComplete ?? string.Empty;
-            var quote = HandleDoubleAndSingleQuote(ref wordToComplete);
+            var quote = CompletionHelpers.HandleDoubleAndSingleQuote(ref wordToComplete);
 
             if (!wordToComplete.EndsWith('*'))
             {
@@ -3311,7 +3311,7 @@ namespace System.Management.Automation
                     var completionText = psJob.Name;
                     var listItemText = completionText;
 
-                    if (CompletionRequiresQuotes(completionText, false))
+                    if (CompletionHelpers.CompletionRequiresQuotes(completionText, false))
                     {
                         var quoteInUse = quote == string.Empty ? "'" : quote;
                         if (quoteInUse == "'")
@@ -3336,7 +3336,7 @@ namespace System.Management.Automation
                 return;
 
             var wordToComplete = context.WordToComplete ?? string.Empty;
-            var quote = HandleDoubleAndSingleQuote(ref wordToComplete);
+            var quote = CompletionHelpers.HandleDoubleAndSingleQuote(ref wordToComplete);
 
             if (!wordToComplete.EndsWith('*'))
             {
@@ -3386,7 +3386,7 @@ namespace System.Management.Automation
                     var completionText = psJob.Name;
                     var listItemText = completionText;
 
-                    if (CompletionRequiresQuotes(completionText, false))
+                    if (CompletionHelpers.CompletionRequiresQuotes(completionText, false))
                     {
                         var quoteInUse = quote == string.Empty ? "'" : quote;
                         if (quoteInUse == "'")
@@ -3470,7 +3470,7 @@ namespace System.Management.Automation
                 return;
 
             var wordToComplete = context.WordToComplete ?? string.Empty;
-            var quote = HandleDoubleAndSingleQuote(ref wordToComplete);
+            var quote = CompletionHelpers.HandleDoubleAndSingleQuote(ref wordToComplete);
 
             if (!wordToComplete.EndsWith('*'))
             {
@@ -3526,7 +3526,7 @@ namespace System.Management.Automation
                         continue;
 
                     uniqueSet.Add(completionText);
-                    if (CompletionRequiresQuotes(completionText, false))
+                    if (CompletionHelpers.CompletionRequiresQuotes(completionText, false))
                     {
                         var quoteInUse = quote == string.Empty ? "'" : quote;
                         if (quoteInUse == "'")
@@ -3561,7 +3561,7 @@ namespace System.Management.Automation
             RemoveLastNullCompletionResult(result);
 
             var providerName = context.WordToComplete ?? string.Empty;
-            var quote = HandleDoubleAndSingleQuote(ref providerName);
+            var quote = CompletionHelpers.HandleDoubleAndSingleQuote(ref providerName);
 
             if (!providerName.EndsWith('*'))
             {
@@ -3579,7 +3579,7 @@ namespace System.Management.Automation
                 var completionText = providerInfo.Name;
                 var listItemText = completionText;
 
-                if (CompletionRequiresQuotes(completionText, false))
+                if (CompletionHelpers.CompletionRequiresQuotes(completionText, false))
                 {
                     var quoteInUse = quote == string.Empty ? "'" : quote;
                     if (quoteInUse == "'")
@@ -3605,7 +3605,7 @@ namespace System.Management.Automation
             RemoveLastNullCompletionResult(result);
 
             var wordToComplete = context.WordToComplete ?? string.Empty;
-            var quote = HandleDoubleAndSingleQuote(ref wordToComplete);
+            var quote = CompletionHelpers.HandleDoubleAndSingleQuote(ref wordToComplete);
 
             if (!wordToComplete.EndsWith('*'))
             {
@@ -3627,7 +3627,7 @@ namespace System.Management.Automation
                     var completionText = driveInfo.Name;
                     var listItemText = completionText;
 
-                    if (CompletionRequiresQuotes(completionText, false))
+                    if (CompletionHelpers.CompletionRequiresQuotes(completionText, false))
                     {
                         var quoteInUse = quote == string.Empty ? "'" : quote;
                         if (quoteInUse == "'")
@@ -3652,7 +3652,7 @@ namespace System.Management.Automation
                 return;
 
             var wordToComplete = context.WordToComplete ?? string.Empty;
-            var quote = HandleDoubleAndSingleQuote(ref wordToComplete);
+            var quote = CompletionHelpers.HandleDoubleAndSingleQuote(ref wordToComplete);
 
             if (!wordToComplete.EndsWith('*'))
             {
@@ -3678,7 +3678,7 @@ namespace System.Management.Automation
                         var completionText = serviceInfo.DisplayName;
                         var listItemText = completionText;
 
-                        if (CompletionRequiresQuotes(completionText, false))
+                        if (CompletionHelpers.CompletionRequiresQuotes(completionText, false))
                         {
                             var quoteInUse = quote == string.Empty ? "'" : quote;
                             if (quoteInUse == "'")
@@ -3709,7 +3709,7 @@ namespace System.Management.Automation
                         var completionText = serviceInfo.Name;
                         var listItemText = completionText;
 
-                        if (CompletionRequiresQuotes(completionText, false))
+                        if (CompletionHelpers.CompletionRequiresQuotes(completionText, false))
                         {
                             var quoteInUse = quote == string.Empty ? "'" : quote;
                             if (quoteInUse == "'")
@@ -3739,7 +3739,7 @@ namespace System.Management.Automation
             RemoveLastNullCompletionResult(result);
 
             var variableName = context.WordToComplete ?? string.Empty;
-            var quote = HandleDoubleAndSingleQuote(ref variableName);
+            var quote = CompletionHelpers.HandleDoubleAndSingleQuote(ref variableName);
             if (!variableName.EndsWith('*'))
             {
                 variableName += "*";
@@ -3765,7 +3765,7 @@ namespace System.Management.Automation
                     completionText = completionText.Replace("*", "`*");
                 }
 
-                if (!completionText.Equals("$", StringComparison.Ordinal) && CompletionRequiresQuotes(completionText, false))
+                if (!completionText.Equals("$", StringComparison.Ordinal) && CompletionHelpers.CompletionRequiresQuotes(completionText, false))
                 {
                     var quoteInUse = effectiveQuote == string.Empty ? "'" : effectiveQuote;
                     if (quoteInUse == "'")
@@ -3798,7 +3798,7 @@ namespace System.Management.Automation
             if (paramName.Equals("Name", StringComparison.OrdinalIgnoreCase))
             {
                 var commandName = context.WordToComplete ?? string.Empty;
-                var quote = HandleDoubleAndSingleQuote(ref commandName);
+                var quote = CompletionHelpers.HandleDoubleAndSingleQuote(ref commandName);
 
                 if (!commandName.EndsWith('*'))
                 {
@@ -3815,7 +3815,7 @@ namespace System.Management.Automation
                         var completionText = aliasInfo.Name;
                         var listItemText = completionText;
 
-                        if (CompletionRequiresQuotes(completionText, false))
+                        if (CompletionHelpers.CompletionRequiresQuotes(completionText, false))
                         {
                             var quoteInUse = quote == string.Empty ? "'" : quote;
                             if (quoteInUse == "'")
@@ -3859,7 +3859,7 @@ namespace System.Management.Automation
             RemoveLastNullCompletionResult(result);
 
             var traceSourceName = context.WordToComplete ?? string.Empty;
-            var quote = HandleDoubleAndSingleQuote(ref traceSourceName);
+            var quote = CompletionHelpers.HandleDoubleAndSingleQuote(ref traceSourceName);
 
             if (!traceSourceName.EndsWith('*'))
             {
@@ -3878,7 +3878,7 @@ namespace System.Management.Automation
                 var completionText = trace.Name;
                 var listItemText = completionText;
 
-                if (CompletionRequiresQuotes(completionText, false))
+                if (CompletionHelpers.CompletionRequiresQuotes(completionText, false))
                 {
                     var quoteInUse = quote == string.Empty ? "'" : quote;
                     if (quoteInUse == "'")
@@ -4493,7 +4493,7 @@ namespace System.Management.Automation
         internal static IEnumerable<CompletionResult> CompleteFilename(CompletionContext context, bool containerOnly, HashSet<string> extension)
         {
             var wordToComplete = context.WordToComplete;
-            var quote = HandleDoubleAndSingleQuote(ref wordToComplete);
+            var quote = CompletionHelpers.HandleDoubleAndSingleQuote(ref wordToComplete);
 
             // Matches file shares with and without the provider name and with either slash direction.
             // Avoids matching Windows device paths like \\.\CDROM0 and \\?\Volume{b8f3fc1c-5cd6-4553-91e2-d6814c4cd375}\
@@ -6936,7 +6936,7 @@ namespace System.Management.Automation
             Diagnostics.Assert(controlBodyType is not null, "This should never happen unless a new Format-* cmdlet is added");
 
             var wordToComplete = context.WordToComplete;
-            var quote = HandleDoubleAndSingleQuote(ref wordToComplete);
+            var quote = CompletionHelpers.HandleDoubleAndSingleQuote(ref wordToComplete);
             WildcardPattern viewPattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
 
             var uniqueNames = new HashSet<string>();
@@ -8544,77 +8544,6 @@ namespace System.Management.Automation
             return null;
         }
 
-        internal static string HandleDoubleAndSingleQuote(ref string wordToComplete)
-        {
-            string quote = string.Empty;
-
-            if (!string.IsNullOrEmpty(wordToComplete) && (wordToComplete[0].IsSingleQuote() || wordToComplete[0].IsDoubleQuote()))
-            {
-                char frontQuote = wordToComplete[0];
-                int length = wordToComplete.Length;
-
-                if (length == 1)
-                {
-                    wordToComplete = string.Empty;
-                    quote = frontQuote.IsSingleQuote() ? "'" : "\"";
-                }
-                else if (length > 1)
-                {
-                    if ((wordToComplete[length - 1].IsDoubleQuote() && frontQuote.IsDoubleQuote()) || (wordToComplete[length - 1].IsSingleQuote() && frontQuote.IsSingleQuote()))
-                    {
-                        wordToComplete = wordToComplete.Substring(1, length - 2);
-                        quote = frontQuote.IsSingleQuote() ? "'" : "\"";
-                    }
-                    else if (!wordToComplete[length - 1].IsDoubleQuote() && !wordToComplete[length - 1].IsSingleQuote())
-                    {
-                        wordToComplete = wordToComplete.Substring(1);
-                        quote = frontQuote.IsSingleQuote() ? "'" : "\"";
-                    }
-                }
-            }
-
-            return quote;
-        }
-
-        /// <summary>
-        /// Get matching completions from word to complete.
-        /// This makes it easier to handle different variations of completions with consideration of quotes.
-        /// </summary>
-        /// <param name="wordToComplete">The word to complete.</param>
-        /// <param name="possibleCompletionValues">The possible completion values to iterate.</param>
-        /// <param name="toolTipMapping">The optional tool tip mapping delegate.</param>
-        /// <param name="resultType">The optional completion result type. Default is Text.</param>
-        /// <returns></returns>
-        internal static IEnumerable<CompletionResult> GetMatchingResults(
-            string wordToComplete,
-            IEnumerable<string> possibleCompletionValues,
-            Func<string, string> toolTipMapping = null,
-            CompletionResultType resultType = CompletionResultType.Text)
-        {
-            string quote = HandleDoubleAndSingleQuote(ref wordToComplete);
-            var pattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
-
-            foreach (string value in possibleCompletionValues)
-            {
-                if (pattern.IsMatch(value))
-                {
-                    string completionText = quote == string.Empty
-                        ? value
-                        : quote + value + quote;
-
-                    string listItemText = value;
-
-                    yield return new CompletionResult(
-                        completionText,
-                        listItemText,
-                        resultType,
-                        toolTip: toolTipMapping is null
-                            ? listItemText
-                            : toolTipMapping(value));
-                }
-            }
-        }
-
         /// <summary>
         /// Calls Get-Command to get command info objects.
         /// </summary>
@@ -8810,33 +8739,6 @@ namespace System.Management.Automation
             }
 
             return false;
-        }
-
-        private static readonly SearchValues<char> s_defaultCharsToCheck = SearchValues.Create("$`");
-        private static readonly SearchValues<char> s_escapeCharsToCheck = SearchValues.Create("$[]`");
-
-        private static bool ContainsCharsToCheck(ReadOnlySpan<char> text, bool escape) 
-            => text.ContainsAny(escape ? s_escapeCharsToCheck : s_defaultCharsToCheck);
-
-        private static bool CompletionRequiresQuotes(string completion, bool escape)
-        {
-            // If the tokenizer sees the completion as more than two tokens, or if there is some error, then
-            // some form of quoting is necessary (if it's a variable, we'd need ${}, filenames would need [], etc.)
-
-            Language.Token[] tokens;
-            ParseError[] errors;
-            Language.Parser.ParseInput(completion, out tokens, out errors);
-
-            // Expect no errors and 2 tokens (1 is for our completion, the other is eof)
-            // Or if the completion is a keyword, we ignore the errors
-            bool requireQuote = !(errors.Length == 0 && tokens.Length == 2);
-            if ((!requireQuote && tokens[0] is StringToken) ||
-                (tokens.Length == 2 && (tokens[0].TokenFlags & TokenFlags.Keyword) != 0))
-            {
-                requireQuote = ContainsCharsToCheck(tokens[0].Text, escape);
-            }
-
-            return requireQuote;
         }
 
         private static bool ProviderSpecified(string path)
