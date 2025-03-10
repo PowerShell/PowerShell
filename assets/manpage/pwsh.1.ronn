@@ -40,7 +40,7 @@ Some parameters have abbreviated forms
 * `-Command` | `-c`:
   Executes the specified commands (and any parameters) as though they were
   typed at the PowerShell command prompt, and then exits, unless NoExit is
-  specified. The value of Command can be `-`, a string or a script block. If
+  specified. The value of Command can be `-`, a string, or a script block. If
   the value of Command is `-`, the command text is read from standard input. If
   the value of Command is a script block, the script block must be enclosed in
   braces (`{}`). You can specify a script block only when running PowerShell in
@@ -171,7 +171,7 @@ Some parameters have abbreviated forms
 
 * `-WindowStyle` | `-w`
   Sets the window style for the session. Valid values are Normal, Minimized,
-  Maximized and Hidden. This parameter only applies to Windows. Using this
+  Maximized, and Hidden. This parameter only applies to Windows. Using this
   parameter on non-Windows platforms results in an error.
 
 * `-WorkingDirectory` | `-wd` | `-wo`

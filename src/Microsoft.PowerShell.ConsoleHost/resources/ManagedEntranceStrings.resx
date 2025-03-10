@@ -478,7 +478,7 @@ All parameters are case-insensitive.</value>
 -WindowStyle | -w
 
     Sets the window style for the session. Valid values are Normal, Minimized,
-    Maximized and Hidden.
+    Maximized, and Hidden.
 
 -WorkingDirectory | -wd
 
