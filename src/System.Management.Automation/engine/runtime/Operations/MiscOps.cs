@@ -3697,21 +3697,29 @@ namespace System.Management.Automation
             try
             {
                 var contentName = "PowerShellMemberInvocation";
-                var argsBuilder = new Text.StringBuilder();
+                var argsBuilder = new string[5 + args.Length * 2];
+                int i = 0;
+                argsBuilder[i++] = "<";
+                argsBuilder[i++] = targetName;
+                argsBuilder[i++] = ">.";
+                argsBuilder[i++] = name;
 
-                for (int i = 0; i < args.Length; i++)
+                if (args.Length > 0)
                 {
-                    string value = ArgumentToString(args[i]);
-
-                    if (i > 0)
+                    foreach (var arg in args)
                     {
-                        argsBuilder.Append(", ");
+                        argsBuilder[i++] = i == 5 ? "(<" : ">, <";
+                        argsBuilder[i++] = ArgumentToString(arg);
                     }
 
-                    argsBuilder.Append($"<{value}>");
+                    argsBuilder[i++] = ">)";
+                }
+                else
+                {
+                    argsBuilder[i++] = "()";
                 }
 
-                string content = $"<{targetName}>.{name}({argsBuilder})";
+                string content = string.Join(null, argsBuilder);
 
                 if (DumpLogAMSIContent.Value)
                 {
