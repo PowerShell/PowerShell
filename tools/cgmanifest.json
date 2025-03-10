@@ -95,7 +95,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.CodeAnalysis.Analyzers",
-          "Version": "3.3.4"
+          "Version": "3.11.0"
         }
       },
       "DevelopmentDependency": true
@@ -105,7 +105,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.CodeAnalysis.Common",
-          "Version": "4.12.0"
+          "Version": "4.13.0"
         }
       },
       "DevelopmentDependency": false
@@ -115,7 +115,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.CodeAnalysis.CSharp",
-          "Version": "4.12.0"
+          "Version": "4.13.0"
         }
       },
       "DevelopmentDependency": false
@@ -134,16 +134,6 @@
       "Component": {
         "Type": "nuget",
         "Nuget": {
-          "Name": "Microsoft.Management.Infrastructure.Runtime.Unix",
-          "Version": "3.0.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
           "Name": "Microsoft.Management.Infrastructure.Runtime.Win",
           "Version": "3.0.0"
         }
@@ -154,8 +144,18 @@
       "Component": {
         "Type": "nuget",
         "Nuget": {
-          "Name": "Microsoft.Management.Infrastructure",
-          "Version": "3.0.0"
+          "Name": "Microsoft.PowerShell.CoreCLR.Eventing",
+          "Version": "7.5.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "Microsoft.PowerShell.GraphicalHost",
+          "Version": "7.6.0-preview.3"
         }
       },
       "DevelopmentDependency": false
@@ -166,16 +166,6 @@
         "Nuget": {
           "Name": "Microsoft.PowerShell.MarkdownRender",
           "Version": "7.2.1"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "Microsoft.PowerShell.Native",
-          "Version": "7.4.0"
         }
       },
       "DevelopmentDependency": false
