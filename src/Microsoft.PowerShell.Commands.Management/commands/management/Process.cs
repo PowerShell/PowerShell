@@ -2736,7 +2736,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="filePath">The file path to get verbs.</param>
         /// <returns>List of file verbs to complete.</returns>
         private static IEnumerable<CompletionResult> CompleteFileVerbs(string wordToComplete, string filePath)
-            => CompletionCompleters.GetMatchingResults(
+            => CompletionHelpers.GetMatchingResults(
                 wordToComplete,
                 possibleCompletionValues: new ProcessStartInfo(filePath).Verbs);
     }
