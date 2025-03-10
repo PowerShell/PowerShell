@@ -697,6 +697,26 @@ namespace System.Management.Automation.Language
             if (foundType != null)
             {
                 ((ISupportsTypeCaching)genericTypeName).CachedType = foundType;
+
+                // When the generic type is in cache, we won't go through the code path that resolves
+                // 'genericTypeName.TypeName', which represents the generic type definition.
+                //
+                // - We could get the type definition by 'genericTypeName.TypeName.GetReflectionType()'
+                //   in some cases, for example, when the generic type is 'System.Tuple[string, string]',
+                //   calling 'GetReflectionType()' returns the 'System.Tuple' type.
+                //
+                // - But in much more other cases, calling that method won't return the type definition,
+                //   for example, when the generic type is 'System.Collections.Generic.List[string]',
+                //   the call returns 'null' because 'System.Collections.Generic.List' is not a valid type.
+                //
+                // In the latter cases, given that we already have the generic type, we can get the type
+                // definition and assign it to the cached type of 'genericTypeName.TypeName'.
+                var genericDefinition = genericTypeName.TypeName;
+                if (genericDefinition.GetReflectionType() is null)
+                {
+                    ((ISupportsTypeCaching)genericDefinition).CachedType = foundType.GetGenericTypeDefinition();
+                }
+
                 return true;
             }
 
