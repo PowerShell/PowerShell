@@ -1,9 +1,9 @@
 [
+  "PSDnsNameListCertificateParser",
   "PSFeedbackProvider",
   "PSLoadAssemblyFromNativeCode",
   "PSNativeWindowsTildeExpansion",
   "PSSerializeJSONLongEnumAsNumber",
   "PSRedirectToVariable",
-  "PSSubsystemPluginModel",
-  "PSDnsNameListCertificateParser"
+  "PSSubsystemPluginModel"
 ]
