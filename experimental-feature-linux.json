@@ -4,5 +4,6 @@
   "PSNativeWindowsTildeExpansion",
   "PSSerializeJSONLongEnumAsNumber",
   "PSRedirectToVariable",
-  "PSSubsystemPluginModel"
+  "PSSubsystemPluginModel",
+  "PSDnsNameListCertificateParser"
 ]
