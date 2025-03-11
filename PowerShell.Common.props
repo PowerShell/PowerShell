@@ -186,7 +186,7 @@
   <!-- Define properties for releases except for framework-dependent deployments as tools,
         including archives and dotnet tools.
 
-        These tools should use should not be Ready To Run because that will make them runtime specific
+        These tools should not be Ready-to-Run because that will make them runtime specific.
   -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' and '$(AppDeployment)' != 'FddTool' ">
     <PublishReadyToRun>true</PublishReadyToRun>
