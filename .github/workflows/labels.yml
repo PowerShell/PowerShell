@@ -5,7 +5,7 @@ name: Verify PR Labels
 
 on:
   pull_request:
-    types: [opened, edited, labeled, unlabeled, synchronize]
+    types: [opened, reopened, edited, labeled, unlabeled, synchronize]
 
 permissions:
   contents: read
