@@ -129,7 +129,7 @@ namespace System.Management.Automation
                 ),
                 new ExperimentalFeature(
                     name: PSDnsNameListCertificateParser,
-                    description: "Parses Common Name when adding to DnsNameList for Subject Distinguished names using X500DistinguishedName.EnumerateRelativeDistinguishedNames."
+                    description: "Parses Subject Distinguished name from Common Name using strong algorithm to get DNS names."
                 )
             };
 
