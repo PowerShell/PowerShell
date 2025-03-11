@@ -3311,7 +3311,7 @@ namespace Microsoft.PowerShell.Commands
     {
         private readonly List<DnsNameRepresentation> _dnsList = new();
         private readonly IdnMapping idnMapping = new();
-
+        private const string distinguishedNamePrefix = "CN=";
         private const string CommonNameOid = "2.5.4.3";
 
         /// <summary>
@@ -3385,8 +3385,24 @@ namespace Microsoft.PowerShell.Commands
             return string.Empty;
         }
 
-        private void ExtractSubjectDistinguishedNameCommonDnsName(X509Certificate2 cert)
+        private void ExtractSubjectDistinguishedNameCommonDnsName(X509Certificate2 cert, bool experimentalFeatureEnabled)
         {
+            if (!experimentalFeatureEnabled)
+            {
+                // extract DNS name from subject distinguish name
+                // if it exists and does not contain a comma
+                // a comma, indicates it is not a DNS name
+                if (cert.Subject.StartsWith(distinguishedNamePrefix, StringComparison.OrdinalIgnoreCase) &&
+                    !cert.Subject.Contains(','))
+                {
+                    string parsedSubjectDistinguishedDnsName = cert.Subject.Substring(distinguishedNamePrefix.Length);
+                    DnsNameRepresentation dnsName = GetDnsNameRepresentation(parsedSubjectDistinguishedDnsName);
+                    _dnsList.Add(dnsName);
+                }
+
+                return;
+            }
+
             foreach (X500RelativeDistinguishedName rdn in cert.SubjectName.EnumerateRelativeDistinguishedNames())
             {
                 // Extract Common Name directly if RDN has single attribute when HasMultipleElements == false
@@ -3433,7 +3449,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public DnsNameProperty(X509Certificate2 cert)
         {
-            ExtractSubjectDistinguishedNameCommonDnsName(cert);
+            ExtractSubjectDistinguishedNameCommonDnsName(cert, ExperimentalFeature.IsEnabled(ExperimentalFeature.PSDnsNameListCertificateParser));
             ExtractSubjectAlternativeNameExtensionDnsNames(cert);
         }
     }

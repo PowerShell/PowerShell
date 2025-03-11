@@ -25,6 +25,7 @@ namespace System.Management.Automation
         internal const string PSNativeWindowsTildeExpansion = nameof(PSNativeWindowsTildeExpansion);
         internal const string PSRedirectToVariable = "PSRedirectToVariable";
         internal const string PSSerializeJSONLongEnumAsNumber = nameof(PSSerializeJSONLongEnumAsNumber);
+        internal const string PSDnsNameListCertificateParser = nameof(PSDnsNameListCertificateParser);
 
         #endregion
 
@@ -125,6 +126,10 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: PSSerializeJSONLongEnumAsNumber,
                     description: "Serialize enums based on long or ulong as an numeric value rather than the string representation when using ConvertTo-Json."
+                ),
+                new ExperimentalFeature(
+                    name: PSDnsNameListCertificateParser,
+                    description: "Parses Common Name when adding to DnsNameList for Subject Distinguished names using X500DistinguishedName.EnumerateRelativeDistinguishedNames."
                 )
             };
 
