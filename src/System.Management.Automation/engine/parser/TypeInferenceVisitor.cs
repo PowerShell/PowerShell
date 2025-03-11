@@ -150,6 +150,8 @@ namespace System.Management.Automation
 
         public TypeDefinitionAst CurrentTypeDefinitionAst { get; set; }
 
+        public HashSet<IParameterMetadataProvider> AnalyzedCommands { get; } = new HashSet<IParameterMetadataProvider>();
+
         public TypeInferenceRuntimePermissions RuntimePermissions { get; set; }
 
         internal PowerShellExecutionHelper Helper { get; }
@@ -718,14 +720,176 @@ namespace System.Management.Automation
 
         object ICustomAstVisitor.VisitBinaryExpression(BinaryExpressionAst binaryExpressionAst)
         {
-            // TODO: Handle other kinds of expressions on the right side.
-            if (binaryExpressionAst.Operator == TokenKind.As && binaryExpressionAst.Right is TypeExpressionAst typeExpression)
+            switch (binaryExpressionAst.Operator)
             {
-                var type = typeExpression.TypeName.GetReflectionType();
-                var psTypeName = type != null ? new PSTypeName(type) : new PSTypeName(typeExpression.TypeName.FullName);
-                return new[] { psTypeName };
+                case TokenKind.And:
+                case TokenKind.Ccontains:
+                case TokenKind.Cin:
+                case TokenKind.Cnotcontains:
+                case TokenKind.Cnotin:
+                case TokenKind.Icontains:
+                case TokenKind.Iin:
+                case TokenKind.Inotcontains:
+                case TokenKind.Inotin:
+                case TokenKind.Is:
+                case TokenKind.IsNot:
+                case TokenKind.Or:
+                case TokenKind.Xor:
+                    // Always returns a bool
+                    return BinaryExpressionAst.BoolTypeNameArray;
+
+                case TokenKind.As:
+                    // TODO: Handle other kinds of expressions on the right side.
+                    if (binaryExpressionAst.Right is TypeExpressionAst typeExpression)
+                    {
+                        var type = typeExpression.TypeName.GetReflectionType();
+                        var psTypeName = type != null ? new PSTypeName(type) : new PSTypeName(typeExpression.TypeName.FullName);
+                        return new[] { psTypeName };
+                    }
+                    break;
+
+                case TokenKind.Ceq:
+                case TokenKind.Cge:
+                case TokenKind.Cgt:
+                case TokenKind.Cle:
+                case TokenKind.Clike:
+                case TokenKind.Clt:
+                case TokenKind.Cmatch:
+                case TokenKind.Cne:
+                case TokenKind.Cnotlike:
+                case TokenKind.Cnotmatch:
+                case TokenKind.Ieq:
+                case TokenKind.Ige:
+                case TokenKind.Igt:
+                case TokenKind.Ile:
+                case TokenKind.Ilike:
+                case TokenKind.Ilt:
+                case TokenKind.Imatch:
+                case TokenKind.Ine:
+                case TokenKind.Inotlike:
+                case TokenKind.Inotmatch:
+                    // Returns a bool or filtered output from the left hand side if it's enumerable
+                    var comparisonOutput = new List<PSTypeName>() { new(typeof(bool)) };
+                    comparisonOutput.AddRange(InferTypes(binaryExpressionAst.Left));
+                    return comparisonOutput;
+
+                case TokenKind.Creplace:
+                case TokenKind.Format:
+                case TokenKind.Ireplace:
+                case TokenKind.Join:
+                    // Always returns a string
+                    return BinaryExpressionAst.StringTypeNameArray;
+
+                case TokenKind.Csplit:
+                case TokenKind.Isplit:
+                    // Always returns a string array
+                    return BinaryExpressionAst.StringArrayTypeNameArray;
+
+                case TokenKind.QuestionQuestion:
+                    // Can return left or right hand side
+                    var nullCoalescingOutput = InferTypes(binaryExpressionAst.Left).ToList();
+                    nullCoalescingOutput.AddRange(InferTypes(binaryExpressionAst.Right));
+                    return nullCoalescingOutput.Distinct();
+
+                default:
+                    break;
             }
-            return InferTypes(binaryExpressionAst.Left);
+
+            List<PSTypeName> lhsTypes = InferTypes(binaryExpressionAst.Left).ToList();
+            if (lhsTypes.Count == 0)
+            {
+                return lhsTypes;
+            }
+
+            string methodName;
+            switch (binaryExpressionAst.Operator)
+            {
+                case TokenKind.Divide:
+                    methodName = "op_Division";
+                    break;
+
+                case TokenKind.Minus:
+                    methodName = "op_Subtraction";
+                    break;
+
+                case TokenKind.Multiply:
+                    methodName = "op_Multiply";
+                    break;
+
+                case TokenKind.Plus:
+                    methodName = "op_Addition";
+                    break;
+
+                case TokenKind.Rem:
+                    methodName = "op_Modulus";
+                    break;
+
+                case TokenKind.Shl:
+                    methodName = "op_LeftShift";
+                    break;
+
+                case TokenKind.Shr:
+                    methodName = "op_RightShift";
+                    break;
+
+                default:
+                    return lhsTypes;
+            }
+
+            List<PSTypeName> rhsTypes = InferTypes(binaryExpressionAst.Right).ToList();
+            HashSet<string> addedReturnTypes = new HashSet<string>();
+            List<PSTypeName> result = new List<PSTypeName>();
+            foreach (PSTypeName lType in lhsTypes)
+            {
+                if (lType.Type is null)
+                {
+                    continue;
+                }
+
+                foreach (MethodInfo method in lType.Type.GetMethods(BindingFlags.Public | BindingFlags.Static))
+                {
+                    if (!method.Name.Equals(methodName, StringComparison.Ordinal))
+                    {
+                        continue;
+                    }
+
+                    if (rhsTypes.Count == 0)
+                    {
+                        if (addedReturnTypes.Add(method.ReturnType.FullName))
+                        {
+                            result.Add(new PSTypeName(method.ReturnType));
+                        }
+
+                        continue;
+                    }
+
+                    ParameterInfo[] methodParams = method.GetParameters();
+                    if (methodParams.Length != 2)
+                    {
+                        continue;
+                    }
+
+                    foreach (PSTypeName rType in rhsTypes)
+                    {
+                        if (rType.Type is not null && rType.Type.IsAssignableTo(methodParams[1].ParameterType))
+                        {
+                            if (addedReturnTypes.Add(method.ReturnType.FullName))
+                            {
+                                result.Add(new PSTypeName(method.ReturnType));
+                            }
+
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (result.Count == 0)
+            {
+                result.AddRange(lhsTypes);
+            }
+
+            return result;
         }
 
         object ICustomAstVisitor.VisitUnaryExpression(UnaryExpressionAst unaryExpressionAst)
@@ -1110,6 +1274,80 @@ namespace System.Management.Automation
 
         private void InferTypesFrom(CommandAst commandAst, List<PSTypeName> inferredTypes)
         {
+            if (commandAst.Redirections.Count > 0)
+            {
+                var mergedStreams = new HashSet<RedirectionStream>();
+                bool allStreamsMerged = false;
+                foreach (RedirectionAst streamRedirection in commandAst.Redirections)
+                {
+                    if (streamRedirection is FileRedirectionAst fileRedirection)
+                    {
+                        if (fileRedirection.FromStream is RedirectionStream.All or RedirectionStream.Output)
+                        {
+                            // command output is redirected so it returns nothing.
+                            return;
+                        }
+                    }
+                    else if (streamRedirection is MergingRedirectionAst mergeRedirection && mergeRedirection.ToStream == RedirectionStream.Output)
+                    {
+                        if (mergeRedirection.FromStream == RedirectionStream.All)
+                        {
+                            allStreamsMerged = true;
+                            continue;
+                        }
+
+                        _ = mergedStreams.Add(mergeRedirection.FromStream);
+                    }
+                }
+
+                if (allStreamsMerged)
+                {
+                    inferredTypes.Add(new PSTypeName(typeof(ErrorRecord)));
+                    inferredTypes.Add(new PSTypeName(typeof(WarningRecord)));
+                    inferredTypes.Add(new PSTypeName(typeof(VerboseRecord)));
+                    inferredTypes.Add(new PSTypeName(typeof(DebugRecord)));
+                    inferredTypes.Add(new PSTypeName(typeof(InformationRecord)));
+                }
+                else
+                {
+                    foreach (RedirectionStream value in mergedStreams)
+                    {
+                        switch (value)
+                        {
+                            case RedirectionStream.Error:
+                                inferredTypes.Add(new PSTypeName(typeof(ErrorRecord)));
+                                break;
+
+                            case RedirectionStream.Warning:
+                                inferredTypes.Add(new PSTypeName(typeof(WarningRecord)));
+                                break;
+
+                            case RedirectionStream.Verbose:
+                                inferredTypes.Add(new PSTypeName(typeof(VerboseRecord)));
+                                break;
+
+                            case RedirectionStream.Debug:
+                                inferredTypes.Add(new PSTypeName(typeof(DebugRecord)));
+                                break;
+
+                            case RedirectionStream.Information:
+                                inferredTypes.Add(new PSTypeName(typeof(InformationRecord)));
+                                break;
+
+                            default:
+                                break;
+                        }
+                    }
+                }
+            }
+
+            if (commandAst.CommandElements[0] is ScriptBlockExpressionAst scriptBlock)
+            {
+                // An anonymous function like: & {"Do Something"}
+                inferredTypes.AddRange(InferTypes(scriptBlock.ScriptBlock));
+                return;
+            }
+
             PseudoBindingInfo pseudoBinding = new PseudoParameterBinder()
             .DoPseudoParameterBinding(commandAst, null, null, PseudoParameterBinder.BindingType.ParameterCompletion);
 
@@ -1190,6 +1428,21 @@ namespace System.Management.Automation
 
                     return;
                 }
+            }
+
+            if ((commandInfo.OutputType.Count == 0
+                || (commandInfo.OutputType.Count == 1
+                && (commandInfo.OutputType[0].Name.EqualsOrdinalIgnoreCase(typeof(PSObject).FullName)
+                || commandInfo.OutputType[0].Name.EqualsOrdinalIgnoreCase(typeof(object).FullName))))
+                && commandInfo is IScriptCommandInfo scriptCommandInfo
+                && scriptCommandInfo.ScriptBlock.Ast is IParameterMetadataProvider scriptBlockWithParams
+                && _context.AnalyzedCommands.Add(scriptBlockWithParams))
+            {
+                // This is a function without an output type defined (or it's too generic to be useful)
+                // We can analyze the code inside the function to find out what it actually outputs
+                // The purpose of the hashset is to avoid infinite loops with functions that call themselves.
+                inferredTypes.AddRange(InferTypes(scriptBlockWithParams.Body));
+                return;
             }
 
             // The OutputType property ignores the parameter set specified in the OutputTypeAttribute.
@@ -2596,7 +2849,7 @@ namespace System.Management.Automation
             var types = new List<PSTypeName>();
             types.AddRange(InferTypes(pipelineChainAst.LhsPipelineChain));
             types.AddRange(InferTypes(pipelineChainAst.RhsPipeline));
-            return GetArrayType(types);
+            return types.Distinct();
         }
 
         private static CommandBaseAst GetPreviousPipelineCommand(CommandAst commandAst)

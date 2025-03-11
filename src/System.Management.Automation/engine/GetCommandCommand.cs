@@ -1694,40 +1694,50 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
+    /// Provides argument completion for Noun parameter. 
     /// </summary>
     public class NounArgumentCompleter : IArgumentCompleter
     {
-        /// <summary>
         /// </summary>
-        public IEnumerable<CompletionResult> CompleteArgument(string commandName, string parameterName, string wordToComplete, CommandAst commandAst, IDictionary fakeBoundParameters)
+        /// Returns completion results for Noun parameter.
+        /// </summary>
+        /// <param name="commandName">The command name.</param>
+        /// <param name="parameterName">The parameter name.</param>
+        /// <param name="wordToComplete">The word to complete.</param>
+        /// <param name="commandAst">The command AST.</param>
+        /// <param name="fakeBoundParameters">The fake bound parameters.</param>
+        /// <returns>List of completion results.</returns>
+        public IEnumerable<CompletionResult> CompleteArgument(
+            string commandName,
+            string parameterName,
+            string wordToComplete,
+            CommandAst commandAst,
+            IDictionary fakeBoundParameters) => CompletionHelpers.GetMatchingResults(
+                wordToComplete,
+                possibleCompletionValues: GetCommandNouns(fakeBoundParameters));
+
+        /// <summary>
+        /// Get sorted set of command nouns using Get-Command.
+        /// </summary>
+        /// <param name="fakeBoundParameters">The fake bound parameters.</param>
+        /// <returns>Sorted set of command nouns.</returns>
+        private static SortedSet<string> GetCommandNouns(IDictionary fakeBoundParameters)
         {
-            if (fakeBoundParameters == null)
-            {
-                throw PSTraceSource.NewArgumentNullException(nameof(fakeBoundParameters));
-            }
+            Collection<CommandInfo> commands = CompletionCompleters.GetCommandInfo(fakeBoundParameters, "Module", "Verb");
+            SortedSet<string> nouns = new(StringComparer.OrdinalIgnoreCase);
 
-            var commandInfo = new CmdletInfo("Get-Command", typeof(GetCommandCommand));
-            var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace)
-                .AddCommand(commandInfo)
-                .AddParameter("Noun", wordToComplete + "*");
-
-            if (fakeBoundParameters.Contains("Module"))
+            foreach (CommandInfo command in commands)
             {
-                ps.AddParameter("Module", fakeBoundParameters["Module"]);
-            }
-
-            HashSet<string> nouns = new HashSet<string>();
-            var results = ps.Invoke<CommandInfo>();
-            foreach (var result in results)
-            {
-                var dash = result.Name.IndexOf('-');
-                if (dash != -1)
+                string commandName = command.Name;
+                int dashIndex = commandName.IndexOf('-');
+                if (dashIndex != -1)
                 {
-                    nouns.Add(result.Name.Substring(dash + 1));
+                    string noun = commandName.Substring(dashIndex + 1);
+                    nouns.Add(noun);
                 }
             }
 
-            return nouns.Order().Select(static noun => new CompletionResult(noun, noun, CompletionResultType.Text, noun));
+            return nouns;
         }
     }
 }

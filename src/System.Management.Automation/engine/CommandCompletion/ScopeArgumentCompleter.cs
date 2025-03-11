@@ -29,7 +29,7 @@ namespace System.Management.Automation
             string wordToComplete,
             CommandAst commandAst,
             IDictionary fakeBoundParameters)
-                => CompletionCompleters.GetMatchingResults(
+                => CompletionHelpers.GetMatchingResults(
                     wordToComplete,
                     possibleCompletionValues: s_Scopes);
     }
