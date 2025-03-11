@@ -328,16 +328,6 @@ Describe "Certificate Provider tests" -Tags "Feature" {
                     [PSCustomObject]@{ Punycode = "www.yourdomain.com"; Unicode = "www.yourdomain.com" }
                 )
             }
-            @{
-                Title              = 'Should set DNSNameList for multi-value RDN'
-                Commands           = @(
-                    "openssl req -x509 -nodes -keyout $keyFilePath -subj '/C=DK/O=Ingen organisatorisk tilknytning/CN=yourdomain.com+serialNumber=XYZ:1111-2222-3-444444444444' -out $certFilePath",
-                    "openssl pkcs12 -export -out $pfxFilePath -inkey $keyFilePath -in $certFilePath -passout pass:$password"
-                )
-                ExpectedDnsNameList = @(
-                    !$IsWindows ? [PSCustomObject]@{ Punycode = "yourdomain.com"; Unicode = "yourdomain.com" } : [PSCustomObject]@{ Punycode = "yourdomain.com+serialNumber=XYZ:1111-2222-3-444444444444"; Unicode = "yourdomain.com+serialNumber=XYZ:1111-2222-3-444444444444" }
-                )
-            }
         ) {
             param($Commands, $ExpectedDnsNameList)
 

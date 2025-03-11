@@ -4,6 +4,7 @@
     "PSCultureInvariantReplaceOperator": [ "test/powershell/Language/Operators/ReplaceOperator.Tests.ps1" ],
     "Microsoft.PowerShell.Utility.PSManageBreakpointsInRunspace": [ "test/powershell/Modules/Microsoft.PowerShell.Utility/RunspaceBreakpointManagement.Tests.ps1" ],
     "PSNativeWindowsTildeExpansion": [ "test/powershell/Language/Scripting/NativeExecution/NativeWindowsTildeExpansion.Tests.ps1" ],
-    "PSSerializeJSONLongEnumAsNumber": [ "test/powershell/Modules/Microsoft.PowerShell.Utility/ConvertTo-Json.PSSerializeJSONLongEnumAsNumber.Tests.ps1" ]
+    "PSSerializeJSONLongEnumAsNumber": [ "test/powershell/Modules/Microsoft.PowerShell.Utility/ConvertTo-Json.PSSerializeJSONLongEnumAsNumber.Tests.ps1" ],
+    "PSDnsNameListCertificateParser": [ "test/powershell/Modules/Microsoft.PowerShell.Security/CertificateProvider.PSDnsNameListCertificateParser.Tests.ps1" ]
   }
 }
