@@ -560,11 +560,11 @@ Fix steps:
         if ($Options.Runtime -notlike 'fxdependent*' -or $Options.Runtime -match $optimizedFddRegex) {
             Write-Verbose "Building without shim" -Verbose
             $sdkToUse = 'Microsoft.NET.Sdk'
-            if (($Options.Runtime -like 'win7-*' -or $Options.Runtime -eq 'win-arm64') -and !$ForMinimalSize) {
-                ## WPF/WinForm and the PowerShell GraphicalHost assemblies are included
-                ## when 'Microsoft.NET.Sdk.WindowsDesktop' is used.
-                $sdkToUse = 'Microsoft.NET.Sdk.WindowsDesktop'
-            }
+            # if (($Options.Runtime -like 'win7-*' -or $Options.Runtime -eq 'win-arm64') -and !$ForMinimalSize) {
+            #     ## WPF/WinForm and the PowerShell GraphicalHost assemblies are included
+            #     ## when 'Microsoft.NET.Sdk.WindowsDesktop' is used.
+            #     $sdkToUse = 'Microsoft.NET.Sdk.WindowsDesktop'
+            # }
 
             $Arguments += "/property:SDKToUse=$sdkToUse"
 
@@ -984,8 +984,8 @@ function New-PSOptions {
         [ValidateSet('Debug', 'Release', 'CodeCoverage', 'StaticAnalysis', '')]
         [string]$Configuration,
 
-        [ValidateSet("net9.0")]
-        [string]$Framework = "net9.0",
+        [ValidateSet("net10.0")]
+        [string]$Framework = "net10.0",
 
         # These are duplicated from Start-PSBuild
         # We do not use ValidateScript since we want tab completion
@@ -3701,7 +3701,7 @@ function Clear-NativeDependencies
     $filesToDeleteWinDesktop = @()
 
     $deps = Get-Content "$PublishFolder/pwsh.deps.json" -Raw | ConvertFrom-Json -Depth 20
-    $targetRuntime = ".NETCoreApp,Version=v9.0/$($script:Options.Runtime)"
+    $targetRuntime = ".NETCoreApp,Version=v10.0/$($script:Options.Runtime)"
 
     $runtimePackNetCore = $deps.targets.${targetRuntime}.PSObject.Properties.Name -like 'runtimepack.Microsoft.NETCore.App.Runtime*'
     $runtimePackWinDesktop = $deps.targets.${targetRuntime}.PSObject.Properties.Name -like 'runtimepack.Microsoft.WindowsDesktop.App.Runtime*'
