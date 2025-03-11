@@ -28,10 +28,6 @@ jobs:
       Write-Host "##vso[build.updatebuildnumber]$name"
     displayName: Set Release Name
 
-  - pwsh: |
-      Get-Module -ListAvailable | Write-Verbose -Verbose
-    displayName: Remove AzRM modules and install Az.Storage
-
   - task: AzurePowerShell@5
     displayName: Upload packages to blob
     inputs:

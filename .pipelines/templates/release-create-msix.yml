@@ -27,18 +27,6 @@ jobs:
       artifact: drop_windows_package_package_win_x86
       displayName: Download x86 msix
       patterns: '**/*.msix'
-
-    - pwsh: |
-        $azureRmModule = Get-InstalledModule AzureRM -ErrorAction SilentlyContinue -Verbose
-        if ($azureRmModule) {
-          Write-Host 'AzureRM module exists. Removing it'
-          Uninstall-AzureRm
-          Write-Host 'AzureRM module removed'
-        }
-
-        ./tools/installPSResource.ps1 -PSRepository CFS
-      displayName: Remove AzRM modules and install Az.Storage
-
     
     # Finds the makeappx tool on the machine with image: 'onebranch.azurecr.io/windows/ltsc2022/vse2022:latest'
     - pwsh: |

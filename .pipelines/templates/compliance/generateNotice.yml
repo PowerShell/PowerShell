@@ -95,19 +95,6 @@ jobs:
       Get-PackageProvider -Name NuGet -ForceBootstrap
     displayName: Initalize PowerShellGet
 
-  - pwsh: ./tools/installPSResource.ps1 -PSRepository CFS
-    displayName: Install PowerShell modules
-
-  - powershell: |
-      if(Get-Command -Name Uninstall-AzureRm -ErrorAction Ignore){
-        Write-Verbose "running Uninstall-AzureRm" -verbose
-        Uninstall-AzureRm
-      } else {
-        Write-Verbose "Uninstall-AzureRm not present" -verbose
-      }
-    displayName: Uninstall Uninstall-AzureRm
-    continueOnError: true
-
   - task: AzurePowerShell@5
     displayName: Upload Notice
     inputs:
