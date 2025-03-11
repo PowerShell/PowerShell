@@ -2692,7 +2692,7 @@ namespace Microsoft.PowerShell.Commands
             // -Verb is not supported on non-Windows platforms as well as Windows headless SKUs
             if (!Platform.IsWindowsDesktop)
             {
-                return [];
+                return Array.Empty<CompletionResult>();
             }
 
             // Completion: Start-Process -FilePath <path> -Verb <wordToComplete>
@@ -2726,7 +2726,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            return [];
+            return Array.Empty<CompletionResult>();
         }
 
         /// <summary>
@@ -2736,7 +2736,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="filePath">The file path to get verbs.</param>
         /// <returns>List of file verbs to complete.</returns>
         private static IEnumerable<CompletionResult> CompleteFileVerbs(string wordToComplete, string filePath)
-            => CompletionCompleters.GetMatchingResults(
+            => CompletionHelpers.GetMatchingResults(
                 wordToComplete,
                 possibleCompletionValues: new ProcessStartInfo(filePath).Verbs);
     }
