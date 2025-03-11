@@ -104,17 +104,6 @@ jobs:
       }
     displayName: Create json files
 
-  - pwsh: |
-      $azureRmModule = Get-InstalledModule AzureRM -ErrorAction SilentlyContinue -Verbose
-      if ($azureRmModule) {
-        Write-Host 'AzureRM module exists. Removing it'
-        Uninstall-AzureRm
-        Write-Host 'AzureRM module removed'
-      }
-
-      ./tools/installPSResource.ps1 -PSRepository CFS
-    displayName: Remove AzRM modules
-
   - task: AzurePowerShell@5
     displayName: Upload buildjson to blob
     inputs:

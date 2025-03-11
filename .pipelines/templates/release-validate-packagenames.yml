@@ -28,18 +28,6 @@ jobs:
       Write-Host "##vso[build.updatebuildnumber]$name"
     displayName: Set Release Name
 
-  - pwsh: |
-      $azureRmModule = Get-InstalledModule AzureRM -ErrorAction SilentlyContinue -Verbose
-      if ($azureRmModule) {
-        Write-Host 'AzureRM module exists. Removing it'
-        Uninstall-AzureRm
-        Write-Host 'AzureRM module removed'
-      }
-
-      ./tools/installPSResource.ps1 -PSRepository CFS
-
-    displayName: Remove AzRM modules and install Az.Storage
-
   - task: AzurePowerShell@5
     displayName: Upload packages to blob
     inputs:

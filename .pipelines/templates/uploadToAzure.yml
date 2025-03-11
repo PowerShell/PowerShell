@@ -256,18 +256,6 @@ jobs:
       New-Item -Path $(Build.ArtifactStagingDirectory)/uploaded -ItemType Directory -Force
     displayName: Create output directory for packages
 
-  - pwsh: |
-      $azureRmModule = Get-InstalledModule AzureRM -ErrorAction SilentlyContinue -Verbose
-      if ($azureRmModule) {
-        Write-Host 'AzureRM module exists. Removing it'
-        Uninstall-AzureRm
-        Write-Host 'AzureRM module removed'
-      }
-
-      ./tools/installPSResource.ps1 -PSRepository CFS
-
-    displayName: Remove AzRM modules
-
   - task: AzurePowerShell@5
     displayName: Upload packages to blob
     inputs:
