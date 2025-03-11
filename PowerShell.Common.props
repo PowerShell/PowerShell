@@ -171,10 +171,10 @@
     <DefineConstants>$(DefineConstants);UNIX</DefineConstants>
   </PropertyGroup>
 
-  <!-- Define non-windows, all configuration properties -->
-  <PropertyGroup Condition=" '$(IsWindows)' != 'true' ">
-    <DefineConstants>$(DefineConstants);UNIX</DefineConstants>
-  </PropertyGroup>
+  <!-- Define all OS, debug configuration properties -->
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugType>portable</DebugType>
+  </PropertyGroup>```
 
   <!-- Define properties for Framework dependent deployments in Packages
         Packages should not use DOTNET_ROOT so we set the search to Global
