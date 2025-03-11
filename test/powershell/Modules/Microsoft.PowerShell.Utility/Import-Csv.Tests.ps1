@@ -182,3 +182,146 @@ Describe "Import-Csv with different newlines" -Tags "CI" {
         $returnObject[1].h3 | Should -Be 23
     }
 }
+
+Describe "Import-Csv with empty and null values" {
+
+    Context 'Empty CSV Fields' {
+        $testCases = @(
+            @{
+                Test     = '1a'
+                Expected = [pscustomobject] @{ P1 = '' }
+                InputCsv = @'
+"P1"
+""
+'@
+            }
+            @{
+                Test     = '1b'
+                Expected = [pscustomobject] @{ P1 = '' }, [pscustomobject] @{ P1 = '' }, [pscustomobject] @{ P1 = '' }
+                InputCsv = @'
+"P1"
+""
+""
+""
+'@
+            }
+            @{
+                Test     = '2a'
+                Expected = [pscustomobject] @{ P1 = ''; P2 = '' }
+                Delimiter = ','
+                InputCsv = @'
+"P1","P2"
+"",
+'@
+            }
+            @{
+                Test     = '2b'
+                Expected = [pscustomobject] @{ P1 = ''; P2 = '' }, [pscustomobject] @{ P1 = ''; P2 = '' }
+                InputCsv = @'
+"P1","P2"
+"",
+"",
+'@
+            }
+            @{
+                Test     = '3a'
+                Expected = [pscustomobject] @{ P1 = ''; P2 = '' }
+                InputCsv = @'
+"P1","P2"
+,
+'@
+            }
+            @{
+                Test     = '3b'
+                Expected = [pscustomobject] @{ P1 = ''; P2 = '' }, [pscustomobject] @{ P1 = ''; P2 = '' }
+                InputCsv = @'
+"P1","P2"
+,
+,
+'@
+            }
+            @{
+                Test     = '4a'
+                Expected = [pscustomobject] @{ P1 = ''; P2 = '' }
+                InputCsv = @'
+"P1","P2"
+,""
+'@
+            }
+            @{
+                Test     = '4b'
+                Expected = [pscustomobject] @{ P1 = ''; P2 = '' }, [pscustomobject] @{ P1 = ''; P2 = '' }
+                InputCsv = @'
+"P1","P2"
+,""
+,""
+'@
+            }
+            @{
+                Test     = '5a'
+                Expected = [pscustomobject] @{ P1 = ''; P2 = '' }
+                InputCsv = @'
+"P1","P2"
+"",""
+'@
+            }
+            @{
+                Test     = '5b'
+                Expected = [pscustomobject] @{ P1 = ''; P2 = '' }, [pscustomobject] @{ P1 = ''; P2 = '' }
+                InputCsv = @'
+"P1","P2"
+"",""
+"",""
+'@
+            }
+            @{
+                Test     = '6a'
+                Expected = [pscustomobject] @{ P1 = ''; P2 = ''; P3 = '' }
+                InputCsv = @'
+"P1","P2","P3"
+,,
+'@
+            }
+            @{
+                Test     = '6b'
+                Expected = [pscustomobject] @{ P1 = ''; P2 = ''; P3 = '' }, [pscustomobject] @{ P1 = ''; P2 = ''; P3 = '' }
+                InputCsv = @'
+"P1","P2","P3"
+,,
+,,
+'@
+            }
+            @{
+                Test     = '7a'
+                Expected = [pscustomobject] @{ P1 = '' }, [pscustomobject] @{ P1 = '' }
+                InputCsv = @'
+"P1"
+""
+""
+
+'@
+            }
+            @{
+                Test     = '7b'
+                Expected = [pscustomobject] @{ P1 = ''; P2 = '' }, [pscustomobject] @{ P1 = 'A1'; P2 = 'A2' }, [pscustomobject] @{ P1 = 'B1'; P2 = 'B2' }, [pscustomobject] @{ P1 = ''; P2 = '' }
+                InputCsv = @'
+"P1","P2"
+,
+A1,A2
+B1,B2
+,
+'@
+            }
+        )
+
+        It 'Import-Csv correctly deserializes input CSV' {
+            foreach ($testCase in $testCases) {
+                $csvFile = Join-Path $TestDrive -ChildPath $((New-Guid).Guid)
+                $testCase.InputCsv | Set-Content -Path $csvFile
+                $actualResult   = Import-Csv -Path $csvFile | ConvertTo-Csv
+                $expectedResult = $testCase.Expected | ConvertTo-Csv
+                $actualResult | Should -BeExactly $expectedResult
+            }
+        }
+    }
+}

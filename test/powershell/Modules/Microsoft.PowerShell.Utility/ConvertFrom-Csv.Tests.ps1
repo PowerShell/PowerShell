@@ -188,13 +188,34 @@ Describe "ConvertFrom-Csv with empty and null values" {
 ,,
 '@
             }
+            @{
+                Test     = '7a'
+                Expected = [pscustomobject] @{ P1 = '' }, [pscustomobject] @{ P1 = '' }
+                InputCsv = @'
+"P1"
+""
+""
+
+'@
+            }
+            @{
+                Test     = '7b'
+                Expected = [pscustomobject] @{ P1 = ''; P2 = '' }, [pscustomobject] @{ P1 = 'A1'; P2 = 'A2' }, [pscustomobject] @{ P1 = 'B1'; P2 = 'B2' }, [pscustomobject] @{ P1 = ''; P2 = $null }
+                InputCsv = @'
+"P1","P2"
+,
+A1,A2
+B1,B2
+,
+'@
+            }
         )
 
         It 'ConvertFrom-Csv correctly deserializes input CSV' {
             foreach ($testCase in $testCases) {
                 $expectedResult = $testCase.Expected | ConvertTo-Csv
                 $actualResult   = $testCase.InputCsv | ConvertFrom-Csv | ConvertTo-Csv
-        
+
                 $actualResult | Should -BeExactly $expectedResult
             }
         }
