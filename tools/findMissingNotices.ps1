@@ -272,6 +272,8 @@ function Get-CGRegistrations {
         "Microsoft.WSMan.Management"
         "Microsoft.WSMan.Runtime"
         "System.Management.Automation"
+        "Microsoft.PowerShell.GraphicalHost"
+        "Microsoft.PowerShell.CoreCLR.Eventing"
     )
 
     Write-Verbose "Found $($targets.Count) targets to process..." -Verbose
