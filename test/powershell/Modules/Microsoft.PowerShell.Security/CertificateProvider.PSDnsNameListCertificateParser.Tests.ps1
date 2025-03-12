@@ -10,6 +10,8 @@ Describe 'CertificateProvider.PSDnsNameListCertificateParser' -Tags "CI" {
 
         $originalDefaultParams = $PSDefaultParameterValues.Clone()
         $PSDefaultParameterValues['It:Skip'] = -not [ExperimentalFeature]::IsEnabled('PSDnsNameListCertificateParser')
+
+        Import-Module (Join-Path -Path $PSScriptRoot 'certificateCommon.psm1') -Force
     }
 
     AfterAll {
