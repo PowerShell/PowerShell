@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-Describe 'CertificateProvider.PSDnsNameListCertificateParser' -Tags "CI" {
+Describe 'CertificateProvider.PSDnsNameSubjectNameCertificateParser' -Tags "CI" {
     BeforeAll {
         Import-Module (Join-Path -Path $PSScriptRoot 'certificateCommon.psm1') -Force
 
@@ -11,7 +11,7 @@ Describe 'CertificateProvider.PSDnsNameListCertificateParser' -Tags "CI" {
         $password = New-CertificatePassword | ConvertFrom-SecureString -AsPlainText
 
         $originalDefaultParams = $PSDefaultParameterValues.Clone()
-        $PSDefaultParameterValues['It:Skip'] = -not [ExperimentalFeature]::IsEnabled('PSDnsNameListCertificateParser')
+        $PSDefaultParameterValues['It:Skip'] = -not [ExperimentalFeature]::IsEnabled('PSDnsNameSubjectNameCertificateParser')
     }
 
     AfterAll {

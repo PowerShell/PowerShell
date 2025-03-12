@@ -3449,7 +3449,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public DnsNameProperty(X509Certificate2 cert)
         {
-            ExtractSubjectDistinguishedNameCommonDnsName(cert, ExperimentalFeature.IsEnabled(ExperimentalFeature.PSDnsNameListCertificateParser));
+            ExtractSubjectDistinguishedNameCommonDnsName(cert, ExperimentalFeature.IsEnabled(ExperimentalFeature.PSDnsNameSubjectNameCertificateParser));
             ExtractSubjectAlternativeNameExtensionDnsNames(cert);
         }
     }
