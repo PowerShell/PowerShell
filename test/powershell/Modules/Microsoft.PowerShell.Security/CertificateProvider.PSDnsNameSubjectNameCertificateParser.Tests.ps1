@@ -10,7 +10,7 @@ Describe 'CertificateProvider.PSDnsNameSubjectNameCertificateParser' -Tags "CI" 
         $pfxFilePath = Join-Path -Path $TestDrive -ChildPath 'certificate.pfx'
         $password = New-CertificatePassword | ConvertFrom-SecureString -AsPlainText
 
-        $originalDefaultParams = $PSDefaultParameterValues.Clone()
+        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
         $PSDefaultParameterValues['It:Skip'] = -not [ExperimentalFeature]::IsEnabled('PSDnsNameSubjectNameCertificateParser')
     }
 
@@ -37,7 +37,7 @@ Describe 'CertificateProvider.PSDnsNameSubjectNameCertificateParser' -Tags "CI" 
                 "openssl pkcs12 -export -out $pfxFilePath -inkey $keyFilePath -in $certFilePath -passout pass:$password"
             )
             ExpectedDnsNameList = @(
-                !$IsWindows ? [PSCustomObject]@{ Punycode = "yourdomain.com"; Unicode = "yourdomain.com" } : [PSCustomObject]@{ Punycode = "yourdomain.com+serialNumber=XYZ:1111-2222-3-444444444444"; Unicode = "yourdomain.com+serialNumber=XYZ:1111-2222-3-444444444444" }
+                [PSCustomObject]@{ Punycode = "yourdomain.com"; Unicode = "yourdomain.com" }
             )
         }
     ) {
