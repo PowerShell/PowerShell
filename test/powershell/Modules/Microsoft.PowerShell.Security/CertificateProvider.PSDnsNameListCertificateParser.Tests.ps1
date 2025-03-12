@@ -3,6 +3,8 @@
 
 Describe 'CertificateProvider.PSDnsNameListCertificateParser' -Tags "CI" {
     BeforeAll {
+        Import-Module (Join-Path -Path $PSScriptRoot 'certificateCommon.psm1') -Force
+
         $keyFilePath = Join-Path -Path $TestDrive -ChildPath 'privateKey.key'
         $certFilePath = Join-Path -Path $TestDrive -ChildPath 'certificate.crt'
         $pfxFilePath = Join-Path -Path $TestDrive -ChildPath 'certificate.pfx'
@@ -10,8 +12,6 @@ Describe 'CertificateProvider.PSDnsNameListCertificateParser' -Tags "CI" {
 
         $originalDefaultParams = $PSDefaultParameterValues.Clone()
         $PSDefaultParameterValues['It:Skip'] = -not [ExperimentalFeature]::IsEnabled('PSDnsNameListCertificateParser')
-
-        Import-Module (Join-Path -Path $PSScriptRoot 'certificateCommon.psm1') -Force
     }
 
     AfterAll {
