@@ -1469,6 +1469,26 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Count | Should -Be 0
     }
 
+    It 'Infers right side of assignment expression' {
+        $res = [AstTypeInference]::InferTypeOf( { $Test1 = "Hello" }.Ast.Find({param($ast) $ast -is [Language.AssignmentStatementAst]}, $true))
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be "System.String"
+    }
+
+    It 'Infers left side of assignment expression when it is a ConvertExpression' {
+        $res = [AstTypeInference]::InferTypeOf( { [string]$Test1 = 42 }.Ast.Find({param($ast) $ast -is [Language.AssignmentStatementAst]}, $true))
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be "System.String"
+    }
+
+    It 'Infers left side of assignment expression when there is a ConvertExpression among other attributes' {
+        $res = [AstTypeInference]::InferTypeOf( {
+            [ValidateLength()] [string] [ValidatePattern()]$Test1 = 42
+        }.Ast.Find({param($ast) $ast -is [Language.AssignmentStatementAst]}, $true))
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be "System.String"
+    }
+
     It 'Infers type of all scope variable after variable assignment' {
         $res = [AstTypeInference]::InferTypeOf( { $true = "Hello";$true }.Ast)
         $res.Count | Should -Be 1
