@@ -277,10 +277,22 @@ namespace System.Management.Automation
         //  - Exporting module members
         public override AstVisitAction VisitCommand(CommandAst commandAst)
         {
-            string commandName =
-                commandAst.GetCommandName() ??
-                GetSafeValueVisitor.GetSafeValue(commandAst.CommandElements[0], null, GetSafeValueVisitor.SafeValueContext.ModuleAnalysis) as string;
+            string commandName = commandAst.GetCommandName();
+            if (commandName is null)
+            {
+                // GetCommandName only works if the name is a string constant. GetSafeValueVistor can evaluate some safe dynamic expressions
+                try
+                {
+                    commandName = GetSafeValueVisitor.GetSafeValue(commandAst.CommandElements[0], null, GetSafeValueVisitor.SafeValueContext.ModuleAnalysis) as string;
+                }
+                catch (ParseException)
+                {
+                    // The script is invalid so we can't use GetSafeValue to get the name either.
+                }
+            }
 
+            // We couldn't get the name of the command. Either it's an anonymous scriptblock: & {"Some script"}
+            // Or it's a dynamic expression we couldn't safely resolve.
             if (commandName == null)
                 return AstVisitAction.SkipChildren;
 
