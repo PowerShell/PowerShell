@@ -7263,7 +7263,7 @@ namespace System.Management.Automation.Language
                         FunctionName.Extent,
                         new TypeName(
                             FunctionName.Extent,
-                            typeof(System.Management.Automation.Language.DynamicKeyword).FullName)),
+                            typeof(DynamicKeyword).FullName)),
                     new StringConstantExpressionAst(
                         FunctionName.Extent,
                         "GetKeyword",
@@ -8422,9 +8422,11 @@ namespace System.Management.Automation.Language
     /// </summary>
     public sealed class TypeName : ITypeName, ISupportsTypeCaching
     {
-        internal readonly string _name;
-        internal Type _type;
-        internal readonly IScriptExtent _extent;
+        private readonly string _name;
+        private readonly IScriptExtent _extent;
+        private readonly int _genericArgumentCount;
+        private Type _type;
+
         internal TypeDefinitionAst _typeDefinitionAst;
 
         /// <summary>
@@ -8481,6 +8483,21 @@ namespace System.Management.Automation.Language
             }
 
             AssemblyName = assembly;
+        }
+
+        /// <summary>
+        /// Construct a typename that represents a generic type definition.
+        /// </summary>
+        /// <param name="extent">The extent of the typename.</param>
+        /// <param name="name">The name of the type.</param>
+        /// <param name="genericArgumentCount">The number of generic arguments.</param>
+        internal TypeName(IScriptExtent extent, string name, int genericArgumentCount)
+            : this(extent, name)
+        {
+            if (genericArgumentCount > 0 && !_name.Contains('`'))
+            {
+                _genericArgumentCount = genericArgumentCount;
+            }
         }
 
         /// <summary>
@@ -8559,8 +8576,20 @@ namespace System.Management.Automation.Language
         {
             if (_type == null)
             {
-                Exception e;
-                Type type = _typeDefinitionAst != null ? _typeDefinitionAst.Type : TypeResolver.ResolveTypeName(this, out e);
+                Type type = _typeDefinitionAst != null ? _typeDefinitionAst.Type : TypeResolver.ResolveTypeName(this, out _);
+
+                if (type is null && _genericArgumentCount > 0)
+                {
+                    TypeName newTypeName = new(
+                        _extent,
+                        string.Create(CultureInfo.InvariantCulture, $"{_name}`{_genericArgumentCount}"))
+                    {
+                        AssemblyName = AssemblyName
+                    };
+
+                    type = TypeResolver.ResolveTypeName(newTypeName, out _);
+                }
+
                 if (type != null)
                 {
                     try
@@ -8595,7 +8624,13 @@ namespace System.Management.Automation.Language
             var result = GetReflectionType();
             if (result == null || !typeof(Attribute).IsAssignableFrom(result))
             {
-                var attrTypeName = new TypeName(_extent, FullName + "Attribute");
+                TypeName attrTypeName = new(
+                    _extent,
+                    $"{_name}Attribute", _genericArgumentCount)
+                {
+                    AssemblyName = AssemblyName
+                };
+
                 result = attrTypeName.GetReflectionType();
                 if (result != null && !typeof(Attribute).IsAssignableFrom(result))
                 {
@@ -8888,8 +8923,13 @@ namespace System.Management.Automation.Language
             {
                 if (!TypeName.FullName.Contains('`'))
                 {
-                    var newTypeName = new TypeName(Extent,
-                        string.Create(CultureInfo.InvariantCulture, $"{TypeName.FullName}`{GenericArguments.Count}"));
+                    TypeName newTypeName = new(
+                        Extent,
+                        string.Create(CultureInfo.InvariantCulture, $"{TypeName.Name}`{GenericArguments.Count}"))
+                    {
+                        AssemblyName = TypeName.AssemblyName
+                    };
+
                     generic = newTypeName.GetReflectionType();
                 }
             }
@@ -8915,8 +8955,13 @@ namespace System.Management.Automation.Language
                 {
                     if (!TypeName.FullName.Contains('`'))
                     {
-                        var newTypeName = new TypeName(Extent,
-                            string.Create(CultureInfo.InvariantCulture, $"{TypeName.FullName}Attribute`{GenericArguments.Count}"));
+                        TypeName newTypeName = new(
+                            Extent,
+                            string.Create(CultureInfo.InvariantCulture, $"{TypeName.Name}Attribute`{GenericArguments.Count}"))
+                        {
+                            AssemblyName = TypeName.AssemblyName
+                        };
+
                         generic = newTypeName.GetReflectionType();
                     }
                 }
