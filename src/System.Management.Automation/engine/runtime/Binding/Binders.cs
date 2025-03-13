@@ -7205,8 +7205,7 @@ namespace System.Management.Automation.Language
                         copyOutTemps.Add(Expression.Assign(psRefValue, temp.Cast(typeof(object))));
 
                         argExprs[i] = temp;
-                        // Log the PSReference type, or its actual value in this case?
-                        argsToLog.Add(args[i].Expression);
+                        argsToLog.Add(temp);
                     }
                     else
                     {
