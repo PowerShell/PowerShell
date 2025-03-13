@@ -967,10 +967,43 @@ namespace System.Management.Automation
 #if UNIX
             return Platform.SelectProductNameForDirectory(Platform.XDG_Type.USER_MODULES);
 #else
-            string myDocumentsPath = InternalTestHooks.SetMyDocumentsSpecialFolderToBlank ? string.Empty : Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            string myDocumentsPath 
+            if (InternalTestHooks.SetMyDocumentsSpecialFolderToBlank)
+            {
+                myDocumentsPath = string.Empty;
+            }
+            else
+            {
+                if (!userPrompted)
+                {
+                    Console.WriteLine("Would you like to switch the user profile to a different directory?");
+                    Console.WriteLine("Type 'Y' to switch to a different directory, 'N' to continue with the current directory");
+                    userChoice = input.Equals("Y", StringComparison.OrdinalIgnoreCase);
+                    userPrompted = true;
+                    if(userChoice)
+                    {
+                        Console.Writeline("Please enter the new directory path: ")
+                        myDocumentsPath = Console.ReadLine();
+                        // test the path
+                        while (!Directory.Exists(myDocumentsPath))
+                        {
+                            Console.WriteLine("The directory does not exist. Please enter a valid directory path: ");
+                            myDocumentsPath = Console.ReadLine();
+                        }
+                    }
+                }
+                else
+                {
+                    myDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                    
+                }
+            }
             return string.IsNullOrEmpty(myDocumentsPath) ? null : Path.Combine(myDocumentsPath, Utils.ModuleDirectory);
 #endif
         }
+
+        private static bool userPrompted = false;
+        private static bool userChoice = false;
 
         /// <summary>
         /// Gets the PSHome module path, as known as the "system wide module path" in windows powershell.
