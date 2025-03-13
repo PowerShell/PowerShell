@@ -628,6 +628,8 @@ namespace System.Management.Automation
 
         internal Dictionary<string, ScriptBlock> NativeArgumentCompleters { get; set; }
 
+        internal CompletionOptions CompletionOptions { get; set; } = new CompletionOptions();
+
         /// <summary>
         /// Routine to create a command(processor) instance using the factory.
         /// </summary>
