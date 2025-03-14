@@ -8580,6 +8580,11 @@ namespace System.Management.Automation.Language
 
                 if (type is null && _genericArgumentCount > 0)
                 {
+                    // We try an alternate name only if it failed to resolve with the original name.
+                    // This is because for a generic type like `System.Tuple<type1, type2>`, the original name `System.Tuple`
+                    // can be resolved and hence `genericTypeName.TypeName.GetReflectionType()` in that case has always been
+                    // returning the type `System.Tuple`. If we change to directly use the alternate name for resolution, the
+                    // return value will become 'System.Tuple`1' in that case, and that's a breaking change.
                     TypeName newTypeName = new(
                         _extent,
                         string.Create(CultureInfo.InvariantCulture, $"{_name}`{_genericArgumentCount}"))
