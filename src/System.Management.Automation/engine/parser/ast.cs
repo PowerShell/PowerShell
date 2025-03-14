@@ -8629,9 +8629,7 @@ namespace System.Management.Automation.Language
             var result = GetReflectionType();
             if (result == null || !typeof(Attribute).IsAssignableFrom(result))
             {
-                TypeName attrTypeName = new(
-                    _extent,
-                    $"{_name}Attribute", _genericArgumentCount)
+                TypeName attrTypeName = new(_extent, $"{_name}Attribute", _genericArgumentCount)
                 {
                     AssemblyName = AssemblyName
                 };
