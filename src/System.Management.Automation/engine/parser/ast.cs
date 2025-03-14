@@ -8494,6 +8494,8 @@ namespace System.Management.Automation.Language
         internal TypeName(IScriptExtent extent, string name, int genericArgumentCount)
             : this(extent, name)
         {
+            ArgumentOutOfRangeException.ThrowIfLessThan(genericArgumentCount, 0);
+
             if (genericArgumentCount > 0 && !_name.Contains('`'))
             {
                 _genericArgumentCount = genericArgumentCount;
