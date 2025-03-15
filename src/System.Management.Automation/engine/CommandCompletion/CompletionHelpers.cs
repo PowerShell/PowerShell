@@ -38,7 +38,7 @@ namespace System.Management.Automation
             {
                 if (pattern.IsMatch(value))
                 {
-                    string completionText = QuoteCompletionText(value, quote, escapeGlobbingPathChars: false);
+                    string completionText = QuoteCompletionText(value, quote);
 
                     string listItemText = value;
 
@@ -112,27 +112,32 @@ namespace System.Management.Automation
         internal static string QuoteCompletionText(
             string completionText,
             string quote,
-            bool escapeGlobbingPathChars)
+            bool escapeSingleQuoteChars = true,
+            bool escapeDoubleQuoteChars = false,
+            bool escapeGlobbingPathChars = false)
         {
-            if (CompletionRequiresQuotes(completionText, escapeGlobbingPathChars))
+            if (!CompletionRequiresQuotes(completionText, escapeGlobbingPathChars))
             {
-                string quoteInUse = string.IsNullOrEmpty(quote) ? "'" : quote;
-
-                completionText = quoteInUse == "'"
-                    ? completionText.Replace("'", "''")
-                    : completionText.Replace("`", "``").Replace("$", "`$");
-
-                if (escapeGlobbingPathChars)
-                {
-                    completionText = quoteInUse == "'"
-                        ? completionText.Replace("[", "`[").Replace("]", "`]")
-                        : completionText.Replace("[", "``[").Replace("]", "``]");
-                }
-
-                return quoteInUse + completionText + quoteInUse;
+                return quote + completionText + quote;
             }
 
-            return quote + completionText + quote;
+            string quoteInUse = string.IsNullOrEmpty(quote) ? "'" : quote;
+
+            completionText = quoteInUse switch
+            {
+                "'" when escapeSingleQuoteChars => completionText.Replace("'", "''"),
+                "\"" when escapeDoubleQuoteChars => completionText.Replace("`", "``").Replace("$", "`$"),
+                _ => completionText
+            };
+
+            if (escapeGlobbingPathChars)
+            {
+                string leftBracket = quoteInUse == "'" ? "`[" : "``[";
+                string rightBracket = quoteInUse == "'" ? "`]" : "``]";
+                completionText = completionText.Replace("[", leftBracket).Replace("]", rightBracket);
+            }
+
+            return quoteInUse + completionText + quoteInUse;
         }
     }
 }
