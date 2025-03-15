@@ -4,6 +4,8 @@
 parameters:
   - name: parentJobs
     type: jobList
+  - name: SkipVerifyPackages
+    type: boolean
 
 jobs:
 - job: generateNotice
@@ -60,7 +62,7 @@ jobs:
   - pwsh: |
       $(repoRoot)/tools/clearlyDefined/ClearlyDefined.ps1 -TestAndHarvest
     displayName: Verify that packages have license data
-
+    condition: eq(${{ parameters.SkipVerifyPackages }}, false)
 
   - task: msospo.ospo-extension.8d7f9abb-6896-461d-9e25-4f74ed65ddb2.notice@0
     displayName: 'NOTICE File Generator'
@@ -70,7 +72,6 @@ jobs:
       outputformat: text
       # this isn't working
       # additionaldata: $(Build.SourcesDirectory)\assets\additionalAttributions.txt
-
 
   - pwsh: |
       Get-Content -Raw -Path $(repoRoot)\assets\additionalAttributions.txt | Out-File '$(ob_outputDirectory)\ThirdPartyNotices.txt' -Encoding utf8NoBOM -Force -Append
@@ -93,29 +94,6 @@ jobs:
       Set-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\.NetFramework\v4.0.30319' -Name 'SchUseStrongCrypto' -Value '1' -Type DWord
       Get-PackageProvider -Name NuGet -ForceBootstrap
     displayName: Initalize PowerShellGet
-
-  - powershell: |
-      $modules = 'Az.Accounts', 'Az.Storage'
-      foreach($module in $modules) {
-        if(!(get-module $module -listavailable)) {
-          Write-Verbose "installing $module..." -verbose
-          Install-Module $module -force -AllowClobber
-        } else {
-          Write-Verbose "$module already installed." -verbose
-          #Update-Module $module -verbose
-        }
-      }
-    displayName: Install PowerShell modules
-
-  - powershell: |
-      if(Get-Command -Name Uninstall-AzureRm -ErrorAction Ignore){
-        Write-Verbose "running Uninstall-AzureRm" -verbose
-        Uninstall-AzureRm
-      } else {
-        Write-Verbose "Uninstall-AzureRm not present" -verbose
-      }
-    displayName: Uninstall Uninstall-AzureRm
-    continueOnError: true
 
   - task: AzurePowerShell@5
     displayName: Upload Notice

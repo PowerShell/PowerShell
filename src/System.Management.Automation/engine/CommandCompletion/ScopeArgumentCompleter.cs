@@ -29,16 +29,8 @@ namespace System.Management.Automation
             string wordToComplete,
             CommandAst commandAst,
             IDictionary fakeBoundParameters)
-        {
-            var scopePattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
-
-            foreach (string scope in s_Scopes)
-            {
-                if (scopePattern.IsMatch(scope))
-                {
-                    yield return new CompletionResult(scope);
-                }
-            }
-        }
+                => CompletionHelpers.GetMatchingResults(
+                    wordToComplete,
+                    possibleCompletionValues: s_Scopes);
     }
 }

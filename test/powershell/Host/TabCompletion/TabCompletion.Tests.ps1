@@ -23,9 +23,45 @@ Describe "TabCompletion" -Tags CI {
         $res | Should -BeExactly 'Test-AbbreviatedFunctionExpansion'
     }
 
+    It 'Should complete module by shortname' {
+        $res = TabExpansion2 -inputScript 'Get-Module -ListAvailable -Name Host'
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Microsoft.PowerShell.Host'
+    }
+
     It 'Should complete native exe' -Skip:(!$IsWindows) {
         $res = TabExpansion2 -inputScript 'notep' -cursorColumn 'notep'.Length
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'notepad.exe'
+    }
+
+    It 'Should not include duplicate command results' {
+        $OldModulePath = $env:PSModulePath
+        $tempDir = Join-Path -Path $TestDrive -ChildPath "TempPsModuleDir"
+        try
+        {
+            $ModuleDirs = @(
+                Join-Path $tempDir "TestModule1\1.0"
+                Join-Path $tempDir "TestModule1\1.1"
+                Join-Path $tempDir "TestModule2\1.0"
+            )
+            foreach ($Dir in $ModuleDirs)
+            {
+                $NewDir = New-Item -Path $Dir -ItemType Directory -Force
+                $ModuleName = $NewDir.Parent.Name
+                Set-Content -Value 'MyTestFunction{}' -LiteralPath "$($NewDir.FullName)\$ModuleName.psm1"
+                New-ModuleManifest -Path "$($NewDir.FullName)\$ModuleName.psd1" -RootModule "$ModuleName.psm1" -FunctionsToExport "MyTestFunction" -ModuleVersion $NewDir.Name
+            }
+
+            $env:PSModulePath += [System.IO.Path]::PathSeparator + $tempDir            
+            $Res = TabExpansion2 -inputScript MyTestFunction
+            $Res.CompletionMatches.Count | Should -Be 2
+            $SortedMatches = $Res.CompletionMatches.CompletionText | Sort-Object
+            $SortedMatches[0] | Should -Be "TestModule1\MyTestFunction"
+            $SortedMatches[1] | Should -Be "TestModule2\MyTestFunction"
+        }
+        finally
+        {
+            $env:PSModulePath = $OldModulePath
+        }
     }
 
     It 'Should complete dotnet method' {
@@ -79,6 +115,17 @@ Describe "TabCompletion" -Tags CI {
         $res.CompletionMatches[0].CompletionText | Should -BeExactly '$CurrentItem'
     }
 
+    It 'Should complete variables set with an attribute' {
+        $res = TabExpansion2 -inputScript '[ValidateNotNull()]$Var1 = 1; $Var'
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '$Var1'
+    }
+
+    It 'Should use the first type constraint in a variable assignment in the tooltip' {
+        $res = TabExpansion2 -inputScript '[int] [string] $Var1 = 1; $Var'
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '$Var1'
+        $res.CompletionMatches[0].ToolTip | Should -BeExactly '[int]$Var1'
+    }
+
     It 'Should not complete parameter name' {
         $res = TabExpansion2 -inputScript 'param($P'
         $res.CompletionMatches.Count | Should -Be 0
@@ -87,6 +134,34 @@ Describe "TabCompletion" -Tags CI {
     It 'Should complete variable in default value of a parameter' {
         $res = TabExpansion2 -inputScript 'param($PS = $P'
         $res.CompletionMatches.Count | Should -BeGreaterThan 0
+    }
+    
+    It 'Should complete variable with description and value <Value>' -TestCases @(
+        @{ Value = 1; Expected = '[int]$VariableWithDescription - Variable description' }
+        @{ Value = 'string'; Expected = '[string]$VariableWithDescription - Variable description' }
+        @{ Value = $null; Expected = 'VariableWithDescription - Variable description' }
+    ) {
+        param ($Value, $Expected)
+        
+        New-Variable -Name VariableWithDescription -Value $Value -Description 'Variable description' -Force
+        $res = TabExpansion2 -inputScript '$VariableWithDescription'
+        $res.CompletionMatches.Count | Should -Be 1
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '$VariableWithDescription'
+        $res.CompletionMatches[0].ToolTip | Should -BeExactly $Expected
+    }
+    
+    It 'Should complete scoped variable with description and value <Value>' -TestCases @(
+        @{ Value = 1; Expected = '[int]$VariableWithDescription - Variable description' }
+        @{ Value = 'string'; Expected = '[string]$VariableWithDescription - Variable description' }
+        @{ Value = $null; Expected = 'VariableWithDescription - Variable description' }
+    ) {
+        param ($Value, $Expected)
+        
+        New-Variable -Name VariableWithDescription -Value $Value -Description 'Variable description' -Force
+        $res = TabExpansion2 -inputScript '$local:VariableWithDescription'
+        $res.CompletionMatches.Count | Should -Be 1
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '$local:VariableWithDescription'
+        $res.CompletionMatches[0].ToolTip | Should -BeExactly $Expected
     }
 
     It 'Should not complete property name in class definition' {
@@ -99,6 +174,122 @@ Describe "TabCompletion" -Tags CI {
         It "Should complete $($Operator.CompletionText)" {
             $res = TabExpansion2 -inputScript "'' $($Operator.CompletionText)" -cursorColumn ($Operator.CompletionText.Length + 3)
             $res.CompletionMatches[0].CompletionText | Should -BeExactly $Operator.CompletionText
+        }
+    }
+
+    context CustomProviderTests {
+        BeforeAll {
+            $testModulePath = Join-Path $TestDrive "ReproModule"
+            New-Item -Path $testModulePath -ItemType Directory > $null
+
+            New-ModuleManifest -Path "$testModulePath/ReproModule.psd1" -RootModule 'testmodule.dll'
+
+            $testBinaryModulePath = Join-Path $testModulePath "testmodule.dll"
+            $binaryModule = @'
+using System;
+using System.Linq;
+using System.Management.Automation;
+using System.Management.Automation.Provider;
+
+namespace BugRepro
+{
+    public class IntItemInfo
+    {
+        public string Name;
+        public IntItemInfo(string name) => Name = name;
+    }
+
+    [CmdletProvider("Int", ProviderCapabilities.None)]
+    public class IntProvider : NavigationCmdletProvider
+    {
+        public static string[] ToChunks(string path) => path.Split("/", StringSplitOptions.RemoveEmptyEntries);
+
+        protected string _ChildName(string path)
+        {
+            var name = ToChunks(path).LastOrDefault();
+            return name ?? string.Empty;
+        }
+
+        protected string Normalize(string path) => string.Join("/", ToChunks(path));
+
+        protected override string GetChildName(string path)
+        {
+            var name = _ChildName(path);
+            // if (!IsItemContainer(path)) { return string.Empty; }
+            return name;
+        }
+
+        protected override bool IsValidPath(string path) => int.TryParse(GetChildName(path), out int _);
+
+        protected override bool IsItemContainer(string path)
+        {
+            var name = _ChildName(path);
+            if (!int.TryParse(name, out int value))
+            {
+                return false;
+            }
+            if (ToChunks(path).Count() > 3)
+            {
+                return false;
+            }
+            return value % 2 == 0;
+        }
+
+        protected override bool ItemExists(string path)
+        {
+            foreach (var chunk in ToChunks(path))
+            {
+                if (!int.TryParse(chunk, out int value))
+                {
+                    return false;
+                }
+                if (value < 0 || value > 9)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        protected override void GetItem(string path)
+        {
+            var name = GetChildName(path);
+            if (!int.TryParse(name, out int _))
+            {
+                return;
+            }
+            WriteItemObject(new IntItemInfo(name), path, IsItemContainer(path));
+        }
+        protected override bool HasChildItems(string path) => IsItemContainer(path);
+
+        protected override void GetChildItems(string path, bool recurse)
+        {
+            if (!IsItemContainer(path)) { GetItem(path); return; }
+
+            for (var i = 0; i <= 9; i++)
+            {
+                var _path = $"{Normalize(path)}/{i}";
+                if (recurse)
+                {
+                    GetChildItems(_path, recurse);
+                }
+                else
+                {
+                    GetItem(_path);
+                }
+            }
+        }
+    }
+}
+'@
+            Add-Type -OutputAssembly $testBinaryModulePath -TypeDefinition $binaryModule
+
+            $pwsh = "$PSHOME\pwsh"
+        }
+
+        It "Should not complete invalid items when a provider path returns itself instead of its children" {
+            $result = & $pwsh -NoProfile -Command "Import-Module -Name $testModulePath; (TabExpansion2 'Get-ChildItem Int::/2/3/').CompletionMatches.Count"
+            $result | Should -BeExactly "0"
         }
     }
 
@@ -304,6 +495,21 @@ switch ($x)
         $res.CompletionMatches.Count | Should -Be 0
     }
 
+    It 'Should complete variable assigned in command redirection to variable' {
+        $res = TabExpansion2 -inputScript 'New-Guid 1>variable:Redir1 2>variable:Redir2 3>variable:Redir3 4>variable:Redir4 5>variable:Redir5 6>variable:Redir6; $Redir'
+        $res.CompletionMatches[0].CompletionText | Should -Be '$Redir1'
+        $res.CompletionMatches[1].CompletionText | Should -Be '$Redir2'
+        $res.CompletionMatches[1].ToolTip | Should -Be '[ErrorRecord]$Redir2'
+        $res.CompletionMatches[2].CompletionText | Should -Be '$Redir3'
+        $res.CompletionMatches[2].ToolTip | Should -Be '[WarningRecord]$Redir3'
+        $res.CompletionMatches[3].CompletionText | Should -Be '$Redir4'
+        $res.CompletionMatches[3].ToolTip | Should -Be '[VerboseRecord]$Redir4'
+        $res.CompletionMatches[4].CompletionText | Should -Be '$Redir5'
+        $res.CompletionMatches[4].ToolTip | Should -Be '[DebugRecord]$Redir5'
+        $res.CompletionMatches[5].CompletionText | Should -Be '$Redir6'
+        $res.CompletionMatches[5].ToolTip | Should -Be '[InformationRecord]$Redir6'
+    }
+
     context TypeConstructionWithHashtable {
         BeforeAll {
             class RandomTestType {
@@ -473,6 +679,21 @@ using `
         $res.CompletionMatches[0].CompletionText | Should -Be '"Classic"'
     }
 
+    It 'Should work for variable assignment of enum type with type inference' {
+        $res = TabExpansion2 -inputScript '[System.Management.Automation.ProgressView]$MyUnassignedVar = $psstyle.Progress.View; $MyUnassignedVar = "Class'
+        $res.CompletionMatches[0].CompletionText | Should -Be '"Classic"'
+    }
+
+    It 'Should work for property assignment of enum type with type inference with PowerShell class' {
+        $res = TabExpansion2 -inputScript 'enum Animals{Cat= 0;Dog= 1};class AnimalTestClass{[Animals] $Prop1};$Test1 = [AnimalTestClass]::new();$Test1.Prop1 = "C'
+        $res.CompletionMatches[0].CompletionText | Should -Be '"Cat"'
+    }
+
+    It 'Should work for variable assignment with type inference of PowerShell Enum' {
+        $res = TabExpansion2 -inputScript 'enum Animals{Cat= 0;Dog= 1}; [Animals]$TestVar1 = "D'
+        $res.CompletionMatches[0].CompletionText | Should -Be '"Dog"'
+    }
+
     It 'Should work for variable assignment of enum type: <inputStr>' -TestCases @(
         @{ inputStr = '$ErrorActionPreference = '; filter = ''; doubleQuotes = $false }
         @{ inputStr = '$ErrorActionPreference='; filter = ''; doubleQuotes = $false }
@@ -616,6 +837,11 @@ using `
         $res.CompletionMatches.CompletionText | Should -Contain "GetType"
     }
 
+    It 'Should complete variable member inferred from command inside scriptblock' {
+        $res = TabExpansion2 -inputScript '& {(New-Guid).'
+        $res.CompletionMatches.Count | Should -BeGreaterThan 0
+    }
+
     It 'Should not complete void instance members' {
         $res = TabExpansion2 -inputScript '([void]("")).'
         $res.CompletionMatches | Should -BeNullOrEmpty
@@ -626,6 +852,20 @@ using `
         $res.CompletionMatches | Should -HaveCount 3
         $completionText = $res.CompletionMatches.CompletionText | Sort-Object
         $completionText -join ' ' | Should -BeExactly 'Equals( new( ReferenceEquals('
+    }
+
+    It 'Should complete variables assigned inside do while loop' {
+        $TestString =  'do{$Var1 = 1; $Var^ }while ($true)'
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '$Var1'
+    }
+
+    It 'Should complete variables assigned inside do until loop' {
+        $TestString =  'do{$Var1 = 1; $Var^ }until ($null = Get-ChildItem)'
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '$Var1'
     }
 
     It 'Should show multiple constructors in the tooltip' {
@@ -661,6 +901,36 @@ ConstructorTestClass(int i, bool b)
         $diffs | Should -BeNullOrEmpty
     }
 
+    It 'Should complete attribute argument in incomplete param block' {
+        $res = TabExpansion2 -inputScript 'param([ValidatePattern('
+        $Expected = ([ValidatePattern].GetProperties() | Where-Object {$_.CanWrite}).Name -join ','
+        $res.CompletionMatches.CompletionText -join ',' | Should -BeExactly $Expected
+    }
+
+    It 'Should complete attribute argument in incomplete param block on new line' {
+        $TestString =  @'
+param([ValidatePattern(
+^)])
+'@
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
+        $Expected = ([ValidatePattern].GetProperties() | Where-Object {$_.CanWrite}).Name -join ','
+        $res.CompletionMatches.CompletionText -join ',' | Should -BeExactly $Expected
+    }
+
+    It 'Should complete attribute argument with partially written name in incomplete param block' {
+        $TestString =  'param([ValidatePattern(op^)]'
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Options'
+    }
+
+    It 'Should complete attribute argument for incomplete standalone attribute' {
+        $res = TabExpansion2 -inputScript '[ValidatePattern('
+        $Expected = ([ValidatePattern].GetProperties() | Where-Object {$_.CanWrite}).Name -join ','
+        $res.CompletionMatches.CompletionText -join ',' | Should -BeExactly $Expected
+    }
+
     It 'Should complete argument for second parameter' {
         $res = TabExpansion2 -inputScript 'Get-ChildItem -Path $HOME -ErrorAction '
         $res.CompletionMatches[0].CompletionText | Should -BeExactly Break
@@ -672,7 +942,7 @@ ConstructorTestClass(int i, bool b)
         $res.CompletionMatches[0].CompletionText | Should -BeExactly Cat
     }
 
-    It 'Should complete cim ETS member added by shortname' -Skip:(!$IsWindows) {
+    It 'Should complete cim ETS member added by shortname' -Skip:(!$IsWindows -or (Test-IsWinServer2012R2) -or (Test-IsWindows2016)) {
         $res = TabExpansion2 -inputScript '(Get-NetFirewallRule).Nam'
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Name'
     }
@@ -681,6 +951,16 @@ ConstructorTestClass(int i, bool b)
         $TestString = 'data MyDataVar {"Hello"};$MyDatav'
         $res = TabExpansion2 -inputScript $TestString
         $res.CompletionMatches[0].CompletionText | Should -BeExactly '$MyDataVar'
+    }
+
+    It 'Should complete global variable without scope' {
+        $res = TabExpansion2 -inputScript '$Global:MyTestVar = "Hello";$MyTestV'
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '$MyTestVar'
+    }
+
+    It 'Should complete previously assigned variable in using: scope' {
+        $res = TabExpansion2 -inputScript '$MyTestVar = "Hello";$Using:MyTestv'
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '$Using:MyTestVar'
     }
 
     it 'Should complete "Value" parameter value in "Where-Object" for Enum property with no input' {
@@ -766,31 +1046,50 @@ ConstructorTestClass(int i, bool b)
 
     Context 'Start-Process -Verb parameter completion' {
         BeforeAll {
-            function GetProcessInfoVerbs($path) {
-                (New-Object -TypeName System.Diagnostics.ProcessStartInfo -ArgumentList $path).Verbs
+            function GetProcessInfoVerbs([string]$path, [switch]$singleQuote, [switch]$doubleQuote) {
+                $verbs = (New-Object -TypeName System.Diagnostics.ProcessStartInfo -ArgumentList $path).Verbs
+
+                if ($singleQuote) {
+                    return ($verbs | ForEach-Object { "'$_'" })
+                }
+                elseif ($doubleQuote) {
+                    return ($verbs | ForEach-Object { """$_""" })
+                }
+
+                return $verbs
             }
 
             $cmdPath = Join-Path -Path $TestDrive -ChildPath 'test.cmd'
-            $cmdVerbs = GetProcessInfoVerbs $cmdPath
+            $cmdVerbs = GetProcessInfoVerbs -Path $cmdPath
+            $cmdVerbsSingleQuote = GetProcessInfoVerbs -Path $cmdPath -SingleQuote
+            $cmdVerbsDoubleQuote = GetProcessInfoVerbs -Path $cmdPath -DoubleQuote
             $exePath = Join-Path -Path $TestDrive -ChildPath 'test.exe'
-            $exeVerbs = GetProcessInfoVerbs $exePath
+            $exeVerbs = GetProcessInfoVerbs -Path $exePath
             $exeVerbsStartingWithRun = $exeVerbs | Where-Object { $_ -like 'run*' }
+            $exeVerbsSingleQuote = GetProcessInfoVerbs -Path $exePath -SingleQuote
+            $exeVerbsStartingWithRunSingleQuote = $exeVerbsSingleQuote | Where-Object { $_ -like "'run*" }
+            $exeVerbsDoubleQuote = GetProcessInfoVerbs -Path $exePath -DoubleQuote
+            $exeVerbsStartingWithRunDoubleQuote = $exeVerbsDoubleQuote | Where-Object { $_ -like """run*" }
             $powerShellExeWithNoExtension = 'powershell'
             $txtPath = Join-Path -Path $TestDrive -ChildPath 'test.txt'
-            $txtVerbs = GetProcessInfoVerbs $txtPath
+            $txtVerbs = GetProcessInfoVerbs -Path $txtPath
             $wavPath = Join-Path -Path $TestDrive -ChildPath 'test.wav'
-            $wavVerbs = GetProcessInfoVerbs $wavPath
+            $wavVerbs = GetProcessInfoVerbs -Path $wavPath
             $docxPath = Join-Path -Path $TestDrive -ChildPath 'test.docx'
-            $docxVerbs = GetProcessInfoVerbs $docxPath
+            $docxVerbs = GetProcessInfoVerbs -Path $docxPath
             $fileWithNoExtensionPath = Join-Path -Path $TestDrive -ChildPath 'test'
-            $fileWithNoExtensionVerbs = GetProcessInfoVerbs $fileWithNoExtensionPath
+            $fileWithNoExtensionVerbs = GetProcessInfoVerbs -Path $fileWithNoExtensionPath
         }
 
         It "Should complete Verb parameter for '<TextInput>'" -Skip:(!([System.Management.Automation.Platform]::IsWindowsDesktop)) -TestCases @(
             @{ TextInput = 'Start-Process -Verb '; ExpectedVerbs = '' }
             @{ TextInput = "Start-Process -FilePath $cmdPath -Verb "; ExpectedVerbs =  $cmdVerbs -join ' ' }
+            @{ TextInput = "Start-Process -FilePath $cmdPath -Verb '"; ExpectedVerbs =  $cmdVerbsSingleQuote -join ' ' }
+            @{ TextInput = "Start-Process -FilePath $cmdPath -Verb """; ExpectedVerbs =   $cmdVerbsDoubleQuote -join ' ' }
             @{ TextInput = "Start-Process -FilePath $exePath -Verb "; ExpectedVerbs = $exeVerbs -join ' ' }
             @{ TextInput = "Start-Process -FilePath $exePath -Verb run"; ExpectedVerbs = $exeVerbsStartingWithRun -join ' ' }
+            @{ TextInput = "Start-Process -FilePath $exePath -Verb 'run"; ExpectedVerbs = $exeVerbsStartingWithRunSingleQuote -join ' ' }
+            @{ TextInput = "Start-Process -FilePath $exePath -Verb ""run"; ExpectedVerbs = $exeVerbsStartingWithRunDoubleQuote -join ' ' }
             @{ TextInput = "Start-Process -FilePath $powerShellExeWithNoExtension -Verb "; ExpectedVerbs = $exeVerbs -join ' ' }
             @{ TextInput = "Start-Process -FilePath $txtPath -Verb "; ExpectedVerbs = $txtVerbs -join ' ' }
             @{ TextInput = "Start-Process -FilePath $wavPath -Verb "; ExpectedVerbs = $wavVerbs -join ' ' }
@@ -807,17 +1106,33 @@ ConstructorTestClass(int i, bool b)
     Context 'Scope parameter completion' {
         BeforeAll {
             $allScopes = 'Global Local Script'
+            $allScopesSingleQuote = "'Global' 'Local' 'Script'"
+            $allScopesDoubleQuote = """Global"" ""Local"" ""Script"""
             $globalScope = 'Global'
+            $globalScopeSingleQuote = "'Global'"
+            $globalScopeDoubleQuote = """Global"""
             $localScope = 'Local'
+            $localScopeSingleQuote = "'Local'"
+            $localScopeDoubleQuote = """Local"""
             $scriptScope = 'Script'
+            $scriptScopeSingleQuote = "'Script'"
+            $scriptScopeDoubleQuote = """Script"""
             $allScopeCommands = 'Clear-Variable', 'Export-Alias', 'Get-Alias', 'Get-PSDrive', 'Get-Variable', 'Import-Alias', 'New-Alias', 'New-PSDrive', 'New-Variable', 'Remove-Alias', 'Remove-PSDrive', 'Remove-Variable', 'Set-Alias', 'Set-Variable'
         }
 
         It "Should complete '<ParameterInput>' for '<Commands>'" -TestCases @(
             @{ Commands = $allScopeCommands; ParameterInput = "-Scope "; ExpectedScopes = $allScopes }
+            @{ Commands = $allScopeCommands; ParameterInput = "-Scope '"; ExpectedScopes = $allScopesSingleQuote }
+            @{ Commands = $allScopeCommands; ParameterInput = "-Scope """; ExpectedScopes = $allScopesDoubleQuote }
             @{ Commands = $allScopeCommands; ParameterInput = "-Scope G"; ExpectedScopes = $globalScope }
+            @{ Commands = $allScopeCommands; ParameterInput = "-Scope 'G"; ExpectedScopes = $globalScopeSingleQuote }
+            @{ Commands = $allScopeCommands; ParameterInput = "-Scope ""G"; ExpectedScopes = $globalScopeDoubleQuote }
             @{ Commands = $allScopeCommands; ParameterInput = "-Scope Lo"; ExpectedScopes = $localScope }
+            @{ Commands = $allScopeCommands; ParameterInput = "-Scope 'Lo"; ExpectedScopes = $localScopeSingleQuote }
+            @{ Commands = $allScopeCommands; ParameterInput = "-Scope ""Lo"; ExpectedScopes = $localScopeDoubleQuote }
             @{ Commands = $allScopeCommands; ParameterInput = "-Scope Scr"; ExpectedScopes = $scriptScope }
+            @{ Commands = $allScopeCommands; ParameterInput = "-Scope 'Scr"; ExpectedScopes = $scriptScopeSingleQuote }
+            @{ Commands = $allScopeCommands; ParameterInput = "-Scope ""Scr"; ExpectedScopes = $scriptScopeDoubleQuote }
             @{ Commands = $allScopeCommands; ParameterInput = "-Scope NonExistentScope"; ExpectedScopes = '' }
         ) {
             param($Commands, $ParameterInput, $ExpectedScopes)
@@ -833,27 +1148,41 @@ ConstructorTestClass(int i, bool b)
     Context 'Get-Verb & Get-Command -Verb parameter completion' {
         BeforeAll {
             $allVerbs = 'Add Approve Assert Backup Block Build Checkpoint Clear Close Compare Complete Compress Confirm Connect Convert ConvertFrom ConvertTo Copy Debug Deny Deploy Disable Disconnect Dismount Edit Enable Enter Exit Expand Export Find Format Get Grant Group Hide Import Initialize Install Invoke Join Limit Lock Measure Merge Mount Move New Open Optimize Out Ping Pop Protect Publish Push Read Receive Redo Register Remove Rename Repair Request Reset Resize Resolve Restart Restore Resume Revoke Save Search Select Send Set Show Skip Split Start Step Stop Submit Suspend Switch Sync Test Trace Unblock Undo Uninstall Unlock Unprotect Unpublish Unregister Update Use Wait Watch Write'
+            $allVerbsSingleQuote = "'Add' 'Approve' 'Assert' 'Backup' 'Block' 'Build' 'Checkpoint' 'Clear' 'Close' 'Compare' 'Complete' 'Compress' 'Confirm' 'Connect' 'Convert' 'ConvertFrom' 'ConvertTo' 'Copy' 'Debug' 'Deny' 'Deploy' 'Disable' 'Disconnect' 'Dismount' 'Edit' 'Enable' 'Enter' 'Exit' 'Expand' 'Export' 'Find' 'Format' 'Get' 'Grant' 'Group' 'Hide' 'Import' 'Initialize' 'Install' 'Invoke' 'Join' 'Limit' 'Lock' 'Measure' 'Merge' 'Mount' 'Move' 'New' 'Open' 'Optimize' 'Out' 'Ping' 'Pop' 'Protect' 'Publish' 'Push' 'Read' 'Receive' 'Redo' 'Register' 'Remove' 'Rename' 'Repair' 'Request' 'Reset' 'Resize' 'Resolve' 'Restart' 'Restore' 'Resume' 'Revoke' 'Save' 'Search' 'Select' 'Send' 'Set' 'Show' 'Skip' 'Split' 'Start' 'Step' 'Stop' 'Submit' 'Suspend' 'Switch' 'Sync' 'Test' 'Trace' 'Unblock' 'Undo' 'Uninstall' 'Unlock' 'Unprotect' 'Unpublish' 'Unregister' 'Update' 'Use' 'Wait' 'Watch' 'Write'"
+            $allVerbsDoubleQuote = """Add"" ""Approve"" ""Assert"" ""Backup"" ""Block"" ""Build"" ""Checkpoint"" ""Clear"" ""Close"" ""Compare"" ""Complete"" ""Compress"" ""Confirm"" ""Connect"" ""Convert"" ""ConvertFrom"" ""ConvertTo"" ""Copy"" ""Debug"" ""Deny"" ""Deploy"" ""Disable"" ""Disconnect"" ""Dismount"" ""Edit"" ""Enable"" ""Enter"" ""Exit"" ""Expand"" ""Export"" ""Find"" ""Format"" ""Get"" ""Grant"" ""Group"" ""Hide"" ""Import"" ""Initialize"" ""Install"" ""Invoke"" ""Join"" ""Limit"" ""Lock"" ""Measure"" ""Merge"" ""Mount"" ""Move"" ""New"" ""Open"" ""Optimize"" ""Out"" ""Ping"" ""Pop"" ""Protect"" ""Publish"" ""Push"" ""Read"" ""Receive"" ""Redo"" ""Register"" ""Remove"" ""Rename"" ""Repair"" ""Request"" ""Reset"" ""Resize"" ""Resolve"" ""Restart"" ""Restore"" ""Resume"" ""Revoke"" ""Save"" ""Search"" ""Select"" ""Send"" ""Set"" ""Show"" ""Skip"" ""Split"" ""Start"" ""Step"" ""Stop"" ""Submit"" ""Suspend"" ""Switch"" ""Sync"" ""Test"" ""Trace"" ""Unblock"" ""Undo"" ""Uninstall"" ""Unlock"" ""Unprotect"" ""Unpublish"" ""Unregister"" ""Update"" ""Use"" ""Wait"" ""Watch"" ""Write"""
             $verbsStartingWithRe = 'Read Receive Redo Register Remove Rename Repair Request Reset Resize Resolve Restart Restore Resume Revoke'
             $verbsStartingWithEx = 'Exit Expand Export'
             $verbsStartingWithConv = 'Convert ConvertFrom ConvertTo'
             $lifeCycleVerbsStartingWithRe = 'Register Request Restart Resume'
+            $lifeCycleVerbsStartingWithReSingleQuote = "'Register' 'Request' 'Restart' 'Resume'"
+            $lifeCycleVerbsStartingWithReDoubleQuote = """Register"" ""Request"" ""Restart"" ""Resume"""
             $dataVerbsStartingwithEx = 'Expand Export'
             $lifeCycleAndCommmonVerbsStartingWithRe = 'Redo Register Remove Rename Request Reset Resize Restart Resume'
             $allLifeCycleAndCommonVerbs = 'Add Approve Assert Build Clear Close Complete Confirm Copy Deny Deploy Disable Enable Enter Exit Find Format Get Hide Install Invoke Join Lock Move New Open Optimize Pop Push Redo Register Remove Rename Request Reset Resize Restart Resume Search Select Set Show Skip Split Start Step Stop Submit Suspend Switch Undo Uninstall Unlock Unregister Wait Watch'
             $allJsonVerbs = 'ConvertFrom ConvertTo Test'
             $jsonVerbsStartingWithConv = 'ConvertFrom ConvertTo'
+            $jsonVerbsStartingWithConvSingleQuote = "'ConvertFrom' 'ConvertTo'"
+            $jsonVerbsStartingWithConvDoubleQuote = """ConvertFrom"" ""ConvertTo"""
             $allJsonAndJobVerbs = 'ConvertFrom ConvertTo Debug Get Receive Remove Start Stop Test Wait'
             $jsonAndJobVerbsStartingWithSt = 'Start Stop'
             $allObjectVerbs = 'Compare ForEach Group Measure New Select Sort Tee Where'
             $utilityModuleObjectVerbs = 'Compare Group Measure New Select Sort Tee'
             $utilityModuleObjectVerbsStartingWithS = 'Select Sort'
+            $utilityModuleObjectVerbsStartingWithSSingleQuote = "'Select' 'Sort'"
+            $utilityModuleObjectVerbsStartingWithSDoubleQuote = """Select"" ""Sort"""
+            $utilityModuleObjectVerbsStartingWithS
             $coreModuleObjectVerbs = 'ForEach Where'
         }
 
         It "Should complete Verb parameter for '<TextInput>'" -TestCases @(
             @{ TextInput = 'Get-Verb -Verb '; ExpectedVerbs = $allVerbs }
+            @{ TextInput = "Get-Verb -Verb '"; ExpectedVerbs = $allVerbsSingleQuote }
+            @{ TextInput = "Get-Verb -Verb """; ExpectedVerbs = $allVerbsDoubleQuote }
             @{ TextInput = 'Get-Verb -Group Lifecycle, Common -Verb '; ExpectedVerbs = $allLifeCycleAndCommonVerbs }
             @{ TextInput = 'Get-Verb -Verb Re'; ExpectedVerbs = $verbsStartingWithRe }
+            @{ TextInput = 'Get-Verb -Group Lifecycle -Verb Re'; ExpectedVerbs = $lifeCycleVerbsStartingWithRe }
+            @{ TextInput = "Get-Verb -Group Lifecycle -Verb 'Re"; ExpectedVerbs = $lifeCycleVerbsStartingWithReSingleQuote }
+            @{ TextInput = "Get-Verb -Group Lifecycle -Verb ""Re"; ExpectedVerbs = $lifeCycleVerbsStartingWithReDoubleQuote }
             @{ TextInput = 'Get-Verb -Group Lifecycle -Verb Re'; ExpectedVerbs = $lifeCycleVerbsStartingWithRe }
             @{ TextInput = 'Get-Verb -Group Lifecycle, Common -Verb Re'; ExpectedVerbs = $lifeCycleAndCommmonVerbsStartingWithRe }
             @{ TextInput = 'Get-Verb -Verb Ex'; ExpectedVerbs = $verbsStartingWithEx }
@@ -866,12 +1195,16 @@ ConstructorTestClass(int i, bool b)
             @{ TextInput = 'Get-Command -Verb Conv'; ExpectedVerbs = $verbsStartingWithConv }
             @{ TextInput = 'Get-Command -Noun Json -Verb '; ExpectedVerbs = $allJsonVerbs }
             @{ TextInput = 'Get-Command -Noun Json -Verb Conv'; ExpectedVerbs = $jsonVerbsStartingWithConv }
+            @{ TextInput = "Get-Command -Noun Json -Verb 'Conv"; ExpectedVerbs = $jsonVerbsStartingWithConvSingleQuote }
+            @{ TextInput = "Get-Command -Noun Json -Verb ""Conv"; ExpectedVerbs = $jsonVerbsStartingWithConvDoubleQuote }
             @{ TextInput = 'Get-Command -Noun Json, Job -Verb '; ExpectedVerbs = $allJsonAndJobVerbs }
             @{ TextInput = 'Get-Command -Noun Json, Job -Verb St'; ExpectedVerbs = $jsonAndJobVerbsStartingWithSt }
             @{ TextInput = 'Get-Command -Noun NonExistentNoun -Verb '; ExpectedVerbs = '' }
             @{ TextInput = 'Get-Command -Noun Object -Module Microsoft.PowerShell.Utility,Microsoft.PowerShell.Core -Verb '; ExpectedVerbs = $allObjectVerbs }
             @{ TextInput = 'Get-Command -Noun Object -Module Microsoft.PowerShell.Utility -Verb '; ExpectedVerbs = $utilityModuleObjectVerbs }
             @{ TextInput = 'Get-Command -Noun Object -Module Microsoft.PowerShell.Utility -Verb S'; ExpectedVerbs = $utilityModuleObjectVerbsStartingWithS }
+            @{ TextInput = "Get-Command -Noun Object -Module Microsoft.PowerShell.Utility -Verb 'S"; ExpectedVerbs = $utilityModuleObjectVerbsStartingWithSSingleQuote }
+            @{ TextInput = "Get-Command -Noun Object -Module Microsoft.PowerShell.Utility -Verb ""S"; ExpectedVerbs = $utilityModuleObjectVerbsStartingWithSDoubleQuote }
             @{ TextInput = 'Get-Command -Noun Object -Module Microsoft.PowerShell.Core -Verb '; ExpectedVerbs = $coreModuleObjectVerbs }
         ) {
             param($TextInput, $ExpectedVerbs)
@@ -884,18 +1217,26 @@ ConstructorTestClass(int i, bool b)
     Context 'StrictMode Version parameter completion' {
         BeforeAll {
             $allStrictModeVersions = '1.0 2.0 3.0 Latest'
+            $allStrictModeVersionsSingleQuote = "'1.0' '2.0' '3.0' 'Latest'"
+            $allStrictModeVersionsDoubleQuote = """1.0"" ""2.0"" ""3.0"" ""Latest"""
             $versionOne = '1.0'
             $versionTwo = '2.0'
             $versionThree = '3.0'
             $latestVersion = 'Latest'
+            $latestVersionSingleQuote = "'Latest'"
+            $latestVersionDoubleQuote = """Latest"""
         }
 
         It "Should complete Version for '<TextInput>'" -TestCases @(
             @{ TextInput = "Set-StrictMode -Version "; ExpectedVersions = $allStrictModeVersions }
+            @{ TextInput = "Set-StrictMode -Version '"; ExpectedVersions = $allStrictModeVersionsSingleQuote }
+            @{ TextInput = "Set-StrictMode -Version """; ExpectedVersions = $allStrictModeVersionsDoubleQuote }
             @{ TextInput = "Set-StrictMode -Version 1"; ExpectedVersions = $versionOne }
             @{ TextInput = "Set-StrictMode -Version 2"; ExpectedVersions = $versionTwo }
             @{ TextInput = "Set-StrictMode -Version 3"; ExpectedVersions = $versionThree }
             @{ TextInput = "Set-StrictMode -Version Lat"; ExpectedVersions = $latestVersion }
+            @{ TextInput = "Set-StrictMode -Version 'Lat"; ExpectedVersions = $latestVersionSingleQuote }
+            @{ TextInput = "Set-StrictMode -Version ""Lat"; ExpectedVersions = $latestVersionDoubleQuote }
             @{ TextInput = "Set-StrictMode -Version NonExistentVersion"; ExpectedVersions = '' }
         ) {
             param($TextInput, $ExpectedVersions)
@@ -928,6 +1269,205 @@ ConstructorTestClass(int i, bool b)
             $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
             $completionText = $res.CompletionMatches.CompletionText | Sort-Object -Unique
             $completionText -join ' ' | Should -BeExactly $ExpectedModules
+        }
+    }
+
+    Context 'New-ItemProperty -PropertyType parameter completion' {
+        BeforeAll {
+            if ($IsWindows) {
+                $allRegistryValueKinds = 'String ExpandString Binary DWord MultiString QWord Unknown'
+                $allRegistryValueKindsWithQuotes = "'String' 'ExpandString' 'Binary' 'DWord' 'MultiString' 'QWord' 'Unknown'"
+                $dwordValueKind = 'DWord'
+                $qwordValueKind = 'QWord'
+                $binaryValueKind = 'Binary'
+                $multiStringValueKind = 'MultiString'
+                $registryPath = "HKCU:\test1\sub"
+                New-Item -Path $registryPath -Force
+                $registryLiteralPath = "HKCU:\test2\*\sub"
+                New-Item -Path $registryLiteralPath -Force
+                $fileSystemPath = "TestDrive:\test1.txt"
+                New-Item -Path $fileSystemPath -Force
+                $fileSystemLiteralPathDir = "TestDrive:\[]"
+                $fileSystemLiteralPath = "$fileSystemLiteralPathDir\test2.txt"
+                New-Item -Path $fileSystemLiteralPath -Force
+            }
+        }
+
+        It "Should complete Property Type for '<TextInput>'" -Skip:(!$IsWindows) -TestCases @(
+            # -Path completions
+            @{ TextInput = "New-ItemProperty -Path $registryPath -PropertyType "; ExpectedPropertyTypes = $allRegistryValueKinds }
+            @{ TextInput = "New-ItemProperty -Path $registryPath -PropertyType d"; ExpectedPropertyTypes = $dwordValueKind }
+            @{ TextInput = "New-ItemProperty -Path $registryPath -PropertyType q"; ExpectedPropertyTypes = $qwordValueKind }
+            @{ TextInput = "New-ItemProperty -Path $registryPath -PropertyType bin"; ExpectedPropertyTypes = $binaryValueKind }
+            @{ TextInput = "New-ItemProperty -Path $registryPath -PropertyType multi"; ExpectedPropertyTypes = $multiStringValueKind }
+            @{ TextInput = "New-ItemProperty -Path $registryPath -PropertyType invalidproptype"; ExpectedPropertyTypes = '' }
+            @{ TextInput = "New-ItemProperty -Path $fileSystemPath -PropertyType "; ExpectedPropertyTypes = '' }
+
+            # -LiteralPath completions
+            @{ TextInput = "New-ItemProperty -LiteralPath $registryLiteralPath -PropertyType "; ExpectedPropertyTypes = $allRegistryValueKinds }
+            @{ TextInput = "New-ItemProperty -LiteralPath $registryLiteralPath -PropertyType d"; ExpectedPropertyTypes = $dwordValueKind }
+            @{ TextInput = "New-ItemProperty -LiteralPath $registryLiteralPath -PropertyType q"; ExpectedPropertyTypes = $qwordValueKind }
+            @{ TextInput = "New-ItemProperty -LiteralPath $registryLiteralPath -PropertyType bin"; ExpectedPropertyTypes = $binaryValueKind }
+            @{ TextInput = "New-ItemProperty -LiteralPath $registryLiteralPath -PropertyType multi"; ExpectedPropertyTypes = $multiStringValueKind }
+            @{ TextInput = "New-ItemProperty -LiteralPath $registryLiteralPath -PropertyType invalidproptype"; ExpectedPropertyTypes = '' }
+            @{ TextInput = "New-ItemProperty -LiteralPath $fileSystemLiteralPath -PropertyType "; ExpectedPropertyTypes = '' }
+
+            # All of these should return no completion since they don't specify -Path/-LiteralPath
+            @{ TextInput = "New-ItemProperty -PropertyType "; ExpectedPropertyTypes = '' }
+            @{ TextInput = "New-ItemProperty -PropertyType d"; ExpectedPropertyTypes = '' }
+            @{ TextInput = "New-ItemProperty -PropertyType q"; ExpectedPropertyTypes = '' }
+            @{ TextInput = "New-ItemProperty -PropertyType bin"; ExpectedPropertyTypes = '' }
+            @{ TextInput = "New-ItemProperty -PropertyType multi"; ExpectedPropertyTypes = '' }
+            @{ TextInput = "New-ItemProperty -PropertyType invalidproptype"; ExpectedPropertyTypes = '' }
+
+            # All of these should return completion even with quotes included
+            @{ TextInput = "New-ItemProperty -Path $registryPath -PropertyType '"; ExpectedPropertyTypes = $allRegistryValueKindsWithQuotes }
+            @{ TextInput = "New-ItemProperty -Path $registryPath -PropertyType 'bin"; ExpectedPropertyTypes = "'$binaryValueKind'" }
+        ) {
+            param($TextInput, $ExpectedPropertyTypes)
+            $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
+            $completionText = $res.CompletionMatches.CompletionText
+            $completionText -join ' ' | Should -BeExactly $ExpectedPropertyTypes
+        }
+
+        It "Test fallback to provider of current location if no path specified" -Skip:(!$IsWindows) {
+            try {
+                Push-Location HKCU:\
+                $textInput = "New-ItemProperty -PropertyType "
+                $res = TabExpansion2 -inputScript $textInput -cursorColumn $textInput.Length
+                $completionText = $res.CompletionMatches.CompletionText
+                $completionText -join ' ' | Should -BeExactly $allRegistryValueKinds
+            }
+            finally {
+                Pop-Location
+            }
+        }
+
+        AfterAll {
+            if ($IsWindows) {
+                Remove-Item -Path $registryPath -Force
+                Remove-Item -LiteralPath $registryLiteralPath -Force
+                Remove-Item -Path $fileSystemPath -Force
+                Remove-Item -LiteralPath $fileSystemLiteralPathDir -Recurse -Force
+            }
+        }
+    }
+
+    Context 'Get-Command -Noun parameter completion' {
+        BeforeAll {
+            function GetModuleCommandNouns(
+                [string]$Module,
+                [string]$Verb,
+                [switch]$SingleQuote,
+                [switch]$DoubleQuote)
+            {
+
+                $commandParams = @{}
+
+                if ($PSBoundParameters.ContainsKey('Module')) {
+                    $commandParams['Module'] = $Module
+                }
+
+                if ($PSBoundParameters.ContainsKey('Verb')) {
+                    $commandParams['Verb'] = $Verb
+                }
+
+                $nouns = (Get-Command @commandParams).Noun
+
+                if ($SingleQuote) {
+                    return ($nouns | ForEach-Object { "'$_'" })
+                }
+                elseif ($DoubleQuote) {
+                    return ($nouns | ForEach-Object { """$_""" })
+                }
+
+                return $nouns
+            }
+
+            $utilityModuleName = 'Microsoft.PowerShell.Utility'
+
+            $allUtilityCommandNouns = GetModuleCommandNouns -Module $utilityModuleName
+            $allUtilityCommandNounsSingleQuote = GetModuleCommandNouns -Module $utilityModuleName -SingleQuote
+            $allUtilityCommandNounsDoubleQuote = GetModuleCommandNouns -Module $utilityModuleName -DoubleQuote
+            $utilityCommandNounsStartingWithF = $allUtilityCommandNouns | Where-Object { $_ -like 'F*'}
+            $utilityCommandNounsStartingWithFSingleQuote = $allUtilityCommandNounsSingleQuote | Where-Object { $_ -like "'F*"}
+            $utilityCommandNounsStartingWithFDoubleQuote = $allUtilityCommandNounsDoubleQuote | Where-Object { $_ -like """F*"}
+
+            $allUtilityCommandNounsWithConvertToVerb = GetModuleCommandNouns -Module $utilityModuleName -Verb 'ConvertTo'
+            $allUtilityCommandNounsWithConvertToVerbSingleQuote = GetModuleCommandNouns -Module $utilityModuleName -SingleQuote -Verb 'ConvertTo'
+            $allUtilityCommandNounsWithConvertToVerbDoubleQuote = GetModuleCommandNouns -Module $utilityModuleName -DoubleQuote -Verb 'ConvertTo'
+            $utilityCommandNounsWithConvertToVerb = $allUtilityCommandNounsWithConvertToVerb | Where-Object { $_ -in 'CliXml', 'Csv', 'Html', 'Json', 'Xml' }
+            $utilityCommandNounsWithConvertToVerbSingleQuote = $allUtilityCommandNounsWithConvertToVerbSingleQuote | Where-Object { $_ -in "'CliXml'", "'Csv'", "'Html'", "'Json'", "'Xml'" }
+            $utilityCommandNounsWithConvertToVerbDoubleQuote = $allUtilityCommandNounsWithConvertToVerbDoubleQuote | Where-Object { $_ -in """CliXml""", """Csv""", """Html""", """Json""", """Xml""" }
+            $utilityCommandNounsWithConvertToVerbStartingWithC = $allUtilityCommandNounsWithConvertToVerb | Where-Object { $_ -in 'CliXml', 'Csv' }
+            $utilityCommandNounsWithConvertToVerbStartingWithCSingleQuote = $allUtilityCommandNounsWithConvertToVerbSingleQuote | Where-Object { $_ -in "'CliXml'", "'Csv'" }
+            $utilityCommandNounsWithConvertToVerbStartingWithCDoubleQuote = $allUtilityCommandNounsWithConvertToVerbDoubleQuote | Where-Object { $_ -in """CliXml""", """Csv""" }
+        }
+
+        It "Should complete Noun for '<TextInput>'" -TestCases @(
+            @{ TextInput = "Get-Command -Module $utilityModuleName -Noun "; ExpectedNouns = $allUtilityCommandNouns }
+            @{ TextInput = "Get-Command -Module $utilityModuleName -Noun '"; ExpectedNouns = $allUtilityCommandNounsSingleQuote }
+            @{ TextInput = "Get-Command -Module $utilityModuleName -Noun """; ExpectedNouns = $allUtilityCommandNounsDoubleQuote }
+            @{ TextInput = "Get-Command -Module $utilityModuleName -Noun F"; ExpectedNouns = $utilityCommandNounsStartingWithF  }
+            @{ TextInput = "Get-Command -Module $utilityModuleName -Noun 'F"; ExpectedNouns = $utilityCommandNounsStartingWithFSingleQuote }
+            @{ TextInput = "Get-Command -Module $utilityModuleName -Noun ""F"; ExpectedNouns = $utilityCommandNounsStartingWithFDoubleQuote }
+            @{ TextInput = "Get-Command -Module $utilityModuleName -Verb ConvertTo -Noun "; ExpectedNouns = $utilityCommandNounsWithConvertToVerb  }
+            @{ TextInput = "Get-Command -Module $utilityModuleName -Verb ConvertTo -Noun '"; ExpectedNouns = $utilityCommandNounsWithConvertToVerbSingleQuote }
+            @{ TextInput = "Get-Command -Module $utilityModuleName -Verb ConvertTo -Noun """; ExpectedNouns = $utilityCommandNounsWithConvertToVerbDoubleQuote }
+            @{ TextInput = "Get-Command -Module $utilityModuleName -Verb ConvertTo -Noun C"; ExpectedNouns = $utilityCommandNounsWithConvertToVerbStartingWithC  }
+            @{ TextInput = "Get-Command -Module $utilityModuleName -Verb ConvertTo -Noun 'C"; ExpectedNouns = $utilityCommandNounsWithConvertToVerbStartingWithCSingleQuote }
+            @{ TextInput = "Get-Command -Module $utilityModuleName -Verb ConvertTo -Noun ""C"; ExpectedNouns = $utilityCommandNounsWithConvertToVerbStartingWithCDoubleQuote }
+        ) {
+            param($TextInput, $ExpectedNouns)
+            $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
+            $completionText = $res.CompletionMatches.CompletionText
+
+            # Avoid using Sort-Object -Unique because it generates different order than SortedSet on MacOS/Linux
+            $sortedSetExpectedNouns = [System.Collections.Generic.SortedSet[string]]::new([System.StringComparer]::OrdinalIgnoreCase)
+            foreach ($noun in $ExpectedNouns)
+            {
+                $sortedSetExpectedNouns.Add($noun) | Out-Null
+            }
+
+            $completionText -join ' ' | Should -BeExactly ($sortedSetExpectedNouns -join ' ')
+        }
+    }
+
+    Context "Get-ExperimentalFeature -Name parameter completion" {
+        BeforeAll {
+            function GetExperimentalFeatureNames([switch]$SingleQuote, [switch]$DoubleQuote) {
+                $features = (Get-ExperimentalFeature).Name
+
+                if ($SingleQuote) {
+                    return ($features | ForEach-Object { "'$_'" })
+                }
+                elseif ($DoubleQuote) {
+                    return ($features | ForEach-Object { """$_""" })
+                }
+
+                return $features
+            }
+
+            $allExperimentalFeatures = GetExperimentalFeatureNames
+            $allExperimentalFeaturesSingleQuote = GetExperimentalFeatureNames -SingleQuote
+            $allExperimentalFeaturesDoubleQuote = GetExperimentalFeatureNames -DoubleQuote
+            $experimentalFeaturesStartingWithPS = $allExperimentalFeatures | Where-Object { $_ -like 'PS*'}
+            $experimentalFeaturesStartingWithPSSingleQuote = $allExperimentalFeaturesSingleQuote | Where-Object { $_ -like "'PS*" }
+            $experimentalFeaturesStartingWithPSDoubleQuote = $allExperimentalFeaturesDoubleQuote | Where-Object { $_ -like """PS*" }
+        }
+
+        It "Should complete Name for '<TextInput>'" -TestCases @(
+            @{ TextInput = "Get-ExperimentalFeature -Name "; ExpectedExperimentalFeatureNames = $allExperimentalFeatures }
+            @{ TextInput = "Get-ExperimentalFeature -Name '"; ExpectedExperimentalFeatureNames = $allExperimentalFeaturesSingleQuote }
+            @{ TextInput = "Get-ExperimentalFeature -Name """; ExpectedExperimentalFeatureNames = $allExperimentalFeaturesDoubleQuote }
+            @{ TextInput = "Get-ExperimentalFeature -Name PS"; ExpectedExperimentalFeatureNames = $experimentalFeaturesStartingWithPS }
+            @{ TextInput = "Get-ExperimentalFeature -Name 'PS"; ExpectedExperimentalFeatureNames = $experimentalFeaturesStartingWithPSSingleQuote }
+            @{ TextInput = "Get-ExperimentalFeature -Name ""PS"; ExpectedExperimentalFeatureNames = $experimentalFeaturesStartingWithPSDoubleQuote }
+        ) {
+            param($TextInput, $ExpectedExperimentalFeatureNames)
+            $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
+            $completionText = $res.CompletionMatches.CompletionText
+            $completionText -join ' ' | Should -BeExactly (($ExpectedExperimentalFeatureNames | Sort-Object -Unique) -join ' ')
         }
     }
 
@@ -1243,6 +1783,36 @@ class InheritedClassTest : System.Attribute
         }
     }
 
+    Context "Script parameter completion" {
+        BeforeAll {
+            Setup -File -Path 'ModuleReqTest.ps1' -Content @'
+#requires -Modules ThisModuleDoesNotExist
+param ($Param1)
+'@
+            Setup -File -Path 'AdminReqTest.ps1' -Content @'
+#requires -RunAsAdministrator
+param ($Param1)
+'@
+            Push-Location ${TestDrive}\
+        }
+
+        AfterAll {
+            Pop-Location
+        }
+
+        It "Input should successfully complete script parameter for script with failed script requirements" {
+            $res = TabExpansion2 -inputScript '.\ModuleReqTest.ps1 -'
+            $res.CompletionMatches.Count | Should -BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly '-Param1'
+        }
+
+        It "Input should successfully complete script parameter for admin script while not elevated" {
+            $res = TabExpansion2 -inputScript '.\AdminReqTest.ps1 -'
+            $res.CompletionMatches.Count | Should -BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly '-Param1'
+        }
+    }
+
     Context "File name completion" {
         BeforeAll {
             $tempDir = Join-Path -Path $TestDrive -ChildPath "baseDir"
@@ -1412,6 +1982,34 @@ class InheritedClassTest : System.Attribute
             $res.CompletionMatches | Should -HaveCount 1
             $expectedPath = Join-Path $PSScriptRoot -ChildPath BugFix.Tests.ps1
             $res.CompletionMatches[0].CompletionText | Should -Be "`"$expectedPath`""
+        }
+
+        It "Relative path completion for using <UsingKind> statement when AST extent has file identity" -TestCases @(
+            @{UsingKind = "module";  ExpectedFileName = 'UsingFileCompletionModuleTest.psm1'}
+            @{UsingKind = "assembly";ExpectedFileName = 'UsingFileCompletionAssemblyTest.dll'}
+        ) -test {
+            param($UsingKind, $ExpectedFileName)
+            $scriptText = "using $UsingKind .\UsingFileCompletion"
+            $tokens = $null
+            $scriptAst = [System.Management.Automation.Language.Parser]::ParseInput(
+                $scriptText,
+                (Join-Path -Path $tempDir -ChildPath ScriptInEditor.ps1),
+                [ref] $tokens,
+                [ref] $null)
+
+            $cursorPosition = $scriptAst.Extent.StartScriptPosition.
+                GetType().
+                GetMethod('CloneWithNewOffset', [System.Reflection.BindingFlags]'NonPublic, Instance').
+                Invoke($scriptAst.Extent.StartScriptPosition, @($scriptText.Length - 1))
+
+            Push-Location -LiteralPath $PSHOME
+            $TestFile = Join-Path -Path $tempDir -ChildPath $ExpectedFileName
+            $null = New-Item -Path $TestFile
+            $res = TabExpansion2 -ast $scriptAst -tokens $tokens -positionOfCursor $cursorPosition
+            Pop-Location
+                        
+            $ExpectedPath = Join-Path -Path '.\' -ChildPath $ExpectedFileName
+            $res.CompletionMatches.CompletionText | Where-Object {$_ -Like "*$ExpectedFileName"} | Should -Be $ExpectedPath
         }
 
         It "Should handle '~' in completiontext when it's used to refer to home in input" {
@@ -1588,6 +2186,7 @@ class InheritedClassTest : System.Attribute
                 @{ inputStr = 'gmo Microsoft.PowerShell.U'; expected = 'Microsoft.PowerShell.Utility'; setup = $null }
                 @{ inputStr = 'rmo Microsoft.PowerShell.U'; expected = 'Microsoft.PowerShell.Utility'; setup = $null }
                 @{ inputStr = 'gcm -Module Microsoft.PowerShell.U'; expected = 'Microsoft.PowerShell.Utility'; setup = $null }
+                @{ inputStr = 'gcm -ExcludeModule Microsoft.PowerShell.U'; expected = 'Microsoft.PowerShell.Utility'; setup = $null }
                 @{ inputStr = 'gmo -list PackageM'; expected = 'PackageManagement'; setup = $null }
                 @{ inputStr = 'gcm -Module PackageManagement Find-Pac'; expected = 'Find-Package'; setup = $null }
                 @{ inputStr = 'ipmo PackageM'; expected = 'PackageManagement'; setup = $null }
@@ -1654,6 +2253,10 @@ class InheritedClassTest : System.Attribute
             $res.CompletionMatches[0].CompletionText | Should -BeExactly $afterTab
         }
 
+        It "Tab completion UNC path with filesystem provider" -Skip:(!$IsWindows) {
+            $res = TabExpansion2 -inputScript 'Filesystem::\\localhost\admin'
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Filesystem::\\localhost\ADMIN$'
+        }
 
         It "Tab completion for registry" -Skip:(!$IsWindows) {
             $beforeTab = 'registry::HKEY_l'
@@ -2505,15 +3108,18 @@ dir -Recurse `
     Context "Module cmdlet completion tests" {
         It "ArugmentCompleter for PSEdition should work for '<cmd>'" -TestCases @(
             @{cmd = "Get-Module -PSEdition "; expected = "Desktop", "Core"}
+            @{cmd = "Get-Module -PSEdition '"; expected = "'Desktop'", "'Core'"}
+            @{cmd = "Get-Module -PSEdition """; expected = """Desktop""", """Core"""}
+            @{cmd = "Get-Module -PSEdition 'Desk"; expected = "'Desktop'"}
+            @{cmd = "Get-Module -PSEdition ""Desk"; expected = """Desktop"""}
+            @{cmd = "Get-Module -PSEdition Co"; expected = "Core"}
+            @{cmd = "Get-Module -PSEdition 'Co"; expected = "'Core'"}
+            @{cmd = "Get-Module -PSEdition ""Co"; expected = """Core"""}
         ) {
             param($cmd, $expected)
             $res = TabExpansion2 -inputScript $cmd -cursorColumn $cmd.Length
-            $res.CompletionMatches | Should -HaveCount $expected.Count
-            $completionOptions = ""
-            foreach ($completion in $res.CompletionMatches) {
-                $completionOptions += $completion.ListItemText
-            }
-            $completionOptions | Should -BeExactly ([string]::Join("", $expected))
+            $completionText = $res.CompletionMatches.CompletionText
+            $completionText -join ' ' | Should -BeExactly ($expected -join ' ')
         }
     }
 
@@ -2832,6 +3438,18 @@ function MyFunction ($param1, $param2)
         $Text = '[abcdefghijklmnopqrstuvwxyz]'
         $res = TabExpansion2 -inputScript $Text -cursorColumn ($Text.Length - 1)
         $res.CompletionMatches | Should -HaveCount 0
+    }
+}
+
+Describe "TabCompletion elevated tests" -Tags CI, RequireAdminOnWindows {
+    It "Tab completion UNC path with spaces" -Skip:(!$IsWindows) {
+        $Share = New-SmbShare -Temporary -ReadAccess (whoami.exe) -Path C:\ -Name "Test Share"
+        $res = TabExpansion2 -inputScript '\\localhost\test'
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly "& '\\localhost\Test Share'"
+        if ($null -ne $Share)
+        {
+            Remove-SmbShare -InputObject $Share -Force -Confirm:$false
+        }
     }
 }
 

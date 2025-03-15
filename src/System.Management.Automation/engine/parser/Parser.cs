@@ -3004,8 +3004,8 @@ namespace System.Management.Automation.Language
                         dropIntoDebugger: true);
                 }
 
-                // Configuration is not supported on ARM64
-                if (PsUtils.IsRunningOnProcessorArchitectureARM())
+                // Configuration is not supported for ARM or ARM64 process architecture.
+                if (PsUtils.IsRunningOnProcessArchitectureARM())
                 {
                     ReportError(
                         configurationToken.Extent,
@@ -7154,7 +7154,7 @@ namespace System.Management.Automation.Language
                             ParserStrings.UnexpectedAttribute,
                             lastAttribute.TypeName.FullName);
 
-                        return new ErrorExpressionAst(ExtentOf(token, lastAttribute));
+                        return new ErrorExpressionAst(ExtentOf(token, lastAttribute), attributes);
                     }
 
                     expr = new AttributedExpressionAst(ExtentOf(lastAttribute, child), lastAttribute, child);

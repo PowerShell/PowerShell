@@ -353,4 +353,25 @@ using namespace &lt;AliasName&gt; = &lt;.NET-namespace&gt;</value>
 
 using type &lt;AliasName&gt; = &lt;.NET-type&gt;</value>
   </data>
+  <data name="RegistryStringToolTip" xml:space="preserve">
+    <value>A normal string.</value>
+  </data>
+  <data name="RegistryExpandStringToolTip" xml:space="preserve">
+    <value>A string that contains unexpanded references to environment variables that are expanded when the value is retrieved.</value>
+  </data>
+  <data name="RegistryBinaryToolTip" xml:space="preserve">
+    <value>Binary data in any form.</value>
+  </data>
+  <data name="RegistryDWordToolTip" xml:space="preserve">
+    <value>A 32-bit binary number.</value>
+  </data>
+  <data name="RegistryMultiStringToolTip" xml:space="preserve">
+    <value>An array of strings.</value>
+  </data>
+  <data name="RegistryQWordToolTip" xml:space="preserve">
+    <value>A 64-bit binary number.</value>
+  </data>
+  <data name="RegistryUnknownToolTip" xml:space="preserve">
+    <value>An unsupported registry data type.</value>
+  </data>
 </root>
