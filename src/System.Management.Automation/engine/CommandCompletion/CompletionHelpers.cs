@@ -56,22 +56,20 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Handles and processes a string that starts and/or ends with single or double quotes.
-        /// Removes the front quote if present, and optionally the back quote if it matches the front quote.
-        /// Updates the input string by reference and returns the type of quote used.
+        /// Removes wrapping quotes from a string and returns the quote used, if present.
         /// </summary>
         /// <param name="wordToComplete">
-        /// The string to process, which may be surrounded by single or double quotes.
-        /// This parameter is passed by reference and is updated to exclude processed quotes.
+        /// The string to process, potentially surrounded by single or double quotes.
+        /// This parameter is updated in-place to exclude the removed quotes.
         /// </param>
         /// <returns>
-        /// Returns a string representing the quote type used (single or double) if a front quote is detected.
-        /// Returns an empty string if no front quote is found or if the input is empty.
+        /// The type of quote detected (single or double), or an empty string if no quote is found.
         /// </returns>
         /// <remarks>
-        /// The method detects single (' or ') and double (" or ") quotes, removes them as needed,
-        /// and modifies the input string in-place. It ensures quotes are matched and only strips
-        /// the back quote if it matches the front quote.
+        /// This method checks for single or double quotes at the start and end of the string.
+        /// If wrapping quotes are detected and match, both are removed; otherwise, only the front quote is removed.
+        /// The string is updated in-place, and only matching front-and-back quotes are stripped.
+        /// If no quotes are detected or the input is empty, the original string remains unchanged.
         /// </remarks>
         internal static string HandleDoubleAndSingleQuote(ref string wordToComplete)
         {
