@@ -293,79 +293,48 @@ Describe "Certificate Provider tests" -Tags "Feature" {
         }
     }
 
-    Context "SAN DNS Name Tests" {
+    Context "X509Certificate2 DnsNameList Property Tests" {
         BeforeAll {
-            $configFilePath = Join-Path -Path $TestDrive -ChildPath 'openssl.cnf'
-            $keyFilePath = Join-Path -Path $TestDrive -ChildPath 'privateKey.key'
-            $certFilePath = Join-Path -Path $TestDrive -ChildPath 'certificate.crt'
-            $pfxFilePath = Join-Path -Path $TestDrive -ChildPath 'certificate.pfx'
-            $password = New-CertificatePassword | ConvertFrom-SecureString -AsPlainText
-
-            $config = @"
-            [ req ]
-            default_bits       = 2048
-            distinguished_name = req_distinguished_name
-            req_extensions     = v3_req
-            prompt             = no
-
-            [ req_distinguished_name ]
-            CN                 = yourdomain.com
-
-            [ v3_req ]
-            subjectAltName     = @alt_names
-
-            [ alt_names ]
-            DNS.1              = yourdomain.com
-            DNS.2              = www.yourdomain.com
-            DNS.3              = api.yourdomain.com
-            DNS.4              = xn--mnchen-3ya.com
-            DNS.5              = xn--80aaxitdbjr.com
-            DNS.6              = xn--caf-dma.com
-"@
-
-            # Write the configuration to the specified path
-            Set-Content -Path $configFilePath -Value $config
-
-            # Generate the self-signed certificate with SANs
-            openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout $keyFilePath -out $certFilePath -config $configFilePath -extensions v3_req
-
-            # Create the PFX file
-            openssl pkcs12 -export -out $pfxFilePath -inkey $keyFilePath -in $certFilePath -passout pass:$password
+            $testDataCertificatesPath = Join-Path -Path $PSScriptRoot -ChildPath 'TestData' -AdditionalChildPath 'Certificates'
         }
 
-        It "Should set DNSNameList from SAN extensions" {
-            $cert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2($pfxFilePath, $password)
+        It "<Title>" -TestCases @(
+            @{
+                Title              = 'Should set DNSNameList from SAN extensions'
+                ExpectedDnsNameList = @(
+                    [PSCustomObject]@{ Punycode = "yourdomain.com"; Unicode = "yourdomain.com" }
+                    [PSCustomObject]@{ Punycode = "www.yourdomain.com"; Unicode = "www.yourdomain.com" }
+                    [PSCustomObject]@{ Punycode = "api.yourdomain.com"; Unicode = "api.yourdomain.com" }
+                    [PSCustomObject]@{ Punycode = "xn--mnchen-3ya.com"; Unicode = "münchen.com" }
+                    [PSCustomObject]@{ Punycode = "xn--80aaxitdbjr.com"; Unicode = "папитрока.com" }
+                    [PSCustomObject]@{ Punycode = "xn--caf-dma.com"; Unicode = "café.com" }
+                )
 
-            $expectedDnsNameList = @(
-                [PSCustomObject]@{
-                    Punycode = "yourdomain.com"
-                    Unicode  = "yourdomain.com"
-                }
-                [PSCustomObject]@{
-                    Punycode = "www.yourdomain.com"
-                    Unicode  = "www.yourdomain.com"
-                }
-                [PSCustomObject]@{
-                    Punycode = "api.yourdomain.com"
-                    Unicode  = "api.yourdomain.com"
-                }
-                [PSCustomObject]@{
-                    Punycode = "xn--mnchen-3ya.com"
-                    Unicode  = "münchen.com"
-                }
-                [PSCustomObject]@{
-                    Punycode = "xn--80aaxitdbjr.com"
-                    Unicode  = "папитрока.com"
-                }
-                [PSCustomObject]@{
-                    Punycode = "xn--caf-dma.com"
-                    Unicode  = "café.com"
-                }
-            )
+                # openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout $keyFilePath -out $certFilePath -subj '/CN=yourdomain.com' -addext 'subjectAltName=DNS:yourdomain.com,DNS:www.yourdomain.com,DNS:api.yourdomain.com,DNS:xn--mnchen-3ya.com,DNS:xn--80aaxitdbjr.com,DNS:xn--caf-dma.com'
+                # openssl pkcs12 -export -out $pfxFilePath -inkey $keyFilePath -in $certFilePath -passout pass:
+                CertificatePath = Join-Path -Path $testDataCertificatesPath -ChildPath 'certificate1.pfx'
+            }
+            @{
+                Title              = 'Should set DNSNameList from Subject Distinguished name'
+                ExpectedDnsNameList = @(
+                    [PSCustomObject]@{ Punycode = "yourdomain.com"; Unicode = "yourdomain.com" }
+                    [PSCustomObject]@{ Punycode = "www.yourdomain.com"; Unicode = "www.yourdomain.com" }
+                )
 
+                # openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout $keyFilePath -out $certFilePath -subj '/CN=yourdomain.com' -addext 'subjectAltName=DNS:www.yourdomain.com'
+                # openssl pkcs12 -export -out $pfxFilePath -inkey $keyFilePath -in $certFilePath -passout pass:
+                CertificatePath = Join-Path -Path $testDataCertificatesPath -ChildPath 'certificate2.pfx'
+            }
+        ) {
+            param($ExpectedDnsNameList, $CertificatePath)
+
+            # Create the certificate object
+            $cert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2($CertificatePath)
+
+            # Validate DnsNameList is correct
             $cert | Should -Not -BeNullOrEmpty
-            $cert.DnsNameList | Should -HaveCount 6
-            ($cert.DnsNameList | ConvertTo-Json -Compress)  | Should -BeExactly ($expectedDnsNameList | ConvertTo-Json -Compress)
+            $cert.DnsNameList | Should -HaveCount $ExpectedDnsNameList.Count
+            ($cert.DnsNameList | ConvertTo-Json -Compress) | Should -BeExactly ($ExpectedDnsNameList | ConvertTo-Json -Compress)
         }
     }
 }

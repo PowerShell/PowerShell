@@ -1,4 +1,5 @@
 [
+  "PSDnsNameSubjectNameCertificateParser",
   "PSFeedbackProvider",
   "PSLoadAssemblyFromNativeCode",
   "PSNativeWindowsTildeExpansion",
