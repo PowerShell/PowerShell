@@ -552,8 +552,7 @@ namespace System.Management.Automation
             {
                 keywordAst ??= context.RelatedAsts[i] as DynamicKeywordStatementAst;
                 parameterAst = (context.RelatedAsts[i] as CommandParameterAst);
-                if (parameterAst != null)
-                    break;
+                if (parameterAst != null) break;
             }
 
             if (parameterAst != null)
