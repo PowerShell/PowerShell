@@ -109,6 +109,29 @@ namespace System.Management.Automation
         private static bool ContainsCharsToCheck(ReadOnlySpan<char> text, bool escape)
             => text.ContainsAny(escape ? s_escapeCharsToCheck : s_defaultCharsToCheck);
 
+        /// <summary>
+        /// Quotes and escapes a given completion text based on the specified options.
+        /// </summary>
+        /// <param name="completionText">
+        /// The text to be quoted and potentially escaped.
+        /// </param>
+        /// <param name="quote">
+        /// The quote character to use for enclosing the text. Defaults to a single quote ('') if not provided.
+        /// </param>
+        /// <param name="escapeSingleQuoteChars">
+        /// Indicates whether single quote characters in the text should be escaped. Defaults to <c>true</c>.
+        /// </param>
+        /// <param name="escapeDoubleQuoteChars">
+        /// Indicates whether special characters (e.g., backticks and dollar signs) in the text
+        /// should be escaped when using double quotes. Defaults to <c>false</c>.
+        /// </param>
+        /// <param name="escapeGlobbingPathChars">
+        /// Indicates whether globbing path characters (e.g., square brackets) in the text should be escaped.
+        /// Defaults to <c>false</c>.
+        /// </param>
+        /// <returns>
+        /// The quoted and optionally escaped version of the <paramref name="completionText"/>.
+        /// </returns>
         internal static string QuoteCompletionText(
             string completionText,
             string quote,
