@@ -67,9 +67,9 @@ namespace Microsoft.PowerShell.Commands
 
             string combinedChildPath = string.Empty;
 
-            if (ChildPath != null)
+            if (this.ChildPath != null)
             {
-                foreach (string childPath in ChildPath)
+                foreach (string childPath in this.ChildPath)
                 {
                     combinedChildPath = SessionState.Path.Combine(combinedChildPath, childPath, CmdletProviderContext);
                 }
