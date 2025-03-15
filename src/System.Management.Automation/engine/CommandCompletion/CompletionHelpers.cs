@@ -38,9 +38,7 @@ namespace System.Management.Automation
             {
                 if (pattern.IsMatch(value))
                 {
-                    string completionText = quote == string.Empty
-                        ? value
-                        : quote + value + quote;
+                    string completionText = QuoteCompletionText(value, quote, escapeGlobbingPathChars: false);
 
                     string listItemText = value;
 
@@ -110,5 +108,31 @@ namespace System.Management.Automation
 
         private static bool ContainsCharsToCheck(ReadOnlySpan<char> text, bool escape)
             => text.ContainsAny(escape ? s_escapeCharsToCheck : s_defaultCharsToCheck);
+
+        internal static string QuoteCompletionText(
+            string completionText,
+            string quote,
+            bool escapeGlobbingPathChars)
+        {
+            if (CompletionRequiresQuotes(completionText, escapeGlobbingPathChars))
+            {
+                string quoteInUse = string.IsNullOrEmpty(quote) ? "'" : quote;
+
+                completionText = quoteInUse == "'"
+                    ? completionText.Replace("'", "''")
+                    : completionText.Replace("`", "``").Replace("$", "`$");
+
+                if (escapeGlobbingPathChars)
+                {
+                    completionText = quoteInUse == "'"
+                        ? completionText.Replace("[", "`[").Replace("]", "`]")
+                        : completionText.Replace("[", "``[").Replace("]", "``]");
+                }
+
+                return quoteInUse + completionText + quoteInUse;
+            }
+
+            return quote + completionText + quote;
+        }
     }
 }
