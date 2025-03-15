@@ -55,36 +55,68 @@ namespace System.Management.Automation
             }
         }
 
+        /// <summary>
+        /// Handles and processes a string that starts and/or ends with single or double quotes.
+        /// Removes the front quote if present, and optionally the back quote if it matches the front quote.
+        /// Updates the input string by reference and returns the type of quote used.
+        /// </summary>
+        /// <param name="wordToComplete">
+        /// The string to process, which may be surrounded by single or double quotes.
+        /// This parameter is passed by reference and is updated to exclude processed quotes.
+        /// </param>
+        /// <returns>
+        /// Returns a string representing the quote type used (' or ") if a front quote is detected.
+        /// Returns an empty string if no front quote is found or if the input is empty.
+        /// </returns>
+        /// <remarks>
+        /// The method detects single (' or ') and double (" or ") quotes, removes them as needed,
+        /// and modifies the input string in-place. It ensures quotes are matched and only strips
+        /// the back quote if it matches the front quote.
+        /// </remarks>
         internal static string HandleDoubleAndSingleQuote(ref string wordToComplete)
         {
-            string quote = string.Empty;
-
-            if (!string.IsNullOrEmpty(wordToComplete) && (wordToComplete[0].IsSingleQuote() || wordToComplete[0].IsDoubleQuote()))
+            if (string.IsNullOrEmpty(wordToComplete))
             {
-                char frontQuote = wordToComplete[0];
-                int length = wordToComplete.Length;
-
-                if (length == 1)
-                {
-                    wordToComplete = string.Empty;
-                    quote = frontQuote.IsSingleQuote() ? "'" : "\"";
-                }
-                else if (length > 1)
-                {
-                    if ((wordToComplete[length - 1].IsDoubleQuote() && frontQuote.IsDoubleQuote()) || (wordToComplete[length - 1].IsSingleQuote() && frontQuote.IsSingleQuote()))
-                    {
-                        wordToComplete = wordToComplete.Substring(1, length - 2);
-                        quote = frontQuote.IsSingleQuote() ? "'" : "\"";
-                    }
-                    else if (!wordToComplete[length - 1].IsDoubleQuote() && !wordToComplete[length - 1].IsSingleQuote())
-                    {
-                        wordToComplete = wordToComplete.Substring(1);
-                        quote = frontQuote.IsSingleQuote() ? "'" : "\"";
-                    }
-                }
+                return string.Empty;
             }
 
-            return quote;
+            char frontQuote = wordToComplete[0];
+
+            bool hasFrontSingleQuote = frontQuote.IsSingleQuote();
+            bool hasFrontDoubleQuote = frontQuote.IsDoubleQuote();
+
+            bool hasFrontQuote = hasFrontSingleQuote || hasFrontDoubleQuote;
+
+            if (!hasFrontQuote)
+            {
+                return string.Empty;
+            }
+
+            string quoteInUse = hasFrontSingleQuote ? "'" : "\"";
+
+            int length = wordToComplete.Length;
+
+            if (length == 1)
+            {
+                wordToComplete = string.Empty;
+                return quoteInUse;
+            }
+
+            char backQuote = wordToComplete[length - 1];
+
+            bool hasBackSingleQuote = backQuote.IsSingleQuote();
+            bool hasBackDoubleQuote = backQuote.IsDoubleQuote();
+
+            bool hasFrontAndBackSingleQuote = hasFrontSingleQuote && hasBackSingleQuote;
+            bool hasFrontAndBackDoubleQuote = hasFrontDoubleQuote && hasBackDoubleQuote;
+
+            bool hasMatchingFrontAndBackQuote = hasFrontAndBackSingleQuote || hasFrontAndBackDoubleQuote;
+
+            wordToComplete = hasMatchingFrontAndBackQuote
+                ? wordToComplete.Substring(1, length - 2)
+                : wordToComplete.Substring(1);
+
+            return quoteInUse;
         }
 
         internal static bool CompletionRequiresQuotes(string completion, bool escape)
