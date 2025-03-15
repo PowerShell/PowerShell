@@ -66,7 +66,7 @@ namespace Microsoft.PowerShell.Commands
                 "Since Path is a mandatory parameter, paths should never be null");
 
             string combinedChildPath = string.Empty;
-            
+
             if (ChildPath != null)
             {
                 foreach (string childPath in ChildPath)
