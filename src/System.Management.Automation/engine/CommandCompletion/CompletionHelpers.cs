@@ -65,7 +65,7 @@ namespace System.Management.Automation
         /// This parameter is passed by reference and is updated to exclude processed quotes.
         /// </param>
         /// <returns>
-        /// Returns a string representing the quote type used (' or ") if a front quote is detected.
+        /// Returns a string representing the quote type used (single or double) if a front quote is detected.
         /// Returns an empty string if no front quote is found or if the input is empty.
         /// </returns>
         /// <remarks>
