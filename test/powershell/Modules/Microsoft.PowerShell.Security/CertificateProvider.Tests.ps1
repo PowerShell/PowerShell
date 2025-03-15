@@ -295,19 +295,12 @@ Describe "Certificate Provider tests" -Tags "Feature" {
 
     Context "X509Certificate2 DnsNameList Property Tests" {
         BeforeAll {
-            $keyFilePath = Join-Path -Path $TestDrive -ChildPath 'privateKey.key'
-            $certFilePath = Join-Path -Path $TestDrive -ChildPath 'certificate.crt'
-            $pfxFilePath = Join-Path -Path $TestDrive -ChildPath 'certificate.pfx'
-            $password = New-CertificatePassword | ConvertFrom-SecureString -AsPlainText
+            $testDataCertificatesPath = Join-Path -Path $PSScriptRoot -ChildPath 'TestData' -AdditionalChildPath 'Certificates'
         }
 
         It "<Title>" -TestCases @(
             @{
                 Title              = 'Should set DNSNameList from SAN extensions'
-                Commands           = @(
-                    "openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout $keyFilePath -out $certFilePath -subj '/CN=yourdomain.com' -addext 'subjectAltName=DNS:yourdomain.com,DNS:www.yourdomain.com,DNS:api.yourdomain.com,DNS:xn--mnchen-3ya.com,DNS:xn--80aaxitdbjr.com,DNS:xn--caf-dma.com'",
-                    "openssl pkcs12 -export -out $pfxFilePath -inkey $keyFilePath -in $certFilePath -passout pass:$password"
-                )
                 ExpectedDnsNameList = @(
                     [PSCustomObject]@{ Punycode = "yourdomain.com"; Unicode = "yourdomain.com" }
                     [PSCustomObject]@{ Punycode = "www.yourdomain.com"; Unicode = "www.yourdomain.com" }
@@ -316,37 +309,32 @@ Describe "Certificate Provider tests" -Tags "Feature" {
                     [PSCustomObject]@{ Punycode = "xn--80aaxitdbjr.com"; Unicode = "папитрока.com" }
                     [PSCustomObject]@{ Punycode = "xn--caf-dma.com"; Unicode = "café.com" }
                 )
+
+                # openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout $keyFilePath -out $certFilePath -subj '/CN=yourdomain.com' -addext 'subjectAltName=DNS:yourdomain.com,DNS:www.yourdomain.com,DNS:api.yourdomain.com,DNS:xn--mnchen-3ya.com,DNS:xn--80aaxitdbjr.com,DNS:xn--caf-dma.com'
+                # openssl pkcs12 -export -out $pfxFilePath -inkey $keyFilePath -in $certFilePath -passout pass:
+                CertificatePath = Join-Path -Path $testDataCertificatesPath -ChildPath 'certificate1.pfx'
             }
             @{
                 Title              = 'Should set DNSNameList from Subject Distinguished name'
-                Commands           = @(
-                    "openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout $keyFilePath -out $certFilePath -subj '/CN=yourdomain.com' -addext 'subjectAltName=DNS:www.yourdomain.com'",
-                    "openssl pkcs12 -export -out $pfxFilePath -inkey $keyFilePath -in $certFilePath -passout pass:$password"
-                )
                 ExpectedDnsNameList = @(
                     [PSCustomObject]@{ Punycode = "yourdomain.com"; Unicode = "yourdomain.com" }
                     [PSCustomObject]@{ Punycode = "www.yourdomain.com"; Unicode = "www.yourdomain.com" }
                 )
+
+                # openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout $keyFilePath -out $certFilePath -subj '/CN=yourdomain.com' -addext 'subjectAltName=DNS:www.yourdomain.com'
+                # openssl pkcs12 -export -out $pfxFilePath -inkey $keyFilePath -in $certFilePath -passout pass:
+                CertificatePath = Join-Path -Path $testDataCertificatesPath -ChildPath 'certificate2.pfx'
             }
         ) {
-            param($Commands, $ExpectedDnsNameList)
-
-            # Execute the OpenSSL commands in silent mode
-            Invoke-Expression -Command "& { $($Commands -join ';') } 2>&1 1>`$null"
+            param($ExpectedDnsNameList, $CertificatePath)
 
             # Create the certificate object
-            $cert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2($pfxFilePath, $password)
+            $cert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2($CertificatePath)
 
             # Validate DnsNameList is correct
             $cert | Should -Not -BeNullOrEmpty
             $cert.DnsNameList | Should -HaveCount $ExpectedDnsNameList.Count
             ($cert.DnsNameList | ConvertTo-Json -Compress) | Should -BeExactly ($ExpectedDnsNameList | ConvertTo-Json -Compress)
-        }
-
-        AfterEach {
-            Remove-Item -Path $keyFilePath -Force -ErrorAction SilentlyContinue
-            Remove-Item -Path $certFilePath -Force -ErrorAction SilentlyContinue
-            Remove-Item -Path $pfxFilePath -Force -ErrorAction SilentlyContinue
         }
     }
 }

@@ -3,15 +3,10 @@
 
 Describe 'CertificateProvider.PSDnsNameSubjectNameCertificateParser' -Tags "CI" {
     BeforeAll {
-        Import-Module (Join-Path -Path $PSScriptRoot 'certificateCommon.psm1') -Force
-
-        $keyFilePath = Join-Path -Path $TestDrive -ChildPath 'privateKey.key'
-        $certFilePath = Join-Path -Path $TestDrive -ChildPath 'certificate.crt'
-        $pfxFilePath = Join-Path -Path $TestDrive -ChildPath 'certificate.pfx'
-        $password = New-CertificatePassword | ConvertFrom-SecureString -AsPlainText
-
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
         $PSDefaultParameterValues['It:Skip'] = -not [ExperimentalFeature]::IsEnabled('PSDnsNameSubjectNameCertificateParser')
+
+        $testDataCertificatesPath = Join-Path -Path $PSScriptRoot -ChildPath 'TestData' -AdditionalChildPath 'Certificates'
     }
 
     AfterAll {
@@ -21,74 +16,65 @@ Describe 'CertificateProvider.PSDnsNameSubjectNameCertificateParser' -Tags "CI" 
     It "<Title>" -TestCases @(
         @{
             Title              = 'Should set DNSNameList from multi-value RDN with special characters'
-            Commands           = @(
-                "openssl req -x509 -nodes -keyout $keyFilePath -subj '/CN=exämple.com+SN=SpecialSerial123' -out $certFilePath",
-                "openssl pkcs12 -export -out $pfxFilePath -inkey $keyFilePath -in $certFilePath -passout pass:$password"
-            )
             ExpectedDnsNameList = @(
                 [PSCustomObject]@{ Punycode = "exämple.com"; Unicode = "exämple.com" }
             )
+
+            # openssl req -x509 -nodes -keyout $keyFilePath -subj '/CN=exämple.com+SN=SpecialSerial123' -out $certFilePath
+            # openssl pkcs12 -export -out $pfxFilePath -inkey $keyFilePath -in $certFilePath -passout pass:
+            CertificatePath = Join-Path -Path $testDataCertificatesPath -ChildPath 'certificate3.pfx'
         }
         @{
             Title              = 'Should handle RDN with subject alternative names'
-            Commands           = @(
-                "openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout $keyFilePath -out $certFilePath -subj '/CN=example.com' -addext 'subjectAltName=DNS:alt.example.com,DNS:another.example.com'",
-                "openssl pkcs12 -export -out $pfxFilePath -inkey $keyFilePath -in $certFilePath -passout pass:$password"
-            )
             ExpectedDnsNameList = @(
                 [PSCustomObject]@{ Punycode = "example.com"; Unicode = "example.com" }
                 [PSCustomObject]@{ Punycode = "alt.example.com"; Unicode = "alt.example.com" }
                 [PSCustomObject]@{ Punycode = "another.example.com"; Unicode = "another.example.com" }
             )
+
+            # openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout $keyFilePath -out $certFilePath -subj '/CN=example.com' -addext 'subjectAltName=DNS:alt.example.com,DNS:another.example.com'
+            # openssl pkcs12 -export -out $pfxFilePath -inkey $keyFilePath -in $certFilePath -passout pass:
+            CertificatePath = Join-Path -Path $testDataCertificatesPath -ChildPath 'certificate4.pfx'
         }
         @{
             Title              = 'Should handle long and complex RDN'
-            Commands           = @(
-                "openssl req -x509 -nodes -keyout $keyFilePath -subj '/C=AU/ST=NSW/L=Sydney/O=ExampleOrg/CN=longexample.com+OU=Engineering' -out $certFilePath",
-                "openssl pkcs12 -export -out $pfxFilePath -inkey $keyFilePath -in $certFilePath -passout pass:$password"
-            )
             ExpectedDnsNameList = @(
                 [PSCustomObject]@{ Punycode = "longexample.com"; Unicode = "longexample.com" }
             )
+
+            # openssl req -x509 -nodes -keyout $keyFilePath -subj '/C=AU/ST=NSW/L=Sydney/O=ExampleOrg/CN=longexample.com+OU=Engineering' -out $certFilePath
+            # openssl pkcs12 -export -out $pfxFilePath -inkey $keyFilePath -in $certFilePath -passout pass:
+            CertificatePath = Join-Path -Path $testDataCertificatesPath -ChildPath 'certificate5.pfx'
         }
         @{
             Title              = 'Should handle empty RDN attributes gracefully'
-            Commands           = @(
-                "openssl req -x509 -nodes -keyout $keyFilePath -subj '/CN=/OU=' -out $certFilePath",
-                "openssl pkcs12 -export -out $pfxFilePath -inkey $keyFilePath -in $certFilePath -passout pass:$password"
-            )
             ExpectedDnsNameList = @(
                 # Expect no entries due to empty attributes
             )
+
+            # openssl req -x509 -nodes -keyout $keyFilePath -subj '/CN=/OU=' -out $certFilePath
+            # openssl pkcs12 -export -out $pfxFilePath -inkey $keyFilePath -in $certFilePath -passout pass:
+            CertificatePath = Join-Path -Path $testDataCertificatesPath -ChildPath 'certificate6.pfx'
         }
         @{
             Title              = 'Should validate DNSNameList with mixed case RDN'
-            Commands           = @(
-                "openssl req -x509 -nodes -keyout $keyFilePath -subj '/CN=MiXeDCasE.com+OU=TestCase' -out $certFilePath",
-                "openssl pkcs12 -export -out $pfxFilePath -inkey $keyFilePath -in $certFilePath -passout pass:$password"
-            )
             ExpectedDnsNameList = @(
                 [PSCustomObject]@{ Punycode = "MiXeDCasE.com"; Unicode = "MiXeDCasE.com" }
             )
+
+            # openssl req -x509 -nodes -keyout $keyFilePath -subj '/CN=MiXeDCasE.com+OU=TestCase' -out $certFilePath
+            # openssl pkcs12 -export -out $pfxFilePath -inkey $keyFilePath -in $certFilePath -passout pass:
+            CertificatePath = Join-Path -Path $testDataCertificatesPath -ChildPath 'certificate7.pfx'
         }
     ) {
-        param($Commands, $ExpectedDnsNameList)
-
-        # Execute the OpenSSL commands in silent mode
-        Invoke-Expression -Command "& { $($Commands -join ';') } 2>&1 1>`$null"
+        param($ExpectedDnsNameList, $CertificatePath)
 
         # Create the certificate object
-        $cert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2($pfxFilePath, $password)
+        $cert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2($CertificatePath)
 
         # Validate DnsNameList is correct
         $cert | Should -Not -BeNullOrEmpty
         $cert.DnsNameList | Should -HaveCount $ExpectedDnsNameList.Count
         ($cert.DnsNameList | ConvertTo-Json -Compress) | Should -BeExactly ($ExpectedDnsNameList | ConvertTo-Json -Compress)
-    }
-
-    AfterEach {
-        Remove-Item -Path $keyFilePath -Force -ErrorAction SilentlyContinue
-        Remove-Item -Path $certFilePath -Force -ErrorAction SilentlyContinue
-        Remove-Item -Path $pfxFilePath -Force -ErrorAction SilentlyContinue
     }
 }
