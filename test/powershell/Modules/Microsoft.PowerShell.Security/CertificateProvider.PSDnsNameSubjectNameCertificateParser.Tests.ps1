@@ -20,24 +20,55 @@ Describe 'CertificateProvider.PSDnsNameSubjectNameCertificateParser' -Tags "CI" 
 
     It "<Title>" -TestCases @(
         @{
-            Title              = 'Should set DNSNameList from Subject Distinguished name'
+            Title              = 'Should set DNSNameList from multi-value RDN with special characters'
             Commands           = @(
-                "openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout $keyFilePath -out $certFilePath -subj '/CN=yourdomain.com' -addext 'subjectAltName=DNS:www.yourdomain.com'",
+                "openssl req -x509 -nodes -keyout $keyFilePath -subj '/CN=exämple.com+SN=SpecialSerial123' -out $certFilePath",
                 "openssl pkcs12 -export -out $pfxFilePath -inkey $keyFilePath -in $certFilePath -passout pass:$password"
             )
             ExpectedDnsNameList = @(
-                [PSCustomObject]@{ Punycode = "yourdomain.com"; Unicode = "yourdomain.com" }
-                [PSCustomObject]@{ Punycode = "www.yourdomain.com"; Unicode = "www.yourdomain.com" }
+                [PSCustomObject]@{ Punycode = "exämple.com"; Unicode = "exämple.com" }
             )
         }
         @{
-            Title              = 'Should set DNSNameList for multi-value RDN'
+            Title              = 'Should handle RDN with subject alternative names'
             Commands           = @(
-                "openssl req -x509 -nodes -keyout $keyFilePath -subj '/C=DK/O=Ingen organisatorisk tilknytning/CN=yourdomain.com+serialNumber=XYZ:1111-2222-3-444444444444' -out $certFilePath",
+                "openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout $keyFilePath -out $certFilePath -subj '/CN=example.com' -addext 'subjectAltName=DNS:alt.example.com,DNS:another.example.com'",
                 "openssl pkcs12 -export -out $pfxFilePath -inkey $keyFilePath -in $certFilePath -passout pass:$password"
             )
             ExpectedDnsNameList = @(
-                [PSCustomObject]@{ Punycode = "yourdomain.com"; Unicode = "yourdomain.com" }
+                [PSCustomObject]@{ Punycode = "example.com"; Unicode = "example.com" }
+                [PSCustomObject]@{ Punycode = "alt.example.com"; Unicode = "alt.example.com" }
+                [PSCustomObject]@{ Punycode = "another.example.com"; Unicode = "another.example.com" }
+            )
+        }
+        @{
+            Title              = 'Should handle long and complex RDN'
+            Commands           = @(
+                "openssl req -x509 -nodes -keyout $keyFilePath -subj '/C=AU/ST=NSW/L=Sydney/O=ExampleOrg/CN=longexample.com+OU=Engineering' -out $certFilePath",
+                "openssl pkcs12 -export -out $pfxFilePath -inkey $keyFilePath -in $certFilePath -passout pass:$password"
+            )
+            ExpectedDnsNameList = @(
+                [PSCustomObject]@{ Punycode = "longexample.com"; Unicode = "longexample.com" }
+            )
+        }
+        @{
+            Title              = 'Should handle empty RDN attributes gracefully'
+            Commands           = @(
+                "openssl req -x509 -nodes -keyout $keyFilePath -subj '/CN=/OU=' -out $certFilePath",
+                "openssl pkcs12 -export -out $pfxFilePath -inkey $keyFilePath -in $certFilePath -passout pass:$password"
+            )
+            ExpectedDnsNameList = @(
+                # Expect no entries due to empty attributes
+            )
+        }
+        @{
+            Title              = 'Should validate DNSNameList with mixed case RDN'
+            Commands           = @(
+                "openssl req -x509 -nodes -keyout $keyFilePath -subj '/CN=MiXeDCasE.com+OU=TestCase' -out $certFilePath",
+                "openssl pkcs12 -export -out $pfxFilePath -inkey $keyFilePath -in $certFilePath -passout pass:$password"
+            )
+            ExpectedDnsNameList = @(
+                [PSCustomObject]@{ Punycode = "MiXeDCasE.com"; Unicode = "MiXeDCasE.com" }
             )
         }
     ) {
