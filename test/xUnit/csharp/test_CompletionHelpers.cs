@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System;
-using System.Linq;
 using System.Management.Automation;
 using Xunit;
 
@@ -38,8 +36,7 @@ namespace PSTests.Parallel
                 quote,
                 escapeSingleQuoteChars,
                 escapeDoubleQuoteChars,
-                escapeGlobbingPathChars
-            );
+                escapeGlobbingPathChars);
             Assert.Equal(expected, result);
         }
     }
