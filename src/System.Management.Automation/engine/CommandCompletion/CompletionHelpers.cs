@@ -64,17 +64,17 @@ namespace System.Management.Automation
 
             char frontQuote = wordToComplete[0];
 
-            bool isFrontQuoteSingleQuote = frontQuote.IsSingleQuote();
-            bool isFrontQuoteDoubleQuote = frontQuote.IsDoubleQuote();
+            bool hasFrontSingleQuote = frontQuote.IsSingleQuote();
+            bool hasFrontDoubleQuote = frontQuote.IsDoubleQuote();
 
-            bool hasFrontQuote = isFrontQuoteSingleQuote || isFrontQuoteDoubleQuote;
+            bool hasFrontQuote = hasFrontSingleQuote || hasFrontDoubleQuote;
 
             if (!hasFrontQuote)
             {
                 return string.Empty;
             }
 
-            string quoteInUse = isFrontQuoteSingleQuote ? "'" : "\"";
+            string quoteInUse = hasFrontSingleQuote ? "'" : "\"";
 
             int length = wordToComplete.Length;
 
@@ -86,11 +86,11 @@ namespace System.Management.Automation
 
             char backQuote = wordToComplete[length - 1];
 
-            bool isBackQuoteSingleQuote = backQuote.IsSingleQuote();
-            bool isBackQuoteDoubleQuote = backQuote.IsDoubleQuote();
+            bool hasBackSingleQuote = backQuote.IsSingleQuote();
+            bool hasBackDoubleQuote = backQuote.IsDoubleQuote();
 
-            bool hasFrontAndBackSingleQuote = isFrontQuoteSingleQuote && isBackQuoteSingleQuote;
-            bool hasFrontAndBackDoubleQuote = isFrontQuoteDoubleQuote && isBackQuoteDoubleQuote;
+            bool hasFrontAndBackSingleQuote = hasFrontSingleQuote && hasBackSingleQuote;
+            bool hasFrontAndBackDoubleQuote = hasFrontDoubleQuote && hasBackDoubleQuote;
 
             bool hasMatchingFrontAndBackQuote = hasFrontAndBackSingleQuote || hasFrontAndBackDoubleQuote;
 
