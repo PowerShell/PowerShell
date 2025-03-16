@@ -3528,6 +3528,10 @@ namespace System.Management.Automation
                         {
                             content = globbedTarget[0];
                         }
+                        else if (targetPath.Contains('`'))
+                        {
+                            content = WildcardPattern.Unescape(targetPath);
+                        }
                     }
 
                     NewItemPrivate(providerInstance, composedPath, type, content, context);
