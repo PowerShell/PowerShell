@@ -2272,7 +2272,8 @@ namespace Microsoft.PowerShell.Commands
                             if (!IsAbsolutePath(strTargetPath))
                             {
                                 // there is already a check before here so that strTargetPath should only resolve to 1 path
-                                strTargetPath = SessionState.Path.GetResolvedPSPathFromPSPath(strTargetPath).FirstOrDefault()?.Path;
+                                // strTargetPath = SessionState.Path.GetResolvedPSPathFromPSPath(strTargetPath).FirstOrDefault()?.Path;
+                                strTargetPath = SessionState.Path.GetUnresolvedProviderPathFromPSPath(strTargetPath);
                             }
 
                             exists = GetFileSystemInfo(strTargetPath, out isDirectory) != null;
