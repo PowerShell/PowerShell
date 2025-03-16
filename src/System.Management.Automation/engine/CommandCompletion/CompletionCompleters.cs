@@ -234,7 +234,7 @@ namespace System.Management.Automation
             syntax = string.IsNullOrEmpty(syntax) ? name : syntax;
             bool needAmpersand;
 
-            if (CompletionHelpers.CompletionRequiresQuotes(name))
+            if (CompletionHelpers.CompletionRequiresQuotes(name, false))
             {
                 needAmpersand = quote == string.Empty && addAmpersandIfNecessary;
                 string quoteInUse = quote == string.Empty ? "'" : quote;
@@ -524,7 +524,7 @@ namespace System.Management.Automation
                                   + moduleInfo.ModuleType.ToString() + "\r\nPath: "
                                   + moduleInfo.Path;
 
-                    if (CompletionHelpers.CompletionRequiresQuotes(completionText))
+                    if (CompletionHelpers.CompletionRequiresQuotes(completionText, false))
                     {
                         var quoteInUse = quote == string.Empty ? "'" : quote;
                         if (quoteInUse == "'")
@@ -1846,7 +1846,7 @@ namespace System.Management.Automation
                         string completionText = entry;
                         if (quote == string.Empty)
                         {
-                            if (CompletionHelpers.CompletionRequiresQuotes(entry))
+                            if (CompletionHelpers.CompletionRequiresQuotes(entry, false))
                             {
                                 realEntry = CodeGeneration.EscapeSingleQuotedStringContent(entry);
                                 completionText = "'" + realEntry + "'";
@@ -3220,7 +3220,7 @@ namespace System.Management.Automation
                         var completionText = eventLog.Log.ToString();
                         var listItemText = completionText;
 
-                        if (CompletionHelpers.CompletionRequiresQuotes(completionText))
+                        if (CompletionHelpers.CompletionRequiresQuotes(completionText, false))
                         {
                             var quoteInUse = quote == string.Empty ? "'" : quote;
                             if (quoteInUse == "'")
@@ -3311,7 +3311,7 @@ namespace System.Management.Automation
                     var completionText = psJob.Name;
                     var listItemText = completionText;
 
-                    if (CompletionHelpers.CompletionRequiresQuotes(completionText))
+                    if (CompletionHelpers.CompletionRequiresQuotes(completionText, false))
                     {
                         var quoteInUse = quote == string.Empty ? "'" : quote;
                         if (quoteInUse == "'")
@@ -3386,7 +3386,7 @@ namespace System.Management.Automation
                     var completionText = psJob.Name;
                     var listItemText = completionText;
 
-                    if (CompletionHelpers.CompletionRequiresQuotes(completionText))
+                    if (CompletionHelpers.CompletionRequiresQuotes(completionText, false))
                     {
                         var quoteInUse = quote == string.Empty ? "'" : quote;
                         if (quoteInUse == "'")
@@ -3526,7 +3526,7 @@ namespace System.Management.Automation
                         continue;
 
                     uniqueSet.Add(completionText);
-                    if (CompletionHelpers.CompletionRequiresQuotes(completionText))
+                    if (CompletionHelpers.CompletionRequiresQuotes(completionText, false))
                     {
                         var quoteInUse = quote == string.Empty ? "'" : quote;
                         if (quoteInUse == "'")
@@ -3579,7 +3579,7 @@ namespace System.Management.Automation
                 var completionText = providerInfo.Name;
                 var listItemText = completionText;
 
-                if (CompletionHelpers.CompletionRequiresQuotes(completionText))
+                if (CompletionHelpers.CompletionRequiresQuotes(completionText, false))
                 {
                     var quoteInUse = quote == string.Empty ? "'" : quote;
                     if (quoteInUse == "'")
@@ -3627,7 +3627,7 @@ namespace System.Management.Automation
                     var completionText = driveInfo.Name;
                     var listItemText = completionText;
 
-                    if (CompletionHelpers.CompletionRequiresQuotes(completionText))
+                    if (CompletionHelpers.CompletionRequiresQuotes(completionText, false))
                     {
                         var quoteInUse = quote == string.Empty ? "'" : quote;
                         if (quoteInUse == "'")
@@ -3678,7 +3678,7 @@ namespace System.Management.Automation
                         var completionText = serviceInfo.DisplayName;
                         var listItemText = completionText;
 
-                        if (CompletionHelpers.CompletionRequiresQuotes(completionText))
+                        if (CompletionHelpers.CompletionRequiresQuotes(completionText, false))
                         {
                             var quoteInUse = quote == string.Empty ? "'" : quote;
                             if (quoteInUse == "'")
@@ -3709,7 +3709,7 @@ namespace System.Management.Automation
                         var completionText = serviceInfo.Name;
                         var listItemText = completionText;
 
-                        if (CompletionHelpers.CompletionRequiresQuotes(completionText))
+                        if (CompletionHelpers.CompletionRequiresQuotes(completionText, false))
                         {
                             var quoteInUse = quote == string.Empty ? "'" : quote;
                             if (quoteInUse == "'")
@@ -3765,7 +3765,7 @@ namespace System.Management.Automation
                     completionText = completionText.Replace("*", "`*");
                 }
 
-                if (!completionText.Equals("$", StringComparison.Ordinal) && CompletionHelpers.CompletionRequiresQuotes(completionText))
+                if (!completionText.Equals("$", StringComparison.Ordinal) && CompletionHelpers.CompletionRequiresQuotes(completionText, false))
                 {
                     var quoteInUse = effectiveQuote == string.Empty ? "'" : effectiveQuote;
                     if (quoteInUse == "'")
@@ -3815,7 +3815,7 @@ namespace System.Management.Automation
                         var completionText = aliasInfo.Name;
                         var listItemText = completionText;
 
-                        if (CompletionHelpers.CompletionRequiresQuotes(completionText))
+                        if (CompletionHelpers.CompletionRequiresQuotes(completionText, false))
                         {
                             var quoteInUse = quote == string.Empty ? "'" : quote;
                             if (quoteInUse == "'")
@@ -3878,7 +3878,7 @@ namespace System.Management.Automation
                 var completionText = trace.Name;
                 var listItemText = completionText;
 
-                if (CompletionHelpers.CompletionRequiresQuotes(completionText))
+                if (CompletionHelpers.CompletionRequiresQuotes(completionText, false))
                 {
                     var quoteInUse = quote == string.Empty ? "'" : quote;
                     if (quoteInUse == "'")

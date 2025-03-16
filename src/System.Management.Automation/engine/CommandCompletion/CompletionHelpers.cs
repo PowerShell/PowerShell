@@ -14,6 +14,8 @@ namespace System.Management.Automation
     {
         private static readonly SearchValues<char> s_defaultCharsToCheck = SearchValues.Create("$`");
 
+        private static readonly SearchValues<char> s_escapeGlobbingPathCharsToCheck = SearchValues.Create("$[]`");
+
         /// <summary>
         /// Get matching completions from word to complete.
         /// This makes it easier to handle different variations of completions with consideration of quotes.
@@ -85,7 +87,7 @@ namespace System.Management.Automation
             return quote;
         }
 
-        internal static bool CompletionRequiresQuotes(string completion)
+        internal static bool CompletionRequiresQuotes(string completion, bool escapeGlobbingPathChars)
         {
             // If the tokenizer sees the completion as more than two tokens, or if there is some error, then
             // some form of quoting is necessary (if it's a variable, we'd need ${}, filenames would need [], etc.)
@@ -98,13 +100,13 @@ namespace System.Management.Automation
             if ((!requireQuote && tokens[0] is StringToken) ||
                 (tokens.Length == 2 && (tokens[0].TokenFlags & TokenFlags.Keyword) != 0))
             {
-                requireQuote = ContainsCharsToCheck(tokens[0].Text);
+                requireQuote = ContainsCharsToCheck(tokens[0].Text, escapeGlobbingPathChars);
             }
 
             return requireQuote;
         }
 
-        private static bool ContainsCharsToCheck(ReadOnlySpan<char> text)
-            => text.ContainsAny(s_defaultCharsToCheck);
+        private static bool ContainsCharsToCheck(ReadOnlySpan<char> text, bool escapeGlobbingPathChars)
+            => text.ContainsAny(escapeGlobbingPathChars ? s_escapeGlobbingPathCharsToCheck : s_defaultCharsToCheck);
     }
 }
