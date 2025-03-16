@@ -9,34 +9,22 @@ namespace PSTests.Parallel
     public class CompletionHelpersTests
     {
         [Theory]
-        [InlineData("word", "'", false, false, false, "'word'")]
-        [InlineData("word", "\"", false, false, false, "\"word\"")]
-        [InlineData("word's", "'", true, false, false, "'word''s'")]
-        [InlineData("`command`", "\"", false, true, false, "\"``command``\"")]
-        [InlineData("word$", "\"", false, true, false, "\"word`$\"")]
-        [InlineData("[word]", "'", true, false, true, "'`[word`]\'")]
-        [InlineData("[word]", "\"", false, true, true, "\"``[word``]\"")]
-        [InlineData("word", "", false, false, false, "word")]
-        [InlineData("word [value]", "'", true, false, true, "'word `[value`]\'")]
-        [InlineData("word [value]", "'", false, false, false, "'word [value]'")]
-        [InlineData("", "'", false, false, false, "''")]
-        [InlineData("", "", false, false, false, "''")]
-        [InlineData("word's", "'", false, false, false, "'word's'")]
-        [InlineData("word$", "\"", false, false, false, "\"word$\"")]
+        [InlineData("word", "'", false, "'word'")]
+        [InlineData("word", "\"", false, "\"word\"")]
+        [InlineData("word's", "'", true, "'word''s'")]
+        [InlineData("word's", "'", false, "'word's'")]
+        [InlineData("already 'quoted'", "'", true, "'already ''quoted'''")]
+        [InlineData("already 'quoted'", "'", false, "'already 'quoted''")]
+        [InlineData("", "'", true, "''")]
+        [InlineData("", "\"", false, "\"\"")]
+        [InlineData("'", "'", true, "''''")]
         public void TestQuoteCompletionText(
-            string completionText,
-            string quote,
-            bool escapeSingleQuoteChars,
-            bool escapeDoubleQuoteChars,
-            bool escapeGlobbingPathChars,
-            string expected)
+             string completionText,
+             string quote,
+             bool escapeSingleQuoteChars,
+             string expected)
         {
-            string result = CompletionHelpers.QuoteCompletionText(
-                completionText,
-                quote,
-                escapeSingleQuoteChars,
-                escapeDoubleQuoteChars,
-                escapeGlobbingPathChars);
+            string result = CompletionHelpers.QuoteCompletionText(completionText, quote, escapeSingleQuoteChars);
             Assert.Equal(expected, result);
         }
     }
