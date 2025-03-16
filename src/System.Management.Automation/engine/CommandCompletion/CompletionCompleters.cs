@@ -1834,23 +1834,8 @@ namespace System.Management.Automation
                     {
                         string realEntry = entry;
                         string completionText = entry;
-                        if (quote == string.Empty)
-                        {
-                            if (CompletionHelpers.CompletionRequiresQuotes(entry, false))
-                            {
-                                realEntry = CodeGeneration.EscapeSingleQuotedStringContent(entry);
-                                completionText = "'" + realEntry + "'";
-                            }
-                        }
-                        else
-                        {
-                            if (quote.Equals("'", StringComparison.OrdinalIgnoreCase))
-                            {
-                                realEntry = CodeGeneration.EscapeSingleQuotedStringContent(entry);
-                            }
 
-                            completionText = quote + realEntry + quote;
-                        }
+                        completionText = CompletionHelpers.QuoteCompletionText(completionText, quote);
 
                         result.Add(new CompletionResult(completionText, entry, CompletionResultType.ParameterValue, entry));
                     }
