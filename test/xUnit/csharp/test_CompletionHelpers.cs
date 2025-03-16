@@ -21,6 +21,7 @@ namespace PSTests.Parallel
         [InlineData("\"word's\"", "word's", "\"")]
         [InlineData("'word\"", "'word\"", "")]
         [InlineData("\"word'", "\"word'", "")]
+        [InlineData("'word\"s'", "word\"s", "'")]
         public void TestHandleDoubleAndSingleQuote(string wordToComplete, string expectedWordToComplete, string expectedQuote)
         {
             string quote = CompletionHelpers.HandleDoubleAndSingleQuote(ref wordToComplete);
