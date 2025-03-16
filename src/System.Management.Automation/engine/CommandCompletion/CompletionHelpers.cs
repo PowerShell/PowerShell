@@ -138,7 +138,7 @@ namespace System.Management.Automation
 
             if (escapeSingleQuoteChars && quoteInUse == "'")
             {
-                completionText = completionText.Replace("'", "''");
+                completionText = CodeGeneration.EscapeSingleQuotedStringContent(completionText);
             }
 
             return quoteInUse + completionText + quoteInUse;
