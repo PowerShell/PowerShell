@@ -116,7 +116,7 @@ namespace System.Management.Automation
         /// The text to be quoted and potentially escaped.
         /// </param>
         /// <param name="quote">
-        /// The quote character to use for enclosing the text. Defaults to a single quote ('') if not provided.
+        /// The quote character to use for enclosing the text. Defaults to a single quote if not provided.
         /// </param>
         /// <param name="escapeSingleQuoteChars">
         /// Indicates whether single quote characters in the text should be escaped. Defaults to <c>true</c>.
