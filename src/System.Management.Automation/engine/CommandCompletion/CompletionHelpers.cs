@@ -121,43 +121,24 @@ namespace System.Management.Automation
         /// <param name="escapeSingleQuoteChars">
         /// Indicates whether single quote characters in the text should be escaped. Defaults to <c>true</c>.
         /// </param>
-        /// <param name="escapeDoubleQuoteChars">
-        /// Indicates whether special characters (backticks and dollar signs) in the text
-        /// should be escaped when using double quotes. Defaults to <c>false</c>.
-        /// </param>
-        /// <param name="escapeGlobbingPathChars">
-        /// Indicates whether globbing path characters (square brackets) in the text should be escaped.
-        /// Defaults to <c>false</c>.
-        /// </param>
         /// <returns>
         /// The quoted and optionally escaped version of the <paramref name="completionText"/>.
         /// </returns>
         internal static string QuoteCompletionText(
             string completionText,
             string quote,
-            bool escapeSingleQuoteChars = true,
-            bool escapeDoubleQuoteChars = false,
-            bool escapeGlobbingPathChars = false)
+            bool escapeSingleQuoteChars = true)
         {
-            if (!CompletionRequiresQuotes(completionText, escapeGlobbingPathChars))
+            if (!CompletionRequiresQuotes(completionText, false))
             {
                 return quote + completionText + quote;
             }
 
             string quoteInUse = string.IsNullOrEmpty(quote) ? "'" : quote;
 
-            completionText = quoteInUse switch
+            if (escapeSingleQuoteChars && quoteInUse == "'")
             {
-                "'" when escapeSingleQuoteChars => completionText.Replace("'", "''"),
-                "\"" when escapeDoubleQuoteChars => completionText.Replace("`", "``").Replace("$", "`$"),
-                _ => completionText
-            };
-
-            if (escapeGlobbingPathChars)
-            {
-                string leftBracket = quoteInUse == "'" ? "`[" : "``[";
-                string rightBracket = quoteInUse == "'" ? "`]" : "``]";
-                completionText = completionText.Replace("[", leftBracket).Replace("]", rightBracket);
+                completionText = completionText.Replace("'", "''");
             }
 
             return quoteInUse + completionText + quoteInUse;
