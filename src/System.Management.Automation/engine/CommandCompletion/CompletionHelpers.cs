@@ -122,11 +122,11 @@ namespace System.Management.Automation
         /// Indicates whether single quote characters in the text should be escaped. Defaults to <c>true</c>.
         /// </param>
         /// <param name="escapeDoubleQuoteChars">
-        /// Indicates whether special characters (e.g., backticks and dollar signs) in the text
+        /// Indicates whether special characters (backticks and dollar signs) in the text
         /// should be escaped when using double quotes. Defaults to <c>false</c>.
         /// </param>
         /// <param name="escapeGlobbingPathChars">
-        /// Indicates whether globbing path characters (e.g., square brackets) in the text should be escaped.
+        /// Indicates whether globbing path characters (square brackets) in the text should be escaped.
         /// Defaults to <c>false</c>.
         /// </param>
         /// <returns>
