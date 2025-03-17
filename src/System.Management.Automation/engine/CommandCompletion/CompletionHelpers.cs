@@ -79,13 +79,10 @@ namespace System.Management.Automation
             }
 
             char frontQuote = wordToComplete[0];
-
             bool hasFrontSingleQuote = frontQuote.IsSingleQuote();
             bool hasFrontDoubleQuote = frontQuote.IsDoubleQuote();
 
-            bool hasFrontQuote = hasFrontSingleQuote || hasFrontDoubleQuote;
-
-            if (!hasFrontQuote)
+            if (!hasFrontSingleQuote && !hasFrontDoubleQuote)
             {
                 return string.Empty;
             }
@@ -93,7 +90,6 @@ namespace System.Management.Automation
             string quoteInUse = hasFrontSingleQuote ? "'" : "\"";
 
             int length = wordToComplete.Length;
-
             if (length == 1)
             {
                 wordToComplete = string.Empty;
@@ -101,20 +97,28 @@ namespace System.Management.Automation
             }
 
             char backQuote = wordToComplete[length - 1];
-
             bool hasBackSingleQuote = backQuote.IsSingleQuote();
             bool hasBackDoubleQuote = backQuote.IsDoubleQuote();
 
-            bool hasFrontAndBackSingleQuote = hasFrontSingleQuote && hasBackSingleQuote;
-            bool hasFrontAndBackDoubleQuote = hasFrontDoubleQuote && hasBackDoubleQuote;
+            bool hasMatchingFrontAndBackQuote =
+                (hasFrontSingleQuote && hasBackSingleQuote) || (hasFrontDoubleQuote && hasBackDoubleQuote);
 
-            bool hasMatchingFrontAndBackQuote = hasFrontAndBackSingleQuote || hasFrontAndBackDoubleQuote;
+            if (hasMatchingFrontAndBackQuote)
+            {
+                wordToComplete = wordToComplete.Substring(1, length - 2);
+                return quoteInUse;
+            }
 
-            wordToComplete = hasMatchingFrontAndBackQuote
-                ? wordToComplete.Substring(1, length - 2)
-                : wordToComplete.Substring(1);
+            bool hasValidFrontQuoteAndNoMatchingBackQuote = 
+                (hasFrontSingleQuote || hasFrontDoubleQuote) && !hasBackSingleQuote && !hasBackDoubleQuote;
 
-            return quoteInUse;
+            if (hasValidFrontQuoteAndNoMatchingBackQuote)
+            {
+                wordToComplete = wordToComplete.Substring(1);
+                return quoteInUse;
+            }
+
+            return string.Empty;
         }
 
         internal static bool CompletionRequiresQuotes(string completion, bool escape)
