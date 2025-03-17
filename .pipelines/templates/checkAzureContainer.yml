@@ -51,16 +51,6 @@ jobs:
       }
     displayName: 'Check suppress.json'
 
-  # Needed as per FAQ here: https://eng.ms/docs/products/onebranch/build/troubleshootingfaqs
-  - task: PowerShell@2
-    displayName: 'Update Az.Storage Module'
-    inputs:
-      targetType: 'inline'
-      script: |
-        Get-PackageProvider -Name NuGet -ForceBootstrap
-        Install-Module -Name Az.Storage -Verbose -Force -AllowClobber
-        Uninstall-AzureRm -Verbose
-
   - task: AzurePowerShell@5
     displayName: Check if blob exists and delete if specified
     inputs:
