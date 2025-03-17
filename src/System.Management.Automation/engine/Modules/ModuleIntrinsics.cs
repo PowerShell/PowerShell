@@ -967,22 +967,19 @@ namespace System.Management.Automation
 #if UNIX
             return Platform.SelectProductNameForDirectory(Platform.XDG_Type.USER_MODULES);
 #else
-            string myDocumentsPath 
-            if (InternalTestHooks.SetMyDocumentsSpecialFolderToBlank)
-            {
-                myDocumentsPath = string.Empty;
-            }
-            else
+            string myDocumentsPath = string.Empty;
+            if (!InternalTestHooks.SetMyDocumentsSpecialFolderToBlank)
             {
                 if (!userPrompted)
                 {
                     Console.WriteLine("Would you like to switch the user profile to a different directory?");
                     Console.WriteLine("Type 'Y' to switch to a different directory, 'N' to continue with the current directory");
+                    string input = Console.ReadLine();
                     userChoice = input.Equals("Y", StringComparison.OrdinalIgnoreCase);
                     userPrompted = true;
-                    if(userChoice)
+                    if (userChoice)
                     {
-                        Console.Writeline("Please enter the new directory path: ")
+                        Console.WriteLine("Please enter the new directory path: ");
                         myDocumentsPath = Console.ReadLine();
                         // test the path
                         while (!Directory.Exists(myDocumentsPath))
@@ -990,20 +987,73 @@ namespace System.Management.Automation
                             Console.WriteLine("The directory does not exist. Please enter a valid directory path: ");
                             myDocumentsPath = Console.ReadLine();
                         }
+                        userModulePath = myDocumentsPath;
+                        UpdatePSModulePath(userModulePath);
                     }
+
                 }
+
                 else
                 {
-                    myDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-                    
+                    if (userChoice && !string.IsNullOrEmpty(userModulePath))
+                    {
+                        myDocumentsPath = userModulePath;
+                    }
+
+                    else
+                    {
+                        myDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                    }
                 }
             }
+
             return string.IsNullOrEmpty(myDocumentsPath) ? null : Path.Combine(myDocumentsPath, Utils.ModuleDirectory);
 #endif
         }
 
         private static bool userPrompted = false;
         private static bool userChoice = false;
+        private static string userModulePath;
+
+        internal static void UpdatePSModulePath(string newPath)
+        {
+            string psModulePath = Environment.GetEnvironmentVariable("PSModulePath");
+            if (string.IsNullOrEmpty(psModulePath))
+            {
+                return;
+            }
+
+            string[] paths = psModulePath.Split(Path.PathSeparator);
+            string oneDrivePath = paths.FirstOrDefault(p => p.Contains("OneDrive - Microsoft"));
+
+            if (!string.IsNullOrEmpty(oneDrivePath))
+            {
+                // Ensure the new path exists
+                if (!Directory.Exists(newPath))
+                {
+                    Directory.CreateDirectory(Path.Combine(newPath, Utils.ModuleDirectory));
+                }
+
+                string destDir = Path.Combine(newPath, Utils.ModuleDirectory);
+
+                // Create all directories
+                foreach (string dir in Directory.GetDirectories(oneDrivePath, "*", SearchOption.AllDirectories))
+                {
+                    Directory.CreateDirectory(Path.Combine(destDir, Path.GetRelativePath(oneDrivePath, dir)));
+                }
+
+                // Copy all files
+                foreach (string file in Directory.GetFiles(oneDrivePath, "*", SearchOption.AllDirectories))
+                {
+                    string destFile = Path.Combine(destDir, Path.GetRelativePath(oneDrivePath, file));
+                    File.Copy(file, destFile, true);
+                }
+
+                // Remove the "OneDrive - Microsoft" path from PSModulePath
+                List<string> updatedPaths = paths.Where(p => !p.Contains("OneDrive - Microsoft")).ToList();
+                Environment.SetEnvironmentVariable("PSModulePath", string.Join(Path.PathSeparator.ToString(), updatedPaths), EnvironmentVariableTarget.User);
+            }
+        }
 
         /// <summary>
         /// Gets the PSHome module path, as known as the "system wide module path" in windows powershell.
