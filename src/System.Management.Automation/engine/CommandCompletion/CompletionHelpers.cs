@@ -100,19 +100,19 @@ namespace System.Management.Automation
             bool hasBackSingleQuote = backQuote.IsSingleQuote();
             bool hasBackDoubleQuote = backQuote.IsDoubleQuote();
 
-            bool hasMatchingFrontAndBackQuote =
+            bool hasBothFrontAndBackQuotes =
                 (hasFrontSingleQuote && hasBackSingleQuote) || (hasFrontDoubleQuote && hasBackDoubleQuote);
 
-            if (hasMatchingFrontAndBackQuote)
+            if (hasBothFrontAndBackQuotes)
             {
                 wordToComplete = wordToComplete.Substring(1, length - 2);
                 return quoteInUse;
             }
 
-            bool hasValidFrontQuoteAndNoMatchingBackQuote = 
+            bool hasFrontQuoteAndNoBackQuote = 
                 (hasFrontSingleQuote || hasFrontDoubleQuote) && !hasBackSingleQuote && !hasBackDoubleQuote;
 
-            if (hasValidFrontQuoteAndNoMatchingBackQuote)
+            if (hasFrontQuoteAndNoBackQuote)
             {
                 wordToComplete = wordToComplete.Substring(1);
                 return quoteInUse;
