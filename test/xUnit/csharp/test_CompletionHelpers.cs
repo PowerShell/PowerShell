@@ -27,5 +27,25 @@ namespace PSTests.Parallel
             string result = CompletionHelpers.QuoteCompletionText(completionText, quote, escapeSingleQuoteChars);
             Assert.Equal(expected, result);
         }
+
+        [InlineData("", "", "")]
+        [InlineData("\"", "", "\"")]
+        [InlineData("'", "", "'")]
+        [InlineData("\"word\"", "word", "\"")]
+        [InlineData("'word'", "word", "'")]
+        [InlineData("\"word", "word", "\"")]
+        [InlineData("'word", "word", "'")]
+        [InlineData("word\"", "word\"", "")]
+        [InlineData("word'", "word'", "")]
+        [InlineData("\"word's\"", "word's", "\"")]
+        [InlineData("'word\"", "'word\"", "")]
+        [InlineData("\"word'", "\"word'", "")]
+        [InlineData("'word\"s'", "word\"s", "'")]
+        public void TestHandleDoubleAndSingleQuote(string wordToComplete, string expectedWordToComplete, string expectedQuote)
+        {
+            string quote = CompletionHelpers.HandleDoubleAndSingleQuote(ref wordToComplete);
+            Assert.Equal(expectedQuote, quote);
+            Assert.Equal(expectedWordToComplete, wordToComplete);
+        }
     }
 }
