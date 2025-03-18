@@ -38,6 +38,7 @@ jobs:
   changes:
     name: Change Detection
     runs-on: ubuntu-latest
+    if: startsWith(github.repository_owner, 'azure') || github.repository_owner == 'PowerShell'
     # Required permissions
     permissions:
       pull-requests: read
@@ -186,6 +187,6 @@ jobs:
       - macos_test_unelevated_ci
       - macos_test_unelevated_others
     if: always()
-    uses: PowerShell/compliance/.github/workflows/ready-to-merge.yml@master
+    uses: PowerShell/compliance/.github/workflows/ready-to-merge.yml@v1.0.0
     with:
       needs_context: ${{ toJson(needs) }}
