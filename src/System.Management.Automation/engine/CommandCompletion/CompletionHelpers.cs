@@ -14,8 +14,6 @@ namespace System.Management.Automation
     {
         private static readonly SearchValues<char> s_defaultCharsToCheck = SearchValues.Create("$`");
 
-        private static readonly SearchValues<char> s_escapeCharsToCheck = SearchValues.Create("$[]`");
-
         /// <summary>
         /// Get matching completions from word to complete.
         /// This makes it easier to handle different variations of completions with consideration of quotes.
@@ -121,14 +119,12 @@ namespace System.Management.Automation
             return string.Empty;
         }
 
-        internal static bool CompletionRequiresQuotes(string completion, bool escape)
+        internal static bool CompletionRequiresQuotes(string completion)
         {
             // If the tokenizer sees the completion as more than two tokens, or if there is some error, then
             // some form of quoting is necessary (if it's a variable, we'd need ${}, filenames would need [], etc.)
 
-            Language.Token[] tokens;
-            ParseError[] errors;
-            Language.Parser.ParseInput(completion, out tokens, out errors);
+            Parser.ParseInput(completion, out Token[] tokens, out ParseError[] errors);
 
             // Expect no errors and 2 tokens (1 is for our completion, the other is eof)
             // Or if the completion is a keyword, we ignore the errors
@@ -136,13 +132,13 @@ namespace System.Management.Automation
             if ((!requireQuote && tokens[0] is StringToken) ||
                 (tokens.Length == 2 && (tokens[0].TokenFlags & TokenFlags.Keyword) != 0))
             {
-                requireQuote = ContainsCharsToCheck(tokens[0].Text, escape);
+                requireQuote = ContainsCharsToCheck(tokens[0].Text);
             }
 
             return requireQuote;
         }
 
-        private static bool ContainsCharsToCheck(ReadOnlySpan<char> text, bool escape)
-            => text.ContainsAny(escape ? s_escapeCharsToCheck : s_defaultCharsToCheck);
+        private static bool ContainsCharsToCheck(ReadOnlySpan<char> text)
+            => text.ContainsAny(s_defaultCharsToCheck);
     }
 }
