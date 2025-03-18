@@ -1241,7 +1241,18 @@ namespace System.Management.Automation
 
         object ICustomAstVisitor.VisitAssignmentStatement(AssignmentStatementAst assignmentStatementAst)
         {
-            return assignmentStatementAst.Left.Accept(this);
+            ExpressionAst child = assignmentStatementAst.Left;
+            while (child is AttributedExpressionAst attributeChild)
+            {
+                if (attributeChild is ConvertExpressionAst convert)
+                {
+                    return new List<PSTypeName>() { new(convert.Type.TypeName) };
+                }
+
+                child = attributeChild.Child;
+            }
+
+            return assignmentStatementAst.Right.Accept(this);
         }
 
         object ICustomAstVisitor.VisitPipeline(PipelineAst pipelineAst)

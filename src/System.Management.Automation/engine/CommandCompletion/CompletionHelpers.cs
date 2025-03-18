@@ -14,8 +14,6 @@ namespace System.Management.Automation
     {
         private static readonly SearchValues<char> s_defaultCharsToCheck = SearchValues.Create("$`");
 
-        private static readonly SearchValues<char> s_escapeCharsToCheck = SearchValues.Create("$[]`");
-
         /// <summary>
         /// Get matching completions from word to complete.
         /// This makes it easier to handle different variations of completions with consideration of quotes.
@@ -53,46 +51,78 @@ namespace System.Management.Automation
             }
         }
 
+        /// <summary>
+        /// Removes wrapping quotes from a string and returns the quote used, if present.
+        /// </summary>
+        /// <param name="wordToComplete">
+        /// The string to process, potentially surrounded by single or double quotes.
+        /// This parameter is updated in-place to exclude the removed quotes.
+        /// </param>
+        /// <returns>
+        /// The type of quote detected (single or double), or an empty string if no quote is found.
+        /// </returns>
+        /// <remarks>
+        /// This method checks for single or double quotes at the start and end of the string.
+        /// If wrapping quotes are detected and match, both are removed; otherwise, only the front quote is removed.
+        /// The string is updated in-place, and only matching front-and-back quotes are stripped.
+        /// If no quotes are detected or the input is empty, the original string remains unchanged.
+        /// </remarks>
         internal static string HandleDoubleAndSingleQuote(ref string wordToComplete)
         {
-            string quote = string.Empty;
-
-            if (!string.IsNullOrEmpty(wordToComplete) && (wordToComplete[0].IsSingleQuote() || wordToComplete[0].IsDoubleQuote()))
+            if (string.IsNullOrEmpty(wordToComplete))
             {
-                char frontQuote = wordToComplete[0];
-                int length = wordToComplete.Length;
-
-                if (length == 1)
-                {
-                    wordToComplete = string.Empty;
-                    quote = frontQuote.IsSingleQuote() ? "'" : "\"";
-                }
-                else if (length > 1)
-                {
-                    if ((wordToComplete[length - 1].IsDoubleQuote() && frontQuote.IsDoubleQuote()) || (wordToComplete[length - 1].IsSingleQuote() && frontQuote.IsSingleQuote()))
-                    {
-                        wordToComplete = wordToComplete.Substring(1, length - 2);
-                        quote = frontQuote.IsSingleQuote() ? "'" : "\"";
-                    }
-                    else if (!wordToComplete[length - 1].IsDoubleQuote() && !wordToComplete[length - 1].IsSingleQuote())
-                    {
-                        wordToComplete = wordToComplete.Substring(1);
-                        quote = frontQuote.IsSingleQuote() ? "'" : "\"";
-                    }
-                }
+                return string.Empty;
             }
 
-            return quote;
+            char frontQuote = wordToComplete[0];
+            bool hasFrontSingleQuote = frontQuote.IsSingleQuote();
+            bool hasFrontDoubleQuote = frontQuote.IsDoubleQuote();
+
+            if (!hasFrontSingleQuote && !hasFrontDoubleQuote)
+            {
+                return string.Empty;
+            }
+
+            string quoteInUse = hasFrontSingleQuote ? "'" : "\"";
+
+            int length = wordToComplete.Length;
+            if (length == 1)
+            {
+                wordToComplete = string.Empty;
+                return quoteInUse;
+            }
+
+            char backQuote = wordToComplete[length - 1];
+            bool hasBackSingleQuote = backQuote.IsSingleQuote();
+            bool hasBackDoubleQuote = backQuote.IsDoubleQuote();
+
+            bool hasBothFrontAndBackQuotes =
+                (hasFrontSingleQuote && hasBackSingleQuote) || (hasFrontDoubleQuote && hasBackDoubleQuote);
+
+            if (hasBothFrontAndBackQuotes)
+            {
+                wordToComplete = wordToComplete.Substring(1, length - 2);
+                return quoteInUse;
+            }
+
+            bool hasFrontQuoteAndNoBackQuote = 
+                (hasFrontSingleQuote || hasFrontDoubleQuote) && !hasBackSingleQuote && !hasBackDoubleQuote;
+
+            if (hasFrontQuoteAndNoBackQuote)
+            {
+                wordToComplete = wordToComplete.Substring(1);
+                return quoteInUse;
+            }
+
+            return string.Empty;
         }
 
-        internal static bool CompletionRequiresQuotes(string completion, bool escape)
+        internal static bool CompletionRequiresQuotes(string completion)
         {
             // If the tokenizer sees the completion as more than two tokens, or if there is some error, then
             // some form of quoting is necessary (if it's a variable, we'd need ${}, filenames would need [], etc.)
 
-            Language.Token[] tokens;
-            ParseError[] errors;
-            Language.Parser.ParseInput(completion, out tokens, out errors);
+            Parser.ParseInput(completion, out Token[] tokens, out ParseError[] errors);
 
             // Expect no errors and 2 tokens (1 is for our completion, the other is eof)
             // Or if the completion is a keyword, we ignore the errors
@@ -100,7 +130,7 @@ namespace System.Management.Automation
             if ((!requireQuote && tokens[0] is StringToken) ||
                 (tokens.Length == 2 && (tokens[0].TokenFlags & TokenFlags.Keyword) != 0))
             {
-                requireQuote = ContainsCharsToCheck(tokens[0].Text, escape);
+                requireQuote = ContainsCharsToCheck(tokens[0].Text);
             }
 
             return requireQuote;

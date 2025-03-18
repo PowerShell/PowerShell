@@ -234,7 +234,7 @@ namespace System.Management.Automation
             syntax = string.IsNullOrEmpty(syntax) ? name : syntax;
             bool needAmpersand;
 
-            if (CompletionHelpers.CompletionRequiresQuotes(name, false))
+            if (CompletionHelpers.CompletionRequiresQuotes(name))
             {
                 needAmpersand = quote == string.Empty && addAmpersandIfNecessary;
                 string quoteInUse = quote == string.Empty ? "'" : quote;
@@ -3660,7 +3660,7 @@ namespace System.Management.Automation
                     completionText = completionText.Replace("*", "`*");
                 }
 
-                if (!completionText.Equals("$", StringComparison.Ordinal) && CompletionHelpers.CompletionRequiresQuotes(completionText, false))
+                if (!completionText.Equals("$", StringComparison.Ordinal) && CompletionHelpers.CompletionRequiresQuotes(completionText))
                 {
                     var quoteInUse = effectiveQuote == string.Empty ? "'" : effectiveQuote;
                     if (quoteInUse == "'")
