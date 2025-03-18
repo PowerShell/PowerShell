@@ -159,7 +159,7 @@ namespace System.Management.Automation
             string quote,
             bool escapeSingleQuoteChars = true)
         {
-            if (!CompletionRequiresQuotes(completionText, false))
+            if (!CompletionRequiresQuotes(completionText))
             {
                 return quote + completionText + quote;
             }
