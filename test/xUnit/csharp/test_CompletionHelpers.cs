@@ -9,22 +9,19 @@ namespace PSTests.Parallel
     public class CompletionHelpersTests
     {
         [Theory]
-        [InlineData("word", "'", false, "'word'")]
-        [InlineData("word", "\"", false, "\"word\"")]
-        [InlineData("word's", "'", true, "'word''s'")]
-        [InlineData("word's", "'", false, "'word's'")]
-        [InlineData("already 'quoted'", "'", true, "'already ''quoted'''")]
-        [InlineData("already 'quoted'", "'", false, "'already 'quoted''")]
-        [InlineData("", "'", true, "''")]
-        [InlineData("", "\"", false, "\"\"")]
-        [InlineData("'", "'", true, "''''")]
+        [InlineData("word", "'", "'word'")]
+        [InlineData("word", "\"", "\"word\"")]
+        [InlineData("word's", "'", "'word''s'")]
+        [InlineData("already 'quoted'", "'", "'already ''quoted'''")]
+        [InlineData("", "'", "''")]
+        [InlineData("", "\"", "\"\"")]
+        [InlineData("'", "'", "''''")]
         public void TestQuoteCompletionText(
              string completionText,
              string quote,
-             bool escapeSingleQuoteChars,
              string expected)
         {
-            string result = CompletionHelpers.QuoteCompletionText(completionText, quote, escapeSingleQuoteChars);
+            string result = CompletionHelpers.QuoteCompletionText(completionText, quote);
             Assert.Equal(expected, result);
         }
 

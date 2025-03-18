@@ -148,16 +148,10 @@ namespace System.Management.Automation
         /// <param name="quote">
         /// The quote character to use for enclosing the text. Defaults to a single quote if not provided.
         /// </param>
-        /// <param name="escapeSingleQuoteChars">
-        /// Indicates whether single quote characters in the text should be escaped. Defaults to <c>true</c>.
-        /// </param>
         /// <returns>
         /// The quoted and optionally escaped version of the <paramref name="completionText"/>.
         /// </returns>
-        internal static string QuoteCompletionText(
-            string completionText,
-            string quote,
-            bool escapeSingleQuoteChars = true)
+        internal static string QuoteCompletionText(string completionText, string quote)
         {
             if (!CompletionRequiresQuotes(completionText))
             {
@@ -166,7 +160,7 @@ namespace System.Management.Automation
 
             string quoteInUse = string.IsNullOrEmpty(quote) ? "'" : quote;
 
-            if (escapeSingleQuoteChars && quoteInUse == "'")
+            if (quoteInUse == "'")
             {
                 completionText = CodeGeneration.EscapeSingleQuotedStringContent(completionText);
             }
