@@ -136,7 +136,7 @@ namespace System.Management.Automation
             return requireQuote;
         }
 
-        private static bool ContainsCharsToCheck(ReadOnlySpan<char> text, bool escape)
+        private static bool ContainsCharsToCheck(ReadOnlySpan<char> text)
             => text.ContainsAny(s_defaultCharsToCheck);
 
         /// <summary>
