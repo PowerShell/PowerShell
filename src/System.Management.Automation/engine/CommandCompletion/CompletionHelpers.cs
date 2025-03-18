@@ -137,7 +137,7 @@ namespace System.Management.Automation
         }
 
         private static bool ContainsCharsToCheck(ReadOnlySpan<char> text, bool escape)
-            => text.ContainsAny(escape ? s_escapeCharsToCheck : s_defaultCharsToCheck);
+            => text.ContainsAny(s_defaultCharsToCheck);
 
         /// <summary>
         /// Quotes and escapes a given completion text based on the specified options.
