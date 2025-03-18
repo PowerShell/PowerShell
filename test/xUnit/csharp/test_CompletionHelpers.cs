@@ -28,6 +28,7 @@ namespace PSTests.Parallel
             Assert.Equal(expected, result);
         }
 
+        [Theory]
         [InlineData("", "", "")]
         [InlineData("\"", "", "\"")]
         [InlineData("'", "", "'")]
