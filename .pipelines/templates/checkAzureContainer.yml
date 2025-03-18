@@ -56,7 +56,8 @@ jobs:
     inputs:
       azureSubscription: az-blob-cicd-infra
       scriptType: inlineScript
-      azurePowerShellVersion: latestVersion
+      azurePowerShellVersion: LatestVersion
+      pwsh: true
       inline: |
         $containersToDelete = @('$(AzureVersion)', '$(AzureVersion)-private', '$(AzureVersion)-nuget', '$(AzureVersion)-gc')
 

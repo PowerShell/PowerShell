@@ -268,6 +268,16 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Name | Should -Be 'System.Management.ManagementObject#root\cimv2\Win32_Process'
     }
 
+    It "Infers type from parameter in classic function definition" {
+        $res = [AstTypeInference]::InferTypeOf(({
+            function MyFunction ([int]$param1)
+            {
+                $param1
+            }
+        }.Ast.FindAll({param($Ast) $Ast -is [Language.VariableExpressionAst]}, $true) | Select-Object -Last 1 ))
+        $res.Name | Should -Be 'System.Int32'
+    }
+
     It "Infers type from binary expression with a bool operator as bool" {
         $res = [AstTypeInference]::InferTypeOf( {
                 (1..10) -contains 5
@@ -1467,6 +1477,26 @@ Describe "Type inference Tests" -tags "CI" {
     It 'Infers type of $null after variable assignment' {
         $res = [AstTypeInference]::InferTypeOf( { $null = "Hello";$null }.Ast)
         $res.Count | Should -Be 0
+    }
+
+    It 'Infers right side of assignment expression' {
+        $res = [AstTypeInference]::InferTypeOf( { $Test1 = "Hello" }.Ast.Find({param($ast) $ast -is [Language.AssignmentStatementAst]}, $true))
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be "System.String"
+    }
+
+    It 'Infers left side of assignment expression when it is a ConvertExpression' {
+        $res = [AstTypeInference]::InferTypeOf( { [string]$Test1 = 42 }.Ast.Find({param($ast) $ast -is [Language.AssignmentStatementAst]}, $true))
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be "System.String"
+    }
+
+    It 'Infers left side of assignment expression when there is a ConvertExpression among other attributes' {
+        $res = [AstTypeInference]::InferTypeOf( {
+            [ValidateLength()] [string] [ValidatePattern()]$Test1 = 42
+        }.Ast.Find({param($ast) $ast -is [Language.AssignmentStatementAst]}, $true))
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be "System.String"
     }
 
     It 'Infers type of all scope variable after variable assignment' {

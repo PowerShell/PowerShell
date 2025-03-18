@@ -1241,7 +1241,18 @@ namespace System.Management.Automation
 
         object ICustomAstVisitor.VisitAssignmentStatement(AssignmentStatementAst assignmentStatementAst)
         {
-            return assignmentStatementAst.Left.Accept(this);
+            ExpressionAst child = assignmentStatementAst.Left;
+            while (child is AttributedExpressionAst attributeChild)
+            {
+                if (attributeChild is ConvertExpressionAst convert)
+                {
+                    return new List<PSTypeName>() { new(convert.Type.TypeName) };
+                }
+
+                child = attributeChild.Child;
+            }
+
+            return assignmentStatementAst.Right.Accept(this);
         }
 
         object ICustomAstVisitor.VisitPipeline(PipelineAst pipelineAst)
@@ -2451,6 +2462,14 @@ namespace System.Management.Automation
             {
                 if (currentAst is IParameterMetadataProvider)
                 {
+                    if (currentAst is ScriptBlockAst && currentAst.Parent is FunctionDefinitionAst)
+                    {
+                        // If this scriptblock belongs to a function we want to visit that instead so we can get the parameters
+                        // function X ($Param1){}
+                        currentAst = currentAst.Parent;
+                    }
+
+                    assignmentVisitor.ScopeDefinitionAst = currentAst;
                     currentAst.Visit(assignmentVisitor);
 
                     if (assignmentVisitor.LocalScopeOnly
@@ -2901,6 +2920,11 @@ namespace System.Management.Automation
             /// Whether or not the last assignment was via command redirection.
             /// </summary>
             internal bool RedirectionAssignment;
+
+            /// <summary>
+            /// The Ast of the scope we are currently analyzing.
+            /// </summary>
+            internal Ast ScopeDefinitionAst;
             internal int StopSearchOffset;
             private int LastAssignmentOffset = -1;
 
@@ -3248,7 +3272,9 @@ namespace System.Management.Automation
 
             public override AstVisitAction VisitFunctionDefinition(FunctionDefinitionAst functionDefinitionAst)
             {
-                return AstVisitAction.SkipChildren;
+                return functionDefinitionAst == ScopeDefinitionAst
+                    ? AstVisitAction.Continue
+                    : AstVisitAction.SkipChildren;
             }
         }
     }
