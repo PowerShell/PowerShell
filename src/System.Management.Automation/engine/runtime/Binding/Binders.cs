@@ -7139,7 +7139,8 @@ namespace System.Management.Automation.Language
                                     mi.Name,
                                     allowCastingToByRefLikeType: false,
                                     temps,
-                                    initTemps));
+                                    initTemps))
+                            .ToList();
 
                         argExprs[i] = Expression.NewArrayInit(paramElementType, elements);
                         // User specified the element arguments, so we log them instead of the compiler-created array.
