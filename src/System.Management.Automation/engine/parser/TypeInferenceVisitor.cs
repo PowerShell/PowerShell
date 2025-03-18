@@ -2922,7 +2922,7 @@ namespace System.Management.Automation
             internal bool RedirectionAssignment;
 
             /// <summary>
-            /// The Ast of the scope we are currently analyzing
+            /// The Ast of the scope we are currently analyzing.
             /// </summary>
             internal Ast ScopeDefinitionAst;
             internal int StopSearchOffset;
