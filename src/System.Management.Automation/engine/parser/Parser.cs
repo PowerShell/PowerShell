@@ -1487,7 +1487,7 @@ namespace System.Management.Automation.Language
                 rBracketToken = null;
             }
 
-            var openGenericType = new TypeName(genericTypeName.Extent, genericTypeName.Text);
+            var openGenericType = new TypeName(genericTypeName.Extent, genericTypeName.Text, genericArguments.Count);
             var result = new GenericTypeName(
                 ExtentOf(genericTypeName.Extent, ExtentFromFirstOf(rBracketToken, genericArguments.LastOrDefault(), firstToken)),
                 openGenericType,
