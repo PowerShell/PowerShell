@@ -140,7 +140,7 @@ namespace System.Management.Automation
             => text.ContainsAny(s_defaultCharsToCheck);
 
         /// <summary>
-        /// Quotes and escapes a given completion text based on the specified options.
+        /// Quotes a given completion text.
         /// </summary>
         /// <param name="completionText">
         /// The text to be quoted.
