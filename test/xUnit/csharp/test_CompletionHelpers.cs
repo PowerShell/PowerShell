@@ -16,6 +16,13 @@ namespace PSTests.Parallel
         [InlineData("", "'", "''")]
         [InlineData("", "\"", "\"\"")]
         [InlineData("'", "'", "''''")]
+        [InlineData("This has a `backtick` and $dollar.", "\"", "\"This has a ``backtick`` and `$dollar.\"")]
+        [InlineData("This has a `backtick` and a $dollar.", "'", "'This has a `backtick` and a $dollar.'")]
+        [InlineData("`Escaping` backticks only.", "\"", "\"``Escaping`` backticks only.\"")]
+        [InlineData("$Only dollars to escape.", "\"", "\"`$Only dollars to escape.\"")]
+        [InlineData("word", "", "word")]
+        [InlineData("word's", "", "'word''s'")]
+        [InlineData("", "", "''")]
         public void TestQuoteCompletionText(
              string completionText,
              string quote,
