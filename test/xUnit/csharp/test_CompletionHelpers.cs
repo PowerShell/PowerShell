@@ -16,6 +16,7 @@ namespace PSTests.Parallel
         [InlineData("", "'", "''")]
         [InlineData("", "\"", "\"\"")]
         [InlineData("'", "'", "''''")]
+        [InlineData("", "", "''")]
         public void TestQuoteCompletionText(
              string completionText,
              string quote,
