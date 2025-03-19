@@ -97,7 +97,7 @@ namespace PSTests.Sequential
 
                 // Test the result from the 'general' feedback provider.
                 Assert.Single(feedbacks);
-                Assert.Equal("general", feedbacks[0].Name);
+                Assert.Equal("General Feedback", feedbacks[0].Name);
                 Assert.Equal(expectedCmd, feedbacks[0].Item.RecommendedActions[0]);
 
                 // Expect the result from both 'general' and the 'slow' feedback providers.
@@ -107,7 +107,7 @@ namespace PSTests.Sequential
                 Assert.Equal(2, feedbacks.Count);
 
                 FeedbackResult entry1 = feedbacks[0];
-                Assert.Equal("general", entry1.Name);
+                Assert.Equal("General Feedback", entry1.Name);
                 Assert.Equal(expectedCmd, entry1.Item.RecommendedActions[0]);
 
                 FeedbackResult entry2 = feedbacks[1];

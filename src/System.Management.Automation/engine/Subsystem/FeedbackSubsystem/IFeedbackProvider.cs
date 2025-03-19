@@ -243,7 +243,7 @@ namespace System.Management.Automation.Subsystem.Feedback
 
         public Guid Id => _guid;
 
-        public string Name => "general";
+        public string Name => "General Feedback";
 
         public string Description => "The built-in general feedback source for command errors.";
 
