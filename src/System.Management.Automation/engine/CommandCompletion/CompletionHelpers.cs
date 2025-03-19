@@ -160,9 +160,14 @@ namespace System.Management.Automation
 
             string quoteInUse = string.IsNullOrEmpty(quote) ? "'" : quote;
 
-            completionText = quoteInUse == "'"
-                ? completionText.Replace("'", "''")
-                : completionText.Replace("`", "``").Replace("$", "`$");
+            if (quoteInUse == "'")
+            {
+                completionText = completionText.Replace("'", "''");
+            }
+            else if (quoteInUse == "\"")
+            {
+                completionText = completionText.Replace("`", "``").Replace("$", "`$");
+            }
 
             return quoteInUse + completionText + quoteInUse;
         }
