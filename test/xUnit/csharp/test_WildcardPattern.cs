@@ -25,6 +25,9 @@ namespace PSTests.Parallel
         [InlineData("a", "a")]
         [InlineData("a*", "a`*")]
         [InlineData("*?[]", "`*`?`[`]")]
+        [InlineData("a`", "a``")]
+        [InlineData("abc`def", "abc``def")]
+        [InlineData("abc``def", "abc````def")]
         public void TestEscape_String(string source, string expected)
         {
             Assert.Equal(WildcardPattern.Escape(source), expected);
