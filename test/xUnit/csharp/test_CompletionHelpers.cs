@@ -30,7 +30,7 @@ namespace PSTests.Parallel
         [InlineData("normaltext", false)]
         [InlineData("$variable", false)]
         [InlineData("abc def", true)]
-        [InlineData("keyword", false)]
+        [InlineData("while", false)] // PowerShell keyword
         [InlineData("key$word", true)]
         [InlineData("abc`def", true)]
         [InlineData("normal-text", false)]
