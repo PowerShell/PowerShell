@@ -143,7 +143,7 @@ namespace System.Management.Automation
         /// Quotes and escapes a given completion text based on the specified options.
         /// </summary>
         /// <param name="completionText">
-        /// The text to be quoted and potentially escaped.
+        /// The text to be quoted.
         /// </param>
         /// <param name="quote">
         /// The quote character to use for enclosing the text. Defaults to a single quote if not provided.
