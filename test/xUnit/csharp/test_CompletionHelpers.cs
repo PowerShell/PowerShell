@@ -27,6 +27,31 @@ namespace PSTests.Parallel
         }
 
         [Theory]
+        [InlineData("normaltext", false)]
+        [InlineData("$variable", false)]
+        [InlineData("abc def", true)]
+        [InlineData("keyword", false)]
+        [InlineData("key$word", true)]
+        [InlineData("abc`def", true)]
+        [InlineData("normal-text", false)]
+        [InlineData("\"doublequotes\"", false)]
+        [InlineData("'singlequotes'", false)]
+        [InlineData("normal 'text'", true)]
+        [InlineData("normal \"text\"", true)]
+        [InlineData("text with ' and \"", true)]
+        [InlineData("text\"with\"quotes", false)]
+        [InlineData("text'with'quotes", false)]
+        [InlineData("\"key$", true)]
+        [InlineData("\"", true)]
+        [InlineData("'", true)]
+        [InlineData("", true)]
+        public void TestCompletionRequiresQuotes(string completion, bool expected)
+        {
+            bool result = CompletionHelpers.CompletionRequiresQuotes(completion);
+            Assert.Equal(expected, result);
+        }
+
+        [Theory]
         [InlineData("", "", "")]
         [InlineData("\"", "", "\"")]
         [InlineData("'", "", "'")]
