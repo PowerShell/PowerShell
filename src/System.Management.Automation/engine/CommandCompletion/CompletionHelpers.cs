@@ -149,7 +149,7 @@ namespace System.Management.Automation
         /// The quote character to use for enclosing the text. Defaults to a single quote if not provided.
         /// </param>
         /// <returns>
-        /// The quoted and optionally escaped version of the <paramref name="completionText"/>.
+        /// The quoted the <paramref name="completionText"/>.
         /// </returns>
         internal static string QuoteCompletionText(string completionText, string quote)
         {
