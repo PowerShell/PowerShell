@@ -2930,7 +2930,7 @@ namespace System.Management.Automation
 
             private void SetLastAssignment(Ast ast, bool enumerate = false, bool redirectionAssignment = false)
             {
-                if (LastAssignmentOffset < ast.Extent.StartOffset)
+                if (LastAssignmentOffset < ast.Extent.StartOffset && !VariableTarget.Extent.IsWithin(ast.Extent))
                 {
                     ClearAssignmentData();
                     LastAssignment = ast;
