@@ -1,5 +1,13 @@
 [
   {
+    "Pattern": "_manifest\\spdx_2.2\\bsi.json",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "_manifest\\spdx_2.2\\manifest.cat",
+    "FileType": "NonProduct"
+  },
+  {
     "Pattern": "Accessibility.dll",
     "FileType": "NonProduct"
   },
@@ -9,6 +17,10 @@
   },
   {
     "Pattern": "clrgc.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "clrgcexp.dll",
     "FileType": "NonProduct"
   },
   {
@@ -388,6 +400,10 @@
     "FileType": "NonProduct"
   },
   {
+    "Pattern": "Humanizer.dll",
+    "FileType": "NonProduct"
+  },
+  {
     "Pattern": "it/Microsoft.CodeAnalysis.CSharp.resources.dll",
     "FileType": "NonProduct"
   },
@@ -556,6 +572,18 @@
     "FileType": "NonProduct"
   },
   {
+    "Pattern": "Json.More.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "JsonPointer.Net.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "JsonSchema.Net.dll",
+    "FileType": "NonProduct"
+  },
+  {
     "Pattern": "ko/Microsoft.CodeAnalysis.CSharp.resources.dll",
     "FileType": "NonProduct"
   },
@@ -641,10 +669,6 @@
   },
   {
     "Pattern": "Markdig.Signed.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "mi.dll",
     "FileType": "NonProduct"
   },
   {
@@ -764,23 +788,39 @@
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "miutils.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "Modules/*.json",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "Modules/*.sha256",
-    "FileType": "NonProduct"
-  },
-  {
     "Pattern": "Modules/Microsoft.PowerShell.Archive/*.cat",
     "FileType": "NonProduct"
   },
   {
     "Pattern": "Modules/Microsoft.PowerShell.Archive/*.ps?1",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/dependencies/*.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/LICENSE",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/Microsoft.PowerShell.PSResourceGet.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/Microsoft.PowerShell.PSResourceGet.psd1",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/Microsoft.PowerShell.PSResourceGet.psm1",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/Notice.txt",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/PSGet.Format.ps1xml",
     "FileType": "NonProduct"
   },
   {
@@ -848,6 +888,22 @@
     "FileType": "NonProduct"
   },
   {
+    "Pattern": "Modules\\Microsoft.PowerShell.PSResourceGet\\Microsoft.PowerShell.PSResourceGet.pdb",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules\\Microsoft.PowerShell.PSResourceGet\\PSResourceRepository.adml",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules\\Microsoft.PowerShell.PSResourceGet\\PSResourceRepository.admx",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules\\PSReadLine\\.signature.p7s",
+    "FileType": "NonProduct"
+  },
+  {
     "Pattern": "mscordaccore_*.dll",
     "FileType": "NonProduct"
   },
@@ -872,19 +928,11 @@
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "Namotion.Reflection.dll",
-    "FileType": "NonProduct"
-  },
-  {
     "Pattern": "netstandard.dll",
     "FileType": "NonProduct"
   },
   {
     "Pattern": "Newtonsoft.Json.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "NJsonSchema.dll",
     "FileType": "NonProduct"
   },
   {
@@ -1037,6 +1085,10 @@
   },
   {
     "Pattern": "PresentationFramework.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "PresentationFramework.Fluent.dll",
     "FileType": "NonProduct"
   },
   {
@@ -1820,6 +1872,14 @@
     "FileType": "NonProduct"
   },
   {
+    "Pattern": "ref\\System.IO.Pipelines.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "ref\\System.Linq.AsyncEnumerable.dll",
+    "FileType": "NonProduct"
+  },
+  {
     "Pattern": "ru/Microsoft.CodeAnalysis.CSharp.resources.dll",
     "FileType": "NonProduct"
   },
@@ -2320,6 +2380,10 @@
     "FileType": "NonProduct"
   },
   {
+    "Pattern": "System.Formats.Nrbf.dll",
+    "FileType": "NonProduct"
+  },
+  {
     "Pattern": "System.Formats.Tar.dll",
     "FileType": "NonProduct"
   },
@@ -2392,6 +2456,10 @@
     "FileType": "NonProduct"
   },
   {
+    "Pattern": "System.IO.Pipelines.dll",
+    "FileType": "NonProduct"
+  },
+  {
     "Pattern": "System.IO.Pipes.AccessControl.dll",
     "FileType": "NonProduct"
   },
@@ -2405,6 +2473,10 @@
   },
   {
     "Pattern": "System.IO.UnmanagedMemoryStream.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "System.Linq.AsyncEnumerable.dll",
     "FileType": "NonProduct"
   },
   {
@@ -2545,6 +2617,14 @@
   },
   {
     "Pattern": "System.Private.Uri.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "System.Private.Windows.Core.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "System.Private.Windows.GdiPlus.dll",
     "FileType": "NonProduct"
   },
   {
@@ -2921,6 +3001,10 @@
   },
   {
     "Pattern": "System.Windows.Presentation.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "System.Windows.Primitives.dll",
     "FileType": "NonProduct"
   },
   {
@@ -3381,6 +3465,10 @@
   },
   {
     "Pattern": "Modules/PSDiagnostics/PSDiagnostics.psm1",
+    "FileType": "Product"
+  },
+  {
+    "Pattern": "Modules\\Microsoft.PowerShell.PSResourceGet\\InstallPSResourceGetPolicyDefinitions.ps1",
     "FileType": "Product"
   },
   {

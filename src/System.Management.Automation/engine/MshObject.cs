@@ -44,7 +44,6 @@ namespace System.Management.Automation
     /// but there is no established scenario for doing this, nor has it been tested.
     /// </remarks>
     [TypeDescriptionProvider(typeof(PSObjectTypeDescriptionProvider))]
-    [Serializable]
     public class PSObject : IFormattable, IComparable, ISerializable, IDynamicMetaObjectProvider
     {
         #region constructors

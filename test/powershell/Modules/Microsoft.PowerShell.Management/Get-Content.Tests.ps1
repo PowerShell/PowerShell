@@ -72,6 +72,14 @@ Describe "Get-Content" -Tags "CI" {
         Get-Content -Path $testPath2 -Last 1 | Should -BeExactly $fifthline
     }
 
+    It 'Verifies -TotalCount reports a ParameterArgumentValidationError error for negative values' {
+        {Get-Content -Path $testPath2 -TotalCount -2} | Should -Throw -ErrorId 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetContentCommand'
+    }
+
+    It 'Verifies -Tail reports a ParameterArgumentValidationError error for negative values' {
+        {Get-Content -Path $testPath2 -Tail -2} | Should -Throw -ErrorId 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetContentCommand'
+    }
+
     It "Should be able to get content within a different drive" {
         Push-Location env:
         $expectedoutput = [Environment]::GetEnvironmentVariable("PATH");
@@ -269,6 +277,20 @@ Describe "Get-Content" -Tags "CI" {
 
     It "Should return no content when -TotalCount value is 0" {
         Get-Content -Path $testPath -TotalCount 0 | Should -BeNullOrEmpty
+    }
+
+    It "Should return no content when -Tail value is 0" {
+        Get-Content -Path $testPath -Tail 0 | Should -BeNullOrEmpty
+    }
+
+    It "Should wait for content when using -Tail 0 and -Wait" {
+        $testValues = @(1,2,3)
+        $Job = Start-Job -ScriptBlock {Get-Content -Path $using:testPath -Tail 0 -Wait}
+        Start-Sleep -Seconds 3
+        Add-Content -Value $testValues -Path $testPath
+        Start-Sleep -Seconds 3
+        Compare-Object -ReferenceObject $testValues -DifferenceObject ($Job | Receive-Job) | Should -BeNullOrEmpty
+        $Job | Remove-Job -Force
     }
 
     It "Should throw TailAndHeadCannotCoexist when both -Tail and -TotalCount are used" {

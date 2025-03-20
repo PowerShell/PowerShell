@@ -859,7 +859,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <value></value>
         [Parameter(Position = 0, ValueFromPipeline = true)]
-        [ValidateRangeAttribute((long)1, long.MaxValue)]
+        [ValidateRange((long)1, long.MaxValue)]
         public long[] Id
         {
             get
@@ -887,7 +887,7 @@ namespace Microsoft.PowerShell.Commands
         /// No of History Entries (starting from last) that are to be displayed.
         /// </summary>
         [Parameter(Position = 1)]
-        [ValidateRangeAttribute(0, (int)Int16.MaxValue)]
+        [ValidateRange(0, (int)Int16.MaxValue)]
         public int Count
         {
             get
@@ -1346,7 +1346,7 @@ namespace Microsoft.PowerShell.Commands
         /// A Boolean that indicates whether history objects should be
         /// passed to the next element in the pipeline.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Passthru
         {
             get { return _passthru; }
@@ -1518,7 +1518,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = "IDParameter", Position = 0,
            HelpMessage = "Specifies the ID of a command in the session history.Clear history clears only the specified command")]
-        [ValidateRangeAttribute((int)1, int.MaxValue)]
+        [ValidateRange((int)1, int.MaxValue)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public int[] Id
         {
@@ -1542,7 +1542,7 @@ namespace Microsoft.PowerShell.Commands
         /// Command line name of an entry in the session history.
         /// </summary>
         [Parameter(ParameterSetName = "CommandLineParameter", HelpMessage = "Specifies the name of a command in the session history")]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] CommandLine
         {
@@ -1566,7 +1566,7 @@ namespace Microsoft.PowerShell.Commands
         /// Clears the specified number of history entries
         /// </summary>
         [Parameter(Mandatory = false, Position = 1, HelpMessage = "Clears the specified number of history entries")]
-        [ValidateRangeAttribute((int)1, int.MaxValue)]
+        [ValidateRange((int)1, int.MaxValue)]
         public int Count
         {
             get

@@ -189,6 +189,9 @@
   <data name="CannotStarttheProcess" xml:space="preserve">
     <value>This command cannot be run completely because the system cannot find all the information required.</value>
   </data>
+  <data name="FailedToCreateProcessObject" xml:space="preserve">
+    <value>Failed to retrieve the new process handle: "{0}". The Process object outputted may have some properties and methods that do not work properly.</value>
+  </data>
   <data name="InvalidUserError" xml:space="preserve">
     <value>This command cannot be run due to error 1783. The possible cause of this error can be using of a non-existing user "{0}". Please give a valid user and run your command again.</value>
   </data>
@@ -203,9 +206,6 @@
   </data>
   <data name="ContradictParametersSpecified" xml:space="preserve">
     <value>Parameters "{0}" and "{1}" cannot be specified at the same time.</value>
-  </data>
-  <data name="IncludeUserNameRequiresElevation" xml:space="preserve">
-    <value>The 'IncludeUserName' parameter requires elevated user rights. Try running the command again in a session that has been opened with elevated user rights (that is, Run as Administrator).</value>
   </data>
   <data name="CouldNotDebugProcess" xml:space="preserve">
     <value>Cannot debug process "{0} ({1})" because of the following error: {2}</value>

@@ -5,7 +5,7 @@ Import-Module HelpersCommon
 
 # Test Settings:
 # This is the list of PowerShell modules for which we test update-help
-$powershellCoreModules = @(
+[string[]] $powershellCoreModules = @(
     "CimCmdlets"
     <#
     This scenario is broken due to issue # https://github.com/PowerShell/platyPS/issues/241
@@ -26,119 +26,127 @@ $powershellCoreModules = @(
 
 # The file extension for the help content on the Download Center.
 # For Linux we use zip, and on Windows we use $extension.
-$extension = ".zip"
+[string] $extension = ".zip"
 
 if ([System.Management.Automation.Platform]::IsWindows)
 {
     $extension = ".cab"
 }
 
+[string] $userHelpRoot = $null
+
 if([System.Management.Automation.Platform]::IsWindows)
 {
-    $userHelpRoot = Join-Path $HOME "Documents/PowerShell/Help/"
+    # To the reader: the explicit parameter names below are required by a brainless code checker.
+    $userHelpRoot = Join-Path -Path:$HOME -ChildPath:Documents -AdditionalChildPath:PowerShell, Help
 }
 else
 {
-    $userModulesRoot = [System.Management.Automation.Platform]::SelectProductNameForDirectory([System.Management.Automation.Platform+XDG_Type]::USER_MODULES)
-    $userHelpRoot = Join-Path $userModulesRoot -ChildPath ".." -AdditionalChildPath "Help"
+    [string] $userModulesRoot = [System.Management.Automation.Platform]::SelectProductNameForDirectory([System.Management.Automation.Platform+XDG_Type]::USER_MODULES)
+    $userHelpRoot = Join-Path -Path:$userModulesRoot -ChildPath:.. -AdditionalChildPath:Help
 }
 
+# default values for system modules
+[string] $myUICulture = 'en-US'   
+[string] $HelpInstallationPath = Join-Path $PSHOME $myUICulture
+[string] $HelpInstallationPathHome = Join-Path $userHelpRoot $myUICulture
+
 # This is the list of test cases -- each test case represents a PowerShell module.
-$testCases = @{
+[hashtable] $testCases = @{
 
     "CimCmdlets" = @{
         HelpFiles            = "Microsoft.Management.Infrastructure.CimCmdlets.dll-help.xml"
         HelpInfoFiles        = "CimCmdlets_fb6cc51d-c096-4b38-b78d-0fed6277096a_HelpInfo.xml"
         CompressedFiles      = "CimCmdlets_fb6cc51d-c096-4b38-b78d-0fed6277096a_en-US_HelpContent$extension"
-        HelpInstallationPath = "$PSHOME\Modules\CimCmdlets\en-US"
-        HelpInstallationPathHome = "$userHelpRoot\CimCmdlets\en-US"
+        HelpInstallationPath = Join-Path -Path:$PSHOME -ChildPath:Modules -AdditionalChildPath:CimCmdlets, $myUICulture
+        HelpInstallationPathHome = Join-Path -Path:$userHelpRoot -ChildPath:CimCmdlets -AdditionalChildPath:$myUICulture
     }
 
     "Microsoft.PowerShell.Archive" = @{
         HelpFiles            = "Microsoft.PowerShell.Archive-help.xml"
         HelpInfoFiles        = "Microsoft.PowerShell.Archive_eb74e8da-9ae2-482a-a648-e96550fb8733_HelpInfo.xml"
         CompressedFiles      = "Microsoft.PowerShell.Archive_eb74e8da-9ae2-482a-a648-e96550fb8733_en-US_HelpContent$extension"
-        HelpInstallationPath = "$PSHOME\Modules\Microsoft.PowerShell.Archive\en-US"
+        HelpInstallationPath = Join-Path -Path:$PSHOME -ChildPath:Modules -AdditionalChildPath:Microsoft.PowerShell.Archive, $myUICulture
     }
 
     "Microsoft.PowerShell.Core" = @{
         HelpFiles            = "System.Management.Automation.dll-help.xml"
         HelpInfoFiles        = "Microsoft.PowerShell.Core_00000000-0000-0000-0000-000000000000_HelpInfo.xml"
         CompressedFiles      = "Microsoft.PowerShell.Core_00000000-0000-0000-0000-000000000000_en-US_HelpContent$extension"
-        HelpInstallationPath = "$PSHOME\en-US"
-        HelpInstallationPathHome = "$userHelpRoot\en-US"
+        HelpInstallationPath = $HelpInstallationPath
+        HelpInstallationPathHome = $HelpInstallationPathHome
     }
 
     "Microsoft.PowerShell.Diagnostics" = @{
         HelpFiles            = "Microsoft.PowerShell.Commands.Diagnostics.dll-help.xml"
         HelpInfoFiles        = "Microsoft.PowerShell.Diagnostics_ca046f10-ca64-4740-8ff9-2565dba61a4f_HelpInfo.xml"
         CompressedFiles      = "Microsoft.PowerShell.Diagnostics_ca046f10-ca64-4740-8ff9-2565dba61a4f_en-US_helpcontent$extension"
-        HelpInstallationPath = "$PSHOME\en-US"
-        HelpInstallationPathHome = "$userHelpRoot\en-US"
+        HelpInstallationPath = $HelpInstallationPath
+        HelpInstallationPathHome = $HelpInstallationPathHome
     }
 
     "Microsoft.PowerShell.Host" = @{
         HelpFiles            = "Microsoft.PowerShell.ConsoleHost.dll-help.xml"
         HelpInfoFiles        = "Microsoft.PowerShell.Host_56d66100-99a0-4ffc-a12d-eee9a6718aef_HelpInfo.xml"
         CompressedFiles      = "Microsoft.PowerShell.Host_56d66100-99a0-4ffc-a12d-eee9a6718aef_en-US_helpcontent$extension"
-        HelpInstallationPath = "$PSHOME\en-US"
-        HelpInstallationPathHome = "$userHelpRoot\en-US"
+        HelpInstallationPath = $HelpInstallationPath
+        HelpInstallationPathHome = $HelpInstallationPathHome
     }
 
     "Microsoft.PowerShell.LocalAccounts" = @{
         HelpFiles            = "Microsoft.Powershell.LocalAccounts.dll-help.xml"
         HelpInfoFiles        = "Microsoft.PowerShell.LocalAccounts_8e362604-2c0b-448f-a414-a6a690a644e2_HelpInfo.xml"
         CompressedFiles      = "Microsoft.PowerShell.LocalAccounts_8e362604-2c0b-448f-a414-a6a690a644e2_en-US_HelpContent$extension"
-        HelpInstallationPath = "$PSHOME\Modules\Microsoft.PowerShell.LocalAccounts\en-US"
-        HelpInstallationPathHome = "$userHelpRoot\Microsoft.PowerShell.LocalAccounts\en-US"
+        HelpInstallationPath = Join-Path -Path:$PSHOME Modules Microsoft.PowerShell.LocalAccounts $myUICulture
+        HelpInstallationPathHome = Join-Path -Path:$userHelpRoot -ChildPath:Microsoft.PowerShell.LocalAccounts -AdditionalChildPath:$myUICulture
     }
 
     "Microsoft.PowerShell.Management" = @{
         HelpFiles            = "Microsoft.PowerShell.Commands.Management.dll-help.xml"
         HelpInfoFiles        = "Microsoft.PowerShell.Management_eefcb906-b326-4e99-9f54-8b4bb6ef3c6d_HelpInfo.xml"
         CompressedFiles      = "Microsoft.PowerShell.Management_eefcb906-b326-4e99-9f54-8b4bb6ef3c6d_en-US_helpcontent$extension"
-        HelpInstallationPath = "$PSHOME\en-US"
-        HelpInstallationPathHome = "$userHelpRoot\en-US"
+        HelpInstallationPath = $HelpInstallationPath
+        HelpInstallationPathHome = $HelpInstallationPathHome
     }
 
     "Microsoft.PowerShell.Security" = @{
         HelpFiles            = "Microsoft.PowerShell.Security.dll-help.xml"
         HelpInfoFiles        = "Microsoft.PowerShell.Security_a94c8c7e-9810-47c0-b8af-65089c13a35a_HelpInfo.xml"
         CompressedFiles      = "Microsoft.PowerShell.Security_a94c8c7e-9810-47c0-b8af-65089c13a35a_en-US_helpcontent$extension"
-        HelpInstallationPath = "$PSHOME\en-US"
-        HelpInstallationPathHome = "$userHelpRoot\en-US"
+        HelpInstallationPath = $HelpInstallationPath
+        HelpInstallationPathHome = $HelpInstallationPathHome
     }
 
     "Microsoft.PowerShell.Utility" = @{
         HelpFiles            = "Microsoft.PowerShell.Commands.Utility.dll-Help.xml", "Microsoft.PowerShell.Utility-help.xml"
         HelpInfoFiles        = "Microsoft.PowerShell.Utility_1da87e53-152b-403e-98dc-74d7b4d63d59_HelpInfo.xml"
         CompressedFiles      = "Microsoft.PowerShell.Utility_1da87e53-152b-403e-98dc-74d7b4d63d59_en-US_helpcontent$extension"
-        HelpInstallationPath = "$PSHOME\en-US"
-        HelpInstallationPathHome = "$userHelpRoot\en-US"
+        HelpInstallationPath = $HelpInstallationPath
+        HelpInstallationPathHome = $HelpInstallationPathHome
     }
 
     "Microsoft.WSMan.Management" = @{
         HelpFiles            = "Microsoft.WSMan.Management.dll-help.xml"
         HelpInfoFiles        = "Microsoft.WsMan.Management_766204A6-330E-4263-A7AB-46C87AFC366C_HelpInfo.xml"
         CompressedFiles      = "Microsoft.WsMan.Management_766204A6-330E-4263-A7AB-46C87AFC366C_en-US_helpcontent$extension"
-        HelpInstallationPath = "$PSHOME\en-US"
-        HelpInstallationPathHome = "$userHelpRoot\en-US"
+        HelpInstallationPath = $HelpInstallationPath
+        HelpInstallationPathHome = $HelpInstallationPathHome
     }
 
     "PackageManagement" = @{
         HelpFiles            = "Microsoft.PowerShell.PackageManagement.dll-help.xml"
         HelpInfoFiles        = "PackageManagement_4ae9fd46-338a-459c-8186-07f910774cb8_HelpInfo.xml"
         CompressedFiles      = "PackageManagement_4ae9fd46-338a-459c-8186-07f910774cb8_en-US_helpcontent$extension"
-        HelpInstallationPath = "$PSHOME\Modules\PackageManagement\en-US"
-        HelpInstallationPathHome = "$userHelpRoot\PackageManagement\en-US"
+        HelpInstallationPath = Join-Path -Path:$PSHOME -ChildPath:Modules -AdditionalChildPath:PackageManagement, $myUICulture
+        HelpInstallationPathHome = Join-Path -Path:$userHelpRoot -ChildPath:PackageManagement -AdditionalChildPath:$myUICulture
     }
 
     "PowershellGet" = @{
         HelpFiles            = "PSGet.psm1-help.xml"
         HelpInfoFiles        = "PowershellGet_1d73a601-4a6c-43c5-ba3f-619b18bbb404_HelpInfo.xml"
         CompressedFiles      = "PowershellGet_1d73a601-4a6c-43c5-ba3f-619b18bbb404_en-US_helpcontent$extension"
-        HelpInstallationPath = "$PSHOME\Modules\PowershellGet\en-US"
-        HelpInstallationPathHome = "$userHelpRoot\PackageManagement\en-US"
+        HelpInstallationPath = Join-Path -Path:$PSHOME -ChildPath:Modules -AdditionalChildPath:PowershellGet, $myUICulture
+        HelpInstallationPathHome = Join-Path -Path:$userHelpRoot -ChildPath:PackageManagement -AdditionalChildPath:$myUICulture
     }
 }
 
@@ -166,23 +174,15 @@ function ValidateInstalledHelpContent
         [switch]$UserScope
     )
 
-    if($UserScope)
-    {
-        $params = @{ Path = $testCases[$moduleName].HelpInstallationPathHome }
-    }
-    else
-    {
-        $params = @{ Path = $testCases[$moduleName].HelpInstallationPath }
-    }
+    [string] $pathProperty = $(if ($UserScope) { 'HelpInstallationPathHome' } else { 'HelpInstallationPath' })
+    [System.IO.FileInfo[]] $helpFilesInstalled = Get-ChildItem -Path:($testCases[$moduleName][$pathProperty]) -Filter:*help.xml -Recurse
 
-    $helpFilesInstalled = @(GetFiles @params | ForEach-Object {Split-Path $_ -Leaf})
-
-    $expectedHelpFiles = @($testCases[$moduleName].HelpFiles)
-    $helpFilesInstalled.Count | Should -Be $expectedHelpFiles.Count
+    [string[]] $expectedHelpFiles = $testCases[$moduleName].HelpFiles
+    $helpFilesInstalled.Count | Should -Be ($expectedHelpFiles.Count)
 
     foreach ($fileName in $expectedHelpFiles)
     {
-        $helpFilesInstalled -contains $fileName | Should -BeTrue
+        [string[]] $helpFilesInstalled.Name -eq $fileName | Should -Be $fileName
     }
 }
 
@@ -199,62 +199,31 @@ function RunUpdateHelpTests
         if ($powershellCoreModules -contains $moduleName)
         {
 
-            It "Validate Update-Help for module '$moduleName' with scope as '$userscope'" -Skip:(!(Test-CanWriteToPsHome) -and $userscope -eq $false) {
+            [string] $moduleHelpPath = $null
+            [string] $updateScope = $null
+            if ($userscope)
+            {
+                $moduleHelpPath = $testCases[$moduleName]['HelpInstallationPathHome']
+                $updateScope = 'CurrentUser'
+            }
+            else
+            {
+                $moduleHelpPath = $testCases[$moduleName]['HelpInstallationPath']
+                $updateScope = 'AllUsers'
+            }
 
-                if($userscope)
-                {
-                    $params = @{Path = $testCases[$moduleName].HelpInstallationPathHome}
-                    $updateScope = @{Scope = 'CurrentUser'}
-                }
-                else
-                {
-                    $params = @{Path = $testCases[$moduleName].HelpInstallationPath}
-                    $updateScope = @{Scope = 'AllUsers'}
-                }
+            It ('Validate Update-Help for module ''{0}'' in {1}' -F $moduleName, [PSCustomObject] $updateScope) -Skip:(!(Test-CanWriteToPsHome) -and $userscope -eq $false) {
 
-                $commonParam = @{
-                    Include = @("*help.xml")
-                    Recurse = $true
-                    ErrorAction = 'SilentlyContinue'
-                }
+                # Delete the whole help directory
+                Remove-Item ($moduleHelpPath) -Recurse
+ 
+                [hashtable] $UICultureParam = $(if ((Get-UICulture).Name -ne $myUICulture) { @{ UICulture = $myUICulture } } else { @{} })
+                [hashtable] $sourcePathParam = $(if ($useSourcePath) { @{ SourcePath = Join-Path $PSScriptRoot assets } } else { @{} })
+                Update-Help -Module:$moduleName -Force @UICultureParam @sourcePathParam -Scope:$updateScope
 
-                $params += $commonParam
+                [hashtable] $userScopeParam = $(if ($userscope) { @{ UserScope = $true } } else { @{} })
+                ValidateInstalledHelpContent -moduleName:$moduleName @userScopeParam
 
-                # If the help file is already installed, delete it.
-                Get-ChildItem @params |
-                    Remove-Item -Force -ErrorAction SilentlyContinue
-
-                if ((Get-UICulture).Name -ne "en-Us")
-                {
-                    if ($useSourcePath)
-                    {
-                        Update-Help -Module $moduleName -Force -UICulture en-US -SourcePath "$PSScriptRoot\assets" @updateScope
-                    }
-                    else
-                    {
-                        Update-Help -Module $moduleName -Force -UICulture en-US @updateScope
-                    }
-                }
-                else
-                {
-                    if ($useSourcePath)
-                    {
-                        Update-Help -Module $moduleName -Force -SourcePath "$PSScriptRoot\assets" @updateScope
-                    }
-                    else
-                    {
-                        Update-Help -Module $moduleName -Force @updateScope
-                    }
-                }
-
-                if($userscope)
-                {
-                    ValidateInstalledHelpContent -moduleName $moduleName -UserScope
-                }
-                else
-                {
-                    ValidateInstalledHelpContent -moduleName $moduleName
-                }
             }
 
             if ($tag -eq "CI")
@@ -289,9 +258,9 @@ function RunSaveHelpTests
 
                 It "Validate Save-Help for the '$moduleName' module" -Pending:$pending {
 
-                    if ((Get-UICulture).Name -ne "en-Us")
+                    if ((Get-UICulture).Name -ne $myUICulture)
                     {
-                        Save-Help -Module $moduleName -Force -UICulture en-US -DestinationPath $saveHelpFolder
+                        Save-Help -Module $moduleName -Force -UICulture $myUICulture -DestinationPath $saveHelpFolder
                     }
                     else
                     {
@@ -347,7 +316,7 @@ Describe "Validate Update-Help from the Web for one PowerShell module." -Tags @(
         $ProgressPreference = $SavedProgressPreference
     }
 
-    RunUpdateHelpTests -Tag "CI" -Scope 'AllUsers'
+    RunUpdateHelpTests -Tag "CI"
 }
 
 Describe "Validate Update-Help from the Web for one PowerShell module for user scope." -Tags @('CI', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
@@ -359,7 +328,7 @@ Describe "Validate Update-Help from the Web for one PowerShell module for user s
         $ProgressPreference = $SavedProgressPreference
     }
 
-    RunUpdateHelpTests -Tag "CI" -Scope 'CurrentUser'
+    RunUpdateHelpTests -Tag "CI" -UserScope
 }
 
 Describe "Validate Update-Help from the Web for all PowerShell modules." -Tags @('Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
@@ -371,7 +340,7 @@ Describe "Validate Update-Help from the Web for all PowerShell modules." -Tags @
         $ProgressPreference = $SavedProgressPreference
     }
 
-    RunUpdateHelpTests -Tag "Feature" -Scope 'AllUsers'
+    RunUpdateHelpTests -Tag "Feature"
 }
 
 Describe "Validate Update-Help from the Web for all PowerShell modules for user scope." -Tags @('Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
@@ -383,7 +352,7 @@ Describe "Validate Update-Help from the Web for all PowerShell modules for user 
         $ProgressPreference = $SavedProgressPreference
     }
 
-    RunUpdateHelpTests -Tag "Feature" -Scope 'CurrentUser'
+    RunUpdateHelpTests -Tag "Feature" -UserScope
 }
 
 Describe "Validate Update-Help -SourcePath for one PowerShell module." -Tags @('CI', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
@@ -395,7 +364,7 @@ Describe "Validate Update-Help -SourcePath for one PowerShell module." -Tags @('
         $ProgressPreference = $SavedProgressPreference
     }
 
-    RunUpdateHelpTests -Tag "CI" -useSourcePath -Scope 'AllUsers'
+    RunUpdateHelpTests -Tag "CI" -useSourcePath
 }
 
 Describe "Validate Update-Help -SourcePath for one PowerShell module for user scope." -Tags @('CI', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
@@ -407,7 +376,7 @@ Describe "Validate Update-Help -SourcePath for one PowerShell module for user sc
         $ProgressPreference = $SavedProgressPreference
     }
 
-    RunUpdateHelpTests -Tag "CI" -useSourcePath -Scope 'CurrentUser'
+    RunUpdateHelpTests -Tag "CI" -useSourcePath -UserScope
 }
 
 Describe "Validate Update-Help -SourcePath for all PowerShell modules." -Tags @('Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
@@ -419,7 +388,7 @@ Describe "Validate Update-Help -SourcePath for all PowerShell modules." -Tags @(
         $ProgressPreference = $SavedProgressPreference
     }
 
-    RunUpdateHelpTests -Tag "Feature" -useSourcePath -Scope 'AllUsers'
+    RunUpdateHelpTests -Tag "Feature" -useSourcePath
 }
 
 Describe "Validate Update-Help -SourcePath for all PowerShell modules for user scope." -Tags @('Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
@@ -431,7 +400,7 @@ Describe "Validate Update-Help -SourcePath for all PowerShell modules for user s
         $ProgressPreference = $SavedProgressPreference
     }
 
-    RunUpdateHelpTests -Tag "Feature" -useSourcePath -Scope 'CurrentUser'
+    RunUpdateHelpTests -Tag "Feature" -useSourcePath -UserScope
 }
 
 Describe "Validate 'Update-Help' shows 'HelpCultureNotSupported' when thrown" -Tags @('Feature') {
@@ -448,6 +417,12 @@ Describe "Validate 'Update-Help' shows 'HelpCultureNotSupported' when thrown" -T
         @{ 'name' = 'explicit culture de-DE'; 'culture' = 'de-DE' }
     ) {
         param ($name, $culture)
+
+        # if running in Linux as an invariant culture => force Spanish
+        if ($IsLinux && $culture -eq $null && (Get-Culture).LCID -eq 127 ){
+            $culture = 'es-ES'
+        }
+
         # Cannot pass null, have to splat to skip argument entirely
         $cultureArg = $culture ? @{ 'UICulture' = $culture } : @{}
         $cultureUsed = $culture ?? (Get-Culture)

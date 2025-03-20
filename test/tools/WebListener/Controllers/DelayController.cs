@@ -54,33 +54,33 @@ namespace mvc.Controllers
             return getController.Index();
         }
 
-        public async Task Stall(int seconds, string contentType, CancellationToken cancellationToken)
+        public async Task Stall(int seconds, string contentType, int chunks, bool contentLength, CancellationToken cancellationToken)
         {
-            await WriteStallResponse(seconds, contentType, null, null, cancellationToken);
+            await WriteStallResponse(seconds, contentType, chunks, contentLength, null, null, cancellationToken);
         }
 
-        public async Task StallBrotli(int seconds, string contentType, CancellationToken cancellationToken)
+        public async Task StallBrotli(int seconds, string contentType, int chunks, bool contentLength, CancellationToken cancellationToken)
         {
             using var memStream = new MemoryStream();
             using var compressedStream = new BrotliStream(memStream, CompressionLevel.Fastest);
             Response.Headers.ContentEncoding = "br";
-            await WriteStallResponse(seconds, contentType, compressedStream, memStream, cancellationToken);
+            await WriteStallResponse(seconds, contentType, chunks, contentLength, compressedStream, memStream, cancellationToken);
         }
 
-        public async Task StallDeflate(int seconds, string contentType, CancellationToken cancellationToken)
+        public async Task StallDeflate(int seconds, string contentType, int chunks, bool contentLength, CancellationToken cancellationToken)
         {
             using var memStream = new MemoryStream();
             using var compressedStream = new DeflateStream(memStream, CompressionLevel.Fastest);
             Response.Headers.ContentEncoding = "deflate";
-            await WriteStallResponse(seconds, contentType, compressedStream, memStream, cancellationToken);
+            await WriteStallResponse(seconds, contentType, chunks, contentLength, compressedStream, memStream, cancellationToken);
         }
 
-        public async Task StallGZip(int seconds, string contentType, CancellationToken cancellationToken)
+        public async Task StallGZip(int seconds, string contentType, int chunks, bool contentLength, CancellationToken cancellationToken)
         {
             using var memStream = new MemoryStream();
             using var compressedStream = new GZipStream(memStream, CompressionLevel.Fastest);
             Response.Headers.ContentEncoding = "gzip";
-            await WriteStallResponse(seconds, contentType, compressedStream, memStream, cancellationToken);
+            await WriteStallResponse(seconds, contentType, chunks, contentLength, compressedStream, memStream, cancellationToken);
         }
 
         public IActionResult Error()
@@ -88,7 +88,7 @@ namespace mvc.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        private async Task WriteStallResponse(int seconds, string contentType, Stream stream, MemoryStream memStream, CancellationToken cancellationToken)
+        private async Task WriteStallResponse(int seconds, string contentType, int chunks, bool contentLength, Stream stream, MemoryStream memStream, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(contentType))
             {
@@ -124,20 +124,41 @@ namespace mvc.Controllers
                 stream.Close();
                 response = memStream.ToArray();
             }
-            int midPoint = response.Length / 2;
-
-            // Start writing approx half the content, including headers and then delay before writing the rest.
-            await Response.Body.WriteAsync(response, 0, midPoint, cancellationToken);
-            await Response.Body.FlushAsync(cancellationToken);
-
-            if (seconds > 0)
+            if (chunks < 2)
             {
-                int milliseconds = seconds * 1000;
-                await Task.Delay(milliseconds);
+                chunks = 2;
+            }
+            if (chunks > response.Length)
+            {
+                throw new InvalidDataException($"Response message is not big enough to break into {chunks} chunks. (Size {response.Length} bytes).");
             }
 
-            await Response.Body.WriteAsync(response, midPoint, response.Length - midPoint, cancellationToken);
-            await Response.Body.FlushAsync(cancellationToken);
+            if (contentLength)
+            {
+                Response.ContentLength = response.Length;
+            }
+            int chunkSize = response.Length / chunks;
+            int currentPos = 0;
+
+            // Write each of the content chunks followed by a delay
+            // The last segment makes up the remainder of the content if
+            // it doesn't divide neatly into the required chunks
+            for (int i = 0; i < chunks; i++)
+            {
+                if (i == chunks - 1)
+                {
+                    chunkSize = response.Length - currentPos;
+                    seconds = 0;
+                }
+                await Response.Body.WriteAsync(response, currentPos, chunkSize, cancellationToken);
+                await Response.Body.FlushAsync(cancellationToken);
+                currentPos += chunkSize;
+                if (seconds > 0)
+                {
+                    int milliseconds = seconds * 1000;
+                    await Task.Delay(milliseconds);
+                }
+            }
         }
     }
 }

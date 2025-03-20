@@ -203,7 +203,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Default shellname.
         /// </summary>
-        protected const string DefaultPowerShellRemoteShellName = System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix + "Microsoft.PowerShell";
+        protected const string DefaultPowerShellRemoteShellName = WSManNativeApi.ResourceURIPrefix + "Microsoft.PowerShell";
 
         /// <summary>
         /// Default application name for the connection uri.
@@ -444,6 +444,37 @@ namespace Microsoft.PowerShell.Commands
             /// </summary>
             FastSavingCritical,
         }
+
+#nullable enable
+        /// <summary>
+        /// Get the State property from Get-VM result.
+        /// </summary>
+        /// <param name="value">The raw PSObject as returned by Get-VM.</param>
+        /// <returns>The VMState value of the State property if present and parsable, otherwise null.</returns>
+        internal VMState? GetVMStateProperty(PSObject value)
+        {
+            object? rawState = value.Properties["State"].Value;
+            if (rawState is Enum enumState)
+            {
+                // If the Hyper-V module was directly importable we have the VMState enum
+                // value which we can just cast to our VMState type.
+                return (VMState)enumState;
+            }
+            else if (rawState is string stringState && Enum.TryParse(stringState, true, out VMState result))
+            {
+                // If the Hyper-V module was imported through implicit remoting on old
+                // Windows versions we get a string back which we will try and parse
+                // as the enum label.
+                return result;
+            }
+
+            // Unknown scenario, this should not happen.
+            string message = PSRemotingErrorInvariants.FormatResourceString(
+                RemotingErrorIdStrings.HyperVFailedToGetStateUnknownType,
+                rawState?.GetType()?.FullName ?? "null");
+            throw new InvalidOperationException(message);
+        }
+#nullable disable
 
         #endregion
 
@@ -1658,7 +1689,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         this.VMName[index] = (string)results[0].Properties["VMName"].Value;
 
-                        if ((VMState)results[0].Properties["State"].Value == VMState.Running)
+                        if (GetVMStateProperty(results[0]) == VMState.Running)
                         {
                             vmIsRunning[index] = true;
                         }
@@ -1707,7 +1738,7 @@ namespace Microsoft.PowerShell.Commands
                         this.VMId[index] = (Guid)results[0].Properties["VMId"].Value;
                         this.VMName[index] = (string)results[0].Properties["VMName"].Value;
 
-                        if ((VMState)results[0].Properties["State"].Value == VMState.Running)
+                        if (GetVMStateProperty(results[0]) == VMState.Running)
                         {
                             vmIsRunning[index] = true;
                         }
@@ -2278,7 +2309,7 @@ namespace Microsoft.PowerShell.Commands
             // Semantic checks on the using statement have already validated that there are no arbitrary expressions,
             // so we'll allow these expressions in everything but NoLanguage mode.
 
-            bool allowUsingExpressions = (Context.SessionState.LanguageMode != PSLanguageMode.NoLanguage);
+            bool allowUsingExpressions = Context.SessionState.LanguageMode != PSLanguageMode.NoLanguage;
             object[] usingValuesInArray = null;
             IDictionary usingValuesInDict = null;
 
@@ -2332,7 +2363,7 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 // This is trusted input as long as we're in FullLanguage mode
-                bool isTrustedInput = (Context.LanguageMode == PSLanguageMode.FullLanguage);
+                bool isTrustedInput = Context.LanguageMode == PSLanguageMode.FullLanguage;
                 powershell = _scriptBlock.GetPowerShell(isTrustedInput, _args);
             }
             catch (ScriptBlockToPowerShellNotSupportedException)
@@ -2428,7 +2459,7 @@ namespace Microsoft.PowerShell.Commands
                 // GetExpressionValue ensures that it only does variable access when supplied a VariableExpressionAst.
                 // So, this is still safe to use in ConstrainedLanguage and will not result in arbitrary code
                 // execution.
-                bool allowVariableAccess = (Context.SessionState.LanguageMode != PSLanguageMode.NoLanguage);
+                bool allowVariableAccess = Context.SessionState.LanguageMode != PSLanguageMode.NoLanguage;
 
                 foreach (var varAst in paramUsingVars)
                 {
@@ -3940,9 +3971,9 @@ namespace Microsoft.PowerShell.Commands
                     string shellUri = null;
                     if (!string.IsNullOrEmpty(configurationName))
                     {
-                        shellUri = (configurationName.IndexOf(
-                                    System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix, StringComparison.OrdinalIgnoreCase) != -1) ?
-                                    configurationName : System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix + configurationName;
+                        shellUri = configurationName.Contains(WSManNativeApi.ResourceURIPrefix, StringComparison.OrdinalIgnoreCase)
+                            ? configurationName
+                            : WSManNativeApi.ResourceURIPrefix + configurationName;
                     }
 
                     foreach (Runspace runspace in runspaces)

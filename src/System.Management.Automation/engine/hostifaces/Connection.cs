@@ -19,7 +19,6 @@ namespace System.Management.Automation.Runspaces
     /// Exception thrown when state of the runspace is different from
     /// expected state of runspace.
     /// </summary>
-    [Serializable]
     public class InvalidRunspaceStateException : SystemException
     {
         /// <summary>
@@ -96,9 +95,10 @@ namespace System.Management.Automation.Runspaces
         /// The <see cref="StreamingContext"/> that contains contextual information
         /// about the source or destination.
         /// </param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected InvalidRunspaceStateException(SerializationInfo info, StreamingContext context)
-        : base(info, context)
         {
+            throw new NotSupportedException();
         }
 
         #endregion
@@ -219,12 +219,9 @@ namespace System.Management.Automation.Runspaces
         ReuseThread = 2,
 
         /// <summary>
-        /// Doesn't create a new thread; the execution occurs on the
-        /// thread that calls Invoke.
+        /// Doesn't create a new thread; the execution occurs on the thread
+        /// that calls Invoke. This option is not valid for asynchronous calls.
         /// </summary>
-        /// <remarks>
-        /// This option is not valid for asynchronous calls
-        /// </remarks>
         UseCurrentThread = 3
     }
 

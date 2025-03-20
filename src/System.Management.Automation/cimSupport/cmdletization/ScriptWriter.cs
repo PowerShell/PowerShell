@@ -100,14 +100,12 @@ namespace Microsoft.PowerShell.Cmdletization
             }
             catch (InvalidOperationException e)
             {
-                XmlSchemaException schemaException = e.InnerException as XmlSchemaException;
-                if (schemaException != null)
+                if (e.InnerException is XmlSchemaException schemaException)
                 {
                     throw new XmlException(schemaException.Message, schemaException, schemaException.LineNumber, schemaException.LinePosition);
                 }
 
-                XmlException xmlException = e.InnerException as XmlException;
-                if (xmlException != null)
+                if (e.InnerException is XmlException xmlException)
                 {
                     throw xmlException;
                 }
@@ -828,8 +826,7 @@ function __cmdletization_BindCommonParameters
         private CommandMetadata GetCommandMetadata(CommonCmdletMetadata cmdletMetadata)
         {
             string defaultParameterSetName = null;
-            StaticCmdletMetadataCmdletMetadata staticCmdletMetadata = cmdletMetadata as StaticCmdletMetadataCmdletMetadata;
-            if (staticCmdletMetadata != null)
+            if (cmdletMetadata is StaticCmdletMetadataCmdletMetadata staticCmdletMetadata)
             {
                 if (!string.IsNullOrEmpty(staticCmdletMetadata.DefaultCmdletParameterSet))
                 {

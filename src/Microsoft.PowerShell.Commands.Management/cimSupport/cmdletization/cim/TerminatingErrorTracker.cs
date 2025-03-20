@@ -53,8 +53,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             int maxNumberOfSessionsIndicatedByCimInstanceArguments = 1;
             foreach (object cmdletArgument in invocationInfo.BoundParameters.Values)
             {
-                CimInstance[] array = cmdletArgument as CimInstance[];
-                if (array != null)
+                if (cmdletArgument is CimInstance[] array)
                 {
                     int numberOfSessionsAssociatedWithArgument = array
                         .Select(CimCmdletAdapter.GetSessionOfOriginFromCimInstance)

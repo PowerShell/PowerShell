@@ -122,7 +122,7 @@ namespace System.Management.Automation
             // language modes (getting internal functions in the user's state) isn't a danger
             if ((!this.UseLocalScope) && (!this._rethrowExitException))
             {
-                ValidateCompatibleLanguageMode(_scriptBlock, context.LanguageMode, Command.MyInvocation);
+                ValidateCompatibleLanguageMode(_scriptBlock, context, Command.MyInvocation);
             }
         }
 

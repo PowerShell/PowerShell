@@ -46,7 +46,7 @@ jobs:
     fetchDepth: 1000
 
   - pwsh: |
-      Get-ChildItem -Path env:
+      Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
     displayName: Capture Environment
     condition: succeededOrFailed()
 
@@ -54,8 +54,14 @@ jobs:
     displayName: Set Build Name for Non-PR
     condition: ne(variables['Build.Reason'], 'PullRequest')
 
-  - ${{ if ne(variables['AzDevOpsFeed'], '') }}:
+  - ${{ if ne(variables['UseAzDevOpsFeed'], '') }}:
     - template: /tools/releaseBuild/azureDevOps/templates/insert-nuget-config-azfeed.yml
+
+  - task: UseDotNet@2
+    displayName: 'Use .NET Core sdk'
+    inputs:
+      useGlobalJson: true
+      packageType: 'sdk'
 
   - pwsh: |
       Import-Module .\tools\ci.psm1
