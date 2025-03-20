@@ -1,0 +1,2 @@
+PS C:\> Set-Location HKCU:\Software\MyCompany\MyApp
+PS HKCU:\Software\MyCompany\MyApp> Remove-ItemProperty -Path . -Name "Options" -Confirm
