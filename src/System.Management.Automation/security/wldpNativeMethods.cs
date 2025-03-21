@@ -174,20 +174,25 @@ namespace System.Management.Automation.Security
         {
             SafeHandle fileHandle = fileStream.SafeFileHandle;
             SystemEnforcementMode systemLockdownPolicy = GetSystemLockdownPolicy();
-            SystemScriptFileEnforcement wldpFilePolicy = SystemScriptFileEnforcement.None;
 
             // First check latest WDAC APIs if available.
             if (systemLockdownPolicy is SystemEnforcementMode.Enforce
-                && !(s_wldpCanExecuteAvailable && TryGetWldpCanExecuteFileResult(filePath, fileHandle, out wldpFilePolicy)))
+                && s_wldpCanExecuteAvailable
+                && TryGetWldpCanExecuteFileResult(filePath, fileHandle, out SystemScriptFileEnforcement wldpFilePolicy))
             {
-                // Failed to invoke WldpCanExecuteFile, revert to legacy APIs.
-                return GetLockdownPolicy(filePath, fileHandle, canExecuteResult: null);
+                return GetLockdownPolicy(filePath, fileHandle, wldpFilePolicy);
+            }
+
+            // Failed to invoke WldpCanExecuteFile, revert to legacy APIs.
+            if (systemLockdownPolicy is SystemEnforcementMode.None)
+            {
+                return SystemScriptFileEnforcement.None;
             }
 
             // WldpCanExecuteFile was invoked successfully so we can skip running
             // legacy WDAC APIs. AppLocker must still be checked in case it is more
             // strict than the current WDAC policy.
-            return GetLockdownPolicy(filePath, fileHandle, wldpFilePolicy);
+            return GetLockdownPolicy(filePath, fileHandle, canExecuteResult: null);
         }
 
         private static SystemScriptFileEnforcement ConvertToModernFileEnforcement(SystemEnforcementMode legacyMode)
