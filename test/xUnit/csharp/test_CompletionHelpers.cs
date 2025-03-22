@@ -9,14 +9,27 @@ namespace PSTests.Parallel
     public class CompletionHelpersTests
     {
         [Theory]
-        [InlineData("word", "'", "'word'")]
-        [InlineData("word", "\"", "\"word\"")]
-        [InlineData("word's", "'", "'word''s'")]
-        [InlineData("already 'quoted'", "'", "'already ''quoted'''")]
         [InlineData("", "'", "''")]
         [InlineData("", "\"", "\"\"")]
         [InlineData("'", "'", "''''")]
         [InlineData("", "", "''")]
+        [InlineData("", null, "''")]
+        [InlineData("word", "'", "'word'")]
+        [InlineData("word", "\"", "\"word\"")]
+        [InlineData("word's", "'", "'word''s'")]
+        [InlineData("it's a test", "'", "'it''s a test'")]
+        [InlineData("already 'quoted'", "'", "'already ''quoted'''")]
+        [InlineData("multiple 'quotes' in 'text'", "'", "'multiple ''quotes'' in ''text'''")]
+        [InlineData("\"word\"", "'", "'\"word\"'")]
+        [InlineData("'word'", "'", "''word''")]
+        [InlineData("word", "", "word")]
+        [InlineData("word", null, "word")]
+        [InlineData("\"word\"", "\"", "\"\"word\"\"")]
+        [InlineData("'word'", "\"", "\"'word'\"")]
+        [InlineData("word with space", "'", "'word with space'")]
+        [InlineData("word with space", "\"", "\"word with space\"")]
+        [InlineData("word\"with\"quotes", "'", "'word\"with\"quotes'")]
+        [InlineData("word'with'quotes", "\"", "\"word'with'quotes\"")]
         public void TestQuoteCompletionText(
              string completionText,
              string quote,
