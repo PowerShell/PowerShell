@@ -36,9 +36,7 @@ namespace System.Management.Automation
             {
                 if (pattern.IsMatch(value))
                 {
-                    string completionText = quote == string.Empty
-                        ? value
-                        : quote + value + quote;
+                    string completionText = QuoteCompletionText(value, quote);
 
                     string listItemText = value;
 
@@ -140,5 +138,34 @@ namespace System.Management.Automation
 
         private static bool ContainsCharsToCheck(ReadOnlySpan<char> text)
             => text.ContainsAny(s_defaultCharsToCheck);
+
+        /// <summary>
+        /// Quotes a given completion text.
+        /// </summary>
+        /// <param name="completionText">
+        /// The text to be quoted.
+        /// </param>
+        /// <param name="quote">
+        /// The quote character to use for enclosing the text. Defaults to a single quote if not provided.
+        /// </param>
+        /// <returns>
+        /// The quoted <paramref name="completionText"/>.
+        /// </returns>
+        internal static string QuoteCompletionText(string completionText, string quote)
+        {
+            if (!CompletionRequiresQuotes(completionText))
+            {
+                return quote + completionText + quote;
+            }
+
+            string quoteInUse = string.IsNullOrEmpty(quote) ? "'" : quote;
+
+            if (quoteInUse == "'")
+            {
+                completionText = CodeGeneration.EscapeSingleQuotedStringContent(completionText);
+            }
+
+            return quoteInUse + completionText + quoteInUse;
+        }
     }
 }
