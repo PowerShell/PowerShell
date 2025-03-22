@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Formats.Asn1;
 using System.Globalization;
 using System.IO;
 using System.Management.Automation;
@@ -3310,8 +3311,8 @@ namespace Microsoft.PowerShell.Commands
     {
         private readonly List<DnsNameRepresentation> _dnsList = new();
         private readonly IdnMapping idnMapping = new();
-
         private const string distinguishedNamePrefix = "CN=";
+        private const string CommonNameOid = "2.5.4.3";
 
         /// <summary>
         /// Get property of DnsNameList.
@@ -3335,25 +3336,96 @@ namespace Microsoft.PowerShell.Commands
             return new DnsNameRepresentation(dnsName, unicodeName);
         }
 
-        /// <summary>
-        /// Constructor for DnsNameProperty.
-        /// </summary>
-        public DnsNameProperty(X509Certificate2 cert)
+        private static string ExtractSingleValueRdnCommonDnsName(X500RelativeDistinguishedName rdn)
         {
-            _dnsList = new List<DnsNameRepresentation>();
+            string oid = rdn.GetSingleElementType().Value;
+            string rdnValue = rdn.GetSingleElementValue();
 
-            // extract DNS name from subject distinguish name
-            // if it exists and does not contain a comma
-            // a comma, indicates it is not a DNS name
-            if (cert.Subject.StartsWith(distinguishedNamePrefix, StringComparison.OrdinalIgnoreCase) &&
-                !cert.Subject.Contains(','))
+            if (!string.IsNullOrEmpty(rdnValue) &&
+                CommonNameOid.Equals(oid, StringComparison.Ordinal))
             {
-                string parsedSubjectDistinguishedDnsName = cert.Subject.Substring(distinguishedNamePrefix.Length);
-                DnsNameRepresentation dnsName = GetDnsNameRepresentation(parsedSubjectDistinguishedDnsName);
-                _dnsList.Add(dnsName);
+                return rdnValue;
             }
 
-            // Extract DNS names from SAN extensions
+            return string.Empty;
+        }
+
+        private static string ExtractMultiValueRdnCommonDnsName(X500RelativeDistinguishedName rdn)
+        {
+            AsnReader asnReader = new(rdn.RawData, AsnEncodingRules.DER);
+
+            // Windows does not enforce the sort order on multi-value RDNs.
+            AsnReader setReader = asnReader.ReadSetOf(skipSortOrderValidation: true);
+
+            while (setReader.HasData)
+            {
+                AsnReader elementReader = setReader.ReadSequence();
+                string oid = elementReader.ReadObjectIdentifier();
+
+                if (CommonNameOid.Equals(oid, StringComparison.Ordinal))
+                {
+                    Asn1Tag tag = elementReader.PeekTag();
+
+                    // Ensure tag class is Universal (standard ASN.1 type)
+                    if (tag.TagClass == TagClass.Universal)
+                    {
+                        string decodedValue = elementReader.ReadCharacterString((UniversalTagNumber)tag.TagValue);
+
+                        if (!string.IsNullOrEmpty(decodedValue))
+                        {
+                            return decodedValue;
+                        }
+                    }
+
+                    // Given CN was found we can exit early if tag value is not Universal class
+                    break;
+                }
+            }
+
+            return string.Empty;
+        }
+
+        private void ExtractSubjectDistinguishedNameCommonDnsName(X509Certificate2 cert, bool experimentalFeatureEnabled)
+        {
+            if (!experimentalFeatureEnabled)
+            {
+                // extract DNS name from subject distinguish name
+                // if it exists and does not contain a comma
+                // a comma, indicates it is not a DNS name
+                if (cert.Subject.StartsWith(distinguishedNamePrefix, StringComparison.OrdinalIgnoreCase) &&
+                    !cert.Subject.Contains(','))
+                {
+                    string parsedSubjectDistinguishedDnsName = cert.Subject.Substring(distinguishedNamePrefix.Length);
+                    DnsNameRepresentation dnsName = GetDnsNameRepresentation(parsedSubjectDistinguishedDnsName);
+                    _dnsList.Add(dnsName);
+                }
+
+                return;
+            }
+
+            foreach (X500RelativeDistinguishedName rdn in cert.SubjectName.EnumerateRelativeDistinguishedNames())
+            {
+                // Extract Common Name directly if RDN has single attribute when HasMultipleElements == false
+                // This is the common case which .NET supports directly
+                // Handle edge case with multi-value RDN when HasMultipleElements == true
+                // We fallback to AsnReader and parse the Common Name
+                // .NET does not support this directly but provides the raw data in the RDN so we can parse it ourselves
+                string dnsName = !rdn.HasMultipleElements
+                    ? ExtractSingleValueRdnCommonDnsName(rdn)
+                    : ExtractMultiValueRdnCommonDnsName(rdn);
+
+                if (!string.IsNullOrEmpty(dnsName))
+                {
+                    _dnsList.Add(GetDnsNameRepresentation(dnsName));
+
+                    // Exit early since we found Common DNS name and don't need to scan more RDNs
+                    break;
+                }
+            }
+        }
+
+        private void ExtractSubjectAlternativeNameExtensionDnsNames(X509Certificate2 cert)
+        {
             foreach (X509Extension extension in cert.Extensions)
             {
                 if (extension is X509SubjectAlternativeNameExtension sanExtension)
@@ -3370,6 +3442,15 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Constructor for DnsNameProperty.
+        /// </summary>
+        public DnsNameProperty(X509Certificate2 cert)
+        {
+            ExtractSubjectDistinguishedNameCommonDnsName(cert, ExperimentalFeature.IsEnabled(ExperimentalFeature.PSDnsNameSubjectNameCertificateParser));
+            ExtractSubjectAlternativeNameExtensionDnsNames(cert);
         }
     }
 
