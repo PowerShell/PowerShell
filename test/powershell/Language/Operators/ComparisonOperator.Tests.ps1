@@ -89,6 +89,9 @@ Describe "ComparisonOperator" -Tag "CI" {
         @{ lhs = 'abc`def'; operator = '-like'; rhs = 'abc````def'; result = $false }
         @{ lhs = 'abc``def'; operator = '-like'; rhs = 'abc````def'; result = $true }
         @{ lhs = 'abc`def'; operator = '-like'; rhs = [WildcardPattern]::Escape('abc`def'); result = $true }
+        @{ lhs = 'abc`def'; operator = '-like'; rhs = [WildcardPattern]::Escape('abc``def'); result = $false }
+        @{ lhs = 'abc``def'; operator = '-like'; rhs = [WildcardPattern]::Escape('abc``def'); result = $true }
+        @{ lhs = 'abc``def'; operator = '-like'; rhs = [WildcardPattern]::Escape('abc````def'); result = $false }
     ) {
         param($lhs, $operator, $rhs, $result)
         $expression = "'$lhs' $operator '$rhs'"
