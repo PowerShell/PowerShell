@@ -240,7 +240,7 @@ namespace System.Management.Automation
                 //
                 // if it is a wildcard char, escape it
                 //
-                if (IsWildcardChar(ch) && !charsNotToEscape.Contains(ch))
+                if ((IsWildcardChar(ch) || ch == '`') && !charsNotToEscape.Contains(ch))
                 {
                     temp[tempIndex++] = escapeChar;
                 }
