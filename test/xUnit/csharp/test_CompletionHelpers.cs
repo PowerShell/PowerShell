@@ -29,6 +29,15 @@ namespace PSTests.Parallel
         [InlineData("word with space", "\"", "\"word with space\"")]
         [InlineData("word\"with\"quotes", "'", "'word\"with\"quotes'")]
         [InlineData("word'with'quotes", "\"", "\"word'with'quotes\"")]
+        [InlineData("while", "'", "'while'")]
+        [InlineData("while", "", "while")]
+        [InlineData("while", "\"", "\"while\"")]
+        [InlineData("$variable", "'", "'$variable'")]
+        [InlineData("$variable", "", "$variable")]
+        [InlineData("$variable", "\"", "\"$variable\"")]
+        [InlineData("key$word", "'", "'key$word'")]
+        [InlineData("key$word", "", "'key$word'")]
+        [InlineData("key$word", "\"", "\"key$word\"")]
         public void TestQuoteCompletionText(
              string completionText,
              string quote,
