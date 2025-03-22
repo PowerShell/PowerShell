@@ -524,17 +524,7 @@ namespace System.Management.Automation
                                   + moduleInfo.ModuleType.ToString() + "\r\nPath: "
                                   + moduleInfo.Path;
 
-                    if (CompletionHelpers.CompletionRequiresQuotes(completionText))
-                    {
-                        var quoteInUse = quote == string.Empty ? "'" : quote;
-                        if (quoteInUse == "'")
-                            completionText = completionText.Replace("'", "''");
-                        completionText = quoteInUse + completionText + quoteInUse;
-                    }
-                    else
-                    {
-                        completionText = quote + completionText + quote;
-                    }
+                    completionText = CompletionHelpers.QuoteCompletionText(completionText, quote);
 
                     result.Add(new CompletionResult(completionText, listItemText, CompletionResultType.ParameterValue, toolTip));
                 }
@@ -1844,23 +1834,8 @@ namespace System.Management.Automation
                     {
                         string realEntry = entry;
                         string completionText = entry;
-                        if (quote == string.Empty)
-                        {
-                            if (CompletionHelpers.CompletionRequiresQuotes(entry))
-                            {
-                                realEntry = CodeGeneration.EscapeSingleQuotedStringContent(entry);
-                                completionText = "'" + realEntry + "'";
-                            }
-                        }
-                        else
-                        {
-                            if (quote.Equals("'", StringComparison.OrdinalIgnoreCase))
-                            {
-                                realEntry = CodeGeneration.EscapeSingleQuotedStringContent(entry);
-                            }
 
-                            completionText = quote + realEntry + quote;
-                        }
+                        completionText = CompletionHelpers.QuoteCompletionText(completionText, quote);
 
                         result.Add(new CompletionResult(completionText, entry, CompletionResultType.ParameterValue, entry));
                     }
@@ -3220,17 +3195,7 @@ namespace System.Management.Automation
                         var completionText = eventLog.Log.ToString();
                         var listItemText = completionText;
 
-                        if (CompletionHelpers.CompletionRequiresQuotes(completionText))
-                        {
-                            var quoteInUse = quote == string.Empty ? "'" : quote;
-                            if (quoteInUse == "'")
-                                completionText = completionText.Replace("'", "''");
-                            completionText = quoteInUse + completionText + quoteInUse;
-                        }
-                        else
-                        {
-                            completionText = quote + completionText + quote;
-                        }
+                        completionText = CompletionHelpers.QuoteCompletionText(completionText, quote);
 
                         if (pattern.IsMatch(listItemText))
                         {
@@ -3311,17 +3276,7 @@ namespace System.Management.Automation
                     var completionText = psJob.Name;
                     var listItemText = completionText;
 
-                    if (CompletionHelpers.CompletionRequiresQuotes(completionText))
-                    {
-                        var quoteInUse = quote == string.Empty ? "'" : quote;
-                        if (quoteInUse == "'")
-                            completionText = completionText.Replace("'", "''");
-                        completionText = quoteInUse + completionText + quoteInUse;
-                    }
-                    else
-                    {
-                        completionText = quote + completionText + quote;
-                    }
+                    completionText = CompletionHelpers.QuoteCompletionText(completionText, quote);
 
                     result.Add(new CompletionResult(completionText, listItemText, CompletionResultType.ParameterValue, listItemText));
                 }
@@ -3386,17 +3341,7 @@ namespace System.Management.Automation
                     var completionText = psJob.Name;
                     var listItemText = completionText;
 
-                    if (CompletionHelpers.CompletionRequiresQuotes(completionText))
-                    {
-                        var quoteInUse = quote == string.Empty ? "'" : quote;
-                        if (quoteInUse == "'")
-                            completionText = completionText.Replace("'", "''");
-                        completionText = quoteInUse + completionText + quoteInUse;
-                    }
-                    else
-                    {
-                        completionText = quote + completionText + quote;
-                    }
+                    completionText = CompletionHelpers.QuoteCompletionText(completionText, quote);
 
                     result.Add(new CompletionResult(completionText, listItemText, CompletionResultType.ParameterValue, listItemText));
                 }
@@ -3526,17 +3471,7 @@ namespace System.Management.Automation
                         continue;
 
                     uniqueSet.Add(completionText);
-                    if (CompletionHelpers.CompletionRequiresQuotes(completionText))
-                    {
-                        var quoteInUse = quote == string.Empty ? "'" : quote;
-                        if (quoteInUse == "'")
-                            completionText = completionText.Replace("'", "''");
-                        completionText = quoteInUse + completionText + quoteInUse;
-                    }
-                    else
-                    {
-                        completionText = quote + completionText + quote;
-                    }
+                    completionText = CompletionHelpers.QuoteCompletionText(completionText, quote);
 
                     // on macOS, system processes names will be empty if PowerShell isn't run as `sudo`
                     if (string.IsNullOrEmpty(listItemText))
@@ -3579,17 +3514,7 @@ namespace System.Management.Automation
                 var completionText = providerInfo.Name;
                 var listItemText = completionText;
 
-                if (CompletionHelpers.CompletionRequiresQuotes(completionText))
-                {
-                    var quoteInUse = quote == string.Empty ? "'" : quote;
-                    if (quoteInUse == "'")
-                        completionText = completionText.Replace("'", "''");
-                    completionText = quoteInUse + completionText + quoteInUse;
-                }
-                else
-                {
-                    completionText = quote + completionText + quote;
-                }
+                completionText = CompletionHelpers.QuoteCompletionText(completionText, quote);
 
                 result.Add(new CompletionResult(completionText, listItemText, CompletionResultType.ParameterValue, listItemText));
             }
@@ -3627,17 +3552,7 @@ namespace System.Management.Automation
                     var completionText = driveInfo.Name;
                     var listItemText = completionText;
 
-                    if (CompletionHelpers.CompletionRequiresQuotes(completionText))
-                    {
-                        var quoteInUse = quote == string.Empty ? "'" : quote;
-                        if (quoteInUse == "'")
-                            completionText = completionText.Replace("'", "''");
-                        completionText = quoteInUse + completionText + quoteInUse;
-                    }
-                    else
-                    {
-                        completionText = quote + completionText + quote;
-                    }
+                    completionText = CompletionHelpers.QuoteCompletionText(completionText, quote);
 
                     result.Add(new CompletionResult(completionText, listItemText, CompletionResultType.ParameterValue, listItemText));
                 }
@@ -3678,17 +3593,7 @@ namespace System.Management.Automation
                         var completionText = serviceInfo.DisplayName;
                         var listItemText = completionText;
 
-                        if (CompletionHelpers.CompletionRequiresQuotes(completionText))
-                        {
-                            var quoteInUse = quote == string.Empty ? "'" : quote;
-                            if (quoteInUse == "'")
-                                completionText = completionText.Replace("'", "''");
-                            completionText = quoteInUse + completionText + quoteInUse;
-                        }
-                        else
-                        {
-                            completionText = quote + completionText + quote;
-                        }
+                        completionText = CompletionHelpers.QuoteCompletionText(completionText, quote);
 
                         result.Add(new CompletionResult(completionText, listItemText, CompletionResultType.ParameterValue, listItemText));
                     }
@@ -3709,17 +3614,7 @@ namespace System.Management.Automation
                         var completionText = serviceInfo.Name;
                         var listItemText = completionText;
 
-                        if (CompletionHelpers.CompletionRequiresQuotes(completionText))
-                        {
-                            var quoteInUse = quote == string.Empty ? "'" : quote;
-                            if (quoteInUse == "'")
-                                completionText = completionText.Replace("'", "''");
-                            completionText = quoteInUse + completionText + quoteInUse;
-                        }
-                        else
-                        {
-                            completionText = quote + completionText + quote;
-                        }
+                        completionText = CompletionHelpers.QuoteCompletionText(completionText, quote);
 
                         result.Add(new CompletionResult(completionText, listItemText, CompletionResultType.ParameterValue, listItemText));
                     }
@@ -3815,17 +3710,7 @@ namespace System.Management.Automation
                         var completionText = aliasInfo.Name;
                         var listItemText = completionText;
 
-                        if (CompletionHelpers.CompletionRequiresQuotes(completionText))
-                        {
-                            var quoteInUse = quote == string.Empty ? "'" : quote;
-                            if (quoteInUse == "'")
-                                completionText = completionText.Replace("'", "''");
-                            completionText = quoteInUse + completionText + quoteInUse;
-                        }
-                        else
-                        {
-                            completionText = quote + completionText + quote;
-                        }
+                        completionText = CompletionHelpers.QuoteCompletionText(completionText, quote);
 
                         result.Add(new CompletionResult(completionText, listItemText, CompletionResultType.ParameterValue, listItemText));
                     }
@@ -3878,17 +3763,7 @@ namespace System.Management.Automation
                 var completionText = trace.Name;
                 var listItemText = completionText;
 
-                if (CompletionHelpers.CompletionRequiresQuotes(completionText))
-                {
-                    var quoteInUse = quote == string.Empty ? "'" : quote;
-                    if (quoteInUse == "'")
-                        completionText = completionText.Replace("'", "''");
-                    completionText = quoteInUse + completionText + quoteInUse;
-                }
-                else
-                {
-                    completionText = quote + completionText + quote;
-                }
+                completionText = CompletionHelpers.QuoteCompletionText(completionText, quote);
 
                 result.Add(new CompletionResult(completionText, listItemText, CompletionResultType.ParameterValue, listItemText));
             }
