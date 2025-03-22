@@ -11,6 +11,8 @@ permissions:
 jobs:
   markdown-link-check:
     runs-on: ubuntu-latest
+    if: github.repository_owner == 'PowerShell'
+
     steps:
     - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
     - uses: gaurav-nelson/github-action-markdown-link-check@5c5dfc0ac2e225883c0e5f03a85311ec2830d368 # v1
