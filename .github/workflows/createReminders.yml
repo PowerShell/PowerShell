@@ -9,6 +9,8 @@ permissions:
 
 jobs:
   reminder:
+    if: github.repository_owner == 'PowerShell'
+
     permissions:
       issues: write  # for agrc/create-reminder-action to set reminders on issues
       pull-requests: write  # for agrc/create-reminder-action to set reminders on PRs
