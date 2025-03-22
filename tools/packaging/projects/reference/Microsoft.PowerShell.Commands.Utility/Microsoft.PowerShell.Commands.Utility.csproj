@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Version>$(RefAsmVersion)</Version>
     <DelaySign>true</DelaySign>
     <AssemblyOriginatorKeyFile>$(SnkFile)</AssemblyOriginatorKeyFile>
@@ -14,7 +14,8 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="System.Security.AccessControl" Version="6.0.0" />
+    <!-- Removing System.Security.AccessControl as per NU1510 -->
+    <!-- PackageReference Include="System.Security.AccessControl" Version="6.0.0" /-->
     <PackageReference Include="Microsoft.PowerShell.MarkdownRender" Version="7.2.1" />
   </ItemGroup>
 </Project>
