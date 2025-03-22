@@ -1876,6 +1876,10 @@
     "FileType": "NonProduct"
   },
   {
+    "Pattern": "ref\\System.Linq.AsyncEnumerable.dll",
+    "FileType": "NonProduct"
+  },
+  {
     "Pattern": "ru/Microsoft.CodeAnalysis.CSharp.resources.dll",
     "FileType": "NonProduct"
   },
@@ -2472,6 +2476,10 @@
     "FileType": "NonProduct"
   },
   {
+    "Pattern": "System.Linq.AsyncEnumerable.dll",
+    "FileType": "NonProduct"
+  },
+  {
     "Pattern": "System.Linq.dll",
     "FileType": "NonProduct"
   },
@@ -2613,6 +2621,10 @@
   },
   {
     "Pattern": "System.Private.Windows.Core.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "System.Private.Windows.GdiPlus.dll",
     "FileType": "NonProduct"
   },
   {
@@ -2989,6 +3001,10 @@
   },
   {
     "Pattern": "System.Windows.Presentation.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "System.Windows.Primitives.dll",
     "FileType": "NonProduct"
   },
   {
