@@ -6119,10 +6119,7 @@ namespace System.Management.Automation
                     if (parameter.StartsWith(currentParameterPrefix, StringComparison.OrdinalIgnoreCase)
                         && !context.CursorPosition.Line.Contains($" -{parameter}", StringComparison.OrdinalIgnoreCase))
                     {
-                        string toolTip = ResourceManagerCache.GetResourceString(
-                            typeof(CompletionCompleters).Assembly,
-                            "System.Management.Automation.resources.TabCompletionStrings",
-                            $"Requires{parameter}ParameterDescription");
+                        string toolTip = GetRequiresParametersToolTip(parameter);
                         results.Add(new CompletionResult(parameter, parameter, CompletionResultType.ParameterName, toolTip));
                     }
                 }
@@ -6152,10 +6149,7 @@ namespace System.Management.Automation
                 {
                     if (psEditionEntry.StartsWith(currentValue, StringComparison.OrdinalIgnoreCase))
                     {
-                        string toolTip = ResourceManagerCache.GetResourceString(
-                            typeof(CompletionCompleters).Assembly,
-                            "System.Management.Automation.resources.TabCompletionStrings",
-                            $"RequiresPsEdition{psEditionEntry}Description");
+                        string toolTip = GetRequiresPsEditionsToolTip(psEditionEntry);
                         results.Add(new CompletionResult(psEditionEntry, psEditionEntry, CompletionResultType.ParameterValue, toolTip));
                     }
                 }
@@ -6240,10 +6234,7 @@ namespace System.Management.Automation
                 {
                     if (moduleSpecKey.StartsWith(currentValue, StringComparison.OrdinalIgnoreCase))
                     {
-                        string toolTip = ResourceManagerCache.GetResourceString(
-                        typeof(CompletionCompleters).Assembly,
-                        "System.Management.Automation.resources.TabCompletionStrings",
-                        $"RequiresModuleSpec{moduleSpecKey}Description");
+                        string toolTip = GetRequiresModuleSpecKeysToolTip(moduleSpecKey);
                         results.Add(new CompletionResult(moduleSpecKey, moduleSpecKey, CompletionResultType.ParameterValue, toolTip));
                     }
                 }
@@ -6260,10 +6251,26 @@ namespace System.Management.Automation
             "Version"
         };
 
+        private static string GetRequiresParametersToolTip(string name) => name switch
+        {
+            "Modules" => TabCompletionStrings.RequiresModulesParameterDescription,
+            "PSEdition" => TabCompletionStrings.RequiresPSEditionParameterDescription,
+            "RunAsAdministrator" => TabCompletionStrings.RequiresRunAsAdministratorParameterDescription,
+            "Version" => TabCompletionStrings.RequiresVersionParameterDescription,
+            _ => string.Empty
+        };
+
         private static readonly string[] s_requiresPSEditions = new string[]
         {
             "Core",
             "Desktop"
+        };
+
+        private static string GetRequiresPsEditionsToolTip(string name) => name switch
+        {
+            "Core" => TabCompletionStrings.RequiresPsEditionCoreDescription,
+            "Desktop" => TabCompletionStrings.RequiresPsEditionDesktopDescription,
+            _ => string.Empty
         };
 
         private static readonly string[] s_requiresModuleSpecKeys = new string[]
@@ -6273,6 +6280,16 @@ namespace System.Management.Automation
             "ModuleName",
             "ModuleVersion",
             "RequiredVersion"
+        };
+
+        private static string GetRequiresModuleSpecKeysToolTip(string name) => name switch
+        {
+            "GUID" => TabCompletionStrings.RequiresModuleSpecGUIDDescription,
+            "MaximumVersion" => TabCompletionStrings.RequiresModuleSpecMaximumVersionDescription,
+            "ModuleName" => TabCompletionStrings.RequiresModuleSpecModuleNameDescription,
+            "ModuleVersion" => TabCompletionStrings.RequiresModuleSpecModuleVersionDescription,
+            "RequiredVersion" => TabCompletionStrings.RequiresModuleSpecRequiredVersionDescription,
+            _ => string.Empty
         };
 
         private static readonly char[] s_hashtableKeyPrefixes = new[]
@@ -6333,10 +6350,7 @@ namespace System.Management.Automation
                 {
                     if (keyword.StartsWith(lineKeyword.Value, StringComparison.OrdinalIgnoreCase))
                     {
-                        string toolTip = ResourceManagerCache.GetResourceString(
-                            typeof(CompletionCompleters).Assembly,
-                            "System.Management.Automation.resources.TabCompletionStrings",
-                            $"CommentHelp{keyword}KeywordDescription");
+                        string toolTip = GetCommentHelpKeywordsToolTip(keyword);
                         result.Add(new CompletionResult(keyword, keyword, CompletionResultType.Keyword, toolTip));
                     }
                 }
@@ -6414,6 +6428,26 @@ namespace System.Management.Automation
             "REMOTEHELPRUNSPACE",
             "ROLE",
             "SYNOPSIS"
+        };
+
+        private static string GetCommentHelpKeywordsToolTip(string name) => name switch
+        {
+            "COMPONENT" => TabCompletionStrings.CommentHelpCOMPONENTKeywordDescription,
+            "DESCRIPTION" => TabCompletionStrings.CommentHelpDESCRIPTIONKeywordDescription,
+            "EXAMPLE" => TabCompletionStrings.CommentHelpEXAMPLEKeywordDescription,
+            "EXTERNALHELP" => TabCompletionStrings.CommentHelpEXTERNALHELPKeywordDescription,
+            "FORWARDHELPCATEGORY" => TabCompletionStrings.CommentHelpFORWARDHELPCATEGORYKeywordDescription,
+            "FORWARDHELPTARGETNAME" => TabCompletionStrings.CommentHelpFORWARDHELPTARGETNAMEKeywordDescription,
+            "FUNCTIONALITY" => TabCompletionStrings.CommentHelpFUNCTIONALITYKeywordDescription,
+            "INPUTS" => TabCompletionStrings.CommentHelpINPUTSKeywordDescription,
+            "LINK" => TabCompletionStrings.CommentHelpLINKKeywordDescription,
+            "NOTES" => TabCompletionStrings.CommentHelpNOTESKeywordDescription,
+            "OUTPUTS" => TabCompletionStrings.CommentHelpOUTPUTSKeywordDescription,
+            "PARAMETER" => TabCompletionStrings.CommentHelpPARAMETERKeywordDescription,
+            "REMOTEHELPRUNSPACE" => TabCompletionStrings.CommentHelpREMOTEHELPRUNSPACEKeywordDescription,
+            "ROLE" => TabCompletionStrings.CommentHelpROLEKeywordDescription,
+            "SYNOPSIS" => TabCompletionStrings.CommentHelpSYNOPSISKeywordDescription,
+            _ => string.Empty
         };
 
         private static readonly HashSet<string> s_commentHelpAllowedDuplicateKeywords = new(StringComparer.OrdinalIgnoreCase)
@@ -8217,10 +8251,7 @@ namespace System.Management.Automation
                         continue;
                     }
 
-                    string toolTip = ResourceManagerCache.GetResourceString(
-                        typeof(CompletionCompleters).Assembly,
-                        "System.Management.Automation.resources.TabCompletionStrings",
-                        $"RequiresModuleSpec{key}Description");
+                    string toolTip = GetRequiresModuleSpecKeysToolTip(key);
 
                     result.Add(new CompletionResult(key, key, CompletionResultType.Property, toolTip));
                 }
@@ -8474,10 +8505,7 @@ namespace System.Management.Automation
             {
                 if ((string.IsNullOrEmpty(wordToComplete) || key.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase)) && !excludedKeys.Contains(key))
                 {
-                    string toolTip = ResourceManagerCache.GetResourceString(
-                        typeof(CompletionCompleters).Assembly,
-                        "System.Management.Automation.resources.TabCompletionStrings",
-                        $"{key}HashtableKeyDescription");
+                    string toolTip = GetHashtableKeyDescriptionToolTip(key);
 
                     result.Add(new CompletionResult(key, key, CompletionResultType.Property, toolTip));
                 }
@@ -8490,6 +8518,26 @@ namespace System.Management.Automation
 
             return result;
         }
+
+        private static string GetHashtableKeyDescriptionToolTip(string name) => name switch
+        {
+            "Alignment" => TabCompletionStrings.AlignmentHashtableKeyDescription,
+            "Ascending" => TabCompletionStrings.AscendingHashtableKeyDescription,
+            "Depth" => TabCompletionStrings.DepthHashtableKeyDescription,
+            "Descending" => TabCompletionStrings.DescendingHashtableKeyDescription,
+            "Expression" => TabCompletionStrings.ExpressionHashtableKeyDescription,
+            "FormatString" => TabCompletionStrings.FormatStringHashtableKeyDescription,
+            "ID" => TabCompletionStrings.IDHashtableKeyDescription,
+            "Keywords" => TabCompletionStrings.KeywordsHashtableKeyDescription,
+            "Label" => TabCompletionStrings.LabelHashtableKeyDescription,
+            "Level" => TabCompletionStrings.LevelHashtableKeyDescription,
+            "LogName" => TabCompletionStrings.LogNameHashtableKeyDescription,
+            "Name" => TabCompletionStrings.NameHashtableKeyDescription,
+            "Path" => TabCompletionStrings.PathHashtableKeyDescription,
+            "ProviderName" => TabCompletionStrings.ProviderNameHashtableKeyDescription,
+            "Width" => TabCompletionStrings.WidthHashtableKeyDescription,
+            _ => string.Empty
+        };
 
         #endregion Hashtable Keys
 
