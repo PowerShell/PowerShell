@@ -58,7 +58,9 @@ Describe "Json Tests" -Tags "Feature" {
             $valueFromNotCompressedResult.FirstName | Should -Match $valueFromCompressedResult.FirstName
         }
 
-        It "Convertto-Json should handle Enum based on Int64" {
+        It "Convertto-Json should handle Enum based on Int64" -Skip:(
+            [ExperimentalFeature]::IsEnabled("PSSerializeJSONLongEnumAsNumber")
+        ) {
 
             # Test follow-up for bug Win8: 378368 Convertto-Json problems with Enum based on Int64.
             if ( $null -eq ("JsonEnumTest" -as "Type")) {
@@ -355,7 +357,7 @@ Describe "Json Tests" -Tags "Feature" {
 {
 	"date-s-should-parse-as-datetime": "2008-09-22T14:01:54",
 	"date-upperO-should-parse-as-datetime": "2008-09-22T14:01:54.9571247Z",
-	
+
 	"date-o-should-parse-as-string": "2019-12-17T06:14:06 +06:00",
 	"date-upperD-should-parse-as-string": "Monday, September 22, 2008",
 	"date-f-should-parse-as-string": "Monday, September 22, 2008 2:01 PM",
@@ -399,7 +401,7 @@ Describe "Json Tests" -Tags "Feature" {
 				$result."date-s-should-parse-as-datetime".ToString("Y") | Should -Be "September 2008"
 				$result."date-s-should-parse-as-datetime".ToString("y") | Should -Be "September 2008"
 				$result."date-s-should-parse-as-datetime" | Should -BeOfType [DateTime]
-				
+
                 $result."date-upperO-should-parse-as-datetime" = [datetime]::SpecifyKind($result."date-upperO-should-parse-as-datetime", [System.DateTimeKind]::Utc)
 				$result."date-upperO-should-parse-as-datetime".ToString("d") | Should -Be "9/22/2008"
 				$result."date-upperO-should-parse-as-datetime".ToString("D") | Should -Be "Monday, September 22, 2008"
@@ -420,7 +422,7 @@ Describe "Json Tests" -Tags "Feature" {
 				$result."date-upperO-should-parse-as-datetime".ToString("Y") | Should -Be "September 2008"
 				$result."date-upperO-should-parse-as-datetime".ToString("y") | Should -Be "September 2008"
 				$result."date-upperO-should-parse-as-datetime" | Should -BeOfType [DateTime]
-				
+
 				$result."date-o-should-parse-as-string" | Should -Be "2019-12-17T06:14:06 +06:00"
 				$result."date-o-should-parse-as-string" | Should -BeOfType [String]
 				$result."date-f-should-parse-as-string" | Should -Be "Monday, September 22, 2008 2:01 PM"
@@ -453,7 +455,7 @@ Describe "Json Tests" -Tags "Feature" {
 				$result."date-y-should-parse-as-string" | Should -BeOfType [String]
 			}
 		}
-		
+
 		It "ConvertFrom-Json properly parses complex objects" {
 			$json = @"
 {
@@ -541,13 +543,13 @@ Describe "Json Tests" -Tags "Feature" {
 			$result."registered" | Should -BeOfType [String]
 			$result."_id"| Should -BeExactly "60dd3ea9253016932039a0a2"
 			$result."_id" | Should -BeOfType [String]
-			
+
 			$result.Tags | Should -BeOfType [string]
-			
-			$result.Tags.count | Should -Be 7 
+
+			$result.Tags.count | Should -Be 7
 			$result.Tags[0] | Should -BeExactly "laboris"
 			$result.Tags | Should -Be @("laboris", "voluptate", "amet", "ad", "velit", "ipsum", "do")
-			
+
 			$result.Friends | Should -BeOfType [pscustomobject]
 			$result.Friends[0].id | Should -Be 0
 			$result.Friends[0].name | Should -BeExactly "Renee Holden"
@@ -556,7 +558,7 @@ Describe "Json Tests" -Tags "Feature" {
 			$result.Friends[2].id | Should -Be 2
 			$result.Friends[2].name | Should -BeExactly "Emilia Holder"
 		}
-		
+
 		It "ConvertFrom-Json chooses the appropriate number type" {
 			ConvertFrom-Json -InputObject "5" | should -Be 5
 			ConvertFrom-Json -InputObject 5 | should -Be 5
@@ -570,33 +572,33 @@ Describe "Json Tests" -Tags "Feature" {
 			ConvertFrom-Json -InputObject 5.0 | should -Be 5.0
 			ConvertFrom-Json -InputObject "5.0" | should -BeOfType [double]
 			ConvertFrom-Json -InputObject 5.0 | should -BeOfType [double]
-			
+
 			# The decimal is lost but only when this is quoted
 			ConvertFrom-Json -InputObject "500000000000.0000000000000001" | should -Be "500000000000"
-			
+
 			# Counter intuitively all four of these tests pass because precision is lost on both sides of the test, likely due to powershell number handling
 			ConvertFrom-Json -InputObject 500000000000.0000000000000001 | should -Be 500000000000
 			ConvertFrom-Json -InputObject 500000000000.0000000000000001 | should -Be 500000000000.0000000000000001
 			ConvertFrom-Json -InputObject 500000000000 | should -Be 500000000000.0000000000000001
 			ConvertFrom-Json -InputObject 500000000000 | should -Be 500000000000
-			
+
 			ConvertFrom-Json -InputObject "500000000000.0000000000000001" | should -BeOfType [double]
 			ConvertFrom-Json -InputObject 500000000000.0000000000000001 | should -BeOfType [double]
-			
+
 			# these tests also pass because precision is lost during conversion/powershell handling
 			ConvertFrom-Json -InputObject "50000000000000000000000000000000000.0000000000000001" | should -Be "5E+34"
 			ConvertFrom-Json -InputObject 50000000000000000000000000000000000.0000000000000001 | should -Be "5E+34"
-			
+
 			ConvertFrom-Json -InputObject "50000000000000000000000000000000000.0000000000000001" | should -BeOfType [double]
 			ConvertFrom-Json -InputObject 50000000000000000000000000000000000.0000000000000001 | should -BeOfType [double]
-			
-			
+
+
 			ConvertFrom-Json -InputObject "50000000000000000000000000000000000" | should -Be 50000000000000000000000000000000000
 			ConvertFrom-Json -InputObject 50000000000000000000000000000000000 | should -Be 50000000000000000000000000000000000
 			ConvertFrom-Json -InputObject "50000000000000000000000000000000000" | should -BeOfType [BigInt]
 			ConvertFrom-Json -InputObject 50000000000000000000000000000000000 | should -BeOfType [BigInt]
 		}
-		
+
         It "ConvertFrom-Json with special characters" {
 
             $json = '{"SampleValue":"\"\\\b\f\n\r\t\u4321\uD7FF"}'

@@ -663,8 +663,7 @@ namespace System.Management.Automation.Internal
         {
             foreach (X509Extension extension in c.Extensions)
             {
-                X509KeyUsageExtension keyUsageExtension = extension as X509KeyUsageExtension;
-                if (keyUsageExtension != null)
+                if (extension is X509KeyUsageExtension keyUsageExtension)
                 {
                     if ((keyUsageExtension.KeyUsages & keyUsage) == keyUsage)
                     {
@@ -1105,7 +1104,10 @@ namespace System.Management.Automation
             var certificatesToProcess = new X509Certificate2Collection();
             try
             {
+                #pragma warning disable SYSLIB0057
                 X509Certificate2 newCertificate = new X509Certificate2(messageBytes);
+                #pragma warning restore SYSLIB0057
+
                 certificatesToProcess.Add(newCertificate);
             }
             catch (Exception)
@@ -1183,7 +1185,9 @@ namespace System.Management.Automation
 
                     try
                     {
+                        #pragma warning disable SYSLIB0057
                         certificate = new X509Certificate2(path);
+                        #pragma warning restore SYSLIB0057
                     }
                     catch (Exception)
                     {
@@ -1338,7 +1342,7 @@ namespace System.Management.Automation
         static AmsiUtils()
         {
 #if !UNIX
-            try 
+            try
             {
                 s_amsiInitFailed = !CheckAmsiInit();
             }
@@ -1348,7 +1352,7 @@ namespace System.Management.Automation
                 s_amsiInitFailed = true;
                 return;
             }
-            
+
             PSEtwLog.LogAmsiUtilStateEvent($"init-{s_amsiInitFailed}", $"{s_amsiContext}-{s_amsiSession}");
 #endif
         }
@@ -1699,29 +1703,29 @@ namespace System.Management.Automation
             /// Return Type: HRESULT->LONG->int
             ///appName: LPCWSTR->WCHAR*
             ///amsiContext: HAMSICONTEXT*
-            [DefaultDllImportSearchPathsAttribute(DllImportSearchPath.System32)]
-            [DllImportAttribute("amsi.dll", EntryPoint = "AmsiInitialize", CallingConvention = CallingConvention.StdCall)]
+            [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+            [DllImport("amsi.dll", EntryPoint = "AmsiInitialize", CallingConvention = CallingConvention.StdCall)]
             internal static extern int AmsiInitialize(
-                [InAttribute()][MarshalAsAttribute(UnmanagedType.LPWStr)] string appName, ref System.IntPtr amsiContext);
+                [In][MarshalAs(UnmanagedType.LPWStr)] string appName, ref System.IntPtr amsiContext);
 
             /// Return Type: void
             ///amsiContext: HAMSICONTEXT->HAMSICONTEXT__*
-            [DefaultDllImportSearchPathsAttribute(DllImportSearchPath.System32)]
-            [DllImportAttribute("amsi.dll", EntryPoint = "AmsiUninitialize", CallingConvention = CallingConvention.StdCall)]
+            [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+            [DllImport("amsi.dll", EntryPoint = "AmsiUninitialize", CallingConvention = CallingConvention.StdCall)]
             internal static extern void AmsiUninitialize(System.IntPtr amsiContext);
 
             /// Return Type: HRESULT->LONG->int
             ///amsiContext: HAMSICONTEXT->HAMSICONTEXT__*
             ///amsiSession: HAMSISESSION*
-            [DefaultDllImportSearchPathsAttribute(DllImportSearchPath.System32)]
-            [DllImportAttribute("amsi.dll", EntryPoint = "AmsiOpenSession", CallingConvention = CallingConvention.StdCall)]
+            [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+            [DllImport("amsi.dll", EntryPoint = "AmsiOpenSession", CallingConvention = CallingConvention.StdCall)]
             internal static extern int AmsiOpenSession(System.IntPtr amsiContext, ref System.IntPtr amsiSession);
 
             /// Return Type: void
             ///amsiContext: HAMSICONTEXT->HAMSICONTEXT__*
             ///amsiSession: HAMSISESSION->HAMSISESSION__*
-            [DefaultDllImportSearchPathsAttribute(DllImportSearchPath.System32)]
-            [DllImportAttribute("amsi.dll", EntryPoint = "AmsiCloseSession", CallingConvention = CallingConvention.StdCall)]
+            [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+            [DllImport("amsi.dll", EntryPoint = "AmsiCloseSession", CallingConvention = CallingConvention.StdCall)]
             internal static extern void AmsiCloseSession(System.IntPtr amsiContext, System.IntPtr amsiSession);
 
             /// Return Type: HRESULT->LONG->int
@@ -1731,13 +1735,13 @@ namespace System.Management.Automation
             ///contentName: LPCWSTR->WCHAR*
             ///amsiSession: HAMSISESSION->HAMSISESSION__*
             ///result: AMSI_RESULT*
-            [DefaultDllImportSearchPathsAttribute(DllImportSearchPath.System32)]
-            [DllImportAttribute("amsi.dll", EntryPoint = "AmsiScanBuffer", CallingConvention = CallingConvention.StdCall)]
+            [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+            [DllImport("amsi.dll", EntryPoint = "AmsiScanBuffer", CallingConvention = CallingConvention.StdCall)]
             internal static extern int AmsiScanBuffer(
             System.IntPtr amsiContext,
                 System.IntPtr buffer,
                 uint length,
-                [InAttribute()][MarshalAsAttribute(UnmanagedType.LPWStr)] string contentName,
+                [In][MarshalAs(UnmanagedType.LPWStr)] string contentName,
                 System.IntPtr amsiSession,
                 ref AMSI_RESULT result);
 
@@ -1747,13 +1751,13 @@ namespace System.Management.Automation
             /// length: ULONG->unsigned int
             /// contentName: LPCWSTR->WCHAR*
             /// result: AMSI_RESULT*
-            [DefaultDllImportSearchPathsAttribute(DllImportSearchPath.System32)]
-            [DllImportAttribute("amsi.dll", EntryPoint = "AmsiNotifyOperation", CallingConvention = CallingConvention.StdCall)]
+            [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+            [DllImport("amsi.dll", EntryPoint = "AmsiNotifyOperation", CallingConvention = CallingConvention.StdCall)]
             internal static extern int AmsiNotifyOperation(
                 System.IntPtr amsiContext,
                 System.IntPtr buffer,
                 uint length,
-                [InAttribute()][MarshalAsAttribute(UnmanagedType.LPWStr)] string contentName,
+                [In][MarshalAs(UnmanagedType.LPWStr)] string contentName,
                 ref AMSI_RESULT result);
 
             /// Return Type: HRESULT->LONG->int
@@ -1762,11 +1766,11 @@ namespace System.Management.Automation
             ///contentName: LPCWSTR->WCHAR*
             ///amsiSession: HAMSISESSION->HAMSISESSION__*
             ///result: AMSI_RESULT*
-            [DefaultDllImportSearchPathsAttribute(DllImportSearchPath.System32)]
-            [DllImportAttribute("amsi.dll", EntryPoint = "AmsiScanString", CallingConvention = CallingConvention.StdCall)]
+            [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+            [DllImport("amsi.dll", EntryPoint = "AmsiScanString", CallingConvention = CallingConvention.StdCall)]
             internal static extern int AmsiScanString(
-                System.IntPtr amsiContext, [InAttribute()][MarshalAsAttribute(UnmanagedType.LPWStr)] string @string,
-                [InAttribute()][MarshalAsAttribute(UnmanagedType.LPWStr)] string contentName, System.IntPtr amsiSession, ref AMSI_RESULT result);
+                System.IntPtr amsiContext, [In][MarshalAs(UnmanagedType.LPWStr)] string @string,
+                [In][MarshalAs(UnmanagedType.LPWStr)] string contentName, System.IntPtr amsiSession, ref AMSI_RESULT result);
         }
     }
 }

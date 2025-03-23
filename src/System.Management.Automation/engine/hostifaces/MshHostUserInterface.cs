@@ -112,10 +112,10 @@ namespace System.Management.Automation.Host
 
         /// <summary>
         /// The default implementation writes a carriage return to the screen buffer.
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.Write(string)"/>
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.Write(System.ConsoleColor, System.ConsoleColor, string)"/>
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.WriteLine(string)"/>
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.WriteLine(System.ConsoleColor, System.ConsoleColor, string)"/>
+        /// <see cref="System.Management.Automation.Host.PSHostUserInterface.Write(string)"/>
+        /// <see cref="System.Management.Automation.Host.PSHostUserInterface.Write(System.ConsoleColor, System.ConsoleColor, string)"/>
+        /// <see cref="System.Management.Automation.Host.PSHostUserInterface.WriteLine(string)"/>
+        /// <see cref="System.Management.Automation.Host.PSHostUserInterface.WriteLine(System.ConsoleColor, System.ConsoleColor, string)"/>
         /// </summary>
         public virtual void WriteLine()
         {
@@ -170,10 +170,10 @@ namespace System.Management.Automation.Host
         /// <summary>
         /// Writes a line to the "error display" of the host, as opposed to the "output display," which is
         /// written to by the variants of
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.Write(string)"/>
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.Write(System.ConsoleColor, System.ConsoleColor, string)"/>
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.WriteLine()"/> and
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.WriteLine(string)"/>
+        /// <see cref="System.Management.Automation.Host.PSHostUserInterface.Write(string)"/>
+        /// <see cref="System.Management.Automation.Host.PSHostUserInterface.Write(System.ConsoleColor, System.ConsoleColor, string)"/>
+        /// <see cref="System.Management.Automation.Host.PSHostUserInterface.WriteLine()"/> and
+        /// <see cref="System.Management.Automation.Host.PSHostUserInterface.WriteLine(string)"/>
         /// </summary>
         /// <param name="value">
         /// The characters to be written.
@@ -314,7 +314,7 @@ namespace System.Management.Automation.Host
                 return string.Empty;
             }
 
-            PSStyle psstyle = PSStyle.Instance;                
+            PSStyle psstyle = PSStyle.Instance;
             switch (formatStyle)
             {
                 case FormatStyle.Reset:

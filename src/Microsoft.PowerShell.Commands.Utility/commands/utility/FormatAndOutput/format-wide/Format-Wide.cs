@@ -59,7 +59,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <value></value>
         [Parameter]
-        [ValidateRangeAttribute(1, int.MaxValue)]
+        [ValidateRange(1, int.MaxValue)]
         public int Column
         {
             get => _column.GetValueOrDefault(-1);

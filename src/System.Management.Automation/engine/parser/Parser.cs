@@ -1487,7 +1487,7 @@ namespace System.Management.Automation.Language
                 rBracketToken = null;
             }
 
-            var openGenericType = new TypeName(genericTypeName.Extent, genericTypeName.Text);
+            var openGenericType = new TypeName(genericTypeName.Extent, genericTypeName.Text, genericArguments.Count);
             var result = new GenericTypeName(
                 ExtentOf(genericTypeName.Extent, ExtentFromFirstOf(rBracketToken, genericArguments.LastOrDefault(), firstToken)),
                 openGenericType,
@@ -2984,8 +2984,8 @@ namespace System.Management.Automation.Language
                     Runspaces.Runspace.DefaultRunspace = localRunspace;
                 }
 
-                // Configuration is not supported on ARM or in ConstrainedLanguage
-                if (PsUtils.IsRunningOnProcessorArchitectureARM() || Runspace.DefaultRunspace?.ExecutionContext?.LanguageMode == PSLanguageMode.ConstrainedLanguage)
+                // Configuration is not supported in ConstrainedLanguage
+                if (Runspace.DefaultRunspace?.ExecutionContext?.LanguageMode == PSLanguageMode.ConstrainedLanguage)
                 {
                     if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
                     {
@@ -3002,6 +3002,17 @@ namespace System.Management.Automation.Language
                         message: ParserStrings.WDACParserConfigKeywordLogMessage,
                         fqid: "ConfigurationLanguageKeywordNotAllowed",
                         dropIntoDebugger: true);
+                }
+
+                // Configuration is not supported for ARM or ARM64 process architecture.
+                if (PsUtils.IsRunningOnProcessArchitectureARM())
+                {
+                    ReportError(
+                        configurationToken.Extent,
+                        nameof(ParserStrings.ConfigurationNotAllowedOnArm64),
+                        ParserStrings.ConfigurationNotAllowedOnArm64,
+                        configurationToken.Kind.Text());
+                    return null;
                 }
 
                 // Configuration is not supported on WinPE
@@ -5133,7 +5144,7 @@ namespace System.Management.Automation.Language
                             workingDirectory = Path.GetDirectoryName(scriptFileName);
                         }
 
-                        assemblyFileName = workingDirectory + @"\" + assemblyFileName;
+                        assemblyFileName = Path.Combine(workingDirectory, assemblyFileName);
                     }
                 }
                 catch
@@ -7143,7 +7154,7 @@ namespace System.Management.Automation.Language
                             ParserStrings.UnexpectedAttribute,
                             lastAttribute.TypeName.FullName);
 
-                        return new ErrorExpressionAst(ExtentOf(token, lastAttribute));
+                        return new ErrorExpressionAst(ExtentOf(token, lastAttribute), attributes);
                     }
 
                     expr = new AttributedExpressionAst(ExtentOf(lastAttribute, child), lastAttribute, child);

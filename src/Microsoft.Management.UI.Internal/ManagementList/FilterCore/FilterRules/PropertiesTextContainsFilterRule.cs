@@ -12,6 +12,7 @@ namespace Microsoft.Management.UI.Internal
     /// Represents a filter rule that searches for text within properties on an object.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
+    [Serializable]
     public class PropertiesTextContainsFilterRule : TextFilterRule
     {
         private static readonly string TextContainsCharactersRegexPattern = "{0}";

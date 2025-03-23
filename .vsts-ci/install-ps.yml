@@ -55,7 +55,7 @@ phases:
       {
         throw "powershell was not upgraded: $($PSVersionTable.PSVersion)"
       }
-      
+
 - template: templates/install-ps-phase.yml
   parameters:
     scriptName: sudo ./tools/install-powershell.sh
