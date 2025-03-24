@@ -357,15 +357,15 @@ The value must be greater than 0.</value>
   </data>
   <data name="DepthHashtableKeyDescription" xml:space="preserve">
     <value>[int]
-The depth key allows you to specify the depth of expansion per property.</value>
+The depth key specifies the depth of expansion per property.</value>
   </data>
   <data name="AscendingHashtableKeyDescription" xml:space="preserve">
     <value>[bool]
-Allows you to specify the order of sorting for one or more properties.</value>
+Specifies the order of sorting for one or more properties.</value>
   </data>
   <data name="DescendingHashtableKeyDescription" xml:space="preserve">
     <value>[bool]
-Allows you to specify the order of sorting for one or more properties.</value>
+Specifies the order of sorting for one or more properties.</value>
   </data>
   <data name="LogNameHashtableKeyDescription" xml:space="preserve">
     <value>[String[]]
@@ -403,7 +403,7 @@ Selects events with the specified event IDs.</value>
   <data name="LevelHashtableKeyDescription" xml:space="preserve">
     <value>[int[]]
 Selects events with the specified log levels.
-You can use the following log levels:
+The following log levels are valid:
 1: Critical
 2: Error
 3: Warning
