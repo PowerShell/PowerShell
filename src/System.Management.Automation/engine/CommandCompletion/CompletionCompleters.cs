@@ -8241,7 +8241,7 @@ namespace System.Management.Automation
                 }
 
                 var result = new List<CompletionResult>();
-                foreach (var key in s_requiresModuleSpecKeys)
+                foreach (string key in s_requiresModuleSpecKeys)
                 {
                     if (excludedKeys.Contains(key)
                         || (wordToComplete is not null && !key.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
@@ -8523,8 +8523,10 @@ namespace System.Management.Automation
         {
             "Alignment" => TabCompletionStrings.AlignmentHashtableKeyDescription,
             "Ascending" => TabCompletionStrings.AscendingHashtableKeyDescription,
+            "Data" => TabCompletionStrings.DataHashtableKeyDescription,
             "Depth" => TabCompletionStrings.DepthHashtableKeyDescription,
             "Descending" => TabCompletionStrings.DescendingHashtableKeyDescription,
+            "EndTime" => TabCompletionStrings.EndTimeHashtableKeyDescription,
             "Expression" => TabCompletionStrings.ExpressionHashtableKeyDescription,
             "FormatString" => TabCompletionStrings.FormatStringHashtableKeyDescription,
             "ID" => TabCompletionStrings.IDHashtableKeyDescription,
@@ -8535,6 +8537,9 @@ namespace System.Management.Automation
             "Name" => TabCompletionStrings.NameHashtableKeyDescription,
             "Path" => TabCompletionStrings.PathHashtableKeyDescription,
             "ProviderName" => TabCompletionStrings.ProviderNameHashtableKeyDescription,
+            "StartTime" => TabCompletionStrings.StartTimeHashtableKeyDescription,
+            "SuppressHashFilter" => TabCompletionStrings.SuppressHashFilterHashtableKeyDescription,
+            "UserID" => TabCompletionStrings.UserIDHashtableKeyDescription,
             "Width" => TabCompletionStrings.WidthHashtableKeyDescription,
             _ => string.Empty
         };
