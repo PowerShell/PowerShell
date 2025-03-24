@@ -92,7 +92,7 @@ Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
                 $eventFound = Wait-UntilTrue -sb {
                     Get-WinEvent -FilterHashtable @{ ProviderName="PowerShellCore"; Id = 4103 } -MaxEvents 5 |
                         Where-Object {$_.Message.Contains($RareCommand)} 
-                } -TimeoutInMilliseconds 20000 -IntervalInMilliseconds 200
+                } -TimeoutInMilliseconds (20*1000) -IntervalInMilliseconds 200
 
                 $eventFound | Should -BeTrue
             }
