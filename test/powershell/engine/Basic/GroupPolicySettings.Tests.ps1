@@ -108,18 +108,6 @@ Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
 
             TestFeature -KeyPath $WinKeyPath
         }
-                
-            $KeyPath = Join-Path $KeyRoot 'ModuleLogging'
-            if (-not (Test-Path $KeyPath)) {$null = New-Item $KeyPath}
-        
-            TestFeature -KeyPath $KeyPath
-        
-            Set-ItemProperty -Path $KeyPath -Name UseWindowsPowerShellPolicySetting -Value 1 -Force
-            $WinKeyPath = Join-Path $WinPSKeyRoot 'ModuleLogging'
-            if (-not (Test-Path $WinKeyPath)) {$null = New-Item $WinKeyPath}
-        
-            TestFeature -KeyPath $WinKeyPath
-        }
         It 'ScriptBlock logging policy test' {
             if (Test-IsWindowsArm64) {
                 Set-ItResult -Pending -Because "There is no PowerShellCore event provider on ARM64 until we have an MSI"
