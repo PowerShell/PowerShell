@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   verify-labels:
-    if: github.repository_owner == 'PowerShell'
+    if: startsWith(github.repository_owner, 'azure') || github.repository_owner == 'PowerShell'
     runs-on: ubuntu-latest
 
     steps:
@@ -22,7 +22,7 @@ jobs:
 
     - name: Verify PR has label starting with 'cl-'
       id: verify-labels
-      uses: actions/github-script@v6
+      uses: actions/github-script@v7
       with:
         script: |
           const labels = context.payload.pull_request.labels.map(label => label.name.toLowerCase());
