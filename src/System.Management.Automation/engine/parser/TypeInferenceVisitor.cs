@@ -2940,13 +2940,13 @@ namespace System.Management.Automation
                 }
             }
 
-            private void SetLastAssignmentType(PSTypeName typeName, IScriptExtent assignmentExtent)
+            private void SetLastAssignmentType(PSTypeName typeName, int assignmentOffset)
             {
-                if (LastAssignmentOffset < assignmentExtent.StartOffset && !VariableTarget.Extent.IsWithin(assignmentExtent))
+                if (LastAssignmentOffset < assignmentOffset)
                 {
                     ClearAssignmentData();
                     LastAssignmentType = typeName;
-                    LastAssignmentOffset = assignmentExtent.StartOffset;
+                    LastAssignmentOffset = assignmentOffset;
                 }
             }
 
@@ -3107,17 +3107,17 @@ namespace System.Management.Automation
                             {
                                 case "ErrorVariable":
                                 case "ev":
-                                    SetLastAssignmentType(new PSTypeName(typeof(List<ErrorRecord>)), commandAst.Extent);
+                                    SetLastAssignmentType(new PSTypeName(typeof(List<ErrorRecord>)), commandAst.Extent.StartOffset);
                                     break;
 
                                 case "WarningVariable":
                                 case "wv":
-                                    SetLastAssignmentType(new PSTypeName(typeof(List<WarningRecord>)), commandAst.Extent);
+                                    SetLastAssignmentType(new PSTypeName(typeof(List<WarningRecord>)), commandAst.Extent.StartOffset);
                                     break;
 
                                 case "InformationVariable":
                                 case "iv":
-                                    SetLastAssignmentType(new PSTypeName(typeof(List<InformationalRecord>)), commandAst.Extent);
+                                    SetLastAssignmentType(new PSTypeName(typeof(List<InformationalRecord>)), commandAst.Extent.StartOffset);
                                     break;
 
                                 case "OutVariable":
@@ -3164,23 +3164,23 @@ namespace System.Management.Automation
                         switch (fileRedirection.FromStream)
                         {
                             case RedirectionStream.Error:
-                                SetLastAssignmentType(new PSTypeName(typeof(ErrorRecord)), commandAst.Extent);
+                                SetLastAssignmentType(new PSTypeName(typeof(ErrorRecord)), commandAst.Extent.StartOffset);
                                 break;
 
                             case RedirectionStream.Warning:
-                                SetLastAssignmentType(new PSTypeName(typeof(WarningRecord)), commandAst.Extent);
+                                SetLastAssignmentType(new PSTypeName(typeof(WarningRecord)), commandAst.Extent.StartOffset);
                                 break;
 
                             case RedirectionStream.Verbose:
-                                SetLastAssignmentType(new PSTypeName(typeof(VerboseRecord)), commandAst.Extent);
+                                SetLastAssignmentType(new PSTypeName(typeof(VerboseRecord)), commandAst.Extent.StartOffset);
                                 break;
 
                             case RedirectionStream.Debug:
-                                SetLastAssignmentType(new PSTypeName(typeof(DebugRecord)), commandAst.Extent);
+                                SetLastAssignmentType(new PSTypeName(typeof(DebugRecord)), commandAst.Extent.StartOffset);
                                 break;
 
                             case RedirectionStream.Information:
-                                SetLastAssignmentType(new PSTypeName(typeof(InformationRecord)), commandAst.Extent);
+                                SetLastAssignmentType(new PSTypeName(typeof(InformationRecord)), commandAst.Extent.StartOffset);
                                 break;
 
                             default:
