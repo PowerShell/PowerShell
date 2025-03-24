@@ -60,54 +60,55 @@ Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
             if (Test-IsWindowsArm64) {
                 Set-ItResult -Pending -Because "There is no PowerShellCore event provider on ARM64 until we have an MSI"
             }
-        
+
             function TestFeature
             {
                 param([string]$KeyPath)
-        
+
                 $ModuleToLog = 'Microsoft.PowerShell.Utility'
                 $ModuleNamesKeyPath = Join-Path $KeyPath 'ModuleNames'
                 if (-not (Test-Path $ModuleNamesKeyPath)) {$null = New-Item $ModuleNamesKeyPath}
-        
+
                 Remove-Module $ModuleToLog -ErrorAction SilentlyContinue
                 Import-Module $ModuleToLog
                 (Get-Module $ModuleToLog).LogPipelineExecutionDetails | Should -BeFalse # without GP logging for the module should be OFF
-        
+
                 # enable GP
                 [string]$RareCommand = Get-Random
                 Set-ItemProperty -Path $KeyPath -Name EnableModuleLogging -Value 1 -Force
                 Set-ItemProperty -Path $ModuleNamesKeyPath -Name $ModuleToLog -Value $ModuleToLog -Force
-        
+
                 Remove-Module $ModuleToLog -ErrorAction SilentlyContinue
                 Import-Module $ModuleToLog # this will read and start using GP setting
                 (Get-Module $ModuleToLog).LogPipelineExecutionDetails | Should -BeTrue # with GP logging for the module should be ON
-        
+
                 Get-Alias $RareCommand -ErrorAction SilentlyContinue | Out-Null
-        
+
                 (Get-Module $ModuleToLog).LogPipelineExecutionDetails = $false # turn off logging
                 Remove-ItemProperty -Path $KeyPath -Name EnableModuleLogging -Force # turn off GP setting
                 Remove-Item $ModuleNamesKeyPath -Recurse -Force
-        
-                # usually event becomes visible in the log after ~500 ms
-                # set timeout for 10 seconds and add retry logic
-                $timeout = 20 * 1000
-                $interval = 200
-                $elapsedTime = 0
-                $eventFound = $false
-        
-                while ($elapsedTime -lt $timeout -and -not $eventFound) {
-                    $eventFound = Get-WinEvent -FilterHashtable @{ ProviderName="PowerShellCore"; Id = 4103 } -MaxEvents 5 |
-                        Where-Object {$_.Message.Contains($RareCommand)} | ForEach-Object { $true }
-                    
-                    if (-not $eventFound) {
-                        Start-Sleep -Milliseconds $interval
-                        $elapsedTime += $interval
-                    }
-                }
-        
+
+                # Wait for the event to become visible in the log
+                $eventFound = Wait-UntilTrue -sb {
+                    Get-WinEvent -FilterHashtable @{ ProviderName="PowerShellCore"; Id = 4103 } -MaxEvents 5 |
+                        Where-Object {$_.Message.Contains($RareCommand)} 
+                } -TimeoutInMilliseconds 20000 -IntervalInMilliseconds 200
+
                 $eventFound | Should -BeTrue
             }
-        
+
+            $KeyPath = Join-Path $KeyRoot 'ModuleLogging'
+            if (-not (Test-Path $KeyPath)) {$null = New-Item $KeyPath}
+
+            TestFeature -KeyPath $KeyPath
+
+            Set-ItemProperty -Path $KeyPath -Name UseWindowsPowerShellPolicySetting -Value 1 -Force
+            $WinKeyPath = Join-Path $WinPSKeyRoot 'ModuleLogging'
+            if (-not (Test-Path $WinKeyPath)) {$null = New-Item $WinKeyPath}
+
+            TestFeature -KeyPath $WinKeyPath
+        }
+                
             $KeyPath = Join-Path $KeyRoot 'ModuleLogging'
             if (-not (Test-Path $KeyPath)) {$null = New-Item $KeyPath}
         
