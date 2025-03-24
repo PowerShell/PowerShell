@@ -1197,6 +1197,12 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Name | Should -Be System.String
     }
 
+    It 'Ignores assignment when a variable is declared and used within the same commandAst' {
+        $variableAst = { Get-Random 2>variable:RandomError1 -InputObject ($RandomError1) }.Ast.FindAll({ param($a) $a -is [Language.VariableExpressionAst] }, $true) | select -Last 1
+        $res = [AstTypeInference]::InferTypeOf($variableAst)
+        $res.Count | Should -Be 0
+    }
+
     $catchClauseTypes = @(
         @{ Type = 'System.ArgumentException' }
         @{ Type = 'System.ArgumentNullException' }
