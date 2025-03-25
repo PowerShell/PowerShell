@@ -2557,7 +2557,7 @@ param ($Param1)
         }
 
         It "Test hashtable key completion in #requires statement for modules" {
-            $res = TabExpansion2 -inputScript "#requires -Modules @{" -cursorColumn 21
+            $res = TabExpansion2 -inputScript "#requires -Modules @{"
             $res.CompletionMatches.Count | Should -BeGreaterThan 0
             $res.CompletionMatches[0].CompletionText | Should -BeExactly "GUID"
         }
@@ -3226,23 +3226,23 @@ dir -Recurse `
         }
         It '<Intent>' -TestCases @(
             @{
-                Intent = 'Complete help keywords with minimum input'
+                Intent = 'Complete help keywords with minimal input'
                 Expected = @(
-                    'COMPONENT'
-                    'DESCRIPTION'
-                    'EXAMPLE'
-                    'EXTERNALHELP'
-                    'FORWARDHELPCATEGORY'
-                    'FORWARDHELPTARGETNAME'
-                    'FUNCTIONALITY'
-                    'INPUTS'
-                    'LINK'
-                    'NOTES'
-                    'OUTPUTS'
-                    'PARAMETER'
-                    'REMOTEHELPRUNSPACE'
-                    'ROLE'
-                    'SYNOPSIS'
+                    "COMPONENT",
+                    "DESCRIPTION",
+                    "EXAMPLE",
+                    "EXTERNALHELP",
+                    "FORWARDHELPCATEGORY",
+                    "FORWARDHELPTARGETNAME",
+                    "FUNCTIONALITY",
+                    "INPUTS",
+                    "LINK",
+                    "NOTES",
+                    "OUTPUTS",
+                    "PARAMETER",
+                    "REMOTEHELPRUNSPACE",
+                    "ROLE",
+                    "SYNOPSIS"
                 )
                 TestString = @'
 <#
@@ -3432,6 +3432,7 @@ function MyFunction ($param1, $param2)
     It 'Should complete module specification keys in using module statement' {
         $res = TabExpansion2 -inputScript 'using module @{'
         $res.CompletionMatches.CompletionText -join ' ' | Should -BeExactly "GUID MaximumVersion ModuleName ModuleVersion RequiredVersion"
+        $res.CompletionMatches[0].ToolTip | Should -Not -Be $res.CompletionMatches[0].CompletionText
     }
 
     It 'Should not fallback to file completion when completing typenames' {
