@@ -58,7 +58,6 @@ jobs:
 
         # For pull requests it's not necessary to checkout the code
       - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.2.0
-        if: github.repository_owner == 'PowerShell'
         id: filter
         with:
           list-files: json
