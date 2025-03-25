@@ -396,3 +396,34 @@ Describe "New-Item -Force should throw an error for invalid characters in direct
         { New-Item -Path $invalidPath -ItemType Directory -Force -ErrorAction Stop } | Should -Throw -ErrorId 'CreateDirectoryIOError,Microsoft.PowerShell.Commands.NewItemCommand'
     }
 }
+
+Describe "If the target path contains wildcard characters, the operation should succeed in creating a file link." -Tags @("CI", 'RequireAdminOnWindows') {
+    BeforeAll {
+        $testFolder = '[LinkCreation]'
+        $testFile = Join-Path $testFolder '[test].txt'
+
+        $symbolicLink = Join-Path $testFolder 'sym-lk.txt'
+        $hardLink = Join-Path $testFolder 'hard-lk.txt'
+        $junction = Join-Path $testFolder 'junc'
+        $fileInJunction = Join-Path $junction '[test].txt'
+        
+        $info = 'succeed!'
+    }
+
+    It "Should succeed in creating a file link." {
+        if (Test-Path -LiteralPath $testFolder) {
+            Remove-Item -LiteralPath $testFolder -Recurse -Force
+        }
+        New-Item $testFolder -Type Directory
+        Set-Content -PSPath $testFile -Value $info
+
+        New-Item $hardLink -Target ([WildcardPattern]::Escape((Get-Item -PSPath $testFile))) -Type HardLink    # create hardlink with absolute path
+        New-Item $symbolicLink -Target ([WildcardPattern]::Escape($testFile)) -Type SymbolicLink
+        New-Item $junction -Target ([WildcardPattern]::Escape((Get-Item -PSPath $testFolder))) -Type Junction
+        
+        Get-Content -PSPath $symbolicLink | Should -Be $info
+        Get-Content -PSPath $hardLink | Should -Be $info
+        Get-Content -PSPath $fileInJunction | Should -Be $info
+    }
+}
+
