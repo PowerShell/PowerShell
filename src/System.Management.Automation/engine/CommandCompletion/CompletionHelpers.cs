@@ -127,7 +127,7 @@ namespace System.Management.Automation
         /// </list>
         /// </summary>
         /// <param name="completion">The input string to analyze for quoting requirements.</param>
-        /// <returns><c>true</c> if the string requires quotes; otherwise, <c>false</c>.</returns>
+        /// <returns><c>true</c> if the string requires quotes, <c>false</c> otherwise.</returns>
         internal static bool CompletionRequiresQuotes(string completion)
         {
             Parser.ParseInput(completion, out Token[] tokens, out ParseError[] errors);
