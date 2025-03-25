@@ -1772,8 +1772,12 @@ param([ValidatePattern(
 
     Context NativeCommand {
         BeforeAll {
-            $nativeCommand = (Get-Command -CommandType Application -TotalCount 1).Name
+            ## Find a native command that is not 'pwsh'. We will use 'pwsh' for cover-all completer tests later.
+            $nativeCommand = Get-Command -CommandType Application -TotalCount 2 |
+                Where-Object Name -NotLike pwsh* |
+                Select-Object -First 1
         }
+
         It 'Completes native commands with -' {
             Register-ArgumentCompleter -Native -CommandName $nativeCommand -ScriptBlock {
                 param($wordToComplete, $ast, $cursorColumn)
