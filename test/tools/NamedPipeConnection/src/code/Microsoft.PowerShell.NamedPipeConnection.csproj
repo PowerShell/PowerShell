@@ -20,18 +20,18 @@
     <PackageReference Include="Microsoft.PowerShell.CoreCLR.Eventing" Version="7.5.0" />
     <PackageReference Include="Microsoft.PowerShell.Native" Version="7.4.0" />
     <PackageReference Include="Microsoft.Security.Extensions" Version="1.3.0" />
-    <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="9.0.2" />
-    <PackageReference Include="System.CodeDom" Version="9.0.2" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="9.0.2" />
-    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="9.0.2" />
-    <PackageReference Include="System.Diagnostics.EventLog" Version="9.0.2" />
-    <PackageReference Include="System.DirectoryServices" Version="9.0.2" />
-    <PackageReference Include="System.Management" Version="9.0.2" />
+    <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="9.0.3" />
+    <PackageReference Include="System.CodeDom" Version="9.0.3" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="9.0.3" />
+    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="9.0.3" />
+    <PackageReference Include="System.Diagnostics.EventLog" Version="9.0.3" />
+    <PackageReference Include="System.DirectoryServices" Version="9.0.3" />
+    <PackageReference Include="System.Management" Version="9.0.3" />
     <PackageReference Include="System.Management.Automation" Version="7.5.0-preview.5" />
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="9.0.2" />
-    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="9.0.2" />
-    <PackageReference Include="System.Security.Permissions" Version="9.0.2" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="9.0.2" />
-    <PackageReference Include="System.Windows.Extensions" Version="9.0.2" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="9.0.3" />
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="9.0.3" />
+    <PackageReference Include="System.Security.Permissions" Version="9.0.3" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="9.0.3" />
+    <PackageReference Include="System.Windows.Extensions" Version="9.0.3" />
   </ItemGroup>
 </Project>
