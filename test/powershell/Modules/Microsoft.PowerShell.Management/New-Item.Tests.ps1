@@ -417,9 +417,9 @@ Describe "If the target path contains wildcard characters, the operation should 
         New-Item $testFolder -Type Directory
         Set-Content -PSPath $testFile -Value $info
 
-        New-Item $hardLink -Target ([WildcardPattern]::Escape((Get-Item -PSPath $testFile))) -Type HardLink    # create hardlink with absolute path
-        New-Item $symbolicLink -Target ([WildcardPattern]::Escape($testFile)) -Type SymbolicLink
-        New-Item $junction -Target ([WildcardPattern]::Escape((Get-Item -PSPath $testFolder))) -Type Junction
+        New-Item $hardLink -Target ((Get-Item -PSPath $testFile)) -Type HardLink    # create hardlink with absolute path
+        New-Item $symbolicLink -Target ($testFile) -Type SymbolicLink
+        New-Item $junction -Target ((Get-Item -PSPath $testFolder)) -Type Junction
         
         Get-Content -PSPath $symbolicLink | Should -Be $info
         Get-Content -PSPath $hardLink | Should -Be $info
