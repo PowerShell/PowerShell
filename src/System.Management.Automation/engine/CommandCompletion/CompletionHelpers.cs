@@ -132,16 +132,15 @@ namespace System.Management.Automation
         {
             Parser.ParseInput(completion, out Token[] tokens, out ParseError[] errors);
 
-            bool hasExpectedTokenCount = tokens.Length == 2;
-            bool hasErrors = errors.Length == 0;
+            bool isExpectedTokenCount = tokens.Length == 2;
 
-            bool requireQuote = !(hasErrors && hasExpectedTokenCount);
+            bool requireQuote = errors.Length > 0 && !isExpectedTokenCount;
 
             Token firstToken = tokens[0];
             bool isStringToken = firstToken is StringToken;
             bool isKeywordToken = (firstToken.TokenFlags & TokenFlags.Keyword) != 0;
 
-            if ((!requireQuote && isStringToken) || (hasExpectedTokenCount && isKeywordToken))
+            if ((!requireQuote && isStringToken) || (isExpectedTokenCount && isKeywordToken))
             {
                 requireQuote = ContainsCharsToCheck(firstToken.Text);
             }
