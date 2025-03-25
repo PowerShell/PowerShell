@@ -119,32 +119,25 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Determines whether the specified completion string requires quotes.
+        /// Quoting is required if:
+        /// <list type="bullet">
+        ///   <item><description>There are parsing errors in the input string.</description></item>
+        ///   <item><description>The parsed token count is not exactly two (the input token + EOF).</description></item>
+        ///   <item><description>The first token is a string or a PowerShell keyword containing special characters.</description></item>
+        /// </list>
         /// </summary>
         /// <param name="completion">The input string to analyze for quoting requirements.</param>
         /// <returns><c>true</c> if the string requires quotes; otherwise, <c>false</c>.</returns>
         internal static bool CompletionRequiresQuotes(string completion)
         {
-            // Parse the input string into tokens and capture any parsing errors.
-            // Tokens represent parts of the input string (e.g., keywords, variables, etc.).
-            // Errors indicate whether the input string has issues that might require quoting.
             Parser.ParseInput(completion, out Token[] tokens, out ParseError[] errors);
 
-            // Determine if quoting is required based on parsing results:
-            // - There are any parsing errors.
-            // - The number of tokens is not exactly 2 (the input string + EOF).
             bool requireQuote = !(errors.Length == 0 && tokens.Length == 2);
 
             Token firstToken = tokens[0];
-
-            // Check the type of the first token:
-            // - String token (e.g. a string literal or text)
-            // - PowerShell keyword (e.g. "while", "if")
             bool isStringToken = firstToken is StringToken;
             bool isKeywordToken = (firstToken.TokenFlags & TokenFlags.Keyword) != 0;
 
-            // Perform additional checks before checking characters:
-            // - If no quotes required and the first token is a string token
-            // - If the input is exactly 2 tokens long and the first token is a keyword
             if ((!requireQuote && isStringToken) || (tokens.Length == 2 && isKeywordToken))
             {
                 requireQuote = ContainsCharsToCheck(firstToken.Text);
