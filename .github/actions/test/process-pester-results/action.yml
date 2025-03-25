@@ -27,7 +27,7 @@ runs:
 
   # this task only takes / as directory separators
   - name: Publish Test Report
-    uses: ctrf-io/github-test-reporter@v1
+    uses: ctrf-io/github-test-reporter@d1e394283c0ca33d34c9b6d8983aaef6945b52ec
     with:
       report-path: './${{ inputs.ctrfFolder }}/*.json'
       exit-on-fail: true
