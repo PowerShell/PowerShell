@@ -45,6 +45,7 @@ jobs:
     # Required permissions
     permissions:
       pull-requests: read
+      contents: read
 
     # Set job outputs to values from filter step
     outputs:
