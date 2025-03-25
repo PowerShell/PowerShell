@@ -134,7 +134,7 @@ namespace System.Management.Automation
 
             bool isExpectedTokenCount = tokens.Length == 2;
 
-            bool requireQuote = errors.Length > 0 && !isExpectedTokenCount;
+            bool requireQuote = errors.Length > 0 || !isExpectedTokenCount;
 
             Token firstToken = tokens[0];
             bool isStringToken = firstToken is StringToken;
