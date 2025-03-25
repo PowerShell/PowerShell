@@ -54,6 +54,13 @@ jobs:
     displayName: 'Capture Artifacts Directory'
     continueOnError: true
 
+  - task: UseDotNet@2
+    displayName: 'Use .NET Core sdk'
+    inputs:
+      useGlobalJson: true
+      packageType: 'sdk'
+      workingDirectory: $(Build.SourcesDirectory)"
+
   # must be run frow Windows PowerShell
   - powershell: |
       # Remove "Program Files\dotnet" from the env variable PATH, so old SDKs won't affect us.
@@ -74,7 +81,6 @@ jobs:
 
   - pwsh: |
       Import-Module .\build.psm1 -force
-      Start-PSBootstrap
       Import-Module .\tools\ci.psm1
       Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
       $options = (Get-PSOptions)
