@@ -5989,12 +5989,13 @@ namespace System.Management.Automation
 
                 // Produce completions for all parameters that begin with the prefix we've found,
                 // but which haven't already been specified in the line we need to complete
-                foreach (KeyValuePair<string, string> parameter in s_requiresParameters)
+                foreach (string parameter in s_requiresParameters)
                 {
-                    if (parameter.Key.StartsWith(currentParameterPrefix, StringComparison.OrdinalIgnoreCase)
-                        && !context.CursorPosition.Line.Contains($" -{parameter.Key}", StringComparison.OrdinalIgnoreCase))
+                    if (parameter.StartsWith(currentParameterPrefix, StringComparison.OrdinalIgnoreCase)
+                        && !context.CursorPosition.Line.Contains($" -{parameter}", StringComparison.OrdinalIgnoreCase))
                     {
-                        results.Add(new CompletionResult(parameter.Key, parameter.Key, CompletionResultType.ParameterName, parameter.Value));
+                        string toolTip = GetRequiresParametersToolTip(parameter);
+                        results.Add(new CompletionResult(parameter, parameter, CompletionResultType.ParameterName, toolTip));
                     }
                 }
 
@@ -6019,11 +6020,12 @@ namespace System.Management.Automation
             // Complete PSEdition parameter values
             if (currentParameterMatch.Value.Equals("PSEdition", StringComparison.OrdinalIgnoreCase))
             {
-                foreach (KeyValuePair<string, string> psEditionEntry in s_requiresPSEditions)
+                foreach (string psEditionEntry in s_requiresPSEditions)
                 {
-                    if (psEditionEntry.Key.StartsWith(currentValue, StringComparison.OrdinalIgnoreCase))
+                    if (psEditionEntry.StartsWith(currentValue, StringComparison.OrdinalIgnoreCase))
                     {
-                        results.Add(new CompletionResult(psEditionEntry.Key, psEditionEntry.Key, CompletionResultType.ParameterValue, psEditionEntry.Value));
+                        string toolTip = GetRequiresPsEditionsToolTip(psEditionEntry);
+                        results.Add(new CompletionResult(psEditionEntry, psEditionEntry, CompletionResultType.ParameterValue, toolTip));
                     }
                 }
 
@@ -6051,7 +6053,7 @@ namespace System.Management.Automation
                 hashtableKeyMatches = Regex.Matches(hashtableString, @"(@{|;)\s*(?:'|\""|\w*)\w*");
 
                 // Build the list of keys we might want to complete, based on what's already been provided
-                var moduleSpecKeysToComplete = new HashSet<string>(s_requiresModuleSpecKeys.Keys);
+                var moduleSpecKeysToComplete = new HashSet<string>(s_requiresModuleSpecKeys);
                 bool sawModuleNameLast = false;
                 foreach (Match existingHashtableKeyMatch in hashtableKeyMatches)
                 {
@@ -6107,7 +6109,8 @@ namespace System.Management.Automation
                 {
                     if (moduleSpecKey.StartsWith(currentValue, StringComparison.OrdinalIgnoreCase))
                     {
-                        results.Add(new CompletionResult(moduleSpecKey, moduleSpecKey, CompletionResultType.ParameterValue, s_requiresModuleSpecKeys[moduleSpecKey]));
+                        string toolTip = GetRequiresModuleSpecKeysToolTip(moduleSpecKey);
+                        results.Add(new CompletionResult(moduleSpecKey, moduleSpecKey, CompletionResultType.ParameterValue, toolTip));
                     }
                 }
             }
@@ -6115,27 +6118,53 @@ namespace System.Management.Automation
             return results;
         }
 
-        private static readonly IReadOnlyDictionary<string, string> s_requiresParameters = new SortedList<string, string>(StringComparer.OrdinalIgnoreCase)
+        private static readonly string[] s_requiresParameters = new string[]
         {
-            { "Modules", "Specifies PowerShell modules that the script requires." },
-            { "PSEdition", "Specifies a PowerShell edition that the script requires." },
-            { "RunAsAdministrator", "Specifies that PowerShell must be running as administrator on Windows." },
-            { "Version", "Specifies the minimum version of PowerShell that the script requires." },
+            "Modules",
+            "PSEdition",
+            "RunAsAdministrator",
+            "Version"
         };
 
-        private static readonly IReadOnlyDictionary<string, string> s_requiresPSEditions = new SortedList<string, string>(StringComparer.OrdinalIgnoreCase)
+        private static string GetRequiresParametersToolTip(string name) => name switch
         {
-            { "Core", "Specifies that the script requires PowerShell Core to run." },
-            { "Desktop", "Specifies that the script requires Windows PowerShell to run." },
+            "Modules" => TabCompletionStrings.RequiresModulesParameterDescription,
+            "PSEdition" => TabCompletionStrings.RequiresPSEditionParameterDescription,
+            "RunAsAdministrator" => TabCompletionStrings.RequiresRunAsAdministratorParameterDescription,
+            "Version" => TabCompletionStrings.RequiresVersionParameterDescription,
+            _ => string.Empty
         };
 
-        private static readonly IReadOnlyDictionary<string, string> s_requiresModuleSpecKeys = new SortedList<string, string>(StringComparer.OrdinalIgnoreCase)
+        private static readonly string[] s_requiresPSEditions = new string[]
         {
-            { "ModuleName", "Required. Specifies the module name." },
-            { "GUID", "Optional. Specifies the GUID of the module." },
-            { "ModuleVersion", "Specifies a minimum acceptable version of the module." },
-            { "RequiredVersion", "Specifies an exact, required version of the module." },
-            { "MaximumVersion", "Specifies the maximum acceptable version of the module." },
+            "Core",
+            "Desktop"
+        };
+
+        private static string GetRequiresPsEditionsToolTip(string name) => name switch
+        {
+            "Core" => TabCompletionStrings.RequiresPsEditionCoreDescription,
+            "Desktop" => TabCompletionStrings.RequiresPsEditionDesktopDescription,
+            _ => string.Empty
+        };
+
+        private static readonly string[] s_requiresModuleSpecKeys = new string[]
+        {
+            "GUID",
+            "MaximumVersion",
+            "ModuleName",
+            "ModuleVersion",
+            "RequiredVersion"
+        };
+
+        private static string GetRequiresModuleSpecKeysToolTip(string name) => name switch
+        {
+            "GUID" => TabCompletionStrings.RequiresModuleSpecGUIDDescription,
+            "MaximumVersion" => TabCompletionStrings.RequiresModuleSpecMaximumVersionDescription,
+            "ModuleName" => TabCompletionStrings.RequiresModuleSpecModuleNameDescription,
+            "ModuleVersion" => TabCompletionStrings.RequiresModuleSpecModuleVersionDescription,
+            "RequiredVersion" => TabCompletionStrings.RequiresModuleSpecRequiredVersionDescription,
+            _ => string.Empty
         };
 
         private static readonly char[] s_hashtableKeyPrefixes = new[]
@@ -6180,7 +6209,7 @@ namespace System.Management.Automation
                 replacementIndex = context.TokenAtCursor.Extent.StartOffset + lineKeyword.Index;
                 replacementLength = lineKeyword.Value.Length;
 
-                var validKeywords = new HashSet<String>(s_commentHelpKeywords.Keys, StringComparer.OrdinalIgnoreCase);
+                var validKeywords = new HashSet<string>(s_commentHelpKeywords, StringComparer.OrdinalIgnoreCase);
                 foreach (Match keyword in usedKeywords)
                 {
                     if (keyword == lineKeyword || s_commentHelpAllowedDuplicateKeywords.Contains(keyword.Value))
@@ -6196,7 +6225,8 @@ namespace System.Management.Automation
                 {
                     if (keyword.StartsWith(lineKeyword.Value, StringComparison.OrdinalIgnoreCase))
                     {
-                        result.Add(new CompletionResult(keyword, keyword, CompletionResultType.Keyword, s_commentHelpKeywords[keyword]));
+                        string toolTip = GetCommentHelpKeywordsToolTip(keyword);
+                        result.Add(new CompletionResult(keyword, keyword, CompletionResultType.Keyword, toolTip));
                     }
                 }
 
@@ -6256,46 +6286,66 @@ namespace System.Management.Automation
             return null;
         }
 
-        private static readonly IReadOnlyDictionary<string, string> s_commentHelpKeywords = new SortedList<string, string>(StringComparer.OrdinalIgnoreCase)
+        private static readonly string[] s_commentHelpKeywords = new string[]
         {
-            { "SYNOPSIS", "A brief description of the function or script. This keyword can be used only once in each topic." },
-            { "DESCRIPTION", "A detailed description of the function or script. This keyword can be used only once in each topic." },
-            { "PARAMETER", ".PARAMETER  <Parameter-Name>\nThe description of a parameter. Add a .PARAMETER keyword for each parameter in the function or script syntax." },
-            { "EXAMPLE", "A sample command that uses the function or script, optionally followed by sample output and a description. Repeat this keyword for each example." },
-            { "INPUTS", "The .NET types of objects that can be piped to the function or script. You can also include a description of the input objects." },
-            { "OUTPUTS", "The .NET type of the objects that the cmdlet returns. You can also include a description of the returned objects." },
-            { "NOTES", "Additional information about the function or script." },
-            { "LINK", "The name of a related topic. Repeat the .LINK keyword for each related topic. The .Link keyword content can also include a URI to an online version of the same help topic." },
-            { "COMPONENT", "The name of the technology or feature that the function or script uses, or to which it is related." },
-            { "ROLE", "The name of the user role for the help topic." },
-            { "FUNCTIONALITY", "The keywords that describe the intended use of the function." },
-            { "FORWARDHELPTARGETNAME", ".FORWARDHELPTARGETNAME <Command-Name>\nRedirects to the help topic for the specified command." },
-            { "FORWARDHELPCATEGORY", ".FORWARDHELPCATEGORY <Category>\nSpecifies the help category of the item in .ForwardHelpTargetName" },
-            { "REMOTEHELPRUNSPACE", ".REMOTEHELPRUNSPACE <PSSession-variable>\nSpecifies a session that contains the help topic. Enter a variable that contains a PSSession object." },
-            { "EXTERNALHELP", ".EXTERNALHELP <XML Help File>\nThe .ExternalHelp keyword is required when a function or script is documented in XML files." }
+            "COMPONENT",
+            "DESCRIPTION",
+            "EXAMPLE",
+            "EXTERNALHELP",
+            "FORWARDHELPCATEGORY",
+            "FORWARDHELPTARGETNAME",
+            "FUNCTIONALITY",
+            "INPUTS",
+            "LINK",
+            "NOTES",
+            "OUTPUTS",
+            "PARAMETER",
+            "REMOTEHELPRUNSPACE",
+            "ROLE",
+            "SYNOPSIS"
+        };
+
+        private static string GetCommentHelpKeywordsToolTip(string name) => name switch
+        {
+            "COMPONENT" => TabCompletionStrings.CommentHelpCOMPONENTKeywordDescription,
+            "DESCRIPTION" => TabCompletionStrings.CommentHelpDESCRIPTIONKeywordDescription,
+            "EXAMPLE" => TabCompletionStrings.CommentHelpEXAMPLEKeywordDescription,
+            "EXTERNALHELP" => TabCompletionStrings.CommentHelpEXTERNALHELPKeywordDescription,
+            "FORWARDHELPCATEGORY" => TabCompletionStrings.CommentHelpFORWARDHELPCATEGORYKeywordDescription,
+            "FORWARDHELPTARGETNAME" => TabCompletionStrings.CommentHelpFORWARDHELPTARGETNAMEKeywordDescription,
+            "FUNCTIONALITY" => TabCompletionStrings.CommentHelpFUNCTIONALITYKeywordDescription,
+            "INPUTS" => TabCompletionStrings.CommentHelpINPUTSKeywordDescription,
+            "LINK" => TabCompletionStrings.CommentHelpLINKKeywordDescription,
+            "NOTES" => TabCompletionStrings.CommentHelpNOTESKeywordDescription,
+            "OUTPUTS" => TabCompletionStrings.CommentHelpOUTPUTSKeywordDescription,
+            "PARAMETER" => TabCompletionStrings.CommentHelpPARAMETERKeywordDescription,
+            "REMOTEHELPRUNSPACE" => TabCompletionStrings.CommentHelpREMOTEHELPRUNSPACEKeywordDescription,
+            "ROLE" => TabCompletionStrings.CommentHelpROLEKeywordDescription,
+            "SYNOPSIS" => TabCompletionStrings.CommentHelpSYNOPSISKeywordDescription,
+            _ => string.Empty
         };
 
         private static readonly HashSet<string> s_commentHelpAllowedDuplicateKeywords = new(StringComparer.OrdinalIgnoreCase)
         {
-            "PARAMETER",
             "EXAMPLE",
-            "LINK"
+            "LINK",
+            "PARAMETER"
         };
 
         private static readonly string[] s_commentHelpForwardCategories = new string[]
         {
             "Alias",
+            "All",
             "Cmdlet",
-            "HelpFile",
-            "Function",
-            "Provider",
-            "General",
-            "FAQ",
-            "Glossary",
-            "ScriptCommand",
             "ExternalScript",
+            "FAQ",
             "Filter",
-            "All"
+            "Function",
+            "General",
+            "Glossary",
+            "HelpFile",
+            "Provider",
+            "ScriptCommand"
         };
 
         private static FunctionDefinitionAst GetCommentHelpFunctionTarget(CompletionContext context)
@@ -8066,7 +8116,7 @@ namespace System.Management.Automation
                 }
 
                 var result = new List<CompletionResult>();
-                foreach (var key in s_requiresModuleSpecKeys.Keys)
+                foreach (string key in s_requiresModuleSpecKeys)
                 {
                     if (excludedKeys.Contains(key)
                         || (wordToComplete is not null && !key.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
@@ -8075,7 +8125,10 @@ namespace System.Management.Automation
                     {
                         continue;
                     }
-                    result.Add(new CompletionResult(key, key, CompletionResultType.Property, s_requiresModuleSpecKeys[key]));
+
+                    string toolTip = GetRequiresModuleSpecKeysToolTip(key);
+
+                    result.Add(new CompletionResult(key, key, CompletionResultType.Property, toolTip));
                 }
 
                 return result;
@@ -8327,7 +8380,9 @@ namespace System.Management.Automation
             {
                 if ((string.IsNullOrEmpty(wordToComplete) || key.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase)) && !excludedKeys.Contains(key))
                 {
-                    result.Add(new CompletionResult(key, key, CompletionResultType.Property, key));
+                    string toolTip = GetHashtableKeyDescriptionToolTip(key);
+
+                    result.Add(new CompletionResult(key, key, CompletionResultType.Property, toolTip));
                 }
             }
 
@@ -8338,6 +8393,31 @@ namespace System.Management.Automation
 
             return result;
         }
+
+        private static string GetHashtableKeyDescriptionToolTip(string name) => name switch
+        {
+            "Alignment" => TabCompletionStrings.AlignmentHashtableKeyDescription,
+            "Ascending" => TabCompletionStrings.AscendingHashtableKeyDescription,
+            "Data" => TabCompletionStrings.DataHashtableKeyDescription,
+            "Depth" => TabCompletionStrings.DepthHashtableKeyDescription,
+            "Descending" => TabCompletionStrings.DescendingHashtableKeyDescription,
+            "EndTime" => TabCompletionStrings.EndTimeHashtableKeyDescription,
+            "Expression" => TabCompletionStrings.ExpressionHashtableKeyDescription,
+            "FormatString" => TabCompletionStrings.FormatStringHashtableKeyDescription,
+            "ID" => TabCompletionStrings.IDHashtableKeyDescription,
+            "Keywords" => TabCompletionStrings.KeywordsHashtableKeyDescription,
+            "Label" => TabCompletionStrings.LabelHashtableKeyDescription,
+            "Level" => TabCompletionStrings.LevelHashtableKeyDescription,
+            "LogName" => TabCompletionStrings.LogNameHashtableKeyDescription,
+            "Name" => TabCompletionStrings.NameHashtableKeyDescription,
+            "Path" => TabCompletionStrings.PathHashtableKeyDescription,
+            "ProviderName" => TabCompletionStrings.ProviderNameHashtableKeyDescription,
+            "StartTime" => TabCompletionStrings.StartTimeHashtableKeyDescription,
+            "SuppressHashFilter" => TabCompletionStrings.SuppressHashFilterHashtableKeyDescription,
+            "UserID" => TabCompletionStrings.UserIDHashtableKeyDescription,
+            "Width" => TabCompletionStrings.WidthHashtableKeyDescription,
+            _ => string.Empty
+        };
 
         #endregion Hashtable Keys
 

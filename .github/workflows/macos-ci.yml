@@ -47,7 +47,7 @@ jobs:
       source: ${{ steps.filter.outputs.source }}
     steps:
       - name: checkout
-        uses: actions/checkout@v4.1.0
+        uses: actions/checkout@v4
 
         # For pull requests it's not necessary to checkout the code
       - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.2.0
@@ -74,7 +74,7 @@ jobs:
     if: ${{ needs.changes.outputs.source == 'true' }}
     steps:
       - name: checkout
-        uses: actions/checkout@v4.1.0
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1000
       - name: Build
@@ -88,7 +88,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v4.1.0
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1000
       - name: macOS Unelevated CI
@@ -105,7 +105,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v4.1.0
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1000
       - name: macOS Elevated CI
@@ -122,7 +122,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v4.1.0
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1000
       - name: macOS Unelevated Others
@@ -139,7 +139,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v4.1.0
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1000
       - name: macOS Elevated Others
@@ -156,7 +156,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v4.1.0
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1000
       - name: Verify xUnit test results
@@ -170,7 +170,7 @@ jobs:
       - macos-latest
     steps:
     - name: checkout
-      uses: actions/checkout@v4.1.0
+      uses: actions/checkout@v4
     - name: Bootstrap packaging
       if: success() || failure()
       run: |-
