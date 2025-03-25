@@ -87,7 +87,7 @@ jobs:
       - ci_build
       - changes
     if: ${{ needs.changes.outputs.source == 'true' }}
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -104,7 +104,7 @@ jobs:
       - ci_build
       - changes
     if: ${{ needs.changes.outputs.source == 'true' }}
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -121,7 +121,7 @@ jobs:
       - ci_build
       - changes
     if: ${{ needs.changes.outputs.source == 'true' }}
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -138,7 +138,7 @@ jobs:
       - ci_build
       - changes
     if: ${{ needs.changes.outputs.source == 'true' }}
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: checkout
         uses: actions/checkout@v4
