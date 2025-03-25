@@ -70,7 +70,7 @@ jobs:
 
   ci_build:
     name: Build PowerShell
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     needs: changes
     if: ${{ needs.changes.outputs.source == 'true' }}
     steps:
