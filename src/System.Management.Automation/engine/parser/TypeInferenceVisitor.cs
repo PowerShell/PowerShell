@@ -2944,6 +2944,9 @@ namespace System.Management.Automation
             {
                 if (LastAssignmentOffset < assignmentExtent.StartOffset && !VariableTarget.Extent.IsWithin(assignmentExtent))
                 {
+                    // If the variable we are inferring the value of is inside this assignment then the assignment is invalid
+                    // For example: $x = 1..10; Get-Random 2>variable:x -InputObject ($x.<Tab>) here the variable should be inferred based on the initial 1..10 assignment
+                    // and not the error redirected variable.
                     ClearAssignmentData();
                     LastAssignmentType = typeName;
                     LastAssignmentOffset = assignmentExtent.StartOffset;
