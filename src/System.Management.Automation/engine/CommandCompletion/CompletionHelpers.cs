@@ -137,14 +137,14 @@ namespace System.Management.Automation
             Token firstToken = tokens[0];
 
             // Check the type of the first token:
-            // - If it's a string token (e.g. a string literal or text)
-            // - If it's a PowerShell keyword (e.g. "while", "if")
+            // - String token (e.g. a string literal or text)
+            // - PowerShell keyword (e.g. "while", "if")
             bool isStringToken = firstToken is StringToken;
             bool isKeywordToken = (firstToken.TokenFlags & TokenFlags.Keyword) != 0;
 
-            // If quoting is not required yet, perform additional checks:
-            // - If the first token is a string token, check if it contains special characters that require quoting.
-            // - If the input is exactly 2 tokens long and the first token is a keyword, check if the keyword contains characters needing quotes.
+            // Perform additional checks before checking characters:
+            // - If no quotes required and the first token is a string token
+            // - If the input is exactly 2 tokens long and the first token is a keyword
             if ((!requireQuote && isStringToken) || (tokens.Length == 2 && isKeywordToken))
             {
                 requireQuote = ContainsCharsToCheck(firstToken.Text);
