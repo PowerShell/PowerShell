@@ -17,6 +17,7 @@
     <PackageReference Include="Microsoft.PowerShell.Archive" Version="1.2.5" />
     <PackageReference Include="PSReadLine" Version="2.3.6" />
     <PackageReference Include="ThreadJob" Version="2.1.0" />
+    <PackageReference Include="Microsoft.PowerShell.ThreadJob" Version="2.2.0" />   
   </ItemGroup>
 
 </Project>
