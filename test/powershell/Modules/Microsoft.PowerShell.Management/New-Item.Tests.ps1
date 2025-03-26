@@ -426,7 +426,7 @@ Describe "If the target path contains wildcard characters, the operation should 
         New-Item $hardLink -Target (Get-Item -PSPath $testFile) -Type HardLink    # create hardlink with absolute path
         Get-Content -PSPath $hardLink | Should -Be $info
     }
-    It "Should succeed in creating a junction." {
+    It "Should succeed in creating a junction on windows." -Skip:(!$IsWindows) {
         New-Item $junction -Target (Get-Item -PSPath .) -Type Junction
         Get-Content -PSPath $fileInJunction | Should -Be $info
     }
