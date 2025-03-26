@@ -54,7 +54,7 @@ runs:
 
   # this task only takes / as directory separators
   - name: Publish Test Report
-    if: github.repository_owner == 'PowerShell'
+    if: always() && github.repository_owner == 'PowerShell'
     uses: ctrf-io/github-test-reporter@d1e394283c0ca33d34c9b6d8983aaef6945b52ec
     with:
       report-path: './${{ inputs.ctrfFolder }}/*.json'
@@ -75,7 +75,6 @@ runs:
       pull-request-report: false
       commit-report: false
       custom-report: false
-    if: always()
 
   - name: Upload testResults artifact
     if: always()
