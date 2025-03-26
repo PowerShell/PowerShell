@@ -1,5 +1,126 @@
 # Preview Changelog
 
+## [7.6.0-preview.4] - 2025-03-27
+
+### Breaking Changes
+
+- Fix `WildcardPattern.Escape` to escape lone backticks correctly (#25211) (Thanks @ArmaanMcleod!)
+- Convert `-ChildPath` parameter to `string[]` for `Join-Path` cmdlet (#24677) (Thanks @ArmaanMcleod!)
+
+### Engine Updates and Fixes
+
+- Add `PipelineStopToken` to `Cmdlet` which will be signaled when the pipeline is stopping (#24620) (Thanks @jborean93!)
+- Fallback to AppLocker after `WldpCanExecuteFile` (#24912)
+- Move .NET method invocation logging to after the needed type conversion is done for method arguments (#25022)
+- Fix share completion with provider and spaces (#19440) (Thanks @MartinGC94!)
+
+### General Cmdlet Updates and Fixes
+
+- Exclude outvariable assignments within the same CommandAst when inferring variables (#25224) (Thanks @MartinGC94!)
+- Fix infinite loop in variable type inference (#25206) (Thanks @MartinGC94!)
+- Update `Microsoft.PowerShell.PSResourceGet` version in `PSGalleryModules.csproj` (#25135)
+- Add tooltips for hashtable key completions (#17864) (Thanks @MartinGC94!)
+- Fix type inference of parameters in classic functions (#25172) (Thanks @MartinGC94!)
+- Improve assignment type inference (#21143) (Thanks @MartinGC94!)
+- Fix `TypeName.GetReflectionType()` to work when the `TypeName` instance represents a generic type definition within a `GenericTypeName` (#24985)
+- Remove the old fuzzy suggestion and fix the local script file name suggestion (#25177)
+- Improve variable type inference (#19830) (Thanks @MartinGC94!)
+- Fix parameter completion when script requirements fail (#17687) (Thanks @MartinGC94!)
+- Improve the completion for attribute arguments (#25129) (Thanks @MartinGC94!)
+- Fix completion that relies on pseudobinding in script blocks (#25122) (Thanks @MartinGC94!)
+- Don't complete duplicate command names (#21113) (Thanks @MartinGC94!)
+- Make `SystemPolicy` public APIs visible but non-op on Unix platforms so that they can be included in `PowerShellStandard.Library` (#25051)
+- Set standard handles explicitly when starting a process with `-NoNewWindow` (#25061)
+- Fix tooltip for variable expansion and include desc (#25112) (Thanks @jborean93!)
+- Add type inference for functions without OutputType attribute and anonymous functions (#21127) (Thanks @MartinGC94!)
+- Add completion for variables assigned by command redirection (#25104) (Thanks @MartinGC94!)
+- Handle type inference for redirected commands (#21131) (Thanks @MartinGC94!)
+- Allow empty prefix string in 'Import-Module -Prefix' to override default prefix in manifest (#20409) (Thanks @MartinGC94!)
+- Update variable/property assignment completion so it can fallback to type inference (#21134) (Thanks @MartinGC94!)
+- Use Get-Help approach to find 'about_*.help.txt' files with correct locale for completions (#24194) (Thanks @MartinGC94!)
+- Use script filepath when completing relative paths for using statements (#20017) (Thanks @MartinGC94!)
+- Fix completion of variables assigned inside Do loops (#25076) (Thanks @MartinGC94!)
+- Fix completion of provider paths when a path returns itself instead of its children (#24755) (Thanks @MartinGC94!)
+- Enable completion of scoped variables without specifying scope (#20340) (Thanks @MartinGC94!)
+- Fix issue with incomplete results when completing paths with wildcards in non-filesystem providers (#24757) (Thanks @MartinGC94!)
+- Allow DSC parsing through OS architecture translation layers (#24852) (Thanks @bdeb1337!)
+
+### Code Cleanup
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@ArmaanMcleod, @pressRtowin</p>
+
+</summary>
+
+<ul>
+<li>Refactor and add comments to <code>CompletionRequiresQuotes</code> to clarify implementation (#25223) (Thanks @ArmaanMcleod!)</li>
+<li>Add <code>QuoteCompletionText</code> method to CompletionHelpers class (#25180) (Thanks @ArmaanMcleod!)</li>
+<li>Remove CompletionHelpers <code>escape</code> parameter from <code>CompletionRequiresQuotes</code> (#25178) (Thanks @ArmaanMcleod!)</li>
+<li>Refactor CompletionHelpers <code>HandleDoubleAndSingleQuote</code> to have less nesting logic (#25179) (Thanks @ArmaanMcleod!)</li>
+<li>Make the use of Oxford commas consistent (#25139)(#25140)(Thanks @pressRtowin!)</li>
+<li>Move common completion methods to CompletionHelpers class (#25138) (Thanks @ArmaanMcleod!)</li>
+<li>Return <code>Array.Empty</code> instead of collection <code>[]</code> (#25137) (Thanks @ArmaanMcleod!)</li>
+</ul>
+
+</details>
+
+### Tools
+
+- Check GH token availability for Get-Changelog (#25133)
+
+### Tests
+
+- Add XUnit test for `HandleDoubleAndSingleQuote` in CompletionHelpers class (#25181) (Thanks @ArmaanMcleod!)
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+
+</summary>
+
+<ul>
+<li>Update outdated package references (#25026)(#25232)</li>
+<li>Bump github/codeql-action from 3.27.9 to 3.28.13 (#25218)(#25231)</li>
+<li>Update .NET SDK to <code>10.0.100-preview.2</code> (#25154)(#25225)</li>
+<li>Remove obsolete template from Windows Packaging CI (#25226)</li>
+<li>Bump actions/upload-artifact from 4.5.0 to 4.6.2 (#25220)</li>
+<li>Bump agrc/reminder-action from 1.0.15 to 1.0.16 (#25222)</li>
+<li>Bump actions/checkout from 2 to 4 (#25221)</li>
+<li>Add <code>NoWarn NU1605</code> to System.ServiceModel.* (#25219)</li>
+<li>Bump actions/github-script from 6 to 7 (#25217)</li>
+<li>Bump ossf/scorecard-action from 2.4.0 to 2.4.1 (#25216)</li>
+<li>Bump super-linter/super-linter from 7.2.1 to 7.3.0 (#25215)</li>
+<li>Bump agrc/create-reminder-action from 1.1.16 to 1.1.17 (#25214)</li>
+<li>Remove dependabot updates that don't work (#25213)</li>
+<li>Update GitHub Actions to work in private GitHub repo (#25197)</li>
+<li>Cleanup old release pipelines (#25201)</li>
+<li>Update package pipeline windows image version (#25191)</li>
+<li>Skip additional packages when generating component manifest (#25102)</li>
+<li>Only build Linux for packaging changes (#25103)</li>
+<li>Remove Az module installs and AzureRM uninstalls in pipeline (#25118)</li>
+<li>Add GitHub Actions workflow to verify PR labels (#25145)</li>
+<li>Add back-port workflow using dotnet/arcade (#25106)</li>
+<li>Make Component Manifest Updater use neutral target in addition to RID target (#25094)</li>
+<li>Make sure the vPack pipeline does not produce an empty package (#24988)</li>
+</ul>
+
+</details>
+
+### Documentation and Help Content
+
+- Add 7.4.9 changelog (#25169)
+- Create Change log for 7.4.8 (#25089)
+
+[7.6.0-preview.4]: https://github.com/PowerShell/PowerShell/compare/v7.6.0-preview.3...v7.6.0-preview.4
+
 ## [7.6.0-preview.3]
 
 ### Breaking Changes
