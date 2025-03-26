@@ -172,57 +172,18 @@ jobs:
       Write-Verbose -Verbose "Compressed files:"
       Get-ChildItem -Path $(Pipeline.Workspace) -Filter "*.zip" -File | Write-Verbose -Verbose
     displayName: Compress package files for signing
-
-  - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@5
-    displayName: 'ESRP CodeSigning'
-    inputs:
-      ConnectedServiceName: 'ESRPMacOSSigning'
-      AppRegistrationClientId: '$(AppRegistrationClientId)'
-      AppRegistrationTenantId: '$(AppRegistrationTenantId)'
-      AuthAKVName: 'pwsh-CICD-Keyvault'
-      AuthCertName: 'PS-macos-signing'
-      AuthSignCertName: 'ESRP-OneCert' # this is not needed for pkg signing
-      FolderPath: $(Pipeline.Workspace)
-      Pattern: '*.zip'
-      signConfigType: inlineSignParams
-      inlineOperation: |
-        [{
-            "KeyCode": "$(KeyCode)",
-            "OperationSetCode": "MacAppDeveloperSign",
-            "parameters": [
-            {
-                "parameterName": "hardening",
-                "parameterValue": "enable"
-            },
-            {
-                "parameterName": "OpusInfo",
-                "parameterValue": "http://Microsoft.com"
-            }
-            ],
-            "ToolName": "sign",
-            "ToolVersion": "1.0"
-        }]
-      SessionTimeout: 90
-      ServiceEndpointUrl: '$(ServiceEndpointUrl)'
-      MaxConcurrency: 25
-
+ 
   - pwsh: |
-      $signedPkg = Get-ChildItem -Path $(Pipeline.Workspace) -Filter "*osx*.zip" -File
-
-      $signedPkg | ForEach-Object {
-        Write-Verbose -Verbose "Signed package zip: $_"
-
-        if (-not (Test-Path $_)) {
-          throw "Package not found: $_"
+      $macosPackages = Get-ChildItem -Path $(Pipeline.Workspace) -Filter "*.zip" -File
+      foreach($pkg in $macosPackages) {
+        Write-Verbose -Verbose "Package to sign: $pkg"
+        if (-not (Test-Path $pkg)) {
+          throw "Package not found: $pkg"
         }
-
-        if (-not (Test-Path $env:ob_outputDirectory)) {
-          $null = New-Item -Path $env:ob_outputDirectory -ItemType Directory
-        }
-
-        Expand-Archive -Path $_ -DestinationPath $env:ob_outputDirectory -Verbose
       }
 
-      Write-Verbose -Verbose "Expanded pkg file:"
-      Get-ChildItem -Path $env:ob_outputDirectory | Write-Verbose -Verbose
-    displayName: Expand signed file
+      $artifactName = 'macos-packages-${{ parameters.buildArchitecture }}'
+      Write-Host "##vso[artifact.upload containerfolder=$artifactName;artifactname=$artifactName]$(OB_OUTPUTDIRECTORY)"
+
+      Get-ChildItem -Path $(OB_OUTPUTDIRECTORY) -Filter "*.zip" -File | Write-Verbose -Verbose
+    displayName: Upload package for signing MacOS${{ parameters.buildArchitecture }}

@@ -129,6 +129,17 @@ extends:
         parameters:
           buildArchitecture: arm64
 
+    - stage: mac_package_sign
+      dependsOn: [mac_package]
+      jobs:
+      - template: /.pipelines/templates/mac-package-sign.yml@self
+        parameters:
+          buildArchitecture: x64
+
+      - template: /.pipelines/templates/mac-package-sign.yml@self
+        parameters:
+          buildArchitecture: arm64
+
     - stage: windows_package
       dependsOn: [prep]
       jobs:
@@ -244,6 +255,6 @@ extends:
       - template: /.pipelines/templates/nupkg.yml@self
 
     - stage: upload
-      dependsOn: [mac_package, windows_package, linux_package, nupkg]
+      dependsOn: [mac_package_sign, windows_package, linux_package, nupkg]
       jobs:
       - template: /.pipelines/templates/uploadToAzure.yml@self

@@ -1,0 +1,74 @@
+parameters:
+  parentJob: ''
+  buildArchitecture: x64
+
+jobs:
+- job: sign_package_macOS_${{ parameters.buildArchitecture }}
+  displayName: Sign Package macOS ${{ parameters.buildArchitecture }}
+  condition: succeeded()
+  pool:
+    type: linux
+
+  variables:
+    - name: HOMEBREW_NO_ANALYTICS
+      value: 1
+    - name: runCodesignValidationInjection
+      value: false
+    - name: nugetMultiFeedWarnLevel
+      value: none
+    - name: NugetSecurityAnalysisWarningLevel
+      value: none
+    - name: skipNugetSecurityAnalysis
+      value: true
+    - group: DotNetPrivateBuildAccess
+    - name: ob_outputDirectory
+      value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+    - name: ob_sdl_binskim_enabled
+      value: true
+    - name: ob_sdl_credscan_suppressionsfileforartifacts
+      value: $(Build.SourcesDirectory)/PowerShell/.config/suppress.json
+    - name: BuildArch
+      value: ${{ parameters.buildArchitecture }}
+
+  steps:
+  - checkout: self
+    clean: true
+
+  - pwsh: |
+      Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
+    displayName: Capture environment
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      artifact: 'macos-packages-${{ parameters.buildArchitecture }}'
+      path: '$(Pipeline.Workspace)'
+    displayName: Download MacOs Package ${{ parameters.buildArchitecture }}
+
+  - task: onebranch.pipeline.signing@1
+    displayName: 'Onebranch Signing MacOS ${{ parameters.buildArchitecture }}'
+    inputs:
+      command: 'sign'
+      signing_profile: CP-401337-Apple
+      files_to_sign: '**/*.zip'
+      search_root: '$(Pipeline.Workspace)'
+    
+  - pwsh: |
+      $signedPkg = Get-ChildItem -Path '$(Pipeline.Workspace)' -Filter "*osx*.zip" -File
+
+      $signedPkg | ForEach-Object {
+        Write-Verbose -Verbose "Signed package zip: $_"
+
+        if (-not (Test-Path $_)) {
+          throw "Package not found: $_"
+        }
+
+        if (-not (Test-Path $env:ob_outputDirectory)) {
+          $null = New-Item -Path $env:ob_outputDirectory -ItemType Directory
+        }
+
+        Expand-Archive -Path $_ -DestinationPath $env:ob_outputDirectory -Verbose
+      }
+
+      Write-Verbose -Verbose "Expanded pkg file:"
+      Get-ChildItem -Path $env:ob_outputDirectory | Write-Verbose -Verbose
+    displayName: Expand signed file
