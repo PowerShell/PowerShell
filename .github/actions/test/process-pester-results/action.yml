@@ -18,7 +18,34 @@ inputs:
 runs:
   using: composite
   steps:
+  - name: Log Summary
+    run: |
+      $testCaseCount = 0
+      $testErrorCount = 0
+      $testFailureCount = 0
+      $testDisabledCount = 0
+      Get-ChildItem -Path "${{ inputs.testResultsFolder }}/*.xml" -Recurse | ForEach-Object {
+        $results = [xml] (get-content $_.FullName)
+        $testCaseCount += $results.testsuites.tests
+        $testErrorCount += $results.testsuites.errors
+        $testFailureCount += $results.testsuites.failures
+        $testDisabledCount += $results.testsuites.disabled
+      }
+
+      @"
+
+      # Summary of ${{ inputs.name }}
+
+      - Total Tests: $testCaseCount
+      - Total Errors: $testErrorCount
+      - Total Failures: $testFailureCount
+      - Total Disabled: $testDisabledCount
+
+      "@ >> $GITHUB_STEP_SUMMARY
+    shell: pwsh
+
   - name: Convert JUnit to CTRF
+    if: github.repository_owner == 'PowerShell'
     run: |-
       Get-ChildItem -Path "${{ inputs.testResultsFolder }}/*.xml" -Recurse | ForEach-Object {
         npx --yes junit-to-ctrf $_.FullName --output ./${{ inputs.ctrfFolder }}/$($_.BaseName).json --tool Pester
