@@ -2693,6 +2693,10 @@ function script:Write-Log
     if ($isError)
     {
         Write-Host -Foreground Red $message
+        if($env:GITHUB_WORKFLOW)
+        {
+            Write-Host "::error::${message}"
+        }
     }
     else
     {
