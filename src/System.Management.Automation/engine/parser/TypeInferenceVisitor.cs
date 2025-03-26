@@ -2930,8 +2930,10 @@ namespace System.Management.Automation
 
             private void SetLastAssignment(Ast ast, bool enumerate = false, bool redirectionAssignment = false)
             {
-                if (LastAssignmentOffset < ast.Extent.StartOffset)
+                if (LastAssignmentOffset < ast.Extent.StartOffset && !VariableTarget.Extent.IsWithin(ast.Extent))
                 {
+                    // If the variable we are inferring the value of is inside this assignment then the assignment is invalid
+                    // For example: $x = Get-Random; $x = $x.Where{$_.<Tab>} here the value should be inferred based on Get-Random and not $x = $x...
                     ClearAssignmentData();
                     LastAssignment = ast;
                     EnumerateAssignment = enumerate;

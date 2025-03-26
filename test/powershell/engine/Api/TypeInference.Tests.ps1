@@ -1203,6 +1203,12 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Count | Should -Be 0
     }
 
+    It 'Ignores the last assignment when a variable is reused' {
+        $variableAst = { $x = New-Guid; $x = $x.Where{$_} }.Ast.FindAll({ param($a) $a -is [Language.VariableExpressionAst] }, $true) | select -Last 1
+        $res = [AstTypeInference]::InferTypeOf($variableAst)
+        $res.Name | Should -Be System.Guid
+    }
+
     $catchClauseTypes = @(
         @{ Type = 'System.ArgumentException' }
         @{ Type = 'System.ArgumentNullException' }

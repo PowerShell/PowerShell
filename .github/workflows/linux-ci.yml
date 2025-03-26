@@ -48,7 +48,7 @@ jobs:
       source: ${{ steps.filter.outputs.source }}
     steps:
       - name: checkout
-        uses: actions/checkout@v4.1.0
+        uses: actions/checkout@v4
 
         # For pull requests it's not necessary to checkout the code
       - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.2.0
@@ -75,7 +75,7 @@ jobs:
     if: ${{ needs.changes.outputs.source == 'true' }}
     steps:
       - name: checkout
-        uses: actions/checkout@v4.1.0
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1000
 
@@ -90,7 +90,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: checkout
-        uses: actions/checkout@v4.1.0
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1000
       - name: Linux Unelevated CI
@@ -107,7 +107,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: checkout
-        uses: actions/checkout@v4.1.0
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1000
       - name: Linux Elevated CI
@@ -124,7 +124,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: checkout
-        uses: actions/checkout@v4.1.0
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1000
       - name: Linux Unelevated Others
@@ -141,7 +141,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: checkout
-        uses: actions/checkout@v4.1.0
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1000
       - name: Linux Elevated Others
@@ -158,7 +158,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v4.1.0
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1000
       - name: Verify xUnit test results
@@ -195,7 +195,7 @@ jobs:
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@5f8171a638ada777af81d42b55959a643bb29017 # v3.28.12
+      uses: github/codeql-action/init@1b549b9259bda1cb5ddde3b41741a82a2d15a841 # v3.28.13
       with:
         languages: ${{ matrix.language }}
         # If you wish to specify custom queries, you can do so here or in a config file.
@@ -221,7 +221,7 @@ jobs:
       shell: pwsh
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@5f8171a638ada777af81d42b55959a643bb29017 # v3.28.12
+      uses: github/codeql-action/analyze@1b549b9259bda1cb5ddde3b41741a82a2d15a841 # v3.28.13
 
   ready_to_merge:
     name: Linux ready to merge
@@ -248,7 +248,7 @@ jobs:
   #   runs-on: ubuntu-20.04
   #   steps:
   #     - name: checkout
-  #       uses: actions/checkout@v4.1.0
+  #       uses: actions/checkout@v4
   #       with:
   #         fetch-depth: 1000
   #     - name: Verify xUnit test results

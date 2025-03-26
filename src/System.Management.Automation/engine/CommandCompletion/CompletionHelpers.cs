@@ -117,20 +117,32 @@ namespace System.Management.Automation
             return string.Empty;
         }
 
+        /// <summary>
+        /// Determines whether the specified completion string requires quotes.
+        /// Quoting is required if:
+        /// <list type="bullet">
+        ///   <item><description>There are parsing errors in the input string.</description></item>
+        ///   <item><description>The parsed token count is not exactly two (the input token + EOF).</description></item>
+        ///   <item><description>The first token is a string or a PowerShell keyword containing special characters.</description></item>
+        /// </list>
+        /// </summary>
+        /// <param name="completion">The input string to analyze for quoting requirements.</param>
+        /// <returns><c>true</c> if the string requires quotes, <c>false</c> otherwise.</returns>
         internal static bool CompletionRequiresQuotes(string completion)
         {
-            // If the tokenizer sees the completion as more than two tokens, or if there is some error, then
-            // some form of quoting is necessary (if it's a variable, we'd need ${}, filenames would need [], etc.)
-
             Parser.ParseInput(completion, out Token[] tokens, out ParseError[] errors);
 
-            // Expect no errors and 2 tokens (1 is for our completion, the other is eof)
-            // Or if the completion is a keyword, we ignore the errors
-            bool requireQuote = !(errors.Length == 0 && tokens.Length == 2);
-            if ((!requireQuote && tokens[0] is StringToken) ||
-                (tokens.Length == 2 && (tokens[0].TokenFlags & TokenFlags.Keyword) != 0))
+            bool isExpectedTokenCount = tokens.Length == 2;
+
+            bool requireQuote = errors.Length > 0 || !isExpectedTokenCount;
+
+            Token firstToken = tokens[0];
+            bool isStringToken = firstToken is StringToken;
+            bool isKeywordToken = (firstToken.TokenFlags & TokenFlags.Keyword) != 0;
+
+            if ((!requireQuote && isStringToken) || (isExpectedTokenCount && isKeywordToken))
             {
-                requireQuote = ContainsCharsToCheck(tokens[0].Text);
+                requireQuote = ContainsCharsToCheck(firstToken.Text);
             }
 
             return requireQuote;
