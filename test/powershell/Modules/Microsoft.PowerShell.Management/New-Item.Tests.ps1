@@ -399,31 +399,40 @@ Describe "New-Item -Force should throw an error for invalid characters in direct
 
 Describe "If the target path contains wildcard characters, the operation should succeed in creating a file link." -Tags @("CI", 'RequireAdminOnWindows') {
     BeforeAll {
+        $originalFolder = Get-Location
         $testFolder = '[LinkCreation]'
-        $testFile = Join-Path $testFolder '[test].txt'
+        $testFile = '[test].txt'
 
-        $symbolicLink = Join-Path $testFolder 'sym-lk.txt'
-        $hardLink = Join-Path $testFolder 'hard-lk.txt'
-        $junction = Join-Path $testFolder 'junc'
+        $symbolicLink = 'sym-lk.txt'
+        $hardLink = 'hard-lk.txt'
+        $junction = 'junc'
         $fileInJunction = Join-Path $junction '[test].txt'
         
         $info = 'succeed!'
-    }
-
-    It "Should succeed in creating a file link." {
+        
         if (Test-Path -LiteralPath $testFolder) {
             Remove-Item -LiteralPath $testFolder -Recurse -Force
         }
         New-Item $testFolder -Type Directory
+        Set-Location -PSPath $testFolder
         Set-Content -PSPath $testFile -Value $info
+    }
 
-        New-Item $hardLink -Target (Get-Item -PSPath $testFile) -Type HardLink    # create hardlink with absolute path
+    It "Should succeed in creating a symbolic link." {
         New-Item $symbolicLink -Target $testFile -Type SymbolicLink
-        New-Item $junction -Target (Get-Item -PSPath $testFolder) -Type Junction
-        
         Get-Content -PSPath $symbolicLink | Should -Be $info
+    }
+    It "Should succeed in creating a hard link." {
+        New-Item $hardLink -Target (Get-Item -PSPath $testFile) -Type HardLink    # create hardlink with absolute path
         Get-Content -PSPath $hardLink | Should -Be $info
+    }
+    It "Should succeed in creating a junction." {
+        New-Item $junction -Target (Get-Item -PSPath .) -Type Junction
         Get-Content -PSPath $fileInJunction | Should -Be $info
+    }
+
+    AfterAll {
+        Set-Location $originalFolder
     }
 }
 
