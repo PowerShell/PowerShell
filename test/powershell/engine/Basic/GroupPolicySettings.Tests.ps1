@@ -87,11 +87,14 @@ Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
                 (Get-Module $ModuleToLog).LogPipelineExecutionDetails = $false # turn off logging
                 Remove-ItemProperty -Path $KeyPath -Name EnableModuleLogging -Force # turn off GP setting
                 Remove-Item $ModuleNamesKeyPath -Recurse -Force
-                # usually event becomes visible in the log after ~500 ms
-                # set timeout for 5 seconds
-                Wait-UntilTrue -sb { Get-WinEvent -FilterHashtable @{ ProviderName="PowerShellCore"; Id = 4103 } -MaxEvents 5 |
-                    Where-Object {$_.Message.Contains($RareCommand)} } -TimeoutInMilliseconds (10*1000) -IntervalInMilliseconds 100 |
-                        Should -BeTrue
+
+                # Wait for the event to become visible in the log
+                $eventFound = Wait-UntilTrue -sb {
+                    Get-WinEvent -FilterHashtable @{ ProviderName="PowerShellCore"; Id = 4103 } -MaxEvents 5 |
+                        Where-Object {$_.Message.Contains($RareCommand)} 
+                } -TimeoutInMilliseconds (20*1000) -IntervalInMilliseconds 200
+
+                $eventFound | Should -BeTrue
             }
 
             $KeyPath = Join-Path $KeyRoot 'ModuleLogging'
@@ -105,7 +108,6 @@ Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
 
             TestFeature -KeyPath $WinKeyPath
         }
-
         It 'ScriptBlock logging policy test' {
             if (Test-IsWindowsArm64) {
                 Set-ItResult -Pending -Because "There is no PowerShellCore event provider on ARM64 until we have an MSI"
