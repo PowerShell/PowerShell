@@ -26,6 +26,8 @@ parameters: # parameters are shown up in ADO UI in a build queue time
     type: boolean
     default: false
 
+name: release-$(BUILD.SOURCEBRANCHNAME)-$(Build.BuildId)
+
 variables:
   - name: CDP_DEFINITION_BUILD_COUNT
     value: $[counter('', 0)]
@@ -63,10 +65,14 @@ resources:
       type: git
       name: OneBranch.Pipelines/GovernedTemplates
       ref: refs/heads/main
+    - repository: PSInternalTools
+      type: git
+      name: PowerShellCore/Internal-PowerShellTeam-Tools
+      ref: refs/heads/master
 
   pipelines:
     - pipeline: CoOrdinatedBuildPipeline
-      source: 'PowerShell-Coordinated Packages-Official'
+      source: 'PowerShell-Coordinated Binaries-Official'
 
     - pipeline: PSPackagesOfficial
       source: 'PowerShell-Packages-Official'
@@ -84,7 +90,7 @@ extends:
     featureFlags:
       WindowsHostVersion:
         Version: 2022
-        Network: Netlock
+        Network: KS3
     cloudvault:
       enabled: false
     globalSdl:
@@ -110,17 +116,14 @@ extends:
       tsaOptionsFile: .config\tsaoptions.json
 
     stages:
-    - stage: DownloadPackages
-      displayName: 'Download Packages'
-      dependsOn: []
+    - stage: setReleaseTagAndUploadTools
+      displayName: 'Set Release Tag and Upload Tools'
       jobs:
-      - template: /.pipelines/templates/release-download-packages.yml@self
+      - template: /.pipelines/templates/release-SetTagAndTools.yml@self
 
     - stage: msixbundle
       displayName: 'Create MSIX Bundle'
       dependsOn: []
-      variables:
-        ob_release_environment: Test
       jobs:
       - template: /.pipelines/templates/release-create-msix.yml@self
 
@@ -201,8 +204,10 @@ extends:
           displayName: 'Validate Linux ARM64 Fxd Packages'
           jobtype: 'linux'
           artifactName: 'drop_linux_package_fxdependent'
+          # this is really an architecture independent package
           packageNamePattern: '**/*linux-x64-fxdependent.tar.gz'
           arm64: 'yes'
+          enableCredScan: false
 
     - stage: validatePackages
       displayName: 'Validate Packages'
@@ -278,7 +283,7 @@ extends:
     - stage: PublishGitHubRelease
       displayName: Publish GitHub Release
       dependsOn: 
-        - DownloadPackages
+        - setReleaseTagAndUploadTools
         - UpdateChangeLog
       variables:
         ob_release_environment: Production
@@ -316,7 +321,9 @@ extends:
   
     - stage: PublishNuGet
       displayName: Publish NuGet
-      dependsOn: PushGitTagAndMakeDraftPublic
+      dependsOn:
+        - setReleaseTagAndUploadTools
+        - PushGitTagAndMakeDraftPublic
       variables:
         ob_release_environment: Production
       jobs:
@@ -328,9 +335,12 @@ extends:
       displayName: Publish PMC
       dependsOn: PushGitTagAndMakeDraftPublic
       jobs:
-      - template: /.pipelines/templates/release-publish-pmc.yml@self
+      - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
-          skipPublish: ${{ parameters.SkipPMCPublish }}
+          displayName: Publish to PMC
+          jobName: ReleaseToPMC
+          instructions: |
+            Run PowerShell-Release-Official-Azure.yml pipeline to publish to PMC
 
     - stage: ReleaseDocker
       dependsOn: PushGitTagAndMakeDraftPublic
@@ -338,15 +348,7 @@ extends:
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
-          displayName: Start Docker Build
-          jobName: StartDockerBuild
-          instructions: |
-            Kick off Docker build
-
-      - template: /.pipelines/templates/approvalJob.yml@self
-        parameters:
           displayName: Start Docker Release
-          dependsOnJob: StartDockerBuild
           jobName: StartDockerRelease
           instructions: |
             Kickoff docker release
