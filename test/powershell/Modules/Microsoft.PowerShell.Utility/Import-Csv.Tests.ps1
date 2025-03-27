@@ -207,8 +207,7 @@ Describe "Import-Csv with empty and null values" {
             }
             @{
                 Test     = '2a'
-                Expected = [pscustomobject] @{ P1 = ''; P2 = '' }
-                Delimiter = ','
+                Expected = [pscustomobject] @{ P1 = ''; P2 = $null }
                 InputCsv = @'
 "P1","P2"
 "",
@@ -216,7 +215,7 @@ Describe "Import-Csv with empty and null values" {
             }
             @{
                 Test     = '2b'
-                Expected = [pscustomobject] @{ P1 = ''; P2 = '' }, [pscustomobject] @{ P1 = ''; P2 = '' }
+                Expected = [pscustomobject] @{ P1 = ''; P2 = '' }, [pscustomobject] @{ P1 = ''; P2 = $null }
                 InputCsv = @'
 "P1","P2"
 "",
@@ -225,7 +224,7 @@ Describe "Import-Csv with empty and null values" {
             }
             @{
                 Test     = '3a'
-                Expected = [pscustomobject] @{ P1 = ''; P2 = '' }
+                Expected = [pscustomobject] @{ P1 = ''; P2 = $null }
                 InputCsv = @'
 "P1","P2"
 ,
@@ -233,7 +232,7 @@ Describe "Import-Csv with empty and null values" {
             }
             @{
                 Test     = '3b'
-                Expected = [pscustomobject] @{ P1 = ''; P2 = '' }, [pscustomobject] @{ P1 = ''; P2 = '' }
+                Expected = [pscustomobject] @{ P1 = ''; P2 = '' }, [pscustomobject] @{ P1 = ''; P2 = $null }
                 InputCsv = @'
 "P1","P2"
 ,
@@ -276,7 +275,7 @@ Describe "Import-Csv with empty and null values" {
             }
             @{
                 Test     = '6a'
-                Expected = [pscustomobject] @{ P1 = ''; P2 = ''; P3 = '' }
+                Expected = [pscustomobject] @{ P1 = ''; P2 = ''; P3 = $null }
                 InputCsv = @'
 "P1","P2","P3"
 ,,
@@ -284,7 +283,7 @@ Describe "Import-Csv with empty and null values" {
             }
             @{
                 Test     = '6b'
-                Expected = [pscustomobject] @{ P1 = ''; P2 = ''; P3 = '' }, [pscustomobject] @{ P1 = ''; P2 = ''; P3 = '' }
+                Expected = [pscustomobject] @{ P1 = ''; P2 = ''; P3 = '' }, [pscustomobject] @{ P1 = ''; P2 = ''; P3 = $null }
                 InputCsv = @'
 "P1","P2","P3"
 ,,
@@ -303,7 +302,7 @@ Describe "Import-Csv with empty and null values" {
             }
             @{
                 Test     = '7b'
-                Expected = [pscustomobject] @{ P1 = ''; P2 = '' }, [pscustomobject] @{ P1 = 'A1'; P2 = 'A2' }, [pscustomobject] @{ P1 = 'B1'; P2 = 'B2' }, [pscustomobject] @{ P1 = ''; P2 = '' }
+                Expected = [pscustomobject] @{ P1 = ''; P2 = '' }, [pscustomobject] @{ P1 = 'A1'; P2 = 'A2' }, [pscustomobject] @{ P1 = 'B1'; P2 = 'B2' }, [pscustomobject] @{ P1 = ''; P2 = $null }
                 InputCsv = @'
 "P1","P2"
 ,
@@ -317,7 +316,7 @@ B1,B2
         It 'Import-Csv correctly deserializes input CSV' {
             foreach ($testCase in $testCases) {
                 $csvFile = Join-Path $TestDrive -ChildPath $((New-Guid).Guid)
-                $testCase.InputCsv | Set-Content -Path $csvFile
+                $testCase.InputCsv | Set-Content -Path $csvFile -NoNewLine
                 $actualResult   = Import-Csv -Path $csvFile | ConvertTo-Csv
                 $expectedResult = $testCase.Expected | ConvertTo-Csv
                 $actualResult | Should -BeExactly $expectedResult
