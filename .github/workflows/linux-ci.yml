@@ -118,7 +118,7 @@ jobs:
     name: Build PowerShell
     runs-on: ubuntu-latest
     needs: changes
-    if: ${{ startsWith(github.repository_owner, 'azure') || needs.changes.outputs.source == 'true' }}
+    if: ${{ needs.changes.outputs.source == 'true' }}
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -132,7 +132,7 @@ jobs:
     needs:
       - ci_build
       - changes
-    if: ${{ startsWith(github.repository_owner, 'azure') || needs.changes.outputs.source == 'true' }}
+    if: ${{ needs.changes.outputs.source == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: checkout
@@ -149,7 +149,7 @@ jobs:
     needs:
       - ci_build
       - changes
-    if: ${{ startsWith(github.repository_owner, 'azure') || needs.changes.outputs.source == 'true' }}
+    if: ${{ needs.changes.outputs.source == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: checkout
@@ -166,7 +166,7 @@ jobs:
     needs:
       - ci_build
       - changes
-    if: ${{ startsWith(github.repository_owner, 'azure') || needs.changes.outputs.source == 'true' }}
+    if: ${{ needs.changes.outputs.source == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: checkout
@@ -183,7 +183,7 @@ jobs:
     needs:
       - ci_build
       - changes
-    if: ${{ startsWith(github.repository_owner, 'azure') || needs.changes.outputs.source == 'true' }}
+    if: ${{ needs.changes.outputs.source == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: checkout
@@ -200,7 +200,7 @@ jobs:
     needs:
       - ci_build
       - changes
-    if: ${{ startsWith(github.repository_owner, 'azure') || needs.changes.outputs.source == 'true' }}
+    if: ${{ needs.changes.outputs.source == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: checkout
@@ -218,7 +218,7 @@ jobs:
     name: Analyze
     runs-on: ubuntu-latest
     needs: changes
-    if: ${{ startsWith(github.repository_owner, 'azure') || needs.changes.outputs.source == 'true' }}
+    if: ${{ needs.changes.outputs.source == 'true' }}
 
     strategy:
       fail-fast: false
