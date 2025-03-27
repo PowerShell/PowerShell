@@ -49,23 +49,10 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
 
-        # For pull requests it's not necessary to checkout the code
-      - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.2.0
+      - name: Change Detection
         id: filter
-        with:
-          list-files: json
-          filters: .github/action-filters.yml
+        uses: "./.github/actions/infrastructure/path-filters"
 
-      - name: Capture outputs
-        run: |
-          "source: ${{ steps.filter.outputs.source }}"
-          "github: ${{ steps.filter.outputs.github }}"
-          "tools: ${{ steps.filter.outputs.tools }}"
-          "props: ${{ steps.filter.outputs.props }}"
-          "tests: ${{ steps.filter.outputs.tests }}"
-          "mainSource: ${{ steps.filter.outputs.mainSource }}"
-          "buildModule: ${{ steps.filter.outputs.buildModule }}"
-        shell: pwsh
 
   ci_build:
     name: Build PowerShell
