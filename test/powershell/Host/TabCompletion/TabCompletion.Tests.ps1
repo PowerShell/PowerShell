@@ -33,6 +33,37 @@ Describe "TabCompletion" -Tags CI {
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'notepad.exe'
     }
 
+    It 'Should not include duplicate command results' {
+        $OldModulePath = $env:PSModulePath
+        $tempDir = Join-Path -Path $TestDrive -ChildPath "TempPsModuleDir"
+        try
+        {
+            $ModuleDirs = @(
+                Join-Path $tempDir "TestModule1\1.0"
+                Join-Path $tempDir "TestModule1\1.1"
+                Join-Path $tempDir "TestModule2\1.0"
+            )
+            foreach ($Dir in $ModuleDirs)
+            {
+                $NewDir = New-Item -Path $Dir -ItemType Directory -Force
+                $ModuleName = $NewDir.Parent.Name
+                Set-Content -Value 'MyTestFunction{}' -LiteralPath "$($NewDir.FullName)\$ModuleName.psm1"
+                New-ModuleManifest -Path "$($NewDir.FullName)\$ModuleName.psd1" -RootModule "$ModuleName.psm1" -FunctionsToExport "MyTestFunction" -ModuleVersion $NewDir.Name
+            }
+
+            $env:PSModulePath += [System.IO.Path]::PathSeparator + $tempDir            
+            $Res = TabExpansion2 -inputScript MyTestFunction
+            $Res.CompletionMatches.Count | Should -Be 2
+            $SortedMatches = $Res.CompletionMatches.CompletionText | Sort-Object
+            $SortedMatches[0] | Should -Be "TestModule1\MyTestFunction"
+            $SortedMatches[1] | Should -Be "TestModule2\MyTestFunction"
+        }
+        finally
+        {
+            $env:PSModulePath = $OldModulePath
+        }
+    }
+
     It 'Should complete dotnet method' {
         $res = TabExpansion2 -inputScript '(1).ToSt' -cursorColumn '(1).ToSt'.Length
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'ToString('
@@ -103,6 +134,34 @@ Describe "TabCompletion" -Tags CI {
     It 'Should complete variable in default value of a parameter' {
         $res = TabExpansion2 -inputScript 'param($PS = $P'
         $res.CompletionMatches.Count | Should -BeGreaterThan 0
+    }
+    
+    It 'Should complete variable with description and value <Value>' -TestCases @(
+        @{ Value = 1; Expected = '[int]$VariableWithDescription - Variable description' }
+        @{ Value = 'string'; Expected = '[string]$VariableWithDescription - Variable description' }
+        @{ Value = $null; Expected = 'VariableWithDescription - Variable description' }
+    ) {
+        param ($Value, $Expected)
+        
+        New-Variable -Name VariableWithDescription -Value $Value -Description 'Variable description' -Force
+        $res = TabExpansion2 -inputScript '$VariableWithDescription'
+        $res.CompletionMatches.Count | Should -Be 1
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '$VariableWithDescription'
+        $res.CompletionMatches[0].ToolTip | Should -BeExactly $Expected
+    }
+    
+    It 'Should complete scoped variable with description and value <Value>' -TestCases @(
+        @{ Value = 1; Expected = '[int]$VariableWithDescription - Variable description' }
+        @{ Value = 'string'; Expected = '[string]$VariableWithDescription - Variable description' }
+        @{ Value = $null; Expected = 'VariableWithDescription - Variable description' }
+    ) {
+        param ($Value, $Expected)
+        
+        New-Variable -Name VariableWithDescription -Value $Value -Description 'Variable description' -Force
+        $res = TabExpansion2 -inputScript '$local:VariableWithDescription'
+        $res.CompletionMatches.Count | Should -Be 1
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '$local:VariableWithDescription'
+        $res.CompletionMatches[0].ToolTip | Should -BeExactly $Expected
     }
 
     It 'Should not complete property name in class definition' {
@@ -436,6 +495,21 @@ switch ($x)
         $res.CompletionMatches.Count | Should -Be 0
     }
 
+    It 'Should complete variable assigned in command redirection to variable' {
+        $res = TabExpansion2 -inputScript 'New-Guid 1>variable:Redir1 2>variable:Redir2 3>variable:Redir3 4>variable:Redir4 5>variable:Redir5 6>variable:Redir6; $Redir'
+        $res.CompletionMatches[0].CompletionText | Should -Be '$Redir1'
+        $res.CompletionMatches[1].CompletionText | Should -Be '$Redir2'
+        $res.CompletionMatches[1].ToolTip | Should -Be '[ErrorRecord]$Redir2'
+        $res.CompletionMatches[2].CompletionText | Should -Be '$Redir3'
+        $res.CompletionMatches[2].ToolTip | Should -Be '[WarningRecord]$Redir3'
+        $res.CompletionMatches[3].CompletionText | Should -Be '$Redir4'
+        $res.CompletionMatches[3].ToolTip | Should -Be '[VerboseRecord]$Redir4'
+        $res.CompletionMatches[4].CompletionText | Should -Be '$Redir5'
+        $res.CompletionMatches[4].ToolTip | Should -Be '[DebugRecord]$Redir5'
+        $res.CompletionMatches[5].CompletionText | Should -Be '$Redir6'
+        $res.CompletionMatches[5].ToolTip | Should -Be '[InformationRecord]$Redir6'
+    }
+
     context TypeConstructionWithHashtable {
         BeforeAll {
             class RandomTestType {
@@ -605,6 +679,21 @@ using `
         $res.CompletionMatches[0].CompletionText | Should -Be '"Classic"'
     }
 
+    It 'Should work for variable assignment of enum type with type inference' {
+        $res = TabExpansion2 -inputScript '[System.Management.Automation.ProgressView]$MyUnassignedVar = $psstyle.Progress.View; $MyUnassignedVar = "Class'
+        $res.CompletionMatches[0].CompletionText | Should -Be '"Classic"'
+    }
+
+    It 'Should work for property assignment of enum type with type inference with PowerShell class' {
+        $res = TabExpansion2 -inputScript 'enum Animals{Cat= 0;Dog= 1};class AnimalTestClass{[Animals] $Prop1};$Test1 = [AnimalTestClass]::new();$Test1.Prop1 = "C'
+        $res.CompletionMatches[0].CompletionText | Should -Be '"Cat"'
+    }
+
+    It 'Should work for variable assignment with type inference of PowerShell Enum' {
+        $res = TabExpansion2 -inputScript 'enum Animals{Cat= 0;Dog= 1}; [Animals]$TestVar1 = "D'
+        $res.CompletionMatches[0].CompletionText | Should -Be '"Dog"'
+    }
+
     It 'Should work for variable assignment of enum type: <inputStr>' -TestCases @(
         @{ inputStr = '$ErrorActionPreference = '; filter = ''; doubleQuotes = $false }
         @{ inputStr = '$ErrorActionPreference='; filter = ''; doubleQuotes = $false }
@@ -748,6 +837,11 @@ using `
         $res.CompletionMatches.CompletionText | Should -Contain "GetType"
     }
 
+    It 'Should complete variable member inferred from command inside scriptblock' {
+        $res = TabExpansion2 -inputScript '& {(New-Guid).'
+        $res.CompletionMatches.Count | Should -BeGreaterThan 0
+    }
+
     It 'Should not complete void instance members' {
         $res = TabExpansion2 -inputScript '([void]("")).'
         $res.CompletionMatches | Should -BeNullOrEmpty
@@ -805,6 +899,36 @@ ConstructorTestClass(int i, bool b)
 
         $diffs = Compare-Object -ReferenceObject $res.CompletionMatches.CompletionText -DifferenceObject $names
         $diffs | Should -BeNullOrEmpty
+    }
+
+    It 'Should complete attribute argument in incomplete param block' {
+        $res = TabExpansion2 -inputScript 'param([ValidatePattern('
+        $Expected = ([ValidatePattern].GetProperties() | Where-Object {$_.CanWrite}).Name -join ','
+        $res.CompletionMatches.CompletionText -join ',' | Should -BeExactly $Expected
+    }
+
+    It 'Should complete attribute argument in incomplete param block on new line' {
+        $TestString =  @'
+param([ValidatePattern(
+^)])
+'@
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
+        $Expected = ([ValidatePattern].GetProperties() | Where-Object {$_.CanWrite}).Name -join ','
+        $res.CompletionMatches.CompletionText -join ',' | Should -BeExactly $Expected
+    }
+
+    It 'Should complete attribute argument with partially written name in incomplete param block' {
+        $TestString =  'param([ValidatePattern(op^)]'
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Options'
+    }
+
+    It 'Should complete attribute argument for incomplete standalone attribute' {
+        $res = TabExpansion2 -inputScript '[ValidatePattern('
+        $Expected = ([ValidatePattern].GetProperties() | Where-Object {$_.CanWrite}).Name -join ','
+        $res.CompletionMatches.CompletionText -join ',' | Should -BeExactly $Expected
     }
 
     It 'Should complete argument for second parameter' {
@@ -1659,6 +1783,36 @@ class InheritedClassTest : System.Attribute
         }
     }
 
+    Context "Script parameter completion" {
+        BeforeAll {
+            Setup -File -Path 'ModuleReqTest.ps1' -Content @'
+#requires -Modules ThisModuleDoesNotExist
+param ($Param1)
+'@
+            Setup -File -Path 'AdminReqTest.ps1' -Content @'
+#requires -RunAsAdministrator
+param ($Param1)
+'@
+            Push-Location ${TestDrive}\
+        }
+
+        AfterAll {
+            Pop-Location
+        }
+
+        It "Input should successfully complete script parameter for script with failed script requirements" {
+            $res = TabExpansion2 -inputScript '.\ModuleReqTest.ps1 -'
+            $res.CompletionMatches.Count | Should -BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly '-Param1'
+        }
+
+        It "Input should successfully complete script parameter for admin script while not elevated" {
+            $res = TabExpansion2 -inputScript '.\AdminReqTest.ps1 -'
+            $res.CompletionMatches.Count | Should -BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly '-Param1'
+        }
+    }
+
     Context "File name completion" {
         BeforeAll {
             $tempDir = Join-Path -Path $TestDrive -ChildPath "baseDir"
@@ -1828,6 +1982,34 @@ class InheritedClassTest : System.Attribute
             $res.CompletionMatches | Should -HaveCount 1
             $expectedPath = Join-Path $PSScriptRoot -ChildPath BugFix.Tests.ps1
             $res.CompletionMatches[0].CompletionText | Should -Be "`"$expectedPath`""
+        }
+
+        It "Relative path completion for using <UsingKind> statement when AST extent has file identity" -TestCases @(
+            @{UsingKind = "module";  ExpectedFileName = 'UsingFileCompletionModuleTest.psm1'}
+            @{UsingKind = "assembly";ExpectedFileName = 'UsingFileCompletionAssemblyTest.dll'}
+        ) -test {
+            param($UsingKind, $ExpectedFileName)
+            $scriptText = "using $UsingKind .\UsingFileCompletion"
+            $tokens = $null
+            $scriptAst = [System.Management.Automation.Language.Parser]::ParseInput(
+                $scriptText,
+                (Join-Path -Path $tempDir -ChildPath ScriptInEditor.ps1),
+                [ref] $tokens,
+                [ref] $null)
+
+            $cursorPosition = $scriptAst.Extent.StartScriptPosition.
+                GetType().
+                GetMethod('CloneWithNewOffset', [System.Reflection.BindingFlags]'NonPublic, Instance').
+                Invoke($scriptAst.Extent.StartScriptPosition, @($scriptText.Length - 1))
+
+            Push-Location -LiteralPath $PSHOME
+            $TestFile = Join-Path -Path $tempDir -ChildPath $ExpectedFileName
+            $null = New-Item -Path $TestFile
+            $res = TabExpansion2 -ast $scriptAst -tokens $tokens -positionOfCursor $cursorPosition
+            Pop-Location
+                        
+            $ExpectedPath = Join-Path -Path '.\' -ChildPath $ExpectedFileName
+            $res.CompletionMatches.CompletionText | Where-Object {$_ -Like "*$ExpectedFileName"} | Should -Be $ExpectedPath
         }
 
         It "Should handle '~' in completiontext when it's used to refer to home in input" {
@@ -2375,7 +2557,7 @@ class InheritedClassTest : System.Attribute
         }
 
         It "Test hashtable key completion in #requires statement for modules" {
-            $res = TabExpansion2 -inputScript "#requires -Modules @{" -cursorColumn 21
+            $res = TabExpansion2 -inputScript "#requires -Modules @{"
             $res.CompletionMatches.Count | Should -BeGreaterThan 0
             $res.CompletionMatches[0].CompletionText | Should -BeExactly "GUID"
         }
@@ -3044,23 +3226,23 @@ dir -Recurse `
         }
         It '<Intent>' -TestCases @(
             @{
-                Intent = 'Complete help keywords with minimum input'
+                Intent = 'Complete help keywords with minimal input'
                 Expected = @(
-                    'COMPONENT'
-                    'DESCRIPTION'
-                    'EXAMPLE'
-                    'EXTERNALHELP'
-                    'FORWARDHELPCATEGORY'
-                    'FORWARDHELPTARGETNAME'
-                    'FUNCTIONALITY'
-                    'INPUTS'
-                    'LINK'
-                    'NOTES'
-                    'OUTPUTS'
-                    'PARAMETER'
-                    'REMOTEHELPRUNSPACE'
-                    'ROLE'
-                    'SYNOPSIS'
+                    "COMPONENT",
+                    "DESCRIPTION",
+                    "EXAMPLE",
+                    "EXTERNALHELP",
+                    "FORWARDHELPCATEGORY",
+                    "FORWARDHELPTARGETNAME",
+                    "FUNCTIONALITY",
+                    "INPUTS",
+                    "LINK",
+                    "NOTES",
+                    "OUTPUTS",
+                    "PARAMETER",
+                    "REMOTEHELPRUNSPACE",
+                    "ROLE",
+                    "SYNOPSIS"
                 )
                 TestString = @'
 <#
@@ -3250,6 +3432,7 @@ function MyFunction ($param1, $param2)
     It 'Should complete module specification keys in using module statement' {
         $res = TabExpansion2 -inputScript 'using module @{'
         $res.CompletionMatches.CompletionText -join ' ' | Should -BeExactly "GUID MaximumVersion ModuleName ModuleVersion RequiredVersion"
+        $res.CompletionMatches[0].ToolTip | Should -Not -Be $res.CompletionMatches[0].CompletionText
     }
 
     It 'Should not fallback to file completion when completing typenames' {

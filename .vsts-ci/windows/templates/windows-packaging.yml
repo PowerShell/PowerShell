@@ -47,9 +47,6 @@ jobs:
     displayName: Capture PowerShell Version Table
     condition: succeededOrFailed()
 
-
-  - template: /tools/releaseBuild/azureDevOps/templates/insert-nuget-config-azfeed.yml
-
   - pwsh: |
       Import-Module .\tools\ci.psm1
       Switch-PSNugetConfig -Source Public
