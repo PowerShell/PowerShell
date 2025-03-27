@@ -26,22 +26,20 @@ Describe 'Classes inheritance syntax' -Tags "CI" {
 
     It 'inheritance syntax allows newlines in various places' {
         class C {}
-        class C2a:C,system.IDisposable{ [void] Dispose() { }}
+        class C2a:C, system.IDisposable { [void] Dispose() { } }
         class C2b
-            :
-            C
-            ,
-            system.IDisposable
-            {
-                [void] Dispose() {}
-                C2b()
-                :   # there are extra spaces here
-                base
-                (
-                )
-                {
-                }
+        :
+        C
+        ,
+        system.IDisposable {
+            [void] Dispose() {}
+            C2b()
+            :   # there are extra spaces here
+            base
+            (
+            ) {
             }
+        }
 
         [C2a].GetInterface("System.IDisposable") | Should -Not -BeNullOrEmpty
         [C2b].GetInterface("System.IDisposable") | Should -Not -BeNullOrEmpty
@@ -53,10 +51,8 @@ Describe 'Classes inheritance syntax' -Tags "CI" {
     }
 
     It 'can implement .NET interface' {
-        class MyComparable : system.IComparable
-        {
-            [int] CompareTo([object] $obj)
-            {
+        class MyComparable : system.IComparable {
+            [int] CompareTo([object] $obj) {
                 return 0;
             }
         }
@@ -132,8 +128,7 @@ class ClassWithStaticAbstractInterface : IInterfaceWithStaticAbstractProperty {
 
     Context "Inheritance from abstract .NET classes" {
         BeforeAll {
-            class TestHost : System.Management.Automation.Host.PSHost
-            {
+            class TestHost : System.Management.Automation.Host.PSHost {
                 [String]$myName = "MyHost"
                 [Version]$myVersion = [Version]"1.0.0.0"
                 [Guid]$myInstanceId = [guid]::NewGuid()
@@ -142,8 +137,8 @@ class ClassWithStaticAbstractInterface : IInterfaceWithStaticAbstractProperty {
                 [System.Management.Automation.Host.PSHostUserInterface]$myUI = $null
                 [bool]$IsInteractive
                 [void]SetShouldExit([int]$exitCode) { }
-                [void]EnterNestedPrompt(){ throw "EnterNestedPrompt-NotSupported" }
-                [void]ExitNestedPrompt(){ throw "Unsupported" }
+                [void]EnterNestedPrompt() { throw "EnterNestedPrompt-NotSupported" }
+                [void]ExitNestedPrompt() { throw "Unsupported" }
                 [void]NotifyBeginApplication() { }
                 [void]NotifyEndApplication() { }
                 [string]get_Name() { return $this.myName; Write-Host "MyName" }
@@ -220,33 +215,28 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
     Context 'Method calls' {
 
         It 'can call instance method on base class' {
-            class bar
-            {
-                [int]foo() {return 100500}
+            class bar {
+                [int]foo() { return 100500 }
             }
             class baz : bar {}
             [baz]::new().foo() | Should -Be 100500
         }
 
         It 'can call static method on base class' {
-            class bar
-            {
-                static [int]foo() {return 100500}
+            class bar {
+                static [int]foo() { return 100500 }
             }
             class baz : bar {}
             [baz]::foo() | Should -Be 100500
         }
 
         It 'can access static and instance base class property' {
-            class A
-            {
+            class A {
                 static [int]$si
                 [int]$i
             }
-            class B : A
-            {
-                [void]foo()
-                {
+            class B : A {
+                [void]foo() {
                     $this::si = 1001
                     $this.i = 1003
                 }
@@ -268,13 +258,11 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
         }
 
         It 'overrides instance method' {
-            class bar
-            {
-                [int]foo() {return 100500}
+            class bar {
+                [int]foo() { return 100500 }
             }
-            class baz : bar
-            {
-                [int]foo() {return 200600}
+            class baz : bar {
+                [int]foo() { return 200600 }
             }
             [baz]::new().foo() | Should -Be 200600
         }
@@ -342,17 +330,13 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
         }
 
         It 'allows base PowerShell class method call and doesn''t fall into recursion' {
-            class bar
-            {
-                [int]foo() {return 1001}
+            class bar {
+                [int]foo() { return 1001 }
             }
-            class baz : bar
-            {
+            class baz : bar {
                 [int] $fooCallCounter
-                [int]foo()
-                {
-                    if ($this.fooCallCounter++ -gt 0)
-                    {
+                [int]foo() {
+                    if ($this.fooCallCounter++ -gt 0) {
                         throw "Recursion happens"
                     }
                     return 3 * ([bar]$this).foo()
@@ -364,17 +348,13 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
         }
 
         It 'case insensitive for base class method calls' {
-            class bar
-            {
-                [int]foo() {return 1001}
+            class bar {
+                [int]foo() { return 1001 }
             }
-            class baz : bar
-            {
+            class baz : bar {
                 [int] $fooCallCounter
-                [int]fOo()
-                {
-                    if ($this.fooCallCounter++ -gt 0)
-                    {
+                [int]fOo() {
+                    if ($this.fooCallCounter++ -gt 0) {
                         throw "Recursion happens"
                     }
                     return ([bAr]$this).fOo() + ([bAr]$this).FOO()
@@ -386,21 +366,17 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
         }
 
         It 'allows any call from the inheritance hierarchy' {
-            class A
-            {
-                [string]GetName() {return "A"}
+            class A {
+                [string]GetName() { return "A" }
             }
-            class B : A
-            {
-                [string]GetName() {return "B"}
+            class B : A {
+                [string]GetName() { return "B" }
             }
-            class C : B
-            {
-                [string]GetName() {return "C"}
+            class C : B {
+                [string]GetName() { return "C" }
             }
-            class D : C
-            {
-                [string]GetName() {return "D"}
+            class D : C {
+                [string]GetName() { return "D" }
             }
             $d = [D]::new()
 
@@ -412,13 +388,11 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
         }
 
         It 'can call base method with params' {
-            class A
-            {
-                [string]ToStr([int]$a) {return "A" + $a}
+            class A {
+                [string]ToStr([int]$a) { return "A" + $a }
             }
-            class B : A
-            {
-                [string]ToStr([int]$a) {return "B" + $a}
+            class B : A {
+                [string]ToStr([int]$a) { return "B" + $a }
             }
             $b = [B]::new()
             ([A]$b).ToStr(101) | Should -Be "A101"
@@ -426,26 +400,20 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
         }
 
         It 'can call base method with many params' {
-            class A
-            {
-                [string]ToStr([int]$a1, [int]$a2, [int]$a3, [int]$a4, [int]$a5, [int]$a6, [int]$a7, [int]$a8, [int]$a9, [int]$a10, [int]$a11, [int]$a12, [int]$a13, [int]$a14)
-                {
+            class A {
+                [string]ToStr([int]$a1, [int]$a2, [int]$a3, [int]$a4, [int]$a5, [int]$a6, [int]$a7, [int]$a8, [int]$a9, [int]$a10, [int]$a11, [int]$a12, [int]$a13, [int]$a14) {
                     return "A"
                 }
 
-                [void]Noop([int]$a1, [int]$a2, [int]$a3, [int]$a4, [int]$a5, [int]$a6, [int]$a7, [int]$a8, [int]$a9, [int]$a10, [int]$a11, [int]$a12, [int]$a13, [int]$a14)
-                {
+                [void]Noop([int]$a1, [int]$a2, [int]$a3, [int]$a4, [int]$a5, [int]$a6, [int]$a7, [int]$a8, [int]$a9, [int]$a10, [int]$a11, [int]$a12, [int]$a13, [int]$a14) {
                 }
             }
-            class B : A
-            {
-                [string]ToStr([int]$a1, [int]$a2, [int]$a3, [int]$a4, [int]$a5, [int]$a6, [int]$a7, [int]$a8, [int]$a9, [int]$a10, [int]$a11, [int]$a12, [int]$a13, [int]$a14)
-                {
+            class B : A {
+                [string]ToStr([int]$a1, [int]$a2, [int]$a3, [int]$a4, [int]$a5, [int]$a6, [int]$a7, [int]$a8, [int]$a9, [int]$a10, [int]$a11, [int]$a12, [int]$a13, [int]$a14) {
                     return "B"
                 }
 
-                [void]Noop([int]$a1, [int]$a2, [int]$a3, [int]$a4, [int]$a5, [int]$a6, [int]$a7, [int]$a8, [int]$a9, [int]$a10, [int]$a11, [int]$a12, [int]$a13, [int]$a14)
-                {
+                [void]Noop([int]$a1, [int]$a2, [int]$a3, [int]$a4, [int]$a5, [int]$a6, [int]$a7, [int]$a8, [int]$a9, [int]$a10, [int]$a11, [int]$a12, [int]$a13, [int]$a14) {
                 }
             }
             $b = [B]::new()
@@ -463,15 +431,13 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
 
         It 'overrides void method call' {
             $script:voidOverrideVar = $null
-            class A
-            {
-                [void]SetStr([int]$a) {$script:voidOverrideVar = "A" + $a}
-                [void]SetStr() {$script:voidOverrideVar = "A"}
+            class A {
+                [void]SetStr([int]$a) { $script:voidOverrideVar = "A" + $a }
+                [void]SetStr() { $script:voidOverrideVar = "A" }
             }
-            class B : A
-            {
-                [void]SetStr([int]$a) {$script:voidOverrideVar = "B" + $a}
-                [void]SetStr() {$script:voidOverrideVar = "B"}
+            class B : A {
+                [void]SetStr([int]$a) { $script:voidOverrideVar = "B" + $a }
+                [void]SetStr() { $script:voidOverrideVar = "B" }
             }
             $b = [B]::new()
             ([A]$b).SetStr(101)
@@ -485,11 +451,9 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
         }
 
         It 'hides final .NET method' {
-            class MyIntList : system.collections.generic.list[int]
-            {
+            class MyIntList : system.collections.generic.list[int] {
                 # Add is final, can we hide it?
-                [void] Add([int]$arg)
-                {
+                [void] Add([int]$arg) {
                     ([system.collections.generic.list[int]]$this).Add($arg * 2)
                 }
             }
@@ -502,13 +466,11 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
     }
 
     Context 'base static method call' {
-        class A
-        {
-            static [string]ToStr([int]$a) {return "A" + $a}
+        class A {
+            static [string]ToStr([int]$a) { return "A" + $a }
         }
-        class B : A
-        {
-            static [string]ToStr([int]$a) {return "B" + $a}
+        class B : A {
+            static [string]ToStr([int]$a) { return "B" + $a }
         }
 
         $b = [B]::new()
@@ -545,14 +507,12 @@ Describe 'Classes inheritance ctors' -Tags "CI" {
     It 'can call base ctor' {
         class A {
             [int]$a
-            A([int]$a)
-            {
+            A([int]$a) {
                 $this.a = $a
             }
         }
 
-        class B : A
-        {
+        class B : A {
             B([int]$a) : base($a * 2) {}
         }
 
@@ -564,14 +524,12 @@ Describe 'Classes inheritance ctors' -Tags "CI" {
     It 'cannot call base ctor with the wrong number of parameters' {
         class A {
             [int]$a
-            A([int]$a)
-            {
+            A([int]$a) {
                 $this.a = $a
             }
         }
 
-        class B : A
-        {
+        class B : A {
             B([int]$a) : base($a * 2, 100) {}
         }
 
@@ -581,19 +539,16 @@ Describe 'Classes inheritance ctors' -Tags "CI" {
     It 'call default base ctor implicitly' {
         class A {
             [int]$a
-            A()
-            {
+            A() {
                 $this.a = 1007
             }
         }
 
-        class B : A
-        {
+        class B : A {
             B() {}
         }
 
-        class C : A
-        {
+        class C : A {
         }
 
         $b = [B]::new()
@@ -605,20 +560,18 @@ Describe 'Classes inheritance ctors' -Tags "CI" {
     It 'doesn''t allow base ctor as an explicit method call' {
         $o = [object]::new()
         # we should not allow direct .ctor call.
-        { $o.{.ctor}() } | Should -Throw -ErrorId "MethodNotFound"
+        { $o.{ .ctor }() } | Should -Throw -ErrorId "MethodNotFound"
     }
 
     It 'allow use conversion [string -> int] in base ctor call' {
         class A {
             [int]$a
-            A([int]$a)
-            {
+            A([int]$a) {
                 $this.a = $a
             }
         }
 
-        class B : A
-        {
+        class B : A {
             B() : base("103") {}
         }
 
@@ -630,18 +583,15 @@ Describe 'Classes inheritance ctors' -Tags "CI" {
         class A {
             [int]$i
             [string]$s
-            A([int]$a)
-            {
+            A([int]$a) {
                 $this.i = $a
             }
-            A([string]$a)
-            {
+            A([string]$a) {
                 $this.s = $a
             }
         }
 
-        class B : A
-        {
+        class B : A {
             B($a) : base($a) {}
         }
 
@@ -679,20 +629,17 @@ Describe 'Base type has abstract properties' -Tags "CI" {
         ##  - public abstract string Name { get; }
         ##  - public abstract void Delete ();
 
-        class myFileSystemInfo : System.IO.FileSystemInfo
-        {
+        class myFileSystemInfo : System.IO.FileSystemInfo {
             [string] $Name
             [bool] $Exists
 
-            myFileSystemInfo([string]$path)
-            {
+            myFileSystemInfo([string]$path) {
                 # ctor
                 $this.Name = $path
                 $this.Exists = $true
             }
 
-            [void] Delete()
-            {
+            [void] Delete() {
             }
         }
 
@@ -713,5 +660,227 @@ Describe 'Base type has abstract properties' -Tags "CI" {
         $failure | Should -Not -BeNullOrEmpty
         $failure.FullyQualifiedErrorId | Should -BeExactly "TypeCreationError"
         $failure.Exception.Message | Should -BeLike "*'get_Exists'*"
+    }
+}
+
+Describe 'Classes inheritance with protected and protected internal members in base class' -Tags 'CI' {
+
+    BeforeAll {
+        Set-StrictMode -Version 3
+        $c1DefinitionProtectedInternal = @'
+            public class C1ProtectedInternal
+            {
+                protected internal const string Constant = "C1_Constant";
+
+                protected internal static string StaticField = "C1_StaticField";
+                protected internal static string StaticProperty { get; set; } = "C1_StaticProperty";
+                protected internal static string StaticMethod() { return "C1_StaticMethod"; }
+
+                protected internal string InstanceField = "C1_InstanceField";
+                protected internal string InstanceProperty { get; set; } = "C1_InstanceProperty";
+                protected internal string InstanceMethod() { return "C1_InstanceMethod"; }
+
+                protected internal virtual string VirtualProperty1 { get; set; } = "C1_VirtualProperty1";
+                protected internal virtual string VirtualProperty2 { get; set; } = "C1_VirtualProperty2";
+                protected internal virtual string VirtualMethod1() { return "C1_VirtualMethod1"; }
+                protected internal virtual string VirtualMethod2() { return "C1_VirtualMethod2"; }
+
+                public string CtorUsed {  get; set; }
+                public C1ProtectedInternal() { CtorUsed = "default ctor"; }
+                protected internal C1ProtectedInternal(string p1) { CtorUsed = "C1_ctor_1args:" + p1; }
+            }
+'@
+        $c2DefinitionProtectedInternal = @'
+        class C2ProtectedInternal : C1ProtectedInternal {
+            C2ProtectedInternal() : base() { $this.VirtualProperty2 = 'C2_VirtualProperty2' }
+            C2ProtectedInternal([string]$p1) : base($p1) { $this.VirtualProperty2 = 'C2_VirtualProperty2' }
+
+            [string]GetConstant() { return [C2ProtectedInternal]::Constant }
+
+            [string]GetStaticField() { return [C2ProtectedInternal]::StaticField }
+            [string]SetStaticField([string]$value) { [C2ProtectedInternal]::StaticField = $value; return [C2ProtectedInternal]::StaticField }
+            [string]GetStaticProperty() { return [C2ProtectedInternal]::StaticProperty }
+            [string]SetStaticProperty([string]$value) { [C2ProtectedInternal]::StaticProperty = $value; return [C2ProtectedInternal]::StaticProperty }
+            [string]CallStaticMethod() { return [C2ProtectedInternal]::StaticMethod() }
+
+            [string]GetInstanceField() { return $this.InstanceField }
+            [string]SetInstanceField([string]$value) { $this.InstanceField = $value; return $this.InstanceField }
+            [string]GetInstanceProperty() { return $this.InstanceProperty }
+            [string]SetInstanceProperty([string]$value) { $this.InstanceProperty = $value; return $this.InstanceProperty }
+            [string]CallInstanceMethod() { return $this.InstanceMethod() }
+
+            [string]GetVirtualProperty1() { return $this.VirtualProperty1 }
+            [string]SetVirtualProperty1([string]$value) { $this.VirtualProperty1 = $value; return $this.VirtualProperty1 }
+            [string]CallVirtualMethod1() { return $this.VirtualMethod1() }
+
+            [string]$VirtualProperty2
+            [string]VirtualMethod2() { return 'C2_VirtualMethod2' }
+            # Note: Overriding a virtual property in a derived PowerShell class prevents access to the
+            #       base property via simple typecast ([base]$this).VirtualProperty2.
+            [string]GetVirtualProperty2() { return $this.VirtualProperty2 }
+            [string]SetVirtualProperty2([string]$value) { $this.VirtualProperty2 = $value; return $this.VirtualProperty2 }
+            [string]CallVirtualMethod2Base() { return ([C1ProtectedInternal]$this).VirtualMethod2() }
+            [string]CallVirtualMethod2Derived() { return $this.VirtualMethod2() }
+}
+
+[C2ProtectedInternal]
+'@
+
+        Add-Type -TypeDefinition $c1DefinitionProtectedInternal
+        Add-Type -TypeDefinition (($c1DefinitionProtectedInternal -creplace 'C1ProtectedInternal', 'C1Protected') -creplace 'protected internal', 'protected')
+
+        $testCases = @(
+            @{ accessType = 'protected'; derivedType = Invoke-Expression ($c2DefinitionProtectedInternal -creplace 'ProtectedInternal', 'Protected') }
+            @{ accessType = 'protected internal'; derivedType = Invoke-Expression $c2DefinitionProtectedInternal }
+        )
+    }
+
+    AfterAll {
+        Set-StrictMode -Off
+    }
+
+    Context 'Derived class can access static base class members' {
+
+        It 'can access <accessType> base constant field' -TestCases $testCases {
+            param($derivedType)
+            $derivedType::new().GetConstant() | Should -Be 'C1_Constant'
+        }
+
+        It 'can access <accessType> base static field' -TestCases $testCases {
+            param($derivedType)
+            $c2 = $derivedType::new()
+            $v = $c2.GetStaticField()
+            $v | Should -Be 'C1_StaticField'
+            $c2.SetStaticField($v + ':foo') | Should -Be 'C1_StaticField:foo'
+        }
+
+        It 'can access <accessType> base static property' -TestCases $testCases {
+            param($derivedType)
+            $c2 = $derivedType::new()
+            $v = $c2.GetStaticProperty()
+            $v | Should -Be 'C1_StaticProperty'
+            $c2.SetStaticProperty($v + ':foo') | Should -Be 'C1_StaticProperty:foo'
+        }
+
+        It 'can call <accessType> base static method' -TestCases $testCases {
+            param($derivedType)
+            $derivedType::new().CallStaticMethod() | Should -Be 'C1_StaticMethod'
+        }
+    }
+
+    Context 'Derived class can access instance base class members' {
+
+        It 'can call <accessType> base ctor' -TestCases $testCases {
+            param($derivedType)
+            $derivedType::new('foo').CtorUsed | Should -Be 'C1_ctor_1args:foo'
+        }
+
+        It 'can access <accessType> base instance field' -TestCases $testCases {
+            param($derivedType)
+            $c2 = $derivedType::new()
+            $v = $c2.GetInstanceField()
+            $v | Should -Be 'C1_InstanceField'
+            $c2.SetInstanceField($v + ':foo') | Should -Be 'C1_InstanceField:foo'
+        }
+
+        It 'can access <accessType> base instance property' -TestCases $testCases {
+            param($derivedType)
+            $c2 = $derivedType::new()
+            $v = $c2.GetInstanceProperty()
+            $v | Should -Be 'C1_InstanceProperty'
+            $c2.SetInstanceProperty($v + ':foo') | Should -Be 'C1_InstanceProperty:foo'
+        }
+
+        It 'can call <accessType> base instance method' -TestCases $testCases {
+            param($derivedType)
+            $derivedType::new().CallInstanceMethod() | Should -Be 'C1_InstanceMethod'
+        }
+
+        It 'can access <accessType> base virtual property' -TestCases $testCases {
+            param($derivedType)
+            $c2 = $derivedType::new()
+            $v = $c2.GetVirtualProperty1()
+            $v | Should -Be 'C1_VirtualProperty1'
+            $c2.SetVirtualProperty1($v + ':foo') | Should -Be 'C1_VirtualProperty1:foo'
+        }
+
+        It 'can call <accessType> base virtual method' -TestCases $testCases {
+            param($derivedType)
+            $derivedType::new().CallVirtualMethod1() | Should -Be 'C1_VirtualMethod1'
+        }
+    }
+
+    Context 'Derived class can override virtual base class members' {
+
+        It 'can override <accessType> base virtual property' -TestCases $testCases {
+            param($derivedType)
+            $c2 = $derivedType::new()
+            $v = $c2.GetVirtualProperty2()
+            $v | Should -Be 'C2_VirtualProperty2'
+            $c2.SetVirtualProperty2($v + ':foo') | Should -Be 'C2_VirtualProperty2:foo'
+        }
+
+        It 'can override <accessType> base virtual method' -TestCases $testCases {
+            param($derivedType)
+            $c2 = $derivedType::new()
+            $c2.CallVirtualMethod2Base() | Should -Be 'C1_VirtualMethod2'
+            $c2.CallVirtualMethod2Derived() | Should -Be 'C2_VirtualMethod2'
+        }
+    }
+
+    Context 'Base class members are not accessible outside class scope' {
+
+        It 'cannot access <accessType> base constant field' -TestCases $testCases {
+            param($derivedType)
+            { $null = $derivedType::Constant } | Should -Throw -ErrorId 'PropertyNotFoundStrict'
+        }
+
+        It 'cannot access <accessType> base static field' -TestCases $testCases {
+            param($derivedType)
+            { $null = $derivedType::StaticField } | Should -Throw -ErrorId 'PropertyNotFoundStrict'
+            { $derivedType::StaticField = 'C1_StaticField' } | Should -Throw -ErrorId 'PropertyAssignmentException'
+        }
+
+        It 'cannot access <accessType> base static property' -TestCases $testCases {
+            param($derivedType)
+            { $null = $derivedType::StaticProperty } | Should -Throw -ErrorId 'PropertyNotFoundStrict'
+            { $derivedType::StaticProperty = 'C1_StaticProperty' } | Should -Throw -ErrorId 'PropertyAssignmentException'
+        }
+
+        It 'cannot call <accessType> base static method' -TestCases $testCases {
+            param($derivedType)
+            { $derivedType::StaticMethod() } | Should -Throw -ErrorId 'MethodNotFound'
+        }
+
+        It 'cannot access <accessType> base instance field' -TestCases $testCases {
+            param($derivedType)
+            $c2 = $derivedType::new()
+            { $null = $c2.InstanceField } | Should -Throw -ErrorId 'PropertyNotFoundStrict'
+            { $c2.InstanceField = 'foo' } | Should -Throw -ErrorId 'PropertyAssignmentException'
+        }
+
+        It 'cannot access <accessType> base instance property' -TestCases $testCases {
+            param($derivedType)
+            $c2 = $derivedType::new()
+            { $null = $c2.InstanceProperty } | Should -Throw -ErrorId 'PropertyNotFoundStrict'
+            { $c2.InstanceProperty = 'foo' } | Should -Throw -ErrorId 'PropertyAssignmentException'
+        }
+
+        It 'cannot call <accessType> base instance method' -TestCases $testCases {
+            param($derivedType)
+            { $derivedType::new().InstanceMethod() } | Should -Throw -ErrorId 'MethodNotFound'
+        }
+
+        It 'cannot access <accessType> base virtual property' -TestCases $testCases {
+            param($derivedType)
+            $c2 = $derivedType::new()
+            { $null = $c2.VirtualProperty1 } | Should -Throw -ErrorId 'PropertyNotFoundStrict'
+            { $c2.VirtualProperty1 = 'foo' } | Should -Throw -ErrorId 'PropertyAssignmentException'
+        }
+
+        It 'cannot call <accessType> base virtual method' -TestCases $testCases {
+            param($derivedType)
+            { $derivedType::new().VirtualMethod1() } | Should -Throw -ErrorId 'MethodNotFound'
+        }
     }
 }
