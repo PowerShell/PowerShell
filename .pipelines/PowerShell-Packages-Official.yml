@@ -136,12 +136,6 @@ extends:
       dependsOn: [mac_package]
       jobs:
       - template: /.pipelines/templates/mac-package-sign.yml@self
-        parameters:
-          buildArchitecture: x64
-
-      - template: /.pipelines/templates/mac-package-sign.yml@self
-        parameters:
-          buildArchitecture: arm64
 
     - stage: windows_package
       dependsOn: [prep]

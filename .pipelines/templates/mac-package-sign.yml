@@ -1,9 +1,5 @@
-parameters:
-  parentJob: ''
-  buildArchitecture: x64
-
 jobs:
-- job: sign_package_macOS_${{ parameters.buildArchitecture }}
+- job: sign_package_macOS_packges
   displayName: Sign Package macOS ${{ parameters.buildArchitecture }}
   condition: succeeded()
   pool:
@@ -40,35 +36,22 @@ jobs:
 
   - task: DownloadPipelineArtifact@2
     inputs:
-      artifact: 'macos-packages-${{ parameters.buildArchitecture }}'
+      buildType: 'Current'
+      artifact: 'macos-pkgs'
       path: '$(Pipeline.Workspace)'
-    displayName: Download MacOs Package ${{ parameters.buildArchitecture }}
+    displayName: Download MacOs Packages
 
   - task: onebranch.pipeline.signing@1
-    displayName: 'Onebranch Signing MacOS ${{ parameters.buildArchitecture }}'
+    displayName: 'Onebranch Signing MacOS Packages'
     inputs:
       command: 'sign'
       signing_profile: CP-401337-Apple
-      files_to_sign: '**/*.zip'
-      search_root: '$(Pipeline.Workspace)'
+      files_to_sign: '**/*.{pkg,tar.gz}'
+      search_root: '$(Pipeline.Workspace)/macos-pkgs/'
     
-  - pwsh: |
-      $signedPkg = Get-ChildItem -Path '$(Pipeline.Workspace)' -Filter "*osx*.zip" -File
-
-      $signedPkg | ForEach-Object {
-        Write-Verbose -Verbose "Signed package zip: $_"
-
-        if (-not (Test-Path $_)) {
-          throw "Package not found: $_"
-        }
-
-        if (-not (Test-Path $env:ob_outputDirectory)) {
-          $null = New-Item -Path $env:ob_outputDirectory -ItemType Directory
-        }
-
-        Expand-Archive -Path $_ -DestinationPath $env:ob_outputDirectory -Verbose
-      }
-
-      Write-Verbose -Verbose "Expanded pkg file:"
-      Get-ChildItem -Path $env:ob_outputDirectory | Write-Verbose -Verbose
-    displayName: Expand signed file
+  - task: PublishPipelineArtifact@1
+    displayName: 'Upload Signed MacOS Packages'
+    inputs:
+      targetPath: '$(Pipeline.Workspace)/macos-pkgs'
+      publishLocation: 'pipeline'
+      artifact: 'macos-pkgs-signed'
