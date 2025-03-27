@@ -34,24 +34,10 @@ jobs:
       Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
     displayName: Capture environment
 
-  - task: DownloadPipelineArtifact@2
-    inputs:
-      buildType: 'Current'
-      artifact: 'macos-pkgs'
-      path: '$(Pipeline.Workspace)'
-    displayName: Download MacOs Packages
-
   - task: onebranch.pipeline.signing@1
     displayName: 'Onebranch Signing MacOS Packages'
     inputs:
       command: 'sign'
       signing_profile: CP-401337-Apple
       files_to_sign: '**/*.{pkg,tar.gz}'
-      search_root: '$(Pipeline.Workspace)/macos-pkgs/'
-    
-  - task: PublishPipelineArtifact@1
-    displayName: 'Upload Signed MacOS Packages'
-    inputs:
-      targetPath: '$(Pipeline.Workspace)/macos-pkgs'
-      publishLocation: 'pipeline'
-      artifact: 'macos-pkgs-signed'
+      search_root: '$(ob_outputDirectory)/macos-pkgs/'
