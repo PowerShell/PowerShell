@@ -128,8 +128,8 @@ jobs:
     env:
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
-- job: sign_package_macOS_${{ parameters.buildArchitecture }}
-  displayName: Sign Package macOS ${{ parameters.buildArchitecture }}
+- job: Upload_Pacakge_macOS_${{ parameters.buildArchitecture }}
+  displayName: Upload Package macOS ${{ parameters.buildArchitecture }}
   dependsOn: package_macOS_${{ parameters.buildArchitecture }}
   condition: succeeded()
   pool:
@@ -184,6 +184,4 @@ jobs:
 
       $artifactName = 'macos-packages-${{ parameters.buildArchitecture }}'
       Write-Host "##vso[artifact.upload containerfolder=$artifactName;artifactname=$artifactName]$(OB_OUTPUTDIRECTORY)"
-
-      Get-ChildItem -Path $(OB_OUTPUTDIRECTORY) -Filter "*.zip" -File | Write-Verbose -Verbose
     displayName: Upload package for signing MacOS${{ parameters.buildArchitecture }}
