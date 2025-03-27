@@ -26,20 +26,22 @@ Describe 'Classes inheritance syntax' -Tags "CI" {
 
     It 'inheritance syntax allows newlines in various places' {
         class C {}
-        class C2a:C, system.IDisposable { [void] Dispose() { } }
+        class C2a:C,system.IDisposable{ [void] Dispose() { }}
         class C2b
-        :
-        C
-        ,
-        system.IDisposable {
-            [void] Dispose() {}
-            C2b()
-            :   # there are extra spaces here
-            base
-            (
-            ) {
+            :
+            C
+            ,
+            system.IDisposable
+            {
+                [void] Dispose() {}
+                C2b()
+                :   # there are extra spaces here
+                base
+                (
+                )
+                {
+                }
             }
-        }
 
         [C2a].GetInterface("System.IDisposable") | Should -Not -BeNullOrEmpty
         [C2b].GetInterface("System.IDisposable") | Should -Not -BeNullOrEmpty
@@ -51,8 +53,10 @@ Describe 'Classes inheritance syntax' -Tags "CI" {
     }
 
     It 'can implement .NET interface' {
-        class MyComparable : system.IComparable {
-            [int] CompareTo([object] $obj) {
+        class MyComparable : system.IComparable
+        {
+            [int] CompareTo([object] $obj)
+            {
                 return 0;
             }
         }
@@ -128,7 +132,8 @@ class ClassWithStaticAbstractInterface : IInterfaceWithStaticAbstractProperty {
 
     Context "Inheritance from abstract .NET classes" {
         BeforeAll {
-            class TestHost : System.Management.Automation.Host.PSHost {
+            class TestHost : System.Management.Automation.Host.PSHost
+            {
                 [String]$myName = "MyHost"
                 [Version]$myVersion = [Version]"1.0.0.0"
                 [Guid]$myInstanceId = [guid]::NewGuid()
@@ -137,8 +142,8 @@ class ClassWithStaticAbstractInterface : IInterfaceWithStaticAbstractProperty {
                 [System.Management.Automation.Host.PSHostUserInterface]$myUI = $null
                 [bool]$IsInteractive
                 [void]SetShouldExit([int]$exitCode) { }
-                [void]EnterNestedPrompt() { throw "EnterNestedPrompt-NotSupported" }
-                [void]ExitNestedPrompt() { throw "Unsupported" }
+                [void]EnterNestedPrompt(){ throw "EnterNestedPrompt-NotSupported" }
+                [void]ExitNestedPrompt(){ throw "Unsupported" }
                 [void]NotifyBeginApplication() { }
                 [void]NotifyEndApplication() { }
                 [string]get_Name() { return $this.myName; Write-Host "MyName" }
@@ -215,28 +220,33 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
     Context 'Method calls' {
 
         It 'can call instance method on base class' {
-            class bar {
-                [int]foo() { return 100500 }
+            class bar
+            {
+                [int]foo() {return 100500}
             }
             class baz : bar {}
             [baz]::new().foo() | Should -Be 100500
         }
 
         It 'can call static method on base class' {
-            class bar {
-                static [int]foo() { return 100500 }
+            class bar
+            {
+                static [int]foo() {return 100500}
             }
             class baz : bar {}
             [baz]::foo() | Should -Be 100500
         }
 
         It 'can access static and instance base class property' {
-            class A {
+            class A
+            {
                 static [int]$si
                 [int]$i
             }
-            class B : A {
-                [void]foo() {
+            class B : A
+            {
+                [void]foo()
+                {
                     $this::si = 1001
                     $this.i = 1003
                 }
@@ -258,11 +268,13 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
         }
 
         It 'overrides instance method' {
-            class bar {
-                [int]foo() { return 100500 }
+            class bar
+            {
+                [int]foo() {return 100500}
             }
-            class baz : bar {
-                [int]foo() { return 200600 }
+            class baz : bar
+            {
+                [int]foo() {return 200600}
             }
             [baz]::new().foo() | Should -Be 200600
         }
@@ -330,13 +342,17 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
         }
 
         It 'allows base PowerShell class method call and doesn''t fall into recursion' {
-            class bar {
-                [int]foo() { return 1001 }
+            class bar
+            {
+                [int]foo() {return 1001}
             }
-            class baz : bar {
+            class baz : bar
+            {
                 [int] $fooCallCounter
-                [int]foo() {
-                    if ($this.fooCallCounter++ -gt 0) {
+                [int]foo()
+                {
+                    if ($this.fooCallCounter++ -gt 0)
+                    {
                         throw "Recursion happens"
                     }
                     return 3 * ([bar]$this).foo()
@@ -348,13 +364,17 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
         }
 
         It 'case insensitive for base class method calls' {
-            class bar {
-                [int]foo() { return 1001 }
+            class bar
+            {
+                [int]foo() {return 1001}
             }
-            class baz : bar {
+            class baz : bar
+            {
                 [int] $fooCallCounter
-                [int]fOo() {
-                    if ($this.fooCallCounter++ -gt 0) {
+                [int]fOo()
+                {
+                    if ($this.fooCallCounter++ -gt 0)
+                    {
                         throw "Recursion happens"
                     }
                     return ([bAr]$this).fOo() + ([bAr]$this).FOO()
@@ -366,17 +386,21 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
         }
 
         It 'allows any call from the inheritance hierarchy' {
-            class A {
-                [string]GetName() { return "A" }
+            class A
+            {
+                [string]GetName() {return "A"}
             }
-            class B : A {
-                [string]GetName() { return "B" }
+            class B : A
+            {
+                [string]GetName() {return "B"}
             }
-            class C : B {
-                [string]GetName() { return "C" }
+            class C : B
+            {
+                [string]GetName() {return "C"}
             }
-            class D : C {
-                [string]GetName() { return "D" }
+            class D : C
+            {
+                [string]GetName() {return "D"}
             }
             $d = [D]::new()
 
@@ -388,11 +412,13 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
         }
 
         It 'can call base method with params' {
-            class A {
-                [string]ToStr([int]$a) { return "A" + $a }
+            class A
+            {
+                [string]ToStr([int]$a) {return "A" + $a}
             }
-            class B : A {
-                [string]ToStr([int]$a) { return "B" + $a }
+            class B : A
+            {
+                [string]ToStr([int]$a) {return "B" + $a}
             }
             $b = [B]::new()
             ([A]$b).ToStr(101) | Should -Be "A101"
@@ -400,20 +426,26 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
         }
 
         It 'can call base method with many params' {
-            class A {
-                [string]ToStr([int]$a1, [int]$a2, [int]$a3, [int]$a4, [int]$a5, [int]$a6, [int]$a7, [int]$a8, [int]$a9, [int]$a10, [int]$a11, [int]$a12, [int]$a13, [int]$a14) {
+            class A
+            {
+                [string]ToStr([int]$a1, [int]$a2, [int]$a3, [int]$a4, [int]$a5, [int]$a6, [int]$a7, [int]$a8, [int]$a9, [int]$a10, [int]$a11, [int]$a12, [int]$a13, [int]$a14)
+                {
                     return "A"
                 }
 
-                [void]Noop([int]$a1, [int]$a2, [int]$a3, [int]$a4, [int]$a5, [int]$a6, [int]$a7, [int]$a8, [int]$a9, [int]$a10, [int]$a11, [int]$a12, [int]$a13, [int]$a14) {
+                [void]Noop([int]$a1, [int]$a2, [int]$a3, [int]$a4, [int]$a5, [int]$a6, [int]$a7, [int]$a8, [int]$a9, [int]$a10, [int]$a11, [int]$a12, [int]$a13, [int]$a14)
+                {
                 }
             }
-            class B : A {
-                [string]ToStr([int]$a1, [int]$a2, [int]$a3, [int]$a4, [int]$a5, [int]$a6, [int]$a7, [int]$a8, [int]$a9, [int]$a10, [int]$a11, [int]$a12, [int]$a13, [int]$a14) {
+            class B : A
+            {
+                [string]ToStr([int]$a1, [int]$a2, [int]$a3, [int]$a4, [int]$a5, [int]$a6, [int]$a7, [int]$a8, [int]$a9, [int]$a10, [int]$a11, [int]$a12, [int]$a13, [int]$a14)
+                {
                     return "B"
                 }
 
-                [void]Noop([int]$a1, [int]$a2, [int]$a3, [int]$a4, [int]$a5, [int]$a6, [int]$a7, [int]$a8, [int]$a9, [int]$a10, [int]$a11, [int]$a12, [int]$a13, [int]$a14) {
+                [void]Noop([int]$a1, [int]$a2, [int]$a3, [int]$a4, [int]$a5, [int]$a6, [int]$a7, [int]$a8, [int]$a9, [int]$a10, [int]$a11, [int]$a12, [int]$a13, [int]$a14)
+                {
                 }
             }
             $b = [B]::new()
@@ -431,13 +463,15 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
 
         It 'overrides void method call' {
             $script:voidOverrideVar = $null
-            class A {
-                [void]SetStr([int]$a) { $script:voidOverrideVar = "A" + $a }
-                [void]SetStr() { $script:voidOverrideVar = "A" }
+            class A
+            {
+                [void]SetStr([int]$a) {$script:voidOverrideVar = "A" + $a}
+                [void]SetStr() {$script:voidOverrideVar = "A"}
             }
-            class B : A {
-                [void]SetStr([int]$a) { $script:voidOverrideVar = "B" + $a }
-                [void]SetStr() { $script:voidOverrideVar = "B" }
+            class B : A
+            {
+                [void]SetStr([int]$a) {$script:voidOverrideVar = "B" + $a}
+                [void]SetStr() {$script:voidOverrideVar = "B"}
             }
             $b = [B]::new()
             ([A]$b).SetStr(101)
@@ -451,9 +485,11 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
         }
 
         It 'hides final .NET method' {
-            class MyIntList : system.collections.generic.list[int] {
+            class MyIntList : system.collections.generic.list[int]
+            {
                 # Add is final, can we hide it?
-                [void] Add([int]$arg) {
+                [void] Add([int]$arg)
+                {
                     ([system.collections.generic.list[int]]$this).Add($arg * 2)
                 }
             }
@@ -466,11 +502,13 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
     }
 
     Context 'base static method call' {
-        class A {
-            static [string]ToStr([int]$a) { return "A" + $a }
+        class A
+        {
+            static [string]ToStr([int]$a) {return "A" + $a}
         }
-        class B : A {
-            static [string]ToStr([int]$a) { return "B" + $a }
+        class B : A
+        {
+            static [string]ToStr([int]$a) {return "B" + $a}
         }
 
         $b = [B]::new()
@@ -507,12 +545,14 @@ Describe 'Classes inheritance ctors' -Tags "CI" {
     It 'can call base ctor' {
         class A {
             [int]$a
-            A([int]$a) {
+            A([int]$a)
+            {
                 $this.a = $a
             }
         }
 
-        class B : A {
+        class B : A
+        {
             B([int]$a) : base($a * 2) {}
         }
 
@@ -524,12 +564,14 @@ Describe 'Classes inheritance ctors' -Tags "CI" {
     It 'cannot call base ctor with the wrong number of parameters' {
         class A {
             [int]$a
-            A([int]$a) {
+            A([int]$a)
+            {
                 $this.a = $a
             }
         }
 
-        class B : A {
+        class B : A
+        {
             B([int]$a) : base($a * 2, 100) {}
         }
 
@@ -539,16 +581,19 @@ Describe 'Classes inheritance ctors' -Tags "CI" {
     It 'call default base ctor implicitly' {
         class A {
             [int]$a
-            A() {
+            A()
+            {
                 $this.a = 1007
             }
         }
 
-        class B : A {
+        class B : A
+        {
             B() {}
         }
 
-        class C : A {
+        class C : A
+        {
         }
 
         $b = [B]::new()
@@ -560,18 +605,20 @@ Describe 'Classes inheritance ctors' -Tags "CI" {
     It 'doesn''t allow base ctor as an explicit method call' {
         $o = [object]::new()
         # we should not allow direct .ctor call.
-        { $o.{ .ctor }() } | Should -Throw -ErrorId "MethodNotFound"
+        { $o.{.ctor}() } | Should -Throw -ErrorId "MethodNotFound"
     }
 
     It 'allow use conversion [string -> int] in base ctor call' {
         class A {
             [int]$a
-            A([int]$a) {
+            A([int]$a)
+            {
                 $this.a = $a
             }
         }
 
-        class B : A {
+        class B : A
+        {
             B() : base("103") {}
         }
 
@@ -583,15 +630,18 @@ Describe 'Classes inheritance ctors' -Tags "CI" {
         class A {
             [int]$i
             [string]$s
-            A([int]$a) {
+            A([int]$a)
+            {
                 $this.i = $a
             }
-            A([string]$a) {
+            A([string]$a)
+            {
                 $this.s = $a
             }
         }
 
-        class B : A {
+        class B : A
+        {
             B($a) : base($a) {}
         }
 
@@ -629,17 +679,20 @@ Describe 'Base type has abstract properties' -Tags "CI" {
         ##  - public abstract string Name { get; }
         ##  - public abstract void Delete ();
 
-        class myFileSystemInfo : System.IO.FileSystemInfo {
+        class myFileSystemInfo : System.IO.FileSystemInfo
+        {
             [string] $Name
             [bool] $Exists
 
-            myFileSystemInfo([string]$path) {
+            myFileSystemInfo([string]$path)
+            {
                 # ctor
                 $this.Name = $path
                 $this.Exists = $true
             }
 
-            [void] Delete() {
+            [void] Delete()
+            {
             }
         }
 
