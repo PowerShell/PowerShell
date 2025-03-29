@@ -1253,7 +1253,7 @@ namespace System.Management.Automation
                 // Unicode is still the default, but now may be overridden
 
                 var cpi = CommandParameterInternal.CreateParameterWithArgument(
-                    /*parameterAst*/null, "Filepath", "-Filepath:",
+                    /*parameterAst*/null, "LiteralPath", "-LiteralPath:",
                     /*argumentAst*/null, File,
                     false);
                 commandProcessor.AddParameter(cpi);
