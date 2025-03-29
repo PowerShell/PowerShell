@@ -2450,6 +2450,8 @@ namespace System.Management.Automation
 
             if (needFileCompletion)
             {
+                completionContext.Options ??= new Hashtable();
+                completionContext.Options["LiteralPaths"] = true;
                 return new List<CompletionResult>(CompletionCompleters.CompleteFilename(completionContext));
             }
             else
