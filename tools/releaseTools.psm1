@@ -351,7 +351,7 @@ function Get-ChangeLog
 
     $version = $ThisReleaseTag.TrimStart('v')
 
-    Write-Output "## [${version}] - $(Get-Date -Format yyyy-MM-dd)`n"
+    Write-Output "## [${version}]`n"
 
     PrintChangeLog -clSection $clUntagged -sectionTitle 'UNTAGGED - Please classify'
     PrintChangeLog -clSection $clBreakingChange -sectionTitle 'Breaking Changes'
