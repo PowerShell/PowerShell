@@ -2741,17 +2741,9 @@ namespace Microsoft.PowerShell.Commands
             string wordToComplete,
             CommandAst commandAst,
             IDictionary fakeBoundParameters)
-        {
-            var strictModeVersionPattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
-
-            foreach (string version in s_strictModeVersions)
-            {
-                if (strictModeVersionPattern.IsMatch(version))
-                {
-                    yield return new CompletionResult(version);
-                }
-            }
-        }
+                => CompletionHelpers.GetMatchingResults(
+                    wordToComplete,
+                    possibleCompletionValues: s_strictModeVersions);
     }
 
     #endregion Set-StrictMode

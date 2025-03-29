@@ -7,6 +7,7 @@ using System.Management.Automation.Runspaces;
 using System.Management.Automation.Tracing;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
+using System.Threading;
 using Microsoft.PowerShell.Telemetry;
 
 using Dbg = System.Management.Automation.Diagnostics;
@@ -29,6 +30,7 @@ namespace System.Management.Automation.Internal
     {
         #region private_members
 
+        private readonly CancellationTokenSource _pipelineStopTokenSource = new CancellationTokenSource();
         private List<CommandProcessorBase> _commands = new List<CommandProcessorBase>();
         private List<PipelineProcessor> _redirectionPipes;
         private PipelineReader<object> _externalInputPipe;
@@ -85,6 +87,7 @@ namespace System.Management.Automation.Internal
                 _externalErrorOutput = null;
                 _executionScope = null;
                 _eventLogBuffer = null;
+                _pipelineStopTokenSource.Dispose();
 #if !CORECLR // Impersonation Not Supported On CSS
                 SecurityContext.Dispose();
                 SecurityContext = null;
@@ -117,6 +120,11 @@ namespace System.Management.Automation.Internal
                 _executionFailed = value;
             }
         }
+
+        /// <summary>
+        /// Gets the CancellationToken that is signaled when the pipeline is stopping.
+        /// </summary>
+        internal CancellationToken PipelineStopToken => _pipelineStopTokenSource.Token;
 
         internal void LogExecutionInfo(InvocationInfo invocationInfo, string text)
         {
@@ -895,6 +903,8 @@ namespace System.Management.Automation.Internal
             {
                 return;
             }
+
+            _pipelineStopTokenSource.Cancel();
 
             // Call StopProcessing() for all the commands.
             foreach (CommandProcessorBase commandProcessor in commands)

@@ -26,7 +26,9 @@ $existingRegistrationsJson.Registrations | ForEach-Object {
     $registration = [Registration]$_
     if ($registration.Component) {
         $name = $registration.Component.Name()
-        $existingRegistrationTable.Add($name, $registration)
+        if (!$existingRegistrationTable.ContainsKey($name)) {
+            $existingRegistrationTable.Add($name, $registration)
+        }
     }
 }
 
@@ -88,6 +90,28 @@ if (!$IsWindows) {
     Write-Warning "Always using $winDesktopSdk since this is not windows!!!"
 }
 
+function ConvertTo-SemVer {
+    param(
+        [String] $Version
+    )
+
+    [System.Management.Automation.SemanticVersion]$desiredVersion = [System.Management.Automation.SemanticVersion]::Empty
+
+    try {
+        $desiredVersion = $Version
+    } catch {
+        <#
+            Json.More.Net broke the rules and published 2.0.1.2 as 2.0.1.
+            So, I'm making the logic work for that scenario by
+            thorwing away any part that doesn't match non-pre-release semver portion
+        #>
+        $null = $Version -match '^(\d+\.\d+\.\d+).*'
+        $desiredVersion = $matches[1]
+    }
+
+    return $desiredVersion
+}
+
 function New-NugetComponent {
     param(
         [string]$name,
@@ -125,23 +149,15 @@ function Get-NuGetPublicVersion {
         return $nugetPublicVersionCache[$Name]
     }
 
-    try {
-        [System.Management.Automation.SemanticVersion]$desiredVersion = $Version
-    } catch {
-        [Version]$desiredVersion = $Version
-    }
+    [System.Management.Automation.SemanticVersion]$desiredVersion = ConvertTo-SemVer -Version $Version
 
     $publicVersion = $null
     $publicVersion = Find-Package -Name $Name -AllowPrereleaseVersions -source $packageSourceName -AllVersions -ErrorAction SilentlyContinue | ForEach-Object {
-        try {
-            $packageVersion = [System.Management.Automation.SemanticVersion]$_.Version
-        } catch {
-            # Fall back to using [version] if it is not a semantic version
-            $packageVersion = $_.Version
-        }
-
+        [System.Management.Automation.SemanticVersion]$packageVersion = ConvertTo-SemVer -Version $_.Version
         $_ | Add-Member -Name SemVer -MemberType NoteProperty -Value $packageVersion -PassThru
-    } | Where-Object { $_.SemVer -le $desiredVersion } | Sort-Object -Property semver -Descending | Select-Object -First 1 -ExpandProperty Version
+    } | Where-Object {
+            $_.SemVer -le $desiredVersion
+        } | Sort-Object -Property semver -Descending | Select-Object -First 1 -ExpandProperty Version
 
     if(!$publicVersion) {
         Write-Warning "No public version found for $Name, using $Version"
@@ -177,8 +193,8 @@ function Get-CGRegistrations {
 
     $registrationChanged = $false
 
-    $dotnetTargetName = 'net8.0'
-    $dotnetTargetNameWin7 = 'net8.0-windows8.0'
+    $dotnetTargetName = 'net10.0'
+    $dotnetTargetNameWin7 = 'net10.0-windows8.0'
     $unixProjectName = 'powershell-unix'
     $windowsProjectName = 'powershell-win-core'
     $actualRuntime = $Runtime
@@ -187,28 +203,34 @@ function Get-CGRegistrations {
         "alpine-.*" {
             $folder = $unixProjectName
             $target = "$dotnetTargetName|$Runtime"
+            $neutralTarget = "$dotnetTargetName"
         }
         "linux-.*" {
             $folder = $unixProjectName
             $target = "$dotnetTargetName|$Runtime"
+            $neutralTarget = "$dotnetTargetName"
         }
         "osx-.*" {
             $folder = $unixProjectName
             $target = "$dotnetTargetName|$Runtime"
+            $neutralTarget = "$dotnetTargetName"
         }
         "win-x*" {
             $sdkToUse = $winDesktopSdk
             $folder = $windowsProjectName
             $target = "$dotnetTargetNameWin7|$Runtime"
+            $neutralTarget = "$dotnetTargetNameWin7"
         }
         "win-.*" {
             $folder = $windowsProjectName
             $target = "$dotnetTargetNameWin7|$Runtime"
+            $neutralTarget = "$dotnetTargetNameWin7"
         }
         "modules" {
             $folder = "modules"
             $actualRuntime = 'linux-x64'
             $target = "$dotnetTargetName|$actualRuntime"
+            $neutralTarget = "$dotnetTargetName"
         }
         Default {
             throw "Invalid runtime name: $Runtime"
@@ -225,6 +247,7 @@ function Get-CGRegistrations {
         $null = New-PADrive -Path $PSScriptRoot\..\src\$folder\obj\project.assets.json -Name $folder
         try {
             $targets = Get-ChildItem -Path "${folder}:/targets/$target" -ErrorAction Stop | Where-Object { $_.Type -eq 'package' }  | select-object -ExpandProperty name
+            $targets += Get-ChildItem -Path "${folder}:/targets/$neutralTarget" -ErrorAction Stop | Where-Object { $_.Type -eq 'project' }  | select-object -ExpandProperty name
         } catch {
             Get-ChildItem -Path "${folder}:/targets" | Out-String | Write-Verbose -Verbose
             throw
@@ -234,27 +257,53 @@ function Get-CGRegistrations {
         Get-PSDrive -Name $folder -ErrorAction Ignore | Remove-PSDrive
     }
 
+    # Name to skip for TPN generation
+    $skipNames = @(
+        "Microsoft.PowerShell.Native"
+        "Microsoft.Management.Infrastructure.Runtime.Unix"
+        "Microsoft.Management.Infrastructure"
+        "Microsoft.PowerShell.Commands.Diagnostics"
+        "Microsoft.PowerShell.Commands.Management"
+        "Microsoft.PowerShell.Commands.Utility"
+        "Microsoft.PowerShell.ConsoleHost"
+        "Microsoft.PowerShell.SDK"
+        "Microsoft.PowerShell.Security"
+        "Microsoft.Management.Infrastructure.CimCmdlets"
+        "Microsoft.WSMan.Management"
+        "Microsoft.WSMan.Runtime"
+        "System.Management.Automation"
+        "Microsoft.PowerShell.GraphicalHost"
+        "Microsoft.PowerShell.CoreCLR.Eventing"
+    )
+
+    Write-Verbose "Found $($targets.Count) targets to process..." -Verbose
     $targets | ForEach-Object {
         $target = $_
         $parts = ($target -split '\|')
         $name = $parts[0]
-        $targetVersion = $parts[1]
-        $publicVersion = Get-NuGetPublicVersion -Name $name -Version $targetVersion
 
-        # Add the registration to the cgmanifest if the TPN does not contain the name of the target OR
-        # the exisitng CG contains the registration, because if the existing CG contains the registration,
-        # that might be the only reason it is in the TPN.
-        if (!$RegistrationTable.ContainsKey($target)) {
-            $DevelopmentDependency = $false
-            if (!$existingRegistrationTable.ContainsKey($name) -or $existingRegistrationTable.$name.Component.Version() -ne $publicVersion) {
-                $registrationChanged = $true
-            }
-            if ($existingRegistrationTable.ContainsKey($name) -and $existingRegistrationTable.$name.DevelopmentDependency) {
-                $DevelopmentDependency = $true
-            }
+        if ($name -in $skipNames) {
+            Write-Verbose "Skipping $name..."
 
-            $registration = New-NugetComponent -Name $name -Version $publicVersion -DevelopmentDependency:$DevelopmentDependency
-            $RegistrationTable.Add($target, $registration)
+        } else {
+            $targetVersion = $parts[1]
+            $publicVersion = Get-NuGetPublicVersion -Name $name -Version $targetVersion
+
+            # Add the registration to the cgmanifest if the TPN does not contain the name of the target OR
+            # the exisitng CG contains the registration, because if the existing CG contains the registration,
+            # that might be the only reason it is in the TPN.
+            if (!$RegistrationTable.ContainsKey($target)) {
+                $DevelopmentDependency = $false
+                if (!$existingRegistrationTable.ContainsKey($name) -or $existingRegistrationTable.$name.Component.Version() -ne $publicVersion) {
+                    $registrationChanged = $true
+                }
+                if ($existingRegistrationTable.ContainsKey($name) -and $existingRegistrationTable.$name.DevelopmentDependency) {
+                    $DevelopmentDependency = $true
+                }
+
+                $registration = New-NugetComponent -Name $name -Version $publicVersion -DevelopmentDependency:$DevelopmentDependency
+                $RegistrationTable.Add($target, $registration)
+            }
         }
     }
 

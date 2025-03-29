@@ -25,6 +25,22 @@ namespace PSTests.Parallel
         [InlineData("a", "a")]
         [InlineData("a*", "a`*")]
         [InlineData("*?[]", "`*`?`[`]")]
+        [InlineData("`", "``")]
+        [InlineData("```", "``````")]
+        [InlineData("a`", "a``")]
+        [InlineData("abc`def", "abc``def")]
+        [InlineData("abc``def", "abc````def")]
+        [InlineData("text with `backticks", "text with ``backticks")]
+        [InlineData("ends with `", "ends with ``")]
+        [InlineData("`starts with", "``starts with")]
+        [InlineData("`in`between`", "``in``between``")]
+        [InlineData("no special characters", "no special characters")]
+        [InlineData("`*`", "```*``")]
+        [InlineData("*`?[]", "`*```?`[`]")]
+        [InlineData("`*`?`[", "```*```?```[")]
+        [InlineData("*?[]`", "`*`?`[`]``")]
+        [InlineData("nested `backticks `inside`", "nested ``backticks ``inside``")]
+        [InlineData("wildcard*with`backtick", "wildcard`*with``backtick")]
         public void TestEscape_String(string source, string expected)
         {
             Assert.Equal(WildcardPattern.Escape(source), expected);
