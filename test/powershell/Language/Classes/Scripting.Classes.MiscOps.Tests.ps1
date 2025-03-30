@@ -133,7 +133,9 @@ Describe "The -File parameter of switch keyword and output redirection should tr
     }
     It "Should succeed in reading file content with switch statement." {
         $info | Out-File -LiteralPath $testFile
-        switch -File $testFile {default{$_ | Should -Be $info}} 
+        switch -File $testFile {
+            default {$_ | Should -Be $info}
+        } 
     }
 }
 
