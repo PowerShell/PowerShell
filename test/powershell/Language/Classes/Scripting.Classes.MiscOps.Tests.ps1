@@ -117,24 +117,33 @@ Describe 'Misc Test' -Tags "CI" {
         }
     }
 }
-Describe "The -File parameter of switch keyword and output redirection should treat path as literal." -Tags @("CI") {
+
+Describe "The -File parameter of switch keyword and output redirection should treat path as literal." -Tags "CI" {
     BeforeAll {
-        $testFile = '[LiteralFileName].txt'
-        $info = 'succeed!'
+        $testFile = "[LiteralFileName].txt"
+        $testInfo = "succeed!"
 
         if (Test-Path -LiteralPath $testFile) {
-            Remove-Item -LiteralPath $testFile -Recurse -Force
+            Remove-Item -LiteralPath $testFile -Force
         }
     }
 
     It "Should succeed in output content to correct file" {
-        $info > $testFile
-        Get-Content -PSPath $testFile | Should -Be $info
+        $testInfo > $testFile
+        Get-Content -LiteralPath $testFile -First 1 | Should -Be $testInfo
     }
+
     It "Should succeed in reading file content with switch statement." {
-        $info | Out-File -LiteralPath $testFile
-        $content = switch -File $testFile {default {$_}}
-        $content | Should -Be $info
+        $testInfo | Out-File -LiteralPath $testFile
+        switch -File $testFile {
+            default { $_ | Should -Be $testInfo }
+        }
+    }
+
+    AfterAll {
+        if (Test-Path -LiteralPath $testFile) {
+            Remove-Item -LiteralPath $testFile -Force
+        }
     }
 }
 
