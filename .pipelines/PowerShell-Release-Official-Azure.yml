@@ -56,7 +56,7 @@ resources:
 
   pipelines:
     - pipeline: CoOrdinatedBuildPipeline
-      source: 'PowerShell-Coordinated Packages-Official'
+      source: 'PowerShell-Coordinated Binaries-Official'
 
     - pipeline: PSPackagesOfficial
       source: 'PowerShell-Packages-Official'

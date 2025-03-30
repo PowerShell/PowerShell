@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 param(
-    # Skips a check that prevents building PowerShell on unsupported Linux distributions
+    # Skips a check that prevents building PowerShell on unsupported Linux distributions.
     [parameter(Mandatory = $false)][switch]$SkipLinuxDistroCheck = $false
 )
 
@@ -11,7 +11,7 @@ param(
 # CI runs with PowerShell 5.0, so don't use features like ?: && ||
 Set-StrictMode -Version 3.0
 
-# On Unix paths is separated by colon
+# On Unix paths is separated by colon.
 # On Windows paths is separated by semicolon
 $script:TestModulePathSeparator = [System.IO.Path]::PathSeparator
 $script:Options = $null
@@ -984,8 +984,8 @@ function New-PSOptions {
         [ValidateSet('Debug', 'Release', 'CodeCoverage', 'StaticAnalysis', '')]
         [string]$Configuration,
 
-        [ValidateSet("net9.0")]
-        [string]$Framework = "net9.0",
+        [ValidateSet("net10.0")]
+        [string]$Framework = "net10.0",
 
         # These are duplicated from Start-PSBuild
         # We do not use ValidateScript since we want tab completion
@@ -3701,7 +3701,7 @@ function Clear-NativeDependencies
     $filesToDeleteWinDesktop = @()
 
     $deps = Get-Content "$PublishFolder/pwsh.deps.json" -Raw | ConvertFrom-Json -Depth 20
-    $targetRuntime = ".NETCoreApp,Version=v9.0/$($script:Options.Runtime)"
+    $targetRuntime = ".NETCoreApp,Version=v10.0/$($script:Options.Runtime)"
 
     $runtimePackNetCore = $deps.targets.${targetRuntime}.PSObject.Properties.Name -like 'runtimepack.Microsoft.NETCore.App.Runtime*'
     $runtimePackWinDesktop = $deps.targets.${targetRuntime}.PSObject.Properties.Name -like 'runtimepack.Microsoft.WindowsDesktop.App.Runtime*'

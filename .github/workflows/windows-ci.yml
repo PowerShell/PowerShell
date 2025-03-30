@@ -39,6 +39,7 @@ jobs:
   changes:
     name: Change Detection
     runs-on: ubuntu-latest
+    if: startsWith(github.repository_owner, 'azure') || github.repository_owner == 'PowerShell'
     # Required permissions
     permissions:
       pull-requests: read
@@ -47,10 +48,10 @@ jobs:
       source: ${{ steps.filter.outputs.source }}
     steps:
       - name: checkout
-        uses: actions/checkout@v4.1.0
+        uses: actions/checkout@v4
 
         # For pull requests it's not necessary to checkout the code
-      - uses: dorny/paths-filter@v3
+      - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.2.0
         id: filter
         with:
           list-files: json
@@ -74,7 +75,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v4.1.0
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1000
       - name: Build
@@ -88,7 +89,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v4.1.0
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1000
       - name: Windows Unelevated CI
@@ -105,7 +106,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v4.1.0
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1000
       - name: Windows Elevated CI
@@ -122,7 +123,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v4.1.0
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1000
       - name: Windows Unelevated Others
@@ -139,7 +140,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v4.1.0
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1000
       - name: Windows Elevated Others
@@ -156,7 +157,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v4.1.0
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1000
       - name: Verify xUnit test results
@@ -170,6 +171,6 @@ jobs:
       - windows_test_unelevated_ci
       - windows_test_unelevated_others
     if: always()
-    uses: PowerShell/compliance/.github/workflows/ready-to-merge.yml@master
+    uses: PowerShell/compliance/.github/workflows/ready-to-merge.yml@v1.0.0
     with:
       needs_context: ${{ toJson(needs) }}

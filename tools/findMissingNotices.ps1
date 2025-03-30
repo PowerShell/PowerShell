@@ -193,8 +193,8 @@ function Get-CGRegistrations {
 
     $registrationChanged = $false
 
-    $dotnetTargetName = 'net9.0'
-    $dotnetTargetNameWin7 = 'net9.0-windows8.0'
+    $dotnetTargetName = 'net10.0'
+    $dotnetTargetNameWin7 = 'net10.0-windows8.0'
     $unixProjectName = 'powershell-unix'
     $windowsProjectName = 'powershell-win-core'
     $actualRuntime = $Runtime
@@ -272,6 +272,8 @@ function Get-CGRegistrations {
         "Microsoft.WSMan.Management"
         "Microsoft.WSMan.Runtime"
         "System.Management.Automation"
+        "Microsoft.PowerShell.GraphicalHost"
+        "Microsoft.PowerShell.CoreCLR.Eventing"
     )
 
     Write-Verbose "Found $($targets.Count) targets to process..." -Verbose
