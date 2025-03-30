@@ -880,10 +880,6 @@
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "Modules/ThreadJob/*.dll",
-    "FileType": "NonProduct"
-  },
-  {
     "Pattern": "Modules/ThreadJob/*.psd1",
     "FileType": "NonProduct"
   },
@@ -900,7 +896,31 @@
     "FileType": "NonProduct"
   },
   {
+    "Pattern": "Modules\\Microsoft.PowerShell.ThreadJob\\.signature.p7s",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules\\Microsoft.PowerShell.ThreadJob\\en-us\\Microsoft.PowerShell.ThreadJob.dll-Help.xml",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules\\Microsoft.PowerShell.ThreadJob\\LICENSE",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules\\Microsoft.PowerShell.ThreadJob\\ThirdPartyNotices.txt",
+    "FileType": "NonProduct"
+  },
+  {
     "Pattern": "Modules\\PSReadLine\\.signature.p7s",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules\\ThreadJob\\.signature.p7s",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules\\ThreadJob\\ThreadJob.psm1",
     "FileType": "NonProduct"
   },
   {
@@ -3469,6 +3489,14 @@
   },
   {
     "Pattern": "Modules\\Microsoft.PowerShell.PSResourceGet\\InstallPSResourceGetPolicyDefinitions.ps1",
+    "FileType": "Product"
+  },
+  {
+    "Pattern": "Modules\\Microsoft.PowerShell.ThreadJob\\Microsoft.PowerShell.ThreadJob.dll",
+    "FileType": "Product"
+  },
+  {
+    "Pattern": "Modules\\Microsoft.PowerShell.ThreadJob\\Microsoft.PowerShell.ThreadJob.psd1",
     "FileType": "Product"
   },
   {
