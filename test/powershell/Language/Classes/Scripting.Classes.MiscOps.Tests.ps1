@@ -127,22 +127,14 @@ Describe "The -File parameter of switch keyword and output redirection should tr
             Remove-Item -LiteralPath $testFile -Force
         }
     }
-
     It "Should succeed in output content to correct file" {
         $testInfo > $testFile
         Get-Content -LiteralPath $testFile -First 1 | Should -Be $testInfo
     }
-
     It "Should succeed in reading file content with switch statement." {
         $testInfo | Out-File -LiteralPath $testFile
         switch -File $testFile {
             default { $_ | Should -Be $testInfo }
-        }
-    }
-
-    AfterAll {
-        if (Test-Path -LiteralPath $testFile) {
-            Remove-Item -LiteralPath $testFile -Force
         }
     }
 }
