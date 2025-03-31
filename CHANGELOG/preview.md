@@ -24,7 +24,7 @@
 - Fix type inference of parameters in classic functions (#25172) (Thanks @MartinGC94!)
 - Improve assignment type inference (#21143) (Thanks @MartinGC94!)
 - Fix `TypeName.GetReflectionType()` to work when the `TypeName` instance represents a generic type definition within a `GenericTypeName` (#24985)
-- Remove the old fuzzy suggestion and fix the local script file name suggestion (#25177)
+- Remove the old fuzzy suggestion and fix the local script filename suggestion (#25177)
 - Improve variable type inference (#19830) (Thanks @MartinGC94!)
 - Fix parameter completion when script requirements fail (#17687) (Thanks @MartinGC94!)
 - Improve the completion for attribute arguments (#25129) (Thanks @MartinGC94!)
@@ -114,7 +114,7 @@
 ### Documentation and Help Content
 
 - Add 7.4.9 changelog (#25169)
-- Create Change log for 7.4.8 (#25089)
+- Create changelog for 7.4.8 (#25089)
 
 [7.6.0-preview.4]: https://github.com/PowerShell/PowerShell/compare/v7.6.0-preview.3...v7.6.0-preview.4
 
