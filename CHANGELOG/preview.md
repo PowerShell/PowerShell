@@ -6,6 +6,7 @@
 
 - Fix `WildcardPattern.Escape` to escape lone backticks correctly (#25211) (Thanks @ArmaanMcleod!)
 - Convert `-ChildPath` parameter to `string[]` for `Join-Path` cmdlet (#24677) (Thanks @ArmaanMcleod!)
+- Bump `ThreadJob` module as a proxy for `Microsoft.PowerShell.ThreadJob` module(#25232)
 
 ### Engine Updates and Fixes
 
@@ -79,12 +80,6 @@
 ### Build and Packaging Improvements
 
 <details>
-
-<summary>
-
-<p>We thank the following contributors!</p>
-
-</summary>
 
 <ul>
 <li>Switch to ubuntu-lastest for CI (#25247)</li>
