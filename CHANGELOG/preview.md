@@ -16,7 +16,7 @@
 
 ### General Cmdlet Updates and Fixes
 
-- Exclude outvariable assignments within the same CommandAst when inferring variables (#25224) (Thanks @MartinGC94!)
+- Exclude `-OutVariable` assignments within the same `CommandAst` when inferring variables (#25224) (Thanks @MartinGC94!)
 - Fix infinite loop in variable type inference (#25206) (Thanks @MartinGC94!)
 - Update `Microsoft.PowerShell.PSResourceGet` version in `PSGalleryModules.csproj` (#25135)
 - Add tooltips for hashtable key completions (#17864) (Thanks @MartinGC94!)
@@ -35,9 +35,9 @@
 - Add type inference for functions without OutputType attribute and anonymous functions (#21127) (Thanks @MartinGC94!)
 - Add completion for variables assigned by command redirection (#25104) (Thanks @MartinGC94!)
 - Handle type inference for redirected commands (#21131) (Thanks @MartinGC94!)
-- Allow empty prefix string in 'Import-Module -Prefix' to override default prefix in manifest (#20409) (Thanks @MartinGC94!)
+- Allow empty prefix string in `Import-Module -Prefix` to override default prefix in manifest (#20409) (Thanks @MartinGC94!)
 - Update variable/property assignment completion so it can fallback to type inference (#21134) (Thanks @MartinGC94!)
-- Use Get-Help approach to find 'about_*.help.txt' files with correct locale for completions (#24194) (Thanks @MartinGC94!)
+- Use `Get-Help` approach to find `about_*.help.txt` files with correct locale for completions (#24194) (Thanks @MartinGC94!)
 - Use script filepath when completing relative paths for using statements (#20017) (Thanks @MartinGC94!)
 - Fix completion of variables assigned inside Do loops (#25076) (Thanks @MartinGC94!)
 - Fix completion of provider paths when a path returns itself instead of its children (#24755) (Thanks @MartinGC94!)
