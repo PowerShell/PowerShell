@@ -6,7 +6,15 @@
 
 - Fix `WildcardPattern.Escape` to escape lone backticks correctly (#25211) (Thanks @ArmaanMcleod!)
 - Convert `-ChildPath` parameter to `string[]` for `Join-Path` cmdlet (#24677) (Thanks @ArmaanMcleod!)
-- Bump `ThreadJob` module as a proxy for `Microsoft.PowerShell.ThreadJob` module(#25232)
+
+PowerShell 7.6-preview.4 includes the following updated modules:
+
+- **Microsoft.PowerShell.ThreadJob** v2.2.0
+- **ThreadJob** v2.1.0
+The **ThreadJob** was renamed to **Microsoft.PowerShell.ThreadJob** module. There is no difference
+in the functionality of the module. To ensure backward compatibility for scripts that use the old
+name, the **ThreadJob** v2.1.0 module is a proxy module that points to the
+**Microsoft.PowerShell.ThreadJob** v2.2.0.
 
 ### Engine Updates and Fixes
 
