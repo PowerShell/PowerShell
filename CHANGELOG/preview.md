@@ -87,7 +87,9 @@
 </summary>
 
 <ul>
+<li>Switch to ubuntu-lastest for CI (#25247)</li>
 <li>Update outdated package references (#25026)(#25232)</li>
+<li>Bump <code>Microsoft.PowerShell.ThreadJob</code> and <code>ThreadJob</code> modules (#25232)</li>
 <li>Bump github/codeql-action from 3.27.9 to 3.28.13 (#25218)(#25231)</li>
 <li>Update .NET SDK to <code>10.0.100-preview.2</code> (#25154)(#25225)</li>
 <li>Remove obsolete template from Windows Packaging CI (#25226)</li>
