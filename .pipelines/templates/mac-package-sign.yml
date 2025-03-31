@@ -61,3 +61,4 @@ jobs:
       New-Item -Path $(ob_outputDirectory)/SignedMacPackages -ItemType Directory -Force
       Get-ChildItem -Path "$(Build.ArtifactStagingDirectory)/downloads/*" -Recurse | 
         Copy-Item -Destination $(ob_outputDirectory)/SignedMacPackages -Recurse -Verbose
+    displayName: Copy signed MacOS packages to output directory
