@@ -158,7 +158,7 @@ jobs:
   - pwsh: |
       $buildArch = '${{ parameters.buildArchitecture }}'
       $macosRuntime = "osx-$buildArch"
-      $pkgNameFilter = "powershell-*$macosRuntime.pkg"
+      $pkgNameFilter = "macos-pkgs/powershell-*$macosRuntime.pkg"
 
       Write-Host "##vso[task.setvariable variable=pkgNameFilter]$pkgNameFilter"
       Write-Host "Dynamic filter set to: $pkgNameFilter"
