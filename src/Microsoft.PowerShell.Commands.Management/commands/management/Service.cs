@@ -740,23 +740,23 @@ namespace Microsoft.PowerShell.Commands
             }
 
             PSObject serviceAsPSObj = PSObject.AsPSObject(service);
-            PSProperty noteProperty = new("UserName", startName);
+            PSNoteProperty noteProperty = new("UserName", startName);
             serviceAsPSObj.Properties.Add(noteProperty, true);
             serviceAsPSObj.TypeNames.Insert(0, "System.Service.ServiceController#UserName");
 
-            noteProperty = new PSProperty("Description", description);
+            noteProperty = new PSNoteProperty("Description", description);
             serviceAsPSObj.Properties.Add(noteProperty, true);
             serviceAsPSObj.TypeNames.Insert(0, "System.Service.ServiceController#Description");
 
-            noteProperty = new PSProperty("DelayedAutoStart", isDelayedAutoStart);
+            noteProperty = new PSNoteProperty("DelayedAutoStart", isDelayedAutoStart);
             serviceAsPSObj.Properties.Add(noteProperty, true);
             serviceAsPSObj.TypeNames.Insert(0, "System.Service.ServiceController#DelayedAutoStart");
 
-            noteProperty = new PSProperty("BinaryPathName", binPath);
+            noteProperty = new PSNoteProperty("BinaryPathName", binPath);
             serviceAsPSObj.Properties.Add(noteProperty, true);
             serviceAsPSObj.TypeNames.Insert(0, "System.Service.ServiceController#BinaryPathName");
 
-            noteProperty = new PSProperty("StartupType", startupType);
+            noteProperty = new PSNoteProperty("StartupType", startupType);
             serviceAsPSObj.Properties.Add(noteProperty, true);
             serviceAsPSObj.TypeNames.Insert(0, "System.Service.ServiceController#StartupType");
 
