@@ -25,7 +25,7 @@
   - [ ] Not Applicable
   - **OR**
   - [ ] [Documentation needed](https://github.com/PowerShell/PowerShell/blob/master/.github/CONTRIBUTING.md#pull-request---submission)
-        - [ ] Issue filed: <!-- Number/link of that issue here -->
+    - [ ] Issue filed: <!-- Number/link of that issue here -->
 - **Testing - New and feature**
   - [ ] N/A or can only be tested interactively
   - **OR**
