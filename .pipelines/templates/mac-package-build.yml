@@ -170,7 +170,7 @@ jobs:
       artifact: macos-pkgs
       itemPattern: '$(pkgNameFilter)'
       targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
-    displayName: Download macos tar packages
+    displayName: Download MacOS packages
 
   - task: onebranch.pipeline.signing@1
     displayName: 'Onebranch Signing MacOS Packages'
