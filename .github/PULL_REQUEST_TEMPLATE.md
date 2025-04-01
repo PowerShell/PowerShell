@@ -15,7 +15,7 @@
 - [ ] [Summarized changes](https://github.com/PowerShell/PowerShell/blob/master/.github/CONTRIBUTING.md#pull-request---submission)
 - [ ] [Make sure all `.h`, `.cpp`, `.cs`, `.ps1` and `.psm1` files have the correct copyright header](https://github.com/PowerShell/PowerShell/blob/master/.github/CONTRIBUTING.md#pull-request---submission)
 - [ ] This PR is ready to merge and is not [Work in Progress](https://github.com/PowerShell/PowerShell/blob/master/.github/CONTRIBUTING.md#pull-request---work-in-progress).
-  - If the PR is work in progress, please add the prefix `WIP:` or `[ WIP ]` to the beginning of the title (the `WIP` bot will keep its status check at `Pending` while the prefix is present) and remove the prefix when the PR is ready.
+  - If the PR is work in progress, please open this as a Draft Pull Request and mark it as Ready to Review when it is ready to merge.
 - **[Breaking changes](https://github.com/PowerShell/PowerShell/blob/master/.github/CONTRIBUTING.md#making-breaking-changes)**
   - [ ] None
   - **OR**
