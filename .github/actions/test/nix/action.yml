@@ -30,11 +30,11 @@ runs:
     continue-on-error: true
     run: Get-ChildItem "${{ github.workspace }}/build/*" -Recurse
     shell: pwsh
-    
+
   - uses: actions/setup-dotnet@v4
     with:
       global-json-file: ./global.json
-      
+
   - name: Bootstrap
     shell: pwsh
     run: |-
@@ -70,6 +70,30 @@ runs:
     continue-on-error: true
     run: Get-ChildItem "${{ github.workspace }}/bins/*" -Recurse -ErrorAction SilentlyContinue
     shell: pwsh
+
+  - name: Setup Culture
+    shell: pwsh
+    run: |
+      $culture = Get-Culture
+      Write-Verbose -Verbose "Current culture is $($culture.Name)"
+      if ($culture.Name -ne 'en-US') {
+        Write-Verbose -Verbose "Setting culture to en-US"
+        sudo update-locale LANG=en_US.UTF-8
+        "LANG=en_US.UTF-8" >> $GITHUB_ENV
+        "LC_ALL=en_US.UTF-8" >> $GITHUB_ENV
+      }
+
+  - name: Capture Culture
+    shell: pwsh
+    run: |
+      $culture = Get-Culture
+      Write-Verbose -Verbose "Current culture is $($culture.Name)"
+      if ($culture.Name -ne 'en-US') {
+        Write-Verbose -Verbose "Setting culture to en-US"
+        sudo update-locale LANG=en_US.UTF-8
+        "LANG=en_US.UTF-8" >> $GITHUB_ENV
+        "LC_ALL=en_US.UTF-8" >> $GITHUB_ENV
+      }
 
   - name: Test
     if: success()
