@@ -88,12 +88,6 @@ runs:
     run: |
       $culture = Get-Culture
       Write-Verbose -Verbose "Current culture is $($culture.Name)"
-      if ($culture.Name -ne 'en-US') {
-        Write-Verbose -Verbose "Setting culture to en-US"
-        sudo update-locale LANG=en_US.UTF-8
-        "LANG=en_US.UTF-8" >> $GITHUB_ENV
-        "LC_ALL=en_US.UTF-8" >> $GITHUB_ENV
-      }
 
   - name: Test
     if: success()
