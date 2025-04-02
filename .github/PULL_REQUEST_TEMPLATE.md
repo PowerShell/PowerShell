@@ -14,7 +14,7 @@
   - Use the present tense and imperative mood when describing your changes
 - [ ] [Summarized changes](https://github.com/PowerShell/PowerShell/blob/master/.github/CONTRIBUTING.md#pull-request---submission)
 - [ ] [Make sure all `.h`, `.cpp`, `.cs`, `.ps1` and `.psm1` files have the correct copyright header](https://github.com/PowerShell/PowerShell/blob/master/.github/CONTRIBUTING.md#pull-request---submission)
-- [ ] This PR is ready to merge.  If this PR is a work in progress, please open this as a [Draft Pull Request and mark it as Ready to Review when it is ready to merge](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests#draft-pull-requests).
+- [ ] This PR is ready to merge.  If this PR is a work in progress, please open this as a [Draft Pull Request and mark it as Ready to Review when it is ready to merge](https://docs.github.com/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests#draft-pull-requests).
 - **[Breaking changes](https://github.com/PowerShell/PowerShell/blob/master/.github/CONTRIBUTING.md#making-breaking-changes)**
   - [ ] None
   - **OR**
