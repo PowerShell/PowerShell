@@ -53,6 +53,8 @@ jobs:
       - name: Change Detection
         id: filter
         uses: "./.github/actions/infrastructure/path-filters"
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   ci_build:
     name: Build PowerShell

@@ -1,5 +1,9 @@
 name: Path Filters
 description: 'Path Filters'
+inputs:
+  GITHUB_TOKEN:
+    description: 'GitHub token'
+    required: true
 outputs:
   source:
     description: 'Source code changes (composite of all changes)'
@@ -29,7 +33,7 @@ runs:
       id: filter
       uses: actions/github-script@v7.0.1
       with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
+        github-token: ${{ inputs.GITHUB_TOKEN }}
         script: |
           // Fetch the list of files changed in the PR
           let files = [];
