@@ -682,11 +682,11 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>ServiceController as PSObject with UserName, Description and StartupType added.</returns>
         private static PSObject AddProperties(nint scManagerHandle, ServiceController service)
         {
-            NakedWin32Handle hService = IntPtr.Zero;
+            NakedWin32Handle hService = nint.Zero;
 
             // As these are optional values, a failure due to permissions or
             // other problem is ignored and the properties are set to null.
-            bool isDelayedAutoStart = false;
+            bool? isDelayedAutoStart = null;
             string? binPath = null;
             string? description = null;
             string? startName = null;
@@ -724,9 +724,12 @@ namespace Microsoft.PowerShell.Commands
                     {
                         binPath = serviceInfo.lpBinaryPathName;
                         startName = serviceInfo.lpServiceStartName;
-                        startupType = NativeMethods.GetServiceStartupType(
-                            (ServiceStartMode)serviceInfo.dwStartType,
-                            isDelayedAutoStart);
+                        if (isDelayedAutoStart.HasValue)
+                        {
+                            startupType = NativeMethods.GetServiceStartupType(
+                                (ServiceStartMode)serviceInfo.dwStartType,
+                                isDelayedAutoStart.Value);
+                        }
                     }
                 }
             }
