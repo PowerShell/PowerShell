@@ -21,7 +21,7 @@ runs:
   - name: Capture Environment
     if: success() || failure()
     run: |-
-      ./Import-Module ./build.psm1
+      Import-Module ./build.psm1
       Write-LogGroupStart -Title 'Environment'
       Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
       Write-LogGroupEnd -Title 'Environment'
@@ -35,7 +35,7 @@ runs:
   - name: Capture Artifacts Directory
     continue-on-error: true
     run: |-
-      ./Import-Module ./build.psm1
+      Import-Module ./build.psm1
       Write-LogGroupStart -Title 'Artifacts Directory'
       Get-ChildItem "${{ github.workspace }}/build/*" -Recurse
       Write-LogGroupEnd -Title 'Artifacts Directory'
@@ -48,7 +48,7 @@ runs:
   - name: Bootstrap
     shell: pwsh
     run: |-
-      ./Import-Module ./build.psm1
+      Import-Module ./build.psm1
       Write-LogGroupStart -Title 'Bootstrap'
       Import-Module ./tools/ci.psm1
       Invoke-CIInstall -SkipUser
@@ -82,7 +82,7 @@ runs:
   - name: Capture Extracted Build ZIP
     continue-on-error: true
     run: |-
-      ./Import-Module ./build.psm1
+      Import-Module ./build.psm1
       Write-LogGroupStart -Title 'Extracted Build ZIP'
       Get-ChildItem "${{ github.workspace }}/bins/*" -Recurse -ErrorAction SilentlyContinue
       Write-LogGroupEnd -Title 'Extracted Build ZIP'
