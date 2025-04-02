@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - release/**
+      - github-mirror
     paths:
       - "**"
       - "!.vsts-ci/misc-analysis.yml"
@@ -16,6 +17,8 @@ on:
     branches:
       - master
       - release/**
+      - github-mirror
+
 # Path filters for PRs need to go into the changes job
 
 concurrency:
