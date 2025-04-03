@@ -86,6 +86,95 @@ Describe "Test-Json" -Tags "CI" {
             }
 '@
 
+        $oneOfSchemaJson = @'
+            {
+            "type": "object",
+            "properties" : {
+                "Devices": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "oneOf": [
+                        {
+                            "properties": {
+                            "id": { "type": "string" },
+                            "deviceType": { "const": "smartphone" },
+                            "os": { "type": "string", "enum": ["iOS", "Android" ] }
+                            },
+                            "required": ["deviceType", "os"]
+                        },
+                        {
+                            "properties": {
+                            "id": { "type": "string" },
+                            "deviceType": { "const": "laptop" },
+                            "arch": { "type": "string", "enum": ["x86", "x64", "arm64"] }
+                            },
+                            "required": ["deviceType", "arch"]
+                        }
+                    ]
+                }    
+                }
+            },
+            "required": [ "Devices"]
+            }
+
+'@
+
+            $jsonValidOneOf = @'
+            {
+            "Devices": [
+                {
+                    "id": "0",
+                    "deviceType": "laptop",
+                    "arch": "x64"
+                },
+                {
+                    "id": "1",
+                    "deviceType": "smartphone",
+                    "os": "iOS"
+                },
+                {
+                    "id": "2",
+                    "deviceType": "laptop",
+                    "arch": "arm64"
+                },
+                {
+                    "id": "3",
+                    "deviceType": "smartphone",
+                    "os": "Android"
+                }
+            ]
+            }
+'@
+
+            $jsonInvalidOneOf = @'
+            {
+            "Devices": [
+                {
+                    "id": "0",
+                    "deviceType": "laptop",
+                    "arch": "x64"
+                },
+                {
+                    "id": "1",
+                    "deviceType": "smartphone",
+                    "os": "iOS"
+                },
+                {
+                    "id": "2",
+                    "deviceType": "laptop",
+                    "arch": "arm64"
+                },
+                {
+                    "id": "3",
+                    "deviceType": "smartphone",
+                    "os": "WindowsPhone"
+                }
+            ]
+            }
+'@
+
+
         $validJsonPath = Join-Path -Path $TestDrive -ChildPath 'validJson.json'
         $validLiteralJsonPath = Join-Path -Path $TestDrive -ChildPath "[valid]Json.json"
         $invalidNodeInJsonPath = Join-Path -Path $TestDrive -ChildPath 'invalidNodeInJson.json'
@@ -179,6 +268,21 @@ Describe "Test-Json" -Tags "CI" {
 
     It "Json file is invalid" {
         Test-Json -Path $invalidNodeInJsonPath -ErrorAction SilentlyContinue | Should -BeFalse
+    }
+
+    It "OneOf invalid json only reports real errors" {
+        $errVar = @()
+        Test-Json -Json $jsonInvalidOneOf -Schema $oneOfSchemaJson -ErrorAction SilentlyContinue -ErrorVariable errVar
+
+        $falseErrors = $errVar | select-string -pattern "Devices\/(0|1|2)"
+        $falseErrors.Count | Should -Be 0
+
+        $realErrors = $errVar | select-string -pattern "Devices\/3"
+        $realErrors.Count | Should -BeGreaterThan 0
+    }
+
+    It "OneOf valid json should succeed" {
+        Test-Json -Json $jsonValidOneOf -Schema $oneOfSchemaJson -ErrorAction SilentlyContinue | Should -BeTrue
     }
 
     It "Json file is invalid against a valid schema from string" {
