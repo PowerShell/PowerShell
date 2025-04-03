@@ -20,6 +20,11 @@ runs:
   steps:
   - name: Log Summary
     run: |
+      if (-not $env:GITHUB_STEP_SUMMARY) {
+        Write-Error "GITHUB_STEP_SUMMARY is not set. Ensure this workflow is running in a GitHub Actions environment."
+        exit 1
+      }
+
       $testCaseCount = 0
       $testErrorCount = 0
       $testFailureCount = 0
@@ -41,7 +46,10 @@ runs:
       - Total Failures: $testFailureCount
       - Total Disabled: $testDisabledCount
 
-      "@ >> $GITHUB_STEP_SUMMARY
+      "@ | Out-File -FilePath $ENV:GITHUB_STEP_SUMMARY -Append
+
+      Write-Host "Summary written to $ENV:GITHUB_STEP_SUMMARY"
+      Get-Content $ENV:GITHUB_STEP_SUMMARY
     shell: pwsh
 
   - name: Upload testResults artifact
