@@ -399,40 +399,39 @@ Describe "New-Item -Force should throw an error for invalid characters in direct
 
 Describe "If the target path contains wildcard characters, the operation should succeed in creating a file link." -Tags @("CI", 'RequireAdminOnWindows') {
     BeforeAll {
-        $originalFolder = Get-Location
-        $testFolder = '[LinkCreation]'
-        $testFile = '[test].txt'
+        $testFolder     = '[LinkCreation]'
+        $testFile       = '[test].txt'
 
-        $symbolicLink = 'sym-lk.txt'
-        $hardLink = 'hard-lk.txt'
-        $junction = 'junc'
-        $fileInJunction = Join-Path $junction '[test].txt'
+        $symbolicLink   = 'sym-lk.txt'
+        $hardLink       = 'hard-lk.txt'
+        $junction       = 'junc'
+        $fileInJunction = Join-Path $junction $testFile
         
-        $info = 'succeed!'
+        $expectedFileContent = 'succeed!'
         
-        if (Test-Path -LiteralPath $testFolder) {
-            Remove-Item -LiteralPath $testFolder -Recurse -Force
-        }
+        Push-Location -PSPath $TestDrive
         New-Item $testFolder -Type Directory
-        Set-Location -PSPath $testFolder
-        Set-Content -PSPath $testFile -Value $info
+        Push-Location -PSPath $testFolder
+        Set-Content -PSPath $testFile -Value $expectedFileContent
     }
 
     It "Should succeed in creating a symbolic link." {
         New-Item $symbolicLink -Target $testFile -Type SymbolicLink
-        Get-Content -PSPath $symbolicLink | Should -Be $info
+        Get-Content -PSPath $symbolicLink | Should -Be $expectedFileContent
     }
-    It "Should succeed in creating a hard link." {
-        New-Item $hardLink -Target (Get-Item -PSPath $testFile) -Type HardLink    # create hardlink with absolute path
-        Get-Content -PSPath $hardLink | Should -Be $info
+    It "Should succeed in creating a hard link with absolute path." {
+        New-Item $hardLink -Target (Get-Item -PSPath $testFile) -Type HardLink
+        Get-Content -PSPath $hardLink | Should -Be $expectedFileContent
     }
-    It "Should succeed in creating a junction on windows." -Skip:(!$IsWindows) {
+    It "Should succeed in creating a junction on Windows." -Skip:(!$IsWindows) {
         New-Item $junction -Target (Get-Item -PSPath .) -Type Junction
-        Get-Content -PSPath $fileInJunction | Should -Be $info
+        Get-Content -PSPath $fileInJunction | Should -Be $expectedFileContent
+        Remove-Item -PSPath $junction
     }
-
-    AfterAll {
-        Set-Location $originalFolder
+    
+	AfterAll {
+        Pop-Location
+        Pop-Location
     }
 }
 
