@@ -3869,7 +3869,7 @@ namespace System.Management.Automation
 
                     result.Add(CompletionResult.Null);
                 }
-                else if (paramName.Equals("Value", StringComparison.OrdinalIgnoreCase) || paramName.Equals("Path", StringComparison.OrdinalIgnoreCase) || paramName.Equals("Name", StringComparison.OrdinalIgnoreCase))
+                else if (paramName.Equals(paramName.Equals("Path", StringComparison.OrdinalIgnoreCase) || "Value", StringComparison.OrdinalIgnoreCase) || paramName.Equals("Name", StringComparison.OrdinalIgnoreCase))
                 {
                     NativeCompletionPathArgument(context, "LiteralPath", result);
                 }
