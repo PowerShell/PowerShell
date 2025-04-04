@@ -408,10 +408,9 @@ Describe "If the target path contains wildcard characters, the operation should 
         $fileInJunction = Join-Path $junction $testFile
         
         $expectedFileContent = 'succeed!'
-        
-        Push-Location -PSPath $TestDrive
-        New-Item $testFolder -Type Directory
-        Push-Location -PSPath $testFolder
+
+        New-Item "TestDrive:\$testFolder" -Type Directory
+        Push-Location -PSPath "TestDrive:\$testFolder"
         Set-Content -PSPath $testFile -Value $expectedFileContent
     }
 
@@ -430,7 +429,6 @@ Describe "If the target path contains wildcard characters, the operation should 
     }
     
 	AfterAll {
-        Pop-Location
         Pop-Location
     }
 }
