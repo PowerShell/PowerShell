@@ -410,22 +410,22 @@ Describe "If the target path contains wildcard characters, the operation should 
         $expectedFileContent = 'succeed!'
 
         New-Item "TestDrive:\$testFolder" -Type Directory
-        Push-Location -PSPath "TestDrive:\$testFolder"
-        Set-Content -PSPath $testFile -Value $expectedFileContent
+        Push-Location -LiteralPath "TestDrive:\$testFolder"
+        Set-Content -LiteralPath $testFile -Value $expectedFileContent
     }
 
     It "Should succeed in creating a symbolic link." {
         New-Item $symbolicLink -Target $testFile -Type SymbolicLink
-        Get-Content -PSPath $symbolicLink | Should -Be $expectedFileContent
+        Get-Content -LiteralPath $symbolicLink | Should -Be $expectedFileContent
     }
     It "Should succeed in creating a hard link with absolute path." {
-        New-Item $hardLink -Target (Get-Item -PSPath $testFile) -Type HardLink
-        Get-Content -PSPath $hardLink | Should -Be $expectedFileContent
+        New-Item $hardLink -Target (Get-Item -LiteralPath $testFile) -Type HardLink
+        Get-Content -LiteralPath $hardLink | Should -Be $expectedFileContent
     }
     It "Should succeed in creating a junction on Windows." -Skip:(!$IsWindows) {
-        New-Item $junction -Target (Get-Item -PSPath .) -Type Junction
-        Get-Content -PSPath $fileInJunction | Should -Be $expectedFileContent
-        Remove-Item -PSPath $junction
+        New-Item $junction -Target (Get-Item -LiteralPath .) -Type Junction
+        Get-Content -LiteralPath $fileInJunction | Should -Be $expectedFileContent
+        Remove-Item -LiteralPath $junction
     }
     
 	AfterAll {
