@@ -2555,7 +2555,7 @@ namespace System.Management.Automation
                 ProviderInfo provider;
                 SessionState sessionState = new SessionState(context.EngineSessionState);
 
-                string unresolvedFilePath = sessionState.Path.GetUnresolvedProviderPathFromPSPath(filePath, out provider, out _);
+                string literalFilePath = sessionState.Path.GetUnresolvedProviderPathFromPSPath(filePath, out provider, out _);
 
                 // Make sure that the path is in the file system - that's all we can handle currently...
                 if (!provider.NameEquals(context.ProviderNames.FileSystem))
@@ -2567,14 +2567,14 @@ namespace System.Management.Automation
                 }
 
                 // Make sure at least one file was found...
-                if (string.IsNullOrEmpty(unresolvedFilePath))
+                if (string.IsNullOrEmpty(literalFilePath))
                 {
                     // "No files matching '{0}' were found.."
                     throw InterpreterError.NewInterpreterException(filePath, typeof(RuntimeException), errorExtent,
                                                                    "FileNotFound", ParserStrings.FileNotFound, filePath);
                 }
 
-                return unresolvedFilePath;
+                return literalFilePath;
             }
             catch (RuntimeException rte)
             {
