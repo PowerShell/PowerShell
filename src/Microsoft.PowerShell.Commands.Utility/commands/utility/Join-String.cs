@@ -172,10 +172,10 @@ namespace Microsoft.PowerShell.Commands.Utility
             "{0:N2}",
 #if UNIX
     "`n    `${0}",
-    "`n    [string] `${0}"
+    "`n    [string] `${0}",
 #else
     "`r`n    `${0}",
-    "`r`n    [string] `${0}"
+    "`r`n    [string] `${0}",
 #endif
         };
 
@@ -194,7 +194,7 @@ namespace Microsoft.PowerShell.Commands.Utility
             "; ",
             NewLineText,
             "-",
-            " "
+            " ",
         };
 
         private static readonly Dictionary<string, (string Tooltip, string ListItemText)> s_separatorMappings = new()
@@ -205,7 +205,7 @@ namespace Microsoft.PowerShell.Commands.Utility
             { "; ", (TabCompletionStrings.SeparatorSemiColonSpaceToolTip, "Semi-Colon-Space") },
             { NewLineText, (StringUtil.Format(TabCompletionStrings.SeparatorNewlineToolTip, NewLineText), "Newline") },
             { "-", (TabCompletionStrings.SeparatorDashToolTip, "Dash") },
-            { " ", (TabCompletionStrings.SeparatorSpaceToolTip, "Space") }
+            { " ", (TabCompletionStrings.SeparatorSpaceToolTip, "Space") },
         };
 
         private static string GetSeparatorToolTip(string separator)
