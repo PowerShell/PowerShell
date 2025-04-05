@@ -2487,6 +2487,16 @@ namespace System.Management.Automation
                         break;
                     }
 
+                case "Resolve-Path":
+                    {
+                        if (parameterName.Equals("RelativeBasePath", StringComparison.OrdinalIgnoreCase))
+                        {
+                            NativeCompletionPathArgument(context, "LiteralPath", result);
+                            break;
+                        }
+                        goto default;
+                    }
+
                 default:
                     {
                         NativeCompletionPathArgument(context, parameterName, result);
