@@ -166,6 +166,67 @@ namespace Microsoft.PowerShell.Commands.Utility
         Justification = "Class is instantiated through late-bound reflection")]
     internal class JoinItemCompleter : IArgumentCompleter
     {
+        private static readonly IReadOnlyList<string> s_formatStringValues = new List<string>
+        {
+            "[{0}]",
+            "{0:N2}",
+#if UNIX
+    "`n    `${0}",
+    "`n    [string] `${0}"
+#else
+    "`r`n    `${0}",
+    "`r`n    [string] `${0}"
+#endif
+        };
+
+        private static readonly string NewLineText =
+#if UNIX
+    "`n";
+#else
+    "`r`n";
+#endif
+
+        private static readonly IReadOnlyList<string> s_separatorValues = new List<string>
+        {
+            ",",
+            ", ",
+            ";",
+            "; ",
+            NewLineText,
+            "-",
+            " "
+        };
+
+        private static readonly Dictionary<string, (string Tooltip, string ListItemText)> s_separatorMappings = new()
+        {
+            { ",", (TabCompletionStrings.SeparatorCommaToolTip, "Comma") },
+            { ", ", (TabCompletionStrings.SeparatorCommaSpaceToolTip, "Comma-Space") },
+            { ";", (TabCompletionStrings.SeparatorSemiColonToolTip, "Semi-Colon") },
+            { "; ", (TabCompletionStrings.SeparatorSemiColonSpaceToolTip, "Semi-Colon-Space") },
+            { NewLineText, (StringUtil.Format(TabCompletionStrings.SeparatorNewlineToolTip, NewLineText), "Newline") },
+            { "-", (TabCompletionStrings.SeparatorDashToolTip, "Dash") },
+            { " ", (TabCompletionStrings.SeparatorSpaceToolTip, "Space") }
+        };
+
+        private static string GetSeparatorToolTip(string separator)
+            => s_separatorMappings.TryGetValue(separator, out var mapping)
+                ? mapping.Tooltip
+                : separator;
+
+        private static string GetSeparatorListItemText(string separator)
+            => s_separatorMappings.TryGetValue(separator, out var mapping)
+                ? mapping.ListItemText
+                : separator;
+
+        /// <summary>
+        /// Returns completion results for PropertyType parameter.
+        /// </summary>
+        /// <param name="commandName">The command name.</param>
+        /// <param name="parameterName">The parameter name.</param>
+        /// <param name="wordToComplete">The word to complete.</param>
+        /// <param name="commandAst">The command AST.</param>
+        /// <param name="fakeBoundParameters">The fake bound parameters.</param>
+        /// <returns>List of Completion Results.</returns>
         public IEnumerable<CompletionResult> CompleteArgument(
             string commandName,
             string parameterName,
@@ -175,64 +236,21 @@ namespace Microsoft.PowerShell.Commands.Utility
         {
             switch (parameterName)
             {
-                case "Separator": return CompleteSeparator(wordToComplete);
-                case "FormatString": return CompleteFormatString(wordToComplete);
+                case "FormatString":
+                    return CompletionHelpers.GetMatchingResults(
+                        wordToComplete,
+                        possibleCompletionValues: s_formatStringValues);
+
+                case "Separator":
+                    return CompletionHelpers.GetMatchingResults(
+                        wordToComplete,
+                        possibleCompletionValues: s_separatorValues,
+                        listItemTextMapping: GetSeparatorListItemText,
+                        toolTipMapping: GetSeparatorToolTip,
+                        resultType: CompletionResultType.ParameterValue);
             }
 
-            return null;
-        }
-
-        private static IEnumerable<CompletionResult> CompleteFormatString(string wordToComplete)
-        {
-            var res = new List<CompletionResult>();
-            void AddMatching(string completionText)
-            {
-                if (completionText.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
-                {
-                    res.Add(new CompletionResult(completionText));
-                }
-            }
-
-            AddMatching("'[{0}]'");
-            AddMatching("'{0:N2}'");
-            AddMatching("\"`r`n    `${0}\"");
-            AddMatching("\"`r`n    [string] `${0}\"");
-
-            return res;
-        }
-
-        private IEnumerable<CompletionResult> CompleteSeparator(string wordToComplete)
-        {
-            var res = new List<CompletionResult>(10);
-
-            void AddMatching(string completionText, string listText, string toolTip)
-            {
-                if (completionText.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
-                {
-                    res.Add(new CompletionResult(completionText, listText, CompletionResultType.ParameterValue, toolTip));
-                }
-            }
-
-            AddMatching("', '", "Comma-Space", "', ' - Comma-Space");
-            AddMatching("';'", "Semi-Colon", "';'  - Semi-Colon ");
-            AddMatching("'; '", "Semi-Colon-Space", "'; ' - Semi-Colon-Space");
-            AddMatching($"\"{NewLineText}\"", "Newline", $"{NewLineText} - Newline");
-            AddMatching("','", "Comma", "','  - Comma");
-            AddMatching("'-'", "Dash", "'-'  - Dash");
-            AddMatching("' '", "Space", "' '  - Space");
-            return res;
-        }
-
-        public string NewLineText
-        {
-            get
-            {
-#if UNIX
-                return "`n";
-#else
-                return "`r`n";
-#endif
-            }
+            return Array.Empty<CompletionResult>();
         }
     }
 }

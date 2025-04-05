@@ -38,6 +38,18 @@ namespace PSTests.Parallel
         [InlineData("key$word", "'", "'key$word'")]
         [InlineData("key$word", "", "'key$word'")]
         [InlineData("key$word", "\"", "\"key$word\"")]
+        [InlineData("`r`n", "\"", "\"`r`n\"")]
+        [InlineData("`r`n", "'", "\"`r`n\"")]
+        [InlineData("`r`n", "", "\"`r`n\"")]
+        [InlineData("`r`n    `${0}", "\"", "\"`r`n    `${0}\"")]
+        [InlineData("`r`n    `${0}", "'", "\"`r`n    `${0}\"")]
+        [InlineData("`r`n    `${0}", "", "\"`r`n    `${0}\"")]
+        [InlineData("`n", "\"", "\"`n\"")]
+        [InlineData("`n", "'", "\"`n\"")]
+        [InlineData("`n", "", "\"`n\"")]
+        [InlineData("`n    `${0}", "\"", "\"`n    `${0}\"")]
+        [InlineData("`n    `${0}", "'", "\"`n    `${0}\"")]
+        [InlineData("`n    `${0}", "", "\"`n    `${0}\"")]
         public void TestQuoteCompletionText(
              string completionText,
              string quote,
@@ -66,6 +78,10 @@ namespace PSTests.Parallel
         [InlineData("\"", true)]
         [InlineData("'", true)]
         [InlineData("", true)]
+        [InlineData(";", true)]
+        [InlineData("; ", true)]
+        [InlineData(",", true)]
+        [InlineData(", ", true)]
         public void TestCompletionRequiresQuotes(string completion, bool expected)
         {
             bool result = CompletionHelpers.CompletionRequiresQuotes(completion);
@@ -91,6 +107,29 @@ namespace PSTests.Parallel
             string quote = CompletionHelpers.HandleDoubleAndSingleQuote(ref wordToComplete);
             Assert.Equal(expectedQuote, quote);
             Assert.Equal(expectedWordToComplete, wordToComplete);
+        }
+
+        [Theory]
+        [InlineData("word", "word", true)]
+        [InlineData("Word", "word", true)]
+        [InlineData("word", "wor", true)]
+        [InlineData("word", "words", false)]
+        [InlineData("word`nnext", "word`n", true)]
+        [InlineData("word`nnext", "word\n", true)]
+        [InlineData("word`r`nnext", "word`r`n", true)]
+        [InlineData("word`r`nnext", "word\r\n", true)]
+        [InlineData("word;next", "word;", true)]
+        [InlineData("word,next", "word,", true)]
+        [InlineData("word[*]next", "word[*", true)]
+        [InlineData("word[abc]next", "word[abc", true)]
+        [InlineData("word", "word*", false)]
+        [InlineData("testword", "test", true)]
+        [InlineData("word", "", true)]
+        [InlineData("", "word", false)]
+        public void TestIsMatch(string value, string wordToComplete, bool expected)
+        {
+            bool result = CompletionHelpers.IsMatch(value, wordToComplete);
+            Assert.Equal(expected, result);
         }
     }
 }
