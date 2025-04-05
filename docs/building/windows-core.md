@@ -35,7 +35,7 @@ The `Start-PSBootstrap` function will automatically install it and add it to you
 
 ```powershell
 Import-Module ./build.psm1
-Start-PSBootstrap
+Start-PSBootstrap -Scenario Dotnet
 ```
 
 Or you can call `Install-Dotnet` directly:
