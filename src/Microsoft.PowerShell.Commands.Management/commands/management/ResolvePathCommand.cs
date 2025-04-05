@@ -129,7 +129,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
-                    _relativeBasePath = SessionState.Internal.Globber.GetProviderPath(RelativeBasePath, CmdletProviderContext, out _, out _relativeDrive);
+                    _relativeBasePath = SessionState.Path.GetUnresolvedProviderPathFromPSPath(_relativeBasePath, CmdletProviderContext, out _, out _relativeDrive);
                 }
                 catch (ProviderNotFoundException providerNotFound)
                 {
@@ -190,7 +190,7 @@ namespace Microsoft.PowerShell.Commands
                         try
                         {
                             SessionState.Path.PushCurrentLocation(string.Empty);
-                            _ = SessionState.Path.SetLocation(_relativeBasePath);
+                            _ = SessionState.Path.SetLocation(_relativeBasePath, CmdletProviderContext, true);
                             result = SessionState.Path.GetResolvedPSPathFromPSPath(path, CmdletProviderContext);
                         }
                         finally
