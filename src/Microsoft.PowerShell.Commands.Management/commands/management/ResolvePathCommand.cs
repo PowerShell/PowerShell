@@ -193,7 +193,7 @@ namespace Microsoft.PowerShell.Commands
                             var suppressWildcardExpansionOriginal = SuppressWildcardExpansion;
                             SuppressWildcardExpansion = true;
                             _ = SessionState.Path.SetLocation(_relativeBasePath, CmdletProviderContext, true);
-                            SuppressWildcardExpansion = SuppressWildcardExpansionOriginal;
+                            SuppressWildcardExpansion = suppressWildcardExpansionOriginal;
                             result = SessionState.Path.GetResolvedPSPathFromPSPath(path, CmdletProviderContext);
                         }
                         finally
