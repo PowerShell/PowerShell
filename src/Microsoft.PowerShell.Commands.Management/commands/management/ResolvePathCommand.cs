@@ -190,7 +190,10 @@ namespace Microsoft.PowerShell.Commands
                         try
                         {
                             SessionState.Path.PushCurrentLocation(string.Empty);
+                            var SuppressWildcardExpansionOriginal = SuppressWildcardExpansion;
+                            SuppressWildcardExpansion = true;
                             _ = SessionState.Path.SetLocation(_relativeBasePath, CmdletProviderContext, true);
+                            SuppressWildcardExpansion = SuppressWildcardExpansionOriginal;
                             result = SessionState.Path.GetResolvedPSPathFromPSPath(path, CmdletProviderContext);
                         }
                         finally
