@@ -190,7 +190,7 @@ namespace Microsoft.PowerShell.Commands
                         try
                         {
                             SessionState.Path.PushCurrentLocation(string.Empty);
-                            var SuppressWildcardExpansionOriginal = SuppressWildcardExpansion;
+                            var suppressWildcardExpansionOriginal = SuppressWildcardExpansion;
                             SuppressWildcardExpansion = true;
                             _ = SessionState.Path.SetLocation(_relativeBasePath, CmdletProviderContext, true);
                             SuppressWildcardExpansion = SuppressWildcardExpansionOriginal;
