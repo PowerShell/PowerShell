@@ -2715,10 +2715,6 @@ function script:Write-Log
             # https://github.com/actions/toolkit/issues/193#issuecomment-605394935
             $escapedMessage = $message -replace "`n", "%0A" -replace "`r"
             Write-Host "::error::${escapedMessage}"
-
-            if ($escapedMessage -ne $message) {
-                Write-Host -Foreground Red $message
-            }
         } else {
             Write-Host -Foreground Red $message
         }
