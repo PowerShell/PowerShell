@@ -2711,10 +2711,16 @@ function script:Write-Log
     )
     if ($isError)
     {
-        Write-Host -Foreground Red $message
-        if($env:GITHUB_WORKFLOW)
-        {
-            Write-Host "::error::${message}"
+        if ($env:GITHUB_WORKFLOW) {
+            # https://github.com/actions/toolkit/issues/193#issuecomment-605394935
+            $escapedMessage = $message -replace "`n", "%0A" -replace "`r"
+            Write-Host "::error::${escapedMessage}"
+
+            if ($escapedMessage -ne $message) {
+                Write-Host -Foreground Red $message
+            }
+        } else {
+            Write-Host -Foreground Red $message
         }
     }
     else
