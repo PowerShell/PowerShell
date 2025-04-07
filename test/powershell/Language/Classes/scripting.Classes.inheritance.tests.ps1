@@ -723,12 +723,6 @@ Describe 'Classes inheritance with protected and protected internal members in b
         $c1DefinitionProtectedInternal = @'
             public class C1ProtectedInternal
             {
-                protected internal const string Constant = "C1_Constant";
-
-                protected internal static string StaticField = "C1_StaticField";
-                protected internal static string StaticProperty { get; set; } = "C1_StaticProperty";
-                protected internal static string StaticMethod() { return "C1_StaticMethod"; }
-
                 protected internal string InstanceField = "C1_InstanceField";
                 protected internal string InstanceProperty { get; set; } = "C1_InstanceProperty";
                 protected internal string InstanceMethod() { return "C1_InstanceMethod"; }
@@ -744,39 +738,35 @@ Describe 'Classes inheritance with protected and protected internal members in b
             }
 '@
         $c2DefinitionProtectedInternal = @'
-        class C2ProtectedInternal : C1ProtectedInternal {
-            C2ProtectedInternal() : base() { $this.VirtualProperty2 = 'C2_VirtualProperty2' }
-            C2ProtectedInternal([string]$p1) : base($p1) { $this.VirtualProperty2 = 'C2_VirtualProperty2' }
+            class C2ProtectedInternal : C1ProtectedInternal {
+                C2ProtectedInternal() : base() { $this.VirtualProperty2 = 'C2_VirtualProperty2' }
+                C2ProtectedInternal([string]$p1) : base($p1) { $this.VirtualProperty2 = 'C2_VirtualProperty2' }
 
-            [string]GetConstant() { return [C2ProtectedInternal]::Constant }
+                [string]GetInstanceField() { return $this.InstanceField }
+                [string]SetInstanceField([string]$value) { $this.InstanceField = $value; return $this.InstanceField }
+                [string]GetInstanceProperty() { return $this.InstanceProperty }
+                [string]SetInstanceProperty([string]$value) { $this.InstanceProperty = $value; return $this.InstanceProperty }
+                [string]CallInstanceMethod() { return $this.InstanceMethod() }
 
-            [string]GetStaticField() { return [C2ProtectedInternal]::StaticField }
-            [string]SetStaticField([string]$value) { [C2ProtectedInternal]::StaticField = $value; return [C2ProtectedInternal]::StaticField }
-            [string]GetStaticProperty() { return [C2ProtectedInternal]::StaticProperty }
-            [string]SetStaticProperty([string]$value) { [C2ProtectedInternal]::StaticProperty = $value; return [C2ProtectedInternal]::StaticProperty }
-            [string]CallStaticMethod() { return [C2ProtectedInternal]::StaticMethod() }
+                [string]GetVirtualProperty1() { return $this.VirtualProperty1 }
+                [string]SetVirtualProperty1([string]$value) { $this.VirtualProperty1 = $value; return $this.VirtualProperty1 }
+                [string]CallVirtualMethod1() { return $this.VirtualMethod1() }
 
-            [string]GetInstanceField() { return $this.InstanceField }
-            [string]SetInstanceField([string]$value) { $this.InstanceField = $value; return $this.InstanceField }
-            [string]GetInstanceProperty() { return $this.InstanceProperty }
-            [string]SetInstanceProperty([string]$value) { $this.InstanceProperty = $value; return $this.InstanceProperty }
-            [string]CallInstanceMethod() { return $this.InstanceMethod() }
+                [string]$VirtualProperty2
+                [string]VirtualMethod2() { return 'C2_VirtualMethod2' }
+                # Note: Overriding a virtual property in a derived PowerShell class prevents access to the
+                #       base property via simple typecast ([base]$this).VirtualProperty2.
+                [string]GetVirtualProperty2() { return $this.VirtualProperty2 }
+                [string]SetVirtualProperty2([string]$value) { $this.VirtualProperty2 = $value; return $this.VirtualProperty2 }
+                [string]CallVirtualMethod2Base() { return ([C1ProtectedInternal]$this).VirtualMethod2() }
+                [string]CallVirtualMethod2Derived() { return $this.VirtualMethod2() }
 
-            [string]GetVirtualProperty1() { return $this.VirtualProperty1 }
-            [string]SetVirtualProperty1([string]$value) { $this.VirtualProperty1 = $value; return $this.VirtualProperty1 }
-            [string]CallVirtualMethod1() { return $this.VirtualMethod1() }
+                [string]GetInstanceMemberDynamic([string]$name) { return $this.$name }
+                [string]SetInstanceMemberDynamic([string]$name, [string]$value) { $this.$name = $value; return $this.$name }
+                [string]CallInstanceMemberDynamic([string]$name) { return $this.$name() }
+            }
 
-            [string]$VirtualProperty2
-            [string]VirtualMethod2() { return 'C2_VirtualMethod2' }
-            # Note: Overriding a virtual property in a derived PowerShell class prevents access to the
-            #       base property via simple typecast ([base]$this).VirtualProperty2.
-            [string]GetVirtualProperty2() { return $this.VirtualProperty2 }
-            [string]SetVirtualProperty2([string]$value) { $this.VirtualProperty2 = $value; return $this.VirtualProperty2 }
-            [string]CallVirtualMethod2Base() { return ([C1ProtectedInternal]$this).VirtualMethod2() }
-            [string]CallVirtualMethod2Derived() { return $this.VirtualMethod2() }
-}
-
-[C2ProtectedInternal]
+            [C2ProtectedInternal]
 '@
 
         Add-Type -TypeDefinition $c1DefinitionProtectedInternal
@@ -792,35 +782,6 @@ Describe 'Classes inheritance with protected and protected internal members in b
         Set-StrictMode -Off
     }
 
-    Context 'Derived class can access static base class members' {
-
-        It 'can access <accessType> base constant field' -TestCases $testCases {
-            param($derivedType)
-            $derivedType::new().GetConstant() | Should -Be 'C1_Constant'
-        }
-
-        It 'can access <accessType> base static field' -TestCases $testCases {
-            param($derivedType)
-            $c2 = $derivedType::new()
-            $v = $c2.GetStaticField()
-            $v | Should -Be 'C1_StaticField'
-            $c2.SetStaticField($v + ':foo') | Should -Be 'C1_StaticField:foo'
-        }
-
-        It 'can access <accessType> base static property' -TestCases $testCases {
-            param($derivedType)
-            $c2 = $derivedType::new()
-            $v = $c2.GetStaticProperty()
-            $v | Should -Be 'C1_StaticProperty'
-            $c2.SetStaticProperty($v + ':foo') | Should -Be 'C1_StaticProperty:foo'
-        }
-
-        It 'can call <accessType> base static method' -TestCases $testCases {
-            param($derivedType)
-            $derivedType::new().CallStaticMethod() | Should -Be 'C1_StaticMethod'
-        }
-    }
-
     Context 'Derived class can access instance base class members' {
 
         It 'can call <accessType> base ctor' -TestCases $testCases {
@@ -828,36 +789,33 @@ Describe 'Classes inheritance with protected and protected internal members in b
             $derivedType::new('foo').CtorUsed | Should -Be 'C1_ctor_1args:foo'
         }
 
-        It 'can access <accessType> base instance field' -TestCases $testCases {
+        It 'can access <accessType> base field' -TestCases $testCases {
             param($derivedType)
             $c2 = $derivedType::new()
-            $v = $c2.GetInstanceField()
-            $v | Should -Be 'C1_InstanceField'
-            $c2.SetInstanceField($v + ':foo') | Should -Be 'C1_InstanceField:foo'
+            $c2.GetInstanceField() | Should -Be 'C1_InstanceField'
+            $c2.SetInstanceField('foo_InstanceField') | Should -Be 'foo_InstanceField'
         }
 
-        It 'can access <accessType> base instance property' -TestCases $testCases {
+        It 'can access <accessType> base property' -TestCases $testCases {
             param($derivedType)
             $c2 = $derivedType::new()
-            $v = $c2.GetInstanceProperty()
-            $v | Should -Be 'C1_InstanceProperty'
-            $c2.SetInstanceProperty($v + ':foo') | Should -Be 'C1_InstanceProperty:foo'
+            $c2.GetInstanceProperty() | Should -Be 'C1_InstanceProperty'
+            $c2.SetInstanceProperty('foo_InstanceProperty') | Should -Be 'foo_InstanceProperty'
         }
 
-        It 'can call <accessType> base instance method' -TestCases $testCases {
+        It 'can call <accessType> base method' -TestCases $testCases {
             param($derivedType)
             $derivedType::new().CallInstanceMethod() | Should -Be 'C1_InstanceMethod'
         }
 
-        It 'can access <accessType> base virtual property' -TestCases $testCases {
+        It 'can access <accessType> virtual base property' -TestCases $testCases {
             param($derivedType)
             $c2 = $derivedType::new()
-            $v = $c2.GetVirtualProperty1()
-            $v | Should -Be 'C1_VirtualProperty1'
-            $c2.SetVirtualProperty1($v + ':foo') | Should -Be 'C1_VirtualProperty1:foo'
+            $c2.GetVirtualProperty1() | Should -Be 'C1_VirtualProperty1'
+            $c2.SetVirtualProperty1('foo_VirtualProperty1') | Should -Be 'foo_VirtualProperty1'
         }
 
-        It 'can call <accessType> base virtual method' -TestCases $testCases {
+        It 'can call <accessType> virtual base method' -TestCases $testCases {
             param($derivedType)
             $derivedType::new().CallVirtualMethod1() | Should -Be 'C1_VirtualMethod1'
         }
@@ -865,15 +823,14 @@ Describe 'Classes inheritance with protected and protected internal members in b
 
     Context 'Derived class can override virtual base class members' {
 
-        It 'can override <accessType> base virtual property' -TestCases $testCases {
+        It 'can override <accessType> virtual base property' -TestCases $testCases {
             param($derivedType)
             $c2 = $derivedType::new()
-            $v = $c2.GetVirtualProperty2()
-            $v | Should -Be 'C2_VirtualProperty2'
-            $c2.SetVirtualProperty2($v + ':foo') | Should -Be 'C2_VirtualProperty2:foo'
+            $c2.GetVirtualProperty2() | Should -Be 'C2_VirtualProperty2'
+            $c2.SetVirtualProperty2('foo_VirtualProperty2') | Should -Be 'foo_VirtualProperty2'
         }
 
-        It 'can override <accessType> base virtual method' -TestCases $testCases {
+        It 'can override <accessType> virtual base method' -TestCases $testCases {
             param($derivedType)
             $c2 = $derivedType::new()
             $c2.CallVirtualMethod2Base() | Should -Be 'C1_VirtualMethod2'
@@ -881,59 +838,75 @@ Describe 'Classes inheritance with protected and protected internal members in b
         }
     }
 
+    Context 'Derived class can access instance base class members dynamically' {
+
+        It 'can access <accessType> base fields and properties' -TestCases $testCases {
+            param($derivedType)
+            $c2 = $derivedType::new()
+            $c2.GetInstanceMemberDynamic('InstanceField') | Should -Be 'C1_InstanceField'
+            $c2.GetInstanceMemberDynamic('InstanceProperty') | Should -Be 'C1_InstanceProperty'
+            $c2.GetInstanceMemberDynamic('VirtualProperty1') | Should -Be 'C1_VirtualProperty1'
+            $c2.SetInstanceMemberDynamic('InstanceField', 'foo1') | Should -Be 'foo1'
+            $c2.SetInstanceMemberDynamic('InstanceProperty', 'foo2') | Should -Be 'foo2'
+            $c2.SetInstanceMemberDynamic('VirtualProperty1', 'foo3') | Should -Be 'foo3'
+        }
+
+        It 'can call <accessType> base methods' -TestCases $testCases {
+            param($derivedType)
+            $c2 = $derivedType::new()
+            $c2.CallInstanceMemberDynamic('InstanceMethod') | Should -Be 'C1_InstanceMethod'
+            $c2.CallInstanceMemberDynamic('VirtualMethod1') | Should -Be 'C1_VirtualMethod1'
+        }
+    }
+
     Context 'Base class members are not accessible outside class scope' {
 
-        It 'cannot access <accessType> base constant field' -TestCases $testCases {
-            param($derivedType)
-            { $null = $derivedType::Constant } | Should -Throw -ErrorId 'PropertyNotFoundStrict'
+        BeforeAll {
+            $instanceTest = {
+                $c2 = $derivedType::new()
+                { $null = $c2.InstanceField } | Should -Throw -ErrorId 'PropertyNotFoundStrict'
+                { $null = $c2.InstanceProperty } | Should -Throw -ErrorId 'PropertyNotFoundStrict'
+                { $null = $c2.VirtualProperty1 } | Should -Throw -ErrorId 'PropertyNotFoundStrict'
+                { $c2.InstanceField = 'foo' } | Should -Throw -ErrorId 'PropertyAssignmentException'
+                { $c2.InstanceProperty = 'foo' } | Should -Throw -ErrorId 'PropertyAssignmentException'
+                { $c2.VirtualProperty1 = 'foo' } | Should -Throw -ErrorId 'PropertyAssignmentException'
+                { $derivedType::new().InstanceMethod() } | Should -Throw -ErrorId 'MethodNotFound'
+                { $derivedType::new().VirtualMethod1() } | Should -Throw -ErrorId 'MethodNotFound'
+                foreach ($name in @('InstanceField', 'InstanceProperty', 'VirtualProperty1')) {
+                    { $null = $c2.$name } | Should -Throw -ErrorId 'PropertyNotFoundStrict'
+                    { $c2.$name = 'foo' } | Should -Throw -ErrorId 'PropertyAssignmentException'
+                }
+                foreach ($name in @('InstanceMethod', 'VirtualMethod1')) {
+                    { $c2.$name() } | Should -Throw -ErrorId 'MethodNotFound'
+                }
+            }
+            $c3UnrelatedType = Invoke-Expression @"
+                class C3Unrelated {
+                    [void]RunInstanceTest([type]`$derivedType) { $instanceTest }
+                }
+                [C3Unrelated]
+"@
+            $negativeTestCases = $testCases.ForEach({
+                    $item = $_.Clone()
+                    $item['scopeType'] = 'null scope'
+                    $item['classScope'] = $null
+                    $item
+                    $item = $_.Clone()
+                    $item['scopeType'] = 'unrelated class scope'
+                    $item['classScope'] = $c3UnrelatedType
+                    $item
+                })
         }
 
-        It 'cannot access <accessType> base static field' -TestCases $testCases {
-            param($derivedType)
-            { $null = $derivedType::StaticField } | Should -Throw -ErrorId 'PropertyNotFoundStrict'
-            { $derivedType::StaticField = 'C1_StaticField' } | Should -Throw -ErrorId 'PropertyAssignmentException'
-        }
-
-        It 'cannot access <accessType> base static property' -TestCases $testCases {
-            param($derivedType)
-            { $null = $derivedType::StaticProperty } | Should -Throw -ErrorId 'PropertyNotFoundStrict'
-            { $derivedType::StaticProperty = 'C1_StaticProperty' } | Should -Throw -ErrorId 'PropertyAssignmentException'
-        }
-
-        It 'cannot call <accessType> base static method' -TestCases $testCases {
-            param($derivedType)
-            { $derivedType::StaticMethod() } | Should -Throw -ErrorId 'MethodNotFound'
-        }
-
-        It 'cannot access <accessType> base instance field' -TestCases $testCases {
-            param($derivedType)
-            $c2 = $derivedType::new()
-            { $null = $c2.InstanceField } | Should -Throw -ErrorId 'PropertyNotFoundStrict'
-            { $c2.InstanceField = 'foo' } | Should -Throw -ErrorId 'PropertyAssignmentException'
-        }
-
-        It 'cannot access <accessType> base instance property' -TestCases $testCases {
-            param($derivedType)
-            $c2 = $derivedType::new()
-            { $null = $c2.InstanceProperty } | Should -Throw -ErrorId 'PropertyNotFoundStrict'
-            { $c2.InstanceProperty = 'foo' } | Should -Throw -ErrorId 'PropertyAssignmentException'
-        }
-
-        It 'cannot call <accessType> base instance method' -TestCases $testCases {
-            param($derivedType)
-            { $derivedType::new().InstanceMethod() } | Should -Throw -ErrorId 'MethodNotFound'
-        }
-
-        It 'cannot access <accessType> base virtual property' -TestCases $testCases {
-            param($derivedType)
-            $c2 = $derivedType::new()
-            { $null = $c2.VirtualProperty1 } | Should -Throw -ErrorId 'PropertyNotFoundStrict'
-            { $c2.VirtualProperty1 = 'foo' } | Should -Throw -ErrorId 'PropertyAssignmentException'
-        }
-
-        It 'cannot call <accessType> base virtual method' -TestCases $testCases {
-            param($derivedType)
-            { $derivedType::new().VirtualMethod1() } | Should -Throw -ErrorId 'MethodNotFound'
+        It 'cannot access <accessType> instance base members in <scopeType>' -TestCases $negativeTestCases {
+            param($derivedType, $classScope)
+            if ($null -eq $classScope) {
+                $instanceTest.Invoke()
+            }
+            else {
+                $c3 = $classScope::new()
+                $c3.RunInstanceTest($derivedType)
+            }
         }
     }
 }
