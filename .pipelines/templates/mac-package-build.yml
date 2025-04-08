@@ -147,36 +147,37 @@ jobs:
   - group: mscodehub-macos-package-signing
 
   steps:
-  - pwsh: |
-      Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
-    displayName: Capture environment
-  
-  - pwsh: |
-      New-Item -Path '$(Build.ArtifactStagingDirectory)/downloads' -ItemType Directory -Force
-    displayName: Create downloads directory
-  
+  - download: current
+    artifact: macos-pkgs
+
   - pwsh: |
       $buildArch = '${{ parameters.buildArchitecture }}'
       $macosRuntime = "osx-$buildArch"
-      $pkgNameFilter = "macos-pkgs/powershell-*$macosRuntime.pkg"
+      $pkgNameFilter = "powershell-*$macosRuntime.pkg"
+      $pkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $pkgNameFilter -Recurse -File
 
-      Write-Host "##vso[task.setvariable variable=pkgNameFilter]$pkgNameFilter"
-      Write-Host "Dynamic filter set to: $pkgNameFilter"
-    displayName: Set Dynamic Filter for Download
+      if ($pkgPath.Count -eq 0) {
+        throw "No package found for $macosRuntime"
+      }
 
-  - task: DownloadPipelineArtifact@2
-    inputs:
-      buildType: 'current'
-      artifact: macos-pkgs
-      itemPattern: '$(pkgNameFilter)'
-      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
-    displayName: Download MacOS packages
+      foreach($p in $pkgPath) {
+        $file = $p.FullName
+        $fileName = $p.BaseName
+        Write-Verbose -verbose "Compressing $file"
+        $zipFile = "$(Pipeline.Workspace)\${fileName}.zip"
+        Write-Verbose -Verbose "Zip file: $zipFile"
+        Compress-Archive -Path $file -Destination $zipFile
+      }
+
+      Write-Verbose -Verbose "Compressed files:"
+      Get-ChildItem -Path $(Pipeline.Workspace) -Filter "*.zip" -File | Write-Verbose -Verbose
+    displayName: Compress package files for signing
 
   - task: onebranch.pipeline.signing@1
     displayName: 'OneBranch CodeSigning Package'
     inputs:
       command: 'sign'
-      files_to_sign: '**/*.pkg'
+      files_to_sign: '**/*.zip'
       search_root: '$(Build.ArtifactStagingDirectory)/downloads/'
       inline_operation: |
         [
@@ -193,6 +194,22 @@ jobs:
         ]
 
   - pwsh: |
-      $pkgPath = Get-ChildItem -Path "$(Build.ArtifactStagingDirectory)/downloads" -Recurse -Filter "*.pkg" | Select-Object -ExpandProperty FullName
-      Write-Host "##vso[artifact.upload containerfolder=signed-macos-pkgs;artifactname=signed-macos-pkgs]$pkgPath"
-    displayName: Upload signed MacOS packages to Artifacts
+      $signedPkg = Get-ChildItem -Path $(Pipeline.Workspace) -Filter "*osx*.zip" -File
+  
+      $signedPkg | ForEach-Object {
+        Write-Verbose -Verbose "Signed package zip: $_"
+  
+        if (-not (Test-Path $_)) {
+          throw "Package not found: $_"
+        }
+  
+        if (-not (Test-Path $env:ob_outputDirectory)) {
+          $null = New-Item -Path $env:ob_outputDirectory -ItemType Directory
+        }
+
+        Expand-Archive -Path $_ -DestinationPath $env:ob_outputDirectory -Verbose
+      }
+
+      Write-Verbose -Verbose "Expanded pkg file:"
+      Get-ChildItem -Path $env:ob_outputDirectory | Write-Verbose -Verbose
+    displayName: Expand signed file
