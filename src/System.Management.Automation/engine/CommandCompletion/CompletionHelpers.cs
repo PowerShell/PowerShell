@@ -188,8 +188,7 @@ namespace System.Management.Automation
         }
 
         private static bool ContainsEscapedNewlineString(string text)
-            => text.Contains("`r`n", StringComparison.Ordinal) ||
-               text.Contains("`n", StringComparison.Ordinal);
+            => text.Contains("`n", StringComparison.Ordinal);
 
         private static bool ContainsCharsToCheck(ReadOnlySpan<char> text)
             => text.ContainsAny(s_defaultCharsToCheck);
