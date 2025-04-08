@@ -784,6 +784,17 @@ Describe 'Classes inheritance with protected and protected internal members in b
 
     Context 'Derived class can access instance base class members' {
 
+        It 'can call protected internal .NET method Object.MemberwiseClone()' {
+            class CNetMethod {
+                [string]$Foo
+                [object]CloneIt() { return $this.MemberwiseClone() }
+            }
+            $c1 = [CNetMethod]::new()
+            $c1.Foo = 'bar'
+            $c2 = $c1.CloneIt()
+            $c2.Foo | Should -Be 'bar'
+        }
+
         It 'can call <accessType> base ctor' -TestCases $testCases {
             param($derivedType)
             $derivedType::new('foo').CtorUsed | Should -Be 'C1_ctor_1args:foo'
