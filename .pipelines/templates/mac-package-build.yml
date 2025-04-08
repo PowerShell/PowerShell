@@ -177,7 +177,7 @@ jobs:
     displayName: 'OneBranch CodeSigning Package'
     inputs:
       command: 'sign'
-      files_to_sign: '**/*.zip'
+      files_to_sign: '**/*-osx-*.zip'
       search_root: '$(Pipeline.Workspace)'
       inline_operation: |
         [
