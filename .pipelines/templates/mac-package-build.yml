@@ -173,20 +173,11 @@ jobs:
       Get-ChildItem -Path $(Pipeline.Workspace) -Filter "*.zip" -File | Write-Verbose -Verbose
     displayName: Compress package files for signing
 
-  - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@5
-    displayName: 'ESRP CodeSigning'
-    inputs:
-      buildType: 'current'
-      artifact: macos-pkgs
-      itemPattern: '$(pkgNameFilter)'
-      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
-    displayName: Download MacOS packages
-
   - task: onebranch.pipeline.signing@1
     displayName: 'OneBranch CodeSigning Package'
     inputs:
       command: 'sign'
-      files_to_sign: '**/*.pkg'
+      files_to_sign: '**/*.zip'
       search_root: '$(Build.ArtifactStagingDirectory)/downloads/'
       inline_operation: |
         [
@@ -204,14 +195,14 @@ jobs:
 
   - pwsh: |
       $signedPkg = Get-ChildItem -Path $(Pipeline.Workspace) -Filter "*osx*.zip" -File
-
+  
       $signedPkg | ForEach-Object {
         Write-Verbose -Verbose "Signed package zip: $_"
-
+  
         if (-not (Test-Path $_)) {
           throw "Package not found: $_"
         }
-
+  
         if (-not (Test-Path $env:ob_outputDirectory)) {
           $null = New-Item -Path $env:ob_outputDirectory -ItemType Directory
         }
