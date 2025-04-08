@@ -41,7 +41,7 @@ namespace Microsoft.PowerShell.Commands.Utility
         /// Gets or sets the delimiter to join the output with.
         /// </summary>
         [Parameter(Position = 1)]
-        [ArgumentCompleter(typeof(JoinItemCompleter))]
+        [ArgumentCompleter(typeof(SeparatorArgumentCompleter))]
         [AllowEmptyString]
         public string Separator
         {
@@ -79,7 +79,7 @@ namespace Microsoft.PowerShell.Commands.Utility
         /// Gets or sets a format string that is applied to each input object.
         /// </summary>
         [Parameter(ParameterSetName = "Format")]
-        [ArgumentCompleter(typeof(JoinItemCompleter))]
+        [ArgumentCompleter(typeof(FormatStringArgumentCompleter))]
         public string FormatString { get; set; }
 
         /// <summary>
@@ -160,25 +160,11 @@ namespace Microsoft.PowerShell.Commands.Utility
         }
     }
 
-    [SuppressMessage(
-        "Microsoft.Performance",
-        "CA1812:AvoidUninstantiatedInternalClasses",
-        Justification = "Class is instantiated through late-bound reflection")]
-    internal class JoinItemCompleter : IArgumentCompleter
+    /// <summary>
+    /// Provides completion for the Separator parameter of the Join-String cmdlet.
+    /// </summary>
+    public class SeparatorArgumentCompleter : IArgumentCompleter
     {
-        private static readonly IReadOnlyList<string> s_formatStringValues = new List<string>
-        {
-            "[{0}]",
-            "{0:N2}",
-#if UNIX
-    "`n    `${0}",
-    "`n    [string] `${0}",
-#else
-    "`r`n    `${0}",
-    "`r`n    [string] `${0}",
-#endif
-        };
-
         private static readonly string NewLineText =
 #if UNIX
     "`n";
@@ -219,7 +205,7 @@ namespace Microsoft.PowerShell.Commands.Utility
                 : separator;
 
         /// <summary>
-        /// Returns completion results for PropertyType parameter.
+        /// Returns completion results for Separator parameter.
         /// </summary>
         /// <param name="commandName">The command name.</param>
         /// <param name="parameterName">The parameter name.</param>
@@ -233,24 +219,49 @@ namespace Microsoft.PowerShell.Commands.Utility
             string wordToComplete,
             CommandAst commandAst,
             IDictionary fakeBoundParameters)
+                => CompletionHelpers.GetMatchingResults(
+                    wordToComplete,
+                    possibleCompletionValues: s_separatorValues,
+                    listItemTextMapping: GetSeparatorListItemText,
+                    toolTipMapping: GetSeparatorToolTip,
+                    resultType: CompletionResultType.ParameterValue);
+    }
+
+    /// <summary>
+    /// Provides completion for the FormatString parameter of the Join-String cmdlet.
+    /// </summary>
+    public class FormatStringArgumentCompleter : IArgumentCompleter
+    {
+        private static readonly IReadOnlyList<string> s_formatStringValues = new List<string>
         {
-            switch (parameterName)
-            {
-                case "FormatString":
-                    return CompletionHelpers.GetMatchingResults(
-                        wordToComplete,
-                        possibleCompletionValues: s_formatStringValues);
+            "[{0}]",
+            "{0:N2}",
+#if UNIX
+    "`n    `${0}",
+    "`n    [string] `${0}",
+#else
+    "`r`n    `${0}",
+    "`r`n    [string] `${0}",
+#endif
+        };
 
-                case "Separator":
-                    return CompletionHelpers.GetMatchingResults(
-                        wordToComplete,
-                        possibleCompletionValues: s_separatorValues,
-                        listItemTextMapping: GetSeparatorListItemText,
-                        toolTipMapping: GetSeparatorToolTip,
-                        resultType: CompletionResultType.ParameterValue);
-            }
-
-            return Array.Empty<CompletionResult>();
-        }
+        /// <summary>
+        /// Returns completion results for FormatString parameter.
+        /// </summary>
+        /// <param name="commandName">The command name.</param>
+        /// <param name="parameterName">The parameter name.</param>
+        /// <param name="wordToComplete">The word to complete.</param>
+        /// <param name="commandAst">The command AST.</param>
+        /// <param name="fakeBoundParameters">The fake bound parameters.</param>
+        /// <returns>List of Completion Results.</returns>
+        public IEnumerable<CompletionResult> CompleteArgument(
+            string commandName,
+            string parameterName,
+            string wordToComplete,
+            CommandAst commandAst,
+            IDictionary fakeBoundParameters)
+                => CompletionHelpers.GetMatchingResults(
+                    wordToComplete,
+                    possibleCompletionValues: s_formatStringValues);
     }
 }
