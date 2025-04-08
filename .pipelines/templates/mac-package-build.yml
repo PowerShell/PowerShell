@@ -176,35 +176,31 @@ jobs:
   - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@5
     displayName: 'ESRP CodeSigning'
     inputs:
-      ConnectedServiceName: 'ESRPMacOSSigning'
-      AppRegistrationClientId: '$(AppRegistrationClientId)'
-      AppRegistrationTenantId: '$(AppRegistrationTenantId)'
-      AuthAKVName: 'pwsh-CICD-Keyvault'
-      AuthCertName: 'PS-macos-signing'
-      AuthSignCertName: 'ESRP-OneCert' # this is not needed for pkg signing
-      FolderPath: $(Pipeline.Workspace)
-      Pattern: '*.zip'
-      signConfigType: inlineSignParams
-      inlineOperation: |
-        [{
-            "KeyCode": "$(KeyCode)",
-            "OperationSetCode": "MacAppDeveloperSign",
-            "parameters": [
-            {
-                "parameterName": "hardening",
-                "parameterValue": "enable"
-            },
-            {
-                "parameterName": "OpusInfo",
-                "parameterValue": "http://Microsoft.com"
-            }
-            ],
+      buildType: 'current'
+      artifact: macos-pkgs
+      itemPattern: '$(pkgNameFilter)'
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
+    displayName: Download MacOS packages
+
+  - task: onebranch.pipeline.signing@1
+    displayName: 'OneBranch CodeSigning Package'
+    inputs:
+      command: 'sign'
+      files_to_sign: '**/*.pkg'
+      search_root: '$(Build.ArtifactStagingDirectory)/downloads/'
+      inline_operation: |
+        [
+          {
+            "KeyCode": "CP-401337-Apple",
+            "OperationCode": "MacAppDeveloperSign",
             "ToolName": "sign",
-            "ToolVersion": "1.0"
-        }]
-      SessionTimeout: 90
-      ServiceEndpointUrl: '$(ServiceEndpointUrl)'
-      MaxConcurrency: 25
+            "ToolVersion": "1.0",
+            "Parameters": {
+              "Hardening": "Enable",
+              "OpusInfo": "http://microsoft.com"
+            }
+          }
+        ]
 
   - pwsh: |
       $signedPkg = Get-ChildItem -Path $(Pipeline.Workspace) -Filter "*osx*.zip" -File
