@@ -178,7 +178,7 @@ jobs:
     inputs:
       command: 'sign'
       files_to_sign: '**/*.zip'
-      search_root: '$(Build.ArtifactStagingDirectory)/downloads/'
+      search_root: '$(Pipeline.Workspace)'
       inline_operation: |
         [
           {
