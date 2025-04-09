@@ -153,6 +153,9 @@
   <data name="OutputEncodingDescription" xml:space="preserve">
     <value>The text encoding used when piping text to a native executable file</value>
   </data>
+  <data name="PSApplicationOutputEncodingDescription" xml:space="preserve">
+    <value>The text encoding used when reading output text from a native executable file</value>
+  </data>
   <data name="PSStyleDescription" xml:space="preserve">
     <value>Configuration controlling how text is rendered.</value>
   </data>
