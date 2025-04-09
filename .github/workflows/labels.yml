@@ -18,11 +18,11 @@ jobs:
 
     steps:
     - name: Check out the repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Verify PR has label starting with 'cl-'
       id: verify-labels
-      uses: actions/github-script@v6
+      uses: actions/github-script@v7
       with:
         script: |
           const labels = context.payload.pull_request.labels.map(label => label.name.toLowerCase());

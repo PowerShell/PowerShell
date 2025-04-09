@@ -84,17 +84,6 @@ jobs:
     displayName: Capture Notice
     continueOnError: true
 
-  - powershell: |
-      [System.Net.ServicePointManager]::SecurityProtocol =
-        [System.Net.ServicePointManager]::SecurityProtocol -bor
-        [System.Security.Authentication.SslProtocols]::Tls12 -bor
-        [System.Security.Authentication.SslProtocols]::Tls11
-
-      Set-ItemProperty -Path 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\.NetFramework\v4.0.30319' -Name 'SchUseStrongCrypto' -Value '1' -Type DWord
-      Set-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\.NetFramework\v4.0.30319' -Name 'SchUseStrongCrypto' -Value '1' -Type DWord
-      Get-PackageProvider -Name NuGet -ForceBootstrap
-    displayName: Initalize PowerShellGet
-
   - task: AzurePowerShell@5
     displayName: Upload Notice
     inputs:
