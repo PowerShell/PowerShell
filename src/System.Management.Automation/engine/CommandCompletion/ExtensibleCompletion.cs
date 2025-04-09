@@ -200,38 +200,59 @@ namespace System.Management.Automation
         protected override void EndProcessing()
         {
             Dictionary<string, ScriptBlock> completerDictionary;
-            if (ParameterName != null)
+
+            if (ParameterName is null)
             {
-                completerDictionary = Context.CustomArgumentCompleters ??
-                                      (Context.CustomArgumentCompleters = new Dictionary<string, ScriptBlock>(StringComparer.OrdinalIgnoreCase));
+                completerDictionary = Context.NativeArgumentCompleters ??= new(StringComparer.OrdinalIgnoreCase);
+
+                foreach (string command in CommandName)
+                {
+                    var key = command?.Trim();
+                    if (string.IsNullOrEmpty(key))
+                    {
+                        continue;
+                    }
+
+                    SetKeyValue(completerDictionary, key, ScriptBlock);
+                }
             }
             else
             {
-                completerDictionary = Context.NativeArgumentCompleters ??
-                                      (Context.NativeArgumentCompleters = new Dictionary<string, ScriptBlock>(StringComparer.OrdinalIgnoreCase));
-            }
+                completerDictionary = Context.CustomArgumentCompleters ??= new(StringComparer.OrdinalIgnoreCase);
 
-            if (CommandName == null || CommandName.Length == 0)
-            {
-                CommandName = new[] { string.Empty };
-            }
-
-            for (int i = 0; i < CommandName.Length; i++)
-            {
-                var key = CommandName[i];
-                if (!string.IsNullOrWhiteSpace(ParameterName))
+                string paramName = ParameterName.Trim();
+                if (paramName.Length is 0)
                 {
-                    if (!string.IsNullOrWhiteSpace(key))
-                    {
-                        key = key + ":" + ParameterName;
-                    }
-                    else
-                    {
-                        key = ParameterName;
-                    }
+                    return;
                 }
 
-                completerDictionary[key] = ScriptBlock;
+                if (CommandName is null || CommandName.Length is 0)
+                {
+                    SetKeyValue(completerDictionary, paramName, ScriptBlock);
+                    return;
+                }
+
+                foreach (string command in CommandName)
+                {
+                    var key = command?.Trim();
+                    key = string.IsNullOrEmpty(key)
+                        ? paramName
+                        : $"{key}:{paramName}";
+
+                    SetKeyValue(completerDictionary, key, ScriptBlock);
+                }
+            }
+
+            static void SetKeyValue(Dictionary<string, ScriptBlock> table, string key, ScriptBlock value)
+            {
+                if (value is null)
+                {
+                    table.Remove(key);
+                }
+                else
+                {
+                    table[key] = value;
+                }
             }
         }
     }
