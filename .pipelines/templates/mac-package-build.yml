@@ -182,7 +182,7 @@ jobs:
       inline_operation: |
         [
           {
-            "KeyCode": "CP-401337-Apple",
+            "KeyCode": "$(KeyCode)",
             "OperationCode": "MacAppDeveloperSign",
             "ToolName": "sign",
             "ToolVersion": "1.0",
