@@ -69,6 +69,7 @@ jobs:
         & $makeappx bundle /d $sourceDir /p "$outputDir\$pkgName"
 
         Get-ChildItem -Path $sourceDir -Recurse
+        # "Uploading msixbundle to Artifacts
         $vstsCommandString = "vso[task.setvariable variable=BundleDir]$outputDir"
         Write-Host "sending " + $vstsCommandString
         Write-Host "##$vstsCommandString"
@@ -82,6 +83,16 @@ jobs:
         signing_profile: Dynamic-WINMSAPP1ST
         files_to_sign: '**/*.msixbundle'
         search_root: '$(BundleDir)'
+    
+    - pwsh: |
+        $signedBundle = Get-ChildItem -Path $(BundleDir) -Filter "*.msixbundle" -File
+        Write-Verbose -Verbose "Signed bundle: $signedBundle"
+
+        Copy-Item -Path $signedBundle -DestinationPath $(ob_outputDirectory) -Verbose
+
+        Write-Verbose -Verbose "Uploaded Bundle:"
+        Get-ChildItem -Path $(ob_outputDirectory) | Write-Verbose -Verbose
+      displayName: Upload msixbundle to Artifacts
 
     - task: AzurePowerShell@5
       displayName: Upload msix to blob
