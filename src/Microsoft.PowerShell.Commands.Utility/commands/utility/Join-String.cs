@@ -237,11 +237,11 @@ namespace Microsoft.PowerShell.Commands.Utility
             "[{0}]",
             "{0:N2}",
 #if UNIX
-    "`n    `${0}",
-    "`n    [string] `${0}",
+            "`n    `${0}",
+            "`n    [string] `${0}",
 #else
-    "`r`n    `${0}",
-    "`r`n    [string] `${0}",
+            "`r`n    `${0}",
+            "`r`n    [string] `${0}",
 #endif
         };
 
