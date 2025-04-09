@@ -47,39 +47,33 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Determines whether the given value matches the specified word or pattern.
+        /// Checks if the given value matches the specified word or pattern.
         /// </summary>
-        /// <param name="value">The input string to check for a match.</param>
-        /// <param name="wordToComplete">The word or partial word to compare against the input string.</param>
+        /// <param name="value">The input string to evaluate.</param>
+        /// <param name="wordToComplete">The word or pattern to compare against.</param>
         /// <returns>
-        /// Returns <c>true</c> if the value matches the wordToComplete or the generated wildcard pattern; otherwise, <c>false</c>.
+        /// <c>true</c> if the value matches the normalized word (case-insensitively) or the wildcard pattern; otherwise, <c>false</c>.
         /// </returns>
         /// <remarks>
-        /// The method performs the following checks:
-        /// 1. If the value contains escaped newline characters, the wordToComplete is normalized 
-        ///    and unescaped, and a case-insensitive prefix match is performed.
-        /// 2. If either the value or wordToComplete contains wildcard characters, a case-insensitive 
-        ///    prefix match is performed. This is to protect against issues in WildcardPatternParser.Parse()
-        ///    where strings like '[*' throw WildcardPatternException from wildcards not being escaped.
-        /// 3. If neither of the above conditions apply, a wildcard pattern is generated from the 
-        ///    wordToComplete, appending a wildcard character (*). The pattern is then used to match the value.
+        /// This method normalizes word to complete by replacing its line endings with backticks 
+        /// and unescaping special characters. 
+        /// It first does a a case-insensitive literal prefix match.
+        /// If the literal match fails, the input value is then evaluated against this case-insensitive wildcard pattern.
         /// </remarks>
         internal static bool IsMatch(string value, string wordToComplete)
         {
-            if (ContainsEscapedNewlineString(value))
+            string normalizedWord = WildcardPattern.Unescape(wordToComplete.ReplaceLineEndings("`"));
+
+            bool match = value.StartsWith(normalizedWord, StringComparison.OrdinalIgnoreCase);
+
+            if (!match)
             {
-                string normalizedWord = WildcardPattern.Unescape(wordToComplete.ReplaceLineEndings("`"));
-                return value.StartsWith(normalizedWord, StringComparison.OrdinalIgnoreCase);
-            }
-            else if (WildcardPattern.ContainsWildcardCharacters(value) ||
-                     WildcardPattern.ContainsWildcardCharacters(wordToComplete))
-            {
-                return value.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase);
+                match = WildcardPattern
+                    .Get(wordToComplete + "*", WildcardOptions.IgnoreCase)
+                    .IsMatch(value);
             }
 
-            return WildcardPattern
-                .Get(wordToComplete + "*", WildcardOptions.IgnoreCase)
-                .IsMatch(value);
+            return match;
         }
 
         /// <summary>
@@ -136,7 +130,7 @@ namespace System.Management.Automation
                 return quoteInUse;
             }
 
-            bool hasFrontQuoteAndNoBackQuote = 
+            bool hasFrontQuoteAndNoBackQuote =
                 (hasFrontSingleQuote || hasFrontDoubleQuote) && !hasBackSingleQuote && !hasBackDoubleQuote;
 
             if (hasFrontQuoteAndNoBackQuote)
