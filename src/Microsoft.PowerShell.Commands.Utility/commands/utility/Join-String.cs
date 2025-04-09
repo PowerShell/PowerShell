@@ -167,9 +167,9 @@ namespace Microsoft.PowerShell.Commands.Utility
     {
         private static readonly string NewLineText =
 #if UNIX
-    "`n";
+        "`n";
 #else
-    "`r`n";
+        "`r`n";
 #endif
 
         private static readonly IReadOnlyList<string> s_separatorValues = new List<string>
