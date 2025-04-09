@@ -203,13 +203,13 @@ jobs:
           throw "Package not found: $_"
         }
   
-        if (-not (Test-Path $env:ob_outputDirectory)) {
-          $null = New-Item -Path $env:ob_outputDirectory -ItemType Directory
+        if (-not (Test-Path $(ob_outputDirectory))) {
+          $null = New-Item -Path $(ob_outputDirectory) -ItemType Directory
         }
 
-        Expand-Archive -Path $_ -DestinationPath $env:ob_outputDirectory -Verbose
+        Expand-Archive -Path $_ -DestinationPath $(ob_outputDirectory) -Verbose
       }
 
       Write-Verbose -Verbose "Expanded pkg file:"
-      Get-ChildItem -Path $env:ob_outputDirectory | Write-Verbose -Verbose
+      Get-ChildItem -Path $(ob_outputDirectory) | Write-Verbose -Verbose
     displayName: Expand signed file
