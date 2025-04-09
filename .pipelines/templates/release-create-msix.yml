@@ -88,7 +88,7 @@ jobs:
         $signedBundle = Get-ChildItem -Path $(BundleDir) -Filter "*.msixbundle" -File
         Write-Verbose -Verbose "Signed bundle: $signedBundle"
 
-        Copy-Item -Path $signedBundle -DestinationPath $(ob_outputDirectory) -Verbose
+        Copy-Item -Path $signedBundle -Destination $(ob_outputDirectory) -Verbose
 
         Write-Verbose -Verbose "Uploaded Bundle:"
         Get-ChildItem -Path $(ob_outputDirectory) | Write-Verbose -Verbose
