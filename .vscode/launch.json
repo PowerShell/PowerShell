@@ -5,11 +5,10 @@
             "name": ".NET Core Launch",
             "type": "coreclr",
             "request": "launch",
-            "justMyCode": false,
-            "stopAtEntry": true,
             "program": "${workspaceRoot}/debug/pwsh",
+            "console": "integratedTerminal",
+            "justMyCode": false,
             "preLaunchTask": "Build",
-            "externalConsole": true,
             "cwd": "${workspaceRoot}"
         },
         {
