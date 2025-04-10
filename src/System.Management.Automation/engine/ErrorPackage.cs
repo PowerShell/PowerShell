@@ -1571,6 +1571,18 @@ namespace System.Management.Automation
 
                 _pipelineIterationInfo = new ReadOnlyCollection<int>(snapshot);
             }
+
+            //
+            // Add BoundParameters and UnboundArguments to this ErrorRecord's InvocationInfo
+            //
+            if (invocationInfo != null && invocationInfo.BoundParameters != null)
+            {
+                _invocationInfo.BoundParameters = invocationInfo.BoundParameters;
+            }
+            if (invocationInfo != null && invocationInfo.UnboundArguments != null)
+            {
+                _invocationInfo.UnboundArguments = invocationInfo.UnboundArguments;
+            }
         }
 
         // 2005/07/14-913791 "write-error output is confusing and misleading"
