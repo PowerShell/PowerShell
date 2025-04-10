@@ -204,8 +204,10 @@ extends:
           displayName: 'Validate Linux ARM64 Fxd Packages'
           jobtype: 'linux'
           artifactName: 'drop_linux_package_fxdependent'
+          # this is really an architecture independent package
           packageNamePattern: '**/*linux-x64-fxdependent.tar.gz'
           arm64: 'yes'
+          enableCredScan: false
 
     - stage: validatePackages
       displayName: 'Validate Packages'
@@ -333,9 +335,12 @@ extends:
       displayName: Publish PMC
       dependsOn: PushGitTagAndMakeDraftPublic
       jobs:
-      - template: /.pipelines/templates/release-publish-pmc.yml@self
+      - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
-          skipPublish: ${{ parameters.SkipPMCPublish }}
+          displayName: Publish to PMC
+          jobName: ReleaseToPMC
+          instructions: |
+            Run PowerShell-Release-Official-Azure.yml pipeline to publish to PMC
 
     - stage: ReleaseDocker
       dependsOn: PushGitTagAndMakeDraftPublic
@@ -343,15 +348,7 @@ extends:
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
-          displayName: Start Docker Build
-          jobName: StartDockerBuild
-          instructions: |
-            Kick off Docker build
-
-      - template: /.pipelines/templates/approvalJob.yml@self
-        parameters:
           displayName: Start Docker Release
-          dependsOnJob: StartDockerBuild
           jobName: StartDockerRelease
           instructions: |
             Kickoff docker release
