@@ -59,6 +59,8 @@ namespace System.Management.Automation
         /// and unescaping special characters. 
         /// It first does a a case-insensitive literal prefix match.
         /// If the literal match fails, the input value is then evaluated against this case-insensitive wildcard pattern.
+        /// To prevent any exceptions when constructing wildcard pattern with existing wildcard characters,
+        /// the word to complete is normalized by escaping wildcard characters first.
         /// </remarks>
         internal static bool IsMatch(string value, string wordToComplete)
         {
@@ -68,8 +70,10 @@ namespace System.Management.Automation
 
             if (!match)
             {
+                normalizedWord = WildcardPattern.Escape(wordToComplete);
+
                 match = WildcardPattern
-                    .Get(wordToComplete + "*", WildcardOptions.IgnoreCase)
+                    .Get(normalizedWord + "*", WildcardOptions.IgnoreCase)
                     .IsMatch(value);
             }
 
