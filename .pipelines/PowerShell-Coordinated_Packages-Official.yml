@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-name: UnifiedPackageBuild-$(Build.BuildId)
-=======
 name: bins-$(BUILD.SOURCEBRANCHNAME)-$(Build.BuildId)
->>>>>>> cdbee9104 (Give the pipeline runs meaningful names (#24987))
 trigger: none
 
 parameters:
