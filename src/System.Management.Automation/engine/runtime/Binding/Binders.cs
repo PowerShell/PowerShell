@@ -6958,8 +6958,6 @@ namespace System.Management.Automation.Language
                             args.Select(static e => e.Expression.Cast(typeof(object))))),
                     expr);
 
-=======
->>>>>>> a6005f387 (Move .NET method invocation logging to after the needed type conversion is done for method arguments (#25022))
                 // If we're calling SteppablePipeline.{Begin|Process|End}, we don't want
                 // to wrap exceptions - this is very much a special case to help error
                 // propagation and ensure errors are attributed to the correct code (the
