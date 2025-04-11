@@ -117,10 +117,10 @@ extends:
       tsaOptionsFile: .config\tsaoptions.json
 
     stages:
-    - stage: setReleaseTagAndUploadTools
+    - stage: setReleaseTagAndChangelog
       displayName: 'Set Release Tag and Upload Tools'
       jobs:
-      - template: /.pipelines/templates/release-SetTagAndTools.yml@self
+      - template: /.pipelines/templates/release-SetTagAndChangelog.yml@self
 
     - stage: msixbundle
       displayName: 'Create MSIX Bundle'
@@ -284,7 +284,7 @@ extends:
     - stage: PublishGitHubReleaseAndNuget
       displayName: Publish GitHub and Nuget Release
       dependsOn: 
-        - setReleaseTagAndUploadTools
+        - setReleaseTagAndChangelog
         - UpdateChangeLog
       variables:
         ob_release_environment: Production
