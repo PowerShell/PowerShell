@@ -294,7 +294,7 @@ extends:
 
     - stage: PushGitTagAndMakeDraftPublic
       displayName: Push Git Tag and Make Draft Public
-      dependsOn: PublishGitHubRelease
+      dependsOn: PublishGitHubReleaseAndNuget
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
