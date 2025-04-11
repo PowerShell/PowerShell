@@ -13,12 +13,14 @@ jobs:
   templateContext:
     inputs:
       - input: pipelineArtifact
+        artifactName: drop_setReleaseTagAndChangelog_SetTagAndChangelog
+      - input: pipelineArtifact
         pipeline: PSPackagesOfficial
         artifactName: drop_upload_upload_packages
   variables:
     - template: ./variable/release-shared.yml@self
       parameters:
-        RELEASETAG: $[ stageDependencies.setReleaseTagAndUploadTools.SetTagAndTools.outputs['OutputReleaseTag.releaseTag'] ]
+        RELEASETAG: $[ stageDependencies.setReleaseTagAndChangelog.setTagAndChangelog.outputs['OutputReleaseTag.releaseTag'] ]
 
   steps:
   - task: PowerShell@2
@@ -120,7 +122,7 @@ jobs:
   variables:
   - template: ./variable/release-shared.yml@self
     parameters:
-      VERSION: $[ stageDependencies.setReleaseTagAndUploadTools.SetTagAndTools.outputs['OutputVersion.Version'] ]
+      VERSION: $[ stageDependencies.setReleaseTagAndChangelog.SetTagAndChangelog.outputs['OutputVersion.Version'] ]
 
   steps:
   - template: release-install-pwsh.yml
