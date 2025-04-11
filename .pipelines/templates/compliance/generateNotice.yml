@@ -95,29 +95,6 @@ jobs:
       Get-PackageProvider -Name NuGet -ForceBootstrap
     displayName: Initalize PowerShellGet
 
-  - powershell: |
-      $modules = 'Az.Accounts', 'Az.Storage'
-      foreach($module in $modules) {
-        if(!(get-module $module -listavailable)) {
-          Write-Verbose "installing $module..." -verbose
-          Install-Module $module -force -AllowClobber
-        } else {
-          Write-Verbose "$module already installed." -verbose
-          #Update-Module $module -verbose
-        }
-      }
-    displayName: Install PowerShell modules
-
-  - powershell: |
-      if(Get-Command -Name Uninstall-AzureRm -ErrorAction Ignore){
-        Write-Verbose "running Uninstall-AzureRm" -verbose
-        Uninstall-AzureRm
-      } else {
-        Write-Verbose "Uninstall-AzureRm not present" -verbose
-      }
-    displayName: Uninstall Uninstall-AzureRm
-    continueOnError: true
-
   - task: AzurePowerShell@5
     displayName: Upload Notice
     inputs:
