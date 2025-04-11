@@ -27,7 +27,7 @@ jobs:
       artifact: drop_windows_package_package_win_x86
       displayName: Download x86 msix
       patterns: '**/*.msix'
-
+    
     # Finds the makeappx tool on the machine with image: 'onebranch.azurecr.io/windows/ltsc2022/vse2022:latest'
     - pwsh: |
         $cmd = Get-Command makeappx.exe -ErrorAction Ignore
