@@ -99,7 +99,7 @@ jobs:
 
   - task: GitHubRelease@1
     inputs:
-      gitHubConnection: 'GitHubRelease'
+      gitHubConnection: PowerShell
       action: 'create'
       tag: '$(ReleaseTag)'
       releaseNotesInline: '$(ReleaseNotes)'
