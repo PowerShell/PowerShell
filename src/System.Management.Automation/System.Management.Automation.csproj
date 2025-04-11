@@ -49,12 +49,8 @@
     <PackageReference Include="Microsoft.Management.Infrastructure" Version="3.0.0" />
     <PackageReference Include="Microsoft.PowerShell.Native" Version="7.4.0" />
     <!-- Signing APIs -->
-<<<<<<< HEAD
-    <PackageReference Include="Microsoft.Security.Extensions" Version="1.3.0" />
-    <PackageReference Include="System.Windows.Extensions" Version="9.0.3" />
-=======
     <PackageReference Include="Microsoft.Security.Extensions" Version="1.4.0" />
->>>>>>> 848dccf63 (Update security extensions (#25021))
+    <PackageReference Include="System.Windows.Extensions" Version="9.0.3" />
   </ItemGroup>
 
   <PropertyGroup>
