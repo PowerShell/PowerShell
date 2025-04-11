@@ -290,7 +290,7 @@ extends:
       jobs:
       - template: /.pipelines/templates/release-githubNuget.yml@self
         parameters:
-          SkipPublish: ${{ parameters.SkipPublish }}
+          skipPublish: ${{ parameters.SkipPublish }}
 
     - stage: PushGitTagAndMakeDraftPublic
       displayName: Push Git Tag and Make Draft Public

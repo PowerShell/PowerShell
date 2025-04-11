@@ -1,6 +1,5 @@
 parameters:
   - name: skipPublish
-    default: false
     type: boolean
 
 jobs:
