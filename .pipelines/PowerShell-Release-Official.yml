@@ -422,17 +422,6 @@ extends:
           instructions: |
             Make sure that changes README.md and metadata.json are merged into master on GitHub.
 
-    - stage: ReleaseSnap
-      displayName: Release Snap
-      dependsOn: ChangesToMaster
-      jobs:
-      - template: /.pipelines/templates/approvalJob.yml@self
-        parameters:
-          displayName: Publish Snap
-          jobName: PublishSnapJob
-          instructions: |
-            Publish Snap
-
     - stage: ReleaseToMU
       displayName: Release to MU
       dependsOn: PushGitTagAndMakeDraftPublic # This only needs the blob to be available
@@ -448,7 +437,6 @@ extends:
       dependsOn: 
         - ReleaseToMU
         - ReleaseSymbols
-        - ReleaseSnap
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
