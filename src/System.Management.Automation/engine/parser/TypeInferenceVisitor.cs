@@ -3039,7 +3039,13 @@ namespace System.Management.Automation
                         : AstVisitAction.StopVisit;
                 }
 
-                if (assignmentStatementAst.Left is AttributedExpressionAst attributedExpression)
+                ProcessAssignmentLeftSide(assignmentStatementAst.Left, assignmentStatementAst.Right, enumerate: false);
+                return AstVisitAction.Continue;
+            }
+
+            private void ProcessAssignmentLeftSide(ExpressionAst left, StatementAst right, bool enumerate = false)
+            {
+                if (left is AttributedExpressionAst attributedExpression)
                 {
                     var firstConvertExpression = attributedExpression as ConvertExpressionAst;
                     ExpressionAst child = attributedExpression.Child;
@@ -3063,16 +3069,32 @@ namespace System.Management.Automation
                         }
                         else
                         {
-                            SetLastAssignment(assignmentStatementAst.Right);
+                            SetLastAssignment(right, enumerate);
                         }
                     }
                 }
-                else if (assignmentStatementAst.Left is VariableExpressionAst variableExpression && AssignsToTargetVar(variableExpression))
+                else if (left is VariableExpressionAst variableExpression && AssignsToTargetVar(variableExpression))
                 {
-                    SetLastAssignment(assignmentStatementAst.Right);
+                    SetLastAssignment(right, enumerate);
                 }
-
-                return AstVisitAction.Continue;
+                else if (left is ArrayLiteralAst array)
+                {
+                    for (int i = 0; i < array.Elements.Count; i++)
+                    {
+                        // When assigning to multiple variables like: $Var1, $Var2 = gci C:\
+                        // The first variables get each individual item, and the last variable get the remaining items.
+                        // So for type inference we make sure to enumerate the collection inferred type when needed.
+                        ProcessAssignmentLeftSide(array.Elements[i], right, enumerate: i != array.Elements.Count - 1);
+                    }
+                }
+                else if (left is ParenExpressionAst parenExpression)
+                {
+                    ExpressionAst pureExpression = parenExpression.Pipeline.GetPureExpression();
+                    if (pureExpression is not null)
+                    {
+                        ProcessAssignmentLeftSide(pureExpression, right, enumerate);
+                    }
+                }
             }
 
             public override AstVisitAction VisitCommand(CommandAst commandAst)
