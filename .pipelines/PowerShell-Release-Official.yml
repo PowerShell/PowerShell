@@ -17,8 +17,8 @@ parameters: # parameters are shown up in ADO UI in a build queue time
     displayName: Skip Signing
     type: string
     default: 'NO'
-  - name: SkipPMCPublish
-    displayName: Skip PMC Publish
+  - name: SkipPublish
+    displayName: Skip Publishing to GitHub and Nuget
     type: boolean
     default: false
   - name: SkipPSInfraInstallers
@@ -83,7 +83,7 @@ resources:
             - releases/*
 
 extends:
-  template: v2/OneBranch.Official.CrossPlat.yml@templates
+  template: v2/OneBranch.NonOfficial.CrossPlat.yml@templates
   parameters:
     release: 
       category: NonAzure
@@ -280,16 +280,18 @@ extends:
             Update and merge the changelog for the release.
             This step is required for creating GitHub draft release.
 
-    - stage: PublishGitHubRelease
-      displayName: Publish GitHub Release
+    - stage: PublishGitHubReleaseAndNuget
+      displayName: Publish GitHub and Nuget Release
       dependsOn: 
         - setReleaseTagAndUploadTools
         - UpdateChangeLog
       variables:
-        ob_release_environment: Production
+        ob_release_environment: Test
       jobs:
-      - template: /.pipelines/templates/release-githubtasks.yml@self
-    
+      - template: /.pipelines/templates/release-githubNuget.yml@self
+        parameters:
+          SkipPublish: ${{ parameters.SkipPublish }}
+
     - stage: PushGitTagAndMakeDraftPublic
       displayName: Push Git Tag and Make Draft Public
       dependsOn: PublishGitHubRelease
@@ -317,19 +319,7 @@ extends:
       jobs:
       - template: /.pipelines/templates/release-MakeBlobPublic.yml@self
         parameters:
-          SkipPSInfraInstallers: ${{ parameters.SkipPSInfraInstallers }}         
-  
-    - stage: PublishNuGet
-      displayName: Publish NuGet
-      dependsOn:
-        - setReleaseTagAndUploadTools
-        - PushGitTagAndMakeDraftPublic
-      variables:
-        ob_release_environment: Production
-      jobs:
-      - template: /.pipelines/templates/release-publish-nuget.yml@self
-        parameters:
-          skipPublish: true
+          SkipPSInfraInstallers: ${{ parameters.SkipPSInfraInstallers }}
 
     - stage: PublishPMC
       displayName: Publish PMC
@@ -423,7 +413,6 @@ extends:
     - stage: ChangesToMaster
       displayName: Ensure changes are in GH master
       dependsOn: 
-        - PublishNuGet 
         - PublishPMC
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
