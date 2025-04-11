@@ -103,7 +103,6 @@ jobs:
     inputs:
       gitHubConnection: PowerShell
       action: 'create'
-      tag: '$(ReleaseTag)'
       releaseNotesInline: '$(ReleaseNotes)'
       isDraft: true
       isPrerelease: '$(IsPreRelease)'
