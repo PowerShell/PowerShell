@@ -7597,8 +7597,6 @@ namespace System.Management.Automation.Language
             }
         }
 
-<<<<<<< HEAD
-=======
 #nullable enable
         private static Expression AddMemberInvocationLogging(
             Expression expr,
@@ -7648,7 +7646,6 @@ namespace System.Management.Automation.Language
         }
 #nullable disable
 
->>>>>>> a6005f387 (Move .NET method invocation logging to after the needed type conversion is done for method arguments (#25022))
         #endregion
     }
 
