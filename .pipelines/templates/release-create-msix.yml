@@ -27,12 +27,8 @@ jobs:
       artifact: drop_windows_package_package_win_x86
       displayName: Download x86 msix
       patterns: '**/*.msix'
-<<<<<<< HEAD
-
-=======
     
     # Finds the makeappx tool on the machine with image: 'onebranch.azurecr.io/windows/ltsc2022/vse2022:latest'
->>>>>>> 4bc918ba5 (Remove Az module installs and AzureRM uninstalls in pipeline (#25118))
     - pwsh: |
         $cmd = Get-Command makeappx.exe -ErrorAction Ignore
         if ($cmd) {
