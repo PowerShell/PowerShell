@@ -18,36 +18,39 @@ inputs:
 runs:
   using: composite
   steps:
-  - name: Convert JUnit to CTRF
-    run: |-
-      Get-ChildItem -Path "${{ inputs.testResultsFolder }}/*.xml" -Recurse | ForEach-Object {
-        npx --yes junit-to-ctrf $_.FullName --output ./${{ inputs.ctrfFolder }}/$($_.BaseName).json --tool Pester
+  - name: Log Summary
+    run: |
+      if (-not $env:GITHUB_STEP_SUMMARY) {
+        Write-Error "GITHUB_STEP_SUMMARY is not set. Ensure this workflow is running in a GitHub Actions environment."
+        exit 1
       }
-    shell: pwsh
 
-  # this task only takes / as directory separators
-  - name: Publish Test Report
-    uses: ctrf-io/github-test-reporter@v1
-    with:
-      report-path: './${{ inputs.ctrfFolder }}/*.json'
-      exit-on-fail: true
-      summary-report: true
-      test-report: false
-      test-list-report: false
-      failed-report: false
-      fail-rate-report: false
-      flaky-report: false
-      flaky-rate-report: false
-      failed-folded-report: true
-      previous-results-report: false
-      ai-report: true
-      skipped-report: false
-      suite-folded-report: false
-      suite-list-report: false
-      pull-request-report: false
-      commit-report: false
-      custom-report: false
-    if: always()
+      $testCaseCount = 0
+      $testErrorCount = 0
+      $testFailureCount = 0
+      $testDisabledCount = 0
+      Get-ChildItem -Path "${{ inputs.testResultsFolder }}/*.xml" -Recurse | ForEach-Object {
+        $results = [xml] (get-content $_.FullName)
+        $testCaseCount += $results.testsuites.tests
+        $testErrorCount += $results.testsuites.errors
+        $testFailureCount += $results.testsuites.failures
+        $testDisabledCount += $results.testsuites.disabled
+      }
+
+      @"
+
+      # Summary of ${{ inputs.name }}
+
+      - Total Tests: $testCaseCount
+      - Total Errors: $testErrorCount
+      - Total Failures: $testFailureCount
+      - Total Disabled: $testDisabledCount
+
+      "@ | Out-File -FilePath $ENV:GITHUB_STEP_SUMMARY -Append
+
+      Write-Host "Summary written to $ENV:GITHUB_STEP_SUMMARY"
+      Get-Content $ENV:GITHUB_STEP_SUMMARY
+    shell: pwsh
 
   - name: Upload testResults artifact
     if: always()
@@ -55,10 +58,3 @@ runs:
     with:
       name: junit-pester-${{ inputs.name }}
       path: ${{ runner.workspace }}/testResults
-
-  - name: Upload ctrf artifact
-    if: always()
-    uses: actions/upload-artifact@v4
-    with:
-      name: ctrf-pester-${{ inputs.name }}
-      path: ${{ inputs.ctrfFolder }}
