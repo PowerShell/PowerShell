@@ -13,8 +13,6 @@ jobs:
   templateContext:
     inputs:
       - input: pipelineArtifact
-        artifactName: drop_setReleaseTagAndUploadTools_SetTagAndTools
-      - input: pipelineArtifact
         pipeline: PSPackagesOfficial
         artifactName: drop_upload_upload_packages
   variables:
@@ -63,12 +61,10 @@ jobs:
     displayName: List all files in the workspace
 
   - task: PowerShell@2
-    condition: and(ne('${{ parameters.skipPublish }}', 'false'), succeeded())
     inputs:
       targetType: inline
       pwsh: true
       script: |
-        Import-module '$(Pipeline.Workspace)/ToolArtifact/GitHubRelease.psm1'
         $releaseVersion = '$(ReleaseTag)' -replace '^v',''
         Write-Verbose -Verbose "Available modules: "
         Get-Module | Write-Verbose -Verbose
@@ -89,9 +85,26 @@ jobs:
         $clContent = $changelog | Select-Object -Skip ($startLine-1) -First ($endLine - $startLine) | Out-String
   
         Write-Verbose -Verbose "Selected content: `n$clContent"
-  
-        Publish-ReleaseDraft -Tag '$(ReleaseTag)' -Name '$(ReleaseTag) Release of PowerShell' -Description $clContent -User PowerShell -Repository PowerShell  -PackageFolder "$(Pipeline.Workspace)/GitHubPackages" -Token $(GitHubReleasePat)
-    displayName: Publish Release Draft
+
+        #upload clContent as a variable
+        Write-Host "##vso[task.setvariable variable=ReleaseNotes;]$clContent"
+
+        #if name has prelease then make preelease true as a variable
+        if ($releaseVersion -like '*-preview*') {
+            Write-Host "##vso[task.setvariable variable=IsPreRelease;]true"
+        } else {
+            Write-Host "##vso[task.setvariable variable=IsPreRelease;]false"
+        }
+    displayName: Set variables for GitHub release task
+
+  - task: GitHubRelease@1
+    inputs:
+      gitHubConnection: 'GitHubRelease'
+      action: 'create'
+      tag: '$(ReleaseTag)'
+      releaseNotesInline: '$(ReleaseNotes)'
+      isDraft: true
+      isPrerelease: '$(IsPreRelease)'
 
 - job: NuGetPublish
   displayName: Publish to NuGet
@@ -101,8 +114,6 @@ jobs:
     os: windows
   templateContext:
     inputs:
-      - input: pipelineArtifact
-        artifactName: drop_setReleaseTagAndUploadTools_SetTagAndTools
       - input: pipelineArtifact
         pipeline: PSPackagesOfficial
         artifactName: drop_upload_upload_packages
@@ -137,12 +148,12 @@ jobs:
     displayName: Download and capture nupkgs
     condition: and(ne('${{ parameters.skipPublish }}', 'false'), succeeded())
 
-  - task: NuGetCommand@2
-    displayName: 'NuGet push'
-    condition: and(ne('${{ parameters.skipPublish }}', 'false'), succeeded())
-    inputs:
-      command: push
-      packagesToPush: '$(Pipeline.Workspace)/release/*.nupkg'
-      nuGetFeedType: external
-      publishFeedCredentials: PowerShellNuGetOrgPush
+  #- task: NuGetCommand@2
+  #  displayName: 'NuGet push'
+  #  condition: and(ne('${{ parameters.skipPublish }}', 'false'), succeeded())
+  #  inputs:
+  #    command: push
+  #    packagesToPush: '$(Pipeline.Workspace)/release/*.nupkg'
+  #    nuGetFeedType: external
+  #    publishFeedCredentials: PowerShellNuGetOrgPush
   
