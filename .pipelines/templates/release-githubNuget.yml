@@ -144,4 +144,3 @@ jobs:
       packagesToPush: '$(Pipeline.Workspace)/release/*.nupkg'
       nuGetFeedType: external
       publishFeedCredentials: PowerShellNuGetOrgPush
-  
