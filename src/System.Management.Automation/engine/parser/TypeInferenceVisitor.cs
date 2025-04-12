@@ -3043,7 +3043,7 @@ namespace System.Management.Automation
                 return AstVisitAction.Continue;
             }
 
-            private void ProcessAssignmentLeftSide(ExpressionAst left, StatementAst right, bool enumerate = false)
+            private void ProcessAssignmentLeftSide(ExpressionAst left, Ast right, bool enumerate = false)
             {
                 if (left is AttributedExpressionAst attributedExpression)
                 {
@@ -3077,14 +3077,36 @@ namespace System.Management.Automation
                 {
                     SetLastAssignment(right, enumerate);
                 }
-                else if (left is ArrayLiteralAst array)
+                else if (left is ArrayLiteralAst leftArray)
                 {
-                    for (int i = 0; i < array.Elements.Count; i++)
+                    if (right is CommandExpressionAst cmdExp && cmdExp.Expression is ArrayLiteralAst rightArray)
+                    {
+                        // The user is assigning an array literal to an array of variables like so: $Var1, $Var2 = 1, 2
+                        // Each element of the right array will be assigned to the corresponding variable on the left.
+                        // If there are fewer elements on the left side, the remaining elements on the right will all be assigned to the last variable.
+                        // If there are fewer elements on the right side, the remaining variables on the left will be null.
+                        for (int i = 0; i < leftArray.Elements.Count; i++)
+                        {
+                            if (i < rightArray.Elements.Count)
+                            {
+                                // If it's the last element on the left, and not on the right, the remaining values on the right will be stuffed into the last variable.
+                                Ast rightSideToProcess = i == leftArray.Elements.Count - 1 && i != rightArray.Elements.Count - 1
+                                    ? rightArray
+                                    : rightArray.Elements[i];
+
+                                ProcessAssignmentLeftSide(leftArray.Elements[i], rightSideToProcess, enumerate: false);
+                            }
+                        }
+
+                        return;
+                    }
+
+                    for (int i = 0; i < leftArray.Elements.Count; i++)
                     {
                         // When assigning to multiple variables like: $Var1, $Var2 = gci C:\
                         // The first variables get each individual item, and the last variable get the remaining items.
                         // So for type inference we make sure to enumerate the collection inferred type when needed.
-                        ProcessAssignmentLeftSide(array.Elements[i], right, enumerate: i != array.Elements.Count - 1);
+                        ProcessAssignmentLeftSide(leftArray.Elements[i], right, enumerate: i != leftArray.Elements.Count - 1);
                     }
                 }
                 else if (left is ParenExpressionAst parenExpression)

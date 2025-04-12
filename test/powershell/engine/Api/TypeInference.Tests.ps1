@@ -391,6 +391,47 @@ Describe "Type inference Tests" -tags "CI" {
         $res2.Name | Should -Be 'System.String[]'
     }
 
+    It "Infers type from variable assignment to array literal with mixed types" {
+        $Asts = {
+            $TestVar1, $TestVar2 = "s1", [guid]::Empty
+            $TestVar1
+            $TestVar2
+        }.Ast.FindAll({param($ast) $ast -is [Language.VariableExpressionAst]}, $true) | Select-Object -Last 2
+        $res1 = [AstTypeInference]::InferTypeOf($Asts[0])
+        $res1.Count | Should -Be 1
+        $res1.Name | Should -Be 'System.String'
+
+        $res2 = [AstTypeInference]::InferTypeOf($Asts[1])
+        $res2.Count | Should -Be 1
+        $res2.Name | Should -Be 'System.Guid'
+    }
+
+    It "Infers type from variable assignment to array literal with mixed types with fallback to Object[] when more on RHS" {
+        $Asts = {
+            $TestVar1, $TestVar2 = "s1", [guid]::Empty, 1
+            $TestVar1
+            $TestVar2
+        }.Ast.FindAll({param($ast) $ast -is [Language.VariableExpressionAst]}, $true) | Select-Object -Last 2
+        $res1 = [AstTypeInference]::InferTypeOf($Asts[0])
+        $res1.Count | Should -Be 1
+        $res1.Name | Should -Be 'System.String'
+
+        $res2 = [AstTypeInference]::InferTypeOf($Asts[1])
+        $res2.Count | Should -Be 1
+        $res2.Name | Should -Be 'System.Object[]'
+    }
+
+    It "Infers type from variable assignment to array literal with mixed types with fallback to null when more on LHS" {
+        $Asts = {
+            $TestVar1, $TestVar2, $TestVar3 = "s1", [guid]::Empty
+            $TestVar1
+            $TestVar2
+            $TestVar3
+        }.Ast.FindAll({param($ast) $ast -is [Language.VariableExpressionAst]}, $true) | Select-Object -Last 1
+        $res1 = [AstTypeInference]::InferTypeOf($Asts)
+        $res1.Count | Should -Be 0
+    }
+
     It "Infers type from instance member property" {
         $res = [AstTypeInference]::InferTypeOf( { 'Text'.Length }.Ast)
         $res.Count | Should -Be 1
