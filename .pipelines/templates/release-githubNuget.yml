@@ -101,9 +101,15 @@ jobs:
   - task: GitHubRelease@1
     inputs:
       gitHubConnection: PowerShell
+      repositoryName: PowerShell/PowerShell
+      target: $ENV:BUILD_SOURCEBRANCH
+      assets: '$(Pipeline.Workspace)/GitHubPackages/*'
+      tagSource: 'userSpecified'
+      tag: '$(ReleaseTag)'
+      isDraft: true
+      addChangeLog: false
       action: 'create'
       releaseNotesInline: '$(ReleaseNotes)'
-      isDraft: true
       isPrerelease: '$(IsPreRelease)'
 
 - job: NuGetPublish
