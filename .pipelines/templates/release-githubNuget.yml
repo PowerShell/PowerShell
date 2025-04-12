@@ -107,7 +107,7 @@ jobs:
 
   - task: GitHubRelease@1
     inputs:
-      gitHubConnection: $(GitHubReleasePat)
+      gitHubConnection: GitHubReleasePAT
       repositoryName: PowerShell/PowerShell
       target: $ENV:BUILD_SOURCEBRANCH
       assets: '$(Pipeline.Workspace)/GitHubPackages/*'
