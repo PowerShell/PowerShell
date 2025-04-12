@@ -150,6 +150,46 @@ Describe "TabCompletion" -Tags CI {
         $res.CompletionMatches[0].ToolTip | Should -BeExactly $Expected
     }
     
+    It 'Should complete environment variable' {
+        try {
+            $env:PWSH_TEST_1 = 'value 1'
+            $env:PWSH_TEST_2 = 'value 2'
+
+            $res = TabExpansion2 -inputScript '$env:PWSH_TEST_'
+            $res.CompletionMatches.Count | Should -Be 2
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly '$env:PWSH_TEST_1'
+            $res.CompletionMatches[0].ListItemText | Should -BeExactly 'PWSH_TEST_1'
+            $res.CompletionMatches[0].ToolTip | Should -BeExactly 'PWSH_TEST_1'
+            $res.CompletionMatches[1].CompletionText | Should -BeExactly '$env:PWSH_TEST_2'
+            $res.CompletionMatches[1].ListItemText | Should -BeExactly 'PWSH_TEST_2'
+            $res.CompletionMatches[1].ToolTip | Should -BeExactly 'PWSH_TEST_2'
+        }
+        finally {
+            $env:PWSH_TEST_1 = $null
+            $env:PWSH_TEST_2 = $null
+        }
+    }
+
+    It 'Should complete function variable' {
+        try {
+            Function Test-PwshTest1 {}
+            Function Test-PwshTest2 {}
+
+            $res = TabExpansion2 -inputScript '${function:Test-PwshTest'
+            $res.CompletionMatches.Count | Should -Be 2
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly '${function:Test-PwshTest1}'
+            $res.CompletionMatches[0].ListItemText | Should -BeExactly 'Test-PwshTest1'
+            $res.CompletionMatches[0].ToolTip | Should -BeExactly 'Test-PwshTest1'
+            $res.CompletionMatches[1].CompletionText | Should -BeExactly '${function:Test-PwshTest2}'
+            $res.CompletionMatches[1].ListItemText | Should -BeExactly 'Test-PwshTest2'
+            $res.CompletionMatches[1].ToolTip | Should -BeExactly 'Test-PwshTest2'
+        }
+        finally {
+            Remove-Item function:Test-PwshTest1 -ErrorAction SilentlyContinue
+            Remove-Item function:Test-PwshTest1 -ErrorAction SilentlyContinue
+        }
+    }
+
     It 'Should complete scoped variable with description and value <Value>' -TestCases @(
         @{ Value = 1; Expected = '[int]$VariableWithDescription - Variable description' }
         @{ Value = 'string'; Expected = '[string]$VariableWithDescription - Variable description' }
