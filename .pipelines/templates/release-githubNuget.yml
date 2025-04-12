@@ -105,7 +105,7 @@ jobs:
       repositoryName: PowerShell/PowerShell
       target: $ENV:BUILD_SOURCEBRANCH
       assets: '$(Pipeline.Workspace)/GitHubPackages/*'
-      tagSource: 'userSpecified'
+      tagSource: 'userSpecifiedTag'
       tag: '$(ReleaseTag)'
       isDraft: true
       addChangeLog: false
