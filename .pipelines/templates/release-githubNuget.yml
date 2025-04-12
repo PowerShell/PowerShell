@@ -87,7 +87,6 @@ jobs:
   
         Write-Verbose -Verbose "Selected content: `n$clContent"
 
-        #upload clContent as a variable
         Write-Host "##vso[task.setvariable variable=ReleaseNotes;]$clContent"
 
         #if name has prelease then make preelease true as a variable
@@ -97,6 +96,11 @@ jobs:
             Write-Host "##vso[task.setvariable variable=IsPreRelease;]false"
         }
     displayName: Set variables for GitHub release task
+
+  - pwsh: |
+      Write-Host "ReleaseNotes content:"
+      Write-Host "$(ReleaseNotes)"
+    displayName: Verify Release Notes
 
   - task: GitHubRelease@1
     inputs:
