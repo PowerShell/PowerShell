@@ -23,19 +23,23 @@ namespace System.Management.Automation
         /// <param name="toolTipMapping">The optional tool tip mapping delegate.</param>
         /// <param name="listItemTextMapping">The optional list item text mapping delegate.</param>
         /// <param name="resultType">The optional completion result type. Default is Text.</param>
+        /// <param name="escapeStrategy">
+        /// A delegate that specifies how to escape the word to complete. If null, no escaping is applied.
+        /// </param>
         /// <returns>List of matching completion results.</returns>
         internal static IEnumerable<CompletionResult> GetMatchingResults(
             string wordToComplete,
             IEnumerable<string> possibleCompletionValues,
             Func<string, string> toolTipMapping = null,
             Func<string, string> listItemTextMapping = null,
-            CompletionResultType resultType = CompletionResultType.Text)
+            CompletionResultType resultType = CompletionResultType.Text,
+            Func<string, string> escapeStrategy = null)
         {
             string quote = HandleDoubleAndSingleQuote(ref wordToComplete);
 
             foreach (string value in possibleCompletionValues)
             {
-                if (IsMatch(value, wordToComplete))
+                if (IsMatch(value, wordToComplete, escapeStrategy))
                 {
                     string completionText = QuoteCompletionText(value, quote);
                     string toolTip = toolTipMapping?.Invoke(value) ?? value;
@@ -47,22 +51,19 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Checks if the given value matches the specified word or pattern.
+        /// Represents a method that checks whether a value matches a word or pattern.
         /// </summary>
-        /// <param name="value">The input string to evaluate.</param>
+        /// <param name="value">The input string to evaluate for a match.</param>
         /// <param name="wordToComplete">The word or pattern to compare against.</param>
+        /// <param name="escapeStrategy">
+        /// A delegate that specifies how to escape the word to complete. If null, no escaping is applied.
+        /// </param>
         /// <returns>
-        /// <c>true</c> if the value matches the normalized word (case-insensitively) or the wildcard pattern; otherwise, <c>false</c>.
+        /// <c>true</c> if the value matches the word (case-insensitively) or the wildcard pattern; otherwise, <c>false</c>.
         /// </returns>
-        /// <remarks>
-        /// This method normalizes word to complete by replacing its line endings with backticks 
-        /// and unescaping special characters. 
-        /// It first does a a case-insensitive literal prefix match.
-        /// If the literal match fails, the input value is then evaluated against this case-insensitive wildcard pattern.
-        /// To prevent any exceptions when constructing wildcard pattern with existing wildcard characters,
-        /// the word to complete is normalized by escaping wildcard characters first.
-        /// </remarks>
-        internal static bool IsMatch(string value, string wordToComplete)
+        internal delegate bool MatchDelegate(string value, string wordToComplete, Func<string, string> escapeStrategy = null);
+
+        internal static readonly MatchDelegate IsMatch = (value, wordToComplete, escapeStrategy) =>
         {
             string normalizedWord = WildcardPattern.Unescape(wordToComplete.ReplaceLineEndings("`"));
 
@@ -70,15 +71,15 @@ namespace System.Management.Automation
 
             if (!match)
             {
-                normalizedWord = WildcardPattern.Escape(wordToComplete);
+                string escapedWord = escapeStrategy?.Invoke(wordToComplete) ?? wordToComplete;
 
                 match = WildcardPattern
-                    .Get(normalizedWord + "*", WildcardOptions.IgnoreCase)
+                    .Get(escapedWord + "*", WildcardOptions.IgnoreCase)
                     .IsMatch(value);
             }
 
             return match;
-        }
+        };
 
         /// <summary>
         /// Removes wrapping quotes from a string and returns the quote used, if present.

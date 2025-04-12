@@ -262,6 +262,7 @@ namespace Microsoft.PowerShell.Commands.Utility
             IDictionary fakeBoundParameters)
                 => CompletionHelpers.GetMatchingResults(
                     wordToComplete,
-                    possibleCompletionValues: s_formatStringValues);
+                    possibleCompletionValues: s_formatStringValues,
+                    escapeStrategy: WildcardPattern.Escape);
     }
 }

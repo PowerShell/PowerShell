@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System;
 using System.Management.Automation;
 using Xunit;
 
@@ -122,13 +123,27 @@ namespace PSTests.Parallel
         [InlineData("word,next", "word,", true)]
         [InlineData("word[*]next", "word[*", true)]
         [InlineData("word[abc]next", "word[abc", true)]
-        [InlineData("word", "word*", false)]
+        [InlineData("word", "word*", true)]
+        [InlineData("Word", "word*", true)]
+        [InlineData("word(Special)", "word*", true)]
         [InlineData("testword", "test", true)]
         [InlineData("word", "", true)]
         [InlineData("", "word", false)]
         public void TestIsMatch(string value, string wordToComplete, bool expected)
         {
             bool result = CompletionHelpers.IsMatch(value, wordToComplete);
+            Assert.Equal(expected, result);
+        }
+
+        [Theory]
+        [InlineData("word", "word", true)]
+        [InlineData("word", "word*", false)]
+        [InlineData("Word", "word*", false)]
+        [InlineData("word[Special]", "word[*", false)]
+        public void TestIsMatchWithEscapeStrategy(string value, string wordToComplete, bool expected)
+        {
+            Func<string, string> escapeStrategy = WildcardPattern.Escape;
+            bool result = CompletionHelpers.IsMatch(value, wordToComplete, escapeStrategy);
             Assert.Equal(expected, result);
         }
     }
