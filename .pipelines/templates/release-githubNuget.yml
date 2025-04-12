@@ -87,8 +87,11 @@ jobs:
   
         Write-Verbose -Verbose "Selected content: `n$clContent"
 
-        Write-Host "##vso[task.setvariable variable=ReleaseNotes;]$clContent"
-
+        $releaseNotesFilePath = "$(Pipeline.Workspace)/release-notes.md"
+        $clContent | Out-File -FilePath $releaseNotesFilePath -Encoding utf8
+  
+        Write-Host "##vso[task.setvariable variable=ReleaseNotesFilePath;]$releaseNotesFilePath"
+  
         #if name has prelease then make preelease true as a variable
         if ($releaseVersion -like '*-preview*') {
             Write-Host "##vso[task.setvariable variable=IsPreRelease;]true"
@@ -99,7 +102,7 @@ jobs:
 
   - pwsh: |
       Write-Host "ReleaseNotes content:"
-      Write-Host "$(ReleaseNotes)"
+      Get-Content "$(Pipeline.Workspace)/release-notes.md" -Raw | Out-String -width 9999 | Write-Host
     displayName: Verify Release Notes
 
   - task: GitHubRelease@1
@@ -113,7 +116,7 @@ jobs:
       isDraft: true
       addChangeLog: false
       action: 'create'
-      releaseNotesInline: '$(ReleaseNotes)'
+      releaseNotesFilePath: '$(ReleaseNotesFilePath)'
       isPrerelease: '$(IsPreRelease)'
 
 - job: NuGetPublish
