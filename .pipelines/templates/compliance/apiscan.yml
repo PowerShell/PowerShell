@@ -78,19 +78,6 @@ jobs:
       workingDirectory: '$(repoRoot)'
       retryCountOnTaskFailure: 2
 
-    - pwsh: |
-        $modules = 'Az.Accounts', 'Az.Storage'
-        foreach($module in $modules) {
-          if(!(get-module $module -listavailable)) {
-            Write-Verbose "installing $module..." -verbose
-            Install-Module $module -force -AllowClobber
-          } else {
-            Write-Verbose "$module already installed." -verbose
-          }
-        }
-      displayName: Install PowerShell modules
-      workingDirectory: '$(repoRoot)'
-
     - task: AzurePowerShell@5
       displayName: Download winverify-private Artifacts
       inputs:

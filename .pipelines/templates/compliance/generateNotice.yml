@@ -84,40 +84,6 @@ jobs:
     displayName: Capture Notice
     continueOnError: true
 
-  - powershell: |
-      [System.Net.ServicePointManager]::SecurityProtocol =
-        [System.Net.ServicePointManager]::SecurityProtocol -bor
-        [System.Security.Authentication.SslProtocols]::Tls12 -bor
-        [System.Security.Authentication.SslProtocols]::Tls11
-
-      Set-ItemProperty -Path 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\.NetFramework\v4.0.30319' -Name 'SchUseStrongCrypto' -Value '1' -Type DWord
-      Set-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\.NetFramework\v4.0.30319' -Name 'SchUseStrongCrypto' -Value '1' -Type DWord
-      Get-PackageProvider -Name NuGet -ForceBootstrap
-    displayName: Initalize PowerShellGet
-
-  - powershell: |
-      $modules = 'Az.Accounts', 'Az.Storage'
-      foreach($module in $modules) {
-        if(!(get-module $module -listavailable)) {
-          Write-Verbose "installing $module..." -verbose
-          Install-Module $module -force -AllowClobber
-        } else {
-          Write-Verbose "$module already installed." -verbose
-          #Update-Module $module -verbose
-        }
-      }
-    displayName: Install PowerShell modules
-
-  - powershell: |
-      if(Get-Command -Name Uninstall-AzureRm -ErrorAction Ignore){
-        Write-Verbose "running Uninstall-AzureRm" -verbose
-        Uninstall-AzureRm
-      } else {
-        Write-Verbose "Uninstall-AzureRm not present" -verbose
-      }
-    displayName: Uninstall Uninstall-AzureRm
-    continueOnError: true
-
   - task: AzurePowerShell@5
     displayName: Upload Notice
     inputs:

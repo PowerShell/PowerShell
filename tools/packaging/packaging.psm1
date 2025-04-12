@@ -16,7 +16,7 @@ $AllDistributions = @()
 $AllDistributions += $DebianDistributions
 $AllDistributions += $RedhatDistributions
 $AllDistributions += 'macOs'
-$script:netCoreRuntime = 'net9.0'
+$script:netCoreRuntime = 'net10.0'
 $script:iconFileName = "Powershell_black_64.png"
 $script:iconPath = Join-Path -path $PSScriptRoot -ChildPath "../../assets/$iconFileName" -Resolve
 
@@ -1621,7 +1621,7 @@ function Get-PackageDependencies
             )
             if($Script:Options.Runtime -like 'fx*') {
                 $Dependencies += @(
-                    "dotnet-runtime-9.0"
+                    "dotnet-runtime-10.0"
                 )
             }
         } elseif ($Distribution -eq 'macOS') {

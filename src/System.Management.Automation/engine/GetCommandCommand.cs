@@ -1712,7 +1712,7 @@ namespace Microsoft.PowerShell.Commands
             string parameterName,
             string wordToComplete,
             CommandAst commandAst,
-            IDictionary fakeBoundParameters) => CompletionCompleters.GetMatchingResults(
+            IDictionary fakeBoundParameters) => CompletionHelpers.GetMatchingResults(
                 wordToComplete,
                 possibleCompletionValues: GetCommandNouns(fakeBoundParameters));
 
