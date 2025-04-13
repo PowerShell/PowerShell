@@ -172,7 +172,7 @@ namespace Microsoft.PowerShell.Commands.Utility
         "`r`n";
 #endif
 
-        private static readonly Dictionary<string, (string Tooltip, string ListItemText)> s_separatorMappings = new()
+        private static readonly Dictionary<string, (string Tooltip, string ListItemText)> s_separatorMappings = new(capacity: 7)
         {
             { ",", (TabCompletionStrings.SeparatorCommaToolTip, "Comma") },
             { ", ", (TabCompletionStrings.SeparatorCommaSpaceToolTip, "Comma-Space") },
@@ -223,7 +223,7 @@ namespace Microsoft.PowerShell.Commands.Utility
     /// </summary>
     public sealed class FormatStringArgumentCompleter : IArgumentCompleter
     {
-        private static readonly IReadOnlyList<string> s_formatStringValues = new List<string>
+        private static readonly IReadOnlyList<string> s_formatStringValues = new List<string>(capacity: 4)
         {
             "[{0}]",
             "{0:N2}",
