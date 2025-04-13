@@ -263,6 +263,6 @@ namespace Microsoft.PowerShell.Commands.Utility
                 => CompletionHelpers.GetMatchingResults(
                     wordToComplete,
                     possibleCompletionValues: s_formatStringValues,
-                    escapeStrategy: WildcardPattern.Escape);
+                    matchStrategy: CompletionHelpers.WildcardPatternEscapeMatch);
     }
 }

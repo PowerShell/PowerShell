@@ -129,21 +129,34 @@ namespace PSTests.Parallel
         [InlineData("testword", "test", true)]
         [InlineData("word", "", true)]
         [InlineData("", "word", false)]
-        public void TestIsMatch(string value, string wordToComplete, bool expected)
+        public void TestDefaultMatch(string value, string wordToComplete, bool expected)
         {
-            bool result = CompletionHelpers.IsMatch(value, wordToComplete);
+            bool result = CompletionHelpers.DefaultMatch(value, wordToComplete);
             Assert.Equal(expected, result);
         }
 
         [Theory]
         [InlineData("word", "word", true)]
+        [InlineData("Word", "word", true)]
+        [InlineData("word", "wor", true)]
+        [InlineData("word", "words", false)]
+        [InlineData("word`nnext", "word`n", true)]
+        [InlineData("word`nnext", "word\n", true)]
+        [InlineData("word`r`nnext", "word`r`n", true)]
+        [InlineData("word`r`nnext", "word\r\n", true)]
+        [InlineData("word;next", "word;", true)]
+        [InlineData("word,next", "word,", true)]
+        [InlineData("word[*]next", "word[*", true)]
+        [InlineData("word[abc]next", "word[abc", true)]
         [InlineData("word", "word*", false)]
         [InlineData("Word", "word*", false)]
-        [InlineData("word[Special]", "word[*", false)]
-        public void TestIsMatchWithEscapeStrategy(string value, string wordToComplete, bool expected)
+        [InlineData("word(Special)", "word*", false)]
+        [InlineData("testword", "test", true)]
+        [InlineData("word", "", true)]
+        [InlineData("", "word", false)]
+        public void TestWildcardPatternEscapeMatch(string value, string wordToComplete, bool expected)
         {
-            Func<string, string> escapeStrategy = WildcardPattern.Escape;
-            bool result = CompletionHelpers.IsMatch(value, wordToComplete, escapeStrategy);
+            bool result = CompletionHelpers.WildcardPatternEscapeMatch(value, wordToComplete);
             Assert.Equal(expected, result);
         }
     }
