@@ -53,7 +53,9 @@ namespace System.Management.Automation
         internal delegate bool MatchStrategy(string value, string wordToComplete);
 
         internal static readonly MatchStrategy LiteralMatch = (value, wordToComplete)
-            => value.StartsWith(WildcardPattern.Unescape(wordToComplete.ReplaceLineEndings("`")), StringComparison.OrdinalIgnoreCase);
+            => value.StartsWith(
+                WildcardPattern.Unescape(wordToComplete.ReplaceLineEndings("`")),
+                StringComparison.OrdinalIgnoreCase);
 
         internal static readonly MatchStrategy WildcardPatternMatch = (value, wordToComplete)
             => WildcardPattern
@@ -61,10 +63,12 @@ namespace System.Management.Automation
                 .IsMatch(value);
 
         internal static readonly MatchStrategy WildcardPatternEscapeMatch = (value, wordToComplete)
-            => LiteralMatch(value, wordToComplete) || WildcardPatternMatch(value, WildcardPattern.Escape(wordToComplete));
+            => LiteralMatch(value, wordToComplete) ||
+               WildcardPatternMatch(value, WildcardPattern.Escape(wordToComplete));
 
         internal static readonly MatchStrategy DefaultMatch = (value, wordToComplete)
-            => LiteralMatch(value, wordToComplete) || WildcardPatternMatch(value, wordToComplete);
+            => LiteralMatch(value, wordToComplete) ||
+               WildcardPatternMatch(value, wordToComplete);
 
         /// <summary>
         /// Removes wrapping quotes from a string and returns the quote used, if present.
