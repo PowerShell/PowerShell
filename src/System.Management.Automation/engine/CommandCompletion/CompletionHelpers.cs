@@ -50,22 +50,76 @@ namespace System.Management.Automation
             }
         }
 
+        /// <summary>
+        /// Defines a strategy for determining if a value matches a word or pattern.
+        /// </summary>
+        /// <param name="value">The input string to check for a match.</param>
+        /// <param name="wordToComplete">The word or pattern to match against.</param>
+        /// <returns>
+        /// <c>true</c> if the value matches the specified word or pattern; otherwise, <c>false</c>.
+        /// </returns>
         internal delegate bool MatchStrategy(string value, string wordToComplete);
 
+        /// <summary>
+        /// Determines if the given value matches the specified word using a literal, case-insensitive prefix match.
+        /// </summary>
+        /// <returns>
+        /// <c>true</c> if the value starts with the normalized word (case-insensitively); otherwise, <c>false</c>.
+        /// </returns>
+        /// <remarks>
+        /// The word to complete is normalized by replacing line endings with backticks and unescaping special characters.
+        /// This normalization ensures that variations in line-ending representations, such as "\r\n" (Windows) & "\n" (UNIX),
+        /// do not interfere with the matching logic. Without normalization, comparisons will fail.
+        /// 
+        /// Example:
+        /// For instance, if the value is "`r`n" and wordToComplete is "\r",
+        /// the prefix match will fail due to differing line-ending formats. Normalizing both strings to use
+        /// backticks allows the comparison to succeed.
+        /// </remarks>
         internal static readonly MatchStrategy LiteralMatch = (value, wordToComplete)
             => value.StartsWith(
                 WildcardPattern.Unescape(wordToComplete.ReplaceLineEndings("`")),
                 StringComparison.OrdinalIgnoreCase);
 
+        /// <summary>
+        /// Determines if the given value matches the specified word using wildcard pattern matching.
+        /// </summary>
+        /// <returns>
+        /// <c>true</c> if the value matches the word as a wildcard pattern; otherwise, <c>false</c>.
+        /// </returns>
+        /// <remarks>
+        /// Wildcard pattern matching allows for flexible matching, where wilcards can represent 
+        /// multiple characters in the input. This strategy is case-insensitive.
+        /// </remarks>
         internal static readonly MatchStrategy WildcardPatternMatch = (value, wordToComplete)
             => WildcardPattern
                 .Get(wordToComplete + "*", WildcardOptions.IgnoreCase)
                 .IsMatch(value);
 
+        /// <summary>
+        /// Determines if the given value matches the specified word using either a literal or wildcard escape strategy.
+        /// </summary>
+        /// <returns>
+        /// <c>true</c> if the value matches either the literal normalized word or the wildcard pattern with escaping; 
+        /// otherwise, <c>false</c>.
+        /// </returns>
+        /// <remarks>
+        /// This strategy first attempts a literal prefix match and, if unsuccessful, escapes the word to complete to 
+        /// handle any problematic wildcard characters before performing a wildcard match.
+        /// </remarks>
         internal static readonly MatchStrategy WildcardPatternEscapeMatch = (value, wordToComplete)
             => LiteralMatch(value, wordToComplete) ||
                WildcardPatternMatch(value, WildcardPattern.Escape(wordToComplete));
 
+        /// <summary>
+        /// Determines if the given value matches the specified word using either a literal or wildcard match strategy.
+        /// </summary>
+        /// <returns>
+        /// <c>true</c> if the value matches either the literal normalized word or the wildcard pattern; otherwise, <c>false</c>.
+        /// </returns>
+        /// <remarks>
+        /// This strategy attempts a literal match first and, if unsuccessful, evaluates the word against a wildcard pattern.
+        /// </remarks>
         internal static readonly MatchStrategy DefaultMatch = (value, wordToComplete)
             => LiteralMatch(value, wordToComplete) ||
                WildcardPatternMatch(value, wordToComplete);
@@ -175,6 +229,14 @@ namespace System.Management.Automation
             return requireQuote;
         }
 
+        /// <summary>
+        /// Determines whether the given text contains an escaped newline string.
+        /// </summary>
+        /// <param name="text">The input string to check for escaped newlines.</param>
+        /// <returns>
+        /// <c>true</c> if the text contains the escaped Unix-style newline string ("`n") or
+        /// the Windows-style newline string ("`r`n"); otherwise, <c>false</c>.
+        /// </returns>
         private static bool ContainsEscapedNewlineString(string text)
             => text.Contains("`n", StringComparison.Ordinal);
 
