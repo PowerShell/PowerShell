@@ -163,7 +163,7 @@ namespace Microsoft.PowerShell.Commands.Utility
     /// <summary>
     /// Provides completion for the Separator parameter of the Join-String cmdlet.
     /// </summary>
-    public class SeparatorArgumentCompleter : IArgumentCompleter
+    public sealed class SeparatorArgumentCompleter : IArgumentCompleter
     {
         private static readonly string NewLineText =
 #if UNIX
@@ -221,7 +221,7 @@ namespace Microsoft.PowerShell.Commands.Utility
     /// <summary>
     /// Provides completion for the FormatString parameter of the Join-String cmdlet.
     /// </summary>
-    public class FormatStringArgumentCompleter : IArgumentCompleter
+    public sealed class FormatStringArgumentCompleter : IArgumentCompleter
     {
         private static readonly IReadOnlyList<string> s_formatStringValues = new List<string>
         {
