@@ -172,17 +172,6 @@ namespace Microsoft.PowerShell.Commands.Utility
         "`r`n";
 #endif
 
-        private static readonly IReadOnlyList<string> s_separatorValues = new List<string>
-        {
-            ",",
-            ", ",
-            ";",
-            "; ",
-            NewLineText,
-            "-",
-            " ",
-        };
-
         private static readonly Dictionary<string, (string Tooltip, string ListItemText)> s_separatorMappings = new()
         {
             { ",", (TabCompletionStrings.SeparatorCommaToolTip, "Comma") },
@@ -193,6 +182,8 @@ namespace Microsoft.PowerShell.Commands.Utility
             { "-", (TabCompletionStrings.SeparatorDashToolTip, "Dash") },
             { " ", (TabCompletionStrings.SeparatorSpaceToolTip, "Space") },
         };
+
+        private static readonly IEnumerable<string> s_separatorValues = s_separatorMappings.Keys;
 
         private static string GetSeparatorToolTip(string separator)
             => s_separatorMappings.TryGetValue(separator, out var mapping)
