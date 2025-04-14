@@ -67,7 +67,7 @@ namespace System.Management.Automation
         /// <c>true</c> if the value starts with the normalized word (case-insensitively); otherwise, <c>false</c>.
         /// </returns>
         /// <remarks>
-        /// The word to complete is normalized by replacing line endings with backticks and unescaping special characters.
+        /// The word to complete is normalized by replacing line endings with backticks.
         /// This normalization ensures that variations in line-ending representations, such as "\r\n" (Windows) & "\n" (UNIX),
         /// do not interfere with the matching logic. Without normalization, comparisons will fail.
         /// 
@@ -76,10 +76,11 @@ namespace System.Management.Automation
         /// the prefix match will fail due to differing line-ending formats. Normalizing both strings to use
         /// backticks allows the comparison to succeed.
         /// </remarks>
-        internal static readonly MatchStrategy LiteralMatch = (value, wordToComplete)
-            => value.StartsWith(
-                WildcardPattern.Unescape(wordToComplete.ReplaceLineEndings("`")),
-                StringComparison.OrdinalIgnoreCase);
+        internal static readonly MatchStrategy LiteralMatch = (value, wordToComplete) =>
+        {
+            string normalisedWordNewlines = wordToComplete.Replace("\r", "`r").Replace("\n", "`n");
+            return value.StartsWith(normalisedWordNewlines, StringComparison.OrdinalIgnoreCase);
+        };
 
         /// <summary>
         /// Determines if the given value matches the specified word using wildcard pattern matching.
