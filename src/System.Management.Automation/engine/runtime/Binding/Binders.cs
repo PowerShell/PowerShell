@@ -7631,6 +7631,7 @@ namespace System.Management.Automation.Language
         }
 #nullable disable
 
+        #endregion
     }
 
     internal class PSCreateInstanceBinder : CreateInstanceBinder
