@@ -58,6 +58,7 @@ variables:
   - name: ReleaseTagVar
     value: ${{ parameters.ReleaseTagVar }}
   - group: PoolNames
+  - group: MSIXSigningProfile
 
 resources:
   repositories:
