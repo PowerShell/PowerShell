@@ -79,7 +79,7 @@ jobs:
       displayName: Sign MsixBundle
       inputs:
         command: 'sign'
-        signing_profile: Dynamic-WINMSAPP1ST
+        signing_profile: $(MSIXProfile)
         files_to_sign: '**/*.msixbundle'
         search_root: '$(BundleDir)'
     
