@@ -110,7 +110,7 @@ jobs:
     inputs:
       gitHubConnection: GitHubReleasePAT
       repositoryName: jshigetomi/PowerShell
-      target: $ENV:BUILD_SOURCEBRANCH
+      target: master
       assets: '$(Pipeline.Workspace)/GitHubPackages/*'
       tagSource: 'userSpecifiedTag'
       tag: '$(ReleaseTag)'
