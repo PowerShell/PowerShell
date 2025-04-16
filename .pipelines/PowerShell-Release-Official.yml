@@ -280,27 +280,17 @@ extends:
             Update and merge the changelog for the release.
             This step is required for creating GitHub draft release.
 
-<<<<<<< HEAD
-    - stage: PublishGitHubRelease
-      displayName: Publish GitHub Release
-      dependsOn:
-=======
     - stage: PublishGitHubReleaseAndNuget
       displayName: Publish GitHub and Nuget Release
       dependsOn: 
->>>>>>> a1412468f (Combine GitHub and Nuget Release Stage (#25318))
         - setReleaseTagAndUploadTools
         - UpdateChangeLog
       variables:
         ob_release_environment: Production
       jobs:
-<<<<<<< HEAD
-      - template: /.pipelines/templates/release-githubtasks.yml@self
-=======
       - template: /.pipelines/templates/release-githubNuget.yml@self
         parameters:
           skipPublish: ${{ parameters.SkipPublish }}
->>>>>>> a1412468f (Combine GitHub and Nuget Release Stage (#25318))
 
     - stage: PushGitTagAndMakeDraftPublic
       displayName: Push Git Tag and Make Draft Public
@@ -330,21 +320,6 @@ extends:
       - template: /.pipelines/templates/release-MakeBlobPublic.yml@self
         parameters:
           SkipPSInfraInstallers: ${{ parameters.SkipPSInfraInstallers }}
-<<<<<<< HEAD
-
-    - stage: PublishNuGet
-      displayName: Publish NuGet
-      dependsOn:
-        - setReleaseTagAndUploadTools
-        - PushGitTagAndMakeDraftPublic
-      variables:
-        ob_release_environment: Production
-      jobs:
-      - template: /.pipelines/templates/release-publish-nuget.yml@self
-        parameters:
-          skipPublish: true
-=======
->>>>>>> a1412468f (Combine GitHub and Nuget Release Stage (#25318))
 
     - stage: PublishPMC
       displayName: Publish PMC
@@ -437,12 +412,7 @@ extends:
 
     - stage: ChangesToMaster
       displayName: Ensure changes are in GH master
-<<<<<<< HEAD
-      dependsOn:
-        - PublishNuGet
-=======
       dependsOn: 
->>>>>>> a1412468f (Combine GitHub and Nuget Release Stage (#25318))
         - PublishPMC
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
