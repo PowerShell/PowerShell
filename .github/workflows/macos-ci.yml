@@ -2,6 +2,9 @@ name: macOS-CI
 
 run-name: "${{ github.ref_name }} - ${{ github.run_number }}"
 
+permissions:
+  contents: read
+  
 on:
   push:
     branches:
