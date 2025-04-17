@@ -1792,6 +1792,7 @@ namespace Microsoft.PowerShell.Commands
             ContentDispositionHeaderValue contentDisposition = new("form-data");
             contentDisposition.Name = LanguagePrimitives.ConvertTo<string>(fieldName);
 
+            // codeql[cs/information-exposure-through-exception] - PowerShell is an on-premise product, meaning local users would already have access to the binaries and stack traces. Therefore, the information would not be exposed in the same way it would be for an ASP .NET service.
             StringContent result = new(LanguagePrimitives.ConvertTo<string>(fieldValue));
             result.Headers.ContentDisposition = contentDisposition;
 
