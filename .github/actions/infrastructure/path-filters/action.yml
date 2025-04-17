@@ -35,6 +35,23 @@ runs:
       with:
         github-token: ${{ inputs.GITHUB_TOKEN }}
         script: |
+          console.log(`Event Name: ${context.eventName}`);
+
+          // Just say everything changed if this is not a PR
+          if (context.eventName !== 'pull_request') {
+            console.log('Not a pull request, setting all outputs to true');
+            core.setOutput('toolsChanged', true);
+            core.setOutput('githubChanged', true);
+            core.setOutput('propsChanged', true);
+            core.setOutput('testsChanged', true);
+            core.setOutput('mainSourceChanged', true);
+            core.setOutput('buildModuleChanged', true);
+            core.setOutput('source', true);
+            return;
+          }
+
+          console.log(`Getting files changed in PR #${context.issue.number}`);
+
           // Fetch the list of files changed in the PR
           let files = [];
           let page = 1;
