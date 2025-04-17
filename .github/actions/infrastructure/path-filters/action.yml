@@ -1,0 +1,105 @@
+name: Path Filters
+description: 'Path Filters'
+inputs:
+  GITHUB_TOKEN:
+    description: 'GitHub token'
+    required: true
+outputs:
+  source:
+    description: 'Source code changes (composite of all changes)'
+    value: ${{ steps.filter.outputs.source }}
+  githubChanged:
+    description: 'GitHub workflow changes'
+    value: ${{ steps.filter.outputs.githubChanged }}
+  toolsChanged:
+    description: 'Tools changes'
+    value: ${{ steps.filter.outputs.toolsChanged }}
+  propsChanged:
+    description: 'Props changes'
+    value: ${{ steps.filter.outputs.propsChanged }}
+  testsChanged:
+    description: 'Tests changes'
+    value: ${{ steps.filter.outputs.testsChanged }}
+  mainSourceChanged:
+    description: 'Main source code changes (any changes in src/)'
+    value: ${{ steps.filter.outputs.mainSourceChanged }}
+  buildModuleChanged:
+    description: 'Build module changes'
+    value: ${{ steps.filter.outputs.buildModuleChanged }}
+runs:
+  using: composite
+  steps:
+    - name: Check if GitHubWorkflowChanges is present
+      id: filter
+      uses: actions/github-script@v7.0.1
+      with:
+        github-token: ${{ inputs.GITHUB_TOKEN }}
+        script: |
+          console.log(`Event Name: ${context.eventName}`);
+
+          // Just say everything changed if this is not a PR
+          if (context.eventName !== 'pull_request') {
+            console.log('Not a pull request, setting all outputs to true');
+            core.setOutput('toolsChanged', true);
+            core.setOutput('githubChanged', true);
+            core.setOutput('propsChanged', true);
+            core.setOutput('testsChanged', true);
+            core.setOutput('mainSourceChanged', true);
+            core.setOutput('buildModuleChanged', true);
+            core.setOutput('source', true);
+            return;
+          }
+
+          console.log(`Getting files changed in PR #${context.issue.number}`);
+
+          // Fetch the list of files changed in the PR
+          let files = [];
+          let page = 1;
+          let fetchedFiles;
+          do {
+            fetchedFiles = await github.rest.pulls.listFiles({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+              per_page: 100,
+              page: page++
+            });
+            files = files.concat(fetchedFiles.data);
+          } while (fetchedFiles.data.length > 0);
+
+          const actionsChanged = files.some(file => file.filename.startsWith('.github/actions'));
+          const workflowsChanged = files.some(file => file.filename.startsWith('.github/workflows'));
+          const githubChanged = actionsChanged || workflowsChanged;
+
+          const toolsCiPsm1Changed = files.some(file => file.filename.startsWith('tools/ci.psm1'));
+          const toolsBuildCommonChanged = files.some(file => file.filename.startsWith('tools/buildCommon/'));
+          const toolsChanged = toolsCiPsm1Changed || toolsBuildCommonChanged;
+
+          const propsChanged = files.some(file => file.filename.endsWith('.props'));
+
+          const testsChanged = files.some(file => file.filename.startsWith('test/powershell/') || file.filename.startsWith('test/tools/') || file.filename.startsWith('test/xUnit/'));
+
+          const mainSourceChanged = files.some(file => file.filename.startsWith('src/'));
+
+          const buildModuleChanged = files.some(file => file.filename.startsWith('build.psm1'));
+
+          const source = mainSourceChanged || toolsChanged || githubChanged || propsChanged || testsChanged;
+
+          core.setOutput('toolsChanged', toolsChanged);
+          core.setOutput('githubChanged', githubChanged);
+          core.setOutput('propsChanged', propsChanged);
+          core.setOutput('testsChanged', testsChanged);
+          core.setOutput('mainSourceChanged', mainSourceChanged);
+          core.setOutput('buildModuleChanged', buildModuleChanged);
+          core.setOutput('source', source);
+
+    - name: Capture outputs
+      run: |
+        Write-Verbose -Verbose "source: ${{ steps.filter.outputs.source }}"
+        Write-Verbose -Verbose "github: ${{ steps.filter.outputs.githubChanged }}"
+        Write-Verbose -Verbose "tools: ${{ steps.filter.outputs.toolsChanged }}"
+        Write-Verbose -Verbose "props: ${{ steps.filter.outputs.propsChanged }}"
+        Write-Verbose -Verbose "tests: ${{ steps.filter.outputs.testsChanged }}"
+        Write-Verbose -Verbose "mainSource: ${{ steps.filter.outputs.mainSourceChanged }}"
+        Write-Verbose -Verbose "buildModule: ${{ steps.filter.outputs.buildModuleChanged }}"
+      shell: pwsh
