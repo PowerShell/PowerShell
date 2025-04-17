@@ -5035,7 +5035,7 @@ function Test-Bom {
         $Path,
         [switch]
         $Fix,
-        [stirng]
+        [string]
         $Architecture
     )
 
