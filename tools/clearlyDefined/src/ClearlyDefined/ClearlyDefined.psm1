@@ -117,7 +117,7 @@ Function Get-ClearlyDefinedData {
                 continue
             }
 
-            Invoke-RestMethod  -Uri "https://api.clearlydefined.io/definitions/$coordinates" | ForEach-Object {
+            Invoke-RestMethod  -Uri "https://api.clearlydefined.io/definitions/$coordinates" -MaximumRetryCount 5 -RetryIntervalSec 60 | ForEach-Object {
                 [bool] $harvested = if ($_.licensed.declared) { $true } else { $false }
                 Add-Member -NotePropertyName cachedTime -NotePropertyValue (get-date) -InputObject $_ -PassThru | Add-Member -NotePropertyName harvested -NotePropertyValue $harvested -PassThru
                 if ($_.harvested) {
