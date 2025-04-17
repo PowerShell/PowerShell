@@ -3354,7 +3354,7 @@ function New-MSIPackage
 
     $buildArguments = New-MsiArgsArray -Argument $arguments
 
-    Test-Bom -Path $staging -BomName windows
+    Test-Bom -Path $staging -BomName windows -Architecture $ProductTargetArchitecture -Verbose
     Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixHeatExePath dir $staging -dr  VersionFolder -cg ApplicationFiles -ag -sfrag -srd -scom -sreg -out $wixFragmentPath -var var.ProductSourcePath $buildArguments -v}
 
     Send-AzdoFile -Path $wixFragmentPath
@@ -4982,6 +4982,9 @@ class BomRecord {
     [string]
     $FileType = "NonProduct"
 
+    [string[]]
+    $Architecture
+
     # Add methods to normalize Pattern to use `/` as the directory separator,
     # but give a Pattern that is usable on the current platform
     [string]
@@ -5011,6 +5014,13 @@ class BomRecord {
         # If the directory separator character is a slash, then set the pattern as-is
         $this.Pattern = $Pattern
     }
+
+    [void]
+    EnsureArchitecture([string[]]$DefaultArchitecture = @("x64","x86","arm64")) {
+        if (-not $this.PSObject.Properties.Match("Architecture")) {
+            $this.Architecture = $DefaultArchitecture
+        }
+    }
 }
 
 # Verify a folder based on a BOM json.
@@ -5024,7 +5034,9 @@ function Test-Bom {
         [string]
         $Path,
         [switch]
-        $Fix
+        $Fix,
+        [stirng]
+        $Architecture
     )
 
     Write-Log "verifying no unauthorized files have been added or removed..."
