@@ -2,6 +2,10 @@ name: Linux-CI
 
 run-name: "${{ github.ref_name }} - ${{ github.run_number }}"
 
+permissions:
+  pull-requests: read
+  contents: read
+  
 on:
   workflow_dispatch:
 
