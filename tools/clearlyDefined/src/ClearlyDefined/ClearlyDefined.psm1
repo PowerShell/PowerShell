@@ -27,7 +27,7 @@ function Start-ClearlyDefinedHarvest {
         $coordinates = Get-ClearlyDefinedCoordinates @PSBoundParameters
         $body = @{tool='package';coordinates=$coordinates} | convertto-json
         Write-Verbose $body -Verbose
-        (Invoke-WebRequest -Method Post  -Uri 'https://api.clearlydefined.io/harvest' -Body $body -ContentType 'application/json').Content
+        (Invoke-WebRequest -Method Post  -Uri 'https://api.clearlydefined.io/harvest' -Body $body -ContentType 'application/json' -MaximumRetryCount 5 -RetryIntervalSec 60 -Verbose).Content
     }
 }
 
