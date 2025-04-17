@@ -14,6 +14,9 @@ namespace System.Management.Automation
     {
         private static readonly SearchValues<char> s_defaultCharsToCheck = SearchValues.Create("$`");
 
+        private const string SingleQuote = "'";
+        private const string DoubleQuote = "\"";
+
         /// <summary>
         /// Get matching completions from word to complete.
         /// This makes it easier to handle different variations of completions with consideration of quotes.
@@ -157,7 +160,7 @@ namespace System.Management.Automation
                 return string.Empty;
             }
 
-            string quoteInUse = hasFrontSingleQuote ? "'" : "\"";
+            string quoteInUse = hasFrontSingleQuote ? SingleQuote : DoubleQuote;
 
             int length = wordToComplete.Length;
             if (length == 1)
@@ -261,7 +264,7 @@ namespace System.Management.Automation
             // Escaped newlines e.g. `r`n need be surrounded with double quotes
             if (ContainsEscapedNewlineString(completionText))
             {
-                return "\"" + completionText + "\"";
+                return DoubleQuote + completionText + DoubleQuote;
             }
 
             if (!CompletionRequiresQuotes(completionText))
@@ -269,9 +272,9 @@ namespace System.Management.Automation
                 return quote + completionText + quote;
             }
 
-            string quoteInUse = string.IsNullOrEmpty(quote) ? "'" : quote;
+            string quoteInUse = string.IsNullOrEmpty(quote) ? SingleQuote : quote;
 
-            if (quoteInUse == "'")
+            if (quoteInUse == SingleQuote)
             {
                 completionText = CodeGeneration.EscapeSingleQuotedStringContent(completionText);
             }
