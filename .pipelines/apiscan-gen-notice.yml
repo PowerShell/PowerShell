@@ -13,6 +13,9 @@ parameters:
     default: false
 
 variables:
+  # PAT permissions NOTE: Declare a SymbolServerPAT variable in this group with a 'microsoft' organizanization scoped PAT with 'Symbols' Read permission.
+  # A PAT in the wrong org will give a single Error 203. No PAT will give a single Error 401, and individual pdbs may be missing even if permissions are correct.
+  - group: symbols
   - name: ob_outputDirectory
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
   - name: CDP_DEFINITION_BUILD_COUNT
@@ -86,8 +89,8 @@ extends:
         softwareName: "PowerShell" # Default is repo name
         versionNumber: "7.5" # Default is build number
         isLargeApp: false # Default: false.
+        symbolsFolder: $(SymbolsServerUrl);$(ob_outputDirectory)
 #softwareFolder - relative path to a folder to be scanned. Default value is root of artifacts folder.
-#symbolsFolder - relative path to a folder that contains symbols. Default value is root of artifacts folder.
 
       tsaOptionsFile: .config\tsaoptions.json
 
