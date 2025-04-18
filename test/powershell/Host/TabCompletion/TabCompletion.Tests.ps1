@@ -1084,6 +1084,17 @@ param([ValidatePattern(
         $res.CompletionMatches[0].CompletionText | Should -BeExactly '$TestVar1'
     }
 
+    It 'Should complete variable assigned in ParenExpression' {
+        $res = TabExpansion2 -inputScript '($ParenVar) = 1; $ParenVa'
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '$ParenVar'
+    }
+
+    It 'Should complete variable assigned in ArrayLiteral' {
+        $res = TabExpansion2 -inputScript '$DemoVar1, $DemoVar2 = 1..10; $DemoVar'
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '$DemoVar1'
+        $res.CompletionMatches[1].CompletionText | Should -BeExactly '$DemoVar2'
+    }
+
     Context 'Start-Process -Verb parameter completion' {
         BeforeAll {
             function GetProcessInfoVerbs([string]$path, [switch]$singleQuote, [switch]$doubleQuote) {
