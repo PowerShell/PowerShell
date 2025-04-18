@@ -123,6 +123,12 @@ jobs:
 
         Copy-Item -Path "$OutputFolder\*" -Destination '$(ob_outputDirectory)' -Recurse -Verbose
 
+        # Only key windows runtimes
+        Get-ChildItem -Path '$(ob_outputDirectory)\runtime\*' -File -Recurse | Where-Object {$_.FullName -notmatch '.*\/runtimes\/win'} | Remove-Item -Force -Verbose
+
+        # Temporarily remove runtimes/win-x64  due to issues with that runtime
+        Get-ChildItem -Path '$(ob_outputDirectory)\runtime\*' -File -Recurse | Where-Object {$_.FullName -match '.*\/runtimes\/win-x86\/'} | Remove-Item -Force -Verbose
+
       workingDirectory: '$(repoRoot)'
       displayName: 'Build PowerShell Source'
 
