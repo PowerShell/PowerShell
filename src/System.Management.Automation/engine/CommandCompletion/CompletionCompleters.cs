@@ -2452,6 +2452,16 @@ namespace System.Management.Automation
                         break;
                     }
 
+                case "ConvertTo-Html":
+                    {
+                        if (parameterName.Equals("Property", StringComparison.OrdinalIgnoreCase))
+                        {
+                            NativeCompletionMemberName(context, result, commandAst, boundArguments?[parameterName]);
+                        }
+
+                        break;
+                    }
+
                 case "New-Object":
                     {
                         if (parameterName.Equals("TypeName", StringComparison.OrdinalIgnoreCase))
@@ -8230,7 +8240,10 @@ namespace System.Management.Automation
                                 case "Sort-Object":
                                     return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Expression", "Ascending", "Descending");
                                 case "Group-Object":
+                                case "Compare-Object":
                                     return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Expression");
+                                case "ConvertTo-Html":
+                                    return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Expression", "Label", "Width", "Alignment");
                                 case "Format-Table":
                                     return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Expression", "FormatString", "Label", "Width", "Alignment");
                                 case "Format-List":
