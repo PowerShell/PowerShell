@@ -127,13 +127,13 @@ jobs:
 
     - pwsh: |
         # Only key windows runtimes
-        Get-ChildItem -Path '$(ob_outputDirectory)\runtime\*' -File -Recurse | Where-Object {$_.FullName -notmatch '.*\/runtimes\/win'} | Foreach-Object {
+        Get-ChildItem -Path '$(ob_outputDirectory)\runtimes\*' -File -Recurse | Where-Object {$_.FullName -notmatch '.*\/runtimes\/win'} | Foreach-Object {
           Write-Verbose -Verbose -Message "Deleting $($_.FullName)"
           Remove-Item -Force -Verbose
         }
 
         # Temporarily remove runtimes/win-x64  due to issues with that runtime
-        Get-ChildItem -Path '$(ob_outputDirectory)\runtime\*' -File -Recurse | Where-Object {$_.FullName -match '.*\/runtimes\/win-x86\/'} | Foreach-Object {
+        Get-ChildItem -Path '$(ob_outputDirectory)\runtimes\*' -File -Recurse | Where-Object {$_.FullName -match '.*\/runtimes\/win-x86\/'} | Foreach-Object {
           Write-Verbose -Verbose -Message "Deleting $($_.FullName)"
           Remove-Item -Force -Verbose
         }
