@@ -122,15 +122,24 @@ jobs:
         }
 
         Copy-Item -Path "$OutputFolder\*" -Destination '$(ob_outputDirectory)' -Recurse -Verbose
-
-        # Only key windows runtimes
-        Get-ChildItem -Path '$(ob_outputDirectory)\runtime\*' -File -Recurse | Where-Object {$_.FullName -notmatch '.*\/runtimes\/win'} | Remove-Item -Force -Verbose
-
-        # Temporarily remove runtimes/win-x64  due to issues with that runtime
-        Get-ChildItem -Path '$(ob_outputDirectory)\runtime\*' -File -Recurse | Where-Object {$_.FullName -match '.*\/runtimes\/win-x86\/'} | Remove-Item -Force -Verbose
-
       workingDirectory: '$(repoRoot)'
       displayName: 'Build PowerShell Source'
+
+    - pwsh: |
+        # Only key windows runtimes
+        Get-ChildItem -Path '$(ob_outputDirectory)\runtime\*' -File -Recurse | Where-Object {$_.FullName -notmatch '.*\/runtimes\/win'} | Foreach-Object {
+          Write-Verbose -Verbose -Message "Deleting $($_.FullName)"
+          Remove-Item -Force -Verbose
+        }
+
+        # Temporarily remove runtimes/win-x64  due to issues with that runtime
+        Get-ChildItem -Path '$(ob_outputDirectory)\runtime\*' -File -Recurse | Where-Object {$_.FullName -match '.*\/runtimes\/win-x86\/'} | Foreach-Object {
+          Write-Verbose -Verbose -Message "Deleting $($_.FullName)"
+          Remove-Item -Force -Verbose
+        }
+
+      workingDirectory: '$(repoRoot)'
+      displayName: 'Remove unused runtimes'
 
     - task: CodeQL3000Finalize@0 # Add CodeQL Finalize task right after your 'Build' step.
       displayName: 🔏 CodeQL 3000 Finalize
