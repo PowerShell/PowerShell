@@ -3676,6 +3676,9 @@ function New-NugetConfigFile {
     $content += $newLine + $nugetConfigFooterTemplate
 
     Set-Content -Path (Join-Path $Destination 'nuget.config') -Value $content -Force
+
+    # Set the nuget.config file to be skipped by git
+    git update-index --skip-worktree (Join-Path $Destination 'nuget.config')
 }
 
 function Clear-PipelineNugetAuthentication {
