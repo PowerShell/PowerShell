@@ -161,9 +161,9 @@ namespace PSTests.Parallel
         [InlineData("\r\n", "`r`n")]
         [InlineData("word\n", "word`n")]
         [InlineData("word\r\n", "word`r`n")]
-        public void TestNormalizeLineEndings(string wordToComplete, string expected)
+        public void TestNormalizeToExpandableString(string wordToComplete, string expected)
         {
-            string result = CompletionHelpers.NormalizeLineEndings(wordToComplete);
+            string result = CompletionHelpers.NormalizeToExpandableString(wordToComplete);
             Assert.Equal(expected, result);
         }
     }

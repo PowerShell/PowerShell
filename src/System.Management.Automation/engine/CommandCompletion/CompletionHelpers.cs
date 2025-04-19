@@ -39,8 +39,10 @@ namespace System.Management.Automation
             matchStrategy ??= DefaultMatch;
 
             string quote = HandleDoubleAndSingleQuote(ref wordToComplete);
-
-            wordToComplete = NormalizeLineEndings(wordToComplete);
+            if (quote == DoubleQuote)
+            {
+                wordToComplete = NormalizeToExpandableString(wordToComplete);
+            }
 
             foreach (string value in possibleCompletionValues)
             {
@@ -56,12 +58,15 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Normalizes the word to complete by replacing line endings with escaped newlines.
-        /// This is necessary to ensure comparisons are consistent with "\r\n" (Windows) & "\n" (UNIX).
+        /// Normalizes the word to complete to expandable string format.
         /// </summary>
         /// <param name="wordToComplete">The word to complete.</param>
         /// <returns>The normalized word with escaped newlines replaced.</returns>
-        internal static string NormalizeLineEndings(string wordToComplete)
+        /// <remarks>
+        /// This method replaces all occurrences of "\r" with "`r" and "\n" with "`n" in the input string.
+        /// This is important for ensuring that the word to complete is in a consistent format for matching.
+        /// </remarks>
+        internal static string NormalizeToExpandableString(string wordToComplete)
             => wordToComplete.Replace("\r", "`r").Replace("\n", "`n");
 
         /// <summary>
