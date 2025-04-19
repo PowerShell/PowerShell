@@ -116,9 +116,7 @@ namespace PSTests.Parallel
         [InlineData("word", "wor", true)]
         [InlineData("word", "words", false)]
         [InlineData("word`nnext", "word`n", true)]
-        [InlineData("word`nnext", "word\n", true)]
         [InlineData("word`r`nnext", "word`r`n", true)]
-        [InlineData("word`r`nnext", "word\r\n", true)]
         [InlineData("word;next", "word;", true)]
         [InlineData("word,next", "word,", true)]
         [InlineData("word[*]next", "word[*", true)]
@@ -141,9 +139,7 @@ namespace PSTests.Parallel
         [InlineData("word", "wor", true)]
         [InlineData("word", "words", false)]
         [InlineData("word`nnext", "word`n", true)]
-        [InlineData("word`nnext", "word\n", true)]
         [InlineData("word`r`nnext", "word`r`n", true)]
-        [InlineData("word`r`nnext", "word\r\n", true)]
         [InlineData("word;next", "word;", true)]
         [InlineData("word,next", "word,", true)]
         [InlineData("word[*]next", "word[*", true)]
@@ -157,6 +153,17 @@ namespace PSTests.Parallel
         public void TestWildcardPatternEscapeMatch(string value, string wordToComplete, bool expected)
         {
             bool result = CompletionHelpers.WildcardPatternEscapeMatch(value, wordToComplete);
+            Assert.Equal(expected, result);
+        }
+
+        [Theory]
+        [InlineData("\n", "`n")]
+        [InlineData("\r\n", "`r`n")]
+        [InlineData("word\n", "word`n")]
+        [InlineData("word\r\n", "word`r`n")]
+        public void TestNormalizeLineEndings(string wordToComplete, string expected)
+        {
+            string result = CompletionHelpers.NormalizeLineEndings(wordToComplete);
             Assert.Equal(expected, result);
         }
     }

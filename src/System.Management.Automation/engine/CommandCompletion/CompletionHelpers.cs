@@ -36,9 +36,11 @@ namespace System.Management.Automation
             CompletionResultType resultType = CompletionResultType.Text,
             MatchStrategy matchStrategy = null)
         {
+            matchStrategy ??= DefaultMatch;
+
             string quote = HandleDoubleAndSingleQuote(ref wordToComplete);
 
-            matchStrategy ??= DefaultMatch;
+            wordToComplete = NormalizeLineEndings(wordToComplete);
 
             foreach (string value in possibleCompletionValues)
             {
@@ -54,6 +56,15 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Normalizes the word to complete by replacing line endings with escaped newlines.
+        /// This is necessary to ensure comparisons are consistent with "\r\n" (Windows) & "\n" (UNIX).
+        /// </summary>
+        /// <param name="wordToComplete">The word to complete.</param>
+        /// <returns>The normalized word with escaped newlines replaced.</returns>
+        internal static string NormalizeLineEndings(string wordToComplete)
+            => wordToComplete.Replace("\r", "`r").Replace("\n", "`n");
+
+        /// <summary>
         /// Defines a strategy for determining if a value matches a word or pattern.
         /// </summary>
         /// <param name="value">The input string to check for a match.</param>
@@ -67,23 +78,10 @@ namespace System.Management.Automation
         /// Determines if the given value matches the specified word using a literal, case-insensitive prefix match.
         /// </summary>
         /// <returns>
-        /// <c>true</c> if the value starts with the normalized word (case-insensitively); otherwise, <c>false</c>.
+        /// <c>true</c> if the value starts with the word (case-insensitively); otherwise, <c>false</c>.
         /// </returns>
-        /// <remarks>
-        /// The word to complete is normalized by replacing line endings with backticks.
-        /// This normalization ensures that variations in line-ending representations, such as "\r\n" (Windows) & "\n" (UNIX),
-        /// do not interfere with the matching logic. Without normalization, comparisons will fail.
-        /// 
-        /// Example:
-        /// For instance, if the value is "`r`n" and wordToComplete is "\r",
-        /// the prefix match will fail due to differing line-ending formats. Normalizing both strings to use
-        /// backticks allows the comparison to succeed.
-        /// </remarks>
-        internal static readonly MatchStrategy LiteralMatch = (value, wordToComplete) =>
-        {
-            string normalisedWordNewlines = wordToComplete.Replace("\r", "`r").Replace("\n", "`n");
-            return value.StartsWith(normalisedWordNewlines, StringComparison.OrdinalIgnoreCase);
-        };
+        internal static readonly MatchStrategy LiteralMatch = (value, wordToComplete)
+            => value.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase);
 
         /// <summary>
         /// Determines if the given value matches the specified word using wildcard pattern matching.
