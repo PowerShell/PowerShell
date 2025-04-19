@@ -151,6 +151,21 @@ jobs:
       displayName: Capture Environment
       condition: succeededOrFailed()
 
+    # Explicitly download symbols for the drop since the SDL image doesn't have http://SymWeb access and APIScan cannot handle https yet.
+    - pwsh: |
+        Import-Module .\build.psm1 -force
+        Find-DotNet
+        $pat = '$(SymbolServerPAT)'
+        if ($pat -like '*PAT*' -or $pat -eq '')
+        {
+          throw 'No PAT defined'
+        }
+        $url = 'https://microsoft.artifacts.visualstudio.com/defaultcollection/_apis/symbol/symsrv'
+        $(symbolToolPath) --authenticated-server-path $(SymbolServerPAT) $url --symbols -d "$env:ob_outputDirectory\*" --recurse-subdirectories
+      displayName: 'Download Symbols for binaries'
+      retryCountOnTaskFailure: 2
+      workingDirectory: '$(repoRoot)'
+
     - pwsh: |
         Get-ChildItem '$(ob_outputDirectory)' -File -Recurse |
         Foreach-Object {
@@ -173,9 +188,3 @@ jobs:
       displayName: Capture Environment
       condition: succeededOrFailed()
       workingDirectory: '$(repoRoot)'
-
-    - pwsh: |
-        Get-ChildItem -Path '$(ob_outputDirectory)\*' -File -Recurse  | Out-String -width 9999 -Stream | write-Verbose -Verbose
-
-      workingDirectory: '$(repoRoot)'
-      displayName: Cature Artifacts
