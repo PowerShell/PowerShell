@@ -62,19 +62,7 @@ namespace System.Management.Automation
         /// <param name="wordToComplete">The word to complete.</param>
         /// <returns>The normalized word with escaped newlines replaced.</returns>
         internal static string NormalizeLineEndings(string wordToComplete)
-        {
-            if (wordToComplete.Contains('\r'))
-            {
-                wordToComplete = wordToComplete.Replace("\r", "`r");
-            }
-
-            if (wordToComplete.Contains('\n'))
-            {
-                wordToComplete = wordToComplete.Replace("\n", "`n");
-            }
-
-            return wordToComplete;
-        }
+            => wordToComplete.Replace("\r", "`r").Replace("\n", "`n");
 
         /// <summary>
         /// Defines a strategy for determining if a value matches a word or pattern.
