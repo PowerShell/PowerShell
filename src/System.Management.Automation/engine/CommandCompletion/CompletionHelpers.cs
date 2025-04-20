@@ -144,7 +144,7 @@ namespace System.Management.Automation
         /// <c>true</c> if the value matches either the literal normalized word or the wildcard pattern; otherwise, <c>false</c>.
         /// </returns>
         /// <remarks>
-        /// This strategy attempts a literal match first and, if unsuccessful, evaluates the word against a wildcard pattern.
+        /// This strategy attempts a literal match first for performance and, if unsuccessful, evaluates the word against a wildcard pattern.
         /// </remarks>
         internal static readonly MatchStrategy DefaultMatch = (value, wordToComplete)
             => LiteralMatch(value, wordToComplete) ||
