@@ -130,7 +130,7 @@ namespace System.Management.Automation
         /// otherwise, <c>false</c>.
         /// </returns>
         /// <remarks>
-        /// This strategy first attempts a literal prefix match and, if unsuccessful, escapes the word to complete to 
+        /// This strategy first attempts a literal prefix match for performance and, if unsuccessful, escapes the word to complete to 
         /// handle any problematic wildcard characters before performing a wildcard match.
         /// </remarks>
         internal static readonly MatchStrategy WildcardPatternEscapeMatch = (value, wordToComplete)
