@@ -58,16 +58,35 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Normalizes the word to complete to expandable string format.
+        /// Normalizes the input string to an expandable string format for PowerShell.
         /// </summary>
-        /// <param name="wordToComplete">The word to complete.</param>
-        /// <returns>The normalized word with escaped newlines replaced.</returns>
+        /// <param name="value">The input string to be normalized.</param>
+        /// <returns>The normalized string with special characters replaced by their PowerShell escape sequences.</returns>
         /// <remarks>
-        /// This method replaces all occurrences of "\r" with "`r" and "\n" with "`n" in the input string.
-        /// This is important for ensuring that the word to complete is in a consistent format for matching.
+        /// This method replaces special characters in the input string with their PowerShell equivalent escape sequences:
+        /// <list type="bullet">
+        ///     <item><description>Replaces "\r" (carriage return) with "`r".</description></item>
+        ///     <item><description>Replaces "\n" (newline) with "`n".</description></item>
+        ///     <item><description>Replaces "\t" (tab) with "`t".</description></item>
+        ///     <item><description>Replaces "\0" (null) with "`0".</description></item>
+        ///     <item><description>Replaces "\a" (bell) with "`a".</description></item>
+        ///     <item><description>Replaces "\b" (backspace) with "`b".</description></item>
+        ///     <item><description>Replaces "\u001b" (escape character) with "`e".</description></item>
+        ///     <item><description>Replaces "\f" (form feed) with "`f".</description></item>
+        ///     <item><description>Replaces "\v" (vertical tab) with "`v".</description></item>
+        /// </list>
         /// </remarks>
-        internal static string NormalizeToExpandableString(string wordToComplete)
-            => wordToComplete.Replace("\r", "`r").Replace("\n", "`n");
+        internal static string NormalizeToExpandableString(string value)
+            => value
+                .Replace("\r", "`r")
+                .Replace("\n", "`n")
+                .Replace("\t", "`t")
+                .Replace("\0", "`0")
+                .Replace("\a", "`a")
+                .Replace("\b", "`b")
+                .Replace("\u001b", "`e")
+                .Replace("\f", "`f")
+                .Replace("\v", "`v");
 
         /// <summary>
         /// Defines a strategy for determining if a value matches a word or pattern.

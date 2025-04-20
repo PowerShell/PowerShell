@@ -158,12 +158,25 @@ namespace PSTests.Parallel
 
         [Theory]
         [InlineData("\n", "`n")]
+        [InlineData("\r", "`r")]
         [InlineData("\r\n", "`r`n")]
+        [InlineData("\t", "`t")]
+        [InlineData("\0", "`0")]
+        [InlineData("\a", "`a")]
+        [InlineData("\b", "`b")]
+        [InlineData("\u001b", "`e")]
+        [InlineData("\f", "`f")]
+        [InlineData("\v", "`v")]
         [InlineData("word\n", "word`n")]
+        [InlineData("word\r", "word`r")]
+        [InlineData("word\t", "word`t")]
+        [InlineData("word\u001b", "word`e")]
+        [InlineData("word\f", "word`f")]
+        [InlineData("word\v", "word`v")]
         [InlineData("word\r\n", "word`r`n")]
-        public void TestNormalizeToExpandableString(string wordToComplete, string expected)
+        public void TestNormalizeToExpandableString(string value, string expected)
         {
-            string result = CompletionHelpers.NormalizeToExpandableString(wordToComplete);
+            string result = CompletionHelpers.NormalizeToExpandableString(value);
             Assert.Equal(expected, result);
         }
     }
