@@ -138,7 +138,7 @@ namespace System.Management.Automation
                WildcardPatternMatch(value, WildcardPattern.Escape(wordToComplete));
 
         /// <summary>
-        /// Determines if the given value matches the specified word using either a literal or wildcard match strategy.
+        /// Determines if the given value matches the specified word taking into account wildcard characters.
         /// </summary>
         /// <returns>
         /// <c>true</c> if the value matches either the literal normalized word or the wildcard pattern; otherwise, <c>false</c>.
