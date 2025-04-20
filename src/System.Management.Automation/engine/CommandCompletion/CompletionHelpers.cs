@@ -123,7 +123,7 @@ namespace System.Management.Automation
                 .IsMatch(value);
 
         /// <summary>
-        /// Determines if the given value matches the specified word using either a literal or wildcard escape strategy.
+        /// Determines if the given value matches the specified word considering wildcard characters literally.
         /// </summary>
         /// <returns>
         /// <c>true</c> if the value matches either the literal normalized word or the wildcard pattern with escaping; 
