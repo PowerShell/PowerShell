@@ -39,7 +39,7 @@ namespace System.Management.Automation
             matchStrategy ??= DefaultMatch;
 
             string quote = HandleDoubleAndSingleQuote(ref wordToComplete);
-            if (quote == DoubleQuote)
+            if (quote != SingleQuote)
             {
                 wordToComplete = NormalizeToExpandableString(wordToComplete);
             }
