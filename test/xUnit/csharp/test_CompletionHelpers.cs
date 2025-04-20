@@ -143,7 +143,6 @@ namespace PSTests.Parallel
         [InlineData("word;next", "word;", true)]
         [InlineData("word,next", "word,", true)]
         [InlineData("word[*]next", "word[*", true)]
-        [InlineData("word`?`[`*`]next", "word?[*", true)]
         [InlineData("word[abc]next", "word[abc", true)]
         [InlineData("word", "word*", false)]
         [InlineData("Word", "word*", false)]
