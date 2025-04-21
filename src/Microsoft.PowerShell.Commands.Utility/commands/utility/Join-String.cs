@@ -174,14 +174,14 @@ namespace Microsoft.PowerShell.Commands.Utility
 
         private static readonly CompletionHelpers.CompletionDisplayInfoMapper SeparatorDisplayInfoMapper = separator => separator switch
         {
-            "," => new(TabCompletionStrings.SeparatorCommaToolTip, "Comma"),
-            ", " => new(TabCompletionStrings.SeparatorCommaSpaceToolTip, "Comma-Space"),
-            ";" => new(TabCompletionStrings.SeparatorSemiColonToolTip, "Semi-Colon"),
-            "; " => new(TabCompletionStrings.SeparatorSemiColonSpaceToolTip, "Semi-Colon-Space"),
-            "-" => new(TabCompletionStrings.SeparatorDashToolTip, "Dash"),
-            " " => new(TabCompletionStrings.SeparatorSpaceToolTip, "Space"),
-            NewLineText => new(StringUtil.Format(TabCompletionStrings.SeparatorNewlineToolTip, NewLineText), "Newline"),
-            _ => new(separator, separator)
+            "," => (TabCompletionStrings.SeparatorCommaToolTip, "Comma"),
+            ", " => (TabCompletionStrings.SeparatorCommaSpaceToolTip, "Comma-Space"),
+            ";" => (TabCompletionStrings.SeparatorSemiColonToolTip, "Semi-Colon"),
+            "; " => (TabCompletionStrings.SeparatorSemiColonSpaceToolTip, "Semi-Colon-Space"),
+            "-" => (TabCompletionStrings.SeparatorDashToolTip, "Dash"),
+            " " => (TabCompletionStrings.SeparatorSpaceToolTip, "Space"),
+            NewLineText => (StringUtil.Format(TabCompletionStrings.SeparatorNewlineToolTip, NewLineText), "Newline"),
+            _ => (separator, separator)
         };
 
         private static readonly IReadOnlyList<string> s_separatorValues = new List<string>(capacity: 7)

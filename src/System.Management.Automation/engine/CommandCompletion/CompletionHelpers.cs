@@ -49,7 +49,7 @@ namespace System.Management.Automation
                 {
                     string completionText = QuoteCompletionText(value, quote);
 
-                    CompletionDisplayInfo displayInfo = displayInfoMapper(value);
+                    (string ToolTip, string ListItemText) displayInfo = displayInfoMapper(value);
                     string toolTip = displayInfo.ToolTip;
                     string listItemText = displayInfo.ListItemText;
 
@@ -59,28 +59,12 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Represents the display information for a completion result.
-        /// </summary>
-        internal class CompletionDisplayInfo
-        {
-            public string ToolTip { get; set; }
-
-            public string ListItemText { get; set; }
-
-            public CompletionDisplayInfo(string toolTip, string listItemText)
-            {
-                ToolTip = toolTip;
-                ListItemText = listItemText;
-            }
-        }
-
-        /// <summary>
         /// Provides the display information for a completion result.
         /// This delegate is used to map a string value to its corresponding display information.
         /// </summary>
         /// <param name="value">The input value to be mapped</param>
         /// <returns>Completion display info containing tool tip and list item text.</returns>
-        internal delegate CompletionDisplayInfo CompletionDisplayInfoMapper(string value);
+        internal delegate (string ToolTip, string ListItemText) CompletionDisplayInfoMapper(string value);
 
         /// <summary>
         /// Provides the default display information for a completion result.
@@ -88,7 +72,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <returns>Completion display info containing tool tip and list item text.</returns>
         internal static readonly CompletionDisplayInfoMapper DefaultDisplayInfoMapper = value
-            => new CompletionDisplayInfo(value, value);
+            => (value, value);
 
         /// <summary>
         /// Normalizes the input string to an expandable string format for PowerShell.
