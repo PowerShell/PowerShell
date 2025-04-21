@@ -104,7 +104,7 @@ namespace System.Management.Automation
         /// <returns>
         /// <c>true</c> if the value starts with the word (case-insensitively); otherwise, <c>false</c>.
         /// </returns>
-        internal static readonly MatchStrategy LiteralMatch = (value, wordToComplete)
+        internal static readonly MatchStrategy LiteralMatchOrdinalIgnoreCase = (value, wordToComplete)
             => value.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase);
 
         /// <summary>
@@ -117,7 +117,7 @@ namespace System.Management.Automation
         /// Wildcard pattern matching allows for flexible matching, where wilcards can represent 
         /// multiple characters in the input. This strategy is case-insensitive.
         /// </remarks>
-        internal static readonly MatchStrategy WildcardPatternMatch = (value, wordToComplete)
+        internal static readonly MatchStrategy WildcardPatternMatchIgnoreCase = (value, wordToComplete)
             => WildcardPattern
                 .Get(wordToComplete + "*", WildcardOptions.IgnoreCase)
                 .IsMatch(value);
@@ -134,8 +134,8 @@ namespace System.Management.Automation
         /// handle any problematic wildcard characters before performing a wildcard match.
         /// </remarks>
         internal static readonly MatchStrategy WildcardPatternEscapeMatch = (value, wordToComplete)
-            => LiteralMatch(value, wordToComplete) ||
-               WildcardPatternMatch(value, WildcardPattern.Escape(wordToComplete));
+            => LiteralMatchOrdinalIgnoreCase(value, wordToComplete) ||
+               WildcardPatternMatchIgnoreCase(value, WildcardPattern.Escape(wordToComplete));
 
         /// <summary>
         /// Determines if the given value matches the specified word taking into account wildcard characters.
@@ -147,8 +147,8 @@ namespace System.Management.Automation
         /// This strategy attempts a literal match first for performance and, if unsuccessful, evaluates the word against a wildcard pattern.
         /// </remarks>
         internal static readonly MatchStrategy DefaultMatch = (value, wordToComplete)
-            => LiteralMatch(value, wordToComplete) ||
-               WildcardPatternMatch(value, wordToComplete);
+            => LiteralMatchOrdinalIgnoreCase(value, wordToComplete) ||
+               WildcardPatternMatchIgnoreCase(value, wordToComplete);
 
         /// <summary>
         /// Removes wrapping quotes from a string and returns the quote used, if present.
