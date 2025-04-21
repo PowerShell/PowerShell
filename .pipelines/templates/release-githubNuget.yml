@@ -87,10 +87,6 @@ jobs:
 
         Write-Verbose -Verbose "Selected content: `n$clContent"
 
-<<<<<<< HEAD
-        Publish-ReleaseDraft -Tag '$(ReleaseTag)' -Name '$(ReleaseTag) Release of PowerShell' -Description $clContent -User PowerShell -Repository PowerShell  -PackageFolder "$(Pipeline.Workspace)/GitHubPackages" -Token $(GitHubReleasePat)
-    displayName: Publish Release Draft
-=======
         $releaseNotesFilePath = "$(Pipeline.Workspace)/release-notes.md"
         $clContent | Out-File -FilePath $releaseNotesFilePath -Encoding utf8
   
@@ -122,7 +118,6 @@ jobs:
       action: 'create'
       releaseNotesFilePath: '$(ReleaseNotesFilePath)'
       isPrerelease: '$(IsPreRelease)'
->>>>>>> fa4f5b6fd (Use GitHubReleaseTask instead of custom script (#25398))
 
 - job: NuGetPublish
   displayName: Publish to NuGet
