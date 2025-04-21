@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<!-- template used by generatePackageSigning.ps1 -->
-<SignConfigXML>
-  <job platform="" configuration="" dest="__OUTPATHROOT__\signed" jobname="PowerShell Core Installer" approvers="vigarg;gstolt">
-  </job>
-</SignConfigXML>
