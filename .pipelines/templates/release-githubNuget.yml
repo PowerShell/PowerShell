@@ -93,7 +93,7 @@ jobs:
         Write-Host "##vso[task.setvariable variable=ReleaseNotesFilePath;]$releaseNotesFilePath"
   
         #if name has prelease then make prerelease true as a variable
-        if ($releaseVersion -like '*-preview*') {
+        if ($releaseVersion -like '*-*') {
             Write-Host "##vso[task.setvariable variable=IsPreRelease;]true"
         } else {
             Write-Host "##vso[task.setvariable variable=IsPreRelease;]false"
