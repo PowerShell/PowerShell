@@ -165,7 +165,7 @@ namespace Microsoft.PowerShell.Commands.Utility
     /// </summary>
     public sealed class SeparatorArgumentCompleter : IArgumentCompleter
     {
-        private static readonly string NewLineText =
+        private const string NewLineText =
 #if UNIX
         "`n";
 #else
@@ -180,7 +180,7 @@ namespace Microsoft.PowerShell.Commands.Utility
             "; " => new(TabCompletionStrings.SeparatorSemiColonSpaceToolTip, "Semi-Colon-Space"),
             "-" => new(TabCompletionStrings.SeparatorDashToolTip, "Dash"),
             " " => new(TabCompletionStrings.SeparatorSpaceToolTip, "Space"),
-            _ when separator == NewLineText => new(StringUtil.Format(TabCompletionStrings.SeparatorNewlineToolTip, NewLineText), "Newline"),
+            NewLineText => new(StringUtil.Format(TabCompletionStrings.SeparatorNewlineToolTip, NewLineText), "Newline"),
             _ => new(separator, separator)
         };
 
