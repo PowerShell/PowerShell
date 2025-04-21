@@ -176,36 +176,28 @@ namespace Microsoft.PowerShell.Commands.Utility
         {
             "," => (
                 ToolTip: TabCompletionStrings.SeparatorCommaToolTip,
-                ListItemText: "Comma"
-            ),
+                ListItemText: "Comma"),
             ", " => (
                 ToolTip: TabCompletionStrings.SeparatorCommaSpaceToolTip,
-                ListItemText: "Comma-Space"
-            ),
+                ListItemText: "Comma-Space"),
             ";" => (
                 ToolTip: TabCompletionStrings.SeparatorSemiColonToolTip,
-                ListItemText: "Semi-Colon"
-            ),
+                ListItemText: "Semi-Colon"),
             "; " => (
                 ToolTip: TabCompletionStrings.SeparatorSemiColonSpaceToolTip,
-                ListItemText: "Semi-Colon-Space"
-            ),
+                ListItemText: "Semi-Colon-Space"),
             "-" => (
                 ToolTip: TabCompletionStrings.SeparatorDashToolTip,
-                ListItemText: "Dash"
-            ),
+                ListItemText: "Dash"),
             " " => (
                 ToolTip: TabCompletionStrings.SeparatorSpaceToolTip,
-                ListItemText: "Space"
-            ),
+                ListItemText: "Space"),
             NewLineText => (
                 ToolTip: StringUtil.Format(TabCompletionStrings.SeparatorNewlineToolTip, NewLineText),
-                ListItemText: "Newline"
-            ),
+                ListItemText: "Newline"),
             _ => (
                 ToolTip: separator,
-                ListItemText: separator
-            )
+                ListItemText: separator),
         };
 
         private static readonly IReadOnlyList<string> s_separatorValues = new List<string>(capacity: 7)

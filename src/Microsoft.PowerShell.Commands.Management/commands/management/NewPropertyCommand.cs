@@ -193,32 +193,25 @@ namespace Microsoft.PowerShell.Commands
         {
             "String" => (
                 ToolTip: TabCompletionStrings.RegistryStringToolTip,
-                ListItemText: "String"
-            ),
+                ListItemText: "String"),
             "ExpandString" => (
                 ToolTip: TabCompletionStrings.RegistryExpandStringToolTip,
-                ListItemText: "ExpandString"
-            ),
+                ListItemText: "ExpandString"),
             "Binary" => (
                 ToolTip: TabCompletionStrings.RegistryBinaryToolTip,
-                ListItemText: "Binary"
-            ),
+                ListItemText: "Binary"),
             "DWord" => (
                 ToolTip: TabCompletionStrings.RegistryDWordToolTip,
-                ListItemText: "DWord"
-            ),
+                ListItemText: "DWord"),
             "MultiString" => (
                 ToolTip: TabCompletionStrings.RegistryMultiStringToolTip,
-                ListItemText: "MultiString"
-            ),
+                ListItemText: "MultiString"),
             "QWord" => (
                 ToolTip: TabCompletionStrings.RegistryQWordToolTip,
-                ListItemText: "QWord"
-            ),
+                ListItemText: "QWord"),
             _ => (
                 ToolTip: TabCompletionStrings.RegistryUnknownToolTip,
-                ListItemText: "Unknown"
-            )
+                ListItemText: "Unknown"),
         };
 
         private static readonly IReadOnlyList<string> s_RegistryPropertyTypes = new List<string>(capacity: 7)
