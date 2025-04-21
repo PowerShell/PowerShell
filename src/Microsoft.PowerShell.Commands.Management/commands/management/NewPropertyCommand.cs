@@ -200,7 +200,7 @@ namespace Microsoft.PowerShell.Commands
             _ => new(TabCompletionStrings.RegistryUnknownToolTip, "Unknown")
         };
 
-        private static readonly IReadOnlyList<string> s_RegistryPropertyTypes = new List<string>(capacity: 6)
+        private static readonly IReadOnlyList<string> s_RegistryPropertyTypes = new List<string>(capacity: 7)
         {
             "String",
             "ExpandString",
