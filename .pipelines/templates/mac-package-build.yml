@@ -198,56 +198,43 @@ jobs:
       Get-ChildItem -Path $(Pipeline.Workspace) -Filter "*.zip" -File | Write-Verbose -Verbose
     displayName: Compress package files for signing
 
-  - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@5
-    displayName: 'ESRP CodeSigning'
+  - task: onebranch.pipeline.signing@1
+    displayName: 'OneBranch CodeSigning Package'
     inputs:
-      ConnectedServiceName: 'ESRPMacOSSigning'
-      AppRegistrationClientId: '$(AppRegistrationClientId)'
-      AppRegistrationTenantId: '$(AppRegistrationTenantId)'
-      AuthAKVName: 'pwsh-CICD-Keyvault'
-      AuthCertName: 'PS-macos-signing'
-      AuthSignCertName: 'ESRP-OneCert' # this is not needed for pkg signing
-      FolderPath: $(Pipeline.Workspace)
-      Pattern: '*.zip'
-      signConfigType: inlineSignParams
-      inlineOperation: |
-        [{
+      command: 'sign'
+      files_to_sign: '**/*-osx-*.zip'
+      search_root: '$(Pipeline.Workspace)'
+      inline_operation: |
+        [
+          {
             "KeyCode": "$(KeyCode)",
-            "OperationSetCode": "MacAppDeveloperSign",
-            "parameters": [
-            {
-                "parameterName": "hardening",
-                "parameterValue": "enable"
-            },
-            {
-                "parameterName": "OpusInfo",
-                "parameterValue": "http://Microsoft.com"
-            }
-            ],
+            "OperationCode": "MacAppDeveloperSign",
             "ToolName": "sign",
-            "ToolVersion": "1.0"
-        }]
-      SessionTimeout: 90
-      ServiceEndpointUrl: '$(ServiceEndpointUrl)'
-      MaxConcurrency: 25
+            "ToolVersion": "1.0",
+            "Parameters": {
+              "Hardening": "Enable",
+              "OpusInfo": "http://microsoft.com"
+            }
+          }
+        ]
 
   - pwsh: |
       $signedPkg = Get-ChildItem -Path $(Pipeline.Workspace) -Filter "*osx*.zip" -File
-
+  
       $signedPkg | ForEach-Object {
         Write-Verbose -Verbose "Signed package zip: $_"
-
+  
         if (-not (Test-Path $_)) {
           throw "Package not found: $_"
         }
-
-        if (-not (Test-Path $env:ob_outputDirectory)) {
-          $null = New-Item -Path $env:ob_outputDirectory -ItemType Directory
+  
+        if (-not (Test-Path $(ob_outputDirectory))) {
+          $null = New-Item -Path $(ob_outputDirectory) -ItemType Directory
         }
 
-        Expand-Archive -Path $_ -DestinationPath $env:ob_outputDirectory -Verbose
+        Expand-Archive -Path $_ -DestinationPath $(ob_outputDirectory) -Verbose
       }
 
       Write-Verbose -Verbose "Expanded pkg file:"
-      Get-ChildItem -Path $env:ob_outputDirectory | Write-Verbose -Verbose
+      Get-ChildItem -Path $(ob_outputDirectory) | Write-Verbose -Verbose
     displayName: Expand signed file
