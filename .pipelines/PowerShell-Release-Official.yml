@@ -280,7 +280,7 @@ extends:
             Update and merge the changelog for the release.
             This step is required for creating GitHub draft release.
 
-    - stage: PublishGitHubReleaseAndNuget
+    - stage: PublishGitHubRelease
       displayName: Publish GitHub and Nuget Release
       dependsOn: 
         - setReleaseTagAndChangelog
