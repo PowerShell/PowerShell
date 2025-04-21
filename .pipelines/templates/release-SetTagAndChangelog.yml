@@ -1,6 +1,6 @@
 jobs:
 - job: setTagAndChangelog
-  displayName: Set Tag and Tools
+  displayName: Set Tag and Upload Changelog
   condition: succeeded()
   pool:
     type: windows

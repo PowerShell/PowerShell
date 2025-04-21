@@ -117,7 +117,7 @@ extends:
 
     stages:
     - stage: setReleaseTagAndChangelog
-      displayName: 'Set Release Tag and Upload Tools'
+      displayName: 'Set Release Tag and Upload Changelog'
       jobs:
       - template: /.pipelines/templates/release-SetTagAndChangelog.yml@self
 
