@@ -116,10 +116,10 @@ extends:
       tsaOptionsFile: .config\tsaoptions.json
 
     stages:
-    - stage: setReleaseTagAndUploadTools
-      displayName: 'Set Release Tag and Upload Tools'
+    - stage: setReleaseTagAndChangelog
+      displayName: 'Set Release Tag and Upload Changelog'
       jobs:
-      - template: /.pipelines/templates/release-SetTagAndTools.yml@self
+      - template: /.pipelines/templates/release-SetTagAndChangelog.yml@self
 
     - stage: msixbundle
       displayName: 'Create MSIX Bundle'
@@ -281,9 +281,9 @@ extends:
             This step is required for creating GitHub draft release.
 
     - stage: PublishGitHubRelease
-      displayName: Publish GitHub Release
-      dependsOn:
-        - setReleaseTagAndUploadTools
+      displayName: Publish GitHub and Nuget Release
+      dependsOn: 
+        - setReleaseTagAndChangelog
         - UpdateChangeLog
       variables:
         ob_release_environment: Production
