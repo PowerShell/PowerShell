@@ -49,9 +49,7 @@ namespace System.Management.Automation
                 {
                     string completionText = QuoteCompletionText(value, quote);
 
-                    (string ToolTip, string ListItemText) displayInfo = displayInfoMapper(value);
-                    string toolTip = displayInfo.ToolTip;
-                    string listItemText = displayInfo.ListItemText;
+                    (string toolTip, string listItemText) = displayInfoMapper(value);
 
                     yield return new CompletionResult(completionText, listItemText, resultType, toolTip);
                 }
