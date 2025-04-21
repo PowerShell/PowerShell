@@ -1368,6 +1368,12 @@ param([ValidatePattern(
             $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
             $completionText = $res.CompletionMatches.CompletionText
             $completionText -join ' ' | Should -BeExactly $ExpectedPropertyTypes
+
+            foreach ($match in $res.CompletionMatches) {
+                $completionText = $match.CompletionText.Replace("""", "").Replace("'", "")
+                $listItemText = $match.ListItemText
+                $completionText | Should -BeExactly $listItemText
+            }
         }
 
         It "Test fallback to provider of current location if no path specified" -Skip:(!$IsWindows) {
@@ -1554,6 +1560,14 @@ param([ValidatePattern(
             $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
             $completionText = $res.CompletionMatches.CompletionText
             $completionText -join ' ' | Should -BeExactly $Expected
+
+            foreach ($match in $res.CompletionMatches) {
+                $toolTip = $match.ToolTip.Replace("""", "").Replace("'", "")
+                $completionText = $match.CompletionText.Replace("""", "").Replace("'", "")
+                $listItemText = $match.ListItemText
+                $toolTip.StartsWith($completionText) | Should -BeTrue
+                $toolTip.EndsWith($listItemText) | Should -BeTrue
+            }
         }
 
         It "Should complete for '<TextInput>'" -Skip:(!$IsWindows) -TestCases @(
@@ -1574,6 +1588,14 @@ param([ValidatePattern(
             $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
             $completionText = $res.CompletionMatches.CompletionText
             $completionText -join ' ' | Should -BeExactly $Expected
+
+            foreach ($match in $res.CompletionMatches) {
+                $toolTip = $match.ToolTip.Replace("""", "").Replace("'", "")
+                $completionText = $match.CompletionText.Replace("""", "").Replace("'", "")
+                $listItemText = $match.ListItemText
+                $toolTip.StartsWith($completionText) | Should -BeTrue
+                $toolTip.EndsWith($listItemText) | Should -BeTrue
+            }
         }
 
         It "Should complete for '<TextInput>'" -Skip:($IsWindows) -TestCases @(
@@ -1590,6 +1612,14 @@ param([ValidatePattern(
             $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
             $completionText = $res.CompletionMatches.CompletionText
             $completionText -join ' ' | Should -BeExactly $Expected
+
+            foreach ($match in $res.CompletionMatches) {
+                $toolTip = $match.ToolTip.Replace("""", "").Replace("'", "")
+                $completionText = $match.CompletionText.Replace("""", "").Replace("'", "")
+                $listItemText = $match.ListItemText
+                $toolTip.StartsWith($completionText) | Should -BeTrue
+                $toolTip.EndsWith($listItemText) | Should -BeTrue
+            }
         }
     }
 
