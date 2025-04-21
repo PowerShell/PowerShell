@@ -109,7 +109,7 @@ jobs:
   - task: GitHubRelease@1
     inputs:
       gitHubConnection: GitHubReleasePAT
-      repositoryName: jshigetomi/PowerShell
+      repositoryName: PowerShell/PowerShell
       target: master
       assets: '$(Pipeline.Workspace)/GitHubPackages/*'
       tagSource: 'userSpecifiedTag'
@@ -162,12 +162,12 @@ jobs:
     displayName: Download and capture nupkgs
     condition: and(ne('${{ parameters.skipPublish }}', 'false'), succeeded())
 
-  #- task: NuGetCommand@2
-  #  displayName: 'NuGet push'
-  #  condition: and(ne('${{ parameters.skipPublish }}', 'false'), succeeded())
-  #  inputs:
-  #    command: push
-  #    packagesToPush: '$(Pipeline.Workspace)/release/*.nupkg'
-  #    nuGetFeedType: external
-  #    publishFeedCredentials: PowerShellNuGetOrgPush
+  - task: NuGetCommand@2
+    displayName: 'NuGet push'
+    condition: and(ne('${{ parameters.skipPublish }}', 'false'), succeeded())
+    inputs:
+      command: push
+      packagesToPush: '$(Pipeline.Workspace)/release/*.nupkg'
+      nuGetFeedType: external
+      publishFeedCredentials: PowerShellNuGetOrgPush
   
