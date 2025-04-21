@@ -189,7 +189,18 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public class PropertyTypeArgumentCompleter : IArgumentCompleter
     {
-        private static readonly string[] s_RegistryPropertyTypes = new string[]
+        private static readonly CompletionHelpers.CompletionDisplayInfoMapper RegistryPropertyTypeDisplayInfoMapper = registryPropertyType => registryPropertyType switch
+        {
+            "String" => new(TabCompletionStrings.RegistryStringToolTip, "String"),
+            "ExpandString" => new(TabCompletionStrings.RegistryExpandStringToolTip, "ExpandString"),
+            "Binary" => new(TabCompletionStrings.RegistryBinaryToolTip, "Binary"),
+            "DWord" => new(TabCompletionStrings.RegistryDWordToolTip, "DWord"),
+            "MultiString" => new(TabCompletionStrings.RegistryMultiStringToolTip, "MultiString"),
+            "QWord" => new(TabCompletionStrings.RegistryQWordToolTip, "QWord"),
+            _ => new(TabCompletionStrings.RegistryUnknownToolTip, "Unknown")
+        };
+
+        private static readonly IReadOnlyList<string> s_RegistryPropertyTypes = new List<string>(capacity: 6)
         {
             "String",
             "ExpandString",
@@ -198,17 +209,6 @@ namespace Microsoft.PowerShell.Commands
             "MultiString",
             "QWord",
             "Unknown"
-        };
-
-        private static string GetRegistryPropertyTypeToolTip(string propertyTypeName) => propertyTypeName switch
-        {
-            "String" => TabCompletionStrings.RegistryStringToolTip,
-            "ExpandString" => TabCompletionStrings.RegistryExpandStringToolTip,
-            "Binary" => TabCompletionStrings.RegistryBinaryToolTip,
-            "DWord" => TabCompletionStrings.RegistryDWordToolTip,
-            "MultiString" => TabCompletionStrings.RegistryMultiStringToolTip,
-            "QWord" => TabCompletionStrings.RegistryQWordToolTip,
-            _ => TabCompletionStrings.RegistryUnknownToolTip
         };
 
         /// <summary>
@@ -230,7 +230,7 @@ namespace Microsoft.PowerShell.Commands
                     ? CompletionHelpers.GetMatchingResults(
                         wordToComplete,
                         possibleCompletionValues: s_RegistryPropertyTypes,
-                        toolTipMapping: GetRegistryPropertyTypeToolTip,
+                        displayInfoMapper: RegistryPropertyTypeDisplayInfoMapper,
                         resultType: CompletionResultType.ParameterValue)
                     : [];
 

@@ -172,28 +172,28 @@ namespace Microsoft.PowerShell.Commands.Utility
         "`r`n";
 #endif
 
-        private static readonly Dictionary<string, (string Tooltip, string ListItemText)> s_separatorMappings = new(capacity: 7)
+        private static readonly CompletionHelpers.CompletionDisplayInfoMapper SeparatorDisplayInfoMapper = separator => separator switch
         {
-            { ",", (TabCompletionStrings.SeparatorCommaToolTip, "Comma") },
-            { ", ", (TabCompletionStrings.SeparatorCommaSpaceToolTip, "Comma-Space") },
-            { ";", (TabCompletionStrings.SeparatorSemiColonToolTip, "Semi-Colon") },
-            { "; ", (TabCompletionStrings.SeparatorSemiColonSpaceToolTip, "Semi-Colon-Space") },
-            { NewLineText, (StringUtil.Format(TabCompletionStrings.SeparatorNewlineToolTip, NewLineText), "Newline") },
-            { "-", (TabCompletionStrings.SeparatorDashToolTip, "Dash") },
-            { " ", (TabCompletionStrings.SeparatorSpaceToolTip, "Space") },
+            "," => new(TabCompletionStrings.SeparatorCommaToolTip, "Comma"),
+            ", " => new(TabCompletionStrings.SeparatorCommaSpaceToolTip, "Comma-Space"),
+            ";" => new(TabCompletionStrings.SeparatorSemiColonToolTip, "Semi-Colon"),
+            "; " => new(TabCompletionStrings.SeparatorSemiColonSpaceToolTip, "Semi-Colon-Space"),
+            "-" => new(TabCompletionStrings.SeparatorDashToolTip, "Dash"),
+            " " => new(TabCompletionStrings.SeparatorSpaceToolTip, "Space"),
+            _ when separator == NewLineText => new(StringUtil.Format(TabCompletionStrings.SeparatorNewlineToolTip, NewLineText), "Newline"),
+            _ => new(separator, separator)
         };
 
-        private static readonly IEnumerable<string> s_separatorValues = s_separatorMappings.Keys;
-
-        private static string GetSeparatorToolTip(string separator)
-            => s_separatorMappings.TryGetValue(separator, out var mapping)
-                ? mapping.Tooltip
-                : separator;
-
-        private static string GetSeparatorListItemText(string separator)
-            => s_separatorMappings.TryGetValue(separator, out var mapping)
-                ? mapping.ListItemText
-                : separator;
+        private static readonly IReadOnlyList<string> s_separatorValues = new List<string>(capacity: 7)
+        {
+            ",",
+            ", ",
+            ";",
+            "; ",
+            NewLineText,
+            "-",
+            " ",
+        };
 
         /// <summary>
         /// Returns completion results for Separator parameter.
@@ -213,8 +213,7 @@ namespace Microsoft.PowerShell.Commands.Utility
                 => CompletionHelpers.GetMatchingResults(
                     wordToComplete,
                     possibleCompletionValues: s_separatorValues,
-                    listItemTextMapping: GetSeparatorListItemText,
-                    toolTipMapping: GetSeparatorToolTip,
+                    displayInfoMapper: SeparatorDisplayInfoMapper,
                     resultType: CompletionResultType.ParameterValue);
     }
 
