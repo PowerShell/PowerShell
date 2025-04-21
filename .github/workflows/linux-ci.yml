@@ -52,15 +52,7 @@ jobs:
       source: ${{ steps.filter.outputs.source }}
     steps:
       - name: checkout
-<<<<<<< HEAD
-        uses: actions/checkout@v4.1.0
-
-        # For pull requests it's not necessary to checkout the code
-      - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.2.0
-        id: filter
-=======
         uses: actions/checkout@v4
->>>>>>> f60193b9d (Make GitHub Workflows work in the internal mirror (#25275))
         with:
           persist-credentials: false
 
