@@ -8,14 +8,14 @@ jobs:
   templateContext:
     inputs:
       - input: pipelineArtifact
-        artifactName: drop_setReleaseTagAndUploadTools_SetTagAndTools
+        artifactName: drop_setReleaseTagAndChangelog_SetTagAndChangelog
       - input: pipelineArtifact
         pipeline: PSPackagesOfficial
         artifactName: drop_upload_upload_packages
   variables:
     - template: ./variable/release-shared.yml@self
       parameters:
-        RELEASETAG: $[ stageDependencies.setReleaseTagAndUploadTools.SetTagAndTools.outputs['OutputReleaseTag.releaseTag'] ]
+        RELEASETAG: $[ stageDependencies.setReleaseTagAndChangelog.setTagAndChangelog.outputs['OutputReleaseTag.releaseTag'] ]
 
   steps:
   - task: PowerShell@2
@@ -62,7 +62,6 @@ jobs:
       targetType: inline
       pwsh: true
       script: |
-        Import-module '$(Pipeline.Workspace)/ToolArtifact/GitHubRelease.psm1'
         $releaseVersion = '$(ReleaseTag)' -replace '^v',''
         Write-Verbose -Verbose "Available modules: "
         Get-Module | Write-Verbose -Verbose
@@ -84,5 +83,90 @@ jobs:
 
         Write-Verbose -Verbose "Selected content: `n$clContent"
 
+<<<<<<< HEAD:.pipelines/templates/release-githubtasks.yml
         Publish-ReleaseDraft -Tag '$(ReleaseTag)' -Name '$(ReleaseTag) Release of PowerShell' -Description $clContent -User PowerShell -Repository PowerShell  -PackageFolder "$(Pipeline.Workspace)/GitHubPackages" -Token $(GitHubReleasePat)
     displayName: Publish Release Draft
+=======
+        $releaseNotesFilePath = "$(Pipeline.Workspace)/release-notes.md"
+        $clContent | Out-File -FilePath $releaseNotesFilePath -Encoding utf8
+  
+        Write-Host "##vso[task.setvariable variable=ReleaseNotesFilePath;]$releaseNotesFilePath"
+  
+        #if name has prelease then make prerelease true as a variable
+        if ($releaseVersion -like '*-*') {
+            Write-Host "##vso[task.setvariable variable=IsPreRelease;]true"
+        } else {
+            Write-Host "##vso[task.setvariable variable=IsPreRelease;]false"
+        }
+    displayName: Set variables for GitHub release task
+
+  - pwsh: |
+      Write-Host "ReleaseNotes content:"
+      Get-Content "$(Pipeline.Workspace)/release-notes.md" -Raw | Out-String -width 9999 | Write-Host
+    displayName: Verify Release Notes
+
+  - task: GitHubRelease@1
+    inputs:
+      gitHubConnection: GitHubReleasePAT
+      repositoryName: PowerShell/PowerShell
+      target: master
+      assets: '$(Pipeline.Workspace)/GitHubPackages/*'
+      tagSource: 'userSpecifiedTag'
+      tag: '$(ReleaseTag)'
+      isDraft: true
+      addChangeLog: false
+      action: 'create'
+      releaseNotesFilePath: '$(ReleaseNotesFilePath)'
+      isPrerelease: '$(IsPreRelease)'
+
+- job: NuGetPublish
+  displayName: Publish to NuGet
+  condition: succeeded()
+  pool:
+    type: release
+    os: windows
+  templateContext:
+    inputs:
+      - input: pipelineArtifact
+        pipeline: PSPackagesOfficial
+        artifactName: drop_upload_upload_packages
+  variables:
+  - template: ./variable/release-shared.yml@self
+    parameters:
+      VERSION: $[ stageDependencies.setReleaseTagAndChangelog.SetTagAndChangelog.outputs['OutputVersion.Version'] ]
+
+  steps:
+  - template: release-install-pwsh.yml
+
+  - pwsh: |
+      Write-Verbose -Verbose "Version: $(Version)"
+      Get-ChildItem Env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
+    displayName: 'Capture Environment Variables'
+
+  - pwsh: |
+      #Exclude all global tool packages. Their names start with 'PowerShell.'
+      $null = New-Item -ItemType Directory -Path "$(Pipeline.Workspace)/release"
+      Copy-Item "$(Pipeline.Workspace)/NuGetPackages/*.nupkg" -Destination "$(Pipeline.Workspace)/release" -Exclude "PowerShell.*.nupkg" -Force -Verbose
+
+      $releaseVersion = '$(Version)'
+      $globalToolPath = "$(Pipeline.Workspace)/NuGetPackages/PowerShell.$releaseVersion.nupkg"
+
+      if ($releaseVersion -notlike '*-*') {
+          # Copy the global tool package for stable releases
+          Copy-Item $globalToolPath -Destination "$(Pipeline.Workspace)/release"
+      }
+
+      Write-Verbose -Verbose "The .nupkgs below will be pushed:"
+      Get-ChildItem "$(Pipeline.Workspace)/release" -recurse
+    displayName: Download and capture nupkgs
+    condition: and(ne('${{ parameters.skipPublish }}', 'false'), succeeded())
+
+  - task: NuGetCommand@2
+    displayName: 'NuGet push'
+    condition: and(ne('${{ parameters.skipPublish }}', 'false'), succeeded())
+    inputs:
+      command: push
+      packagesToPush: '$(Pipeline.Workspace)/release/*.nupkg'
+      nuGetFeedType: external
+      publishFeedCredentials: PowerShellNuGetOrgPush
+>>>>>>> fa4f5b6fd (Use GitHubReleaseTask instead of custom script (#25398)):.pipelines/templates/release-githubNuget.yml
