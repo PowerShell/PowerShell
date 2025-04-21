@@ -1373,6 +1373,7 @@ param([ValidatePattern(
                 $completionText = $match.CompletionText.Replace("""", "").Replace("'", "")
                 $listItemText = $match.ListItemText
                 $completionText | Should -BeExactly $listItemText
+                $match.ToolTip | Should -Not -BeNullOrEmpty
             }
         }
 
