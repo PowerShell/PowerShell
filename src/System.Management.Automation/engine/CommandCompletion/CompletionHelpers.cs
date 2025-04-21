@@ -23,19 +23,18 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="wordToComplete">The word to complete.</param>
         /// <param name="possibleCompletionValues">The possible completion values to iterate.</param>
-        /// <param name="toolTipMapping">The optional tool tip mapping delegate.</param>
-        /// <param name="listItemTextMapping">The optional list item text mapping delegate.</param>
+        /// <param name="displayInfoMapper">The optional completion display info mapper delegate for tool tip and list item text.</param>
         /// <param name="resultType">The optional completion result type. Default is Text.</param>
         /// <param name="matchStrategy">The optional match strategy delegate.</param>
         /// <returns>List of matching completion results.</returns>
         internal static IEnumerable<CompletionResult> GetMatchingResults(
             string wordToComplete,
             IEnumerable<string> possibleCompletionValues,
-            Func<string, string> toolTipMapping = null,
-            Func<string, string> listItemTextMapping = null,
+            CompletionDisplayInfoMapper displayInfoMapper = null,
             CompletionResultType resultType = CompletionResultType.Text,
             MatchStrategy matchStrategy = null)
         {
+            displayInfoMapper ??= DefaultDisplayInfoMapper;
             matchStrategy ??= DefaultMatch;
 
             string quote = HandleDoubleAndSingleQuote(ref wordToComplete);
@@ -49,13 +48,29 @@ namespace System.Management.Automation
                 if (matchStrategy(value, wordToComplete))
                 {
                     string completionText = QuoteCompletionText(value, quote);
-                    string toolTip = toolTipMapping?.Invoke(value) ?? value;
-                    string listItemText = listItemTextMapping?.Invoke(value) ?? value;
+
+                    (string toolTip, string listItemText) = displayInfoMapper(value);
 
                     yield return new CompletionResult(completionText, listItemText, resultType, toolTip);
                 }
             }
         }
+
+        /// <summary>
+        /// Provides the display information for a completion result.
+        /// This delegate is used to map a string value to its corresponding display information.
+        /// </summary>
+        /// <param name="value">The input value to be mapped</param>
+        /// <returns>Completion display info containing tool tip and list item text.</returns>
+        internal delegate (string ToolTip, string ListItemText) CompletionDisplayInfoMapper(string value);
+
+        /// <summary>
+        /// Provides the default display information for a completion result.
+        /// Defaults to using the input value for both the tool tip and list item text.
+        /// </summary>
+        /// <returns>Completion display info containing tool tip and list item text.</returns>
+        internal static readonly CompletionDisplayInfoMapper DefaultDisplayInfoMapper = value
+            => (value, value);
 
         /// <summary>
         /// Normalizes the input string to an expandable string format for PowerShell.

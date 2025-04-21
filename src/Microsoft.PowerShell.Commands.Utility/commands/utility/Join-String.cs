@@ -165,35 +165,51 @@ namespace Microsoft.PowerShell.Commands.Utility
     /// </summary>
     public sealed class SeparatorArgumentCompleter : IArgumentCompleter
     {
-        private static readonly string NewLineText =
+        private const string NewLineText =
 #if UNIX
         "`n";
 #else
         "`r`n";
 #endif
 
-        private static readonly Dictionary<string, (string Tooltip, string ListItemText)> s_separatorMappings = new(capacity: 7)
+        private static readonly CompletionHelpers.CompletionDisplayInfoMapper SeparatorDisplayInfoMapper = separator => separator switch
         {
-            { ",", (TabCompletionStrings.SeparatorCommaToolTip, "Comma") },
-            { ", ", (TabCompletionStrings.SeparatorCommaSpaceToolTip, "Comma-Space") },
-            { ";", (TabCompletionStrings.SeparatorSemiColonToolTip, "Semi-Colon") },
-            { "; ", (TabCompletionStrings.SeparatorSemiColonSpaceToolTip, "Semi-Colon-Space") },
-            { NewLineText, (StringUtil.Format(TabCompletionStrings.SeparatorNewlineToolTip, NewLineText), "Newline") },
-            { "-", (TabCompletionStrings.SeparatorDashToolTip, "Dash") },
-            { " ", (TabCompletionStrings.SeparatorSpaceToolTip, "Space") },
+            "," => (
+                ToolTip: TabCompletionStrings.SeparatorCommaToolTip,
+                ListItemText: "Comma"),
+            ", " => (
+                ToolTip: TabCompletionStrings.SeparatorCommaSpaceToolTip,
+                ListItemText: "Comma-Space"),
+            ";" => (
+                ToolTip: TabCompletionStrings.SeparatorSemiColonToolTip,
+                ListItemText: "Semi-Colon"),
+            "; " => (
+                ToolTip: TabCompletionStrings.SeparatorSemiColonSpaceToolTip,
+                ListItemText: "Semi-Colon-Space"),
+            "-" => (
+                ToolTip: TabCompletionStrings.SeparatorDashToolTip,
+                ListItemText: "Dash"),
+            " " => (
+                ToolTip: TabCompletionStrings.SeparatorSpaceToolTip,
+                ListItemText: "Space"),
+            NewLineText => (
+                ToolTip: StringUtil.Format(TabCompletionStrings.SeparatorNewlineToolTip, NewLineText),
+                ListItemText: "Newline"),
+            _ => (
+                ToolTip: separator,
+                ListItemText: separator),
         };
 
-        private static readonly IEnumerable<string> s_separatorValues = s_separatorMappings.Keys;
-
-        private static string GetSeparatorToolTip(string separator)
-            => s_separatorMappings.TryGetValue(separator, out var mapping)
-                ? mapping.Tooltip
-                : separator;
-
-        private static string GetSeparatorListItemText(string separator)
-            => s_separatorMappings.TryGetValue(separator, out var mapping)
-                ? mapping.ListItemText
-                : separator;
+        private static readonly IReadOnlyList<string> s_separatorValues = new List<string>(capacity: 7)
+        {
+            ",",
+            ", ",
+            ";",
+            "; ",
+            NewLineText,
+            "-",
+            " ",
+        };
 
         /// <summary>
         /// Returns completion results for Separator parameter.
@@ -213,8 +229,7 @@ namespace Microsoft.PowerShell.Commands.Utility
                 => CompletionHelpers.GetMatchingResults(
                     wordToComplete,
                     possibleCompletionValues: s_separatorValues,
-                    listItemTextMapping: GetSeparatorListItemText,
-                    toolTipMapping: GetSeparatorToolTip,
+                    displayInfoMapper: SeparatorDisplayInfoMapper,
                     resultType: CompletionResultType.ParameterValue);
     }
 
