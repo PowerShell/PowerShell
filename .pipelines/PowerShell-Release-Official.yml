@@ -280,17 +280,10 @@ extends:
             Update and merge the changelog for the release.
             This step is required for creating GitHub draft release.
 
-<<<<<<< HEAD
-    - stage: PublishGitHubRelease
-      displayName: Publish GitHub Release
-      dependsOn:
-        - setReleaseTagAndUploadTools
-=======
     - stage: PublishGitHubReleaseAndNuget
       displayName: Publish GitHub and Nuget Release
       dependsOn: 
         - setReleaseTagAndChangelog
->>>>>>> fa4f5b6fd (Use GitHubReleaseTask instead of custom script (#25398))
         - UpdateChangeLog
       variables:
         ob_release_environment: Production

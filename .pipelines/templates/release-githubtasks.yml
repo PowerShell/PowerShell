@@ -83,10 +83,6 @@ jobs:
 
         Write-Verbose -Verbose "Selected content: `n$clContent"
 
-<<<<<<< HEAD:.pipelines/templates/release-githubtasks.yml
-        Publish-ReleaseDraft -Tag '$(ReleaseTag)' -Name '$(ReleaseTag) Release of PowerShell' -Description $clContent -User PowerShell -Repository PowerShell  -PackageFolder "$(Pipeline.Workspace)/GitHubPackages" -Token $(GitHubReleasePat)
-    displayName: Publish Release Draft
-=======
         $releaseNotesFilePath = "$(Pipeline.Workspace)/release-notes.md"
         $clContent | Out-File -FilePath $releaseNotesFilePath -Encoding utf8
   
@@ -169,4 +165,3 @@ jobs:
       packagesToPush: '$(Pipeline.Workspace)/release/*.nupkg'
       nuGetFeedType: external
       publishFeedCredentials: PowerShellNuGetOrgPush
->>>>>>> fa4f5b6fd (Use GitHubReleaseTask instead of custom script (#25398)):.pipelines/templates/release-githubNuget.yml
