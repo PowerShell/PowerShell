@@ -174,14 +174,38 @@ namespace Microsoft.PowerShell.Commands.Utility
 
         private static readonly CompletionHelpers.CompletionDisplayInfoMapper SeparatorDisplayInfoMapper = separator => separator switch
         {
-            "," => (TabCompletionStrings.SeparatorCommaToolTip, "Comma"),
-            ", " => (TabCompletionStrings.SeparatorCommaSpaceToolTip, "Comma-Space"),
-            ";" => (TabCompletionStrings.SeparatorSemiColonToolTip, "Semi-Colon"),
-            "; " => (TabCompletionStrings.SeparatorSemiColonSpaceToolTip, "Semi-Colon-Space"),
-            "-" => (TabCompletionStrings.SeparatorDashToolTip, "Dash"),
-            " " => (TabCompletionStrings.SeparatorSpaceToolTip, "Space"),
-            NewLineText => (StringUtil.Format(TabCompletionStrings.SeparatorNewlineToolTip, NewLineText), "Newline"),
-            _ => (separator, separator)
+            "," => (
+                ToolTip: TabCompletionStrings.SeparatorCommaToolTip,
+                ListItemText: "Comma"
+            ),
+            ", " => (
+                ToolTip: TabCompletionStrings.SeparatorCommaSpaceToolTip,
+                ListItemText: "Comma-Space"
+            ),
+            ";" => (
+                ToolTip: TabCompletionStrings.SeparatorSemiColonToolTip,
+                ListItemText: "Semi-Colon"
+            ),
+            "; " => (
+                ToolTip: TabCompletionStrings.SeparatorSemiColonSpaceToolTip,
+                ListItemText: "Semi-Colon-Space"
+            ),
+            "-" => (
+                ToolTip: TabCompletionStrings.SeparatorDashToolTip,
+                ListItemText: "Dash"
+            ),
+            " " => (
+                ToolTip: TabCompletionStrings.SeparatorSpaceToolTip,
+                ListItemText: "Space"
+            ),
+            NewLineText => (
+                ToolTip: StringUtil.Format(TabCompletionStrings.SeparatorNewlineToolTip, NewLineText),
+                ListItemText: "Newline"
+            ),
+            _ => (
+                ToolTip: separator,
+                ListItemText: separator
+            )
         };
 
         private static readonly IReadOnlyList<string> s_separatorValues = new List<string>(capacity: 7)

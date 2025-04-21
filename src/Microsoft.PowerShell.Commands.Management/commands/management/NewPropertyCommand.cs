@@ -191,13 +191,34 @@ namespace Microsoft.PowerShell.Commands
     {
         private static readonly CompletionHelpers.CompletionDisplayInfoMapper RegistryPropertyTypeDisplayInfoMapper = registryPropertyType => registryPropertyType switch
         {
-            "String" => (TabCompletionStrings.RegistryStringToolTip, "String"),
-            "ExpandString" => (TabCompletionStrings.RegistryExpandStringToolTip, "ExpandString"),
-            "Binary" => (TabCompletionStrings.RegistryBinaryToolTip, "Binary"),
-            "DWord" => (TabCompletionStrings.RegistryDWordToolTip, "DWord"),
-            "MultiString" => (TabCompletionStrings.RegistryMultiStringToolTip, "MultiString"),
-            "QWord" => (TabCompletionStrings.RegistryQWordToolTip, "QWord"),
-            _ => (TabCompletionStrings.RegistryUnknownToolTip, "Unknown")
+            "String" => (
+                ToolTip: TabCompletionStrings.RegistryStringToolTip,
+                ListItemText: "String"
+            ),
+            "ExpandString" => (
+                ToolTip: TabCompletionStrings.RegistryExpandStringToolTip,
+                ListItemText: "ExpandString"
+            ),
+            "Binary" => (
+                ToolTip: TabCompletionStrings.RegistryBinaryToolTip,
+                ListItemText: "Binary"
+            ),
+            "DWord" => (
+                ToolTip: TabCompletionStrings.RegistryDWordToolTip,
+                ListItemText: "DWord"
+            ),
+            "MultiString" => (
+                ToolTip: TabCompletionStrings.RegistryMultiStringToolTip,
+                ListItemText: "MultiString"
+            ),
+            "QWord" => (
+                ToolTip: TabCompletionStrings.RegistryQWordToolTip,
+                ListItemText: "QWord"
+            ),
+            _ => (
+                ToolTip: TabCompletionStrings.RegistryUnknownToolTip,
+                ListItemText: "Unknown"
+            )
         };
 
         private static readonly IReadOnlyList<string> s_RegistryPropertyTypes = new List<string>(capacity: 7)
