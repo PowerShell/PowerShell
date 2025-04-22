@@ -199,8 +199,14 @@ namespace System.Management.Automation
         /// <exception cref="PSInvalidCastException">When no conversion was possible.</exception>
         public override object ConvertFrom(object sourceValue, Type destinationType, IFormatProvider formatProvider, bool ignoreCase)
         {
-            string sourceAsString = (string)LanguagePrimitives.ConvertTo(sourceValue, typeof(string), formatProvider);
-            return LanguagePrimitives.ConvertTo(sourceAsString, destinationType, formatProvider);
+           string sourceAsString = LanguagePrimitives.ConvertTo(sourceValue, typeof(string), formatProvider) as string;
+            if (sourceAsString != null){
+                string groupSeparator = formatProvider?.GetFormat(typeof(NumberFormatInfo)) is NumberFormatInfo nfi 
+                    ? nfi.NumberGroupSeparator 
+                    : CultureInfo.CurrentCulture.NumberFormat.NumberGroupSeparator;
+                sourceAsString = sourceAsString.Replace(groupSeparator, string.Empty); // Remove culture-specific group separator
+                }
+                return LanguagePrimitives.ConvertTo(sourceAsString, destinationType, formatProvider);
         }
 
         /// <summary>
