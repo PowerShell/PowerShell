@@ -202,9 +202,14 @@ namespace System.Management.Automation
             // Fix: Remove commas from numeric strings before conversion to prevent casting errors.
             string sourceAsString = LanguagePrimitives.ConvertTo(sourceValue, typeof(string), formatProvider) as string;
             
-                if (sourceAsString != null){
-                    sourceAsString = sourceAsString.Replace(",", ""); // Remove commas before conversion
-                }
+            if (sourceAsString != null){
+            
+                string groupSeparator = formatProvider?.GetFormat(typeof(NumberFormatInfo)) is NumberFormatInfo nfi 
+                    ? nfi.NumberGroupSeparator 
+                    : CultureInfo.CurrentCulture.NumberFormat.NumberGroupSeparator;
+                    
+                sourceAsString = sourceAsString.Replace(groupSeparator, string.Empty); // Remove culture-specific group separator
+            }
             return LanguagePrimitives.ConvertTo(sourceAsString, destinationType, formatProvider);
 
         }
