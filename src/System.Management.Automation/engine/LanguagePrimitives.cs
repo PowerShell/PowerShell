@@ -2956,18 +2956,10 @@ namespace System.Management.Automation
 
                if (resultType == typeof(BigInteger))
                { 
-                    // Adjust NumberStyles to remove AllowHexSpecifier for standard numeric parsing
-                    NumberStyles style = NumberStyles.AllowLeadingSign 
-                    | NumberStyles.AllowDecimalPoint 
-                    | NumberStyles.AllowExponent; 
+                    NumberStyles style = NumberStyles.Integer | NumberStyles.AllowThousands;
                     BigInteger parsedValue;
                     
-                    if (BigInteger.TryParse(strToConvert, style, NumberFormatInfo.InvariantInfo, out parsedValue))
-                    {
-                        return parsedValue;
-                    }
-                    
-                    throw new PSInvalidCastException("Failed to convert string to BigInteger.");
+                    return BigInteger.Parse(strToConvert, style, NumberFormatInfo.InvariantInfo);
                 }
                 // Fallback conversion for regular numeric types.
                 return GetIntegerSystemConverter(resultType).ConvertFrom(strToConvert);
