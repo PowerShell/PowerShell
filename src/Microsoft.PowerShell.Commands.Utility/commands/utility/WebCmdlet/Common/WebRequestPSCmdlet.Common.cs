@@ -1575,9 +1575,8 @@ namespace Microsoft.PowerShell.Commands
             ArgumentNullException.ThrowIfNull(content);
 
             Encoding encoding = null;
-            string contentType = WebSession.ContentHeaders[HttpKnownHeaderNames.ContentType];
 
-            if (contentType is not null)
+            if (WebSession.ContentHeaders.TryGetValue(HttpKnownHeaderNames.ContentType, out string contentType) && contentType is not null)
             {
                 // If Content-Type contains the encoding format (as CharSet), use this encoding format
                 // to encode the Body of the WebRequest sent to the server. Default Encoding format
@@ -1772,6 +1771,7 @@ namespace Microsoft.PowerShell.Commands
             ContentDispositionHeaderValue contentDisposition = new("form-data");
             contentDisposition.Name = LanguagePrimitives.ConvertTo<string>(fieldName);
 
+            // codeql[cs/information-exposure-through-exception] - PowerShell is an on-premise product, meaning local users would already have access to the binaries and stack traces. Therefore, the information would not be exposed in the same way it would be for an ASP .NET service.
             StringContent result = new(LanguagePrimitives.ConvertTo<string>(fieldValue));
             result.Headers.ContentDisposition = contentDisposition;
 

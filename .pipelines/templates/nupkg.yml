@@ -22,7 +22,8 @@ jobs:
       value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
     - name: ob_sdl_credscan_suppressionsFile
       value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
-    - group: 'AzDevOpsArtifacts'
+    - group: mscodehub-feed-read-general
+    - group: mscodehub-feed-read-akv
     - group: DotNetPrivateBuildAccess
 
   steps:
@@ -32,7 +33,7 @@ jobs:
       ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
   - pwsh: |
-      Get-ChildItem -Path env:
+      Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
     displayName: Capture environment
     env:
       ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
@@ -89,32 +90,23 @@ jobs:
     env:
       ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
 
-  - pwsh: |
-      $repoRoot = "$(PowerShellRoot)"
-      Write-Verbose -Verbose "repoRoot: $repoRoot"
-
-      $configPath = "$repoRoot/nuget.config"
-      Import-Module "$repoRoot/build.psm1" -Force
-      New-NugetConfigFile -NugetFeedUrl $(PowerShellCore_PublicPackages) -UserName $(AzDevOpsFeedUserName) -ClearTextPAT $(AzDevOpsFeedPAT2) -FeedName AzDevOpsFeed -Destination "$(PowerShellRoot)"
-
-      if(-not (Test-Path $configPath))
-      {
-          throw "nuget.config is not created"
-      }
-      Get-Content $configPath | Write-Verbose -Verbose
-    displayName: 'Add nuget.config for Azure DevOps feed for packages'
-    condition: and(succeededOrFailed(), ne(variables['PowerShellCore_PublicPackages'], ''))
-    env:
-      ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
+  - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
+    parameters:
+      repoRoot: $(PowerShellRoot)
 
   - task: NuGetToolInstaller@1
     displayName: 'Install NuGet.exe'
 
+  - task: UseDotNet@2
+    displayName: 'Use .NET Core sdk'
+    inputs:
+      useGlobalJson: true
+      packageType: 'sdk'
+      workingDirectory: '$(PowerShellRoot)'
+
   - pwsh: |
       Set-Location -Path '$(PowerShellRoot)'
       Import-Module "$(PowerShellRoot)/build.psm1" -Force
-
-      Start-PSBootstrap -Verbose
 
       $sharedModules = @('Microsoft.PowerShell.Commands.Management',
                         'Microsoft.PowerShell.Commands.Utility',
@@ -133,32 +125,32 @@ jobs:
       $refAssemblyFolder = Join-Path '$(System.ArtifactsDirectory)' 'RefAssembly'
       $null = New-Item -Path $refAssemblyFolder -Force -Verbose -Type Directory
 
-      Start-PSBuild -Clean -Runtime linux-x64 -Configuration Release
+      Start-PSBuild -Clean -Runtime linux-x64 -Configuration Release -ReleaseTag $(ReleaseTagVar)
 
       $sharedModules | Foreach-Object {
-        $refFile = Get-ChildItem -Path "$(PowerShellRoot)\src\$_\obj\Release\net9.0\refint\$_.dll"
+        $refFile = Get-ChildItem -Path "$(PowerShellRoot)\src\$_\obj\Release\net10.0\refint\$_.dll"
         Write-Verbose -Verbose "RefAssembly: $refFile"
         Copy-Item -Path $refFile -Destination "$refAssemblyFolder\$_.dll" -Verbose
-        $refDoc = "$(PowerShellRoot)\src\$_\bin\Release\net9.0\$_.xml"
+        $refDoc = "$(PowerShellRoot)\src\$_\bin\Release\net10.0\$_.xml"
         if (-not (Test-Path $refDoc)) {
           Write-Warning "$refDoc not found"
-          Get-ChildItem -Path "$(PowerShellRoot)\src\$_\bin\Release\net9.0\" | Out-String | Write-Verbose -Verbose
+          Get-ChildItem -Path "$(PowerShellRoot)\src\$_\bin\Release\net10.0\" | Out-String | Write-Verbose -Verbose
         }
         else {
           Copy-Item -Path $refDoc -Destination "$refAssemblyFolder\$_.xml" -Verbose
         }
       }
 
-      Start-PSBuild -Clean -Runtime win7-x64 -Configuration Release
+      Start-PSBuild -Clean -Runtime win7-x64 -Configuration Release -ReleaseTag $(ReleaseTagVar)
 
       $winOnlyModules | Foreach-Object {
-        $refFile = Get-ChildItem -Path "$(PowerShellRoot)\src\$_\obj\Release\net9.0\refint\*.dll"
+        $refFile = Get-ChildItem -Path "$(PowerShellRoot)\src\$_\obj\Release\net10.0\refint\*.dll"
         Write-Verbose -Verbose 'RefAssembly: $refFile'
         Copy-Item -Path $refFile -Destination "$refAssemblyFolder\$_.dll" -Verbose
-        $refDoc = "$(PowerShellRoot)\src\$_\bin\Release\net9.0\$_.xml"
+        $refDoc = "$(PowerShellRoot)\src\$_\bin\Release\net10.0\$_.xml"
         if (-not (Test-Path $refDoc)) {
           Write-Warning "$refDoc not found"
-          Get-ChildItem -Path "$(PowerShellRoot)\src\$_\bin\Release\net9.0" | Out-String | Write-Verbose -Verbose
+          Get-ChildItem -Path "$(PowerShellRoot)\src\$_\bin\Release\net10.0" | Out-String | Write-Verbose -Verbose
         }
         else {
           Copy-Item -Path $refDoc -Destination "$refAssemblyFolder\$_.xml" -Verbose
@@ -258,7 +250,8 @@ jobs:
       $linuxFxdPath = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_linux_sign_linux_fxd\Signed-fxdependent"
       $alpineFxdPath = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_linux_sign_linux_fxd_x64_alpine\Signed-fxdependent-noopt-linux-musl-x64"
 
-      $packageTypes = @('Unified', 'PowerShell.Linux.Alpine', 'PowerShell.Linux.x64', 'PowerShell.Linux.arm32', 'PowerShell.Linux.arm64', 'PowerShell.Windows.x64')
+      # Build global tools which do not have the shims exe generated in build.
+      $packageTypes = @('Unified', 'PowerShell.Linux.Alpine', 'PowerShell.Linux.x64', 'PowerShell.Linux.arm32', 'PowerShell.Linux.arm64')
 
       $packageTypes | Foreach-Object {
         $PackageType = $_
@@ -298,6 +291,12 @@ jobs:
       Write-Verbose -Verbose "Copying nupkgs to output directory"
       $nupkgOutputPath = Join-Path -Path '$(Pipeline.Workspace)' -ChildPath 'nupkg'
       Get-ChildItem -Path $nupkgOutputPath -Filter *.nupkg -Recurse | Copy-Item -Destination '$(ob_outputDirectory)' -Force -Verbose
+
+      # Copy Windows.x86 global tool from build to output directory
+      $winX64GlobalTool = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_fxdependent_release\globaltool\powershell*.nupkg"
+      Write-Verbose -Verbose "Finding Windows.x64 global tool at $winX64GlobalTool"
+      $globalToolPath = Get-Item $winX64GlobalTool
+      Copy-Item -Path $globalToolPath -Destination '$(ob_outputDirectory)' -Force -Verbose
 
       Write-Verbose -Verbose "Copying global tools to output directory"
       $gblToolOutputPath = Join-Path -Path '$(Pipeline.Workspace)' -ChildPath 'globaltools'

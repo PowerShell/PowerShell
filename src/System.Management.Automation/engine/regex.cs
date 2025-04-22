@@ -238,9 +238,9 @@ namespace System.Management.Automation
                 char ch = pattern[i];
 
                 //
-                // if it is a wildcard char, escape it
+                // if it is a special char, escape it
                 //
-                if (IsWildcardChar(ch) && !charsNotToEscape.Contains(ch))
+                if (SpecialChars.Contains(ch) && !charsNotToEscape.Contains(ch))
                 {
                     temp[tempIndex++] = escapeChar;
                 }

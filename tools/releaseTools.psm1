@@ -43,6 +43,7 @@ $Script:powershell_team = @(
     "Patrick Meinecke"
     "Steven Bucher"
     "PowerShell Team Bot"
+    "Justin Chung"
 )
 
 # They are very active contributors, so we keep their email-login mappings here to save a few queries to Github.
@@ -150,12 +151,19 @@ function Get-ChangeLog
         [Parameter(Mandatory = $true)]
         [string]$ThisReleaseTag,
 
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory = $false)]
         [string]$Token,
 
         [Parameter()]
         [switch]$HasCherryPick
     )
+
+    if(-not $Token) {
+        $Token = Get-GHDefaultAuthToken
+        if(-not $Token) {
+            throw "No GitHub Auth Token provided"
+        }
+    }
 
     $tag_hash = git rev-parse "$LastReleaseTag^0"
     $format = '%H||%P||%aN||%aE||%s'
@@ -358,6 +366,29 @@ function Get-ChangeLog
     PrintChangeLog -clSection $clDocs -sectionTitle 'Documentation and Help Content'
 
     Write-Output "[${version}]: https://github.com/PowerShell/PowerShell/compare/${LastReleaseTag}...${ThisReleaseTag}`n"
+}
+
+function Get-GHDefaultAuthToken {
+    $IsGHCLIInstalled = $false
+    if (Get-command -CommandType Application -Name gh -ErrorAction SilentlyContinue) {
+        $IsGHCLIInstalled = $true
+    } else {
+        Write-Error -Message "GitHub CLI is not installed. Please install it from https://cli.github.com/" -ErrorAction Stop
+    }
+
+    if ($IsGHCLIInstalled) {
+        try {
+            $Token = & gh auth token
+        } catch {
+            Write-Error -Message "Please login to GitHub CLI using 'gh auth login'"
+        }
+    }
+
+    if (-not $Token) {
+        $Token = Read-Host -Prompt "Enter GitHub Auth Token"
+    }
+
+    return $Token
 }
 
 function PrintChangeLog($clSection, $sectionTitle, [switch] $Compress) {
@@ -723,6 +754,74 @@ function Get-PRBackportReport {
         $prs
     }
 }
+enum RemoteType {
+    GitHub
+    AzureRepo
+}
+
+function Get-UpstreamInfo {
+    param(
+        [Parameter(Mandatory=$true)]
+        [string[]]$Upstream,
+
+        [Parameter(Mandatory=$true)]
+        [string]$UpstreamRemote
+    )
+
+    $upstreamName = '(powershell(core)?)(/_git)?/(powershell)'
+    $pattern = "^$UpstreamRemote\s*(.*)\:(.*/([-\w.]+)/)?$upstreamName(\.git)?.*fetch"
+    Write-Verbose -Verbose "searching for an upstream with regex: '$pattern'"
+    $Upstream = $Upstream | Where-Object { $_ -match $pattern }
+
+    Write-Verbose -Verbose "found $Upstream"
+
+    if (!$Upstream) {
+        throw "Please create an upstream remote that points to $upstreamName"
+    }
+
+    $matches | Format-Table | Out-String -Stream -Width 9999 | Write-Verbose
+    $org = $matches[3]
+    if ($org -ne 'github.com' -and $matches[1] -ne 'git@github.com') {
+        Write-Verbose 'parsing Azure repo remote' -Verbose
+        # Azure Repo remote
+        $project = $matches[4]
+        $repo = $matches[7]
+        $upstreamHost = $matches[1]
+
+        if ($upstreamHost -eq 'https') {
+            $upstreamHost = $org
+        }
+        # matches everything but `.` ending in a `.`
+        # in other word, matching the first part of a hostname.
+        # like `www.microsoft.com` it would match `www.` with `www` in a capture group.
+        if ($org -match '([^\..]*)\.') {
+            $org = $Matches[1]
+        }
+    } else {
+        Write-Verbose 'parsing github remote' -Verbose
+        # GitHub Repo remote
+        $org = $matches[4]
+        $repo = $matches[7]
+        $upstreamHost = 'github.com'
+        $project = $upstreamHost
+    }
+
+    $remoteType = [RemoteType]::GitHub
+
+    if ($upstreamHost -match '.*azure.com$' -or $upstreamHost -match '.*visualstudio.com$') {
+        [RemoteType] $remoteType = [RemoteType]::AzureRepo
+    }
+
+    $upstreamMatchInfo = @{
+        org     = $org
+        project = $project
+        repo    = $repo
+        host    = $upstreamHost
+        remoteType = $remoteType
+    }
+
+    return $upstreamMatchInfo
+}
 
 # Backports a PR
 # requires:
@@ -740,7 +839,7 @@ function Invoke-PRBackport {
         $PrNumber,
 
         [Parameter(Mandatory)]
-        [ValidateScript({$_ -match '^release/v\d+\.\d+\.\d+'})]
+        [ValidateScript({$_ -match '^release/v\d+\.\d+(\.\d+)?'})]
         [string]
         $Target,
 
@@ -748,7 +847,10 @@ function Invoke-PRBackport {
         $Overwrite,
 
         [string]
-        $BranchPostFix
+        $BranchPostFix,
+
+        [string]
+        $UpstreamRemote = 'upstream'
     )
     function script:Invoke-NativeCommand {
         param(
@@ -792,15 +894,14 @@ function Invoke-PRBackport {
         throw "PR is not merged ($state)"
     }
 
-    $upstream = $null
-    $upstreamName = 'powershell/powershell'
-    $upstream = Invoke-NativeCommand { git remote -v } | Where-Object { $_ -match "^upstream.*$upstreamName.*fetch" }
+    $upstream = Invoke-NativeCommand { git remote -v }
+    $upstreamMatchInfo = Get-UpstreamInfo -Upstream $upstream -UpstreamRemote $UpstreamRemote
+    $remoteType = $upstreamMatchInfo.remoteType
 
-    if (!$upstream) {
-        throw "Please create an upstream remote that points to $upstreamName"
-    }
+    Write-Verbose -Verbose "remotetype: $remoteType"
+    $upstreamMatchInfo | Format-Table | Out-String -Stream -Width 9999 | Write-Verbose -Verbose
 
-    Invoke-NativeCommand { git fetch upstream $Target }
+    Invoke-NativeCommand { git fetch $UpstreamRemote $Target }
 
     $switch = '-c'
     if ($Overwrite) {
@@ -812,9 +913,21 @@ function Invoke-PRBackport {
         $branchName += "-$BranchPostFix"
     }
 
-    if ($PSCmdlet.ShouldProcess("Create branch $branchName from upstream/$Target")) {
-        Invoke-NativeCommand { git switch upstream/$Target $switch $branchName }
+    if ($PSCmdlet.ShouldProcess("Create branch $branchName from $UpstreamRemote/$Target")) {
+        Invoke-NativeCommand { git switch $UpstreamRemote/$Target $switch $branchName }
     }
+
+    try {
+        $revParseParams = @(
+            '--verify'
+            "$commitId^{commit}"
+        )
+        Invoke-NativeCommand { git rev-parse --quiet $revParseParams }
+    }
+    catch {
+        throw "Commit does not exist.  Try fetching the upstream. (git rev-parse $revParseParams)"
+    }
+
 
     try {
         Invoke-NativeCommand { git cherry-pick $commitId }
@@ -824,7 +937,72 @@ function Invoke-PRBackport {
     }
 
     if ($PSCmdlet.ShouldProcess("Create the PR")) {
-        gh pr create --base $Target --title $backportTitle --body "Backport #$PrNumber" --web
+        $body = "Backport #$PrNumber"
+        switch($remoteType) {
+            "AzureRepo" {
+                Write-Verbose -Verbose "Pushing branch to $UpstreamRemote"
+                git push --set-upstream $UpstreamRemote HEAD
+                $parameters = @(
+                    'repos'
+                    'pr'
+                    'create'
+                )
+                # Open in the browser
+                $parameters += @(
+                    '--open'
+                )
+                $parameters += @(
+                    '--target-branch'
+                    $Target
+                )
+                $parameters += @(
+                    '--title'
+                    $backportTitle
+                )
+                $parameters += @(
+                    '--description'
+                $body
+                )
+                $parameters += @(
+                    '--squash'
+                    'true'
+                )
+                $parameters += @(
+                    '--auto-complete'
+                    'true'
+                )
+                $parameters += @(
+                    '--delete-source-branch'
+                    'true'
+                )
+                $parameters += @(
+                    '--org'
+                    "https://dev.azure.com/$($upstreamMatchInfo.org)"
+                )
+                $parameters += @(
+                    '--project'
+                    $upstreamMatchInfo.project
+                )
+                $parameters += @(
+                    '--source-branch'
+                    $branchName
+                )
+                $parameters += @(
+                    '--repository'
+                    $upstreamMatchInfo.repo
+                )
+
+                Write-Verbose -Verbose "az $parameters"
+                $null = Invoke-NativeCommand { az $parameters }
+            }
+            "GitHub" {
+                Write-Verbose -Verbose "Creating PR using gh CLI"
+                gh pr create --base $Target --title $backportTitle --body $body --web
+            }
+            default {
+                throw "unknown remoteType: $remoteType"
+            }
+        }
     }
 }
 
@@ -848,4 +1026,4 @@ function Invoke-PRBackportApproved {
         }
 }
 
-Export-ModuleMember -Function Get-ChangeLog, Get-NewOfficalPackage, Update-PsVersionInCode, Get-PRBackportReport, Invoke-PRBackport, Invoke-PRBackportApproved
+Export-ModuleMember -Function Get-ChangeLog, Get-NewOfficalPackage, Update-PsVersionInCode, Get-PRBackportReport, Invoke-PRBackport, Invoke-PRBackportApproved, Get-UpstreamInfo

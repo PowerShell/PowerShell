@@ -326,7 +326,7 @@ namespace Microsoft.WSMan.Management
         [Parameter(ParameterSetName = "Enumerate")]
 
         [ValidateNotNullOrEmpty]
-        [ValidateSetAttribute(new string[] { "object", "epr", "objectandepr" })]
+        [ValidateSet(new string[] { "object", "epr", "objectandepr" })]
         [Alias("RT")]
         public string ReturnType
         {

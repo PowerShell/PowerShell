@@ -1,33 +1,53 @@
 parameters:
 - name: "repoRoot"
   default: $(REPOROOT)
+- name: "ob_restore_phase"
+  type: boolean
+  default: true
+
 steps:
-- pwsh: |
-    $configPath = "${env:NugetConfigDir}/nuget.config"
-    Import-Module ${{ parameters.repoRoot }}/build.psm1 -Force
-    New-NugetConfigFile -NugetFeedUrl $(PowerShellCore_PublicPackages) -UserName $(AzDevopsFeedUserNameKVPAT) -ClearTextPAT $(mscodehubPackageReadPat) -FeedName AzDevOpsFeed -Destination "${env:NugetConfigDir}"
-    if(-not (Test-Path $configPath))
-    {
-        throw "nuget.config is not created"
-    }
-    Get-Content $configPath | Write-Verbose -Verbose
-  displayName: 'Add nuget.config for Azure DevOps feed for PSGallery modules'
-  condition: and(succeededOrFailed(), ne(variables['AzDevOpsFeed'], ''))
-  env:
-    NugetConfigDir: ${{ parameters.repoRoot }}/src/Modules
-    ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+- task: NuGetAuthenticate@1
+  displayName: Install Azure Artifacts Credential Provider
+  inputs:
+    forceReinstallCredentialProvider: true
 
 - pwsh: |
-    $configPath = "${env:NugetConfigDir}/nuget.config"
-    Import-Module ${{ parameters.repoRoot }}/build.psm1 -Force
-    New-NugetConfigFile -NugetFeedUrl $(PowerShellCore_PublicPackages) -UserName $(AzDevopsFeedUserNameKVPAT) -ClearTextPAT $(mscodehubPackageReadPat) -FeedName AzDevOpsFeed -Destination "${env:NugetConfigDir}"
-    if(-not (Test-Path $configPath))
-    {
-        throw "nuget.config is not created"
+    try {
+      $configPath = "${env:NugetConfigDir}/nuget.config"
+      Import-Module ${{ parameters.repoRoot }}/build.psm1 -Force
+
+      Write-Verbose -Verbose "Running: Switch-PSNugetConfig -Source Private -UserName '$(AzDevopsFeedUserNameKVPAT)' -ClearTextPAT '$(powershellPackageReadPat)'"
+      Switch-PSNugetConfig -Source Private -UserName '$(AzDevopsFeedUserNameKVPAT)' -ClearTextPAT '$(powershellPackageReadPat)'
+
+      if(-not (Test-Path $configPath))
+      {
+          throw "nuget.config is not created"
+      }
     }
-    Get-Content $configPath | Write-Verbose -Verbose
-  displayName: 'Add nuget.config for Azure DevOps feed for packages'
-  condition: and(succeededOrFailed(), ne(variables['PSInternalNugetFeed'], ''))
+    catch {
+      Get-Error
+      throw
+    }
+  displayName: 'Switch to production Azure DevOps feed for all nuget.configs'
+  condition: and(succeededOrFailed(), ne(variables['UseAzDevOpsFeed'], ''))
   env:
-    NugetConfigDir: ${{ parameters.repoRoot }}
-    ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+    NugetConfigDir: ${{ parameters.repoRoot }}/src/Modules
+    ob_restore_phase: ${{ parameters.ob_restore_phase }}
+
+- pwsh: |
+    Get-ChildItem ${{ parameters.repoRoot }}/nuget.config -Recurse | Foreach-Object {
+      Write-Verbose -Verbose "--- START $($_.fullname) ---"
+      get-content $_.fullname  | Out-String -width 9999 -Stream | write-Verbose -Verbose
+      Write-Verbose -Verbose "--- END $($_.fullname) ---"
+    }
+  displayName: 'Capture all nuget.config files'
+  condition: and(succeededOrFailed(), ne(variables['UseAzDevOpsFeed'], ''))
+  env:
+    ob_restore_phase: ${{ parameters.ob_restore_phase }}
+
+- pwsh: |
+    Get-ChildItem -Path env:VSS* | Out-String -width 9999 -Stream | write-Verbose -Verbose
+  displayName: Capture VSS* Environment
+  condition: and(succeededOrFailed(), ne(variables['UseAzDevOpsFeed'], ''))
+  env:
+    ob_restore_phase: ${{ parameters.ob_restore_phase }}

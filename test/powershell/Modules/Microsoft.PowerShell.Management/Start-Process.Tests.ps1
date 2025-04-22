@@ -241,3 +241,17 @@ Describe "Environment Tests" -Tags "Feature" {
         }
     }
 }
+
+Describe "Bug fixes" -Tags "CI" {
+
+    ## https://github.com/PowerShell/PowerShell/issues/24986
+    It "Error redirection along with '-NoNewWindow' should work for Start-Process" -Skip:(!$IsWindows) {
+        $errorFile = Join-Path -Path $TestDrive -ChildPath error.txt
+        $out = pwsh -noprofile -c "Start-Process -Wait -NoNewWindow -RedirectStandardError $errorFile -FilePath cmd -ArgumentList '/C echo Hello'"
+
+        ## 'Hello' should be sent to standard output; 'error.txt' file should be created but empty.
+        $out | Should -BeExactly "Hello"
+        Test-Path -Path $errorFile | Should -BeTrue
+        (Get-Item $errorFile).Length | Should -Be 0
+    }
+}

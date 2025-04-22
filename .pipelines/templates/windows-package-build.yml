@@ -18,6 +18,7 @@ jobs:
     - name: skipNugetSecurityAnalysis
       value: true
     - group: DotNetPrivateBuildAccess
+    - group: certificate_logical_to_actual
     - name: ob_outputDirectory
       value: '$(Build.ArtifactStagingDirectory)\ONEBRANCH_ARTIFACT'
     - name: ob_sdl_binskim_enabled
@@ -37,7 +38,7 @@ jobs:
       ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
   - pwsh: |
-      Get-ChildItem -Path env:
+      Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
     displayName: Capture environment
     env:
       ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
@@ -77,20 +78,14 @@ jobs:
     env:
       ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
 
+  - task: UseDotNet@2
+    inputs:
+      useGlobalJson: true
+      workingDirectory: $(REPOROOT)
+    env:
+      ob_restore_phase: true
+
   - pwsh: |
-      # cleanup previous install
-      if((Test-Path "${env:ProgramFiles(x86)}\WiX Toolset xcopy")) {
-        Remove-Item "${env:ProgramFiles(x86)}\WiX Toolset xcopy" -Recurse -Force
-      }
-      $toolsDir = New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)\tools'
-      $wixUri = 'https://github.com/wixtoolset/wix3/releases/download/wix3141rtm/wix314-binaries.zip'
-
-      Invoke-RestMethod -Uri $wixUri -OutFile '$(Build.ArtifactStagingDirectory)\tools\wix.zip' -MaximumRetryCount 5 -RetryIntervalSec 10
-      Import-Module '$(PowerShellRoot)\tools\releaseBuild\Images\microsoft_powershell_windowsservercore\wix.psm1'
-      $isArm64 = '$(Runtime)' -eq 'arm64'
-
-      Install-WixZip -zipPath '$(Build.ArtifactStagingDirectory)\tools\wix.zip' -arm64:$isArm64
-
       $msixUrl = '$(makeappUrl)'
       Invoke-RestMethod -Uri $msixUrl -OutFile '$(Pipeline.Workspace)\makeappx.zip'
       Expand-Archive '$(Pipeline.Workspace)\makeappx.zip' -destination '\' -Force
@@ -117,7 +112,7 @@ jobs:
       Import-Module "$repoRoot\build.psm1"
       Import-Module "$repoRoot\tools\packaging"
 
-      Start-PSBootstrap -Package
+      Start-PSBootstrap -Scenario Package
 
       $signedFilesPath, $psoptionsFilePath = if ($env:RUNTIME -eq 'minsize') {
           "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_x64_${runtime}\$signedFolder"
@@ -148,7 +143,7 @@ jobs:
         Write-Verbose -Message "LTS Release: $LTS"
       }
 
-      Start-PSBootstrap -Package
+      Start-PSBootstrap -Scenario Package
 
       $WindowsRuntime = switch ($runtime) {
         'x64' { 'win7-x64' }
@@ -212,11 +207,44 @@ jobs:
       Set-Location $repoRoot
 
       $exePath = New-ExePackage -ProductVersion $version -ProductTargetArchitecture $runtime -MsiLocationPath $msiLocation
+      Write-Verbose -Verbose "setting vso[task.setvariable variable=exePath]$exePath"
+      Write-Host "##vso[task.setvariable variable=exePath]$exePath"
       Write-Verbose -Verbose "exePath: $exePath"
-    displayName: 'Make exe package'
+
+      $enginePath = Join-Path -Path '$(System.ArtifactsDirectory)\unsignedEngine' -ChildPath engine.exe
+      Expand-ExePackageEngine -ExePath $exePath -EnginePath $enginePath -ProductTargetArchitecture $runtime
+    displayName: 'Make exe and expand package'
 
   - task: onebranch.pipeline.signing@1
-    displayName: Sign MSI packages
+    displayName: Sign exe engine
+    inputs:
+      command: 'sign'
+      signing_profile: $(msft_3rd_party_cert_id)
+      files_to_sign: '$(System.ArtifactsDirectory)\unsignedEngine\*.exe'
+      search_root: '$(Pipeline.Workspace)'
+
+  - pwsh: |
+      $runtime = '$(Runtime)'
+      Write-Verbose -Verbose "runtime = '$(Runtime)'"
+      $repoRoot = "$env:REPOROOT"
+      Import-Module "$repoRoot\build.psm1"
+      Import-Module "$repoRoot\tools\packaging"
+
+      $noExeRuntimes = @('fxdependent', 'fxdependentWinDesktop', 'minsize')
+
+      if ($runtime -in $noExeRuntimes) {
+        Write-Verbose -Verbose "No EXE generated for $runtime"
+        return
+      }
+
+      $exePath = '$(exePath)'
+      $enginePath = Join-Path -Path '$(System.ArtifactsDirectory)\unsignedEngine' -ChildPath engine.exe
+      $enginePath | Get-AuthenticodeSignature | out-string | Write-Verbose -verbose
+      Compress-ExePackageEngine -ExePath $exePath -EnginePath $enginePath -ProductTargetArchitecture $runtime
+    displayName: Compress signed exe package
+
+  - task: onebranch.pipeline.signing@1
+    displayName: Sign exe packages
     inputs:
       command: 'sign'
       signing_profile: external_distribution

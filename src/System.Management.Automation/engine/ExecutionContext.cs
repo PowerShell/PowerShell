@@ -477,7 +477,6 @@ namespace System.Management.Automation
         /// The assemblies that have been loaded for this runspace.
         /// </summary>
         internal Dictionary<string, Assembly> AssemblyCache { get; private set; }
-
         #endregion Properties
 
         #region Engine State
@@ -634,12 +633,13 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="command">The name of the command to lookup.</param>
         /// <param name="dotSource"></param>
+        /// <param name="forCompletion"></param>
         /// <returns>The command processor object.</returns>
-        internal CommandProcessorBase CreateCommand(string command, bool dotSource)
+        internal CommandProcessorBase CreateCommand(string command, bool dotSource, bool forCompletion = false)
         {
             CommandOrigin commandOrigin = this.EngineSessionState.CurrentScope.ScopeOrigin;
             CommandProcessorBase commandProcessor =
-                CommandDiscovery.LookupCommandProcessor(command, commandOrigin, !dotSource);
+                CommandDiscovery.LookupCommandProcessor(command, commandOrigin, !dotSource, forCompletion);
             // Reset the command origin for script commands... // BUGBUG - dotting can get around command origin checks???
             if (commandProcessor != null && commandProcessor is ScriptCommandProcessorBase)
             {
@@ -1385,6 +1385,7 @@ namespace System.Management.Automation
             {
                 try
                 {
+                    // codeql[cs/dll-injection-remote] - The dll is loaded during the initial state setup, which is expected behavior. This allows users hosting PowerShell to load additional C# types to enable their specific scenarios.
                     loadedAssembly = Assembly.LoadFrom(filePath);
                     return loadedAssembly;
                 }

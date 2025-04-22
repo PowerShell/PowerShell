@@ -1,0 +1,169 @@
+name: Windows-CI
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+      - release/**
+      - github-mirror
+    paths:
+      - "**"
+      - "!.vsts-ci/misc-analysis.yml"
+      - "!.github/ISSUE_TEMPLATE/**"
+      - "!.dependabot/config.yml"
+      - "!test/perf/**"
+      - "!.pipelines/**"
+  pull_request:
+    branches:
+      - master
+      - release/**
+      - github-mirror
+
+# Path filters for PRs need to go into the changes job
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ contains(github.ref, 'merge')}}
+
+permissions:
+  contents: read
+
+run-name: "${{ github.ref_name }} - ${{ github.run_number }}"
+
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  GIT_CONFIG_PARAMETERS: "'core.autocrlf=false'"
+  NugetSecurityAnalysisWarningLevel: none
+  POWERSHELL_TELEMETRY_OPTOUT: 1
+  __SuppressAnsiEscapeSequences: 1
+  nugetMultiFeedWarnLevel: none
+jobs:
+  changes:
+    name: Change Detection
+    runs-on: ubuntu-latest
+    if: startsWith(github.repository_owner, 'azure') || github.repository_owner == 'PowerShell'
+    # Required permissions
+    permissions:
+      pull-requests: read
+      contents: read
+
+    # Set job outputs to values from filter step
+    outputs:
+      source: ${{ steps.filter.outputs.source }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: Change Detection
+        id: filter
+        uses: "./.github/actions/infrastructure/path-filters"
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  ci_build:
+    name: Build PowerShell
+    needs: changes
+    if: ${{ needs.changes.outputs.source == 'true' }}
+    runs-on: windows-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1000
+      - name: Build
+        uses: "./.github/actions/build/ci"
+  windows_test_unelevated_ci:
+    name: Windows Unelevated CI
+    needs:
+      - ci_build
+      - changes
+    if: ${{ needs.changes.outputs.source == 'true' }}
+    runs-on: windows-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1000
+      - name: Windows Unelevated CI
+        uses: "./.github/actions/test/windows"
+        with:
+          purpose: UnelevatedPesterTests
+          tagSet: CI
+  windows_test_elevated_ci:
+    name: Windows Elevated CI
+    needs:
+      - ci_build
+      - changes
+    if: ${{ needs.changes.outputs.source == 'true' }}
+    runs-on: windows-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1000
+      - name: Windows Elevated CI
+        uses: "./.github/actions/test/windows"
+        with:
+          purpose: ElevatedPesterTests
+          tagSet: CI
+  windows_test_unelevated_others:
+    name: Windows Unelevated Others
+    needs:
+      - ci_build
+      - changes
+    if: ${{ needs.changes.outputs.source == 'true' }}
+    runs-on: windows-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1000
+      - name: Windows Unelevated Others
+        uses: "./.github/actions/test/windows"
+        with:
+          purpose: UnelevatedPesterTests
+          tagSet: Others
+  windows_test_elevated_others:
+    name: Windows Elevated Others
+    needs:
+      - ci_build
+      - changes
+    if: ${{ needs.changes.outputs.source == 'true' }}
+    runs-on: windows-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1000
+      - name: Windows Elevated Others
+        uses: "./.github/actions/test/windows"
+        with:
+          purpose: ElevatedPesterTests
+          tagSet: Others
+  verify_xunit:
+    name: Verify xUnit test results
+    needs:
+      - ci_build
+      - changes
+    if: ${{ needs.changes.outputs.source == 'true' }}
+    runs-on: windows-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1000
+      - name: Verify xUnit test results
+        uses: "./.github/actions/test/verify_xunit"
+  ready_to_merge:
+    name: windows ready to merge
+    needs:
+      - verify_xunit
+      - windows_test_elevated_ci
+      - windows_test_elevated_others
+      - windows_test_unelevated_ci
+      - windows_test_unelevated_others
+    if: always()
+    uses: PowerShell/compliance/.github/workflows/ready-to-merge.yml@v1.0.0
+    with:
+      needs_context: ${{ toJson(needs) }}

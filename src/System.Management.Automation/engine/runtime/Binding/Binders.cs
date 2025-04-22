@@ -2717,6 +2717,14 @@ namespace System.Management.Automation.Language
                                            lhsEnumerator.Expression.Cast(typeof(IEnumerator)),
                                            rhsEnumerator.Expression.Cast(typeof(IEnumerator)));
                 }
+                else if (target.Value is object[] targetArray)
+                {
+                    // Adding 1 item to an object[]
+                    // This is an optimisation over the default EnumerableOps_AddObject.
+                    call = Expression.Call(CachedReflectionInfo.ArrayOps_AddObject,
+                                           target.Expression.Cast(typeof(object[])),
+                                           arg.Expression.Cast(typeof(object)));
+                }
                 else
                 {
                     // Adding 1 item to a list
@@ -6935,20 +6943,6 @@ namespace System.Management.Automation.Language
                     expr = Expression.Block(expr, ExpressionCache.AutomationNullConstant);
                 }
 
-                // Expression block runs two expressions in order:
-                //  - Log method invocation to AMSI Notifications (can throw PSSecurityException)
-                //  - Invoke method
-                string targetName = methodInfo.ReflectedType?.FullName ?? string.Empty;
-                expr = Expression.Block(
-                    Expression.Call(
-                        CachedReflectionInfo.MemberInvocationLoggingOps_LogMemberInvocation,
-                        Expression.Constant(targetName),
-                        Expression.Constant(name),
-                        Expression.NewArrayInit(
-                            typeof(object),
-                            args.Select(static e => e.Expression.Cast(typeof(object))))),
-                    expr);
-
                 // If we're calling SteppablePipeline.{Begin|Process|End}, we don't want
                 // to wrap exceptions - this is very much a special case to help error
                 // propagation and ensure errors are attributed to the correct code (the
@@ -7111,6 +7105,7 @@ namespace System.Management.Automation.Language
                 invocationType != MethodInvocationType.NonVirtual;
             var parameters = mi.GetParameters();
             var argExprs = new Expression[parameters.Length];
+            var argsToLog = new List<Expression>(Math.Max(parameters.Length, args.Length));
 
             for (int i = 0; i < parameters.Length; ++i)
             {
@@ -7135,16 +7130,21 @@ namespace System.Management.Automation.Language
 
                     if (expandParameters)
                     {
-                        argExprs[i] = Expression.NewArrayInit(
-                            paramElementType,
-                            args.Skip(i).Select(
-                                a => a.CastOrConvertMethodArgument(
+                        IEnumerable<Expression> elements = args
+                            .Skip(i)
+                            .Select(a =>
+                                a.CastOrConvertMethodArgument(
                                     paramElementType,
                                     paramName,
                                     mi.Name,
                                     allowCastingToByRefLikeType: false,
                                     temps,
-                                    initTemps)));
+                                    initTemps))
+                            .ToList();
+
+                        argExprs[i] = Expression.NewArrayInit(paramElementType, elements);
+                        // User specified the element arguments, so we log them instead of the compiler-created array.
+                        argsToLog.AddRange(elements);
                     }
                     else
                     {
@@ -7155,16 +7155,28 @@ namespace System.Management.Automation.Language
                             allowCastingToByRefLikeType: false,
                             temps,
                             initTemps);
+
                         argExprs[i] = arg;
+                        argsToLog.Add(arg);
                     }
                 }
                 else if (i >= args.Length)
                 {
-                    Diagnostics.Assert(parameters[i].IsOptional,
+                    // We don't log the default value for an optional parameter, as it's not specified by the user.
+                    Diagnostics.Assert(
+                        parameters[i].IsOptional,
                         "if there are too few arguments, FindBestMethod should only succeed if parameters are optional");
+
                     var argValue = parameters[i].DefaultValue;
                     if (argValue == null)
                     {
+                        argExprs[i] = Expression.Default(parameterType);
+                    }
+                    else if (!parameters[i].HasDefaultValue && parameterType != typeof(object) && argValue == Type.Missing)
+                    {
+                        // If the method contains just [Optional] without a default value set then we cannot use
+                        // Type.Missing as a placeholder. Instead we use the default value for that type. Only
+                        // exception to this rule is when the parameter type is object.
                         argExprs[i] = Expression.Default(parameterType);
                     }
                     else
@@ -7192,17 +7204,25 @@ namespace System.Management.Automation.Language
                         var psRefValue = Expression.Property(args[i].Expression.Cast(typeof(PSReference)), CachedReflectionInfo.PSReference_Value);
                         initTemps.Add(Expression.Assign(temp, psRefValue.Convert(temp.Type)));
                         copyOutTemps.Add(Expression.Assign(psRefValue, temp.Cast(typeof(object))));
+
                         argExprs[i] = temp;
+                        argsToLog.Add(temp);
                     }
                     else
                     {
-                        argExprs[i] = args[i].CastOrConvertMethodArgument(
+                        var convertedArg = args[i].CastOrConvertMethodArgument(
                             parameterType,
                             paramName,
                             mi.Name,
                             allowCastingToByRefLikeType,
                             temps,
                             initTemps);
+
+                        argExprs[i] = convertedArg;
+                        // If the converted arg is a byref-like type, then we log the original arg.
+                        argsToLog.Add(convertedArg.Type.IsByRefLike
+                            ? args[i].Expression
+                            : convertedArg);
                     }
                 }
             }
@@ -7248,6 +7268,12 @@ namespace System.Management.Automation.Language
                 }
             }
 
+            // We need to add one expression to log the .NET invocation before actually invoking:
+            //  - Log method invocation to AMSI Notifications (can throw PSSecurityException)
+            //  - Invoke method
+            string targetName = mi.ReflectedType?.FullName ?? string.Empty;
+            string methodName = mi.Name is ".ctor" ? "new" : mi.Name;
+
             if (temps.Count > 0)
             {
                 if (call.Type != typeof(void) && copyOutTemps.Count > 0)
@@ -7258,7 +7284,12 @@ namespace System.Management.Automation.Language
                     copyOutTemps.Add(retValue);
                 }
 
+                AddMemberInvocationLogging(initTemps, targetName, methodName, argsToLog);
                 call = Expression.Block(call.Type, temps, initTemps.Append(call).Concat(copyOutTemps));
+            }
+            else
+            {
+                call = AddMemberInvocationLogging(call, targetName, methodName, argsToLog);
             }
 
             return call;
@@ -7550,6 +7581,55 @@ namespace System.Management.Automation.Language
                 }
             }
         }
+
+#nullable enable
+        private static Expression AddMemberInvocationLogging(
+            Expression expr,
+            string targetName,
+            string name,
+            List<Expression> args)
+        {
+#if UNIX
+            // For efficiency this is a no-op on non-Windows platforms.
+            return expr;
+#else
+            Expression[] invocationArgs = new Expression[args.Count];
+            for (int i = 0; i < args.Count; i++)
+            {
+                invocationArgs[i] = args[i].Cast(typeof(object));
+            }
+
+            return Expression.Block(
+                Expression.Call(
+                    CachedReflectionInfo.MemberInvocationLoggingOps_LogMemberInvocation,
+                    Expression.Constant(targetName),
+                    Expression.Constant(name),
+                    Expression.NewArrayInit(typeof(object), invocationArgs)),
+                expr);
+#endif
+        }
+
+        private static void AddMemberInvocationLogging(
+            List<Expression> exprs,
+            string targetName,
+            string name,
+            List<Expression> args)
+        {
+#if !UNIX
+            Expression[] invocationArgs = new Expression[args.Count];
+            for (int i = 0; i < args.Count; i++)
+            {
+                invocationArgs[i] = args[i].Cast(typeof(object));
+            }
+
+            exprs.Add(Expression.Call(
+                CachedReflectionInfo.MemberInvocationLoggingOps_LogMemberInvocation,
+                Expression.Constant(targetName),
+                Expression.Constant(name),
+                Expression.NewArrayInit(typeof(object), invocationArgs)));
+#endif
+        }
+#nullable disable
 
         #endregion
     }
