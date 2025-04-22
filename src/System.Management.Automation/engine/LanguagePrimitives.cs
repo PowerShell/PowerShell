@@ -2957,7 +2957,6 @@ namespace System.Management.Automation
                if (resultType == typeof(BigInteger))
                { 
                     NumberStyles style = NumberStyles.Integer | NumberStyles.AllowThousands;
-                    BigInteger parsedValue;
                     
                     return BigInteger.Parse(strToConvert, style, NumberFormatInfo.InvariantInfo);
                 }
