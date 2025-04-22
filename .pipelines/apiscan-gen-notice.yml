@@ -90,9 +90,12 @@ extends:
         versionNumber: "7.5" # Default is build number
         isLargeApp: false # Default: false.
         symbolsFolder: $(SymbolsServerUrl);$(ob_outputDirectory)
-#softwareFolder - relative path to a folder to be scanned. Default value is root of artifacts folder.
-
+#softwareFolder - relative path to a folder to be scanned. Default value is root of artifacts folder
       tsaOptionsFile: .config\tsaoptions.json
+      psscriptanalyzer:
+          enabled: true
+          policyName: Microsoft
+          break: false
 
     stages:
       - stage: APIScan
