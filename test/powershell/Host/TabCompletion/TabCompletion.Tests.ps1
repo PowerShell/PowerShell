@@ -1368,6 +1368,13 @@ param([ValidatePattern(
             $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
             $completionText = $res.CompletionMatches.CompletionText
             $completionText -join ' ' | Should -BeExactly $ExpectedPropertyTypes
+
+            foreach ($match in $res.CompletionMatches) {
+                $completionText = $match.CompletionText.Replace("""", "").Replace("'", "")
+                $listItemText = $match.ListItemText
+                $completionText | Should -BeExactly $listItemText
+                $match.ToolTip | Should -Not -BeNullOrEmpty
+            }
         }
 
         It "Test fallback to provider of current location if no path specified" -Skip:(!$IsWindows) {
@@ -1508,6 +1515,112 @@ param([ValidatePattern(
             $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
             $completionText = $res.CompletionMatches.CompletionText
             $completionText -join ' ' | Should -BeExactly (($ExpectedExperimentalFeatureNames | Sort-Object -Unique) -join ' ')
+        }
+    }
+
+    Context "Join-String -Separator & -FormatString parameter completion" {
+        BeforeAll {
+            if ($IsWindows) {
+                $allSeparators = "',' ', ' ';' '; ' ""``r``n"" '-' ' '"
+                $allFormatStrings = "'[{0}]' '{0:N2}' ""``r``n    ```${0}"" ""``r``n    [string] ```${0}"""
+                $newlineSeparator = """``r``n"""
+                $newlineFormatStrings = """``r``n    ```${0}"" ""``r``n    [string] ```${0}"""
+            }
+            else {
+                $allSeparators = "',' ', ' ';' '; ' ""``n"" '-' ' '"
+                $allFormatStrings = "'[{0}]' '{0:N2}' ""``n    ```${0}"" ""``n    [string] ```${0}"""
+                $newlineSeparator = """``n"""
+                $newlineFormatStrings = """``n    ```${0}"" ""``n    [string] ```${0}"""
+            }
+
+            $commaSeparators = "',' ', '"
+            $semiColonSeparators = "';' '; '"
+            
+            $squareBracketFormatString = "'[{0}]'"
+            $curlyBraceFormatString = "'{0:N2}'"
+        }
+
+        It "Should complete for '<TextInput>'" -TestCases @(
+            @{ TextInput = "Join-String -Separator "; Expected = $allSeparators }
+            @{ TextInput = "Join-String -Separator '"; Expected = $allSeparators }
+            @{ TextInput = "Join-String -Separator """; Expected = $allSeparators.Replace("'", """") }
+            @{ TextInput = "Join-String -Separator ',"; Expected = $commaSeparators }
+            @{ TextInput = "Join-String -Separator "","; Expected = $commaSeparators.Replace("'", """") }
+            @{ TextInput = "Join-String -Separator ';"; Expected = $semiColonSeparators }
+            @{ TextInput = "Join-String -Separator "";"; Expected = $semiColonSeparators.Replace("'", """") }
+            @{ TextInput = "Join-String -FormatString "; Expected = $allFormatStrings }
+            @{ TextInput = "Join-String -FormatString '"; Expected = $allFormatStrings }
+            @{ TextInput = "Join-String -FormatString """; Expected = $allFormatStrings.Replace("'", """") }
+            @{ TextInput = "Join-String -FormatString ["; Expected = $squareBracketFormatString }
+            @{ TextInput = "Join-String -FormatString '["; Expected = $squareBracketFormatString }
+            @{ TextInput = "Join-String -FormatString ""["; Expected = $squareBracketFormatString.Replace("'", """") }
+            @{ TextInput = "Join-String -FormatString '{"; Expected = $curlyBraceFormatString }
+            @{ TextInput = "Join-String -FormatString ""{"; Expected = $curlyBraceFormatString.Replace("'", """") }
+        ) {
+            param($TextInput, $Expected)
+            $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
+            $completionText = $res.CompletionMatches.CompletionText
+            $completionText -join ' ' | Should -BeExactly $Expected
+
+            foreach ($match in $res.CompletionMatches) {
+                $toolTip = $match.ToolTip.Replace("""", "").Replace("'", "")
+                $completionText = $match.CompletionText.Replace("""", "").Replace("'", "")
+                $listItemText = $match.ListItemText
+                $toolTip.StartsWith($completionText) | Should -BeTrue
+                $toolTip.EndsWith($listItemText) | Should -BeTrue
+            }
+        }
+
+        It "Should complete for '<TextInput>'" -Skip:(!$IsWindows) -TestCases @(
+            @{ TextInput = "Join-String -Separator '``"; Expected = $newlineSeparator }
+            @{ TextInput = "Join-String -Separator ""``"; Expected = $newlineSeparator }
+            @{ TextInput = "Join-String -Separator '``r"; Expected = $newlineSeparator }
+            @{ TextInput = "Join-String -Separator ""``r"; Expected = $newlineSeparator }
+            @{ TextInput = "Join-String -Separator '``r``"; Expected = $newlineSeparator }
+            @{ TextInput = "Join-String -Separator ""``r``"; Expected = $newlineSeparator }
+            @{ TextInput = "Join-String -FormatString '``"; Expected = $newlineFormatStrings }
+            @{ TextInput = "Join-String -FormatString ""``"; Expected = $newlineFormatStrings }
+            @{ TextInput = "Join-String -FormatString '``r"; Expected = $newlineFormatStrings }
+            @{ TextInput = "Join-String -FormatString ""``r"; Expected = $newlineFormatStrings }
+            @{ TextInput = "Join-String -FormatString '``r``"; Expected = $newlineFormatStrings }
+            @{ TextInput = "Join-String -FormatString ""``r``"; Expected = $newlineFormatStrings }
+        ) {
+            param($TextInput, $Expected)
+            $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
+            $completionText = $res.CompletionMatches.CompletionText
+            $completionText -join ' ' | Should -BeExactly $Expected
+
+            foreach ($match in $res.CompletionMatches) {
+                $toolTip = $match.ToolTip.Replace("""", "").Replace("'", "")
+                $completionText = $match.CompletionText.Replace("""", "").Replace("'", "")
+                $listItemText = $match.ListItemText
+                $toolTip.StartsWith($completionText) | Should -BeTrue
+                $toolTip.EndsWith($listItemText) | Should -BeTrue
+            }
+        }
+
+        It "Should complete for '<TextInput>'" -Skip:($IsWindows) -TestCases @(
+            @{ TextInput = "Join-String -Separator '``"; Expected = $newlineSeparator }
+            @{ TextInput = "Join-String -Separator ""``"; Expected = $newlineSeparator }
+            @{ TextInput = "Join-String -Separator '``n"; Expected = $newlineSeparator }
+            @{ TextInput = "Join-String -Separator ""``n"; Expected = $newlineSeparator }
+            @{ TextInput = "Join-String -FormatString '``"; Expected = $newlineFormatStrings }
+            @{ TextInput = "Join-String -FormatString ""``"; Expected = $newlineFormatStrings }
+            @{ TextInput = "Join-String -FormatString '``n"; Expected = $newlineFormatStrings }
+            @{ TextInput = "Join-String -FormatString ""``n"; Expected = $newlineFormatStrings }
+        ) {
+            param($TextInput, $Expected)
+            $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
+            $completionText = $res.CompletionMatches.CompletionText
+            $completionText -join ' ' | Should -BeExactly $Expected
+
+            foreach ($match in $res.CompletionMatches) {
+                $toolTip = $match.ToolTip.Replace("""", "").Replace("'", "")
+                $completionText = $match.CompletionText.Replace("""", "").Replace("'", "")
+                $listItemText = $match.ListItemText
+                $toolTip.StartsWith($completionText) | Should -BeTrue
+                $toolTip.EndsWith($listItemText) | Should -BeTrue
+            }
         }
     }
 
