@@ -2954,17 +2954,21 @@ namespace System.Management.Automation
                     return result;
                 }
 
-                if (resultType == typeof(BigInteger))
-                {
-                    // Fallback for BigInteger: manual parsing using any common format.
-                    NumberStyles style = NumberStyles.AllowLeadingSign
-                        | NumberStyles.AllowDecimalPoint
-                        | NumberStyles.AllowExponent
-                        | NumberStyles.AllowHexSpecifier;
-
-                    return BigInteger.Parse(strToConvert, style, NumberFormatInfo.InvariantInfo);
+               if (resultType == typeof(BigInteger))
+               { 
+                    // Adjust NumberStyles to remove AllowHexSpecifier for standard numeric parsing
+                    NumberStyles style = NumberStyles.AllowLeadingSign 
+                    | NumberStyles.AllowDecimalPoint 
+                    | NumberStyles.AllowExponent; 
+                    BigInteger parsedValue;
+                    
+                    if (BigInteger.TryParse(strToConvert, style, NumberFormatInfo.InvariantInfo, out parsedValue))
+                    {
+                        return parsedValue;
+                    }
+                    
+                    throw new PSInvalidCastException("Failed to convert string to BigInteger.");
                 }
-
                 // Fallback conversion for regular numeric types.
                 return GetIntegerSystemConverter(resultType).ConvertFrom(strToConvert);
             }
