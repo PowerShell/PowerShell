@@ -915,7 +915,7 @@ namespace System.Management.Automation
             {
                 if (InferTypes(hashtableAst).FirstOrDefault() is PSSyntheticTypeName syntheticTypeName)
                 {
-                    var baseSyntheticType = convertExpressionAst.Type.TypeName.FullName.EqualsOrdinalIgnoreCase("PSCustomObject")
+                    var baseSyntheticType = convertExpressionAst.Type.TypeName.FullName.EqualsOrdinalIgnoreCase(nameof(PSCustomObject))
                         ? typeof(PSCustomObject)
                         : typeof(Hashtable);
                     return new[] { PSSyntheticTypeName.Create(baseSyntheticType, syntheticTypeName.Members) };
