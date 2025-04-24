@@ -118,7 +118,7 @@ extends:
           ob_createvpack_verbose: true
 
         steps:
-          - template: ./templates/SetVersionVariables.yml
+          - template: ./pipelines/templates/SetVersionVariables.yml@self
             parameters:
               ReleaseTagVar: $(ReleaseTagVar)
               CreateJson: yes
