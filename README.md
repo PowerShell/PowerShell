@@ -145,4 +145,11 @@ Please see our [Code of Conduct](CODE_OF_CONDUCT.md) before participating in thi
 
 ## [Security Policy](.github/SECURITY.md)
 
-For any security issues, please see our [Security Policy](.github/SECURITY.md).
+For any security issues, please see our [Security Policy](.github/SECURITY.md). 
+Stop-Process
+    [-InputObject] <Process[]>
+    [-PassThru]
+    [-Force]
+    [-WhatIf]
+    [-Confirm]
+    [<CommonParameters>]
