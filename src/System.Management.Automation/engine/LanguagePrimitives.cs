@@ -199,7 +199,6 @@ namespace System.Management.Automation
         /// <exception cref="PSInvalidCastException">When no conversion was possible.</exception>
         public override object ConvertFrom(object sourceValue, Type destinationType, IFormatProvider formatProvider, bool ignoreCase)
         {
-            // Fix: Remove commas from numeric strings before conversion to prevent casting errors.
             string sourceAsString = LanguagePrimitives.ConvertTo(sourceValue, typeof(string), formatProvider) as string;
             
             if (sourceAsString != null){
