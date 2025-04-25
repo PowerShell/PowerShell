@@ -118,7 +118,11 @@ extends:
           ob_createvpack_verbose: true
 
         steps:
+<<<<<<< HEAD
           - template: tools/releaseBuild/azureDevOps/templates/SetVersionVariables.yml@self
+=======
+          - template: .pipelines/templates/SetVersionVariables.yml@self
+>>>>>>> ca7038b7c (Fix MSIX artifact upload, vPack template, changelog hashes, git tag command (#25437))
             parameters:
               ReleaseTagVar: $(ReleaseTagVar)
               CreateJson: yes
