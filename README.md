@@ -146,3 +146,13 @@ Please see our [Code of Conduct](CODE_OF_CONDUCT.md) before participating in thi
 ## [Security Policy](.github/SECURITY.md)
 
 For any security issues, please see our [Security Policy](.github/SECURITY.md).
+Stop-Process -Id 3952 -Confirm -PassThru
+
+Confirm
+Are you sure you want to perform this action?
+Performing operation "Stop-Process" on Target "notepad (3952)".
+[Y] Yes  [A] Yes to All  [N] No  [L] No to All  [S] Suspend  [?] Help
+(default is "Y"):y
+Handles  NPM(K)    PM(K)      WS(K) VM(M)   CPU(s)     Id ProcessName
+-------  ------    -----      ----- -----   ------     -- -----------
+41       2      996       3212    31            3952 notepad
