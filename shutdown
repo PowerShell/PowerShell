@@ -1,0 +1,7 @@
+Stop-Process
+    [-Id] <Int32[]>
+    [-PassThru]
+    [-Force]
+    [-WhatIf]
+    [-Confirm]
+    [<CommonParameters>]
