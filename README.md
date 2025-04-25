@@ -144,5 +144,12 @@ The governance policy for the PowerShell project is described the [PowerShell Go
 Please see our [Code of Conduct](CODE_OF_CONDUCT.md) before participating in this project.
 
 ## [Security Policy](.github/SECURITY.md)
-
-For any security issues, please see our [Security Policy](.github/SECURITY.md).
+Stop-Process
+    -Name <String[]>
+    [-PassThru]
+    [-Force]
+    [-WhatIf]
+    [-Confirm]
+    [<CommonParameters>]
+    
+For any security issues, please see our [Security Policy](.github/SECURITY.md). 
