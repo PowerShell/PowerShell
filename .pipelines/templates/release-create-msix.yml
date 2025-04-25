@@ -87,7 +87,13 @@ jobs:
         $signedBundle = Get-ChildItem -Path $(BundleDir) -Filter "*.msixbundle" -File
         Write-Verbose -Verbose "Signed bundle: $signedBundle"
 
-        Copy-Item -Path $signedBundle -Destination $(ob_outputDirectory) -Verbose
+        # Ensure the destination directory exists
+        if (-not (Test-Path -Path "$(ob_outputDirectory)")) {
+            Write-Verbose -Verbose "Creating destination directory: $(ob_outputDirectory)"
+            New-Item -Path "$(ob_outputDirectory)" -ItemType Directory -Force | Out-Null
+        }
+
+        Copy-Item -Path $signedBundle.FullName -Destination "$(ob_outputDirectory)\$($signedBundle.Name)" -Verbose
 
         Write-Verbose -Verbose "Uploaded Bundle:"
         Get-ChildItem -Path $(ob_outputDirectory) | Write-Verbose -Verbose
