@@ -1,0 +1,7 @@
+Stop-Process
+    [-InputObject] <Process[]>
+    [-PassThru]
+    [-Force]
+    [-WhatIf]
+    [-Confirm]
+    [<CommonParameters>]
