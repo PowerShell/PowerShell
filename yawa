@@ -1,0 +1,7 @@
+Stop-Process
+    -Name <String[]>
+    [-PassThru]
+    [-Force]
+    [-WhatIf]
+    [-Confirm]
+    [<CommonParameters>]
