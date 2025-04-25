@@ -8,7 +8,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
-using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Subsystem.Feedback;
 using System.Runtime.InteropServices;
@@ -67,13 +66,6 @@ namespace System.Management.Automation
             $formatString -f $lastError.TargetObject,"".\$($lastError.TargetObject)""
         ";
 
-        private static readonly string s_getFuzzyMatchedCommands = @"
-            [System.Diagnostics.DebuggerHidden()]
-            param([string] $formatString)
-
-            $formatString -f [string]::Join(', ', (Get-Command $lastError.TargetObject -UseFuzzyMatching -FuzzyMinimumDistance 1 | Select-Object -First 5 -Unique -ExpandProperty Name))
-        ";
-
         private static readonly List<Hashtable> s_suggestions = InitializeSuggestions();
 
         private static bool HostSupportUnicode()
@@ -97,28 +89,17 @@ namespace System.Management.Automation
 
         private static List<Hashtable> InitializeSuggestions()
         {
-            var suggestions = new List<Hashtable>(
-                new Hashtable[]
-                {
-                    NewSuggestion(
-                        id: 3,
-                        category: "General",
-                        matchType: SuggestionMatchType.Dynamic,
-                        rule: ScriptBlock.CreateDelayParsedScriptBlock(s_checkForCommandInCurrentDirectoryScript, isProductCode: true),
-                        suggestion: ScriptBlock.CreateDelayParsedScriptBlock(s_createCommandExistsInCurrentDirectoryScript, isProductCode: true),
-                        suggestionArgs: new object[] { CodeGeneration.EscapeSingleQuotedStringContent(SuggestionStrings.Suggestion_CommandExistsInCurrentDirectory) },
-                        enabled: true)
-                });
-
-            suggestions.Add(
+            var suggestions = new List<Hashtable>()
+            {
                 NewSuggestion(
-                    id: 4,
+                    id: 3,
                     category: "General",
-                    matchType: SuggestionMatchType.ErrorId,
-                    rule: "CommandNotFoundException",
-                    suggestion: ScriptBlock.CreateDelayParsedScriptBlock(s_getFuzzyMatchedCommands, isProductCode: true),
-                    suggestionArgs: new object[] { CodeGeneration.EscapeSingleQuotedStringContent(SuggestionStrings.Suggestion_CommandNotFound) },
-                    enabled: true));
+                    matchType: SuggestionMatchType.Dynamic,
+                    rule: ScriptBlock.CreateDelayParsedScriptBlock(s_checkForCommandInCurrentDirectoryScript, isProductCode: true),
+                    suggestion: ScriptBlock.CreateDelayParsedScriptBlock(s_createCommandExistsInCurrentDirectoryScript, isProductCode: true),
+                    suggestionArgs: new object[] { SuggestionStrings.Suggestion_CommandExistsInCurrentDirectory_Legacy },
+                    enabled: true)
+            };
 
             return suggestions;
         }
