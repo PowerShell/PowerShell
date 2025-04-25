@@ -84,6 +84,17 @@ jobs:
         $endLine = $headingStartLines[1] - 1
   
         $clContent = $changelog | Select-Object -Skip ($startLine-1) -First ($endLine - $startLine) | Out-String
+
+        $StringBuilder = [System.Text.StringBuilder]::new($clContent, $clContent.Length + 2kb)
+        $StringBuilder.AppendLine().AppendLine() > $null
+        $StringBuilder.AppendLine("### SHA256 Hashes of the release artifacts").AppendLine() > $null
+        Get-ChildItem -Path "$(Pipeline.Workspace)/GitHubPackages/" -File | ForEach-Object {
+            $PackageName = $_.Name
+            $SHA256 = (Get-FileHash -Path $_.FullName -Algorithm SHA256).Hash
+            $StringBuilder.AppendLine("- $PackageName").AppendLine("  - $SHA256") > $null
+        }
+
+        $clContent = $StringBuilder.ToString()
   
         Write-Verbose -Verbose "Selected content: `n$clContent"
 
@@ -113,6 +124,7 @@ jobs:
       assets: '$(Pipeline.Workspace)/GitHubPackages/*'
       tagSource: 'userSpecifiedTag'
       tag: '$(ReleaseTag)'
+      title: "$(ReleaseTag) Release of PowerShell"
       isDraft: true
       addChangeLog: false
       action: 'create'
