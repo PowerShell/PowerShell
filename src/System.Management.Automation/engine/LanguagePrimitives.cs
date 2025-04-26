@@ -200,18 +200,14 @@ namespace System.Management.Automation
         public override object ConvertFrom(object sourceValue, Type destinationType, IFormatProvider formatProvider, bool ignoreCase)
         {
             string sourceAsString = LanguagePrimitives.ConvertTo(sourceValue, typeof(string), formatProvider) as string;
-            
-            if (sourceAsString != null){
-            
-                string groupSeparator = formatProvider?.GetFormat(typeof(NumberFormatInfo)) is NumberFormatInfo nfi 
-                    ? nfi.NumberGroupSeparator 
-                    : CultureInfo.CurrentCulture.NumberFormat.NumberGroupSeparator;
-                    
-                sourceAsString = sourceAsString.Replace(groupSeparator, string.Empty); // Remove culture-specific group separator
-            }
-            return LanguagePrimitives.ConvertTo(sourceAsString, destinationType, formatProvider);
+                
+                if (!string.IsNullOrEmpty(sourceAsString) && destinationType == typeof(BigInteger)) 
+                {
+                    return BigInteger.Parse(sourceAsString, NumberStyles.Integer | NumberStyles.AllowThousands, NumberFormatInfo.InvariantInfo);
+                }
+                return LanguagePrimitives.ConvertTo(sourceAsString, destinationType, formatProvider);
+         }
 
-        }
 
         /// <summary>
         /// Returns false, since this converter is not designed to be used to
