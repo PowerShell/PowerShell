@@ -207,8 +207,6 @@ namespace System.Management.Automation
                 }
                 return LanguagePrimitives.ConvertTo(sourceAsString, destinationType, formatProvider);
          }
-
-
         /// <summary>
         /// Returns false, since this converter is not designed to be used to
         /// convert from the type associated with the converted to other types.
