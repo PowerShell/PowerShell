@@ -5,13 +5,12 @@
 
 using System;
 using System.IO;
-using System.IO.Pipes;
-using System.Text;
 using System.Management.Automation;
 using System.Net.Http;
-using System.Net;
-using System.Linq;
 using System.Threading;
+using System.IO.Pipes;
+using System.Text;
+using System.Linq;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -69,200 +68,117 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        #endregion Virtual Method Overrides
-
-        #region Named Pipe Support
-
-        /// <summary>
-        /// Determines if the request should be handled as a named pipe request.
-        /// </summary>
-        /// <param name="client">The HttpClient to use.</param>
-        /// <param name="request">The HttpRequestMessage to send.</param>
-        /// <param name="handleRedirect">Whether to handle redirects.</param>
-        /// <returns>The HttpResponseMessage.</returns>
         internal override HttpResponseMessage GetResponse(HttpClient client, HttpRequestMessage request, bool handleRedirect)
         {
             Uri uri = request.RequestUri ?? throw new ArgumentNullException(nameof(request.RequestUri), "Request URI cannot be null.");
 
             if (uri.Scheme.Equals("npipe", StringComparison.OrdinalIgnoreCase))
             {
-                return ProcessNamedPipeRequest(uri, request);
+                TimeSpan timeout = ConvertTimeoutSecondsToTimeSpan(OperationTimeoutSeconds);
+                return ProcessNamedPipeRequest(uri, request, timeout);
             }
 
             return base.GetResponse(client, request, handleRedirect);
         }
 
-        /// <summary>
-        /// Processes an HTTP-like request using Named Pipes.
-        /// </summary>
-        /// <param name="uri">The URI containing the named pipe path.</param>
-        /// <param name="request">The HttpRequestMessage to send.</param>
-        /// <returns>An HttpResponseMessage containing the response.</returns>
-        private HttpResponseMessage ProcessNamedPipeRequest(Uri uri, HttpRequestMessage request)
-        {
-            // Retrieve named pipe name from the URI path.
-            string pipeName = uri.AbsolutePath.TrimStart('/');
-            Console.WriteLine($"[DEBUG] Processing Named Pipe request for pipe: {pipeName}");
+        private static HttpResponseMessage ProcessNamedPipeRequest(Uri uri, HttpRequestMessage request, TimeSpan timeout)
+        {   
+            string requestUrl = uri.ToString();
+            string pipeName = requestUrl.Replace("npipe://", string.Empty);
+            
+            int index = pipeName.IndexOf("/");
+            string leftSide = index != -1 ? pipeName.Substring(0, index) : pipeName; // Everything before '/'
+            string rightSide = index != -1 ? pipeName.Substring(index) : string.Empty; // Everything after '/', including '/'
+            pipeName = leftSide;
+            string extractedPart = rightSide;
 
-            using (NamedPipeClientStream pipeClient = new NamedPipeClientStream(".", pipeName, PipeDirection.InOut))
+            StringBuilder responseBuilder = new StringBuilder();
+
+            Console.WriteLine($"Detected Named Pipe Request: {pipeName}");
+
+            try
             {
-                try
+                using (var client = new NamedPipeClientStream(".", pipeName, PipeDirection.InOut))
                 {
-                    Console.WriteLine("[DEBUG] Attempting to connect to the named pipe...");
-                    pipeClient.Connect();
-                    Console.WriteLine("[DEBUG] Connected to the named pipe server.");
+                    client.Connect((int)timeout.TotalMilliseconds);
+                    Console.WriteLine("Connected to Named Pipe.");
 
-                    // Build and send the HTTP-like request string.
-                    string requestString = BuildHttpRequestString(request);
-                    Console.WriteLine($"[DEBUG] Sending request string:\n{requestString}");
-                    byte[] requestBytes = Encoding.UTF8.GetBytes(requestString);
-                    pipeClient.Write(requestBytes, 0, requestBytes.Length);
-                    Console.WriteLine("[DEBUG] Request sent to the named pipe server.");
+                    byte[] requestBytes = Encoding.UTF8.GetBytes($"GET {extractedPart} HTTP/1.1\r\nHost: pipe\r\n\r\n");
+                    client.Write(requestBytes, 0, requestBytes.Length);
+                    client.Flush();
 
-                    // Read response from named pipe.
-                    byte[] buffer = new byte[4096]; // Buffer for bigger responses.
-                    int bytesRead = pipeClient.Read(buffer, 0, buffer.Length);
-                    if (bytesRead == 0)
+                    using (StreamReader reader = new StreamReader(client))
                     {
-                        Console.WriteLine("[ERROR] No data received from the named pipe server.");
-                        return new HttpResponseMessage(HttpStatusCode.InternalServerError)
+                        char[] buffer = new char[1024];
+                        int bytesRead;
+                        DateTime startTime = DateTime.Now;
+
+                        Console.WriteLine("Response from Named Pipe:");
+                        while ((bytesRead = reader.Read(buffer, 0, buffer.Length)) > 0)
                         {
-                            Content = new StringContent("[ERROR] No response received.")
-                        };
+                            string chunk = new string(buffer, 0, bytesRead);
+                            responseBuilder.Append(chunk);
+                            Console.Write(chunk);
+
+                            if (chunk.Contains("0\r\n\r\n"))
+                            {
+                                Console.WriteLine("\nPossible end of response detected.");
+                                break;
+                            }
+
+                            // if ((DateTime.Now - startTime) > timeout)
+                            // {
+                            //     Console.WriteLine("\nResponse timeout reached. Stopping read.");
+                            //     break;
+                            // }
+
+                            Thread.Sleep(100);
+                        }
+                        Console.WriteLine("\nDone reading response.");
                     }
-
-                    string responseString = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-                    Console.WriteLine($"[DEBUG] Received response string:\n{responseString}");
-
-                    // Build HttpResponseMessage from raw response string.
-                    HttpResponseMessage responseMessage = BuildHttpResponse(responseString);
-                    Console.WriteLine("[DEBUG] Passing response to ProcessResponse...");
-                    if (responseMessage == null)
-                    {
-                        throw new ArgumentException("responeseMessage was processed incorrectly before");
-                    }
-                    ProcessResponse(responseMessage);
-
-                    if (responseMessage == null)
-                    {
-                        throw new ArgumentException("responeseMessage was processed incorrectly after");
-                    }
-
-                    Console.WriteLine("Returning responseMessage");
-                    return responseMessage;
                 }
-                catch (IOException ex)
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error communicating with named pipe `{pipeName}`: {ex.Message}");
+                return new HttpResponseMessage(System.Net.HttpStatusCode.InternalServerError)
                 {
-                    Console.WriteLine($"[ERROR] IOException while interacting with the named pipe: {ex.Message}");
-                    return new HttpResponseMessage(HttpStatusCode.InternalServerError)
-                    {
-                        Content = new StringContent($"[ERROR] Connection error: {ex.Message}")
-                    };
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"[ERROR] Unexpected error: {ex.Message}");
-                    return new HttpResponseMessage(HttpStatusCode.InternalServerError)
-                    {
-                        Content = new StringContent($"[ERROR] Unexpected error: {ex.Message}")
-                    };
-                }
-            }
-        }
-
-        // Helper method to build a basic HTTP-like request string.
-        private static string BuildHttpRequestString(HttpRequestMessage request)
-        {
-            // Build a simple HTTP request string based on the HttpRequestMessage.
-            StringBuilder requestString = new StringBuilder();
-            if (request.Method == null)
-            {
-                throw new ArgumentException("Request method must not be null");
-            }
-            
-            if (request.RequestUri?.AbsolutePath == null)
-            {
-                throw new ArgumentException("RequestUri Absolute Path must not be null");
+                    Content = new StringContent($"Pipe communication failed: {ex.Message}")
+                };
             }
 
-            requestString.AppendLine($"{request.Method} {request.RequestUri.AbsolutePath} HTTP/1.1");
-            requestString.AppendLine($"Host: {request.RequestUri.Host}");
-            
-            // Add headers
-            foreach (var header in request.Headers)
+            // Return a properly formatted HTTP response
+            string responseText = responseBuilder.ToString();
+
+            Console.WriteLine($"responseBuilder: {(responseBuilder == null ? "null" : "not null")}");
+            Console.WriteLine($"responseBuilder.ToString(): {responseBuilder?.ToString().Length ?? -1} chars");
+
+            if (string.IsNullOrEmpty(responseText))
             {
-                foreach (var value in header.Value)
-                {
-                    requestString.AppendLine($"{header.Key}: {value}");
-                }
+                Console.WriteLine("Warning: responseBuilder returned null or empty string.");
+                responseText = "(empty response)";
             }
 
-            // Add empty line to separate headers from the body (HTTP convention)
-            requestString.AppendLine();
+            var stringContent = new StringContent(responseText, Encoding.UTF8);
 
-            // Add body if present
-            if (request.Content != null)
+            var responseMessage = new HttpResponseMessage(System.Net.HttpStatusCode.OK)
             {
-                var body = request.Content.ReadAsStringAsync().Result;
-                requestString.AppendLine(body);
-            }
+                Content = stringContent
+            };
 
-            return requestString.ToString();
-        }
-
-        // Helper method to build an HttpResponseMessage from the response string.
-        private static HttpResponseMessage BuildHttpResponse(string responseString)
-        {
-            Console.WriteLine($"[DEBUG] Building HttpResponseMessage from response string:\n{responseString}");
-
-            var responseMessage = new HttpResponseMessage();
-
-            // Split response into lines.
-            string[] responseLines = responseString.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
-
-            // Parse status line (e.g., HTTP/1.1 200 OK).
-            if (responseLines.Length > 0)
+            if (responseMessage.Content?.Headers != null)
             {
-                string statusLine = responseLines[0];
-                string[] statusParts = statusLine.Split(' ');
-
-                if (statusParts.Length >= 2)
-                {
-                    responseMessage.StatusCode = Enum.Parse<HttpStatusCode>(statusParts[1]);
-                    responseMessage.ReasonPhrase = statusParts.Length > 2 ? statusParts[2] : string.Empty;
-                }
-                else
-                {
-                    throw new FormatException("Invalid status line format.");
-                }
-            }
-
-            // Parse headers.
-            int emptyLineIndex = Array.IndexOf(responseLines, string.Empty);
-            for (int i = 1; i < emptyLineIndex; i++) // Headers end before the empty line.
-            {
-                string headerLine = responseLines[i];
-                var headerParts = headerLine.Split(':', 2);
-                if (headerParts.Length == 2)
-                {
-                    responseMessage.Headers.TryAddWithoutValidation(headerParts[0].Trim(), headerParts[1].Trim());
-                }
-            }
-
-            // Parse body.
-            if (emptyLineIndex != -1 && emptyLineIndex + 1 < responseLines.Length)
-            {
-                string body = string.Join("\n", responseLines[(emptyLineIndex + 1)..]);
-                responseMessage.Content = new StringContent(body);
+                responseMessage.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("text/plain");
+                Console.WriteLine("Set content type");
             }
             else
             {
-                responseMessage.Content = new StringContent(string.Empty);
+                Console.WriteLine("Warning: Content or Content.Headers was null.");
             }
 
+            Console.WriteLine("Returning response");
             return responseMessage;
         }
-
-        #endregion Named Pipe Support
+        #endregion Virtual Method Overrides
     }
 }
