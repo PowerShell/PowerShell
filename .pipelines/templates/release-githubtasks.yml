@@ -1,3 +1,8 @@
+parameters:
+  - name: skipPublish
+    default: false
+    type: boolean
+
 jobs:
 - job: GithubReleaseDraft
   displayName: Create GitHub Release Draft
@@ -76,8 +81,6 @@ jobs:
 
         $clContent = $changelog | Select-Object -Skip ($startLine-1) -First ($endLine - $startLine) | Out-String
 
-<<<<<<< HEAD:.pipelines/templates/release-githubtasks.yml
-=======
         $StringBuilder = [System.Text.StringBuilder]::new($clContent, $clContent.Length + 2kb)
         $StringBuilder.AppendLine().AppendLine() > $null
         $StringBuilder.AppendLine("### SHA256 Hashes of the release artifacts").AppendLine() > $null
@@ -89,7 +92,6 @@ jobs:
 
         $clContent = $StringBuilder.ToString()
   
->>>>>>> ca7038b7c (Fix MSIX artifact upload, vPack template, changelog hashes, git tag command (#25437)):.pipelines/templates/release-githubNuget.yml
         Write-Verbose -Verbose "Selected content: `n$clContent"
 
         $releaseNotesFilePath = "$(Pipeline.Workspace)/release-notes.md"
