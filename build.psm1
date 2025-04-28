@@ -1224,6 +1224,7 @@ function Get-PesterTag {
 # testing PowerShell remote custom connections.
 function Publish-CustomConnectionTestModule
 {
+    Write-LogGroupStart -Title "Publish-CustomConnectionTestModule"
     $sourcePath = "${PSScriptRoot}/test/tools/NamedPipeConnection"
     $outPath = "${PSScriptRoot}/test/tools/NamedPipeConnection/out/Microsoft.PowerShell.NamedPipeConnection"
     $publishPath = "${PSScriptRoot}/test/tools/Modules"
@@ -1248,6 +1249,8 @@ function Publish-CustomConnectionTestModule
     finally {
         Pop-Location
     }
+
+    Write-LogGroupEnd -Title "Publish-CustomConnectionTestModule"
 }
 
 function Publish-PSTestTools {
@@ -1257,6 +1260,7 @@ function Publish-PSTestTools {
         $runtime
     )
 
+    Write-LogGroupStart -Title "Publish-PSTestTools"
     Find-Dotnet
 
     $tools = @(
@@ -1328,6 +1332,7 @@ function Publish-PSTestTools {
 
     # Publish the Microsoft.PowerShell.NamedPipeConnection module
     Publish-CustomConnectionTestModule
+    Write-LogGroupEnd -Title "Publish-PSTestTools"
 }
 
 function Get-ExperimentalFeatureTests {
@@ -1815,12 +1820,16 @@ function Show-PSPesterError
         throw 'Unknown Show-PSPester parameter set'
     }
 
-    Write-Log -isError -message ("Description: " + $description)
-    Write-Log -isError -message ("Name:        " + $name)
-    Write-Log -isError -message "message:"
-    Write-Log -isError -message $message
-    Write-Log -isError -message "stack-trace:"
-    Write-Log -isError -message $stack_trace
+    # Empty line at the end is intentional formatting
+    Write-Log -isError -message @"
+Description: $description
+Name:        $name
+message:
+$message
+stack-trace:
+$stack_trace
+
+"@
 
 }
 
@@ -1860,13 +1869,17 @@ function Test-XUnitTestResults
         $message = $failure.failure.message
         $stack_trace = $failure.failure.'stack-trace'
 
-        Write-Log -isError -message ("Description: " + $description)
-        Write-Log -isError -message ("Name:        " + $name)
-        Write-Log -isError -message "message:"
-        Write-Log -isError -message $message
-        Write-Log -isError -message "stack-trace:"
-        Write-Log -isError -message $stack_trace
-        Write-Log -isError -message " "
+        # Empty line at the end is intentional formatting
+        Write-Log -isError -message         @"
+        Description: $description
+        Name:        $name
+        message:
+        $message
+        stack-trace:
+        $stack_trace
+
+"@
+
     }
 
     throw "$($results.assemblies.assembly.failed) tests failed"
@@ -1902,7 +1915,8 @@ function Test-PSPesterResults
         $x = [xml](Get-Content -Raw $testResultsFile)
         if ([int]$x.'test-results'.failures -gt 0)
         {
-            Write-Log -isError -message "TEST FAILURES"
+            Write-LogGroupStart -Title 'TEST FAILURES'
+
             # switch between methods, SelectNode is not available on dotnet core
             if ( "System.Xml.XmlDocumentXPathExtensions" -as [Type] )
             {
@@ -1916,6 +1930,8 @@ function Test-PSPesterResults
             {
                 Show-PSPesterError -testFailure $testfail
             }
+
+            Write-LogGroupEnd -Title 'TEST FAILURES'
             throw "$($x.'test-results'.failures) tests in $TestArea failed"
         }
     }
@@ -1936,11 +1952,12 @@ function Test-PSPesterResults
         }
         elseif ($ResultObject.FailedCount -gt 0)
         {
-            Write-Log -isError -message 'TEST FAILURES'
+            Write-LogGroupStart -Title 'TEST FAILURES'
 
             $ResultObject.TestResult | Where-Object {$_.Passed -eq $false} | ForEach-Object {
                 Show-PSPesterError -testFailureObject $_
             }
+            Write-LogGroupEnd -Title 'TEST FAILURES'
 
             throw "$($ResultObject.FailedCount) tests in $TestArea failed"
         }
@@ -2687,10 +2704,12 @@ function script:Write-Log
     )
     if ($isError)
     {
-        Write-Host -Foreground Red $message
-        if($env:GITHUB_WORKFLOW)
-        {
-            Write-Host "::error::${message}"
+        if ($env:GITHUB_WORKFLOW) {
+            # https://github.com/actions/toolkit/issues/193#issuecomment-605394935
+            $escapedMessage = $message -replace "`n", "%0A" -replace "`r"
+            Write-Host "::error::${escapedMessage}"
+        } else {
+            Write-Host -Foreground Red $message
         }
     }
     else
