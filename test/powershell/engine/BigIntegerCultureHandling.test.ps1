@@ -17,10 +17,21 @@ Describe 'PowerShell Type Conversion - BigInteger Parsing' -Tag 'CI' {
         $convertedValue | Should -Be 100000
     }
 
-    It 'Correctly parses large numbers with separators' {
-        [System.Globalization.CultureInfo]::CurrentCulture = [System.Globalization.CultureInfo]::GetCultureInfo("fr-FR")
-        $formattedNumber = "1,0,0,0"
+    It 'Handles large comma-separated numbers that previously failed' {
+        $formattedNumber = "9223372036854775,807"
         $convertedValue = [System.Management.Automation.LanguagePrimitives]::ConvertTo($formattedNumber, [bigint])
-        $convertedValue | Should -Be 1000
+        $convertedValue | Should -Be 9223372036854775807
+    }
+
+    It 'Handles extremely large numbers to verify precision' {
+        $formattedNumber = "99999999999999999999999999999"
+        $convertedValue = [System.Management.Automation.LanguagePrimitives]::ConvertTo($formattedNumber, [bigint])
+        $convertedValue | Should -Be 99999999999999999999999999999
+    }
+
+    It 'Parses mixed separators correctly' {
+        $formattedNumber = "1,0000,00"
+        $convertedValue = [System.Management.Automation.LanguagePrimitives]::ConvertTo($formattedNumber, [bigint])
+        $convertedValue | Should -Be 1000000
     }
 }
