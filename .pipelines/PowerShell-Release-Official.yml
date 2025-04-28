@@ -288,7 +288,7 @@ extends:
       variables:
         ob_release_environment: Production
       jobs:
-      - template: /.pipelines/templates/release-githubtasks.yml@self
+      - template: /.pipelines/templates/release-githubNuget.yml@self
 
     - stage: PushGitTagAndMakeDraftPublic
       displayName: Push Git Tag and Make Draft Public
