@@ -5345,11 +5345,11 @@ namespace System.Management.Automation
                                                                 ToStringCodeMethods.Type(value.GetType(),
                                                                                          dropNamespaces: true), name);
                                 }
-                            }
 
-                            if (!string.IsNullOrEmpty(variable.Description))
-                            {
-                                tooltip += $" - {variable.Description}";
+                                if (!string.IsNullOrEmpty(variable.Description))
+                                {
+                                    tooltip += $" - {variable.Description}";
+                                }
                             }
 
                             var completedName = !tokenAtCursorUsedBraces && !ContainsCharactersRequiringQuotes(name)

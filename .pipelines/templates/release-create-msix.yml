@@ -75,6 +75,30 @@ jobs:
       displayName: Create MsixBundle
       retryCountOnTaskFailure: 1
 
+    - task: onebranch.pipeline.signing@1
+      displayName: Sign MsixBundle
+      inputs:
+        command: 'sign'
+        signing_profile: $(MSIXProfile)
+        files_to_sign: '**/*.msixbundle'
+        search_root: '$(BundleDir)'
+    
+    - pwsh: |
+        $signedBundle = Get-ChildItem -Path $(BundleDir) -Filter "*.msixbundle" -File
+        Write-Verbose -Verbose "Signed bundle: $signedBundle"
+
+        # Ensure the destination directory exists
+        if (-not (Test-Path -Path "$(ob_outputDirectory)")) {
+            Write-Verbose -Verbose "Creating destination directory: $(ob_outputDirectory)"
+            New-Item -Path "$(ob_outputDirectory)" -ItemType Directory -Force | Out-Null
+        }
+
+        Copy-Item -Path $signedBundle.FullName -Destination "$(ob_outputDirectory)\$($signedBundle.Name)" -Verbose
+
+        Write-Verbose -Verbose "Uploaded Bundle:"
+        Get-ChildItem -Path $(ob_outputDirectory) | Write-Verbose -Verbose
+      displayName: Upload msixbundle to Artifacts
+
     - task: AzurePowerShell@5
       displayName: Upload msix to blob
       inputs:
