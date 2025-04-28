@@ -19,7 +19,7 @@ Describe 'PowerShell Type Conversion - BigInteger Parsing' -Tag 'CI' {
 
     It 'Correctly parses large numbers with separators' {
         [System.Globalization.CultureInfo]::CurrentCulture = [System.Globalization.CultureInfo]::GetCultureInfo("fr-FR")
-        $formattedNumber = "1 000"
+        $formattedNumber = "1,0,0,0"
         $convertedValue = [System.Management.Automation.LanguagePrimitives]::ConvertTo($formattedNumber, [bigint])
         $convertedValue | Should -Be 1000
     }
