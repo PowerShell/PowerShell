@@ -17,8 +17,13 @@ parameters: # parameters are shown up in ADO UI in a build queue time
     displayName: Skip Signing
     type: string
     default: 'NO'
+<<<<<<< HEAD
   - name: SkipPMCPublish
     displayName: Skip PMC Publish
+=======
+  - name: SkipPublish
+    displayName: Skip Publishing to Nuget
+>>>>>>> d5b63e132 (Fix Conditional Parameter to Skip NuGet Publish (#25468))
     type: boolean
     default: false
   - name: SkipPSInfraInstallers
