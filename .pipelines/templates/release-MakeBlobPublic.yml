@@ -160,7 +160,6 @@ jobs:
           $destinationContext = New-AzStorageContext -StorageAccountName $destinationStorageAccountName
           Write-Verbose -Verbose "Destination context: $($destinationContext.BlobEndPoint)"
 
-          $prefix = 'globaltool'
           $blobs = Get-AzStorageBlob -Context $sourceContext -Container $sourceContainerName -Prefix $prefix
 
           Write-Verbose -Verbose "Blobs found in $sourceContainerName"
