@@ -1,6 +1,6 @@
 jobs:
-- job: SetTagAndTools
-  displayName: Set Tag and Tools
+- job: setTagAndChangelog
+  displayName: Set Tag and Upload Changelog
   condition: succeeded()
   pool:
     type: windows
@@ -19,32 +19,6 @@ jobs:
     clean: true
     env:
       ob_restore_phase: true
-
-  - checkout: PSInternalTools
-    clean: true
-    env:
-      ob_restore_phase: true
-
-  - pwsh: |
-      New-Item -ItemType Directory -Path '$(Pipeline.Workspace)/ToolArtifact'
-      Get-ChildItem -Path '$(Build.SourcesDirectory)/Internal-PowerShellTeam-Tools/Scripts' -Filter 'GitHubRelease.psm1' -ErrorAction SilentlyContinue |
-        Copy-Item -Destination '$(Pipeline.Workspace)/ToolArtifact' -Verbose
-    displayName: Move GitHub Tool
-
-  - task: onebranch.pipeline.signing@1
-    displayName: Sign Tools
-    inputs:
-      command: 'sign'
-      signing_profile: internal_azure_service
-      files_to_sign: '*.ps1;*.psm1'
-      search_root: '$(Pipeline.Workspace)/ToolArtifact'
-
-  - pwsh: | 
-      Write-Verbose -Verbose "Creating output directory for release tools: $(ob_outputDirectory)/ToolArtifact"
-      New-Item -Path $(ob_outputDirectory)/ToolArtifact -ItemType Directory -Force
-      Get-ChildItem -Path "$(Pipeline.Workspace)/ToolArtifact/*" -Recurse | 
-        Copy-Item -Destination $(ob_outputDirectory)/ToolArtifact -Recurse -Verbose
-    displayName: Upload Tools
   
   - pwsh: |
       Write-Verbose -Verbose "Release Tag: $(OutputReleaseTag.releaseTag)"
