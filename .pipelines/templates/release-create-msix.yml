@@ -75,8 +75,6 @@ jobs:
       displayName: Create MsixBundle
       retryCountOnTaskFailure: 1
 
-<<<<<<< HEAD
-=======
     - task: onebranch.pipeline.signing@1
       displayName: Sign MsixBundle
       inputs:
@@ -101,7 +99,6 @@ jobs:
         Get-ChildItem -Path $(ob_outputDirectory) | Write-Verbose -Verbose
       displayName: Upload msixbundle to Artifacts
 
->>>>>>> ca7038b7c (Fix MSIX artifact upload, vPack template, changelog hashes, git tag command (#25437))
     - task: AzurePowerShell@5
       displayName: Upload msix to blob
       inputs:
