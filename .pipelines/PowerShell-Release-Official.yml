@@ -18,7 +18,7 @@ parameters: # parameters are shown up in ADO UI in a build queue time
     type: string
     default: 'NO'
   - name: SkipPublish
-    displayName: Skip Publishing to GitHub and Nuget
+    displayName: Skip Publishing to Nuget
     type: boolean
     default: false
   - name: SkipPSInfraInstallers
