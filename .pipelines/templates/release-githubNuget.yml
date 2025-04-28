@@ -91,7 +91,6 @@ jobs:
         $releaseNotesFilePath = "$(Pipeline.Workspace)/release-notes.md"
         $clContent | Out-File -FilePath $releaseNotesFilePath -Encoding utf8
   
-<<<<<<< HEAD:.pipelines/templates/release-githubtasks.yml
         Write-Host "##vso[task.setvariable variable=ReleaseNotesFilePath;]$releaseNotesFilePath"
   
         #if name has prelease then make prerelease true as a variable
@@ -120,10 +119,6 @@ jobs:
       action: 'create'
       releaseNotesFilePath: '$(ReleaseNotesFilePath)'
       isPrerelease: '$(IsPreRelease)'
-=======
-        Publish-ReleaseDraft -Tag '$(ReleaseTag)' -Name '$(ReleaseTag) Release of PowerShell' -Description $clContent -User PowerShell -Repository PowerShell  -PackageFolder "$(Pipeline.Workspace)/GitHubPackages" -Token $(GitHubReleasePat)
-    displayName: Publish Release Draft
->>>>>>> a1412468f (Combine GitHub and Nuget Release Stage (#25318)):.pipelines/templates/release-githubNuget.yml
 
 - job: NuGetPublish
   displayName: Publish to NuGet
@@ -134,21 +129,14 @@ jobs:
   templateContext:
     inputs:
       - input: pipelineArtifact
-<<<<<<< HEAD:.pipelines/templates/release-githubtasks.yml
-=======
         artifactName: drop_setReleaseTagAndUploadTools_SetTagAndTools
       - input: pipelineArtifact
->>>>>>> a1412468f (Combine GitHub and Nuget Release Stage (#25318)):.pipelines/templates/release-githubNuget.yml
         pipeline: PSPackagesOfficial
         artifactName: drop_upload_upload_packages
   variables:
   - template: ./variable/release-shared.yml@self
     parameters:
-<<<<<<< HEAD:.pipelines/templates/release-githubtasks.yml
-      VERSION: $[ stageDependencies.setReleaseTagAndChangelog.SetTagAndChangelog.outputs['OutputVersion.Version'] ]
-=======
       VERSION: $[ stageDependencies.setReleaseTagAndUploadTools.SetTagAndTools.outputs['OutputVersion.Version'] ]
->>>>>>> a1412468f (Combine GitHub and Nuget Release Stage (#25318)):.pipelines/templates/release-githubNuget.yml
 
   steps:
   - template: release-install-pwsh.yml
