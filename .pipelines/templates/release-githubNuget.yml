@@ -1,3 +1,7 @@
+parameters:
+  - name: skipPublish
+    type: boolean
+
 jobs:
 - job: GithubReleaseDraft
   displayName: Create GitHub Release Draft
@@ -58,6 +62,7 @@ jobs:
     displayName: List all files in the workspace
 
   - task: PowerShell@2
+    condition: and(ne('${{ parameters.skipPublish }}', 'false'), succeeded())
     inputs:
       targetType: inline
       pwsh: true
@@ -124,12 +129,14 @@ jobs:
   templateContext:
     inputs:
       - input: pipelineArtifact
+        artifactName: drop_setReleaseTagAndUploadTools_SetTagAndTools
+      - input: pipelineArtifact
         pipeline: PSPackagesOfficial
         artifactName: drop_upload_upload_packages
   variables:
   - template: ./variable/release-shared.yml@self
     parameters:
-      VERSION: $[ stageDependencies.setReleaseTagAndChangelog.SetTagAndChangelog.outputs['OutputVersion.Version'] ]
+      VERSION: $[ stageDependencies.setReleaseTagAndUploadTools.SetTagAndTools.outputs['OutputVersion.Version'] ]
 
   steps:
   - template: release-install-pwsh.yml
