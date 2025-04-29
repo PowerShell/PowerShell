@@ -567,28 +567,9 @@ namespace Microsoft.PowerShell.Commands
                         FillRequestStream(request);
                         try
                         {
-                            long requestContentLength = request.Content is null ? 0 : request.Content.Headers.ContentLength.Value;
-
-                            string reqVerboseMsg = string.Format(
-                                CultureInfo.CurrentCulture,
-                                WebCmdletStrings.WebMethodInvocationVerboseMsg,
-                                request.Version,
-                                request.Method,
-                                requestContentLength);
-
-                            WriteVerbose(reqVerboseMsg);
-
                             _maximumRedirection = WebSession.MaximumRedirection;
 
                             using HttpResponseMessage response = GetResponse(client, request, handleRedirect);
-
-                            string contentType = ContentHelper.GetContentType(response);
-                            long? contentLength = response.Content.Headers.ContentLength;
-                            string respVerboseMsg = contentLength is null
-                                ? string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.WebResponseNoSizeVerboseMsg, response.Version, contentType)
-                                : string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.WebResponseVerboseMsg, response.Version, contentLength, contentType);
-
-                            WriteVerbose(respVerboseMsg);
 
                             bool _isSuccess = response.IsSuccessStatusCode;
 
@@ -638,6 +619,9 @@ namespace Microsoft.PowerShell.Commands
                                 string detailMsg = string.Empty;
                                 try
                                 {
+                                    string contentType = ContentHelper.GetContentType(response);
+                                    long? contentLength = response.Content.Headers.ContentLength;
+
                                     // We can't use ReadAsStringAsync because it doesn't have per read timeouts
                                     TimeSpan perReadTimeout = ConvertTimeoutSecondsToTimeSpan(OperationTimeoutSeconds);
                                     string characterSet = WebResponseHelper.GetCharacterSet(response);
@@ -1296,7 +1280,40 @@ namespace Microsoft.PowerShell.Commands
                 _cancelToken = new CancellationTokenSource();
                 try
                 {
+                    long requestContentLength = request.Content is null ? 0 : request.Content.Headers.ContentLength.Value;
+
+                    string reqVerboseMsg = string.Format(
+                        CultureInfo.CurrentCulture,
+                        WebCmdletStrings.WebMethodInvocationVerboseMsg,
+                        request.Version,
+                        request.Method,
+                        requestContentLength);
+
+                    WriteVerbose(reqVerboseMsg);
+
+                    string reqDebugMsg = string.Format(
+                        CultureInfo.CurrentCulture,
+                        WebCmdletStrings.WebRequestDebugMsg,
+                        request.ToString());
+
+                    WriteDebug(reqDebugMsg);
+
                     response = client.SendAsync(currentRequest, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
+
+                    string contentType = ContentHelper.GetContentType(response);
+                    long? contentLength = response.Content.Headers.ContentLength;
+                    string respVerboseMsg = contentLength is null
+                        ? string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.WebResponseNoSizeVerboseMsg, response.Version, contentType)
+                        : string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.WebResponseVerboseMsg, response.Version, contentLength, contentType);
+
+                    WriteVerbose(respVerboseMsg);
+
+                    string resDebugMsg = string.Format(
+                        CultureInfo.CurrentCulture,
+                        WebCmdletStrings.WebResponseDebugMsg,
+                        response.ToString());
+
+                    WriteDebug(resDebugMsg);
                 }
                 catch (TaskCanceledException ex)
                 {
@@ -1360,17 +1377,6 @@ namespace Microsoft.PowerShell.Commands
                     using (HttpRequestMessage requestWithoutRange = GetRequest(currentUri))
                     {
                         FillRequestStream(requestWithoutRange);
-
-                        long requestContentLength = requestWithoutRange.Content is null ? 0 : requestWithoutRange.Content.Headers.ContentLength.Value;
-
-                        string reqVerboseMsg = string.Format(
-                            CultureInfo.CurrentCulture,
-                            WebCmdletStrings.WebMethodInvocationVerboseMsg,
-                            requestWithoutRange.Version,
-                            requestWithoutRange.Method,
-                            requestContentLength);
-
-                        WriteVerbose(reqVerboseMsg);
 
                         response.Dispose();
                         response = GetResponse(client, requestWithoutRange, handleRedirect);
