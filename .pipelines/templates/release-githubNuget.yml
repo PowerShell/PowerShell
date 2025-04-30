@@ -134,7 +134,7 @@ jobs:
 
   - task: GitHubRelease@1
     inputs:
-      gitHubConnection: $(ConnectionName)
+      gitHubConnection: $(gitHubConnection)
       repositoryName: PowerShell/PowerShell
       target: master
       assets: '$(Pipeline.Workspace)/GitHubPackages/*'
