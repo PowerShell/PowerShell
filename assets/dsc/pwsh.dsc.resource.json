@@ -1,0 +1,239 @@
+{
+    "$schema": "https://aka.ms/dsc/schemas/v3/bundled/resource/manifest.json",
+    "type": "Microsoft/PowerShell",
+    "description": "DSC resource for PowerShell.",
+    "version": "0.1.0",
+    "tags": [
+        "PowerShell",
+        "DSC",
+        "Windows",
+        "Linux",
+        "macOS"
+    ],
+    "get": {
+        "executable": "pwsh",
+        "args": [
+            "-NoLogo",
+            "-NonInteractive",
+            "-NoProfile",
+            "-Command",
+            "./pwsh.resource.ps1 Get"
+        ],
+        "input": "stdin"
+    },
+    "export": {
+        "executable": "pwsh",
+        "args": [
+            "-NoLogo",
+            "-NonInteractive",
+            "-NoProfile",
+            "-Command",
+            "./pwsh.resource.ps1 Export"
+        ]
+    },
+    "set": {
+        "executable": "pwsh",
+        "args": [
+            "-NoLogo",
+            "-NonInteractive",
+            "-NoProfile",
+            "-Command",
+            "./pwsh.resource.ps1 Set"
+        ],
+        "input": "stdin"
+    },
+    "schema": {
+        "embedded": {
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "$id": "https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/resources/Microsoft/PowerShell/v0.1.0/schema.json",
+            "title": "PowerShell",
+            "description": "DSC resource for PowerShell.",
+            "type": "object",
+            "required": [],
+            "additionalProperties": false,
+            "definitions": {
+                "ConsoleSessionConfigurationConfig": {
+                    "type": "object",
+                    "properties": {
+                        "enableConsoleSessionConfiguration": {
+                            "type": "boolean"
+                        },
+                        "consoleSessionConfigurationName": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "ModuleLoggingConfig": {
+                    "type": "object",
+                    "properties": {
+                        "enableModuleLogging": {
+                            "type": "boolean"
+                        },
+                        "moduleNames": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "PowerShellPoliciesConfig": {
+                    "type": "object",
+                    "properties": {
+                        "consoleSessionConfiguration": {
+                            "$ref": "#/definitions/ConsoleSessionConfigurationConfig"
+                        },
+                        "moduleLogging": {
+                            "$ref": "#/definitions/ModuleLoggingConfig"
+                        },
+                        "protectedEventLogging": {
+                            "$ref": "#/definitions/ProtectedEventLoggingConfig"
+                        },
+                        "scriptBlockLogging": {
+                            "$ref": "#/definitions/ScriptBlockLoggingConfig"
+                        },
+                        "scriptExecution": {
+                            "$ref": "#/definitions/ScriptExecutionConfig"
+                        },
+                        "transcription": {
+                            "$ref": "#/definitions/TranscriptionConfig"
+                        },
+                        "updatableHelp": {
+                            "$ref": "#/definitions/UpdatableHelpConfig"
+                        }
+                    }
+                },
+                "ProtectedEventLoggingConfig": {
+                    "type": "object",
+                    "properties": {
+                        "enableProtectedEventLogging": {
+                            "type": "boolean"
+                        },
+                        "encryptionCertificate": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "ScriptBlockLoggingConfig": {
+                    "type": "object",
+                    "properties": {
+                        "enableScriptBlockInvocationLogging": {
+                            "type": "boolean"
+                        },
+                        "enableScriptBlockLogging": {
+                            "type": "boolean"
+                        }
+                    }
+                },
+                "ScriptExecutionConfig": {
+                    "type": "object",
+                    "properties": {
+                        "executionPolicy": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "TranscriptionConfig": {
+                    "type": "object",
+                    "properties": {
+                        "enableTranscripting": {
+                            "type": "boolean"
+                        },
+                        "enableInvocationHeader": {
+                            "type": "boolean"
+                        },
+                        "outputDirectory": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "UpdatableHelpConfig": {
+                    "type": "object",
+                    "properties": {
+                        "defaultSourcePath": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "properties": {
+                "experimentalFeatures": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "disableImplicitWinCompatibility": {
+                    "type": "boolean"
+                },
+                "windowsPowerShellCompatibilityModuleDenyList": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "windowsPowerShellCompatibilityNoClobberModuleList": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "logChannels": {
+                    "type": "string",
+                    "enum": [
+                        "Operational",
+                        "Analytic"
+                    ]
+                },
+                "logIdentity": {
+                    "type": "string"
+                },
+                "logLevel": {
+                    "type": "string",
+                    "enum": [
+                        "Always",
+                        "Critical",
+                        "Error",
+                        "Warning",
+                        "Informational",
+                        "Verbose",
+                        "Debug"
+                    ]
+                },
+                "logKeywords": {
+                    "type": "string",
+                    "enum": [
+                        "Runspace",
+                        "Pipeline",
+                        "Protocol",
+                        "Transport",
+                        "Host",
+                        "Cmdelts",
+                        "Serializer",
+                        "Session",
+                        "ManagedPlugin"
+                    ]
+                },
+                "microsoft.PowerShell:ExecutionPolicy": {
+                    "type": "string",
+                    "enum": [
+                        "Unrestricted",
+                        "RemoteSigned",
+                        "AllSigned",
+                        "Bypass",
+                        "Undefined"
+                    ]
+                },
+                "psModulePath": {
+                    "type": "string"
+                },
+                "powerShellPolicies": {
+                    "$ref": "#/definitions/PowerShellPoliciesConfig"
+                }
+            }
+        }
+    }
+}
