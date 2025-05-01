@@ -591,7 +591,7 @@ Describe "Handling of globbing patterns" -Tags "CI" {
 }
 
 Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows" {
-BeforeAll {
+    BeforeAll {
         # on macOS, the /tmp directory is a symlink, so we'll resolve it here
         $TestPath = $TestDrive
         if ($IsMacOS)
