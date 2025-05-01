@@ -226,7 +226,7 @@ namespace System.Management.Automation
                     return;
                 }
 
-                if (CommandName is null || CommandName.Length is 0)
+                if (CommandName is null or "")
                 {
                     SetKeyValue(completerDictionary, paramName, ScriptBlock);
                     return;
