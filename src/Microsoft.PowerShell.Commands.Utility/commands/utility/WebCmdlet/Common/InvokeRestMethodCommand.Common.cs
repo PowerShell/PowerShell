@@ -126,17 +126,27 @@ namespace Microsoft.PowerShell.Commands
                     object? obj = null;
                     Exception? ex = null;
 
+                    // Try to convert the response according to the return type.
                     if (returnType == RestReturnType.Json)
                     {
-                        convertSuccess = TryConvertToJson(str, DateFormat, out obj, ref ex) || TryConvertToXml(str, out obj, ref ex);
+                        convertSuccess = TryConvertToJson(str, DateFormat, out obj, ref ex);
+
+                        if (!convertSuccess)
+                        {
+                            WriteVerbose($"Failed to parse JSON response: {ex?.Message}");
+                        }
                     }
-                    // Default to try xml first since it's more common
-                    else
+                    else if (returnType == RestReturnType.Xml)
                     {
-                        convertSuccess = TryConvertToXml(str, out obj, ref ex) || TryConvertToJson(str, DateFormat, out obj, ref ex);
+                        convertSuccess = TryConvertToXml(str, out obj, ref ex);
+
+                        if (!convertSuccess)
+                        {
+                            WriteVerbose($"Failed to parse XML response: {ex?.Message}");
+                        }
                     }
 
-                    if (!convertSuccess)
+                    else
                     {
                         // Fallback to string
                         obj = str;
@@ -147,7 +157,7 @@ namespace Microsoft.PowerShell.Commands
 
                 responseStream.Position = 0;
             }
-            
+
             if (ShouldSaveToOutFile)
             {
                 string outFilePath = WebResponseHelper.GetOutFilePath(response, _qualifiedOutFile);
@@ -242,9 +252,9 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-            catch (XmlException)
+            catch (XmlException ex)
             {
-                // Catch XmlException
+                WriteVerbose($"XML processing error: {ex.Message}");
             }
             finally
             {
