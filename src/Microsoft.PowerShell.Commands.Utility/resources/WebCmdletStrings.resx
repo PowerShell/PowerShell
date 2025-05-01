@@ -164,7 +164,7 @@
   </data>
   <data name="InsecureRedirection" xml:space="preserve">
     <value>Cannot follow an insecure redirection by default. Reissue the command specifying the -AllowInsecureRedirect switch. </value>
-  </data> 
+  </data>
   <data name="KeysWithDifferentCasingInJsonString" xml:space="preserve">
     <value>Cannot convert the JSON string because it contains keys with different casing. Please use the -AsHashTable switch instead. The key that was attempted to be added to the existing key '{0}' was '{1}'.</value>
   </data>
@@ -242,6 +242,12 @@
   </data>
   <data name="WebResponseVerboseMsg" xml:space="preserve">
     <value>Received HTTP/{0} {1}-byte response of content type {2}</value>
+  </data>
+  <data name="WebRequestDebugMsg" xml:space="preserve">
+    <value>Request {0}</value>
+  </data>
+  <data name="WebResponseDebugMsg" xml:space="preserve">
+    <value>Response {0}</value>
   </data>
   <data name="WebResponseNoSizeVerboseMsg" xml:space="preserve">
     <value>Received HTTP/{0} response of content type {1} of unknown size</value>
