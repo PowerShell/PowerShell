@@ -880,7 +880,7 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
 
                 Remove-Item -Path $Link -ErrorAction SilentlyContinue > $null
                 Test-Path -Path $Link | Should -BeFalse
-                Test-Path -Path $Target | Should -BeTrue
+                Test-Path -LiteralPath $Target | Should -BeTrue
             }
         }
 
