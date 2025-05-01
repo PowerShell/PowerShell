@@ -300,7 +300,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 obj = JsonObject.ConvertFromJson(json, false, 1024, DateFormat, out ErrorRecord error);
 
-
                 if (obj == null)
                 {
                     // This ensures that a null returned by ConvertFromJson() is the actual JSON null literal.
