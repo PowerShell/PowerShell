@@ -605,6 +605,7 @@ BeforeAll {
             }
         }
 
+        # Ensure that the file link can still be successfully created when the target file/directory name contains wildcards.
         $realFile = Join-Path $TestPath "[file].txt"
         $nonFile = Join-Path $TestPath "not-a-file"
         $fileContent = "some text"
