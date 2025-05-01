@@ -611,12 +611,12 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
         $realDir = Join-Path $TestPath "subdir"
         $realDir2 = Join-Path $TestPath "second-subdir"
         $nonDir = Join-Path $TestPath "not-a-dir"
-        $hardLinkToFile = Join-Path $TestPath "hard-to-file.txt"
-        $symLinkToFile = Join-Path $TestPath "sym-link-to-file.txt"
-        $symLinkToDir = Join-Path $TestPath "sym-link-to-dir"
-        $symLinkToNothing = Join-Path $TestPath "sym-link-to-nowhere"
-        $dirSymLinkToDir = Join-Path $TestPath "symd-link-to-dir"
-        $junctionToDir = Join-Path $TestPath "junction-to-dir"
+        $hardLinkToFile = Join-Path $TestPath "[hard-to-file].txt"
+        $symLinkToFile = Join-Path $TestPath "[sym-link-to-file].txt"
+        $symLinkToDir = Join-Path $TestPath "[sym-link-to-dir]"
+        $symLinkToNothing = Join-Path $TestPath "[sym-link-to-nowhere]"
+        $dirSymLinkToDir = Join-Path $TestPath "[symd-link-to-dir]"
+        $junctionToDir = Join-Path $TestPath "[junction-to-dir]"
 
         New-Item -ItemType File -Path $realFile -Value $fileContent > $null
         New-Item -ItemType Directory -Path $realDir > $null
