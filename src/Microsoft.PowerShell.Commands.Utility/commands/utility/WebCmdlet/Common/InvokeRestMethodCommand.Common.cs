@@ -128,12 +128,12 @@ namespace Microsoft.PowerShell.Commands
 
                     if (returnType == RestReturnType.Json)
                     {
-                        convertSuccess = TryConvertToJson(str, out obj, ref ex) || TryConvertToXml(str, out obj, ref ex);
+                        convertSuccess = TryConvertToJson(str, DateFormat, out obj, ref ex) || TryConvertToXml(str, out obj, ref ex);
                     }
                     // Default to try xml first since it's more common
                     else
                     {
-                        convertSuccess = TryConvertToXml(str, out obj, ref ex) || TryConvertToJson(str, out obj, ref ex);
+                        convertSuccess = TryConvertToXml(str, out obj, ref ex) || TryConvertToJson(str, DateFormat, out obj, ref ex);
                     }
 
                     if (!convertSuccess)
