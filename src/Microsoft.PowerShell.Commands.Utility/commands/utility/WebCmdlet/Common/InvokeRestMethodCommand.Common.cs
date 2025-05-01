@@ -67,6 +67,13 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public string? StatusCodeVariable { get; set; }
 
+        /// <summary>
+        /// Gets or sets how DateTime values are to be converted.
+        /// </summary>
+        [Parameter]
+        [ValidateSet("Default", "Local", "Utc", "Offset", "String")]
+        public JsonDateKind DateFormat { get; set; } = "JsonDateKind.Default";
+
         #endregion Parameters
 
         #region Virtual Method Overrides
@@ -291,7 +298,8 @@ namespace Microsoft.PowerShell.Commands
             bool converted = false;
             try
             {
-                obj = JsonObject.ConvertFromJson(json, out ErrorRecord error);
+                obj = JsonObject.ConvertFromJson(json, false, 1024, DateFormat, out ErrorRecord error);
+
 
                 if (obj == null)
                 {
