@@ -72,7 +72,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [ValidateSet("Default", "Local", "Utc", "Offset", "String")]
-        public JsonDateKind DateFormat { get; set; } = "JsonDateKind.Default";
+        public JsonDateKind DateFormat { get; set; } = JsonDateKind.Default;
 
         #endregion Parameters
 
@@ -293,7 +293,7 @@ namespace Microsoft.PowerShell.Commands
             return doc != null;
         }
 
-        private static bool TryConvertToJson(string json, [NotNullWhen(true)] out object? obj, ref Exception? exRef)
+        private static bool TryConvertToJson(string json, JsonDateKind DateFormat, [NotNullWhen(true)] out object? obj, ref Exception? exRef)
         {
             bool converted = false;
             try
