@@ -22,6 +22,14 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
+        /// Initializes a new instance of the IsEmptyFilterRule class from an existing instance.
+        /// </summary>
+        /// <param name="source">The source to initialize from.</param>
+        public IsEmptyFilterRule(IsEmptyFilterRule source) : base(source)
+        {
+        }
+
+        /// <summary>
         /// Gets a values indicating whether the supplied item is empty.
         /// </summary>
         /// <param name="item">The item to evaluate.</param>

@@ -71,6 +71,16 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
+        /// Initializes a new instance of the TextFilterRule class from an existing instance.
+        /// </summary>
+        /// <param name="source">The source to initialize from.</param>
+        protected TextFilterRule(TextFilterRule source) : base(source)
+        {
+            this.IgnoreCase = source.IgnoreCase;
+            this.CultureInvariant = source.CultureInvariant;
+        }
+
+        /// <summary>
         /// Gets the current value and determines whether it should be evaluated as an exact match.
         /// </summary>
         /// <param name="evaluateAsExactMatch">Whether the current value should be evaluated as an exact match.</param>

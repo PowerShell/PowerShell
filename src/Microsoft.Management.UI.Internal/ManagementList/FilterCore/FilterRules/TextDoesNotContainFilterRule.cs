@@ -23,6 +23,14 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
+        /// Initializes a new instance of the TextDoesNotContainFilterRule class from an existing instance.
+        /// </summary>
+        /// <param name="source">The source to initialize from.</param>
+        public TextDoesNotContainFilterRule(TextDoesNotContainFilterRule source) : base(source)
+        {
+        }
+
+        /// <summary>
         /// Determines if Value is not contained within data.
         /// </summary>
         /// <param name="data">

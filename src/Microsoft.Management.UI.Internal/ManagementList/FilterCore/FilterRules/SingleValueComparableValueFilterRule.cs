@@ -52,6 +52,17 @@ namespace Microsoft.Management.UI.Internal
             this.Value.PropertyChanged += this.Value_PropertyChanged;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the SingleValueComparableValueFilterRule class from an existing instance.
+        /// </summary>
+        /// <param name="source">The source to initialize from.</param>
+        protected SingleValueComparableValueFilterRule(SingleValueComparableValueFilterRule<T> source) : base(source)
+        {
+            this.Value = new ValidatingValue<T>();
+            this.Value.Value = source.Value.Value;
+            this.Value.PropertyChanged += this.Value_PropertyChanged;
+        }
+
         #endregion Ctor
 
         private void Value_PropertyChanged(object sender, PropertyChangedEventArgs e)

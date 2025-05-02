@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Microsoft.Management.UI.Internal
@@ -23,6 +24,14 @@ namespace Microsoft.Management.UI.Internal
         public TextContainsFilterRule()
         {
             this.DisplayName = UICultureResources.FilterRule_Contains;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the TextContainsFilterRule class from an existing instance.
+        /// </summary>
+        /// <param name="source">The source to initialize from.</param>
+        public TextContainsFilterRule(TextContainsFilterRule source) : base(source)
+        {
         }
 
         /// <summary>

@@ -82,6 +82,16 @@ namespace Microsoft.Management.UI.Internal
             this.AvailableRules.DisplayNameConverter = new FilterRuleToDisplayNameConverter();
         }
 
+        /// <summary>
+        /// Initializes a new instance of the PropertyValueSelectorFilterRule class from an existing instance.
+        /// </summary>
+        /// <param name="source">The source to initialize from.</param>
+        public PropertyValueSelectorFilterRule(PropertyValueSelectorFilterRule<T> source) : base(source)
+        {
+            this.PropertyName = source.PropertyName;
+            this.AvailableRules.DisplayNameConverter = new FilterRuleToDisplayNameConverter();
+        }
+
         #endregion Ctor
 
         #region Public Methods

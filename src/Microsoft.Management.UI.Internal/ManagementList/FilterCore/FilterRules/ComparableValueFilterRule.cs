@@ -30,6 +30,22 @@ namespace Microsoft.Management.UI.Internal
 
         #endregion Properties
 
+        /// <summary>
+        /// Initializes a new instance of the ComparableValueFilterRule class.
+        /// </summary>
+        protected ComparableValueFilterRule()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the ComparableValueFilterRule class from an existing instance.
+        /// </summary>
+        /// <param name="source">The source to initialize from.</param>
+        protected ComparableValueFilterRule(ComparableValueFilterRule<T> source) : base(source)
+        {
+            this.DefaultNullValueEvaluation = source.DefaultNullValueEvaluation;
+        }
+
         #region Public Methods
 
         /// <summary>

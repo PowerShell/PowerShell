@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Data;
 
 namespace Microsoft.Management.UI.Internal
 {
@@ -38,6 +39,25 @@ namespace Microsoft.Management.UI.Internal
         /// </summary>
         protected FilterRule()
         {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the FilterRule class from an existing instance.
+        /// </summary>
+        /// <param name="source">The source to initialize from.</param>
+        protected FilterRule(FilterRule source)
+        {
+            ArgumentNullException.ThrowIfNull(source);
+            this.DisplayName = source.DisplayName;
+        }
+
+        /// <summary>
+        /// Creates a deep copy of a FilterRule.
+        /// </summary>
+        /// <returns>Returns a deep copy of the passed in rule.</returns>
+        public FilterRule Clone()
+        {
+            return (FilterRule)Activator.CreateInstance(this.GetType(), new object[] { this });
         }
 
         /// <summary>

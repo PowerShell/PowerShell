@@ -48,6 +48,26 @@ namespace Microsoft.Management.UI.Internal
             this.AvailableRules.SelectedValueChanged += this.AvailableRules_SelectedValueChanged;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the SelectorFilterRule class from an existing instance.
+        /// </summary>
+        /// <param name="source">The source to initialize from.</param>
+        public SelectorFilterRule(SelectorFilterRule source) : base(source)
+        {
+            this.AvailableRules = new ValidatingSelectorValue<FilterRule>();
+            foreach (DataErrorInfoValidationRule rule in source.AvailableRules.ValidationRules)
+            {
+                this.AvailableRules.AddValidationRule(rule);
+            }
+            foreach (FilterRule rule in source.AvailableRules.AvailableValues)
+            {
+                this.AvailableRules.AvailableValues.Add(rule.Clone());
+            }
+            this.AvailableRules.SelectedIndex = source.AvailableRules.SelectedIndex;
+            this.AvailableRules.SelectedValueChanged += this.AvailableRules_SelectedValueChanged;
+            this.AvailableRules.SelectedValue.EvaluationResultInvalidated += this.SelectedValue_EvaluationResultInvalidated;
+        }
+
         #endregion Ctor
 
         #region Public Methods

@@ -26,6 +26,14 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
+        /// Initializes a new instance of the IsGreaterThanFilterRule class from an existing instance.
+        /// </summary>
+        /// <param name="source">The source to initialize from.</param>
+        public IsGreaterThanFilterRule(IsGreaterThanFilterRule<T> source) : base(source)
+        {
+        }
+
+        /// <summary>
         /// Determines if item is greater than Value.
         /// </summary>
         /// <param name="data">
