@@ -249,7 +249,7 @@ extends:
 
     - stage: msixbundle
       displayName: 'Create MSIX Bundle'
-      dependsOn: []
+      dependsOn: [windows_package]
       jobs:
       - template: /.pipelines/templates/package-create-msix.yml@self
 
