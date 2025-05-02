@@ -231,6 +231,15 @@ jobs:
       targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
     displayName: Download macos x64 packages
 
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifact: drop_msixbundle_CreateMSIXBundle
+      itemPattern: |
+        '**/*.msixbundle'
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
+    displayName: Download MSIXBundle
+
   - pwsh: |
       Get-ChildItem '$(Build.ArtifactStagingDirectory)/downloads' | Select-Object -ExpandProperty FullName
     displayName: 'Capture downloads'
