@@ -254,6 +254,6 @@ extends:
       - template: /.pipelines/templates/package-create-msix.yml@self
 
     - stage: upload
-      dependsOn: [mac_package, windows_package, linux_package, nupkg]
+      dependsOn: [mac_package, windows_package, linux_package, nupkg, msixbundle]
       jobs:
       - template: /.pipelines/templates/uploadToAzure.yml@self
