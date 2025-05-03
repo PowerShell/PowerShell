@@ -709,9 +709,14 @@ namespace Microsoft.PowerShell
         /// </exception>
         public override void Write(string value)
         {
-            WriteImpl(value, newLine: false);
+            lock (_instanceLock)
+            {
+                WriteImpl(value, newLine: false);
+            }
         }
 
+        // The WriteImpl() method should always be called within a lock on _instanceLock
+        // to ensure thread safety and prevent issues in multi-threaded scenarios.
         private void WriteImpl(string value, bool newLine)
         {
             if (string.IsNullOrEmpty(value) && !newLine)
@@ -845,7 +850,10 @@ namespace Microsoft.PowerShell
         /// </exception>
         public override void WriteLine(string value)
         {
-            this.WriteImpl(value, newLine: true);
+            lock (_instanceLock)
+            {
+                this.WriteImpl(value, newLine: true);
+            }
         }
 
         /// <summary>
@@ -862,7 +870,10 @@ namespace Microsoft.PowerShell
         /// </exception>
         public override void WriteLine()
         {
-            this.WriteImpl(Environment.NewLine, newLine: false);
+            lock (_instanceLock)
+            {
+                this.WriteImpl(Environment.NewLine, newLine: false);
+            }
         }
 
         #region Word Wrapping
