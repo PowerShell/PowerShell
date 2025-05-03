@@ -18,6 +18,27 @@ namespace Microsoft.Management.UI.Internal
     [Serializable]
     public abstract class ValidatingValueBase : IDataErrorInfo, INotifyPropertyChanged, IDeepCloneable
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ValidatingValueBase"/> class.
+        /// </summary>
+        protected ValidatingValueBase()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the  <see cref="ValidatingValueBase"/> class.
+        /// </summary>
+        /// <param name="source">The source to initialize from.</param>
+        protected ValidatingValueBase(ValidatingValueBase source)
+        {
+            ArgumentNullException.ThrowIfNull(source);
+            validationRules.EnsureCapacity(source.validationRules.Count);
+            foreach (var rule in source.validationRules)
+            {
+                validationRules.Add((DataErrorInfoValidationRule)rule.DeepClone());
+            }
+        }
+
         #region Properties
 
         #region ValidationRules
@@ -127,30 +148,9 @@ namespace Microsoft.Management.UI.Internal
 
         #endregion Events
 
-        /// <summary>
-        /// Initializes a new instance of the ValidatingValueBase class.
-        /// </summary>
-        protected ValidatingValueBase()
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the ValidatingValueBase class.
-        /// </summary>
-        /// <param name="source">The source to initialize from.</param>
-        protected ValidatingValueBase(ValidatingValueBase source)
-        {
-            ArgumentNullException.ThrowIfNull(source);
-            validationRules.EnsureCapacity(source.validationRules.Count);
-            foreach (var rule in source.validationRules)
-            {
-                validationRules.Add((DataErrorInfoValidationRule)rule.DeepClone());
-            }
-        }
-
         #region Public Methods
 
-        /// <inheritdoc/>
+        /// <inheritdoc cref="IDeepCloneable.DeepClone()" />
         public abstract object DeepClone();
 
         #region AddValidationRule

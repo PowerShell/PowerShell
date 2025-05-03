@@ -34,14 +34,14 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Initializes a new instance of the FilterRule class.
+        /// Initializes a new instance of the <see cref="FilterRule"/> class.
         /// </summary>
         protected FilterRule()
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the FilterRule class from an existing instance.
+        /// Initializes a new instance of the <see cref="FilterRule"/> class.
         /// </summary>
         /// <param name="source">The source to initialize from.</param>
         protected FilterRule(FilterRule source)
@@ -50,7 +50,7 @@ namespace Microsoft.Management.UI.Internal
             this.DisplayName = source.DisplayName;
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc cref="IDeepCloneable.DeepClone()" />
         public object DeepClone()
         {
             return Activator.CreateInstance(this.GetType(), new object[] { this });

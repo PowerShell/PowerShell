@@ -18,7 +18,7 @@ namespace Microsoft.Management.UI.Internal
     public class IsGreaterThanFilterRule<T> : SingleValueComparableValueFilterRule<T> where T : IComparable
     {
         /// <summary>
-        /// Initializes a new instance of the IsGreaterThanFilterRule class.
+        /// Initializes a new instance of the <see cref="IsGreaterThanFilterRule{T}"/> class.
         /// </summary>
         public IsGreaterThanFilterRule()
         {
@@ -26,7 +26,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Initializes a new instance of the IsGreaterThanFilterRule class from an existing instance.
+        /// Initializes a new instance of the <see cref="IsGreaterThanFilterRule{T}"/> class.
         /// </summary>
         /// <param name="source">The source to initialize from.</param>
         public IsGreaterThanFilterRule(IsGreaterThanFilterRule<T> source)

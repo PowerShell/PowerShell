@@ -14,7 +14,7 @@ namespace Microsoft.Management.UI.Internal
     public class IsEmptyFilterRule : FilterRule
     {
         /// <summary>
-        /// Initializes a new instance of the IsEmptyFilterRule class.
+        /// Initializes a new instance of the <see cref="IsEmptyFilterRule"/> class.
         /// </summary>
         public IsEmptyFilterRule()
         {
@@ -22,7 +22,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Initializes a new instance of the IsEmptyFilterRule class from an existing instance.
+        /// Initializes a new instance of the <see cref="IsEmptyFilterRule"/> class.
         /// </summary>
         /// <param name="source">The source to initialize from.</param>
         public IsEmptyFilterRule(IsEmptyFilterRule source)

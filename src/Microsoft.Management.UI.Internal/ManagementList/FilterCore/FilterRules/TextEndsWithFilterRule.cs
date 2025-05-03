@@ -18,7 +18,7 @@ namespace Microsoft.Management.UI.Internal
         private static readonly string TextEndsWithWordsRegexPattern = WordBoundaryRegexPattern + TextEndsWithCharactersRegexPattern;
 
         /// <summary>
-        /// Initializes a new instance of the TextEndsWithFilterRule class.
+        /// Initializes a new instance of the <see cref="TextEndsWithFilterRule"/> class.
         /// </summary>
         public TextEndsWithFilterRule()
         {
@@ -26,7 +26,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Initializes a new instance of the TextEndsWithFilterRule class from an existing instance.
+        /// Initializes a new instance of the <see cref="TextEndsWithFilterRule"/> class.
         /// </summary>
         /// <param name="source">The source to initialize from.</param>
         public TextEndsWithFilterRule(TextEndsWithFilterRule source)

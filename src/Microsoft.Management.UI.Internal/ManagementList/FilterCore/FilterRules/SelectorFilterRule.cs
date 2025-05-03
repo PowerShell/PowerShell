@@ -40,7 +40,7 @@ namespace Microsoft.Management.UI.Internal
         #region Ctor
 
         /// <summary>
-        /// Creates a new SelectorFilterRule instance.
+        /// Initializes a new instance of the <see cref="SelectorFilterRule"/> class.
         /// </summary>
         public SelectorFilterRule()
         {
@@ -49,7 +49,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Initializes a new instance of the SelectorFilterRule class from an existing instance.
+        /// Initializes a new instance of the <see cref="SelectorFilterRule"/> class.
         /// </summary>
         /// <param name="source">The source to initialize from.</param>
         public SelectorFilterRule(SelectorFilterRule source)

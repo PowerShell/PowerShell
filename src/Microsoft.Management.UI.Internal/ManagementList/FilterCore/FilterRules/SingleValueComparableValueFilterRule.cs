@@ -44,7 +44,7 @@ namespace Microsoft.Management.UI.Internal
         #region Ctor
 
         /// <summary>
-        /// Initializes a new instance of the SingleValueComparableValueFilterRule class.
+        /// Initializes a new instance of the <see cref="SingleValueComparableValueFilterRule{T}"/> class.
         /// </summary>
         protected SingleValueComparableValueFilterRule()
         {
@@ -53,7 +53,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Initializes a new instance of the SingleValueComparableValueFilterRule class from an existing instance.
+        /// Initializes a new instance of the <see cref="SingleValueComparableValueFilterRule{T}"/> class.
         /// </summary>
         /// <param name="source">The source to initialize from.</param>
         protected SingleValueComparableValueFilterRule(SingleValueComparableValueFilterRule<T> source)

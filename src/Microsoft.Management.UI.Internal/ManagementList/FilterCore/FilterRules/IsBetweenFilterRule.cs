@@ -56,7 +56,7 @@ namespace Microsoft.Management.UI.Internal
         #region Ctor
 
         /// <summary>
-        /// Initializes a new instance of the IsBetweenFilterRule class.
+        /// Initializes a new instance of the <see cref="IsBetweenFilterRule{T}"/> class.
         /// </summary>
         public IsBetweenFilterRule()
         {
@@ -70,7 +70,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Initializes a new instance of the IsBetweenFilterRule class from an existing instance.
+        /// Initializes a new instance of the <see cref="IsBetweenFilterRule{T}"/> class.
         /// </summary>
         /// <param name="source">The source to initialize from.</param>
         public IsBetweenFilterRule(IsBetweenFilterRule<T> source)

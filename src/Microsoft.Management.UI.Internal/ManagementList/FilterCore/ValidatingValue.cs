@@ -18,6 +18,23 @@ namespace Microsoft.Management.UI.Internal
     [Serializable]
     public class ValidatingValue<T> : ValidatingValueBase
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ValidatingValue{T}"/> class.
+        /// </summary>
+        public ValidatingValue()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ValidatingValue{T}"/> class.
+        /// </summary>
+        /// <param name="source">The source to initialize from.</param>
+        public ValidatingValue(ValidatingValue<T> source)
+            : base(source)
+        {
+            value = source.Value is IDeepCloneable deepClone ? deepClone.DeepClone() : source.Value;
+        }
+
         #region Properties
 
         #region Value
@@ -50,25 +67,8 @@ namespace Microsoft.Management.UI.Internal
 
         #region Public Methods
 
-        /// <summary>
-        /// Initializes a new instance of the ValidatingValueBase class.
-        /// </summary>
-        public ValidatingValue()
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the ValidatingValueBase class.
-        /// </summary>
-        /// <param name="source">The source to initialize from.</param>
-        public ValidatingValue(ValidatingValue<T> source)
-            : base(source)
-        {
-            value = source.Value is IDeepCloneable deepClone ? deepClone.DeepClone() : source.Value;
-        }
-
-        /// <inheritdoc/>
-        public override ValidatingValueBase DeepClone()
+        /// <inheritdoc cref="IDeepCloneable.DeepClone()" />
+        public override object DeepClone()
         {
             return new ValidatingValue<T>(this);
         }

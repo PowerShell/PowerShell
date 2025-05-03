@@ -62,7 +62,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Initializes a new instance of the TextFilterRule class.
+        /// Initializes a new instance of the <see cref="TextFilterRule"/> class.
         /// </summary>
         protected TextFilterRule()
         {
@@ -71,7 +71,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Initializes a new instance of the TextFilterRule class from an existing instance.
+        /// Initializes a new instance of the  <see cref="TextFilterRule"/> class.
         /// </summary>
         /// <param name="source">The source to initialize from.</param>
         protected TextFilterRule(TextFilterRule source)

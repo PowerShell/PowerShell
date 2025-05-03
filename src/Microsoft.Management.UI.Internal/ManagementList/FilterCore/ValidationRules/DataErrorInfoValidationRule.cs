@@ -26,7 +26,7 @@ namespace Microsoft.Management.UI.Internal
         /// </returns>
         public abstract DataErrorInfoValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo);
 
-        /// <inheritdoc/>
+        /// <inheritdoc cref="IDeepCloneable.DeepClone()" />
         public abstract object DeepClone();
     }
 }

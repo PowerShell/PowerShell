@@ -30,7 +30,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Initializes a new instance of the PropertiesTextContainsFilterRule class from an existing instance.
+        /// Initializes a new instance of the  <see cref="PropertiesTextContainsFilterRule"/> class.
         /// </summary>
         /// <param name="source">The source to initialize from.</param>
         public PropertiesTextContainsFilterRule(PropertiesTextContainsFilterRule source)

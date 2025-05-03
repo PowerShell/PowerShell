@@ -18,7 +18,7 @@ namespace Microsoft.Management.UI.Internal
         private static readonly string TextContainsWordsRegexPattern = WordBoundaryRegexPattern + TextContainsCharactersRegexPattern + WordBoundaryRegexPattern;
 
         /// <summary>
-        /// Initializes a new instance of the TextContainsFilterRule class.
+        /// Initializes a new instance of the <see cref="TextContainsFilterRule"/> class.
         /// </summary>
         public TextContainsFilterRule()
         {
@@ -26,7 +26,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Initializes a new instance of the TextContainsFilterRule class from an existing instance.
+        /// Initializes a new instance of the <see cref="TextContainsFilterRule"/> class.
         /// </summary>
         /// <param name="source">The source to initialize from.</param>
         public TextContainsFilterRule(TextContainsFilterRule source)

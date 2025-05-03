@@ -17,7 +17,7 @@ namespace Microsoft.Management.UI.Internal
         private static readonly string TextEqualsCharactersRegexPattern = "^{0}$";
 
         /// <summary>
-        /// Initializes a new instance of the TextEqualsFilterRule class.
+        /// Initializes a new instance of the <see cref="TextEqualsFilterRule"/> class.
         /// </summary>
         public TextEqualsFilterRule()
         {
@@ -25,7 +25,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Initializes a new instance of the TextEqualsFilterRule class from an existing instance.
+        /// Initializes a new instance of the <see cref="TextEqualsFilterRule"/> class.
         /// </summary>
         /// <param name="source">The source to initialize from.</param>
         public TextEqualsFilterRule(TextEqualsFilterRule source)

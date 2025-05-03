@@ -51,7 +51,7 @@ namespace Microsoft.Management.UI.Internal
             }
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc cref="IDeepCloneable.DeepClone()" />
         public override object DeepClone()
         {
             // Instance is stateless.

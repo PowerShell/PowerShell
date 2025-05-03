@@ -14,7 +14,7 @@ namespace Microsoft.Management.UI.Internal
     public class TextDoesNotContainFilterRule : TextContainsFilterRule
     {
         /// <summary>
-        /// Initializes a new instance of the TextDoesNotContainFilterRule class.
+        /// Initializes a new instance of the <see cref="TextDoesNotContainFilterRule"/> class.
         /// </summary>
         public TextDoesNotContainFilterRule()
         {
@@ -23,7 +23,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Initializes a new instance of the TextDoesNotContainFilterRule class from an existing instance.
+        /// Initializes a new instance of the <see cref="TextDoesNotContainFilterRule"/> class.
         /// </summary>
         /// <param name="source">The source to initialize from.</param>
         public TextDoesNotContainFilterRule(TextDoesNotContainFilterRule source)
