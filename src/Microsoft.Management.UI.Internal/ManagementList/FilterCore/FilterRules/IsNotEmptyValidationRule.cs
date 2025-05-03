@@ -55,7 +55,8 @@ namespace Microsoft.Management.UI.Internal
         public override object DeepClone()
         {
             // Instance is stateless.
-            return this;
+            // return this;
+            return new IsNotEmptyValidationRule();
         }
 
         #endregion Public Methods
