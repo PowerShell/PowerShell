@@ -75,12 +75,10 @@ namespace Microsoft.Management.UI.Internal
         /// <param name="source">The source to initialize from.</param>
         public IsBetweenFilterRule(IsBetweenFilterRule<T> source) : base(source)
         {
-            this.StartValue = new ValidatingValue<T>();
-            this.StartValue.Value = source.StartValue.Value;
+            this.StartValue = (ValidatingValue<T>)source.StartValue.DeepClone();
             this.StartValue.PropertyChanged += this.Value_PropertyChanged;
 
-            this.EndValue = new ValidatingValue<T>();
-            this.EndValue.Value = source.EndValue.Value;
+            this.EndValue = (ValidatingValue<T>)source.EndValue.DeepClone();
             this.EndValue.PropertyChanged += this.Value_PropertyChanged;
         }
 

@@ -16,7 +16,7 @@ namespace Microsoft.Management.UI.Internal
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
     [Serializable]
-    public abstract class ValidatingValueBase : IDataErrorInfo, INotifyPropertyChanged
+    public abstract class ValidatingValueBase : IDataErrorInfo, INotifyPropertyChanged, IDeepCloneable
     {
         #region Properties
 
@@ -127,7 +127,30 @@ namespace Microsoft.Management.UI.Internal
 
         #endregion Events
 
+        /// <summary>
+        /// Initializes a new instance of the ValidatingValueBase class.
+        /// </summary>
+        protected ValidatingValueBase()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the ValidatingValueBase class.
+        /// </summary>
+        protected ValidatingValueBase(ValidatingValueBase source)
+        {
+            ArgumentNullException.ThrowIfNull(source);
+            validationRules.EnsureCapacity(source.validationRules.Count);
+            foreach (var rule in source.validationRules)
+            {
+                validationRules.Add((DataErrorInfoValidationRule)rule.DeepClone());
+            }
+        }
+
         #region Public Methods
+
+        /// <inheritdoc/>
+        public abstract object DeepClone();
 
         #region AddValidationRule
 

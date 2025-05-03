@@ -54,16 +54,7 @@ namespace Microsoft.Management.UI.Internal
         /// <param name="source">The source to initialize from.</param>
         public SelectorFilterRule(SelectorFilterRule source) : base(source)
         {
-            this.AvailableRules = new ValidatingSelectorValue<FilterRule>();
-            foreach (DataErrorInfoValidationRule rule in source.AvailableRules.ValidationRules)
-            {
-                this.AvailableRules.AddValidationRule(rule);
-            }
-            foreach (FilterRule rule in source.AvailableRules.AvailableValues)
-            {
-                this.AvailableRules.AvailableValues.Add(rule.Clone());
-            }
-            this.AvailableRules.SelectedIndex = source.AvailableRules.SelectedIndex;
+            this.AvailableRules = (ValidatingSelectorValue<FilterRule>)source.AvailableRules.DeepClone();
             this.AvailableRules.SelectedValueChanged += this.AvailableRules_SelectedValueChanged;
             this.AvailableRules.SelectedValue.EvaluationResultInvalidated += this.SelectedValue_EvaluationResultInvalidated;
         }
@@ -106,8 +97,8 @@ namespace Microsoft.Management.UI.Internal
             FilterRuleCustomizationFactory.FactoryInstance.TransferValues(oldValue, newValue);
             FilterRuleCustomizationFactory.FactoryInstance.ClearValues(oldValue);
 
-            newValue.EvaluationResultInvalidated += this.SelectedValue_EvaluationResultInvalidated;
             oldValue.EvaluationResultInvalidated -= this.SelectedValue_EvaluationResultInvalidated;
+            newValue.EvaluationResultInvalidated += this.SelectedValue_EvaluationResultInvalidated;
 
             this.NotifyEvaluationResultInvalidated();
         }

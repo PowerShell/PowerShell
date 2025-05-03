@@ -28,7 +28,7 @@ namespace Microsoft.Management.UI.Internal
         public static FilterRule DeepCopy(this FilterRule rule)
         {
             ArgumentNullException.ThrowIfNull(rule);
-            return rule.Clone();
+            return (FilterRule)rule.DeepClone();
         }
     }
 }

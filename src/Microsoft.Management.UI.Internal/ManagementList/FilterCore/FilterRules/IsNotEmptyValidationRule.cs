@@ -51,6 +51,13 @@ namespace Microsoft.Management.UI.Internal
             }
         }
 
+        /// <inheritdoc/>
+        public override object DeepClone()
+        {
+            // Instance is stateless.
+            return this;
+        }
+
         #endregion Public Methods
 
         internal static bool IsStringNotEmpty(string value)

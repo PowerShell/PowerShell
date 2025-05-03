@@ -58,8 +58,7 @@ namespace Microsoft.Management.UI.Internal
         /// <param name="source">The source to initialize from.</param>
         protected SingleValueComparableValueFilterRule(SingleValueComparableValueFilterRule<T> source) : base(source)
         {
-            this.Value = new ValidatingValue<T>();
-            this.Value.Value = source.Value.Value;
+            this.Value = (ValidatingValue<T>)source.Value.DeepClone();
             this.Value.PropertyChanged += this.Value_PropertyChanged;
         }
 

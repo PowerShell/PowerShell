@@ -148,7 +148,42 @@ namespace Microsoft.Management.UI.Internal
 
         #endregion Events
 
+        /// <summary>
+        /// Initializes a new instance of the ValidatingValueBase class.
+        /// </summary>
+        public ValidatingSelectorValue()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the ValidatingValueBase class.
+        /// </summary>
+        public ValidatingSelectorValue(ValidatingSelectorValue<T> source)
+            : base(source)
+        {
+            availableValues.EnsureCapacity(source.availableValues.Count);
+            if (typeof(IDeepCloneable).IsAssignableFrom(typeof(T)))
+            {
+                foreach (var value in source.availableValues)
+                {
+                    availableValues.Add((T)((IDeepCloneable)value).DeepClone());
+                }
+            }
+            else
+            {
+                availableValues.AddRange(source.availableValues);
+            }
+            selectedIndex = source.selectedIndex;
+            displayNameConverter = source.displayNameConverter;
+        }
+
         #region Public Methods
+
+        /// <inheritdoc/>
+        public override object DeepClone()
+        {
+            return new ValidatingSelectorValue<T>(this);
+        }
 
         #region Validate
 

@@ -11,7 +11,7 @@ namespace Microsoft.Management.UI.Internal
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
     [Serializable]
-    public abstract class FilterRule : IEvaluate
+    public abstract class FilterRule : IEvaluate, IDeepCloneable
     {
         /// <summary>
         /// Gets a value indicating whether the FilterRule can be
@@ -51,13 +51,10 @@ namespace Microsoft.Management.UI.Internal
             this.DisplayName = source.DisplayName;
         }
 
-        /// <summary>
-        /// Creates a deep copy of a FilterRule.
-        /// </summary>
-        /// <returns>Returns a deep copy of the passed in rule.</returns>
-        public FilterRule Clone()
+        /// <inheritdoc/>
+        public object DeepClone()
         {
-            return (FilterRule)Activator.CreateInstance(this.GetType(), new object[] { this });
+            return Activator.CreateInstance(this.GetType(), new object[] { this });
         }
 
         /// <summary>

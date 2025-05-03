@@ -51,6 +51,28 @@ namespace Microsoft.Management.UI.Internal
         #region Public Methods
 
         /// <summary>
+        /// Initializes a new instance of the ValidatingValueBase class.
+        /// </summary>
+        public ValidatingValue()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the ValidatingValueBase class.
+        /// </summary>
+        public ValidatingValue(ValidatingValue<T> source)
+            : base(source)
+        {
+            value = source.Value is IDeepCloneable deepClone ? deepClone.DeepClone() : source.Value;
+        }
+
+        /// <inheritdoc/>
+        public override ValidatingValueBase DeepClone()
+        {
+            return new ValidatingValue<T>(this);
+        }
+
+        /// <summary>
         /// Gets the raw value cast/transformed into
         /// type T.
         /// </summary>
