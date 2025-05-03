@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Data;
 
 namespace Microsoft.Management.UI.Internal
 {

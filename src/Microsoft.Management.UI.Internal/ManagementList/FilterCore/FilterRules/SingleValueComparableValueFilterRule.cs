@@ -56,7 +56,8 @@ namespace Microsoft.Management.UI.Internal
         /// Initializes a new instance of the SingleValueComparableValueFilterRule class from an existing instance.
         /// </summary>
         /// <param name="source">The source to initialize from.</param>
-        protected SingleValueComparableValueFilterRule(SingleValueComparableValueFilterRule<T> source) : base(source)
+        protected SingleValueComparableValueFilterRule(SingleValueComparableValueFilterRule<T> source)
+            : base(source)
         {
             this.Value = (ValidatingValue<T>)source.Value.DeepClone();
             this.Value.PropertyChanged += this.Value_PropertyChanged;

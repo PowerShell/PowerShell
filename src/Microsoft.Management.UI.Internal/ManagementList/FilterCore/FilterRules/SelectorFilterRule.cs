@@ -52,7 +52,8 @@ namespace Microsoft.Management.UI.Internal
         /// Initializes a new instance of the SelectorFilterRule class from an existing instance.
         /// </summary>
         /// <param name="source">The source to initialize from.</param>
-        public SelectorFilterRule(SelectorFilterRule source) : base(source)
+        public SelectorFilterRule(SelectorFilterRule source)
+            : base(source)
         {
             this.AvailableRules = (ValidatingSelectorValue<FilterRule>)source.AvailableRules.DeepClone();
             this.AvailableRules.SelectedValueChanged += this.AvailableRules_SelectedValueChanged;

@@ -28,7 +28,8 @@ namespace Microsoft.Management.UI.Internal
         /// Initializes a new instance of the TextEqualsFilterRule class from an existing instance.
         /// </summary>
         /// <param name="source">The source to initialize from.</param>
-        public TextEqualsFilterRule(TextEqualsFilterRule source) : base(source)
+        public TextEqualsFilterRule(TextEqualsFilterRule source)
+            : base(source)
         {
         }
 

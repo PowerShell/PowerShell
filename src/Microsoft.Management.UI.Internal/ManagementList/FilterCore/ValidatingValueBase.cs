@@ -137,6 +137,7 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Initializes a new instance of the ValidatingValueBase class.
         /// </summary>
+        /// <param name="source">The source to initialize from.</param>
         protected ValidatingValueBase(ValidatingValueBase source)
         {
             ArgumentNullException.ThrowIfNull(source);

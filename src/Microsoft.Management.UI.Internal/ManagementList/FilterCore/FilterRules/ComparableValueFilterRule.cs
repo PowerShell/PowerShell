@@ -41,7 +41,8 @@ namespace Microsoft.Management.UI.Internal
         /// Initializes a new instance of the ComparableValueFilterRule class from an existing instance.
         /// </summary>
         /// <param name="source">The source to initialize from.</param>
-        protected ComparableValueFilterRule(ComparableValueFilterRule<T> source) : base(source)
+        protected ComparableValueFilterRule(ComparableValueFilterRule<T> source)
+            : base(source)
         {
             this.DefaultNullValueEvaluation = source.DefaultNullValueEvaluation;
         }

@@ -73,7 +73,8 @@ namespace Microsoft.Management.UI.Internal
         /// Initializes a new instance of the IsBetweenFilterRule class from an existing instance.
         /// </summary>
         /// <param name="source">The source to initialize from.</param>
-        public IsBetweenFilterRule(IsBetweenFilterRule<T> source) : base(source)
+        public IsBetweenFilterRule(IsBetweenFilterRule<T> source)
+            : base(source)
         {
             this.StartValue = (ValidatingValue<T>)source.StartValue.DeepClone();
             this.StartValue.PropertyChanged += this.Value_PropertyChanged;

@@ -25,7 +25,8 @@ namespace Microsoft.Management.UI.Internal
         /// Initializes a new instance of the IsNotEmptyFilterRule class from an existing instance.
         /// </summary>
         /// <param name="source">The source to initialize from.</param>
-        public IsNotEmptyFilterRule(IsNotEmptyFilterRule source) : base(source)
+        public IsNotEmptyFilterRule(IsNotEmptyFilterRule source)
+            : base(source)
         {
         }
 

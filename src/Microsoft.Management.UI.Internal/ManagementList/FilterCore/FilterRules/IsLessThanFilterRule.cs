@@ -29,7 +29,8 @@ namespace Microsoft.Management.UI.Internal
         /// Initializes a new instance of the IsLessThanFilterRule class from an existing instance.
         /// </summary>
         /// <param name="source">The source to initialize from.</param>
-        public IsLessThanFilterRule(IsLessThanFilterRule<T> source) : base(source)
+        public IsLessThanFilterRule(IsLessThanFilterRule<T> source)
+            : base(source)
         {
         }
 

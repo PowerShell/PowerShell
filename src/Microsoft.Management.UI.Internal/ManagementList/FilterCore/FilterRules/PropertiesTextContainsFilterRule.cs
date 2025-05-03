@@ -33,7 +33,8 @@ namespace Microsoft.Management.UI.Internal
         /// Initializes a new instance of the PropertiesTextContainsFilterRule class from an existing instance.
         /// </summary>
         /// <param name="source">The source to initialize from.</param>
-        public PropertiesTextContainsFilterRule(PropertiesTextContainsFilterRule source) : base(source)
+        public PropertiesTextContainsFilterRule(PropertiesTextContainsFilterRule source)
+            : base(source)
         {
             this.PropertyNames = new List<string>(source.PropertyNames);
             this.EvaluationResultInvalidated += this.PropertiesTextContainsFilterRule_EvaluationResultInvalidated;

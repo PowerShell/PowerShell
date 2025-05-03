@@ -74,7 +74,8 @@ namespace Microsoft.Management.UI.Internal
         /// Initializes a new instance of the TextFilterRule class from an existing instance.
         /// </summary>
         /// <param name="source">The source to initialize from.</param>
-        protected TextFilterRule(TextFilterRule source) : base(source)
+        protected TextFilterRule(TextFilterRule source)
+            : base(source)
         {
             this.IgnoreCase = source.IgnoreCase;
             this.CultureInvariant = source.CultureInvariant;

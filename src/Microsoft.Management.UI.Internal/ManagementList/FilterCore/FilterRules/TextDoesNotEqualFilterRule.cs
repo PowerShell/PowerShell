@@ -26,7 +26,8 @@ namespace Microsoft.Management.UI.Internal
         /// Initializes a new instance of the TextDoesNotEqualFilterRule class from an existing instance.
         /// </summary>
         /// <param name="source">The source to initialize from.</param>
-        public TextDoesNotEqualFilterRule(TextDoesNotEqualFilterRule source) : base(source)
+        public TextDoesNotEqualFilterRule(TextDoesNotEqualFilterRule source)
+            : base(source)
         {
         }
 

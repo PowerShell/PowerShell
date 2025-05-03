@@ -29,7 +29,8 @@ namespace Microsoft.Management.UI.Internal
         /// Initializes a new instance of the TextEndsWithFilterRule class from an existing instance.
         /// </summary>
         /// <param name="source">The source to initialize from.</param>
-        public TextEndsWithFilterRule(TextEndsWithFilterRule source) : base(source)
+        public TextEndsWithFilterRule(TextEndsWithFilterRule source)
+            : base(source)
         {
         }
 

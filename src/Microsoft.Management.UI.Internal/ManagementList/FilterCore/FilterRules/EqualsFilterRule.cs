@@ -29,7 +29,8 @@ namespace Microsoft.Management.UI.Internal
         /// Initializes a new instance of the EqualsFilterRule class from an existing instance.
         /// </summary>
         /// <param name="source">The source to initialize from.</param>
-        public EqualsFilterRule(EqualsFilterRule<T> source) : base(source)
+        public EqualsFilterRule(EqualsFilterRule<T> source)
+            : base(source)
         {
         }
 
