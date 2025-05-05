@@ -199,8 +199,8 @@ namespace System.Management.Automation
         /// <exception cref="PSInvalidCastException">When no conversion was possible.</exception>
         public override object ConvertFrom(object sourceValue, Type destinationType, IFormatProvider formatProvider, bool ignoreCase)
         {
-           string sourceAsString = (string)LanguagePrimitives.ConvertTo(sourceValue, typeof(string), formatProvider);
-           return LanguagePrimitives.ConvertTo(sourceAsString, destinationType, formatProvider);
+            string sourceAsString = LanguagePrimitives.ConvertTo(sourceValue, typeof(string), formatProvider) as string;
+            return LanguagePrimitives.ConvertTo(sourceAsString, destinationType, formatProvider);
         }
         /// <summary>
         /// Returns false, since this converter is not designed to be used to
