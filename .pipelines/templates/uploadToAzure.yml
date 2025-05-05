@@ -408,7 +408,7 @@ jobs:
           Move-Item -Path $_.FullName -Destination $uploadedDirectory -Force -Verbose
         }
 
-        $msixbundleFiles = Get-ChildItem -Path $downloadsDirectory -Filter "*.msixbundle" | Where-Object { $_.Name -notlike "powershell*.msixbundle" }
+        $msixbundleFiles = Get-ChildItem -Path $downloadsDirectory -Filter "*.msixbundle"
 
         $containerName = '$(OutputVersion.AzureVersion)-private'
         $storageAccount = '$(StorageAccount)'
