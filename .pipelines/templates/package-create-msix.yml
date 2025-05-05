@@ -108,32 +108,3 @@ jobs:
         Write-Verbose -Verbose "Uploaded Bundle:"
         Get-ChildItem -Path $(ob_outputDirectory) | Write-Verbose -Verbose
       displayName: Upload msixbundle to Artifacts
-
-    - task: AzurePowerShell@5
-      displayName: Upload msix to blob
-      inputs:
-        azureSubscription: az-blob-cicd-infra
-        scriptType: inlineScript
-        azurePowerShellVersion: LatestVersion
-        pwsh: true
-        inline: |
-          $containerName = '$(OutputVersion.AzureVersion)-private'
-          $storageAccount = '$(StorageAccount)'
-
-          $storageContext = New-AzStorageContext -StorageAccountName $storageAccount -UseConnectedAccount
-
-          if ($env:BundleDir) {
-            $bundleFile = Get-Item "$env:BundleDir\*.msixbundle"
-            $blobName = $bundleFile | Split-Path -Leaf
-            $existing = Get-AzStorageBlob -Container $containerName -Blob $blobName -Context $storageContext -ErrorAction Ignore
-            if ($existing) {
-              Write-Verbose -Verbose "MSIX bundle already exists at '$storageAccount/$containerName/$blobName', removing first."
-              $existingBlob | Remove-AzStorageBlob -ErrorAction Stop -Verbose
-            }
-
-            Write-Verbose -Verbose "Uploading $bundleFile to $containerName/$blobName"
-            Set-AzStorageBlobContent -File $bundleFile -Container $containerName -Blob $blobName -Context $storageContext -Force
-          }
-          else{
-            throw "BundleDir not found"
-          }
