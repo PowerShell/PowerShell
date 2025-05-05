@@ -39,6 +39,8 @@ jobs:
       CreateJson: yes
       UseJson: no
 
+  - template: /.pipelines/templates/SetReleaseTagandContainerName.yml@self
+
   - template: /.pipelines/templates/cloneToOfficialPath.yml@self
 
   - pwsh: |
