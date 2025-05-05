@@ -237,7 +237,7 @@ jobs:
       buildType: 'current'
       artifact: drop_msixbundle_CreateMSIXBundle
       itemPattern: |
-        '**/*.msixbundle'
+        **/*.msixbundle
       targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
     displayName: Download MSIXBundle
 
