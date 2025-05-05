@@ -6690,6 +6690,8 @@ namespace System.Management.Automation.Language
                         .WriteToDebugLog(this);
                     BindingRestrictions argRestrictions = args.Aggregate(BindingRestrictions.Empty, static (current, arg) => current.Merge(arg.PSGetMethodArgumentRestriction()));
 
+                    // We need to pass the empty enumerator to the ForEach/Where operators, so that they can return an empty collection.
+                    // The ForEach/Where operators will not be able to call the script block if the enumerator is empty.
                     if (s_whereSearchValues.Contains(Name))
                     {
                         return InvokeWhereOnCollection(emptyEnumerator, args, argRestrictions).WriteToDebugLog(this);
