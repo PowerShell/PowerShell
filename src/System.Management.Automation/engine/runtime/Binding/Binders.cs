@@ -6539,8 +6539,12 @@ namespace System.Management.Automation.Language
         private const string ForeachMagicMethodName = "Foreach";
         private const string ForeachMagicMethodPSName = $"PS{ForeachMagicMethodName}";
 
-        private static readonly SearchValues<string> s_whereSearchValues = SearchValues.Create([WhereMagicMethodName, WhereMagicMethodPSName], StringComparison.OrdinalIgnoreCase);   
-        private static readonly SearchValues<string> s_foreachSearchValues = SearchValues.Create([ForeachMagicMethodName, ForeachMagicMethodPSName], StringComparison.OrdinalIgnoreCase);
+        private static readonly SearchValues<string> s_whereSearchValues = SearchValues.Create(
+            ["Where", "PSWhere"],
+            StringComparison.OrdinalIgnoreCase);
+        private static readonly SearchValues<string> s_foreachSearchValues = SearchValues.Create(
+            ["ForEach", "PSForEach"],
+            StringComparison.OrdinalIgnoreCase);
 
         internal enum MethodInvocationType
         {
