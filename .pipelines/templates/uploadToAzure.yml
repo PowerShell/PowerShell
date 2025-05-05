@@ -416,17 +416,15 @@ jobs:
         $storageContext = New-AzStorageContext -StorageAccountName $storageAccount -UseConnectedAccount
 
         if ($msixbundleFiles) {
-          $bundleFile = Get-Item "$msixbundleFiles\*.msixbundle"
-          $blobName = $bundleFile | Split-Path -Leaf
+          $bundleFile = $msixbundleFiles[0].FullName
+          $blobName = $msixbundleFiles[0].Name
           $existing = Get-AzStorageBlob -Container $containerName -Blob $blobName -Context $storageContext -ErrorAction Ignore
           if ($existing) {
-            Write-Verbose -Verbose "MSIX bundle already exists at '$storageAccount/$containerName/$blobName', removing first."
-            $existing | Remove-AzStorageBlob -ErrorAction Stop -Verbose
+              Write-Verbose -Verbose "MSIX bundle already exists at '$storageAccount/$containerName/$blobName', removing first."
+              $existing | Remove-AzStorageBlob -ErrorAction Stop -Verbose
           }
-
           Write-Verbose -Verbose "Uploading $bundleFile to $containerName/$blobName"
           Set-AzStorageBlobContent -File $bundleFile -Container $containerName -Blob $blobName -Context $storageContext -Force
-        }
-        else {
-          throw "MSIXBundle not found in $downloadsDirectory"
+        } else {
+            throw "MSIXBundle not found in $downloadsDirectory"
         }
