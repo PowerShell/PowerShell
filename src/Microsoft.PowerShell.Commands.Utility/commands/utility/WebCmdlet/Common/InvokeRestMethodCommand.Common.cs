@@ -99,18 +99,20 @@ namespace Microsoft.PowerShell.Commands
                     string? characterSet = WebResponseHelper.GetCharacterSet(response);
                     string str = StreamHelper.DecodeStream(responseStream, characterSet, out Encoding encoding, perReadTimeout, _cancelToken.Token);
 
-                    string encodingVerboseName;
+                    string encodingName;
                     try
                     {
-                        encodingVerboseName = encoding.HeaderName;
+                        // NOTE: This is a getter method that may possibly throw a NotSupportedException exception,
+                        // hence the try/catch
+                        encodingName = encoding.HeaderName;
                     }
                     catch
                     {
-                        encodingVerboseName = string.Empty;
+                        encodingName = string.Empty;
                     }
 
-                    // NOTE: Tests use this verbose output to verify the encoding.
-                    WriteVerbose($"Content encoding: {encodingVerboseName}");
+                    // NOTE: Tests use this debug output to verify the encoding.
+                    WriteDebug($"WebResponse content encoding: {encodingName}");
 
                     // Determine the response type
                     RestReturnType returnType = CheckReturnType(response);
@@ -140,7 +142,7 @@ namespace Microsoft.PowerShell.Commands
 
                 responseStream.Position = 0;
             }
-            
+
             if (ShouldSaveToOutFile)
             {
                 string outFilePath = WebResponseHelper.GetOutFilePath(response, _qualifiedOutFile);
