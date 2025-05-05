@@ -6534,14 +6534,10 @@ namespace System.Management.Automation.Language
 
     internal sealed class PSInvokeMemberBinder : InvokeMemberBinder
     {
-        private const string WhereMagicMethodName = "Where";
-        private const string WhereMagicMethodPSName = $"PS{WhereMagicMethodName}";
-        private const string ForeachMagicMethodName = "Foreach";
-        private const string ForeachMagicMethodPSName = $"PS{ForeachMagicMethodName}";
-
         private static readonly SearchValues<string> s_whereSearchValues = SearchValues.Create(
             ["Where", "PSWhere"],
             StringComparison.OrdinalIgnoreCase);
+
         private static readonly SearchValues<string> s_foreachSearchValues = SearchValues.Create(
             ["ForEach", "PSForEach"],
             StringComparison.OrdinalIgnoreCase);
@@ -6700,8 +6696,6 @@ namespace System.Management.Automation.Language
                     }
 
                     if (s_foreachSearchValues.Contains(Name))
-                        // We need to pass the empty enumerator to the ForEach operator, so that it can return an empty collection.
-                        // The ForEach operator will not be able to call the script block if the enumerator is empty.
                     {
                         return InvokeForEachOnCollection(emptyEnumerator, args, argRestrictions).WriteToDebugLog(this);
                     }
