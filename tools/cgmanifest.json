@@ -125,7 +125,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Extensions.ObjectPool",
-          "Version": "8.0.14"
+          "Version": "8.0.15"
         }
       },
       "DevelopmentDependency": false
@@ -195,7 +195,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Windows.Compatibility",
-          "Version": "8.0.14"
+          "Version": "8.0.15"
         }
       },
       "DevelopmentDependency": false
@@ -425,7 +425,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Diagnostics.EventLog",
-          "Version": "8.0.1"
+          "Version": "8.0.2"
         }
       },
       "DevelopmentDependency": false
@@ -455,7 +455,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.DirectoryServices.Protocols",
-          "Version": "8.0.0"
+          "Version": "8.0.1"
         }
       },
       "DevelopmentDependency": false
@@ -475,7 +475,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Drawing.Common",
-          "Version": "8.0.14"
+          "Version": "8.0.15"
         }
       },
       "DevelopmentDependency": false
