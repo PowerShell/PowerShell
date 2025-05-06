@@ -99,15 +99,11 @@ jobs:
         $signedBundle = Get-ChildItem -Path $(BundleDir) -Filter "*.msixbundle" -File
         Write-Verbose -Verbose "Signed bundle: $signedBundle"
 
-<<<<<<< HEAD:.pipelines/templates/release-create-msix.yml
-        Copy-Item -Path $signedBundle -Destination $(ob_outputDirectory) -Verbose
-=======
         if (-not (Test-Path $(ob_outputDirectory))) {
           New-Item -ItemType Directory -Path $(ob_outputDirectory) -Force
         }
 
         Copy-Item -Path $signedBundle.FullName -Destination "$(ob_outputDirectory)" -Verbose
->>>>>>> 2274a88a2 (Move MSIXBundle to Packages and Release to GitHub (#25512)):.pipelines/templates/package-create-msix.yml
 
         Write-Verbose -Verbose "Uploaded Bundle:"
         Get-ChildItem -Path $(ob_outputDirectory) | Write-Verbose -Verbose
