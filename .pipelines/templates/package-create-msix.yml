@@ -13,20 +13,32 @@ jobs:
   steps:
     - template: release-SetReleaseTagandContainerName.yml@self
 
-    - download: PSPackagesOfficial
-      artifact: drop_windows_package_package_win_arm64
-      displayName: Download arm64 msix
-      patterns: '**/*.msix'
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        buildType: 'current'
+        artifact: drop_windows_package_package_win_arm64
+        itemPattern: |
+          **/*.msix
+        targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
+      displayName: Download windows arm64 packages
 
-    - download: PSPackagesOfficial
-      artifact: drop_windows_package_package_win_x64
-      displayName: Download x64 msix
-      patterns: '**/*.msix'
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        buildType: 'current'
+        artifact: drop_windows_package_package_win_x64
+        itemPattern: |
+          **/*.msix
+        targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
+      displayName: Download windows x64 packages
 
-    - download: PSPackagesOfficial
-      artifact: drop_windows_package_package_win_x86
-      displayName: Download x86 msix
-      patterns: '**/*.msix'
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        buildType: 'current'
+        artifact: drop_windows_package_package_win_x86
+        itemPattern: |
+          **/*.msix
+        targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
+      displayName: Download windows x86 packages
     
     # Finds the makeappx tool on the machine with image: 'onebranch.azurecr.io/windows/ltsc2022/vse2022:latest'
     - pwsh: |
@@ -53,7 +65,7 @@ jobs:
         $sourceDir = '$(Pipeline.Workspace)\releasePipeline\msix'
         $null = New-Item -Path $sourceDir -ItemType Directory -Force
 
-        $msixFiles = Get-ChildItem -Path "$(Pipeline.Workspace)/PSPackagesOfficial/*.msix" -Recurse
+        $msixFiles = Get-ChildItem -Path "$(Build.ArtifactStagingDirectory)/downloads/*.msix" -Recurse
         foreach ($msixFile in $msixFiles) {
             $null = Copy-Item -Path $msixFile.FullName -Destination $sourceDir -Force -Verbose
         }
@@ -87,43 +99,12 @@ jobs:
         $signedBundle = Get-ChildItem -Path $(BundleDir) -Filter "*.msixbundle" -File
         Write-Verbose -Verbose "Signed bundle: $signedBundle"
 
-        # Ensure the destination directory exists
-        if (-not (Test-Path -Path "$(ob_outputDirectory)")) {
-            Write-Verbose -Verbose "Creating destination directory: $(ob_outputDirectory)"
-            New-Item -Path "$(ob_outputDirectory)" -ItemType Directory -Force | Out-Null
+        if (-not (Test-Path $(ob_outputDirectory))) {
+          New-Item -ItemType Directory -Path $(ob_outputDirectory) -Force
         }
 
-        Copy-Item -Path $signedBundle.FullName -Destination "$(ob_outputDirectory)\$($signedBundle.Name)" -Verbose
+        Copy-Item -Path $signedBundle.FullName -Destination "$(ob_outputDirectory)" -Verbose
 
         Write-Verbose -Verbose "Uploaded Bundle:"
         Get-ChildItem -Path $(ob_outputDirectory) | Write-Verbose -Verbose
       displayName: Upload msixbundle to Artifacts
-
-    - task: AzurePowerShell@5
-      displayName: Upload msix to blob
-      inputs:
-        azureSubscription: az-blob-cicd-infra
-        scriptType: inlineScript
-        azurePowerShellVersion: LatestVersion
-        pwsh: true
-        inline: |
-          $containerName = '$(OutputVersion.AzureVersion)-private'
-          $storageAccount = '$(StorageAccount)'
-
-          $storageContext = New-AzStorageContext -StorageAccountName $storageAccount -UseConnectedAccount
-
-          if ($env:BundleDir) {
-            $bundleFile = Get-Item "$env:BundleDir\*.msixbundle"
-            $blobName = $bundleFile | Split-Path -Leaf
-            $existing = Get-AzStorageBlob -Container $containerName -Blob $blobName -Context $storageContext -ErrorAction Ignore
-            if ($existing) {
-              Write-Verbose -Verbose "MSIX bundle already exists at '$storageAccount/$containerName/$blobName', removing first."
-              $existingBlob | Remove-AzStorageBlob -ErrorAction Stop -Verbose
-            }
-
-            Write-Verbose -Verbose "Uploading $bundleFile to $containerName/$blobName"
-            Set-AzStorageBlobContent -File $bundleFile -Container $containerName -Blob $blobName -Context $storageContext -Force
-          }
-          else{
-            throw "BundleDir not found"
-          }

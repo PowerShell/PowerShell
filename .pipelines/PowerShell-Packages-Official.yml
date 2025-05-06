@@ -60,6 +60,7 @@ variables:
     value: $[format('{0:yyyyMMdd}-{1}', pipeline.startTime,variables['Build.SourceBranch'])]
   - name: branchCounter
     value: $[counter(variables['branchCounterKey'], 1)]
+  - group: MSIXSigningProfile
 
 resources:
   pipelines:
@@ -246,7 +247,13 @@ extends:
       jobs:
       - template: /.pipelines/templates/nupkg.yml@self
 
+    - stage: msixbundle
+      displayName: 'Create MSIX Bundle'
+      dependsOn: [windows_package]
+      jobs:
+      - template: /.pipelines/templates/package-create-msix.yml@self
+
     - stage: upload
-      dependsOn: [mac_package, windows_package, linux_package, nupkg]
+      dependsOn: [mac_package, windows_package, linux_package, nupkg, msixbundle]
       jobs:
       - template: /.pipelines/templates/uploadToAzure.yml@self
