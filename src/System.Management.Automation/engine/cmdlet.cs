@@ -459,7 +459,7 @@ namespace System.Management.Automation
         }
 
         internal bool IsWriteVerboseEnabled()
-            => commandRuntime is MshCommandRuntime mshRuntime && mshRuntime.IsWriteVerboseEnabled();
+            => commandRuntime is not MshCommandRuntime mshRuntime || mshRuntime.IsWriteVerboseEnabled();
 
         /// <summary>
         /// Display warning information.
@@ -499,7 +499,7 @@ namespace System.Management.Automation
         }
 
         internal bool IsWriteWarningEnabled()
-            => commandRuntime is MshCommandRuntime mshRuntime && mshRuntime.IsWriteWarningEnabled();
+            => commandRuntime is not MshCommandRuntime mshRuntime || mshRuntime.IsWriteWarningEnabled();
 
         /// <summary>
         /// Write text into pipeline execution log.
@@ -610,7 +610,7 @@ namespace System.Management.Automation
         }
 
         internal bool IsWriteProgressEnabled()
-            => commandRuntime is MshCommandRuntime mshRuntime && mshRuntime.IsWriteProgressEnabled();
+            => commandRuntime is not MshCommandRuntime mshRuntime || mshRuntime.IsWriteProgressEnabled();
 
         /// <summary>
         /// Display debug information.
@@ -656,7 +656,7 @@ namespace System.Management.Automation
         }
 
         internal bool IsWriteDebugEnabled()
-            => commandRuntime is MshCommandRuntime mshRuntime && mshRuntime.IsWriteDebugEnabled();
+            => commandRuntime is not MshCommandRuntime mshRuntime || mshRuntime.IsWriteDebugEnabled();
 
         /// <summary>
         /// Route information to the user or host.
@@ -766,7 +766,7 @@ namespace System.Management.Automation
         }
 
         internal bool IsWriteInformationEnabled()
-            => commandRuntime is MshCommandRuntime mshRuntime && mshRuntime.IsWriteInformationEnabled();
+            => commandRuntime is not MshCommandRuntime mshRuntime || mshRuntime.IsWriteInformationEnabled();
 
         #endregion Write
 
