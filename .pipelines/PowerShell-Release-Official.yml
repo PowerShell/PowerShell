@@ -58,7 +58,6 @@ variables:
   - name: ReleaseTagVar
     value: ${{ parameters.ReleaseTagVar }}
   - group: PoolNames
-  - group: MSIXSigningProfile
 
 resources:
   repositories:
@@ -121,12 +120,6 @@ extends:
       displayName: 'Set Release Tag and Upload Changelog'
       jobs:
       - template: /.pipelines/templates/release-SetTagAndChangelog.yml@self
-
-    - stage: msixbundle
-      displayName: 'Create MSIX Bundle'
-      dependsOn: []
-      jobs:
-      - template: /.pipelines/templates/release-create-msix.yml@self
 
     - stage: validateSdk
       displayName: 'Validate SDK'
@@ -270,7 +263,6 @@ extends:
         - fxdpackages
         - gbltool
         - validateSdk
-        - msixbundle
 
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self

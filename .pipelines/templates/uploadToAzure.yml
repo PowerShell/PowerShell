@@ -25,6 +25,7 @@ jobs:
     value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
   - name: ob_sdl_codeql_compiled_enabled
     value: false
+  - group: 'Azure Blob variable group'
 
   steps:
   - checkout: self
@@ -37,6 +38,8 @@ jobs:
       ReleaseTagVar: $(ReleaseTagVar)
       CreateJson: yes
       UseJson: no
+
+  - template: /.pipelines/templates/release-SetReleaseTagandContainerName.yml@self
 
   - template: /.pipelines/templates/cloneToOfficialPath.yml@self
 
@@ -231,6 +234,15 @@ jobs:
       targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
     displayName: Download macos x64 packages
 
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifact: drop_msixbundle_CreateMSIXBundle
+      itemPattern: |
+        **/*.msixbundle
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
+    displayName: Download MSIXBundle
+
   - pwsh: |
       Get-ChildItem '$(Build.ArtifactStagingDirectory)/downloads' | Select-Object -ExpandProperty FullName
     displayName: 'Capture downloads'
@@ -396,4 +408,27 @@ jobs:
           $null = Set-AzStorageBlobContent -File $_.FullName -Container $containerName -Blob $blobName -Context $context
           Write-Host "File $blobName uploaded to $containerName container."
           Move-Item -Path $_.FullName -Destination $uploadedDirectory -Force -Verbose
+        }
+
+        $msixbundleFiles = Get-ChildItem -Path $downloadsDirectory -Filter "*.msixbundle"
+
+        $containerName = '$(OutputVersion.AzureVersion)-private'
+        $storageAccount = '$(StorageAccount)'
+
+        $storageContext = New-AzStorageContext -StorageAccountName $storageAccount -UseConnectedAccount
+
+        if ($msixbundleFiles) {
+          $bundleFile = $msixbundleFiles[0].FullName
+          $blobName = $msixbundleFiles[0].Name
+
+          $existing = Get-AzStorageBlob -Container $containerName -Blob $blobName -Context $storageContext -ErrorAction Ignore
+          if ($existing) {
+              Write-Verbose -Verbose "MSIX bundle already exists at '$storageAccount/$containerName/$blobName', removing first."
+              $existing | Remove-AzStorageBlob -ErrorAction Stop -Verbose
+          }
+
+          Write-Verbose -Verbose "Uploading $bundleFile to $containerName/$blobName"
+          Set-AzStorageBlobContent -File $bundleFile -Container $containerName -Blob $blobName -Context $storageContext -Force
+        } else {
+            throw "MSIXBundle not found in $downloadsDirectory"
         }
