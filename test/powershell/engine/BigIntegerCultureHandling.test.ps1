@@ -34,4 +34,18 @@ Describe 'PowerShell Type Conversion - BigInteger Parsing' -Tag 'CI' {
         $convertedValue = [System.Management.Automation.LanguagePrimitives]::ConvertTo($formattedNumber, [bigint])
         $convertedValue | Should -Be 1000000
     }
+
+    It 'Parses number using de-DE culture but falls back to invariant behavior' {
+        [System.Globalization.CultureInfo]::CurrentCulture = [System.Globalization.CultureInfo]::GetCultureInfo("de-DE")
+        $formattedNumber = "1.000"  # in de-DE this means 1000
+        $convertedValue = [System.Management.Automation.LanguagePrimitives]::ConvertTo($formattedNumber, [bigint])
+        # since [bigint] uses invariant culture, this will be parsed as 1
+        $convertedValue | Should -Be 1
+    }
+
+    It 'Casts from floating-point number string to BigInteger using fallback' {
+        $formattedNumber = "1.2"
+        $convertedValue = [System.Management.Automation.LanguagePrimitives]::ConvertTo($formattedNumber, [bigint])
+        $convertedValue | Should -Be 1
+    }
 }
