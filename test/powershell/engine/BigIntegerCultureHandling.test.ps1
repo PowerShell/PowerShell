@@ -10,7 +10,7 @@ Describe 'PowerShell Type Conversion - BigInteger Parsing' -Tag 'CI' {
         $convertedValue | Should -Be 1000
     }
 
-    It 'Handles large comma-separated numbers that previously failed' {
+    It 'Handles large numbers with thousands separators that previously failed' {
         $formattedNumber = "9223372036854775,807"
         $convertedValue = [System.Management.Automation.LanguagePrimitives]::ConvertTo($formattedNumber, [bigint])
         $convertedValue | Should -Be 9223372036854775807
@@ -28,7 +28,7 @@ Describe 'PowerShell Type Conversion - BigInteger Parsing' -Tag 'CI' {
         $convertedValue | Should -Be 1000000
     }
 
-    It 'Parses number using de-DE culture but falls back to invariant behavior' {
+    It 'Parses a number string using the invariant culture, irrespective of the current culture' {
         $originalCulture = [cultureinfo]::CurrentCulture
         try {
             [cultureinfo]::CurrentCulture = [cultureinfo]::GetCultureInfo("de-DE")
