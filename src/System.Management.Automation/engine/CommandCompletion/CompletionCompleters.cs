@@ -6455,7 +6455,9 @@ namespace System.Management.Automation
             new List<Tuple<string, string>>
                 {
                     new Tuple<string, string>("Where", "Where({ expression } [, mode [, numberToReturn]])"),
-                    new Tuple<string, string>("ForEach", "ForEach(expression [, arguments...])")
+                    new Tuple<string, string>("ForEach", "ForEach(expression [, arguments...])"),
+                    new Tuple<string, string>("PSWhere", "PSWhere({ expression } [, mode [, numberToReturn]])"),
+                    new Tuple<string, string>("PSForEach", "PSForEach(expression [, arguments...])"),
                 };
 
         // List of DSC collection-value variables
