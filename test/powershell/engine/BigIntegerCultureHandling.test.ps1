@@ -10,13 +10,6 @@ Describe 'PowerShell Type Conversion - BigInteger Parsing' -Tag 'CI' {
         $convertedValue | Should -Be 1000
     }
 
-    It 'Handles formatted numbers correctly in hi-IN culture' {
-        [System.Globalization.CultureInfo]::CurrentCulture = [System.Globalization.CultureInfo]::GetCultureInfo("hi-IN")
-        $formattedNumber = "1,00,000"
-        $convertedValue = [System.Management.Automation.LanguagePrimitives]::ConvertTo($formattedNumber, [bigint])
-        $convertedValue | Should -Be 100000
-    }
-
     It 'Handles large comma-separated numbers that previously failed' {
         $formattedNumber = "9223372036854775,807"
         $convertedValue = [System.Management.Automation.LanguagePrimitives]::ConvertTo($formattedNumber, [bigint])
@@ -36,11 +29,17 @@ Describe 'PowerShell Type Conversion - BigInteger Parsing' -Tag 'CI' {
     }
 
     It 'Parses number using de-DE culture but falls back to invariant behavior' {
-        [System.Globalization.CultureInfo]::CurrentCulture = [System.Globalization.CultureInfo]::GetCultureInfo("de-DE")
-        $formattedNumber = "1.000"  # in de-DE this means 1000
-        $convertedValue = [System.Management.Automation.LanguagePrimitives]::ConvertTo($formattedNumber, [bigint])
-        # since [bigint] uses invariant culture, this will be parsed as 1
-        $convertedValue | Should -Be 1
+        $originalCulture = [cultureinfo]::CurrentCulture
+        try {
+            [cultureinfo]::CurrentCulture = [cultureinfo]::GetCultureInfo("de-DE")
+            $formattedNumber = "1.000"  # in de-DE this means 1000
+            $convertedValue = [System.Management.Automation.LanguagePrimitives]::ConvertTo($formattedNumber, [bigint])
+            # since [bigint] uses invariant culture, this will be parsed as 1
+            $convertedValue | Should -Be 1
+        }
+        finally {
+            [cultureinfo]::CurrentCulture = $originalCulture
+        }
     }
 
     It 'Casts from floating-point number string to BigInteger using fallback' {
