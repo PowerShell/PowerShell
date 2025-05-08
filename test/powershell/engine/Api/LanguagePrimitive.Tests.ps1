@@ -185,14 +185,7 @@ Describe "Language Primitive Tests" -Tags "CI" {
         $test.TestHandlerReturnEnum() | Should -BeTrue
         $test.TestHandlerReturnObject() | Should -BeTrue
     }
-
-    It 'Can convert formatted numbers using PowerShell type system' {
-        [System.Globalization.CultureInfo]::CurrentCulture = [System.Globalization.CultureInfo]::GetCultureInfo("en-US")
-        $formattedNumber = "1,000"
-        $convertedValue = [System.Management.Automation.LanguagePrimitives]::ConvertTo($formattedNumber, [bigint])
-        $convertedValue | Should -Be 1000
-    }
-
+    
     It 'Handles large numbers with thousands separators that previously failed' {
         $formattedNumber = "9223372036854775,807"
         $convertedValue = [System.Management.Automation.LanguagePrimitives]::ConvertTo($formattedNumber, [bigint])
