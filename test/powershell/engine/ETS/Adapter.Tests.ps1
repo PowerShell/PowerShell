@@ -204,6 +204,12 @@ Describe "Adapter Tests" -tags "CI" {
         It "Can use PSForEach as an alias for the Foreach magic method" {
             $x = 5
             $x.PSForEach({$_}) | Should -Be 5
+
+            $p = $null.PSForEach{"I didn't run"}
+            $p.GetType().Name | Should -BeExactly 'Collection`1'
+            $p.Count | Should -BeExactly 0
+
+            ([pscustomobject]@{ Name = 'bar' }).PSForEach({$_.Name}) | Should -BeExactly 'bar'
         }
     }
 
@@ -249,6 +255,12 @@ Describe "Adapter Tests" -tags "CI" {
         It "Can use PSWhere as an alias for the Where magic method" {
             $x = 5
             $x.PSWhere{$true} | Should -Be 5
+
+            $p = $null.PSWhere{"I didn't run"}
+            $p.GetType().Name | Should -BeExactly 'Collection`1'
+            $p.Count | Should -BeExactly 0
+
+            ([pscustomobject]@{ Name = 'bar' }).PSWhere({$_.Name}) | ForEach-Object Name | Should -BeExactly 'bar'
         }
     }
 }
