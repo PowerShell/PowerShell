@@ -40,12 +40,24 @@ namespace Microsoft.Management.UI.Internal
         #region Ctor
 
         /// <summary>
-        /// Creates a new SelectorFilterRule instance.
+        /// Initializes a new instance of the <see cref="SelectorFilterRule"/> class.
         /// </summary>
         public SelectorFilterRule()
         {
             this.AvailableRules = new ValidatingSelectorValue<FilterRule>();
             this.AvailableRules.SelectedValueChanged += this.AvailableRules_SelectedValueChanged;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SelectorFilterRule"/> class.
+        /// </summary>
+        /// <param name="source">The source to initialize from.</param>
+        public SelectorFilterRule(SelectorFilterRule source)
+            : base(source)
+        {
+            this.AvailableRules = (ValidatingSelectorValue<FilterRule>)source.AvailableRules.DeepClone();
+            this.AvailableRules.SelectedValueChanged += this.AvailableRules_SelectedValueChanged;
+            this.AvailableRules.SelectedValue.EvaluationResultInvalidated += this.SelectedValue_EvaluationResultInvalidated;
         }
 
         #endregion Ctor
@@ -86,8 +98,8 @@ namespace Microsoft.Management.UI.Internal
             FilterRuleCustomizationFactory.FactoryInstance.TransferValues(oldValue, newValue);
             FilterRuleCustomizationFactory.FactoryInstance.ClearValues(oldValue);
 
-            newValue.EvaluationResultInvalidated += this.SelectedValue_EvaluationResultInvalidated;
             oldValue.EvaluationResultInvalidated -= this.SelectedValue_EvaluationResultInvalidated;
+            newValue.EvaluationResultInvalidated += this.SelectedValue_EvaluationResultInvalidated;
 
             this.NotifyEvaluationResultInvalidated();
         }
