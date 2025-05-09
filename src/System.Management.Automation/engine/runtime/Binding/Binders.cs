@@ -5298,7 +5298,8 @@ namespace System.Management.Automation.Language
                             var propertyAccessor = adapterData.member as PropertyInfo;
                             if (propertyAccessor != null)
                             {
-                                if (propertyAccessor.GetMethod.IsFamily &&
+                                var propertyGetter = propertyAccessor.GetMethod;
+                                if ((propertyGetter.IsFamily || propertyGetter.IsFamilyOrAssembly) &&
                                     (_classScope == null || !_classScope.IsSubclassOf(propertyAccessor.DeclaringType)))
                                 {
                                     return GenerateGetPropertyException(restrictions).WriteToDebugLog(this);
@@ -5758,8 +5759,8 @@ namespace System.Management.Automation.Language
                             var getMethod = propertyInfo.GetGetMethod(nonPublic: true);
                             var setMethod = propertyInfo.GetSetMethod(nonPublic: true);
 
-                            if ((getMethod == null || getMethod.IsFamily || getMethod.IsPublic) &&
-                                (setMethod == null || setMethod.IsFamily || setMethod.IsPublic))
+                            if ((getMethod == null || getMethod.IsPublic || getMethod.IsFamily || getMethod.IsFamilyOrAssembly) &&
+                                (setMethod == null || setMethod.IsPublic || setMethod.IsFamily || setMethod.IsFamilyOrAssembly))
                             {
                                 memberInfo = new PSProperty(this.Name, PSObject.DotNetInstanceAdapter, target.Value, new DotNetAdapter.PropertyCacheEntry(propertyInfo));
                             }
@@ -5769,7 +5770,7 @@ namespace System.Management.Automation.Language
                             var fieldInfo = member as FieldInfo;
                             if (fieldInfo != null)
                             {
-                                if (fieldInfo.IsFamily)
+                                if (fieldInfo.IsFamily || fieldInfo.IsFamilyOrAssembly)
                                 {
                                     memberInfo = new PSProperty(this.Name, PSObject.DotNetInstanceAdapter, target.Value, new DotNetAdapter.PropertyCacheEntry(fieldInfo));
                                 }
@@ -5777,7 +5778,7 @@ namespace System.Management.Automation.Language
                             else
                             {
                                 var methodInfo = member as MethodInfo;
-                                if (methodInfo != null && (methodInfo.IsPublic || methodInfo.IsFamily))
+                                if (methodInfo != null && (methodInfo.IsPublic || methodInfo.IsFamily || methodInfo.IsFamilyOrAssembly))
                                 {
                                     candidateMethods ??= new List<MethodBase>();
 
@@ -6292,7 +6293,8 @@ namespace System.Management.Automation.Language
                         var targetExpr = _static ? null : PSGetMemberBinder.GetTargetExpr(target, data.member.DeclaringType);
                         if (propertyInfo != null)
                         {
-                            if (propertyInfo.SetMethod.IsFamily &&
+                            var propertySetter = propertyInfo.SetMethod;
+                            if ((propertySetter.IsFamily || propertySetter.IsFamilyOrAssembly) &&
                                 (_classScope == null || !_classScope.IsSubclassOf(propertyInfo.DeclaringType)))
                             {
                                 return GeneratePropertyAssignmentException(restrictions).WriteToDebugLog(this);
@@ -7902,7 +7904,7 @@ namespace System.Management.Automation.Language
                 ? BindingRestrictions.GetTypeRestriction(target.Expression, target.Value.GetType())
                 : target.PSGetTypeRestriction();
             restrictions = args.Aggregate(restrictions, static (current, arg) => current.Merge(arg.PSGetMethodArgumentRestriction()));
-            var newConstructors = DotNetAdapter.GetMethodInformationArray(ctors.Where(static c => c.IsPublic || c.IsFamily).ToArray());
+            var newConstructors = DotNetAdapter.GetMethodInformationArray(ctors.Where(static c => c.IsPublic || c.IsFamily || c.IsFamilyOrAssembly).ToArray());
             return PSInvokeMemberBinder.InvokeDotNetMethod(_callInfo, "new", _constraints, PSInvokeMemberBinder.MethodInvocationType.BaseCtor,
                                                            target, args, restrictions, newConstructors, typeof(MethodException));
         }
