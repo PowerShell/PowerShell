@@ -315,7 +315,7 @@ function ExecuteRestMethod {
                 }
             }
             if ($null -eq $result.Encoding) {
-                throw "Encoding not found in verbose output. Lines: $($result.Debug.Count) Content:$($result.Debug)"
+                throw "Encoding not found in debug output. Lines: $($result.Debug.Count) Content:$($result.Debug)"
             }
         }
 
