@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System.Buffers;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -6533,6 +6534,14 @@ namespace System.Management.Automation.Language
 
     internal sealed class PSInvokeMemberBinder : InvokeMemberBinder
     {
+        private static readonly SearchValues<string> s_whereSearchValues = SearchValues.Create(
+            ["Where", "PSWhere"],
+            StringComparison.OrdinalIgnoreCase);
+
+        private static readonly SearchValues<string> s_foreachSearchValues = SearchValues.Create(
+            ["ForEach", "PSForEach"],
+            StringComparison.OrdinalIgnoreCase);
+
         internal enum MethodInvocationType
         {
             Ordinary,
@@ -6681,12 +6690,14 @@ namespace System.Management.Automation.Language
                         .WriteToDebugLog(this);
                     BindingRestrictions argRestrictions = args.Aggregate(BindingRestrictions.Empty, static (current, arg) => current.Merge(arg.PSGetMethodArgumentRestriction()));
 
-                    if (string.Equals(Name, "Where", StringComparison.OrdinalIgnoreCase))
+                    // We need to pass the empty enumerator to the ForEach/Where operators, so that they can return an empty collection.
+                    // The ForEach/Where operators will not be able to call the script block if the enumerator is empty.
+                    if (s_whereSearchValues.Contains(Name))
                     {
                         return InvokeWhereOnCollection(emptyEnumerator, args, argRestrictions).WriteToDebugLog(this);
                     }
 
-                    if (string.Equals(Name, "ForEach", StringComparison.OrdinalIgnoreCase))
+                    if (s_foreachSearchValues.Contains(Name))
                     {
                         return InvokeForEachOnCollection(emptyEnumerator, args, argRestrictions).WriteToDebugLog(this);
                     }
@@ -6866,12 +6877,12 @@ namespace System.Management.Automation.Language
             if (!_static && !_nonEnumerating && target.Value != AutomationNull.Value)
             {
                 // Invoking Where and ForEach operators on collections.
-                if (string.Equals(Name, "Where", StringComparison.OrdinalIgnoreCase))
+                if (s_whereSearchValues.Contains(Name))
                 {
                     return InvokeWhereOnCollection(target, args, restrictions).WriteToDebugLog(this);
                 }
 
-                if (string.Equals(Name, "ForEach", StringComparison.OrdinalIgnoreCase))
+                if (s_foreachSearchValues.Contains(Name))
                 {
                     return InvokeForEachOnCollection(target, args, restrictions).WriteToDebugLog(this);
                 }
@@ -7490,7 +7501,7 @@ namespace System.Management.Automation.Language
             // As a last resort, we invoke 'Where' and 'ForEach' operators on singletons like
             //    ([pscustomobject]@{ foo = 'bar' }).Foreach({$_})
             //    ([pscustomobject]@{ foo = 'bar' }).Where({1})
-            if (string.Equals(methodName, "Where", StringComparison.OrdinalIgnoreCase))
+            if (s_whereSearchValues.Contains(methodName))
             {
                 var enumerator = (new object[] { obj }).GetEnumerator();
                 switch (args.Length)
@@ -7506,7 +7517,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (string.Equals(methodName, "Foreach", StringComparison.OrdinalIgnoreCase))
+            if (s_foreachSearchValues.Contains(methodName))
             {
                 var enumerator = (new object[] { obj }).GetEnumerator();
                 object[] argsToPass;
