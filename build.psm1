@@ -961,9 +961,26 @@ function Restore-PSPester
 {
     param(
         [ValidateNotNullOrEmpty()]
-        [string] $Destination = ([IO.Path]::Combine((Split-Path (Get-PSOptions -DefaultToNew).Output), "Modules"))
+        [string]$Destination = ([IO.Path]::Combine((Split-Path (Get-PSOptions -DefaultToNew).Output), 'Modules'))
     )
-    Save-Module -Name Pester -Path $Destination -Repository PSGallery -MaximumVersion 4.99
+
+    #The PowerShell Pester tests have not yet been fully updated to Pester 5.
+    #Update when https://github.com/PowerShell/PowerShell/issues/12816 is resolved.
+    [Microsoft.PowerShell.Commands.ModuleSpecification]$requiredPester = @{
+        ModuleName     = 'Pester';
+        ModuleVersion  = '4.2';
+        MaximumVersion = '4.99'
+    }
+
+    #Ensure an existing unsupported Pester isn't already loaded into the current session
+    Get-Module -Name Pester | Where-Object version -GE $requiredPester.MaximumVersion | Remove-Module
+
+    #Save-Module Requires the folder to already be present
+    if (-not (Test-Path $Destination)) {
+        throw "PowerShell Module Folder $Destination does not exist in which to restore Pester. Did you run a build first?"
+    }
+
+    Save-Module -InputObject $requiredPester -Repository PSGallery -Path $Destination
 }
 
 function Compress-TestContent {
@@ -1392,25 +1409,7 @@ function Start-PSPester {
         Switch-PSNugetConfig -Source Public
     }
 
-    #The PowerShell Pester tests have not yet been fully updated to Pester 5.
-    #Update when https://github.com/PowerShell/PowerShell/issues/12816 is resolved.
-    [Microsoft.PowerShell.Commands.ModuleSpecification]$requiredPester = @{
-        ModuleName     = 'Pester';
-        ModuleVersion  = '4.2';
-        MaximumVersion = '4.99'
-    }
-
-    if (-not (Get-Module -ListAvailable -FullyQualifiedName $requiredPester)) {
-        $publishModulePath = Join-Path $BinDir 'Modules'
-        #Create the base directory if it doesn't exist
-        if (-not (Test-Path $publishModulePath)) {
-            $null = New-Item -Path $publishModulePath -ItemType Directory -Force
-        }
-        Restore-PSPester -Destination $publishModulePath
-    }
-
-    #Ensure an existing Pester 5 isn't loaded
-    Get-Module -Name Pester | Where-Object version -GE $requiredPester.MaximumVersion | Remove-Module
+    Restore-PSPester -Destination $publishModulePath
 
     if ($IncludeFailingTest.IsPresent) {
         $Path += "$PSScriptRoot/tools/failingTests"
