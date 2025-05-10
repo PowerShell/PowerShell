@@ -39,26 +39,57 @@
 
     "tasks": [
         {
-            "label": "Bootstrap",
+            "label": "Build - Clean",
             "type": "shell",
-            "command": "Import-Module '${workspaceFolder}/build.psm1'; Start-PSBootstrap",
-            "problemMatcher": []
-        },
-        {
-            "label": "Clean Build",
-            "type": "shell",
-            "command": "Import-Module '${workspaceFolder}/build.psm1'; Start-PSBuild -Clean -Output (Join-Path '${workspaceFolder}' debug)",
-            "problemMatcher": "$msCompile"
-        },
-        {
-            "label": "Build",
-            "type": "shell",
-            "command": "Import-Module '${workspaceFolder}/build.psm1'; Start-PSBuild -Output (Join-Path '${workspaceFolder}' debug)",
+            "command": "Import-Module '${workspaceFolder}/build.psm1'; Start-PSBuild -Clean",
             "group": {
                 "kind": "build",
                 "isDefault": true
             },
             "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "Build",
+            "type": "shell",
+            "command": "Import-Module '${workspaceFolder}/build.psm1'; Start-PSBuild",
+            "group": {
+                "kind": "build",
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "Bootstrap",
+            "type": "shell",
+            "command": "Import-Module '${workspaceFolder}/build.psm1'; Start-PSBootstrap -Scenario dotnet",
+            "problemMatcher": []
+        },
+        {
+            "label": "Test",
+            "dependsOn": [
+                "Test - Pester",
+                "Test - xUnit"
+            ],
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Test - Pester",
+            "type": "shell",
+            "command": "Import-Module '${workspaceFolder}/build.psm1'; Start-PSPester",
+            "group": {
+                "kind": "test",
+            },
+        },
+        {
+            "label": "Test - xUnit",
+            "type": "shell",
+            "command": "Import-Module '${workspaceFolder}/build.psm1'; Start-PSXUnit",
+            "group": {
+                "kind": "test"
+            }
         }
     ]
+
 }
