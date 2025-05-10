@@ -2,14 +2,13 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": ".NET Core Launch",
+            "name": "PowerShell Dev Console",
             "type": "coreclr",
             "request": "launch",
             "program": "${workspaceRoot}/debug/pwsh",
             "console": "integratedTerminal",
             "justMyCode": false,
             "stopAtEntry": false,
-            "preLaunchTask": "Build",
             "cwd": "${workspaceRoot}"
         },
         {
