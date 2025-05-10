@@ -1,5 +1,6 @@
 #Docs: https://containers.dev/implementors/json_reference/#lifecycle-scripts
 . $PSScriptRoot/shared.ps1
+Import-Module -Force ./build.psm1
 
 log "Adding $SCRIPT:WorkspaceFolder to git safe directories"
 git config --global --add safe.directory $SCRIPT:WorkspaceFolder

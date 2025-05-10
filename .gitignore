@@ -4,6 +4,7 @@ obj/
 project.lock.json
 *-tests.xml
 /debug/
+/debug
 /staging/
 /Packages/
 *.nuget.props
