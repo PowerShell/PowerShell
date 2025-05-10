@@ -961,9 +961,23 @@ function Restore-PSPester
 {
     param(
         [ValidateNotNullOrEmpty()]
-        [string] $Destination = ([IO.Path]::Combine((Split-Path (Get-PSOptions -DefaultToNew).Output), "Modules"))
+        [string]$Destination = ([IO.Path]::Combine((Split-Path (Get-PSOptions -DefaultToNew).Output), 'Modules'))
     )
-    Save-Module -Name Pester -Path $Destination -Repository PSGallery -MaximumVersion 4.99
+
+    #The PowerShell Pester tests have not yet been fully updated to Pester 5.
+    #Update when https://github.com/PowerShell/PowerShell/issues/12816 is resolved.
+    [Microsoft.PowerShell.Commands.ModuleSpecification]$requiredPester = @{
+        ModuleName     = 'Pester';
+        ModuleVersion  = '4.2';
+        MaximumVersion = '4.99'
+    }
+
+    #Ensure an existing unsupported Pester isn't already loaded into the current session
+    Get-Module -Name Pester | Where-Object version -GE $requiredPester.MaximumVersion | Remove-Module
+
+    Save-Module -InputObject $requiredPester -Repository PSGallery -Path $Destination
+
+    Save-Module -Name $requiredPester.ModuleName -M
 }
 
 function Compress-TestContent {
@@ -973,7 +987,7 @@ function Compress-TestContent {
     )
 
     $null = Publish-PSTestTools
-    $powerShellTestRoot =  Join-Path $PSScriptRoot 'test'
+    $powerShellTestRoot = Join-Path $PSScriptRoot 'test'
     Add-Type -AssemblyName System.IO.Compression.FileSystem
 
     $resolvedPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Destination)
@@ -986,27 +1000,27 @@ function New-PSOptions {
         [ValidateSet('Debug', 'Release', 'CodeCoverage', 'StaticAnalysis', '')]
         [string]$Configuration,
 
-        [ValidateSet("net10.0")]
-        [string]$Framework = "net10.0",
+        [ValidateSet('net10.0')]
+        [string]$Framework = 'net10.0',
 
         # These are duplicated from Start-PSBuild
         # We do not use ValidateScript since we want tab completion
-        [ValidateSet("",
-                     "linux-musl-x64",
-                     "fxdependent",
-                     "fxdependent-noopt-linux-musl-x64",
-                     "fxdependent-linux-x64",
-                     "fxdependent-linux-arm64",
-                     "fxdependent-win-desktop",
-                     "linux-arm",
-                     "linux-arm64",
-                     "linux-x64",
-                     "osx-arm64",
-                     "osx-x64",
-                     "win-arm",
-                     "win-arm64",
-                     "win7-x64",
-                     "win7-x86")]
+        [ValidateSet('',
+            'linux-musl-x64',
+            'fxdependent',
+            'fxdependent-noopt-linux-musl-x64',
+            'fxdependent-linux-x64',
+            'fxdependent-linux-arm64',
+            'fxdependent-win-desktop',
+            'linux-arm',
+            'linux-arm64',
+            'linux-x64',
+            'osx-arm64',
+            'osx-x64',
+            'win-arm',
+            'win-arm64',
+            'win7-x64',
+            'win7-x86')]
         [string]$Runtime,
 
         # Accept a path to the output directory
@@ -1056,86 +1070,79 @@ function New-PSOptions {
         }
 
         if (-not $Runtime) {
-            Throw "Could not determine Runtime Identifier, please update dotnet"
+            throw 'Could not determine Runtime Identifier, please update dotnet'
         } else {
             Write-Verbose "Using runtime '$Runtime'"
         }
     }
 
     $PowerShellDir = if ($Runtime -like 'win*' -or ($Runtime -like 'fxdependent*' -and $environment.IsWindows)) {
-        "powershell-win-core"
+        'powershell-win-core'
     } else {
-        "powershell-unix"
+        'powershell-unix'
     }
 
-    $Top = [IO.Path]::Combine($PSScriptRoot, "src", $PowerShellDir)
+    $Top = [IO.Path]::Combine($PSScriptRoot, 'src', $PowerShellDir)
     Write-Verbose "Top project directory is $Top"
 
     $Executable = if ($Runtime -like 'fxdependent*') {
-        "pwsh.dll"
+        'pwsh.dll'
     } elseif ($environment.IsLinux -or $environment.IsMacOS) {
-        "pwsh"
+        'pwsh'
     } elseif ($environment.IsWindows) {
-        "pwsh.exe"
+        'pwsh.exe'
     }
 
     # Build the Output path
     if (!$Output) {
         if ($Runtime -like 'fxdependent*' -and ($Runtime -like 'fxdependent*linux*' -or $Runtime -like 'fxdependent*alpine*')) {
             $outputRuntime = $Runtime -replace 'fxdependent-', ''
-            $Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, $outputRuntime, "publish", $Executable)
-        }
-        elseif ($Runtime -like 'fxdependent*') {
-            $Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, "publish", $Executable)
-        }
-        else {
-            $Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, $Runtime, "publish", $Executable)
+            $Output = [IO.Path]::Combine($Top, 'bin', $Configuration, $Framework, $outputRuntime, 'publish', $Executable)
+        } elseif ($Runtime -like 'fxdependent*') {
+            $Output = [IO.Path]::Combine($Top, 'bin', $Configuration, $Framework, 'publish', $Executable)
+        } else {
+            $Output = [IO.Path]::Combine($Top, 'bin', $Configuration, $Framework, $Runtime, 'publish', $Executable)
         }
     } else {
         $Output = [IO.Path]::Combine($Output, $Executable)
     }
 
-    if ($SMAOnly)
-    {
-        $Top = [IO.Path]::Combine($PSScriptRoot, "src", "System.Management.Automation")
+    if ($SMAOnly) {
+        $Top = [IO.Path]::Combine($PSScriptRoot, 'src', 'System.Management.Automation')
     }
 
-    $RootInfo = @{RepoPath = $PSScriptRoot}
+    $RootInfo = @{RepoPath = $PSScriptRoot }
 
     # the valid root is the root of the filesystem and the folder PowerShell
     $RootInfo['ValidPath'] = Join-Path -Path ([system.io.path]::GetPathRoot($RootInfo.RepoPath)) -ChildPath 'PowerShell'
 
-    if($RootInfo.RepoPath -ne $RootInfo.ValidPath)
-    {
+    if ($RootInfo.RepoPath -ne $RootInfo.ValidPath) {
         $RootInfo['Warning'] = "Please ensure your repo is at the root of the file system and named 'PowerShell' (example: '$($RootInfo.ValidPath)'), when building and packaging for release!"
         $RootInfo['IsValid'] = $false
-    }
-    else
-    {
+    } else {
         $RootInfo['IsValid'] = $true
     }
 
     return New-PSOptionsObject `
-                -RootInfo ([PSCustomObject]$RootInfo) `
-                -Top $Top `
-                -Runtime $Runtime `
-                -Configuration $Configuration `
-                -PSModuleRestore $PSModuleRestore.IsPresent `
-                -Framework $Framework `
-                -Output $Output `
-                -ForMinimalSize $ForMinimalSize
+        -RootInfo ([PSCustomObject]$RootInfo) `
+        -Top $Top `
+        -Runtime $Runtime `
+        -Configuration $Configuration `
+        -PSModuleRestore $PSModuleRestore.IsPresent `
+        -Framework $Framework `
+        -Output $Output `
+        -ForMinimalSize $ForMinimalSize
 }
 
 # Get the Options of the last build
 function Get-PSOptions {
     param(
-        [Parameter(HelpMessage='Defaults to New-PSOption if a build has not occurred.')]
+        [Parameter(HelpMessage = 'Defaults to New-PSOption if a build has not occurred.')]
         [switch]
         $DefaultToNew
     )
 
-    if (!$script:Options -and $DefaultToNew.IsPresent)
-    {
+    if (!$script:Options -and $DefaultToNew.IsPresent) {
         return New-PSOptions
     }
 
@@ -1165,41 +1172,39 @@ function Get-PSOutput {
 }
 
 function Get-PesterTag {
-    param ( [Parameter(Position=0)][string]$testbase = "$PSScriptRoot/test/powershell" )
+    param ( [Parameter(Position = 0)][string]$testbase = "$PSScriptRoot/test/powershell" )
     $alltags = @{}
     $warnings = @()
 
-    Get-ChildItem -Recurse $testbase -File | Where-Object {$_.name -match "tests.ps1"}| ForEach-Object {
+    Get-ChildItem -Recurse $testbase -File | Where-Object { $_.name -match 'tests.ps1' } | ForEach-Object {
         $fullname = $_.fullname
         $tok = $err = $null
-        $ast = [System.Management.Automation.Language.Parser]::ParseFile($FullName, [ref]$tok,[ref]$err)
+        $ast = [System.Management.Automation.Language.Parser]::ParseFile($FullName, [ref]$tok, [ref]$err)
         $des = $ast.FindAll({
-            $args[0] -is [System.Management.Automation.Language.CommandAst] `
-                -and $args[0].CommandElements.GetType() -in @(
+                $args[0] -is [System.Management.Automation.Language.CommandAst] `
+                    -and $args[0].CommandElements.GetType() -in @(
                     [System.Management.Automation.Language.StringConstantExpressionAst],
                     [System.Management.Automation.Language.ExpandableStringExpressionAst]
                 ) `
-                -and $args[0].CommandElements[0].Value -eq "Describe"
-        }, $true)
-        foreach( $describe in $des) {
+                    -and $args[0].CommandElements[0].Value -eq 'Describe'
+            }, $true)
+        foreach ( $describe in $des) {
             $elements = $describe.CommandElements
             $lineno = $elements[0].Extent.StartLineNumber
             $foundPriorityTags = @()
             for ( $i = 0; $i -lt $elements.Count; $i++) {
-                if ( $elements[$i].extent.text -match "^-t" ) {
-                    $vAst = $elements[$i+1]
-                    if ( $vAst.FindAll({$args[0] -is "System.Management.Automation.Language.VariableExpressionAst"},$true) ) {
+                if ( $elements[$i].extent.text -match '^-t' ) {
+                    $vAst = $elements[$i + 1]
+                    if ( $vAst.FindAll({ $args[0] -is 'System.Management.Automation.Language.VariableExpressionAst' }, $true) ) {
                         $warnings += "TAGS must be static strings, error in ${fullname}, line $lineno"
                     }
-                    $values = $vAst.FindAll({$args[0] -is "System.Management.Automation.Language.StringConstantExpressionAst"},$true).Value
+                    $values = $vAst.FindAll({ $args[0] -is 'System.Management.Automation.Language.StringConstantExpressionAst' }, $true).Value
                     $values | ForEach-Object {
                         if (@('REQUIREADMINONWINDOWS', 'REQUIRESUDOONUNIX', 'SLOW') -contains $_) {
                             # These are valid tags also, but they are not the priority tags
-                        }
-                        elseif (@('CI', 'FEATURE', 'SCENARIO') -contains $_) {
+                        } elseif (@('CI', 'FEATURE', 'SCENARIO') -contains $_) {
                             $foundPriorityTags += $_
-                        }
-                        else {
+                        } else {
                             $warnings += "${fullname} includes improper tag '$_', line '$lineno'"
                         }
 
@@ -1209,29 +1214,26 @@ function Get-PesterTag {
             }
             if ( $foundPriorityTags.Count -eq 0 ) {
                 $warnings += "${fullname}:$lineno does not include -Tag in Describe"
-            }
-            elseif ( $foundPriorityTags.Count -gt 1 ) {
+            } elseif ( $foundPriorityTags.Count -gt 1 ) {
                 $warnings += "${fullname}:$lineno includes more then one scope -Tag: $foundPriorityTags"
             }
         }
     }
     if ( $Warnings.Count -gt 0 ) {
-        $alltags['Result'] = "Fail"
-    }
-    else {
-        $alltags['Result'] = "Pass"
+        $alltags['Result'] = 'Fail'
+    } else {
+        $alltags['Result'] = 'Pass'
     }
     $alltags['Warnings'] = $warnings
     $o = [pscustomobject]$alltags
-    $o.psobject.TypeNames.Add("DescribeTagsInUse")
+    $o.psobject.TypeNames.Add('DescribeTagsInUse')
     $o
 }
 
 # Function to build and publish the Microsoft.PowerShell.NamedPipeConnection module for
 # testing PowerShell remote custom connections.
-function Publish-CustomConnectionTestModule
-{
-    Write-LogGroupStart -Title "Publish-CustomConnectionTestModule"
+function Publish-CustomConnectionTestModule {
+    Write-LogGroupStart -Title 'Publish-CustomConnectionTestModule'
     $sourcePath = "${PSScriptRoot}/test/tools/NamedPipeConnection"
     $outPath = "${PSScriptRoot}/test/tools/NamedPipeConnection/out/Microsoft.PowerShell.NamedPipeConnection"
     $publishPath = "${PSScriptRoot}/test/tools/Modules"
@@ -1252,12 +1254,11 @@ function Publish-CustomConnectionTestModule
 
         # Clean up build artifacts
         ./build.ps1 -Clean
-    }
-    finally {
+    } finally {
         Pop-Location
     }
 
-    Write-LogGroupEnd -Title "Publish-CustomConnectionTestModule"
+    Write-LogGroupEnd -Title 'Publish-CustomConnectionTestModule'
 }
 
 function Publish-PSTestTools {
@@ -1267,30 +1268,29 @@ function Publish-PSTestTools {
         $runtime
     )
 
-    Write-LogGroupStart -Title "Publish-PSTestTools"
+    Write-LogGroupStart -Title 'Publish-PSTestTools'
     Find-Dotnet
 
     $tools = @(
-        @{ Path="${PSScriptRoot}/test/tools/TestAlc";     Output="library" }
-        @{ Path="${PSScriptRoot}/test/tools/TestExe";     Output="exe" }
-        @{ Path="${PSScriptRoot}/test/tools/UnixSocket";  Output="exe" }
-        @{ Path="${PSScriptRoot}/test/tools/WebListener"; Output="exe" }
+        @{ Path = "${PSScriptRoot}/test/tools/TestAlc"; Output = 'library' }
+        @{ Path = "${PSScriptRoot}/test/tools/TestExe"; Output = 'exe' }
+        @{ Path = "${PSScriptRoot}/test/tools/UnixSocket"; Output = 'exe' }
+        @{ Path = "${PSScriptRoot}/test/tools/WebListener"; Output = 'exe' }
     )
 
     # This is a windows service, so it only works on windows
     if ($environment.IsWindows) {
-        $tools += @{ Path = "${PSScriptRoot}/test/tools/TestService"; Output = "exe" }
+        $tools += @{ Path = "${PSScriptRoot}/test/tools/TestService"; Output = 'exe' }
     }
 
     $Options = Get-PSOptions -DefaultToNew
 
     # Publish tools so it can be run by tests
-    foreach ($tool in $tools)
-    {
+    foreach ($tool in $tools) {
         Push-Location $tool.Path
         try {
-            $toolPath = Join-Path -Path $tool.Path -ChildPath "bin"
-            $objPath = Join-Path -Path $tool.Path -ChildPath "obj"
+            $toolPath = Join-Path -Path $tool.Path -ChildPath 'bin'
+            $objPath = Join-Path -Path $tool.Path -ChildPath 'obj'
 
             if (Test-Path $toolPath) {
                 Remove-Item -Path $toolPath -Recurse -Force
@@ -1320,14 +1320,14 @@ function Publish-PSTestTools {
             dotnet publish --output bin --configuration $Options.Configuration --framework $Options.Framework --runtime $runtime --self-contained | Out-String | Write-Verbose -Verbose
 
             $dll = $null
-            $dll = Get-ChildItem -Path bin -Recurse -Filter "*.dll"
+            $dll = Get-ChildItem -Path bin -Recurse -Filter '*.dll'
 
             if (-not $dll) {
                 throw "Failed to find exe in $toolPath"
             }
 
             if ( -not $env:PATH.Contains($toolPath) ) {
-                $env:PATH = $toolPath+$TestModulePathSeparator+$($env:PATH)
+                $env:PATH = $toolPath + $TestModulePathSeparator + $($env:PATH)
             }
         } finally {
             Pop-Location
@@ -1339,11 +1339,11 @@ function Publish-PSTestTools {
 
     # Publish the Microsoft.PowerShell.NamedPipeConnection module
     Publish-CustomConnectionTestModule
-    Write-LogGroupEnd -Title "Publish-PSTestTools"
+    Write-LogGroupEnd -Title 'Publish-PSTestTools'
 }
 
 function Get-ExperimentalFeatureTests {
-    $testMetadataFile = Join-Path $PSScriptRoot "test/tools/TestMetadata.json"
+    $testMetadataFile = Join-Path $PSScriptRoot 'test/tools/TestMetadata.json'
     $metadata = Get-Content -Path $testMetadataFile -Raw | ConvertFrom-Json | ForEach-Object -MemberName ExperimentalFeatures
     $features = $metadata | Get-Member -MemberType NoteProperty | ForEach-Object -MemberName Name
 
@@ -1355,34 +1355,34 @@ function Get-ExperimentalFeatureTests {
 }
 
 function Start-PSPester {
-    [CmdletBinding(DefaultParameterSetName='default')]
+    [CmdletBinding(DefaultParameterSetName = 'default')]
     param(
-        [Parameter(Position=0)]
-        [ArgumentCompleter({param($c,$p,$word) Get-ChildItem -Recurse -File -LiteralPath $PSScriptRoot/Test/PowerShell -filter *.tests.ps1 | Where-Object FullName -like "*$word*" })]
+        [Parameter(Position = 0)]
+        [ArgumentCompleter({ param($c, $p, $word) Get-ChildItem -Recurse -File -LiteralPath $PSScriptRoot/Test/PowerShell -Filter *.tests.ps1 | Where-Object FullName -Like "*$word*" })]
         [string[]]$Path = @("$PSScriptRoot/test/powershell"),
-        [string]$OutputFormat = "NUnitXml",
-        [string]$OutputFile = "pester-tests.xml",
+        [string]$OutputFormat = 'NUnitXml',
+        [string]$OutputFile = 'pester-tests.xml',
         [string[]]$ExcludeTag = 'Slow',
-        [string[]]$Tag = @("CI","Feature"),
+        [string[]]$Tag = @('CI', 'Feature'),
         [switch]$ThrowOnFailure,
         [string]$BinDir = (Split-Path (Get-PSOptions -DefaultToNew).Output),
         [string]$powershell = (Join-Path $BinDir 'pwsh'),
-        [string]$Pester = ([IO.Path]::Combine($BinDir, "Modules", "Pester")),
-        [Parameter(ParameterSetName='Unelevate',Mandatory=$true)]
+        [string]$Pester = ([IO.Path]::Combine($BinDir, 'Modules', 'Pester')),
+        [Parameter(ParameterSetName = 'Unelevate', Mandatory = $true)]
         [switch]$Unelevate,
         [switch]$Quiet,
         [switch]$Terse,
-        [Parameter(ParameterSetName='PassThru',Mandatory=$true)]
+        [Parameter(ParameterSetName = 'PassThru', Mandatory = $true)]
         [switch]$PassThru,
-        [Parameter(ParameterSetName='PassThru',HelpMessage='Run commands on Linux with sudo.')]
+        [Parameter(ParameterSetName = 'PassThru', HelpMessage = 'Run commands on Linux with sudo.')]
         [switch]$Sudo,
         [switch]$IncludeFailingTest,
         [switch]$IncludeCommonTests,
         [string]$ExperimentalFeatureName,
-        [Parameter(HelpMessage='Title to publish the results as.')]
+        [Parameter(HelpMessage = 'Title to publish the results as.')]
         [string]$Title = 'PowerShell 7 Tests',
-        [Parameter(ParameterSetName='Wait', Mandatory=$true,
-            HelpMessage='Wait for the debugger to attach to PowerShell before Pester starts.  Debug builds only!')]
+        [Parameter(ParameterSetName = 'Wait', Mandatory = $true,
+            HelpMessage = 'Wait for the debugger to attach to PowerShell before Pester starts.  Debug builds only!')]
         [switch]$Wait,
         [switch]$SkipTestToolBuild,
         [switch]$UseNuGetOrg
@@ -1392,71 +1392,52 @@ function Start-PSPester {
         Switch-PSNugetConfig -Source Public
     }
 
-    if (-not (Get-Module -ListAvailable -Name $Pester -ErrorAction SilentlyContinue | Where-Object { $_.Version -ge "4.2" } ))
-    {
-        Restore-PSPester
-    }
+    Restore-PSPester -Destination $publishModulePath
 
-    if ($IncludeFailingTest.IsPresent)
-    {
+    if ($IncludeFailingTest.IsPresent) {
         $Path += "$PSScriptRoot/tools/failingTests"
     }
 
-    if($IncludeCommonTests.IsPresent)
-    {
+    if ($IncludeCommonTests.IsPresent) {
         $path = += "$PSScriptRoot/test/common"
     }
 
     # we need to do few checks and if user didn't provide $ExcludeTag explicitly, we should alternate the default
-    if ($Unelevate)
-    {
-        if (-not $environment.IsWindows)
-        {
+    if ($Unelevate) {
+        if (-not $environment.IsWindows) {
             throw '-Unelevate is currently not supported on non-Windows platforms'
         }
 
-        if (-not $environment.IsAdmin)
-        {
+        if (-not $environment.IsAdmin) {
             throw '-Unelevate cannot be applied because the current user is not Administrator'
         }
 
-        if (-not $PSBoundParameters.ContainsKey('ExcludeTag'))
-        {
+        if (-not $PSBoundParameters.ContainsKey('ExcludeTag')) {
             $ExcludeTag += 'RequireAdminOnWindows'
         }
-    }
-    elseif ($environment.IsWindows -and (-not $environment.IsAdmin))
-    {
-        if (-not $PSBoundParameters.ContainsKey('ExcludeTag'))
-        {
+    } elseif ($environment.IsWindows -and (-not $environment.IsAdmin)) {
+        if (-not $PSBoundParameters.ContainsKey('ExcludeTag')) {
             $ExcludeTag += 'RequireAdminOnWindows'
         }
-    }
-    elseif (-not $environment.IsWindows -and (-not $Sudo.IsPresent))
-    {
-        if (-not $PSBoundParameters.ContainsKey('ExcludeTag'))
-        {
+    } elseif (-not $environment.IsWindows -and (-not $Sudo.IsPresent)) {
+        if (-not $PSBoundParameters.ContainsKey('ExcludeTag')) {
             $ExcludeTag += 'RequireSudoOnUnix'
         }
-    }
-    elseif (-not $environment.IsWindows -and $Sudo.IsPresent)
-    {
-        if (-not $PSBoundParameters.ContainsKey('Tag'))
-        {
+    } elseif (-not $environment.IsWindows -and $Sudo.IsPresent) {
+        if (-not $PSBoundParameters.ContainsKey('Tag')) {
             $Tag = 'RequireSudoOnUnix'
         }
     }
 
     Write-Verbose "Running pester tests at '$path' with tag '$($Tag -join ''', ''')' and ExcludeTag '$($ExcludeTag -join ''', ''')'" -Verbose
-    if(!$SkipTestToolBuild.IsPresent)
-    {
+    if (!$SkipTestToolBuild.IsPresent) {
         $publishArgs = @{ }
         # if we are building for Alpine, we must include the runtime as linux-x64
         # will not build runnable test tools
         if ( $environment.IsLinux -and $environment.IsAlpine ) {
             $publishArgs['runtime'] = 'linux-musl-x64'
         }
-        Publish-PSTestTools @publishArgs | ForEach-Object {Write-Host $_}
+        Publish-PSTestTools @publishArgs | ForEach-Object { Write-Host $_ }
 
         # Publish the Microsoft.PowerShell.NamedPipeConnection module for testing custom remote connections.
         Publish-CustomConnectionTestModule | ForEach-Object { Write-Host $_ }
@@ -1466,21 +1447,20 @@ function Start-PSPester {
 
     # Disable telemetry for all startups of pwsh in tests
     $command = "`$env:POWERSHELL_TELEMETRY_OPTOUT = 'yes';"
-    if ($Terse)
-    {
+    if ($Terse) {
         $command += "`$ProgressPreference = 'silentlyContinue'; "
     }
 
     # Autoload (in subprocess) temporary modules used in our tests
     $newPathFragment = $TestModulePath + $TestModulePathSeparator
-    $command += '$env:PSModulePath = '+"'$newPathFragment'" + '+$env:PSModulePath;'
+    $command += '$env:PSModulePath = ' + "'$newPathFragment'" + '+$env:PSModulePath;'
 
     # Windows needs the execution policy adjusted
     if ($environment.IsWindows) {
-        $command += "Set-ExecutionPolicy -Scope Process Unrestricted; "
+        $command += 'Set-ExecutionPolicy -Scope Process Unrestricted; '
     }
 
-    $command += "Import-Module '$Pester'; "
+    $command += "Import-Module '$Pester' -MaximumVersion $($requiredPester.MaximumVersion) -MinimumVersion $($requiredPester.MinimumVersion) -ErrorAction Stop; "
 
     if ($Unelevate)
     {
