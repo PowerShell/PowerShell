@@ -1488,10 +1488,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     debugBuilder.Append(DebugHeaderPrefix).AppendLine("QUERY");
                     string[] queryParams = request.RequestUri.Query.TrimStart('?').Split('&');
-                    foreach (string param in queryParams)
-                    {
-                        debugBuilder.AppendLine(param);
-                    }
+                    debugBuilder.AppendJoin(Environment.NewLine, queryParams);
                 }
 
                 debugBuilder.Append(DebugHeaderPrefix).AppendLine("HEADERS");
@@ -1503,13 +1500,7 @@ namespace Microsoft.PowerShell.Commands
                         continue;
                     }
 
-                    foreach (var header in headerSet)
-                    {
-                        debugBuilder
-                        .Append($"{header.Key}: ")
-                        .AppendJoin(", ", header.Value)
-                        .AppendLine();
-                    }
+                    debugBuilder.AppendLine(headerSet.ToString());
                 }
 
                 if (request.Content is not null)
@@ -1592,7 +1583,7 @@ namespace Microsoft.PowerShell.Commands
                 // 200 OK
                 StringBuilder debugBuilder = new("WebResponse Detail" + Environment.NewLine, 512);
 
-                debugBuilder.AppendLine(DebugHeaderPrefix + "HEADERS");
+                debugBuilder.Append(DebugHeaderPrefix).AppendLine("HEADERS");
 
                 foreach (var headerSet in new HttpHeaders?[] { response.Headers, response.Content?.Headers })
                 {
@@ -1601,15 +1592,12 @@ namespace Microsoft.PowerShell.Commands
                         continue;
                     }
 
-                    foreach (var header in headerSet)
-                    {
-                        debugBuilder.AppendLine($"{header.Key}: {string.Join(", ", header.Value)}");
-                    }
+                    debugBuilder.AppendLine(headerSet.ToString());
                 }
 
                 if (response.Content is not null)
                 {
-                    debugBuilder.AppendLine(DebugHeaderPrefix + "BODY");
+                    debugBuilder.Append(DebugHeaderPrefix).AppendLine("BODY");
 
                     if (ContentHelper.IsTextBasedContentType(ContentHelper.GetContentType(response)))
                     {
