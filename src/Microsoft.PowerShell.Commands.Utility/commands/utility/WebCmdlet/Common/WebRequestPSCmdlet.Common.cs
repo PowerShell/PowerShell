@@ -1506,7 +1506,7 @@ namespace Microsoft.PowerShell.Commands
                 if (request.Content is not null)
                 {
                     debugBuilder
-                    .AppendLine(DebugHeaderPrefix + "BODY")
+                    .Append(DebugHeaderPrefix).AppendLine("BODY")
                     .AppendLine(request.Content switch
                     {
                         StringContent stringContent => stringContent
