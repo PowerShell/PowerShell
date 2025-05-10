@@ -4,7 +4,7 @@
 	"name": "PowerShell Development",
 	// NOTE: This should be kept up to date to match the .NET SDK currently in use on the master branch.
   	// but not mandatory as we fetch the appropriate .NET SDK as needed during build.
-	"image": "mcr.microsoft.com/devcontainers/dotnet:dev-10.0-preview-noble",
+	"image": "mcr.microsoft.com/devcontainers/dotnet:1-10.0-preview-noble",
 	"hostRequirements": {
 		"cpus": 4
 	},
@@ -12,6 +12,19 @@
 	// Bind the working folder to /powershell instead of /workspaces/PowerShell
 	"workspaceMount": "source=${localWorkspaceFolder},target=/powershell,type=bind,consistency=cached",
 	"workspaceFolder": "/powershell",
+
+	"capAdd": [
+		"NET_RAW" // Needed for Pester tests that require ping
+	],
+
+	"remoteUser": "vscode",
+	"containerUser": "vscode",
+
+	// This is required if the dotnet is updated to a later version than what is in the image.
+	// So that the C# extension can detect it. Doing it in .bashrc is not enough.
+	"remoteEnv": {
+		"PATH": "/home/vscode/.dotnet:${containerEnv:PATH}"
+	},
 
 	// Container lifecycle scripts
 	// Docs: https://containers.dev/implementors/json_reference/#lifecycle-scripts
@@ -22,7 +35,7 @@
 
 	// These lifecycle scripts are non-blocking to loading the codespace and UI by default
 	// "postCreateCommand": ["/usr/bin/pwsh", "-nop", "-noni", "-f", ".devcontainer/scripts/3-postCreate.ps1"],
-	"postStartCommand": ["/usr/bin/pwsh", "-nop", "-noni", "-f", ".devcontainer/scripts/4-postStart.ps1"],
+	// "postStartCommand": ["/usr/bin/pwsh", "-nop", "-noni", "-f", ".devcontainer/scripts/4-postStart.ps1"],
 	// "postAttachCommand": ["/usr/bin/pwsh", "-nop", "-noni", "-f", ".devcontainer/scripts/5-postAttach.ps1"],
 
 	// Configure tool-specific properties.
@@ -55,9 +68,4 @@
 			]
 		}
 	}
-
-	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-	// Generally not necessary because sudo is available in the container.
-	// NOTE: if using Windows Docker Desktop or WSL, you need to add options = "metadata,uid=1000,gid=1000" to wsl.conf to avoid permissions errors. You can also uncomment this to use root, but it is not recommended
-	// "remoteUser": "root"
 }

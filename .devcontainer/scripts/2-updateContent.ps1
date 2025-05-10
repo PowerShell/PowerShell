@@ -3,7 +3,7 @@
 
 #If doing a clone into devcontainer, VSCode defaults to a shallow clone. The build process does not support shallow
 #clones due to the use of git tag describe, so we must "unshallow" it if this occurs
-if ([bool](git rev-parse --is-shallow-repository)) {
+if ((git rev-parse --is-shallow-repository) -ne 'false') {
     log 'Shallow Clone detected, this is not supported by the PowerShell build process. Unshallowing...'
     git fetch --unshallow
 }
@@ -12,18 +12,18 @@ if ([bool](git rev-parse --is-shallow-repository)) {
 Import-Module -Force ./build.psm1
 Sync-PSTags -AddRemoteIfMissing
 
-log 'Bootstrap PowerShell Prerequisites'
-& sudo pwsh -c {
-    Import-Module -Force ./build.psm1
-    Start-PSBootstrap -Scenario DotNet
-}
+log 'Bootstrap PowerShell Build Prerequisites'
+Import-Module -Force ./build.psm1
+Start-PSBootstrap -Scenario DotNet
+
+#Ping is needed for tests but is not included in the .NET SDK devcontainer and PSBootstrap doesn't cover it
+log 'Installing iputils (for the ping utility)'
+sudo apt install iputils-ping -y
 
 # Perform a build if Github Codespaces prebuild, otherwise optimize to start quickly
 if ($ENV:CODESPACES) {
-    $outputPath = Join-Path $SCRIPT:WorkspaceFolder 'debug'
     log "Prebuilding PowerShell for Codespaces to $outputPath"
-    Start-PSBuild -UseNugetOrg -Clean -Output $outputPath
-
+    Start-PSBuild -UseNugetOrg -Clean
     log 'Prebuilding Tests'
     dotnet build test/xUnit test/Modules
 }

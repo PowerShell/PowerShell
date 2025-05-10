@@ -13,6 +13,8 @@ if (-not (Test-Path $defaultWorkspaceFolder)) {
     git config --global --add safe.directory $defaultWorkspaceFolder
 }
 
+
+
 # NOTE: We override the Azure Devops private feed as it may not be up to date with the required packages
 # This is only for development and not builds so any potential vulnerabilities will be caught at CI time
 # If you want to restore private restore behavior for testing, perform the following:
@@ -25,14 +27,3 @@ git update-index --skip-worktree nuget.config src/Modules/nuget.config test/tool
 log 'Switching to Nuget.Org Packages Only for Codespaces Development'
 Import-Module ./build.psm1
 Switch-PSNugetConfig -Source NuGetOnly
-
-#Install latest .NET specified by the PowerShell global.json file. Start-PSBootstrap can do this but we want to ensure it goes into the devcontainer global directory.
-Push-Location /tmp
-try {
-    & curl -LOs https://dot.net/v1/dotnet-install.sh
-    & chmod +x dotnet-install.sh
-    log 'Checking if PowerShell global.json dotnet SDK version is installed'
-    & sudo ./dotnet-install.sh --install-dir /usr/share/dotnet --jsonfile $WorkspaceFolder/global.json
-} finally {
-    Pop-Location
-}

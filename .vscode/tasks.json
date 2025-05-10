@@ -39,9 +39,9 @@
 
     "tasks": [
         {
-            "label": "Build",
+            "label": "Build - Clean",
             "type": "shell",
-            "command": "Import-Module '${workspaceFolder}/build.psm1'; Start-PSBuild -Output (Join-Path '${workspaceFolder}' debug)",
+            "command": "Import-Module '${workspaceFolder}/build.psm1'; Start-PSBuild -Clean",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -49,9 +49,9 @@
             "problemMatcher": "$msCompile"
         },
         {
-            "label": "Build - Clean",
+            "label": "Build",
             "type": "shell",
-            "command": "Import-Module '${workspaceFolder}/build.psm1'; Start-PSBuild -Clean -Output (Join-Path '${workspaceFolder}' debug)",
+            "command": "Import-Module '${workspaceFolder}/build.psm1'; Start-PSBuild",
             "group": {
                 "kind": "build",
             },
@@ -60,7 +60,7 @@
         {
             "label": "Bootstrap",
             "type": "shell",
-            "command": "Import-Module '${workspaceFolder}/build.psm1'; Start-PSBootstrap",
+            "command": "Import-Module '${workspaceFolder}/build.psm1'; Start-PSBootstrap -Scenario dotnet",
             "problemMatcher": []
         },
         {
@@ -77,7 +77,7 @@
         {
             "label": "Test - Pester",
             "type": "shell",
-            "command": "Import-Module '${workspaceFolder}/build.psm1'; Start-PSPester -powershell '${workspaceFolder}/debug'",
+            "command": "Import-Module '${workspaceFolder}/build.psm1'; Start-PSPester",
             "group": {
                 "kind": "test",
             },
