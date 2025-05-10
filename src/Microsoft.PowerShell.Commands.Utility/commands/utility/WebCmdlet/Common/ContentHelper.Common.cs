@@ -27,7 +27,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal static string GetFriendlyContentLength(long? length) =>
             length.HasValue
-            ? $"{length.Value.Bytes().Humanize()} ({length.Value.ToString("#,0").Replace(",", " ")} bytes)"
+            ? $"{length.Value.Bytes().Humanize()} ({length.Value:#,0} bytes)"
             : "unknown size";
 
         internal static StringBuilder GetRawContentHeader(HttpResponseMessage response)

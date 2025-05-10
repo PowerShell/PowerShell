@@ -309,7 +309,7 @@ function ExecuteRestMethod {
             foreach ($item in $result.Debug) {
                 $line = $item.Trim()
                 if ($line.StartsWith($debugEncodingPrefix)) {
-                    $encodingName = $item.SubString($EncodingPrefix.Length).Trim()
+                    $encodingName = $item.SubString($EncodingPrefix.Length).Split('(')[0].Trim()
                     $result.Encoding = [System.Text.Encoding]::GetEncoding($encodingName)
                     break
                 }
