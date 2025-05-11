@@ -499,11 +499,16 @@ namespace System.Management.Automation
                     nestedModulesToFilterOut = new(currentModule.NestedModules);
                 }
 
+                var completedModules = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                 foreach (PSObject item in psObjects)
                 {
                     var moduleInfo = (PSModuleInfo)item.BaseObject;
                     var completionText = moduleInfo.Name;
-                    var listItemText = completionText;
+                    if (!completedModules.Add(completionText))
+                    {
+                        continue;
+                    }
+
                     if (shortNameSearch
                         && completionText.Contains('.')
                         && !shortNamePattern.IsMatch(completionText.Substring(completionText.LastIndexOf('.') + 1))
@@ -524,6 +529,7 @@ namespace System.Management.Automation
                                   + moduleInfo.ModuleType.ToString() + "\r\nPath: "
                                   + moduleInfo.Path;
 
+                    string listItemText = completionText;
                     completionText = CompletionHelpers.QuoteCompletionText(completionText, quote);
 
                     result.Add(new CompletionResult(completionText, listItemText, CompletionResultType.ParameterValue, toolTip));
