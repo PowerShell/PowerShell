@@ -92,6 +92,7 @@ Describe "TabCompletion" -Tags CI {
             $env:PSModulePath = $OldModulePath
             Remove-Item -LiteralPath $ModuleDirs -Recurse -Force
         }
+    }
 
     It 'Should complete dotnet method' {
         $res = TabExpansion2 -inputScript '(1).ToSt' -cursorColumn '(1).ToSt'.Length
