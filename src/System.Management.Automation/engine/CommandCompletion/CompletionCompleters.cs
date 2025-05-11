@@ -529,10 +529,9 @@ namespace System.Management.Automation
                                   + moduleInfo.ModuleType.ToString() + "\r\nPath: "
                                   + moduleInfo.Path;
 
-                    string listItemText = completionText;
                     completionText = CompletionHelpers.QuoteCompletionText(completionText, quote);
 
-                    result.Add(new CompletionResult(completionText, listItemText, CompletionResultType.ParameterValue, toolTip));
+                    result.Add(new CompletionResult(completionText, listItemText: moduleInfo.Name, CompletionResultType.ParameterValue, toolTip));
                 }
             }
 
