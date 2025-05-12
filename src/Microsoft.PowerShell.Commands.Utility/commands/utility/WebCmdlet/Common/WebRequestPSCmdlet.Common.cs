@@ -1287,12 +1287,12 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (IsWriteVerboseEnabled())
                     {
-                        WriteWebRequestVerboseInfo(request);
+                        WriteWebRequestVerboseInfo(currentRequest);
                     }
 
                     if (IsWriteDebugEnabled())
                     {
-                        GetWebRequestDebugInfo(request);
+                        GetWebRequestDebugInfo(currentRequest);
                     }
 
                     response = client.SendAsync(currentRequest, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
