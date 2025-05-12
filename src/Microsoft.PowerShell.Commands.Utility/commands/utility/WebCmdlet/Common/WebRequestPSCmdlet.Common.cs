@@ -1292,7 +1292,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (IsWriteDebugEnabled())
                     {
-                        GetWebRequestDebugInfo(currentRequest);
+                        WriteWebRequestDebugInfo(currentRequest);
                     }
 
                     response = client.SendAsync(currentRequest, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
@@ -1472,7 +1472,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private void GetWebRequestDebugInfo(HttpRequestMessage request)
+        private void WriteWebRequestDebugInfo(HttpRequestMessage request)
         {
             try
             {
