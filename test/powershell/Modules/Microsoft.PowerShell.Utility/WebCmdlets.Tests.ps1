@@ -301,15 +301,17 @@ function ExecuteRestMethod {
     $DebugPreference = 'Continue'
     try {
         $debugFile = Join-Path $TestDrive -ChildPath ExecuteRestMethod.debug.txt
-        $result.Output = Invoke-RestMethod -Uri $Uri -UseBasicParsing:$UseBasicParsing.IsPresent -Debug 5>$debugFile
+        $result.Output = Invoke-RestMethod -Uri $Uri -UseBasicParsing:$UseBasicParsing.IsPresent 5>$debugFile
         $result.Content = $result.Output
 
+        # Invoke-RestMethod does not return encoding as part of an object, only in debug output, so we parse the debug output for the purposes of verifying the test.
+        # This debug output is defined in InvokeRestMethodCommand.Common.cs ProcessResponse()
         if (Test-Path -Path $debugFile) {
             $result.Debug = Get-Content -Path $debugFile
             foreach ($item in $result.Debug) {
                 $line = $item.Trim()
                 if ($line.StartsWith($debugEncodingPrefix)) {
-                    $encodingName = $item.SubString($EncodingPrefix.Length).Split('(')[0].Trim()
+                    $encodingName = [int]::Parse($item.SubString($EncodingPrefix.Length).Split('CodePage: ')[1].Trim())
                     $result.Encoding = [System.Text.Encoding]::GetEncoding($encodingName)
                     break
                 }

@@ -99,22 +99,22 @@ namespace Microsoft.PowerShell.Commands
                     string? characterSet = WebResponseHelper.GetCharacterSet(response);
                     string str = StreamHelper.DecodeStream(responseStream, characterSet, out Encoding encoding, perReadTimeout, _cancelToken.Token);
 
-                    string encodingName = "unknown";
-                    string encodingHeaderName = "unknown";
+                    string friendlyName = "unknown";
+                    string encodingWebName = "unknown";
                     string encodingPage = encoding.CodePage == -1 ? "unknown" : encoding.CodePage.ToString();
                     try
                     {
                         // NOTE: These are getter methods that may possibly throw a NotSupportedException exception,
                         // hence the try/catch
-                        encodingHeaderName = encoding.HeaderName;
-                        encodingName = encoding.BodyName;
+                        encodingWebName = encoding.WebName;
+                        friendlyName = encoding.EncodingName;
                     }
                     catch
                     {
                     }
 
                     // NOTE: Tests use this debug output to verify the encoding.
-                    WriteDebug($"WebResponse content encoding: {encodingHeaderName} ({encodingName}) CodePage: {encodingPage}");
+                    WriteDebug($"WebResponse content encoding: {encodingWebName} ({friendlyName}) CodePage: {encodingPage}");
 
                     // Determine the response type
                     RestReturnType returnType = CheckReturnType(response);
