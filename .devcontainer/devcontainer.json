@@ -35,7 +35,7 @@
 
 	// These lifecycle scripts are non-blocking to loading the codespace and UI by default
 	// "postCreateCommand": ["/usr/bin/pwsh", "-nop", "-noni", "-f", ".devcontainer/scripts/3-postCreate.ps1"],
-	// "postStartCommand": ["/usr/bin/pwsh", "-nop", "-noni", "-f", ".devcontainer/scripts/4-postStart.ps1"],
+	"postStartCommand": ["/usr/bin/pwsh", "-nop", "-noni", "-f", ".devcontainer/scripts/4-postStart.ps1"],
 	// "postAttachCommand": ["/usr/bin/pwsh", "-nop", "-noni", "-f", ".devcontainer/scripts/5-postAttach.ps1"],
 
 	// Configure tool-specific properties.
