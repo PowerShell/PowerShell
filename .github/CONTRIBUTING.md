@@ -3,6 +3,7 @@
 We welcome and appreciate contributions from the community!
 
 There are many ways to become involved with PowerShell including:
+
 - [Contributing to Documentation](#contributing-to-documentation)
 - [Contributing to Issues](#contributing-to-issues)
 - [Contributing to Code](#contributing-to-code)
@@ -10,6 +11,7 @@ There are many ways to become involved with PowerShell including:
 Please read the rest of this document to ensure a smooth contribution process.
 
 ## Contributing to Documentation
+
 Contributing to the docs is an excellent way to get started with the process of making open source contributions with minimal technical skill required.
 
 Please see the [Contributor Guide in `MicrosoftDocs/PowerShell-Docs`](https://aka.ms/PSDocsContributor).
@@ -109,14 +111,15 @@ Additional references:
 * GitHub's guide on [Contributing to Open Source](https://guides.github.com/activities/contributing-to-open-source/#pull-request)
 * GitHub's guide on [Understanding the GitHub Flow](https://guides.github.com/introduction/flow/)
 
-
 ## Contributing to Code
 
 ### Quick Start Checklist
 
 * Review the [Contributor License Agreement][CLA] requirement.
 * Get familiar with the [PowerShell Repository Git Concepts](../docs/git/README.md).
-* Start a [Github Codespace](#Dev Container) and start exploring the repository.
+* Start a [GitHub Codespace](#Dev Container) and start exploring the repository.
+* Consider if what you want to do might be implementable as a [PowerShell Binary Module](https://learn.microsoft.com/powershell/scripting/developer/module/how-to-write-a-powershell-binary-module?view=powershell-7.5).
+  The PowerShell repository has a rigorous acceptance process due to its huge popularity and emphasis on stability and long term support, and with a binary module you can contribute to the community much more quickly.
 * Pick an existing issue to work on! For instance, clarifying a confusing or unclear error message is a great starting point.
 
 ### Intro to Git and GitHub
@@ -129,22 +132,25 @@ Additional references:
 
 ### Code Editing
 
-PowerShell is primarily written in [C#](https://learn.microsoft.com/dotnet/csharp/tour-of-csharp/overview). While you can use any C# development environment you prefer, [Visual Studio Code (VS Code)][use-vscode-editor] is recommended.
+PowerShell is primarily written in [C#](https://learn.microsoft.com/dotnet/csharp/tour-of-csharp/overview). While you can use any C# development environment you prefer, [Visual Studio Code][use-vscode-editor] is recommended.
 
 ### Dev Container
 
-There is a PowerShell [Dev Container](https://code.visualstudio.com/docs/devcontainers/containers) which enables you get up and running quickly with a prepared VSCode environment with all the required prerequisites already installed.
+There is a PowerShell [Dev Container](https://code.visualstudio.com/docs/devcontainers/containers) which enables you get up and running quickly with a prepared Visual Studio Code environment with all the required prerequisites already installed.
 
-[Github Codespaces](https://github.com/features/codespaces) is the fastest way to get started. Codespaces allows you to start a Github-hosted devcontainer from anywhere and contribute from your browser or via VSCode remoting. All GitHub users get 15 hours per month of a 4-core codespace for free.
+[Github Codespaces](https://github.com/features/codespaces) is the fastest way to get started.
+Codespaces allows you to start a Github-hosted devcontainer from anywhere and contribute from your browser or via Visual Studio Code remoting.
+All GitHub users get 15 hours per month of a 4-core codespace for free.
 
 To start a codespace for the PowerShell repository:
+
 1. Go to https://github.com/PowerShell/PowerShell
 1. Click the green button on the right and choose to create a codespace ![alt text](Images/Codespaces.png)
 1. Alternatively, just hit the comma `,` key on your keyboard which should instantly start a codespace as well.
 
 Once the codespace starts, you can press `ctrl+shift+b` (`cmd+shift+b` on Mac) to run the default build task. If you would like to interactivey test your changes, you can press `F5` to start debugging, add breakpoints, etc.
 
-[Learn more about how to get started with C# in VSCode](https://code.visualstudio.com/docs/csharp/get-started)
+[Learn more about how to get started with C# in Visual Studio Code](https://code.visualstudio.com/docs/csharp/get-started)
 
 ### Building and testing
 
