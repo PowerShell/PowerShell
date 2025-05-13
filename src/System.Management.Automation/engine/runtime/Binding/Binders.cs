@@ -5632,6 +5632,66 @@ namespace System.Management.Automation.Language
             return result;
         }
 
+        private void GetPSMemberInfoFromClassScopeMembers(DynamicMetaObject target, MemberInfo[] members, DotNetAdapter dotNetAdapter, ref PSMemberInfo memberInfo)
+        {
+            List<MethodBase> candidateMethods = null;
+            foreach (var member in members)
+            {
+                if (this.Name.Equals(member.Name, StringComparison.OrdinalIgnoreCase))
+                {
+                    if (member is PropertyInfo propertyInfo)
+                    {
+                        var getMethod = propertyInfo.GetGetMethod(nonPublic: true);
+                        var setMethod = propertyInfo.GetSetMethod(nonPublic: true);
+
+                        if ((getMethod == null || getMethod.IsPublic || getMethod.IsFamily || getMethod.IsFamilyOrAssembly) &&
+                            (setMethod == null || setMethod.IsPublic || setMethod.IsFamily || setMethod.IsFamilyOrAssembly))
+                        {
+                            memberInfo = new PSProperty(this.Name, dotNetAdapter, target.Value, new DotNetAdapter.PropertyCacheEntry(propertyInfo));
+                        }
+                    }
+                    else if (member is FieldInfo fieldInfo)
+                    {
+                        if (fieldInfo.IsFamily || fieldInfo.IsFamilyOrAssembly)
+                        {
+                            memberInfo = new PSProperty(this.Name, dotNetAdapter, target.Value, new DotNetAdapter.PropertyCacheEntry(fieldInfo));
+                        }
+                    }
+                    else if (member is MethodInfo methodInfo)
+                    {
+                        if (methodInfo != null && (methodInfo.IsPublic || methodInfo.IsFamily || methodInfo.IsFamilyOrAssembly))
+                        {
+                            candidateMethods ??= new List<MethodBase>();
+
+                            candidateMethods.Add(methodInfo);
+                        }
+                    }
+                }
+            }
+
+            if (candidateMethods != null && candidateMethods.Count > 0)
+            {
+                var psMethodInfo = memberInfo as PSMethod;
+                if (psMethodInfo != null)
+                {
+                    var cacheEntry = (DotNetAdapter.MethodCacheEntry)psMethodInfo.adapterData;
+                    candidateMethods.AddRange(cacheEntry.methodInformationStructures.Select(static e => e.method));
+                    memberInfo = null;
+                }
+
+                if (memberInfo != null)
+                {
+                    // Ambiguous, it'd be better to report an error other than "can't find member", but I'm lazy.
+                    memberInfo = null;
+                }
+                else
+                {
+                    DotNetAdapter.MethodCacheEntry method = new DotNetAdapter.MethodCacheEntry(candidateMethods);
+                    memberInfo = PSMethod.Create(this.Name, dotNetAdapter, null, method);
+                }
+            }
+        }
+
         internal PSMemberInfo GetPSMemberInfo(DynamicMetaObject target,
                                               out BindingRestrictions restrictions,
                                               out bool canOptimize,
@@ -5665,62 +5725,11 @@ namespace System.Management.Automation.Language
                     var objType = obj as Type ?? obj?.GetType();
                     if (objType != null && (objType == _classScope || objType.IsSubclassOf(_classScope)))
                     {
-                        List<MethodBase> candidateMethods = null;
-                        foreach (var member in _classScope.GetMembers(BindingFlags.Static | BindingFlags.FlattenHierarchy | BindingFlags.NonPublic))
-                        {
-                            if (this.Name.Equals(member.Name, StringComparison.OrdinalIgnoreCase))
-                            {
-                                if (member is PropertyInfo propertyInfo)
-                                {
-                                    var getMethod = propertyInfo.GetGetMethod(nonPublic: true);
-                                    var setMethod = propertyInfo.GetSetMethod(nonPublic: true);
-
-                                    if ((getMethod == null || getMethod.IsPublic || getMethod.IsFamily || getMethod.IsFamilyOrAssembly) &&
-                                        (setMethod == null || setMethod.IsPublic || setMethod.IsFamily || setMethod.IsFamilyOrAssembly))
-                                    {
-                                        memberInfo = new PSProperty(this.Name, PSObject.DotNetStaticAdapter, target.Value, new DotNetAdapter.PropertyCacheEntry(propertyInfo));
-                                    }
-                                }
-                                else if (member is FieldInfo fieldInfo)
-                                {
-                                    if (fieldInfo.IsFamily || fieldInfo.IsFamilyOrAssembly)
-                                    {
-                                        memberInfo = new PSProperty(this.Name, PSObject.DotNetStaticAdapter, target.Value, new DotNetAdapter.PropertyCacheEntry(fieldInfo));
-                                    }
-                                }
-                                else if (member is MethodInfo methodInfo)
-                                {
-                                    if (methodInfo != null && (methodInfo.IsPublic || methodInfo.IsFamily || methodInfo.IsFamilyOrAssembly))
-                                    {
-                                        candidateMethods ??= new List<MethodBase>();
-
-                                        candidateMethods.Add(methodInfo);
-                                    }
-                                }
-                            }
-                        }
-
-                        if (candidateMethods != null && candidateMethods.Count > 0)
-                        {
-                            var psMethodInfo = memberInfo as PSMethod;
-                            if (psMethodInfo != null)
-                            {
-                                var cacheEntry = (DotNetAdapter.MethodCacheEntry)psMethodInfo.adapterData;
-                                candidateMethods.AddRange(cacheEntry.methodInformationStructures.Select(static e => e.method));
-                                memberInfo = null;
-                            }
-
-                            if (memberInfo != null)
-                            {
-                                // Ambiguous, it'd be better to report an error other than "can't find member", but I'm lazy.
-                                memberInfo = null;
-                            }
-                            else
-                            {
-                                DotNetAdapter.MethodCacheEntry method = new DotNetAdapter.MethodCacheEntry(candidateMethods);
-                                memberInfo = PSMethod.Create(this.Name, PSObject.DotNetStaticAdapter, null, method);
-                            }
-                        }
+                        GetPSMemberInfoFromClassScopeMembers(
+                            target,
+                            _classScope.GetMembers(BindingFlags.Static | BindingFlags.FlattenHierarchy | BindingFlags.NonPublic), 
+                            PSObject.DotNetStaticAdapter,
+                            ref memberInfo);
                     }
                 }
                 return memberInfo;
@@ -5813,68 +5822,11 @@ namespace System.Management.Automation.Language
 
             if (_classScope != null && (target.LimitType == _classScope || target.LimitType.IsSubclassOf(_classScope)) && adapterSet.OriginalAdapter == PSObject.DotNetInstanceAdapter)
             {
-                List<MethodBase> candidateMethods = null;
-                foreach (var member in _classScope.GetMembers(BindingFlags.Instance | BindingFlags.FlattenHierarchy | BindingFlags.NonPublic))
-                {
-                    if (this.Name.Equals(member.Name, StringComparison.OrdinalIgnoreCase))
-                    {
-                        var propertyInfo = member as PropertyInfo;
-                        if (propertyInfo != null)
-                        {
-                            var getMethod = propertyInfo.GetGetMethod(nonPublic: true);
-                            var setMethod = propertyInfo.GetSetMethod(nonPublic: true);
-
-                            if ((getMethod == null || getMethod.IsPublic || getMethod.IsFamily || getMethod.IsFamilyOrAssembly) &&
-                                (setMethod == null || setMethod.IsPublic || setMethod.IsFamily || setMethod.IsFamilyOrAssembly))
-                            {
-                                memberInfo = new PSProperty(this.Name, PSObject.DotNetInstanceAdapter, target.Value, new DotNetAdapter.PropertyCacheEntry(propertyInfo));
-                            }
-                        }
-                        else
-                        {
-                            var fieldInfo = member as FieldInfo;
-                            if (fieldInfo != null)
-                            {
-                                if (fieldInfo.IsFamily || fieldInfo.IsFamilyOrAssembly)
-                                {
-                                    memberInfo = new PSProperty(this.Name, PSObject.DotNetInstanceAdapter, target.Value, new DotNetAdapter.PropertyCacheEntry(fieldInfo));
-                                }
-                            }
-                            else
-                            {
-                                var methodInfo = member as MethodInfo;
-                                if (methodInfo != null && (methodInfo.IsPublic || methodInfo.IsFamily || methodInfo.IsFamilyOrAssembly))
-                                {
-                                    candidateMethods ??= new List<MethodBase>();
-
-                                    candidateMethods.Add(methodInfo);
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (candidateMethods != null && candidateMethods.Count > 0)
-                {
-                    var psMethodInfo = memberInfo as PSMethod;
-                    if (psMethodInfo != null)
-                    {
-                        var cacheEntry = (DotNetAdapter.MethodCacheEntry)psMethodInfo.adapterData;
-                        candidateMethods.AddRange(cacheEntry.methodInformationStructures.Select(static e => e.method));
-                        memberInfo = null;
-                    }
-
-                    if (memberInfo != null)
-                    {
-                        // Ambiguous, it'd be better to report an error other than "can't find member", but I'm lazy.
-                        memberInfo = null;
-                    }
-                    else
-                    {
-                        DotNetAdapter.MethodCacheEntry method = new DotNetAdapter.MethodCacheEntry(candidateMethods);
-                        memberInfo = PSMethod.Create(this.Name, PSObject.DotNetInstanceAdapter, null, method);
-                    }
-                }
+                GetPSMemberInfoFromClassScopeMembers(
+                    target,
+                    _classScope.GetMembers(BindingFlags.Instance | BindingFlags.FlattenHierarchy | BindingFlags.NonPublic), 
+                    PSObject.DotNetInstanceAdapter,
+                    ref memberInfo);
             }
 
             if (hasInstanceMember)
