@@ -89,6 +89,8 @@ Describe "File encoding tests" -Tag CI {
         It "Parameter 'Encoding' should accept '<encoding>'" -TestCases @(
             @{ encoding = 1251 }
             @{ encoding = "windows-1251" }
+            # Piping the string creates a PSObject boxed value that we are testing.
+            @{ encoding = ("windows-1251" | Write-Output) }
         ) {
             param ( $encoding )
             $testFile = "${TESTDRIVE}/fileEncoding-$($encoding).txt"
