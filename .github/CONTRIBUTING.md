@@ -145,7 +145,9 @@ All GitHub users get 15 hours per month of a 4-core codespace for free.
 To start a codespace for the PowerShell repository:
 
 1. Go to https://github.com/PowerShell/PowerShell
-1. Click the green button on the right and choose to create a codespace ![alt text](Images/Codespaces.png)
+1. Click the green button on the right and choose to create a codespace
+
+   ![alt text](Images/Codespaces.png)
 1. Alternatively, just hit the comma `,` key on your keyboard which should instantly start a codespace as well.
 
 Once the codespace starts, you can press `ctrl+shift+b` (`cmd+shift+b` on Mac) to run the default build task. If you would like to interactivey test your changes, you can press `F5` to start debugging, add breakpoints, etc.
