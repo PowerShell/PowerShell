@@ -56,7 +56,7 @@ namespace Microsoft.Management.UI.Internal
         #region Ctor
 
         /// <summary>
-        /// Initializes a new instance of the IsBetweenFilterRule class.
+        /// Initializes a new instance of the <see cref="IsBetweenFilterRule{T}"/> class.
         /// </summary>
         public IsBetweenFilterRule()
         {
@@ -66,6 +66,20 @@ namespace Microsoft.Management.UI.Internal
             this.StartValue.PropertyChanged += this.Value_PropertyChanged;
 
             this.EndValue = new ValidatingValue<T>();
+            this.EndValue.PropertyChanged += this.Value_PropertyChanged;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IsBetweenFilterRule{T}"/> class.
+        /// </summary>
+        /// <param name="source">The source to initialize from.</param>
+        public IsBetweenFilterRule(IsBetweenFilterRule<T> source)
+            : base(source)
+        {
+            this.StartValue = (ValidatingValue<T>)source.StartValue.DeepClone();
+            this.StartValue.PropertyChanged += this.Value_PropertyChanged;
+
+            this.EndValue = (ValidatingValue<T>)source.EndValue.DeepClone();
             this.EndValue.PropertyChanged += this.Value_PropertyChanged;
         }
 
