@@ -423,6 +423,7 @@ Repeat offenses may result in a permanent ban from the PowerShell org.
 [PowerShell-Docs]: https://github.com/powershell/powershell-docs/
 [use-vscode-editor]: https://learn.microsoft.com/dotnet/core/tutorials/with-visual-studio-code
 [repository-maintainer]: ../docs/community/governance.md#repository-maintainers
+[area-expert]: ../.github/CODEOWNERS
 [first-time-issue]: https://github.com/powershell/powershell/issues?q=is%3Aopen+is%3Aissue+label%3AFirst-Time-Issue
 [coding-guidelines]: ../docs/dev-process/coding-guidelines.md
 [breaking-changes-contract]: ../docs/dev-process/breaking-change-contract.md
