@@ -93,12 +93,12 @@ Also, make sure to check out our [PowerShell-RFC repository](https://github.com/
 |--------------------------|----------------------------|------------------------|
 | [Instructions][bd-linux] | [Instructions][bd-windows] | [Instructions][bd-macOS] |
 
-[bd-linux]: https://github.com/PowerShell/PowerShell/tree/master/docs/building/linux.md
-[bd-windows]: https://github.com/PowerShell/PowerShell/tree/master/docs/building/windows-core.md
-[bd-macOS]: https://github.com/PowerShell/PowerShell/tree/master/docs/building/macos.md
-[FAQ]: https://github.com/PowerShell/PowerShell/tree/master/docs/FAQ.md
+If you have any problems building PowerShell, please start by consulting the developer [FAQ].
 
-If you have any problems building PowerShell, please start by consulting the developer [FAQ][].
+[bd-linux]: docs/building/linux.md
+[bd-windows]: docs/building/windows-core.md
+[bd-macOS]: docs/building/macos.md
+[FAQ]: docs/FAQ.md
 
 ## Downloading the Source Code
 
