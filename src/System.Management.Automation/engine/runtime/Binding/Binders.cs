@@ -5644,6 +5644,7 @@ namespace System.Management.Automation.Language
             bool hasTypeTableMember;
             bool hasInstanceMember;
             BindingRestrictions versionRestriction;
+            PSMemberInfo memberInfo = null;
             lock (this)
             {
                 versionRestriction = BinderUtils.GetVersionCheck(this, _version);
@@ -5657,7 +5658,72 @@ namespace System.Management.Automation.Language
                 restrictions = restrictions.Merge(versionRestriction);
                 canOptimize = true;
 
-                return PSObject.GetStaticCLRMember(target.Value, Name);
+                memberInfo = PSObject.GetStaticCLRMember(target.Value, Name);
+                if (memberInfo == null && _classScope != null)
+                {
+                    var obj = PSObject.Base(target.Value);
+                    var objType = obj as Type ?? obj?.GetType();
+                    if (objType != null && (objType == _classScope || objType.IsSubclassOf(_classScope)))
+                    {
+                        List<MethodBase> candidateMethods = null;
+                        foreach (var member in _classScope.GetMembers(BindingFlags.Static | BindingFlags.FlattenHierarchy | BindingFlags.NonPublic))
+                        {
+                            if (this.Name.Equals(member.Name, StringComparison.OrdinalIgnoreCase))
+                            {
+                                if (member is PropertyInfo propertyInfo)
+                                {
+                                    var getMethod = propertyInfo.GetGetMethod(nonPublic: true);
+                                    var setMethod = propertyInfo.GetSetMethod(nonPublic: true);
+
+                                    if ((getMethod == null || getMethod.IsPublic || getMethod.IsFamily || getMethod.IsFamilyOrAssembly) &&
+                                        (setMethod == null || setMethod.IsPublic || setMethod.IsFamily || setMethod.IsFamilyOrAssembly))
+                                    {
+                                        memberInfo = new PSProperty(this.Name, PSObject.DotNetStaticAdapter, target.Value, new DotNetAdapter.PropertyCacheEntry(propertyInfo));
+                                    }
+                                }
+                                else if (member is FieldInfo fieldInfo)
+                                {
+                                    if (fieldInfo.IsFamily || fieldInfo.IsFamilyOrAssembly)
+                                    {
+                                        memberInfo = new PSProperty(this.Name, PSObject.DotNetStaticAdapter, target.Value, new DotNetAdapter.PropertyCacheEntry(fieldInfo));
+                                    }
+                                }
+                                else if (member is MethodInfo methodInfo)
+                                {
+                                    if (methodInfo != null && (methodInfo.IsPublic || methodInfo.IsFamily || methodInfo.IsFamilyOrAssembly))
+                                    {
+                                        candidateMethods ??= new List<MethodBase>();
+
+                                        candidateMethods.Add(methodInfo);
+                                    }
+                                }
+                            }
+                        }
+
+                        if (candidateMethods != null && candidateMethods.Count > 0)
+                        {
+                            var psMethodInfo = memberInfo as PSMethod;
+                            if (psMethodInfo != null)
+                            {
+                                var cacheEntry = (DotNetAdapter.MethodCacheEntry)psMethodInfo.adapterData;
+                                candidateMethods.AddRange(cacheEntry.methodInformationStructures.Select(static e => e.method));
+                                memberInfo = null;
+                            }
+
+                            if (memberInfo != null)
+                            {
+                                // Ambiguous, it'd be better to report an error other than "can't find member", but I'm lazy.
+                                memberInfo = null;
+                            }
+                            else
+                            {
+                                DotNetAdapter.MethodCacheEntry method = new DotNetAdapter.MethodCacheEntry(candidateMethods);
+                                memberInfo = PSMethod.Create(this.Name, PSObject.DotNetStaticAdapter, null, method);
+                            }
+                        }
+                    }
+                }
+                return memberInfo;
             }
 
             canOptimize = false;
@@ -5665,7 +5731,6 @@ namespace System.Management.Automation.Language
             Diagnostics.Assert(!TryGetInstanceMember(target.Value, Name, out _),
                                 "shouldn't get here if there is an instance member");
 
-            PSMemberInfo memberInfo = null;
             ConsolidatedString typenames = null;
             var context = LocalPipeline.GetExecutionContextFromTLS();
             var typeTable = context?.TypeTable;
