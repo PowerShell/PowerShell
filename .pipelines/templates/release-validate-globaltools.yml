@@ -85,8 +85,18 @@ jobs:
 
         $toolPath = "$(System.DefaultWorkingDirectory)/toolPath/${{ parameters.globalToolExeName }}"
 
-        Find-Dotnet -SetDotNetRoot
+        $source = (get-command -Type Application -Name dotnet | Select-Object -First 1 -ExpandProperty source)
+        $target = (Get-ChildItem $source).target
 
+        # If we find a symbolic link for dotnet, then we need to split the filename off the target.
+        if ($target) {
+          Write-Verbose -Verbose "Splitting target: $target"
+          $target = Split-Path $target
+        }
+
+        Write-Verbose -Verbose "target is set as $target"
+
+        $env:DOTNET_ROOT = (resolve-path -Path (Join-Path (split-path $source) $target)).ProviderPath
         Write-Verbose -Verbose "DOTNET_ROOT: $env:DOTNET_ROOT"
         Get-ChildItem $env:DOTNET_ROOT
 
