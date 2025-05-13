@@ -7,7 +7,7 @@ namespace Microsoft.Management.UI.Internal
     /// Defines a generalized method for creating a deep copy of an instance.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
-    public interface IDeepCloneable
+    internal interface IDeepCloneable
     {
         /// <summary>
         /// Creates a deep copy of the current instance.
