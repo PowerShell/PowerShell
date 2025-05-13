@@ -68,7 +68,6 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Occurs when the values of this rule changes.
         /// </summary>
-        [field: NonSerialized]
         public event EventHandler EvaluationResultInvalidated;
 
         /// <summary>
