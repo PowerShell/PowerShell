@@ -30,6 +30,17 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
+        /// Initializes a new instance of the  <see cref="PropertiesTextContainsFilterRule"/> class.
+        /// </summary>
+        /// <param name="source">The source to initialize from.</param>
+        public PropertiesTextContainsFilterRule(PropertiesTextContainsFilterRule source)
+            : base(source)
+        {
+            this.PropertyNames = new List<string>(source.PropertyNames);
+            this.EvaluationResultInvalidated += this.PropertiesTextContainsFilterRule_EvaluationResultInvalidated;
+        }
+
+        /// <summary>
         /// Gets a collection of the names of properties to search in.
         /// </summary>
         public ICollection<string> PropertyNames
