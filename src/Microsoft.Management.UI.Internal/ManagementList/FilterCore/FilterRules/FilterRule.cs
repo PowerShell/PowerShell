@@ -9,7 +9,6 @@ namespace Microsoft.Management.UI.Internal
     /// The base class for all filtering rules.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
-    [Serializable]
     public abstract class FilterRule : IEvaluate, IDeepCloneable
     {
         /// <summary>
