@@ -10,7 +10,7 @@ namespace Microsoft.Management.UI.Internal
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
     [Serializable]
-    public abstract class DataErrorInfoValidationRule
+    public abstract class DataErrorInfoValidationRule : IDeepCloneable
     {
         /// <summary>
         /// When overridden in a derived class, performs validation checks on a value.
@@ -25,5 +25,8 @@ namespace Microsoft.Management.UI.Internal
         /// A DataErrorInfoValidationResult object.
         /// </returns>
         public abstract DataErrorInfoValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo);
+
+        /// <inheritdoc cref="IDeepCloneable.DeepClone()" />
+        public abstract object DeepClone();
     }
 }
