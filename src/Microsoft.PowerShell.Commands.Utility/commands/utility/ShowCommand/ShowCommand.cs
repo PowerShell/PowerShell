@@ -170,6 +170,12 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
+            if (Utils.IsSessionRestricted(this.Context)) {
+                Exception e = new InvalidOperationException(HelpErrors.NotAllowedInRestrictedRemoting);
+                ErrorRecord errorRecord = new ErrorRecord(e, "CommandNotAllowed", ErrorCategory.InvalidOperation, null);
+                this.ThrowTerminatingError(errorRecord);
+            }
+
             _showCommandProxy = new ShowCommandProxy(this);
 
             if (_showCommandProxy.ScreenHeight < this.Height)
