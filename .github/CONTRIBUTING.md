@@ -1,11 +1,11 @@
 # Contributing to PowerShell
 
-We welcome and appreciate contributions from the community.
+We welcome and appreciate contributions from the community!
+
 There are many ways to become involved with PowerShell including:
-- filing and participating in issues
-- joining in design conversations
-- writing and improving documentation
-- contributing to the code
+- [Contributing to Documentation](#contributing-to-documentation)
+- [Contributing to Issues](#contributing-to-issues)
+- [Contributing to Code](#contributing-to-code)
 
 Please read the rest of this document to ensure a smooth contribution process.
 
@@ -42,7 +42,7 @@ which will update the documentation for you.
 made.
 1. Link your Docs PR to your original change PR.
 
-## Contributing to documentation related to maintaining or contributing to the PowerShell project
+### Style notes for documentation related to maintaining or contributing to the PowerShell project
 
 * When writing Markdown documentation, use [semantic linefeeds][].
   In most cases, it means "one clause/idea per line".
@@ -77,52 +77,6 @@ To run the link-checker, follow these steps:
   `npm install -g markdown-link-check@3.8.5`
 * run `find . \*.md -exec markdown-link-check {} \;`
 
-## Contributing to Code
-
-### Quick Start Checklist
-
-* Review the [Contributor License Agreement][CLA] requirement.
-* Get familiar with the [PowerShell Repository Git Concepts](../docs/git/README.md).
-* Start a [Github Codespace](#Dev Container) and start exploring the repository.
-* Pick an existing issue to work on! For instance, clarifying a confusing or unclear error message is a great starting point.
-
-### Intro to Git and GitHub
-
-1. Sign up for a [GitHub account](https://github.com/signup/free).
-1. Learning Git and GitHub:
-    - [Git Basics](../docs/git/basics.md): install and getting started
-    - [Good Resources for Learning Git and GitHub][good-git-resources]
-1. The PowerShell repository uses GitHub Flow as the primary branching strategy. [Learn about GitHub Flow](https://guides.github.com/introduction/flow/)
-
-### Code Editing
-
-PowerShell is primarily written in [C#](https://learn.microsoft.com/en-us/dotnet/csharp/tour-of-csharp/overview). While you can use any C# development environment you prefer, [Visual Studio Code (VS Code)][use-vscode-editor] is recommended.
-
-### Dev Container
-
-There is a PowerShell [Dev Container](https://code.visualstudio.com/docs/devcontainers/containers) which enables you get up and running quickly with a prepared VSCode environment with all the required prerequisites already installed.
-
-[Github Codespaces](https://github.com/features/codespaces) is the fastest way to get started. Codespaces allows you to start a Github-hosted devcontainer from anywhere and contribute from your browser or via VSCode remoting. All GitHub users get 15 hours per month of a 4-core codespace for free.
-
-To start a codespace for the PowerShell repository:
-1. Go to https://github.com/PowerShell/PowerShell
-1. Click the green button on the right and choose to create a codespace ![alt text](Images/Codespaces.png)
-1. Alternatively, just hit the comma `,` key on your keyboard which should instantly start a codespace as well.
-
-Once the codespace starts, you can press `ctrl+shift+b` (`cmd+shift+b` on Mac) to run the default build task. If you would like to interactivey test your changes, you can press `F5` to start debugging, add breakpoints, etc.
-
-[Learn more about how to get started with C# in VSCode](https://code.visualstudio.com/docs/csharp/get-started)
-
-### Building and testing
-
-#### Building PowerShell
-
-[Building PowerShell](../README.md#Building-Powershell) has instructions for various platforms.
-
-#### Testing PowerShell
-
-Please see PowerShell [Testing Guidelines - Running Tests Outside of CI][running-tests-outside-of-ci] on how to test your build locally.
-
 ## Contributing to Issues
 
 1. Review [Issue Management][issue-management].
@@ -154,6 +108,53 @@ Additional references:
 * GitHub's guide on [forking](https://guides.github.com/activities/forking/)
 * GitHub's guide on [Contributing to Open Source](https://guides.github.com/activities/contributing-to-open-source/#pull-request)
 * GitHub's guide on [Understanding the GitHub Flow](https://guides.github.com/introduction/flow/)
+
+
+## Contributing to Code
+
+### Quick Start Checklist
+
+* Review the [Contributor License Agreement][CLA] requirement.
+* Get familiar with the [PowerShell Repository Git Concepts](../docs/git/README.md).
+* Start a [Github Codespace](#Dev Container) and start exploring the repository.
+* Pick an existing issue to work on! For instance, clarifying a confusing or unclear error message is a great starting point.
+
+### Intro to Git and GitHub
+
+1. Sign up for a [GitHub account](https://github.com/signup/free).
+1. Learning Git and GitHub:
+    - [Git Basics](../docs/git/basics.md): install and getting started
+    - [Good Resources for Learning Git and GitHub][good-git-resources]
+1. The PowerShell repository uses GitHub Flow as the primary branching strategy. [Learn about GitHub Flow](https://guides.github.com/introduction/flow/)
+
+### Code Editing
+
+PowerShell is primarily written in [C#](https://learn.microsoft.com/dotnet/csharp/tour-of-csharp/overview). While you can use any C# development environment you prefer, [Visual Studio Code (VS Code)][use-vscode-editor] is recommended.
+
+### Dev Container
+
+There is a PowerShell [Dev Container](https://code.visualstudio.com/docs/devcontainers/containers) which enables you get up and running quickly with a prepared VSCode environment with all the required prerequisites already installed.
+
+[Github Codespaces](https://github.com/features/codespaces) is the fastest way to get started. Codespaces allows you to start a Github-hosted devcontainer from anywhere and contribute from your browser or via VSCode remoting. All GitHub users get 15 hours per month of a 4-core codespace for free.
+
+To start a codespace for the PowerShell repository:
+1. Go to https://github.com/PowerShell/PowerShell
+1. Click the green button on the right and choose to create a codespace ![alt text](Images/Codespaces.png)
+1. Alternatively, just hit the comma `,` key on your keyboard which should instantly start a codespace as well.
+
+Once the codespace starts, you can press `ctrl+shift+b` (`cmd+shift+b` on Mac) to run the default build task. If you would like to interactivey test your changes, you can press `F5` to start debugging, add breakpoints, etc.
+
+[Learn more about how to get started with C# in VSCode](https://code.visualstudio.com/docs/csharp/get-started)
+
+### Building and testing
+
+#### Building PowerShell
+
+[Building PowerShell](../README.md#Building-Powershell) has instructions for various platforms.
+
+#### Testing PowerShell
+
+Please see PowerShell [Testing Guidelines - Running Tests Outside of CI][running-tests-outside-of-ci] on how to test your build locally.
 
 ### Lifecycle of a pull request
 
@@ -318,7 +319,7 @@ In these cases:
    Mention the original pull request ID in the description of the new issue and close the abandoned pull request.
    - If the changes in an abandoned pull request are no longer needed (e.g. due to refactoring of the codebase or a design change), *assignee* will simply close the pull request.
 
-## Making Breaking Changes
+### Making Breaking Changes
 
 When you make code changes,
 please pay attention to these that can affect the [Public Contract][breaking-changes-contract].
@@ -327,12 +328,12 @@ Before making changes to the code,
 first review the [breaking changes contract][breaking-changes-contract]
 and follow the guidelines to keep PowerShell backward compatible.
 
-## Making Design Changes
+### Making Design Changes
 
 To add new features such as cmdlets or making design changes,
 please follow the [PowerShell Request for Comments (RFC)][rfc-process] process.
 
-## Common Engineering Practices
+### Common Engineering Practices
 
 Other than the guidelines for [coding][coding-guidelines],
 the [RFC process][rfc-process] for design,
@@ -384,7 +385,7 @@ is also appropriate, as is using Markdown syntax.
   Before you invest a large amount of time,
   file an issue and start a discussion with the community.
 
-## Contributor License Agreement (CLA)
+### Contributor License Agreement (CLA)
 
 To speed up the acceptance of any contribution to any PowerShell repositories,
 you should sign the Microsoft [Contributor License Agreement (CLA)](https://cla.microsoft.com/) ahead of time.
@@ -422,7 +423,6 @@ Repeat offenses may result in a permanent ban from the PowerShell org.
 [PowerShell-Docs]: https://github.com/powershell/powershell-docs/
 [use-vscode-editor]: https://learn.microsoft.com/dotnet/core/tutorials/with-visual-studio-code
 [repository-maintainer]: ../docs/community/governance.md#repository-maintainers
-[area-expert]: ../docs/community/governance.md#area-experts
 [first-time-issue]: https://github.com/powershell/powershell/issues?q=is%3Aopen+is%3Aissue+label%3AFirst-Time-Issue
 [coding-guidelines]: ../docs/dev-process/coding-guidelines.md
 [breaking-changes-contract]: ../docs/dev-process/breaking-change-contract.md
