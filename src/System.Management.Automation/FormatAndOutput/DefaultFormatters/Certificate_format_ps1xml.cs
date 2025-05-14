@@ -64,6 +64,7 @@ namespace System.Management.Automation.Runspaces
                 ListControl.Create()
                     .StartEntry(entrySelectedByType: new[] { "Microsoft.PowerShell.Commands.X509StoreLocation" })
                         .AddItemProperty(@"Location")
+                        .AddItemProperty(@"LocationName")
                         .AddItemProperty(@"StoreNames")
                     .EndEntry()
                     .StartEntry(entrySelectedByType: new[] { "System.Security.Cryptography.X509Certificates.X509Store" })
