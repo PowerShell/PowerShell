@@ -138,7 +138,7 @@ PowerShell is primarily written in [C#](https://learn.microsoft.com/dotnet/cshar
 
 There is a PowerShell [Dev Container](https://code.visualstudio.com/docs/devcontainers/containers) which enables you get up and running quickly with a prepared Visual Studio Code environment with all the required prerequisites already installed.
 
-[Github Codespaces](https://github.com/features/codespaces) is the fastest way to get started.
+[GitHub Codespaces](https://github.com/features/codespaces) is the fastest way to get started.
 Codespaces allows you to start a Github-hosted devcontainer from anywhere and contribute from your browser or via Visual Studio Code remoting.
 All GitHub users get 15 hours per month of a 4-core codespace for free.
 
