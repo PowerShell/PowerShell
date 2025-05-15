@@ -80,11 +80,10 @@ jobs:
       Set-BuildVariable -Name BuildInfoJsonFile -Value $targetFile
 
       ## Create 'lts.json' if it's the latest stable and also a LTS release.
-
       if ($fileName -eq "stable.json") {
         [System.Management.Automation.SemanticVersion] $stableVersion = $stableReleaseTag
         [System.Management.Automation.SemanticVersion] $currentVersion = $currentReleaseTag
-        if ($currentVersion -gt $stableVersion) {
+        if ($currentVersion.Minor % 2 -eq 0) {
           $ltsFile = "$ENV:PIPELINE_WORKSPACE/lts.json"
           Copy-Item -Path $targetFile -Destination $ltsFile -Force
           Set-BuildVariable -Name LtsBuildInfoJsonFile -Value $ltsFile
@@ -93,14 +92,20 @@ jobs:
           Set-BuildVariable -Name CopyLTSBuildInfo -Value NO
         }
 
-        $releaseTag = $buildInfo.ReleaseTag
-        $version = $releaseTag -replace '^v'
-        $semVersion = [System.Management.Automation.SemanticVersion] $version
+        ## Only update the stable.json if the current version is greater than the stable version.
+        if ($currentVersion -gt $stableVersion) {
+          $releaseTag = $buildInfo.ReleaseTag
+          $version = $releaseTag -replace '^v'
+          $semVersion = [System.Management.Automation.SemanticVersion] $version
 
-        $versionFile = "$ENV:PIPELINE_WORKSPACE/$($semVersion.Major)-$($semVersion.Minor).json"
-        Copy-Item -Path $targetFile -Destination $versionFile -Force
-        Set-BuildVariable -Name VersionBuildInfoJsonFile -Value $versionFile
-        Set-BuildVariable -Name CopyVersionBuildInfo -Value YES
+          $versionFile = "$ENV:PIPELINE_WORKSPACE/$($semVersion.Major)-$($semVersion.Minor).json"
+          Copy-Item -Path $targetFile -Destination $versionFile -Force
+          Set-BuildVariable -Name VersionBuildInfoJsonFile -Value $versionFile
+          Set-BuildVariable -Name CopyVersionBuildInfo -Value YES
+        } else {
+          Set-BuildVariable -Name CopyVersionBuildInfo -Value NO
+        }
+
       } else {
         Set-BuildVariable -Name CopyVersionBuildInfo -Value NO
       }
@@ -120,6 +125,7 @@ jobs:
 
         $storageContext = New-AzStorageContext -StorageAccountName $storageAccount -UseConnectedAccount
 
+        #preview
         if ($env:CopyMainBuildInfo -eq 'YES') {
           $jsonFile = "$env:BuildInfoJsonFile"
           $blobName = Get-Item $jsonFile | Split-Path -Leaf
@@ -127,6 +133,7 @@ jobs:
           Set-AzStorageBlobContent -File $jsonFile -Container $containerName -Blob "$prefix/$blobName" -Context $storageContext -Force
         }
 
+        #LTS
         if ($env:CopyLTSBuildInfo -eq 'YES') {
           $jsonFile = "$env:LtsBuildInfoJsonFile"
           $blobName = Get-Item $jsonFile | Split-Path -Leaf
@@ -134,6 +141,7 @@ jobs:
           Set-AzStorageBlobContent -File $jsonFile -Container $containerName -Blob "$prefix/$blobName" -Context $storageContext -Force
         }
 
+        #stable
         if ($env:CopyVersionBuildInfo -eq 'YES') {
           $jsonFile = "$env:VersionBuildInfoJsonFile"
           $blobName = Get-Item $jsonFile | Split-Path -Leaf
