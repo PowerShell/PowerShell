@@ -58,8 +58,8 @@ jobs:
       $dateTime = [datetime]::new($dateTime.Ticks - ($dateTime.Ticks % [timespan]::TicksPerSecond), $dateTime.Kind)
 
       $metadata = Get-Content -LiteralPath "$toolsDirectory/metadata.json" -ErrorAction Stop | ConvertFrom-Json
-      $stableRelease = $metadata.StableRelease.Latest
-      $ltsRelease = $metadata.LTSRelease.Latest
+      $stableReleaseTag = $metadata.StableReleaseTag -Replace 'v',''
+      $currentReleaseTag = $buildInfo.ReleaseTag -Replace 'v',''
 
       Write-Verbose -Verbose "Writing $jsonFile contents:"
       $buildInfoJsonContent = Get-Content $jsonFile -Encoding UTF8NoBom -Raw
@@ -71,7 +71,7 @@ jobs:
       $targetFile = "$ENV:PIPELINE_WORKSPACE/$fileName"
       ConvertTo-Json -InputObject $buildInfo | Out-File $targetFile -Encoding ascii
 
-      if ($stableRelease -or $fileName -eq "preview.json") {
+      if ($fileName -eq "preview.json") {
         Set-BuildVariable -Name CopyMainBuildInfo -Value YES
       } else {
         Set-BuildVariable -Name CopyMainBuildInfo -Value NO
@@ -82,7 +82,9 @@ jobs:
       ## Create 'lts.json' if it's the latest stable and also a LTS release.
 
       if ($fileName -eq "stable.json") {
-        if ($ltsRelease) {
+        [System.Management.Automation.SemanticVersion] $stableVersion = $stableReleaseTag
+        [System.Management.Automation.SemanticVersion] $currentVersion = $currentReleaseTag
+        if ($currentVersion -gt $stableVersion) {
           $ltsFile = "$ENV:PIPELINE_WORKSPACE/lts.json"
           Copy-Item -Path $targetFile -Destination $ltsFile -Force
           Set-BuildVariable -Name LtsBuildInfoJsonFile -Value $ltsFile
