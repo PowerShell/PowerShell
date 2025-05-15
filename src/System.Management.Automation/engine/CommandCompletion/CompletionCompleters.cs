@@ -499,11 +499,16 @@ namespace System.Management.Automation
                     nestedModulesToFilterOut = new(currentModule.NestedModules);
                 }
 
+                var completedModules = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                 foreach (PSObject item in psObjects)
                 {
                     var moduleInfo = (PSModuleInfo)item.BaseObject;
                     var completionText = moduleInfo.Name;
-                    var listItemText = completionText;
+                    if (!completedModules.Add(completionText))
+                    {
+                        continue;
+                    }
+
                     if (shortNameSearch
                         && completionText.Contains('.')
                         && !shortNamePattern.IsMatch(completionText.Substring(completionText.LastIndexOf('.') + 1))
@@ -526,7 +531,7 @@ namespace System.Management.Automation
 
                     completionText = CompletionHelpers.QuoteCompletionText(completionText, quote);
 
-                    result.Add(new CompletionResult(completionText, listItemText, CompletionResultType.ParameterValue, toolTip));
+                    result.Add(new CompletionResult(completionText, listItemText: moduleInfo.Name, CompletionResultType.ParameterValue, toolTip));
                 }
             }
 
@@ -5573,7 +5578,13 @@ namespace System.Management.Automation
                         : AstVisitAction.StopVisit;
                 }
 
-                if (assignmentStatementAst.Left is AttributedExpressionAst attributedExpression)
+                ProcessAssignmentLeftSide(assignmentStatementAst.Left, assignmentStatementAst.Right);
+                return AstVisitAction.Continue;
+            }
+
+            private void ProcessAssignmentLeftSide(ExpressionAst left, StatementAst right)
+            {
+                if (left is AttributedExpressionAst attributedExpression)
                 {
                     var firstConvertExpression = attributedExpression as ConvertExpressionAst;
                     ExpressionAst child = attributedExpression.Child;
@@ -5593,7 +5604,7 @@ namespace System.Management.Automation
                     {
                         if (variableExpression == CompletionVariableAst || s_specialVariablesCache.Value.Contains(variableExpression.VariablePath.UserPath))
                         {
-                            return AstVisitAction.Continue;
+                            return;
                         }
 
                         if (firstConvertExpression is not null)
@@ -5602,22 +5613,22 @@ namespace System.Management.Automation
                         }
                         else
                         {
-                            PSTypeName lastAssignedType = assignmentStatementAst.Right is CommandExpressionAst commandExpression
+                            PSTypeName lastAssignedType = right is CommandExpressionAst commandExpression
                                 ? GetInferredVarTypeFromAst(commandExpression.Expression)
                                 : null;
                             SaveVariableInfo(variableExpression.VariablePath.UnqualifiedPath, lastAssignedType, isConstraint: false);
                         }
                     }
                 }
-                else if (assignmentStatementAst.Left is VariableExpressionAst variableExpression)
+                else if (left is VariableExpressionAst variableExpression)
                 {
                     if (variableExpression == CompletionVariableAst || s_specialVariablesCache.Value.Contains(variableExpression.VariablePath.UserPath))
                     {
-                        return AstVisitAction.Continue;
+                        return;
                     }
 
                     PSTypeName lastAssignedType;
-                    if (assignmentStatementAst.Right is CommandExpressionAst commandExpression)
+                    if (right is CommandExpressionAst commandExpression)
                     {
                         lastAssignedType = GetInferredVarTypeFromAst(commandExpression.Expression);
                     }
@@ -5628,8 +5639,21 @@ namespace System.Management.Automation
 
                     SaveVariableInfo(variableExpression.VariablePath.UnqualifiedPath, lastAssignedType, isConstraint: false);
                 }
-
-                return AstVisitAction.Continue;
+                else if (left is ArrayLiteralAst array)
+                {
+                    foreach (ExpressionAst expression in array.Elements)
+                    {
+                        ProcessAssignmentLeftSide(expression, right);
+                    }
+                }
+                else if (left is ParenExpressionAst parenExpression)
+                {
+                    ExpressionAst pureExpression = parenExpression.Pipeline.GetPureExpression();
+                    if (pureExpression is not null)
+                    {
+                        ProcessAssignmentLeftSide(pureExpression, right);
+                    }
+                }
             }
 
             public override AstVisitAction VisitCommand(CommandAst commandAst)

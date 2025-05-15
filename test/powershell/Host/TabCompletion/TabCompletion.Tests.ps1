@@ -36,13 +36,13 @@ Describe "TabCompletion" -Tags CI {
     It 'Should not include duplicate command results' {
         $OldModulePath = $env:PSModulePath
         $tempDir = Join-Path -Path $TestDrive -ChildPath "TempPsModuleDir"
+        $ModuleDirs = @(
+            Join-Path $tempDir "TestModule1\1.0"
+            Join-Path $tempDir "TestModule1\1.1"
+            Join-Path $tempDir "TestModule2\1.0"
+        )
         try
         {
-            $ModuleDirs = @(
-                Join-Path $tempDir "TestModule1\1.0"
-                Join-Path $tempDir "TestModule1\1.1"
-                Join-Path $tempDir "TestModule2\1.0"
-            )
             foreach ($Dir in $ModuleDirs)
             {
                 $NewDir = New-Item -Path $Dir -ItemType Directory -Force
@@ -61,6 +61,36 @@ Describe "TabCompletion" -Tags CI {
         finally
         {
             $env:PSModulePath = $OldModulePath
+            Remove-Item -LiteralPath $ModuleDirs -Recurse -Force
+        }
+    }
+
+    It 'Should not include duplicate module results' {
+        $OldModulePath = $env:PSModulePath
+        $tempDir = Join-Path -Path $TestDrive -ChildPath "TempPsModuleDir"
+        try
+        {
+            $ModuleDirs = @(
+                Join-Path $tempDir "TestModule1\1.0"
+                Join-Path $tempDir "TestModule1\1.1"
+            )
+            foreach ($Dir in $ModuleDirs)
+            {
+                $NewDir = New-Item -Path $Dir -ItemType Directory -Force
+                $ModuleName = $NewDir.Parent.Name
+                Set-Content -Value 'MyTestFunction{}' -LiteralPath "$($NewDir.FullName)\$ModuleName.psm1"
+                New-ModuleManifest -Path "$($NewDir.FullName)\$ModuleName.psd1" -RootModule "$ModuleName.psm1" -FunctionsToExport "MyTestFunction" -ModuleVersion $NewDir.Name
+            }
+
+            $env:PSModulePath += [System.IO.Path]::PathSeparator + $tempDir            
+            $Res = TabExpansion2 -inputScript 'Import-Module -Name TestModule'
+            $Res.CompletionMatches.Count | Should -Be 1
+            $Res.CompletionMatches[0].CompletionText | Should -Be TestModule1
+        }
+        finally
+        {
+            $env:PSModulePath = $OldModulePath
+            Remove-Item -LiteralPath $ModuleDirs -Recurse -Force
         }
     }
 
@@ -1082,6 +1112,17 @@ param([ValidatePattern(
         $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
         $res | Should -HaveCount 1
         $res.CompletionMatches[0].CompletionText | Should -BeExactly '$TestVar1'
+    }
+
+    It 'Should complete variable assigned in ParenExpression' {
+        $res = TabExpansion2 -inputScript '($ParenVar) = 1; $ParenVa'
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '$ParenVar'
+    }
+
+    It 'Should complete variable assigned in ArrayLiteral' {
+        $res = TabExpansion2 -inputScript '$DemoVar1, $DemoVar2 = 1..10; $DemoVar'
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '$DemoVar1'
+        $res.CompletionMatches[1].CompletionText | Should -BeExactly '$DemoVar2'
     }
 
     Context 'Start-Process -Verb parameter completion' {
