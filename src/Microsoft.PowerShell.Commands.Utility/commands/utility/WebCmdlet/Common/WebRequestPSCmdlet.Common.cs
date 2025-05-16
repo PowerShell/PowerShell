@@ -1455,6 +1455,10 @@ namespace Microsoft.PowerShell.Commands
                 {
                     verboseBuilder.Append($" body size {ContentHelper.GetFriendlyContentLength(requestContentLength)}");
                 }
+                if (OutFile is not null)
+                {
+                    verboseBuilder.Append($" output to {QualifyFilePath(OutFile)}");
+                }
 
                 WriteVerbose(verboseBuilder.ToString().Trim());
             }
