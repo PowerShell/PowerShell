@@ -17,8 +17,6 @@ if (-not (Test-Path $defaultWorkspaceFolder)) {
     git config --global --add safe.directory $defaultWorkspaceFolder
 }
 
-
-
 # NOTE: We override the Azure Devops private feed as it may not be up to date with the required packages
 # This is only for development and not builds so any potential vulnerabilities will be caught at CI time
 # If you want to restore private restore behavior for testing, perform the following:

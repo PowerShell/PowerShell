@@ -23,6 +23,7 @@
   // We use it for convenience and consistency with the settings that require absolute paths.
   // NOTE: This is ignored when using a named volume devcontainer but will still work fine.
   "workspaceFolder": "/powershell",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/powershell,type=bind,consistency=cached",
 
   "remoteUser": "vscode",
   "containerUser": "vscode",
@@ -83,7 +84,6 @@
           "PowerShell-DevBuild": "${workspaceFolder}/debug/pwsh"
         },
         "powershell.powerShellDefaultVersion": "PowerShell-Devcontainer",
-        "terminal.integrated.defaultProfile.linux": "pwsh",
         "terminal.integrated.profiles.linux": {
           "pwsh dev": {
             "path": "/powershell/debug/pwsh",
