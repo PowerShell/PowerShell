@@ -1417,9 +1417,6 @@ namespace Microsoft.PowerShell.Commands
                     currentRequest = GetRequest(currentUri);
                     FillRequestStream(currentRequest);
                 }
-
-                // We know the message will usually be at least a certain size, so this reduces allocations.
-                StringBuilder verboseBuilder = new(128);
             }
             while (totalRequests > 0 && !response.IsSuccessStatusCode);
 
