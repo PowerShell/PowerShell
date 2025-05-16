@@ -1277,151 +1277,144 @@ namespace Microsoft.PowerShell.Commands
             HttpRequestMessage currentRequest = request;
             HttpResponseMessage response = null;
 
-            do
+            // Track the current URI being used by various requests and re-requests.
+            Uri currentUri = currentRequest.RequestUri;
+
+            _cancelToken = new CancellationTokenSource();
+            try
             {
-                // Track the current URI being used by various requests and re-requests.
-                Uri currentUri = currentRequest.RequestUri;
+                if (IsWriteVerboseEnabled())
+                {
+                    WriteWebRequestVerboseInfo(currentRequest);
+                }
+
+                if (IsWriteDebugEnabled())
+                {
+                    WriteWebRequestDebugInfo(currentRequest);
+                }
+
+                response = client.SendAsync(currentRequest, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
+
+                if (IsWriteVerboseEnabled())
+                {
+                    WriteWebResponseVerboseInfo(response);
+                }
+
+                if (IsWriteDebugEnabled())
+                {
+                    WriteWebResponseDebugInfo(response);
+                }
+            }
+            catch (TaskCanceledException ex)
+            {
+                if (ex.InnerException is TimeoutException)
+                {
+                    // HTTP Request timed out
+                    ErrorRecord er = new(ex, "ConnectionTimeoutReached", ErrorCategory.OperationTimeout, null);
+                    ThrowTerminatingError(er);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            if (handleRedirect
+                && _maximumRedirection is not 0
+                && IsRedirectCode(response.StatusCode)
+                && response.Headers.Location is not null)
+            {
+                _cancelToken.Cancel();
+                _cancelToken = null;
+
+                // If explicit count was provided, reduce it for this redirection.
+                if (_maximumRedirection > 0)
+                {
+                    _maximumRedirection--;
+                }
+
+                // For selected redirects, GET must be used with the redirected Location.
+                if (RequestRequiresForceGet(response.StatusCode, currentRequest.Method) && !PreserveHttpMethodOnRedirect)
+                {
+                    Method = WebRequestMethod.Get;
+                    CustomMethod = string.Empty;
+                }
+
+                currentUri = new Uri(request.RequestUri, response.Headers.Location);
+
+                // Continue to handle redirection
+                using HttpRequestMessage redirectRequest = GetRequest(currentUri);
+                response.Dispose();
+                response = GetResponse(client, redirectRequest, handleRedirect);
+            }
+
+            // Request again without the Range header because the server indicated the range was not satisfiable.
+            // This happens when the local file is larger than the remote file.
+            // If the size of the remote file is the same as the local file, there is nothing to resume.
+            if (Resume.IsPresent
+                && response.StatusCode == HttpStatusCode.RequestedRangeNotSatisfiable
+                && (response.Content.Headers.ContentRange.HasLength
+                && response.Content.Headers.ContentRange.Length != _resumeFileSize))
+            {
+                _cancelToken.Cancel();
+
+                WriteVerbose(WebCmdletStrings.WebMethodResumeFailedVerboseMsg);
+
+                // Disable the Resume switch so the subsequent calls to GetResponse() and FillRequestStream()
+                // are treated as a standard -OutFile request. This also disables appending local file.
+                Resume = new SwitchParameter(false);
+
+                using (HttpRequestMessage requestWithoutRange = GetRequest(currentUri))
+                {
+                    FillRequestStream(requestWithoutRange);
+
+                    response.Dispose();
+                    response = GetResponse(client, requestWithoutRange, handleRedirect);
+                }
+            }
+
+            _resumeSuccess = response.StatusCode == HttpStatusCode.PartialContent;
+
+            // When MaximumRetryCount is not specified, the totalRequests is 1.
+            if (totalRequests > 1 && ShouldRetry(response.StatusCode))
+            {
+                int retryIntervalInSeconds = WebSession.RetryIntervalInSeconds;
+
+                // If the status code is 429 get the retry interval from the Headers.
+                // Ignore broken header and its value.
+                if (response.StatusCode is HttpStatusCode.TooManyRequests && response.Headers.TryGetValues(HttpKnownHeaderNames.RetryAfter, out IEnumerable<string> retryAfter))
+                {
+                    try
+                    {
+                        IEnumerator<string> enumerator = retryAfter.GetEnumerator();
+                        if (enumerator.MoveNext())
+                        {
+                            retryIntervalInSeconds = Convert.ToInt32(enumerator.Current);
+                        }
+                    }
+                    catch
+                    {
+                        // Ignore broken header.
+                    }
+                }
+
+                string retryMessage = string.Format(
+                    CultureInfo.CurrentCulture,
+                    WebCmdletStrings.RetryVerboseMsg,
+                    retryIntervalInSeconds,
+                    response.StatusCode);
+
+                WriteVerbose(retryMessage);
 
                 _cancelToken = new CancellationTokenSource();
-                try
-                {
-                    if (IsWriteVerboseEnabled())
-                    {
-                        WriteWebRequestVerboseInfo(currentRequest);
-                    }
+                Task.Delay(retryIntervalInSeconds * 1000, _cancelToken.Token).GetAwaiter().GetResult();
+                _cancelToken.Cancel();
+                _cancelToken = null;
 
-                    if (IsWriteDebugEnabled())
-                    {
-                        WriteWebRequestDebugInfo(currentRequest);
-                    }
-
-                    response = client.SendAsync(currentRequest, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
-
-                    if (IsWriteVerboseEnabled())
-                    {
-                        WriteWebResponseVerboseInfo(response);
-                    }
-
-                    if (IsWriteDebugEnabled())
-                    {
-                        WriteWebResponseDebugInfo(response);
-                    }
-                }
-                catch (TaskCanceledException ex)
-                {
-                    if (ex.InnerException is TimeoutException)
-                    {
-                        // HTTP Request timed out
-                        ErrorRecord er = new(ex, "ConnectionTimeoutReached", ErrorCategory.OperationTimeout, null);
-                        ThrowTerminatingError(er);
-                    }
-                    else
-                    {
-                        throw;
-                    }
-
-                }
-                if (handleRedirect
-                    && _maximumRedirection is not 0
-                    && IsRedirectCode(response.StatusCode)
-                    && response.Headers.Location is not null)
-                {
-                    _cancelToken.Cancel();
-                    _cancelToken = null;
-
-                    // If explicit count was provided, reduce it for this redirection.
-                    if (_maximumRedirection > 0)
-                    {
-                        _maximumRedirection--;
-                    }
-
-                    // For selected redirects, GET must be used with the redirected Location.
-                    if (RequestRequiresForceGet(response.StatusCode, currentRequest.Method) && !PreserveHttpMethodOnRedirect)
-                    {
-                        Method = WebRequestMethod.Get;
-                        CustomMethod = string.Empty;
-                    }
-
-                    currentUri = new Uri(request.RequestUri, response.Headers.Location);
-
-                    // Continue to handle redirection
-                    using HttpRequestMessage redirectRequest = GetRequest(currentUri);
-                    response.Dispose();
-                    response = GetResponse(client, redirectRequest, handleRedirect);
-                }
-
-                // Request again without the Range header because the server indicated the range was not satisfiable.
-                // This happens when the local file is larger than the remote file.
-                // If the size of the remote file is the same as the local file, there is nothing to resume.
-                if (Resume.IsPresent
-                    && response.StatusCode == HttpStatusCode.RequestedRangeNotSatisfiable
-                    && (response.Content.Headers.ContentRange.HasLength
-                    && response.Content.Headers.ContentRange.Length != _resumeFileSize))
-                {
-                    _cancelToken.Cancel();
-
-                    WriteVerbose(WebCmdletStrings.WebMethodResumeFailedVerboseMsg);
-
-                    // Disable the Resume switch so the subsequent calls to GetResponse() and FillRequestStream()
-                    // are treated as a standard -OutFile request. This also disables appending local file.
-                    Resume = new SwitchParameter(false);
-
-                    using (HttpRequestMessage requestWithoutRange = GetRequest(currentUri))
-                    {
-                        FillRequestStream(requestWithoutRange);
-
-                        response.Dispose();
-                        response = GetResponse(client, requestWithoutRange, handleRedirect);
-                    }
-                }
-
-                _resumeSuccess = response.StatusCode == HttpStatusCode.PartialContent;
-
-                // When MaximumRetryCount is not specified, the totalRequests is 1.
-                if (totalRequests > 1 && ShouldRetry(response.StatusCode))
-                {
-                    int retryIntervalInSeconds = WebSession.RetryIntervalInSeconds;
-
-                    // If the status code is 429 get the retry interval from the Headers.
-                    // Ignore broken header and its value.
-                    if (response.StatusCode is HttpStatusCode.TooManyRequests && response.Headers.TryGetValues(HttpKnownHeaderNames.RetryAfter, out IEnumerable<string> retryAfter))
-                    {
-                        try
-                        {
-                            IEnumerator<string> enumerator = retryAfter.GetEnumerator();
-                            if (enumerator.MoveNext())
-                            {
-                                retryIntervalInSeconds = Convert.ToInt32(enumerator.Current);
-                            }
-                        }
-                        catch
-                        {
-                            // Ignore broken header.
-                        }
-                    }
-
-                    string retryMessage = string.Format(
-                        CultureInfo.CurrentCulture,
-                        WebCmdletStrings.RetryVerboseMsg,
-                        retryIntervalInSeconds,
-                        response.StatusCode);
-
-                    WriteVerbose(retryMessage);
-
-                    _cancelToken = new CancellationTokenSource();
-                    Task.Delay(retryIntervalInSeconds * 1000, _cancelToken.Token).GetAwaiter().GetResult();
-                    _cancelToken.Cancel();
-                    _cancelToken = null;
-
-                    currentRequest.Dispose();
-                    currentRequest = GetRequest(currentUri);
-                    FillRequestStream(currentRequest);
-                }
-
-                // We know the message will usually be at least a certain size, so this reduces allocations.
-                StringBuilder verboseBuilder = new(128);
+                currentRequest.Dispose();
+                currentRequest = GetRequest(currentUri);
+                FillRequestStream(currentRequest);
             }
-            while (totalRequests > 0 && !response.IsSuccessStatusCode);
 
             return response;
         }
