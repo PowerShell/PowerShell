@@ -1,18 +1,20 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/dotnet
 {
-	"name": "PowerShell Development",
-	// NOTE: This should be kept up to date to match the .NET SDK currently in use on the master branch.
-  	// but not mandatory as we fetch the appropriate .NET SDK as needed during build.
-	"image": "mcr.microsoft.com/devcontainers/dotnet:1-10.0-preview-noble",
+	"name": "JG PowerShell",
+
+	"build": {
+		"dockerfile": "Dockerfile",
+		"args": {
+			// NOTE: This should be kept up to date to match the .NET SDK currently in use on the master branch.
+  		// but not mandatory as we fetch the appropriate .NET SDK as needed during build.
+			// See: https://mcr.microsoft.com/en-us/artifact/mar/devcontainers/dotnet/tags for available tags.
+			"VARIANT": "1-10.0-preview-noble"
+		}
+	},
 	"hostRequirements": {
 		"cpus": 4
 	},
-
-	// Bind the working folder to /powershell instead of /workspaces/PowerShell
-	"workspaceMount": "source=${localWorkspaceFolder},target=/powershell,type=bind,consistency=cached",
-	"workspaceFolder": "/powershell",
-
 	"capAdd": [
 		"NET_RAW" // Needed for Pester tests that require ping
 	],
@@ -29,14 +31,15 @@
 	// Container lifecycle scripts
 	// Docs: https://containers.dev/implementors/json_reference/#lifecycle-scripts
 
-	//NOTE: We don't use initializeCommand because that runs on the host and we may not know what OS it is.
-	"onCreateCommand": ["/usr/bin/pwsh", "-nop", "-noni", "-f", ".devcontainer/scripts/1-onCreate.ps1"],
-	"updateContentCommand": ["/usr/bin/pwsh", "-nop", "-noni", "-f", ".devcontainer/scripts/2-updateContent.ps1"],
+	// NOTE: We don't use initializeCommand because that runs on the host and we may not know what OS it is.
+
+	"onCreateCommand": ["/usr/bin/pwsh", "-nop", "-noni", "-f", "/devcontainer/scripts/1-onCreate.ps1"],
+	"updateContentCommand": ["/usr/bin/pwsh", "-nop", "-noni", "-f", "/devcontainer/scripts/2-updateContent.ps1"],
 
 	// These lifecycle scripts are non-blocking to loading the codespace and UI by default
-	// "postCreateCommand": ["/usr/bin/pwsh", "-nop", "-noni", "-f", ".devcontainer/scripts/3-postCreate.ps1"],
-	"postStartCommand": ["/usr/bin/pwsh", "-nop", "-noni", "-f", ".devcontainer/scripts/4-postStart.ps1"],
-	// "postAttachCommand": ["/usr/bin/pwsh", "-nop", "-noni", "-f", ".devcontainer/scripts/5-postAttach.ps1"],
+	"postCreateCommand": ["/usr/bin/pwsh", "-nop", "-noni", "-f", "/devcontainer/scripts/3-postCreate.ps1"],
+	"postStartCommand": ["/usr/bin/pwsh", "-nop", "-noni", "-f", "/devcontainer/scripts/4-postStart.ps1"],
+	"postAttachCommand": ["/usr/bin/pwsh", "-nop", "-noni", "-f", "/devcontainer/scripts/5-postAttach.ps1"],
 
 	// Configure tool-specific properties.
 	"customizations": {
@@ -47,7 +50,7 @@
 				"csharp.experimental.debug.hotReload": true,
 				"powershell.powerShellAdditionalExePaths": {
 					"PowerShell-Devcontainer": "/usr/bin/pwsh",
-					"PowerShell-DevBuild": "/powershell/debug/pwsh"
+					"PowerShell-DevBuild": "${workspaceFolder}/debug/pwsh"
 				},
 				"powershell.powerShellDefaultVersion": "PowerShell-Devcontainer",
 				"terminal.integrated.defaultProfile.linux": "pwsh",

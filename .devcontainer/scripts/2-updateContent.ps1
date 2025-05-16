@@ -25,7 +25,12 @@ if ($ENV:CODESPACES) {
     log "Prebuilding PowerShell for Codespaces to $outputPath"
     Start-PSBuild -UseNugetOrg -Clean
     log 'Prebuilding Tests'
-    dotnet build test/xUnit test/Modules
+    dotnet build test/xUnit
+    log 'Fetching Pester for Tests'
+    Restore-PSPester
+    log 'Build Testing Tools'
+    Publish-PSTestTools
+    Publish-CustomConnectionTestModule
 }
 
 #Create a symbolic link from "debug" in the root folder to the publish folder for convenience.
