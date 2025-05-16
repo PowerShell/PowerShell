@@ -37,6 +37,7 @@ if ($ENV:CODESPACES) {
 }
 
 #Create a symbolic link from "debug" in the root folder to the publish folder for convenience.
+#This is required because some settings like terminal.integrated.profiles.linux cannot use variables like ${workspaceFolder} so we need an absolute path.
 $publishPath = Split-Path (get-psoptions -DefaultToNew).Output
 if (-not $publishPath) {
     New-Item -Path $publishPath -ItemType Directory -Force | Out-Null
