@@ -1,9 +1,29 @@
 // Place your settings in this file to overwrite default and user settings.
 {
+  // This is the default. EditorConfig *should* override this on a per language basis.
   "editor.tabSize": 4,
   "editor.insertSpaces": true,
-
   "files.insertFinalNewline": true,
+
+  // These are defaults but explicitly specified to override any user local preferences
+  "omnisharp.enableEditorConfigSupport": true,
+  "prettier.useEditorConfig": true,
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+
+  // Only format changed code, as lots of code may not meet current format standards.
+  "editor.formatOnSaveMode": "modifications",
+
+  // We leave this one up to the user
+  // "editor.codeActionsOnSave": {}
+
+  // Configure Prettier for formatting
+  // PowerShell and C# use their respective extension formatters
+  // Markdown uses markdownlint
+  "[json][jsonc][yaml][shellscript][html][javascript][typescript][properties]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  // Markdown
 
   // Based on current .markdownlist.json settings:
   // https://github.com/PowerShell/PowerShell/blob/master/.markdownlint.json
@@ -33,8 +53,5 @@
   "powershell.codeFormatting.whitespaceAroundOperator": true,
 
   // Adds a space after a separator (',' and ';').
-  "powershell.codeFormatting.whitespaceAfterSeparator": true,
-
-  // Omnisharp : Enable EditorConfig support
-  "omnisharp.enableEditorConfigSupport": true
+  "powershell.codeFormatting.whitespaceAfterSeparator": true
 }

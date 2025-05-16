@@ -9,6 +9,7 @@
     "ms-vscode.PowerShell",
     "twxs.cmake",
     "DavidAnson.vscode-markdownlint",
-    "vitaliymaz.vscode-svg-previewer"
+    "vitaliymaz.vscode-svg-previewer",
+    "esbenp.prettier-vscode"
   ]
 }
