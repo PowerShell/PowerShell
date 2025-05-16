@@ -23,7 +23,6 @@
   "[json][jsonc][yaml][shellscript][html][javascript][typescript][properties]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  // Markdown
 
   // Based on current .markdownlist.json settings:
   // https://github.com/PowerShell/PowerShell/blob/master/.markdownlint.json
