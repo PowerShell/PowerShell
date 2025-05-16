@@ -1,42 +1,15 @@
 {
     "version": "2.0.0",
-
-    "windows": {
-        "options": {
-            "shell": {
-                "executable": "pwsh.exe",
-                "args": [
-                    "-NoProfile",
-                    "-ExecutionPolicy",
-                    "Bypass",
-                    "-Command"
-                ]
-            }
+    "options": {
+        "shell": {
+            "executable": "pwsh",
+            "args": [
+                "-NoProfile",
+                "-NonInteractive",
+                "-Command"
+            ]
         }
     },
-    "linux": {
-        "options": {
-            "shell": {
-                "executable": "/usr/bin/pwsh",
-                "args": [
-                    "-NoProfile",
-                    "-Command"
-                ]
-            }
-        }
-    },
-    "osx": {
-        "options": {
-            "shell": {
-                "executable": "/usr/local/bin/pwsh",
-                "args": [
-                    "-NoProfile",
-                    "-Command"
-                ]
-            }
-        }
-    },
-
     "tasks": [
         {
             "label": "Build - Clean",
