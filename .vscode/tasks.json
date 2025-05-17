@@ -14,7 +14,7 @@
         {
             "label": "Build - Clean",
             "type": "shell",
-            "command": "Import-Module '${workspaceFolder}/build.psm1'; Start-PSBuild -Clean",
+            "command": "Import-Module '${workspaceFolder}/build.psm1'; Start-PSBuild -Clean -PublishLinkPath debug",
             "group": {
                 "kind": "build",
                 "isDefault": true

@@ -26,7 +26,7 @@ sudo apt install iputils-ping -y
 
 # Perform an initial build of PowerShell, this is needed so the "pwsh dev" terminal and debug launch tasks are available on first run
 log "Building PowerShell"
-Start-PSBuild -UseNugetOrg -Clean -PublishLinkPath $SCRIPT:WorkspaceFolder/debug
+Start-PSBuild -UseNugetOrg -Clean -PublishLinkPath debug
 
 # Prebuild more if in a codespace, otherwise leave this to the user to optimize local startup time
 if ($ENV:CODESPACES) {
