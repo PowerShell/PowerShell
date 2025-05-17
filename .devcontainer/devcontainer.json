@@ -89,8 +89,10 @@
         "ms-dotnettools.csharp",
         "ms-dotnettools.csdevkit",
         "ms-vscode.PowerShell",
+        "GitHub.vscode-pull-request-github",
         "ms-azure-devops.azure-pipelines",
-        "github.vscode-pull-request-github",
+        "editorconfig.editorconfig",
+        "DavidAnson.vscode-markdownlint",
         "esbenp.prettier-vscode"
       ]
     }
