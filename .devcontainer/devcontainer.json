@@ -79,7 +79,7 @@
         },
         "terminal.integrated.profiles.linux": {
           "pwsh dev": {
-            "path": "${workspaceFolder}/debug/pwsh",
+            "path": "/powershell/debug/pwsh",
             "icon": "terminal-powershell",
             "color": "terminal.ansiMagenta"
           }
