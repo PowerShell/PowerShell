@@ -67,6 +67,13 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public string? StatusCodeVariable { get; set; }
 
+        /// <summary>
+        /// Gets or sets how DateTime values are to be converted.
+        /// </summary>
+        [Parameter]
+        [ValidateSet("Default", "Local", "Utc", "Offset", "String")]
+        public JsonDateKind DateFormat { get; set; } = JsonDateKind.Default;
+
         #endregion Parameters
 
         #region Virtual Method Overrides
@@ -119,17 +126,27 @@ namespace Microsoft.PowerShell.Commands
                     object? obj = null;
                     Exception? ex = null;
 
+                    // Try to convert the response according to the return type.
                     if (returnType == RestReturnType.Json)
                     {
-                        convertSuccess = TryConvertToJson(str, out obj, ref ex) || TryConvertToXml(str, out obj, ref ex);
+                        convertSuccess = TryConvertToJson(str, DateFormat, out obj, ref ex);
+
+                        if (!convertSuccess)
+                        {
+                            WriteVerbose($"Failed to parse JSON response: {ex?.Message}");
+                        }
                     }
-                    // Default to try xml first since it's more common
-                    else
+                    else if (returnType == RestReturnType.Xml)
                     {
-                        convertSuccess = TryConvertToXml(str, out obj, ref ex) || TryConvertToJson(str, out obj, ref ex);
+                        convertSuccess = TryConvertToXml(str, out obj, ref ex);
+
+                        if (!convertSuccess)
+                        {
+                            WriteVerbose($"Failed to parse XML response: {ex?.Message}");
+                        }
                     }
 
-                    if (!convertSuccess)
+                    else
                     {
                         // Fallback to string
                         obj = str;
@@ -140,7 +157,7 @@ namespace Microsoft.PowerShell.Commands
 
                 responseStream.Position = 0;
             }
-            
+
             if (ShouldSaveToOutFile)
             {
                 string outFilePath = WebResponseHelper.GetOutFilePath(response, _qualifiedOutFile);
@@ -235,9 +252,9 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-            catch (XmlException)
+            catch (XmlException ex)
             {
-                // Catch XmlException
+                WriteVerbose($"XML processing error: {ex.Message}");
             }
             finally
             {
@@ -286,12 +303,12 @@ namespace Microsoft.PowerShell.Commands
             return doc != null;
         }
 
-        private static bool TryConvertToJson(string json, [NotNullWhen(true)] out object? obj, ref Exception? exRef)
+        private static bool TryConvertToJson(string json, JsonDateKind DateFormat, [NotNullWhen(true)] out object? obj, ref Exception? exRef)
         {
             bool converted = false;
             try
             {
-                obj = JsonObject.ConvertFromJson(json, out ErrorRecord error);
+                obj = JsonObject.ConvertFromJson(json, false, 1024, DateFormat, out ErrorRecord error);
 
                 if (obj == null)
                 {
