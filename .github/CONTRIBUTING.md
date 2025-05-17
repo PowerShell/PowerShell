@@ -154,7 +154,7 @@ Once the codespace starts, you can press `ctrl+shift+b` (`cmd+shift+b` on Mac) t
 
 [Learn more about how to get started with C# in Visual Studio Code](https://code.visualstudio.com/docs/csharp/get-started)
 
-### Building and testing
+### Building and Testing
 
 #### Building PowerShell
 
