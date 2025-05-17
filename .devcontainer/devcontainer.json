@@ -2,7 +2,6 @@
 // README at: https://github.com/devcontainers/templates/tree/main/src/dotnet
 {
   "name": "JG PowerShell",
-
   "build": {
     "dockerfile": "Dockerfile",
     "args": {
@@ -22,9 +21,6 @@
   // This path is symlinked in the onCreateCommand to the actual workspaceFolder
   // We use it for convenience and consistency with the settings that require absolute paths.
   // NOTE: This is ignored when using a named volume devcontainer but will still work fine.
-  "workspaceFolder": "/powershell",
-  "workspaceMount": "source=${localWorkspaceFolder},target=/powershell,type=bind,consistency=cached",
-
   "remoteUser": "vscode",
   "containerUser": "vscode",
 
@@ -68,7 +64,6 @@
     "-f",
     "/devcontainer/scripts/4-postStart.ps1"
   ],
-
   // This runs in a vscode terminal after startup and is generally not needed but here for reference.
   // "postAttachCommand": ["/usr/bin/pwsh", "-nop", "-noni", "-f", "/devcontainer/scripts/5-postAttach.ps1"],
 
@@ -80,13 +75,11 @@
         "dotnet.testWindow.useTestingPlatformProtocol": true,
         "csharp.experimental.debug.hotReload": true,
         "powershell.powerShellAdditionalExePaths": {
-          "PowerShell-Devcontainer": "/usr/bin/pwsh",
-          "PowerShell-DevBuild": "${workspaceFolder}/debug/pwsh"
+          "PowerShell-Dev": "${workspaceFolder}/debug/pwsh"
         },
-        "powershell.powerShellDefaultVersion": "PowerShell-Devcontainer",
         "terminal.integrated.profiles.linux": {
           "pwsh dev": {
-            "path": "/powershell/debug/pwsh",
+            "path": "${workspaceFolder}/debug/pwsh",
             "icon": "terminal-powershell",
             "color": "terminal.ansiMagenta"
           }

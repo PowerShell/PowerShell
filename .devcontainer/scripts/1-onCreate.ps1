@@ -2,20 +2,20 @@
 $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
 
+# The workspace folder name can be variable, we need a stable target for some settings like terminal path
+$absolutePath = '/powershell'
 . $PSScriptRoot/shared.ps1
-Import-Module -Force ./build.psm1
+
+if ($PWD -ne $absolutePath) {
+    log "Linking $SCRIPT:WorkspaceFolder to $absolutePath"
+    sudo ln -s $SCRIPT:WorkspaceFolder /powershell
+    log "Adding $absolutePath to git safe directories"
+    git config --global --add safe.directory $absolutePath
+}
 
 log "Adding $SCRIPT:WorkspaceFolder to git safe directories"
 git config --global --add safe.directory $SCRIPT:WorkspaceFolder
 
-# WorkspaceFolder might end up as a different path, so link it if it is not
-# This is so any scripts that require a hardcoded path to the workspace folder can use it
-$defaultWorkspaceFolder = '/powershell'
-if (-not (Test-Path $defaultWorkspaceFolder)) {
-    log "Linking $defaultWorkspaceFolder to $SCRIPT:WorkspaceFolder"
-    & sudo ln -s $SCRIPT:WorkspaceFolder $defaultWorkspaceFolder
-    git config --global --add safe.directory $defaultWorkspaceFolder
-}
 
 # NOTE: We override the Azure Devops private feed as it may not be up to date with the required packages
 # This is only for development and not builds so any potential vulnerabilities will be caught at CI time
