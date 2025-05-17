@@ -613,6 +613,7 @@ Fix steps:
     }
 
     if ($PublishLinkPath -and (Test-Path $publishPath)) {
+
         $linkPath = Join-Path $PSScriptRoot $PublishLinkPath
         try {
             if (Test-Path $linkPath) {
@@ -631,7 +632,10 @@ Fix steps:
 
             if (-not (Test-Path $linkPath)) {
                 Write-Log -message "Creating symbolic link at $linkPath to $publishPath"
-                New-Item -Force -ItemType SymbolicLink -Target $publishPath -Path $linkPath -ErrorAction Stop
+                $result = New-Item -Force -ItemType SymbolicLink -Path $linkPath -Value $publishPath -ErrorAction Stop
+                if (-not $result) {
+                    throw "Failed to create symbolic link at $linkPath, New-Item was run but nothing was returned. This is probably a bug."
+                }
             }
         } catch {
             Write-Warning "Failed to create PublishLinkPath at $linkPath`: $_. If on Windows, ensure you are in Developer Mode"
