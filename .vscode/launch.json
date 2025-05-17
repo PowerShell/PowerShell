@@ -9,6 +9,10 @@
             "console": "integratedTerminal",
             "justMyCode": false,
             "stopAtEntry": false,
+            "logging": {
+                "moduleLoad": false,
+                "exceptions": false // PS throws a lot of caught exceptions and this clutters output view.
+            },
             "cwd": "${workspaceRoot}"
         },
         {
