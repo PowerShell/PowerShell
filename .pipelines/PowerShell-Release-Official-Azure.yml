@@ -14,7 +14,7 @@ parameters: # parameters are shown up in ADO UI in a build queue time
     type: string
     default: 'NO'
 
-name: ev2-$(BUILD.SOURCEBRANCHNAME)-$(Build.BuildId)
+name: PROD-AME-EV2-$(BUILD.SOURCEBRANCHNAME)-$(Build.BuildId)
 
 variables:
   - name: CDP_DEFINITION_BUILD_COUNT
