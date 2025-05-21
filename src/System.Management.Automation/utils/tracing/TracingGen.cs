@@ -10,7 +10,7 @@ namespace System.Management.Automation.Tracing
     /// <summary>
     /// Tracer.
     /// </summary>
-    public sealed partial class Tracer : System.Management.Automation.Tracing.EtwActivity
+    public sealed partial class Tracer : EtwActivity
     {
         /// <summary>
         /// Critical level.
@@ -37,7 +37,6 @@ namespace System.Management.Automation.Tracing
         /// </summary>
         public const long KeywordAll = 0xFFFFFFFF;
 
-        private static readonly Guid providerId = Guid.Parse("a0c1853b-5c40-4b15-8766-3cf1c58f985a");
         private static readonly EventDescriptor WriteTransferEventEvent;
         private static readonly EventDescriptor DebugMessageEvent;
         private static readonly EventDescriptor M3PAbortingWorkflowExecutionEvent;
@@ -217,17 +216,6 @@ namespace System.Management.Automation.Tracing
         /// Constructor.
         /// </summary>
         public Tracer() : base() { }
-
-        /// <summary>
-        /// Provider Guid.
-        /// </summary>
-        protected override Guid ProviderId
-        {
-            get
-            {
-                return providerId;
-            }
-        }
 
         /// <summary>
         /// Transfer Event.
