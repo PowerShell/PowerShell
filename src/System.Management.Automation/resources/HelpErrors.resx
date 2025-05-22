@@ -190,4 +190,7 @@ To update these Help topics, start PowerShell by using the "Run as Administrator
   <data name="NoNetworkCommands" xml:space="preserve">
     <value>Cannot get help from a network location when in a restricted session.</value>
   </data>
+  <data name="NotAllowedInRestrictedRemoting" xml:space="preserve">
+    <value>Command not allowed in a restricted session.</value>
+  </data>
 </root>
