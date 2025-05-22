@@ -11,6 +11,11 @@ jobs:
       value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
 
   steps:
+    - checkout: self
+      clean: true
+      env:
+        ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
     - template: release-SetReleaseTagandContainerName.yml@self
 
     - task: DownloadPipelineArtifact@2
@@ -87,13 +92,13 @@ jobs:
       displayName: Create MsixBundle
       retryCountOnTaskFailure: 1
 
-    - task: onebranch.pipeline.signing@1
-      displayName: Sign MsixBundle
-      inputs:
-        command: 'sign'
-        signing_profile: $(MSIXProfile)
-        files_to_sign: '**/*.msixbundle'
-        search_root: '$(BundleDir)'
+    #- task: onebranch.pipeline.signing@1
+    #  displayName: Sign MsixBundle
+    #  inputs:
+    #    command: 'sign'
+    #    signing_profile: $(MSIXProfile)
+    #    files_to_sign: '**/*.msixbundle'
+    #    search_root: '$(BundleDir)'
     
     - pwsh: |
         $signedBundle = Get-ChildItem -Path $(BundleDir) -Filter "*.msixbundle" -File
@@ -108,3 +113,40 @@ jobs:
         Write-Verbose -Verbose "Uploaded Bundle:"
         Get-ChildItem -Path $(ob_outputDirectory) | Write-Verbose -Verbose
       displayName: Upload msixbundle to Artifacts
+
+    - pwsh: |
+        Write-Verbose -Verbose "Pipeline.Workspace: $(Pipeline.Workspace)"
+        Get-ChildItem -Path $(Pipeline.Workspace) -Recurse | Select-Object -ExpandProperty FullName
+        Write-Verbose -Verbose "System.DefaultWorkingDirectory: $(System.DefaultWorkingDirectory)"
+        Get-ChildItem -Path $(System.DefaultWorkingDirectory) -Recurse | Select-Object -ExpandProperty FullName
+        Test-Path -Path '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDP-Private.xml' | Write-Verbose -Verbose
+      displayName: Output Pipeline.Workspace and System.DefaultWorkingDirectory
+
+    - task: MS-RDX-MRO.windows-store-publish-dev.package-task.store-package@3
+      displayName: 'Create StoreBroker Package'
+      inputs:
+        serviceEndpoint: StoreAppPublish-Private
+        sbConfigPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/SBConfig-Private.json'
+        sourceFolder: '$(BundleDir)'
+        contents: '*.msixBundle'
+        outSBName: 'PowerShellStorePackage'
+        pdpPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDP-Private/PDP'
+        pdpMediaPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDP-Private/PDP-Media'
+
+    - pwsh: |
+        $submissionPackageDir = "$(System.DefaultWorkingDirectory)/SBOutDir"
+        $jsonFile = "$submissionPackageDir/PowerShellStorePackage.json"
+        $zipFile = "$submissionPackageDir/PowerShellStorePackage.zip"
+    
+        if ((Test-Path $jsonFile) -and (Test-Path $zipFile)) {
+            Write-Verbose -Verbose "Uploading StoreBroker Package files:"
+            Write-Verbose -Verbose "JSON File: $jsonFile"
+            Write-Verbose -Verbose "ZIP File: $zipFile"
+
+            Copy-Item -Path $submissionPackageDir -Destination "$(ob_outputDirectory)" -Verbose -Recurse
+        } 
+
+        else {
+            Write-Error "Required files not found in $submissionPackageDir"
+        }
+      displayName: 'Upload StoreBroker Package'

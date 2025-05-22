@@ -1,0 +1,72 @@
+parameters:
+  - name: skipMSIXPublish
+    type: boolean
+
+jobs:
+- job: Store_Publish_MSIX
+  displayName: Publish MSIX to the Microsoft Store
+  condition: ne('${{ parameters.skipMSIXPublish }}', 'true')
+  pool:
+    type: release
+    os: windows
+  templateContext:
+    inputs:
+      - input: pipelineArtifact
+        pipeline: PSPackagesOfficial
+        artifactName: drop_msixbundle_CreateMSIXBundle
+  variables:
+    - template: ./variable/release-shared.yml@self
+      parameters:
+        RELEASETAG: $[ stageDependencies.setReleaseTagAndChangelog.setTagAndChangelog.outputs['OutputReleaseTag.releaseTag'] ]
+
+  steps:
+  - template: release-SetReleaseTagandContainerName.yml@self
+  
+  - task: PowerShell@2
+    inputs:
+      targetType: inline
+      script: |
+        Write-Verbose -Verbose "Release Tag: $(OutputReleaseTag.releaseTag)"
+        Get-ChildItem $(Pipeline.Workspace) -Recurse | Select-Object -ExpandProperty FullName
+    displayName: 'Capture ReleaseTag and Downloaded Packages'
+
+  - task: PowerShell@2
+    inputs:
+      targetType: inline
+      script: |
+        if ("$(OutputReleaseTag.releaseTag)" -eq '') {
+          Write-Error "ReleaseTag is not set. Cannot proceed with publishing to the Store."
+          exit 1
+        }
+        $middleURL = ''
+        $tagString = "$(OutputReleaseTag.releaseTag)"
+        if ($tagString -match '-') {
+          $middleURL = "preview"
+        }
+        elseif ($tagString -match '(\d+\.\d+)') {
+          $middleURL = $matches[1]
+        }
+
+        $endURL = $tagString -replace '[v\.]',''
+        $message = "Changelog: https://github.com/PowerShell/PowerShell/blob/master/CHANGELOG/$middleURL.md#$endURL"
+        Write-Verbose -Verbose "Release Notes for the Store:"
+        Write-Verbose -Verbose "$message"
+        $jsonPath = "$(Pipeline.Workspace)\SBOutDir\PowerShellStorePackage.json"
+        $json = Get-Content $jsonPath -Raw | ConvertFrom-Json
+
+        $json.listings.'en-us'.baseListing.releaseNotes = $message
+
+        $json | ConvertTo-Json -Depth 100 | Set-Content $jsonPath -Encoding UTF8
+    displayName: 'Update Release Notes in JSON'
+
+  - task: MS-RDX-MRO.windows-store-publish.publish-task.store-publish@3
+    displayName: 'Publish StoreBroker Package'
+    inputs:
+      serviceEndpoint: 'StoreAppPublish-Private'
+      appId: 9N321NNBLGNT
+      inputMethod: JsonAndZip
+      jsonPath: '$(Pipeline.Workspace)\SBOutDir\PowerShellStorePackage.json'
+      zipPath: '$(Pipeline.Workspace)\SBOutDir\PowerShellStorePackage.zip'
+      numberOfPackagesToKeep: 2
+      jsonZipUpdateMetadata: true
+      targetPublishMode: 'Immediate'
