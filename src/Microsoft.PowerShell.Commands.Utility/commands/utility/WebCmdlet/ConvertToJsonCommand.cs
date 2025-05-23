@@ -138,7 +138,8 @@ namespace Microsoft.PowerShell.Commands
                     WriteObject(output);
                 }
             }
-            else {
+            else
+            {
                 _inputObjects.Add(InputObject);
             }
         }
