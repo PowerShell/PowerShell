@@ -156,4 +156,48 @@ Describe 'ConvertTo-Json' -tags "CI" {
         $actual = ConvertTo-Json -Compress -InputObject $obj
         $actual | Should -Be '{"Positive":18446744073709551615,"Negative":-18446744073709551615}'
     }
+
+    It "Should convert objects to JSON as Stream" {
+        $objects = @(
+            [pscustomobject]@{ Name = "Object1"; Value = 10 },
+            [pscustomobject]@{ Name = "Object2"; Value = 20 },
+            [pscustomobject]@{ Name = "Object3"; Value = 30 }
+        )
+        $returnObject = $objects | ConvertTo-Json -Compress -AsStream
+        $returnObject -is [System.Array] | Should -BeTrue
+        $returnObject | Should -HaveCount 3
+        $returnObject[0] | Should -Be '{"Name":"Object1","Value":10}'
+        $returnObject[1] | Should -Be '{"Name":"Object2","Value":20}'
+        $returnObject[2] | Should -Be '{"Name":"Object3","Value":30}'
+    }
+
+    It "Should convert nested array to JSON as Stream" {
+        $objects = ((1,2),3,(4,5))
+        $returnObject = $objects | ConvertTo-Json -Compress -AsStream
+        $returnObject -is [System.Array] | Should -BeTrue
+        $returnObject | Should -HaveCount 3
+        $returnObject[0] | Should -Be '[1,2]'
+        $returnObject[1] | Should -Be '3'
+        $returnObject[2] | Should -Be '[4,5]'
+    }   
+
+    It "StopProcessing as stream should succeed" -Pending:$true {
+        $ps = [PowerShell]::Create()
+        $null = $ps.AddScript({
+            $obj = [PSCustomObject]@{P1 = ''; P2 = ''; P3 = ''; P4 = ''; P5 = ''; P6 = ''}
+            $obj.P1 = $obj.P2 = $obj.P3 = $obj.P4 = $obj.P5 = $obj.P6 = $obj
+            1..100 | ForEach-Object { $obj } | ConvertTo-Json -Depth 10 -Verbose -AsStream
+            # the conversion is expected to take some time, this throw is in case it doesn't
+            throw "Should not have thrown exception"
+        })
+        $null = $ps.BeginInvoke() 
+        # wait for verbose message from ConvertTo-Json to ensure cmdlet is processing
+        Wait-UntilTrue { $ps.Streams.Verbose.Count -gt 0 } | Should -BeTrue
+        $null = $ps.BeginStop($null, $null)
+        # wait a bit to ensure state has changed, not using synchronous Stop() to avoid blocking Pester
+        Start-Sleep -Milliseconds 100
+        $ps.InvocationStateInfo.State | Should -BeExactly "Stopped"
+        $ps.Dispose()
+    }
+
 }
