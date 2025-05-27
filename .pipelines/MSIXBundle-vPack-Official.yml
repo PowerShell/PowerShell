@@ -114,11 +114,24 @@ extends:
             displayName: Download package
 
           - pwsh: |
-              Get-ChildItem '$(Pipeline.Workspace)\PSPackagesOfficial' -Recurse | Out-String -Width 150
+              $payloadDir = '$(Pipeline.Workspace)\PSPackagesOfficial\drop_msixbundle_CreateMSIXBundle'
+              Get-ChildItem $payloadDir -Recurse | Out-String -Width 150
+              $vstsCommandString = "vso[task.setvariable variable=PayloadDir]$payloadDir"
+              Write-Host "sending " + $vstsCommandString
+              Write-Host "##$vstsCommandString"
             displayName: 'Capture Artifact Listing'
 
           - pwsh: |
-              $bundlePackage = Get-ChildItem '$(Pipeline.Workspace)\PSPackagesOfficial\*.msixbundle'
+              $bundlePackage = Get-ChildItem '$(PayloadDir)\*.msixbundle'
+              Write-Verbose -Verbose ("MSIX bundle package: " + $bundlePackage.FullName -join ', ')
+              if ($bundlePackage.Count -ne 1) {
+                  throw "Expected to find 1 MSIX bundle package, but found $($bundlePackage.Count)"
+              }
+
+              if (-not (Test-Path '$(ob_outputDirectory)' -PathType Container)) {
+                  $null = New-Item '$(ob_outputDirectory)' -ItemType Directory -ErrorAction Stop
+              }
+
               $targetPath = Join-Path '$(ob_outputDirectory)' 'Microsoft.PowerShell_8wekyb3d8bbwe.msixbundle'
               Copy-Item -Verbose -Path $bundlePackage.FullName -Destination $targetPath
             displayName: 'Stage msixbundle for vpack'
