@@ -91,6 +91,7 @@ extends:
           ob_createvpack_targetDestinationDirectory: '$(Destination)'
           ob_createvpack_propsFile: false
           ob_createvpack_provData: true
+          ob_createvpack_metadata: '$(Build.SourceVersion)'
           ob_createvpack_versionAs: string
           ob_createvpack_version: '$(version)'
           ob_createvpack_verbose: true
