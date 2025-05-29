@@ -3727,13 +3727,13 @@ function New-MSIXPackage
     $releasePublisher = 'CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US'
 
     $appxManifest = Get-Content "$RepoRoot\assets\AppxManifest.xml" -Raw
-    $appxManifest = $appxManifest
-        .Replace('$VERSION$', $ProductVersion)
-        .Replace('$ARCH$', $Architecture)
-        .Replace('$PRODUCTNAME$', $productName)
-        .Replace('$DISPLAYNAME$', $displayName)
-        .Replace('$PUBLISHER$', $releasePublisher)
-        .Replace('$PHONEPRODUCTID$', $PhoneProductId)
+    $appxManifest = $appxManifest.
+        Replace('$VERSION$', $ProductVersion).
+        Replace('$ARCH$', $Architecture).
+        Replace('$PRODUCTNAME$', $productName).
+        Replace('$DISPLAYNAME$', $displayName).
+        Replace('$PUBLISHER$', $releasePublisher).
+        Replace('$PHONEPRODUCTID$', $PhoneProductId)
 
     $xml = [xml]$appxManifest
     if ($isPreview) {
