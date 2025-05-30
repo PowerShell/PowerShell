@@ -181,21 +181,23 @@ Describe 'ConvertTo-Json' -tags "CI" {
         $returnObject[2] | Should -Be '[4,5]'
     }   
 
-    It "StopProcessing as stream should succeed" -Pending:$true {
+    It "StopProcessing as stream should succeed" {
         $ps = [PowerShell]::Create()
+        $dataCollection = [System.Management.Automation.PSDataCollection[PSObject]]::new()
         $null = $ps.AddScript({
-            $obj = [PSCustomObject]@{P1 = ''; P2 = ''; P3 = ''; P4 = ''; P5 = ''; P6 = ''}
-            $obj.P1 = $obj.P2 = $obj.P3 = $obj.P4 = $obj.P5 = $obj.P6 = $obj
-            1..100 | ForEach-Object { $obj } | ConvertTo-Json -Depth 10 -Verbose -AsStream
-            # the conversion is expected to take some time, this throw is in case it doesn't
+            $obj1 = [PSCustomObject]@{Prop = 'value1'}
+            $obj2 = [PSCustomObject]@{} | Add-Member -MemberType ScriptProperty -Name Prop -Value {
+                Start-Sleep -Seconds 5
+                'value2'
+            } -PassThru
+            $obj1,$obj2 | ConvertTo-Json -AsStream
             throw "Should not have thrown exception"
         })
-        $null = $ps.BeginInvoke() 
-        # wait for verbose message from ConvertTo-Json to ensure cmdlet is processing
-        Wait-UntilTrue { $ps.Streams.Verbose.Count -gt 0 } | Should -BeTrue
+        $null = $ps.BeginInvoke($dataCollection,$dataCollection)
+        Start-Sleep -Milliseconds 1000
         $null = $ps.BeginStop($null, $null)
-        # wait a bit to ensure state has changed, not using synchronous Stop() to avoid blocking Pester
-        Start-Sleep -Milliseconds 100
+        Start-Sleep -Milliseconds 1000
+        $dataCollection.Count | Should -BeExactly 1
         $ps.InvocationStateInfo.State | Should -BeExactly "Stopped"
         $ps.Dispose()
     }
