@@ -368,10 +368,11 @@ extends:
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
-          displayName: Start vPack Release pipeline
+          displayName: Start 2 vPack Release pipelines
           jobName: PublishVPack
           instructions: |
-            Kick off vPack release pipeline
+            1. Kick off PowerShell-vPack-Official pipeline
+            2. Kick off PowerShell-MSIXBundle-VPack pipeline
 
     # Need to verify if the Az PS / CLI team still uses this. Skippinng for this release.
     # - stage: ReleaseDeps
