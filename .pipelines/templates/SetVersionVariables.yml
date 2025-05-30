@@ -72,11 +72,7 @@ steps:
     ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
 
 - powershell: |
-<<<<<<< HEAD
-    Get-ChildItem -Path env:
-=======
     Get-ChildItem -Path Env: | Out-String -Width 150
->>>>>>> 70b4bda20 (Publish `.msixbundle` package as a VPack (#25612))
   displayName: Capture environment
   condition: succeededOrFailed()
   env:
