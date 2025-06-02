@@ -16,7 +16,6 @@ namespace Microsoft.Management.UI.Internal
     /// The generic parameter.
     /// </typeparam>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
-    [Serializable]
     public class ValidatingSelectorValue<T> : ValidatingValueBase
     {
         #region Properties
@@ -143,7 +142,6 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Notifies listeners that the selected value has changed.
         /// </summary>
-        [field: NonSerialized]
         public event EventHandler<PropertyChangedEventArgs<T>> SelectedValueChanged;
 
         #endregion Events

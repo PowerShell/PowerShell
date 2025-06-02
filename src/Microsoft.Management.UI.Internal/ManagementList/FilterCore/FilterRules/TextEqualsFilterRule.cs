@@ -11,7 +11,6 @@ namespace Microsoft.Management.UI.Internal
     /// check if it is equal to the rule's value.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
-    [Serializable]
     public class TextEqualsFilterRule : TextFilterRule
     {
         private static readonly string TextEqualsCharactersRegexPattern = "^{0}$";

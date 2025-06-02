@@ -15,8 +15,12 @@ namespace Microsoft.Management.UI.Internal
     /// classes to support validation via the IDataErrorInfo interface.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
+<<<<<<< HEAD
     [Serializable]
     public abstract class ValidatingValueBase : IDataErrorInfo, INotifyPropertyChanged
+=======
+    public abstract class ValidatingValueBase : IDataErrorInfo, INotifyPropertyChanged, IDeepCloneable
+>>>>>>> 625da6ff5 (Remove `OnDeserialized` and `Serializable` attributes from `Microsoft.Management.UI.Internal` project (#25548))
     {
         #region Properties
 
@@ -26,7 +30,6 @@ namespace Microsoft.Management.UI.Internal
         private ReadOnlyCollection<DataErrorInfoValidationRule> readonlyValidationRules;
         private bool isValidationRulesCollectionDirty = true;
 
-        [field: NonSerialized]
         private DataErrorInfoValidationResult cachedValidationResult;
 
         /// <summary>
@@ -120,7 +123,6 @@ namespace Microsoft.Management.UI.Internal
         /// <remarks>
         /// The listeners attached to this event are not serialized.
         /// </remarks>
-        [field: NonSerialized]
         public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion PropertyChanged
