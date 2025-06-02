@@ -13,7 +13,6 @@ namespace Microsoft.Management.UI.Internal
     /// The generic parameter.
     /// </typeparam>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
-    [Serializable]
     public class DoesNotEqualFilterRule<T> : EqualsFilterRule<T> where T : IComparable
     {
         /// <summary>
