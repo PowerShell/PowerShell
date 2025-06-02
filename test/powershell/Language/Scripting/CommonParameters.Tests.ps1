@@ -149,14 +149,14 @@ Describe "Common parameters support for script cmdlets" -Tags "CI" {
 
     Context "ProgressAction" {
         It "Ignores progress actions on advanced script function with no variables" {
-            $ps = [Powershell]::Create()
-            $ps.AddScript(@'
-                function test-function {
-                    [CmdletBinding()]param()
+            $ps.AddScript(
+@'
+function test-function {
+    [CmdletBinding()]param()
 
-                    Write-Progress "progress foo"
-                }
-                test-function -ProgressAction Ignore
+    Write-Progress "progress foo"
+}
+test-function -ProgressAction Ignore
 '@).Invoke()
 
             $ps.Streams.Progress.Count | Should -Be 0
@@ -166,16 +166,16 @@ Describe "Common parameters support for script cmdlets" -Tags "CI" {
         }
 
         It "Ignores progress actions on advanced script function with variables" {
-            $ps = [Powershell]::Create()
-            $ps.AddScript(@'
-                function test-function {
-                    [CmdletBinding()]param()
+            $ps.AddScript(
+@'
+function test-function {
+    [CmdletBinding()]param([string]$path)
 
-                    switch($false) { default {} }
+    switch($false) { default { "echo $path" } }
 
-                    Write-Progress "progress foo"
-                }
-                test-function -ProgressAction Ignore
+    Write-Progress "progress foo"
+}
+test-function -ProgressAction Ignore
 '@).Invoke()
 
             $ps.Streams.Progress.Count | Should -Be 0
