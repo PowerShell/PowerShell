@@ -325,17 +325,6 @@ extends:
           instructions: |
             Run PowerShell-Release-Official-Azure.yml pipeline to publish to PMC
 
-    - stage: ReleaseDocker
-      dependsOn: PushGitTagAndMakeDraftPublic
-      displayName: 'Docker Release'
-      jobs:
-      - template: /.pipelines/templates/approvalJob.yml@self
-        parameters:
-          displayName: Start Docker Release
-          jobName: StartDockerRelease
-          instructions: |
-            Kickoff docker release
-
     - stage: UpdateDotnetDocker
       dependsOn: PushGitTagAndMakeDraftPublic
       displayName: Update DotNet SDK Docker images
@@ -348,7 +337,7 @@ extends:
             Create PR for updating dotnet-docker images to use latest PowerShell version.
             1. Fork and clone https://github.com/dotnet/dotnet-docker.git
             2. git checkout upstream/nightly -b updatePS
-            3. dotnet run --project .\eng\update-dependencies\ -- <dotnetversion> --product-version powershell=<powershellversion> --compute-shas
+            3. dotnet run --project .\eng\update-dependencies\ specific <dotnetversion> --product-version powershell=<powershellversion> --compute-shas
             4. create PR targeting nightly branch
 
     - stage: UpdateWinGet
