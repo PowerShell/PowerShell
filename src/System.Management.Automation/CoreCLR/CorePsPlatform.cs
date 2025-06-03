@@ -167,8 +167,13 @@ namespace System.Management.Automation
         internal static readonly string ConfigDirectory = Platform.SelectProductNameForDirectory(Platform.XDG_Type.CONFIG);
 #else
         // Gets the location for cache and config folders.
-        internal static readonly string CacheDirectory = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Microsoft\PowerShell";
-        internal static readonly string ConfigDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + @"\PowerShell";
+        internal static readonly string CacheDirectory = SafeDeriveFromSpecialFolder(
+            Environment.SpecialFolder.LocalApplicationData,
+            @"Microsoft\PowerShell");
+
+        internal static readonly string ConfigDirectory = SafeDeriveFromSpecialFolder(
+            Environment.SpecialFolder.Personal,
+            @"PowerShell");
 
         private static readonly Lazy<bool> _isStaSupported = new Lazy<bool>(() =>
         {
@@ -216,6 +221,17 @@ namespace System.Management.Automation
 #else
             internal const string Home = "USERPROFILE";
 #endif
+        }
+
+        private static string SafeDeriveFromSpecialFolder(Environment.SpecialFolder specialFolder, string subPath)
+        {
+            string folderPath = Environment.GetFolderPath(specialFolder, Environment.SpecialFolderOption.DoNotVerify);
+            if (string.IsNullOrWhiteSpace(folderPath))
+            {
+                return string.Empty;
+            }
+
+            return Path.Combine(folderPath, subPath);
         }
 
 #if UNIX
