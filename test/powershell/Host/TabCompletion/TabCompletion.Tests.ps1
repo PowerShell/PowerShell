@@ -2257,6 +2257,15 @@ param ($Param1)
 
             Remove-Item -LiteralPath $LiteralPath
         }
+
+        It "Should add single quotes if there are double quotes in bare quote file path" {
+			$BadQuote = [char]8220
+		    $TestFile1 = Join-Path -Path $TestDrive -ChildPath "Test1${BadQuote}File"
+            $null = New-Item -Path $TestFile1 -Force
+            $res = TabExpansion2 -inputScript "Get-ChildItem -Path $TestDrive\"
+            ($res.CompletionMatches | Where-Object ListItemText -Like "Test1?File").CompletionText | Should -Be "'$TestFile1'"
+            Remove-Item -LiteralPath $TestFile1 -Force
+        }
     }
 
     It 'Should correct slashes in UNC path completion' -Skip:(!$IsWindows) {

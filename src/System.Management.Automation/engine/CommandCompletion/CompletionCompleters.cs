@@ -5044,12 +5044,19 @@ namespace System.Management.Automation
 
                 default:
                     // Handle all the different quote types
-                    if (useSingleQuoteEscapeRules && path[index].IsSingleQuote())
+                    if (useSingleQuoteEscapeRules)
                     {
-                        _ = sb.Append('\'');
-                        quotesAreNeeded = true;
+                        if (path[index].IsSingleQuote())
+                        {
+                            _ = sb.Append('\'');
+                            quotesAreNeeded = true;
+                        }
+                        else if (!quotesAreNeeded && stringType == StringConstantType.BareWord && path[index].IsDoubleQuote())
+                        {
+                            quotesAreNeeded = true;
+                        }
                     }
-                    else if (!useSingleQuoteEscapeRules && path[index].IsDoubleQuote())
+                    else if (path[index].IsDoubleQuote())
                     {
                         _ = sb.Append('`');
                         quotesAreNeeded = true;
