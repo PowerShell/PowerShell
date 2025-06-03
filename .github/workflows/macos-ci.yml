@@ -7,6 +7,7 @@ on:
     branches:
       - master
       - release/**
+      - github-mirror
     paths:
       - "**"
       - "!.github/ISSUE_TEMPLATE/**"
@@ -17,6 +18,7 @@ on:
     branches:
       - master
       - release/**
+      - github-mirror
 # Path filters for PRs need to go into the changes job
 
 concurrency:
@@ -34,13 +36,17 @@ env:
   __SuppressAnsiEscapeSequences: 1
   nugetMultiFeedWarnLevel: none
   system_debug: 'false'
+
 jobs:
   changes:
     name: Change Detection
     runs-on: ubuntu-latest
+    if: startsWith(github.repository_owner, 'azure') || github.repository_owner == 'PowerShell'
     # Required permissions
     permissions:
       pull-requests: read
+      contents: read
+
     # Set job outputs to values from filter step
     outputs:
       source: ${{ steps.filter.outputs.source }}
@@ -48,23 +54,11 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4.1.0
 
-        # For pull requests it's not necessary to checkout the code
-      - uses: dorny/paths-filter@v3
+      - name: Change Detection
         id: filter
+        uses: "./.github/actions/infrastructure/path-filters"
         with:
-          list-files: json
-          filters: .github/action-filters.yml
-
-      - name: Capture outputs
-        run: |
-          "source: ${{ steps.filter.outputs.source }}"
-          "github: ${{ steps.filter.outputs.github }}"
-          "tools: ${{ steps.filter.outputs.tools }}"
-          "props: ${{ steps.filter.outputs.props }}"
-          "tests: ${{ steps.filter.outputs.tests }}"
-          "mainSource: ${{ steps.filter.outputs.mainSource }}"
-          "buildModule: ${{ steps.filter.outputs.buildModule }}"
-        shell: pwsh
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   ci_build:
     name: Build PowerShell
@@ -186,6 +180,6 @@ jobs:
       - macos_test_unelevated_ci
       - macos_test_unelevated_others
     if: always()
-    uses: PowerShell/compliance/.github/workflows/ready-to-merge.yml@master
+    uses: PowerShell/compliance/.github/workflows/ready-to-merge.yml@v1.0.0
     with:
       needs_context: ${{ toJson(needs) }}

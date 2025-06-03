@@ -6,7 +6,7 @@ jobs:
     type: windows
   variables:
   - name: ob_sdl_sbom_enabled
-    value: false
+    value: true
   - name: runCodesignValidationInjection
     value: false
   - name: NugetSecurityAnalysisWarningLevel
@@ -241,7 +241,7 @@ jobs:
       Write-Verbose -Verbose "Creating output directory for GitHub Release files: $(ob_outputDirectory)/GitHubPackages"
       New-Item -Path $(ob_outputDirectory)/GitHubPackages -ItemType Directory -Force
       Get-ChildItem -Path "$(Build.ArtifactStagingDirectory)/downloads/*" -Recurse | 
-        Where-Object { $_.Extension -notin '.msix', '.nupkg' } | 
+        Where-Object { $_.Extension -notin '.msix', '.nupkg' -and $_.Name -notmatch '-gc'} | 
         Copy-Item -Destination $(ob_outputDirectory)/GitHubPackages -Recurse -Verbose
       
       Write-Verbose -Verbose "Creating output directory for NuGet packages: $(ob_outputDirectory)/NuGetPackages"
@@ -255,18 +255,6 @@ jobs:
       # Create output directory for packages which have been uploaded to blob storage
       New-Item -Path $(Build.ArtifactStagingDirectory)/uploaded -ItemType Directory -Force
     displayName: Create output directory for packages
-
-  - pwsh: |
-      $azureRmModule = Get-InstalledModule AzureRM -ErrorAction SilentlyContinue -Verbose
-      if ($azureRmModule) {
-        Write-Host 'AzureRM module exists. Removing it'
-        Uninstall-AzureRm
-        Write-Host 'AzureRM module removed'
-      }
-
-      Install-Module -Name Az.Storage -Force -AllowClobber -Scope CurrentUser -Verbose
-
-    displayName: Remove AzRM modules
 
   - task: AzurePowerShell@5
     displayName: Upload packages to blob
