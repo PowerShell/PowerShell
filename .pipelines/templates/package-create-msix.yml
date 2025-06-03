@@ -99,13 +99,6 @@ jobs:
         $signedBundle = Get-ChildItem -Path $(BundleDir) -Filter "*.msixbundle" -File
         Write-Verbose -Verbose "Signed bundle: $signedBundle"
 
-<<<<<<< HEAD:.pipelines/templates/package-create-msix.yml
-        if (-not (Test-Path $(ob_outputDirectory))) {
-          New-Item -ItemType Directory -Path $(ob_outputDirectory) -Force
-        }
-
-        Copy-Item -Path $signedBundle.FullName -Destination "$(ob_outputDirectory)" -Verbose
-=======
         # Ensure the destination directory exists
         if (-not (Test-Path -Path "$(ob_outputDirectory)")) {
             Write-Verbose -Verbose "Creating destination directory: $(ob_outputDirectory)"
@@ -113,7 +106,6 @@ jobs:
         }
 
         Copy-Item -Path $signedBundle.FullName -Destination "$(ob_outputDirectory)\$($signedBundle.Name)" -Verbose
->>>>>>> ca7038b7c (Fix MSIX artifact upload, vPack template, changelog hashes, git tag command (#25437)):.pipelines/templates/release-create-msix.yml
 
         Write-Verbose -Verbose "Uploaded Bundle:"
         Get-ChildItem -Path $(ob_outputDirectory) | Write-Verbose -Verbose
