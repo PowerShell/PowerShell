@@ -2258,12 +2258,37 @@ param ($Param1)
             Remove-Item -LiteralPath $LiteralPath
         }
 
-        It "Should add single quotes if there are double quotes in bare quote file path" {
+        It "Should add single quotes if there are double quotes in bare word file path" {
 			$BadQuote = [char]8220
 		    $TestFile1 = Join-Path -Path $TestDrive -ChildPath "Test1${BadQuote}File"
             $null = New-Item -Path $TestFile1 -Force
             $res = TabExpansion2 -inputScript "Get-ChildItem -Path $TestDrive\"
             ($res.CompletionMatches | Where-Object ListItemText -Like "Test1?File").CompletionText | Should -Be "'$TestFile1'"
+            Remove-Item -LiteralPath $TestFile1 -Force
+        }
+
+        It "Should escape double quote if the input string uses double quotes" {
+			$BadQuote = [char]8220
+		    $TestFile1 = Join-Path -Path $TestDrive -ChildPath "Test1${BadQuote}File"
+            $null = New-Item -Path $TestFile1 -Force
+            $res = TabExpansion2 -inputScript "Get-ChildItem -Path `"$TestDrive\"
+            $Expected = "`"$($TestFile1.Insert($TestFile1.LastIndexOf($BadQuote), '`'))`""
+            ($res.CompletionMatches | Where-Object ListItemText -Like "Test1?File").CompletionText | Should -Be $Expected
+            Remove-Item -LiteralPath $TestFile1 -Force
+        }
+
+        It "Should escape single quotes in file paths" {
+			$BadQuote = "'"
+		    $TestFile1 = Join-Path -Path $TestDrive -ChildPath "Test1${BadQuote}File"
+            $null = New-Item -Path $TestFile1 -Force
+            $Expected = "'$($TestFile1.Insert($TestFile1.LastIndexOf($BadQuote), "'"))'"
+
+            $res = TabExpansion2 -inputScript "Get-ChildItem -Path '$TestDrive\"
+            ($res.CompletionMatches | Where-Object ListItemText -Like "Test1?File").CompletionText | Should -Be $Expected
+
+            $res = TabExpansion2 -inputScript "Get-ChildItem -Path $TestDrive\"
+            ($res.CompletionMatches | Where-Object ListItemText -Like "Test1?File").CompletionText | Should -Be $Expected
+
             Remove-Item -LiteralPath $TestFile1 -Force
         }
     }
