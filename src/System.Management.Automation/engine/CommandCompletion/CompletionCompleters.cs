@@ -5043,21 +5043,24 @@ namespace System.Management.Automation
                     break;
 
                 default:
-                    // Handle all the different quote types
                     if (useSingleQuoteEscapeRules)
                     {
+                        // Bareword or singlequoted input string.
                         if (path[index].IsSingleQuote())
                         {
+                            // SingleQuotes are escaped with more single quotes. quotesAreNeeded is set so bareword strings can quoted.
                             _ = sb.Append('\'');
                             quotesAreNeeded = true;
                         }
                         else if (!quotesAreNeeded && stringType == StringConstantType.BareWord && path[index].IsDoubleQuote())
                         {
+                            // Bareword string with double quote inside. Make sure to quote it so we don't need to escape it.
                             quotesAreNeeded = true;
                         }
                     }
                     else if (path[index].IsDoubleQuote())
                     {
+                        // Double quoted or bareword with variables input string. Need to escape double quotes.
                         _ = sb.Append('`');
                         quotesAreNeeded = true;
                     }
