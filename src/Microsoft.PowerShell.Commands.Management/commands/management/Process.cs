@@ -16,6 +16,7 @@ using System.Management.Automation.Language;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
+using System.Security;
 using System.Security.Principal;
 using System.Text;
 using System.Threading;
