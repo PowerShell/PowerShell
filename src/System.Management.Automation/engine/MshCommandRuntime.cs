@@ -2372,19 +2372,18 @@ namespace System.Management.Automation
                 _pp._permittedToWriteToPipeline = permittedToWriteToPipeline;
                 _pp._permittedToWriteThread = Thread.CurrentThread;
             }
+            
             /// <summary>
-            /// End the scope where WriteObject/WriteError is permitted.
+            /// Release all resources.
             /// </summary>
-            /// <!--
-            /// Not a true public, since the class is internal.
-            /// This is public only due to C# interface rules.
-            /// -->
+            /// <remarks>
+            /// End the scope where WriteObject/WriteError is permitted.
+            /// </remarks>
             public void Dispose()
             {
                 _pp._permittedToWrite = _wasPermittedToWrite;
                 _pp._permittedToWriteToPipeline = _wasPermittedToWriteToPipeline;
                 _pp._permittedToWriteThread = _wasPermittedToWriteThread;
-                GC.SuppressFinalize(this);
             }
 
             // There is no finalizer, by design.  This class relies on always
