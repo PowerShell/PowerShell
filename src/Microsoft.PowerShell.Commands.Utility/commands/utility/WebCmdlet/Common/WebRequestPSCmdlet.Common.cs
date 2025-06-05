@@ -1459,7 +1459,7 @@ namespace Microsoft.PowerShell.Commands
                 long? requestContentLength = request.Content?.Headers?.ContentLength;
                 if (requestContentLength is not null)
                 {
-                    verboseBuilder.Append($" body size {ContentHelper.GetFriendlyContentLength(requestContentLength)}");
+                    verboseBuilder.Append($" with body size {ContentHelper.GetFriendlyContentLength(requestContentLength)}");
                 }
                 if (OutFile is not null)
                 {
@@ -1491,7 +1491,10 @@ namespace Microsoft.PowerShell.Commands
                 {
                     debugBuilder.Append(DebugHeaderPrefix).AppendLine("QUERY");
                     string[] queryParams = request.RequestUri.Query.TrimStart('?').Split('&');
-                    debugBuilder.AppendJoin(Environment.NewLine, queryParams);
+                    debugBuilder
+                        .AppendJoin(Environment.NewLine, queryParams)
+                        .AppendLine()
+                        .AppendLine();
                 }
 
                 debugBuilder.Append(DebugHeaderPrefix).AppendLine("HEADERS");
@@ -1527,7 +1530,8 @@ namespace Microsoft.PowerShell.Commands
                         StreamContent streamContent =>
                             "[Stream content: " + ContentHelper.GetFriendlyContentLength(streamContent.Headers.ContentLength) + "]",
                         _ => "[Unknown content type]",
-                    });
+                    })
+                    .AppendLine();
                 }
 
                 WriteDebug(debugBuilder.ToString().Trim());
