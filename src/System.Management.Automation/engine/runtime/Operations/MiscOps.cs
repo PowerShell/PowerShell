@@ -1253,7 +1253,7 @@ namespace System.Management.Automation
                 // Unicode is still the default, but now may be overridden
 
                 var cpi = CommandParameterInternal.CreateParameterWithArgument(
-                    /*parameterAst*/null, "Filepath", "-Filepath:",
+                    /*parameterAst*/null, "LiteralPath", "-LiteralPath:",
                     /*argumentAst*/null, File,
                     false);
                 commandProcessor.AddParameter(cpi);
@@ -2555,8 +2555,7 @@ namespace System.Management.Automation
                 ProviderInfo provider;
                 SessionState sessionState = new SessionState(context.EngineSessionState);
 
-                Collection<string> filePaths =
-                    sessionState.Path.GetResolvedProviderPathFromPSPath(filePath, out provider);
+                string literalFilePath = sessionState.Path.GetUnresolvedProviderPathFromPSPath(filePath, out provider, out _);
 
                 // Make sure that the path is in the file system - that's all we can handle currently...
                 if (!provider.NameEquals(context.ProviderNames.FileSystem))
@@ -2568,21 +2567,14 @@ namespace System.Management.Automation
                 }
 
                 // Make sure at least one file was found...
-                if (filePaths == null || filePaths.Count < 1)
+                if (string.IsNullOrEmpty(literalFilePath))
                 {
                     // "No files matching '{0}' were found.."
                     throw InterpreterError.NewInterpreterException(filePath, typeof(RuntimeException), errorExtent,
                                                                    "FileNotFound", ParserStrings.FileNotFound, filePath);
                 }
 
-                if (filePaths.Count > 1)
-                {
-                    // "The path resolved to more than one file; can only process one file at a time."
-                    throw InterpreterError.NewInterpreterException(filePaths, typeof(RuntimeException), errorExtent,
-                                                                   "AmbiguousPath", ParserStrings.AmbiguousPath);
-                }
-
-                return filePaths[0];
+                return literalFilePath;
             }
             catch (RuntimeException rte)
             {
