@@ -1547,7 +1547,7 @@ namespace Microsoft.PowerShell.Commands
         {
             try
             {
-                // Typical basic example: WebResponse: 200 OK with text/plain payload body size (6 B (6 bytes))
+                // Typical basic example: WebResponse: 200 OK with text/plain payload body size 6 B (6 bytes)
                 StringBuilder verboseBuilder = new(128);
                 verboseBuilder.Append($"WebResponse: {(int)response.StatusCode} {response.ReasonPhrase ?? response.StatusCode.ToString()}");
 
@@ -1560,7 +1560,7 @@ namespace Microsoft.PowerShell.Commands
                 long? responseContentLength = response.Content?.Headers?.ContentLength;
                 if (responseContentLength is not null)
                 {
-                    verboseBuilder.Append($" body size ({ContentHelper.GetFriendlyContentLength(responseContentLength)})");
+                    verboseBuilder.Append($" with body size {ContentHelper.GetFriendlyContentLength(responseContentLength)}");
                 }
 
                 WriteVerbose(verboseBuilder.ToString().Trim());
