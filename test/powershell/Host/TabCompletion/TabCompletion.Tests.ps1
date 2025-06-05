@@ -2278,10 +2278,12 @@ param ($Param1)
         }
 
         It "Should escape single quotes in file paths" {
-			$BadQuote = "'"
+			$SingleQuote = "'"
 		    $TestFile1 = Join-Path -Path $TestDrive -ChildPath "Test1${BadQuote}File"
             $null = New-Item -Path $TestFile1 -Force
-            $Expected = "'$($TestFile1.Insert($TestFile1.LastIndexOf($BadQuote), "'"))'"
+            # Regardless if the input string was singlequoted or not, we expect to add surrounding single quotes and
+            # escape the single quote in the file path with another singlequote.
+            $Expected = "'$($TestFile1.Insert($TestFile1.LastIndexOf($SingleQuote), "'"))'"
 
             $res = TabExpansion2 -inputScript "Get-ChildItem -Path '$TestDrive\"
             ($res.CompletionMatches | Where-Object ListItemText -Like "Test1?File").CompletionText | Should -Be $Expected
