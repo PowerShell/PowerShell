@@ -11,7 +11,6 @@ namespace Microsoft.Management.UI.Internal
     /// check if it ends with the rule's value.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
-    [Serializable]
     public class TextEndsWithFilterRule : TextFilterRule
     {
         private static readonly string TextEndsWithCharactersRegexPattern = "{0}$";
