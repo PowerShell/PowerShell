@@ -1285,15 +1285,15 @@ namespace Microsoft.PowerShell.Commands
                 _cancelToken = new CancellationTokenSource();
                 try
                 {
-                    if (IsWriteVerboseEnabled())
-                    {
-                        WriteWebRequestVerboseInfo(currentRequest);
-                    }
+                    // if (IsWriteVerboseEnabled())
+                    // {
+                    //     WriteWebRequestVerboseInfo(currentRequest);
+                    // }
 
-                    if (IsWriteDebugEnabled())
-                    {
-                        WriteWebRequestDebugInfo(currentRequest);
-                    }
+                    // if (IsWriteDebugEnabled())
+                    // {
+                    //     WriteWebRequestDebugInfo(currentRequest);
+                    // }
 
                     response = client.SendAsync(currentRequest, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
 
@@ -1417,6 +1417,8 @@ namespace Microsoft.PowerShell.Commands
                     currentRequest = GetRequest(currentUri);
                     FillRequestStream(currentRequest);
                 }
+
+                totalRequests--;
             }
             while (totalRequests > 0 && !response.IsSuccessStatusCode);
 
