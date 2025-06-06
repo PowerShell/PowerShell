@@ -2279,7 +2279,7 @@ param ($Param1)
 
         It "Should escape single quotes in file paths" {
 			$SingleQuote = "'"
-		    $TestFile1 = Join-Path -Path $TestDrive -ChildPath "Test1${BadQuote}File"
+		    $TestFile1 = Join-Path -Path $TestDrive -ChildPath "Test1${SingleQuote}File"
             $null = New-Item -Path $TestFile1 -Force
             # Regardless if the input string was singlequoted or not, we expect to add surrounding single quotes and
             # escape the single quote in the file path with another singlequote.
