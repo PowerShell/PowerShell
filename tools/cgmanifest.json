@@ -66,7 +66,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Markdig.Signed",
-          "Version": "0.41.1"
+          "Version": "0.41.2"
         }
       },
       "DevelopmentDependency": false
@@ -755,6 +755,16 @@
       "Component": {
         "Type": "nuget",
         "Nuget": {
+          "Name": "System.Text.Encoding.CodePages",
+          "Version": "9.0.5"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
           "Name": "System.Threading.AccessControl",
           "Version": "9.0.5"
         }
@@ -766,7 +776,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Web.Services.Description",
-          "Version": "8.1.1"
+          "Version": "8.1.2"
         }
       },
       "DevelopmentDependency": false
