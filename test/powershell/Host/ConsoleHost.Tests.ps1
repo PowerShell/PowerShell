@@ -1203,4 +1203,19 @@ Describe 'TERM env var' -Tag CI {
             $env:NO_COLOR = $null
         }
     }
+
+    It 'No_COLOR should be respected for redirected output' {
+        $psi =  [System.Diagnostics.ProcessStartInfo] @{
+            FileName  = 'pwsh'
+            # Pass a command that succeeds and normally produces colored output, and one that produces error output.
+            Arguments = '-NoProfile -Command Get-Item .; Get-Content \nosuch123'
+            # Redirect (capture) both stdout and stderr.
+            RedirectStandardOutput = $true
+            RedirectStandardError = $true
+          }
+        $psi.Environment.Add('NO_COLOR', 1)
+        ($ps = [System.Diagnostics.Process]::Start($psi)).WaitForExit()
+        $ps.StandardOutput.ReadToEnd() | Should -Not -Contain '\e'
+        $ps.StandardError.ReadToEnd() | Should -Not -Contain '\e'
+    }
 }
