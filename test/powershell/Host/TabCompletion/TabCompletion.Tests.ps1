@@ -2257,6 +2257,42 @@ param ($Param1)
 
             Remove-Item -LiteralPath $LiteralPath
         }
+
+        It "Should add single quotes if there are double quotes in bare word file path" {
+			$BadQuote = [char]8220
+		    $TestFile1 = Join-Path -Path $TestDrive -ChildPath "Test1${BadQuote}File"
+            $null = New-Item -Path $TestFile1 -Force
+            $res = TabExpansion2 -inputScript "Get-ChildItem -Path $TestDrive\"
+            ($res.CompletionMatches | Where-Object ListItemText -Like "Test1?File").CompletionText | Should -Be "'$TestFile1'"
+            Remove-Item -LiteralPath $TestFile1 -Force
+        }
+
+        It "Should escape double quote if the input string uses double quotes" {
+			$BadQuote = [char]8220
+		    $TestFile1 = Join-Path -Path $TestDrive -ChildPath "Test1${BadQuote}File"
+            $null = New-Item -Path $TestFile1 -Force
+            $res = TabExpansion2 -inputScript "Get-ChildItem -Path `"$TestDrive\"
+            $Expected = "`"$($TestFile1.Insert($TestFile1.LastIndexOf($BadQuote), '`'))`""
+            ($res.CompletionMatches | Where-Object ListItemText -Like "Test1?File").CompletionText | Should -Be $Expected
+            Remove-Item -LiteralPath $TestFile1 -Force
+        }
+
+        It "Should escape single quotes in file paths" {
+			$SingleQuote = "'"
+		    $TestFile1 = Join-Path -Path $TestDrive -ChildPath "Test1${SingleQuote}File"
+            $null = New-Item -Path $TestFile1 -Force
+            # Regardless if the input string was singlequoted or not, we expect to add surrounding single quotes and
+            # escape the single quote in the file path with another singlequote.
+            $Expected = "'$($TestFile1.Insert($TestFile1.LastIndexOf($SingleQuote), "'"))'"
+
+            $res = TabExpansion2 -inputScript "Get-ChildItem -Path '$TestDrive\"
+            ($res.CompletionMatches | Where-Object ListItemText -Like "Test1?File").CompletionText | Should -Be $Expected
+
+            $res = TabExpansion2 -inputScript "Get-ChildItem -Path $TestDrive\"
+            ($res.CompletionMatches | Where-Object ListItemText -Like "Test1?File").CompletionText | Should -Be $Expected
+
+            Remove-Item -LiteralPath $TestFile1 -Force
+        }
     }
 
     It 'Should correct slashes in UNC path completion' -Skip:(!$IsWindows) {
