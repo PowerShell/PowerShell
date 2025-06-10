@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/component-detection-manifest.json",
   "Registrations": [
     {
       "Component": {
@@ -125,7 +126,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Extensions.ObjectPool",
-          "Version": "8.0.15"
+          "Version": "8.0.17"
         }
       },
       "DevelopmentDependency": false
@@ -174,16 +175,6 @@
       "Component": {
         "Type": "nuget",
         "Nuget": {
-          "Name": "Microsoft.Win32.Registry",
-          "Version": "4.7.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
           "Name": "Microsoft.Win32.SystemEvents",
           "Version": "8.0.0"
         }
@@ -195,7 +186,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Windows.Compatibility",
-          "Version": "8.0.15"
+          "Version": "8.0.17"
         }
       },
       "DevelopmentDependency": false
@@ -245,7 +236,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "runtime.native.System.Data.SqlClient.sni",
-          "Version": "4.7.0"
+          "Version": "4.4.0"
         }
       },
       "DevelopmentDependency": false
@@ -405,7 +396,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Data.SqlClient",
-          "Version": "4.8.6"
+          "Version": "4.9.0"
         }
       },
       "DevelopmentDependency": false
@@ -455,7 +446,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.DirectoryServices.Protocols",
-          "Version": "8.0.1"
+          "Version": "8.0.2"
         }
       },
       "DevelopmentDependency": false
@@ -475,7 +466,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Drawing.Common",
-          "Version": "8.0.15"
+          "Version": "8.0.17"
         }
       },
       "DevelopmentDependency": false
@@ -525,7 +516,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Net.Http.WinHttpHandler",
-          "Version": "8.0.2"
+          "Version": "8.0.3"
         }
       },
       "DevelopmentDependency": false
@@ -790,6 +781,5 @@
       },
       "DevelopmentDependency": false
     }
-  ],
-  "$schema": "https://json.schemastore.org/component-detection-manifest.json"
+  ]
 }
