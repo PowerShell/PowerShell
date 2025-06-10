@@ -48,4 +48,5 @@
     <rescap:Capability Name="packageManagement" />
     <rescap:Capability Name="packageQuery" />
   </Capabilities>
+  <mp:PhoneIdentity PhoneProductId="$PHONEPRODUCTID$" PhonePublisherId="95d94207-0c7c-47ed-82db-d75c81153c35" />
 </Package>

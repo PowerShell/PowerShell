@@ -84,31 +84,6 @@ steps:
     files_to_sign: '**\*.psd1;**\*.psm1;**\*.ps1xml;**\*.ps1;**\*.dll;**\*.exe;**\pwsh'
     search_root: $(Pipeline.Workspace)/toBeSigned
 
-- task: onebranch.pipeline.signing@1
-  displayName: Sign pwsh.exe with Windows cert
-  inputs:
-    command: 'sign'
-    cp_code: '203'
-    files_to_sign: '**\pwsh.exe'
-    search_root: $(Pipeline.Workspace)/toBeSigned
-
-- pwsh: |
-    if (Test-Path $(Pipeline.Workspace)/toBeSigned/pwsh.exe) {
-      Write-Verbose -Verbose "pwsh.exe is found, verifying signature"
-      $signature = Get-AuthenticodeSignature -FilePath $(Pipeline.Workspace)/toBeSigned/pwsh.exe
-      if ($signature.SignerCertificate.Issuer -notmatch '^CN=Microsoft Windows Production.*') {
-        Write-Error -ErrorAction Stop "pwsh.exe is not signed by Microsoft"
-      }
-      else {
-        Write-Verbose -Verbose "pwsh.exe is signed by Microsoft"
-      }
-    }
-    else {
-      Write-Verbose -Verbose "pwsh.exe is not found, skipping"
-    }
-
-  displayName: 'Verify windows signature'
-
 - pwsh : |
     Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
   displayName: Capture environment

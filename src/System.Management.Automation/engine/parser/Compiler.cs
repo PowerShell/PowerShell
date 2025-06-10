@@ -833,6 +833,14 @@ namespace System.Management.Automation.Language
 
         static Compiler()
         {
+            Diagnostics.Assert(SpecialVariables.AutomaticVariables.Length == (int)AutomaticVariable.NumberOfAutomaticVariables
+                && SpecialVariables.AutomaticVariableTypes.Length == (int)AutomaticVariable.NumberOfAutomaticVariables,
+                "The 'AutomaticVariable' enum length does not match both 'AutomaticVariables' and 'AutomaticVariableTypes' length.");
+
+            Diagnostics.Assert(Enum.GetNames(typeof(PreferenceVariable)).Length == SpecialVariables.PreferenceVariables.Length
+                && Enum.GetNames(typeof(PreferenceVariable)).Length == SpecialVariables.PreferenceVariableTypes.Length,
+                "The 'PreferenceVariable' enum length does not match both 'PreferenceVariables' and 'PreferenceVariableTypes' length.");
+
             s_functionContext = Expression.Parameter(typeof(FunctionContext), "funcContext");
             s_executionContextParameter = Expression.Variable(typeof(ExecutionContext), "context");
 

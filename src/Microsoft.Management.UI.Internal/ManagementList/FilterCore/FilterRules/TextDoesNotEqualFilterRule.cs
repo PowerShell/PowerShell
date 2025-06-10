@@ -10,7 +10,6 @@ namespace Microsoft.Management.UI.Internal
     /// check if it is not equal to the rule's value.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
-    [Serializable]
     public class TextDoesNotEqualFilterRule : TextEqualsFilterRule
     {
         /// <summary>

@@ -67,7 +67,7 @@ stages:
   jobs:
   - template: templates/ci-build.yml
     parameters:
-      pool: ubuntu-20.04
+      pool: ubuntu-latest
       jobName: linux_build
       displayName: linux Build
 
@@ -77,4 +77,4 @@ stages:
   jobs:
   - template: linux/templates/packaging.yml
     parameters:
-      pool: ubuntu-20.04
+      pool: ubuntu-latest
