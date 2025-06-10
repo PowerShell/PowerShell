@@ -48,7 +48,7 @@
     <PackageReference Include="System.DirectoryServices.Protocols" Version="9.0.6" />
     <PackageReference Include="System.Drawing.Common" Version="9.0.6" />
     <PackageReference Include="System.Formats.Asn1" Version="9.0.6" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
     <PackageReference Include="System.IO.Packaging" Version="9.0.6" />
     <PackageReference Include="System.IO.Ports" Version="9.0.6" />
     <PackageReference Include="System.Management" Version="9.0.6" />
