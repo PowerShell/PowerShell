@@ -2752,6 +2752,9 @@ namespace Microsoft.PowerShell
                         _parent._isRunningPromptLoop = false;
                     }
                 }
+#if UNIX
+                ui.WriteLine();
+#endif
             }
 
             internal void BlockCommandOutput()
