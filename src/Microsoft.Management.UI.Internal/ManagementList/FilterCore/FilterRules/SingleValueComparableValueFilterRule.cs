@@ -44,11 +44,22 @@ namespace Microsoft.Management.UI.Internal
         #region Ctor
 
         /// <summary>
-        /// Initializes a new instance of the SingleValueComparableValueFilterRule class.
+        /// Initializes a new instance of the <see cref="SingleValueComparableValueFilterRule{T}"/> class.
         /// </summary>
         protected SingleValueComparableValueFilterRule()
         {
             this.Value = new ValidatingValue<T>();
+            this.Value.PropertyChanged += this.Value_PropertyChanged;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SingleValueComparableValueFilterRule{T}"/> class.
+        /// </summary>
+        /// <param name="source">The source to initialize from.</param>
+        protected SingleValueComparableValueFilterRule(SingleValueComparableValueFilterRule<T> source)
+            : base(source)
+        {
+            this.Value = (ValidatingValue<T>)source.Value.DeepClone();
             this.Value.PropertyChanged += this.Value_PropertyChanged;
         }
 
