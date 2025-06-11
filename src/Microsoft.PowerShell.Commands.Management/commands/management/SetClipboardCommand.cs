@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -90,6 +91,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="append">If true, appends to clipboard instead of overwriting.</param>
         private void SetClipboardContent(List<string> contentList, bool append)
         {
+            Hashtable clipboardActions = (Hashtable)GetVariableValue("PSClipboardActions");
             string setClipboardShouldProcessTarget;
 
             if ((contentList == null || contentList.Count == 0) && !append)
@@ -97,7 +99,7 @@ namespace Microsoft.PowerShell.Commands
                 setClipboardShouldProcessTarget = string.Format(CultureInfo.InvariantCulture, ClipboardResources.ClipboardCleared);
                 if (ShouldProcess(setClipboardShouldProcessTarget, "Set-Clipboard"))
                 {
-                    Clipboard.SetText(string.Empty);
+                    Clipboard.SetText(clipboardActions, string.Empty);
                 }
 
                 return;
@@ -106,7 +108,7 @@ namespace Microsoft.PowerShell.Commands
             StringBuilder content = new();
             if (append)
             {
-                content.AppendLine(Clipboard.GetText());
+                content.AppendLine(Clipboard.GetText(clipboardActions));
             }
 
             if (contentList != null)
@@ -148,7 +150,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (!AsOSC52)
             {
-                Clipboard.SetText(content);
+                Clipboard.SetText((Hashtable)GetVariableValue("PSClipboardActions"), content);
                 return;
             }
 
