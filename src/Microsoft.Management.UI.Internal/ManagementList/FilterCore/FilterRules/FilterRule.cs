@@ -9,8 +9,12 @@ namespace Microsoft.Management.UI.Internal
     /// The base class for all filtering rules.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
+<<<<<<< HEAD
     [Serializable]
     public abstract class FilterRule : IEvaluate
+=======
+    public abstract class FilterRule : IEvaluate, IDeepCloneable
+>>>>>>> 625da6ff5 (Remove `OnDeserialized` and `Serializable` attributes from `Microsoft.Management.UI.Internal` project (#25548))
     {
         /// <summary>
         /// Gets a value indicating whether the FilterRule can be
@@ -53,7 +57,6 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Occurs when the values of this rule changes.
         /// </summary>
-        [field: NonSerialized]
         public event EventHandler EvaluationResultInvalidated;
 
         /// <summary>
