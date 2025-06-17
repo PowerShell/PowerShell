@@ -27,7 +27,7 @@ Describe 'Misc Test' -Tags "CI" {
         [int[]] $Wheels = @(1,2,3);
         [string] Foo() {
             $ret=""
-            Foreach($PSItem in $this.Wheels) { $ret +="$PSItem;"}
+            Foreach($item in $this.Wheels) { $ret +="$item;"}
             return $ret
         }
 
@@ -117,3 +117,22 @@ Describe 'Misc Test' -Tags "CI" {
         }
     }
 }
+
+Describe "The -File parameter of switch keyword and output redirection should treat path as literal." -Tags "CI" {
+    BeforeAll {
+        $testFile = "TestDrive:\[LiteralFileName].txt"
+        $expectedFileContent = "succeed!"
+    }
+    It "Should succeed in output content to correct file" {
+        $expectedFileContent > $testFile
+        Get-Content -LiteralPath $testFile | Should -Be $expectedFileContent
+    }
+    It "Should succeed in reading file content with switch statement." {
+        $expectedFileContent | Out-File -LiteralPath $testFile
+        switch -File $testFile {
+            default { $_ | Should -Be $expectedFileContent }
+        }
+    }
+}
+
+
