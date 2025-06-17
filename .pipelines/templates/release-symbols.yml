@@ -33,7 +33,7 @@ jobs:
     env:
       ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
-  - template: release-SetReleaseTagAndContainerName.yml
+  - template: release-SetReleaseTagandContainerName.yml
 
   - pwsh: |
       Get-ChildItem Env:
