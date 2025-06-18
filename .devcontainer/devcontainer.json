@@ -1,22 +1,99 @@
-// See https://aka.ms/vscode-remote/devcontainer.json for format details.
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/dotnet
 {
-  "name": ".NET Core 6.0, including pwsh (Ubuntu 18.04)",
-  "dockerFile": "Dockerfile",
+  "name": "PowerShell Dev",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "args": {
+      // NOTE: This should be kept up to date to match the .NET SDK currently in use on the master branch.
+      // but not mandatory as we fetch the appropriate .NET SDK as needed during build.
+      // See: https://mcr.microsoft.com/en-us/artifact/mar/devcontainers/dotnet/tags for available tags.
+      "VARIANT": "1-10.0-preview-noble"
+    }
+  },
+  "hostRequirements": {
+    "cpus": 4 // .NET compliation is intensive so we want more cores by default
+  },
+  "capAdd": [
+    "NET_RAW" // Needed for Pester tests that require ping
+  ],
 
-  "workspaceMount": "source=${localWorkspaceFolder},target=/PowerShell,type=bind",
-  "workspaceFolder": "/PowerShell",
+  // This path is symlinked in the onCreateCommand to the actual workspaceFolder
+  // We use it for convenience and consistency with the settings that require absolute paths.
+  // NOTE: This is ignored when using a named volume devcontainer but will still work fine.
+  "remoteUser": "vscode",
+  "containerUser": "vscode",
 
-  // Uncomment the next line to run commands after the container is created.
-  "postCreateCommand": "cd src/powershell-unix && dotnet restore",
+  // This is required if the dotnet is updated to a later version than what is in the image.
+  // So that the C# extension can detect it. Doing it in .bashrc is not enough.
+  "remoteEnv": {
+    "PATH": "/home/vscode/.dotnet:${containerEnv:PATH}"
+  },
 
+  // Container lifecycle scripts
+  // Docs: https://containers.dev/implementors/json_reference/#lifecycle-scripts
+
+  // NOTE: We don't use initializeCommand because that runs on the host and we may not know what OS it is.
+  "onCreateCommand": [
+    "/usr/bin/pwsh",
+    "-nop",
+    "-noni",
+    "-f",
+    "/devcontainer/scripts/1-onCreate.ps1"
+  ],
+  "updateContentCommand": [
+    "/usr/bin/pwsh",
+    "-nop",
+    "-noni",
+    "-f",
+    "/devcontainer/scripts/2-updateContent.ps1"
+  ],
+
+  // These lifecycle scripts are non-blocking to loading the codespace and UI by default
+  "postCreateCommand": [
+    "/usr/bin/pwsh",
+    "-nop",
+    "-noni",
+    "-f",
+    "/devcontainer/scripts/3-postCreate.ps1"
+  ],
+  "postStartCommand": [
+    "/usr/bin/pwsh",
+    "-nop",
+    "-noni",
+    "-f",
+    "/devcontainer/scripts/4-postStart.ps1"
+  ],
+  // This runs in a vscode terminal after startup and is generally not needed but here for reference.
+  // "postAttachCommand": ["/usr/bin/pwsh", "-nop", "-noni", "-f", "/devcontainer/scripts/5-postAttach.ps1"],
+
+  // Configure tool-specific properties.
   "customizations": {
     "vscode": {
+      "settings": {
+        "dotnet.defaultSolution": "PowerShell.sln",
+        "dotnet.testWindow.useTestingPlatformProtocol": true,
+        "csharp.experimental.debug.hotReload": true,
+        "powershell.powerShellAdditionalExePaths": {
+          "PowerShell-Dev": "${workspaceFolder}/debug/pwsh"
+        },
+        "terminal.integrated.profiles.linux": {
+          "pwsh dev": {
+            "path": "/powershell/debug/pwsh",
+            "icon": "terminal-powershell",
+            "color": "terminal.ansiMagenta"
+          }
+        }
+      },
       "extensions": [
-        "ms-azure-devops.azure-pipelines",
         "ms-dotnettools.csharp",
-        "ms-vscode.powershell",
+        "ms-dotnettools.csdevkit",
+        "ms-vscode.PowerShell",
+        "GitHub.vscode-pull-request-github",
+        "ms-azure-devops.azure-pipelines",
+        "editorconfig.editorconfig",
         "DavidAnson.vscode-markdownlint",
-        "vitaliymaz.vscode-svg-previewer"
+        "esbenp.prettier-vscode"
       ]
     }
   }
