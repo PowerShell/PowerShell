@@ -191,11 +191,11 @@ jobs:
         Write-Verbose -Verbose "The .nupkgs below will be pushed:"
         Get-ChildItem "$(Pipeline.Workspace)/release" -recurse
     displayName: Download and capture nupkgs
-    condition: and(ne('${{ parameters.skipPublish }}', 'false'), succeeded())
+    condition: and(ne('${{ parameters.skipPublish }}', 'true'), succeeded())
 
   - task: NuGetCommand@2
     displayName: 'NuGet push'
-    condition: and(ne('${{ parameters.skipPublish }}', 'false'), succeeded())
+    condition: and(ne('${{ parameters.skipPublish }}', 'true'), succeeded())
     inputs:
       command: push
       packagesToPush: '$(Pipeline.Workspace)/release/*.nupkg'
