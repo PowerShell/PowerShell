@@ -500,6 +500,13 @@ Fix steps:
         $Arguments += "/property:PublishReadyToRun=false"
     }
 
+    # As the ReadyToRun package for linux-ppc64le is not available on NuGet,
+    # we must explicitly disable ReadyToRun compilation for this runtime.
+    # This addresses the NETSDK1094 error for this specific platform.
+    if ($Options.Runtime -eq 'linux-ppc64le') {
+        $Arguments += "/property:PublishReadyToRun=false"
+    }
+
     $Arguments += "--configuration", $Options.Configuration
     $Arguments += "--framework", $Options.Framework
 
