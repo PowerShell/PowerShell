@@ -324,6 +324,7 @@ function Start-PSBuild {
                      "linux-arm",
                      "linux-arm64",
                      "linux-x64",
+                    "linux-ppc64le",
                      "osx-arm64",
                      "osx-x64",
                      "win-arm",
@@ -1001,6 +1002,7 @@ function New-PSOptions {
                      "linux-arm",
                      "linux-arm64",
                      "linux-x64",
+                    "linux-ppc64le",
                      "osx-arm64",
                      "osx-x64",
                      "win-arm",
@@ -3880,3 +3882,4 @@ function Set-PipelineVariable {
     # also set in the current session
     Set-Item -Path "env:$Name" -Value $Value
 }
+
