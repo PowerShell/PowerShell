@@ -62,18 +62,7 @@ namespace Microsoft.PowerShell
             string userPrompt = null;
             string passwordPrompt = null;
 
-            if (!string.IsNullOrEmpty(caption))
-            {
-                // Should be a skin lookup
-
-                WriteLineToConsole();
-                WriteLineToConsole(PromptColor, RawUI.BackgroundColor, WrapToCurrentWindowWidth(caption));
-            }
-
-            if (!string.IsNullOrEmpty(message))
-            {
-                WriteLineToConsole(WrapToCurrentWindowWidth(message));
-            }
+            WriteCaptionAndMessage(caption, message);
 
             if (string.IsNullOrEmpty(userName))
             {
