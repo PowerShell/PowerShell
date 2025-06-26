@@ -3802,6 +3802,9 @@ function Clear-NativeDependencies
         '.*-arm64' {
             $diasymFileName = $diasymFileNamePattern -f 'arm64'
         }
+        '.*-ppc64le' {
+            $diasymFileName = $diasymFileNamePattern -f 'ppc64le'
+        }
         'fxdependent.*' {
             Write-Verbose -Message "$($script:Options.Runtime) is a fxdependent runtime, no cleanup needed in pwsh.deps.json" -Verbose
             return
