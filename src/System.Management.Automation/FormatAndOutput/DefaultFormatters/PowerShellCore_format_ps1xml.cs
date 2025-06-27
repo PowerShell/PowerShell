@@ -1324,7 +1324,7 @@ namespace System.Management.Automation.Runspaces
                                     }
 
                                     if ($ErrorView -eq 'DetailedView') {
-                                        $message = Get-Error | Out-String
+                                        $message = Get-Error -InputObject $err | Out-String
                                         return "${errorColor}${message}${resetcolor}"
                                     }
 
