@@ -58,6 +58,23 @@ public sealed class PathInfo
             : LocationGlobber.GetDriveQualifiedPath(_path, Drive);
 
     /// <summary>
+    /// Gets the PowerShell path that this object represents, in a format suitable for display to the user.
+    /// For scripting, prefer to use the other properties of PathInfo, do not rely on the exact format of this property.
+    /// </summary>
+    public string DisplayPath
+    {
+        // for real filesystem paths, always return the provider path, since the provider-qualified paths can be a bit
+        // unwieldy (e.g., after `Get-Item D:\dir | cd`, `Path` will be `Microsoft.PowerShell.Core\FileSystem::D:\dir`)
+        //
+        // for other providers (such as Registry), the provider-qualified path has the same issue, but the solution is
+        // less clear-cut, since the provider path may not have a drive (Registry), or it may be empty (Env), or it may
+        // not match the semantic location (virtual drive from New-PSDrive); return the fully-qualified path for now
+        get => Drive == null && Provider.ImplementingType == typeof(FileSystemProvider)
+                ? ProviderPath
+                : Path;
+    }
+
+    /// <summary>
     /// Gets a string representing the PowerShell path.
     /// </summary>
     /// <returns>
