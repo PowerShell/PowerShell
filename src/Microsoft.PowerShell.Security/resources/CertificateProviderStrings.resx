@@ -186,4 +186,25 @@
   <data name="RemoteErrorMessage" xml:space="preserve">
     <value>. The following error may be a result of user credentials required on the remote machine. See Enable-WSManCredSSP Cmdlet help on how to enable and use CredSSP for delegation with PowerShell remoting. </value>
   </data>
+  <data name="CannotGetAclWrongPathType" xml:space="preserve">
+    <value>You cannot get an ACL for the certificate provider path '{0}', only certificate items are supported.</value>
+  </data>
+  <data name="CannotSetAclWrongPathType" xml:space="preserve">
+    <value>You cannot set an ACL for the certificate provider path '{0}', only certificate items are supported.</value>
+  </data>
+  <data name="CannotGetAclWrongItemType" xml:space="preserve">
+    <value>You cannot get Certificate SecurityDescriptor for the type '{0}', only the 'Key' type is supported.</value>
+  </data>
+  <data name="GetKeyHandleAuthFailure" xml:space="preserve">
+    <value>Failed to retrieve certificate key handle due to access permissions: {0}</value>
+  </data>
+  <data name="GetKeyHandleMissingFailure" xml:space="preserve">
+    <value>Failed to retrieve certificate key handle as certificate has no associated key: {0}</value>
+  </data>
+  <data name="GetKeySDFailure" xml:space="preserve">
+    <value>Failed to retrieve certificate key security descriptor: {0}</value>
+  </data>
+  <data name="SetKeySDFailure" xml:space="preserve">
+    <value>Failed to set certificate key security descriptor: {0}</value>
+  </data>
 </root>
