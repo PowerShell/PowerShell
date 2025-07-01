@@ -389,13 +389,17 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                             CultureInfo.CurrentUICulture, CimCmdletStrings.InvalidMethodParameter, parameterName, methodName, className));
                     }
 
+                    CimFlags parameterFlags = CimFlags.In;
+                    if (paramDeclaration.Qualifiers.Contains("Out"))
+                    {
+                        parameterFlags |= CimFlags.Out;
+                    }
+
                     parameter = CimMethodParameter.Create(
                         parameterName,
                         parameterValue,
                         paramDeclaration.CimType,
                         parameterFlags);
-                    // FIXME: check in/out qualifier
-                    // parameterFlags = paramDeclaration.Qualifiers;
                 }
                 else
                 {
