@@ -87,7 +87,7 @@ resources:
             - releases/*
 
 extends:
-  template: v2/OneBranch.NonOfficial.CrossPlat.yml@templates
+  template: v2/OneBranch.Official.CrossPlat.yml@templates
   parameters:
     release: 
       category: NonAzure
@@ -283,7 +283,7 @@ extends:
         - setReleaseTagAndChangelog
         - UpdateChangeLog
       variables:
-        ob_release_environment: Test
+        ob_release_environment: Production
       jobs:
       - template: /.pipelines/templates/release-githubNuget.yml@self
         parameters:
@@ -359,7 +359,7 @@ extends:
       dependsOn: PushGitTagAndMakeDraftPublic
       displayName: Publish MSIX to store
       variables:
-        ob_release_environment: Test
+        ob_release_environment: Production
       jobs:
       - template: /.pipelines/templates/release-MSIX-Publish.yml@self
         parameters:

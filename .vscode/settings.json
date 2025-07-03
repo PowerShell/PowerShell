@@ -36,6 +36,5 @@
   "powershell.codeFormatting.whitespaceAfterSeparator": true,
 
   // Omnisharp : Enable EditorConfig support
-  "omnisharp.enableEditorConfigSupport": true,
-  "azure-pipelines.1ESPipelineTemplatesSchemaFile": true
+  "omnisharp.enableEditorConfigSupport": true
 }

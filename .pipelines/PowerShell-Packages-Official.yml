@@ -79,7 +79,7 @@ resources:
       ref: refs/heads/main
 
 extends:
-  template: v2/OneBranch.NonOfficial.CrossPlat.yml@templates
+  template: v2/OneBranch.Official.CrossPlat.yml@templates
   parameters:
     cloudvault:
       enabled: false
@@ -98,7 +98,7 @@ extends:
       compiled:
         enabled: false
       credscan:
-        enabled: false
+        enabled: true
         scanFolder:  $(Build.SourcesDirectory)
         suppressionsFile: $(Build.SourcesDirectory)\.config\suppress.json
       cg:
@@ -108,7 +108,7 @@ extends:
         enabled: true
         forStages: ['build']
         credscan:
-          enabled: false
+          enabled: true
           scanFolder:  $(Build.SourcesDirectory)
           suppressionsFile: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
         binskim:
