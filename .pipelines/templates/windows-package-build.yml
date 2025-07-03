@@ -169,7 +169,7 @@ jobs:
 
       Set-Location $repoRoot
 
-      Start-PSPackage -Type $packageTypes -SkipReleaseChecks -WindowsRuntime $WindowsRuntime -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath -LTS:$LTS -Private
+      Start-PSPackage -Type $packageTypes -SkipReleaseChecks -WindowsRuntime $WindowsRuntime -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath -LTS:$LTS
 
     displayName: 'Package ${{ parameters.buildArchitecture}}'
     env:
