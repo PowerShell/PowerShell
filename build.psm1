@@ -506,6 +506,7 @@ Fix steps:
     if ($Options.Runtime -eq 'linux-ppc64le') {
         $Arguments += "/property:PublishReadyToRun=false"
         $Arguments += "/property:WarnAsError=false" # Do not treat warnings as errors for ppc64le
+        $Arguments += "/property:RunAnalyzers=false" # Disable analyzers for ppc64le
     }
 
     $Arguments += "--configuration", $Options.Configuration
