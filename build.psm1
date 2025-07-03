@@ -505,7 +505,7 @@ Fix steps:
     # This addresses the NETSDK1094 error for this specific platform.
     if ($Options.Runtime -eq 'linux-ppc64le') {
         $Arguments += "/property:PublishReadyToRun=false"
-        $Arguments += "/warnaserror-" # Do not treat warnings as errors for ppc64le
+        $Arguments += "/property:WarnAsError=false" # Do not treat warnings as errors for ppc64le
     }
 
     $Arguments += "--configuration", $Options.Configuration

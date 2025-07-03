@@ -1044,7 +1044,7 @@ function New-UnixPackage {
         # Host architecture values allowed for rpm type packages include: x86_64, aarch64, native, all, noarch, any
         # Host architecture values allowed for osxpkg type packages include: x86_64, arm64
         [string]
-        [ValidateSet("x86_64", "amd64", "aarch64", "arm64", "native", "all", "noarch", "any")]
+        [ValidateSet("x86_64", "amd64", "aarch64", "arm64", "ppc64el", "native", "all", "noarch", "any")]
         $HostArchitecture,
 
         [Switch]
