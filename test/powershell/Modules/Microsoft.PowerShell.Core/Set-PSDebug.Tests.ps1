@@ -15,5 +15,16 @@ Describe "Set-PSDebug" -Tags "CI" {
         It "Should be able to set strict" {
             { Set-PSDebug -Strict } | Should -Not -Throw
         }
+        
+        It "Should skip magic extents created by pwsh" {
+            class ClassWithDefaultCtor {
+                MyMethod() { }
+            }
+            
+            { 
+                Set-PSDebug -Trace 1
+                [ClassWithDefaultCtor]::new()
+            } | Should -Not -Throw
+        }
     }
 }
