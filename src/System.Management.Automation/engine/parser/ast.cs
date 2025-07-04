@@ -3645,13 +3645,25 @@ namespace System.Management.Automation.Language
             : base(extent)
         {
             StatementAst statement = null;
+            AttributeAst[] attributes = [];
             if (type == SpecialMemberFunctionType.DefaultConstructor)
             {
                 var invokeMemberAst = new BaseCtorInvokeMemberExpressionAst(extent, extent, Array.Empty<ExpressionAst>());
                 statement = new CommandExpressionAst(extent, invokeMemberAst, null);
+
+                // This stops the tracer from showing an empty body and an
+                // invalid extent and confusing end users who don't expect to
+                // see something they haven't written.
+                attributes = [new AttributeAst(extent, new ReflectionTypeName(typeof(DebuggerHiddenAttribute)), null, null)];
             }
 
-            Body = new ScriptBlockAst(extent, null, new StatementBlockAst(extent, statement == null ? null : new[] { statement }, null), false);
+            Body = new ScriptBlockAst(
+                extent,
+                attributes,
+                paramBlock: null,
+                statements: new StatementBlockAst(extent, statement == null ? null : new[] { statement }, null),
+                isFilter: false,
+                isConfiguration: false);
             this.SetParent(Body);
             definingType.SetParent(this);
             DefiningType = definingType;

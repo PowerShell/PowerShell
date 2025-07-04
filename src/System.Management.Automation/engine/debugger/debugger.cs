@@ -1536,7 +1536,10 @@ namespace System.Management.Automation
 
         internal void OnSequencePointHit(FunctionContext functionContext)
         {
-            if (_context.ShouldTraceStatement && !_callStack.Last().IsFrameHidden && !functionContext._debuggerStepThrough)
+            if (_context.ShouldTraceStatement &&
+                !_callStack.Last().IsFrameHidden &&
+                !functionContext._debuggerStepThrough &&
+                functionContext.CurrentPosition.StartScriptPosition.ColumnNumber > 0)
             {
                 TraceLine(functionContext.CurrentPosition);
             }
