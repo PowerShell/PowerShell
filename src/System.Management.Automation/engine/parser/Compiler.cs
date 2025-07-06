@@ -4176,17 +4176,28 @@ namespace System.Management.Automation.Language
             var commandElements = commandAst.CommandElements;
             Expression[] elementExprs = new Expression[commandElements.Count];
 
+            bool nextIsSplat = false;
+            int elementCount = 0;
             for (int i = 0; i < commandElements.Count; ++i)
             {
                 var element = commandElements[i];
                 if (element is CommandParameterAst)
                 {
-                    elementExprs[i] = Compile(element);
+                    if (nextIsSplat)
+                    {
+                        return ThrowRuntimeError(
+                            "CommandParameterValueAfterSplatParameter",
+                            ParserStrings.CommandParameterValueAfterSplatParameter,
+                            typeof(CommandParameterInternal[]),
+                            Expression.Constant(element.Extent.Text));
+                    }
+
+                    elementExprs[elementCount] = Compile(element);
                 }
                 else
                 {
                     var splatTest = element;
-                    bool splatted = false;
+                    bool splatted = nextIsSplat;
 
                     UsingExpressionAst usingExpression = element as UsingExpressionAst;
                     if (usingExpression != null)
@@ -4197,15 +4208,50 @@ namespace System.Management.Automation.Language
                     VariableExpressionAst variableExpression = splatTest as VariableExpressionAst;
                     if (variableExpression != null)
                     {
-                        splatted = variableExpression.Splatted;
+                        if (nextIsSplat && variableExpression.Splatted)
+                        {
+                            return ThrowRuntimeError(
+                                "SplatValueAfterSplatParameter",
+                                ParserStrings.SplatValueAfterSplatParameter,
+                                typeof(CommandParameterInternal[]),
+                                Expression.Constant(variableExpression.Extent.Text));
+                        }
+                        else if (!splatted)
+                        {
+                            splatted = variableExpression.Splatted;
+                        }
                     }
 
-                    elementExprs[i] = Expression.Call(
+                    if (element is StringConstantExpressionAst stringConst &&
+                        stringConst.StringConstantType == StringConstantType.BareWord &&
+                        (string)stringConst.SafeGetValue() == "-@")
+                    {
+                        nextIsSplat = true;
+                        continue;
+                    }
+
+                    elementExprs[elementCount] = Expression.Call(
                         CachedReflectionInfo.CommandParameterInternal_CreateArgument,
                         Expression.Convert(GetCommandArgumentExpression(element), typeof(object)),
                         Expression.Constant(element),
                         ExpressionCache.Constant(splatted));
                 }
+
+                nextIsSplat = false;
+                elementCount++;
+            }
+
+            if (nextIsSplat)
+            {
+                return ThrowRuntimeError(
+                    "MissingSplatValue",
+                    ParserStrings.MissingSplatValue,
+                    typeof(CommandParameterInternal[]));
+            }
+
+            if (elementCount < elementExprs.Length)
+            {
+                Array.Resize(ref elementExprs, elementCount);
             }
 
             Expression result = Expression.NewArrayInit(typeof(CommandParameterInternal), elementExprs);
