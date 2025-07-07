@@ -6,8 +6,8 @@
     "ms-azure-devops.azure-pipelines",
     "ms-vscode.cpptools",
     "ms-dotnettools.csharp",
-    "ms-vscode.PowerShell",
     "twxs.cmake",
+    "ms-vscode.PowerShell",
     "DavidAnson.vscode-markdownlint",
     "vitaliymaz.vscode-svg-previewer"
   ]
