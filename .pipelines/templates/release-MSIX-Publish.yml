@@ -61,7 +61,7 @@ jobs:
 
   - task: MS-RDX-MRO.windows-store-publish.publish-task.store-publish@3
     displayName: 'Publish LTS StoreBroker Package'
-    condition: eq(dependencies.setTagAndChangelog.outputs['ChannelSelection.IsLTS'],'true')
+    condition: eq(stageDependencies.setReleaseTagAndChangelog.setTagAndChangelog.outputs['ChannelSelection.IsLTS'],'true')
     inputs:
       serviceEndpoint: 'StoreAppPublish-Stable'
       appId: 9MXBK0PFV7PJ
@@ -74,7 +74,7 @@ jobs:
 
   - task: MS-RDX-MRO.windows-store-publish.publish-task.store-publish@3
     displayName: 'Publish Stable StoreBroker Package'
-    condition: eq(dependencies.setTagAndChangelog.outputs['ChannelSelection.IsStable'],'true')
+    condition: eq(stageDependencies.setReleaseTagAndChangelog.setTagAndChangelog.outputs['ChannelSelection.IsStable'],'true')
     inputs:
       serviceEndpoint: 'StoreAppPublish-Stable'
       appId: 9MZ1SNWT0N5D
@@ -87,7 +87,7 @@ jobs:
 
   - task: MS-RDX-MRO.windows-store-publish.publish-task.store-publish@3
     displayName: 'Publish Preview StoreBroker Package'
-    condition: eq(dependencies.setTagAndChangelog.outputs['ChannelSelection.IsPreview'],'true')
+    condition: eq(stageDependencies.setReleaseTagAndChangelog.setTagAndChangelog.outputs['ChannelSelection.IsPreview'],'true')
     inputs:
       serviceEndpoint: 'StoreAppPublish-Preview'
       appId: 9P95ZZKTNRN4
