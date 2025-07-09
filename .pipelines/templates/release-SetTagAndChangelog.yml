@@ -75,5 +75,7 @@ jobs:
           Write-Host "##vso[task.setvariable variable=$name;isOutput=true]$value"
       }
 
-    name: ChannelSelection
-    displayName: Upload Changelog and Determine LTS, Preview, or Stable
+    name: UploadChangeLog
+    displayName: Upload Changelog
+
+  - template: channelSelection.yml@self
