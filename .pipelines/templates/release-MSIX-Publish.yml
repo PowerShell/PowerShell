@@ -5,7 +5,6 @@ parameters:
 jobs:
 - job: Store_Publish_MSIX
   displayName: Publish MSIX to the Microsoft Store
-  condition: ne('${{ parameters.skipMSIXPublish }}', 'true')
   pool:
     type: release
     os: windows
@@ -106,6 +105,7 @@ jobs:
 
   - task: MS-RDX-MRO.windows-store-publish.publish-task.store-publish@3
     displayName: 'Publish LTS StoreBroker Package'
+    condition: ne('${{ parameters.skipMSIXPublish }}', 'true')
     inputs:
       serviceEndpoint: '$(SelectedServiceEndpoint)'
       appId: '$(SelectedAppId)'
