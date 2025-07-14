@@ -16,7 +16,7 @@ jobs:
   - checkout: self
     clean: true
 
-  - template: release-SetReleaseTagAndContainerName.yml
+  - template: release-SetReleaseTagandContainerName.yml
 
   - pwsh: |
        Get-ChildItem ENV: | Out-String -width 9999 -Stream | write-Verbose -Verbose
