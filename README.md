@@ -1,3 +1,5 @@
+# 🚀 這是我第一次貢獻 PowerShell！
+
 # ![logo][] PowerShell
 
 Welcome to the PowerShell GitHub Community!
