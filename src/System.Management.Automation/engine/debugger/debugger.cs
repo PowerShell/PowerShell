@@ -1543,7 +1543,9 @@ namespace System.Management.Automation
             if (_context.ShouldTraceStatement &&
                 !_callStack.Last().IsFrameHidden &&
                 !functionContext._debuggerStepThrough &&
-                functionContext.CurrentPosition.StartScriptPosition.ColumnNumber > 0)
+                functionContext.CurrentPosition is not EmptyScriptExtent &&
+                (functionContext.CurrentPosition is InternalScriptExtent ||
+                   functionContext.CurrentPosition.StartColumnNumber > 0))
             {
                 TraceLine(functionContext.CurrentPosition);
             }
