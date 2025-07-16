@@ -61,18 +61,7 @@ namespace Microsoft.PowerShell
 
             lock (_instanceLock)
             {
-                if (!string.IsNullOrEmpty(caption))
-                {
-                    // Should be a skin lookup
-
-                    WriteLineToConsole();
-                    WriteLineToConsole(PromptColor, RawUI.BackgroundColor, WrapToCurrentWindowWidth(caption));
-                }
-
-                if (!string.IsNullOrEmpty(message))
-                {
-                    WriteLineToConsole(WrapToCurrentWindowWidth(message));
-                }
+                WriteCaptionAndMessage(caption, message);
 
                 int result = defaultChoice;
 
@@ -202,18 +191,7 @@ namespace Microsoft.PowerShell
             // we lock here so that multiple threads won't interleave the various reads and writes here.
             lock (_instanceLock)
             {
-                // write caption on the console, if present.
-                if (!string.IsNullOrEmpty(caption))
-                {
-                    // Should be a skin lookup
-                    WriteLineToConsole();
-                    WriteLineToConsole(PromptColor, RawUI.BackgroundColor, WrapToCurrentWindowWidth(caption));
-                }
-                // write message
-                if (!string.IsNullOrEmpty(message))
-                {
-                    WriteLineToConsole(WrapToCurrentWindowWidth(message));
-                }
+                WriteCaptionAndMessage(caption, message);
 
                 string[,] hotkeysAndPlainLabels = null;
                 HostUIHelperMethods.BuildHotkeysAndPlainLabels(choices, out hotkeysAndPlainLabels);
@@ -230,7 +208,9 @@ namespace Microsoft.PowerShell
                 {
                     // write the current prompt
                     string choiceMsg = StringUtil.Format(ConsoleHostUserInterfaceStrings.ChoiceMessage, choicesSelected);
-                    WriteToConsole(PromptColor, RawUI.BackgroundColor, WrapToCurrentWindowWidth(choiceMsg));
+                    WriteToConsole(
+                        PSStyle.Decorate(WrapToCurrentWindowWidth(choiceMsg), PSStyle.Instance.Prompt.ChoiceOther),
+                        transcribeResult: true);
 
                     ReadLineResult rlResult;
                     string response = ReadChoiceResponse(out rlResult);
@@ -292,47 +272,32 @@ namespace Microsoft.PowerShell
         {
             System.Management.Automation.Diagnostics.Assert(defaultChoiceKeys != null, "defaultChoiceKeys cannot be null.");
 
-            ConsoleColor fg = RawUI.ForegroundColor;
-            ConsoleColor bg = RawUI.BackgroundColor;
-            int lineLenMax = RawUI.WindowSize.Width - 1;
-            int lineLen = 0;
-
-            const string choiceTemplate = "[{0}] {1}  ";
-
+            var prompts = new List<string>();
             for (int i = 0; i < hotkeysAndPlainLabels.GetLength(1); ++i)
             {
-                ConsoleColor cfg = PromptColor;
-                if (defaultChoiceKeys.ContainsKey(i))
-                {
-                    // Should be a skin lookup
-                    cfg = DefaultPromptColor;
-                }
+                var color = defaultChoiceKeys.ContainsKey(i)
+                    ? PSStyle.Instance.Prompt.ChoiceDefault
+                    : PSStyle.Instance.Prompt.ChoiceOther;
 
+                const string choiceTemplate = "[{0}] {1}";
                 string choice =
                     string.Format(
                         CultureInfo.InvariantCulture,
                         choiceTemplate,
                         hotkeysAndPlainLabels[0, i],
                         hotkeysAndPlainLabels[1, i]);
-                WriteChoiceHelper(choice, cfg, bg, ref lineLen, lineLenMax);
-                if (shouldEmulateForMultipleChoiceSelection)
-                {
-                    WriteLineToConsole();
-                }
+
+                prompts.Add(PSStyle.Decorate(choice, color));
             }
 
-            WriteChoiceHelper(
-                ConsoleHostUserInterfaceStrings.PromptForChoiceHelp,
-                fg,
-                bg,
-                ref lineLen,
-                lineLenMax);
-            if (shouldEmulateForMultipleChoiceSelection)
-            {
-                WriteLineToConsole();
-            }
+            prompts.Add(PSStyle.Decorate(ConsoleHostUserInterfaceStrings.PromptForChoiceHelp,
+                PSStyle.Instance.Prompt.ChoiceHelp) + " ");
 
-            string defaultPrompt = string.Empty;
+            WriteToConsole(shouldEmulateForMultipleChoiceSelection
+                ? string.Join(Environment.NewLine, prompts)
+                : JoinWrappedToCurrentWindowWidth("  ", prompts),
+                transcribeResult: true);
+
             if (defaultChoiceKeys.Count > 0)
             {
                 string prepend = string.Empty;
@@ -345,12 +310,14 @@ namespace Microsoft.PowerShell
                         defaultStr = hotkeysAndPlainLabels[1, defaultChoice];
                     }
 
-                    defaultChoicesBuilder.Append(CultureInfo.InvariantCulture, $"{prepend}{defaultStr}");
+                    // Reset style after each in case it is decorated
+                    defaultChoicesBuilder.Append(CultureInfo.InvariantCulture, $"{prepend}{defaultStr}{PSStyle.Instance.Reset}{PSStyle.Instance.Prompt.Help}");
                     prepend = ",";
                 }
 
                 string defaultChoices = defaultChoicesBuilder.ToString();
 
+                string defaultPrompt = string.Empty;
                 if (defaultChoiceKeys.Count == 1)
                 {
                     defaultPrompt = shouldEmulateForMultipleChoiceSelection ?
@@ -360,35 +327,77 @@ namespace Microsoft.PowerShell
                 }
                 else
                 {
-                    defaultPrompt = StringUtil.Format(ConsoleHostUserInterfaceStrings.DefaultChoicesForMultipleChoices,
+                    defaultPrompt = StringUtil.Format(
+                        ConsoleHostUserInterfaceStrings.DefaultChoicesForMultipleChoices,
                         defaultChoices);
+                }
+
+                WriteToConsole(
+                    PSStyle.Decorate(defaultPrompt, PSStyle.Instance.Prompt.Help) + " ",
+                    transcribeResult: true);
+            }
+        }
+
+        /// <summary>
+        /// Joins lines with separator, breaking into new line if longer than window width.
+        /// </summary>
+        /// <param name="separator">
+        /// Separator used between strings fitting on the same line.
+        /// </param>
+        /// <param name="values">
+        /// Collection of strings, never broken unless cannot fit on one line by itself.
+        /// </param>
+        /// <returns>
+        /// Joined string.
+        /// </returns>
+        private string JoinWrappedToCurrentWindowWidth(string separator, IEnumerable<string> values)
+        {
+            // Avoid recalculating every time, as skipping over escapes is nontrivial
+            int lineLength = 0;
+            int maxLength = RawUI.WindowSize.Width;
+
+            var result = new StringBuilder();
+            foreach (var value in values)
+            {
+                int valueLength = new StringDecorated(value).ContentLength;
+                if (result.Length == 0)
+                {
+                    result.Append(value);
+                    lineLength += valueLength;
+                }
+                else if (lineLength + valueLength + separator.Length < maxLength)
+                {
+                    result.Append(separator);
+                    result.Append(value);
+                    lineLength += valueLength + separator.Length;
+                }
+                else
+                {
+                    result.Append(Environment.NewLine);
+                    result.Append(value);
+                    lineLength = valueLength;
                 }
             }
 
-            WriteChoiceHelper(defaultPrompt,
-                fg,
-                bg,
-                ref lineLen,
-                lineLenMax);
+            return result.ToString();
         }
 
-        private void WriteChoiceHelper(string text, ConsoleColor fg, ConsoleColor bg, ref int lineLen, int lineLenMax)
+        private void WriteCaptionAndMessage(string caption, string message)
         {
-            int textLen = RawUI.LengthInBufferCells(text);
-            bool trimEnd = false;
-
-            if (lineLen + textLen > lineLenMax)
+            if (!string.IsNullOrEmpty(caption))
             {
                 WriteLineToConsole();
-                trimEnd = true;
-                lineLen = textLen;
-            }
-            else
-            {
-                lineLen += textLen;
+                WriteLineToConsole(PSStyle.Decorate(
+                    WrapToCurrentWindowWidth(caption),
+                    PSStyle.Instance.Prompt.Caption));
             }
 
-            WriteToConsole(fg, bg, trimEnd ? text.TrimEnd(null) : text);
+            if (!string.IsNullOrEmpty(message))
+            {
+                WriteLineToConsole(PSStyle.Decorate(
+                    WrapToCurrentWindowWidth(message),
+                    PSStyle.Instance.Prompt.Message));
+            }
         }
 
         private string ReadChoiceResponse(out ReadLineResult result)
@@ -411,56 +420,18 @@ namespace Microsoft.PowerShell
 
             for (int i = 0; i < choices.Count; ++i)
             {
-                string s;
-
                 // If there's no hotkey, use the label as the help
+                string prompt = hotkeysAndPlainLabels[0, i].Length > 0
+                    ? ("[" + hotkeysAndPlainLabels[0, i] + "] ")
+                    : (hotkeysAndPlainLabels[1, i] + " - ");
 
-                if (hotkeysAndPlainLabels[0, i].Length > 0)
-                {
-                    s = hotkeysAndPlainLabels[0, i];
-                }
-                else
-                {
-                    s = hotkeysAndPlainLabels[1, i];
-                }
+                string message = choices[i].HelpMessage;
 
+                prompt = PSStyle.Decorate(prompt, PSStyle.Instance.Prompt.ChoiceOther);
+                message = PSStyle.Decorate(message, PSStyle.Instance.Prompt.Help);
                 WriteLineToConsole(
                     WrapToCurrentWindowWidth(
-                        string.Create(CultureInfo.InvariantCulture, $"{s} - {choices[i].HelpMessage}")));
-            }
-        }
-
-        /// <summary>
-        /// Guarantee a contrasting color for the prompt...
-        /// </summary>
-        private ConsoleColor PromptColor
-        {
-            get
-            {
-                switch (RawUI.BackgroundColor)
-                {
-                    case ConsoleColor.White: return ConsoleColor.Black;
-                    case ConsoleColor.Cyan: return ConsoleColor.Black;
-                    case ConsoleColor.DarkYellow: return ConsoleColor.Black;
-                    case ConsoleColor.Yellow: return ConsoleColor.Black;
-                    case ConsoleColor.Gray: return ConsoleColor.Black;
-                    case ConsoleColor.Green: return ConsoleColor.Black;
-                    default: return ConsoleColor.White;
-                }
-            }
-        }
-        /// <summary>
-        /// Guarantee a contrasting color for the default prompt that is slightly
-        /// different from the other prompt elements.
-        /// </summary>
-        private ConsoleColor DefaultPromptColor
-        {
-            get
-            {
-                if (PromptColor == ConsoleColor.White)
-                    return ConsoleColor.Yellow;
-                else
-                    return ConsoleColor.Blue;
+                        string.Create(CultureInfo.InvariantCulture, $"{prompt}{message}")));
             }
         }
     }
