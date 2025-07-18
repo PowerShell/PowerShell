@@ -155,6 +155,29 @@ Describe "Get-Alias DRT Unit Tests" -Tags "CI" {
             $returnObject[$i].Definition | Should -Be 'Get-Command'
         }
     }
+
+    # Below test was suggested by GitHub Copilot to aid with fixing issue #25616
+    It "Get-Alias DisplayName should always show AliasName -> ReferencedCommand for all aliases" {
+    # Clean up any existing aliases
+    if (Get-Alias -Name Test-MyAlias -ErrorAction SilentlyContinue) { Remove-Item Alias:Test-MyAlias }
+    if (Get-Alias -Name tma -ErrorAction SilentlyContinue) { Remove-Item Alias:tma }
+
+    # Create a Verb-Noun style alias "Test-MyAlias" pointing to Get-Command
+    Set-Alias -Name Test-MyAlias -Value Get-Command
+    # Create a short alias for the above "tma" -> "Test-MyAlias"
+    Set-Alias -Name tma -Value Test-MyAlias
+
+    $aliases = Get-Alias Test-MyAlias, tma
+
+    $aliases | ForEach-Object {
+        # The DisplayName property should always be in the format: Name -> [Definition or ReferencedCommand]
+        $_.DisplayName | Should -Be "$($_.Name) -> Get-Command"
+    }
+
+    # Clean up
+    Remove-Item Alias:Test-MyAlias
+    Remove-Item Alias:tma
+}
 }
 
 Describe "Get-Alias" -Tags "CI" {
