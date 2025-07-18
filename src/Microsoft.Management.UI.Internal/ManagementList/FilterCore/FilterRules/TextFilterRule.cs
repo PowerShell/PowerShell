@@ -14,7 +14,6 @@ namespace Microsoft.Management.UI.Internal
     /// evaluating string operations.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
-    [Serializable]
     public abstract class TextFilterRule : SingleValueComparableValueFilterRule<string>
     {
         /// <summary>
