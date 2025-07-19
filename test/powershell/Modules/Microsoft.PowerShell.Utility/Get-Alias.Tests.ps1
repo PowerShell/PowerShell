@@ -156,28 +156,18 @@ Describe "Get-Alias DRT Unit Tests" -Tags "CI" {
         }
     }
 
-    # Below test was suggested by GitHub Copilot to aid with fixing issue #25616
     It "Get-Alias DisplayName should always show AliasName -> ReferencedCommand for all aliases" {
-    # Address comments in PR by @iSazonov
-    ('Test-MyAlias', 'tma').foreach{Remove-Item Alias:$_ -ErrorAction SilentlyContinue}
-
-    Set-Alias -Name Test-MyAlias -Value Get-Command
-    Set-Alias -Name tma -Value Test-MyAlias
-
-    $aliases = Get-Alias Test-MyAlias, tma
-    $aliases | ForEach-Object {
-        # The DisplayName property should always be in the format: Name -> [Definition or ReferencedCommand]
-        $_.DisplayName | Should -Be "$($_.Name) -> Get-Command"
+        Set-Alias -Name Test-MyAlias -Value Get-Command -Force
+        Set-Alias -Name tma -Value Test-MyAlias -force
+        $aliases = Get-Alias Test-MyAlias, tma
+        $aliases | ForEach-Object {
+            $_.DisplayName | Should -Be "$($_.Name) -> Get-Command"
+        }
+        $aliases.Name.foreach{Remove-Item Alias:$_ -ErrorAction SilentlyContinue}
     }
-
-    # Clean up
-    Remove-Item Alias:Test-MyAlias
-    Remove-Item Alias:tma
-    ('Test-MyAlias', 'tma').foreach{Remove-Item Alias:$_ -ErrorAction SilentlyContinue}
 }
 
 Describe "Get-Alias" -Tags "CI" {
-    }
     It "Should have a return type of System.Array when gal returns more than one object" {
         $val1=(Get-Alias a*)
         $val2=(Get-Alias c*)
