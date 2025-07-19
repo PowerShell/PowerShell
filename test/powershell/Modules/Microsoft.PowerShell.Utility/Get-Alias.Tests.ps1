@@ -156,7 +156,7 @@ Describe "Get-Alias DRT Unit Tests" -Tags "CI" {
         }
     }
 
-    It "Get-Alias DisplayName should always show AliasName -> ReferencedCommand for all aliases" {
+    It "Get-Alias DisplayName should always show AliasName -> ResolvedCommand for all aliases" {
         Set-Alias -Name Test-MyAlias -Value Get-Command -Force
         Set-Alias -Name tma -Value Test-MyAlias -force
         $aliases = Get-Alias Test-MyAlias, tma
