@@ -145,7 +145,7 @@
     <AssemblyTitle>PowerShell 7</AssemblyTitle>
 
     <TargetFramework>net11.0</TargetFramework>
-    <LangVersion>13.0</LangVersion>
+    <LangVersion>14.0</LangVersion>
 
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
