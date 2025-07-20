@@ -7,7 +7,7 @@
   <PropertyGroup>
     <!-- source generator project needs to target 'netstandard2.0' -->
     <TargetFramework>netstandard2.0</TargetFramework>
-    <LangVersion>13.0</LangVersion>
+    <LangVersion>preview</LangVersion>
     <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
     <Nullable>enable</Nullable>
