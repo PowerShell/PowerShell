@@ -1026,7 +1026,7 @@ namespace Microsoft.PowerShell.Commands
                                 {
                                     // In order to support foreach remoting properly ( icm | % { icm } ), the server must
                                     // be using protocol version 2.2. Otherwise, we skip this and assume the old behavior.
-                                    if (version >= RemotingConstants.ProtocolVersionWin8RTM)
+                                    if (version >= RemotingConstants.ProtocolVersion_2_2)
                                     {
                                         // Suppress collection behavior
                                         _needToCollect = false;

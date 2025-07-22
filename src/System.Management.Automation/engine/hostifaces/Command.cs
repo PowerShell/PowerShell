@@ -662,7 +662,7 @@ namespace System.Management.Automation.Runspaces
             commandAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.MergeUnclaimedPreviousCommandResults, this.MergeUnclaimedPreviousCommandResults));
 
             if (psRPVersion != null &&
-                psRPVersion >= RemotingConstants.ProtocolVersionWin10RTM)
+                psRPVersion >= RemotingConstants.ProtocolVersion_2_3)
             {
                 // V5 merge instructions
                 commandAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.MergeError, MergeInstructions[(int)MergeType.Error]));
@@ -672,7 +672,7 @@ namespace System.Management.Automation.Runspaces
                 commandAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.MergeInformation, MergeInstructions[(int)MergeType.Information]));
             }
             else if (psRPVersion != null &&
-                psRPVersion >= RemotingConstants.ProtocolVersionWin8RTM)
+                psRPVersion >= RemotingConstants.ProtocolVersion_2_2)
             {
                 // V3 merge instructions.
                 commandAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.MergeError, MergeInstructions[(int)MergeType.Error]));
