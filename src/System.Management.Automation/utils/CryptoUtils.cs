@@ -659,6 +659,109 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
+        /// Gets the bytes of a secure string.
+        /// </summary>
+        private static byte[] GetBytesFromSecureString(SecureString secureString)
+        {
+            byte[] data = null;
+            IntPtr ptr = Marshal.SecureStringToCoTaskMemUnicode(secureString);
+
+            if (ptr != IntPtr.Zero)
+            {
+                try
+                {
+                    data = new byte[secureString.Length * 2];
+                    for (int i = 0; i < data.Length; i++)
+                    {
+                        data[i] = Marshal.ReadByte(ptr, i);
+                    }
+                }
+                finally
+                {
+                    Marshal.ZeroFreeCoTaskMemUnicode(ptr);
+                }
+            }
+
+            return data;
+        }
+
+        /// <summary>
+        /// Gets a secure string from the specified byte array.
+        /// </summary>
+        private static SecureString GetSecureStringFromBytes(byte[] data)
+        {
+            Dbg.Assert(data is not null, "The passed-in data cannot be null.");
+
+            ushort value;
+            SecureString secureString = new();
+
+            try
+            {
+                for (int i = 0; i < data.Length; i += 2)
+                {
+                    value = (ushort)(data[i] + (ushort)(data[i + 1] << 8));
+                    secureString.AppendChar((char)value);
+                    value = 0;
+                }
+            }
+            finally
+            {
+                // if there was an exception for whatever reason,
+                // clear the last value store in Value
+                value = 0;
+
+                // zero out the contents
+                Array.Clear(data);
+            }
+
+            return secureString;
+        }
+
+        /// <summary>
+        /// Convert a secure string to a base64 encoded string.
+        /// </summary>
+        protected string ConvertSecureStringToBase64String(SecureString secureString)
+        {
+            string dataAsString = null;
+            byte[] data = GetBytesFromSecureString(secureString);
+
+            if (data is not null)
+            {
+                try
+                {
+                    dataAsString = Convert.ToBase64String(data);
+                }
+                finally
+                {
+                    Array.Clear(data);
+                }
+            }
+
+            return dataAsString;
+        }
+
+        /// <summary>
+        /// Convert a base64 encoded string to a secure string.
+        /// </summary>
+        /// <param name="base64String"></param>
+        /// <returns></returns>
+        protected SecureString ConvertBase64StringToSecureString(string base64String)
+        {
+            try
+            {
+                byte[] data = Convert.FromBase64String(base64String);
+                return GetSecureStringFromBytes(data);
+            }
+            catch (FormatException)
+            {
+                // do nothing
+                // this catch is to ensure that the exception doesn't
+                // go unhandled leading to a crash
+                throw new PSCryptoException();
+            }
+        }
+
+        /// <summary>
         /// Core logic to encrypt a string. Assumes session key is already generated.
         /// </summary>
         /// <param name="secureString">
@@ -671,18 +774,10 @@ namespace System.Management.Automation.Internal
 
             if (_rsaCryptoProvider.CanEncrypt)
             {
-                IntPtr ptr = Marshal.SecureStringToCoTaskMemUnicode(secureString);
+                byte[] data = GetBytesFromSecureString(secureString);
 
-                if (ptr != IntPtr.Zero)
+                if (data is not null)
                 {
-                    byte[] data = new byte[secureString.Length * 2];
-                    for (int i = 0; i < data.Length; i++)
-                    {
-                        data[i] = Marshal.ReadByte(ptr, i);
-                    }
-
-                    Marshal.ZeroFreeCoTaskMemUnicode(ptr);
-
                     try
                     {
                         byte[] encryptedData = _rsaCryptoProvider.EncryptWithSessionKey(data);
@@ -690,10 +785,7 @@ namespace System.Management.Automation.Internal
                     }
                     finally
                     {
-                        for (int j = 0; j < data.Length; j++)
-                        {
-                            data[j] = 0;
-                        }
+                        Array.Clear(data);
                     }
                 }
             }
@@ -723,10 +815,11 @@ namespace System.Management.Automation.Internal
             // happened successfully
             if (_rsaCryptoProvider.CanEncrypt)
             {
-                byte[] data = null;
                 try
                 {
-                    data = Convert.FromBase64String(encryptedString);
+                    byte[] data = Convert.FromBase64String(encryptedString);
+                    byte[] decryptedData = _rsaCryptoProvider.DecryptWithSessionKey(data);
+                    secureString = GetSecureStringFromBytes(decryptedData);
                 }
                 catch (FormatException)
                 {
@@ -734,36 +827,6 @@ namespace System.Management.Automation.Internal
                     // this catch is to ensure that the exception doesn't
                     // go unhandled leading to a crash
                     throw new PSCryptoException();
-                }
-
-                if (data != null)
-                {
-                    byte[] decryptedData = _rsaCryptoProvider.DecryptWithSessionKey(data);
-
-                    secureString = new SecureString();
-                    UInt16 value = 0;
-                    try
-                    {
-                        for (int i = 0; i < decryptedData.Length; i += 2)
-                        {
-                            value = (UInt16)(decryptedData[i] + (UInt16)(decryptedData[i + 1] << 8));
-                            secureString.AppendChar((char)value);
-                            value = 0;
-                        }
-                    }
-                    finally
-                    {
-                        // if there was an exception for whatever reason,
-                        // clear the last value store in Value
-                        value = 0;
-
-                        // zero out the contents
-                        for (int i = 0; i < decryptedData.Length; i += 2)
-                        {
-                            decryptedData[i] = 0;
-                            decryptedData[i + 1] = 0;
-                        }
-                    }
                 }
             }
             else
@@ -867,14 +930,29 @@ namespace System.Management.Automation.Internal
         internal override string EncryptSecureString(SecureString secureString)
         {
             // session!=null check required for DRTs TestEncryptSecureString* entries in CryptoUtilsTest/UTUtils.dll
-            // for newer clients, server will never initiate key exchange.
-            // for server, just the session key is required to encrypt/decrypt anything
-            if (Session is ServerRemoteSession session && session.Context.ClientCapability.ProtocolVersion >= RemotingConstants.ProtocolVersionWin8RTM)
+            bool initiateKeyExchange = true;
+
+            if (Session is ServerRemoteSession session)
             {
-                _rsaCryptoProvider.GenerateSessionKey();
+                Version clientProtocolVersion = session.Context.ClientCapability.ProtocolVersion;
+                if (clientProtocolVersion >= RemotingConstants.ProtocolVersion_2_4)
+                {
+                    // For client v2.4+, we no longer encrypt secure strings, but rely on the underlying secure transport to do the right thing.
+                    return ConvertSecureStringToBase64String(secureString);
+                }
+
+                if (clientProtocolVersion >= RemotingConstants.ProtocolVersion_2_2)
+                {
+                    // For client v2.2+, server will never initiate key exchange.
+                    // For server, just the session key is required to encrypt/decrypt anything
+                    initiateKeyExchange = false;
+                    _rsaCryptoProvider.GenerateSessionKey();
+                }
             }
-            else // older clients
+
+            if (initiateKeyExchange)
             {
+                // older clients.
                 RunKeyExchangeIfRequired();
             }
 
@@ -883,6 +961,12 @@ namespace System.Management.Automation.Internal
 
         internal override SecureString DecryptSecureString(string encryptedString)
         {
+            if (Session is ServerRemoteSession session && session.Context.ClientCapability.ProtocolVersion >= RemotingConstants.ProtocolVersion_2_4)
+            {
+                // For client v2.4+, we no longer encrypt secure strings, but rely on the underlying secure transport to do the right thing.
+                return ConvertBase64StringToSecureString(encryptedString);
+            }
+
             RunKeyExchangeIfRequired();
 
             return DecryptSecureStringCore(encryptedString);
@@ -994,6 +1078,12 @@ namespace System.Management.Automation.Internal
 
         internal override string EncryptSecureString(SecureString secureString)
         {
+            if (Session is ClientRemoteSession session && session.ServerProtocolVersion >= RemotingConstants.ProtocolVersion_2_4)
+            {
+                // For server v2.4+, we no longer encrypt secure strings, but rely on the underlying secure transport to do the right thing.
+                return ConvertSecureStringToBase64String(secureString);
+            }
+
             RunKeyExchangeIfRequired();
 
             return EncryptSecureStringCore(secureString);
@@ -1001,6 +1091,12 @@ namespace System.Management.Automation.Internal
 
         internal override SecureString DecryptSecureString(string encryptedString)
         {
+            if (Session is ClientRemoteSession session && session.ServerProtocolVersion >= RemotingConstants.ProtocolVersion_2_4)
+            {
+                // For server v2.4+, we no longer encrypt secure strings, but rely on the underlying secure transport to do the right thing.
+                return ConvertBase64StringToSecureString(encryptedString);
+            }
+
             RunKeyExchangeIfRequired();
 
             return DecryptSecureStringCore(encryptedString);

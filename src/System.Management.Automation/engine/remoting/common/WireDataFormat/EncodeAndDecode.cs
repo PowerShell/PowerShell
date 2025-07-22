@@ -76,10 +76,11 @@ namespace System.Management.Automation
     {
         internal static readonly Version HostVersion = PSVersionInfo.PSVersion;
 
-        internal static readonly Version ProtocolVersionWin7RC = new Version(2, 0);
-        internal static readonly Version ProtocolVersionWin7RTM = new Version(2, 1);
-        internal static readonly Version ProtocolVersionWin8RTM = new Version(2, 2);
-        internal static readonly Version ProtocolVersionWin10RTM = new Version(2, 3);
+        internal static readonly Version ProtocolVersion_2_0 = new(2, 0); // Window 7 RC
+        internal static readonly Version ProtocolVersion_2_1 = new(2, 1); // Window 7 RTM
+        internal static readonly Version ProtocolVersion_2_2 = new(2, 2); // Window 8 RTM
+        internal static readonly Version ProtocolVersion_2_3 = new(2, 3); // Window 10 RTM
+        internal static readonly Version ProtocolVersion_2_4 = new(2, 4); // PowerShell 7.6
 
         // Minor will be incremented for each change in PSRP client/server stack and new versions will be
         // forked on early major release/drop changes history.
@@ -87,7 +88,13 @@ namespace System.Management.Automation
         //      2.102 to 2.103 - Key exchange protocol changes in M3
         //      2.103 to 2.2   - Final ship protocol version value, no change to protocol
         //      2.2 to 2.3     - Enabling informational stream
-        internal static readonly Version ProtocolVersionCurrent = new Version(2, 3);
+        //      2.3 to 2.4     - Obsolete the key exchange. The following messages are deprecated when both server and client are 2.4 or later:
+        //                        - PUBLIC_KEY
+        //                        - PUBLIC_KEY_REQUEST
+        //                        - ENCRYPTED_SESSION_KEY
+        //                       Per the Crypto board's review, we don't need to do extra encryption for SecureString objects.
+        //                       We will just depend on the secure transport layer to encrypt the data.
+        internal static readonly Version ProtocolVersionCurrent = new(2, 4);
         internal static readonly Version ProtocolVersion = ProtocolVersionCurrent;
         // Used by remoting commands to add remoting specific note properties.
         internal static readonly string ComputerNameNoteProperty = "PSComputerName";
@@ -2158,7 +2165,7 @@ namespace System.Management.Automation
                 return false;
             }
 
-            return (runspace.GetRemoteProtocolVersion() >= RemotingConstants.ProtocolVersionWin8RTM);
+            return (runspace.GetRemoteProtocolVersion() >= RemotingConstants.ProtocolVersion_2_2);
         }
     }
 }
