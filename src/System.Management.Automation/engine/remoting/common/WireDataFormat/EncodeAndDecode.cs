@@ -88,12 +88,14 @@ namespace System.Management.Automation
         //      2.102 to 2.103 - Key exchange protocol changes in M3
         //      2.103 to 2.2   - Final ship protocol version value, no change to protocol
         //      2.2 to 2.3     - Enabling informational stream
-        //      2.3 to 2.4     - Obsolete the key exchange. The following messages are deprecated when both server and client are 2.4 or later:
+        //      2.3 to 2.4     - Deprecate the 'Session_Key' exchange. The following messages are obsolete when both server and client are v2.4+:
         //                        - PUBLIC_KEY
         //                        - PUBLIC_KEY_REQUEST
         //                        - ENCRYPTED_SESSION_KEY
-        //                       Per the Crypto board's review, we don't need to do extra encryption for SecureString objects.
-        //                       We will just depend on the secure transport layer to encrypt the data.
+        //                       The padding algorithm 'RSAEncryptionPadding.Pkcs1' used in the 'Session_Key' exchange is NOT secure, and therefore,
+        //                       PSRP needs to be used on top of a secure transport and the 'Session_Key' doesn't add any extra security.
+        //                       So, we decided to deprecate the 'Session_Key' exchange in PSRP and skip encryption and decryption for 'SecureString'
+        //                       objects. Instead, we require the transport to be secure for secure data transfer between PSRP clients and servers.
         internal static readonly Version ProtocolVersionCurrent = new(2, 4);
         internal static readonly Version ProtocolVersion = ProtocolVersionCurrent;
         // Used by remoting commands to add remoting specific note properties.
