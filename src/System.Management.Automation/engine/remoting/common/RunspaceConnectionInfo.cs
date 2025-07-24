@@ -2206,11 +2206,50 @@ namespace System.Management.Automation.Runspaces
             var context = Runspaces.LocalPipeline.GetExecutionContextFromTLS();
             if (context != null)
             {
-                var cmdInfo = context.CommandDiscovery.LookupCommandInfo(sshCommand, CommandOrigin.Internal) as ApplicationInfo;
+                var cmdInfo = CommandDiscovery.LookupCommandInfo(
+                    sshCommand,
+                    CommandTypes.Application,
+                    SearchResolutionOptions.None,
+                    CommandOrigin.Internal,
+                    context) as ApplicationInfo;
                 if (cmdInfo != null)
                 {
                     filePath = cmdInfo.Path;
                 }
+            }
+            else
+            {
+                // A Runspace may not be present in the TLS in SDK hosted apps
+                // or if running in another thread without a Runspace. While
+                // ProcessStartInfo can lookup the full path in PATH, we set
+                // the cwd to the parent directory of the found executable so
+                // we do a manual lookup here.
+                string[] entries = Environment.GetEnvironmentVariable("PATH")?.Split(
+                    Path.PathSeparator,
+                    StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries) ?? [];
+                foreach (var path in entries)
+                {
+                    if (!Path.IsPathFullyQualified(path))
+                    {
+                        continue;
+                    }
+
+                    var sshCommandPath = Path.Combine(path, sshCommand);
+                    if (File.Exists(sshCommandPath))
+                    {
+                        filePath = sshCommandPath;
+                        break;
+                    }
+                }
+            }
+            
+            if (string.IsNullOrEmpty(filePath))
+            {
+                throw new CommandNotFoundException(
+                    sshCommand,
+                    null,
+                    "CommandNotFoundException",
+                    DiscoveryExceptions.CommandNotFoundException);
             }
 
             // Create a local ssh process (client) that conects to a remote sshd process (server) using a 'powershell' subsystem.
