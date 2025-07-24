@@ -18,7 +18,7 @@ parameters: # parameters are shown up in ADO UI in a build queue time
     type: string
     default: 'NO'
   - name: SkipPublish
-    displayName: Skip Publishing to GitHub and Nuget
+    displayName: Skip Publishing to Nuget
     type: boolean
     default: false
   - name: SkipPSInfraInstallers
@@ -58,7 +58,6 @@ variables:
   - name: ReleaseTagVar
     value: ${{ parameters.ReleaseTagVar }}
   - group: PoolNames
-  - group: MSIXSigningProfile
 
 resources:
   repositories:
@@ -121,12 +120,6 @@ extends:
       displayName: 'Set Release Tag and Upload Changelog'
       jobs:
       - template: /.pipelines/templates/release-SetTagAndChangelog.yml@self
-
-    - stage: msixbundle
-      displayName: 'Create MSIX Bundle'
-      dependsOn: []
-      jobs:
-      - template: /.pipelines/templates/release-create-msix.yml@self
 
     - stage: validateSdk
       displayName: 'Validate SDK'
@@ -270,7 +263,6 @@ extends:
         - fxdpackages
         - gbltool
         - validateSdk
-        - msixbundle
 
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
@@ -333,17 +325,6 @@ extends:
           instructions: |
             Run PowerShell-Release-Official-Azure.yml pipeline to publish to PMC
 
-    - stage: ReleaseDocker
-      dependsOn: PushGitTagAndMakeDraftPublic
-      displayName: 'Docker Release'
-      jobs:
-      - template: /.pipelines/templates/approvalJob.yml@self
-        parameters:
-          displayName: Start Docker Release
-          jobName: StartDockerRelease
-          instructions: |
-            Kickoff docker release
-
     - stage: UpdateDotnetDocker
       dependsOn: PushGitTagAndMakeDraftPublic
       displayName: Update DotNet SDK Docker images
@@ -356,7 +337,7 @@ extends:
             Create PR for updating dotnet-docker images to use latest PowerShell version.
             1. Fork and clone https://github.com/dotnet/dotnet-docker.git
             2. git checkout upstream/nightly -b updatePS
-            3. dotnet run --project .\eng\update-dependencies\ -- <dotnetversion> --product-version powershell=<powershellversion> --compute-shas
+            3. dotnet run --project .\eng\update-dependencies\ specific <dotnetversion> --product-version powershell=<powershellversion> --compute-shas
             4. create PR targeting nightly branch
 
     - stage: UpdateWinGet
@@ -387,10 +368,11 @@ extends:
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
-          displayName: Start vPack Release pipeline
+          displayName: Start 2 vPack Release pipelines
           jobName: PublishVPack
           instructions: |
-            Kick off vPack release pipeline
+            1. Kick off PowerShell-vPack-Official pipeline
+            2. Kick off PowerShell-MSIXBundle-VPack pipeline
 
     # Need to verify if the Az PS / CLI team still uses this. Skippinng for this release.
     # - stage: ReleaseDeps
