@@ -1,0 +1,197 @@
+[
+  {
+    "Name": "Cmdlets and Modules",
+    "Description": "Focuses on core/inbox modules in the PowerShell/PowerShell repo, including proposing new cmdlets/parameters, improvements, bugfixes, and breaking changes.",
+    "Members": [
+      { "Name": "James Truher", "GitHub": "JamesWTruher", "Type": "Microsoft Employee" },
+      { "Name": "Steve Lee", "GitHub": "SteveL-MSFT", "Type": "Microsoft Employee" },
+      { "Name": "Jeff Hicks", "GitHub": "jdhitsolutions", "Type": "Community Contributor" },
+      { "Name": "Tobias Weltner", "GitHub": "TobiasPSP", "Type": "Community Contributor" },
+      { "Name": "Ryan Yates", "GitHub": "kilasuit", "Type": "Community Contributor" }
+    ],
+    "HistoricMembers": [
+     /// "Previous members who have contributed to this working group but are no longer active"
+     ],
+    "Responsibilities": [
+      "Core/inbox modules in PowerShell/PowerShell repo",
+      "Propose new cmdlets/parameters",
+      "Improvements and bugfixes to existing cmdlets/parameters",
+      "Breaking changes"
+    ]
+  },
+  {
+    "Name": "DSC",
+    "Description": "The Desired State Configuration (DSC) WG manages all facets of DSC in PowerShell 7, including language features (like the Configuration keyword) and the PSDesiredStateConfiguration module. Today, DSC is integrated into the PowerShell language, and we need to manage it as such.",
+    "Members": [
+      { "Name": "Travis Plunk", "GitHub": "TravisEz13", "Type": "Microsoft Employee" },
+      { "Name": "Jason Helmick", "GitHub": "theJasonHelmick", "Type": "Microsoft Employee" },
+      { "Name": "Andrey Nemenya", "GitHub": "anmenaga", "Type": "Microsoft Employee" },
+      { "Name": "Gael Colas", "GitHub": "gaelcolas", "Type": "Community Contributor" },
+      { "Name": "Michael Lombardi", "GitHub": "michaeltlombardi", "Type": "Microsoft Employee" },
+      { "Name": "Steve Lee", "GitHub": "SteveL-MSFT", "Type": "Microsoft Employee" }
+    ],
+    "HistoricMembers": [
+     /// "Previous members who have contributed to this working group but are no longer active"
+     ],
+    "Responsibilities": [
+      "Manage all facets of DSC in PowerShell 7",
+      "Oversee language features like the Configuration keyword",
+      "Maintain the PSDesiredStateConfiguration module"
+    ],
+    "Repositories": [
+    //  List of repositories related to DSC
+    //   { "Name": "PSDesiredStateConfiguration", "URL": "  
+    ],
+    "TaskTrackingProjects": [
+      // List of any Public GitHub Projects or task tracking systems used by this Working Group
+    ]
+  },
+  {
+    "Name": "Developer Experience",
+    "Description": "The PowerShell developer experience includes the development of modules (in C#, PowerShell script, etc.), as well as the experience of hosting PowerShell and its APIs in other applications and language runtimes. Special consideration should be given to topics like backwards compatibility with Windows PowerShell (e.g. with PowerShell Standard) and integration with related developer tools (e.g. .NET CLI or the PowerShell extension for VS Code).",
+    "Members": [
+      { "Name": "James Truher", "GitHub": "JamesWTruher", "Type": "Former Microsoft Employee" },
+      { "Name": "Aditya Patwardhan", "GitHub": "adityapatwardhan", "Type": "Microsoft Employee" },
+      { "Name": "Michael Lombardi", "GitHub": "michaeltlombardi", "Type": "Microsoft Employee" },
+      { "Name": "SeeminglyScience", "GitHub": "SeeminglyScience", "Type": "Microsoft Employee" },
+      { "Name": "Bergmeister", "GitHub": "bergmeister", "Type": "Community Contributor" }
+    ],,
+    "HistoricMembers": [
+     /// "Previous members who have contributed to this working group but are no longer active"
+     ],
+    "Responsibilities": [
+      "Development of modules in C#, PowerShell script, etc.",
+      "Hosting PowerShell and its APIs in other applications and runtimes",
+      "Backwards compatibility with Windows PowerShell",
+      "Integration with developer tools (e.g. .NET CLI, VS Code extension)"
+    ],
+    "Repositories": [
+    //  List of repositories related to DSC
+    //   { "Name": "PSDesiredStateConfiguration", "URL": "  
+    ],
+    "TaskTrackingProjects": [
+      // List of any Public GitHub Projects or task tracking systems used by this Working Group
+    ]
+  },
+  {
+    "Name": "Engine",
+    "Description": "The Engine WG focuses on the implementation and maintenance of core PowerShell engine code, including the language parser, command and parameter binders, module and provider systems, performance, componentization, and AssemblyLoadContext. Not responsible for the definition of the PowerShell language.",
+    "Members": [
+      { "Name": "Dongbo Wang", "GitHub": "daxian-dbw", "Type": "Microsoft Employee" },
+      { "Name": "James Truher", "GitHub": "JamesWTruher", "Type": "Former Microsoft Employee" },
+      { "Name": "Keith Hill", "GitHub": "rkeithhill", "Type": "Community Contributor" },
+      { "Name": "Vexx32", "GitHub": "vexx32", "Type": "Community Contributor" },
+      { "Name": "SeeminglyScience", "GitHub": "SeeminglyScience", "Type": "Microsoft Employee" },
+      { "Name": "IISResetMe", "GitHub": "IISResetMe", "Type": "Community Contributor" },
+      { "Name": "PowerCode", "GitHub": "powercode", "Type": "Community Contributor" },
+      { "Name": "Kilasuit", "GitHub": "kilasuit", "Type": "Community Contributor" }
+    ],
+    "HistoricMembers": [
+     /// "Previous members who have contributed to this working group but are no longer active"
+     ],
+    "Responsibilities": [
+      "Implementation and maintenance of core PowerShell engine code",
+      "Language parser, command and parameter binders",
+      "Module and provider systems",
+      "Performance, componentization, AssemblyLoadContext"
+    ],
+    "Repositories": [
+    //  List of repositories related to DSC
+    //   { "Name": "PSDesiredStateConfiguration", "URL": "  
+    ],
+    "TaskTrackingProjects": [
+      // List of any Public GitHub Projects or task tracking systems used by this Working Group
+    ]
+  },
+  {
+    "Name": "Interactive UX",
+    "Description": "Focuses on the interactive user experience in PowerShell, including the console, help system, tab completion/IntelliSense, markdown rendering, PSReadLine, and debugging.",
+    "Members": [
+      { "Name": "Jason Helmick", "GitHub": "theJasonHelmick", "Type": "Microsoft Employee" },
+      { "Name": "Dongbo Wang", "GitHub": "daxian-dbw", "Type": "Microsoft Employee" },
+      { "Name": "Aditya Patwardhan", "GitHub": "adityapatwardhan", "Type": "Microsoft Employee" },
+      { "Name": "James Truher", "GitHub": "JamesWTruher", "Type": "Former Microsoft Employee" },
+      { "Name": "SeeminglyScience", "GitHub": "SeeminglyScience", "Type": "Microsoft Employee" },
+      { "Name": "Sean Wheeler", "GitHub": "sdwheeler", "Type": "Microsoft Employee" },
+      { "Name": "Kilasuit", "GitHub": "kilasuit", "Type": "Community Contributor" },
+      { "Name": "Friedrich Weinmann", "GitHub": "FriedrichWeinmann", "Type": "Microsoft Employee" },
+      { "Name": "Steven Bucher", "GitHub": "StevenBucher98", "Type": "Microsoft Employee" }
+    ],
+    "HistoricMembers": [
+     /// "Previous members who have contributed to this working group but are no longer active"
+     ],
+    "Responsibilities": [
+      "Console user experience",
+      "Help system",
+      "Tab completion / IntelliSense",
+      "Markdown rendering",
+      "PSReadLine",
+      "Debugging"
+    ]
+  },
+  {
+    "Name": "Language",
+    "Description": "Deals with the abstract definition of the PowerShell language itself, working closely with the PowerShell Committee.",
+    "Members": [
+      { "Name": "James Truher", "GitHub": "JamesWTruher", "Type": "Microsoft Employee" },
+      { "Name": "Dongbo Wang", "GitHub": "daxian-dbw", "Type": "Microsoft Employee" },
+      { "Name": "SeeminglyScience", "GitHub": "SeeminglyScience", "Type": "Microsoft Employee" }
+    ],
+    "HistoricMembers": [
+     /// "Previous members who have contributed to this working group but are no longer active"
+     ],    
+    "Responsibilities": [
+      "Definition of the PowerShell language",
+      "Work with the PowerShell Committee on language decisions"
+    ],
+    "Repositories": [
+    //  List of repositories related to DSC
+    //   { "Name": "PSDesiredStateConfiguration", "URL": "  
+    ],
+    "TaskTrackingProjects": [
+      // List of any Public GitHub Projects or task tracking systems used by this Working Group
+    ]
+  },
+  {
+    "Name": "Remoting",
+    "Description": "Focuses on the PowerShell Remoting Protocol (PSRP), protocols implemented under PSRP (e.g. WinRM, SSH), and the PowerShell job system.",
+    "Members": [
+      { "Name": "Andrey Nemenya", "GitHub": "anmenaga", "Type": "Microsoft Employee" },
+      { "Name": "Travis Plunk", "GitHub": "TravisEz13", "Type": "Microsoft Employee" }
+    ],
+    "HistoricMembers": [
+     /// "Previous members who have contributed to this working group but are no longer active"
+     ],
+    "Responsibilities": [
+      "PowerShell Remoting Protocol (PSRP)",
+      "Protocols under PSRP (WinRM, SSH)",
+      "Other remoting protocols",
+      "PowerShell job system"
+    ]
+  },
+  
+  {
+    "Name": "Security",
+    "Description": "Handles issues and pull requests with security implications, providing expertise, concerns, and guidance.",
+    "Members": [
+      { "Name": "Travis Plunk", "GitHub": "TravisEz13", "Type": "Microsoft Employee" },
+      { "Name": "Sydney Smith", "GitHub": "SydneySmithReal", "Type": "Microsoft Employee" },
+      { "Name": "Anam Navi", "GitHub": "anamnavi", "Type": "Microsoft Employee" },
+      { "Name": "Steve Lee", "GitHub": "SteveL-MSFT", "Type": "Microsoft Employee" }
+    ],
+    "HistoricMembers": [
+     /// "Previous members who have contributed to this working group but are no longer active"
+     ],
+    "Responsibilities": [
+      "Review issues and PRs with security implications",
+      "Provide security expertise and guidance"
+    ],
+    "Repositories": [
+    //  List of repositories related to DSC
+    //   { "Name": "PSDesiredStateConfiguration", "URL": "  
+    ],
+    "TaskTrackingProjects": [
+      // List of any Public GitHub Projects or task tracking systems used by this Working Group
+    ]
+  }
+]
