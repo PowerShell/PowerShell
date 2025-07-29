@@ -670,7 +670,11 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(bindingInfo.InfoType.Equals(PseudoBindingInfoType.PseudoBindingSucceed), "The pseudo binding should succeed");
             List<CompletionResult> result = new List<CompletionResult>();
-            Assembly commandAssembly = bindingInfo.CommandInfo.CommandMetadata.CommandType.Assembly;
+            Assembly commandAssembly = null;
+            if (bindingInfo.CommandInfo is CmdletInfo)
+            {
+                commandAssembly = bindingInfo.CommandInfo.CommandMetadata.CommandType.Assembly;
+            }
 
             if (parameterName == string.Empty)
             {
@@ -809,7 +813,7 @@ namespace System.Management.Automation
             if (pattern.IsMatch(matchedParameterName))
             {
                 string completionText = "-" + matchedParameterName + colonSuffix;
-                string tooltip = parameterType + matchedParameterName + helpMessage;
+                string tooltip = $"{parameterType}{matchedParameterName}{helpMessage}";
                 result.Add(new CompletionResult(completionText, matchedParameterName, CompletionResultType.ParameterName, tooltip));
             }
             else
@@ -823,7 +827,7 @@ namespace System.Management.Automation
                             $"-{alias}{colonSuffix}",
                             alias,
                             CompletionResultType.ParameterName,
-                            parameterType + alias + helpMessage));
+                            $"{parameterType}{alias}{helpMessage}"));
                     }
                 }
             }
@@ -899,7 +903,7 @@ namespace System.Management.Automation
 
                 string name = param.Parameter.Name;
                 string type = "[" + ToStringCodeMethods.Type(param.Parameter.Type, dropNamespaces: true) + "] ";
-                string helpMessage = string.Empty;
+                string helpMessage = null;
                 bool isCommonParameter = Cmdlet.CommonParameters.Contains(name, StringComparer.OrdinalIgnoreCase);
                 List<CompletionResult> listInUse = isCommonParameter ? commonParamResult : result;
 
@@ -924,7 +928,7 @@ namespace System.Management.Automation
                                     break;
                                 }
                                 
-                                if (helpMessage is not null && TryGetParameterHelpMessage(pattr, commandAssembly, out string attrHelpMessage))
+                                if (helpMessage is null && TryGetParameterHelpMessage(pattr, commandAssembly, out string attrHelpMessage))
                                 {
                                     helpMessage = $" - {attrHelpMessage}";
                                 }
