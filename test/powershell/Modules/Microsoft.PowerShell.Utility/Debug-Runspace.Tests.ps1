@@ -31,6 +31,33 @@ Describe "Debug-Runspace" -Tag "CI" {
         $rs1.Debugger.SetDebugMode("None")
         { Debug-Runspace -Runspace $rs1 -ErrorAction stop } | Should -Throw -ErrorId "InvalidOperation,Microsoft.PowerShell.Commands.DebugRunspaceCommand"
     }
+    
+    It "Should write attach event and mark runspace as having a remote debugger attached" {
+        $onAttachName = [System.Management.Automation.PSEngineEvent]::OnDebugAttach
+        
+        $debugTarget = [PowerShell]::Create()
+        $null = $debugTarget.AddCommand('Wait-Event').AddParameter('SourceIdentifier', $onAttachName)
+        $waitTask = $debugTarget.BeginInvoke()
 
+        $debugTarget.Runspace.IsRemoteDebuggerAttached | Should -BeFalse
+
+        $debugger = [PowerShell]::Create()
+        $null = $debugger.AddCommand('Debug-Runspace').AddParameter('Id', $debugTarget.Runspace.Id)
+        $debugTask = $debugger.BeginInvoke()
+        
+        $waitTask.AsyncWaitHandle.WaitOne(5000) | Should -BeTrue
+        $waitInfo = $debugTarget.EndInvoke($waitTask)
+        $waitInfo.SourceIdentifier | Should -Be $onAttachName
+
+        $debugTarget.Runspace.IsRemoteDebuggerAttached | Should -BeTrue
+
+        $debugger.Stop()
+        $exp = {
+            $debugger.EndInvoke($debugTask)
+        } | Should -Throw -PassThru
+        $exp.FullyQualifiedErrorId | Should -Be "PipelineStoppedException"
+
+        $debugTarget.Runspace.IsRemoteDebuggerAttached | Should -BeFalse
+    }
 }
 
