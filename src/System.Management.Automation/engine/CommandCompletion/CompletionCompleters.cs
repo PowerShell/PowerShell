@@ -671,9 +671,9 @@ namespace System.Management.Automation
             Diagnostics.Assert(bindingInfo.InfoType.Equals(PseudoBindingInfoType.PseudoBindingSucceed), "The pseudo binding should succeed");
             List<CompletionResult> result = new List<CompletionResult>();
             Assembly commandAssembly = null;
-            if (bindingInfo.CommandInfo is CmdletInfo)
+            if (bindingInfo.CommandInfo is CmdletInfo cmdletInfo)
             {
-                commandAssembly = bindingInfo.CommandInfo.CommandMetadata.CommandType.Assembly;
+                commandAssembly = cmdletInfo.CommandMetadata.CommandType.Assembly;
             }
 
             if (parameterName == string.Empty)
@@ -812,7 +812,7 @@ namespace System.Management.Automation
             string colonSuffix = withColon ? ":" : string.Empty;
             if (pattern.IsMatch(matchedParameterName))
             {
-                string completionText = "-" + matchedParameterName + colonSuffix;
+                string completionText = $"-{matchedParameterName}{colonSuffix}";
                 string tooltip = $"{parameterType}{matchedParameterName}{helpMessage}";
                 result.Add(new CompletionResult(completionText, matchedParameterName, CompletionResultType.ParameterName, tooltip));
             }
@@ -938,7 +938,7 @@ namespace System.Management.Automation
 
                     if (showToUser)
                     {
-                        string completionText = "-" + name + colonSuffix;
+                        string completionText = $"-{name}{colonSuffix}";
                         string tooltip = $"{type}{name}{helpMessage}";
                         listInUse.Add(new CompletionResult(completionText, name, CompletionResultType.ParameterName,
                                                            tooltip));
