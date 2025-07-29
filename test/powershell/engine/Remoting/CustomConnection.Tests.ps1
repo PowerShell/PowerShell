@@ -57,7 +57,6 @@ Describe 'NamedPipe Custom Remote Connection Tests' -Tags 'Feature','RequireAdmi
     # Skip this timeout test for non-Windows platforms, because dotNet named pipes do not honor the 'NumberOfServerInstances'
     # property and allows connection to a currently connected server.
     It 'Verifies timeout error when trying to connect to pwsh process with current connection' -Skip:(!$IsWindows) {
-        $script:session = New-NamedPipeSession -ProcessId $script:PwshProcId -ConnectingTimeout 10 -Name CustomNPConnection -ErrorAction Stop
         $brokenSession = New-NamedPipeSession -ProcessId $script:PwshProcId -ConnectingTimeout 2 -Name CustomNPConnection -ErrorAction Stop
 
         # Verify expected broken session
