@@ -2580,9 +2580,9 @@ namespace System.Management.Automation
                     }
                 }
 
-                // For a native command, if a cover-all completer is registered, then return it.
+                // For a native command, if a fallback completer is registered, then return it.
                 // For example, the 'Microsoft.PowerShell.UnixTabCompletion' module.
-                if (isNative && registeredCompleters.TryGetValue("*", out scriptBlock))
+                if (isNative && registeredCompleters.TryGetValue(RegisterArgumentCompleterCommand.FallbackCompleterKey, out scriptBlock))
                 {
                     return scriptBlock;
                 }

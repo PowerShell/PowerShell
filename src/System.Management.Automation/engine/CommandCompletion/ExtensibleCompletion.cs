@@ -172,28 +172,45 @@ namespace System.Management.Automation
     [Cmdlet(VerbsLifecycle.Register, "ArgumentCompleter", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=528576")]
     public class RegisterArgumentCompleterCommand : PSCmdlet
     {
+        private const string PowerShellSetName = "PowerShellSet";
+        private const string NativeCommandSetName = "NativeCommandSet";
+        private const string NativeFallbackSetName = "NativeFallbackSet";
+
+        // Use a key that is unlikely to be a file name or path to indicate the fallback completer for native commands.
+        internal const string FallbackCompleterKey = "___ps::<native_fallback_key>@@___";
+
         /// <summary>
+        /// Gets or sets the command names for which the argument completer is registered.
         /// </summary>
-        [Parameter(ParameterSetName = "NativeSet", Mandatory = true)]
-        [Parameter(ParameterSetName = "PowerShellSet")]
+        [Parameter(ParameterSetName = NativeCommandSetName, Mandatory = true)]
+        [Parameter(ParameterSetName = PowerShellSetName)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] CommandName { get; set; }
 
         /// <summary>
+        /// Gets or sets the name of the parameter for which the argument completer is registered.
         /// </summary>
-        [Parameter(ParameterSetName = "PowerShellSet", Mandatory = true)]
+        [Parameter(ParameterSetName = PowerShellSetName, Mandatory = true)]
         public string ParameterName { get; set; }
 
         /// <summary>
+        /// Gets or sets the script block that will be executed to provide argument completions.
         /// </summary>
         [Parameter(Mandatory = true)]
         [AllowNull()]
         public ScriptBlock ScriptBlock { get; set; }
 
         /// <summary>
+        /// Indicates the argument completer is for native commands.
         /// </summary>
-        [Parameter(ParameterSetName = "NativeSet")]
+        [Parameter(ParameterSetName = NativeCommandSetName)]
         public SwitchParameter Native { get; set; }
+
+        /// <summary>
+        /// Indicates the argument completer is a fallback for any native commands that don't have a completer registered.
+        /// </summary>
+        [Parameter(ParameterSetName = NativeFallbackSetName)]
+        public SwitchParameter NativeFallback { get; set; }
 
         /// <summary>
         /// </summary>
@@ -201,7 +218,13 @@ namespace System.Management.Automation
         {
             Dictionary<string, ScriptBlock> completerDictionary;
 
-            if (ParameterName is null)
+            if (ParameterSetName is NativeFallbackSetName)
+            {
+                completerDictionary = Context.NativeArgumentCompleters ??= new(StringComparer.OrdinalIgnoreCase);
+
+                SetKeyValue(completerDictionary, FallbackCompleterKey, ScriptBlock);
+            }
+            else if (ParameterSetName is NativeCommandSetName)
             {
                 completerDictionary = Context.NativeArgumentCompleters ??= new(StringComparer.OrdinalIgnoreCase);
 
@@ -216,7 +239,7 @@ namespace System.Management.Automation
                     SetKeyValue(completerDictionary, key, ScriptBlock);
                 }
             }
-            else
+            else if (ParameterSetName is PowerShellSetName)
             {
                 completerDictionary = Context.CustomArgumentCompleters ??= new(StringComparer.OrdinalIgnoreCase);
 
