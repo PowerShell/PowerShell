@@ -25,7 +25,7 @@ internal static partial class Interop
                 return ERROR_NOT_SUPPORTED;
             }
 
-            ReadOnlySpan<char> driveName = stackalloc char[] { drive, ':', '\0' };
+            ReadOnlySpan<char> driveName = [drive, ':', '\0'];
             int bufferSize = MAX_PATH;
             Span<char> uncBuffer = stackalloc char[MAX_PATH];
             if (InternalTestHooks.WNetGetConnectionBufferSize > 0 && InternalTestHooks.WNetGetConnectionBufferSize <= MAX_PATH)
