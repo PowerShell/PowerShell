@@ -1,0 +1,231 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<helpItems schema="maml" xmlns="http://msh">
+  <command:class xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http//msdn.microsoft.com/mshelp">
+    <command:title>classOne</command:title>
+    <command:introduction>
+      <maml:para>ClassOne: Class synopsis.</maml:para>
+    </command:introduction>
+    <command:members>
+      <command:member type="field">
+        <command:introduction>
+          <maml:para>ClassOne: Property description.</maml:para>
+        </command:introduction>
+        <command:fieldData>
+          <command:name>Property</command:name>
+          <dev:type>
+            <maml:name>string</maml:name>
+            <maml:uri />
+          </dev:type>
+        </command:fieldData>
+      </command:member>
+      <command:member type="method">
+        <command:title>ctor</command:title>
+        <command:introduction>
+          <maml:para>ClassOne: Constructor description.</maml:para>
+        </command:introduction>
+        <command:Parameters />
+      </command:member>
+      <command:member type="method">
+        <command:title>ctor</command:title>
+        <command:introduction>
+          <maml:para>ClassOne: Constructor with argument description.</maml:para>
+        </command:introduction>
+        <command:Parameters>
+          <command:Parameter>
+            <command:name>argument</command:name>
+            <dev:type>
+              <maml:name>string</maml:name>
+              <maml:uri />
+            </dev:type>
+          </command:Parameter>
+        </command:Parameters>
+      </command:member>
+      <command:member type="method">
+        <command:title>voidMethod</command:title>
+        <command:introduction>
+          <maml:para>ClassOne: Void method description.</maml:para>
+        </command:introduction>
+        <command:Parameters />
+        <command:returnValue>
+          <dev:type>
+            <maml:name>string</maml:name>
+            <maml:uri />
+          </dev:type>
+          <maml:description />
+        </command:returnValue>
+      </command:member>
+      <command:member type="method">
+        <command:title>voidMethod</command:title>
+        <command:introduction>
+          <maml:para>ClassOne: Void method with argument description.</maml:para>
+        </command:introduction>
+        <command:Parameters>
+          <command:Parameter>
+            <command:name>argument</command:name>
+            <dev:type>
+              <maml:name>string</maml:name>
+              <maml:uri />
+            </dev:type>
+          </command:Parameter>
+        </command:Parameters>
+        <command:returnValue>
+          <dev:type>
+            <maml:name>string</maml:name>
+            <maml:uri />
+          </dev:type>
+          <maml:description />
+        </command:returnValue>
+      </command:member>
+      <command:member type="method">
+        <command:title>returnMethod</command:title>
+        <command:introduction>
+          <maml:para>ClassOne: String method description.</maml:para>
+        </command:introduction>
+        <command:Parameters />
+        <command:returnValue>
+          <dev:type>
+            <maml:name>string</maml:name>
+            <maml:uri />
+          </dev:type>
+          <maml:description />
+        </command:returnValue>
+      </command:member>
+      <command:member type="method">
+        <command:title>returnMethod</command:title>
+        <command:introduction>
+          <maml:para>ClassOne: String method with argument description.</maml:para>
+        </command:introduction>
+        <command:Parameters>
+          <command:Parameter>
+            <command:name>argument</command:name>
+            <dev:type>
+              <maml:name>string</maml:name>
+              <maml:uri />
+            </dev:type>
+          </command:Parameter>
+        </command:Parameters>
+        <command:returnValue>
+          <dev:type>
+            <maml:name>string</maml:name>
+            <maml:uri />
+          </dev:type>
+          <maml:description />
+        </command:returnValue>
+      </command:member>
+    </command:members>
+  </command:class>
+  <command:class xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http//msdn.microsoft.com/mshelp">
+    <command:title>classTwo</command:title>
+    <command:introduction>
+      <maml:para>classTwo: Class synopsis.</maml:para>
+    </command:introduction>
+    <command:members>
+      <command:member type="field">
+        <command:introduction>
+          <maml:para>classTwo: Property description.</maml:para>
+        </command:introduction>
+        <command:fieldData>
+          <command:name>Property</command:name>
+          <dev:type>
+            <maml:name>string</maml:name>
+            <maml:uri />
+          </dev:type>
+        </command:fieldData>
+      </command:member>
+      <command:member type="method">
+        <command:title>ctor</command:title>
+        <command:introduction>
+          <maml:para>classTwo: Constructor description.</maml:para>
+        </command:introduction>
+        <command:Parameters />
+      </command:member>
+      <command:member type="method">
+        <command:title>ctor</command:title>
+        <command:introduction>
+          <maml:para>classTwo: Constructor with argument description.</maml:para>
+        </command:introduction>
+        <command:Parameters>
+          <command:Parameter>
+            <command:name>argument</command:name>
+            <dev:type>
+              <maml:name>string</maml:name>
+              <maml:uri />
+            </dev:type>
+          </command:Parameter>
+        </command:Parameters>
+      </command:member>
+      <command:member type="method">
+        <command:title>voidMethod</command:title>
+        <command:introduction>
+          <maml:para>classTwo: Void method description.</maml:para>
+        </command:introduction>
+        <command:Parameters />
+        <command:returnValue>
+          <dev:type>
+            <maml:name>string</maml:name>
+            <maml:uri />
+          </dev:type>
+          <maml:description />
+        </command:returnValue>
+      </command:member>
+      <command:member type="method">
+        <command:title>voidMethod</command:title>
+        <command:introduction>
+          <maml:para>classTwo: Void method with argument description.</maml:para>
+        </command:introduction>
+        <command:Parameters>
+          <command:Parameter>
+            <command:name>argument</command:name>
+            <dev:type>
+              <maml:name>string</maml:name>
+              <maml:uri />
+            </dev:type>
+          </command:Parameter>
+        </command:Parameters>
+        <command:returnValue>
+          <dev:type>
+            <maml:name>string</maml:name>
+            <maml:uri />
+          </dev:type>
+          <maml:description />
+        </command:returnValue>
+      </command:member>
+      <command:member type="method">
+        <command:title>returnMethod</command:title>
+        <command:introduction>
+          <maml:para>classTwo: String method description.</maml:para>
+        </command:introduction>
+        <command:Parameters />
+        <command:returnValue>
+          <dev:type>
+            <maml:name>string</maml:name>
+            <maml:uri />
+          </dev:type>
+          <maml:description />
+        </command:returnValue>
+      </command:member>
+      <command:member type="method">
+        <command:title>returnMethod</command:title>
+        <command:introduction>
+          <maml:para>classTwo: String method with argument description.</maml:para>
+        </command:introduction>
+        <command:Parameters>
+          <command:Parameter>
+            <command:name>argument</command:name>
+            <dev:type>
+              <maml:name>string</maml:name>
+              <maml:uri />
+            </dev:type>
+          </command:Parameter>
+        </command:Parameters>
+        <command:returnValue>
+          <dev:type>
+            <maml:name>string</maml:name>
+            <maml:uri />
+          </dev:type>
+          <maml:description />
+        </command:returnValue>
+      </command:member>
+    </command:members>
+  </command:class>
+</helpItems>
