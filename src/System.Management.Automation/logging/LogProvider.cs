@@ -123,6 +123,17 @@ namespace System.Management.Automation
             int queryResult);
 
         /// <summary>
+        /// Provider interface function for logging WDAC audit event.
+        /// </summary>
+        /// <param name="title">Title of WDAC audit event.</param>
+        /// <param name="message">WDAC audit event message.</param>
+        /// <param name="fqid">FullyQualifiedId of WDAC audit event.</param>
+        internal abstract void LogWDACAuditEvent(
+            string title,
+            string message,
+            string fqid);
+
+        /// <summary>
         /// True if the log provider needs to use logging variables.
         /// </summary>
         /// <returns></returns>
@@ -189,9 +200,7 @@ namespace System.Management.Automation
         {
             sb.AppendLine(StringUtil.Format(EtwLoggingStrings.ErrorRecordMessage, except.Message));
 
-            IContainsErrorRecord ier = except as IContainsErrorRecord;
-
-            if (ier != null)
+            if (except is IContainsErrorRecord ier)
             {
                 ErrorRecord er = ier.ErrorRecord;
 
@@ -411,6 +420,19 @@ namespace System.Management.Automation
             string fileName,
             int querySuccess,
             int queryResult)
+        {
+        }
+
+        /// <summary>
+        /// Provider interface function for logging WDAC audit event.
+        /// </summary>
+        /// <param name="title">Title of WDAC audit event.</param>
+        /// <param name="message">WDAC audit event message.</param>
+        /// <param name="fqid">FullyQualifiedId of WDAC audit event.</param>
+        internal override void LogWDACAuditEvent(
+            string title,
+            string message,
+            string fqid)
         {
         }
 

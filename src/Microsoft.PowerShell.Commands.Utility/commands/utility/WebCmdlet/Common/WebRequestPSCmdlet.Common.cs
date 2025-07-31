@@ -11,6 +11,7 @@ using System.Management.Automation;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Sockets;
 using System.Security;
 using System.Security.Authentication;
 using System.Security.Cryptography;
@@ -91,6 +92,11 @@ namespace Microsoft.PowerShell.Commands
     public abstract class WebRequestPSCmdlet : PSCmdlet, IDisposable
     {
         #region Fields
+
+        /// <summary>
+        /// Used to prefix the headers in debug and verbose messaging.
+        /// </summary>
+        internal const string DebugHeaderPrefix = "--- ";
 
         /// <summary>
         /// Cancellation token source.
@@ -266,11 +272,25 @@ namespace Microsoft.PowerShell.Commands
         public virtual SwitchParameter DisableKeepAlive { get; set; }
 
         /// <summary>
-        /// Gets or sets the TimeOut property.
+        /// Gets or sets the ConnectionTimeoutSeconds property.
         /// </summary>
+        /// <remarks>
+        /// This property applies to sending the request and receiving the response headers only.
+        /// </remarks>
+        [Alias("TimeoutSec")]
         [Parameter]
         [ValidateRange(0, int.MaxValue)]
-        public virtual int TimeoutSec { get; set; }
+        public virtual int ConnectionTimeoutSeconds { get; set; }
+
+        /// <summary>
+        /// Gets or sets the OperationTimeoutSeconds property.
+        /// </summary>
+        /// <remarks>
+        /// This property applies to each read operation when receiving the response body.
+        /// </remarks>
+        [Parameter]
+        [ValidateRange(0, int.MaxValue)]
+        public virtual int OperationTimeoutSeconds { get; set; }
 
         /// <summary>
         /// Gets or sets the Headers property.
@@ -352,20 +372,22 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true, ParameterSetName = "CustomMethodNoProxy")]
         [Alias("CM")]
         [ValidateNotNullOrEmpty]
-        public virtual string CustomMethod
-        {
-            get => _custommethod;
+        public virtual string CustomMethod { get => _customMethod; set => _customMethod = value.ToUpperInvariant(); }
 
-            set => _custommethod = value.ToUpperInvariant();
-        }
-
-        private string _custommethod;
+        private string _customMethod;
 
         /// <summary>
         /// Gets or sets the PreserveHttpMethodOnRedirect property.
         /// </summary>
         [Parameter]
         public virtual SwitchParameter PreserveHttpMethodOnRedirect { get; set; }
+
+        /// <summary>
+        /// Gets or sets the UnixSocket property.
+        /// </summary>
+        [Parameter]
+        [ValidateNotNullOrEmpty]
+        public virtual UnixDomainSocketEndPoint UnixSocket { get; set; }
 
         #endregion Method
 
@@ -550,28 +572,9 @@ namespace Microsoft.PowerShell.Commands
                         FillRequestStream(request);
                         try
                         {
-                            long requestContentLength = request.Content is null ? 0 : request.Content.Headers.ContentLength.Value;
-
-                            string reqVerboseMsg = string.Format(
-                                CultureInfo.CurrentCulture,
-                                WebCmdletStrings.WebMethodInvocationVerboseMsg,
-                                request.Version,
-                                request.Method,
-                                requestContentLength);
-
-                            WriteVerbose(reqVerboseMsg);
-
                             _maximumRedirection = WebSession.MaximumRedirection;
 
                             using HttpResponseMessage response = GetResponse(client, request, handleRedirect);
-
-                            string contentType = ContentHelper.GetContentType(response);
-                            long? contentLength = response.Content.Headers.ContentLength;
-                            string respVerboseMsg = contentLength is null
-                                ? string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.WebResponseNoSizeVerboseMsg, response.Version, contentType)
-                                : string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.WebResponseVerboseMsg, response.Version, contentLength, contentType);
-                            
-                            WriteVerbose(respVerboseMsg);
 
                             bool _isSuccess = response.IsSuccessStatusCode;
 
@@ -621,12 +624,22 @@ namespace Microsoft.PowerShell.Commands
                                 string detailMsg = string.Empty;
                                 try
                                 {
-                                    string error = StreamHelper.GetResponseString(response, _cancelToken.Token);
+                                    string contentType = ContentHelper.GetContentType(response);
+                                    long? contentLength = response.Content.Headers.ContentLength;
+
+                                    // We can't use ReadAsStringAsync because it doesn't have per read timeouts
+                                    TimeSpan perReadTimeout = ConvertTimeoutSecondsToTimeSpan(OperationTimeoutSeconds);
+                                    string characterSet = WebResponseHelper.GetCharacterSet(response);
+                                    var responseStream = StreamHelper.GetResponseStream(response, _cancelToken.Token);
+                                    int initialCapacity = (int)Math.Min(contentLength ?? StreamHelper.DefaultReadBuffer, StreamHelper.DefaultReadBuffer);
+                                    var bufferedStream = new WebResponseContentMemoryStream(responseStream, initialCapacity, this, contentLength, perReadTimeout, _cancelToken.Token);
+                                    string error = StreamHelper.DecodeStream(bufferedStream, characterSet, out Encoding encoding, perReadTimeout, _cancelToken.Token);
                                     detailMsg = FormatErrorMessage(error, contentType);
                                 }
-                                catch
+                                catch (Exception ex)
                                 {
                                     // Catch all
+                                    er.ErrorDetails = new ErrorDetails(ex.ToString());
                                 }
 
                                 if (!string.IsNullOrEmpty(detailMsg))
@@ -656,6 +669,11 @@ namespace Microsoft.PowerShell.Commands
                                 WriteError(er);
                             }
                         }
+                        catch (TimeoutException ex)
+                        {
+                            ErrorRecord er = new(ex, "OperationTimeoutReached", ErrorCategory.OperationTimeout, null);
+                            ThrowTerminatingError(er);
+                        }
                         catch (HttpRequestException ex)
                         {
                             ErrorRecord er = new(ex, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
@@ -666,7 +684,7 @@ namespace Microsoft.PowerShell.Commands
 
                             ThrowTerminatingError(er);
                         }
-                        finally 
+                        finally
                         {
                             _cancelToken?.Dispose();
                             _cancelToken = null;
@@ -705,7 +723,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Disposes the associated WebSession if it is not being used as part of a persistent session.
-        /// </summary> 
+        /// </summary>
         /// <param name="disposing">True when called from Dispose() and false when called from finalizer.</param>
         protected virtual void Dispose(bool disposing)
         {
@@ -723,7 +741,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Disposes the associated WebSession if it is not being used as part of a persistent session.
-        /// </summary> 
+        /// </summary>
         public void Dispose()
         {
             Dispose(disposing: true);
@@ -970,7 +988,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        webProxy.UseDefaultCredentials =  ProxyUseDefaultCredentials;
+                        webProxy.UseDefaultCredentials = ProxyUseDefaultCredentials;
                     }
 
                     // We don't want to update the WebSession unless the proxies are different
@@ -992,6 +1010,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 WebSession.MaximumRedirection = MaximumRedirection;
             }
+
+            WebSession.UnixSocket = UnixSocket;
 
             WebSession.SkipCertificateCheck = SkipCertificateCheck.IsPresent;
 
@@ -1020,7 +1040,7 @@ namespace Microsoft.PowerShell.Commands
                 WebSession.RetryIntervalInSeconds = RetryIntervalSec;
             }
 
-            WebSession.TimeoutSec = TimeoutSec;
+            WebSession.ConnectionTimeout = ConvertTimeoutSecondsToTimeSpan(ConnectionTimeoutSeconds);
         }
 
         internal virtual HttpClient GetHttpClient(bool handleRedirect)
@@ -1141,7 +1161,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 WebSession.ContentHeaders[HttpKnownHeaderNames.ContentType] = ContentType;
             }
-            else if (request.Method == HttpMethod.Post || request.Method == HttpMethod.Put)
+            else if (request.Method == HttpMethod.Post)
             {
                 // Win8:545310 Invoke-WebRequest does not properly set MIME type for POST
                 WebSession.ContentHeaders.TryGetValue(HttpKnownHeaderNames.ContentType, out string contentType);
@@ -1263,8 +1283,44 @@ namespace Microsoft.PowerShell.Commands
                 Uri currentUri = currentRequest.RequestUri;
 
                 _cancelToken = new CancellationTokenSource();
-                response = client.SendAsync(currentRequest, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
+                try
+                {
+                    if (IsWriteVerboseEnabled())
+                    {
+                        WriteWebRequestVerboseInfo(currentRequest);
+                    }
 
+                    if (IsWriteDebugEnabled())
+                    {
+                        WriteWebRequestDebugInfo(currentRequest);
+                    }
+
+                    response = client.SendAsync(currentRequest, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
+
+                    if (IsWriteVerboseEnabled())
+                    {
+                        WriteWebResponseVerboseInfo(response);
+                    }
+
+                    if (IsWriteDebugEnabled())
+                    {
+                        WriteWebResponseDebugInfo(response);
+                    }
+                }
+                catch (TaskCanceledException ex)
+                {
+                    if (ex.InnerException is TimeoutException)
+                    {
+                        // HTTP Request timed out
+                        ErrorRecord er = new(ex, "ConnectionTimeoutReached", ErrorCategory.OperationTimeout, null);
+                        ThrowTerminatingError(er);
+                    }
+                    else
+                    {
+                        throw;
+                    }
+
+                }
                 if (handleRedirect
                     && _maximumRedirection is not 0
                     && IsRedirectCode(response.StatusCode)
@@ -1313,17 +1369,6 @@ namespace Microsoft.PowerShell.Commands
                     using (HttpRequestMessage requestWithoutRange = GetRequest(currentUri))
                     {
                         FillRequestStream(requestWithoutRange);
-
-                        long requestContentLength = requestWithoutRange.Content is null ? 0 : requestWithoutRange.Content.Headers.ContentLength.Value;
-
-                        string reqVerboseMsg = string.Format(
-                            CultureInfo.CurrentCulture,
-                            WebCmdletStrings.WebMethodInvocationVerboseMsg,
-                            requestWithoutRange.Version,
-                            requestWithoutRange.Method,
-                            requestContentLength);
-
-                        WriteVerbose(reqVerboseMsg);
 
                         response.Dispose();
                         response = GetResponse(client, requestWithoutRange, handleRedirect);
@@ -1384,10 +1429,206 @@ namespace Microsoft.PowerShell.Commands
         {
             ArgumentNullException.ThrowIfNull(response);
         }
-
         #endregion Virtual Methods
 
         #region Helper Methods
+#nullable enable
+        internal static TimeSpan ConvertTimeoutSecondsToTimeSpan(int timeout) => timeout > 0 ? TimeSpan.FromSeconds(timeout) : Timeout.InfiniteTimeSpan;
+
+        private void WriteWebRequestVerboseInfo(HttpRequestMessage request)
+        {
+            try
+            {
+                // Typical Basic Example: 'WebRequest: v1.1 POST https://httpstat.us/200 with query length 6'
+                StringBuilder verboseBuilder = new(128);
+
+                // "Redact" the query string from verbose output, the details will be visible in Debug output
+                string uriWithoutQuery = request.RequestUri?.GetLeftPart(UriPartial.Path) ?? string.Empty;
+                verboseBuilder.Append($"WebRequest: v{request.Version} {request.Method} {uriWithoutQuery}");
+                if (request.RequestUri?.Query is not null && request.RequestUri.Query.Length > 1)
+                {
+                    verboseBuilder.Append($" with query length {request.RequestUri.Query.Length - 1}");
+                }
+
+                string? requestContentType = ContentHelper.GetContentType(request);
+                if (requestContentType is not null)
+                {
+                    verboseBuilder.Append($" with {requestContentType} payload");
+                }
+
+                long? requestContentLength = request.Content?.Headers?.ContentLength;
+                if (requestContentLength is not null)
+                {
+                    verboseBuilder.Append($" with body size {ContentHelper.GetFriendlyContentLength(requestContentLength)}");
+                }
+                if (OutFile is not null)
+                {
+                    verboseBuilder.Append($" output to {QualifyFilePath(OutFile)}");
+                }
+
+                WriteVerbose(verboseBuilder.ToString().Trim());
+            }
+            catch (Exception ex)
+            {
+                // Just in case there are any edge cases we missed, we don't break workflows with an exception
+                WriteVerbose($"Failed to Write WebRequest Verbose Info: {ex} {ex.StackTrace}");
+            }
+        }
+
+        private void WriteWebRequestDebugInfo(HttpRequestMessage request)
+        {
+            try
+            {
+                // Typical basic example:
+                // WebRequest Detail
+                // ---QUERY
+                // test = 5
+                // --- HEADERS
+                // User - Agent: Mozilla / 5.0, (Linux;Ubuntu 24.04.2 LTS;en - US), PowerShell / 7.6.0
+                StringBuilder debugBuilder = new("WebRequest Detail" + Environment.NewLine, 512);
+
+                if (!string.IsNullOrEmpty(request.RequestUri?.Query))
+                {
+                    debugBuilder.Append(DebugHeaderPrefix).AppendLine("QUERY");
+                    string[] queryParams = request.RequestUri.Query.TrimStart('?').Split('&');
+                    debugBuilder
+                        .AppendJoin(Environment.NewLine, queryParams)
+                        .AppendLine()
+                        .AppendLine();
+                }
+
+                debugBuilder.Append(DebugHeaderPrefix).AppendLine("HEADERS");
+
+                foreach (var headerSet in new HttpHeaders?[] { request.Headers, request.Content?.Headers })
+                {
+                    if (headerSet is null)
+                    {
+                        continue;
+                    }
+
+                    debugBuilder.AppendLine(headerSet.ToString());
+                }
+
+                if (request.Content is not null)
+                {
+                    debugBuilder
+                    .Append(DebugHeaderPrefix).AppendLine("BODY")
+                    .AppendLine(request.Content switch
+                    {
+                        StringContent stringContent => stringContent
+                            .ReadAsStringAsync(_cancelToken.Token)
+                            .GetAwaiter().GetResult(),
+                        MultipartFormDataContent multipartContent => "=> Multipart Form Content"
+                            + Environment.NewLine
+                            + multipartContent.ReadAsStringAsync(_cancelToken.Token)
+                            .GetAwaiter().GetResult(),
+                        ByteArrayContent byteContent => InFile is not null
+                            ? "[Binary content: "
+                                + ContentHelper.GetFriendlyContentLength(byteContent.Headers.ContentLength)
+                                + "]"
+                            : byteContent.ReadAsStringAsync(_cancelToken.Token).GetAwaiter().GetResult(),
+                        StreamContent streamContent =>
+                            "[Stream content: " + ContentHelper.GetFriendlyContentLength(streamContent.Headers.ContentLength) + "]",
+                        _ => "[Unknown content type]",
+                    })
+                    .AppendLine();
+                }
+
+                WriteDebug(debugBuilder.ToString().Trim());
+            }
+            catch (Exception ex)
+            {
+                // Just in case there are any edge cases we missed, we don't break workflows with an exception
+                WriteVerbose($"Failed to Write WebRequest Debug Info: {ex} {ex.StackTrace}");
+            }
+        }
+
+        private void WriteWebResponseVerboseInfo(HttpResponseMessage response)
+        {
+            try
+            {
+                // Typical basic example: WebResponse: 200 OK with text/plain payload body size 6 B (6 bytes)
+                StringBuilder verboseBuilder = new(128);
+                verboseBuilder.Append($"WebResponse: {(int)response.StatusCode} {response.ReasonPhrase ?? response.StatusCode.ToString()}");
+
+                string? responseContentType = ContentHelper.GetContentType(response);
+                if (responseContentType is not null)
+                {
+                    verboseBuilder.Append($" with {responseContentType} payload");
+                }
+
+                long? responseContentLength = response.Content?.Headers?.ContentLength;
+                if (responseContentLength is not null)
+                {
+                    verboseBuilder.Append($" with body size {ContentHelper.GetFriendlyContentLength(responseContentLength)}");
+                }
+
+                WriteVerbose(verboseBuilder.ToString().Trim());
+            }
+            catch (Exception ex)
+            {
+                // Just in case there are any edge cases we missed, we don't break workflows with an exception
+                WriteVerbose($"Failed to Write WebResponse Verbose Info: {ex} {ex.StackTrace}");
+            }
+        }
+
+        private void WriteWebResponseDebugInfo(HttpResponseMessage response)
+        {
+            try
+            {
+                // Typical basic example
+                // WebResponse Detail
+                // --- HEADERS
+                // Date: Fri, 09 May 2025 18:06:44 GMT
+                // Server: Kestrel
+                // Set-Cookie: ARRAffinity=ee0b467f95b53d8dcfe48aeeb4173f93cf819be6e4721f434341647f4695039d;Path=/;HttpOnly;Secure;Domain=httpstat.us, ARRAffinitySameSite=ee0b467f95b53d8dcfe48aeeb4173f93cf819be6e4721f434341647f4695039d;Path=/;HttpOnly;SameSite=None;Secure;Domain=httpstat.us
+                // Strict-Transport-Security: max-age=2592000
+                // Request-Context: appId=cid-v1:3548b0f5-7f75-492f-82bb-b6eb0e864e53
+                // Content-Length: 6
+                // Content-Type: text/plain
+                // --- BODY
+                // 200 OK
+                StringBuilder debugBuilder = new("WebResponse Detail" + Environment.NewLine, 512);
+
+                debugBuilder.Append(DebugHeaderPrefix).AppendLine("HEADERS");
+
+                foreach (var headerSet in new HttpHeaders?[] { response.Headers, response.Content?.Headers })
+                {
+                    if (headerSet is null)
+                    {
+                        continue;
+                    }
+
+                    debugBuilder.AppendLine(headerSet.ToString());
+                }
+
+                if (response.Content is not null)
+                {
+                    debugBuilder.Append(DebugHeaderPrefix).AppendLine("BODY");
+
+                    if (ContentHelper.IsTextBasedContentType(ContentHelper.GetContentType(response)))
+                    {
+                        debugBuilder.AppendLine(
+                            response.Content.ReadAsStringAsync(_cancelToken.Token)
+                            .GetAwaiter().GetResult());
+                    }
+                    else
+                    {
+                        string friendlyContentLength = ContentHelper.GetFriendlyContentLength(
+                            response.Content?.Headers?.ContentLength);
+                        debugBuilder.AppendLine($"[Binary content: {friendlyContentLength}]");
+                    }
+                }
+
+                WriteDebug(debugBuilder.ToString().Trim());
+            }
+            catch (Exception ex)
+            {
+                // Just in case there are any edge cases we missed, we don't break workflows with an exception
+                WriteVerbose($"Failed to Write WebResponse Debug Info: {ex} {ex.StackTrace}");
+            }
+        }
+
         private Uri PrepareUri(Uri uri)
         {
             uri = CheckProtocol(uri);
@@ -1422,6 +1663,7 @@ namespace Microsoft.PowerShell.Commands
 
             return uri.IsAbsoluteUri ? uri : new Uri("http://" + uri.OriginalString);
         }
+#nullable restore
 
         private string QualifyFilePath(string path) => PathUtils.ResolveFilePath(filePath: path, command: this, isLiteralPath: true);
 
@@ -1525,9 +1767,8 @@ namespace Microsoft.PowerShell.Commands
             ArgumentNullException.ThrowIfNull(content);
 
             Encoding encoding = null;
-            string contentType = WebSession.ContentHeaders[HttpKnownHeaderNames.ContentType];
 
-            if (contentType is not null)
+            if (WebSession.ContentHeaders.TryGetValue(HttpKnownHeaderNames.ContentType, out string contentType) && contentType is not null)
             {
                 // If Content-Type contains the encoding format (as CharSet), use this encoding format
                 // to encode the Body of the WebRequest sent to the server. Default Encoding format
@@ -1666,7 +1907,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="fieldValue">The Field Value to use.</param>
         /// <param name="formData">The <see cref="MultipartFormDataContent"/> to update.</param>
         /// <param name="enumerate">If true, collection types in <paramref name="fieldValue"/> will be enumerated. If false, collections will be treated as single value.</param>
-        private void AddMultipartContent(object fieldName, object fieldValue, MultipartFormDataContent formData, bool enumerate)
+        private static void AddMultipartContent(object fieldName, object fieldValue, MultipartFormDataContent formData, bool enumerate)
         {
             ArgumentNullException.ThrowIfNull(formData);
 
@@ -1720,10 +1961,9 @@ namespace Microsoft.PowerShell.Commands
         private static StringContent GetMultipartStringContent(object fieldName, object fieldValue)
         {
             ContentDispositionHeaderValue contentDisposition = new("form-data");
+            contentDisposition.Name = LanguagePrimitives.ConvertTo<string>(fieldName);
 
-            // .NET does not enclose field names in quotes, however, modern browsers and curl do.
-            contentDisposition.Name = "\"" + LanguagePrimitives.ConvertTo<string>(fieldName) + "\"";
-
+            // codeql[cs/information-exposure-through-exception] - PowerShell is an on-premise product, meaning local users would already have access to the binaries and stack traces. Therefore, the information would not be exposed in the same way it would be for an ASP .NET service.
             StringContent result = new(LanguagePrimitives.ConvertTo<string>(fieldValue));
             result.Headers.ContentDisposition = contentDisposition;
 
@@ -1738,9 +1978,7 @@ namespace Microsoft.PowerShell.Commands
         private static StreamContent GetMultipartStreamContent(object fieldName, Stream stream)
         {
             ContentDispositionHeaderValue contentDisposition = new("form-data");
-
-            // .NET does not enclose field names in quotes, however, modern browsers and curl do.
-            contentDisposition.Name = "\"" + LanguagePrimitives.ConvertTo<string>(fieldName) + "\"";
+            contentDisposition.Name = LanguagePrimitives.ConvertTo<string>(fieldName);
 
             StreamContent result = new(stream);
             result.Headers.ContentDisposition = contentDisposition;
@@ -1758,8 +1996,8 @@ namespace Microsoft.PowerShell.Commands
         {
             StreamContent result = GetMultipartStreamContent(fieldName: fieldName, stream: new FileStream(file.FullName, FileMode.Open));
 
-            // .NET does not enclose field names in quotes, however, modern browsers and curl do.
-            result.Headers.ContentDisposition.FileName = "\"" + file.Name + "\"";
+            result.Headers.ContentDisposition.FileName = file.Name;
+            result.Headers.ContentDisposition.FileNameStar = file.Name;
 
             return result;
         }

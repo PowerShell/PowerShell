@@ -8,7 +8,6 @@ namespace System.Management.Automation
     /// <summary>
     /// Defines the exception that is thrown if a native command fails.
     /// </summary>
-    [Serializable]
     public class ApplicationFailedException : RuntimeException
     {
         #region private
@@ -25,10 +24,11 @@ namespace System.Management.Automation
         /// <param name="info">The serialization information to use when initializing this object.</param>
         /// <param name="context">The streaming context to use when initializing this object.</param>
         /// <returns>Constructed object.</returns>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
         protected ApplicationFailedException(SerializationInfo info,
                            StreamingContext context)
-                : base(info, context)
         {
+            throw new NotSupportedException();
         }
         #endregion Serialization
 

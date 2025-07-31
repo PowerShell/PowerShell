@@ -141,7 +141,21 @@ namespace System.Management.Automation.Tracing
             int querySuccess,
             int queryResult)
         {
-            provider.LogWDACQueryEvent(queryName, fileName, querySuccess, queryResult);
+            provider.LogWDACQueryEvent(queryName, fileName ?? string.Empty, querySuccess, queryResult);
+        }
+
+        /// <summary>
+        /// Provider interface function for logging WDAC audit event.
+        /// </summary>
+        /// <param name="title">Title of WDAC audit event.</param>
+        /// <param name="message">WDAC audit event message.</param>
+        /// <param name="fqid">FullyQualifiedId of WDAC audit event.</param>
+        internal static void LogWDACAuditEvent(
+            string title,
+            string message,
+            string fqid)
+        {
+            provider.LogWDACAuditEvent(title, message, fqid);
         }
 
         /// <summary>

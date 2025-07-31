@@ -116,7 +116,6 @@ namespace System.Management.Automation
     /// <summary>build
     /// Thread Safe buffer used with PowerShell Hosting interfaces.
     /// </summary>
-    [Serializable]
     public class PSDataCollection<T> : IList<T>, ICollection<T>, IEnumerable<T>, IList, ICollection, IEnumerable, IDisposable, ISerializable
     {
         #region Private Data

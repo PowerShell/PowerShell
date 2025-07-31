@@ -238,9 +238,9 @@ namespace System.Management.Automation
                 char ch = pattern[i];
 
                 //
-                // if it is a wildcard char, escape it
+                // if it is a special char, escape it
                 //
-                if (IsWildcardChar(ch) && !charsNotToEscape.Contains(ch))
+                if (SpecialChars.Contains(ch) && !charsNotToEscape.Contains(ch))
                 {
                     temp[tempIndex++] = escapeChar;
                 }
@@ -304,6 +304,43 @@ namespace System.Management.Automation
 
                 // If it is an escape character then advance past
                 // the next character
+
+                if (pattern[index] == escapeChar)
+                {
+                    ++index;
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Checks if the string contains a left bracket "[" followed by a right bracket "]" after any number of characters.
+        /// </summary>
+        /// <param name="pattern"> The string to check.</param>
+        /// <returns>Returns true if the string contains both a left and right bracket "[" "]" and if the right bracket comes after the left bracket.</returns>
+        internal static bool ContainsRangeWildcard(string pattern)
+        {
+            if (string.IsNullOrEmpty(pattern))
+            {
+                return false;
+            }
+
+            bool foundStart = false;
+            bool result = false;
+            for (int index = 0; index < pattern.Length; ++index)
+            {
+                if (pattern[index] is '[')
+                {
+                    foundStart = true;
+                    continue;
+                }
+                
+                if (foundStart && pattern[index] is ']')
+                {
+                    result = true;
+                    break;
+                }
 
                 if (pattern[index] == escapeChar)
                 {
@@ -432,7 +469,6 @@ namespace System.Management.Automation
     /// <summary>
     /// Thrown when a wildcard pattern is invalid.
     /// </summary>
-    [Serializable]
     public class WildcardPatternException : RuntimeException
     {
         /// <summary>
@@ -488,10 +524,11 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
         protected WildcardPatternException(SerializationInfo info,
                                         StreamingContext context)
-            : base(info, context)
         {
+            throw new NotSupportedException();
         }
     }
 

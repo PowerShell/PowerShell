@@ -16,6 +16,7 @@ using System.Management.Automation.Language;
 using System.Management.Automation.Remoting;
 using System.Management.Automation.Remoting.Server;
 using System.Management.Automation.Runspaces;
+using System.Management.Automation.Security;
 using System.Management.Automation.Subsystem.Feedback;
 using System.Management.Automation.Tracing;
 using System.Reflection;
@@ -122,11 +123,23 @@ namespace Microsoft.PowerShell
                 throw new ConsoleHostStartupException(ConsoleHostStrings.ShellCannotBeStartedWithConfigConflict);
             }
 
-            // put PSHOME in front of PATH so that calling `powershell` within `powershell` always starts the same running version
+            // Put PSHOME in front of PATH so that calling `pwsh` within `pwsh` always starts the same running version.
             string path = Environment.GetEnvironmentVariable("PATH");
-            string pshome = Utils.DefaultPowerShellAppBase + Path.PathSeparator;
+            string pshome = Utils.DefaultPowerShellAppBase;
+            string dotnetToolsPathSegment = $"{Path.DirectorySeparatorChar}.store{Path.DirectorySeparatorChar}powershell{Path.DirectorySeparatorChar}";
 
-            // to not impact startup perf, we don't remove duplicates, but we avoid adding a duplicate to the front
+            int index = pshome.IndexOf(dotnetToolsPathSegment, StringComparison.Ordinal);
+            if (index > 0)
+            {
+                // We're running PowerShell global tool. In this case the real entry executable should be the 'pwsh'
+                // or 'pwsh.exe' within the tool folder which should be the path right before the '\.store', not what
+                // PSHome is pointing to.
+                pshome = pshome[0..index];
+            }
+
+            pshome += Path.PathSeparator;
+
+            // To not impact startup perf, we don't remove duplicates, but we avoid adding a duplicate to the front
             // we also don't handle the edge case where PATH only contains $PSHOME
             if (string.IsNullOrEmpty(path))
             {
@@ -609,15 +622,18 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// See base class.
         /// </summary>
-        public void PushRunspace(Runspace newRunspace)
+        public void PushRunspace(Runspace runspace)
         {
             if (_runspaceRef == null)
             {
                 return;
             }
 
-            RemoteRunspace remoteRunspace = newRunspace as RemoteRunspace;
-            Dbg.Assert(remoteRunspace != null, "Expected remoteRunspace != null");
+            if (runspace is not RemoteRunspace remoteRunspace)
+            {
+                throw new ArgumentException(ConsoleHostStrings.PushRunspaceNotRemote, nameof(runspace));
+            }
+
             remoteRunspace.StateChanged += HandleRemoteRunspaceStateChanged;
 
             // Unsubscribe the local session debugger.
@@ -1633,7 +1649,7 @@ namespace Microsoft.PowerShell
             if (Platform.IsWindowsDesktop)
             {
                 // Note: this API can detect if a third-party screen reader is active, such as NVDA, but not the in-box Windows Narrator.
-                // Quoted from https://docs.microsoft.com/windows/win32/api/winuser/nf-winuser-systemparametersinfoa about the
+                // Quoted from https://learn.microsoft.com/windows/win32/api/winuser/nf-winuser-systemparametersinfoa about the
                 // accessibility parameter 'SPI_GETSCREENREADER':
                 // "Narrator, the screen reader that is included with Windows, does not set the SPI_SETSCREENREADER or SPI_GETSCREENREADER flags."
                 bool enabled = false;
@@ -1855,7 +1871,14 @@ namespace Microsoft.PowerShell
                     switch (languageMode)
                     {
                         case PSLanguageMode.ConstrainedLanguage:
-                            s_theConsoleHost.UI.WriteLine(ManagedEntranceStrings.ShellBannerCLMode);
+                            if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
+                            {
+                                s_theConsoleHost.UI.WriteLine(ManagedEntranceStrings.ShellBannerCLMode);
+                            }
+                            else
+                            {
+                                s_theConsoleHost.UI.WriteLine(ManagedEntranceStrings.ShellBannerCLAuditMode);
+                            }
                             break;
 
                         case PSLanguageMode.NoLanguage:
@@ -2141,9 +2164,7 @@ namespace Microsoft.PowerShell
 
             // NTRAID#Windows OS Bugs-1143621-2005/04/08-sburns
 
-            IContainsErrorRecord icer = e as IContainsErrorRecord;
-
-            if (icer != null)
+            if (e is IContainsErrorRecord icer)
             {
                 error = icer.ErrorRecord;
             }
@@ -2200,8 +2221,7 @@ namespace Microsoft.PowerShell
 
             // See if the exception has an error record attached to it...
             ErrorRecord er = null;
-            IContainsErrorRecord icer = e as IContainsErrorRecord;
-            if (icer != null)
+            if (e is IContainsErrorRecord icer)
                 er = icer.ErrorRecord;
 
             if (e is PSRemotingTransportException)
@@ -2736,8 +2756,7 @@ namespace Microsoft.PowerShell
 
             internal void BlockCommandOutput()
             {
-                RemotePipeline rCmdPipeline = _parent.runningCmd as RemotePipeline;
-                if (rCmdPipeline != null)
+                if (_parent.runningCmd is RemotePipeline rCmdPipeline)
                 {
                     rCmdPipeline.DrainIncomingData();
                     rCmdPipeline.SuspendIncomingData();
@@ -2750,8 +2769,7 @@ namespace Microsoft.PowerShell
 
             internal void ResumeCommandOutput()
             {
-                RemotePipeline rCmdPipeline = _parent.runningCmd as RemotePipeline;
-                if (rCmdPipeline != null)
+                if (_parent.runningCmd is RemotePipeline rCmdPipeline)
                 {
                     rCmdPipeline.ResumeIncomingData();
                 }
@@ -2841,8 +2859,7 @@ namespace Microsoft.PowerShell
                 }
 
                 // If it is remote exception ferret out the real exception.
-                RemoteException remoteException = e as RemoteException;
-                if (remoteException == null || remoteException.ErrorRecord == null)
+                if (e is not RemoteException remoteException || remoteException.ErrorRecord == null)
                 {
                     return false;
                 }
@@ -2923,8 +2940,7 @@ namespace Microsoft.PowerShell
                 // Check for the pushed runspace scenario.
                 if (_isRunspacePushed)
                 {
-                    RemoteRunspace remoteRunspace = _parent.Runspace as RemoteRunspace;
-                    if (remoteRunspace != null)
+                    if (_parent.Runspace is RemoteRunspace remoteRunspace)
                     {
                         promptString = HostUtilities.GetRemotePrompt(remoteRunspace, promptString, _parent._inPushedConfiguredSession);
                     }
@@ -2958,13 +2974,9 @@ namespace Microsoft.PowerShell
 
                 PSObject prompt = output.ReadAndRemoveAt0();
                 string promptString = (prompt != null) ? (prompt.BaseObject as string) : null;
-                if (promptString != null)
+                if (promptString != null && _parent.Runspace is RemoteRunspace remoteRunspace)
                 {
-                    RemoteRunspace remoteRunspace = _parent.Runspace as RemoteRunspace;
-                    if (remoteRunspace != null)
-                    {
-                        promptString = HostUtilities.GetRemotePrompt(remoteRunspace, promptString, _parent._inPushedConfiguredSession);
-                    }
+                    promptString = HostUtilities.GetRemotePrompt(remoteRunspace, promptString, _parent._inPushedConfiguredSession);
                 }
 
                 return promptString;
@@ -2987,7 +2999,6 @@ namespace Microsoft.PowerShell
             private static readonly Stack<InputLoop> s_instanceStack = new Stack<InputLoop>();
         }
 
-        [Serializable]
         [SuppressMessage("Microsoft.Design", "CA1064:ExceptionsShouldBePublic", Justification =
             "This exception cannot be used outside of the console host application. It is not thrown by a library routine, only by an application.")]
         private sealed class ConsoleHostStartupException : Exception
@@ -3001,14 +3012,6 @@ namespace Microsoft.PowerShell
             internal
             ConsoleHostStartupException(string message)
                 : base(message)
-            {
-            }
-
-            private
-            ConsoleHostStartupException(
-                System.Runtime.Serialization.SerializationInfo info,
-                System.Runtime.Serialization.StreamingContext context)
-                : base(info, context)
             {
             }
 

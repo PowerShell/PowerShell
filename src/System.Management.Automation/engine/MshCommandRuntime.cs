@@ -390,6 +390,9 @@ namespace System.Management.Automation
             WriteProgress(sourceId, progressRecord, false);
         }
 
+        internal bool IsWriteProgressEnabled()
+            => WriteHelper_ShouldWrite(ProgressPreference, lastProgressContinueStatus);
+
         internal void WriteProgress(
                 Int64 sourceId,
                 ProgressRecord progressRecord,
@@ -471,6 +474,9 @@ namespace System.Management.Automation
         {
             WriteDebug(new DebugRecord(text));
         }
+
+        internal bool IsWriteDebugEnabled()
+            => WriteHelper_ShouldWrite(DebugPreference, lastDebugContinueStatus);
 
         /// <summary>
         /// Display debug information.
@@ -566,6 +572,9 @@ namespace System.Management.Automation
             WriteVerbose(new VerboseRecord(text));
         }
 
+        internal bool IsWriteVerboseEnabled()
+            => WriteHelper_ShouldWrite(VerbosePreference, lastVerboseContinueStatus);
+
         /// <summary>
         /// Display verbose information.
         /// </summary>
@@ -660,6 +669,9 @@ namespace System.Management.Automation
             WriteWarning(new WarningRecord(text));
         }
 
+        internal bool IsWriteWarningEnabled()
+            => WriteHelper_ShouldWrite(WarningPreference, lastWarningContinueStatus);
+
         /// <summary>
         /// Display warning information.
         /// </summary>
@@ -732,6 +744,9 @@ namespace System.Management.Automation
         {
             WriteInformation(informationRecord, false);
         }
+
+        internal bool IsWriteInformationEnabled()
+            => WriteHelper_ShouldWrite(InformationPreference, lastInformationContinueStatus);
 
         /// <summary>
         /// Display tagged object information.
@@ -1483,7 +1498,7 @@ namespace System.Management.Automation
         /// <see cref="System.Management.Automation.ShouldProcessReason"/>
         /// are returned.
         /// </param>
-        /// <remarks>true iff the action should be performed</remarks>
+        /// <remarks>true if-and-only-if the action should be performed</remarks>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The pipeline has already been terminated, or was terminated
         /// during the execution of this method.
@@ -1783,11 +1798,11 @@ namespace System.Management.Automation
         /// the default option selected in the selection menu is 'No'.
         /// </param>
         /// <param name="yesToAll">
-        /// true iff user selects YesToAll.  If this is already true,
+        /// true if-and-only-if user selects YesToAll.  If this is already true,
         /// ShouldContinue will bypass the prompt and return true.
         /// </param>
         /// <param name="noToAll">
-        /// true iff user selects NoToAll.  If this is already true,
+        /// true if-and-only-if user selects NoToAll.  If this is already true,
         /// ShouldContinue will bypass the prompt and return false.
         /// </param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
@@ -1830,11 +1845,11 @@ namespace System.Management.Automation
         /// It may be displayed by some hosts, but not all.
         /// </param>
         /// <param name="yesToAll">
-        /// true iff user selects YesToAll.  If this is already true,
+        /// true if-and-only-if user selects YesToAll.  If this is already true,
         /// ShouldContinue will bypass the prompt and return true.
         /// </param>
         /// <param name="noToAll">
-        /// true iff user selects NoToAll.  If this is already true,
+        /// true if-and-only-if user selects NoToAll.  If this is already true,
         /// ShouldContinue will bypass the prompt and return false.
         /// </param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">

@@ -104,9 +104,7 @@ internal sealed class FileBytePipe : BytePipe
             throw new RuntimeException(null, e, errorRecord);
         }
 
-        ApplicationInsightsTelemetry.SendExperimentalUseData(
-            ExperimentalFeature.PSNativeCommandPreserveBytePipe,
-            "f");
+        ApplicationInsightsTelemetry.SendExperimentalUseData("PSNativeCommandPreserveBytePipe", "f");
 
         return new FileBytePipe(fileStream);
     }

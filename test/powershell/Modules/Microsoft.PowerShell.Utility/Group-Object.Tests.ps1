@@ -130,6 +130,14 @@ Describe "Group-Object" -Tags "CI" {
         $result[0].Name | Should -Be ""
         $result[0].Group | Should -Be '@{X=}'
     }
+
+    It "Should handle format-like strings with curly braces like normal strings" {
+        $result = '{', '}', '{0}' | Group-Object
+        $result.Count | Should -Be 3
+        $result[0].Name | Should -BeExactly '{'
+        $result[1].Name | Should -BeExactly '{0}'
+        $result[2].Name | Should -BeExactly '}'
+    }
 }
 
 Describe "Check 'Culture' parameter in order object cmdlets (Group-Object, Sort-Object, Compare-Object)" -Tags "CI" {

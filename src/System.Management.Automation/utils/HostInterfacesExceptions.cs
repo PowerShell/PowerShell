@@ -10,7 +10,6 @@ namespace System.Management.Automation.Host
     /// Defines the exception thrown when the Host cannot complete an operation
     /// such as checking whether there is any input available.
     /// </summary>
-    [Serializable]
     public
     class HostException : RuntimeException
     {
@@ -101,10 +100,11 @@ namespace System.Management.Automation.Host
         /// <param name="context">
         /// The contextual information about the source or destination.
         /// </param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
         protected
         HostException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
         {
+            throw new NotSupportedException();
         }
 
         #endregion
@@ -120,8 +120,7 @@ namespace System.Management.Automation.Host
 
     /// <summary>
     /// Defines the exception thrown when an error occurs from prompting for a command parameter.
-    /// </summary>
-    [Serializable]
+    /// </summary>    
     public
     class PromptingException : HostException
     {
@@ -210,10 +209,11 @@ namespace System.Management.Automation.Host
         /// <param name="context">
         /// The contextual information about the source or destination.
         /// </param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
         protected
         PromptingException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
         {
+            throw new NotSupportedException();
         }
         #endregion
 

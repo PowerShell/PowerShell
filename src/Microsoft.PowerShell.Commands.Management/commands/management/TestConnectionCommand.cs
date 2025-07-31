@@ -56,7 +56,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Private Fields
 
-        private static byte[]? s_DefaultSendBuffer;
+        private static readonly byte[] s_DefaultSendBuffer = Array.Empty<byte>();
 
         private readonly CancellationTokenSource _dnsLookupCancel = new();
 
@@ -188,7 +188,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets whether to enable detailed output mode while running a TCP connection test.
         /// Without this flag, the TCP test will return a boolean result.
         /// </summary>
-        [Parameter]
+        [Parameter(ParameterSetName = TcpPortParameterSet)]
         public SwitchParameter Detailed;
 
         /// <summary>
@@ -484,7 +484,10 @@ namespace Microsoft.PowerShell.Commands
                                 reply.Status == IPStatus.Success
                                     ? reply.RoundtripTime
                                     : timer.ElapsedMilliseconds,
-                                buffer.Length,
+
+                                // If we use the empty buffer, then .NET actually uses a 32 byte buffer so we want to show
+                                // as the result object the actual buffer size used instead of 0.
+                                buffer.Length == 0 ? DefaultSendBufferSize : buffer.Length,
                                 pingNum: i);
                             WriteObject(new TraceStatus(
                                 currentHop,
@@ -562,6 +565,8 @@ namespace Microsoft.PowerShell.Commands
             int LowMTUSize = targetAddress.AddressFamily == AddressFamily.InterNetworkV6 ? 1280 : 68;
             int timeout = TimeoutSeconds * 1000;
 
+            PingReply? timeoutReply = null;
+
             try
             {
                 PingOptions pingOptions = new(MaxHops, true);
@@ -582,6 +587,7 @@ namespace Microsoft.PowerShell.Commands
                     if (reply.Status == IPStatus.PacketTooBig || reply.Status == IPStatus.TimedOut)
                     {
                         HighMTUSize = CurrentMTUSize;
+                        timeoutReply = reply;
                         retry = 1;
                     }
                     else if (reply.Status == IPStatus.Success)
@@ -640,13 +646,32 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                ArgumentNullException.ThrowIfNull(replyResult);
+                if (replyResult is null)
+                {
+                    if (timeoutReply is not null)
+                    {
+                        Exception timeoutException = new TimeoutException(targetAddress.ToString());
+                        ErrorRecord errorRecord = new(
+                            timeoutException,
+                            TestConnectionExceptionId,
+                            ErrorCategory.ResourceUnavailable,
+                            timeoutReply);
+                        WriteError(errorRecord);
+                    }
+                    else
+                    {
+                        ArgumentNullException.ThrowIfNull(replyResult);
+                    }
+                }
+                else
+                {
+                    WriteObject(new PingMtuStatus(
+                        Source,
+                        resolvedTargetName,
+                        replyResult,
+                        CurrentMTUSize));
+                }
 
-                WriteObject(new PingMtuStatus(
-                    Source,
-                    resolvedTargetName,
-                    replyResult,
-                    CurrentMTUSize));
             }
         }
 
@@ -707,7 +732,7 @@ namespace Microsoft.PowerShell.Commands
                         resolvedTargetName,
                         reply,
                         reply.RoundtripTime,
-                        buffer.Length,
+                        buffer.Length == 0 ? DefaultSendBufferSize : buffer.Length,
                         pingNum: (uint)i));
                 }
 
@@ -862,7 +887,7 @@ namespace Microsoft.PowerShell.Commands
         // Creates and fills a send buffer. This follows the ping.exe and CoreFX model.
         private static byte[] GetSendBuffer(int bufferSize)
         {
-            if (bufferSize == DefaultSendBufferSize && s_DefaultSendBuffer != null)
+            if (bufferSize == DefaultSendBufferSize)
             {
                 return s_DefaultSendBuffer;
             }
@@ -872,11 +897,6 @@ namespace Microsoft.PowerShell.Commands
             for (int i = 0; i < bufferSize; i++)
             {
                 sendBuffer[i] = (byte)((int)'a' + i % 23);
-            }
-
-            if (bufferSize == DefaultSendBufferSize && s_DefaultSendBuffer == null)
-            {
-                s_DefaultSendBuffer = sendBuffer;
             }
 
             return sendBuffer;

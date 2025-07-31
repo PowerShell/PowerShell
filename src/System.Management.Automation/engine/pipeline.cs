@@ -7,6 +7,7 @@ using System.Management.Automation.Runspaces;
 using System.Management.Automation.Tracing;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
+using System.Threading;
 using Microsoft.PowerShell.Telemetry;
 
 using Dbg = System.Management.Automation.Diagnostics;
@@ -29,6 +30,7 @@ namespace System.Management.Automation.Internal
     {
         #region private_members
 
+        private readonly CancellationTokenSource _pipelineStopTokenSource = new CancellationTokenSource();
         private List<CommandProcessorBase> _commands = new List<CommandProcessorBase>();
         private List<PipelineProcessor> _redirectionPipes;
         private PipelineReader<object> _externalInputPipe;
@@ -85,6 +87,7 @@ namespace System.Management.Automation.Internal
                 _externalErrorOutput = null;
                 _executionScope = null;
                 _eventLogBuffer = null;
+                _pipelineStopTokenSource.Dispose();
 #if !CORECLR // Impersonation Not Supported On CSS
                 SecurityContext.Dispose();
                 SecurityContext = null;
@@ -117,6 +120,11 @@ namespace System.Management.Automation.Internal
                 _executionFailed = value;
             }
         }
+
+        /// <summary>
+        /// Gets the CancellationToken that is signaled when the pipeline is stopping.
+        /// </summary>
+        internal CancellationToken PipelineStopToken => _pipelineStopTokenSource.Token;
 
         internal void LogExecutionInfo(InvocationInfo invocationInfo, string text)
         {
@@ -261,31 +269,26 @@ namespace System.Management.Automation.Internal
         /// <exception cref="ObjectDisposedException"></exception>
         internal int Add(CommandProcessorBase commandProcessor)
         {
-            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe))
+            if (commandProcessor is NativeCommandProcessor nativeCommand)
             {
-                if (commandProcessor is NativeCommandProcessor nativeCommand)
+                if (_lastNativeCommand is not null)
                 {
-                    if (_lastNativeCommand is not null)
+                    // Only report experimental feature usage once per pipeline.
+                    if (!_haveReportedNativePipeUsage)
                     {
-                        // Only report experimental feature usage once per pipeline.
-                        if (!_haveReportedNativePipeUsage)
-                        {
-                            ApplicationInsightsTelemetry.SendExperimentalUseData(
-                                ExperimentalFeature.PSNativeCommandPreserveBytePipe,
-                                "p");
-                            _haveReportedNativePipeUsage = true;
-                        }
-
-                        _lastNativeCommand.DownStreamNativeCommand = nativeCommand;
-                        nativeCommand.UpstreamIsNativeCommand = true;
+                        ApplicationInsightsTelemetry.SendExperimentalUseData("PSNativeCommandPreserveBytePipe", "p");
+                        _haveReportedNativePipeUsage = true;
                     }
 
-                    _lastNativeCommand = nativeCommand;
+                    _lastNativeCommand.DownStreamNativeCommand = nativeCommand;
+                    nativeCommand.UpstreamIsNativeCommand = true;
                 }
-                else
-                {
-                    _lastNativeCommand = null;
-                }
+
+                _lastNativeCommand = nativeCommand;
+            }
+            else
+            {
+                _lastNativeCommand = null;
             }
 
             commandProcessor.CommandRuntime.PipelineProcessor = this;
@@ -901,6 +904,8 @@ namespace System.Management.Automation.Internal
                 return;
             }
 
+            _pipelineStopTokenSource.Cancel();
+
             // Call StopProcessing() for all the commands.
             foreach (CommandProcessorBase commandProcessor in commands)
             {
@@ -1446,7 +1451,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="e">Error which terminated the pipeline.</param>
         /// <param name="command">Command against which to log SecondFailure.</param>
-        /// <returns>True iff the pipeline was not already stopped.</returns>
+        /// <returns>True if-and-only-if the pipeline was not already stopped.</returns>
         internal bool RecordFailure(Exception e, InternalCommand command)
         {
             bool wasStopping = false;

@@ -10,7 +10,6 @@ namespace Microsoft.Management.UI.Internal
     /// The TextEndsWithFilterRule class evaluates a string item to
     /// check if it ends with the rule's value.
     /// </summary>
-    [Serializable]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
     public class TextEndsWithFilterRule : TextFilterRule
     {
@@ -18,11 +17,20 @@ namespace Microsoft.Management.UI.Internal
         private static readonly string TextEndsWithWordsRegexPattern = WordBoundaryRegexPattern + TextEndsWithCharactersRegexPattern;
 
         /// <summary>
-        /// Initializes a new instance of the TextEndsWithFilterRule class.
+        /// Initializes a new instance of the <see cref="TextEndsWithFilterRule"/> class.
         /// </summary>
         public TextEndsWithFilterRule()
         {
             this.DisplayName = UICultureResources.FilterRule_TextEndsWith;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TextEndsWithFilterRule"/> class.
+        /// </summary>
+        /// <param name="source">The source to initialize from.</param>
+        public TextEndsWithFilterRule(TextEndsWithFilterRule source)
+            : base(source)
+        {
         }
 
         /// <summary>

@@ -15,7 +15,6 @@ namespace Microsoft.Management.UI.Internal
     /// <summary>
     /// Allows the state of the ManagementList to be saved and restored.
     /// </summary>
-    [Serializable]
     [SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
     public class ManagementListStateDescriptor : StateDescriptor<ManagementList>
     {
@@ -136,7 +135,7 @@ namespace Microsoft.Management.UI.Internal
         /// </summary>
         /// <param name="subject">Target ManagementList.</param>
         /// <param name="callback">RetryActionAfterLoaded callback method.</param>
-        /// <returns>True iff columns restorable.</returns>
+        /// <returns>True if-and-only-if columns are restorable.</returns>
         /// <exception cref="InvalidOperationException">
         /// ManagementList.AutoGenerateColumns not supported.
         /// </exception>
@@ -465,7 +464,6 @@ namespace Microsoft.Management.UI.Internal
 
         #region Helper Classes
 
-        [Serializable]
         internal class ColumnStateDescriptor
         {
             private int index;
@@ -510,7 +508,6 @@ namespace Microsoft.Management.UI.Internal
             }
         }
 
-        [Serializable]
         internal class RuleStateDescriptor
         {
             /// <summary>

@@ -10,7 +10,6 @@ namespace Microsoft.Management.UI.Internal
     /// The TextStartsWithFilterRule class evaluates a string item to
     /// check if it starts with the rule's value.
     /// </summary>
-    [Serializable]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
     public class TextStartsWithFilterRule : TextFilterRule
     {
@@ -18,11 +17,20 @@ namespace Microsoft.Management.UI.Internal
         private static readonly string TextStartsWithWordsRegexPattern = TextStartsWithCharactersRegexPattern + WordBoundaryRegexPattern;
 
         /// <summary>
-        /// Initializes a new instance of the TextStartsWithFilterRule class.
+        /// Initializes a new instance of the <see cref="TextStartsWithFilterRule"/> class.
         /// </summary>
         public TextStartsWithFilterRule()
         {
             this.DisplayName = UICultureResources.FilterRule_TextStartsWith;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TextStartsWithFilterRule"/> class.
+        /// </summary>
+        /// <param name="source">The source to initialize from.</param>
+        public TextStartsWithFilterRule(TextStartsWithFilterRule source)
+            : base(source)
+        {
         }
 
         /// <summary>

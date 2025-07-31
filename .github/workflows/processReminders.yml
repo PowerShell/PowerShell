@@ -10,6 +10,7 @@ permissions:
 
 jobs:
   reminder:
+    if: github.repository_owner == 'PowerShell'
     permissions:
       issues: write  # for agrc/reminder-action to set reminders on issues
       pull-requests: write  # for agrc/reminder-action to set reminders on PRs
@@ -17,4 +18,4 @@ jobs:
 
     steps:
       - name: check reminders and notify
-        uses: agrc/reminder-action@v1
+        uses: agrc/reminder-action@c0ccba185490ad2c0f1de824d625f71d705a6312 # v1.0.17

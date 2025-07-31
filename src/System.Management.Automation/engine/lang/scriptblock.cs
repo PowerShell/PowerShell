@@ -1276,14 +1276,16 @@ namespace System.Management.Automation
         /// Clean resources for script commands of this steppable pipeline.
         /// </summary>
         /// <remarks>
-        /// The way we handle 'Clean' blocks in a steppable pipeline makes sure that:
-        ///  1. The 'Clean' blocks get to run if any exception is thrown from 'Begin/Process/End'.
-        ///  2. The 'Clean' blocks get to run if 'End' finished successfully.
+        /// <para>
+        /// The way we handle 'Clean' blocks in a steppable pipeline makes sure that:</para>
+        /// <para>1. The 'Clean' blocks get to run if any exception is thrown from 'Begin/Process/End'.</para>
+        /// <para>2. The 'Clean' blocks get to run if 'End' finished successfully.</para>
+        /// <para>
         /// However, this is not enough for a steppable pipeline, because the function, where the steppable
         /// pipeline gets used, may fail (think about a proxy function). And that may lead to the situation
         /// where "no exception was thrown from the steppable pipeline" but "the steppable pipeline didn't
         /// run to the end". In that case, 'Clean' won't run unless it's triggered explicitly on the steppable
-        /// pipeline. This method allows a user to do that from the 'Clean' block of the proxy function.
+        /// pipeline. This method allows a user to do that from the 'Clean' block of the proxy function.</para>
         /// </remarks>
         public void Clean()
         {
@@ -1333,7 +1335,6 @@ namespace System.Management.Automation
     /// Defines the exception thrown when conversion from ScriptBlock to PowerShell is forbidden
     /// (i.e. when the script block has undeclared variables or more than one statement)
     /// </summary>
-    [Serializable]
     public class ScriptBlockToPowerShellNotSupportedException : RuntimeException
     {
         #region ctor
@@ -1387,9 +1388,10 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected ScriptBlockToPowerShellNotSupportedException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
         {
+            throw new NotSupportedException();
         }
         #endregion Serialization
 

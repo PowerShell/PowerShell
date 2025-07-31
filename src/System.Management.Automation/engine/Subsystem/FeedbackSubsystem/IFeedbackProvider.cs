@@ -9,6 +9,7 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
 using System.Threading;
+using Microsoft.PowerShell.Telemetry;
 
 namespace System.Management.Automation.Subsystem.Feedback
 {
@@ -19,31 +20,26 @@ namespace System.Management.Automation.Subsystem.Feedback
     public enum FeedbackTrigger
     {
         /// <summary>
-        /// The last command line is comment only.
-        /// </summary>
-        Comment = 0x0001,
-
-        /// <summary>
         /// The last command line executed successfully.
         /// </summary>
-        Success = 0x0002,
+        Success = 0x0001,
 
         /// <summary>
         /// The last command line failed due to a command-not-found error.
         /// This is a special case of <see cref="Error"/>.
         /// </summary>
-        CommandNotFound = 0x0004,
+        CommandNotFound = 0x0002,
 
         /// <summary>
         /// The last command line failed with an error record.
         /// This includes the case of command-not-found error.
         /// </summary>
-        Error = CommandNotFound | 0x0008,
+        Error = CommandNotFound | 0x0004,
 
         /// <summary>
         /// All possible triggers.
         /// </summary>
-        All = Comment | Success | Error
+        All = Success | Error
     }
 
     /// <summary>
@@ -247,7 +243,7 @@ namespace System.Management.Automation.Subsystem.Feedback
 
         public Guid Id => _guid;
 
-        public string Name => "general";
+        public string Name => "General Feedback";
 
         public string Description => "The built-in general feedback source for command errors.";
 
@@ -281,27 +277,25 @@ namespace System.Management.Automation.Subsystem.Feedback
             }
 
             // Check fuzzy matching command names.
-            if (ExperimentalFeature.IsEnabled("PSCommandNotFoundSuggestion"))
-            {
-                var pwsh = PowerShell.Create(RunspaceMode.CurrentRunspace);
-                var results = pwsh.AddCommand("Get-Command")
-                        .AddParameter("UseFuzzyMatching")
-                        .AddParameter("FuzzyMinimumDistance", 1)
-                        .AddParameter("Name", target)
-                    .AddCommand("Select-Object")
-                        .AddParameter("First", 5)
-                        .AddParameter("Unique")
-                        .AddParameter("ExpandProperty", "Name")
-                    .Invoke<string>();
+            var pwsh = PowerShell.Create(RunspaceMode.CurrentRunspace);
+            var results = pwsh.AddCommand("Get-Command")
+                    .AddParameter("UseFuzzyMatching")
+                    .AddParameter("FuzzyMinimumDistance", 1)
+                    .AddParameter("Name", target)
+                .AddCommand("Select-Object")
+                    .AddParameter("First", 5)
+                    .AddParameter("Unique")
+                    .AddParameter("ExpandProperty", "Name")
+                .Invoke<string>();
 
-                if (results.Count > 0)
-                {
-                    return new FeedbackItem(
-                        SuggestionStrings.Suggestion_CommandNotFound,
-                        new List<string>(results),
-                        FeedbackDisplayLayout.Landscape);
-                }
-            }
+			if (results.Count > 0)
+			{
+				ApplicationInsightsTelemetry.SendUseTelemetry("FuzzyMatching", "CommandNotFound");
+				return new FeedbackItem(
+					SuggestionStrings.Suggestion_CommandNotFound,
+					new List<string>(results),
+					FeedbackDisplayLayout.Landscape);
+			}
 
             return null;
         }

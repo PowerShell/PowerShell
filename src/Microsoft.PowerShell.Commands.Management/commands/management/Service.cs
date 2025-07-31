@@ -103,7 +103,7 @@ namespace Microsoft.PowerShell.Commands
             string message = StringUtil.Format(errorMessage,
                 serviceName,
                 displayName,
-                (innerException == null) ? string.Empty : innerException.Message);
+                (innerException == null) ? category.ToString() : innerException.Message);
 
             var exception = new ServiceCommandException(message, innerException);
             exception.ServiceName = serviceName;
@@ -610,146 +610,163 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            foreach (ServiceController service in MatchingServices())
+            nint scManagerHandle = nint.Zero;
+            if (!DependentServices && !RequiredServices)
             {
-                if (!DependentServices.IsPresent && !RequiredServices.IsPresent)
+                // As Get-Service only works on local services we get this once
+                // to retrieve extra properties added by PowerShell.
+                scManagerHandle = NativeMethods.OpenSCManagerW(
+                    lpMachineName: null,
+                    lpDatabaseName: null,
+                    dwDesiredAccess: NativeMethods.SC_MANAGER_CONNECT);
+                if (scManagerHandle == nint.Zero)
                 {
-                    WriteObject(AddProperties(service));
+                    Win32Exception exception = new();
+                    string message = StringUtil.Format(ServiceResources.FailToOpenServiceControlManager, exception.Message);
+                    ServiceCommandException serviceException = new ServiceCommandException(message, exception);
+                    ErrorRecord err = new ErrorRecord(
+                        serviceException,
+                        "FailToOpenServiceControlManager",
+                        ErrorCategory.PermissionDenied,
+                        null);
+                    ThrowTerminatingError(err);
                 }
-                else
-                {
-                    if (DependentServices.IsPresent)
-                    {
-                        foreach (ServiceController dependantserv in service.DependentServices)
-                        {
-                            WriteObject(dependantserv);
-                        }
-                    }
+            }
 
-                    if (RequiredServices.IsPresent)
+            try
+            {
+                foreach (ServiceController service in MatchingServices())
+                {
+                    if (!DependentServices.IsPresent && !RequiredServices.IsPresent)
                     {
-                        foreach (ServiceController servicedependedon in service.ServicesDependedOn)
+                        WriteObject(AddProperties(scManagerHandle, service));
+                    }
+                    else
+                    {
+                        if (DependentServices.IsPresent)
                         {
-                            WriteObject(servicedependedon);
+                            foreach (ServiceController dependantserv in service.DependentServices)
+                            {
+                                WriteObject(dependantserv);
+                            }
+                        }
+
+                        if (RequiredServices.IsPresent)
+                        {
+                            foreach (ServiceController servicedependedon in service.ServicesDependedOn)
+                            {
+                                WriteObject(servicedependedon);
+                            }
                         }
                     }
+                }
+            }
+            finally
+            {
+                if (scManagerHandle != nint.Zero)
+                {
+                    bool succeeded = NativeMethods.CloseServiceHandle(scManagerHandle);
+                    Diagnostics.Assert(succeeded, "SCManager handle close failed");
                 }
             }
         }
 
         #endregion Overrides
 
+#nullable enable
         /// <summary>
         /// Adds UserName, Description, BinaryPathName, DelayedAutoStart and StartupType to a ServiceController object.
         /// </summary>
+        /// <param name="scManagerHandle">Handle to the local SCManager instance.</param>
         /// <param name="service"></param>
         /// <returns>ServiceController as PSObject with UserName, Description and StartupType added.</returns>
-        private PSObject AddProperties(ServiceController service)
+        private static PSObject AddProperties(nint scManagerHandle, ServiceController service)
         {
-            NakedWin32Handle hScManager = IntPtr.Zero;
-            NakedWin32Handle hService = IntPtr.Zero;
-            int lastError = 0;
-            PSObject serviceAsPSObj = PSObject.AsPSObject(service);
+            NakedWin32Handle hService = nint.Zero;
+
+            // As these are optional values, a failure due to permissions or
+            // other problem is ignored and the properties are set to null.
+            bool? isDelayedAutoStart = null;
+            string? binPath = null;
+            string? description = null;
+            string? startName = null;
+            ServiceStartupType startupType = ServiceStartupType.InvalidValue;
             try
             {
-                hScManager = NativeMethods.OpenSCManagerW(
-                    lpMachineName: service.MachineName,
-                    lpDatabaseName: null,
-                    dwDesiredAccess: NativeMethods.SC_MANAGER_CONNECT
-                );
-                if (hScManager == IntPtr.Zero)
-                {
-                    lastError = Marshal.GetLastWin32Error();
-                    Win32Exception exception = new(lastError);
-                    WriteNonTerminatingError(
-                        service,
-                        exception,
-                        "FailToOpenServiceControlManager",
-                        ServiceResources.FailToOpenServiceControlManager,
-                        ErrorCategory.PermissionDenied);
-                }
-
+                // We don't use service.ServiceHandle as that requests
+                // SERVICE_ALL_ACCESS when we only need SERVICE_QUERY_CONFIG.
                 hService = NativeMethods.OpenServiceW(
-                    hScManager,
+                    scManagerHandle,
                     service.ServiceName,
                     NativeMethods.SERVICE_QUERY_CONFIG
                 );
-                if (hService == IntPtr.Zero)
+                if (hService != nint.Zero)
                 {
-                    lastError = Marshal.GetLastWin32Error();
-                    Win32Exception exception = new(lastError);
-                    WriteNonTerminatingError(
-                        service,
-                        exception,
-                        "CouldNotGetServiceInfo",
-                        ServiceResources.CouldNotGetServiceInfo,
-                        ErrorCategory.PermissionDenied);
+                    if (NativeMethods.QueryServiceConfig2(
+                        hService,
+                        NativeMethods.SERVICE_CONFIG_DESCRIPTION,
+                        out NativeMethods.SERVICE_DESCRIPTIONW descriptionInfo))
+                    {
+                        description = descriptionInfo.lpDescription;
+                    }
+
+                    if (NativeMethods.QueryServiceConfig2(
+                        hService,
+                        NativeMethods.SERVICE_CONFIG_DELAYED_AUTO_START_INFO,
+                        out NativeMethods.SERVICE_DELAYED_AUTO_START_INFO autostartInfo))
+                    {
+                        isDelayedAutoStart = autostartInfo.fDelayedAutostart;
+                    }
+
+                    if (NativeMethods.QueryServiceConfig(
+                        hService,
+                        out NativeMethods.QUERY_SERVICE_CONFIG serviceInfo))
+                    {
+                        binPath = serviceInfo.lpBinaryPathName;
+                        startName = serviceInfo.lpServiceStartName;
+                        if (isDelayedAutoStart.HasValue)
+                        {
+                            startupType = NativeMethods.GetServiceStartupType(
+                                (ServiceStartMode)serviceInfo.dwStartType,
+                                isDelayedAutoStart.Value);
+                        }
+                    }
                 }
-
-                NativeMethods.SERVICE_DESCRIPTIONW description = new();
-                bool querySuccessful = NativeMethods.QueryServiceConfig2<NativeMethods.SERVICE_DESCRIPTIONW>(hService, NativeMethods.SERVICE_CONFIG_DESCRIPTION, out description);
-
-                NativeMethods.SERVICE_DELAYED_AUTO_START_INFO autostartInfo = new();
-                querySuccessful = querySuccessful && NativeMethods.QueryServiceConfig2<NativeMethods.SERVICE_DELAYED_AUTO_START_INFO>(hService, NativeMethods.SERVICE_CONFIG_DELAYED_AUTO_START_INFO, out autostartInfo);
-
-                NativeMethods.QUERY_SERVICE_CONFIG serviceInfo = new();
-                querySuccessful = querySuccessful && NativeMethods.QueryServiceConfig(hService, out serviceInfo);
-
-                if (!querySuccessful)
-                {
-                    WriteNonTerminatingError(
-                        service: service,
-                        innerException: null,
-                        errorId: "CouldNotGetServiceInfo",
-                        errorMessage: ServiceResources.CouldNotGetServiceInfo,
-                        category: ErrorCategory.PermissionDenied
-                        );
-                }
-
-                PSProperty noteProperty = new("UserName", serviceInfo.lpServiceStartName);
-                serviceAsPSObj.Properties.Add(noteProperty, true);
-                serviceAsPSObj.TypeNames.Insert(0, "System.Service.ServiceController#UserName");
-
-                noteProperty = new PSProperty("Description", description.lpDescription);
-                serviceAsPSObj.Properties.Add(noteProperty, true);
-                serviceAsPSObj.TypeNames.Insert(0, "System.Service.ServiceController#Description");
-
-                noteProperty = new PSProperty("DelayedAutoStart", autostartInfo.fDelayedAutostart);
-                serviceAsPSObj.Properties.Add(noteProperty, true);
-                serviceAsPSObj.TypeNames.Insert(0, "System.Service.ServiceController#DelayedAutoStart");
-
-                noteProperty = new PSProperty("BinaryPathName", serviceInfo.lpBinaryPathName);
-                serviceAsPSObj.Properties.Add(noteProperty, true);
-                serviceAsPSObj.TypeNames.Insert(0, "System.Service.ServiceController#BinaryPathName");
-
-                noteProperty = new PSProperty("StartupType", NativeMethods.GetServiceStartupType(service.StartType, autostartInfo.fDelayedAutostart));
-                serviceAsPSObj.Properties.Add(noteProperty, true);
-                serviceAsPSObj.TypeNames.Insert(0, "System.Service.ServiceController#StartupType");
             }
             finally
             {
                 if (hService != IntPtr.Zero)
                 {
                     bool succeeded = NativeMethods.CloseServiceHandle(hService);
-                    if (!succeeded)
-                    {
-                        Diagnostics.Assert(lastError != 0, "ErrorCode not success");
-                    }
-                }
-
-                if (hScManager != IntPtr.Zero)
-                {
-                    bool succeeded = NativeMethods.CloseServiceHandle(hScManager);
-                    if (!succeeded)
-                    {
-                        Diagnostics.Assert(lastError != 0, "ErrorCode not success");
-                    }
+                    Diagnostics.Assert(succeeded, "Failed to close service handle");
                 }
             }
+
+            PSObject serviceAsPSObj = PSObject.AsPSObject(service);
+            PSNoteProperty noteProperty = new("UserName", startName);
+            serviceAsPSObj.Properties.Add(noteProperty, true);
+            serviceAsPSObj.TypeNames.Insert(0, "System.Service.ServiceController#UserName");
+
+            noteProperty = new PSNoteProperty("Description", description);
+            serviceAsPSObj.Properties.Add(noteProperty, true);
+            serviceAsPSObj.TypeNames.Insert(0, "System.Service.ServiceController#Description");
+
+            noteProperty = new PSNoteProperty("DelayedAutoStart", isDelayedAutoStart);
+            serviceAsPSObj.Properties.Add(noteProperty, true);
+            serviceAsPSObj.TypeNames.Insert(0, "System.Service.ServiceController#DelayedAutoStart");
+
+            noteProperty = new PSNoteProperty("BinaryPathName", binPath);
+            serviceAsPSObj.Properties.Add(noteProperty, true);
+            serviceAsPSObj.TypeNames.Insert(0, "System.Service.ServiceController#BinaryPathName");
+
+            noteProperty = new PSNoteProperty("StartupType", startupType);
+            serviceAsPSObj.Properties.Add(noteProperty, true);
+            serviceAsPSObj.TypeNames.Insert(0, "System.Service.ServiceController#StartupType");
 
             return serviceAsPSObj;
         }
     }
+#nullable disable
     #endregion GetServiceCommand
 
     #region ServiceOperationBaseCommand
@@ -888,7 +905,7 @@ namespace Microsoft.PowerShell.Commands
         /// This will start the service.
         /// </summary>
         /// <param name="serviceController">Service to start.</param>
-        /// <returns>True iff the service was started.</returns>
+        /// <returns>True if-and-only-if the service was started.</returns>
         internal bool DoStartService(ServiceController serviceController)
         {
             Exception exception = null;
@@ -903,8 +920,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (InvalidOperationException e)
             {
-                Win32Exception eInner = e.InnerException as Win32Exception;
-                if (eInner == null
+                if (e.InnerException is not Win32Exception eInner
                     || eInner.NativeErrorCode != NativeMethods.ERROR_SERVICE_ALREADY_RUNNING)
                 {
                     exception = e;
@@ -945,7 +961,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="serviceController">Service to stop.</param>
         /// <param name="force">Stop dependent services.</param>
         /// <param name="waitForServiceToStop"></param>
-        /// <returns>True iff the service was stopped.</returns>
+        /// <returns>True if-and-only-if the service was stopped.</returns>
         internal List<ServiceController> DoStopService(ServiceController serviceController, bool force, bool waitForServiceToStop)
         {
             // Ignore ServiceController.CanStop.  CanStop will be set false
@@ -1020,9 +1036,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (InvalidOperationException e)
             {
-                Win32Exception eInner =
-                    e.InnerException as Win32Exception;
-                if (eInner == null
+                if (e.InnerException is not Win32Exception eInner
                     || eInner.NativeErrorCode != NativeMethods.ERROR_SERVICE_NOT_ACTIVE)
                 {
                     exception = e;
@@ -1097,7 +1111,7 @@ namespace Microsoft.PowerShell.Commands
         /// This will pause the service.
         /// </summary>
         /// <param name="serviceController">Service to pause.</param>
-        /// <returns>True iff the service was paused.</returns>
+        /// <returns>True if-and-only-if the service was paused.</returns>
         internal bool DoPauseService(ServiceController serviceController)
         {
             Exception exception = null;
@@ -1117,8 +1131,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (InvalidOperationException e)
             {
-                Win32Exception eInner = e.InnerException as Win32Exception;
-                if (eInner != null
+                if (e.InnerException is Win32Exception eInner
                     && eInner.NativeErrorCode == NativeMethods.ERROR_SERVICE_NOT_ACTIVE)
                 {
                     serviceNotRunning = true;
@@ -1178,7 +1191,7 @@ namespace Microsoft.PowerShell.Commands
         /// This will resume the service.
         /// </summary>
         /// <param name="serviceController">Service to resume.</param>
-        /// <returns>True iff the service was resumed.</returns>
+        /// <returns>True if-and-only-if the service was resumed.</returns>
         internal bool DoResumeService(ServiceController serviceController)
         {
             Exception exception = null;
@@ -1198,8 +1211,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (InvalidOperationException e)
             {
-                Win32Exception eInner = e.InnerException as Win32Exception;
-                if (eInner != null
+                if (e.InnerException is Win32Exception eInner
                     && eInner.NativeErrorCode == NativeMethods.ERROR_SERVICE_NOT_ACTIVE)
                 {
                     serviceNotRunning = true;
@@ -2355,7 +2367,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements the Remove-Service command.
     /// </summary>
-    [Cmdlet(VerbsCommon.Remove, "Service", SupportsShouldProcess = true, DefaultParameterSetName = "Name")]
+    [Cmdlet(VerbsCommon.Remove, "Service", SupportsShouldProcess = true, DefaultParameterSetName = "Name", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2248980")]
     public class RemoveServiceCommand : ServiceBaseCommand
     {
         #region Parameters
@@ -2524,7 +2536,6 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Non-terminating errors occurring in the service noun commands.
     /// </summary>
-    [Serializable]
     public class ServiceCommandException : SystemException
     {
         #region ctors
@@ -2566,25 +2577,12 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="info"></param>
         /// <param name="context"></param>
         /// <returns>Constructed object.</returns>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8, hence this method is now marked as obsolete", DiagnosticId = "SYSLIB0051")]
         protected ServiceCommandException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
         {
-            ArgumentNullException.ThrowIfNull(info);
-
-            _serviceName = info.GetString("ServiceName");
+            throw new NotSupportedException();
         }
-        /// <summary>
-        /// Serializer.
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            ArgumentNullException.ThrowIfNull(info);
 
-            base.GetObjectData(info, context);
-            info.AddValue("ServiceName", _serviceName);
-        }
         #endregion Serialization
 
         #region Properties
@@ -2755,53 +2753,6 @@ namespace Microsoft.PowerShell.Commands
             System.Security.AccessControl.SecurityInfos dwSecurityInformation,
             byte[] lpSecurityDescriptor
             );
-
-        /// <summary>
-        /// CreateJobObject API creates or opens a job object.
-        /// </summary>
-        /// <param name="lpJobAttributes">
-        /// A pointer to a SECURITY_ATTRIBUTES structure that specifies the security descriptor for the
-        /// job object and determines whether child processes can inherit the returned handle.
-        /// If lpJobAttributes is NULL, the job object gets a default security descriptor
-        /// and the handle cannot be inherited.
-        /// </param>
-        /// <param name="lpName">
-        /// The name of the job.
-        /// </param>
-        /// <returns>
-        /// If the function succeeds, the return value is a handle to the job object.
-        /// If the object existed before the function call, the function
-        /// returns a handle to the existing job object.
-        /// </returns>
-        [DllImport("Kernel32.dll", CharSet = CharSet.Unicode)]
-        internal static extern IntPtr CreateJobObject(IntPtr lpJobAttributes, string lpName);
-
-        /// <summary>
-        /// Retrieves job state information from the job object.
-        /// </summary>
-        /// <param name="hJob">
-        /// A handle to the job whose information is being queried.
-        /// </param>
-        /// <param name="JobObjectInfoClass">
-        /// The information class for the limits to be queried.
-        /// </param>
-        /// <param name="lpJobObjectInfo">
-        /// The limit or job state information.
-        /// </param>
-        /// <param name="cbJobObjectLength">
-        /// The count of the job information being queried, in bytes.
-        /// </param>
-        /// <param name="lpReturnLength">
-        /// A pointer to a variable that receives the length of
-        /// data written to the structure pointed to by the lpJobObjectInfo parameter.
-        /// </param>
-        /// <returns>If the function succeeds, the return value is nonzero.
-        /// If the function fails, the return value is zero.
-        /// </returns>
-        [DllImport("Kernel32.dll", EntryPoint = "QueryInformationJobObject", SetLastError = true, CharSet = CharSet.Unicode)]
-        public static extern bool QueryInformationJobObject(SafeHandle hJob, int JobObjectInfoClass,
-                                    ref JOBOBJECT_BASIC_PROCESS_ID_LIST lpJobObjectInfo,
-                                    int cbJobObjectLength, IntPtr lpReturnLength);
 
         internal static bool QueryServiceConfig(NakedWin32Handle hService, out NativeMethods.QUERY_SERVICE_CONFIG configStructure)
         {

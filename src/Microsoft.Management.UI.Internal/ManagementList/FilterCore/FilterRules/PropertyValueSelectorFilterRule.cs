@@ -15,7 +15,6 @@ namespace Microsoft.Management.UI.Internal
     /// <typeparam name="T">
     /// The generic parameter.
     /// </typeparam>
-    [Serializable]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
     public class PropertyValueSelectorFilterRule<T> : SelectorFilterRule where T : IComparable
     {
@@ -66,11 +65,6 @@ namespace Microsoft.Management.UI.Internal
         /// </param>
         public PropertyValueSelectorFilterRule(string propertyName, string propertyDisplayName, IEnumerable<FilterRule> rules)
         {
-            ArgumentException.ThrowIfNullOrEmpty(propertyName);
-            ArgumentException.ThrowIfNullOrEmpty(propertyDisplayName);
-
-            ArgumentNullException.ThrowIfNull(rules);
-
             this.PropertyName = propertyName;
             this.DisplayName = propertyDisplayName;
 
@@ -84,6 +78,17 @@ namespace Microsoft.Management.UI.Internal
                 this.AvailableRules.AvailableValues.Add(rule);
             }
 
+            this.AvailableRules.DisplayNameConverter = new FilterRuleToDisplayNameConverter();
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PropertyValueSelectorFilterRule{T}"/> class.
+        /// </summary>
+        /// <param name="source">The source to initialize from.</param>
+        public PropertyValueSelectorFilterRule(PropertyValueSelectorFilterRule<T> source)
+            : base(source)
+        {
+            this.PropertyName = source.PropertyName;
             this.AvailableRules.DisplayNameConverter = new FilterRuleToDisplayNameConverter();
         }
 

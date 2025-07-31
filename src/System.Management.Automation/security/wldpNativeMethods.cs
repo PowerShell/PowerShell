@@ -6,8 +6,10 @@
 //
 #if !UNIX
 
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Runspaces;
 using System.Management.Automation.Tracing;
 using System.Runtime.InteropServices;
 
@@ -36,7 +38,12 @@ namespace System.Management.Automation.Security
         /// <summary>
         /// Script file is allowed to run in ConstrainedLanguage mode only.
         /// </summary>
-        AllowConstrained = 3
+        AllowConstrained = 3,
+
+        /// <summary>
+        /// Script file is allowed to run in FullLanguage mode but will emit ConstrainedLanguage restriction audit logs.
+        /// </summary>
+        AllowConstrainedAudit = 4
     }
 
     /// <summary>
@@ -69,6 +76,63 @@ namespace System.Management.Automation.Security
         }
 
         /// <summary>
+        /// Writes to PowerShell WDAC Audit mode ETW log.
+        /// </summary>
+        /// <param name="context">Current execution context.</param>
+        /// <param name="title">Audit message title.</param>
+        /// <param name="message">Audit message message.</param>
+        /// <param name="fqid">Fully Qualified ID.</param>
+        /// <param name="dropIntoDebugger">Stops code execution and goes into debugger mode.</param>
+        internal static void LogWDACAuditMessage(
+            ExecutionContext context,
+            string title,
+            string message,
+            string fqid,
+            bool dropIntoDebugger = false)
+        {
+            string messageToWrite = message;
+
+            // Augment the log message with current script information from the script debugger, if available.
+            context ??= LocalPipeline.GetExecutionContextFromTLS();
+            bool debuggerAvailable = context is not null &&
+                                     context._debugger is ScriptDebugger;
+
+            if (debuggerAvailable)
+            {
+                var scriptPosMessage = context._debugger.GetCurrentScriptPosition();
+                if (!string.IsNullOrEmpty(scriptPosMessage))
+                {
+                    messageToWrite = message + scriptPosMessage;
+                }
+            }
+
+            PSEtwLog.LogWDACAuditEvent(title, messageToWrite, fqid);
+
+            // We drop into the debugger only if requested and we are running in the interactive host session runspace (Id == 1).
+            if (debuggerAvailable && dropIntoDebugger &&
+                context._debugger.DebugMode.HasFlag(DebugModes.LocalScript) &&
+                Runspace.DefaultRunspace?.Id == 1 &&
+                context.DebugPreferenceVariable.HasFlag(ActionPreference.Break) &&
+                context.InternalHost?.UI is not null)
+            {
+                try
+                {
+                    context.InternalHost.UI.WriteLine();
+                    context.InternalHost.UI.WriteLine("WDAC Audit Log:");
+                    context.InternalHost.UI.WriteLine($"Title: {title}");
+                    context.InternalHost.UI.WriteLine($"Message: {message}");
+                    context.InternalHost.UI.WriteLine($"FullyQualifedId: {fqid}");
+                    context.InternalHost.UI.WriteLine("Stopping script execution in debugger...");
+                    context.InternalHost.UI.WriteLine();
+
+                    context._debugger.Break();
+                }
+                catch
+                { }
+            }
+        }
+
+        /// <summary>
         /// Gets the system lockdown policy.
         /// </summary>
         /// <returns>An EnforcementMode that describes the system policy.</returns>
@@ -85,7 +149,7 @@ namespace System.Management.Automation.Security
             {
                 lock (s_systemLockdownPolicyLock)
                 {
-                    s_systemLockdownPolicy = GetDebugLockdownPolicy(path: null);
+                    s_systemLockdownPolicy = GetDebugLockdownPolicy(path: null, out _);
                 }
             }
 
@@ -109,85 +173,89 @@ namespace System.Management.Automation.Security
             System.IO.FileStream fileStream)
         {
             SafeHandle fileHandle = fileStream.SafeFileHandle;
+            SystemEnforcementMode systemLockdownPolicy = GetSystemLockdownPolicy();
 
-            // First check latest WDAC APIs if available. Also revert to legacy APIs if debug hook is in effect.
-            Exception errorException = null;
-            if (s_wldpCanExecuteAvailable && !s_allowDebugOverridePolicy)
+            // First check latest WDAC APIs if available.
+            if (systemLockdownPolicy is SystemEnforcementMode.Enforce
+                && s_wldpCanExecuteAvailable
+                && TryGetWldpCanExecuteFileResult(filePath, fileHandle, out SystemScriptFileEnforcement wldpFilePolicy))
             {
-                try
+                return GetLockdownPolicy(filePath, fileHandle, wldpFilePolicy);
+            }
+
+            // Failed to invoke WldpCanExecuteFile, revert to legacy APIs.
+            if (systemLockdownPolicy is SystemEnforcementMode.None)
+            {
+                return SystemScriptFileEnforcement.None;
+            }
+
+            // WldpCanExecuteFile was invoked successfully so we can skip running
+            // legacy WDAC APIs. AppLocker must still be checked in case it is more
+            // strict than the current WDAC policy.
+            return GetLockdownPolicy(filePath, fileHandle, canExecuteResult: null);
+        }
+
+        private static SystemScriptFileEnforcement ConvertToModernFileEnforcement(SystemEnforcementMode legacyMode)
+        {
+            return legacyMode switch
+            {
+                SystemEnforcementMode.None => SystemScriptFileEnforcement.Allow,
+                SystemEnforcementMode.Audit => SystemScriptFileEnforcement.AllowConstrainedAudit,
+                SystemEnforcementMode.Enforce => SystemScriptFileEnforcement.AllowConstrained,
+                _ => SystemScriptFileEnforcement.Block,
+            };
+        }
+
+        private static bool TryGetWldpCanExecuteFileResult(string filePath, SafeHandle fileHandle, out SystemScriptFileEnforcement result)
+        {
+            try
+            {
+                string fileName = System.IO.Path.GetFileNameWithoutExtension(filePath);
+                string auditMsg = $"PowerShell ExternalScriptInfo reading file: {fileName}";
+
+                int hr = WldpNativeMethods.WldpCanExecuteFile(
+                    host: PowerShellHost,
+                    options: WLDP_EXECUTION_EVALUATION_OPTIONS.WLDP_EXECUTION_EVALUATION_OPTION_NONE,
+                    fileHandle: fileHandle.DangerousGetHandle(),
+                    auditInfo: auditMsg,
+                    result: out WLDP_EXECUTION_POLICY canExecuteResult);
+
+                PSEtwLog.LogWDACQueryEvent("WldpCanExecuteFile", filePath, hr, (int)canExecuteResult);
+
+                if (hr >= 0)
                 {
-                    string fileName = System.IO.Path.GetFileNameWithoutExtension(filePath);
-                    string auditMsg = $"PowerShell ExternalScriptInfo reading file: {fileName}";
-
-                    int hr = WldpNativeMethods.WldpCanExecuteFile(
-                        host: PowerShellHost,
-                        options: WLDP_EXECUTION_EVALUATION_OPTIONS.WLDP_EXECUTION_EVALUATION_OPTION_NONE,
-                        fileHandle: fileHandle.DangerousGetHandle(),
-                        auditInfo: auditMsg,
-                        result: out WLDP_EXECUTION_POLICY canExecuteResult);
-
-                    PSEtwLog.LogWDACQueryEvent("WldpCanExecuteFile", filePath, hr, (int)canExecuteResult);
-
-                    if (hr >= 0)
+                    switch (canExecuteResult)
                     {
-                        switch (canExecuteResult)
-                        {
-                            case WLDP_EXECUTION_POLICY.WLDP_CAN_EXECUTE_ALLOWED:
-                                return SystemScriptFileEnforcement.Allow;
+                        case WLDP_EXECUTION_POLICY.WLDP_CAN_EXECUTE_ALLOWED:
+                            result = SystemScriptFileEnforcement.Allow;
+                            return true;
 
-                            case WLDP_EXECUTION_POLICY.WLDP_CAN_EXECUTE_BLOCKED:
-                                return SystemScriptFileEnforcement.Block;
+                        case WLDP_EXECUTION_POLICY.WLDP_CAN_EXECUTE_BLOCKED:
+                            result = SystemScriptFileEnforcement.Block;
+                            return true;
 
-                            case WLDP_EXECUTION_POLICY.WLDP_CAN_EXECUTE_REQUIRE_SANDBOX:
-                                return SystemScriptFileEnforcement.AllowConstrained;
+                        case WLDP_EXECUTION_POLICY.WLDP_CAN_EXECUTE_REQUIRE_SANDBOX:
+                            result = SystemScriptFileEnforcement.AllowConstrained;
+                            return true;
 
-                            default:
-                                // Fall through to legacy system policy checks.
-                                System.Diagnostics.Debug.Assert(false, $"Unknown execution policy returned from WldCanExecute: {canExecuteResult}");
-                                break;
-                        }
+                        default:
+                            // Fall through to legacy system policy checks.
+                            Debug.Assert(false, $"Unknown policy result returned from WldCanExecute: {canExecuteResult}");
+                            break;
                     }
-
-                    // If HResult is unsuccessful (such as E_NOTIMPL (0x80004001)), fall through to legacy system checks.
-                }
-                catch (DllNotFoundException ex)
-                {
-                    // Fall back to legacy system policy checks.
-                    s_wldpCanExecuteAvailable = false;
-                    errorException = ex;
-                }
-                catch (EntryPointNotFoundException ex)
-                {
-                    // Fall back to legacy system policy checks.
-                    s_wldpCanExecuteAvailable = false;
-                    errorException = ex;
                 }
 
-                if (errorException != null)
-                {
-                    PSEtwLog.LogWDACQueryEvent("WldpCanExecuteFile_Failed", filePath, errorException.HResult, 0);
-                }
+                // If HResult is unsuccessful (such as E_NOTIMPL (0x80004001)), fall through to legacy system checks.
             }
-
-            // Original (legacy) WDAC and AppLocker system checks.
-            if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.None)
+            catch (Exception ex) when (ex is DllNotFoundException or EntryPointNotFoundException)
             {
-                switch (SystemPolicy.GetLockdownPolicy(filePath, fileHandle))
-                {
-                    case SystemEnforcementMode.Enforce:
-                        return SystemScriptFileEnforcement.AllowConstrained;
-
-                    case SystemEnforcementMode.None:
-                    case SystemEnforcementMode.Audit:
-                        return SystemScriptFileEnforcement.Allow;
-
-                    default:
-                        System.Diagnostics.Debug.Assert(false, "GetFilePolicyEnforcement: Unknown SystemEnforcementMode.");
-                        return SystemScriptFileEnforcement.Block;
-                }
+                // Fall back to legacy system policy checks.
+                s_wldpCanExecuteAvailable = false;
+                PSEtwLog.LogWDACQueryEvent("WldpCanExecuteFile_Failed", filePath, ex.HResult, 0);
             }
 
-            return SystemScriptFileEnforcement.None;
+            result = default;
+            return false;
         }
 
         /// <summary>
@@ -196,9 +264,32 @@ namespace System.Management.Automation.Security
         /// <returns>An EnforcementMode that describes policy.</returns>
         public static SystemEnforcementMode GetLockdownPolicy(string path, SafeHandle handle)
         {
+            SystemScriptFileEnforcement modernMode = GetLockdownPolicy(path, handle, canExecuteResult: null);
+            Debug.Assert(
+                modernMode is not SystemScriptFileEnforcement.Block,
+                "Block should never be converted to legacy file enforcement.");
+
+            return modernMode switch
+            {
+                SystemScriptFileEnforcement.Block => SystemEnforcementMode.Enforce,
+                SystemScriptFileEnforcement.AllowConstrained => SystemEnforcementMode.Enforce,
+                SystemScriptFileEnforcement.AllowConstrainedAudit => SystemEnforcementMode.Audit,
+                SystemScriptFileEnforcement.Allow => SystemEnforcementMode.None,
+                SystemScriptFileEnforcement.None => SystemEnforcementMode.None,
+                _ => throw new ArgumentOutOfRangeException(nameof(modernMode)),
+            };
+        }
+
+        private static SystemScriptFileEnforcement GetLockdownPolicy(
+            string path,
+            SafeHandle handle,
+            SystemScriptFileEnforcement? canExecuteResult)
+        {
+            SystemScriptFileEnforcement wldpFilePolicy = canExecuteResult
+                ?? ConvertToModernFileEnforcement(GetWldpPolicy(path, handle));
+
             // Check the WLDP File policy via API
-            var wldpFilePolicy = GetWldpPolicy(path, handle);
-            if (wldpFilePolicy == SystemEnforcementMode.Enforce)
+            if (wldpFilePolicy is SystemScriptFileEnforcement.Block or SystemScriptFileEnforcement.AllowConstrained)
             {
                 return wldpFilePolicy;
             }
@@ -210,29 +301,28 @@ namespace System.Management.Automation.Security
             var appLockerFilePolicy = GetAppLockerPolicy(path, handle);
             if (appLockerFilePolicy == SystemEnforcementMode.Enforce)
             {
-                return appLockerFilePolicy;
+                return ConvertToModernFileEnforcement(appLockerFilePolicy);
             }
 
             // At this point, LockdownPolicy = Audit or Allowed.
             // If there was a WLDP policy, but WLDP didn't block it,
             // then it was explicitly allowed. Therefore, return the result for the file.
-            SystemEnforcementMode systemWldpPolicy = s_cachedWldpSystemPolicy.GetValueOrDefault(SystemEnforcementMode.None);
-            if ((systemWldpPolicy == SystemEnforcementMode.Audit) ||
-                (systemWldpPolicy == SystemEnforcementMode.Enforce))
+            if (s_cachedWldpSystemPolicy is SystemEnforcementMode.Audit or SystemEnforcementMode.Enforce
+                || wldpFilePolicy is SystemScriptFileEnforcement.AllowConstrainedAudit)
             {
                 return wldpFilePolicy;
             }
 
             // If there was a system-wide AppLocker policy, but AppLocker didn't block it,
             // then return AppLocker's status.
-            if (s_cachedSaferSystemPolicy.GetValueOrDefault(SaferPolicy.Allowed) ==
-                SaferPolicy.Disallowed)
+            if (s_cachedSaferSystemPolicy is SaferPolicy.Disallowed)
             {
-                return appLockerFilePolicy;
+                return ConvertToModernFileEnforcement(appLockerFilePolicy);
             }
 
             // If it's not set to 'Enforce' by the platform, allow debug overrides
-            return GetDebugLockdownPolicy(path);
+            GetDebugLockdownPolicy(path, out SystemScriptFileEnforcement debugPolicy);
+            return debugPolicy;
         }
 
         [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods",
@@ -487,7 +577,7 @@ namespace System.Management.Automation.Security
             return result;
         }
 
-        private static SystemEnforcementMode GetDebugLockdownPolicy(string path)
+        private static SystemEnforcementMode GetDebugLockdownPolicy(string path, out SystemScriptFileEnforcement modernEnforcement)
         {
             s_allowDebugOverridePolicy = true;
 
@@ -498,10 +588,19 @@ namespace System.Management.Automation.Security
                 // check so that we can actually put it in the filename during testing.
                 if (path.Contains("System32", StringComparison.OrdinalIgnoreCase))
                 {
+                    modernEnforcement = SystemScriptFileEnforcement.Allow;
                     return SystemEnforcementMode.None;
                 }
 
                 // No explicit debug allowance for the file, so return the system policy if there is one.
+                modernEnforcement = s_systemLockdownPolicy switch
+                {
+                    SystemEnforcementMode.Enforce => SystemScriptFileEnforcement.AllowConstrained,
+                    SystemEnforcementMode.Audit => SystemScriptFileEnforcement.AllowConstrainedAudit,
+                    SystemEnforcementMode.None => SystemScriptFileEnforcement.None,
+                    _ => SystemScriptFileEnforcement.None,
+                };
+
                 return s_systemLockdownPolicy.GetValueOrDefault(SystemEnforcementMode.None);
             }
 
@@ -511,10 +610,13 @@ namespace System.Management.Automation.Security
             if (result != null)
             {
                 pdwLockdownState = LanguagePrimitives.ConvertTo<uint>(result);
-                return GetLockdownPolicyForResult(pdwLockdownState);
+                SystemEnforcementMode policy = GetLockdownPolicyForResult(pdwLockdownState);
+                modernEnforcement = ConvertToModernFileEnforcement(policy);
+                return policy;
             }
 
             // If the system-wide debug policy had no preference, then there is no enforcement.
+            modernEnforcement = SystemScriptFileEnforcement.None;
             return SystemEnforcementMode.None;
         }
 

@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
+using System.Management.Automation.Security;
 
 namespace System.Management.Automation
 {
@@ -1984,11 +1985,21 @@ namespace System.Management.Automation
             var context = LocalPipeline.GetExecutionContextFromTLS();
             if (context?.LanguageMode == PSLanguageMode.ConstrainedLanguage)
             {
-                if ((variable.Options & ScopedItemOptions.AllScope) == ScopedItemOptions.AllScope)
+                if (variable.Options.HasFlag(ScopedItemOptions.AllScope))
                 {
-                    // Don't let people set AllScope variables in ConstrainedLanguage, as they can be used to
-                    // interfere with the session state of trusted commands.
-                    throw new PSNotSupportedException();
+                    if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
+                    {
+                        // Don't let people set AllScope variables in ConstrainedLanguage, as they can be used to
+                        // interfere with the session state of trusted commands.
+                        throw new PSNotSupportedException();
+                    }
+
+                    SystemPolicy.LogWDACAuditMessage(
+                        context: context,
+                        title: SessionStateStrings.WDACSessionStateVarLogTitle,
+                        message: StringUtil.Format(SessionStateStrings.WDACSessionStateVarLogMessage, variable.Name),
+                        fqid: "AllScopeVariableNotAllowed",
+                        dropIntoDebugger: true);
                 }
 
                 // Mark untrusted values for assignments to 'Global:' variables, and 'Script:' variables in

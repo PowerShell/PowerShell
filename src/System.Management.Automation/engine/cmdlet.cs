@@ -10,7 +10,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Resources;
 using System.Management.Automation.Internal;
-using Dbg = System.Management.Automation.Diagnostics;
+using System.Threading;
 
 namespace System.Management.Automation
 {
@@ -99,6 +99,11 @@ namespace System.Management.Automation
                 }
             }
         }
+
+        /// <summary>
+        /// Gets the CancellationToken that is signaled when the pipeline is stopping.
+        /// </summary>
+        public CancellationToken PipelineStopToken => StopToken;
 
         /// <summary>
         /// The name of the parameter set in effect.
@@ -453,6 +458,9 @@ namespace System.Management.Automation
             }
         }
 
+        internal bool IsWriteVerboseEnabled()
+            => commandRuntime is not MshCommandRuntime mshRuntime || mshRuntime.IsWriteVerboseEnabled();
+
         /// <summary>
         /// Display warning information.
         /// </summary>
@@ -489,6 +497,9 @@ namespace System.Management.Automation
                     throw new System.NotImplementedException("WriteWarning");
             }
         }
+
+        internal bool IsWriteWarningEnabled()
+            => commandRuntime is not MshCommandRuntime mshRuntime || mshRuntime.IsWriteWarningEnabled();
 
         /// <summary>
         /// Write text into pipeline execution log.
@@ -598,6 +609,9 @@ namespace System.Management.Automation
                 throw new System.NotImplementedException("WriteProgress");
         }
 
+        internal bool IsWriteProgressEnabled()
+            => commandRuntime is not MshCommandRuntime mshRuntime || mshRuntime.IsWriteProgressEnabled();
+
         /// <summary>
         /// Display debug information.
         /// </summary>
@@ -640,6 +654,9 @@ namespace System.Management.Automation
                     throw new System.NotImplementedException("WriteDebug");
             }
         }
+
+        internal bool IsWriteDebugEnabled()
+            => commandRuntime is not MshCommandRuntime mshRuntime || mshRuntime.IsWriteDebugEnabled();
 
         /// <summary>
         /// Route information to the user or host.
@@ -747,6 +764,9 @@ namespace System.Management.Automation
                 }
             }
         }
+
+        internal bool IsWriteInformationEnabled()
+            => commandRuntime is not MshCommandRuntime mshRuntime || mshRuntime.IsWriteInformationEnabled();
 
         #endregion Write
 
@@ -1311,11 +1331,11 @@ namespace System.Management.Automation
         /// It may be displayed by some hosts, but not all.
         /// </param>
         /// <param name="yesToAll">
-        /// true iff user selects YesToAll.  If this is already true,
+        /// true if-and-only-if user selects YesToAll.  If this is already true,
         /// ShouldContinue will bypass the prompt and return true.
         /// </param>
         /// <param name="noToAll">
-        /// true iff user selects NoToAll.  If this is already true,
+        /// true if-and-only-if user selects NoToAll.  If this is already true,
         /// ShouldContinue will bypass the prompt and return false.
         /// </param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
@@ -1451,11 +1471,11 @@ namespace System.Management.Automation
         /// the default option selected in the selection menu is 'No'.
         /// </param>
         /// <param name="yesToAll">
-        /// true iff user selects YesToAll.  If this is already true,
+        /// true if-and-only-if user selects YesToAll.  If this is already true,
         /// ShouldContinue will bypass the prompt and return true.
         /// </param>
         /// <param name="noToAll">
-        /// true iff user selects NoToAll.  If this is already true,
+        /// true if-and-only-if user selects NoToAll.  If this is already true,
         /// ShouldContinue will bypass the prompt and return false.
         /// </param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
@@ -1820,14 +1840,16 @@ namespace System.Management.Automation
         None = 0x0,
 
         /// <summary>
+        /// <para>
         /// WhatIf behavior was requested.
-        /// </summary>
-        /// <remarks>
+        /// </para>
+        /// <para>
         /// In the host, WhatIf behavior can be requested explicitly
         /// for one cmdlet instance using the -WhatIf commandline parameter,
         /// or implicitly for all SupportsShouldProcess cmdlets with $WhatIfPreference.
         /// Other hosts may have other ways to request WhatIf behavior.
-        /// </remarks>
+        /// </para>
+        /// </summary>
         WhatIf = 0x1,
     }
 }

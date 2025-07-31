@@ -2,11 +2,13 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Security;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -146,9 +148,9 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Prevent additional commands in ConstrainedLanguage mode
-            if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
+            if (_setSupportedCommand && Context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
             {
-                if (_setSupportedCommand)
+                if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
                 {
                     NotSupportedException nse =
                         PSTraceSource.NewNotSupportedException(
@@ -156,6 +158,13 @@ namespace Microsoft.PowerShell.Commands
                     ThrowTerminatingError(
                         new ErrorRecord(nse, "CannotDefineSupportedCommand", ErrorCategory.PermissionDenied, null));
                 }
+                
+                SystemPolicy.LogWDACAuditMessage(
+                    context: Context,
+                    title: ImportLocalizedDataStrings.WDACLogTitle,
+                    message: ImportLocalizedDataStrings.WDACLogMessage,
+                    fqid: "SupportedCommandsDisabled",
+                    dropIntoDebugger: true);
             }
 
             string script = GetScript(path);
@@ -282,7 +291,7 @@ namespace Microsoft.PowerShell.Commands
 
             fileName = Path.GetFileNameWithoutExtension(fileName);
 
-            CultureInfo culture = null;
+            CultureInfo culture;
             if (_uiculture == null)
             {
                 culture = CultureInfo.CurrentUICulture;
@@ -299,19 +308,33 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            CultureInfo currentCulture = culture;
+            List<CultureInfo> cultureList = new List<CultureInfo> { culture };
+            if (_uiculture == null && culture.Name != "en-US")
+            {
+                // .NET 4.8 presents en-US as a parent of any current culture when accessed via the CurrentUICulture
+                // property.
+                //
+                // This feature is not present when GetCultureInfo is called, therefore this fallback change only
+                // applies when the UICulture parameter is not supplied.
+                cultureList.Add(CultureInfo.GetCultureInfo("en-US"));
+            }
+
             string filePath;
             string fullFileName = fileName + ".psd1";
-            while (currentCulture != null && !string.IsNullOrEmpty(currentCulture.Name))
+            foreach (CultureInfo cultureToTest in cultureList)
             {
-                filePath = Path.Combine(dir, currentCulture.Name, fullFileName);
-
-                if (File.Exists(filePath))
+                CultureInfo currentCulture = cultureToTest;
+                while (currentCulture != null && !string.IsNullOrEmpty(currentCulture.Name))
                 {
-                    return filePath;
-                }
+                    filePath = Path.Combine(dir, currentCulture.Name, fullFileName);
 
-                currentCulture = currentCulture.Parent;
+                    if (File.Exists(filePath))
+                    {
+                        return filePath;
+                    }
+
+                    currentCulture = currentCulture.Parent;
+                }
             }
 
             filePath = Path.Combine(dir, fullFileName);

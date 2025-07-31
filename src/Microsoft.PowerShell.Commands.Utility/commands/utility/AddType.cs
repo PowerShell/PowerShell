@@ -129,7 +129,7 @@ namespace Microsoft.PowerShell.Commands
         /// Any using statements required by the auto-generated type.
         /// </summary>
         [Parameter(ParameterSetName = FromMemberParameterSetName)]
-        [ValidateNotNull()]
+        [ValidateNotNull]
         [Alias("Using")]
         public string[] UsingNamespace { get; set; } = Array.Empty<string>();
 
@@ -405,7 +405,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Flag to pass the resulting types along.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter PassThru { get; set; }
 
         /// <summary>
@@ -556,15 +556,24 @@ namespace Microsoft.PowerShell.Commands
         {
             // Prevent code compilation in ConstrainedLanguage mode, or NoLanguage mode under system lock down.
             if (SessionState.LanguageMode == PSLanguageMode.ConstrainedLanguage ||
-                (SessionState.LanguageMode == PSLanguageMode.NoLanguage && 
-                 SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce))
+                (SessionState.LanguageMode == PSLanguageMode.NoLanguage && SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce))
             {
-                ThrowTerminatingError(
-                    new ErrorRecord(
-                        new PSNotSupportedException(AddTypeStrings.CannotDefineNewType),
-                        nameof(AddTypeStrings.CannotDefineNewType),
-                        ErrorCategory.PermissionDenied,
-                        targetObject: null));
+                if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
+                {
+                    ThrowTerminatingError(
+                        new ErrorRecord(
+                            new PSNotSupportedException(AddTypeStrings.CannotDefineNewType),
+                            nameof(AddTypeStrings.CannotDefineNewType),
+                            ErrorCategory.PermissionDenied,
+                            targetObject: null));
+                }
+
+                SystemPolicy.LogWDACAuditMessage(
+                    context: Context,
+                    title: AddTypeStrings.AddTypeLogTitle,
+                    message: AddTypeStrings.AddTypeLogMessage,
+                    fqid: "AddTypeCmdletDisabled",
+                    dropIntoDebugger: true);
             }
 
             // 'ConsoleApplication' and 'WindowsApplication' types are currently not working in .NET Core
@@ -675,6 +684,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // CoreCLR doesn't allow re-load TPA assemblies with different API (i.e. we load them by name and now want to load by path).
                 // LoadAssemblyHelper helps us avoid re-loading them, if they already loaded.
+                // codeql[cs/dll-injection-remote] - This is expected PowerShell behavior and integral to the purpose of the class. It allows users to load any C# dependencies they need for their PowerShell application and add other types they require.
                 Assembly assembly = LoadAssemblyHelper(assemblyName) ?? Assembly.LoadFrom(ResolveAssemblyName(assemblyName, false));
 
                 if (PassThru)

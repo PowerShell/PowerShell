@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Windows.Data;
 
@@ -16,10 +15,40 @@ namespace Microsoft.Management.UI.Internal
     /// <typeparam name="T">
     /// The generic parameter.
     /// </typeparam>
-    [Serializable]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
     public class ValidatingSelectorValue<T> : ValidatingValueBase
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ValidatingSelectorValue{T}"/> class.
+        /// </summary>
+        public ValidatingSelectorValue()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ValidatingSelectorValue{T}"/> class.
+        /// </summary>
+        /// <param name="source">The source to initialize from.</param>
+        public ValidatingSelectorValue(ValidatingSelectorValue<T> source)
+            : base(source)
+        {
+            availableValues.EnsureCapacity(source.availableValues.Count);
+            if (typeof(IDeepCloneable).IsAssignableFrom(typeof(T)))
+            {
+                foreach (var value in source.availableValues)
+                {
+                    availableValues.Add((T)((IDeepCloneable)value).DeepClone());
+                }
+            }
+            else
+            {
+                availableValues.AddRange(source.availableValues);
+            }
+
+            selectedIndex = source.selectedIndex;
+            displayNameConverter = source.displayNameConverter;
+        }
+
         #region Properties
 
         #region Consts
@@ -131,11 +160,6 @@ namespace Microsoft.Management.UI.Internal
 
             set
             {
-                if (value != null && !value.GetType().IsSerializable)
-                {
-                    throw new ArgumentException("The DisplayNameConverter must be serializable.", "value");
-                }
-
                 this.displayNameConverter = value;
             }
         }
@@ -149,12 +173,17 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Notifies listeners that the selected value has changed.
         /// </summary>
-        [field: NonSerialized]
         public event EventHandler<PropertyChangedEventArgs<T>> SelectedValueChanged;
 
         #endregion Events
 
         #region Public Methods
+
+        /// <inheritdoc cref="IDeepCloneable.DeepClone()" />
+        public override object DeepClone()
+        {
+            return new ValidatingSelectorValue<T>(this);
+        }
 
         #region Validate
 
@@ -215,14 +244,12 @@ namespace Microsoft.Management.UI.Internal
         /// </param>
         protected void NotifySelectedValueChanged(T oldValue, T newValue)
         {
-            #pragma warning disable IDE1005 // IDE1005: Delegate invocation can be simplified.
             EventHandler<PropertyChangedEventArgs<T>> eh = this.SelectedValueChanged;
 
             if (eh != null)
             {
                 eh(this, new PropertyChangedEventArgs<T>(oldValue, newValue));
             }
-            #pragma warning restore IDE1005
         }
 
         #endregion NotifySelectedValueChanged

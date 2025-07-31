@@ -69,8 +69,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (token != null)
                     {
-                        FieldPropertyToken fpt = token as FieldPropertyToken;
-                        if (fpt != null)
+                        if (token is FieldPropertyToken fpt)
                         {
                             // If Database does not provide a label(DisplayName) for the current property, use the expression value instead.
                             displayName ??= fpt.expression.expressionValue;
@@ -98,8 +97,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
-                            TextToken tt = token as TextToken;
-                            if (tt != null)
+                            if (token is TextToken tt)
                             {
                                 displayName = _typeInfoDatabase.displayResourceManagerCache.GetTextTokenString(tt);
                                 columnInfo = new OriginalColumnInfo(tt.text, displayName, tt.text, parentCmdlet);

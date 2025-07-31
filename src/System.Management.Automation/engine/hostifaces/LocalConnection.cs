@@ -1491,7 +1491,6 @@ namespace System.Management.Automation.Runspaces
     /// Defines the exception thrown an error loading modules occurs while opening the runspace. It
     /// contains a list of all of the module errors that have occurred.
     /// </summary>
-    [Serializable]
     public class RunspaceOpenModuleLoadException : RuntimeException
     {
         #region ctor
@@ -1558,27 +1557,11 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
         protected RunspaceOpenModuleLoadException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
         {
-        }
-
-        /// <summary>
-        /// Populates a <see cref="SerializationInfo"/> with the
-        /// data needed to serialize the RunspaceOpenModuleLoadException object.
-        /// </summary>
-        /// <param name="info">The <see cref="SerializationInfo"/> to populate with data.</param>
-        /// <param name="context">The destination for this serialization.</param>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-            {
-                throw new PSArgumentNullException(nameof(info));
-            }
-
-            base.GetObjectData(info, context);
-        }
-
+            throw new NotSupportedException();
+        }        
         #endregion Serialization
     }
 

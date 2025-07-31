@@ -2835,7 +2835,7 @@ namespace System.Management.Automation
 
                 // Get the public or protected getter
                 MethodInfo propertyGetter = property.GetGetMethod(true);
-                if (propertyGetter != null && (propertyGetter.IsPublic || propertyGetter.IsFamily))
+                if (propertyGetter != null && (propertyGetter.IsPublic || propertyGetter.IsFamily || propertyGetter.IsFamilyOrAssembly))
                 {
                     this.isStatic = propertyGetter.IsStatic;
                     // Delegate is initialized later to avoid jit if it's not called
@@ -2847,7 +2847,7 @@ namespace System.Management.Automation
 
                 // Get the public or protected setter
                 MethodInfo propertySetter = property.GetSetMethod(true);
-                if (propertySetter != null && (propertySetter.IsPublic || propertySetter.IsFamily))
+                if (propertySetter != null && (propertySetter.IsPublic || propertySetter.IsFamily || propertySetter.IsFamilyOrAssembly))
                 {
                     this.isStatic = propertySetter.IsStatic;
                 }
@@ -4365,7 +4365,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This is a flavor of MethodInvokeDotNet to deal with a peculiarity of property setters:
-        /// Tthe setValue is always the last parameter. This enables a parameter after a varargs or optional
+        /// The setValue is always the last parameter. This enables a parameter after a varargs or optional
         /// parameters and GetBestMethodAndArguments is not prepared for that.
         /// This method disregards the last parameter in its call to GetBestMethodAndArguments used in this case
         /// more for its "Arguments" side than for its "BestMethod" side, since there is only one method.
@@ -4441,7 +4441,7 @@ namespace System.Management.Automation
             }
 
             builder.Append(memberName ?? methodEntry.Name);
-            if (methodEntry.IsGenericMethodDefinition)
+            if (methodEntry.IsGenericMethodDefinition || methodEntry.IsGenericMethod)
             {
                 builder.Append('[');
 
@@ -5440,7 +5440,7 @@ namespace System.Management.Automation
             }
 
             XmlNodeList nodeChildren = node.ChildNodes;
-            // nodeChildren will not be null as we already verified iff the node has children.
+            // nodeChildren will not be null as we already verified that the node has children.
             if ((nodeChildren.Count == 1) && (nodeChildren[0].NodeType == XmlNodeType.Text))
             {
                 return node.InnerText;

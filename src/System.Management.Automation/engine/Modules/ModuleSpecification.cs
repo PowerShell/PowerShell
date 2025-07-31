@@ -165,6 +165,49 @@ namespace Microsoft.PowerShell.Commands
             return null;
         }
 
+        internal string GetRequiredModuleNotFoundVersionMessage()
+        {
+            if (RequiredVersion is not null)
+            {
+                return StringUtil.Format(
+                    Modules.RequiredModuleNotFoundRequiredVersion,
+                    Name,
+                    RequiredVersion);
+            }
+
+            bool hasVersion = Version is not null;
+            bool hasMaximumVersion = MaximumVersion is not null;
+
+            if (hasVersion && hasMaximumVersion)
+            {
+                return StringUtil.Format(
+                    Modules.RequiredModuleNotFoundModuleAndMaximumVersion,
+                    Name,
+                    Version,
+                    MaximumVersion);
+            }
+
+            if (hasVersion)
+            {
+                return StringUtil.Format(
+                    Modules.RequiredModuleNotFoundModuleVersion,
+                    Name,
+                    Version);
+            }
+
+            if (hasMaximumVersion)
+            {
+                return StringUtil.Format(
+                    Modules.RequiredModuleNotFoundMaximumVersion,
+                    Name,
+                    MaximumVersion);
+            }
+
+            return StringUtil.Format(
+                Modules.RequiredModuleNotFoundWithoutVersion,
+                Name);
+        }
+
         internal ModuleSpecification(PSModuleInfo moduleInfo)
         {
             ArgumentNullException.ThrowIfNull(moduleInfo);

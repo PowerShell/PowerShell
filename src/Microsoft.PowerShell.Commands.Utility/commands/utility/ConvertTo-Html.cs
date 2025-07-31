@@ -502,9 +502,8 @@ namespace Microsoft.PowerShell.Commands
                                     MshCommandRuntime mshCommandRuntime = this.CommandRuntime as MshCommandRuntime;
                                     string Message = StringUtil.Format(ConvertHTMLStrings.MetaPropertyNotFound, s, _meta[s]);
                                     WarningRecord record = new(Message);
-                                    InvocationInfo invocationInfo = GetVariableValue(SpecialVariables.MyInvocation) as InvocationInfo;
 
-                                    if (invocationInfo != null)
+                                    if (GetVariableValue(SpecialVariables.MyInvocation) is InvocationInfo invocationInfo)
                                     {
                                         record.SetInvocationInfo(invocationInfo);
                                     }
@@ -553,16 +552,14 @@ namespace Microsoft.PowerShell.Commands
             foreach (MshParameter p in mshParams)
             {
                 COLTag.Append("<col");
-                string width = p.GetEntry(ConvertHTMLParameterDefinitionKeys.WidthEntryKey) as string;
-                if (width != null)
+                if (p.GetEntry(ConvertHTMLParameterDefinitionKeys.WidthEntryKey) is string width)
                 {
                     COLTag.Append(" width = \"");
                     COLTag.Append(width);
                     COLTag.Append('"');
                 }
 
-                string alignment = p.GetEntry(ConvertHTMLParameterDefinitionKeys.AlignmentEntryKey) as string;
-                if (alignment != null)
+                if (p.GetEntry(ConvertHTMLParameterDefinitionKeys.AlignmentEntryKey) is string alignment)
                 {
                     COLTag.Append(" align = \"");
                     COLTag.Append(alignment);
@@ -608,8 +605,7 @@ namespace Microsoft.PowerShell.Commands
         private static void WritePropertyName(StringBuilder Listtag, MshParameter p)
         {
             // for writing the property name
-            string label = p.GetEntry(ConvertHTMLParameterDefinitionKeys.LabelEntryKey) as string;
-            if (label != null)
+            if (p.GetEntry(ConvertHTMLParameterDefinitionKeys.LabelEntryKey) is string label)
             {
                 Listtag.Append(label);
             }

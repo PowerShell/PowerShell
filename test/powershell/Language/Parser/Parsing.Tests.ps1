@@ -665,10 +665,79 @@ Describe "Parsing using statement with alias and linebreak and comma" -Tag CI {
     }
 }
 
-It "Should correctly parse array types that are used as arguments without brackets in generic type" {
-    $tks = $null
-    $ers = $null
-    $Script = '[System.Tuple[System.String[],System.Int32[]]]'
-    $result = [System.Management.Automation.Language.Parser]::ParseInput($Script, [ref]$tks, [ref]$ers)
-    $result.EndBlock.Statements[0].PipelineElements[0].Expression.TypeName.FullName | Should -Be 'System.Tuple[System.String[],System.Int32[]]'
+Describe "Additional tests" -Tag CI {
+    It "Should correctly parse array literals for index expressions in method calls" {
+        $tks = $null
+        $ers = $null
+        $Script = '[string]::join(" ", (0, 1, 2)[0, 1])'
+        $result = [System.Management.Automation.Language.Parser]::ParseInput($Script, [ref]$tks, [ref]$ers)
+        $result.EndBlock.Statements[0].PipelineElements[0].Expression.Arguments[1].Index.Elements.Count | Should -Be 2
+        $ers.Count | Should -Be 0
+    }
+
+    It "Should correctly parse array types that are used as arguments without brackets in generic type" {
+        $tks = $null
+        $ers = $null
+        $Script = '[System.Tuple[System.String[],System.Int32[]]]'
+        $result = [System.Management.Automation.Language.Parser]::ParseInput($Script, [ref]$tks, [ref]$ers)
+        $result.EndBlock.Statements[0].PipelineElements[0].Expression.TypeName.FullName | Should -Be 'System.Tuple[System.String[],System.Int32[]]'
+    }
+
+    It "Should correctly set the cached type for 'GenericTypeName.TypeName' as needed when the generic type is found in cache" {
+        $tks = $null
+        $ers = $null
+        $Script = '[System.Collections.Generic.List[string]]'
+
+        ## See https://github.com/PowerShell/PowerShell/issues/24982 for details about the issue.
+        $result = [System.Management.Automation.Language.Parser]::ParseInput($Script, [ref]$tks, [ref]$ers)
+        $typeExpr = $result.EndBlock.Statements[0].PipelineElements[0].Expression
+        $typeExpr.TypeName.FullName | Should -Be 'System.Collections.Generic.List[string]'
+        $typeExpr.TypeName.TypeName.FullName | Should -Be 'System.Collections.Generic.List'
+        $typeExpr.TypeName.TypeName.GetReflectionType() | Should -Not -BeNullOrEmpty
+        $typeExpr.TypeName.TypeName.GetReflectionType().FullName | Should -Be 'System.Collections.Generic.List`1'
+
+        $result2 = [System.Management.Automation.Language.Parser]::ParseInput($Script, [ref]$tks, [ref]$ers)
+        $typeExpr2 = $result2.EndBlock.Statements[0].PipelineElements[0].Expression
+        $typeExpr2.TypeName.FullName | Should -Be 'System.Collections.Generic.List[string]'
+        $typeExpr2.TypeName.TypeName.FullName | Should -Be 'System.Collections.Generic.List'
+        $typeExpr2.TypeName.TypeName.GetReflectionType() | Should -Not -BeNullOrEmpty
+        $typeExpr2.TypeName.TypeName.GetReflectionType().FullName | Should -Be 'System.Collections.Generic.List`1'
+
+        $Script = '[System.Tuple[System.String[],System.Int32[]]]'
+        $result3 = [System.Management.Automation.Language.Parser]::ParseInput($Script, [ref]$tks, [ref]$ers)
+        $result3.EndBlock.Statements[0].PipelineElements[0].Expression.TypeName.TypeName.GetReflectionType().FullName | Should -Be 'System.Tuple'
+
+        ## Generic type with assembly name can be resolved.
+        [System.Collections.Generic.List[string], System.Private.CoreLib].FullName | Should -BeLike 'System.Collections.Generic.List``1`[`[System.String, *`]`]'
+
+        $Script = '[System.Collections.Generic.List[string], System.Private.CoreLib]'
+        $result4 = [System.Management.Automation.Language.Parser]::ParseInput($Script, [ref]$tks, [ref]$ers)
+        $typeExpr4 = $result4.EndBlock.Statements[0].PipelineElements[0].Expression
+        $typeExpr4.TypeName.FullName | Should -Be 'System.Collections.Generic.List[string],System.Private.CoreLib'
+        $typeExpr4.TypeName.TypeName.FullName | Should -Be 'System.Collections.Generic.List,System.Private.CoreLib'
+        $typeExpr4.TypeName.TypeName.GetReflectionType() | Should -Not -BeNullOrEmpty
+        $typeExpr4.TypeName.TypeName.GetReflectionType().FullName | Should -Be 'System.Collections.Generic.List`1'
+
+        ## Generic type with '`<n>' in name can be resolved.
+        [System.Collections.Generic.List`1[string]].FullName | Should -BeLike 'System.Collections.Generic.List``1`[`[System.String, *`]`]'
+
+        $Script = '[System.Collections.Generic.List`1[string]]'
+        $result5 = [System.Management.Automation.Language.Parser]::ParseInput($Script, [ref]$tks, [ref]$ers)
+        $typeExpr5 = $result5.EndBlock.Statements[0].PipelineElements[0].Expression
+        $typeExpr5.TypeName.FullName | Should -Be 'System.Collections.Generic.List`1[string]'
+        $typeExpr5.TypeName.TypeName.FullName | Should -Be 'System.Collections.Generic.List`1'
+        $typeExpr5.TypeName.TypeName.GetReflectionType() | Should -Not -BeNullOrEmpty
+        $typeExpr5.TypeName.TypeName.GetReflectionType().FullName | Should -Be 'System.Collections.Generic.List`1'
+    }
+
+    It "Should get correct offsets for number constant parsing error" {
+        $tks = $null
+        $ers = $null
+        $Script = '$n = 0x10000000000000000'
+        $null = [System.Management.Automation.Language.Parser]::ParseInput($Script, [ref]$tks, [ref]$ers)
+        $ers.Length | Should -BeExactly 1
+        $ers[0].Extent.StartOffset | Should -BeExactly 5
+        $ers[0].Extent.EndOffset | Should -BeExactly 24
+        $ers[0].Extent.Text | Should -BeExactly '0x10000000000000000'
+    }
 }
