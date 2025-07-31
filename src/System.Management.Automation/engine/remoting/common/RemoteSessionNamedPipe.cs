@@ -454,7 +454,7 @@ namespace System.Management.Automation.Remoting
             SafePipeHandle pipeHandle = NamedPipeNative.CreateNamedPipe(
                 fullPipeName,
                 NamedPipeNative.PIPE_ACCESS_DUPLEX | NamedPipeNative.FILE_FLAG_FIRST_PIPE_INSTANCE | NamedPipeNative.FILE_FLAG_OVERLAPPED,
-                NamedPipeNative.PIPE_TYPE_MESSAGE | NamedPipeNative.PIPE_READMODE_MESSAGE,
+                NamedPipeNative.PIPE_TYPE_MESSAGE | NamedPipeNative.PIPE_READMODE_MESSAGE | NamedPipeNative.PIPE_REJECT_REMOTE_CLIENTS,
                 1,
                 _namedPipeBufferSizeForRemoting,
                 _namedPipeBufferSizeForRemoting,
