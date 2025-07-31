@@ -155,6 +155,16 @@ Describe "Get-Alias DRT Unit Tests" -Tags "CI" {
             $returnObject[$i].Definition | Should -Be 'Get-Command'
         }
     }
+
+    It "Get-Alias DisplayName should always show AliasName -> ResolvedCommand for all aliases" {
+        Set-Alias -Name Test-MyAlias -Value Get-Command -Force
+        Set-Alias -Name tma -Value Test-MyAlias -force
+        $aliases = Get-Alias Test-MyAlias, tma
+        $aliases | ForEach-Object {
+            $_.DisplayName | Should -Be "$($_.Name) -> Get-Command"
+        }
+        $aliases.Name.foreach{Remove-Item Alias:$_ -ErrorAction SilentlyContinue}
+    }
 }
 
 Describe "Get-Alias" -Tags "CI" {
