@@ -2213,7 +2213,7 @@ namespace System.Management.Automation.Runspaces
                 }
             }
 
-            // Create a local ssh process (client) that conects to a remote sshd process (server) using a 'powershell' subsystem.
+            // Create a local ssh process (client) that connects to a remote sshd process (server) using a 'powershell' subsystem.
             //
             // Local ssh invoked as:
             //   windows:
