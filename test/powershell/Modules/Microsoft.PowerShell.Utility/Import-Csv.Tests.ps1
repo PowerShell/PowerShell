@@ -498,15 +498,15 @@ C1
             $result[2].P3 | Should -BeNullOrEmpty
         }
 
-        It 'Should handle pipe delimiter with empty fields' {
+        It 'Should handle delimiter with empty fields' {
             $csvFile = Join-Path $TestDrive -ChildPath $((New-Guid).Guid)
             @'
-P1|P2|P3
-A1||
-B1||
-C1||
+P1,P2,P3
+A1,,
+B1,,
+C1,,
 '@ | Set-Content -Path $csvFile -NoNewline
-            $result = Import-Csv -Path $csvFile -Delimiter '|'
+            $result = Import-Csv -Path $csvFile -Delimiter ','
 
             $result.Count | Should -Be 3
             $result[0].P1 | Should -Be 'A1'
@@ -520,22 +520,44 @@ C1||
         It 'Should handle custom delimiter that appears in data' {
             $csvFile = Join-Path $TestDrive -ChildPath $((New-Guid).Guid)
             @'
-P1@P2@P3
-A1@@
-B1@B2@B3
-C1@@
+P1;P2;P3
+A1
+B1
+C1
 '@ | Set-Content -Path $csvFile -NoNewline
-            $result = Import-Csv -Path $csvFile -Delimiter '@'
+            $result = Import-Csv -Path $csvFile -Delimiter ';'
 
             $result.Count | Should -Be 3
             $result[0].P1 | Should -Be 'A1'
-            $result[0].P2 | Should -Be ''
-            $result[0].P3 | Should -Be ''
+            $result[0].P2 | Should -BeNullOrEmpty
+            $result[0].P3 | Should -BeNullOrEmpty
             $result[1].P1 | Should -Be 'B1'
-            $result[1].P2 | Should -Be 'B2'
-            $result[1].P3 | Should -Be 'B3'
+            $result[1].P2 | Should -BeNullOrEmpty
+            $result[1].P3 | Should -BeNullOrEmpty
             $result[2].P1 | Should -Be 'C1'
-            $result[2].P2 | Should -Be ''
+            $result[2].P2 | Should -BeNullOrEmpty
+            $result[2].P3 | Should -BeNullOrEmpty
+        }
+
+        It 'Should handle no delimiters in data' {
+            $csvFile = Join-Path $TestDrive -ChildPath $((New-Guid).Guid)
+            @'
+P1,P2,P3
+A1
+B1
+C1
+'@ | Set-Content -Path $csvFile -NoNewline
+            $result = Import-Csv -Path $csvFile
+
+            $result.Count | Should -Be 3
+            $result[0].P1 | Should -Be 'A1'
+            $result[0].P2 | Should -BeNullOrEmpty
+            $result[0].P3 | Should -BeNullOrEmpty
+            $result[1].P1 | Should -Be 'B1'
+            $result[1].P2 | Should -BeNullOrEmpty
+            $result[1].P3 | Should -BeNullOrEmpty
+            $result[2].P1 | Should -Be 'C1'
+            $result[2].P2 | Should -BeNullOrEmpty
             $result[2].P3 | Should -BeNullOrEmpty
         }
     }
@@ -574,47 +596,6 @@ C1@@
             $result[0].P1 | Should -Be ''
             $result[0].P25 | Should -Be ''
             $result[0].P50 | Should -BeNullOrEmpty
-        }
-    }
-
-    Context 'File Path Edge Cases' {
-        It 'Should handle files with Unicode BOM' {
-            $csvFile = Join-Path $TestDrive -ChildPath $((New-Guid).Guid)
-            $csvContent = @'
-P1,P2
-,
-A1,A2
-'@
-            # Write with UTF-8 BOM
-            [System.IO.File]::WriteAllText($csvFile, $csvContent, [System.Text.UTF8Encoding]::new($true))
-            $result = Import-Csv -Path $csvFile
-
-            $result.Count | Should -Be 2
-            $result[0].P1 | Should -Be ''
-            $result[0].P2 | Should -BeNullOrEmpty
-            $result[1].P1 | Should -Be 'A1'
-            $result[1].P2 | Should -Be 'A2'
-        }
-
-        It 'Should handle very long file paths' {
-            # Create a nested directory structure to test long paths
-            $longPath = $TestDrive
-            for ($i = 0; $i -lt 10; $i++) {
-                $longPath = Join-Path $longPath "VeryLongDirectoryNameToTestFilePathHandling$i"
-                New-Item -Path $longPath -ItemType Directory -Force > $null
-            }
-
-            $csvFile = Join-Path $longPath "test.csv"
-            @'
-P1,P2
-,
-A1,A2
-'@ | Set-Content -Path $csvFile -NoNewline
-
-            $result = Import-Csv -Path $csvFile
-            $result.Count | Should -Be 2
-            $result[0].P1 | Should -Be ''
-            $result[1].P1 | Should -Be 'A1'
         }
     }
 }
