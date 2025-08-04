@@ -11,7 +11,7 @@ function Get-TargetResource {
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
         [string]
-        $text
+        $Text
     )
 
     $result = @{
@@ -31,7 +31,7 @@ function Set-TargetResource {
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
         [string]
-        $text
+        $Text
     )
     $path = "$env:SystemDrive\dscTestPath\hello1.txt"
     New-Item -Path $path -Type File -Force
@@ -48,7 +48,7 @@ function Test-TargetResource {
        [Parameter(Mandatory = $true)]
        [ValidateNotNullOrEmpty()]
        [string]
-       $text
+       $Text
     )
     $false
 }
