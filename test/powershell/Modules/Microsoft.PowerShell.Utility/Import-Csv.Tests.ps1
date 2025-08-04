@@ -539,7 +539,7 @@ C1
             $result[2].P3 | Should -BeNullOrEmpty
         }
 
-        It 'Should handle no delimiters in data' {
+        It 'Should handle no delimiter with empty fields' {
             $csvFile = Join-Path $TestDrive -ChildPath $((New-Guid).Guid)
             @'
 P1,P2,P3

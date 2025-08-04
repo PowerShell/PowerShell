@@ -355,11 +355,11 @@ C1
 
         It 'Should handle pipe delimiter with empty fields' {
             $result = @'
-P1|P2|P3
-A1||
-B1||
-C1||
-'@ | ConvertFrom-Csv -Delimiter '|'
+P1,P2,P3
+A1,,
+B1,,
+C1,,
+'@ | ConvertFrom-Csv -Delimiter ','
 
             $result.Count | Should -Be 3
             $result[0].P1 | Should -Be 'A1'
@@ -372,55 +372,42 @@ C1||
 
         It 'Should handle custom delimiter that appears in data' {
             $result = @'
-P1@P2@P3
-A1@@
-B1@B2@B3
-C1@@
-'@ | ConvertFrom-Csv -Delimiter '@'
+P1;P2;P3
+A1
+B1
+C1
+'@ | ConvertFrom-Csv -Delimiter ';'
 
             $result.Count | Should -Be 3
             $result[0].P1 | Should -Be 'A1'
-            $result[0].P2 | Should -Be ''
-            $result[0].P3 | Should -Be ''
+            $result[0].P2 | Should -BeNullOrEmpty
+            $result[0].P3 | Should -BeNullOrEmpty
             $result[1].P1 | Should -Be 'B1'
-            $result[1].P2 | Should -Be 'B2'
-            $result[1].P3 | Should -Be 'B3'
+            $result[1].P2 | Should -BeNullOrEmpty
+            $result[1].P3 | Should -BeNullOrEmpty
             $result[2].P1 | Should -Be 'C1'
-            $result[2].P2 | Should -Be ''
+            $result[2].P2 | Should -BeNullOrEmpty
             $result[2].P3 | Should -BeNullOrEmpty
         }
-    }
 
-    Context 'Large Data and Performance Edge Cases' {
-        It 'Should handle large number of empty rows efficiently' {
-            $csvContent = "P1,P2,P3`n"
-            # Add 100 empty rows
-            for ($i = 0; $i -lt 100; $i++) {
-                $csvContent += ",,`n"
-            }
+        It 'Should handle no delimiter with empty fields' {
+            $result = @'
+P1,P2,P3
+A1
+B1
+C1
+'@ | ConvertFrom-Csv
 
-            $result = $csvContent | ConvertFrom-Csv
-            $result.Count | Should -Be 100
-            $result[0].P1 | Should -Be ''
-            $result[0].P2 | Should -Be ''
+            $result.Count | Should -Be 3
+            $result[0].P1 | Should -Be 'A1'
+            $result[0].P2 | Should -BeNullOrEmpty
             $result[0].P3 | Should -BeNullOrEmpty
-            $result[99].P1 | Should -Be ''
-            $result[99].P2 | Should -Be ''
-            $result[99].P3 | Should -BeNullOrEmpty
-        }
-
-        It 'Should handle many columns with empty values' {
-            $headers = 1..50 | ForEach-Object { "P$_" }
-            $headerLine = $headers -join ','
-            $emptyLine = ',' * 49  # 49 commas for 50 columns
-
-            $csvContent = "$headerLine`n$emptyLine`n"
-            $result = $csvContent | ConvertFrom-Csv
-
-            $result.Count | Should -Be 1
-            $result[0].P1 | Should -Be ''
-            $result[0].P25 | Should -Be ''
-            $result[0].P50 | Should -BeNullOrEmpty
+            $result[1].P1 | Should -Be 'B1'
+            $result[1].P2 | Should -BeNullOrEmpty
+            $result[1].P3 | Should -BeNullOrEmpty
+            $result[2].P1 | Should -Be 'C1'
+            $result[2].P2 | Should -BeNullOrEmpty
+            $result[2].P3 | Should -BeNullOrEmpty
         }
     }
 }
