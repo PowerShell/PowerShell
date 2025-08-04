@@ -276,14 +276,15 @@ B1,B2
 ,
 '@ | ConvertFrom-Csv -Header P1, P2
 
-            $result.Count | Should -Be 3  # Changed from 4 to 3
+            $result.Count | Should -Be 4
             $result[0].P1 | Should -Be ''
             $result[0].P2 | Should -Be ''
             $result[1].P1 | Should -Be 'A1'
             $result[1].P2 | Should -Be 'A2'
             $result[2].P1 | Should -Be 'B1'
             $result[2].P2 | Should -Be 'B2'
-            # Removed the fourth assertion since trailing empty line isn't processed
+            $result[3].P1 | Should -Be ''
+            $result[3].P2 | Should -BeNullOrEmpty
         }
 
         It 'Should handle whitespace-only fields' {

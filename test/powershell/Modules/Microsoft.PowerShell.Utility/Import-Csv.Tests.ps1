@@ -377,13 +377,15 @@ B1,B2
 '@ | Set-Content -Path $csvFile -NoNewline
             $result = Import-Csv -Path $csvFile -Header P1, P2
 
-            $result.Count | Should -Be 3
+            $result.Count | Should -Be 4
             $result[0].P1 | Should -Be ''
             $result[0].P2 | Should -Be ''
             $result[1].P1 | Should -Be 'A1'
             $result[1].P2 | Should -Be 'A2'
             $result[2].P1 | Should -Be 'B1'
             $result[2].P2 | Should -Be 'B2'
+            $result[3].P1 | Should -Be ''
+            $result[3].P2 | Should -BeNullOrEmpty
         }
     }
 
