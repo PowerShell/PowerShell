@@ -10,8 +10,8 @@
 src/System.Management.Automation/security/wldpNativeMethods.cs @TravisEz13 @seeminglyscience
 
 # Area: CI Build
-.github/workflows    @PowerShell/powershell-maintainers
-.github/actions      @PowerShell/powershell-maintainers
+.github/workflows    @PowerShell/powershell-maintainers @jshigetomi
+.github/actions      @PowerShell/powershell-maintainers @jshigetomi 
 
 # Now, areas that should have paths or filters, although we might not have them defined
 # According to the docs, order here must be by precedence of the filter, with later rules overwritting
@@ -53,13 +53,13 @@ src/System.Management.Automation/engine/remoting    @daxian-dbw @TravisEz13
 
 # Areas: Build
 # Must be last
-*.config   @PowerShell/powershell-maintainers 
-*.props    @PowerShell/powershell-maintainers 
-*.yml      @PowerShell/powershell-maintainers 
-*.csproj   @PowerShell/powershell-maintainers 
-build.*    @PowerShell/powershell-maintainers 
-tools/     @PowerShell/powershell-maintainers 
-# docker/    @PowerShell/powershell-maintainers 
+*.config   @PowerShell/powershell-maintainers @jshigetomi
+*.props    @PowerShell/powershell-maintainers @jshigetomi
+*.yml      @PowerShell/powershell-maintainers @jshigetomi
+*.csproj   @PowerShell/powershell-maintainers @jshigetomi
+build.*    @PowerShell/powershell-maintainers @jshigetomi
+tools/     @PowerShell/powershell-maintainers @jshigetomi
+# docker/    @PowerShell/powershell-maintainers @jshigetomi
 
 # Area: Compliance
 tools/terms    @TravisEz13

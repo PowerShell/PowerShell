@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - release/**
+      - github-mirror
     paths:
       - "**"
       - "!.vsts-ci/misc-analysis.yml"
@@ -16,6 +17,8 @@ on:
     branches:
       - master
       - release/**
+      - github-mirror
+
 # Path filters for PRs need to go into the changes job
 
 concurrency:
@@ -43,6 +46,8 @@ jobs:
     # Required permissions
     permissions:
       pull-requests: read
+      contents: read
+
     # Set job outputs to values from filter step
     outputs:
       source: ${{ steps.filter.outputs.source }}
@@ -50,23 +55,11 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
 
-        # For pull requests it's not necessary to checkout the code
-      - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.2.0
+      - name: Change Detection
         id: filter
+        uses: "./.github/actions/infrastructure/path-filters"
         with:
-          list-files: json
-          filters: .github/action-filters.yml
-
-      - name: Capture outputs
-        run: |
-          "source: ${{ steps.filter.outputs.source }}"
-          "github: ${{ steps.filter.outputs.github }}"
-          "tools: ${{ steps.filter.outputs.tools }}"
-          "props: ${{ steps.filter.outputs.props }}"
-          "tests: ${{ steps.filter.outputs.tests }}"
-          "mainSource: ${{ steps.filter.outputs.mainSource }}"
-          "buildModule: ${{ steps.filter.outputs.buildModule }}"
-        shell: pwsh
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   ci_build:
     name: Build PowerShell

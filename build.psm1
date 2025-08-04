@@ -179,6 +179,8 @@ function Get-EnvironmentInformation
         $environment += @{'IsUbuntu16' = $environment.IsUbuntu -and $LinuxInfo.VERSION_ID -match '16.04'}
         $environment += @{'IsUbuntu18' = $environment.IsUbuntu -and $LinuxInfo.VERSION_ID -match '18.04'}
         $environment += @{'IsUbuntu20' = $environment.IsUbuntu -and $LinuxInfo.VERSION_ID -match '20.04'}
+        $environment += @{'IsUbuntu22' = $environment.IsUbuntu -and $LinuxInfo.VERSION_ID -match '22.04'}
+        $environment += @{'IsUbuntu24' = $environment.IsUbuntu -and $LinuxInfo.VERSION_ID -match '24.04'}
         $environment += @{'IsCentOS' = $LinuxInfo.ID -match 'centos' -and $LinuxInfo.VERSION_ID -match '7'}
         $environment += @{'IsFedora' = $LinuxInfo.ID -match 'fedora' -and $LinuxInfo.VERSION_ID -ge 24}
         $environment += @{'IsOpenSUSE' = $LinuxInfo.ID -match 'opensuse'}
@@ -1229,6 +1231,7 @@ function Get-PesterTag {
 # testing PowerShell remote custom connections.
 function Publish-CustomConnectionTestModule
 {
+    Write-LogGroupStart -Title "Publish-CustomConnectionTestModule"
     $sourcePath = "${PSScriptRoot}/test/tools/NamedPipeConnection"
     $outPath = "${PSScriptRoot}/test/tools/NamedPipeConnection/out/Microsoft.PowerShell.NamedPipeConnection"
     $publishPath = "${PSScriptRoot}/test/tools/Modules"
@@ -1253,6 +1256,8 @@ function Publish-CustomConnectionTestModule
     finally {
         Pop-Location
     }
+
+    Write-LogGroupEnd -Title "Publish-CustomConnectionTestModule"
 }
 
 function Publish-PSTestTools {
@@ -1262,6 +1267,7 @@ function Publish-PSTestTools {
         $runtime
     )
 
+    Write-LogGroupStart -Title "Publish-PSTestTools"
     Find-Dotnet
 
     $tools = @(
@@ -1333,6 +1339,7 @@ function Publish-PSTestTools {
 
     # Publish the Microsoft.PowerShell.NamedPipeConnection module
     Publish-CustomConnectionTestModule
+    Write-LogGroupEnd -Title "Publish-PSTestTools"
 }
 
 function Get-ExperimentalFeatureTests {
@@ -1820,12 +1827,16 @@ function Show-PSPesterError
         throw 'Unknown Show-PSPester parameter set'
     }
 
-    Write-Log -isError -message ("Description: " + $description)
-    Write-Log -isError -message ("Name:        " + $name)
-    Write-Log -isError -message "message:"
-    Write-Log -isError -message $message
-    Write-Log -isError -message "stack-trace:"
-    Write-Log -isError -message $stack_trace
+    # Empty line at the end is intentional formatting
+    Write-Log -isError -message @"
+Description: $description
+Name:        $name
+message:
+$message
+stack-trace:
+$stack_trace
+
+"@
 
 }
 
@@ -1865,13 +1876,17 @@ function Test-XUnitTestResults
         $message = $failure.failure.message
         $stack_trace = $failure.failure.'stack-trace'
 
-        Write-Log -isError -message ("Description: " + $description)
-        Write-Log -isError -message ("Name:        " + $name)
-        Write-Log -isError -message "message:"
-        Write-Log -isError -message $message
-        Write-Log -isError -message "stack-trace:"
-        Write-Log -isError -message $stack_trace
-        Write-Log -isError -message " "
+        # Empty line at the end is intentional formatting
+        Write-Log -isError -message         @"
+        Description: $description
+        Name:        $name
+        message:
+        $message
+        stack-trace:
+        $stack_trace
+
+"@
+
     }
 
     throw "$($results.assemblies.assembly.failed) tests failed"
@@ -1907,7 +1922,8 @@ function Test-PSPesterResults
         $x = [xml](Get-Content -Raw $testResultsFile)
         if ([int]$x.'test-results'.failures -gt 0)
         {
-            Write-Log -isError -message "TEST FAILURES"
+            Write-LogGroupStart -Title 'TEST FAILURES'
+
             # switch between methods, SelectNode is not available on dotnet core
             if ( "System.Xml.XmlDocumentXPathExtensions" -as [Type] )
             {
@@ -1921,6 +1937,8 @@ function Test-PSPesterResults
             {
                 Show-PSPesterError -testFailure $testfail
             }
+
+            Write-LogGroupEnd -Title 'TEST FAILURES'
             throw "$($x.'test-results'.failures) tests in $TestArea failed"
         }
     }
@@ -1941,11 +1959,12 @@ function Test-PSPesterResults
         }
         elseif ($ResultObject.FailedCount -gt 0)
         {
-            Write-Log -isError -message 'TEST FAILURES'
+            Write-LogGroupStart -Title 'TEST FAILURES'
 
             $ResultObject.TestResult | Where-Object {$_.Passed -eq $false} | ForEach-Object {
                 Show-PSPesterError -testFailureObject $_
             }
+            Write-LogGroupEnd -Title 'TEST FAILURES'
 
             throw "$($ResultObject.FailedCount) tests in $TestArea failed"
         }
@@ -2692,7 +2711,13 @@ function script:Write-Log
     )
     if ($isError)
     {
-        Write-Host -Foreground Red $message
+        if ($env:GITHUB_WORKFLOW) {
+            # https://github.com/actions/toolkit/issues/193#issuecomment-605394935
+            $escapedMessage = $message -replace "`n", "%0A" -replace "`r"
+            Write-Host "::error::${escapedMessage}"
+        } else {
+            Write-Host -Foreground Red $message
+        }
     }
     else
     {
@@ -2701,6 +2726,59 @@ function script:Write-Log
     #reset colors for older package to at return to default after error message on a compilation error
     [console]::ResetColor()
 }
+
+function script:Write-LogGroup {
+    param
+    (
+        [Parameter(Position = 0, Mandatory)]
+        [ValidateNotNullOrEmpty()]
+        [string[]] $Message,
+        [Parameter(Mandatory)]
+        [string] $Title
+    )
+
+
+    Write-LogGroupStart -Title $Title
+
+    foreach ($line in $Message) {
+        Write-Log -Message $line
+    }
+
+    Write-LogGroupEnd -Title $Title
+}
+
+$script:logGroupColor = [System.ConsoleColor]::Cyan
+
+function script:Write-LogGroupStart {
+    param
+    (
+        [Parameter(Mandatory)]
+        [string] $Title
+    )
+
+    if ($env:GITHUB_WORKFLOW) {
+        Write-Host "::group::${Title}"
+    }
+    else {
+        Write-Host -ForegroundColor $script:logGroupColor "=== BEGIN: $Title ==="
+    }
+}
+
+function script:Write-LogGroupEnd {
+    param
+    (
+        [Parameter(Mandatory)]
+        [string] $Title
+    )
+
+    if ($env:GITHUB_WORKFLOW) {
+        Write-Host "::endgroup::"
+    }
+    else {
+        Write-Host -ForegroundColor $script:logGroupColor "==== END: $Title ===="
+    }
+}
+
 function script:precheck([string]$command, [string]$missedMessage) {
     $c = Get-Command $command -ErrorAction Ignore
     if (-not $c) {
@@ -3598,6 +3676,14 @@ function New-NugetConfigFile {
     $content += $newLine + $nugetConfigFooterTemplate
 
     Set-Content -Path (Join-Path $Destination 'nuget.config') -Value $content -Force
+
+    # Set the nuget.config file to be skipped by git
+    push-location $Destination
+    try {
+        git update-index --skip-worktree (Join-Path $Destination 'nuget.config')
+    } finally {
+        pop-location
+    }
 }
 
 function Clear-PipelineNugetAuthentication {
@@ -3619,22 +3705,50 @@ function Set-PipelineNugetAuthentication {
 
 function Set-CorrectLocale
 {
+    Write-LogGroupStart -Title "Set-CorrectLocale"
+
     if (-not $IsLinux)
     {
+        Write-LogGroupEnd -Title "Set-CorrectLocale"
         return
     }
 
     $environment = Get-EnvironmentInformation
-    if ($environment.IsUbuntu -and $environment.IsUbuntu20)
-    {
+    if ($environment.IsUbuntu16 -or $environment.IsUbuntu18) {
+        Write-Verbose -Message "Don't set locale before Ubuntu 20" -Verbose
+        Write-LogGroupEnd -Title "Set-CorrectLocale"
+        Write-Locale
+        return
+    }
+
+    if ($environment.IsUbuntu) {
+        Write-Log -Message "Setting locale to en_US.UTF-8"
         $env:LC_ALL = 'en_US.UTF-8'
         $env:LANG = 'en_US.UTF-8'
         sudo locale-gen $env:LANG
-        sudo update-locale
+        if ($environment.IsUbuntu20) {
+            Write-Log -Message "Updating locale for Ubuntu 20"
+            sudo update-locale
+        } else {
+            Write-Log -Message "Updating locale for Ubuntu 22 and newer"
+            sudo update-locale LANG=$env:LANG LC_ALL=$env:LC_ALL
+        }
+    }
+
+    Write-LogGroupEnd -Title "Set-CorrectLocale"
+    Write-Locale
+
+}
+
+function Write-Locale {
+    if (-not $IsLinux -and -not $IsMacOS) {
+        Write-Verbose -Message "only supported on Linux and macOS" -Verbose
+        return
     }
 
     # Output the locale to log it
-    locale
+    $localOutput = & locale
+    Write-LogGroup -Title "Capture Locale" -Message $localOutput
 }
 
 function Install-AzCopy {

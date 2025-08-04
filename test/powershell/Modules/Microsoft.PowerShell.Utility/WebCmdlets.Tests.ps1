@@ -284,7 +284,7 @@ function ExecuteWebRequest {
     return $result
 }
 
-[string] $verboseEncodingPrefix = 'Content encoding: '
+[string] $debugEncodingPrefix = 'WebResponse content encoding: '
 # This function calls Invoke-WebRequest with the given uri and
 # parses the verbose output to determine the encoding used for the content.
 function ExecuteRestMethod {
@@ -297,37 +297,39 @@ function ExecuteRestMethod {
         $UseBasicParsing
     )
     $result = @{Output = $null; Error = $null; Encoding = $null; Content = $null}
-    $verbosePreferenceSave = $VerbosePreference
-    $VerbosePreference = 'Continue'
+    $debugPreferenceSave = $DebugPreference
+    $DebugPreference = 'Continue'
     try {
-        $verboseFile = Join-Path $TestDrive -ChildPath ExecuteRestMethod.verbose.txt
-        $result.Output = Invoke-RestMethod -Uri $Uri -UseBasicParsing:$UseBasicParsing.IsPresent -Verbose 4>$verboseFile
+        $debugFile = Join-Path $TestDrive -ChildPath ExecuteRestMethod.debug.txt
+        $result.Output = Invoke-RestMethod -Uri $Uri -UseBasicParsing:$UseBasicParsing.IsPresent 5>$debugFile
         $result.Content = $result.Output
 
-        if (Test-Path -Path $verboseFile) {
-            $result.Verbose = Get-Content -Path $verboseFile
-            foreach ($item in $result.Verbose) {
+        # Invoke-RestMethod does not return encoding as part of an object, only in debug output, so we parse the debug output for the purposes of verifying the test.
+        # This debug output is defined in InvokeRestMethodCommand.Common.cs ProcessResponse()
+        if (Test-Path -Path $debugFile) {
+            $result.Debug = Get-Content -Path $debugFile
+            foreach ($item in $result.Debug) {
                 $line = $item.Trim()
-                if ($line.StartsWith($verboseEncodingPrefix)) {
-                    $encodingName = $item.SubString($verboseEncodingPrefix.Length).Trim()
+                if ($line.StartsWith($debugEncodingPrefix)) {
+                    $encodingName = [int]::Parse($item.SubString($EncodingPrefix.Length).Split('CodePage: ')[1].Trim())
                     $result.Encoding = [System.Text.Encoding]::GetEncoding($encodingName)
                     break
                 }
             }
-            if ($result.Encoding -eq $null) {
-                throw "Encoding not found in verbose output. Lines: $($result.Verbose.Count) Content:$($result.Verbose)"
+            if ($null -eq $result.Encoding) {
+                throw "Encoding not found in debug output. Lines: $($result.Debug.Count) Content:$($result.Debug)"
             }
         }
 
-        if ($result.Verbose -eq $null) {
-            throw "No verbose output was found"
+        if ($null -eq $result.Debug) {
+            throw "No debug output was found"
         }
     } catch {
         $result.Error = $_ | Select-Object * | Out-String
     } finally {
-        $VerbosePreference = $verbosePreferenceSave
-        if (Test-Path -Path $verboseFile) {
-            Remove-Item -Path $verboseFile -ErrorAction SilentlyContinue
+        $DebugPreference = $debugPreferenceSave
+        if (Test-Path -Path $debugFile) {
+            Remove-Item -Path $debugFile -ErrorAction SilentlyContinue
         }
     }
 

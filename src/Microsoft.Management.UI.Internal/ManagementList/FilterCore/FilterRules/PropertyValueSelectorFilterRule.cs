@@ -16,7 +16,6 @@ namespace Microsoft.Management.UI.Internal
     /// The generic parameter.
     /// </typeparam>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
-    [Serializable]
     public class PropertyValueSelectorFilterRule<T> : SelectorFilterRule where T : IComparable
     {
         #region Properties
@@ -79,6 +78,17 @@ namespace Microsoft.Management.UI.Internal
                 this.AvailableRules.AvailableValues.Add(rule);
             }
 
+            this.AvailableRules.DisplayNameConverter = new FilterRuleToDisplayNameConverter();
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PropertyValueSelectorFilterRule{T}"/> class.
+        /// </summary>
+        /// <param name="source">The source to initialize from.</param>
+        public PropertyValueSelectorFilterRule(PropertyValueSelectorFilterRule<T> source)
+            : base(source)
+        {
+            this.PropertyName = source.PropertyName;
             this.AvailableRules.DisplayNameConverter = new FilterRuleToDisplayNameConverter();
         }
 
