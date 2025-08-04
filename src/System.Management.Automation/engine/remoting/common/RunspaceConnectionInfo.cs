@@ -2212,6 +2212,7 @@ namespace System.Management.Automation.Runspaces
                     SearchResolutionOptions.None,
                     CommandOrigin.Internal,
                     context) as ApplicationInfo;
+
                 if (cmdInfo != null)
                 {
                     filePath = cmdInfo.Path;
