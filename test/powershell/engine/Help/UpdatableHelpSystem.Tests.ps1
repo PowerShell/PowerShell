@@ -47,7 +47,7 @@ else
 }
 
 # default values for system modules
-[string] $myUICulture = 'en-US'   
+[string] $myUICulture = 'en-US'
 [string] $HelpInstallationPath = Join-Path $PSHOME $myUICulture
 [string] $HelpInstallationPathHome = Join-Path $userHelpRoot $myUICulture
 
@@ -118,7 +118,7 @@ else
     }
 
     "Microsoft.PowerShell.Utility" = @{
-        HelpFiles            = "Microsoft.PowerShell.Commands.Utility.dll-Help.xml", "Microsoft.PowerShell.Utility-help.xml"
+        HelpFiles            = "Microsoft.PowerShell.Commands.Utility.dll-Help.xml"
         HelpInfoFiles        = "Microsoft.PowerShell.Utility_1da87e53-152b-403e-98dc-74d7b4d63d59_HelpInfo.xml"
         CompressedFiles      = "Microsoft.PowerShell.Utility_1da87e53-152b-403e-98dc-74d7b4d63d59_en-US_helpcontent$extension"
         HelpInstallationPath = $HelpInstallationPath
@@ -216,7 +216,7 @@ function RunUpdateHelpTests
 
                 # Delete the whole help directory
                 Remove-Item ($moduleHelpPath) -Recurse
- 
+
                 [hashtable] $UICultureParam = $(if ((Get-UICulture).Name -ne $myUICulture) { @{ UICulture = $myUICulture } } else { @{} })
                 [hashtable] $sourcePathParam = $(if ($useSourcePath) { @{ SourcePath = Join-Path $PSScriptRoot assets } } else { @{} })
                 Update-Help -Module:$moduleName -Force @UICultureParam @sourcePathParam -Scope:$updateScope
