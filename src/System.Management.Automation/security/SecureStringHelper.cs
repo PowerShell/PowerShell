@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="data">Input data.</param>
         /// <returns>A SecureString .</returns>
-        private static SecureString New(byte[] data)
+        internal static SecureString New(byte[] data)
         {
             if ((data.Length % 2) != 0)
             {

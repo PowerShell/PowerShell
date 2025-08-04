@@ -5,7 +5,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Management.Automation.Remoting;
-using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Security;
 using System.Security.Cryptography;
@@ -663,26 +662,9 @@ namespace System.Management.Automation.Internal
         /// </summary>
         private static byte[] GetBytesFromSecureString(SecureString secureString)
         {
-            byte[] data = null;
-            IntPtr ptr = Marshal.SecureStringToCoTaskMemUnicode(secureString);
-
-            if (ptr != IntPtr.Zero)
-            {
-                try
-                {
-                    data = new byte[secureString.Length * 2];
-                    for (int i = 0; i < data.Length; i++)
-                    {
-                        data[i] = Marshal.ReadByte(ptr, i);
-                    }
-                }
-                finally
-                {
-                    Marshal.ZeroFreeCoTaskMemUnicode(ptr);
-                }
-            }
-
-            return data;
+            return secureString is null
+                ? null
+                : Microsoft.PowerShell.SecureStringHelper.GetData(secureString);
         }
 
         /// <summary>
@@ -692,29 +674,15 @@ namespace System.Management.Automation.Internal
         {
             Dbg.Assert(data is not null, "The passed-in data cannot be null.");
 
-            ushort value;
-            SecureString secureString = new();
-
             try
             {
-                for (int i = 0; i < data.Length; i += 2)
-                {
-                    value = (ushort)(data[i] + (ushort)(data[i + 1] << 8));
-                    secureString.AppendChar((char)value);
-                    value = 0;
-                }
+                return Microsoft.PowerShell.SecureStringHelper.New(data);
             }
             finally
             {
-                // if there was an exception for whatever reason,
-                // clear the last value store in Value
-                value = 0;
-
                 // zero out the contents
                 Array.Clear(data);
             }
-
-            return secureString;
         }
 
         /// <summary>
