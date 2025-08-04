@@ -2222,9 +2222,11 @@ namespace System.Management.Automation.Runspaces
             {
                 // A Runspace may not be present in the TLS in SDK hosted apps
                 // or if running in another thread without a Runspace. While
-                // ProcessStartInfo can lookup the full path in PATH, we set
-                // the cwd to the parent directory of the found executable so
-                // we do a manual lookup here.
+                // 'ProcessStartInfo' can lookup the full path in PATH, it searches
+                // the process' working directory first. 'LookupCommandInfo' does
+                // not search the process' working directory and we want to keep that
+                // behavior. We also get the parent dir of the full path to set as the
+                // new WorkingDirectory. So, we do a manual lookup here only in PATH.
                 string[] entries = Environment.GetEnvironmentVariable("PATH")?.Split(
                     Path.PathSeparator,
                     StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries) ?? [];
