@@ -568,7 +568,7 @@ C1
         It 'Should handle large number of empty rows efficiently' {
             $csvFile = Join-Path $TestDrive -ChildPath $((New-Guid).Guid)
             $csvContent = "P1,P2,P3`n"
-            # Add 100 empty rows
+
             for ($i = 0; $i -lt 100; $i++) {
                 $csvContent += ",,`n"
             }
@@ -588,7 +588,7 @@ C1
             $csvFile = Join-Path $TestDrive -ChildPath $((New-Guid).Guid)
             $headers = 1..50 | ForEach-Object { "P$_" }
             $headerLine = $headers -join ','
-            $emptyLine = ',' * 49  # 49 commas for 50 columns
+            $emptyLine = ',' * 49
 
             $csvContent = "$headerLine`n$emptyLine`n"
             $csvContent | Set-Content -Path $csvFile -NoNewline

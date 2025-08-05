@@ -301,7 +301,7 @@ P1,P2,P3
             $result[0].P3 | Should -Be '   '
             $result[1].P1 | Should -Be ''
             $result[1].P2 | Should -Be ''
-            $result[1].P3 | Should -Be ''  # Changed from ' ' to ''
+            $result[1].P3 | Should -Be ''
             $result[2].P1 | Should -Be ''
             $result[2].P2 | Should -Be ''
             $result[2].P3 | Should -Be ''
@@ -317,10 +317,10 @@ Line2"
 '@ | ConvertFrom-Csv
 
             $result.Count | Should -Be 2
-            $result[0].P1 | Should -Be "Line1`r`nLine2"  # Changed to include \r\n
+            $result[0].P1 | Should -Be "Line1`r`nLine2"
             $result[0].P2 | Should -Be 'Value2'
             $result[1].P1 | Should -Be 'Value3'
-            $result[1].P2 | Should -Be "Line1`r`nLine2"  # Changed to include \r\n
+            $result[1].P2 | Should -Be "Line1`r`nLine2"
         }
 
         It 'Should handle escaped quotes within fields' {
@@ -334,7 +334,7 @@ P1,P2
             $result[0].P1 | Should -Be 'Value with "quotes"'
             $result[0].P2 | Should -Be 'Normal value'
             $result[1].P1 | Should -Be 'Another "quoted" value'
-            $result[1].P2 | Should -Be ''  # Changed from '"' to ''
+            $result[1].P2 | Should -Be ''
         }
 
         It 'Should handle tab delimiter with empty fields' {
@@ -347,10 +347,10 @@ C1
 
             $result.Count | Should -Be 3
             $result[0].P1 | Should -Be 'A1'
-            $result[0].P2 | Should -BeNullOrEmpty  # Changed from Should -Be '' to Should -BeNullOrEmpty
-            $result[0].P3 | Should -BeNullOrEmpty  # Changed from Should -Be '' to Should -BeNullOrEmpty
+            $result[0].P2 | Should -BeNullOrEmpty
+            $result[0].P3 | Should -BeNullOrEmpty
             $result[2].P1 | Should -Be 'C1'
-            $result[2].P2 | Should -BeNullOrEmpty  # Changed from Should -Be '' to Should -BeNullOrEmpty
+            $result[2].P2 | Should -BeNullOrEmpty
             $result[2].P3 | Should -BeNullOrEmpty
         }
 
