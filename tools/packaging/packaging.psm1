@@ -609,6 +609,15 @@ function Start-PSPackage {
                 }
             }
             'deb' {
+                # Determine the host architecture dynamically
+                $hostArchitecture = switch ($Runtime) {
+                    'linux-arm64' { 'arm64' }
+                    'linux-arm'   { 'armhf' } # Assuming arm32 is armhf for Debian
+                    'linux-ppc64le' { 'ppc64el' } # Debian uses 'ppc64el' for ppc64le
+                    'linux-x64'   { 'amd64' }
+                    default       { throw "Unsupported runtime architecture: $Runtime" }
+                }
+
                 $Arguments = @{
                     Type = 'deb'
                     PackageSourcePath = $Source
@@ -617,7 +626,7 @@ function Start-PSPackage {
                     Force = $Force
                     NoSudo = $NoSudo
                     LTS = $LTS
-                    HostArchitecture = "amd64"
+                    HostArchitecture = $hostArchitecture
                 }
                 foreach ($Distro in $Script:DebianDistributions) {
                     $Arguments["Distribution"] = $Distro
@@ -1035,7 +1044,7 @@ function New-UnixPackage {
         # Host architecture values allowed for rpm type packages include: x86_64, aarch64, native, all, noarch, any
         # Host architecture values allowed for osxpkg type packages include: x86_64, arm64
         [string]
-        [ValidateSet("x86_64", "amd64", "aarch64", "arm64", "native", "all", "noarch", "any")]
+        [ValidateSet("x86_64", "amd64", "aarch64", "arm64", "ppc64el", "native", "all", "noarch", "any")]
         $HostArchitecture,
 
         [Switch]
