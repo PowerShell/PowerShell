@@ -121,7 +121,8 @@
   },
   {
     "Pattern": "D3DCompiler_47_cor3.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": ["x64, x86"]
   },
   {
     "Pattern": "de/Microsoft.CodeAnalysis.CSharp.resources.dll",
@@ -1900,6 +1901,10 @@
     "FileType": "NonProduct"
   },
   {
+    "Pattern": "ref\\System.Net.ServerSentEvents.dll",
+    "FileType": "NonProduct"
+  },
+  {
     "Pattern": "ru/Microsoft.CodeAnalysis.CSharp.resources.dll",
     "FileType": "NonProduct"
   },
@@ -2577,6 +2582,10 @@
   },
   {
     "Pattern": "System.Net.Security.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "System.Net.ServerSentEvents.dll",
     "FileType": "NonProduct"
   },
   {

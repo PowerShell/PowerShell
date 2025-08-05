@@ -15,9 +15,29 @@ namespace Microsoft.Management.UI.Internal
     /// classes to support validation via the IDataErrorInfo interface.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
-    [Serializable]
-    public abstract class ValidatingValueBase : IDataErrorInfo, INotifyPropertyChanged
+    public abstract class ValidatingValueBase : IDataErrorInfo, INotifyPropertyChanged, IDeepCloneable
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ValidatingValueBase"/> class.
+        /// </summary>
+        protected ValidatingValueBase()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the  <see cref="ValidatingValueBase"/> class.
+        /// </summary>
+        /// <param name="source">The source to initialize from.</param>
+        protected ValidatingValueBase(ValidatingValueBase source)
+        {
+            ArgumentNullException.ThrowIfNull(source);
+            validationRules.EnsureCapacity(source.validationRules.Count);
+            foreach (var rule in source.validationRules)
+            {
+                validationRules.Add((DataErrorInfoValidationRule)rule.DeepClone());
+            }
+        }
+
         #region Properties
 
         #region ValidationRules
@@ -26,7 +46,6 @@ namespace Microsoft.Management.UI.Internal
         private ReadOnlyCollection<DataErrorInfoValidationRule> readonlyValidationRules;
         private bool isValidationRulesCollectionDirty = true;
 
-        [field: NonSerialized]
         private DataErrorInfoValidationResult cachedValidationResult;
 
         /// <summary>
@@ -120,7 +139,6 @@ namespace Microsoft.Management.UI.Internal
         /// <remarks>
         /// The listeners attached to this event are not serialized.
         /// </remarks>
-        [field: NonSerialized]
         public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion PropertyChanged
@@ -128,6 +146,9 @@ namespace Microsoft.Management.UI.Internal
         #endregion Events
 
         #region Public Methods
+
+        /// <inheritdoc cref="IDeepCloneable.DeepClone()" />
+        public abstract object DeepClone();
 
         #region AddValidationRule
 

@@ -17,8 +17,8 @@ parameters: # parameters are shown up in ADO UI in a build queue time
     displayName: Skip Signing
     type: string
     default: 'NO'
-  - name: SkipPMCPublish
-    displayName: Skip PMC Publish
+  - name: SkipPublish
+    displayName: Skip Publishing to Nuget
     type: boolean
     default: false
   - name: SkipPSInfraInstallers
@@ -116,16 +116,10 @@ extends:
       tsaOptionsFile: .config\tsaoptions.json
 
     stages:
-    - stage: setReleaseTagAndUploadTools
-      displayName: 'Set Release Tag and Upload Tools'
+    - stage: setReleaseTagAndChangelog
+      displayName: 'Set Release Tag and Upload Changelog'
       jobs:
-      - template: /.pipelines/templates/release-SetTagAndTools.yml@self
-
-    - stage: msixbundle
-      displayName: 'Create MSIX Bundle'
-      dependsOn: []
-      jobs:
-      - template: /.pipelines/templates/release-create-msix.yml@self
+      - template: /.pipelines/templates/release-SetTagAndChangelog.yml@self
 
     - stage: validateSdk
       displayName: 'Validate SDK'
@@ -269,7 +263,6 @@ extends:
         - fxdpackages
         - gbltool
         - validateSdk
-        - msixbundle
 
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
@@ -280,19 +273,21 @@ extends:
             Update and merge the changelog for the release.
             This step is required for creating GitHub draft release.
 
-    - stage: PublishGitHubRelease
-      displayName: Publish GitHub Release
+    - stage: PublishGitHubReleaseAndNuget
+      displayName: Publish GitHub and Nuget Release
       dependsOn: 
-        - setReleaseTagAndUploadTools
+        - setReleaseTagAndChangelog
         - UpdateChangeLog
       variables:
         ob_release_environment: Production
       jobs:
-      - template: /.pipelines/templates/release-githubtasks.yml@self
-    
+      - template: /.pipelines/templates/release-githubNuget.yml@self
+        parameters:
+          skipPublish: ${{ parameters.SkipPublish }}
+
     - stage: PushGitTagAndMakeDraftPublic
       displayName: Push Git Tag and Make Draft Public
-      dependsOn: PublishGitHubRelease
+      dependsOn: PublishGitHubReleaseAndNuget
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
@@ -317,19 +312,7 @@ extends:
       jobs:
       - template: /.pipelines/templates/release-MakeBlobPublic.yml@self
         parameters:
-          SkipPSInfraInstallers: ${{ parameters.SkipPSInfraInstallers }}         
-  
-    - stage: PublishNuGet
-      displayName: Publish NuGet
-      dependsOn:
-        - setReleaseTagAndUploadTools
-        - PushGitTagAndMakeDraftPublic
-      variables:
-        ob_release_environment: Production
-      jobs:
-      - template: /.pipelines/templates/release-publish-nuget.yml@self
-        parameters:
-          skipPublish: true
+          SkipPSInfraInstallers: ${{ parameters.SkipPSInfraInstallers }}
 
     - stage: PublishPMC
       displayName: Publish PMC
@@ -341,17 +324,6 @@ extends:
           jobName: ReleaseToPMC
           instructions: |
             Run PowerShell-Release-Official-Azure.yml pipeline to publish to PMC
-
-    - stage: ReleaseDocker
-      dependsOn: PushGitTagAndMakeDraftPublic
-      displayName: 'Docker Release'
-      jobs:
-      - template: /.pipelines/templates/approvalJob.yml@self
-        parameters:
-          displayName: Start Docker Release
-          jobName: StartDockerRelease
-          instructions: |
-            Kickoff docker release
 
     - stage: UpdateDotnetDocker
       dependsOn: PushGitTagAndMakeDraftPublic
@@ -365,7 +337,7 @@ extends:
             Create PR for updating dotnet-docker images to use latest PowerShell version.
             1. Fork and clone https://github.com/dotnet/dotnet-docker.git
             2. git checkout upstream/nightly -b updatePS
-            3. dotnet run --project .\eng\update-dependencies\ -- <dotnetversion> --product-version powershell=<powershellversion> --compute-shas
+            3. dotnet run --project .\eng\update-dependencies\ specific <dotnetversion> --product-version powershell=<powershellversion> --compute-shas
             4. create PR targeting nightly branch
 
     - stage: UpdateWinGet
@@ -396,10 +368,11 @@ extends:
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
-          displayName: Start vPack Release pipeline
+          displayName: Start 2 vPack Release pipelines
           jobName: PublishVPack
           instructions: |
-            Kick off vPack release pipeline
+            1. Kick off PowerShell-vPack-Official pipeline
+            2. Kick off PowerShell-MSIXBundle-VPack pipeline
 
     # Need to verify if the Az PS / CLI team still uses this. Skippinng for this release.
     # - stage: ReleaseDeps
@@ -423,7 +396,6 @@ extends:
     - stage: ChangesToMaster
       displayName: Ensure changes are in GH master
       dependsOn: 
-        - PublishNuGet 
         - PublishPMC
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
@@ -432,17 +404,6 @@ extends:
           jobName: MergeToMaster
           instructions: |
             Make sure that changes README.md and metadata.json are merged into master on GitHub.
-
-    - stage: ReleaseSnap
-      displayName: Release Snap
-      dependsOn: ChangesToMaster
-      jobs:
-      - template: /.pipelines/templates/approvalJob.yml@self
-        parameters:
-          displayName: Publish Snap
-          jobName: PublishSnapJob
-          instructions: |
-            Publish Snap
 
     - stage: ReleaseToMU
       displayName: Release to MU
@@ -459,7 +420,6 @@ extends:
       dependsOn: 
         - ReleaseToMU
         - ReleaseSymbols
-        - ReleaseSnap
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
