@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Host;
@@ -10,6 +11,7 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Management.Automation.Security;
 using System.Security;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
@@ -64,6 +66,16 @@ namespace Microsoft.PowerShell
         }
 
         #region constructor
+
+        /// <summary>
+        /// The EKU OID that identifies a certificate is from Azure Trusted Signing.
+        /// </summary>
+        private const string _azureTrustedSigningIdentifier = "1.3.6.1.4.1.311.97.1.0";
+
+        /// <summary>
+        /// The OID prefix that uniquely identifies a certificate issued by Azure Trusted Signing.
+        /// </summary>
+        private const string _azureTrustedSigningIdPrefix = "1.3.6.1.4.1.311.97.";
 
         // execution policy that dictates what can run in msh
         private ExecutionPolicy _executionPolicy;
@@ -217,7 +229,7 @@ namespace Microsoft.PowerShell
                     if (signature.Status == SignatureStatus.Valid)
                     {
                         // The file is signed by a trusted publisher
-                        if (IsTrustedPublisher(signature, path))
+                        if (IsTrustedPublisher(signature))
                         {
                             policyCheckPassed = true;
                         }
@@ -287,7 +299,7 @@ namespace Microsoft.PowerShell
                 if (signature.Status == SignatureStatus.Valid)
                 {
                     // The file is signed by a trusted publisher
-                    if (IsTrustedPublisher(signature, path))
+                    if (IsTrustedPublisher(signature))
                     {
                         policyCheckPassed = true;
                     }
@@ -350,7 +362,7 @@ namespace Microsoft.PowerShell
                         // The file is signed by a trusted publisher
                         if (signature.Status == SignatureStatus.Valid)
                         {
-                            if (IsTrustedPublisher(signature, path))
+                            if (IsTrustedPublisher(signature))
                             {
                                 policyCheckPassed = true;
                             }
@@ -431,13 +443,22 @@ namespace Microsoft.PowerShell
 #endif
         }
 
-        // Checks that a publisher is trusted by the system or is one of
-        // the signed product binaries
-        private static bool IsTrustedPublisher(Signature signature, string file)
+#nullable enable
+        /// <summary>
+        /// Checks if the publisher is trusted by checking whether the
+        /// certificate thumbprint is in the "Trusted Publishers" store or
+        /// the Azure Trusted Signer Publisher ID is present in the
+        /// "Trusted Publishers" store.
+        /// </summary>
+        /// <param name="signature">The signature to check.</param>
+        /// <returns>True if the publisher is trusted.</returns>
+        private static bool IsTrustedPublisher(Signature signature)
         {
             // Get the thumbprint of the current signature
             X509Certificate2 signerCertificate = signature.SignerCertificate;
             string thumbprint = signerCertificate.Thumbprint;
+
+            TryGetAzureTrustedSignerPublisherId(signerCertificate, out string? azurePublisherId);
 
             // See if it matches any in the list of trusted publishers
             X509Store trustedPublishers = new X509Store(StoreName.TrustedPublisher, StoreLocation.CurrentUser);
@@ -447,34 +468,102 @@ namespace Microsoft.PowerShell
             {
                 if (string.Equals(trustedCertificate.Thumbprint, thumbprint, StringComparison.OrdinalIgnoreCase))
                 {
-                    if (!IsUntrustedPublisher(signature, file))
-                    {
-                        return true;
-                    }
+                    // The certs match by thumbprint, check that the cert is
+                    // also not in the untrusted list either by thumbprint or
+                    // by Azure Trusted Signer Publisher ID.
+                    return !IsUntrustedPublisher(signerCertificate, azurePublisherId);
+                }
+                else if (azurePublisherId is not null &&
+                    TryGetAzureTrustedSignerPublisherId(trustedCertificate, out string? trustedIdentifier) &&
+                    azurePublisherId == trustedIdentifier)
+                {
+                    // The cert has the same Azure Trusted Signer Publisher ID,
+                    // check that the cert is also not in the untrusted list.
+                    // cert we use doesn't matter as we are checking by the ID
+                    // which will match both trustedCertificate and
+                    // signerCertificate.
+                    return !IsUntrustedPublisher(signerCertificate, azurePublisherId);
                 }
             }
 
             return false;
         }
 
-        private static bool IsUntrustedPublisher(Signature signature, string file)
+        /// <summary>
+        /// Checks if the publisher is untrusted by checking whether the same
+        /// certificate thumbprint is in the "Disallowed" store or if the
+        /// Azure Trusted Signer Publisher ID is present in any of the certs
+        /// in the "Disallowed" store.
+        /// </summary>
+        /// <param name="signerCertificate">The certificate to check by thumbprint.</param>
+        /// <param name="azurePublisherId">Optional Azure Trusted Signer Publisher ID to check.</param>
+        /// <returns>True when the publisher is untrusted.</returns>
+        private static bool IsUntrustedPublisher(X509Certificate2 signerCertificate, string? azurePublisherId)
         {
             // Get the thumbprint of the current signature
-            X509Certificate2 signerCertificate = signature.SignerCertificate;
             string thumbprint = signerCertificate.Thumbprint;
 
             // See if it matches any in the list of trusted publishers
-            X509Store trustedPublishers = new X509Store(StoreName.Disallowed, StoreLocation.CurrentUser);
-            trustedPublishers.Open(OpenFlags.ReadOnly);
+            X509Store untrustedPublishers = new X509Store(StoreName.Disallowed, StoreLocation.CurrentUser);
+            untrustedPublishers.Open(OpenFlags.ReadOnly);
 
-            foreach (X509Certificate2 trustedCertificate in trustedPublishers.Certificates)
+            foreach (X509Certificate2 untrustedCertificate in untrustedPublishers.Certificates)
             {
-                if (string.Equals(trustedCertificate.Thumbprint, thumbprint, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(untrustedCertificate.Thumbprint, thumbprint, StringComparison.OrdinalIgnoreCase))
+                {
                     return true;
+                }
+                else if (azurePublisherId is not null &&
+                    TryGetAzureTrustedSignerPublisherId(untrustedCertificate, out string? untrustedIdentifier) &&
+                    azurePublisherId == untrustedIdentifier)
+                {
+                    return true;
+                }
             }
 
             return false;
         }
+
+        /// <summary>
+        /// Checks if the certificate has the Azure Trusted Signer Publisher ID
+        /// EKU present and sets publisherOid to that unique OID.
+        /// </summary>
+        /// <param name="certificate">The certificate to check.</param>
+        /// <param name="publisherOid">The Azure publisher OID if present.</param>
+        /// <returns>True when the certificate has the Azure Trusted Signer Publisher ID EKU.</returns>
+        private static bool TryGetAzureTrustedSignerPublisherId(
+            X509Certificate2 certificate,
+            [NotNullWhen(true)] out string? publisherOid)
+        {
+            bool containsAzTSIdentifier = false;
+            publisherOid = null;
+
+            foreach (X509Extension ext in certificate.Extensions)
+            {
+                if (ext is X509EnhancedKeyUsageExtension ekuExt)
+                {
+                    // The EKU OIDs need to contain the Azure Trusted Signing Identifier
+                    // and have one that starts with the Azure Trusted Signing ID Prefix.
+                    foreach (Oid oid in ekuExt.EnhancedKeyUsages)
+                    {
+
+                        if (oid.Value == _azureTrustedSigningIdentifier)
+                        {
+                            containsAzTSIdentifier = true;
+                        }
+                        else if (oid.Value?.StartsWith(_azureTrustedSigningIdPrefix) == true)
+                        {
+                            publisherOid = oid.Value;
+                        }
+                    }
+
+                    break;  // No need to check other extensions.
+                }
+            }
+
+            return containsAzTSIdentifier && publisherOid is not null;
+        }
+#nullable disable
 
         /// <summary>
         /// Trust a publisher by adding it to the "Trusted Publishers" store.
