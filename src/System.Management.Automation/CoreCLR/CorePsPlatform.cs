@@ -637,25 +637,29 @@ namespace System.Management.Automation
                         return DirectoryOwnerFullGroupReadExecOtherReadExec;
                     }
 
-                    Span<char> modeCharacters = stackalloc char[10];
-                    modeCharacters[0] = itemTypeTable[ItemType];
-                    bool isExecutable;
-
                     UnixFileMode modeInfo = (UnixFileMode)Mode;
-                    modeCharacters[1] = modeInfo.HasFlag(UnixFileMode.UserRead) ? CanRead : NoPerm;
-                    modeCharacters[2] = modeInfo.HasFlag(UnixFileMode.UserWrite) ? CanWrite : NoPerm;
-                    isExecutable = modeInfo.HasFlag(UnixFileMode.UserExecute);
-                    modeCharacters[3] = modeInfo.HasFlag(UnixFileMode.SetUser) ? (isExecutable ? SetAndExec : SetAndNotExec) : (isExecutable ? CanExecute : NoPerm);
 
-                    modeCharacters[4] = modeInfo.HasFlag(UnixFileMode.GroupRead) ? CanRead : NoPerm;
-                    modeCharacters[5] = modeInfo.HasFlag(UnixFileMode.GroupWrite) ? CanWrite : NoPerm;
-                    isExecutable = modeInfo.HasFlag(UnixFileMode.GroupExecute);
-                    modeCharacters[6] = modeInfo.HasFlag(UnixFileMode.SetGroup) ? (isExecutable ? SetAndExec : SetAndNotExec) : (isExecutable ? CanExecute : NoPerm);
+                    Span<char> modeCharacters = [
+                        itemTypeTable[ItemType],
 
-                    modeCharacters[7] = modeInfo.HasFlag(UnixFileMode.OtherRead) ? CanRead : NoPerm;
-                    modeCharacters[8] = modeInfo.HasFlag(UnixFileMode.OtherWrite) ? CanWrite : NoPerm;
-                    isExecutable = modeInfo.HasFlag(UnixFileMode.OtherExecute);
-                    modeCharacters[9] = modeInfo.HasFlag(UnixFileMode.StickyBit) ? (isExecutable ? StickyAndExec : StickyAndNotExec) : (isExecutable ? CanExecute : NoPerm);
+                        modeInfo.HasFlag(UnixFileMode.UserRead) ? CanRead : NoPerm,
+                        modeInfo.HasFlag(UnixFileMode.UserWrite) ? CanWrite : NoPerm,
+                        modeInfo.HasFlag(UnixFileMode.SetUser) ?
+                            (modeInfo.HasFlag(UnixFileMode.UserExecute) ? SetAndExec : SetAndNotExec) :
+                            (modeInfo.HasFlag(UnixFileMode.UserExecute) ? CanExecute : NoPerm),
+
+                        modeInfo.HasFlag(UnixFileMode.GroupRead) ? CanRead : NoPerm,
+                        modeInfo.HasFlag(UnixFileMode.GroupWrite) ? CanWrite : NoPerm,
+                        modeInfo.HasFlag(UnixFileMode.SetGroup) ?
+                            (modeInfo.HasFlag(UnixFileMode.GroupExecute) ? SetAndExec : SetAndNotExec) :
+                            (modeInfo.HasFlag(UnixFileMode.GroupExecute) ? CanExecute : NoPerm),
+
+                        modeInfo.HasFlag(UnixFileMode.OtherRead) ? CanRead : NoPerm,
+                        modeInfo.HasFlag(UnixFileMode.OtherWrite) ? CanWrite : NoPerm,
+                        modeInfo.HasFlag(UnixFileMode.StickyBit) ?
+                            (modeInfo.HasFlag(UnixFileMode.OtherExecute) ? StickyAndExec : StickyAndNotExec) :
+                            (modeInfo.HasFlag(UnixFileMode.OtherExecute) ? CanExecute : NoPerm),
+                    ];
 
                     return new string(modeCharacters);
                 }

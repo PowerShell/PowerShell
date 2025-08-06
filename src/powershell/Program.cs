@@ -129,10 +129,7 @@ namespace Microsoft.PowerShell
             // At this point, we are on macOS
 
             // Set up the mib array and the query for process maximum args size
-            Span<int> mib = stackalloc int[3];
-            int mibLength = 2;
-            mib[0] = MACOS_CTL_KERN;
-            mib[1] = MACOS_KERN_ARGMAX;
+            Span<int> mib = [MACOS_CTL_KERN, MACOS_KERN_ARGMAX];
             int size = IntPtr.Size / 2;
             int argmax = 0;
 
@@ -141,7 +138,7 @@ namespace Microsoft.PowerShell
             {
                 fixed (int *mibptr = mib)
                 {
-                    ThrowOnFailure(nameof(argmax), SysCtl(mibptr, mibLength, &argmax, &size, IntPtr.Zero, 0));
+                    ThrowOnFailure(nameof(argmax), SysCtl(mibptr, mib.Length, &argmax, &size, IntPtr.Zero, 0));
                 }
             }
 
@@ -155,16 +152,13 @@ namespace Microsoft.PowerShell
             IntPtr executablePathPtr = IntPtr.Zero;
             try
             {
-                mib[0] = MACOS_CTL_KERN;
-                mib[1] = MACOS_KERN_PROCARGS2;
-                mib[2] = pid;
-                mibLength = 3;
+                mib = [MACOS_CTL_KERN, MACOS_KERN_PROCARGS2, pid];
 
                 unsafe
                 {
                     fixed (int *mibptr = mib)
                     {
-                        ThrowOnFailure(nameof(procargs), SysCtl(mibptr, mibLength, procargs.ToPointer(), &argmax, IntPtr.Zero, 0));
+                        ThrowOnFailure(nameof(procargs), SysCtl(mibptr, mib.Length, procargs.ToPointer(), &argmax, IntPtr.Zero, 0));
                     }
 
                     // The memory block we're reading is a series of null-terminated strings
