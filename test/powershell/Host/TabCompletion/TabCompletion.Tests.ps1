@@ -1125,6 +1125,163 @@ param([ValidatePattern(
         $res.CompletionMatches[1].CompletionText | Should -BeExactly '$DemoVar2'
     }
 
+    It 'Should include parameter help message in tool tip - SingleMatch <SingleMatch>' -TestCases @(
+        @{ SingleMatch = $true }
+        @{ SingleMatch = $false }
+    ) {
+        param ($SingleMatch)
+
+        Function Test-Function {
+            param (
+                [Parameter(HelpMessage = 'Some help message')]
+                $ParamWithHelp,
+
+                $ParamWithoutHelp
+            )
+        }
+
+        $expected = '[Object] ParamWithHelp - Some help message'
+
+        if ($SingleMatch) {
+            $Script = 'Test-Function -ParamWithHelp'
+            $res = (TabExpansion2 -inputScript $Script).CompletionMatches
+        }
+        else {
+            $Script = 'Test-Function -'
+            $res = (TabExpansion2 -inputScript $Script).CompletionMatches | Where-Object CompletionText -eq '-ParamWithHelp'
+        }
+
+        $res.Count | Should -Be 1
+        $res.CompletionText | Should -BeExactly '-ParamWithHelp'
+        $res.ToolTip | Should -BeExactly $expected
+    }
+
+    It 'Should include parameter help resource message in tool tip - SingleMatch <SingleMatch>' -TestCases @(
+        @{ SingleMatch = $true }
+        @{ SingleMatch = $false }
+    ) {
+        param ($SingleMatch)
+
+        $expected = '`[string`] Activity - *'
+
+        if ($SingleMatch) {
+            $Script = 'Write-Progress -Activity'
+            $res = (TabExpansion2 -inputScript $Script).CompletionMatches
+        }
+        else {
+            $Script = 'Write-Progress -'
+            $res = (TabExpansion2 -inputScript $Script).CompletionMatches | Where-Object CompletionText -eq '-Activity'
+        }
+
+        $res.Count | Should -Be 1
+        $res.CompletionText | Should -BeExactly '-Activity'
+        $res.ToolTip | Should -BeLikeExactly $expected
+    }
+
+    It 'Should skip empty parameter HelpMessage with multiple parameters - SingleMatch <SingleMatch>' -TestCases @(
+        @{ SingleMatch = $true }
+        @{ SingleMatch = $false }
+    ) {
+        param ($SingleMatch)
+
+        Function Test-Function {
+            [CmdletBinding(DefaultParameterSetName = 'SetWithoutHelp')]
+            param (
+                [Parameter(ParameterSetName = 'SetWithHelp', HelpMessage = 'Help Message')]
+                [Parameter(ParameterSetName = 'SetWithoutHelp')]
+                [string]
+                $ParamWithHelp,
+                
+                [Parameter(ParameterSetName = 'SetWithHelp')]
+                [switch]
+                $ParamWithoutHelp
+            )
+        }
+
+        $expected = '[string] ParamWithHelp - Help Message'
+
+        if ($SingleMatch) {
+            $Script = 'Test-Function -ParamWithHelp'
+            $res = (TabExpansion2 -inputScript $Script).CompletionMatches
+        }
+        else {
+            $Script = 'Test-Function -'
+            $res = (TabExpansion2 -inputScript $Script).CompletionMatches | Where-Object CompletionText -eq '-ParamWithHelp'
+        }
+
+        $res.Count | Should -Be 1
+        $res.CompletionText | Should -BeExactly '-ParamWithHelp'
+        $res.ToolTip | Should -BeExactly $expected
+    }
+
+    It 'Should retrieve help message from dynamic parameter' {
+        Function Test-Function {
+            [CmdletBinding()]
+            param ()
+            dynamicparam {
+                $attr = [System.Management.Automation.ParameterAttribute]@{
+                    HelpMessage = "Howdy partner"
+                }
+                $attrCollection = [System.Collections.ObjectModel.Collection[System.Attribute]]::new()
+                $attrCollection.Add($attr)
+
+                $dynParam = [System.Management.Automation.RuntimeDefinedParameter]::new('DynamicParam', [string], $attrCollection)
+
+                $paramDictionary = [System.Management.Automation.RuntimeDefinedParameterDictionary]::new()
+                $paramDictionary.Add('DynamicParam', $dynParam)
+                $paramDictionary
+            }
+
+            end {}
+        }
+
+        $expected = '[string] DynamicParam - Howdy partner'
+        $Script = 'Test-Function -'
+        $res = (TabExpansion2 -inputScript $Script).CompletionMatches | Where-Object CompletionText -eq '-DynamicParam'
+        $res.Count | Should -Be 1
+        $res.CompletionText | Should -BeExactly '-DynamicParam'
+        $res.ToolTip | Should -BeExactly $expected
+    }
+
+    It 'Should have type and name for parameter without help message' {
+        Function Test-Function {
+            param (
+                [Parameter()]
+                $WithParamAttribute,
+
+                $WithoutParamAttribute
+            )
+        }
+
+        $Script = 'Test-Function -'
+        $res = (TabExpansion2 -inputScript $Script).CompletionMatches |
+            Where-Object CompletionText -in '-WithParamAttribute', '-WithoutParamAttribute' |
+            Sort-Object CompletionText
+        $res.Count | Should -Be 2
+
+        $res.CompletionText[0] | Should -BeExactly '-WithoutParamAttribute'
+        $res.ToolTip[0] | Should -BeExactly '[Object] WithoutParamAttribute'
+
+        $res.CompletionText[1] | Should -BeExactly '-WithParamAttribute'
+        $res.ToolTip[1] | Should -BeExactly '[Object] WithParamAttribute'
+    }
+
+    It 'Should ignore errors when faling to get HelpMessage resource' {
+        Function Test-Function {
+            param (
+                [Parameter(HelpMessageBaseName="invalid", HelpMessageResourceId="SomeId")]
+                $InvalidHelpParam
+            )
+        }
+
+        $expected = '[Object] InvalidHelpParam'
+        $Script = 'Test-Function -InvalidHelpParam'
+        $res = (TabExpansion2 -inputScript $Script).CompletionMatches
+        $res.Count | Should -Be 1
+        $res.CompletionText | Should -BeExactly '-InvalidHelpParam'
+        $res.ToolTip | Should -BeExactly $expected
+    }
+
     Context 'Start-Process -Verb parameter completion' {
         BeforeAll {
             function GetProcessInfoVerbs([string]$path, [switch]$singleQuote, [switch]$doubleQuote) {
