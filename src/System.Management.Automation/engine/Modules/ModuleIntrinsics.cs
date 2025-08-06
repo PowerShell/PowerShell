@@ -998,12 +998,6 @@ namespace System.Management.Automation
             }
         }
 
-        
-
-        private static bool userPrompted = false;
-        private static bool userChoice = false;
-        private static string userModulePath;
-
         internal static void UpdatePSModulePath(string newPath)
         {
             string psModulePath = Environment.GetEnvironmentVariable("PSModulePath");
