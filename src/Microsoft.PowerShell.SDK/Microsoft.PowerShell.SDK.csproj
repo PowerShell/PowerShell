@@ -17,55 +17,55 @@
   <ItemGroup>
     <!-- This section is to force the version of non-direct dependencies -->
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="8.0.17" />
-    <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="9.0.6" />
-    <PackageReference Include="Microsoft.Win32.SystemEvents" Version="9.0.6" />
-    <PackageReference Include="runtime.android-arm.runtime.native.System.IO.Ports" Version="9.0.6" />
-    <PackageReference Include="runtime.android-arm64.runtime.native.System.IO.Ports" Version="9.0.6" />
-    <PackageReference Include="runtime.android-x64.runtime.native.System.IO.Ports" Version="9.0.6" />
-    <PackageReference Include="runtime.android-x86.runtime.native.System.IO.Ports" Version="9.0.6" />
-    <PackageReference Include="runtime.linux-arm.runtime.native.System.IO.Ports" Version="9.0.6" />
-    <PackageReference Include="runtime.linux-arm64.runtime.native.System.IO.Ports" Version="9.0.6" />
-    <PackageReference Include="runtime.linux-bionic-arm64.runtime.native.System.IO.Ports" Version="9.0.6" />
-    <PackageReference Include="runtime.linux-bionic-x64.runtime.native.System.IO.Ports" Version="9.0.6" />
-    <PackageReference Include="runtime.linux-musl-arm.runtime.native.System.IO.Ports" Version="9.0.6" />
-    <PackageReference Include="runtime.linux-musl-arm64.runtime.native.System.IO.Ports" Version="9.0.6" />
-    <PackageReference Include="runtime.linux-musl-x64.runtime.native.System.IO.Ports" Version="9.0.6" />
-    <PackageReference Include="runtime.linux-x64.runtime.native.System.IO.Ports" Version="9.0.6" />
-    <PackageReference Include="runtime.maccatalyst-arm64.runtime.native.System.IO.Ports" Version="9.0.6" />
-    <PackageReference Include="runtime.maccatalyst-x64.runtime.native.System.IO.Ports" Version="9.0.6" />
-    <PackageReference Include="runtime.native.System.IO.Ports" Version="9.0.6" />
-    <PackageReference Include="runtime.osx-arm64.runtime.native.System.IO.Ports" Version="9.0.6" />
-    <PackageReference Include="runtime.osx-x64.runtime.native.System.IO.Ports" Version="9.0.6" />
-    <PackageReference Include="System.CodeDom" Version="9.0.6" />
-    <PackageReference Include="System.ComponentModel.Composition" Version="9.0.6" />
-    <PackageReference Include="System.ComponentModel.Composition.Registration" Version="9.0.6" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="9.0.6" />
-    <PackageReference Include="System.Data.Odbc" Version="9.0.6" />
-    <PackageReference Include="System.Data.OleDb" Version="9.0.6" />
+    <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="8.0.19" />
+    <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="9.0.8" />
+    <PackageReference Include="Microsoft.Win32.SystemEvents" Version="9.0.8" />
+    <PackageReference Include="runtime.android-arm.runtime.native.System.IO.Ports" Version="9.0.8" />
+    <PackageReference Include="runtime.android-arm64.runtime.native.System.IO.Ports" Version="9.0.8" />
+    <PackageReference Include="runtime.android-x64.runtime.native.System.IO.Ports" Version="9.0.8" />
+    <PackageReference Include="runtime.android-x86.runtime.native.System.IO.Ports" Version="9.0.8" />
+    <PackageReference Include="runtime.linux-arm.runtime.native.System.IO.Ports" Version="9.0.8" />
+    <PackageReference Include="runtime.linux-arm64.runtime.native.System.IO.Ports" Version="9.0.8" />
+    <PackageReference Include="runtime.linux-bionic-arm64.runtime.native.System.IO.Ports" Version="9.0.8" />
+    <PackageReference Include="runtime.linux-bionic-x64.runtime.native.System.IO.Ports" Version="9.0.8" />
+    <PackageReference Include="runtime.linux-musl-arm.runtime.native.System.IO.Ports" Version="9.0.8" />
+    <PackageReference Include="runtime.linux-musl-arm64.runtime.native.System.IO.Ports" Version="9.0.8" />
+    <PackageReference Include="runtime.linux-musl-x64.runtime.native.System.IO.Ports" Version="9.0.8" />
+    <PackageReference Include="runtime.linux-x64.runtime.native.System.IO.Ports" Version="9.0.8" />
+    <PackageReference Include="runtime.maccatalyst-arm64.runtime.native.System.IO.Ports" Version="9.0.8" />
+    <PackageReference Include="runtime.maccatalyst-x64.runtime.native.System.IO.Ports" Version="9.0.8" />
+    <PackageReference Include="runtime.native.System.IO.Ports" Version="9.0.8" />
+    <PackageReference Include="runtime.osx-arm64.runtime.native.System.IO.Ports" Version="9.0.8" />
+    <PackageReference Include="runtime.osx-x64.runtime.native.System.IO.Ports" Version="9.0.8" />
+    <PackageReference Include="System.CodeDom" Version="9.0.8" />
+    <PackageReference Include="System.ComponentModel.Composition" Version="9.0.8" />
+    <PackageReference Include="System.ComponentModel.Composition.Registration" Version="9.0.8" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="9.0.8" />
+    <PackageReference Include="System.Data.Odbc" Version="9.0.8" />
+    <PackageReference Include="System.Data.OleDb" Version="9.0.8" />
     <!-- the following package(s) are from https://github.com/dotnet/fxdac -->
     <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
-    <PackageReference Include="System.Diagnostics.EventLog" Version="9.0.6" />
-    <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="9.0.6" />
-    <PackageReference Include="System.DirectoryServices" Version="9.0.6" />
-    <PackageReference Include="System.DirectoryServices.AccountManagement" Version="9.0.6" />
-    <PackageReference Include="System.DirectoryServices.Protocols" Version="9.0.6" />
-    <PackageReference Include="System.Drawing.Common" Version="9.0.6" />
+    <PackageReference Include="System.Diagnostics.EventLog" Version="9.0.8" />
+    <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="9.0.8" />
+    <PackageReference Include="System.DirectoryServices" Version="9.0.8" />
+    <PackageReference Include="System.DirectoryServices.AccountManagement" Version="9.0.8" />
+    <PackageReference Include="System.DirectoryServices.Protocols" Version="9.0.8" />
+    <PackageReference Include="System.Drawing.Common" Version="9.0.8" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
-    <PackageReference Include="System.IO.Packaging" Version="9.0.6" />
-    <PackageReference Include="System.IO.Ports" Version="9.0.6" />
-    <PackageReference Include="System.Management" Version="9.0.6" />
-    <PackageReference Include="System.Net.Http.WinHttpHandler" Version="9.0.6" />
-    <PackageReference Include="System.Reflection.Context" Version="9.0.6" />
-    <PackageReference Include="System.Runtime.Caching" Version="9.0.6" />
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="9.0.6" />
-    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="9.0.6" />
-    <PackageReference Include="System.Security.Cryptography.Xml" Version="9.0.6" />
-    <PackageReference Include="System.Security.Permissions" Version="9.0.6" />
-    <PackageReference Include="System.ServiceProcess.ServiceController" Version="9.0.6" />
-    <PackageReference Include="System.Speech" Version="9.0.6" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="9.0.6" />
-    <PackageReference Include="System.Text.Encodings.Web" Version="9.0.6" />
+    <PackageReference Include="System.IO.Packaging" Version="9.0.8" />
+    <PackageReference Include="System.IO.Ports" Version="9.0.8" />
+    <PackageReference Include="System.Management" Version="9.0.8" />
+    <PackageReference Include="System.Net.Http.WinHttpHandler" Version="9.0.8" />
+    <PackageReference Include="System.Reflection.Context" Version="9.0.8" />
+    <PackageReference Include="System.Runtime.Caching" Version="9.0.8" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="9.0.8" />
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="9.0.8" />
+    <PackageReference Include="System.Security.Cryptography.Xml" Version="9.0.8" />
+    <PackageReference Include="System.Security.Permissions" Version="9.0.8" />
+    <PackageReference Include="System.ServiceProcess.ServiceController" Version="9.0.8" />
+    <PackageReference Include="System.Speech" Version="9.0.8" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="9.0.8" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="9.0.8" />
     <!--
         the following package(s) are from https://github.com/dotnet/wcf
         they are pinned to the version 4.10.x due to a breaking change in newer versions.
@@ -78,10 +78,10 @@
     <PackageReference Include="System.ServiceModel.Security" Version="4.10.3" />
     <PackageReference Include="System.Private.ServiceModel" Version="4.10.3" />
     <!-- the source could not be found for the following package(s) -->
-    <PackageReference Include="Microsoft.Windows.Compatibility" Version="9.0.6" />
-    <PackageReference Include="System.Threading.AccessControl" Version="9.0.6" />
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="9.0.8" />
+    <PackageReference Include="System.Threading.AccessControl" Version="9.0.8" />
     <PackageReference Include="System.Web.Services.Description" Version="8.0.0" />
-    <PackageReference Include="System.Windows.Extensions" Version="9.0.6" />
+    <PackageReference Include="System.Windows.Extensions" Version="9.0.8" />
   </ItemGroup>
 
 </Project>
