@@ -967,49 +967,38 @@ namespace System.Management.Automation
 #if UNIX
             return Platform.SelectProductNameForDirectory(Platform.XDG_Type.USER_MODULES);
 #else
-            string myDocumentsPath = string.Empty;
-            if (!InternalTestHooks.SetMyDocumentsSpecialFolderToBlank)
-            {
-                if (!userPrompted)
-                {
-                    Console.WriteLine("Would you like to switch the user profile to a different directory?");
-                    Console.WriteLine("Type 'Y' to switch to a different directory, 'N' to continue with the current directory");
-                    string input = Console.ReadLine();
-                    userChoice = input.Equals("Y", StringComparison.OrdinalIgnoreCase);
-                    userPrompted = true;
-                    if (userChoice)
-                    {
-                        Console.WriteLine("Please enter the new directory path: ");
-                        myDocumentsPath = Console.ReadLine();
-                        // test the path
-                        while (!Directory.Exists(myDocumentsPath))
-                        {
-                            Console.WriteLine("The directory does not exist. Please enter a valid directory path: ");
-                            myDocumentsPath = Console.ReadLine();
-                        }
-                        userModulePath = myDocumentsPath;
-                        UpdatePSModulePath(userModulePath);
-                    }
-
-                }
-
-                else
-                {
-                    if (userChoice && !string.IsNullOrEmpty(userModulePath))
-                    {
-                        myDocumentsPath = userModulePath;
-                    }
-
-                    else
-                    {
-                        myDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-                    }
-                }
-            }
-
+            string myDocumentsPath = InternalTestHooks.SetMyDocumentsSpecialFolderToBlank ? string.Empty : Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             return string.IsNullOrEmpty(myDocumentsPath) ? null : Path.Combine(myDocumentsPath, Utils.ModuleDirectory);
 #endif
         }
+
+        /// <summary>
+        /// Gets the PS content path when PSContentPath experimental feature is enabled,
+        /// otherwise returns the personal module path.
+        /// </summary>
+        /// <returns>PS content path or personal module path.</returns>
+        internal static string GetPSContentPath()
+        {
+            // Check if PSContentPath experimental feature is enabled
+            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSContentPath))
+            {
+#if UNIX
+                // On Unix, use XDG standard for content path
+                return Platform.SelectProductNameForDirectory(Platform.XDG_Type.USER_MODULES);
+#else
+                // On Windows, use LOCALAPPDATA\PowerShell
+                string localAppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                return string.IsNullOrEmpty(localAppDataPath) ? null : Path.Combine(localAppDataPath, "PowerShell");
+#endif
+            }
+            else
+            {
+                // Fall back to existing GetPersonalModulePath behavior
+                return GetPersonalModulePath();
+            }
+        }
+
+        
 
         private static bool userPrompted = false;
         private static bool userChoice = false;
