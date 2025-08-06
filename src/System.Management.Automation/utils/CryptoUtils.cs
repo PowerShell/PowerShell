@@ -433,6 +433,7 @@ namespace System.Management.Automation.Internal
             GenerateSessionKey();
 
             // encrypt it
+            // codeql[cs/cryptography/rsa-unapproved-encryption-padding-scheme] - PowerShell v7.4 and later versions have deprecated the key exchange in the remoting protocol. This code is kept only for backward compatibility reason.
             byte[] encryptedKey = _rsa.Encrypt(_aes.Key, RSAEncryptionPadding.Pkcs1);
 
             // convert the key to capi simpleblob format before exporting
@@ -466,6 +467,7 @@ namespace System.Management.Automation.Internal
             byte[] sessionKeyBlob = Convert.FromBase64String(sessionKey);
             byte[] rsaEncryptedKey = PSCryptoNativeConverter.FromCapiSimpleKeyBlob(sessionKeyBlob);
 
+            // codeql[cs/cryptography/rsa-unapproved-encryption-padding-scheme] - PowerShell v7.4 and later versions have deprecated the key exchange in the remoting protocol. This code is kept only for backward compatibility reason.
             _aes.Key = _rsa.Decrypt(rsaEncryptedKey, RSAEncryptionPadding.Pkcs1);
 
             // now we have imported the key and will be able to
