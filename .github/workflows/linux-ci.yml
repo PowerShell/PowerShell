@@ -9,6 +9,7 @@ on:
     branches:
       - master
       - release/**
+      - github-mirror
     paths:
       - "**"
       - "!.github/ISSUE_TEMPLATE/**"
@@ -19,6 +20,7 @@ on:
     branches:
       - master
       - release/**
+      - github-mirror
 # Path filters for PRs need to go into the changes job
 
 concurrency:
@@ -37,44 +39,37 @@ env:
   system_debug: 'false'
 jobs:
   changes:
+    if: startsWith(github.repository_owner, 'azure') || github.repository_owner == 'PowerShell'
     name: Change Detection
     runs-on: ubuntu-latest
     # Required permissions
     permissions:
       pull-requests: read
+      contents: read
+
     # Set job outputs to values from filter step
     outputs:
       source: ${{ steps.filter.outputs.source }}
     steps:
       - name: checkout
-        uses: actions/checkout@v4.1.0
-
-        # For pull requests it's not necessary to checkout the code
-      - uses: dorny/paths-filter@v3
-        id: filter
+        uses: actions/checkout@v4
         with:
-          list-files: json
-          filters: .github/action-filters.yml
+          persist-credentials: false
 
-      - name: Capture outputs
-        run: |
-          "source: ${{ steps.filter.outputs.source }}"
-          "github: ${{ steps.filter.outputs.github }}"
-          "tools: ${{ steps.filter.outputs.tools }}"
-          "props: ${{ steps.filter.outputs.props }}"
-          "tests: ${{ steps.filter.outputs.tests }}"
-          "mainSource: ${{ steps.filter.outputs.mainSource }}"
-          "buildModule: ${{ steps.filter.outputs.buildModule }}"
-        shell: pwsh
+      - name: Change Detection
+        id: filter
+        uses: "./.github/actions/infrastructure/path-filters"
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   ci_build:
     name: Build PowerShell
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     needs: changes
     if: ${{ needs.changes.outputs.source == 'true' }}
     steps:
       - name: checkout
-        uses: actions/checkout@v4.1.0
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1000
 
@@ -86,10 +81,10 @@ jobs:
       - ci_build
       - changes
     if: ${{ needs.changes.outputs.source == 'true' }}
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v4.1.0
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1000
       - name: Linux Unelevated CI
@@ -103,10 +98,10 @@ jobs:
       - ci_build
       - changes
     if: ${{ needs.changes.outputs.source == 'true' }}
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v4.1.0
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1000
       - name: Linux Elevated CI
@@ -120,10 +115,10 @@ jobs:
       - ci_build
       - changes
     if: ${{ needs.changes.outputs.source == 'true' }}
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v4.1.0
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1000
       - name: Linux Unelevated Others
@@ -137,10 +132,10 @@ jobs:
       - ci_build
       - changes
     if: ${{ needs.changes.outputs.source == 'true' }}
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v4.1.0
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1000
       - name: Linux Elevated Others
@@ -157,7 +152,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v4.1.0
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1000
       - name: Verify xUnit test results
@@ -194,7 +189,7 @@ jobs:
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@df409f7d9260372bd5f19e5b04e83cb3c43714ae # v3.27.9
+      uses: github/codeql-action/init@51f77329afa6477de8c49fc9c7046c15b9a4e79d # v3.29.5
       with:
         languages: ${{ matrix.language }}
         # If you wish to specify custom queries, you can do so here or in a config file.
@@ -220,7 +215,7 @@ jobs:
       shell: pwsh
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@df409f7d9260372bd5f19e5b04e83cb3c43714ae # v3.27.9
+      uses: github/codeql-action/analyze@51f77329afa6477de8c49fc9c7046c15b9a4e79d # v3.29.5
 
   ready_to_merge:
     name: Linux ready to merge
@@ -232,7 +227,7 @@ jobs:
       - linux_test_unelevated_others
       - analyze
     if: always()
-    uses: PowerShell/compliance/.github/workflows/ready-to-merge.yml@master
+    uses: PowerShell/compliance/.github/workflows/ready-to-merge.yml@v1.0.0
     with:
       needs_context: ${{ toJson(needs) }}
   # TODO: Enable this when we have a Linux packaging workflow
@@ -247,7 +242,7 @@ jobs:
   #   runs-on: ubuntu-20.04
   #   steps:
   #     - name: checkout
-  #       uses: actions/checkout@v4.1.0
+  #       uses: actions/checkout@v4
   #       with:
   #         fetch-depth: 1000
   #     - name: Verify xUnit test results

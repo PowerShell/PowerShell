@@ -35,7 +35,7 @@ The `Start-PSBootstrap` function will automatically install it and add it to you
 
 ```powershell
 Import-Module ./build.psm1
-Start-PSBootstrap
+Start-PSBootstrap -Scenario Dotnet
 ```
 
 Or you can call `Install-Dotnet` directly:
@@ -53,6 +53,8 @@ If you have any problems installing `dotnet`, please see their [documentation][c
 ## Build using our module
 
 We maintain a [PowerShell module](../../build.psm1) with the function `Start-PSBuild` to build PowerShell.
+
+We do not recommend using Visual Studio Dev Environment Terminal to build the source code.
 
 ```powershell
 Import-Module ./build.psm1

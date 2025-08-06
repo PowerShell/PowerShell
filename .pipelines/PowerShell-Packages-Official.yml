@@ -51,7 +51,7 @@ variables:
   - name: ob_outputDirectory
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
   - name: WindowsContainerImage
-    value: 'onebranch.azurecr.io/windows/ltsc2019/vse2022:latest' # Docker image which is used to build the project
+    value: 'onebranch.azurecr.io/windows/ltsc2022/vse2022:latest' # Docker image which is used to build the project
   - name: LinuxContainerImage
     value: mcr.microsoft.com/onebranch/cbl-mariner/build:2.0
   - group: mscodehub-feed-read-general
@@ -60,6 +60,7 @@ variables:
     value: $[format('{0:yyyyMMdd}-{1}', pipeline.startTime,variables['Build.SourceBranch'])]
   - name: branchCounter
     value: $[counter(variables['branchCounterKey'], 1)]
+  - group: MSIXSigningProfile
 
 resources:
   pipelines:
@@ -83,6 +84,9 @@ extends:
     cloudvault:
       enabled: false
     featureFlags:
+      WindowsHostVersion:
+        Version: 2022
+        Network: KS3
       linuxEsrpSigning: true
     globalSdl:
       disableLegacyManifest: true
@@ -243,7 +247,13 @@ extends:
       jobs:
       - template: /.pipelines/templates/nupkg.yml@self
 
+    - stage: msixbundle
+      displayName: 'Create MSIX Bundle'
+      dependsOn: [windows_package]
+      jobs:
+      - template: /.pipelines/templates/package-create-msix.yml@self
+
     - stage: upload
-      dependsOn: [mac_package, windows_package, linux_package, nupkg]
+      dependsOn: [mac_package, windows_package, linux_package, nupkg, msixbundle]
       jobs:
       - template: /.pipelines/templates/uploadToAzure.yml@self
