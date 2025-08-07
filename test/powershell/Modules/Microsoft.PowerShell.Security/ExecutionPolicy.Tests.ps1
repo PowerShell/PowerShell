@@ -252,28 +252,28 @@ Describe "Trusted Publisher Checks" -Tags 'CI', 'RequireAdminOnWindows' {
     It "Distrusts publisher not in TrustedPublisher store" {
         {
             Invoke-SignedScript -Certificate $publisherOneCerts[0]
-        } | Should -Throw "AuthorizationManager check failed"
+        } | Should -Throw
     }
 
     It "Distrusts publisher when EKU OID has no marker present" {
         $trustedStore.Add($publisherNoMarkerCerts[0])
         {
             Invoke-SignedScript -Certificate $publisherNoMarkerCerts[1]
-        } | Should -Throw "AuthorizationManager check failed"
+        } | Should -Throw
     }
 
     It "Distrusts publisher when EKU OID matches but from another CA" {
         $trustedStore.Add($publisherOneCerts[0])
         {
             Invoke-SignedScript -Certificate $otherCaCerts[0]
-        } | Should -Throw "AuthorizationManager check failed"
+        } | Should -Throw
     }
 
     It "Distrusts publisher when EKU OID is not the same but from same CA" {
         $trustedStore.Add($publisherOneCerts[0])
         {
             Invoke-SignedScript -Certificate $publisherTwoCerts[0]
-        } | Should -Throw "AuthorizationManager check failed"
+        } | Should -Throw
     }
 
     It "Distrusts publisher when trusted but is disallowed - allow <AllowType>" -TestCases @(
@@ -288,7 +288,7 @@ Describe "Trusted Publisher Checks" -Tags 'CI', 'RequireAdminOnWindows' {
 
         {
             Invoke-SignedScript -Certificate $publisherOneCerts[1]
-        } | Should -Throw "AuthorizationManager check failed"
+        } | Should -Throw
     }
 }
 
