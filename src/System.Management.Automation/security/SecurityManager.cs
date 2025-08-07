@@ -77,6 +77,12 @@ namespace Microsoft.PowerShell
         /// </summary>
         private const string _azureTrustedSigningIdPrefix = "1.3.6.1.4.1.311.97.";
 
+        [TraceSource("SecurityManager", "Security Manager Script Trust Checks.")]
+        private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer(
+            "SecurityManager",
+            "Security Manager Script Trust Checks.",
+            false);
+
         // execution policy that dictates what can run in msh
         private ExecutionPolicy _executionPolicy;
 
@@ -457,6 +463,7 @@ namespace Microsoft.PowerShell
             // Get the thumbprint of the current signature
             X509Certificate2 signerCertificate = signature.SignerCertificate;
             string thumbprint = signerCertificate.Thumbprint;
+            s_tracer.WriteLine("Checking if publisher with thumbprint {0} is trusted.", thumbprint);
 
             TryGetAzureTrustedSignerPublisherId(signerCertificate, out string? azurePublisherId);
 
@@ -464,26 +471,31 @@ namespace Microsoft.PowerShell
             X509Store trustedPublishers = new X509Store(StoreName.TrustedPublisher, StoreLocation.CurrentUser);
             trustedPublishers.Open(OpenFlags.ReadOnly);
 
+            bool isTrusted = false;
             foreach (X509Certificate2 trustedCertificate in trustedPublishers.Certificates)
             {
+                s_tracer.WriteLine("Checking publisher against certificate '{0}' and thumbprint {1}.",
+                    trustedCertificate.FriendlyName,
+                    trustedCertificate.Thumbprint);
+
                 if (string.Equals(trustedCertificate.Thumbprint, thumbprint, StringComparison.OrdinalIgnoreCase))
                 {
-                    // The certs match by thumbprint, check that the cert is
-                    // also not in the untrusted list either by thumbprint or
-                    // by Azure Trusted Signer Publisher ID.
-                    return !IsUntrustedPublisher(signerCertificate, azurePublisherId);
+                    isTrusted = true;
                 }
                 else if (azurePublisherId is not null &&
                     TryGetAzureTrustedSignerPublisherId(trustedCertificate, out string? trustedIdentifier) &&
                     azurePublisherId == trustedIdentifier)
                 {
-                    // The cert has the same Azure Trusted Signer Publisher ID,
-                    // check that the cert is also not in the untrusted list.
-                    // cert we use doesn't matter as we are checking by the ID
-                    // which will match both trustedCertificate and
-                    // signerCertificate.
-                    return !IsUntrustedPublisher(signerCertificate, azurePublisherId);
+                    isTrusted = true;
+                    break;
                 }
+            }
+
+            // Do a final check to verify that the certificate has not been
+            // explicitly added to the "Disallowed" store.
+            if (isTrusted && !IsUntrustedPublisher(signerCertificate))
+            {
+                return true;
             }
 
             return false;
@@ -491,17 +503,16 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// Checks if the publisher is untrusted by checking whether the same
-        /// certificate thumbprint is in the "Disallowed" store or if the
-        /// Azure Trusted Signer Publisher ID is present in any of the certs
-        /// in the "Disallowed" store.
+        /// certificate thumbprint is in the "Disallowed" store.
         /// </summary>
         /// <param name="signerCertificate">The certificate to check by thumbprint.</param>
-        /// <param name="azurePublisherId">Optional Azure Trusted Signer Publisher ID to check.</param>
         /// <returns>True when the publisher is untrusted.</returns>
-        private static bool IsUntrustedPublisher(X509Certificate2 signerCertificate, string? azurePublisherId)
+        private static bool IsUntrustedPublisher(X509Certificate2 signerCertificate)
         {
             // Get the thumbprint of the current signature
             string thumbprint = signerCertificate.Thumbprint;
+            s_tracer.WriteLine("Checking if certificate {0} is untrusted.",
+                thumbprint);
 
             // See if it matches any in the list of trusted publishers
             X509Store untrustedPublishers = new X509Store(StoreName.Disallowed, StoreLocation.CurrentUser);
@@ -509,13 +520,11 @@ namespace Microsoft.PowerShell
 
             foreach (X509Certificate2 untrustedCertificate in untrustedPublishers.Certificates)
             {
+                s_tracer.WriteLine("Checking publisher against untrusted certificate '{0}' and thumbprint {1}.",
+                    untrustedCertificate.FriendlyName,
+                    untrustedCertificate.Thumbprint);
+
                 if (string.Equals(untrustedCertificate.Thumbprint, thumbprint, StringComparison.OrdinalIgnoreCase))
-                {
-                    return true;
-                }
-                else if (azurePublisherId is not null &&
-                    TryGetAzureTrustedSignerPublisherId(untrustedCertificate, out string? untrustedIdentifier) &&
-                    azurePublisherId == untrustedIdentifier)
                 {
                     return true;
                 }
@@ -526,17 +535,17 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// Checks if the certificate has the Azure Trusted Signer Publisher ID
-        /// EKU present and sets publisherOid to that unique OID.
+        /// EKU present and sets publisherId to that unique identifier.
         /// </summary>
         /// <param name="certificate">The certificate to check.</param>
-        /// <param name="publisherOid">The Azure publisher OID if present.</param>
+        /// <param name="publisherId">An opaque blog that uniquely identifies the publisher if present.</param>
         /// <returns>True when the certificate has the Azure Trusted Signer Publisher ID EKU.</returns>
         private static bool TryGetAzureTrustedSignerPublisherId(
             X509Certificate2 certificate,
-            [NotNullWhen(true)] out string? publisherOid)
+            [NotNullWhen(true)] out string? publisherId)
         {
             bool containsAzTSIdentifier = false;
-            publisherOid = null;
+            string? azurePubOid = null;
 
             foreach (X509Extension ext in certificate.Extensions)
             {
@@ -546,14 +555,13 @@ namespace Microsoft.PowerShell
                     // and have one that starts with the Azure Trusted Signing ID Prefix.
                     foreach (Oid oid in ekuExt.EnhancedKeyUsages)
                     {
-
                         if (oid.Value == _azureTrustedSigningIdentifier)
                         {
                             containsAzTSIdentifier = true;
                         }
                         else if (oid.Value?.StartsWith(_azureTrustedSigningIdPrefix) == true)
                         {
-                            publisherOid = oid.Value;
+                            azurePubOid = oid.Value;
                         }
                     }
 
@@ -561,7 +569,50 @@ namespace Microsoft.PowerShell
                 }
             }
 
-            return containsAzTSIdentifier && publisherOid is not null;
+            string? caThumbprint = null;
+            if (containsAzTSIdentifier && azurePubOid is not null)
+            {
+                s_tracer.WriteLine("Certificate {0} has Azure Trusted Signer EKU OID {1}.",
+                    certificate.Thumbprint,
+                    azurePubOid);
+
+                // To avoid matching on certs that have the same EKU OID added
+                // we add the thumbprint of the root CA to the unique
+                // identifier. This means someone can't manually create a
+                // cert with the same OID as one already trusted as it needs to
+                // come from the same CA. We don't do a revocation check as we
+                // aren't checking the validity of the certificate, just getting
+                // the thumbprint of the root CA.
+                using X509Chain chain = new X509Chain();
+                chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
+                if (chain.Build(certificate))
+                {
+                    // Remarks state that the last element in the chain in the
+                    // root CA on all platforms.
+                    caThumbprint = chain.ChainElements[^1].Certificate.Thumbprint;
+                }
+                else
+                {
+                    s_tracer.WriteLine("Failed to find root CA for certificate {0}: {1}",
+                        certificate.Thumbprint,
+                        chain.ChainStatus[0].StatusInformation);
+                }
+            }
+
+            if (caThumbprint is not null)
+            {
+                publisherId = $"{azurePubOid}.{caThumbprint}";
+
+                s_tracer.WriteLine("Publisher ID for certificate {0} is {1}.",
+                    certificate.Thumbprint,
+                    publisherId);
+                return true;
+            }
+            else
+            {
+                publisherId = null;
+                return false;
+            }
         }
 #nullable disable
 
