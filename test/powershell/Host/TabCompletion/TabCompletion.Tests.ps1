@@ -1929,8 +1929,12 @@ param([ValidatePattern(
 
     Context NativeCommand {
         BeforeAll {
-            $nativeCommand = (Get-Command -CommandType Application -TotalCount 1).Name
+            ## Find a native command that is not 'pwsh'. We will use 'pwsh' for fallback completer tests later.
+            $nativeCommand = Get-Command -CommandType Application -TotalCount 2 |
+                Where-Object Name -NotLike pwsh* |
+                Select-Object -First 1
         }
+
         It 'Completes native commands with -' {
             Register-ArgumentCompleter -Native -CommandName $nativeCommand -ScriptBlock {
                 param($wordToComplete, $ast, $cursorColumn)
@@ -1993,6 +1997,52 @@ param([ValidatePattern(
             $res = TabExpansion2 -inputScript $line -cursorColumn $line.Length
             $res.CompletionMatches | Should -HaveCount 1
             $res.CompletionMatches.CompletionText | Should -BeExactly "-option"
+        }
+
+        It 'Covers an arbitrary unbound native command with -t' {
+            ## Register a completer for $nativeCommand.
+            Register-ArgumentCompleter -Native -CommandName $nativeCommand -ScriptBlock {
+                param($wordToComplete, $ast, $cursorColumn)
+                if ($wordToComplete -eq '-t') {
+                    return "-terminal"
+                }
+            }
+
+            ## Register a fallback native command completer.
+            Register-ArgumentCompleter -NativeFallback -ScriptBlock {
+                param($wordToComplete, $ast, $cursorColumn)
+                if ($wordToComplete -eq '-t') {
+                    return "-testing"
+                }
+            }
+
+            ## The specific completer will be used if it exists.
+            $line = "$nativeCommand -t"
+            $res = TabExpansion2 -inputScript $line -cursorColumn $line.Length
+            $res.CompletionMatches | Should -HaveCount 1
+            $res.CompletionMatches.CompletionText | Should -BeExactly "-terminal"
+
+            ## Otherwise, the fallback completer will kick in.
+            $line = "pwsh -t"
+            $res = TabExpansion2 -inputScript $line -cursorColumn $line.Length
+            $res.CompletionMatches | Should -HaveCount 1
+            $res.CompletionMatches.CompletionText | Should -BeExactly "-testing"
+
+            ## Remove the completer for $nativeCommand.
+            Register-ArgumentCompleter -Native -CommandName $nativeCommand -ScriptBlock $null
+
+            ## The fallback completer will be used for $nativeCommand.
+            $line = "$nativeCommand -t"
+            $res = TabExpansion2 -inputScript $line -cursorColumn $line.Length
+            $res.CompletionMatches | Should -HaveCount 1
+            $res.CompletionMatches.CompletionText | Should -BeExactly "-testing"
+
+            ## Remove the fallback completer for $nativeCommand.
+            Register-ArgumentCompleter -NativeFallback -ScriptBlock $null
+
+            ## The fallback completer will be used for $nativeCommand.
+            $res = TabExpansion2 -inputScript $line -cursorColumn $line.Length
+            $res.CompletionMatches | Should -HaveCount 0
         }
     }
 
