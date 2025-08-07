@@ -176,6 +176,23 @@
     <DebugType>portable</DebugType>
   </PropertyGroup>
 
+  <!-- Define properties for Framework dependent deployments in Packages
+        For GlobalTool, we want to search for the apphost in the global location.
+        For FxDependent, we want to search in the environment variable and global location.
+        For SelfContained, we want to search in the app local location.
+  -->
+  <PropertyGroup Condition=" '$(AppDeployment)' == 'GlobalTool' ">
+    <AppHostDotNetSearch>Global</AppHostDotNetSearch>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(AppDeployment)' == 'FxDependent' ">
+    <AppHostDotNetSearch>EnvironmentVariable;Global</AppHostDotNetSearch>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(AppDeployment)' == 'SelfContained' ">
+    <AppHostDotNetSearch>AppLocal</AppHostDotNetSearch>
+  </PropertyGroup>
+
   <!-- Define all OS, release configuration properties -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <PublishReadyToRun>true</PublishReadyToRun>
