@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Get-Process for admin" -Tags @('CI', 'RequireAdminOnWindows') {
-    It "Should support -Module" -Pending:$IsMacOS {
+    It "Should support -Module" -Pending:($IsMacOS -or $IsFreeBSD) {
         $modules = Get-Process -Id $PID -Module
         $modules.GetType() | Should -BeExactly "System.Object[]"
         foreach ($module in $modules) {
@@ -91,7 +91,7 @@ Describe "Get-Process" -Tags "CI" {
         { Get-Process -FileVersionInfo -ErrorAction Stop } | Should -Throw -ErrorId "CouldNotEnumerateFileVer,Microsoft.PowerShell.Commands.GetProcessCommand"
     }
 
-    It "Should return CommandLine property" -Skip:($IsMacOS) {
+    It "Should return CommandLine property" -Skip:($IsMacOS -or $IsFreeBSD) {
         if ($IsWindows) {
             # Windows will convert the bound parameters and quote them if it
             # contains whitespace. Any inner double quotes are escaped with \".

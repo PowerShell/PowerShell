@@ -28,13 +28,13 @@ Describe "NativeLinuxCommands" -tags "CI" {
     It "Should not redirect standard input if native command is the first command in pipeline (1)" {
         df | ForEach-Object -Begin { $out = @() } -Process { $out += $_ }
         $out.Length -gt 0 | Should -BeTrue
-        $out[0] -like "Filesystem*Available*" | Should -BeTrue
+        $out[0] -like "Filesystem*Avail*" | Should -BeTrue
     }
 
     It "Should not redirect standard input if native command is the first command in pipeline (2)" {
         $out = df
         $out.Length -gt 0 | Should -BeTrue
-        $out[0] -like "Filesystem*Available*" | Should -BeTrue
+        $out[0] -like "Filesystem*Avail*" | Should -BeTrue
     }
 
     It "Should find command before script with same name" {
