@@ -48,7 +48,11 @@ namespace System.Management.Automation.Runspaces
                     .AddHeader(Alignment.Left, label: "UnixMode", width: 10)
                     .AddHeader(Alignment.Right, label: "User", width: 10)
                     .AddHeader(Alignment.Left, label: "Group", width: 10)
-                    .AddHeader(Alignment.Right, label: "LastWriteTime", width: 16)
+                    // Until LastWriteTime prints as '{0:d} {0:HH}:{0:mm}', it will always be local date + 6 wide.
+                    // Widest locales for date serialization are hr-HR, hu-HU, bg-BG (13 & 14).
+                    // width as a constant should not be less than 20
+                    // https://github.com/PowerShell/PowerShell/issues/19723
+                    .AddHeader(Alignment.Right, label: "LastWriteTime", width: 20)
                     .AddHeader(Alignment.Right, label: "Size", width: 12)
                     .AddHeader(Alignment.Left, label: "Name")
                     .StartRowDefinition(wrap: true)
