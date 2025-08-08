@@ -19,12 +19,12 @@ Describe "Configuration file locations" -tags "CI","Slow" {
                 }
                 $expectedCache    = [IO.Path]::Combine($env:LOCALAPPDATA, "Microsoft", "Windows", "PowerShell", "StartupProfileData-NonInteractive")
                 $expectedModule   = [IO.Path]::Combine($env:USERPROFILE, "Documents", $ProductName, "Modules")
-                $expectedProfile  = [io.path]::Combine($env:USERPROFILE, "Documents", $ProductName, $profileName)
+                $expectedProfile  = [IO.Path]::Combine($env:USERPROFILE, "Documents", $ProductName, $profileName)
                 $expectedReadline = [IO.Path]::Combine($env:AppData, "Microsoft", "Windows", "PowerShell", "PSReadline", "ConsoleHost_history.txt")
             } else {
                 $expectedCache    = [IO.Path]::Combine($env:HOME, ".cache", "powershell", "StartupProfileData-NonInteractive")
                 $expectedModule   = [IO.Path]::Combine($env:HOME, ".local", "share", "powershell", "Modules")
-                $expectedProfile  = [io.path]::Combine($env:HOME,".config","powershell",$profileName)
+                $expectedProfile  = [IO.Path]::Combine($env:HOME,".config","powershell",$profileName)
                 $expectedReadline = [IO.Path]::Combine($env:HOME, ".local", "share", "powershell", "PSReadLine", "ConsoleHost_history.txt")
             }
 
