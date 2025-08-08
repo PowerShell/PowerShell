@@ -253,6 +253,7 @@ namespace System.Management.Automation
                         throw new InvalidOperationException(SessionStateStrings.LocationUndoStackIsEmpty);
                     }
 
+                    context.SuppressWildcardExpansion = true;
                     path = _setLocationHistory.Undo(this.CurrentLocation).Path;
                     break;
                 case string originalPathSwitch when !literalPath && originalPathSwitch.Equals("+", StringComparison.Ordinal):
@@ -261,6 +262,7 @@ namespace System.Management.Automation
                         throw new InvalidOperationException(SessionStateStrings.LocationRedoStackIsEmpty);
                     }
 
+                    context.SuppressWildcardExpansion = true;
                     path = _setLocationHistory.Redo(this.CurrentLocation).Path;
                     break;
                 default:
