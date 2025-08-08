@@ -36,5 +36,10 @@
   "powershell.codeFormatting.whitespaceAfterSeparator": true,
 
   // Omnisharp : Enable EditorConfig support
-  "omnisharp.enableEditorConfigSupport": true
+  "omnisharp.enableEditorConfigSupport": true,
+  "python.testing.pytestArgs": [
+    "test"
+  ],
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestEnabled": true
 }
