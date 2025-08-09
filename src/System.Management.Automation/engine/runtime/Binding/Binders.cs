@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System.Buffers;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -5297,7 +5298,8 @@ namespace System.Management.Automation.Language
                             var propertyAccessor = adapterData.member as PropertyInfo;
                             if (propertyAccessor != null)
                             {
-                                if (propertyAccessor.GetMethod.IsFamily &&
+                                var propertyGetter = propertyAccessor.GetMethod;
+                                if ((propertyGetter.IsFamily || propertyGetter.IsFamilyOrAssembly) &&
                                     (_classScope == null || !_classScope.IsSubclassOf(propertyAccessor.DeclaringType)))
                                 {
                                     return GenerateGetPropertyException(restrictions).WriteToDebugLog(this);
@@ -5757,8 +5759,8 @@ namespace System.Management.Automation.Language
                             var getMethod = propertyInfo.GetGetMethod(nonPublic: true);
                             var setMethod = propertyInfo.GetSetMethod(nonPublic: true);
 
-                            if ((getMethod == null || getMethod.IsFamily || getMethod.IsPublic) &&
-                                (setMethod == null || setMethod.IsFamily || setMethod.IsPublic))
+                            if ((getMethod == null || getMethod.IsPublic || getMethod.IsFamily || getMethod.IsFamilyOrAssembly) &&
+                                (setMethod == null || setMethod.IsPublic || setMethod.IsFamily || setMethod.IsFamilyOrAssembly))
                             {
                                 memberInfo = new PSProperty(this.Name, PSObject.DotNetInstanceAdapter, target.Value, new DotNetAdapter.PropertyCacheEntry(propertyInfo));
                             }
@@ -5768,7 +5770,7 @@ namespace System.Management.Automation.Language
                             var fieldInfo = member as FieldInfo;
                             if (fieldInfo != null)
                             {
-                                if (fieldInfo.IsFamily)
+                                if (fieldInfo.IsFamily || fieldInfo.IsFamilyOrAssembly)
                                 {
                                     memberInfo = new PSProperty(this.Name, PSObject.DotNetInstanceAdapter, target.Value, new DotNetAdapter.PropertyCacheEntry(fieldInfo));
                                 }
@@ -5776,7 +5778,7 @@ namespace System.Management.Automation.Language
                             else
                             {
                                 var methodInfo = member as MethodInfo;
-                                if (methodInfo != null && (methodInfo.IsPublic || methodInfo.IsFamily))
+                                if (methodInfo != null && (methodInfo.IsPublic || methodInfo.IsFamily || methodInfo.IsFamilyOrAssembly))
                                 {
                                     candidateMethods ??= new List<MethodBase>();
 
@@ -6291,7 +6293,8 @@ namespace System.Management.Automation.Language
                         var targetExpr = _static ? null : PSGetMemberBinder.GetTargetExpr(target, data.member.DeclaringType);
                         if (propertyInfo != null)
                         {
-                            if (propertyInfo.SetMethod.IsFamily &&
+                            var propertySetter = propertyInfo.SetMethod;
+                            if ((propertySetter.IsFamily || propertySetter.IsFamilyOrAssembly) &&
                                 (_classScope == null || !_classScope.IsSubclassOf(propertyInfo.DeclaringType)))
                             {
                                 return GeneratePropertyAssignmentException(restrictions).WriteToDebugLog(this);
@@ -6533,6 +6536,21 @@ namespace System.Management.Automation.Language
 
     internal sealed class PSInvokeMemberBinder : InvokeMemberBinder
     {
+        [TraceSource("MethodInvocation", "Traces the invocation of .NET methods.")]
+        internal static readonly PSTraceSource MethodInvocationTracer =
+            PSTraceSource.GetTracer(
+                "MethodInvocation",
+                "Traces the invocation of .NET methods.",
+                false);
+
+        private static readonly SearchValues<string> s_whereSearchValues = SearchValues.Create(
+            ["Where", "PSWhere"],
+            StringComparison.OrdinalIgnoreCase);
+
+        private static readonly SearchValues<string> s_foreachSearchValues = SearchValues.Create(
+            ["ForEach", "PSForEach"],
+            StringComparison.OrdinalIgnoreCase);
+
         internal enum MethodInvocationType
         {
             Ordinary,
@@ -6681,12 +6699,14 @@ namespace System.Management.Automation.Language
                         .WriteToDebugLog(this);
                     BindingRestrictions argRestrictions = args.Aggregate(BindingRestrictions.Empty, static (current, arg) => current.Merge(arg.PSGetMethodArgumentRestriction()));
 
-                    if (string.Equals(Name, "Where", StringComparison.OrdinalIgnoreCase))
+                    // We need to pass the empty enumerator to the ForEach/Where operators, so that they can return an empty collection.
+                    // The ForEach/Where operators will not be able to call the script block if the enumerator is empty.
+                    if (s_whereSearchValues.Contains(Name))
                     {
                         return InvokeWhereOnCollection(emptyEnumerator, args, argRestrictions).WriteToDebugLog(this);
                     }
 
-                    if (string.Equals(Name, "ForEach", StringComparison.OrdinalIgnoreCase))
+                    if (s_foreachSearchValues.Contains(Name))
                     {
                         return InvokeForEachOnCollection(emptyEnumerator, args, argRestrictions).WriteToDebugLog(this);
                     }
@@ -6866,12 +6886,12 @@ namespace System.Management.Automation.Language
             if (!_static && !_nonEnumerating && target.Value != AutomationNull.Value)
             {
                 // Invoking Where and ForEach operators on collections.
-                if (string.Equals(Name, "Where", StringComparison.OrdinalIgnoreCase))
+                if (s_whereSearchValues.Contains(Name))
                 {
                     return InvokeWhereOnCollection(target, args, restrictions).WriteToDebugLog(this);
                 }
 
-                if (string.Equals(Name, "ForEach", StringComparison.OrdinalIgnoreCase))
+                if (s_foreachSearchValues.Contains(Name))
                 {
                     return InvokeForEachOnCollection(target, args, restrictions).WriteToDebugLog(this);
                 }
@@ -6941,6 +6961,17 @@ namespace System.Management.Automation.Language
                 if (expr.Type == typeof(void))
                 {
                     expr = Expression.Block(expr, ExpressionCache.AutomationNullConstant);
+                }
+
+                if (MethodInvocationTracer.IsEnabled)
+                {
+                    expr = Expression.Block(
+                        Expression.Call(
+                            Expression.Constant(MethodInvocationTracer),
+                            CachedReflectionInfo.PSTraceSource_WriteLine,
+                            Expression.Constant("Invoking method: {0}"),
+                            Expression.Constant(result.methodDefinition)),
+                        expr);
                 }
 
                 // If we're calling SteppablePipeline.{Begin|Process|End}, we don't want
@@ -7490,7 +7521,7 @@ namespace System.Management.Automation.Language
             // As a last resort, we invoke 'Where' and 'ForEach' operators on singletons like
             //    ([pscustomobject]@{ foo = 'bar' }).Foreach({$_})
             //    ([pscustomobject]@{ foo = 'bar' }).Where({1})
-            if (string.Equals(methodName, "Where", StringComparison.OrdinalIgnoreCase))
+            if (s_whereSearchValues.Contains(methodName))
             {
                 var enumerator = (new object[] { obj }).GetEnumerator();
                 switch (args.Length)
@@ -7506,7 +7537,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (string.Equals(methodName, "Foreach", StringComparison.OrdinalIgnoreCase))
+            if (s_foreachSearchValues.Contains(methodName))
             {
                 var enumerator = (new object[] { obj }).GetEnumerator();
                 object[] argsToPass;
@@ -7891,7 +7922,7 @@ namespace System.Management.Automation.Language
                 ? BindingRestrictions.GetTypeRestriction(target.Expression, target.Value.GetType())
                 : target.PSGetTypeRestriction();
             restrictions = args.Aggregate(restrictions, static (current, arg) => current.Merge(arg.PSGetMethodArgumentRestriction()));
-            var newConstructors = DotNetAdapter.GetMethodInformationArray(ctors.Where(static c => c.IsPublic || c.IsFamily).ToArray());
+            var newConstructors = DotNetAdapter.GetMethodInformationArray(ctors.Where(static c => c.IsPublic || c.IsFamily || c.IsFamilyOrAssembly).ToArray());
             return PSInvokeMemberBinder.InvokeDotNetMethod(_callInfo, "new", _constraints, PSInvokeMemberBinder.MethodInvocationType.BaseCtor,
                                                            target, args, restrictions, newConstructors, typeof(MethodException));
         }

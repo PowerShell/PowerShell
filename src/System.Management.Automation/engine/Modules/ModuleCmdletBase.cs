@@ -136,12 +136,17 @@ namespace Microsoft.PowerShell.Commands
 
         internal SessionState TargetSessionState
         {
-            // Module loading could happen during tab completion triggered by PSReadLine,
-            // but that doesn't mean the module should be loaded targeting the PSReadLine
-            // module's session state. In that case, use Global session state instead.
-            get => BaseGlobal || Context.EngineSessionState.Module?.Name is "PSReadLine"
-                ? Context.TopLevelSessionState.PublicSessionState
-                : Context.SessionState;
+            get
+            {
+                if (BaseGlobal)
+                {
+                    return this.Context.TopLevelSessionState.PublicSessionState;
+                }
+                else
+                {
+                    return this.Context.SessionState;
+                }
+            }
         }
 
         /// <summary>
@@ -1620,7 +1625,17 @@ namespace Microsoft.PowerShell.Commands
                 if (bailOnFirstError) return null;
             }
 
-            string resolvedCommandPrefix = BasePrefix ?? defaultCommandPrefix ?? string.Empty;
+            string resolvedCommandPrefix = string.Empty;
+
+            if (!string.IsNullOrEmpty(defaultCommandPrefix))
+            {
+                resolvedCommandPrefix = defaultCommandPrefix;
+            }
+
+            if (!string.IsNullOrEmpty(this.BasePrefix))
+            {
+                resolvedCommandPrefix = this.BasePrefix;
+            }
 
             if (!string.IsNullOrEmpty(actualRootModule))
             {

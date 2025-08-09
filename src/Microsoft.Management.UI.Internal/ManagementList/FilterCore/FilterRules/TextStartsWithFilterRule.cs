@@ -11,18 +11,26 @@ namespace Microsoft.Management.UI.Internal
     /// check if it starts with the rule's value.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
-    [Serializable]
     public class TextStartsWithFilterRule : TextFilterRule
     {
         private static readonly string TextStartsWithCharactersRegexPattern = "^{0}";
         private static readonly string TextStartsWithWordsRegexPattern = TextStartsWithCharactersRegexPattern + WordBoundaryRegexPattern;
 
         /// <summary>
-        /// Initializes a new instance of the TextStartsWithFilterRule class.
+        /// Initializes a new instance of the <see cref="TextStartsWithFilterRule"/> class.
         /// </summary>
         public TextStartsWithFilterRule()
         {
             this.DisplayName = UICultureResources.FilterRule_TextStartsWith;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TextStartsWithFilterRule"/> class.
+        /// </summary>
+        /// <param name="source">The source to initialize from.</param>
+        public TextStartsWithFilterRule(TextStartsWithFilterRule source)
+            : base(source)
+        {
         }
 
         /// <summary>
