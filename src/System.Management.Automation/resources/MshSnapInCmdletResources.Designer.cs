@@ -41,5 +41,11 @@ namespace System.Management.Automation
             set { resourceCulture = value; }
         }
         // Add properties for each resource string as needed.
+        public static string NekiResourceKey => ResourceManager.GetString("NekiResourceKey", resourceCulture);
+        // Resource string properties
+        public static string CmdletNotFound => ResourceManager.GetString("CmdletNotFound", resourceCulture);
+        public static string InvalidParameter => ResourceManager.GetString("InvalidParameter", resourceCulture);
+        public static string HelpText => ResourceManager.GetString("HelpText", resourceCulture);
+        // Dodaj property za svaki ključ iz .resx datoteke
     }
 }
