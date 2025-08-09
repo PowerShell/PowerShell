@@ -4,8 +4,6 @@
 Describe "Isolated module scenario - load the whole module in custom ALC" -Tag 'CI' {
     It "Loading 'IsolatedModule' should work as expected" {
 
-        Set-ItResult -Pending -Because "The test is failing as we cannot depend on Newtonsoft.Json v10.0.0 as it has security vulnerabilities."
-        
         ## The 'IsolatedModule' module can be found at '<repo-root>\test\tools\Modules'.
         ## The module assemblies are created and deployed by '<repo-root>\test\tools\TestAlc'.
         ## The module defines its own custom ALC and has its module structure organized in a special way that allows the module to be loaded in that custom ALC.
@@ -14,9 +12,15 @@ Describe "Isolated module scenario - load the whole module in custom ALC" -Tag '
         ## │   Test.Isolated.Init.dll (contains the custom ALC and code to setup 'Resolving' handler)
         ## │
         ## └───Dependencies
-        ##        Newtonsoft.Json.dll (version 10.0.0.0 dependency)
+        ##        System.CommandLine.dll (version 2.0.0.0 dependency)
         ##        Test.Isolated.Nested.dll (nested binary module)
         ##        Test.Isolated.Root.dll (root binary module)
+
+        ## The assembly 'System.CommandLine.dll' should not be loaded in the PowerShell default ALC by default.
+        [System.Runtime.Loader.AssemblyLoadContext]::Default.Assemblies |
+            Where-Object FullName -Like 'System.CommandLine,*' |
+            Should -Be $null
+
         $module = Import-Module IsolatedModule -PassThru
         $nestedCmd = Get-Command Test-NestedCommand
         $rootCmd = Get-Command Test-RootCommand
@@ -30,10 +34,14 @@ Describe "Isolated module scenario - load the whole module in custom ALC" -Tag '
         $context1.Name | Should -BeExactly "MyCustomALC"
         $context1 | Should -Be $context2
 
-        ## Test-NestedCommand depends on NewtonSoft.Json 10.0.0.0 while PowerShell depends on 13.0.0.0 or higher.
-        ## The exact version of NewtonSoft.Json should be loaded to the custom ALC.
+        ## Test-NestedCommand depends on 'System.CommandLine.dll' which is loaded in the module's ALC.
         $foo = [Test.Isolated.Nested.Foo]::new("Hello", "World")
-        Test-NestedCommand -Param $foo | Should -BeExactly "Hello-World-Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed"
+        Test-NestedCommand -Param $foo | Should -BeExactly "Hello-World-System.CommandLine, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"
+
+        ## The assembly 'System.CommandLine.dll' should still not be loaded in the PowerShell default ALC.
+        [System.Runtime.Loader.AssemblyLoadContext]::Default.Assemblies |
+            Where-Object FullName -Like 'System.CommandLine,*' |
+            Should -Be $null
 
         ## The type 'Test.Isolated.Root.Red' from the root module can be resolved and should be from the same load context.
         $context3 = [System.Runtime.Loader.AssemblyLoadContext]::GetLoadContext($rootCmd.ImplementingType.Assembly)

@@ -101,7 +101,7 @@ runs:
       chmod a+x $pwshPath
       $options.Output = $pwshPath
       Set-PSOptions $options
-      Invoke-CITest -Purpose '${{ inputs.purpose }}' -TagSet '${{ inputs.tagSet }}' -TitlePrefix '${{ inputs.buildName }}' -OutputFormat JUnitXml
+      Invoke-CITest -Purpose '${{ inputs.purpose }}' -TagSet '${{ inputs.tagSet }}' -TitlePrefix '${{ inputs.buildName }}' -OutputFormat NUnitXml
     shell: pwsh
 
   - name: Convert, Publish, and Upload Pester Test Results

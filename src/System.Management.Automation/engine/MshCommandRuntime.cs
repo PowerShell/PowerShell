@@ -390,6 +390,9 @@ namespace System.Management.Automation
             WriteProgress(sourceId, progressRecord, false);
         }
 
+        internal bool IsWriteProgressEnabled()
+            => WriteHelper_ShouldWrite(ProgressPreference, lastProgressContinueStatus);
+
         internal void WriteProgress(
                 Int64 sourceId,
                 ProgressRecord progressRecord,
@@ -471,6 +474,9 @@ namespace System.Management.Automation
         {
             WriteDebug(new DebugRecord(text));
         }
+
+        internal bool IsWriteDebugEnabled()
+            => WriteHelper_ShouldWrite(DebugPreference, lastDebugContinueStatus);
 
         /// <summary>
         /// Display debug information.
@@ -566,6 +572,9 @@ namespace System.Management.Automation
             WriteVerbose(new VerboseRecord(text));
         }
 
+        internal bool IsWriteVerboseEnabled()
+            => WriteHelper_ShouldWrite(VerbosePreference, lastVerboseContinueStatus);
+
         /// <summary>
         /// Display verbose information.
         /// </summary>
@@ -660,6 +669,9 @@ namespace System.Management.Automation
             WriteWarning(new WarningRecord(text));
         }
 
+        internal bool IsWriteWarningEnabled()
+            => WriteHelper_ShouldWrite(WarningPreference, lastWarningContinueStatus);
+
         /// <summary>
         /// Display warning information.
         /// </summary>
@@ -732,6 +744,9 @@ namespace System.Management.Automation
         {
             WriteInformation(informationRecord, false);
         }
+
+        internal bool IsWriteInformationEnabled()
+            => WriteHelper_ShouldWrite(InformationPreference, lastInformationContinueStatus);
 
         /// <summary>
         /// Display tagged object information.

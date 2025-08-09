@@ -458,6 +458,9 @@ namespace System.Management.Automation
             }
         }
 
+        internal bool IsWriteVerboseEnabled()
+            => commandRuntime is not MshCommandRuntime mshRuntime || mshRuntime.IsWriteVerboseEnabled();
+
         /// <summary>
         /// Display warning information.
         /// </summary>
@@ -494,6 +497,9 @@ namespace System.Management.Automation
                     throw new System.NotImplementedException("WriteWarning");
             }
         }
+
+        internal bool IsWriteWarningEnabled()
+            => commandRuntime is not MshCommandRuntime mshRuntime || mshRuntime.IsWriteWarningEnabled();
 
         /// <summary>
         /// Write text into pipeline execution log.
@@ -603,6 +609,9 @@ namespace System.Management.Automation
                 throw new System.NotImplementedException("WriteProgress");
         }
 
+        internal bool IsWriteProgressEnabled()
+            => commandRuntime is not MshCommandRuntime mshRuntime || mshRuntime.IsWriteProgressEnabled();
+
         /// <summary>
         /// Display debug information.
         /// </summary>
@@ -645,6 +654,9 @@ namespace System.Management.Automation
                     throw new System.NotImplementedException("WriteDebug");
             }
         }
+
+        internal bool IsWriteDebugEnabled()
+            => commandRuntime is not MshCommandRuntime mshRuntime || mshRuntime.IsWriteDebugEnabled();
 
         /// <summary>
         /// Route information to the user or host.
@@ -752,6 +764,9 @@ namespace System.Management.Automation
                 }
             }
         }
+
+        internal bool IsWriteInformationEnabled()
+            => commandRuntime is not MshCommandRuntime mshRuntime || mshRuntime.IsWriteInformationEnabled();
 
         #endregion Write
 

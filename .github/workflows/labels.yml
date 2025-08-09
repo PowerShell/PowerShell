@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   verify-labels:
-    if: startsWith(github.repository_owner, 'azure') || github.repository_owner == 'PowerShell'
+    if: github.repository_owner == 'PowerShell'
     runs-on: ubuntu-latest
 
     steps:

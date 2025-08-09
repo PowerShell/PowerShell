@@ -551,7 +551,8 @@ function Get-HelpNetworkTestCases
 
     # Command discovery does not follow symlinks to network locations for module qualified paths
     $networkBlockedError = "CommandNameNotAllowed,Microsoft.PowerShell.Commands.GetHelpCommand"
-    $scriptBlockedError = "ScriptsNotAllowed"
+    # This error may change as long as no test cases start failing for other reasons
+    $scriptBlockedError = "CommandNotFoundException"
 
     $formats = @(
         '//{0}/share/{1}'

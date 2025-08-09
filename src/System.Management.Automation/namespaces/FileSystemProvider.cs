@@ -2271,8 +2271,7 @@ namespace Microsoft.PowerShell.Commands
                             // for hardlinks we resolve the target to an absolute path
                             if (!IsAbsolutePath(strTargetPath))
                             {
-                                // there is already a check before here so that strTargetPath should only resolve to 1 path
-                                strTargetPath = SessionState.Path.GetResolvedPSPathFromPSPath(strTargetPath).FirstOrDefault()?.Path;
+                                strTargetPath = SessionState.Path.GetUnresolvedProviderPathFromPSPath(strTargetPath);
                             }
 
                             exists = GetFileSystemInfo(strTargetPath, out isDirectory) != null;
@@ -2666,12 +2665,6 @@ namespace Microsoft.PowerShell.Commands
                 !string.IsNullOrEmpty(path),
                 "The caller should verify path");
 
-            // Get the parent path
-            string parentPath = GetParentPath(path, null);
-
-            // The directory name
-            string childName = GetChildName(path);
-
             ErrorRecord error = null;
             if (!Force && ItemExists(path, out error))
             {
@@ -2701,7 +2694,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (ShouldProcess(resource, action))
                 {
-                    var result = Directory.CreateDirectory(Path.Combine(parentPath, childName));
+                    var result = Directory.CreateDirectory(path);
 
                     if (streamOutput)
                     {

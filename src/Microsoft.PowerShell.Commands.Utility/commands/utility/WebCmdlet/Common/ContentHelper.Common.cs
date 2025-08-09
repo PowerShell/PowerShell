@@ -9,7 +9,7 @@ using System.Management.Automation;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-
+using Humanizer;
 using Microsoft.Win32;
 
 namespace Microsoft.PowerShell.Commands
@@ -21,7 +21,14 @@ namespace Microsoft.PowerShell.Commands
         // ContentType may not exist in response header.  Return null if not.
         internal static string? GetContentType(HttpResponseMessage response) => response.Content.Headers.ContentType?.MediaType;
 
+        internal static string? GetContentType(HttpRequestMessage request) => request.Content?.Headers.ContentType?.MediaType;
+
         internal static Encoding GetDefaultEncoding() => Encoding.UTF8;
+
+        internal static string GetFriendlyContentLength(long? length) =>
+            length.HasValue
+            ? $"{length.Value.Bytes().Humanize()} ({length.Value:#,0} bytes)"
+            : "unknown size";
 
         internal static StringBuilder GetRawContentHeader(HttpResponseMessage response)
         {
@@ -133,9 +140,12 @@ namespace Microsoft.PowerShell.Commands
                        || contentType.Equals("application/xml-external-parsed-entity", StringComparison.OrdinalIgnoreCase)
                        || contentType.Equals("application/xml-dtd", StringComparison.OrdinalIgnoreCase)
                        || contentType.EndsWith("+xml", StringComparison.OrdinalIgnoreCase);
-            
+
             return isXml;
         }
+
+        internal static bool IsTextBasedContentType([NotNullWhen(true)] string? contentType)
+            => IsText(contentType) || IsJson(contentType) || IsXml(contentType);
 
         #endregion Internal Methods
     }

@@ -26,7 +26,7 @@ jobs:
         use-verbose-mode: 'yes'
         config-file: .github/workflows/markdown-link/config.json
     - name: Microsoft Teams Notifier
-      uses: skitionek/notify-microsoft-teams@190d4d92146df11f854709774a4dae6eaf5e2aa3 # master
+      uses: skitionek/notify-microsoft-teams@e7a2493ac87dad8aa7a62f079f295e54ff511d88 # master
       if: failure()
       with:
         webhook_url: ${{ secrets.PS_BUILD_TEAMS_CHANNEL }}

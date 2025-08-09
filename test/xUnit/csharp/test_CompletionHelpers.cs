@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System;
 using System.Management.Automation;
 using Xunit;
 
@@ -38,6 +39,18 @@ namespace PSTests.Parallel
         [InlineData("key$word", "'", "'key$word'")]
         [InlineData("key$word", "", "'key$word'")]
         [InlineData("key$word", "\"", "\"key$word\"")]
+        [InlineData("`r`n", "\"", "\"`r`n\"")]
+        [InlineData("`r`n", "'", "\"`r`n\"")]
+        [InlineData("`r`n", "", "\"`r`n\"")]
+        [InlineData("`r`n    `${0}", "\"", "\"`r`n    `${0}\"")]
+        [InlineData("`r`n    `${0}", "'", "\"`r`n    `${0}\"")]
+        [InlineData("`r`n    `${0}", "", "\"`r`n    `${0}\"")]
+        [InlineData("`n", "\"", "\"`n\"")]
+        [InlineData("`n", "'", "\"`n\"")]
+        [InlineData("`n", "", "\"`n\"")]
+        [InlineData("`n    `${0}", "\"", "\"`n    `${0}\"")]
+        [InlineData("`n    `${0}", "'", "\"`n    `${0}\"")]
+        [InlineData("`n    `${0}", "", "\"`n    `${0}\"")]
         public void TestQuoteCompletionText(
              string completionText,
              string quote,
@@ -66,6 +79,10 @@ namespace PSTests.Parallel
         [InlineData("\"", true)]
         [InlineData("'", true)]
         [InlineData("", true)]
+        [InlineData(";", true)]
+        [InlineData("; ", true)]
+        [InlineData(",", true)]
+        [InlineData(", ", true)]
         public void TestCompletionRequiresQuotes(string completion, bool expected)
         {
             bool result = CompletionHelpers.CompletionRequiresQuotes(completion);
@@ -91,6 +108,76 @@ namespace PSTests.Parallel
             string quote = CompletionHelpers.HandleDoubleAndSingleQuote(ref wordToComplete);
             Assert.Equal(expectedQuote, quote);
             Assert.Equal(expectedWordToComplete, wordToComplete);
+        }
+
+        [Theory]
+        [InlineData("word", "word", true)]
+        [InlineData("Word", "word", true)]
+        [InlineData("word", "wor", true)]
+        [InlineData("word", "words", false)]
+        [InlineData("word`nnext", "word`n", true)]
+        [InlineData("word`r`nnext", "word`r`n", true)]
+        [InlineData("word;next", "word;", true)]
+        [InlineData("word,next", "word,", true)]
+        [InlineData("word[*]next", "word[*", true)]
+        [InlineData("word[abc]next", "word[abc", true)]
+        [InlineData("word", "word*", true)]
+        [InlineData("Word", "word*", true)]
+        [InlineData("word(Special)", "word*", true)]
+        [InlineData("testword", "test", true)]
+        [InlineData("word", "", true)]
+        [InlineData("", "word", false)]
+        public void TestDefaultMatch(string value, string wordToComplete, bool expected)
+        {
+            bool result = CompletionHelpers.DefaultMatch(value, wordToComplete);
+            Assert.Equal(expected, result);
+        }
+
+        [Theory]
+        [InlineData("word", "word", true)]
+        [InlineData("Word", "word", true)]
+        [InlineData("word", "wor", true)]
+        [InlineData("word", "words", false)]
+        [InlineData("word`nnext", "word`n", true)]
+        [InlineData("word`r`nnext", "word`r`n", true)]
+        [InlineData("word;next", "word;", true)]
+        [InlineData("word,next", "word,", true)]
+        [InlineData("word[*]next", "word[*", true)]
+        [InlineData("word[abc]next", "word[abc", true)]
+        [InlineData("word", "word*", false)]
+        [InlineData("Word", "word*", false)]
+        [InlineData("word(Special)", "word*", false)]
+        [InlineData("testword", "test", true)]
+        [InlineData("word", "", true)]
+        [InlineData("", "word", false)]
+        public void TestWildcardPatternEscapeMatch(string value, string wordToComplete, bool expected)
+        {
+            bool result = CompletionHelpers.WildcardPatternEscapeMatch(value, wordToComplete);
+            Assert.Equal(expected, result);
+        }
+
+        [Theory]
+        [InlineData("\n", "`n")]
+        [InlineData("\r", "`r")]
+        [InlineData("\r\n", "`r`n")]
+        [InlineData("\t", "`t")]
+        [InlineData("\0", "`0")]
+        [InlineData("\a", "`a")]
+        [InlineData("\b", "`b")]
+        [InlineData("\u001b", "`e")]
+        [InlineData("\f", "`f")]
+        [InlineData("\v", "`v")]
+        [InlineData("word\n", "word`n")]
+        [InlineData("word\r", "word`r")]
+        [InlineData("word\t", "word`t")]
+        [InlineData("word\u001b", "word`e")]
+        [InlineData("word\f", "word`f")]
+        [InlineData("word\v", "word`v")]
+        [InlineData("word\r\n", "word`r`n")]
+        public void TestNormalizeToExpandableString(string value, string expected)
+        {
+            string result = CompletionHelpers.NormalizeToExpandableString(value);
+            Assert.Equal(expected, result);
         }
     }
 }

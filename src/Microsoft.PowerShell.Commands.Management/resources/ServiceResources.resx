@@ -159,9 +159,6 @@
   <data name="CouldNotSetService" xml:space="preserve">
     <value>Service '{1} ({0})' cannot be configured due to the following error: {2}</value>
   </data>
-  <data name="CouldNotGetServiceInfo" xml:space="preserve">
-    <value>Service '{1} ({0})' cannot be queried due to the following error: {2}</value>
-  </data>
   <data name="CouldNotSetServiceDescription" xml:space="preserve">
     <value>Service '{1} ({0})' description cannot be configured due to the following error: {2}</value>
   </data>
@@ -211,7 +208,7 @@
     <value>Service '{1} ({0})' resume failed.</value>
   </data>
   <data name="FailToOpenServiceControlManager" xml:space="preserve">
-    <value>Failed to configure the service '{1} ({0})' due to the following error: {2}. Run PowerShell as admin and run your command again.</value>
+    <value>Failed to open SCManager due to the following error: {0}. Run PowerShell as admin and run your command again.</value>
   </data>
   <data name="UnsupportedStartupType" xml:space="preserve">
     <value>The startup type '{0}' is not supported by {1}.</value>

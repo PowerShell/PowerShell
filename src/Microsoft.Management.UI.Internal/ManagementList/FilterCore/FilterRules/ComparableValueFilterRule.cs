@@ -13,9 +13,25 @@ namespace Microsoft.Management.UI.Internal
     /// The generic parameter.
     /// </typeparam>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
-    [Serializable]
     public abstract class ComparableValueFilterRule<T> : FilterRule where T : IComparable
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ComparableValueFilterRule{T}"/> class.
+        /// </summary>
+        protected ComparableValueFilterRule()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ComparableValueFilterRule{T}"/> class.
+        /// </summary>
+        /// <param name="source">The source to initialize from.</param>
+        protected ComparableValueFilterRule(ComparableValueFilterRule<T> source)
+            : base(source)
+        {
+            this.DefaultNullValueEvaluation = source.DefaultNullValueEvaluation;
+        }
+
         #region Properties
 
         /// <summary>

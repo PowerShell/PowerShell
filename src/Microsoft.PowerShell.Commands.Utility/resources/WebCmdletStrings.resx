@@ -164,7 +164,7 @@
   </data>
   <data name="InsecureRedirection" xml:space="preserve">
     <value>Cannot follow an insecure redirection by default. Reissue the command specifying the -AllowInsecureRedirect switch. </value>
-  </data> 
+  </data>
   <data name="KeysWithDifferentCasingInJsonString" xml:space="preserve">
     <value>Cannot convert the JSON string because it contains keys with different casing. Please use the -AsHashTable switch instead. The key that was attempted to be added to the existing key '{0}' was '{1}'.</value>
   </data>
@@ -234,14 +234,8 @@
   <data name="FollowingRelLinkVerboseMsg" xml:space="preserve">
     <value>Following rel link {0}</value>
   </data>
-  <data name="WebMethodInvocationVerboseMsg" xml:space="preserve">
-    <value>Requested HTTP/{0} {1} with {2}-byte payload</value>
-  </data>
   <data name="WebMethodResumeFailedVerboseMsg" xml:space="preserve">
     <value>The remote server indicated it could not resume downloading. The local file will be overwritten.</value>
-  </data>
-  <data name="WebResponseVerboseMsg" xml:space="preserve">
-    <value>Received HTTP/{0} {1}-byte response of content type {2}</value>
   </data>
   <data name="WebResponseNoSizeVerboseMsg" xml:space="preserve">
     <value>Received HTTP/{0} response of content type {1} of unknown size</value>

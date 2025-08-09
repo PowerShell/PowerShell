@@ -20,15 +20,25 @@ runs:
   steps:
   - name: Capture Environment
     if: success() || failure()
-    run: 'Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose'
+    run: |-
+      Import-Module ./build.psm1
+      Write-LogGroupStart -Title 'Environment'
+      Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
+      Write-LogGroupEnd -Title 'Environment'
     shell: pwsh
+
   - name: Download Build Artifacts
     uses: actions/download-artifact@v4
     with:
       path: "${{ github.workspace }}"
+
   - name: Capture Artifacts Directory
     continue-on-error: true
-    run: Get-ChildItem "${{ github.workspace }}\build\*" -Recurse
+    run: |-
+      Import-Module ./build.psm1
+      Write-LogGroupStart -Title 'Artifacts Directory'
+      Get-ChildItem "${{ github.workspace }}/build/*" -Recurse
+      Write-LogGroupEnd -Title 'Artifacts Directory'
     shell: pwsh
 
   - uses: actions/setup-dotnet@v4
@@ -38,7 +48,8 @@ runs:
   - name: Bootstrap
     shell: powershell
     run: |-
-      # Remove "Program Files\dotnet" from the env variable PATH, so old SDKs won't affect us.
+      Import-Module ./build.psm1
+      Write-LogGroupStart -Title 'Bootstrap'
       Write-Host "Old Path:"
       Write-Host $env:Path
       $dotnetPath = Join-Path $env:SystemDrive 'Program Files\dotnet'
@@ -49,6 +60,7 @@ runs:
       # Bootstrap
       Import-Module .\tools\ci.psm1
       Invoke-CIInstall
+      Write-LogGroupEnd -Title 'Bootstrap'
 
   - name: Test
     if: success()
@@ -60,7 +72,7 @@ runs:
       $path = split-path -path $options.Output
       $rootPath = split-Path -path $path
       Expand-Archive -Path '${{ github.workspace }}\build\build.zip' -DestinationPath $rootPath -Force
-      Invoke-CITest -Purpose '${{ inputs.purpose }}' -TagSet '${{ inputs.tagSet }}' -OutputFormat JUnitXml
+      Invoke-CITest -Purpose '${{ inputs.purpose }}' -TagSet '${{ inputs.tagSet }}' -OutputFormat NUnitXml
     shell: pwsh
 
   - name: Convert, Publish, and Upload Pester Test Results

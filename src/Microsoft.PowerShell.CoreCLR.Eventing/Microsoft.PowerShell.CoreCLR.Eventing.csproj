@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
-    <PackageReference Include="System.Diagnostics.EventLog" Version="10.0.0-preview.2.25163.2" />
+    <PackageReference Include="System.Diagnostics.EventLog" Version="10.0.0-preview.6.25358.103" />
   </ItemGroup>
 
 </Project>

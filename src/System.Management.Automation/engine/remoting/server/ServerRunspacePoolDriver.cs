@@ -716,7 +716,7 @@ namespace System.Management.Automation
             bool isNested = false;
 
             // The server would've dropped the protocol version of an older client was connecting
-            if (_serverCapability.ProtocolVersion >= RemotingConstants.ProtocolVersionWin8RTM)
+            if (_serverCapability.ProtocolVersion >= RemotingConstants.ProtocolVersion_2_2)
             {
                 isNested = RemotingDecoder.GetIsNested(data.Data);
             }

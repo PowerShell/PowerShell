@@ -586,4 +586,25 @@ using type &lt;AliasName&gt; = &lt;.NET-type&gt;</value>
   <data name="RegistryUnknownToolTip" xml:space="preserve">
     <value>An unsupported registry data type.</value>
   </data>
+  <data name="SeparatorCommaToolTip" xml:space="preserve">
+    <value>',' - Comma</value>
+  </data>
+  <data name="SeparatorCommaSpaceToolTip" xml:space="preserve">
+    <value>', ' - Comma-Space</value>
+  </data>
+  <data name="SeparatorSemiColonToolTip" xml:space="preserve">
+    <value>';' - Semi-Colon</value>
+  </data>
+  <data name="SeparatorSemiColonSpaceToolTip" xml:space="preserve">
+    <value>'; ' - Semi-Colon-Space</value>
+  </data>
+  <data name="SeparatorNewlineToolTip" xml:space="preserve">
+    <value>{0} - Newline</value>
+  </data>
+  <data name="SeparatorDashToolTip" xml:space="preserve">
+    <value>'-' - Dash</value>
+  </data>
+  <data name="SeparatorSpaceToolTip" xml:space="preserve">
+    <value>' ' - Space</value>
+  </data>
 </root>

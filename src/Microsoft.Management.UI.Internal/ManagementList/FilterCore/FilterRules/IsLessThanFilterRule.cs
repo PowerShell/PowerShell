@@ -14,15 +14,23 @@ namespace Microsoft.Management.UI.Internal
     /// The generic parameter.
     /// </typeparam>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
-    [Serializable]
     public class IsLessThanFilterRule<T> : SingleValueComparableValueFilterRule<T> where T : IComparable
     {
         /// <summary>
-        /// Initializes a new instance of the IsLessThanFilterRule class.
+        /// Initializes a new instance of the <see cref="IsLessThanFilterRule{T}"/> class.
         /// </summary>
         public IsLessThanFilterRule()
         {
             this.DisplayName = UICultureResources.FilterRule_LessThanOrEqual;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IsLessThanFilterRule{T}"/> class.
+        /// </summary>
+        /// <param name="source">The source to initialize from.</param>
+        public IsLessThanFilterRule(IsLessThanFilterRule<T> source)
+            : base(source)
+        {
         }
 
         /// <summary>

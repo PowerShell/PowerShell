@@ -505,20 +505,11 @@ namespace System.Management.Automation.Remoting
             _serverProtocolVersion = serverProtocolVersion;
             Version clientProtocolVersion = Context.ClientCapability.ProtocolVersion;
 
-            if (
-                clientProtocolVersion.Equals(serverProtocolVersion)
-                || (clientProtocolVersion == RemotingConstants.ProtocolVersionWin7RTM &&
-                    serverProtocolVersion == RemotingConstants.ProtocolVersionWin7RC)
-                || (clientProtocolVersion == RemotingConstants.ProtocolVersionWin8RTM &&
-                    (serverProtocolVersion == RemotingConstants.ProtocolVersionWin7RC ||
-                     serverProtocolVersion == RemotingConstants.ProtocolVersionWin7RTM
-                     ))
-                || (clientProtocolVersion == RemotingConstants.ProtocolVersionWin10RTM &&
-                    (serverProtocolVersion == RemotingConstants.ProtocolVersionWin7RC ||
-                     serverProtocolVersion == RemotingConstants.ProtocolVersionWin7RTM ||
-                     serverProtocolVersion == RemotingConstants.ProtocolVersionWin8RTM
-                     ))
-                 )
+            if (clientProtocolVersion == serverProtocolVersion ||
+                serverProtocolVersion == RemotingConstants.ProtocolVersion_2_0 ||
+                serverProtocolVersion == RemotingConstants.ProtocolVersion_2_1 ||
+                serverProtocolVersion == RemotingConstants.ProtocolVersion_2_2 ||
+                serverProtocolVersion == RemotingConstants.ProtocolVersion_2_3)
             {
                 // passed negotiation check
             }
