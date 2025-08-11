@@ -538,7 +538,7 @@ namespace Microsoft.PowerShell
         /// EKU present and sets publisherId to that unique identifier.
         /// </summary>
         /// <param name="certificate">The certificate to check.</param>
-        /// <param name="publisherId">An opaque blog that uniquely identifies the publisher if present.</param>
+        /// <param name="publisherId">An opaque blob that uniquely identifies the publisher if present.</param>
         /// <returns>True when the certificate has the Azure Trusted Signer Publisher ID EKU.</returns>
         private static bool TryGetAzureTrustedSignerPublisherId(
             X509Certificate2 certificate,
