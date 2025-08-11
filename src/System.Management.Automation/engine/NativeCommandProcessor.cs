@@ -11,15 +11,16 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Management.Automation.Internal;
-using System.Management.Automation.Runspaces;
-using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
+using Microsoft.PowerShell.Commands;
 using Microsoft.PowerShell.Telemetry;
+using Microsoft.Win32;
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
@@ -194,27 +195,187 @@ namespace System.Management.Automation
     /// </summary>
     internal class NativeCommandProcessor : CommandProcessorBase
     {
-        // This is the list of files which will trigger Legacy behavior if
-        // PSNativeCommandArgumentPassing is set to "Windows".
-        private static readonly IReadOnlySet<string> s_legacyFileExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
-        {
-            ".js",
-            ".wsf",
-            ".cmd",
-            ".bat",
-            ".vbs",
-        };
+        /// <summary>
+        /// This is the list of files which will trigger Legacy behavior if 'PSNativeCommandArgumentPassing' is set to "Windows".
+        /// </summary>
+        private static readonly HashSet<string> s_legacyFileExtensions = new(StringComparer.OrdinalIgnoreCase)
+            {
+                ".js",
+                ".wsf",
+                ".cmd",
+                ".bat",
+                ".vbs",
+            };
 
-        // The following native commands have non-standard behavior with regard to argument passing,
-        // so we use Legacy argument parsing for them when PSNativeCommandArgumentPassing is set to Windows.
-        private static readonly IReadOnlySet<string> s_legacyCommands = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        /// <summary>
+        /// This is the list of native commands that have non-standard behavior with regard to argument passing.
+        /// We use Legacy argument parsing for them when 'PSNativeCommandArgumentPassing' is set to "Windows".
+        /// </summary>
+        private static readonly HashSet<string> s_legacyCommands = new(StringComparer.OrdinalIgnoreCase)
+            {
+                "cmd",
+                "cscript",
+                "find",
+                "sqlcmd",
+                "wscript",
+            };
+
+#if !UNIX
+        /// <summary>
+        /// List of known package managers pulled from the registry.
+        /// </summary>
+        private static readonly HashSet<string> s_knownPackageManagers = GetPackageManagerListFromRegistry();
+
+        /// <summary>
+        /// Indicates whether the EnvironmentProvider is enabled in the current session.
+        /// </summary>
+        [ThreadStatic]
+        private static bool? s_environmentProviderEnabled;
+
+        private readonly bool _isPackageManager;
+        private string _originalUserEnvPath;
+        private string _originalSystemEnvPath;
+
+        private static HashSet<string> GetPackageManagerListFromRegistry()
         {
-            "cmd",
-            "cscript",
-            "find",
-            "sqlcmd",
-            "wscript",
-        };
+            const int MaxPackageManagerCount = 8;
+            const string RegKeyPath = @"Software\Microsoft\Command Processor\KnownPackageManagers";
+
+            string[] subKeyNames = null;
+            HashSet<string> retSet = null;
+
+            try
+            {
+                using RegistryKey key = Registry.LocalMachine.OpenSubKey(RegKeyPath);
+                subKeyNames = key?.GetSubKeyNames();
+            }
+            catch
+            {
+                return null;
+            }
+
+            if (subKeyNames is { Length: > 0 })
+            {
+                IEnumerable<string> names = subKeyNames.Length <= MaxPackageManagerCount
+                    ? subKeyNames
+                    : subKeyNames.Take(MaxPackageManagerCount);
+
+                retSet = new(names, StringComparer.OrdinalIgnoreCase);
+            }
+
+            return retSet;
+        }
+
+        private static bool IsPackageManager(string name, ExecutionContext context)
+        {
+            if (s_knownPackageManagers is null)
+            {
+                return false;
+            }
+
+            // Disable PATH update if 'EnvironmentProvider' is disabled in the current session.
+            s_environmentProviderEnabled ??= context.EngineSessionState.Providers.ContainsKey(EnvironmentProvider.ProviderName);
+            if (s_environmentProviderEnabled is false)
+            {
+                return false;
+            }
+
+            if (s_knownPackageManagers.Contains(name))
+            {
+                return true;
+            }
+
+            int lastDotIndex = name.LastIndexOf('.');
+            if (lastDotIndex > 0)
+            {
+                string nameWithoutExt = name[..lastDotIndex];
+                if (s_knownPackageManagers.Contains(nameWithoutExt))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static ReadOnlySpan<char> GetAddedPartOfString(string oldString, string newString)
+        {
+            if (oldString.Length >= newString.Length)
+            {
+                // Nothing added or something removed.
+                return ReadOnlySpan<char>.Empty;
+            }
+
+            int index = newString.IndexOf(oldString);
+            if (index is -1)
+            {
+                // The new and old strings are drastically different. Stop trying in this case.
+                return ReadOnlySpan<char>.Empty;
+            }
+
+            if (index > 0)
+            {
+                // Found the old string at non-zero offset, so something was prepended to the old string.
+                return newString.AsSpan(0, index);
+            }
+            else
+            {
+                // Found the old string at the beginning of the new string, so something was appended to the old string.
+                return newString.AsSpan(oldString.Length);
+            }
+        }
+
+        private static void UpdateProcessEnvPath(string oldUserPath, string oldSystemPath)
+        {
+            string newUserEnvPath = Environment.GetEnvironmentVariable("Path", EnvironmentVariableTarget.User);
+            string newSystemEnvPath = Environment.GetEnvironmentVariable("Path", EnvironmentVariableTarget.Machine);
+            string procEnvPath = Environment.GetEnvironmentVariable("Path");
+
+            ReadOnlySpan<char> userPathChange = GetAddedPartOfString(oldUserPath, newUserEnvPath);
+            ReadOnlySpan<char> systemPathChange = GetAddedPartOfString(oldSystemPath, newSystemEnvPath);
+
+            // Add 2 to account for the path separators we may need to add.
+            int maxLength = procEnvPath.Length + userPathChange.Length + systemPathChange.Length + 2;
+            StringBuilder newPath = null;
+
+            if (userPathChange.Length > 0)
+            {
+                CreateNewProcEnvPath(userPathChange);
+            }
+
+            if (systemPathChange.Length > 0)
+            {
+                CreateNewProcEnvPath(systemPathChange);
+            }
+
+            if (newPath is { Length: > 0 })
+            {
+                // Update the process env Path.
+                Environment.SetEnvironmentVariable("Path", newPath.ToString());
+            }
+
+            // Helper method to create a new env Path string.
+            void CreateNewProcEnvPath(ReadOnlySpan<char> newChange)
+            {
+                newPath ??= new StringBuilder(procEnvPath, capacity: maxLength);
+
+                if (newPath.Length is 0 || newPath[^1] is ';')
+                {
+                    newPath.Append(newChange[0] is ';'
+                        ? newChange.Slice(1)
+                        : newChange);
+                }
+                else if (newChange[0] is ';')
+                {
+                    newPath.Append(newChange);
+                }
+                else
+                {
+                    newPath.Append(';').Append(newChange);
+                }
+            }
+        }
+#endif
 
         #region ctor/native command properties
 
@@ -262,7 +423,11 @@ namespace System.Management.Automation
             // Create input writer for providing input to the process.
             _inputWriter = new ProcessInputWriter(Command);
 
-            _isTranscribing = this.Command.Context.EngineHostInterface.UI.IsTranscribing;
+            _isTranscribing = context.EngineHostInterface.UI.IsTranscribing;
+
+#if !UNIX
+            _isPackageManager = IsPackageManager(_applicationInfo.Name, context);
+#endif
         }
 
         /// <summary>
@@ -418,7 +583,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Process object for the invoked application.
         /// </summary>
-        private System.Diagnostics.Process _nativeProcess;
+        private Process _nativeProcess;
 
         /// <summary>
         /// This is used for writing input to the process.
@@ -559,6 +724,12 @@ namespace System.Management.Automation
 
                 // must set UseShellExecute to false if we modify the environment block
                 startInfo.UseShellExecute = false;
+            }
+
+            if (_isPackageManager)
+            {
+                _originalUserEnvPath = Environment.GetEnvironmentVariable("Path", EnvironmentVariableTarget.User);
+                _originalSystemEnvPath = Environment.GetEnvironmentVariable("Path", EnvironmentVariableTarget.Machine);
             }
 #endif
 
@@ -897,6 +1068,13 @@ namespace System.Management.Automation
                     // read all the available output in the blocking way
                     ConsumeAvailableNativeProcessOutput(blocking: true);
                     _nativeProcess.WaitForExit();
+
+#if !UNIX
+                    if (_isPackageManager)
+                    {
+                        UpdateProcessEnvPath(_originalUserEnvPath, _originalSystemEnvPath);
+                    }
+#endif
 
                     // Capture screen output if we are transcribing and running stand alone
                     if (_isTranscribing && (s_supportScreenScrape == true) && _runStandAlone)
@@ -1717,6 +1895,7 @@ namespace System.Management.Automation
         #region Minishell Interop
 
         private bool _isMiniShell = false;
+
         /// <summary>
         /// Returns true if native command being invoked is mini-shell.
         /// </summary>
