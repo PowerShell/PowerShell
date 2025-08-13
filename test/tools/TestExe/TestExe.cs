@@ -191,22 +191,23 @@ Other options are for specific tests only. Read source code for details.
             if (target.HasFlag(EnvTarget.User))
             {
                 // Append to the User Path.
-                UpdateEnvPath(UserEnvRegPath, append: true, @"X:\not-exist-user-path");
+                using RegistryKey reg = Registry.CurrentUser.OpenSubKey(UserEnvRegPath, writable: true);
+                UpdateEnvPath(reg, append: true, @"X:\not-exist-user-path");
             }
 
             if (target.HasFlag(EnvTarget.System))
             {
                 // Prepend to the System Path.
-                UpdateEnvPath(SysEnvRegPath, append: false, @"X:\not-exist-sys-path");
+                using RegistryKey reg = Registry.LocalMachine.OpenSubKey(SysEnvRegPath, writable: true);
+                UpdateEnvPath(reg, append: false, @"X:\not-exist-sys-path");
             }
 
-            static void UpdateEnvPath(string envRegPath, bool append, string newPathItem)
+            static void UpdateEnvPath(RegistryKey regKey, bool append, string newPathItem)
             {
-                using RegistryKey reg = Registry.CurrentUser.OpenSubKey(envRegPath);
                 // Get the registry value kind.
-                RegistryValueKind kind = reg.GetValueKind(EnvVarName);
+                RegistryValueKind kind = regKey.GetValueKind(EnvVarName);
                 // Get the literal registry value (not expanded) for the env var.
-                string oldValue = (string)reg.GetValue(
+                string oldValue = (string)regKey.GetValue(
                     EnvVarName,
                     defaultValue: string.Empty,
                     RegistryValueOptions.DoNotExpandEnvironmentNames);
@@ -226,7 +227,7 @@ Other options are for specific tests only. Read source code for details.
                 }
 
                 // Set the new value and preserve the original value kind.
-                reg.SetValue(EnvVarName, newValue, kind);
+                regKey.SetValue(EnvVarName, newValue, kind);
             }
         }
     }
