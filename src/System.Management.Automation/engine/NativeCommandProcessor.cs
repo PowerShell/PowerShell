@@ -332,8 +332,8 @@ namespace System.Management.Automation
             string newSystemEnvPath = Environment.GetEnvironmentVariable("Path", EnvironmentVariableTarget.Machine);
             string procEnvPath = Environment.GetEnvironmentVariable("Path");
 
-            ReadOnlySpan<char> userPathChange = GetAddedPartOfString(oldUserPath, newUserEnvPath).TrimEnd(';');
-            ReadOnlySpan<char> systemPathChange = GetAddedPartOfString(oldSystemPath, newSystemEnvPath).TrimEnd(';');
+            ReadOnlySpan<char> userPathChange = GetAddedPartOfString(oldUserPath, newUserEnvPath).Trim(';');
+            ReadOnlySpan<char> systemPathChange = GetAddedPartOfString(oldSystemPath, newSystemEnvPath).Trim(';');
 
             // Add 2 to account for the path separators we may need to add.
             int maxLength = procEnvPath.Length + userPathChange.Length + systemPathChange.Length + 2;
@@ -361,12 +361,6 @@ namespace System.Management.Automation
                 newPath ??= new StringBuilder(procEnvPath, capacity: maxLength);
 
                 if (newPath.Length is 0 || newPath[^1] is ';')
-                {
-                    newPath.Append(newChange[0] is ';'
-                        ? newChange.Slice(1)
-                        : newChange);
-                }
-                else if (newChange[0] is ';')
                 {
                     newPath.Append(newChange);
                 }

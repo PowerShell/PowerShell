@@ -70,18 +70,18 @@ function UpdatePackageManager {
         [string] $Name
     )
 
-    try {
-        $regKey = [Microsoft.Win32.Registry]::LocalMachine.OpenSubKey('Software\Microsoft\Command Processor\KnownPackageManagers', $true)
-
-        if ($Add) {
-            $null = $regKey.CreateSubKey($Name)
-        }
-        elseif ($Remove) {
-            $regKey.DeleteSubKey($Name)
-        }
+    $regKeyPath = 'HKLM:\Software\Microsoft\Command Processor\KnownPackageManagers'
+    $keyExists = Test-Path -Path $regKeyPath
+    if (-not $keyExists) {
+        Write-Host -ForegroundColor Cyan "The registry key 'KnownPackageManagers' doesn't exist."
     }
-    finally {
-        ${regKey}?.Dispose()
+
+    $subKeyPath = "$regKeyPath\$Name"
+    if ($Add) {
+        $null = New-Item $subKeyPath -Force -ErrorAction Stop
+    }
+    elseif ($Remove -and $keyExists) {
+        Remove-Item $subKeyPath -Recurse -Force -ErrorAction Stop
     }
 }
 
