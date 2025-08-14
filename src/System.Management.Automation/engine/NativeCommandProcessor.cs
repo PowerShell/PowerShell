@@ -238,6 +238,7 @@ namespace System.Management.Automation
 
         private static HashSet<string> GetPackageManagerListFromRegistry()
         {
+            // We only account for the first 8 package managers. This is the same behavior as in CMD.
             const int MaxPackageManagerCount = 8;
             const string RegKeyPath = @"Software\Microsoft\Command Processor\KnownPackageManagers";
 
@@ -331,8 +332,8 @@ namespace System.Management.Automation
             string newSystemEnvPath = Environment.GetEnvironmentVariable("Path", EnvironmentVariableTarget.Machine);
             string procEnvPath = Environment.GetEnvironmentVariable("Path");
 
-            ReadOnlySpan<char> userPathChange = GetAddedPartOfString(oldUserPath, newUserEnvPath);
-            ReadOnlySpan<char> systemPathChange = GetAddedPartOfString(oldSystemPath, newSystemEnvPath);
+            ReadOnlySpan<char> userPathChange = GetAddedPartOfString(oldUserPath, newUserEnvPath).TrimEnd(';');
+            ReadOnlySpan<char> systemPathChange = GetAddedPartOfString(oldSystemPath, newSystemEnvPath).TrimEnd(';');
 
             // Add 2 to account for the path separators we may need to add.
             int maxLength = procEnvPath.Length + userPathChange.Length + systemPathChange.Length + 2;

@@ -192,17 +192,17 @@ Other options are for specific tests only. Read source code for details.
             {
                 // Append to the User Path.
                 using RegistryKey reg = Registry.CurrentUser.OpenSubKey(UserEnvRegPath, writable: true);
-                UpdateEnvPath(reg, append: true, @"X:\not-exist-user-path");
+                UpdateEnvPathImpl(reg, append: true, @"X:\not-exist-user-path");
             }
 
             if (target.HasFlag(EnvTarget.System))
             {
                 // Prepend to the System Path.
                 using RegistryKey reg = Registry.LocalMachine.OpenSubKey(SysEnvRegPath, writable: true);
-                UpdateEnvPath(reg, append: false, @"X:\not-exist-sys-path");
+                UpdateEnvPathImpl(reg, append: false, @"X:\not-exist-sys-path");
             }
 
-            static void UpdateEnvPath(RegistryKey regKey, bool append, string newPathItem)
+            static void UpdateEnvPathImpl(RegistryKey regKey, bool append, string newPathItem)
             {
                 // Get the registry value kind.
                 RegistryValueKind kind = regKey.GetValueKind(EnvVarName);
