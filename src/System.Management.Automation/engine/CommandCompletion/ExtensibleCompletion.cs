@@ -172,66 +172,110 @@ namespace System.Management.Automation
     [Cmdlet(VerbsLifecycle.Register, "ArgumentCompleter", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=528576")]
     public class RegisterArgumentCompleterCommand : PSCmdlet
     {
+        private const string PowerShellSetName = "PowerShellSet";
+        private const string NativeCommandSetName = "NativeCommandSet";
+        private const string NativeFallbackSetName = "NativeFallbackSet";
+
+        // Use a key that is unlikely to be a file name or path to indicate the fallback completer for native commands.
+        internal const string FallbackCompleterKey = "___ps::<native_fallback_key>@@___";
+
         /// <summary>
+        /// Gets or sets the command names for which the argument completer is registered.
         /// </summary>
-        [Parameter(ParameterSetName = "NativeSet", Mandatory = true)]
-        [Parameter(ParameterSetName = "PowerShellSet")]
+        [Parameter(ParameterSetName = NativeCommandSetName, Mandatory = true)]
+        [Parameter(ParameterSetName = PowerShellSetName)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] CommandName { get; set; }
 
         /// <summary>
+        /// Gets or sets the name of the parameter for which the argument completer is registered.
         /// </summary>
-        [Parameter(ParameterSetName = "PowerShellSet", Mandatory = true)]
+        [Parameter(ParameterSetName = PowerShellSetName, Mandatory = true)]
         public string ParameterName { get; set; }
 
         /// <summary>
+        /// Gets or sets the script block that will be executed to provide argument completions.
         /// </summary>
         [Parameter(Mandatory = true)]
         [AllowNull()]
         public ScriptBlock ScriptBlock { get; set; }
 
         /// <summary>
+        /// Indicates the argument completer is for native commands.
         /// </summary>
-        [Parameter(ParameterSetName = "NativeSet")]
+        [Parameter(ParameterSetName = NativeCommandSetName)]
         public SwitchParameter Native { get; set; }
+
+        /// <summary>
+        /// Indicates the argument completer is a fallback for any native commands that don't have a completer registered.
+        /// </summary>
+        [Parameter(ParameterSetName = NativeFallbackSetName)]
+        public SwitchParameter NativeFallback { get; set; }
 
         /// <summary>
         /// </summary>
         protected override void EndProcessing()
         {
             Dictionary<string, ScriptBlock> completerDictionary;
-            if (ParameterName != null)
-            {
-                completerDictionary = Context.CustomArgumentCompleters ??
-                                      (Context.CustomArgumentCompleters = new Dictionary<string, ScriptBlock>(StringComparer.OrdinalIgnoreCase));
-            }
-            else
-            {
-                completerDictionary = Context.NativeArgumentCompleters ??
-                                      (Context.NativeArgumentCompleters = new Dictionary<string, ScriptBlock>(StringComparer.OrdinalIgnoreCase));
-            }
 
-            if (CommandName == null || CommandName.Length == 0)
+            if (ParameterSetName is NativeFallbackSetName)
             {
-                CommandName = new[] { string.Empty };
-            }
+                completerDictionary = Context.NativeArgumentCompleters ??= new(StringComparer.OrdinalIgnoreCase);
 
-            for (int i = 0; i < CommandName.Length; i++)
+                SetKeyValue(completerDictionary, FallbackCompleterKey, ScriptBlock);
+            }
+            else if (ParameterSetName is NativeCommandSetName)
             {
-                var key = CommandName[i];
-                if (!string.IsNullOrWhiteSpace(ParameterName))
+                completerDictionary = Context.NativeArgumentCompleters ??= new(StringComparer.OrdinalIgnoreCase);
+
+                foreach (string command in CommandName)
                 {
-                    if (!string.IsNullOrWhiteSpace(key))
+                    var key = command?.Trim();
+                    if (string.IsNullOrEmpty(key))
                     {
-                        key = key + ":" + ParameterName;
+                        continue;
                     }
-                    else
-                    {
-                        key = ParameterName;
-                    }
+
+                    SetKeyValue(completerDictionary, key, ScriptBlock);
+                }
+            }
+            else if (ParameterSetName is PowerShellSetName)
+            {
+                completerDictionary = Context.CustomArgumentCompleters ??= new(StringComparer.OrdinalIgnoreCase);
+
+                string paramName = ParameterName.Trim();
+                if (paramName.Length is 0)
+                {
+                    return;
                 }
 
-                completerDictionary[key] = ScriptBlock;
+                if (CommandName is null || CommandName.Length is 0)
+                {
+                    SetKeyValue(completerDictionary, paramName, ScriptBlock);
+                    return;
+                }
+
+                foreach (string command in CommandName)
+                {
+                    var key = command?.Trim();
+                    key = string.IsNullOrEmpty(key)
+                        ? paramName
+                        : $"{key}:{paramName}";
+
+                    SetKeyValue(completerDictionary, key, ScriptBlock);
+                }
+            }
+
+            static void SetKeyValue(Dictionary<string, ScriptBlock> table, string key, ScriptBlock value)
+            {
+                if (value is null)
+                {
+                    table.Remove(key);
+                }
+                else
+                {
+                    table[key] = value;
+                }
             }
         }
     }

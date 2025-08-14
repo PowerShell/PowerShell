@@ -1067,9 +1067,9 @@ namespace System.Management.Automation.Runspaces
         /// ExecutionContext, if it available in TLS
         /// Null, if ExecutionContext is not available in TLS
         /// </returns>
-        internal static System.Management.Automation.ExecutionContext GetExecutionContextFromTLS()
+        internal static ExecutionContext GetExecutionContextFromTLS()
         {
-            System.Management.Automation.Runspaces.Runspace runspace = Runspace.DefaultRunspace;
+            Runspace runspace = Runspace.DefaultRunspace;
             if (runspace == null)
             {
                 return null;
