@@ -13,6 +13,13 @@ using Microsoft.Win32;
 
 namespace TestExe
 {
+    [Flags]
+    internal enum EnvTarget
+    {
+        User = 1,
+        System = 2,
+    }
+
     internal class TestExe
     {
         private static int Main(string[] args)
@@ -206,6 +213,7 @@ Other options are for specific tests only. Read source code for details.
             {
                 // Get the registry value kind.
                 RegistryValueKind kind = regKey.GetValueKind(EnvVarName);
+
                 // Get the literal registry value (not expanded) for the env var.
                 string oldValue = (string)regKey.GetValue(
                     EnvVarName,
@@ -236,12 +244,5 @@ Other options are for specific tests only. Read source code for details.
     {
         [LibraryImport("Kernel32.dll")]
         internal static partial nint GetCommandLineW();
-    }
-
-    [Flags]
-    internal enum EnvTarget
-    {
-        User = 1,
-        System = 2
     }
 }
