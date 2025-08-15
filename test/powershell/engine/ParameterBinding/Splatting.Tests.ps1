@@ -367,4 +367,227 @@ Describe "Hashtable Splatting Parameter Binding Tests" -Tags "CI" {
             SimpleTest @hash -key "Yeah" | Should -BeExactly 'Key: Yeah; Path: World; Args: '
         }
     }
+
+    Context "-@ Parameter splatting" {
+        BeforeAll {
+            $nativeCmdArgs = @(
+                '-CommandWithArgs'
+                # First 3 are pwsh, '-CommandWithArgs', and this command
+                '[Environment]::GetCommandLineArgs() | Select-Object -Skip 3 | ConvertTo-Json -AsArray'
+            )
+
+            Function Test-SimpleFunction {
+                $args
+            }
+
+            Function Test-AdvancedFunction {
+                [CmdletBinding()]
+                param (
+                    [Parameter()]
+                    [string]
+                    $Param1,
+
+                    [Parameter()]
+                    [string]
+                    $Param2
+                )
+
+                @{
+                    Param1 = $Param1
+                    Param2 = $Param2
+                }
+            }
+        }
+        It "Splats a hashtable" {
+            $ht = [Ordered]@{ Name = "Test"; Path = "C:\Temp" }
+            $actual = Test-SimpleFunction -@ $ht
+
+            $actual.Count | Should -Be 4
+            $actual[0] | Should -BeExactly '-Name:'
+            $actual[0].'<CommandParameterName>' | Should -BeExactly 'Name'
+            $actual[1] | Should -BeExactly 'Test'
+            $actual[2] | Should -BeExactly '-Path:'
+            $actual[2].'<CommandParameterName>' | Should -BeExactly 'Path'
+            $actual[3] | Should -BeExactly 'C:\Temp'
+        }
+
+        It "Splats an array" {
+            $ht = @('Positional', '-LooksLikeSwitch', '-LooksLikeParameter:Value')
+            $actual = Test-SimpleFunction -@ $ht
+
+            $actual.Count | Should -Be 3
+            $actual[0] | Should -BeExactly 'Positional'
+            $actual[0].PSObject.Properties.Match('<CommandParameterName>') | Should -BeNullOrEmpty
+            $actual[1] | Should -BeExactly '-LooksLikeSwitch'
+            $actual[1].PSObject.Properties.Match('<CommandParameterName>') | Should -BeNullOrEmpty
+            $actual[2] | Should -BeExactly '-LooksLikeParameter:Value'
+            $actual[2].PSObject.Properties.Match('<CommandParameterName>') | Should -BeNullOrEmpty
+        }
+
+        It "Splats multiple hashtables" {
+            $ht1 = [Ordered]@{ Name = "Test"; Path = "C:\Temp" }
+            $ht2 = @{ Other = $true }
+            $actual = Test-SimpleFunction -@ $ht1 -@ $ht2
+
+            $actual.Count | Should -Be 6
+            $actual[0] | Should -BeExactly '-Name:'
+            $actual[0].'<CommandParameterName>' | Should -BeExactly 'Name'
+            $actual[1] | Should -BeExactly 'Test'
+            $actual[2] | Should -BeExactly '-Path:'
+            $actual[2].'<CommandParameterName>' | Should -BeExactly 'Path'
+            $actual[3] | Should -BeExactly 'C:\Temp'
+            $actual[4] | Should -BeExactly '-Other:'
+            $actual[4].'<CommandParameterName>' | Should -BeExactly 'Other'
+            $actual[5] | Should -BeTrue
+        }
+
+        It "Splats an expression value" {
+            Function Get-Splat {
+                [Ordered]@{ Name = "Test"; Path = "C:\Temp" }
+            }
+
+            $actual = Test-SimpleFunction -@ (Get-Splat)
+
+            $actual.Count | Should -Be 4
+            $actual[0] | Should -BeExactly '-Name:'
+            $actual[0].'<CommandParameterName>' | Should -BeExactly 'Name'
+            $actual[1] | Should -BeExactly 'Test'
+            $actual[2] | Should -BeExactly '-Path:'
+            $actual[2].'<CommandParameterName>' | Should -BeExactly 'Path'
+            $actual[3] | Should -BeExactly 'C:\Temp'
+        }
+
+        It "Mixes parameter splat with splatted variable" {
+            $ht1 = [Ordered]@{ Name = "Test"; Path = "C:\Temp" }
+            $ht2 = @{ Other = $true }
+            $actual = Test-SimpleFunction -@ $ht1 @ht2
+
+            $actual.Count | Should -Be 6
+            $actual[0] | Should -BeExactly '-Name:'
+            $actual[0].'<CommandParameterName>' | Should -BeExactly 'Name'
+            $actual[1] | Should -BeExactly 'Test'
+            $actual[2] | Should -BeExactly '-Path:'
+            $actual[2].'<CommandParameterName>' | Should -BeExactly 'Path'
+            $actual[3] | Should -BeExactly 'C:\Temp'
+            $actual[4] | Should -BeExactly '-Other:'
+            $actual[4].'<CommandParameterName>' | Should -BeExactly 'Other'
+            $actual[5] | Should -BeTrue
+        }
+
+        It "Splats native command" {
+            # Splatting an array will splat the next level of arrays so
+            # pos 3 and 4 should be separate args while 5 and 6 become a single
+            # arg. This is the same as 'pwsh @nativeCmdArgs @array'.
+            $array = @('pos 1', 'pos 2', @('pos 3', 'pos 4', @('pos 5', 'pos 6')))
+            $actual = pwsh @nativeCmdArgs -@ $array | ConvertFrom-Json
+
+            $actual.Count | Should -Be 5
+            $actual[0] | Should -BeExactly 'pos 1'
+            $actual[1] | Should -BeExactly 'pos 2'
+            $actual[2] | Should -BeExactly 'pos 3'
+            $actual[3] | Should -BeExactly 'pos 4'
+            $actual[4] | Should -BeExactly 'pos 5 pos 6'
+        }
+
+        It "Passes -@ literal to native command without splatting" {
+            $actual = pwsh @nativeCmdArgs '-@' value | ConvertFrom-Json
+
+            $actual.Count | Should -Be 2
+            $actual[0] | Should -BeExactly '-@'
+            $actual[1] | Should -BeExactly 'value'
+        }
+
+        It "Passes -@ literal to simple function" {
+            $actual = Test-SimpleFunction '-@' value
+
+            $actual.Count | Should -Be 2
+            $actual[0] | Should -BeExactly '-@'
+            $actual[0].PSObject.Properties.Match('<CommandParameterName>') | Should -BeNullOrEmpty
+            $actual[1] | Should -BeExactly 'value'
+        }
+
+        It "Binds to -@ parameter with splat on simple function" {
+            Function Test-SimpleAtParam {
+                param(${@})
+
+                ${@}
+            }
+
+            $actual = Test-SimpleAtParam -@ @{ '-@' = 'value' }
+            $actual | Should -BeExactly value
+        }
+
+        It "Binds to -@ parameter with splat on advanced function" {
+            Function Test-AdvAtParam {
+                param([Parameter()]${@})
+
+                ${@}
+            }
+
+            $actual = Test-AdvAtParam -@ @{ '-@' = 'value' }
+            $actual | Should -BeExactly value
+        }
+
+        It "PSDefaultParameterValues will not attempt to splat -@ value" {
+            Function Test-DefaultParamValuesWithSplatParam {
+                param([Parameter()]${@}, $Param)
+
+                @{
+                    '@' = ${@}
+                    Param = $Param
+                }
+            }
+
+            # This is not expected to splat the value but rather bind
+            # to the '-@' parameter if present.
+            $PSDefaultParameterValues['Test-DefaultParamValuesWithSplatParam:@'] = @{ Param = 'Value' }
+            try {
+                $actual = Test-DefaultParamValuesWithSplatParam
+            }
+            finally {
+                $PSDefaultParameterValues.Remove('Test-DefaultParamValuesWithSplatParam:@')
+            }
+
+            $actual.'@' | Should -BeOfType ([Hashtable])
+            $actual.'@'.Count | Should -Be 1
+            $actual.'@'.Param | Should -BeExactly 'Value'
+            $actual.Param | Should -BeNullOrEmpty
+        }
+
+        # Same behaviour as Test-AdvancedFunction @ht1 -Param1 arg
+        It "Explicit parameter overrides splatted value" {
+            $ht = @{ Param1 = 'splat' }
+            $actual = Test-AdvancedFunction -@ $ht -Param1 arg
+
+            $actual.Param1 | Should -BeExactly 'arg'
+            $actual.Param2 | Should -BeNullOrEmpty
+        }
+
+        It "Fails when used without a value" {
+            {
+                Get-Item -@
+            } | Should -Throw "Missing value after the splat parameter -@."
+        }
+
+        It "Fails when used with a splatted value" {
+            {
+                Get-Item -@ @value
+            } | Should -Throw "Cannot use a @splat expression '@value' after the splat parameter '-@'. Remove the splat parameter or change the splat to a variable instead."
+        }
+
+        It "Fails when used with a -Command:Parameter expression" {
+            {
+                Get-Item -@ -Parameter:Value
+            } | Should -Throw "Cannot use a -Parameter:Value expression '-Parameter:Value' after the splat parameter '-@'. Remove the splat parameter or specify the parameter value in a hashtable instead."
+        }
+
+        # Same behaviour as Test-AdvancedFunction @ht1 @ht2
+        It "Fails when defining the same parameter multiple times" {
+            $ht1 = @{Param1 = 'first'}
+            $ht2 = @{Param1 = 'second'}
+            {
+                Test-AdvancedFunction -@ $ht1 -@ $ht2
+            } | Should -Throw "Cannot bind parameter because parameter 'Param1' is specified more than once"
+        }
+    }
 }
