@@ -14,7 +14,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
     /// <summary>
     /// Job that handles executing a WQL (in the future CQL?) query on a remote CIM server.
     /// </summary>
-    internal class EnumerateAssociatedInstancesJob : QueryJobBase
+    internal sealed class EnumerateAssociatedInstancesJob : QueryJobBase
     {
         private readonly CimInstance _associatedObject;
         private readonly string _associationName;
