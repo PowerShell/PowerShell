@@ -62,7 +62,7 @@ jobs:
 
   ci_build:
     name: Build PowerShell
-    runs-on: macos-14
+    runs-on: macos-15-large
     needs: changes
     if: ${{ needs.changes.outputs.source == 'true' }}
     steps:
@@ -78,7 +78,7 @@ jobs:
       - ci_build
       - changes
     if: ${{ needs.changes.outputs.source == 'true' }}
-    runs-on: macos-14
+    runs-on: macos-15-large
     steps:
       - name: checkout
         uses: actions/checkout@v5
@@ -95,7 +95,7 @@ jobs:
       - ci_build
       - changes
     if: ${{ needs.changes.outputs.source == 'true' }}
-    runs-on: macos-14
+    runs-on: macos-15-large
     steps:
       - name: checkout
         uses: actions/checkout@v5
@@ -112,7 +112,7 @@ jobs:
       - ci_build
       - changes
     if: ${{ needs.changes.outputs.source == 'true' }}
-    runs-on: macos-14
+    runs-on: macos-15-large
     steps:
       - name: checkout
         uses: actions/checkout@v5
@@ -129,7 +129,7 @@ jobs:
       - ci_build
       - changes
     if: ${{ needs.changes.outputs.source == 'true' }}
-    runs-on: macos-14
+    runs-on: macos-15-large
     steps:
       - name: checkout
         uses: actions/checkout@v5
@@ -160,7 +160,7 @@ jobs:
       - changes
     if: ${{ needs.changes.outputs.source == 'true' }}
     runs-on:
-      - macos-14
+      - macos-15-large
     steps:
     - name: checkout
       uses: actions/checkout@v5
