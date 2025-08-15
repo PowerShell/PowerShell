@@ -9,9 +9,17 @@ using System.Runtime.InteropServices;
 using System.IO;
 using System.Globalization;
 using System.Linq;
+using Microsoft.Win32;
 
 namespace TestExe
 {
+    [Flags]
+    internal enum EnvTarget
+    {
+        User = 1,
+        System = 2,
+    }
+
     internal class TestExe
     {
         private static int Main(string[] args)
@@ -46,6 +54,15 @@ namespace TestExe
                         break;
                     case "-writebytes":
                         WriteBytes(args.AsSpan()[1..]);
+                        break;
+                    case "-updateuserpath":
+                        UpdateEnvPath(EnvTarget.User);
+                        break;
+                    case "-updatesystempath":
+                        UpdateEnvPath(EnvTarget.System);
+                        break;
+                    case "-updateuserandsystempath":
+                        UpdateEnvPath(EnvTarget.User | EnvTarget.System);
                         break;
                     case "--help":
                     case "-h":
@@ -154,7 +171,7 @@ Other options are for specific tests only. Read source code for details.
         {
             if (args.Length > 1)
             {
-                uint num = UInt32.Parse(args[1]);
+                uint num = uint.Parse(args[1]);
                 for (uint i = 0; i < num; i++)
                 {
                     Process child = new Process();
@@ -165,6 +182,61 @@ Other options are for specific tests only. Read source code for details.
             }
             // sleep is needed so the process doesn't exit before the test case kill it
             Thread.Sleep(100000);
+        }
+
+        private static void UpdateEnvPath(EnvTarget target)
+        {
+            if (!OperatingSystem.IsWindows())
+            {
+                return;
+            }
+
+            const string EnvVarName = "Path";
+            const string UserEnvRegPath = "Environment";
+            const string SysEnvRegPath = @"SYSTEM\CurrentControlSet\Control\Session Manager\Environment";
+
+            if (target.HasFlag(EnvTarget.User))
+            {
+                // Append to the User Path.
+                using RegistryKey reg = Registry.CurrentUser.OpenSubKey(UserEnvRegPath, writable: true);
+                UpdateEnvPathImpl(reg, append: true, @"X:\not-exist-user-path");
+            }
+
+            if (target.HasFlag(EnvTarget.System))
+            {
+                // Prepend to the System Path.
+                using RegistryKey reg = Registry.LocalMachine.OpenSubKey(SysEnvRegPath, writable: true);
+                UpdateEnvPathImpl(reg, append: false, @"X:\not-exist-sys-path");
+            }
+
+            static void UpdateEnvPathImpl(RegistryKey regKey, bool append, string newPathItem)
+            {
+                // Get the registry value kind.
+                RegistryValueKind kind = regKey.GetValueKind(EnvVarName);
+
+                // Get the literal registry value (not expanded) for the env var.
+                string oldValue = (string)regKey.GetValue(
+                    EnvVarName,
+                    defaultValue: string.Empty,
+                    RegistryValueOptions.DoNotExpandEnvironmentNames);
+
+                string newValue;
+                if (append)
+                {
+                    // Append to the old value.
+                    string separator = (oldValue is "" || oldValue.EndsWith(';')) ? string.Empty : ";";
+                    newValue = $"{oldValue}{separator}{newPathItem}";
+                }
+                else
+                {
+                    // Prepend to the old value.
+                    string separator = (oldValue is "" || oldValue.StartsWith(';')) ? string.Empty : ";";
+                    newValue = $"{newPathItem}{separator}{oldValue}";
+                }
+
+                // Set the new value and preserve the original value kind.
+                regKey.SetValue(EnvVarName, newValue, kind);
+            }
         }
     }
 
