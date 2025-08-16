@@ -578,7 +578,7 @@ namespace Microsoft.PowerShell
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal void WriteToConsole(char c, bool transcribeResult)
         {
-            ReadOnlySpan<char> value = stackalloc char[1] { c };
+            ReadOnlySpan<char> value = [c];
             WriteToConsole(value, transcribeResult);
         }
 
