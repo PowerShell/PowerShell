@@ -227,10 +227,10 @@ namespace System.Management.Automation
         private static readonly HashSet<string> s_knownPackageManagers = GetPackageManagerListFromRegistry();
 
         /// <summary>
-        /// Indicates whether the EnvironmentProvider is enabled in the current session.
+        /// Indicates whether the Path Update feature is enabled in the current session.
         /// </summary>
         [ThreadStatic]
-        private static bool? s_environmentProviderEnabled;
+        private static bool? s_pathUpdateFeatureEnabled;
 
         private readonly bool _isPackageManager;
         private string _originalUserEnvPath;
@@ -274,9 +274,11 @@ namespace System.Management.Automation
                 return false;
             }
 
-            // Disable PATH update if 'EnvironmentProvider' is disabled in the current session.
-            s_environmentProviderEnabled ??= context.EngineSessionState.Providers.ContainsKey(EnvironmentProvider.ProviderName);
-            if (s_environmentProviderEnabled is false)
+            // Disable PATH update if 'EnvironmentProvider' is disabled in the current session, or the current session is restricted.
+            s_pathUpdateFeatureEnabled ??= context.EngineSessionState.Providers.ContainsKey(EnvironmentProvider.ProviderName)
+                && !Utils.IsSessionRestricted(context);
+
+            if (s_pathUpdateFeatureEnabled is false)
             {
                 return false;
             }
