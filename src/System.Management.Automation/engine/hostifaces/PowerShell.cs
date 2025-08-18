@@ -5271,7 +5271,7 @@ namespace System.Management.Automation
             if (_runspace != null)
             {
                 return _runspace.RunspaceStateInfo.State != RunspaceState.BeforeOpen &&
-                       _runspace.GetRemoteProtocolVersion() >= RemotingConstants.ProtocolVersionWin8RTM;
+                       _runspace.GetRemoteProtocolVersion() >= RemotingConstants.ProtocolVersion_2_2;
             }
 
             RemoteRunspacePoolInternal remoteRunspacePoolInternal = null;
@@ -5285,7 +5285,7 @@ namespace System.Management.Automation
             }
 
             return remoteRunspacePoolInternal != null &&
-                   remoteRunspacePoolInternal.PSRemotingProtocolVersion >= RemotingConstants.ProtocolVersionWin8RTM;
+                   remoteRunspacePoolInternal.PSRemotingProtocolVersion >= RemotingConstants.ProtocolVersion_2_2;
         }
 
         /// <summary>

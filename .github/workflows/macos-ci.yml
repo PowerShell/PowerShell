@@ -52,7 +52,7 @@ jobs:
       source: ${{ steps.filter.outputs.source }}
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Change Detection
         id: filter
@@ -62,12 +62,12 @@ jobs:
 
   ci_build:
     name: Build PowerShell
-    runs-on: macos-latest
+    runs-on: macos-15-large
     needs: changes
     if: ${{ needs.changes.outputs.source == 'true' }}
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 1000
       - name: Build
@@ -78,10 +78,10 @@ jobs:
       - ci_build
       - changes
     if: ${{ needs.changes.outputs.source == 'true' }}
-    runs-on: macos-latest
+    runs-on: macos-15-large
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 1000
       - name: macOS Unelevated CI
@@ -95,10 +95,10 @@ jobs:
       - ci_build
       - changes
     if: ${{ needs.changes.outputs.source == 'true' }}
-    runs-on: macos-latest
+    runs-on: macos-15-large
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 1000
       - name: macOS Elevated CI
@@ -112,10 +112,10 @@ jobs:
       - ci_build
       - changes
     if: ${{ needs.changes.outputs.source == 'true' }}
-    runs-on: macos-latest
+    runs-on: macos-15-large
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 1000
       - name: macOS Unelevated Others
@@ -129,10 +129,10 @@ jobs:
       - ci_build
       - changes
     if: ${{ needs.changes.outputs.source == 'true' }}
-    runs-on: macos-latest
+    runs-on: macos-15-large
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 1000
       - name: macOS Elevated Others
@@ -149,7 +149,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 1000
       - name: Verify xUnit test results
@@ -160,10 +160,10 @@ jobs:
       - changes
     if: ${{ needs.changes.outputs.source == 'true' }}
     runs-on:
-      - macos-latest
+      - macos-15-large
     steps:
     - name: checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
     - name: Bootstrap packaging
       if: success() || failure()
       run: |-
