@@ -77,6 +77,8 @@ else
             DistroBasedOn='mariner'
         elif [ -f /etc/mandrake-release ] ; then
             DistroBasedOn='mandrake'
+        elif [ -f /etc/azurelinux-release ] ; then
+            DistroBasedOn='mariner'
         elif [ -f /etc/debian_version ] ; then
             DistroBasedOn='debian'
         fi
