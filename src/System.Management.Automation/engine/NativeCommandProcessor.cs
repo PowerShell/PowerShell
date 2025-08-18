@@ -236,6 +236,9 @@ namespace System.Management.Automation
         private string _originalUserEnvPath;
         private string _originalSystemEnvPath;
 
+        /// <summary>
+        /// Gets the known package managers from the registry.
+        /// </summary>
         private static HashSet<string> GetPackageManagerListFromRegistry()
         {
             // We only account for the first 8 package managers. This is the same behavior as in CMD.
@@ -267,6 +270,9 @@ namespace System.Management.Automation
             return retSet;
         }
 
+        /// <summary>
+        /// Checks if the specified command name is a known package manager.
+        /// </summary>
         private static bool IsPackageManager(string name, ExecutionContext context)
         {
             if (s_knownPackageManagers is null)
@@ -301,6 +307,9 @@ namespace System.Management.Automation
             return false;
         }
 
+        /// <summary>
+        /// Gets the added part of the new string compared to the old string.
+        /// </summary>
         private static ReadOnlySpan<char> GetAddedPartOfString(string oldString, string newString)
         {
             if (oldString.Length >= newString.Length)
@@ -328,6 +337,11 @@ namespace System.Management.Automation
             }
         }
 
+        /// <summary>
+        /// Update the process-scope environment variable Path based on the changes in the user-scope and system-scope Path.
+        /// </summary>
+        /// <param name="oldUserPath">The old value of the user-scope Path retrieved from registry.</param>
+        /// <param name="oldSystemPath">The old value of the system-scope Path retrieved from registry.</param>
         private static void UpdateProcessEnvPath(string oldUserPath, string oldSystemPath)
         {
             string newUserEnvPath = Environment.GetEnvironmentVariable("Path", EnvironmentVariableTarget.User);
