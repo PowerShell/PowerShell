@@ -13,6 +13,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Management.Automation.Internal;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading;
@@ -227,10 +228,10 @@ namespace System.Management.Automation
         private static readonly HashSet<string> s_knownPackageManagers = GetPackageManagerListFromRegistry();
 
         /// <summary>
-        /// Indicates whether the Path Update feature is enabled in the current session.
+        /// Indicates whether the Path Update feature is enabled in a given session.
+        /// PowerShell sessions could reuse the same thread, so we cannot cache the value with a thread static variable.
         /// </summary>
-        [ThreadStatic]
-        private static bool? s_pathUpdateFeatureEnabled;
+        private static readonly ConditionalWeakTable<ExecutionContext, string> s_pathUpdateFeatureEnabled = new();
 
         private readonly bool _isPackageManager;
         private string _originalUserEnvPath;
@@ -271,20 +272,11 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Checks if the specified command name is a known package manager.
+        /// Check if the given name is a known package manager from the registry list.
         /// </summary>
-        private static bool IsPackageManager(string name, ExecutionContext context)
+        private static bool IsKnownPackageManager(string name)
         {
             if (s_knownPackageManagers is null)
-            {
-                return false;
-            }
-
-            // Disable PATH update if 'EnvironmentProvider' is disabled in the current session, or the current session is restricted.
-            s_pathUpdateFeatureEnabled ??= context.EngineSessionState.Providers.ContainsKey(EnvironmentProvider.ProviderName)
-                && !Utils.IsSessionRestricted(context);
-
-            if (s_pathUpdateFeatureEnabled is false)
             {
                 return false;
             }
@@ -305,6 +297,28 @@ namespace System.Management.Automation
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Check if the Path Update feature is enabled for the given session.
+        /// </summary>
+        private static bool IsPathUpdateFeatureEnabled(ExecutionContext context)
+        {
+            // We check only once per session.
+            if (s_pathUpdateFeatureEnabled.TryGetValue(context, out string value))
+            {
+                // The feature is enabled if the value is not null.
+                return value is { };
+            }
+
+            // Disable Path Update if 'EnvironmentProvider' is disabled in the current session, or the current session is restricted.
+            bool enabled = context.EngineSessionState.Providers.ContainsKey(EnvironmentProvider.ProviderName)
+                && !Utils.IsSessionRestricted(context);
+
+            // - Use the static empty string instance to indicate that the feature is enabled.
+            // - Use the null value to indicate that the feature is disabled.
+            s_pathUpdateFeatureEnabled.TryAdd(context, enabled ? string.Empty : null);
+            return enabled;
         }
 
         /// <summary>
@@ -437,7 +451,7 @@ namespace System.Management.Automation
             _isTranscribing = context.EngineHostInterface.UI.IsTranscribing;
 
 #if !UNIX
-            _isPackageManager = IsPackageManager(_applicationInfo.Name, context);
+            _isPackageManager = IsKnownPackageManager(_applicationInfo.Name) && IsPathUpdateFeatureEnabled(context);
 #endif
         }
 
