@@ -492,11 +492,11 @@ Fix steps:
         $Arguments += "/property:IsWindows=false"
     }
 
-    # Framework Dependent builds do not support ReadyToRun as it needs a specific runtime to optimize for.
-    # The property is set in Powershell.Common.props file.
-    # We override the property through the build command line.
+    # Different deployment types build with different properties.
+    # We pass in the AppDeployment property to indicate which type of deployment we are doing.
+    # This allows the PowerShell.Common.props to set the correct properties for the build.
     if(($Options.Runtime -like 'fxdependent*' -or $ForMinimalSize) -and $Options.Runtime -notmatch $optimizedFddRegex) {
-        $Arguments += "/property:PublishReadyToRun=false"
+        $Arguments += "/property:AppDeployment=FddTool"
     }
 
     $Arguments += "--configuration", $Options.Configuration
@@ -513,6 +513,7 @@ Fix steps:
     } elseif ($Options.Runtime -match $optimizedFddRegex) {
         $runtime = $Options.Runtime -replace 'fxdependent-', ''
         $Arguments += "--runtime", $runtime
+        $Arguments += "/property:AppDeployment=FddPackage"
     }
 
     if ($ReleaseTag) {
