@@ -24,7 +24,14 @@ parameters: # parameters are shown up in ADO UI in a build queue time
     displayName: Skip Signing
     type: string
     default: 'NO'
-    
+  - name: Officialness
+    displayName: Officialness of the Pipeline
+    type: string
+    values:
+     - "Official"
+     - "Nonofficial"
+    default: "Official"
+
 name: pkgs-$(BUILD.SOURCEBRANCHNAME)-$(Build.BuildId)
 
 variables:
@@ -79,7 +86,7 @@ resources:
       ref: refs/heads/main
 
 extends:
-  template: v2/OneBranch.Official.CrossPlat.yml@templates
+  template: v2/OneBranch.${{ parameters.Officialness }}.CrossPlat.yml@templates
   parameters:
     cloudvault:
       enabled: false
@@ -88,6 +95,7 @@ extends:
         Version: 2022
         Network: KS3
       linuxEsrpSigning: true
+      incrementalSDLBinaryAnalysis: true
     globalSdl:
       disableLegacyManifest: true
       # disabled Armorty as we dont have any ARM templates to scan. It fails on some sample ARM templates.
@@ -104,19 +112,12 @@ extends:
       cg:
         enabled: true
         ignoreDirectories: '.devcontainer,demos,docker,docs,src,test,tools/packaging'
-      asyncSdl:
-        enabled: true
-        forStages: ['build']
-        credscan:
-          enabled: true
-          scanFolder:  $(Build.SourcesDirectory)
-          suppressionsFile: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
-        binskim:
-          enabled: false
-        # APIScan requires a non-Ready-To-Run build
-        apiscan:
-          enabled: false
-        tsaOptionsFile: .config\tsaoptions.json
+      binskim:
+        enabled: false
+      # APIScan requires a non-Ready-To-Run build
+      apiscan:
+        enabled: false
+      tsaOptionsFile: .config\tsaoptions.json
     stages:
     - stage: prep
       jobs:

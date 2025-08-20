@@ -71,8 +71,6 @@ extends:
       # APIScan requires a non-Ready-To-Run build
       apiscan:
         enabled: false
-      asyncSDL:
-        enabled: false
       tsaOptionsFile: .config/tsaoptions.json
 
     stages:

@@ -30,6 +30,14 @@ parameters:
     displayName: Debugging - Enable CodeQL and set cadence to 1 hour
     type: boolean
     default: false
+  - name: Officialness
+    displayName: Officialness of the Pipeline
+    type: string
+    values:
+     - "Official"
+     - "Nonofficial"
+    default: "Official"
+
 
 resources:
   repositories:
@@ -90,7 +98,7 @@ variables:
 
 
 extends:
-  template: v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates
+  template: v2/OneBranch.${{ parameters.Officialness }}.CrossPlat.yml@onebranchTemplates
   parameters:
     customTags: 'ES365AIMigrationTooling'
     featureFlags:
@@ -98,6 +106,7 @@ extends:
           Network: KS3
       WindowsHostVersion:
           Network: KS3
+      incrementalSDLBinaryAnalysis: true
     globalSdl:
       disableLegacyManifest: true
       # disabled Armorty as we dont have any ARM templates to scan. It fails on some sample ARM templates.
@@ -116,19 +125,12 @@ extends:
       cg:
         enabled: true
         ignoreDirectories: '.devcontainer,demos,docker,docs,src,test,tools/packaging'
-      asyncSdl:
-        enabled: true
-        forStages: [prep, macos, linux, windows, test_and_release_artifacts]
-        credscan:
-          enabled: true
-          scanFolder:  $(Build.SourcesDirectory)
-          suppressionsFile: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
-        binskim:
-          enabled: false
-        # APIScan requires a non-Ready-To-Run build
-        apiscan:
-          enabled: false
-        tsaOptionsFile: .config\tsaoptions.json
+      binskim:
+        enabled: false
+      # APIScan requires a non-Ready-To-Run build
+      apiscan:
+        enabled: false
+      tsaOptionsFile: .config\tsaoptions.json
 
     stages:
     - stage: prep
