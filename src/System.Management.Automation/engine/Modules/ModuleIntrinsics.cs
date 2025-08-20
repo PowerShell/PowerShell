@@ -490,7 +490,7 @@ namespace System.Management.Automation
         /// <param name="requiredVersion">The required version of the expected module.</param>
         /// <param name="minimumVersion">The minimum required version of the expected module.</param>
         /// <param name="maximumVersion">The maximum required version of the expected module.</param>
-        /// <returns>True if the module info object matches all given constraints, false otherwise.</returns>
+        /// <returns>True if the module info object matches all the constraints on the module specification, false otherwise.</returns>
         internal static bool IsModuleMatchingConstraints(
             out ModuleMatchFailure matchFailureReason,
             PSModuleInfo moduleInfo,
@@ -964,78 +964,7 @@ namespace System.Management.Automation
         /// <returns>Personal module path.</returns>
         internal static string GetPersonalModulePath()
         {
-#if UNIX
-            return Platform.SelectProductNameForDirectory(Platform.XDG_Type.USER_MODULES);
-#else
-            string myDocumentsPath = InternalTestHooks.SetMyDocumentsSpecialFolderToBlank ? string.Empty : Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            return string.IsNullOrEmpty(myDocumentsPath) ? null : Path.Combine(myDocumentsPath, Utils.ModuleDirectory);
-#endif
-        }
-
-        /// <summary>
-        /// Gets the PS content path when PSContentPath experimental feature is enabled,
-        /// otherwise returns the personal module path.
-        /// </summary>
-        /// <returns>PS content path or personal module path.</returns>
-        internal static string GetPSContentPath()
-        {
-            // Check if PSContentPath experimental feature is enabled
-            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSContentPath))
-            {
-#if UNIX
-                // On Unix, use XDG standard for content path
-                return Platform.SelectProductNameForDirectory(Platform.XDG_Type.USER_MODULES);
-#else
-                // On Windows, use LOCALAPPDATA\PowerShell
-                string localAppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                return string.IsNullOrEmpty(localAppDataPath) ? null : Path.Combine(localAppDataPath, "PowerShell");
-#endif
-            }
-            else
-            {
-                // Fall back to existing GetPersonalModulePath behavior
-                return GetPersonalModulePath();
-            }
-        }
-
-        internal static void UpdatePSModulePath(string newPath)
-        {
-            string psModulePath = Environment.GetEnvironmentVariable("PSModulePath");
-            if (string.IsNullOrEmpty(psModulePath))
-            {
-                return;
-            }
-
-            string[] paths = psModulePath.Split(Path.PathSeparator);
-            string oneDrivePath = paths.FirstOrDefault(p => p.Contains("OneDrive - Microsoft"));
-
-            if (!string.IsNullOrEmpty(oneDrivePath))
-            {
-                // Ensure the new path exists
-                if (!Directory.Exists(newPath))
-                {
-                    Directory.CreateDirectory(Path.Combine(newPath, Utils.ModuleDirectory));
-                }
-
-                string destDir = Path.Combine(newPath, Utils.ModuleDirectory);
-
-                // Create all directories
-                foreach (string dir in Directory.GetDirectories(oneDrivePath, "*", SearchOption.AllDirectories))
-                {
-                    Directory.CreateDirectory(Path.Combine(destDir, Path.GetRelativePath(oneDrivePath, dir)));
-                }
-
-                // Copy all files
-                foreach (string file in Directory.GetFiles(oneDrivePath, "*", SearchOption.AllDirectories))
-                {
-                    string destFile = Path.Combine(destDir, Path.GetRelativePath(oneDrivePath, file));
-                    File.Copy(file, destFile, true);
-                }
-
-                // Remove the "OneDrive - Microsoft" path from PSModulePath
-                List<string> updatedPaths = paths.Where(p => !p.Contains("OneDrive - Microsoft")).ToList();
-                Environment.SetEnvironmentVariable("PSModulePath", string.Join(Path.PathSeparator.ToString(), updatedPaths), EnvironmentVariableTarget.User);
-            }
+            return Path.Combine(Utils.GetPSContentPath(), "Modules");
         }
 
         /// <summary>

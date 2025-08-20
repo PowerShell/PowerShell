@@ -62,8 +62,8 @@ namespace System.Management.Automation.Configuration
         private string systemWideConfigDirectory;
 
         // The json file containing the per-user configuration settings.
-        private readonly string perUserConfigFile;
-        private readonly string perUserConfigDirectory;
+        private string perUserConfigFile;
+        private string perUserConfigDirectory;
 
         // Note: JObject and JsonSerializer are thread safe.
         // Root Json objects corresponding to the configuration file for 'AllUsers' and 'CurrentUser' respectively.
@@ -139,6 +139,31 @@ namespace System.Management.Automation.Configuration
             }
 
             return modulePath;
+        }
+
+        /// <summary>
+        /// Gets the PSContentPath from the configuration file.
+        /// </summary>
+        /// <returns>The configured PSContentPath if found, null otherwise.</returns>
+        internal string GetPSContentPath()
+        {
+            return ReadValueFromFile<string>(ConfigScope.CurrentUser, "UserPSContentPath", Platform.DefaultPSContentDirectory);
+        }
+
+        /// <summary>
+        /// Sets the PSContentPath in the configuration file.
+        /// </summary>
+        /// <param name="path">The path to set as PSContentPath.</param>
+        internal void SetPSContentPath(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+            {
+                RemoveValueFromFile<string>(ConfigScope.CurrentUser, "UserPSContentPath");
+            }
+            else
+            {
+                WriteValueToFile<string>(ConfigScope.CurrentUser, "UserPSContentPath", path);
+            }
         }
 
         /// <summary>
@@ -588,6 +613,26 @@ namespace System.Management.Automation.Configuration
             if (File.Exists(fileName))
             {
                 UpdateValueInFile<T>(scope, key, default(T), false);
+            }
+        }
+
+        internal void MigrateUserConfig(string oldPath, string newPath)
+        {
+            try
+            {
+                // Ensure new directory exists
+                Directory.CreateDirectory(Path.GetDirectoryName(newPath));
+
+                // Copy the config file
+                File.Copy(oldPath, newPath);
+
+                perUserConfigDirectory = Path.GetDirectoryName(newPath);
+                perUserConfigFile = newPath;
+            }
+            catch (Exception)
+            {
+                // Migration failed, but don't break the system
+                // Log the error if logging is available
             }
         }
     }

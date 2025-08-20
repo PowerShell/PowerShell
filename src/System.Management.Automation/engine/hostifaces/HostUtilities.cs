@@ -203,7 +203,7 @@ namespace System.Management.Automation
 
             if (forCurrentUser)
             {
-                basePath = Platform.ConfigDirectory;
+                basePath = Utils.GetPSContentPath();
             }
             else
             {
