@@ -181,12 +181,14 @@
         For FxDependent, we want to search in the environment variable and global location.
         For SelfContained, we want to search in the app local location.
   -->
-  <PropertyGroup Condition=" '$(AppDeployment)' == 'GlobalTool' ">
-    <AppHostDotNetSearch>Global</AppHostDotNetSearch>
+  <PropertyGroup Condition=" '$(AppDeployment)' == 'FxDependent' ">
+    <!-- Specify both to keep existing behavior because we have not had complaints about this scenario -->
+    <AppHostDotNetSearch>EnvironmentVariable;Global</AppHostDotNetSearch>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(AppDeployment)' == 'FxDependent' ">
-    <AppHostDotNetSearch>EnvironmentVariable;Global</AppHostDotNetSearch>
+  <PropertyGroup Condition=" '$(AppDeployment)' == 'FxDependentDeployment' ">
+    <!-- If we specify Environment too, it searches that first, no matter what order we specify-->
+    <AppHostDotNetSearch>Global</AppHostDotNetSearch>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(AppDeployment)' == 'SelfContained' ">

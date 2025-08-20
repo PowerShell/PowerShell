@@ -495,14 +495,16 @@ Fix steps:
     # We pass in the AppDeployment property to indicate which type of deployment we are doing.
     # This allows the PowerShell.Common.props to set the correct properties for the build.
     $AppDeployment = if(($Options.Runtime -like 'fxdependent*' -or $ForMinimalSize) -and $Options.Runtime -notmatch $optimizedFddRegex) {
-        # Global
-        "GlobalTool"
-    }
-    elseif($Options.Runtime -like 'fxdependent*' -and $Options.Runtime -match $optimizedFddRegex) {
-        # EnvironmentVariable, Global
+        # Global and zip files
         "FxDependent"
     }
+    elseif($Options.Runtime -like 'fxdependent*' -and $Options.Runtime -match $optimizedFddRegex) {
+        # These are Optimized and must come from the correct version of the runtime.
+        # Global
+        "FxDependentDeployment"
+    }
     else {
+        # The majority of our packages
         # AppLocal
         "SelfContained"
     }
