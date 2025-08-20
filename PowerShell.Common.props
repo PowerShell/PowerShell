@@ -177,8 +177,10 @@
   </PropertyGroup>
 
   <!-- Define properties for Framework dependent deployments in Packages
-        For GlobalTool, we want to search for the apphost in the global location.
-        For FxDependent, we want to search in the environment variable and global location.
+        https://learn.microsoft.com/en-us/dotnet/core/project-sdk/msbuild-props#apphostdotnetsearch
+        For FxDependent, we want to search for the apphost in the Environment or global location
+        , as this was not causing any issues.
+        For FxDependentDeployment, we want to search ONLY in global location.
         For SelfContained, we want to search in the app local location.
   -->
   <PropertyGroup Condition=" '$(AppDeployment)' == 'FxDependent' ">
