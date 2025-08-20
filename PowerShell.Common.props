@@ -178,8 +178,8 @@
 
   <!-- Define properties for Framework dependent deployments in Packages
         https://learn.microsoft.com/en-us/dotnet/core/project-sdk/msbuild-props#apphostdotnetsearch
-        For FxDependent, we want to search for the apphost in the Environment or global location
-        , as this was not causing any issues.
+        For FxDependent, we want to search for the apphost in the Environment or global location,
+        as this was not causing any issues.
         For FxDependentDeployment, we want to search ONLY in global location.
         For SelfContained, we want to search in the app local location.
   -->
