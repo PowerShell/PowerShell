@@ -30,13 +30,9 @@ parameters:
     displayName: Debugging - Enable CodeQL and set cadence to 1 hour
     type: boolean
     default: false
-  - name: Officialness
-    displayName: Officialness of the Pipeline
-    type: string
-    values:
-     - "Official"
-     - "Nonofficial"
-    default: "Official"
+  - name: OfficialBuild
+    type: boolean
+    default: false
 
 
 resources:
@@ -95,10 +91,12 @@ variables:
       value: true
     ${{ else }}:
       value: false
-
+  - name: templateFile
+    value: ${{ iif ( parameters.OfficialBuild, 'v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates', 'v2/OneBranch.NonOfficial.CrossPlat.yml@onebranchTemplates' ) }}
+  
 
 extends:
-  template: v2/OneBranch.${{ parameters.Officialness }}.CrossPlat.yml@onebranchTemplates
+  template: ${{ variables.templateFile }}
   parameters:
     customTags: 'ES365AIMigrationTooling'
     featureFlags:

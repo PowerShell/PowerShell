@@ -13,14 +13,9 @@ parameters: # parameters are shown up in ADO UI in a build queue time
     displayName: Skip Signing
     type: string
     default: 'NO'
-  - name: Officialness
-    displayName: Officialness of the Pipeline
-    type: string
-    values:
-     - "Official"
-     - "Nonofficial"
-    default: "Official"
-
+  - name: OfficialBuild
+    type: boolean
+    default: false
 
 name: ev2-$(BUILD.SOURCEBRANCHNAME)-$(Build.BuildId)
 
@@ -54,6 +49,9 @@ variables:
   - name: LinuxContainerImage
     value: mcr.microsoft.com/onebranch/cbl-mariner/build:2.0
   - group: PoolNames
+  - name: templateFile
+    value: ${{ iif ( parameters.OfficialBuild, 'v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates', 'v2/OneBranch.NonOfficial.CrossPlat.yml@onebranchTemplates' ) }}
+  
 
 resources:
   repositories:
@@ -75,7 +73,7 @@ resources:
             - releases/*
 
 extends:
-  template: v2/OneBranch.Official.CrossPlat.yml@templates
+  template: ${{ variables.templateFile }}
   parameters:
     featureFlags:
       WindowsHostVersion:

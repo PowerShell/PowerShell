@@ -24,13 +24,9 @@ parameters: # parameters are shown up in ADO UI in a build queue time
     displayName: Skip Signing
     type: string
     default: 'NO'
-  - name: Officialness
-    displayName: Officialness of the Pipeline
-    type: string
-    values:
-     - "Official"
-     - "Nonofficial"
-    default: "Official"
+  - name: OfficialBuild
+    type: boolean
+    default: false
 
 name: pkgs-$(BUILD.SOURCEBRANCHNAME)-$(Build.BuildId)
 
@@ -68,6 +64,9 @@ variables:
   - name: branchCounter
     value: $[counter(variables['branchCounterKey'], 1)]
   - group: MSIXSigningProfile
+  - name: templateFile
+    value: ${{ iif ( parameters.OfficialBuild, 'v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates', 'v2/OneBranch.NonOfficial.CrossPlat.yml@onebranchTemplates' ) }}
+  
 
 resources:
   pipelines:
@@ -86,7 +85,7 @@ resources:
       ref: refs/heads/main
 
 extends:
-  template: v2/OneBranch.${{ parameters.Officialness }}.CrossPlat.yml@templates
+  template: ${{ variables.templateFile }}
   parameters:
     cloudvault:
       enabled: false
