@@ -93,6 +93,9 @@ variables:
       value: false
   - name: templateFile
     value: ${{ iif ( parameters.OfficialBuild, 'v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates', 'v2/OneBranch.NonOfficial.CrossPlat.yml@onebranchTemplates' ) }}
+  # Fix for BinSkim ICU package error in Linux containers
+  - name: DOTNET_SYSTEM_GLOBALIZATION_INVARIANT
+    value: true
   
 
 extends:
