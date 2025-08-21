@@ -1335,7 +1335,7 @@ namespace Microsoft.PowerShell.Commands
 
 #pragma warning disable 649 // fields and properties in these class are assigned dynamically
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
-    internal class WmiBaseBoard
+    internal sealed class WmiBaseBoard
     {
         public string Caption;
         public string[] ConfigOptions;
@@ -1368,7 +1368,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
-    internal class WmiBios : WmiClassBase
+    internal sealed class WmiBios : WmiClassBase
     {
         public ushort[] BiosCharacteristics;
         public string[] BIOSVersion;
@@ -1403,7 +1403,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
-    internal class WmiComputerSystem
+    internal sealed class WmiComputerSystem
     {
         public ushort? AdminPasswordStatus;
         public bool? AutomaticManagedPagefile;
@@ -1486,7 +1486,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
-    internal class WmiDeviceGuard
+    internal sealed class WmiDeviceGuard
     {
         public uint[] AvailableSecurityProperties;
         public uint? CodeIntegrityPolicyEnforcementStatus;
@@ -1561,7 +1561,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
-    internal class WmiKeyboard
+    internal sealed class WmiKeyboard
     {
         public ushort? Availability;
         public string Caption;
@@ -1588,14 +1588,14 @@ namespace Microsoft.PowerShell.Commands
     }
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
-    internal class WMiLogicalMemory
+    internal sealed class WMiLogicalMemory
     {
         // TODO: fill this in!!!
         public uint? TotalPhysicalMemory;
     }
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
-    internal class WmiMsftNetAdapter
+    internal sealed class WmiMsftNetAdapter
     {
         public string Caption;
         public string Description;
@@ -1683,7 +1683,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
-    internal class WmiNetworkAdapter
+    internal sealed class WmiNetworkAdapter
     {
         public string AdapterType;
         public ushort? AdapterTypeID;
@@ -1727,7 +1727,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
-    internal class WmiNetworkAdapterConfiguration
+    internal sealed class WmiNetworkAdapterConfiguration
     {
         public bool? ArpAlwaysSourceRoute;
         public bool? ArpUseEtherSNAP;
@@ -1793,7 +1793,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
-    internal class WmiOperatingSystem : WmiClassBase
+    internal sealed class WmiOperatingSystem : WmiClassBase
     {
         #region Fields
         public string BootDevice;
@@ -1900,7 +1900,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
-    internal class WmiPageFileUsage
+    internal sealed class WmiPageFileUsage
     {
         public uint? AllocatedBaseSize;
         public string Caption;
@@ -1914,7 +1914,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
-    internal class WmiProcessor
+    internal sealed class WmiProcessor
     {
         public ushort? AddressWidth;
         public ushort? Architecture;
@@ -1977,7 +1977,7 @@ namespace Microsoft.PowerShell.Commands
     #endregion Intermediate WMI classes
 
     #region Other Intermediate classes
-    internal class RegWinNtCurrentVersion
+    internal sealed class RegWinNtCurrentVersion
     {
         public string BuildLabEx;
         public string CurrentVersion;
