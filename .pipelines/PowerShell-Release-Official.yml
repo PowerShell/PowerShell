@@ -65,6 +65,9 @@ variables:
     value: ${{ iif ( parameters.OfficialBuild, 'v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates', 'v2/OneBranch.NonOfficial.CrossPlat.yml@onebranchTemplates' ) }}
   - name: releaseEnvironment
     value: ${{ iif ( parameters.OfficialBuild, 'Production', 'Test' ) }}
+  # Fix for BinSkim ICU package error in Linux containers
+  - name: DOTNET_SYSTEM_GLOBALIZATION_INVARIANT
+    value: true
 
 resources:
   repositories:
@@ -114,6 +117,9 @@ extends:
         suppressionsFile: $(Build.SourcesDirectory)\.config\suppress.json
       binskim:
         break: false # always break the build on binskim issues in addition to TSA upload
+        # Fix for ICU package error in Linux containers - enable globalization invariant mode for BinSkim
+        environment:
+          DOTNET_SYSTEM_GLOBALIZATION_INVARIANT: true
       policheck:
         break: true # always break the build on policheck issues. You can disable it by setting to 'false'
       # suppression:

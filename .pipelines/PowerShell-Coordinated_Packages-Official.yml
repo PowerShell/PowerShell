@@ -125,6 +125,9 @@ extends:
         ignoreDirectories: '.devcontainer,demos,docker,docs,src,test,tools/packaging'
       binskim:
         enabled: false
+        # Fix for ICU package error in Linux containers - enable globalization invariant mode for BinSkim
+        environment:
+          DOTNET_SYSTEM_GLOBALIZATION_INVARIANT: true
       # APIScan requires a non-Ready-To-Run build
       apiscan:
         enabled: false
