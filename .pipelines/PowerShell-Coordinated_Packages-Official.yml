@@ -96,6 +96,9 @@ variables:
   # Fix for BinSkim ICU package error in Linux containers
   - name: DOTNET_SYSTEM_GLOBALIZATION_INVARIANT
     value: true
+  # Disable BinSkim at job level to override NonOfficial template defaults
+  - name: ob_sdl_binskim_enabled
+    value: false
   
 
 extends:
@@ -128,9 +131,7 @@ extends:
         ignoreDirectories: '.devcontainer,demos,docker,docs,src,test,tools/packaging'
       binskim:
         enabled: false
-        # Fix for ICU package error in Linux containers - enable globalization invariant mode for BinSkim
-        environment:
-          DOTNET_SYSTEM_GLOBALIZATION_INVARIANT: true
+        exactToolVersion: 4.4.2
       # APIScan requires a non-Ready-To-Run build
       apiscan:
         enabled: false

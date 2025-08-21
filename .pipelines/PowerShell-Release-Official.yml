@@ -117,9 +117,7 @@ extends:
         suppressionsFile: $(Build.SourcesDirectory)\.config\suppress.json
       binskim:
         break: false # always break the build on binskim issues in addition to TSA upload
-        # Fix for ICU package error in Linux containers - enable globalization invariant mode for BinSkim
-        environment:
-          DOTNET_SYSTEM_GLOBALIZATION_INVARIANT: true
+        exactToolVersion: 4.4.2
       policheck:
         break: true # always break the build on policheck issues. You can disable it by setting to 'false'
       # suppression:
