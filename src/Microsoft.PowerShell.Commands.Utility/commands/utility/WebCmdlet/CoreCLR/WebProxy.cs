@@ -8,7 +8,7 @@ using System.Net;
 
 namespace Microsoft.PowerShell.Commands
 {
-    internal class WebProxy : IWebProxy, IEquatable<WebProxy>
+    internal sealed class WebProxy : IWebProxy, IEquatable<WebProxy>
     {
         private ICredentials? _credentials;
         private readonly Uri _proxyAddress;
