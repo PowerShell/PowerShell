@@ -31,7 +31,11 @@
     <Resource Include="resources\Graphics\SpyGlass16.png" />
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="'$(Rebuild)' == 'true'">
+    <PackageReference Include="System.Management.Automation" Version="7.5.2" />
+    <PackageReference Include="Microsoft.PowerShell.Commands.Utility" Version="7.5.2" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(Rebuild)' != 'true'">
     <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />
     <ProjectReference Include="..\Microsoft.PowerShell.Commands.Utility\Microsoft.PowerShell.Commands.Utility.csproj" />
   </ItemGroup>

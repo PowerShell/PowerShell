@@ -6,7 +6,7 @@
     <IncludeBuildOutput>false</IncludeBuildOutput>
   </PropertyGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="'$(Rebuild)' != 'true'">
     <ProjectReference Include="..\Microsoft.PowerShell.Commands.Management\Microsoft.PowerShell.Commands.Management.csproj" />
     <ProjectReference Include="..\Microsoft.PowerShell.Commands.Utility\Microsoft.PowerShell.Commands.Utility.csproj" />
     <ProjectReference Include="..\Microsoft.PowerShell.ConsoleHost\Microsoft.PowerShell.ConsoleHost.csproj" />
