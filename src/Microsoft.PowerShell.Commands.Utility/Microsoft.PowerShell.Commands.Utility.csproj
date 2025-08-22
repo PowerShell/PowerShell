@@ -1,5 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <Import Project="..\..\PowerShell.Common.props" />
+  <Import Project="..\Module.Common.props" />
   <PropertyGroup>
     <Description>PowerShell's Microsoft.PowerShell.Commands.Utility project</Description>
     <NoWarn>$(NoWarn);CS1570;CA1416</NoWarn>
@@ -11,14 +12,16 @@
     <PackageReference Include="JsonPointer.Net" Version="5.0.2" />
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
+      </PackageReference>
     <PackageReference Include="Microsoft.Win32.SystemEvents" Version="9.0.6" />
     <PackageReference Include="System.Reflection.Metadata" Version="8.0.1" />
-    <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />
     <PackageReference Include="Markdig.Signed" Version="0.38.0" />
     <PackageReference Include="Microsoft.PowerShell.MarkdownRender" Version="7.2.1" />
+    <!-- the following package(s) are from https://github.com/JamesNK/Newtonsoft.Json -->
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="System.DirectoryServices" Version="9.0.6" />
   </ItemGroup>
+
 
   <PropertyGroup>
     <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
