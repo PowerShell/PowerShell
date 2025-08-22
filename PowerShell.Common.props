@@ -37,9 +37,12 @@
         For RCs, we will increment the iteration from 100.
 
         Examples
-        7.2.0 becomes 7.2.0
-        7.2.0-preview.1 becomes 7.2.0.1
-        7.2.0-rc.1 becomes 7.2.0.101
+        7.2.0 becomes 7.2.0.500
+        7.2.1 becomes 7.2.0.500
+        7.2.0-preview.1 becomes 7.2.0.4
+        7.2.0-preview.2 becomes 7.2.0.4
+        7.2.0-rc.1 becomes 7.2.0.100
+        7.2.0-rc.2 becomes 7.2.0.100
       -->
 
       <!-- parse the release tag into the parts we need -->
@@ -47,11 +50,14 @@
       <ReleaseTagVersionPart>$([System.Text.RegularExpressions.Regex]::Match($(ReleaseTag), $(RegexReleaseTag)).Groups[1].Value)</ReleaseTagVersionPart>
       <ReleaseTagSemVersionPart>$([System.Text.RegularExpressions.Regex]::Match($(ReleaseTag), $(RegexReleaseTag)).Groups[8].Value)</ReleaseTagSemVersionPart>
       <ReleaseTagSemVersionPrereleaseNamePart>$([System.Text.RegularExpressions.Regex]::Match($(ReleaseTag), $(RegexReleaseTag)).Groups[6].Value)</ReleaseTagSemVersionPrereleaseNamePart>
+      <!-- Increment revision 4 for preview releases -->
+      <PreviewSemVerPartValue>4</PreviewSemVerPartValue>
       <!-- Increment revision 100 for rc releases -->
       <RCIncrementValue>100</RCIncrementValue>
       <!-- Increment revision 500 for GA releases -->
       <GAIncrementValue>500</GAIncrementValue>
-      <ReleaseTagSemVersionPart Condition = "'$(ReleaseTagSemVersionPrereleaseNamePart)' == 'rc'">$([MSBuild]::Add($(ReleaseTagSemVersionPart), $(RCIncrementValue)))</ReleaseTagSemVersionPart>
+      <ReleaseTagSemVersionPart Condition = "'$(ReleaseTagSemVersionPrereleaseNamePart)' != 'rc'">$(PreviewSemVerPartValue)</ReleaseTagSemVersionPart>
+      <ReleaseTagSemVersionPart Condition = "'$(ReleaseTagSemVersionPrereleaseNamePart)' == 'rc'">$(RCIncrementValue)</ReleaseTagSemVersionPart>
       <!-- Create the internal version -->
       <PSCoreBuildVersion>$(ReleaseTag)</PSCoreBuildVersion>
       <!-- Create the version if we have a pre-release -->
