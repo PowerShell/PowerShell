@@ -11,13 +11,29 @@
     <PackageReference Include="JsonPointer.Net" Version="5.0.2" />
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
+      </PackageReference>
     <PackageReference Include="Microsoft.Win32.SystemEvents" Version="9.0.6" />
     <PackageReference Include="System.Reflection.Metadata" Version="8.0.1" />
-    <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />
     <PackageReference Include="Markdig.Signed" Version="0.38.0" />
     <PackageReference Include="Microsoft.PowerShell.MarkdownRender" Version="7.2.1" />
+    <!-- the following package(s) are from https://github.com/JamesNK/Newtonsoft.Json -->
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="System.DirectoryServices" Version="9.0.6" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(Rebuild)' == 'true'">
+    <PackageReference Include="System.Management.Automation" Version="7.5.2">
+      <ExcludeAssets>compile</ExcludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <!-- todo only use hint for windows-->
+    <Reference Include="System.Management.Automation">
+
+      <HintPath>$(NuGetPackageRoot)System.Management.Automation\7.5.2\runtimes\win\lib\net9.0\System.Management.Automation.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup Condition="'$(Rebuild)' != 'true'">
+    <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
