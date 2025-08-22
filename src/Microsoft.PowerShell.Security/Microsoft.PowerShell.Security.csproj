@@ -6,7 +6,10 @@
     <AssemblyName>Microsoft.PowerShell.Security</AssemblyName>
   </PropertyGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="'$(Rebuild)' == 'true'">
+    <PackageReference Include="System.Management.Automation" Version="7.5.2" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(Rebuild)' != 'true'">
     <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />
   </ItemGroup>
 
