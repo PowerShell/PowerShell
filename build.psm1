@@ -300,6 +300,7 @@ function Start-PSBuild {
         [switch]$NoPSModuleRestore,
         [switch]$CI,
         [switch]$ForMinimalSize,
+        [switch]$BuildFromPackages,
 
         # Skips the step where the pwsh that's been built is used to create a configuration
         # Useful when changing parsing/compilation, since bugs there can mean we can't get past this step
@@ -469,6 +470,10 @@ Fix steps:
     }
     else {
         $Arguments += "--self-contained"
+    }
+
+    if($BuildFromPackages) {
+        $Arguments += "/property:Rebuild=true"
     }
 
     if ($Options.Runtime -like 'win*') {
