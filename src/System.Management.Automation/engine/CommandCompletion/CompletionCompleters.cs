@@ -17,6 +17,9 @@ using System.Management.Automation.Provider;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Runtime.InteropServices;
+#if !UNIX
+using System.Runtime.InteropServices.Marshalling;
+#endif
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -5181,14 +5184,6 @@ namespace System.Management.Automation
             @"(^Microsoft\.PowerShell\.Core\\FileSystem::|^FileSystem::|^)(?:\\\\|//)(?![.|?])([^\\/]+)(?:\\|/)([^\\/]*)$",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-        private struct SHARE_INFO_1
-        {
-            public string netname;
-            public int type;
-            public string remark;
-        }
-
         private static readonly System.IO.EnumerationOptions _enumerationOptions = new System.IO.EnumerationOptions
         {
             MatchCasing = MatchCasing.CaseInsensitive,
@@ -5200,50 +5195,46 @@ namespace System.Management.Automation
 #if UNIX
             return new List<string>();
 #else
-            nint shBuf = nint.Zero;
-            uint numEntries = 0;
-            uint totalEntries;
-            uint resumeHandle = 0;
-            try
+            unsafe
             {
-                int result = Interop.Windows.NetShareEnum(
-                    machine,
-                    level: 1,
-                    out shBuf,
-                    Interop.Windows.MAX_PREFERRED_LENGTH,
-                    out numEntries,
-                    out totalEntries,
-                    ref resumeHandle);
-
-                var shares = new List<string>();
-                if (result == Interop.Windows.ERROR_SUCCESS || result == Interop.Windows.ERROR_MORE_DATA)
+                Interop.Windows.SHARE_INFO_1* pShareInfo = null;
+                try
                 {
-                    for (int i = 0; i < numEntries; ++i)
+                    uint result = Interop.Windows.NetShareEnum<Interop.Windows.SHARE_INFO_1>(
+                        machine,
+                        out pShareInfo,
+                        out int count);
+
+                    List<string> shares = new();
+
+                    if (result is Interop.Windows.ERROR_SUCCESS or Interop.Windows.ERROR_MORE_DATA)
                     {
-                        nint curInfoPtr = shBuf + (Marshal.SizeOf<SHARE_INFO_1>() * i);
-                        SHARE_INFO_1 shareInfo = Marshal.PtrToStructure<SHARE_INFO_1>(curInfoPtr);
-
-                        if ((shareInfo.type & Interop.Windows.STYPE_MASK) != Interop.Windows.STYPE_DISKTREE)
+                        foreach (Interop.Windows.SHARE_INFO_1 shareInfo in new ReadOnlySpan<Interop.Windows.SHARE_INFO_1>(pShareInfo, count))
                         {
-                            continue;
-                        }
+                            if ((shareInfo.type & Interop.Windows.STYPE_MASK) != Interop.Windows.STYPE_DISKTREE)
+                            {
+                                continue;
+                            }
 
-                        if (ignoreHidden && shareInfo.netname.EndsWith('$'))
-                        {
-                            continue;
-                        }
+                            string share = Utf16StringMarshaller.ConvertToManaged(shareInfo.netname);
 
-                        shares.Add(shareInfo.netname);
+                            if (ignoreHidden && share.EndsWith('$'))
+                            {
+                                continue;
+                            }
+
+                            shares.Add(share);
+                        }
                     }
-                }
 
-                return shares;
-            }
-            finally
-            {
-                if (shBuf != nint.Zero)
+                    return shares;
+                }
+                finally
                 {
-                    Interop.Windows.NetApiBufferFree(shBuf);
+                    if (pShareInfo is not null)
+                    {
+                        Interop.Windows.NetApiBufferFree(pShareInfo);
+                    }
                 }
             }
 #endif
