@@ -131,7 +131,6 @@ namespace System.Diagnostics.Eventing.Reader
             return win32Error == 0;
         }
 
-        [System.Security.SecuritySafeCritical]
         public static void EvtCancel(EventLogHandle handle)
         {
             if (!UnsafeNativeMethods.EvtCancel(handle))
@@ -232,7 +231,6 @@ namespace System.Diagnostics.Eventing.Reader
             return handle;
         }
 
-        [System.Security.SecuritySafeCritical]
         public static void EvtSaveChannelConfig(EventLogHandle channelConfig, int flags)
         {
             bool status = UnsafeNativeMethods.EvtSaveChannelConfig(channelConfig, flags);
@@ -250,7 +248,6 @@ namespace System.Diagnostics.Eventing.Reader
             return logHandle;
         }
 
-        [System.Security.SecuritySafeCritical]
         public static void EvtExportLog(
                             EventLogHandle session,
                             string channelPath,
@@ -265,7 +262,6 @@ namespace System.Diagnostics.Eventing.Reader
                 ThrowEventLogException(win32Error);
         }
 
-        [System.Security.SecuritySafeCritical]
         public static void EvtArchiveExportedLog(
                             EventLogHandle session,
                             string logFilePath,
@@ -279,7 +275,6 @@ namespace System.Diagnostics.Eventing.Reader
                 ThrowEventLogException(win32Error);
         }
 
-        [System.Security.SecuritySafeCritical]
         public static void EvtClearLog(
                             EventLogHandle session,
                             string channelPath,
@@ -359,7 +354,6 @@ namespace System.Diagnostics.Eventing.Reader
                 ThrowEventLogException(win32Error);
         }
 
-        [System.Security.SecuritySafeCritical]
         public static object EvtGetEventInfo(EventLogHandle handle, UnsafeNativeMethods.EvtEventPropertyId enumType)
         {
             IntPtr buffer = IntPtr.Zero;
@@ -422,7 +416,6 @@ namespace System.Diagnostics.Eventing.Reader
             }
         }
 
-        [System.Security.SecuritySafeCritical]
         public static object EvtGetPublisherMetadataProperty(EventLogHandle pmHandle, UnsafeNativeMethods.EvtPublisherMetadataPropertyId thePropertyId)
         {
             IntPtr buffer = IntPtr.Zero;
@@ -608,7 +601,6 @@ namespace System.Diagnostics.Eventing.Reader
             }
         }
 
-        [System.Security.SecuritySafeCritical]
         public static object EvtGetChannelConfigProperty(EventLogHandle handle, UnsafeNativeMethods.EvtChannelConfigPropertyId enumType)
         {
             IntPtr buffer = IntPtr.Zero;
@@ -647,7 +639,6 @@ namespace System.Diagnostics.Eventing.Reader
             }
         }
 
-        [System.Security.SecuritySafeCritical]
         public static void EvtSetChannelConfigProperty(EventLogHandle handle, UnsafeNativeMethods.EvtChannelConfigPropertyId enumType, object val)
         {
             UnsafeNativeMethods.EvtVariant varVal = new();
@@ -824,7 +815,6 @@ namespace System.Diagnostics.Eventing.Reader
             }
         }
 
-        [System.Security.SecuritySafeCritical]
         public static void EvtRenderBufferWithContextSystem(EventLogHandle contextHandle, EventLogHandle eventHandle, UnsafeNativeMethods.EvtRenderFlags flag, SystemProperties systemProperties, int SYSTEM_PROPERTY_COUNT)
         {
             IntPtr buffer = IntPtr.Zero;
@@ -926,7 +916,6 @@ namespace System.Diagnostics.Eventing.Reader
 
         // EvtRenderContextFlags can be both: EvtRenderContextFlags.EvtRenderContextUser and EvtRenderContextFlags.EvtRenderContextValues
         // Render with Context = ContextUser or ContextValues (with user defined Xpath query strings)
-        [System.Security.SecuritySafeCritical]
         public static IList<object> EvtRenderBufferWithContextUserOrValues(EventLogHandle contextHandle, EventLogHandle eventHandle)
         {
             IntPtr buffer = IntPtr.Zero;
@@ -972,7 +961,6 @@ namespace System.Diagnostics.Eventing.Reader
             }
         }
 
-        [System.Security.SecuritySafeCritical]
         public static string EvtFormatMessageRenderName(EventLogHandle pmHandle, EventLogHandle eventHandle, UnsafeNativeMethods.EvtFormatMessageFlags flag)
         {
             int bufferNeeded;
@@ -1026,7 +1014,6 @@ namespace System.Diagnostics.Eventing.Reader
         }
 
         // The EvtFormatMessage used for the obtaining of the Keywords names.
-        [System.Security.SecuritySafeCritical]
         public static IEnumerable<string> EvtFormatMessageRenderKeywords(EventLogHandle pmHandle, EventLogHandle eventHandle, UnsafeNativeMethods.EvtFormatMessageFlags flag)
         {
             IntPtr buffer = IntPtr.Zero;
@@ -1126,7 +1113,6 @@ namespace System.Diagnostics.Eventing.Reader
         }
 
         // Get the formatted description, using the msgId for FormatDescription(string [])
-        [System.Security.SecuritySafeCritical]
         public static string EvtFormatMessageFormatDescription(EventLogHandle handle, EventLogHandle eventHandle, string[] values)
         {
             int bufferNeeded;

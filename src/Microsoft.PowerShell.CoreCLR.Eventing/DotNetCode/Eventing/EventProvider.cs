@@ -72,7 +72,6 @@ namespace System.Diagnostics.Eventing
         /// <param name="providerGuid">
         /// Unique GUID among all trace sources running on a system
         /// </param>
-        [SecuritySafeCritical]
         [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "guid")]
         public EventProvider(Guid providerGuid)
         {
@@ -116,7 +115,6 @@ namespace System.Diagnostics.Eventing
             GC.SuppressFinalize(this);
         }
 
-        [System.Security.SecuritySafeCritical]
         protected virtual void Dispose(bool disposing)
         {
             //
