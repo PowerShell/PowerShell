@@ -90,7 +90,6 @@ namespace System.Diagnostics.Eventing.Reader
             }
         }
 
-        [System.Security.SecurityCritical]
         public static EventLogHandle EvtQuery(
                             EventLogHandle session,
                             string path,
@@ -104,7 +103,6 @@ namespace System.Diagnostics.Eventing.Reader
             return handle;
         }
 
-        [System.Security.SecurityCritical]
         public static void EvtSeek(
                             EventLogHandle resultSet,
                             long position,
@@ -118,7 +116,6 @@ namespace System.Diagnostics.Eventing.Reader
                 ThrowEventLogException(win32Error);
         }
 
-        [System.Security.SecurityCritical]
         public static bool EvtNext(
                             EventLogHandle queryHandle,
                             int eventSize,
@@ -144,7 +141,6 @@ namespace System.Diagnostics.Eventing.Reader
             }
         }
 
-        [System.Security.SecurityCritical]
         public static void EvtClose(IntPtr handle)
         {
             //
@@ -154,7 +150,6 @@ namespace System.Diagnostics.Eventing.Reader
             UnsafeNativeMethods.EvtClose(handle);
         }
 
-        [System.Security.SecurityCritical]
         public static EventLogHandle EvtOpenProviderMetadata(
                             EventLogHandle session,
                             string ProviderId,
@@ -175,7 +170,6 @@ namespace System.Diagnostics.Eventing.Reader
             return handle;
         }
 
-        [System.Security.SecurityCritical]
         public static int EvtGetObjectArraySize(EventLogHandle objectArray)
         {
             int arraySize;
@@ -186,7 +180,6 @@ namespace System.Diagnostics.Eventing.Reader
             return arraySize;
         }
 
-        [System.Security.SecurityCritical]
         public static EventLogHandle EvtOpenEventMetadataEnum(EventLogHandle ProviderMetadata, int flags)
         {
             EventLogHandle emEnumHandle = UnsafeNativeMethods.EvtOpenEventMetadataEnum(ProviderMetadata, flags);
@@ -197,7 +190,6 @@ namespace System.Diagnostics.Eventing.Reader
         }
 
         // returns null if EOF
-        [System.Security.SecurityCritical]
         public static EventLogHandle EvtNextEventMetadata(EventLogHandle eventMetadataEnum, int flags)
         {
             EventLogHandle emHandle = UnsafeNativeMethods.EvtNextEventMetadata(eventMetadataEnum, flags);
@@ -213,7 +205,6 @@ namespace System.Diagnostics.Eventing.Reader
             return emHandle;
         }
 
-        [System.Security.SecurityCritical]
         public static EventLogHandle EvtOpenChannelEnum(EventLogHandle session, int flags)
         {
             EventLogHandle channelEnum = UnsafeNativeMethods.EvtOpenChannelEnum(session, flags);
@@ -223,7 +214,6 @@ namespace System.Diagnostics.Eventing.Reader
             return channelEnum;
         }
 
-        [System.Security.SecurityCritical]
         public static EventLogHandle EvtOpenProviderEnum(EventLogHandle session, int flags)
         {
             EventLogHandle pubEnum = UnsafeNativeMethods.EvtOpenPublisherEnum(session, flags);
@@ -233,7 +223,6 @@ namespace System.Diagnostics.Eventing.Reader
             return pubEnum;
         }
 
-        [System.Security.SecurityCritical]
         public static EventLogHandle EvtOpenChannelConfig(EventLogHandle session, string channelPath, int flags)
         {
             EventLogHandle handle = UnsafeNativeMethods.EvtOpenChannelConfig(session, channelPath, flags);
@@ -252,7 +241,6 @@ namespace System.Diagnostics.Eventing.Reader
                 ThrowEventLogException(win32Error);
         }
 
-        [System.Security.SecurityCritical]
         public static EventLogHandle EvtOpenLog(EventLogHandle session, string path, PathType flags)
         {
             EventLogHandle logHandle = UnsafeNativeMethods.EvtOpenLog(session, path, flags);
@@ -305,7 +293,6 @@ namespace System.Diagnostics.Eventing.Reader
                 ThrowEventLogException(win32Error);
         }
 
-        [System.Security.SecurityCritical]
         public static EventLogHandle EvtCreateRenderContext(
                             int valuePathsCount,
                             string[] valuePaths,
@@ -318,7 +305,6 @@ namespace System.Diagnostics.Eventing.Reader
             return renderContextHandleValues;
         }
 
-        [System.Security.SecurityCritical]
         public static void EvtRender(
                             EventLogHandle context,
                             EventLogHandle eventHandle,
@@ -347,7 +333,6 @@ namespace System.Diagnostics.Eventing.Reader
             }
         }
 
-        [System.Security.SecurityCritical]
         public static EventLogHandle EvtOpenSession(UnsafeNativeMethods.EvtLoginClass loginClass, ref UnsafeNativeMethods.EvtRpcLogin login, int timeout, int flags)
         {
             EventLogHandle handle = UnsafeNativeMethods.EvtOpenSession(loginClass, ref login, timeout, flags);
@@ -357,7 +342,6 @@ namespace System.Diagnostics.Eventing.Reader
             return handle;
         }
 
-        [System.Security.SecurityCritical]
         public static EventLogHandle EvtCreateBookmark(string bookmarkXml)
         {
             EventLogHandle handle = UnsafeNativeMethods.EvtCreateBookmark(bookmarkXml);
@@ -367,7 +351,6 @@ namespace System.Diagnostics.Eventing.Reader
             return handle;
         }
 
-        [System.Security.SecurityCritical]
         public static void EvtUpdateBookmark(EventLogHandle bookmark, EventLogHandle eventHandle)
         {
             bool status = UnsafeNativeMethods.EvtUpdateBookmark(bookmark, eventHandle);
@@ -410,7 +393,6 @@ namespace System.Diagnostics.Eventing.Reader
             }
         }
 
-        [System.Security.SecurityCritical]
         public static object EvtGetQueryInfo(EventLogHandle handle, UnsafeNativeMethods.EvtQueryPropertyId enumType)
         {
             IntPtr buffer = IntPtr.Zero;
@@ -471,7 +453,6 @@ namespace System.Diagnostics.Eventing.Reader
             }
         }
 
-        [System.Security.SecurityCritical]
         internal static EventLogHandle EvtGetPublisherMetadataPropertyHandle(EventLogHandle pmHandle, UnsafeNativeMethods.EvtPublisherMetadataPropertyId thePropertyId)
         {
             IntPtr buffer = IntPtr.Zero;
@@ -509,7 +490,6 @@ namespace System.Diagnostics.Eventing.Reader
         }
 
         // implies UnsafeNativeMethods.EvtFormatMessageFlags.EvtFormatMessageId flag.
-        [System.Security.SecurityCritical]
         public static string EvtFormatMessage(EventLogHandle handle, uint msgId)
         {
             int bufferNeeded;
@@ -566,7 +546,6 @@ namespace System.Diagnostics.Eventing.Reader
             return sb.ToString();
         }
 
-        [System.Security.SecurityCritical]
         public static object EvtGetObjectArrayProperty(EventLogHandle objArrayHandle, int index, int thePropertyId)
         {
             IntPtr buffer = IntPtr.Zero;
@@ -598,7 +577,6 @@ namespace System.Diagnostics.Eventing.Reader
             }
         }
 
-        [System.Security.SecurityCritical]
         public static object EvtGetEventMetadataProperty(EventLogHandle handle, UnsafeNativeMethods.EvtEventMetadataPropertyId enumType)
         {
             IntPtr buffer = IntPtr.Zero;
@@ -759,7 +737,6 @@ namespace System.Diagnostics.Eventing.Reader
             }
         }
 
-        [System.Security.SecurityCritical]
         public static string EvtNextChannelPath(EventLogHandle handle, ref bool finish)
         {
             StringBuilder sb = new(null);
@@ -788,7 +765,6 @@ namespace System.Diagnostics.Eventing.Reader
             return sb.ToString();
         }
 
-        [System.Security.SecurityCritical]
         public static string EvtNextPublisherId(EventLogHandle handle, ref bool finish)
         {
             StringBuilder sb = new(null);
@@ -817,7 +793,6 @@ namespace System.Diagnostics.Eventing.Reader
             return sb.ToString();
         }
 
-        [System.Security.SecurityCritical]
         public static object EvtGetLogInfo(EventLogHandle handle, UnsafeNativeMethods.EvtLogPropertyId enumType)
         {
             IntPtr buffer = IntPtr.Zero;
@@ -1118,7 +1093,6 @@ namespace System.Diagnostics.Eventing.Reader
             }
         }
 
-        [System.Security.SecurityCritical]
         public static string EvtRenderBookmark(EventLogHandle eventHandle)
         {
             IntPtr buffer = IntPtr.Zero;
@@ -1212,7 +1186,6 @@ namespace System.Diagnostics.Eventing.Reader
             return sb.ToString();
         }
 
-        [System.Security.SecurityCritical]
         private static object ConvertToObject(UnsafeNativeMethods.EvtVariant val)
         {
             switch (val.Type)
@@ -1324,7 +1297,6 @@ namespace System.Diagnostics.Eventing.Reader
             }
         }
 
-        [System.Security.SecurityCritical]
         public static object ConvertToObject(UnsafeNativeMethods.EvtVariant val, UnsafeNativeMethods.EvtVariantType desiredType)
         {
             if (val.Type == (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeNull) return null;
@@ -1334,7 +1306,6 @@ namespace System.Diagnostics.Eventing.Reader
             return ConvertToObject(val);
         }
 
-        [System.Security.SecurityCritical]
         public static string ConvertToString(UnsafeNativeMethods.EvtVariant val)
         {
             if (val.StringVal == IntPtr.Zero)
@@ -1343,7 +1314,6 @@ namespace System.Diagnostics.Eventing.Reader
                 return Marshal.PtrToStringUni(val.StringVal);
         }
 
-        [System.Security.SecurityCritical]
         public static string ConvertToAnsiString(UnsafeNativeMethods.EvtVariant val)
         {
             if (val.AnsiString == IntPtr.Zero)
@@ -1352,7 +1322,6 @@ namespace System.Diagnostics.Eventing.Reader
                 return Marshal.PtrToStringAnsi(val.AnsiString);
         }
 
-        [System.Security.SecurityCritical]
         public static EventLogHandle ConvertToSafeHandle(UnsafeNativeMethods.EvtVariant val)
         {
             if (val.Handle == IntPtr.Zero)
@@ -1361,7 +1330,6 @@ namespace System.Diagnostics.Eventing.Reader
                 return new EventLogHandle(val.Handle, true);
         }
 
-        [System.Security.SecurityCritical]
         public static Array ConvertToArray<T>(UnsafeNativeMethods.EvtVariant val, int size) where T : struct
         {
             IntPtr ptr = val.Reference;
@@ -1382,7 +1350,6 @@ namespace System.Diagnostics.Eventing.Reader
             }
         }
 
-        [System.Security.SecurityCritical]
         public static Array ConvertToBoolArray(UnsafeNativeMethods.EvtVariant val)
         {
             // NOTE: booleans are padded to 4 bytes in ETW
@@ -1405,7 +1372,6 @@ namespace System.Diagnostics.Eventing.Reader
             }
         }
 
-        [System.Security.SecurityCritical]
         public static Array ConvertToFileTimeArray(UnsafeNativeMethods.EvtVariant val)
         {
             IntPtr ptr = val.Reference;
@@ -1426,7 +1392,6 @@ namespace System.Diagnostics.Eventing.Reader
             }
         }
 
-        [System.Security.SecurityCritical]
         public static Array ConvertToSysTimeArray(UnsafeNativeMethods.EvtVariant val)
         {
             IntPtr ptr = val.Reference;
@@ -1448,7 +1413,6 @@ namespace System.Diagnostics.Eventing.Reader
             }
         }
 
-        [System.Security.SecurityCritical]
         public static string[] ConvertToStringArray(UnsafeNativeMethods.EvtVariant val, bool ansi)
         {
             if (val.Reference == IntPtr.Zero)
