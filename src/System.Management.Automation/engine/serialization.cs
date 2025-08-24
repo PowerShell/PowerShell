@@ -876,13 +876,13 @@ namespace System.Management.Automation
             IDictionary<object, ulong> objectRefIdDictionary = null;
             if ((_context.options & SerializationOptions.NoObjectRefIds) == 0)
             {
-                objectRefIdDictionary = new WeakReferenceDictionary<UInt64>();
+                objectRefIdDictionary = new WeakReferenceDictionary<ulong>();
             }
 
             _objectRefIdHandler = new ReferenceIdHandlerForSerializer<object>(objectRefIdDictionary);
 
             _typeRefIdHandler = new ReferenceIdHandlerForSerializer<ConsolidatedString>(
-                new Dictionary<ConsolidatedString, UInt64>(ConsolidatedString.EqualityComparer));
+                new Dictionary<ConsolidatedString, ulong>(ConsolidatedString.EqualityComparer));
         }
 
         #endregion
@@ -2301,7 +2301,7 @@ namespace System.Management.Automation
                     PSEventId.Serializer_ModeOverride, PSOpcode.SerializationSettings, PSTask.Serialization,
                     PSKeyword.Serializer | PSKeyword.UseAlwaysAnalytic,
                     source.InternalTypeNames.Key,
-                    (UInt32)(SerializationMethod.String));
+                    (uint)(SerializationMethod.String));
 
                 return true;
             }
@@ -2641,7 +2641,7 @@ namespace System.Management.Automation
             Dbg.Assert(entry != null, "caller should have validated the information");
 
             // Char is defined as unsigned short in schema
-            WriteRawString(serializer, streamName, property, XmlConvert.ToString((UInt16)(char)source), entry);
+            WriteRawString(serializer, streamName, property, XmlConvert.ToString((ushort)(char)source), entry);
         }
 
         /// <summary>
@@ -2675,7 +2675,7 @@ namespace System.Management.Automation
             Dbg.Assert(source != null, "caller should have validated the information");
             Dbg.Assert(entry != null, "caller should have validated the information");
 
-            WriteRawString(serializer, streamName, property, XmlConvert.ToString((Single)source), entry);
+            WriteRawString(serializer, streamName, property, XmlConvert.ToString((float)source), entry);
         }
 
         /// <summary>
@@ -3058,16 +3058,16 @@ namespace System.Management.Automation
                     typeof(DateTime),
                     typeof(decimal),
                     typeof(double),
-                    typeof(Int16),
-                    typeof(Int32),
-                    typeof(Int64),
+                    typeof(short),
+                    typeof(int),
+                    typeof(long),
                     typeof(sbyte),
-                    typeof(Single),
+                    typeof(float),
                     typeof(string),
                     typeof(TimeSpan),
-                    typeof(UInt16),
-                    typeof(UInt32),
-                    typeof(UInt64),
+                    typeof(ushort),
+                    typeof(uint),
+                    typeof(ulong),
                     typeof(object),
                     typeof(CimInstance)
                 }
@@ -4408,7 +4408,7 @@ namespace System.Management.Automation
                 recognizedException = e;
             }
 
-            throw deserializer.NewXmlException(Serialization.InvalidPrimitiveType, recognizedException, typeof(Int16).FullName);
+            throw deserializer.NewXmlException(Serialization.InvalidPrimitiveType, recognizedException, typeof(short).FullName);
         }
 
         internal static object DeserializeInt32(InternalDeserializer deserializer)
@@ -4428,7 +4428,7 @@ namespace System.Management.Automation
                 recognizedException = e;
             }
 
-            throw deserializer.NewXmlException(Serialization.InvalidPrimitiveType, recognizedException, typeof(Int32).FullName);
+            throw deserializer.NewXmlException(Serialization.InvalidPrimitiveType, recognizedException, typeof(int).FullName);
         }
 
         internal static object DeserializeInt64(InternalDeserializer deserializer)
@@ -4448,7 +4448,7 @@ namespace System.Management.Automation
                 recognizedException = e;
             }
 
-            throw deserializer.NewXmlException(Serialization.InvalidPrimitiveType, recognizedException, typeof(Int64).FullName);
+            throw deserializer.NewXmlException(Serialization.InvalidPrimitiveType, recognizedException, typeof(long).FullName);
         }
 
         internal static object DeserializeSByte(InternalDeserializer deserializer)
@@ -4542,7 +4542,7 @@ namespace System.Management.Automation
                 recognizedException = e;
             }
 
-            throw deserializer.NewXmlException(Serialization.InvalidPrimitiveType, recognizedException, typeof(UInt16).FullName);
+            throw deserializer.NewXmlException(Serialization.InvalidPrimitiveType, recognizedException, typeof(ushort).FullName);
         }
 
         internal static object DeserializeUInt32(InternalDeserializer deserializer)
@@ -4562,7 +4562,7 @@ namespace System.Management.Automation
                 recognizedException = e;
             }
 
-            throw deserializer.NewXmlException(Serialization.InvalidPrimitiveType, recognizedException, typeof(UInt32).FullName);
+            throw deserializer.NewXmlException(Serialization.InvalidPrimitiveType, recognizedException, typeof(uint).FullName);
         }
 
         internal static object DeserializeUInt64(InternalDeserializer deserializer)
@@ -4582,7 +4582,7 @@ namespace System.Management.Automation
                 recognizedException = e;
             }
 
-            throw deserializer.NewXmlException(Serialization.InvalidPrimitiveType, recognizedException, typeof(UInt64).FullName);
+            throw deserializer.NewXmlException(Serialization.InvalidPrimitiveType, recognizedException, typeof(ulong).FullName);
         }
 
         internal static object DeserializeUri(InternalDeserializer deserializer)
@@ -4748,7 +4748,7 @@ namespace System.Management.Automation
 
             if (recognizedException != null)
             {
-                throw deserializer.NewXmlException(Serialization.InvalidPrimitiveType, recognizedException, typeof(UInt64).FullName);
+                throw deserializer.NewXmlException(Serialization.InvalidPrimitiveType, recognizedException, typeof(ulong).FullName);
             }
 
             deserializer.ReadEndElement();
@@ -5004,23 +5004,23 @@ namespace System.Management.Automation
         /// Get new reference id.
         /// </summary>
         /// <returns>New reference id.</returns>
-        private UInt64 GetNewReferenceId()
+        private ulong GetNewReferenceId()
         {
-            UInt64 refId = _seed++;
+            ulong refId = _seed++;
             return refId;
         }
 
         /// <summary>
         /// Seed is incremented by one after each reference generation.
         /// </summary>
-        private UInt64 _seed;
+        private ulong _seed;
 
         // note:
         // any boxed UInt64 takes 16 bytes on the heap
         // one-character string (i.e. "7") takes 20 bytes on the heap
-        private readonly IDictionary<T, UInt64> _object2refId;
+        private readonly IDictionary<T, ulong> _object2refId;
 
-        internal ReferenceIdHandlerForSerializer(IDictionary<T, UInt64> dictionary)
+        internal ReferenceIdHandlerForSerializer(IDictionary<T, ulong> dictionary)
         {
             _object2refId = dictionary;
         }
@@ -5035,7 +5035,7 @@ namespace System.Management.Automation
             if (_object2refId != null)
             {
                 Dbg.Assert(!_object2refId.ContainsKey(t), "SetRefId shouldn't be called when the object is already assigned a ref id");
-                UInt64 refId = GetNewReferenceId();
+                ulong refId = GetNewReferenceId();
                 _object2refId.Add(t, refId);
                 return refId.ToString(System.Globalization.CultureInfo.InvariantCulture);
             }
@@ -5052,7 +5052,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal string GetRefId(T t)
         {
-            UInt64 refId;
+            ulong refId;
             if ((_object2refId != null) && (_object2refId.TryGetValue(t, out refId)))
             {
                 return refId.ToString(System.Globalization.CultureInfo.InvariantCulture);
@@ -5262,19 +5262,19 @@ namespace System.Management.Automation
                                 SerializationStrings.GuidTag,
                                 null,
                                 InternalDeserializer.DeserializeGuid),
-            new TypeSerializationInfo(typeof(Int16),
+            new TypeSerializationInfo(typeof(short),
                                 SerializationStrings.ShortTag,
                                 SerializationStrings.ShortTag,
                                 null,
                                 InternalDeserializer.DeserializeInt16),
 
-            new TypeSerializationInfo(typeof(Int32),
+            new TypeSerializationInfo(typeof(int),
                                 SerializationStrings.IntTag,
                                 SerializationStrings.IntTag,
                                 null,
                                 InternalDeserializer.DeserializeInt32),
 
-            new TypeSerializationInfo(typeof(Int64),
+            new TypeSerializationInfo(typeof(long),
                                 SerializationStrings.LongTag,
                                 SerializationStrings.LongTag,
                                 null,
@@ -5286,7 +5286,7 @@ namespace System.Management.Automation
                                 null,
                                 InternalDeserializer.DeserializeSByte),
 
-            new TypeSerializationInfo(typeof(Single),
+            new TypeSerializationInfo(typeof(float),
                                 SerializationStrings.FloatTag,
                                 SerializationStrings.FloatTag,
                                 InternalSerializer.WriteSingle,
@@ -5310,19 +5310,19 @@ namespace System.Management.Automation
                                 InternalSerializer.WriteTimeSpan,
                                 InternalDeserializer.DeserializeTimeSpan),
 
-            new TypeSerializationInfo(typeof(UInt16),
+            new TypeSerializationInfo(typeof(ushort),
                                 SerializationStrings.UnsignedShortTag,
                                 SerializationStrings.UnsignedShortTag,
                                 null,
                                 InternalDeserializer.DeserializeUInt16),
 
-            new TypeSerializationInfo(typeof(UInt32),
+            new TypeSerializationInfo(typeof(uint),
                                 SerializationStrings.UnsignedIntTag,
                                 SerializationStrings.UnsignedIntTag,
                                 null,
                                 InternalDeserializer.DeserializeUInt32),
 
-            new TypeSerializationInfo(typeof(UInt64),
+            new TypeSerializationInfo(typeof(ulong),
                                 SerializationStrings.UnsignedLongTag,
                                 SerializationStrings.UnsignedLongTag,
                                 null,
@@ -5619,7 +5619,7 @@ namespace System.Management.Automation
                     PSEventId.Serializer_ModeOverride, PSOpcode.SerializationSettings, PSTask.Serialization,
                     PSKeyword.Serializer | PSKeyword.UseAlwaysAnalytic,
                     source.InternalTypeNames.Key,
-                    (UInt32)(SerializationMethod.SpecificProperties));
+                    (uint)(SerializationMethod.SpecificProperties));
 
                 PSMemberInfoInternalCollection<PSPropertyInfo> specificProperties =
                     new PSMemberInfoInternalCollection<PSPropertyInfo>();
@@ -6027,16 +6027,16 @@ namespace System.Management.Automation
                 typeof(decimal),
                 typeof(double),
                 typeof(Guid),
-                typeof(Int32),
-                typeof(Int64),
+                typeof(int),
+                typeof(long),
                 typeof(sbyte),
-                typeof(Single),
+                typeof(float),
                 // typeof(ScriptBlock) - don't want ScriptBlocks, because they are deserialized into strings
                 typeof(string),
                 typeof(TimeSpan),
-                typeof(UInt16),
-                typeof(UInt32),
-                typeof(UInt64),
+                typeof(ushort),
+                typeof(uint),
+                typeof(ulong),
                 typeof(Uri),
                 typeof(byte[]),
                 typeof(Version),
@@ -6263,7 +6263,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="key">The key of the element to add.</param>
         /// <param name="value">The value of the element to add.</param>
-        public void Add(string key, Decimal value)
+        public void Add(string key, decimal value)
         {
             this.Add((object)key, (object)value);
         }
@@ -6273,7 +6273,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="key">The key of the element to add.</param>
         /// <param name="value">The value of the element to add.</param>
-        public void Add(string key, Decimal[] value)
+        public void Add(string key, decimal[] value)
         {
             this.Add((object)key, (object)value);
         }
@@ -6323,7 +6323,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="key">The key of the element to add.</param>
         /// <param name="value">The value of the element to add.</param>
-        public void Add(string key, Int32 value)
+        public void Add(string key, int value)
         {
             this.Add((object)key, (object)value);
         }
@@ -6333,7 +6333,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="key">The key of the element to add.</param>
         /// <param name="value">The value of the element to add.</param>
-        public void Add(string key, Int32[] value)
+        public void Add(string key, int[] value)
         {
             this.Add((object)key, (object)value);
         }
@@ -6343,7 +6343,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="key">The key of the element to add.</param>
         /// <param name="value">The value of the element to add.</param>
-        public void Add(string key, Int64 value)
+        public void Add(string key, long value)
         {
             this.Add((object)key, (object)value);
         }
@@ -6353,7 +6353,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="key">The key of the element to add.</param>
         /// <param name="value">The value of the element to add.</param>
-        public void Add(string key, Int64[] value)
+        public void Add(string key, long[] value)
         {
             this.Add((object)key, (object)value);
         }
@@ -6383,7 +6383,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="key">The key of the element to add.</param>
         /// <param name="value">The value of the element to add.</param>
-        public void Add(string key, Single value)
+        public void Add(string key, float value)
         {
             this.Add((object)key, (object)value);
         }
@@ -6393,7 +6393,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="key">The key of the element to add.</param>
         /// <param name="value">The value of the element to add.</param>
-        public void Add(string key, Single[] value)
+        public void Add(string key, float[] value)
         {
             this.Add((object)key, (object)value);
         }
@@ -6443,7 +6443,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="key">The key of the element to add.</param>
         /// <param name="value">The value of the element to add.</param>
-        public void Add(string key, UInt16 value)
+        public void Add(string key, ushort value)
         {
             this.Add((object)key, (object)value);
         }
@@ -6453,7 +6453,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="key">The key of the element to add.</param>
         /// <param name="value">The value of the element to add.</param>
-        public void Add(string key, UInt16[] value)
+        public void Add(string key, ushort[] value)
         {
             this.Add((object)key, (object)value);
         }
@@ -6463,7 +6463,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="key">The key of the element to add.</param>
         /// <param name="value">The value of the element to add.</param>
-        public void Add(string key, UInt32 value)
+        public void Add(string key, uint value)
         {
             this.Add((object)key, (object)value);
         }
@@ -6473,7 +6473,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="key">The key of the element to add.</param>
         /// <param name="value">The value of the element to add.</param>
-        public void Add(string key, UInt32[] value)
+        public void Add(string key, uint[] value)
         {
             this.Add((object)key, (object)value);
         }
@@ -6483,7 +6483,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="key">The key of the element to add.</param>
         /// <param name="value">The value of the element to add.</param>
-        public void Add(string key, UInt64 value)
+        public void Add(string key, ulong value)
         {
             this.Add((object)key, (object)value);
         }
@@ -6493,7 +6493,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="key">The key of the element to add.</param>
         /// <param name="value">The value of the element to add.</param>
-        public void Add(string key, UInt64[] value)
+        public void Add(string key, ulong[] value)
         {
             this.Add((object)key, (object)value);
         }
@@ -7338,7 +7338,7 @@ namespace Microsoft.PowerShell
         /// <returns>
         /// Boolean properties of ParameterSetMetadata object encoded as an integer
         /// </returns>
-        public static UInt32 GetParameterSetMetadataFlags(PSObject instance)
+        public static uint GetParameterSetMetadataFlags(PSObject instance)
         {
             if (instance == null)
             {
@@ -7350,7 +7350,7 @@ namespace Microsoft.PowerShell
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
-            return (UInt32)(parameterSetMetadata.Flags);
+            return (uint)(parameterSetMetadata.Flags);
         }
 
         /// <summary>
@@ -7384,7 +7384,7 @@ namespace Microsoft.PowerShell
         private static ParameterSetMetadata RehydrateParameterSetMetadata(PSObject pso)
         {
             int position = GetPropertyValue<int>(pso, "Position");
-            UInt32 flags = GetPropertyValue<UInt32>(pso, "Flags");
+            uint flags = GetPropertyValue<uint>(pso, "Flags");
             string helpMessage = GetPropertyValue<string>(pso, "HelpMessage");
             return new ParameterSetMetadata(position, (ParameterSetMetadata.ParameterFlags)flags, helpMessage);
         }

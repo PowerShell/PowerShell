@@ -194,7 +194,7 @@ namespace System.Management.Automation.Host
         public abstract void WriteDebugLine(string message);
 
         /// <summary>
-        /// Invoked by <see cref="System.Management.Automation.Cmdlet.WriteProgress(Int64, System.Management.Automation.ProgressRecord)"/> to display a progress record.
+        /// Invoked by <see cref="System.Management.Automation.Cmdlet.WriteProgress(long, System.Management.Automation.ProgressRecord)"/> to display a progress record.
         /// </summary>
         /// <param name="sourceId">
         /// Unique identifier of the source of the record.  An int64 is used because typically, the 'this' pointer of
@@ -207,7 +207,7 @@ namespace System.Management.Automation.Host
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.WriteDebugLine"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.WriteVerboseLine"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.WriteWarningLine"/>
-        public abstract void WriteProgress(Int64 sourceId, ProgressRecord record);
+        public abstract void WriteProgress(long sourceId, ProgressRecord record);
 
         /// <summary>
         /// Invoked by <see cref="System.Management.Automation.Cmdlet.WriteVerbose"/> to display a verbose processing message to the user.
