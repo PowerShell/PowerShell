@@ -166,37 +166,14 @@ namespace System.Management.Automation
         internal bool IsCommitted { get; set; } = false;
 
         /// <summary>
-        /// Destructor for the PSTransaction class.
-        /// </summary>
-        ~PSTransaction()
-        {
-            Dispose(false);
-        }
-
-        /// <summary>
-        /// Disposes the PSTransaction object.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
         /// Disposes the PSTransaction object, which disposes the
         /// underlying transaction.
         /// </summary>
-        /// <param name="disposing">
-        /// Whether to actually dispose the object.
-        /// </param>
-        public void Dispose(bool disposing)
+        public void Dispose()
         {
-            if (disposing)
+            if (_transaction != null)
             {
-                if (_transaction != null)
-                {
-                    _transaction.Dispose();
-                }
+                _transaction.Dispose();
             }
         }
     }
@@ -218,35 +195,12 @@ namespace System.Management.Automation
         private PSTransactionManager _transactionManager;
 
         /// <summary>
-        /// Destructor for the PSTransactionManager class.
-        /// </summary>
-        ~PSTransactionContext()
-        {
-            Dispose(false);
-        }
-
-        /// <summary>
-        /// Disposes the PSTransactionContext object.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
         /// Disposes the PSTransactionContext object, which resets the
         /// active PSTransaction.
         /// </summary>
-        /// <param name="disposing">
-        /// Whether to actually dispose the object.
-        /// </param>
-        private void Dispose(bool disposing)
+        public void Dispose()
         {
-            if (disposing)
-            {
-                _transactionManager.ResetActive();
-            }
+            _transactionManager.ResetActive();
         }
     }
 
@@ -663,44 +617,21 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Destructor for the PSTransactionManager class.
-        /// </summary>
-        ~PSTransactionManager()
-        {
-            Dispose(false);
-        }
-
-        /// <summary>
-        /// Disposes the PSTransactionManager object.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
         /// Disposes the PSTransactionContext object, which resets the
         /// active PSTransaction.
         /// </summary>
-        /// <param name="disposing">
-        /// Whether to actually dispose the object.
-        /// </param>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "baseTransaction", Justification = "baseTransaction should not be disposed since we do not own it - it belongs to the caller")]
-        public void Dispose(bool disposing)
+        public void Dispose()
         {
-            if (disposing)
+            ResetActive();
+
+            while (_transactionStack.Peek() != null)
             {
-                ResetActive();
+                PSTransaction currentTransaction = _transactionStack.Pop();
 
-                while (_transactionStack.Peek() != null)
+                if (currentTransaction != _baseTransaction)
                 {
-                    PSTransaction currentTransaction = _transactionStack.Pop();
-
-                    if (currentTransaction != _baseTransaction)
-                    {
-                        currentTransaction.Dispose();
-                    }
+                    currentTransaction.Dispose();
                 }
             }
         }
