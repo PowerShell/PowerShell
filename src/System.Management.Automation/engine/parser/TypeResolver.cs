@@ -735,6 +735,7 @@ namespace System.Management.Automation
                     { typeof(char),                                        new[] { "char" } },
                     { typeof(CmdletBindingAttribute),                      new[] { "CmdletBinding" } },
                     { typeof(DateTime),                                    new[] { "datetime" } },
+                    { typeof(DateTimeOffset),                              new[] { "datetimeoffset" } },
                     { typeof(decimal),                                     new[] { "decimal" } },
                     { typeof(double),                                      new[] { "double" } },
                     { typeof(DscResourceAttribute),                        new[] { "DscResource" } },
