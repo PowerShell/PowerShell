@@ -26,6 +26,10 @@ parameters:
     displayName: Enable MSBuild Binary Logs
     type: boolean
     default: false
+  - name: OfficialBuild
+    type: boolean
+    default: false
+
 
 resources:
   repositories:
@@ -74,9 +78,30 @@ variables:
   - group: mscodehub-feed-read-akv
   - name: ENABLE_MSBUILD_BINLOGS
     value: ${{ parameters.ENABLE_MSBUILD_BINLOGS }}
+<<<<<<< HEAD
+=======
+  - ${{ if eq(parameters['FORCE_CODEQL'],'true') }}:
+    # Cadence is hours before CodeQL will allow a re-upload of the database
+    - name: CodeQL.Cadence
+      value: 1
+  - name: CODEQL_ENABLED
+    ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters['FORCE_CODEQL'],'true')) }}:
+      value: true
+    ${{ else }}:
+      value: false
+  - name: templateFile
+    value: ${{ iif ( parameters.OfficialBuild, 'v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates', 'v2/OneBranch.NonOfficial.CrossPlat.yml@onebranchTemplates' ) }}
+  # Fix for BinSkim ICU package error in Linux containers
+  - name: DOTNET_SYSTEM_GLOBALIZATION_INVARIANT
+    value: true
+  # Disable BinSkim at job level to override NonOfficial template defaults
+  - name: ob_sdl_binskim_enabled
+    value: false
+  
+>>>>>>> 10a8226f8 (Remove AsyncSDL from Pipelines Toggle Official/NonOfficial Runs (#25885))
 
 extends:
-  template: v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates
+  template: ${{ variables.templateFile }}
   parameters:
     customTags: 'ES365AIMigrationTooling'
     featureFlags:
@@ -84,6 +109,7 @@ extends:
           Network: KS3
       WindowsHostVersion:
           Network: KS3
+      incrementalSDLBinaryAnalysis: true
     globalSdl:
       disableLegacyManifest: true
       # disabled Armorty as we dont have any ARM templates to scan. It fails on some sample ARM templates.
@@ -103,6 +129,7 @@ extends:
       cg:
         enabled: true
         ignoreDirectories: '.devcontainer,demos,docker,docs,src,test,tools/packaging'
+<<<<<<< HEAD
       asyncSdl:
         enabled: true
         forStages: [prep, macos, linux, windows, SignFiles, test_and_release_artifacts]
@@ -116,6 +143,15 @@ extends:
         apiscan:
           enabled: false
         tsaOptionsFile: .config\tsaoptions.json
+=======
+      binskim:
+        enabled: false
+        exactToolVersion: 4.4.2
+      # APIScan requires a non-Ready-To-Run build
+      apiscan:
+        enabled: false
+      tsaOptionsFile: .config\tsaoptions.json
+>>>>>>> 10a8226f8 (Remove AsyncSDL from Pipelines Toggle Official/NonOfficial Runs (#25885))
 
     stages:
     - stage: prep

@@ -25,6 +25,9 @@ parameters: # parameters are shown up in ADO UI in a build queue time
     displayName: Skip Copying Archives and Installers to PSInfrastructure Public Location
     type: boolean
     default: false
+  - name: OfficialBuild
+    type: boolean
+    default: false
 
 name: release-$(BUILD.SOURCEBRANCHNAME)-$(Build.BuildId)
 
@@ -58,6 +61,13 @@ variables:
   - name: ReleaseTagVar
     value: ${{ parameters.ReleaseTagVar }}
   - group: PoolNames
+  - name: templateFile
+    value: ${{ iif ( parameters.OfficialBuild, 'v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates', 'v2/OneBranch.NonOfficial.CrossPlat.yml@onebranchTemplates' ) }}
+  - name: releaseEnvironment
+    value: ${{ iif ( parameters.OfficialBuild, 'Production', 'Test' ) }}
+  # Fix for BinSkim ICU package error in Linux containers
+  - name: DOTNET_SYSTEM_GLOBALIZATION_INVARIANT
+    value: true
 
 resources:
   repositories:
@@ -83,7 +93,7 @@ resources:
             - releases/*
 
 extends:
-  template: v2/OneBranch.Official.CrossPlat.yml@templates
+  template: ${{ variables.templateFile }}
   parameters:
     release:
       category: NonAzure
@@ -91,6 +101,7 @@ extends:
       WindowsHostVersion:
         Version: 2022
         Network: KS3
+      incrementalSDLBinaryAnalysis: true
     cloudvault:
       enabled: false
     globalSdl:
@@ -98,9 +109,6 @@ extends:
       # disabled Armory as we dont have any ARM templates to scan. It fails on some sample ARM templates.
       armory:
         enabled: false
-      asyncSdl:
-        enabled: true
-        tsaOptionsFile: .config/tsaoptions.json
       tsa:
         enabled: true
       credscan:
@@ -109,6 +117,7 @@ extends:
         suppressionsFile: $(Build.SourcesDirectory)\.config\suppress.json
       binskim:
         break: false # always break the build on binskim issues in addition to TSA upload
+        exactToolVersion: 4.4.2
       policheck:
         break: true # always break the build on policheck issues. You can disable it by setting to 'false'
       # suppression:
@@ -279,7 +288,7 @@ extends:
         - setReleaseTagAndChangelog
         - UpdateChangeLog
       variables:
-        ob_release_environment: Production
+        ob_release_environment: ${{ parameters.releaseEnvironment }}
       jobs:
       - template: /.pipelines/templates/release-githubNuget.yml@self
         parameters:
