@@ -162,7 +162,7 @@ function Test-PathNotInSettings($Path) {
     }
 
     # [System.Environment]::GetEnvironmentVariable automatically expands all variables
-    [System.Array] $InstalledPaths = @()
+    [array] $InstalledPaths = @()
     if ([System.Environment]::OSVersion.Platform -eq "Win32NT") {
         $InstalledPaths += @(([System.Environment]::GetEnvironmentVariable('PATH', [System.EnvironmentVariableTarget]::User)) -split ([System.IO.Path]::PathSeparator))
         $InstalledPaths += @(([System.Environment]::GetEnvironmentVariable('PATH', [System.EnvironmentVariableTarget]::Machine)) -split ([System.IO.Path]::PathSeparator))
