@@ -151,7 +151,7 @@
       <value>You cannot move a certificate container. </value>
   </data>
   <data name="CannotMoveCrossContext" xml:space="preserve">
-      <value>You cannot move a certificate from user store to or from machine. </value>
+      <value>You cannot move a certificate between user, machine, or service locations. </value>
   </data>
   <data name="CannotMoveToSameStore" xml:space="preserve">
     <value>You cannot move a certificate to the same store. </value>
