@@ -165,11 +165,11 @@ c                              3
     It 'Parses DateKind Default strings for <Value>' -TestCases @(
         @{
             Value = '"2022-11-02T12:01:44.5801388+04:00"'
-            Expected = ([DateTimeOffset]::new(2022, 11, 2, 12, 1, 44, 580, 138, (New-TimeSpan -Hours 4)).AddTicks(8).LocalDateTime)
+            Expected = ([datetimeoffset]::new(2022, 11, 2, 12, 1, 44, 580, 138, (New-TimeSpan -Hours 4)).AddTicks(8).LocalDateTime)
         }
         @{
             Value = '"2022-11-02T12:01:44.5801388-04:00"'
-            Expected = ([DateTimeOffset]::new(2022, 11, 2, 12, 1, 44, 580, 138, (New-TimeSpan -Hours -4)).AddTicks(8).LocalDateTime)
+            Expected = ([datetimeoffset]::new(2022, 11, 2, 12, 1, 44, 580, 138, (New-TimeSpan -Hours -4)).AddTicks(8).LocalDateTime)
         }
         @{
             Value = '"1970-01-01T00:00:00"'
@@ -177,23 +177,23 @@ c                              3
         }
         @{
             Value = '"1970-01-01T00:00:00.0000000Z"'
-            Expected = ([DateTimeOffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours 0)).UtcDateTime)
+            Expected = ([datetimeoffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours 0)).UtcDateTime)
         }
         @{
             Value = '"1970-01-01T00:00:00.0000000+00:00"'
-            Expected = ([DateTimeOffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours 0)).LocalDateTime)
+            Expected = ([datetimeoffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours 0)).LocalDateTime)
         }
         @{
             Value = '"1970-01-01T00:00:00.0000000-00:00"'
-            Expected = ([DateTimeOffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours 0)).LocalDateTime)
+            Expected = ([datetimeoffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours 0)).LocalDateTime)
         }
         @{
             Value = '"1970-01-01T00:00:00.0000000+10:00"'
-            Expected = ([DateTimeOffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours 10)).LocalDateTime)
+            Expected = ([datetimeoffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours 10)).LocalDateTime)
         }
         @{
             Value = '"1970-01-01T00:00:00.0000000-10:00"'
-            Expected = ([DateTimeOffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours -10)).LocalDateTime)
+            Expected = ([datetimeoffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours -10)).LocalDateTime)
         }
     ) {
         param ($Value, $Expected)
@@ -212,11 +212,11 @@ c                              3
     It 'Parses DateKind Local strings for <Value>' -TestCases @(
         @{
             Value = '"2022-11-02T12:01:44.5801388+04:00"'
-            Expected = ([DateTimeOffset]::new(2022, 11, 2, 12, 1, 44, 580, 138, (New-TimeSpan -Hours 4)).AddTicks(8).LocalDateTime)
+            Expected = ([datetimeoffset]::new(2022, 11, 2, 12, 1, 44, 580, 138, (New-TimeSpan -Hours 4)).AddTicks(8).LocalDateTime)
         }
         @{
             Value = '"2022-11-02T12:01:44.5801388-04:00"'
-            Expected = ([DateTimeOffset]::new(2022, 11, 2, 12, 1, 44, 580, 138, (New-TimeSpan -Hours -4)).AddTicks(8).LocalDateTime)
+            Expected = ([datetimeoffset]::new(2022, 11, 2, 12, 1, 44, 580, 138, (New-TimeSpan -Hours -4)).AddTicks(8).LocalDateTime)
         }
         @{
             Value = '"1970-01-01T00:00:00"'
@@ -224,23 +224,23 @@ c                              3
         }
         @{
             Value = '"1970-01-01T00:00:00.0000000Z"'
-            Expected = ([DateTimeOffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours 0)).LocalDateTime)
+            Expected = ([datetimeoffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours 0)).LocalDateTime)
         }
         @{
             Value = '"1970-01-01T00:00:00.0000000+00:00"'
-            Expected = ([DateTimeOffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours 0)).LocalDateTime)
+            Expected = ([datetimeoffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours 0)).LocalDateTime)
         }
         @{
             Value = '"1970-01-01T00:00:00.0000000-00:00"'
-            Expected = ([DateTimeOffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours 0)).LocalDateTime)
+            Expected = ([datetimeoffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours 0)).LocalDateTime)
         }
         @{
             Value = '"1970-01-01T00:00:00.0000000+10:00"'
-            Expected = ([DateTimeOffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours 10)).LocalDateTime)
+            Expected = ([datetimeoffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours 10)).LocalDateTime)
         }
         @{
             Value = '"1970-01-01T00:00:00.0000000-10:00"'
-            Expected = ([DateTimeOffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours -10)).LocalDateTime)
+            Expected = ([datetimeoffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours -10)).LocalDateTime)
         }
     ) {
         param ($Value, $Expected)
@@ -254,11 +254,11 @@ c                              3
     It 'Parses DateKind Utc strings for <Value>' -TestCases @(
         @{
             Value = '"2022-11-02T12:01:44.5801388+04:00"'
-            Expected = ([DateTimeOffset]::new(2022, 11, 2, 12, 1, 44, 580, 138, (New-TimeSpan -Hours 4)).AddTicks(8).UtcDateTime)
+            Expected = ([datetimeoffset]::new(2022, 11, 2, 12, 1, 44, 580, 138, (New-TimeSpan -Hours 4)).AddTicks(8).UtcDateTime)
         }
         @{
             Value = '"2022-11-02T12:01:44.5801388-04:00"'
-            Expected = ([DateTimeOffset]::new(2022, 11, 2, 12, 1, 44, 580, 138, (New-TimeSpan -Hours -4)).AddTicks(8).UtcDateTime)
+            Expected = ([datetimeoffset]::new(2022, 11, 2, 12, 1, 44, 580, 138, (New-TimeSpan -Hours -4)).AddTicks(8).UtcDateTime)
         }
         @{
             Value = '"1970-01-01T00:00:00"'
@@ -266,23 +266,23 @@ c                              3
         }
         @{
             Value = '"1970-01-01T00:00:00.0000000Z"'
-            Expected = ([DateTimeOffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours 0)).UtcDateTime)
+            Expected = ([datetimeoffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours 0)).UtcDateTime)
         }
         @{
             Value = '"1970-01-01T00:00:00.0000000+00:00"'
-            Expected = ([DateTimeOffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours 0)).UtcDateTime)
+            Expected = ([datetimeoffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours 0)).UtcDateTime)
         }
         @{
             Value = '"1970-01-01T00:00:00.0000000-00:00"'
-            Expected = ([DateTimeOffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours 0)).UtcDateTime)
+            Expected = ([datetimeoffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours 0)).UtcDateTime)
         }
         @{
             Value = '"1970-01-01T00:00:00.0000000+10:00"'
-            Expected = ([DateTimeOffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours 10)).UtcDateTime)
+            Expected = ([datetimeoffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours 10)).UtcDateTime)
         }
         @{
             Value = '"1970-01-01T00:00:00.0000000-10:00"'
-            Expected = ([DateTimeOffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours -10)).UtcDateTime)
+            Expected = ([datetimeoffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours -10)).UtcDateTime)
         }
     ) {
         param ($Value, $Expected)
@@ -296,41 +296,41 @@ c                              3
     It 'Parses DateKind Offset strings for <Value>' -TestCases @(
         @{
             Value = '"2022-11-02T12:01:44.5801388+04:00"'
-            Expected = ([DateTimeOffset]::new(2022, 11, 2, 12, 1, 44, 580, 138, (New-TimeSpan -Hours 4)).AddTicks(8))
+            Expected = ([datetimeoffset]::new(2022, 11, 2, 12, 1, 44, 580, 138, (New-TimeSpan -Hours 4)).AddTicks(8))
         }
         @{
             Value = '"2022-11-02T12:01:44.5801388-04:00"'
-            Expected = ([DateTimeOffset]::new(2022, 11, 2, 12, 1, 44, 580, 138, (New-TimeSpan -Hours -4)).AddTicks(8))
+            Expected = ([datetimeoffset]::new(2022, 11, 2, 12, 1, 44, 580, 138, (New-TimeSpan -Hours -4)).AddTicks(8))
         }
         @{
             Value = '"1970-01-01T00:00:00"'
-            Expected = ([DateTimeOffset]::new([DateTime]::new(1970, 1, 1, 0, 0, 0, 0, 0, 'Local')))
+            Expected = ([datetimeoffset]::new([DateTime]::new(1970, 1, 1, 0, 0, 0, 0, 0, 'Local')))
         }
         @{
             Value = '"1970-01-01T00:00:00.0000000Z"'
-            Expected = ([DateTimeOffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours 0)))
+            Expected = ([datetimeoffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours 0)))
         }
         @{
             Value = '"1970-01-01T00:00:00.0000000+00:00"'
-            Expected = ([DateTimeOffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours 0)))
+            Expected = ([datetimeoffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours 0)))
         }
         @{
             Value = '"1970-01-01T00:00:00.0000000-00:00"'
-            Expected = ([DateTimeOffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours 0)))
+            Expected = ([datetimeoffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours 0)))
         }
         @{
             Value = '"1970-01-01T00:00:00.0000000+10:00"'
-            Expected = ([DateTimeOffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours 10)))
+            Expected = ([datetimeoffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours 10)))
         }
         @{
             Value = '"1970-01-01T00:00:00.0000000-10:00"'
-            Expected = ([DateTimeOffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours -10)))
+            Expected = ([datetimeoffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours -10)))
         }
     ) {
         param ($Value, $Expected)
 
         $json = $Value | ConvertFrom-Json -DateKind Offset
-        $json | Should -BeOfType ([DateTimeOffset])
+        $json | Should -BeOfType ([datetimeoffset])
         $json.EqualsExact($Expected) | Should -BeTrue
     }
 

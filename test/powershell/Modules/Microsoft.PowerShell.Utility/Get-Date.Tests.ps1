@@ -325,9 +325,9 @@ Describe "Get-Date" -Tags "CI" {
     }
 
     It "-UnixTimeSeconds works (<Expected>)" -TestCases @(
-        @{ UnixTimeSeconds = 1577836800; Expected = [System.DateTimeOffset]::FromUnixTimeSeconds(1577836800).LocalDateTime },
-        @{ UnixTimeSeconds = 0;          Expected = [System.DateTimeOffset]::UnixEpoch.LocalDateTime },
-        @{ UnixTimeSeconds = -1;         Expected = [System.DateTimeOffset]::FromUnixTimeSeconds(-1).LocalDateTime }
+        @{ UnixTimeSeconds = 1577836800; Expected = [datetimeoffset]::FromUnixTimeSeconds(1577836800).LocalDateTime },
+        @{ UnixTimeSeconds = 0;          Expected = [datetimeoffset]::UnixEpoch.LocalDateTime },
+        @{ UnixTimeSeconds = -1;         Expected = [datetimeoffset]::FromUnixTimeSeconds(-1).LocalDateTime }
     ) {
         param(
             [long] $UnixTimeSeconds,
