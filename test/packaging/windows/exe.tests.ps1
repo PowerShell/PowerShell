@@ -24,7 +24,7 @@ Describe -Name "Windows EXE" -Fixture {
 
                 [Parameter(Mandatory)]
                 [ValidateScript({Test-Path -Path $_})]
-                [String]$ExePath
+                [string]$ExePath
             )
             $action = "$($PSCmdlet.ParameterSetName)ing"
             if ($Install) {

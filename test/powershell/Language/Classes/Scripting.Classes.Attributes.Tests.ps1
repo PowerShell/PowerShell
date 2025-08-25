@@ -279,14 +279,14 @@ Describe 'ValidateSet support a dynamically generated set' -Tag "CI" {
 
         BeforeAll {
             class GenValuesForParam : System.Management.Automation.IValidateSetValuesGenerator {
-                [String[]] GetValidValues() {
+                [string[]] GetValidValues() {
 
                     return [string[]]("Test1","TestString1","Test2")
                 }
             }
 
             class GenValuesForParamNull : System.Management.Automation.IValidateSetValuesGenerator {
-                [String[]] GetValidValues() {
+                [string[]] GetValidValues() {
 
                     return [string[]]$null
                 }
@@ -294,7 +294,7 @@ Describe 'ValidateSet support a dynamically generated set' -Tag "CI" {
 
             # Return '$testValues2' and after 2 seconds after first use return another array '$testValues1'.
             class GenValuesForParamCache1 : System.Management.Automation.IValidateSetValuesGenerator {
-                [String[]] GetValidValues() {
+                [string[]] GetValidValues() {
 
                     $testValues1 = "Test11","TestString11","Test22"
                     $testValues2 = "Test11","TestString22","Test22"
@@ -413,7 +413,7 @@ Describe 'ValidateSet support a dynamically generated set' -Tag "CI" {
                 GenValuesForParam() : base(300) {
                 }
 
-                [String[]] GenerateValidValues() {
+                [string[]] GenerateValidValues() {
 
                     return [string[]]("Test1","TestString1","Test2")
                 }
@@ -425,7 +425,7 @@ Describe 'ValidateSet support a dynamically generated set' -Tag "CI" {
 
                 Static [bool] $temp = $true;
 
-                [String[]] GenerateValidValues() {
+                [string[]] GenerateValidValues() {
 
                     if ([GenValuesWithExpiration]::temp) {
                         [GenValuesWithExpiration]::temp = $false

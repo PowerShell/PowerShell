@@ -4413,13 +4413,13 @@ param(
 param(
     [Parameter(ParameterSetName='nameSet', Position=0, ValueFromPipelineByPropertyName=$true)]
     [Parameter(ParameterSetName='pathSet', Mandatory=$true, Position=0, ValueFromPipelineByPropertyName=$true)]
-    [System.String[]]
+    [string[]]
     ${Path},
 
     [Parameter(ParameterSetName='nameSet', Mandatory=$true, ValueFromPipelineByPropertyName=$true)]
     [AllowNull()]
     [AllowEmptyString()]
-    [System.String]
+    [string]
     ${Name},
 
     [Parameter(ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]

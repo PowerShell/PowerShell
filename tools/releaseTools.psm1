@@ -509,7 +509,7 @@ function Get-ChangeLogMessage
 function Get-NewOfficalPackage
 {
     param(
-        [String]
+        [string]
         $Path = (Join-Path -Path $PSScriptRoot -ChildPath '..\src'),
         [Switch]
         $IncludeAll
@@ -691,15 +691,15 @@ function Update-PsVersionInCode
     param(
         [Parameter(Mandatory)]
         [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d{1,2})?)?$")]
-        [String]
+        [string]
         $NewReleaseTag,
 
         [Parameter(Mandatory)]
         [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d{1,2})?)?$")]
-        [String]
+        [string]
         $NextReleaseTag,
 
-        [String]
+        [string]
         $Path = (Join-Path -Path $PSScriptRoot -ChildPath '..')
     )
 
@@ -777,7 +777,7 @@ function Test-GitHubCliVersion {
 function Get-PRBackportReport {
     param(
         [ValidateSet('Consider', 'Approved', 'Done')]
-        [String] $TriageState = 'Approved',
+        [string] $TriageState = 'Approved',
         [ValidatePattern('^\d+\.\d+$')]
         [string] $Version,
         [switch] $Web
