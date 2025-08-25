@@ -134,7 +134,7 @@ class ClassWithStaticAbstractInterface : IInterfaceWithStaticAbstractProperty {
         BeforeAll {
             class TestHost : System.Management.Automation.Host.PSHost
             {
-                [String]$myName = "MyHost"
+                [string]$myName = "MyHost"
                 [Version]$myVersion = [Version]"1.0.0.0"
                 [Guid]$myInstanceId = [guid]::NewGuid()
                 [System.Globalization.CultureInfo]$myCurrentCulture = "en-us"
