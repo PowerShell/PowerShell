@@ -6,11 +6,10 @@
     <AssemblyName>Microsoft.PowerShell.Security</AssemblyName>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />
-  </ItemGroup>
+  <Import Project="..\Module.Common.props" />
 
   <ItemGroup>
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="9.0.6" />
     <Compile Remove="singleshell\installer\MshSecurityMshSnapin.cs" />
     <Compile Remove="gen\SecurityMshSnapinResources.cs" />
 

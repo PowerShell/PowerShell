@@ -1,5 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <Import Project="..\..\PowerShell.Common.props" />
+  <Import Project="..\Module.Common.props" />
   <PropertyGroup>
     <Description>PowerShell's Microsoft.PowerShell.Commands.Management project</Description>
     <NoWarn>$(NoWarn);CS1570;CA1416</NoWarn>
@@ -49,6 +50,8 @@
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
     <PackageReference Include="System.Diagnostics.EventLog" Version="9.0.6" />
     <PackageReference Include="System.ServiceProcess.ServiceController" Version="9.0.6" />
+    <PackageReference Include="System.Management" Version="9.0.6" />
+    <PackageReference Include="Microsoft.Management.Infrastructure" Version="3.0.0" />
   </ItemGroup>
 
 </Project>
