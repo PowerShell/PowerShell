@@ -1,5 +1,12 @@
 name: CI Build
 description: 'Builds PowerShell'
+inputs:
+  ExtraBuildParams:
+    description: 'Extra Build Params'
+    default: ''
+  SkipXUnitTests:
+    description: 'Skip xUnit Tests'
+    default: 'false'
 runs:
   using: composite
   steps:
@@ -29,8 +36,9 @@ runs:
     run: |-
       Write-Verbose -Verbose "Running Build..."
       Import-Module .\tools\ci.psm1
-      Invoke-CIBuild
+      Invoke-CIBuild -ExtraBuildParams '${{ inputs.ExtraBuildParams }}'
     shell: pwsh
+
   - name: xUnit Tests
     if: success()
     continue-on-error: true
@@ -42,6 +50,7 @@ runs:
     shell: pwsh
   - name: Upload build artifact
     uses: actions/upload-artifact@v4
+    if: eq('${{ inputs.SkipXUnitTests }}', 'true')
     with:
       name: build
       path: ${{ runner.workspace }}/build
@@ -50,3 +59,4 @@ runs:
     with:
       name: testResults-xunit
       path: ${{ runner.workspace }}/xunit
+    if: eq('${{ inputs.SkipXUnitTests }}', 'true')

@@ -98,6 +98,11 @@ function Invoke-CIFull
 # Implements the CI 'build_script' step
 function Invoke-CIBuild
 {
+    param(
+        [string]
+        $ExtraBuildParams
+    )
+
     $releaseTag = Get-ReleaseTag
     # check to be sure our test tags are correct
     $result = Get-PesterTag
@@ -112,7 +117,17 @@ function Invoke-CIBuild
         Start-PSBuild -Configuration 'CodeCoverage' -PSModuleRestore -CI -ReleaseTag $releaseTag
     }
 
-    Start-PSBuild -PSModuleRestore -Configuration 'Release' -CI -ReleaseTag $releaseTag -UseNuGetOrg
+    $buildParams = @()
+    foreach($switch in $ExtraBuildParams.Split(' '))
+    {
+        if($switch -and $switch.Trim().Length -gt 0)
+        {
+            Write-Verbose "Adding extra build param: $switch" -Verbose
+            $buildParams += $switch
+        }
+    }
+
+    Start-PSBuild -PSModuleRestore -Configuration 'Release' -CI -ReleaseTag $releaseTag -UseNuGetOrg $buildParams
     Save-PSOptions
 
     $options = (Get-PSOptions)
