@@ -418,11 +418,11 @@ Describe "Type accelerators" -Tags "CI" {
 
             if ( !$IsWindows )
             {
-                $totalAccelerators = 102
+                $totalAccelerators = 103
             }
             else
             {
-                $totalAccelerators = 107
+                $totalAccelerators = 108
 
                 $extraFullPSAcceleratorTestCases = @(
                     @{
@@ -444,6 +444,10 @@ Describe "Type accelerators" -Tags "CI" {
                     @{
                         Accelerator = 'wmisearcher'
                         Type        = [System.Management.ManagementObjectSearcher]
+                    }
+                    @{
+                        Accelerator = 'datetimeoffset'
+                        Type        = [System.DateTimeOffset]
                     }
                 )
             }
