@@ -173,7 +173,7 @@ Class OsLogIds
 class PSLogItem
 {
     [string] $LogId = [string]::Empty
-    [DateTime] $Timestamp = [DateTime]::Now
+    [datetime] $Timestamp = [datetime]::Now
     [string] $Hostname = [string]::Empty
     [int] $ProcessId = 0
     [int] $ThreadId = 0
@@ -200,7 +200,7 @@ class PSLogItem
         return 1
     }
 
-    static [PSLogItem] ConvertSysLog([string] $content, [string] $id, [Nullable[DateTime]] $after)
+    static [PSLogItem] ConvertSysLog([string] $content, [string] $id, [Nullable[datetime]] $after)
     {
         Set-StrictMode -Version 3.0
         <#
@@ -228,7 +228,7 @@ class PSLogItem
         #>
 
         $firstToken = $content.split()[0]
-        $dt = $firstToken -as [DateTime]
+        $dt = $firstToken -as [datetime]
         if ($dt)
         {
             $replacement = "{0:MMM} {0:dd} {0:hh}:{0:mm}:{0:ss}" -f $dt
@@ -253,18 +253,18 @@ class PSLogItem
             }
         }
 
-        $now = [DateTime]::Now
+        $now = [datetime]::Now
         $month = [PSLogItem]::GetMonth($parts[[SysLogIds]::Month])
         $day = [int]::Parse($parts[[SysLogIds]::Day])
 
         # guess at the year
-        $year = [DateTime]::Now.Year
+        $year = [datetime]::Now.Year
         if (($month -gt $now.Month) -or ($now.Month -eq $month -and $day -gt $now.Day))
         {
             $year--;
         }
-        [DateTime]$time = [DateTime]::Parse($parts[[SysLogIds]::Time], [System.Globalization.CultureInfo]::InvariantCulture)
-        $time = [DateTime]::new($year, $month, $day, $time.Hour, $time.Minute, $time.Second)
+        [datetime]$time = [datetime]::Parse($parts[[SysLogIds]::Time], [System.Globalization.CultureInfo]::InvariantCulture)
+        $time = [datetime]::new($year, $month, $day, $time.Hour, $time.Minute, $time.Second)
 
         if ($after -ne $null -and $time -lt $after)
         {
@@ -352,7 +352,7 @@ class PSLogItem
         return $item
     }
 
-    static [object] ConvertOsLog([string] $content, [string] $id, [Nullable[DateTime]] $after)
+    static [object] ConvertOsLog([string] $content, [string] $id, [Nullable[datetime]] $after)
     {
         Set-StrictMode -Version 3.0
         <#
@@ -390,9 +390,9 @@ class PSLogItem
 
             # look for a date/time stamp prior to the thread.
             # if this succeeds, we'll ignore the values in split.
-            [DateTime] $time = [DateTime]::Now
+            [datetime] $time = [datetime]::Now
             $value = $content.Substring(0, $index).Trim()
-            if ([DateTime]::TryParse($value, [ref] $time) -eq $false)
+            if ([datetime]::TryParse($value, [ref] $time) -eq $false)
             {
                 # no timestamp,
                 # assume text only
@@ -501,7 +501,7 @@ function ConvertFrom-SysLog
 
         [string] $Id,
 
-        [Nullable[DateTime]] $After
+        [Nullable[datetime]] $After
     )
 
     Begin
@@ -577,7 +577,7 @@ function ConvertFrom-SysLog
     Gets up to 200 log entries with the id 'powershell' from /var/log/syslog
 
 .Example
-    PS> $time = [DateTime]::Parse('1/19/2018 1:26:49 PM')
+    PS> $time = [datetime]::Parse('1/19/2018 1:26:49 PM')
     PS> Get-PSSysLog -id 'powershell' -logPath '/var/log/syslog' -After $time
 
     Gets log entries with the id 'powershell' that occurred on or after a specific date/time
@@ -616,7 +616,7 @@ function Get-PSSysLog
 
         [Parameter(ParameterSetName = 'All')]
         [Parameter(ParameterSetName = 'After')]
-        [Nullable[DateTime]] $After
+        [Nullable[datetime]] $After
     )
 
     [int] $maxItems = 0
@@ -726,7 +726,7 @@ function ConvertFrom-OSLog
 
         [string] $Id,
 
-        [Nullable[DateTime]] $After
+        [Nullable[datetime]] $After
     )
 
     Begin
@@ -815,7 +815,7 @@ function Get-PSOsLog
         [ValidateRange(0, [int]::MaxValue)]
         [int] $TotalCount,
 
-        [Nullable[DateTime]] $After
+        [Nullable[datetime]] $After
     )
 
     [int] $maxItems = 0
@@ -847,12 +847,12 @@ function Get-PSOsLog
     Log entries with a timestamp on or after this value will be returned.
 
 .EXAMPLE
-    PS> $timestamp = [DateTime]::Now
+    PS> $timestamp = [datetime]::Now
     PS> # perform some work...
     PS> $content = (Export-PSOsLog -After $timestamp)
 
 .EXAMPLE
-    PS> $timestamp = [DateTime]::Now
+    PS> $timestamp = [datetime]::Now
     PS> # perform some work...
     PS> Export-PSOsLog -After $timestamp | Set-Content -Path "$PSDrive/mytest.txt"
 
@@ -867,7 +867,7 @@ function Export-PSOsLog
     (
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
-        [DateTime] $After,
+        [datetime] $After,
 
         [string] $LogId = "powershell",
 
@@ -942,7 +942,7 @@ function Wait-UntilSuccess
         [int]$IntervalInMilliseconds = 10000
         )
     # Get the current time
-    $startTime = [DateTime]::Now
+    $startTime = [datetime]::Now
 
     # Loop until the script block returns
     while ($true) {
@@ -951,7 +951,7 @@ function Wait-UntilSuccess
         }
         catch{
             # If the timeout period has passed, return false
-            $msPassed = ([DateTime]::Now - $startTime).TotalMilliseconds
+            $msPassed = ([datetime]::Now - $startTime).TotalMilliseconds
             if ($msPassed -gt $timeoutInMilliseconds) {
                 if($LogErrorSb)
                 {
@@ -1091,7 +1091,7 @@ function Wait-PSWinEvent
         $All
     )
 
-    $startTime = [DateTime]::Now
+    $startTime = [datetime]::Now
     $lastFoundCount = 0;
 
     do
@@ -1142,7 +1142,7 @@ function Wait-PSWinEvent
 
             $lastFoundCount = $recordsToReturn.Count
         }
-    } while (([DateTime]::Now - $startTime).TotalSeconds -lt $timeout)
+    } while (([datetime]::Now - $startTime).TotalSeconds -lt $timeout)
 }
 #endregion eventlog support
 

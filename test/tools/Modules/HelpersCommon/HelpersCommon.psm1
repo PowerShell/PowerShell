@@ -9,12 +9,12 @@ function Wait-UntilTrue
         [int]$IntervalInMilliseconds = 1000
         )
     # Get the current time
-    $startTime = [DateTime]::Now
+    $startTime = [datetime]::Now
 
     # Loop until the script block evaluates to true
     while (-not ($sb.Invoke())) {
         # If the timeout period has passed, return false
-        if (([DateTime]::Now - $startTime).TotalMilliseconds -gt $timeoutInMilliseconds) {
+        if (([datetime]::Now - $startTime).TotalMilliseconds -gt $timeoutInMilliseconds) {
             return $false
         }
         # Wait

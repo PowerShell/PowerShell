@@ -2083,7 +2083,7 @@ namespace System.Management.Automation
                         //       [CmdletBinding()]
                         //       param(
                         //          [Parameter(Mandatory=$true, ValueFromPipeline=$true)]
-                        //          [System.DateTime]
+                        //          [datetime]
                         //          $Date,
                         //          [Parameter(ParameterSetName="computer")]
                         //          [Parameter(ParameterSetName="session")]
@@ -2111,7 +2111,7 @@ namespace System.Management.Automation
                         //          [Parameter(ParameterSetName="new")]
                         //          $NewName,
                         //          [Parameter(Mandatory=$true, ValueFromPipeline=$true)]
-                        //          [System.DateTime]
+                        //          [datetime]
                         //          $Date,
                         //          [Parameter(ParameterSetName="computer")]
                         //          [Parameter(ParameterSetName="session")]
@@ -2149,7 +2149,7 @@ namespace System.Management.Automation
                         //           $DisableComputer,
                         //
                         //           [Parameter(ParameterSetName="session", ValueFromPipeline=$true)]
-                        //           [DateTime]
+                        //           [datetime]
                         //           $Date
                         //        )
                         //
@@ -2186,7 +2186,7 @@ namespace System.Management.Automation
                         //          $Param,
                         //
                         //          [Parameter(ValueFromPipeline=$true)]
-                        //          [DateTime]
+                        //          [datetime]
                         //          $Date
                         //       )
 

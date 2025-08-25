@@ -327,7 +327,7 @@ Path:.*
 
             [string] $contentFile = Join-Path -Path $workingDirectory -ChildPath ('pwsh.log.txt')
             # get log items after current time.
-            [DateTime] $after = [DateTime]::Now
+            [datetime] $after = [datetime]::Now
         }
     }
 
@@ -342,7 +342,7 @@ Path:.*
 
     It 'Verifies basic logging with no customizations' -Skip:(!$IsMacOS) {
         try {
-            $timeString = [DateTime]::Now.ToString('yyyy-MM-dd HH:mm:ss')
+            $timeString = [datetime]::Now.ToString('yyyy-MM-dd HH:mm:ss')
             $configFile = WriteLogSettings -LogId $logId
             copy-item $configFile /tmp/pwshtest.config.json
             $testPid = & $powershell -NoProfile -SettingsFile $configFile -Command '$PID'
@@ -480,7 +480,7 @@ Describe 'Basic EventLog tests on Windows' -Tag @('CI','RequireAdminOnWindows') 
             $logName = 'PowerShellCore'
 
             # get log items after current time.
-            [DateTime] $after = [DateTime]::Now
+            [datetime] $after = [datetime]::Now
             Clear-PSEventLog -Name "$logName/Operational"
         }
     }
