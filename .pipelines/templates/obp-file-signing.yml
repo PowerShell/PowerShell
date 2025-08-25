@@ -1,6 +1,8 @@
 parameters:
   binPath: '$(ob_outputDirectory)'
   globalTool: 'false'
+  SigningProfile: 'external_distribution'
+  OfficialBuild: true
 
 steps:
 - pwsh: |
@@ -80,7 +82,7 @@ steps:
   displayName: Sign 1st party files
   inputs:
     command: 'sign'
-    signing_profile: external_distribution
+    signing_profile: ${{ parameters.SigningProfile }}
     files_to_sign: '**\*.psd1;**\*.psm1;**\*.ps1xml;**\*.ps1;**\*.dll;**\*.exe;**\pwsh'
     search_root: $(Pipeline.Workspace)/toBeSigned
 
@@ -95,13 +97,15 @@ steps:
     $BuildPath = (Get-Item '${{ parameters.binPath }}').FullName
     Write-Verbose -Verbose -Message "BuildPath: $BuildPath"
 
+    $officialBuild = [System.Convert]::ToBoolean('${{ parameters.OfficialBuild }}')
+
     ## copy all files to be signed to build folder
-    Update-PSSignedBuildFolder -BuildPath $BuildPath -SignedFilesPath '$(Pipeline.Workspace)/toBeSigned'
+    Update-PSSignedBuildFolder -BuildPath $BuildPath -SignedFilesPath '$(Pipeline.Workspace)/toBeSigned' -OfficialBuild $officialBuild
 
     $dlls = Get-ChildItem $BuildPath/*.dll, $BuildPath/*.exe -Recurse
     $signatures = $dlls | Get-AuthenticodeSignature
-    $missingSignatures = $signatures | Where-Object { $_.status -eq 'notsigned' -or $_.SignerCertificate.Issuer -notmatch '^CN=Microsoft.*'}| select-object -ExpandProperty Path
-
+    $missingSignatures = $signatures | Where-Object { $_.status -eq 'notsigned' -or $_.SignerCertificate.Issuer -notmatch '^CN=(Microsoft|TestAzureEngBuildCodeSign).*'}| select-object -ExpandProperty Path
+    
     Write-Verbose -verbose "to be signed:`r`n $($missingSignatures | Out-String)"
 
     $filesToSignDirectory = "$(Pipeline.Workspace)/thirdPartyToBeSigned"
@@ -137,6 +141,7 @@ steps:
   displayName: Capture ThirdParty Signed files
 
 - pwsh: |
+    $officialBuild = [System.Convert]::ToBoolean('${{ parameters.OfficialBuild }}')
     Import-Module '$(PowerShellRoot)/build.psm1' -Force
     Import-Module '$(PowerShellRoot)/tools/packaging' -Force
     $isGlobalTool = '${{ parameters.globalTool }}' -eq 'true'
@@ -153,7 +158,7 @@ steps:
 
     Write-Verbose "Copying third party signed files to the build folder"
     $thirdPartySignedFilesPath = (Get-Item '$(Pipeline.Workspace)/thirdPartyToBeSigned').FullName
-    Update-PSSignedBuildFolder -BuildPath $pathForUpload -SignedFilesPath $thirdPartySignedFilesPath
+    Update-PSSignedBuildFolder -BuildPath $pathForUpload -SignedFilesPath $thirdPartySignedFilesPath -OfficialBuild $officialBuild
 
   displayName: 'Copy signed files for upload'
 
