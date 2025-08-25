@@ -354,7 +354,7 @@ namespace Microsoft.PowerShell.Commands
             Xml,
         }
 
-        internal class BufferingStreamReader : Stream
+        internal sealed class BufferingStreamReader : Stream
         {
             internal BufferingStreamReader(Stream baseStream, TimeSpan perReadTimeout, CancellationToken cancellationToken)
             {
