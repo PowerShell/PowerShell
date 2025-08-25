@@ -136,6 +136,24 @@ Describe "Set-Location" -Tags "CI" {
             Set-Location -
             (Get-Location).Path | Should -Be ($initialLocation).Path
         }
+        
+        It 'Should go to last location back, even if any path contains wildcard' {
+            $initialLocation = (Get-Location).Path
+            $wildcardLocation = 'TestDrive:\[Folder]'
+            New-Item $wildcardLocation -Type Directory
+            
+            Set-Location -LiteralPath $wildcardLocation
+            Set-Location -
+            (Get-Location).Path | Should -Be $initialLocation
+            Set-Location +
+            (Get-Location).Path | Should -Be $wildcardLocation
+
+            Set-Location -LiteralPath $initialLocation
+            Set-Location -
+            (Get-Location).Path | Should -Be $wildcardLocation
+            Set-Location +
+            (Get-Location).Path | Should -Be $initialLocation
+        }
 
         It 'Should go to last location back, forth and back again when specifying minus, plus and minus as a path' {
             $initialLocation = (Get-Location).Path
