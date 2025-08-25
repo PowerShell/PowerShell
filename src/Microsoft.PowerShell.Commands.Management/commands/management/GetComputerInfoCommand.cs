@@ -1486,7 +1486,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
-    internal class WmiDeviceGuard
+    internal sealed class WmiDeviceGuard
     {
         public uint[] AvailableSecurityProperties;
         public uint? CodeIntegrityPolicyEnforcementStatus;
@@ -1595,7 +1595,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
-    internal class WmiMsftNetAdapter
+    internal sealed class WmiMsftNetAdapter
     {
         public string Caption;
         public string Description;
@@ -1683,7 +1683,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
-    internal class WmiNetworkAdapter
+    internal sealed class WmiNetworkAdapter
     {
         public string AdapterType;
         public ushort? AdapterTypeID;
