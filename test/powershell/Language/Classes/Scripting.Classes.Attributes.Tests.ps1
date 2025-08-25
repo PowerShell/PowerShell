@@ -299,8 +299,8 @@ Describe 'ValidateSet support a dynamically generated set' -Tag "CI" {
                     $testValues1 = "Test11","TestString11","Test22"
                     $testValues2 = "Test11","TestString22","Test22"
 
-                    $currentTime = [DateTime]::Now
-                    if ([DateTime]::Compare([GenValuesForParamCache1]::cacheTime, $currentTime) -le 0)
+                    $currentTime = [datetime]::Now
+                    if ([datetime]::Compare([GenValuesForParamCache1]::cacheTime, $currentTime) -le 0)
                     {
                         $testValues = $testValues1;
                     }
@@ -311,7 +311,7 @@ Describe 'ValidateSet support a dynamically generated set' -Tag "CI" {
                     return [string[]]$testValues
                 }
 
-                static [DateTime] $cacheTime = [DateTime]::Now.AddSeconds(2);
+                static [datetime] $cacheTime = [datetime]::Now.AddSeconds(2);
             }
 
             function Get-TestValidateSetPS4
