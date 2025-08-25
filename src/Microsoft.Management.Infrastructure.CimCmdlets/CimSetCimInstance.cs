@@ -186,11 +186,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 return true;
             }
 
-            IDictionaryEnumerator enumerator = properties.GetEnumerator();
-            while (enumerator.MoveNext())
+            foreach (DictionaryEntry entry in properties)
             {
-                object value = GetBaseObject(enumerator.Value);
-                string key = enumerator.Key.ToString();
+                object value = GetBaseObject(entry.Value);
+                string key = entry.Key.ToString();
                 DebugHelper.WriteLog("Input property name '{0}' with value '{1}'", 1, key, value);
 
                 try

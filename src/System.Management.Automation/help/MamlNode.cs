@@ -260,11 +260,9 @@ namespace System.Management.Automation
 
             PSObject mshObject = new PSObject();
 
-            IDictionaryEnumerator enumerator = properties.GetEnumerator();
-
-            while (enumerator.MoveNext())
+            foreach (DictionaryEntry entry in properties)
             {
-                mshObject.Properties.Add(new PSNoteProperty((string)enumerator.Key, enumerator.Value));
+                mshObject.Properties.Add(new PSNoteProperty((string)entry.Key, entry.Value));
             }
 
             return mshObject;
@@ -421,11 +419,10 @@ namespace System.Management.Automation
                 return null;
 
             Hashtable result = new Hashtable(StringComparer.OrdinalIgnoreCase);
-            IDictionaryEnumerator enumerator = properties.GetEnumerator();
 
-            while (enumerator.MoveNext())
+            foreach (DictionaryEntry entry in properties)
             {
-                ArrayList propertyValues = (ArrayList)enumerator.Value;
+                ArrayList propertyValues = (ArrayList)entry.Value;
 
                 if (propertyValues == null || propertyValues.Count == 0)
                     continue;
@@ -439,13 +436,13 @@ namespace System.Management.Automation
                         // Even for strings or other basic types, they need to be contained in PSObject in case
                         // there is attributes for this object.
 
-                        result[enumerator.Key] = mshObject;
+                        result[entry.Key] = mshObject;
 
                         continue;
                     }
                 }
 
-                result[enumerator.Key] = propertyValues.ToArray(typeof(PSObject));
+                result[entry.Key] = propertyValues.ToArray(typeof(PSObject));
             }
 
             return result;

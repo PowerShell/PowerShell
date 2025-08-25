@@ -280,17 +280,16 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 }
             }
 
-            IDictionaryEnumerator enumerator = properties.GetEnumerator();
-            while (enumerator.MoveNext())
+            foreach (DictionaryEntry entry in properties)
             {
                 CimFlags flag = CimFlags.None;
-                string propertyName = enumerator.Key.ToString().Trim();
+                string propertyName = entry.Key.ToString().Trim();
                 if (keys.Contains(propertyName, StringComparer.OrdinalIgnoreCase))
                 {
                     flag = CimFlags.Key;
                 }
 
-                object propertyValue = GetBaseObject(enumerator.Value);
+                object propertyValue = GetBaseObject(entry.Value);
 
                 DebugHelper.WriteLog("Create and add new property to ciminstance: name = {0}; value = {1}; flags = {2}", 5, propertyName, propertyValue, flag);
 

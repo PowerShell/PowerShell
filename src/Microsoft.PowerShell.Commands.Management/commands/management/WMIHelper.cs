@@ -246,10 +246,9 @@ namespace Microsoft.PowerShell.Commands
 
                     if (setObject.Arguments != null)
                     {
-                        IDictionaryEnumerator en = setObject.Arguments.GetEnumerator();
-                        while (en.MoveNext())
+                        foreach (DictionaryEntry entry in setObject.Arguments)
                         {
-                            mObj[en.Key as string] = en.Value;
+                            mObj[entry.Key as string] = entry.Value;
                         }
                     }
 
@@ -439,10 +438,9 @@ namespace Microsoft.PowerShell.Commands
 
                     if (setObject.Arguments != null)
                     {
-                        IDictionaryEnumerator en = setObject.Arguments.GetEnumerator();
-                        while (en.MoveNext())
+                        foreach (DictionaryEntry entry in setObject.Arguments)
                         {
-                            mObject[en.Key as string] = en.Value;
+                            mObject[entry.Key as string] = entry.Value;
                         }
                     }
 
@@ -1277,10 +1275,9 @@ namespace Microsoft.PowerShell.Commands
 
                 if (setObject.Arguments != null)
                 {
-                    IDictionaryEnumerator en = setObject.Arguments.GetEnumerator();
-                    while (en.MoveNext())
+                    foreach (DictionaryEntry entry in setObject.Arguments)
                     {
-                        mObject[en.Key as string] = en.Value;
+                        mObject[entry.Key as string] = entry.Value;
                     }
                 }
             }
@@ -1431,10 +1428,9 @@ namespace Microsoft.PowerShell.Commands
 
                     if (wmiInstance.Arguments != null)
                     {
-                        IDictionaryEnumerator en = wmiInstance.Arguments.GetEnumerator();
-                        while (en.MoveNext())
+                        foreach (DictionaryEntry entry in wmiInstance.Arguments)
                         {
-                            mObj[en.Key as string] = en.Value;
+                            mObj[entry.Key as string] = entry.Value;
                         }
                     }
                 }

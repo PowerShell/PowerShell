@@ -348,13 +348,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             collection = new CimMethodParametersCollection();
-            IDictionaryEnumerator enumerator = parameters.GetEnumerator();
-            while (enumerator.MoveNext())
+            
+            foreach (DictionaryEntry entry in parameters)
             {
-                string parameterName = enumerator.Key.ToString();
+                string parameterName = entry.Key.ToString();
 
                 const CimFlags parameterFlags = CimFlags.In;
-                object parameterValue = GetBaseObject(enumerator.Value);
+                object parameterValue = GetBaseObject(entry.Value);
 
                 DebugHelper.WriteLog(@"Create parameter name= {0}, value= {1}, flags= {2}.", 4,
                     parameterName,
