@@ -17,6 +17,9 @@ using System.Management.Automation.Provider;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Runtime.InteropServices;
+#if !UNIX
+using System.Runtime.InteropServices.Marshalling;
+#endif
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -5176,12 +5179,12 @@ namespace System.Management.Automation
             @"(^Microsoft\.PowerShell\.Core\\FileSystem::|^FileSystem::|^)(?:\\\\|//)(?![.|?])([^\\/]+)(?:\\|/)([^\\/]*)$",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-        private struct SHARE_INFO_1
+        [StructLayout(LayoutKind.Sequential)]
+        private unsafe struct SHARE_INFO_1
         {
-            public string netname;
+            public ushort* netname;
             public int type;
-            public string remark;
+            public ushort* remark;
         }
 
         private static readonly System.IO.EnumerationOptions _enumerationOptions = new System.IO.EnumerationOptions
@@ -5190,49 +5193,64 @@ namespace System.Management.Automation
             AttributesToSkip = 0 // Default is to skip Hidden and System files, so we clear this to retain existing behavior
         };
 
+#nullable enable
         internal static List<string> GetFileShares(string machine, bool ignoreHidden)
         {
 #if UNIX
             return new List<string>();
 #else
-            nint shBuf = nint.Zero;
-            uint numEntries = 0;
-            uint totalEntries;
-            uint resumeHandle = 0;
-            int result = Interop.Windows.NetShareEnum(
-                machine,
-                level: 1,
-                out shBuf,
-                Interop.Windows.MAX_PREFERRED_LENGTH,
-                out numEntries,
-                out totalEntries,
-                ref resumeHandle);
-
-            var shares = new List<string>();
-            if (result == Interop.Windows.ERROR_SUCCESS || result == Interop.Windows.ERROR_MORE_DATA)
+            unsafe
             {
-                for (int i = 0; i < numEntries; ++i)
+                byte* pBuffer = null;
+                try
                 {
-                    nint curInfoPtr = shBuf + (Marshal.SizeOf<SHARE_INFO_1>() * i);
-                    SHARE_INFO_1 shareInfo = Marshal.PtrToStructure<SHARE_INFO_1>(curInfoPtr);
+                    uint numEntries = 0;
+                    uint totalEntries;
+                    uint resumeHandle = 0;
+                    int result = Interop.Windows.NetShareEnum(
+                        machine,
+                        level: 1,
+                        out pBuffer,
+                        Interop.Windows.MAX_PREFERRED_LENGTH,
+                        out numEntries,
+                        out totalEntries,
+                        ref resumeHandle);
 
-                    if ((shareInfo.type & Interop.Windows.STYPE_MASK) != Interop.Windows.STYPE_DISKTREE)
+                    var shares = new List<string>();
+                    if (result == Interop.Windows.ERROR_SUCCESS || result == Interop.Windows.ERROR_MORE_DATA)
                     {
-                        continue;
+                        SHARE_INFO_1* pShareInfo = (SHARE_INFO_1*)pBuffer;
+                        for (int i = 0; i < numEntries; ++i)
+                        {
+                            if ((pShareInfo[i].type & Interop.Windows.STYPE_MASK) != Interop.Windows.STYPE_DISKTREE)
+                            {
+                                continue;
+                            }
+
+                            string share = Utf16StringMarshaller.ConvertToManaged(pShareInfo[i].netname);
+
+                            if (ignoreHidden && share.EndsWith('$'))
+                            {
+                                continue;
+                            }
+
+                            shares.Add(share);
+                        }                        
                     }
 
-                    if (ignoreHidden && shareInfo.netname.EndsWith('$'))
+                    return shares;
+                }
+                finally
+                {
+                    if (pBuffer is not null)
                     {
-                        continue;
+                        Interop.Windows.NetApiBufferFree(pBuffer);
                     }
-
-                    shares.Add(shareInfo.netname);
                 }
             }
-
-            return shares;
 #endif
         }
+#nullable restore
 
         private static bool CheckFileExtension(string path, HashSet<string> extension)
         {

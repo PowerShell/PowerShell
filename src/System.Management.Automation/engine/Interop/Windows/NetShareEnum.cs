@@ -14,10 +14,10 @@ internal static partial class Interop
         internal const int STYPE_MASK = 0x000000FF;
 
         [LibraryImport("Netapi32.dll", StringMarshalling = StringMarshalling.Utf16)]
-        internal static partial int NetShareEnum(
+        internal static unsafe partial int NetShareEnum(
             string serverName,
             int level,
-            out nint bufptr,
+            out byte* bufptr,
             int prefMaxLen,
             out uint entriesRead,
             out uint totalEntries,
