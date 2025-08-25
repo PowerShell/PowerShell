@@ -65,6 +65,12 @@ namespace Microsoft.PowerShell.Commands
         public int ParentId { get; set; } = -1;
 
         /// <summary>
+        /// Specifies that the activity is non-essential, and may be discarded by the host to improve performance.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter NonEssential { get; set; }
+
+        /// <summary>
         /// Identifies whether the activity has completed (and the display for it should be removed),
         /// or if it is proceeding (and the display for it should be shown).
         /// </summary>
@@ -122,7 +128,8 @@ namespace Microsoft.PowerShell.Commands
             pr.PercentComplete = PercentComplete;
             pr.SecondsRemaining = SecondsRemaining;
             pr.CurrentOperation = CurrentOperation;
-            pr.RecordType = this.Completed ? ProgressRecordType.Completed : ProgressRecordType.Processing;
+            pr.IsEssential = !NonEssential;
+            pr.RecordType = this.Completed ? ProgressRecordType.Completed : ProgressRecordType.Processing;            
 
             WriteProgress(SourceId, pr);
         }
