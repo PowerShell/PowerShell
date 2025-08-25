@@ -2815,7 +2815,7 @@ param ($Param1)
             $scriptBl = {
                 function Test-Completion {
                     param (
-                        [String]$TestVal
+                        [string]$TestVal
                     )
                 }
                 [scriptblock]$completer = {
