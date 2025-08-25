@@ -68,10 +68,9 @@ extends:
         suppressionsFile: $(Build.SourcesDirectory)\.config\suppress.json
       binskim:
         enabled: false
+        exactToolVersion: 4.4.2
       # APIScan requires a non-Ready-To-Run build
       apiscan:
-        enabled: false
-      asyncSDL:
         enabled: false
       tsaOptionsFile: .config/tsaoptions.json
 
