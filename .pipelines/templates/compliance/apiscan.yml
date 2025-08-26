@@ -12,9 +12,6 @@ jobs:
         value: fromBranch
       # Defines the variables APIScanClient, APIScanTenant and APIScanSecret
       - group: PS-PS-APIScan
-      # PAT permissions NOTE: Declare a SymbolServerPAT variable in this group with a 'microsoft' organizanization scoped PAT with 'Symbols' Read permission.
-      # A PAT in the wrong org will give a single Error 203. No PAT will give a single Error 401, and individual pdbs may be missing even if permissions are correct.
-      - group: symbols
       - name: branchCounterKey
         value: $[format('{0:yyyyMMdd}-{1}', pipeline.startTime,variables['Build.SourceBranch'])]
       - name: branchCounter
@@ -61,14 +58,12 @@ jobs:
       parameters:
         repoRoot: '$(repoRoot)'
 
-    - pwsh: |
-        Import-Module .\build.psm1 -force
-        Start-PSBootstrap
-      workingDirectory: '$(repoRoot)'
-      retryCountOnTaskFailure: 2
-      displayName: 'Bootstrap'
-      env:
-        __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+    - task: UseDotNet@2
+      displayName: 'Use .NET Core sdk'
+      inputs:
+        useGlobalJson: true
+        packageType: 'sdk'
+        workingDirectory: $(Build.SourcesDirectory)"
 
     - pwsh: |
         Import-Module .\build.psm1 -force
@@ -79,19 +74,6 @@ jobs:
       displayName: Install dotnet-symbol
       workingDirectory: '$(repoRoot)'
       retryCountOnTaskFailure: 2
-
-    - pwsh: |
-        $modules = 'Az.Accounts', 'Az.Storage'
-        foreach($module in $modules) {
-          if(!(get-module $module -listavailable)) {
-            Write-Verbose "installing $module..." -verbose
-            Install-Module $module -force -AllowClobber
-          } else {
-            Write-Verbose "$module already installed." -verbose
-          }
-        }
-      displayName: Install PowerShell modules
-      workingDirectory: '$(repoRoot)'
 
     - task: AzurePowerShell@5
       displayName: Download winverify-private Artifacts
@@ -140,9 +122,24 @@ jobs:
         }
 
         Copy-Item -Path "$OutputFolder\*" -Destination '$(ob_outputDirectory)' -Recurse -Verbose
-
       workingDirectory: '$(repoRoot)'
       displayName: 'Build PowerShell Source'
+
+    - pwsh: |
+        # Only key windows runtimes
+        Get-ChildItem -Path '$(ob_outputDirectory)\runtimes\*' -File -Recurse | Where-Object {$_.FullName -notmatch '.*\/runtimes\/win'} | Foreach-Object {
+          Write-Verbose -Verbose -Message "Deleting $($_.FullName)"
+          Remove-Item -Force -Verbose -Path $_.FullName
+        }
+
+        # Temporarily remove runtimes/win-x64  due to issues with that runtime
+        Get-ChildItem -Path '$(ob_outputDirectory)\runtimes\*' -File -Recurse | Where-Object {$_.FullName -match '.*\/runtimes\/win-x86\/'} | Foreach-Object {
+          Write-Verbose -Verbose -Message "Deleting $($_.FullName)"
+          Remove-Item -Force -Verbose -Path $_.FullName
+        }
+
+      workingDirectory: '$(repoRoot)'
+      displayName: 'Remove unused runtimes'
 
     - task: CodeQL3000Finalize@0 # Add CodeQL Finalize task right after your 'Build' step.
       displayName: 🔏 CodeQL 3000 Finalize

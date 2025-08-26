@@ -71,7 +71,7 @@ namespace Microsoft.PowerShell.Commands
         /// An instance of the PSTraceSource class used for trace output
         /// using "FileSystemProvider" as the category.
         /// </summary>
-        [Dbg.TraceSourceAttribute("FileSystemProvider", "The namespace navigation provider for the file system")]
+        [Dbg.TraceSource("FileSystemProvider", "The namespace navigation provider for the file system")]
         private static readonly Dbg.PSTraceSource s_tracer =
             Dbg.PSTraceSource.GetTracer("FileSystemProvider", "The namespace navigation provider for the file system");
 
@@ -1086,11 +1086,10 @@ namespace Microsoft.PowerShell.Commands
 
             // Remove drive root first
             string pathWithoutDriveRoot = path.Substring(Path.GetPathRoot(path).Length);
-            char[] invalidFileChars = Path.GetInvalidFileNameChars();
 
             foreach (string segment in pathWithoutDriveRoot.Split(Path.DirectorySeparatorChar))
             {
-                if (segment.IndexOfAny(invalidFileChars) != -1)
+                if (PathUtils.ContainsInvalidFileNameChars(segment))
                 {
                     return false;
                 }
@@ -2258,24 +2257,21 @@ namespace Microsoft.PowerShell.Commands
                         {
                             exists = true;
 
-                            var normalizedTargetPath = strTargetPath;
-                            if (strTargetPath.StartsWith(".\\", StringComparison.OrdinalIgnoreCase) ||
-                                strTargetPath.StartsWith("./", StringComparison.OrdinalIgnoreCase))
-                            {
-                                normalizedTargetPath = Path.Join(SessionState.Internal.CurrentLocation.ProviderPath, strTargetPath.AsSpan(2));
-                            }
-
-                            GetFileSystemInfo(normalizedTargetPath, out isDirectory);
-
+                            // unify directory separators to be consistent with the rest of PowerShell even on non-Windows platforms;
+                            // do this before resolving the target, otherwise e.g. `.\test` would break on Linux, since the combined
+                            // path below would be something like `/path/to/cwd/.\test`
                             strTargetPath = strTargetPath.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
+
+                            // check if the target is a file or directory
+                            var normalizedTargetPath = Path.Combine(Path.GetDirectoryName(path), strTargetPath);
+                            GetFileSystemInfo(normalizedTargetPath, out isDirectory);
                         }
                         else
                         {
                             // for hardlinks we resolve the target to an absolute path
                             if (!IsAbsolutePath(strTargetPath))
                             {
-                                // there is already a check before here so that strTargetPath should only resolve to 1 path
-                                strTargetPath = SessionState.Path.GetResolvedPSPathFromPSPath(strTargetPath).FirstOrDefault()?.Path;
+                                strTargetPath = SessionState.Path.GetUnresolvedProviderPathFromPSPath(strTargetPath);
                             }
 
                             exists = GetFileSystemInfo(strTargetPath, out isDirectory) != null;
@@ -2669,12 +2665,6 @@ namespace Microsoft.PowerShell.Commands
                 !string.IsNullOrEmpty(path),
                 "The caller should verify path");
 
-            // Get the parent path
-            string parentPath = GetParentPath(path, null);
-
-            // The directory name
-            string childName = GetChildName(path);
-
             ErrorRecord error = null;
             if (!Force && ItemExists(path, out error))
             {
@@ -2704,7 +2694,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (ShouldProcess(resource, action))
                 {
-                    var result = Directory.CreateDirectory(Path.Combine(parentPath, childName));
+                    var result = Directory.CreateDirectory(path);
 
                     if (streamOutput)
                     {
@@ -2719,8 +2709,15 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (IOException ioException)
             {
-                // Ignore the error if force was specified
+#if UNIX
                 if (!Force)
+#else
+                // Windows error code for invalid characters in file or directory name
+                const int ERROR_INVALID_NAME = unchecked((int)0x8007007B);
+
+                // Do not suppress IOException on Windows if it has the specific HResult for invalid characters in directory name
+                if (ioException.HResult == ERROR_INVALID_NAME || !Force)
+#endif
                 {
                     // IOException contains specific message about the error occurred and so no need for errordetails.
                     WriteError(new ErrorRecord(ioException, "CreateDirectoryIOError", ErrorCategory.WriteError, path));
@@ -7435,8 +7432,8 @@ namespace Microsoft.PowerShell.Commands
         /// reading data from the file.
         /// </summary>
         [Parameter]
-        [ArgumentToEncodingTransformationAttribute()]
-        [ArgumentEncodingCompletionsAttribute]
+        [ArgumentToEncodingTransformation]
+        [ArgumentEncodingCompletions]
         [ValidateNotNullOrEmpty]
         public Encoding Encoding
         {
@@ -8203,8 +8200,7 @@ namespace System.Management.Automation.Internal
                     AlternateStreamData data = new AlternateStreamData();
                     data.Stream = findStreamData.Name;
                     data.Length = findStreamData.Length;
-                    data.FileName = path.Replace(data.Stream, string.Empty);
-                    data.FileName = data.FileName.Trim(':');
+                    data.FileName = path;
 
                     alternateStreams.Add(data);
                     findStreamData = new AlternateStreamNativeData();

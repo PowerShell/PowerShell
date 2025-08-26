@@ -55,7 +55,7 @@ namespace System.Management.Automation.Remoting
     /// </summary>
     internal abstract class ClientRemoteSession : RemoteSession
     {
-        [TraceSourceAttribute("CRSession", "ClientRemoteSession")]
+        [TraceSource("CRSession", "ClientRemoteSession")]
         private static readonly PSTraceSource s_trace = PSTraceSource.GetTracer("CRSession", "ClientRemoteSession");
 
         #region Public_Method_API
@@ -177,7 +177,7 @@ namespace System.Management.Automation.Remoting
     /// </summary>
     internal class ClientRemoteSessionImpl : ClientRemoteSession, IDisposable
     {
-        [TraceSourceAttribute("CRSessionImpl", "ClientRemoteSessionImpl")]
+        [TraceSource("CRSessionImpl", "ClientRemoteSessionImpl")]
         private static readonly PSTraceSource s_trace = PSTraceSource.GetTracer("CRSessionImpl", "ClientRemoteSessionImpl");
 
         private PSRemotingCryptoHelperClient _cryptoHelper = null;
@@ -505,20 +505,11 @@ namespace System.Management.Automation.Remoting
             _serverProtocolVersion = serverProtocolVersion;
             Version clientProtocolVersion = Context.ClientCapability.ProtocolVersion;
 
-            if (
-                clientProtocolVersion.Equals(serverProtocolVersion)
-                || (clientProtocolVersion == RemotingConstants.ProtocolVersionWin7RTM &&
-                    serverProtocolVersion == RemotingConstants.ProtocolVersionWin7RC)
-                || (clientProtocolVersion == RemotingConstants.ProtocolVersionWin8RTM &&
-                    (serverProtocolVersion == RemotingConstants.ProtocolVersionWin7RC ||
-                     serverProtocolVersion == RemotingConstants.ProtocolVersionWin7RTM
-                     ))
-                || (clientProtocolVersion == RemotingConstants.ProtocolVersionWin10RTM &&
-                    (serverProtocolVersion == RemotingConstants.ProtocolVersionWin7RC ||
-                     serverProtocolVersion == RemotingConstants.ProtocolVersionWin7RTM ||
-                     serverProtocolVersion == RemotingConstants.ProtocolVersionWin8RTM
-                     ))
-                 )
+            if (clientProtocolVersion == serverProtocolVersion ||
+                serverProtocolVersion == RemotingConstants.ProtocolVersion_2_0 ||
+                serverProtocolVersion == RemotingConstants.ProtocolVersion_2_1 ||
+                serverProtocolVersion == RemotingConstants.ProtocolVersion_2_2 ||
+                serverProtocolVersion == RemotingConstants.ProtocolVersion_2_3)
             {
                 // passed negotiation check
             }

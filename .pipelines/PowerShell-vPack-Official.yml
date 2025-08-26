@@ -1,5 +1,3 @@
-name: $(BuildDefinitionName)_$(date:yyMM).$(date:dd)$(rev:rrr)
-
 trigger: none
 
 parameters: # parameters are shown up in ADO UI in a build queue time
@@ -27,6 +25,8 @@ parameters: # parameters are shown up in ADO UI in a build queue time
   type: string
   displayName: 'Release Tag Var:'
   default: 'fromBranch'
+
+name: vPack_${{ parameters.architecture }}_$(date:yyMM).$(date:dd)$(rev:rrr)
 
 variables:
   - name: CDP_DEFINITION_BUILD_COUNT
@@ -59,6 +59,15 @@ resources:
       name: OneBranch.Pipelines/GovernedTemplates
       ref: refs/heads/main
 
+  pipelines:
+    - pipeline: PSPackagesOfficial
+      source: 'PowerShell-Packages-Official'
+      trigger:
+        branches:
+          include:
+            - master
+            - releases/*
+
 extends:
   template: v2/Microsoft.Official.yml@templates
   parameters:
@@ -84,10 +93,9 @@ extends:
         suppressionsFile: $(Build.SourcesDirectory)\.config\suppress.json
       binskim:
         enabled: false
+        exactToolVersion: 4.4.2
       # APIScan requires a non-Ready-To-Run build
       apiscan:
-        enabled: false
-      asyncSDL:
         enabled: false
       tsaOptionsFile: .config/tsaoptions.json
     stages:
@@ -109,7 +117,7 @@ extends:
           ob_createvpack_verbose: true
 
         steps:
-          - template: tools/releaseBuild/azureDevOps/templates/SetVersionVariables.yml@self
+          - template: .pipelines/templates/SetVersionVariables.yml@self
             parameters:
               ReleaseTagVar: $(ReleaseTagVar)
               CreateJson: yes
@@ -129,28 +137,31 @@ extends:
               installationPath: $(Agent.ToolsDirectory)/dotnet
 
           - pwsh: |
-              Import-module '$(BUILD.SOURCESDIRECTORY)/build.psm1'
-              Install-AzCopy
-            displayName: Install AzCopy
-            retryCountOnTaskFailure: 2
+              $packageArtifactName = 'drop_windows_package_package_win_${{ parameters.architecture }}'
+              $vstsCommandString = "vso[task.setvariable variable=PackageArtifactName]$packageArtifactName"
+              Write-Host "sending " + $vstsCommandString
+              Write-Host "##$vstsCommandString"
 
-          - pwsh: |
-              Import-module '$(BUILD.SOURCESDIRECTORY)/build.psm1'
-              $azcopy = Find-AzCopy
-              Write-Verbose -Verbose "Found AzCopy: $azcopy"
-              Write-Host "running: $azcopy cp https://$(StorageAccount).blob.core.windows.net/$(AzureVersion)/PowerShell-$(Version)-win-${{ parameters.architecture }}.zip $(System.ArtifactsDirectory)"
-              & $azcopy cp https://$(StorageAccount).blob.core.windows.net/$(AzureVersion)/PowerShell-$(Version)-win-${{ parameters.architecture }}.zip $(System.ArtifactsDirectory)
-            displayName: 'Download Azure Artifacts'
-            retryCountOnTaskFailure: 2
-            env:
-              AZCOPY_AUTO_LOGIN_TYPE: MSI
+              $packageArtifactPath = '$(Pipeline.Workspace)\PSPackagesOfficial'
+              $vstsCommandString = "vso[task.setvariable variable=PackageArtifactPath]$packageArtifactPath"
+              Write-Host "sending " + $vstsCommandString
+              Write-Host "##$vstsCommandString"
+            displayName: 'Set package artifact variables'
 
-          - pwsh: 'Get-ChildItem $(System.ArtifactsDirectory)\* -recurse | Select-Object -ExpandProperty Name'
+          - download: PSPackagesOfficial
+            artifact: $(PackageArtifactName)
+            displayName: Download package
+
+          - pwsh: 'Get-ChildItem $(PackageArtifactPath)\* -recurse | Select-Object -ExpandProperty Name'
             displayName: 'Capture Artifact Listing'
 
           - pwsh: |
               $message = @()
-              Get-ChildItem $(System.ArtifactsDirectory)\* -recurse -include *.zip, *.msi | ForEach-Object {
+              $packages = Get-ChildItem $(PackageArtifactPath)\* -recurse -include *.zip, *.msi
+
+              if($packages.count -eq 0) {throw "No packages found in $(PackageArtifactPath)"}
+
+              $packages | ForEach-Object {
                   if($_.Name -notmatch 'PowerShell-\d+\.\d+\.\d+\-([a-z]*.\d+\-)?win\-(fxdependent|x64|arm64|x86|fxdependentWinDesktop)\.(msi|zip){1}')
                   {
                         $messageInstance = "$($_.Name) is not a valid package name"
@@ -163,7 +174,7 @@ extends:
             displayName: 'Validate Zip and MSI Package Names'
 
           - pwsh: |
-              Get-ChildItem $(System.ArtifactsDirectory)\* -recurse -include *.zip, *.msi | ForEach-Object {
+              Get-ChildItem $(PackageArtifactPath)\* -recurse -include *.zip | ForEach-Object {
                   if($_.Name -match 'PowerShell-\d+\.\d+\.\d+\-([a-z]*.\d+\-)?win\-(${{ parameters.architecture }})\.(zip){1}')
                   {
                       Expand-Archive -Path $_.FullName -DestinationPath $(ob_outputDirectory)
@@ -194,7 +205,11 @@ extends:
 
           - pwsh: |
               Write-Verbose "VPack Version: $(ob_createvpack_version)" -Verbose
-              Get-ChildItem -Path $(ob_outputDirectory)\* -Recurse
+              $vpackFiles = Get-ChildItem -Path $(ob_outputDirectory)\* -Recurse
+              if($vpackFiles.Count -eq 0) {
+                  throw "No files found in $(ob_outputDirectory)"
+              }
+              $vpackFiles
             displayName: Debug Output Directory and Version
             condition: succeededOrFailed()
 
@@ -204,5 +219,5 @@ extends:
               command: 'sign'
               signing_environment: 'azure-ado'
               cp_code: $(windows_build_tools_cert_id)
-              files_to_sign: '**/*.exe;**/*.dll;**/*.ps1;**/*.psm1'
+              files_to_sign: '**/*.exe;**/System.Management.Automation.dll'
               search_root: $(ob_outputDirectory)

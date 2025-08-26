@@ -202,7 +202,6 @@ namespace System.Management.Automation
             string sourceAsString = (string)LanguagePrimitives.ConvertTo(sourceValue, typeof(string), formatProvider);
             return LanguagePrimitives.ConvertTo(sourceAsString, destinationType, formatProvider);
         }
-
         /// <summary>
         /// Returns false, since this converter is not designed to be used to
         /// convert from the type associated with the converted to other types.
@@ -2078,6 +2077,14 @@ namespace System.Management.Automation
             }
 
             /// <summary>
+            /// Returns all names for the provided enum type.
+            /// </summary>
+            /// <param name="enumType">The enum type to retrieve names from.</param>
+            /// <returns>Array of enum names for the specified type.</returns>
+            internal static string[] GetEnumNames(Type enumType)
+                => EnumSingleTypeConverter.GetEnumHashEntry(enumType).names;
+
+            /// <summary>
             /// Returns all values for the provided enum type.
             /// </summary>
             /// <param name="enumType">The enum type to retrieve values from.</param>
@@ -2935,17 +2942,12 @@ namespace System.Management.Automation
                     return result;
                 }
 
-                if (resultType == typeof(BigInteger))
-                {
-                    // Fallback for BigInteger: manual parsing using any common format.
-                    NumberStyles style = NumberStyles.AllowLeadingSign
-                        | NumberStyles.AllowDecimalPoint
-                        | NumberStyles.AllowExponent
-                        | NumberStyles.AllowHexSpecifier;
-
+               if (resultType == typeof(BigInteger))
+               { 
+                    NumberStyles style = NumberStyles.Integer | NumberStyles.AllowThousands;
+                    
                     return BigInteger.Parse(strToConvert, style, NumberFormatInfo.InvariantInfo);
                 }
-
                 // Fallback conversion for regular numeric types.
                 return GetIntegerSystemConverter(resultType).ConvertFrom(strToConvert);
             }

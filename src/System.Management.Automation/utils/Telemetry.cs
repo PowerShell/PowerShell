@@ -205,6 +205,7 @@ namespace Microsoft.PowerShell.Telemetry
                         "adrms",
                         "adrmsadmin",
                         "agpm",
+                        "AIShell",
                         "appbackgroundtask",
                         "applocker",
                         "appv",
@@ -635,7 +636,7 @@ namespace Microsoft.PowerShell.Telemetry
                 s_knownSubsystemNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
                     {
                         "Completion",
-                        "general",
+                        "General Feedback",
                         "Windows Package Manager - WinGet",
                         "Az Predictor"
                     };

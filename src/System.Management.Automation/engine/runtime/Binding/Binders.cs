@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System.Buffers;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -5297,7 +5298,8 @@ namespace System.Management.Automation.Language
                             var propertyAccessor = adapterData.member as PropertyInfo;
                             if (propertyAccessor != null)
                             {
-                                if (propertyAccessor.GetMethod.IsFamily &&
+                                var propertyGetter = propertyAccessor.GetMethod;
+                                if ((propertyGetter.IsFamily || propertyGetter.IsFamilyOrAssembly) &&
                                     (_classScope == null || !_classScope.IsSubclassOf(propertyAccessor.DeclaringType)))
                                 {
                                     return GenerateGetPropertyException(restrictions).WriteToDebugLog(this);
@@ -5757,8 +5759,8 @@ namespace System.Management.Automation.Language
                             var getMethod = propertyInfo.GetGetMethod(nonPublic: true);
                             var setMethod = propertyInfo.GetSetMethod(nonPublic: true);
 
-                            if ((getMethod == null || getMethod.IsFamily || getMethod.IsPublic) &&
-                                (setMethod == null || setMethod.IsFamily || setMethod.IsPublic))
+                            if ((getMethod == null || getMethod.IsPublic || getMethod.IsFamily || getMethod.IsFamilyOrAssembly) &&
+                                (setMethod == null || setMethod.IsPublic || setMethod.IsFamily || setMethod.IsFamilyOrAssembly))
                             {
                                 memberInfo = new PSProperty(this.Name, PSObject.DotNetInstanceAdapter, target.Value, new DotNetAdapter.PropertyCacheEntry(propertyInfo));
                             }
@@ -5768,7 +5770,7 @@ namespace System.Management.Automation.Language
                             var fieldInfo = member as FieldInfo;
                             if (fieldInfo != null)
                             {
-                                if (fieldInfo.IsFamily)
+                                if (fieldInfo.IsFamily || fieldInfo.IsFamilyOrAssembly)
                                 {
                                     memberInfo = new PSProperty(this.Name, PSObject.DotNetInstanceAdapter, target.Value, new DotNetAdapter.PropertyCacheEntry(fieldInfo));
                                 }
@@ -5776,7 +5778,7 @@ namespace System.Management.Automation.Language
                             else
                             {
                                 var methodInfo = member as MethodInfo;
-                                if (methodInfo != null && (methodInfo.IsPublic || methodInfo.IsFamily))
+                                if (methodInfo != null && (methodInfo.IsPublic || methodInfo.IsFamily || methodInfo.IsFamilyOrAssembly))
                                 {
                                     candidateMethods ??= new List<MethodBase>();
 
@@ -6291,7 +6293,8 @@ namespace System.Management.Automation.Language
                         var targetExpr = _static ? null : PSGetMemberBinder.GetTargetExpr(target, data.member.DeclaringType);
                         if (propertyInfo != null)
                         {
-                            if (propertyInfo.SetMethod.IsFamily &&
+                            var propertySetter = propertyInfo.SetMethod;
+                            if ((propertySetter.IsFamily || propertySetter.IsFamilyOrAssembly) &&
                                 (_classScope == null || !_classScope.IsSubclassOf(propertyInfo.DeclaringType)))
                             {
                                 return GeneratePropertyAssignmentException(restrictions).WriteToDebugLog(this);
@@ -6533,6 +6536,21 @@ namespace System.Management.Automation.Language
 
     internal sealed class PSInvokeMemberBinder : InvokeMemberBinder
     {
+        [TraceSource("MethodInvocation", "Traces the invocation of .NET methods.")]
+        internal static readonly PSTraceSource MethodInvocationTracer =
+            PSTraceSource.GetTracer(
+                "MethodInvocation",
+                "Traces the invocation of .NET methods.",
+                false);
+
+        private static readonly SearchValues<string> s_whereSearchValues = SearchValues.Create(
+            ["Where", "PSWhere"],
+            StringComparison.OrdinalIgnoreCase);
+
+        private static readonly SearchValues<string> s_foreachSearchValues = SearchValues.Create(
+            ["ForEach", "PSForEach"],
+            StringComparison.OrdinalIgnoreCase);
+
         internal enum MethodInvocationType
         {
             Ordinary,
@@ -6681,12 +6699,14 @@ namespace System.Management.Automation.Language
                         .WriteToDebugLog(this);
                     BindingRestrictions argRestrictions = args.Aggregate(BindingRestrictions.Empty, static (current, arg) => current.Merge(arg.PSGetMethodArgumentRestriction()));
 
-                    if (string.Equals(Name, "Where", StringComparison.OrdinalIgnoreCase))
+                    // We need to pass the empty enumerator to the ForEach/Where operators, so that they can return an empty collection.
+                    // The ForEach/Where operators will not be able to call the script block if the enumerator is empty.
+                    if (s_whereSearchValues.Contains(Name))
                     {
                         return InvokeWhereOnCollection(emptyEnumerator, args, argRestrictions).WriteToDebugLog(this);
                     }
 
-                    if (string.Equals(Name, "ForEach", StringComparison.OrdinalIgnoreCase))
+                    if (s_foreachSearchValues.Contains(Name))
                     {
                         return InvokeForEachOnCollection(emptyEnumerator, args, argRestrictions).WriteToDebugLog(this);
                     }
@@ -6866,12 +6886,12 @@ namespace System.Management.Automation.Language
             if (!_static && !_nonEnumerating && target.Value != AutomationNull.Value)
             {
                 // Invoking Where and ForEach operators on collections.
-                if (string.Equals(Name, "Where", StringComparison.OrdinalIgnoreCase))
+                if (s_whereSearchValues.Contains(Name))
                 {
                     return InvokeWhereOnCollection(target, args, restrictions).WriteToDebugLog(this);
                 }
 
-                if (string.Equals(Name, "ForEach", StringComparison.OrdinalIgnoreCase))
+                if (s_foreachSearchValues.Contains(Name))
                 {
                     return InvokeForEachOnCollection(target, args, restrictions).WriteToDebugLog(this);
                 }
@@ -6943,19 +6963,16 @@ namespace System.Management.Automation.Language
                     expr = Expression.Block(expr, ExpressionCache.AutomationNullConstant);
                 }
 
-                // Expression block runs two expressions in order:
-                //  - Log method invocation to AMSI Notifications (can throw PSSecurityException)
-                //  - Invoke method
-                string targetName = methodInfo.ReflectedType?.FullName ?? string.Empty;
-                expr = Expression.Block(
-                    Expression.Call(
-                        CachedReflectionInfo.MemberInvocationLoggingOps_LogMemberInvocation,
-                        Expression.Constant(targetName),
-                        Expression.Constant(name),
-                        Expression.NewArrayInit(
-                            typeof(object),
-                            args.Select(static e => e.Expression.Cast(typeof(object))))),
-                    expr);
+                if (MethodInvocationTracer.IsEnabled)
+                {
+                    expr = Expression.Block(
+                        Expression.Call(
+                            Expression.Constant(MethodInvocationTracer),
+                            CachedReflectionInfo.PSTraceSource_WriteLine,
+                            Expression.Constant("Invoking method: {0}"),
+                            Expression.Constant(result.methodDefinition)),
+                        expr);
+                }
 
                 // If we're calling SteppablePipeline.{Begin|Process|End}, we don't want
                 // to wrap exceptions - this is very much a special case to help error
@@ -7119,6 +7136,7 @@ namespace System.Management.Automation.Language
                 invocationType != MethodInvocationType.NonVirtual;
             var parameters = mi.GetParameters();
             var argExprs = new Expression[parameters.Length];
+            var argsToLog = new List<Expression>(Math.Max(parameters.Length, args.Length));
 
             for (int i = 0; i < parameters.Length; ++i)
             {
@@ -7143,16 +7161,21 @@ namespace System.Management.Automation.Language
 
                     if (expandParameters)
                     {
-                        argExprs[i] = Expression.NewArrayInit(
-                            paramElementType,
-                            args.Skip(i).Select(
-                                a => a.CastOrConvertMethodArgument(
+                        IEnumerable<Expression> elements = args
+                            .Skip(i)
+                            .Select(a =>
+                                a.CastOrConvertMethodArgument(
                                     paramElementType,
                                     paramName,
                                     mi.Name,
                                     allowCastingToByRefLikeType: false,
                                     temps,
-                                    initTemps)));
+                                    initTemps))
+                            .ToList();
+
+                        argExprs[i] = Expression.NewArrayInit(paramElementType, elements);
+                        // User specified the element arguments, so we log them instead of the compiler-created array.
+                        argsToLog.AddRange(elements);
                     }
                     else
                     {
@@ -7163,13 +7186,18 @@ namespace System.Management.Automation.Language
                             allowCastingToByRefLikeType: false,
                             temps,
                             initTemps);
+
                         argExprs[i] = arg;
+                        argsToLog.Add(arg);
                     }
                 }
                 else if (i >= args.Length)
                 {
-                    Diagnostics.Assert(parameters[i].IsOptional,
+                    // We don't log the default value for an optional parameter, as it's not specified by the user.
+                    Diagnostics.Assert(
+                        parameters[i].IsOptional,
                         "if there are too few arguments, FindBestMethod should only succeed if parameters are optional");
+
                     var argValue = parameters[i].DefaultValue;
                     if (argValue == null)
                     {
@@ -7207,17 +7235,25 @@ namespace System.Management.Automation.Language
                         var psRefValue = Expression.Property(args[i].Expression.Cast(typeof(PSReference)), CachedReflectionInfo.PSReference_Value);
                         initTemps.Add(Expression.Assign(temp, psRefValue.Convert(temp.Type)));
                         copyOutTemps.Add(Expression.Assign(psRefValue, temp.Cast(typeof(object))));
+
                         argExprs[i] = temp;
+                        argsToLog.Add(temp);
                     }
                     else
                     {
-                        argExprs[i] = args[i].CastOrConvertMethodArgument(
+                        var convertedArg = args[i].CastOrConvertMethodArgument(
                             parameterType,
                             paramName,
                             mi.Name,
                             allowCastingToByRefLikeType,
                             temps,
                             initTemps);
+
+                        argExprs[i] = convertedArg;
+                        // If the converted arg is a byref-like type, then we log the original arg.
+                        argsToLog.Add(convertedArg.Type.IsByRefLike
+                            ? args[i].Expression
+                            : convertedArg);
                     }
                 }
             }
@@ -7263,6 +7299,12 @@ namespace System.Management.Automation.Language
                 }
             }
 
+            // We need to add one expression to log the .NET invocation before actually invoking:
+            //  - Log method invocation to AMSI Notifications (can throw PSSecurityException)
+            //  - Invoke method
+            string targetName = mi.ReflectedType?.FullName ?? string.Empty;
+            string methodName = mi.Name is ".ctor" ? "new" : mi.Name;
+
             if (temps.Count > 0)
             {
                 if (call.Type != typeof(void) && copyOutTemps.Count > 0)
@@ -7273,7 +7315,12 @@ namespace System.Management.Automation.Language
                     copyOutTemps.Add(retValue);
                 }
 
+                AddMemberInvocationLogging(initTemps, targetName, methodName, argsToLog);
                 call = Expression.Block(call.Type, temps, initTemps.Append(call).Concat(copyOutTemps));
+            }
+            else
+            {
+                call = AddMemberInvocationLogging(call, targetName, methodName, argsToLog);
             }
 
             return call;
@@ -7474,7 +7521,7 @@ namespace System.Management.Automation.Language
             // As a last resort, we invoke 'Where' and 'ForEach' operators on singletons like
             //    ([pscustomobject]@{ foo = 'bar' }).Foreach({$_})
             //    ([pscustomobject]@{ foo = 'bar' }).Where({1})
-            if (string.Equals(methodName, "Where", StringComparison.OrdinalIgnoreCase))
+            if (s_whereSearchValues.Contains(methodName))
             {
                 var enumerator = (new object[] { obj }).GetEnumerator();
                 switch (args.Length)
@@ -7490,7 +7537,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (string.Equals(methodName, "Foreach", StringComparison.OrdinalIgnoreCase))
+            if (s_foreachSearchValues.Contains(methodName))
             {
                 var enumerator = (new object[] { obj }).GetEnumerator();
                 object[] argsToPass;
@@ -7565,6 +7612,55 @@ namespace System.Management.Automation.Language
                 }
             }
         }
+
+#nullable enable
+        private static Expression AddMemberInvocationLogging(
+            Expression expr,
+            string targetName,
+            string name,
+            List<Expression> args)
+        {
+#if UNIX
+            // For efficiency this is a no-op on non-Windows platforms.
+            return expr;
+#else
+            Expression[] invocationArgs = new Expression[args.Count];
+            for (int i = 0; i < args.Count; i++)
+            {
+                invocationArgs[i] = args[i].Cast(typeof(object));
+            }
+
+            return Expression.Block(
+                Expression.Call(
+                    CachedReflectionInfo.MemberInvocationLoggingOps_LogMemberInvocation,
+                    Expression.Constant(targetName),
+                    Expression.Constant(name),
+                    Expression.NewArrayInit(typeof(object), invocationArgs)),
+                expr);
+#endif
+        }
+
+        private static void AddMemberInvocationLogging(
+            List<Expression> exprs,
+            string targetName,
+            string name,
+            List<Expression> args)
+        {
+#if !UNIX
+            Expression[] invocationArgs = new Expression[args.Count];
+            for (int i = 0; i < args.Count; i++)
+            {
+                invocationArgs[i] = args[i].Cast(typeof(object));
+            }
+
+            exprs.Add(Expression.Call(
+                CachedReflectionInfo.MemberInvocationLoggingOps_LogMemberInvocation,
+                Expression.Constant(targetName),
+                Expression.Constant(name),
+                Expression.NewArrayInit(typeof(object), invocationArgs)));
+#endif
+        }
+#nullable disable
 
         #endregion
     }
@@ -7826,7 +7922,7 @@ namespace System.Management.Automation.Language
                 ? BindingRestrictions.GetTypeRestriction(target.Expression, target.Value.GetType())
                 : target.PSGetTypeRestriction();
             restrictions = args.Aggregate(restrictions, static (current, arg) => current.Merge(arg.PSGetMethodArgumentRestriction()));
-            var newConstructors = DotNetAdapter.GetMethodInformationArray(ctors.Where(static c => c.IsPublic || c.IsFamily).ToArray());
+            var newConstructors = DotNetAdapter.GetMethodInformationArray(ctors.Where(static c => c.IsPublic || c.IsFamily || c.IsFamilyOrAssembly).ToArray());
             return PSInvokeMemberBinder.InvokeDotNetMethod(_callInfo, "new", _constraints, PSInvokeMemberBinder.MethodInvocationType.BaseCtor,
                                                            target, args, restrictions, newConstructors, typeof(MethodException));
         }

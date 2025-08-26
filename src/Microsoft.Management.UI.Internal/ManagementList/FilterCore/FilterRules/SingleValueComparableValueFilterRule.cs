@@ -13,7 +13,6 @@ namespace Microsoft.Management.UI.Internal
     /// </summary>
     /// <typeparam name="T">The generic parameter.</typeparam>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
-    [Serializable]
     public abstract class SingleValueComparableValueFilterRule<T> : ComparableValueFilterRule<T> where T : IComparable
     {
         #region Properties
@@ -44,11 +43,22 @@ namespace Microsoft.Management.UI.Internal
         #region Ctor
 
         /// <summary>
-        /// Initializes a new instance of the SingleValueComparableValueFilterRule class.
+        /// Initializes a new instance of the <see cref="SingleValueComparableValueFilterRule{T}"/> class.
         /// </summary>
         protected SingleValueComparableValueFilterRule()
         {
             this.Value = new ValidatingValue<T>();
+            this.Value.PropertyChanged += this.Value_PropertyChanged;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SingleValueComparableValueFilterRule{T}"/> class.
+        /// </summary>
+        /// <param name="source">The source to initialize from.</param>
+        protected SingleValueComparableValueFilterRule(SingleValueComparableValueFilterRule<T> source)
+            : base(source)
+        {
+            this.Value = (ValidatingValue<T>)source.Value.DeepClone();
             this.Value.PropertyChanged += this.Value_PropertyChanged;
         }
 
@@ -60,12 +70,6 @@ namespace Microsoft.Management.UI.Internal
             {
                 this.NotifyEvaluationResultInvalidated();
             }
-        }
-
-        [OnDeserialized]
-        private void Initialize(StreamingContext context)
-        {
-            this.Value.PropertyChanged += this.Value_PropertyChanged;
         }
     }
 }

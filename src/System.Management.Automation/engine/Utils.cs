@@ -1539,14 +1539,14 @@ namespace System.Management.Automation
         /// <returns>True if the session is restricted.</returns>
         internal static bool IsSessionRestricted(ExecutionContext context)
         {
-                CmdletInfo cmdletInfo = context.SessionState.InvokeCommand.GetCmdlet("Microsoft.PowerShell.Core\\Import-Module");
-                // if import-module is visible, then the session is not restricted,
-                // because the user can load arbitrary code.
-                if (cmdletInfo != null && cmdletInfo.Visibility == SessionStateEntryVisibility.Public)
-                {
-                   return false;
-                }
-                return true;
+            CmdletInfo cmdletInfo = context.SessionState.InvokeCommand.GetCmdlet("Microsoft.PowerShell.Core\\Import-Module");
+            // if import-module is visible, then the session is not restricted,
+            // because the user can load arbitrary code.
+            if (cmdletInfo != null && cmdletInfo.Visibility == SessionStateEntryVisibility.Public)
+            {
+                return false;
+            }
+            return true;
         }
     }
 }
@@ -1608,6 +1608,9 @@ namespace System.Management.Automation.Internal
         internal static bool OneDriveTestOn;
         internal static bool OneDriveTestRecurseOn;
         internal static string OneDriveTestSymlinkName = "link-Beta";
+
+        // Test out smaller connection buffer size when calling WNetGetConnection.
+        internal static int WNetGetConnectionBufferSize = -1;
 
         /// <summary>This member is used for internal test purposes.</summary>
         public static void SetTestHook(string property, object value)

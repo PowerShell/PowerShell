@@ -4991,7 +4991,7 @@ namespace System.Management.Automation
 
         #endregion misc
 
-        [TraceSourceAttribute("InternalDeserializer", "InternalDeserializer class")]
+        [TraceSource("InternalDeserializer", "InternalDeserializer class")]
         private static readonly PSTraceSource s_trace = PSTraceSource.GetTracer("InternalDeserializer", "InternalDeserializer class");
     }
 

@@ -16,7 +16,7 @@ $AllDistributions = @()
 $AllDistributions += $DebianDistributions
 $AllDistributions += $RedhatDistributions
 $AllDistributions += 'macOs'
-$script:netCoreRuntime = 'net9.0'
+$script:netCoreRuntime = 'net10.0'
 $script:iconFileName = "Powershell_black_64.png"
 $script:iconPath = Join-Path -path $PSScriptRoot -ChildPath "../../assets/$iconFileName" -Resolve
 
@@ -1621,7 +1621,7 @@ function Get-PackageDependencies
             )
             if($Script:Options.Runtime -like 'fx*') {
                 $Dependencies += @(
-                    "dotnet-runtime-9.0"
+                    "dotnet-runtime-10.0"
                 )
             }
         } elseif ($Distribution -eq 'macOS') {
@@ -1637,7 +1637,7 @@ function Get-PackageDependencies
 function Test-Dependencies
 {
     foreach ($Dependency in "fpm") {
-        if (!(precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Package")) {
+        if (!(precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Scenario Package")) {
             # These tools are not added to the path automatically on OpenSUSE 13.2
             # try adding them to the path and re-tesing first
             [string] $gemsPath = $null
@@ -1647,7 +1647,7 @@ function Test-Dependencies
                 $depenencyPath  = Get-ChildItem -Path (Join-Path -Path $gemsPath -ChildPath "gems" -AdditionalChildPath $Dependency) -Recurse | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty DirectoryName
                 $originalPath = $env:PATH
                 $env:PATH = $ENV:PATH +":" + $depenencyPath
-                if ((precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Package")) {
+                if ((precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Scenario Package")) {
                     continue
                 }
                 else {
@@ -3354,7 +3354,7 @@ function New-MSIPackage
 
     $buildArguments = New-MsiArgsArray -Argument $arguments
 
-    Test-Bom -Path $staging -BomName windows
+    Test-Bom -Path $staging -BomName windows -Architecture $ProductTargetArchitecture -Verbose
     Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixHeatExePath dir $staging -dr  VersionFolder -cg ApplicationFiles -ag -sfrag -srd -scom -sreg -out $wixFragmentPath -var var.ProductSourcePath $buildArguments -v}
 
     Send-AzdoFile -Path $wixFragmentPath
@@ -3707,8 +3707,17 @@ function New-MSIXPackage
 
     $ProductVersion = Get-WindowsVersion -PackageName $packageName
 
+    # Any app that is submitted to the Store must have a PhoneIdentity in its appxmanifest.
+    # If you submit a package without this information to the Store, the Store will silently modify your package to include it.
+    # To find the PhoneProductId value, you need to run a package through the Store certification process,
+    # and use the PhoneProductId value from the Store certified package to update the manifest in your source code.
+    # This is the PhoneProductId for the "Microsoft.PowerShell" package.
+    $PhoneProductId = "5b3ae196-2df7-446e-8060-94b4ad878387"
+
     $isPreview = Test-IsPreview -Version $ProductSemanticVersion
     if ($isPreview) {
+        # This is the PhoneProductId for the "Microsoft.PowerShellPreview" package.
+        $PhoneProductId = "67859fd2-b02a-45be-8fb5-62c569a3e8bf"
         Write-Verbose "Using Preview assets" -Verbose
     }
 
@@ -3718,7 +3727,14 @@ function New-MSIXPackage
     $releasePublisher = 'CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US'
 
     $appxManifest = Get-Content "$RepoRoot\assets\AppxManifest.xml" -Raw
-    $appxManifest = $appxManifest.Replace('$VERSION$', $ProductVersion).Replace('$ARCH$', $Architecture).Replace('$PRODUCTNAME$', $productName).Replace('$DISPLAYNAME$', $displayName).Replace('$PUBLISHER$', $releasePublisher)
+    $appxManifest = $appxManifest.
+        Replace('$VERSION$', $ProductVersion).
+        Replace('$ARCH$', $Architecture).
+        Replace('$PRODUCTNAME$', $productName).
+        Replace('$DISPLAYNAME$', $displayName).
+        Replace('$PUBLISHER$', $releasePublisher).
+        Replace('$PHONEPRODUCTID$', $PhoneProductId)
+
     $xml = [xml]$appxManifest
     if ($isPreview) {
         Write-Verbose -Verbose "Adding pwsh-preview.exe alias"
@@ -4982,6 +4998,9 @@ class BomRecord {
     [string]
     $FileType = "NonProduct"
 
+    [string[]]
+    $Architecture
+
     # Add methods to normalize Pattern to use `/` as the directory separator,
     # but give a Pattern that is usable on the current platform
     [string]
@@ -5011,6 +5030,13 @@ class BomRecord {
         # If the directory separator character is a slash, then set the pattern as-is
         $this.Pattern = $Pattern
     }
+
+    [void]
+    EnsureArchitecture([string[]]$DefaultArchitecture = @("x64","x86","arm64")) {
+        if (-not $this.PSObject.Properties.Match("Architecture")) {
+            $this.Architecture = $DefaultArchitecture
+        }
+    }
 }
 
 # Verify a folder based on a BOM json.
@@ -5024,7 +5050,9 @@ function Test-Bom {
         [string]
         $Path,
         [switch]
-        $Fix
+        $Fix,
+        [string]
+        $Architecture
     )
 
     Write-Log "verifying no unauthorized files have been added or removed..."
