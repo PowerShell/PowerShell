@@ -62,7 +62,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Overrides <see cref="System.Object.ToString"/>
+        /// Overrides <see cref="object.ToString"/>
         /// </summary>
         /// <returns>
         /// "a,b" where a and b are the values of the X and Y properties.
@@ -75,7 +75,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Overrides <see cref="System.Object.Equals(object)"/>
+        /// Overrides <see cref="object.Equals(object)"/>
         /// </summary>
         /// <param name="obj">
         /// object to be compared for equality.
@@ -99,7 +99,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Overrides <see cref="System.Object.GetHashCode"/>
+        /// Overrides <see cref="object.GetHashCode"/>
         /// </summary>
         /// <returns>
         /// Hash code for this instance.
@@ -248,7 +248,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Overloads <see cref="System.Object.ToString"/>
+        /// Overloads <see cref="object.ToString"/>
         /// </summary>
         /// <returns>
         /// "a,b" where a and b are the values of the Width and Height properties.
@@ -261,7 +261,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Overrides <see cref="System.Object.Equals(object)"/>
+        /// Overrides <see cref="object.Equals(object)"/>
         /// </summary>
         /// <param name="obj">
         /// object to be compared for equality.
@@ -285,7 +285,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Overrides <see cref="System.Object.GetHashCode"/>
+        /// Overrides <see cref="object.GetHashCode"/>
         /// </summary>
         /// <returns>
         /// Hash code for this instance.
@@ -557,7 +557,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Overloads <see cref="System.Object.ToString"/>
+        /// Overloads <see cref="object.ToString"/>
         /// </summary>
         /// <returns>
         /// "a,b,c,d" where a, b, c, and d are the values of the VirtualKeyCode, Character, ControlKeyState, and KeyDown properties.
@@ -569,7 +569,7 @@ namespace System.Management.Automation.Host
             return string.Create(CultureInfo.InvariantCulture, $"{VirtualKeyCode},{Character},{ControlKeyState},{KeyDown}");
         }
         /// <summary>
-        /// Overrides <see cref="System.Object.Equals(object)"/>
+        /// Overrides <see cref="object.Equals(object)"/>
         /// </summary>
         /// <param name="obj">
         /// object to be compared for equality.
@@ -593,7 +593,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Overrides <see cref="System.Object.GetHashCode"/>
+        /// Overrides <see cref="object.GetHashCode"/>
         /// </summary>
         /// <returns>
         /// Hash code for this instance.
@@ -787,7 +787,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Overloads <see cref="System.Object.ToString"/>
+        /// Overloads <see cref="object.ToString"/>
         /// </summary>
         /// <returns>
         /// "a,b ; c,d" where a, b, c, and d are values of the Left, Top, Right, and Bottom properties.
@@ -800,7 +800,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Overrides <see cref="System.Object.Equals(object)"/>
+        /// Overrides <see cref="object.Equals(object)"/>
         /// </summary>
         /// <param name="obj">
         /// object to be compared for equality.
@@ -824,7 +824,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Overrides <see cref="System.Object.GetHashCode"/>
+        /// Overrides <see cref="object.GetHashCode"/>
         /// </summary>
         /// <returns>
         /// Hash code for this instance.
@@ -1015,7 +1015,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Overloads <see cref="System.Object.ToString"/>
+        /// Overloads <see cref="object.ToString"/>
         /// </summary>
         /// <returns>
         /// "'a' b c d" where a, b, c, and d are the values of the Character, ForegroundColor, BackgroundColor, and Type properties.
@@ -1028,7 +1028,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Overrides <see cref="System.Object.Equals(object)"/>
+        /// Overrides <see cref="object.Equals(object)"/>
         /// </summary>
         /// <param name="obj">
         /// object to be compared for equality.
@@ -1052,7 +1052,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Overrides <see cref="System.Object.GetHashCode"/>
+        /// Overrides <see cref="object.GetHashCode"/>
         /// <!-- consider (ForegroundColor XOR BackgroundColor) the high-order part of a 32-bit int,
         ///      and Character the lower order half.  Then use the int32.GetHashCode.-->
         /// </summary>
