@@ -7,20 +7,16 @@ within the purview of that WG.
 For an up-to-date list of the issue/PR labels associated with these WGs,
 see [Issue Management](../maintainers/issue-management.md)
 
-## Microsoft Desired State Configuration (DSC) v3
+## Desired State Configuration (DSC)
 
-The Microsoft DSC v3 WG covers Microsoft DSC, a standalone, cross‑platform CLI utility that is not part of,
-and does not depend on, PowerShell. The WG focuses on guidance and tooling, plus optional
-interoperability scenarios when PowerShell users choose to call the DSC CLI.
+The DSC Working Group primarily focuses around the development & adoption of the DSC v3
+specification, whilst maintaining where needed limited support of previous versions,
+including any required interoptability between versions.
 
-Microsoft DSC v3 no longer uses any PowerShell language constructs (for example, the `Configuration` keyword)
-and does not rely on the `PSDesiredStateConfiguration` module. The WG does not define or manage PowerShell
-language features; its scope is limited how you could invoke and leverage PSDSC resources with the DSC CLI
-when needed.
-
-> [!NOTE]
-> PSDSC (PowerShell Desired State Configuration) will continue to be available. This update only reflects that the WG is
-> focused on Microsoft DSC v3 going forward and does not remove PSDSC from use.
+DSC v3 is maintained in the PowerShell/DSC repo & is no longer dependant on PowerShell,
+whilst enabling the use of PowerShell & Windows PowerShell where requested by
+configuration authors. This WG is also responsible for the `PSDesiredStateConfiguration`
+module & interactions with teams like Azure Machine Config & other 3rd party organisations.
 
 ### Members
 
