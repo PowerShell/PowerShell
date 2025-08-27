@@ -114,7 +114,7 @@ extends:
         variables:
           ob_outputDirectory: '$(BUILD.SOURCESDIRECTORY)\out'
           ob_createvpack_enabled: ${{ parameters.createVPack }}
-          ob_createvpack_packagename: 'PowerShell.${{ parameters.architecture }}'
+          ob_createvpack_packagename: '${{ parameters.vPackName }}.${{ parameters.architecture }}'
           ob_createvpack_description: PowerShell ${{ parameters.architecture }} $(version)
           ob_createvpack_owneralias: tplunk
           ob_createvpack_versionAs: string
