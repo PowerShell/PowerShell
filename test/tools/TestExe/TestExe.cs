@@ -142,7 +142,7 @@ namespace TestExe
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 nint cmdLinePtr = Interop.GetCommandLineW();
-                rawCmdLine = Marshal.PtrToStringUni(cmdLinePtr);
+                rawCmdLine = Marshal.PtrToStringUni(cmdLinePtr)!;
             }
 
             Console.WriteLine(rawCmdLine);
@@ -198,15 +198,21 @@ Other options are for specific tests only. Read source code for details.
             if (target.HasFlag(EnvTarget.User))
             {
                 // Append to the User Path.
-                using RegistryKey reg = Registry.CurrentUser.OpenSubKey(UserEnvRegPath, writable: true);
-                UpdateEnvPathImpl(reg, append: true, @"X:\not-exist-user-path");
+                using RegistryKey? reg = Registry.CurrentUser.OpenSubKey(UserEnvRegPath, writable: true);
+                if (reg is not null)
+                {
+                    UpdateEnvPathImpl(reg, append: true, @"X:\not-exist-user-path");
+                }
             }
 
             if (target.HasFlag(EnvTarget.System))
             {
                 // Prepend to the System Path.
-                using RegistryKey reg = Registry.LocalMachine.OpenSubKey(SysEnvRegPath, writable: true);
-                UpdateEnvPathImpl(reg, append: false, @"X:\not-exist-sys-path");
+                using RegistryKey? reg = Registry.LocalMachine.OpenSubKey(SysEnvRegPath, writable: true);
+                if (reg is not null)
+                {
+                    UpdateEnvPathImpl(reg, append: false, @"X:\not-exist-sys-path");
+                }
             }
 
             static void UpdateEnvPathImpl(RegistryKey regKey, bool append, string newPathItem)
