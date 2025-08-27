@@ -98,14 +98,16 @@ steps:
     Write-Verbose -Verbose -Message "BuildPath: $BuildPath"
 
     $officialBuild = [System.Convert]::ToBoolean('${{ parameters.OfficialBuild }}')
-
+    $checkIssuerOnly = [System.Convert]::ToBoolean('${{ parameters.CheckIssuerOnly }}')
     ## copy all files to be signed to build folder
-    Update-PSSignedBuildFolder -BuildPath $BuildPath -SignedFilesPath '$(Pipeline.Workspace)/toBeSigned' -OfficialBuild $officialBuild
+    Update-PSSignedBuildFolder -BuildPath $BuildPath -SignedFilesPath '$(Pipeline.Workspace)/toBeSigned' -OfficialBuild $officialBuild -CheckIssuerOnly $checkIssuerOnly
 
     $dlls = Get-ChildItem $BuildPath/*.dll, $BuildPath/*.exe -Recurse
     $signatures = $dlls | Get-AuthenticodeSignature
-    $missingSignatures = $signatures | Where-Object { $_.status -eq 'notsigned' -or $_.SignerCertificate.Issuer -notmatch '^CN=(Microsoft|TestAzureEngBuildCodeSign).*'}| select-object -ExpandProperty Path
-    
+    $officialIssuerPattern = '^CN=(Microsoft Code Signing PCA|Microsoft Root Certificate Authority|Microsoft Corporation).*'
+    $testCert = '^CN=(Microsoft|TestAzureEngBuildCodeSign).*'
+    $missingSignatures = $signatures | Where-Object { $_.status -eq 'notsigned' -or $_.SignerCertificate.Issuer -notmatch $testCert -or $_.SignerCertificate.Issuer -notmatch $officialIssuerPattern} | select-object -ExpandProperty Path
+
     Write-Verbose -verbose "to be signed:`r`n $($missingSignatures | Out-String)"
 
     $filesToSignDirectory = "$(Pipeline.Workspace)/thirdPartyToBeSigned"
@@ -142,6 +144,7 @@ steps:
 
 - pwsh: |
     $officialBuild = [System.Convert]::ToBoolean('${{ parameters.OfficialBuild }}')
+    $checkIssuerOnly = [System.Convert]::ToBoolean('${{ parameters.CheckIssuerOnly }}')
     Import-Module '$(PowerShellRoot)/build.psm1' -Force
     Import-Module '$(PowerShellRoot)/tools/packaging' -Force
     $isGlobalTool = '${{ parameters.globalTool }}' -eq 'true'
@@ -158,7 +161,7 @@ steps:
 
     Write-Verbose "Copying third party signed files to the build folder"
     $thirdPartySignedFilesPath = (Get-Item '$(Pipeline.Workspace)/thirdPartyToBeSigned').FullName
-    Update-PSSignedBuildFolder -BuildPath $pathForUpload -SignedFilesPath $thirdPartySignedFilesPath -OfficialBuild $officialBuild
+    Update-PSSignedBuildFolder -BuildPath $pathForUpload -SignedFilesPath $thirdPartySignedFilesPath -OfficialBuild $officialBuild -CheckIssuerOnly $checkIssuerOnly
 
   displayName: 'Copy signed files for upload'
 

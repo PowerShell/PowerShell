@@ -888,7 +888,8 @@ function Update-PSSignedBuildFolder
         [Parameter(Mandatory)]
         [string]$SignedFilesPath,
         [string[]] $RemoveFilter = ('*.pdb', '*.zip', '*.r2rmap'),
-        [bool]$OfficialBuild = $true
+        [bool]$OfficialBuild = $true,
+        [bool]$CheckIssuerOnly = $false
     )
 
     $BuildPathNormalized = (Get-Item $BuildPath).FullName
@@ -946,11 +947,13 @@ function Update-PSSignedBuildFolder
             $signature = Get-AuthenticodeSignature -FilePath $signedFilePath
 
             if ($signature.Status -ne 'Valid' -and $OfficialBuild) {
+                Write-Host "Certificate Issuer: $($signature.SignerCertificate.Issuer)"
+                Write-Host "Certificate Subject: $($signature.SignerCertificate.Subject)"
                 Write-Error "Invalid signature for $signedFilePath"
             } elseif ($OfficialBuild -eq $false) {
                 if ($signature.Status -eq 'NotSigned') {
                     Write-Warning "File is not signed: $signedFilePath"
-                } elseif ($signature.SignerCertificate.Issuer -notmatch '^CN=(Microsoft|TestAzureEngBuildCodeSign).*') {
+                } elseif ($signature.SignerCertificate.Issuer -notmatch '^CN=(Microsoft|TestAzureEngBuildCodeSign|Windows Internal Build Tools).*') {
                     Write-Warning "File signed with test certificate: $signedFilePath"
                     Write-Host "Certificate Issuer: $($signature.SignerCertificate.Issuer)"
                     Write-Host "Certificate Subject: $($signature.SignerCertificate.Subject)"

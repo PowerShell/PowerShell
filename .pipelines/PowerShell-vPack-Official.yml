@@ -230,7 +230,7 @@ extends:
             parameters:
               binPath: '$(Pipeline.Workspace)/Symbols_${{ parameters.architecture }}'
               SigningProfile: $(windows_build_tools_cert_id)
-              OfficialBuild: ${{ parameters.OfficialBuild }}
+              OfficialBuild: $false
 
           ### END OF BUILD ###
 
