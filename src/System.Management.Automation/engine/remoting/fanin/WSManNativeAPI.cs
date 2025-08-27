@@ -304,7 +304,6 @@ namespace System.Management.Automation.Remoting.Client
                 /// <summary>
                 /// Making password secure.
                 /// </summary>
-                [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
                 internal IntPtr password;
             }
 
@@ -626,7 +625,6 @@ namespace System.Management.Automation.Remoting.Client
         {
             internal int bufferLength;
 
-            [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
             internal IntPtr data;
         }
 
@@ -637,10 +635,8 @@ namespace System.Management.Automation.Remoting.Client
         {
             private readonly WSManDataStruct _internalData;
 
-            [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
             private IntPtr _marshalledObject = IntPtr.Zero;
 
-            [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
             private IntPtr _marshalledBuffer = IntPtr.Zero;
 
             /// <summary>
@@ -933,7 +929,6 @@ namespace System.Management.Automation.Remoting.Client
         {
             internal int streamIDsCount;
 
-            [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
             internal IntPtr streamIDs;
         }
 
@@ -1085,7 +1080,6 @@ namespace System.Management.Automation.Remoting.Client
             /// <summary>
             /// Pointer to an array of WSManOption objects.
             /// </summary>
-            [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
             internal IntPtr options;
 
             internal bool optionsMustUnderstand;
@@ -1223,13 +1217,11 @@ namespace System.Management.Automation.Remoting.Client
             {
                 internal int argsCount;
 
-                [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
                 internal IntPtr args;
             }
 
             private WSManCommandArgSetInternal _internalData;
 
-            [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
             private MarshalledObject _data;
 
             #region Managed to Unmanaged
@@ -1733,7 +1725,6 @@ namespace System.Management.Automation.Remoting.Client
             // GC handle which prevents garbage collector from collecting this delegate.
             private GCHandle _gcHandle;
 
-            [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
             private readonly IntPtr _asyncCallback;
 
             internal WSManShellAsyncCallback(WSManShellCompletionFunction callback)
