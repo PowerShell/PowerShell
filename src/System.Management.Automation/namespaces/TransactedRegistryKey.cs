@@ -805,6 +805,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         {
             return InternalOpenSubKey(name, permissionCheck, (int)rights);
         }
+
         // Suppressed to be consistent with naming in Microsoft.Win32.RegistryKey
         [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
         private TransactedRegistryKey InternalOpenSubKey(string name, RegistryKeyPermissionCheck permissionCheck, int rights)
