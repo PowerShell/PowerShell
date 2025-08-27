@@ -141,9 +141,6 @@ namespace Microsoft.PowerShell.Commands.Internal
         // If that call fails with ERROR_INVALID_TRANSACTION, we have possibly run into bug 181242. To workaround
         // this, we open the key without a transaction and then open it again with
         // a transaction and return THAT hkey.
-
-        // Suppressed because there is no way for arbitrary data to be passed.
-        [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
         private int RegOpenKeyTransactedWrapper(SafeRegistryHandle hKey, string lpSubKey,
                     int ulOptions, int samDesired, out SafeRegistryHandle hkResult,
                     SafeTransactionHandle hTransaction, IntPtr pExtendedParameter)
