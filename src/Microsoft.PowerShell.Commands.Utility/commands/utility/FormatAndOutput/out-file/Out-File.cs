@@ -281,12 +281,10 @@ namespace Microsoft.PowerShell.Commands
             CleanUp();
         }
 
-        /// <summary>
-        /// InternalDispose.
-        /// </summary>
-        protected override void InternalDispose()
+        /// <inheritdoc/>
+        protected override void Dispose(bool disposing)
         {
-            base.InternalDispose();
+            base.Dispose(disposing);
             CleanUp();
         }
 
