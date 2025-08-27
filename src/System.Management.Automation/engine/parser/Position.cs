@@ -622,7 +622,6 @@ namespace System.Management.Automation.Language
         /// <param name="scriptLineNumber">The line number of the position, with the value 1 being the first line.</param>
         /// <param name="offsetInLine">The column number of the position, with the value 1 being the first column.</param>
         /// <param name="line">The complete text of the line that this position is included on.</param>
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
         public ScriptPosition(string scriptName, int scriptLineNumber, int offsetInLine, string line)
         {
             File = scriptName;
@@ -647,7 +646,6 @@ namespace System.Management.Automation.Language
         /// <param name="offsetInLine">The column number of the position, with the value 1 being the first column.</param>
         /// <param name="line">The complete text of the line that this position is included on.</param>
         /// <param name="fullScript">The complete script text.  Optional, can be null.</param>
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
         public ScriptPosition(
             string scriptName,
             int scriptLineNumber,

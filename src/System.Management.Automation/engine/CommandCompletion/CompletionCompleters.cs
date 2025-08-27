@@ -4420,7 +4420,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="fileName"></param>
         /// <returns></returns>
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
         public static IEnumerable<CompletionResult> CompleteFilename(string fileName)
         {
             var runspace = Runspace.DefaultRunspace;
@@ -4440,7 +4439,6 @@ namespace System.Management.Automation
             return CompleteFilename(context, containerOnly: false, extension: null);
         }
 
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
         internal static IEnumerable<CompletionResult> CompleteFilename(CompletionContext context, bool containerOnly, HashSet<string> extension)
         {
             var wordToComplete = context.WordToComplete;
