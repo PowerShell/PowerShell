@@ -209,7 +209,14 @@ namespace System.Management.Automation.Internal.Host
                 return;
             }
 
-            _externalUI.Write(foregroundColor, backgroundColor, value);
+            if (PSStyle.Instance.OutputRendering == OutputRendering.PlainText)
+            {
+                _externalUI.Write(value);
+            }
+            else
+            {
+                _externalUI.Write(foregroundColor, backgroundColor, value);
+            }
         }
 
         /// <summary>
@@ -303,7 +310,14 @@ namespace System.Management.Automation.Internal.Host
                 return;
             }
 
-            _externalUI.WriteLine(foregroundColor, backgroundColor, value);
+            if (PSStyle.Instance.OutputRendering == OutputRendering.PlainText)
+            {
+                _externalUI.WriteLine(value);
+            }
+            else
+            {
+                _externalUI.WriteLine(foregroundColor, backgroundColor, value);
+            }
         }
 
         /// <summary>

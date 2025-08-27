@@ -885,7 +885,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Helper class for Export-Csv and ConvertTo-Csv.
     /// </summary>
-    internal class ExportCsvHelper : IDisposable
+    internal sealed class ExportCsvHelper : IDisposable
     {
         private readonly char _delimiter;
         private readonly BaseCsvWritingCommand.QuoteKind _quoteKind;
@@ -1224,7 +1224,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Helper class to import single CSV file.
     /// </summary>
-    internal class ImportCsvHelper
+    internal sealed class ImportCsvHelper
     {
         #region constructor
 

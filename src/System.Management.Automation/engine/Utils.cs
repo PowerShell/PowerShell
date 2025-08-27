@@ -1539,14 +1539,14 @@ namespace System.Management.Automation
         /// <returns>True if the session is restricted.</returns>
         internal static bool IsSessionRestricted(ExecutionContext context)
         {
-                CmdletInfo cmdletInfo = context.SessionState.InvokeCommand.GetCmdlet("Microsoft.PowerShell.Core\\Import-Module");
-                // if import-module is visible, then the session is not restricted,
-                // because the user can load arbitrary code.
-                if (cmdletInfo != null && cmdletInfo.Visibility == SessionStateEntryVisibility.Public)
-                {
-                   return false;
-                }
-                return true;
+            CmdletInfo cmdletInfo = context.SessionState.InvokeCommand.GetCmdlet("Microsoft.PowerShell.Core\\Import-Module");
+            // if import-module is visible, then the session is not restricted,
+            // because the user can load arbitrary code.
+            if (cmdletInfo != null && cmdletInfo.Visibility == SessionStateEntryVisibility.Public)
+            {
+                return false;
+            }
+            return true;
         }
     }
 }
