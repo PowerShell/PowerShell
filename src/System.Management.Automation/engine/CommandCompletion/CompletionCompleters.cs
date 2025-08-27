@@ -64,7 +64,6 @@ namespace System.Management.Automation
         /// <param name="moduleName"></param>
         /// <param name="commandTypes"></param>
         /// <returns></returns>
-        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
         public static IEnumerable<CompletionResult> CompleteCommand(string commandName, string moduleName, CommandTypes commandTypes = CommandTypes.All)
         {
             var runspace = Runspace.DefaultRunspace;
