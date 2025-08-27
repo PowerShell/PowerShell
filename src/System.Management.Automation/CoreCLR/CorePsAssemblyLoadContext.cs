@@ -538,27 +538,39 @@ namespace System.Management.Automation
 
         private static string GetNativeDllSubFolderName(out string ext)
         {
-            string folderName = string.Empty;
-            ext = string.Empty;
-            var processArch = RuntimeInformation.ProcessArchitecture.ToString().ToLowerInvariant();
+            string architecture = ArchitectureToString(RuntimeInformation.ProcessArchitecture);
 
             if (Platform.IsWindows)
             {
-                folderName = "win-" + processArch;
                 ext = ".dll";
-            }
-            else if (Platform.IsLinux)
-            {
-                folderName = "linux-" + processArch;
-                ext = ".so";
-            }
-            else if (Platform.IsMacOS)
-            {
-                folderName = "osx-" + processArch;
-                ext = ".dylib";
+                return "win-" + architecture;
             }
 
-            return folderName;
+            if (Platform.IsLinux)
+            {
+                ext = ".so";
+                return "linux-" + architecture;
+            }
+
+            if (Platform.IsMacOS)
+            {
+                ext = ".dylib";
+                return "osx-" + architecture;
+            }
+
+            throw new PlatformNotSupportedException();
+        }
+
+        private static string ArchitectureToString(Architecture architecture)
+        {
+            return architecture switch
+            {
+                Architecture.X86 => "x86",
+                Architecture.X64 => "x64",
+                Architecture.Arm => "arm",
+                Architecture.Arm64 => "arm64",
+                _ => architecture.ToString().ToLowerInvariant()
+            };
         }
 
         #endregion Private_Methods
