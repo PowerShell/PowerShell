@@ -65,7 +65,8 @@ variables:
     value: ${{ iif ( parameters.OfficialBuild, 'v2/Microsoft.Official.yml@templates', 'v2/Microsoft.NonOfficial.yml@templates' ) }}
   - group: DotNetPrivateBuildAccess
   - group: certificate_logical_to_actual
-  - group: mscodehub-feed-read-general
+# We shouldn't be using PATs anymore
+#  - group: mscodehub-feed-read-general
 
 resources:
   repositories:
@@ -129,7 +130,7 @@ extends:
             clean: true
             path: s
             env:
-              ob_restore_phase: true 
+              ob_restore_phase: true
 
           - template: .pipelines/templates/SetVersionVariables.yml@self
             parameters:
