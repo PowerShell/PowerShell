@@ -38,8 +38,6 @@ namespace System.Management.Automation.Remoting.Server
         /// </summary>
         protected int _inProgressCommandsCount = 0;
 
-        protected PowerShellTraceSource tracer = PowerShellTraceSourceFactory.GetTraceSource();
-
         protected bool _exitProcessOnError;
 
         #endregion
@@ -170,7 +168,10 @@ namespace System.Management.Automation.Remoting.Server
 
                 _inProgressCommandsCount++;
 
-                tracer.WriteMessage("OutOfProcessMediator.OnCommandCreationPacketReceived, in progress command count : " + _inProgressCommandsCount + " psGuid : " + psGuid.ToString());
+                using (PowerShellTraceSource tracer = PowerShellTraceSourceFactory.GetTraceSource())
+                {
+                    tracer.WriteMessage("OutOfProcessMediator.OnCommandCreationPacketReceived, in progress command count : " + _inProgressCommandsCount + " psGuid : " + psGuid.ToString());
+                }
             }
         }
 
@@ -218,65 +219,66 @@ namespace System.Management.Automation.Remoting.Server
 
         protected void OnClosePacketReceived(Guid psGuid)
         {
-            PowerShellTraceSource tracer = PowerShellTraceSourceFactory.GetTraceSource();
-
-            if (psGuid == Guid.Empty)
+            using (PowerShellTraceSource tracer = PowerShellTraceSourceFactory.GetTraceSource())
             {
-                tracer.WriteMessage("BEGIN calling close on session transport manager");
-
-                bool waitForAllcmdsClosedEvent = false;
-
-                lock (_syncObject)
+                if (psGuid == Guid.Empty)
                 {
-                    if (_inProgressCommandsCount > 0)
-                        waitForAllcmdsClosedEvent = true;
+                    tracer.WriteMessage("BEGIN calling close on session transport manager");
+
+                    bool waitForAllcmdsClosedEvent = false;
+
+                    lock (_syncObject)
+                    {
+                        if (_inProgressCommandsCount > 0)
+                            waitForAllcmdsClosedEvent = true;
+                    }
+
+                    // Wait outside sync lock if required for all cmds to be closed
+                    //
+                    if (waitForAllcmdsClosedEvent)
+                        allcmdsClosedEvent.WaitOne();
+
+                    lock (_syncObject)
+                    {
+                        tracer.WriteMessage("OnClosePacketReceived, in progress commands count should be zero : " + _inProgressCommandsCount + ", psGuid : " + psGuid.ToString());
+
+                        // it appears that when closing PowerShell ISE, therefore closing OutOfProcServerMediator, there are 2 Close command requests
+                        // changing PSRP/IPC at this point is too risky, therefore protecting about this duplication
+                        sessionTM?.Close(null);
+
+                        tracer.WriteMessage("END calling close on session transport manager");
+                        sessionTM = null;
+                    }
+                }
+                else
+                {
+                    tracer.WriteMessage("Closing command with GUID " + psGuid.ToString());
+
+                    // this is for a command
+                    AbstractServerTransportManager cmdTM = null;
+
+                    lock (_syncObject)
+                    {
+                        cmdTM = sessionTM.GetCommandTransportManager(psGuid);
+                    }
+
+                    // dont throw if there is no cmdTM as it might have legitimately closed
+                    cmdTM?.Close(null);
+
+                    lock (_syncObject)
+                    {
+                        tracer.WriteMessage("OnClosePacketReceived, in progress commands count should be greater than zero : " + _inProgressCommandsCount + ", psGuid : " + psGuid.ToString());
+
+                        _inProgressCommandsCount--;
+
+                        if (_inProgressCommandsCount == 0)
+                            allcmdsClosedEvent.Set();
+                    }
                 }
 
-                // Wait outside sync lock if required for all cmds to be closed
-                //
-                if (waitForAllcmdsClosedEvent)
-                    allcmdsClosedEvent.WaitOne();
-
-                lock (_syncObject)
-                {
-                    tracer.WriteMessage("OnClosePacketReceived, in progress commands count should be zero : " + _inProgressCommandsCount + ", psGuid : " + psGuid.ToString());
-
-                    // it appears that when closing PowerShell ISE, therefore closing OutOfProcServerMediator, there are 2 Close command requests
-                    // changing PSRP/IPC at this point is too risky, therefore protecting about this duplication
-                    sessionTM?.Close(null);
-
-                    tracer.WriteMessage("END calling close on session transport manager");
-                    sessionTM = null;
-                }
+                // send close ack
+                originalStdOut.WriteLine(OutOfProcessUtils.CreateCloseAckPacket(psGuid));
             }
-            else
-            {
-                tracer.WriteMessage("Closing command with GUID " + psGuid.ToString());
-
-                // this is for a command
-                AbstractServerTransportManager cmdTM = null;
-
-                lock (_syncObject)
-                {
-                    cmdTM = sessionTM.GetCommandTransportManager(psGuid);
-                }
-
-                // dont throw if there is no cmdTM as it might have legitimately closed
-                cmdTM?.Close(null);
-
-                lock (_syncObject)
-                {
-                    tracer.WriteMessage("OnClosePacketReceived, in progress commands count should be greater than zero : " + _inProgressCommandsCount + ", psGuid : " + psGuid.ToString());
-
-                    _inProgressCommandsCount--;
-
-                    if (_inProgressCommandsCount == 0)
-                        allcmdsClosedEvent.Set();
-                }
-            }
-
-            // send close ack
-            originalStdOut.WriteLine(OutOfProcessUtils.CreateCloseAckPacket(psGuid));
         }
 
         protected void OnCloseAckPacketReceived(Guid psGuid)

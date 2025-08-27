@@ -330,6 +330,8 @@ namespace System.Management.Automation.Remoting
                 try { HyperVSocket.Dispose(); }
                 catch (ObjectDisposedException) { }
             }
+
+            _tracer.Dispose();
         }
 
         #endregion
