@@ -1,14 +1,20 @@
 trigger: none
 
 parameters: # parameters are shown up in ADO UI in a build queue time
+- name: OfficialBuild
+  type: boolean
+  default: false
 - name: 'createVPack'
   displayName: 'Create and Submit VPack'
   type: boolean
   default: true
-- name: 'debug'
-  displayName: 'Enable debug output'
-  type: boolean
-  default: false
+- name: vPackName
+  type: string
+  displayName: 'VPack Name:'
+  default: 'PowerShell'
+  values:
+    - PowerShell
+    - PowerShellDoNotUse
 - name: 'VPackPublishOverride'
   type: string
   displayName: 'VPack Publish Override Version (can leave blank):'
@@ -17,16 +23,10 @@ parameters: # parameters are shown up in ADO UI in a build queue time
   type: string
   displayName: 'Release Tag Var:'
   default: 'fromBranch'
-- name: OfficialBuild
+- name: 'debug'
+  displayName: 'Enable debug output'
   type: boolean
   default: false
-- name: vPackName
-  type: string
-  displayName: 'VPack Name:'
-  default: 'PowerShell'
-  values:
-    - PowerShell
-    - PowerShellDoNotUse
 
 name: vPack_$(date:yyMM).$(date:dd)$(rev:rrr)
 
@@ -99,9 +99,9 @@ extends:
         enabled: false
       tsaOptionsFile: .config/tsaoptions.json
     stages:
-    - stage: main
+    - stage: Build
       jobs:
-      - job: main
+      - job: Build
         pool:
           type: windows
 
@@ -126,14 +126,14 @@ extends:
           ob_outputDirectory: '$(BUILD.SOURCESDIRECTORY)\out'
           ob_createvpack_enabled: ${{ parameters.createVPack }}
           ob_createvpack_owneralias: tplunk
-          ob_createvpack_versionAs: string
-          ob_createvpack_version: '$(version)'
+          ob_createvpack_versionAs: parts
           ob_createvpack_propsFile: true
           ob_createvpack_verbose: true
           ArtifactPlatform: 'windows'
 
         steps:
           - checkout: self
+            displayName: Checkout source code - during restore
             clean: true
             path: s
             env:
@@ -144,6 +144,36 @@ extends:
               ReleaseTagVar: $(ReleaseTagVar)
               CreateJson: yes
               UseJson: no
+
+          - pwsh: |
+              Write-Host "Using VPackPublishOverride variable"
+
+              $mainVersionParts = '$(version)' -split '-'
+              $versionParts =  $mainVersionParts[0] -split '.';
+              $major = $versionParts[0]
+              $minor = $versionParts[1]
+              $patch = $versionParts[2]
+              $previewPart = $mainVersionParts[1]
+
+              Write-Host "major: $major; minor: $minor; patch: $patch;"
+
+              $vstsCommandString = "vso[task.setvariable variable=ob_createvpack_majorVer]$major"
+              Write-Host "sending " + $vstsCommandString
+              Write-Host "##$vstsCommandString"
+
+              $vstsCommandString = "vso[task.setvariable variable=ob_createvpack_minorVer]$minor"
+              Write-Host "sending " + $vstsCommandString
+              Write-Host "##$vstsCommandString"
+
+              $vstsCommandString = "vso[task.setvariable variable=ob_createvpack_patchVer]$patch"
+              Write-Host "sending " + $vstsCommandString
+              Write-Host "##$vstsCommandString"
+              if($previewPart) {
+                $vstsCommandString = "vso[task.setvariable variable=ob_createvpack_prereleaseVer]$previewPart"
+              } else {
+                Write-Verbose -Verbose "No prerelease part found in version string."
+              }
+            displayName: Set ob_createvpack_*Ver
 
           - pwsh: |
               if($env:RELEASETAGVAR -match '-') {
@@ -173,6 +203,7 @@ extends:
               Language: csharp
 
           - task: UseDotNet@2
+            displayName: 'Install .NET based on global.json'
             inputs:
               useGlobalJson: true
               workingDirectory: $(repoRoot)
@@ -225,7 +256,7 @@ extends:
               Save-PSOptions -PSOptionsPath $psOptPath
 
               Write-Verbose -Verbose "Completed building PowerShell for '$env:BuildConfiguration' configuration"
-            displayName: Build Windows Universal - $(Architecture) - -$(BuildConfiguration) Symbols folder
+            displayName: Build Windows Universal - $(Architecture) -$(BuildConfiguration) Symbols folder
             env:
               __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
               ob_restore_phase: true # Set ob_restore_phase to run this step before '🔒 Setup Signing' step.
@@ -243,7 +274,7 @@ extends:
           ### END OF BUILD ###
 
           - pwsh: |
-              Write-Verbose "VPack Version: $(ob_createvpack_version)" -Verbose
+              Get-ChildItem env:ob_createvpack_*Ver
               Get-ChildItem -Path "$(Pipeline.Workspace)\Symbols_$(Architecture)\*" -Recurse
               Get-Content "$(Pipeline.Workspace)\PowerShell\preview.json" -ErrorAction SilentlyContinue | Write-Host
             displayName: Debug Output Directory and Version
