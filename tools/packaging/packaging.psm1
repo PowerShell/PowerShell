@@ -888,8 +888,7 @@ function Update-PSSignedBuildFolder
         [Parameter(Mandatory)]
         [string]$SignedFilesPath,
         [string[]] $RemoveFilter = ('*.pdb', '*.zip', '*.r2rmap'),
-        [bool]$OfficialBuild = $true,
-        [bool]$CheckIssuerOnly = $false
+        [bool]$OfficialBuild = $true
     )
 
     $BuildPathNormalized = (Get-Item $BuildPath).FullName
