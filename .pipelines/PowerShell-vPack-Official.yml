@@ -174,12 +174,16 @@ extends:
                 Write-Verbose -Verbose "No prerelease part found in version string."
               }
             displayName: Set ob_createvpack_*Ver
+            env:
+              ob_restore_phase: true
 
           - pwsh: |
               if($env:RELEASETAGVAR -match '-') {
                   throw "Don't release a preview build without coordinating with Windows Engineering Build Tools Team"
               }
             displayName: Stop any preview release
+            env:
+              ob_restore_phase: true
 
           - task: UseDotNet@2
             displayName: 'Use .NET Core sdk'
