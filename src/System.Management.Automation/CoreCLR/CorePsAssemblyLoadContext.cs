@@ -242,11 +242,11 @@ namespace System.Management.Automation
         /// </summary>
         internal static IntPtr NativeDllHandler(Assembly assembly, string libraryName)
         {
-            s_nativeDllSubFolder ??= GetNativeDllSubFolderName(out s_nativeDllExtension);
-            string folder = Path.GetDirectoryName(assembly.Location);
-            string fullName = Path.Combine(folder, s_nativeDllSubFolder, libraryName) + s_nativeDllExtension;
+            string libraryDirectory = GetNativeLibraryDirectoryName(out string libraryExtension);
+            string assemblyDirectory = Path.GetDirectoryName(assembly.Location);
+            string libraryPath = Path.Combine(assemblyDirectory, libraryDirectory, libraryName) + libraryExtension;
 
-            return NativeLibrary.TryLoad(fullName, out IntPtr pointer) ? pointer : IntPtr.Zero;
+            return NativeLibrary.TryLoad(libraryPath, out IntPtr pointer) ? pointer : IntPtr.Zero;
         }
 
         #endregion Internal_Methods
@@ -533,44 +533,52 @@ namespace System.Management.Automation
             throw new FileNotFoundException(message);
         }
 
-        private static string s_nativeDllSubFolder;
-        private static string s_nativeDllExtension;
-
-        private static string GetNativeDllSubFolderName(out string ext)
+        /// <summary>
+        /// Returns the native library directory name and extension for the operating system and architecture.
+        /// </summary>
+        /// <remarks>
+        /// The JIT can optimize these switch branches as constant values.
+        /// </remarks>
+        private static string GetNativeLibraryDirectoryName(out string libraryExtension)
         {
-            string architecture = ArchitectureToString(RuntimeInformation.ProcessArchitecture);
-
-            if (Platform.IsWindows)
+            if (OperatingSystem.IsWindows())
             {
-                ext = ".dll";
-                return "win-" + architecture;
+                libraryExtension = ".dll";
+                return RuntimeInformation.ProcessArchitecture switch
+                {
+                    Architecture.X64 => "win-x64",
+                    Architecture.X86 => "win-x86",
+                    Architecture.Arm => "win-arm",
+                    Architecture.Arm64 => "win-arm64",
+                    _ => throw new PlatformNotSupportedException(),
+                };
             }
 
-            if (Platform.IsLinux)
+            if (OperatingSystem.IsLinux())
             {
-                ext = ".so";
-                return "linux-" + architecture;
+                libraryExtension = ".so";
+                return RuntimeInformation.ProcessArchitecture switch
+                {
+                    Architecture.X64 => "linux-x64",
+                    Architecture.X86 => "linux-x86",
+                    Architecture.Arm => "linux-arm",
+                    Architecture.Arm64 => "linux-arm64",
+                    _ => throw new PlatformNotSupportedException(),
+                };
             }
 
-            if (Platform.IsMacOS)
+            if (OperatingSystem.IsMacOS())
             {
-                ext = ".dylib";
-                return "osx-" + architecture;
+                libraryExtension = ".dylib";
+                return RuntimeInformation.ProcessArchitecture switch
+                {
+                    Architecture.X64 => "osx-x64",
+                    Architecture.Arm64 => "osx-arm64",
+                    _ => throw new PlatformNotSupportedException(),
+                };
             }
 
             throw new PlatformNotSupportedException();
-        }
-
-        private static string ArchitectureToString(Architecture architecture)
-        {
-            return architecture switch
-            {
-                Architecture.X86 => "x86",
-                Architecture.X64 => "x64",
-                Architecture.Arm => "arm",
-                Architecture.Arm64 => "arm64",
-                _ => architecture.ToString().ToLowerInvariant()
-            };
         }
 
         #endregion Private_Methods
