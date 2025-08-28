@@ -265,6 +265,12 @@ extends:
             env:
               ob_restore_phase: true # Set ob_restore_phase to run this step before '🔒 Setup Signing' step.
 
+          - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
+            displayName: 'Component Detection'
+            inputs:
+              sourceScanPath: '$(repoRoot)\src'
+              ob_restore_phase: true
+
           - template: /.pipelines/templates/obp-file-signing.yml@self
             parameters:
               binPath: '$(Pipeline.Workspace)/Symbols_$(Architecture)'
