@@ -9,14 +9,6 @@ parameters: # parameters are shown up in ADO UI in a build queue time
   displayName: 'Enable debug output'
   type: boolean
   default: false
-- name: 'architecture'
-  type: string
-  displayName: 'Select the vpack architecture:'
-  values:
-    - x64
-    - x86
-    - arm64
-  default: x64
 - name: 'VPackPublishOverride'
   type: string
   displayName: 'VPack Publish Override Version (can leave blank):'
@@ -36,7 +28,7 @@ parameters: # parameters are shown up in ADO UI in a build queue time
     - PowerShell
     - PowerShellDoNotUse
 
-name: vPack_${{ parameters.architecture }}_$(date:yyMM).$(date:dd)$(rev:rrr)
+name: vPack_$(date:yyMM).$(date:dd)$(rev:rrr)
 
 variables:
   - name: CDP_DEFINITION_BUILD_COUNT
@@ -113,11 +105,26 @@ extends:
         pool:
           type: windows
 
+        strategy:
+          matrix:
+            x86:
+              architecture: x86
+              ob_createvpack_packagename: '${{ parameters.vPackName }}.x86'
+              ob_createvpack_description: PowerShell x86 $(version)
+
+            x64:
+              architecture: x64
+              ob_createvpack_packagename: '${{ parameters.vPackName }}.x64'
+              ob_createvpack_description: PowerShell x64 $(version)
+
+            arm64:
+              architecture: arm64
+              ob_createvpack_packagename: '${{ parameters.vPackName }}.arm64'
+              ob_createvpack_description: PowerShell arm64 $(version)
+
         variables:
           ob_outputDirectory: '$(BUILD.SOURCESDIRECTORY)\out'
           ob_createvpack_enabled: ${{ parameters.createVPack }}
-          ob_createvpack_packagename: '${{ parameters.vPackName }}.${{ parameters.architecture }}'
-          ob_createvpack_description: PowerShell ${{ parameters.architecture }} $(version)
           ob_createvpack_owneralias: tplunk
           ob_createvpack_versionAs: string
           ob_createvpack_version: '$(version)'
@@ -178,7 +185,7 @@ extends:
               Write-Host ("sending " + $vstsCommandString)
               Write-Host "##$vstsCommandString"
 
-              $Architecture = '${{ parameters.architecture }}'
+              $Architecture = '$(Architecture)'
               $runtime = switch ($Architecture)
                 {
                   "x64" { "win7-x64" }
@@ -218,7 +225,7 @@ extends:
               Save-PSOptions -PSOptionsPath $psOptPath
 
               Write-Verbose -Verbose "Completed building PowerShell for '$env:BuildConfiguration' configuration"
-            displayName: 'Build Windows Universal - ${{ parameters.architecture }} - -$(BuildConfiguration) Symbols folder'
+            displayName: 'Build Windows Universal - '$(Architecture)' - -$(BuildConfiguration) Symbols folder'
             env:
               __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
               ob_restore_phase: true # Set ob_restore_phase to run this step before '🔒 Setup Signing' step.
@@ -229,7 +236,7 @@ extends:
 
           - template: /.pipelines/templates/obp-file-signing.yml@self
             parameters:
-              binPath: '$(Pipeline.Workspace)/Symbols_${{ parameters.architecture }}'
+              binPath: '$(Pipeline.Workspace)/Symbols_$(Architecture)'
               SigningProfile: $(windows_build_tools_cert_id)
               OfficialBuild: false
 
@@ -237,7 +244,7 @@ extends:
 
           - pwsh: |
               Write-Verbose "VPack Version: $(ob_createvpack_version)" -Verbose
-              Get-ChildItem -Path "$(Pipeline.Workspace)\Symbols_${{ parameters.architecture }}\*" -Recurse
+              Get-ChildItem -Path "$(Pipeline.Workspace)\Symbols_$(Architecture)\*" -Recurse
               Get-Content "$(Pipeline.Workspace)\PowerShell\preview.json" -ErrorAction SilentlyContinue | Write-Host
             displayName: Debug Output Directory and Version
             condition: succeededOrFailed()
@@ -258,9 +265,9 @@ extends:
 
           - pwsh: |
               Write-Verbose "VPack Version: $(ob_createvpack_version)" -Verbose
-              $vpackFiles = Get-ChildItem -Path "$(Pipeline.Workspace)\Symbols_${{ parameters.architecture }}\*" -Recurse
+              $vpackFiles = Get-ChildItem -Path "$(Pipeline.Workspace)\Symbols_$(Architecture)\*" -Recurse
               if($vpackFiles.Count -eq 0) {
-                  throw "No files found in $(Pipeline.Workspace)\Symbols_${{ parameters.architecture }}"
+                  throw "No files found in $(Pipeline.Workspace)\Symbols_$(Architecture)"
               }
               $vpackFiles
             displayName: Debug Output Directory and Version
