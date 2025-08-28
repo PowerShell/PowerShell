@@ -4,7 +4,7 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <AssemblyName>MyApp</AssemblyName>
     <OutputType>Exe</OutputType>
-    <RuntimeIdentifiers>win10-x64;linux-x64;osx-x64</RuntimeIdentifiers>
+    <RuntimeIdentifiers>win10-x64;linux-x64;osx-x64;freebsd-x64</RuntimeIdentifiers>
   </PropertyGroup>
 
   <ItemGroup>
