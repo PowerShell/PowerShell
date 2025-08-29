@@ -3,7 +3,7 @@ trigger: none
 parameters: # parameters are shown up in ADO UI in a build queue time
 - name: OfficialBuild
   type: boolean
-  default: false
+  default: true
 - name: 'createVPack'
   displayName: 'Create and Submit VPack'
   type: boolean
