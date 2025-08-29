@@ -106,7 +106,6 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// <param name="peUse"></param>
         /// <returns></returns>
         [DllImport(PinvokeDllNames.LookupAccountSidDllName, CharSet = CharSet.Unicode, SetLastError = true, BestFitMapping = false)]
-        [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern unsafe bool LookupAccountSid(string lpSystemName,
                                                      IntPtr sid,
@@ -138,7 +137,6 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         [DllImport(PinvokeDllNames.CloseHandleDllName, SetLastError = true)]
-        [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool CloseHandle(IntPtr handle);
 
@@ -150,7 +148,6 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// <param name="tokenHandle">Process token.</param>
         /// <returns>The current process token.</returns>
         [DllImport(PinvokeDllNames.OpenProcessTokenDllName, CharSet = CharSet.Unicode, SetLastError = true, BestFitMapping = false)]
-        [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool OpenProcessToken(IntPtr processHandle, uint desiredAccess, out IntPtr tokenHandle);
 
@@ -165,7 +162,6 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// <param name="returnLength"></param>
         /// <returns></returns>
         [DllImport(PinvokeDllNames.GetTokenInformationDllName, CharSet = CharSet.Unicode, SetLastError = true, BestFitMapping = false)]
-        [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool GetTokenInformation(IntPtr tokenHandle,
                                                         TOKEN_INFORMATION_CLASS tokenInformationClass,
