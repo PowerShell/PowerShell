@@ -81,9 +81,9 @@ namespace Microsoft.PowerShell.Commands
                 {
                     List<PSObject> parsedFields = new();
                     MatchCollection fieldMatch = HtmlParser.InputFieldRegex.Matches(Content);
-                    foreach (Match field in fieldMatch)
+                    foreach (Match match in fieldMatch)
                     {
-                        parsedFields.Add(CreateHtmlObject(field.Value, "INPUT"));
+                        parsedFields.Add(CreateHtmlObject(match.Value, "INPUT"));
                     }
 
                     _inputFields = new WebCmdletElementCollection(parsedFields);
