@@ -105,21 +105,12 @@ extends:
           matrix:
             x86:
               architecture: x86
-              ob_createvpack_packagename: '${{ parameters.vPackName }}.x86'
-              ob_createvpack_description: PowerShell x86 $(version)
-              ob_artifactBaseName: drop_build_x86
 
             x64:
               architecture: x64
-              ob_createvpack_packagename: '${{ parameters.vPackName }}.x64'
-              ob_createvpack_description: PowerShell x64 $(version)
-              ob_artifactBaseName: drop_build_x64
 
             arm64:
               architecture: arm64
-              ob_createvpack_packagename: '${{ parameters.vPackName }}.arm64'
-              ob_createvpack_description: PowerShell arm64 $(version)
-              ob_artifactBaseName: drop_build_arm64
 
         variables:
           ob_outputDirectory: '$(BUILD.SOURCESDIRECTORY)\out'
@@ -128,6 +119,10 @@ extends:
           ob_createvpack_versionAs: parts
           ob_createvpack_propsFile: true
           ob_createvpack_verbose: true
+          ob_createvpack_packagename: '${{ parameters.vPackName }}.$(architecture)'
+          ob_createvpack_description: PowerShell $(architecture) $(version)
+          ob_artifactBaseName: drop_build_$(architecture)
+          ob_artifactSuffix: $(architecture)
           ArtifactPlatform: 'windows'
 
         steps:
