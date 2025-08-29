@@ -148,7 +148,7 @@ extends:
               $mainVersionParts = $version -split '-'
 
               Write-Verbose -Verbose "mainVersionParts: $($mainVersionParts[0]) ; $($mainVersionParts[1])"
-              $versionParts =  $mainVersionParts[0] -split '.';
+              $versionParts =  $mainVersionParts[0] -split '[.]';
               $major = $versionParts[0]
               $minor = $versionParts[1]
               $patch = $versionParts[2]
@@ -187,6 +187,8 @@ extends:
                      }
                 }
             displayName: Validate ob_createvpack_*Ver variables
+            env:
+              ob_restore_phase: true
 
           - pwsh: |
               if($env:RELEASETAGVAR -match '-') {
