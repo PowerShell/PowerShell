@@ -1396,6 +1396,7 @@ namespace System.Management.Automation
         {
             var startInfo = new ProcessStartInfo
             {
+                // codeql[cs/microsoft/command-line-injection-shell-execution] - This is expected Poweshell behavior where user inputted paths are supported for the context of this method. The user assumes trust for the file path specified to retrieved process info for, so any info would be for the user except for remoting in which case restricted remoting security guidelines should be used.
                 FileName = this.Path
             };
 

@@ -419,6 +419,7 @@ namespace System.Management.Automation.Help
                         using (HttpClient client = new HttpClient(handler))
                         {
                             client.Timeout = new TimeSpan(0, 0, 30); // Set 30 second timeout
+                            // codeql[cs/ssrf] - This is expected Poweshell behavior and the user assumes the risk for the help content Uri they are invoking PowerShell for on their machine. PowerShell is not a web application or server, so no server side resources are at risk.
                             Task<HttpResponseMessage> responseMessage = client.GetAsync(uri);
                             using (HttpResponseMessage response = responseMessage.Result)
                             {
@@ -783,6 +784,7 @@ namespace System.Management.Automation.Help
                 using (HttpClient client = new HttpClient(handler))
                 {
                     client.Timeout = _defaultTimeout;
+                    // codeql[cs/ssrf] - This is expected Poweshell behavior where the user assumes the risk for the help content they download on their machine. PowerShell is not a web application or server, so no server side resources are at risk.
                     Task<HttpResponseMessage> responseMsg = client.GetAsync(new Uri(uri), _cancelTokenSource.Token);
 
                     // TODO: Should I use a continuation to write the stream to a file?
