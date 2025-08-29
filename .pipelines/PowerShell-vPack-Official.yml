@@ -107,16 +107,19 @@ extends:
               architecture: x86
               ob_createvpack_packagename: '${{ parameters.vPackName }}.x86'
               ob_createvpack_description: PowerShell x86 $(version)
+              ob_artifactSuffix: x86
 
             x64:
               architecture: x64
               ob_createvpack_packagename: '${{ parameters.vPackName }}.x64'
               ob_createvpack_description: PowerShell x64 $(version)
+              ob_artifactSuffix: x64
 
             arm64:
               architecture: arm64
               ob_createvpack_packagename: '${{ parameters.vPackName }}.arm64'
               ob_createvpack_description: PowerShell arm64 $(version)
+              ob_artifactSuffix: arm64
 
         variables:
           ob_outputDirectory: '$(BUILD.SOURCESDIRECTORY)\out'
