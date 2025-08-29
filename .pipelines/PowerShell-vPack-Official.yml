@@ -122,7 +122,6 @@ extends:
           ob_createvpack_packagename: '${{ parameters.vPackName }}.$(architecture)'
           ob_createvpack_description: PowerShell $(architecture) $(version)
           ob_artifactBaseName: drop_build_$(architecture)
-          ob_artifactSuffix: $(architecture)
           ArtifactPlatform: 'windows'
 
         steps:
