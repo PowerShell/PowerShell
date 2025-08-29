@@ -753,14 +753,6 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
         return [string[]]$osPagingFiles
     }
 
-    function Get-UnixSecondsToDateTime
-    {
-        param([string]$seconds)
-
-        $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
-        $origin.AddSeconds($seconds)
-    }
-
     function Get-WinNtCurrentVersion
     {
         # This method was translated/converted from cmdlet impl method = RegistryInfo.GetWinNtCurrentVersion();
@@ -774,7 +766,7 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
             # more complicated case: InstallDate
             if ($regValue)
             {
-                return Get-UnixSecondsToDateTime $regValue
+                return [DateTimeOffset]::FromUnixTimeSeconds([long][int]$regValue).DateTime
             }
         }
         else
