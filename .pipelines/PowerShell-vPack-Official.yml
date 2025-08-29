@@ -24,7 +24,7 @@ parameters: # parameters are shown up in ADO UI in a build queue time
   type: boolean
   default: false
 
-name: vPack_$(Build.SourceBranchName)_Prod_${{ parameters.OfficialBuild }}_Create_${{ parameters.createVPack }}_$(date:yyMM).$(date:dd)$(rev:rrr)
+name: vPack.$(Build.SourceBranchName).Prod.${{ parameters.OfficialBuild }}.Create.${{ parameters.createVPack }}.Name.${{ parameters.vPackName}}.$(date:yyyyMMdd).$(rev:rr)
 
 variables:
   - name: CDP_DEFINITION_BUILD_COUNT
