@@ -796,7 +796,7 @@ namespace System.Management.Automation
 
         #region ToString
         /// <summary>
-        /// As <see cref="System.Object.ToString()"/>
+        /// As <see cref="object.ToString()"/>
         /// </summary>
         /// <returns>Developer-readable identifier.</returns>
         public override string ToString()
@@ -1677,7 +1677,7 @@ namespace System.Management.Automation
 
         #region ToString
         /// <summary>
-        /// As <see cref="System.Object.ToString()"/>
+        /// As <see cref="object.ToString()"/>
         /// </summary>
         /// <returns>Developer-readable identifier.</returns>
         public override string ToString()
