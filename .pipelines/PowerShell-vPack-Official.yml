@@ -113,6 +113,8 @@ extends:
               architecture: arm64
 
         variables:
+          ArtifactPlatform: 'windows'
+          ob_artifactBaseName: drop_build_$(architecture)
           ob_outputDirectory: '$(BUILD.SOURCESDIRECTORY)\out'
           ob_createvpack_enabled: ${{ parameters.createVPack }}
           ob_createvpack_owneralias: tplunk
@@ -121,8 +123,14 @@ extends:
           ob_createvpack_verbose: true
           ob_createvpack_packagename: '${{ parameters.vPackName }}.$(architecture)'
           ob_createvpack_description: PowerShell $(architecture) $(version)
-          ob_artifactBaseName: drop_build_$(architecture)
-          ArtifactPlatform: 'windows'
+          # I think the variables reload after we transition back to the host so this works. 🤷‍♂️
+          ob_createvpack_majorVer: $(pwshMajorVersion)
+          ob_createvpack_minorVer: $(pwshMinorVersion)
+          ob_createvpack_patchVer: $(pwshPatchVersion)
+          ${{ if ne(variables['pwshPrereleaseVersion'], '') }}:
+            ob_createvpack_prereleaseVer: $(pwshPrereleaseVersion)
+          ${{ else }}:
+            ob_createvpack_prereleaseVer: $(Build.SourceVersion)
 
         steps:
           - checkout: self
@@ -158,19 +166,19 @@ extends:
 
               Write-Host "major: $major; minor: $minor; patch: $patch;"
 
-              $vstsCommandString = "vso[task.setvariable variable=ob_createvpack_majorVer]$major"
+              $vstsCommandString = "vso[task.setvariable variable=pwshMajorVersion]$major"
               Write-Host ("sending " + $vstsCommandString)
               Write-Host "##$vstsCommandString"
 
-              $vstsCommandString = "vso[task.setvariable variable=ob_createvpack_minorVer]$minor"
+              $vstsCommandString = "vso[task.setvariable variable=pwshMinorVersion]$minor"
               Write-Host ("sending " + $vstsCommandString)
               Write-Host "##$vstsCommandString"
 
-              $vstsCommandString = "vso[task.setvariable variable=ob_createvpack_patchVer]$patch"
+              $vstsCommandString = "vso[task.setvariable variable=pwshPatchVersion]$patch"
               Write-Host ("sending " + $vstsCommandString)
               Write-Host "##$vstsCommandString"
               if($previewPart) {
-                $vstsCommandString = "vso[task.setvariable variable=ob_createvpack_prereleaseVer]$previewPart"
+                $vstsCommandString = "vso[task.setvariable variable=pwshPrereleaseVersion]$previewPart"
               } else {
                 Write-Verbose -Verbose "No prerelease part found in version string."
               }
@@ -178,15 +186,15 @@ extends:
             env:
               ob_restore_phase: true
 
+          # Validate pwsh*Version variables
           - pwsh: |
-                #validate ob_createvpack_*Ver variables
-                $variables = @("ob_createvpack_majorVer", "ob_createvpack_minorVer", "ob_createvpack_patchVer")
+                $variables = @("pwshMajorVersion", "pwshMinorVersion", "pwshPatchVersion")
                 foreach ($var in $variables) {
                      if (-not (get-item "Env:\$var" -ErrorAction SilentlyContinue).value) {
                          throw "Required variable '`$env:$var' is not set."
                      }
                 }
-            displayName: Validate ob_createvpack_*Ver variables
+            displayName: Validate pwsh*Version variables
             env:
               ob_restore_phase: true
 
@@ -297,7 +305,7 @@ extends:
           ### END OF BUILD ###
 
           - pwsh: |
-              Get-ChildItem env:ob_createvpack_*Ver
+              Get-ChildItem env:/ob_createvpack_*Ver
               Get-ChildItem -Path "$(Pipeline.Workspace)\Symbols_$(Architecture)\*" -Recurse
               Get-Content "$(Pipeline.Workspace)\PowerShell\preview.json" -ErrorAction SilentlyContinue | Write-Host
             displayName: Debug Output Directory and Version
