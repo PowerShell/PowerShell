@@ -2638,9 +2638,8 @@ namespace System.Management.Automation
                 }
             }
 
-            var registeredCompleters = optionKey.Equals("NativeArgumentCompleters", StringComparison.OrdinalIgnoreCase)
-                ? context.NativeArgumentCompleters
-                : context.CustomArgumentCompleters;
+            bool isNative = optionKey.Equals("NativeArgumentCompleters", StringComparison.OrdinalIgnoreCase);
+            var registeredCompleters = isNative ? context.NativeArgumentCompleters : context.CustomArgumentCompleters;
 
             if (registeredCompleters != null)
             {
@@ -2650,6 +2649,13 @@ namespace System.Management.Automation
                     {
                         return scriptBlock;
                     }
+                }
+
+                // For a native command, if a fallback completer is registered, then return it.
+                // For example, the 'Microsoft.PowerShell.UnixTabCompletion' module.
+                if (isNative && registeredCompleters.TryGetValue(RegisterArgumentCompleterCommand.FallbackCompleterKey, out scriptBlock))
+                {
+                    return scriptBlock;
                 }
             }
 
