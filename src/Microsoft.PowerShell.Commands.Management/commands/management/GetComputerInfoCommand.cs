@@ -1246,17 +1246,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (key != null)
                 {
-                    object temp = key.GetValue("InstallDate");
-
                     return new RegWinNtCurrentVersion()
                     {
                         BuildLabEx = (string)key.GetValue("BuildLabEx"),
                         CurrentVersion = (string)key.GetValue("CurrentVersion"),
                         EditionId = (string)key.GetValue("EditionID"),
                         InstallationType = (string)key.GetValue("InstallationType"),
-                        InstallDate = temp == null
-                            ? (DateTime?)null
-                            : DateTimeOffset.FromUnixTimeSeconds((long)(int)temp).DateTime,
+                        InstallDate = key.GetValue("InstallDate") is int seconds
+                            ? DateTimeOffset.FromUnixTimeSeconds(seconds).DateTime : null,
                         ProductId = (string)key.GetValue("ProductId"),
                         ProductName = (string)key.GetValue("ProductName"),
                         RegisteredOrganization = (string)key.GetValue("RegisteredOrganization"),
