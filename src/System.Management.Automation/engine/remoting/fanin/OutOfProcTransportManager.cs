@@ -1663,7 +1663,7 @@ namespace System.Management.Automation.Remoting.Client
             PSRemotingCryptoHelper cryptoHelper)
             : base(runspaceId, cryptoHelper)
         {
-            if (connectionInfo == null) { throw new PSArgumentException("connectionInfo"); }
+            if (connectionInfo == null) { throw new PSArgumentException(null, nameof(connectionInfo)); }
 
             _connectionInfo = connectionInfo;
         }

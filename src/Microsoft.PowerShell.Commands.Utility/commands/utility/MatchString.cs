@@ -534,7 +534,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (Count > (array.Length - arrayIndex))
                 {
-                    throw new ArgumentException("arrayIndex");
+                    throw new ArgumentException(null, nameof(arrayIndex));
                 }
 
                 // Iterate through the buffer in correct order.
