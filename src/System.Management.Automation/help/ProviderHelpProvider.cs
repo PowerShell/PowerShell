@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
@@ -136,7 +135,7 @@ namespace System.Management.Automation
         /// (Which should not happen unless some provider is pointing
         /// to a help file that actually doesn't contain the help for it).
         /// </summary>
-        private readonly Hashtable _helpFiles = new Hashtable();
+        private readonly HashSet<string> _helpFiles = new();
 
         /// <summary>
         /// Load help file provided.
@@ -200,7 +199,7 @@ namespace System.Management.Automation
                 null); /* default maxCharactersInDocument */
 
             // Add this file into _helpFiles hashtable to prevent it to be loaded again.
-            _helpFiles[helpFile] = 0;
+            _helpFiles.Add(helpFile);
 
             XmlNode helpItemsNode = null;
 
