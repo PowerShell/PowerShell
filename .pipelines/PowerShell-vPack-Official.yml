@@ -139,25 +139,35 @@ extends:
               UseJson: no
 
           - pwsh: |
-              $mainVersionParts = '$(version)' -split '-'
+              $version = '$(Version)'
+              Write-Verbose -Verbose "Version: $version"
+              if(!$version) {
+                  throw "Version is not set."
+              }
+
+              $mainVersionParts = $version -split '-'
+
+              Write-Verbose -Verbose "mainVersionParts: $($mainVersionParts[0]) ; $($mainVersionParts[1])"
               $versionParts =  $mainVersionParts[0] -split '.';
               $major = $versionParts[0]
               $minor = $versionParts[1]
               $patch = $versionParts[2]
+
               $previewPart = $mainVersionParts[1]
+              Write-Verbose -Verbose "previewPart: $previewPart"
 
               Write-Host "major: $major; minor: $minor; patch: $patch;"
 
               $vstsCommandString = "vso[task.setvariable variable=ob_createvpack_majorVer]$major"
-              Write-Host "sending " + $vstsCommandString
+              Write-Host ("sending " + $vstsCommandString)
               Write-Host "##$vstsCommandString"
 
               $vstsCommandString = "vso[task.setvariable variable=ob_createvpack_minorVer]$minor"
-              Write-Host "sending " + $vstsCommandString
+              Write-Host ("sending " + $vstsCommandString)
               Write-Host "##$vstsCommandString"
 
               $vstsCommandString = "vso[task.setvariable variable=ob_createvpack_patchVer]$patch"
-              Write-Host "sending " + $vstsCommandString
+              Write-Host ("sending " + $vstsCommandString)
               Write-Host "##$vstsCommandString"
               if($previewPart) {
                 $vstsCommandString = "vso[task.setvariable variable=ob_createvpack_prereleaseVer]$previewPart"
@@ -167,6 +177,16 @@ extends:
             displayName: Set ob_createvpack_*Ver
             env:
               ob_restore_phase: true
+
+          - pwsh: |
+                #validate ob_createvpack_*Ver variables
+                $variables = @("ob_createvpack_majorVer", "ob_createvpack_minorVer", "ob_createvpack_patchVer")
+                foreach ($var in $variables) {
+                     if (-not (get-item "Env:\$var" -ErrorAction SilentlyContinue).value) {
+                         throw "Required variable '`$env:$var' is not set."
+                     }
+                }
+            displayName: Validate ob_createvpack_*Ver variables
 
           - pwsh: |
               if($env:RELEASETAGVAR -match '-') {
