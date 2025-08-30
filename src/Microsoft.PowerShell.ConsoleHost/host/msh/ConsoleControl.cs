@@ -1234,7 +1234,7 @@ namespace Microsoft.PowerShell
         /// <exception cref="HostException">
         /// If there is not enough memory to complete calls to Win32's ReadConsoleOutput
         /// </exception>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called in CHK builds")]
+        [SuppressMessage("Style", "IDE0051:Remove unused private members", Justification = "Called in CHK builds")]
         internal static void CheckWriteEdges(
             ConsoleHandle consoleHandle,
             uint codePage, Coordinates origin,
@@ -1294,7 +1294,7 @@ namespace Microsoft.PowerShell
             }
         }
 
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called in CHK builds")]
+        [SuppressMessage("Style", "IDE0051:Remove unused private members", Justification = "Called in CHK builds")]
         private static void CheckWriteConsoleOutputContents(BufferCell[,] contents, Rectangle contentsRegion)
         {
             for (int r = contentsRegion.Top; r <= contentsRegion.Bottom; r++)

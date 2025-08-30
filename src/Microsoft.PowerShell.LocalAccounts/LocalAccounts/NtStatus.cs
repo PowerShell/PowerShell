@@ -456,7 +456,7 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
         /// <returns>
         /// True if the NTSTATUS value indicates a warning, false otherwise.
         /// </returns>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+        [SuppressMessage("Style", "IDE0051:Remove unused private members")]
         public static bool IsWarning(UInt32 ntstatus)
         {
             return Severity(ntstatus) == STATUS_SEVERITY_WARNING;
@@ -469,7 +469,7 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
         /// <returns>
         /// True if the NTSTATUS value indicates that it is informational, false otherwise.
         /// </returns>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+        [SuppressMessage("Style", "IDE0051:Remove unused private members")]
         public static bool IsInformational(UInt32 ntstatus)
         {
             return Severity(ntstatus) == STATUS_SEVERITY_INFORMATIONAL;
@@ -495,7 +495,7 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
         /// The value of the Facility portion of an NTSTATUS value.
         /// </returns>
 
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+        [SuppressMessage("Style", "IDE0051:Remove unused private members")]
         public static uint Facility(UInt32 ntstatus)
         {
             return (ntstatus >> 16) & 0x0FFF;
@@ -508,7 +508,7 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
         /// <returns>
         /// The value of the Code portion of an NTSTATUS value.
         /// </returns>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+        [SuppressMessage("Style", "IDE0051:Remove unused private members")]
         public static uint Code(UInt32 ntstatus)
         {
             return ntstatus & 0xFFFF;
