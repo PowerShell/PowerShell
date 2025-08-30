@@ -558,6 +558,10 @@ dotnet_diagnostic.CA2015.severity = warning
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2016
 dotnet_diagnostic.CA2016.severity = suggestion
 
+# CA2021: Do not call Enumerable.Cast<T> or Enumerable.OfType<T> with incompatible types
+# https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2021
+dotnet_diagnostic.CA2021.severity = warning
+
 # CA2100: Review SQL queries for security vulnerabilities
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2100
 dotnet_diagnostic.CA2100.severity = none
