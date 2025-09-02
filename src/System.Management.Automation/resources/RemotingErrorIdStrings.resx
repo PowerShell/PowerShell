@@ -1723,4 +1723,10 @@ SSH client process terminated before connection could be established.</value>
   <data name="HyperVFailedToGetStateUnknownType" xml:space="preserve">
     <value>Failed to get Hyper-V VM State. The value was of the type {0} but was expected to be Microsoft.HyperV.PowerShell.VMState or System.String.</value>
   </data>
+  <data name="HyperVInvalidResponse" xml:space="preserve">
+    <value>Hyper-V {0} sent an invalid {1} response during the connection negotiation.</value>
+  </data>
+  <data name="HyperVNegotiationFailed" xml:space="preserve">
+    <value>Negotiating a secure connection to Hyper-V failed. Make sure the Host and Guest are updated with all relevant Microsoft Updates.</value>
+  </data>
 </root>
