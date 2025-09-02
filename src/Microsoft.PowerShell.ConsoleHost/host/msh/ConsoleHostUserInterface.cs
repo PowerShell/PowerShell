@@ -1396,6 +1396,7 @@ namespace Microsoft.PowerShell
                 }
                 else
                 {
+                    value = GetOutputString(value, SupportsVirtualTerminal);
                     Console.Error.WriteLine(value);
                 }
             }
