@@ -155,6 +155,9 @@ steps:
     }
     else {
       $pathForUpload = '${{ parameters.binPath }}'
+      Write-Verbose -Verbose -Message "pathForUpload: $pathForUpload"
+      Copy-Item -Path '${{ parameters.binPath }}\*' -Destination $pathForUpload -Recurse -Force -Verbose
+      Write-Verbose -Verbose -Message "Files copied to $pathForUpload"
     }
 
     Write-Verbose "Copying third party signed files to the build folder"
