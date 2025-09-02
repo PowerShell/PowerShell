@@ -78,17 +78,6 @@ variables:
   - group: mscodehub-feed-read-akv
   - name: ENABLE_MSBUILD_BINLOGS
     value: ${{ parameters.ENABLE_MSBUILD_BINLOGS }}
-<<<<<<< HEAD
-=======
-  - ${{ if eq(parameters['FORCE_CODEQL'],'true') }}:
-    # Cadence is hours before CodeQL will allow a re-upload of the database
-    - name: CodeQL.Cadence
-      value: 1
-  - name: CODEQL_ENABLED
-    ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters['FORCE_CODEQL'],'true')) }}:
-      value: true
-    ${{ else }}:
-      value: false
   - name: templateFile
     value: ${{ iif ( parameters.OfficialBuild, 'v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates', 'v2/OneBranch.NonOfficial.CrossPlat.yml@onebranchTemplates' ) }}
   # Fix for BinSkim ICU package error in Linux containers
@@ -97,8 +86,6 @@ variables:
   # Disable BinSkim at job level to override NonOfficial template defaults
   - name: ob_sdl_binskim_enabled
     value: false
-  
->>>>>>> 10a8226f8 (Remove AsyncSDL from Pipelines Toggle Official/NonOfficial Runs (#25885))
 
 extends:
   template: ${{ variables.templateFile }}
@@ -129,21 +116,6 @@ extends:
       cg:
         enabled: true
         ignoreDirectories: '.devcontainer,demos,docker,docs,src,test,tools/packaging'
-<<<<<<< HEAD
-      asyncSdl:
-        enabled: true
-        forStages: [prep, macos, linux, windows, SignFiles, test_and_release_artifacts]
-        credscan:
-          enabled: true
-          scanFolder:  $(Build.SourcesDirectory)
-          suppressionsFile: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
-        binskim:
-          enabled: false
-        # APIScan requires a non-Ready-To-Run build
-        apiscan:
-          enabled: false
-        tsaOptionsFile: .config\tsaoptions.json
-=======
       binskim:
         enabled: false
         exactToolVersion: 4.4.2
@@ -151,7 +123,6 @@ extends:
       apiscan:
         enabled: false
       tsaOptionsFile: .config\tsaoptions.json
->>>>>>> 10a8226f8 (Remove AsyncSDL from Pipelines Toggle Official/NonOfficial Runs (#25885))
 
     stages:
     - stage: prep
