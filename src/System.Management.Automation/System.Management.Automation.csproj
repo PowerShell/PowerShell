@@ -32,25 +32,25 @@
     <!-- the Application Insights package -->
     <PackageReference Include="Microsoft.ApplicationInsights" Version="2.22.0" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
-    <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="9.0.6" />
-    <PackageReference Include="System.CodeDom" Version="9.0.6" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="9.0.6" />
-    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="9.0.6" />
-    <PackageReference Include="System.Diagnostics.EventLog" Version="9.0.6" />
-    <PackageReference Include="System.DirectoryServices" Version="9.0.6" />
+    <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="9.0.8" />
+    <PackageReference Include="System.CodeDom" Version="9.0.8" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="9.0.8" />
+    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="9.0.8" />
+    <PackageReference Include="System.Diagnostics.EventLog" Version="9.0.8" />
+    <PackageReference Include="System.DirectoryServices" Version="9.0.8" />
     <!--PackageReference Include="System.IO.FileSystem.AccessControl" Version="6.0.0-preview.5.21301.5" /-->
-    <PackageReference Include="System.Management" Version="9.0.6" />
+    <PackageReference Include="System.Management" Version="9.0.8" />
     <PackageReference Include="System.Security.AccessControl" Version="6.0.1" />
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="9.0.6" />
-    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="9.0.6" />
-    <PackageReference Include="System.Security.Permissions" Version="9.0.6" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="9.0.6" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="9.0.8" />
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="9.0.8" />
+    <PackageReference Include="System.Security.Permissions" Version="9.0.8" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="9.0.8" />
     <!-- the following package(s) are from the powershell org -->
     <PackageReference Include="Microsoft.Management.Infrastructure" Version="3.0.0" />
     <PackageReference Include="Microsoft.PowerShell.Native" Version="7.4.0" />
     <!-- Signing APIs -->
     <PackageReference Include="Microsoft.Security.Extensions" Version="1.4.0" />
-    <PackageReference Include="System.Windows.Extensions" Version="9.0.6" />
+    <PackageReference Include="System.Windows.Extensions" Version="9.0.8" />
   </ItemGroup>
 
   <PropertyGroup>
