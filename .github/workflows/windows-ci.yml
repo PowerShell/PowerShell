@@ -18,6 +18,7 @@ on:
       - master
       - release/**
       - github-mirror
+      - "*-feature"
 
 # Path filters for PRs need to go into the changes job
 
