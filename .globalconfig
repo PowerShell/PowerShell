@@ -1666,7 +1666,7 @@ dotnet_diagnostic.SA1027.severity = none
 
 # SA1028: Code should not contain trailing whitespace
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1028.md
-dotnet_diagnostic.SA1028.severity = none
+dotnet_diagnostic.SA1028.severity = warning
 
 # SA1100: Do not prefix calls with base unless local implementation exists
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1100.md
