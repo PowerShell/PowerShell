@@ -330,7 +330,7 @@ namespace Microsoft.PowerShell.Commands
             bool writeError,
             Collection<PSTraceSource> matchingSources)
         {
-            ArgumentNullException.ThrowIfNull(cmdlet); 
+            ArgumentNullException.ThrowIfNull(cmdlet);
             ArgumentNullException.ThrowIfNull(matchingSources);
 
             _cmdlet = cmdlet;

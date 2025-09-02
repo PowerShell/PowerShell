@@ -1014,7 +1014,7 @@ namespace System.Management.Automation.Remoting.Client
         }
 
         #endregion
-    
+
         #region Protected Methods
 
         /// <summary>
@@ -1716,7 +1716,7 @@ namespace System.Management.Automation.Remoting.Client
             // Start connection timeout timer if requested.
             // Timer callback occurs only once after timeout time.
             _connectionTimer = new Timer(
-                callback: (_) => 
+                callback: (_) =>
                 {
                     if (_connectionEstablished)
                     {
@@ -2505,7 +2505,7 @@ namespace System.Management.Automation.Remoting.Server
             _stdErrWriter = errWriter;
             _cmdTransportManagers = new Dictionary<Guid, OutOfProcessServerTransportManager>();
 
-            this.WSManTransportErrorOccured += (object sender, TransportErrorOccuredEventArgs e) => 
+            this.WSManTransportErrorOccured += (object sender, TransportErrorOccuredEventArgs e) =>
             {
                 string msg = e.Exception.TransportMessage ?? e.Exception.InnerException?.Message ?? string.Empty;
                 _stdErrWriter.WriteLine(StringUtil.Format(RemotingErrorIdStrings.RemoteTransportError, msg));
