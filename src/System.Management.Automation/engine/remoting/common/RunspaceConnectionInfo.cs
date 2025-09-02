@@ -2245,7 +2245,7 @@ namespace System.Management.Automation.Runspaces
                     }
                 }
             }
-            
+
             if (string.IsNullOrEmpty(filePath))
             {
                 throw new CommandNotFoundException(

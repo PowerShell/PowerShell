@@ -25,7 +25,7 @@ namespace mvc.Controllers
         public JsonResult Gzip()
         {
             var getController = new GetController();
-            getController.ControllerContext = this.ControllerContext;            
+            getController.ControllerContext = this.ControllerContext;
             return getController.Index();
         }
 
@@ -33,7 +33,7 @@ namespace mvc.Controllers
         public JsonResult Deflate()
         {
             var getController = new GetController();
-            getController.ControllerContext = this.ControllerContext;            
+            getController.ControllerContext = this.ControllerContext;
             return getController.Index();
         }
 
@@ -41,7 +41,7 @@ namespace mvc.Controllers
         public JsonResult Brotli()
         {
             var getController = new GetController();
-            getController.ControllerContext = this.ControllerContext;            
+            getController.ControllerContext = this.ControllerContext;
             return getController.Index();
         }
 
