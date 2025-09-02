@@ -1966,7 +1966,9 @@ function Test-PSPesterResults
 
 function Start-PSxUnit {
     [CmdletBinding()]param(
-        [string] $xUnitTestResultsFile = "xUnitResults.xml"
+        [string] $xUnitTestResultsFile = "xUnitResults.xml",
+        [switch] $DebugLogging,
+        [string] $Filter
     )
 
     # Add .NET CLI tools to PATH
@@ -2024,9 +2026,28 @@ function Start-PSxUnit {
 
         # We run the xUnit tests sequentially to avoid race conditions caused by manipulating the config.json file.
         # xUnit tests run in parallel by default. To make them run sequentially, we need to define the 'xunit.runner.json' file.
-        dotnet test --configuration $Options.configuration --test-adapter-path:. "--logger:xunit;LogFilePath=$xUnitTestResultsFile"
+        $extraParams = @()
+        if($Filter) {
+            $extraParams += @(
+                '--filter'
+                $Filter
+            )
+        }
 
-        Publish-TestResults -Path $xUnitTestResultsFile -Type 'XUnit' -Title 'Xunit Sequential'
+        if($DebugLogging) {
+            $extraParams += @(
+                "--logger:console;verbosity=detailed"
+            )
+        } else {
+            $extraParams += @(
+                "--logger:xunit;LogFilePath=$xUnitTestResultsFile"
+            )
+        }
+        dotnet test @extraParams --configuration $Options.configuration --test-adapter-path:.
+
+        if(!$DebugLogging){
+            Publish-TestResults -Path $xUnitTestResultsFile -Type 'XUnit' -Title 'Xunit Sequential'
+        }
     }
     finally {
         $env:DOTNET_ROOT = $originalDOTNET_ROOT
