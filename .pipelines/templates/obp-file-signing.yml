@@ -147,7 +147,7 @@ steps:
     Import-Module '$(PowerShellRoot)/tools/packaging' -Force
     $isGlobalTool = '${{ parameters.globalTool }}' -eq 'true'
 
-    if (-not $isGlobalTool) {
+    if (-not $isGlobalTool -and $officialBuild) {
       $pathForUpload = New-Item -ItemType Directory -Path '$(ob_outputDirectory)/Signed-$(Runtime)' -Force
       Write-Verbose -Verbose -Message "pathForUpload: $pathForUpload"
       Copy-Item -Path '${{ parameters.binPath }}\*' -Destination $pathForUpload -Recurse -Force -Verbose
