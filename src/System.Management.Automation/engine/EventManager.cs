@@ -2045,7 +2045,7 @@ namespace System.Management.Automation
         {
             return obj is PSEventSubscriber es && Equals(es);
         }
-        
+
         /// <summary>
         /// Determines if two PSEventSubscriber instances are equal
         /// </summary>

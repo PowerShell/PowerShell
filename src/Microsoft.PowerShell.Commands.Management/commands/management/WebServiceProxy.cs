@@ -475,7 +475,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
                 }
 
-                if (proxyType != null) 
+                if (proxyType != null)
                 {
                     break;
                 }

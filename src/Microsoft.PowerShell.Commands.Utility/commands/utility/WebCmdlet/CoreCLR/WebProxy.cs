@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.Commands
                 return false;
             }
 
-            // _proxyAddress cannot be null as it is set in the constructor            
+            // _proxyAddress cannot be null as it is set in the constructor
             return other._credentials == _credentials
                 && _proxyAddress.Equals(other._proxyAddress)
                 && BypassProxyOnLocal == other.BypassProxyOnLocal;

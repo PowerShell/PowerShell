@@ -449,12 +449,12 @@ namespace System.Management.Automation
             // eg: Host<Tab> finds Microsoft.PowerShell.Host
             // If the user has entered a manual wildcard, or a module name that contains a "." we assume they only want results that matches the input exactly.
             bool shortNameSearch = wordToComplete.Length > 0 && !WildcardPattern.ContainsWildcardCharacters(wordToComplete) && !wordToComplete.Contains('.');
-            
+
             if (!wordToComplete.EndsWith('*'))
             {
                 wordToComplete += "*";
             }
-            
+
             string[] moduleNames;
             WildcardPattern shortNamePattern;
             if (shortNameSearch)
@@ -849,7 +849,7 @@ namespace System.Management.Automation
             [NotNullWhen(true)] out string? message)
         {
             message = null;
-            
+
             if (attr.HelpMessage is not null)
             {
                 message = attr.HelpMessage;
@@ -927,7 +927,7 @@ namespace System.Management.Automation
                                     addCommonParameters = false;
                                     break;
                                 }
-                                
+
                                 if (helpMessage is null && TryGetParameterHelpMessage(pattr, commandAssembly, out string attrHelpMessage))
                                 {
                                     helpMessage = $" - {attrHelpMessage}";
@@ -4767,7 +4767,7 @@ namespace System.Management.Automation
                     var resultType = isContainer
                         ? CompletionResultType.ProviderContainer
                         : CompletionResultType.ProviderItem;
-                    
+
                     bool leafQuotesNeeded;
                     var completionText = NewPathCompletionText(
                         basePath,
@@ -4991,7 +4991,7 @@ namespace System.Management.Automation
             for (int i = 0; i < path.Length; i++)
             {
                 // on Windows, we need to preserve the expanded home path as native commands don't understand it
-#if UNIX                
+#if UNIX
                 if (i == homeIndex)
                 {
                     _ = sb.Append('~');
@@ -8613,7 +8613,7 @@ namespace System.Management.Automation
         /// <param name="parametersToAdd">The parameters to add.</param>
         /// <returns>Collection of command info objects.</returns>
         internal static Collection<CommandInfo> GetCommandInfo(
-            IDictionary fakeBoundParameters, 
+            IDictionary fakeBoundParameters,
             params string[] parametersToAdd)
         {
             using var ps = PowerShell.Create(RunspaceMode.CurrentRunspace);
