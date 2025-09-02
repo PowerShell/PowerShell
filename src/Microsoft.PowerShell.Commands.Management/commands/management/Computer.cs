@@ -24,9 +24,6 @@ using Microsoft.Management.Infrastructure.Options;
 using Microsoft.Win32;
 using Dbg = System.Management.Automation;
 
-// FxCop suppressions for resource strings:
-[module: SuppressMessage("Microsoft.Naming", "CA1703:ResourceStringsShouldBeSpelledCorrectly", Scope = "resource", Target = "ComputerResources.resources", MessageId = "unjoined")]
-
 namespace Microsoft.PowerShell.Commands
 {
     #region Restart-Computer
