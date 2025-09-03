@@ -141,4 +141,3 @@ function Test-Completions
         }
     }
 }
-
