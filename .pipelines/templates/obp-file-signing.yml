@@ -144,6 +144,7 @@ steps:
 
 - pwsh: |
     $officialBuild = [System.Convert]::ToBoolean('${{ parameters.OfficialBuild }}')
+    $vPackScenario = [System.Convert]::ToBoolean('${{ parameters.vPackScenario }}')
     Import-Module '$(PowerShellRoot)/build.psm1' -Force
     Import-Module '$(PowerShellRoot)/tools/packaging' -Force
     $isGlobalTool = '${{ parameters.globalTool }}' -eq 'true'
