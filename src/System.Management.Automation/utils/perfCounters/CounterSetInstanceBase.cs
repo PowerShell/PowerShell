@@ -74,7 +74,6 @@ namespace System.Management.Automation.PerformanceData
         /// But, if isNumerator is false, then a check is made on the input
         /// counter's type to ensure that denominator is indeed value for such a counter.
         /// </summary>
-        [SuppressMessage("Microsoft.Usage", "CA2233:OperationsShouldNotOverflow", Justification = "countId is validated as known denominator before it is incremented.")]
         protected bool RetrieveTargetCounterIdIfValid(int counterId, bool isNumerator, out int targetCounterId)
         {
             targetCounterId = counterId;

@@ -321,7 +321,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// This allows for @{e='foo';label='bar';alignment='center';width='20'}.
         /// </summary>
-        internal class ConvertHTMLExpressionParameterDefinition : CommandParameterDefinition
+        internal sealed class ConvertHTMLExpressionParameterDefinition : CommandParameterDefinition
         {
             protected override void SetEntries()
             {

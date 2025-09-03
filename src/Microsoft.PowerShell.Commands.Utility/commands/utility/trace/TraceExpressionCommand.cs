@@ -323,7 +323,7 @@ namespace Microsoft.PowerShell.Commands
     /// cmdlet.  It gets attached to the sub-pipelines success or error pipeline and redirects
     /// all objects written to these pipelines to trace-command pipeline.
     /// </summary>
-    internal class TracePipelineWriter : PipelineWriter
+    internal sealed class TracePipelineWriter : PipelineWriter
     {
         internal TracePipelineWriter(
             TraceListenerCommandBase cmdlet,

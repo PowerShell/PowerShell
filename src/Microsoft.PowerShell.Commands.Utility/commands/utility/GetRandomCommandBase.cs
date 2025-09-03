@@ -561,7 +561,7 @@ namespace Microsoft.PowerShell.Commands
     /// methods using the NextBytes() primitive based on the CLR implementation:
     ///     https://referencesource.microsoft.com/#mscorlib/system/random.cs.
     /// </summary>
-    internal class PolymorphicRandomNumberGenerator
+    internal sealed class PolymorphicRandomNumberGenerator
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="PolymorphicRandomNumberGenerator"/> class.

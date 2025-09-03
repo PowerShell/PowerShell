@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.Commands
 
     /// <summary>
     /// </summary>
-    internal class SortObjectExpressionParameterDefinition : CommandParameterDefinition
+    internal sealed class SortObjectExpressionParameterDefinition : CommandParameterDefinition
     {
         protected override void SetEntries()
         {
@@ -36,7 +36,7 @@ namespace Microsoft.PowerShell.Commands
 
     /// <summary>
     /// </summary>
-    internal class GroupObjectExpressionParameterDefinition : CommandParameterDefinition
+    internal sealed class GroupObjectExpressionParameterDefinition : CommandParameterDefinition
     {
         protected override void SetEntries()
         {
@@ -630,7 +630,7 @@ namespace Microsoft.PowerShell.Commands
         internal bool comparable = false;
     }
 
-    internal class OrderByPropertyComparer : IComparer<OrderByPropertyEntry>
+    internal sealed class OrderByPropertyComparer : IComparer<OrderByPropertyEntry>
     {
         internal OrderByPropertyComparer(bool[] ascending, CultureInfo cultureInfo, bool caseSensitive)
         {
@@ -699,7 +699,7 @@ namespace Microsoft.PowerShell.Commands
         private readonly ObjectCommandComparer[] _propertyComparers = null;
     }
 
-    internal class IndexedOrderByPropertyComparer : IComparer<OrderByPropertyEntry>
+    internal sealed class IndexedOrderByPropertyComparer : IComparer<OrderByPropertyEntry>
     {
         internal IndexedOrderByPropertyComparer(OrderByPropertyComparer orderByPropertyComparer)
         {

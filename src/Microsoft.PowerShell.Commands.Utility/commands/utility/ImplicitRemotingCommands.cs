@@ -1916,7 +1916,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion
     }
 
-    internal class ImplicitRemotingCodeGenerator
+    internal sealed class ImplicitRemotingCodeGenerator
     {
         internal static readonly Version VersionOfScriptWriter = new(1, 0);
 

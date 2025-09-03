@@ -12,7 +12,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
     /// <summary>
     /// Job wrapping invocation of a CreateInstance intrinsic CIM method.
     /// </summary>
-    internal class CreateInstanceJob : PropertySettingJob<CimInstance>
+    internal sealed class CreateInstanceJob : PropertySettingJob<CimInstance>
     {
         private CimInstance _resultFromCreateInstance;
         private CimInstance _resultFromGetInstance;

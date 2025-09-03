@@ -715,7 +715,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Helper class to import single XML file.
     /// </summary>
-    internal class ImportXmlHelper : IDisposable
+    internal sealed class ImportXmlHelper : IDisposable
     {
         #region constructor
 

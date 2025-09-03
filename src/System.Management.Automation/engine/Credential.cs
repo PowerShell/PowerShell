@@ -10,9 +10,6 @@ using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using Microsoft.PowerShell;
 
-// FxCop suppressions for resource strings:
-[module: SuppressMessage("Microsoft.Naming", "CA1703:ResourceStringsShouldBeSpelledCorrectly", Scope = "resource", Target = "Credential.resources", MessageId = "Cred")]
-
 namespace System.Management.Automation
 {
     /// <summary>

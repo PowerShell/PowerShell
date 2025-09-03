@@ -2505,7 +2505,6 @@ namespace System.Management.Automation
     /// This remote instance of PowerShell can be in a separate process,
     /// appdomain or machine.
     /// </remarks>
-    [SuppressMessage("Microsoft.Usage", "CA2240:ImplementISerializableCorrectly")]
     public class RemoteException : RuntimeException
     {
         /// <summary>

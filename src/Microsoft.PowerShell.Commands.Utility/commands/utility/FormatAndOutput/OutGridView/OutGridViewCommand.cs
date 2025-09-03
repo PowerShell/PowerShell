@@ -323,7 +323,7 @@ namespace Microsoft.PowerShell.Commands
             internal abstract void ProcessInputObject(PSObject input);
         }
 
-        internal class ScalarTypeHeader : GridHeader
+        internal sealed class ScalarTypeHeader : GridHeader
         {
             private readonly Type _originalScalarType;
 
@@ -349,7 +349,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        internal class NonscalarTypeHeader : GridHeader
+        internal sealed class NonscalarTypeHeader : GridHeader
         {
             private readonly AppliesTo _appliesTo = null;
 
@@ -453,7 +453,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        internal class HeteroTypeHeader : GridHeader
+        internal sealed class HeteroTypeHeader : GridHeader
         {
             internal HeteroTypeHeader(OutGridViewCommand parentCmd, PSObject input) : base(parentCmd)
             {
