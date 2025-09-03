@@ -121,6 +121,9 @@ function SetOperation {
     elseif (-not $InputResource._exist -and $profileExists) {
         Remove-Item -Path $profilePath -Force
     }
+    elseif (-not $InputResource._exist -and -not $profileExists) {
+        # Do nothing
+    }
 }
 
 $inputJson = $input | ConvertFrom-Json
