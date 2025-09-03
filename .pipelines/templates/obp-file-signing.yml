@@ -151,7 +151,7 @@ steps:
 
     if ($vPackScenario) {
       Write-Verbose -Verbose -Message "vPackScenario is true, copying to $(ob_outputDirectory)"
-      $pathForUpload = New-Item -ItemType Directory -Path '$(ob_outputDirectory)/Signed-$(Runtime)' -Force
+      $pathForUpload = New-Item -ItemType Directory -Path '$(ob_outputDirectory)' -Force
       Write-Verbose -Verbose -Message "pathForUpload: $pathForUpload"
       Copy-Item -Path '${{ parameters.binPath }}\*' -Destination $pathForUpload -Recurse -Force -Verbose
       Write-Verbose -Verbose -Message "Files copied to $pathForUpload"
