@@ -155,7 +155,7 @@ steps:
       Copy-Item -Path '${{ parameters.binPath }}\*' -Destination $pathForUpload -Recurse -Force -Verbose
       Write-Verbose -Verbose -Message "Files copied to $pathForUpload"
     }
-    if (-not $isGlobalTool) {
+    elseif (-not $isGlobalTool) {
       $pathForUpload = New-Item -ItemType Directory -Path '$(ob_outputDirectory)/Signed-$(Runtime)' -Force
       Write-Verbose -Verbose -Message "pathForUpload: $pathForUpload"
       Copy-Item -Path '${{ parameters.binPath }}\*' -Destination $pathForUpload -Recurse -Force -Verbose
