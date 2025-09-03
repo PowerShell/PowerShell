@@ -1325,6 +1325,7 @@ namespace Microsoft.PowerShell.Commands
             if (ShouldProcess(resource, action))
             {
                 var invokeProcess = new System.Diagnostics.Process();
+                // codeql[cs/microsoft/command-line-injection-shell-execution] - This is expected Poweshell behavior where user inputted paths are supported for the context of this method. The user assumes trust for the file path they are specifying. If there is concern for remoting, restricted remoting guidelines should be used.
                 invokeProcess.StartInfo.FileName = path;
 #if UNIX
                 bool useShellExecute = false;
