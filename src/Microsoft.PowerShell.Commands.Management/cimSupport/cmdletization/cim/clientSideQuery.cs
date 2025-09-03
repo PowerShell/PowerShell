@@ -20,9 +20,9 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
     /// 1) filtering that cannot be translated into a server-side query (i.e. when CimQuery.WildcardToWqlLikeOperand reports that it cannot translate into WQL)
     /// 2) detecting if all expected results have been received and giving friendly user errors otherwise (i.e. could not find process with name='foo';  details in Windows 8 Bugs: #60926)
     /// </summary>
-    internal class ClientSideQuery : QueryBuilder
+    internal sealed class ClientSideQuery : QueryBuilder
     {
-        internal class NotFoundError
+        internal sealed class NotFoundError
         {
             public NotFoundError()
             {
@@ -530,7 +530,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             }
         }
 
-        internal class PropertyValueExcludeFilter : PropertyValueRegularFilter
+        internal sealed class PropertyValueExcludeFilter : PropertyValueRegularFilter
         {
             public PropertyValueExcludeFilter(string propertyName, object expectedPropertyValue, bool wildcardsEnabled, BehaviorOnNoMatch behaviorOnNoMatch)
                 : base(propertyName, expectedPropertyValue, wildcardsEnabled, behaviorOnNoMatch)
@@ -548,7 +548,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             }
         }
 
-        internal class PropertyValueMinFilter : PropertyValueFilter
+        internal sealed class PropertyValueMinFilter : PropertyValueFilter
         {
             public PropertyValueMinFilter(string propertyName, object expectedPropertyValue, BehaviorOnNoMatch behaviorOnNoMatch)
                 : base(propertyName, expectedPropertyValue, behaviorOnNoMatch)
@@ -583,7 +583,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             }
         }
 
-        internal class PropertyValueMaxFilter : PropertyValueFilter
+        internal sealed class PropertyValueMaxFilter : PropertyValueFilter
         {
             public PropertyValueMaxFilter(string propertyName, object expectedPropertyValue, BehaviorOnNoMatch behaviorOnNoMatch)
                 : base(propertyName, expectedPropertyValue, behaviorOnNoMatch)

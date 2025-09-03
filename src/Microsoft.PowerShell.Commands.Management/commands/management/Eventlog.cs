@@ -1465,4 +1465,3 @@ namespace Microsoft.PowerShell.Commands
 
     #endregion RemoveEventLogCommand
 }
-

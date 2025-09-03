@@ -98,7 +98,7 @@ jobs:
         $artifactName = '$(artifactName)'
         $rootPath = "$(Pipeline.Workspace)/PSPackagesOfficial/$artifactName"
 
-        $env:DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
+        $env:DOTNET_NOLOGO=1
         Import-Module "$repoRoot/build.psm1" -Force
         Find-Dotnet -SetDotnetRoot
         Write-Verbose -Verbose "DOTNET_ROOT: $env:DOTNET_ROOT"
