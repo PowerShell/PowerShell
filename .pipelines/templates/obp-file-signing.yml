@@ -3,6 +3,7 @@ parameters:
   globalTool: 'false'
   SigningProfile: 'external_distribution'
   OfficialBuild: true
+  vPackScenario: false
 
 steps:
 - pwsh: |
@@ -147,7 +148,14 @@ steps:
     Import-Module '$(PowerShellRoot)/tools/packaging' -Force
     $isGlobalTool = '${{ parameters.globalTool }}' -eq 'true'
 
-    if (-not $isGlobalTool -and $officialBuild) {
+    if ($vPackScenario) {
+      Write-Verbose -Verbose -Message "vPackScenario is true, copying to $(ob_outputDirectory)"
+      $pathForUpload = New-Item -ItemType Directory -Path '$(ob_outputDirectory)/Signed-$(Runtime)' -Force
+      Write-Verbose -Verbose -Message "pathForUpload: $pathForUpload"
+      Copy-Item -Path '${{ parameters.binPath }}\*' -Destination $pathForUpload -Recurse -Force -Verbose
+      Write-Verbose -Verbose -Message "Files copied to $pathForUpload"
+    }
+    if (-not $isGlobalTool) {
       $pathForUpload = New-Item -ItemType Directory -Path '$(ob_outputDirectory)/Signed-$(Runtime)' -Force
       Write-Verbose -Verbose -Message "pathForUpload: $pathForUpload"
       Copy-Item -Path '${{ parameters.binPath }}\*' -Destination $pathForUpload -Recurse -Force -Verbose
@@ -155,9 +163,6 @@ steps:
     }
     else {
       $pathForUpload = '${{ parameters.binPath }}'
-      Write-Verbose -Verbose -Message "pathForUpload: $pathForUpload"
-      Copy-Item -Path '${{ parameters.binPath }}\*' -Destination $pathForUpload -Recurse -Force -Verbose
-      Write-Verbose -Verbose -Message "Files copied to $pathForUpload"
     }
 
     Write-Verbose "Copying third party signed files to the build folder"

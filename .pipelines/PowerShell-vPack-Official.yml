@@ -301,6 +301,7 @@ extends:
               binPath: '$(Pipeline.Workspace)/Symbols_$(Architecture)'
               SigningProfile: $(windows_build_tools_cert_id)
               OfficialBuild: false
+              vPackScenario: true
 
           ### END OF BUILD ###
 
