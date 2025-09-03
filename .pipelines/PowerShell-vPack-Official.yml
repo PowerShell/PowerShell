@@ -312,20 +312,7 @@ extends:
             condition: succeededOrFailed()
 
           - pwsh: |
-<<<<<<< HEAD
-              Write-Host "Using VPackPublishOverride variable"
-              $vpackVersion = '${{ parameters.VPackPublishOverride }}'
-              $vstsCommandString = "vso[task.setvariable variable=ob_createvpack_version]$vpackVersion"
-              Write-Host "sending " + $vstsCommandString
-              Write-Host "##$vstsCommandString"
-            condition: ne('${{ parameters.VPackPublishOverride }}', ' ')
-            displayName: 'Set ob_createvpack_version with VPackPublishOverride'
-
-          - pwsh: |
-              Get-ChildItem -Path env:
-=======
               Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
->>>>>>> 499cedfaf (Add build to vPack Pipeline (#25915))
             displayName: Capture Environment
             condition: succeededOrFailed()
 
