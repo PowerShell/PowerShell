@@ -16,7 +16,6 @@ namespace Microsoft.Management.UI.Internal
     /// The generic parameter.
     /// </typeparam>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
-    [Serializable]
     public class IsBetweenFilterRule<T> : ComparableValueFilterRule<T> where T : IComparable
     {
         #region Properties
@@ -120,13 +119,6 @@ namespace Microsoft.Management.UI.Internal
             {
                 this.NotifyEvaluationResultInvalidated();
             }
-        }
-
-        [OnDeserialized]
-        private void Initialize(StreamingContext context)
-        {
-            this.StartValue.PropertyChanged += this.Value_PropertyChanged;
-            this.EndValue.PropertyChanged += this.Value_PropertyChanged;
         }
 
         #endregion Value Change Handlers

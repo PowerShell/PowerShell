@@ -13,7 +13,6 @@ namespace Microsoft.Management.UI.Internal
     /// </summary>
     /// <typeparam name="T">The generic parameter.</typeparam>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
-    [Serializable]
     public abstract class SingleValueComparableValueFilterRule<T> : ComparableValueFilterRule<T> where T : IComparable
     {
         #region Properties
@@ -71,12 +70,6 @@ namespace Microsoft.Management.UI.Internal
             {
                 this.NotifyEvaluationResultInvalidated();
             }
-        }
-
-        [OnDeserialized]
-        private void Initialize(StreamingContext context)
-        {
-            this.Value.PropertyChanged += this.Value_PropertyChanged;
         }
     }
 }

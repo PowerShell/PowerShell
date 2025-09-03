@@ -10,7 +10,6 @@ namespace Microsoft.Management.UI.Internal
     /// is empty or not.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
-    [Serializable]
     public class IsEmptyFilterRule : FilterRule
     {
         /// <summary>
