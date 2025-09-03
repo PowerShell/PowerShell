@@ -1296,6 +1296,20 @@ namespace Microsoft.PowerShell.Commands
                 _cancelToken = new CancellationTokenSource();
                 try
                 {
+<<<<<<< HEAD
+=======
+                    if (IsWriteVerboseEnabled())
+                    {
+                        WriteWebRequestVerboseInfo(currentRequest);
+                    }
+
+                    if (IsWriteDebugEnabled())
+                    {
+                        WriteWebRequestDebugInfo(currentRequest);
+                    }
+
+                    // codeql[cs/ssrf] - This is expected Poweshell behavior where user inputted Uri is supported for the context of this method. The user assumes trust for the Uri and invocation is done on the user's machine, not a web application. If there is concern for remoting, they should use restricted remoting.
+>>>>>>> 1e46d89c6 (Add Codeql Suppressions (#25943))
                     response = client.SendAsync(currentRequest, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
                 }
                 catch (TaskCanceledException ex)

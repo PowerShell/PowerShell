@@ -1926,6 +1926,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (CommandNotFoundException)
             {
+                // codeql[cs/microsoft/command-line-injection-shell-execution] - This is expected Poweshell behavior where user inputted paths are supported for the context of this method. The user assumes trust for the file path they are specifying and the process is on the user's system except for remoting in which case restricted remoting security guidelines should be used.
                 startInfo.FileName = FilePath;
 #if UNIX
                 // Arguments are passed incorrectly to the executable used for ShellExecute and not to filename https://github.com/dotnet/corefx/issues/30718
