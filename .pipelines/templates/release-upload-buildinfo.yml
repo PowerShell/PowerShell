@@ -58,6 +58,7 @@ jobs:
       $dateTime = [datetime]::new($dateTime.Ticks - ($dateTime.Ticks % [timespan]::TicksPerSecond), $dateTime.Kind)
 
       $metadata = Get-Content -LiteralPath "$toolsDirectory/metadata.json" -ErrorAction Stop | ConvertFrom-Json
+      $isLTSRelease = $metadata.LTSRelease.Latest
       $stableReleaseTag = $metadata.StableReleaseTag -Replace 'v',''
       $currentReleaseTag = $buildInfo.ReleaseTag -Replace 'v',''
 
@@ -83,7 +84,7 @@ jobs:
       if ($fileName -eq "stable.json") {
         [System.Management.Automation.SemanticVersion] $stableVersion = $stableReleaseTag
         [System.Management.Automation.SemanticVersion] $currentVersion = $currentReleaseTag
-        if ($currentVersion.Minor % 2 -eq 0) {
+        if ($isLTSRelease) {
           $ltsFile = "$ENV:PIPELINE_WORKSPACE/lts.json"
           Copy-Item -Path $targetFile -Destination $ltsFile -Force
           Set-BuildVariable -Name LtsBuildInfoJsonFile -Value $ltsFile
