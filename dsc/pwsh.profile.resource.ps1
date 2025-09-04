@@ -23,10 +23,10 @@ class PwshResource {
     [bool] $_exist
 
     [string] ToJson() {
-        return @{
-            ProfileType = $this.ProfileType
-            Content    = $this.Content
-        } | ConvertTo-Json -Compress
+        return ([ordered] @{
+            profileType = $this.profileType
+            content    = $this.content
+        }) | ConvertTo-Json -Compress -EnumsAsStrings
     }
 }
 
@@ -67,10 +67,11 @@ function ExportOperation {
     $currentUserAllHost = PopulatePwshResource -profileType 'CurrentUserAllHosts'
     $currentUserCurrentHost = PopulatePwshResource -profileType 'CurrentUserCurrentHost'
 
-    $allUserCurrentHost | ConvertTo-Json -Compress
-    $allUsersAllHost | ConvertTo-Json -Compress
-    $currentUserAllHost | ConvertTo-Json -Compress
-    $currentUserCurrentHost | ConvertTo-Json -Compress
+    # Cannot use the ToJson() method here as we are adding a note property
+    $allUserCurrentHost | Add-Member -NotePropertyName '_name' -NotePropertyValue 'AllUsersCurrentHost' -PassThru | ConvertTo-Json -Compress -EnumsAsStrings
+    $allUsersAllHost | Add-Member -NotePropertyName '_name' -NotePropertyValue 'AllUsersAllHosts' -PassThru | ConvertTo-Json -Compress -EnumsAsStrings
+    $currentUserAllHost | Add-Member -NotePropertyName '_name' -NotePropertyValue 'CurrentUserAllHosts' -PassThru | ConvertTo-Json -Compress -EnumsAsStrings
+    $currentUserCurrentHost | Add-Member -NotePropertyName '_name' -NotePropertyValue 'CurrentUserCurrentHost' -PassThru | ConvertTo-Json -Compress -EnumsAsStrings
 }
 
 function GetOperation {
@@ -99,7 +100,7 @@ function GetOperation {
         $InputResource._exist = $false
     }
 
-    $InputResource | ConvertTo-Json -Compress
+    $InputResource.ToJson()
 }
 
 function SetOperation {
@@ -128,10 +129,12 @@ function SetOperation {
 
 $inputJson = $input | ConvertFrom-Json
 
-$InputResource = [PwshResource]::new()
-$InputResource.profileType = $inputJson.profileType
-$InputResource.content = $inputJson.content
-$InputResource._exist = $inputJson._exist
+if ($inputJson) {
+    $InputResource = [PwshResource]::new()
+    $InputResource.profileType = $inputJson.profileType
+    $InputResource.content = $inputJson.content
+    $InputResource._exist = $inputJson._exist
+}
 
 switch ($Operation) {
     'get' {
