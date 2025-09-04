@@ -334,9 +334,6 @@ foreach ( $argumentListValue in "Standard","Legacy","Windows" ) {
             param ($arguments, $expected)
             $sb = [scriptblock]::Create("testexe -echoargs $arguments")
             $lines = & $sb
-            if ($lines.count -ne $expected.count) {
-                wait-debugger
-            }
             $lines.Count | Should -Be $expected.count
             $lines | Should -BeExactly $expected
         }
