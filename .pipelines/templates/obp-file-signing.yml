@@ -102,12 +102,9 @@ steps:
     $BuildPath = (Get-Item '${{ parameters.binPath }}').FullName
     Write-Verbose -Verbose -Message "BuildPath: $BuildPath"
 
-<<<<<<< HEAD
     Write-Verbose -Verbose "Signed Path: $(Pipeline.Workspace)/toBeSigned"
 
-=======
     $officialBuild = [System.Convert]::ToBoolean('${{ parameters.OfficialBuild }}')
->>>>>>> 499cedfaf (Add build to vPack Pipeline (#25915))
     ## copy all files to be signed to build folder
     Update-PSSignedBuildFolder -BuildPath $BuildPath -SignedFilesPath '$(Pipeline.Workspace)/toBeSigned' -OfficialBuild $officialBuild
 
