@@ -193,7 +193,7 @@ function Get-EnvironmentInformation
         $environment += @{'IsRedHatFamily' = $environment.IsCentOS -or $environment.IsFedora -or $environment.IsRedHat}
         $environment += @{'IsSUSEFamily' = $environment.IsSLES -or $environment.IsOpenSUSE}
         $environment += @{'IsAlpine' = $LinuxInfo.ID -match 'alpine'}
-        $environment += @{'IsMariner' = $LinuxInfo.ID -match 'mariner'}
+        $environment += @{'IsMariner' = $LinuxInfo.ID -match 'mariner' -or $LinuxInfo.ID -match 'azurelinux'}
 
         # Workaround for temporary LD_LIBRARY_PATH hack for Fedora 24
         # https://github.com/PowerShell/PowerShell/issues/2511
@@ -2207,6 +2207,8 @@ function Get-RedHatPackageManager {
         "yum install -y -q"
     } elseif ($environment.IsFedora -or (Get-Command -Name dnf -CommandType Application -ErrorAction SilentlyContinue)) {
         "dnf install -y -q"
+    } elseif ($environment.IsMariner -or (Get-Command -Name Test-DscConfiguration -CommandType Application -ErrorAction SilentlyContinue)) {
+        "tdnf install -y -q"
     } else {
         throw "Error determining package manager for this distribution."
     }

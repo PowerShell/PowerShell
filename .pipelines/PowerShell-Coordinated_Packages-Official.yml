@@ -69,7 +69,7 @@ variables:
   - name: __DOTNET_RUNTIME_FEED
     value: ${{ parameters.InternalSDKBlobURL }}
   - name: LinuxContainerImage
-    value: onebranch.azurecr.io/linux/ubuntu-2004:latest
+    value: mcr.microsoft.com/onebranch/azurelinux/build:3.0
   - name: WindowsContainerImage
     value: onebranch.azurecr.io/windows/ltsc2019/vse2022:latest
   - name: CDP_DEFINITION_BUILD_COUNT
