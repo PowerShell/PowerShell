@@ -26,7 +26,7 @@ variables:
   - group: 'ComponentGovernance'
   - group: 'PoolNames'
   - name: LinuxContainerImage
-    value: onebranch.azurecr.io/linux/ubuntu-2004:latest
+    value: mcr.microsoft.com/onebranch/azurelinux/build:3.0
   - name: WindowsContainerImage
     value: onebranch.azurecr.io/windows/ltsc2022/vse2022:latest
   - ${{ if eq(parameters['FORCE_CODEQL'],'true') }}:
