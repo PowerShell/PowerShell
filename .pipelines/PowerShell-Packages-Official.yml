@@ -28,7 +28,7 @@ parameters: # parameters are shown up in ADO UI in a build queue time
     type: boolean
     default: false
 
-name: pkgs-$(BUILD.SOURCEBRANCHNAME)-$(Build.BuildId)
+name: pkgs-$(BUILD.SOURCEBRANCHNAME)-prod.${{ parameters.OfficialBuild }}-$(Build.BuildId)
 
 variables:
   - name: CDP_DEFINITION_BUILD_COUNT

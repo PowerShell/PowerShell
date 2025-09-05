@@ -1,4 +1,3 @@
-name: bins-$(BUILD.SOURCEBRANCHNAME)-$(Build.BuildId)
 trigger: none
 
 parameters:
@@ -34,6 +33,7 @@ parameters:
     type: boolean
     default: false
 
+name: bins-$(BUILD.SOURCEBRANCHNAME)-prod.${{ parameters.OfficialBuild }}-$(Build.BuildId)
 
 resources:
   repositories:
@@ -99,7 +99,7 @@ variables:
   # Disable BinSkim at job level to override NonOfficial template defaults
   - name: ob_sdl_binskim_enabled
     value: false
-  
+
 
 extends:
   template: ${{ variables.templateFile }}
