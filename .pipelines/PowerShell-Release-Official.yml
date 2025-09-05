@@ -95,7 +95,7 @@ resources:
 extends:
   template: ${{ variables.templateFile }}
   parameters:
-    release: 
+    release:
       category: NonAzure
     featureFlags:
       WindowsHostVersion:
@@ -303,8 +303,8 @@ extends:
           displayName: Push Git Tag
           jobName: PushGitTag
           instructions: |
-            Push the git tag to upstream  
-    
+            Push the git tag to upstream
+
       - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
           displayName: Make Draft Public
@@ -312,10 +312,10 @@ extends:
           jobName: DraftPublic
           instructions: |
             Make the GitHub Release Draft Public
-  
+
     - stage: BlobPublic
       displayName: Make Blob Public
-      dependsOn: 
+      dependsOn:
         - UpdateChangeLog
         - PushGitTagAndMakeDraftPublic
       jobs:
@@ -426,7 +426,7 @@ extends:
 
     - stage: ReleaseClose
       displayName: Finish Release
-      dependsOn: 
+      dependsOn:
         - ReleaseToMU
         - ReleaseSymbols
       jobs:
