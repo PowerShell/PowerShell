@@ -57,7 +57,7 @@ variables:
   - name: WindowsContainerImage
     value: 'onebranch.azurecr.io/windows/ltsc2022/vse2022:latest'
   - name: LinuxContainerImage
-    value: mcr.microsoft.com/onebranch/cbl-mariner/build:2.0
+    value: mcr.microsoft.com/onebranch/azurelinux/build:3.0
   - name: ReleaseTagVar
     value: ${{ parameters.ReleaseTagVar }}
   - group: PoolNames
@@ -284,7 +284,7 @@ extends:
 
     - stage: PublishGitHubReleaseAndNuget
       displayName: Publish GitHub and Nuget Release
-      dependsOn: 
+      dependsOn:
         - setReleaseTagAndChangelog
         - UpdateChangeLog
       variables:
@@ -404,7 +404,7 @@ extends:
 
     - stage: ChangesToMaster
       displayName: Ensure changes are in GH master
-      dependsOn: 
+      dependsOn:
         - PublishPMC
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
