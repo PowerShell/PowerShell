@@ -86,7 +86,7 @@ namespace System.Management.Automation
                     Diagnostics.Assert(!parameter.ParameterText.Contains(' '), "Parameters cannot have whitespace");
                     // We may need to cook up a new parameter in some cases
                     // e.g., in the case of -foo=bar.baz the PS parser sees this as multiple tokens (and others - see the tests), which requires special handling.
-                    int combinedParameterCount = CombineNativeParameters(parameters, i, out CommandParameterInternal combinedParameter);
+                    int combinedParameterCount = CombineNativeParameters(Context, parameters, i, out CommandParameterInternal combinedParameter);
 
                     if (combinedParameterCount > 0)
                     {
@@ -536,11 +536,12 @@ namespace System.Management.Automation
         /// If variables are desired in a parameter to a native app when '=' is used, they should be provided as explicit expandable strings:
         /// nativeapp -p1="$a.$b.$c"
         /// </summary>
+        /// <param name="context">The execution context for the current command, needed to expand a string.</param>
         /// <param name="parameters">The parameters for the current command.</param>
         /// <param name="currentOffset">The current offset within the parameters array.</param>
         /// <param name="combinedParameter">The combined parameter.</param>
         /// <returns>an int representing the number of combined parameters</returns>
-        private static int CombineNativeParameters(IList<CommandParameterInternal> parameters, int currentOffset, out CommandParameterInternal combinedParameter)
+        private static int CombineNativeParameters(ExecutionContext context, IList<CommandParameterInternal> parameters, int currentOffset, out CommandParameterInternal combinedParameter)
         {
             combinedParameter = null;
             var parameter = currentOffset >= parameters.Count ? null : parameters[currentOffset];
@@ -548,7 +549,7 @@ namespace System.Management.Automation
 
             // don't combine if one of the parameters is null, or if the next parameter actually has a parameterAst
             // which indicates that it is a separate parameter (i.e., it has a prepended '-')
-            if (parameter == null || nextParameter == null || nextParameter.ParameterAst != null)
+            if (parameter is null || nextParameter is null || nextParameter.ParameterAst is not null || nextParameter.ArgumentAst is null)
             {
                 return 0;
             }
@@ -591,7 +592,19 @@ namespace System.Management.Automation
                 endOffset = nextParameter.ArgumentAst.Extent.StartScriptPosition.Offset;
             }
 
+#if EXPANDARG
+            if (context is not null)
+            {
+                var expandedString = context.SessionState.InvokeCommand.ExpandString(paramText.ToString());
+                combinedParameter = CommandParameterInternal.CreateParameter(expandedString, expandedString);
+            }
+            else
+            {
+                combinedParameter = CommandParameterInternal.CreateParameter(paramText.ToString(), paramText.ToString());
+            }
+#else
             combinedParameter = CommandParameterInternal.CreateParameter(paramText.ToString(), paramText.ToString());
+#endif
             return parameterCombineCount;
         }
 
