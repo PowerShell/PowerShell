@@ -195,14 +195,14 @@ jobs:
 
   - pwsh: |
       $signedPkg = Get-ChildItem -Path $(Pipeline.Workspace) -Filter "*osx*.zip" -File
-  
+
       $signedPkg | ForEach-Object {
         Write-Verbose -Verbose "Signed package zip: $_"
-  
+
         if (-not (Test-Path $_)) {
           throw "Package not found: $_"
         }
-  
+
         if (-not (Test-Path $(ob_outputDirectory))) {
           $null = New-Item -Path $(ob_outputDirectory) -ItemType Directory
         }
