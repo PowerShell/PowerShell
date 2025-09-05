@@ -66,7 +66,7 @@ variables:
   - group: MSIXSigningProfile
   - name: templateFile
     value: ${{ iif ( parameters.OfficialBuild, 'v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates', 'v2/OneBranch.NonOfficial.CrossPlat.yml@onebranchTemplates' ) }}
-  
+
 
 resources:
   pipelines:
@@ -79,7 +79,7 @@ resources:
             - releases/*
 
   repositories:
-    - repository: templates
+    - repository: onebranchTemplates
       type: git
       name: OneBranch.Pipelines/GovernedTemplates
       ref: refs/heads/main
