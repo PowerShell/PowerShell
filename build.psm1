@@ -353,8 +353,8 @@ function Start-PSBuild {
         $PSModuleRestore = $true
     }
 
-    if ($Runtime -eq "linux-arm" -and $environment.IsLinux -and -not $environment.IsUbuntu) {
-        throw "Cross compiling for linux-arm is only supported on Ubuntu environment"
+    if ($Runtime -eq "linux-arm" -and $environment.IsLinux -and -not $environment.IsUbuntu -and -not $environment.IsMariner) {
+        throw "Cross compiling for linux-arm is only supported on AzureLinux/Ubuntu environment"
     }
 
     if ("win-arm","win-arm64" -contains $Runtime -and -not $environment.IsWindows) {
@@ -2280,8 +2280,8 @@ function Start-PSBootstrap {
             # Note that when it is null, Invoke-Expression (but not &) must be used to interpolate properly
             $sudo = if (!$NoSudo) { "sudo" }
 
-            if ($BuildLinuxArm -and $environment.IsLinux -and -not $environment.IsUbuntu) {
-                Write-Error "Cross compiling for linux-arm is only supported on Ubuntu environment"
+            if ($BuildLinuxArm -and $environment.IsLinux -and -not $environment.IsUbuntu -and -not $environment.IsMariner) {
+                Write-Error "Cross compiling for linux-arm is only supported on AzureLinux/Ubuntu environment"
                 return
             }
 
