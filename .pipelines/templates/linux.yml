@@ -201,5 +201,6 @@ jobs:
   - template: /.pipelines/templates/obp-file-signing.yml@self
     parameters:
       binPath: $(DropRootPath)
+      OfficialBuild: $(ps_official_build)
 
   - template: /.pipelines/templates/step/finalize.yml@self

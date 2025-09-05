@@ -69,7 +69,7 @@ variables:
   - name: __DOTNET_RUNTIME_FEED
     value: ${{ parameters.InternalSDKBlobURL }}
   - name: LinuxContainerImage
-    value: onebranch.azurecr.io/linux/ubuntu-2004:latest
+    value: mcr.microsoft.com/onebranch/azurelinux/build:3.0
   - name: WindowsContainerImage
     value: onebranch.azurecr.io/windows/ltsc2019/vse2022:latest
   - name: CDP_DEFINITION_BUILD_COUNT
@@ -99,7 +99,8 @@ variables:
   # Disable BinSkim at job level to override NonOfficial template defaults
   - name: ob_sdl_binskim_enabled
     value: false
-
+  - name: ps_official_build
+    value: ${{ parameters.OfficialBuild }}
 
 extends:
   template: ${{ variables.templateFile }}
@@ -143,7 +144,7 @@ extends:
       - job: SetVars
         displayName: Set Variables
         pool:
-          type: windows
+          type: linux
 
         variables:
           - name: ob_outputDirectory
