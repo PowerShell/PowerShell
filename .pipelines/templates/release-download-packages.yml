@@ -14,7 +14,7 @@ jobs:
   - pwsh: |
       Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
     displayName: Capture environment variables
-  
+
   - download: PSPackagesOfficial
     artifact: drop_linux_package_deb
     displayName: Download linux deb packages
@@ -102,21 +102,21 @@ jobs:
   - pwsh: |
       Get-ChildItem '$(Pipeline.Workspace)/PSPackagesOfficial' -Recurse | Select-Object -ExpandProperty FullName
     displayName: 'Capture downloads'
-  
+
   - pwsh: |
       $PackagesPath = '$(Pipeline.Workspace)/PSPackagesOfficial'
       Write-Verbose -Verbose "Copying Github Release files in $PackagesPath to use in Release Pipeline"
-      
+
       Write-Verbose -Verbose "Creating output directory for GitHub Release files: $(ob_outputDirectory)/GitHubPackages"
       New-Item -Path $(ob_outputDirectory)/GitHubPackages -ItemType Directory -Force
-      Get-ChildItem -Path "$PackagesPath/*" -Recurse | 
+      Get-ChildItem -Path "$PackagesPath/*" -Recurse |
         Where-Object { $_.Extension -notin '.msix', '.nupkg' } |
         Where-Object { $_.Extension -in '.gz', '.pkg', '.msi', '.zip', '.deb', '.rpm', '.zip' } |
         Copy-Item -Destination $(ob_outputDirectory)/GitHubPackages -Recurse -Verbose
-      
+
       Write-Verbose -Verbose "Creating output directory for NuGet packages: $(ob_outputDirectory)/NuGetPackages"
       New-Item -Path $(ob_outputDirectory)/NuGetPackages -ItemType Directory -Force
-      Get-ChildItem -Path "$PackagesPath/*" -Recurse | 
-        Where-Object { $_.Extension -eq '.nupkg' } | 
+      Get-ChildItem -Path "$PackagesPath/*" -Recurse |
+        Where-Object { $_.Extension -eq '.nupkg' } |
         Copy-Item -Destination $(ob_outputDirectory)/NuGetPackages -Recurse -Verbose
     displayName: Copy downloads to Artifacts

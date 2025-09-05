@@ -8,11 +8,11 @@ where:
 configuration:
   resourceManagementConfiguration:
     eventResponderTasks:
-      - if: 
+      - if:
           - not:
               hasLabel:
                 label: Resolution-No Activity
-          - isAction: 
+          - isAction:
               action: Closed
         then:
           - addReply:
