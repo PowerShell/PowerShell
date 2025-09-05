@@ -29,7 +29,7 @@ variables:
 
 resources:
   repositories:
-    - repository: templates
+    - repository: onebranchTemplates
       type: git
       name: OneBranch.Pipelines/GovernedTemplates
       ref: refs/heads/main
@@ -44,7 +44,7 @@ resources:
             - releases/*
 
 extends:
-  template: v2/Microsoft.Official.yml@templates
+  template: v2/Microsoft.Official.yml@onebranchTemplates
   parameters:
     platform:
       name: 'windows_undocked' # windows undocked
