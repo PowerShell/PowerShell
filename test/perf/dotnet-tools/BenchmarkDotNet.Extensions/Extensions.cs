@@ -13,7 +13,7 @@ namespace BenchmarkDotNet.Extensions
         public static int ToExitCode(this IEnumerable<Summary> summaries)
         {
             // an empty summary means that initial filtering and validation did not allow to run
-            if (!summaries.Any()) 
+            if (!summaries.Any())
                 return 1;
 
             // if anything has failed, it's an error

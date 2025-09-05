@@ -44,7 +44,7 @@ namespace Reporting
             {
                 ret.Init();
             }
-                        
+
             return ret;
         }
 
@@ -66,7 +66,7 @@ namespace Reporting
                 {
                     var split = kvp.Split('=');
                     run.Configurations.Add(split[0], split[1]);
-                } 
+                }
             }
 
             os = new Os()
@@ -91,7 +91,7 @@ namespace Reporting
         public string GetJson()
         {
             if (!InLab)
-            { 
+            {
                 return null;
             }
             var jsonobj = new
@@ -122,7 +122,7 @@ namespace Reporting
                 ret.AppendLine($"{LeftJustify("Metric", counterWidth)}|{LeftJustify("Average",resultWidth)}|{LeftJustify("Min", resultWidth)}|{LeftJustify("Max",resultWidth)}");
                 ret.AppendLine($"{new String('-', counterWidth)}|{new String('-', resultWidth)}|{new String('-', resultWidth)}|{new String('-', resultWidth)}");
 
-           
+
                 ret.AppendLine(Print(defaultCounter, counterWidth, resultWidth));
                 foreach(var counter in topCounters)
                 {

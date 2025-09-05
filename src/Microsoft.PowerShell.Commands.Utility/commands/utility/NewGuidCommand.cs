@@ -45,7 +45,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     ErrorRecord error = new(ex, "StringNotRecognizedAsGuid", ErrorCategory.InvalidArgument, null);
                     WriteError(error);
-                }  
+                }
             }
             else
             {

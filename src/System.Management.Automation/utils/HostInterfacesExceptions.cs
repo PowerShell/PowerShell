@@ -100,7 +100,7 @@ namespace System.Management.Automation.Host
         /// <param name="context">
         /// The contextual information about the source or destination.
         /// </param>
-        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected
         HostException(SerializationInfo info, StreamingContext context)
         {
@@ -120,7 +120,7 @@ namespace System.Management.Automation.Host
 
     /// <summary>
     /// Defines the exception thrown when an error occurs from prompting for a command parameter.
-    /// </summary>    
+    /// </summary>
     public
     class PromptingException : HostException
     {
@@ -209,7 +209,7 @@ namespace System.Management.Automation.Host
         /// <param name="context">
         /// The contextual information about the source or destination.
         /// </param>
-        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected
         PromptingException(SerializationInfo info, StreamingContext context)
         {

@@ -25,7 +25,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return;
             }
-            
+
             try
             {
                 string outFilename = Host.UI.StopTranscribing();

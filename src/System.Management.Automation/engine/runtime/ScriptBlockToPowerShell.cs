@@ -327,8 +327,8 @@ namespace System.Management.Automation
             bool isTrustedInput,
             ExecutionContext context)
         {
-            // Using variables for Foreach-Object -Parallel use are restricted to be within the 
-            // Foreach-Object -Parallel call scope. This will filter the using variable map to variables 
+            // Using variables for Foreach-Object -Parallel use are restricted to be within the
+            // Foreach-Object -Parallel call scope. This will filter the using variable map to variables
             // only within the current (outer) Foreach-Object -Parallel call scope.
             var usingAsts = UsingExpressionAstSearcher.FindAllUsingExpressions(scriptBlock.Ast).ToList();
             UsingExpressionAst usingAst = null;
@@ -358,11 +358,11 @@ namespace System.Management.Automation
                 if (rte.ErrorRecord.FullyQualifiedErrorId.Equals("VariableIsUndefined", StringComparison.Ordinal))
                 {
                     throw InterpreterError.NewInterpreterException(
-                        targetObject: null, 
+                        targetObject: null,
                         exceptionType: typeof(RuntimeException),
-                        errorPosition: usingAst.Extent, 
+                        errorPosition: usingAst.Extent,
                         resourceIdAndErrorId: "UsingVariableIsUndefined",
-                        resourceString: AutomationExceptions.UsingVariableIsUndefined, 
+                        resourceString: AutomationExceptions.UsingVariableIsUndefined,
                         args: rte.ErrorRecord.TargetObject);
                 }
             }
@@ -435,7 +435,7 @@ namespace System.Management.Automation
             /*
                 Example:
                 $Test1 = "Hello"
-                1 | ForEach-Object -Parallel { 
+                1 | ForEach-Object -Parallel {
                    $using:Test1
                    $Test2 = "Goodbye"
                    1 | ForEach-Object -Parallel {
@@ -450,7 +450,7 @@ namespace System.Management.Automation
             while (currentParent != scriptblockAst)
             {
                 // Look for Foreach-Object outer commands
-                if (currentParent is CommandAst commandAst && 
+                if (currentParent is CommandAst commandAst &&
                     FindForEachInCommand(commandAst))
                 {
                     // Using Ast is outside the invoking foreach scope.
