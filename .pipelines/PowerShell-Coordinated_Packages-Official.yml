@@ -144,7 +144,7 @@ extends:
       - job: SetVars
         displayName: Set Variables
         pool:
-          type: windows
+          type: linux
 
         variables:
           - name: ob_outputDirectory
