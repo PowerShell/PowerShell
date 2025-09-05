@@ -99,7 +99,8 @@ variables:
   # Disable BinSkim at job level to override NonOfficial template defaults
   - name: ob_sdl_binskim_enabled
     value: false
-  
+  - name: ps_official_build
+    value: ${{ parameters.OfficialBuild }}
 
 extends:
   template: ${{ variables.templateFile }}

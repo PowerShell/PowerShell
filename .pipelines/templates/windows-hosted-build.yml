@@ -206,6 +206,7 @@ jobs:
   - template: /.pipelines/templates/obp-file-signing.yml@self
     parameters:
       binPath: '$(Pipeline.Workspace)/Symbols_$(Architecture)'
+      OfficialBuild: $(ps_official_build)
 
   ## first we sign all the files in the bin folder
   - ${{ if eq(variables['Architecture'], 'fxdependent') }}:
@@ -213,6 +214,7 @@ jobs:
       parameters:
         binPath: '$(GlobalToolArtifactPath)/publish/PowerShell.Windows.x64/release'
         globalTool: 'true'
+        OfficialBuild: $(ps_official_build)
 
   - pwsh: |
       Get-ChildItem '$(GlobalToolArtifactPath)/obj/PowerShell.Windows.x64/release'
