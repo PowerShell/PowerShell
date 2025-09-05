@@ -29,7 +29,7 @@ parameters: # parameters are shown up in ADO UI in a build queue time
     type: boolean
     default: false
 
-name: release-$(BUILD.SOURCEBRANCHNAME)-$(Build.BuildId)
+name: release-$(BUILD.SOURCEBRANCHNAME)-prod.${{ parameters.OfficialBuild }}-$(Build.BuildId)
 
 variables:
   - name: CDP_DEFINITION_BUILD_COUNT
@@ -71,7 +71,7 @@ variables:
 
 resources:
   repositories:
-    - repository: templates
+    - repository: onebranchTemplates
       type: git
       name: OneBranch.Pipelines/GovernedTemplates
       ref: refs/heads/main
@@ -315,7 +315,7 @@ extends:
 
     - stage: BlobPublic
       displayName: Make Blob Public
-      dependsOn: 
+      dependsOn:
         - UpdateChangeLog
         - PushGitTagAndMakeDraftPublic
       jobs:
@@ -425,7 +425,7 @@ extends:
 
     - stage: ReleaseClose
       displayName: Finish Release
-      dependsOn: 
+      dependsOn:
         - ReleaseToMU
         - ReleaseSymbols
       jobs:

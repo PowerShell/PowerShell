@@ -1,4 +1,3 @@
-name: bins-$(BUILD.SOURCEBRANCHNAME)-$(Build.BuildId)
 trigger: none
 
 parameters:
@@ -30,6 +29,7 @@ parameters:
     type: boolean
     default: false
 
+name: bins-$(BUILD.SOURCEBRANCHNAME)-prod.${{ parameters.OfficialBuild }}-$(Build.BuildId)
 
 resources:
   repositories:
