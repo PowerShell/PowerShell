@@ -284,7 +284,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-Microsoft.Extensions.ObjectPool 8.0.17 - MIT
+Microsoft.Extensions.ObjectPool 8.0.19 - MIT
 
 
 Copyright Jorn Zaefferer
@@ -374,7 +374,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-Microsoft.Win32.Registry.AccessControl 9.0.6 - MIT
+Microsoft.Win32.Registry.AccessControl 9.0.8 - MIT
 
 
 Copyright (c) 2021
@@ -464,7 +464,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-Microsoft.Win32.SystemEvents 9.0.6 - MIT
+Microsoft.Win32.SystemEvents 9.0.8 - MIT
 
 
 Copyright (c) 2021
@@ -554,7 +554,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-Microsoft.Windows.Compatibility 9.0.6 - MIT
+Microsoft.Windows.Compatibility 9.0.8 - MIT
 
 
 (c) Microsoft Corporation
@@ -607,7 +607,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ---------------------------------------------------------
 
-runtime.android-arm.runtime.native.System.IO.Ports 9.0.6 - MIT
+runtime.android-arm.runtime.native.System.IO.Ports 9.0.8 - MIT
 
 
 Copyright (c) 2021
@@ -697,7 +697,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-runtime.android-arm64.runtime.native.System.IO.Ports 9.0.6 - MIT
+runtime.android-arm64.runtime.native.System.IO.Ports 9.0.8 - MIT
 
 
 Copyright (c) 2021
@@ -787,7 +787,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-runtime.android-x64.runtime.native.System.IO.Ports 9.0.6 - MIT
+runtime.android-x64.runtime.native.System.IO.Ports 9.0.8 - MIT
 
 
 Copyright (c) 2021
@@ -877,7 +877,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-runtime.android-x86.runtime.native.System.IO.Ports 9.0.6 - MIT
+runtime.android-x86.runtime.native.System.IO.Ports 9.0.8 - MIT
 
 
 Copyright (c) 2021
@@ -967,7 +967,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-runtime.linux-arm.runtime.native.System.IO.Ports 9.0.6 - MIT
+runtime.linux-arm.runtime.native.System.IO.Ports 9.0.8 - MIT
 
 
 Copyright (c) 2021
@@ -1057,7 +1057,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-runtime.linux-arm64.runtime.native.System.IO.Ports 9.0.6 - MIT
+runtime.linux-arm64.runtime.native.System.IO.Ports 9.0.8 - MIT
 
 
 Copyright (c) 2021
@@ -1147,7 +1147,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-runtime.linux-bionic-arm64.runtime.native.System.IO.Ports 9.0.6 - MIT
+runtime.linux-bionic-arm64.runtime.native.System.IO.Ports 9.0.8 - MIT
 
 
 Copyright (c) 2021
@@ -1237,7 +1237,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-runtime.linux-bionic-x64.runtime.native.System.IO.Ports 9.0.6 - MIT
+runtime.linux-bionic-x64.runtime.native.System.IO.Ports 9.0.8 - MIT
 
 
 Copyright (c) 2021
@@ -1327,7 +1327,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-runtime.linux-musl-arm.runtime.native.System.IO.Ports 9.0.6 - MIT
+runtime.linux-musl-arm.runtime.native.System.IO.Ports 9.0.8 - MIT
 
 
 Copyright (c) 2021
@@ -1417,7 +1417,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-runtime.linux-musl-arm64.runtime.native.System.IO.Ports 9.0.6 - MIT
+runtime.linux-musl-arm64.runtime.native.System.IO.Ports 9.0.8 - MIT
 
 
 Copyright (c) 2021
@@ -1507,7 +1507,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-runtime.linux-musl-x64.runtime.native.System.IO.Ports 9.0.6 - MIT
+runtime.linux-musl-x64.runtime.native.System.IO.Ports 9.0.8 - MIT
 
 
 Copyright (c) 2021
@@ -1597,7 +1597,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-runtime.linux-x64.runtime.native.System.IO.Ports 9.0.6 - MIT
+runtime.linux-x64.runtime.native.System.IO.Ports 9.0.8 - MIT
 
 
 Copyright (c) 2021
@@ -1687,7 +1687,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-runtime.maccatalyst-arm64.runtime.native.System.IO.Ports 9.0.6 - MIT
+runtime.maccatalyst-arm64.runtime.native.System.IO.Ports 9.0.8 - MIT
 
 
 Copyright (c) 2021
@@ -1777,7 +1777,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-runtime.maccatalyst-x64.runtime.native.System.IO.Ports 9.0.6 - MIT
+runtime.maccatalyst-x64.runtime.native.System.IO.Ports 9.0.8 - MIT
 
 
 Copyright (c) 2021
@@ -1912,7 +1912,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-runtime.native.System.IO.Ports 9.0.6 - MIT
+runtime.native.System.IO.Ports 9.0.8 - MIT
 
 
 Copyright (c) 2021
@@ -2002,7 +2002,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-runtime.osx-arm64.runtime.native.System.IO.Ports 9.0.6 - MIT
+runtime.osx-arm64.runtime.native.System.IO.Ports 9.0.8 - MIT
 
 
 Copyright (c) 2021
@@ -2092,7 +2092,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-runtime.osx-x64.runtime.native.System.IO.Ports 9.0.6 - MIT
+runtime.osx-x64.runtime.native.System.IO.Ports 9.0.8 - MIT
 
 
 Copyright (c) 2021
@@ -2182,7 +2182,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.CodeDom 9.0.6 - MIT
+System.CodeDom 9.0.8 - MIT
 
 
 Copyright (c) 2021
@@ -2358,7 +2358,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.ComponentModel.Composition 9.0.6 - MIT
+System.ComponentModel.Composition 9.0.8 - MIT
 
 
 Copyright (c) 2021
@@ -2448,7 +2448,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.ComponentModel.Composition.Registration 9.0.6 - MIT
+System.ComponentModel.Composition.Registration 9.0.8 - MIT
 
 
 Copyright (c) 2021
@@ -2538,7 +2538,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Configuration.ConfigurationManager 9.0.6 - MIT
+System.Configuration.ConfigurationManager 9.0.8 - MIT
 
 
 Copyright (c) 2021
@@ -2628,7 +2628,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Data.Odbc 9.0.6 - MIT
+System.Data.Odbc 9.0.8 - MIT
 
 
 Copyright (c) 2021
@@ -2718,7 +2718,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Data.OleDb 9.0.6 - MIT
+System.Data.OleDb 9.0.8 - MIT
 
 
 Copyright (c) 2021
@@ -2827,7 +2827,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-System.Diagnostics.DiagnosticSource 9.0.6 - MIT
+System.Diagnostics.DiagnosticSource 9.0.8 - MIT
 
 
 Copyright (c) 2021
@@ -2917,7 +2917,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Diagnostics.EventLog 9.0.6 - MIT
+System.Diagnostics.EventLog 9.0.8 - MIT
 
 
 Copyright (c) 2021
@@ -3007,7 +3007,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Diagnostics.PerformanceCounter 9.0.6 - MIT
+System.Diagnostics.PerformanceCounter 9.0.8 - MIT
 
 
 Copyright (c) 2021
@@ -3097,7 +3097,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.DirectoryServices 9.0.6 - MIT
+System.DirectoryServices 9.0.8 - MIT
 
 
 Copyright (c) 2021
@@ -3187,7 +3187,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.DirectoryServices.AccountManagement 9.0.6 - MIT
+System.DirectoryServices.AccountManagement 9.0.8 - MIT
 
 
 Copyright (c) 2021
@@ -3277,7 +3277,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.DirectoryServices.Protocols 9.0.6 - MIT
+System.DirectoryServices.Protocols 9.0.8 - MIT
 
 
 Copyright (c) 2021
@@ -3367,7 +3367,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Drawing.Common 9.0.6 - MIT
+System.Drawing.Common 9.0.8 - MIT
 
 
 (c) Microsoft Corporation
@@ -3402,7 +3402,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.IO.Packaging 9.0.6 - MIT
+System.IO.Packaging 9.0.8 - MIT
 
 
 Copyright (c) 2021
@@ -3492,7 +3492,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.IO.Ports 9.0.6 - MIT
+System.IO.Ports 9.0.8 - MIT
 
 
 Copyright (c) 2021
@@ -3582,7 +3582,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Management 9.0.6 - MIT
+System.Management 9.0.8 - MIT
 
 
 Copyright (c) 2021
@@ -3672,7 +3672,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Net.Http.WinHttpHandler 9.0.6 - MIT
+System.Net.Http.WinHttpHandler 9.0.8 - MIT
 
 
 Copyright (c) 2021
@@ -3847,7 +3847,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Reflection.Context 9.0.6 - MIT
+System.Reflection.Context 9.0.8 - MIT
 
 
 Copyright (c) 2021
@@ -4077,7 +4077,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Runtime.Caching 9.0.6 - MIT
+System.Runtime.Caching 9.0.8 - MIT
 
 
 Copyright (c) 2021
@@ -4242,7 +4242,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Security.Cryptography.Pkcs 9.0.6 - MIT
+System.Security.Cryptography.Pkcs 9.0.8 - MIT
 
 
 Copyright (c) 2021
@@ -4332,7 +4332,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Security.Cryptography.ProtectedData 9.0.6 - MIT
+System.Security.Cryptography.ProtectedData 9.0.8 - MIT
 
 
 Copyright (c) 2021
@@ -4422,7 +4422,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Security.Cryptography.Xml 9.0.6 - MIT
+System.Security.Cryptography.Xml 9.0.8 - MIT
 
 
 Copyright (c) 2021
@@ -4512,7 +4512,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Security.Permissions 9.0.6 - MIT
+System.Security.Permissions 9.0.8 - MIT
 
 
 Copyright (c) 2021
@@ -4851,7 +4851,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.ServiceModel.Syndication 9.0.6 - MIT
+System.ServiceModel.Syndication 9.0.8 - MIT
 
 
 Copyright (c) 2021
@@ -4941,7 +4941,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.ServiceProcess.ServiceController 9.0.6 - MIT
+System.ServiceProcess.ServiceController 9.0.8 - MIT
 
 
 Copyright (c) 2021
@@ -5031,7 +5031,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Speech 9.0.6 - MIT
+System.Speech 9.0.8 - MIT
 
 
 Copyright (c) 2021
@@ -5121,7 +5121,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Text.Encoding.CodePages 9.0.6 - MIT
+System.Text.Encoding.CodePages 9.0.8 - MIT
 
 
 Copyright (c) 2021
@@ -5211,7 +5211,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Text.Encodings.Web 9.0.6 - MIT
+System.Text.Encodings.Web 9.0.8 - MIT
 
 
 Copyright (c) 2021
@@ -5301,7 +5301,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Threading.AccessControl 9.0.6 - MIT
+System.Threading.AccessControl 9.0.8 - MIT
 
 
 Copyright (c) 2021
@@ -5427,7 +5427,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Windows.Extensions 9.0.6 - MIT
+System.Windows.Extensions 9.0.8 - MIT
 
 
 Copyright (c) 2021
