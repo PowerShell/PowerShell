@@ -89,14 +89,14 @@ namespace Microsoft.PowerShell
                 if (_progPaneUpdateTimer == null)
                 {
                     // Show a progress pane at the first time we've received a progress record
-                    progPaneUpdateFlag = 1;
+                    _progPaneUpdateFlag = 1;
 
                     // The timer will be auto restarted every 'UpdateTimerThreshold' ms
                     _progPaneUpdateTimer = new Timer(new TimerCallback(ProgressPaneUpdateTimerElapsed), null, UpdateTimerThreshold, UpdateTimerThreshold);
                 }
             }
 
-            if (Interlocked.CompareExchange(ref progPaneUpdateFlag, 0, 1) == 1 || record.RecordType == ProgressRecordType.Completed)
+            if (record.IsEssential || record.RecordType == ProgressRecordType.Completed || Interlocked.CompareExchange(ref _progPaneUpdateFlag, 0, 1) == 1)
             {
                 // Update the progress pane only when the timer set up the update flag or WriteProgress is completed.
                 // As a result, we do not block WriteProgress and whole script and eliminate unnecessary console locks and updates.
@@ -132,7 +132,7 @@ namespace Microsoft.PowerShell
         void
         ProgressPaneUpdateTimerElapsed(object sender)
         {
-            Interlocked.CompareExchange(ref progPaneUpdateFlag, 1, 0);
+            Interlocked.CompareExchange(ref _progPaneUpdateFlag, 1, 0);
         }
 
         private
@@ -209,6 +209,7 @@ namespace Microsoft.PowerShell
 
         private const int UpdateTimerThreshold = 200;
 
-        private int progPaneUpdateFlag = 0;
+        // The flag to indicate whether we need to update 'ProgressPane' 0: no update, 1: need update
+        private int _progPaneUpdateFlag = 0;
     }
 }   // namespace
