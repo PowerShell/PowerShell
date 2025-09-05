@@ -802,13 +802,13 @@ namespace Microsoft.PowerShell
 
             public ConsoleColor FormatAccentColor
             {
-                [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+                [SuppressMessage("Style", "IDE0051:Remove unused private members")]
                 get
                 {
                     return _ui.FormatAccentColor;
                 }
 
-                [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+                [SuppressMessage("Style", "IDE0051:Remove unused private members")]
                 set
                 {
                     _ui.FormatAccentColor = value;
@@ -817,13 +817,13 @@ namespace Microsoft.PowerShell
 
             public ConsoleColor ErrorAccentColor
             {
-                [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+                [SuppressMessage("Style", "IDE0051:Remove unused private members")]
                 get
                 {
                     return _ui.ErrorAccentColor;
                 }
 
-                [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+                [SuppressMessage("Style", "IDE0051:Remove unused private members")]
                 set
                 {
                     _ui.ErrorAccentColor = value;
@@ -832,13 +832,13 @@ namespace Microsoft.PowerShell
 
             public ConsoleColor ErrorForegroundColor
             {
-                [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+                [SuppressMessage("Style", "IDE0051:Remove unused private members")]
                 get
                 {
                     return _ui.ErrorForegroundColor;
                 }
 
-                [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+                [SuppressMessage("Style", "IDE0051:Remove unused private members")]
                 set
                 {
                     _ui.ErrorForegroundColor = value;
@@ -847,13 +847,13 @@ namespace Microsoft.PowerShell
 
             public ConsoleColor ErrorBackgroundColor
             {
-                [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+                [SuppressMessage("Style", "IDE0051:Remove unused private members")]
                 get
                 {
                     return _ui.ErrorBackgroundColor;
                 }
 
-                [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+                [SuppressMessage("Style", "IDE0051:Remove unused private members")]
                 set
                 {
                     _ui.ErrorBackgroundColor = value;
@@ -862,13 +862,13 @@ namespace Microsoft.PowerShell
 
             public ConsoleColor WarningForegroundColor
             {
-                [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+                [SuppressMessage("Style", "IDE0051:Remove unused private members")]
                 get
                 {
                     return _ui.WarningForegroundColor;
                 }
 
-                [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+                [SuppressMessage("Style", "IDE0051:Remove unused private members")]
                 set
                 {
                     _ui.WarningForegroundColor = value;
@@ -877,13 +877,13 @@ namespace Microsoft.PowerShell
 
             public ConsoleColor WarningBackgroundColor
             {
-                [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+                [SuppressMessage("Style", "IDE0051:Remove unused private members")]
                 get
                 {
                     return _ui.WarningBackgroundColor;
                 }
 
-                [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+                [SuppressMessage("Style", "IDE0051:Remove unused private members")]
                 set
                 {
                     _ui.WarningBackgroundColor = value;
@@ -892,13 +892,13 @@ namespace Microsoft.PowerShell
 
             public ConsoleColor DebugForegroundColor
             {
-                [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+                [SuppressMessage("Style", "IDE0051:Remove unused private members")]
                 get
                 {
                     return _ui.DebugForegroundColor;
                 }
 
-                [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+                [SuppressMessage("Style", "IDE0051:Remove unused private members")]
                 set
                 {
                     _ui.DebugForegroundColor = value;
@@ -907,13 +907,13 @@ namespace Microsoft.PowerShell
 
             public ConsoleColor DebugBackgroundColor
             {
-                [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+                [SuppressMessage("Style", "IDE0051:Remove unused private members")]
                 get
                 {
                     return _ui.DebugBackgroundColor;
                 }
 
-                [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+                [SuppressMessage("Style", "IDE0051:Remove unused private members")]
                 set
                 {
                     _ui.DebugBackgroundColor = value;
@@ -922,13 +922,13 @@ namespace Microsoft.PowerShell
 
             public ConsoleColor VerboseForegroundColor
             {
-                [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+                [SuppressMessage("Style", "IDE0051:Remove unused private members")]
                 get
                 {
                     return _ui.VerboseForegroundColor;
                 }
 
-                [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+                [SuppressMessage("Style", "IDE0051:Remove unused private members")]
                 set
                 {
                     _ui.VerboseForegroundColor = value;
@@ -937,13 +937,13 @@ namespace Microsoft.PowerShell
 
             public ConsoleColor VerboseBackgroundColor
             {
-                [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+                [SuppressMessage("Style", "IDE0051:Remove unused private members")]
                 get
                 {
                     return _ui.VerboseBackgroundColor;
                 }
 
-                [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+                [SuppressMessage("Style", "IDE0051:Remove unused private members")]
                 set
                 {
                     _ui.VerboseBackgroundColor = value;
@@ -952,13 +952,13 @@ namespace Microsoft.PowerShell
 
             public ConsoleColor ProgressForegroundColor
             {
-                [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+                [SuppressMessage("Style", "IDE0051:Remove unused private members")]
                 get
                 {
                     return _ui.ProgressForegroundColor;
                 }
 
-                [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+                [SuppressMessage("Style", "IDE0051:Remove unused private members")]
                 set
                 {
                     _ui.ProgressForegroundColor = value;
@@ -967,13 +967,13 @@ namespace Microsoft.PowerShell
 
             public ConsoleColor ProgressBackgroundColor
             {
-                [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+                [SuppressMessage("Style", "IDE0051:Remove unused private members")]
                 get
                 {
                     return _ui.ProgressBackgroundColor;
                 }
 
-                [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+                [SuppressMessage("Style", "IDE0051:Remove unused private members")]
                 set
                 {
                     _ui.ProgressBackgroundColor = value;

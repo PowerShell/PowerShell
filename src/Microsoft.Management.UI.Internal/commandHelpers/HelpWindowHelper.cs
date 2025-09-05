@@ -22,7 +22,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// </summary>
         /// <param name="helpObj">Object with help information.</param>
         /// <param name="cmdlet">Cmdlet calling this method.</param>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called from methods called using reflection")]
+        [SuppressMessage("Style", "IDE0051:Remove unused private members", Justification = "Called from methods called using reflection")]
         private static void ShowHelpWindow(PSObject helpObj, PSCmdlet cmdlet)
         {
             Window ownerWindow = ShowCommandHelper.GetHostWindow(cmdlet);
