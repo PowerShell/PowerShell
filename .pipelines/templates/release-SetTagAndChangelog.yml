@@ -42,7 +42,7 @@ jobs:
         Write-Error "Changelog file not found: $filePath"
         exit 1
       }
-      
+
       Write-Verbose -Verbose "Creating output directory for CHANGELOG: $(ob_outputDirectory)/CHANGELOG"
       New-Item -Path $(ob_outputDirectory)/CHANGELOG -ItemType Directory -Force
       Copy-Item -Path $filePath -Destination $(ob_outputDirectory)/CHANGELOG

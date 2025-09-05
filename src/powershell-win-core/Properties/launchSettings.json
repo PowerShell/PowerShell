@@ -1,4 +1,4 @@
-{ 
+{
   "profiles": {
     "powershell-win-core": {
       "commandName": "Executable",
