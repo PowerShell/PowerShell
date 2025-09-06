@@ -47,11 +47,10 @@ variables:
   - name: WindowsContainerImage
     value: 'onebranch.azurecr.io/windows/ltsc2022/vse2022:latest'
   - name: LinuxContainerImage
-    value: mcr.microsoft.com/onebranch/cbl-mariner/build:2.0
+    value: mcr.microsoft.com/onebranch/azurelinux/build:3.0
   - group: PoolNames
   - name: templateFile
     value: ${{ iif ( parameters.OfficialBuild, 'v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates', 'v2/OneBranch.NonOfficial.CrossPlat.yml@onebranchTemplates' ) }}
-  
 
 resources:
   repositories:
