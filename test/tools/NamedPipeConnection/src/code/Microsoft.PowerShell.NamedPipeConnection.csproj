@@ -16,7 +16,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Microsoft.Management.Infrastructure" Version="3.0.0" />
-    <PackageReference Include="Microsoft.PowerShell.CoreCLR.Eventing" Version="7.4.10" />
+    <PackageReference Include="Microsoft.PowerShell.CoreCLR.Eventing" Version="7.4.11" />
     <PackageReference Include="Microsoft.PowerShell.Native" Version="7.4.0" />
     <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="8.0.0" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.1" />
