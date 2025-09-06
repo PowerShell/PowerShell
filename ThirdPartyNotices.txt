@@ -284,7 +284,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-Microsoft.Extensions.ObjectPool 8.0.17 - MIT
+Microsoft.Extensions.ObjectPool 8.0.19 - MIT
 
 
 Copyright Jorn Zaefferer
@@ -604,7 +604,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-Microsoft.Windows.Compatibility 8.0.17 - MIT
+Microsoft.Windows.Compatibility 8.0.19 - MIT
 
 
 (c) Microsoft Corporation
@@ -2355,7 +2355,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Drawing.Common 8.0.17 - MIT
+System.Drawing.Common 8.0.19 - MIT
 
 
 (c) Microsoft Corporation
