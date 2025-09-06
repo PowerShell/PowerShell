@@ -92,6 +92,8 @@ extends:
       WindowsHostVersion:
         Version: 2022
         Network: KS3
+      LinuxHostVersion:
+        Network: KS3
       linuxEsrpSigning: true
       incrementalSDLBinaryAnalysis: true
     globalSdl:
