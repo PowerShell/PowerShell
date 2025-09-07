@@ -444,28 +444,28 @@ namespace System.Management.Automation
                                                           out TOKEN_PRIVILEGE previousPrivilegeState,
                                                           ref int returnLength);
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        [StructLayout(LayoutKind.Sequential)]
         internal struct TOKEN_PRIVILEGE
         {
             internal uint PrivilegeCount;
             internal LUID_AND_ATTRIBUTES Privilege;
         }
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        [StructLayout(LayoutKind.Sequential)]
         internal struct LUID
         {
             internal uint LowPart;
             internal uint HighPart;
         }
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        [StructLayout(LayoutKind.Sequential)]
         internal struct LUID_AND_ATTRIBUTES
         {
             internal LUID Luid;
             internal uint Attributes;
         }
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        [StructLayout(LayoutKind.Sequential)]
         internal struct PRIVILEGE_SET
         {
             internal uint PrivilegeCount;

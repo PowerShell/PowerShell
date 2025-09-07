@@ -24,7 +24,7 @@ internal static partial class Interop
             public uint dwHighDateTime;
         }
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        [StructLayout(LayoutKind.Sequential)]
         internal unsafe struct WIN32_FIND_DATA
         {
             internal uint dwFileAttributes;

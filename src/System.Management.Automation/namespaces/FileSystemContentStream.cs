@@ -1482,7 +1482,7 @@ namespace Microsoft.PowerShell.Commands
             private const int MAX_DEFAULTCHAR = 2;
             private const int MAX_LEADBYTES = 12;
 
-            [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+            [StructLayout(LayoutKind.Sequential)]
             internal struct CPINFO
             {
                 [MarshalAs(UnmanagedType.U4)]
