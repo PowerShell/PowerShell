@@ -426,6 +426,9 @@ function Get-ChangeLogMessage
         '^Build\(deps\): ' {
             return $OriginalMessage.replace($Matches.0,'')
         }
+        '^\[release/v\d+\.\d+\]\s*' {
+            return $OriginalMessage.replace($Matches.0,'')
+        }
         default {
             return $OriginalMessage
         }
