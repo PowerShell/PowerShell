@@ -17,7 +17,6 @@ jobs:
       - name: branchCounter
         value: $[counter(variables['branchCounterKey'], 1)]
       - group: DotNetPrivateBuildAccess
-      - group: Azure Blob variable group
       - group: ReleasePipelineSecrets
       - group: mscodehub-feed-read-general
       - group: mscodehub-feed-read-akv
@@ -75,25 +74,6 @@ jobs:
       workingDirectory: '$(repoRoot)'
       retryCountOnTaskFailure: 2
 
-    - task: AzurePowerShell@5
-      displayName: Download winverify-private Artifacts
-      inputs:
-        azureSubscription: az-blob-cicd-infra
-        scriptType: inlineScript
-        azurePowerShellVersion: LatestVersion
-        workingDirectory: '$(repoRoot)'
-        pwsh: true
-        inline: |
-          # download smybols for getfilesiginforedist.dll
-          $storageAccountName = "pscoretestdata"
-          $containerName = 'winverify-private'
-          $winverifySymbolsPath = New-Item -ItemType Directory -Path '$(System.ArtifactsDirectory)/winverify-symbols' -Force
-          $dllName = 'getfilesiginforedist.dll'
-          $winverifySymbolsDllPath = Join-Path $winverifySymbolsPath $dllName
-
-          $context = New-AzStorageContext -StorageAccountName $storageAccountName -UseConnectedAccount
-          Get-AzStorageBlobContent -Container $containerName -Blob $dllName -Destination $winverifySymbolsDllPath -Context $context
-
     - pwsh: |
         Get-ChildItem -Path '$(System.ArtifactsDirectory)/winverify-symbols'
       displayName: Capture winverify-private Artifacts
@@ -147,12 +127,6 @@ jobs:
         Write-Verbose -Verbose -Message "Show content in 'runtimes' folder:"
         Get-ChildItem -Path '$(ob_outputDirectory)\runtimes'
         Write-Host
-
-        # # Replace 'getfilesiginforedist.dll' from the 'runtimes\win-x64' folder
-        # Write-Verbose -Verbose -Message "Replace 'getfilesiginforedist.dll':"
-        # $targetFile = Get-ChildItem -Path '$(ob_outputDirectory)\runtimes\*' -Recurse | Where-Object {$_.Name -eq 'getfilesiginforedist.dll'}
-        # Remove-Item -Path $targetFile.FullName -Verbose
-        # Copy-Item -Path '$(System.ArtifactsDirectory)\winverify-symbols\getfilesiginforedist.dll' -Destination $targetFile.FullName -Verbose
       workingDirectory: '$(repoRoot)'
       displayName: 'Remove unused runtimes'
 
