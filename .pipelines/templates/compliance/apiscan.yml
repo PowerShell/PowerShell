@@ -148,11 +148,11 @@ jobs:
         Get-ChildItem -Path '$(ob_outputDirectory)\runtimes'
         Write-Host
 
-        # Replace 'getfilesiginforedist.dll' from the 'runtimes\win-x64' folder
-        Write-Verbose -Verbose -Message "Replace 'getfilesiginforedist.dll':"
-        $targetFile = Get-ChildItem -Path '$(ob_outputDirectory)\runtimes\*' -Recurse | Where-Object {$_.Name -eq 'getfilesiginforedist.dll'}
-        Remove-Item -Path $targetFile.FullName -Verbose
-        Copy-Item -Path '$(System.ArtifactsDirectory)\winverify-symbols\getfilesiginforedist.dll' -Destination $targetFile.FullName -Verbose
+        # # Replace 'getfilesiginforedist.dll' from the 'runtimes\win-x64' folder
+        # Write-Verbose -Verbose -Message "Replace 'getfilesiginforedist.dll':"
+        # $targetFile = Get-ChildItem -Path '$(ob_outputDirectory)\runtimes\*' -Recurse | Where-Object {$_.Name -eq 'getfilesiginforedist.dll'}
+        # Remove-Item -Path $targetFile.FullName -Verbose
+        # Copy-Item -Path '$(System.ArtifactsDirectory)\winverify-symbols\getfilesiginforedist.dll' -Destination $targetFile.FullName -Verbose
       workingDirectory: '$(repoRoot)'
       displayName: 'Remove unused runtimes'
 
