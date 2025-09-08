@@ -74,12 +74,6 @@ jobs:
       workingDirectory: '$(repoRoot)'
       retryCountOnTaskFailure: 2
 
-    - pwsh: |
-        Get-ChildItem -Path '$(System.ArtifactsDirectory)/winverify-symbols'
-      displayName: Capture winverify-private Artifacts
-      workingDirectory: '$(repoRoot)'
-      condition: succeededOrFailed()
-
     - task: CodeQL3000Init@0 # Add CodeQL Init task right before your 'Build' step.
       displayName: 🔏 CodeQL 3000 Init
       condition: eq(variables['CODEQL_ENABLED'], 'true')
