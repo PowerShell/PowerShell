@@ -1,6 +1,9 @@
 trigger: none
 
 parameters:
+  - name: OfficialBuild
+    type: boolean
+    default: true
   - name: InternalSDKBlobURL
     displayName: URL to the blob having internal .NET SDK
     type: string
@@ -27,9 +30,6 @@ parameters:
     default: false
   - name: FORCE_CODEQL
     displayName: Debugging - Enable CodeQL and set cadence to 1 hour
-    type: boolean
-    default: false
-  - name: OfficialBuild
     type: boolean
     default: false
 

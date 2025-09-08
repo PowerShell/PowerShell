@@ -1,6 +1,9 @@
 trigger: none
 
 parameters: # parameters are shown up in ADO UI in a build queue time
+  - name: OfficialBuild
+    type: boolean
+    default: true
   - name: 'debug'
     displayName: 'Enable debug output'
     type: boolean
@@ -23,9 +26,6 @@ parameters: # parameters are shown up in ADO UI in a build queue time
     default: false
   - name: SkipPSInfraInstallers
     displayName: Skip Copying Archives and Installers to PSInfrastructure Public Location
-    type: boolean
-    default: false
-  - name: OfficialBuild
     type: boolean
     default: false
 
@@ -224,17 +224,10 @@ extends:
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
-          displayName: Validate Windows Packages
-          jobName: ValidateWinPkg
-          instructions: |
-            Validate zip package on windows
-
-      - template: /.pipelines/templates/approvalJob.yml@self
-        parameters:
           displayName: Validate OSX Packages
           jobName: ValidateOsxPkg
           instructions: |
-            Validate tar.gz package on osx-arm64
+            Run MacOS smoke test https://dev.azure.com/mscodehub/PowerShellCore/_build?definitionId=3662&_a=summary
 
     - stage: ReleaseAutomation
       dependsOn: []

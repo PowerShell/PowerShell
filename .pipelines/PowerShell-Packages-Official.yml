@@ -1,6 +1,9 @@
 trigger: none
 
 parameters: # parameters are shown up in ADO UI in a build queue time
+  - name: OfficialBuild
+    type: boolean
+    default: true
   - name: ForceAzureBlobDelete
     displayName: Delete Azure Blob
     type: string
@@ -24,9 +27,6 @@ parameters: # parameters are shown up in ADO UI in a build queue time
     displayName: Skip Signing
     type: string
     default: 'NO'
-  - name: OfficialBuild
-    type: boolean
-    default: false
 
 name: pkgs-$(BUILD.SOURCEBRANCHNAME)-prod.${{ parameters.OfficialBuild }}-$(Build.BuildId)
 
