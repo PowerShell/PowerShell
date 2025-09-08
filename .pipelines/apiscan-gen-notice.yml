@@ -87,7 +87,7 @@ extends:
       apiscan:
         enabled: true
         softwareName: "PowerShell" # Default is repo name
-        versionNumber: "7.5" # Default is build number
+        versionNumber: "7.6" # Default is build number
         isLargeApp: false # Default: false.
         symbolsFolder: $(SymbolsServerUrl);$(ob_outputDirectory)
 #softwareFolder - relative path to a folder to be scanned. Default value is root of artifacts folder
