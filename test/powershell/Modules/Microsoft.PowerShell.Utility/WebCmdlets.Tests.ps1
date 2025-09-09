@@ -4604,6 +4604,45 @@ Describe "Web cmdlets Unix Sockets tests" -Tags "CI", "RequireAdminOnWindows" {
     }
 }
 
+Describe "Web cmdlets PipeName tests" -Tags "CI", "RequireAdminOnWindows","pipename" {
+    BeforeAll {
+        $script:PipeSkipTests = $false
+        try {
+            Import-Module (Join-Path $PSScriptRoot '..' '..' '..' '..' 'tools' 'Modules' 'PipeName' 'PipeName.psd1') -Force
+            $script:PipeName = Get-PipeName
+            Start-PipeServer -PipeName $script:PipeName | Out-Null
+            if (-not (Get-PipeServer)) { throw 'Pipe server did not start.' }
+        }
+        catch {
+            Write-Verbose -Verbose -Message "PipeName test setup failed: $_"
+            $script:PipeSkipTests = $true
+        }
+    }
+
+    AfterAll { Stop-PipeServer }
+
+    It "Execute Invoke-WebRequest with -PipeName" {
+        if ($script:PipeSkipTests) {
+            Set-ItResult -Skipped -Because "PipeName tests could not initialize."
+            return
+        }
+        $uri = Get-PipeServerUri
+        $result = Invoke-WebRequest $uri -PipeName $script:PipeName
+        $result.StatusCode | Should -Be "200"
+        $result.Content | Should -Be "Hello World PipeName."
+    }
+
+    It "Execute Invoke-RestMethod with -PipeName" {
+        if ($script:PipeSkipTests) {
+            Set-ItResult -Skipped -Because "PipeName tests could not initialize."
+            return
+        }
+        $uri = Get-PipeServerUri
+        $result = Invoke-RestMethod $uri -PipeName $script:PipeName
+        $result | Should -Be "Hello World PipeName."
+    }
+}
+
 Describe 'Invoke-WebRequest and Invoke-RestMethod support OperationTimeoutSeconds' -Tags "CI", "RequireAdminOnWindows" {
     BeforeAll {
         $oldProgress = $ProgressPreference
