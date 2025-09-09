@@ -206,23 +206,12 @@ namespace Microsoft.PowerShell.Commands
 
             if (_unixSocket is not null)
             {
-                handler.ConnectCallback = async (context, token) =>
-                {
-                    Socket socket = new(AddressFamily.Unix, SocketType.Stream, ProtocolType.IP);
-                    await socket.ConnectAsync(_unixSocket).ConfigureAwait(false);
-
-                    return new NetworkStream(socket, ownsSocket: false);
-                };
+                handler.ConnectCallback = ConnectToUnixSocketAsync;
             }
 
             if (_pipeName is not null)
             {
-                handler.ConnectCallback = async (context, token) =>
-                {
-                    var stream = new System.IO.Pipes.NamedPipeClientStream(".", _pipeName, System.IO.Pipes.PipeDirection.InOut, System.IO.Pipes.PipeOptions.Asynchronous);
-                    await stream.ConnectAsync((int)_connectionTimeout.TotalMilliseconds, token).ConfigureAwait(false);
-                    return stream;
-                };
+                handler.ConnectCallback = ConnectToNamedPipeAsync;
             }
 
             handler.CookieContainer = Cookies;
@@ -269,6 +258,33 @@ namespace Microsoft.PowerShell.Commands
             {
                 Timeout = _connectionTimeout
             };
+        }
+
+        /// <summary>
+        /// Connect to a Unix Domain Socket.
+        /// </summary>
+        /// <param name="context">The connection context.</param>
+        /// <param name="token">The cancellation token.</param>
+        /// <returns>The network stream.</returns>
+        private async System.Threading.Tasks.ValueTask<System.IO.Stream> ConnectToUnixSocketAsync(System.Net.Http.SocketsHttpConnectionContext context, CancellationToken token)
+        {
+            Socket socket = new(AddressFamily.Unix, SocketType.Stream, ProtocolType.IP);
+            await socket.ConnectAsync(_unixSocket).ConfigureAwait(false);
+
+            return new NetworkStream(socket, ownsSocket: false);
+        }
+
+        /// <summary>
+        /// Connect to a Named Pipe.
+        /// </summary>
+        /// <param name="context">The connection context.</param>
+        /// <param name="token">The cancellation token.</param>
+        /// <returns>The pipe stream.</returns>
+        private async System.Threading.Tasks.ValueTask<System.IO.Stream> ConnectToNamedPipeAsync(System.Net.Http.SocketsHttpConnectionContext context, CancellationToken token)
+        {
+            var stream = new System.IO.Pipes.NamedPipeClientStream(".", _pipeName, System.IO.Pipes.PipeDirection.InOut, System.IO.Pipes.PipeOptions.Asynchronous);
+            await stream.ConnectAsync((int)_connectionTimeout.TotalMilliseconds, token).ConfigureAwait(false);
+            return stream;
         }
 
         private void SetClassVar<T>(ref T oldValue, T newValue) where T : class?
