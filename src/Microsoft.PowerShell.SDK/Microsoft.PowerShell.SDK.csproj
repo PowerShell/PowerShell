@@ -16,13 +16,13 @@
 
   <ItemGroup>
     <!-- This section is to force the version of non-direct dependencies -->
-    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.0-preview.7.25380.108" />
-    <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="10.0.0-preview.7.25380.108" />
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.0-rc.1.25451.107" />
+    <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="10.0.0-rc.1.25451.107" />
     <!-- the following package(s) are from https://github.com/dotnet/fxdac -->
     <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
-    <PackageReference Include="System.IO.Packaging" Version="10.0.0-preview.7.25380.108" />
-    <PackageReference Include="System.Net.Http.WinHttpHandler" Version="10.0.0-preview.7.25380.108" />
+    <PackageReference Include="System.IO.Packaging" Version="10.0.0-rc.1.25451.107" />
+    <PackageReference Include="System.Net.Http.WinHttpHandler" Version="10.0.0-rc.1.25451.107" />
     <!-- Removing due to NU1510 -->
     <!-- PackageReference Include="System.Text.Encodings.Web" Version="9.0.2" /-->
     <!--
@@ -37,7 +37,7 @@
     <PackageReference Include="System.ServiceModel.Security" Version="4.10.3" NoWarn="NU1605" />
     <PackageReference Include="System.Private.ServiceModel" Version="4.10.3" NoWarn="NU1605" />
     <!-- the source could not be found for the following package(s) -->
-    <PackageReference Include="Microsoft.Windows.Compatibility" Version="10.0.0-preview.7.25380.108" />
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="10.0.0-rc.1.25451.107" />
   </ItemGroup>
 
 </Project>
