@@ -4604,41 +4604,40 @@ Describe "Web cmdlets Unix Sockets tests" -Tags "CI", "RequireAdminOnWindows" {
     }
 }
 
-Describe "Web cmdlets PipeName tests" -Tags "CI", "RequireAdminOnWindows","pipename" {
+Describe "Web cmdlets PipeName tests" -Tags "CI" {
     BeforeAll {
-        $script:PipeSkipTests = $false
+        $pipeSkipTests = $false
         try {
-            Import-Module (Join-Path $PSScriptRoot '..' '..' '..' '..' 'tools' 'Modules' 'PipeName' 'PipeName.psd1') -Force
-            $script:PipeName = Get-PipeName
-            Start-PipeServer -PipeName $script:PipeName | Out-Null
+           $pipeName = Get-PipeName
+            Start-PipeServer -PipeName $pipeName | Out-Null
             if (-not (Get-PipeServer)) { throw 'Pipe server did not start.' }
         }
         catch {
             Write-Verbose -Verbose -Message "PipeName test setup failed: $_"
-            $script:PipeSkipTests = $true
+            $pipeSkipTests = $true
         }
     }
 
     AfterAll { Stop-PipeServer }
 
     It "Execute Invoke-WebRequest with -PipeName" {
-        if ($script:PipeSkipTests) {
+        if ($pipeSkipTests) {
             Set-ItResult -Skipped -Because "PipeName tests could not initialize."
             return
         }
         $uri = Get-PipeServerUri
-        $result = Invoke-WebRequest $uri -PipeName $script:PipeName
+        $result = Invoke-WebRequest $uri -PipeName $pipeName
         $result.StatusCode | Should -Be "200"
         $result.Content | Should -Be "Hello World PipeName."
     }
 
     It "Execute Invoke-RestMethod with -PipeName" {
-        if ($script:PipeSkipTests) {
+        if ($pipeSkipTests) {
             Set-ItResult -Skipped -Because "PipeName tests could not initialize."
             return
         }
         $uri = Get-PipeServerUri
-        $result = Invoke-RestMethod $uri -PipeName $script:PipeName
+        $result = Invoke-RestMethod $uri -PipeName $pipeName
         $result | Should -Be "Hello World PipeName."
     }
 }
