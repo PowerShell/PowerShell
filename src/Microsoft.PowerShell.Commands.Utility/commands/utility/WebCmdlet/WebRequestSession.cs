@@ -35,6 +35,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _disposed;
         private TimeSpan _connectionTimeout;
         private UnixDomainSocketEndPoint? _unixSocket;
+        private string? _pipeName;
 
         /// <summary>
         /// Contains true if an existing HttpClient had to be disposed and recreated since the WebSession was last used.
@@ -148,6 +149,8 @@ namespace Microsoft.PowerShell.Commands
 
         internal UnixDomainSocketEndPoint UnixSocket { set => SetClassVar(ref _unixSocket, value); }
 
+        internal string? PipeName { set => SetClassVar(ref _pipeName, value); }
+
         internal bool NoProxy
         {
             set
@@ -209,6 +212,16 @@ namespace Microsoft.PowerShell.Commands
                     await socket.ConnectAsync(_unixSocket).ConfigureAwait(false);
 
                     return new NetworkStream(socket, ownsSocket: false);
+                };
+            }
+
+            if (_pipeName is not null)
+            {
+                handler.ConnectCallback = async (context, token) =>
+                {
+                    var stream = new System.IO.Pipes.NamedPipeClientStream(".", _pipeName, System.IO.Pipes.PipeDirection.InOut, System.IO.Pipes.PipeOptions.Asynchronous);
+                    await stream.ConnectAsync((int)_connectionTimeout.TotalMilliseconds, token).ConfigureAwait(false);
+                    return stream;
                 };
             }
 

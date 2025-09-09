@@ -389,6 +389,13 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public virtual UnixDomainSocketEndPoint UnixSocket { get; set; }
 
+        /// <summary>
+        /// Gets or sets the PipeName property.
+        /// </summary>
+        [Parameter]
+        [ValidateNotNullOrEmpty]
+        public virtual string PipeName { get; set; }
+
         #endregion Method
 
         #region NoProxy
