@@ -1373,4 +1373,13 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   <data name="ConfigurationNotAllowedOnArm64" xml:space="preserve">
     <value>Configuration keyword is not supported on ARM64 processors.</value>
   </data>
+  <data name="MissingSplatValue" xml:space="preserve">
+    <value>Missing value after the splat parameter -@.</value>
+  </data>
+  <data name="SplatValueAfterSplatParameter" xml:space="preserve">
+    <value>Cannot use a @splat expression '{0}' after the splat parameter '-@'. Remove the splat parameter or change the splat to a variable instead.</value>
+  </data>
+  <data name="CommandParameterValueAfterSplatParameter" xml:space="preserve">
+    <value>Cannot use a -Parameter:Value expression '{0}' after the splat parameter '-@'. Remove the splat parameter or specify the parameter value in a hashtable instead.</value>
+  </data>
 </root>
