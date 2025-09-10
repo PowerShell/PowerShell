@@ -12,6 +12,7 @@ on:
       - github-mirror
     paths:
       - "**"
+      - ".globalconfig"
       - "!.github/ISSUE_TEMPLATE/**"
       - "!.dependabot/config.yml"
       - "!.pipelines/**"
