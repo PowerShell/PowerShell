@@ -8,6 +8,7 @@ on:
       - github-mirror
     paths:
       - "**"
+      - ".globalconfig"
       - "!.vsts-ci/misc-analysis.yml"
       - "!.github/ISSUE_TEMPLATE/**"
       - "!.dependabot/config.yml"
