@@ -268,8 +268,10 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The network stream.</returns>
         private async System.Threading.Tasks.ValueTask<System.IO.Stream> ConnectToUnixSocketAsync(System.Net.Http.SocketsHttpConnectionContext context, CancellationToken token)
         {
+            ArgumentNullException.ThrowIfNull(_unixSocket, nameof(_unixSocket));
+
             Socket socket = new(AddressFamily.Unix, SocketType.Stream, ProtocolType.IP);
-            await socket.ConnectAsync(_unixSocket).ConfigureAwait(false);
+            await socket.ConnectAsync(_unixSocket, token).ConfigureAwait(false);
 
             return new NetworkStream(socket, ownsSocket: false);
         }
@@ -282,8 +284,15 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The pipe stream.</returns>
         private async System.Threading.Tasks.ValueTask<System.IO.Stream> ConnectToNamedPipeAsync(System.Net.Http.SocketsHttpConnectionContext context, CancellationToken token)
         {
+            ArgumentNullException.ThrowIfNull(_pipeName, nameof(_pipeName));
+
+            int timeoutMs = checked((int)Math.Min(
+                   int.MaxValue,
+                   Math.Round(_connectionTimeout.TotalMilliseconds, MidpointRounding.AwayFromZero)
+               ));
+
             var stream = new System.IO.Pipes.NamedPipeClientStream(".", _pipeName, System.IO.Pipes.PipeDirection.InOut, System.IO.Pipes.PipeOptions.Asynchronous);
-            await stream.ConnectAsync((int)_connectionTimeout.TotalMilliseconds, token).ConfigureAwait(false);
+            await stream.ConnectAsync(timeoutMs, token).ConfigureAwait(false);
             return stream;
         }
 
