@@ -12,6 +12,7 @@ on:
       - github-mirror
     paths:
       - "**"
+      - "nuget.config"
       - "*.props"
       - ".globalconfig"
       - "!.github/ISSUE_TEMPLATE/**"
