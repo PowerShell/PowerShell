@@ -6,11 +6,11 @@ Describe 'Generic Method invocation' -Tags 'CI' {
     BeforeAll {
         $EmptyArrayCases = @(
             @{
-                Script       = '[Array]::Empty[string]()'
+                Script       = '[array]::Empty[string]()'
                 ExpectedType = [string[]]
             }
             @{
-                Script       = '[Array]::Empty[System.Collections.Generic.Dictionary[System.Numerics.BigInteger, System.Collections.Generic.List[string[,]]]]()'
+                Script       = '[array]::Empty[System.Collections.Generic.Dictionary[System.Numerics.BigInteger, System.Collections.Generic.List[string[,]]]]()'
                 ExpectedType = [System.Collections.Generic.Dictionary[System.Numerics.BigInteger, System.Collections.Generic.List[string[, ]]][]]
             }
         )
@@ -22,31 +22,31 @@ Describe 'Generic Method invocation' -Tags 'CI' {
                 IndexString  = '[type]'
             }
             @{
-                Script       = '$object.IPSubnet[[Array]::IndexOf($_.IPAddress, $_.IPAddress[0])]'
+                Script       = '$object.IPSubnet[[array]::IndexOf($_.IPAddress, $_.IPAddress[0])]'
                 IndexType    = 'System.Management.Automation.Language.InvokeMemberExpressionAst'
-                IndexString  = '[Array]::IndexOf($_.IPAddress, $_.IPAddress[0])'
+                IndexString  = '[array]::IndexOf($_.IPAddress, $_.IPAddress[0])'
             }
             @{
                 Script       = @'
                     [IPAddress]::Parse(
                         $_.IPSubnet[
-                            [Array]::IndexOf($_.IPAddress, $_.IPAddress[0])
+                            [array]::IndexOf($_.IPAddress, $_.IPAddress[0])
                         ]
                     )
 '@
                 IndexType    = 'System.Management.Automation.Language.InvokeMemberExpressionAst'
-                IndexString  = '[Array]::IndexOf($_.IPAddress, $_.IPAddress[0])'
+                IndexString  = '[array]::IndexOf($_.IPAddress, $_.IPAddress[0])'
             }
             @{
                 Script       = @'
                     [IPAddress]::Parse(
                         $_.IPSubnet[
-                            ([Array]::IndexOf($_.IPAddress, $_.IPAddress[0]))
+                            ([array]::IndexOf($_.IPAddress, $_.IPAddress[0]))
                         ]
                     )
 '@
                 IndexType    = 'System.Management.Automation.Language.ParenExpressionAst'
-                IndexString  = '([Array]::IndexOf($_.IPAddress, $_.IPAddress[0]))'
+                IndexString  = '([array]::IndexOf($_.IPAddress, $_.IPAddress[0]))'
             }
         )
 
@@ -107,7 +107,7 @@ Describe 'Generic Method invocation' -Tags 'CI' {
                 ErrorCount     = 2
             }
             @{
-                Script         = '[Array]::Empty[[type]]()'
+                Script         = '[array]::Empty[[type]]()'
                 ExpectedErrors = @('UnexpectedToken', 'ExpectedExpression')
                 ErrorCount     = 2
             }
@@ -251,7 +251,7 @@ Describe 'Generic Method invocation' -Tags 'CI' {
 
     It 'can use type that is loaded at runtime' {
         Add-Type -TypeDefinition "public class GenericTypeTest {}"
-        $r = [Array]::Empty[GenericTypeTest]()
+        $r = [array]::Empty[GenericTypeTest]()
 
         $r.GetType() | Should -Be ([GenericTypeTest[]])
         $r.Length | Should -Be 0
