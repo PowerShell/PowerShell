@@ -8,8 +8,7 @@ on:
       - github-mirror
     paths:
       - "**"
-      - "nuget.config"
-      - "*.props"
+      - "*"
       - ".globalconfig"
       - "!.vsts-ci/misc-analysis.yml"
       - "!.github/ISSUE_TEMPLATE/**"
