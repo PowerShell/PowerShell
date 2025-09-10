@@ -206,7 +206,14 @@ namespace Microsoft.PowerShell.Commands
 
             if (_unixSocket is not null)
             {
-                handler.ConnectCallback = ConnectToUnixSocketAsync;
+                handler.ConnectCallback = async (context, token) =>
+               {
+                   Socket socket = new(AddressFamily.Unix, SocketType.Stream, ProtocolType.IP);
+                   await socket.ConnectAsync(_unixSocket).ConfigureAwait(false);
+
+                   return new NetworkStream(socket, ownsSocket: false);
+               };
+
             }
 
             if (_pipeName is not null)
@@ -258,22 +265,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 Timeout = _connectionTimeout
             };
-        }
-
-        /// <summary>
-        /// Connect to a Unix Domain Socket.
-        /// </summary>
-        /// <param name="context">The connection context.</param>
-        /// <param name="token">The cancellation token.</param>
-        /// <returns>The network stream.</returns>
-        private async System.Threading.Tasks.ValueTask<System.IO.Stream> ConnectToUnixSocketAsync(System.Net.Http.SocketsHttpConnectionContext context, CancellationToken token)
-        {
-            ArgumentNullException.ThrowIfNull(_unixSocket, nameof(_unixSocket));
-
-            Socket socket = new(AddressFamily.Unix, SocketType.Stream, ProtocolType.IP);
-            await socket.ConnectAsync(_unixSocket, token).ConfigureAwait(false);
-
-            return new NetworkStream(socket, ownsSocket: false);
         }
 
         /// <summary>
