@@ -1020,6 +1020,8 @@ namespace Microsoft.PowerShell.Commands
 
             WebSession.UnixSocket = UnixSocket;
 
+            WebSession.PipeName = PipeName;
+
             WebSession.SkipCertificateCheck = SkipCertificateCheck.IsPresent;
 
             // Store the other supplied headers
