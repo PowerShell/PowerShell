@@ -274,15 +274,14 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="token">The cancellation token.</param>
         /// <returns>The pipe stream.</returns>
         private async System.Threading.Tasks.ValueTask<System.IO.Stream> ConnectToNamedPipeAsync(System.Net.Http.SocketsHttpConnectionContext context, CancellationToken token)
-        {
-            ArgumentNullException.ThrowIfNull(_pipeName, nameof(_pipeName));
+        { 
 
             int timeoutMs = checked((int)Math.Min(
                    int.MaxValue,
                    Math.Round(_connectionTimeout.TotalMilliseconds, MidpointRounding.AwayFromZero)
                ));
 
-            var stream = new System.IO.Pipes.NamedPipeClientStream(".", _pipeName, System.IO.Pipes.PipeDirection.InOut, System.IO.Pipes.PipeOptions.Asynchronous);
+            var stream = new System.IO.Pipes.NamedPipeClientStream(".", _pipeName!, System.IO.Pipes.PipeDirection.InOut, System.IO.Pipes.PipeOptions.Asynchronous);
             await stream.ConnectAsync(timeoutMs, token).ConfigureAwait(false);
             return stream;
         }
