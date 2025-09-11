@@ -6,13 +6,13 @@ Describe "Write-Host with default Console Host" -Tags "Slow","Feature" {
         $powershell = Join-Path -Path $PSHOME -ChildPath "pwsh"
 
         $testData = @(
-            @{ Name = '-Separator';       Command = "Write-Host a,b,c -Separator '+'";                 returnCount = 1; returnValue = @("a+b+c") }
-            @{ Name = '-NoNewline=true';  Command = "Write-Host a,b -NoNewline:`$true;Write-Host a,b"; returnCount = 1; returnValue = @("a ba b") }
-            @{ Name = '-NoNewline=false'; Command = "Write-Host a1,b1;Write-Host a2,b2";               returnCount = 2; returnValue = @("a1 b1","a2 b2") }
+            @{ Name = '-Separator';       Command = "`$PSStyle.OutputRendering='Plaintext';Write-Host a,b,c -Separator '+'";                 returnCount = 1; returnValue = @("a+b+c") }
+            @{ Name = '-NoNewline=true';  Command = "`$PSStyle.OutputRendering='Plaintext';Write-Host a,b -NoNewline:`$true;Write-Host a,b"; returnCount = 1; returnValue = @("a ba b") }
+            @{ Name = '-NoNewline=false'; Command = "`$PSStyle.OutputRendering='Plaintext';Write-Host a1,b1;Write-Host a2,b2";               returnCount = 2; returnValue = @("a1 b1","a2 b2") }
         )
     }
 
-    It "write-Host works with '<Name>' switch" -TestCases:$testData -Pending:$IsMacOS {
+    It "write-Host works with '<Name>' switch" -TestCases:$testData {
         param($Command, $returnCount, $returnValue)
 
         [array]$result = & $powershell -noprofile -c $Command
