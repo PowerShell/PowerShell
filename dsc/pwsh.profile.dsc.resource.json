@@ -1,0 +1,103 @@
+{
+    "$schema": "https://aka.ms/dsc/schemas/v3/bundled/resource/manifest.json",
+    "description": "Manage PowerShell profiles.",
+    "tags": [
+        "linux",
+        "windows",
+        "macos",
+        "powershell"
+    ],
+    "type": "Microsoft.PowerShell/Profile",
+    "version": "0.0.1",
+    "get": {
+        "executable": "pwsh",
+        "args": [
+            "-NoLogo",
+            "-NonInteractive",
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-Command",
+            "$Input | ./pwsh.profile.resource.ps1 -operation 'get'"
+        ],
+        "input": "stdin"
+    },
+    "set": {
+        "executable": "pwsh",
+        "args": [
+            "-NoLogo",
+            "-NonInteractive",
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-Command",
+            "$Input | ./pwsh.profile.resource.ps1 -operation 'set'"
+        ],
+        "input": "stdin"
+    },
+    "export": {
+        "executable": "pwsh",
+        "args": [
+            "-NoLogo",
+            "-NonInteractive",
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-Command",
+            "$Input | ./pwsh.profile.resource.ps1 -operation 'export'"
+        ],
+        "input": "stdin"
+    },
+    "schema": {
+        "embedded": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "title": "Profile",
+            "description": "A resource for managing PowerShell profiles.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "profileType"
+            ],
+            "properties": {
+                "profileType": {
+                    "title": "Name",
+                    "description": "The name of the repository.",
+                    "type": "string"
+                },
+                "content": {
+                    "title": "Content",
+                    "description": "The content of the profile.",
+                    "type": "string"
+                },
+                "_exist": {
+                    "$ref": "https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/v3/resource/properties/exist.json"
+                }
+            },
+            "$defs": {
+                "ProfileType": {
+                    "type": "string",
+                    "title": "Profile Type",
+                    "description": "The type of the profile. Can be 'AllUsersCurrentHost', 'AllUsersAllHosts', 'CurrentUserAllHosts', or 'CurrentUserCurrentHost'.",
+                    "enum": [
+                        "AllUsersCurrentHost",
+                        "AllUsersAllHosts",
+                        "CurrentUserAllHosts",
+                        "CurrentUserCurrentHost"
+                    ]
+                },
+                "https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/v3/resource/properties/exist.json": {
+                    "$schema": "https://json-schema.org/draft/2020-12/schema",
+                    "$id": "https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/v3/resource/properties/exist.json",
+                    "title": "Instance should exist",
+                    "description": "Indicates whether the DSC resource instance should exist.",
+                    "type": "boolean",
+                    "default": true,
+                    "enum": [
+                        false,
+                        true
+                    ]
+                }
+            }
+        }
+    }
+}
