@@ -132,7 +132,7 @@ namespace Microsoft.PowerShell.Commands
         internal static T[] GetAll<T>(CimSession session, string nameSpace, string wmiClassName) where T : class, new()
         {
             ArgumentException.ThrowIfNullOrEmpty(wmiClassName);
-            
+
             var rv = new List<T>();
 
             try

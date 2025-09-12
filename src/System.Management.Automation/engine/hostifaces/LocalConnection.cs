@@ -1557,11 +1557,11 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
-        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected RunspaceOpenModuleLoadException(SerializationInfo info, StreamingContext context)
         {
             throw new NotSupportedException();
-        }        
+        }
         #endregion Serialization
     }
 
