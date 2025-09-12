@@ -295,6 +295,10 @@ namespace System.Management.Automation.Runspaces
             yield return new ExtendedTypeDefinition(
                 "System.Management.Automation.PSStyle+BackgroundColor",
                 ViewsOf_System_Management_Automation_PSStyleBackgroundColor());
+
+            yield return new ExtendedTypeDefinition(
+                "System.Management.Automation.PSStyle+PromptFormatting",
+                ViewsOf_System_Management_Automation_PSStylePromptFormat());
         }
 
         private static IEnumerable<FormatViewDefinition> ViewsOf_System_RuntimeType()
@@ -2245,6 +2249,22 @@ namespace System.Management.Automation.Runspaces
 
                             $sb.ToString()",
                             label: "Extension")
+                    .EndEntry()
+                .EndList());
+        }
+
+        private static IEnumerable<FormatViewDefinition> ViewsOf_System_Management_Automation_PSStylePromptFormat()
+        {
+            yield return new FormatViewDefinition(
+                "System.Management.Automation.PSStyle+PromptFormat",
+                ListControl.Create()
+                    .StartEntry()
+                        .AddItemScriptBlock(@"$_.AsEscapeSequence('Caption')", label: "Caption")
+                        .AddItemScriptBlock(@"$_.AsEscapeSequence('Message')", label: "Message")
+                        .AddItemScriptBlock(@"$_.AsEscapeSequence('Help')", label: "Help")
+                        .AddItemScriptBlock(@"$_.AsEscapeSequence('ChoiceDefault')", label: "ChoiceDefault")
+                        .AddItemScriptBlock(@"$_.AsEscapeSequence('ChoiceOther')", label: "ChoiceOther")
+                        .AddItemScriptBlock(@"$_.AsEscapeSequence('ChoiceHelp')", label: "ChoiceHelp")
                     .EndEntry()
                 .EndList());
         }
