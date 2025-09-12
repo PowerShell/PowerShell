@@ -220,7 +220,7 @@ namespace Microsoft.PowerShell
             internal FONTSIGNATURE fs;
         }
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        [StructLayout(LayoutKind.Sequential)]
         internal struct TEXTMETRIC
         {
             // From public\sdk\inc\wingdi.h

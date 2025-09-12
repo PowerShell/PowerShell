@@ -606,7 +606,7 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// Type of INPUT_RECORD which is a key.
             /// </summary>
-            [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+            [StructLayout(LayoutKind.Sequential)]
             internal struct KEY_EVENT_RECORD
             {
                 /// <summary>
