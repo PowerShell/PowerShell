@@ -25,6 +25,10 @@ parameters: # parameters are shown up in ADO UI in a build queue time
     displayName: Skip Copying Archives and Installers to PSInfrastructure Public Location
     type: boolean
     default: false
+  - name: skipMSIXPublish
+    displayName: Skip MSIX Publish
+    type: boolean
+    default: false
   - name: OfficialBuild
     type: boolean
     default: false
@@ -363,13 +367,12 @@ extends:
     - stage: PublishMsix
       dependsOn: PushGitTagAndMakeDraftPublic
       displayName: Publish MSIX to store
+      variables:
+        ob_release_environment: Production
       jobs:
-      - template: /.pipelines/templates/approvalJob.yml@self
+      - template: /.pipelines/templates/release-MSIX-Publish.yml@self
         parameters:
-          displayName: Publish the MSIX Bundle package to store
-          jobName: PublishMsix
-          instructions: |
-            Ask Steve to release MSIX bundle package to Store
+          skipMSIXPublish: ${{ parameters.skipMSIXPublish }}
 
     - stage: PublishVPack
       dependsOn: PushGitTagAndMakeDraftPublic
