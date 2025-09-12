@@ -11,7 +11,7 @@ if ($useModule)
     $m = New-Module {
         function Test-DrivePresenceFromModule
         {
-            param ([String]$Path)
+            param ([string]$Path)
 
             & $global:CoreScriptPath -Path $Path
         }
