@@ -185,8 +185,6 @@ namespace System.Management.Automation
                     switch (digits.Length)
                     {
                         // Only accept sign bits at these lengths:
-                        case 8: // byte
-                        case 16: // short
                         case 32: // int
                         case 64: // long
                         case 96: // decimal
