@@ -9,10 +9,12 @@ function Get-EnvInformation
         $environment += @{'IsCoreCLR' = [System.Management.Automation.Platform]::IsCoreCLR}
         $environment += @{'IsLinux' = [System.Management.Automation.Platform]::IsLinux}
         $environment += @{'IsMacOS' = [System.Management.Automation.Platform]::IsMacOS}
+        $environment += @{'IsFreeBSD' = [System.Management.Automation.Platform]::IsFreeBSD}
     } else {
         $environment += @{'IsCoreCLR' = $false}
         $environment += @{'IsLinux' = $false}
         $environment += @{'IsMacOS' = $false}
+        $environment += @{'IsFreeBSD' = $false}
     }
 
     if ($environment.IsWindows)
@@ -36,6 +38,10 @@ function Get-EnvInformation
         if (-not($environment.UsingHomebrew -or $environment.UsingMacports)) {
             throw "Neither Homebrew nor MacPorts is installed on this system, visit https://brew.sh/ or https://www.macports.org/ to continue"
         }
+    }
+
+    if ($environment.IsFreeBSD) {
+        $environment += @{ 'OSArchitecture' = [System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture }
     }
 
     if ($environment.IsLinux) {
@@ -133,6 +139,7 @@ function Start-PSBuild {
                      "linux-arm",
                      "linux-arm64",
                      "linux-x64",
+                     "freebsd-x64"
                      "osx-arm64",
                      "osx-x64",
                      "win-arm",
@@ -176,7 +183,7 @@ function Start-PSBuild {
             throw "Build for the minimal size requires the minimal disk footprint, so `CrossGen` is not allowed"
         }
 
-        if ($Runtime -and "linux-x64", "win7-x64", "osx-x64" -notcontains $Runtime) {
+        if ($Runtime -and "linux-x64", "win7-x64", "osx-x64", "freebsd-x64" -notcontains $Runtime) {
             throw "Build for the minimal size is enabled only for following runtimes: 'linux-x64', 'win7-x64', 'osx-x64'"
         }
     }
@@ -518,6 +525,7 @@ function New-PSOptions {
                      "linux-arm",
                      "linux-arm64",
                      "linux-x64",
+                     "freebsd-x64"
                      "osx-arm64",
                      "osx-x64",
                      "win-arm",
@@ -561,6 +569,13 @@ function New-PSOptions {
             else {
                 $Runtime = "osx-x64"
             }
+        } elseif ($environment.IsFreeBSD) {
+            if ($PSVersionTable.OS.Contains('ARM64')) {
+                $Runtime = "freebsd-arm64"
+            }
+            else {
+                $Runtime = "freebsd-x64"
+            }
         } else {
             $RID = dotnet --info | ForEach-Object {
                 if ($_ -match "RID") {
@@ -592,7 +607,7 @@ function New-PSOptions {
 
     $Executable = if ($Runtime -like 'fxdependent*') {
         "pwsh.dll"
-    } elseif ($environment.IsLinux -or $environment.IsMacOS) {
+    } elseif ($environment.IsLinux -or $environment.IsMacOS -or $environment.IsFreeBSD) {
         "pwsh"
     } elseif ($environment.IsWindows) {
         "pwsh.exe"
@@ -1015,14 +1030,14 @@ function Install-Dotnet {
     $installObtainUrl = "https://dotnet.microsoft.com/download/dotnet-core/scripts/v1"
     $uninstallObtainUrl = "https://raw.githubusercontent.com/dotnet/cli/master/scripts/obtain"
 
-    # Install for Linux and OS X
-    if ($environment.IsLinux -or $environment.IsMacOS) {
+    # Install for Linux, OS X, and FreeBSD
+    if ($environment.IsLinux -or $environment.IsMacOS -or $environment.IsFreeBSD) {
         $wget = Get-Command -Name wget -CommandType Application -TotalCount 1 -ErrorAction Stop
 
         # Uninstall all previous dotnet packages
         $uninstallScript = if ($environment.IsLinux -and $environment.IsUbuntu) {
             "dotnet-uninstall-debian-packages.sh"
-        } elseif ($environment.IsMacOS) {
+        } elseif ($environment.IsMacOS -or $environment.IsFreeBSD) {
             "dotnet-uninstall-pkgs.sh"
         }
 
@@ -1032,7 +1047,7 @@ function Install-Dotnet {
                 Invoke-Expression "$sudo bash ./$uninstallScript"
             }
         } else {
-            Write-Warning "This script only removes prior versions of dotnet for Ubuntu and OS X"
+            Write-Warning "This script only removes prior versions of dotnet for Ubuntu, OS X, and FreeBSD"
         }
 
         # Install new dotnet 1.1.0 preview packages
@@ -1135,7 +1150,7 @@ function Start-PSBootstrap {
     Push-Location $PSScriptRoot/tools
 
     try {
-        if ($environment.IsLinux -or $environment.IsMacOS) {
+        if ($environment.IsLinux -or $environment.IsMacOS -or $environment.IsFreeBSD) {
             # This allows sudo install to be optional; needed when running in containers / as root
             # Note that when it is null, Invoke-Expression (but not &) must be used to interpolate properly
             $sudo = if (!$NoSudo) { "sudo" }
@@ -1240,6 +1255,18 @@ function Start-PSBootstrap {
                 Start-NativeExecution {
                     Invoke-Expression "apk add $Deps"
                 }
+            } elseif ($environment.IsFreeBSD) {
+                $Deps += 'libunwind', 'curl', 'bash', 'git'
+                $PackageManager = "pkg install --yes"
+                $baseCommand = "$sudo $PackageManager"
+
+                if($NoSudo)
+                {
+                    $baseCommand = $PackageManager
+                }
+                Start-NativeExecution {
+                    Invoke-Expression "$baseCommand $Deps"
+                }
             }
 
             # Install [fpm](https://github.com/jordansissel/fpm) and [ronn](https://github.com/rtomayko/ronn)
@@ -1316,6 +1343,7 @@ function Start-CrossGen {
                      "linux-arm",
                      "linux-arm64",
                      "linux-x64",
+                     "freebsd-x64"
                      "osx-arm64",
                      "osx-x64",
                      "win-arm",
@@ -1343,6 +1371,7 @@ function Start-CrossGen {
                 "linux-arm",
                 "linux-arm64",
                 "linux-x64",
+                "freebsd-x64"
                 "osx-arm64",
                 "osx-x64",
                 "win-arm",
@@ -1905,6 +1934,10 @@ function Start-PSPackage {
         [ValidateScript({$Environment.IsMacOS})]
         [string] $MacOSRuntime,
 
+        [ValidateSet('freebsd-x64', 'freebsd-arm64')]
+        [ValidateScript({$Environment.IsFreeBSD})]
+        [string] $FreeBSDRuntime,
+
         [Switch] $Force,
 
         [Switch] $SkipReleaseChecks,
@@ -1941,6 +1974,8 @@ function Start-PSPackage {
             $WindowsRuntime, "Release"
         } elseif ($MacOSRuntime) {
            $MacOSRuntime, "Release"
+        }  elseif ($FreeBSDRuntime) {
+           $FreeBSDRuntime, "Release"
         } elseif ($Type -eq "tar-alpine") {
             New-PSOptions -Configuration "Release" -Runtime "alpine-x64" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         } elseif ($Type -eq "tar-arm") {
@@ -1973,6 +2008,8 @@ function Start-PSPackage {
             Write-Log "Packaging : '$Type'; Packaging Configuration: '$Configuration'"
         } elseif ($MacOSRuntime) {
             $NameSuffix = $MacOSRuntime
+        } elseif ($FreeBSDRuntime) {
+            $NameSuffix = $FreeBSDRuntime
         } else {
             Write-Log "Packaging RID: '$Runtime'; Packaging Configuration: '$Configuration'"
         }
@@ -2135,6 +2172,8 @@ function Start-PSPackage {
                 }
             } elseif ($Environment.IsMacOS) {
                 "osxpkg", "nupkg", "tar"
+            } elseif ($Environment.IsFreeBSD) {
+                "nupkg", "tar"
             } elseif ($Environment.IsWindows) {
                 "msi", "nupkg", "msix"
             }
@@ -2547,10 +2586,12 @@ function New-UnixPackage {
             New-StagingFolder -StagingPath $Staging -PackageSourcePath $PackageSourcePath
         }
 
-        # Follow the Filesystem Hierarchy Standard for Linux and macOS
+        # Follow the Filesystem Hierarchy Standard for Linux, macOS, and FreeBSD
         $Destination = if ($Environment.IsLinux) {
             "/opt/microsoft/powershell/$Suffix"
         } elseif ($Environment.IsMacOS) {
+            "/usr/local/microsoft/powershell/$Suffix"
+        } elseif ($Environment.IsFreeBSD) {
             "/usr/local/microsoft/powershell/$Suffix"
         }
 
