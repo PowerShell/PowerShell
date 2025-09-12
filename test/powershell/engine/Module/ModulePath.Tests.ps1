@@ -3,6 +3,8 @@
 Describe "SxS Module Path Basic Tests" -tags "CI" {
 
     BeforeAll {
+        $pathSeparator = [System.IO.Path]::PathSeparator
+
         if ($IsWindows)
         {
             $powershell = "$PSHOME\pwsh.exe"
@@ -20,7 +22,16 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
             $powershell = "$PSHOME/pwsh"
             $expectedUserPath = [System.Management.Automation.Platform]::SelectProductNameForDirectory("USER_MODULES")
             $expectedSharedPath = [System.Management.Automation.Platform]::SelectProductNameForDirectory("SHARED_MODULES")
-            $userConfigPath = "~/.config/powershell/powershell.config.json"
+
+            $configPath = [System.Management.Automation.Platform]::SelectProductNameForDirectory("CONFIG")
+            $userConfigPath = Join-Path -Path $configPath -ChildPath powershell.config.json
+        }
+
+        $userConfigParentPath = Split-Path -Path $userConfigPath -Parent
+        $userConfigParentExists = $true
+        if (-not (Test-Path -LiteralPath $userConfigParentPath)) {
+            $userConfigParentExists = $false
+            New-Item -Path $userConfigParentPath -ItemType Directory | Out-Null
         }
 
         $userConfigExists = $false
@@ -50,7 +61,10 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
     }
 
     AfterAll {
-        if ($userConfigExists) {
+        if (-not $userConfigParentExists) {
+            Remove-Item -Path $userConfigParentPath -Force -Recurse
+        }
+        elseif ($userConfigExists) {
             Move-Item "$userConfigPath.backup" $userConfigPath -Force -ErrorAction Ignore
         }
         else {
@@ -200,6 +214,68 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
         $env:PSModulePath = $env:PSModulePath.Replace($expectedUserPath, $newUserPath).Replace($expectedSharedPath,"")
         $out = & $powershell -noprofile -command '$env:PSModulePath'
         $out.Split([System.IO.Path]::PathSeparator, [System.StringSplitOptions]::RemoveEmptyEntries) | Should -Not -BeLike $validation
+    }
+
+    It 'Sets PSModulePath based on user [<User>] config and env var [<EnvVar>]' -TestCases @(
+        @{
+            User = ''
+            EnvVar = $null
+            Expected = "${expectedUserPath}${pathSeparator}${expectedSharedPath}${pathSeparator}${expectedSystemPath}" }
+        @{
+            User = ''
+            EnvVar = "foo"
+            Expected = "${expectedUserPath}${pathSeparator}${expectedSharedPath}${pathSeparator}${expectedSystemPath}${pathSeparator}foo"
+        }
+        @{
+            User = 'user'
+            EnvVar = $null
+            Expected = "user${pathSeparator}${expectedSharedPath}${pathSeparator}${expectedSystemPath}" }
+        @{
+            User = 'user'
+            EnvVar = "foo"
+            Expected = "user${pathSeparator}${expectedSharedPath}${pathSeparator}${expectedSystemPath}${pathSeparator}foo"
+        }
+        @{
+            User = $pathSeparator
+            EnvVar = $null
+            Expected = "${expectedSharedPath}${pathSeparator}${expectedSystemPath}" }
+        @{
+            User = $pathSeparator
+            EnvVar = "foo"
+            Expected = "${expectedSharedPath}${pathSeparator}${expectedSystemPath}${pathSeparator}foo"
+        }
+    ) {
+        param ($User, $EnvVar, $Expected)
+
+        if ($User) {
+            $config = @{
+                PSModulePath = $User
+            } | ConvertTo-Json
+            Set-Content -LiteralPath $userConfigPath -Value $config -Force
+        }
+        elseif (Test-Path -LiteralPath $userConfigPath) {
+            Remove-Item -LiteralPath $userConfigPath -Force
+        }
+
+        if ($IsWindows) {
+            # On Windows if the process PSModulePath does not match the User
+            # scoped env var then the unique entries in the Machine level are
+            # appended.
+            $userPSModulePath = [Environment]::GetEnvironmentVariable('PSModulePath', 'User')
+            if (($EnvVar ?? "") -eq ($userPSModulePath ?? "")) {
+                $machinePSModulePath = [Environment]::GetEnvironmentVariable('PSModulePath', 'Machine') -split ';' |
+                    ForEach-Object { $_.Trim().TrimEnd('\') }
+                    Select-Object -Unique
+                $Expected += "${pathSeparator}$($machinePSModulePath -join ';')"
+            }
+        }
+
+        $env:PSModulePath = $EnvVar
+        $out = & $powershell -noprofile -command '$env:PSModulePath'
+
+        Write-Host "PSModulePath`n$expected`n$out" -ForegroundColor Red
+
+        $out | Should -Be $expected
     }
 }
 
