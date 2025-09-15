@@ -249,7 +249,6 @@ namespace Microsoft.PowerShell
         }
 #pragma warning restore SA1025 // CodeMustNotContainMultipleWhitespaceInARow
 
-
         internal ParameterBitmap ParametersUsed = 0;
 
         internal double ParametersUsedAsDouble
