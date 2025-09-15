@@ -232,6 +232,7 @@ namespace Microsoft.PowerShell
             ConfigurationFile   = 0x0000000004000000, // -ConfigurationFile
             NoProfileLoadTime   = 0x0000000008000000, // -NoProfileLoadTime
             CommandWithArgs     = 0x0000000010000000, // -CommandWithArgs | -cwa
+
             // Enum values for specified ExecutionPolicy
             EPUnrestricted      = 0x0000000100000000, // ExecutionPolicy unrestricted
             EPRemoteSigned      = 0x0000000200000000, // ExecutionPolicy remote signed
@@ -241,6 +242,7 @@ namespace Microsoft.PowerShell
             EPBypass            = 0x0000002000000000, // ExecutionPolicy bypass
             EPUndefined         = 0x0000004000000000, // ExecutionPolicy undefined
             EPIncorrect         = 0x0000008000000000, // ExecutionPolicy incorrect
+
             // V2 Socket Server Mode
             V2SocketServerMode  = 0x0000100000000000, // -V2SocketServerMode | -v2so
         }
@@ -1213,7 +1215,7 @@ namespace Microsoft.PowerShell
                 {
                     _removeWorkingDirectoryTrailingCharacter = true;
                 }
-                else if (MatchSwitch(switchKey, "token", "to") )
+                else if (MatchSwitch(switchKey, "token", "to"))
                 {
                     ++i;
                     if (i >= args.Length)
@@ -1224,10 +1226,11 @@ namespace Microsoft.PowerShell
                     }
 
                     _token = args[i];
+
                     // Not adding anything to ParametersUsed, because it is required with V2 socket server mode
                     // So, we can assume it based on that bit
                 }
-                else if (MatchSwitch(switchKey, "utctimestamp", "utc") )
+                else if (MatchSwitch(switchKey, "utctimestamp", "utc"))
                 {
                     ++i;
                     if (i >= args.Length)
@@ -1239,6 +1242,7 @@ namespace Microsoft.PowerShell
 
                     // Parse as iso8601UtcString
                     _utcTimestamp = DateTimeOffset.ParseExact(args[i], "yyyy-MM-dd'T'HH:mm:ssK", CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
+
                     // Not adding anything to ParametersUsed, because it is required with V2 socket server mode
                     // So, we can assume it based on that bit
                 }

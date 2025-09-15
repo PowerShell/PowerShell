@@ -284,8 +284,8 @@ namespace Microsoft.PowerShell
                         initialCommand: s_cpp.InitialCommand,
                         configurationName: s_cpp.ConfigurationName,
                         token: s_cpp.Token,
-                        tokenCreationTime: s_cpp.UTCTimestamp.Value
-                    );
+                        tokenCreationTime: s_cpp.UTCTimestamp.Value);
+
                     exitCode = 0;
                 }
 #endif
@@ -1926,6 +1926,7 @@ namespace Microsoft.PowerShell
                             {
                                 s_theConsoleHost.UI.WriteLine(ManagedEntranceStrings.ShellBannerCLAuditMode);
                             }
+
                             break;
 
                         case PSLanguageMode.NoLanguage:
@@ -2792,6 +2793,7 @@ namespace Microsoft.PowerShell
 #endif
                         }
                     }
+
                     // NTRAID#Windows Out Of Band Releases-915506-2005/09/09
                     // Removed HandleUnexpectedExceptions infrastructure
                     finally
