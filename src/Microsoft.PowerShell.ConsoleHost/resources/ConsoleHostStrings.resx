@@ -182,4 +182,10 @@ The current session does not support debugging; execution will continue.
   <data name="RunAsAdministrator" xml:space="preserve">
     <value>Run as Administrator</value>
   </data>
+  <data name="PushRunspaceNotRemote" xml:space="preserve">
+    <value>PushRunspace can only push a remote runspace.</value>
+  </data>
+  <data name="MissingMandatoryParameter" xml:space="preserve">
+    <value>The '{0}' parameter is mandatory and must be specified when using the '{1}' parameter.</value>
+  </data>
 </root>
