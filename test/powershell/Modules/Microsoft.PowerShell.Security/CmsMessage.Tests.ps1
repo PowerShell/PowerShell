@@ -1,5 +1,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+
+[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingConvertToSecureStringWithPlainText', '')]
+param()
+
 Import-Module (Join-Path -Path $PSScriptRoot 'certificateCommon.psm1') -Force
 
 Describe "CmsMessage cmdlets and Get-PfxCertificate basic tests" -Tags "CI" {

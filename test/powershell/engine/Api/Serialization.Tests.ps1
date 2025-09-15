@@ -1,5 +1,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+
+[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingConvertToSecureStringWithPlainText', '')]
+param()
+
 Describe "Serialization Tests" -tags "CI" {
     BeforeAll {
         $testfileName="SerializationTest.txt"
@@ -99,4 +103,3 @@ Describe "Serialization Tests" -tags "CI" {
         SerializeAndDeserialize($versionObject).TestScriptProperty | Should -Be $versionObject.TestScriptProperty
     }
 }
-
