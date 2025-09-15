@@ -196,6 +196,7 @@ namespace Microsoft.PowerShell
             "workingdirectory"
         };
 
+#pragma warning disable SA1025 // CodeMustNotContainMultipleWhitespaceInARow
         /// <summary>
         /// These represent the parameters that are used when starting pwsh.
         /// We can query in our telemetry to determine how pwsh was invoked.
@@ -246,6 +247,8 @@ namespace Microsoft.PowerShell
             // V2 Socket Server Mode
             V2SocketServerMode  = 0x0000100000000000, // -V2SocketServerMode | -v2so
         }
+#pragma warning restore SA1025 // CodeMustNotContainMultipleWhitespaceInARow
+
 
         internal ParameterBitmap ParametersUsed = 0;
 
