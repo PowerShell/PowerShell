@@ -222,4 +222,10 @@ Valid formats are:
   <data name="NullElementInArgs" xml:space="preserve">
     <value>The specified arguments must not contain null elements.</value>
   </data>
+  <data name="InvalidExecutionPolicyArgument" xml:space="preserve">
+    <value>Invalid ExecutionPolicy value '{0}'.</value>
+  </data>
+  <data name="MissingMandatoryArgument" xml:space="preserve">
+    <value>An argument is required to be supplied to the '{0}' parameter.</value>
+  </data>
 </root>
