@@ -39,7 +39,7 @@ jobs:
           **/*.msix
         targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
       displayName: Download windows x86 packages
-    
+
     # Finds the makeappx tool on the machine with image: 'onebranch.azurecr.io/windows/ltsc2022/vse2022:latest'
     - pwsh: |
         $cmd = Get-Command makeappx.exe -ErrorAction Ignore
@@ -94,7 +94,7 @@ jobs:
         signing_profile: $(MSIXProfile)
         files_to_sign: '**/*.msixbundle'
         search_root: '$(BundleDir)'
-    
+
     - pwsh: |
         $signedBundle = Get-ChildItem -Path $(BundleDir) -Filter "*.msixbundle" -File
         Write-Verbose -Verbose "Signed bundle: $signedBundle"
