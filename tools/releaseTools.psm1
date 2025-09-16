@@ -351,7 +351,7 @@ function Get-ChangeLog
 
     $version = $ThisReleaseTag.TrimStart('v')
 
-    Write-Output "## [${version}] - $(Get-Date -Format yyyy-MM-dd)`n"
+    Write-Output "## [${version}]`n"
 
     PrintChangeLog -clSection $clUntagged -sectionTitle 'UNTAGGED - Please classify'
     PrintChangeLog -clSection $clBreakingChange -sectionTitle 'Breaking Changes'
@@ -424,6 +424,9 @@ function Get-ChangeLogMessage
             return $OriginalMessage.replace($Matches.0,'') + " (Internal $($Matches.1))"
         }
         '^Build\(deps\): ' {
+            return $OriginalMessage.replace($Matches.0,'')
+        }
+        '^\[release/v\d+\.\d+\]\s*' {
             return $OriginalMessage.replace($Matches.0,'')
         }
         default {
