@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace System.Management.Automation.Runspaces
 {
@@ -48,7 +49,9 @@ namespace System.Management.Automation.Runspaces
                     .AddHeader(Alignment.Left, label: "UnixMode", width: 10)
                     .AddHeader(Alignment.Right, label: "User", width: 10)
                     .AddHeader(Alignment.Left, label: "Group", width: 10)
-                    .AddHeader(Alignment.Right, label: "LastWriteTime", width: 16)
+                    // Until LastWriteTime prints as '{0:d} {0:HH}:{0:mm}', it will always be local date + 6 wide.
+                    // https://github.com/PowerShell/PowerShell/issues/19723
+                    .AddHeader(Alignment.Right, label: "LastWriteTime", width: CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern.Length + 6)
                     .AddHeader(Alignment.Right, label: "Size", width: 12)
                     .AddHeader(Alignment.Left, label: "Name")
                     .StartRowDefinition(wrap: true)
