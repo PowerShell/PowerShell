@@ -272,11 +272,6 @@ namespace System.Management.Automation.Remoting
                         PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.InvalidCredential, "Token has expired"));
                 }
 
-                // Set socket timeout for receive operations to prevent indefinite blocking
-                int timeoutMs = (int)remainingTime.TotalMilliseconds;
-                HyperVSocket.ReceiveTimeout = timeoutMs;
-                HyperVSocket.SendTimeout = timeoutMs;
-
                 // Create a cancellation token that will be cancelled when the timeout expires
                 using var cancellationTokenSource = new CancellationTokenSource(remainingTime);
                 CancellationToken cancellationToken = cancellationTokenSource.Token;
