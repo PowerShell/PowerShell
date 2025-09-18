@@ -194,6 +194,30 @@ namespace System.Management.Automation
         private static bool? _isWindowsDesktop = null;
 #endif
 
+        internal static bool TryDeriveFromCache(string path1, out string result)
+        {
+            if (CacheDirectory is null or [])
+            {
+                result = null;
+                return false;
+            }
+
+            result = Path.Combine(CacheDirectory, path1);
+            return true;
+        }
+
+        internal static bool TryDeriveFromCache(string path1, string path2, out string result)
+        {
+            if (CacheDirectory is null or [])
+            {
+                result = null;
+                return false;
+            }
+
+            result = Path.Combine(CacheDirectory, path1, path2);
+            return true;
+        }
+
         // format files
         internal static readonly string[] FormatFileNames = new string[]
         {
@@ -225,13 +249,13 @@ namespace System.Management.Automation
 
         private static string SafeDeriveFromSpecialFolder(Environment.SpecialFolder specialFolder, string subPath)
         {
-            string folderPath = Environment.GetFolderPath(specialFolder, Environment.SpecialFolderOption.DoNotVerify);
-            if (string.IsNullOrWhiteSpace(folderPath))
+            string basePath = Environment.GetFolderPath(specialFolder, Environment.SpecialFolderOption.DoNotVerify);
+            if (string.IsNullOrWhiteSpace(basePath))
             {
                 return string.Empty;
             }
 
-            return Path.Combine(folderPath, subPath);
+            return Path.Join(basePath, subPath);
         }
 
 #if UNIX
@@ -376,7 +400,7 @@ namespace System.Management.Automation
                 _ => throw new NotSupportedException()
             };
 #else
-            return Environment.GetFolderPath(folder);
+            return Environment.GetFolderPath(folder, Environment.SpecialFolderOption.DoNotVerify);
 #endif
         }
 
