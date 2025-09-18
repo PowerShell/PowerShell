@@ -387,6 +387,11 @@ namespace System.Management.Automation.Remoting
         /// <param name="cancellationToken">Cancellation token for timeout handling.</param>
         internal static void ValidateToken(Socket socket, string token, CancellationToken cancellationToken = default)
         {
+            // Set socket timeout for receive operations to prevent indefinite blocking
+            int timeoutMs = (int)MAX_TOKEN_LIFE_MINUTES * 60 * 1000; // Convert minutes to milliseconds
+            socket.ReceiveTimeout = timeoutMs;
+            socket.SendTimeout = timeoutMs;
+
             // Check for cancellation before starting validation
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -449,6 +454,9 @@ namespace System.Management.Automation.Remoting
 
             // Acknowledge the token is valid with "PASS".
             socket.Send("PASS"u8);
+
+            socket.ReceiveTimeout = 0; // Disable the timeout after successful validation
+            socket.SendTimeout = 0;
         }
     }
 
