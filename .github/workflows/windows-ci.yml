@@ -18,6 +18,7 @@ on:
       - master
       - release/**
       - github-mirror
+      - "*-feature"
 
 # Path filters for PRs need to go into the changes job
 
@@ -32,7 +33,7 @@ run-name: "${{ github.ref_name }} - ${{ github.run_number }}"
 
 env:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
-  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  DOTNET_NOLOGO: 1
   GIT_CONFIG_PARAMETERS: "'core.autocrlf=false'"
   NugetSecurityAnalysisWarningLevel: none
   POWERSHELL_TELEMETRY_OPTOUT: 1
