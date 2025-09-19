@@ -25,19 +25,18 @@ jobs:
     env:
       ob_restore_phase: true
 
+  - template: /.pipelines/templates/SetVersionVariables.yml@self
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+
+  - template: /.pipelines/templates/cloneToOfficialPath.yml@self
+
   - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
     parameters:
-      repoRoot: $(Build.SourcesDirectory)/PowerShell
+      repoRoot: $(PowerShellRoot)
       ob_restore_phase: true
 
-  - task: UseDotNet@2
-    displayName: 'Use .NET Core sdk'
-    inputs:
-      useGlobalJson: true
-      packageType: 'sdk'
-      workingDirectory: $(Build.SourcesDirectory)/PowerShell"
-    env:
-      ob_restore_phase: true
+  - template: /.pipelines/templates/install-dotnet.yml@self
 
   - pwsh: |
       New-Item -Path '$(ob_outputDirectory)' -ItemType Directory -Force
@@ -93,19 +92,18 @@ jobs:
     env:
       ob_restore_phase: true
 
+  - template: /.pipelines/templates/SetVersionVariables.yml@self
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+
+  - template: /.pipelines/templates/cloneToOfficialPath.yml@self
+
   - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
     parameters:
       repoRoot: $(Build.SourcesDirectory)/PowerShell
       ob_restore_phase: true
 
-  - task: UseDotNet@2
-    displayName: 'Use .NET Core sdk'
-    inputs:
-      useGlobalJson: true
-      packageType: 'sdk'
-      workingDirectory: $(Build.SourcesDirectory)/PowerShell"
-    env:
-      ob_restore_phase: true
+  - template: /.pipelines/templates/install-dotnet.yml@self
 
   - pwsh: |
       New-Item -Path '$(ob_outputDirectory)' -ItemType Directory -Force
