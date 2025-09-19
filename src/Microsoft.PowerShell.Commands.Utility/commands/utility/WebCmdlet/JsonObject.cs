@@ -10,7 +10,6 @@ using System.Management.Automation;
 using System.Management.Automation.Language;
 using System.Numerics;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using System.Threading;
 
 using Newtonsoft.Json;
@@ -289,11 +288,11 @@ namespace Microsoft.PowerShell.Commands
                     return null;
                 }
 
-                // Array
                 switch (entry.Value)
                 {
                     case JArray list:
                         {
+                            // Array
                             var listResult = PopulateFromJArray(list, out error);
                             if (error != null)
                             {
@@ -331,47 +330,41 @@ namespace Microsoft.PowerShell.Commands
         // This function is a clone of PopulateFromList using JArray as input.
         private static ICollection<object> PopulateFromJArray(JArray list, out ErrorRecord error)
         {
-            error = null;
             var result = new object[list.Count];
+            var i = 0;
 
-            for (var index = 0; index < list.Count; index++)
+            foreach (var element in list)
             {
-                var element = list[index];
                 switch (element)
                 {
                     case JArray subList:
+                        // Array
+                        result[i++] = PopulateFromJArray(subList, out error);
+                        if (error != null)
                         {
-                            // Array
-                            var listResult = PopulateFromJArray(subList, out error);
-                            if (error != null)
-                            {
-                                return null;
-                            }
-
-                            result[index] = listResult;
-                            break;
+                            return null;
                         }
+                        break;
                     case JObject dic:
+                        // Dictionary
+                        result[i++] = PopulateFromJDictionary(dic, new DuplicateMemberHashSet(dic.Count), out error);
+                        if (error != null)
                         {
-                            // Dictionary
-                            var dicResult = PopulateFromJDictionary(dic, new DuplicateMemberHashSet(dic.Count), out error);
-                            if (error != null)
-                            {
-                                return null;
-                            }
-
-                            result[index] = dicResult;
-                            break;
+                            return null;
                         }
+                        break;
                     case JValue value:
+                        if (value.Type != JTokenType.Comment)
                         {
-                            result[index] = value.Value;
-                            break;
+                            result[i++] = value.Value;
                         }
+                        break;
                 }
             }
 
-            return result;
+            error = null;
+            // In the common case of not having any comments, return the original array, otherwise create a sliced copy.
+            return i == list.Count ? result : result[..i];
         }
 
         // This function is a clone of PopulateFromDictionary using JObject as an input.
@@ -434,48 +427,41 @@ namespace Microsoft.PowerShell.Commands
         // This function is a clone of PopulateFromList using JArray as input.
         private static ICollection<object> PopulateHashTableFromJArray(JArray list, out ErrorRecord error)
         {
-            error = null;
             var result = new object[list.Count];
+            var i = 0;
 
-            for (var index = 0; index < list.Count; index++)
+            foreach (var element in list)
             {
-                var element = list[index];
-
                 switch (element)
                 {
-                    case JArray array:
+                    case JArray subList:
+                        // Array
+                        result[i++] = PopulateHashTableFromJArray(subList, out error);
+                        if (error != null)
                         {
-                            // Array
-                            var listResult = PopulateHashTableFromJArray(array, out error);
-                            if (error != null)
-                            {
-                                return null;
-                            }
-
-                            result[index] = listResult;
-                            break;
+                            return null;
                         }
+                        break;
                     case JObject dic:
+                        // Dictionary
+                        result[i++] = PopulateHashTableFromJDictionary(dic, out error);
+                        if (error != null)
                         {
-                            // Dictionary
-                            var dicResult = PopulateHashTableFromJDictionary(dic, out error);
-                            if (error != null)
-                            {
-                                return null;
-                            }
-
-                            result[index] = dicResult;
-                            break;
+                            return null;
                         }
+                        break;
                     case JValue value:
+                        if (value.Type != JTokenType.Comment)
                         {
-                            result[index] = value.Value;
-                            break;
+                            result[i++] = value.Value;
                         }
+                        break;
                 }
             }
 
-            return result;
+            error = null;
+            // In the common case of not having any comments, return the original array, otherwise create a sliced copy.
+            return i == list.Count ? result : result[..i];
         }
 
         #endregion ConvertFromJson
