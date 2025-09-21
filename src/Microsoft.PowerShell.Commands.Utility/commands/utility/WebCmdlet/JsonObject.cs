@@ -332,7 +332,7 @@ namespace Microsoft.PowerShell.Commands
         private static ICollection<object> PopulateFromJArray(JArray list, out ErrorRecord error)
         {
             error = null;
-            var result = new object[list.Count];
+            var result = new System.Collections.Generic.List<object>(); // object[list.Count];
 
             for (var index = 0; index < list.Count; index++)
             {
@@ -348,7 +348,7 @@ namespace Microsoft.PowerShell.Commands
                                 return null;
                             }
 
-                            result[index] = listResult;
+                            result.Add(listResult);
                             break;
                         }
                     case JObject dic:
@@ -360,12 +360,12 @@ namespace Microsoft.PowerShell.Commands
                                 return null;
                             }
 
-                            result[index] = dicResult;
+                            result.Add(dicResult);
                             break;
                         }
                     case JValue value:
                         {
-                            result[index] = value.Value;
+                            result.Add(value.Value);
                             break;
                         }
                 }
