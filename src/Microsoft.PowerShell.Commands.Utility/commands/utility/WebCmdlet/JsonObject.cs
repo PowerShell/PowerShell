@@ -330,6 +330,7 @@ namespace Microsoft.PowerShell.Commands
         // This function is a clone of PopulateFromList using JArray as input.
         private static ICollection<object> PopulateFromJArray(JArray list, out ErrorRecord error)
         {
+            error = null;
             var result = new object[list.Count];
             var i = 0;
 
@@ -344,7 +345,9 @@ namespace Microsoft.PowerShell.Commands
                         {
                             return null;
                         }
+
                         break;
+
                     case JObject dic:
                         // Dictionary
                         result[i++] = PopulateFromJDictionary(dic, new DuplicateMemberHashSet(dic.Count), out error);
@@ -352,17 +355,19 @@ namespace Microsoft.PowerShell.Commands
                         {
                             return null;
                         }
+
                         break;
+
                     case JValue value:
                         if (value.Type != JTokenType.Comment)
                         {
                             result[i++] = value.Value;
                         }
+
                         break;
                 }
             }
 
-            error = null;
             // In the common case of not having any comments, return the original array, otherwise create a sliced copy.
             return i == list.Count ? result : result[..i];
         }
@@ -427,6 +432,7 @@ namespace Microsoft.PowerShell.Commands
         // This function is a clone of PopulateFromList using JArray as input.
         private static ICollection<object> PopulateHashTableFromJArray(JArray list, out ErrorRecord error)
         {
+            error = null;
             var result = new object[list.Count];
             var i = 0;
 
@@ -441,7 +447,9 @@ namespace Microsoft.PowerShell.Commands
                         {
                             return null;
                         }
+
                         break;
+
                     case JObject dic:
                         // Dictionary
                         result[i++] = PopulateHashTableFromJDictionary(dic, out error);
@@ -449,17 +457,19 @@ namespace Microsoft.PowerShell.Commands
                         {
                             return null;
                         }
+
                         break;
+
                     case JValue value:
                         if (value.Type != JTokenType.Comment)
                         {
                             result[i++] = value.Value;
                         }
+
                         break;
                 }
             }
 
-            error = null;
             // In the common case of not having any comments, return the original array, otherwise create a sliced copy.
             return i == list.Count ? result : result[..i];
         }
