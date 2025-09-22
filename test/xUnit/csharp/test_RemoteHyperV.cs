@@ -63,18 +63,18 @@ namespace PSTests.Sequential
             }
         }
 
-        private static void SendResponse(string name, Socket client, Queue<(byte[] bytes, int delayMs)> serverResponses)
+        private static void SendResponse(string name, Socket client, Queue<(byte[] Bytes, int DelayMs)> serverResponses)
         {
             if (serverResponses.Count > 0)
             {
                 _output.WriteLine($"Mock {name} ----------------------------------------------------");
                 var respTuple = serverResponses.Dequeue();
-                var resp = respTuple.bytes;
+                var resp = respTuple.Bytes;
 
-                if (respTuple.delayMs > 0)
+                if (respTuple.DelayMs > 0)
                 {
-                    _output.WriteLine($"Mock {name} - delaying response by {respTuple.delayMs} ms");
-                    Thread.Sleep(respTuple.delayMs);
+                    _output.WriteLine($"Mock {name} - delaying response by {respTuple.DelayMs} ms");
+                    Thread.Sleep(respTuple.DelayMs);
                 }
                 if (resp.Length > 0) {
                     client.Send(resp, resp.Length, SocketFlags.None);
@@ -86,16 +86,16 @@ namespace PSTests.Sequential
         private static void StartHandshakeServer(
             string name,
             int port,
-            IEnumerable<(string message, Encoding encoding)> expectedClientSends,
-            IEnumerable<(string message, Encoding encoding)> serverResponses,
+            IEnumerable<(string Message, Encoding Encoding)> expectedClientSends,
+            IEnumerable<(string Message, Encoding Encoding)> serverResponses,
             bool verifyConnectionClosed,
             CancellationToken cancellationToken,
             bool sendFirst = false)
         {
-            IEnumerable<(string message, Encoding encoding, int delayMs)> serverResponsesWithDelay = new List<(string message, Encoding encoding, int delayMs)>();
+            IEnumerable<(string Message, Encoding Encoding, int DelayMs)> serverResponsesWithDelay = new List<(string Message, Encoding Encoding, int DelayMs)>();
             foreach (var item in serverResponses)
             {
-                ((List<(string message, Encoding encoding, int delayMs)>)serverResponsesWithDelay).Add((item.message, item.encoding, 1));
+                ((List<(string Message, Encoding Encoding, int DelayMs)>)serverResponsesWithDelay).Add((item.Message, item.Encoding, 1));
             }
             StartHandshakeServer(name, port, expectedClientSends, serverResponsesWithDelay, verifyConnectionClosed, cancellationToken, sendFirst);
         }
@@ -103,23 +103,23 @@ namespace PSTests.Sequential
         private static void StartHandshakeServer(
             string name,
             int port,
-            IEnumerable<(string message, Encoding encoding)> expectedClientSends,
-            IEnumerable<(string message, Encoding encoding, int delayMs)> serverResponses,
+            IEnumerable<(string Message, Encoding Encoding)> expectedClientSends,
+            IEnumerable<(string Message, Encoding Encoding, int DelayMs)> serverResponses,
             bool verifyConnectionClosed,
             CancellationToken cancellationToken,
             bool sendFirst = false)
         {
-            var expectedMessages = new Queue<(string message, byte[] bytes, Encoding encoding)>();
+            var expectedMessages = new Queue<(string Message, byte[] Bytes, Encoding Encoding)>();
             foreach (var item in expectedClientSends)
             {
-                var itemBytes = item.encoding.GetBytes(item.message);
-                expectedMessages.Enqueue((message: item.message, bytes: itemBytes, encoding: item.encoding));
+                var itemBytes = item.Encoding.GetBytes(item.Message);
+                expectedMessages.Enqueue((Message: item.Message, Bytes: itemBytes, Encoding: item.Encoding));
             }
 
-            var serverResponseBytes = new Queue<(byte[] bytes, int delayMs)>();
+            var serverResponseBytes = new Queue<(byte[] Bytes, int DelayMs)>();
             foreach (var item in serverResponses)
             {
-                (byte[] bytes, int delayMs) queueItem = (item.encoding.GetBytes(item.message), item.delayMs);
+                (byte[] Bytes, int DelayMs) queueItem = (item.Encoding.GetBytes(item.Message), item.DelayMs);
                 serverResponseBytes.Enqueue(queueItem);
             }
 
@@ -130,8 +130,8 @@ namespace PSTests.Sequential
         private static void StartHandshakeServerImplementation(
             string name,
             int port,
-            Queue<(string message, byte[] bytes, Encoding encoding)> expectedClientSends,
-            Queue<(byte[] bytes, int delayMs)> serverResponses,
+            Queue<(string Message, byte[] Bytes, Encoding Encoding)> expectedClientSends,
+            Queue<(byte[] Bytes, int DelayMs)> serverResponses,
             bool verifyConnectionClosed,
             CancellationToken cancellationToken,
             bool sendFirst = false)
@@ -157,18 +157,18 @@ namespace PSTests.Sequential
                         cancellationToken.ThrowIfCancellationRequested();
                         var expectedMessage = expectedClientSends.Dequeue();
                         _output.WriteLine($"Mock {name} - remaining expected messages: {expectedClientSends.Count}");
-                        var expected = expectedMessage.bytes;
+                        var expected = expectedMessage.Bytes;
                         Array.Clear(buffer, 0, buffer.Length);
                         int received = client.Receive(buffer);
                         // Optionally validate received data matches expected
-                        string expectedString = expectedMessage.message;
-                        string bufferString = expectedMessage.encoding.GetString(buffer, 0, received);
+                        string expectedString = expectedMessage.Message;
+                        string bufferString = expectedMessage.Encoding.GetString(buffer, 0, received);
                         string alternativeEncodedString = string.Empty;
-                        if (expectedMessage.encoding == Encoding.Unicode)
+                        if (expectedMessage.Encoding == Encoding.Unicode)
                         {
                             alternativeEncodedString = Encoding.UTF8.GetString(buffer, 0, received);
                         }
-                        else if (expectedMessage.encoding == Encoding.UTF8)
+                        else if (expectedMessage.Encoding == Encoding.UTF8)
                         {
                             alternativeEncodedString = Encoding.Unicode.GetString(buffer, 0, received);
                         }
@@ -247,103 +247,103 @@ namespace PSTests.Sequential
         }
 
         // Helper method to create test data
-        private static (List<(string, Encoding)> expectedClientSends, List<(string, Encoding)> serverResponses) CreateHandshakeTestData(NetworkCredential cred)
+        private static (List<(string Message, Encoding Encoding)> expectedClientSends, List<(string Message, Encoding Encoding)> serverResponses) CreateHandshakeTestData(NetworkCredential cred)
         {
-            var expectedClientSends = new List<(string message, Encoding encoding)>
+            var expectedClientSends = new List<(string Message, Encoding Encoding)>
             {
-                (message: cred.Domain, encoding: Encoding.Unicode),
-                (message: cred.UserName, encoding: Encoding.Unicode),
-                (message: "NONEMPTYPW", encoding: Encoding.ASCII),
-                (message: cred.Password, encoding: Encoding.Unicode)
+                (Message: cred.Domain, Encoding: Encoding.Unicode),
+                (Message: cred.UserName, Encoding: Encoding.Unicode),
+                (Message: "NONEMPTYPW", Encoding: Encoding.ASCII),
+                (Message: cred.Password, Encoding: Encoding.Unicode)
             };
 
-            var serverResponses = new List<(string message, Encoding encoding)>
+            var serverResponses = new List<(string Message, Encoding Encoding)>
             {
-                (message: CreateRandomAsciiResponse(), encoding: Encoding.ASCII), // Response to domain
-                (message: CreateRandomAsciiResponse(), encoding: Encoding.ASCII), // Response to username
-                (message: CreateRandomAsciiResponse(), encoding: Encoding.ASCII)  // Response to non-empty password
+                (Message: CreateRandomAsciiResponse(), Encoding: Encoding.ASCII), // Response to domain
+                (Message: CreateRandomAsciiResponse(), Encoding: Encoding.ASCII), // Response to username
+                (Message: CreateRandomAsciiResponse(), Encoding: Encoding.ASCII)  // Response to non-empty password
             };
 
             return (expectedClientSends, serverResponses);
         }
 
-        private static List<(string message, Encoding encoding)> CreateVersionNegotiationClientSends()
+        private static List<(string Message, Encoding Encoding)> CreateVersionNegotiationClientSends()
         {
-            return new List<(string message, Encoding encoding)>
+            return new List<(string Message, Encoding Encoding)>
             {
-                (message: "VERSION", encoding: Encoding.UTF8),
-                (message: "VERSION_2", encoding: Encoding.UTF8),
+                (Message: "VERSION", Encoding: Encoding.UTF8),
+                (Message: "VERSION_2", Encoding: Encoding.UTF8),
             };
         }
 
-        private static List<(string, Encoding)> CreateV2Sends(NetworkCredential cred, string configurationName)
+        private static List<(string Message, Encoding Encoding)> CreateV2Sends(NetworkCredential cred, string configurationName)
         {
             var sends = CreateVersionNegotiationClientSends();
             var password = cred.Password;
             var emptyPassword = string.IsNullOrEmpty(password);
 
-            sends.AddRange(new List<(string message, Encoding encoding)>
+            sends.AddRange(new List<(string Message, Encoding Encoding)>
             {
-                (message: cred.Domain, encoding: Encoding.Unicode),
-                (message: cred.UserName, encoding: Encoding.Unicode)
+                (Message: cred.Domain, Encoding: Encoding.Unicode),
+                (Message: cred.UserName, Encoding: Encoding.Unicode)
             });
 
             if (!emptyPassword)
             {
-                sends.AddRange(new List<(string message, Encoding encoding)>
+                sends.AddRange(new List<(string Message, Encoding Encoding)>
                 {
-                    (message: "NONEMPTYPW", encoding: Encoding.UTF8),
-                    (message: cred.Password, encoding: Encoding.Unicode)
+                    (Message: "NONEMPTYPW", Encoding: Encoding.UTF8),
+                    (Message: cred.Password, Encoding: Encoding.Unicode)
                 });
             }
             else
             {
-                sends.Add((message: "EMPTYPW", encoding: Encoding.UTF8)); // Empty password and we don't expect a response
+                sends.Add((Message: "EMPTYPW", Encoding: Encoding.UTF8)); // Empty password and we don't expect a response
             }
 
             if (!string.IsNullOrEmpty(configurationName))
             {
-                sends.Add((message: "NONEMPTYCF", encoding: Encoding.UTF8));
-                sends.Add((message: configurationName, encoding: Encoding.Unicode)); // Configuration string and we don't expect a response
+                sends.Add((Message: "NONEMPTYCF", Encoding: Encoding.UTF8));
+                sends.Add((Message: configurationName, Encoding: Encoding.Unicode)); // Configuration string and we don't expect a response
             }
             else
             {
-                sends.Add((message: "EMPTYCF", encoding: Encoding.UTF8)); // Configuration string and we don't expect a response
+                sends.Add((Message: "EMPTYCF", Encoding: Encoding.UTF8)); // Configuration string and we don't expect a response
             }
 
-            sends.Add((message: "PASS", encoding: Encoding.ASCII)); // Response to TOKEN
+            sends.Add((Message: "PASS", Encoding: Encoding.ASCII)); // Response to TOKEN
 
             return sends;
         }
 
-        private static List<(string, Encoding)> CreateV2Responses(string version = "VERSION_2", bool emptyConfig = false, string token = "FakeToken0+/=", bool emptyPassword = false)
+        private static List<(string Message, Encoding Encoding)> CreateV2Responses(string version = "VERSION_2", bool emptyConfig = false, string token = "FakeToken0+/=", bool emptyPassword = false)
         {
-            var responses = new List<(string message, Encoding encoding)>
+            var responses = new List<(string Message, Encoding Encoding)>
             {
-                (message: version, encoding: Encoding.ASCII), // Response to VERSION
-                (message: "PASS", encoding: Encoding.ASCII), // Response to VERSION_2
-                (message: "PASS", encoding: Encoding.ASCII), // Response to domain
-                (message: "PASS", encoding: Encoding.ASCII), // Response to username
+                (Message: version, Encoding: Encoding.ASCII), // Response to VERSION
+                (Message: "PASS", Encoding: Encoding.ASCII), // Response to VERSION_2
+                (Message: "PASS", Encoding: Encoding.ASCII), // Response to domain
+                (Message: "PASS", Encoding: Encoding.ASCII), // Response to username
             };
 
             if (!emptyPassword)
             {
-                responses.Add((message: "PASS", encoding: Encoding.ASCII));  // Response to non-empty password
+                responses.Add((Message: "PASS", Encoding: Encoding.ASCII));  // Response to non-empty password
             }
 
-            responses.Add((message: "CONF", encoding: Encoding.ASCII)); // Response to configuration
+            responses.Add((Message: "CONF", Encoding: Encoding.ASCII)); // Response to configuration
 
             if (!emptyConfig)
             {
-                responses.Add((message: "PASS", encoding: Encoding.ASCII));  // Response to non-empty configuration
+                responses.Add((Message: "PASS", Encoding: Encoding.ASCII));  // Response to non-empty configuration
             }
-            responses.Add((message: "TOKEN " + token, encoding: Encoding.ASCII)); // Response to with a token than uses each class of character in base 64 encoding
+            responses.Add((Message: "TOKEN " + token, Encoding: Encoding.ASCII)); // Response to with a token than uses each class of character in base 64 encoding
 
             return responses;
         }
 
         // Helper method to create test data
-        private static (List<(string, Encoding)> expectedClientSends, List<(string, Encoding)> serverResponses)
+        private static (List<(string Message, Encoding Encoding)> expectedClientSends, List<(string Message, Encoding Encoding)> serverResponses)
                 CreateHandshakeTestDataV2(NetworkCredential cred, string version, string configurationName, string token)
         {
             bool emptyConfig = string.IsNullOrEmpty(configurationName);
@@ -352,21 +352,21 @@ namespace PSTests.Sequential
         }
 
         // Helper method to create test data
-        private static (List<(string, Encoding)> expectedClientSends, List<(string, Encoding)> serverResponses) CreateHandshakeTestDataForFallback(NetworkCredential cred)
+        private static (List<(string Message, Encoding Encoding)> expectedClientSends, List<(string Message, Encoding Encoding)> serverResponses) CreateHandshakeTestDataForFallback(NetworkCredential cred)
         {
-            var expectedClientSends = new List<(string message, Encoding encoding)>
+            var expectedClientSends = new List<(string Message, Encoding Encoding)>
             {
-                (message: "VERSION", encoding: Encoding.UTF8),
-                (message: @"?<PSDirectVMLegacy>", encoding: Encoding.Unicode),
-                (message: "EMPTYPW", encoding: Encoding.UTF8), // Response to domain
-                (message: "FAIL", encoding: Encoding.UTF8), // Response to domain
+                (Message: "VERSION", Encoding: Encoding.UTF8),
+                (Message: @"?<PSDirectVMLegacy>", Encoding: Encoding.Unicode),
+                (Message: "EMPTYPW", Encoding: Encoding.UTF8), // Response to domain
+                (Message: "FAIL", Encoding: Encoding.UTF8), // Response to domain
             };
 
-            List<(string message, Encoding encoding)> serverResponses = new List<(string message, Encoding encoding)>
+            List<(string Message, Encoding Encoding)> serverResponses = new List<(string Message, Encoding Encoding)>
             {
-                (message: "PASS", encoding: Encoding.ASCII), // Response to VERSION but v1 server expects domain so it says "PASS"
-                (message: "PASS", encoding: Encoding.ASCII), // Response to username
-                (message: "FAIL", encoding: Encoding.ASCII) // Response to EMPTYPW
+                (Message: "PASS", Encoding: Encoding.ASCII), // Response to VERSION but v1 server expects domain so it says "PASS"
+                (Message: "PASS", Encoding: Encoding.ASCII), // Response to username
+                (Message: "FAIL", Encoding: Encoding.ASCII) // Response to EMPTYPW
             };
 
             return (expectedClientSends, serverResponses);
@@ -571,12 +571,12 @@ namespace PSTests.Sequential
             var cred = CreateTestCredential();
 
             var expectedClientSends = CreateVersionNegotiationClientSends();
-            expectedClientSends.Add((message: "TOKEN " + token, encoding: Encoding.ASCII));
+            expectedClientSends.Add((Message: "TOKEN " + token, Encoding: Encoding.ASCII));
 
-            var serverResponses = new List<(string message, Encoding encoding)>{
-                (message: version, encoding: Encoding.ASCII), // Response to VERSION
-                (message: "PASS", encoding: Encoding.ASCII), // Response to VERSION_2
-                (message: "PASS", encoding: Encoding.ASCII) // Response to token
+            var serverResponses = new List<(string Message, Encoding Encoding)>{
+                (Message: version, Encoding: Encoding.ASCII), // Response to VERSION
+                (Message: "PASS", Encoding: Encoding.ASCII), // Response to VERSION_2
+                (Message: "PASS", Encoding: Encoding.ASCII) // Response to token
             };
 
             using var cts = new CancellationTokenSource(TimeSpan.FromMinutes(1));
@@ -644,16 +644,18 @@ namespace PSTests.Sequential
         {
             int port = 50000 + (int)(DateTime.Now.Ticks % 10000);
 
-            var expectedClientSends = new List<(string message, Encoding encoding)>{
-                (message: "VERSION", encoding: Encoding.ASCII), // Response to VERSION
-                (message: "VERSION_2", encoding: Encoding.ASCII), // Response to VERSION_2
-                (message: $"TOKEN {token}", encoding: Encoding.ASCII)
+            var expectedClientSends = new List<(string Message, Encoding Encoding)>
+            {
+                (Message: "VERSION", Encoding: Encoding.ASCII), // Response to VERSION
+                (Message: "VERSION_2", Encoding: Encoding.ASCII), // Response to VERSION_2
+                (Message: $"TOKEN {token}", Encoding: Encoding.ASCII)
             };
 
-            var serverResponses = new List<(string message, Encoding encoding)>{
-                (message: "VERSION_2", encoding: Encoding.ASCII), // Response to VERSION_2
-                (message: "PASS", encoding: Encoding.ASCII), // Response to VERSION_2
-                (message: "PASS", encoding: Encoding.ASCII) // Response to token
+            var serverResponses = new List<(string Message, Encoding Encoding)>
+            {
+                (Message: "VERSION_2", Encoding: Encoding.ASCII), // Response to VERSION_2
+                (Message: "PASS", Encoding: Encoding.ASCII), // Response to VERSION_2
+                (Message: "PASS", Encoding: Encoding.ASCII) // Response to token
             };
 
             using var cts = new CancellationTokenSource(TimeSpan.FromMinutes(1));
@@ -679,16 +681,18 @@ namespace PSTests.Sequential
             string expectedToken = token;
             int port = 50000 + (int)(DateTime.Now.Ticks % 10000);
 
-            var expectedClientSends = new List<(string message, Encoding encoding, int delayMs)>{
-                (message: "VERSION", encoding: Encoding.ASCII, delayMs: timeoutMs), // Response to VERSION
-                (message: "VERSION_2", encoding: Encoding.ASCII, delayMs: timeoutMs), // Response to VERSION_2
-                (message: $"TOKEN {token}", encoding: Encoding.ASCII, delayMs: 1)
+            var expectedClientSends = new List<(string Message, Encoding Encoding, int DelayMs)>
+            {
+                (Message: "VERSION", Encoding: Encoding.ASCII, DelayMs: timeoutMs), // Response to VERSION
+                (Message: "VERSION_2", Encoding: Encoding.ASCII, DelayMs: timeoutMs), // Response to VERSION_2
+                (Message: $"TOKEN {token}", Encoding: Encoding.ASCII, DelayMs: 1),
             };
 
-            var serverResponses = new List<(string message, Encoding encoding)>{
-                (message: "VERSION_2", encoding: Encoding.ASCII), // Response to VERSION_2
-                (message: "PASS", encoding: Encoding.ASCII), // Response to VERSION_2
-                (message: "PASS", encoding: Encoding.ASCII) // Response to token
+            var serverResponses = new List<(string Message, Encoding Encoding)>
+            {
+                (Message: "VERSION_2", Encoding: Encoding.ASCII), // Response to VERSION_2
+                (Message: "PASS", Encoding: Encoding.ASCII), // Response to VERSION_2
+                (Message: "PASS", Encoding: Encoding.ASCII) // Response to token
             };
 
             using var cts = new CancellationTokenSource(TimeSpan.FromMinutes(1));
@@ -727,27 +731,27 @@ namespace PSTests.Sequential
             string expectedToken = token;
             int port = 50000 + (int)(DateTime.Now.Ticks % 10000);
 
-            var expectedClientSends = new List<(string message, Encoding encoding, int delayMs)>{
-                (message: "VERSION", encoding: Encoding.ASCII, delayMs: 1), // Response to VERSION
-                (message: "VERSION_2", encoding: Encoding.ASCII, delayMs: 1), // Response to VERSION_2
-                (message: $"TOKEN {token}", encoding: Encoding.ASCII, delayMs: 1),
-                (message: string.Empty, encoding: Encoding.ASCII, delayMs: 99), // Send some data after the handshake
-                (message: string.Empty, encoding: Encoding.ASCII, delayMs: 100), // Send some data after the handshake
-                (message: string.Empty, encoding: Encoding.ASCII, delayMs: 101),  // Send some data after the handshake
-                (message: string.Empty, encoding: Encoding.ASCII, delayMs: 102),  // Send some data after the handshake
-                (message: string.Empty, encoding: Encoding.ASCII, delayMs: 103)  // Send some data after the handshake
+            var expectedClientSends = new List<(string Message, Encoding Encoding, int DelayMs)>
+            {
+                (Message: "VERSION", Encoding: Encoding.ASCII, DelayMs: 1), // Response to VERSION
+                (Message: "VERSION_2", Encoding: Encoding.ASCII, DelayMs: 1), // Response to VERSION_2
+                (Message: $"TOKEN {token}", Encoding: Encoding.ASCII, DelayMs: 1),
+                (Message: string.Empty, Encoding: Encoding.ASCII, DelayMs: 99), // Send some data after the handshake
+                (Message: string.Empty, Encoding: Encoding.ASCII, DelayMs: 100), // Send some data after the handshake
+                (Message: string.Empty, Encoding: Encoding.ASCII, DelayMs: 101),  // Send some data after the handshake
+                (Message: string.Empty, Encoding: Encoding.ASCII, DelayMs: 102),  // Send some data after the handshake
+                (Message: string.Empty, Encoding: Encoding.ASCII, DelayMs: 103),  // Send some data after the handshake
             };
 
-            var serverResponses = new List<(string message, Encoding encoding)>{
-                (message: "VERSION_2", encoding: Encoding.ASCII), // Response to VERSION_2
-                (message: "PASS", encoding: Encoding.ASCII), // Response to VERSION_2
-                (message: "PASS", encoding: Encoding.ASCII), // Response to token
-                (message: "PSRP-Message0", encoding: Encoding.ASCII), // Indicate server is ready to receive data
-                (message: "PSRP-Message1", encoding: Encoding.ASCII), // Indicate server is ready to receive data
-                (message: "PSRP-Message2", encoding: Encoding.ASCII),  // Indicate server is ready to receive data
-                (message: "PSRP-Message3", encoding: Encoding.ASCII),  // Indicate server is ready to receive data
-                (message: "PSRP-Message4", encoding: Encoding.ASCII)  //
-
+            var serverResponses = new List<(string Message, Encoding Encoding)>{
+                (Message: "VERSION_2", Encoding: Encoding.ASCII), // Response to VERSION_2
+                (Message: "PASS", Encoding: Encoding.ASCII), // Response to VERSION_2
+                (Message: "PASS", Encoding: Encoding.ASCII), // Response to token
+                (Message: "PSRP-Message0", Encoding: Encoding.ASCII), // Indicate server is ready to receive data
+                (Message: "PSRP-Message1", Encoding: Encoding.ASCII), // Indicate server is ready to receive data
+                (Message: "PSRP-Message2", Encoding: Encoding.ASCII),  // Indicate server is ready to receive data
+                (Message: "PSRP-Message3", Encoding: Encoding.ASCII),  // Indicate server is ready to receive data
+                (Message: "PSRP-Message4", Encoding: Encoding.ASCII),
             };
 
             using var cts = new CancellationTokenSource(TimeSpan.FromMinutes(2));
@@ -776,16 +780,18 @@ namespace PSTests.Sequential
         {
             int port = 50000 + (int)(DateTime.Now.Ticks % 10000);
 
-            var expectedClientSends = new List<(string message, Encoding encoding)>{
-                (message: "VERSION", encoding: Encoding.ASCII), // Initial request
-                (message: "VERSION_2", encoding: Encoding.ASCII), // Response to VERSION_2
-                (message: $"TOKEN {token}", encoding: Encoding.ASCII)
+            var expectedClientSends = new List<(string Message, Encoding Encoding)>
+            {
+                (Message: "VERSION", Encoding: Encoding.ASCII), // Initial request
+                (Message: "VERSION_2", Encoding: Encoding.ASCII), // Response to VERSION_2
+                (Message: $"TOKEN {token}", Encoding: Encoding.ASCII)
             };
 
-            var serverResponses = new List<(string message, Encoding encoding)>{
-                (message: "VERSION_2", encoding: Encoding.ASCII), // Response to VERSION
-                (message: "PASS", encoding: Encoding.ASCII), // Response to VERSION_2
-                (message: "FAIL", encoding: Encoding.ASCII) // Response to token
+            var serverResponses = new List<(string Message, Encoding Encoding)>
+            {
+                (Message: "VERSION_2", Encoding: Encoding.ASCII), // Response to VERSION
+                (Message: "PASS", Encoding: Encoding.ASCII), // Response to VERSION_2
+                (Message: "FAIL", Encoding: Encoding.ASCII) // Response to token
             };
 
             using var cts = new CancellationTokenSource(TimeSpan.FromMinutes(1));
