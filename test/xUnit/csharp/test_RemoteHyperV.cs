@@ -441,7 +441,7 @@ namespace PSTests.Sequential
 
             using (var client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
             {
-                client.Connect(IPAddress.Loopback, port);
+                ConnectWithRetry(client, IPAddress.Loopback, port, _output);
                 var exchangeResult = System.Management.Automation.Remoting.RemoteSessionHyperVSocketClient.ExchangeCredentialsAndConfiguration(cred, configurationName, client, false);
                 var result = exchangeResult.success;
                 System.Threading.Thread.Sleep(100); // Allow time for server to process
