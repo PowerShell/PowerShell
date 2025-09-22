@@ -20,7 +20,7 @@ namespace PSTests.Sequential
     public class RemoteHyperVTests
     {
         private static ITestOutputHelper _output;
-        private static TimeSpan timeout = TimeSpan.FromSeconds(15);
+        private static readonly TimeSpan timeout = TimeSpan.FromSeconds(15);
 
         public RemoteHyperVTests(ITestOutputHelper output)
         {
