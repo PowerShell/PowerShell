@@ -83,7 +83,7 @@ runs:
 
           const buildModuleChanged = files.some(file => file.filename.startsWith('build.psm1'));
 
-          const globalConfigChanged = files.some(file => file.filename.startsWith('.globalconfig')) || files.some(file => file.filename.startsWith('nuget.config')) || files.some(file => file.filename.startsWith('global.json'));
+          const globalConfigChanged = files.some(file => file.filename.startsWith('.globalconfig')) || files.some(file => file.filename.startsWith('nuget.config')) || files.some(file => file.filename.startsWith('global.json' || files.some(file => file.filename.startsWith('stylecop.json'));
 
           const source = mainSourceChanged || toolsChanged || githubChanged || propsChanged || testsChanged || globalConfigChanged;
 
