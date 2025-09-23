@@ -635,6 +635,16 @@ namespace System.Management.Automation.Remoting.Server
             originalStdErr = new HyperVSocketErrorTextWriter(_hypervSocketServer.TextWriter);
         }
 
+        private HyperVSocketMediator(string token,
+            DateTimeOffset tokenCreationTime)
+            : base(false)
+        {
+            _hypervSocketServer = new RemoteSessionHyperVSocketServer(false, token: token, tokenCreationTime: tokenCreationTime);
+
+            originalStdIn = _hypervSocketServer.TextReader;
+            originalStdOut = new OutOfProcessTextWriter(_hypervSocketServer.TextWriter);
+            originalStdErr = new HyperVSocketErrorTextWriter(_hypervSocketServer.TextWriter);
+        }
         #endregion
 
         #region Static Methods
@@ -656,6 +666,24 @@ namespace System.Management.Automation.Remoting.Server
                 configurationFile: null);
         }
 
+        internal static void Run(
+            string initialCommand,
+            string configurationName,
+            string token,
+            DateTimeOffset tokenCreationTime)
+        {
+            lock (SyncObject)
+            {
+                s_instance = new HyperVSocketMediator(token, tokenCreationTime);
+            }
+
+            s_instance.Start(
+                initialCommand: initialCommand,
+                cryptoHelper: new PSRemotingCryptoHelperServer(),
+                workingDirectory: null,
+                configurationName: configurationName,
+                configurationFile: null);
+        }
         #endregion
     }
 

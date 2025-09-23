@@ -198,7 +198,26 @@ namespace Microsoft.PowerShell
                 }
 
                 // Servermode parameter validation check.
-                if ((s_cpp.ServerMode && s_cpp.NamedPipeServerMode) || (s_cpp.ServerMode && s_cpp.SocketServerMode) || (s_cpp.NamedPipeServerMode && s_cpp.SocketServerMode))
+                int serverModeCount = 0;
+                if (s_cpp.ServerMode)
+                {
+                    serverModeCount++;
+                }
+                if (s_cpp.NamedPipeServerMode)
+                {
+                    serverModeCount++;
+                }
+                if (s_cpp.SocketServerMode)
+                {
+                    serverModeCount++;
+                }
+#if !UNIX
+                if (s_cpp.V2SocketServerMode)
+                {
+                    serverModeCount++;
+                }
+#endif
+                if (serverModeCount > 1)
                 {
                     s_tracer.TraceError("Conflicting server mode parameters, parameters must be used exclusively.");
                     s_theConsoleHost?.ui.WriteErrorLine(ConsoleHostStrings.ConflictingServerModeParameters);
@@ -242,6 +261,34 @@ namespace Microsoft.PowerShell
                         configurationName: s_cpp.ConfigurationName);
                     exitCode = 0;
                 }
+#if !UNIX
+                else if (s_cpp.V2SocketServerMode)
+                {
+                    if (s_cpp.Token == null)
+                    {
+                        s_tracer.TraceError("Token is required for V2SocketServerMode.");
+                        s_theConsoleHost?.ui.WriteErrorLine(string.Format(CultureInfo.CurrentCulture, ConsoleHostStrings.MissingMandatoryParameter, "-Token", "-V2SocketServerMode"));
+                        return ExitCodeBadCommandLineParameter;
+                    }
+
+                    if (s_cpp.UTCTimestamp == null)
+                    {
+                        s_tracer.TraceError("UTCTimestamp is required for V2SocketServerMode.");
+                        s_theConsoleHost?.ui.WriteErrorLine(string.Format(CultureInfo.CurrentCulture, ConsoleHostStrings.MissingMandatoryParameter, "-UTCTimestamp", "-v2socketservermode"));
+                        return ExitCodeBadCommandLineParameter;
+                    }
+
+                    ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("V2SocketServerMode", s_cpp.ParametersUsedAsDouble);
+                    ProfileOptimization.StartProfile("StartupProfileData-V2SocketServerMode");
+                    HyperVSocketMediator.Run(
+                        initialCommand: s_cpp.InitialCommand,
+                        configurationName: s_cpp.ConfigurationName,
+                        token: s_cpp.Token,
+                        tokenCreationTime: s_cpp.UTCTimestamp.Value);
+
+                    exitCode = 0;
+                }
+#endif
                 else if (s_cpp.SocketServerMode)
                 {
                     ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("SocketServerMode", s_cpp.ParametersUsedAsDouble);
@@ -1879,6 +1926,7 @@ namespace Microsoft.PowerShell
                             {
                                 s_theConsoleHost.UI.WriteLine(ManagedEntranceStrings.ShellBannerCLAuditMode);
                             }
+
                             break;
 
                         case PSLanguageMode.NoLanguage:
@@ -2745,6 +2793,7 @@ namespace Microsoft.PowerShell
 #endif
                         }
                     }
+
                     // NTRAID#Windows Out Of Band Releases-915506-2005/09/09
                     // Removed HandleUnexpectedExceptions infrastructure
                     finally

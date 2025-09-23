@@ -219,7 +219,7 @@ function RunUpdateHelpTests
 
                 [hashtable] $UICultureParam = $(if ((Get-UICulture).Name -ne $myUICulture) { @{ UICulture = $myUICulture } } else { @{} })
                 [hashtable] $sourcePathParam = $(if ($useSourcePath) { @{ SourcePath = Join-Path $PSScriptRoot assets } } else { @{} })
-                Update-Help -Module:$moduleName -Force @UICultureParam @sourcePathParam -Scope:$updateScope
+                Update-Help -Module:$moduleName -Force @UICultureParam @sourcePathParam -Scope:$updateScope -ErrorAction Stop
 
                 [hashtable] $userScopeParam = $(if ($userscope) { @{ UserScope = $true } } else { @{} })
                 ValidateInstalledHelpContent -moduleName:$moduleName @userScopeParam

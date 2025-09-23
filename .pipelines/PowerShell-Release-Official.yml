@@ -288,7 +288,7 @@ extends:
         - setReleaseTagAndChangelog
         - UpdateChangeLog
       variables:
-        ob_release_environment: ${{ parameters.releaseEnvironment }}
+        ob_release_environment: ${{ variables.releaseEnvironment }}
       jobs:
       - template: /.pipelines/templates/release-githubNuget.yml@self
         parameters:

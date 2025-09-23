@@ -153,4 +153,3 @@ stages:
 
         Publish-TestResults -Title "PSResourceGet - ACR tests" -Path $outputFilePath -Type NUnit
       displayName: 'PSResourceGet ACR functional tests using AzAuth'
-

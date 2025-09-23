@@ -48,6 +48,9 @@ namespace PSTests.Parallel
             Assert.False(cpp.ShowVersion);
             Assert.False(cpp.SkipProfiles);
             Assert.False(cpp.SocketServerMode);
+#if !UNIX
+            Assert.False(cpp.V2SocketServerMode);
+#endif
             Assert.False(cpp.SSHServerMode);
             if (Platform.IsWindows)
             {
@@ -335,6 +338,25 @@ namespace PSTests.Parallel
             Assert.True(cpp.SocketServerMode);
             Assert.Null(cpp.ErrorMessage);
         }
+
+#if !UNIX
+        [Theory]
+        [InlineData("-v2socketservermode", "-token", "natoheusatoehusnatoeu", "-utctimestamp", "2023-10-01T12:00:00Z")]
+        [InlineData("-v2so", "-token", "asentuhasoneuthsaoe", "-utctimestamp", "2025-06-09T12:00:00Z")]
+        public static void TestParameter_V2SocketServerMode(params string[] commandLine)
+        {
+            var cpp = new CommandLineParameterParser();
+
+            cpp.Parse(commandLine);
+
+            Assert.False(cpp.AbortStartup);
+            Assert.True(cpp.NoExit);
+            Assert.False(cpp.ShowShortHelp);
+            Assert.False(cpp.ShowBanner);
+            Assert.True(cpp.V2SocketServerMode);
+            Assert.Null(cpp.ErrorMessage);
+        }
+#endif
 
         [Theory]
         [InlineData("-servermode")]
