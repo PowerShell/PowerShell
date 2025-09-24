@@ -45,7 +45,7 @@ namespace System.Management.Automation
         /// The context for the runspace to which this session state object belongs.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// if <paramref name="context"/> is null.
+        /// if <paramref name="context"/> is null value.
         /// </exception>
         internal SessionStateInternal(ExecutionContext context) : this(null, false, context)
         {
