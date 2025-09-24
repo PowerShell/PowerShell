@@ -196,12 +196,12 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 ThrowTerminatingError(
                                     new ErrorRecord(
-                                        new PSNotSupportedException(NewObjectStrings.CannotCreateTypeConstrainedLanguage), 
+                                        new PSNotSupportedException(NewObjectStrings.CannotCreateTypeConstrainedLanguage),
                                         "CannotCreateTypeConstrainedLanguage",
                                         ErrorCategory.PermissionDenied,
                                         targetObject: null));
                             }
-                            
+
                             SystemPolicy.LogWDACAuditMessage(
                                 context: Context,
                                 title: NewObjectStrings.TypeWDACLogTitle,

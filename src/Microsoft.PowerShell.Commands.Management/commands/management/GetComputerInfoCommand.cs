@@ -3685,7 +3685,7 @@ namespace Microsoft.PowerShell.Commands
         /// Secure Memory Overwrite.
         /// </summary>
         SecureMemoryOverwrite = 4,
-        
+
         /// <summary>
         /// UEFI Code Readonly.
         /// </summary>

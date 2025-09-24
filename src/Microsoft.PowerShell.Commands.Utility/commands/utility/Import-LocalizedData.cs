@@ -158,7 +158,7 @@ namespace Microsoft.PowerShell.Commands
                     ThrowTerminatingError(
                         new ErrorRecord(nse, "CannotDefineSupportedCommand", ErrorCategory.PermissionDenied, null));
                 }
-                
+
                 SystemPolicy.LogWDACAuditMessage(
                     context: Context,
                     title: ImportLocalizedDataStrings.WDACLogTitle,
