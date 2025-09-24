@@ -1311,11 +1311,12 @@ namespace System.Management.Automation.Language
         public override AstVisitAction VisitUsingStatement(UsingStatementAst usingStatementAst)
         {
             UsingStatementKind kind = usingStatementAst.UsingStatementKind;
-            bool usingKindSupported = kind is UsingStatementKind.Namespace or UsingStatementKind.Assembly or UsingStatementKind.Module;
-            if (!usingKindSupported || usingStatementAst.Alias != null)
+            bool usingKindSupported = kind is UsingStatementKind.Namespace or UsingStatementKind.Assembly or UsingStatementKind.Module or UsingStatementKind.Type;
+            bool usingAliasSupported = kind == UsingStatementKind.Namespace;
+
+            if (!usingKindSupported || (usingStatementAst.Alias is not null && !usingAliasSupported))
             {
-                _parser.ReportError(
-                    usingStatementAst.Extent,
+                _parser.ReportError(usingStatementAst.Extent,
                     nameof(ParserStrings.UsingStatementNotSupported),
                     ParserStrings.UsingStatementNotSupported);
             }
@@ -1323,10 +1324,13 @@ namespace System.Management.Automation.Language
             if (kind is UsingStatementKind.Namespace)
             {
                 Regex nsPattern = NamespacePattern();
-                if (!nsPattern.IsMatch(usingStatementAst.Name.Value))
+                StringConstantExpressionAst namespaceExpression = usingStatementAst.Alias is null
+                    ? usingStatementAst.Name
+                    : usingStatementAst.Alias;
+                if (!nsPattern.IsMatch(namespaceExpression.Value))
                 {
                     _parser.ReportError(
-                        usingStatementAst.Name.Extent,
+                        namespaceExpression.Extent,
                         nameof(ParserStrings.InvalidNamespaceValue),
                         ParserStrings.InvalidNamespaceValue);
                 }
