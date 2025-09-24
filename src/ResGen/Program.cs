@@ -137,7 +137,7 @@ using System.Reflection;
     private static global::System.Globalization.CultureInfo resourceCulture;
 
     /// <summary>constructor</summary>
-    [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute(""Microsoft.Performance"", ""CA1811:AvoidUncalledPrivateCode"")]
+    [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute(""Style"", ""IDE0051:Remove unused private members"")]
     {4} {0}() {{
     }}
 
