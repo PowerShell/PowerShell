@@ -62,7 +62,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Overrides <see cref="System.Object.ToString"/>
+        /// Overrides <see cref="object.ToString"/>
         /// </summary>
         /// <returns>
         /// "a,b" where a and b are the values of the X and Y properties.
@@ -75,7 +75,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Overrides <see cref="System.Object.Equals(object)"/>
+        /// Overrides <see cref="object.Equals(object)"/>
         /// </summary>
         /// <param name="obj">
         /// object to be compared for equality.
@@ -99,7 +99,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Overrides <see cref="System.Object.GetHashCode"/>
+        /// Overrides <see cref="object.GetHashCode"/>
         /// </summary>
         /// <returns>
         /// Hash code for this instance.
@@ -110,24 +110,24 @@ namespace System.Management.Automation.Host
         {
             // idea: consider X the high-order part of a 64-bit in, and Y the lower order half.  Then use the int64.GetHashCode.
 
-            UInt64 i64 = 0;
+            ulong i64 = 0;
 
             if (X < 0)
             {
-                if (X == Int32.MinValue)
+                if (X == int.MinValue)
                 {
                     // add one and invert to avoid an overflow.
 
-                    i64 = (UInt64)(-1 * (X + 1));
+                    i64 = (ulong)(-1 * (X + 1));
                 }
                 else
                 {
-                    i64 = (UInt64)(-X);
+                    i64 = (ulong)(-X);
                 }
             }
             else
             {
-                i64 = (UInt64)X;
+                i64 = (ulong)X;
             }
 
             // rotate 32 bits to the left.
@@ -138,18 +138,18 @@ namespace System.Management.Automation.Host
 
             if (Y < 0)
             {
-                if (Y == Int32.MinValue)
+                if (Y == int.MinValue)
                 {
-                    i64 += (UInt64)(-1 * (Y + 1));
+                    i64 += (ulong)(-1 * (Y + 1));
                 }
                 else
                 {
-                    i64 += (UInt64)(-Y);
+                    i64 += (ulong)(-Y);
                 }
             }
             else
             {
-                i64 += (UInt64)Y;
+                i64 += (ulong)Y;
             }
 
             int result = i64.GetHashCode();
@@ -248,7 +248,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Overloads <see cref="System.Object.ToString"/>
+        /// Overloads <see cref="object.ToString"/>
         /// </summary>
         /// <returns>
         /// "a,b" where a and b are the values of the Width and Height properties.
@@ -261,7 +261,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Overrides <see cref="System.Object.Equals(object)"/>
+        /// Overrides <see cref="object.Equals(object)"/>
         /// </summary>
         /// <param name="obj">
         /// object to be compared for equality.
@@ -285,7 +285,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Overrides <see cref="System.Object.GetHashCode"/>
+        /// Overrides <see cref="object.GetHashCode"/>
         /// </summary>
         /// <returns>
         /// Hash code for this instance.
@@ -299,24 +299,24 @@ namespace System.Management.Automation.Host
         {
             // idea: consider Width the high-order part of a 64-bit in, and Height the lower order half.  Then use the int64.GetHashCode.
 
-            UInt64 i64 = 0;
+            ulong i64 = 0;
 
             if (Width < 0)
             {
-                if (Width == Int32.MinValue)
+                if (Width == int.MinValue)
                 {
                     // add one and invert to avoid an overflow.
 
-                    i64 = (UInt64)(-1 * (Width + 1));
+                    i64 = (ulong)(-1 * (Width + 1));
                 }
                 else
                 {
-                    i64 = (UInt64)(-Width);
+                    i64 = (ulong)(-Width);
                 }
             }
             else
             {
-                i64 = (UInt64)Width;
+                i64 = (ulong)Width;
             }
 
             // rotate 32 bits to the left.
@@ -327,18 +327,18 @@ namespace System.Management.Automation.Host
 
             if (Height < 0)
             {
-                if (Height == Int32.MinValue)
+                if (Height == int.MinValue)
                 {
-                    i64 += (UInt64)(-1 * (Height + 1));
+                    i64 += (ulong)(-1 * (Height + 1));
                 }
                 else
                 {
-                    i64 += (UInt64)(-Height);
+                    i64 += (ulong)(-Height);
                 }
             }
             else
             {
-                i64 += (UInt64)Height;
+                i64 += (ulong)Height;
             }
 
             int result = i64.GetHashCode();
@@ -557,7 +557,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Overloads <see cref="System.Object.ToString"/>
+        /// Overloads <see cref="object.ToString"/>
         /// </summary>
         /// <returns>
         /// "a,b,c,d" where a, b, c, and d are the values of the VirtualKeyCode, Character, ControlKeyState, and KeyDown properties.
@@ -569,7 +569,7 @@ namespace System.Management.Automation.Host
             return string.Create(CultureInfo.InvariantCulture, $"{VirtualKeyCode},{Character},{ControlKeyState},{KeyDown}");
         }
         /// <summary>
-        /// Overrides <see cref="System.Object.Equals(object)"/>
+        /// Overrides <see cref="object.Equals(object)"/>
         /// </summary>
         /// <param name="obj">
         /// object to be compared for equality.
@@ -593,7 +593,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Overrides <see cref="System.Object.GetHashCode"/>
+        /// Overrides <see cref="object.GetHashCode"/>
         /// </summary>
         /// <returns>
         /// Hash code for this instance.
@@ -611,13 +611,13 @@ namespace System.Management.Automation.Host
             //                VirtualKeyCode the lower-order nibbles of a 32-bit int,
             //       Then use the UInt32.GetHashCode.
 
-            UInt32 i32 = KeyDown ? 0x10000000U : 0;
+            uint i32 = KeyDown ? 0x10000000U : 0;
 
             // mask in ControlKeyState
             i32 |= ((uint)ControlKeyState) << 16;
 
             // mask in the VirtualKeyCode
-            i32 |= (UInt32)VirtualKeyCode;
+            i32 |= (uint)VirtualKeyCode;
 
             return i32.GetHashCode();
         }
@@ -787,7 +787,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Overloads <see cref="System.Object.ToString"/>
+        /// Overloads <see cref="object.ToString"/>
         /// </summary>
         /// <returns>
         /// "a,b ; c,d" where a, b, c, and d are values of the Left, Top, Right, and Bottom properties.
@@ -800,7 +800,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Overrides <see cref="System.Object.Equals(object)"/>
+        /// Overrides <see cref="object.Equals(object)"/>
         /// </summary>
         /// <param name="obj">
         /// object to be compared for equality.
@@ -824,7 +824,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Overrides <see cref="System.Object.GetHashCode"/>
+        /// Overrides <see cref="object.GetHashCode"/>
         /// </summary>
         /// <returns>
         /// Hash code for this instance.
@@ -839,25 +839,25 @@ namespace System.Management.Automation.Host
             // idea: consider (Top XOR Bottom) the high-order part of a 64-bit int,
             //                (Left XOR Right) the lower order half.  Then use the int64.GetHashCode.
 
-            UInt64 i64 = 0;
+            ulong i64 = 0;
 
             int upper = Top ^ Bottom;
             if (upper < 0)
             {
-                if (upper == Int32.MinValue)
+                if (upper == int.MinValue)
                 {
                     // add one and invert to avoid an overflow.
 
-                    i64 = (UInt64)(-1 * (upper + 1));
+                    i64 = (ulong)(-1 * (upper + 1));
                 }
                 else
                 {
-                    i64 = (UInt64)(-upper);
+                    i64 = (ulong)(-upper);
                 }
             }
             else
             {
-                i64 = (UInt64)upper;
+                i64 = (ulong)upper;
             }
 
             // rotate 32 bits to the left.
@@ -869,18 +869,18 @@ namespace System.Management.Automation.Host
             int lower = Left ^ Right;
             if (lower < 0)
             {
-                if (lower == Int32.MinValue)
+                if (lower == int.MinValue)
                 {
-                    i64 += (UInt64)(-1 * (lower + 1));
+                    i64 += (ulong)(-1 * (lower + 1));
                 }
                 else
                 {
-                    i64 += (UInt64)(-upper);
+                    i64 += (ulong)(-upper);
                 }
             }
             else
             {
-                i64 += (UInt64)lower;
+                i64 += (ulong)lower;
             }
 
             int result = i64.GetHashCode();
@@ -1015,7 +1015,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Overloads <see cref="System.Object.ToString"/>
+        /// Overloads <see cref="object.ToString"/>
         /// </summary>
         /// <returns>
         /// "'a' b c d" where a, b, c, and d are the values of the Character, ForegroundColor, BackgroundColor, and Type properties.
@@ -1028,7 +1028,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Overrides <see cref="System.Object.Equals(object)"/>
+        /// Overrides <see cref="object.Equals(object)"/>
         /// </summary>
         /// <param name="obj">
         /// object to be compared for equality.
@@ -1052,7 +1052,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Overrides <see cref="System.Object.GetHashCode"/>
+        /// Overrides <see cref="object.GetHashCode"/>
         /// <!-- consider (ForegroundColor XOR BackgroundColor) the high-order part of a 32-bit int,
         ///      and Character the lower order half.  Then use the int32.GetHashCode.-->
         /// </summary>
@@ -1067,11 +1067,11 @@ namespace System.Management.Automation.Host
             // idea: consider (ForegroundColor XOR BackgroundColor) the high-order part of a 32-bit int,
             //                and Character the lower order half.  Then use the int32.GetHashCode.
 
-            UInt32 i32 = ((uint)(ForegroundColor ^ BackgroundColor)) << 16;
+            uint i32 = ((uint)(ForegroundColor ^ BackgroundColor)) << 16;
 
             // mask in Height
 
-            i32 |= (UInt16)Character;
+            i32 |= (ushort)Character;
             int result = i32.GetHashCode();
 
             return result;
