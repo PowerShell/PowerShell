@@ -26,6 +26,9 @@ public class TestClass
 
     public static string StaticWithOptionalExpected() => StaticWithOptional();
     public static string StaticWithOptional([Optional] string value) => value;
+    
+    public static nint StaticWithOptionalIntPtrExpected() => StaticWithOptionalIntPtr();
+    public static nint StaticWithOptionalIntPtr(nint value = default(nint)) => value;
 
     public object InstanceWithDefaultExpected() => InstanceWithDefault();
     public object InstanceWithDefault(object value = null) => value;
@@ -98,6 +101,12 @@ public class TestClassCstorWithOptional
     It "Binds to static method with Optional argument" {
         $expected = [CLRBindingTests.TestClass]::StaticWithOptionalExpected()
         $actual = [CLRBindingTests.TestClass]::StaticWithOptional()
+        $actual | Should -Be $expected
+    }
+    
+    It "Binds to static method with default IntPtr argument" {
+        $expected = [CLRBindingTests.TestClass]::StaticWithOptionalIntPtrExpected()
+        $actual = [CLRBindingTests.TestClass]::StaticWithOptionalIntPtr()
         $actual | Should -Be $expected
     }
 
