@@ -64,12 +64,7 @@ jobs:
       AnalyzeInPipeline: false
       Language: csharp
 
-  - task: UseDotNet@2
-    inputs:
-      useGlobalJson: true
-      workingDirectory: $(PowerShellRoot)
-    env:
-      ob_restore_phase: true
+  - template: /.pipelines/templates/install-dotnet.yml@self
 
   - pwsh: |
       $runtime = $env:RUNTIME

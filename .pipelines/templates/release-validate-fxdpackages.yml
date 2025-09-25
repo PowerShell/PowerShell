@@ -61,12 +61,7 @@ jobs:
         Get-ChildItem "$(Pipeline.Workspace)/PSPackagesOfficial/$artifactName" -Recurse
       displayName: 'Capture Downloaded Artifacts'
 
-    - task: UseDotNet@2
-      displayName: 'Use .NET Core sdk'
-      inputs:
-        useGlobalJson: true
-        packageType: 'sdk'
-        workingDirectory: $(Build.SourcesDirectory)/PowerShell"
+    - template: /.pipelines/templates/install-dotnet.yml@self
 
     - pwsh: |
         $artifactName = '$(artifactName)'

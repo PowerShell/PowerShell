@@ -1,0 +1,21 @@
+steps:
+  - pwsh: |
+      $psRoot = '$(PowerShellRoot)'
+
+      if (-not (Test-Path $psRoot)) {
+        $psRoot = '$(Build.SourcesDirectory)/PowerShell'
+        Set-Location $psRoot -Verbose
+      }
+
+      $version = Get-Content ./global.json | ConvertFrom-Json | Select-Object -ExpandProperty sdk | Select-Object -ExpandProperty version
+
+      Write-Verbose -Verbose "Installing .NET SDK with version $version"
+
+      Import-Module ./build.psm1 -Force
+      Install-Dotnet -Version $version -Verbose
+
+    displayName: 'Install dotnet SDK'
+    workingDirectory: $(PowerShellRoot)
+    env:
+       ob_restore_phase: true
+
