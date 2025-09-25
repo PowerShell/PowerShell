@@ -1,6 +1,9 @@
 trigger: none
 
 parameters: # parameters are shown up in ADO UI in a build queue time
+  - name: OfficialBuild
+    type: boolean
+    default: true
   - name: 'debug'
     displayName: 'Enable debug output'
     type: boolean
@@ -13,9 +16,6 @@ parameters: # parameters are shown up in ADO UI in a build queue time
     displayName: Skip Signing
     type: string
     default: 'NO'
-  - name: OfficialBuild
-    type: boolean
-    default: false
 
 name: ev2-$(BUILD.SOURCEBRANCHNAME)-prod.${{ parameters.OfficialBuild }}-$(Build.BuildId)
 
