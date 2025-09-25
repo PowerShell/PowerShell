@@ -572,7 +572,7 @@ namespace Microsoft.PowerShell.Commands
         /// since it is optional for GetService and mandatory otherwise.
         /// </remarks>
         [Parameter(Position = 0, ParameterSetName = "Default", ValueFromPipelineByPropertyName = true, ValueFromPipeline = true)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         [Alias("ServiceName")]
         public string[] Name
         {
@@ -1547,7 +1547,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <value></value>
         [Parameter]
-        [Credential()]
+        [Credential]
         public PSCredential Credential { get; set; }
 
         /// <summary>
@@ -2085,7 +2085,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <value></value>
         [Parameter]
-        [Credential()]
+        [Credential]
         public PSCredential Credential
         {
             get { return credential; }
