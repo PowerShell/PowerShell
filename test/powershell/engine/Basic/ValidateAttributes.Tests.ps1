@@ -263,6 +263,65 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
         }
     }
 
+    Context "ValidateLength" {
+        BeforeAll {
+            $testCases = @(
+                @{
+                    ScriptBlock             = { function foo { param([ValidateLength(2, 5)] [string] $bar) }; foo "a" }
+                    FullyQualifiedErrorId   = "ParameterArgumentValidationError,foo"
+                    InnerErrorId            = "ValidateLengthMinLengthFailure"
+                }
+                @{
+                    ScriptBlock             = { function foo { param([ValidateLength(2, 5)] [string] $bar) }; foo "abcdef" }
+                    FullyQualifiedErrorId   = "ParameterArgumentValidationError,foo"
+                    InnerErrorId            = "ValidateLengthMaxLengthFailure"
+                }
+                @{
+                    ScriptBlock             = { function foo { param([ValidateLength(2, 5)] $bar) }; foo 123 }
+                    FullyQualifiedErrorId   = "ParameterArgumentValidationError,foo"
+                    InnerErrorId            = "ValidateLengthNotString"
+                }
+            )
+
+            $validTestCases = @(
+                @{
+                    ScriptBlock  = { function foo { param([ValidateLength(2, 5)] [string] $bar) }; foo "abc" }
+                }
+                @{
+                    ScriptBlock  = { function foo { param([ValidateLength(2, 5)] [string] $bar) }; foo "ab" }
+                }
+                @{
+                    ScriptBlock  = { function foo { param([ValidateLength(2, 5)] [string] $bar) }; foo "abcde" }
+                }
+            )
+        }
+
+        It 'Exception: <FullyQualifiedErrorId>:<InnerErrorId>' -TestCases $testCases {
+            param($ScriptBlock, $FullyQualifiedErrorId, $InnerErrorId)
+
+            $ScriptBlock | Should -Throw -ErrorId $FullyQualifiedErrorId
+            if ($InnerErrorId) {
+                $error[0].exception.innerexception.errorrecord.FullyQualifiedErrorId | Should -Be $InnerErrorId
+            }
+        }
+
+        It 'No Exception: valid string length' -TestCases $validTestCases {
+            param($ScriptBlock)
+            $ScriptBlock | Should -Not -Throw
+        }
+
+        It 'ValidateLength error message should be properly formatted' {
+            function foo { param([ValidateLength(0,2)] [string] $bar) $bar }
+            
+            { foo "11111" } | Should -Throw -ErrorId "ParameterArgumentValidationError,foo"
+            
+            # Check the inner exception message is properly formatted
+            $error[0].Exception.InnerException.Message | Should -Match 'The character length of the "argument" argument is too long at 5 characters'
+            # The outer exception should have the actual parameter name
+            $error[0].Exception.Message | Should -Match 'bar'
+        }
+    }
+
     Context "ValidateNotNull, ValidateNotNullOrEmpty, ValidateNotNullOrWhiteSpace and Not-Null-Or-Empty check for Mandatory parameter" {
 
         BeforeAll {
