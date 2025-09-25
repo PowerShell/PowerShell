@@ -4,7 +4,7 @@ steps:
       if ($ENV:BUILD_REASON -eq 'PullRequest') {
         throw 'We dont support PRs'
       }
-      
+
       Write-Verbose -Verbose $ENV:BUILD_SOURCEBRANCH
       $branchName = $ENV:BUILD_SOURCEBRANCH -replace '^refs/heads/'
       Write-Verbose -Verbose "Branch Name: $branchName"
