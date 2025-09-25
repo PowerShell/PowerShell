@@ -94,8 +94,8 @@ jobs:
     parameters:
       repoRoot: $(PowerShellRoot)
 
-  - task: NuGetToolInstaller@1
-    displayName: 'Install NuGet.exe'
+  # - task: NuGetToolInstaller@1
+  #   displayName: 'Install NuGet.exe'
 
   - template: /.pipelines/templates/install-dotnet.yml@self
 

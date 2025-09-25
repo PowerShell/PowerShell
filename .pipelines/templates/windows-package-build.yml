@@ -109,6 +109,8 @@ jobs:
 
       Start-PSBootstrap -Scenario Package
 
+      Find-Dotnet
+
       $signedFilesPath, $psoptionsFilePath = if ($env:RUNTIME -eq 'minsize') {
           "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_x64_${runtime}\$signedFolder"
           "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_x64_${runtime}\psoptions\psoptions.json"
