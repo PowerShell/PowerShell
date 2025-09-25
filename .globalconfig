@@ -1838,7 +1838,7 @@ dotnet_diagnostic.SA1205.severity = warning
 
 # SA1206: Declaration keywords should follow order
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1206.md
-dotnet_diagnostic.SA1206.severity = none
+dotnet_diagnostic.SA1206.severity = warning
 
 # SA1207: Protected should come before internal
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1207.md
