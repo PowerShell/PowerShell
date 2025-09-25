@@ -1,8 +1,6 @@
 steps:
   - pwsh: |
-      $psRoot = '$(PowerShellRoot)'
-
-      if (-not (Test-Path $psRoot)) {
+      if (-not (Test-Path '$(RepoRoot)')) {
         $psRoot = '$(Build.SourcesDirectory)/PowerShell'
         Set-Location $psRoot -Verbose
       }
@@ -15,7 +13,7 @@ steps:
       Install-Dotnet -Version $version -Verbose
 
     displayName: 'Install dotnet SDK'
-    workingDirectory: $(PowerShellRoot)
+    workingDirectory: $(RepoRoot)
     env:
        ob_restore_phase: true
 

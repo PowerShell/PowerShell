@@ -29,11 +29,9 @@ jobs:
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
 
-  - template: /.pipelines/templates/cloneToOfficialPath.yml@self
-
   - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
     parameters:
-      repoRoot: $(PowerShellRoot)
+      repoRoot: $(RepoRoot)
       ob_restore_phase: true
 
   - template: /.pipelines/templates/install-dotnet.yml@self
@@ -95,8 +93,6 @@ jobs:
   - template: /.pipelines/templates/SetVersionVariables.yml@self
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
-
-  - template: /.pipelines/templates/cloneToOfficialPath.yml@self
 
   - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
     parameters:

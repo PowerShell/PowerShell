@@ -105,7 +105,7 @@ jobs:
       Import-Module "$repoRoot/build.psm1"
       Import-Module "$repoRoot/tools/packaging"
 
-      Start-PSBootstrap -Scenario Package
+      Start-PSBootstrap -Scenario Both
 
       $psOptionsPath = "$(Pipeline.Workspace)/CoOrdinatedBuildPipeline/${unsignedDrop}/psoptions/psoptions.json"
 
