@@ -56,7 +56,7 @@ jobs:
     - pwsh: |
         $repoRoot = "$(Build.SourcesDirectory)"
 
-        $env:DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
+        $env:DOTNET_NOLOGO=1
 
         $localLocation = "$(Pipeline.Workspace)/PSPackagesOfficial/drop_nupkg_build_nupkg"
         $xmlElement = @"

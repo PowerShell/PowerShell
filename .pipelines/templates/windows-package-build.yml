@@ -302,4 +302,3 @@ jobs:
     displayName: 'List artifacts'
     env:
       ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
-

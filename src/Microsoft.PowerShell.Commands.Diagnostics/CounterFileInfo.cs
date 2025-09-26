@@ -54,4 +54,3 @@ namespace Microsoft.PowerShell.Commands.GetCounter
         private UInt32 _sampleCount = 0;
     }
 }
-

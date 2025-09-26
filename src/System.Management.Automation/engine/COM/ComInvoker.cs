@@ -7,9 +7,6 @@ using System.Runtime.InteropServices;
 
 using COM = System.Runtime.InteropServices.ComTypes;
 
-// Disable obsolete warnings about VarEnum and COM-marshaling APIs in CoreCLR
-#pragma warning disable 618
-
 namespace System.Management.Automation
 {
     internal static class ComInvoker
