@@ -817,8 +817,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 {
                     foreach (string resourceDir in Directory.EnumerateDirectories(dscResourcesPath))
                     {
-                        IEnumerable<string> schemaFiles = Directory.EnumerateFiles(resourceDir, "*.schema.mof");
-                        if (!schemaFiles.Any())
+                        using IEnumerator<string> schemaFiles = Directory.EnumerateFiles(resourceDir, "*.schema.mof").GetEnumerator();
+                        
+                        if (!schemaFiles.MoveNext())
                         {
                             continue;
                         }
@@ -829,10 +830,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                             continue;
                         }
 
-                        foreach (string schemaFile in schemaFiles)
+                        do
                         {
-                            ImportClasses(schemaFile, moduleInfo, errors, importInBoxResourcesImplicitly);
+                            ImportClasses(schemaFiles.Current, moduleInfo, errors, importInBoxResourcesImplicitly);
                         }
+                        while (schemaFiles.MoveNext());
                     }
                 }
             }
