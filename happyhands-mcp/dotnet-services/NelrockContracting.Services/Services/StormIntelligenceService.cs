@@ -1,0 +1,182 @@
+using NelrockContracting.Services.Models;
+
+namespace NelrockContracting.Services.Services;
+
+public interface IStormIntelligenceService
+{
+    Task<StormSwathResponse> FetchStormSwathAsync(StormSwathRequest request);
+    Task<HailStatsResponse> GetHailStatsAsync(HailStatsRequest request);
+    Task<ServiceAreaIntersectionResponse> IntersectServiceAreaAsync(ServiceAreaIntersectionRequest request);
+    Task<EventSummaryResponse> GetEventSummaryAsync(string eventId);
+}
+
+public class StormIntelligenceService : IStormIntelligenceService
+{
+    private readonly ILogger<StormIntelligenceService> _logger;
+
+    public StormIntelligenceService(ILogger<StormIntelligenceService> logger)
+    {
+        _logger = logger;
+    }
+
+    public async Task<StormSwathResponse> FetchStormSwathAsync(StormSwathRequest request)
+    {
+        _logger.LogInformation("Fetching storm swath for bbox: {BBox}", request.BBox);
+        
+        // Mock implementation - in real scenario, integrate with NOAA/NWS APIs
+        await Task.Delay(100); // Simulate API call
+        
+        var mockFeature = new GeoJsonFeature
+        {
+            Geometry = new
+            {
+                type = "Polygon",
+                coordinates = new[] { new[] {
+                    new[] { request.BBox.West, request.BBox.South },
+                    new[] { request.BBox.East, request.BBox.South },
+                    new[] { request.BBox.East, request.BBox.North },
+                    new[] { request.BBox.West, request.BBox.North },
+                    new[] { request.BBox.West, request.BBox.South }
+                }}
+            },
+            Properties = new Dictionary<string, object>
+            {
+                ["maxHailSize"] = 1.75,
+                ["maxWindSpeed"] = 65,
+                ["eventId"] = "2025-09-29-hail-central-IL"
+            }
+        };
+
+        return new StormSwathResponse
+        {
+            GeoJson = new GeoJsonFeatureCollection { Features = new[] { mockFeature } },
+            Metadata = new StormMetadata
+            {
+                EventId = "2025-09-29-hail-central-IL",
+                MaxHailSizeInches = 1.75,
+                MaxWindSpeedMph = 65,
+                Duration = TimeSpan.FromMinutes(45)
+            }
+        };
+    }
+
+    public async Task<HailStatsResponse> GetHailStatsAsync(HailStatsRequest request)
+    {
+        _logger.LogInformation("Getting hail stats for {Lat}, {Lon} on {Date}", 
+            request.Latitude, request.Longitude, request.Date);
+        
+        await Task.Delay(50);
+        
+        // Mock hail analysis based on location and date
+        var random = new Random(request.Date.DayOfYear + (int)(request.Latitude * 100));
+        
+        return new HailStatsResponse
+        {
+            MaxSizeInches = Math.Round(random.NextDouble() * 2.5 + 0.5, 2),
+            DurationMinutes = random.Next(15, 90),
+            HailProbability = Math.Round(random.NextDouble() * 0.8 + 0.1, 2),
+            EventId = $"{request.Date:yyyy-MM-dd}-hail-event"
+        };
+    }
+
+    public async Task<ServiceAreaIntersectionResponse> IntersectServiceAreaAsync(ServiceAreaIntersectionRequest request)
+    {
+        _logger.LogInformation("Computing service area intersection");
+        
+        await Task.Delay(200); // Simulate complex GIS computation
+        
+        // Mock intersection analysis
+        var hotZones = new[]
+        {
+            new HotZone
+            {
+                ZoneId = "HZ-001",
+                Geometry = request.SwathGeoJson.Features.First(),
+                Priority = 0.85,
+                EstimatedProperties = 147
+            }
+        };
+
+        var addresses = GenerateMockAddresses(10);
+
+        return new ServiceAreaIntersectionResponse
+        {
+            HotZones = hotZones,
+            Addresses = addresses
+        };
+    }
+
+    public async Task<EventSummaryResponse> GetEventSummaryAsync(string eventId)
+    {
+        _logger.LogInformation("Generating event summary for {EventId}", eventId);
+        
+        await Task.Delay(100);
+        
+        var markdown = $@"# Storm Event Summary: {eventId}
+
+## Overview
+Significant hail and wind event impacted central Illinois on September 29, 2025.
+
+## Key Metrics
+- **Max Hail Size**: 1.75 inches
+- **Max Wind Speed**: 65 mph
+- **Duration**: 45 minutes
+- **Affected Properties**: ~500
+
+## Damage Assessment
+Based on NOAA radar data and field reports:
+- Roof damage: Moderate to severe shingle impact
+- Gutters: Widespread denting and displacement
+- Siding: Scattered impact damage on south/west faces
+- Windows: Minimal breakage reported
+
+## Recommended Actions
+1. **Immediate**: Photo documentation of damage
+2. **24-48 hours**: Temporary repairs for weather protection
+3. **1 week**: Complete damage assessment and insurance claim
+4. **2-4 weeks**: Permanent repairs scheduled
+
+*Report generated by Nelrock Contracting Storm Intelligence System*";
+
+        return new EventSummaryResponse
+        {
+            EventId = eventId,
+            MarkdownSummary = markdown,
+            StartTime = DateTime.Parse("2025-09-29T18:30:00Z"),
+            EndTime = DateTime.Parse("2025-09-29T19:15:00Z"),
+            AffectedAreas = new[] { "Springfield", "Decatur", "Champaign", "Bloomington" }
+        };
+    }
+
+    private PropertyAddress[] GenerateMockAddresses(int count)
+    {
+        var addresses = new List<PropertyAddress>();
+        var random = new Random();
+        
+        for (int i = 0; i < count; i++)
+        {
+            addresses.Add(new PropertyAddress
+            {
+                Address = $"{random.Next(100, 9999)} {GetRandomStreetName()} {GetRandomStreetType()}, Springfield, IL",
+                Latitude = 39.7817 + (random.NextDouble() - 0.5) * 0.1,
+                Longitude = -89.6501 + (random.NextDouble() - 0.5) * 0.1,
+                DamageRisk = Math.Round(random.NextDouble() * 0.7 + 0.2, 2),
+                ZoneId = "HZ-001"
+            });
+        }
+        
+        return addresses.ToArray();
+    }
+
+    private string GetRandomStreetName()
+    {
+        var names = new[] { "Elm", "Oak", "Maple", "Cedar", "Pine", "Walnut", "Cherry", "Hickory" };
+        return names[new Random().Next(names.Length)];
+    }
+
+    private string GetRandomStreetType()
+    {
+        var types = new[] { "St", "Ave", "Dr", "Ln", "Ct", "Blvd" };
+        return types[new Random().Next(types.Length)];
+    }
+}

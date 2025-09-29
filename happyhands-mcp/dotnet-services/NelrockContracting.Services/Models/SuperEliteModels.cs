@@ -1,0 +1,918 @@
+using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
+
+namespace NelrockContracting.Services.Models
+{
+    // Super Elite API Models - Clean Implementation
+    
+    // Request Models
+    public class EstimateAnalysisRequest
+    {
+        [Required] public string ClaimNumber { get; set; }
+        [Required] public IFormFile CarrierEstimate { get; set; }
+        [Required] public IFormFile ContractorScope { get; set; }
+        public IEnumerable<IFormFile> Photos { get; set; }
+        [Required] public PropertyDetails PropertyDetails { get; set; }
+        [Required] public ClaimDetails ClaimDetails { get; set; }
+        public AnalysisOptions Options { get; set; }
+    }
+
+    public class BlueprintSupplementRequest
+    {
+        [Required] public IFormFile Blueprint { get; set; }
+        public IEnumerable<IFormFile> Photos { get; set; }
+        [Required] public List<ScopeItem> ScopeItems { get; set; }
+        public string ClaimNumber { get; set; }
+        public string PropertyAddress { get; set; }
+    }
+
+    public class LegalSupportRequest
+    {
+        [Required] public string DocumentType { get; set; }
+        [Required] public string ClaimNumber { get; set; }
+        [Required] public LegalContext Context { get; set; }
+        public List<SupportingDocument> SupportingDocuments { get; set; }
+        public DeadlineRequirements DeadlineRequirements { get; set; }
+    }
+
+    public class FraudDetectionRequest
+    {
+        [Required] public string ClaimNumber { get; set; }
+        [Required] public EstimateData EstimateData { get; set; }
+        [Required] public ContractorInfo ContractorInfo { get; set; }
+        public List<HistoricalClaim> HistoricalClaims { get; set; }
+        public PropertyInfo PropertyInfo { get; set; }
+    }
+
+    public class MarketAnalysisRequest
+    {
+        [Required] public string ZipCode { get; set; }
+        public string TradeType { get; set; }
+        public DateTime EffectiveDate { get; set; } = DateTime.UtcNow;
+        public List<string> MaterialTypes { get; set; }
+    }
+
+    public class ComplianceCheckRequest
+    {
+        [Required] public PropertyDetails Property { get; set; }
+        [Required] public List<ScopeItem> ScopeItems { get; set; }
+        public List<string> ApplicableCodes { get; set; }
+        public string JurisdictionCode { get; set; }
+    }
+
+    public class PhotoAnalysisRequest
+    {
+        [Required] public IEnumerable<IFormFile> Photos { get; set; }
+        [Required] public string AnalysisType { get; set; }
+        public string ClaimNumber { get; set; }
+        public PropertyDetails PropertyDetails { get; set; }
+    }
+
+    public class AuditReportRequest
+    {
+        [Required] public string ClaimNumber { get; set; }
+        [Required] public AuditScope Scope { get; set; }
+        public List<string> IncludeDocuments { get; set; }
+        public ReportFormat Format { get; set; }
+    }
+
+    public class WebhookRequest
+    {
+        [Required] public string Url { get; set; }
+        [Required] public List<string> Events { get; set; }
+        public string Secret { get; set; }
+        public bool Active { get; set; } = true;
+    }
+
+    public class AnalyticsRequest
+    {
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public string[] Metrics { get; set; }
+        public string GroupBy { get; set; }
+    }
+
+    // Response Models
+    public class EstimateAnalysisResponse
+    {
+        public string ClaimNumber { get; set; }
+        public string AnalysisId { get; set; }
+        public DateTime ProcessedAt { get; set; }
+        public List<EstimateDiscrepancy> Discrepancies { get; set; }
+        public List<ComplianceIssue> ComplianceIssues { get; set; }
+        public MarketComparisonResult MarketComparison { get; set; }
+        public FraudRiskAssessment FraudRisk { get; set; }
+        public GeneratedDocuments Documents { get; set; }
+        public ProcessingMetrics ProcessingMetrics { get; set; }
+    }
+
+    public class BlueprintSupplementResponse
+    {
+        public string SupplementId { get; set; }
+        public DateTime ProcessedAt { get; set; }
+        public GeneratedDocument AnnotatedBlueprint { get; set; }
+        public List<DamageMapping> DamageMapping { get; set; }
+        public List<VisualComparison> VisualComparisons { get; set; }
+        public GeneratedDocument PresentationPackage { get; set; }
+        public ComplianceVerification ComplianceVerification { get; set; }
+        public ProcessingMetrics ProcessingMetrics { get; set; }
+    }
+
+    public class LegalSupportResponse
+    {
+        public string DocumentId { get; set; }
+        public string DocumentType { get; set; }
+        public DateTime GeneratedAt { get; set; }
+        public GeneratedDocument Document { get; set; }
+        public List<LegalReference> LegalReferences { get; set; }
+        public DeadlineTracking DeadlineTracking { get; set; }
+        public List<PrecedentCase> PrecedentCases { get; set; }
+    }
+
+    public class FraudDetectionResponse
+    {
+        public string AnalysisId { get; set; }
+        public DateTime ProcessedAt { get; set; }
+        public string RiskLevel { get; set; }
+        public decimal RiskScore { get; set; }
+        public List<RiskFactor> RiskFactors { get; set; }
+        public PatternAnalysis PatternAnalysis { get; set; }
+        public List<GeographicAnomaly> GeographicAnomalies { get; set; }
+        public VendorRelationshipAnalysis VendorRelationships { get; set; }
+        public HistoricalPatternAnalysis HistoricalPatterns { get; set; }
+        public GeneratedDocument InvestigationPlan { get; set; }
+        public decimal Confidence { get; set; }
+    }
+
+    public class MarketAnalysisResponse
+    {
+        public string ZipCode { get; set; }
+        public DateTime EffectiveDate { get; set; }
+        public List<MarketMaterialCost> MaterialCosts { get; set; }
+        public List<LaborRate> LaborRates { get; set; }
+        public List<EquipmentRate> EquipmentRates { get; set; }
+        public SeasonalVariations SeasonalVariations { get; set; }
+        public List<SupplyChainFactor> SupplyChainFactors { get; set; }
+        public TrendForecasting TrendForecasting { get; set; }
+        public List<RegionalComparison> RegionalComparisons { get; set; }
+        public DateTime LastUpdated { get; set; }
+    }
+
+    public class ComplianceCheckResponse
+    {
+        public string CheckId { get; set; }
+        public DateTime CheckedAt { get; set; }
+        public List<BuildingCodeCompliance> BuildingCodes { get; set; }
+        public AccessibilityCompliance AccessibilityCompliance { get; set; }
+        public EnvironmentalCompliance EnvironmentalCompliance { get; set; }
+        public List<LocalOrdinance> LocalOrdinances { get; set; }
+        public decimal ComplianceScore { get; set; }
+        public List<ComplianceViolation> Violations { get; set; }
+        public List<ComplianceRecommendation> Recommendations { get; set; }
+    }
+
+    public class PhotoAnalysisResponse
+    {
+        public string AnalysisId { get; set; }
+        public DateTime ProcessedAt { get; set; }
+        public List<PhotoAnalysis> PhotoAnalyses { get; set; }
+        public PhotoDamageAssessment DamageAssessment { get; set; }
+        public List<AnnotatedPhoto> AnnotatedPhotos { get; set; }
+        public OverallAssessment OverallAssessment { get; set; }
+        public ProcessingMetrics ProcessingMetrics { get; set; }
+    }
+
+    public class AuditReportResponse
+    {
+        public string ReportId { get; set; }
+        public DateTime GeneratedAt { get; set; }
+        public GeneratedDocument AuditReport { get; set; }
+        public string ExecutiveSummary { get; set; }
+        public List<AuditFinding> Findings { get; set; }
+        public List<AuditRecommendation> Recommendations { get; set; }
+        public List<GeneratedDocument> SupportingDocuments { get; set; }
+    }
+
+    public class ClaimStatusResponse
+    {
+        public string ClaimNumber { get; set; }
+        public string Status { get; set; }
+        public DateTime LastUpdated { get; set; }
+        public DateTime? EstimatedCompletion { get; set; }
+        public int CompletionPercentage { get; set; }
+        public string CurrentPhase { get; set; }
+        public List<TimelineEvent> Timeline { get; set; }
+    }
+
+    public class WebhookResponse
+    {
+        public string WebhookId { get; set; }
+        public string Status { get; set; }
+        public DateTime RegisteredAt { get; set; }
+        public string Url { get; set; }
+        public List<string> Events { get; set; }
+    }
+
+    public class AnalyticsResponse
+    {
+        public DateRange Period { get; set; }
+        public ClaimsMetrics ClaimsMetrics { get; set; }
+        public EstimateMetrics EstimateMetrics { get; set; }
+        public PerformanceMetrics PerformanceMetrics { get; set; }
+    }
+
+    public class HealthCheckResponse
+    {
+        public string Status { get; set; }
+        public DateTime Timestamp { get; set; }
+        public string Version { get; set; }
+        public List<DependencyStatus> Dependencies { get; set; }
+        public TimeSpan Uptime { get; set; }
+    }
+
+    // Supporting Models (no duplicates with existing models)
+    public class PropertyDetails
+    {
+        public string Address { get; set; }
+        public string ZipCode { get; set; }
+        public string PropertyType { get; set; }
+        public int YearBuilt { get; set; }
+        public decimal SquareFootage { get; set; }
+        public string RoofType { get; set; }
+        public int Stories { get; set; }
+    }
+
+    public class ClaimDetails
+    {
+        public DateTime LossDate { get; set; }
+        public string LossType { get; set; }
+        public string PolicyNumber { get; set; }
+        public string CarrierName { get; set; }
+        public decimal PolicyLimits { get; set; }
+        public decimal Deductible { get; set; }
+    }
+
+    public class AnalysisOptions
+    {
+        public bool IncludeFraudDetection { get; set; } = true;
+        public bool IncludeMarketComparison { get; set; } = true;
+        public bool IncludeComplianceCheck { get; set; } = true;
+        public bool GenerateAuditReport { get; set; } = true;
+        public bool GenerateLegalMemo { get; set; } = true;
+    }
+
+    public class ScopeItem
+    {
+        public string Category { get; set; }
+        public string Description { get; set; }
+        public decimal Quantity { get; set; }
+        public string Unit { get; set; }
+        public decimal UnitPrice { get; set; }
+        public decimal Total { get; set; }
+    }
+
+    // Unique model classes (renamed to avoid conflicts)
+    public class EliteEstimateDiscrepancy
+    {
+        public string LineItem { get; set; }
+        public decimal CarrierAmount { get; set; }
+        public decimal MarketAmount { get; set; }
+        public decimal DiscrepancyAmount { get; set; }
+        public decimal DiscrepancyPercentage { get; set; }
+        public string DiscrepancyType { get; set; }
+        public string Justification { get; set; }
+    }
+    public class EstimateDiscrepancy : EliteEstimateDiscrepancy { }
+
+    public class EliteComplianceIssue
+    {
+        public string CodeSection { get; set; }
+        public string Description { get; set; }
+        public string Severity { get; set; }
+        public string Recommendation { get; set; }
+        public decimal CostImpact { get; set; }
+    }
+    public class ComplianceIssue : EliteComplianceIssue { }
+
+    public class MarketComparisonResult
+    {
+        public decimal CarrierTotal { get; set; }
+        public decimal MarketTotal { get; set; }
+        public decimal VarianceAmount { get; set; }
+        public decimal VariancePercentage { get; set; }
+    }
+
+    public class FraudRiskAssessment
+    {
+        public string RiskLevel { get; set; }
+        public decimal RiskScore { get; set; }
+        public List<string> RiskFactors { get; set; }
+        public decimal Confidence { get; set; }
+    }
+
+    public class GeneratedDocuments
+    {
+        public GeneratedDocument AuditReport { get; set; }
+        public GeneratedDocument LegalMemo { get; set; }
+        public GeneratedDocument SupplementSuggestions { get; set; }
+    }
+
+    public class GeneratedDocument
+    {
+        public string DocumentId { get; set; }
+        public string FileName { get; set; }
+        public string Format { get; set; }
+        public string DownloadUrl { get; set; }
+        public long SizeBytes { get; set; }
+        public DateTime GeneratedAt { get; set; }
+    }
+
+    public class ProcessingMetrics
+    {
+        public int ProcessingTimeMs { get; set; }
+        public int FilesProcessed { get; set; }
+        public decimal AIConfidenceScore { get; set; }
+    }
+
+    // Simple data models
+    public class SuperEliteFileData
+    {
+        public string FileName { get; set; }
+        public byte[] Content { get; set; }
+        public string ContentType { get; set; }
+        public long Size { get; set; }
+    }
+
+    public class DamageMapping
+    {
+        public string Location { get; set; }
+        public string DamageType { get; set; }
+        public string Severity { get; set; }
+        public List<Coordinate> Coordinates { get; set; }
+        public List<string> PhotoReferences { get; set; }
+    }
+
+    public class VisualComparison
+    {
+        public string ComparisonType { get; set; }
+        public string BeforeImage { get; set; }
+        public string AfterImage { get; set; }
+        public string OverlayImage { get; set; }
+        public string Analysis { get; set; }
+    }
+
+    public class ComplianceVerification
+    {
+        public bool IsCompliant { get; set; }
+        public List<string> ViolatedCodes { get; set; }
+        public List<string> Recommendations { get; set; }
+        public decimal ComplianceScore { get; set; }
+    }
+
+    public class LegalContext
+    {
+        public string State { get; set; }
+        public string County { get; set; }
+        public string LegalBasis { get; set; }
+        public List<string> ApplicableLaws { get; set; }
+        public string CaseType { get; set; }
+    }
+
+    public class SupportingDocument
+    {
+        public string DocumentType { get; set; }
+        public string Description { get; set; }
+        public string FileUrl { get; set; }
+    }
+
+    public class DeadlineRequirements
+    {
+        public DateTime ResponseDeadline { get; set; }
+        public DateTime FilingDeadline { get; set; }
+        public string Jurisdiction { get; set; }
+    }
+
+    public class LegalReference
+    {
+        public string CitationType { get; set; }
+        public string Citation { get; set; }
+        public string Description { get; set; }
+        public string Relevance { get; set; }
+    }
+
+    public class DeadlineTracking
+    {
+        public List<LegalDeadline> Deadlines { get; set; }
+        public DateTime NextDeadline { get; set; }
+        public string Status { get; set; }
+    }
+
+    public class LegalDeadline
+    {
+        public string DeadlineType { get; set; }
+        public DateTime Date { get; set; }
+        public string Description { get; set; }
+        public bool IsCritical { get; set; }
+    }
+
+    public class PrecedentCase
+    {
+        public string CaseName { get; set; }
+        public string Citation { get; set; }
+        public string Jurisdiction { get; set; }
+        public DateTime DecisionDate { get; set; }
+        public string Summary { get; set; }
+        public string Relevance { get; set; }
+    }
+
+    public class EstimateData
+    {
+        public decimal TotalAmount { get; set; }
+        public List<ScopeItem> LineItems { get; set; }
+        public DateTime EstimateDate { get; set; }
+        public string EstimatorName { get; set; }
+    }
+
+    public class ContractorInfo
+    {
+        public string CompanyName { get; set; }
+        public string LicenseNumber { get; set; }
+        public string Address { get; set; }
+        public DateTime EstablishedDate { get; set; }
+        public List<string> Specialties { get; set; }
+    }
+
+    public class HistoricalClaim
+    {
+        public string ClaimNumber { get; set; }
+        public DateTime ClaimDate { get; set; }
+        public decimal ClaimAmount { get; set; }
+        public string ContractorName { get; set; }
+        public string PropertyAddress { get; set; }
+    }
+
+    public class PropertyInfo
+    {
+        public string PropertyId { get; set; }
+        public PropertyDetails Details { get; set; }
+        public List<HistoricalClaim> PreviousClaims { get; set; }
+        public string OwnershipHistory { get; set; }
+    }
+
+    public class RiskFactor
+    {
+        public string Factor { get; set; }
+        public string Description { get; set; }
+        public decimal Weight { get; set; }
+        public decimal Impact { get; set; }
+    }
+
+    public class PatternAnalysis
+    {
+        public List<string> IdentifiedPatterns { get; set; }
+        public decimal PatternConfidence { get; set; }
+        public string Analysis { get; set; }
+    }
+
+    public class GeographicAnomaly
+    {
+        public string AnomalyType { get; set; }
+        public string Description { get; set; }
+        public decimal Severity { get; set; }
+        public string Location { get; set; }
+    }
+
+    public class VendorRelationshipAnalysis
+    {
+        public List<string> RelatedVendors { get; set; }
+        public decimal RelationshipStrength { get; set; }
+        public string RiskAssessment { get; set; }
+    }
+
+    public class HistoricalPatternAnalysis
+    {
+        public List<string> Patterns { get; set; }
+        public decimal Frequency { get; set; }
+        public string TrendAnalysis { get; set; }
+    }
+
+    // MaterialCost is defined in EstimatingModels.cs
+    // For market analysis, we need a different structure
+    public class MarketMaterialCost
+    {
+        public string MaterialType { get; set; }
+        public string Unit { get; set; }
+        public decimal Cost { get; set; }
+        public decimal MarketVariance { get; set; }
+    }
+
+    public class LaborRate
+    {
+        public string TradeType { get; set; }
+        public decimal HourlyRate { get; set; }
+        public decimal MarketVariance { get; set; }
+        public string SkillLevel { get; set; }
+    }
+
+    public class EquipmentRate
+    {
+        public string EquipmentType { get; set; }
+        public decimal DailyRate { get; set; }
+        public string RentalPeriod { get; set; }
+        public decimal MarketVariance { get; set; }
+    }
+
+    public class SeasonalVariations
+    {
+        public List<SeasonalFactor> Factors { get; set; }
+        public decimal CurrentMultiplier { get; set; }
+        public string Explanation { get; set; }
+    }
+
+    public class SeasonalFactor
+    {
+        public string Season { get; set; }
+        public decimal Multiplier { get; set; }
+        public string Description { get; set; }
+    }
+
+    public class SupplyChainFactor
+    {
+        public string Factor { get; set; }
+        public decimal Impact { get; set; }
+        public string Description { get; set; }
+        public DateTime EffectiveDate { get; set; }
+    }
+
+    public class TrendForecasting
+    {
+        public List<TrendPrediction> Predictions { get; set; }
+        public decimal Confidence { get; set; }
+        public string Methodology { get; set; }
+    }
+
+    public class TrendPrediction
+    {
+        public DateTime PredictionDate { get; set; }
+        public decimal PredictedValue { get; set; }
+        public string Category { get; set; }
+        public decimal Confidence { get; set; }
+    }
+
+    public class RegionalComparison
+    {
+        public string Region { get; set; }
+        public decimal CostIndex { get; set; }
+        public decimal RelativeVariance { get; set; }
+        public string Description { get; set; }
+    }
+
+    public class BuildingCodeCompliance
+    {
+        public string CodeType { get; set; }
+        public string Version { get; set; }
+        public bool IsCompliant { get; set; }
+        public List<string> Violations { get; set; }
+        public decimal ComplianceScore { get; set; }
+    }
+
+    public class AccessibilityCompliance
+    {
+        public bool ADACompliant { get; set; }
+        public List<string> Violations { get; set; }
+        public List<string> Recommendations { get; set; }
+        public decimal CostToComply { get; set; }
+    }
+
+    public class EnvironmentalCompliance
+    {
+        public List<string> ApplicableRegulations { get; set; }
+        public bool IsCompliant { get; set; }
+        public List<string> RequiredPermits { get; set; }
+        public List<string> Recommendations { get; set; }
+    }
+
+    public class LocalOrdinance
+    {
+        public string OrdinanceNumber { get; set; }
+        public string Description { get; set; }
+        public bool IsApplicable { get; set; }
+        public string ComplianceStatus { get; set; }
+    }
+
+    public class ComplianceViolation
+    {
+        public string ViolationType { get; set; }
+        public string Description { get; set; }
+        public string Severity { get; set; }
+        public decimal FinePotential { get; set; }
+        public string Resolution { get; set; }
+    }
+
+    public class ComplianceRecommendation
+    {
+        public string RecommendationType { get; set; }
+        public string Description { get; set; }
+        public decimal EstimatedCost { get; set; }
+        public string Priority { get; set; }
+    }
+
+    public class PhotoAnalysis
+    {
+        public string PhotoId { get; set; }
+        public string FileName { get; set; }
+        public List<DetectedObject> DetectedObjects { get; set; }
+        public List<DamageIndicator> DamageIndicators { get; set; }
+        public QualityAssessment QualityAssessment { get; set; }
+        public decimal ConfidenceScore { get; set; }
+    }
+
+    public class DetectedObject
+    {
+        public string ObjectType { get; set; }
+        public decimal Confidence { get; set; }
+        public PhotoBoundingBox BoundingBox { get; set; }
+        public string Description { get; set; }
+    }
+
+    public class DamageIndicator
+    {
+        public string DamageType { get; set; }
+        public string Severity { get; set; }
+        public decimal Confidence { get; set; }
+        public PhotoBoundingBox Location { get; set; }
+        public string Description { get; set; }
+    }
+
+    // BoundingBox is defined in StormModels.cs
+    // For photo analysis, we need pixel coordinates
+    public class PhotoBoundingBox
+    {
+        public int X { get; set; }
+        public int Y { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
+    }
+
+    public class QualityAssessment
+    {
+        public decimal Sharpness { get; set; }
+        public decimal Brightness { get; set; }
+        public decimal Contrast { get; set; }
+        public bool HasTimestamp { get; set; }
+        public bool HasMetadata { get; set; }
+    }
+
+    // DamageAssessment is defined in EstimatingModels.cs
+    // For photo analysis, we need a different structure
+    public class PhotoDamageAssessment
+    {
+        public string OverallSeverity { get; set; }
+        public List<string> DamageTypes { get; set; }
+        public decimal EstimatedRepairCost { get; set; }
+        public string Priority { get; set; }
+    }
+
+    public class AnnotatedPhoto
+    {
+        public string OriginalPhotoId { get; set; }
+        public string AnnotatedImageUrl { get; set; }
+        public List<Annotation> Annotations { get; set; }
+        public string Summary { get; set; }
+    }
+
+    public class Annotation
+    {
+        public string Type { get; set; }
+        public string Label { get; set; }
+        public PhotoBoundingBox Location { get; set; }
+        public string Description { get; set; }
+    }
+
+    public class OverallAssessment
+    {
+        public string Summary { get; set; }
+        public List<string> KeyFindings { get; set; }
+        public List<string> Recommendations { get; set; }
+        public decimal TotalEstimatedCost { get; set; }
+    }
+
+    public class AuditScope
+    {
+        public List<string> AuditAreas { get; set; }
+        public string AuditType { get; set; }
+        public DateTime AuditDate { get; set; }
+        public string AuditorName { get; set; }
+    }
+
+    public class ReportFormat
+    {
+        public string Format { get; set; }
+        public bool IncludeImages { get; set; }
+        public bool IncludeCharts { get; set; }
+        public string TemplateType { get; set; }
+    }
+
+    public class AuditFinding
+    {
+        public string FindingType { get; set; }
+        public string Description { get; set; }
+        public string Severity { get; set; }
+        public string Evidence { get; set; }
+        public string Recommendation { get; set; }
+    }
+
+    public class AuditRecommendation
+    {
+        public string RecommendationType { get; set; }
+        public string Description { get; set; }
+        public string Priority { get; set; }
+        public decimal EstimatedCost { get; set; }
+        public DateTime TargetDate { get; set; }
+    }
+
+    public class TimelineEvent
+    {
+        public DateTime Date { get; set; }
+        public string Event { get; set; }
+        public string Description { get; set; }
+        public string Status { get; set; }
+    }
+
+    public class DateRange
+    {
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+    }
+
+    public class ClaimsMetrics
+    {
+        public int TotalClaims { get; set; }
+        public decimal AverageSettlement { get; set; }
+        public decimal SuccessRate { get; set; }
+        public TimeSpan AverageProcessingTime { get; set; }
+    }
+
+    public class EstimateMetrics
+    {
+        public int TotalEstimates { get; set; }
+        public decimal AverageDiscrepancy { get; set; }
+        public decimal SupplementRate { get; set; }
+        public decimal AverageSupplementAmount { get; set; }
+    }
+
+    public class PerformanceMetrics
+    {
+        public decimal ProcessingAccuracy { get; set; }
+        public decimal CustomerSatisfaction { get; set; }
+        public TimeSpan TimeToResolution { get; set; }
+    }
+
+    public class DependencyStatus
+    {
+        public string Name { get; set; }
+        public string Status { get; set; }
+        public TimeSpan ResponseTime { get; set; }
+        public string Version { get; set; }
+    }
+
+    public class Coordinate
+    {
+        public decimal X { get; set; }
+        public decimal Y { get; set; }
+    }
+
+    public class ApiError
+    {
+        public string Message { get; set; }
+        public string Details { get; set; }
+        public string ErrorCode { get; set; }
+        public DateTime Timestamp { get; set; } = DateTime.UtcNow;
+    }
+
+    // Minimal AI service models
+    public class EstimateAnalysisData
+    {
+        public SuperEliteFileData CarrierEstimate { get; set; }
+        public SuperEliteFileData ContractorScope { get; set; }
+        public List<SuperEliteFileData> Photos { get; set; }
+        public PropertyDetails PropertyDetails { get; set; }
+        public ClaimDetails ClaimDetails { get; set; }
+    }
+
+    public class BlueprintAnalysisData
+    {
+        public SuperEliteFileData Blueprint { get; set; }
+        public List<SuperEliteFileData> Photos { get; set; }
+        public List<ScopeItem> ScopeItems { get; set; }
+    }
+
+    public class AIEstimateAnalysis
+    {
+        public List<EstimateDiscrepancy> Discrepancies { get; set; }
+        public decimal CarrierTotal { get; set; }
+        public decimal FraudScore { get; set; }
+        public string FraudRiskLevel { get; set; }
+        public List<string> FraudFactors { get; set; }
+        public decimal FraudConfidence { get; set; }
+        public decimal OverallConfidence { get; set; }
+        public List<ScopeItem> Scope { get; set; }
+    }
+
+    public class AIBlueprintAnalysis
+    {
+        public List<DamageMapping> DamageMapping { get; set; }
+        public List<VisualComparison> VisualComparisons { get; set; }
+        public decimal OverallConfidence { get; set; }
+    }
+
+    public class AIFraudAnalysis
+    {
+        public string RiskLevel { get; set; }
+        public decimal RiskScore { get; set; }
+        public List<RiskFactor> RiskFactors { get; set; }
+        public PatternAnalysis PatternAnalysis { get; set; }
+        public List<GeographicAnomaly> GeographicAnomalies { get; set; }
+        public VendorRelationshipAnalysis VendorRelationships { get; set; }
+        public HistoricalPatternAnalysis HistoricalPatterns { get; set; }
+        public decimal Confidence { get; set; }
+    }
+
+    public class AIPhotoAnalysis
+    {
+        public List<PhotoAnalysis> PhotoAnalyses { get; set; }
+        public PhotoDamageAssessment DamageAssessment { get; set; }
+        public List<AnnotatedPhoto> AnnotatedPhotos { get; set; }
+        public OverallAssessment OverallAssessment { get; set; }
+        public int ProcessingTimeMs { get; set; }
+        public decimal OverallConfidence { get; set; }
+    }
+
+    public class MarketData
+    {
+        public decimal EstimatedTotal { get; set; }
+        public List<MarketMaterialCost> MaterialCosts { get; set; }
+        public List<LaborRate> LaborRates { get; set; }
+        public List<EquipmentRate> EquipmentRates { get; set; }
+        public SeasonalVariations SeasonalVariations { get; set; }
+        public List<SupplyChainFactor> SupplyChainFactors { get; set; }
+        public TrendForecasting TrendForecasting { get; set; }
+        public List<RegionalComparison> RegionalComparisons { get; set; }
+        public DateTime LastUpdated { get; set; }
+    }
+
+    public class ComplianceResults
+    {
+        public List<ComplianceIssue> Issues { get; set; }
+        public List<BuildingCodeCompliance> BuildingCodes { get; set; }
+        public AccessibilityCompliance AccessibilityCompliance { get; set; }
+        public EnvironmentalCompliance EnvironmentalCompliance { get; set; }
+        public List<LocalOrdinance> LocalOrdinances { get; set; }
+        public decimal OverallScore { get; set; }
+        public List<ComplianceViolation> Violations { get; set; }
+        public List<ComplianceRecommendation> Recommendations { get; set; }
+    }
+
+    // Service Interfaces
+    public interface IAIAnalysisService
+    {
+        Task<AIEstimateAnalysis> AnalyzeEstimateAsync(EstimateAnalysisData data);
+        Task<AIBlueprintAnalysis> AnalyzeBlueprintAsync(BlueprintAnalysisData data);
+        Task<AIFraudAnalysis> AnalyzeFraudRiskAsync(FraudDetectionRequest request);
+        Task<AIPhotoAnalysis> AnalyzePhotosAsync(List<SuperEliteFileData> photos, string analysisType);
+    }
+
+    public interface IDocumentGenerationService
+    {
+        Task<GeneratedDocument> GenerateAuditReportAsync(AIEstimateAnalysis analysis, MarketData marketData);
+        Task<GeneratedDocument> GenerateLegalMemoAsync(AIEstimateAnalysis analysis, ComplianceResults compliance);
+        Task<GeneratedDocument> GenerateSupplementAsync(AIEstimateAnalysis analysis);
+        Task<GeneratedDocument> GenerateAnnotatedBlueprintAsync(SuperEliteFileData blueprint, List<DamageMapping> damageMapping);
+        Task<GeneratedDocument> GeneratePresentationPackageAsync(GeneratedDocument blueprint, AIBlueprintAnalysis analysis, List<SuperEliteFileData> photos);
+        Task<GeneratedDocument> GenerateDemandLetterAsync(LegalSupportRequest request);
+        Task<GeneratedDocument> GenerateAppraisalRequestAsync(LegalSupportRequest request);
+        Task<GeneratedDocument> GenerateLitigationSupportAsync(LegalSupportRequest request);
+        Task<GeneratedDocument> GenerateExpertWitnessReportAsync(LegalSupportRequest request);
+        Task<GeneratedDocument> GenerateInvestigationPlanAsync(AIFraudAnalysis fraudAnalysis);
+        Task<GeneratedDocument> GenerateComprehensiveAuditAsync(AuditReportRequest request);
+    }
+
+    public interface IMarketDataService
+    {
+        Task<MarketData> GetMarketRatesAsync(string zipCode, DateTime effectiveDate);
+        Task<MarketData> GetComprehensiveMarketDataAsync(MarketAnalysisRequest request);
+    }
+
+    public interface IComplianceService
+    {
+        Task<ComplianceResults> CheckBuildingCodesAsync(PropertyDetails property, List<ScopeItem> scope);
+        Task<ComplianceVerification> VerifyBlueprintComplianceAsync(SuperEliteFileData blueprint);
+        Task<ComplianceResults> CheckComprehensiveComplianceAsync(ComplianceCheckRequest request);
+    }
+
+    public interface IWebhookService
+    {
+        Task<string> RegisterWebhookAsync(WebhookRequest request);
+        Task SendWebhookAsync(string webhookId, object data);
+    }
+}

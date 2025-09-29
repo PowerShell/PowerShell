@@ -1,0 +1,1395 @@
+openapi: 3.1.0
+info:
+  title: Super Elite Claim Bots API
+  version: 2.0.0
+  description: |
+    Advanced AI-powered API for insurance claim analysis, estimate intelligence, 
+    blueprint supplementation, and automated dispute resolution for restoration contractors.
+    
+    ## Features
+    - **Estimate Intelligence**: AI-powered carrier estimate analysis with compliance checking
+    - **Blueprint Supplementation**: Automated scope matching with visual annotations
+    - **Legal Documentation**: Auto-generated legal memos and rebuttal packages
+    - **Compliance Verification**: IRC, IBC, and local code validation
+    - **Fraud Detection**: Advanced algorithms for identifying estimate discrepancies
+    - **Real-time Processing**: Instant analysis with webhook notifications
+    
+  contact:
+    name: Super Elite Claim Bots Support
+    url: https://superelite-claimbots.ai/support
+    email: support@superelite-claimbots.ai
+  license:
+    name: Proprietary
+    url: https://superelite-claimbots.ai/license
+  termsOfService: https://superelite-claimbots.ai/terms
+
+servers:
+  - url: https://superelite-claimbots.ai/api/v2
+    description: Production server
+  - url: https://staging.superelite-claimbots.ai/api/v2
+    description: Staging server
+  - url: http://localhost:8080/api/v2
+    description: Development server
+
+security:
+  - ApiKeyAuth: []
+  - BearerAuth: []
+
+paths:
+  /claims:
+    post:
+      operationId: createClaim
+      summary: Create a new claim case
+      description: Initialize a new claim case with basic property and event information
+      tags:
+        - Claims Management
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ClaimInput"
+      responses:
+        "201":
+          description: Claim case created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClaimResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+    get:
+      operationId: listClaims
+      summary: List claim cases
+      description: Retrieve paginated list of claim cases with filtering options
+      tags:
+        - Claims Management
+      parameters:
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - name: status
+          in: query
+          schema:
+            $ref: "#/components/schemas/ClaimStatus"
+        - name: carrierName
+          in: query
+          schema:
+            type: string
+        - name: dateFrom
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: dateTo
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: List of claims
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClaimsList"
+
+  /claims/{claimId}:
+    get:
+      operationId: getClaim
+      summary: Get claim details
+      description: Retrieve detailed information about a specific claim
+      tags:
+        - Claims Management
+      parameters:
+        - $ref: "#/components/parameters/ClaimIdParam"
+      responses:
+        "200":
+          description: Claim details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClaimDetail"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    
+    put:
+      operationId: updateClaim
+      summary: Update claim information
+      description: Update claim details, status, or associated documents
+      tags:
+        - Claims Management
+      parameters:
+        - $ref: "#/components/parameters/ClaimIdParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ClaimUpdateInput"
+      responses:
+        "200":
+          description: Claim updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClaimResponse"
+
+  /analyze-estimate:
+    post:
+      operationId: analyzeEstimate
+      summary: AI-powered carrier estimate analysis
+      description: |
+        Comprehensive analysis of carrier estimates including:
+        - Line item discrepancy detection
+        - Code compliance verification
+        - Market rate comparison
+        - Fraud risk assessment
+        - Automated audit report generation
+      tags:
+        - Estimate Intelligence
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                claimId:
+                  type: string
+                  description: Associated claim ID
+                estimateFile:
+                  type: string
+                  format: binary
+                  description: Carrier estimate file (PDF, XLS, CSV, ESX)
+                scopeFile:
+                  type: string
+                  format: binary
+                  description: Contractor scope file (PDF, XLS, CSV, ESX)
+                carrierName:
+                  type: string
+                  enum: [State Farm, Allstate, Farmers, USAA, Liberty Mutual, Progressive, Travelers, Nationwide, American Family, Auto-Owners]
+                  description: Insurance carrier name
+                jurisdiction:
+                  type: string
+                  description: State/jurisdiction code (e.g., IL, TX, FL)
+                propertyType:
+                  $ref: "#/components/schemas/PropertyType"
+                eventDate:
+                  type: string
+                  format: date
+                  description: Date of loss event
+                photos:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                  description: Supporting damage photos
+                additionalDocs:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                  description: Additional supporting documents
+                analysisOptions:
+                  $ref: "#/components/schemas/AnalysisOptions"
+              required:
+                - estimateFile
+                - scopeFile
+                - carrierName
+                - jurisdiction
+      responses:
+        "200":
+          description: Comprehensive estimate analysis completed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EstimateAnalysisOutput"
+        "202":
+          description: Analysis queued for processing
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProcessingStatus"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "413":
+          $ref: "#/components/responses/PayloadTooLarge"
+
+  /supplement-blueprint:
+    post:
+      operationId: supplementBlueprint
+      summary: Blueprint-based supplement generation
+      description: |
+        Advanced blueprint analysis and supplement package generation:
+        - Architectural drawing interpretation
+        - Scope item spatial mapping
+        - Visual annotation generation
+        - Compliance verification
+        - Professional presentation package
+      tags:
+        - Blueprint Intelligence
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                claimId:
+                  type: string
+                  description: Associated claim ID
+                blueprintFile:
+                  type: string
+                  format: binary
+                  description: Architectural blueprints (PDF, DWG, JPG, PNG)
+                photoLibrary:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                  description: Damage documentation photos
+                scopeItems:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/ScopeItem"
+                  description: Detailed scope line items
+                buildingCodes:
+                  type: array
+                  items:
+                    type: string
+                  description: Applicable building codes (IRC2021, IBC2021, etc.)
+                supplementType:
+                  $ref: "#/components/schemas/SupplementType"
+                deliveryFormat:
+                  $ref: "#/components/schemas/DeliveryFormat"
+              required:
+                - blueprintFile
+                - photoLibrary
+                - scopeItems
+      responses:
+        "200":
+          description: Blueprint supplement package generated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BlueprintSupplementOutput"
+        "202":
+          description: Processing initiated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProcessingStatus"
+
+  /legal-support:
+    post:
+      operationId: generateLegalPackage
+      summary: Generate legal support documentation
+      description: |
+        AI-generated legal documentation package including:
+        - Demand letters
+        - Appraisal requests
+        - Litigation support memos
+        - Expert witness reports
+        - Regulatory compliance documentation
+      tags:
+        - Legal Intelligence
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LegalPackageInput"
+      responses:
+        "200":
+          description: Legal package generated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LegalPackageOutput"
+
+  /compliance-check:
+    post:
+      operationId: verifyCompliance
+      summary: Building code compliance verification
+      description: |
+        Comprehensive compliance verification against:
+        - International Residential Code (IRC)
+        - International Building Code (IBC)
+        - Local jurisdiction amendments
+        - Energy codes (IECC)
+        - Accessibility standards (ADA/ICC A117.1)
+      tags:
+        - Compliance Intelligence
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ComplianceCheckInput"
+      responses:
+        "200":
+          description: Compliance verification completed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ComplianceReport"
+
+  /fraud-detection:
+    post:
+      operationId: detectFraud
+      summary: AI-powered fraud detection analysis
+      description: |
+        Advanced fraud detection algorithms analyzing:
+        - Estimate inflation patterns
+        - Unusual line item combinations
+        - Geographic pricing anomalies
+        - Vendor relationship mapping
+        - Historical claim patterns
+      tags:
+        - Fraud Intelligence
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FraudDetectionInput"
+      responses:
+        "200":
+          description: Fraud analysis completed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FraudAnalysisOutput"
+
+  /market-analysis:
+    get:
+      operationId: getMarketRates
+      summary: Real-time market rate analysis
+      description: |
+        Current market pricing intelligence including:
+        - Material costs by ZIP code
+        - Labor rates by trade and region
+        - Equipment rental rates
+        - Seasonal price variations
+        - Supply chain impact factors
+      tags:
+        - Market Intelligence
+      parameters:
+        - name: zipCode
+          in: query
+          required: true
+          schema:
+            type: string
+            pattern: '^\d{5}(-\d{4})?$'
+        - name: tradeType
+          in: query
+          schema:
+            $ref: "#/components/schemas/TradeType"
+        - name: materialCategory
+          in: query
+          schema:
+            $ref: "#/components/schemas/MaterialCategory"
+        - name: effectiveDate
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: Market analysis data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MarketAnalysis"
+
+  /webhooks:
+    post:
+      operationId: createWebhook
+      summary: Create webhook subscription
+      description: Subscribe to real-time notifications for processing updates
+      tags:
+        - Webhooks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WebhookInput"
+      responses:
+        "201":
+          description: Webhook created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebhookResponse"
+
+  /reports:
+    get:
+      operationId: generateReport
+      summary: Generate analytics reports
+      description: |
+        Comprehensive reporting and analytics:
+        - Claim processing metrics
+        - Success rate analytics
+        - Carrier behavior patterns
+        - ROI analysis
+        - Performance dashboards
+      tags:
+        - Analytics
+      parameters:
+        - name: reportType
+          in: query
+          required: true
+          schema:
+            $ref: "#/components/schemas/ReportType"
+        - name: dateRange
+          in: query
+          required: true
+          schema:
+            $ref: "#/components/schemas/DateRange"
+        - name: filters
+          in: query
+          schema:
+            type: object
+      responses:
+        "200":
+          description: Report generated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportOutput"
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    ClaimIdParam:
+      name: claimId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Unique claim identifier
+    
+    PageParam:
+      name: page
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+      description: Page number
+    
+    LimitParam:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+      description: Items per page
+
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    
+    PayloadTooLarge:
+      description: File size exceeds limit
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+
+  schemas:
+    ClaimInput:
+      type: object
+      required:
+        - propertyAddress
+        - carrierName
+        - eventDate
+        - eventType
+      properties:
+        propertyAddress:
+          $ref: "#/components/schemas/Address"
+        carrierName:
+          type: string
+        policyNumber:
+          type: string
+        claimNumber:
+          type: string
+        eventDate:
+          type: string
+          format: date
+        eventType:
+          $ref: "#/components/schemas/EventType"
+        propertyType:
+          $ref: "#/components/schemas/PropertyType"
+        deductible:
+          type: number
+          format: decimal
+        policyLimits:
+          type: number
+          format: decimal
+
+    ClaimResponse:
+      type: object
+      properties:
+        claimId:
+          type: string
+          format: uuid
+        status:
+          $ref: "#/components/schemas/ClaimStatus"
+        createdAt:
+          type: string
+          format: date-time
+        estimatedCompletion:
+          type: string
+          format: date-time
+
+    ClaimDetail:
+      allOf:
+        - $ref: "#/components/schemas/ClaimInput"
+        - $ref: "#/components/schemas/ClaimResponse"
+        - type: object
+          properties:
+            documents:
+              type: array
+              items:
+                $ref: "#/components/schemas/Document"
+            analyses:
+              type: array
+              items:
+                $ref: "#/components/schemas/AnalysisResult"
+            timeline:
+              type: array
+              items:
+                $ref: "#/components/schemas/TimelineEvent"
+
+    ClaimUpdateInput:
+      type: object
+      properties:
+        status:
+          $ref: "#/components/schemas/ClaimStatus"
+        notes:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+
+    ClaimsList:
+      type: object
+      properties:
+        claims:
+          type: array
+          items:
+            $ref: "#/components/schemas/ClaimResponse"
+        pagination:
+          $ref: "#/components/schemas/Pagination"
+
+    EstimateAnalysisOutput:
+      type: object
+      properties:
+        analysisId:
+          type: string
+          format: uuid
+        claimId:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [completed, processing, failed]
+        confidence:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          description: AI confidence score (0-1)
+        discrepancies:
+          type: array
+          items:
+            $ref: "#/components/schemas/Discrepancy"
+        auditReport:
+          $ref: "#/components/schemas/DocumentReference"
+        comparisonChart:
+          $ref: "#/components/schemas/DocumentReference"
+        legalMemo:
+          $ref: "#/components/schemas/DocumentReference"
+        supplementSuggestions:
+          type: array
+          items:
+            $ref: "#/components/schemas/SupplementSuggestion"
+        complianceIssues:
+          type: array
+          items:
+            $ref: "#/components/schemas/ComplianceIssue"
+        fraudRiskScore:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+        marketAnalysis:
+          $ref: "#/components/schemas/MarketComparison"
+        processingTime:
+          type: number
+          description: Processing time in seconds
+        metadata:
+          $ref: "#/components/schemas/AnalysisMetadata"
+
+    BlueprintSupplementOutput:
+      type: object
+      properties:
+        supplementId:
+          type: string
+          format: uuid
+        claimId:
+          type: string
+          format: uuid
+        annotatedBlueprints:
+          type: array
+          items:
+            $ref: "#/components/schemas/DocumentReference"
+        annotatedPhotos:
+          type: array
+          items:
+            $ref: "#/components/schemas/AnnotatedPhoto"
+        supplementPackage:
+          $ref: "#/components/schemas/DocumentReference"
+        rebuttalMemo:
+          $ref: "#/components/schemas/DocumentReference"
+        visualComparisons:
+          type: array
+          items:
+            $ref: "#/components/schemas/VisualComparison"
+        scopeMatching:
+          type: array
+          items:
+            $ref: "#/components/schemas/ScopeMatch"
+        confidenceMetrics:
+          $ref: "#/components/schemas/ConfidenceMetrics"
+
+    AnalysisOptions:
+      type: object
+      properties:
+        includeCodeCompliance:
+          type: boolean
+          default: true
+        includeFraudDetection:
+          type: boolean
+          default: true
+        includeMarketAnalysis:
+          type: boolean
+          default: true
+        detailLevel:
+          type: string
+          enum: [basic, standard, comprehensive]
+          default: standard
+        priorityProcessing:
+          type: boolean
+          default: false
+        webhookUrl:
+          type: string
+          format: uri
+
+    ScopeItem:
+      type: object
+      required:
+        - itemCode
+        - description
+        - quantity
+        - unit
+      properties:
+        itemCode:
+          type: string
+          description: Industry standard item code (Xactimate, etc.)
+        description:
+          type: string
+        quantity:
+          type: number
+          format: decimal
+        unit:
+          type: string
+        unitPrice:
+          type: number
+          format: decimal
+        totalPrice:
+          type: number
+          format: decimal
+        category:
+          $ref: "#/components/schemas/ItemCategory"
+        location:
+          type: string
+        notes:
+          type: string
+        photos:
+          type: array
+          items:
+            type: string
+            format: uri
+
+    Discrepancy:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [pricing, quantity, missing_item, unnecessary_item, code_violation, quality_grade]
+        severity:
+          type: string
+          enum: [critical, major, minor, info]
+        itemCode:
+          type: string
+        description:
+          type: string
+        carrierValue:
+          type: number
+          format: decimal
+        contractorValue:
+          type: number
+          format: decimal
+        marketValue:
+          type: number
+          format: decimal
+        variance:
+          type: number
+          format: decimal
+        explanation:
+          type: string
+        recommendation:
+          type: string
+        supportingEvidence:
+          type: array
+          items:
+            $ref: "#/components/schemas/Evidence"
+
+    ComplianceIssue:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Building code reference
+        section:
+          type: string
+        description:
+          type: string
+        severity:
+          type: string
+          enum: [violation, warning, recommendation]
+        itemsAffected:
+          type: array
+          items:
+            type: string
+        correction:
+          type: string
+        costImpact:
+          type: number
+          format: decimal
+
+    LegalPackageInput:
+      type: object
+      required:
+        - claimId
+        - packageType
+      properties:
+        claimId:
+          type: string
+          format: uuid
+        packageType:
+          type: string
+          enum: [demand_letter, appraisal_request, litigation_support, expert_report]
+        jurisdiction:
+          type: string
+        clientInfo:
+          $ref: "#/components/schemas/ClientInfo"
+        disputeAmount:
+          type: number
+          format: decimal
+        keyIssues:
+          type: array
+          items:
+            type: string
+        deadlines:
+          type: array
+          items:
+            $ref: "#/components/schemas/Deadline"
+
+    LegalPackageOutput:
+      type: object
+      properties:
+        packageId:
+          type: string
+          format: uuid
+        documents:
+          type: array
+          items:
+            $ref: "#/components/schemas/LegalDocument"
+        filingInstructions:
+          type: string
+        deadlineCalendar:
+          $ref: "#/components/schemas/DocumentReference"
+        precedentCases:
+          type: array
+          items:
+            $ref: "#/components/schemas/Precedent"
+
+    ComplianceCheckInput:
+      type: object
+      required:
+        - scopeItems
+        - jurisdiction
+        - propertyType
+      properties:
+        scopeItems:
+          type: array
+          items:
+            $ref: "#/components/schemas/ScopeItem"
+        jurisdiction:
+          type: string
+        propertyType:
+          $ref: "#/components/schemas/PropertyType"
+        buildingYear:
+          type: integer
+        occupancyType:
+          type: string
+        specialRequirements:
+          type: array
+          items:
+            type: string
+
+    ComplianceReport:
+      type: object
+      properties:
+        overallCompliance:
+          type: string
+          enum: [compliant, non_compliant, needs_review]
+        issues:
+          type: array
+          items:
+            $ref: "#/components/schemas/ComplianceIssue"
+        recommendations:
+          type: array
+          items:
+            type: string
+        codeReferences:
+          type: array
+          items:
+            $ref: "#/components/schemas/CodeReference"
+        costImpact:
+          $ref: "#/components/schemas/CostImpact"
+
+    FraudDetectionInput:
+      type: object
+      required:
+        - estimate
+        - claimInfo
+      properties:
+        estimate:
+          $ref: "#/components/schemas/EstimateData"
+        claimInfo:
+          $ref: "#/components/schemas/ClaimInfo"
+        historicalData:
+          type: boolean
+          default: true
+        vendorAnalysis:
+          type: boolean
+          default: true
+
+    FraudAnalysisOutput:
+      type: object
+      properties:
+        riskScore:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+        riskLevel:
+          type: string
+          enum: [low, medium, high, critical]
+        indicators:
+          type: array
+          items:
+            $ref: "#/components/schemas/FraudIndicator"
+        recommendations:
+          type: array
+          items:
+            type: string
+        investigation:
+          $ref: "#/components/schemas/InvestigationPlan"
+
+    MarketAnalysis:
+      type: object
+      properties:
+        region:
+          type: string
+        effectiveDate:
+          type: string
+          format: date
+        materialRates:
+          type: array
+          items:
+            $ref: "#/components/schemas/MaterialRate"
+        laborRates:
+          type: array
+          items:
+            $ref: "#/components/schemas/LaborRate"
+        trends:
+          $ref: "#/components/schemas/MarketTrends"
+        factors:
+          type: array
+          items:
+            $ref: "#/components/schemas/MarketFactor"
+
+    # Additional supporting schemas
+    Address:
+      type: object
+      required:
+        - street
+        - city
+        - state
+        - zipCode
+      properties:
+        street:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+          minLength: 2
+          maxLength: 2
+        zipCode:
+          type: string
+          pattern: '^\d{5}(-\d{4})?$'
+        county:
+          type: string
+
+    EventType:
+      type: string
+      enum: [hail, wind, tornado, hurricane, flood, fire, vandalism, theft, other]
+
+    PropertyType:
+      type: string
+      enum: [single_family, multi_family, commercial, industrial, institutional]
+
+    ClaimStatus:
+      type: string
+      enum: [new, in_progress, analysis_complete, disputed, settled, closed]
+
+    SupplementType:
+      type: string
+      enum: [initial, revised, final, emergency]
+
+    DeliveryFormat:
+      type: string
+      enum: [pdf, interactive, presentation, mobile_optimized]
+
+    TradeType:
+      type: string
+      enum: [roofing, siding, flooring, electrical, plumbing, hvac, general, specialty]
+
+    MaterialCategory:
+      type: string
+      enum: [roofing, siding, flooring, electrical, plumbing, hvac, structural, finishes]
+
+    ItemCategory:
+      type: string
+      enum: [roofing, siding, interior, electrical, plumbing, hvac, structural, cleanup]
+
+    ReportType:
+      type: string
+      enum: [performance, financial, compliance, fraud, market, custom]
+
+    ProcessingStatus:
+      type: object
+      properties:
+        jobId:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [queued, processing, completed, failed]
+        progress:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+        estimatedCompletion:
+          type: string
+          format: date-time
+        webhookUrl:
+          type: string
+          format: uri
+
+    DocumentReference:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        url:
+          type: string
+          format: uri
+        fileName:
+          type: string
+        fileType:
+          type: string
+        fileSize:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        expiresAt:
+          type: string
+          format: date-time
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        code:
+          type: integer
+        details:
+          type: object
+        timestamp:
+          type: string
+          format: date-time
+
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+        limit:
+          type: integer
+        total:
+          type: integer
+        totalPages:
+          type: integer
+        hasNext:
+          type: boolean
+        hasPrev:
+          type: boolean
+
+    # Additional complex schemas would be defined here...
+    Document:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        url:
+          type: string
+        uploadedAt:
+          type: string
+          format: date-time
+
+    AnalysisResult:
+      type: object
+      properties:
+        type:
+          type: string
+        status:
+          type: string
+        completedAt:
+          type: string
+          format: date-time
+
+    TimelineEvent:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        event:
+          type: string
+        description:
+          type: string
+
+    SupplementSuggestion:
+      type: object
+      properties:
+        itemCode:
+          type: string
+        description:
+          type: string
+        justification:
+          type: string
+        amount:
+          type: number
+
+    AnnotatedPhoto:
+      type: object
+      properties:
+        photoId:
+          type: string
+        annotations:
+          type: array
+          items:
+            type: object
+
+    VisualComparison:
+      type: object
+      properties:
+        beforeImage:
+          type: string
+        afterImage:
+          type: string
+        analysis:
+          type: string
+
+    ScopeMatch:
+      type: object
+      properties:
+        itemCode:
+          type: string
+        confidence:
+          type: number
+        location:
+          type: object
+
+    ConfidenceMetrics:
+      type: object
+      properties:
+        overall:
+          type: number
+        byCategory:
+          type: object
+
+    Evidence:
+      type: object
+      properties:
+        type:
+          type: string
+        description:
+          type: string
+        source:
+          type: string
+
+    ClientInfo:
+      type: object
+      properties:
+        name:
+          type: string
+        contact:
+          type: string
+        address:
+          $ref: "#/components/schemas/Address"
+
+    Deadline:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+        description:
+          type: string
+        priority:
+          type: string
+
+    LegalDocument:
+      type: object
+      properties:
+        type:
+          type: string
+        content:
+          type: string
+        format:
+          type: string
+
+    Precedent:
+      type: object
+      properties:
+        case:
+          type: string
+        jurisdiction:
+          type: string
+        relevance:
+          type: string
+
+    CodeReference:
+      type: object
+      properties:
+        code:
+          type: string
+        section:
+          type: string
+        description:
+          type: string
+
+    CostImpact:
+      type: object
+      properties:
+        total:
+          type: number
+        breakdown:
+          type: object
+
+    EstimateData:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/ScopeItem"
+        total:
+          type: number
+
+    ClaimInfo:
+      type: object
+      properties:
+        claimNumber:
+          type: string
+        carrier:
+          type: string
+        eventDate:
+          type: string
+          format: date
+
+    FraudIndicator:
+      type: object
+      properties:
+        type:
+          type: string
+        description:
+          type: string
+        severity:
+          type: string
+
+    InvestigationPlan:
+      type: object
+      properties:
+        steps:
+          type: array
+          items:
+            type: string
+        timeline:
+          type: string
+
+    MaterialRate:
+      type: object
+      properties:
+        material:
+          type: string
+        rate:
+          type: number
+        unit:
+          type: string
+
+    LaborRate:
+      type: object
+      properties:
+        trade:
+          type: string
+        rate:
+          type: number
+        unit:
+          type: string
+
+    MarketTrends:
+      type: object
+      properties:
+        direction:
+          type: string
+        percentage:
+          type: number
+
+    MarketFactor:
+      type: object
+      properties:
+        factor:
+          type: string
+        impact:
+          type: string
+
+    MarketComparison:
+      type: object
+      properties:
+        region:
+          type: string
+        variance:
+          type: number
+
+    AnalysisMetadata:
+      type: object
+      properties:
+        version:
+          type: string
+        models:
+          type: array
+          items:
+            type: string
+
+    DateRange:
+      type: object
+      properties:
+        start:
+          type: string
+          format: date
+        end:
+          type: string
+          format: date
+
+    WebhookInput:
+      type: object
+      properties:
+        url:
+          type: string
+          format: uri
+        events:
+          type: array
+          items:
+            type: string
+
+    WebhookResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        url:
+          type: string
+        events:
+          type: array
+          items:
+            type: string
+
+    ReportOutput:
+      type: object
+      properties:
+        reportId:
+          type: string
+        format:
+          type: string
+        url:
+          type: string

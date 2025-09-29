@@ -1,0 +1,6 @@
+nohup: ignoring input
+/PowerShell/happyhands-mcp/dotnet-services/NelrockContracting.Services/Models/SuperEliteModels.cs(720,18): error CS0101: The namespace 'NelrockContracting.Services.Models' already contains a definition for 'DamageAssessment' [/PowerShell/happyhands-mcp/dotnet-services/NelrockContracting.Services/NelrockContracting.Services.csproj]
+/PowerShell/happyhands-mcp/dotnet-services/NelrockContracting.Services/Models/SuperEliteModels.cs(557,18): error CS0101: The namespace 'NelrockContracting.Services.Models' already contains a definition for 'MaterialCost' [/PowerShell/happyhands-mcp/dotnet-services/NelrockContracting.Services/NelrockContracting.Services.csproj]
+/PowerShell/happyhands-mcp/dotnet-services/NelrockContracting.Services/Models/SuperEliteModels.cs(703,18): error CS0101: The namespace 'NelrockContracting.Services.Models' already contains a definition for 'BoundingBox' [/PowerShell/happyhands-mcp/dotnet-services/NelrockContracting.Services/NelrockContracting.Services.csproj]
+
+The build failed. Fix the build errors and run again.

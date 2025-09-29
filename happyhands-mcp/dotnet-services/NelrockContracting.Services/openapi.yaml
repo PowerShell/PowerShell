@@ -1,0 +1,185 @@
+openapi: 3.0.1
+info:
+  title: Nelrock Hybrid Roofing API
+  description: Storm intelligence and estimating API for roofing contractors
+  version: 1.0.0
+servers:
+  - url: http://localhost:5001/api
+    description: Local Development
+paths:
+  /storm/fetch_storm_swath:
+    get:
+      summary: Get detailed storm path data
+      parameters:
+        - name: eventId
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: format
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [geojson, json]
+      responses:
+        '200':
+          description: Storm swath data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  swath:
+                    type: object
+                  metadata:
+                    type: object
+
+  /storm/hail_stats_at:
+    get:
+      summary: Analyze hail damage potential at a location
+      parameters:
+        - name: lat
+          in: query
+          required: true
+          schema:
+            type: number
+        - name: lon
+          in: query
+          required: true
+          schema:
+            type: number
+        - name: date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Hail statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  hailSize:
+                    type: number
+                  probability:
+                    type: number
+
+  /storm/intersect_service_area:
+    post:
+      summary: Find affected properties within a service area
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                polygon:
+                  type: object
+                eventId:
+                  type: string
+      responses:
+        '200':
+          description: Affected properties
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  affectedProperties:
+                    type: array
+                    items:
+                      type: object
+
+  /storm/event_summary:
+    get:
+      summary: Generate a storm event report
+      parameters:
+        - name: eventId
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Storm event summary
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  summary:
+                    type: object
+
+  /estimate/build_scope:
+    post:
+      summary: Create a repair estimate with IRC compliance
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                propertyId:
+                  type: string
+                damages:
+                  type: array
+                  items:
+                    type: object
+      responses:
+        '200':
+          description: Scope created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  scopeId:
+                    type: string
+                  estimate:
+                    type: object
+
+  /estimate/export_xactimate:
+    get:
+      summary: Export scope to Xactimate format
+      parameters:
+        - name: scopeId
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Xactimate export file
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  fileUrl:
+                    type: string
+
+  /estimate/calculate_material_costs:
+    get:
+      summary: Calculate real-time material costs for a scope
+      parameters:
+        - name: scopeId
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Material cost breakdown
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  costs:
+                    type: object

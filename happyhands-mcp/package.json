@@ -1,0 +1,22 @@
+{
+  "name": "nelrock-contracting-mcp",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "MCP server for Nelrock Contracting: messaging + scheduling",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "NODE_ENV=development node src/index.js",
+    "start-dotnet": "cd dotnet-services/NelrockContracting.Services && /root/.dotnet/dotnet run",
+    "test": "DOTNET_SERVICE_URL=http://localhost:5001 node test-client.mjs",
+    "test-integration": "DOTNET_SERVICE_URL=http://localhost:5001 node test-integration.mjs",
+    "test-claims": "node test-claim-analysis.mjs",
+    "demo": "./start-demo.sh"
+  },
+  "dependencies": {
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
+    "dotenv": "^16.4.5",
+    "uuid": "^9.0.1"
+  }
+}
