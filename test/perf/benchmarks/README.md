@@ -22,6 +22,7 @@ This folder contains micro benchmarks that test the performance of PowerShell En
 ### Quick Start
 
 You can run the benchmarks directly using `dotnet run` in this directory:
+
 1. To run the benchmarks in Interactive Mode, where you will be asked which benchmark(s) to run:
 
    ```

@@ -34,6 +34,7 @@ Without that data, we are simply shooting in the dark.
 Even in our lab (STEX) environment we run tests to get code coverage data irregularly, and  PowerShell Core has _no_ tools to gather code coverage data.
 We need to investigate possible solutions for code coverage on PowerShell Core.
 There are a small number of solutions available:
+
 * [OpenCover](https://github.com/OpenCover/opencover)
     * OpenCover is currently used by corefx to produce code coverage data, also visualization is available via [CoverAlls](https://coveralls.io/github/OpenCover/opencover).
     We should investigate `OpenCover` and determine it's feasibility for us.
@@ -73,6 +74,7 @@ Our current test infrastructure does not have comprehensive support for remote t
 We need a matrix of protocols and platforms to ensure that we have adequate coverage to ensure quality.
 
 In addition to loopback tests using both WSMan and SSH protocols, we should have the following _minimum_ matrix of client/server connections for both WSMan and SSH (where available) protocols.
+
 * Windows Client->Nano Server
 * Windows Client->Linux Server
 * Linux Client -> Windows Server
@@ -96,9 +98,11 @@ We need to investigate whether there are solutions available, and if not, design
 ## Reporting
 
 Currently, we report against the simplest of KPI:
+
 * is the CI build error free (which is part of the PR/Merge process - and reported on our landing page)
 
 There are a number of KPIs which we could report on:
+
 * Code KPIs
     * What is the coverage (% blocks covered) of our `CI` tests
     * What is the coverage of all tests
@@ -133,6 +137,7 @@ Now that we are running all of our tests on a nightly basis, we should be commun
 PowerBI could be used to create the visualizations, which would reduce the time and effort.
 
 In order to achieve this we need to:
+
 * Designate an Azure instance to run services and populate Azure tables:
     * Create tools to retrieve and transform git data
     * Create tools to retrieve and transform the test data
@@ -141,6 +146,7 @@ In order to achieve this we need to:
 ## Release Criteria
 
 We must start defining the release criteria for a production ready release of PowerShell Core, as an initial proposal:
+
 * No open issues for the release
 * 80% code coverage of high use cmdlets (cmdlets used by 70% of users, as captured via telemetry)
 * 90% code coverage of language elements (coverage error code paths may not be 100%)
@@ -150,6 +156,7 @@ We must start defining the release criteria for a production ready release of Po
 * Acceptance by Partners (via Survey)
 
 A couple of assumptions have been made for this list:
+
 1) we actually know the high use cmdlets - this implies we have telemetry to determine our cmdlet use
 2) we have designated our Partners
 
@@ -174,6 +181,7 @@ The PowerShell team created roughly 90,000 tests since the beginning of the proj
 Initially tests were created in a C# framework which was used internally at Microsoft.
 After that, a number of script based frameworks were created to run script based tests.
 We have decided not to release those for a number of reasons:
+
 * All the frameworks have a core assumption of running in the Microsoft Lab environment and rely on internal Microsoft tools
 * All the frameworks rely on specific logging file formats used by internal Microsoft reporting tools
 * Some of the frameworks have limitations which we can avoid by recasting/recreating them as `Pester` or `xUnit` tests
