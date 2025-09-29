@@ -6,7 +6,7 @@ using System.Management.Automation;
 
 namespace Application.Test
 {
-    public class Program
+    public static class Program
     {
         /// <summary>
         /// Managed entry point shim, which starts the actual program.
