@@ -45,8 +45,7 @@ variables:
     value: 1
   - name: POWERSHELL_TELEMETRY_OPTOUT
     value: 1
-  # Avoid expensive initialization of dotnet cli, see: https://donovanbrown.com/post/Stop-wasting-time-during-NET-Core-builds
-  - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
+  - name: DOTNET_NOLOGO
     value: 1
   - name: __SuppressAnsiEscapeSequences
     value: 1

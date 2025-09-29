@@ -28,7 +28,7 @@ parameters: # parameters are shown up in ADO UI in a build queue time
     type: boolean
     default: false
 
-name: pkgs-$(BUILD.SOURCEBRANCHNAME)-$(Build.BuildId)
+name: pkgs-$(BUILD.SOURCEBRANCHNAME)-prod.${{ parameters.OfficialBuild }}-$(Build.BuildId)
 
 variables:
   - name: CDP_DEFINITION_BUILD_COUNT
@@ -56,7 +56,7 @@ variables:
   - name: WindowsContainerImage
     value: 'onebranch.azurecr.io/windows/ltsc2022/vse2022:latest' # Docker image which is used to build the project
   - name: LinuxContainerImage
-    value: mcr.microsoft.com/onebranch/cbl-mariner/build:2.0
+    value: mcr.microsoft.com/onebranch/azurelinux/build:3.0
   - group: mscodehub-feed-read-general
   - group: mscodehub-feed-read-akv
   - name: branchCounterKey
@@ -66,7 +66,6 @@ variables:
   - group: MSIXSigningProfile
   - name: templateFile
     value: ${{ iif ( parameters.OfficialBuild, 'v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates', 'v2/OneBranch.NonOfficial.CrossPlat.yml@onebranchTemplates' ) }}
-  
 
 resources:
   pipelines:
@@ -79,7 +78,7 @@ resources:
             - releases/*
 
   repositories:
-    - repository: templates
+    - repository: onebranchTemplates
       type: git
       name: OneBranch.Pipelines/GovernedTemplates
       ref: refs/heads/main
@@ -92,6 +91,8 @@ extends:
     featureFlags:
       WindowsHostVersion:
         Version: 2022
+        Network: KS3
+      LinuxHostVersion:
         Network: KS3
       linuxEsrpSigning: true
       incrementalSDLBinaryAnalysis: true
