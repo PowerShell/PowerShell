@@ -182,7 +182,7 @@ While, these reasons are not insurmountable, releasing these tests with their cu
 Further, by creating/releasing `xUnit` and `Pester` tests we can take the opportunity to review existing tests and improve them, or eliminate them if they are poor, or duplicate tests.
 It is obvious that the review of more than 90,000 tests is an enormous undertaking, and will take some time, and we are committed to creating a set of tests which can provide confidence that PowerShell Core has the same quality as earlier releases of PowerShell.
 
-### Challenges ##
+### Challenges
 
 While there is a test gap between what is available on Github vs what is available via our internal proprietary tests, it may be possible to use our existing tests (and frameworks) against PowerShell Core.
 This is an attractive potential because we have very high confidence of our current tests.
