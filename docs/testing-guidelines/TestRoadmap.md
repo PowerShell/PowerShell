@@ -1,22 +1,22 @@
-# Overview
+## Overview
 While we have done a fairly good job providing adequate coverage for the highest priority areas of PowerShell Core, we still have lots of gaps when we compare what is available in the OSS project vs what we have available as part of the Windows release test infrastructure.
 This is to be expected as that infrastructure was built up over more than a decade.
 It is not clear, however, how many of the current tests actually provide value, and how much duplication we have.
 In any event, there is still a large difference in what we have in PowerShell Core and our older tests.
 
-# Data Visibility
+## Data Visibility
 In both PowerShell Core or our proprietary tests we can't actually determine how and what cmdlets and engine functions (language/scripting/debugging/remoting) are being tested because we do not gather any usage telemetry on what our tests are doing during test execution.
 We have no way via automation to determine how thoroughly we are testing our code except by inspecting the actual tests or looking at code coverage data (which isn't gathered often and only available on full PowerShell).
 Further, this doesn't provide us data with regard to the test quality, only that we've covered a specific block of code.
 The areas of greatest risk are those where we have no data at all, by collecting coverage data we can illuminate those code paths that are not being used and fill those gaps with new tests.
 
-## Telemetry and Logging
+### Telemetry and Logging
 While we have some telemetry feeds on Windows, we have _no_ telemetry capabilities on non-Windows platforms.
 We should enable telemetry on PowerShell Core on all platforms and review the usage data as soon as possible.
 This will provide us much needed visibility in how PowerShell Core is being used and can help us identify areas we should track more closely.
 We already have infrastructure in place to allow us see how PowerShell Core is being used, by collecting telemetry from PowerShell Core, we can improve our confidence as we drive to production quality.
 
-### Logging
+#### Logging
 The code which on Windows create ETW logging has been completely stubbed out on Linux/macOS.
 We should take advantage of the native logging mechanisms on Linux/macOS and implement a logger similar to the ETW logger on Windows using Syslog (or equivalent).
 We could use this data during test runs to identify test gaps.
@@ -25,7 +25,7 @@ It is not sufficient to support only one platform because we have many tests whi
 We can also determine engine coverage gaps by measuring test of operators and other language elements.
 Without that data, we are simply shooting in the dark.
 
-## Code coverage
+### Code coverage
 Even in our lab (STEX) environment we run tests to get code coverage data irregularly, and  PowerShell Core has _no_ tools to gather code coverage data.
 We need to investigate possible solutions for code coverage on PowerShell Core.
 There are a small number of solutions available:
@@ -40,7 +40,7 @@ If we can get code coverage on PowerShell Core on Windows, we would at least be 
 
 Running code coverage more often on full PowerShell is something that we should consider, if it will help us close existing test coverage gaps, but the issue is _not_ test coverage for full PowerShell, but rather PowerShell Core where we have only a small percentage of tests in comparison.
 
-## Daily Test Runs
+### Daily Test Runs
 We currently run only those tests which are tagged `CI` excluding the tag `SLOW` as part of our continuous integration systems.
 This means roughly 1/3rd of our github tests are not being run on any regular schedule.
 In order to provide us with higher confidence in our code, we should be running *ALL* of our tests on a regular basis.
@@ -48,7 +48,7 @@ However, running the tests is only the first step, we need an easy way to be not
 Tracking this over time affords us the ability to see how our test count increases, implying an improvement in coverage.
 It also provides us mechanism whereby we can see trends in instability.
 
-### Pending and Skipped Tests
+#### Pending and Skipped Tests
 We currently have approximately 300 tests which are marked either as `skipped` or `pending`.
 `Pending` tests represent those tests which should be run but are not currently being executed, usually because the underlying functionality is not present.
 Over time, the number of `Pending` tests should drive to zero, and we should be tracking the list of tests which are marked `pending` and track those to be sure that they do not spend too long in this state.
@@ -59,7 +59,7 @@ In either case, `pending` or `skipped` tests should be tracked over time so we c
 In the best case, the _total_ number of tests is the same across all platforms.
 The count of Skipped/Pending tests would naturally be different as not all tests will be applicable to every platform, but if we can have consistency of test count across platforms, it will be easier to compare test results on one platform vs another.
 
-## Remoting Considerations
+### Remoting Considerations
 Given that one of the targeted scenarios is to manage heterogeneous environments remotely, we need a test environment which encompasses the available platforms and protocols.
 Our current test infrastructure does not have comprehensive support for remote testing except for loopback operations.
 We need a matrix of protocols and platforms to ensure that we have adequate coverage to ensure quality.
@@ -73,7 +73,7 @@ In addition to loopback tests using both WSMan and SSH protocols, we should have
 * Full PowerShell Client -> PowerShell Core Server
 * Downlevel Full PowerShell Client -> PowerShell Core Server
 
-### Challenges
+#### Challenges
 * On Windows, we have cmdlets to enable and disable remote access, those cmdlets do not exist on non-Windows platforms (they rely on configuration stored in the registry), nor do we support configuration for the SSH protocol.
 We need to be sure that we can easily enable remoting for the non-Windows platforms and support both WSMan _and_ SSH configurations.
 * Our current multi-machine tests do not test the connection code, they simply execute test code remotely and retrieve results and assume a good connection.
@@ -84,7 +84,7 @@ We may need to create our own heterogeneous environment in Azure, or look to oth
 
 We need to investigate whether there are solutions available, and if not, design/implement an environment to meet our needs.
 
-# Reporting
+## Reporting
 Currently, we report against the simplest of KPI:
 * is the CI build error free (which is part of the PR/Merge process - and reported on our landing page)
 
@@ -106,13 +106,13 @@ There are a number of KPIs which we could report on:
     * What are the common operations performed by PowerShell Core (cmdlet usage)
     * How many remote connections are created in a session
 
-## Reporting Priorities
+### Reporting Priorities
 1. As a baseline, we should report code coverage on current Full PowerShell from the latest Windows release
 2. We should report on code coverage as soon as possible.
 This is the tool that will enable us to at least determine where we have _no_ data and illuminate test gaps.
 3. We should track our CI execution time, which will allow us to keep an eye on our code submission workflow and how much our developers are waiting for builds
 
-### Public Dashboard
+#### Public Dashboard
 Because we collect the test results as a build artifact, it is possible to collect and collate this data and provide a number of dash-board reports.
 Since we are an OSS project, it makes sense that our reports should be also public.
 A public dashboard provides evidence that we are not collecting PII, increasing trust in the project and shows that we are using data to drive product decisions.
@@ -126,7 +126,7 @@ In order to achieve this we need to:
     * Create tools to retrieve and transform the test data
 * Create PowerBI queries to visualize our KPIs
 
-# Release Criteria
+## Release Criteria
 We must start defining the release criteria for a production ready release of PowerShell Core, as an initial proposal:
 * No open issues for the release
 * 80% code coverage of high use cmdlets (cmdlets used by 70% of users, as captured via telemetry)
@@ -140,11 +140,11 @@ A couple of assumptions have been made for this list:
 1) we actually know the high use cmdlets - this implies we have telemetry to determine our cmdlet use
 2) we have designated our Partners
 
-# Microsoft Release Process
+## Microsoft Release Process
 If PowerShell Core is targeted to be released as part of Windows Server or Nano, we will have additional requirements which must be met with regard to acceptance by the Windows org of the PowerShell Core package.
 This represents additional work which needs planning and allocated resources.
 
-## Replace STEX tests with PowerShell Core tests
+### Replace STEX tests with PowerShell Core tests
 Currently we have two distinct set of test artifacts, those used in PowerShell Core and our traditional lab (STEX) based tests.
 We are creating new tests for PowerShell Core using the existing tests as guidance, but this is creating duplication between the two sets so we need to find ways to invoke our current PowerShell Core tests as part of our STEX based runs.
 When we do this, we can start to delete our existing tests and reduce the maintenance burden due to duplicated tests.
@@ -153,7 +153,7 @@ When we do this, we can start to delete our existing tests and reduce the mainte
 
 * Create a way to invoke our github based tests in lab runs
 
-## Historical Tests
+### Historical Tests
 The PowerShell team created roughly 90,000 tests since the beginning of the project starting in 2003.
 Initially tests were created in a C# framework which was used internally at Microsoft.
 After that, a number of script based frameworks were created to run script based tests.
@@ -166,7 +166,7 @@ While, these reasons are not insurmountable, releasing these tests with their cu
 Further, by creating/releasing `xUnit` and `Pester` tests we can take the opportunity to review existing tests and improve them, or eliminate them if they are poor, or duplicate tests.
 It is obvious that the review of more than 90,000 tests is an enormous undertaking, and will take some time, and we are committed to creating a set of tests which can provide confidence that PowerShell Core has the same quality as earlier releases of PowerShell.
 
-## Challenges ##
+### Challenges ##
 While there is a test gap between what is available on Github vs what is available via our internal proprietary tests, it may be possible to use our existing tests (and frameworks) against PowerShell Core.
 This is an attractive potential because we have very high confidence of our current tests.
 Moreover, we could also collect code coverage data during a test pass.
@@ -177,7 +177,7 @@ Unfortunately, the current logging mechanism used in our in-lab tests are not av
 
 * Investigate the effort to run our historical tests in a PowerShell Core environment
 
-# Action Plan
+## Action Plan
 This document represents a number of initiatives, all of which will take resources.
 Below is my suggestion for prioritization to reduce risk and improve confidence in our overall quality:
 
