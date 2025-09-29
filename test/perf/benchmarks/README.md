@@ -23,26 +23,31 @@ This folder contains micro benchmarks that test the performance of PowerShell En
 
 You can run the benchmarks directly using `dotnet run` in this directory:
 1. To run the benchmarks in Interactive Mode, where you will be asked which benchmark(s) to run:
+
    ```
    dotnet run -c Release -f net6.0
    ```
 
 2. To list all available benchmarks ([read more](https://github.com/dotnet/performance/blob/main/docs/benchmarkdotnet.md#Listing-the-Benchmarks)):
+
    ```
    dotnet run -c Release -f net6.0 --list [flat/tree]
    ```
 
 3. To filter the benchmarks using a glob pattern applied to `namespace.typeName.methodName` ([read more](https://github.com/dotnet/performance/blob/main/docs/benchmarkdotnet.md#Filtering-the-Benchmarks)]):
+
    ```
    dotnet run -c Release -f net6.0 --filter *script* --list flat
    ```
 
 4. To profile the benchmarked code and produce an ETW Trace file ([read more](https://github.com/dotnet/performance/blob/main/docs/benchmarkdotnet.md#Profiling))
+
    ```
    dotnet run -c Release -f net6.0 --filter *script* --profiler ETW
    ```
 
 You can also use the function `Start-Benchmarking` from the module [`perf.psm1`](../perf.psm1) to run the benchmarks:
+
 ```powershell
 Start-Benchmarking [-TargetFramework <string>] [-List <string>] [-Filter <string[]>] [-Artifacts <string>] [-KeepFiles] [<CommonParameters>]
 
@@ -50,6 +55,7 @@ Start-Benchmarking [-TargetPSVersion <string>] [-Filter <string[]>] [-Artifacts 
 
 Start-Benchmarking -Runtime <string[]> [-Filter <string[]>] [-Artifacts <string>] [-KeepFiles] [<CommonParameters>]
 ```
+
 Run `Get-Help Start-Benchmarking -Full` to see the description of each parameter.
 
 ### Regression Detection
