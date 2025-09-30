@@ -54,15 +54,10 @@ namespace Microsoft.PowerShell
         internal const int ExitCodeCtrlBreak = 128 + 21; // SIGBREAK
         internal const int ExitCodeInitFailure = 70; // Internal Software Error
         internal const int ExitCodeBadCommandLineParameter = 64; // Command Line Usage Error
-        private const uint SPI_GETSCREENREADER = 0x0046;
 #if UNIX
         internal const string DECCKM_ON = "\x1b[?1h";
         internal const string DECCKM_OFF = "\x1b[?1l";
 #endif
-
-        [DllImport("user32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool SystemParametersInfo(uint uiAction, uint uiParam, ref bool pvParam, uint fWinIni);
 
         /// <summary>
         /// Internal Entry point in msh console host implementation.
@@ -1680,35 +1675,6 @@ namespace Microsoft.PowerShell
             }
         }
 
-        /// <summary>
-        /// Check if a screen reviewer utility is running.
-        /// When a screen reader is running, we don't auto-load the PSReadLine module at startup,
-        /// since PSReadLine is not accessibility-friendly enough as of today.
-        /// </summary>
-        private bool IsScreenReaderActive()
-        {
-            if (_screenReaderActive.HasValue)
-            {
-                return _screenReaderActive.Value;
-            }
-
-            _screenReaderActive = false;
-            if (Platform.IsWindowsDesktop)
-            {
-                // Note: this API can detect if a third-party screen reader is active, such as NVDA, but not the in-box Windows Narrator.
-                // Quoted from https://learn.microsoft.com/windows/win32/api/winuser/nf-winuser-systemparametersinfoa about the
-                // accessibility parameter 'SPI_GETSCREENREADER':
-                // "Narrator, the screen reader that is included with Windows, does not set the SPI_SETSCREENREADER or SPI_GETSCREENREADER flags."
-                bool enabled = false;
-                if (SystemParametersInfo(SPI_GETSCREENREADER, 0, ref enabled, 0))
-                {
-                    _screenReaderActive = enabled;
-                }
-            }
-
-            return _screenReaderActive.Value;
-        }
-
         private static bool LoadPSReadline()
         {
             // Don't load PSReadline if:
@@ -1759,7 +1725,6 @@ namespace Microsoft.PowerShell
                 bool psReadlineFailed = false;
 
                 // Load PSReadline by default unless there is no use:
-                //    - screen reader is active, such as NVDA, indicating non-visual access
                 //    - we're running a command/file and just exiting
                 //    - stdin is redirected by a parent process
                 //    - we're not interactive
@@ -1770,26 +1735,18 @@ namespace Microsoft.PowerShell
                 ReadOnlyCollection<ModuleSpecification> defaultImportModulesList = null;
                 if (!customConfigurationProvided && LoadPSReadline())
                 {
-                    if (IsScreenReaderActive())
+                    // Create and open Runspace with PSReadline.
+                    defaultImportModulesList = DefaultInitialSessionState.Modules;
+                    DefaultInitialSessionState.ImportPSModule(new[] { "PSReadLine" });
+                    consoleRunspace = RunspaceFactory.CreateRunspace(this, DefaultInitialSessionState);
+                    try
                     {
-                        s_theConsoleHost.UI.WriteLine(ManagedEntranceStrings.PSReadLineDisabledWhenScreenReaderIsActive);
-                        s_theConsoleHost.UI.WriteLine();
+                        OpenConsoleRunspace(consoleRunspace, args.StaMode);
                     }
-                    else
+                    catch (Exception)
                     {
-                        // Create and open Runspace with PSReadline.
-                        defaultImportModulesList = DefaultInitialSessionState.Modules;
-                        DefaultInitialSessionState.ImportPSModule(new[] { "PSReadLine" });
-                        consoleRunspace = RunspaceFactory.CreateRunspace(this, DefaultInitialSessionState);
-                        try
-                        {
-                            OpenConsoleRunspace(consoleRunspace, args.StaMode);
-                        }
-                        catch (Exception)
-                        {
-                            consoleRunspace = null;
-                            psReadlineFailed = true;
-                        }
+                        consoleRunspace = null;
+                        psReadlineFailed = true;
                     }
                 }
 
@@ -3102,7 +3059,6 @@ namespace Microsoft.PowerShell
         private bool _setShouldExitCalled;
         private bool _isRunningPromptLoop;
         private bool _wasInitialCommandEncoded;
-        private bool? _screenReaderActive;
 
         // hostGlobalLock is used to sync public method calls (in case multiple threads call into the host) and access to
         // state that persists across method calls, like progress data. It's internal because the ui object also
