@@ -54,15 +54,13 @@
             "title": "Profile",
             "description": "A resource for managing PowerShell profiles.",
             "type": "object",
-            "additionalProperties": false,
+            "unevaluatedProperties": false,
             "required": [
                 "profileType"
             ],
             "properties": {
                 "profileType": {
-                    "title": "Name",
-                    "description": "The name of the repository.",
-                    "type": "string"
+                    "$ref": "#/$defs/ProfileType"
                 },
                 "content": {
                     "title": "Content",
