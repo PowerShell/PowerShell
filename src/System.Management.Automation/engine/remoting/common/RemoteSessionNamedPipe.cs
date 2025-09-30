@@ -500,7 +500,7 @@ namespace System.Management.Automation.Remoting
             s_syncObject = new object();
 
             // Unless opt-out, all PowerShell instances will start with the named-pipe listener created and running.
-            IPCNamedPipeServerEnabled = !Utils.GetEnvironmentVariableAsBool(name: "POWERSHELL_Diagnostics_OPTOUT", defaultValue: false);
+            IPCNamedPipeServerEnabled = !Utils.GetEnvironmentVariableAsBool(name: "POWERSHELL_DIAGNOSTICS_OPTOUT", defaultValue: false);
 
             if (IPCNamedPipeServerEnabled)
             {
