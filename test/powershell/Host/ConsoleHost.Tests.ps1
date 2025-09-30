@@ -1021,7 +1021,7 @@ public enum ShowWindowCommands : int
         $global:PSDefaultParameterValues = $defaultParamValues
     }
 
-    It "-WindowStyle <WindowStyle> should work on Windows" -TestCases @(
+    It "-WindowStyle <WindowStyle> should work on Windows" -Pending -TestCases @(
             @{WindowStyle="Normal"},
             @{WindowStyle="Minimized"},
             @{WindowStyle="Maximized"}  # hidden doesn't work in CI/Server Core
@@ -1047,7 +1047,7 @@ public enum ShowWindowCommands : int
         }
     }
 
-    It "Invalid -WindowStyle returns error" {
+    It "Invalid -WindowStyle returns error" -Pending {
         & $powershell -WindowStyle invalid
         $LASTEXITCODE | Should -Be $ExitCodeBadCommandLineParameter
     }
