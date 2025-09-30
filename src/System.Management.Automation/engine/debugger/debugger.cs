@@ -1536,7 +1536,16 @@ namespace System.Management.Automation
 
         internal void OnSequencePointHit(FunctionContext functionContext)
         {
-            if (_context.ShouldTraceStatement && !_callStack.Last().IsFrameHidden && !functionContext._debuggerStepThrough)
+            // TraceLine uses ColumnNumber and expects it to be 1 based. For
+            // extents added by the engine and not user code the value can be
+            // set to 0 causing an exception. This skips those types of extents
+            // as tracing them wouldn't be useful for the end user anyway.
+            if (_context.ShouldTraceStatement &&
+                !_callStack.Last().IsFrameHidden &&
+                !functionContext._debuggerStepThrough &&
+                functionContext.CurrentPosition is not EmptyScriptExtent &&
+                (functionContext.CurrentPosition is InternalScriptExtent ||
+                   functionContext.CurrentPosition.StartColumnNumber > 0))
             {
                 TraceLine(functionContext.CurrentPosition);
             }

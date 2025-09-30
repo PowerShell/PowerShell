@@ -6536,6 +6536,13 @@ namespace System.Management.Automation.Language
 
     internal sealed class PSInvokeMemberBinder : InvokeMemberBinder
     {
+        [TraceSource("MethodInvocation", "Traces the invocation of .NET methods.")]
+        internal static readonly PSTraceSource MethodInvocationTracer =
+            PSTraceSource.GetTracer(
+                "MethodInvocation",
+                "Traces the invocation of .NET methods.",
+                false);
+
         private static readonly SearchValues<string> s_whereSearchValues = SearchValues.Create(
             ["Where", "PSWhere"],
             StringComparison.OrdinalIgnoreCase);
@@ -6954,6 +6961,17 @@ namespace System.Management.Automation.Language
                 if (expr.Type == typeof(void))
                 {
                     expr = Expression.Block(expr, ExpressionCache.AutomationNullConstant);
+                }
+
+                if (MethodInvocationTracer.IsEnabled)
+                {
+                    expr = Expression.Block(
+                        Expression.Call(
+                            Expression.Constant(MethodInvocationTracer),
+                            CachedReflectionInfo.PSTraceSource_WriteLine,
+                            Expression.Constant("Invoking method: {0}"),
+                            Expression.Constant(result.methodDefinition)),
+                        expr);
                 }
 
                 // If we're calling SteppablePipeline.{Begin|Process|End}, we don't want

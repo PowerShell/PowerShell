@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell.Commands
     /// This trace listener cannot be specified in the app.config file.
     /// It must be added through the add-tracelistener cmdlet.
     /// </remarks>
-    internal class PSHostTraceListener
+    internal sealed class PSHostTraceListener
         : System.Diagnostics.TraceListener
     {
         #region TraceListener constructors and disposer

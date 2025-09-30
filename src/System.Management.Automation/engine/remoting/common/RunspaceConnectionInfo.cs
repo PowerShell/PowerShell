@@ -2206,11 +2206,53 @@ namespace System.Management.Automation.Runspaces
             var context = Runspaces.LocalPipeline.GetExecutionContextFromTLS();
             if (context != null)
             {
-                var cmdInfo = context.CommandDiscovery.LookupCommandInfo(sshCommand, CommandOrigin.Internal) as ApplicationInfo;
+                var cmdInfo = CommandDiscovery.LookupCommandInfo(
+                    sshCommand,
+                    CommandTypes.Application,
+                    SearchResolutionOptions.None,
+                    CommandOrigin.Internal,
+                    context) as ApplicationInfo;
+
                 if (cmdInfo != null)
                 {
                     filePath = cmdInfo.Path;
                 }
+            }
+            else
+            {
+                // A Runspace may not be present in the TLS in SDK hosted apps
+                // or if running in another thread without a Runspace. While
+                // 'ProcessStartInfo' can lookup the full path in PATH, it searches
+                // the process' working directory first. 'LookupCommandInfo' does
+                // not search the process' working directory and we want to keep that
+                // behavior. We also get the parent dir of the full path to set as the
+                // new WorkingDirectory. So, we do a manual lookup here only in PATH.
+                string[] entries = Environment.GetEnvironmentVariable("PATH")?.Split(
+                    Path.PathSeparator,
+                    StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries) ?? [];
+                foreach (var path in entries)
+                {
+                    if (!Path.IsPathFullyQualified(path))
+                    {
+                        continue;
+                    }
+
+                    var sshCommandPath = Path.Combine(path, sshCommand);
+                    if (File.Exists(sshCommandPath))
+                    {
+                        filePath = sshCommandPath;
+                        break;
+                    }
+                }
+            }
+            
+            if (string.IsNullOrEmpty(filePath))
+            {
+                throw new CommandNotFoundException(
+                    sshCommand,
+                    null,
+                    "CommandNotFoundException",
+                    DiscoveryExceptions.CommandNotFoundException);
             }
 
             // Create a local ssh process (client) that conects to a remote sshd process (server) using a 'powershell' subsystem.
@@ -2230,6 +2272,7 @@ namespace System.Management.Automation.Runspaces
             //   linux|macos:
             //     Subsystem powershell /usr/local/bin/pwsh -SSHServerMode -NoLogo -NoProfile
 
+            // codeql[cs/microsoft/command-line-injection-shell-execution] - This is expected Poweshell behavior where user inputted paths are supported for the context of this method. The user assumes trust for the file path specified, so any file executed in the runspace would be in the user's local system/process or a system they have access to in which case restricted remoting security guidelines should be used.
             System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo(filePath);
 
             // pass "-i identity_file" command line argument to ssh if KeyFilePath is set

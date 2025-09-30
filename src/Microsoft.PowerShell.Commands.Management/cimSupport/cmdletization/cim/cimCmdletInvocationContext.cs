@@ -10,7 +10,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Cmdletization.Cim
 {
-    internal class CimCmdletInvocationContext
+    internal sealed class CimCmdletInvocationContext
     {
         internal CimCmdletInvocationContext(
             CimCmdletDefinitionContext cmdletDefinitionContext,

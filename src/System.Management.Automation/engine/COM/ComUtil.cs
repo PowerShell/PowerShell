@@ -141,9 +141,6 @@ namespace System.Management.Automation
             return "UnknownCustomtype";
         }
 
-        // Disable obsolete warning about VarEnum in CoreCLR
-#pragma warning disable 618
-
         /// <summary>
         /// This function gets a string representation of the Type Descriptor
         /// This is used in generating signature for Properties and Methods.
@@ -258,8 +255,6 @@ namespace System.Management.Automation
             VarEnum vt = (VarEnum)typedesc.vt;
             return VarEnumSelector.GetTypeForVarEnum(vt);
         }
-
-#pragma warning restore 618
 
         /// <summary>
         /// Converts a FuncDesc out of GetFuncDesc into a MethodInformation.

@@ -888,7 +888,8 @@ function Update-PSSignedBuildFolder
         [string]$BuildPath,
         [Parameter(Mandatory)]
         [string]$SignedFilesPath,
-        [string[]] $RemoveFilter = ('*.pdb', '*.zip', '*.r2rmap')
+        [string[]] $RemoveFilter = ('*.pdb', '*.zip', '*.r2rmap'),
+        [bool]$OfficialBuild = $true
     )
 
     $BuildPathNormalized = (Get-Item $BuildPath).FullName
@@ -944,8 +945,21 @@ function Update-PSSignedBuildFolder
         if ($IsWindows)
         {
             $signature = Get-AuthenticodeSignature -FilePath $signedFilePath
-            if ($signature.Status -ne 'Valid') {
+
+            if ($signature.Status -ne 'Valid' -and $OfficialBuild) {
+                Write-Host "Certificate Issuer: $($signature.SignerCertificate.Issuer)"
+                Write-Host "Certificate Subject: $($signature.SignerCertificate.Subject)"
                 Write-Error "Invalid signature for $signedFilePath"
+            } elseif ($OfficialBuild -eq $false) {
+                if ($signature.Status -eq 'NotSigned') {
+                    Write-Warning "File is not signed: $signedFilePath"
+                } elseif ($signature.SignerCertificate.Issuer -notmatch '^CN=(Microsoft|TestAzureEngBuildCodeSign|Windows Internal Build Tools).*') {
+                    Write-Warning "File signed with test certificate: $signedFilePath"
+                    Write-Host "Certificate Issuer: $($signature.SignerCertificate.Issuer)"
+                    Write-Host "Certificate Subject: $($signature.SignerCertificate.Subject)"
+                } else {
+                    Write-Verbose -Verbose "File properly signed: $signedFilePath"
+                }
             }
         }
         else
@@ -1599,7 +1613,7 @@ function Get-PackageDependencies
                 "libgssapi-krb5-2",
                 "libstdc++6",
                 "zlib1g",
-                "libicu74|libicu72|libicu71|libicu70|libicu69|libicu68|libicu67|libicu66|libicu65|libicu63|libicu60|libicu57|libicu55|libicu52",
+                "libicu76|libicu74|libicu72|libicu71|libicu70|libicu69|libicu68|libicu67|libicu66|libicu65|libicu63|libicu60|libicu57|libicu55|libicu52",
                 "libssl3|libssl1.1|libssl1.0.2|libssl1.0.0"
             )
 

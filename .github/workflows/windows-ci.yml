@@ -8,6 +8,8 @@ on:
       - github-mirror
     paths:
       - "**"
+      - "*"
+      - ".globalconfig"
       - "!.vsts-ci/misc-analysis.yml"
       - "!.github/ISSUE_TEMPLATE/**"
       - "!.dependabot/config.yml"
@@ -18,6 +20,7 @@ on:
       - master
       - release/**
       - github-mirror
+      - "*-feature"
 
 # Path filters for PRs need to go into the changes job
 
@@ -32,7 +35,7 @@ run-name: "${{ github.ref_name }} - ${{ github.run_number }}"
 
 env:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
-  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  DOTNET_NOLOGO: 1
   GIT_CONFIG_PARAMETERS: "'core.autocrlf=false'"
   NugetSecurityAnalysisWarningLevel: none
   POWERSHELL_TELEMETRY_OPTOUT: 1
@@ -53,7 +56,7 @@ jobs:
       source: ${{ steps.filter.outputs.source }}
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Change Detection
         id: filter
@@ -68,7 +71,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 1000
       - name: Build
@@ -82,7 +85,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 1000
       - name: Windows Unelevated CI
@@ -99,7 +102,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 1000
       - name: Windows Elevated CI
@@ -116,7 +119,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 1000
       - name: Windows Unelevated Others
@@ -133,7 +136,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 1000
       - name: Windows Elevated Others
@@ -150,7 +153,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 1000
       - name: Verify xUnit test results

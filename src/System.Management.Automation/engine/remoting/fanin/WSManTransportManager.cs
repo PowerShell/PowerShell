@@ -1258,7 +1258,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <param name="serverProtocolVersion">Server negotiated protocol version.</param>
         internal void AdjustForProtocolVariations(Version serverProtocolVersion)
         {
-            if (serverProtocolVersion <= RemotingConstants.ProtocolVersionWin7RTM)
+            if (serverProtocolVersion <= RemotingConstants.ProtocolVersion_2_1)
             {
                 int maxEnvSize;
                 WSManNativeApi.WSManGetSessionOptionAsDword(_wsManSessionHandle,
