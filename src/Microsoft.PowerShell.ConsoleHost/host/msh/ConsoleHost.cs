@@ -54,15 +54,10 @@ namespace Microsoft.PowerShell
         internal const int ExitCodeCtrlBreak = 128 + 21; // SIGBREAK
         internal const int ExitCodeInitFailure = 70; // Internal Software Error
         internal const int ExitCodeBadCommandLineParameter = 64; // Command Line Usage Error
-        private const uint SPI_GETSCREENREADER = 0x0046;
 #if UNIX
         internal const string DECCKM_ON = "\x1b[?1h";
         internal const string DECCKM_OFF = "\x1b[?1l";
 #endif
-
-        [DllImport("user32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool SystemParametersInfo(uint uiAction, uint uiParam, ref bool pvParam, uint fWinIni);
 
         /// <summary>
         /// Internal Entry point in msh console host implementation.
