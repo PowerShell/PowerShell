@@ -22,13 +22,11 @@ jobs:
         STABLE: $[ stageDependencies.setReleaseTagAndChangelog.setTagAndChangelog.outputs['ChannelSelection.IsStable'] ]
         PREVIEW: $[ stageDependencies.setReleaseTagAndChangelog.setTagAndChangelog.outputs['ChannelSelection.IsPreview'] ]
   steps:
-  - template: release-SetReleaseTagandContainerName.yml@self
-  
   - task: PowerShell@2
     inputs:
       targetType: inline
       script: |
-        Write-Verbose -Verbose "Release Tag: $(OutputReleaseTag.releaseTag)"
+        Write-Verbose -Verbose "Release Tag: $(ReleaseTag)"
         Get-ChildItem $(Pipeline.Workspace) -Recurse | Select-Object -ExpandProperty FullName
     displayName: 'Capture ReleaseTag and Downloaded Packages'
 
@@ -36,12 +34,12 @@ jobs:
     inputs:
       targetType: inline
       script: |
-        if ("$(OutputReleaseTag.releaseTag)" -eq '') {
+        if ("$(ReleaseTag)" -eq '') {
           Write-Error "ReleaseTag is not set. Cannot proceed with publishing to the Store."
           exit 1
         }
         $middleURL = ''
-        $tagString = "$(OutputReleaseTag.releaseTag)"
+        $tagString = "$(ReleaseTag)"
         if ($tagString -match '-') {
           $middleURL = "preview"
         }
