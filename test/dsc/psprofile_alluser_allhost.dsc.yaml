@@ -4,6 +4,6 @@ resources:
 - name: PSProfile
   type: Microsoft.PowerShell/Profile
   properties:
-    profileType: CurrentUserCurrentHost
-    content: "Write-Host 'Welcome to your PowerShell profile!'"
+    profileType: AllUsersAllHosts
+    content: "Write-Host 'Welcome to your PowerShell profile - AllUsersAllHosts!'"
     _exist: true
