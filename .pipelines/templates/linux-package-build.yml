@@ -87,6 +87,8 @@ jobs:
     env:
       ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
 
+  - template: /.pipelines/templates/install-dotnet.yml@self
+
   - pwsh: |
       $packageType = '$(PackageType)'
       Write-Verbose -Verbose "packageType = $packageType"
@@ -103,7 +105,7 @@ jobs:
       Import-Module "$repoRoot/build.psm1"
       Import-Module "$repoRoot/tools/packaging"
 
-      Start-PSBootstrap -Scenario Package
+      Start-PSBootstrap -Scenario Both
 
       $psOptionsPath = "$(Pipeline.Workspace)/CoOrdinatedBuildPipeline/${unsignedDrop}/psoptions/psoptions.json"
 

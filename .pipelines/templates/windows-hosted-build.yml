@@ -63,12 +63,7 @@ jobs:
       AnalyzeInPipeline: true
       Language: csharp
 
-  - task: UseDotNet@2
-    inputs:
-      useGlobalJson: true
-      workingDirectory: $(PowerShellRoot)
-    env:
-      ob_restore_phase: true
+  - template: /.pipelines/templates/install-dotnet.yml@self
 
   - pwsh: |
       $runtime = switch ($env:Architecture)
@@ -142,6 +137,7 @@ jobs:
         }
 
       Import-Module -Name $(PowerShellRoot)/build.psm1 -Force
+      Find-Dotnet
 
       ## Build global tool
       Write-Verbose -Message "Building PowerShell global tool for Windows.x64" -Verbose
@@ -236,6 +232,9 @@ jobs:
           We also delete pdbs, content and contentFiles folder which are not necessary.
           After that, we repack using Compress-Archive and rename it back to a nupkg.
         #>
+
+      Import-Module -Name $(PowerShellRoot)/build.psm1 -Force
+      Find-Dotnet
 
       $packagingStrings = Import-PowerShellDataFile "$(PowerShellRoot)\tools\packaging\packaging.strings.psd1"
 
