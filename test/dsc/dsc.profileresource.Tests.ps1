@@ -35,20 +35,23 @@ Describe "DSC PowerShell Profile Resource Tests" -Tag "CI" {
     }
     AfterAll {
         # Restore original profile
-        $testProfilePathCurrentUserCurrentHost = (Get-Item $PROFILE.CurrentUserCurrentHost).FullName
-        Copy-Item -Path "$TestDrive/currentuser-currenthost-profile.bak" -Destination $testProfilePathCurrentUserCurrentHost -Force
+        $testProfilePathCurrentUserCurrentHost = $PROFILE.CurrentUserCurrentHost
+        Copy-Item -Path "$TestDrive/currentuser-currenthost-profile.bak" -Destination $testProfilePathCurrentUserCurrentHost -Force -ErrorAction SilentlyContinue
 
-        $testProfilePathCurrentUserAllHosts = (Get-Item $PROFILE.CurrentUserAllHosts).FullName
-        Copy-Item -Path "$TestDrive/currentuser-allhosts-profile.bak" -Destination $testProfilePathCurrentUserAllHosts -Force
+        $testProfilePathCurrentUserAllHosts = $PROFILE.CurrentUserAllHosts
+        Copy-Item -Path "$TestDrive/currentuser-allhosts-profile.bak" -Destination $testProfilePathCurrentUserAllHosts -Force -ErrorAction SilentlyContinue
 
-        $testProfilePathAllUsersCurrentHost = (Get-Item $PROFILE.AllUsersCurrentHost).FullName
-        Copy-Item -Path "$TestDrive/allusers-currenthost-profile.bak" -Destination $testProfilePathAllUsersCurrentHost -Force
+        $testProfilePathAllUsersCurrentHost = $PROFILE.AllUsersCurrentHost
+        Copy-Item -Path "$TestDrive/allusers-currenthost-profile.bak" -Destination $testProfilePathAllUsersCurrentHost -Force -ErrorAction SilentlyContinue
 
-        $testProfilePathAllUsersAllHosts = (Get-Item $PROFILE.AllUsersAllHosts).FullName
-        Copy-Item -Path "$TestDrive/allusers-allhosts-profile.bak" -Destination $testProfilePathAllUsersAllHosts -Force
+        $testProfilePathAllUsersAllHosts = $PROFILE.AllUsersAllHosts
+        Copy-Item -Path "$TestDrive/allusers-allhosts-profile.bak" -Destination $testProfilePathAllUsersAllHosts -Force -ErrorAction SilentlyContinue
 
         $env:PATH = $originalPath
-        Remove-Item -Path "$TestDrive/currentuser-currenthost-profile.bak" -Force
+        Remove-Item -Path "$TestDrive/currentuser-currenthost-profile.bak" -Force -ErrorAction SilentlyContinue
+        Remove-Item -Path "$TestDrive/currentuser-allhosts-profile.bak" -Force -ErrorAction SilentlyContinue
+        Remove-Item -Path "$TestDrive/allusers-currenthost-profile.bak" -Force -ErrorAction SilentlyContinue
+        Remove-Item -Path "$TestDrive/allusers-allhosts-profile.bak" -Force -ErrorAction SilentlyContinue
     }
 
     It 'DSC resource is located at $PSHome' {
