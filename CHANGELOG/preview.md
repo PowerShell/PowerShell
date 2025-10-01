@@ -44,6 +44,8 @@
 - Update `Get-Service` to ignore common errors when retrieving non-critical properties for a service (#24245) (Thanks @jborean93!)
 - Add single/double quote support for `Join-String` Argument Completer (#25283) (Thanks @ArmaanMcleod!)
 - Fix tab completion for env/function variables (#25346) (Thanks @jborean93!)
+- Fix `Out-GridView` by replacing use of obsolete `BinaryFormatter` with custom implementation (#25497) (Thanks @mawosoft!)
+- Remove the use of Windows PowerShell ETW provider id from code base and update the `PSDiagnostics` module to work for PowerShell 7 (#25590)
 
 ### Code Cleanup
 
@@ -76,7 +78,6 @@
 <li>Seal internal types in <code>Microsoft.PowerShell.Commands.Management</code> (#25849) (Thanks @xtqqczze!)</li>
 <li>Make the interface <code>IDeepCloneable</code> internal to minimize confusion (#25552)</li>
 <li>Remove <code>OnDeserialized</code> and <code>Serializable</code> attributes from <code>Microsoft.Management.UI.Internal</code> project (#25548)</li>
-<li>Fix <code>Out-GridView</code> by replacing use of obsolete <code>BinaryFormatter</code> with custom implementation (#25497) (Thanks @mawosoft!)</li>
 <li>Refactor Tooltip/ListItemText mapping to use <code>CompletionDisplayInfoMapper</code> delegate (#25395) (Thanks @ArmaanMcleod!)</li>
 </ul>
 
@@ -84,7 +85,7 @@
 
 ### Tools
 
-- Add Codeql Suppressions (#25943)
+- Add Codeql Suppressions (#25943, #26132)
 - Update CODEOWNERS to add Justin as a maintainer (#25386)
 - Do not run labels workflow in the internal repo (#25279)
 
@@ -187,6 +188,8 @@
 <li>Migrate MacOS Signing to OneBranch (#25295)</li>
 <li>Bump github/codeql-action from 3.28.13 to 3.28.15 (#25290)</li>
 <li>Update test result processing to use NUnitXml format and enhance logging for better clarity (#25288)</li>
+<li>Fix R2R for fxdependent packaging (#26131)</li>
+<li>Remove <code>UseDotnet</code> task and use the <code>dotnet-install</code> script (#26093)</li>
 </ul>
 
 </details>
