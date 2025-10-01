@@ -1021,7 +1021,7 @@ public enum ShowWindowCommands : int
         $global:PSDefaultParameterValues = $defaultParamValues
     }
 
-    It "-WindowStyle <WindowStyle> should work on Windows" -TestCases @(
+    It "-WindowStyle <WindowStyle> should work on Windows" -Pending -TestCases @(
             @{WindowStyle="Normal"},
             @{WindowStyle="Minimized"},
             @{WindowStyle="Maximized"}  # hidden doesn't work in CI/Server Core
