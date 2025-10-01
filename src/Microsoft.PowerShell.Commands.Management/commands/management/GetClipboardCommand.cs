@@ -34,6 +34,12 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+        /// <summary>
+        /// The delimiters to use when splitting the clipboard content.
+        /// </summary>
+        [Parameter]
+        public string[] Delimiter { get; set; } = [Environment.NewLine];
+
         private bool _raw;
 
         /// <summary>
@@ -68,8 +74,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                string[] splitSymbol = { Environment.NewLine };
-                result.AddRange(textContent.Split(splitSymbol, StringSplitOptions.None));
+                result.AddRange(textContent.Split(Delimiter, StringSplitOptions.None));
             }
 
             return result;
