@@ -658,6 +658,8 @@ namespace System.Management.Automation
                                 {
                                     startInfo.ArgumentList.RemoveAt(0);
                                 }
+
+                                // codeql[cs/microsoft/command-line-injection-shell-execution] - This is expected Poweshell behavior where user inputted paths are supported for the context of this method. The user assumes trust for the file path specified on the user's system to retrieve process info for, and in the case of remoting, restricted remoting security guidelines should be used.
                                 startInfo.FileName = oldFileName;
                             }
                         }
