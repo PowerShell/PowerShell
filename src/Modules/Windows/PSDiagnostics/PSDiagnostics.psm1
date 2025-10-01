@@ -7,17 +7,19 @@
   enable a user to use ETW tracing in PowerShell 7.
  #>
 
-$script:Logman="$env:windir\system32\logman.exe"
-$script:wsmanlogfile = "$env:windir\system32\wsmtraces.log"
-$script:wsmprovfile = "$env:windir\system32\wsmtraceproviders.txt"
+$script:windir = [System.Environment]::GetEnvironmentVariable("windir", [System.EnvironmentVariableTarget]::Machine)
+
+$script:Logman = "${script:windir}\system32\logman.exe"
+$script:wsmanlogfile = "${script:windir}\system32\wsmtraces.log"
+$script:wsmprovfile = "${script:windir}\system32\wsmtraceproviders.txt"
 $script:wsmsession = "wsmlog"
 $script:pssession = "PSTrace"
 $script:psprovidername = "PowerShellCore"
 $script:wsmprovidername = "Microsoft-Windows-WinRM"
 $script:oplog = "/Operational"
-$script:analyticlog="/Analytic"
-$script:debuglog="/Debug"
-$script:wevtutil="$env:windir\system32\wevtutil.exe"
+$script:analyticlog = "/Analytic"
+$script:debuglog = "/Debug"
+$script:wevtutil = "${script:windir}\system32\wevtutil.exe"
 $script:slparam = "sl"
 $script:glparam = "gl"
 
