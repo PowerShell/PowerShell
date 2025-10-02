@@ -11,8 +11,9 @@ parameters: # parameters are shown up in ADO UI in a build queue time
 - name: vPackName
   type: string
   displayName: 'VPack Name:'
-  default: 'PowerShell'
+  default: 'PowerShell.BuildTool'
   values:
+    - PowerShell.BuildTool
     - PowerShell
     - PowerShellDoNotUse
 - name: 'ReleaseTagVar'
