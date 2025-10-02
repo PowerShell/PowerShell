@@ -132,4 +132,7 @@ Describe 'Native UNIX globbing tests' -tags "CI" {
 		/bin/echo '~/foo' | Should -BeExactly '~/foo'
 		/bin/echo "~/foo" | Should -BeExactly '~/foo'
 	}
+    It '~ should be expanded when used with implicit quotes' {
+        /bin/echo ~/a` b | Should -BeExactly "$($ExecutionContext.SessionState.Provider.Get("FileSystem").Home)/a b"
+    }
 }
