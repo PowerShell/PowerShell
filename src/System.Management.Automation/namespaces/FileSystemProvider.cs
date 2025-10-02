@@ -8286,7 +8286,7 @@ namespace System.Management.Automation.Internal
             ArgumentNullException.ThrowIfNull(streamName);
 
             string adjustedStreamName = streamName.Trim();
-            if (adjustedStreamName.IndexOf(':') != 0)
+            if (!adjustedStreamName.StartsWith(':'))
             {
                 adjustedStreamName = ":" + adjustedStreamName;
             }
