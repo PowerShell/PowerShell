@@ -238,7 +238,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "HashTable")]
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "HashTable")]
         [Alias("AHT")]
         public SwitchParameter AsHashTable { get; set; }
 

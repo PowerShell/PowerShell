@@ -31,7 +31,6 @@ namespace System.Diagnostics.Eventing
         [FieldOffset(8)]
         private readonly long _keywords;
 
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "opcode", Justification = "matell: Shipped public in 3.5, breaking change to fix now.")]
         public EventDescriptor(
                 int id,
                 byte version,
@@ -103,8 +102,7 @@ namespace System.Diagnostics.Eventing
                 return _level;
             }
         }
-
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "Opcode", Justification = "matell: Shipped public in 3.5, breaking change to fix now.")]
+        
         public byte Opcode
         {
             get
