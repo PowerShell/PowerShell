@@ -985,7 +985,12 @@ public static WINDOWPLACEMENT GetPlacement(IntPtr hwnd)
 {
     WINDOWPLACEMENT placement = new WINDOWPLACEMENT();
     placement.length = Marshal.SizeOf(placement);
-    GetWindowPlacement(hwnd, ref placement);
+
+    if (!GetWindowPlacement(hwnd, ref placement))
+    {
+        throw new Win32Exception();
+    }
+
     return placement;
 }
 
