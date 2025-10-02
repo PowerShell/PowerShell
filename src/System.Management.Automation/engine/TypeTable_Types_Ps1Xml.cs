@@ -3224,7 +3224,7 @@ namespace System.Management.Automation.Runspaces
           # WMI team fixed the formatting issue related to InstalledOn
           # property in Windows7 (to return string)..so returning the WMI's
           # version directly
-           [DateTime]::Parse($this.psBase.properties[""InstalledOn""].Value, [System.Globalization.DateTimeFormatInfo]::new())
+           [datetime]::Parse($this.psBase.properties[""InstalledOn""].Value, [System.Globalization.DateTimeFormatInfo]::new())
           }
           else
           {
@@ -8017,7 +8017,7 @@ namespace System.Management.Automation.Runspaces
           # WMI team fixed the formatting issue related to InstalledOn
           # property in Windows7 (to return string)..so returning the WMI's
           # version directly
-          [DateTime]::Parse($this.psBase.CimInstanceProperties[""InstalledOn""].Value, [System.Globalization.DateTimeFormatInfo]::new())
+          [datetime]::Parse($this.psBase.CimInstanceProperties[""InstalledOn""].Value, [System.Globalization.DateTimeFormatInfo]::new())
           }
           else
           {
