@@ -208,7 +208,7 @@ jobs:
       name: UpdateConfigs
       displayName: Update PDPs and SBConfig.json
 
-    - task: MS-RDX-MRO.windows-store-publish-dev.package-task.store-package@3
+    - task: MS-RDX-MRO.windows-store-publish.package-task.store-package@3
       displayName: 'Create StoreBroker Package'
       inputs:
         serviceEndpoint: '$(ServiceConnection)'
