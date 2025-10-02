@@ -11,6 +11,6 @@ internal static partial class Interop
     {
 
         [LibraryImport("Netapi32.dll")]
-        internal static partial int NetApiBufferFree(nint Buffer);
+        internal static partial uint NetApiBufferFree(IntPtr Buffer);
     }
 }
