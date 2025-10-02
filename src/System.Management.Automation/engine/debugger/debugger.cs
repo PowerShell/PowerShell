@@ -2084,8 +2084,8 @@ namespace System.Management.Automation
                     else
                     {
                         tuple.Item1.Add(breakpoint.SequencePointIndex, new List<LineBreakpoint> { breakpoint });
-                    } 
-                    
+                    }
+
                     // We need to keep track of any breakpoints that are bound in each script because they may
                     // need to be rebound if the script changes.
                     var boundBreakpoints = _boundBreakpoints[currentScriptFile].Item2;
@@ -2099,7 +2099,7 @@ namespace System.Management.Automation
             }
 
             // Here could check if all breakpoints for the current functionContext were bound, but because there is no atomic
-            // api for conditional removal we either need to lock, or do some trickery that has possibility of race conditions. 
+            // api for conditional removal we either need to lock, or do some trickery that has possibility of race conditions.
             // Instead we keep the item in the dictionary with 0 breakpoint count. This should not be a big issue,
             // because it is single entry per file that had breakpoints, so there won't be thousands of files in a session.
         }

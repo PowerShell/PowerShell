@@ -2943,9 +2943,9 @@ namespace System.Management.Automation
                 }
 
                if (resultType == typeof(BigInteger))
-               { 
+               {
                     NumberStyles style = NumberStyles.Integer | NumberStyles.AllowThousands;
-                    
+
                     return BigInteger.Parse(strToConvert, style, NumberFormatInfo.InvariantInfo);
                 }
                 // Fallback conversion for regular numeric types.

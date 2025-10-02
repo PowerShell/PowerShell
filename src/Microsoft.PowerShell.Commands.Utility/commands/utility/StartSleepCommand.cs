@@ -110,7 +110,7 @@ namespace Microsoft.PowerShell.Commands
                 case "Milliseconds":
                     sleepTime = Milliseconds;
                     break;
-                
+
                 case "FromTimeSpan":
                     if (Duration.TotalMilliseconds > int.MaxValue)
                     {
