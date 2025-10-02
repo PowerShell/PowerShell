@@ -265,6 +265,9 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="fileName">Name of file to check.</param>
         /// <param name="fileContent">Content of file to check.</param>
+        /// <param name="embeddedSignatureOnly">
+        /// Get the embedded signature in the provided file rather than one inside a .cat file.
+        /// </param>
         /// <returns>Signature object.</returns>
         /// <exception cref="System.ArgumentException">
         /// Thrown if argument fileName is empty.
@@ -275,11 +278,14 @@ namespace System.Management.Automation
         /// <exception cref="System.IO.FileNotFoundException">
         /// Thrown if the file specified by argument fileName is not found.
         /// </exception>
-        internal static Signature GetSignature(string fileName, byte[] fileContent)
+        internal static Signature GetSignature(
+            string fileName,
+            byte[] fileContent,
+            bool embeddedSignatureOnly = false)
         {
             Signature signature = null;
 
-            if (fileContent == null)
+            if (!embeddedSignatureOnly && fileContent == null)
             {
                 // First, try to get the signature from the latest dotNet signing API.
                 signature = GetSignatureFromMSSecurityExtensions(fileName);
