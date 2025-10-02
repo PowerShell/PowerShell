@@ -65,6 +65,9 @@ namespace System.Management.Automation.Configuration
         private string perUserConfigFile;
         private string perUserConfigDirectory;
 
+        // Flag to track if migration has been checked
+        private bool migrationChecked = false;
+
         // Note: JObject and JsonSerializer are thread safe.
         // Root Json objects corresponding to the configuration file for 'AllUsers' and 'CurrentUser' respectively.
         // They are used as a cache to avoid hitting the disk for every read operation.
@@ -411,6 +414,9 @@ namespace System.Management.Automation.Configuration
         /// <param name="defaultValue">The default value to return if the key is not present.</param>
         private T ReadValueFromFile<T>(ConfigScope scope, string key, T defaultValue = default)
         {
+            // Check for PSContentPath migration on first config access
+            CheckForMigrationOnFirstAccess();
+
             string fileName = GetConfigFilePath(scope);
             JObject configData = configRoots[(int)scope];
 
@@ -633,6 +639,68 @@ namespace System.Management.Automation.Configuration
             {
                 // Migration failed, but don't break the system
                 // Log the error if logging is available
+            }
+        }
+
+        /// <summary>
+        /// Checks for migration on first configuration access to avoid circular dependencies.
+        /// </summary>
+        private void CheckForMigrationOnFirstAccess()
+        {
+            if (migrationChecked)
+            {
+                return;
+            }
+
+            migrationChecked = true;
+
+            try
+            {
+                // Only perform migration if PSContentPath experimental feature is enabled
+                // This is safe to call here because ExperimentalFeature will be initialized by now
+                if (!ExperimentalFeature.IsEnabled(ExperimentalFeature.PSContentPath))
+                {
+                    return;
+                }
+
+                CheckAndPerformPSContentPathMigration();
+            }
+            catch
+            {
+                // Migration is best-effort; don't fail config access if it fails
+            }
+        }
+
+        /// <summary>
+        /// Checks if PSContentPath migration is needed and performs it if the experimental feature is enabled.
+        /// </summary>
+        private void CheckAndPerformPSContentPathMigration()
+        {
+            try
+            {
+                string oldConfigFile = Path.Combine(Platform.ConfigDirectory, ConfigFileName);
+                string newConfigFile = Path.Combine(Platform.DefaultPSContentDirectory, ConfigFileName);
+                
+                if (!File.Exists(oldConfigFile))
+                {
+                    return; // Nothing to migrate
+                }
+                
+                // Check if we need to migrate from old location to new location
+                // Only migrate if:
+                // 1. Old config directory is different from new default directory
+                // 2. New config file doesn't already exist (avoid overwriting)
+                // 3. Old config file exists
+                if (!string.Equals(oldConfigFile, newConfigFile, StringComparison.OrdinalIgnoreCase) && 
+                    !File.Exists(newConfigFile))
+                {
+                    MigrateUserConfig(oldConfigFile, newConfigFile);
+                }
+            }
+            catch
+            {
+                // Migration is best-effort; don't fail PowerShell startup if it fails
+                // The user can manually copy the file if needed
             }
         }
     }

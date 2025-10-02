@@ -13,6 +13,7 @@ namespace Microsoft.PowerShell.Commands
     /// Implements Get-PSContentPath cmdlet.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "PSContentPath", HelpUri = "https://go.microsoft.com/fwlink/?linkid=2096787")]
+    [Experimental(ExperimentalFeature.PSContentPath, ExperimentAction.Show)]
     public class GetPSContentPathCommand : PSCmdlet
     {
         /// <summary>
@@ -40,6 +41,7 @@ namespace Microsoft.PowerShell.Commands
     /// Implements Set-PSContentPath cmdlet.
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "PSContentPath", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?linkid=2096787")]
+    [Experimental(ExperimentalFeature.PSContentPath, ExperimentAction.Show)]
     public class SetPSContentPathCommand : PSCmdlet
     {
         /// <summary>
@@ -103,7 +105,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Check if the path is rooted (absolute path)
-                if (!Path.IsPathRooted(expandedPath))
+                if (!System.IO.Path.IsPathRooted(expandedPath))
                 {
                     WriteError(new ErrorRecord(
                         new ArgumentException($"The path '{path}' must be an absolute path."),
@@ -114,7 +116,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Try to get the full path to validate format
-                string fullPath = Path.GetFullPath(expandedPath);
+                string fullPath = System.IO.Path.GetFullPath(expandedPath);
 
                 // Warn if the directory doesn't exist, but don't fail
                 if (!Directory.Exists(fullPath))
