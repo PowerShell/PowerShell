@@ -474,7 +474,7 @@
                 <RegistryValue Type="string" Name="MUIVerb" Value="$(var.PowerShellFileContextSubMenuDialogText)"/>
                 <RegistryValue Type="string" Name="Icon" Value="[VersionFolder]pwsh.exe" KeyPath="yes"/>
                 <RegistryKey Key="Command">
-                  <RegistryValue Type="string" Value="[VersionFolder]pwsh.exe -Command &quot;$host.UI.RawUI.WindowTitle = '$(var.ProductName) $(var.SimpleProductVersion) ($(sys.BUILDARCH))'; &amp; '%1'&quot;"/>
+                  <RegistryValue Type="string" Value="[VersionFolder]pwsh.exe -Command &quot; &amp; '%1'&quot;"/>
                 </RegistryKey>
               </RegistryKey>
             </Component>
