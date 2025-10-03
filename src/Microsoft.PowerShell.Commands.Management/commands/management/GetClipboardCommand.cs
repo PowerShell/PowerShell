@@ -37,7 +37,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// The delimiters to use when splitting the clipboard content.
+        /// Gets or sets the delimiters to use when splitting the clipboard content.
         /// </summary>
         [Parameter]
         [ArgumentCompleter(typeof(DelimiterCompleter))]
