@@ -212,6 +212,7 @@ Describe "ConvertTo-Csv" -Tags "CI" {
                 [ordered]@{ Number = $_; Letter = $Letters[$_] }
             }
             $CsvString = $Items | ConvertTo-Csv
+            $TestHashTable = [ordered]@{ 'first' = 'value1'; 'second' = $null; 'third' = 'value3' }
         }
 
         It 'should treat dictionary entries as properties' {
@@ -234,6 +235,17 @@ Describe "ConvertTo-Csv" -Tags "CI" {
             $NewCsvString = $Items | ConvertTo-Csv
             $NewCsvString[0] | Should -MatchExactly 'Extra'
             $NewCsvString | Select-Object -Skip 1 | Should -MatchExactly 'Surprise!'
+        }
+
+        It 'should convert hashtable with null values without error'{
+            { $TestHashTable | ConvertTo-Csv } | Should -Not -Throw
+        }
+
+        It 'should properly convert hashtable with null and non-null values'{
+            $CsvResult = $TestHashTable | ConvertTo-Csv
+
+            $CsvResult[0] | Should -BeExactly "`"first`",`"second`",`"third`""
+            $CsvResult[1] | Should -BeExactly "`"value1`",$null,`"value3`""
         }
     }
 }

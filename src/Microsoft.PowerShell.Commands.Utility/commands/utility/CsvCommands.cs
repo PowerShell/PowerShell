@@ -1044,7 +1044,15 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (dictionary.Contains(propertyName))
                     {
-                        value = dictionary[propertyName].ToString();
+                        //Handle null reference exception for existing property with null value
+                        if (dictionary[propertyName] == null)
+                        {
+                            value = null;
+                        }
+                        else
+                        {
+                            value = dictionary[propertyName].ToString();
+                        }
                     }
                     else if (mshObject.Properties[propertyName] is PSPropertyInfo property)
                     {
