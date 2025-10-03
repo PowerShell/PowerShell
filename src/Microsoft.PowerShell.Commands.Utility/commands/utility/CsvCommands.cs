@@ -1044,7 +1044,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (dictionary.Contains(propertyName))
                     {
-                        value = dictionary[propertyName].ToString();
+                        value = dictionary[propertyName]?.ToString();
                     }
                     else if (mshObject.Properties[propertyName] is PSPropertyInfo property)
                     {
