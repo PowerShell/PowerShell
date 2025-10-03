@@ -237,10 +237,6 @@ Describe "ConvertTo-Csv" -Tags "CI" {
             $NewCsvString | Select-Object -Skip 1 | Should -MatchExactly 'Surprise!'
         }
 
-        It 'should convert hashtable with null values without error'{
-            { $TestHashTable | ConvertTo-Csv } | Should -Not -Throw
-        }
-
         It 'should properly convert hashtable with null and non-null values'{
             $CsvResult = $TestHashTable | ConvertTo-Csv
 
