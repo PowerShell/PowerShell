@@ -20,16 +20,6 @@ Describe "DSC PowerShell Profile Resource Tests" -Tag "CI" {
         Copy-Item -Path $testProfilePathCurrentUserAllHosts -Destination "$TestDrive/currentuser-allhosts-profile.bak" -Force -ErrorAction SilentlyContinue
         Set-Content -Path $testProfilePathCurrentUserAllHosts -Value $testProfileContent -Force
 
-        $testProfileContent = "# Test profile content allusers currenthost"
-        $testProfilePathAllUsersCurrentHost = $PROFILE.AllUsersCurrentHost
-        Copy-Item -Path $testProfilePathAllUsersCurrentHost -Destination "$TestDrive/allusers-currenthost-profile.bak" -Force -ErrorAction SilentlyContinue
-        Set-Content -Path $testProfilePathAllUsersCurrentHost -Value $testProfileContent -Force
-
-        $testProfileContent = "# Test profile content allusers allhosts"
-        $testProfilePathAllUsersAllHosts = $PROFILE.AllUsersAllHosts
-        Copy-Item -Path $testProfilePathAllUsersAllHosts -Destination "$TestDrive/allusers-allhosts-profile.bak" -Force -ErrorAction SilentlyContinue
-        Set-Content -Path $testProfilePathAllUsersAllHosts -Value $testProfileContent -Force
-
         $originalPath = $env:PATH
         $env:PATH += ";$PSHome"
     }
@@ -41,17 +31,9 @@ Describe "DSC PowerShell Profile Resource Tests" -Tag "CI" {
         $testProfilePathCurrentUserAllHosts = $PROFILE.CurrentUserAllHosts
         Copy-Item -Path "$TestDrive/currentuser-allhosts-profile.bak" -Destination $testProfilePathCurrentUserAllHosts -Force -ErrorAction SilentlyContinue
 
-        $testProfilePathAllUsersCurrentHost = $PROFILE.AllUsersCurrentHost
-        Copy-Item -Path "$TestDrive/allusers-currenthost-profile.bak" -Destination $testProfilePathAllUsersCurrentHost -Force -ErrorAction SilentlyContinue
-
-        $testProfilePathAllUsersAllHosts = $PROFILE.AllUsersAllHosts
-        Copy-Item -Path "$TestDrive/allusers-allhosts-profile.bak" -Destination $testProfilePathAllUsersAllHosts -Force -ErrorAction SilentlyContinue
-
         $env:PATH = $originalPath
         Remove-Item -Path "$TestDrive/currentuser-currenthost-profile.bak" -Force -ErrorAction SilentlyContinue
         Remove-Item -Path "$TestDrive/currentuser-allhosts-profile.bak" -Force -ErrorAction SilentlyContinue
-        Remove-Item -Path "$TestDrive/allusers-currenthost-profile.bak" -Force -ErrorAction SilentlyContinue
-        Remove-Item -Path "$TestDrive/allusers-allhosts-profile.bak" -Force -ErrorAction SilentlyContinue
     }
 
     It 'DSC resource is located at $PSHome' {
@@ -67,21 +49,38 @@ Describe "DSC PowerShell Profile Resource Tests" -Tag "CI" {
     }
 
     It 'DSC resource can set current user current host profile' {
-        $setOutput = (& $dscExe config set --file .\psprofile_set.dsc.yaml -o json) | ConvertFrom-Json
+        $setOutput = (& $dscExe config set --file .\psprofile_currentuser_currenthost.dsc.yaml -o json) | ConvertFrom-Json
         $expectedContent = "Write-Host 'Welcome to your PowerShell profile - CurrentUserCurrentHost!'"
         $setOutput.results.result.afterState.content | Should -BeExactly $expectedContent
     }
 
-    It 'DSC resource can set current user current host profile' {
-        $setOutput = (& $dscExe config get --file .\psprofile_set.dsc.yaml -o json) | ConvertFrom-Json
+    It 'DSC resource can get current user current host profile' {
+        $getOutput = (& $dscExe config get --file .\psprofile_currentuser_currenthost.dsc.yaml -o json) | ConvertFrom-Json
+        $expectedContent = "Write-Host 'Welcome to your PowerShell profile - CurrentUserCurrentHost!'"
+        $getOutput.results.result.actualState.content | Should -BeExactly $expectedContent
+    }
+
+    It 'DSC resource can set current user all hosts profile' {
+        $setOutput = (& $dscExe config set --file .\psprofile_currentuser_allhosts.dsc.yaml -o json) | ConvertFrom-Json
         $expectedContent = "Write-Host 'Welcome to your PowerShell profile - CurrentUserAllHosts!'"
         $setOutput.results.result.afterState.content | Should -BeExactly $expectedContent
     }
 
-    It 'DSC resource can set all users current host profile' {
-        $setOutput = (& $dscExe config set --file .\psprofile_alluserscurrenthost.dsc.yaml -o json) | ConvertFrom-Json
-        $expectedContent = "Write-Host 'Welcome to your PowerShell profile - AllUsersCurrentHost!'"
-        $setOutput.results.result.afterState.content | Should -BeExactly $expectedContent
+    It 'DSC resource can get current user all hosts profile' {
+        $getOutput = (& $dscExe config get --file .\psprofile_currentuser_allhosts.dsc.yaml -o json) | ConvertFrom-Json
+        $expectedContent = "Write-Host 'Welcome to your PowerShell profile - CurrentUserAllHosts!'"
+        $getOutput.results.result.actualState.content | Should -BeExactly $expectedContent
+    }
+
+    It 'DSC resource can export all profiles' {
+        $exportOutput = (& $dscExe config export --file .\psprofile_export.dsc.yaml -o json) | ConvertFrom-Json
+
+        $exportOutput.resources | Should -HaveCount 4
+
+        $exportOutput.resources | ForEach-Object {
+            $_.type | Should -Be 'Microsoft.PowerShell/Profile'
+            $_.name | Should -BeIn @('AllUsersCurrentHost', 'AllUsersAllHosts', 'CurrentUserCurrentHost', 'CurrentUserAllHosts')
+        }
     }
 }
 
@@ -94,11 +93,31 @@ Describe "DSC PowerShell Profile resource elevated tests" -Tag "CI", 'RequireAdm
 
         $dscExe = Get-Command -name dsc -CommandType Application | Select-Object -First 1
 
+        $testProfileContent = "# Test profile content allusers currenthost"
+        $testProfilePathAllUsersCurrentHost = $PROFILE.AllUsersCurrentHost
+        Copy-Item -Path $testProfilePathAllUsersCurrentHost -Destination "$TestDrive/allusers-currenthost-profile.bak" -Force -ErrorAction SilentlyContinue
+        Set-Content -Path $testProfilePathAllUsersCurrentHost -Value $testProfileContent -Force
+
+        $testProfileContent = "# Test profile content allusers allhosts"
+        $testProfilePathAllUsersAllHosts = $PROFILE.AllUsersAllHosts
+        Copy-Item -Path $testProfilePathAllUsersAllHosts -Destination "$TestDrive/allusers-allhosts-profile.bak" -Force -ErrorAction SilentlyContinue
+        Set-Content -Path $testProfilePathAllUsersAllHosts -Value $testProfileContent -Force
+
+
         $originalPath = $env:PATH
         $env:PATH += ";$PSHome"
     }
     AfterAll {
         $env:PATH = $originalPath
+
+        $testProfilePathAllUsersCurrentHost = $PROFILE.AllUsersCurrentHost
+        Copy-Item -Path "$TestDrive/allusers-currenthost-profile.bak" -Destination $testProfilePathAllUsersCurrentHost -Force -ErrorAction SilentlyContinue
+
+        $testProfilePathAllUsersAllHosts = $PROFILE.AllUsersAllHosts
+        Copy-Item -Path "$TestDrive/allusers-allhosts-profile.bak" -Destination $testProfilePathAllUsersAllHosts -Force -ErrorAction SilentlyContinue
+
+        Remove-Item -Path "$TestDrive/currentuser-allhosts-profile.bak" -Force -ErrorAction SilentlyContinue
+        Remove-Item -Path "$TestDrive/allusers-allhosts-profile.bak" -Force -ErrorAction SilentlyContinue
     }
 
     It 'DSC resource can set all users all hosts profile' {
@@ -107,9 +126,21 @@ Describe "DSC PowerShell Profile resource elevated tests" -Tag "CI", 'RequireAdm
         $setOutput.results.result.afterState.content | Should -BeExactly $expectedContent
     }
 
+    It 'DSC resource can get all users all hosts profile' {
+        $getOutput = (& $dscExe config get --file .\psprofile_alluser_allhost.dsc.yaml -o json) | ConvertFrom-Json
+        $expectedContent = "Write-Host 'Welcome to your PowerShell profile - AllUsersAllHosts!'"
+        $getOutput.results.result.actualState.content | Should -BeExactly $expectedContent
+    }
+
     It 'DSC resource can set all users current hosts profile' {
-        $setOutput = (& $dscExe config set --file .\psprofile_alluserscurrenthost.dsc.yaml -o json) | ConvertFrom-Json
+        $setOutput = (& $dscExe config set --file .\psprofile_allusers_currenthost.dsc.yaml -o json) | ConvertFrom-Json
         $expectedContent = "Write-Host 'Welcome to your PowerShell profile - AllUsersCurrentHost!'"
         $setOutput.results.result.afterState.content | Should -BeExactly $expectedContent
+    }
+
+    It 'DSC resource can get all users current hosts profile' {
+        $getOutput = (& $dscExe config get --file .\psprofile_allusers_currenthost.dsc.yaml -o json) | ConvertFrom-Json
+        $expectedContent = "Write-Host 'Welcome to your PowerShell profile - AllUsersCurrentHost!'"
+        $getOutput.results.result.actualState.content | Should -BeExactly $expectedContent
     }
 }
