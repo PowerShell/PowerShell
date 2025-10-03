@@ -340,7 +340,7 @@ namespace System.Management.Automation
 
         internal static Hashtable GetModuleManifestProperties(string psDataFilePath, string[] keys)
         {
-            string dataFileContents = ScriptAnalysis.ReadScript(psDataFilePath);
+            string dataFileContents = File.ReadAllText(psDataFilePath, Encoding.Default);
             ParseError[] parseErrors;
             var ast = (new Parser()).Parse(psDataFilePath, dataFileContents, null, out parseErrors, ParseMode.ModuleAnalysis);
             if (parseErrors.Length > 0)
