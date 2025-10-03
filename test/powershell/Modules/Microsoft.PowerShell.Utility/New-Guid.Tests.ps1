@@ -17,6 +17,11 @@ Describe "New-Guid" -Tags "CI" {
         $guid.ToString() | Should -BeExactly "00000000-0000-0000-0000-000000000000"
     }
 
+    It "Should respect explicit false value for -Empty" {
+        $guid = New-Guid -Empty:$false
+        $guid.ToString() | Should -Not -BeExactly "00000000-0000-0000-0000-000000000000"
+    }
+
     It "Should convert a string to a guid" {
         $guid1 = New-Guid
         $guid2 = New-Guid -InputObject $guid1.ToString()
