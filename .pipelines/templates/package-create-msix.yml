@@ -8,6 +8,10 @@ jobs:
     - group: msixTools
     - group: 'Azure Blob variable group'
     - group: 'Store Publish Variables'
+    - name: ob_sdl_credscan_suppressionsFile
+      value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+    - name: ob_sdl_tsa_configFile
+      value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
     - name: ob_outputDirectory
       value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
 

@@ -1,0 +1,6 @@
+# CredScan suppression file
+# Test certificate with private key
+\\test\\tools\\Modules\\WebListener\\ClientCert.pfx
+\\test\\tools\\Modules\\WebListener\\ServerCert.pfx
+# Test certificate with private key and inline suppression isn't working  
+\\test\\powershell\\Modules\\Microsoft.PowerShell.Security\\certificateCommon.psm1
