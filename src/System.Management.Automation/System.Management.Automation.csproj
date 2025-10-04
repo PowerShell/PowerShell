@@ -28,26 +28,26 @@
 
   <ItemGroup>
     <!-- the following package(s) are from https://github.com/JamesNK/Newtonsoft.Json -->
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <!-- the Application Insights package -->
     <PackageReference Include="Microsoft.ApplicationInsights" Version="2.23.0" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
-    <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="10.0.0-preview.6.25358.103" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.0-preview.6.25358.103" />
+    <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="10.0.0-rc.1.25451.107" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.0-rc.1.25451.107" />
     <!-- Removing due to NU1510 -->
     <!-- PackageReference Include="System.Diagnostics.DiagnosticSource" Version="9.0.2" /-->
-    <PackageReference Include="System.DirectoryServices" Version="10.0.0-preview.6.25358.103" />
+    <PackageReference Include="System.DirectoryServices" Version="10.0.0-rc.1.25451.107" />
     <!--PackageReference Include="System.IO.FileSystem.AccessControl" Version="6.0.0-preview.5.21301.5" /-->
-    <PackageReference Include="System.Management" Version="10.0.0-preview.6.25358.103" />
+    <PackageReference Include="System.Management" Version="10.0.0-rc.1.25451.107" />
     <!-- Removing System.Security.AccessControl as per NU1510 -->
     <!-- PackageReference Include="System.Security.AccessControl" Version="6.0.1" /-->
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.0-preview.6.25358.103" />
-    <PackageReference Include="System.Security.Permissions" Version="10.0.0-preview.6.25358.103" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.0-rc.1.25451.107" />
+    <PackageReference Include="System.Security.Permissions" Version="10.0.0-rc.1.25451.107" />
     <!-- Removing due to NU1510 -->
     <!-- PackageReference Include="System.Text.Encoding.CodePages" Version="9.0.2" /-->
     <!-- the following package(s) are from the powershell org -->
     <PackageReference Include="Microsoft.Management.Infrastructure" Version="3.0.0" />
-    <PackageReference Include="Microsoft.PowerShell.Native" Version="7.4.0" />
+    <PackageReference Include="Microsoft.PowerShell.Native" Version="700.0.0-preview.1" />
     <!-- Signing APIs -->
   <PackageReference Include="Microsoft.Security.Extensions" Version="1.4.0" />
   </ItemGroup>

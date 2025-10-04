@@ -13,7 +13,7 @@ using Microsoft.PowerShell.Commands.Internal.Format;
 
 namespace Microsoft.PowerShell.Commands
 {
-    internal class OutWindowProxy : IDisposable
+    internal sealed class OutWindowProxy : IDisposable
     {
         private const string OutGridViewWindowClassName = "Microsoft.Management.UI.Internal.OutGridViewWindow";
         private const string OriginalTypePropertyName = "OriginalType";

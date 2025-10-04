@@ -9,7 +9,7 @@ using Microsoft.PowerShell.Commands.Internal.Format;
 
 namespace Microsoft.PowerShell.Commands
 {
-    internal class OriginalColumnInfo : ColumnInfo
+    internal sealed class OriginalColumnInfo : ColumnInfo
     {
         private readonly string _liveObjectPropertyName;
         private readonly OutGridViewCommand _parentCmdlet;

@@ -46,17 +46,12 @@ jobs:
         Get-ChildItem "$(Pipeline.Workspace)/PSPackagesOfficial/drop_nupkg_build_nupkg" -Recurse
       displayName: 'Capture Downloaded Artifacts'
 
-    - task: UseDotNet@2
-      displayName: 'Use .NET Core sdk'
-      inputs:
-        useGlobalJson: true
-        packageType: 'sdk'
-        workingDirectory: $(REPOROOT)
+    - template: /.pipelines/templates/install-dotnet.yml@self
 
     - pwsh: |
         $repoRoot = "$(Build.SourcesDirectory)"
 
-        $env:DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
+        $env:DOTNET_NOLOGO=1
 
         $localLocation = "$(Pipeline.Workspace)/PSPackagesOfficial/drop_nupkg_build_nupkg"
         $xmlElement = @"

@@ -10,7 +10,7 @@ namespace System.Management.Automation.Tracing
     /// <summary>
     /// Tracer.
     /// </summary>
-    public sealed partial class Tracer : System.Management.Automation.Tracing.EtwActivity
+    public sealed partial class Tracer : EtwActivity
     {
         /// <summary>
         /// DebugMessage.

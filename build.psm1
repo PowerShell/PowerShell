@@ -193,7 +193,7 @@ function Get-EnvironmentInformation
         $environment += @{'IsRedHatFamily' = $environment.IsCentOS -or $environment.IsFedora -or $environment.IsRedHat}
         $environment += @{'IsSUSEFamily' = $environment.IsSLES -or $environment.IsOpenSUSE}
         $environment += @{'IsAlpine' = $LinuxInfo.ID -match 'alpine'}
-        $environment += @{'IsMariner' = $LinuxInfo.ID -match 'mariner'}
+        $environment += @{'IsMariner' = $LinuxInfo.ID -match 'mariner' -or $LinuxInfo.ID -match 'azurelinux'}
 
         # Workaround for temporary LD_LIBRARY_PATH hack for Fedora 24
         # https://github.com/PowerShell/PowerShell/issues/2511
@@ -353,8 +353,8 @@ function Start-PSBuild {
         $PSModuleRestore = $true
     }
 
-    if ($Runtime -eq "linux-arm" -and $environment.IsLinux -and -not $environment.IsUbuntu) {
-        throw "Cross compiling for linux-arm is only supported on Ubuntu environment"
+    if ($Runtime -eq "linux-arm" -and $environment.IsLinux -and -not $environment.IsUbuntu -and -not $environment.IsMariner) {
+        throw "Cross compiling for linux-arm is only supported on AzureLinux/Ubuntu environment"
     }
 
     if ("win-arm","win-arm64" -contains $Runtime -and -not $environment.IsWindows) {
@@ -492,13 +492,24 @@ Fix steps:
         $Arguments += "/property:IsWindows=false"
     }
 
-    # Framework Dependent builds do not support ReadyToRun as it needs a specific runtime to optimize for.
-    # The property is set in Powershell.Common.props file.
-    # We override the property through the build command line.
-    if(($Options.Runtime -like 'fxdependent*' -or $ForMinimalSize) -and $Options.Runtime -notmatch $optimizedFddRegex) {
-        $Arguments += "/property:PublishReadyToRun=false"
+    # We pass in the AppDeployment property to indicate which type of deployment we are doing.
+    # This allows the PowerShell.Common.props to set the correct properties for the build.
+    $AppDeployment = if(($Options.Runtime -like 'fxdependent*' -or $ForMinimalSize) -and $Options.Runtime -notmatch $optimizedFddRegex) {
+        # Global and zip files
+        "FxDependent"
+    }
+    elseif($Options.Runtime -like 'fxdependent*' -and $Options.Runtime -match $optimizedFddRegex) {
+        # These are Optimized and must come from the correct version of the runtime.
+        # Global
+        "FxDependentDeployment"
+    }
+    else {
+        # The majority of our packages
+        # AppLocal
+        "SelfContained"
     }
 
+    $Arguments += "/property:AppDeployment=$AppDeployment"
     $Arguments += "--configuration", $Options.Configuration
     $Arguments += "--framework", $Options.Framework
 
@@ -1973,7 +1984,9 @@ function Test-PSPesterResults
 
 function Start-PSxUnit {
     [CmdletBinding()]param(
-        [string] $xUnitTestResultsFile = "xUnitResults.xml"
+        [string] $xUnitTestResultsFile = "xUnitResults.xml",
+        [switch] $DebugLogging,
+        [string] $Filter
     )
 
     # Add .NET CLI tools to PATH
@@ -2031,9 +2044,28 @@ function Start-PSxUnit {
 
         # We run the xUnit tests sequentially to avoid race conditions caused by manipulating the config.json file.
         # xUnit tests run in parallel by default. To make them run sequentially, we need to define the 'xunit.runner.json' file.
-        dotnet test --configuration $Options.configuration --test-adapter-path:. "--logger:xunit;LogFilePath=$xUnitTestResultsFile"
+        $extraParams = @()
+        if($Filter) {
+            $extraParams += @(
+                '--filter'
+                $Filter
+            )
+        }
 
-        Publish-TestResults -Path $xUnitTestResultsFile -Type 'XUnit' -Title 'Xunit Sequential'
+        if($DebugLogging) {
+            $extraParams += @(
+                "--logger:console;verbosity=detailed"
+            )
+        } else {
+            $extraParams += @(
+                "--logger:xunit;LogFilePath=$xUnitTestResultsFile"
+            )
+        }
+        dotnet test @extraParams --configuration $Options.configuration --test-adapter-path:.
+
+        if(!$DebugLogging){
+            Publish-TestResults -Path $xUnitTestResultsFile -Type 'XUnit' -Title 'Xunit Sequential'
+        }
     }
     finally {
         $env:DOTNET_ROOT = $originalDOTNET_ROOT
@@ -2060,8 +2092,8 @@ function Install-Dotnet {
     # Note that when it is null, Invoke-Expression (but not &) must be used to interpolate properly
     $sudo = if (!$NoSudo) { "sudo" }
 
-    # $installObtainUrl = "https://dot.net/v1"
-    $installObtainUrl = "https://dotnet.microsoft.com/download/dotnet/scripts/v1"
+    $installObtainUrl = "https://builds.dotnet.microsoft.com/dotnet/scripts/v1"
+    #$installObtainUrl = "https://dotnet.microsoft.com/download/dotnet/scripts/v1"
     $uninstallObtainUrl = "https://raw.githubusercontent.com/dotnet/cli/master/scripts/obtain"
 
     # Install for Linux and OS X
@@ -2152,7 +2184,6 @@ function Install-Dotnet {
             $installArgs += @{ SkipNonVersionedFiles = $true }
 
             $installArgs | Out-String | Write-Verbose -Verbose
-
             & ./$installScript @installArgs
         }
         else {
@@ -2196,6 +2227,8 @@ function Get-RedHatPackageManager {
         "yum install -y -q"
     } elseif ($environment.IsFedora -or (Get-Command -Name dnf -CommandType Application -ErrorAction SilentlyContinue)) {
         "dnf install -y -q"
+    } elseif ($environment.IsMariner -or (Get-Command -Name Test-DscConfiguration -CommandType Application -ErrorAction SilentlyContinue)) {
+        "tdnf install -y -q"
     } else {
         throw "Error determining package manager for this distribution."
     }
@@ -2267,8 +2300,8 @@ function Start-PSBootstrap {
             # Note that when it is null, Invoke-Expression (but not &) must be used to interpolate properly
             $sudo = if (!$NoSudo) { "sudo" }
 
-            if ($BuildLinuxArm -and $environment.IsLinux -and -not $environment.IsUbuntu) {
-                Write-Error "Cross compiling for linux-arm is only supported on Ubuntu environment"
+            if ($BuildLinuxArm -and $environment.IsLinux -and -not $environment.IsUbuntu -and -not $environment.IsMariner) {
+                Write-Error "Cross compiling for linux-arm is only supported on AzureLinux/Ubuntu environment"
                 return
             }
 
