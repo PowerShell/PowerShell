@@ -38,12 +38,12 @@ namespace Microsoft.PowerShell.Commands
 
                 if (Since)
                 {
-                    // Caller requests absolute point in time of last boot
+                    // Output the time of the last system boot.
                     WriteObject(DateTime.Now.Subtract(uptime));
                 }
                 else
                 {
-                    // Caller requests span of time since last boot
+                    // Output the time elapsed since the last system boot.
                     WriteObject(uptime);
                 }
             }
