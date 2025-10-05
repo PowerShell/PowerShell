@@ -36,7 +36,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 TimeSpan uptime = TimeSpan.FromSeconds(Stopwatch.GetTimestamp() / Stopwatch.Frequency);
 
-                if (Since.ToBool())
+                if (Since)
                 {
                     // Caller requests absolute point in time of last boot
                     WriteObject(DateTime.Now.Subtract(uptime));
