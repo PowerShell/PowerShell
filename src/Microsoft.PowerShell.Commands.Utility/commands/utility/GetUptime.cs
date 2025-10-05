@@ -28,19 +28,39 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            TimeSpan uptime = TimeSpan.FromMilliseconds(Environment.TickCount64);
-
             switch (ParameterSetName)
             {
                 case TimespanParameterSet:
-                    // return TimeSpan of time since the system started up
-                    WriteObject(uptime);
+                    ProcessTimespanParameterSet();
                     break;
                 case SinceParameterSet:
-                    // return Datetime when the system started up
-                    WriteObject(DateTime.Now.Subtract(uptime));
+                    ProcessSinceParameterSet();
                     break;
             }
+        }
+
+        /// <summary>
+        /// Process the Timespan parameter set.
+        /// </summary>
+        /// <remarks>
+        /// Outputs the time of the last system boot as a <see cref="TimeSpan"/>.
+        /// </remarks>
+        private void ProcessTimespanParameterSet()
+        {
+            TimeSpan result = TimeSpan.FromMilliseconds(Environment.TickCount64);
+            WriteObject(result);
+        }
+
+        /// <summary>
+        /// Process the Since parameter set.
+        /// </summary>
+        /// <remarks>
+        /// Outputs the time elapsed since the last system boot as a <see cref="DateTime"/>.
+        /// </remarks>
+        private void ProcessSinceParameterSet()
+        {
+            DateTime result = DateTime.Now.Subtract(TimeSpan.FromMilliseconds(Environment.TickCount64));
+            WriteObject(result);
         }
 
         /// <summary>
