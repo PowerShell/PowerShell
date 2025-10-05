@@ -28,31 +28,18 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            // Get-Uptime throw if IsHighResolution = false
-            // because stopwatch.GetTimestamp() return DateTime.UtcNow.Ticks
-            // instead of ticks from system startup.
-            // InternalTestHooks.StopwatchIsNotHighResolution is used as test hook.
-            if (Stopwatch.IsHighResolution && !InternalTestHooks.StopwatchIsNotHighResolution)
-            {
-                TimeSpan uptime = TimeSpan.FromSeconds(Stopwatch.GetTimestamp() / Stopwatch.Frequency);
+            TimeSpan uptime = TimeSpan.FromMilliseconds(Environment.TickCount64);
 
-                switch (ParameterSetName)
-                {
-                    case TimespanParameterSet:
-                        // return TimeSpan of time since the system started up
-                        WriteObject(uptime);
-                        break;
-                    case SinceParameterSet:
-                        // return Datetime when the system started up
-                        WriteObject(DateTime.Now.Subtract(uptime));
-                        break;
-                }
-            }
-            else
+            switch (ParameterSetName)
             {
-                WriteDebug("System.Diagnostics.Stopwatch.IsHighResolution returns 'False'.");
-                Exception exc = new NotSupportedException(GetUptimeStrings.GetUptimePlatformIsNotSupported);
-                ThrowTerminatingError(new ErrorRecord(exc, "GetUptimePlatformIsNotSupported", ErrorCategory.NotImplemented, null));
+                case TimespanParameterSet:
+                    // return TimeSpan of time since the system started up
+                    WriteObject(uptime);
+                    break;
+                case SinceParameterSet:
+                    // return Datetime when the system started up
+                    WriteObject(DateTime.Now.Subtract(uptime));
+                    break;
             }
         }
 
