@@ -581,7 +581,7 @@ else
                     args: new object[] {
                                             file,
                                             shellName,
-                                            ShowSecurityDescriptorUI.ToBool(),
+                                            ShowSecurityDescriptorUI,
                                             force,
                                             whatIf,
                                             confirm,
@@ -3482,7 +3482,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                                                force,
                                                sddl,
                                                isSddlSpecified,
-                                               ShowSecurityDescriptorUI.ToBool(),
+                                               ShowSecurityDescriptorUI,
                                                WSManNativeApi.ResourceURIPrefix + shellName,
                                                shellNotFoundErrorMsg,
                                                shellNotPowerShellMsg,
@@ -3639,7 +3639,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
 
             if (isUseSharedProcessSpecified)
             {
-                optionsTable[UseSharedProcessToken] = UseSharedProcess.ToBool().ToString();
+                optionsTable[UseSharedProcessToken] = UseSharedProcess.ToString();
             }
 
             setOptionsSb.InvokeUsingCmdlet(
