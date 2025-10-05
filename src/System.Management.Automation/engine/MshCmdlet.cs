@@ -74,14 +74,15 @@ namespace System.Management.Automation
     /// </summary>
     public readonly struct SwitchParameter
     {
-        private readonly bool _isPresent;
+        private readonly bool _value;
+
         /// <summary>
         /// Returns true if the parameter was specified on the command line, false otherwise.
         /// </summary>
         /// <value>True if the parameter was specified, false otherwise</value>
         public bool IsPresent
         {
-            get { return _isPresent; }
+            get { return _value; }
         }
         /// <summary>
         /// Implicit cast operator for casting SwitchParameter to bool.
@@ -90,7 +91,7 @@ namespace System.Management.Automation
         /// <returns>The corresponding boolean value.</returns>
         public static implicit operator bool(SwitchParameter switchParameter)
         {
-            return switchParameter._isPresent;
+            return switchParameter._value;
         }
 
         /// <summary>
@@ -109,7 +110,7 @@ namespace System.Management.Automation
         /// <returns>The boolean equivalent of the SwitchParameter.</returns>
         public bool ToBool()
         {
-            return _isPresent;
+            return _value;
         }
 
         /// <summary>
@@ -120,7 +121,7 @@ namespace System.Management.Automation
         /// </param>
         public SwitchParameter(bool isPresent)
         {
-            _isPresent = isPresent;
+            _value = isPresent;
         }
 
         /// <summary>
@@ -141,11 +142,11 @@ namespace System.Management.Automation
         {
             if (obj is bool)
             {
-                return _isPresent == (bool)obj;
+                return _value == (bool)obj;
             }
             else if (obj is SwitchParameter)
             {
-                return _isPresent == (SwitchParameter)obj;
+                return _value == (SwitchParameter)obj;
             }
             else
             {
@@ -158,7 +159,7 @@ namespace System.Management.Automation
         /// <returns>The hash code for this cobject.</returns>
         public override int GetHashCode()
         {
-            return _isPresent.GetHashCode();
+            return _value.GetHashCode();
         }
 
         /// <summary>
@@ -228,7 +229,7 @@ namespace System.Management.Automation
         /// <returns>The string for this object.</returns>
         public override string ToString()
         {
-            return _isPresent.ToString();
+            return _value.ToString();
         }
     }
 
