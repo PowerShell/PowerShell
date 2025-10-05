@@ -453,7 +453,7 @@ namespace Microsoft.PowerShell.Commands
             if (ParameterSetName == GetPSSessionCommand.ComputerNameParameterSet ||
                 ParameterSetName == GetPSSessionCommand.ComputerInstanceIdParameterSet)
             {
-                string scheme = UseSSL.IsPresent ? WSManConnectionInfo.HttpsScheme : WSManConnectionInfo.HttpScheme;
+                string scheme = UseSSL ? WSManConnectionInfo.HttpsScheme : WSManConnectionInfo.HttpScheme;
 
                 foreach (string computerName in ComputerName)
                 {

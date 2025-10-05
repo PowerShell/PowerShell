@@ -107,7 +107,7 @@ namespace Microsoft.PowerShell.Commands
 
             HostInformationMessage informationMessage = new();
             informationMessage.Message = result;
-            informationMessage.NoNewLine = NoNewline.IsPresent;
+            informationMessage.NoNewLine = NoNewline;
 
             try
             {

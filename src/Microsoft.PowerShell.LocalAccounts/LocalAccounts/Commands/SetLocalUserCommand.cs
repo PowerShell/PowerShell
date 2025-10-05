@@ -213,7 +213,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            if (this.HasParameter("AccountExpires") && AccountNeverExpires.IsPresent)
+            if (this.HasParameter("AccountExpires") && AccountNeverExpires)
             {
                 InvalidParametersException ex = new InvalidParametersException("AccountExpires", "AccountNeverExpires");
                 ThrowTerminatingError(ex.MakeErrorRecord());
@@ -287,7 +287,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                if (AccountNeverExpires.IsPresent)
+                if (AccountNeverExpires)
                     delta.AccountExpires = null;
 
                 sam.UpdateLocalUser(user, delta, Password, passwordNeverExpires);

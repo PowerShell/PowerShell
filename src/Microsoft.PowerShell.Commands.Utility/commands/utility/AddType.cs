@@ -1013,7 +1013,7 @@ namespace Microsoft.PowerShell.Commands
                 compilationOptions = GetDefaultCompilationOptions();
             }
 
-            if (!IgnoreWarnings.IsPresent)
+            if (!IgnoreWarnings)
             {
                 compilationOptions = compilationOptions.WithGeneralDiagnosticOption(defaultDiagnosticOption);
             }
@@ -1050,7 +1050,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
             }
 
-            if (!string.IsNullOrEmpty(_outputAssembly) && !PassThru.IsPresent)
+            if (!string.IsNullOrEmpty(_outputAssembly) && !PassThru)
             {
                 CompileToAssembly(syntaxTrees, compilationOptions, emitOptions);
             }

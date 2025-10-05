@@ -84,7 +84,7 @@ namespace Microsoft.PowerShell.Commands
                 if (string.Equals(
                     inputString,
                     _lastObjectAsString,
-                    CaseInsensitive.IsPresent ? StringComparison.CurrentCultureIgnoreCase : StringComparison.CurrentCulture))
+                    CaseInsensitive ? StringComparison.CurrentCultureIgnoreCase : StringComparison.CurrentCulture))
                 {
                     isUnique = false;
                 }
@@ -98,7 +98,7 @@ namespace Microsoft.PowerShell.Commands
                 _comparer ??= new ObjectCommandComparer(
                     ascending: true,
                     CultureInfo.CurrentCulture,
-                    caseSensitive: !CaseInsensitive.IsPresent);
+                    caseSensitive: !CaseInsensitive);
 
                 isUnique = (_comparer.Compare(InputObject, _lastObject) != 0);
             }

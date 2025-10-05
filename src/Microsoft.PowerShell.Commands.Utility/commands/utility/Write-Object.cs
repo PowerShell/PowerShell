@@ -37,7 +37,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            WriteObject(InputObject, !NoEnumerate.IsPresent);
+            WriteObject(InputObject, !NoEnumerate);
         }
     }
     #endregion

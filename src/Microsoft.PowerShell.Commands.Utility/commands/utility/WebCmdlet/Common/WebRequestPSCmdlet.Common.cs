@@ -513,7 +513,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Determines whether writing to a file should Resume and append rather than overwrite.
         /// </summary>
-        internal bool ShouldResume => Resume.IsPresent && _resumeSuccess;
+        internal bool ShouldResume => Resume && _resumeSuccess;
 
         internal bool ShouldSaveToOutFile => !string.IsNullOrEmpty(OutFile);
 
@@ -546,7 +546,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // If the request contains an authorization header and PreserveAuthorizationOnRedirect is not set,
                 // it needs to be stripped on the first redirect.
-                bool keepAuthorizationOnRedirect = PreserveAuthorizationOnRedirect.IsPresent
+                bool keepAuthorizationOnRedirect = PreserveAuthorizationOnRedirect
                                                    && WebSession.Headers.ContainsKey(HttpKnownHeaderNames.Authorization);
 
                 bool handleRedirect = keepAuthorizationOnRedirect || AllowInsecureRedirect || PreserveHttpMethodOnRedirect;
@@ -580,7 +580,7 @@ namespace Microsoft.PowerShell.Commands
 
                             // Check if the Resume range was not satisfiable because the file already completed downloading.
                             // This happens when the local file is the same size as the remote file.
-                            if (Resume.IsPresent
+                            if (Resume
                                 && response.StatusCode == HttpStatusCode.RequestedRangeNotSatisfiable
                                 && response.Content.Headers.ContentRange.HasLength
                                 && response.Content.Headers.ContentRange.Length == _resumeFileSize)
@@ -885,14 +885,14 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Output ??
-            if (PassThru.IsPresent && OutFile is null)
+            if (PassThru && OutFile is null)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.OutFileMissing, "WebCmdletOutFileMissingException", nameof(PassThru));
                 ThrowTerminatingError(error);
             }
 
             // Resume requires OutFile.
-            if (Resume.IsPresent && OutFile is null)
+            if (Resume && OutFile is null)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.OutFileMissing, "WebCmdletOutFileMissingException", nameof(Resume));
                 ThrowTerminatingError(error);
@@ -901,7 +901,7 @@ namespace Microsoft.PowerShell.Commands
             _qualifiedOutFile = ShouldSaveToOutFile ? QualifiedOutFile : null;
 
             // OutFile must not be a directory to use Resume.
-            if (Resume.IsPresent && Directory.Exists(_qualifiedOutFile))
+            if (Resume && Directory.Exists(_qualifiedOutFile))
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.ResumeNotFilePath, "WebCmdletResumeNotFilePathException", _qualifiedOutFile);
                 ThrowTerminatingError(error);
@@ -972,7 +972,7 @@ namespace Microsoft.PowerShell.Commands
             // Proxy and NoProxy parameters are mutually exclusive.
             // If NoProxy is provided, WebSession will turn off the proxy
             // and if Proxy is provided NoProxy will be turned off.
-            if (NoProxy.IsPresent)
+            if (NoProxy)
             {
                 WebSession.NoProxy = true;
             }
@@ -1013,7 +1013,7 @@ namespace Microsoft.PowerShell.Commands
 
             WebSession.UnixSocket = UnixSocket;
 
-            WebSession.SkipCertificateCheck = SkipCertificateCheck.IsPresent;
+            WebSession.SkipCertificateCheck = SkipCertificateCheck;
 
             // Store the other supplied headers
             if (Headers is not null)
@@ -1134,7 +1134,7 @@ namespace Microsoft.PowerShell.Commands
 
             // If the file to resume downloading exists, create the Range request header using the file size.
             // If not, create a Range to request the entire file.
-            if (Resume.IsPresent)
+            if (Resume)
             {
                 FileInfo fileInfo = new(QualifiedOutFile);
 
@@ -1354,7 +1354,7 @@ namespace Microsoft.PowerShell.Commands
                 // Request again without the Range header because the server indicated the range was not satisfiable.
                 // This happens when the local file is larger than the remote file.
                 // If the size of the remote file is the same as the local file, there is nothing to resume.
-                if (Resume.IsPresent
+                if (Resume
                     && response.StatusCode == HttpStatusCode.RequestedRangeNotSatisfiable
                     && (response.Content.Headers.ContentRange.HasLength
                     && response.Content.Headers.ContentRange.Length != _resumeFileSize))

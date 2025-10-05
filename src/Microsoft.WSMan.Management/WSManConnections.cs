@@ -288,7 +288,7 @@ namespace Microsoft.WSMan.Management
                 helper.AssertError(helper.GetResourceMsgFromResourcetext("ConnectFailure"), false, computername);
             }
 
-            helper.CreateWsManConnection(ParameterSetName, connectionuri, port, computername, applicationname, usessl.IsPresent, Authentication, sessionoption, Credential, CertificateThumbprint);
+            helper.CreateWsManConnection(ParameterSetName, connectionuri, port, computername, applicationname, usessl, Authentication, sessionoption, Credential, CertificateThumbprint);
         }
     }
     #endregion

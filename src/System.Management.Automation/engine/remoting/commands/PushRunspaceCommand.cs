@@ -687,7 +687,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 WSManConnectionInfo connectionInfo = null;
                 connectionInfo = new WSManConnectionInfo();
-                string scheme = UseSSL.IsPresent ? WSManConnectionInfo.HttpsScheme : WSManConnectionInfo.HttpScheme;
+                string scheme = UseSSL ? WSManConnectionInfo.HttpsScheme : WSManConnectionInfo.HttpScheme;
                 connectionInfo.ComputerName = resolvedComputerName;
                 connectionInfo.Port = Port;
                 connectionInfo.AppName = ApplicationName;
@@ -1216,7 +1216,7 @@ namespace Microsoft.PowerShell.Commands
                 // Hyper-V container uses Hype-V socket as transport.
                 // Windows Server container uses named pipe as transport.
                 //
-                connectionInfo = ContainerConnectionInfo.CreateContainerConnectionInfo(ContainerId, RunAsAdministrator.IsPresent, this.ConfigurationName);
+                connectionInfo = ContainerConnectionInfo.CreateContainerConnectionInfo(ContainerId, RunAsAdministrator, this.ConfigurationName);
 
                 connectionInfo.CreateContainerProcess();
                 remoteRunspace = CreateTemporaryRemoteRunspaceForPowerShellDirect(this.Host, connectionInfo);

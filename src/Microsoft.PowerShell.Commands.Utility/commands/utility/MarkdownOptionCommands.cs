@@ -172,7 +172,7 @@ namespace Microsoft.PowerShell.Commands
 
             var setOption = PSMarkdownOptionInfoCache.Set(this.CommandInfo, mdOptionInfo);
 
-            if (PassThru.IsPresent)
+            if (PassThru)
             {
                 WriteObject(setOption);
             }

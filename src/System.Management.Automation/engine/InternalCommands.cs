@@ -2710,7 +2710,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            if (_off.IsPresent)
+            if (_off)
             {
                 _version = new Version(0, 0);
             }

@@ -63,7 +63,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                _force = value.IsPresent;
+                _force = value;
             }
         }
 
@@ -131,7 +131,7 @@ namespace Microsoft.PowerShell.Commands
                 ThrowTerminatingError(error);
             }
 
-            DirectoryInfo directory = PathUtils.CreateModuleDirectory(this, this.OutputModule, this.Force.IsPresent);
+            DirectoryInfo directory = PathUtils.CreateModuleDirectory(this, this.OutputModule, this.Force);
 
             // Creating a temporary directory where files will be created.
             // Then, copy the files from this location to the location specified in OutputModule
@@ -886,7 +886,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentNullException(nameof(commandName));
             }
 
-            if (this.AllowClobber.IsPresent)
+            if (this.AllowClobber)
             {
                 return true;
             }

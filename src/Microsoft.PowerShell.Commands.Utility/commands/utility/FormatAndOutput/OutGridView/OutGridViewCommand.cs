@@ -99,7 +99,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get { return OutputMode == OutputModeOption.Multiple ? new SwitchParameter(true) : new SwitchParameter(false); }
 
-            set { this.OutputMode = value.IsPresent ? OutputModeOption.Multiple : OutputModeOption.None; }
+            set { this.OutputMode = value ? OutputModeOption.Multiple : OutputModeOption.None; }
         }
 
         #endregion Input Parameters

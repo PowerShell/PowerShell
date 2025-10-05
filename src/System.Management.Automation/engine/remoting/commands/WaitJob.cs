@@ -165,7 +165,7 @@ namespace Microsoft.PowerShell.Commands
 
                 Dbg.Assert(_blockedJobs.All(j => !_finishedJobs.Contains(j)), "Job cannot be in *both* _blockedJobs and _finishedJobs");
 
-                if (this.Any.IsPresent)
+                if (this.Any)
                 {
                     if (_finishedJobs.Count > 0)
                     {

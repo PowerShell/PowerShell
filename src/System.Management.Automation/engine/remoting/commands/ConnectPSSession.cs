@@ -930,7 +930,7 @@ namespace Microsoft.PowerShell.Commands
             if (ParameterSetName == ConnectPSSessionCommand.ComputerNameParameterSet ||
                 ParameterSetName == ConnectPSSessionCommand.ComputerNameGuidParameterSet)
             {
-                string scheme = UseSSL.IsPresent ? WSManConnectionInfo.HttpsScheme : WSManConnectionInfo.HttpScheme;
+                string scheme = UseSSL ? WSManConnectionInfo.HttpsScheme : WSManConnectionInfo.HttpScheme;
 
                 foreach (string computerName in ComputerName)
                 {

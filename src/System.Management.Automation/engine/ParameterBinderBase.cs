@@ -1094,7 +1094,7 @@ namespace System.Management.Automation
 
                                 if (currentValue is SwitchParameter)
                                 {
-                                    currentValue = ((SwitchParameter)currentValue).IsPresent;
+                                    currentValue = (SwitchParameter)currentValue;
                                 }
 
                                 boType = currentValue.GetType();

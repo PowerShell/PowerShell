@@ -1816,7 +1816,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
             // Make sure that only one of (Global | Scope) is specified
-            if (Global.IsPresent && _isScopeSpecified)
+            if (Global && _isScopeSpecified)
             {
                 InvalidOperationException ioe = new InvalidOperationException(Modules.GlobalAndScopeParameterCannotBeSpecifiedTogether);
                 ErrorRecord er = new ErrorRecord(ioe, "Modules_GlobalAndScopeParameterCannotBeSpecifiedTogether",

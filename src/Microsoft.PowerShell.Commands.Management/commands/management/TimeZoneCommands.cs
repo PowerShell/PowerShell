@@ -291,7 +291,7 @@ namespace Microsoft.PowerShell.Commands
                     // will not recognize the new time zone settings
                     TimeZoneInfo.ClearCachedData();
 
-                    if (PassThru.IsPresent)
+                    if (PassThru)
                     {
                         // return the TimeZoneInfo object for the (new) current local time zone
                         WriteObject(TimeZoneInfo.Local);
@@ -314,7 +314,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                if (PassThru.IsPresent)
+                if (PassThru)
                 {
                     // show the user the time zone settings that would have been used.
                     WriteObject(InputObject);

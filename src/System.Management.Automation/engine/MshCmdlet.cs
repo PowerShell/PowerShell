@@ -90,7 +90,7 @@ namespace System.Management.Automation
         /// <returns>The corresponding boolean value.</returns>
         public static implicit operator bool(SwitchParameter switchParameter)
         {
-            return switchParameter.IsPresent;
+            return switchParameter._isPresent;
         }
 
         /// <summary>
@@ -145,7 +145,7 @@ namespace System.Management.Automation
             }
             else if (obj is SwitchParameter)
             {
-                return _isPresent == ((SwitchParameter)obj).IsPresent;
+                return _isPresent == (SwitchParameter)obj;
             }
             else
             {

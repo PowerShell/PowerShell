@@ -61,12 +61,12 @@ namespace ExperimentalFeatureTest
             string message = $"Hello World {Name}.";
             if (ExperimentalFeature.IsEnabled("ExpTest.FeatureOne"))
             {
-                if (SwitchOne.IsPresent)
+                if (SwitchOne)
                 {
                     message += "-SwitchOne is on.";
                 }
 
-                if (SwitchTwo.IsPresent)
+                if (SwitchTwo)
                 {
                     message += "-SwitchTwo is on.";
                 }

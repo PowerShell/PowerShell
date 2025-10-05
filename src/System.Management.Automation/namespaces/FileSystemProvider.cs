@@ -6835,7 +6835,7 @@ namespace Microsoft.PowerShell.Commands
 #if !UNIX
                     streamName = dynParams.Stream;
 #endif
-                    suppressNewline = dynParams.NoNewline.IsPresent;
+                    suppressNewline = dynParams.NoNewline;
                 }
             }
 

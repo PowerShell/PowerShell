@@ -1439,7 +1439,7 @@ namespace Microsoft.PowerShell.Commands
 
             // create helper objects for computer names
             RemoteRunspace remoteRunspace = null;
-            string scheme = UseSSL.IsPresent ? WSManConnectionInfo.HttpsScheme : WSManConnectionInfo.HttpScheme;
+            string scheme = UseSSL ? WSManConnectionInfo.HttpsScheme : WSManConnectionInfo.HttpScheme;
 
             for (int i = 0; i < ResolvedComputerNames.Length; i++)
             {
@@ -1858,7 +1858,7 @@ namespace Microsoft.PowerShell.Commands
                     // Hyper-V container uses Hype-V socket as transport.
                     // Windows Server container uses named pipe as transport.
                     //
-                    connectionInfo = ContainerConnectionInfo.CreateContainerConnectionInfo(input, RunAsAdministrator.IsPresent, this.ConfigurationName);
+                    connectionInfo = ContainerConnectionInfo.CreateContainerConnectionInfo(input, RunAsAdministrator, this.ConfigurationName);
 
                     resolvedNameList.Add(connectionInfo.ComputerName);
 

@@ -119,14 +119,14 @@ namespace Microsoft.PowerShell.Commands
         private bool ConvertFromJsonHelper(string input)
         {
             ErrorRecord error = null;
-            object result = JsonObject.ConvertFromJson(input, AsHashtable.IsPresent, Depth, DateKind, out error);
+            object result = JsonObject.ConvertFromJson(input, AsHashtable, Depth, DateKind, out error);
 
             if (error != null)
             {
                 ThrowTerminatingError(error);
             }
 
-            WriteObject(result, !NoEnumerate.IsPresent);
+            WriteObject(result, !NoEnumerate);
             return (result != null);
         }
 

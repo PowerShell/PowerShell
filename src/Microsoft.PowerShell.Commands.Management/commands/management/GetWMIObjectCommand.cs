@@ -210,7 +210,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                if (List.IsPresent)
+                if (List)
                 {
                     if (!this.ValidateClassFormat())
                     {
@@ -230,7 +230,7 @@ namespace Microsoft.PowerShell.Commands
 
                     foreach (string name in ComputerName)
                     {
-                        if (this.Recurse.IsPresent)
+                        if (this.Recurse)
                         {
                             Queue namespaceElement = new Queue();
                             namespaceElement.Enqueue(this.Namespace);
@@ -349,7 +349,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // When -List is not specified and -Recurse is specified, we need the -Class parameter to compose the right query string
-                if (this.Recurse.IsPresent && string.IsNullOrEmpty(Class))
+                if (this.Recurse && string.IsNullOrEmpty(Class))
                 {
                     string errorMsg = string.Format(CultureInfo.InvariantCulture, WmiResources.WmiParameterMissing, "-Class");
                     ErrorRecord er = new ErrorRecord(new InvalidOperationException(errorMsg), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
