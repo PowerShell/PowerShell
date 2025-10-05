@@ -654,7 +654,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         public SwitchParameter KeyOnly
         {
-            set { this.OperationOptions.KeysOnly = value.IsPresent; }
+            set { this.OperationOptions.KeysOnly = value.IsSpecified; }
         }
 
         /// <summary>
@@ -664,7 +664,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             set
             {
-                if (value.IsPresent)
+                if (value.IsSpecified)
                 {
                     this.OperationOptions.Flags = CimOperationFlags.PolymorphismShallow;
                 }

@@ -642,7 +642,7 @@ namespace Microsoft.PowerShell.Commands
                     ObjectCommandComparer comparer = new(
                         ascending: true,
                         CultureInfo.CurrentCulture,
-                        caseSensitive: !CaseInsensitive.IsPresent);
+                        caseSensitive: !CaseInsensitive.IsSpecified);
 
                     if ((comparer.Compare(obj.BaseObject, uniqueObj.WrittenObject.BaseObject) == 0) &&
                         (uniqueObj.NotePropertyCount == addedNoteProperties.Count))

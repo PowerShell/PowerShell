@@ -798,7 +798,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     WSManConnectionInfo connectionInfo = null;
                     connectionInfo = new WSManConnectionInfo();
-                    string scheme = UseSSL.IsPresent ? WSManConnectionInfo.HttpsScheme : WSManConnectionInfo.HttpScheme;
+                    string scheme = UseSSL.IsSpecified ? WSManConnectionInfo.HttpsScheme : WSManConnectionInfo.HttpScheme;
                     connectionInfo.ComputerName = resolvedComputerNames[i];
                     connectionInfo.Port = Port;
                     connectionInfo.AppName = ApplicationName;
@@ -1015,7 +1015,7 @@ namespace Microsoft.PowerShell.Commands
                     // Hyper-V container uses Hype-V socket as transport.
                     // Windows Server container uses named pipe as transport.
                     //
-                    connectionInfo = ContainerConnectionInfo.CreateContainerConnectionInfo(input, RunAsAdministrator.IsPresent, this.ConfigurationName);
+                    connectionInfo = ContainerConnectionInfo.CreateContainerConnectionInfo(input, RunAsAdministrator.IsSpecified, this.ConfigurationName);
 
                     resolvedNameList.Add(connectionInfo.ComputerName);
 

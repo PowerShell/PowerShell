@@ -138,7 +138,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        if (Password == null && !NoPromptForPassword.IsPresent)
+                        if (Password == null && !NoPromptForPassword.IsSpecified)
                         {
                             try
                             {

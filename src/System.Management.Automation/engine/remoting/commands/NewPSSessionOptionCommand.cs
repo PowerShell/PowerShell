@@ -401,8 +401,8 @@ namespace Microsoft.PowerShell.Commands
                 result.MaximumConnectionRedirectionCount = this.MaximumRedirection;
             }
 
-            result.NoCompression = this.NoCompression.IsPresent;
-            result.NoMachineProfile = this.NoMachineProfile.IsPresent;
+            result.NoCompression = this.NoCompression.IsSpecified;
+            result.NoMachineProfile = this.NoMachineProfile.IsSpecified;
 
             result.MaximumReceivedDataSizePerCommand = _maxRecvdDataSizePerCommand;
             result.MaximumReceivedObjectSize = _maxRecvdObjectSize;

@@ -120,8 +120,8 @@ namespace Microsoft.PowerShell.Commands
 
                 var context = new JsonObject.ConvertToJsonContext(
                     Depth,
-                    EnumsAsStrings.IsPresent,
-                    Compress.IsPresent,
+                    EnumsAsStrings.IsSpecified,
+                    Compress.IsSpecified,
                     EscapeHandling,
                     targetCmdlet: this,
                     _cancellationSource.Token);

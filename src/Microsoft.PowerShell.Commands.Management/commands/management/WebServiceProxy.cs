@@ -222,7 +222,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (pr.Name.Equals("UseDefaultCredentials", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (UseDefaultCredential.IsPresent)
+                    if (UseDefaultCredential.IsSpecified)
                     {
                         bool flag = true;
                         pr.SetValue(instance, flag as object, null);
@@ -322,7 +322,7 @@ namespace Microsoft.PowerShell.Commands
             DiscoveryClientProtocol dcp = new DiscoveryClientProtocol();
 
             // if paramset is defaultcredential, set the flag in wcclient
-            if (_usedefaultcredential.IsPresent)
+            if (_usedefaultcredential.IsSpecified)
                 dcp.UseDefaultCredentials = true;
 
             // if paramset is credential, assign the credentials

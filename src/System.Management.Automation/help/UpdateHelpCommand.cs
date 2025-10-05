@@ -174,7 +174,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (!_isInitialized)
                 {
-                    if (_path == null && Recurse.IsPresent)
+                    if (_path == null && Recurse.IsSpecified)
                     {
                         PSArgumentException e = new PSArgumentException(StringUtil.Format(HelpDisplayStrings.CannotSpecifyRecurseWithoutPath));
                         ThrowTerminatingError(e.ErrorRecord);
