@@ -43,6 +43,9 @@ jobs:
     - pwsh: |
         $repoRoot = "$(Build.SourcesDirectory)/PowerShell"
 
+        Import-Module "$repoRoot/build.psm1" -Force -Verbose
+        Start-PSBootstrap -Scenario Dotnet
+
         $toolPath = New-Item -ItemType Directory "$(System.DefaultWorkingDirectory)/toolPath" | Select-Object -ExpandProperty FullName
 
         Write-Verbose -Verbose "dotnet tool list -g"
