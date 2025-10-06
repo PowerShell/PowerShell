@@ -15,12 +15,15 @@ jobs:
         artifactName: drop_msixbundle_CreateMSIXBundle
   variables:
     - group: 'Store Publish Variables'
+    - name: LTS
+      value: $[ stageDependencies.setReleaseTagAndChangelog.setTagAndChangelog.outputs['ChannelSelection.IsLTS'] ]
+    - name: STABLE
+      value: $[ stageDependencies.setReleaseTagAndChangelog.setTagAndChangelog.outputs['ChannelSelection.IsStable'] ]
+    - name: PREVIEW
+      value: $[ stageDependencies.setReleaseTagAndChangelog.setTagAndChangelog.outputs['ChannelSelection.IsPreview'] ]
     - template: ./variable/release-shared.yml@self
       parameters:
         RELEASETAG: $[ stageDependencies.setReleaseTagAndChangelog.setTagAndChangelog.outputs['OutputReleaseTag.releaseTag'] ]
-        LTS: $[ stageDependencies.setReleaseTagAndChangelog.setTagAndChangelog.outputs['ChannelSelection.IsLTS'] ]
-        STABLE: $[ stageDependencies.setReleaseTagAndChangelog.setTagAndChangelog.outputs['ChannelSelection.IsStable'] ]
-        PREVIEW: $[ stageDependencies.setReleaseTagAndChangelog.setTagAndChangelog.outputs['ChannelSelection.IsPreview'] ]
   steps:
   - task: PowerShell@2
     inputs:
