@@ -22,8 +22,6 @@ jobs:
     - name: PREVIEW
       value: $[ stageDependencies.setReleaseTagAndChangelog.setTagAndChangelog.outputs['ChannelSelection.IsPreview'] ]
     - template: ./variable/release-shared.yml@self
-      parameters:
-        RELEASETAG: $[ stageDependencies.setReleaseTagAndChangelog.setTagAndChangelog.outputs['OutputReleaseTag.releaseTag'] ]
   steps:
   - task: PowerShell@2
     inputs:
@@ -71,25 +69,9 @@ jobs:
         $IsStable = '$(STABLE)' -eq 'true' 
         $IsPreview = '$(PREVIEW)' -eq 'true'
 
-        Write-Verbose -Verbose "Channel Selection - LTS: $(LTS), Stable: $(Stable), Preview: $(Preview)"
+        Write-Verbose -Verbose "Channel Selection - LTS: $(LTS), Stable: $(STABLE), Preview: $(PREVIEW)"
 
-        # Define app configurations for each channel using secret variables
-        $channelConfigs = @{
-          'LTS' = @{
-            AppId = '$(AppID-LTS)'
-            ServiceEndpoint = 'StoreAppPublish-Stable'
-          }
-          'Stable' = @{
-            AppId = '$(AppID-Stable)'
-            ServiceEndpoint = 'StoreAppPublish-Stable'
-          }
-          'Preview' = @{
-            AppId = '$(AppID-Preview)'
-            ServiceEndpoint = 'StoreAppPublish-Preview'
-          }
-        }
-
-        # Determine the current channel
+        # Determine the current channel for logging purposes
         $currentChannel = if ($IsLTS) { 'LTS' }
           elseif ($IsStable) { 'Stable' }
           elseif ($IsPreview) { 'Preview' }
@@ -98,23 +80,42 @@ jobs:
             exit 1
           }
                        
-        $config = $channelConfigs[$currentChannel]
         Write-Verbose -Verbose "Selected channel: $currentChannel"
-        Write-Verbose -Verbose "App ID: $($config.AppId)"
-        Write-Verbose -Verbose "Service Endpoint: $($config.ServiceEndpoint)"
-        
-        # Set pipeline variables for use in the store-publish task
-        Write-Host "##vso[task.setvariable variable=SelectedAppId]$($config.AppId)"
-        Write-Host "##vso[task.setvariable variable=SelectedServiceEndpoint]$($config.ServiceEndpoint)"
-        Write-Host "##vso[task.setvariable variable=SelectedChannel]$currentChannel"
-    displayName: 'Set StoreBroker Configurations'
+        Write-Verbose -Verbose "Conditional tasks will handle the publishing based on channel variables"
+    displayName: 'Validate Channel Selection'
 
   - task: MS-RDX-MRO.windows-store-publish.publish-task.store-publish@3
     displayName: 'Publish LTS StoreBroker Package'
-    condition: ne('${{ parameters.skipMSIXPublish }}', 'true')
+    condition: and(ne('${{ parameters.skipMSIXPublish }}', 'true'), eq(variables['LTS'], 'true'))
     inputs:
-      serviceEndpoint: '$(SelectedServiceEndpoint)'
-      appId: '$(SelectedAppId)'
+      serviceEndpoint: 'StoreAppPublish-Stable'
+      appId: '$(AppID-LTS)'
+      inputMethod: JsonAndZip
+      jsonPath: '$(Pipeline.Workspace)\SBOutDir\PowerShellStorePackage.json'
+      zipPath: '$(Pipeline.Workspace)\SBOutDir\PowerShellStorePackage.zip'
+      numberOfPackagesToKeep: 2
+      jsonZipUpdateMetadata: true
+      targetPublishMode: 'Immediate'
+
+  - task: MS-RDX-MRO.windows-store-publish.publish-task.store-publish@3
+    displayName: 'Publish Stable StoreBroker Package'
+    condition: and(ne('${{ parameters.skipMSIXPublish }}', 'true'), eq(variables['STABLE'], 'true'))
+    inputs:
+      serviceEndpoint: 'StoreAppPublish-Stable'
+      appId: '$(AppID-Stable)'
+      inputMethod: JsonAndZip
+      jsonPath: '$(Pipeline.Workspace)\SBOutDir\PowerShellStorePackage.json'
+      zipPath: '$(Pipeline.Workspace)\SBOutDir\PowerShellStorePackage.zip'
+      numberOfPackagesToKeep: 2
+      jsonZipUpdateMetadata: true
+      targetPublishMode: 'Immediate'
+
+  - task: MS-RDX-MRO.windows-store-publish.publish-task.store-publish@3
+    displayName: 'Publish Preview StoreBroker Package'
+    condition: and(ne('${{ parameters.skipMSIXPublish }}', 'true'), eq(variables['PREVIEW'], 'true'))
+    inputs:
+      serviceEndpoint: 'StoreAppPublish-Preview'
+      appId: '$(AppID-Preview)'
       inputMethod: JsonAndZip
       jsonPath: '$(Pipeline.Workspace)\SBOutDir\PowerShellStorePackage.json'
       zipPath: '$(Pipeline.Workspace)\SBOutDir\PowerShellStorePackage.zip'
