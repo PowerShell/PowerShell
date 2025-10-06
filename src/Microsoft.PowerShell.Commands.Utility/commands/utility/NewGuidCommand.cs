@@ -49,7 +49,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                guid = ParameterSetName is "Empty" ? Guid.Empty : Guid.NewGuid();
+                guid = Empty.ToBool() ? Guid.Empty : Guid.NewGuid();
             }
 
             WriteObject(guid);
