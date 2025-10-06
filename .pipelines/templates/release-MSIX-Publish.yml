@@ -63,6 +63,11 @@ jobs:
     inputs:
       targetType: inline
       script: |
+        # Convert ADO variables to PowerShell boolean variables
+        $IsLTS = '$(LTS)' -eq 'true'
+        $IsStable = '$(STABLE)' -eq 'true' 
+        $IsPreview = '$(PREVIEW)' -eq 'true'
+
         Write-Verbose -Verbose "Channel Selection - LTS: $(LTS), Stable: $(Stable), Preview: $(Preview)"
 
         # Define app configurations for each channel using secret variables
