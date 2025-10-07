@@ -761,6 +761,12 @@ namespace System.Management.Automation.Runspaces
         /// Gets the Runspace Id.
         /// </summary>
         public int Id { get; }
+        
+        /// <summary>
+        /// Gets and sets a boolean indicating whether the runspace has a
+        /// debugger attached with <c>Debug-Runspace</c>.
+        /// </summary>
+        public bool IsRemoteDebuggerAttached { get; internal set; }
 
         /// <summary>
         /// Returns protocol version that the remote server uses for PS remoting.
