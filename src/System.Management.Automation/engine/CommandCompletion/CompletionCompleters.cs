@@ -5204,38 +5204,48 @@ namespace System.Management.Automation
             uint numEntries = 0;
             uint totalEntries;
             uint resumeHandle = 0;
-            int result = Interop.Windows.NetShareEnum(
-                machine,
-                level: 1,
-                out shBuf,
-                Interop.Windows.MAX_PREFERRED_LENGTH,
-                out numEntries,
-                out totalEntries,
-                ref resumeHandle);
-
-            var shares = new List<string>();
-            if (result == Interop.Windows.ERROR_SUCCESS || result == Interop.Windows.ERROR_MORE_DATA)
+            try
             {
-                for (int i = 0; i < numEntries; ++i)
+                int result = Interop.Windows.NetShareEnum(
+                    machine,
+                    level: 1,
+                    out shBuf,
+                    Interop.Windows.MAX_PREFERRED_LENGTH,
+                    out numEntries,
+                    out totalEntries,
+                    ref resumeHandle);
+
+                var shares = new List<string>();
+                if (result == Interop.Windows.ERROR_SUCCESS || result == Interop.Windows.ERROR_MORE_DATA)
                 {
-                    nint curInfoPtr = shBuf + (Marshal.SizeOf<SHARE_INFO_1>() * i);
-                    SHARE_INFO_1 shareInfo = Marshal.PtrToStructure<SHARE_INFO_1>(curInfoPtr);
-
-                    if ((shareInfo.type & Interop.Windows.STYPE_MASK) != Interop.Windows.STYPE_DISKTREE)
+                    for (int i = 0; i < numEntries; ++i)
                     {
-                        continue;
-                    }
+                        nint curInfoPtr = shBuf + (Marshal.SizeOf<SHARE_INFO_1>() * i);
+                        SHARE_INFO_1 shareInfo = Marshal.PtrToStructure<SHARE_INFO_1>(curInfoPtr);
 
-                    if (ignoreHidden && shareInfo.netname.EndsWith('$'))
-                    {
-                        continue;
-                    }
+                        if ((shareInfo.type & Interop.Windows.STYPE_MASK) != Interop.Windows.STYPE_DISKTREE)
+                        {
+                            continue;
+                        }
 
-                    shares.Add(shareInfo.netname);
+                        if (ignoreHidden && shareInfo.netname.EndsWith('$'))
+                        {
+                            continue;
+                        }
+
+                        shares.Add(shareInfo.netname);
+                    }
+                }
+
+                return shares;
+            }
+            finally
+            {
+                if (shBuf != nint.Zero)
+                {
+                    Interop.Windows.NetApiBufferFree(shBuf);
                 }
             }
-
-            return shares;
 #endif
         }
 
