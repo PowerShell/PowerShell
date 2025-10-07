@@ -6,7 +6,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.Eventing;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Diagnostics.CodeAnalysis;
 
 namespace System.Management.Automation.Tracing

@@ -78,12 +78,7 @@ jobs:
     env:
       ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
 
-  - task: UseDotNet@2
-    inputs:
-      useGlobalJson: true
-      workingDirectory: $(REPOROOT)
-    env:
-      ob_restore_phase: true
+  - template: /.pipelines/templates/install-dotnet.yml@self
 
   - pwsh: |
       $msixUrl = '$(makeappUrl)'
@@ -112,7 +107,9 @@ jobs:
       Import-Module "$repoRoot\build.psm1"
       Import-Module "$repoRoot\tools\packaging"
 
-      Start-PSBootstrap -Scenario Package
+      Start-PSBootstrap -Scenario Both
+
+      Find-Dotnet
 
       $signedFilesPath, $psoptionsFilePath = if ($env:RUNTIME -eq 'minsize') {
           "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_x64_${runtime}\$signedFolder"

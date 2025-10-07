@@ -28,7 +28,7 @@
 
   <ItemGroup>
     <!-- the following package(s) are from https://github.com/JamesNK/Newtonsoft.Json -->
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <!-- the Application Insights package -->
     <PackageReference Include="Microsoft.ApplicationInsights" Version="2.23.0" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
