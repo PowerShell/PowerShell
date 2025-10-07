@@ -1831,7 +1831,7 @@ namespace System.Management.Automation
         public const string OnIdle = "PowerShell.OnIdle";
 
         /// <summary>
-        /// Called when Debug-Runspace has attached a debugger to the current runspace.
+        /// Called when <c>Debug-Runspace</c> has attached a debugger to the current runspace.
         /// </summary>
         public const string OnDebugAttach = "PowerShell.OnDebugAttach";
 

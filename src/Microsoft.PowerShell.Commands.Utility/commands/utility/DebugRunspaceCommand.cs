@@ -268,11 +268,11 @@ namespace Microsoft.PowerShell.Commands
                 _runspace.IsRemoteDebuggerAttached = true;
                 _runspace.Events?.GenerateEvent(
                     PSEngineEvent.OnDebugAttach,
-                    null,
-                    Array.Empty<object>(),
-                    null,
-                    true,
-                    false);
+                    sender: null,
+                    args: Array.Empty<object>(),
+                    extraData: null,
+                    processInCurrentThread: true,
+                    waitForCompletionInCurrentThread: false);
 
                 while (_debugging)
                 {
