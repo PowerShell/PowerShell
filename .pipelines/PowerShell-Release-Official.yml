@@ -156,7 +156,7 @@ extends:
         parameters:
           jobName: "LinuxSDK"
           displayName: "Linux SDK Validation"
-          imageName: PSMMSUbuntu20.04-Secure
+          imageName: PSMMSUbuntu22.04-Secure
           poolName: $(ubuntuPool)
 
     - stage: gbltool
