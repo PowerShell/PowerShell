@@ -869,7 +869,7 @@ namespace System.Management.Automation
                     "ValidateLengthMaxLengthFailure",
                     null,
                     Metadata.ValidateLengthMaxLengthFailure,
-                    MaxLength, len, "argument");
+                    MaxLength, len);
             }
         }
 

@@ -312,11 +312,12 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
 
         It 'ValidateLength error message should be properly formatted' {
             function foo { param([ValidateLength(0,2)] [string] $bar) $bar }
-            
+
             { foo "11111" } | Should -Throw -ErrorId "ParameterArgumentValidationError,foo"
-            
-            # Check the inner exception message is properly formatted
-            $error[0].Exception.InnerException.Message | Should -Match 'The character length of the "argument" argument is too long at 5 characters'
+
+            # Check the inner exception message is properly formatted and consistent with MinLength format
+            $error[0].Exception.InnerException.Message | Should -Match 'The character length \(5\) of the argument is too long\.'
+            $error[0].Exception.InnerException.Message | Should -Match 'shorter than or equal to "2"'
             # The outer exception should have the actual parameter name
             $error[0].Exception.Message | Should -Match 'bar'
         }
