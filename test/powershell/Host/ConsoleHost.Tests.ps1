@@ -988,7 +988,7 @@ public static WINDOWPLACEMENT GetPlacement(IntPtr hwnd)
 
     if (!GetWindowPlacement(hwnd, ref placement))
     {
-        throw new Win32Exception();
+        throw new System.ComponentModel.Win32Exception();
     }
 
     return placement;
