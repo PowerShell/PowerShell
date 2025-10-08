@@ -510,6 +510,14 @@ dotnet_diagnostic.CA1846.severity = warning
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1847
 dotnet_diagnostic.CA1847.severity = warning
 
+# CA1858: Use 'StartsWith' instead of 'IndexOf'
+# https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1858
+dotnet_diagnostic.CA1858.severity = warning
+
+# CA1860: Avoid using 'Enumerable.Any()' extension method
+# https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1860
+dotnet_diagnostic.CA1860.severity = warning
+
 # CA1868: Unnecessary call to 'Contains' for sets
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1868
 dotnet_diagnostic.CA1868.severity = warning

@@ -1831,6 +1831,11 @@ namespace System.Management.Automation
         public const string OnIdle = "PowerShell.OnIdle";
 
         /// <summary>
+        /// Called when <c>Debug-Runspace</c> has attached a debugger to the current runspace.
+        /// </summary>
+        public const string OnDebugAttach = "PowerShell.OnDebugAttach";
+
+        /// <summary>
         /// Called during scriptblock invocation.
         /// </summary>
         internal const string OnScriptBlockInvoke = "PowerShell.OnScriptBlockInvoke";
@@ -1843,7 +1848,7 @@ namespace System.Management.Automation
         /// <summary>
         /// A HashSet that contains all engine event names.
         /// </summary>
-        internal static readonly HashSet<string> EngineEvents = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { Exiting, OnIdle, OnScriptBlockInvoke };
+        internal static readonly HashSet<string> EngineEvents = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { Exiting, OnIdle, OnDebugAttach, OnScriptBlockInvoke };
     }
 
     /// <summary>
