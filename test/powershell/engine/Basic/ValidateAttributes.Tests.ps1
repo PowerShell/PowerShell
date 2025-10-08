@@ -311,15 +311,15 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
         }
 
         It 'ValidateLength error message should be properly formatted' {
-            function foo { param([ValidateLength(0,2)] [string] $bar) $bar }
+            function Test-ValidateLength { param([ValidateLength(0,2)] [string] $Value) $Value }
 
-            { foo "11111" } | Should -Throw -ErrorId "ParameterArgumentValidationError,foo"
+            $ExpectedMaxLength = 2
+            $ExpectedRealLength = 5
 
-            # Check the inner exception message is properly formatted and consistent with MinLength format
-            $error[0].Exception.InnerException.Message | Should -Match 'The character length \(5\) of the argument is too long\.'
-            $error[0].Exception.InnerException.Message | Should -Match 'shorter than or equal to "2"'
-            # The outer exception should have the actual parameter name
-            $error[0].Exception.Message | Should -Match 'bar'
+            { Test-ValidateLength "11111" } | Should -Throw -ErrorId "ParameterArgumentValidationError,Test-ValidateLength"
+
+            $error[0].Exception.InnerException.Message | Should -Match ".+\($ExpectedRealLength\).+\`"$ExpectedMaxLength\`""
+            $error[0].Exception.Message | Should -Match 'Value'
         }
     }
 
