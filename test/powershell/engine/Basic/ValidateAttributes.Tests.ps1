@@ -311,14 +311,20 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
         }
 
         It 'ValidateLength error message should be properly formatted' {
-            function Test-ValidateLength { param([ValidateLength(0,2)] [string] $Value) $Value }
+            function Test-ValidateLengthMax { param([ValidateLength(0,2)] [string] $Value) $Value }
+            function Test-ValidateLengthMin { param([ValidateLength(5,10)] [string] $Value) $Value }
 
+            $TestStringTooLong = "11111"
+            $TestStringTooShort = "123"
             $ExpectedMaxLength = 2
-            $ExpectedRealLength = 5
+            $ExpectedMinLength = 5
 
-            { Test-ValidateLength "11111" } | Should -Throw -ErrorId "ParameterArgumentValidationError,Test-ValidateLength"
+            { Test-ValidateLengthMax $TestStringTooLong } | Should -Throw -ErrorId "ParameterArgumentValidationError,Test-ValidateLengthMax"
+            $error[0].Exception.InnerException.Message | Should -Match ".+\($($TestStringTooLong.Length)\).+\`"$ExpectedMaxLength\`""
+            $error[0].Exception.Message | Should -Match 'Value'
 
-            $error[0].Exception.InnerException.Message | Should -Match ".+\($ExpectedRealLength\).+\`"$ExpectedMaxLength\`""
+            { Test-ValidateLengthMin $TestStringTooShort } | Should -Throw -ErrorId "ParameterArgumentValidationError,Test-ValidateLengthMin"
+            $error[0].Exception.InnerException.Message | Should -Match ".+\($($TestStringTooShort.Length)\).+\`"$ExpectedMinLength\`""
             $error[0].Exception.Message | Should -Match 'Value'
         }
     }
