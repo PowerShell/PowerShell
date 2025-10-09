@@ -150,7 +150,7 @@ namespace System.Management.Automation.Configuration
         /// <returns>The configured PSContentPath if found, null otherwise.</returns>
         internal string GetPSContentPath()
         {
-            return ReadValueFromFile<string>(ConfigScope.CurrentUser, "UserPSContentPath", Platform.DefaultPSContentDirectory);
+            return ReadValueFromFile<string>(ConfigScope.CurrentUser, Constants.PSUserContentPathEnvVar);
         }
 
         /// <summary>
@@ -161,11 +161,11 @@ namespace System.Management.Automation.Configuration
         {
             if (string.IsNullOrEmpty(path))
             {
-                RemoveValueFromFile<string>(ConfigScope.CurrentUser, "UserPSContentPath");
+                RemoveValueFromFile<string>(ConfigScope.CurrentUser, Constants.PSUserContentPathEnvVar);
             }
             else
             {
-                WriteValueToFile<string>(ConfigScope.CurrentUser, "UserPSContentPath", path);
+                WriteValueToFile<string>(ConfigScope.CurrentUser, Constants.PSUserContentPathEnvVar, path);
             }
         }
 

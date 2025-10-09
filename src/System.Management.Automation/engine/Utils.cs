@@ -711,7 +711,7 @@ namespace System.Management.Automation
         /// Gets the PSContent path from PowerShell.config.json or falls back to platform defaults.
         /// </summary>
         /// <returns>The PSContent directory path</returns>
-        internal static string GetPSContentPath()
+        internal static string GetPSContentPath(bool setModulePath = false)
         {
             try
             {
@@ -726,6 +726,15 @@ namespace System.Management.Automation
             }
 
             // Fall back to platform defaults
+            if (setModulePath)
+            {
+                return PowerShellConfig.Instance.GetModulePath(ConfigScope.CurrentUser) ?? 
+#if UNIX
+                       Platform.SelectProductNameForDirectory(Platform.XDG_Type.DATA);
+#else
+                       Environment.GetFolderPath(Environment.SpecialFolder.Personal) + @"\PowerShell";
+#endif
+            }
 #if UNIX
             return Platform.SelectProductNameForDirectory(Platform.XDG_Type.DATA);
 #else

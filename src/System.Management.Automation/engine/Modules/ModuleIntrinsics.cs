@@ -21,6 +21,7 @@ namespace System.Management.Automation
     internal static class Constants
     {
         public const string PSModulePathEnvVar = "PSModulePath";
+        public const string PSUserContentPathEnvVar = "PSUserContentPath";
     }
 
     /// <summary>
@@ -1361,9 +1362,14 @@ namespace System.Management.Automation
             }
 #endif
             string allUsersModulePath = PowerShellConfig.Instance.GetModulePath(ConfigScope.AllUsers);
-            string personalModulePath = PowerShellConfig.Instance.GetModulePath(ConfigScope.CurrentUser);
+            string personalModulePath = Utils.GetPSContentPath(true) ?? string.Empty;
             string newModulePathString = GetModulePath(currentModulePath, allUsersModulePath, personalModulePath);
 
+            if (!string.IsNullOrEmpty(personalModulePath))
+            {
+                Environment.SetEnvironmentVariable(Constants.PSUserContentPathEnvVar, personalModulePath);
+            }
+            
             if (!string.IsNullOrEmpty(newModulePathString))
             {
                 Environment.SetEnvironmentVariable(Constants.PSModulePathEnvVar, newModulePathString);
