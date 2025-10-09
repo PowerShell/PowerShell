@@ -126,7 +126,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Extensions.ObjectPool",
-          "Version": "8.0.19"
+          "Version": "8.0.20"
         }
       },
       "DevelopmentDependency": false
@@ -186,7 +186,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Windows.Compatibility",
-          "Version": "8.0.19"
+          "Version": "8.0.20"
         }
       },
       "DevelopmentDependency": false
@@ -196,7 +196,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Newtonsoft.Json",
-          "Version": "13.0.3"
+          "Version": "13.0.4"
         }
       },
       "DevelopmentDependency": false
@@ -466,7 +466,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Drawing.Common",
-          "Version": "8.0.19"
+          "Version": "8.0.20"
         }
       },
       "DevelopmentDependency": false
