@@ -5,6 +5,9 @@
 # PSSession tests for non-Windows platforms
 #
 
+[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingConvertToSecureStringWithPlainText', '')]
+param()
+
 function GetRandomString()
 {
     return [System.IO.Path]::GetFileNameWithoutExtension([System.IO.Path]::GetRandomFileName())
