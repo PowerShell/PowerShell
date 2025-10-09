@@ -510,6 +510,10 @@ dotnet_diagnostic.CA1846.severity = warning
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1847
 dotnet_diagnostic.CA1847.severity = warning
 
+# CA1853: Unnecessary call to 'Dictionary.ContainsKey(key)'
+# https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1853
+dotnet_diagnostic.CA1853.severity = warning
+
 # CA1858: Use 'StartsWith' instead of 'IndexOf'
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1858
 dotnet_diagnostic.CA1858.severity = warning
