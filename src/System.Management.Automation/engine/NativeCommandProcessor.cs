@@ -1468,6 +1468,7 @@ namespace System.Management.Automation
                 {
                     using (ParameterBinderBase.bindingTracer.TraceScope("BIND argument [{0}]", NativeParameterBinderController.Arguments))
                     {
+                        // codeql[cs/microsoft/command-line-injection ] - This is intended PowerShell behavior as NativeParameterBinderController.Arguments is what the native parameter binder generates based on the user input when invoking the command and cannot be injected externally.
                         startInfo.Arguments = NativeParameterBinderController.Arguments;
                     }
                 }
