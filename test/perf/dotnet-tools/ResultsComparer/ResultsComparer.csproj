@@ -12,7 +12,7 @@
     <PackageReference Include="Microsoft.Diagnostics.NETCore.Client" Version="0.2.621003" />
     <PackageReference Include="Microsoft.Diagnostics.Runtime" Version="2.2.343001" />
     <PackageReference Include="Microsoft.Diagnostics.Tracing.TraceEvent" Version="3.0.8" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="BenchmarkDotNet" Version="0.13.12" />
     <PackageReference Include="Perfolizer" Version="0.3.17" />
   </ItemGroup>
