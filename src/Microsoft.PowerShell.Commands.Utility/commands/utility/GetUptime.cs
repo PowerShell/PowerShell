@@ -28,32 +28,39 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            // Get-Uptime throw if IsHighResolution = false
-            // because stopwatch.GetTimestamp() return DateTime.UtcNow.Ticks
-            // instead of ticks from system startup.
-            // InternalTestHooks.StopwatchIsNotHighResolution is used as test hook.
-            if (Stopwatch.IsHighResolution && !InternalTestHooks.StopwatchIsNotHighResolution)
+            switch (ParameterSetName)
             {
-                TimeSpan uptime = TimeSpan.FromSeconds(Stopwatch.GetTimestamp() / Stopwatch.Frequency);
+                case TimespanParameterSet:
+                    ProcessTimespanParameterSet();
+                    break;
+                case SinceParameterSet:
+                    ProcessSinceParameterSet();
+                    break;
+            }
+        }
 
-                switch (ParameterSetName)
-                {
-                    case TimespanParameterSet:
-                        // return TimeSpan of time since the system started up
-                        WriteObject(uptime);
-                        break;
-                    case SinceParameterSet:
-                        // return Datetime when the system started up
-                        WriteObject(DateTime.Now.Subtract(uptime));
-                        break;
-                }
-            }
-            else
-            {
-                WriteDebug("System.Diagnostics.Stopwatch.IsHighResolution returns 'False'.");
-                Exception exc = new NotSupportedException(GetUptimeStrings.GetUptimePlatformIsNotSupported);
-                ThrowTerminatingError(new ErrorRecord(exc, "GetUptimePlatformIsNotSupported", ErrorCategory.NotImplemented, null));
-            }
+        /// <summary>
+        /// Process the Timespan parameter set.
+        /// </summary>
+        /// <remarks>
+        /// Outputs the time of the last system boot as a <see cref="TimeSpan"/>.
+        /// </remarks>
+        private void ProcessTimespanParameterSet()
+        {
+            TimeSpan result = TimeSpan.FromMilliseconds(Environment.TickCount64);
+            WriteObject(result);
+        }
+
+        /// <summary>
+        /// Process the Since parameter set.
+        /// </summary>
+        /// <remarks>
+        /// Outputs the time elapsed since the last system boot as a <see cref="DateTime"/>.
+        /// </remarks>
+        private void ProcessSinceParameterSet()
+        {
+            DateTime result = DateTime.Now.Subtract(TimeSpan.FromMilliseconds(Environment.TickCount64));
+            WriteObject(result);
         }
 
         /// <summary>
