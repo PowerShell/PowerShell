@@ -370,7 +370,7 @@ extends:
         - PushGitTagAndMakeDraftPublic
       displayName: Publish MSIX to store
       variables:
-        ob_release_environment: Production
+        ob_release_environment: ${{ variables.releaseEnvironment }}
       jobs:
       - template: /.pipelines/templates/release-MSIX-Publish.yml@self
         parameters:
