@@ -45,7 +45,7 @@
 - Add single/double quote support for `Join-String` Argument Completer (#25283) (Thanks @ArmaanMcleod!)
 - Fix tab completion for env/function variables (#25346) (Thanks @jborean93!)
 - Fix `Out-GridView` by replacing use of obsolete `BinaryFormatter` with custom implementation (#25497) (Thanks @mawosoft!)
-- Remove the use of Windows PowerShell ETW provider id from code base and update the `PSDiagnostics` module to work for PowerShell 7 (#25590)
+- Remove the use of Windows PowerShell ETW provider ID from codebase and update the `PSDiagnostics` module to work for PowerShell 7 (#25590)
 
 ### Code Cleanup
 
@@ -87,7 +87,7 @@
 
 - Add Codeql Suppressions (#25943, #26132)
 - Update CODEOWNERS to add Justin as a maintainer (#25386)
-- Do not run labels workflow in the internal repo (#25279)
+- Do not run labels workflow in the internal repository (#25279)
 
 ### Tests
 
@@ -197,15 +197,15 @@
 ### Documentation and Help Content
 
 - Fix a typo in the 7.4 changelog (#26038) (Thanks @VbhvGupta!)
-- Add 7.4.12 Changelog (#26011)
-- Add v7.5.3 Changelog (#25994)
+- Add 7.4.12 changelog (#26011)
+- Add v7.5.3 changelog (#25994)
 - Fix typo in CHANGELOG for script filename suggestion (#25962)
 - Update CHANGELOG for v7.5.2 (#25668)
 - Update CHANGELOG for v7.4.11 (#25667)
 - Update build documentation with instruction of dev terminal (#25587)
 - Update links and contribution guide in documentation (#25532) (Thanks @JustinGrote!)
-- Add 7.4.10 Changelog (#25520)
-- Add 7.5.1 Change log (#25382)
+- Add 7.4.10 changelog (#25520)
+- Add 7.5.1 changelog (#25382)
 
 [7.6.0-preview.5]: https://github.com/PowerShell/PowerShell/compare/v7.6.0-preview.4...v7.6.0-preview.5
 
@@ -467,7 +467,7 @@ name, the **ThreadJob** v2.1.0 module is a proxy module that points to the
 
 ### Tools
 
-- Added Justin Chung as Powershell team memeber on releaseTools.psm1 (#24672)
+- Added Justin Chung as PowerShell team memeber on releaseTools.psm1 (#24672)
 
 ### Tests
 
