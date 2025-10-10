@@ -1342,7 +1342,7 @@ dotnet_diagnostic.IDE0048.severity = suggestion
 
 # IDE0049: PreferBuiltInOrFrameworkType
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0049
-dotnet_diagnostic.IDE0049.severity = warning
+dotnet_diagnostic.IDE0049.severity = suggestion
 
 # IDE0050: ConvertAnonymousTypeToTuple
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0050
