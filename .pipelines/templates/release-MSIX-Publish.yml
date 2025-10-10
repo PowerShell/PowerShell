@@ -22,6 +22,8 @@ jobs:
     - name: PREVIEW
       value: $[ stageDependencies.setReleaseTagAndChangelog.setTagAndChangelog.outputs['ChannelSelection.IsPreview'] ]
     - template: ./variable/release-shared.yml@self
+      parameters:
+        RELEASETAG: $[ stageDependencies.setReleaseTagAndChangelog.setTagAndChangelog.outputs['OutputReleaseTag.releaseTag'] ]
   steps:
   - task: PowerShell@2
     inputs:
@@ -41,14 +43,14 @@ jobs:
         }
         $middleURL = ''
         $tagString = "$(ReleaseTag)"
-        if ($tagString -match '-') {
+        if ($tagString -match '-preview') {
           $middleURL = "preview"
         }
         elseif ($tagString -match '(\d+\.\d+)') {
           $middleURL = $matches[1]
         }
 
-        $endURL = $tagString -replace '[v\.]',''
+        $endURL = $tagString -replace '^v|\.', ''
         $message = "Changelog: https://github.com/PowerShell/PowerShell/blob/master/CHANGELOG/$middleURL.md#$endURL"
         Write-Verbose -Verbose "Release Notes for the Store:"
         Write-Verbose -Verbose "$message"
@@ -88,7 +90,7 @@ jobs:
     displayName: 'Publish LTS StoreBroker Package'
     condition: and(ne('${{ parameters.skipMSIXPublish }}', 'true'), eq(variables['LTS'], 'true'))
     inputs:
-      serviceEndpoint: 'StoreAppPublish-Stable'
+      serviceEndpoint: 'StoreAppPublish-Private'
       appId: '$(AppID-LTS)'
       inputMethod: JsonAndZip
       jsonPath: '$(Pipeline.Workspace)\SBOutDir\PowerShellStorePackage.json'
@@ -101,7 +103,7 @@ jobs:
     displayName: 'Publish Stable StoreBroker Package'
     condition: and(ne('${{ parameters.skipMSIXPublish }}', 'true'), eq(variables['STABLE'], 'true'))
     inputs:
-      serviceEndpoint: 'StoreAppPublish-Stable'
+      serviceEndpoint: 'StoreAppPublish-Private'
       appId: '$(AppID-Stable)'
       inputMethod: JsonAndZip
       jsonPath: '$(Pipeline.Workspace)\SBOutDir\PowerShellStorePackage.json'
@@ -114,7 +116,7 @@ jobs:
     displayName: 'Publish Preview StoreBroker Package'
     condition: and(ne('${{ parameters.skipMSIXPublish }}', 'true'), eq(variables['PREVIEW'], 'true'))
     inputs:
-      serviceEndpoint: 'StoreAppPublish-Preview'
+      serviceEndpoint: 'StoreAppPublish-Private'
       appId: '$(AppID-Preview)'
       inputMethod: JsonAndZip
       jsonPath: '$(Pipeline.Workspace)\SBOutDir\PowerShellStorePackage.json'
@@ -122,3 +124,8 @@ jobs:
       numberOfPackagesToKeep: 2
       jsonZipUpdateMetadata: true
       targetPublishMode: 'Immediate'
+
+  - pwsh: |
+      Get-Content -Path "$(System.DefaultWorkingDirectory)/SBLog.txt" -ErrorAction SilentlyContinue
+    displayName: Upload Store Failure Log
+    condition: failed()

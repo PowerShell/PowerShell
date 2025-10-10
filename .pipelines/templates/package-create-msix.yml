@@ -97,13 +97,13 @@ jobs:
       displayName: Create MsixBundle
       retryCountOnTaskFailure: 1
 
-    # - task: onebranch.pipeline.signing@1
-    #   displayName: Sign MsixBundle
-    #   inputs:
-    #     command: 'sign'
-    #     signing_profile: $(MSIXProfile)
-    #     files_to_sign: '**/*.msixbundle'
-    #     search_root: '$(BundleDir)'
+    - task: onebranch.pipeline.signing@1
+      displayName: Sign MsixBundle
+      inputs:
+        command: 'sign'
+        signing_profile: $(MSIXProfile)
+        files_to_sign: '**/*.msixbundle'
+        search_root: '$(BundleDir)'
     
     - pwsh: |
         $signedBundle = Get-ChildItem -Path $(BundleDir) -Filter "*.msixbundle" -File
