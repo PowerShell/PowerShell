@@ -365,7 +365,9 @@ extends:
             This is typically done by the community 1-2 days after the release.
 
     - stage: PublishMsix
-      dependsOn: PushGitTagAndMakeDraftPublic
+      dependsOn: 
+        - setReleaseTagAndChangelog
+        - PushGitTagAndMakeDraftPublic
       displayName: Publish MSIX to store
       variables:
         ob_release_environment: Production
