@@ -51,7 +51,10 @@ jobs:
     - pwsh: |
         $repoRoot = "$(Build.SourcesDirectory)"
 
-        $env:DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
+        Import-Module "$repoRoot/build.psm1" -Force -Verbose
+        Start-PSBootstrap -Scenario Dotnet
+
+        $env:DOTNET_NOLOGO=1
 
         $localLocation = "$(Pipeline.Workspace)/PSPackagesOfficial/drop_nupkg_build_nupkg"
         $xmlElement = @"

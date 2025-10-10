@@ -4,7 +4,9 @@
   "packageParameters": {
     "PDPRootPath": "",
     "Release": "",
-    "PDPInclude": [],
+    "PDPInclude": [
+      "PDP.xml"
+    ],
     "PDPExclude": [],
     "LanguageExclude": [
       "default",
@@ -21,7 +23,7 @@
   },
   "appSubmission": {
     "productId": "",
-    "targetPublishMode": "NotSet",
+    "targetPublishMode": "Immediate",
     "targetPublishDate": null,
     "visibility": "NotSet",
     "pricing": {
