@@ -124,3 +124,9 @@ jobs:
       numberOfPackagesToKeep: 2
       jsonZipUpdateMetadata: true
       targetPublishMode: 'Immediate'
+
+  - pwsh: |
+      Get-Item -Path "$(System.DefaultWorkingDirectory)/SBLog.txt" -ErrorAction SilentlyContinue |
+        Copy-Item -Destination "$(ob_outputDirectory)" -Verbose
+    displayName: Upload Store Failure Log
+    condition: failed()
