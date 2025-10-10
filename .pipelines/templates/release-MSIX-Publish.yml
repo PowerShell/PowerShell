@@ -116,7 +116,7 @@ jobs:
     displayName: 'Publish Preview StoreBroker Package'
     condition: and(ne('${{ parameters.skipMSIXPublish }}', 'true'), eq(variables['PREVIEW'], 'true'))
     inputs:
-      serviceEndpoint: 'StoreAppPublish-Preview'
+      serviceEndpoint: 'StoreAppPublish-Private'
       appId: '$(AppID-Preview)'
       inputMethod: JsonAndZip
       jsonPath: '$(Pipeline.Workspace)\SBOutDir\PowerShellStorePackage.json'
