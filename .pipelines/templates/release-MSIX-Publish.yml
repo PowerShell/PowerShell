@@ -126,6 +126,11 @@ jobs:
       targetPublishMode: 'Immediate'
 
   - pwsh: |
+      #Create output directory if it doesn't exist 
+      if (-not (Test-Path -Path "$(ob_outputDirectory)")) {
+          New-Item -ItemType Directory -Path "$(ob_outputDirectory)" -Force
+      }
+
       Get-Item -Path "$(System.DefaultWorkingDirectory)/SBLog.txt" -ErrorAction SilentlyContinue |
         Copy-Item -Destination "$(ob_outputDirectory)" -Verbose
     displayName: Upload Store Failure Log
