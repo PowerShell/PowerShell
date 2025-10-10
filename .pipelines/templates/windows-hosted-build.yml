@@ -272,7 +272,7 @@ jobs:
         'Microsoft.PowerShell.PSResourceGet'
         'Microsoft.PowerShell.Archive'
         'PSReadLine'
-        'ThreadJob'
+        'Microsoft.PowerShell.ThreadJob'
       )
 
       $sourceModulePath = Join-Path '$(GlobalToolArtifactPath)' 'publish' 'PowerShell.Windows.x64' 'release' 'Modules'
