@@ -36,16 +36,15 @@ namespace Microsoft.PowerShell.Commands
             {
                 TimeSpan uptime = TimeSpan.FromSeconds(Stopwatch.GetTimestamp() / Stopwatch.Frequency);
 
-                switch (ParameterSetName)
+                if (Since)
                 {
-                    case TimespanParameterSet:
-                        // return TimeSpan of time since the system started up
-                        WriteObject(uptime);
-                        break;
-                    case SinceParameterSet:
-                        // return Datetime when the system started up
-                        WriteObject(DateTime.Now.Subtract(uptime));
-                        break;
+                    // Output the time of the last system boot.
+                    WriteObject(DateTime.Now.Subtract(uptime));
+                }
+                else
+                {
+                    // Output the time elapsed since the last system boot.
+                    WriteObject(uptime);
                 }
             }
             else

@@ -510,6 +510,10 @@ dotnet_diagnostic.CA1846.severity = warning
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1847
 dotnet_diagnostic.CA1847.severity = warning
 
+# CA1853: Unnecessary call to 'Dictionary.ContainsKey(key)'
+# https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1853
+dotnet_diagnostic.CA1853.severity = warning
+
 # CA1858: Use 'StartsWith' instead of 'IndexOf'
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1858
 dotnet_diagnostic.CA1858.severity = warning
@@ -1338,7 +1342,7 @@ dotnet_diagnostic.IDE0048.severity = suggestion
 
 # IDE0049: PreferBuiltInOrFrameworkType
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0049
-dotnet_diagnostic.IDE0049.severity = warning
+dotnet_diagnostic.IDE0049.severity = suggestion
 
 # IDE0050: ConvertAnonymousTypeToTuple
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0050
@@ -1846,7 +1850,7 @@ dotnet_diagnostic.SA1205.severity = warning
 
 # SA1206: Declaration keywords should follow order
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1206.md
-dotnet_diagnostic.SA1206.severity = none
+dotnet_diagnostic.SA1206.severity = warning
 
 # SA1207: Protected should come before internal
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1207.md
