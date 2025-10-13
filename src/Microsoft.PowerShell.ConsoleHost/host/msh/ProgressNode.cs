@@ -111,7 +111,7 @@ namespace Microsoft.PowerShell
                     RenderMinimal(strCollection, indentation, maxWidth, rawUI);
                     break;
                 case RenderStyle.Ansi:
-                    RenderAnsi(strCollection, indentation, maxWidth);
+                    RenderAnsi(strCollection, indentation, maxWidth, rawUI);
                     break;
                 case RenderStyle.Invisible:
                     // do nothing
@@ -368,9 +368,12 @@ namespace Microsoft.PowerShell
         /// <param name="maxWidth">
         /// The maximum number of chars that the rendering is allowed to consume.
         /// </param>
+        /// <param name="rawUI">
+        /// The PSHostRawUserInterface used to gauge string widths in the rendering.
+        /// </param>
         private
         void
-        RenderAnsi(ArrayList strCollection, int indentation, int maxWidth)
+        RenderAnsi(ArrayList strCollection, int indentation, int maxWidth, PSHostRawUserInterface rawUI)
         {
             string indent = StringUtil.Padding(indentation);
             string secRemain = string.Empty;
@@ -389,9 +392,11 @@ namespace Microsoft.PowerShell
 
             // if the activity is really long, only use up to half the width
             string activity;
-            if (Activity.Length > maxWidth / 2)
+            int activityDisplayWidth = rawUI.LengthInBufferCells(Activity);
+            if (activityDisplayWidth > maxWidth / 2)
             {
-                activity = Activity.Substring(0, maxWidth / 2) + PSObjectHelper.Ellipsis;
+                activity = StringUtil.TruncateToBufferCellWidth(rawUI, Activity, maxWidth / 2 - 1) + PSObjectHelper.Ellipsis;
+                activityDisplayWidth = maxWidth / 2;
             }
             else
             {
@@ -399,24 +404,40 @@ namespace Microsoft.PowerShell
             }
 
             // 4 is for the extra space and square brackets below and one extra space
-            int barWidth = maxWidth - activity.Length - indentation - 4;
+            int barWidth = maxWidth - activityDisplayWidth - indentation - 4;
 
             var sb = new StringBuilder();
             int padding = maxWidth + PSStyle.Instance.Progress.Style.Length + PSStyle.Instance.Reverse.Length + PSStyle.Instance.ReverseOff.Length;
             sb.Append(PSStyle.Instance.Reverse);
 
+            // Build the status description part
             int maxStatusLength = barWidth - secRemainLength - 1;
-            if (maxStatusLength > 0 && StatusDescription.Length > barWidth - secRemainLength)
+            string statusPart;
+            int statusPartDisplayWidth;
+            if (maxStatusLength > 0)
             {
-                sb.Append(StatusDescription.AsSpan(0, barWidth - secRemainLength - 1));
-                sb.Append(PSObjectHelper.Ellipsis);
+                int statusDisplayWidth = rawUI.LengthInBufferCells(StatusDescription);
+                if (statusDisplayWidth > barWidth - secRemainLength)
+                {
+                    statusPart = StringUtil.TruncateToBufferCellWidth(rawUI, StatusDescription, barWidth - secRemainLength - 1) + PSObjectHelper.Ellipsis;
+                    statusPartDisplayWidth = barWidth - secRemainLength;
+                }
+                else
+                {
+                    statusPart = StatusDescription;
+                    statusPartDisplayWidth = statusDisplayWidth;
+                }
             }
             else
             {
-                sb.Append(StatusDescription);
+                statusPart = StatusDescription;
+                statusPartDisplayWidth = rawUI.LengthInBufferCells(StatusDescription);
             }
 
-            int emptyPadLength = barWidth + PSStyle.Instance.Reverse.Length - sb.Length - secRemainLength;
+            sb.Append(statusPart);
+
+            // Calculate padding needed
+            int emptyPadLength = barWidth - statusPartDisplayWidth - secRemainLength;
             if (emptyPadLength > 0)
             {
                 sb.Append(string.Empty.PadRight(emptyPadLength));
@@ -424,6 +445,7 @@ namespace Microsoft.PowerShell
 
             sb.Append(secRemain);
 
+            // Insert ReverseOff at the correct position for the progress bar
             if (PercentComplete >= 0 && PercentComplete < 100 && barWidth > 0)
             {
                 int barLength = PercentComplete * barWidth / 100;
@@ -432,9 +454,28 @@ namespace Microsoft.PowerShell
                     barLength = barWidth - 1;
                 }
 
-                if (barLength < sb.Length)
+                // Calculate the string position where we need to insert ReverseOff
+                // We need to find the character position that corresponds to barLength buffer cells
+                int stringPos = PSStyle.Instance.Reverse.Length;
+                int currentCellCount = 0;
+                
+                for (int i = 0; i < statusPart.Length && currentCellCount < barLength; i++)
                 {
-                    sb.Insert(barLength + PSStyle.Instance.Reverse.Length, PSStyle.Instance.ReverseOff);
+                    currentCellCount += rawUI.LengthInBufferCells(statusPart.Substring(i, 1));
+                    stringPos++;
+                }
+
+                // Add any padding characters
+                int remainingCells = barLength - currentCellCount;
+                stringPos += Math.Max(0, remainingCells);
+
+                if (stringPos < sb.Length)
+                {
+                    sb.Insert(stringPos, PSStyle.Instance.ReverseOff);
+                }
+                else
+                {
+                    sb.Append(PSStyle.Instance.ReverseOff);
                 }
             }
             else
