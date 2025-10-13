@@ -165,6 +165,11 @@ namespace System.Management.Automation
                     powershell.AddParameter("CommandType", types);
                 }
 
+                if (context.ExecutionContext.CompletionOptions.ExcludedModules?.Length > 0)
+                {
+                    powershell.AddParameter("ExcludeModule", context.ExecutionContext.CompletionOptions.ExcludedModules);
+                }
+
                 // Exception is ignored, the user simply does not get any completion results if the pipeline fails
                 Exception exceptionThrown;
                 var commandInfos = context.Helper.ExecuteCurrentPowerShell(out exceptionThrown);
@@ -186,6 +191,11 @@ namespace System.Management.Automation
                     if (!types.Equals(CommandTypes.All))
                     {
                         powershell.AddParameter("CommandType", types);
+                    }
+
+                    if (context.ExecutionContext.CompletionOptions.ExcludedModules?.Length > 0)
+                    {
+                        powershell.AddParameter("ExcludeModule", context.ExecutionContext.CompletionOptions.ExcludedModules);
                     }
 
                     commandInfos = context.Helper.ExecuteCurrentPowerShell(out exceptionThrown);
@@ -2562,6 +2572,16 @@ namespace System.Management.Automation
                         break;
                     }
 
+                case "Set-CompletionOptions":
+                    {
+                        if (parameterName.EqualsOrdinalIgnoreCase("ExcludedModules"))
+                        {
+                            NativeCompletionModuleCommands(context, paramName: "Name", result);
+                        }
+
+                        break;
+                    }
+
                 default:
                     {
                         NativeCompletionPathArgument(context, parameterName, result);
@@ -4653,7 +4673,46 @@ namespace System.Management.Automation
                     break;
             }
 
-            return results.OrderBy(x => x.ToolTip);
+            switch (context.ExecutionContext.CompletionOptions.PathSorting)
+            {
+                case PathSorting.FullPath:
+                    return results.OrderBy(x => x.ToolTip);
+
+                case PathSorting.ContainersFirst:
+                    return results.OrderByDescending(x => x.ResultType).ThenBy(x => x.ListItemText);
+
+                default:
+                    return results;
+            }
+        }
+
+        private static char GetPreferredSeparatorChar(ProviderInfo provider, string wordToComplete, PathSeparator userSetting, out bool isNonStandard)
+        {
+            char separator;
+            switch (userSetting)
+            {
+                case PathSeparator.LastUsed:
+                    int index = wordToComplete.LastIndexOfAny(Utils.Separators.Directory);
+                    separator =  index == -1
+                        ? provider.ItemSeparator
+                        : wordToComplete[index];
+                    break;
+
+                case PathSeparator.Slash:
+                    separator = '/';
+                    break;
+
+                case PathSeparator.Backslash:
+                    separator = '\\';
+                    break;
+
+                default:
+                    isNonStandard = false;
+                    return provider.ItemSeparator;
+            }
+
+            isNonStandard = provider.ItemSeparator != separator;
+            return separator;
         }
 
         /// <summary>
@@ -4690,6 +4749,9 @@ namespace System.Management.Automation
             Diagnostics.Assert(provider.Name.Equals(FileSystemProvider.ProviderName), "Provider should be filesystem provider.");
 #endif
             var enumerationOptions = _enumerationOptions;
+            CompletionOptions completionOptions = context.ExecutionContext.CompletionOptions;
+            bool replaceSeparator;
+            char preferredSeparator = GetPreferredSeparatorChar(provider, context.WordToComplete, completionOptions.PreferredPathSeparator, out replaceSeparator);
             var results = new List<CompletionResult>();
             string homePath = inputUsedHome && !string.IsNullOrEmpty(provider.Home) ? provider.Home : null;
 
@@ -4731,6 +4793,10 @@ namespace System.Management.Automation
                     basePath = basePath.EndsWith(provider.ItemSeparator)
                         ? providerPrefix + basePath
                         : providerPrefix + basePath + provider.ItemSeparator;
+                    if (replaceSeparator)
+                    {
+                        basePath = basePath.Replace(provider.ItemSeparator, preferredSeparator);
+                    }
                     basePath = RebuildPathWithVars(basePath, homePath, stringType, literalPaths, out baseQuotesNeeded);
                 }
                 else
@@ -4749,8 +4815,8 @@ namespace System.Management.Automation
                         continue;
                     }
 
-                    var entryName = entry.Name;
-                    if (wildcardFilter is not null && !wildcardFilter.IsMatch(entryName))
+                    var listItemText = entry.Name;
+                    if (wildcardFilter is not null && !wildcardFilter.IsMatch(listItemText))
                     {
                         continue;
                     }
@@ -4766,22 +4832,28 @@ namespace System.Management.Automation
                         }
 
                         basePath = basePath.Remove(basePath.Length - entry.Name.Length);
+                        if (replaceSeparator)
+                        {
+                            basePath = basePath.Replace(provider.ItemSeparator, preferredSeparator);
+                        }
                         basePath = RebuildPathWithVars(basePath, homePath, stringType, literalPaths, out baseQuotesNeeded);
                     }
 
                     var resultType = isContainer
                         ? CompletionResultType.ProviderContainer
                         : CompletionResultType.ProviderItem;
-                    
-                    bool leafQuotesNeeded;
+
+                    string leaf = isContainer && completionOptions.AddTrailingSeparatorForContainers
+                        ? listItemText + preferredSeparator
+                        : listItemText;
                     var completionText = NewPathCompletionText(
                         basePath,
-                        EscapePath(entryName, stringType, literalPaths, out leafQuotesNeeded),
+                        EscapePath(leaf, stringType, literalPaths, out bool leafQuotesNeeded),
                         stringType,
                         containsNestedExpressions: false,
                         forceQuotes: baseQuotesNeeded || leafQuotesNeeded,
                         addAmpersand: false);
-                    results.Add(new CompletionResult(completionText, entryName, resultType, entry.FullName));
+                    results.Add(new CompletionResult(completionText, listItemText, resultType, entry.FullName));
                 }
             }
 
@@ -4818,6 +4890,9 @@ namespace System.Management.Automation
                 ? provider.Home
                 : null;
 
+            CompletionOptions completionOptions = context.ExecutionContext.CompletionOptions;
+            bool replaceSeparator;
+            char preferredSeparator = GetPreferredSeparatorChar(provider, context.WordToComplete, completionOptions.PreferredPathSeparator, out replaceSeparator);
             var pattern = WildcardPattern.Get(filterText, WildcardOptions.IgnoreCase);
             var results = new List<CompletionResult>();
 
@@ -4904,6 +4979,11 @@ namespace System.Management.Automation
                     basePath = basePath.Remove(basePath.Length - childNameList[0].Length);
                 }
 
+                if (replaceSeparator)
+                {
+                    basePath = basePath.Replace(provider.ItemSeparator, preferredSeparator);
+                }
+
                 bool baseQuotesNeeded;
                 basePath = RebuildPathWithVars(basePath, homePath, stringType, literalPaths, out baseQuotesNeeded);
 
@@ -4931,10 +5011,12 @@ namespace System.Management.Automation
                         resultType = CompletionResultType.Text;
                     }
 
-                    bool leafQuotesNeeded;
+                    string leaf = isContainer && completionOptions.AddTrailingSeparatorForContainers
+                        ? childName + preferredSeparator
+                        : childName;
                     var completionText = NewPathCompletionText(
                         basePath,
-                        EscapePath(childName, stringType, literalPaths, out leafQuotesNeeded),
+                        EscapePath(leaf, stringType, literalPaths, out bool leafQuotesNeeded),
                         stringType,
                         containsNestedExpressions: false,
                         forceQuotes: baseQuotesNeeded || leafQuotesNeeded,
