@@ -47,5 +47,5 @@ jobs:
       uses: actions/github-script@v8
       with:
         script: |
-          const message = "Super-Linter found issues in the changed files. Please check the logs for details.  You can run the linter locally using the command: `./tools/super-lister/super-lister.ps1`.";
+          const message = "Super-Linter found issues in the changed files. Please check the logs for details.  You can run the linter locally using the command: `./tools/super-linter/super-linter.ps1`.";
           core.setFailed(message);
