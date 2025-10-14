@@ -150,7 +150,12 @@ namespace System.Management.Automation.Configuration
         /// <returns>The configured PSContentPath if found, null otherwise.</returns>
         internal string GetPSContentPath()
         {
-            return ReadValueFromFile<string>(ConfigScope.CurrentUser, Constants.PSUserContentPathEnvVar);
+            string contentPath = ReadValueFromFile<string>(ConfigScope.CurrentUser, Constants.PSUserContentPathEnvVar);
+            if (!string.IsNullOrEmpty(contentPath))
+            {
+                contentPath = Environment.ExpandEnvironmentVariables(contentPath);
+            }
+            return contentPath;
         }
 
         /// <summary>
