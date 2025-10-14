@@ -686,20 +686,33 @@ namespace System.Management.Automation.Configuration
                 string oldConfigFile = Path.Combine(Platform.ConfigDirectory, ConfigFileName);
                 string newConfigFile = Path.Combine(Platform.DefaultPSContentDirectory, ConfigFileName);
                 
-                if (!File.Exists(oldConfigFile))
+                // If paths are the same, no migration needed
+                if (string.Equals(oldConfigFile, newConfigFile, StringComparison.OrdinalIgnoreCase))
                 {
-                    return; // Nothing to migrate
+                    return;
                 }
                 
-                // Check if we need to migrate from old location to new location
-                // Only migrate if:
-                // 1. Old config directory is different from new default directory
-                // 2. New config file doesn't already exist (avoid overwriting)
-                // 3. Old config file exists
-                if (!string.Equals(oldConfigFile, newConfigFile, StringComparison.OrdinalIgnoreCase) && 
-                    !File.Exists(newConfigFile))
+                // Always update to use the new location when experimental feature is enabled
+                string newConfigDir = Path.GetDirectoryName(newConfigFile);
+                
+                // If migration was already completed (new config exists), just update paths
+                if (File.Exists(newConfigFile))
+                {
+                    perUserConfigDirectory = newConfigDir;
+                    perUserConfigFile = newConfigFile;
+                    return;
+                }
+                
+                // If old config exists and needs migration, perform the migration
+                if (File.Exists(oldConfigFile))
                 {
                     MigrateUserConfig(oldConfigFile, newConfigFile);
+                }
+                else
+                {
+                    // No existing config, but still use new location going forward
+                    perUserConfigDirectory = newConfigDir;
+                    perUserConfigFile = newConfigFile;
                 }
             }
             catch
