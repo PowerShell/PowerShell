@@ -503,6 +503,7 @@ function Start-PSPackage {
                     AssetsPath = "$RepoRoot\assets"
                     ProductTargetArchitecture = $TargetArchitecture
                     Force = $Force
+                    LTS = $LTS
             }
 
                 if ($PSCmdlet.ShouldProcess("Create MSI Package")) {
@@ -3805,7 +3806,9 @@ function New-MSIPackage
         # Force overwrite of package
         [Switch] $Force,
 
-        [string] $CurrentLocation = (Get-Location)
+        [string] $CurrentLocation = (Get-Location),
+
+        [switch] $LTS
     )
 
     $wixPaths = Get-WixPath -IsProductArchitectureArm ($ProductTargetArchitecture -eq "arm64")
@@ -3825,6 +3828,11 @@ function New-MSIPackage
     if ($isPreview)
     {
         $simpleProductVersion += '-preview'
+    }
+
+    if ($LTS.IsPresent)
+    {
+        $simpleProductVersion += '-lts'
     }
 
     $staging = "$PSScriptRoot/staging"
