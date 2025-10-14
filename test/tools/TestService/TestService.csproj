@@ -15,7 +15,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Windows.Compatibility" Version="8.0.19" />
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="8.0.21" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.1" />
     <PackageReference Include="System.Data.Odbc" Version="8.0.1" />
     <PackageReference Include="System.Data.OleDb" Version="8.0.1" />
@@ -24,7 +24,7 @@
     <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="8.0.1" />
     <PackageReference Include="System.DirectoryServices.AccountManagement" Version="8.0.1" />
     <PackageReference Include="System.DirectoryServices.Protocols" Version="8.0.2" />
-    <PackageReference Include="System.Drawing.Common" Version="8.0.19" />
+    <PackageReference Include="System.Drawing.Common" Version="8.0.21" />
     <PackageReference Include="System.IO.Packaging" Version="8.0.1" />
     <PackageReference Include="System.Runtime.Caching" Version="8.0.1" />
     <PackageReference Include="System.Security.Cryptography.Pkcs" Version="8.0.1" />
