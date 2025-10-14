@@ -12,7 +12,8 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implements Get-PSContentPath cmdlet.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "PSContentPath", HelpUri = "https://go.microsoft.com/fwlink/?linkid=2096787")]
+    /// TODO:: Add helpURI
+    [Cmdlet(VerbsCommon.Get, "PSContentPath", HelpUri = "https://go.microsoft.com/fwlink/?linkid=")]
     [Experimental(ExperimentalFeature.PSContentPath, ExperimentAction.Show)]
     public class GetPSContentPathCommand : PSCmdlet
     {
@@ -40,7 +41,8 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implements Set-PSContentPath cmdlet.
     /// </summary>
-    [Cmdlet(VerbsCommon.Set, "PSContentPath", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?linkid=2096787")]
+    /// TODO:: Add helpURI
+    [Cmdlet(VerbsCommon.Set, "PSContentPath", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?linkid=")]
     [Experimental(ExperimentalFeature.PSContentPath, ExperimentAction.Show)]
     public class SetPSContentPathCommand : PSCmdlet
     {
