@@ -51,52 +51,41 @@ jobs:
         Write-Host "Base ref: origin/${{ github.base_ref }}"
         ./tools/verifyCopyright.ps1 -BaseRef "origin/${{ github.base_ref }}" -Verbose
 
-    - name: Verify copyright headers using GitHub Script
-      if: failure()
+    - name: Double-check with GitHub Script (alternative verification)
+      if: success() || failure()
       uses: actions/github-script@v8
       with:
         script: |
           const fs = require('fs');
           const path = require('path');
           
-          // Get changed files
+          console.log('Running alternative copyright verification using GitHub Script...');
+          
+          // Get changed files from the PR
           const { data: files } = await github.rest.pulls.listFiles({
             owner: context.repo.owner,
             repo: context.repo.repo,
             pull_number: context.issue.number,
           });
           
+          console.log(`Checking ${files.length} changed files...`);
+          
           const copyrightPatterns = {
-            cs: /^\/\/\s*Copyright\s*\(c\)\s*Microsoft\s+Corporation\.\s*[\r\n]+\/\/\s*Licensed\s+under\s+the\s+MIT\s+License\./m,
-            ps: /^#\s*Copyright\s*\(c\)\s*Microsoft\s+Corporation\.\s*[\r\n]+#\s*Licensed\s+under\s+the\s+MIT\s+License\./m,
-            yaml: /^#\s*Copyright\s*\(c\)\s*Microsoft\s+Corporation\.\s*[\r\n]+#\s*Licensed\s+under\s+the\s+MIT\s+License\./m,
+            cs: /\/\/\s*Copyright\s*\(c\)\s*Microsoft\s+Corporation\.\s*[\r\n]+\/\/\s*Licensed\s+under\s+the\s+MIT\s+License\./m,
+            hash: /#\s*Copyright\s*\(c\)\s*Microsoft\s+Corporation\.\s*[\r\n]+#\s*Licensed\s+under\s+the\s+MIT\s+License\./m,
           };
           
           const extensionMap = {
-            '.cs': 'cs',
-            '.c': 'cs',
-            '.cpp': 'cs',
-            '.h': 'cs',
-            '.hpp': 'cs',
-            '.ps1': 'ps',
-            '.psm1': 'ps',
-            '.psd1': 'ps',
-            '.yml': 'yaml',
-            '.yaml': 'yaml',
-            '.sh': 'ps',
-            '.py': 'ps',
+            '.cs': 'cs', '.c': 'cs', '.cpp': 'cs', '.h': 'cs', '.hpp': 'cs',
+            '.ps1': 'hash', '.psm1': 'hash', '.psd1': 'hash',
+            '.yml': 'hash', '.yaml': 'hash',
+            '.sh': 'hash', '.py': 'hash',
           };
           
           const excludePatterns = [
-            /\.md$/,
-            /\.txt$/,
-            /\.json$/,
-            /\.sln$/,
-            /^LICENSE/,
-            /^README/,
-            /^CHANGELOG/,
-            /\/testdata\//,
-            /\/test\/assets\//,
+            /\.md$/, /\.txt$/, /\.json$/, /\.sln$/, /\.resx$/, /\.csproj$/,
+            /^LICENSE/, /^README/, /^CHANGELOG/,
+            /\/testdata\//, /\/test\/assets\//,
           ];
           
           const missingCopyright = [];
@@ -127,6 +116,9 @@ jobs:
               
               if (!pattern.test(header)) {
                 missingCopyright.push(filename);
+                console.log(`✗ ${filename} - Missing copyright header`);
+              } else {
+                console.log(`✓ ${filename} - Has copyright header`);
               }
             } catch (error) {
               console.log(`Warning: Could not read file ${filename}: ${error.message}`);
@@ -134,6 +126,8 @@ jobs:
           }
           
           if (missingCopyright.length > 0) {
-            const message = `The following files are missing copyright headers:\n${missingCopyright.map(f => `  - ${f}`).join('\n')}`;
+            const message = `GitHub Script verification: The following files are missing copyright headers:\n${missingCopyright.map(f => `  - ${f}`).join('\n')}`;
             core.setFailed(message);
+          } else {
+            console.log('GitHub Script verification: All checked files have proper copyright headers! ✓');
           }
