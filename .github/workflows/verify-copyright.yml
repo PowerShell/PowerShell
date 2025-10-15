@@ -1,0 +1,139 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+name: Verify Copyright Headers
+
+on:
+  pull_request:
+    branches:
+      - master
+      - release/**
+      - github-mirror
+      - "*-feature"
+    paths:
+      - "**/*.cs"
+      - "**/*.ps1"
+      - "**/*.psm1"
+      - "**/*.psd1"
+      - "**/*.yml"
+      - "**/*.yaml"
+      - "**/*.sh"
+      - "**/*.py"
+      - "**/*.c"
+      - "**/*.cpp"
+      - "**/*.h"
+      - "**/*.hpp"
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  verify-copyright:
+    name: Verify Copyright Headers
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'PowerShell'
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v5
+      with:
+        fetch-depth: 0
+
+    - name: Fetch base branch
+      run: |
+        git fetch origin ${{ github.base_ref }}
+
+    - name: Verify copyright headers using PowerShell
+      shell: pwsh
+      run: |
+        $ErrorActionPreference = 'Stop'
+        Write-Host "Base ref: origin/${{ github.base_ref }}"
+        ./tools/verifyCopyright.ps1 -BaseRef "origin/${{ github.base_ref }}" -Verbose
+
+    - name: Verify copyright headers using GitHub Script
+      if: failure()
+      uses: actions/github-script@v8
+      with:
+        script: |
+          const fs = require('fs');
+          const path = require('path');
+          
+          // Get changed files
+          const { data: files } = await github.rest.pulls.listFiles({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            pull_number: context.issue.number,
+          });
+          
+          const copyrightPatterns = {
+            cs: /^\/\/\s*Copyright\s*\(c\)\s*Microsoft\s+Corporation\.\s*[\r\n]+\/\/\s*Licensed\s+under\s+the\s+MIT\s+License\./m,
+            ps: /^#\s*Copyright\s*\(c\)\s*Microsoft\s+Corporation\.\s*[\r\n]+#\s*Licensed\s+under\s+the\s+MIT\s+License\./m,
+            yaml: /^#\s*Copyright\s*\(c\)\s*Microsoft\s+Corporation\.\s*[\r\n]+#\s*Licensed\s+under\s+the\s+MIT\s+License\./m,
+          };
+          
+          const extensionMap = {
+            '.cs': 'cs',
+            '.c': 'cs',
+            '.cpp': 'cs',
+            '.h': 'cs',
+            '.hpp': 'cs',
+            '.ps1': 'ps',
+            '.psm1': 'ps',
+            '.psd1': 'ps',
+            '.yml': 'yaml',
+            '.yaml': 'yaml',
+            '.sh': 'ps',
+            '.py': 'ps',
+          };
+          
+          const excludePatterns = [
+            /\.md$/,
+            /\.txt$/,
+            /\.json$/,
+            /\.sln$/,
+            /^LICENSE/,
+            /^README/,
+            /^CHANGELOG/,
+            /\/testdata\//,
+            /\/test\/assets\//,
+          ];
+          
+          const missingCopyright = [];
+          
+          for (const file of files) {
+            const filename = file.filename;
+            const ext = path.extname(filename).toLowerCase();
+            
+            // Skip excluded files
+            if (excludePatterns.some(pattern => pattern.test(filename))) {
+              continue;
+            }
+            
+            // Skip if not a tracked extension
+            if (!extensionMap[ext]) {
+              continue;
+            }
+            
+            // Skip deleted files
+            if (file.status === 'removed') {
+              continue;
+            }
+            
+            try {
+              const content = fs.readFileSync(filename, 'utf8');
+              const header = content.substring(0, Math.min(500, content.length));
+              const pattern = copyrightPatterns[extensionMap[ext]];
+              
+              if (!pattern.test(header)) {
+                missingCopyright.push(filename);
+              }
+            } catch (error) {
+              console.log(`Warning: Could not read file ${filename}: ${error.message}`);
+            }
+          }
+          
+          if (missingCopyright.length > 0) {
+            const message = `The following files are missing copyright headers:\n${missingCopyright.map(f => `  - ${f}`).join('\n')}`;
+            core.setFailed(message);
+          }
