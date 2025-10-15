@@ -261,6 +261,9 @@ Please see PowerShell [Testing Guidelines - Running Tests Outside of CI][running
 * After submitting your pull request,
   our [CI system (Azure DevOps Pipelines)][ci-system]
   will run a suite of tests and automatically update the status of the pull request.
+* A GitHub Actions workflow automatically verifies that all changed source files include the proper copyright header.
+  If your PR fails the copyright check, add the appropriate copyright header to the beginning of each flagged file
+  (see the copyright header examples above).
 * Our CI contains automated spell checking and link checking for Markdown files. If there is any false-positive,
   [run the spell checker command-line tool in interactive mode](#spell-checking-documentation)
   to add words to the `.spelling` file.

@@ -1,31 +1,5 @@
 # C# Coding Guidelines
 
-## Copyright Headers
-
-All source code files must include the Microsoft copyright header at the beginning of the file:
-
-**For C#, C, C++, Java, JavaScript, TypeScript files:**
-```csharp
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
-```
-
-**For PowerShell, Python, Ruby, YAML, Shell script files:**
-```powershell
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
-```
-
-**For XML, CSPROJ, RESX files:**
-```xml
-<!-- Copyright (c) Microsoft Corporation.
-     Licensed under the MIT License. -->
-```
-
-The copyright header should be placed at the very beginning of the file, before any other code or comments (except for XML declaration in XML files).
-
-A GitHub Actions workflow automatically verifies that all changed files include the proper copyright header. If your PR fails the copyright check, add the appropriate header to the beginning of each flagged file.
-
 ## Coding Conventions
 
 As a general rule, our coding convention is to follow the style of the surrounding code.
