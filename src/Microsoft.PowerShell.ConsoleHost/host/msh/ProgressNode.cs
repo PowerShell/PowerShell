@@ -407,7 +407,6 @@ namespace Microsoft.PowerShell
             int barWidth = maxWidth - activityDisplayWidth - indentation - 4;
 
             var sb = new StringBuilder();
-            int padding = maxWidth + PSStyle.Instance.Progress.Style.Length + PSStyle.Instance.Reverse.Length + PSStyle.Instance.ReverseOff.Length;
             sb.Append(PSStyle.Instance.Reverse);
 
             // Build the status description part
@@ -419,8 +418,9 @@ namespace Microsoft.PowerShell
                 int statusDisplayWidth = rawUI.LengthInBufferCells(StatusDescription);
                 if (statusDisplayWidth > barWidth - secRemainLength)
                 {
-                    statusPart = StringUtil.TruncateToBufferCellWidth(rawUI, StatusDescription, barWidth - secRemainLength - 1) + PSObjectHelper.Ellipsis;
-                    statusPartDisplayWidth = barWidth - secRemainLength;
+                    int ellipsisWidth = rawUI.LengthInBufferCells(PSObjectHelper.EllipsisStr);
+                    statusPart = StringUtil.TruncateToBufferCellWidth(rawUI, StatusDescription, barWidth - secRemainLength - ellipsisWidth) + PSObjectHelper.EllipsisStr;
+                    statusPartDisplayWidth = rawUI.LengthInBufferCells(statusPart);
                 }
                 else
                 {
@@ -490,8 +490,7 @@ namespace Microsoft.PowerShell
                     PSStyle.Instance.Progress.Style,
                     activity,
                     sb.ToString(),
-                    PSStyle.Instance.Reset)
-                .PadRight(padding));
+                    PSStyle.Instance.Reset));
         }
 
         /// <summary>
