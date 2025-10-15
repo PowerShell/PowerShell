@@ -49,20 +49,10 @@ namespace System.Management.Automation.Runspaces
                     .AddHeader(Alignment.Left, label: "UnixMode", width: 10)
                     .AddHeader(Alignment.Right, label: "User", width: 10)
                     .AddHeader(Alignment.Left, label: "Group", width: 10)
-                    // Until LastWriteTime prints as '{0:d} {0:HH}:{0:mm}', it will always be ShortDatePattern + 6 wide.
-                    // Some locale's ShortDatePattern don't trivially relate to the length of the serialized date string.
-                    // Some patterns only have a single day or month designator but will likely take 2 characters, and
-                    // some even have era designators in their ShortDatePattern, which we take the length of and 1 extra
-                    // for a space character. The Fixed 6 comes from the time suffix, eg. " 23:59".
-                    // https://github.com/PowerShell/PowerShell/issues/19723
                     .AddHeader(
                         Alignment.Right,
                         label: "LastWriteTime",
-                        width: CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern.Length +
-                            (CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern.AsSpan().Count('d') == 1 ? 1 : 0) +
-                            (CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern.AsSpan().Count('M') == 1 ? 1 : 0) +
-                            (CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern.AsSpan().Count('g') == 1 ? 1 + CultureInfo.CurrentCulture.DateTimeFormat.GetEraName(1).Length : 0) +
-                            6)
+                        width: String.Format(CultureInfo.CurrentCulture, "{0:d} {0:HH}:{0:mm}", CultureInfo.CurrentCulture.Calendar.MaxSupportedDateTime).Length)
                     .AddHeader(Alignment.Right, label: "Size", width: 12)
                     .AddHeader(Alignment.Left, label: "Name")
                     .StartRowDefinition(wrap: true)
