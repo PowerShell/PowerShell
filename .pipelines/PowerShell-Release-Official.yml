@@ -156,7 +156,7 @@ extends:
         parameters:
           jobName: "LinuxSDK"
           displayName: "Linux SDK Validation"
-          imageName: PSMMSUbuntu20.04-Secure
+          imageName: PSMMSUbuntu22.04-Secure
           poolName: $(ubuntuPool)
 
     - stage: gbltool
@@ -365,10 +365,12 @@ extends:
             This is typically done by the community 1-2 days after the release.
 
     - stage: PublishMsix
-      dependsOn: PushGitTagAndMakeDraftPublic
+      dependsOn: 
+        - setReleaseTagAndChangelog
+        - PushGitTagAndMakeDraftPublic
       displayName: Publish MSIX to store
       variables:
-        ob_release_environment: Production
+        ob_release_environment: ${{ variables.releaseEnvironment }}
       jobs:
       - template: /.pipelines/templates/release-MSIX-Publish.yml@self
         parameters:

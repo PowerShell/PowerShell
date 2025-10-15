@@ -8,6 +8,10 @@ jobs:
     - group: msixTools
     - group: 'Azure Blob variable group'
     - group: 'Store Publish Variables'
+    - name: ob_sdl_credscan_suppressionsFile
+      value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+    - name: ob_sdl_tsa_configFile
+      value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
     - name: ob_outputDirectory
       value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
 
@@ -139,16 +143,19 @@ jobs:
           'LTS' = @{
             AppStoreName = 'PowerShell-LTS'
             ProductId = '$(productId-LTS)'
+            AppId = '$(AppID-LTS)'
             ServiceEndpoint = "StoreAppPublish-Stable"
           }
           'Stable' = @{
             AppStoreName = 'PowerShell'
             ProductId = '$(productId-Stable)'
+            AppId = '$(AppID-Stable)'
             ServiceEndpoint = "StoreAppPublish-Stable"
           }
           'Preview' = @{
             AppStoreName = 'PowerShell (Preview)'
             ProductId = '$(productId-Preview)'
+            AppId = '$(AppID-Preview)'
             ServiceEndpoint = "StoreAppPublish-Preview"
           }
         }
@@ -173,16 +180,21 @@ jobs:
 
           [xml]$pdpXml = Get-Content $pdpPath -Raw
 
-          $appStoreNameElement = $pdpXml.SelectSingleNode("//AppStoreName[@_locID]")
+          # Create namespace manager for XML with default namespace
+          $nsManager = New-Object System.Xml.XmlNamespaceManager($pdpXml.NameTable)
+          $nsManager.AddNamespace("pd", "http://schemas.microsoft.com/appx/2012/ProductDescription")
+          
+          $appStoreNameElement = $pdpXml.SelectSingleNode("//pd:AppStoreName", $nsManager)
           if ($appStoreNameElement) {
-            $appStoreNameElement.InnerText = $config.AppStoreName
-            Write-Verbose -Verbose "Updated AppStoreName to: $($config.AppStoreName)"
+            $appStoreNameElement.SetAttribute("_locID", $config.AppStoreName)
+            Write-Verbose -Verbose "Updated AppStoreName _locID to: $($config.AppStoreName)"
           } else {
             Write-Warning "AppStoreName element not found in PDP file"
           }
 
           $pdpXml.Save($pdpPath)
           Write-Verbose -Verbose "PDP file updated successfully"
+          Get-Content -Path $pdpPath | Write-Verbose -Verbose
         } else {
           Write-Error "PDP file not found: $pdpPath"
           exit 1
@@ -200,26 +212,33 @@ jobs:
 
           $sbConfigJson | ConvertTo-Json -Depth 100 | Set-Content $sbConfigPath -Encoding UTF8
           Write-Verbose -Verbose "SBConfig file updated successfully"
+          Get-Content -Path $sbConfigPath | Write-Verbose -Verbose
         } else {
           Write-Error "SBConfig file not found: $sbConfigPath"
           exit 1
         }
 
         Write-Host "##vso[task.setvariable variable=ServiceConnection]$($config.ServiceEndpoint)"
-        Write-Host "##vso[task.setvariable variable=SBConfigPath]$($config.SBConfigPath)"
+        Write-Host "##vso[task.setvariable variable=SBConfigPath]$($sbConfigPath)"
       name: UpdateConfigs
       displayName: Update PDPs and SBConfig.json
 
-    - task: MS-RDX-MRO.windows-store-publish-dev.package-task.store-package@3
+    - task: MS-RDX-MRO.windows-store-publish.package-task.store-package@3
       displayName: 'Create StoreBroker Package'
       inputs:
-        serviceEndpoint: '$(ServiceConnection)'
+        serviceEndpoint: 'StoreAppPublish-Private'
         sbConfigPath: '$(SBConfigPath)'
         sourceFolder: '$(BundleDir)'
         contents: '*.msixBundle'
         outSBName: 'PowerShellStorePackage'
         pdpPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDP/PDP'
         pdpMediaPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDP/PDP-Media'
+
+    - pwsh: |
+        Get-Item -Path "$(System.DefaultWorkingDirectory)/SBLog.txt" -ErrorAction SilentlyContinue |
+          Copy-Item -Destination "$(ob_outputDirectory)" -Verbose
+      displayName: Upload Store Failure Log
+      condition: failed()
 
     - pwsh: |
         $submissionPackageDir = "$(System.DefaultWorkingDirectory)/SBOutDir"
