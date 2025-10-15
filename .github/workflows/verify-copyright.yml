@@ -15,14 +15,6 @@ on:
       - "**/*.ps1"
       - "**/*.psm1"
       - "**/*.psd1"
-      - "**/*.yml"
-      - "**/*.yaml"
-      - "**/*.sh"
-      - "**/*.py"
-      - "**/*.c"
-      - "**/*.cpp"
-      - "**/*.h"
-      - "**/*.hpp"
 
 permissions:
   contents: read
@@ -37,97 +29,15 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v5
-      with:
-        fetch-depth: 0
 
-    - name: Fetch base branch
-      run: |
-        git fetch origin ${{ github.base_ref }}
+    - name: Get changed files
+      id: changed-files
+      uses: "./.github/actions/infrastructure/path-filters"
+      with:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Verify copyright headers using PowerShell
       shell: pwsh
       run: |
         $ErrorActionPreference = 'Stop'
-        Write-Host "Base ref: origin/${{ github.base_ref }}"
-        ./tools/verifyCopyright.ps1 -BaseRef "origin/${{ github.base_ref }}" -Verbose
-
-    - name: Double-check with GitHub Script (alternative verification)
-      if: success() || failure()
-      uses: actions/github-script@v8
-      with:
-        script: |
-          const fs = require('fs');
-          const path = require('path');
-          
-          console.log('Running alternative copyright verification using GitHub Script...');
-          
-          // Get changed files from the PR
-          const { data: files } = await github.rest.pulls.listFiles({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            pull_number: context.issue.number,
-          });
-          
-          console.log(`Checking ${files.length} changed files...`);
-          
-          const copyrightPatterns = {
-            cs: /\/\/\s*Copyright\s*\(c\)\s*Microsoft\s+Corporation\.\s*[\r\n]+\/\/\s*Licensed\s+under\s+the\s+MIT\s+License\./m,
-            hash: /#\s*Copyright\s*\(c\)\s*Microsoft\s+Corporation\.\s*[\r\n]+#\s*Licensed\s+under\s+the\s+MIT\s+License\./m,
-          };
-          
-          const extensionMap = {
-            '.cs': 'cs', '.c': 'cs', '.cpp': 'cs', '.h': 'cs', '.hpp': 'cs',
-            '.ps1': 'hash', '.psm1': 'hash', '.psd1': 'hash',
-            '.yml': 'hash', '.yaml': 'hash',
-            '.sh': 'hash', '.py': 'hash',
-          };
-          
-          const excludePatterns = [
-            /\.md$/, /\.txt$/, /\.json$/, /\.sln$/, /\.resx$/, /\.csproj$/,
-            /^LICENSE/, /^README/, /^CHANGELOG/,
-            /\/testdata\//, /\/test\/assets\//,
-          ];
-          
-          const missingCopyright = [];
-          
-          for (const file of files) {
-            const filename = file.filename;
-            const ext = path.extname(filename).toLowerCase();
-            
-            // Skip excluded files
-            if (excludePatterns.some(pattern => pattern.test(filename))) {
-              continue;
-            }
-            
-            // Skip if not a tracked extension
-            if (!extensionMap[ext]) {
-              continue;
-            }
-            
-            // Skip deleted files
-            if (file.status === 'removed') {
-              continue;
-            }
-            
-            try {
-              const content = fs.readFileSync(filename, 'utf8');
-              const header = content.substring(0, Math.min(500, content.length));
-              const pattern = copyrightPatterns[extensionMap[ext]];
-              
-              if (!pattern.test(header)) {
-                missingCopyright.push(filename);
-                console.log(`✗ ${filename} - Missing copyright header`);
-              } else {
-                console.log(`✓ ${filename} - Has copyright header`);
-              }
-            } catch (error) {
-              console.log(`Warning: Could not read file ${filename}: ${error.message}`);
-            }
-          }
-          
-          if (missingCopyright.length > 0) {
-            const message = `GitHub Script verification: The following files are missing copyright headers:\n${missingCopyright.map(f => `  - ${f}`).join('\n')}`;
-            core.setFailed(message);
-          } else {
-            console.log('GitHub Script verification: All checked files have proper copyright headers! ✓');
-          }
+        ./tools/verifyCopyright.ps1 -Verbose
