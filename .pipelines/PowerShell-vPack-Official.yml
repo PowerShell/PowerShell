@@ -5,6 +5,21 @@ parameters: # parameters are shown up in ADO UI in a build queue time
   displayName: 'Create and Submit VPack'
   type: boolean
   default: true
+<<<<<<< HEAD
+=======
+- name: vPackName
+  type: string
+  displayName: 'VPack Name:'
+  default: 'PowerShell.BuildTool'
+  values:
+    - PowerShell.BuildTool
+    - PowerShell
+    - PowerShellDoNotUse
+- name: 'ReleaseTagVar'
+  type: string
+  displayName: 'Release Tag Var:'
+  default: 'fromBranch'
+>>>>>>> 7e081b30b (Update vPack name (#26090))
 - name: 'debug'
   displayName: 'Enable debug output'
   type: boolean
