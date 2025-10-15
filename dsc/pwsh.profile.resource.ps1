@@ -115,8 +115,8 @@ function SetOperation {
         if ($InputResource.content) {
             Set-Content -Path $profilePath -Value $InputResource.content
         }
-        else {
-            Remove-Item -Path $profilePath -Force
+        else  {
+            ## Do nothing if content is not specified
         }
     }
     elseif (-not $InputResource._exist -and $profileExists) {
