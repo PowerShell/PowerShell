@@ -1,0 +1,68 @@
+name: Verify Markdown Links
+
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - '**/*.md'
+      - '.github/workflows/verify-markdown-links.yml'
+      - '.github/actions/infrastructure/markdownlinks/**'
+  pull_request:
+    branches: [ main, master ]
+    paths:
+      - '**/*.md'
+  schedule:
+    # Run weekly on Sundays at midnight UTC to catch external link rot
+    - cron: '0 0 * * 0'
+  workflow_dispatch:
+    inputs:
+      path:
+        description: 'Path to verify (default: CHANGELOG)'
+        required: false
+        default: '.'
+
+jobs:
+  verify-changelog-links:
+    name: Verify CHANGELOG Links
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Verify CHANGELOG links
+        id: verify
+        uses: ./.github/actions/infrastructure/markdownlinks
+        with:
+          path: ${{ github.event.inputs.path || '.' }}
+          fail-on-error: 'true'
+          timeout: 30
+          max-retries: 2
+          # Exclude internal or known temporary unavailable links
+          exclude-patterns: ''
+
+      - name: Display verification results
+        if: always()
+        run: |
+          echo "## Link Verification Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Total Links**: ${{ steps.verify.outputs.total-links }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Passed**: ✅ ${{ steps.verify.outputs.passed-links }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Failed**: ❌ ${{ steps.verify.outputs.failed-links }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Skipped**: ⊘ ${{ steps.verify.outputs.skipped-links }}" >> $GITHUB_STEP_SUMMARY
+
+      - name: Comment on PR (if failed)
+        if: failure() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const failedLinks = '${{ steps.verify.outputs.failed-links }}';
+            if (failedLinks > 0) {
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: `## ❌ Markdown Link Verification Failed\n\n` +
+                      `Found ${failedLinks} broken link(s) in the markdown files.\n\n` +
+                      `Please check the workflow logs for details.`
+              });
+            }

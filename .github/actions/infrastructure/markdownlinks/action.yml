@@ -1,0 +1,113 @@
+name: 'Verify Markdown Links'
+description: 'Verify all links in markdown files using PowerShell and Markdig'
+author: 'PowerShell Team'
+
+inputs:
+  path:
+    description: 'Path to the directory containing markdown files to verify'
+    required: false
+    default: './CHANGELOG'
+  exclude-patterns:
+    description: 'Comma-separated list of URL patterns to exclude from verification'
+    required: false
+    default: ''
+  fail-on-error:
+    description: 'Whether to fail the action if any links are broken'
+    required: false
+    default: 'true'
+  timeout:
+    description: 'Timeout in seconds for HTTP requests'
+    required: false
+    default: '30'
+  max-retries:
+    description: 'Maximum number of retries for failed requests'
+    required: false
+    default: '2'
+
+outputs:
+  total-links:
+    description: 'Total number of unique links checked'
+    value: ${{ steps.verify.outputs.total }}
+  passed-links:
+    description: 'Number of links that passed verification'
+    value: ${{ steps.verify.outputs.passed }}
+  failed-links:
+    description: 'Number of links that failed verification'
+    value: ${{ steps.verify.outputs.failed }}
+  skipped-links:
+    description: 'Number of links that were skipped'
+    value: ${{ steps.verify.outputs.skipped }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Verify markdown links
+      id: verify
+      shell: pwsh
+      run: |
+        Write-Host "Starting markdown link verification..." -ForegroundColor Cyan
+
+        # Prepare exclude patterns
+        $excludePatterns = @()
+        $excludeInput = '${{ inputs.exclude-patterns }}'
+        if ($excludeInput) {
+          $excludePatterns = $excludeInput -split ',' | ForEach-Object { $_.Trim() }
+          Write-Host "Exclude patterns: $($excludePatterns -join ', ')" -ForegroundColor Yellow
+        }
+
+        # Build parameters
+        $params = @{
+          Path = '${{ inputs.path }}'
+          Timeout = [int]'${{ inputs.timeout }}'
+          MaxRetries = [int]'${{ inputs.max-retries }}'
+        }
+
+        if ($excludePatterns.Count -gt 0) {
+          $params.Exclude = $excludePatterns
+        }
+
+        if ('${{ inputs.fail-on-error }}' -eq 'true') {
+          $params.FailOnError = $true
+        }
+
+        # Run the verification script
+        $scriptPath = Join-Path '${{ github.action_path }}' 'Verify-MarkdownLinks.ps1'
+
+        # Capture output and parse results
+        $output = & $scriptPath @params 2>&1 | Tee-Object -Variable capturedOutput
+
+        # Try to extract metrics from output
+        $totalLinks = 0
+        $passedLinks = 0
+        $failedLinks = 0
+        $skippedLinks = 0
+
+        foreach ($line in $capturedOutput) {
+          if ($line -match 'Total URLs checked: (\d+)') {
+            $totalLinks = $Matches[1]
+          }
+          elseif ($line -match 'Passed: (\d+)') {
+            $passedLinks = $Matches[1]
+          }
+          elseif ($line -match 'Failed: (\d+)') {
+            $failedLinks = $Matches[1]
+          }
+          elseif ($line -match 'Skipped: (\d+)') {
+            $skippedLinks = $Matches[1]
+          }
+        }
+
+        # Set outputs
+        "total=$totalLinks" >> $env:GITHUB_OUTPUT
+        "passed=$passedLinks" >> $env:GITHUB_OUTPUT
+        "failed=$failedLinks" >> $env:GITHUB_OUTPUT
+        "skipped=$skippedLinks" >> $env:GITHUB_OUTPUT
+
+        Write-Host "Action completed" -ForegroundColor Cyan
+
+        # Exit with the same code as the verification script
+        exit $LASTEXITCODE
+
+branding:
+  icon: 'link'
+  color: 'blue'
