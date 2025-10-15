@@ -230,10 +230,11 @@ namespace System.Management.Automation
             else
             {
                 basePath = GetAllUsersFolderPath(shellId);
-                if (string.IsNullOrEmpty(basePath))
-                {
-                    return string.Empty;
-                }
+            }
+
+            if (string.IsNullOrEmpty(basePath))
+            {
+                return string.Empty;
             }
 
             string profileName = useTestProfile ? "profile_test.ps1" : "profile.ps1";
