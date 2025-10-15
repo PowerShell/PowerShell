@@ -5,7 +5,6 @@ inputs:
   purpose:
     required: false
     default: ''
-    type: string
   tagSet:
     required: false
     default: CI
@@ -13,6 +12,15 @@ inputs:
   ctrfFolder:
     required: false
     default: ctrf
+    type: string
+  client-id:
+    required: true
+    type: string
+  tenant-id:
+    required: true
+    type: string
+  subscription-id:
+    required: true
     type: string
 
 runs:
@@ -42,6 +50,26 @@ runs:
   - uses: actions/setup-dotnet@v4
     with:
       global-json-file: .\global.json
+
+  - name: Get Latest DSC Package Version
+    shell: pwsh
+    run: |-
+      Import-Module .\.github\workflows\GHWorkflowHelper\GHWorkflowHelper.psm1
+      $releases = Invoke-RestMethod -Uri "https://api.github.com/repos/PowerShell/Dsc/releases"
+      $latestRelease = $releases | Select-Object -First 1
+      $latestVersion = $latestRelease.tag_name.TrimStart("v")
+      Write-Host "Latest DSC Version: $latestVersion"
+
+      $downloadUrl = $latestRelease.assets | Where-Object { $_.name -like "DSC-*-x86_64-pc-windows-msvc.zip" } | Select-Object -First 1 | Select-Object -ExpandProperty browser_download_url
+      Write-Host "Download URL: $downloadUrl"
+      $tempPath = Get-GWTempPath
+      Invoke-RestMethod -Uri $downloadUrl -OutFile "$tempPath\DSC.zip"
+
+      $null = New-Item -ItemType Directory -Path "$tempPath\DSC" -Force
+      Expand-Archive -Path "$tempPath\DSC.zip" -DestinationPath "$tempPath\DSC" -Force
+      $dscRoot = "$tempPath\DSC"
+      Write-Host "DSC Root: $dscRoot"
+      Set-GWVariable -Name "DSC_ROOT" -Value $dscRoot
 
   - name: Bootstrap
     shell: powershell

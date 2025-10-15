@@ -8,7 +8,7 @@
         "powershell"
     ],
     "type": "Microsoft.PowerShell/Profile",
-    "version": "0.0.1",
+    "version": "0.1.0",
     "get": {
         "executable": "pwsh",
         "args": [
