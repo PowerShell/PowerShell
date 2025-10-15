@@ -250,7 +250,7 @@ Please see PowerShell [Testing Guidelines - Running Tests Outside of CI][running
 ### Pull Request - Work in Progress
 
 * If your pull request is not ready to merge, please mark it as a [draft pull request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests#draft-pull-requests).
-  Alternatively, you can add the prefix `WIP:` to the beginning of the title and remove the prefix when the PR is ready.
+  Additionally, you can add the prefix `WIP:` to the beginning of the title and remove the prefix when the PR is ready.
 
 #### Pull Request - Automatic Checks
 
