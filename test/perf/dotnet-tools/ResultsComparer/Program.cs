@@ -191,7 +191,7 @@ namespace ResultsComparer
         private static void ExportToXml((string id, Benchmark baseResult, Benchmark diffResult, EquivalenceTestConclusion conclusion)[] notSame, FileInfo xmlPath)
         {
             if (xmlPath == null)
-            {  
+            {
                 Console.WriteLine("No file given");
                 return;
             }

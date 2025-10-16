@@ -77,7 +77,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>True if both the objects are same or else returns false.</returns>
         public override bool Equals(object inputObject)
         {
-            if (!(inputObject is ObjectCommandPropertyValue objectCommandPropertyValueObject))
+            if (inputObject is not ObjectCommandPropertyValue objectCommandPropertyValueObject)
             {
                 return false;
             }
