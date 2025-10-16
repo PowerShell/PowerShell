@@ -27,7 +27,7 @@ on:
       - release/**
       - feature/**
     paths:
-      - ".vsts-ci/windows/*.yml"
+      - ".github/workflows/windows-packaging.yml"
       - "assets/wix/**"
       - "build.psm1"
       - "global.json"
