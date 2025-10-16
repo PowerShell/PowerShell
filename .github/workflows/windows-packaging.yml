@@ -114,18 +114,11 @@ jobs:
           Invoke-CIInstall -SkipUser
         shell: pwsh
 
-      - name: Build
+      - name: Build and Package
         run: |
           Import-Module .\tools\ci.psm1
           New-CodeCoverageAndTestPackage
-          Invoke-CIFinish -Runtime ${{ matrix.runtimePrefix }}-${{ matrix.architecture }} -channel ${{ matrix.channel }} -Stage Build
-        shell: pwsh
-
-      - name: Package and Test
-        run: |
-          Import-Module .\tools\ci.psm1
-          New-CodeCoverageAndTestPackage
-          Invoke-CIFinish -Runtime ${{ matrix.runtimePrefix }}-${{ matrix.architecture }} -channel ${{ matrix.channel }} -Stage Package
+          Invoke-CIFinish -Runtime ${{ matrix.runtimePrefix }}-${{ matrix.architecture }} -channel ${{ matrix.channel }}
         shell: pwsh
 
       - name: Upload Build Artifacts
