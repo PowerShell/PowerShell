@@ -26,6 +26,9 @@ outputs:
   buildModuleChanged:
     description: 'Build module changes'
     value: ${{ steps.filter.outputs.buildModuleChanged }}
+  packagingChanged:
+    description: 'Packaging related changes'
+    value: ${{ steps.filter.outputs.packagingChanged }}
 runs:
   using: composite
   steps:
@@ -85,6 +88,20 @@ runs:
 
           const globalConfigChanged = files.some(file => file.filename.startsWith('.globalconfig')) || files.some(file => file.filename.startsWith('nuget.config')) || files.some(file => file.filename.startsWith('global.json'));
 
+          const packagingChanged = files.some(file => 
+            file.filename === '.github/workflows/windows-ci.yml' ||
+            file.filename.startsWith('assets/wix/') ||
+            file.filename === 'build.psm1' ||
+            file.filename === 'global.json' ||
+            file.filename === 'nuget.config' ||
+            file.filename === 'PowerShell.Common.props' ||
+            file.filename.match(/^src\/.*\.csproj$/) ||
+            file.filename.startsWith('test/packaging/windows/') ||
+            file.filename === 'tools/ci.psm1' ||
+            file.filename.startsWith('tools/packaging/') ||
+            file.filename.startsWith('tools/wix/')
+          );
+
           const source = mainSourceChanged || toolsChanged || githubChanged || propsChanged || testsChanged || globalConfigChanged;
 
           core.setOutput('toolsChanged', toolsChanged);
@@ -94,6 +111,7 @@ runs:
           core.setOutput('mainSourceChanged', mainSourceChanged);
           core.setOutput('buildModuleChanged', buildModuleChanged);
           core.setOutput('globalConfigChanged', globalConfigChanged);
+          core.setOutput('packagingChanged', packagingChanged);
           core.setOutput('source', source);
           
 
@@ -106,4 +124,5 @@ runs:
         Write-Verbose -Verbose "tests: ${{ steps.filter.outputs.testsChanged }}"
         Write-Verbose -Verbose "mainSource: ${{ steps.filter.outputs.mainSourceChanged }}"
         Write-Verbose -Verbose "buildModule: ${{ steps.filter.outputs.buildModuleChanged }}"
+        Write-Verbose -Verbose "packaging: ${{ steps.filter.outputs.packagingChanged }}"
       shell: pwsh
