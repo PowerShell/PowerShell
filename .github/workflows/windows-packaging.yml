@@ -81,7 +81,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
         with:
-          clean: true
+          fetch-depth: 1000
 
       - name: Capture Environment
         if: success() || failure()
