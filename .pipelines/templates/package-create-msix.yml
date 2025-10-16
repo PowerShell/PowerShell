@@ -240,21 +240,9 @@ jobs:
 
     - task: MS-RDX-MRO.windows-store-publish.package-task.store-package@3
       displayName: 'Create StoreBroker Package'
-      condition: eq('$(STABLE)', 'true')
+      condition: or(eq('$(STABLE)', 'true'), eq('$(LTS)', 'true'))
       inputs:
         serviceEndpoint: 'StoreAppPublish-Stable'
-        sbConfigPath: '$(SBConfigPath)'
-        sourceFolder: '$(BundleDir)'
-        contents: '*.msixBundle'
-        outSBName: 'PowerShellStorePackage'
-        pdpPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDP/PDP'
-        pdpMediaPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDP/PDP-Media'
-
-    - task: MS-RDX-MRO.windows-store-publish.package-task.store-package@3
-      displayName: 'Create StoreBroker Package'
-      condition: eq('$(LTS)', 'true')
-      inputs:
-        serviceEndpoint: 'StoreAppPublish-LTS'
         sbConfigPath: '$(SBConfigPath)'
         sourceFolder: '$(BundleDir)'
         contents: '*.msixBundle'

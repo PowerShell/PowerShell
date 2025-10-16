@@ -43,14 +43,14 @@ jobs:
         }
         $middleURL = ''
         $tagString = "$(ReleaseTag)"
-        if ($tagString -match '-preview') {
+        if ($tagString -match '-') {
           $middleURL = "preview"
         }
         elseif ($tagString -match '(\d+\.\d+)') {
           $middleURL = $matches[1]
         }
 
-        $endURL = $tagString -replace '^v|\.', ''
+        $endURL = $tagString -replace '[v\.]',''
         $message = "Changelog: https://github.com/PowerShell/PowerShell/blob/master/CHANGELOG/$middleURL.md#$endURL"
         Write-Verbose -Verbose "Release Notes for the Store:"
         Write-Verbose -Verbose "$message"
@@ -87,10 +87,10 @@ jobs:
     displayName: 'Validate Channel Selection'
 
   - task: MS-RDX-MRO.windows-store-publish.publish-task.store-publish@3
-    displayName: 'Publish LTS StoreBroker Package'
-    condition: and(ne('${{ parameters.skipMSIXPublish }}', 'true'), eq(variables['LTS'], 'true'))
+    displayName: 'Publish LTS/Stable StoreBroker Package'
+    condition: and(ne('${{ parameters.skipMSIXPublish }}', 'true'), or(eq('$(STABLE)', 'true'), eq('$(LTS)', 'true')))
     inputs:
-      serviceEndpoint: 'StoreAppPublish-LTS'
+      serviceEndpoint: 'StoreAppPublish-Stable'
       appId: '$(AppID-LTS)'
       inputMethod: JsonAndZip
       jsonPath: '$(Pipeline.Workspace)\SBOutDir\PowerShellStorePackage.json'
@@ -100,21 +100,8 @@ jobs:
       targetPublishMode: 'Immediate'
 
   - task: MS-RDX-MRO.windows-store-publish.publish-task.store-publish@3
-    displayName: 'Publish Stable StoreBroker Package'
-    condition: and(ne('${{ parameters.skipMSIXPublish }}', 'true'), eq(variables['STABLE'], 'true'))
-    inputs:
-      serviceEndpoint: 'StoreAppPublish-Stable'
-      appId: '$(AppID-Stable)'
-      inputMethod: JsonAndZip
-      jsonPath: '$(Pipeline.Workspace)\SBOutDir\PowerShellStorePackage.json'
-      zipPath: '$(Pipeline.Workspace)\SBOutDir\PowerShellStorePackage.zip'
-      numberOfPackagesToKeep: 2
-      jsonZipUpdateMetadata: true
-      targetPublishMode: 'Immediate'
-
-  - task: MS-RDX-MRO.windows-store-publish.publish-task.store-publish@3
     displayName: 'Publish Preview StoreBroker Package'
-    condition: and(ne('${{ parameters.skipMSIXPublish }}', 'true'), eq(variables['PREVIEW'], 'true'))
+    condition: and(ne('${{ parameters.skipMSIXPublish }}', 'true'), eq('$(PREVIEW)', 'true'))
     inputs:
       serviceEndpoint: 'StoreAppPublish-Preview'
       appId: '$(AppID-Preview)'
@@ -124,8 +111,3 @@ jobs:
       numberOfPackagesToKeep: 2
       jsonZipUpdateMetadata: true
       targetPublishMode: 'Immediate'
-
-  - pwsh: |
-      Get-Content -Path "$(System.DefaultWorkingDirectory)/SBLog.txt" -ErrorAction SilentlyContinue
-    displayName: Upload Store Failure Log
-    condition: failed()
