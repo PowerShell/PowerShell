@@ -100,13 +100,7 @@ namespace System.Management.Automation
         /// </summary>
         public
         int
-        ActivityId
-        {
-            get
-            {
-                return id;
-            }
-        }
+        ActivityId => id;
 
         /// <summary>
         /// Gets and sets the Id of the activity for which this record is a subordinate.
@@ -202,17 +196,9 @@ namespace System.Management.Automation
         string
         CurrentOperation
         {
-            get
-            {
-                return currentOperation;
-            }
-
-            set
-            {
-                // null or empty string is allowed
-
-                currentOperation = value;
-            }
+            get => currentOperation;
+            // null or empty string is allowed
+            set => currentOperation = value;
         }
 
         /// <summary>
@@ -223,10 +209,7 @@ namespace System.Management.Automation
         int
         PercentComplete
         {
-            get
-            {
-                return percent;
-            }
+            get => percent;
 
             set
             {
@@ -256,17 +239,9 @@ namespace System.Management.Automation
         int
         SecondsRemaining
         {
-            get
-            {
-                return secondsRemaining;
-            }
-
-            set
-            {
-                // negative values are allowed
-
-                secondsRemaining = value;
-            }
+            get => secondsRemaining;
+            // negative values are allowed
+            set => secondsRemaining = value;
         }
 
         /// <summary>
@@ -276,10 +251,7 @@ namespace System.Management.Automation
         ProgressRecordType
         RecordType
         {
-            get
-            {
-                return type;
-            }
+            get => type;
 
             set
             {
@@ -290,6 +262,18 @@ namespace System.Management.Automation
 
                 type = value;
             }
+        }
+
+        /// <summary>
+        /// <see langword="true"/> if this record is essential for correct progress reporting; otherwise <see langword="false"/>.
+        /// 
+        /// <para/>
+        /// If this property is <see langword="true"/>, the host should not suppress this record even if it is not the most recent record.
+        /// </summary>
+        public bool IsEssential
+        {
+            get => isEssential;
+            set => isEssential = value;
         }
 
         /// <summary>
@@ -453,6 +437,9 @@ namespace System.Management.Automation
         [DataMember]
         private ProgressRecordType type = ProgressRecordType.Processing;
 
+        [DataMember]
+        private bool isEssential = true;
+
         #endregion
 
         #region Serialization / deserialization for remoting
@@ -489,6 +476,7 @@ namespace System.Management.Automation
             result.PercentComplete = RemotingDecoder.GetPropertyValue<int>(progressAsPSObject, RemoteDataNameStrings.ProgressRecord_PercentComplete);
             result.RecordType = RemotingDecoder.GetPropertyValue<ProgressRecordType>(progressAsPSObject, RemoteDataNameStrings.ProgressRecord_Type);
             result.SecondsRemaining = RemotingDecoder.GetPropertyValue<int>(progressAsPSObject, RemoteDataNameStrings.ProgressRecord_SecondsRemaining);
+            result.IsEssential = RemotingDecoder.GetPropertyValueOrDefault(progressAsPSObject, RemoteDataNameStrings.ProgressRecord_IsEssential, false);
 
             return result;
         }
@@ -515,6 +503,7 @@ namespace System.Management.Automation
             progressAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.ProgressRecord_PercentComplete, this.PercentComplete));
             progressAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.ProgressRecord_Type, this.RecordType));
             progressAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.ProgressRecord_SecondsRemaining, this.SecondsRemaining));
+            progressAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.ProgressRecord_IsEssential, this.IsEssential));
 
             return progressAsPSObject;
         }

@@ -257,6 +257,7 @@ namespace System.Management.Automation
         internal const string ProgressRecord_Type = "Type";
         internal const string ProgressRecord_SecondsRemaining = "SecondsRemaining";
         internal const string ProgressRecord_StatusDescription = "StatusDescription";
+        internal const string ProgressRecord_IsEssential = "IsEssential";
 
         #endregion
     }
@@ -1560,6 +1561,25 @@ namespace System.Management.Automation
             object propertyValue = property.Value;
             return ConvertPropertyValueTo<T>(propertyName, propertyValue);
         }
+
+#nullable enable
+        internal static T? GetPropertyValueOrDefault<T>(PSObject psObject, string propertyName, T defaultValue)
+        {
+            if (psObject == null)
+            {
+                throw PSTraceSource.NewArgumentNullException(nameof(psObject));
+            }
+
+            if (propertyName == null)
+            {
+                throw PSTraceSource.NewArgumentNullException(nameof(propertyName));
+            }
+
+            PSPropertyInfo? property = psObject.Properties[propertyName];
+            
+            return property.Value is null ? defaultValue : ConvertPropertyValueTo<T>(propertyName, property.Value);
+        }
+#nullable disable
 
         internal static IEnumerable<T> EnumerateListProperty<T>(PSObject psObject, string propertyName)
         {
