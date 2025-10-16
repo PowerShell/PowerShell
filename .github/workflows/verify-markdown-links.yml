@@ -39,20 +39,3 @@ jobs:
           max-retries: 2
           # Exclude internal or known temporary unavailable links
           exclude-patterns: ''
-
-      - name: Comment on PR (if failed)
-        if: failure() && github.event_name == 'pull_request'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const failedLinks = '${{ steps.verify.outputs.failed-links }}';
-            if (failedLinks > 0) {
-              github.rest.issues.createComment({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                body: `## ❌ Markdown Link Verification Failed\n\n` +
-                      `Found ${failedLinks} broken link(s) in the markdown files.\n\n` +
-                      `Please check the workflow logs for details.`
-              });
-            }
