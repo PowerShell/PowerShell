@@ -80,7 +80,20 @@ The action automatically skips the following link types:
 - **Anchor links** (`#section-name`) - Would require full markdown parsing
 - **Email links** (`mailto:user@example.com`) - Cannot be verified without sending email
 
-## Example Workflow
+## GitHub Workflow Test
+
+This section provides a workflow example and instructions for testing the link verification action.
+
+### Testing the Workflow
+
+To test that the workflow properly detects broken links:
+
+1. Make change to this file (e.g., this README.md file already contains one in the [Broken Link Test](#broken-link-test) section)
+1. The workflow will run and should fail, reporting the broken link(s)
+1. Revert your change to this file
+1. Push again to verify the workflow passes
+
+### Example Workflow Configuration
 
 ```yaml
 name: Verify Links
@@ -154,6 +167,10 @@ Failed Links:
 
 - PowerShell 7+ (includes Markdig)
 - Runs on: `ubuntu-latest`, `windows-latest`, `macos-latest`
+
+## Broken Link Test
+
+- [Broken Link](https://github.com/PowerShell/PowerShell/wiki/NonExistentPage404)
 
 ## License
 
