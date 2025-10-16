@@ -24,6 +24,14 @@ parameters: # parameters are shown up in ADO UI in a build queue time
   displayName: 'Enable debug output'
   type: boolean
   default: false
+- name: netiso
+  displayName: "Network Isolation Policy"
+  type: string
+  values:
+    - KS4
+    - R1
+    - Netlock
+  default: "RS1"
 
 name: vPack_$(Build.SourceBranchName)_Prod.${{ parameters.OfficialBuild }}_Create.${{ parameters.createVPack }}_Name.${{ parameters.vPackName}}_$(date:yyyyMMdd).$(rev:rr)
 
@@ -54,6 +62,8 @@ variables:
     value: ${{ iif ( parameters.OfficialBuild, 'v2/Microsoft.Official.yml@onebranchTemplates', 'v2/Microsoft.NonOfficial.yml@onebranchTemplates' ) }}
   - group: DotNetPrivateBuildAccess
   - group: certificate_logical_to_actual
+  - name: netiso
+    value: ${{ parameters.netiso }}
 # We shouldn't be using PATs anymore
 #  - group: mscodehub-feed-read-general
 
@@ -74,6 +84,10 @@ extends:
       enabled: false
 
     globalSdl:
+      featureFlags:
+        WindowsHostVersion:
+          Version: 2022
+          Network: ${{ variables.netiso }}
       useCustomPolicy: true # for signing code
       disableLegacyManifest: true
       # disabled Armory as we dont have any ARM templates to scan. It fails on some sample ARM templates.
