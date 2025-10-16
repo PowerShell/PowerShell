@@ -1458,7 +1458,7 @@ dotnet_diagnostic.IDE0080.severity = silent
 
 # IDE0081: RemoveUnnecessaryByVal
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0081
-dotnet_diagnostic.IDE0081.severity = silent
+dotnet_diagnostic.IDE0081.severity = warning
 
 # IDE0082: ConvertTypeOfToNameOf
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0082
