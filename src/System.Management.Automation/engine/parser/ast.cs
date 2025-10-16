@@ -7939,7 +7939,7 @@ namespace System.Management.Automation.Language
 
         /// <summary>
         /// The static type produced after the cast is normally the type named by <see cref="Type"/>, but in some cases
-        /// it may not be, in which, <see cref="object"/> is assumed.
+        /// it may not be, in which, <see cref="Object"/> is assumed.
         /// </summary>
         public override Type StaticType
         {
