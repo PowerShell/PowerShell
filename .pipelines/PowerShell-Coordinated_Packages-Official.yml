@@ -95,9 +95,9 @@ extends:
     customTags: 'ES365AIMigrationTooling'
     featureFlags:
       LinuxHostVersion:
-          Network: KS3
+          Network: KS4
       WindowsHostVersion:
-          Network: KS3
+          Network: KS4
       incrementalSDLBinaryAnalysis: true
     globalSdl:
       disableLegacyManifest: true
