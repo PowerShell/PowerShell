@@ -196,16 +196,48 @@ foreach ($linkGroup in $uniqueLinks) {
             else {
                 $verifyResult.Error
             }
-            Write-Host "✗ FAILED: $url - $errorMsg" -ForegroundColor Red
-            foreach ($occurrence in $occurrences) {
-                Write-Host "    Found in: $($occurrence.Path):$($occurrence.Line):$($occurrence.Column)" -ForegroundColor DarkGray
+
+            # Determine if this status code should be ignored or treated as failure
+            # Ignore: 401 (Unauthorized), 403 (Forbidden), 429 (Too Many Requests - already retried)
+            # Fail: 404 (Not Found), 410 (Gone), 406 (Not Acceptable) - these indicate broken links
+            $shouldIgnore = $false
+            $ignoreReason = ""
+            
+            switch ($verifyResult.StatusCode) {
+                401 {
+                    $shouldIgnore = $true
+                    $ignoreReason = "authentication required"
+                }
+                403 {
+                    $shouldIgnore = $true
+                    $ignoreReason = "access forbidden"
+                }
+                429 {
+                    $shouldIgnore = $true
+                    $ignoreReason = "rate limited (already retried)"
+                }
             }
-            $results.Failed++
-            [void]$results.Errors.Add(@{
-                Url = $url
-                Error = $errorMsg
-                Occurrences = $occurrences
-            })
+
+            if ($shouldIgnore) {
+                Write-Host "⊘ IGNORED: $url - $errorMsg ($ignoreReason)" -ForegroundColor Yellow
+                Write-Verbose "Ignored error details for $url - Status: $($verifyResult.StatusCode) - $ignoreReason"
+                foreach ($occurrence in $occurrences) {
+                    Write-Verbose "    Found in: $($occurrence.Path):$($occurrence.Line):$($occurrence.Column)"
+                }
+                $results.Skipped++
+            }
+            else {
+                Write-Host "✗ FAILED: $url - $errorMsg" -ForegroundColor Red
+                foreach ($occurrence in $occurrences) {
+                    Write-Host "    Found in: $($occurrence.Path):$($occurrence.Line):$($occurrence.Column)" -ForegroundColor DarkGray
+                }
+                $results.Failed++
+                [void]$results.Errors.Add(@{
+                    Url = $url
+                    Error = $errorMsg
+                    Occurrences = $occurrences
+                })
+            }
         }
     }
 
