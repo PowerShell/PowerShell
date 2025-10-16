@@ -17,12 +17,12 @@
   <ItemGroup>
     <!-- This section is to force the version of non-direct dependencies -->
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="8.0.17" />
+    <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="8.0.21" />
     <!-- the following package(s) are from https://github.com/dotnet/fxdac -->
     <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
     <PackageReference Include="System.Diagnostics.EventLog" Version="8.0.2" />
     <PackageReference Include="System.DirectoryServices.Protocols" Version="8.0.2" />
-    <PackageReference Include="System.Drawing.Common" Version="8.0.17" />
+    <PackageReference Include="System.Drawing.Common" Version="8.0.21" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
     <PackageReference Include="System.IO.Packaging" Version="8.0.1" />
     <PackageReference Include="System.Runtime.Caching" Version="8.0.1" />
@@ -41,7 +41,7 @@
     <PackageReference Include="System.Private.ServiceModel" Version="4.10.3" />
     <PackageReference Include="System.Web.Services.Description" Version="4.10.3" />
     <!-- the source could not be found for the following package(s) -->
-    <PackageReference Include="Microsoft.Windows.Compatibility" Version="8.0.17" />
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="8.0.21" />
   </ItemGroup>
 
 </Project>

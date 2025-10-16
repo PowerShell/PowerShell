@@ -27,8 +27,11 @@ parameters: # parameters are shown up in ADO UI in a build queue time
   - name: OfficialBuild
     type: boolean
     default: false
+  - name: disableNetworkIsolation
+    type: boolean
+    default: false
 
-name: pkgs-$(BUILD.SOURCEBRANCHNAME)-$(Build.BuildId)
+name: pkgs-$(BUILD.SOURCEBRANCHNAME)-prod.${{ parameters.OfficialBuild }}-$(Build.BuildId)
 
 variables:
   - name: CDP_DEFINITION_BUILD_COUNT
@@ -56,7 +59,7 @@ variables:
   - name: WindowsContainerImage
     value: 'onebranch.azurecr.io/windows/ltsc2022/vse2022:latest' # Docker image which is used to build the project
   - name: LinuxContainerImage
-    value: mcr.microsoft.com/onebranch/cbl-mariner/build:2.0
+    value: mcr.microsoft.com/onebranch/azurelinux/build:3.0
   - group: mscodehub-feed-read-general
   - group: mscodehub-feed-read-akv
   - name: branchCounterKey
@@ -66,7 +69,8 @@ variables:
   - group: MSIXSigningProfile
   - name: templateFile
     value: ${{ iif ( parameters.OfficialBuild, 'v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates', 'v2/OneBranch.NonOfficial.CrossPlat.yml@onebranchTemplates' ) }}
-  
+  - name: disableNetworkIsolation
+    value: ${{ parameters.disableNetworkIsolation }}
 
 resources:
   pipelines:
@@ -79,7 +83,7 @@ resources:
             - releases/*
 
   repositories:
-    - repository: templates
+    - repository: onebranchTemplates
       type: git
       name: OneBranch.Pipelines/GovernedTemplates
       ref: refs/heads/main
@@ -93,8 +97,11 @@ extends:
       WindowsHostVersion:
         Version: 2022
         Network: KS3
+      LinuxHostVersion:
+        Network: KS3
       linuxEsrpSigning: true
       incrementalSDLBinaryAnalysis: true
+      disableNetworkIsolation: ${{ variables.disableNetworkIsolation }}
     globalSdl:
       disableLegacyManifest: true
       # disabled Armorty as we dont have any ARM templates to scan. It fails on some sample ARM templates.

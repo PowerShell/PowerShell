@@ -62,12 +62,7 @@ jobs:
       AnalyzeInPipeline: true
       Language: csharp
 
-  - task: UseDotNet@2
-    inputs:
-      useGlobalJson: true
-      workingDirectory: $(PowerShellRoot)
-    env:
-      ob_restore_phase: true
+  - template: /.pipelines/templates/install-dotnet.yml@self
 
   - pwsh: |
       $runtime = $env:RUNTIME
@@ -199,5 +194,6 @@ jobs:
   - template: /.pipelines/templates/obp-file-signing.yml@self
     parameters:
       binPath: $(DropRootPath)
+      OfficialBuild: $(ps_official_build)
 
   - template: /.pipelines/templates/step/finalize.yml@self

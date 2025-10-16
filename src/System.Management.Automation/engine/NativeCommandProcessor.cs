@@ -658,6 +658,8 @@ namespace System.Management.Automation
                                 {
                                     startInfo.ArgumentList.RemoveAt(0);
                                 }
+
+                                // codeql[cs/microsoft/command-line-injection-shell-execution] - This is expected Poweshell behavior where user inputted paths are supported for the context of this method. The user assumes trust for the file path specified on the user's system to retrieve process info for, and in the case of remoting, restricted remoting security guidelines should be used.
                                 startInfo.FileName = oldFileName;
                             }
                         }
@@ -1467,6 +1469,7 @@ namespace System.Management.Automation
                 {
                     using (ParameterBinderBase.bindingTracer.TraceScope("BIND argument [{0}]", NativeParameterBinderController.Arguments))
                     {
+                        // codeql[cs/microsoft/command-line-injection ] - This is intended PowerShell behavior as NativeParameterBinderController.Arguments is what the native parameter binder generates based on the user input when invoking the command and cannot be injected externally.
                         startInfo.Arguments = NativeParameterBinderController.Arguments;
                     }
                 }

@@ -515,6 +515,7 @@ function Start-PSPackage {
                     Architecture = $WindowsRuntime.Split('-')[1]
                     Force = $Force
                     Private = $Private
+                    LTS = $LTS
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create MSIX Package")) {
@@ -3663,6 +3664,9 @@ function New-MSIXPackage
         # Produce private package for testing in Store
         [Switch] $Private,
 
+        # Produce LTS package
+        [Switch] $LTS,
+
         # Force overwrite of package
         [Switch] $Force,
 
@@ -3707,6 +3711,9 @@ function New-MSIXPackage
     } elseif ($ProductSemanticVersion.Contains('-')) {
         $ProductName += 'Preview'
         $displayName += ' Preview'
+    } elseif ($LTS) {
+        $ProductName += '-LTS'
+        $displayName += '-LTS'
     }
 
     Write-Verbose -Verbose "ProductName: $productName"
@@ -3717,6 +3724,10 @@ function New-MSIXPackage
     $isPreview = Test-IsPreview -Version $ProductSemanticVersion
     if ($isPreview) {
         Write-Verbose "Using Preview assets" -Verbose
+    } elseif ($LTS) {
+        # This is the PhoneProductId for the "Microsoft.PowerShell-LTS" package.
+        $PhoneProductId = "a9af273a-c636-47ac-bc2a-775edf80b2b9"
+        Write-Verbose "Using LTS assets" -Verbose
     }
 
     # Appx manifest needs to be in root of source path, but the embedded version needs to be updated

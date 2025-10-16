@@ -25,11 +25,15 @@ parameters: # parameters are shown up in ADO UI in a build queue time
     displayName: Skip Copying Archives and Installers to PSInfrastructure Public Location
     type: boolean
     default: false
+  - name: skipMSIXPublish
+    displayName: Skip MSIX Publish
+    type: boolean
+    default: false
   - name: OfficialBuild
     type: boolean
     default: false
 
-name: release-$(BUILD.SOURCEBRANCHNAME)-$(Build.BuildId)
+name: release-$(BUILD.SOURCEBRANCHNAME)-prod.${{ parameters.OfficialBuild }}-$(Build.BuildId)
 
 variables:
   - name: CDP_DEFINITION_BUILD_COUNT
@@ -57,7 +61,7 @@ variables:
   - name: WindowsContainerImage
     value: 'onebranch.azurecr.io/windows/ltsc2022/vse2022:latest'
   - name: LinuxContainerImage
-    value: mcr.microsoft.com/onebranch/cbl-mariner/build:2.0
+    value: mcr.microsoft.com/onebranch/azurelinux/build:3.0
   - name: ReleaseTagVar
     value: ${{ parameters.ReleaseTagVar }}
   - group: PoolNames
@@ -71,7 +75,7 @@ variables:
 
 resources:
   repositories:
-    - repository: templates
+    - repository: onebranchTemplates
       type: git
       name: OneBranch.Pipelines/GovernedTemplates
       ref: refs/heads/main
@@ -284,11 +288,11 @@ extends:
 
     - stage: PublishGitHubReleaseAndNuget
       displayName: Publish GitHub and Nuget Release
-      dependsOn: 
+      dependsOn:
         - setReleaseTagAndChangelog
         - UpdateChangeLog
       variables:
-        ob_release_environment: ${{ parameters.releaseEnvironment }}
+        ob_release_environment: ${{ variables.releaseEnvironment }}
       jobs:
       - template: /.pipelines/templates/release-githubNuget.yml@self
         parameters:
@@ -315,7 +319,7 @@ extends:
 
     - stage: BlobPublic
       displayName: Make Blob Public
-      dependsOn: 
+      dependsOn:
         - UpdateChangeLog
         - PushGitTagAndMakeDraftPublic
       jobs:
@@ -363,13 +367,12 @@ extends:
     - stage: PublishMsix
       dependsOn: PushGitTagAndMakeDraftPublic
       displayName: Publish MSIX to store
+      variables:
+        ob_release_environment: Production
       jobs:
-      - template: /.pipelines/templates/approvalJob.yml@self
+      - template: /.pipelines/templates/release-MSIX-Publish.yml@self
         parameters:
-          displayName: Publish the MSIX Bundle package to store
-          jobName: PublishMsix
-          instructions: |
-            Ask Steve to release MSIX bundle package to Store
+          skipMSIXPublish: ${{ parameters.skipMSIXPublish }}
 
     - stage: PublishVPack
       dependsOn: PushGitTagAndMakeDraftPublic
@@ -403,7 +406,7 @@ extends:
 
     - stage: ChangesToMaster
       displayName: Ensure changes are in GH master
-      dependsOn: 
+      dependsOn:
         - PublishPMC
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
@@ -425,7 +428,7 @@ extends:
 
     - stage: ReleaseClose
       displayName: Finish Release
-      dependsOn: 
+      dependsOn:
         - ReleaseToMU
         - ReleaseSymbols
       jobs:
