@@ -17,11 +17,14 @@
 .PARAMETER File
     Array of specific markdown files to verify. If provided, Path parameter is ignored.
 
-.PARAMETER Timeout
+.PARAMETER TimeoutSec
     Timeout in seconds for HTTP requests. Defaults to 30.
 
-.PARAMETER MaxRetries
+.PARAMETER MaximumRetryCount
     Maximum number of retries for failed requests. Defaults to 2.
+
+.PARAMETER RetryIntervalSec
+    Interval in seconds between retry attempts. Defaults to 2.
 
 .EXAMPLE
     .\Verify-MarkdownLinks.ps1 -Path ./CHANGELOG
@@ -38,8 +41,9 @@ param(
     [string]$Path = "Q:\src\git\powershell\docs\git",
     [Parameter(ParameterSetName = 'ByFile', Mandatory)]
     [string[]]$File = @(),
-    [int]$Timeout = 30,
-    [int]$MaxRetries = 2
+    [int]$TimeoutSec = 30,
+    [int]$MaximumRetryCount = 2,
+    [int]$RetryIntervalSec = 2
 )
 
 $ErrorActionPreference = 'Stop'
@@ -103,9 +107,9 @@ function Test-HttpLink {
         # Try HEAD request first (faster, doesn't download content)
         $response = Invoke-WebRequest -Uri $Url `
             -Method Head `
-            -TimeoutSec $Timeout `
-            -MaximumRetryCount $MaxRetries `
-            -RetryIntervalSec 2 `
+            -TimeoutSec $TimeoutSec `
+            -MaximumRetryCount $MaximumRetryCount `
+            -RetryIntervalSec $RetryIntervalSec `
             -UserAgent "Mozilla/5.0 (compatible; GitHubActions/1.0; +https://github.com)" `
             -SkipHttpErrorCheck
 
@@ -114,9 +118,9 @@ function Test-HttpLink {
             Write-Verbose "HEAD request failed with $($response.StatusCode), retrying with GET for: $Url"
             $response = Invoke-WebRequest -Uri $Url `
                 -Method Get `
-                -TimeoutSec $Timeout `
-                -MaximumRetryCount $MaxRetries `
-                -RetryIntervalSec 2 `
+                -TimeoutSec $TimeoutSec `
+                -MaximumRetryCount $MaximumRetryCount `
+                -RetryIntervalSec $RetryIntervalSec `
                 -UserAgent "Mozilla/5.0 (compatible; GitHubActions/1.0; +https://github.com)" `
                 -SkipHttpErrorCheck
         }

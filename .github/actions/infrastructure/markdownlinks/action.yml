@@ -7,11 +7,11 @@ inputs:
     description: 'Path to the directory containing markdown files to verify'
     required: false
     default: './CHANGELOG'
-  timeout:
+  timeout-sec:
     description: 'Timeout in seconds for HTTP requests'
     required: false
     default: '30'
-  max-retries:
+  maximum-retry-count:
     description: 'Maximum number of retries for failed requests'
     required: false
     default: '2'
@@ -96,8 +96,8 @@ runs:
         # Build parameters for each file
         $params = @{
           File = $changedFiles
-          Timeout = [int]'${{ inputs.timeout }}'
-          MaxRetries = [int]'${{ inputs.max-retries }}'
+          TimeoutSec = [int]'${{ inputs.timeout-sec }}'
+          MaximumRetryCount = [int]'${{ inputs.maximum-retry-count }}'
         }
 
         # Run the verification script
