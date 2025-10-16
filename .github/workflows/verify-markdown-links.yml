@@ -17,19 +17,19 @@ on:
   workflow_dispatch:
     inputs:
       path:
-        description: 'Path to verify (default: CHANGELOG)'
+        description: 'Path to verify (default: all markdown files)'
         required: false
         default: '.'
 
 jobs:
-  verify-changelog-links:
-    name: Verify CHANGELOG Links
+  verify-markdown-links:
+    name: Verify Markdown Links
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Verify CHANGELOG links
+      - name: Verify markdown links
         id: verify
         uses: ./.github/actions/infrastructure/markdownlinks
         with:
