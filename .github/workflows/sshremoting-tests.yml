@@ -1,0 +1,106 @@
+name: SSH-Remoting-Tests
+
+run-name: "${{ github.ref_name }} - ${{ github.run_number }}"
+
+on:
+  workflow_dispatch:
+
+  push:
+    branches:
+      - master
+      - release/**
+      - feature/**
+    paths:
+      - "src/System.Management.Automation/engine/**"
+      - "test/SSHRemoting/**"
+  pull_request:
+    branches:
+      - master
+      - release/**
+      - feature/**
+    paths:
+      - "src/System.Management.Automation/engine/**"
+      - "test/SSHRemoting/**"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ contains(github.ref, 'merge')}}
+
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+  DOTNET_NOLOGO: 1
+  POWERSHELL_TELEMETRY_OPTOUT: 1
+  __SuppressAnsiEscapeSequences: 1
+
+jobs:
+  ssh_remoting_tests:
+    name: SSH Remoting Tests
+    runs-on: ubuntu-20.04
+    container: mcr.microsoft.com/powershell/test-deps:ubuntu-18.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Capture Environment
+        if: success() || failure()
+        run: |
+          Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
+        shell: pwsh
+
+      - name: Set Build Name for Non-PR
+        if: github.event_name != 'pull_request'
+        run: |
+          Write-Host "Build: ${{ github.ref_name }}-${{ github.sha }}-$(Get-Date -Format 'yyyyMMddHHmmss')"
+        shell: pwsh
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: ./global.json
+
+      - name: Install Git
+        if: success()
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git
+        shell: bash
+
+      - name: Bootstrap
+        if: success() || failure()
+        run: |
+          Import-Module .\tools\ci.psm1
+          Invoke-CIInstall -SkipUser
+        shell: pwsh
+
+      - name: Build
+        if: success()
+        run: |
+          Import-Module .\tools\ci.psm1
+          Invoke-CIBuild
+        shell: pwsh
+
+      - name: Install SSH Remoting
+        if: success()
+        run: |
+          Import-Module .\tools\ci.psm1
+          Restore-PSOptions
+          $options = (Get-PSOptions)
+          Import-Module .\test\tools\Modules\HelpersRemoting
+          Install-SSHRemoting -PowerShellFilePath $options.Output
+        shell: pwsh
+
+      - name: Test
+        if: success()
+        run: |
+          Import-Module .\tools\ci.psm1
+          Restore-PSOptions
+          $options = (Get-PSOptions)
+          Import-Module .\build.psm1
+          Start-PSPester -Path test/SSHRemoting -powershell $options.Output -OutputFile "$PWD/sshTestResults.xml"
+        shell: pwsh
+
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ssh-test-results
+          path: sshTestResults.xml
