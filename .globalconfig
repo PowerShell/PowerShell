@@ -1222,7 +1222,7 @@ dotnet_diagnostic.IDE0018.severity = silent
 
 # IDE0019: InlineAsTypeCheck
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0019
-dotnet_diagnostic.IDE0019.severity = silent
+dotnet_diagnostic.IDE0019.severity = warning
 
 # IDE0020: InlineIsTypeCheck
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0020

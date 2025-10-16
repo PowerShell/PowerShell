@@ -448,12 +448,12 @@ namespace System.Management.Automation
             // eg: Host<Tab> finds Microsoft.PowerShell.Host
             // If the user has entered a manual wildcard, or a module name that contains a "." we assume they only want results that matches the input exactly.
             bool shortNameSearch = wordToComplete.Length > 0 && !WildcardPattern.ContainsWildcardCharacters(wordToComplete) && !wordToComplete.Contains('.');
-            
+
             if (!wordToComplete.EndsWith('*'))
             {
                 wordToComplete += "*";
             }
-            
+
             string[] moduleNames;
             WildcardPattern shortNamePattern;
             if (shortNameSearch)
@@ -602,7 +602,7 @@ namespace System.Management.Automation
             else
             {
                 // No CommandParameterAst is found. It could be a StringConstantExpressionAst "-"
-                if (!(context.RelatedAsts[context.RelatedAsts.Count - 1] is StringConstantExpressionAst dashAst))
+                if (context.RelatedAsts[context.RelatedAsts.Count - 1] is not StringConstantExpressionAst dashAst)
                     return result;
                 if (!dashAst.Value.Trim().Equals("-", StringComparison.OrdinalIgnoreCase))
                     return result;
@@ -848,7 +848,7 @@ namespace System.Management.Automation
             [NotNullWhen(true)] out string? message)
         {
             message = null;
-            
+
             if (attr.HelpMessage is not null)
             {
                 message = attr.HelpMessage;
@@ -926,7 +926,7 @@ namespace System.Management.Automation
                                     addCommonParameters = false;
                                     break;
                                 }
-                                
+
                                 if (helpMessage is null && TryGetParameterHelpMessage(pattr, commandAssembly, out string attrHelpMessage))
                                 {
                                     helpMessage = $" - {attrHelpMessage}";
@@ -3130,7 +3130,7 @@ namespace System.Management.Automation
                             continue;
                         }
 
-                        if (!(namespaceNameProperty.Value is string childNamespace))
+                        if (namespaceNameProperty.Value is not string childNamespace)
                         {
                             continue;
                         }
@@ -4772,7 +4772,7 @@ namespace System.Management.Automation
                     var resultType = isContainer
                         ? CompletionResultType.ProviderContainer
                         : CompletionResultType.ProviderItem;
-                    
+
                     bool leafQuotesNeeded;
                     var completionText = NewPathCompletionText(
                         basePath,
@@ -4996,7 +4996,7 @@ namespace System.Management.Automation
             for (int i = 0; i < path.Length; i++)
             {
                 // on Windows, we need to preserve the expanded home path as native commands don't understand it
-#if UNIX                
+#if UNIX
                 if (i == homeIndex)
                 {
                     _ = sb.Append('~');
@@ -6059,7 +6059,7 @@ namespace System.Management.Automation
                 for (int index = psobjs.Count - 1; index >= 0; index--)
                 {
                     var psobj = psobjs[index];
-                    if (!(PSObject.Base(psobj) is HistoryInfo historyInfo)) continue;
+                    if (PSObject.Base(psobj) is not HistoryInfo historyInfo) continue;
 
                     var commandLine = historyInfo.CommandLine;
                     if (!string.IsNullOrEmpty(commandLine) && pattern.IsMatch(commandLine))
@@ -8560,7 +8560,7 @@ namespace System.Management.Automation
             var varValues = new List<string>();
             foreach (ExpressionAst nestedAst in expandableStringAst.NestedExpressions)
             {
-                if (!(nestedAst is VariableExpressionAst variableAst)) { return false; }
+                if (nestedAst is not VariableExpressionAst variableAst) { return false; }
 
                 string strValue = CombineVariableWithPartialPath(variableAst, null, executionContext);
                 if (strValue != null)
@@ -8628,7 +8628,7 @@ namespace System.Management.Automation
         /// <param name="parametersToAdd">The parameters to add.</param>
         /// <returns>Collection of command info objects.</returns>
         internal static Collection<CommandInfo> GetCommandInfo(
-            IDictionary fakeBoundParameters, 
+            IDictionary fakeBoundParameters,
             params string[] parametersToAdd)
         {
             using var ps = PowerShell.Create(RunspaceMode.CurrentRunspace);
@@ -8688,7 +8688,7 @@ namespace System.Management.Automation
                 IEnumerable members;
                 if (@static)
                 {
-                    if (!(PSObject.Base(value) is Type type))
+                    if (PSObject.Base(value) is not Type type)
                     {
                         return;
                     }
@@ -8754,7 +8754,7 @@ namespace System.Management.Automation
                     var pattern = WildcardPattern.Get(memberName, WildcardOptions.IgnoreCase);
                     foreach (DictionaryEntry entry in dictionary)
                     {
-                        if (!(entry.Key is string key))
+                        if (entry.Key is not string key)
                             continue;
 
                         if (pattern.IsMatch(key))

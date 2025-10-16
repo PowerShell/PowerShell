@@ -284,7 +284,7 @@ namespace System.Management.Automation
 
         internal static List<string> GetSuggestion(Runspace runspace)
         {
-            if (!(runspace is LocalRunspace localRunspace))
+            if (runspace is not LocalRunspace localRunspace)
             {
                 return new List<string>();
             }

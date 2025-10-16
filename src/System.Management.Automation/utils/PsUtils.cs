@@ -308,7 +308,7 @@ namespace System.Management.Automation
                          ex.Message);
             }
 
-            if (!(evaluationResult is Hashtable retResult))
+            if (evaluationResult is not Hashtable retResult)
             {
                 throw PSTraceSource.NewInvalidOperationException(
                          ParserStrings.InvalidPowerShellDataFile,
@@ -453,14 +453,14 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException(MinishellParameterBinderController.ArgsParameter);
             }
 
-            if (!(dso is PSObject mo))
+            if (dso is not PSObject mo)
             {
                 // This helper function should move the host. Provide appropriate error message.
                 // Format of args parameter is not correct.
                 throw PSTraceSource.NewArgumentException(MinishellParameterBinderController.ArgsParameter);
             }
 
-            if (!(mo.BaseObject is ArrayList argsList))
+            if (mo.BaseObject is not ArrayList argsList)
             {
                 // This helper function should move the host. Provide appropriate error message.
                 // Format of args parameter is not correct.
