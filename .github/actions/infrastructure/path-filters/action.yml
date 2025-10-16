@@ -91,13 +91,12 @@ runs:
           const packagingChanged = files.some(file => 
             file.filename === '.github/workflows/windows-ci.yml' ||
             file.filename.startsWith('assets/wix/') ||
-            file.filename === 'build.psm1' ||
-            file.filename === 'global.json' ||
-            file.filename === 'nuget.config' ||
+            buildModuleChanged ||
+            globalConfigChanged ||
             file.filename === 'PowerShell.Common.props' ||
             file.filename.match(/^src\/.*\.csproj$/) ||
             file.filename.startsWith('test/packaging/windows/') ||
-            file.filename === 'tools/ci.psm1' ||
+           toolsCiPsm1Changed ||
             file.filename.startsWith('tools/packaging/') ||
             file.filename.startsWith('tools/wix/')
           );
