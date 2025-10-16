@@ -1503,7 +1503,7 @@ namespace System.Management.Automation
             {
                 return false;
             }
-             
+
             if (inferredTypes.Count == 0)
             {
                 return false;
@@ -2613,7 +2613,7 @@ namespace System.Management.Automation
 
             return result;
         }
-      
+
         private static List<CompletionResult> CompleteUsingKeywords(int cursorOffset, Token[] tokens, ref int replacementIndex, ref int replacementLength)
         {
             var result = new List<CompletionResult>();
