@@ -104,7 +104,7 @@ extends:
     featureFlags:
       WindowsHostVersion:
         Version: 2022
-        Network: KS3
+        Network: KS4
       incrementalSDLBinaryAnalysis: true
     cloudvault:
       enabled: false
@@ -365,7 +365,7 @@ extends:
             This is typically done by the community 1-2 days after the release.
 
     - stage: PublishMsix
-      dependsOn: 
+      dependsOn:
         - setReleaseTagAndChangelog
         - PushGitTagAndMakeDraftPublic
       displayName: Publish MSIX to store

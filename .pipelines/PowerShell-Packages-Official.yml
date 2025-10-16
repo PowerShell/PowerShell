@@ -96,9 +96,9 @@ extends:
     featureFlags:
       WindowsHostVersion:
         Version: 2022
-        Network: KS3
+        Network: KS4
       LinuxHostVersion:
-        Network: KS3
+        Network: KS4
       linuxEsrpSigning: true
       incrementalSDLBinaryAnalysis: true
       disableNetworkIsolation: ${{ variables.disableNetworkIsolation }}
