@@ -18,10 +18,10 @@
     Filter by link type: All, Inline, Reference, AutoLink. Defaults to All.
 
 .EXAMPLE
-    .\Parse-ChangelogLinks.ps1
+    .\Parse-MarkdownLink.ps1
 
 .EXAMPLE
-    .\Parse-ChangelogLinks.ps1 -LinkType Reference
+    .\Parse-MarkdownLink.ps1 -LinkType Reference
 #>
 
 param(

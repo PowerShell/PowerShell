@@ -121,7 +121,7 @@ jobs:
 
 ## How It Works
 
-1. **Parse Markdown**: Uses `Parse-ChangelogLinks.ps1` to extract all links from markdown files using Markdig
+1. **Parse Markdown**: Uses `Parse-MarkdownLink.ps1` to extract all links from markdown files using Markdig
 2. **Deduplicate**: Groups links by URL to avoid checking the same link multiple times
 3. **Verify Links**:
    - HTTP/HTTPS links: Makes HEAD/GET requests with configurable timeout and retries

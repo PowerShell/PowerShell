@@ -47,7 +47,7 @@ $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 Write-Host "Extracting links from markdown files in: $Path" -ForegroundColor Cyan
 
 # Get all links from markdown files using the Parse-ChangelogLinks script
-$parseScriptPath = Join-Path $scriptDir "Parse-ChangelogLinks.ps1"
+$parseScriptPath = Join-Path $scriptDir "Parse-MarkdownLink.ps1"
 $allLinks = & $parseScriptPath -ChangelogPath $Path
 
 if ($allLinks.Count -eq 0) {
