@@ -245,6 +245,6 @@ jobs:
       - name: checkout
         uses: actions/checkout@v5
         with:
-          fetch-depth: 1000
+          fetch-depth: 0
       - name: Linux Packaging
         uses: "./.github/actions/test/linux-packaging"

@@ -28,6 +28,9 @@ runs:
     run: |-
       Import-Module ./build.psm1
       Start-PSBootstrap -Scenario Package
+      Write-Verbose -Verbose "Start Sync-PSTags"
+      Sync-PSTags -AddRemoteIfMissing
+      Write-Verbose -Verbose "End Sync-PSTags"
     shell: pwsh
 
   - name: Extract Build ZIP
