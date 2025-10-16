@@ -25,7 +25,7 @@ If you are new to PowerShell and want to learn more, we recommend reviewing the 
 ## Get PowerShell
 
 PowerShell is supported on Windows, macOS, and a variety of Linux platforms. For
-more information, see [Installing PowerShell](https://learn.microsoft.com/powershell/scripting/install/installing-powershell-broken).
+more information, see [Installing PowerShell](https://learn.microsoft.com/powershell/scripting/install/installing-powershell).
 
 ## Upgrading PowerShell
 
