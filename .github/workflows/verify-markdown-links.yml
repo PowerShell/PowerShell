@@ -40,16 +40,6 @@ jobs:
           # Exclude internal or known temporary unavailable links
           exclude-patterns: ''
 
-      - name: Display verification results
-        if: always()
-        run: |
-          echo "## Link Verification Results" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "- **Total Links**: ${{ steps.verify.outputs.total-links }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Passed**: ✅ ${{ steps.verify.outputs.passed-links }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Failed**: ❌ ${{ steps.verify.outputs.failed-links }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Skipped**: ⊘ ${{ steps.verify.outputs.skipped-links }}" >> $GITHUB_STEP_SUMMARY
-
       - name: Comment on PR (if failed)
         if: failure() && github.event_name == 'pull_request'
         uses: actions/github-script@v7

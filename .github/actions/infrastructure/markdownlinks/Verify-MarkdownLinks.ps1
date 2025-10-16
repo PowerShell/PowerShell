@@ -283,4 +283,57 @@ else {
     Write-Host "`n✅ All links verified successfully!" -ForegroundColor Green
 }
 
+# Write to GitHub Actions step summary if running in a workflow
+if ($env:GITHUB_STEP_SUMMARY) {
+    $summaryContent = @"
+
+# Markdown Link Verification Results
+
+## Summary
+- **Total URLs checked:** $($results.Total)
+- **Passed:** ✅ $($results.Passed)
+- **Failed:** $(if ($results.Failed -gt 0) { "❌" } else { "✅" }) $($results.Failed)
+- **Skipped:** $($results.Skipped)
+
+"@
+
+    if ($results.Failed -gt 0) {
+        $summaryContent += @"
+
+## Failed Links
+
+| URL | Error | Occurrences |
+|-----|-------|-------------|
+
+"@
+        foreach ($failedLink in $results.Errors) {
+            $occurrenceList = ($failedLink.Occurrences | ForEach-Object {
+                "$($_.Path):$($_.Line):$($_.Column)"
+            }) -join '<br>'
+            $summaryContent += "| $($failedLink.Url) | $($failedLink.Error) | $($failedLink.Occurrences.Count) |`n"
+        }
+
+        $summaryContent += @"
+
+<details>
+<summary>Click to see all failed link locations</summary>
+
+"@
+        foreach ($failedLink in $results.Errors) {
+            $summaryContent += "`n### $($failedLink.Url)`n"
+            $summaryContent += "**Error:** $($failedLink.Error)`n`n"
+            foreach ($occurrence in $failedLink.Occurrences) {
+                $summaryContent += "- ``$($occurrence.Path):$($occurrence.Line):$($occurrence.Column)```n"
+            }
+        }
+        $summaryContent += "`n</details>`n"
+    }
+    else {
+        $summaryContent += "`n## ✅ All links verified successfully!`n"
+    }
+
+    $summaryContent | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append
+    Write-Verbose "Summary written to GitHub Actions step summary"
+}
+
 exit 0
