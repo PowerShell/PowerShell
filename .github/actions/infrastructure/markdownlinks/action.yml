@@ -7,14 +7,6 @@ inputs:
     description: 'Path to the directory containing markdown files to verify'
     required: false
     default: './CHANGELOG'
-  exclude-patterns:
-    description: 'Comma-separated list of URL patterns to exclude from verification'
-    required: false
-    default: ''
-  fail-on-error:
-    description: 'Whether to fail the action if any links are broken'
-    required: false
-    default: 'true'
   timeout:
     description: 'Timeout in seconds for HTTP requests'
     required: false
@@ -101,27 +93,11 @@ runs:
         Write-Host "Changed markdown files: $($changedFiles.Count)" -ForegroundColor Cyan
         $changedFiles | ForEach-Object { Write-Host "  - $_" -ForegroundColor Gray }
 
-        # Prepare exclude patterns
-        $excludePatterns = @()
-        $excludeInput = '${{ inputs.exclude-patterns }}'
-        if ($excludeInput) {
-          $excludePatterns = $excludeInput -split ',' | ForEach-Object { $_.Trim() }
-          Write-Host "Exclude patterns: $($excludePatterns -join ', ')" -ForegroundColor Yellow
-        }
-
         # Build parameters for each file
         $params = @{
           File = $changedFiles
           Timeout = [int]'${{ inputs.timeout }}'
           MaxRetries = [int]'${{ inputs.max-retries }}'
-        }
-
-        if ($excludePatterns.Count -gt 0) {
-          $params.Exclude = $excludePatterns
-        }
-
-        if ('${{ inputs.fail-on-error }}' -eq 'true') {
-          $params.FailOnError = $true
         }
 
         # Run the verification script

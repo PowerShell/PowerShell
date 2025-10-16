@@ -17,12 +17,6 @@
 .PARAMETER File
     Array of specific markdown files to verify. If provided, Path parameter is ignored.
 
-.PARAMETER Exclude
-    Array of URL patterns to exclude from verification (e.g., for known temporary issues).
-
-.PARAMETER FailOnError
-    If set, the script will exit with non-zero code if any links fail.
-
 .PARAMETER Timeout
     Timeout in seconds for HTTP requests. Defaults to 30.
 
@@ -44,8 +38,6 @@ param(
     [string]$Path = "Q:\src\git\powershell\docs\git",
     [Parameter(ParameterSetName = 'ByFile', Mandatory)]
     [string[]]$File = @(),
-    [string[]]$Exclude = @(),
-    [switch]$FailOnError,
     [int]$Timeout = 30,
     [int]$MaxRetries = 2
 )
@@ -167,33 +159,20 @@ foreach ($linkGroup in $uniqueLinks) {
     $progressCount++
     $url = $linkGroup.Name
     $occurrences = $linkGroup.Group
-    Write-Verbose "[$progressCount/$($uniqueLinks.Count)] Checking: $url"
+    Write-Verbose -Verbose "[$progressCount/$($uniqueLinks.Count)] Checking: $url"
 
-    # Check if URL should be excluded
-        $shouldExclude = $false
-        foreach ($excludePattern in $Exclude) {
-            if ($url -like $excludePattern) {
-                $shouldExclude = $true
-                break
-            }
-        }
-        if ($shouldExclude) {
-            Write-Host "⊘ SKIPPED: $url (excluded)" -ForegroundColor Gray
-            $results.Skipped++
-            continue
-        }
-        # Determine link type and verify
+    # Determine link type and verify
         $verifyResult = $null
         if ($url -match '^https?://') {
             $verifyResult = Test-HttpLink -Url $url
         }
         elseif ($url -match '^#') {
-            Write-Verbose "Skipping anchor link: $url"
+            Write-Verbose -Verbose "Skipping anchor link: $url"
             $results.Skipped++
             continue
         }
         elseif ($url -match '^mailto:') {
-            Write-Verbose "Skipping mailto link: $url"
+            Write-Verbose -Verbose "Skipping mailto link: $url"
             $results.Skipped++
             continue
         }
@@ -236,9 +215,9 @@ foreach ($linkGroup in $uniqueLinks) {
 
             if ($shouldIgnore) {
                 Write-Host "⊘ IGNORED: $url - $errorMsg ($ignoreReason)" -ForegroundColor Yellow
-                Write-Verbose "Ignored error details for $url - Status: $($verifyResult.StatusCode) - $ignoreReason"
+                Write-Verbose -Verbose "Ignored error details for $url - Status: $($verifyResult.StatusCode) - $ignoreReason"
                 foreach ($occurrence in $occurrences) {
-                    Write-Verbose "    Found in: $($occurrence.Path):$($occurrence.Line):$($occurrence.Column)"
+                    Write-Verbose -Verbose "    Found in: $($occurrence.Path):$($occurrence.Line):$($occurrence.Column)"
                 }
                 $results.Skipped++
             }
@@ -274,10 +253,8 @@ if ($results.Failed -gt 0) {
         Write-Host "    Occurrences: $($failedLink.Occurrences.Count)" -ForegroundColor DarkGray
     }
 
-    if ($FailOnError) {
-        Write-Host "`n❌ Link verification failed!" -ForegroundColor Red
-        exit 1
-    }
+    Write-Host "`n❌ Link verification failed!" -ForegroundColor Red
+    exit 1
 }
 else {
     Write-Host "`n✅ All links verified successfully!" -ForegroundColor Green
@@ -307,9 +284,6 @@ if ($env:GITHUB_STEP_SUMMARY) {
 
 "@
         foreach ($failedLink in $results.Errors) {
-            $occurrenceList = ($failedLink.Occurrences | ForEach-Object {
-                "$($_.Path):$($_.Line):$($_.Column)"
-            }) -join '<br>'
             $summaryContent += "| $($failedLink.Url) | $($failedLink.Error) | $($failedLink.Occurrences.Count) |`n"
         }
 
@@ -323,7 +297,7 @@ if ($env:GITHUB_STEP_SUMMARY) {
             $summaryContent += "`n### $($failedLink.Url)`n"
             $summaryContent += "**Error:** $($failedLink.Error)`n`n"
             foreach ($occurrence in $failedLink.Occurrences) {
-                $summaryContent += "- ``$($occurrence.Path):$($occurrence.Line):$($occurrence.Column)```n"
+                $summaryContent += "- `$($occurrence.Path):$($occurrence.Line):$($occurrence.Column)`n"
             }
         }
         $summaryContent += "`n</details>`n"
@@ -332,8 +306,9 @@ if ($env:GITHUB_STEP_SUMMARY) {
         $summaryContent += "`n## ✅ All links verified successfully!`n"
     }
 
+    Write-Verbose -Verbose "Writing `n $summaryContent `n to ${env:GITHUB_STEP_SUMMARY}"
     $summaryContent | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append
-    Write-Verbose "Summary written to GitHub Actions step summary"
+    Write-Verbose -Verbose "Summary written to GitHub Actions step summary"
 }
 
 exit 0
