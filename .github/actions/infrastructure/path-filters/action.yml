@@ -96,7 +96,7 @@ runs:
             file.filename === 'PowerShell.Common.props' ||
             file.filename.match(/^src\/.*\.csproj$/) ||
             file.filename.startsWith('test/packaging/windows/') ||
-           toolsCiPsm1Changed ||
+            toolsCiPsm1Changed ||
             file.filename.startsWith('tools/packaging/') ||
             file.filename.startsWith('tools/wix/')
           );
