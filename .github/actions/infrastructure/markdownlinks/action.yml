@@ -3,10 +3,6 @@ description: 'Verify all links in markdown files using PowerShell and Markdig'
 author: 'PowerShell Team'
 
 inputs:
-  path:
-    description: 'Path to the directory containing markdown files to verify'
-    required: false
-    default: './CHANGELOG'
   timeout-sec:
     description: 'Timeout in seconds for HTTP requests'
     required: false

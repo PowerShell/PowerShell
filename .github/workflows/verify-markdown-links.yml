@@ -15,11 +15,6 @@ on:
     # Run weekly on Sundays at midnight UTC to catch external link rot
     - cron: '0 0 * * 0'
   workflow_dispatch:
-    inputs:
-      path:
-        description: 'Path to verify (default: all markdown files)'
-        required: false
-        default: '.'
 
 jobs:
   verify-markdown-links:
@@ -33,9 +28,5 @@ jobs:
         id: verify
         uses: ./.github/actions/infrastructure/markdownlinks
         with:
-          path: ${{ github.event.inputs.path || '.' }}
-          fail-on-error: 'true'
-          timeout: 30
-          max-retries: 2
-          # Exclude internal or known temporary unavailable links
-          exclude-patterns: ''
+          timeout-sec: 30
+          maximum-retry-count: 2
