@@ -228,7 +228,7 @@ jobs:
 
     - task: MS-RDX-MRO.windows-store-publish.package-task.store-package@3
       displayName: 'Create StoreBroker Package'
-      condition: eq(variables['PREVIEW'], 'true')
+      condition: eq('$(PREVIEW)', 'true')
       inputs:
         serviceEndpoint: 'StoreAppPublish-Preview'
         sbConfigPath: '$(SBConfigPath)'
@@ -240,7 +240,7 @@ jobs:
 
     - task: MS-RDX-MRO.windows-store-publish.package-task.store-package@3
       displayName: 'Create StoreBroker Package'
-      condition: eq(variables['STABLE'], 'true')
+      condition: eq('$(STABLE)', 'true')
       inputs:
         serviceEndpoint: 'StoreAppPublish-Stable'
         sbConfigPath: '$(SBConfigPath)'
@@ -252,7 +252,7 @@ jobs:
 
     - task: MS-RDX-MRO.windows-store-publish.package-task.store-package@3
       displayName: 'Create StoreBroker Package'
-      condition: eq(variables['LTS'], 'true')
+      condition: eq('$(LTS)', 'true')
       inputs:
         serviceEndpoint: 'StoreAppPublish-LTS'
         sbConfigPath: '$(SBConfigPath)'
