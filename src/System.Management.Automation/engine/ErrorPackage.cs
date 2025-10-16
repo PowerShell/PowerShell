@@ -1665,7 +1665,7 @@ namespace System.Management.Automation
                 return commandInfo.Name;
             }
 
-            if (!(commandInfo is CmdletInfo cmdletInfo))
+            if (commandInfo is not CmdletInfo cmdletInfo)
             {
                 return string.Empty;
             }

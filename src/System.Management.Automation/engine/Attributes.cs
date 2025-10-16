@@ -844,7 +844,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">For invalid arguments.</exception>
         protected override void ValidateElement(object element)
         {
-            if (!(element is string objectString))
+            if (element is not string objectString)
             {
                 throw new ValidationMetadataException(
                     "ValidateLengthNotString",
@@ -1956,7 +1956,7 @@ namespace System.Management.Automation
                     Metadata.ValidateNotNullFailure);
             }
 
-            if (!(arguments is string path))
+            if (arguments is not string path)
             {
                 throw new ValidationMetadataException(
                     "PathArgumentIsNotValid",

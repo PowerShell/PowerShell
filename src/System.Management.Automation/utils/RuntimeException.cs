@@ -221,7 +221,7 @@ namespace System.Management.Automation
             if (e == null)
                 return string.Empty;
 
-            if (!(e is IContainsErrorRecord icer))
+            if (e is not IContainsErrorRecord icer)
                 return e.Message;
             ErrorRecord er = icer.ErrorRecord;
             if (er == null)
