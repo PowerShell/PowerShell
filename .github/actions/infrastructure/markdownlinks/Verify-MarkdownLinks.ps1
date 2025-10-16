@@ -108,6 +108,7 @@ function Test-HttpLink {
     )
 
     try {
+        # Try HEAD request first (faster, doesn't download content)
         $response = Invoke-WebRequest -Uri $Url `
             -Method Head `
             -TimeoutSec $Timeout `
@@ -115,6 +116,18 @@ function Test-HttpLink {
             -RetryIntervalSec 2 `
             -UserAgent "Mozilla/5.0 (compatible; GitHubActions/1.0; +https://github.com)" `
             -SkipHttpErrorCheck
+
+        # If HEAD fails with 404 or 405, retry with GET (some servers don't support HEAD)
+        if ($response.StatusCode -eq 404 -or $response.StatusCode -eq 405) {
+            Write-Verbose "HEAD request failed with $($response.StatusCode), retrying with GET for: $Url"
+            $response = Invoke-WebRequest -Uri $Url `
+                -Method Get `
+                -TimeoutSec $Timeout `
+                -MaximumRetryCount $MaxRetries `
+                -RetryIntervalSec 2 `
+                -UserAgent "Mozilla/5.0 (compatible; GitHubActions/1.0; +https://github.com)" `
+                -SkipHttpErrorCheck
+        }
 
         if ($response.StatusCode -ge 200 -and $response.StatusCode -lt 400) {
             return @{ Success = $true; StatusCode = $response.StatusCode }
