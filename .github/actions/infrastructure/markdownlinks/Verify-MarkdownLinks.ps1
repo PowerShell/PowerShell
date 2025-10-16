@@ -1,6 +1,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+#Requires -Version 7.0
+
 <#
 .SYNOPSIS
     Verify all links in markdown files.
@@ -70,38 +72,28 @@ $results = @{
     Errors = [System.Collections.ArrayList]::new()
 }
 
-# Create a web client for HTTP requests with proper headers
-$httpClient = [System.Net.Http.HttpClient]::new()
-$httpClient.Timeout = [TimeSpan]::FromSeconds($Timeout)
-$httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (compatible; GitHubActions/1.0; +https://github.com)")
-
 function Test-HttpLink {
     param(
-        [string]$Url,
-        [int]$Retries = 0
+        [string]$Url
     )
 
     try {
-        $response = $httpClient.GetAsync($Url).GetAwaiter().GetResult()
+        $response = Invoke-WebRequest -Uri $Url `
+            -Method Head `
+            -TimeoutSec $Timeout `
+            -MaximumRetryCount $MaxRetries `
+            -RetryIntervalSec 2 `
+            -UserAgent "Mozilla/5.0 (compatible; GitHubActions/1.0; +https://github.com)" `
+            -SkipHttpErrorCheck
 
-        if ($response.IsSuccessStatusCode) {
-            return @{ Success = $true; StatusCode = [int]$response.StatusCode }
-        }
-        elseif ($response.StatusCode -eq [System.Net.HttpStatusCode]::TooManyRequests -and $Retries -lt $MaxRetries) {
-            Write-Verbose "Rate limited, retrying... ($($Retries + 1)/$MaxRetries)"
-            Start-Sleep -Seconds (5 * ($Retries + 1))
-            return Test-HttpLink -Url $Url -Retries ($Retries + 1)
+        if ($response.StatusCode -ge 200 -and $response.StatusCode -lt 400) {
+            return @{ Success = $true; StatusCode = $response.StatusCode }
         }
         else {
-            return @{ Success = $false; StatusCode = [int]$response.StatusCode; Error = "HTTP $([int]$response.StatusCode)" }
+            return @{ Success = $false; StatusCode = $response.StatusCode; Error = "HTTP $($response.StatusCode)" }
         }
     }
     catch {
-        if ($Retries -lt $MaxRetries) {
-            Write-Verbose "Request failed, retrying... ($($Retries + 1)/$MaxRetries)"
-            Start-Sleep -Seconds 2
-            return Test-HttpLink -Url $Url -Retries ($Retries + 1)
-        }
         return @{ Success = $false; StatusCode = 0; Error = $_.Exception.Message }
     }
 }
