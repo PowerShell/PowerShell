@@ -90,7 +90,7 @@ jobs:
     displayName: 'Publish LTS StoreBroker Package'
     condition: and(ne('${{ parameters.skipMSIXPublish }}', 'true'), eq(variables['LTS'], 'true'))
     inputs:
-      serviceEndpoint: 'StoreAppPublish-Private'
+      serviceEndpoint: 'StoreAppPublish-LTS'
       appId: '$(AppID-LTS)'
       inputMethod: JsonAndZip
       jsonPath: '$(Pipeline.Workspace)\SBOutDir\PowerShellStorePackage.json'
@@ -103,7 +103,7 @@ jobs:
     displayName: 'Publish Stable StoreBroker Package'
     condition: and(ne('${{ parameters.skipMSIXPublish }}', 'true'), eq(variables['STABLE'], 'true'))
     inputs:
-      serviceEndpoint: 'StoreAppPublish-Private'
+      serviceEndpoint: 'StoreAppPublish-Stable'
       appId: '$(AppID-Stable)'
       inputMethod: JsonAndZip
       jsonPath: '$(Pipeline.Workspace)\SBOutDir\PowerShellStorePackage.json'
@@ -116,7 +116,7 @@ jobs:
     displayName: 'Publish Preview StoreBroker Package'
     condition: and(ne('${{ parameters.skipMSIXPublish }}', 'true'), eq(variables['PREVIEW'], 'true'))
     inputs:
-      serviceEndpoint: 'StoreAppPublish-Private'
+      serviceEndpoint: 'StoreAppPublish-Preview'
       appId: '$(AppID-Preview)'
       inputMethod: JsonAndZip
       jsonPath: '$(Pipeline.Workspace)\SBOutDir\PowerShellStorePackage.json'
