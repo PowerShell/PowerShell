@@ -41,11 +41,65 @@ outputs:
 runs:
   using: 'composite'
   steps:
+    - name: Get changed markdown files
+      id: changed-files
+      uses: actions/github-script@v7
+      with:
+        script: |
+          let changedMarkdownFiles = [];
+
+          if (context.eventName === 'pull_request') {
+            const { data: files } = await github.rest.pulls.listFiles({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+            });
+
+            changedMarkdownFiles = files
+              .filter(file => file.filename.endsWith('.md'))
+              .map(file => file.filename);
+          } else if (context.eventName === 'push') {
+            const { data: comparison } = await github.rest.repos.compareCommits({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              base: context.payload.before,
+              head: context.payload.after,
+            });
+
+            changedMarkdownFiles = comparison.files
+              .filter(file => file.filename.endsWith('.md'))
+              .map(file => file.filename);
+          } else {
+            core.setFailed(`Unsupported event type: ${context.eventName}. This action only supports 'pull_request' and 'push' events.`);
+            return;
+          }
+
+          console.log('Changed markdown files:', changedMarkdownFiles);
+          core.setOutput('files', JSON.stringify(changedMarkdownFiles));
+          core.setOutput('count', changedMarkdownFiles.length);
+          return changedMarkdownFiles;
+
     - name: Verify markdown links
       id: verify
       shell: pwsh
       run: |
         Write-Host "Starting markdown link verification..." -ForegroundColor Cyan
+
+        # Get changed markdown files from previous step
+        $changedFilesJson = '${{ steps.changed-files.outputs.files }}'
+        $changedFiles = $changedFilesJson | ConvertFrom-Json
+        
+        if ($changedFiles.Count -eq 0) {
+          Write-Host "No markdown files changed, skipping verification" -ForegroundColor Yellow
+          "total=0" >> $env:GITHUB_OUTPUT
+          "passed=0" >> $env:GITHUB_OUTPUT
+          "failed=0" >> $env:GITHUB_OUTPUT
+          "skipped=0" >> $env:GITHUB_OUTPUT
+          exit 0
+        }
+        
+        Write-Host "Changed markdown files: $($changedFiles.Count)" -ForegroundColor Cyan
+        $changedFiles | ForEach-Object { Write-Host "  - $_" -ForegroundColor Gray }
 
         # Prepare exclude patterns
         $excludePatterns = @()
@@ -55,9 +109,9 @@ runs:
           Write-Host "Exclude patterns: $($excludePatterns -join ', ')" -ForegroundColor Yellow
         }
 
-        # Build parameters
+        # Build parameters for each file
         $params = @{
-          Path = '${{ inputs.path }}'
+          File = $changedFiles
           Timeout = [int]'${{ inputs.timeout }}'
           MaxRetries = [int]'${{ inputs.max-retries }}'
         }

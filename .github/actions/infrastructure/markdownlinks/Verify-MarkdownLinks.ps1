@@ -14,6 +14,9 @@
 .PARAMETER Path
     Path to the directory containing markdown files. Defaults to current directory.
 
+.PARAMETER File
+    Array of specific markdown files to verify. If provided, Path parameter is ignored.
+
 .PARAMETER Exclude
     Array of URL patterns to exclude from verification (e.g., for known temporary issues).
 
@@ -31,10 +34,16 @@
 
 .EXAMPLE
     .\Verify-MarkdownLinks.ps1 -Path ./docs -FailOnError
+
+.EXAMPLE
+    .\Verify-MarkdownLinks.ps1 -File @('CHANGELOG/7.5.md', 'README.md')
 #>
 
 param(
+    [Parameter(ParameterSetName = 'ByPath', Mandatory)]
     [string]$Path = "Q:\src\git\powershell\docs\git",
+    [Parameter(ParameterSetName = 'ByFile', Mandatory)]
+    [string[]]$File = @(),
     [string[]]$Exclude = @(),
     [switch]$FailOnError,
     [int]$Timeout = 30,
@@ -46,11 +55,32 @@ $ErrorActionPreference = 'Stop'
 # Get the script directory
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 
-Write-Host "Extracting links from markdown files in: $Path" -ForegroundColor Cyan
+# Determine what to process: specific files or directory
+if ($File.Count -gt 0) {
+    Write-Host "Extracting links from $($File.Count) specified markdown file(s)" -ForegroundColor Cyan
 
-# Get all links from markdown files using the Parse-ChangelogLinks script
-$parseScriptPath = Join-Path $scriptDir "Parse-MarkdownLink.ps1"
-$allLinks = & $parseScriptPath -ChangelogPath $Path
+    # Process each file individually
+    $allLinks = @()
+    $parseScriptPath = Join-Path $scriptDir "Parse-MarkdownLink.ps1"
+
+    foreach ($filePath in $File) {
+        if (Test-Path $filePath) {
+            Write-Verbose "Processing: $filePath"
+            $fileLinks = & $parseScriptPath -ChangelogPath $filePath
+            $allLinks += $fileLinks
+        }
+        else {
+            Write-Warning "File not found: $filePath"
+        }
+    }
+}
+else {
+    Write-Host "Extracting links from markdown files in: $Path" -ForegroundColor Cyan
+
+    # Get all links from markdown files using the Parse-ChangelogLinks script
+    $parseScriptPath = Join-Path $scriptDir "Parse-MarkdownLink.ps1"
+    $allLinks = & $parseScriptPath -ChangelogPath $Path
+}
 
 if ($allLinks.Count -eq 0) {
     Write-Host "No links found in markdown files." -ForegroundColor Yellow
