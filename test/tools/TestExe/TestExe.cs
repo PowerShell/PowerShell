@@ -86,9 +86,9 @@ namespace TestExe
         private static void ReadBytes()
         {
             using Stream stdin = Console.OpenStandardInput();
-            Span<byte> buffer = [0x200];
+            Span<byte> buffer = stackalloc byte[0x200];
             Unsafe.InitBlock(ref MemoryMarshal.GetReference(buffer), 0, 0x200);
-            Span<char> hex = ['\0', '\0'];
+            Span<char> hex = stackalloc char[] { '\0', '\0' };
             while (true)
             {
                 int received = stdin.Read(buffer);
