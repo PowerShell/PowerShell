@@ -80,14 +80,15 @@ extends:
     platform:
       name: 'windows_undocked' # windows undocked
 
+    featureFlags:
+      WindowsHostVersion:
+        Version: 2022
+        Network: ${{ variables.netiso }}
+
     cloudvault:
       enabled: false
 
     globalSdl:
-      featureFlags:
-        WindowsHostVersion:
-          Version: 2022
-          Network: ${{ variables.netiso }}
       useCustomPolicy: true # for signing code
       disableLegacyManifest: true
       # disabled Armory as we dont have any ARM templates to scan. It fails on some sample ARM templates.
