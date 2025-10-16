@@ -134,8 +134,11 @@ function Test-LocalLink {
         [string]$BasePath
     )
 
+    # Strip query parameters (e.g., ?sanitize=true) and anchors (e.g., #section)
+    $cleanUrl = $Url -replace '\?.*$', '' -replace '#.*$', ''
+
     # Handle relative paths
-    $targetPath = Join-Path $BasePath $Url
+    $targetPath = Join-Path $BasePath $cleanUrl
 
     if (Test-Path $targetPath) {
         return @{ Success = $true }
@@ -202,7 +205,7 @@ foreach ($linkGroup in $uniqueLinks) {
             # Fail: 404 (Not Found), 410 (Gone), 406 (Not Acceptable) - these indicate broken links
             $shouldIgnore = $false
             $ignoreReason = ""
-            
+
             switch ($verifyResult.StatusCode) {
                 401 {
                     $shouldIgnore = $true
