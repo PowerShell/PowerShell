@@ -93,35 +93,39 @@ namespace System.Management.Automation
 
                 if (parameter.ArgumentSpecified)
                 {
-                    // If this is the verbatim argument marker, we don't pass it on to the native command.
-                    // We do need to remember it though - we'll expand environment variables in subsequent args.
                     object argValue = parameter.ArgumentValue;
-                    if (string.Equals("--%", argValue as string, StringComparison.OrdinalIgnoreCase))
-                    {
-                        sawVerbatimArgumentMarker = true;
-                        continue;
-                    }
 
                     if (argValue != AutomationNull.Value && argValue != UnboundParameter.Value)
                     {
-                        // ArrayLiteralAst is used to reconstruct the correct argument, e.g.
-                        //    windbg  -k com:port=\\devbox\pipe\debug,pipe,resets=0,reconnect
                         // The parser produced an array of strings but marked the parameter so we
                         // can properly reconstruct the correct command line.
-                        bool usedQuotes = false;
-                        ArrayLiteralAst arrayLiteralAst = null;
-                        switch (parameter?.ArgumentAst)
+                        bool usedQuotes;
+                        if (argValue is PSObject { BaseObject: string baseString } psObject && psObject.Properties[ParserOps.StringConstantType]?.Value is StringConstantType stp)
                         {
-                            case StringConstantExpressionAst sce:
-                                usedQuotes = sce.StringConstantType != StringConstantType.BareWord;
-                                break;
-                            case ExpandableStringExpressionAst ese:
-                                usedQuotes = ese.StringConstantType != StringConstantType.BareWord;
-                                break;
-                            case ArrayLiteralAst ala:
-                                arrayLiteralAst = ala;
-                                break;
+                            usedQuotes = stp != StringConstantType.BareWord;
+                            argValue = baseString;
                         }
+                        else
+                        {
+                            usedQuotes = parameter.ArgumentAst switch
+                            {
+                                StringConstantExpressionAst sce => sce.StringConstantType != StringConstantType.BareWord,
+                                ExpandableStringExpressionAst ese => ese.StringConstantType != StringConstantType.BareWord,
+                                _ => false,
+                            };
+                        }
+
+                        // If this is the verbatim argument marker, we don't pass it on to the native command.
+                        // We do need to remember it though - we'll expand environment variables in subsequent args.
+                        if (string.Equals("--%", argValue as string, StringComparison.OrdinalIgnoreCase))
+                        {
+                            sawVerbatimArgumentMarker = true;
+                            continue;
+                        }
+
+                        // ArrayLiteralAst is used to reconstruct the correct argument, e.g.
+                        //    windbg  -k com:port=\\devbox\pipe\debug,pipe,resets=0,reconnect
+                        ArrayLiteralAst arrayLiteralAst = parameter.ArgumentAst as ArrayLiteralAst;
 
                         AppendOneNativeArgument(Context, parameter, argValue, arrayLiteralAst, sawVerbatimArgumentMarker, usedQuotes);
                     }
