@@ -1357,6 +1357,16 @@ function New-UnixPackage {
                     Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo mv $hack_dest $symlink_dest")) -VerboseOutputOnError
                 }
             }
+            
+            # Clean up rpmbuild directory if it was created
+            if ($Type -eq 'rpm') {
+                $rpmBuildRoot = Join-Path $env:HOME "rpmbuild"
+                if (Test-Path $rpmBuildRoot) {
+                    Write-Verbose "Cleaning up rpmbuild directory: $rpmBuildRoot" -Verbose
+                    Remove-Item -Path $rpmBuildRoot -Recurse -Force -ErrorAction SilentlyContinue
+                }
+            }
+            
             if ($AfterScriptInfo.AfterInstallScript) {
                 Remove-Item -ErrorAction 'silentlycontinue' $AfterScriptInfo.AfterInstallScript -Force
             }
@@ -1588,51 +1598,43 @@ cp $ManGzipFile `$RPM_BUILD_ROOT$ManDestination
 
 "@
 
-    # Add symlinks
+    # Add symlinks - we need to get the target of the temp symlink
     foreach ($link in $LinkInfo) {
         $linkDir = Split-Path -Parent $link.Destination
         $specContent += "mkdir -p `$RPM_BUILD_ROOT$linkDir`n"
-        $specContent += "ln -sf $($link.Source) `$RPM_BUILD_ROOT$($link.Destination)`n"
+        # For RPM, we copy the symlink itself (which fpm does by including it in the source)
+        # The symlink at $link.Source points to the actual target, so we'll copy it
+        $specContent += "cp -P $($link.Source) `$RPM_BUILD_ROOT$($link.Destination)`n"
     }
 
     # Post-install script
     $postInstallContent = Get-Content -Path $AfterInstallScript -Raw
-    $specContent += @"
-
-%post
-$postInstallContent
-
-"@
+    $specContent += "`n%post`n"
+    $specContent += $postInstallContent
+    $specContent += "`n"
 
     # Post-uninstall script
     $postUninstallContent = Get-Content -Path $AfterRemoveScript -Raw
-    $specContent += @"
-%postun
-$postUninstallContent
-
-"@
+    $specContent += "%postun`n"
+    $specContent += $postUninstallContent
+    $specContent += "`n"
 
     # Files section
-    $specContent += @"
-%files
-%defattr(-,root,root,-)
-$Destination/*
-$ManDestination
-
-"@
+    $specContent += "%files`n"
+    $specContent += "%defattr(-,root,root,-)`n"
+    $specContent += "$Destination/*`n"
+    $specContent += "$ManDestination`n"
 
     # Add symlinks to files
     foreach ($link in $LinkInfo) {
         $specContent += "$($link.Destination)`n"
     }
 
-    $specContent += @"
-
-%changelog
-* $(Get-Date -Format "ddd MMM dd yyyy") PowerShell Team <PowerShellTeam@hotmail.com> - $Version-$Iteration
-- Automated build
-
-"@
+    # Changelog with correct date format for RPM
+    $changelogDate = Get-Date -Format "ddd MMM dd yyyy"
+    $specContent += "`n%changelog`n"
+    $specContent += "* $changelogDate PowerShell Team <PowerShellTeam@hotmail.com> - $Version-$Iteration`n"
+    $specContent += "- Automated build`n"
 
     return $specContent
 }
