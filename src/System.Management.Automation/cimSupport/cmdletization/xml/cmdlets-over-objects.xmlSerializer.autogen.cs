@@ -760,7 +760,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 WriteXsiType(@"CmdletParameterMetadataForGetCmdletFilteringParameter", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
             }
-    
+
             if (o.@IsMandatorySpecified)
             {
                 WriteAttribute(@"IsMandatory", @"", System.Xml.XmlConvert.ToString((global::System.Boolean)((global::System.Boolean)o.@IsMandatory)));

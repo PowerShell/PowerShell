@@ -500,7 +500,7 @@ namespace System.Management.Automation
             afterPrev -= arrayExtent.StartOffset;
             beforeNext -= arrayExtent.StartOffset;
 
-            if (arrayText[afterPrev] == ',') 
+            if (arrayText[afterPrev] == ',')
             {
                 return ", ";
             }
@@ -509,7 +509,7 @@ namespace System.Management.Automation
             {
                 return " ,";
             }
-            
+
             return " , ";
         }
 
