@@ -318,6 +318,9 @@ foreach ( $argumentListValue in "Standard","Legacy","Windows" ) {
     }
 
     Describe 'Verbatim arguments tests' -tags "CI" {
+        BeforeAll{
+            $var = 'foo'
+        }
         It 'Should handle arguments <echoargs> correctly' -testCases @(
             @{echoargs = "--%";              Expected = @()}
             @{echoargs = "--% ";             Expected = @()}
@@ -331,6 +334,12 @@ foreach ( $argumentListValue in "Standard","Legacy","Windows" ) {
             @{echoargs = "a --% --%";        Expected = @('a', '--%')}
             @{echoargs = "a --% b";          Expected = @('a', 'b')}
             @{echoargs = "a --% b --%";      Expected = @('a', 'b', '--%')}
+
+            @{
+                echoargs = "a `$var `"var=`$var`" 'var' (1) --% a `$var `"var=`$var`" 'var' (1) * ~";
+                Expected = @('a', 'foo', 'var=foo', 'var', '1', 'a', '$var',
+                    ($PSNativeCommandArgumentPassing -eq 'Legacy' ? 'var=$var' : '"var=$var"'), "'var'", '(1)', '*', '~')
+            }
         ) {
             param($echoargs, $Expected)
             $lines = @(Invoke-Expression "testexe -echoargs $echoargs")
