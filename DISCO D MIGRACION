@@ -1,0 +1,33 @@
+$basePath = "D:\Proyectos_Ableton"
+
+$dirs = @(
+    "Ableton_Library\User Library",
+    "Ableton_Library\Packs",
+    "Ableton_Temporales\Temp",
+    "Ableton_Temporales\Cache",
+    "Proyectos_Ableton\Beats\Beat_Nombre1",
+    "Proyectos_Ableton\Beats\Beat_Nombre2",
+    "Proyectos_Ableton\Beats\Beat_Nombre3",
+    "Proyectos_Ableton\Grabaciones_Vocales\Vocal_Artista1",
+    "Proyectos_Ableton\Grabaciones_Vocales\Vocal_Artista2",
+    "Proyectos_Ableton\Grabaciones_Vocales\Vocal_Artista3",
+    "Proyectos_Ableton\Mezclas\Mezcla_Track1",
+    "Proyectos_Ableton\Mezclas\Mezcla_Track2",
+    "Proyectos_Ableton\Mezclas\Mezcla_Track3",
+    "Proyectos_Ableton\Masters\Master_Track1",
+    "Proyectos_Ableton\Masters\Master_Track2",
+    "Proyectos_Ableton\Masters\Master_Track3",
+    "Exportaciones_Finales\Singles",
+    "Exportaciones_Finales\Álbumes",
+    "Exportaciones_Finales\Promos"
+)
+
+foreach ($dir in $dirs) {
+    $fullPath = Join-Path $basePath $dir
+    if (-not (Test-Path $fullPath)) {
+        New-Item -ItemType Directory -Path $fullPath | Out-Null
+        Write-Output "Carpeta creada: $fullPath"
+    } else {
+        Write-Output "Carpeta existente: $fullPath"
+    }
+}
