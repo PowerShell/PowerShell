@@ -2241,7 +2241,7 @@ function Install-GlobalGem {
         # We cannot guess if the user wants to run gem install as root on linux and windows,
         # but macOs usually requires sudo
         $gemsudo = ''
-        if($environment.IsMacOS -or $env:TF_BUILD) {
+        if($environment.IsMacOS -or $env:TF_BUILD -or $env:GITHUB_ACTIONS) {
             $gemsudo = $sudo
         }
 
