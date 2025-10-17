@@ -3649,6 +3649,7 @@ namespace System.Management.Automation
 
     internal static class MemberInvocationLoggingOps
     {
+#if DEBUG
         private static readonly Lazy<bool> DumpLogAMSIContent = new Lazy<bool>(
             () => {
                 object result = Environment.GetEnvironmentVariable("__PSDumpAMSILogContent");
@@ -3659,6 +3660,7 @@ namespace System.Management.Automation
                 return false;
             }
         );
+#endif
 
         private static string ArgumentToString(object arg)
         {
@@ -3713,20 +3715,24 @@ namespace System.Management.Automation
 
                 string content = $"<{targetName}>.{name}({argsBuilder})";
 
+#if DEBUG
                 if (DumpLogAMSIContent.Value)
                 {
                     Console.WriteLine("\n=== Amsi notification report content ===");
                     Console.WriteLine(content);
                 }
+#endif
 
                 var success = AmsiUtils.ReportContent(
                     name: contentName,
                     content: content);
 
+#if DEBUG
                 if (DumpLogAMSIContent.Value)
                 {
                     Console.WriteLine($"=== Amsi notification report success: {success} ===");
                 }
+#endif
             }
             catch (PSSecurityException)
             {
@@ -3734,12 +3740,16 @@ namespace System.Management.Automation
                 // must be propagated.
                 throw;
             }
+#pragma warning disable CS0168 // variable declared but never used
             catch (Exception ex)
+#pragma warning restore CS0168
             {
+#if DEBUG
                 if (DumpLogAMSIContent.Value)
                 {
                     Console.WriteLine($"!!! Amsi notification report exception: {ex} !!!");
                 }
+#endif
             }
         }
     }
