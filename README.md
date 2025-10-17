@@ -56,7 +56,6 @@ Want to chat with other members of the PowerShell community?
 
 There are dozens of topic-specific channels on our community-driven PowerShell Virtual User Group, which you can join on:
 
-* [Gitter](https://gitter.im/PowerShell/PowerShell)
 * [Discord](https://discord.gg/PowerShell)
 * [IRC](https://web.libera.chat/#powershell) on Libera.Chat
 * [Slack](https://aka.ms/psslack)
