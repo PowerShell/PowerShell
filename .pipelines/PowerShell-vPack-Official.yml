@@ -31,7 +31,7 @@ parameters: # parameters are shown up in ADO UI in a build queue time
     - KS4
     - R1
     - Netlock
-  default: "RS1"
+  default: "R1"
 
 name: vPack_$(Build.SourceBranchName)_Prod.${{ parameters.OfficialBuild }}_Create.${{ parameters.createVPack }}_Name.${{ parameters.vPackName}}_$(date:yyyyMMdd).$(rev:rr)
 
