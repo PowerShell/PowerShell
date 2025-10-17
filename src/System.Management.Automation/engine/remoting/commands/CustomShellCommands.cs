@@ -1753,7 +1753,7 @@ else
             }
 
             StringBuilder conditionalACE = new StringBuilder();
-            if (!(configTable[ConfigFileConstants.RequiredGroups] is Hashtable requiredGroupsHash))
+            if (configTable[ConfigFileConstants.RequiredGroups] is not Hashtable requiredGroupsHash)
             {
                 throw new PSInvalidOperationException(RemotingErrorIdStrings.RequiredGroupsNotHashTable);
             }
