@@ -165,7 +165,9 @@ function Parse-ChangelogFiles {
         } catch {
             Write-Warning "Error processing file $($file.Name): $($_.Exception.Message)"
         }
-    }    # Filter by link type if specified
+    }   
+    
+    # Filter by link type if specified
     if ($LinkType -ne "All") {
         $allLinks = $allLinks | Where-Object { $_.Type -eq $LinkType }
     }
