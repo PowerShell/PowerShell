@@ -435,7 +435,7 @@ namespace System.Management.Automation.Remoting
             cancellationToken.ThrowIfCancellationRequested();
 
             ReadOnlySpan<byte> responseBytes = Encoding.UTF8.GetBytes(responseString);
-            string responseToken = ExtractFuzzedToken(responseBytes);
+            string responseToken = RemoteSessionHyperVSocketClient.ExtractFuzzedToken(responseBytes);
 
             if (responseToken == null)
             {
@@ -1126,7 +1126,7 @@ namespace System.Management.Automation.Remoting
             }
         }
 
-        internal string ExtractFuzzedToken(ReadOnlySpan<byte> tokenResponse)
+        internal static string ExtractFuzzedToken(ReadOnlySpan<byte> tokenResponse)
         {
             // implementation
             string token = Encoding.UTF8.GetString(tokenResponse);
