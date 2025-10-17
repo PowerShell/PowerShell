@@ -337,17 +337,14 @@ foreach ( $argumentListValue in "Standard","Legacy","Windows" ) {
 
             @{
                 echoargs = "a `$var `"var=`$var`" 'var' (1) --% a `$var `"var=`$var`" 'var' (1) * ~";
-                Expected = @('a', 'foo', 'var=foo', 'var', '1', 'a', '$var',
-                    ($PSNativeCommandArgumentPassing -eq 'Legacy' ? 'var=$var' : '"var=$var"'), "'var'", '(1)', '*', '~')
+                Expected = @('a', 'foo', 'var=foo', 'var', '1',
+                'a', '$var',
+                ($PSNativeCommandArgumentPassing -eq 'Legacy' ? 'var=$var' : '"var=$var"'),
+                "'var'", '(1)', '*', '~')
             }
         ) {
             param($echoargs, $Expected)
-            $lines = @(Invoke-Expression "testexe -echoargs $echoargs")
-            $lines.Count | Should -Be $Expected.Count
-            for ($i = 0; $i -lt $Expected.Count; $i++) {
-                $e = $Expected[$i]
-                $lines[$i] | Should -BeExactly "Arg $i is <$e>"
-            }
+            @(Invoke-Expression "testexe -echoargs $echoargs") | Should -BeExactly @($Expected | ForEach-Object { $i = 0 } { "Arg {0} is <$_>" -f $i++ })
         }
     }
 }
