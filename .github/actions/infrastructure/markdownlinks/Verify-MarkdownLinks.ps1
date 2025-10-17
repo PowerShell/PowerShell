@@ -315,4 +315,3 @@ if ($env:GITHUB_STEP_SUMMARY) {
     Write-Verbose -Verbose "Summary written to GitHub Actions step summary"
 }
 
-exit 0
