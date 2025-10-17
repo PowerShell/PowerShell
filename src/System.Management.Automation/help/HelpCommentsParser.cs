@@ -951,7 +951,7 @@ namespace System.Management.Automation
             var result = new List<Language.Token>();
 
             // Any whitespace between the token and the first comment is allowed.
-            int nextMaxStartLine = int.MaxValue;
+            int nextMaxStartLine = Int32.MaxValue;
 
             for (int i = startIndex; i < tokens.Length; i++)
             {
