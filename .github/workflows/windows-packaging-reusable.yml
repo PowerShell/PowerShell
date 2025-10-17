@@ -15,7 +15,7 @@ env:
 
 jobs:
   package:
-    name: Windows Packaging - ${{ matrix.architecture }} - ${{ matrix.channel }}
+    name: ${{ matrix.architecture }} - ${{ matrix.channel }}
     runs-on: windows-latest
     strategy:
       fail-fast: false
