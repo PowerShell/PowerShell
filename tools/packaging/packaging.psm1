@@ -1283,12 +1283,18 @@ function New-UnixPackage {
                     
                     # Build RPM package
                     try {
-                        $Output = Start-NativeExecution { 
-                            rpmbuild -bb --quiet --define "_topdir $rpmBuildRoot" --buildroot "$rpmBuildRoot/BUILDROOT" $specFile 
+                        # Use bash to properly handle rpmbuild arguments
+                        $buildCmd = "rpmbuild -bb --quiet --define '_topdir $rpmBuildRoot' --buildroot '$rpmBuildRoot/BUILDROOT' '$specFile'"
+                        Write-Verbose "Running: $buildCmd" -Verbose
+                        $Output = bash -c $buildCmd 2>&1
+                        $exitCode = $LASTEXITCODE
+                        
+                        if ($exitCode -ne 0) {
+                            throw "rpmbuild failed with exit code $exitCode"
                         }
                         
                         # Find the generated RPM
-                        $rpmFile = Get-ChildItem -Path (Join-Path $rpmsDir $HostArchitecture) -Filter "*.rpm" | 
+                        $rpmFile = Get-ChildItem -Path (Join-Path $rpmsDir $HostArchitecture) -Filter "*.rpm" -ErrorAction Stop | 
                             Sort-Object -Property LastWriteTime -Descending | 
                             Select-Object -First 1
                         
@@ -1302,7 +1308,9 @@ function New-UnixPackage {
                     }
                     catch {
                         Write-Verbose -Message "!!!Handling error in rpmbuild!!!" -Verbose -ErrorAction SilentlyContinue
-                        Write-Verbose -Message "$Output" -Verbose -ErrorAction SilentlyContinue
+                        if ($Output) {
+                            Write-Verbose -Message "$Output" -Verbose -ErrorAction SilentlyContinue
+                        }
                         Get-Error -InputObject $_
                         throw
                     }
