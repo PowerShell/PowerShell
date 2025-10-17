@@ -91,15 +91,15 @@ runs:
           const packagingChanged = files.some(file => 
             file.filename === '.github/workflows/windows-ci.yml' ||
             file.filename.startsWith('assets/wix/') ||
-            buildModuleChanged ||
-            globalConfigChanged ||
             file.filename === 'PowerShell.Common.props' ||
             file.filename.match(/^src\/.*\.csproj$/) ||
             file.filename.startsWith('test/packaging/windows/') ||
-            toolsCiPsm1Changed ||
             file.filename.startsWith('tools/packaging/') ||
             file.filename.startsWith('tools/wix/')
-          );
+          ) ||
+            buildModuleChanged ||
+            globalConfigChanged ||
+            toolsCiPsm1Changed;
 
           const source = mainSourceChanged || toolsChanged || githubChanged || propsChanged || testsChanged || globalConfigChanged;
 

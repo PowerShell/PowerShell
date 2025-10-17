@@ -161,81 +161,46 @@ jobs:
           fetch-depth: 1000
       - name: Verify xUnit test results
         uses: "./.github/actions/test/verify_xunit"
-  windows_packaging:
-    name: Windows Packaging - ${{ matrix.architecture }} - ${{ matrix.channel }}
+  windows_packaging_x64_preview:
+    name: Windows Packaging - x64 - preview
     needs:
       - changes
     if: ${{ needs.changes.outputs.packagingChanged == 'true' }}
-    runs-on: windows-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - architecture: x64
-            channel: preview
-            runtimePrefix: win7
-          - architecture: x86
-            channel: stable
-            runtimePrefix: win7
-          - architecture: x86
-            channel: preview
-            runtimePrefix: win7
-          - architecture: arm64
-            channel: preview
-            runtimePrefix: win
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v5
-        with:
-          fetch-depth: 1000
-
-      - name: Capture Environment
-        if: success() || failure()
-        run: |
-          Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
-        shell: pwsh
-
-      - name: Capture PowerShell Version Table
-        if: success() || failure()
-        run: |
-          $PSVersionTable
-        shell: pwsh
-
-      - name: Switch to Public Feeds
-        if: success()
-        run: |
-          Import-Module .\tools\ci.psm1
-          Switch-PSNugetConfig -Source Public
-        shell: pwsh
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          global-json-file: ./global.json
-
-      - name: Bootstrap
-        if: success()
-        run: |
-          Import-Module .\tools\ci.psm1
-          Invoke-CIInstall -SkipUser
-        shell: pwsh
-
-      - name: Build and Package
-        run: |
-          Import-Module .\tools\ci.psm1
-          New-CodeCoverageAndTestPackage
-          Invoke-CIFinish -Runtime ${{ matrix.runtimePrefix }}-${{ matrix.architecture }} -channel ${{ matrix.channel }}
-        shell: pwsh
-
-      - name: Upload Build Artifacts
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: windows-packaging-${{ matrix.architecture }}-${{ matrix.channel }}
-          path: |
-            ${{ github.workspace }}/artifacts/**/*
-            !${{ github.workspace }}/artifacts/**/*.pdb
+    uses: ./.github/workflows/windows-packaging-reusable.yml
+    with:
+      architecture: x64
+      channel: preview
+      runtimePrefix: win7
+  windows_packaging_x86_stable:
+    name: Windows Packaging - x86 - stable
+    needs:
+      - changes
+    if: ${{ needs.changes.outputs.packagingChanged == 'true' }}
+    uses: ./.github/workflows/windows-packaging-reusable.yml
+    with:
+      architecture: x86
+      channel: stable
+      runtimePrefix: win7
+  windows_packaging_x86_preview:
+    name: Windows Packaging - x86 - preview
+    needs:
+      - changes
+    if: ${{ needs.changes.outputs.packagingChanged == 'true' }}
+    uses: ./.github/workflows/windows-packaging-reusable.yml
+    with:
+      architecture: x86
+      channel: preview
+      runtimePrefix: win7
+  windows_packaging_arm64_preview:
+    name: Windows Packaging - arm64 - preview
+    needs:
+      - changes
+    if: ${{ needs.changes.outputs.packagingChanged == 'true' }}
+    uses: ./.github/workflows/windows-packaging-reusable.yml
+    with:
+      architecture: arm64
+      channel: preview
+      runtimePrefix: win
   ready_to_merge:
     name: windows ready to merge
     needs:
@@ -244,7 +209,10 @@ jobs:
       - windows_test_elevated_others
       - windows_test_unelevated_ci
       - windows_test_unelevated_others
-      - windows_packaging
+      - windows_packaging_x64_preview
+      - windows_packaging_x86_stable
+      - windows_packaging_x86_preview
+      - windows_packaging_arm64_preview
     if: always()
     uses: PowerShell/compliance/.github/workflows/ready-to-merge.yml@v1.0.0
     with:
