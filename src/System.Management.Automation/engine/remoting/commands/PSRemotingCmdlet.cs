@@ -606,7 +606,7 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.ComputerNameParameterSet)]
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
-        [ValidateRange((int)1, (int)ushort.MaxValue)]
+        [ValidateRange((int)1, (int)UInt16.MaxValue)]
         public virtual int Port { get; set; }
 
         /// <summary>
@@ -4149,7 +4149,7 @@ namespace Microsoft.PowerShell.Commands
                                     try
                                     {
                                         // WinRM returns both signed and unsigned 32 bit string values.  Convert to signed 32 bit integer.
-                                        long eCode = Convert.ToInt64(errorCodeString, System.Globalization.NumberFormatInfo.InvariantInfo);
+                                        Int64 eCode = Convert.ToInt64(errorCodeString, System.Globalization.NumberFormatInfo.InvariantInfo);
                                         unchecked
                                         {
                                             errorCode = (int)eCode;

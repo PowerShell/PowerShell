@@ -225,7 +225,7 @@ namespace System.Management.Automation.Runspaces
                     // The timer constructor will throw an exception
                     // for any value greater than Int32.MaxValue
                     // hence this is the maximum possible limit
-                    _openTimeout = int.MaxValue;
+                    _openTimeout = Int32.MaxValue;
                 }
             }
         }
@@ -270,7 +270,7 @@ namespace System.Management.Automation.Runspaces
         /// The maximum allowed idle timeout duration (in ms) that can be set on a Runspace.  This is a read-only property
         /// that is set once the Runspace is successfully created and opened.
         /// </summary>
-        public int MaxIdleTimeout { get; internal set; } = int.MaxValue;
+        public int MaxIdleTimeout { get; internal set; } = Int32.MaxValue;
 
         /// <summary>
         /// Populates session options from a PSSessionOption instance.
@@ -2505,7 +2505,7 @@ namespace System.Management.Automation.Runspaces
             var argvList = new List<string>();
             argvList.Add(psi.FileName);
 
-            var argsToParse = string.Join(' ', psi.ArgumentList).Trim();
+            var argsToParse = String.Join(' ', psi.ArgumentList).Trim();
             var argsLength = argsToParse.Length;
             for (int i = 0; i < argsLength; )
             {

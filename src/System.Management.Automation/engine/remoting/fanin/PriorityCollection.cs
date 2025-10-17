@@ -561,11 +561,11 @@ namespace System.Management.Automation.Remoting
                     PSEtwLog.LogAnalyticVerbose(
                         PSEventId.ReceivedRemotingFragment, PSOpcode.Receive, PSTask.None,
                         PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
-                        (long)objectId,
-                        (long)fragmentId,
+                        (Int64)objectId,
+                        (Int64)fragmentId,
                         sFlag ? 1 : 0,
                         eFlag ? 1 : 0,
-                        (uint)blobLength,
+                        (UInt32)blobLength,
                         new PSETWBinaryBlob(oneFragment, FragmentedRemoteObject.HeaderLength, blobLength));
 
                     byte[] extraData = null;

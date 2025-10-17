@@ -277,7 +277,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Overriding to suppress this parameter.
         /// </summary>
-        public override int ThrottleLimit
+        public override Int32 ThrottleLimit
         {
             get
             {

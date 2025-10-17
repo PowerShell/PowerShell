@@ -283,7 +283,7 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         [Parameter(ParameterSetName = GetPSSessionCommand.ComputerNameParameterSet)]
         [Parameter(ParameterSetName = GetPSSessionCommand.ComputerInstanceIdParameterSet)]
-        [ValidateRange((int)1, (int)ushort.MaxValue)]
+        [ValidateRange((int)1, (int)UInt16.MaxValue)]
         public int Port { get; set; }
 
         /// <summary>

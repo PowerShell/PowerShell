@@ -1551,7 +1551,7 @@ namespace System.Management.Automation.Internal
         /// <param name="inputstream"></param>
         private void WriteInput(ObjectStreamBase inputstream)
         {
-            Collection<object> inputObjects = inputstream.ObjectReader.NonBlockingRead(int.MaxValue);
+            Collection<object> inputObjects = inputstream.ObjectReader.NonBlockingRead(Int32.MaxValue);
 
             foreach (object inputObject in inputObjects)
             {
@@ -1562,7 +1562,7 @@ namespace System.Management.Automation.Internal
             if (!inputstream.IsOpen)
             {
                 // Write any data written after the NonBlockingRead call above.
-                inputObjects = inputstream.ObjectReader.NonBlockingRead(int.MaxValue);
+                inputObjects = inputstream.ObjectReader.NonBlockingRead(Int32.MaxValue);
 
                 foreach (object inputObject in inputObjects)
                 {

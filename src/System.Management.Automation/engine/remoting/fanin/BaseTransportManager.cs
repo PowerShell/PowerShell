@@ -213,7 +213,7 @@ namespace System.Management.Automation.Remoting
 
         // This value instructs the server to use whatever setting it has for idle timeout.
         internal const int UseServerDefaultIdleTimeout = -1;
-        internal const uint UseServerDefaultIdleTimeoutUInt = uint.MaxValue;
+        internal const uint UseServerDefaultIdleTimeoutUInt = UInt32.MaxValue;
 
         // Minimum allowed idle timeout time is 60 seconds.
         internal const int MinimumIdleTimeout = 60 * 1000;
@@ -390,9 +390,9 @@ namespace System.Management.Automation.Remoting
                                                   PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
                                                   remoteObject.RunspacePoolId.ToString(),
                                                   remoteObject.PowerShellId.ToString(),
-                                                  (uint)(remoteObject.Destination),
-                                                  (uint)(remoteObject.DataType),
-                                                  (uint)(remoteObject.TargetInterface));
+                                                  (UInt32)(remoteObject.Destination),
+                                                  (UInt32)(remoteObject.DataType),
+                                                  (UInt32)(remoteObject.TargetInterface));
 
             // This might throw exceptions which the caller handles.
             PowerShellGuidObserver.SafeInvoke(remoteObject.PowerShellId, EventArgs.Empty);
@@ -1414,8 +1414,8 @@ namespace System.Management.Automation.Remoting.Server
                 _runspacePoolInstanceId.ToString(),
                 _powerShellInstanceId.ToString(),
                 dataToSend.Length.ToString(CultureInfo.InvariantCulture),
-                (uint)_dataType,
-                (uint)_targetInterface);
+                (UInt32)_dataType,
+                (UInt32)_targetInterface);
 
             SendDataToClient(dataToSend, isEndFragment && _shouldFlushData, _reportAsPending, isEndFragment);
         }
