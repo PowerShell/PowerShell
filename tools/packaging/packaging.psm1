@@ -1245,40 +1245,102 @@ function New-UnixPackage {
         # Setup package dependencies
         $Dependencies = @(Get-PackageDependencies @packageDependenciesParams)
 
-        $Arguments = @()
-
-
-        $Arguments += Get-FpmArguments `
-            -Name $Name `
-            -Version $packageVersion `
-            -Iteration $Iteration `
-            -Description $Description `
-            -Type $Type `
-            -Dependencies $Dependencies `
-            -AfterInstallScript $AfterScriptInfo.AfterInstallScript `
-            -AfterRemoveScript $AfterScriptInfo.AfterRemoveScript `
-            -Staging $Staging `
-            -Destination $Destination `
-            -ManGzipFile $ManGzipInfo.GzipFile `
-            -ManDestination $ManGzipInfo.ManFile `
-            -LinkInfo $Links `
-            -AppsFolder $AppsFolder `
-            -Distribution $DebDistro `
-            -HostArchitecture $HostArchitecture `
-            -ErrorAction Stop
-
         # Build package
         try {
-            if ($PSCmdlet.ShouldProcess("Create $type package")) {
-                Write-Log "Creating package with fpm $Arguments..."
-                try {
-                    $Output = Start-NativeExecution { fpm $Arguments }
+            if ($Type -eq 'rpm') {
+                # Use rpmbuild directly for RPM packages
+                if ($PSCmdlet.ShouldProcess("Create RPM package with rpmbuild")) {
+                    Write-Log "Creating RPM package with rpmbuild..."
+                    
+                    # Create rpmbuild directory structure
+                    $rpmBuildRoot = Join-Path $env:HOME "rpmbuild"
+                    $specsDir = Join-Path $rpmBuildRoot "SPECS"
+                    $rpmsDir = Join-Path $rpmBuildRoot "RPMS"
+                    
+                    New-Item -ItemType Directory -Path $specsDir -Force | Out-Null
+                    New-Item -ItemType Directory -Path $rpmsDir -Force | Out-Null
+                    
+                    # Generate RPM spec file
+                    $specContent = New-RpmSpec `
+                        -Name $Name `
+                        -Version $packageVersion `
+                        -Iteration $Iteration `
+                        -Description $Description `
+                        -Dependencies $Dependencies `
+                        -AfterInstallScript $AfterScriptInfo.AfterInstallScript `
+                        -AfterRemoveScript $AfterScriptInfo.AfterRemoveScript `
+                        -Staging $Staging `
+                        -Destination $Destination `
+                        -ManGzipFile $ManGzipInfo.GzipFile `
+                        -ManDestination $ManGzipInfo.ManFile `
+                        -LinkInfo $Links `
+                        -Distribution $DebDistro `
+                        -HostArchitecture $HostArchitecture
+                    
+                    $specFile = Join-Path $specsDir "$Name.spec"
+                    $specContent | Out-File -FilePath $specFile -Encoding ascii
+                    Write-Verbose "Generated spec file: $specFile" -Verbose
+                    
+                    # Build RPM package
+                    try {
+                        $Output = Start-NativeExecution { 
+                            rpmbuild -bb --quiet --define "_topdir $rpmBuildRoot" --buildroot "$rpmBuildRoot/BUILDROOT" $specFile 
+                        }
+                        
+                        # Find the generated RPM
+                        $rpmFile = Get-ChildItem -Path (Join-Path $rpmsDir $HostArchitecture) -Filter "*.rpm" | 
+                            Sort-Object -Property LastWriteTime -Descending | 
+                            Select-Object -First 1
+                        
+                        if ($rpmFile) {
+                            # Copy RPM to current location
+                            Copy-Item -Path $rpmFile.FullName -Destination $CurrentLocation -Force
+                            $Output = @("Created package {:path=>""$(Join-Path $CurrentLocation $rpmFile.Name)""}")
+                        } else {
+                            throw "RPM file not found after build"
+                        }
+                    }
+                    catch {
+                        Write-Verbose -Message "!!!Handling error in rpmbuild!!!" -Verbose -ErrorAction SilentlyContinue
+                        Write-Verbose -Message "$Output" -Verbose -ErrorAction SilentlyContinue
+                        Get-Error -InputObject $_
+                        throw
+                    }
                 }
-                catch {
-                    Write-Verbose -Message "!!!Handling error in FPM!!!" -Verbose -ErrorAction SilentlyContinue
-                    Write-Verbose -Message "$Output" -Verbose -ErrorAction SilentlyContinue
-                    Get-Error -InputObject $_
-                    throw
+            } else {
+                # Use fpm for DEB and macOS packages
+                $Arguments = @()
+                
+                $Arguments += Get-FpmArguments `
+                    -Name $Name `
+                    -Version $packageVersion `
+                    -Iteration $Iteration `
+                    -Description $Description `
+                    -Type $Type `
+                    -Dependencies $Dependencies `
+                    -AfterInstallScript $AfterScriptInfo.AfterInstallScript `
+                    -AfterRemoveScript $AfterScriptInfo.AfterRemoveScript `
+                    -Staging $Staging `
+                    -Destination $Destination `
+                    -ManGzipFile $ManGzipInfo.GzipFile `
+                    -ManDestination $ManGzipInfo.ManFile `
+                    -LinkInfo $Links `
+                    -AppsFolder $AppsFolder `
+                    -Distribution $DebDistro `
+                    -HostArchitecture $HostArchitecture `
+                    -ErrorAction Stop
+                
+                if ($PSCmdlet.ShouldProcess("Create $type package")) {
+                    Write-Log "Creating package with fpm $Arguments..."
+                    try {
+                        $Output = Start-NativeExecution { fpm $Arguments }
+                    }
+                    catch {
+                        Write-Verbose -Message "!!!Handling error in FPM!!!" -Verbose -ErrorAction SilentlyContinue
+                        Write-Verbose -Message "$Output" -Verbose -ErrorAction SilentlyContinue
+                        Get-Error -InputObject $_
+                        throw
+                    }
                 }
             }
         } finally {
@@ -1437,6 +1499,142 @@ Class LinkInfo
 {
     [string] $Source
     [string] $Destination
+}
+
+function New-RpmSpec
+{
+    param(
+        [Parameter(Mandatory,HelpMessage='Package Name')]
+        [String]$Name,
+
+        [Parameter(Mandatory,HelpMessage='Package Version')]
+        [String]$Version,
+
+        [Parameter(Mandatory)]
+        [String]$Iteration,
+
+        [Parameter(Mandatory,HelpMessage='Package description')]
+        [String]$Description,
+
+        [Parameter(Mandatory,HelpMessage='Staging folder for installation files')]
+        [String]$Staging,
+
+        [Parameter(Mandatory,HelpMessage='Install path on target machine')]
+        [String]$Destination,
+
+        [Parameter(Mandatory,HelpMessage='The built and gzipped man file.')]
+        [String]$ManGzipFile,
+
+        [Parameter(Mandatory,HelpMessage='The destination of the man file')]
+        [String]$ManDestination,
+
+        [Parameter(Mandatory,HelpMessage='Symlink to powershell executable')]
+        [LinkInfo[]]$LinkInfo,
+
+        [Parameter(Mandatory,HelpMessage='Packages required to install this package')]
+        [String[]]$Dependencies,
+
+        [Parameter(Mandatory,HelpMessage='Script to run after the package installation.')]
+        [String]$AfterInstallScript,
+
+        [Parameter(Mandatory,HelpMessage='Script to run after the package removal.')]
+        [String]$AfterRemoveScript,
+
+        [String]$Distribution = 'rhel.7',
+        [string]$HostArchitecture
+    )
+
+    $specContent = @"
+# RPM spec file for PowerShell
+# Generated by PowerShell build system
+
+Name:           $Name
+Version:        $Version
+Release:        $Iteration%{?dist}
+Summary:        PowerShell - Cross-platform automation and configuration tool/framework
+License:        MIT
+URL:            https://microsoft.com/powershell
+BuildArch:      $HostArchitecture
+AutoReq:        no
+
+"@
+
+    # Add dependencies
+    foreach ($dep in $Dependencies) {
+        $specContent += "Requires:       $dep`n"
+    }
+
+    $specContent += @"
+
+%description
+$Description
+
+%prep
+# No prep needed - files are already staged
+
+%build
+# No build needed - binaries are pre-built
+
+%install
+rm -rf `$RPM_BUILD_ROOT
+mkdir -p `$RPM_BUILD_ROOT$Destination
+mkdir -p `$RPM_BUILD_ROOT$(Split-Path -Parent $ManDestination)
+
+# Copy all files from staging to destination
+cp -r $Staging/* `$RPM_BUILD_ROOT$Destination/
+
+# Copy man page
+cp $ManGzipFile `$RPM_BUILD_ROOT$ManDestination
+
+"@
+
+    # Add symlinks
+    foreach ($link in $LinkInfo) {
+        $linkDir = Split-Path -Parent $link.Destination
+        $specContent += "mkdir -p `$RPM_BUILD_ROOT$linkDir`n"
+        $specContent += "ln -sf $($link.Source) `$RPM_BUILD_ROOT$($link.Destination)`n"
+    }
+
+    # Post-install script
+    $postInstallContent = Get-Content -Path $AfterInstallScript -Raw
+    $specContent += @"
+
+%post
+$postInstallContent
+
+"@
+
+    # Post-uninstall script
+    $postUninstallContent = Get-Content -Path $AfterRemoveScript -Raw
+    $specContent += @"
+%postun
+$postUninstallContent
+
+"@
+
+    # Files section
+    $specContent += @"
+%files
+%defattr(-,root,root,-)
+$Destination/*
+$ManDestination
+
+"@
+
+    # Add symlinks to files
+    foreach ($link in $LinkInfo) {
+        $specContent += "$($link.Destination)`n"
+    }
+
+    $specContent += @"
+
+%changelog
+* $(Get-Date -Format "ddd MMM dd yyyy") PowerShell Team <PowerShellTeam@hotmail.com> - $Version-$Iteration
+- Automated build
+
+"@
+
+    return $specContent
 }
 
 function Get-FpmArguments
@@ -1651,7 +1849,16 @@ function Get-PackageDependencies
 
 function Test-Dependencies
 {
-    foreach ($Dependency in "fpm") {
+    # Note: RPM packages no longer require fpm; they use rpmbuild directly
+    # DEB packages still use fpm
+    $Dependencies = @()
+    
+    # Only check for fpm on Debian-based systems
+    if ($Environment.IsDebianFamily) {
+        $Dependencies += "fpm"
+    }
+    
+    foreach ($Dependency in $Dependencies) {
         if (!(precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Scenario Package")) {
             # These tools are not added to the path automatically on OpenSUSE 13.2
             # try adding them to the path and re-tesing first
