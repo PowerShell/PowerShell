@@ -161,46 +161,12 @@ jobs:
           fetch-depth: 1000
       - name: Verify xUnit test results
         uses: "./.github/actions/test/verify_xunit"
-  windows_packaging_x64_preview:
-    name: Windows Packaging - x64 - preview
+  windows_packaging:
+    name: Windows Packaging
     needs:
       - changes
     if: ${{ needs.changes.outputs.packagingChanged == 'true' }}
     uses: ./.github/workflows/windows-packaging-reusable.yml
-    with:
-      architecture: x64
-      channel: preview
-      runtimePrefix: win7
-  windows_packaging_x86_stable:
-    name: Windows Packaging - x86 - stable
-    needs:
-      - changes
-    if: ${{ needs.changes.outputs.packagingChanged == 'true' }}
-    uses: ./.github/workflows/windows-packaging-reusable.yml
-    with:
-      architecture: x86
-      channel: stable
-      runtimePrefix: win7
-  windows_packaging_x86_preview:
-    name: Windows Packaging - x86 - preview
-    needs:
-      - changes
-    if: ${{ needs.changes.outputs.packagingChanged == 'true' }}
-    uses: ./.github/workflows/windows-packaging-reusable.yml
-    with:
-      architecture: x86
-      channel: preview
-      runtimePrefix: win7
-  windows_packaging_arm64_preview:
-    name: Windows Packaging - arm64 - preview
-    needs:
-      - changes
-    if: ${{ needs.changes.outputs.packagingChanged == 'true' }}
-    uses: ./.github/workflows/windows-packaging-reusable.yml
-    with:
-      architecture: arm64
-      channel: preview
-      runtimePrefix: win
   ready_to_merge:
     name: windows ready to merge
     needs:
@@ -209,10 +175,7 @@ jobs:
       - windows_test_elevated_others
       - windows_test_unelevated_ci
       - windows_test_unelevated_others
-      - windows_packaging_x64_preview
-      - windows_packaging_x86_stable
-      - windows_packaging_x86_preview
-      - windows_packaging_arm64_preview
+      - windows_packaging
     if: always()
     uses: PowerShell/compliance/.github/workflows/ready-to-merge.yml@v1.0.0
     with:

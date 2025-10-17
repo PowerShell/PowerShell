@@ -2,16 +2,6 @@ name: Windows Packaging (Reusable)
 
 on:
   workflow_call:
-    inputs:
-      architecture:
-        required: true
-        type: string
-      channel:
-        required: true
-        type: string
-      runtimePrefix:
-        required: true
-        type: string
 
 env:
   GIT_CONFIG_PARAMETERS: "'core.autocrlf=false'"
@@ -25,8 +15,24 @@ env:
 
 jobs:
   package:
-    name: Windows Packaging - ${{ inputs.architecture }} - ${{ inputs.channel }}
+    name: Windows Packaging - ${{ matrix.architecture }} - ${{ matrix.channel }}
     runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - architecture: x64
+            channel: preview
+            runtimePrefix: win7
+          - architecture: x86
+            channel: stable
+            runtimePrefix: win7
+          - architecture: x86
+            channel: preview
+            runtimePrefix: win7
+          - architecture: arm64
+            channel: preview
+            runtimePrefix: win
 
     steps:
       - name: Checkout
@@ -69,14 +75,14 @@ jobs:
         run: |
           Import-Module .\tools\ci.psm1
           New-CodeCoverageAndTestPackage
-          Invoke-CIFinish -Runtime ${{ inputs.runtimePrefix }}-${{ inputs.architecture }} -channel ${{ inputs.channel }}
+          Invoke-CIFinish -Runtime ${{ matrix.runtimePrefix }}-${{ matrix.architecture }} -channel ${{ matrix.channel }}
         shell: pwsh
 
       - name: Upload Build Artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: windows-packaging-${{ inputs.architecture }}-${{ inputs.channel }}
+          name: windows-packaging-${{ matrix.architecture }}-${{ matrix.channel }}
           path: |
             ${{ github.workspace }}/artifacts/**/*
             !${{ github.workspace }}/artifacts/**/*.pdb
