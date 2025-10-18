@@ -43,7 +43,7 @@ jobs:
         shell: pwsh
         run: |
           Import-Module ./tools/ci.psm1
-          Restore-PSOptions -PSOptionsPath "${{ runner.workspace }}/build/psoptions.json"
+          Restore-PSOptions -PSOptionsPath "$env:RUNNER_WORKSPACE/build/psoptions.json"
 
       - name: Run full xUnit test suite
         shell: pwsh
