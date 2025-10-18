@@ -28,7 +28,6 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
         //
         public const UInt32 STATUS_MORE_ENTRIES             = 0x00000105;
 
-
         /////////////////////////////////////////////////////////////////////////
         //
         // Standard Information values
