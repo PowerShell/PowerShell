@@ -1247,7 +1247,7 @@ namespace System.Management.Automation.SecurityAccountsManager
 
                 status = SamApi.SamCreateUser2InDomain(domainHandle,
                     ref str,
-                    (int) SamApi.USER_NORMAL_ACCOUNT,
+                    (int)SamApi.USER_NORMAL_ACCOUNT,
                     Win32.MAXIMUM_ALLOWED,
                     out userHandle,
                     out grantedAccess,
@@ -1473,7 +1473,7 @@ namespace System.Management.Automation.SecurityAccountsManager
 
                     Marshal.Copy(memberIds, idArray, 0, (int)memberCount);
 
-                    for (int i=0; i < memberCount; i++)
+                    for (int i = 0; i < memberCount; i++)
                     {
                         var sid = new SecurityIdentifier(idArray[i]);
                         yield return MakeLocalPrincipalObject(LookupAccountInfo(sid));

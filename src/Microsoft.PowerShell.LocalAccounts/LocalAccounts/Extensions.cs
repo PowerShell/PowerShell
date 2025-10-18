@@ -107,7 +107,7 @@ namespace System.Management.Automation.SecurityAccountsManager.Extensions
             byte[] sidBinary = new byte[sid.BinaryLength];
             sid.GetBinaryForm(sidBinary, 0);
 
-            return System.BitConverter.ToUInt32(sidBinary, sidBinary.Length-4);
+            return System.BitConverter.ToUInt32(sidBinary, sidBinary.Length - 4);
         }
 
         /// <summary>
@@ -130,12 +130,13 @@ namespace System.Management.Automation.SecurityAccountsManager.Extensions
 
             // The Identifier Authority is six bytes wide,
             // in big-endian format, starting at the third byte
-            long authority = (long) (((long)sidBinary[2]) << 40) +
-                                    (((long)sidBinary[3]) << 32) +
-                                    (((long)sidBinary[4]) << 24) +
-                                    (((long)sidBinary[5]) << 16) +
-                                    (((long)sidBinary[6]) <<  8) +
-                                    (((long)sidBinary[7])      );
+            long authority =
+                (((long)sidBinary[2]) << 40) +
+                (((long)sidBinary[3]) << 32) +
+                (((long)sidBinary[4]) << 24) +
+                (((long)sidBinary[5]) << 16) +
+                (((long)sidBinary[6]) << 8) +
+                (((long)sidBinary[7]));
 
             return authority;
         }
