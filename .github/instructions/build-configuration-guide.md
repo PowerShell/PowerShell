@@ -78,12 +78,12 @@ steps:
 
 **Linux/macOS:**
 ```
-src/powershell-unix/bin/Debug/net9.0/<runtime>/publish/
+src/powershell-unix/bin/Debug/<netversion>/<runtime>/publish/
 ```
 
 **Windows:**
 ```
-src/powershell-win-core/bin/Debug/net9.0/<runtime>/publish/
+src/powershell-win-core/bin/Debug/<netversion>/<runtime>/publish/
 ```
 
 ## Best Practices
@@ -92,4 +92,4 @@ src/powershell-win-core/bin/Debug/net9.0/<runtime>/publish/
 2. Avoid redundant parameters
 3. Match configuration to purpose
 4. Use `-CI` only when needed
-5. Always specify `-ReleaseTag` for release builds
+5. Always specify `-ReleaseTag` for release or packaging builds

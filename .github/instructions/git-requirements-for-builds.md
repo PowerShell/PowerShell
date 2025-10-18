@@ -46,7 +46,6 @@ Include tag synchronization in the bootstrap step:
   run: |
     Import-Module ./tools/ci.psm1
     Invoke-CIInstall -SkipUser
-    Sync-PSTags -AddRemoteIfMissing
 ```
 
 ## Complete Example
