@@ -192,7 +192,7 @@ jobs:
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@e296a935590eb16afc0c0108289f68c87e2a89a5 # v3.29.5
+      uses: github/codeql-action/init@f443b600d91635bebf5b0d9ebc620189c0d6fba5 # v3.29.5
       with:
         languages: ${{ matrix.language }}
         # If you wish to specify custom queries, you can do so here or in a config file.
@@ -218,7 +218,7 @@ jobs:
       shell: pwsh
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@e296a935590eb16afc0c0108289f68c87e2a89a5 # v3.29.5
+      uses: github/codeql-action/analyze@f443b600d91635bebf5b0d9ebc620189c0d6fba5 # v3.29.5
 
   ready_to_merge:
     name: Linux ready to merge
@@ -229,24 +229,22 @@ jobs:
       - linux_test_unelevated_ci
       - linux_test_unelevated_others
       - analyze
+      - linux_packaging
     if: always()
     uses: PowerShell/compliance/.github/workflows/ready-to-merge.yml@v1.0.0
     with:
       needs_context: ${{ toJson(needs) }}
-  # TODO: Enable this when we have a Linux packaging workflow
-
-  # ERROR:  While executing gem ... (Gem::FilePermissionError)
-  # You don't have write permissions for the /var/lib/gems/2.7.0 directory.
-  #   WARNING: Installation of gem dotenv 2.8.1 failed! Must resolve manually.
-
-  # linux_packaging:
-  #   name: Attempt Linux Packaging
-  #   needs: ci_build
-  #   runs-on: ubuntu-20.04
-  #   steps:
-  #     - name: checkout
-  #       uses: actions/checkout@v5
-  #       with:
-  #         fetch-depth: 1000
-  #     - name: Verify xUnit test results
-  #       uses: "./.github/actions/test/linux-packaging"
+  linux_packaging:
+    name: Linux Packaging
+    needs:
+      - ci_build
+      - changes
+    if: ${{ needs.changes.outputs.source == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: Linux Packaging
+        uses: "./.github/actions/test/linux-packaging"

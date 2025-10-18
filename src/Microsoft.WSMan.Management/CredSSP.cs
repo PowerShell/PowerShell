@@ -514,7 +514,7 @@ namespace Microsoft.WSMan.Management
                 try
                 {
                     XmlDocument xmldoc = new XmlDocument();
-                    
+
                     // push the xml string with credssp enabled
                     xmldoc.LoadXml(m_SessionObj.Put(helper.CredSSP_RUri, newxmlcontent, 0));
 
