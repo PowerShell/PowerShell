@@ -8,11 +8,6 @@ on:
         type: string
         required: false
         default: ubuntu-latest
-      build_artifact_name:
-        description: 'Name of build artifact to download prior to tests (blank if none)'
-        type: string
-        required: false
-        default: build
       test_results_artifact_name:
         description: 'Artifact name for xUnit test results directory'
         type: string
@@ -27,23 +22,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Download build artifact (optional)
-        if: ${{ inputs.build_artifact_name != '' }}
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ inputs.build_artifact_name }}
-          path: ${{ runner.workspace }}/build
-
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           global-json-file: ./global.json
 
-      - name: Prepare test environment
+      - name: Bootstrap
         shell: pwsh
         run: |
           Import-Module ./tools/ci.psm1
-          Restore-PSOptions -PSOptionsPath "$env:RUNNER_WORKSPACE/build/psoptions.json"
+          Invoke-CIInstall -SkipUser
+
+      - name: Build PowerShell
+        shell: pwsh
+        run: |
+          Import-Module ./tools/ci.psm1
+          $releaseTag = Get-ReleaseTag
+          Start-PSBuild -PSModuleRestore -Configuration 'Release' -CI -ReleaseTag $releaseTag
 
       - name: Run full xUnit test suite
         shell: pwsh

@@ -146,13 +146,11 @@ jobs:
   xunit_tests:
     name: xUnit Tests
     needs:
-      - ci_build
       - changes
     if: ${{ needs.changes.outputs.source == 'true' }}
     uses: ./.github/workflows/xunit-tests.yml
     with:
       runner_os: macos-15-large
-      build_artifact_name: build
       test_results_artifact_name: testResults-xunit
   PackageMac-macos_packaging:
     name: macOS packaging (bootstrap only)
