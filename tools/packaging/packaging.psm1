@@ -1301,7 +1301,7 @@ function New-UnixPackage {
                         if ($rpmFile) {
                             # Copy RPM to current location
                             Copy-Item -Path $rpmFile.FullName -Destination $CurrentLocation -Force
-                            $Output = @("Created package {:path=>""$(Join-Path $CurrentLocation $rpmFile.Name)""}")
+                            $Output = @("Created package {:path=>""$($rpmFile.Name)""}")
                         } else {
                             throw "RPM file not found after build"
                         }
