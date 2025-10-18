@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public Microsoft.PowerShell.Commands.LocalUser[] InputObject
         {
-            get { return this.inputobject;}
+            get { return this.inputobject; }
 
             set { this.inputobject = value; }
         }

@@ -36,7 +36,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNull]
         public string Description
         {
-            get { return this.description;}
+            get { return this.description; }
 
             set { this.description = value; }
         }
@@ -56,7 +56,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNull]
         public Microsoft.PowerShell.Commands.LocalGroup InputObject
         {
-            get { return this.inputobject;}
+            get { return this.inputobject; }
 
             set { this.inputobject = value; }
         }
@@ -76,7 +76,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNull]
         public string Name
         {
-            get { return this.name;}
+            get { return this.name; }
 
             set { this.name = value; }
         }
@@ -95,7 +95,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNull]
         public System.Security.Principal.SecurityIdentifier SID
         {
-            get { return this.sid;}
+            get { return this.sid; }
 
             set { this.sid = value; }
         }

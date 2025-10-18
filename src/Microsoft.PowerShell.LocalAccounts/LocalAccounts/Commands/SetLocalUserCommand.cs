@@ -53,7 +53,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public System.DateTime AccountExpires
         {
-            get { return this.accountexpires;}
+            get { return this.accountexpires; }
 
             set { this.accountexpires = value; }
         }
@@ -67,7 +67,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public System.Management.Automation.SwitchParameter AccountNeverExpires
         {
-            get { return this.accountneverexpires;}
+            get { return this.accountneverexpires; }
 
             set { this.accountneverexpires = value; }
         }
@@ -82,7 +82,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNull]
         public string Description
         {
-            get { return this.description;}
+            get { return this.description; }
 
             set { this.description = value; }
         }
@@ -98,7 +98,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNull]
         public string FullName
         {
-            get { return this.fullname;}
+            get { return this.fullname; }
 
             set { this.fullname = value; }
         }
@@ -117,7 +117,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNull]
         public Microsoft.PowerShell.Commands.LocalUser InputObject
         {
-            get { return this.inputobject;}
+            get { return this.inputobject; }
 
             set { this.inputobject = value; }
         }
@@ -136,7 +136,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string Name
         {
-            get { return this.name;}
+            get { return this.name; }
 
             set { this.name = value; }
         }
@@ -151,7 +151,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNull]
         public System.Security.SecureString Password
         {
-            get { return this.password;}
+            get { return this.password; }
 
             set { this.password = value; }
         }
@@ -184,7 +184,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNull]
         public System.Security.Principal.SecurityIdentifier SID
         {
-            get { return this.sid;}
+            get { return this.sid; }
 
             set { this.sid = value; }
         }
@@ -199,7 +199,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public bool UserMayChangePassword
         {
-            get { return this.usermaychangepassword;}
+            get { return this.usermaychangepassword; }
 
             set { this.usermaychangepassword = value; }
         }

@@ -41,7 +41,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNull]
         public Microsoft.PowerShell.Commands.LocalGroup Group
         {
-            get { return this.group;}
+            get { return this.group; }
 
             set { this.group = value; }
         }
@@ -62,7 +62,7 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public Microsoft.PowerShell.Commands.LocalPrincipal[] Member
         {
-            get { return this.member;}
+            get { return this.member; }
 
             set { this.member = value; }
         }
@@ -79,7 +79,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string Name
         {
-            get { return this.name;}
+            get { return this.name; }
 
             set { this.name = value; }
         }
@@ -96,7 +96,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNull]
         public System.Security.Principal.SecurityIdentifier SID
         {
-            get { return this.sid;}
+            get { return this.sid; }
 
             set { this.sid = value; }
         }
