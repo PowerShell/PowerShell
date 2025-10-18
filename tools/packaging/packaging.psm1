@@ -1284,7 +1284,12 @@ function New-UnixPackage {
                     # Build RPM package
                     try {
                         # Use bash to properly handle rpmbuild arguments
-                        $buildCmd = "rpmbuild -bb --quiet --define '_topdir $rpmBuildRoot' --buildroot '$rpmBuildRoot/BUILDROOT' '$specFile'"
+                        # Add --target for cross-architecture builds
+                        $targetArch = ""
+                        if ($HostArchitecture -ne "x86_64" -and $HostArchitecture -ne "noarch") {
+                            $targetArch = "--target $HostArchitecture"
+                        }
+                        $buildCmd = "rpmbuild -bb --quiet $targetArch --define '_topdir $rpmBuildRoot' --buildroot '$rpmBuildRoot/BUILDROOT' '$specFile'"
                         Write-Verbose "Running: $buildCmd" -Verbose
                         $Output = bash -c $buildCmd 2>&1
                         $exitCode = $LASTEXITCODE
