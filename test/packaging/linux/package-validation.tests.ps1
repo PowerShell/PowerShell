@@ -28,9 +28,9 @@ Describe "Linux Package Name Validation" {
             
             $invalidPackages = @()
             foreach ($package in $rpmPackages) {
-                # Pattern matches: powershell-preview-7.6.0-1.preview.6.x86_64.rpm or powershell-7.6.0-1.x86_64.rpm
-                # Also matches: powershell-lts-7.6.0-1.rh.x86_64.rpm
-                if ($package.Name -notmatch 'powershell\-(preview-|lts-)?\d+\.\d+\.\d+(_[a-z]*\.\d+)?-1\.(preview\.\d+\.)?(rh|cm)\.(x86_64|aarch64)\.rpm') {
+                # Pattern matches: powershell-preview-7.6.0_preview.5-1.cm.x86_64.rpm
+                # Also matches: powershell-7.6.0-1.rh.x86_64.rpm, powershell-lts-7.6.0-1.rh.x86_64.rpm
+                if ($package.Name -notmatch 'powershell\-(preview-|lts-)?\d+\.\d+\.\d+(_[a-z]*\.\d+)?-1\.(rh|cm)\.(x86_64|aarch64)\.rpm') {
                     $invalidPackages += "$($package.Name) is not a valid RPM package name"
                     Write-Warning "$($package.Name) is not a valid RPM package name"
                 }
