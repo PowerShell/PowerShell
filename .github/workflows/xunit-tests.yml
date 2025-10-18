@@ -36,16 +36,11 @@ jobs:
           Invoke-CIInstall -SkipUser
           Sync-PSTags -AddRemoteIfMissing
 
-      - name: Build PowerShell
+      - name: Build PowerShell and run xUnit tests
         shell: pwsh
         run: |
           Import-Module ./tools/ci.psm1
           Start-PSBuild
-
-      - name: Run full xUnit test suite
-        shell: pwsh
-        run: |
-          Import-Module ./tools/ci.psm1
           Write-Host "Running full xUnit test suite (no skipping)..."
           Invoke-CIxUnit
           Write-Host "Completed xUnit test run."
