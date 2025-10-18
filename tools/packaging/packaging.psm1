@@ -1281,6 +1281,15 @@ function New-UnixPackage {
                     $specContent | Out-File -FilePath $specFile -Encoding ascii
                     Write-Verbose "Generated spec file: $specFile" -Verbose
                     
+                    # Log the spec file content
+                    if ($env:GITHUB_ACTIONS -eq 'true') {
+                        Write-Host "::group::RPM Spec File Content"
+                        Write-Host $specContent
+                        Write-Host "::endgroup::"
+                    } else {
+                        Write-Verbose "RPM Spec File Content:`n$specContent" -Verbose
+                    }
+                    
                     # Build RPM package
                     try {
                         # Use bash to properly handle rpmbuild arguments
