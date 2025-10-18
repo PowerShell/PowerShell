@@ -37,7 +37,7 @@ jobs:
         shell: pwsh
         run: |
           Import-Module ./tools/ci.psm1
-          Start-PSBuild -PSModuleRestore
+          Start-PSBuild
 
       - name: Run full xUnit test suite
         shell: pwsh
