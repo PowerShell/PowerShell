@@ -37,8 +37,7 @@ jobs:
         shell: pwsh
         run: |
           Import-Module ./tools/ci.psm1
-          $releaseTag = Get-ReleaseTag
-          Start-PSBuild -PSModuleRestore -Configuration 'Release' -CI -ReleaseTag $releaseTag
+          Start-PSBuild -PSModuleRestore
 
       - name: Run full xUnit test suite
         shell: pwsh
