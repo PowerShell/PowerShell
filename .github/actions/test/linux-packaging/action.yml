@@ -62,6 +62,9 @@ runs:
       # Create the artifacts staging directory
       New-Item -ItemType Directory -Path "$env:BUILD_ARTIFACTSTAGINGDIRECTORY" -Force | Out-Null
 
+      # Import packaging module to ensure RPM packaging changes are loaded
+      Import-Module ./build.psm1 -Force
+      Import-Module ./tools/packaging/packaging.psm1 -Force
       Import-Module ./tools/ci.psm1
       Restore-PSOptions -PSOptionsPath '${{ runner.workspace }}/build/psoptions.json'
       $options = (Get-PSOptions)
