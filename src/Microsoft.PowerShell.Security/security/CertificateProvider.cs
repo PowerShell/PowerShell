@@ -3459,8 +3459,7 @@ namespace Microsoft.PowerShell.Commands
                 return false;
 
             uint SessionId;
-            uint ProcessId = (uint)Environment.ProcessId;
-            if (!SMASecurity.NativeMethods.ProcessIdToSessionId(ProcessId, out SessionId))
+            if (!SMASecurity.NativeMethods.ProcessIdToSessionId((uint)Environment.ProcessId, out SessionId))
                 return false;
 
             if (SessionId == 0)
