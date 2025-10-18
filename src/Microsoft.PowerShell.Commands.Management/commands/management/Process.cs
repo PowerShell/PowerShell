@@ -1954,8 +1954,12 @@ namespace Microsoft.PowerShell.Commands
                 if (_UseNewEnvironment)
                 {
                     startInfo.EnvironmentVariables.Clear();
+#if UNIX
+                    LoadEnvironmentVariable(startInfo, Context.SessionState.GetInitialEnvironmentVariables());
+#else
                     LoadEnvironmentVariable(startInfo, System.Environment.GetEnvironmentVariables(EnvironmentVariableTarget.Machine));
                     LoadEnvironmentVariable(startInfo, System.Environment.GetEnvironmentVariables(EnvironmentVariableTarget.User));
+#endif
                 }
 
                 if (_environment != null)
