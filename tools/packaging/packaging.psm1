@@ -1567,17 +1567,10 @@ function New-RpmSpec
         [string]$HostArchitecture
     )
 
-    # RPM doesn't allow hyphens in version, so split version and pre-release
-    # e.g., "7.6.0-preview.6" becomes Version: 7.6.0 and Release: 1.preview.6
-    $rpmVersion = $Version
+    # RPM doesn't allow hyphens in version, so convert them to underscores
+    # e.g., "7.6.0-preview.6" becomes Version: 7.6.0_preview.6
+    $rpmVersion = $Version -replace '-', '_'
     $rpmRelease = $Iteration
-    
-    if ($Version -match '^(.+?)-(.+)$') {
-        $rpmVersion = $Matches[1]
-        $preRelease = $Matches[2]
-        # Prepend iteration to pre-release part
-        $rpmRelease = "$Iteration.$preRelease"
-    }
 
     $specContent = @"
 # RPM spec file for PowerShell
