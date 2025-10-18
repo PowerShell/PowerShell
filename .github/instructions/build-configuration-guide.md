@@ -35,7 +35,7 @@
   run: |
     Import-Module ./tools/ci.psm1
     $releaseTag = Get-ReleaseTag
-    Start-PSBuild -Configuration 'Release' -CI -ReleaseTag $releaseTag
+    Start-PSBuild -Configuration 'Release' -ReleaseTag $releaseTag
 ```
 
 **Why Release:**
