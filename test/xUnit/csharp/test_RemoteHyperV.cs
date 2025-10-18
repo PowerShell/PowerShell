@@ -573,7 +573,8 @@ namespace PSTests.Sequential
             var expectedClientSends = CreateVersionNegotiationClientSends();
             expectedClientSends.Add((message: "TOKEN " + token, encoding: Encoding.ASCII));
 
-            var serverResponses = new List<(string message, Encoding encoding)>{
+            var serverResponses = new List<(string message, Encoding encoding)>
+            {
                 (message: version, encoding: Encoding.ASCII), // Response to VERSION
                 (message: "PASS", encoding: Encoding.ASCII), // Response to VERSION_2
                 (message: "PASS", encoding: Encoding.ASCII) // Response to token
@@ -644,13 +645,15 @@ namespace PSTests.Sequential
         {
             int port = 50000 + (int)(DateTime.Now.Ticks % 10000);
 
-            var expectedClientSends = new List<(string message, Encoding encoding)>{
+            var expectedClientSends = new List<(string message, Encoding encoding)>
+            {
                 (message: "VERSION", encoding: Encoding.ASCII), // Response to VERSION
                 (message: "VERSION_2", encoding: Encoding.ASCII), // Response to VERSION_2
                 (message: $"TOKEN {token}", encoding: Encoding.ASCII)
             };
 
-            var serverResponses = new List<(string message, Encoding encoding)>{
+            var serverResponses = new List<(string message, Encoding encoding)>
+            {
                 (message: "VERSION_2", encoding: Encoding.ASCII), // Response to VERSION_2
                 (message: "PASS", encoding: Encoding.ASCII), // Response to VERSION_2
                 (message: "PASS", encoding: Encoding.ASCII) // Response to token
@@ -679,13 +682,15 @@ namespace PSTests.Sequential
             string expectedToken = token;
             int port = 50000 + (int)(DateTime.Now.Ticks % 10000);
 
-            var expectedClientSends = new List<(string message, Encoding encoding, int delayMs)>{
+            var expectedClientSends = new List<(string message, Encoding encoding, int delayMs)>
+            {
                 (message: "VERSION", encoding: Encoding.ASCII, delayMs: timeoutMs), // Response to VERSION
                 (message: "VERSION_2", encoding: Encoding.ASCII, delayMs: timeoutMs), // Response to VERSION_2
                 (message: $"TOKEN {token}", encoding: Encoding.ASCII, delayMs: 1)
             };
 
-            var serverResponses = new List<(string message, Encoding encoding)>{
+            var serverResponses = new List<(string message, Encoding encoding)>
+            {
                 (message: "VERSION_2", encoding: Encoding.ASCII), // Response to VERSION_2
                 (message: "PASS", encoding: Encoding.ASCII), // Response to VERSION_2
                 (message: "PASS", encoding: Encoding.ASCII) // Response to token
@@ -727,7 +732,8 @@ namespace PSTests.Sequential
             string expectedToken = token;
             int port = 50000 + (int)(DateTime.Now.Ticks % 10000);
 
-            var expectedClientSends = new List<(string message, Encoding encoding, int delayMs)>{
+            var expectedClientSends = new List<(string message, Encoding encoding, int delayMs)>
+            {
                 (message: "VERSION", encoding: Encoding.ASCII, delayMs: 1), // Response to VERSION
                 (message: "VERSION_2", encoding: Encoding.ASCII, delayMs: 1), // Response to VERSION_2
                 (message: $"TOKEN {token}", encoding: Encoding.ASCII, delayMs: 1),
@@ -738,7 +744,8 @@ namespace PSTests.Sequential
                 (message: string.Empty, encoding: Encoding.ASCII, delayMs: 103)  // Send some data after the handshake
             };
 
-            var serverResponses = new List<(string message, Encoding encoding)>{
+            var serverResponses = new List<(string message, Encoding encoding)>
+            {
                 (message: "VERSION_2", encoding: Encoding.ASCII), // Response to VERSION_2
                 (message: "PASS", encoding: Encoding.ASCII), // Response to VERSION_2
                 (message: "PASS", encoding: Encoding.ASCII), // Response to token
@@ -776,13 +783,15 @@ namespace PSTests.Sequential
         {
             int port = 50000 + (int)(DateTime.Now.Ticks % 10000);
 
-            var expectedClientSends = new List<(string message, Encoding encoding)>{
+            var expectedClientSends = new List<(string message, Encoding encoding)>
+            {
                 (message: "VERSION", encoding: Encoding.ASCII), // Initial request
                 (message: "VERSION_2", encoding: Encoding.ASCII), // Response to VERSION_2
                 (message: $"TOKEN {token}", encoding: Encoding.ASCII)
             };
 
-            var serverResponses = new List<(string message, Encoding encoding)>{
+            var serverResponses = new List<(string message, Encoding encoding)>
+            {
                 (message: "VERSION_2", encoding: Encoding.ASCII), // Response to VERSION
                 (message: "PASS", encoding: Encoding.ASCII), // Response to VERSION_2
                 (message: "FAIL", encoding: Encoding.ASCII) // Response to token
