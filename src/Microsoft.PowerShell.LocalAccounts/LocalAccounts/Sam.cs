@@ -1273,7 +1273,7 @@ namespace System.Management.Automation.SecurityAccountsManager
             }
             catch (Exception)
             {
-                if (IntPtr.Zero != userHandle)
+                if (userHandle != IntPtr.Zero)
                 {
                     SamApi.SamDeleteUser(userHandle);
                 }
@@ -2369,7 +2369,7 @@ namespace System.Management.Automation.SecurityAccountsManager
             }
             finally
             {
-                if (IntPtr.Zero != securityObject)
+                if (securityObject != IntPtr.Zero)
                     status = SamApi.SamFreeMemory(securityObject);
             }
 
@@ -2662,7 +2662,7 @@ namespace System.Management.Automation.SecurityAccountsManager
             }
             finally
             {
-                if (IntPtr.Zero != sidBytes)
+                if (sidBytes != IntPtr.Zero)
                     status = SamApi.SamFreeMemory(sidBytes);
             }
 
