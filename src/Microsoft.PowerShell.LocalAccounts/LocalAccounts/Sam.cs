@@ -2134,7 +2134,7 @@ namespace System.Management.Automation.SecurityAccountsManager
             if (user.PasswordRequired != changed.PasswordRequired)
                 properties |= UserProperties.PasswordRequired;
 
-            if (   properties != UserProperties.None
+            if (properties != UserProperties.None
                 || passwordExpired != PasswordExpiredState.Unchanged
                 || password != null)
             {
