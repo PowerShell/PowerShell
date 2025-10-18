@@ -1,0 +1,60 @@
+name: xUnit Tests (Reusable)
+
+on:
+  workflow_call:
+    inputs:
+      runner_os:
+        description: 'Runner OS for xUnit tests'
+        type: string
+        required: false
+        default: ubuntu-latest
+      build_artifact_name:
+        description: 'Name of build artifact to download prior to tests (blank if none)'
+        type: string
+        required: false
+        default: build
+      test_results_artifact_name:
+        description: 'Artifact name for xUnit test results directory'
+        type: string
+        required: false
+        default: testResults-xunit
+
+jobs:
+  xunit:
+    name: Run xUnit Tests
+    runs-on: ${{ inputs.runner_os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download build artifact (optional)
+        if: ${{ inputs.build_artifact_name != '' }}
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.build_artifact_name }}
+          path: ${{ runner.workspace }}/build
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: ./global.json
+
+      - name: Prepare test environment
+        shell: pwsh
+        run: |
+          Import-Module ./tools/ci.psm1
+          Restore-PSOptions
+
+      - name: Run full xUnit test suite
+        shell: pwsh
+        run: |
+          Import-Module ./tools/ci.psm1
+          Write-Host "Running full xUnit test suite (no skipping)..."
+          Invoke-CIxUnit
+          Write-Host "Completed xUnit test run."
+
+      - name: Upload xUnit results
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.test_results_artifact_name }}
+          path: ${{ github.workspace }}/xunit
