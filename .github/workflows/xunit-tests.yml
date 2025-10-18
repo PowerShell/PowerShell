@@ -47,6 +47,7 @@ jobs:
 
       - name: Upload xUnit results
         uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: ${{ inputs.test_results_artifact_name }}
-          path: ${{ github.workspace }}/xunit
+          path: ${{ github.workspace }}/xUnitTestResults.xml
