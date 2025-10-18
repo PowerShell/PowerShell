@@ -21,6 +21,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 1000
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
@@ -32,6 +34,7 @@ jobs:
         run: |
           Import-Module ./tools/ci.psm1
           Invoke-CIInstall -SkipUser
+          Sync-PSTags -AddRemoteIfMissing
 
       - name: Build PowerShell
         shell: pwsh
