@@ -3740,15 +3740,15 @@ namespace System.Management.Automation
                 // must be propagated.
                 throw;
             }
+#if DEBUG
             catch (Exception ex)
             {
-#if DEBUG
                 if (DumpLogAMSIContent.Value)
                 {
                     Console.WriteLine($"!!! Amsi notification report exception: {ex} !!!");
                 }
-#endif
             }
+#endif
         }
     }
 }
