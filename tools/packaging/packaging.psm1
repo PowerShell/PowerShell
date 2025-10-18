@@ -1589,10 +1589,19 @@ Release:        $rpmRelease%{?dist}
 Summary:        PowerShell - Cross-platform automation and configuration tool/framework
 License:        MIT
 URL:            https://microsoft.com/powershell
-BuildArch:      $HostArchitecture
 AutoReq:        no
 
 "@
+
+    # Only add BuildArch if not doing cross-architecture build
+    # For cross-arch builds, we'll rely on --target option
+    if ($HostArchitecture -eq "x86_64" -or $HostArchitecture -eq "noarch") {
+        $specContent += "BuildArch:      $HostArchitecture`n`n"
+    } else {
+        # For cross-architecture builds, don't specify BuildArch in spec
+        # The --target option will handle the architecture
+        $specContent += "`n"
+    }
 
     # Add dependencies
     foreach ($dep in $Dependencies) {
