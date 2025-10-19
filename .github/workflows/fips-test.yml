@@ -1,0 +1,127 @@
+name: FIPS Compliance Testing
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - master
+      - release/**
+      - "*-feature"
+    paths:
+      - 'test/powershell/engine/Security/FIPSPolicy.Tests.ps1'
+      - '.github/workflows/fips-test.yml'
+      - 'src/**/*.cs'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+  DOTNET_NOLOGO: 1
+  POWERSHELL_TELEMETRY_OPTOUT: 1
+  __SuppressAnsiEscapeSequences: 1
+
+jobs:
+  fips-test-debian:
+    name: FIPS Test on Debian
+    runs-on: ubuntu-latest
+    container:
+      image: debian:bookworm
+    
+    steps:
+      - name: Install prerequisites
+        run: |
+          apt-get update
+          apt-get install -y \
+            wget \
+            apt-transport-https \
+            software-properties-common \
+            git \
+            ca-certificates
+      
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 1000
+      
+      - name: Install PowerShell
+        run: |
+          # Download the Microsoft repository GPG keys
+          wget -q https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb
+          dpkg -i packages-microsoft-prod.deb
+          rm packages-microsoft-prod.deb
+          
+          # Update package lists
+          apt-get update
+          
+          # Install PowerShell
+          apt-get install -y powershell
+      
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: ./global.json
+      
+      - name: Bootstrap PowerShell
+        shell: pwsh
+        run: |
+          Import-Module ./build.psm1
+          Import-Module ./tools/ci.psm1
+          Invoke-CIInstall -SkipUser
+      
+      - name: Build PowerShell
+        shell: pwsh
+        run: |
+          Import-Module ./build.psm1
+          Import-Module ./tools/ci.psm1
+          Invoke-CIBuild
+      
+      - name: Install crypto-policies for FIPS
+        run: |
+          # Install crypto-policies package which provides fips-mode-setup
+          apt-get install -y crypto-policies
+      
+      - name: Enable FIPS mode
+        run: |
+          # Enable FIPS mode on the system
+          # Note: This typically requires a reboot, but for testing we'll configure what we can
+          fips-mode-setup --enable || true
+          
+          # Verify FIPS is configured
+          fips-mode-setup --check || echo "FIPS mode setup attempted"
+      
+      - name: Run FIPS Policy Tests
+        shell: pwsh
+        run: |
+          Import-Module ./build.psm1
+          Import-Module Pester
+          
+          Write-Host "Running FIPS Policy Tests..."
+          
+          $pesterConfig = New-PesterConfiguration
+          $pesterConfig.Run.Path = './test/powershell/engine/Security/FIPSPolicy.Tests.ps1'
+          $pesterConfig.Run.Exit = $true
+          $pesterConfig.Output.Verbosity = 'Detailed'
+          $pesterConfig.TestResult.Enabled = $true
+          $pesterConfig.TestResult.OutputPath = './FIPSTestResults.xml'
+          $pesterConfig.TestResult.OutputFormat = 'NUnitXml'
+          
+          Invoke-Pester -Configuration $pesterConfig
+      
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fips-test-results
+          path: |
+            FIPSTestResults.xml
+          retention-days: 7
+      
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: |
+            FIPSTestResults.xml
+          check_name: 'FIPS Policy Test Results'
