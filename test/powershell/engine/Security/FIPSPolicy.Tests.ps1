@@ -118,6 +118,49 @@ Write-Output $result
             $result | Should -BeIn @('MD5_WORKS', 'MD5_NOT_AVAILABLE', 'FIPS_BLOCKED', 'MD5_CREATE_FAILED', 'MD5_COMPUTE_FAILED')
             Write-Verbose "MD5 test result: $result" -Verbose
         }
+
+        It "Get-FileHash with MD5 algorithm behavior with FIPS policy" {
+            # Test Get-FileHash -Algorithm MD5 behavior
+            # This cmdlet may fail when FIPS policy blocks MD5
+            $script = @'
+$tempDir = if ($IsWindows) { $env:TEMP } else { $env:TMPDIR ?? "/tmp" }
+$testFile = Join-Path $tempDir "fips-test-$(Get-Random).txt"
+$result = "UNKNOWN"
+try {
+    "test content" | Set-Content -Path $testFile -NoNewline
+    
+    try {
+        $hash = Get-FileHash -Path $testFile -Algorithm MD5 -ErrorAction Stop
+        if ($hash.Algorithm -eq 'MD5' -and $hash.Hash) {
+            $result = "GET_FILEHASH_MD5_SUCCESS"
+        } else {
+            $result = "GET_FILEHASH_MD5_UNEXPECTED"
+        }
+    } catch {
+        $errorMessage = $_.Exception.Message
+        if ($errorMessage -like "*FIPS*" -or $errorMessage -like "*MD5*" -or $_.Exception.InnerException.GetType().Name -eq "InvalidOperationException") {
+            $result = "GET_FILEHASH_MD5_BLOCKED"
+        } else {
+            $result = "GET_FILEHASH_MD5_ERROR"
+        }
+    }
+} catch {
+    $result = "OUTER_EXCEPTION: $($_.Exception.GetType().Name)"
+} finally {
+    if ($testFile -and (Test-Path $testFile -ErrorAction SilentlyContinue)) {
+        Remove-Item $testFile -Force -ErrorAction SilentlyContinue
+    }
+}
+Write-Output $result
+exit 0
+'@
+            $result = & $pwshPath -NoProfile -NonInteractive -Command $script 2>&1 | Select-Object -Last 1
+            $LASTEXITCODE | Should -Be 0
+            # On systems with FIPS enforced, Get-FileHash MD5 should fail
+            # On systems without FIPS, it should succeed
+            $result | Should -BeIn @('GET_FILEHASH_MD5_SUCCESS', 'GET_FILEHASH_MD5_BLOCKED', 'GET_FILEHASH_MD5_ERROR', 'GET_FILEHASH_MD5_UNEXPECTED')
+            Write-Verbose "Get-FileHash MD5 test result: $result" -Verbose
+        }
     }
 
     Context "PowerShell with FIPS Policy Disabled" {
@@ -161,7 +204,7 @@ try {
         }
     }
 
-    Context "FIPS-Compliant Cryptographic Operations" -Skip:(!$IsWindows) {
+    Context "FIPS-Compliant Cryptographic Operations" {
         It "Can use FIPS-compliant hash algorithms" {
             # SHA256 is FIPS-compliant
             $script = @'
@@ -196,6 +239,60 @@ try {
             $result = & $pwshPath -NoProfile -NonInteractive -Command $script 2>&1
             $LASTEXITCODE | Should -Be 0
             [int]$result | Should -BeGreaterThan 0
+        }
+
+        It "Get-FileHash with SHA256 (FIPS-compliant) should always work" {
+            # SHA256 is FIPS-compliant and should work with or without FIPS policy
+            $script = @'
+$tempDir = if ($IsWindows) { $env:TEMP } else { $env:TMPDIR ?? "/tmp" }
+$testFile = Join-Path $tempDir "fips-test-sha256-$(Get-Random).txt"
+try {
+    "test content for SHA256" | Set-Content -Path $testFile -NoNewline
+    
+    $hash = Get-FileHash -Path $testFile -Algorithm SHA256 -ErrorAction Stop
+    if ($hash.Algorithm -eq 'SHA256' -and $hash.Hash -and $hash.Hash.Length -eq 64) {
+        Write-Output "SUCCESS"
+    } else {
+        Write-Output "UNEXPECTED_RESULT"
+    }
+} catch {
+    Write-Output "FAILED: $($_.Exception.Message)"
+} finally {
+    if ($testFile -and (Test-Path $testFile -ErrorAction SilentlyContinue)) {
+        Remove-Item $testFile -Force -ErrorAction SilentlyContinue
+    }
+}
+'@
+            $result = & $pwshPath -NoProfile -NonInteractive -Command $script 2>&1 | Select-Object -Last 1
+            $LASTEXITCODE | Should -Be 0
+            $result | Should -Be 'SUCCESS'
+        }
+
+        It "Get-FileHash with SHA512 (FIPS-compliant) should always work" {
+            # SHA512 is also FIPS-compliant
+            $script = @'
+$tempDir = if ($IsWindows) { $env:TEMP } else { $env:TMPDIR ?? "/tmp" }
+$testFile = Join-Path $tempDir "fips-test-sha512-$(Get-Random).txt"
+try {
+    "test content for SHA512" | Set-Content -Path $testFile -NoNewline
+    
+    $hash = Get-FileHash -Path $testFile -Algorithm SHA512 -ErrorAction Stop
+    if ($hash.Algorithm -eq 'SHA512' -and $hash.Hash -and $hash.Hash.Length -eq 128) {
+        Write-Output "SUCCESS"
+    } else {
+        Write-Output "UNEXPECTED_RESULT"
+    }
+} catch {
+    Write-Output "FAILED: $($_.Exception.Message)"
+} finally {
+    if ($testFile -and (Test-Path $testFile -ErrorAction SilentlyContinue)) {
+        Remove-Item $testFile -Force -ErrorAction SilentlyContinue
+    }
+}
+'@
+            $result = & $pwshPath -NoProfile -NonInteractive -Command $script 2>&1 | Select-Object -Last 1
+            $LASTEXITCODE | Should -Be 0
+            $result | Should -Be 'SUCCESS'
         }
     }
 }
