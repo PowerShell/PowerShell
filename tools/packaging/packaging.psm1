@@ -1579,7 +1579,10 @@ function New-RpmSpec
     # RPM doesn't allow hyphens in version, so convert them to underscores
     # e.g., "7.6.0-preview.6" becomes Version: 7.6.0_preview.6
     $rpmVersion = $Version -replace '-', '_'
-    $rpmRelease = $Iteration
+    
+    # Build Release field with distribution suffix (e.g., "1.cm" or "1.rh")
+    # Don't use RPM macros - build the full release string in PowerShell
+    $rpmRelease = "$Iteration.$Distribution"
 
     $specContent = @"
 # RPM spec file for PowerShell
@@ -1587,7 +1590,7 @@ function New-RpmSpec
 
 Name:           $Name
 Version:        $rpmVersion
-Release:        $rpmRelease%{?dist}
+Release:        $rpmRelease
 Summary:        PowerShell - Cross-platform automation and configuration tool/framework
 License:        MIT
 URL:            https://microsoft.com/powershell
