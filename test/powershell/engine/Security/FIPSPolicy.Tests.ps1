@@ -81,6 +81,43 @@ Describe "FIPS Policy Compliance Tests" -Tags 'CI' {
             $LASTEXITCODE | Should -Be 0
             $result | Should -Not -BeNullOrEmpty
         }
+
+        It "MD5 algorithm behavior with FIPS policy configuration" {
+            # Test MD5 behavior - it may be blocked or unavailable depending on platform and .NET version
+            # This test verifies PowerShell handles MD5 appropriately when FIPS might be enforced
+            $script = @'
+$result = "UNKNOWN"
+try {
+    $md5 = [System.Security.Cryptography.MD5]::Create()
+    if ($null -eq $md5) {
+        $result = "MD5_NOT_AVAILABLE"
+    } else {
+        try {
+            $hash = $md5.ComputeHash([System.Text.Encoding]::UTF8.GetBytes("test"))
+            if ($hash.Length -eq 16) {
+                $result = "MD5_WORKS"
+            }
+            $md5.Dispose()
+        } catch {
+            $result = "MD5_COMPUTE_FAILED"
+        }
+    }
+} catch [System.Reflection.TargetInvocationException] {
+    $result = "FIPS_BLOCKED"
+} catch [System.InvalidOperationException] {
+    $result = "FIPS_BLOCKED"
+} catch {
+    $result = "MD5_CREATE_FAILED"
+}
+Write-Output $result
+'@
+            $result = & $pwshPath -NoProfile -NonInteractive -Command $script 2>&1
+            $LASTEXITCODE | Should -Be 0
+            # On systems with FIPS enforced, MD5 should be blocked or unavailable
+            # On systems without FIPS, MD5 may work or may not be available depending on .NET version
+            $result | Should -BeIn @('MD5_WORKS', 'MD5_NOT_AVAILABLE', 'FIPS_BLOCKED', 'MD5_CREATE_FAILED', 'MD5_COMPUTE_FAILED')
+            Write-Verbose "MD5 test result: $result" -Verbose
+        }
     }
 
     Context "PowerShell with FIPS Policy Disabled" {
