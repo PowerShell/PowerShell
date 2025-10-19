@@ -50,7 +50,7 @@ stages:
   jobs:
   - job: win_test
     pool:
-      vmImage: windows-2019
+      vmImage: windows-latest
     displayName: Windows Test
     timeoutInMinutes: 90
 

@@ -1,5 +1,5 @@
 parameters:
-  pool: 'windows-2019'
+  pool: 'windows-latest'
   imageName: 'PSWindows11-ARM64'
   parentJobs: []
   purpose: ''
@@ -34,7 +34,7 @@ jobs:
       }
 
     displayName: Install PowerShell if missing
-    condition: ne('${{ parameters.pool }}', 'windows-2019')
+    condition: ne('${{ parameters.pool }}', 'windows-latest')
 
   - pwsh: |
       Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
