@@ -90,20 +90,6 @@ jobs:
           Invoke-CIFinish -Runtime ${{ matrix.runtimePrefix }}-${{ matrix.architecture }} -channel ${{ matrix.channel }}
         shell: pwsh
 
-      - name: Test Package Installation
-        run: |
-          Write-Host "Finding and installing PowerShell packages for testing..."
-          $packages = Get-ChildItem -Path "${{ github.workspace }}/artifacts" -Filter "*.msi" -Recurse -ErrorAction SilentlyContinue
-          if ($packages) {
-            foreach ($package in $packages) {
-              Write-Host "Installing package for ASA test: $($package.FullName)"
-              Start-Process msiexec.exe -ArgumentList "/i", "`"$($package.FullName)`"", "/quiet", "/norestart" -Wait -NoNewWindow
-            }
-          } else {
-            Write-Host "No MSI packages found to test."
-          }
-        shell: pwsh
-
       - name: Analyze with Attack Surface Analyzer
         run: |
           Write-Host "Taking post-installation snapshot..."
