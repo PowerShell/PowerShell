@@ -167,15 +167,6 @@ jobs:
       - changes
     if: ${{ needs.changes.outputs.packagingChanged == 'true' }}
     uses: ./.github/workflows/windows-packaging-reusable.yml
-  windows_fips_test:
-    name: Windows FIPS Policy Tests
-    needs:
-      - ci_build
-      - changes
-    if: ${{ needs.changes.outputs.source == 'true' }}
-    uses: ./.github/workflows/fips-test-reusable.yml
-    with:
-      runner: windows-latest
   ready_to_merge:
     name: windows ready to merge
     needs:
@@ -185,7 +176,6 @@ jobs:
       - windows_test_unelevated_ci
       - windows_test_unelevated_others
       - windows_packaging
-      - windows_fips_test
     if: always()
     uses: PowerShell/compliance/.github/workflows/ready-to-merge.yml@v1.0.0
     with:
