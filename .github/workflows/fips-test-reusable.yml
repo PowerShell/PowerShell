@@ -1,0 +1,78 @@
+name: FIPS Policy Tests (Reusable)
+
+on:
+  workflow_call:
+    inputs:
+      runner:
+        required: true
+        type: string
+        description: 'The GitHub runner to use (e.g., ubuntu-latest, macos-15-large, windows-latest)'
+
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+  DOTNET_NOLOGO: 1
+  POWERSHELL_TELEMETRY_OPTOUT: 1
+  __SuppressAnsiEscapeSequences: 1
+
+jobs:
+  fips_test:
+    name: FIPS Policy Tests
+    runs-on: ${{ inputs.runner }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 1000
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: ./global.json
+
+      - name: Bootstrap
+        shell: pwsh
+        run: |
+          Import-Module ./build.psm1
+          Import-Module ./tools/ci.psm1
+          Invoke-CIInstall -SkipUser
+
+      - name: Build PowerShell
+        shell: pwsh
+        run: |
+          Import-Module ./build.psm1
+          Import-Module ./tools/ci.psm1
+          Invoke-CIBuild
+
+      - name: Run FIPS Policy Tests
+        shell: pwsh
+        run: |
+          Import-Module ./build.psm1
+          Import-Module Pester
+          
+          $testPath = Join-Path $PWD "test/powershell/engine/Security/FIPSPolicy.Tests.ps1"
+          
+          $pesterConfig = New-PesterConfiguration
+          $pesterConfig.Run.Path = $testPath
+          $pesterConfig.Run.Exit = $true
+          $pesterConfig.Output.Verbosity = 'Detailed'
+          $pesterConfig.TestResult.Enabled = $true
+          $pesterConfig.TestResult.OutputPath = Join-Path $PWD "FIPSTestResults.xml"
+          $pesterConfig.TestResult.OutputFormat = 'NUnitXml'
+          
+          Invoke-Pester -Configuration $pesterConfig
+
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always() && runner.os == 'Linux'
+        with:
+          files: |
+            FIPSTestResults.xml
+          check_name: 'FIPS Policy Test Results'
+
+      - name: Publish Test Results (Windows/macOS)
+        uses: dorny/test-reporter@v1
+        if: always() && runner.os != 'Linux'
+        with:
+          name: 'FIPS Policy Test Results'
+          path: 'FIPSTestResults.xml'
+          reporter: 'java-junit'

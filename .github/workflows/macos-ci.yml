@@ -173,6 +173,15 @@ jobs:
         import-module ./build.psm1
         start-psbootstrap -Scenario package
       shell: pwsh
+  macos_fips_test:
+    name: macOS FIPS Policy Tests
+    needs:
+      - ci_build
+      - changes
+    if: ${{ needs.changes.outputs.source == 'true' }}
+    uses: ./.github/workflows/fips-test-reusable.yml
+    with:
+      runner: macos-15-large
   ready_to_merge:
     name: macos ready to merge
     needs:
@@ -182,6 +191,7 @@ jobs:
       - macos_test_elevated_others
       - macos_test_unelevated_ci
       - macos_test_unelevated_others
+      - macos_fips_test
     if: always()
     uses: PowerShell/compliance/.github/workflows/ready-to-merge.yml@v1.0.0
     with:
