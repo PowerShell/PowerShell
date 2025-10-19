@@ -31,11 +31,9 @@ Describe "FIPS Policy Compliance Tests" -Tags 'CI' {
 
     Context "PowerShell with FIPS Policy Enabled" {
         BeforeAll {
-            # Get the runtime config path
+            # Get the runtime config path - use $PSHOME to get PowerShell installation directory
             $pwshPath = (Get-Process -Id $PID).Path
-            $pwshDir = Split-Path -Parent $pwshPath
-            $pwshExeName = Split-Path -Leaf $pwshPath
-            $runtimeConfigPath = Join-Path $pwshDir "$pwshExeName.runtimeconfig.json"
+            $runtimeConfigPath = Join-Path $PSHOME "pwsh.runtimeconfig.json"
             
             # Backup the original config
             $backupConfigPath = Join-Path $TestDrive "fips-backup.runtimeconfig.json"
@@ -99,10 +97,7 @@ try {
         
         AfterAll {
             # Restore the original config
-            $pwshPath = (Get-Process -Id $PID).Path
-            $pwshDir = Split-Path -Parent $pwshPath
-            $pwshExeName = Split-Path -Leaf $pwshPath
-            $runtimeConfigPath = Join-Path $pwshDir "$pwshExeName.runtimeconfig.json"
+            $runtimeConfigPath = Join-Path $PSHOME "pwsh.runtimeconfig.json"
             $backupConfigPath = Join-Path $TestDrive "fips-backup.runtimeconfig.json"
             
             if (Test-Path $backupConfigPath) {
