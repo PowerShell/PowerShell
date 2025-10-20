@@ -1610,6 +1610,8 @@ AutoReq:        no
         # The native /bin/strip on x86_64 cannot process ARM64 binaries and would fail with:
         # "Unable to recognise the format of the input file"
         # See: https://rpm-software-management.github.io/rpm/manual/macros.html
+        # __strip: This macro controls the command used for stripping binaries during the build process.
+        # /bin/true: A command that does nothing and always exits successfully, effectively bypassing the stripping process.
         $specContent += "%define __strip /bin/true`n"
         
         # Disable debug package generation to prevent strip-related errors
