@@ -53,6 +53,7 @@ jobs:
     # Set job outputs to values from filter step
     outputs:
       source: ${{ steps.filter.outputs.source }}
+      packagingChanged: ${{ steps.filter.outputs.packagingChanged }}
     steps:
       - name: checkout
         uses: actions/checkout@v5
@@ -146,20 +147,15 @@ jobs:
         with:
           purpose: ElevatedPesterTests
           tagSet: Others
-  verify_xunit:
-    name: Verify xUnit test results
+  xunit_tests:
+    name: xUnit Tests
     needs:
-      - ci_build
       - changes
     if: ${{ needs.changes.outputs.source == 'true' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: checkout
-        uses: actions/checkout@v5
-        with:
-          fetch-depth: 1000
-      - name: Verify xUnit test results
-        uses: "./.github/actions/test/verify_xunit"
+    uses: ./.github/workflows/xunit-tests.yml
+    with:
+      runner_os: ubuntu-latest
+      test_results_artifact_name: testResults-xunit
 
   analyze:
     permissions:
@@ -192,7 +188,7 @@ jobs:
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@f443b600d91635bebf5b0d9ebc620189c0d6fba5 # v3.29.5
+      uses: github/codeql-action/init@16140ae1a102900babc80a33c44059580f687047 # v3.29.5
       with:
         languages: ${{ matrix.language }}
         # If you wish to specify custom queries, you can do so here or in a config file.
@@ -218,12 +214,12 @@ jobs:
       shell: pwsh
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@f443b600d91635bebf5b0d9ebc620189c0d6fba5 # v3.29.5
+      uses: github/codeql-action/analyze@16140ae1a102900babc80a33c44059580f687047 # v3.29.5
 
   ready_to_merge:
     name: Linux ready to merge
     needs:
-      - verify_xunit
+      - xunit_tests
       - linux_test_elevated_ci
       - linux_test_elevated_others
       - linux_test_unelevated_ci
@@ -239,7 +235,7 @@ jobs:
     needs:
       - ci_build
       - changes
-    if: ${{ needs.changes.outputs.source == 'true' }}
+    if: ${{ needs.changes.outputs.packagingChanged == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: checkout
