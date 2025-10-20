@@ -1,5 +1,5 @@
 ---
-applyTo: ".github/**/*.yml"
+applyTo: ".github/**/*.{yml,yaml}"
 ---
 
 # Publishing Pester Test Results Instructions
