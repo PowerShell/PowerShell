@@ -18,6 +18,9 @@ Describe "Windows platform file signatures" -Tags 'Feature' {
         $signature | Should -Not -BeNullOrEmpty
         $signature.Status | Should -BeExactly 'Valid'
         $signature.SignatureType | Should -BeExactly 'Catalog'
+        
+        # Verify that SubjectAlternativeName property exists
+        $signature.PSObject.Properties.Name | Should -Contain 'SubjectAlternativeName'
     }
 }
 
@@ -184,5 +187,20 @@ Describe "Windows file content signatures" -Tags @('Feature', 'RequireAdminOnWin
         $actual = Get-AuthenticodeSignature -Content $fileBytes -SourcePathOrExtension .ps1
         $actual.SignerCertificate.Thumbprint | Should -Be $certificate.Thumbprint
         $actual.Status | Should -Be 'Valid'
+    }
+
+    It "Verifies SubjectAlternativeName property is populated" {
+        Set-Content -Path testdrive:\test.ps1 -Value 'Write-Output "Test SAN"' -Encoding UTF8NoBOM
+
+        $scriptPath = Join-Path $TestDrive test.ps1
+        $status = Set-AuthenticodeSignature -FilePath $scriptPath -Certificate $certificate
+        $status.Status | Should -Be 'Valid'
+
+        $actual = Get-AuthenticodeSignature -FilePath $scriptPath
+        $actual.SignerCertificate.Thumbprint | Should -Be $certificate.Thumbprint
+        $actual.Status | Should -Be 'Valid'
+        
+        # Verify that SubjectAlternativeName property exists
+        $actual.PSObject.Properties.Name | Should -Contain 'SubjectAlternativeName'
     }
 }
