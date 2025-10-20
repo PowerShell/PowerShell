@@ -5,7 +5,7 @@ We'll start by showing how to set up your environment from scratch.
 
 ## Environment
 
-These instructions are written assuming Ubuntu (the CI uses ubuntu-latest).
+These instructions are written assuming Ubuntu 24.04 LTS (the CI uses ubuntu-latest).
 The build module works on a best-effort basis for other distributions.
 
 ### Git Setup
