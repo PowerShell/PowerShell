@@ -1617,7 +1617,8 @@ AutoReq:        no
         # Disable debug package generation to prevent strip-related errors
         # Debug packages require binary stripping which fails for cross-arch builds
         # See: https://rpm-packaging-guide.github.io/#debugging
-        $specContent += "%define debug_package %{nil}`n`n"
+        # See: https://docs.fedoraproject.org/en-US/packaging-guidelines/Debuginfo/#_useless_or_incomplete_debuginfo_packages_due_to_other_reasons
+        $specContent += "%global debug_package %{nil}`n`n"
     }
 
     # Add dependencies
