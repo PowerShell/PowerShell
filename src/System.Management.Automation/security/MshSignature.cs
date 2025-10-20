@@ -188,7 +188,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the Subject Alternative Name from the signer certificate.
         /// </summary>
-        public string? SubjectAlternativeName { get; private set; }
+        public string SubjectAlternativeName { get; private set; }
 
         /// <summary>
         /// Constructor for class Signature
@@ -406,7 +406,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="certificate">The certificate to extract SAN from.</param>
         /// <returns>Formatted SAN string or null if not found.</returns>
-        private static string? GetSubjectAlternativeName(X509Certificate2? certificate)
+        private static string GetSubjectAlternativeName(X509Certificate2 certificate)
         {
             if (certificate == null)
             {
@@ -417,7 +417,7 @@ namespace System.Management.Automation
             foreach (X509Extension extension in certificate.Extensions)
             {
                 // Check if this is the Subject Alternative Name extension
-                if (extension.Oid?.Value == "2.5.29.17")
+                if (extension.Oid != null && extension.Oid.Value == "2.5.29.17")
                 {
                     // Format the extension with multiline format (parameter 1)
                     return extension.Format(multiLine: true);
