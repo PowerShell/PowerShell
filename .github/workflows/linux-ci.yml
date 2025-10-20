@@ -51,6 +51,7 @@ jobs:
     # Set job outputs to values from filter step
     outputs:
       source: ${{ steps.filter.outputs.source }}
+      packagingChanged: ${{ steps.filter.outputs.packagingChanged }}
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -231,6 +232,7 @@ jobs:
     uses: PowerShell/compliance/.github/workflows/ready-to-merge.yml@v1.0.0
     with:
       needs_context: ${{ toJson(needs) }}
+<<<<<<< HEAD
   # TODO: Enable this when we have a Linux packaging workflow
 
   # ERROR:  While executing gem ... (Gem::FilePermissionError)
@@ -248,3 +250,19 @@ jobs:
   #         fetch-depth: 1000
   #     - name: Verify xUnit test results
   #       uses: "./.github/actions/test/linux-packaging"
+=======
+  linux_packaging:
+    name: Linux Packaging
+    needs:
+      - ci_build
+      - changes
+    if: ${{ needs.changes.outputs.packagingChanged == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: Linux Packaging
+        uses: "./.github/actions/test/linux-packaging"
+>>>>>>> 5661a5152 (Replace fpm with native rpmbuild for RPM package generation (#26233))

@@ -63,6 +63,15 @@ runs:
   - name: Packaging Tests
     if: success()
     run: |-
+<<<<<<< HEAD
+=======
+      # Create the artifacts staging directory
+      New-Item -ItemType Directory -Path "$env:BUILD_ARTIFACTSTAGINGDIRECTORY" -Force | Out-Null
+
+      # Import packaging module to ensure RPM packaging changes are loaded
+      Import-Module ./build.psm1 -Force
+      Import-Module ./tools/packaging/packaging.psm1 -Force
+>>>>>>> 5661a5152 (Replace fpm with native rpmbuild for RPM package generation (#26233))
       Import-Module ./tools/ci.psm1
       Restore-PSOptions -PSOptionsPath '${{ github.workspace }}/build/psoptions.json'
       $options = (Get-PSOptions)
@@ -75,6 +84,7 @@ runs:
       Set-PSOptions $options
       Invoke-CIFinish
     shell: pwsh
+<<<<<<< HEAD
   - name: Upload packages
     run: |-
       Get-ChildItem "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}/*.deb" -Recurse | ForEach-Object {
@@ -93,3 +103,36 @@ runs:
         Write-Host "##vso[artifact.upload containerfolder=rpm;artifactname=rpm]$packagePath"
       }
     shell: pwsh
+=======
+
+  - name: Validate Package Names
+    run: |-
+      # Run Pester tests to validate package names
+      Import-Module Pester -Force
+      $testResults = Invoke-Pester -Path ./test/packaging/linux/package-validation.tests.ps1 -PassThru
+      if ($testResults.FailedCount -gt 0) {
+          throw "Package validation tests failed"
+      }
+    shell: pwsh
+
+  - name: Upload deb packages
+    uses: actions/upload-artifact@v4
+    with:
+      name: packages-deb
+      path: ${{ runner.workspace }}/packages/*.deb
+      if-no-files-found: ignore
+
+  - name: Upload rpm packages
+    uses: actions/upload-artifact@v4
+    with:
+      name: packages-rpm
+      path: ${{ runner.workspace }}/packages/*.rpm
+      if-no-files-found: ignore
+
+  - name: Upload tar.gz packages
+    uses: actions/upload-artifact@v4
+    with:
+      name: packages-tar
+      path: ${{ runner.workspace }}/packages/*.tar.gz
+      if-no-files-found: ignore
+>>>>>>> 5661a5152 (Replace fpm with native rpmbuild for RPM package generation (#26233))
