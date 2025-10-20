@@ -90,6 +90,7 @@ runs:
 
           const packagingChanged = files.some(file => 
             file.filename === '.github/workflows/windows-ci.yml' ||
+            file.filename === '.github/workflows/windows-packaging-reusable.yml' ||
             file.filename.startsWith('assets/wix/') ||
             file.filename === 'PowerShell.Common.props' ||
             file.filename.match(/^src\/.*\.csproj$/) ||
