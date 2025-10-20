@@ -16,14 +16,14 @@ updates:
     labels:
       - "CL-BuildPackaging"
 
-  - package-ecosystem: docker
-    directory: "/"
+  - package-ecosystem: "docker"
+    directory: /
     schedule:
       interval: daily
     labels:
       - "CL-BuildPackaging"
 
-  - package-ecosystem: docker
+  - package-ecosystem: "docker"
     directory: "/"
     target-branch: "release/*"
     schedule:
