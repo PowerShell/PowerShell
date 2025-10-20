@@ -1,3 +1,7 @@
+---
+applyTo: ".github/**/*.yml"
+---
+
 # Publishing Pester Test Results Instructions
 
 This document describes how the PowerShell repository uses GitHub Actions to publish Pester test results.
