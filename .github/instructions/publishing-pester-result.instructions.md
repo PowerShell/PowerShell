@@ -93,7 +93,7 @@ Used in:
 - `.github/workflows/linux-ci.yml`
 - `.github/workflows/macos-ci.yml`
 
-Example usage (line 107-112 in `nix/action.yml`):
+Example usage (lines 99-104 in `nix/action.yml`):
 
 ```yaml
 - name: Convert, Publish, and Upload Pester Test Results
