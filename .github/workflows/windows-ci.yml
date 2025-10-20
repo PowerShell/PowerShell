@@ -25,7 +25,7 @@ on:
 # Path filters for PRs need to go into the changes job
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: ${{ contains(github.ref, 'merge')}}
 
 permissions:
