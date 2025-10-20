@@ -90,7 +90,7 @@ jobs:
           $appID = '$(AppID-Stable)'
         }
 
-        Write-Host "##vso[task.setvariable variable=APPID]$appID
+        Write-Host "##vso[task.setvariable variable=APPID]$appID"
         Write-Verbose -Verbose "Selected channel: $currentChannel"
         Write-Verbose -Verbose "Conditional tasks will handle the publishing based on channel variables"
     displayName: 'Validate Channel Selection'
