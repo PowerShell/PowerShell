@@ -145,20 +145,16 @@ jobs:
         with:
           purpose: ElevatedPesterTests
           tagSet: Others
-  verify_xunit:
-    name: Verify xUnit test results
+  xunit_tests:
+    name: xUnit Tests
     needs:
-      - ci_build
       - changes
     if: ${{ needs.changes.outputs.source == 'true' }}
-    runs-on: windows-latest
-    steps:
-      - name: checkout
-        uses: actions/checkout@v4.1.0
-        with:
-          fetch-depth: 1000
-      - name: Verify xUnit test results
-        uses: "./.github/actions/test/verify_xunit"
+    uses: ./.github/workflows/xunit-tests.yml
+    with:
+      runner_os: windows-latest
+      test_results_artifact_name: testResults-xunit
+
   windows_packaging:
     name: Windows Packaging
     needs:
@@ -168,7 +164,7 @@ jobs:
   ready_to_merge:
     name: windows ready to merge
     needs:
-      - verify_xunit
+      - xunit_tests
       - windows_test_elevated_ci
       - windows_test_elevated_others
       - windows_test_unelevated_ci

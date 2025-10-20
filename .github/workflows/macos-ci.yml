@@ -141,20 +141,16 @@ jobs:
         with:
           purpose: ElevatedPesterTests
           tagSet: Others
-  verify_xunit:
-    name: Verify xUnit test results
+  xunit_tests:
+    name: xUnit Tests
     needs:
-      - ci_build
       - changes
     if: ${{ needs.changes.outputs.source == 'true' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: checkout
-        uses: actions/checkout@v4.1.0
-        with:
-          fetch-depth: 1000
-      - name: Verify xUnit test results
-        uses: "./.github/actions/test/verify_xunit"
+    uses: ./.github/workflows/xunit-tests.yml
+    with:
+      runner_os: macos-15-large
+      test_results_artifact_name: testResults-xunit
+
   PackageMac-macos_packaging:
     name: macOS packaging (bootstrap only)
     needs:
@@ -174,7 +170,7 @@ jobs:
   ready_to_merge:
     name: macos ready to merge
     needs:
-      - verify_xunit
+      - xunit_tests
       - PackageMac-macos_packaging
       - macos_test_elevated_ci
       - macos_test_elevated_others
