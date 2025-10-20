@@ -1454,7 +1454,7 @@ dotnet_diagnostic.IDE0079.severity = silent
 
 # IDE0080: RemoveConfusingSuppressionForIsExpression
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0080
-dotnet_diagnostic.IDE0080.severity = silent
+dotnet_diagnostic.IDE0080.severity = warning
 
 # IDE0081: RemoveUnnecessaryByVal
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0081

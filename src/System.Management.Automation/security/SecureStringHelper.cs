@@ -594,7 +594,7 @@ namespace Microsoft.PowerShell
         internal const int E_FILENOTFOUND = unchecked((int)0x80070002); // File not found
         internal const int ERROR_FILE_NOT_FOUND = 2;                    // File not found
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        [StructLayout(LayoutKind.Sequential)]
         internal struct CRYPTOAPI_BLOB
         {
             internal uint cbData;
