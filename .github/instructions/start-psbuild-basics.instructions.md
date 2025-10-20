@@ -1,3 +1,11 @@
+---
+applyTo:
+  - "build.psm1"
+  - "tools/ci.psm1"
+  - ".github/**/*.yml"
+  - ".github/**/*.yaml"
+---
+
 # Start-PSBuild Basics
 
 ## Purpose
