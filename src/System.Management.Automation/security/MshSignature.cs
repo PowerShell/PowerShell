@@ -186,6 +186,11 @@ namespace System.Management.Automation
         public bool IsOSBinary { get; internal set; }
 
         /// <summary>
+        /// Gets the Subject Alternative Name from the signer certificate.
+        /// </summary>
+        public string? SubjectAlternativeName { get; private set; }
+
+        /// <summary>
         /// Constructor for class Signature
         ///
         /// Call this to create a validated time-stamped signature object.
@@ -277,6 +282,12 @@ namespace System.Management.Automation
             _statusMessage = GetSignatureStatusMessage(isc,
                                                       error,
                                                       filePath);
+
+            // Extract Subject Alternative Name from the signer certificate
+            if (signer != null)
+            {
+                SubjectAlternativeName = GetSubjectAlternativeName(signer);
+            }
         }
 
         private static SignatureStatus GetSignatureStatusFromWin32Error(DWORD error)
@@ -388,6 +399,32 @@ namespace System.Management.Automation
             }
 
             return message;
+        }
+
+        /// <summary>
+        /// Extracts the Subject Alternative Name from the certificate.
+        /// </summary>
+        /// <param name="certificate">The certificate to extract SAN from.</param>
+        /// <returns>Formatted SAN string or null if not found.</returns>
+        private static string? GetSubjectAlternativeName(X509Certificate2? certificate)
+        {
+            if (certificate == null)
+            {
+                return null;
+            }
+
+            // Look for the Subject Alternative Name extension (OID: 2.5.29.17)
+            foreach (X509Extension extension in certificate.Extensions)
+            {
+                // Check if this is the Subject Alternative Name extension
+                if (extension.Oid?.Value == "2.5.29.17")
+                {
+                    // Format the extension with multiline format (parameter 1)
+                    return extension.Format(multiLine: true);
+                }
+            }
+
+            return null;
         }
     }
 }

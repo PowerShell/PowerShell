@@ -41,10 +41,10 @@ In PowerShell:
 
 ```powershell
 Import-Module ./build.psm1
-Start-PSBootstrap
+Start-PSBootstrap -scenario dotnet
 ```
 
-The `Start-PSBootstrap` function does the following:
+The `Start-PSBootstrap -scenario dotnet` function does the following:
 
 - Adds the LLVM package feed
 - Installs our dependencies combined with the dependencies of the .NET CLI toolchain via `apt-get`
