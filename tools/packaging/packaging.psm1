@@ -1605,7 +1605,9 @@ AutoReq:        no
     } else {
         # For cross-architecture builds, don't specify BuildArch in spec
         # The --target option will handle the architecture
-        $specContent += "`n"
+        # Also disable automatic binary stripping to avoid strip errors with cross-arch binaries
+        $specContent += "%define __strip /bin/true`n"
+        $specContent += "%define debug_package %{nil}`n`n"
     }
 
     # Add dependencies
