@@ -1605,8 +1605,16 @@ AutoReq:        no
     } else {
         # For cross-architecture builds, don't specify BuildArch in spec
         # The --target option will handle the architecture
-        # Also disable automatic binary stripping to avoid strip errors with cross-arch binaries
+        
+        # Disable automatic binary stripping for cross-arch builds
+        # The native /bin/strip on x86_64 cannot process ARM64 binaries and would fail with:
+        # "Unable to recognise the format of the input file"
+        # See: https://rpm-software-management.github.io/rpm/manual/macros.html
         $specContent += "%define __strip /bin/true`n"
+        
+        # Disable debug package generation to prevent strip-related errors
+        # Debug packages require binary stripping which fails for cross-arch builds
+        # See: https://rpm-packaging-guide.github.io/#debugging
         $specContent += "%define debug_package %{nil}`n`n"
     }
 
