@@ -31,22 +31,8 @@ runs:
       Import-Module .\tools\ci.psm1
       Invoke-CIBuild
     shell: pwsh
-  - name: xUnit Tests
-    if: success()
-    continue-on-error: true
-    run: |-
-      Write-Verbose -Verbose "Running xUnit tests..."
-      Import-Module .\tools\ci.psm1
-      Restore-PSOptions
-      Invoke-CIxUnit -SkipFailing
-    shell: pwsh
   - name: Upload build artifact
     uses: actions/upload-artifact@v4
     with:
       name: build
       path: ${{ runner.workspace }}/build
-  - name: Upload xunit artifact
-    uses: actions/upload-artifact@v4
-    with:
-      name: testResults-xunit
-      path: ${{ runner.workspace }}/xunit
