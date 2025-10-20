@@ -1,3 +1,9 @@
+---
+applyTo:
+  - ".github/**/*.yml"
+  - ".github/**/*.yaml"
+---
+
 # Build and Checkout Prerequisites for PowerShell CI
 
 This document describes the checkout and build prerequisites used in PowerShell's CI workflows. It is intended for GitHub Copilot sessions working with the build system.
