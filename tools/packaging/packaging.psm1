@@ -1656,6 +1656,7 @@ cp $ManGzipFile `$RPM_BUILD_ROOT$ManDestination
         $specContent += "mkdir -p `$RPM_BUILD_ROOT$linkDir`n"
         # For RPM, we copy the symlink itself (which fpm does by including it in the source)
         # The symlink at $link.Source points to the actual target, so we'll copy it
+        # The -P flag preserves symlinks rather than copying their targets, which is critical for this operation.
         $specContent += "cp -P $($link.Source) `$RPM_BUILD_ROOT$($link.Destination)`n"
     }
 
