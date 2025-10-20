@@ -210,7 +210,7 @@ Describe "Windows file content signatures" -Tags @('Feature', 'RequireAdminOnWin
             }
             $caRoot = PKI\New-SelfSignedCertificate @caParams -Subject "CN=$testPrefix-CA"
             
-            $rootStore = Get-Item -Path Cert:\LocalMachine\Root
+            $rootStore = Get-Item -Path Cert:\CurrentUser\Root
             $rootStore.Open([System.Security.Cryptography.X509Certificates.OpenFlags]::ReadWrite)
             try {
                 $rootStore.Add([System.Security.Cryptography.X509Certificates.X509Certificate2]::new($caRoot.RawData))
@@ -231,7 +231,7 @@ Describe "Windows file content signatures" -Tags @('Feature', 'RequireAdminOnWin
             }
             $sanCertificate = PKI\New-SelfSignedCertificate @certParams -Subject "CN=$testPrefix-Signed" -Signer $caRoot
             
-            $publisherStore = Get-Item -Path Cert:\LocalMachine\TrustedPublisher
+            $publisherStore = Get-Item -Path Cert:\CurrentUser\TrustedPublisher
             $publisherStore.Open([System.Security.Cryptography.X509Certificates.OpenFlags]::ReadWrite)
             try {
                 $publisherStore.Add([System.Security.Cryptography.X509Certificates.X509Certificate2]::new($sanCertificate.RawData))
@@ -274,11 +274,11 @@ Describe "Windows file content signatures" -Tags @('Feature', 'RequireAdminOnWin
             if (Test-Path "Cert:\CurrentUser\My\$($sanCert.CertThumbprint)") {
                 Remove-Item -Path "Cert:\CurrentUser\My\$($sanCert.CertThumbprint)" -Force -ErrorAction Ignore
             }
-            if (Test-Path "Cert:\LocalMachine\Root\$($sanCert.CAThumbprint)") {
-                Remove-Item -Path "Cert:\LocalMachine\Root\$($sanCert.CAThumbprint)" -Force -ErrorAction Ignore
+            if (Test-Path "Cert:\CurrentUser\Root\$($sanCert.CAThumbprint)") {
+                Remove-Item -Path "Cert:\CurrentUser\Root\$($sanCert.CAThumbprint)" -Force -ErrorAction Ignore
             }
-            if (Test-Path "Cert:\LocalMachine\TrustedPublisher\$($sanCert.CertThumbprint)") {
-                Remove-Item -Path "Cert:\LocalMachine\TrustedPublisher\$($sanCert.CertThumbprint)" -Force -ErrorAction Ignore
+            if (Test-Path "Cert:\CurrentUser\TrustedPublisher\$($sanCert.CertThumbprint)") {
+                Remove-Item -Path "Cert:\CurrentUser\TrustedPublisher\$($sanCert.CertThumbprint)" -Force -ErrorAction Ignore
             }
         }
     }
