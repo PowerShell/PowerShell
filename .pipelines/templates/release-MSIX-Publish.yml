@@ -73,7 +73,6 @@ jobs:
 
         Write-Verbose -Verbose "Channel Selection - LTS: $(LTS), Stable: $(STABLE), Preview: $(PREVIEW)"
 
-        # Determine the current channel for logging purposes
         $currentChannel = if ($IsLTS) { 'LTS' }
           elseif ($IsStable) { 'Stable' }
           elseif ($IsPreview) { 'Preview' }
@@ -81,7 +80,17 @@ jobs:
             Write-Error "No valid channel detected"
             exit 1
           }
-                       
+
+        # If LTS or Stable need to assign the correct AppID for the shared task.
+        $appID = $null
+        if ($IsLTS) {
+          $appID = '$(AppID-LTS)'
+        }
+        elseif ($IsStable){
+          $appID = '$(AppID-Stable)'
+        }
+
+        Write-Host "##vso[task.setvariable variable=APPID]$appID
         Write-Verbose -Verbose "Selected channel: $currentChannel"
         Write-Verbose -Verbose "Conditional tasks will handle the publishing based on channel variables"
     displayName: 'Validate Channel Selection'
@@ -91,7 +100,7 @@ jobs:
     condition: and(ne('${{ parameters.skipMSIXPublish }}', 'true'), or(eq('$(STABLE)', 'true'), eq('$(LTS)', 'true')))
     inputs:
       serviceEndpoint: 'StoreAppPublish-Stable'
-      appId: '$(AppID-LTS)'
+      appId: '$(AppID)'
       inputMethod: JsonAndZip
       jsonPath: '$(Pipeline.Workspace)\SBOutDir\PowerShellStorePackage.json'
       zipPath: '$(Pipeline.Workspace)\SBOutDir\PowerShellStorePackage.zip'
