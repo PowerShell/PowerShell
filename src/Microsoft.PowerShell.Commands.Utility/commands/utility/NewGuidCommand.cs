@@ -10,6 +10,7 @@ namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
     /// The implementation of the "new-guid" cmdlet.
+    /// Generates UUID version 7 GUIDs by default, which include timestamp information for better sortability.
     /// </summary>
     [Cmdlet(VerbsCommon.New, "Guid", DefaultParameterSetName = "Default", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2097130")]
     [OutputType(typeof(Guid))]
@@ -30,6 +31,8 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Returns a Guid.
+        /// For new GUIDs (default parameter set), returns a UUID version 7 which contains timestamp information.
+        /// To generate UUID version 4, use [Guid]::NewGuid() directly.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -49,7 +52,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                guid = Empty.ToBool() ? Guid.Empty : Guid.NewGuid();
+                guid = Empty.ToBool() ? Guid.Empty : Guid.CreateVersion7();
             }
 
             WriteObject(guid);
