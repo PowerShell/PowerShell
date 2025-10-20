@@ -45,6 +45,11 @@ jobs:
         with:
           fetch-depth: 1000
       
+      - name: Fix git ownership
+        run: |
+          # Fix git ownership issue in container
+          git config --global --add safe.directory /__w/PowerShell/PowerShell
+      
       - name: Install PowerShell
         run: |
           # Download the Microsoft repository GPG keys
