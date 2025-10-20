@@ -3740,15 +3740,17 @@ namespace System.Management.Automation
                 // must be propagated.
                 throw;
             }
-#if DEBUG
+#pragma warning disable CS0168 // variable declared but never used
             catch (Exception ex)
+#pragma warning restore CS0168
             {
+#if DEBUG
                 if (DumpLogAMSIContent.Value)
                 {
                     Console.WriteLine($"!!! Amsi notification report exception: {ex} !!!");
                 }
-            }
 #endif
+            }
         }
     }
 }
