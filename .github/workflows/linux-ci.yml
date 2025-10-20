@@ -53,6 +53,7 @@ jobs:
     # Set job outputs to values from filter step
     outputs:
       source: ${{ steps.filter.outputs.source }}
+      packagingChanged: ${{ steps.filter.outputs.packagingChanged }}
     steps:
       - name: checkout
         uses: actions/checkout@v5
@@ -239,7 +240,7 @@ jobs:
     needs:
       - ci_build
       - changes
-    if: ${{ needs.changes.outputs.source == 'true' }}
+    if: ${{ needs.changes.outputs.packagingChanged == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: checkout
