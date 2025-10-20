@@ -282,4 +282,22 @@ Describe "Windows file content signatures" -Tags @('Feature', 'RequireAdminOnWin
             }
         }
     }
+
+    It "Verifies SubjectAlternativeName is null when certificate has no SAN" {
+        Set-Content -Path testdrive:\test.ps1 -Value 'Write-Output "Test No SAN"' -Encoding UTF8NoBOM
+
+        $scriptPath = Join-Path $TestDrive test.ps1
+        $status = Set-AuthenticodeSignature -FilePath $scriptPath -Certificate $certificate
+        $status.Status | Should -Be 'Valid'
+
+        $actual = Get-AuthenticodeSignature -FilePath $scriptPath
+        $actual.SignerCertificate.Thumbprint | Should -Be $certificate.Thumbprint
+        $actual.Status | Should -Be 'Valid'
+        
+        # Verify that SubjectAlternativeName property exists
+        $actual.PSObject.Properties.Name | Should -Contain 'SubjectAlternativeName'
+        
+        # Verify the content is null when certificate has no SAN extension
+        $actual.SubjectAlternativeName | Should -BeNullOrEmpty
+    }
 }
