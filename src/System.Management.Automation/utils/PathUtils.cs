@@ -794,14 +794,6 @@ namespace System.Management.Automation
             return c == ' ' || c == '.';
         }
 
-        /// <summary>
-        /// Returns true if the given character is a valid drive letter
-        /// </summary>
-        private static bool IsValidDriveChar(char value)
-        {
-            return ((value >= 'A' && value <= 'Z') || (value >= 'a' && value <= 'z'));
-        }
-
         private static bool IsDevice(string path)
         {
             return IsExtended(path)
@@ -859,7 +851,7 @@ namespace System.Management.Automation
                 && IsDirectorySeparator(path[2])
                 // To match old behavior we'll check the drive character for validity as the path is technically
                 // not qualified if you don't have a valid drive. "=:\" is the "=" file's default data stream.
-                && IsValidDriveChar(path[0]));
+                && char.IsAsciiLetter(path[0]));
         }
         /// <summary>
         /// True if the given character is a directory separator.

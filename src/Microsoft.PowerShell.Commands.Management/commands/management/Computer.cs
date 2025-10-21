@@ -2019,35 +2019,25 @@ $result
         /// <returns></returns>
         internal static bool IsComputerNameValid(string computerName)
         {
-            bool allDigits = true;
+            bool hasNonDigit = false;
 
             if (computerName.Length >= 64)
                 return false;
 
             foreach (char t in computerName)
             {
-                if (t >= 'A' && t <= 'Z' ||
-                    t >= 'a' && t <= 'z')
+                if (t is '-' || char.IsAsciiLetter(t))
                 {
-                    allDigits = false;
+                    hasNonDigit = true;
                     continue;
                 }
-                else if (t >= '0' && t <= '9')
-                {
-                    continue;
-                }
-                else if (t == '-')
-                {
-                    allDigits = false;
-                    continue;
-                }
-                else
+                else if (!char.IsAsciiDigit(t))
                 {
                     return false;
                 }
             }
 
-            return !allDigits;
+            return hasNonDigit;
         }
 
         /// <summary>
