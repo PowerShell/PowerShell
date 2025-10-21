@@ -72,11 +72,18 @@ The output of `Start-PSBuild` includes a `powershell.exe` executable which can s
 #### Linux / macOS
 
 The `Start-PSPackage` function delegates to `New-UnixPackage`.
-It relies on the [Effing Package Management][fpm] project,
-which makes building packages for any (non-Windows) platform a breeze.
-Similarly, the PowerShell man-page is generated from the Markdown-like file
+
+For **Linux** (Debian-based distributions), it relies on the [Effing Package Management][fpm] project,
+which makes building packages a breeze.
+
+For **macOS**, it uses native packaging tools (`pkgbuild` and `productbuild`) from Xcode Command Line Tools,
+eliminating the need for Ruby or fpm.
+
+For **Linux** (Red Hat-based distributions), it uses `rpmbuild` directly.
+
+The PowerShell man-page is generated from the Markdown-like file
 [`assets/pwsh.1.ronn`][man] using [Ronn][].
-The function `Start-PSBootstrap -Package` will install both these tools.
+The function `Start-PSBootstrap -Package` will install these tools.
 
 To modify any property of the packages, edit the `New-UnixPackage` function.
 Please also refer to the function for details on the package properties
