@@ -204,16 +204,6 @@ jobs:
         }
 
         Write-Host "##vso[task.setvariable variable=ServiceConnection]$($config.ServiceEndpoint)"
-<<<<<<< HEAD
-        Write-Host "##vso[task.setvariable variable=SBConfigPath]$($config.SBConfigPath)"
-      name: UpdateConfigs
-      displayName: Update PDPs and SBConfig.json
-
-    - task: MS-RDX-MRO.windows-store-publish-dev.package-task.store-package@3
-      displayName: 'Create StoreBroker Package'
-      inputs:
-        serviceEndpoint: '$(ServiceConnection)'
-=======
         Write-Host "##vso[task.setvariable variable=SBConfigPath]$($sbConfigPath)"
 
         # These variables are used in the next tasks to determine which ServiceEndpoint to use
@@ -240,7 +230,6 @@ jobs:
       condition: or(eq('$(STABLE)', 'true'), eq('$(LTS)', 'true'))
       inputs:
         serviceEndpoint: 'StoreAppPublish-Stable'
->>>>>>> dbc09a1aa (Separate Store Automation Service Endpoints, Resolve AppID (#26210))
         sbConfigPath: '$(SBConfigPath)'
         sourceFolder: '$(BundleDir)'
         contents: '*.msixBundle'
