@@ -3378,17 +3378,13 @@ namespace Microsoft.PowerShell.Commands
 
                     if (itemExistsDynamicParameters.OlderThan is { } olderThan)
                     {
-                        DateTime olderThanUtc = olderThan.Kind == DateTimeKind.Unspecified
-                            ? DateTime.SpecifyKind(olderThan, DateTimeKind.Utc)
-                            : olderThan.ToUniversalTime();
+                        DateTime olderThanUtc = olderThan.ToUniversalTime();
                         result &= lastWriteTimeUtc < olderThanUtc;
                     }
 
                     if (itemExistsDynamicParameters.NewerThan is { } newerThan)
                     {
-                        DateTime newerThanUtc = newerThan.Kind == DateTimeKind.Unspecified
-                            ? DateTime.SpecifyKind(newerThan, DateTimeKind.Utc)
-                            : newerThan.ToUniversalTime();
+                        DateTime newerThanUtc = newerThan.ToUniversalTime();
                         result &= lastWriteTimeUtc > newerThanUtc;
                     }
                 }
