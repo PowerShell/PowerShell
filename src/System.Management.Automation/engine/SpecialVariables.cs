@@ -41,6 +41,10 @@ namespace System.Management.Automation
 
         internal static readonly VariablePath OutputEncodingVarPath = new VariablePath(OutputEncoding);
 
+        internal const string PSApplicationOutputEncoding = nameof(PSApplicationOutputEncoding);
+
+        internal static readonly VariablePath PSApplicationOutputEncodingVarPath = new VariablePath(PSApplicationOutputEncoding);
+
         internal const string VerboseHelpErrors = "VerboseHelpErrors";
 
         internal static readonly VariablePath VerboseHelpErrorsVarPath = new VariablePath(VerboseHelpErrors);
@@ -388,6 +392,7 @@ namespace System.Management.Automation
                     SpecialVariables.NestedPromptLevel,
                     SpecialVariables.pwd,
                     SpecialVariables.Matches,
+                    SpecialVariables.PSApplicationOutputEncoding,
                 },
                 StringComparer.OrdinalIgnoreCase
             );
