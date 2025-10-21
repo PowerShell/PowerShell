@@ -188,59 +188,16 @@ jobs:
     - name: Test package contents
       if: success()
       run: |-
-        import-module ./build.psm1
-        # Find the created package
-        $package = Get-ChildItem -Path . -Filter "*.pkg" | Select-Object -First 1
-        if (-not $package) {
-          throw "Package not found"
+        $env:PACKAGE_FOLDER = Get-Location
+        Import-Module Pester
+        $pesterConfig = New-PesterConfiguration
+        $pesterConfig.Run.Path = './tools/packaging/releaseTests/macOSPackage.tests.ps1'
+        $pesterConfig.Run.PassThru = $true
+        $pesterConfig.Output.Verbosity = 'Detailed'
+        $result = Invoke-Pester -Configuration $pesterConfig
+        if ($result.FailedCount -gt 0) {
+          throw "Package validation failed with $($result.FailedCount) failed test(s)"
         }
-        Write-Host "Testing package: $($package.FullName)"
-        
-        # Expand the package to inspect contents
-        $expandDir = New-Item -ItemType Directory -Path "./package-contents" -Force
-        & pkgutil --expand $package.FullName $expandDir.FullName
-        
-        # Verify package structure
-        Write-Host "Package structure:"
-        Get-ChildItem -Path $expandDir.FullName -Recurse | Select-Object -ExpandProperty FullName
-        
-        # Extract the payload to verify files
-        $payloadDir = New-Item -ItemType Directory -Path "./package-payload" -Force
-        $componentPkg = Get-ChildItem -Path $expandDir.FullName -Filter "*.pkg" -Recurse | Select-Object -First 1
-        if ($componentPkg) {
-          Push-Location $payloadDir.FullName
-          try {
-            & cpio -i < "$($componentPkg.DirectoryName)/Payload"
-          } finally {
-            Pop-Location
-          }
-        }
-        
-        # Verify key files exist
-        Write-Host "Verifying package contents..."
-        $expectedFiles = @(
-          "usr/local/microsoft/powershell/*/pwsh"
-          "usr/local/bin/pwsh*"
-          "usr/local/share/man/man1/pwsh*.gz"
-          "Applications/PowerShell*.app/Contents/Info.plist"
-        )
-        
-        $missingFiles = @()
-        foreach ($pattern in $expectedFiles) {
-          $found = Get-ChildItem -Path $payloadDir.FullName -Recurse -ErrorAction SilentlyContinue | Where-Object { $_.FullName -like "*$pattern*" }
-          if (-not $found) {
-            $missingFiles += $pattern
-            Write-Warning "Missing expected file pattern: $pattern"
-          } else {
-            Write-Host "✓ Found: $pattern"
-          }
-        }
-        
-        if ($missingFiles.Count -gt 0) {
-          throw "Package validation failed: Missing expected files"
-        }
-        
-        Write-Host "Package validation successful!"
       shell: pwsh
     - name: Upload package artifact
       if: always()
