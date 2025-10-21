@@ -110,7 +110,7 @@ function Test-HttpLink {
             -TimeoutSec $TimeoutSec `
             -MaximumRetryCount $MaximumRetryCount `
             -RetryIntervalSec $RetryIntervalSec `
-            -UserAgent "Mozilla/5.0 (compatible; GitHubActions/1.0; +https://github.com)" `
+            -UserAgent "Mozilla/5.0 (compatible; GitHubActions/1.0; +https://github.com/PowerShell/PowerShell)" `
             -SkipHttpErrorCheck
 
         # If HEAD fails with 404 or 405, retry with GET (some servers don't support HEAD)
