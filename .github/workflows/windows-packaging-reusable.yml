@@ -74,7 +74,7 @@ jobs:
       - name: Install Attack Surface Analyzer
         run: |
           Write-Host "Installing Attack Surface Analyzer..."
-          dotnet tool install -g Microsoft.CST.AttackSurfaceAnalyzer.CLI --version 2.4.176
+          dotnet tool install -g Microsoft.CST.AttackSurfaceAnalyzer.CLI --version 2.3.328
         shell: pwsh
 
       - name: Take Baseline Snapshot
