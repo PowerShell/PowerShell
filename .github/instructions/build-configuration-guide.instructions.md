@@ -1,3 +1,11 @@
+---
+applyTo:
+  - "build.psm1"
+  - "tools/ci.psm1"
+  - ".github/**/*.yml"
+  - ".github/**/*.yaml"
+---
+
 # Build Configuration Guide
 
 ## Choosing the Right Configuration
