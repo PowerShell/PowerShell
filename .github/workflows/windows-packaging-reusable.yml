@@ -81,14 +81,15 @@ jobs:
         run: |
           Write-Host "Taking baseline snapshot with Attack Surface Analyzer..."
           # Use specific collectors for faster execution:
-          # -f: File system collector (PowerShell install dirs and Windows)
+          # -f: File system collector (PowerShell install dirs and System32\PowerShell)
           # -s: Service collector
           # -r: Registry collector
           # -u: User and group account collector
           # -p: Network port collector
           # -l: Log collector (EventLog)
           # Exclude slow collectors like WiFi, TPM, Cryptographic Keys, Firewall, COM, Certificates
-          & "$env:USERPROFILE\.dotnet\tools\asa.exe" collect -f -s -r -u -p -l --directories "C:\Program Files\PowerShell,C:\Program Files (x86)\PowerShell,C:\Windows"
+          $windowsPowerShellPath = [System.Environment]::GetFolderPath([System.Environment+SpecialFolder]::Windows) + "\System32\PowerShell"
+          & "$env:USERPROFILE\.dotnet\tools\asa.exe" collect -f -s -r -u -p -l --directories "C:\Program Files\PowerShell,C:\Program Files (x86)\PowerShell,$windowsPowerShellPath"
         shell: pwsh
 
       - name: Build and Package
@@ -101,7 +102,8 @@ jobs:
       - name: Analyze with Attack Surface Analyzer
         run: |
           Write-Host "Taking post-installation snapshot..."
-          & "$env:USERPROFILE\.dotnet\tools\asa.exe" collect -f -s -r -u -p -l --directories "C:\Program Files\PowerShell,C:\Program Files (x86)\PowerShell,C:\Windows"
+          $windowsPowerShellPath = [System.Environment]::GetFolderPath([System.Environment+SpecialFolder]::Windows) + "\System32\PowerShell"
+          & "$env:USERPROFILE\.dotnet\tools\asa.exe" collect -f -s -r -u -p -l --directories "C:\Program Files\PowerShell,C:\Program Files (x86)\PowerShell,$windowsPowerShellPath"
 
           Write-Host "Exporting comparison results..."
           & "$env:USERPROFILE\.dotnet\tools\asa.exe" export-collect
