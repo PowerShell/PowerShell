@@ -413,13 +413,10 @@ namespace System.Management.Automation
                 return null;
             }
 
-            // Look for the Subject Alternative Name extension (OID: 2.5.29.17)
             foreach (X509Extension extension in certificate.Extensions)
             {
-                // Check if this is the Subject Alternative Name extension
-                if (extension.Oid != null && extension.Oid.Value == "2.5.29.17")
+                if (extension.Oid != null && extension.Oid.Value == CertificateFilterInfo.SubjectAlternativeNameOid)
                 {
-                    // Format the extension with multiline format (parameter 1)
                     return extension.Format(multiLine: true);
                 }
             }
