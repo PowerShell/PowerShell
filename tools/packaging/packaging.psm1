@@ -1775,25 +1775,22 @@ function New-MacOSPackage
         Copy-Item -Path $ManGzipFile -Destination (Join-Path $pkgRoot $ManDestination) -Force
 
         # Create symlinks in package root
+        # The LinkInfo contains Source (a temp file that IS a symlink) and Destination (where to install it)
         foreach ($link in $LinkInfo) {
-            $linkDir = Join-Path $pkgRoot (Split-Path $link.Destination -Parent)
-            New-Item -ItemType Directory -Path $linkDir -Force | Out-Null
-            $linkPath = Join-Path $pkgRoot $link.Destination
-            $linkTarget = $link.Source
+            $linkDestDir = Join-Path $pkgRoot (Split-Path $link.Destination -Parent)
+            New-Item -ItemType Directory -Path $linkDestDir -Force | Out-Null
+            $finalLinkPath = Join-Path $pkgRoot $link.Destination
             
-            # Create relative symlink
-            Write-Verbose "Creating symlink: $linkPath -> $linkTarget" -Verbose
-            Push-Location (Split-Path $linkPath -Parent)
-            try {
-                # Remove if exists
-                if (Test-Path $linkPath) {
-                    Remove-Item $linkPath -Force
-                }
-                ln -s $linkTarget (Split-Path $linkPath -Leaf)
+            # Copy the symlink from the temp location to the package root
+            Write-Verbose "Copying symlink from $($link.Source) to $finalLinkPath" -Verbose
+            
+            # Remove if exists
+            if (Test-Path $finalLinkPath) {
+                Remove-Item $finalLinkPath -Force
             }
-            finally {
-                Pop-Location
-            }
+            
+            # Copy the symlink itself (not its target)
+            Copy-Item -Path $link.Source -Destination $finalLinkPath -Force
         }
 
         # Copy launcher app folder if provided
