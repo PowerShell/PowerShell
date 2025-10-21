@@ -35,8 +35,21 @@ namespace System.Management.Automation.Runspaces
         {
 #if UNIX
             PwshExePath = Path.Combine(Utils.DefaultPowerShellAppBase, "pwsh");
+            if (!File.Exists(PwshExePath))
+            {
+                // Fallback to the currently running process path if the computed path doesn't exist.
+                // This handles scenarios like Alpine Linux containers where PowerShell is installed as a dotnet tool
+                // and the computed path points to a non-existent or incompatible binary.
+                PwshExePath = System.Environment.ProcessPath ?? PwshExePath;
+            }
 #else
             PwshExePath = Path.Combine(Utils.DefaultPowerShellAppBase, "pwsh.exe");
+            if (!File.Exists(PwshExePath))
+            {
+                // Fallback to the currently running process path if the computed path doesn't exist.
+                PwshExePath = System.Environment.ProcessPath ?? PwshExePath;
+            }
+
             var winPowerShellDir = Utils.GetApplicationBaseFromRegistry(Utils.DefaultPowerShellShellID);
             WinPwshExePath = string.IsNullOrEmpty(winPowerShellDir) ? null : Path.Combine(winPowerShellDir, "powershell.exe");
 #endif
