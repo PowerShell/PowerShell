@@ -1,0 +1,139 @@
+name: 'Verify Markdown Links'
+description: 'Verify all links in markdown files using PowerShell and Markdig'
+author: 'PowerShell Team'
+
+inputs:
+  timeout-sec:
+    description: 'Timeout in seconds for HTTP requests'
+    required: false
+    default: '30'
+  maximum-retry-count:
+    description: 'Maximum number of retries for failed requests'
+    required: false
+    default: '2'
+
+outputs:
+  total-links:
+    description: 'Total number of unique links checked'
+    value: ${{ steps.verify.outputs.total }}
+  passed-links:
+    description: 'Number of links that passed verification'
+    value: ${{ steps.verify.outputs.passed }}
+  failed-links:
+    description: 'Number of links that failed verification'
+    value: ${{ steps.verify.outputs.failed }}
+  skipped-links:
+    description: 'Number of links that were skipped'
+    value: ${{ steps.verify.outputs.skipped }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Get changed markdown files
+      id: changed-files
+      uses: actions/github-script@v7
+      with:
+        script: |
+          let changedMarkdownFiles = [];
+
+          if (context.eventName === 'pull_request') {
+            const { data: files } = await github.rest.pulls.listFiles({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+            });
+
+            changedMarkdownFiles = files
+              .filter(file => file.filename.endsWith('.md'))
+              .map(file => file.filename);
+          } else if (context.eventName === 'push') {
+            const { data: comparison } = await github.rest.repos.compareCommits({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              base: context.payload.before,
+              head: context.payload.after,
+            });
+
+            changedMarkdownFiles = comparison.files
+              .filter(file => file.filename.endsWith('.md'))
+              .map(file => file.filename);
+          } else {
+            core.setFailed(`Unsupported event type: ${context.eventName}. This action only supports 'pull_request' and 'push' events.`);
+            return;
+          }
+
+          console.log('Changed markdown files:', changedMarkdownFiles);
+          core.setOutput('files', JSON.stringify(changedMarkdownFiles));
+          core.setOutput('count', changedMarkdownFiles.length);
+          return changedMarkdownFiles;
+
+    - name: Verify markdown links
+      id: verify
+      shell: pwsh
+      run: |
+        Write-Host "Starting markdown link verification..." -ForegroundColor Cyan
+
+        # Get changed markdown files from previous step
+        $changedFilesJson = '${{ steps.changed-files.outputs.files }}'
+        $changedFiles = $changedFilesJson | ConvertFrom-Json
+        
+        if ($changedFiles.Count -eq 0) {
+          Write-Host "No markdown files changed, skipping verification" -ForegroundColor Yellow
+          "total=0" >> $env:GITHUB_OUTPUT
+          "passed=0" >> $env:GITHUB_OUTPUT
+          "failed=0" >> $env:GITHUB_OUTPUT
+          "skipped=0" >> $env:GITHUB_OUTPUT
+          exit 0
+        }
+        
+        Write-Host "Changed markdown files: $($changedFiles.Count)" -ForegroundColor Cyan
+        $changedFiles | ForEach-Object { Write-Host "  - $_" -ForegroundColor Gray }
+
+        # Build parameters for each file
+        $params = @{
+          File = $changedFiles
+          TimeoutSec = [int]'${{ inputs.timeout-sec }}'
+          MaximumRetryCount = [int]'${{ inputs.maximum-retry-count }}'
+        }
+
+        # Run the verification script
+        $scriptPath = Join-Path '${{ github.action_path }}' 'Verify-MarkdownLinks.ps1'
+
+        # Capture output and parse results
+        $output = & $scriptPath @params 2>&1 | Tee-Object -Variable capturedOutput
+
+        # Try to extract metrics from output
+        $totalLinks = 0
+        $passedLinks = 0
+        $failedLinks = 0
+        $skippedLinks = 0
+
+        foreach ($line in $capturedOutput) {
+          if ($line -match 'Total URLs checked: (\d+)') {
+            $totalLinks = $Matches[1]
+          }
+          elseif ($line -match 'Passed: (\d+)') {
+            $passedLinks = $Matches[1]
+          }
+          elseif ($line -match 'Failed: (\d+)') {
+            $failedLinks = $Matches[1]
+          }
+          elseif ($line -match 'Skipped: (\d+)') {
+            $skippedLinks = $Matches[1]
+          }
+        }
+
+        # Set outputs
+        "total=$totalLinks" >> $env:GITHUB_OUTPUT
+        "passed=$passedLinks" >> $env:GITHUB_OUTPUT
+        "failed=$failedLinks" >> $env:GITHUB_OUTPUT
+        "skipped=$skippedLinks" >> $env:GITHUB_OUTPUT
+
+        Write-Host "Action completed" -ForegroundColor Cyan
+
+        # Exit with the same code as the verification script
+        exit $LASTEXITCODE
+
+branding:
+  icon: 'link'
+  color: 'blue'
