@@ -99,7 +99,7 @@ jobs:
     displayName: 'Validate Channel Selection'
 
   - task: MS-RDX-MRO.windows-store-publish.publish-task.store-publish@3
-    displayName: 'Publish LTS/Stable StoreBroker Package'
+    displayName: 'Publish StoreBroker Package (Stable/LTS)'
     condition: and(ne('${{ parameters.skipMSIXPublish }}', 'true'), or(eq('$(STABLE)', 'true'), eq('$(LTS)', 'true')))
     inputs:
       serviceEndpoint: 'StoreAppPublish-Stable'
@@ -112,7 +112,7 @@ jobs:
       targetPublishMode: 'Immediate'
 
   - task: MS-RDX-MRO.windows-store-publish.publish-task.store-publish@3
-    displayName: 'Publish Preview StoreBroker Package'
+    displayName: 'Publish StoreBroker Package (Preview)'
     condition: and(ne('${{ parameters.skipMSIXPublish }}', 'true'), eq('$(PREVIEW)', 'true'))
     inputs:
       serviceEndpoint: 'StoreAppPublish-Preview'
