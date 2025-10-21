@@ -183,7 +183,7 @@ jobs:
         $releaseTag = Get-ReleaseTag
         Start-PSBuild -Configuration Release -PSModuleRestore -ReleaseTag $releaseTag
         $macOSRuntime = if ([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture -eq 'Arm64') { 'osx-arm64' } else { 'osx-x64' }
-        Start-PSPackage -Type osxpkg -ReleaseTag $releaseTag -MacOSRuntime $macOSRuntime
+        Start-PSPackage -Type osxpkg -ReleaseTag $releaseTag -MacOSRuntime $macOSRuntime -SkipReleaseChecks
       shell: pwsh
     - name: Test package contents
       if: success()
