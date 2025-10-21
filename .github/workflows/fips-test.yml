@@ -48,6 +48,7 @@ jobs:
       - name: Fix git ownership
         run: |
           # Fix git ownership issue in container
+          # In containers, github.workspace resolves to /home/runner/work/PowerShell/PowerShell
           git config --global --add safe.directory ${{ github.workspace }}
       
       - name: Install PowerShell
