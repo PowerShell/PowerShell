@@ -5,7 +5,7 @@ We'll start by showing how to set up your environment from scratch.
 
 ## Environment
 
-These instructions are written assuming the Ubuntu 16.04 LTS, since that's the distro the team uses.
+These instructions are written assuming Ubuntu 24.04 LTS (the CI uses ubuntu-latest).
 The build module works on a best-effort basis for other distributions.
 
 ### Git Setup
@@ -41,15 +41,13 @@ In PowerShell:
 
 ```powershell
 Import-Module ./build.psm1
-Start-PSBootstrap
+Start-PSBootstrap -Scenario Both
 ```
 
 The `Start-PSBootstrap` function does the following:
 
-- Adds the LLVM package feed
-- Installs our dependencies combined with the dependencies of the .NET CLI toolchain via `apt-get`
-- Uninstalls any prior versions of .NET CLI
-- Downloads and installs the .NET Core SDK 2.0.0 to `~/.dotnet`
+- Installs build dependencies and packaging tools via `apt-get` (or equivalent package manager)
+- Downloads and installs the .NET SDK (currently version 10.0.100-rc.1) to `~/.dotnet`
 
 If you want to use `dotnet` outside of `Start-PSBuild`, add `~/.dotnet` to your `PATH` environment variable.
 
@@ -69,7 +67,7 @@ Start-PSBuild -UseNuGetOrg
 Congratulations! If everything went right, PowerShell is now built.
 The `Start-PSBuild` script will output the location of the executable:
 
-`./src/powershell-unix/bin/Debug/net6.0/linux-x64/publish/pwsh`.
+`./src/powershell-unix/bin/Debug/net10.0/linux-x64/publish/pwsh`.
 
 You should now be running the PowerShell Core that you just built, if you run the above executable.
 You can run our cross-platform Pester tests with `Start-PSPester -UseNuGetOrg`, and our xUnit tests with `Start-PSxUnit`.

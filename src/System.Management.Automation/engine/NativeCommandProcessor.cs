@@ -1645,16 +1645,17 @@ namespace System.Management.Automation
                 startInfo.UseShellExecute = false;
                 startInfo.RedirectStandardInput = redirectInput;
 
+                Encoding outputEncoding = GetOutputEncoding();
                 if (redirectOutput)
                 {
                     startInfo.RedirectStandardOutput = true;
-                    startInfo.StandardOutputEncoding = Console.OutputEncoding;
+                    startInfo.StandardOutputEncoding = outputEncoding;
                 }
 
                 if (redirectError)
                 {
                     startInfo.RedirectStandardError = true;
-                    startInfo.StandardErrorEncoding = Console.OutputEncoding;
+                    startInfo.StandardErrorEncoding = outputEncoding;
                 }
             }
 
@@ -1711,6 +1712,20 @@ namespace System.Management.Automation
 
             return startInfo;
         }
+
+#nullable enable
+        /// <summary>
+        /// Gets the encoding to use for a process' output/error pipes.
+        /// </summary>
+        /// <returns>The encoding to use for the process output.</returns>
+        private Encoding GetOutputEncoding()
+        {
+            Encoding? applicationOutputEncoding = Context.GetVariableValue(
+                    SpecialVariables.PSApplicationOutputEncodingVarPath) as Encoding;
+
+            return applicationOutputEncoding ?? Console.OutputEncoding;
+        }
+#nullable disable
 
         /// <summary>
         /// Determine if we have a special file which will change the way native argument passing
