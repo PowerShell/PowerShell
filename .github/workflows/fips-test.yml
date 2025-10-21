@@ -45,11 +45,31 @@ jobs:
         with:
           fetch-depth: 1000
       
+      - name: Capture Environment
+        run: |
+          echo "=== Environment Variables ==="
+          env | sort
+          echo ""
+          echo "=== Current Directory ==="
+          pwd
+          echo ""
+          echo "=== GitHub Workspace ==="
+          echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE"
+          echo ""
+          echo "=== Git Status ==="
+          git status || echo "Git status failed"
+          echo ""
+          echo "=== Git Config Safe Directory ==="
+          git config --global --get-all safe.directory || echo "No safe directories configured"
+      
       - name: Fix git ownership
         run: |
           # Fix git ownership issue in container
           # In containers, github.workspace resolves to /home/runner/work/PowerShell/PowerShell
-          git config --global --add safe.directory ${{ github.workspace }}
+          echo "Adding safe directory: $GITHUB_WORKSPACE"
+          git config --global --add safe.directory $GITHUB_WORKSPACE
+          echo "Verifying safe directory was added:"
+          git config --global --get-all safe.directory
       
       - name: Install PowerShell
         run: |
