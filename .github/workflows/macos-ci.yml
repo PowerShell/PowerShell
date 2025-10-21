@@ -173,21 +173,15 @@ jobs:
         import-module ./build.psm1
         start-psbootstrap -Scenario package
       shell: pwsh
-    - name: Build PowerShell
+    - name: Build PowerShell and Create macOS package
       if: success()
       run: |-
         import-module ./build.psm1
         import-module ./tools/ci.psm1
+        import-module ./tools/packaging/packaging.psm1
         Sync-PSTags -AddRemoteIfMissing
         $releaseTag = Get-ReleaseTag
         Start-PSBuild -Configuration Release -PSModuleRestore -ReleaseTag $releaseTag
-      shell: pwsh
-    - name: Create macOS package
-      if: success()
-      run: |-
-        import-module ./build.psm1
-        import-module ./tools/packaging/packaging.psm1
-        $releaseTag = Get-ReleaseTag
         $macOSRuntime = if ([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture -eq 'Arm64') { 'osx-arm64' } else { 'osx-x64' }
         Start-PSPackage -Type osxpkg -ReleaseTag $releaseTag -MacOSRuntime $macOSRuntime
       shell: pwsh
