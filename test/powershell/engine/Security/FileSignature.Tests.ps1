@@ -254,8 +254,10 @@ Describe "Windows file content signatures" -Tags @('Feature', 'RequireAdminOnWin
             
             # Verify the content of SubjectAlternativeName
             $actual.SubjectAlternativeName | Should -Not -BeNullOrEmpty
-            $actual.SubjectAlternativeName | Should -Match 'DNS Name=test\.example\.com'
-            $actual.SubjectAlternativeName | Should -Match 'DNS Name=\*\.example\.com'
+            $actual.SubjectAlternativeName | Should -BeOfType [string[]]
+            $actual.SubjectAlternativeName.Count | Should -Be 2
+            $actual.SubjectAlternativeName | Should -Contain 'DNS Name=test.example.com'
+            $actual.SubjectAlternativeName | Should -Contain 'DNS Name=*.example.com'
         } finally {
             # Clean up the test certificates
             if (Test-Path "Cert:\CurrentUser\My\$($sanCertificate.Thumbprint)") {
