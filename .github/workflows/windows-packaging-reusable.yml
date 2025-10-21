@@ -111,6 +111,16 @@ jobs:
           Write-Host "Attack Surface Analyzer test completed."
         shell: pwsh
 
+      - name: Upload Attack Surface Analyzer Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: attack-surface-analyzer-results-${{ matrix.architecture }}-${{ matrix.channel }}
+          path: |
+            ${{ github.workspace }}/*_summary.json.txt
+            ${{ github.workspace }}/*_results.json.txt
+            ${{ github.workspace }}/asa.sqlite
+
       - name: Upload Build Artifacts
         if: always()
         uses: actions/upload-artifact@v4
