@@ -1781,16 +1781,26 @@ function New-MacOSPackage
             New-Item -ItemType Directory -Path $linkDestDir -Force | Out-Null
             $finalLinkPath = Join-Path $pkgRoot $link.Destination
             
-            # Copy the symlink from the temp location to the package root
-            Write-Verbose "Copying symlink from $($link.Source) to $finalLinkPath" -Verbose
+            Write-Verbose "Creating symlink at $finalLinkPath" -Verbose
             
             # Remove if exists
             if (Test-Path $finalLinkPath) {
                 Remove-Item $finalLinkPath -Force
             }
             
-            # Copy the symlink itself (not its target)
-            Copy-Item -Path $link.Source -Destination $finalLinkPath -Force
+            # Get the target of the original symlink and recreate it in the package root
+            if (Test-Path $link.Source) {
+                $linkTarget = (Get-Item $link.Source).Target
+                if ($linkTarget) {
+                    Write-Verbose "Creating symlink to target: $linkTarget" -Verbose
+                    New-Item -ItemType SymbolicLink -Path $finalLinkPath -Target $linkTarget -Force | Out-Null
+                } else {
+                    Write-Warning "Could not determine target for symlink at $($link.Source), copying file instead"
+                    Copy-Item -Path $link.Source -Destination $finalLinkPath -Force
+                }
+            } else {
+                Write-Warning "Source symlink $($link.Source) does not exist"
+            }
         }
 
         # Copy launcher app folder if provided
