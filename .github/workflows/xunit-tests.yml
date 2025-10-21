@@ -25,7 +25,7 @@ jobs:
           fetch-depth: 1000
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           global-json-file: ./global.json
 
