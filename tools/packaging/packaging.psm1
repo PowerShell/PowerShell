@@ -1197,19 +1197,7 @@ function New-UnixPackage {
             # Generate After Install and After Remove scripts
             $AfterScriptInfo = New-AfterScripts -Link $Link -Distribution $DebDistro -Destination $Destination
 
-            # there is a weird bug in fpm
-            # if the target of the powershell symlink exists, `fpm` aborts
-            # with a `utime` error on macOS.
-            # so we move it to make symlink broken
-            # refers to executable, does not vary by channel
-            $symlink_dest = "$Destination/pwsh"
-            $hack_dest = "./_fpm_symlink_hack_powershell"
-            if ($Environment.IsMacOS) {
-                if (Test-Path $symlink_dest) {
-                    Write-Warning "Move $symlink_dest to $hack_dest (fpm utime bug)"
-                    Start-NativeExecution ([ScriptBlock]::Create("$sudo mv $symlink_dest $hack_dest"))
-                }
-            }
+            # Note: The fpm symlink workaround is no longer needed with native macOS packaging tools
 
             # Generate gzip of man file
             $ManGzipInfo = New-ManGzip -IsPreview:$IsPreview -IsLTS:$LTS
@@ -1329,8 +1317,38 @@ function New-UnixPackage {
                         throw
                     }
                 }
+            } elseif ($Type -eq 'osxpkg') {
+                # Use native macOS packaging tools
+                if ($PSCmdlet.ShouldProcess("Create macOS package with pkgbuild/productbuild")) {
+                    Write-Log "Creating macOS package with native tools..."
+                    
+                    $macPkgArgs = @{
+                        Name = $Name
+                        Version = $packageVersion
+                        Iteration = $Iteration
+                        Staging = $Staging
+                        Destination = $Destination
+                        ManGzipFile = $ManGzipInfo.GzipFile
+                        ManDestination = $ManGzipInfo.ManFile
+                        LinkInfo = $Links
+                        AfterInstallScript = $AfterScriptInfo.AfterInstallScript
+                        AppsFolder = $AppsFolder
+                        HostArchitecture = $HostArchitecture
+                        CurrentLocation = $CurrentLocation
+                    }
+                    
+                    try {
+                        $packageFile = New-MacOSPackage @macPkgArgs
+                        $Output = @("Created package {:path=>""$($packageFile.Name)""}")
+                    }
+                    catch {
+                        Write-Verbose -Message "!!!Handling error in macOS packaging!!!" -Verbose -ErrorAction SilentlyContinue
+                        Get-Error -InputObject $_
+                        throw
+                    }
+                }
             } else {
-                # Use fpm for DEB and macOS packages
+                # Use fpm for DEB packages
                 $Arguments = @()
                 
                 $Arguments += Get-FpmArguments `
@@ -1372,12 +1390,6 @@ function New-UnixPackage {
                 {
                     Clear-MacOSLauncher
                 }
-
-                # this is continuation of a fpm hack for a weird bug
-                if (Test-Path $hack_dest) {
-                    Write-Warning "Move $hack_dest to $symlink_dest (fpm utime bug)"
-                    Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo mv $hack_dest $symlink_dest")) -VerboseOutputOnError
-                }
             }
             
             # Clean up rpmbuild directory if it was created
@@ -1401,12 +1413,9 @@ function New-UnixPackage {
         # Magic to get path output
         $createdPackage = Get-Item (Join-Path $CurrentLocation (($Output[-1] -split ":path=>")[-1] -replace '["{}]'))
 
-        if ($Environment.IsMacOS) {
-            if ($PSCmdlet.ShouldProcess("Add distribution information and Fix PackageName"))
-            {
-                $createdPackage = New-MacOsDistributionPackage -FpmPackage $createdPackage -HostArchitecture $HostArchitecture -IsPreview:$IsPreview
-            }
-        }
+        # For macOS with native tools, the package is already in the correct format
+        # For macOS with fpm (no longer used), we would need New-MacOsDistributionPackage
+        # For other platforms, the package name from fpm/rpmbuild is sufficient
 
         if (Test-Path $createdPackage)
         {
@@ -1692,6 +1701,206 @@ cp $ManGzipFile `$RPM_BUILD_ROOT$ManDestination
     return $specContent
 }
 
+function New-MacOSPackage
+{
+    [CmdletBinding(SupportsShouldProcess=$true)]
+    param(
+        [Parameter(Mandatory)]
+        [string]$Name,
+
+        [Parameter(Mandatory)]
+        [string]$Version,
+
+        [Parameter(Mandatory)]
+        [string]$Iteration,
+
+        [Parameter(Mandatory)]
+        [string]$Staging,
+
+        [Parameter(Mandatory)]
+        [string]$Destination,
+
+        [Parameter(Mandatory)]
+        [string]$ManGzipFile,
+
+        [Parameter(Mandatory)]
+        [string]$ManDestination,
+
+        [Parameter(Mandatory)]
+        [LinkInfo[]]$LinkInfo,
+
+        [Parameter(Mandatory)]
+        [string]$AfterInstallScript,
+
+        [Parameter(Mandatory)]
+        [string]$AppsFolder,
+
+        [Parameter(Mandatory)]
+        [string]$HostArchitecture,
+
+        [string]$CurrentLocation = (Get-Location)
+    )
+
+    Write-Log "Creating macOS package using pkgbuild and productbuild..."
+
+    # Create a temporary directory for package building
+    $tempRoot = New-TempFolder
+    $componentPkgPath = Join-Path $tempRoot "component.pkg"
+    $scriptsDir = Join-Path $tempRoot "scripts"
+    $resourcesDir = Join-Path $tempRoot "resources"
+    $distributionFile = Join-Path $tempRoot "distribution.xml"
+
+    try {
+        # Create scripts directory
+        New-Item -ItemType Directory -Path $scriptsDir -Force | Out-Null
+
+        # Copy and prepare the postinstall script
+        $postInstallPath = Join-Path $scriptsDir "postinstall"
+        Copy-Item -Path $AfterInstallScript -Destination $postInstallPath -Force
+        chmod 755 $postInstallPath
+
+        # Create a temporary directory for the package root
+        $pkgRoot = Join-Path $tempRoot "pkgroot"
+        New-Item -ItemType Directory -Path $pkgRoot -Force | Out-Null
+
+        # Copy staging files to destination path in package root
+        $destInPkg = Join-Path $pkgRoot $Destination
+        New-Item -ItemType Directory -Path $destInPkg -Force | Out-Null
+        Write-Verbose "Copying staging files from $Staging to $destInPkg" -Verbose
+        Copy-Item -Path "$Staging/*" -Destination $destInPkg -Recurse -Force
+
+        # Create man page directory structure
+        $manDir = Join-Path $pkgRoot (Split-Path $ManDestination -Parent)
+        New-Item -ItemType Directory -Path $manDir -Force | Out-Null
+        Copy-Item -Path $ManGzipFile -Destination (Join-Path $pkgRoot $ManDestination) -Force
+
+        # Create symlinks in package root
+        foreach ($link in $LinkInfo) {
+            $linkDir = Join-Path $pkgRoot (Split-Path $link.Destination -Parent)
+            New-Item -ItemType Directory -Path $linkDir -Force | Out-Null
+            $linkPath = Join-Path $pkgRoot $link.Destination
+            $linkTarget = $link.Source
+            
+            # Create relative symlink
+            Write-Verbose "Creating symlink: $linkPath -> $linkTarget" -Verbose
+            Push-Location (Split-Path $linkPath -Parent)
+            try {
+                # Remove if exists
+                if (Test-Path $linkPath) {
+                    Remove-Item $linkPath -Force
+                }
+                ln -s $linkTarget (Split-Path $linkPath -Leaf)
+            }
+            finally {
+                Pop-Location
+            }
+        }
+
+        # Copy launcher app folder if provided
+        if ($AppsFolder) {
+            $appsInPkg = Join-Path $pkgRoot "Applications"
+            New-Item -ItemType Directory -Path $appsInPkg -Force | Out-Null
+            Write-Verbose "Copying launcher app from $AppsFolder to $appsInPkg" -Verbose
+            Copy-Item -Path "$AppsFolder/*" -Destination $appsInPkg -Recurse -Force
+        }
+
+        # Build the component package using pkgbuild
+        $pkgIdentifier = Get-MacOSPackageId -IsPreview:($Name -like '*-preview')
+        
+        if ($PSCmdlet.ShouldProcess("Build component package with pkgbuild")) {
+            Write-Log "Running pkgbuild to create component package..."
+            $pkgbuildArgs = @(
+                "--root", $pkgRoot,
+                "--identifier", $pkgIdentifier,
+                "--version", $Version,
+                "--scripts", $scriptsDir,
+                "--install-location", "/",
+                $componentPkgPath
+            )
+            
+            Write-Verbose "pkgbuild arguments: $pkgbuildArgs" -Verbose
+            $pkgbuildOutput = & pkgbuild @pkgbuildArgs 2>&1
+            
+            if ($LASTEXITCODE -ne 0) {
+                Write-Error "pkgbuild failed with exit code $LASTEXITCODE"
+                Write-Error "Output: $pkgbuildOutput"
+                throw "Failed to create component package"
+            }
+            
+            Write-Verbose "Component package created: $componentPkgPath" -Verbose
+        }
+
+        # Create resources directory for distribution package
+        New-Item -ItemType Directory -Path $resourcesDir -Force | Out-Null
+        
+        # Copy background image if it exists
+        $backgroundImage = "$RepoRoot/assets/macDialog.png"
+        if (Test-Path $backgroundImage) {
+            Copy-Item -Path $backgroundImage -Destination $resourcesDir -Force
+        }
+
+        # Create distribution XML
+        $minOSVersion = "11.0"  # macOS Big Sur minimum
+        $packageFileName = Split-Path $componentPkgPath -Leaf
+        
+        # Map architecture names
+        $archForDistribution = if ($HostArchitecture -eq "arm64") { "arm64" } else { "x86_64" }
+        
+        $distributionContent = $packagingStrings.OsxDistributionTemplate -f `
+            $Name, `
+            $Version, `
+            $packageFileName, `
+            $minOSVersion, `
+            $pkgIdentifier, `
+            $archForDistribution
+
+        $distributionContent | Out-File -FilePath $distributionFile -Encoding utf8
+
+        # Build the final product package using productbuild
+        $packageName = "$Name-$Version-osx-$HostArchitecture.pkg"
+        $packagePath = Join-Path $CurrentLocation $packageName
+
+        if (Test-Path $packagePath) {
+            Write-Warning "Removing existing package: $packagePath"
+            Remove-Item $packagePath -Force
+        }
+
+        if ($PSCmdlet.ShouldProcess("Build product package with productbuild")) {
+            Write-Log "Running productbuild to create final package..."
+            $productbuildArgs = @(
+                "--distribution", $distributionFile,
+                "--package-path", $tempRoot,
+                "--resources", $resourcesDir,
+                $packagePath
+            )
+            
+            Write-Verbose "productbuild arguments: $productbuildArgs" -Verbose
+            $productbuildOutput = & productbuild @productbuildArgs 2>&1
+            
+            if ($LASTEXITCODE -ne 0) {
+                Write-Error "productbuild failed with exit code $LASTEXITCODE"
+                Write-Error "Output: $productbuildOutput"
+                throw "Failed to create product package"
+            }
+            
+            if (Test-Path $packagePath) {
+                Write-Log "Successfully created macOS package: $packagePath"
+                return (Get-Item $packagePath)
+            }
+            else {
+                throw "Package was not created at expected location: $packagePath"
+            }
+        }
+    }
+    finally {
+        # Clean up temporary directory
+        if (Test-Path $tempRoot) {
+            Write-Verbose "Cleaning up temporary directory: $tempRoot" -Verbose
+            Remove-Item -Path $tempRoot -Recurse -Force -ErrorAction SilentlyContinue
+        }
+    }
+}
+
 function Get-FpmArguments
 {
     param(
@@ -1905,6 +2114,7 @@ function Get-PackageDependencies
 function Test-Dependencies
 {
     # Note: RPM packages no longer require fpm; they use rpmbuild directly
+    # macOS packages use pkgbuild and productbuild from Xcode Command Line Tools
     # DEB packages still use fpm
     $Dependencies = @()
     
@@ -1913,22 +2123,31 @@ function Test-Dependencies
         $Dependencies += "fpm"
     }
     
+    # Check for macOS packaging tools
+    if ($Environment.IsMacOS) {
+        $Dependencies += "pkgbuild"
+        $Dependencies += "productbuild"
+    }
+    
     foreach ($Dependency in $Dependencies) {
         if (!(precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Scenario Package")) {
-            # These tools are not added to the path automatically on OpenSUSE 13.2
-            # try adding them to the path and re-tesing first
-            [string] $gemsPath = $null
-            [string] $depenencyPath = $null
-            $gemsPath = Get-ChildItem -Path /usr/lib64/ruby/gems | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName
-            if ($gemsPath) {
-                $depenencyPath  = Get-ChildItem -Path (Join-Path -Path $gemsPath -ChildPath "gems" -AdditionalChildPath $Dependency) -Recurse | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty DirectoryName
-                $originalPath = $env:PATH
-                $env:PATH = $ENV:PATH +":" + $depenencyPath
-                if ((precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Scenario Package")) {
-                    continue
-                }
-                else {
-                    $env:PATH = $originalPath
+            # For Debian systems, try adding ruby gems to the path
+            if ($Environment.IsDebianFamily) {
+                # These tools are not added to the path automatically on OpenSUSE 13.2
+                # try adding them to the path and re-tesing first
+                [string] $gemsPath = $null
+                [string] $depenencyPath = $null
+                $gemsPath = Get-ChildItem -Path /usr/lib64/ruby/gems | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName
+                if ($gemsPath) {
+                    $depenencyPath  = Get-ChildItem -Path (Join-Path -Path $gemsPath -ChildPath "gems" -AdditionalChildPath $Dependency) -Recurse | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty DirectoryName
+                    $originalPath = $env:PATH
+                    $env:PATH = $ENV:PATH +":" + $depenencyPath
+                    if ((precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Scenario Package")) {
+                        continue
+                    }
+                    else {
+                        $env:PATH = $originalPath
+                    }
                 }
             }
 
@@ -2089,7 +2308,7 @@ function New-MacOSLauncher
         chmod 755 $shellscript
     }
 
-    # Add app folder to fpm paths.
+    # Return the app folder path for packaging
     $appsfolder = (Resolve-Path -Path "$macosapp/..").Path
 
     return $appsfolder
