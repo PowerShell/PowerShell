@@ -47,7 +47,7 @@ jobs:
           $middleURL = $matches[1]
         }
 
-        $endURL = $tagString -replace '[v\.]',''
+        $endURL = $tagString -replace '^v','' -replace '\.',''
         $message = "Changelog: https://github.com/PowerShell/PowerShell/blob/master/CHANGELOG/$middleURL.md#$endURL"
         Write-Verbose -Verbose "Release Notes for the Store:"
         Write-Verbose -Verbose "$message"
@@ -65,23 +65,6 @@ jobs:
       script: |
         Write-Verbose -Verbose "Channel Selection - LTS: $(LTS), Stable: $(Stable), Preview: $(Preview)"
 
-        # Define app configurations for each channel using secret variables
-        $channelConfigs = @{
-          'LTS' = @{
-            AppId = '$(AppID-LTS)'
-            ServiceEndpoint = 'StoreAppPublish-Stable'
-          }
-          'Stable' = @{
-            AppId = '$(AppID-Stable)'
-            ServiceEndpoint = 'StoreAppPublish-Stable'
-          }
-          'Preview' = @{
-            AppId = '$(AppID-Preview)'
-            ServiceEndpoint = 'StoreAppPublish-Preview'
-          }
-        }
-
-        # Determine the current channel
         $currentChannel = if ($IsLTS) { 'LTS' }
           elseif ($IsStable) { 'Stable' }
           elseif ($IsPreview) { 'Preview' }
@@ -89,24 +72,43 @@ jobs:
             Write-Error "No valid channel detected"
             exit 1
           }
-                       
-        $config = $channelConfigs[$currentChannel]
+
+        # Assign AppID for Store-Publish Task
+        $appID = $null
+        if ($IsLTS) {
+          $appID = '$(AppID-LTS)'
+        }
+        elseif ($IsStable) {
+          $appID = '$(AppID-Stable)'
+        }
+        else {
+          $appID = '$(AppID-Preview)'
+        }
+
+        Write-Host "##vso[task.setvariable variable=AppID]$appID"
         Write-Verbose -Verbose "Selected channel: $currentChannel"
-        Write-Verbose -Verbose "App ID: $($config.AppId)"
-        Write-Verbose -Verbose "Service Endpoint: $($config.ServiceEndpoint)"
-        
-        # Set pipeline variables for use in the store-publish task
-        Write-Host "##vso[task.setvariable variable=SelectedAppId]$($config.AppId)"
-        Write-Host "##vso[task.setvariable variable=SelectedServiceEndpoint]$($config.ServiceEndpoint)"
-        Write-Host "##vso[task.setvariable variable=SelectedChannel]$currentChannel"
-    displayName: 'Set StoreBroker Configurations'
+        Write-Verbose -Verbose "Conditional tasks will handle the publishing based on channel variables"
+    displayName: 'Validate Channel Selection'
 
   - task: MS-RDX-MRO.windows-store-publish.publish-task.store-publish@3
-    displayName: 'Publish LTS StoreBroker Package'
-    condition: ne('${{ parameters.skipMSIXPublish }}', 'true')
+    displayName: 'Publish StoreBroker Package (Stable/LTS)'
+    condition: and(ne('${{ parameters.skipMSIXPublish }}', 'true'), or(eq('$(STABLE)', 'true'), eq('$(LTS)', 'true')))
     inputs:
-      serviceEndpoint: '$(SelectedServiceEndpoint)'
-      appId: '$(SelectedAppId)'
+      serviceEndpoint: 'StoreAppPublish-Stable'
+      appId: '$(AppID)'
+      inputMethod: JsonAndZip
+      jsonPath: '$(Pipeline.Workspace)\SBOutDir\PowerShellStorePackage.json'
+      zipPath: '$(Pipeline.Workspace)\SBOutDir\PowerShellStorePackage.zip'
+      numberOfPackagesToKeep: 2
+      jsonZipUpdateMetadata: true
+      targetPublishMode: 'Immediate'
+
+  - task: MS-RDX-MRO.windows-store-publish.publish-task.store-publish@3
+    displayName: 'Publish StoreBroker Package (Preview)'
+    condition: and(ne('${{ parameters.skipMSIXPublish }}', 'true'), eq('$(PREVIEW)', 'true'))
+    inputs:
+      serviceEndpoint: 'StoreAppPublish-Preview'
+      appId: '$(AppID)'
       inputMethod: JsonAndZip
       jsonPath: '$(Pipeline.Workspace)\SBOutDir\PowerShellStorePackage.json'
       zipPath: '$(Pipeline.Workspace)\SBOutDir\PowerShellStorePackage.zip'
