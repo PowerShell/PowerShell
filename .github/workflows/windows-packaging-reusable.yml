@@ -106,7 +106,7 @@ jobs:
           & "$env:USERPROFILE\.dotnet\tools\asa.exe" collect -f -s -r -u -p -l --directories "C:\Program Files\PowerShell,C:\Program Files (x86)\PowerShell,$windowsPowerShellPath"
 
           Write-Host "Exporting comparison results..."
-          & "$env:USERPROFILE\.dotnet\tools\asa.exe" export-collect
+          & "$env:USERPROFILE\.dotnet\tools\asa.exe" export-collect --outputsarif --savetodatabase
 
           Write-Host "Attack Surface Analyzer test completed."
         shell: pwsh
