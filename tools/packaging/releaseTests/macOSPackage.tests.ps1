@@ -25,37 +25,21 @@ Describe "Verify macOS Package" {
         $script:extractedFiles = @()
         
         if ($package) {
-            # Expand the package to inspect contents
-            $script:expandDir = Join-Path (Get-Location) -ChildPath "package-contents-test"
-            if (Test-Path $script:expandDir) {
-                try {
-                    Remove-Item -Path $script:expandDir -Recurse -Force -ErrorAction Stop
-                    # Wait a moment for filesystem to catch up
-                    Start-Sleep -Milliseconds 100
-                } catch {
-                    Write-Warning "Failed to remove existing directory: $_"
-                }
-            }
-            
-            if (-not (Test-Path $script:expandDir)) {
-                $null = New-Item -ItemType Directory -Path $script:expandDir -Force
-            }
+            # Use TestDrive for temporary directories - pkgutil will create the expand directory
+            $script:expandDir = Join-Path "TestDrive:" -ChildPath "package-contents-test"
+            $expandDirResolved = (Resolve-Path "TestDrive:").ProviderPath
+            $script:expandDir = Join-Path $expandDirResolved -ChildPath "package-contents-test"
             
             Write-Verbose "Expanding package to: $($script:expandDir)" -Verbose
+            # pkgutil will create the directory itself, so don't pre-create it
             & pkgutil --expand $package.FullName $script:expandDir
             
             # Extract the payload to verify files
-            $script:payloadDir = Join-Path (Get-Location) -ChildPath "package-payload-test"
-            if (Test-Path $script:payloadDir) {
-                try {
-                    Remove-Item -Path $script:payloadDir -Recurse -Force -ErrorAction Stop
-                    # Wait a moment for filesystem to catch up
-                    Start-Sleep -Milliseconds 100
-                } catch {
-                    Write-Warning "Failed to remove existing directory: $_"
-                }
-            }
+            $script:payloadDir = Join-Path "TestDrive:" -ChildPath "package-payload-test"
+            $payloadDirResolved = (Resolve-Path "TestDrive:").ProviderPath
+            $script:payloadDir = Join-Path $payloadDirResolved -ChildPath "package-payload-test"
             
+            # Create payload directory since cpio needs it
             if (-not (Test-Path $script:payloadDir)) {
                 $null = New-Item -ItemType Directory -Path $script:payloadDir -Force
             }
@@ -79,13 +63,8 @@ Describe "Verify macOS Package" {
     }
     
     AfterAll {
-        # Clean up test directories
-        if ($script:expandDir -and (Test-Path $script:expandDir)) {
-            Remove-Item -Path $script:expandDir -Recurse -Force -ErrorAction SilentlyContinue
-        }
-        if ($script:payloadDir -and (Test-Path $script:payloadDir)) {
-            Remove-Item -Path $script:payloadDir -Recurse -Force -ErrorAction SilentlyContinue
-        }
+        # TestDrive automatically cleans up, but we can ensure cleanup happens
+        # No manual cleanup needed as TestDrive handles it
     }
     
     Context "Package existence and structure" {
