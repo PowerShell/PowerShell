@@ -2023,11 +2023,14 @@ namespace System.Management.Automation
                 for (int i = 0; i < text.Length; i++)
                 {
                     uint h = text[i];
-                    if (h >= 'A' && h <= 'Z')
+                    if (h == '-')
+                    {
+                    }
+                    else if (char.IsAsciiLetter((char)h))
                     {
                         h |= 0x20; // ToLower
                     }
-                    else if (!((h >= 'a' && h <= 'z') || h == '-'))
+                    else
                     {
                         // If the character isn't in any of our patterns,
                         // don't bother hashing and reset the running length.
@@ -2070,11 +2073,11 @@ namespace System.Management.Automation
             // This code can be used when adding a new pattern.
             internal static uint HashNewPattern(string pattern)
             {
-                char ToLower(char c)
+                uint ToLower(uint c)
                 {
-                    if (c >= 'A' && c <= 'Z')
+                    if (char.IsAsciiLetterUpper((char)c))
                     {
-                        c = (char) (c | 0x20);
+                        c |= 0x20;
                     }
 
                     return c;

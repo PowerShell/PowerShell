@@ -877,8 +877,6 @@ namespace System.Management.Automation
         /// <returns>Absence of mounted drive for FileSystem provider or False for other provider types.</returns>
         private bool IsAStaleVhdMountedDrive(PSDriveInfo drive)
         {
-            bool result = false;
-
             // check that drive's provider type is FileSystem
             if ((drive.Provider != null) && (!drive.Provider.NameEquals(this.ExecutionContext.ProviderNames.FileSystem)))
             {
@@ -894,13 +892,11 @@ namespace System.Management.Automation
             //  3. Unmount the VHD in session 'A'.
             // The drive pointing to VHD in session 'B' gets detected as DriveType.NoRootDirectory
             // after the VHD is removed in session 'A'.
-            if (drive != null && !string.IsNullOrEmpty(drive.Name) && drive.Name.Length == 1)
+            if (drive is { Name.Length: 1 })
             {
                 try
                 {
-                    char driveChar = Convert.ToChar(drive.Name, CultureInfo.InvariantCulture);
-
-                    if (char.ToUpperInvariant(driveChar) >= 'A' && char.ToUpperInvariant(driveChar) <= 'Z')
+                    if (char.IsAsciiLetter(drive.Name[0]))
                     {
                         DriveInfo systemDriveInfo = new DriveInfo(drive.Name);
 
@@ -908,7 +904,7 @@ namespace System.Management.Automation
                         {
                             if (!Directory.Exists(drive.Root))
                             {
-                                result = true;
+                                return true;
                             }
                         }
                     }
@@ -919,7 +915,7 @@ namespace System.Management.Automation
                 }
             }
 
-            return result;
+            return false;
         }
 
         /// <summary>
