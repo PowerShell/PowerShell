@@ -43,14 +43,14 @@ jobs:
         }
         $middleURL = ''
         $tagString = "$(ReleaseTag)"
-        if ($tagString -match '-') {
+        if ($tagString -match '-preview') {
           $middleURL = "preview"
         }
         elseif ($tagString -match '(\d+\.\d+)') {
           $middleURL = $matches[1]
         }
 
-        $endURL = $tagString -replace '[v\.]',''
+        $endURL = $tagString -replace '^v','' -replace '\.',''
         $message = "Changelog: https://github.com/PowerShell/PowerShell/blob/master/CHANGELOG/$middleURL.md#$endURL"
         Write-Verbose -Verbose "Release Notes for the Store:"
         Write-Verbose -Verbose "$message"
@@ -90,7 +90,7 @@ jobs:
           $appID = '$(AppID-Stable)'
         }
 
-        Write-Host "##vso[task.setvariable variable=APPID]$appID"
+        Write-Host "##vso[task.setvariable variable=AppID]$appID"
         Write-Verbose -Verbose "Selected channel: $currentChannel"
         Write-Verbose -Verbose "Conditional tasks will handle the publishing based on channel variables"
     displayName: 'Validate Channel Selection'
