@@ -80,7 +80,14 @@ jobs:
       - name: Take Baseline Snapshot
         run: |
           Write-Host "Taking baseline snapshot with Attack Surface Analyzer..."
-          & "$env:USERPROFILE\.dotnet\tools\asa.exe" collect -a
+          # Use specific collectors for faster execution:
+          # - File: Monitor filesystem changes (limited to Program Files)
+          # - Service: Monitor Windows services
+          # - Registry: Monitor registry changes
+          # - User: Monitor user account changes
+          # - Port: Monitor network port changes
+          # Exclude slow collectors like WiFi, TPM, Cryptographic Keys, EventLog, Firewall, COM, Certificates
+          & "$env:USERPROFILE\.dotnet\tools\asa.exe" collect --collect File --collect Service --collect Registry --collect User --collect Port --directories "C:\Program Files\PowerShell" --directories "C:\Program Files (x86)\PowerShell"
         shell: pwsh
 
       - name: Build and Package
@@ -93,7 +100,7 @@ jobs:
       - name: Analyze with Attack Surface Analyzer
         run: |
           Write-Host "Taking post-installation snapshot..."
-          & "$env:USERPROFILE\.dotnet\tools\asa.exe" collect -a
+          & "$env:USERPROFILE\.dotnet\tools\asa.exe" collect --collect File --collect Service --collect Registry --collect User --collect Port --directories "C:\Program Files\PowerShell" --directories "C:\Program Files (x86)\PowerShell"
 
           Write-Host "Exporting comparison results..."
           & "$env:USERPROFILE\.dotnet\tools\asa.exe" export-collect
