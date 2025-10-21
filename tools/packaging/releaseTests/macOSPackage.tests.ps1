@@ -28,9 +28,18 @@ Describe "Verify macOS Package" {
             # Expand the package to inspect contents
             $script:expandDir = Join-Path (Get-Location) -ChildPath "package-contents-test"
             if (Test-Path $script:expandDir) {
-                Remove-Item -Path $script:expandDir -Recurse -Force
+                try {
+                    Remove-Item -Path $script:expandDir -Recurse -Force -ErrorAction Stop
+                    # Wait a moment for filesystem to catch up
+                    Start-Sleep -Milliseconds 100
+                } catch {
+                    Write-Warning "Failed to remove existing directory: $_"
+                }
             }
-            $null = New-Item -ItemType Directory -Path $script:expandDir -Force
+            
+            if (-not (Test-Path $script:expandDir)) {
+                $null = New-Item -ItemType Directory -Path $script:expandDir -Force
+            }
             
             Write-Verbose "Expanding package to: $($script:expandDir)" -Verbose
             & pkgutil --expand $package.FullName $script:expandDir
@@ -38,9 +47,18 @@ Describe "Verify macOS Package" {
             # Extract the payload to verify files
             $script:payloadDir = Join-Path (Get-Location) -ChildPath "package-payload-test"
             if (Test-Path $script:payloadDir) {
-                Remove-Item -Path $script:payloadDir -Recurse -Force
+                try {
+                    Remove-Item -Path $script:payloadDir -Recurse -Force -ErrorAction Stop
+                    # Wait a moment for filesystem to catch up
+                    Start-Sleep -Milliseconds 100
+                } catch {
+                    Write-Warning "Failed to remove existing directory: $_"
+                }
             }
-            $null = New-Item -ItemType Directory -Path $script:payloadDir -Force
+            
+            if (-not (Test-Path $script:payloadDir)) {
+                $null = New-Item -ItemType Directory -Path $script:payloadDir -Force
+            }
             
             $componentPkg = Get-ChildItem -Path $script:expandDir -Filter "*.pkg" -Recurse | Select-Object -First 1
             if ($componentPkg) {
