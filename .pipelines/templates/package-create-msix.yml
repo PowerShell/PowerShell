@@ -219,7 +219,7 @@ jobs:
         Write-Host "##vso[task.setvariable variable=ServiceConnection]$($config.ServiceEndpoint)"
         Write-Host "##vso[task.setvariable variable=SBConfigPath]$($sbConfigPath)"
 
-        #These variables are used in the next tasks to determine which ServiceEndpoint to use
+        # These variables are used in the next tasks to determine which ServiceEndpoint to use
         Write-Host "##vso[task.setvariable variable=LTS]$($IsLTS.ToString().ToLower())"
         Write-Host "##vso[task.setvariable variable=STABLE]$($IsStable.ToString().ToLower())"
         Write-Host "##vso[task.setvariable variable=PREVIEW]$($IsPreview.ToString().ToLower())"

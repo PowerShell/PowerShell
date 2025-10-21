@@ -81,13 +81,16 @@ jobs:
             exit 1
           }
 
-        # If LTS or Stable need to assign the correct AppID for the shared task.
+        # Assign AppID for Store-Publish Task
         $appID = $null
         if ($IsLTS) {
           $appID = '$(AppID-LTS)'
         }
-        elseif ($IsStable){
+        elseif ($IsStable) {
           $appID = '$(AppID-Stable)'
+        } 
+        else {
+          $appID = '$(AppID-Preview)'
         }
 
         Write-Host "##vso[task.setvariable variable=AppID]$appID"
@@ -113,7 +116,7 @@ jobs:
     condition: and(ne('${{ parameters.skipMSIXPublish }}', 'true'), eq('$(PREVIEW)', 'true'))
     inputs:
       serviceEndpoint: 'StoreAppPublish-Preview'
-      appId: '$(AppID-Preview)'
+      appId: '$(AppID)'
       inputMethod: JsonAndZip
       jsonPath: '$(Pipeline.Workspace)\SBOutDir\PowerShellStorePackage.json'
       zipPath: '$(Pipeline.Workspace)\SBOutDir\PowerShellStorePackage.zip'
