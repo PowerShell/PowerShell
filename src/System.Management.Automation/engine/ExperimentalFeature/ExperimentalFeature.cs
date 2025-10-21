@@ -25,6 +25,7 @@ namespace System.Management.Automation
         internal const string PSNativeWindowsTildeExpansion = nameof(PSNativeWindowsTildeExpansion);
         internal const string PSRedirectToVariable = "PSRedirectToVariable";
         internal const string PSSerializeJSONLongEnumAsNumber = nameof(PSSerializeJSONLongEnumAsNumber);
+        internal const string PSContentPath = "PSContentPath";
 
         #endregion
 
@@ -124,7 +125,10 @@ namespace System.Management.Automation
                     description: "Add support for redirecting to the variable drive"),
                 new ExperimentalFeature(
                     name: PSSerializeJSONLongEnumAsNumber,
-                    description: "Serialize enums based on long or ulong as an numeric value rather than the string representation when using ConvertTo-Json."
+                    description: "Serialize enums based on long or ulong as an numeric value rather than the string representation when using ConvertTo-Json."),
+                new ExperimentalFeature(
+                    name: PSContentPath,
+                    description: "Moves PS content to the new default location in LocalAppData/PowerShell and allows users to specify the content path."
                 )
             };
 

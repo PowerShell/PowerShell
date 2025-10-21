@@ -21,6 +21,7 @@ namespace System.Management.Automation
     internal static class Constants
     {
         public const string PSModulePathEnvVar = "PSModulePath";
+        public const string PSUserContentPathEnvVar = "PSUserContentPath";
     }
 
     /// <summary>
@@ -490,7 +491,7 @@ namespace System.Management.Automation
         /// <param name="requiredVersion">The required version of the expected module.</param>
         /// <param name="minimumVersion">The minimum required version of the expected module.</param>
         /// <param name="maximumVersion">The maximum required version of the expected module.</param>
-        /// <returns>True if the module info object matches all given constraints, false otherwise.</returns>
+        /// <returns>True if the module info object matches all the constraints on the module specification, false otherwise.</returns>
         internal static bool IsModuleMatchingConstraints(
             out ModuleMatchFailure matchFailureReason,
             PSModuleInfo moduleInfo,
@@ -964,12 +965,7 @@ namespace System.Management.Automation
         /// <returns>Personal module path.</returns>
         internal static string GetPersonalModulePath()
         {
-#if UNIX
-            return Platform.SelectProductNameForDirectory(Platform.XDG_Type.USER_MODULES);
-#else
-            string myDocumentsPath = InternalTestHooks.SetMyDocumentsSpecialFolderToBlank ? string.Empty : Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            return string.IsNullOrEmpty(myDocumentsPath) ? null : Path.Combine(myDocumentsPath, Utils.ModuleDirectory);
-#endif
+            return Path.Combine(Utils.GetPSContentPath(), "Modules");
         }
 
         /// <summary>
@@ -1366,9 +1362,14 @@ namespace System.Management.Automation
             }
 #endif
             string allUsersModulePath = PowerShellConfig.Instance.GetModulePath(ConfigScope.AllUsers);
-            string personalModulePath = PowerShellConfig.Instance.GetModulePath(ConfigScope.CurrentUser);
+            string personalModulePath = Utils.GetPSContentPath(true) ?? string.Empty;
             string newModulePathString = GetModulePath(currentModulePath, allUsersModulePath, personalModulePath);
 
+            if (!string.IsNullOrEmpty(personalModulePath))
+            {
+                Environment.SetEnvironmentVariable(Constants.PSUserContentPathEnvVar, personalModulePath);
+            }
+            
             if (!string.IsNullOrEmpty(newModulePathString))
             {
                 Environment.SetEnvironmentVariable(Constants.PSModulePathEnvVar, newModulePathString);

@@ -165,11 +165,12 @@ namespace System.Management.Automation
         // Gets the location for cache and config folders.
         internal static readonly string CacheDirectory = Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE);
         internal static readonly string ConfigDirectory = Platform.SelectProductNameForDirectory(Platform.XDG_Type.CONFIG);
+        internal static readonly string DefaultPSContentDirectory = Path.Combine(Platform.SelectProductNameForDirectory(Platform.XDG_Type.DATA), "PowerShell");
 #else
         // Gets the location for cache and config folders.
         internal static readonly string CacheDirectory = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Microsoft\PowerShell";
         internal static readonly string ConfigDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + @"\PowerShell";
-
+        internal static readonly string DefaultPSContentDirectory = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\PowerShell";
         private static readonly Lazy<bool> _isStaSupported = new Lazy<bool>(() =>
         {
             int result = Interop.Windows.CoInitializeEx(IntPtr.Zero, Interop.Windows.COINIT_APARTMENTTHREADED);

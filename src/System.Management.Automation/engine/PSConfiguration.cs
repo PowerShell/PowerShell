@@ -62,8 +62,11 @@ namespace System.Management.Automation.Configuration
         private string systemWideConfigDirectory;
 
         // The json file containing the per-user configuration settings.
-        private readonly string perUserConfigFile;
-        private readonly string perUserConfigDirectory;
+        private string perUserConfigFile;
+        private string perUserConfigDirectory;
+
+        // Flag to track if migration has been checked
+        private bool migrationChecked = false;
 
         // Note: JObject and JsonSerializer are thread safe.
         // Root Json objects corresponding to the configuration file for 'AllUsers' and 'CurrentUser' respectively.
@@ -139,6 +142,36 @@ namespace System.Management.Automation.Configuration
             }
 
             return modulePath;
+        }
+
+        /// <summary>
+        /// Gets the PSContentPath from the configuration file.
+        /// </summary>
+        /// <returns>The configured PSContentPath if found, null otherwise.</returns>
+        internal string GetPSContentPath()
+        {
+            string contentPath = ReadValueFromFile<string>(ConfigScope.CurrentUser, Constants.PSUserContentPathEnvVar);
+            if (!string.IsNullOrEmpty(contentPath))
+            {
+                contentPath = Environment.ExpandEnvironmentVariables(contentPath);
+            }
+            return contentPath;
+        }
+
+        /// <summary>
+        /// Sets the PSContentPath in the configuration file.
+        /// </summary>
+        /// <param name="path">The path to set as PSContentPath.</param>
+        internal void SetPSContentPath(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+            {
+                RemoveValueFromFile<string>(ConfigScope.CurrentUser, Constants.PSUserContentPathEnvVar);
+            }
+            else
+            {
+                WriteValueToFile<string>(ConfigScope.CurrentUser, Constants.PSUserContentPathEnvVar, path);
+            }
         }
 
         /// <summary>
@@ -386,6 +419,9 @@ namespace System.Management.Automation.Configuration
         /// <param name="defaultValue">The default value to return if the key is not present.</param>
         private T ReadValueFromFile<T>(ConfigScope scope, string key, T defaultValue = default)
         {
+            // Check for PSContentPath migration on first config access
+            CheckForMigrationOnFirstAccess();
+
             string fileName = GetConfigFilePath(scope);
             JObject configData = configRoots[(int)scope];
 
@@ -588,6 +624,101 @@ namespace System.Management.Automation.Configuration
             if (File.Exists(fileName))
             {
                 UpdateValueInFile<T>(scope, key, default(T), false);
+            }
+        }
+
+        internal void MigrateUserConfig(string oldPath, string newPath)
+        {
+            try
+            {
+                // Ensure new directory exists
+                Directory.CreateDirectory(Path.GetDirectoryName(newPath));
+
+                // Copy the config file
+                File.Copy(oldPath, newPath);
+
+                perUserConfigDirectory = Path.GetDirectoryName(newPath);
+                perUserConfigFile = newPath;
+            }
+            catch (Exception)
+            {
+                // Migration failed, but don't break the system
+                // Log the error if logging is available
+            }
+        }
+
+        /// <summary>
+        /// Checks for migration on first configuration access to avoid circular dependencies.
+        /// </summary>
+        private void CheckForMigrationOnFirstAccess()
+        {
+            if (migrationChecked)
+            {
+                return;
+            }
+
+            migrationChecked = true;
+
+            try
+            {
+                // Only perform migration if PSContentPath experimental feature is enabled
+                // This is safe to call here because ExperimentalFeature will be initialized by now
+                if (!ExperimentalFeature.IsEnabled(ExperimentalFeature.PSContentPath))
+                {
+                    return;
+                }
+
+                CheckAndPerformPSContentPathMigration();
+            }
+            catch
+            {
+                // Migration is best-effort; don't fail config access if it fails
+            }
+        }
+
+        /// <summary>
+        /// Checks if PSContentPath migration is needed and performs it if the experimental feature is enabled.
+        /// </summary>
+        private void CheckAndPerformPSContentPathMigration()
+        {
+            try
+            {
+                string oldConfigFile = Path.Combine(Platform.ConfigDirectory, ConfigFileName);
+                string newConfigFile = Path.Combine(Platform.DefaultPSContentDirectory, ConfigFileName);
+                
+                // If paths are the same, no migration needed
+                if (string.Equals(oldConfigFile, newConfigFile, StringComparison.OrdinalIgnoreCase))
+                {
+                    return;
+                }
+                
+                // Always update to use the new location when experimental feature is enabled
+                string newConfigDir = Path.GetDirectoryName(newConfigFile);
+                
+                // If migration was already completed (new config exists), just update paths
+                if (File.Exists(newConfigFile))
+                {
+                    perUserConfigDirectory = newConfigDir;
+                    perUserConfigFile = newConfigFile;
+                    return;
+                }
+                
+                // If old config exists and needs migration, perform the migration
+                if (File.Exists(oldConfigFile))
+                {
+                    MigrateUserConfig(oldConfigFile, newConfigFile);
+                }
+                else
+                {
+                    // No existing config, but still use new location going forward
+                    perUserConfigDirectory = newConfigDir;
+                    perUserConfigFile = newConfigFile;
+                }
+            }
+            catch
+            {
+                // Migration is best-effort; don't fail PowerShell startup if it fails
+                // The user can manually copy the file if needed
             }
         }
     }
