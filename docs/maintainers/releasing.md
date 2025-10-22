@@ -138,7 +138,7 @@ Without `-Name` specified, the primary `powershell`
 package will instead be created.
 
 [fpm]: https://github.com/jordansissel/fpm
-[man]: ../../assets/pwsh.1.ronn
+[man]: ../../assets/manpage/pwsh.1.ronn
 [ronn]: https://github.com/rtomayko/ronn
 
 ### Build and Packaging Examples
