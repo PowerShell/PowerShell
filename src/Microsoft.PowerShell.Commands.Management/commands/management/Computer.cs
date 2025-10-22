@@ -2019,7 +2019,7 @@ $result
         /// <returns></returns>
         internal static bool IsComputerNameValid(string computerName)
         {
-            bool allDigits = true;
+            bool hasNonDigit = false;
 
             if (computerName.Length >= 64)
                 return false;
@@ -2028,7 +2028,7 @@ $result
             {
                 if (char.IsAsciiLetter(t))
                 {
-                    allDigits = false;
+                    hasNonDigit = true;
                     continue;
                 }
                 else if (char.IsAsciiDigit(t))
@@ -2037,7 +2037,7 @@ $result
                 }
                 else if (t is '-')
                 {
-                    allDigits = false;
+                    hasNonDigit = true;
                     continue;
                 }
                 else
@@ -2046,7 +2046,7 @@ $result
                 }
             }
 
-            return !allDigits;
+            return hasNonDigit;
         }
 
         /// <summary>
