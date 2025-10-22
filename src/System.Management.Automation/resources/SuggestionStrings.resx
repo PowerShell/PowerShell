@@ -123,9 +123,6 @@ PowerShell does not load commands from the current location by default (see 'Get
 
 If you trust this command, run the following command instead:</value>
   </data>
-  <data name="Suggestion_CommandExistsInCurrentDirectory_Legacy" xml:space="preserve">
-    <value>The command "{0}" was not found, but does exist in the current location. PowerShell does not load commands from the current location by default. If you trust this command, instead type: "{1}". See "get-help about_Command_Precedence" for more details.</value>
-  </data>
   <data name="Suggestion_CommandNotFound" xml:space="preserve">
     <value>The most similar commands are:</value>
   </data>
