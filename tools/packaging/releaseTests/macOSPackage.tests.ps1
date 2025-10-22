@@ -46,7 +46,7 @@ Describe "Verify macOS Package" {
             
             $componentPkg = Get-ChildItem -Path $script:expandDir -Filter "*.pkg" -Recurse | Select-Object -First 1
             if ($componentPkg) {
-                Write-Verbose "Extracting payload from: $($componentPkg.DirectoryName)" -Verbose
+                Write-Verbose "Extracting payload from: $($componentPkg.FullName)" -Verbose
                 Push-Location $script:payloadDir
                 try {
                     $payloadFile = "$($componentPkg.DirectoryName)/Payload"
