@@ -69,10 +69,52 @@ namespace System.Management.Automation.Security
     /// Support class for dealing with the Windows Lockdown Policy,
     /// Device Guard, and Constrained PowerShell.
     /// </summary>
-    public sealed class SystemPolicy
+    public sealed partial class SystemPolicy
     {
         private SystemPolicy()
         {
+        }
+
+        private static bool? s_isFilelessEntryDisabled;
+
+        internal static bool IsFilelessEntryDisabled()
+        {
+            if (s_isFilelessEntryDisabled.HasValue)
+            {
+                return s_isFilelessEntryDisabled.Value;
+            }
+
+            const string SettingName = "DisableFilelessEntry";
+            int hr = WldpNativeMethods.WldpGetApplicationSettingBoolean(
+                "Powershell",
+                SettingName,
+                out bool disabled);
+
+            PSEtwLog.LogWDACQueryEvent(
+                "WldpGetApplicationSettingBoolean",
+                SettingName,
+                hr,
+                disabled ? 1 : 0);
+
+            const int NOT_FOUND = unchecked((int)0x80070490);
+            if (hr is NOT_FOUND)
+            {
+                disabled = false;
+            }
+
+            if (!disabled)
+            {
+                string result = Environment.GetEnvironmentVariable(
+                    "__PSLockdownPolicy_DisableFileless",
+                    EnvironmentVariableTarget.Machine);
+                if (result is "1")
+                {
+                    disabled = true;
+                }
+            }
+
+            s_isFilelessEntryDisabled = disabled;
+            return disabled;
         }
 
         /// <summary>
@@ -811,8 +853,16 @@ namespace System.Management.Automation.Security
         /// <summary>
         /// Native methods for dealing with the lockdown policy.
         /// </summary>
-        internal static class WldpNativeMethods
+        internal static partial class WldpNativeMethods
         {
+            [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+            [LibraryImport("wldp.dll", StringMarshalling = StringMarshalling.Utf16)]
+            internal static partial int WldpGetApplicationSettingBoolean(
+                string id,
+                string setting,
+                [MarshalAs(UnmanagedType.Bool)]
+                out bool result);
+
             /// <summary>
             /// Returns a WLDP_EXECUTION_POLICY enum value indicating if and how a script file
             /// should be executed.

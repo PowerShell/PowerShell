@@ -14,6 +14,7 @@ using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
+using System.Management.Automation.Security;
 using System.Security;
 using System.Text;
 
@@ -882,6 +883,11 @@ namespace Microsoft.PowerShell
         {
             if (args.Length == 0)
             {
+                if (SystemPolicy.IsFilelessEntryDisabled())
+                {
+                    SetCommandLineError(CommandLineParameterParserStrings.FilelessEntryNotAllowed);
+                }
+
                 return;
             }
 
@@ -927,6 +933,12 @@ namespace Microsoft.PowerShell
                     _noExit = true;
                     noexitSeen = true;
                     ParametersUsed |= ParameterBitmap.NoExit;
+
+                    if (SystemPolicy.IsFilelessEntryDisabled())
+                    {
+                        SetCommandLineError(CommandLineParameterParserStrings.FilelessEntryNotAllowed);
+                        break;
+                    }
                 }
                 else if (MatchSwitch(switchKey, "noprofile", "nop"))
                 {
@@ -1263,6 +1275,11 @@ namespace Microsoft.PowerShell
                 }
             }
 
+            if (_error is null && (ParametersUsed & ParameterBitmap.File) is 0 && SystemPolicy.IsFilelessEntryDisabled())
+            {
+                SetCommandLineError(CommandLineParameterParserStrings.FilelessEntryNotAllowed);
+            }
+
             Dbg.Assert(
                     ((_exitCode == ConsoleHost.ExitCodeBadCommandLineParameter) && _abortStartup)
                 || (_exitCode == ConsoleHost.ExitCodeSuccess),
@@ -1360,6 +1377,12 @@ namespace Microsoft.PowerShell
             // Process interactive input...
             if (args[i] == "-")
             {
+                if (SystemPolicy.IsFilelessEntryDisabled())
+                {
+                    SetCommandLineError(CommandLineParameterParserStrings.FilelessEntryNotAllowed);
+                    return false;
+                }
+
                 // the arg to -file is -, which is secret code for "read the commands from stdin with prompts"
 
                 _explicitReadCommandsFromStdin = true;
@@ -1492,6 +1515,12 @@ namespace Microsoft.PowerShell
 
         private bool ParseCommand(string[] args, ref int i, bool noexitSeen, bool isEncoded)
         {
+            if (SystemPolicy.IsFilelessEntryDisabled())
+            {
+                SetCommandLineError(CommandLineParameterParserStrings.FilelessEntryNotAllowed);
+                return false;
+            }
+
             if (_commandLineCommand != null)
             {
                 // we've already set the command, so squawk
