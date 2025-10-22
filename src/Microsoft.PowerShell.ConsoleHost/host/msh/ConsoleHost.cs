@@ -148,13 +148,16 @@ namespace Microsoft.PowerShell
             try
             {
                 string profileDir = Platform.CacheDirectory;
-#if !UNIX
-                if (!Directory.Exists(profileDir))
+                if (!string.IsNullOrEmpty(profileDir))
                 {
-                    Directory.CreateDirectory(profileDir);
-                }
+#if !UNIX
+                    if (!Directory.Exists(profileDir))
+                    {
+                        Directory.CreateDirectory(profileDir);
+                    }
 #endif
-                ProfileOptimization.SetProfileRoot(profileDir);
+                    ProfileOptimization.SetProfileRoot(profileDir);
+                }
             }
             catch
             {
