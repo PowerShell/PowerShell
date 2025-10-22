@@ -2031,11 +2031,7 @@ $result
                     hasNonDigit = true;
                     continue;
                 }
-                else if (char.IsAsciiDigit(t))
-                {
-                    continue;
-                }
-                else
+                else if (!char.IsAsciiDigit(t))
                 {
                     return false;
                 }
