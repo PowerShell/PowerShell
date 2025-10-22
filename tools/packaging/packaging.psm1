@@ -1776,12 +1776,19 @@ function New-NativeDeb
         New-Item -ItemType Directory -Path $debianDir -Force | Out-Null
         New-Item -ItemType Directory -Path $dataDir -Force | Out-Null
 
-        # Create control file
+        # Calculate installed size (in KB)
+        $installedSize = 0
+        Get-ChildItem -Path $Staging -Recurse -File | ForEach-Object { $installedSize += $_.Length }
+        $installedSize += (Get-Item $ManGzipFile).Length
+        $installedSizeKB = [Math]::Ceiling($installedSize / 1024)
+        
+        # Create control file with all fields in proper order
         $controlContent = @"
 Package: $Name
 Version: $Version-$Iteration
 Architecture: $HostArchitecture
 Maintainer: PowerShell Team <PowerShellTeam@hotmail.com>
+Installed-Size: $installedSizeKB
 Priority: optional
 Section: shells
 Homepage: https://microsoft.com/powershell
@@ -1789,14 +1796,6 @@ Depends: $(if ($Dependencies) { $Dependencies -join ', ' })
 Description: $Description
 
 "@
-        
-        # Calculate installed size (in KB)
-        $installedSize = 0
-        Get-ChildItem -Path $Staging -Recurse -File | ForEach-Object { $installedSize += $_.Length }
-        $installedSize += (Get-Item $ManGzipFile).Length
-        $installedSizeKB = [Math]::Ceiling($installedSize / 1024)
-        
-        $controlContent = $controlContent.Replace("Depends: ", "Installed-Size: $installedSizeKB`nDepends: ")
         
         $controlFile = Join-Path $debianDir "control"
         $controlContent | Out-File -FilePath $controlFile -Encoding ascii -NoNewline
@@ -1837,16 +1836,21 @@ Description: $Description
         Copy-Item -Path $ManGzipFile -Destination $manDestPath -Force
         Write-Verbose "Copied man page to: $manDestPath" -Verbose
 
-        # Create symlinks
+        # Copy symlinks from temporary locations
         foreach ($link in $LinkInfo) {
             $linkPath = Join-Path $dataDir $link.Destination.TrimStart('/')
             $linkDir = Split-Path $linkPath -Parent
             New-Item -ItemType Directory -Path $linkDir -Force | Out-Null
             
-            # Create relative symlink
-            $relativePath = $link.Source
-            New-Item -ItemType SymbolicLink -Path $linkPath -Target $relativePath -Force | Out-Null
-            Write-Verbose "Created symlink: $linkPath -> $relativePath" -Verbose
+            # Copy the temporary symlink file that was created by New-LinkInfo
+            # The Source contains a temporary symlink that points to the correct target
+            if (Test-Path $link.Source) {
+                # Use bash cp to preserve the symlink
+                bash -c "cp -P '$($link.Source)' '$linkPath'"
+                Write-Verbose "Copied symlink: $linkPath (from $($link.Source))" -Verbose
+            } else {
+                Write-Warning "Symlink source not found: $($link.Source)"
+            }
         }
 
         # Set proper permissions
@@ -1860,10 +1864,10 @@ Description: $Description
             chmod 755 "$pwshPath"
         }
 
-        # Calculate md5sums for all files in data directory
+        # Calculate md5sums for all files in data directory (excluding symlinks)
         $md5sumsFile = Join-Path $debianDir "md5sums"
         $md5Content = ""
-        Get-ChildItem -Path $dataDir -Recurse -File | Where-Object { -not $_.LinkType } | ForEach-Object {
+        Get-ChildItem -Path $dataDir -Recurse -File | Where-Object { -not $_.Target } | ForEach-Object {
             $relativePath = $_.FullName.Substring($dataDir.Length + 1)
             $md5Hash = (Get-FileHash -Path $_.FullName -Algorithm MD5).Hash.ToLower()
             $md5Content += "$md5Hash  $relativePath`n"
@@ -1915,7 +1919,7 @@ Description: $Description
 
 # Get-FpmArguments builds the argument list for the fpm tool.
 # Note: This function is now only used for macOS package creation.
-# DEB packages use New-NativeDeb, and RPM packages use New-RpmSpec/rpmbuild.
+# DEB packages use New-NativeDeb, and RPM packages use rpmbuild directly with spec files.
 function Get-FpmArguments
 {
     param(
@@ -2128,8 +2132,12 @@ function Get-PackageDependencies
 
 function Test-Dependencies
 {
-    # Note: RPM packages no longer require fpm; they use rpmbuild directly
-    # DEB packages no longer require fpm; they use native DEB packaging
+    # Test-Dependencies checks for required packaging tools.
+    # Note: RPM packages use rpmbuild directly (checked in build.psm1)
+    # DEB packages use native tools (dpkg-deb, ar, tar, gzip, md5sum) which are pre-installed
+    # macOS packages still use fpm (installed via build.psm1)
+    # 
+    # This function is maintained for potential future dependency checks.
     $Dependencies = @()
     
     # No longer checking for fpm on Debian-based systems
