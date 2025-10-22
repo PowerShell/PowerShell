@@ -1913,6 +1913,9 @@ Description: $Description
     }
 }
 
+# Get-FpmArguments builds the argument list for the fpm tool.
+# Note: This function is now only used for macOS package creation.
+# DEB packages use New-NativeDeb, and RPM packages use New-RpmSpec/rpmbuild.
 function Get-FpmArguments
 {
     param(
