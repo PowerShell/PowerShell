@@ -46,17 +46,10 @@ namespace System.Management.Automation.Runspaces
                 // and the computed path points to a non-existent or incompatible binary.
                 // Only use the host process if it is pwsh/pwsh.exe to avoid accidentally using a different executable.
                 var processPath = System.Environment.ProcessPath;
-                if (!string.IsNullOrEmpty(processPath))
+                if (!string.IsNullOrEmpty(processPath) && 
+                    Path.GetFileName(processPath) == exeName)
                 {
-                    var processFileName = Path.GetFileName(processPath);
-#if UNIX
-                    if (processFileName == exeName)
-#else
-                    if (processFileName.Equals(exeName, StringComparison.OrdinalIgnoreCase))
-#endif
-                    {
-                        PwshExePath = processPath;
-                    }
+                    PwshExePath = processPath;
                 }
             }
 
