@@ -1329,8 +1329,37 @@ function New-UnixPackage {
                         throw
                     }
                 }
+            } elseif ($Type -eq 'deb') {
+                # Use native DEB package builder
+                if ($PSCmdlet.ShouldProcess("Create DEB package natively")) {
+                    Write-Log "Creating DEB package natively..."
+                    try {
+                        $result = New-NativeDeb `
+                            -Name $Name `
+                            -Version $packageVersion `
+                            -Iteration $Iteration `
+                            -Description $Description `
+                            -Staging $Staging `
+                            -Destination $Destination `
+                            -ManGzipFile $ManGzipInfo.GzipFile `
+                            -ManDestination $ManGzipInfo.ManFile `
+                            -LinkInfo $Links `
+                            -Dependencies $Dependencies `
+                            -AfterInstallScript $AfterScriptInfo.AfterInstallScript `
+                            -AfterRemoveScript $AfterScriptInfo.AfterRemoveScript `
+                            -HostArchitecture $HostArchitecture `
+                            -CurrentLocation $CurrentLocation
+                        
+                        $Output = @("Created package {:path=>""$($result.PackageName)""}")
+                    }
+                    catch {
+                        Write-Verbose -Message "!!!Handling error in native DEB creation!!!" -Verbose -ErrorAction SilentlyContinue
+                        Get-Error -InputObject $_
+                        throw
+                    }
+                }
             } else {
-                # Use fpm for DEB and macOS packages
+                # Use fpm for macOS packages
                 $Arguments = @()
                 
                 $Arguments += Get-FpmArguments `
@@ -1692,6 +1721,192 @@ cp $ManGzipFile `$RPM_BUILD_ROOT$ManDestination
     return $specContent
 }
 
+function New-NativeDeb
+{
+    param(
+        [Parameter(Mandatory,HelpMessage='Package Name')]
+        [String]$Name,
+
+        [Parameter(Mandatory,HelpMessage='Package Version')]
+        [String]$Version,
+
+        [Parameter(Mandatory)]
+        [String]$Iteration,
+
+        [Parameter(Mandatory,HelpMessage='Package description')]
+        [String]$Description,
+
+        [Parameter(Mandatory,HelpMessage='Staging folder for installation files')]
+        [String]$Staging,
+
+        [Parameter(Mandatory,HelpMessage='Install path on target machine')]
+        [String]$Destination,
+
+        [Parameter(Mandatory,HelpMessage='The built and gzipped man file.')]
+        [String]$ManGzipFile,
+
+        [Parameter(Mandatory,HelpMessage='The destination of the man file')]
+        [String]$ManDestination,
+
+        [Parameter(Mandatory,HelpMessage='Symlink to powershell executable')]
+        [LinkInfo[]]$LinkInfo,
+
+        [Parameter(HelpMessage='Packages required to install this package.')]
+        [String[]]$Dependencies,
+
+        [Parameter(HelpMessage='Script to run after the package installation.')]
+        [String]$AfterInstallScript,
+
+        [Parameter(HelpMessage='Script to run after the package removal.')]
+        [String]$AfterRemoveScript,
+
+        [string]$HostArchitecture,
+
+        [string]$CurrentLocation
+    )
+
+    Write-Log "Creating native DEB package..."
+
+    # Create temporary build directory
+    $debBuildRoot = Join-Path $env:HOME "debbuild-$(Get-Random)"
+    $debianDir = Join-Path $debBuildRoot "DEBIAN"
+    $dataDir = Join-Path $debBuildRoot "data"
+    
+    try {
+        New-Item -ItemType Directory -Path $debianDir -Force | Out-Null
+        New-Item -ItemType Directory -Path $dataDir -Force | Out-Null
+
+        # Create control file
+        $controlContent = @"
+Package: $Name
+Version: $Version-$Iteration
+Architecture: $HostArchitecture
+Maintainer: PowerShell Team <PowerShellTeam@hotmail.com>
+Priority: optional
+Section: shells
+Homepage: https://microsoft.com/powershell
+Depends: $(if ($Dependencies) { $Dependencies -join ', ' })
+Description: $Description
+"@
+        
+        # Calculate installed size (in KB)
+        $installedSize = 0
+        Get-ChildItem -Path $Staging -Recurse -File | ForEach-Object { $installedSize += $_.Length }
+        $installedSize += (Get-Item $ManGzipFile).Length
+        $installedSizeKB = [Math]::Ceiling($installedSize / 1024)
+        
+        $controlContent = $controlContent.Replace("Depends: ", "Installed-Size: $installedSizeKB`nDepends: ")
+        
+        $controlFile = Join-Path $debianDir "control"
+        $controlContent | Out-File -FilePath $controlFile -Encoding ascii -NoNewline
+        
+        Write-Verbose "Control file created: $controlFile" -Verbose
+        if ($env:GITHUB_ACTIONS -eq 'true') {
+            Write-Host "::group::DEB Control File Content"
+            Write-Host $controlContent
+            Write-Host "::endgroup::"
+        }
+
+        # Copy postinst script if provided
+        if ($AfterInstallScript -and (Test-Path $AfterInstallScript)) {
+            $postinstFile = Join-Path $debianDir "postinst"
+            Copy-Item -Path $AfterInstallScript -Destination $postinstFile -Force
+            chmod 755 $postinstFile
+            Write-Verbose "Postinst script copied to: $postinstFile" -Verbose
+        }
+
+        # Copy postrm script if provided
+        if ($AfterRemoveScript -and (Test-Path $AfterRemoveScript)) {
+            $postrmFile = Join-Path $debianDir "postrm"
+            Copy-Item -Path $AfterRemoveScript -Destination $postrmFile -Force
+            chmod 755 $postrmFile
+            Write-Verbose "Postrm script copied to: $postrmFile" -Verbose
+        }
+
+        # Copy staging files to data directory
+        $targetPath = Join-Path $dataDir $Destination.TrimStart('/')
+        New-Item -ItemType Directory -Path $targetPath -Force | Out-Null
+        Copy-Item -Path "$Staging/*" -Destination $targetPath -Recurse -Force
+        Write-Verbose "Copied staging files to: $targetPath" -Verbose
+
+        # Copy man page
+        $manDestPath = Join-Path $dataDir $ManDestination.TrimStart('/')
+        $manDestDir = Split-Path $manDestPath -Parent
+        New-Item -ItemType Directory -Path $manDestDir -Force | Out-Null
+        Copy-Item -Path $ManGzipFile -Destination $manDestPath -Force
+        Write-Verbose "Copied man page to: $manDestPath" -Verbose
+
+        # Create symlinks
+        foreach ($link in $LinkInfo) {
+            $linkPath = Join-Path $dataDir $link.Destination.TrimStart('/')
+            $linkDir = Split-Path $linkPath -Parent
+            New-Item -ItemType Directory -Path $linkDir -Force | Out-Null
+            
+            # Create relative symlink
+            $relativePath = $link.Source
+            New-Item -ItemType SymbolicLink -Path $linkPath -Target $relativePath -Force | Out-Null
+            Write-Verbose "Created symlink: $linkPath -> $relativePath" -Verbose
+        }
+
+        # Set proper permissions
+        Write-Verbose "Setting file permissions..." -Verbose
+        Start-NativeExecution {
+            find $dataDir -type d -exec chmod 755 {} \;
+            find $dataDir -type f -exec chmod 644 {} \;
+            chmod 755 "$targetPath/pwsh"
+        }
+
+        # Calculate md5sums for all files in data directory
+        $md5sumsFile = Join-Path $debianDir "md5sums"
+        $md5Content = ""
+        Get-ChildItem -Path $dataDir -Recurse -File | ForEach-Object {
+            $relativePath = $_.FullName.Substring($dataDir.Length + 1)
+            $md5Hash = (Get-FileHash -Path $_.FullName -Algorithm MD5).Hash.ToLower()
+            $md5Content += "$md5Hash  $relativePath`n"
+        }
+        $md5Content | Out-File -FilePath $md5sumsFile -Encoding ascii -NoNewline
+        Write-Verbose "MD5 sums file created: $md5sumsFile" -Verbose
+
+        # Build the package using dpkg-deb
+        $debFileName = "${Name}_${Version}-${Iteration}_${HostArchitecture}.deb"
+        $debFilePath = Join-Path $CurrentLocation $debFileName
+        
+        Write-Verbose "Building DEB package: $debFileName" -Verbose
+        
+        # Copy DEBIAN directory and data files to build root
+        $buildDir = Join-Path $debBuildRoot "build"
+        New-Item -ItemType Directory -Path $buildDir -Force | Out-Null
+        Copy-Item -Path $debianDir -Destination (Join-Path $buildDir "DEBIAN") -Recurse -Force
+        Copy-Item -Path "$dataDir/*" -Destination $buildDir -Recurse -Force
+        
+        # Build package with dpkg-deb
+        $dpkgOutput = bash -c "dpkg-deb --build '$buildDir' '$debFilePath' 2>&1"
+        $exitCode = $LASTEXITCODE
+        
+        if ($exitCode -ne 0) {
+            Write-Verbose "dpkg-deb output: $dpkgOutput" -Verbose
+            throw "dpkg-deb failed with exit code $exitCode"
+        }
+        
+        if (Test-Path $debFilePath) {
+            Write-Log "Successfully created DEB package: $debFileName"
+            return @{
+                PackagePath = $debFilePath
+                PackageName = $debFileName
+            }
+        } else {
+            throw "DEB package file not found after build: $debFilePath"
+        }
+    }
+    finally {
+        # Cleanup temporary directory
+        if (Test-Path $debBuildRoot) {
+            Write-Verbose "Cleaning up temporary build directory: $debBuildRoot" -Verbose
+            Remove-Item -Path $debBuildRoot -Recurse -Force -ErrorAction SilentlyContinue
+        }
+    }
+}
+
 function Get-FpmArguments
 {
     param(
@@ -1905,13 +2120,12 @@ function Get-PackageDependencies
 function Test-Dependencies
 {
     # Note: RPM packages no longer require fpm; they use rpmbuild directly
-    # DEB packages still use fpm
+    # DEB packages no longer require fpm; they use native DEB packaging
     $Dependencies = @()
     
-    # Only check for fpm on Debian-based systems
-    if ($Environment.IsDebianFamily) {
-        $Dependencies += "fpm"
-    }
+    # No longer checking for fpm on Debian-based systems
+    # Native DEB packaging only requires standard tools: dpkg-deb, ar, tar, gzip, md5sum
+    # which are typically pre-installed on Debian-based systems
     
     foreach ($Dependency in $Dependencies) {
         if (!(precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Scenario Package")) {
