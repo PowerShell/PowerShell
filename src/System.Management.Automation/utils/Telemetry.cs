@@ -177,7 +177,8 @@ namespace Microsoft.PowerShell.Telemetry
         static ApplicationInsightsTelemetry()
         {
             // If we can't send telemetry, there's no reason to do any of this
-            CanSendTelemetry = !GetEnvironmentVariableAsBool(name: _telemetryOptoutEnvVar, defaultValue: false);
+            CanSendTelemetry = !GetEnvironmentVariableAsBool(name: _telemetryOptoutEnvVar, defaultValue: false)
+                && Platform.TryDeriveFromCache("telemetry.uuid", out s_uuidPath);
             if (CanSendTelemetry)
             {
                 s_sessionId = Guid.NewGuid().ToString();
