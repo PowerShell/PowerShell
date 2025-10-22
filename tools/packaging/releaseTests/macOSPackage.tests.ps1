@@ -49,7 +49,7 @@ Describe "Verify macOS Package" {
                 Write-Verbose "Extracting payload from: $($componentPkg.FullName)" -Verbose
                 Push-Location $script:payloadDir
                 try {
-                    $payloadFile = Join-Path $componentPkg.DirectoryName "Payload"
+                    $payloadFile = Join-Path $componentPkg.FullName "Payload"
                     Get-Content -Path $payloadFile -Raw -AsByteStream | & cpio -i 2>&1 | Out-Null
                 } finally {
                     Pop-Location
