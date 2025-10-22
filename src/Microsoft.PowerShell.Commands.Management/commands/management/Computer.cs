@@ -2026,17 +2026,16 @@ $result
 
             foreach (char t in computerName)
             {
-                if (t >= 'A' && t <= 'Z' ||
-                    t >= 'a' && t <= 'z')
+                if (char.IsAsciiLetter(t))
                 {
                     allDigits = false;
                     continue;
                 }
-                else if (t >= '0' && t <= '9')
+                else if (char.IsAsciiDigit(t))
                 {
                     continue;
                 }
-                else if (t == '-')
+                else if (t is '-')
                 {
                     allDigits = false;
                     continue;
