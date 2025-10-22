@@ -2018,7 +2018,7 @@ namespace Microsoft.PowerShell.Commands
 
         private object GetLikeRHSOperand(object operand)
         {
-            if (!(operand is string val))
+            if (operand is not string val)
             {
                 return operand;
             }
