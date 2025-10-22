@@ -25,8 +25,15 @@ parameters: # parameters are shown up in ADO UI in a build queue time
     displayName: Skip Copying Archives and Installers to PSInfrastructure Public Location
     type: boolean
     default: false
+  - name: skipMSIXPublish
+    displayName: Skip MSIX Publish
+    type: boolean
+    default: false
+  - name: OfficialBuild
+    type: boolean
+    default: false
 
-name: release-$(BUILD.SOURCEBRANCHNAME)-$(Build.BuildId)
+name: release-$(BUILD.SOURCEBRANCHNAME)-prod.${{ parameters.OfficialBuild }}-$(Build.BuildId)
 
 variables:
   - name: CDP_DEFINITION_BUILD_COUNT
@@ -54,14 +61,21 @@ variables:
   - name: WindowsContainerImage
     value: 'onebranch.azurecr.io/windows/ltsc2022/vse2022:latest'
   - name: LinuxContainerImage
-    value: mcr.microsoft.com/onebranch/cbl-mariner/build:2.0
+    value: mcr.microsoft.com/onebranch/azurelinux/build:3.0
   - name: ReleaseTagVar
     value: ${{ parameters.ReleaseTagVar }}
   - group: PoolNames
+  - name: templateFile
+    value: ${{ iif ( parameters.OfficialBuild, 'v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates', 'v2/OneBranch.NonOfficial.CrossPlat.yml@onebranchTemplates' ) }}
+  - name: releaseEnvironment
+    value: ${{ iif ( parameters.OfficialBuild, 'Production', 'Test' ) }}
+  # Fix for BinSkim ICU package error in Linux containers
+  - name: DOTNET_SYSTEM_GLOBALIZATION_INVARIANT
+    value: true
 
 resources:
   repositories:
-    - repository: templates
+    - repository: onebranchTemplates
       type: git
       name: OneBranch.Pipelines/GovernedTemplates
       ref: refs/heads/main
@@ -83,14 +97,15 @@ resources:
             - releases/*
 
 extends:
-  template: v2/OneBranch.Official.CrossPlat.yml@templates
+  template: ${{ variables.templateFile }}
   parameters:
-    release: 
+    release:
       category: NonAzure
     featureFlags:
       WindowsHostVersion:
         Version: 2022
         Network: KS3
+      incrementalSDLBinaryAnalysis: true
     cloudvault:
       enabled: false
     globalSdl:
@@ -98,9 +113,6 @@ extends:
       # disabled Armory as we dont have any ARM templates to scan. It fails on some sample ARM templates.
       armory:
         enabled: false
-      asyncSdl:
-        enabled: true
-        tsaOptionsFile: .config/tsaoptions.json
       tsa:
         enabled: true
       credscan:
@@ -109,6 +121,7 @@ extends:
         suppressionsFile: $(Build.SourcesDirectory)\.config\suppress.json
       binskim:
         break: false # always break the build on binskim issues in addition to TSA upload
+        exactToolVersion: 4.4.2
       policheck:
         break: true # always break the build on policheck issues. You can disable it by setting to 'false'
       # suppression:
@@ -143,7 +156,7 @@ extends:
         parameters:
           jobName: "LinuxSDK"
           displayName: "Linux SDK Validation"
-          imageName: PSMMSUbuntu20.04-Secure
+          imageName: PSMMSUbuntu22.04-Secure
           poolName: $(ubuntuPool)
 
     - stage: gbltool
@@ -275,11 +288,11 @@ extends:
 
     - stage: PublishGitHubReleaseAndNuget
       displayName: Publish GitHub and Nuget Release
-      dependsOn: 
+      dependsOn:
         - setReleaseTagAndChangelog
         - UpdateChangeLog
       variables:
-        ob_release_environment: Production
+        ob_release_environment: ${{ variables.releaseEnvironment }}
       jobs:
       - template: /.pipelines/templates/release-githubNuget.yml@self
         parameters:
@@ -294,8 +307,8 @@ extends:
           displayName: Push Git Tag
           jobName: PushGitTag
           instructions: |
-            Push the git tag to upstream  
-    
+            Push the git tag to upstream
+
       - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
           displayName: Make Draft Public
@@ -303,10 +316,10 @@ extends:
           jobName: DraftPublic
           instructions: |
             Make the GitHub Release Draft Public
-  
+
     - stage: BlobPublic
       displayName: Make Blob Public
-      dependsOn: 
+      dependsOn:
         - UpdateChangeLog
         - PushGitTagAndMakeDraftPublic
       jobs:
@@ -352,15 +365,16 @@ extends:
             This is typically done by the community 1-2 days after the release.
 
     - stage: PublishMsix
-      dependsOn: PushGitTagAndMakeDraftPublic
+      dependsOn: 
+        - setReleaseTagAndChangelog
+        - PushGitTagAndMakeDraftPublic
       displayName: Publish MSIX to store
+      variables:
+        ob_release_environment: ${{ variables.releaseEnvironment }}
       jobs:
-      - template: /.pipelines/templates/approvalJob.yml@self
+      - template: /.pipelines/templates/release-MSIX-Publish.yml@self
         parameters:
-          displayName: Publish the MSIX Bundle package to store
-          jobName: PublishMsix
-          instructions: |
-            Ask Steve to release MSIX bundle package to Store
+          skipMSIXPublish: ${{ parameters.skipMSIXPublish }}
 
     - stage: PublishVPack
       dependsOn: PushGitTagAndMakeDraftPublic
@@ -395,7 +409,7 @@ extends:
 
     - stage: ChangesToMaster
       displayName: Ensure changes are in GH master
-      dependsOn: 
+      dependsOn:
         - PublishPMC
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
@@ -417,7 +431,7 @@ extends:
 
     - stage: ReleaseClose
       displayName: Finish Release
-      dependsOn: 
+      dependsOn:
         - ReleaseToMU
         - ReleaseSymbols
       jobs:

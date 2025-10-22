@@ -22,7 +22,7 @@ namespace Microsoft.PowerShell.Commands
     /// this class as a wrapper to MemoryStream to lazily initialize. Otherwise, the
     /// content will unnecessarily be read even if there are no consumers for it.
     /// </summary>
-    internal class WebResponseContentMemoryStream : MemoryStream
+    internal sealed class WebResponseContentMemoryStream : MemoryStream
     {
         #region Data
 

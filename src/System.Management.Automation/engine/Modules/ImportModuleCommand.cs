@@ -1371,7 +1371,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private bool IsPs1xmlFileHelper_IsPresentInEntries(RemoteDiscoveryHelper.CimModuleFile cimModuleFile, IEnumerable<string> manifestEntries)
+        private bool IsPs1xmlFileHelper_IsPresentInEntries(RemoteDiscoveryHelper.CimModuleFile cimModuleFile, List<string> manifestEntries)
         {
             const string ps1xmlExt = ".ps1xml";
             string fileName = cimModuleFile.FileName;

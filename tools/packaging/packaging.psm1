@@ -515,6 +515,7 @@ function Start-PSPackage {
                     Architecture = $WindowsRuntime.Split('-')[1]
                     Force = $Force
                     Private = $Private
+                    LTS = $LTS
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create MSIX Package")) {
@@ -887,7 +888,8 @@ function Update-PSSignedBuildFolder
         [string]$BuildPath,
         [Parameter(Mandatory)]
         [string]$SignedFilesPath,
-        [string[]] $RemoveFilter = ('*.pdb', '*.zip', '*.r2rmap')
+        [string[]] $RemoveFilter = ('*.pdb', '*.zip', '*.r2rmap'),
+        [bool]$OfficialBuild = $true
     )
 
     $BuildPathNormalized = (Get-Item $BuildPath).FullName
@@ -943,8 +945,21 @@ function Update-PSSignedBuildFolder
         if ($IsWindows)
         {
             $signature = Get-AuthenticodeSignature -FilePath $signedFilePath
-            if ($signature.Status -ne 'Valid') {
+
+            if ($signature.Status -ne 'Valid' -and $OfficialBuild) {
+                Write-Host "Certificate Issuer: $($signature.SignerCertificate.Issuer)"
+                Write-Host "Certificate Subject: $($signature.SignerCertificate.Subject)"
                 Write-Error "Invalid signature for $signedFilePath"
+            } elseif ($OfficialBuild -eq $false) {
+                if ($signature.Status -eq 'NotSigned') {
+                    Write-Warning "File is not signed: $signedFilePath"
+                } elseif ($signature.SignerCertificate.Issuer -notmatch '^CN=(Microsoft|TestAzureEngBuildCodeSign|Windows Internal Build Tools).*') {
+                    Write-Warning "File signed with test certificate: $signedFilePath"
+                    Write-Host "Certificate Issuer: $($signature.SignerCertificate.Issuer)"
+                    Write-Host "Certificate Subject: $($signature.SignerCertificate.Subject)"
+                } else {
+                    Write-Verbose -Verbose "File properly signed: $signedFilePath"
+                }
             }
         }
         else
@@ -1230,40 +1245,124 @@ function New-UnixPackage {
         # Setup package dependencies
         $Dependencies = @(Get-PackageDependencies @packageDependenciesParams)
 
-        $Arguments = @()
-
-
-        $Arguments += Get-FpmArguments `
-            -Name $Name `
-            -Version $packageVersion `
-            -Iteration $Iteration `
-            -Description $Description `
-            -Type $Type `
-            -Dependencies $Dependencies `
-            -AfterInstallScript $AfterScriptInfo.AfterInstallScript `
-            -AfterRemoveScript $AfterScriptInfo.AfterRemoveScript `
-            -Staging $Staging `
-            -Destination $Destination `
-            -ManGzipFile $ManGzipInfo.GzipFile `
-            -ManDestination $ManGzipInfo.ManFile `
-            -LinkInfo $Links `
-            -AppsFolder $AppsFolder `
-            -Distribution $DebDistro `
-            -HostArchitecture $HostArchitecture `
-            -ErrorAction Stop
-
         # Build package
         try {
-            if ($PSCmdlet.ShouldProcess("Create $type package")) {
-                Write-Log "Creating package with fpm $Arguments..."
-                try {
-                    $Output = Start-NativeExecution { fpm $Arguments }
+            if ($Type -eq 'rpm') {
+                # Use rpmbuild directly for RPM packages
+                if ($PSCmdlet.ShouldProcess("Create RPM package with rpmbuild")) {
+                    Write-Log "Creating RPM package with rpmbuild..."
+                    
+                    # Create rpmbuild directory structure
+                    $rpmBuildRoot = Join-Path $env:HOME "rpmbuild"
+                    $specsDir = Join-Path $rpmBuildRoot "SPECS"
+                    $rpmsDir = Join-Path $rpmBuildRoot "RPMS"
+                    
+                    New-Item -ItemType Directory -Path $specsDir -Force | Out-Null
+                    New-Item -ItemType Directory -Path $rpmsDir -Force | Out-Null
+                    
+                    # Generate RPM spec file
+                    $specContent = New-RpmSpec `
+                        -Name $Name `
+                        -Version $packageVersion `
+                        -Iteration $Iteration `
+                        -Description $Description `
+                        -Dependencies $Dependencies `
+                        -AfterInstallScript $AfterScriptInfo.AfterInstallScript `
+                        -AfterRemoveScript $AfterScriptInfo.AfterRemoveScript `
+                        -Staging $Staging `
+                        -Destination $Destination `
+                        -ManGzipFile $ManGzipInfo.GzipFile `
+                        -ManDestination $ManGzipInfo.ManFile `
+                        -LinkInfo $Links `
+                        -Distribution $DebDistro `
+                        -HostArchitecture $HostArchitecture
+                    
+                    $specFile = Join-Path $specsDir "$Name.spec"
+                    $specContent | Out-File -FilePath $specFile -Encoding ascii
+                    Write-Verbose "Generated spec file: $specFile" -Verbose
+                    
+                    # Log the spec file content
+                    if ($env:GITHUB_ACTIONS -eq 'true') {
+                        Write-Host "::group::RPM Spec File Content"
+                        Write-Host $specContent
+                        Write-Host "::endgroup::"
+                    } else {
+                        Write-Verbose "RPM Spec File Content:`n$specContent" -Verbose
+                    }
+                    
+                    # Build RPM package
+                    try {
+                        # Use bash to properly handle rpmbuild arguments
+                        # Add --target for cross-architecture builds
+                        $targetArch = ""
+                        if ($HostArchitecture -ne "x86_64" -and $HostArchitecture -ne "noarch") {
+                            $targetArch = "--target $HostArchitecture"
+                        }
+                        $buildCmd = "rpmbuild -bb --quiet $targetArch --define '_topdir $rpmBuildRoot' --buildroot '$rpmBuildRoot/BUILDROOT' '$specFile'"
+                        Write-Verbose "Running: $buildCmd" -Verbose
+                        $Output = bash -c $buildCmd 2>&1
+                        $exitCode = $LASTEXITCODE
+                        
+                        if ($exitCode -ne 0) {
+                            throw "rpmbuild failed with exit code $exitCode"
+                        }
+                        
+                        # Find the generated RPM
+                        $rpmFile = Get-ChildItem -Path (Join-Path $rpmsDir $HostArchitecture) -Filter "*.rpm" -ErrorAction Stop | 
+                            Sort-Object -Property LastWriteTime -Descending | 
+                            Select-Object -First 1
+                        
+                        if ($rpmFile) {
+                            # Copy RPM to current location
+                            Copy-Item -Path $rpmFile.FullName -Destination $CurrentLocation -Force
+                            $Output = @("Created package {:path=>""$($rpmFile.Name)""}")
+                        } else {
+                            throw "RPM file not found after build"
+                        }
+                    }
+                    catch {
+                        Write-Verbose -Message "!!!Handling error in rpmbuild!!!" -Verbose -ErrorAction SilentlyContinue
+                        if ($Output) {
+                            Write-Verbose -Message "$Output" -Verbose -ErrorAction SilentlyContinue
+                        }
+                        Get-Error -InputObject $_
+                        throw
+                    }
                 }
-                catch {
-                    Write-Verbose -Message "!!!Handling error in FPM!!!" -Verbose -ErrorAction SilentlyContinue
-                    Write-Verbose -Message "$Output" -Verbose -ErrorAction SilentlyContinue
-                    Get-Error -InputObject $_
-                    throw
+            } else {
+                # Use fpm for DEB and macOS packages
+                $Arguments = @()
+                
+                $Arguments += Get-FpmArguments `
+                    -Name $Name `
+                    -Version $packageVersion `
+                    -Iteration $Iteration `
+                    -Description $Description `
+                    -Type $Type `
+                    -Dependencies $Dependencies `
+                    -AfterInstallScript $AfterScriptInfo.AfterInstallScript `
+                    -AfterRemoveScript $AfterScriptInfo.AfterRemoveScript `
+                    -Staging $Staging `
+                    -Destination $Destination `
+                    -ManGzipFile $ManGzipInfo.GzipFile `
+                    -ManDestination $ManGzipInfo.ManFile `
+                    -LinkInfo $Links `
+                    -AppsFolder $AppsFolder `
+                    -Distribution $DebDistro `
+                    -HostArchitecture $HostArchitecture `
+                    -ErrorAction Stop
+                
+                if ($PSCmdlet.ShouldProcess("Create $type package")) {
+                    Write-Log "Creating package with fpm $Arguments..."
+                    try {
+                        $Output = Start-NativeExecution { fpm $Arguments }
+                    }
+                    catch {
+                        Write-Verbose -Message "!!!Handling error in FPM!!!" -Verbose -ErrorAction SilentlyContinue
+                        Write-Verbose -Message "$Output" -Verbose -ErrorAction SilentlyContinue
+                        Get-Error -InputObject $_
+                        throw
+                    }
                 }
             }
         } finally {
@@ -1280,6 +1379,16 @@ function New-UnixPackage {
                     Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo mv $hack_dest $symlink_dest")) -VerboseOutputOnError
                 }
             }
+            
+            # Clean up rpmbuild directory if it was created
+            if ($Type -eq 'rpm') {
+                $rpmBuildRoot = Join-Path $env:HOME "rpmbuild"
+                if (Test-Path $rpmBuildRoot) {
+                    Write-Verbose "Cleaning up rpmbuild directory: $rpmBuildRoot" -Verbose
+                    Remove-Item -Path $rpmBuildRoot -Recurse -Force -ErrorAction SilentlyContinue
+                }
+            }
+            
             if ($AfterScriptInfo.AfterInstallScript) {
                 Remove-Item -ErrorAction 'silentlycontinue' $AfterScriptInfo.AfterInstallScript -Force
             }
@@ -1422,6 +1531,165 @@ Class LinkInfo
 {
     [string] $Source
     [string] $Destination
+}
+
+function New-RpmSpec
+{
+    param(
+        [Parameter(Mandatory,HelpMessage='Package Name')]
+        [String]$Name,
+
+        [Parameter(Mandatory,HelpMessage='Package Version')]
+        [String]$Version,
+
+        [Parameter(Mandatory)]
+        [String]$Iteration,
+
+        [Parameter(Mandatory,HelpMessage='Package description')]
+        [String]$Description,
+
+        [Parameter(Mandatory,HelpMessage='Staging folder for installation files')]
+        [String]$Staging,
+
+        [Parameter(Mandatory,HelpMessage='Install path on target machine')]
+        [String]$Destination,
+
+        [Parameter(Mandatory,HelpMessage='The built and gzipped man file.')]
+        [String]$ManGzipFile,
+
+        [Parameter(Mandatory,HelpMessage='The destination of the man file')]
+        [String]$ManDestination,
+
+        [Parameter(Mandatory,HelpMessage='Symlink to powershell executable')]
+        [LinkInfo[]]$LinkInfo,
+
+        [Parameter(Mandatory,HelpMessage='Packages required to install this package')]
+        [String[]]$Dependencies,
+
+        [Parameter(Mandatory,HelpMessage='Script to run after the package installation.')]
+        [String]$AfterInstallScript,
+
+        [Parameter(Mandatory,HelpMessage='Script to run after the package removal.')]
+        [String]$AfterRemoveScript,
+
+        [String]$Distribution = 'rhel.7',
+        [string]$HostArchitecture
+    )
+
+    # RPM doesn't allow hyphens in version, so convert them to underscores
+    # e.g., "7.6.0-preview.6" becomes Version: 7.6.0_preview.6
+    $rpmVersion = $Version -replace '-', '_'
+    
+    # Build Release field with distribution suffix (e.g., "1.cm" or "1.rh")
+    # Don't use RPM macros - build the full release string in PowerShell
+    $rpmRelease = "$Iteration.$Distribution"
+
+    $specContent = @"
+# RPM spec file for PowerShell
+# Generated by PowerShell build system
+
+Name:           $Name
+Version:        $rpmVersion
+Release:        $rpmRelease
+Summary:        PowerShell - Cross-platform automation and configuration tool/framework
+License:        MIT
+URL:            https://microsoft.com/powershell
+AutoReq:        no
+
+"@
+
+    # Only add BuildArch if not doing cross-architecture build
+    # For cross-arch builds, we'll rely on --target option
+    if ($HostArchitecture -eq "x86_64" -or $HostArchitecture -eq "noarch") {
+        $specContent += "BuildArch:      $HostArchitecture`n`n"
+    } else {
+        # For cross-architecture builds, don't specify BuildArch in spec
+        # The --target option will handle the architecture
+        
+        # Disable automatic binary stripping for cross-arch builds
+        # The native /bin/strip on x86_64 cannot process ARM64 binaries and would fail with:
+        # "Unable to recognise the format of the input file"
+        # See: https://rpm-software-management.github.io/rpm/manual/macros.html
+        # __strip: This macro controls the command used for stripping binaries during the build process.
+        # /bin/true: A command that does nothing and always exits successfully, effectively bypassing the stripping process.
+        $specContent += "%define __strip /bin/true`n"
+        
+        # Disable debug package generation to prevent strip-related errors
+        # Debug packages require binary stripping which fails for cross-arch builds
+        # See: https://rpm-packaging-guide.github.io/#debugging
+        # See: https://docs.fedoraproject.org/en-US/packaging-guidelines/Debuginfo/#_useless_or_incomplete_debuginfo_packages_due_to_other_reasons
+        $specContent += "%global debug_package %{nil}`n`n"
+    }
+
+    # Add dependencies
+    foreach ($dep in $Dependencies) {
+        $specContent += "Requires:       $dep`n"
+    }
+
+    $specContent += @"
+
+%description
+$Description
+
+%prep
+# No prep needed - files are already staged
+
+%build
+# No build needed - binaries are pre-built
+
+%install
+rm -rf `$RPM_BUILD_ROOT
+mkdir -p `$RPM_BUILD_ROOT$Destination
+mkdir -p `$RPM_BUILD_ROOT$(Split-Path -Parent $ManDestination)
+
+# Copy all files from staging to destination
+cp -r $Staging/* `$RPM_BUILD_ROOT$Destination/
+
+# Copy man page
+cp $ManGzipFile `$RPM_BUILD_ROOT$ManDestination
+
+"@
+
+    # Add symlinks - we need to get the target of the temp symlink
+    foreach ($link in $LinkInfo) {
+        $linkDir = Split-Path -Parent $link.Destination
+        $specContent += "mkdir -p `$RPM_BUILD_ROOT$linkDir`n"
+        # For RPM, we copy the symlink itself (which fpm does by including it in the source)
+        # The symlink at $link.Source points to the actual target, so we'll copy it
+        # The -P flag preserves symlinks rather than copying their targets, which is critical for this operation.
+        $specContent += "cp -P $($link.Source) `$RPM_BUILD_ROOT$($link.Destination)`n"
+    }
+
+    # Post-install script
+    $postInstallContent = Get-Content -Path $AfterInstallScript -Raw
+    $specContent += "`n%post`n"
+    $specContent += $postInstallContent
+    $specContent += "`n"
+
+    # Post-uninstall script
+    $postUninstallContent = Get-Content -Path $AfterRemoveScript -Raw
+    $specContent += "%postun`n"
+    $specContent += $postUninstallContent
+    $specContent += "`n"
+
+    # Files section
+    $specContent += "%files`n"
+    $specContent += "%defattr(-,root,root,-)`n"
+    $specContent += "$Destination/*`n"
+    $specContent += "$ManDestination`n"
+
+    # Add symlinks to files
+    foreach ($link in $LinkInfo) {
+        $specContent += "$($link.Destination)`n"
+    }
+
+    # Changelog with correct date format for RPM
+    $changelogDate = Get-Date -Format "ddd MMM dd yyyy"
+    $specContent += "`n%changelog`n"
+    $specContent += "* $changelogDate PowerShell Team <PowerShellTeam@hotmail.com> - $rpmVersion-$rpmRelease`n"
+    $specContent += "- Automated build`n"
+
+    return $specContent
 }
 
 function Get-FpmArguments
@@ -1598,7 +1866,7 @@ function Get-PackageDependencies
                 "libgssapi-krb5-2",
                 "libstdc++6",
                 "zlib1g",
-                "libicu74|libicu72|libicu71|libicu70|libicu69|libicu68|libicu67|libicu66|libicu65|libicu63|libicu60|libicu57|libicu55|libicu52",
+                "libicu76|libicu74|libicu72|libicu71|libicu70|libicu69|libicu68|libicu67|libicu66|libicu65|libicu63|libicu60|libicu57|libicu55|libicu52",
                 "libssl3|libssl1.1|libssl1.0.2|libssl1.0.0"
             )
 
@@ -1636,7 +1904,16 @@ function Get-PackageDependencies
 
 function Test-Dependencies
 {
-    foreach ($Dependency in "fpm") {
+    # Note: RPM packages no longer require fpm; they use rpmbuild directly
+    # DEB packages still use fpm
+    $Dependencies = @()
+    
+    # Only check for fpm on Debian-based systems
+    if ($Environment.IsDebianFamily) {
+        $Dependencies += "fpm"
+    }
+    
+    foreach ($Dependency in $Dependencies) {
         if (!(precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Scenario Package")) {
             # These tools are not added to the path automatically on OpenSUSE 13.2
             # try adding them to the path and re-tesing first
@@ -3656,6 +3933,9 @@ function New-MSIXPackage
         # Produce private package for testing in Store
         [Switch] $Private,
 
+        # Produce LTS package
+        [Switch] $LTS,
+
         # Force overwrite of package
         [Switch] $Force,
 
@@ -3700,6 +3980,9 @@ function New-MSIXPackage
     } elseif ($ProductSemanticVersion.Contains('-')) {
         $ProductName += 'Preview'
         $displayName += ' Preview'
+    } elseif ($LTS) {
+        $ProductName += '-LTS'
+        $displayName += '-LTS'
     }
 
     Write-Verbose -Verbose "ProductName: $productName"
@@ -3719,6 +4002,10 @@ function New-MSIXPackage
         # This is the PhoneProductId for the "Microsoft.PowerShellPreview" package.
         $PhoneProductId = "67859fd2-b02a-45be-8fb5-62c569a3e8bf"
         Write-Verbose "Using Preview assets" -Verbose
+    } elseif ($LTS) {
+        # This is the PhoneProductId for the "Microsoft.PowerShell-LTS" package.
+        $PhoneProductId = "a9af273a-c636-47ac-bc2a-775edf80b2b9"
+        Write-Verbose "Using LTS assets" -Verbose
     }
 
     # Appx manifest needs to be in root of source path, but the embedded version needs to be updated

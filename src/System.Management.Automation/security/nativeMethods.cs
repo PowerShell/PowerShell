@@ -1287,28 +1287,28 @@ namespace System.Management.Automation.Security
             UNPROTECTED_SACL_SECURITY_INFORMATION = 0x10000000
         }
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        [StructLayout(LayoutKind.Sequential)]
         internal struct LUID
         {
             internal uint LowPart;
             internal uint HighPart;
         }
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        [StructLayout(LayoutKind.Sequential)]
         internal struct LUID_AND_ATTRIBUTES
         {
             internal LUID Luid;
             internal uint Attributes;
         }
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        [StructLayout(LayoutKind.Sequential)]
         internal struct TOKEN_PRIVILEGE
         {
             internal uint PrivilegeCount;
             internal LUID_AND_ATTRIBUTES Privilege;
         }
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        [StructLayout(LayoutKind.Sequential)]
         internal struct ACL
         {
             internal byte AclRevision;
@@ -1318,7 +1318,7 @@ namespace System.Management.Automation.Security
             internal ushort Sbz2;
         }
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        [StructLayout(LayoutKind.Sequential)]
         internal struct ACE_HEADER
         {
             internal byte AceType;
@@ -1326,7 +1326,7 @@ namespace System.Management.Automation.Security
             internal ushort AceSize;
         }
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        [StructLayout(LayoutKind.Sequential)]
         internal struct SYSTEM_AUDIT_ACE
         {
             internal ACE_HEADER Header;
@@ -1334,7 +1334,7 @@ namespace System.Management.Automation.Security
             internal uint SidStart;
         }
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        [StructLayout(LayoutKind.Sequential)]
         internal struct LSA_UNICODE_STRING
         {
             internal ushort Length;
@@ -1342,7 +1342,7 @@ namespace System.Management.Automation.Security
             internal IntPtr Buffer;
         }
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        [StructLayout(LayoutKind.Sequential)]
         internal struct CENTRAL_ACCESS_POLICY
         {
             internal IntPtr CAPID;

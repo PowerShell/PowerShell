@@ -12,6 +12,8 @@ on:
       - github-mirror
     paths:
       - "**"
+      - "*"
+      - ".globalconfig"
       - "!.github/ISSUE_TEMPLATE/**"
       - "!.dependabot/config.yml"
       - "!.pipelines/**"
@@ -21,15 +23,16 @@ on:
       - master
       - release/**
       - github-mirror
+      - "*-feature"
 # Path filters for PRs need to go into the changes job
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: ${{ contains(github.ref, 'merge')}}
 
 env:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
-  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  DOTNET_NOLOGO: 1
   FORCE_FEATURE: 'False'
   FORCE_PACKAGE: 'False'
   NUGET_KEY: none
@@ -50,9 +53,10 @@ jobs:
     # Set job outputs to values from filter step
     outputs:
       source: ${{ steps.filter.outputs.source }}
+      packagingChanged: ${{ steps.filter.outputs.packagingChanged }}
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           persist-credentials: false
 
@@ -69,7 +73,7 @@ jobs:
     if: ${{ needs.changes.outputs.source == 'true' }}
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 1000
 
@@ -84,7 +88,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 1000
       - name: Linux Unelevated CI
@@ -101,7 +105,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 1000
       - name: Linux Elevated CI
@@ -118,7 +122,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 1000
       - name: Linux Unelevated Others
@@ -135,7 +139,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 1000
       - name: Linux Elevated Others
@@ -143,20 +147,15 @@ jobs:
         with:
           purpose: ElevatedPesterTests
           tagSet: Others
-  verify_xunit:
-    name: Verify xUnit test results
+  xunit_tests:
+    name: xUnit Tests
     needs:
-      - ci_build
       - changes
     if: ${{ needs.changes.outputs.source == 'true' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1000
-      - name: Verify xUnit test results
-        uses: "./.github/actions/test/verify_xunit"
+    uses: ./.github/workflows/xunit-tests.yml
+    with:
+      runner_os: ubuntu-latest
+      test_results_artifact_name: testResults-xunit
 
   analyze:
     permissions:
@@ -179,17 +178,17 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
       with:
         fetch-depth: '0'
 
-    - uses: actions/setup-dotnet@v4
+    - uses: actions/setup-dotnet@v5
       with:
         global-json-file: ./global.json
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@fca7ace96b7d713c7035871441bd52efbe39e27e # v3.28.19
+      uses: github/codeql-action/init@16140ae1a102900babc80a33c44059580f687047 # v3.29.5
       with:
         languages: ${{ matrix.language }}
         # If you wish to specify custom queries, you can do so here or in a config file.
@@ -215,35 +214,33 @@ jobs:
       shell: pwsh
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@fca7ace96b7d713c7035871441bd52efbe39e27e # v3.28.19
+      uses: github/codeql-action/analyze@16140ae1a102900babc80a33c44059580f687047 # v3.29.5
 
   ready_to_merge:
     name: Linux ready to merge
     needs:
-      - verify_xunit
+      - xunit_tests
       - linux_test_elevated_ci
       - linux_test_elevated_others
       - linux_test_unelevated_ci
       - linux_test_unelevated_others
       - analyze
+      - linux_packaging
     if: always()
     uses: PowerShell/compliance/.github/workflows/ready-to-merge.yml@v1.0.0
     with:
       needs_context: ${{ toJson(needs) }}
-  # TODO: Enable this when we have a Linux packaging workflow
-
-  # ERROR:  While executing gem ... (Gem::FilePermissionError)
-  # You don't have write permissions for the /var/lib/gems/2.7.0 directory.
-  #   WARNING: Installation of gem dotenv 2.8.1 failed! Must resolve manually.
-
-  # linux_packaging:
-  #   name: Attempt Linux Packaging
-  #   needs: ci_build
-  #   runs-on: ubuntu-20.04
-  #   steps:
-  #     - name: checkout
-  #       uses: actions/checkout@v4
-  #       with:
-  #         fetch-depth: 1000
-  #     - name: Verify xUnit test results
-  #       uses: "./.github/actions/test/linux-packaging"
+  linux_packaging:
+    name: Linux Packaging
+    needs:
+      - ci_build
+      - changes
+    if: ${{ needs.changes.outputs.packagingChanged == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: Linux Packaging
+        uses: "./.github/actions/test/linux-packaging"

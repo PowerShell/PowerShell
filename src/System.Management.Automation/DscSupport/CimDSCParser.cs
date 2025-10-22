@@ -3252,7 +3252,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                         string tempSchemaFilepath = schemaFiles.FirstOrDefault();
 
                         Debug.Assert(schemaFiles.Count() == 1, "A valid DSCResource module can have only one schema mof file");
-                        
+
                         if (tempSchemaFilepath is not null)
                         {
                             var classes = GetCachedClassByFileName(tempSchemaFilepath) ?? ImportClasses(tempSchemaFilepath, new Tuple<string, Version>(module.Name, module.Version), errors);

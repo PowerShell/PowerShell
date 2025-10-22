@@ -15,7 +15,7 @@ namespace Microsoft.PowerShell
     /// <summary>
     /// Executor wraps a Pipeline instance, and provides helper methods for executing commands in that pipeline. It is used to
     /// provide bookkeeping and structure to the use of pipeline in such a way that they can be interrupted and cancelled by a
-    /// break event handler, and to track nesting of pipelines (which happens with interrupted input loops (aka subshells) and 
+    /// break event handler, and to track nesting of pipelines (which happens with interrupted input loops (aka subshells) and
     /// use of tab-completion in prompts). The bookkeeping is necessary because the break handler is static and global, and
     /// there is no means for tying a break handler to an instance of an object.
     ///
