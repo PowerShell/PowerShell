@@ -1787,6 +1787,7 @@ Section: shells
 Homepage: https://microsoft.com/powershell
 Depends: $(if ($Dependencies) { $Dependencies -join ', ' })
 Description: $Description
+
 "@
         
         # Calculate installed size (in KB)
@@ -1850,16 +1851,19 @@ Description: $Description
 
         # Set proper permissions
         Write-Verbose "Setting file permissions..." -Verbose
-        Start-NativeExecution {
-            find $dataDir -type d -exec chmod 755 {} \;
-            find $dataDir -type f -exec chmod 644 {} \;
-            chmod 755 "$targetPath/pwsh"
+        bash -c "find '$dataDir' -type d -exec chmod 755 '{}' \;"
+        bash -c "find '$dataDir' -type f -exec chmod 644 '{}' \;"
+        
+        # Set executable permission for pwsh if it exists
+        $pwshPath = "$targetPath/pwsh"
+        if (Test-Path $pwshPath) {
+            chmod 755 "$pwshPath"
         }
 
         # Calculate md5sums for all files in data directory
         $md5sumsFile = Join-Path $debianDir "md5sums"
         $md5Content = ""
-        Get-ChildItem -Path $dataDir -Recurse -File | ForEach-Object {
+        Get-ChildItem -Path $dataDir -Recurse -File | Where-Object { -not $_.LinkType } | ForEach-Object {
             $relativePath = $_.FullName.Substring($dataDir.Length + 1)
             $md5Hash = (Get-FileHash -Path $_.FullName -Algorithm MD5).Hash.ToLower()
             $md5Content += "$md5Hash  $relativePath`n"
@@ -1876,8 +1880,10 @@ Description: $Description
         # Copy DEBIAN directory and data files to build root
         $buildDir = Join-Path $debBuildRoot "build"
         New-Item -ItemType Directory -Path $buildDir -Force | Out-Null
-        Copy-Item -Path $debianDir -Destination (Join-Path $buildDir "DEBIAN") -Recurse -Force
-        Copy-Item -Path "$dataDir/*" -Destination $buildDir -Recurse -Force
+        
+        # Use bash cp to preserve symlinks
+        bash -c "cp -a '$debianDir' '$buildDir/DEBIAN'"
+        bash -c "cp -a '$dataDir'/* '$buildDir/'"
         
         # Build package with dpkg-deb
         $dpkgOutput = bash -c "dpkg-deb --build '$buildDir' '$debFilePath' 2>&1"
