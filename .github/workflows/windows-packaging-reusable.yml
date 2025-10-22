@@ -119,6 +119,7 @@ jobs:
           path: |
             ${{ github.workspace }}/*_summary.json.txt
             ${{ github.workspace }}/*_results.json.txt
+            ${{ github.workspace }}/*.sarif
             ${{ github.workspace }}/asa.sqlite
 
       - name: Upload Build Artifacts
