@@ -286,8 +286,8 @@ extends:
             Update and merge the changelog for the release.
             This step is required for creating GitHub draft release.
 
-    - stage: PublishGitHubReleaseAndNuget
-      displayName: Publish GitHub and Nuget Release
+    - stage: PublishGitHubRelease
+      displayName: Publish GitHub Release
       dependsOn:
         - setReleaseTagAndChangelog
         - UpdateChangeLog
@@ -295,12 +295,25 @@ extends:
         ob_release_environment: ${{ variables.releaseEnvironment }}
       jobs:
       - template: /.pipelines/templates/release-githubNuget.yml@self
+
+    - stage: PublishNuGet
+      displayName: Publish NuGet
+      dependsOn:
+        - setReleaseTagAndChangelog
+        - UpdateChangeLog
+        - PublishGitHubRelease
+      variables:
+        ob_release_environment: ${{ variables.releaseEnvironment }}
+      jobs:
+      - template: /.pipelines/templates/release-NuGetPublish.yml@self
         parameters:
           skipPublish: ${{ parameters.SkipPublish }}
 
     - stage: PushGitTagAndMakeDraftPublic
       displayName: Push Git Tag and Make Draft Public
-      dependsOn: PublishGitHubReleaseAndNuget
+      dependsOn:
+        - PublishGitHubRelease
+        - PublishNuGet
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
