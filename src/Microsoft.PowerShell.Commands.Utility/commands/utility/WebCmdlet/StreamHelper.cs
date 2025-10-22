@@ -415,7 +415,7 @@ namespace Microsoft.PowerShell.Commands
         internal static void SaveStreamToFile(Stream stream, string filePath, PSCmdlet cmdlet, long? contentLength, TimeSpan perReadTimeout, CancellationToken cancellationToken)
         {
             // If the web cmdlet should resume, append the file instead of overwriting.
-            FileMode fileMode = cmdlet is WebRequestPSCmdlet webCmdlet && webCmdlet.ShouldResume ? FileMode.Append : FileMode.Create;
+            FileMode fileMode = ((cmdlet is WebRequestPSCmdlet webCmdlet && webCmdlet.ShouldResume)) ? FileMode.Append : FileMode.Create;
             using FileStream output = new(filePath, fileMode, FileAccess.Write, FileShare.Read);
             WriteToStream(stream, output, cmdlet, contentLength, perReadTimeout, cancellationToken);
         }

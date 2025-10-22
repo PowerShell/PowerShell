@@ -624,8 +624,8 @@ namespace Microsoft.PowerShell.Commands
             object statValue = statMinOrMaxValue;
 
             double temp;
-            currentValue = ((objValue != null) && LanguagePrimitives.TryConvertTo<double>(objValue, out temp)) ? temp : currentValue;
-            statValue = ((statValue != null) && LanguagePrimitives.TryConvertTo<double>(statValue, out temp)) ? temp : statValue;
+            currentValue = (((objValue != null) && LanguagePrimitives.TryConvertTo<double>(objValue, out temp))) ? temp : currentValue;
+            statValue = (((statValue != null) && LanguagePrimitives.TryConvertTo<double>(statValue, out temp))) ? temp : statValue;
 
             if (currentValue != null && statValue != null && !currentValue.GetType().Equals(statValue.GetType()))
             {

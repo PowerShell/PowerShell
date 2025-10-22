@@ -116,7 +116,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (_inputObjects.Count > 0)
             {
-                object objectToProcess = (_inputObjects.Count > 1 || AsArray) ? (_inputObjects.ToArray() as object) : _inputObjects[0];
+                object objectToProcess = ((_inputObjects.Count > 1 || AsArray)) ? (_inputObjects.ToArray() as object) : _inputObjects[0];
 
                 var context = new JsonObject.ConvertToJsonContext(
                     Depth,
