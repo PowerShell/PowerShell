@@ -2026,18 +2026,13 @@ $result
 
             foreach (char t in computerName)
             {
-                if (char.IsAsciiLetter(t))
+                if (t is '-' || char.IsAsciiLetter(t))
                 {
                     hasNonDigit = true;
                     continue;
                 }
                 else if (char.IsAsciiDigit(t))
                 {
-                    continue;
-                }
-                else if (t is '-')
-                {
-                    hasNonDigit = true;
                     continue;
                 }
                 else
