@@ -2282,7 +2282,12 @@ function Start-PSBootstrap {
         [switch]$BuildLinuxArm,
         [switch]$Force,
         [Parameter(Mandatory = $true)]
-        [ValidateSet("Package", "DotNet", "Both", "Tools")]
+        # Package: Install dependencies for packaging tools (fpm, rpmbuild, WiX)
+        # DotNet: Install the .NET SDK
+        # Both: Install both packaging and .NET SDK dependencies
+        # Tools: Install .NET global tools (e.g., dotnet-format)
+        # All: Install all dependencies (packaging, .NET SDK, and tools)
+        [ValidateSet("Package", "DotNet", "Both", "Tools", "All")]
         [string]$Scenario = "Package"
     )
 
@@ -2402,7 +2407,7 @@ function Start-PSBootstrap {
 
             # Install [fpm](https://github.com/jordansissel/fpm)
             # Note: fpm is now only needed for DEB and macOS packages; RPM packages use rpmbuild directly
-            if ($Scenario -eq 'Both' -or $Scenario -eq 'Package') {
+            if ($Scenario -in 'All', 'Both', 'Package') {
                 # Install fpm on Debian-based systems, macOS, and Mariner (where DEB packages are built)
                 if (($environment.IsLinux -and ($environment.IsDebianFamily -or $environment.IsMariner)) -or $environment.IsMacOS) {
                     Install-GlobalGem -Sudo $sudo -GemName "dotenv" -GemVersion "2.8.1"
@@ -2422,7 +2427,7 @@ function Start-PSBootstrap {
             }
         }
 
-        if ($Scenario -eq 'DotNet' -or $Scenario -eq 'Both') {
+        if ($Scenario -in 'All', 'Both', 'DotNet') {
 
             Write-Verbose -Verbose "Calling Find-Dotnet from Start-PSBootstrap"
 
@@ -2479,7 +2484,7 @@ function Start-PSBootstrap {
             }
         }
 
-        if ($Scenario -eq 'Tools') {
+        if ($Scenario -in 'All', 'Tools') {
             Write-Log -message "Installing .NET global tools"
 
             # Ensure dotnet is available
