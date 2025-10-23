@@ -27,26 +27,28 @@ jobs:
           Import-Module ./build.psm1 -Verbose -ErrorAction Stop
           Write-LogGroupEnd -Title $title
           
-          $title = 'Bootstrap'
+          $title = 'Switch to public feed'
           Write-LogGroupStart -Title $title
-          # Switch to public sources in CI
-          Start-PSBootstrap -scenario dotnet
+          Switch-PSNugetConfig -Source Public
           Write-LogGroupEnd -Title $title
 
-          $title = 'switch to public feed'
+          $title = 'Bootstrap'
           Write-LogGroupStart -Title $title
-          # Switch to public sources in CI
-          Switch-PSNugetConfig -Source Public
-          Write-LogGroupEnd -title $title
+          Start-PSBootstrap -Scenario DotNet
+          Write-LogGroupEnd -Title $title
+          
+          $title = 'Install .NET Tools'
+          Write-LogGroupStart -Title $title
+          Start-PSBootstrap -Scenario Tools
+          Write-LogGroupEnd -Title $title
 
           $title = 'Sync Tags'
           Write-LogGroupStart -Title $title
           Sync-PSTags -AddRemoteIfMissing
-          Write-LogGroupEnd -title $title
-
+          Write-LogGroupEnd -Title $title
           
           $title = 'Setup .NET environment variables'
           Write-LogGroupStart -Title $title
           Find-DotNet -SetDotnetRoot
-          Write-LogGroupEnd -title $title
+          Write-LogGroupEnd -Title $title
         shell: pwsh
