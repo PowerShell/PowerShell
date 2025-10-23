@@ -2773,9 +2773,11 @@ function Find-Dotnet {
     }
 
     if (-not (precheck 'dotnet' "Still could not find 'dotnet', restoring PATH.")) {
+        # Give up, restore original PATH.  There is nothing to persist since we didn't make a change.
         $env:PATH = $originalPath
     }
     elseif ($SetDotnetRoot) {
+        # If we found dotnet, also add the global tools path to PATH
         # Add .NET global tools to PATH when setting up the environment
         $dotnetToolsPath = Join-Path $dotnetPath "tools"
         if (Test-Path $dotnetToolsPath) {
