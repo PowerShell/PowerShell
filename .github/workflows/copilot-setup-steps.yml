@@ -19,17 +19,34 @@ jobs:
         with:
           fetch-depth: 1000
           
-      - uses: actions/setup-dotnet@v4
-        with:
-          global-json-file: ./global.json
-          
       - name: Bootstrap
         if: success()
         run: |-
-          Write-Verbose -Verbose "Running Bootstrap..."
-          Import-Module .\tools\ci.psm1
-          Invoke-CIInstall -SkipUser
-          Write-Verbose -Verbose "Start Sync-PSTags"
+          $title = 'Import Build.psm1'
+          Write-Host "::group::$title"
+          Import-Module ./build.psm1 -Verbose -ErrorAction Stop
+          Write-LogGroupEnd -Title $title
+          
+          $title = 'Bootstrap'
+          Write-LogGroupStart -Title $title
+          # Switch to public sources in CI
+          Start-PSBootstrap -scenario dotnet
+          Write-LogGroupEnd -Title $title
+
+          $title = 'switch to public feed'
+          Write-LogGroupStart -Title $title
+          # Switch to public sources in CI
+          Switch-PSNugetConfig -Source Public
+          Write-LogGroupEnd -title $title
+
+          $title = 'Sync Tags'
+          Write-LogGroupStart -Title $title
           Sync-PSTags -AddRemoteIfMissing
-          Write-Verbose -Verbose "End Sync-PSTags"
+          Write-LogGroupEnd -title $title
+
+          
+          $title = 'Setup .NET environment variables'
+          Write-LogGroupStart -Title $title
+          Find-DotNet -SetDotnetRoot
+          Write-LogGroupEnd -title $title
         shell: pwsh
