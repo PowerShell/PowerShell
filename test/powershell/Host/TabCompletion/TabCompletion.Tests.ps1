@@ -4012,4 +4012,14 @@ Describe "WSMan Config Provider tab complete tests" -Tags Feature,RequireAdminOn
         # https://github.com/PowerShell/PowerShell/issues/4744
         # TODO: move to test cases above once working
     }
+
+    It "[CompletionCompleters]::CompleteFilename should not throw NullReferenceException with empty string" {
+        # This test verifies the fix for a bug where CompleteFilename("") would throw NullReferenceException
+        # because context.RelatedAsts was null when called via the public API
+        { [System.Management.Automation.CompletionCompleters]::CompleteFilename("") } | Should -Not -Throw
+        
+        # Verify it returns results (may be empty or contain current directory items)
+        $result = [System.Management.Automation.CompletionCompleters]::CompleteFilename("")
+        $result | Should -Not -BeNullOrEmpty
+    }
 }
