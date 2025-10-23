@@ -4580,13 +4580,20 @@ namespace System.Management.Automation
                     return CommandCompletion.EmptyCompletionResult;
                 }
 
-                var lastAst = context.RelatedAsts[^1];
-                if (lastAst.Parent is UsingStatementAst usingStatement
-                    && usingStatement.UsingStatementKind is UsingStatementKind.Module or UsingStatementKind.Assembly
-                    && lastAst.Extent.File is not null)
+                if (context.RelatedAsts != null && context.RelatedAsts.Count > 0)
                 {
-                    relativeBasePath = Directory.GetParent(lastAst.Extent.File).FullName;
-                    _ = currentPS.AddParameter("RelativeBasePath", relativeBasePath);
+                    var lastAst = context.RelatedAsts[^1];
+                    if (lastAst.Parent is UsingStatementAst usingStatement
+                        && usingStatement.UsingStatementKind is UsingStatementKind.Module or UsingStatementKind.Assembly
+                        && lastAst.Extent.File is not null)
+                    {
+                        relativeBasePath = Directory.GetParent(lastAst.Extent.File).FullName;
+                        _ = currentPS.AddParameter("RelativeBasePath", relativeBasePath);
+                    }
+                    else
+                    {
+                        relativeBasePath = context.ExecutionContext.SessionState.Internal.CurrentLocation.ProviderPath;
+                    }
                 }
                 else
                 {
