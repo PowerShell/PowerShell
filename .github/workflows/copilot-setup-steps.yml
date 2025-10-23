@@ -7,7 +7,7 @@ jobs:
   # The job MUST be called `copilot-setup-steps` or it will not be picked up by Copilot.
   # See https://docs.github.com/en/copilot/customizing-copilot/customizing-the-development-environment-for-copilot-coding-agent
   copilot-setup-steps:
-    runs-on: 8-core-ubuntu-latest
+    runs-on: ubuntu-latest
 
     permissions:
       contents: read
