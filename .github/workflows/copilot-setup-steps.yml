@@ -1,7 +1,14 @@
 name: "Copilot Setup Steps"
 
 # Allow testing of the setup steps from your repository's "Actions" tab.
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+
+  pull_request:
+    branches:
+      - master
+    paths:
+      - ".github/workflows/copilot-setup-steps.yml"
 
 jobs:
   # The job MUST be called `copilot-setup-steps` or it will not be picked up by Copilot.
@@ -18,7 +25,7 @@ jobs:
       - uses: actions/checkout@v5
         with:
           fetch-depth: 1000
-          
+
       - name: Bootstrap
         if: success()
         run: |-
@@ -26,7 +33,7 @@ jobs:
           Write-Host "::group::$title"
           Import-Module ./build.psm1 -Verbose -ErrorAction Stop
           Write-LogGroupEnd -Title $title
-          
+
           $title = 'Switch to public feed'
           Write-LogGroupStart -Title $title
           Switch-PSNugetConfig -Source Public
@@ -36,7 +43,7 @@ jobs:
           Write-LogGroupStart -Title $title
           Start-PSBootstrap -Scenario DotNet
           Write-LogGroupEnd -Title $title
-          
+
           $title = 'Install .NET Tools'
           Write-LogGroupStart -Title $title
           Start-PSBootstrap -Scenario Tools
@@ -46,7 +53,7 @@ jobs:
           Write-LogGroupStart -Title $title
           Sync-PSTags -AddRemoteIfMissing
           Write-LogGroupEnd -Title $title
-          
+
           $title = 'Setup .NET environment variables'
           Write-LogGroupStart -Title $title
           Find-DotNet -SetDotnetRoot
