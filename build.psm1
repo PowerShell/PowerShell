@@ -2284,7 +2284,7 @@ function Start-PSBootstrap {
         [Parameter(Mandatory = $true)]
         # Package: Install dependencies for packaging tools (fpm, rpmbuild, WiX)
         # DotNet: Install the .NET SDK
-        # Both: Install both packaging and .NET SDK dependencies
+        # Both: Package and DotNet scenarios
         # Tools: Install .NET global tools (e.g., dotnet-format)
         # All: Install all dependencies (packaging, .NET SDK, and tools)
         [ValidateSet("Package", "DotNet", "Both", "Tools", "All")]
