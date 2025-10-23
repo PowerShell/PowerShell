@@ -193,12 +193,20 @@
   <PropertyGroup Condition=" '$(AppDeployment)' == 'FxDependentDeployment' ">
     <!-- If we specify Environment too, it searches that first, no matter what order we specify-->
     <AppHostDotNetSearch>Global</AppHostDotNetSearch>
+  </PropertyGroup>
+
+  <!-- Enable ready-to-run only for Release configuration -->
+  <PropertyGroup Condition=" '$(AppDeployment)' == 'FxDependentDeployment' And '$(Configuration)' == 'Release' ">
     <PublishReadyToRun>true</PublishReadyToRun>
     <PublishReadyToRunEmitSymbols>true</PublishReadyToRunEmitSymbols>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(AppDeployment)' == 'SelfContained' ">
     <AppHostDotNetSearch>AppLocal</AppHostDotNetSearch>
+  </PropertyGroup>
+
+  <!-- Enable ready-to-run only for Release configuration -->
+  <PropertyGroup Condition=" '$(AppDeployment)' == 'SelfContained' And '$(Configuration)' == 'Release' ">
     <PublishReadyToRun>true</PublishReadyToRun>
     <PublishReadyToRunEmitSymbols>true</PublishReadyToRunEmitSymbols>
   </PropertyGroup>
