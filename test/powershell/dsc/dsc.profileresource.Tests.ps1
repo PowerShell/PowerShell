@@ -3,6 +3,14 @@
 
 Describe "DSC PowerShell Profile Resource Tests" -Tag "CI" {
     BeforeAll {
+        $DSC_ROOT = $env:DSC_ROOT
+
+        if (-not (Test-Path -Path $DSC_ROOT)) {
+            throw "DSC_ROOT environment variable is not set or path does not exist."
+        }
+
+        $env:PATH += ";$DSC_ROOT"
+
         # Ensure DSC v3 is available
         if (-not (Get-Command -name dsc -CommandType Application -ErrorAction SilentlyContinue)) {
             throw "DSC v3 is not installed"
@@ -86,6 +94,14 @@ Describe "DSC PowerShell Profile Resource Tests" -Tag "CI" {
 
 Describe "DSC PowerShell Profile resource elevated tests" -Tag "CI", 'RequireAdminOnWindows', 'RequireSudoOnUnix' {
     BeforeAll {
+        $DSC_ROOT = $env:DSC_ROOT
+
+        if (-not (Test-Path -Path $DSC_ROOT)) {
+            throw "DSC_ROOT environment variable is not set or path does not exist."
+        }
+
+        $env:PATH += ";$DSC_ROOT"
+
         # Ensure DSC v3 is available
         if (-not (Get-Command -name dsc -CommandType Application -ErrorAction SilentlyContinue)) {
             throw "DSC v3 is not installed"
