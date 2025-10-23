@@ -1,6 +1,20 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+# This test validates that GitHub Actions workflows and composite actions
+# that use setup-dotnet are properly configured to use the .NET SDK version
+# specified in the global.json file at the repository root.
+#
+# The test ensures:
+# 1. global.json exists and contains a valid SDK version
+# 2. All workflow and action files using setup-dotnet reference the global-json-file parameter
+# 3. The global-json-file parameter points to the correct global.json file
+#
+# This prevents issues where workflows might:
+# - Use a different .NET SDK version than intended
+# - Fail to specify a version and get an unpredictable default version
+# - Have inconsistent .NET SDK versions across different workflows
+
 Describe "GitHub Actions Workflow .NET Version Configuration" -Tags CI {
     BeforeAll {
         $repoRoot = (Resolve-Path "$PSScriptRoot/../../..").Path
