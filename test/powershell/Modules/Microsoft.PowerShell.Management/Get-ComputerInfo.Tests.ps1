@@ -753,6 +753,14 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
         return [string[]]$osPagingFiles
     }
 
+    function Get-UnixSecondsToDateTime
+    {
+        param([string]$seconds)
+
+        $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
+        $origin.AddSeconds($seconds)
+    }
+
     function Get-WinNtCurrentVersion
     {
         # This method was translated/converted from cmdlet impl method = RegistryInfo.GetWinNtCurrentVersion();
@@ -761,17 +769,20 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
         $key = 'HKLM:\Software\Microsoft\Windows NT\CurrentVersion\'
         $regValue = (Get-ItemProperty -Path $key -Name $propertyName -ErrorAction SilentlyContinue).$propertyName
 
-        if ($null -eq $regValue)
-        {
-            return $null
-        }
-
         if ($propertyName -eq "InstallDate")
         {
-            return [DateTimeOffset]::FromUnixTimeSeconds($regValue).DateTime
+            # more complicated case: InstallDate
+            if ($regValue)
+            {
+                return Get-UnixSecondsToDateTime $regValue
+            }
+        }
+        else
+        {
+            return $regValue
         }
 
-        return $regValue
+        return $null
     }
 
     function Get-ExpectedComputerInfoValue
