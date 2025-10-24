@@ -67,6 +67,9 @@ runs:
         $extractSubFolder = "${{ inputs.extractSubFolder }}"
         $environmentVariable = "${{ inputs.environmentVariable }}"
 
+        Import-Module ./build.psm1
+        Switch-PSNugetConfig -Source Public
+
         Write-Host "Installing Azure DevOps CLI..."
         dotnet tool install --global Azure.DevOps.CLI
 

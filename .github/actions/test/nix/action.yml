@@ -45,14 +45,36 @@ runs:
     with:
       global-json-file: ./global.json
 
+  - name: Set Package Name by Platform
+    id: set_package_name
+    shell: pwsh
+    run: |-
+      $platform = $env.RUNNER_OS
+      if ($platform -eq 'Linux') {
+        $package = "microsoft.dsc-linux"
+        $packageName = 'DSC-{version}-x86_64-linux.tar.gz'
+      } elseif ($platform -eq 'macOS') {
+        $package = "microsoft.dsc-macos"
+        $packageName = 'DSC-{version}-x86_64-osx.tar.gz'
+      } elseif ($platform -eq 'Windows') {
+        $package = "microsoft.dsc-windows"
+        $packageName = 'DSC-{version}-x86_64-win.zip'
+      } else {
+        throw "Unsupported platform: $platform"
+      }
+      echo "packageFileName=$packageName" >> $env.GITHUB_OUTPUT
+      echo "package=$package" >> $env.GITHUB_OUTPUT
+      echo "::set-output name=packageFileName::$packageName"
+      echo "::set-output name=package::$package"
+
   - name: Install Universal Package from Azure DevOps Feed
     uses: "./.github/actions/install-azure-devops-package"
     with:
       feed: "PowerShell-Universal"
-      package: "microsoft.dsc-linux"
+      package: "${{ steps.set_package_name.outputs.package }}"
       version: "3.2.0-preview.6"
       project: "2972bb5c-f20c-4a60-8bd9-00ffe9987edc"
-      packageFileName: "DSC-{version}-x86_64-linux.tar.gz"
+      packageFileName: "${{ steps.set_package_name.outputs.packageFileName }}"
       extractSubFolder: "DSC"
       environmentVariable: "DSC_ROOT"
 
