@@ -2316,7 +2316,9 @@ function Start-PSBootstrap {
                 elseif ($environment.IsUbuntu18) { $Deps += "libicu60"}
 
                 # Packaging tools
-                if ($Scenario -eq 'Both' -or $Scenario -eq 'Package') { $Deps += "ruby-dev", "groff", "libffi-dev", "rpm", "g++", "make" }
+                # Note: ruby-dev, libffi-dev, g++, and make are no longer needed for DEB packaging
+                # DEB packages now use native dpkg-deb (pre-installed)
+                if ($Scenario -eq 'Both' -or $Scenario -eq 'Package') { $Deps += "groff", "rpm" }
 
                 # Install dependencies
                 # change the fontend from apt-get to noninteractive
@@ -2340,7 +2342,9 @@ function Start-PSBootstrap {
                 $Deps += "libicu", "openssl-libs"
 
                 # Packaging tools
-                if ($Scenario -eq 'Both' -or $Scenario -eq 'Package') { $Deps += "ruby-devel", "rpm-build", "groff", 'libffi-devel', "gcc-c++" }
+                # Note: ruby-devel and libffi-devel are no longer needed
+                # RPM packages use rpmbuild, DEB packages use dpkg-deb
+                if ($Scenario -eq 'Both' -or $Scenario -eq 'Package') { $Deps += "rpm-build", "groff" }
 
                 $PackageManager = Get-RedHatPackageManager
 
@@ -2361,7 +2365,8 @@ function Start-PSBootstrap {
                 $Deps += "wget"
 
                 # Packaging tools
-                if ($Scenario -eq 'Both' -or $Scenario -eq 'Package') { $Deps += "ruby-devel", "rpmbuild", "groff", 'libffi-devel', "gcc" }
+                # Note: ruby-devel and libffi-devel are no longer needed for packaging
+                if ($Scenario -eq 'Both' -or $Scenario -eq 'Package') { $Deps += "rpmbuild", "groff" }
 
                 $PackageManager = "zypper --non-interactive install"
                 $baseCommand = "$sudo $PackageManager"
@@ -2401,10 +2406,10 @@ function Start-PSBootstrap {
             }
 
             # Install [fpm](https://github.com/jordansissel/fpm)
-            # Note: fpm is now only needed for DEB and macOS packages; RPM packages use rpmbuild directly
+            # Note: fpm is now only needed for macOS packages; RPM and DEB packages use native builders
             if ($Scenario -eq 'Both' -or $Scenario -eq 'Package') {
-                # Install fpm on Debian-based systems, macOS, and Mariner (where DEB packages are built)
-                if (($environment.IsLinux -and ($environment.IsDebianFamily -or $environment.IsMariner)) -or $environment.IsMacOS) {
+                # Install fpm only on macOS
+                if ($environment.IsMacOS) {
                     Install-GlobalGem -Sudo $sudo -GemName "dotenv" -GemVersion "2.8.1"
                     Install-GlobalGem -Sudo $sudo -GemName "ffi" -GemVersion "1.16.3"
                     Install-GlobalGem -Sudo $sudo -GemName "fpm" -GemVersion "1.15.1"
@@ -2417,6 +2422,15 @@ function Start-PSBootstrap {
                     if (!(Get-Command rpmbuild -ErrorAction SilentlyContinue)) {
                         Write-Warning "rpmbuild not found. Installing rpm-build package..."
                         Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo $PackageManager install -y rpm-build")) -IgnoreExitcode
+                    }
+                }
+                
+                # For Debian-based systems, ensure dpkg-deb is available (usually pre-installed)
+                if ($environment.IsLinux -and $environment.IsDebianFamily) {
+                    Write-Verbose -Verbose "Checking for dpkg-deb..."
+                    if (!(Get-Command dpkg-deb -ErrorAction SilentlyContinue)) {
+                        Write-Warning "dpkg-deb not found. Installing dpkg package..."
+                        Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo apt-get install -y dpkg")) -IgnoreExitcode
                     }
                 }
             }
