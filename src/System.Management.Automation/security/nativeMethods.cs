@@ -761,8 +761,7 @@ namespace System.Management.Automation.Security
 
             si.dwSize = (DWORD)Marshal.SizeOf(si);
             si.dwSubjectChoice = (DWORD)SignInfoSubjectChoice.CRYPTUI_WIZ_DIGITAL_SIGN_SUBJECT_FILE;
-            // Add extended path prefix for long paths to support paths >= 260 characters
-            si.pwszFileName = PathUtils.EnsureExtendedPrefixIfNeeded(fileName);
+            si.pwszFileName = fileName;
             si.dwSigningCertChoice = (DWORD)SignInfoCertChoice.CRYPTUI_WIZ_DIGITAL_SIGN_CERT;
             si.pSigningCertContext = signingCert.Handle;
             si.pwszTimestampURL = timeStampServerUrl;
