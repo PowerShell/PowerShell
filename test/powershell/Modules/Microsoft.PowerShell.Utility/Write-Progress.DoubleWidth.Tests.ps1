@@ -54,7 +54,7 @@ Describe 'Write-Progress with double-width characters' -Tags 'CI' {
         $progressRecord = $th.UI.Streams.Progress[0]
         $progressRecord.Activity | Should -Be '下载'
         $progressRecord.StatusDescription | Should -Match '正在下载文件'
-    }    
+    }
     It 'Should handle mixed ASCII and double-width characters' {
         $result = $ps.AddScript("Write-Progress -Activity 'Processing' -Status 'Processing ファイル 123 items 日本語' -PercentComplete 60").Invoke()
         $th.UI.Streams.Progress.Count | Should -Be 1
