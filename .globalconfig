@@ -574,6 +574,10 @@ dotnet_diagnostic.CA2016.severity = suggestion
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2021
 dotnet_diagnostic.CA2021.severity = warning
 
+# CA2022: Avoid inexact read with 'Stream.Read'
+# https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2022
+dotnet_diagnostic.CA2022.severity = warning
+
 # CA2100: Review SQL queries for security vulnerabilities
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2100
 dotnet_diagnostic.CA2100.severity = none
