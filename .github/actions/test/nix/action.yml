@@ -49,16 +49,14 @@ runs:
     id: set_package_name
     shell: pwsh
     run: |-
-      $platform = $env.RUNNER_OS
+      $platform = $env:RUNNER_OS
+      Write-Host "Runner platform: $platform"
       if ($platform -eq 'Linux') {
         $package = "microsoft.dsc-linux"
         $packageName = 'DSC-{version}-x86_64-linux.tar.gz'
       } elseif ($platform -eq 'macOS') {
         $package = "microsoft.dsc-macos"
         $packageName = 'DSC-{version}-x86_64-osx.tar.gz'
-      } elseif ($platform -eq 'Windows') {
-        $package = "microsoft.dsc-windows"
-        $packageName = 'DSC-{version}-x86_64-win.zip'
       } else {
         throw "Unsupported platform: $platform"
       }
