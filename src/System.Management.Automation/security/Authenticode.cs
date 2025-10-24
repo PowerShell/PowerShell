@@ -455,9 +455,12 @@ namespace System.Management.Automation
                 dwStateAction = WinTrustAction.WTD_STATEACTION_VERIFY,
             };
 
+            // Add extended path prefix for long paths to support paths >= 260 characters
+            string fileNameForApi = PathUtils.EnsureExtendedPrefixIfNeeded(fileName);
+
             unsafe
             {
-                fixed (char* fileNamePtr = fileName)
+                fixed (char* fileNamePtr = fileNameForApi)
                 {
                     if (fileContent == null)
                     {
