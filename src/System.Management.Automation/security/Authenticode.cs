@@ -160,9 +160,6 @@ namespace System.Management.Automation
             SecuritySupport.CheckIfFileExists(fileName);
             // SecurityUtils.CheckIfFileSmallerThan4Bytes(fileName);
 
-            // Add extended path prefix for long paths to support paths >= 260 characters
-            string fileNameForApi = PathUtils.EnsureExtendedPrefixIfNeeded(fileName);
-
             try
             {
                 // CryptUI is not documented either way, but does not
@@ -179,7 +176,7 @@ namespace System.Management.Automation
                 // first initialize the struct to pass to
                 // CryptUIWizDigitalSign() function
                 //
-                NativeMethods.CRYPTUI_WIZ_DIGITAL_SIGN_INFO si = NativeMethods.InitSignInfoStruct(fileNameForApi,
+                NativeMethods.CRYPTUI_WIZ_DIGITAL_SIGN_INFO si = NativeMethods.InitSignInfoStruct(fileName,
                                                               certificate,
                                                               timeStampServerUrlForCryptUI,
                                                               hashOid,
