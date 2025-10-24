@@ -185,4 +185,40 @@ Describe "Windows file content signatures" -Tags @('Feature', 'RequireAdminOnWin
         $actual.SignerCertificate.Thumbprint | Should -Be $certificate.Thumbprint
         $actual.Status | Should -Be 'Valid'
     }
+
+    It "Validates signature using long path (>= 255 characters)" {
+        # Create a long path structure (directory name >= 255 characters)
+        $longDir = 'a' * 130
+        $longSubDir = 'b' * 130
+        $fileName = "test.ps1"
+        $topPath = Join-Path $TestDrive $longDir
+        $longDirPath = Join-Path $topPath $longSubDir
+        $longFilePath = Join-Path $longDirPath $fileName
+
+        # Verify the path is indeed long enough (>= 255 characters)
+        $longFilePath.Length | Should -BeGreaterOrEqual 255
+
+        # Create the file with content
+        New-Item -ItemType Directory -Path $longDirPath -Force | Out-Null
+        Set-Content -Path $longFilePath -Value 'Write-Output "Hello from long path"' -Encoding UTF8
+
+        # Sign the file
+        $status = Set-AuthenticodeSignature -FilePath $longFilePath -Certificate $certificate
+        $status.Status | Should -Be 'Valid'
+
+        # Verify signature on the long path
+        $actual = Get-AuthenticodeSignature -FilePath $longFilePath
+        $actual.SignerCertificate.Thumbprint | Should -Be $certificate.Thumbprint
+        $actual.Status | Should -Be 'Valid'
+        $actual.StatusMessage | Should -Match 'Signature verified'
+
+        # Also test with LiteralPath parameter
+        $actualLiteral = Get-AuthenticodeSignature -LiteralPath $longFilePath
+        $actualLiteral.SignerCertificate.Thumbprint | Should -Be $certificate.Thumbprint
+        $actualLiteral.Status | Should -Be 'Valid'
+        $actualLiteral.StatusMessage | Should -Match 'Signature verified'
+
+        # Clean up
+        Remove-Item -Path $topPath -Force -Recurse -ErrorAction SilentlyContinue
+    }
 }

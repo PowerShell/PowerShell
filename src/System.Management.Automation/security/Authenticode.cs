@@ -111,6 +111,9 @@ namespace System.Management.Automation
             Utils.CheckArgForNullOrEmpty(fileName, "fileName");
             Utils.CheckArgForNull(certificate, "certificate");
 
+            // Add extended path prefix for long paths to support paths >= 260 characters
+            fileName = PathUtils.EnsureExtendedPrefixIfNeeded(fileName);
+
             // If given, TimeStamp server URLs must begin with http:// or https://
             if (!string.IsNullOrEmpty(timeStampServerUrl))
             {
@@ -455,9 +458,12 @@ namespace System.Management.Automation
                 dwStateAction = WinTrustAction.WTD_STATEACTION_VERIFY,
             };
 
+            // Add extended path prefix for long paths to support paths >= 260 characters
+            string fileNameForApi = PathUtils.EnsureExtendedPrefixIfNeeded(fileName);
+
             unsafe
             {
-                fixed (char* fileNamePtr = fileName)
+                fixed (char* fileNamePtr = fileNameForApi)
                 {
                     if (fileContent == null)
                     {
