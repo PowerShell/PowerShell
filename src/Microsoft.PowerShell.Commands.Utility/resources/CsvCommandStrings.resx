@@ -157,4 +157,7 @@
   <data name="EOFIsReached" xml:space="preserve">
     <value>EOF is reached.</value>
   </data>
+  <data name="CannotSpecifyAppendAndNoHeader" xml:space="preserve">
+    <value>You cannot specify both the -Append and -NoHeader parameters. When appending to an existing file, headers should already be present.</value>
+  </data>
 </root>
