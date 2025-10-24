@@ -71,7 +71,7 @@ runs:
         Switch-PSNugetConfig -Source Public
 
         Write-Host "Installing Azure DevOps CLI..."
-        dotnet tool install --global Azure.DevOps.CLI
+        az extension add --name azure-devops
 
         Write-Host "Configuring Azure DevOps defaults..."
         az devops configure --defaults organization=$org project=$project
