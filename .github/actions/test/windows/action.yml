@@ -45,6 +45,17 @@ runs:
     with:
       global-json-file: .\global.json
 
+  - name: Install Universal Package from Azure DevOps Feed
+    uses: "./.github/actions/install-azure-devops-package"
+    with:
+      feed: "PowerShell-Universal"
+      package: "microsoft.dsc-windows"
+      version: "3.2.0-preview.6"
+      project: "2972bb5c-f20c-4a60-8bd9-00ffe9987edc"
+      packageFileName: "DSC-{version}-x86_64-pc-windows-msvc.zip"
+      extractSubFolder: "DSC"
+      environmentVariable: "DSC_ROOT"
+
   - name: Bootstrap
     shell: powershell
     run: |-
