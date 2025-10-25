@@ -396,12 +396,12 @@ namespace Microsoft.PowerShell
             if (activityDisplayWidth > maxWidth / 2)
             {
                 activity = StringUtil.TruncateToBufferCellWidth(rawUI, Activity, (maxWidth / 2) - 1) + PSObjectHelper.Ellipsis;
-                activityDisplayWidth = maxWidth / 2;
             }
             else
             {
                 activity = Activity;
             }
+            activityDisplayWidth = rawUI.LengthInBufferCells(activity);
 
             // 4 is for the extra space and square brackets below and one extra space
             int barWidth = maxWidth - activityDisplayWidth - indentation - 4;
@@ -461,7 +461,7 @@ namespace Microsoft.PowerShell
 
                 for (int i = 0; i < statusPart.Length && currentCellCount < barLength; i++)
                 {
-                    currentCellCount += rawUI.LengthInBufferCells(statusPart.Substring(i, 1));
+                    currentCellCount += rawUI.LengthInBufferCells(statusPart[i].ToString());
                     stringPos++;
                 }
 
