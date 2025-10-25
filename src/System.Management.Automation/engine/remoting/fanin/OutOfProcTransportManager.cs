@@ -1902,8 +1902,10 @@ namespace System.Management.Automation.Remoting.Client
                     if (data == null)
                     {
                         // End of stream indicates that the SSH transport is broken.
-                        // SSH will return the appropriate error in StdErr stream so
-                        // let the error reader thread report the error.
+                        // If SSH did not emit an error on StdErr, treat this as an
+                        // abrupt termination and report an error so the cmdlet
+                        // using the session stops instead of hanging.
+                        HandleSSHError(new PSRemotingTransportException(RemotingErrorIdStrings.SSHAbruptlyTerminated));
                         break;
                     }
 
