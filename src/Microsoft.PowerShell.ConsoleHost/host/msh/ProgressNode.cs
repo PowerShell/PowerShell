@@ -401,6 +401,7 @@ namespace Microsoft.PowerShell
             {
                 activity = Activity;
             }
+
             activityDisplayWidth = rawUI.LengthInBufferCells(activity);
 
             // 4 is for the extra space and square brackets below and one extra space
