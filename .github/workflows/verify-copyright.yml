@@ -1,0 +1,43 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+name: Verify Copyright Headers
+
+on:
+  pull_request:
+    branches:
+      - master
+      - release/**
+      - github-mirror
+      - "*-feature"
+    paths:
+      - "**/*.cs"
+      - "**/*.ps1"
+      - "**/*.psm1"
+      - "**/*.psd1"
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  verify-copyright:
+    name: Verify Copyright Headers
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'PowerShell'
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v5
+
+    - name: Get changed files
+      id: changed-files
+      uses: "./.github/actions/infrastructure/path-filters"
+      with:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Verify copyright headers using PowerShell
+      shell: pwsh
+      run: |
+        $ErrorActionPreference = 'Stop'
+        ./tools/verifyCopyright.ps1 -Verbose
