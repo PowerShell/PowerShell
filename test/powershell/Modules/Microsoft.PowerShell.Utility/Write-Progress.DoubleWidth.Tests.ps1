@@ -4,7 +4,7 @@
 Describe 'Write-Progress with double-width characters' -Tags 'CI' {
     BeforeAll {
         $th = New-TestHost
-        $rs = [runspacefactory]::Createrunspace($th)
+        $rs = [runspacefactory]::CreateRunspace($th)
         $rs.open()
         $ps = [powershell]::Create()
         $ps.Runspace = $rs
