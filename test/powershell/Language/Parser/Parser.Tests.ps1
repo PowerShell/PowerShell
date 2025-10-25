@@ -702,7 +702,7 @@ foo``u{2195}abc
     }
 
     It "Check that a command that uses shell execute can be run from the command line and that no exception is thrown. (line 1702)" {
-        if ( $IsLinux -or $IsMacOS ) {
+        if ( $IsLinux -or $IsMacOS -or $IsFreeBSD) {
             # because we execute on *nix based on executable bit, and the file name doesn't matter
             # so we can use the same filename as for windows, just make sure it's executable with chmod
             "#!/bin/sh`necho ""Hello World""" | Out-File -Encoding ASCII $shellfile
