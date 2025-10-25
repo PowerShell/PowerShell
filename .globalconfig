@@ -215,7 +215,7 @@ dotnet_diagnostic.CA1070.severity = warning
 
 # CA1200: Avoid using cref tags with a prefix
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1200
-dotnet_diagnostic.CA1200.severity = silent
+dotnet_diagnostic.CA1200.severity = warning
 
 # CA1303: Do not pass literals as localized parameters
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1303
