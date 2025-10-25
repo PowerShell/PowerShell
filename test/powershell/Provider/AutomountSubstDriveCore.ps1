@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-param ([String]$Path)
+param ([string]$Path)
 
 try
 {
@@ -14,7 +14,7 @@ try
     $exitCode = $LASTEXITCODE
     if ($exitCode -ne 0) { Write-Error "Creating drive with subst.exe failed with exit code $exitCode" }
 
-    $root = [String]::Format('{0}:\', $driveLetter)
+    $root = [string]::Format('{0}:\', $driveLetter)
     $pathToCheck = Join-Path -Path $root -ChildPath $dir.Name
 
     if (Test-Path $pathToCheck)
