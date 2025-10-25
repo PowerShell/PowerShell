@@ -2089,7 +2089,7 @@ namespace System.Management.Automation.Remoting.Client
                 sessionTM.EnqueueAndStartProcessingThread(null, null,
                     new CompletionEventArgs(CompletionNotification.DisconnectCompleted));
 
-                // Log ETW traces                
+                // Log ETW traces
                 PSEtwLog.LogAnalyticInformational(
                     PSEventId.WSManCloseShellCallbackReceived,
                     PSOpcode.Disconnect,

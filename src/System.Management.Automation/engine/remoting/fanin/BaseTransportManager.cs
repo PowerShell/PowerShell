@@ -82,7 +82,7 @@ namespace System.Management.Automation.Remoting
         /// ReconnectShellEx
         /// </summary>
         ReconnectShellEx = 8,
-        
+
         /// <summary>
         /// ConnectShellEx
         /// </summary>
