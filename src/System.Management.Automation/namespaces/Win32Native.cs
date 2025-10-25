@@ -24,10 +24,6 @@ namespace Microsoft.PowerShell.Commands.Internal
     /**
      * Win32 encapsulation for MSCORLIB.
      */
-    // Remove the default demands for all N/Direct methods with this
-    // global declaration on the class.
-    //
-    [SuppressUnmanagedCodeSecurity]
     internal static class Win32Native
     {
         #region Integer Const
