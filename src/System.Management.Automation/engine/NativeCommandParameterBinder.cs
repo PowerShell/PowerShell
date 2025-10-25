@@ -161,7 +161,7 @@ namespace System.Management.Automation
         /// <param name="argument">The value used with parameter.</param>
         internal void AddToArgumentList(CommandParameterInternal parameter, string argument)
         {
-            if (parameter.ParameterNameSpecified && parameter.ParameterText.EndsWith(":"))
+            if (parameter.ParameterNameSpecified && parameter.ParameterText.EndsWith(':'))
             {
                 if (argument != parameter.ParameterText)
                 {

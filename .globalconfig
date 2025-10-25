@@ -522,6 +522,18 @@ dotnet_diagnostic.CA1858.severity = warning
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1860
 dotnet_diagnostic.CA1860.severity = warning
 
+# CA1865: Use char overload
+# https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1865
+dotnet_diagnostic.CA1865.severity = warning
+
+# CA1866: Use char overload
+# https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1866
+dotnet_diagnostic.CA1866.severity = warning
+
+# CA1867: Use char overload
+# https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1867
+dotnet_diagnostic.CA1867.severity = warning
+
 # CA1868: Unnecessary call to 'Contains' for sets
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1868
 dotnet_diagnostic.CA1868.severity = warning
