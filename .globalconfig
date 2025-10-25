@@ -590,6 +590,10 @@ dotnet_diagnostic.CA2021.severity = warning
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2022
 dotnet_diagnostic.CA2022.severity = warning
 
+# CA2025: Ensure tasks using 'IDisposable' instances complete before the instances are disposed
+# https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2025
+dotnet_diagnostic.CA2025.severity = warning
+
 # CA2100: Review SQL queries for security vulnerabilities
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2100
 dotnet_diagnostic.CA2100.severity = none
