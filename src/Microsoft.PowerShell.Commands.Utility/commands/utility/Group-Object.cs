@@ -512,9 +512,9 @@ namespace Microsoft.PowerShell.Commands
             s_tracer.WriteLine(_groups.Count);
             if (_groups.Count > 0)
             {
-                if (AsHashTable.IsPresent)
+                if (AsHashTable.IsSpecified)
                 {
-                    StringComparer comparer = CaseSensitive.IsPresent
+                    StringComparer comparer = CaseSensitive.IsSpecified
                         ? StringComparer.CurrentCulture
                         : StringComparer.CurrentCultureIgnoreCase;
                     var hashtable = new Hashtable(comparer);

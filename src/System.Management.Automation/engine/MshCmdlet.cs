@@ -4,6 +4,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
@@ -74,14 +75,24 @@ namespace System.Management.Automation
     /// </summary>
     public readonly struct SwitchParameter
     {
-        private readonly bool _isPresent;
+        private readonly bool _isSpecified;
         /// <summary>
-        /// Returns true if the parameter was specified on the command line, false otherwise.
+        /// Returns true if the parameter was present on the command line and specified with the value $true, false otherwise.
         /// </summary>
         /// <value>True if the parameter was specified, false otherwise</value>
+        public bool IsSpecified
+        {
+            get { return _isSpecified; }
+        }
+        /// <summary>
+        /// Returns true if the parameter was present on the command line and specified with the value $true, false otherwise.
+        /// </summary>
+        /// <value>True if the parameter was specified, false otherwise</value>
+        /// <seealso cref="IsSpecified"/>
+        [Obsolete("Use the IsSpecified property."), Browsable(false)]
         public bool IsPresent
         {
-            get { return _isPresent; }
+            get { return _isSpecified; }
         }
         /// <summary>
         /// Implicit cast operator for casting SwitchParameter to bool.
@@ -90,7 +101,7 @@ namespace System.Management.Automation
         /// <returns>The corresponding boolean value.</returns>
         public static implicit operator bool(SwitchParameter switchParameter)
         {
-            return switchParameter.IsPresent;
+            return switchParameter.IsSpecified;
         }
 
         /// <summary>
@@ -107,9 +118,11 @@ namespace System.Management.Automation
         /// Explicit method to convert a SwitchParameter to a boolean value.
         /// </summary>
         /// <returns>The boolean equivalent of the SwitchParameter.</returns>
+        /// <seealso cref="IsSpecified"/>
+        [Obsolete("Use the IsSpecified property."), Browsable(false)]
         public bool ToBool()
         {
-            return _isPresent;
+            return _isSpecified;
         }
 
         /// <summary>
@@ -120,7 +133,7 @@ namespace System.Management.Automation
         /// </param>
         public SwitchParameter(bool isPresent)
         {
-            _isPresent = isPresent;
+            _isSpecified = isPresent;
         }
 
         /// <summary>
@@ -141,11 +154,11 @@ namespace System.Management.Automation
         {
             if (obj is bool)
             {
-                return _isPresent == (bool)obj;
+                return _isSpecified == (bool)obj;
             }
             else if (obj is SwitchParameter)
             {
-                return _isPresent == ((SwitchParameter)obj).IsPresent;
+                return _isSpecified == ((SwitchParameter)obj).IsSpecified;
             }
             else
             {
@@ -158,7 +171,7 @@ namespace System.Management.Automation
         /// <returns>The hash code for this cobject.</returns>
         public override int GetHashCode()
         {
-            return _isPresent.GetHashCode();
+            return _isSpecified.GetHashCode();
         }
 
         /// <summary>
@@ -228,7 +241,7 @@ namespace System.Management.Automation
         /// <returns>The string for this object.</returns>
         public override string ToString()
         {
-            return _isPresent.ToString();
+            return _isSpecified.ToString();
         }
     }
 

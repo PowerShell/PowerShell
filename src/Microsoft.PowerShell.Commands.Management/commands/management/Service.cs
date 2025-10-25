@@ -637,13 +637,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (ServiceController service in MatchingServices())
                 {
-                    if (!DependentServices.IsPresent && !RequiredServices.IsPresent)
+                    if (!DependentServices.IsSpecified && !RequiredServices.IsSpecified)
                     {
                         WriteObject(AddProperties(scManagerHandle, service));
                     }
                     else
                     {
-                        if (DependentServices.IsPresent)
+                        if (DependentServices.IsSpecified)
                         {
                             foreach (ServiceController dependantserv in service.DependentServices)
                             {
@@ -651,7 +651,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                         }
 
-                        if (RequiredServices.IsPresent)
+                        if (RequiredServices.IsSpecified)
                         {
                             foreach (ServiceController servicedependedon in service.ServicesDependedOn)
                             {
@@ -1932,7 +1932,7 @@ namespace Microsoft.PowerShell.Commands
                         SetServiceSecurityDescriptor(service, SecurityDescriptorSddl, hService);
                     }
 
-                    if (PassThru.IsPresent)
+                    if (PassThru.IsSpecified)
                     {
                         // To display the service, refreshing the service would not show the display name after updating
                         ServiceController displayservice = new(Name);

@@ -90,7 +90,7 @@ namespace Microsoft.PowerShell.Commands
         {
             set
             {
-                if (value.ToBool())
+                if (value.IsSpecified)
                 {
                     _viewTokenToAdd = HelpView.DetailedView;
                 }
@@ -117,7 +117,7 @@ namespace Microsoft.PowerShell.Commands
         {
             set
             {
-                if (value.ToBool())
+                if (value.IsSpecified)
                 {
                     _viewTokenToAdd = HelpView.FullView;
                 }
@@ -143,7 +143,7 @@ namespace Microsoft.PowerShell.Commands
         {
             set
             {
-                if (value.ToBool())
+                if (value.IsSpecified)
                 {
                     _viewTokenToAdd = HelpView.ExamplesView;
                 }

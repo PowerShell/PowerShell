@@ -298,7 +298,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void SetCountForTcpTest()
         {
-            if (Repeat.IsPresent)
+            if (Repeat.IsSpecified)
             {
                 Count = int.MaxValue;
             }
@@ -312,7 +312,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (!TryResolveNameOrAddress(targetNameOrAddress, out _, out IPAddress? targetAddress))
             {
-                if (Quiet.IsPresent)
+                if (Quiet.IsSpecified)
                 {
                     WriteObject(false);
                 }
@@ -370,7 +370,7 @@ namespace Microsoft.PowerShell.Commands
                     stopwatch.Reset();
                 }
 
-                if (!Detailed.IsPresent)
+                if (!Detailed.IsSpecified)
                 {
                     WriteObject(status == SocketError.Success);
                     return;
@@ -406,7 +406,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (!TryResolveNameOrAddress(targetNameOrAddress, out string resolvedTargetName, out IPAddress? targetAddress))
             {
-                if (!Quiet.IsPresent)
+                if (!Quiet.IsSpecified)
                 {
                     WriteObject(false);
                 }
@@ -415,7 +415,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             int currentHop = 1;
-            PingOptions pingOptions = new(currentHop, DontFragment.IsPresent);
+            PingOptions pingOptions = new(currentHop, DontFragment.IsSpecified);
             PingReply reply;
             PingReply discoveryReply;
             int timeout = TimeoutSeconds * 1000;
@@ -475,7 +475,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         reply = SendCancellablePing(hopAddress, timeout, buffer, pingOptions, timer);
 
-                        if (!Quiet.IsPresent)
+                        if (!Quiet.IsSpecified)
                         {
                             var status = new PingStatus(
                                 Source,
@@ -524,7 +524,7 @@ namespace Microsoft.PowerShell.Commands
                 && (discoveryReply.Status == IPStatus.TtlExpired
                     || discoveryReply.Status == IPStatus.TimedOut));
 
-            if (Quiet.IsPresent)
+            if (Quiet.IsSpecified)
             {
                 WriteObject(currentHop <= MaxHops);
             }
@@ -551,7 +551,7 @@ namespace Microsoft.PowerShell.Commands
             PingReply? reply, replyResult = null;
             if (!TryResolveNameOrAddress(targetNameOrAddress, out string resolvedTargetName, out IPAddress? targetAddress))
             {
-                if (Quiet.IsPresent)
+                if (Quiet.IsSpecified)
                 {
                     WriteObject(-1);
                 }
@@ -640,7 +640,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            if (Quiet.IsPresent)
+            if (Quiet.IsSpecified)
             {
                 WriteObject(CurrentMTUSize);
             }
@@ -683,7 +683,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (!TryResolveNameOrAddress(targetNameOrAddress, out string resolvedTargetName, out IPAddress? targetAddress))
             {
-                if (Quiet.IsPresent)
+                if (Quiet.IsSpecified)
                 {
                     WriteObject(false);
                 }
@@ -695,7 +695,7 @@ namespace Microsoft.PowerShell.Commands
             byte[] buffer = GetSendBuffer(BufferSize);
 
             PingReply reply;
-            PingOptions pingOptions = new(MaxHops, DontFragment.IsPresent);
+            PingOptions pingOptions = new(MaxHops, DontFragment.IsSpecified);
             int timeout = TimeoutSeconds * 1000;
             int delay = Delay * 1000;
 
@@ -720,7 +720,7 @@ namespace Microsoft.PowerShell.Commands
                     continue;
                 }
 
-                if (Quiet.IsPresent)
+                if (Quiet.IsSpecified)
                 {
                     // Return 'true' only if all pings have completed successfully.
                     quietResult &= reply.Status == IPStatus.Success;
@@ -743,7 +743,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (Quiet.IsPresent)
+            if (Quiet.IsSpecified)
             {
                 WriteObject(quietResult);
             }
@@ -807,7 +807,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (Exception ex)
                 {
-                    if (!Quiet.IsPresent)
+                    if (!Quiet.IsSpecified)
                     {
                         string message = StringUtil.Format(
                             TestConnectionResources.NoPingResult,

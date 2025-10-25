@@ -149,7 +149,7 @@ namespace Microsoft.PowerShell.Commands
                 powerShell.AddCommand("Get-Module");
                 powerShell.AddParameter("ListAvailable", true);
 
-                if (Refresh.IsPresent)
+                if (Refresh.IsSpecified)
                 {
                     powerShell.AddParameter("Refresh", true);
                 }
@@ -329,7 +329,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void AssertListAvailableMode()
         {
-            if (!this.ListAvailable.IsPresent)
+            if (!this.ListAvailable.IsSpecified)
             {
                 string errorMessage = Modules.RemoteDiscoveryWorksOnlyInListAvailableMode;
                 ArgumentException argumentException = new ArgumentException(errorMessage);
@@ -397,7 +397,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else if (ParameterSetName.Equals(ParameterSet_AvailableLocally, StringComparison.OrdinalIgnoreCase))
             {
-                if (ListAvailable.IsPresent)
+                if (ListAvailable.IsSpecified)
                 {
                     GetAvailableLocallyModules(names, moduleSpecTable, this.All);
                 }
