@@ -395,13 +395,13 @@ namespace Microsoft.PowerShell
             int activityDisplayWidth = rawUI.LengthInBufferCells(Activity);
             if (activityDisplayWidth > maxWidth / 2)
             {
-                activity = StringUtil.TruncateToBufferCellWidth(rawUI, Activity, maxWidth / 2 - 1) + PSObjectHelper.Ellipsis;
+                activity = StringUtil.TruncateToBufferCellWidth(rawUI, Activity, (maxWidth / 2) - 1) + PSObjectHelper.Ellipsis;
+                activityDisplayWidth = maxWidth / 2;
             }
             else
             {
                 activity = Activity;
             }
-            activityDisplayWidth = rawUI.LengthInBufferCells(activity);
 
             // 4 is for the extra space and square brackets below and one extra space
             int barWidth = maxWidth - activityDisplayWidth - indentation - 4;
@@ -458,10 +458,10 @@ namespace Microsoft.PowerShell
                 // We need to find the character position that corresponds to barLength buffer cells
                 int stringPos = PSStyle.Instance.Reverse.Length;
                 int currentCellCount = 0;
-                
+
                 for (int i = 0; i < statusPart.Length && currentCellCount < barLength; i++)
                 {
-                    currentCellCount += rawUI.LengthInBufferCells(statusPart[i].ToString());
+                    currentCellCount += rawUI.LengthInBufferCells(statusPart.Substring(i, 1));
                     stringPos++;
                 }
 
