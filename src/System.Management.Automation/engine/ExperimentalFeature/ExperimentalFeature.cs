@@ -118,7 +118,7 @@ namespace System.Management.Automation
                     description: "Replace the hard-coded suggestion framework with the extensible feedback provider"),
                 new ExperimentalFeature(
                     name: PSNativeWindowsTildeExpansion,
-                    description: "On windows, expand unquoted tilde (`~`) with the user's current home folder."),
+                    description: "On Windows, expand unquoted tilde (`~`) with the user's current home folder."),
                 new ExperimentalFeature(
                     name: PSRedirectToVariable,
                     description: "Add support for redirecting to the variable drive"),

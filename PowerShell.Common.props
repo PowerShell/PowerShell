@@ -186,6 +186,8 @@
   <PropertyGroup Condition=" '$(AppDeployment)' == 'FxDependent' ">
     <!-- Specify both to keep existing behavior because we have not had complaints about this scenario -->
     <AppHostDotNetSearch>EnvironmentVariable;Global</AppHostDotNetSearch>
+    <PublishReadyToRun>false</PublishReadyToRun>
+    <PublishReadyToRunEmitSymbols>false</PublishReadyToRunEmitSymbols>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(AppDeployment)' == 'FxDependentDeployment' ">
@@ -193,14 +195,24 @@
     <AppHostDotNetSearch>Global</AppHostDotNetSearch>
   </PropertyGroup>
 
+  <!-- Enable ready-to-run only for Release configuration -->
+  <PropertyGroup Condition=" '$(AppDeployment)' == 'FxDependentDeployment' And '$(Configuration)' == 'Release' ">
+    <PublishReadyToRun>true</PublishReadyToRun>
+    <PublishReadyToRunEmitSymbols>true</PublishReadyToRunEmitSymbols>
+  </PropertyGroup>
+
   <PropertyGroup Condition=" '$(AppDeployment)' == 'SelfContained' ">
     <AppHostDotNetSearch>AppLocal</AppHostDotNetSearch>
   </PropertyGroup>
 
-  <!-- Define all OS, release configuration properties -->
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+  <!-- Enable ready-to-run only for Release configuration -->
+  <PropertyGroup Condition=" '$(AppDeployment)' == 'SelfContained' And '$(Configuration)' == 'Release' ">
     <PublishReadyToRun>true</PublishReadyToRun>
     <PublishReadyToRunEmitSymbols>true</PublishReadyToRunEmitSymbols>
+  </PropertyGroup>
+
+  <!-- Define all OS, release configuration properties -->
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <Optimize>true</Optimize>
     <DebugType>portable</DebugType>
   </PropertyGroup>

@@ -10,6 +10,8 @@ on:
       - github-mirror
     paths:
       - "**"
+      - "*"
+      - ".globalconfig"
       - "!.github/ISSUE_TEMPLATE/**"
       - "!.dependabot/config.yml"
       - "!.pipelines/**"
@@ -19,15 +21,16 @@ on:
       - master
       - release/**
       - github-mirror
+      - "*-feature"
 # Path filters for PRs need to go into the changes job
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: ${{ contains(github.ref, 'merge')}}
 
 env:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
-  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  DOTNET_NOLOGO: 1
   FORCE_FEATURE: 'False'
   FORCE_PACKAGE: 'False'
   HOMEBREW_NO_ANALYTICS: 1
@@ -140,20 +143,15 @@ jobs:
         with:
           purpose: ElevatedPesterTests
           tagSet: Others
-  verify_xunit:
-    name: Verify xUnit test results
+  xunit_tests:
+    name: xUnit Tests
     needs:
-      - ci_build
       - changes
     if: ${{ needs.changes.outputs.source == 'true' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: checkout
-        uses: actions/checkout@v5
-        with:
-          fetch-depth: 1000
-      - name: Verify xUnit test results
-        uses: "./.github/actions/test/verify_xunit"
+    uses: ./.github/workflows/xunit-tests.yml
+    with:
+      runner_os: macos-15-large
+      test_results_artifact_name: testResults-xunit
   PackageMac-macos_packaging:
     name: macOS packaging (bootstrap only)
     needs:
@@ -173,7 +171,7 @@ jobs:
   ready_to_merge:
     name: macos ready to merge
     needs:
-      - verify_xunit
+      - xunit_tests
       - PackageMac-macos_packaging
       - macos_test_elevated_ci
       - macos_test_elevated_others

@@ -193,7 +193,7 @@ function Get-EnvironmentInformation
         $environment += @{'IsRedHatFamily' = $environment.IsCentOS -or $environment.IsFedora -or $environment.IsRedHat}
         $environment += @{'IsSUSEFamily' = $environment.IsSLES -or $environment.IsOpenSUSE}
         $environment += @{'IsAlpine' = $LinuxInfo.ID -match 'alpine'}
-        $environment += @{'IsMariner' = $LinuxInfo.ID -match 'mariner'}
+        $environment += @{'IsMariner' = $LinuxInfo.ID -match 'mariner' -or $LinuxInfo.ID -match 'azurelinux'}
 
         # Workaround for temporary LD_LIBRARY_PATH hack for Fedora 24
         # https://github.com/PowerShell/PowerShell/issues/2511
@@ -353,8 +353,8 @@ function Start-PSBuild {
         $PSModuleRestore = $true
     }
 
-    if ($Runtime -eq "linux-arm" -and $environment.IsLinux -and -not $environment.IsUbuntu) {
-        throw "Cross compiling for linux-arm is only supported on Ubuntu environment"
+    if ($Runtime -eq "linux-arm" -and $environment.IsLinux -and -not $environment.IsUbuntu -and -not $environment.IsMariner) {
+        throw "Cross compiling for linux-arm is only supported on AzureLinux/Ubuntu environment"
     }
 
     if ("win-arm","win-arm64" -contains $Runtime -and -not $environment.IsWindows) {
@@ -1984,7 +1984,9 @@ function Test-PSPesterResults
 
 function Start-PSxUnit {
     [CmdletBinding()]param(
-        [string] $xUnitTestResultsFile = "xUnitResults.xml"
+        [string] $xUnitTestResultsFile = "xUnitResults.xml",
+        [switch] $DebugLogging,
+        [string] $Filter
     )
 
     # Add .NET CLI tools to PATH
@@ -2042,9 +2044,28 @@ function Start-PSxUnit {
 
         # We run the xUnit tests sequentially to avoid race conditions caused by manipulating the config.json file.
         # xUnit tests run in parallel by default. To make them run sequentially, we need to define the 'xunit.runner.json' file.
-        dotnet test --configuration $Options.configuration --test-adapter-path:. "--logger:xunit;LogFilePath=$xUnitTestResultsFile"
+        $extraParams = @()
+        if($Filter) {
+            $extraParams += @(
+                '--filter'
+                $Filter
+            )
+        }
 
-        Publish-TestResults -Path $xUnitTestResultsFile -Type 'XUnit' -Title 'Xunit Sequential'
+        if($DebugLogging) {
+            $extraParams += @(
+                "--logger:console;verbosity=detailed"
+            )
+        } else {
+            $extraParams += @(
+                "--logger:xunit;LogFilePath=$xUnitTestResultsFile"
+            )
+        }
+        dotnet test @extraParams --configuration $Options.configuration --test-adapter-path:.
+
+        if(!$DebugLogging){
+            Publish-TestResults -Path $xUnitTestResultsFile -Type 'XUnit' -Title 'Xunit Sequential'
+        }
     }
     finally {
         $env:DOTNET_ROOT = $originalDOTNET_ROOT
@@ -2071,8 +2092,8 @@ function Install-Dotnet {
     # Note that when it is null, Invoke-Expression (but not &) must be used to interpolate properly
     $sudo = if (!$NoSudo) { "sudo" }
 
-    # $installObtainUrl = "https://dot.net/v1"
-    $installObtainUrl = "https://dotnet.microsoft.com/download/dotnet/scripts/v1"
+    $installObtainUrl = "https://builds.dotnet.microsoft.com/dotnet/scripts/v1"
+    #$installObtainUrl = "https://dotnet.microsoft.com/download/dotnet/scripts/v1"
     $uninstallObtainUrl = "https://raw.githubusercontent.com/dotnet/cli/master/scripts/obtain"
 
     # Install for Linux and OS X
@@ -2163,7 +2184,6 @@ function Install-Dotnet {
             $installArgs += @{ SkipNonVersionedFiles = $true }
 
             $installArgs | Out-String | Write-Verbose -Verbose
-
             & ./$installScript @installArgs
         }
         else {
@@ -2207,6 +2227,8 @@ function Get-RedHatPackageManager {
         "yum install -y -q"
     } elseif ($environment.IsFedora -or (Get-Command -Name dnf -CommandType Application -ErrorAction SilentlyContinue)) {
         "dnf install -y -q"
+    } elseif ($environment.IsMariner -or (Get-Command -Name Test-DscConfiguration -CommandType Application -ErrorAction SilentlyContinue)) {
+        "tdnf install -y -q"
     } else {
         throw "Error determining package manager for this distribution."
     }
@@ -2230,7 +2252,7 @@ function Install-GlobalGem {
         # We cannot guess if the user wants to run gem install as root on linux and windows,
         # but macOs usually requires sudo
         $gemsudo = ''
-        if($environment.IsMacOS -or $env:TF_BUILD) {
+        if($environment.IsMacOS -or $env:TF_BUILD -or $env:GITHUB_ACTIONS) {
             $gemsudo = $sudo
         }
 
@@ -2260,7 +2282,12 @@ function Start-PSBootstrap {
         [switch]$BuildLinuxArm,
         [switch]$Force,
         [Parameter(Mandatory = $true)]
-        [ValidateSet("Package", "DotNet", "Both")]
+        # Package: Install dependencies for packaging tools (fpm, rpmbuild, WiX)
+        # DotNet: Install the .NET SDK
+        # Both: Package and DotNet scenarios
+        # Tools: Install .NET global tools (e.g., dotnet-format)
+        # All: Install all dependencies (packaging, .NET SDK, and tools)
+        [ValidateSet("Package", "DotNet", "Both", "Tools", "All")]
         [string]$Scenario = "Package"
     )
 
@@ -2278,8 +2305,8 @@ function Start-PSBootstrap {
             # Note that when it is null, Invoke-Expression (but not &) must be used to interpolate properly
             $sudo = if (!$NoSudo) { "sudo" }
 
-            if ($BuildLinuxArm -and $environment.IsLinux -and -not $environment.IsUbuntu) {
-                Write-Error "Cross compiling for linux-arm is only supported on Ubuntu environment"
+            if ($BuildLinuxArm -and $environment.IsLinux -and -not $environment.IsUbuntu -and -not $environment.IsMariner) {
+                Write-Error "Cross compiling for linux-arm is only supported on AzureLinux/Ubuntu environment"
                 return
             }
 
@@ -2379,15 +2406,28 @@ function Start-PSBootstrap {
             }
 
             # Install [fpm](https://github.com/jordansissel/fpm)
-            if ($Scenario -eq 'Both' -or $Scenario -eq 'Package') {
-                Install-GlobalGem -Sudo $sudo -GemName "dotenv" -GemVersion "2.8.1"
-                Install-GlobalGem -Sudo $sudo -GemName "ffi" -GemVersion "1.16.3"
-                Install-GlobalGem -Sudo $sudo -GemName "fpm" -GemVersion "1.15.1"
-                Install-GlobalGem -Sudo $sudo -GemName "rexml" -GemVersion "3.2.5"
+            # Note: fpm is now only needed for DEB and macOS packages; RPM packages use rpmbuild directly
+            if ($Scenario -in 'All', 'Both', 'Package') {
+                # Install fpm on Debian-based systems, macOS, and Mariner (where DEB packages are built)
+                if (($environment.IsLinux -and ($environment.IsDebianFamily -or $environment.IsMariner)) -or $environment.IsMacOS) {
+                    Install-GlobalGem -Sudo $sudo -GemName "dotenv" -GemVersion "2.8.1"
+                    Install-GlobalGem -Sudo $sudo -GemName "ffi" -GemVersion "1.16.3"
+                    Install-GlobalGem -Sudo $sudo -GemName "fpm" -GemVersion "1.15.1"
+                    Install-GlobalGem -Sudo $sudo -GemName "rexml" -GemVersion "3.2.5"
+                }
+
+                # For RPM-based systems, ensure rpmbuild is available
+                if ($environment.IsLinux -and ($environment.IsRedHatFamily -or $environment.IsSUSEFamily -or $environment.IsMariner)) {
+                    Write-Verbose -Verbose "Checking for rpmbuild..."
+                    if (!(Get-Command rpmbuild -ErrorAction SilentlyContinue)) {
+                        Write-Warning "rpmbuild not found. Installing rpm-build package..."
+                        Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo $PackageManager install -y rpm-build")) -IgnoreExitcode
+                    }
+                }
             }
         }
 
-        if ($Scenario -eq 'DotNet' -or $Scenario -eq 'Both') {
+        if ($Scenario -in 'All', 'Both', 'DotNet') {
 
             Write-Verbose -Verbose "Calling Find-Dotnet from Start-PSBootstrap"
 
@@ -2441,6 +2481,19 @@ function Start-PSBootstrap {
                 Import-Module "$PSScriptRoot\tools\wix\wix.psm1"
                 $isArm64 = "$env:RUNTIME" -eq 'arm64'
                 Install-Wix -arm64:$isArm64
+            }
+        }
+
+        if ($Scenario -in 'All', 'Tools') {
+            Write-Log -message "Installing .NET global tools"
+
+            # Ensure dotnet is available
+            Find-Dotnet
+
+            # Install dotnet-format
+            Write-Verbose -Verbose "Installing dotnet-format global tool"
+            Start-NativeExecution {
+                dotnet tool install --global dotnet-format
             }
         }
 
@@ -2611,6 +2664,63 @@ function Start-ResGen
     }
 }
 
+function Add-PSEnvironmentPath {
+    <#
+    .SYNOPSIS
+        Adds a path to the process PATH and persists to GitHub Actions workflow if running in GitHub Actions
+    .PARAMETER Path
+        Path to add to PATH
+    .PARAMETER Prepend
+        If specified, prepends the path instead of appending
+    #>
+    param (
+        [Parameter(Mandatory)]
+        [string]$Path,
+
+        [switch]$Prepend
+    )
+
+    # Set in current process
+    if ($Prepend) {
+        $env:PATH = $Path + [IO.Path]::PathSeparator + $env:PATH
+    } else {
+        $env:PATH += [IO.Path]::PathSeparator + $Path
+    }
+
+    # Persist to GitHub Actions workflow if running in GitHub Actions
+    if ($env:GITHUB_ACTIONS -eq 'true') {
+        Write-Verbose -Verbose "Adding $Path to GITHUB_PATH"
+        Add-Content -Path $env:GITHUB_PATH -Value $Path
+    }
+}
+
+function Set-PSEnvironmentVariable {
+    <#
+    .SYNOPSIS
+        Sets an environment variable in the process and persists to GitHub Actions workflow if running in GitHub Actions
+    .PARAMETER Name
+        The name of the environment variable
+    .PARAMETER Value
+        The value of the environment variable
+    #>
+    param (
+        [Parameter(Mandatory)]
+        [string]$Name,
+
+        [Parameter(Mandatory)]
+        [string]$Value
+    )
+
+    # Set in current process
+    Set-Item -Path "env:$Name" -Value $Value
+
+    # Persist to GitHub Actions workflow if running in GitHub Actions
+    if ($env:GITHUB_ACTIONS -eq 'true') {
+        Write-Verbose -Verbose "Setting $Name in GITHUB_ENV"
+        Add-Content -Path $env:GITHUB_ENV -Value "$Name=$Value"
+    }
+}
+
 function Find-Dotnet {
     param (
         [switch] $SetDotnetRoot
@@ -2641,24 +2751,39 @@ function Find-Dotnet {
         if ($dotnetCLIInstalledVersion -ne $chosenDotNetVersion) {
             Write-Warning "The 'dotnet' in the current path can't find SDK version ${dotnetCLIRequiredVersion}, prepending $dotnetPath to PATH."
             # Globally installed dotnet doesn't have the required SDK version, prepend the user local dotnet location
-            $env:PATH = $dotnetPath + [IO.Path]::PathSeparator + $env:PATH
+            Add-PSEnvironmentPath -Path $dotnetPath -Prepend
 
             if ($SetDotnetRoot) {
                 Write-Verbose -Verbose "Setting DOTNET_ROOT to $dotnetPath"
-                $env:DOTNET_ROOT = $dotnetPath
+                Set-PSEnvironmentVariable -Name 'DOTNET_ROOT' -Value $dotnetPath
             }
         } elseif ($SetDotnetRoot) {
             Write-Verbose -Verbose "Expected dotnet version found, setting DOTNET_ROOT to $dotnetPath"
-            $env:DOTNET_ROOT = $dotnetPath
+            Set-PSEnvironmentVariable -Name 'DOTNET_ROOT' -Value $dotnetPath
         }
     }
     else {
         Write-Warning "Could not find 'dotnet', appending $dotnetPath to PATH."
-        $env:PATH += [IO.Path]::PathSeparator + $dotnetPath
+        Add-PSEnvironmentPath -Path $dotnetPath
+
+        if ($SetDotnetRoot) {
+            Write-Verbose -Verbose "Setting DOTNET_ROOT to $dotnetPath"
+            Set-PSEnvironmentVariable -Name 'DOTNET_ROOT' -Value $dotnetPath
+        }
     }
 
     if (-not (precheck 'dotnet' "Still could not find 'dotnet', restoring PATH.")) {
+        # Give up, restore original PATH.  There is nothing to persist since we didn't make a change.
         $env:PATH = $originalPath
+    }
+    elseif ($SetDotnetRoot) {
+        # If we found dotnet, also add the global tools path to PATH
+        # Add .NET global tools to PATH when setting up the environment
+        $dotnetToolsPath = Join-Path $dotnetPath "tools"
+        if (Test-Path $dotnetToolsPath) {
+            Write-Verbose -Verbose "Adding .NET tools path to PATH: $dotnetToolsPath"
+            Add-PSEnvironmentPath -Path $dotnetToolsPath
+        }
     }
 }
 

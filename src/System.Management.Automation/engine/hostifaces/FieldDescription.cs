@@ -89,7 +89,7 @@ namespace System.Management.Automation.Host
         /// </value>
         /// <remarks>
         /// If not already set by a call to <see cref="System.Management.Automation.Host.FieldDescription.SetParameterType"/>,
-        /// <see cref="System.String"/> will be used as the type.
+        /// <see cref="string"/> will be used as the type.
         /// <!--The value of ParameterTypeName is the string value returned.
         /// by System.Type.Name.-->
         /// </remarks>
@@ -115,7 +115,7 @@ namespace System.Management.Automation.Host
         /// </summary>
         /// <remarks>
         /// If not already set by a call to <see cref="System.Management.Automation.Host.FieldDescription.SetParameterType"/>,
-        /// <see cref="System.String"/> will be used as the type.
+        /// <see cref="string"/> will be used as the type.
         /// <!--The value of ParameterTypeName is the string value returned.
         /// by System.Type.Name.-->
         /// </remarks>
@@ -144,7 +144,7 @@ namespace System.Management.Automation.Host
         /// to load the containing assembly to access the type information. AssemblyName is used for this purpose.
         ///
         /// If not already set by a call to <see cref="System.Management.Automation.Host.FieldDescription.SetParameterType"/>,
-        /// <see cref="System.String"/> will be used as the type.
+        /// <see cref="string"/> will be used as the type.
         /// </remarks>
         public
         string

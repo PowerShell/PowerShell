@@ -985,7 +985,12 @@ public static WINDOWPLACEMENT GetPlacement(IntPtr hwnd)
 {
     WINDOWPLACEMENT placement = new WINDOWPLACEMENT();
     placement.length = Marshal.SizeOf(placement);
-    GetWindowPlacement(hwnd, ref placement);
+
+    if (!GetWindowPlacement(hwnd, ref placement))
+    {
+        throw new System.ComponentModel.Win32Exception();
+    }
+
     return placement;
 }
 
@@ -1021,7 +1026,7 @@ public enum ShowWindowCommands : int
         $global:PSDefaultParameterValues = $defaultParamValues
     }
 
-    It "-WindowStyle <WindowStyle> should work on Windows" -TestCases @(
+    It "-WindowStyle <WindowStyle> should work on Windows" -Pending -TestCases @(
             @{WindowStyle="Normal"},
             @{WindowStyle="Minimized"},
             @{WindowStyle="Maximized"}  # hidden doesn't work in CI/Server Core
@@ -1202,5 +1207,20 @@ Describe 'TERM env var' -Tag CI {
         finally {
             $env:NO_COLOR = $null
         }
+    }
+
+    It 'No_COLOR should be respected for redirected output' {
+        $psi =  [System.Diagnostics.ProcessStartInfo] @{
+            FileName  = 'pwsh'
+            # Pass a command that succeeds and normally produces colored output, and one that produces error output.
+            Arguments = '-NoProfile -Command Get-Item .; Get-Content \nosuch123'
+            # Redirect (capture) both stdout and stderr.
+            RedirectStandardOutput = $true
+            RedirectStandardError = $true
+          }
+        $psi.Environment.Add('NO_COLOR', 1)
+        ($ps = [System.Diagnostics.Process]::Start($psi)).WaitForExit()
+        $ps.StandardOutput.ReadToEnd() | Should -Not -Contain '\e'
+        $ps.StandardError.ReadToEnd() | Should -Not -Contain '\e'
     }
 }

@@ -1839,7 +1839,7 @@ namespace System.Management.Automation
                         return;
                     }
 
-                    if (!(childNameObjects[index].BaseObject is string childName))
+                    if (childNameObjects[index].BaseObject is not string childName)
                     {
                         continue;
                     }
@@ -2584,7 +2584,7 @@ namespace System.Management.Automation
                         return;
                     }
 
-                    if (!(result.BaseObject is string name))
+                    if (result.BaseObject is not string name)
                     {
                         continue;
                     }
@@ -2632,7 +2632,7 @@ namespace System.Management.Automation
                                 return;
                             }
 
-                            if (!(result.BaseObject is string name))
+                            if (result.BaseObject is not string name)
                             {
                                 continue;
                             }

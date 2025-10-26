@@ -78,7 +78,7 @@ namespace System.Management.Automation
         /// <param name="context">
         /// streaming context
         /// </param>
-        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected CommandNotFoundException(SerializationInfo info,
                                         StreamingContext context)
         {
@@ -336,13 +336,13 @@ namespace System.Management.Automation
         /// <param name="context">
         /// streaming context
         /// </param>
-        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected ScriptRequiresException(SerializationInfo info,
                                         StreamingContext context)
         {
             throw new NotSupportedException();
         }
-        
+
         #endregion Serialization
 
         #region Properties

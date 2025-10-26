@@ -7,10 +7,20 @@ jobs:
   variables:
     - group: msixTools
     - group: 'Azure Blob variable group'
+    - group: 'Store Publish Variables'
+    - name: ob_sdl_credscan_suppressionsFile
+      value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+    - name: ob_sdl_tsa_configFile
+      value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
     - name: ob_outputDirectory
       value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
 
   steps:
+    - checkout: self
+      clean: true
+      env:
+        ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
     - template: release-SetReleaseTagandContainerName.yml@self
 
     - task: DownloadPipelineArtifact@2
@@ -108,3 +118,158 @@ jobs:
         Write-Verbose -Verbose "Uploaded Bundle:"
         Get-ChildItem -Path $(ob_outputDirectory) | Write-Verbose -Verbose
       displayName: Upload msixbundle to Artifacts
+
+    - pwsh: |
+        Write-Verbose -Verbose "Pipeline.Workspace: $(Pipeline.Workspace)"
+        Get-ChildItem -Path $(Pipeline.Workspace) -Recurse | Select-Object -ExpandProperty FullName
+        Write-Verbose -Verbose "System.DefaultWorkingDirectory: $(System.DefaultWorkingDirectory)"
+        Get-ChildItem -Path $(System.DefaultWorkingDirectory) -Recurse | Select-Object -ExpandProperty FullName
+        Test-Path -Path '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDP-Private.xml' | Write-Verbose -Verbose
+      displayName: Output Pipeline.Workspace and System.DefaultWorkingDirectory
+    
+    - template: channelSelection.yml@self
+
+    - pwsh: |
+        $IsLTS = '$(ChannelSelection.IsLTS)' -eq 'true'
+        $IsStable = '$(ChannelSelection.IsStable)' -eq 'true' 
+        $IsPreview = '$(ChannelSelection.IsPreview)' -eq 'true'
+
+        Write-Verbose -Verbose "Channel Selection - LTS: $IsLTS, Stable: $IsStable, Preview: $IsPreview"
+
+        # Define app configurations for each channel
+        $channelConfigs = @{
+          'LTS' = @{
+            AppStoreName = 'PowerShell-LTS'
+            ProductId = '$(productId-LTS)'
+            AppId = '$(AppID-LTS)'
+            ServiceEndpoint = "StoreAppPublish-Stable"
+          }
+          'Stable' = @{
+            AppStoreName = 'PowerShell'
+            ProductId = '$(productId-Stable)'
+            AppId = '$(AppID-Stable)'
+            ServiceEndpoint = "StoreAppPublish-Stable"
+          }
+          'Preview' = @{
+            AppStoreName = 'PowerShell (Preview)'
+            ProductId = '$(productId-Preview)'
+            AppId = '$(AppID-Preview)'
+            ServiceEndpoint = "StoreAppPublish-Preview"
+          }
+        }
+
+        $currentChannel = if ($IsLTS) { 'LTS' }
+          elseif ($IsStable) { 'Stable' }
+          elseif ($IsPreview) { 'Preview' }
+          else { 
+            Write-Error "No valid channel detected"
+            exit 1
+          }
+                       
+        $config = $channelConfigs[$currentChannel]
+        Write-Verbose -Verbose "Selected channel: $currentChannel"
+        Write-Verbose -Verbose "App Store Name: $($config.AppStoreName)"
+        Write-Verbose -Verbose "Product ID: $($config.ProductId)"
+
+        # Update PDP.xml file
+        $pdpPath = '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDP/PDP/en-US/PDP.xml'
+        if (Test-Path $pdpPath) {
+          Write-Verbose -Verbose "Updating PDP file: $pdpPath"
+
+          [xml]$pdpXml = Get-Content $pdpPath -Raw
+
+          # Create namespace manager for XML with default namespace
+          $nsManager = New-Object System.Xml.XmlNamespaceManager($pdpXml.NameTable)
+          $nsManager.AddNamespace("pd", "http://schemas.microsoft.com/appx/2012/ProductDescription")
+          
+          $appStoreNameElement = $pdpXml.SelectSingleNode("//pd:AppStoreName", $nsManager)
+          if ($appStoreNameElement) {
+            $appStoreNameElement.SetAttribute("_locID", $config.AppStoreName)
+            Write-Verbose -Verbose "Updated AppStoreName _locID to: $($config.AppStoreName)"
+          } else {
+            Write-Warning "AppStoreName element not found in PDP file"
+          }
+
+          $pdpXml.Save($pdpPath)
+          Write-Verbose -Verbose "PDP file updated successfully"
+          Get-Content -Path $pdpPath | Write-Verbose -Verbose
+        } else {
+          Write-Error "PDP file not found: $pdpPath"
+          exit 1
+        }
+
+        # Update SBConfig.json file
+        $sbConfigPath = '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/SBConfig.json'
+        if (Test-Path $sbConfigPath) {
+          Write-Verbose -Verbose "Updating SBConfig file: $sbConfigPath"
+
+          $sbConfigJson = Get-Content $sbConfigPath -Raw | ConvertFrom-Json
+
+          $sbConfigJson.appSubmission.productId = $config.ProductId
+          Write-Verbose -Verbose "Updated productId to: $($config.ProductId)"
+
+          $sbConfigJson | ConvertTo-Json -Depth 100 | Set-Content $sbConfigPath -Encoding UTF8
+          Write-Verbose -Verbose "SBConfig file updated successfully"
+          Get-Content -Path $sbConfigPath | Write-Verbose -Verbose
+        } else {
+          Write-Error "SBConfig file not found: $sbConfigPath"
+          exit 1
+        }
+
+        Write-Host "##vso[task.setvariable variable=ServiceConnection]$($config.ServiceEndpoint)"
+        Write-Host "##vso[task.setvariable variable=SBConfigPath]$($sbConfigPath)"
+
+        # These variables are used in the next tasks to determine which ServiceEndpoint to use
+        Write-Host "##vso[task.setvariable variable=LTS]$($IsLTS.ToString().ToLower())"
+        Write-Host "##vso[task.setvariable variable=STABLE]$($IsStable.ToString().ToLower())"
+        Write-Host "##vso[task.setvariable variable=PREVIEW]$($IsPreview.ToString().ToLower())"
+      name: UpdateConfigs
+      displayName: Update PDPs and SBConfig.json
+
+    - task: MS-RDX-MRO.windows-store-publish.package-task.store-package@3
+      displayName: 'Create StoreBroker Package (Preview)'
+      condition: eq('$(PREVIEW)', 'true')
+      inputs:
+        serviceEndpoint: 'StoreAppPublish-Preview'
+        sbConfigPath: '$(SBConfigPath)'
+        sourceFolder: '$(BundleDir)'
+        contents: '*.msixBundle'
+        outSBName: 'PowerShellStorePackage'
+        pdpPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDP/PDP'
+        pdpMediaPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDP/PDP-Media'
+
+    - task: MS-RDX-MRO.windows-store-publish.package-task.store-package@3
+      displayName: 'Create StoreBroker Package (Stable/LTS)'
+      condition: or(eq('$(STABLE)', 'true'), eq('$(LTS)', 'true'))
+      inputs:
+        serviceEndpoint: 'StoreAppPublish-Stable'
+        sbConfigPath: '$(SBConfigPath)'
+        sourceFolder: '$(BundleDir)'
+        contents: '*.msixBundle'
+        outSBName: 'PowerShellStorePackage'
+        pdpPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDP/PDP'
+        pdpMediaPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDP/PDP-Media'
+
+    - pwsh: |
+        Get-Item -Path "$(System.DefaultWorkingDirectory)/SBLog.txt" -ErrorAction SilentlyContinue |
+          Copy-Item -Destination "$(ob_outputDirectory)" -Verbose
+      displayName: Upload Store Failure Log
+      condition: failed()
+
+    - pwsh: |
+        $submissionPackageDir = "$(System.DefaultWorkingDirectory)/SBOutDir"
+        $jsonFile = "$submissionPackageDir/PowerShellStorePackage.json"
+        $zipFile = "$submissionPackageDir/PowerShellStorePackage.zip"
+    
+        if ((Test-Path $jsonFile) -and (Test-Path $zipFile)) {
+          Write-Verbose -Verbose "Uploading StoreBroker Package files:"
+          Write-Verbose -Verbose "JSON File: $jsonFile"
+          Write-Verbose -Verbose "ZIP File: $zipFile"
+
+          Copy-Item -Path $submissionPackageDir -Destination "$(ob_outputDirectory)" -Verbose -Recurse
+        } 
+
+        else {
+          Write-Error "Required files not found in $submissionPackageDir"
+        }
+      displayName: 'Upload StoreBroker Package'

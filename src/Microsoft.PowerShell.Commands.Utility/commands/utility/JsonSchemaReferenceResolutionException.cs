@@ -11,7 +11,7 @@ namespace Microsoft.PowerShell.Commands;
 /// Thrown during evaluation of <see cref="TestJsonCommand"/> when an attempt
 /// to resolve a <code>$ref</code> or <code>$dynamicRef</code> fails.
 /// </summary>
-internal class JsonSchemaReferenceResolutionException : Exception
+internal sealed class JsonSchemaReferenceResolutionException : Exception
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="JsonSchemaReferenceResolutionException"/> class.
