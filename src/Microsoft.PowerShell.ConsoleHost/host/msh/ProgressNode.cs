@@ -462,7 +462,7 @@ namespace Microsoft.PowerShell
 
                 for (int i = 0; i < statusPart.Length && currentCellCount < barLength; i++)
                 {
-                    currentCellCount += rawUI.LengthInBufferCells(statusPart[i].ToString());
+                    currentCellCount += rawUI.LengthInBufferCells(statusPart[i]);
                     stringPos++;
                 }
 
