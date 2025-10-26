@@ -524,7 +524,7 @@ dotnet_diagnostic.CA1860.severity = warning
 
 # CA1862: Use the 'StringComparison' method overloads to perform case-insensitive string comparisons
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1862
-dotnet_diagnostic.CA1862.severity = warning
+dotnet_diagnostic.CA1862.severity = suggestion
 
 # CA1865: Use char overload
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1865
