@@ -2026,7 +2026,7 @@ $result
 
             foreach (char t in computerName)
             {
-                if (t is '-' || char.IsAsciiLetter(t))
+                if (char.IsAsciiLetter(t) || t is '-' )
                 {
                     hasNonDigit = true;
                     continue;
