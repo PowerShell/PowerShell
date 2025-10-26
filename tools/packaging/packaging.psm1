@@ -1859,6 +1859,10 @@ function Get-PackageDependencies
 
         # These should match those in the Dockerfiles, but exclude tools like Git, which, and curl
         $Dependencies = @()
+        $MinICUVersion = 60                    # runtime minimum supported
+        $BuildICUVersion = 76                  # current build version
+        $MaxICUVersion = $BuildICUVersion + 30 # headroom
+
         if ($Distribution -eq 'deb') {
             $Dependencies = @(
                 "libc6",
@@ -1866,10 +1870,9 @@ function Get-PackageDependencies
                 "libgssapi-krb5-2",
                 "libstdc++6",
                 "zlib1g",
-                "libicu76|libicu74|libicu72|libicu71|libicu70|libicu69|libicu68|libicu67|libicu66|libicu65|libicu63|libicu60|libicu57|libicu55|libicu52",
+                ($($MinICUVersion..$MaxICUVersion | ForEach-Object { "libicu$_" }) -join '|'),
                 "libssl3|libssl1.1|libssl1.0.2|libssl1.0.0"
             )
-
         } elseif ($Distribution -eq 'rh') {
             $Dependencies = @(
                 "openssl-libs",
