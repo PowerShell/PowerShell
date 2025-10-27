@@ -2425,12 +2425,16 @@ function Start-PSBootstrap {
                     }
                 }
                 
-                # For Debian-based systems, ensure dpkg-deb is available (usually pre-installed)
-                if ($environment.IsLinux -and $environment.IsDebianFamily) {
+                # For Debian-based systems and Mariner, ensure dpkg-deb is available
+                if ($environment.IsLinux -and ($environment.IsDebianFamily -or $environment.IsMariner)) {
                     Write-Verbose -Verbose "Checking for dpkg-deb..."
                     if (!(Get-Command dpkg-deb -ErrorAction SilentlyContinue)) {
                         Write-Warning "dpkg-deb not found. Installing dpkg package..."
-                        Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo apt-get install -y dpkg")) -IgnoreExitcode
+                        if ($environment.IsMariner) {
+                            Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo $PackageManager install -y dpkg")) -IgnoreExitcode
+                        } else {
+                            Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo apt-get install -y dpkg")) -IgnoreExitcode
+                        }
                     }
                 }
             }

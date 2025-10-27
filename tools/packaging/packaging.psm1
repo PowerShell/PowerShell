@@ -1845,8 +1845,8 @@ Description: $Description
             # Copy the temporary symlink file that was created by New-LinkInfo
             # The Source contains a temporary symlink that points to the correct target
             if (Test-Path $link.Source) {
-                # Use bash cp to preserve the symlink
-                bash -c "cp -P '$($link.Source)' '$linkPath'"
+                # Use cp to preserve the symlink
+                cp -P $link.Source $linkPath
                 Write-Verbose "Copied symlink: $linkPath (from $($link.Source))" -Verbose
             } else {
                 Write-Warning "Symlink source not found: $($link.Source)"
@@ -1855,10 +1855,13 @@ Description: $Description
 
         # Set proper permissions
         Write-Verbose "Setting file permissions..." -Verbose
-        bash -c "find '$dataDir' -type d -exec chmod 755 '{}' \;"
-        bash -c "find '$dataDir' -type f -exec chmod 644 '{}' \;"
+        # 755 = rwxr-xr-x (owner can read/write/execute, group and others can read/execute)
+        Get-ChildItem $dataDir -Directory -Recurse | ForEach-Object { chmod 755 $_.FullName }
+        # 644 = rw-r--r-- (owner can read/write, group and others can read only)
+        Get-ChildItem $dataDir -File -Recurse | ForEach-Object { chmod 644 $_.FullName }
         
         # Set executable permission for pwsh if it exists
+        # 755 = rwxr-xr-x (executable permission)
         $pwshPath = "$targetPath/pwsh"
         if (Test-Path $pwshPath) {
             chmod 755 "$pwshPath"
@@ -1885,12 +1888,12 @@ Description: $Description
         $buildDir = Join-Path $debBuildRoot "build"
         New-Item -ItemType Directory -Path $buildDir -Force | Out-Null
         
-        # Use bash cp to preserve symlinks
-        bash -c "cp -a '$debianDir' '$buildDir/DEBIAN'"
-        bash -c "cp -a '$dataDir'/* '$buildDir/'"
+        # Use cp to preserve symlinks
+        cp -a $debianDir "$buildDir/DEBIAN"
+        cp -a "$dataDir/*" "$buildDir/"
         
         # Build package with dpkg-deb
-        $dpkgOutput = bash -c "dpkg-deb --build '$buildDir' '$debFilePath' 2>&1"
+        $dpkgOutput = dpkg-deb --build $buildDir $debFilePath 2>&1
         $exitCode = $LASTEXITCODE
         
         if ($exitCode -ne 0) {

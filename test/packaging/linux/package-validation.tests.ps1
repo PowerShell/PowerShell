@@ -54,6 +54,43 @@ Describe "Linux Package Name Validation" {
         }
     }
     
+    Context "DEB Package Names" {
+        It "Should have valid DEB package names" {
+            $debPackages = Get-ChildItem -Path $artifactsDir -Recurse -Filter *.deb -ErrorAction SilentlyContinue
+            
+            if ($debPackages.Count -eq 0) {
+                Set-ItResult -Skipped -Because "No DEB packages found in artifacts directory"
+                return
+            }
+            
+            $invalidPackages = @()
+            # Regex pattern for valid DEB package names.
+            # Breakdown:
+            # ^powershell            : Starts with 'powershell'
+            # (-preview|-lts)?       : Optionally '-preview' or '-lts'
+            # _\d+\.\d+\.\d+         : Underscore followed by version number (e.g., _7.6.0)
+            # (-[a-z]*\.\d+)?        : Optional dash, letters, dot, and digits (e.g., -preview.6)
+            # -1\.                   : Literal '-1.'
+            # (preview\.\d+\.)?      : Optional 'preview.' and digits, followed by a dot
+            # deb\.                  : Literal 'deb.'
+            # (amd64|arm64)\.deb$    : Architecture and file extension
+            $debPackageNamePattern = '^powershell(-preview|-lts)?_\d+\.\d+\.\d+(-[a-z]*\.\d+)?-1\.(preview\.\d+\.)?deb\.(amd64|arm64)\.deb$'
+
+            foreach ($package in $debPackages) {
+                if ($package.Name -notmatch $debPackageNamePattern) {
+                    $invalidPackages += "$($package.Name) is not a valid DEB package name"
+                    Write-Warning "$($package.Name) is not a valid DEB package name"
+                }
+            }
+            
+            if ($invalidPackages.Count -gt 0) {
+                throw ($invalidPackages | Out-String)
+            }
+            
+            $debPackages.Count | Should -BeGreaterThan 0
+        }
+    }
+    
     Context "Tar.Gz Package Names" {
         It "Should have valid tar.gz package names" {
             $tarPackages = Get-ChildItem -Path $artifactsDir -Recurse -Filter *.tar.gz -ErrorAction SilentlyContinue
