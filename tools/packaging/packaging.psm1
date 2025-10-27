@@ -1789,7 +1789,9 @@ function New-MacOSPackage
         # Copy and prepare the postinstall script
         $postInstallPath = Join-Path $scriptsDir "postinstall"
         Copy-Item -Path $AfterInstallScript -Destination $postInstallPath -Force
-        chmod 755 $postInstallPath
+        Start-NativeExecution {
+            chmod 755 $postInstallPath
+        }
 
         # Create a temporary directory for the package root
         $pkgRoot = Join-Path $tempRoot "pkgroot"
@@ -2286,6 +2288,8 @@ function New-MacOSLauncher
     # Set permissions for plist and shell script.
     Start-NativeExecution {
         chmod 644 $plist
+    }
+    Start-NativeExecution {
         chmod 755 $shellscript
     }
 
