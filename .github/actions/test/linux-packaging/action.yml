@@ -22,16 +22,11 @@ runs:
       Write-Verbose -Verbose "End Sync-PSTags"
     shell: pwsh
 
-  - name: Build PowerShell
+  - name: Build and Package
     run: |-
       Import-Module ./tools/ci.psm1
       $releaseTag = Get-ReleaseTag
       Start-PSBuild -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag
-    shell: pwsh
-
-  - name: Create Packages
-    run: |-
-      Import-Module ./tools/ci.psm1
       Invoke-CIFinish
     shell: pwsh
 
