@@ -13,68 +13,25 @@ runs:
     with:
       global-json-file: ./global.json
 
-  - name: Download Build Artifacts
-    uses: actions/download-artifact@v4
-    with:
-      name: build
-      path: "${{ runner.workspace }}/build"
-
-  - name: Capture Artifacts Directory
-    continue-on-error: true
-    run: Get-ChildItem "${{ runner.workspace }}/build/*" -Recurse
-    shell: pwsh
-
   - name: Bootstrap
     run: |-
-      Import-Module ./build.psm1
-      Start-PSBootstrap -Scenario Package
+      Import-Module ./tools/ci.psm1
+      Invoke-CIInstall -SkipUser
       Write-Verbose -Verbose "Start Sync-PSTags"
       Sync-PSTags -AddRemoteIfMissing
       Write-Verbose -Verbose "End Sync-PSTags"
     shell: pwsh
 
-  - name: Extract Build ZIP
+  - name: Build PowerShell
     run: |-
-      $destinationFolder = "${{ runner.workspace }}/bins"
-      $archiveFile = "${{ runner.workspace }}/build/build.zip"
-
-      Write-Verbose "Extracting $archiveFile to $destinationFolder" -Verbose
-      New-Item -ItemType Directory -Path $destinationFolder -Force | Out-Null
-      Expand-Archive -Path $archiveFile -DestinationPath $destinationFolder -Force
-    shell: pwsh
-
-  - name: Fix permissions
-    continue-on-error: true
-    run: |-
-      find "${{ runner.workspace }}/bins" -type d -exec chmod +rwx {} \;
-      find "${{ runner.workspace }}/bins" -type f -exec chmod +rw {} \;
-    shell: bash
-
-  - name: Capture Extracted Build ZIP
-    continue-on-error: true
-    run: Get-ChildItem "${{ runner.workspace }}/bins/*" -Recurse -ErrorAction SilentlyContinue
+      Import-Module ./tools/ci.psm1
+      $releaseTag = Get-ReleaseTag
+      Start-PSBuild -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag
     shell: pwsh
 
   - name: Create Packages
-    env:
-      BUILD_ARTIFACTSTAGINGDIRECTORY: ${{ runner.workspace }}/packages
     run: |-
-      # Create the artifacts staging directory
-      New-Item -ItemType Directory -Path "$env:BUILD_ARTIFACTSTAGINGDIRECTORY" -Force | Out-Null
-
-      # Import packaging module to ensure RPM packaging changes are loaded
-      Import-Module ./build.psm1 -Force
-      Import-Module ./tools/packaging/packaging.psm1 -Force
       Import-Module ./tools/ci.psm1
-      Restore-PSOptions -PSOptionsPath '${{ runner.workspace }}/build/psoptions.json'
-      $options = (Get-PSOptions)
-      $rootPath = '${{ runner.workspace }}/bins'
-      $originalRootPath = Split-Path -path $options.Output
-      $path = Join-Path -path $rootPath -ChildPath (split-path -leaf -path $originalRootPath)
-      $pwshPath = Join-Path -path $path -ChildPath 'pwsh'
-      chmod a+x $pwshPath
-      $options.Output = $pwshPath
-      Set-PSOptions $options
       Invoke-CIFinish
     shell: pwsh
 
