@@ -2282,7 +2282,12 @@ function Start-PSBootstrap {
         [switch]$BuildLinuxArm,
         [switch]$Force,
         [Parameter(Mandatory = $true)]
-        [ValidateSet("Package", "DotNet", "Both")]
+        # Package: Install dependencies for packaging tools (fpm, rpmbuild, WiX)
+        # DotNet: Install the .NET SDK
+        # Both: Package and DotNet scenarios
+        # Tools: Install .NET global tools (e.g., dotnet-format)
+        # All: Install all dependencies (packaging, .NET SDK, and tools)
+        [ValidateSet("Package", "DotNet", "Both", "Tools", "All")]
         [string]$Scenario = "Package"
     )
 
@@ -2407,7 +2412,7 @@ function Start-PSBootstrap {
 
             # Install [fpm](https://github.com/jordansissel/fpm)
             # Note: fpm is now only needed for macOS packages; RPM and DEB packages use native builders
-            if ($Scenario -eq 'Both' -or $Scenario -eq 'Package') {
+            if ($Scenario -in 'All', 'Both', 'Package') {
                 # Install fpm only on macOS
                 if ($environment.IsMacOS) {
                     Install-GlobalGem -Sudo $sudo -GemName "dotenv" -GemVersion "2.8.1"
@@ -2415,7 +2420,7 @@ function Start-PSBootstrap {
                     Install-GlobalGem -Sudo $sudo -GemName "fpm" -GemVersion "1.15.1"
                     Install-GlobalGem -Sudo $sudo -GemName "rexml" -GemVersion "3.2.5"
                 }
-                
+
                 # For RPM-based systems, ensure rpmbuild is available
                 if ($environment.IsLinux -and ($environment.IsRedHatFamily -or $environment.IsSUSEFamily -or $environment.IsMariner)) {
                     Write-Verbose -Verbose "Checking for rpmbuild..."
@@ -2443,7 +2448,7 @@ function Start-PSBootstrap {
             }
         }
 
-        if ($Scenario -eq 'DotNet' -or $Scenario -eq 'Both') {
+        if ($Scenario -in 'All', 'Both', 'DotNet') {
 
             Write-Verbose -Verbose "Calling Find-Dotnet from Start-PSBootstrap"
 
@@ -2497,6 +2502,19 @@ function Start-PSBootstrap {
                 Import-Module "$PSScriptRoot\tools\wix\wix.psm1"
                 $isArm64 = "$env:RUNTIME" -eq 'arm64'
                 Install-Wix -arm64:$isArm64
+            }
+        }
+
+        if ($Scenario -in 'All', 'Tools') {
+            Write-Log -message "Installing .NET global tools"
+
+            # Ensure dotnet is available
+            Find-Dotnet
+
+            # Install dotnet-format
+            Write-Verbose -Verbose "Installing dotnet-format global tool"
+            Start-NativeExecution {
+                dotnet tool install --global dotnet-format
             }
         }
 
@@ -2667,6 +2685,63 @@ function Start-ResGen
     }
 }
 
+function Add-PSEnvironmentPath {
+    <#
+    .SYNOPSIS
+        Adds a path to the process PATH and persists to GitHub Actions workflow if running in GitHub Actions
+    .PARAMETER Path
+        Path to add to PATH
+    .PARAMETER Prepend
+        If specified, prepends the path instead of appending
+    #>
+    param (
+        [Parameter(Mandatory)]
+        [string]$Path,
+
+        [switch]$Prepend
+    )
+
+    # Set in current process
+    if ($Prepend) {
+        $env:PATH = $Path + [IO.Path]::PathSeparator + $env:PATH
+    } else {
+        $env:PATH += [IO.Path]::PathSeparator + $Path
+    }
+
+    # Persist to GitHub Actions workflow if running in GitHub Actions
+    if ($env:GITHUB_ACTIONS -eq 'true') {
+        Write-Verbose -Verbose "Adding $Path to GITHUB_PATH"
+        Add-Content -Path $env:GITHUB_PATH -Value $Path
+    }
+}
+
+function Set-PSEnvironmentVariable {
+    <#
+    .SYNOPSIS
+        Sets an environment variable in the process and persists to GitHub Actions workflow if running in GitHub Actions
+    .PARAMETER Name
+        The name of the environment variable
+    .PARAMETER Value
+        The value of the environment variable
+    #>
+    param (
+        [Parameter(Mandatory)]
+        [string]$Name,
+
+        [Parameter(Mandatory)]
+        [string]$Value
+    )
+
+    # Set in current process
+    Set-Item -Path "env:$Name" -Value $Value
+
+    # Persist to GitHub Actions workflow if running in GitHub Actions
+    if ($env:GITHUB_ACTIONS -eq 'true') {
+        Write-Verbose -Verbose "Setting $Name in GITHUB_ENV"
+        Add-Content -Path $env:GITHUB_ENV -Value "$Name=$Value"
+    }
+}
+
 function Find-Dotnet {
     param (
         [switch] $SetDotnetRoot
@@ -2697,24 +2772,39 @@ function Find-Dotnet {
         if ($dotnetCLIInstalledVersion -ne $chosenDotNetVersion) {
             Write-Warning "The 'dotnet' in the current path can't find SDK version ${dotnetCLIRequiredVersion}, prepending $dotnetPath to PATH."
             # Globally installed dotnet doesn't have the required SDK version, prepend the user local dotnet location
-            $env:PATH = $dotnetPath + [IO.Path]::PathSeparator + $env:PATH
+            Add-PSEnvironmentPath -Path $dotnetPath -Prepend
 
             if ($SetDotnetRoot) {
                 Write-Verbose -Verbose "Setting DOTNET_ROOT to $dotnetPath"
-                $env:DOTNET_ROOT = $dotnetPath
+                Set-PSEnvironmentVariable -Name 'DOTNET_ROOT' -Value $dotnetPath
             }
         } elseif ($SetDotnetRoot) {
             Write-Verbose -Verbose "Expected dotnet version found, setting DOTNET_ROOT to $dotnetPath"
-            $env:DOTNET_ROOT = $dotnetPath
+            Set-PSEnvironmentVariable -Name 'DOTNET_ROOT' -Value $dotnetPath
         }
     }
     else {
         Write-Warning "Could not find 'dotnet', appending $dotnetPath to PATH."
-        $env:PATH += [IO.Path]::PathSeparator + $dotnetPath
+        Add-PSEnvironmentPath -Path $dotnetPath
+
+        if ($SetDotnetRoot) {
+            Write-Verbose -Verbose "Setting DOTNET_ROOT to $dotnetPath"
+            Set-PSEnvironmentVariable -Name 'DOTNET_ROOT' -Value $dotnetPath
+        }
     }
 
     if (-not (precheck 'dotnet' "Still could not find 'dotnet', restoring PATH.")) {
+        # Give up, restore original PATH.  There is nothing to persist since we didn't make a change.
         $env:PATH = $originalPath
+    }
+    elseif ($SetDotnetRoot) {
+        # If we found dotnet, also add the global tools path to PATH
+        # Add .NET global tools to PATH when setting up the environment
+        $dotnetToolsPath = Join-Path $dotnetPath "tools"
+        if (Test-Path $dotnetToolsPath) {
+            Write-Verbose -Verbose "Adding .NET tools path to PATH: $dotnetToolsPath"
+            Add-PSEnvironmentPath -Path $dotnetToolsPath
+        }
     }
 }
 
