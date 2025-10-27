@@ -24,6 +24,10 @@ jobs:
           - architecture: x64
             channel: preview
             runtimePrefix: win7
+          - architecture: x64
+            channel: stable
+            runtimePrefix: win7
+            runASA: true
           - architecture: x86
             channel: stable
             runtimePrefix: win7
@@ -71,12 +75,59 @@ jobs:
           Invoke-CIInstall -SkipUser
         shell: pwsh
 
+      - name: Install Attack Surface Analyzer
+        if: matrix.runASA == true
+        run: |
+          Write-Host "Installing Attack Surface Analyzer..."
+          dotnet tool install -g Microsoft.CST.AttackSurfaceAnalyzer.CLI --version 2.3.328
+        shell: pwsh
+
+      - name: Take Baseline Snapshot
+        if: matrix.runASA == true
+        run: |
+          Write-Host "Taking baseline snapshot with Attack Surface Analyzer..."
+          # Use specific collectors for faster execution:
+          # -f: File system collector (PowerShell install dirs and System32\PowerShell)
+          # -s: Service collector
+          # -r: Registry collector
+          # -u: User and group account collector
+          # -p: Network port collector
+          # -l: Log collector (EventLog)
+          # Exclude slow collectors like WiFi, TPM, Cryptographic Keys, Firewall, COM, Certificates
+          $windowsPowerShellPath = [System.Environment]::GetFolderPath([System.Environment+SpecialFolder]::Windows) + "\System32\PowerShell"
+          & "$env:USERPROFILE\.dotnet\tools\asa.exe" collect -f -s -r -u -p -l --directories "C:\Program Files\PowerShell,C:\Program Files (x86)\PowerShell,$windowsPowerShellPath"
+        shell: pwsh
+
       - name: Build and Package
         run: |
           Import-Module .\tools\ci.psm1
           New-CodeCoverageAndTestPackage
           Invoke-CIFinish -Runtime ${{ matrix.runtimePrefix }}-${{ matrix.architecture }} -channel ${{ matrix.channel }}
         shell: pwsh
+
+      - name: Analyze with Attack Surface Analyzer
+        if: matrix.runASA == true
+        run: |
+          Write-Host "Taking post-installation snapshot..."
+          $windowsPowerShellPath = [System.Environment]::GetFolderPath([System.Environment+SpecialFolder]::Windows) + "\System32\PowerShell"
+          & "$env:USERPROFILE\.dotnet\tools\asa.exe" collect -f -s -r -u -p -l --directories "C:\Program Files\PowerShell,C:\Program Files (x86)\PowerShell,$windowsPowerShellPath"
+
+          Write-Host "Exporting comparison results..."
+          & "$env:USERPROFILE\.dotnet\tools\asa.exe" export-collect --outputsarif --savetodatabase
+
+          Write-Host "Attack Surface Analyzer test completed."
+        shell: pwsh
+
+      - name: Upload Attack Surface Analyzer Results
+        if: matrix.runASA == true && always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: attack-surface-analyzer-results-${{ matrix.architecture }}-${{ matrix.channel }}
+          path: |
+            ${{ github.workspace }}/*_summary.json.txt
+            ${{ github.workspace }}/*_results.json.txt
+            ${{ github.workspace }}/*.sarif
+            ${{ github.workspace }}/asa.sqlite
 
       - name: Upload Build Artifacts
         if: always()
