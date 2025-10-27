@@ -2029,7 +2029,6 @@ $result
                 if (char.IsAsciiLetter(t) || t is '-' )
                 {
                     hasNonDigit = true;
-                    continue;
                 }
                 else if (!char.IsAsciiDigit(t))
                 {
