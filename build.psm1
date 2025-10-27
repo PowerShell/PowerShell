@@ -2431,6 +2431,9 @@ function Start-PSBootstrap {
                     if (!(Get-Command dpkg-deb -ErrorAction SilentlyContinue)) {
                         Write-Warning "dpkg-deb not found. Installing dpkg package..."
                         if ($environment.IsMariner) {
+                            # For Mariner (Azure Linux), install the extended repo first to access dpkg
+                            Write-Verbose -Verbose "Installing azurelinux-repos-extended for Mariner..."
+                            Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo $PackageManager install -y azurelinux-repos-extended")) -IgnoreExitcode
                             Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo $PackageManager install -y dpkg")) -IgnoreExitcode
                         } else {
                             Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo apt-get install -y dpkg")) -IgnoreExitcode
