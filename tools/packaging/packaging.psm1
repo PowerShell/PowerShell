@@ -1,6 +1,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+. "$PSScriptRoot\..\buildCommon\startNativeExecution.ps1"
+
 $Environment = Get-EnvironmentInformation
 $RepoRoot = (Resolve-Path -Path "$PSScriptRoot/../..").Path
 
@@ -1542,20 +1544,11 @@ function New-MacOsDistributionPackage
         try
         {
             # productbuild is an xcode command line tool
-            $productbuildArgs = @(
-                "--distribution", $distributionXmlPath,
-                "--package-path", $tempDir,
-                "--resources", $resourcesDir,
-                $finalPackagePath
-            )
-            
-            Write-Verbose "productbuild arguments: $productbuildArgs" -Verbose
-            $productbuildOutput = & productbuild @productbuildArgs 2>&1
-            
-            if ($LASTEXITCODE -ne 0) {
-                Write-Error "productbuild failed with exit code $LASTEXITCODE"
-                Write-Error "Output: $productbuildOutput"
-                throw "Failed to create product package"
+            Start-NativeExecution -VerboseOutputOnError {
+                productbuild --distribution $distributionXmlPath `
+                    --package-path $tempDir `
+                    --resources $resourcesDir `
+                    $finalPackagePath
             }
             
             if (Test-Path $finalPackagePath) {
@@ -1855,22 +1848,14 @@ function New-MacOSPackage
         
         if ($PSCmdlet.ShouldProcess("Build component package with pkgbuild")) {
             Write-Log "Running pkgbuild to create component package..."
-            $pkgbuildArgs = @(
-                "--root", $pkgRoot,
-                "--identifier", $pkgIdentifier,
-                "--version", $Version,
-                "--scripts", $scriptsDir,
-                "--install-location", "/",
-                $componentPkgPath
-            )
             
-            Write-Verbose "pkgbuild arguments: $pkgbuildArgs" -Verbose
-            $pkgbuildOutput = & pkgbuild @pkgbuildArgs 2>&1
-            
-            if ($LASTEXITCODE -ne 0) {
-                Write-Error "pkgbuild failed with exit code $LASTEXITCODE"
-                Write-Error "Output: $pkgbuildOutput"
-                throw "Failed to create component package"
+            Start-NativeExecution -VerboseOutputOnError {
+                pkgbuild --root $pkgRoot `
+                    --identifier $pkgIdentifier `
+                    --version $Version `
+                    --scripts $scriptsDir `
+                    --install-location "/" `
+                    $componentPkgPath
             }
             
             Write-Verbose "Component package created: $componentPkgPath" -Verbose
