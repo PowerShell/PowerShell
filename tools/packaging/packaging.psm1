@@ -1859,6 +1859,18 @@ function Get-PackageDependencies
 
         # These should match those in the Dockerfiles, but exclude tools like Git, which, and curl
         $Dependencies = @()
+
+        # ICU version range follows .NET runtime policy.
+        # See: src/native/libs/System.Globalization.Native/pal_icushim.c in dotnet/runtime
+        #
+        # Version range rationale:
+        # - The runtime supports ICU versions >= the version it was built against
+        #   and <= that version + 30, to allow sufficient headroom for future releases.
+        # - ICU typically releases about twice per year, so +30 provides roughly
+        #   15 years of forward compatibility.
+        # - On some platforms, the minimum supported version may be lower
+        #   than the build version and we know that older versions just works.
+        #
         $MinICUVersion = 60                    # runtime minimum supported
         $BuildICUVersion = 76                  # current build version
         $MaxICUVersion = $BuildICUVersion + 30 # headroom
