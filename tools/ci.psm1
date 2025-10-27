@@ -197,7 +197,10 @@ function Invoke-CIxUnit
 {
     param(
         [switch]
-        $SkipFailing
+        $SkipFailing,
+        
+        [switch]
+        $CodeCoverage
     )
     $env:CoreOutput = Split-Path -Parent (Get-PSOutput -Options (Get-PSOptions))
     $path = "$env:CoreOutput\pwsh.exe"
@@ -213,7 +216,17 @@ function Invoke-CIxUnit
 
     $xUnitTestResultsFile = Join-Path -Path $PWD -ChildPath "xUnitTestResults.xml"
 
-    Start-PSxUnit -xUnitTestResultsFile $xUnitTestResultsFile
+    if($CodeCoverage.IsPresent)
+    {
+        $coverageFile = Join-Path -Path $PWD -ChildPath "coverage.xml"
+        Start-PSxUnit -xUnitTestResultsFile $xUnitTestResultsFile -CodeCoverage -CodeCoverageOutputFile $coverageFile
+        Push-Artifact -Path $coverageFile -name codecoverage
+    }
+    else
+    {
+        Start-PSxUnit -xUnitTestResultsFile $xUnitTestResultsFile
+    }
+    
     Push-Artifact -Path $xUnitTestResultsFile -name xunit
 
     if(!$SkipFailing.IsPresent)

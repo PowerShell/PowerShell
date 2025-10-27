@@ -41,54 +41,14 @@ jobs:
         run: |
           dotnet tool install --global dotnet-coverage
 
-      - name: Build PowerShell
+      - name: Build PowerShell and run xUnit tests
         shell: pwsh
         run: |
           Import-Module ./tools/ci.psm1
           Start-PSBuild
-          Write-Host "Completed PowerShell build."
-
-      - name: Run xUnit tests with code coverage
-        shell: pwsh
-        run: |
-          Import-Module ./tools/ci.psm1
-          Import-Module ./build.psm1
-          
-          # Get build options
-          $options = Get-PSOptions
-          $Content = Split-Path -Parent (Get-PSOutput)
-          if (-not (Test-Path $Content)) {
-              throw "PowerShell must be built before running tests!"
-          }
-          
-          $xUnitTestResultsFile = Join-Path -Path $PWD -ChildPath "xUnitTestResults.xml"
-          $coverageFile = Join-Path -Path $PWD -ChildPath "coverage.xml"
-          
-          Write-Host "Running xUnit tests with code coverage..."
-          
-          # Add workaround to unblock xUnit testing
-          $dotnetPath = if ($env:OS -match 'Windows') { "$env:LocalAppData\Microsoft\dotnet" } else { "$env:HOME/.dotnet" }
-          $originalDOTNET_ROOT = $env:DOTNET_ROOT
-          $env:DOTNET_ROOT = $dotnetPath
-          
-          try {
-            Push-Location test/xUnit
-            
-            # Remove old test results if they exist
-            if (Test-Path $xUnitTestResultsFile) {
-                Remove-Item $xUnitTestResultsFile -Force -ErrorAction SilentlyContinue
-            }
-            if (Test-Path $coverageFile) {
-                Remove-Item $coverageFile -Force -ErrorAction SilentlyContinue
-            }
-            
-            # Run tests with code coverage
-            dotnet-coverage collect --output $coverageFile --output-format cobertura "dotnet test --logger:xunit;LogFilePath=$xUnitTestResultsFile --configuration $($options.configuration) --test-adapter-path:."
-          } finally {
-            Pop-Location
-            $env:DOTNET_ROOT = $originalDOTNET_ROOT
-          }
-          Write-Host "Completed xUnit test run with coverage."
+          Write-Host "Running full xUnit test suite (no skipping)..."
+          Invoke-CIxUnit -CodeCoverage
+          Write-Host "Completed xUnit test run."
 
       - name: Upload xUnit results
         uses: actions/upload-artifact@v5

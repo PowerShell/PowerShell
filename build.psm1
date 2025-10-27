@@ -1986,7 +1986,9 @@ function Start-PSxUnit {
     [CmdletBinding()]param(
         [string] $xUnitTestResultsFile = "xUnitResults.xml",
         [switch] $DebugLogging,
-        [string] $Filter
+        [string] $Filter,
+        [switch] $CodeCoverage,
+        [string] $CodeCoverageOutputFile = "coverage.xml"
     )
 
     # Add .NET CLI tools to PATH
@@ -2042,6 +2044,10 @@ function Start-PSxUnit {
             Remove-Item $xUnitTestResultsFile -Force -ErrorAction SilentlyContinue
         }
 
+        if ($CodeCoverage.IsPresent -and (Test-Path $CodeCoverageOutputFile)) {
+            Remove-Item $CodeCoverageOutputFile -Force -ErrorAction SilentlyContinue
+        }
+
         # We run the xUnit tests sequentially to avoid race conditions caused by manipulating the config.json file.
         # xUnit tests run in parallel by default. To make them run sequentially, we need to define the 'xunit.runner.json' file.
         $extraParams = @()
@@ -2061,7 +2067,21 @@ function Start-PSxUnit {
                 "--logger:xunit;LogFilePath=$xUnitTestResultsFile"
             )
         }
-        dotnet test @extraParams --configuration $Options.configuration --test-adapter-path:.
+        
+        $testCommand = "dotnet test @extraParams --configuration $($Options.configuration) --test-adapter-path:."
+        
+        if($CodeCoverage.IsPresent) {
+            # Run tests with code coverage using dotnet-coverage
+            Write-Verbose "Running xUnit tests with code coverage..." -Verbose
+            $testCommandString = "dotnet test --logger:xunit;LogFilePath=$xUnitTestResultsFile --configuration $($Options.configuration) --test-adapter-path:."
+            if($Filter) {
+                $testCommandString = "dotnet test --filter '$Filter' --logger:xunit;LogFilePath=$xUnitTestResultsFile --configuration $($Options.configuration) --test-adapter-path:."
+            }
+            dotnet-coverage collect --output $CodeCoverageOutputFile --output-format cobertura $testCommandString
+        }
+        else {
+            dotnet test @extraParams --configuration $Options.configuration --test-adapter-path:.
+        }
 
         if(!$DebugLogging){
             Publish-TestResults -Path $xUnitTestResultsFile -Type 'XUnit' -Title 'Xunit Sequential'
