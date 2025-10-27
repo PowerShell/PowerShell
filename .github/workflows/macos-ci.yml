@@ -179,6 +179,7 @@ jobs:
         import-module ./build.psm1
         import-module ./tools/ci.psm1
         import-module ./tools/packaging/packaging.psm1
+        Switch-PSNugetConfig -Source Public
         Sync-PSTags -AddRemoteIfMissing
         $releaseTag = Get-ReleaseTag
         Start-PSBuild -Configuration Release -PSModuleRestore -ReleaseTag $releaseTag
