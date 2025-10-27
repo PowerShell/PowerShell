@@ -1870,7 +1870,7 @@ function Get-PackageDependencies
                 "libgssapi-krb5-2",
                 "libstdc++6",
                 "zlib1g",
-                ($MinICUVersion..$MaxICUVersion).ForEach{ "libicu$_" } -join '|',
+                ($MaxICUVersion..$MinICUVersion).ForEach{ "libicu$_" } -join '|',
                 "libssl3|libssl1.1|libssl1.0.2|libssl1.0.0"
             )
         } elseif ($Distribution -eq 'rh') {
