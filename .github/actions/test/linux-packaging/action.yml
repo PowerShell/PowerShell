@@ -19,16 +19,13 @@ runs:
       Start-PSBootstrap -Scenario Package
       Import-Module ./tools/ci.psm1
       Invoke-CIInstall -SkipUser
-      Write-Verbose -Verbose "Start Sync-PSTags"
-      Sync-PSTags -AddRemoteIfMissing
-      Write-Verbose -Verbose "End Sync-PSTags"
     shell: pwsh
 
   - name: Build and Package
     run: |-
       Import-Module ./tools/ci.psm1
       $releaseTag = Get-ReleaseTag
-      Start-PSBuild -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag
+      Start-PSBuild -Configuration 'Release' -ReleaseTag $releaseTag
       Invoke-CIFinish
     shell: pwsh
 

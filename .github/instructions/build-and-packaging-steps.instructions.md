@@ -25,7 +25,7 @@ Run build and packaging in the same step to keep PSOptions in memory:
   run: |-
     Import-Module ./tools/ci.psm1
     $releaseTag = Get-ReleaseTag
-    Start-PSBuild -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag
+    Start-PSBuild -Configuration 'Release' -ReleaseTag $releaseTag
     Invoke-CIFinish
   shell: pwsh
 ```
@@ -44,7 +44,7 @@ If you must separate build and packaging into different steps:
   run: |-
     Import-Module ./tools/ci.psm1
     $releaseTag = Get-ReleaseTag
-    Start-PSBuild -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag
+    Start-PSBuild -Configuration 'Release' -ReleaseTag $releaseTag
     Save-PSOptions -PSOptionsPath "${{ runner.workspace }}/psoptions.json"
   shell: pwsh
 
@@ -67,7 +67,7 @@ If you must separate build and packaging into different steps:
 ```yaml
 - name: Build PowerShell
   run: |-
-    Start-PSBuild -PSModuleRestore -Configuration 'Release'
+    Start-PSBuild -Configuration 'Release'
   shell: pwsh
 
 - name: Create Packages
@@ -109,7 +109,7 @@ If you must separate build and packaging into different steps:
   run: |-
     Import-Module ./tools/ci.psm1
     $releaseTag = Get-ReleaseTag
-    Start-PSBuild -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag
+    Start-PSBuild -Configuration 'Release' -ReleaseTag $releaseTag
     Invoke-CIFinish
   shell: pwsh
 ```
