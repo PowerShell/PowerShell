@@ -126,4 +126,27 @@ Describe "Tab completion bug fix" -Tags "CI" {
             $Runspace.Dispose()
         }
     }
+
+    It "Issue#26277 - [CompletionCompleters]::CompleteFilename('') should work" {
+        $testDir = Join-Path $TestDrive "TempTestDir"
+        $file1 = Join-Path $testDir "abc.ps1"
+        $file2 = Join-Path $testDir "def.py"
+
+        New-Item -ItemType Directory -Path $testDir > $null
+        New-Item -ItemType File -Path $file1 > $null
+        New-Item -ItemType File -Path $file2 > $null
+
+        try {
+            Push-Location -Path $testDir
+            $result = [System.Management.Automation.CompletionCompleters]::CompleteFilename("")
+            $result | Should -Not -Be $null
+            $result | Measure-Object | ForEach-Object -MemberName Count | Should -Be 2
+
+            $item1, $item2 = @($result)
+            $item1.ListItemText | Should -BeExactly 'abc.ps1'
+            $item2.ListItemText | Should -BeExactly 'def.py'
+        } finally {
+            Pop-Location
+        }
+    }
 }

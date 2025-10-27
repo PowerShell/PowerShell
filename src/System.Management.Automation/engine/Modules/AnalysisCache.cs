@@ -664,6 +664,11 @@ namespace System.Management.Automation
 
         public void QueueSerialization()
         {
+            if (string.IsNullOrEmpty(s_cacheStoreLocation))
+            {
+                return;
+            }
+
             // We expect many modules to rapidly call for serialization.
             // Instead of doing it right away, we'll queue a task that starts writing
             // after it seems like we've stopped adding stuff to write out.  This is
@@ -1121,7 +1126,7 @@ namespace System.Management.Automation
                 cacheFileName = string.Create(CultureInfo.InvariantCulture, $"{cacheFileName}-{hashString}");
             }
 
-            s_cacheStoreLocation = Path.Combine(Platform.CacheDirectory, cacheFileName);
+            Platform.TryDeriveFromCache(cacheFileName, out s_cacheStoreLocation);
         }
     }
 
