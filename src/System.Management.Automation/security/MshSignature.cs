@@ -417,13 +417,7 @@ namespace System.Management.Automation
             {
                 if (extension.Oid != null && extension.Oid.Value == CertificateFilterInfo.SubjectAlternativeNameOid)
                 {
-                    string formatted = extension.Format(multiLine: true);
-                    if (string.IsNullOrEmpty(formatted))
-                    {
-                        return null;
-                    }
-
-                    return formatted.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+                    return  extension.Format(multiLine: false);
                 }
             }
 
