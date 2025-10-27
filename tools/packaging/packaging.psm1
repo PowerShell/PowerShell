@@ -1460,13 +1460,26 @@ Function New-LinkInfo
 
 function New-MacOsDistributionPackage
 {
+    [CmdletBinding(SupportsShouldProcess=$true)]
     param(
-        [Parameter(Mandatory,HelpMessage='The FileInfo of the file created by FPM')]
-        [System.IO.FileInfo]$FpmPackage,
+        [Parameter(Mandatory,HelpMessage='The FileInfo of the component package')]
+        [System.IO.FileInfo]$ComponentPackage,
+
+        [Parameter(Mandatory,HelpMessage='Package name for the output file')]
+        [string]$PackageName,
+
+        [Parameter(Mandatory,HelpMessage='Package version')]
+        [string]$Version,
+
+        [Parameter(Mandatory,HelpMessage='Output directory for the final package')]
+        [string]$OutputDirectory,
 
         [Parameter(HelpMessage='x86_64 for Intel or arm64 for Apple Silicon')]
         [ValidateSet("x86_64", "arm64")]
         [string] $HostArchitecture = "x86_64",
+
+        [Parameter(HelpMessage='Package identifier')]
+        [string]$PackageIdentifier,
 
         [Switch] $IsPreview
     )
@@ -1476,64 +1489,90 @@ function New-MacOsDistributionPackage
         throw 'New-MacOsDistributionPackage is only supported on macOS!'
     }
 
-    $packageName = Split-Path -Leaf -Path $FpmPackage
-
     # Create a temp directory to store the needed files
     $tempDir = Join-Path ([System.IO.Path]::GetTempPath()) ([System.IO.Path]::GetRandomFileName())
     New-Item -ItemType Directory -Path $tempDir -Force > $null
 
     $resourcesDir = Join-Path -Path $tempDir -ChildPath 'resources'
     New-Item -ItemType Directory -Path $resourcesDir -Force > $null
-    #Copy background file to temp directory
+    
+    # Copy background file to temp directory
     $backgroundFile = "$RepoRoot/assets/macDialog.png"
-    Copy-Item -Path $backgroundFile -Destination $resourcesDir
-    # Move the current package to the temp directory
-    $tempPackagePath = Join-Path -Path $tempDir -ChildPath $packageName
-    Move-Item -Path $FpmPackage -Destination $tempPackagePath -Force
-
-    # Add the OS information to the macOS package file name.
-    $packageExt = [System.IO.Path]::GetExtension($FpmPackage.Name)
-
-    # get the package name from fpm without the extension, but replace powershell-preview at the beginning of the name with powershell.
-    $packageNameWithoutExt = [System.IO.Path]::GetFileNameWithoutExtension($FpmPackage.Name) -replace '^powershell\-preview' , 'powershell'
-
-    $newPackageName = "{0}-{1}{2}" -f $packageNameWithoutExt, $script:Options.Runtime, $packageExt
-    $newPackagePath = Join-Path $FpmPackage.DirectoryName $newPackageName
-
-    # -Force is not deleting the NewName if it exists, so delete it if it does
-    if ($Force -and (Test-Path -Path $newPackagePath))
-    {
-        Remove-Item -Force $newPackagePath
+    if (Test-Path $backgroundFile) {
+        Copy-Item -Path $backgroundFile -Destination $resourcesDir -Force
     }
+    
+    # Copy the component package to temp directory
+    $componentFileName = Split-Path -Leaf -Path $ComponentPackage
+    $tempComponentPath = Join-Path -Path $tempDir -ChildPath $componentFileName
+    Copy-Item -Path $ComponentPackage -Destination $tempComponentPath -Force
 
     # Create the distribution xml
     $distributionXmlPath = Join-Path -Path $tempDir -ChildPath 'powershellDistribution.xml'
 
-    $packageId = Get-MacOSPackageId -IsPreview:$IsPreview.IsPresent
+    # Get package ID if not provided
+    if (-not $PackageIdentifier) {
+        $PackageIdentifier = Get-MacOSPackageId -IsPreview:$IsPreview.IsPresent
+    }
 
+    # Minimum OS version
+    $minOSVersion = "11.0"  # macOS Big Sur minimum
+    
     # format distribution template with:
     # 0 - title
     # 1 - version
-    # 2 - package path
+    # 2 - package path (component package filename)
     # 3 - minimum os version
     # 4 - Package Identifier
     # 5 - host architecture (x86_64 for Intel or arm64 for Apple Silicon)
-    $PackagingStrings.OsxDistributionTemplate -f "PowerShell - $packageVersion", $packageVersion, $packageName, '10.14', $packageId, $HostArchitecture | Out-File -Encoding ascii -FilePath $distributionXmlPath -Force
+    $PackagingStrings.OsxDistributionTemplate -f $PackageName, $Version, $componentFileName, $minOSVersion, $PackageIdentifier, $HostArchitecture | Out-File -Encoding utf8 -FilePath $distributionXmlPath -Force
 
-    Write-Log "Applying distribution.xml to package..."
-    Push-Location $tempDir
-    try
-    {
-        # productbuild is an xcode command line tool, and those tools are installed when you install brew
-        Start-NativeExecution -sb {productbuild --distribution $distributionXmlPath --resources $resourcesDir $newPackagePath} -VerboseOutputOnError
-    }
-    finally
-    {
-        Pop-Location
-        Remove-Item -Path $tempDir -Recurse -Force
+    # Build final package path
+    $finalPackagePath = Join-Path $OutputDirectory "$PackageName-$Version-osx-$HostArchitecture.pkg"
+    
+    # Remove existing package if it exists
+    if (Test-Path $finalPackagePath) {
+        Write-Warning "Removing existing package: $finalPackagePath"
+        Remove-Item $finalPackagePath -Force
     }
 
-    return (Get-Item $newPackagePath)
+    if ($PSCmdlet.ShouldProcess("Build product package with productbuild")) {
+        Write-Log "Applying distribution.xml to package..."
+        Push-Location $tempDir
+        try
+        {
+            # productbuild is an xcode command line tool
+            $productbuildArgs = @(
+                "--distribution", $distributionXmlPath,
+                "--package-path", $tempDir,
+                "--resources", $resourcesDir,
+                $finalPackagePath
+            )
+            
+            Write-Verbose "productbuild arguments: $productbuildArgs" -Verbose
+            $productbuildOutput = & productbuild @productbuildArgs 2>&1
+            
+            if ($LASTEXITCODE -ne 0) {
+                Write-Error "productbuild failed with exit code $LASTEXITCODE"
+                Write-Error "Output: $productbuildOutput"
+                throw "Failed to create product package"
+            }
+            
+            if (Test-Path $finalPackagePath) {
+                Write-Log "Successfully created macOS package: $finalPackagePath"
+            }
+            else {
+                throw "Package was not created at expected location: $finalPackagePath"
+            }
+        }
+        finally
+        {
+            Pop-Location
+            Remove-Item -Path $tempDir -Recurse -Force -ErrorAction SilentlyContinue
+        }
+    }
+
+    return (Get-Item $finalPackagePath)
 }
 
 Class LinkInfo
@@ -1837,67 +1876,17 @@ function New-MacOSPackage
             Write-Verbose "Component package created: $componentPkgPath" -Verbose
         }
 
-        # Create resources directory for distribution package
-        New-Item -ItemType Directory -Path $resourcesDir -Force | Out-Null
+        # Create the final distribution package using the refactored function
+        $distributionPackage = New-MacOsDistributionPackage `
+            -ComponentPackage (Get-Item $componentPkgPath) `
+            -PackageName $Name `
+            -Version $Version `
+            -OutputDirectory $CurrentLocation `
+            -HostArchitecture $HostArchitecture `
+            -PackageIdentifier $pkgIdentifier `
+            -IsPreview:($Name -like '*-preview')
         
-        # Copy background image if it exists
-        $backgroundImage = "$RepoRoot/assets/macDialog.png"
-        if (Test-Path $backgroundImage) {
-            Copy-Item -Path $backgroundImage -Destination $resourcesDir -Force
-        }
-
-        # Create distribution XML
-        $minOSVersion = "11.0"  # macOS Big Sur minimum
-        $packageFileName = Split-Path $componentPkgPath -Leaf
-        
-        # Map architecture names
-        $archForDistribution = if ($HostArchitecture -eq "arm64") { "arm64" } else { "x86_64" }
-        
-        $distributionContent = $packagingStrings.OsxDistributionTemplate -f `
-            $Name, `
-            $Version, `
-            $packageFileName, `
-            $minOSVersion, `
-            $pkgIdentifier, `
-            $archForDistribution
-
-        $distributionContent | Out-File -FilePath $distributionFile -Encoding utf8
-
-        # Build the final product package using productbuild
-        $packageName = "$Name-$Version-osx-$HostArchitecture.pkg"
-        $packagePath = Join-Path $CurrentLocation $packageName
-
-        if (Test-Path $packagePath) {
-            Write-Warning "Removing existing package: $packagePath"
-            Remove-Item $packagePath -Force
-        }
-
-        if ($PSCmdlet.ShouldProcess("Build product package with productbuild")) {
-            Write-Log "Running productbuild to create final package..."
-            $productbuildArgs = @(
-                "--distribution", $distributionFile,
-                "--package-path", $tempRoot,
-                "--resources", $resourcesDir,
-                $packagePath
-            )
-            
-            Write-Verbose "productbuild arguments: $productbuildArgs" -Verbose
-            $productbuildOutput = & productbuild @productbuildArgs 2>&1
-            
-            if ($LASTEXITCODE -ne 0) {
-                Write-Error "productbuild failed with exit code $LASTEXITCODE"
-                Write-Error "Output: $productbuildOutput"
-                throw "Failed to create product package"
-            }
-            
-            if (Test-Path $packagePath) {
-                Write-Log "Successfully created macOS package: $packagePath"
-                return (Get-Item $packagePath)
-            }
-            else {
-                throw "Package was not created at expected location: $packagePath"
-            }
-        }
+        return $distributionPackage
     }
     finally {
         # Clean up temporary directory
