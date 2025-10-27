@@ -24,6 +24,10 @@ jobs:
           - architecture: x64
             channel: preview
             runtimePrefix: win7
+          - architecture: x64
+            channel: stable
+            runtimePrefix: win7
+            runASA: true
           - architecture: x86
             channel: stable
             runtimePrefix: win7
@@ -72,12 +76,14 @@ jobs:
         shell: pwsh
 
       - name: Install Attack Surface Analyzer
+        if: matrix.runASA == true
         run: |
           Write-Host "Installing Attack Surface Analyzer..."
           dotnet tool install -g Microsoft.CST.AttackSurfaceAnalyzer.CLI --version 2.3.328
         shell: pwsh
 
       - name: Take Baseline Snapshot
+        if: matrix.runASA == true
         run: |
           Write-Host "Taking baseline snapshot with Attack Surface Analyzer..."
           # Use specific collectors for faster execution:
@@ -100,6 +106,7 @@ jobs:
         shell: pwsh
 
       - name: Analyze with Attack Surface Analyzer
+        if: matrix.runASA == true
         run: |
           Write-Host "Taking post-installation snapshot..."
           $windowsPowerShellPath = [System.Environment]::GetFolderPath([System.Environment+SpecialFolder]::Windows) + "\System32\PowerShell"
@@ -112,7 +119,7 @@ jobs:
         shell: pwsh
 
       - name: Upload Attack Surface Analyzer Results
-        if: always()
+        if: matrix.runASA == true && always()
         uses: actions/upload-artifact@v4
         with:
           name: attack-surface-analyzer-results-${{ matrix.architecture }}-${{ matrix.channel }}
