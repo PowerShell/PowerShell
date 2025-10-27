@@ -15,6 +15,8 @@ runs:
 
   - name: Bootstrap
     run: |-
+      Import-Module ./build.psm1
+      Start-PSBootstrap -Scenario Package
       Import-Module ./tools/ci.psm1
       Invoke-CIInstall -SkipUser
       Write-Verbose -Verbose "Start Sync-PSTags"
