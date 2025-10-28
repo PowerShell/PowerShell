@@ -536,13 +536,17 @@ Fix steps:
     }
 
     # handle Restore
+    Write-LogGroupStart -Title "Restore NuGet Packages"
     Restore-PSPackage -Options $Options -Force:$Restore -InteractiveAuth:$InteractiveAuth
+    Write-LogGroupEnd -Title "Restore NuGet Packages"
 
     # handle ResGen
     # Heuristic to run ResGen on the fresh machine
     if ($ResGen -or -not (Test-Path "$PSScriptRoot/src/Microsoft.PowerShell.ConsoleHost/gen")) {
+        Write-LogGroupStart -Title "Generate Resource Files (ResGen)"
         Write-Log -message "Run ResGen (generating C# bindings for resx files)"
         Start-ResGen
+        Write-LogGroupEnd -Title "Generate Resource Files (ResGen)"
     }
 
     # Handle TypeGen
@@ -554,8 +558,10 @@ Fix steps:
 
     $incFileName = "powershell_$runtime.inc"
     if ($TypeGen -or -not (Test-Path "$PSScriptRoot/src/TypeCatalogGen/$incFileName")) {
+        Write-LogGroupStart -Title "Generate Type Catalog (TypeGen)"
         Write-Log -message "Run TypeGen (generating CorePsTypeCatalog.cs)"
         Start-TypeGen -IncFileName $incFileName
+        Write-LogGroupEnd -Title "Generate Type Catalog (TypeGen)"
     }
 
     # Get the folder path where pwsh.exe is located.
@@ -566,6 +572,7 @@ Fix steps:
         $publishPath = $Options.Output
     }
 
+    Write-LogGroupStart -Title "Build PowerShell"
     try {
         # Relative paths do not work well if cwd is not changed to project
         Push-Location $Options.Top
@@ -620,6 +627,7 @@ Fix steps:
     } finally {
         Pop-Location
     }
+    Write-LogGroupEnd -Title "Build PowerShell"
 
     # No extra post-building task will run if '-SMAOnly' is specified, because its purpose is for a quick update of S.M.A.dll after full build.
     if ($SMAOnly) {
@@ -627,6 +635,7 @@ Fix steps:
     }
 
     # publish reference assemblies
+    Write-LogGroupStart -Title "Publish Reference Assemblies"
     try {
         Push-Location "$PSScriptRoot/src/TypeCatalogGen"
         $refAssemblies = Get-Content -Path $incFileName | Where-Object { $_ -like "*microsoft.netcore.app*" } | ForEach-Object { $_.TrimEnd(';') }
@@ -640,6 +649,7 @@ Fix steps:
     } finally {
         Pop-Location
     }
+    Write-LogGroupEnd -Title "Publish Reference Assemblies"
 
     if ($ReleaseTag) {
         $psVersion = $ReleaseTag
@@ -682,10 +692,13 @@ Fix steps:
     # download modules from powershell gallery.
     #   - PowerShellGet, PackageManagement, Microsoft.PowerShell.Archive
     if ($PSModuleRestore) {
+        Write-LogGroupStart -Title "Restore PowerShell Modules"
         Restore-PSModuleToBuild -PublishPath $publishPath
+        Write-LogGroupEnd -Title "Restore PowerShell Modules"
     }
 
     # publish powershell.config.json
+    Write-LogGroupStart -Title "Generate PowerShell Configuration"
     $config = [ordered]@{}
 
     if ($Options.Runtime -like "*win*") {
@@ -731,10 +744,13 @@ Fix steps:
     } else {
         Write-Warning "No powershell.config.json generated for $publishPath"
     }
+    Write-LogGroupEnd -Title "Generate PowerShell Configuration"
 
     # Restore the Pester module
     if ($CI) {
+        Write-LogGroupStart -Title "Restore Pester Module"
         Restore-PSPester -Destination (Join-Path $publishPath "Modules")
+        Write-LogGroupEnd -Title "Restore Pester Module"
     }
 
     Clear-NativeDependencies -PublishFolder $publishPath
@@ -908,6 +924,8 @@ function Restore-PSPackage
 
         $ProjectDirs | ForEach-Object {
             $project = $_
+            $projectName = Split-Path -Leaf -Path $project
+            Write-LogGroupStart -Title "Restore Project: $projectName"
             Write-Log -message "Run dotnet restore $project $RestoreArguments"
             $retryCount = 0
             $maxTries = 5
@@ -929,7 +947,6 @@ function Restore-PSPackage
                                     $null = New-Item -path $env:OB_OUTPUTDIRECTORY -ItemType Directory -Force -Verbose
                                 }
 
-                                $projectName = Split-Path -Leaf -Path $project
                                 $binlogFileName = "${projectName}.msbuild.binlog"
                                 if ($IsMacOS) {
                                     $resolvedPath = (Resolve-Path -Path ./msbuild.binlog).ProviderPath
@@ -940,6 +957,7 @@ function Restore-PSPackage
                             }
                         }
 
+                        Write-LogGroupEnd -Title "Restore Project: $projectName"
                         throw
                     }
                     continue
@@ -948,6 +966,7 @@ function Restore-PSPackage
                 Write-Log -message "Done restoring $project"
                 break
             }
+            Write-LogGroupEnd -Title "Restore Project: $projectName"
         }
     }
 }
@@ -2086,6 +2105,7 @@ function Install-Dotnet {
         [string]$FeedCredential
     )
 
+    Write-LogGroupStart -Title "Install .NET SDK $Version"
     Write-Verbose -Verbose "In install-dotnet"
 
     # This allows sudo install to be optional; needed when running in containers / as root
@@ -2220,6 +2240,7 @@ function Install-Dotnet {
             }
         }
     }
+    Write-LogGroupEnd -Title "Install .NET SDK $Version"
 }
 
 function Get-RedHatPackageManager {
@@ -2291,6 +2312,7 @@ function Start-PSBootstrap {
         [string]$Scenario = "Package"
     )
 
+    Write-LogGroupStart -Title "Bootstrap PowerShell Build Dependencies"
     Write-Log -message "Installing PowerShell build dependencies"
 
     Push-Location $PSScriptRoot/tools
@@ -2301,12 +2323,14 @@ function Start-PSBootstrap {
 
     try {
         if ($environment.IsLinux -or $environment.IsMacOS) {
+            Write-LogGroupStart -Title "Install Native Dependencies"
             # This allows sudo install to be optional; needed when running in containers / as root
             # Note that when it is null, Invoke-Expression (but not &) must be used to interpolate properly
             $sudo = if (!$NoSudo) { "sudo" }
 
             if ($BuildLinuxArm -and $environment.IsLinux -and -not $environment.IsUbuntu -and -not $environment.IsMariner) {
                 Write-Error "Cross compiling for linux-arm is only supported on AzureLinux/Ubuntu environment"
+                Write-LogGroupEnd -Title "Install Native Dependencies"
                 return
             }
 
@@ -2425,9 +2449,11 @@ function Start-PSBootstrap {
                     }
                 }
             }
+            Write-LogGroupEnd -Title "Install Native Dependencies"
         }
 
         if ($Scenario -in 'All', 'Both', 'DotNet') {
+            Write-LogGroupStart -Title "Install .NET SDK"
 
             Write-Verbose -Verbose "Calling Find-Dotnet from Start-PSBootstrap"
 
@@ -2466,10 +2492,12 @@ function Start-PSBootstrap {
             else {
                 Write-Log -message "dotnet is already installed.  Skipping installation."
             }
+            Write-LogGroupEnd -Title "Install .NET SDK"
         }
 
         # Install Windows dependencies if `-Package` or `-BuildWindowsNative` is specified
         if ($environment.IsWindows) {
+            Write-LogGroupStart -Title "Install Windows Dependencies"
             ## The VSCode build task requires 'pwsh.exe' to be found in Path
             if (-not (Get-Command -Name pwsh.exe -CommandType Application -ErrorAction Ignore))
             {
@@ -2482,9 +2510,11 @@ function Start-PSBootstrap {
                 $isArm64 = "$env:RUNTIME" -eq 'arm64'
                 Install-Wix -arm64:$isArm64
             }
+            Write-LogGroupEnd -Title "Install Windows Dependencies"
         }
 
         if ($Scenario -in 'All', 'Tools') {
+            Write-LogGroupStart -Title "Install .NET Global Tools"
             Write-Log -message "Installing .NET global tools"
 
             # Ensure dotnet is available
@@ -2495,16 +2525,20 @@ function Start-PSBootstrap {
             Start-NativeExecution {
                 dotnet tool install --global dotnet-format
             }
+            Write-LogGroupEnd -Title "Install .NET Global Tools"
         }
 
         if ($env:TF_BUILD) {
+            Write-LogGroupStart -Title "Capture NuGet Sources"
             Write-Verbose -Verbose "--- Start - Capturing nuget sources"
             dotnet nuget list source --format detailed
             Write-Verbose -Verbose "--- End   - Capturing nuget sources"
+            Write-LogGroupEnd -Title "Capture NuGet Sources"
         }
     } finally {
         Pop-Location
     }
+    Write-LogGroupEnd -Title "Bootstrap PowerShell Build Dependencies"
 }
 
 ## If the required SDK version is found, return it.
