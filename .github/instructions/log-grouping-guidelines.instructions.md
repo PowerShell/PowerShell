@@ -73,7 +73,7 @@ Each group should be a logically independent operation that users might want to 
 
 ### 4. One Group Per Iteration Is Excessive
 
-Avoid putting log groups inside loops where each iteration creates a separate group.
+Avoid putting log groups inside loops where each iteration creates a separate group.  This would probable cause nesting.
 
 **❌ Don't:**
 ```powershell
