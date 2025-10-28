@@ -1409,7 +1409,6 @@ function New-UnixPackage {
         $createdPackage = Get-Item (Join-Path $CurrentLocation (($Output[-1] -split ":path=>")[-1] -replace '["{}]'))
 
         # For macOS with native tools, the package is already in the correct format
-        # For macOS with fpm (no longer used), we would need New-MacOsDistributionPackage
         # For other platforms, the package name from dpkg-deb/rpmbuild is sufficient
 
         if (Test-Path $createdPackage)
