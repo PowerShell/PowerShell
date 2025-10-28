@@ -24,15 +24,14 @@ jobs:
         with:
           fetch-depth: 1000
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v5
-        with:
-          global-json-file: ./global.json
-
       - name: Bootstrap
         shell: pwsh
         run: |
+          Import-Module ./build.psm1
           Import-Module ./tools/ci.psm1
+          Switch-PSNugetConfig -Source Public
+          Start-PSBootstrap -Scenario DotNet
+          Find-Dotnet -SetDotnetRoot
           Invoke-CIInstall -SkipUser
           Sync-PSTags -AddRemoteIfMissing
 
