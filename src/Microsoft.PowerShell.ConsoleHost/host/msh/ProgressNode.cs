@@ -67,7 +67,7 @@ namespace Microsoft.PowerShell
 
             this.Style = IsMinimalProgressRenderingEnabled()
                 ? RenderStyle.Ansi
-                : this.Style = RenderStyle.FullPlus;
+                : RenderStyle.FullPlus;
 
             this.SourceId = sourceId;
         }

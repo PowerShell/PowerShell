@@ -91,6 +91,7 @@ namespace PSTests.Parallel
     /// </summary>
     public static class ProgressNodeTests
     {
+        /// <summary>
         /// Verify Issue #21293 scenario - the original bug report
         /// This test reproduces the exact scenario from the issue
         /// Tests with various window widths to ensure the fix works across different terminal sizes
