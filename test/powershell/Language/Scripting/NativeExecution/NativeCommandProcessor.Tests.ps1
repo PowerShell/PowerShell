@@ -283,7 +283,7 @@ Categories=Application;
             $beforeCount = [int]('tell application "TextEdit" to count of windows' | osascript)
             & $TestFile
             $startTime = Get-Date
-            $title = [String]::Empty
+            $title = [string]::Empty
             while (((Get-Date) - $startTime).TotalSeconds -lt 30 -and ($title -ne $expectedTitle)) {
                 Start-Sleep -Milliseconds 100
                 $title = 'tell application "TextEdit" to get name of front window' | osascript
