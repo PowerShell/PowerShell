@@ -68,7 +68,7 @@ jobs:
 
     - run: |
         Import-Module .\tools\ci.psm1
-        Invoke-CIBuild
+        Invoke-CIBuild -Configuration 'StaticAnalysis'
       name: Build
       shell: pwsh
 
