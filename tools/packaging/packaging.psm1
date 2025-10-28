@@ -1199,8 +1199,6 @@ function New-UnixPackage {
             # Generate After Install and After Remove scripts
             $AfterScriptInfo = New-AfterScripts -Link $Link -Distribution $DebDistro -Destination $Destination
 
-            # Note: The fpm symlink workaround is no longer needed with native macOS packaging tools
-
             # Generate gzip of man file
             $ManGzipInfo = New-ManGzip -IsPreview:$IsPreview -IsLTS:$LTS
 
@@ -1412,7 +1410,7 @@ function New-UnixPackage {
 
         # For macOS with native tools, the package is already in the correct format
         # For macOS with fpm (no longer used), we would need New-MacOsDistributionPackage
-        # For other platforms, the package name from fpm/rpmbuild is sufficient
+        # For other platforms, the package name from dpkg-deb/rpmbuild is sufficient
 
         if (Test-Path $createdPackage)
         {
@@ -1690,8 +1688,8 @@ cp $ManGzipFile `$RPM_BUILD_ROOT$ManDestination
     foreach ($link in $LinkInfo) {
         $linkDir = Split-Path -Parent $link.Destination
         $specContent += "mkdir -p `$RPM_BUILD_ROOT$linkDir`n"
-        # For RPM, we copy the symlink itself (which fpm does by including it in the source)
-        # The symlink at $link.Source points to the actual target, so we'll copy it
+        # For RPM, we copy the symlink itself.
+        # The symlink at $link.Source points to the actual target, so we'll copy it.
         # The -P flag preserves symlinks rather than copying their targets, which is critical for this operation.
         $specContent += "cp -P $($link.Source) `$RPM_BUILD_ROOT$($link.Destination)`n"
     }
@@ -2090,146 +2088,6 @@ function New-MacOSPackage
     }
 }
 
-function Get-FpmArguments
-{
-    param(
-        [Parameter(Mandatory,HelpMessage='Package Name')]
-        [String]$Name,
-
-        [Parameter(Mandatory,HelpMessage='Package Version')]
-        [String]$Version,
-
-        [Parameter(Mandatory)]
-        [String]$Iteration,
-
-        [Parameter(Mandatory,HelpMessage='Package description')]
-        [String]$Description,
-
-        # From start-PSPackage without modification, already validated
-        # Values: deb, rpm, osxpkg
-        [Parameter(Mandatory,HelpMessage='Installer Type')]
-        [String]$Type,
-
-        [Parameter(Mandatory,HelpMessage='Staging folder for installation files')]
-        [String]$Staging,
-
-        [Parameter(Mandatory,HelpMessage='Install path on target machine')]
-        [String]$Destination,
-
-        [Parameter(Mandatory,HelpMessage='The built and gzipped man file.')]
-        [String]$ManGzipFile,
-
-        [Parameter(Mandatory,HelpMessage='The destination of the man file')]
-        [String]$ManDestination,
-
-        [Parameter(Mandatory,HelpMessage='Symlink to powershell executable')]
-        [LinkInfo[]]$LinkInfo,
-
-        [Parameter(HelpMessage='Packages required to install this package.  Not applicable for MacOS.')]
-        [ValidateScript({
-            if (!$Environment.IsMacOS -and $_.Count -eq 0)
-            {
-                throw "Must not be null or empty on this environment."
-            }
-            return $true
-        })]
-        [String[]]$Dependencies,
-
-        [Parameter(HelpMessage='Script to run after the package installation.')]
-        [AllowNull()]
-        [ValidateScript({
-            if (!$Environment.IsMacOS -and !$_)
-            {
-                throw "Must not be null on this environment."
-            }
-            return $true
-        })]
-        [String]$AfterInstallScript,
-
-        [Parameter(HelpMessage='Script to run after the package removal.')]
-        [AllowNull()]
-        [ValidateScript({
-            if (!$Environment.IsMacOS -and !$_)
-            {
-                throw "Must not be null on this environment."
-            }
-            return $true
-        })]
-        [String]$AfterRemoveScript,
-
-        [Parameter(HelpMessage='AppsFolder used to add macOS launcher')]
-        [AllowNull()]
-        [ValidateScript({
-            if ($Environment.IsMacOS -and !$_)
-            {
-                throw "Must not be null on this environment."
-            }
-            return $true
-        })]
-        [String]$AppsFolder,
-        [String]$Distribution = 'rhel.7',
-        [string]$HostArchitecture
-    )
-
-    $Arguments = @(
-        "--force", "--verbose",
-        "--name", $Name,
-        "--version", $Version,
-        "--iteration", $Iteration,
-        "--maintainer", "PowerShell Team <PowerShellTeam@hotmail.com>",
-        "--vendor", "Microsoft Corporation",
-        "--url", "https://microsoft.com/powershell",
-        "--description", $Description,
-        "--architecture", $HostArchitecture,
-        "--category", "shells",
-        "-t", $Type,
-        "-s", "dir"
-    )
-    if ($Distribution -in $script:RedHatDistributions) {
-        $Arguments += @("--rpm-digest", "sha256")
-        $Arguments += @("--rpm-dist", $Distribution)
-        $Arguments += @("--rpm-os", "linux")
-        $Arguments += @("--license", "MIT")
-        $Arguments += @("--rpm-rpmbuild-define", "_build_id_links none")
-    } else {
-        $Arguments += @("--license", "MIT License")
-    }
-
-    if ($Environment.IsMacOS) {
-        $Arguments += @("--osxpkg-identifier-prefix", "com.microsoft")
-    }
-
-    foreach ($Dependency in $Dependencies) {
-        $Arguments += @("--depends", $Dependency)
-    }
-
-    if ($AfterInstallScript) {
-        $Arguments += @("--after-install", $AfterInstallScript)
-    }
-
-    if ($AfterRemoveScript) {
-        $Arguments += @("--after-remove", $AfterRemoveScript)
-    }
-
-    $Arguments += @(
-        "$Staging/=$Destination/",
-        "$ManGzipFile=$ManDestination"
-    )
-
-    foreach($link in $LinkInfo)
-    {
-        $linkArgument = "$($link.Source)=$($link.Destination)"
-        $Arguments += $linkArgument
-    }
-
-    if ($AppsFolder)
-    {
-        $Arguments += "$AppsFolder=/"
-    }
-
-    return $Arguments
-}
-
 function Get-PackageDependencies
 {
     [CmdletBinding()]
@@ -2302,39 +2160,25 @@ function Get-PackageDependencies
 
 function Test-Dependencies
 {
-    # Note: RPM packages no longer require fpm; they use rpmbuild directly
-    # macOS packages use pkgbuild and productbuild from Xcode Command Line Tools
-    # DEB packages still use fpm
+    # RPM packages use rpmbuild directly.
+    # DEB packages use dpkg-deb directly.
+    # macOS packages use pkgbuild and productbuild from Xcode Command Line Tools.
     $Dependencies = @()
-    
+
+    # Check for 'rpmbuild' and 'dpkg-deb' on Azure Linux.
+    if ($Environment.IsMariner) {
+        $Dependencies += "dpkg-deb"
+        $Dependencies += "rpmbuild"
+    }
+
     # Check for macOS packaging tools
     if ($Environment.IsMacOS) {
         $Dependencies += "pkgbuild"
         $Dependencies += "productbuild"
     }
-    
+
     foreach ($Dependency in $Dependencies) {
         if (!(precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Scenario Package")) {
-            # For Debian systems, try adding ruby gems to the path
-            if ($Environment.IsDebianFamily) {
-                # These tools are not added to the path automatically on OpenSUSE 13.2
-                # try adding them to the path and re-tesing first
-                [string] $gemsPath = $null
-                [string] $depenencyPath = $null
-                $gemsPath = Get-ChildItem -Path /usr/lib64/ruby/gems | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName
-                if ($gemsPath) {
-                    $depenencyPath  = Get-ChildItem -Path (Join-Path -Path $gemsPath -ChildPath "gems" -AdditionalChildPath $Dependency) -Recurse | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty DirectoryName
-                    $originalPath = $env:PATH
-                    $env:PATH = $ENV:PATH +":" + $depenencyPath
-                    if ((precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Scenario Package")) {
-                        continue
-                    }
-                    else {
-                        $env:PATH = $originalPath
-                    }
-                }
-            }
-
             throw "Dependency precheck failed!"
         }
     }
