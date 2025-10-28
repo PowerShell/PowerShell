@@ -1821,7 +1821,7 @@ $(if ($extendedDescription) { $extendedDescription + "`n" })
         if ($AfterInstallScript -and (Test-Path $AfterInstallScript)) {
             $postinstFile = Join-Path $debianDir "postinst"
             Copy-Item -Path $AfterInstallScript -Destination $postinstFile -Force
-            chmod 755 $postinstFile
+            Start-NativeExecution { chmod 755 $postinstFile }
             Write-Verbose "Postinst script copied to: $postinstFile" -Verbose
         }
 
@@ -1829,7 +1829,7 @@ $(if ($extendedDescription) { $extendedDescription + "`n" })
         if ($AfterRemoveScript -and (Test-Path $AfterRemoveScript)) {
             $postrmFile = Join-Path $debianDir "postrm"
             Copy-Item -Path $AfterRemoveScript -Destination $postrmFile -Force
-            chmod 755 $postrmFile
+            Start-NativeExecution { chmod 755 $postrmFile }
             Write-Verbose "Postrm script copied to: $postrmFile" -Verbose
         }
 
@@ -1856,7 +1856,7 @@ $(if ($extendedDescription) { $extendedDescription + "`n" })
             # The Source contains a temporary symlink that points to the correct target
             if (Test-Path $link.Source) {
                 # Use cp to preserve the symlink
-                cp -P $link.Source $linkPath
+                Start-NativeExecution { cp -P $link.Source $linkPath }
                 Write-Verbose "Copied symlink: $linkPath (from $($link.Source))" -Verbose
             } else {
                 Write-Warning "Symlink source not found: $($link.Source)"
@@ -1866,18 +1866,22 @@ $(if ($extendedDescription) { $extendedDescription + "`n" })
         # Set proper permissions
         Write-Verbose "Setting file permissions..." -Verbose
         # 755 = rwxr-xr-x (owner can read/write/execute, group and others can read/execute)
-        Get-ChildItem $dataDir -Directory -Recurse | ForEach-Object { chmod 755 $_.FullName }
+        Get-ChildItem $dataDir -Directory -Recurse | ForEach-Object {
+            Start-NativeExecution { chmod 755 $_.FullName }
+        }
         # 644 = rw-r--r-- (owner can read/write, group and others can read only)
         # Exclude symlinks to avoid "cannot operate on dangling symlink" error
         Get-ChildItem $dataDir -File -Recurse |
             Where-Object { -not $_.Target } |
-            ForEach-Object { chmod 644 $_.FullName }
+            ForEach-Object {
+                Start-NativeExecution { chmod 644 $_.FullName }
+            }
 
         # Set executable permission for pwsh if it exists
         # 755 = rwxr-xr-x (executable permission)
         $pwshPath = "$targetPath/pwsh"
         if (Test-Path $pwshPath) {
-            chmod 755 "$pwshPath"
+            Start-NativeExecution { chmod 755 $pwshPath }
         }
 
         # Calculate md5sums for all files in data directory (excluding symlinks)
@@ -1908,11 +1912,11 @@ $(if ($extendedDescription) { $extendedDescription + "`n" })
         Write-Verbose "buildDir: $buildDir" -Verbose
         
         # Use cp to preserve symlinks
-        cp -a $debianDir "$buildDir/DEBIAN"
-        cp -a $dataDir/* $buildDir
+        Start-NativeExecution { cp -a $debianDir "$buildDir/DEBIAN" }
+        Start-NativeExecution { cp -a $dataDir/* $buildDir }
 
         # Build package with dpkg-deb
-        $dpkgOutput = dpkg-deb --build $buildDir $debFilePath 2>&1
+        $dpkgOutput = Start-NativeExecution { dpkg-deb --build $buildDir $debFilePath } 2>&1
         $exitCode = $LASTEXITCODE
 
         if ($exitCode -ne 0) {
