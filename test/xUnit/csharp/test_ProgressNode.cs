@@ -96,6 +96,7 @@ namespace PSTests.Parallel
         /// This test reproduces the exact scenario from the issue.
         /// Tests with various window widths to ensure the fix works across different terminal sizes.
         /// </summary>
+        /// <param name="maxWidth">The maximum width in buffer cells for the progress bar rendering.</param>
         [Theory]
         [InlineData(20)]
         [InlineData(25)]
@@ -133,6 +134,7 @@ namespace PSTests.Parallel
         /// <summary>
         /// Verify that progress bar respects maxWidth for Japanese text.
         /// </summary>
+        /// <param name="maxWidth">The maximum width in buffer cells for the progress bar rendering.</param>
         [Theory]
         [InlineData(20)]
         [InlineData(25)]
@@ -169,6 +171,7 @@ namespace PSTests.Parallel
         /// <summary>
         /// Verify emoji handling with sufficient text length.
         /// </summary>
+        /// <param name="maxWidth">The maximum width in buffer cells for the progress bar rendering.</param>
         [Theory]
         [InlineData(20)]
         [InlineData(25)]
@@ -206,6 +209,7 @@ namespace PSTests.Parallel
         /// Test various lengths of double-width text.
         /// All test cases have sufficient length to detect the bug.
         /// </summary>
+        /// <param name="maxWidth">The maximum width in buffer cells for the progress bar rendering.</param>
         [Theory]
         [InlineData("あいうえお", 20)]
         [InlineData("あいうえお", 25)]
@@ -266,6 +270,7 @@ namespace PSTests.Parallel
         /// <summary>
         /// Verify mixed ASCII and double-width characters.
         /// </summary>
+        /// <param name="maxWidth">The maximum width in buffer cells for the progress bar rendering.</param>
         [Theory]
         [InlineData(20)]
         [InlineData(25)]
@@ -302,6 +307,7 @@ namespace PSTests.Parallel
         /// <summary>
         /// Verify long double-width string handling and truncation.
         /// </summary>
+        /// <param name="maxWidth">The maximum width in buffer cells for the progress bar rendering.</param>
         [Theory]
         [InlineData(20)]
         [InlineData(25)]
@@ -338,6 +344,7 @@ namespace PSTests.Parallel
         /// <summary>
         /// Verify that truncation respects character boundaries.
         /// </summary>
+        /// <param name="maxWidth">The maximum width in buffer cells for the progress bar rendering.</param>
         [Theory]
         [InlineData(20)]
         [InlineData(25)]
@@ -376,6 +383,7 @@ namespace PSTests.Parallel
         /// Verifies that statusPartDisplayWidth is calculated from actual statusPart length,
         /// not from estimated value, to prevent progress bar from exceeding maxWidth.
         /// </summary>
+        /// <param name="maxWidth">The maximum width in buffer cells for the progress bar rendering.</param>
         [Theory]
         [InlineData(20)]
         [InlineData(25)]
@@ -427,6 +435,7 @@ namespace PSTests.Parallel
         /// Test activityDisplayWidth bug with small maxWidth to amplify error.
         /// Bug: After truncation, activityDisplayWidth is set to maxWidth/2 but actual width differs.
         /// </summary>
+        /// <param name="maxWidth">The maximum width in buffer cells for the progress bar rendering.</param>
         [Theory]
         [InlineData(20)]
         [InlineData(25)]
@@ -467,6 +476,7 @@ namespace PSTests.Parallel
         /// Test surrogate pair handling with strategically positioned emojis.
         /// Bug: Substring(i,1) splits surrogate pairs causing width calculation errors.
         /// </summary>
+        /// <param name="maxWidth">The maximum width in buffer cells for the progress bar rendering.</param>
         [Theory]
         [InlineData(20)]
         [InlineData(25)]
