@@ -21,10 +21,7 @@ Describe "Linux Package Name Validation" {
         It "Should have valid RPM package names" {
             $rpmPackages = Get-ChildItem -Path $artifactsDir -Recurse -Filter *.rpm -ErrorAction SilentlyContinue
             
-            if ($rpmPackages.Count -eq 0) {
-                Set-ItResult -Skipped -Because "No RPM packages found in artifacts directory"
-                return
-            }
+            $rpmPackages.Count | Should -BeGreaterThan 0 -Because "At least one RPM package should exist in the artifacts directory"
             
             $invalidPackages = @()
             # Regex pattern for valid RPM package names.
@@ -49,8 +46,6 @@ Describe "Linux Package Name Validation" {
             if ($invalidPackages.Count -gt 0) {
                 throw ($invalidPackages | Out-String)
             }
-            
-            $rpmPackages.Count | Should -BeGreaterThan 0
         }
     }
     
@@ -94,10 +89,7 @@ Describe "Linux Package Name Validation" {
         It "Should have valid tar.gz package names" {
             $tarPackages = Get-ChildItem -Path $artifactsDir -Recurse -Filter *.tar.gz -ErrorAction SilentlyContinue
             
-            if ($tarPackages.Count -eq 0) {
-                Set-ItResult -Skipped -Because "No tar.gz packages found in artifacts directory"
-                return
-            }
+            $tarPackages.Count | Should -BeGreaterThan 0 -Because "At least one tar.gz package should exist in the artifacts directory"
             
             $invalidPackages = @()
             foreach ($package in $tarPackages) {
@@ -112,8 +104,6 @@ Describe "Linux Package Name Validation" {
             if ($invalidPackages.Count -gt 0) {
                 throw ($invalidPackages | Out-String)
             }
-            
-            $tarPackages.Count | Should -BeGreaterThan 0
         }
     }
     
