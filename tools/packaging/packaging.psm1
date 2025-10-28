@@ -1731,31 +1731,31 @@ cp $ManGzipFile `$RPM_BUILD_ROOT$ManDestination
 function New-NativeDeb
 {
     param(
-        [Parameter(Mandatory,HelpMessage='Package Name')]
+        [Parameter(Mandatory, HelpMessage='Package Name')]
         [String]$Name,
 
-        [Parameter(Mandatory,HelpMessage='Package Version')]
+        [Parameter(Mandatory, HelpMessage='Package Version')]
         [String]$Version,
 
         [Parameter(Mandatory)]
         [String]$Iteration,
 
-        [Parameter(Mandatory,HelpMessage='Package description')]
+        [Parameter(Mandatory, HelpMessage='Package description')]
         [String]$Description,
 
-        [Parameter(Mandatory,HelpMessage='Staging folder for installation files')]
+        [Parameter(Mandatory, HelpMessage='Staging folder for installation files')]
         [String]$Staging,
 
-        [Parameter(Mandatory,HelpMessage='Install path on target machine')]
+        [Parameter(Mandatory, HelpMessage='Install path on target machine')]
         [String]$Destination,
 
-        [Parameter(Mandatory,HelpMessage='The built and gzipped man file.')]
+        [Parameter(Mandatory, HelpMessage='The built and gzipped man file.')]
         [String]$ManGzipFile,
 
-        [Parameter(Mandatory,HelpMessage='The destination of the man file')]
+        [Parameter(Mandatory, HelpMessage='The destination of the man file')]
         [String]$ManDestination,
 
-        [Parameter(Mandatory,HelpMessage='Symlink to powershell executable')]
+        [Parameter(Mandatory, HelpMessage='Symlink to powershell executable')]
         [LinkInfo[]]$LinkInfo,
 
         [Parameter(HelpMessage='Packages required to install this package.')]
@@ -1778,7 +1778,7 @@ function New-NativeDeb
     $debBuildRoot = Join-Path $env:HOME "debbuild-$(Get-Random)"
     $debianDir = Join-Path $debBuildRoot "DEBIAN"
     $dataDir = Join-Path $debBuildRoot "data"
-    
+
     try {
         New-Item -ItemType Directory -Path $debianDir -Force | Out-Null
         New-Item -ItemType Directory -Path $dataDir -Force | Out-Null
@@ -1788,7 +1788,7 @@ function New-NativeDeb
         Get-ChildItem -Path $Staging -Recurse -File | ForEach-Object { $installedSize += $_.Length }
         $installedSize += (Get-Item $ManGzipFile).Length
         $installedSizeKB = [Math]::Ceiling($installedSize / 1024)
-        
+
         # Create control file with all fields in proper order
         # Description must be single line (first line) followed by extended description with leading space
         $descriptionLines = $Description -split "`n"
@@ -1796,7 +1796,7 @@ function New-NativeDeb
         $extendedDescription = if ($descriptionLines.Count -gt 1) {
             ($descriptionLines[1..($descriptionLines.Count-1)] | ForEach-Object { " $_" }) -join "`n"
         }
-        
+
         $controlContent = @"
 Package: $Name
 Version: $Version-$Iteration
@@ -1810,10 +1810,10 @@ Depends: $(if ($Dependencies) { $Dependencies -join ', ' })
 Description: $shortDescription
 $(if ($extendedDescription) { $extendedDescription + "`n" })
 "@
-        
+
         $controlFile = Join-Path $debianDir "control"
         $controlContent | Out-File -FilePath $controlFile -Encoding ascii -NoNewline
-        
+
         Write-Verbose "Control file created: $controlFile" -Verbose
         Write-LogGroup -Title "DEB Control File Content" -Message $controlContent
 
@@ -1851,7 +1851,7 @@ $(if ($extendedDescription) { $extendedDescription + "`n" })
             $linkPath = Join-Path $dataDir $link.Destination.TrimStart('/')
             $linkDir = Split-Path $linkPath -Parent
             New-Item -ItemType Directory -Path $linkDir -Force | Out-Null
-            
+
             # Copy the temporary symlink file that was created by New-LinkInfo
             # The Source contains a temporary symlink that points to the correct target
             if (Test-Path $link.Source) {
@@ -1869,8 +1869,10 @@ $(if ($extendedDescription) { $extendedDescription + "`n" })
         Get-ChildItem $dataDir -Directory -Recurse | ForEach-Object { chmod 755 $_.FullName }
         # 644 = rw-r--r-- (owner can read/write, group and others can read only)
         # Exclude symlinks to avoid "cannot operate on dangling symlink" error
-        Get-ChildItem $dataDir -File -Recurse | Where-Object { -not $_.Target } | ForEach-Object { chmod 644 $_.FullName }
-        
+        Get-ChildItem $dataDir -File -Recurse |
+            Where-Object { -not $_.Target } |
+            ForEach-Object { chmod 644 $_.FullName }
+
         # Set executable permission for pwsh if it exists
         # 755 = rwxr-xr-x (executable permission)
         $pwshPath = "$targetPath/pwsh"
@@ -1881,20 +1883,22 @@ $(if ($extendedDescription) { $extendedDescription + "`n" })
         # Calculate md5sums for all files in data directory (excluding symlinks)
         $md5sumsFile = Join-Path $debianDir "md5sums"
         $md5Content = ""
-        Get-ChildItem -Path $dataDir -Recurse -File | Where-Object { -not $_.Target } | ForEach-Object {
-            $relativePath = $_.FullName.Substring($dataDir.Length + 1)
-            $md5Hash = (Get-FileHash -Path $_.FullName -Algorithm MD5).Hash.ToLower()
-            $md5Content += "$md5Hash  $relativePath`n"
-        }
+        Get-ChildItem -Path $dataDir -Recurse -File |
+            Where-Object { -not $_.Target } |
+            ForEach-Object {
+                $relativePath = $_.FullName.Substring($dataDir.Length + 1)
+                $md5Hash = (Get-FileHash -Path $_.FullName -Algorithm MD5).Hash.ToLower()
+                $md5Content += "$md5Hash  $relativePath`n"
+            }
         $md5Content | Out-File -FilePath $md5sumsFile -Encoding ascii -NoNewline
         Write-Verbose "MD5 sums file created: $md5sumsFile" -Verbose
 
         # Build the package using dpkg-deb
         $debFileName = "${Name}_${Version}-${Iteration}_${HostArchitecture}.deb"
         $debFilePath = Join-Path $CurrentLocation $debFileName
-        
+
         Write-Verbose "Building DEB package: $debFileName" -Verbose
-        
+
         # Copy DEBIAN directory and data files to build root
         $buildDir = Join-Path $debBuildRoot "build"
         New-Item -ItemType Directory -Path $buildDir -Force | Out-Null
@@ -1906,16 +1910,16 @@ $(if ($extendedDescription) { $extendedDescription + "`n" })
         # Use cp to preserve symlinks
         cp -a $debianDir "$buildDir/DEBIAN"
         cp -a $dataDir/* $buildDir
-        
+
         # Build package with dpkg-deb
         $dpkgOutput = dpkg-deb --build $buildDir $debFilePath 2>&1
         $exitCode = $LASTEXITCODE
-        
+
         if ($exitCode -ne 0) {
             Write-Verbose "dpkg-deb output: $dpkgOutput" -Verbose
             throw "dpkg-deb failed with exit code $exitCode"
         }
-        
+
         if (Test-Path $debFilePath) {
             Write-Log "Successfully created DEB package: $debFileName"
             return @{
