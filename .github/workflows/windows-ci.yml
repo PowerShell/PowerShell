@@ -154,7 +154,22 @@ jobs:
     with:
       runner_os: windows-latest
       test_results_artifact_name: testResults-xunit
+  analyze:
+    name: CodeQL Analysis
+    needs: changes
+    if: ${{ needs.changes.outputs.source == 'true' }}
+    uses: ./.github/workflows/analyze-reusable.yml
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    with:
+      runner_os: windows-latest
 
+      security-events: write
+    with:
+      runner_os: windows-latest
+>>>>>>> 5e5e17766 (Refactor analyze job to reusable workflow and enable on Windows CI (#26322))
   windows_packaging:
     name: Windows Packaging
     needs:
@@ -169,6 +184,7 @@ jobs:
       - windows_test_elevated_others
       - windows_test_unelevated_ci
       - windows_test_unelevated_others
+      - analyze
       - windows_packaging
     if: always()
     uses: PowerShell/compliance/.github/workflows/ready-to-merge.yml@v1.0.0
