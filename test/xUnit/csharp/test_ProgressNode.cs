@@ -92,9 +92,9 @@ namespace PSTests.Parallel
     public static class ProgressNodeTests
     {
         /// <summary>
-        /// Verify Issue #21293 scenario - the original bug report
-        /// This test reproduces the exact scenario from the issue
-        /// Tests with various window widths to ensure the fix works across different terminal sizes
+        /// Verify Issue #21293 scenario - the original bug report.
+        /// This test reproduces the exact scenario from the issue.
+        /// Tests with various window widths to ensure the fix works across different terminal sizes.
         /// </summary>
         [Theory]
         [InlineData(20)]
@@ -125,12 +125,13 @@ namespace PSTests.Parallel
             var output = strCollection[0] as string;
             int actualWidth = ConsoleControl.LengthInBufferCells(output, 0, checkEscapeSequences: true);
 
-            Assert.True(actualWidth <= maxWidth,
+            Assert.True(
+                actualWidth <= maxWidth,
                 $"Issue #21293 (width {maxWidth}): Progress bar ({actualWidth} cells) exceeds maxWidth ({maxWidth}). Output: {output}");
         }
 
         /// <summary>
-        /// Verify that progress bar respects maxWidth for Japanese text
+        /// Verify that progress bar respects maxWidth for Japanese text.
         /// </summary>
         [Theory]
         [InlineData(20)]
@@ -160,12 +161,13 @@ namespace PSTests.Parallel
             var output = strCollection[0] as string;
             int actualWidth = ConsoleControl.LengthInBufferCells(output, 0, checkEscapeSequences: true);
 
-            Assert.True(actualWidth <= maxWidth,
+            Assert.True(
+                actualWidth <= maxWidth,
                 $"Progress bar width {maxWidth}: ({actualWidth}) exceeds maxWidth ({maxWidth}). Output: {output}");
         }
 
         /// <summary>
-        /// Verify emoji handling with sufficient text length
+        /// Verify emoji handling with sufficient text length.
         /// </summary>
         [Theory]
         [InlineData(20)]
@@ -195,13 +197,14 @@ namespace PSTests.Parallel
             var output = strCollection[0] as string;
             int actualWidth = ConsoleControl.LengthInBufferCells(output, 0, checkEscapeSequences: true);
 
-            Assert.True(actualWidth <= maxWidth,
+            Assert.True(
+                actualWidth <= maxWidth,
                 $"Emoji progress bar width {maxWidth}: ({actualWidth} cells) exceeds maxWidth ({maxWidth}). Output: {output}");
         }
 
         /// <summary>
-        /// Test various lengths of double-width text
-        /// All test cases have sufficient length to detect the bug
+        /// Test various lengths of double-width text.
+        /// All test cases have sufficient length to detect the bug.
         /// </summary>
         [Theory]
         [InlineData("あいうえお", 20)]
@@ -255,12 +258,13 @@ namespace PSTests.Parallel
             var output = strCollection[0] as string;
             int actualWidth = ConsoleControl.LengthInBufferCells(output, 0, checkEscapeSequences: true);
 
-            Assert.True(actualWidth <= maxWidth,
+            Assert.True(
+                actualWidth <= maxWidth,
                 $"Status '{statusText}' width {maxWidth}: resulted in width {actualWidth} exceeding maxWidth {maxWidth}. Output: {output}");
         }
 
         /// <summary>
-        /// Verify mixed ASCII and double-width characters
+        /// Verify mixed ASCII and double-width characters.
         /// </summary>
         [Theory]
         [InlineData(20)]
@@ -290,12 +294,13 @@ namespace PSTests.Parallel
             var output = strCollection[0] as string;
             int actualWidth = ConsoleControl.LengthInBufferCells(output, 0, checkEscapeSequences: true);
 
-            Assert.True(actualWidth <= maxWidth,
+            Assert.True(
+                actualWidth <= maxWidth,
                 $"Mixed-width text width {maxWidth}: resulted in width {actualWidth} exceeding maxWidth {maxWidth}. Output: {output}");
         }
 
         /// <summary>
-        /// Verify long double-width string handling and truncation
+        /// Verify long double-width string handling and truncation.
         /// </summary>
         [Theory]
         [InlineData(20)]
@@ -325,12 +330,13 @@ namespace PSTests.Parallel
             var output = strCollection[0] as string;
             int actualWidth = ConsoleControl.LengthInBufferCells(output, 0, checkEscapeSequences: true);
 
-            Assert.True(actualWidth <= maxWidth,
+            Assert.True(
+                actualWidth <= maxWidth,
                 $"Long double-width text width {maxWidth}: resulted in width {actualWidth} exceeding maxWidth {maxWidth}. Output: {output}");
         }
 
         /// <summary>
-        /// Verify that truncation respects character boundaries
+        /// Verify that truncation respects character boundaries.
         /// </summary>
         [Theory]
         [InlineData(20)]
@@ -360,14 +366,15 @@ namespace PSTests.Parallel
             var output = strCollection[0] as string;
             int actualWidth = ConsoleControl.LengthInBufferCells(output, 0, checkEscapeSequences: true);
 
-            Assert.True(actualWidth <= maxWidth,
+            Assert.True(
+                actualWidth <= maxWidth,
                 $"Truncated progress bar width {maxWidth}: ({actualWidth} cells) exceeds maxWidth ({maxWidth}). Output: {output}");
         }
 
         /// <summary>
-        /// Test for Issue: Double closing bracket when truncating with double-width characters
+        /// Test for Issue: Double closing bracket when truncating with double-width characters.
         /// Verifies that statusPartDisplayWidth is calculated from actual statusPart length,
-        /// not from estimated value, to prevent progress bar from exceeding maxWidth
+        /// not from estimated value, to prevent progress bar from exceeding maxWidth.
         /// </summary>
         [Theory]
         [InlineData(20)]
@@ -400,7 +407,8 @@ namespace PSTests.Parallel
             int actualWidth = ConsoleControl.LengthInBufferCells(output, 0, checkEscapeSequences: true);
 
             // The progress bar must not exceed maxWidth
-            Assert.True(actualWidth <= maxWidth,
+            Assert.True(
+                actualWidth <= maxWidth,
                 $"Progress bar with long truncated status width {maxWidth}: ({actualWidth} cells) exceeds maxWidth ({maxWidth}). Output: {output}");
 
             // Verify no double closing brackets - count ']' occurrences at end
@@ -410,13 +418,14 @@ namespace PSTests.Parallel
                 closingBracketCount++;
             }
 
-            Assert.True(closingBracketCount <= 1,
+            Assert.True(
+                closingBracketCount <= 1,
                 $"Found {closingBracketCount} consecutive closing brackets at end (width {maxWidth}), expected 1. Output: {output}");
         }
 
         /// <summary>
-        /// Test activityDisplayWidth bug with small maxWidth to amplify error
-        /// Bug: After truncation, activityDisplayWidth is set to maxWidth/2 but actual width differs
+        /// Test activityDisplayWidth bug with small maxWidth to amplify error.
+        /// Bug: After truncation, activityDisplayWidth is set to maxWidth/2 but actual width differs.
         /// </summary>
         [Theory]
         [InlineData(20)]
@@ -449,13 +458,14 @@ namespace PSTests.Parallel
             var output = strCollection[0] as string;
             int actualWidth = ConsoleControl.LengthInBufferCells(output, 0, checkEscapeSequences: true);
 
-            Assert.True(actualWidth <= maxWidth,
+            Assert.True(
+                actualWidth <= maxWidth,
                 $"maxWidth {maxWidth} test: width {actualWidth} exceeds {maxWidth}. Output: [{output}]");
         }
 
         /// <summary>
-        /// Test surrogate pair handling with strategically positioned emojis
-        /// Bug: Substring(i,1) splits surrogate pairs causing width calculation errors
+        /// Test surrogate pair handling with strategically positioned emojis.
+        /// Bug: Substring(i,1) splits surrogate pairs causing width calculation errors.
         /// </summary>
         [Theory]
         [InlineData(20)]
@@ -486,7 +496,8 @@ namespace PSTests.Parallel
             var output = strCollection[0] as string;
             int actualWidth = ConsoleControl.LengthInBufferCells(output, 0, checkEscapeSequences: true);
 
-            Assert.True(actualWidth <= maxWidth,
+            Assert.True(
+                actualWidth <= maxWidth,
                 $"Surrogate pair test width {maxWidth}: width {actualWidth} exceeds {maxWidth}. Output: [{output}]");
         }
     }
