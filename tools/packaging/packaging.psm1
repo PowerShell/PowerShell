@@ -1783,6 +1783,13 @@ function New-NativeDeb
         $installedSizeKB = [Math]::Ceiling($installedSize / 1024)
         
         # Create control file with all fields in proper order
+        # Description must be single line (first line) followed by extended description with leading space
+        $descriptionLines = $Description -split "`n"
+        $shortDescription = $descriptionLines[0]
+        $extendedDescription = if ($descriptionLines.Count -gt 1) {
+            ($descriptionLines[1..($descriptionLines.Count-1)] | ForEach-Object { " $_" }) -join "`n"
+        } else { "" }
+        
         $controlContent = @"
 Package: $Name
 Version: $Version-$Iteration
@@ -1793,8 +1800,8 @@ Priority: optional
 Section: shells
 Homepage: https://microsoft.com/powershell
 Depends: $(if ($Dependencies) { $Dependencies -join ', ' })
-Description: $Description
-
+Description: $shortDescription
+$(if ($extendedDescription) { $extendedDescription + "`n" })
 "@
         
         $controlFile = Join-Path $debianDir "control"
@@ -1858,7 +1865,8 @@ Description: $Description
         # 755 = rwxr-xr-x (owner can read/write/execute, group and others can read/execute)
         Get-ChildItem $dataDir -Directory -Recurse | ForEach-Object { chmod 755 $_.FullName }
         # 644 = rw-r--r-- (owner can read/write, group and others can read only)
-        Get-ChildItem $dataDir -File -Recurse | ForEach-Object { chmod 644 $_.FullName }
+        # Exclude symlinks to avoid "cannot operate on dangling symlink" error
+        Get-ChildItem $dataDir -File -Recurse | Where-Object { -not $_.Target } | ForEach-Object { chmod 644 $_.FullName }
         
         # Set executable permission for pwsh if it exists
         # 755 = rwxr-xr-x (executable permission)
@@ -1889,8 +1897,10 @@ Description: $Description
         New-Item -ItemType Directory -Path $buildDir -Force | Out-Null
         
         # Use cp to preserve symlinks
-        cp -a $debianDir "$buildDir/DEBIAN"
-        cp -a "$dataDir/*" "$buildDir/"
+        # Copy DEBIAN directory
+        Start-NativeExecution { cp -a $debianDir "$buildDir/DEBIAN" }
+        # Copy data files - use shell to expand the wildcard
+        Start-NativeExecution { bash -c "cp -a $dataDir/* $buildDir/" }
         
         # Build package with dpkg-deb
         $dpkgOutput = dpkg-deb --build $buildDir $debFilePath 2>&1
