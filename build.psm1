@@ -2234,43 +2234,6 @@ function Get-RedHatPackageManager {
     }
 }
 
-function Install-GlobalGem {
-    param(
-        [Parameter()]
-        [string]
-        $Sudo = "",
-
-        [Parameter(Mandatory)]
-        [string]
-        $GemName,
-
-        [Parameter(Mandatory)]
-        [string]
-        $GemVersion
-    )
-    try {
-        # We cannot guess if the user wants to run gem install as root on linux and windows,
-        # but macOs usually requires sudo
-        $gemsudo = ''
-        if($environment.IsMacOS -or $env:TF_BUILD -or $env:GITHUB_ACTIONS) {
-            $gemsudo = $sudo
-        }
-
-        Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install $GemName -v $GemVersion --no-document"))
-
-    } catch {
-        Write-Warning "Installation of gem $GemName $GemVersion failed! Must resolve manually."
-        $logs = Get-ChildItem "/var/lib/gems/*/extensions/x86_64-linux/*/$GemName-*/gem_make.out" | Select-Object -ExpandProperty FullName
-        foreach ($log in $logs) {
-            Write-Verbose "Contents of: $log" -Verbose
-            Get-Content -Raw -Path $log -ErrorAction Ignore | ForEach-Object { Write-Verbose $_ -Verbose }
-            Write-Verbose "END Contents of: $log" -Verbose
-        }
-
-        throw
-    }
-}
-
 function Start-PSBootstrap {
     [CmdletBinding()]
     param(
