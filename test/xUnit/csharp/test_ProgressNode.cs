@@ -209,6 +209,7 @@ namespace PSTests.Parallel
         /// Test various lengths of double-width text.
         /// All test cases have sufficient length to detect the bug.
         /// </summary>
+        /// <param name="statusText">The status message displayed in the progress bar.</param>
         /// <param name="maxWidth">The maximum width in buffer cells for the progress bar rendering.</param>
         [Theory]
         [InlineData("あいうえお", 20)]
