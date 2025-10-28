@@ -58,23 +58,24 @@ Describe "Linux Package Name Validation" {
         It "Should have valid DEB package names" {
             $debPackages = Get-ChildItem -Path $artifactsDir -Recurse -Filter *.deb -ErrorAction SilentlyContinue
             
-            if ($debPackages.Count -eq 0) {
-                Set-ItResult -Skipped -Because "No DEB packages found in artifacts directory"
-                return
-            }
+            $debPackages.Count | Should -BeGreaterThan 0 -Because "At least one DEB package should exist in the artifacts directory"
             
             $invalidPackages = @()
             # Regex pattern for valid DEB package names.
+            # Valid examples:
+            # - powershell-preview_7.6.0-preview.6-1.deb_amd64.deb
+            # - powershell-lts_7.4.13-1.deb_amd64.deb
+            # - powershell_7.4.13-1.deb_amd64.deb
             # Breakdown:
             # ^powershell            : Starts with 'powershell'
             # (-preview|-lts)?       : Optionally '-preview' or '-lts'
             # _\d+\.\d+\.\d+         : Underscore followed by version number (e.g., _7.6.0)
-            # (-[a-z]*\.\d+)?        : Optional dash, letters, dot, and digits (e.g., -preview.6)
-            # -1\.                   : Literal '-1.'
-            # (preview\.\d+\.)?      : Optional 'preview.' and digits, followed by a dot
-            # deb\.                  : Literal 'deb.'
-            # (amd64|arm64)\.deb$    : Architecture and file extension
-            $debPackageNamePattern = '^powershell(-preview|-lts)?_\d+\.\d+\.\d+(-[a-z]*\.\d+)?-1\.(preview\.\d+\.)?deb\.(amd64|arm64)\.deb$'
+            # (-[a-z]+\.\d+)?        : Optional dash, letters, dot, and digits (e.g., -preview.6)
+            # -1                     : Literal '-1'
+            # \.deb_                 : Literal '.deb_'
+            # (amd64|arm64)          : Architecture
+            # \.deb$                 : File extension
+            $debPackageNamePattern = '^powershell(-preview|-lts)?_\d+\.\d+\.\d+(-[a-z]+\.\d+)?-1\.deb_(amd64|arm64)\.deb$'
 
             foreach ($package in $debPackages) {
                 if ($package.Name -notmatch $debPackageNamePattern) {
@@ -86,8 +87,6 @@ Describe "Linux Package Name Validation" {
             if ($invalidPackages.Count -gt 0) {
                 throw ($invalidPackages | Out-String)
             }
-            
-            $debPackages.Count | Should -BeGreaterThan 0
         }
     }
     
