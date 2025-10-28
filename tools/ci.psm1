@@ -101,6 +101,11 @@ function Invoke-CIFull
 # Implements the CI 'build_script' step
 function Invoke-CIBuild
 {
+    param(
+        [ValidateSet('Debug', 'Release', 'CodeCoverage', 'StaticAnalysis')]
+        [string]$Configuration = 'Release'
+    )
+
     $releaseTag = Get-ReleaseTag
     # check to be sure our test tags are correct
     $result = Get-PesterTag
@@ -115,7 +120,7 @@ function Invoke-CIBuild
         Start-PSBuild -Configuration 'CodeCoverage' -PSModuleRestore -CI -ReleaseTag $releaseTag
     }
 
-    Start-PSBuild -PSModuleRestore -Configuration 'Release' -CI -ReleaseTag $releaseTag -UseNuGetOrg
+    Start-PSBuild -PSModuleRestore -Configuration $Configuration -CI -ReleaseTag $releaseTag -UseNuGetOrg
     Save-PSOptions
 
     $options = (Get-PSOptions)
