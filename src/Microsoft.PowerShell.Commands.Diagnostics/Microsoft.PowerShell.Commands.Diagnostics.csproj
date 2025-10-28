@@ -8,7 +8,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />
+<<<<<<< HEAD
     <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="8.0.1" />
+=======
+    <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="10.0.0-rc.2.25502.107" />
+>>>>>>> df8fe254b (Update SDK to 10.0.100-rc.2.25502.107 (#26305))
   </ItemGroup>
 
   <PropertyGroup>

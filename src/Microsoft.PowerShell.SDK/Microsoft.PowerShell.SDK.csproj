@@ -16,18 +16,30 @@
 
   <ItemGroup>
     <!-- This section is to force the version of non-direct dependencies -->
+<<<<<<< HEAD
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="8.0.21" />
+=======
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.0-rc.2.25502.107" />
+    <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="10.0.0-rc.2.25502.107" />
+>>>>>>> df8fe254b (Update SDK to 10.0.100-rc.2.25502.107 (#26305))
     <!-- the following package(s) are from https://github.com/dotnet/fxdac -->
     <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
     <PackageReference Include="System.Diagnostics.EventLog" Version="8.0.2" />
     <PackageReference Include="System.DirectoryServices.Protocols" Version="8.0.2" />
     <PackageReference Include="System.Drawing.Common" Version="8.0.21" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
+<<<<<<< HEAD
     <PackageReference Include="System.IO.Packaging" Version="8.0.1" />
     <PackageReference Include="System.Runtime.Caching" Version="8.0.1" />
     <PackageReference Include="System.Net.Http.WinHttpHandler" Version="8.0.3" />
     <PackageReference Include="System.Text.Encodings.Web" Version="8.0.0" />
+=======
+    <PackageReference Include="System.IO.Packaging" Version="10.0.0-rc.2.25502.107" />
+    <PackageReference Include="System.Net.Http.WinHttpHandler" Version="10.0.0-rc.2.25502.107" />
+    <!-- Removing due to NU1510 -->
+    <!-- PackageReference Include="System.Text.Encodings.Web" Version="9.0.2" /-->
+>>>>>>> df8fe254b (Update SDK to 10.0.100-rc.2.25502.107 (#26305))
     <!--
         the following package(s) are from https://github.com/dotnet/wcf
         they are pinned to the version 4.10.x due to a breaking change in newer versions.
@@ -41,7 +53,11 @@
     <PackageReference Include="System.Private.ServiceModel" Version="4.10.3" />
     <PackageReference Include="System.Web.Services.Description" Version="4.10.3" />
     <!-- the source could not be found for the following package(s) -->
+<<<<<<< HEAD
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="8.0.21" />
+=======
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="10.0.0-rc.2.25502.107" />
+>>>>>>> df8fe254b (Update SDK to 10.0.100-rc.2.25502.107 (#26305))
   </ItemGroup>
 
 </Project>

@@ -66,7 +66,11 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Markdig.Signed",
+<<<<<<< HEAD
           "Version": "0.33.0"
+=======
+          "Version": "0.43.0"
+>>>>>>> df8fe254b (Update SDK to 10.0.100-rc.2.25502.107 (#26305))
         }
       },
       "DevelopmentDependency": false
@@ -86,7 +90,11 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Bcl.AsyncInterfaces",
+<<<<<<< HEAD
           "Version": "8.0.0"
+=======
+          "Version": "9.0.10"
+>>>>>>> df8fe254b (Update SDK to 10.0.100-rc.2.25502.107 (#26305))
         }
       },
       "DevelopmentDependency": false
@@ -126,7 +134,11 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Extensions.ObjectPool",
+<<<<<<< HEAD
           "Version": "8.0.21"
+=======
+          "Version": "9.0.10"
+>>>>>>> df8fe254b (Update SDK to 10.0.100-rc.2.25502.107 (#26305))
         }
       },
       "DevelopmentDependency": false
@@ -166,7 +178,11 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Win32.Registry.AccessControl",
+<<<<<<< HEAD
           "Version": "8.0.0"
+=======
+          "Version": "9.0.10"
+>>>>>>> df8fe254b (Update SDK to 10.0.100-rc.2.25502.107 (#26305))
         }
       },
       "DevelopmentDependency": false
@@ -176,7 +192,11 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Win32.SystemEvents",
+<<<<<<< HEAD
           "Version": "8.0.0"
+=======
+          "Version": "9.0.10"
+>>>>>>> df8fe254b (Update SDK to 10.0.100-rc.2.25502.107 (#26305))
         }
       },
       "DevelopmentDependency": false
@@ -186,7 +206,11 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Windows.Compatibility",
+<<<<<<< HEAD
           "Version": "8.0.21"
+=======
+          "Version": "9.0.10"
+>>>>>>> df8fe254b (Update SDK to 10.0.100-rc.2.25502.107 (#26305))
         }
       },
       "DevelopmentDependency": false
@@ -205,8 +229,53 @@
       "Component": {
         "Type": "nuget",
         "Nuget": {
+<<<<<<< HEAD
           "Name": "runtime.linux-arm.runtime.native.System.IO.Ports",
           "Version": "8.0.0"
+=======
+          "Name": "runtime.android-arm.runtime.native.System.IO.Ports",
+          "Version": "9.0.10"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "runtime.android-arm64.runtime.native.System.IO.Ports",
+          "Version": "9.0.10"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "runtime.android-x64.runtime.native.System.IO.Ports",
+          "Version": "9.0.10"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "runtime.android-x86.runtime.native.System.IO.Ports",
+          "Version": "9.0.10"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "runtime.linux-arm.runtime.native.System.IO.Ports",
+          "Version": "9.0.10"
+>>>>>>> df8fe254b (Update SDK to 10.0.100-rc.2.25502.107 (#26305))
         }
       },
       "DevelopmentDependency": false
@@ -216,7 +285,61 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "runtime.linux-arm64.runtime.native.System.IO.Ports",
+<<<<<<< HEAD
           "Version": "8.0.0"
+=======
+          "Version": "9.0.10"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "runtime.linux-bionic-arm64.runtime.native.System.IO.Ports",
+          "Version": "9.0.10"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "runtime.linux-bionic-x64.runtime.native.System.IO.Ports",
+          "Version": "9.0.10"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "runtime.linux-musl-arm.runtime.native.System.IO.Ports",
+          "Version": "9.0.10"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "runtime.linux-musl-arm64.runtime.native.System.IO.Ports",
+          "Version": "9.0.10"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "runtime.linux-musl-x64.runtime.native.System.IO.Ports",
+          "Version": "9.0.10"
+>>>>>>> df8fe254b (Update SDK to 10.0.100-rc.2.25502.107 (#26305))
         }
       },
       "DevelopmentDependency": false
@@ -226,7 +349,31 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "runtime.linux-x64.runtime.native.System.IO.Ports",
+<<<<<<< HEAD
           "Version": "8.0.0"
+=======
+          "Version": "9.0.10"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "runtime.maccatalyst-arm64.runtime.native.System.IO.Ports",
+          "Version": "9.0.10"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "runtime.maccatalyst-x64.runtime.native.System.IO.Ports",
+          "Version": "9.0.10"
+>>>>>>> df8fe254b (Update SDK to 10.0.100-rc.2.25502.107 (#26305))
         }
       },
       "DevelopmentDependency": false
@@ -246,7 +393,11 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "runtime.native.System.IO.Ports",
+<<<<<<< HEAD
           "Version": "8.0.0"
+=======
+          "Version": "9.0.10"
+>>>>>>> df8fe254b (Update SDK to 10.0.100-rc.2.25502.107 (#26305))
         }
       },
       "DevelopmentDependency": false
@@ -256,7 +407,11 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "runtime.osx-arm64.runtime.native.System.IO.Ports",
+<<<<<<< HEAD
           "Version": "8.0.0"
+=======
+          "Version": "9.0.10"
+>>>>>>> df8fe254b (Update SDK to 10.0.100-rc.2.25502.107 (#26305))
         }
       },
       "DevelopmentDependency": false
@@ -266,7 +421,11 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "runtime.osx-x64.runtime.native.System.IO.Ports",
+<<<<<<< HEAD
           "Version": "8.0.0"
+=======
+          "Version": "9.0.10"
+>>>>>>> df8fe254b (Update SDK to 10.0.100-rc.2.25502.107 (#26305))
         }
       },
       "DevelopmentDependency": false
@@ -326,6 +485,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.CodeDom",
+<<<<<<< HEAD
           "Version": "8.0.0"
         }
       },
@@ -337,6 +497,9 @@
         "Nuget": {
           "Name": "System.Collections.Immutable",
           "Version": "8.0.0"
+=======
+          "Version": "9.0.10"
+>>>>>>> df8fe254b (Update SDK to 10.0.100-rc.2.25502.107 (#26305))
         }
       },
       "DevelopmentDependency": false
@@ -346,7 +509,11 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.ComponentModel.Composition.Registration",
+<<<<<<< HEAD
           "Version": "8.0.0"
+=======
+          "Version": "9.0.10"
+>>>>>>> df8fe254b (Update SDK to 10.0.100-rc.2.25502.107 (#26305))
         }
       },
       "DevelopmentDependency": false
@@ -356,7 +523,11 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.ComponentModel.Composition",
+<<<<<<< HEAD
           "Version": "8.0.0"
+=======
+          "Version": "9.0.10"
+>>>>>>> df8fe254b (Update SDK to 10.0.100-rc.2.25502.107 (#26305))
         }
       },
       "DevelopmentDependency": false
@@ -366,7 +537,11 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Configuration.ConfigurationManager",
+<<<<<<< HEAD
           "Version": "8.0.1"
+=======
+          "Version": "9.0.10"
+>>>>>>> df8fe254b (Update SDK to 10.0.100-rc.2.25502.107 (#26305))
         }
       },
       "DevelopmentDependency": false
@@ -376,7 +551,11 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Data.Odbc",
+<<<<<<< HEAD
           "Version": "8.0.1"
+=======
+          "Version": "9.0.10"
+>>>>>>> df8fe254b (Update SDK to 10.0.100-rc.2.25502.107 (#26305))
         }
       },
       "DevelopmentDependency": false
@@ -386,7 +565,11 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Data.OleDb",
+<<<<<<< HEAD
           "Version": "8.0.1"
+=======
+          "Version": "9.0.10"
+>>>>>>> df8fe254b (Update SDK to 10.0.100-rc.2.25502.107 (#26305))
         }
       },
       "DevelopmentDependency": false
@@ -416,7 +599,11 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Diagnostics.EventLog",
+<<<<<<< HEAD
           "Version": "8.0.2"
+=======
+          "Version": "9.0.10"
+>>>>>>> df8fe254b (Update SDK to 10.0.100-rc.2.25502.107 (#26305))
         }
       },
       "DevelopmentDependency": false
@@ -426,7 +613,11 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Diagnostics.PerformanceCounter",
+<<<<<<< HEAD
           "Version": "8.0.1"
+=======
+          "Version": "9.0.10"
+>>>>>>> df8fe254b (Update SDK to 10.0.100-rc.2.25502.107 (#26305))
         }
       },
       "DevelopmentDependency": false
@@ -436,7 +627,11 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.DirectoryServices.AccountManagement",
+<<<<<<< HEAD
           "Version": "8.0.1"
+=======
+          "Version": "9.0.10"
+>>>>>>> df8fe254b (Update SDK to 10.0.100-rc.2.25502.107 (#26305))
         }
       },
       "DevelopmentDependency": false
@@ -446,7 +641,11 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.DirectoryServices.Protocols",
+<<<<<<< HEAD
           "Version": "8.0.2"
+=======
+          "Version": "9.0.10"
+>>>>>>> df8fe254b (Update SDK to 10.0.100-rc.2.25502.107 (#26305))
         }
       },
       "DevelopmentDependency": false
@@ -456,7 +655,11 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.DirectoryServices",
+<<<<<<< HEAD
           "Version": "8.0.0"
+=======
+          "Version": "9.0.10"
+>>>>>>> df8fe254b (Update SDK to 10.0.100-rc.2.25502.107 (#26305))
         }
       },
       "DevelopmentDependency": false
@@ -466,6 +669,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Drawing.Common",
+<<<<<<< HEAD
           "Version": "8.0.21"
         }
       },
@@ -477,6 +681,9 @@
         "Nuget": {
           "Name": "System.Formats.Asn1",
           "Version": "8.0.2"
+=======
+          "Version": "9.0.10"
+>>>>>>> df8fe254b (Update SDK to 10.0.100-rc.2.25502.107 (#26305))
         }
       },
       "DevelopmentDependency": false
@@ -486,7 +693,11 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.IO.Packaging",
+<<<<<<< HEAD
           "Version": "8.0.1"
+=======
+          "Version": "9.0.10"
+>>>>>>> df8fe254b (Update SDK to 10.0.100-rc.2.25502.107 (#26305))
         }
       },
       "DevelopmentDependency": false
@@ -496,7 +707,11 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.IO.Ports",
+<<<<<<< HEAD
           "Version": "8.0.0"
+=======
+          "Version": "9.0.10"
+>>>>>>> df8fe254b (Update SDK to 10.0.100-rc.2.25502.107 (#26305))
         }
       },
       "DevelopmentDependency": false
@@ -506,7 +721,11 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Management",
+<<<<<<< HEAD
           "Version": "8.0.0"
+=======
+          "Version": "9.0.10"
+>>>>>>> df8fe254b (Update SDK to 10.0.100-rc.2.25502.107 (#26305))
         }
       },
       "DevelopmentDependency": false
@@ -516,6 +735,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Net.Http.WinHttpHandler",
+<<<<<<< HEAD
           "Version": "8.0.3"
         }
       },
@@ -527,6 +747,9 @@
         "Nuget": {
           "Name": "System.Numerics.Vectors",
           "Version": "4.5.0"
+=======
+          "Version": "9.0.10"
+>>>>>>> df8fe254b (Update SDK to 10.0.100-rc.2.25502.107 (#26305))
         }
       },
       "DevelopmentDependency": false
@@ -546,6 +769,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Reflection.Context",
+<<<<<<< HEAD
           "Version": "8.0.0"
         }
       },
@@ -567,6 +791,9 @@
         "Nuget": {
           "Name": "System.Reflection.Metadata",
           "Version": "8.0.0"
+=======
+          "Version": "9.0.10"
+>>>>>>> df8fe254b (Update SDK to 10.0.100-rc.2.25502.107 (#26305))
         }
       },
       "DevelopmentDependency": false
@@ -576,6 +803,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Runtime.Caching",
+<<<<<<< HEAD
           "Version": "8.0.1"
         }
       },
@@ -597,6 +825,9 @@
         "Nuget": {
           "Name": "System.Security.AccessControl",
           "Version": "6.0.1"
+=======
+          "Version": "9.0.10"
+>>>>>>> df8fe254b (Update SDK to 10.0.100-rc.2.25502.107 (#26305))
         }
       },
       "DevelopmentDependency": false
@@ -606,7 +837,11 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Security.Cryptography.Pkcs",
+<<<<<<< HEAD
           "Version": "8.0.1"
+=======
+          "Version": "9.0.10"
+>>>>>>> df8fe254b (Update SDK to 10.0.100-rc.2.25502.107 (#26305))
         }
       },
       "DevelopmentDependency": false
@@ -616,7 +851,11 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Security.Cryptography.ProtectedData",
+<<<<<<< HEAD
           "Version": "8.0.0"
+=======
+          "Version": "9.0.10"
+>>>>>>> df8fe254b (Update SDK to 10.0.100-rc.2.25502.107 (#26305))
         }
       },
       "DevelopmentDependency": false
@@ -626,7 +865,11 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Security.Cryptography.Xml",
+<<<<<<< HEAD
           "Version": "8.0.2"
+=======
+          "Version": "9.0.10"
+>>>>>>> df8fe254b (Update SDK to 10.0.100-rc.2.25502.107 (#26305))
         }
       },
       "DevelopmentDependency": false
@@ -636,6 +879,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Security.Permissions",
+<<<<<<< HEAD
           "Version": "8.0.0"
         }
       },
@@ -647,6 +891,9 @@
         "Nuget": {
           "Name": "System.Security.Principal.Windows",
           "Version": "5.0.0"
+=======
+          "Version": "9.0.10"
+>>>>>>> df8fe254b (Update SDK to 10.0.100-rc.2.25502.107 (#26305))
         }
       },
       "DevelopmentDependency": false
@@ -706,7 +953,11 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.ServiceModel.Syndication",
+<<<<<<< HEAD
           "Version": "8.0.0"
+=======
+          "Version": "9.0.10"
+>>>>>>> df8fe254b (Update SDK to 10.0.100-rc.2.25502.107 (#26305))
         }
       },
       "DevelopmentDependency": false
@@ -716,7 +967,11 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.ServiceProcess.ServiceController",
+<<<<<<< HEAD
           "Version": "8.0.1"
+=======
+          "Version": "9.0.10"
+>>>>>>> df8fe254b (Update SDK to 10.0.100-rc.2.25502.107 (#26305))
         }
       },
       "DevelopmentDependency": false
@@ -726,7 +981,11 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Speech",
+<<<<<<< HEAD
           "Version": "8.0.0"
+=======
+          "Version": "9.0.10"
+>>>>>>> df8fe254b (Update SDK to 10.0.100-rc.2.25502.107 (#26305))
         }
       },
       "DevelopmentDependency": false
@@ -736,6 +995,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Text.Encoding.CodePages",
+<<<<<<< HEAD
           "Version": "8.0.0"
         }
       },
@@ -747,6 +1007,9 @@
         "Nuget": {
           "Name": "System.Text.Encodings.Web",
           "Version": "8.0.0"
+=======
+          "Version": "9.0.10"
+>>>>>>> df8fe254b (Update SDK to 10.0.100-rc.2.25502.107 (#26305))
         }
       },
       "DevelopmentDependency": false
@@ -756,7 +1019,11 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Threading.AccessControl",
+<<<<<<< HEAD
           "Version": "8.0.0"
+=======
+          "Version": "9.0.10"
+>>>>>>> df8fe254b (Update SDK to 10.0.100-rc.2.25502.107 (#26305))
         }
       },
       "DevelopmentDependency": false
@@ -776,7 +1043,11 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Windows.Extensions",
+<<<<<<< HEAD
           "Version": "8.0.0"
+=======
+          "Version": "9.0.10"
+>>>>>>> df8fe254b (Update SDK to 10.0.100-rc.2.25502.107 (#26305))
         }
       },
       "DevelopmentDependency": false
