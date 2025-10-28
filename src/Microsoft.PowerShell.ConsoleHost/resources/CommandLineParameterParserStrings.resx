@@ -228,7 +228,7 @@ Valid formats are:
   <data name="MissingMandatoryArgument" xml:space="preserve">
     <value>An argument is required to be supplied to the '{0}' parameter.</value>
   </data>
-  <data name="FilelessEntryNotAllowed" xml:space="preserve">
-    <value>Fileless execution is not allowed by policy. Please use the -File parameter.</value>
+  <data name="FileOnlyEntryRequired" xml:space="preserve">
+    <value>The parameter "-File" is required by policy.</value>
   </data>
 </root>

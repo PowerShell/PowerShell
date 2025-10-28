@@ -883,9 +883,9 @@ namespace Microsoft.PowerShell
         {
             if (args.Length == 0)
             {
-                if (SystemPolicy.IsFilelessEntryDisabled())
+                if (SystemPolicy.IsFileOnlyEntryEnabled())
                 {
-                    SetCommandLineError(CommandLineParameterParserStrings.FilelessEntryNotAllowed);
+                    SetCommandLineError(CommandLineParameterParserStrings.FileOnlyEntryRequired);
                 }
 
                 return;
@@ -934,9 +934,9 @@ namespace Microsoft.PowerShell
                     noexitSeen = true;
                     ParametersUsed |= ParameterBitmap.NoExit;
 
-                    if (SystemPolicy.IsFilelessEntryDisabled())
+                    if (SystemPolicy.IsFileOnlyEntryEnabled() && !SystemPolicy.IsNoExitAllowed())
                     {
-                        SetCommandLineError(CommandLineParameterParserStrings.FilelessEntryNotAllowed);
+                        SetCommandLineError(CommandLineParameterParserStrings.FileOnlyEntryRequired);
                         break;
                     }
                 }
@@ -1275,9 +1275,9 @@ namespace Microsoft.PowerShell
                 }
             }
 
-            if (_error is null && (ParametersUsed & ParameterBitmap.File) is 0 && SystemPolicy.IsFilelessEntryDisabled())
+            if (_error is null && (ParametersUsed & ParameterBitmap.File) is 0 && SystemPolicy.IsFileOnlyEntryEnabled())
             {
-                SetCommandLineError(CommandLineParameterParserStrings.FilelessEntryNotAllowed);
+                SetCommandLineError(CommandLineParameterParserStrings.FileOnlyEntryRequired);
             }
 
             Dbg.Assert(
@@ -1377,9 +1377,9 @@ namespace Microsoft.PowerShell
             // Process interactive input...
             if (args[i] == "-")
             {
-                if (SystemPolicy.IsFilelessEntryDisabled())
+                if (SystemPolicy.IsFileOnlyEntryEnabled())
                 {
-                    SetCommandLineError(CommandLineParameterParserStrings.FilelessEntryNotAllowed);
+                    SetCommandLineError(CommandLineParameterParserStrings.FileOnlyEntryRequired);
                     return false;
                 }
 
@@ -1515,9 +1515,9 @@ namespace Microsoft.PowerShell
 
         private bool ParseCommand(string[] args, ref int i, bool noexitSeen, bool isEncoded)
         {
-            if (SystemPolicy.IsFilelessEntryDisabled())
+            if (SystemPolicy.IsFileOnlyEntryEnabled())
             {
-                SetCommandLineError(CommandLineParameterParserStrings.FilelessEntryNotAllowed);
+                SetCommandLineError(CommandLineParameterParserStrings.FileOnlyEntryRequired);
                 return false;
             }
 

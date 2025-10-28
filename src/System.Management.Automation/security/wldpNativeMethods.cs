@@ -75,46 +75,69 @@ namespace System.Management.Automation.Security
         {
         }
 
-        private static bool? s_isFilelessEntryDisabled;
+        // The S in PowerShell must be lower case to match the manifest.
+        private const string AppManifestId = "Powershell";
 
-        internal static bool IsFilelessEntryDisabled()
+        private static bool? s_isFileOnlyEntryEnabled;
+
+        internal static bool IsFileOnlyEntryEnabled()
         {
-            if (s_isFilelessEntryDisabled.HasValue)
+            if (s_isFileOnlyEntryEnabled.HasValue)
             {
-                return s_isFilelessEntryDisabled.Value;
+                return s_isFileOnlyEntryEnabled.Value;
             }
 
-            const string SettingName = "DisableFilelessEntry";
+            const string SettingName = "EnableFileOnlyEntry";
+            s_isFileOnlyEntryEnabled = TestBooleanWldpSetting(SettingName);
+            return s_isFileOnlyEntryEnabled.Value;
+        }
+
+        private static bool? s_allowNoExit;
+
+        internal static bool IsNoExitAllowed()
+        {
+            if (s_allowNoExit.HasValue)
+            {
+                return s_allowNoExit.Value;
+            }
+
+            const string SettingName = "AllowNoExit";
+            s_allowNoExit = TestBooleanWldpSetting(SettingName);
+            return s_allowNoExit.Value;
+        }
+
+        private static bool TestBooleanWldpSetting(string settingName)
+        {
             int hr = WldpNativeMethods.WldpGetApplicationSettingBoolean(
-                "Powershell",
-                SettingName,
-                out bool disabled);
+                AppManifestId,
+                settingName,
+                out bool result);
 
             PSEtwLog.LogWDACQueryEvent(
                 "WldpGetApplicationSettingBoolean",
-                SettingName,
+                settingName,
                 hr,
-                disabled ? 1 : 0);
+                result ? 1 : 0);
 
-            const int NOT_FOUND = unchecked((int)0x80070490);
-            if (hr is NOT_FOUND)
+            if (hr is not 0)
             {
-                disabled = false;
+                result = false;
             }
 
-            if (!disabled)
+            if (!result)
             {
-                string result = Environment.GetEnvironmentVariable(
-                    "__PSLockdownPolicy_DisableFileless",
+                string debugValue = Environment.GetEnvironmentVariable(
+                    $"__PSLockdownPolicy_{settingName}",
                     EnvironmentVariableTarget.Machine);
-                if (result is "1")
+
+                if (debugValue is "1")
                 {
-                    disabled = true;
+                    result = true;
                 }
             }
 
-            s_isFilelessEntryDisabled = disabled;
-            return disabled;
+            s_isFileOnlyEntryEnabled = result;
+            return result;
         }
 
         /// <summary>
