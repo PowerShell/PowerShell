@@ -1916,12 +1916,8 @@ $(if ($extendedDescription) { $extendedDescription + "`n" })
         Start-NativeExecution { cp -a $dataDir/* $buildDir }
 
         # Build package with dpkg-deb
-        $dpkgOutput = Start-NativeExecution { dpkg-deb --build $buildDir $debFilePath } 2>&1
-        $exitCode = $LASTEXITCODE
-
-        if ($exitCode -ne 0) {
-            Write-Verbose "dpkg-deb output: $dpkgOutput" -Verbose
-            throw "dpkg-deb failed with exit code $exitCode"
+        Start-NativeExecution -VerboseOutputOnError {
+            dpkg-deb --build $buildDir $debFilePath
         }
 
         if (Test-Path $debFilePath) {
