@@ -160,14 +160,10 @@ jobs:
         uses: "./.github/actions/test/verify_xunit"
 
   analyze:
-    permissions:
-      actions: read  # for github/codeql-action/init to get workflow details
-      contents: read  # for actions/checkout to fetch code
-      security-events: write  # for github/codeql-action/analyze to upload SARIF results
-    name: Analyze
-    runs-on: ubuntu-latest
+    name: CodeQL Analysis
     needs: changes
     if: ${{ needs.changes.outputs.source == 'true' }}
+<<<<<<< HEAD
 
     strategy:
       fail-fast: false
@@ -217,6 +213,15 @@ jobs:
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@df409f7d9260372bd5f19e5b04e83cb3c43714ae # v3.27.9
+=======
+    uses: ./.github/workflows/analyze-reusable.yml
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    with:
+      runner_os: ubuntu-latest
+>>>>>>> 5e5e17766 (Refactor analyze job to reusable workflow and enable on Windows CI (#26322))
 
   ready_to_merge:
     name: Linux ready to merge
