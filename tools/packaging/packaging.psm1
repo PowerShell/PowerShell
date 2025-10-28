@@ -1788,7 +1788,7 @@ function New-NativeDeb
         $shortDescription = $descriptionLines[0]
         $extendedDescription = if ($descriptionLines.Count -gt 1) {
             ($descriptionLines[1..($descriptionLines.Count-1)] | ForEach-Object { " $_" }) -join "`n"
-        } else { "" }
+        }
         
         $controlContent = @"
 Package: $Name
@@ -1896,11 +1896,13 @@ $(if ($extendedDescription) { $extendedDescription + "`n" })
         $buildDir = Join-Path $debBuildRoot "build"
         New-Item -ItemType Directory -Path $buildDir -Force | Out-Null
         
+        Write-Verbose "debianDir: $debianDir" -Verbose
+        Write-Verbose "dataDir: $dataDir" -Verbose
+        Write-Verbose "buildDir: $buildDir" -Verbose
+        
         # Use cp to preserve symlinks
-        # Copy DEBIAN directory
-        Start-NativeExecution { cp -a $debianDir "$buildDir/DEBIAN" }
-        # Copy data files - use shell to expand the wildcard
-        Start-NativeExecution { bash -c "cp -a $dataDir/* $buildDir/" }
+        cp -a $debianDir "$buildDir/DEBIAN"
+        cp -a $dataDir/* $buildDir
         
         # Build package with dpkg-deb
         $dpkgOutput = dpkg-deb --build $buildDir $debFilePath 2>&1
