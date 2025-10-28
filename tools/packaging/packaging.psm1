@@ -2155,10 +2155,6 @@ function Test-Dependencies
     # This function is maintained for potential future dependency checks.
     $Dependencies = @()
     
-    # No longer checking for fpm on Debian-based systems
-    # Native DEB packaging only requires standard tools: dpkg-deb, ar, tar, gzip, md5sum
-    # which are typically pre-installed on Debian-based systems
-    
     foreach ($Dependency in $Dependencies) {
         if (!(precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Scenario Package")) {
             # These tools are not added to the path automatically on OpenSUSE 13.2
