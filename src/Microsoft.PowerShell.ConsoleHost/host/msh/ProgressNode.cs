@@ -411,16 +411,16 @@ namespace Microsoft.PowerShell
             sb.Append(PSStyle.Instance.Reverse);
 
             // Build the status description part
-            int maxStatusLength = barWidth - secRemainLength - 1;
+            int maxStatusWidth = barWidth - secRemainLength;
             string statusPart;
             int statusPartDisplayWidth;
-            if (maxStatusLength > 0)
+            if (maxStatusWidth > 0)
             {
                 int statusDisplayWidth = rawUI.LengthInBufferCells(StatusDescription);
-                if (statusDisplayWidth > barWidth - secRemainLength)
+                if (statusDisplayWidth > maxStatusWidth)
                 {
                     int ellipsisWidth = rawUI.LengthInBufferCells(PSObjectHelper.EllipsisStr);
-                    statusPart = StringUtil.TruncateToBufferCellWidth(rawUI, StatusDescription, barWidth - secRemainLength - ellipsisWidth) + PSObjectHelper.EllipsisStr;
+                    statusPart = StringUtil.TruncateToBufferCellWidth(rawUI, StatusDescription, maxStatusWidth - ellipsisWidth) + PSObjectHelper.EllipsisStr;
                     statusPartDisplayWidth = rawUI.LengthInBufferCells(statusPart);
                 }
                 else
