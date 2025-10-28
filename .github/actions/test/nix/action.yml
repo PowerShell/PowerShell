@@ -14,6 +14,18 @@ inputs:
     required: false
     default: ctrf
     type: string
+  client-id:
+    description: 'Azure AD Application (Client) ID for authentication'
+    required: true
+    default: ''
+  tenant-id:
+    description: 'Azure AD Tenant ID for authentication'
+    required: true
+    default: ''
+  subscription-id:
+    description: 'Azure Subscription ID for authentication'
+    required: true
+    default: ''
 
 runs:
   using: composite
@@ -72,9 +84,9 @@ runs:
       package: "${{ steps.set_package_name.outputs.package }}"
       version: "3.2.0-preview.6"
       project: "2972bb5c-f20c-4a60-8bd9-00ffe9987edc"
-      client-id: ${{ secrets.AZURE_CLIENT_ID }}
-      tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-      subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      client-id: ${{ inputs.client-id }}
+      tenant-id: ${{ inputs.tenant-id }}
+      subscription-id: ${{ inputs.subscription-id }}
       packageFileName: "${{ steps.set_package_name.outputs.packageFileName }}"
       extractSubFolder: "DSC"
       environmentVariable: "DSC_ROOT"

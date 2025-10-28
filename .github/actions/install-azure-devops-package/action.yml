@@ -25,15 +25,15 @@ inputs:
   client-id:
     description: 'Azure AD Application (Client) ID for authentication'
     required: true
-    default: ${{ secrets.AZURE_CLIENT_ID }}
+    default: ''
   tenant-id:
     description: 'Azure AD Tenant ID for authentication'
     required: true
-    default: ${{ secrets.AZURE_TENANT_ID }}
+    default: ''
   subscription-id:
     description: 'Azure Subscription ID for authentication'
     required: true
-    default: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+    default: ''
   destination:
     description: 'Destination path for package download'
     required: false

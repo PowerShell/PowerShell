@@ -5,7 +5,6 @@ inputs:
   purpose:
     required: false
     default: ''
-    type: string
   tagSet:
     required: false
     default: CI
@@ -13,6 +12,15 @@ inputs:
   ctrfFolder:
     required: false
     default: ctrf
+    type: string
+  client-id:
+    required: true
+    type: string
+  tenant-id:
+    required: true
+    type: string
+  subscription-id:
+    required: true
     type: string
 
 runs:
@@ -52,9 +60,9 @@ runs:
       package: "microsoft.dsc-windows"
       version: "3.2.0-preview.6"
       project: "2972bb5c-f20c-4a60-8bd9-00ffe9987edc"
-      client-id: ${{ secrets.AZURE_CLIENT_ID }}
-      tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-      subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      client-id: ${{ inputs.client-id }}
+      tenant-id: ${{ inputs.tenant-id }}
+      subscription-id: ${{ inputs.subscription-id }}
       packageFileName: "DSC-{version}-x86_64-pc-windows-msvc.zip"
       extractSubFolder: "DSC"
       environmentVariable: "DSC_ROOT"
