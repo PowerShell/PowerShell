@@ -1861,7 +1861,7 @@ function Get-PackageDependencies
         $Dependencies = @()
 
         # ICU version range follows .NET runtime policy.
-        # See: src/native/libs/System.Globalization.Native/pal_icushim.c in dotnet/runtime
+        # See: https://github.com/dotnet/runtime/blob/3fe8518d51bbcaa179bbe275b2597fbe1b88bc5a/src/native/libs/System.Globalization.Native/pal_icushim.c#L235-L243
         #
         # Version range rationale:
         # - The runtime supports ICU versions >= the version it was built against
