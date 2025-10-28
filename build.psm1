@@ -924,8 +924,6 @@ function Restore-PSPackage
 
         $ProjectDirs | ForEach-Object {
             $project = $_
-            $projectName = Split-Path -Leaf -Path $project
-            Write-LogGroupStart -Title "Restore Project: $projectName"
             Write-Log -message "Run dotnet restore $project $RestoreArguments"
             $retryCount = 0
             $maxTries = 5
@@ -947,6 +945,7 @@ function Restore-PSPackage
                                     $null = New-Item -path $env:OB_OUTPUTDIRECTORY -ItemType Directory -Force -Verbose
                                 }
 
+                                $projectName = Split-Path -Leaf -Path $project
                                 $binlogFileName = "${projectName}.msbuild.binlog"
                                 if ($IsMacOS) {
                                     $resolvedPath = (Resolve-Path -Path ./msbuild.binlog).ProviderPath
@@ -957,7 +956,6 @@ function Restore-PSPackage
                             }
                         }
 
-                        Write-LogGroupEnd -Title "Restore Project: $projectName"
                         throw
                     }
                     continue
@@ -966,7 +964,6 @@ function Restore-PSPackage
                 Write-Log -message "Done restoring $project"
                 break
             }
-            Write-LogGroupEnd -Title "Restore Project: $projectName"
         }
     }
 }
