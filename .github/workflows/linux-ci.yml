@@ -233,7 +233,6 @@ jobs:
   linux_packaging:
     name: Linux Packaging
     needs:
-      - ci_build
       - changes
     if: ${{ needs.changes.outputs.packagingChanged == 'true' }}
     runs-on: ubuntu-latest
