@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections;
-using System.Globalization;
 using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Text.RegularExpressions;
@@ -18,6 +17,8 @@ namespace PSTests.Parallel
     /// </summary>
     internal class TestProgressRawUI : PSHostRawUserInterface
     {
+        private static readonly Regex VTSequenceRegex = new Regex(@"\x1b\[[0-9;]*m", RegexOptions.Compiled);
+
         public override ConsoleColor ForegroundColor { get; set; }
 
         public override ConsoleColor BackgroundColor { get; set; }
@@ -82,15 +83,13 @@ namespace PSTests.Parallel
                 return 0;
 
             // First, strip VT sequences as they don't contribute to display width
-            string stripped = Regex.Replace(str, @"\x1b\[[0-9;]*m", string.Empty);
+            string stripped = VTSequenceRegex.Replace(str, string.Empty);
 
             int width = 0;
             foreach (char c in stripped)
             {
                 // Check if character is double-width
                 // This includes CJK characters, full-width punctuation, and emoji
-                var category = CharUnicodeInfo.GetUnicodeCategory(c);
-
                 // Characters in these ranges are typically double-width:
                 // - East Asian ideographs (CJK)
                 // - Hangul syllables (Korean)
@@ -134,12 +133,14 @@ namespace PSTests.Parallel
     /// </summary>
     public static class ProgressNodeTests
     {
+        private static readonly Regex VTSequenceRegex = new Regex(@"\x1b\[[0-9;]*m", RegexOptions.Compiled);
+
         private static string StripVTSequences(string input)
         {
             if (string.IsNullOrEmpty(input))
                 return input;
 
-            return Regex.Replace(input, @"\x1b\[[0-9;]*m", string.Empty);
+            return VTSequenceRegex.Replace(input, string.Empty);
         }
 
         /// <summary>
