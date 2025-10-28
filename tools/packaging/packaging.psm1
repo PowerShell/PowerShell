@@ -1808,11 +1808,7 @@ $(if ($extendedDescription) { $extendedDescription + "`n" })
         $controlContent | Out-File -FilePath $controlFile -Encoding ascii -NoNewline
         
         Write-Verbose "Control file created: $controlFile" -Verbose
-        if ($env:GITHUB_ACTIONS -eq 'true') {
-            Write-Host "::group::DEB Control File Content"
-            Write-Host $controlContent
-            Write-Host "::endgroup::"
-        }
+        Write-LogGroup -Title "DEB Control File Content" -Message $controlContent
 
         # Copy postinst script if provided
         if ($AfterInstallScript -and (Test-Path $AfterInstallScript)) {
