@@ -5,7 +5,6 @@ using System;
 using System.Collections;
 using System.Management.Automation;
 using System.Management.Automation.Host;
-using System.Text.RegularExpressions;
 using Microsoft.PowerShell;
 using Xunit;
 
@@ -13,12 +12,10 @@ namespace PSTests.Parallel
 {
     /// <summary>
     /// Test helper class that implements PSHostRawUserInterface for progress bar testing.
-    /// This implementation properly handles VT sequences and double-width characters.
+    /// Delegates width calculations to ConsoleControl.LengthInBufferCells.
     /// </summary>
     internal class TestProgressRawUI : PSHostRawUserInterface
     {
-        private static readonly Regex VTSequenceRegex = new Regex(@"\x1b\[[0-9;]*m", RegexOptions.Compiled);
-
         public override ConsoleColor ForegroundColor { get; set; }
 
         public override ConsoleColor BackgroundColor { get; set; }
@@ -71,58 +68,19 @@ namespace PSTests.Parallel
             throw new NotImplementedException();
         }
 
-        /// <summary>
-        /// Calculate the display width of a string in buffer cells, properly handling:
-        /// - VT sequences (ANSI escape codes) which have zero width
-        /// - Double-width characters (CJK, emoji) which occupy 2 cells
-        /// - Regular characters which occupy 1 cell
-        /// </summary>
         public override int LengthInBufferCells(string str)
         {
-            if (string.IsNullOrEmpty(str))
-                return 0;
-
-            // First, strip VT sequences as they don't contribute to display width
-            string stripped = VTSequenceRegex.Replace(str, string.Empty);
-
-            int width = 0;
-            foreach (char c in stripped)
-            {
-                // Check if character is double-width
-                // This includes CJK characters, full-width punctuation, and emoji
-                // Characters in these ranges are typically double-width:
-                // - East Asian ideographs (CJK)
-                // - Hangul syllables (Korean)
-                // - Full-width forms
-                // - Emoji and symbols
-                bool isDoubleWidth =
-                    (c >= 0x1100 && c <= 0x115F) ||  // Hangul Jamo
-                    (c >= 0x2E80 && c <= 0x9FFF) ||  // CJK
-                    (c >= 0xAC00 && c <= 0xD7AF) ||  // Hangul Syllables
-                    (c >= 0xF900 && c <= 0xFAFF) ||  // CJK Compatibility
-                    (c >= 0xFE10 && c <= 0xFE19) ||  // Vertical forms
-                    (c >= 0xFE30 && c <= 0xFE6F) ||  // CJK Compatibility Forms
-                    (c >= 0xFF00 && c <= 0xFF60) ||  // Full-width forms
-                    (c >= 0xFFE0 && c <= 0xFFE6) ||  // Full-width forms
-                    (c >= 0x1F300 && c <= 0x1F9FF);  // Emoji and symbols
-
-                width += isDoubleWidth ? 2 : 1;
-            }
-
-            return width;
+            return ConsoleControl.LengthInBufferCells(str, 0, checkEscapeSequences: true);
         }
 
         public override int LengthInBufferCells(string str, int offset)
         {
-            if (string.IsNullOrEmpty(str) || offset >= str.Length)
-                return 0;
-
-            return LengthInBufferCells(str.Substring(offset));
+            return ConsoleControl.LengthInBufferCells(str, offset, checkEscapeSequences: true);
         }
 
         public override int LengthInBufferCells(char c)
         {
-            return LengthInBufferCells(c.ToString());
+            return ConsoleControl.LengthInBufferCells(c);
         }
     }
 
@@ -133,17 +91,6 @@ namespace PSTests.Parallel
     /// </summary>
     public static class ProgressNodeTests
     {
-        private static readonly Regex VTSequenceRegex = new Regex(@"\x1b\[[0-9;]*m", RegexOptions.Compiled);
-
-        private static string StripVTSequences(string input)
-        {
-            if (string.IsNullOrEmpty(input))
-                return input;
-
-            return VTSequenceRegex.Replace(input, string.Empty);
-        }
-
-        /// <summary>
         /// Verify Issue #21293 scenario - the original bug report
         /// This test reproduces the exact scenario from the issue
         /// Tests with various window widths to ensure the fix works across different terminal sizes
@@ -175,11 +122,10 @@ namespace PSTests.Parallel
             node.Render(strCollection, 0, maxWidth, rawUI);
 
             var output = strCollection[0] as string;
-            var stripped = StripVTSequences(output);
-            int actualWidth = rawUI.LengthInBufferCells(stripped);
+            int actualWidth = ConsoleControl.LengthInBufferCells(output, 0, checkEscapeSequences: true);
 
             Assert.True(actualWidth <= maxWidth,
-                $"Issue #21293 (width {maxWidth}): Progress bar ({actualWidth} cells) exceeds maxWidth ({maxWidth}). Stripped: {stripped}");
+                $"Issue #21293 (width {maxWidth}): Progress bar ({actualWidth} cells) exceeds maxWidth ({maxWidth}). Output: {output}");
         }
 
         /// <summary>
@@ -211,11 +157,10 @@ namespace PSTests.Parallel
             node.Render(strCollection, 0, maxWidth, rawUI);
 
             var output = strCollection[0] as string;
-            var stripped = StripVTSequences(output);
-            int actualWidth = rawUI.LengthInBufferCells(stripped);
+            int actualWidth = ConsoleControl.LengthInBufferCells(output, 0, checkEscapeSequences: true);
 
             Assert.True(actualWidth <= maxWidth,
-                $"Progress bar width {maxWidth}: ({actualWidth}) exceeds maxWidth ({maxWidth}). Stripped: {stripped}");
+                $"Progress bar width {maxWidth}: ({actualWidth}) exceeds maxWidth ({maxWidth}). Output: {output}");
         }
 
         /// <summary>
@@ -247,11 +192,10 @@ namespace PSTests.Parallel
             node.Render(strCollection, 0, maxWidth, rawUI);
 
             var output = strCollection[0] as string;
-            var stripped = StripVTSequences(output);
-            int actualWidth = rawUI.LengthInBufferCells(stripped);
+            int actualWidth = ConsoleControl.LengthInBufferCells(output, 0, checkEscapeSequences: true);
 
             Assert.True(actualWidth <= maxWidth,
-                $"Emoji progress bar width {maxWidth}: ({actualWidth} cells) exceeds maxWidth ({maxWidth}). Stripped: {stripped}");
+                $"Emoji progress bar width {maxWidth}: ({actualWidth} cells) exceeds maxWidth ({maxWidth}). Output: {output}");
         }
 
         /// <summary>
@@ -308,11 +252,10 @@ namespace PSTests.Parallel
             node.Render(strCollection, 0, maxWidth, rawUI);
 
             var output = strCollection[0] as string;
-            var stripped = StripVTSequences(output);
-            int actualWidth = rawUI.LengthInBufferCells(stripped);
+            int actualWidth = ConsoleControl.LengthInBufferCells(output, 0, checkEscapeSequences: true);
 
             Assert.True(actualWidth <= maxWidth,
-                $"Status '{statusText}' width {maxWidth}: resulted in width {actualWidth} exceeding maxWidth {maxWidth}. Stripped: {stripped}");
+                $"Status '{statusText}' width {maxWidth}: resulted in width {actualWidth} exceeding maxWidth {maxWidth}. Output: {output}");
         }
 
         /// <summary>
@@ -344,11 +287,10 @@ namespace PSTests.Parallel
             node.Render(strCollection, 0, maxWidth, rawUI);
 
             var output = strCollection[0] as string;
-            var stripped = StripVTSequences(output);
-            int actualWidth = rawUI.LengthInBufferCells(stripped);
+            int actualWidth = ConsoleControl.LengthInBufferCells(output, 0, checkEscapeSequences: true);
 
             Assert.True(actualWidth <= maxWidth,
-                $"Mixed-width text width {maxWidth}: resulted in width {actualWidth} exceeding maxWidth {maxWidth}. Stripped: {stripped}");
+                $"Mixed-width text width {maxWidth}: resulted in width {actualWidth} exceeding maxWidth {maxWidth}. Output: {output}");
         }
 
         /// <summary>
@@ -380,11 +322,10 @@ namespace PSTests.Parallel
             node.Render(strCollection, 0, maxWidth, rawUI);
 
             var output = strCollection[0] as string;
-            var stripped = StripVTSequences(output);
-            int actualWidth = rawUI.LengthInBufferCells(stripped);
+            int actualWidth = ConsoleControl.LengthInBufferCells(output, 0, checkEscapeSequences: true);
 
             Assert.True(actualWidth <= maxWidth,
-                $"Long double-width text width {maxWidth}: resulted in width {actualWidth} exceeding maxWidth {maxWidth}. Stripped: {stripped}");
+                $"Long double-width text width {maxWidth}: resulted in width {actualWidth} exceeding maxWidth {maxWidth}. Output: {output}");
         }
 
         /// <summary>
@@ -416,11 +357,10 @@ namespace PSTests.Parallel
             node.Render(strCollection, 0, maxWidth, rawUI);
 
             var output = strCollection[0] as string;
-            var stripped = StripVTSequences(output);
-            int actualWidth = rawUI.LengthInBufferCells(stripped);
+            int actualWidth = ConsoleControl.LengthInBufferCells(output, 0, checkEscapeSequences: true);
 
             Assert.True(actualWidth <= maxWidth,
-                $"Truncated progress bar width {maxWidth}: ({actualWidth} cells) exceeds maxWidth ({maxWidth}). Stripped: {stripped}");
+                $"Truncated progress bar width {maxWidth}: ({actualWidth} cells) exceeds maxWidth ({maxWidth}). Output: {output}");
         }
 
         /// <summary>
@@ -456,22 +396,21 @@ namespace PSTests.Parallel
             node.Render(strCollection, 0, maxWidth, rawUI);
 
             var output = strCollection[0] as string;
-            var stripped = StripVTSequences(output);
-            int actualWidth = rawUI.LengthInBufferCells(stripped);
+            int actualWidth = ConsoleControl.LengthInBufferCells(output, 0, checkEscapeSequences: true);
 
             // The progress bar must not exceed maxWidth
             Assert.True(actualWidth <= maxWidth,
-                $"Progress bar with long truncated status width {maxWidth}: ({actualWidth} cells) exceeds maxWidth ({maxWidth}). Stripped: {stripped}");
+                $"Progress bar with long truncated status width {maxWidth}: ({actualWidth} cells) exceeds maxWidth ({maxWidth}). Output: {output}");
 
             // Verify no double closing brackets - count ']' occurrences at end
             int closingBracketCount = 0;
-            for (int i = stripped.Length - 1; i >= 0 && stripped[i] == ']'; i--)
+            for (int i = output.Length - 1; i >= 0 && output[i] == ']'; i--)
             {
                 closingBracketCount++;
             }
 
             Assert.True(closingBracketCount <= 1,
-                $"Found {closingBracketCount} consecutive closing brackets at end (width {maxWidth}), expected 1. Output: {stripped}");
+                $"Found {closingBracketCount} consecutive closing brackets at end (width {maxWidth}), expected 1. Output: {output}");
         }
 
         /// <summary>
@@ -507,11 +446,10 @@ namespace PSTests.Parallel
             node.Render(strCollection, 0, maxWidth, rawUI);
 
             var output = strCollection[0] as string;
-            var stripped = StripVTSequences(output);
-            int actualWidth = rawUI.LengthInBufferCells(stripped);
+            int actualWidth = ConsoleControl.LengthInBufferCells(output, 0, checkEscapeSequences: true);
 
             Assert.True(actualWidth <= maxWidth,
-                $"maxWidth {maxWidth} test: width {actualWidth} exceeds {maxWidth}. Output: [{stripped}]");
+                $"maxWidth {maxWidth} test: width {actualWidth} exceeds {maxWidth}. Output: [{output}]");
         }
 
         /// <summary>
@@ -545,11 +483,10 @@ namespace PSTests.Parallel
             node.Render(strCollection, 0, maxWidth, rawUI);
 
             var output = strCollection[0] as string;
-            var stripped = StripVTSequences(output);
-            int actualWidth = rawUI.LengthInBufferCells(stripped);
+            int actualWidth = ConsoleControl.LengthInBufferCells(output, 0, checkEscapeSequences: true);
 
             Assert.True(actualWidth <= maxWidth,
-                $"Surrogate pair test width {maxWidth}: width {actualWidth} exceeds {maxWidth}. Output: [{stripped}]");
+                $"Surrogate pair test width {maxWidth}: width {actualWidth} exceeds {maxWidth}. Output: [{output}]");
         }
     }
 }
