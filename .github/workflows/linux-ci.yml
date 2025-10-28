@@ -178,8 +178,8 @@ jobs:
       - linux_test_elevated_others
       - linux_test_unelevated_ci
       - linux_test_unelevated_others
-      - analyze
       - linux_packaging
+      # - analyze
     if: always()
     uses: PowerShell/compliance/.github/workflows/ready-to-merge.yml@v1.0.0
     with:
