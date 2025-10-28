@@ -2282,7 +2282,7 @@ function Start-PSBootstrap {
         [switch]$BuildLinuxArm,
         [switch]$Force,
         [Parameter(Mandatory = $true)]
-        # Package: Install dependencies for packaging tools (fpm, rpmbuild, WiX)
+        # Package: Install dependencies for packaging tools (rpmbuild, dpkg-deb, pkgbuild, WiX)
         # DotNet: Install the .NET SDK
         # Both: Package and DotNet scenarios
         # Tools: Install .NET global tools (e.g., dotnet-format)
@@ -2410,17 +2410,7 @@ function Start-PSBootstrap {
                 }
             }
 
-            # Install [fpm](https://github.com/jordansissel/fpm)
-            # Note: fpm is now only needed for macOS packages; RPM and DEB packages use native builders
             if ($Scenario -in 'All', 'Both', 'Package') {
-                # Install fpm only on macOS
-                if ($environment.IsMacOS) {
-                    Install-GlobalGem -Sudo $sudo -GemName "dotenv" -GemVersion "2.8.1"
-                    Install-GlobalGem -Sudo $sudo -GemName "ffi" -GemVersion "1.16.3"
-                    Install-GlobalGem -Sudo $sudo -GemName "fpm" -GemVersion "1.15.1"
-                    Install-GlobalGem -Sudo $sudo -GemName "rexml" -GemVersion "3.2.5"
-                }
-
                 # For RPM-based systems, ensure rpmbuild is available
                 if ($environment.IsLinux -and ($environment.IsRedHatFamily -or $environment.IsSUSEFamily -or $environment.IsMariner)) {
                     Write-Verbose -Verbose "Checking for rpmbuild..."
