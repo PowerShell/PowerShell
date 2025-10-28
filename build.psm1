@@ -543,10 +543,8 @@ Fix steps:
     # handle ResGen
     # Heuristic to run ResGen on the fresh machine
     if ($ResGen -or -not (Test-Path "$PSScriptRoot/src/Microsoft.PowerShell.ConsoleHost/gen")) {
-        Write-LogGroupStart -Title "Generate Resource Files (ResGen)"
         Write-Log -message "Run ResGen (generating C# bindings for resx files)"
         Start-ResGen
-        Write-LogGroupEnd -Title "Generate Resource Files (ResGen)"
     }
 
     # Handle TypeGen
@@ -558,10 +556,8 @@ Fix steps:
 
     $incFileName = "powershell_$runtime.inc"
     if ($TypeGen -or -not (Test-Path "$PSScriptRoot/src/TypeCatalogGen/$incFileName")) {
-        Write-LogGroupStart -Title "Generate Type Catalog (TypeGen)"
         Write-Log -message "Run TypeGen (generating CorePsTypeCatalog.cs)"
         Start-TypeGen -IncFileName $incFileName
-        Write-LogGroupEnd -Title "Generate Type Catalog (TypeGen)"
     }
 
     # Get the folder path where pwsh.exe is located.
@@ -2309,7 +2305,6 @@ function Start-PSBootstrap {
         [string]$Scenario = "Package"
     )
 
-    Write-LogGroupStart -Title "Bootstrap PowerShell Build Dependencies"
     Write-Log -message "Installing PowerShell build dependencies"
 
     Push-Location $PSScriptRoot/tools
@@ -2535,7 +2530,6 @@ function Start-PSBootstrap {
     } finally {
         Pop-Location
     }
-    Write-LogGroupEnd -Title "Bootstrap PowerShell Build Dependencies"
 }
 
 ## If the required SDK version is found, return it.
