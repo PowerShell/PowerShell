@@ -63,15 +63,12 @@ runs:
   - name: Packaging Tests
     if: success()
     run: |-
-<<<<<<< HEAD
-=======
       # Create the artifacts staging directory
       New-Item -ItemType Directory -Path "$env:BUILD_ARTIFACTSTAGINGDIRECTORY" -Force | Out-Null
 
       # Import packaging module to ensure RPM packaging changes are loaded
       Import-Module ./build.psm1 -Force
       Import-Module ./tools/packaging/packaging.psm1 -Force
->>>>>>> 5661a5152 (Replace fpm with native rpmbuild for RPM package generation (#26233))
       Import-Module ./tools/ci.psm1
       Restore-PSOptions -PSOptionsPath '${{ github.workspace }}/build/psoptions.json'
       $options = (Get-PSOptions)
@@ -84,26 +81,6 @@ runs:
       Set-PSOptions $options
       Invoke-CIFinish
     shell: pwsh
-<<<<<<< HEAD
-  - name: Upload packages
-    run: |-
-      Get-ChildItem "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}/*.deb" -Recurse | ForEach-Object {
-        $packagePath = $_.FullName
-        Write-Host "Uploading $packagePath"
-        Write-Host "##vso[artifact.upload containerfolder=deb;artifactname=deb]$packagePath"
-      }
-      Get-ChildItem "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}/*.rpm" -Recurse | ForEach-Object {
-        $packagePath = $_.FullName
-        Write-Host "Uploading $packagePath"
-        Write-Host "##vso[artifact.upload containerfolder=rpm;artifactname=rpm]$packagePath"
-      }
-      Get-ChildItem "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}/*.tar.gz" -Recurse | ForEach-Object {
-        $packagePath = $_.FullName
-        Write-Host "Uploading $packagePath"
-        Write-Host "##vso[artifact.upload containerfolder=rpm;artifactname=rpm]$packagePath"
-      }
-    shell: pwsh
-=======
 
   - name: Validate Package Names
     run: |-
@@ -135,4 +112,3 @@ runs:
       name: packages-tar
       path: ${{ runner.workspace }}/packages/*.tar.gz
       if-no-files-found: ignore
->>>>>>> 5661a5152 (Replace fpm with native rpmbuild for RPM package generation (#26233))
