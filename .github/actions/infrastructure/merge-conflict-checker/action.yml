@@ -15,36 +15,7 @@ runs:
   steps:
     - name: Get changed files
       id: changed-files
-      uses: actions/github-script@v7
-      with:
-        script: |
-          let changedFiles = [];
-
-          if (context.eventName === 'pull_request') {
-            console.log(`Getting files changed in PR #${context.payload.pull_request.number}`);
-
-            // Fetch the list of files changed in the PR (first page only, up to 100 files)
-            const { data: files } = await github.rest.pulls.listFiles({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: context.payload.pull_request.number,
-              per_page: 100,
-              page: 1
-            });
-
-            // Get all changed files (added, modified, or renamed)
-            changedFiles = files
-              .filter(file => file.status === 'added' || file.status === 'modified' || file.status === 'renamed')
-              .map(file => file.filename);
-          } else {
-            core.setFailed(`This action only supports 'pull_request' events. Current event: ${context.eventName}`);
-            return;
-          }
-
-          console.log(`Found ${changedFiles.length} changed files`);
-          core.setOutput('files', JSON.stringify(changedFiles));
-          core.setOutput('count', changedFiles.length);
-          return changedFiles;
+      uses: "./.github/actions/infrastructure/get-changed-files"
 
     - name: Check for merge conflict markers
       id: check
