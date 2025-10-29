@@ -887,13 +887,7 @@ namespace Microsoft.PowerShell.Commands
         }
         /// <summary>
         /// Attempts to find an exact property match for expressions containing escaped wildcard characters.
-        /// This addresses issue #25982 where properties with literal wildcard characters cannot be targeted 
-        /// even when properly escaped.
         /// </summary>
-        /// <param name="expression">The property expression to evaluate</param>
-        /// <param name="inputObject">The object to search for properties</param>
-        /// <param name="result">The result if an exact match is found</param>
-        /// <returns>True if an exact property match was found; otherwise, false</returns>
         private static bool TryGetExactPropertyMatch(PSPropertyExpression expression, PSObject inputObject, out PSPropertyExpressionResult result)
         {
             result = null;
