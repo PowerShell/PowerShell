@@ -2383,11 +2383,24 @@ function Start-PSBootstrap {
             }
 
             # Install [fpm](https://github.com/jordansissel/fpm)
+            # Note: fpm is now only needed for DEB and macOS packages; RPM packages use rpmbuild directly
             if ($Scenario -eq 'Both' -or $Scenario -eq 'Package') {
-                Install-GlobalGem -Sudo $sudo -GemName "dotenv" -GemVersion "2.8.1"
-                Install-GlobalGem -Sudo $sudo -GemName "ffi" -GemVersion "1.16.3"
-                Install-GlobalGem -Sudo $sudo -GemName "fpm" -GemVersion "1.15.1"
-                Install-GlobalGem -Sudo $sudo -GemName "rexml" -GemVersion "3.2.5"
+                # Install fpm on Debian-based systems, macOS, and Mariner (where DEB packages are built)
+                if (($environment.IsLinux -and ($environment.IsDebianFamily -or $environment.IsMariner)) -or $environment.IsMacOS) {
+                    Install-GlobalGem -Sudo $sudo -GemName "dotenv" -GemVersion "2.8.1"
+                    Install-GlobalGem -Sudo $sudo -GemName "ffi" -GemVersion "1.16.3"
+                    Install-GlobalGem -Sudo $sudo -GemName "fpm" -GemVersion "1.15.1"
+                    Install-GlobalGem -Sudo $sudo -GemName "rexml" -GemVersion "3.2.5"
+                }
+                
+                # For RPM-based systems, ensure rpmbuild is available
+                if ($environment.IsLinux -and ($environment.IsRedHatFamily -or $environment.IsSUSEFamily -or $environment.IsMariner)) {
+                    Write-Verbose -Verbose "Checking for rpmbuild..."
+                    if (!(Get-Command rpmbuild -ErrorAction SilentlyContinue)) {
+                        Write-Warning "rpmbuild not found. Installing rpm-build package..."
+                        Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo $PackageManager install -y rpm-build")) -IgnoreExitcode
+                    }
+                }
             }
         }
 
