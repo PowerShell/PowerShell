@@ -70,7 +70,7 @@ jobs:
   merge_conflict_check:
     name: Check for Merge Conflict Markers
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' && (startsWith(github.repository_owner, 'azure') || github.repository_owner == 'PowerShell')
     permissions:
       pull-requests: read
       contents: read
