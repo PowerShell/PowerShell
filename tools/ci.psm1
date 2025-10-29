@@ -977,3 +977,184 @@ function Invoke-InitializeContainerStage {
       Write-Host "##vso[build.addbuildtag]$($selectedImage.JobName)"
     }
 }
+
+function Test-MergeConflictMarker
+{
+    <#
+    .SYNOPSIS
+        Checks files for Git merge conflict markers and outputs results for GitHub Actions.
+    .DESCRIPTION
+        Scans the specified files for Git merge conflict markers (<<<<<<<, =======, >>>>>>>)
+        and generates console output, GitHub Actions outputs, and job summary.
+        Designed for use in GitHub Actions workflows.
+    .PARAMETER File
+        Array of file paths (relative or absolute) to check for merge conflict markers.
+    .PARAMETER WorkspacePath
+        Base workspace path for resolving relative paths. Defaults to current directory.
+    .PARAMETER OutputPath
+        Path to write GitHub Actions outputs. Defaults to $env:GITHUB_OUTPUT.
+    .PARAMETER SummaryPath
+        Path to write GitHub Actions job summary. Defaults to $env:GITHUB_STEP_SUMMARY.
+    .EXAMPLE
+        Test-MergeConflictMarker -File @('file1.txt', 'file2.cs') -WorkspacePath $env:GITHUB_WORKSPACE
+    #>
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)]
+        [string[]] $File,
+
+        [Parameter()]
+        [string] $WorkspacePath = $PWD,
+
+        [Parameter()]
+        [string] $OutputPath = $env:GITHUB_OUTPUT,
+
+        [Parameter()]
+        [string] $SummaryPath = $env:GITHUB_STEP_SUMMARY
+    )
+
+    Write-Host "Starting merge conflict marker check..." -ForegroundColor Cyan
+
+    if ($File.Count -eq 0) {
+        Write-Host "No files changed, skipping check" -ForegroundColor Yellow
+        if ($OutputPath) {
+            "files-checked=0" | Out-File -FilePath $OutputPath -Append -Encoding utf8
+            "conflicts-found=0" | Out-File -FilePath $OutputPath -Append -Encoding utf8
+        }
+        return
+    }
+
+    Write-Host "Checking $($File.Count) changed files for merge conflict markers" -ForegroundColor Cyan
+
+    # Convert relative paths to absolute paths
+    $absolutePaths = $File | ForEach-Object {
+        if ([System.IO.Path]::IsPathRooted($_)) {
+            $_
+        } else {
+            Join-Path $WorkspacePath $_
+        }
+    }
+
+    $filesWithConflicts = @()
+    $filesChecked = 0
+
+    foreach ($filePath in $absolutePaths) {
+        # Check if file exists (might be deleted)
+        if (-not (Test-Path $filePath)) {
+            Write-Verbose "  Skipping deleted file: $filePath"
+            continue
+        }
+
+        # Skip binary files and directories
+        if ((Get-Item $filePath) -is [System.IO.DirectoryInfo]) {
+            continue
+        }
+
+        $filesChecked++
+        Write-Host "  Checking: $filePath" -ForegroundColor Gray
+
+        # Read file content
+        try {
+            $content = Get-Content -Path $filePath -Raw -ErrorAction Stop
+
+            # Use a single regex to match all Git conflict markers at the start of any line
+            # Git conflict markers are 7 characters followed by a space or end of line
+            $pattern = '(?m)^(<{7}|={7}|>{7})(\s|$)'
+            $matches = [regex]::Matches($content, $pattern)
+
+            if ($matches.Count -gt 0) {
+                # Calculate line numbers for each match
+                $lines = $content -split "`n"
+                $markerDetails = @()
+
+                foreach ($match in $matches) {
+                    # Find which line this match is on
+                    $lineNumber = 1
+                    $position = 0
+                    foreach ($line in $lines) {
+                        if ($position + $line.Length -ge $match.Index) {
+                            break
+                        }
+                        $position += $line.Length + 1  # +1 for newline
+                        $lineNumber++
+                    }
+
+                    $markerDetails += [PSCustomObject]@{
+                        Marker = $match.Groups[1].Value
+                        Line = $lineNumber
+                    }
+                }
+
+                $filesWithConflicts += [PSCustomObject]@{
+                    File = $filePath
+                    MarkerDetails = $markerDetails
+                }
+
+                Write-Host "  ❌ CONFLICT MARKERS FOUND in $filePath" -ForegroundColor Red
+                foreach ($detail in $markerDetails) {
+                    Write-Host "     Line $($detail.Line): $($detail.Marker)" -ForegroundColor Red
+                }
+            }
+        }
+        catch {
+            # Skip files that can't be read (likely binary)
+            Write-Verbose "  Skipping unreadable file: $filePath"
+        }
+    }
+
+    # Output results to GitHub Actions
+    if ($OutputPath) {
+        "files-checked=$filesChecked" | Out-File -FilePath $OutputPath -Append -Encoding utf8
+        "conflicts-found=$($filesWithConflicts.Count)" | Out-File -FilePath $OutputPath -Append -Encoding utf8
+    }
+
+    Write-Host "`nSummary:" -ForegroundColor Cyan
+    Write-Host "  Files checked: $filesChecked" -ForegroundColor Cyan
+    Write-Host "  Files with conflicts: $($filesWithConflicts.Count)" -ForegroundColor Cyan
+
+    # Create GitHub Actions job summary
+    if ($SummaryPath) {
+        $summaryContent = @"
+# Merge Conflict Marker Check Results
+
+## Summary
+- **Files Checked:** $filesChecked
+- **Files with Conflicts:** $($filesWithConflicts.Count)
+
+"@
+
+        if ($filesWithConflicts.Count -gt 0) {
+            Write-Host "`n❌ Merge conflict markers detected in the following files:" -ForegroundColor Red
+
+            $summaryContent += "`n## ❌ Conflicts Detected`n`n"
+            $summaryContent += "The following files contain merge conflict markers:`n`n"
+
+            foreach ($fileInfo in $filesWithConflicts) {
+                Write-Host "  - $($fileInfo.File)" -ForegroundColor Red
+
+                $summaryContent += "### 📄 ``$($fileInfo.File)```n`n"
+                $summaryContent += "| Line | Marker |`n"
+                $summaryContent += "|------|--------|`n"
+
+                foreach ($detail in $fileInfo.MarkerDetails) {
+                    Write-Host "     Line $($detail.Line): $($detail.Marker)" -ForegroundColor Red
+                    $summaryContent += "| $($detail.Line) | ``$($detail.Marker)`` |`n"
+                }
+                $summaryContent += "`n"
+            }
+
+            $summaryContent += "`n**Action Required:** Please resolve these conflicts before merging.`n"
+            Write-Host "`nPlease resolve these conflicts before merging." -ForegroundColor Red
+        } else {
+            Write-Host "`n✅ No merge conflict markers found" -ForegroundColor Green
+            $summaryContent += "`n## ✅ No Conflicts Found`n`nAll checked files are free of merge conflict markers.`n"
+        }
+
+        $summaryContent | Out-File -FilePath $SummaryPath -Encoding utf8
+    }
+
+    # Exit with error if conflicts found
+    if ($filesWithConflicts.Count -gt 0) {
+        throw "Merge conflict markers detected in $($filesWithConflicts.Count) file(s)"
+    }
+}
