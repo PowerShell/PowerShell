@@ -385,7 +385,7 @@ function Start-PSBuild {
     }
 
     if ($Clean) {
-        Write-Log -message "Cleaning your working directory. You can also do it with 'git clean -fdX --exclude .vs/PowerShell/v16/Server/sqlite3'"
+        Write-LogGroupStart -Title "Cleaning your working directory"
         Push-Location $PSScriptRoot
         try {
             # Excluded sqlite3 folder is due to this Roslyn issue: https://github.com/dotnet/roslyn/issues/23060
@@ -393,6 +393,7 @@ function Start-PSBuild {
             # Excluded nuget.config as this is required for release build.
             git clean -fdX --exclude .vs/PowerShell/v16/Server/sqlite3 --exclude src/Modules/nuget.config  --exclude nuget.config
         } finally {
+            Write-LogGroupEnd -Title "Cleaning your working directory"
             Pop-Location
         }
     }
