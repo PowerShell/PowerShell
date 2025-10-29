@@ -43,7 +43,8 @@ jobs:
       - name: Capture Environment
         if: success() || failure()
         run: |
-          Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
+          Import-Module .\tools\ci.psm1
+          Show-Environment
         shell: pwsh
 
       - name: Capture PowerShell Version Table
