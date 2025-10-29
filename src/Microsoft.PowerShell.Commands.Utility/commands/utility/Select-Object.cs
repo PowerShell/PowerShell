@@ -437,19 +437,34 @@ namespace Microsoft.PowerShell.Commands
 
             PSPropertyExpression ex = p.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
             List<PSPropertyExpressionResult> expressionResults = new();
-            foreach (PSPropertyExpression resolvedName in ex.ResolveNames(inputObject))
+            
+            // Check for exact property match first for expressions that might contain escaped wildcards
+            // This addresses issue #25982 where properties with literal wildcard characters
+            // cannot be targeted even when properly escaped
+            bool exactMatchFound = false;
+            if (TryGetExactPropertyMatch(ex, inputObject, out PSPropertyExpressionResult exactResult))
             {
-                if (_exclusionFilter == null || !_exclusionFilter.IsMatch(resolvedName))
+                expressionResults.Add(exactResult);
+                exactMatchFound = true;
+            }
+            
+            // If no exact match was found, fall back to wildcard resolution
+            if (!exactMatchFound)
+            {
+                foreach (PSPropertyExpression resolvedName in ex.ResolveNames(inputObject))
                 {
-                    List<PSPropertyExpressionResult> tempExprResults = resolvedName.GetValues(inputObject);
-                    if (tempExprResults == null)
+                    if (_exclusionFilter == null || !_exclusionFilter.IsMatch(resolvedName))
                     {
-                        continue;
-                    }
+                        List<PSPropertyExpressionResult> tempExprResults = resolvedName.GetValues(inputObject);
+                        if (tempExprResults == null)
+                        {
+                            continue;
+                        }
 
-                    foreach (PSPropertyExpressionResult mshExpRes in tempExprResults)
-                    {
-                        expressionResults.Add(mshExpRes);
+                        foreach (PSPropertyExpressionResult mshExpRes in tempExprResults)
+                        {
+                            expressionResults.Add(mshExpRes);
+                        }
                     }
                 }
             }
@@ -511,7 +526,19 @@ namespace Microsoft.PowerShell.Commands
             List<PSNoteProperty> matchedProperties)
         {
             PSPropertyExpression ex = p.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
-            List<PSPropertyExpressionResult> expressionResults = ex.GetValues(inputObject);
+            List<PSPropertyExpressionResult> expressionResults;
+            
+            // Check for exact property match first for expressions that might contain escaped wildcards
+            // This addresses issue #25982 where properties with literal wildcard characters
+            // cannot be expanded even when properly escaped
+            if (TryGetExactPropertyMatch(ex, inputObject, out PSPropertyExpressionResult exactResult))
+            {
+                expressionResults = new List<PSPropertyExpressionResult> { exactResult };
+            }
+            else
+            {
+                expressionResults = ex.GetValues(inputObject);
+            }
 
             if (expressionResults.Count == 0)
             {
@@ -857,6 +884,48 @@ namespace Microsoft.PowerShell.Commands
                     WriteObject(obj.WrittenObject);
                 }
             }
+        }
+        /// <summary>
+        /// Attempts to find an exact property match for expressions containing escaped wildcard characters.
+        /// This addresses issue #25982 where properties with literal wildcard characters cannot be targeted 
+        /// even when properly escaped.
+        /// </summary>
+        /// <param name="expression">The property expression to evaluate</param>
+        /// <param name="inputObject">The object to search for properties</param>
+        /// <param name="result">The result if an exact match is found</param>
+        /// <returns>True if an exact property match was found; otherwise, false</returns>
+        private static bool TryGetExactPropertyMatch(PSPropertyExpression expression, PSObject inputObject, out PSPropertyExpressionResult result)
+        {
+            result = null;
+            
+            try
+            {
+                string originalString = expression.ToString();
+                string unescapedPropertyName = WildcardPattern.Unescape(originalString);
+                
+                // Only proceed if unescaping changed the string (indicating escaped wildcards)
+                if (!string.Equals(originalString, unescapedPropertyName, StringComparison.Ordinal))
+                {
+                    // Check if the unescaped property name exists as an exact match on the object
+                    PSPropertyInfo propertyInfo = inputObject.Properties[unescapedPropertyName];
+                    if (propertyInfo != null)
+                    {
+                        // Create a resolved PSPropertyExpression with the unescaped property name
+                        // This addresses issues #17068 and #25982 - escaped wildcards should show
+                        // the actual property name in the header, not the escaped version
+                        PSPropertyExpression exactExpression = new PSPropertyExpression(unescapedPropertyName, true);
+                        result = new PSPropertyExpressionResult(propertyInfo.Value, exactExpression, null);
+                        return true;
+                    }
+                }
+            }
+            catch (Exception ex) when (ex is ArgumentException || ex is InvalidOperationException)
+            {
+                // If there's an error accessing the property, fall back to normal processing
+                // This handles cases where the property access itself might fail
+            }
+            
+            return false;
         }
     }
 
