@@ -103,11 +103,13 @@ runs:
             $content = Get-Content -Path $filePath -Raw -ErrorAction Stop
 
             # Check for conflict markers
+            # Use a single regex to match all conflict markers at the start of any line
+            $pattern = '(?m)^(<{7}|={7}|>{7})'
+            $matches = [regex]::Matches($content, $pattern)
             $foundMarkers = @()
-            foreach ($marker in $conflictMarkers) {
-              if ($content -match "^$marker" -or $content -match "`n$marker") {
-                $foundMarkers += $marker
-              }
+            if ($matches.Count -gt 0) {
+              # Collect unique marker types found
+              $foundMarkers = $matches | ForEach-Object { $_.Value } | Select-Object -Unique
             }
 
             if ($foundMarkers.Count -gt 0) {
