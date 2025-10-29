@@ -122,7 +122,7 @@ Installers:
 - Architecture: x64
   InstallerUrl: https://github.com/PowerShell/PowerShell/releases/download/v$ReleaseVersion/$msiName
   InstallerSha256: $msiHash
-  InstallerType: msi
+  InstallerType: wix
 PackageLocale: en-US
 ManifestType: singleton
 ManifestVersion: 1.0.0
