@@ -1,0 +1,6 @@
+# Test file with conflict end marker
+
+This file contains only the conflict end marker to test detection.
+
+>>>>>>> feature-branch
+This is content from the feature branch.

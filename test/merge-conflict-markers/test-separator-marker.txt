@@ -1,0 +1,6 @@
+# Test file with conflict separator marker
+
+This file contains only the conflict separator marker to test detection.
+
+=======
+This is the separator between conflicting changes.

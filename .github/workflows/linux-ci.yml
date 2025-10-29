@@ -194,6 +194,7 @@ jobs:
       - linux_test_unelevated_ci
       - linux_test_unelevated_others
       - linux_packaging
+      - merge_conflict_check
       # - analyze
     if: always()
     uses: PowerShell/compliance/.github/workflows/ready-to-merge.yml@v1.0.0
