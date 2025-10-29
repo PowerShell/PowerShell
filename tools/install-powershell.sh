@@ -26,7 +26,9 @@ install(){
     #gitrepo paths are overrideable to run from your own fork or branch for testing or private distribution
 
     local VERSION="1.2.0"
-    local gitreposubpath="PowerShell/PowerShell/master"
+    # Pin to specific commit for security (OpenSSF Scorecard requirement)
+    # Pinned commit: 26bb188c8 - "Improve ValidateLength error message consistency and refactor validation tests" (2025-10-12)
+    local gitreposubpath="PowerShell/PowerShell/26bb188c8be0cda6cb548ce1a12840ebf67e1331"
     local gitreposcriptroot="https://raw.githubusercontent.com/$gitreposubpath/tools"
     local gitscriptname="install-powershell.psh"
 
@@ -121,7 +123,7 @@ install(){
 			if [[ $osname = *SUSE* ]]; then
 				DistroBasedOn='suse'
 				REV=$(source /etc/os-release; echo $VERSION_ID)
-			fi			
+			fi
             OS=$(lowercase $OS)
             DistroBasedOn=$(lowercase $DistroBasedOn)
         fi
