@@ -47,11 +47,7 @@ jobs:
           $middleURL = $matches[1]
         }
 
-<<<<<<< HEAD
-        $endURL = $tagString -replace '[v\.]',''
-=======
         $endURL = $tagString -replace '^v','' -replace '\.',''
->>>>>>> dbc09a1aa (Separate Store Automation Service Endpoints, Resolve AppID (#26210))
         $message = "Changelog: https://github.com/PowerShell/PowerShell/blob/master/CHANGELOG/$middleURL.md#$endURL"
         Write-Verbose -Verbose "Release Notes for the Store:"
         Write-Verbose -Verbose "$message"
@@ -85,10 +81,6 @@ jobs:
           }
         }
 
-<<<<<<< HEAD
-        # Determine the current channel
-=======
->>>>>>> dbc09a1aa (Separate Store Automation Service Endpoints, Resolve AppID (#26210))
         $currentChannel = if ($IsLTS) { 'LTS' }
           elseif ($IsStable) { 'Stable' }
           elseif ($IsPreview) { 'Preview' }
@@ -96,10 +88,8 @@ jobs:
             Write-Error "No valid channel detected"
             exit 1
           }
-<<<<<<< HEAD
                        
         $config = $channelConfigs[$currentChannel]
-=======
 
         # Assign AppID for Store-Publish Task
         $appID = $null
@@ -114,7 +104,6 @@ jobs:
         }
 
         Write-Host "##vso[task.setvariable variable=AppID]$appID"
->>>>>>> dbc09a1aa (Separate Store Automation Service Endpoints, Resolve AppID (#26210))
         Write-Verbose -Verbose "Selected channel: $currentChannel"
         Write-Verbose -Verbose "App ID: $($config.AppId)"
         Write-Verbose -Verbose "Service Endpoint: $($config.ServiceEndpoint)"
@@ -126,28 +115,18 @@ jobs:
     displayName: 'Set StoreBroker Configurations'
 
   - task: MS-RDX-MRO.windows-store-publish.publish-task.store-publish@3
-<<<<<<< HEAD
-    displayName: 'Publish LTS StoreBroker Package'
-    condition: ne('${{ parameters.skipMSIXPublish }}', 'true')
-    inputs:
-      serviceEndpoint: '$(SelectedServiceEndpoint)'
-      appId: '$(SelectedAppId)'
-=======
     displayName: 'Publish StoreBroker Package (Stable/LTS)'
     condition: and(ne('${{ parameters.skipMSIXPublish }}', 'true'), or(eq('$(STABLE)', 'true'), eq('$(LTS)', 'true')))
     inputs:
       serviceEndpoint: 'StoreAppPublish-Stable'
       appId: '$(AppID)'
->>>>>>> dbc09a1aa (Separate Store Automation Service Endpoints, Resolve AppID (#26210))
       inputMethod: JsonAndZip
       jsonPath: '$(Pipeline.Workspace)\SBOutDir\PowerShellStorePackage.json'
       zipPath: '$(Pipeline.Workspace)\SBOutDir\PowerShellStorePackage.zip'
       numberOfPackagesToKeep: 2
       jsonZipUpdateMetadata: true
       targetPublishMode: 'Immediate'
-<<<<<<< HEAD
-=======
-
+      
   - task: MS-RDX-MRO.windows-store-publish.publish-task.store-publish@3
     displayName: 'Publish StoreBroker Package (Preview)'
     condition: and(ne('${{ parameters.skipMSIXPublish }}', 'true'), eq('$(PREVIEW)', 'true'))
@@ -160,4 +139,3 @@ jobs:
       numberOfPackagesToKeep: 2
       jsonZipUpdateMetadata: true
       targetPublishMode: 'Immediate'
->>>>>>> dbc09a1aa (Separate Store Automation Service Endpoints, Resolve AppID (#26210))
