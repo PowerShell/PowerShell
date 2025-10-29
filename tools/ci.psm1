@@ -978,7 +978,7 @@ function Invoke-InitializeContainerStage {
     }
 }
 
-function Test-MergeConflictMarker
+Function Test-MergeConflictMarker
 {
     <#
     .SYNOPSIS
@@ -1026,7 +1026,7 @@ function Test-MergeConflictMarker
 
     Write-Host "Checking $($File.Count) changed files for merge conflict markers" -ForegroundColor Cyan
 
-    # Convert relative paths to absolute paths
+    # Convert relative paths to absolute paths for processing
     $absolutePaths = $File | ForEach-Object {
         if ([System.IO.Path]::IsPathRooted($_)) {
             $_
@@ -1051,7 +1051,15 @@ function Test-MergeConflictMarker
         }
 
         $filesChecked++
-        Write-Host "  Checking: $filePath" -ForegroundColor Gray
+        
+        # Get relative path for display
+        $relativePath = if ($WorkspacePath -and $filePath.StartsWith($WorkspacePath)) {
+            $filePath.Substring($WorkspacePath.Length).TrimStart([System.IO.Path]::DirectorySeparatorChar, [System.IO.Path]::AltDirectorySeparatorChar)
+        } else {
+            $filePath
+        }
+        
+        Write-Host "  Checking: $relativePath" -ForegroundColor Gray
 
         # Read file content
         try {
@@ -1060,14 +1068,14 @@ function Test-MergeConflictMarker
             # Use a single regex to match all Git conflict markers at the start of any line
             # Git conflict markers are 7 characters followed by a space or end of line
             $pattern = '(?m)^(<{7}|={7}|>{7})(\s|$)'
-            $matches = [regex]::Matches($content, $pattern)
+            $regexMatches = [regex]::Matches($content, $pattern)
 
-            if ($matches.Count -gt 0) {
+            if ($regexMatches.Count -gt 0) {
                 # Calculate line numbers for each match
                 $lines = $content -split "`n"
                 $markerDetails = @()
 
-                foreach ($match in $matches) {
+                foreach ($match in $regexMatches) {
                     # Find which line this match is on
                     $lineNumber = 1
                     $position = 0
@@ -1086,11 +1094,11 @@ function Test-MergeConflictMarker
                 }
 
                 $filesWithConflicts += [PSCustomObject]@{
-                    File = $filePath
+                    File = $relativePath
                     MarkerDetails = $markerDetails
                 }
 
-                Write-Host "  ❌ CONFLICT MARKERS FOUND in $filePath" -ForegroundColor Red
+                Write-Host "  ❌ CONFLICT MARKERS FOUND in $relativePath" -ForegroundColor Red
                 foreach ($detail in $markerDetails) {
                     Write-Host "     Line $($detail.Line): $($detail.Marker)" -ForegroundColor Red
                 }
@@ -1098,7 +1106,7 @@ function Test-MergeConflictMarker
         }
         catch {
             # Skip files that can't be read (likely binary)
-            Write-Verbose "  Skipping unreadable file: $filePath"
+            Write-Verbose "  Skipping unreadable file: $relativePath"
         }
     }
 

@@ -23,20 +23,14 @@ runs:
           if (context.eventName === 'pull_request') {
             console.log(`Getting files changed in PR #${context.payload.pull_request.number}`);
 
-            // Fetch the list of files changed in the PR
-            let files = [];
-            let page = 1;
-            let fetchedFiles;
-            do {
-              fetchedFiles = await github.rest.pulls.listFiles({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                pull_number: context.payload.pull_request.number,
-                per_page: 100,
-                page: page++
-              });
-              files = files.concat(fetchedFiles.data);
-            } while (fetchedFiles.data.length === 100);
+            // Fetch the list of files changed in the PR (first page only, up to 100 files)
+            const { data: files } = await github.rest.pulls.listFiles({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+              per_page: 100,
+              page: 1
+            });
 
             // Get all changed files (added, modified, or renamed)
             changedFiles = files
