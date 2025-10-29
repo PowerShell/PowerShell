@@ -67,6 +67,20 @@ jobs:
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  merge_conflict_check:
+    name: Check for Merge Conflict Markers
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    permissions:
+      pull-requests: read
+      contents: read
+    steps:
+      - name: checkout
+        uses: actions/checkout@v5
+
+      - name: Check for merge conflict markers
+        uses: "./.github/actions/infrastructure/merge-conflict-checker"
+
   ci_build:
     name: Build PowerShell
     runs-on: ubuntu-latest
