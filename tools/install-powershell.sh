@@ -82,6 +82,8 @@ install(){
         elif [ "${OS}" == "AIX" ] ; then
             OSSTR="${OS} $(oslevel) ($(oslevel -r))"
             DistroBasedOn=aix
+        elif [ "${OS}" == "FreeBSD" ] ; then
+            ARCH=$(uname -p)
         elif [ "${OS}" == "Linux" ] ; then
             if [ -f /etc/redhat-release ] ; then
                 DistroBasedOn='redhat'
@@ -145,7 +147,7 @@ install(){
 
 
     case "$DistroBasedOn" in
-        redhat|debian|osx|suse|amazonlinux|gentoo|mariner)
+        redhat|debian|osx|suse|amazonlinux|gentoo|mariner|freebsd)
             echo "Configuring PowerShell Environment for: $DistroBasedOn $DIST $REV"
             if [ -f "$SCRIPTFOLDER/installpsh-$DistroBasedOn.sh" ]; then
                 #Script files were copied local - use them

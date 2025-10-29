@@ -59,7 +59,8 @@ $ErrorActionPreference = "Stop"
 
 $IsLinuxEnv = (Get-Variable -Name "IsLinux" -ErrorAction Ignore) -and $IsLinux
 $IsMacOSEnv = (Get-Variable -Name "IsMacOS" -ErrorAction Ignore) -and $IsMacOS
-$IsWinEnv = !$IsLinuxEnv -and !$IsMacOSEnv
+$IsFreeBSDEnv = (Get-Variable -Name "IsFreeBSD" -ErrorAction Ignore) -and $IsFreeBSD
+$IsWinEnv = !$IsLinuxEnv -and !$IsMacOSEnv -and !$IsFreeBSDEnv
 
 if (-not $Destination) {
     if ($IsWinEnv) {
@@ -290,6 +291,8 @@ try {
             $packageName = "powershell-${release}-linux-${architecture}.tar.gz"
         } elseif ($IsMacOSEnv) {
             $packageName = "powershell-${release}-osx-${architecture}.tar.gz"
+        } elseif ($IsFreeBSDEnv) {
+            $packageName = "powershell-${release}-freebsd-${architecture}.tar.gz"
         }
 
         if ($architecture -ne "x64") {
@@ -358,6 +361,8 @@ try {
             $packageName = "powershell-${release}-linux-${architecture}.tar.gz"
         } elseif ($IsMacOSEnv) {
             $packageName = "powershell-${release}-osx-${architecture}.tar.gz"
+        } elseif ($IsFreeBSDEnv) {
+            $packageName = "powershell-${release}-freebsd-${architecture}.tar.gz"
         }
 
         $downloadURL = "https://github.com/PowerShell/PowerShell/releases/download/v${release}/${packageName}"
@@ -450,7 +455,7 @@ try {
             }
         } else {
             $targetPath = Join-Path -Path $Destination -ChildPath "pwsh"
-            if ($IsLinuxEnv) { $symlink = "/usr/bin/pwsh" } elseif ($IsMacOSEnv) { $symlink = "/usr/local/bin/pwsh" }
+            if ($IsLinuxEnv) { $symlink = "/usr/bin/pwsh" } elseif ($IsMacOSEnv -or $IsFreeBSDEnv) { $symlink = "/usr/local/bin/pwsh" }
             $needNewSymlink = $true
 
             if (Test-Path -Path $symlink) {

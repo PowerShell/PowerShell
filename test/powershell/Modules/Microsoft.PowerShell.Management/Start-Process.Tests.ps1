@@ -21,7 +21,7 @@ Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
         if ($IsWindows) {
             $pingParam = "-n 2 localhost"
         }
-        elseif ($IsLinux -Or $IsMacOS) {
+        elseif ($IsLinux -Or $IsMacOS -Or $IsFreeBSD) {
             $pingParam = "-c 2 localhost"
         }
     }

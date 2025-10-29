@@ -461,7 +461,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
             uint offset = 0;
             byte[] bytes = null;
 
-            if (Platform.IsLinux || Platform.IsMacOS)
+            if (Platform.IsLinux || Platform.IsMacOS || Platform.IsFreeBSD)
             {
                 bytes = System.Text.Encoding.UTF8.GetBytes(classText);
             }
@@ -672,7 +672,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         {
             s_tracer.WriteLine("Initializing DSC class cache force={0}");
 
-            if (Platform.IsLinux || Platform.IsMacOS)
+            if (Platform.IsLinux || Platform.IsMacOS || Platform.IsFreeBSD)
             {
                 //
                 // Load the base schema files.

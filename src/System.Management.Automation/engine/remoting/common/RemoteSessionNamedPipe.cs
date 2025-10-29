@@ -304,6 +304,7 @@ namespace System.Management.Automation.Remoting
         private const int _namedPipeBufferSizeForRemoting = 32768;
         private const int _maxPipePathLengthLinux = 108;
         private const int _maxPipePathLengthMacOS = 104;
+        private const int _maxPipePathLengthFreeBSD = 1023;
 
         // Singleton server.
         private static readonly object s_syncObject;
@@ -575,6 +576,11 @@ namespace System.Management.Automation.Remoting
                 if (!Platform.IsWindows)
                 {
                     int maxNameLength = (Platform.IsLinux ? _maxPipePathLengthLinux : _maxPipePathLengthMacOS) - Path.GetTempPath().Length;
+                    if (Platform.IsFreeBSD)
+                    {
+                        int length = _maxPipePathLengthFreeBSD - Path.GetTempPath().Length;
+                        maxNameLength = length > 255 ? 255 : length;
+                    }
                     if (pipeName.Length > maxNameLength)
                     {
                         throw new InvalidOperationException(

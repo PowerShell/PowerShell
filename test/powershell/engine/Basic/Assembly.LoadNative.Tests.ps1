@@ -35,6 +35,16 @@ Describe "Can load a native assembly" -Tags "CI" {
                 $thisProcess = Get-Process -pid $pid
                 $sourceDllName = ($thisProcess.Modules | Where-Object {$_.moduleName -eq 'libhostpolicy.so'}).FileName
             }
+        } elseif ($IsFreeBSD) {
+            $arch = "freebsd-" + $processArch
+            $nativeDllName = "nativedll.so"
+            $sourceDllName = Join-Path $PSHome "libhostpolicy.so"
+            # This won't be in PSHome in a FX Dependent install
+            # Fallback to finding it using the process object
+            if (!(Test-Path $sourceDllName)) {
+                $thisProcess = Get-Process -pid $pid
+                $sourceDllName = ($thisProcess.Modules | Where-Object {$_.moduleName -eq 'libhostpolicy.so'}).FileName
+            }
         } elseif ($IsMacOS) {
             $arch = "osx-" + $processArch
             $nativeDllName = "nativedll.dylib"

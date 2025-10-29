@@ -70,13 +70,13 @@ Describe "Set-Location" -Tags "CI" {
             Should -Throw -ErrorId "PathNotFound,Microsoft.PowerShell.Commands.SetLocationCommand"
     }
 
-    It "Should use actual casing of folder on case-insensitive filesystem" -Skip:($IsLinux) {
+    It "Should use actual casing of folder on case-insensitive filesystem" -Skip:($IsLinux -or $IsFreeBSD) {
         $testPath = New-Item -ItemType Directory -Path testdrive:/teST
         Set-Location $testPath.FullName.ToUpper()
         $(Get-Location).Path | Should -BeExactly $testPath.FullName
     }
 
-    It "Should use actual casing of folder on case-sensitive filesystem: <dir>" -Skip:(!$IsLinux) {
+    It "Should use actual casing of folder on case-sensitive filesystem: <dir>" -Skip:(!$IsLinux -or !$IsFreeBSD) {
         $dir = "teST"
         $testPathLower = New-Item -ItemType Directory -Path (Join-Path $TestDrive $dir.ToLower())
         $testPathUpper = New-Item -ItemType Directory -Path (Join-Path $TestDrive $dir.ToUpper())

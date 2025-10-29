@@ -89,7 +89,7 @@ Describe "Get-Content" -Tags "CI" {
     }
 
     #[BugId(BugDatabase.WindowsOutOfBandReleases, 906022)]
-    It "should throw 'PSNotSupportedException' when you Set-Content to an unsupported provider" -Skip:($IsLinux -Or $IsMacOS) {
+    It "should throw 'PSNotSupportedException' when you Set-Content to an unsupported provider" -Skip:($IsLinux -Or $IsMacOS -Or $IsFreeBSD) {
         {Get-Content -Path HKLM:\\software\\microsoft -ErrorAction Stop} | Should -Throw "IContentCmdletProvider interface is not implemented"
     }
 

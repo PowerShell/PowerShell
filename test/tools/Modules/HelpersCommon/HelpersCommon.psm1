@@ -215,7 +215,7 @@ function Send-VstsLogFile {
     if(!(Test-Path -Path $logFolder))
     {
         $null = New-Item -Path $logFolder -ItemType Directory
-        if($IsMacOS -or $IsLinux)
+        if($IsMacOS -or $IsLinux -or $IsFreeBSD)
         {
             $null = chmod a+rw $logFolder
         }
@@ -241,7 +241,7 @@ function Send-VstsLogFile {
 # Tests if the Linux or macOS user is root
 function Test-IsRoot
 {
-    if($IsLinux -or $IsMacOS)
+    if($IsLinux -or $IsMacOS -or $IsFreeBSD)
     {
         $uid = &id -u
         if($uid -eq 0)
@@ -371,6 +371,9 @@ function Get-PlatformInfo {
     }
     if ( $IsMacOS ) {
         return @{Platform = "macos"; Version = sw_vers -productversion }
+    }
+    if ( $IsFreeBSD ) {
+        return @{Platform = "freebsd"; Version = '' }
     }
     if ( $IsLinux ) {
         $osrelease = Get-Content /etc/os-release | ConvertFrom-StringData

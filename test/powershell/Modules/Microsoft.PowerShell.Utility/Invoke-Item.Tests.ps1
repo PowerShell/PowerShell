@@ -147,6 +147,10 @@ Describe "Invoke-Item basic tests" -Tags "Feature" {
                 $notepadProcess.Name | Should -BeIn $notepadProcessName
                 Stop-Process -InputObject $notepadProcess
             }
+        }
+        if ($IsFreeBSD) {
+            & $powershell -noprofile -c "Invoke-Item '$ping'" 2> $redirectFile
+            Get-Content $redirectFile -Raw | Should -Match "usage:"
         } else {
             ## On Unix, we use `UseShellExecute = false`
             ## 'ping' on Unix write out usage to stderr
@@ -240,6 +244,10 @@ Categories=Application;
                 # may take time for handler to start
                 Wait-FileToBePresent -File "$HOME/InvokeItemTest.Success" -TimeoutInSeconds 10 -IntervalInMilliseconds 100 | Should -BeTrue
                 Get-Content $HOME/InvokeItemTest.Success | Should -Be $PSHOME
+            }
+            elseif ($IsFreeBSD)
+            {
+                Set-TestInconclusive -Message "This test can not be handled on FreeBSD at this time"
             }
             else
             {

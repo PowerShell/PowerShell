@@ -60,6 +60,17 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// True if the current platform is FreeBSD.
+        /// </summary>
+        public static bool IsFreeBSD
+        {
+            get
+            {
+                return OperatingSystem.IsFreeBSD();
+            }
+        }
+
+        /// <summary>
         /// True if the underlying system is NanoServer.
         /// </summary>
         public static bool IsNanoServer
@@ -481,7 +492,7 @@ namespace System.Management.Automation
 
         internal static int NonWindowsGetProcessParentPid(int pid)
         {
-            return IsMacOS ? Unix.NativeMethods.GetPPid(pid) : Unix.GetProcFSParentPid(pid);
+            return IsMacOS ? Unix.NativeMethods.GetPPid(pid) : IsFreeBSD ? Unix.NativeMethods.GetPPid(pid) : Unix.GetProcFSParentPid(pid);
         }
 
         internal static bool NonWindowsKillProcess(int pid)

@@ -156,12 +156,19 @@ namespace Microsoft.PowerShell
     {
         private const int MaxPipePathLengthLinux = 108;
         private const int MaxPipePathLengthMacOS = 104;
+        private const int MaxPipePathLengthFreeBSD = 1023;
 
         internal static int MaxNameLength()
         {
             if (Platform.IsWindows)
             {
                 return ushort.MaxValue;
+            }
+
+            if (Platform.IsFreeBSD)
+            {
+                int length = MaxPipePathLengthFreeBSD - Path.GetTempPath().Length;
+                return length > 255 ? 255 : length;
             }
 
             int maxLength = Platform.IsLinux ? MaxPipePathLengthLinux : MaxPipePathLengthMacOS;

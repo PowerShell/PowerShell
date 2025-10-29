@@ -17,7 +17,7 @@ Describe "Resolve-Path returns proper path" -Tag "CI" {
             @{ wd = $testRoot; target = Join-Path $fakeRoot "file.txt"; expected = Join-Path "." "fakeroot" "file.txt" }
         )
 
-        $hiddenFilePrefix = ($IsLinux -or $IsMacOS) ? '.' : ''
+        $hiddenFilePrefix = ($IsLinux -or $IsMacOS -or $IsFreeBSD) ? '.' : ''
 
         $hiddenFilePath1 = Join-Path -Path $TestDrive -ChildPath "$($hiddenFilePrefix)test1.txt"
         $hiddenFilePath2 = Join-Path -Path $TestDrive -ChildPath "$($hiddenFilePrefix)test2.txt"
