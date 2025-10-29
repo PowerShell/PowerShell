@@ -51,6 +51,11 @@ jobs:
     # Set job outputs to values from filter step
     outputs:
       source: ${{ steps.filter.outputs.source }}
+<<<<<<< HEAD
+=======
+      buildModuleChanged: ${{ steps.filter.outputs.buildModuleChanged }}
+      packagingChanged: ${{ steps.filter.outputs.packagingChanged }}
+>>>>>>> cdeda2a50 (Add log grouping to build.psm1 for collapsible GitHub Actions logs (#26326))
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -67,7 +72,7 @@ jobs:
     name: Build PowerShell
     runs-on: ubuntu-latest
     needs: changes
-    if: ${{ needs.changes.outputs.source == 'true' }}
+    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
     steps:
       - name: checkout
         uses: actions/checkout@v4.1.0
@@ -81,7 +86,7 @@ jobs:
     needs:
       - ci_build
       - changes
-    if: ${{ needs.changes.outputs.source == 'true' }}
+    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: checkout
@@ -98,7 +103,7 @@ jobs:
     needs:
       - ci_build
       - changes
-    if: ${{ needs.changes.outputs.source == 'true' }}
+    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: checkout
@@ -115,7 +120,7 @@ jobs:
     needs:
       - ci_build
       - changes
-    if: ${{ needs.changes.outputs.source == 'true' }}
+    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: checkout
@@ -132,7 +137,7 @@ jobs:
     needs:
       - ci_build
       - changes
-    if: ${{ needs.changes.outputs.source == 'true' }}
+    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: checkout
@@ -149,6 +154,7 @@ jobs:
     needs:
       - ci_build
       - changes
+<<<<<<< HEAD
     if: ${{ needs.changes.outputs.source == 'true' }}
     runs-on: ubuntu-latest
     steps:
@@ -168,6 +174,10 @@ jobs:
       actions: read
       contents: read
       security-events: write
+=======
+    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
+    uses: ./.github/workflows/xunit-tests.yml
+>>>>>>> cdeda2a50 (Add log grouping to build.psm1 for collapsible GitHub Actions logs (#26326))
     with:
       runner_os: ubuntu-latest
 

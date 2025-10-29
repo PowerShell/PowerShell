@@ -714,6 +714,14 @@ function Set-Path
     }
 }
 
+# Display environment variables in a log group for GitHub Actions
+function Show-Environment
+{
+    Write-LogGroupStart -Title 'Environment'
+    Get-ChildItem -Path env: | Out-String -width 9999 -Stream | Write-Verbose -Verbose
+    Write-LogGroupEnd -Title 'Environment'
+}
+
 # Bootstrap script for Linux and macOS
 function Invoke-BootstrapStage
 {
