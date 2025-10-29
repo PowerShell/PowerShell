@@ -885,6 +885,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
+        
         /// <summary>
         /// Attempts to find an exact property match for expressions containing escaped wildcard characters.
         /// </summary>
@@ -896,7 +897,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 string originalString = expression.ToString();
                 string unescapedPropertyName = WildcardPattern.Unescape(originalString);
-                
                 // Only proceed if unescaping changed the string (indicating escaped wildcards)
                 if (!string.Equals(originalString, unescapedPropertyName, StringComparison.Ordinal))
                 {
