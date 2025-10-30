@@ -101,6 +101,11 @@ function Invoke-CIFull
 # Implements the CI 'build_script' step
 function Invoke-CIBuild
 {
+    param(
+        [ValidateSet('Debug', 'Release', 'CodeCoverage', 'StaticAnalysis')]
+        [string]$Configuration = 'Release'
+    )
+
     $releaseTag = Get-ReleaseTag
     # check to be sure our test tags are correct
     $result = Get-PesterTag
@@ -115,7 +120,7 @@ function Invoke-CIBuild
         Start-PSBuild -Configuration 'CodeCoverage' -PSModuleRestore -CI -ReleaseTag $releaseTag
     }
 
-    Start-PSBuild -PSModuleRestore -Configuration 'Release' -CI -ReleaseTag $releaseTag -UseNuGetOrg
+    Start-PSBuild -PSModuleRestore -Configuration $Configuration -CI -ReleaseTag $releaseTag -UseNuGetOrg
     Save-PSOptions
 
     $options = (Get-PSOptions)
@@ -681,6 +686,14 @@ function Set-Path
     {
         Write-Verbose "$path already in path." -Verbose
     }
+}
+
+# Display environment variables in a log group for GitHub Actions
+function Show-Environment
+{
+    Write-LogGroupStart -Title 'Environment'
+    Get-ChildItem -Path env: | Out-String -width 9999 -Stream | Write-Verbose -Verbose
+    Write-LogGroupEnd -Title 'Environment'
 }
 
 # Bootstrap script for Linux and macOS
