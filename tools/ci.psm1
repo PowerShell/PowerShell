@@ -1015,15 +1015,6 @@ Function Test-MergeConflictMarker
 
     Write-Host "Starting merge conflict marker check..." -ForegroundColor Cyan
 
-    if ($File.Count -eq 0) {
-        Write-Host "No files changed, skipping check" -ForegroundColor Yellow
-        if ($OutputPath) {
-            "files-checked=0" | Out-File -FilePath $OutputPath -Append -Encoding utf8
-            "conflicts-found=0" | Out-File -FilePath $OutputPath -Append -Encoding utf8
-        }
-        return
-    }
-
     Write-Host "Checking $($File.Count) changed files for merge conflict markers" -ForegroundColor Cyan
 
     # Convert relative paths to absolute paths for processing
