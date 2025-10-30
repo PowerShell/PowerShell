@@ -93,7 +93,7 @@ The action supports simple filter patterns:
   run: |
     $changedFilesJson = $env:CHANGED_FILES
     $changedFiles = $changedFilesJson | ConvertFrom-Json
-
+    
     foreach ($file in $changedFiles) {
       Write-Host "Processing: $file"
       # Your processing logic here
