@@ -88,8 +88,10 @@ The action supports simple filter patterns:
 
 - name: Process each file
   shell: pwsh
+  env:
+    CHANGED_FILES: ${{ steps.changed-files.outputs.files }}
   run: |
-    $changedFilesJson = '${{ steps.changed-files.outputs.files }}'
+    $changedFilesJson = $env:CHANGED_FILES
     $changedFiles = $changedFilesJson | ConvertFrom-Json
     
     foreach ($file in $changedFiles) {

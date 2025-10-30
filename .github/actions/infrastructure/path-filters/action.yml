@@ -81,7 +81,7 @@ runs:
           const githubChanged = actionsChanged || workflowsChanged;
           console.log(`→ GitHub changed (actions OR workflows): ${githubChanged}`);
 
-          const toolsCiPsm1Changed = files.some(file => file.startsWith('tools/ci.psm1'));
+          const toolsCiPsm1Changed = files.some(file => file === 'tools/ci.psm1');
           console.log(`✓ tools/ci.psm1 changed: ${toolsCiPsm1Changed}`);
 
           const toolsBuildCommonChanged = files.some(file => file.startsWith('tools/buildCommon/'));
@@ -99,10 +99,10 @@ runs:
           const mainSourceChanged = files.some(file => file.startsWith('src/'));
           console.log(`✓ Main source (src/) changed: ${mainSourceChanged}`);
 
-          const buildModuleChanged = files.some(file => file.startsWith('build.psm1'));
+          const buildModuleChanged = files.some(file => file === 'build.psm1');
           console.log(`✓ build.psm1 changed: ${buildModuleChanged}`);
 
-          const globalConfigChanged = files.some(file => file.startsWith('.globalconfig')) || files.some(file => file.startsWith('nuget.config')) || files.some(file => file.startsWith('global.json'));
+          const globalConfigChanged = files.some(file => file === '.globalconfig' || file === 'nuget.config' || file === 'global.json');
           console.log(`✓ Global config changed: ${globalConfigChanged}`);
 
           const packagingChanged = files.some(file =>
