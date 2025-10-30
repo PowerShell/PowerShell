@@ -406,12 +406,9 @@ namespace System.Management.Automation
                 }
             }
 #else
-            if (!usedQuotes && ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeWindowsTildeExpansion))
+            if (!usedQuotes && ExpandTilde(arg, parameter))
             {
-                if (ExpandTilde(arg, parameter))
-                {
-                    argExpanded = true;
-                }
+                argExpanded = true;
             }
 #endif
 
