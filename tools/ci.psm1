@@ -1067,6 +1067,11 @@ Function Test-MergeConflictMarker
 
             # Use a single regex to match all Git conflict markers at the start of any line
             # Git conflict markers are 7 characters followed by a space or end of line
+            # Regex pattern breakdown:
+            #   (?m)         - Enables multiline mode so ^ and $ match the start/end of each line
+            #   ^            - Matches the start of a line
+            #   (<{7}|={7}|>{7}) - Matches exactly 7 consecutive '<', '=', or '>' characters (Git conflict markers)
+            #   (\s|$)       - Ensures the marker is followed by whitespace or end of line
             $pattern = '(?m)^(<{7}|={7}|>{7})(\s|$)'
             $regexMatches = [regex]::Matches($content, $pattern)
 
