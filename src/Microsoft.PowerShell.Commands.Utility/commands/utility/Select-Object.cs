@@ -531,14 +531,9 @@ namespace Microsoft.PowerShell.Commands
             // Check for exact property match first for expressions that might contain escaped wildcards
             // This addresses issue #25982 where properties with literal wildcard characters
             // cannot be expanded even when properly escaped
-            if (TryGetExactPropertyMatch(ex, inputObject, out PSPropertyExpressionResult exactResult))
-            {
-                expressionResults = new List<PSPropertyExpressionResult> { exactResult };
-            }
-            else
-            {
-                expressionResults = ex.GetValues(inputObject);
-            }
+            expressionResults = TryGetExactPropertyMatch(ex, inputObject, out PSPropertyExpressionResult exactResult)
+                ? new List<PSPropertyExpressionResult> { exactResult }
+                : ex.GetValues(inputObject);
 
             if (expressionResults.Count == 0)
             {
