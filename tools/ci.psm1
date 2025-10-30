@@ -1069,13 +1069,13 @@ Function Test-MergeConflictMarker
             #   (<{7}|={7}|>{7}) - Matches exactly 7 consecutive '<', '=', or '>' characters (Git conflict markers)
             #   (\s|$)       - Ensures the marker is followed by whitespace or end of line
             $pattern = '^(<{7}|={7}|>{7})(\s|$)'
-            $matches = Select-String -Path $filePath -Pattern $pattern -AllMatches -ErrorAction Stop
+            $matchedLines = Select-String -Path $filePath -Pattern $pattern -AllMatches -ErrorAction Stop
 
-            if ($matches) {
+            if ($matchedLines) {
                 # Collect marker details with line numbers (Select-String provides LineNumber automatically)
                 $markerDetails = @()
 
-                foreach ($match in $matches) {
+                foreach ($match in $matchedLines) {
                     $markerDetails += [PSCustomObject]@{
                         Marker = $match.Matches[0].Groups[1].Value
                         Line = $match.LineNumber
