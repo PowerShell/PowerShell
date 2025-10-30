@@ -1061,40 +1061,24 @@ Function Test-MergeConflictMarker
         
         Write-Host "  Checking: $relativePath" -ForegroundColor Gray
 
-        # Read file content
+        # Search for conflict markers using Select-String
         try {
-            $content = Get-Content -Path $filePath -Raw -ErrorAction Stop
-
-            # Use a single regex to match all Git conflict markers at the start of any line
             # Git conflict markers are 7 characters followed by a space or end of line
             # Regex pattern breakdown:
-            #   (?m)         - Enables multiline mode so ^ and $ match the start/end of each line
             #   ^            - Matches the start of a line
             #   (<{7}|={7}|>{7}) - Matches exactly 7 consecutive '<', '=', or '>' characters (Git conflict markers)
             #   (\s|$)       - Ensures the marker is followed by whitespace or end of line
-            $pattern = '(?m)^(<{7}|={7}|>{7})(\s|$)'
-            $regexMatches = [regex]::Matches($content, $pattern)
+            $pattern = '^(<{7}|={7}|>{7})(\s|$)'
+            $matches = Select-String -Path $filePath -Pattern $pattern -AllMatches -ErrorAction Stop
 
-            if ($regexMatches.Count -gt 0) {
-                # Calculate line numbers for each match
-                $lines = $content -split "`n"
+            if ($matches) {
+                # Collect marker details with line numbers (Select-String provides LineNumber automatically)
                 $markerDetails = @()
 
-                foreach ($match in $regexMatches) {
-                    # Find which line this match is on
-                    $lineNumber = 1
-                    $position = 0
-                    foreach ($line in $lines) {
-                        if ($position + $line.Length -ge $match.Index) {
-                            break
-                        }
-                        $position += $line.Length + 1  # +1 for newline
-                        $lineNumber++
-                    }
-
+                foreach ($match in $matches) {
                     $markerDetails += [PSCustomObject]@{
-                        Marker = $match.Groups[1].Value
-                        Line = $lineNumber
+                        Marker = $match.Matches[0].Groups[1].Value
+                        Line = $match.LineNumber
                     }
                 }
 
