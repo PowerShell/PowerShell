@@ -188,3 +188,53 @@ Describe "Test-MergeConflictMarker" {
         }
     }
 }
+
+Describe "Install-CIPester" {
+    BeforeAll {
+        # Import the module
+        Import-Module "$PSScriptRoot/../../tools/ci.psm1" -Force
+    }
+
+    Context "When checking function exists" {
+        It "Should export Install-CIPester function" {
+            $function = Get-Command Install-CIPester -ErrorAction SilentlyContinue
+            $function | Should -Not -BeNullOrEmpty
+            $function.ModuleName | Should -Be 'ci'
+        }
+
+        It "Should have expected parameters" {
+            $function = Get-Command Install-CIPester
+            $function.Parameters.Keys | Should -Contain 'MinimumVersion'
+            $function.Parameters.Keys | Should -Contain 'MaximumVersion'
+            $function.Parameters.Keys | Should -Contain 'Force'
+        }
+
+        It "Should accept version parameters" {
+            $function = Get-Command Install-CIPester
+            $function.Parameters['MinimumVersion'].ParameterType.Name | Should -Be 'String'
+            $function.Parameters['MaximumVersion'].ParameterType.Name | Should -Be 'String'
+            $function.Parameters['Force'].ParameterType.Name | Should -Be 'SwitchParameter'
+        }
+    }
+
+    Context "When validating real execution" {
+        # These tests only run in CI where we can safely install/test Pester
+
+        It "Should successfully run without errors when Pester exists" {
+            if (!$env:CI) {
+                Set-ItResult -Skipped -Because "Test requires CI environment to safely install Pester"
+            }
+
+            { Install-CIPester -ErrorAction Stop } | Should -Not -Throw
+        }
+
+        It "Should accept custom version parameters" {
+            if (!$env:CI) {
+                Set-ItResult -Skipped -Because "Test requires CI environment to safely install Pester"
+            }
+
+            { Install-CIPester -MinimumVersion '4.0.0' -MaximumVersion '5.99.99' -ErrorAction Stop } | Should -Not -Throw
+        }
+    }
+}
+

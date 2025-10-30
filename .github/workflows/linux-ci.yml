@@ -184,20 +184,8 @@ jobs:
       - name: Install Pester
         shell: pwsh
         run: |
-          $requiredVersion = '5.0.0'
-          $maximumVersion = '5.99.99'
-          
-          $installedPester = Get-Module -Name Pester -ListAvailable | 
-            Where-Object { $_.Version -ge $requiredVersion -and $_.Version -le $maximumVersion } |
-            Sort-Object -Property Version -Descending |
-            Select-Object -First 1
-          
-          if ($installedPester) {
-            Write-Host "Pester version $($installedPester.Version) is already installed and meets requirements"
-          } else {
-            Write-Host "Installing Pester module"
-            Install-Module -Name Pester -Force -SkipPublisherCheck -MaximumVersion $maximumVersion
-          }
+          Import-Module ./tools/ci.psm1
+          Install-CIPester
 
       - name: Run Infrastructure Tests
         shell: pwsh
