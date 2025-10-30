@@ -193,7 +193,7 @@ jobs:
           New-Item -ItemType Directory -Path $testResultsFolder -Force | Out-Null
 
           $config = New-PesterConfiguration
-          $config.Run.Path = './test/infrastracture/'
+          $config.Run.Path = './test/infrastructure/'
           $config.Run.PassThru = $true
           $config.TestResult.Enabled = $true
           $config.TestResult.OutputFormat = 'NUnitXml'
