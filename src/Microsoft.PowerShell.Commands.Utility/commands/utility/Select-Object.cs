@@ -913,7 +913,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-            catch (Exception ex) when (ex is ArgumentException || ex is InvalidOperationException)
+            catch (Exception) when (ex is ArgumentException || ex is InvalidOperationException)
             {
                 // If there's an error accessing the property, fall back to normal processing
                 // This handles cases where the property access itself might fail
