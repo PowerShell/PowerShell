@@ -99,7 +99,7 @@ runs:
           const mainSourceChanged = files.some(file => file.startsWith('src/'));
           console.log(`✓ Main source (src/) changed: ${mainSourceChanged}`);
 
-          const buildModuleChanged = files.some(file => file.startsWith('build.psm1'));
+          const buildModuleChanged = files.some(file => file === 'build.psm1');
           console.log(`✓ build.psm1 changed: ${buildModuleChanged}`);
 
           const globalConfigChanged = files.some(file => file.startsWith('.globalconfig')) || files.some(file => file.startsWith('nuget.config')) || files.some(file => file.startsWith('global.json'));
