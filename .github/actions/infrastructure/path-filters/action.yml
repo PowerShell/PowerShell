@@ -102,7 +102,7 @@ runs:
           const buildModuleChanged = files.some(file => file === 'build.psm1');
           console.log(`✓ build.psm1 changed: ${buildModuleChanged}`);
 
-          const globalConfigChanged = files.some(file => file.startsWith('.globalconfig')) || files.some(file => file.startsWith('nuget.config')) || files.some(file => file.startsWith('global.json'));
+          const globalConfigChanged = files.some(file => file === '.globalconfig' || file === 'nuget.config' || file === 'global.json');
           console.log(`✓ Global config changed: ${globalConfigChanged}`);
 
           const packagingChanged = files.some(file =>
