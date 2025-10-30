@@ -81,7 +81,7 @@ runs:
           const githubChanged = actionsChanged || workflowsChanged;
           console.log(`→ GitHub changed (actions OR workflows): ${githubChanged}`);
 
-          const toolsCiPsm1Changed = files.some(file => file.startsWith('tools/ci.psm1'));
+          const toolsCiPsm1Changed = files.some(file => file === 'tools/ci.psm1');
           console.log(`✓ tools/ci.psm1 changed: ${toolsCiPsm1Changed}`);
 
           const toolsBuildCommonChanged = files.some(file => file.startsWith('tools/buildCommon/'));
