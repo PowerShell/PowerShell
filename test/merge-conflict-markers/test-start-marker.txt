@@ -1,6 +1,0 @@
-# Test file with conflict start marker
-
-This file contains only the conflict start marker to test detection.
-
-<<<<<<< HEAD
-This is content from HEAD branch.
