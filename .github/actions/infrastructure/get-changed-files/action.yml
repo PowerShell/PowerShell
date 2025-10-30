@@ -9,6 +9,10 @@ inputs:
     description: 'Comma-separated list of event types to support (pull_request, push)'
     required: false
     default: 'pull_request'
+  include-deleted:
+    description: 'Whether to include deleted files in the results (default: false)'
+    required: false
+    default: 'false'
 outputs:
   files:
     description: 'JSON array of changed file paths'
@@ -26,6 +30,7 @@ runs:
         script: |
           const eventTypes = '${{ inputs.event-types }}'.split(',').map(t => t.trim());
           const filter = '${{ inputs.filter }}';
+          const includeDeleted = '${{ inputs.include-deleted }}' === 'true';
           let changedFiles = [];
 
           if (eventTypes.includes('pull_request') && context.eventName === 'pull_request') {
@@ -54,8 +59,15 @@ runs:
               console.log(`Note: This PR has ${allFiles.length} changed files. All files fetched using pagination.`);
             }
 
+            // Filter based on file status
             changedFiles = allFiles
-              .filter(file => file.status === 'added' || file.status === 'modified' || file.status === 'renamed')
+              .filter(file => {
+                if (includeDeleted) {
+                  return file.status === 'added' || file.status === 'modified' || file.status === 'renamed' || file.status === 'removed';
+                } else {
+                  return file.status === 'added' || file.status === 'modified' || file.status === 'renamed';
+                }
+              })
               .map(file => file.filename);
 
           } else if (eventTypes.includes('push') && context.eventName === 'push') {
@@ -68,8 +80,15 @@ runs:
               head: context.payload.after,
             });
 
+            // Filter based on file status
             changedFiles = comparison.files
-              .filter(file => file.status === 'added' || file.status === 'modified' || file.status === 'renamed')
+              .filter(file => {
+                if (includeDeleted) {
+                  return file.status === 'added' || file.status === 'modified' || file.status === 'renamed' || file.status === 'removed';
+                } else {
+                  return file.status === 'added' || file.status === 'modified' || file.status === 'renamed';
+                }
+              })
               .map(file => file.filename);
 
           } else {
