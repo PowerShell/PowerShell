@@ -20,9 +20,11 @@ runs:
     - name: Check for merge conflict markers
       id: check
       shell: pwsh
+      env:
+        CHANGED_FILES_JSON: ${{ steps.changed-files.outputs.files }}
       run: |
-        # Get changed files from previous step
-        $changedFilesJson = '${{ steps.changed-files.outputs.files }}'
+        # Get changed files from environment variable (secure against injection)
+        $changedFilesJson = $env:CHANGED_FILES_JSON
         $changedFiles = $changedFilesJson | ConvertFrom-Json
 
         # Import ci.psm1 and run the check
