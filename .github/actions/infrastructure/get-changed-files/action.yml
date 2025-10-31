@@ -1,0 +1,117 @@
+name: 'Get Changed Files'
+description: 'Gets the list of files changed in a pull request or push event'
+inputs:
+  filter:
+    description: 'Optional filter pattern (e.g., "*.md" for markdown files, ".github/" for GitHub files)'
+    required: false
+    default: ''
+  event-types:
+    description: 'Comma-separated list of event types to support (pull_request, push)'
+    required: false
+    default: 'pull_request'
+outputs:
+  files:
+    description: 'JSON array of changed file paths'
+    value: ${{ steps.get-files.outputs.files }}
+  count:
+    description: 'Number of changed files'
+    value: ${{ steps.get-files.outputs.count }}
+runs:
+  using: 'composite'
+  steps:
+    - name: Get changed files
+      id: get-files
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const eventTypes = '${{ inputs.event-types }}'.split(',').map(t => t.trim());
+          const filter = '${{ inputs.filter }}';
+          let changedFiles = [];
+
+          if (eventTypes.includes('pull_request') && context.eventName === 'pull_request') {
+            console.log(`Getting files changed in PR #${context.payload.pull_request.number}`);
+
+            // Fetch all files changed in the PR with pagination
+            let allFiles = [];
+            let page = 1;
+            let fetchedCount;
+
+            do {
+              const { data: files } = await github.rest.pulls.listFiles({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: context.payload.pull_request.number,
+                per_page: 100,
+                page: page
+              });
+
+              allFiles = allFiles.concat(files);
+              fetchedCount = files.length;
+              page++;
+            } while (fetchedCount === 100);
+
+            if (allFiles.length >= 100) {
+              console.log(`Note: This PR has ${allFiles.length} changed files. All files fetched using pagination.`);
+            }
+
+            changedFiles = allFiles
+              .filter(file => file.status === 'added' || file.status === 'modified' || file.status === 'renamed')
+              .map(file => file.filename);
+
+          } else if (eventTypes.includes('push') && context.eventName === 'push') {
+            console.log(`Getting files changed in push to ${context.ref}`);
+
+            const { data: comparison } = await github.rest.repos.compareCommits({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              base: context.payload.before,
+              head: context.payload.after,
+            });
+
+            changedFiles = comparison.files
+              .filter(file => file.status === 'added' || file.status === 'modified' || file.status === 'renamed')
+              .map(file => file.filename);
+
+          } else {
+            core.setFailed(`Unsupported event type: ${context.eventName}. Supported types: ${eventTypes.join(', ')}`);
+            return;
+          }
+
+          // Apply filter if provided
+          if (filter) {
+            const filterLower = filter.toLowerCase();
+            const beforeFilter = changedFiles.length;
+            changedFiles = changedFiles.filter(file => {
+              const fileLower = file.toLowerCase();
+              // Support simple patterns like "*.md" or ".github/"
+              if (filterLower.startsWith('*.')) {
+                const ext = filterLower.substring(1);
+                return fileLower.endsWith(ext);
+              } else {
+                return fileLower.startsWith(filterLower);
+              }
+            });
+            console.log(`Filter '${filter}' applied: ${beforeFilter} → ${changedFiles.length} files`);
+          }
+
+          // Calculate simple hash for verification
+          const crypto = require('crypto');
+          const filesJson = JSON.stringify(changedFiles.sort());
+          const hash = crypto.createHash('sha256').update(filesJson).digest('hex').substring(0, 8);
+
+          // Log changed files in a collapsible group
+          core.startGroup(`Changed Files (${changedFiles.length} total, hash: ${hash})`);
+          if (changedFiles.length > 0) {
+            changedFiles.forEach(file => console.log(`  - ${file}`));
+          } else {
+            console.log('  (no files changed)');
+          }
+          core.endGroup();
+
+          console.log(`Found ${changedFiles.length} changed files`);
+          core.setOutput('files', JSON.stringify(changedFiles));
+          core.setOutput('count', changedFiles.length);
+
+branding:
+  icon: 'file-text'
+  color: 'blue'
