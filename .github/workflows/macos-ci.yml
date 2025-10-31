@@ -171,6 +171,63 @@ jobs:
         import-module ./build.psm1
         start-psbootstrap -Scenario package
       shell: pwsh
+<<<<<<< HEAD
+=======
+    - name: Build PowerShell and Create macOS package
+      if: success()
+      run: |-
+        import-module ./build.psm1
+        import-module ./tools/ci.psm1
+        import-module ./tools/packaging/packaging.psm1
+        Switch-PSNugetConfig -Source Public
+        Sync-PSTags -AddRemoteIfMissing
+        $releaseTag = Get-ReleaseTag
+        Start-PSBuild -Configuration Release -PSModuleRestore -ReleaseTag $releaseTag
+        $macOSRuntime = if ([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture -eq 'Arm64') { 'osx-arm64' } else { 'osx-x64' }
+        Start-PSPackage -Type osxpkg -ReleaseTag $releaseTag -MacOSRuntime $macOSRuntime -SkipReleaseChecks
+      shell: pwsh
+
+    - name: Install Pester
+      if: success()
+      run: |-
+        Import-Module ./tools/ci.psm1
+        Install-CIPester
+      shell: pwsh
+
+    - name: Test package contents
+      if: success()
+      run: |-
+        $env:PACKAGE_FOLDER = Get-Location
+        $testResultsPath = Join-Path $env:RUNNER_WORKSPACE "testResults"
+        if (-not (Test-Path $testResultsPath)) {
+          New-Item -ItemType Directory -Path $testResultsPath -Force | Out-Null
+        }
+        Import-Module Pester
+        $pesterConfig = New-PesterConfiguration
+        $pesterConfig.Run.Path = './tools/packaging/releaseTests/macOSPackage.tests.ps1'
+        $pesterConfig.Run.PassThru = $true
+        $pesterConfig.Output.Verbosity = 'Detailed'
+        $pesterConfig.TestResult.Enabled = $true
+        $pesterConfig.TestResult.OutputFormat = 'NUnitXml'
+        $pesterConfig.TestResult.OutputPath = Join-Path $testResultsPath "macOSPackage.xml"
+        $result = Invoke-Pester -Configuration $pesterConfig
+        if ($result.FailedCount -gt 0) {
+          throw "Package validation failed with $($result.FailedCount) failed test(s)"
+        }
+      shell: pwsh
+    - name: Publish and Upload Pester Test Results
+      if: always()
+      uses: "./.github/actions/test/process-pester-results"
+      with:
+        name: "macOSPackage"
+        testResultsFolder: "${{ runner.workspace }}/testResults"
+    - name: Upload package artifact
+      if: always()
+      uses: actions/upload-artifact@v5
+      with:
+        name: macos-package
+        path: "*.pkg"
+>>>>>>> 0c40a84ab (Add merge conflict marker detection to linux-ci workflow and refactor existing actions to use reusable get-changed-files action (#26350))
   ready_to_merge:
     name: macos ready to merge
     needs:
