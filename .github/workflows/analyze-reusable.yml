@@ -56,7 +56,8 @@ jobs:
         # queries: ./path/to/local/query, your-org/your-repo/queries@main
 
     - run: |
-        Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
+        Import-Module .\tools\ci.psm1
+        Show-Environment
       name: Capture Environment
       shell: pwsh
 

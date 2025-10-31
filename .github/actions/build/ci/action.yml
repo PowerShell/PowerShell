@@ -5,7 +5,9 @@ runs:
   steps:
   - name: Capture Environment
     if: success() || failure()
-    run: 'Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose'
+    run: |-
+      Import-Module .\tools\ci.psm1
+      Show-Environment
     shell: pwsh
   - name: Set Build Name for Non-PR
     if: github.event_name != 'PullRequest'
