@@ -1056,8 +1056,12 @@ Function Test-MergeConflictMarker
     Write-Host "Starting merge conflict marker check..." -ForegroundColor Cyan
 
     # Helper function to write outputs when no files to check
-    $writeNoFilesOutput = {
-        param($Message)
+    function Write-NoFilesOutput {
+        param(
+            [string]$Message,
+            [string]$OutputPath,
+            [string]$SummaryPath
+        )
         
         # Output results to GitHub Actions
         if ($OutputPath) {
@@ -1086,7 +1090,7 @@ $Message
     # Handle empty file list (e.g., when PR only deletes files)
     if ($File.Count -eq 0) {
         Write-Host "No files to check (empty file list)" -ForegroundColor Yellow
-        & $writeNoFilesOutput "No files were provided for checking (this can happen when a PR only deletes files)."
+        Write-NoFilesOutput -Message "No files were provided for checking (this can happen when a PR only deletes files)." -OutputPath $OutputPath -SummaryPath $SummaryPath
         return
     }
 
@@ -1100,7 +1104,7 @@ $Message
     
     if ($filesToCheck.Count -eq 0) {
         Write-Host "No files to check after filtering (all files were *.cs)" -ForegroundColor Yellow
-        & $writeNoFilesOutput "All $filteredCount file(s) were filtered out (*.cs files are excluded from merge conflict checking)."
+        Write-NoFilesOutput -Message "All $filteredCount file(s) were filtered out (*.cs files are excluded from merge conflict checking)." -OutputPath $OutputPath -SummaryPath $SummaryPath
         return
     }
 
