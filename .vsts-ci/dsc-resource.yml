@@ -1,0 +1,178 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+name: PR-$(System.PullRequest.PullRequestNumber)-$(Date:yyyyMMdd)$(Rev:.rr)
+trigger:
+  # Batch merge builds together while a merge build is running
+  batch: true
+  branches:
+    include:
+    - master
+    - release*
+    - feature*
+  paths:
+    include:
+    - 'src'
+pr:
+  branches:
+    include:
+    - master
+    - release*
+    - feature*
+  paths:
+    include:
+    - 'dsc'
+
+parameters:
+  - name: dscVersion
+    type: string
+    default: 'v3.2.0-preview.4'
+
+variables:
+  GIT_CONFIG_PARAMETERS: "'core.autocrlf=false'"
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+  POWERSHELL_TELEMETRY_OPTOUT: 1
+  DOTNET_NOLOGO: 1
+  __SuppressAnsiEscapeSequences: 1
+  NugetSecurityAnalysisWarningLevel: none
+  nugetMultiFeedWarnLevel: none
+
+resources:
+- repo: self
+  clean: true
+
+stages:
+- stage: AcquireDsc
+  displayName: Install DSC
+  jobs:
+  - job: acquire_dsc
+    displayName: Acquire DSC Resources
+    pool:
+      vmImage: 'windows-latest'
+
+    steps:
+    - pwsh: |
+        Get-ChildItem -Path env:
+      displayName: Capture Environment
+      condition: succeededOrFailed()
+
+    - pwsh: |
+        # Download DSC from GitHub and install it locally for use in the build.
+        $dscVersion = '${{ parameters.dscVersion }}'.TrimStart('v')
+        Write-Verbose -Verbose "Downloading DSC version $dscVersion from GitHub..."
+        $dscZipUrl = https://github.com/PowerShell/DSC/releases/download/v$dscVersion/DSC-$dscVersion-x86_64-pc-windows-msvc.zip
+        Write-Verbose -Verbose "Downloading DSC from $dscZipUrl"
+        $destinationPath = "$(System.ArtifactsDirectory)\dsc\$dscVersion"
+        $zipFilePath = Join-Path -Path $destinationPath -ChildPath "DSC-$dscVersion.zip"
+        New-Item -ItemType Directory -Path $destinationPath -Force | Out-Null
+        Invoke-WebRequest -Uri $dscZipUrl -OutFile $zipFilePath -UseBasicParsing
+        Write-Verbose -Verbose "Extracting DSC to $destinationPath"
+        Expand-Archive -Path $zipFilePath -DestinationPath $destinationPath -Force
+        Remove-Item -Path $zipFilePath -Force
+
+        Get-ChildItem -Path $destinationPath -Recurse | ForEach-Object {
+            Write-Verbose -Verbose "Extracted file: $($_.FullName)"
+        }
+      displayName: 'Download and Install DSC'
+
+
+    - pwsh: |
+        Get-ChildItem "$(System.ArtifactsDirectory)\*" -Recurse
+      displayName: 'Capture Artifacts Directory'
+      continueOnError: true
+
+    - pwsh: |
+        Import-Module .\tools\ci.psm1
+        Invoke-CIInstall
+      displayName: Bootstrap
+
+- stage: TestWin
+  displayName: Test PSResourceGetACR
+  jobs:
+  - job: win_test_ACR
+    displayName: PSResourceGet ACR Tests
+    pool:
+      vmImage: 'windows-latest'
+
+    steps:
+    - pwsh: |
+        Get-ChildItem -Path env:
+      displayName: Capture Environment
+      condition: succeededOrFailed()
+
+    - task: DownloadBuildArtifacts@0
+      displayName: 'Download Build Artifacts'
+      inputs:
+        downloadType: specific
+        itemPattern: |
+          build/**/*
+        downloadPath: '$(System.ArtifactsDirectory)'
+
+    - pwsh: |
+        Get-ChildItem "$(System.ArtifactsDirectory)\*" -Recurse
+      displayName: 'Capture Artifacts Directory'
+      continueOnError: true
+
+    - pwsh: |
+        # Remove "Program Files\dotnet" from the env variable PATH, so old SDKs won't affect us.
+        Write-Host "Old Path:"
+        Write-Host $env:Path
+
+        $dotnetPath = Join-Path $env:SystemDrive 'Program Files\dotnet'
+        $paths = $env:Path -split ";" | Where-Object { -not $_.StartsWith($dotnetPath) }
+        $env:Path = $paths -join ";"
+
+        Write-Host "New Path:"
+        Write-Host $env:Path
+
+        # Bootstrap
+        Import-Module .\tools\ci.psm1
+        Invoke-CIInstall
+      displayName: Bootstrap
+
+    - pwsh: |
+        Install-Module -Name 'Microsoft.PowerShell.SecretManagement' -force -SkipPublisherCheck -AllowClobber
+        Install-Module -Name 'Microsoft.PowerShell.SecretStore' -force -SkipPublisherCheck -AllowClobber
+        $vaultPassword = ConvertTo-SecureString $("a!!"+ (Get-Random -Maximum ([int]::MaxValue))) -AsPlainText -Force
+        Set-SecretStoreConfiguration -Authentication None -Interaction None -Confirm:$false -Password $vaultPassword
+        Register-SecretVault -Name SecretStore -ModuleName Microsoft.PowerShell.SecretStore -DefaultVault
+      displayName: 'Install Secret store'
+
+    - task: AzurePowerShell@5
+      inputs:
+        azureSubscription: PSResourceGetACR
+        azurePowerShellVersion: LatestVersion
+        ScriptType: InlineScript
+        pwsh: true
+        inline: |
+          Write-Verbose -Verbose "Getting Azure Container Registry"
+          Get-AzContainerRegistry -ResourceGroupName 'PSResourceGet' -Name 'psresourcegettest' | Select-Object -Property *
+          Write-Verbose -Verbose "Setting up secret for Azure Container Registry"
+          $azt = Get-AzAccessToken
+          $tenantId = $azt.TenantID
+          Set-Secret -Name $tenantId -Secret $azt.Token -Verbose
+          $vstsCommandString = "vso[task.setvariable variable=TenantId]$tenantId"
+          Write-Host "sending " + $vstsCommandString
+          Write-Host "##$vstsCommandString"
+      displayName: 'Setup Azure Container Registry secret'
+
+    - pwsh: |
+        Import-Module .\build.psm1 -force
+        Import-Module .\tools\ci.psm1
+        Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
+        $options = (Get-PSOptions)
+        $path = split-path -path $options.Output
+        $rootPath = split-Path -path $path
+        Expand-Archive -Path '$(System.ArtifactsDirectory)\build\build.zip' -DestinationPath $rootPath -Force
+
+        $pwshExe = Get-ChildItem -Path $rootPath -Recurse -Filter pwsh.exe | Select-Object -First 1
+
+        $outputFilePath = "$(Build.SourcesDirectory)\test\powershell\Modules\Microsoft.PowerShell.PSResourceGet\ACRTests.xml"
+        $cmdline = "`$env:ACRTESTS = 'true'; Invoke-Pester -Path '$(Build.SourcesDirectory)\test\powershell\Modules\Microsoft.PowerShell.PSResourceGet\Microsoft.PowerShell.PSResourceGet.Tests.ps1' -TestName 'PSResourceGet - ACR tests' -OutputFile $outputFilePath -OutputFormat NUnitXml"
+        Write-Verbose -Verbose "Running $cmdline"
+
+        & $pwshExe -Command $cmdline
+
+        Publish-TestResults -Title "PSResourceGet - ACR tests" -Path $outputFilePath -Type NUnit
+      displayName: 'PSResourceGet ACR functional tests using AzAuth'
+
