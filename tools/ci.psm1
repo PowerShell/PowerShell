@@ -1039,8 +1039,9 @@ Function Test-MergeConflictMarker
     #>
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory)]
-        [string[]] $File,
+        [Parameter()]
+        [AllowEmptyCollection()]
+        [string[]] $File = @(),
 
         [Parameter()]
         [string] $WorkspacePath = $PWD,
@@ -1054,10 +1055,77 @@ Function Test-MergeConflictMarker
 
     Write-Host "Starting merge conflict marker check..." -ForegroundColor Cyan
 
-    Write-Host "Checking $($File.Count) changed files for merge conflict markers" -ForegroundColor Cyan
+    # Handle empty file list (e.g., when PR only deletes files)
+    if ($File.Count -eq 0) {
+        Write-Host "No files to check (empty file list)" -ForegroundColor Yellow
+        
+        # Output results to GitHub Actions
+        if ($OutputPath) {
+            "files-checked=0" | Out-File -FilePath $OutputPath -Append -Encoding utf8
+            "conflicts-found=0" | Out-File -FilePath $OutputPath -Append -Encoding utf8
+        }
+        
+        # Create GitHub Actions job summary
+        if ($SummaryPath) {
+            $summaryContent = @"
+# Merge Conflict Marker Check Results
+
+## Summary
+- **Files Checked:** 0
+- **Files with Conflicts:** 0
+
+## ℹ️ No Files to Check
+
+No files were provided for checking (this can happen when a PR only deletes files).
+
+"@
+            $summaryContent | Out-File -FilePath $SummaryPath -Encoding utf8
+        }
+        
+        return
+    }
+
+    # Filter out *.cs files from merge conflict checking
+    $filesToCheck = @($File | Where-Object { $_ -notlike "*.cs" })
+    $filteredCount = $File.Count - $filesToCheck.Count
+    
+    if ($filteredCount -gt 0) {
+        Write-Host "Filtered out $filteredCount *.cs file(s) from merge conflict checking" -ForegroundColor Yellow
+    }
+    
+    if ($filesToCheck.Count -eq 0) {
+        Write-Host "No files to check after filtering (all files were *.cs)" -ForegroundColor Yellow
+        
+        # Output results to GitHub Actions
+        if ($OutputPath) {
+            "files-checked=0" | Out-File -FilePath $OutputPath -Append -Encoding utf8
+            "conflicts-found=0" | Out-File -FilePath $OutputPath -Append -Encoding utf8
+        }
+        
+        # Create GitHub Actions job summary
+        if ($SummaryPath) {
+            $summaryContent = @"
+# Merge Conflict Marker Check Results
+
+## Summary
+- **Files Checked:** 0
+- **Files with Conflicts:** 0
+
+## ℹ️ No Files to Check
+
+All $filteredCount file(s) were filtered out (*.cs files are excluded from merge conflict checking).
+
+"@
+            $summaryContent | Out-File -FilePath $SummaryPath -Encoding utf8
+        }
+        
+        return
+    }
+
+    Write-Host "Checking $($filesToCheck.Count) changed files for merge conflict markers" -ForegroundColor Cyan
 
     # Convert relative paths to absolute paths for processing
-    $absolutePaths = $File | ForEach-Object {
+    $absolutePaths = $filesToCheck | ForEach-Object {
         if ([System.IO.Path]::IsPathRooted($_)) {
             $_
         } else {
