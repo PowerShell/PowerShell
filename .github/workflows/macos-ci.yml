@@ -186,6 +186,14 @@ jobs:
         $macOSRuntime = if ([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture -eq 'Arm64') { 'osx-arm64' } else { 'osx-x64' }
         Start-PSPackage -Type osxpkg -ReleaseTag $releaseTag -MacOSRuntime $macOSRuntime -SkipReleaseChecks
       shell: pwsh
+
+    - name: Install Pester
+      if: success()
+      run: |-
+        Import-Module ./tools/ci.psm1
+        Install-CIPester
+      shell: pwsh
+
     - name: Test package contents
       if: success()
       run: |-
