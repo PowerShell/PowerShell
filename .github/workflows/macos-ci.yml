@@ -80,7 +80,7 @@ jobs:
       - ci_build
       - changes
     if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
-    runs-on: macos-15-large
+    runs-on: macos-latest
     steps:
       - name: checkout
         uses: actions/checkout@v4.1.0
