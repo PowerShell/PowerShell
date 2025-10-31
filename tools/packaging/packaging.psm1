@@ -1195,6 +1195,7 @@ function New-UnixPackage {
             # Generate After Install and After Remove scripts
             $AfterScriptInfo = New-AfterScripts -Link $Link -Distribution $DebDistro -Destination $Destination
 
+<<<<<<< HEAD
             # there is a weird bug in fpm
             # if the target of the powershell symlink exists, `fpm` aborts
             # with a `utime` error on macOS.
@@ -1209,6 +1210,8 @@ function New-UnixPackage {
                 }
             }
 
+=======
+>>>>>>> 7e1ef1f74 (Replace `fpm` with `dpkg-deb` for DEB package generation (#26281))
             # Generate gzip of man file
             $ManGzipInfo = New-ManGzip -IsPreview:$IsPreview -IsLTS:$LTS
 
@@ -1272,12 +1275,75 @@ function New-UnixPackage {
                 try {
                     $Output = Start-NativeExecution { fpm $Arguments }
                 }
+<<<<<<< HEAD
                 catch {
                     Write-Verbose -Message "!!!Handling error in FPM!!!" -Verbose -ErrorAction SilentlyContinue
                     Write-Verbose -Message "$Output" -Verbose -ErrorAction SilentlyContinue
                     Get-Error -InputObject $_
                     throw
                 }
+=======
+            } elseif ($Type -eq 'deb') {
+                # Use native DEB package builder
+                if ($PSCmdlet.ShouldProcess("Create DEB package natively")) {
+                    Write-Log "Creating DEB package natively..."
+                    try {
+                        $result = New-NativeDeb `
+                            -Name $Name `
+                            -Version $packageVersion `
+                            -Iteration $Iteration `
+                            -Description $Description `
+                            -Staging $Staging `
+                            -Destination $Destination `
+                            -ManGzipFile $ManGzipInfo.GzipFile `
+                            -ManDestination $ManGzipInfo.ManFile `
+                            -LinkInfo $Links `
+                            -Dependencies $Dependencies `
+                            -AfterInstallScript $AfterScriptInfo.AfterInstallScript `
+                            -AfterRemoveScript $AfterScriptInfo.AfterRemoveScript `
+                            -HostArchitecture $HostArchitecture `
+                            -CurrentLocation $CurrentLocation
+                        
+                        $Output = @("Created package {:path=>""$($result.PackageName)""}")
+                    }
+                    catch {
+                        Write-Verbose -Message "!!!Handling error in native DEB creation!!!" -Verbose -ErrorAction SilentlyContinue
+                    }
+                }
+            } elseif ($Type -eq 'osxpkg') {
+                # Use native macOS packaging tools
+                if ($PSCmdlet.ShouldProcess("Create macOS package with pkgbuild/productbuild")) {
+                    Write-Log "Creating macOS package with native tools..."
+                    
+                    $macPkgArgs = @{
+                        Name = $Name
+                        Version = $packageVersion
+                        Iteration = $Iteration
+                        Staging = $Staging
+                        Destination = $Destination
+                        ManGzipFile = $ManGzipInfo.GzipFile
+                        ManDestination = $ManGzipInfo.ManFile
+                        LinkInfo = $Links
+                        AfterInstallScript = $AfterScriptInfo.AfterInstallScript
+                        AppsFolder = $AppsFolder
+                        HostArchitecture = $HostArchitecture
+                        CurrentLocation = $CurrentLocation
+                    }
+                    
+                    try {
+                        $packageFile = New-MacOSPackage @macPkgArgs
+                        $Output = @("Created package {:path=>""$($packageFile.Name)""}")
+                    }
+                    catch {
+                        Write-Verbose -Message "!!!Handling error in macOS packaging!!!" -Verbose -ErrorAction SilentlyContinue
+                        Get-Error -InputObject $_
+                        throw
+                    }
+                }
+            } else {
+                # Nothing should reach here
+                throw "Unknown package type: $Type"
+>>>>>>> 7e1ef1f74 (Replace `fpm` with `dpkg-deb` for DEB package generation (#26281))
             }
         } finally {
             if ($Environment.IsMacOS) {
@@ -1305,12 +1371,17 @@ function New-UnixPackage {
         # Magic to get path output
         $createdPackage = Get-Item (Join-Path $CurrentLocation (($Output[-1] -split ":path=>")[-1] -replace '["{}]'))
 
+<<<<<<< HEAD
         if ($Environment.IsMacOS) {
             if ($PSCmdlet.ShouldProcess("Add distribution information and Fix PackageName"))
             {
                 $createdPackage = New-MacOsDistributionPackage -FpmPackage $createdPackage -HostArchitecture $HostArchitecture -IsPreview:$IsPreview
             }
         }
+=======
+        # For macOS with native tools, the package is already in the correct format
+        # For other platforms, the package name from dpkg-deb/rpmbuild is sufficient
+>>>>>>> 7e1ef1f74 (Replace `fpm` with `dpkg-deb` for DEB package generation (#26281))
 
         if (Test-Path $createdPackage)
         {
@@ -1437,7 +1508,11 @@ Class LinkInfo
     [string] $Destination
 }
 
+<<<<<<< HEAD
 function Get-FpmArguments
+=======
+function New-RpmSpec
+>>>>>>> 7e1ef1f74 (Replace `fpm` with `dpkg-deb` for DEB package generation (#26281))
 {
     param(
         [Parameter(Mandatory,HelpMessage='Package Name')]
@@ -1452,11 +1527,14 @@ function Get-FpmArguments
         [Parameter(Mandatory,HelpMessage='Package description')]
         [String]$Description,
 
+<<<<<<< HEAD
         # From start-PSPackage without modification, already validated
         # Values: deb, rpm, osxpkg
         [Parameter(Mandatory,HelpMessage='Installer Type')]
         [String]$Type,
 
+=======
+>>>>>>> 7e1ef1f74 (Replace `fpm` with `dpkg-deb` for DEB package generation (#26281))
         [Parameter(Mandatory,HelpMessage='Staging folder for installation files')]
         [String]$Staging,
 
@@ -1472,6 +1550,7 @@ function Get-FpmArguments
         [Parameter(Mandatory,HelpMessage='Symlink to powershell executable')]
         [LinkInfo[]]$LinkInfo,
 
+<<<<<<< HEAD
         [Parameter(HelpMessage='Packages required to install this package.  Not applicable for MacOS.')]
         [ValidateScript({
             if (!$Environment.IsMacOS -and $_.Count -eq 0)
@@ -1514,10 +1593,22 @@ function Get-FpmArguments
             return $true
         })]
         [String]$AppsFolder,
+=======
+        [Parameter(Mandatory,HelpMessage='Packages required to install this package')]
+        [String[]]$Dependencies,
+
+        [Parameter(Mandatory,HelpMessage='Script to run after the package installation.')]
+        [String]$AfterInstallScript,
+
+        [Parameter(Mandatory,HelpMessage='Script to run after the package removal.')]
+        [String]$AfterRemoveScript,
+
+>>>>>>> 7e1ef1f74 (Replace `fpm` with `dpkg-deb` for DEB package generation (#26281))
         [String]$Distribution = 'rhel.7',
         [string]$HostArchitecture
     )
 
+<<<<<<< HEAD
     $Arguments = @(
         "--force", "--verbose",
         "--name", $Name,
@@ -1575,6 +1666,484 @@ function Get-FpmArguments
     }
 
     return $Arguments
+=======
+    # RPM doesn't allow hyphens in version, so convert them to underscores
+    # e.g., "7.6.0-preview.6" becomes Version: 7.6.0_preview.6
+    $rpmVersion = $Version -replace '-', '_'
+    
+    # Build Release field with distribution suffix (e.g., "1.cm" or "1.rh")
+    # Don't use RPM macros - build the full release string in PowerShell
+    $rpmRelease = "$Iteration.$Distribution"
+
+    $specContent = @"
+# RPM spec file for PowerShell
+# Generated by PowerShell build system
+
+Name:           $Name
+Version:        $rpmVersion
+Release:        $rpmRelease
+Summary:        PowerShell - Cross-platform automation and configuration tool/framework
+License:        MIT
+URL:            https://microsoft.com/powershell
+AutoReq:        no
+
+"@
+
+    # Only add BuildArch if not doing cross-architecture build
+    # For cross-arch builds, we'll rely on --target option
+    if ($HostArchitecture -eq "x86_64" -or $HostArchitecture -eq "noarch") {
+        $specContent += "BuildArch:      $HostArchitecture`n`n"
+    } else {
+        # For cross-architecture builds, don't specify BuildArch in spec
+        # The --target option will handle the architecture
+        
+        # Disable automatic binary stripping for cross-arch builds
+        # The native /bin/strip on x86_64 cannot process ARM64 binaries and would fail with:
+        # "Unable to recognise the format of the input file"
+        # See: https://rpm-software-management.github.io/rpm/manual/macros.html
+        # __strip: This macro controls the command used for stripping binaries during the build process.
+        # /bin/true: A command that does nothing and always exits successfully, effectively bypassing the stripping process.
+        $specContent += "%define __strip /bin/true`n"
+        
+        # Disable debug package generation to prevent strip-related errors
+        # Debug packages require binary stripping which fails for cross-arch builds
+        # See: https://rpm-packaging-guide.github.io/#debugging
+        # See: https://docs.fedoraproject.org/en-US/packaging-guidelines/Debuginfo/#_useless_or_incomplete_debuginfo_packages_due_to_other_reasons
+        $specContent += "%global debug_package %{nil}`n`n"
+    }
+
+    # Add dependencies
+    foreach ($dep in $Dependencies) {
+        $specContent += "Requires:       $dep`n"
+    }
+
+    $specContent += @"
+
+%description
+$Description
+
+%prep
+# No prep needed - files are already staged
+
+%build
+# No build needed - binaries are pre-built
+
+%install
+rm -rf `$RPM_BUILD_ROOT
+mkdir -p `$RPM_BUILD_ROOT$Destination
+mkdir -p `$RPM_BUILD_ROOT$(Split-Path -Parent $ManDestination)
+
+# Copy all files from staging to destination
+cp -r $Staging/* `$RPM_BUILD_ROOT$Destination/
+
+# Copy man page
+cp $ManGzipFile `$RPM_BUILD_ROOT$ManDestination
+
+"@
+
+    # Add symlinks - we need to get the target of the temp symlink
+    foreach ($link in $LinkInfo) {
+        $linkDir = Split-Path -Parent $link.Destination
+        $specContent += "mkdir -p `$RPM_BUILD_ROOT$linkDir`n"
+        # For RPM, we copy the symlink itself.
+        # The symlink at $link.Source points to the actual target, so we'll copy it.
+        # The -P flag preserves symlinks rather than copying their targets, which is critical for this operation.
+        $specContent += "cp -P $($link.Source) `$RPM_BUILD_ROOT$($link.Destination)`n"
+    }
+
+    # Post-install script
+    $postInstallContent = Get-Content -Path $AfterInstallScript -Raw
+    $specContent += "`n%post`n"
+    $specContent += $postInstallContent
+    $specContent += "`n"
+
+    # Post-uninstall script
+    $postUninstallContent = Get-Content -Path $AfterRemoveScript -Raw
+    $specContent += "%postun`n"
+    $specContent += $postUninstallContent
+    $specContent += "`n"
+
+    # Files section
+    $specContent += "%files`n"
+    $specContent += "%defattr(-,root,root,-)`n"
+    $specContent += "$Destination/*`n"
+    $specContent += "$ManDestination`n"
+
+    # Add symlinks to files
+    foreach ($link in $LinkInfo) {
+        $specContent += "$($link.Destination)`n"
+    }
+
+    # Changelog with correct date format for RPM
+    $changelogDate = Get-Date -Format "ddd MMM dd yyyy"
+    $specContent += "`n%changelog`n"
+    $specContent += "* $changelogDate PowerShell Team <PowerShellTeam@hotmail.com> - $rpmVersion-$rpmRelease`n"
+    $specContent += "- Automated build`n"
+
+    return $specContent
+}
+
+function New-NativeDeb
+{
+    param(
+        [Parameter(Mandatory, HelpMessage='Package Name')]
+        [String]$Name,
+
+        [Parameter(Mandatory, HelpMessage='Package Version')]
+        [String]$Version,
+
+        [Parameter(Mandatory)]
+        [String]$Iteration,
+
+        [Parameter(Mandatory, HelpMessage='Package description')]
+        [String]$Description,
+
+        [Parameter(Mandatory, HelpMessage='Staging folder for installation files')]
+        [String]$Staging,
+
+        [Parameter(Mandatory, HelpMessage='Install path on target machine')]
+        [String]$Destination,
+
+        [Parameter(Mandatory, HelpMessage='The built and gzipped man file.')]
+        [String]$ManGzipFile,
+
+        [Parameter(Mandatory, HelpMessage='The destination of the man file')]
+        [String]$ManDestination,
+
+        [Parameter(Mandatory, HelpMessage='Symlink to powershell executable')]
+        [LinkInfo[]]$LinkInfo,
+
+        [Parameter(HelpMessage='Packages required to install this package.')]
+        [String[]]$Dependencies,
+
+        [Parameter(HelpMessage='Script to run after the package installation.')]
+        [String]$AfterInstallScript,
+
+        [Parameter(HelpMessage='Script to run after the package removal.')]
+        [String]$AfterRemoveScript,
+
+        [string]$HostArchitecture,
+
+        [string]$CurrentLocation
+    )
+
+    Write-Log "Creating native DEB package..."
+
+    # Create temporary build directory
+    $debBuildRoot = Join-Path $env:HOME "debbuild-$(Get-Random)"
+    $debianDir = Join-Path $debBuildRoot "DEBIAN"
+    $dataDir = Join-Path $debBuildRoot "data"
+
+    try {
+        New-Item -ItemType Directory -Path $debianDir -Force | Out-Null
+        New-Item -ItemType Directory -Path $dataDir -Force | Out-Null
+
+        # Calculate installed size (in KB)
+        $installedSize = 0
+        Get-ChildItem -Path $Staging -Recurse -File | ForEach-Object { $installedSize += $_.Length }
+        $installedSize += (Get-Item $ManGzipFile).Length
+        $installedSizeKB = [Math]::Ceiling($installedSize / 1024)
+
+        # Create control file with all fields in proper order
+        # Description must be single line (first line) followed by extended description with leading space
+        $descriptionLines = $Description -split "`n"
+        $shortDescription = $descriptionLines[0]
+        $extendedDescription = if ($descriptionLines.Count -gt 1) {
+            ($descriptionLines[1..($descriptionLines.Count-1)] | ForEach-Object { " $_" }) -join "`n"
+        }
+
+        $controlContent = @"
+Package: $Name
+Version: $Version-$Iteration
+Architecture: $HostArchitecture
+Maintainer: PowerShell Team <PowerShellTeam@hotmail.com>
+Installed-Size: $installedSizeKB
+Priority: optional
+Section: shells
+Homepage: https://microsoft.com/powershell
+Depends: $(if ($Dependencies) { $Dependencies -join ', ' })
+Description: $shortDescription
+$(if ($extendedDescription) { $extendedDescription + "`n" })
+"@
+
+        $controlFile = Join-Path $debianDir "control"
+        $controlContent | Out-File -FilePath $controlFile -Encoding ascii -NoNewline
+
+        Write-Verbose "Control file created: $controlFile" -Verbose
+        Write-LogGroup -Title "DEB Control File Content" -Message $controlContent
+
+        # Copy postinst script if provided
+        if ($AfterInstallScript -and (Test-Path $AfterInstallScript)) {
+            $postinstFile = Join-Path $debianDir "postinst"
+            Copy-Item -Path $AfterInstallScript -Destination $postinstFile -Force
+            Start-NativeExecution { chmod 755 $postinstFile }
+            Write-Verbose "Postinst script copied to: $postinstFile" -Verbose
+        }
+
+        # Copy postrm script if provided
+        if ($AfterRemoveScript -and (Test-Path $AfterRemoveScript)) {
+            $postrmFile = Join-Path $debianDir "postrm"
+            Copy-Item -Path $AfterRemoveScript -Destination $postrmFile -Force
+            Start-NativeExecution { chmod 755 $postrmFile }
+            Write-Verbose "Postrm script copied to: $postrmFile" -Verbose
+        }
+
+        # Copy staging files to data directory
+        $targetPath = Join-Path $dataDir $Destination.TrimStart('/')
+        New-Item -ItemType Directory -Path $targetPath -Force | Out-Null
+        Copy-Item -Path "$Staging/*" -Destination $targetPath -Recurse -Force
+        Write-Verbose "Copied staging files to: $targetPath" -Verbose
+
+        # Copy man page
+        $manDestPath = Join-Path $dataDir $ManDestination.TrimStart('/')
+        $manDestDir = Split-Path $manDestPath -Parent
+        New-Item -ItemType Directory -Path $manDestDir -Force | Out-Null
+        Copy-Item -Path $ManGzipFile -Destination $manDestPath -Force
+        Write-Verbose "Copied man page to: $manDestPath" -Verbose
+
+        # Copy symlinks from temporary locations
+        foreach ($link in $LinkInfo) {
+            $linkPath = Join-Path $dataDir $link.Destination.TrimStart('/')
+            $linkDir = Split-Path $linkPath -Parent
+            New-Item -ItemType Directory -Path $linkDir -Force | Out-Null
+
+            # Copy the temporary symlink file that was created by New-LinkInfo
+            # The Source contains a temporary symlink that points to the correct target
+            if (Test-Path $link.Source) {
+                # Use cp to preserve the symlink
+                Start-NativeExecution { cp -P $link.Source $linkPath }
+                Write-Verbose "Copied symlink: $linkPath (from $($link.Source))" -Verbose
+            } else {
+                Write-Warning "Symlink source not found: $($link.Source)"
+            }
+        }
+
+        # Set proper permissions
+        Write-Verbose "Setting file permissions..." -Verbose
+        # 755 = rwxr-xr-x (owner can read/write/execute, group and others can read/execute)
+        Get-ChildItem $dataDir -Directory -Recurse | ForEach-Object {
+            Start-NativeExecution { chmod 755 $_.FullName }
+        }
+        # 644 = rw-r--r-- (owner can read/write, group and others can read only)
+        # Exclude symlinks to avoid "cannot operate on dangling symlink" error
+        Get-ChildItem $dataDir -File -Recurse |
+            Where-Object { -not $_.Target } |
+            ForEach-Object {
+                Start-NativeExecution { chmod 644 $_.FullName }
+            }
+
+        # Set executable permission for pwsh if it exists
+        # 755 = rwxr-xr-x (executable permission)
+        $pwshPath = "$targetPath/pwsh"
+        if (Test-Path $pwshPath) {
+            Start-NativeExecution { chmod 755 $pwshPath }
+        }
+
+        # Calculate md5sums for all files in data directory (excluding symlinks)
+        $md5sumsFile = Join-Path $debianDir "md5sums"
+        $md5Content = ""
+        Get-ChildItem -Path $dataDir -Recurse -File |
+            Where-Object { -not $_.Target } |
+            ForEach-Object {
+                $relativePath = $_.FullName.Substring($dataDir.Length + 1)
+                $md5Hash = (Get-FileHash -Path $_.FullName -Algorithm MD5).Hash.ToLower()
+                $md5Content += "$md5Hash  $relativePath`n"
+            }
+        $md5Content | Out-File -FilePath $md5sumsFile -Encoding ascii -NoNewline
+        Write-Verbose "MD5 sums file created: $md5sumsFile" -Verbose
+
+        # Build the package using dpkg-deb
+        $debFileName = "${Name}_${Version}-${Iteration}_${HostArchitecture}.deb"
+        $debFilePath = Join-Path $CurrentLocation $debFileName
+
+        Write-Verbose "Building DEB package: $debFileName" -Verbose
+
+        # Copy DEBIAN directory and data files to build root
+        $buildDir = Join-Path $debBuildRoot "build"
+        New-Item -ItemType Directory -Path $buildDir -Force | Out-Null
+        
+        Write-Verbose "debianDir: $debianDir" -Verbose
+        Write-Verbose "dataDir: $dataDir" -Verbose
+        Write-Verbose "buildDir: $buildDir" -Verbose
+        
+        # Use cp to preserve symlinks
+        Start-NativeExecution { cp -a $debianDir "$buildDir/DEBIAN" }
+        Start-NativeExecution { cp -a $dataDir/* $buildDir }
+
+        # Build package with dpkg-deb
+        Start-NativeExecution -VerboseOutputOnError {
+            dpkg-deb --build $buildDir $debFilePath
+        }
+
+        if (Test-Path $debFilePath) {
+            Write-Log "Successfully created DEB package: $debFileName"
+            return @{
+                PackagePath = $debFilePath
+                PackageName = $debFileName
+            }
+        } else {
+            throw "DEB package file not found after build: $debFilePath"
+        }
+    }
+    finally {
+        # Cleanup temporary directory
+        if (Test-Path $debBuildRoot) {
+            Write-Verbose "Cleaning up temporary build directory: $debBuildRoot" -Verbose
+            Remove-Item -Path $debBuildRoot -Recurse -Force -ErrorAction SilentlyContinue
+        }
+    }
+}
+
+function New-MacOSPackage
+{
+    [CmdletBinding(SupportsShouldProcess=$true)]
+    param(
+        [Parameter(Mandatory)]
+        [string]$Name,
+
+        [Parameter(Mandatory)]
+        [string]$Version,
+
+        [Parameter(Mandatory)]
+        [string]$Iteration,
+
+        [Parameter(Mandatory)]
+        [string]$Staging,
+
+        [Parameter(Mandatory)]
+        [string]$Destination,
+
+        [Parameter(Mandatory)]
+        [string]$ManGzipFile,
+
+        [Parameter(Mandatory)]
+        [string]$ManDestination,
+
+        [Parameter(Mandatory)]
+        [LinkInfo[]]$LinkInfo,
+
+        [Parameter(Mandatory)]
+        [string]$AfterInstallScript,
+
+        [Parameter(Mandatory)]
+        [string]$AppsFolder,
+
+        [Parameter(Mandatory)]
+        [string]$HostArchitecture,
+
+        [string]$CurrentLocation = (Get-Location)
+    )
+
+    Write-Log "Creating macOS package using pkgbuild and productbuild..."
+
+    # Create a temporary directory for package building
+    $tempRoot = New-TempFolder
+    $componentPkgPath = Join-Path $tempRoot "component.pkg"
+    $scriptsDir = Join-Path $tempRoot "scripts"
+    $resourcesDir = Join-Path $tempRoot "resources"
+    $distributionFile = Join-Path $tempRoot "distribution.xml"
+
+    try {
+        # Create scripts directory
+        New-Item -ItemType Directory -Path $scriptsDir -Force | Out-Null
+
+        # Copy and prepare the postinstall script
+        $postInstallPath = Join-Path $scriptsDir "postinstall"
+        Copy-Item -Path $AfterInstallScript -Destination $postInstallPath -Force
+        Start-NativeExecution {
+            chmod 755 $postInstallPath
+        }
+
+        # Create a temporary directory for the package root
+        $pkgRoot = Join-Path $tempRoot "pkgroot"
+        New-Item -ItemType Directory -Path $pkgRoot -Force | Out-Null
+
+        # Copy staging files to destination path in package root
+        $destInPkg = Join-Path $pkgRoot $Destination
+        New-Item -ItemType Directory -Path $destInPkg -Force | Out-Null
+        Write-Verbose "Copying staging files from $Staging to $destInPkg" -Verbose
+        Copy-Item -Path "$Staging/*" -Destination $destInPkg -Recurse -Force
+
+        # Create man page directory structure
+        $manDir = Join-Path $pkgRoot (Split-Path $ManDestination -Parent)
+        New-Item -ItemType Directory -Path $manDir -Force | Out-Null
+        Copy-Item -Path $ManGzipFile -Destination (Join-Path $pkgRoot $ManDestination) -Force
+
+        # Create symlinks in package root
+        # The LinkInfo contains Source (a temp file that IS a symlink) and Destination (where to install it)
+        foreach ($link in $LinkInfo) {
+            $linkDestDir = Join-Path $pkgRoot (Split-Path $link.Destination -Parent)
+            New-Item -ItemType Directory -Path $linkDestDir -Force | Out-Null
+            $finalLinkPath = Join-Path $pkgRoot $link.Destination
+            
+            Write-Verbose "Creating symlink at $finalLinkPath" -Verbose
+            
+            # Remove if exists
+            if (Test-Path $finalLinkPath) {
+                Remove-Item $finalLinkPath -Force
+            }
+            
+            # Get the target of the original symlink and recreate it in the package root
+            if (Test-Path $link.Source) {
+                $linkTarget = (Get-Item $link.Source).Target
+                if ($linkTarget) {
+                    Write-Verbose "Creating symlink to target: $linkTarget" -Verbose
+                    New-Item -ItemType SymbolicLink -Path $finalLinkPath -Target $linkTarget -Force | Out-Null
+                } else {
+                    Write-Warning "Could not determine target for symlink at $($link.Source), copying file instead"
+                    Copy-Item -Path $link.Source -Destination $finalLinkPath -Force
+                }
+            } else {
+                Write-Warning "Source symlink $($link.Source) does not exist"
+            }
+        }
+
+        # Copy launcher app folder if provided
+        if ($AppsFolder) {
+            $appsInPkg = Join-Path $pkgRoot "Applications"
+            New-Item -ItemType Directory -Path $appsInPkg -Force | Out-Null
+            Write-Verbose "Copying launcher app from $AppsFolder to $appsInPkg" -Verbose
+            Copy-Item -Path "$AppsFolder/*" -Destination $appsInPkg -Recurse -Force
+        }
+
+        # Build the component package using pkgbuild
+        $pkgIdentifier = Get-MacOSPackageId -IsPreview:($Name -like '*-preview')
+        
+        if ($PSCmdlet.ShouldProcess("Build component package with pkgbuild")) {
+            Write-Log "Running pkgbuild to create component package..."
+            
+            Start-NativeExecution -VerboseOutputOnError {
+                pkgbuild --root $pkgRoot `
+                    --identifier $pkgIdentifier `
+                    --version $Version `
+                    --scripts $scriptsDir `
+                    --install-location "/" `
+                    $componentPkgPath
+            }
+            
+            Write-Verbose "Component package created: $componentPkgPath" -Verbose
+        }
+
+        # Create the final distribution package using the refactored function
+        $distributionPackage = New-MacOsDistributionPackage `
+            -ComponentPackage (Get-Item $componentPkgPath) `
+            -PackageName $Name `
+            -Version $Version `
+            -OutputDirectory $CurrentLocation `
+            -HostArchitecture $HostArchitecture `
+            -PackageIdentifier $pkgIdentifier `
+            -IsPreview:($Name -like '*-preview')
+        
+        return $distributionPackage
+    }
+    finally {
+        # Clean up temporary directory
+        if (Test-Path $tempRoot) {
+            Write-Verbose "Cleaning up temporary directory: $tempRoot" -Verbose
+            Remove-Item -Path $tempRoot -Recurse -Force -ErrorAction SilentlyContinue
+        }
+    }
+>>>>>>> 7e1ef1f74 (Replace `fpm` with `dpkg-deb` for DEB package generation (#26281))
 }
 
 function Get-PackageDependencies
@@ -1649,6 +2218,7 @@ function Get-PackageDependencies
 
 function Test-Dependencies
 {
+<<<<<<< HEAD
     foreach ($Dependency in "fpm") {
         if (!(precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Scenario Package")) {
             # These tools are not added to the path automatically on OpenSUSE 13.2
@@ -1668,6 +2238,27 @@ function Test-Dependencies
                 }
             }
 
+=======
+    # RPM packages use rpmbuild directly.
+    # DEB packages use dpkg-deb directly.
+    # macOS packages use pkgbuild and productbuild from Xcode Command Line Tools.
+    $Dependencies = @()
+
+    # Check for 'rpmbuild' and 'dpkg-deb' on Azure Linux.
+    if ($Environment.IsMariner) {
+        $Dependencies += "dpkg-deb"
+        $Dependencies += "rpmbuild"
+    }
+
+    # Check for macOS packaging tools
+    if ($Environment.IsMacOS) {
+        $Dependencies += "pkgbuild"
+        $Dependencies += "productbuild"
+    }
+
+    foreach ($Dependency in $Dependencies) {
+        if (!(precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Scenario Package")) {
+>>>>>>> 7e1ef1f74 (Replace `fpm` with `dpkg-deb` for DEB package generation (#26281))
             throw "Dependency precheck failed!"
         }
     }
