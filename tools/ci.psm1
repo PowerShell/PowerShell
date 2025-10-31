@@ -1055,9 +1055,9 @@ Function Test-MergeConflictMarker
 
     Write-Host "Starting merge conflict marker check..." -ForegroundColor Cyan
 
-    # Handle empty file list (e.g., when PR only deletes files)
-    if ($File.Count -eq 0) {
-        Write-Host "No files to check (empty file list)" -ForegroundColor Yellow
+    # Helper function to write outputs when no files to check
+    $writeNoFilesOutput = {
+        param($Message)
         
         # Output results to GitHub Actions
         if ($OutputPath) {
@@ -1076,12 +1076,17 @@ Function Test-MergeConflictMarker
 
 ## ℹ️ No Files to Check
 
-No files were provided for checking (this can happen when a PR only deletes files).
+$Message
 
 "@
             $summaryContent | Out-File -FilePath $SummaryPath -Encoding utf8
         }
-        
+    }
+
+    # Handle empty file list (e.g., when PR only deletes files)
+    if ($File.Count -eq 0) {
+        Write-Host "No files to check (empty file list)" -ForegroundColor Yellow
+        & $writeNoFilesOutput "No files were provided for checking (this can happen when a PR only deletes files)."
         return
     }
 
@@ -1095,30 +1100,7 @@ No files were provided for checking (this can happen when a PR only deletes file
     
     if ($filesToCheck.Count -eq 0) {
         Write-Host "No files to check after filtering (all files were *.cs)" -ForegroundColor Yellow
-        
-        # Output results to GitHub Actions
-        if ($OutputPath) {
-            "files-checked=0" | Out-File -FilePath $OutputPath -Append -Encoding utf8
-            "conflicts-found=0" | Out-File -FilePath $OutputPath -Append -Encoding utf8
-        }
-        
-        # Create GitHub Actions job summary
-        if ($SummaryPath) {
-            $summaryContent = @"
-# Merge Conflict Marker Check Results
-
-## Summary
-- **Files Checked:** 0
-- **Files with Conflicts:** 0
-
-## ℹ️ No Files to Check
-
-All $filteredCount file(s) were filtered out (*.cs files are excluded from merge conflict checking).
-
-"@
-            $summaryContent | Out-File -FilePath $SummaryPath -Encoding utf8
-        }
-        
+        & $writeNoFilesOutput "All $filteredCount file(s) were filtered out (*.cs files are excluded from merge conflict checking)."
         return
     }
 
