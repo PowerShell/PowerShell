@@ -1,6 +1,6 @@
 id: IssueManagement.IssueFeedbackForm
 name: GitOps.PullRequestIssueManagement
-description: Bot to request the feedback for how we are doing in the repo, replies on closed PRs and issues that are NOT labeled with no activity and NOT when a maintainer (user with Write or Admin permissions) closes their own issue/PR
+description: Bot to request the feedback for how we are doing in the repo, replies on closed PRs and issues that are NOT labeled with no activity and NOT labeled as User-Maintainer
 owner:
 resource: repository
 disabled: false
@@ -12,17 +12,11 @@ configuration:
           - not:
               hasLabel:
                 label: Resolution-No Activity
+          - not:
+              hasLabel:
+                label: User-Maintainer
           - isAction: 
               action: Closed
-          - not:
-              and:
-                - isActivitySender:
-                    issueAuthor: True
-                - or:
-                    - activitySenderHasPermission:
-                        permission: Write
-                    - activitySenderHasPermission:
-                        permission: Admin
         then:
           - addReply:
               reply: " 📣 Hey @${issueAuthor}, how did we do? We would love to hear your feedback with the link below! 🗣️ \n\n🔗 https://aka.ms/PSRepoFeedback "

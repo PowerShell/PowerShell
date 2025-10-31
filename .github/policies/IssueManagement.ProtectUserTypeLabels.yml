@@ -1,0 +1,49 @@
+id: IssueManagement.ProtectUserTypeLabels
+name: GitOps.PullRequestIssueManagement
+description: Restrict User-Maintainer and User-Community labels to only be applied/removed by users with Write permissions or higher
+owner:
+resource: repository
+disabled: false
+where:
+configuration:
+  resourceManagementConfiguration:
+    eventResponderTasks:
+      - description: Remove User-Maintainer label if added by non-maintainer
+        if:
+          - or:
+              - payloadType: Issues
+              - payloadType: Pull_Request
+          - labelAdded:
+              label: User-Maintainer
+          - not:
+              or:
+                - activitySenderHasPermission:
+                    permission: Write
+                - activitySenderHasPermission:
+                    permission: Admin
+        then:
+          - removeLabel:
+              label: User-Maintainer
+          - addReply:
+              reply: "⚠️ The `User-Maintainer` label can only be applied by users with Write or Admin permissions."
+      
+      - description: Remove User-Community label if added by non-maintainer
+        if:
+          - or:
+              - payloadType: Issues
+              - payloadType: Pull_Request
+          - labelAdded:
+              label: User-Community
+          - not:
+              or:
+                - activitySenderHasPermission:
+                    permission: Write
+                - activitySenderHasPermission:
+                    permission: Admin
+        then:
+          - removeLabel:
+              label: User-Community
+          - addReply:
+              reply: "⚠️ The `User-Community` label can only be applied by users with Write or Admin permissions."
+onFailure:
+onSuccess:
