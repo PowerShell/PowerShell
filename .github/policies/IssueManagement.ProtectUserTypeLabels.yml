@@ -10,9 +10,6 @@ configuration:
     eventResponderTasks:
       - description: Remove User-Maintainer label if added by non-maintainer
         if:
-          - or:
-              - payloadType: Issues
-              - payloadType: Pull_Request
           - labelAdded:
               label: User-Maintainer
           - not:
@@ -29,9 +26,6 @@ configuration:
       
       - description: Remove User-Community label if added by non-maintainer
         if:
-          - or:
-              - payloadType: Issues
-              - payloadType: Pull_Request
           - labelAdded:
               label: User-Community
           - not:

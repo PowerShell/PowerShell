@@ -8,9 +8,8 @@ where:
 configuration:
   resourceManagementConfiguration:
     eventResponderTasks:
-      - description: Label issue as User-Maintainer if author has Write or Admin permissions
+      - description: Label as User-Maintainer if author has Write or Admin permissions
         if:
-          - payloadType: Issues
           - isAction:
               action: Opened
           - or:
@@ -22,38 +21,8 @@ configuration:
           - addLabel:
               label: User-Maintainer
       
-      - description: Label issue as User-Community if author does not have Write or Admin permissions
+      - description: Label as User-Community if author does not have Write or Admin permissions
         if:
-          - payloadType: Issues
-          - isAction:
-              action: Opened
-          - not:
-              or:
-                - activitySenderHasPermission:
-                    permission: Write
-                - activitySenderHasPermission:
-                    permission: Admin
-        then:
-          - addLabel:
-              label: User-Community
-      
-      - description: Label PR as User-Maintainer if author has Write or Admin permissions
-        if:
-          - payloadType: Pull_Request
-          - isAction:
-              action: Opened
-          - or:
-              - activitySenderHasPermission:
-                  permission: Write
-              - activitySenderHasPermission:
-                  permission: Admin
-        then:
-          - addLabel:
-              label: User-Maintainer
-      
-      - description: Label PR as User-Community if author does not have Write or Admin permissions
-        if:
-          - payloadType: Pull_Request
           - isAction:
               action: Opened
           - not:
