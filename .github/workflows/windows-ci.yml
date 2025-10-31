@@ -151,8 +151,7 @@ jobs:
     needs:
       - ci_build
       - changes
-<<<<<<< HEAD
-    if: ${{ needs.changes.outputs.source == 'true' }}
+    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
     runs-on: windows-latest
     steps:
       - name: checkout
@@ -161,13 +160,6 @@ jobs:
           fetch-depth: 1000
       - name: Verify xUnit test results
         uses: "./.github/actions/test/verify_xunit"
-=======
-    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
-    uses: ./.github/workflows/xunit-tests.yml
-    with:
-      runner_os: windows-latest
-      test_results_artifact_name: testResults-xunit
->>>>>>> cdeda2a50 (Add log grouping to build.psm1 for collapsible GitHub Actions logs (#26326))
   analyze:
     name: CodeQL Analysis
     needs: changes
