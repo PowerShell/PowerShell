@@ -30,11 +30,17 @@ Describe "Test-MergeConflictMarker" {
     }
 
     Context "When no files are provided" {
-        It "Should handle empty file array" {
-            # The function parameter has Mandatory validation which rejects empty arrays by design
-            # This test verifies that behavior
+        It "Should handle empty file array gracefully" {
+            # The function now accepts empty arrays to handle cases like delete-only PRs
             $emptyArray = @()
-            { Test-MergeConflictMarker -File $emptyArray -WorkspacePath $script:testWorkspace -OutputPath $script:testOutputPath -SummaryPath $script:testSummaryPath } | Should -Throw -ExpectedMessage "*empty array*"
+            Test-MergeConflictMarker -File $emptyArray -WorkspacePath $script:testWorkspace -OutputPath $script:testOutputPath -SummaryPath $script:testSummaryPath
+            
+            $outputs = Get-Content $script:testOutputPath
+            $outputs | Should -Contain "files-checked=0"
+            $outputs | Should -Contain "conflicts-found=0"
+            
+            $summary = Get-Content $script:testSummaryPath -Raw
+            $summary | Should -Match "No Files to Check"
         }
     }
 
