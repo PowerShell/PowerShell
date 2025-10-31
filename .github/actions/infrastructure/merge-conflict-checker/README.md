@@ -56,8 +56,10 @@ jobs:
 - **File Handling**:
   - Checks only files that were added, modified, or renamed
   - Skips deleted files
+  - **Filters out `*.cs` files** (C# files are excluded from merge conflict checking)
   - Skips binary/unreadable files
   - Skips directories
+- **Empty File List**: Gracefully handles cases where no files need checking (e.g., PRs that only delete files)
 
 ## Example Output
 
