@@ -249,7 +249,8 @@ Please see PowerShell [Testing Guidelines - Running Tests Outside of CI][running
 
 ### Pull Request - Work in Progress
 
-* If your pull request is not ready to merge, please add the prefix `WIP:` to the beginning of the title and remove the prefix when the PR is ready.
+* If your pull request is not ready to merge, please mark it as a [draft pull request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests#draft-pull-requests).
+  Additionally, you can add the prefix `WIP:` to the beginning of the title and remove the prefix when the PR is ready.
 
 #### Pull Request - Automatic Checks
 
@@ -261,6 +262,9 @@ Please see PowerShell [Testing Guidelines - Running Tests Outside of CI][running
 * After submitting your pull request,
   our [CI system (Azure DevOps Pipelines)][ci-system]
   will run a suite of tests and automatically update the status of the pull request.
+* A GitHub Actions workflow automatically verifies that all changed source files include the proper copyright header.
+  If your PR fails the copyright check, add the appropriate copyright header to the beginning of each flagged file
+  (see the copyright header examples above).
 * Our CI contains automated spell checking and link checking for Markdown files. If there is any false-positive,
   [run the spell checker command-line tool in interactive mode](#spell-checking-documentation)
   to add words to the `.spelling` file.
