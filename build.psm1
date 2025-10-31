@@ -2409,12 +2409,8 @@ function Start-PSBootstrap {
             Write-LogGroupEnd -Title "Install Native Dependencies"
         }
 
-<<<<<<< HEAD
         if ($Scenario -eq 'DotNet' -or $Scenario -eq 'Both') {
-=======
-        if ($Scenario -in 'All', 'Both', 'DotNet') {
             Write-LogGroupStart -Title "Install .NET SDK"
->>>>>>> cdeda2a50 (Add log grouping to build.psm1 for collapsible GitHub Actions logs (#26326))
 
             Write-Verbose -Verbose "Calling Find-Dotnet from Start-PSBootstrap"
 
@@ -2474,24 +2470,6 @@ function Start-PSBootstrap {
             Write-LogGroupEnd -Title "Install Windows Dependencies"
         }
 
-<<<<<<< HEAD
-=======
-        if ($Scenario -in 'All', 'Tools') {
-            Write-LogGroupStart -Title "Install .NET Global Tools"
-            Write-Log -message "Installing .NET global tools"
-
-            # Ensure dotnet is available
-            Find-Dotnet
-
-            # Install dotnet-format
-            Write-Verbose -Verbose "Installing dotnet-format global tool"
-            Start-NativeExecution {
-                dotnet tool install --global dotnet-format
-            }
-            Write-LogGroupEnd -Title "Install .NET Global Tools"
-        }
-
->>>>>>> cdeda2a50 (Add log grouping to build.psm1 for collapsible GitHub Actions logs (#26326))
         if ($env:TF_BUILD) {
             Write-LogGroupStart -Title "Capture NuGet Sources"
             Write-Verbose -Verbose "--- Start - Capturing nuget sources"
