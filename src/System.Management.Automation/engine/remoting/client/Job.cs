@@ -1742,7 +1742,7 @@ namespace System.Management.Automation
         /// job object</param>
         /// <param name="name"> a friendly name for the job object
         /// </param>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+        [SuppressMessage("Style", "IDE0051:Remove unused private members")]
         internal PSRemotingJob(string[] computerNames,
                         List<IThrottleOperation> computerNameHelpers, string remoteCommand, string name)
             : this(computerNames, computerNameHelpers, remoteCommand, 0, name)
@@ -2314,7 +2314,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Checks the status of remote command execution.
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+        [SuppressMessage("Style", "IDE0051:Remove unused private members")]
         private void SetStatusMessage()
         {
             _statusMessage = "test";
