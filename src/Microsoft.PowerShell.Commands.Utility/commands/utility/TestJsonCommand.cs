@@ -264,19 +264,11 @@ namespace Microsoft.PowerShell.Commands
 
                 if (_jschema != null)
                 {
-                    EvaluationResults evaluationResults = _jschema.Evaluate(parsedJson, new EvaluationOptions { OutputFormat = OutputFormat.List });
+                    EvaluationResults evaluationResults = _jschema.Evaluate(parsedJson, new EvaluationOptions { OutputFormat = OutputFormat.Hierarchical });
                     result = evaluationResults.IsValid;
                     if (!result)
                     {
                         HandleValidationErrors(evaluationResults);
-
-                        if (evaluationResults.HasDetails)
-                        {
-                            foreach (var nestedResult in evaluationResults.Details)
-                            {
-                                HandleValidationErrors(nestedResult);
-                            }
-                        }
                     }
                 }
             }
@@ -300,16 +292,27 @@ namespace Microsoft.PowerShell.Commands
 
         private void HandleValidationErrors(EvaluationResults evaluationResult)
         {
-            if (!evaluationResult.HasErrors)
+            if (evaluationResult.IsValid)
             {
                 return;
             }
 
-            foreach (var error in evaluationResult.Errors!)
+            if (evaluationResult.HasErrors)
             {
-                Exception exception = new(string.Format(TestJsonCmdletStrings.InvalidJsonAgainstSchemaDetailed, error.Value, evaluationResult.InstanceLocation));
-                ErrorRecord errorRecord = new(exception, "InvalidJsonAgainstSchemaDetailed", ErrorCategory.InvalidData, null);
-                WriteError(errorRecord);
+                foreach (var error in evaluationResult.Errors!)
+                {
+                    Exception exception = new(string.Format(TestJsonCmdletStrings.InvalidJsonAgainstSchemaDetailed, error.Value, evaluationResult.InstanceLocation));
+                    ErrorRecord errorRecord = new(exception, "InvalidJsonAgainstSchemaDetailed", ErrorCategory.InvalidData, null);
+                    WriteError(errorRecord);
+                }
+            }
+
+            if (evaluationResult.HasDetails)
+            {
+                foreach (var nestedResult in evaluationResult.Details)
+                {
+                    HandleValidationErrors(nestedResult);
+                }
             }
         }
     }
