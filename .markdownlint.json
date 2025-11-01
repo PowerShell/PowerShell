@@ -1,18 +1,24 @@
 {
     "default": true,
+    "MD003": true,
     "MD004": false,
     "MD007": {
         "indent": 4
     },
+    "MD012": true,
     "MD013": {
         "line_length": 240
     },
+    "MD022": true,
+    "MD025": true,
     "MD026": {
         "punctuation": ".,;:!"
     },
     "MD029": {
         "style": "one"
     },
+    "MD031": true,
+    "MD032": true,
     "MD033": false,
     "MD034": false,
     "MD038": false,
