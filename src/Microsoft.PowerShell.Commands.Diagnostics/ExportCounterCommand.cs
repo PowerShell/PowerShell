@@ -188,7 +188,7 @@ namespace Microsoft.PowerShell.Commands
             //
             SetOutputFormat();
 
-            if (Circular.IsPresent && _maxSize == 0)
+            if (Circular.IsSpecified && _maxSize == 0)
             {
                 string msg = string.Format(CultureInfo.InvariantCulture, _resourceMgr.GetString("CounterCircularNoMaxSize"));
                 Exception exc = new Exception(msg);
@@ -255,7 +255,7 @@ namespace Microsoft.PowerShell.Commands
                     ReportPdhError(res, true);
                 }
 
-                res = _pdhHelper.OpenLogForWriting(_resolvedPath, _outputFormat, Force.IsPresent, _maxSize * 1024 * 1024, Circular.IsPresent, null);
+                res = _pdhHelper.OpenLogForWriting(_resolvedPath, _outputFormat, Force.IsSpecified, _maxSize * 1024 * 1024, Circular.IsSpecified, null);
                 if (res == PdhResults.PDH_FILE_ALREADY_EXISTS)
                 {
                     string msg = string.Format(CultureInfo.InvariantCulture, _resourceMgr.GetString("CounterFileExists"), _resolvedPath);

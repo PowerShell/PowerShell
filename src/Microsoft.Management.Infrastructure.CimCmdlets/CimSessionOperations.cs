@@ -923,7 +923,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 CimTestCimSessionContext context = new(proxy, wrapper);
                 proxy.ContextObject = context;
                 // Skip test the connection if user intend to
-                if (cmdlet.SkipTestConnection.IsPresent)
+                if (cmdlet.SkipTestConnection.IsSpecified)
                 {
                     AddSessionToCache(proxy.CimSession, context, new CmdletOperationBase(cmdlet));
                 }

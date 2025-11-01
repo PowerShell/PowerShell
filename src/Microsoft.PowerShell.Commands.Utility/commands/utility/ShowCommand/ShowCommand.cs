@@ -369,7 +369,7 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                _commandViewModelObj = _showCommandProxy.GetCommandViewModel(new ShowCommandCommandInfo(commandInfo), _noCommonParameter.ToBool(), _importedModules, this.Name.Contains('\\'));
+                _commandViewModelObj = _showCommandProxy.GetCommandViewModel(new ShowCommandCommandInfo(commandInfo), _noCommonParameter.IsSpecified, _importedModules, this.Name.Contains('\\'));
                 _showCommandProxy.ShowCommandWindow(_commandViewModelObj, _passThrough);
             }
             catch (TargetInvocationException ti)
@@ -394,7 +394,7 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                _showCommandProxy.ShowAllModulesWindow(_importedModules, _commands, _noCommonParameter.ToBool(), _passThrough);
+                _showCommandProxy.ShowAllModulesWindow(_importedModules, _commands, _noCommonParameter.IsSpecified, _passThrough);
             }
             catch (TargetInvocationException ti)
             {

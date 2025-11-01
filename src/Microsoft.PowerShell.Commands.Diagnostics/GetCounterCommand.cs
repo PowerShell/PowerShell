@@ -200,7 +200,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            if (Continuous.IsPresent && _maxSamplesSpecified)
+            if (Continuous.IsSpecified && _maxSamplesSpecified)
             {
                 Exception exc = new(string.Format(CultureInfo.CurrentCulture, _resourceMgr.GetString("CounterContinuousOrMaxSamples")));
                 ThrowTerminatingError(new ErrorRecord(exc, "CounterContinuousOrMaxSamples", ErrorCategory.InvalidArgument, null));
@@ -488,7 +488,7 @@ namespace Microsoft.PowerShell.Commands
             bool bSkip = true;
             uint sampleReads = 0;
 
-            if (Continuous.IsPresent)
+            if (Continuous.IsSpecified)
             {
                 _maxSamples = KEEP_ON_SAMPLING;
             }

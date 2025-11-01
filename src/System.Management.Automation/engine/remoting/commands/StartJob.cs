@@ -588,7 +588,7 @@ namespace Microsoft.PowerShell.Commands
                 ThrowTerminatingError(errorRecord);
             }
 
-            if (RunAs32.IsPresent && Environment.Is64BitProcess)
+            if (RunAs32.IsSpecified && Environment.Is64BitProcess)
             {
                 // We cannot start a 32-bit 'pwsh' process from a 64-bit 'pwsh' installation.
                 string message = RemotingErrorIdStrings.RunAs32NotSupported;

@@ -397,7 +397,7 @@ namespace Microsoft.PowerShell.Commands
                 _commandScores = new List<CommandScore>();
             }
 
-            if (ShowCommandInfo.IsPresent && Syntax.IsPresent)
+            if (ShowCommandInfo.IsSpecified && Syntax.IsSpecified)
             {
                 ThrowTerminatingError(
                     new ErrorRecord(
@@ -559,7 +559,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        if (ShowCommandInfo.IsPresent)
+                        if (ShowCommandInfo.IsSpecified)
                         {
                             // Write output as ShowCommandCommandInfo object.
                             WriteObject(
@@ -1336,7 +1336,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (isCommandMatch)
                 {
-                    if (Syntax.IsPresent && current is AliasInfo ai)
+                    if (Syntax.IsSpecified && current is AliasInfo ai)
                     {
                         // If the matching command was an alias, then use the resolved command
                         // instead of the alias...

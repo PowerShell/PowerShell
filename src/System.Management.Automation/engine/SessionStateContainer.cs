@@ -1335,7 +1335,7 @@ namespace System.Management.Automation
 
                         if (context.DynamicParameters is Microsoft.PowerShell.Commands.GetChildDynamicParameters dynParam)
                         {
-                            isFileOrDirectoryPresent = dynParam.File.IsPresent || dynParam.Directory.IsPresent;
+                            isFileOrDirectoryPresent = dynParam.File.IsSpecified || dynParam.Directory.IsSpecified;
                         }
 
                         if (string.Equals(childName, "*", StringComparison.OrdinalIgnoreCase) && isFileOrDirectoryPresent)

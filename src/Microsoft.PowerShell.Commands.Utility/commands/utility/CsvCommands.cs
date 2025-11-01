@@ -307,7 +307,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // write headers (row1: typename + row2: column names)
-                if (!_isActuallyAppending && !NoHeader.IsPresent)
+                if (!_isActuallyAppending && !NoHeader.IsSpecified)
                 {
                     if (NoTypeInformation == false)
                     {
@@ -732,7 +732,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 _propertyNames = ExportCsvHelper.BuildPropertyNames(InputObject, _propertyNames);
 
-                if (!NoHeader.IsPresent)
+                if (!NoHeader.IsSpecified)
                 {
                     if (NoTypeInformation == false)
                     {

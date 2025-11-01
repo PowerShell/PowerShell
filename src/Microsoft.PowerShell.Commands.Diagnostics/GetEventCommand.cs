@@ -525,7 +525,7 @@ namespace Microsoft.PowerShell.Commands
                                 //
                                 // Skip direct channels matching the wildcard unless -Force is present.
                                 //
-                                if (!Force.IsPresent &&
+                                if (!Force.IsSpecified &&
                                     WildcardPattern.ContainsWildcardCharacters(logPattern) &&
                                         (logObj.LogType == EventLogType.Debug ||
                                         logObj.LogType == EventLogType.Analytical))
@@ -624,7 +624,7 @@ namespace Microsoft.PowerShell.Commands
         {
             using (EventLogSession eventLogSession = CreateSession())
             {
-                if (!Oldest.IsPresent)
+                if (!Oldest.IsSpecified)
                 {
                     //
                     // Do minimal parsing of xmlQuery to determine if any direct channels or ETL files are in it.
@@ -1544,7 +1544,7 @@ namespace Microsoft.PowerShell.Commands
         //
         private void TerminateForNonEvtxFileWithoutOldest(string fileName)
         {
-            if (!Oldest.IsPresent)
+            if (!Oldest.IsSpecified)
             {
                 if (System.IO.Path.GetExtension(fileName).Equals(".etl", StringComparison.OrdinalIgnoreCase) ||
                     System.IO.Path.GetExtension(fileName).Equals(".evt", StringComparison.OrdinalIgnoreCase))
@@ -1584,7 +1584,7 @@ namespace Microsoft.PowerShell.Commands
                 return false;
             }
 
-            if (!Oldest.IsPresent)
+            if (!Oldest.IsSpecified)
             {
                 if (logObj.LogType == EventLogType.Debug || logObj.LogType == EventLogType.Analytical)
                 {
@@ -1896,7 +1896,7 @@ namespace Microsoft.PowerShell.Commands
                         EventLogConfiguration logObj = new(logLink.LogName, eventLogSession);
                         if (logObj.LogType == EventLogType.Debug || logObj.LogType == EventLogType.Analytical)
                         {
-                            if (!Force.IsPresent)
+                            if (!Force.IsSpecified)
                             {
                                 continue;
                             }
@@ -1988,7 +1988,7 @@ namespace Microsoft.PowerShell.Commands
 
                         if (logObj.LogType == EventLogType.Debug || logObj.LogType == EventLogType.Analytical)
                         {
-                            if (WildcardPattern.ContainsWildcardCharacters(logPattern) && !Force.IsPresent)
+                            if (WildcardPattern.ContainsWildcardCharacters(logPattern) && !Force.IsSpecified)
                             {
                                 continue;
                             }

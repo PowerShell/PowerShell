@@ -838,7 +838,7 @@ namespace Microsoft.PowerShell.Commands
             _state = WmiState.Running;
             RaiseWmiOperationState(null, WmiState.Running);
             ConnectionOptions options = getObject.GetConnectionOption();
-            if (getObject.List.IsPresent)
+            if (getObject.List.IsSpecified)
             {
                 if (!getObject.ValidateClassFormat())
                 {
@@ -855,7 +855,7 @@ namespace Microsoft.PowerShell.Commands
 
                 try
                 {
-                    if (getObject.Recurse.IsPresent)
+                    if (getObject.Recurse.IsSpecified)
                     {
                         ArrayList namespaceArray = new ArrayList();
                         ArrayList sinkArray = new ArrayList();

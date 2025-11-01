@@ -550,7 +550,7 @@ namespace Microsoft.PowerShell.Commands
         {
             foreach (Process process in MatchingProcesses())
             {
-                if (Module.IsPresent && FileVersionInfo.IsPresent)
+                if (Module.IsSpecified && FileVersionInfo.IsSpecified)
                 {
                     ProcessModule tempmodule = null;
                     try
@@ -594,7 +594,7 @@ namespace Microsoft.PowerShell.Commands
                         WriteNonTerminatingError(process, exception, ProcessResources.CouldNotEnumerateModuleFileVer, "CouldNotEnumerateModuleFileVer", ErrorCategory.PermissionDenied);
                     }
                 }
-                else if (Module.IsPresent)
+                else if (Module.IsSpecified)
                 {
                     try
                     {
@@ -627,7 +627,7 @@ namespace Microsoft.PowerShell.Commands
                         WriteNonTerminatingError(process, exception, ProcessResources.CouldNotEnumerateModules, "CouldNotEnumerateModules", ErrorCategory.PermissionDenied);
                     }
                 }
-                else if (FileVersionInfo.IsPresent)
+                else if (FileVersionInfo.IsSpecified)
                 {
                     try
                     {
@@ -670,7 +670,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    WriteObject(IncludeUserName.IsPresent ? AddUserNameToProcess(process) : process);
+                    WriteObject(IncludeUserName.IsSpecified ? AddUserNameToProcess(process) : process);
                 }
             }
         }
@@ -2131,7 +2131,7 @@ namespace Microsoft.PowerShell.Commands
 #endif
             }
 
-            if (PassThru.IsPresent)
+            if (PassThru.IsSpecified)
             {
                 if (process != null)
                 {
@@ -2145,7 +2145,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (Wait.IsPresent)
+            if (Wait.IsSpecified)
             {
                 if (process != null)
                 {

@@ -310,7 +310,7 @@ namespace Microsoft.PowerShell.Commands
                     baseId = id;
 
                     // get id,count,newest values
-                    if (!newest.IsPresent)
+                    if (!newest.IsSpecified)
                     {
                         // get older entries
 
@@ -390,7 +390,7 @@ namespace Microsoft.PowerShell.Commands
                     // eg if size is 5 and then the entries can be 7,6,1,2,3
                     if (_capacity != DefaultHistorySize)
                         SmallestID = SmallestIDinBuffer();
-                    if (!newest.IsPresent)
+                    if (!newest.IsSpecified)
                     {
                         // get oldest count entries
                         index = 1;
@@ -485,7 +485,7 @@ namespace Microsoft.PowerShell.Commands
                     SmallestID = SmallestIDinBuffer();
                 if (count != 0)
                 {
-                    if (!newest.IsPresent)
+                    if (!newest.IsSpecified)
                     {
                         long id = 1;
                         if (_capacity != DefaultHistorySize)
