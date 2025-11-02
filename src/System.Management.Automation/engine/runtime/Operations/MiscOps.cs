@@ -3217,17 +3217,18 @@ namespace System.Management.Automation
                 return null;
             }
 
-            for (int i = 0; i < result.Count; i++)
+            var flattened = new List<object>();
+            foreach (var o in result)
             {
-                FlattenResults(result[i], result);
+                FlattenResults(o, flattened);
             }
 
-            if (result.Count == 1)
+            if (flattened.Count == 1)
             {
-                return result[0];
+                return flattened[0];
             }
 
-            return result.ToArray();
+            return flattened.ToArray();
         }
 
         private static void MethodInvokerWorker(CallSite invokeMemberSite,
