@@ -3218,9 +3218,9 @@ namespace System.Management.Automation
             }
 
             var flattened = new List<object>();
-            foreach (var o in result)
+            foreach (object obj in result)
             {
-                FlattenResults(o, flattened);
+                FlattenResults(obj, flattened);
             }
 
             if (flattened.Count == 1)
