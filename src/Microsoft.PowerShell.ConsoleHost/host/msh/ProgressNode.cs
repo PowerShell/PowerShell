@@ -392,8 +392,8 @@ namespace Microsoft.PowerShell
 
             // if the activity is really long, only use up to half the width
             string activity;
-            int activityDisplayWidth = rawUI.LengthInBufferCells(Activity);
-            if (activityDisplayWidth > maxWidth / 2)
+            int activityDisplayCellsWidth = rawUI.LengthInBufferCells(Activity);
+            if (activityDisplayCellsWidth > maxWidth / 2)
             {
                 activity = StringUtil.TruncateToBufferCellWidth(rawUI, Activity, (maxWidth / 2) - 1) + PSObjectHelper.Ellipsis;
             }
@@ -402,10 +402,10 @@ namespace Microsoft.PowerShell
                 activity = Activity;
             }
 
-            activityDisplayWidth = rawUI.LengthInBufferCells(activity);
+            activityDisplayCellsWidth = rawUI.LengthInBufferCells(activity);
 
             // 4 is for the extra space and square brackets below and one extra space
-            int barWidth = maxWidth - activityDisplayWidth - indentation - 4;
+            int barWidth = maxWidth - activityDisplayCellsWidth - indentation - 4;
 
             var sb = new StringBuilder();
             sb.Append(PSStyle.Instance.Reverse);
@@ -441,7 +441,7 @@ namespace Microsoft.PowerShell
             int emptyPadLength = barWidth - statusPartDisplayWidth - secRemainLength;
             if (emptyPadLength > 0)
             {
-                sb.Append(string.Empty.PadRight(emptyPadLength));
+                sb.Append(' ', emptyPadLength);
             }
 
             sb.Append(secRemain);

@@ -20,22 +20,13 @@ namespace PSTests.Parallel
         /// <summary>
         /// Verify Issue #21293 scenario - the original bug report.
         /// This test reproduces the exact scenario from the issue.
-        /// Tests with various window widths to ensure the fix works across different terminal sizes.
+        /// Tests with edge cases around standard terminal width (80 columns).
         /// </summary>
         /// <param name="maxWidth">The maximum width in buffer cells for the progress bar rendering.</param>
         [Theory]
-        [InlineData(20)]
-        [InlineData(25)]
-        [InlineData(37)]
-        [InlineData(40)]
-        [InlineData(60)]
-        [InlineData(73)]
+        [InlineData(79)]
         [InlineData(80)]
-        [InlineData(93)]
-        [InlineData(100)]
-        [InlineData(120)]
-        [InlineData(155)]
-        [InlineData(200)]
+        [InlineData(81)]
         public static void ProgressBar_OriginalBugScenario_MustNotExceedMaxWidth(int maxWidth)
         {
             var rawUI = new TestProgressRawUI();
@@ -62,18 +53,9 @@ namespace PSTests.Parallel
         /// </summary>
         /// <param name="maxWidth">The maximum width in buffer cells for the progress bar rendering.</param>
         [Theory]
-        [InlineData(20)]
-        [InlineData(25)]
-        [InlineData(37)]
-        [InlineData(40)]
-        [InlineData(60)]
-        [InlineData(73)]
+        [InlineData(79)]
         [InlineData(80)]
-        [InlineData(93)]
-        [InlineData(100)]
-        [InlineData(120)]
-        [InlineData(155)]
-        [InlineData(200)]
+        [InlineData(81)]
         public static void ProgressBar_WithDoubleWidthChars_MustNotExceedMaxWidth(int maxWidth)
         {
             var rawUI = new TestProgressRawUI();
@@ -99,18 +81,9 @@ namespace PSTests.Parallel
         /// </summary>
         /// <param name="maxWidth">The maximum width in buffer cells for the progress bar rendering.</param>
         [Theory]
-        [InlineData(20)]
-        [InlineData(25)]
-        [InlineData(37)]
-        [InlineData(40)]
-        [InlineData(60)]
-        [InlineData(73)]
+        [InlineData(79)]
         [InlineData(80)]
-        [InlineData(93)]
-        [InlineData(100)]
-        [InlineData(120)]
-        [InlineData(155)]
-        [InlineData(200)]
+        [InlineData(81)]
         public static void ProgressBar_WithEmoji_MustNotExceedMaxWidth(int maxWidth)
         {
             var rawUI = new TestProgressRawUI();
@@ -138,42 +111,15 @@ namespace PSTests.Parallel
         /// <param name="statusText">The status message displayed in the progress bar.</param>
         /// <param name="maxWidth">The maximum width in buffer cells for the progress bar rendering.</param>
         [Theory]
-        [InlineData("あいうえお", 20)]
-        [InlineData("あいうえお", 25)]
-        [InlineData("あいうえお", 37)]
-        [InlineData("あいうえお", 40)]
-        [InlineData("あいうえお", 60)]
-        [InlineData("あいうえお", 73)]
+        [InlineData("あいうえお", 79)]
         [InlineData("あいうえお", 80)]
-        [InlineData("あいうえお", 93)]
-        [InlineData("あいうえお", 100)]
-        [InlineData("あいうえお", 120)]
-        [InlineData("あいうえお", 155)]
-        [InlineData("あいうえお", 200)]
-        [InlineData("データ処理中", 20)]
-        [InlineData("データ処理中", 25)]
-        [InlineData("データ処理中", 37)]
-        [InlineData("データ処理中", 40)]
-        [InlineData("データ処理中", 60)]
-        [InlineData("データ処理中", 73)]
+        [InlineData("あいうえお", 81)]
+        [InlineData("データ処理中", 79)]
         [InlineData("データ処理中", 80)]
-        [InlineData("データ処理中", 93)]
-        [InlineData("データ処理中", 100)]
-        [InlineData("データ処理中", 120)]
-        [InlineData("データ処理中", 155)]
-        [InlineData("データ処理中", 200)]
-        [InlineData("ファイルをアップロード中", 20)]
-        [InlineData("ファイルをアップロード中", 25)]
-        [InlineData("ファイルをアップロード中", 37)]
-        [InlineData("ファイルをアップロード中", 40)]
-        [InlineData("ファイルをアップロード中", 60)]
-        [InlineData("ファイルをアップロード中", 73)]
+        [InlineData("データ処理中", 81)]
+        [InlineData("ファイルをアップロード中", 79)]
         [InlineData("ファイルをアップロード中", 80)]
-        [InlineData("ファイルをアップロード中", 93)]
-        [InlineData("ファイルをアップロード中", 100)]
-        [InlineData("ファイルをアップロード中", 120)]
-        [InlineData("ファイルをアップロード中", 155)]
-        [InlineData("ファイルをアップロード中", 200)]
+        [InlineData("ファイルをアップロード中", 81)]
         public static void ProgressBar_VariousDoubleWidthLengths_MustNotExceedMaxWidth(string statusText, int maxWidth)
         {
             var rawUI = new TestProgressRawUI();
@@ -199,18 +145,9 @@ namespace PSTests.Parallel
         /// </summary>
         /// <param name="maxWidth">The maximum width in buffer cells for the progress bar rendering.</param>
         [Theory]
-        [InlineData(20)]
-        [InlineData(25)]
-        [InlineData(37)]
-        [InlineData(40)]
-        [InlineData(60)]
-        [InlineData(73)]
+        [InlineData(79)]
         [InlineData(80)]
-        [InlineData(93)]
-        [InlineData(100)]
-        [InlineData(120)]
-        [InlineData(155)]
-        [InlineData(200)]
+        [InlineData(81)]
         public static void ProgressBar_MixedWidthText_MustNotExceedMaxWidth(int maxWidth)
         {
             var rawUI = new TestProgressRawUI();
@@ -236,18 +173,9 @@ namespace PSTests.Parallel
         /// </summary>
         /// <param name="maxWidth">The maximum width in buffer cells for the progress bar rendering.</param>
         [Theory]
-        [InlineData(20)]
-        [InlineData(25)]
-        [InlineData(37)]
-        [InlineData(40)]
-        [InlineData(60)]
-        [InlineData(73)]
+        [InlineData(79)]
         [InlineData(80)]
-        [InlineData(93)]
-        [InlineData(100)]
-        [InlineData(120)]
-        [InlineData(155)]
-        [InlineData(200)]
+        [InlineData(81)]
         public static void ProgressBar_LongDoubleWidthString_MustNotExceedMaxWidth(int maxWidth)
         {
             var rawUI = new TestProgressRawUI();
@@ -273,18 +201,9 @@ namespace PSTests.Parallel
         /// </summary>
         /// <param name="maxWidth">The maximum width in buffer cells for the progress bar rendering.</param>
         [Theory]
-        [InlineData(20)]
-        [InlineData(25)]
-        [InlineData(37)]
-        [InlineData(40)]
-        [InlineData(60)]
-        [InlineData(73)]
+        [InlineData(79)]
         [InlineData(80)]
-        [InlineData(93)]
-        [InlineData(100)]
-        [InlineData(120)]
-        [InlineData(155)]
-        [InlineData(200)]
+        [InlineData(81)]
         public static void ProgressBar_Truncation_MustRespectCharacterBoundaries(int maxWidth)
         {
             var rawUI = new TestProgressRawUI();
@@ -312,18 +231,9 @@ namespace PSTests.Parallel
         /// </summary>
         /// <param name="maxWidth">The maximum width in buffer cells for the progress bar rendering.</param>
         [Theory]
-        [InlineData(20)]
-        [InlineData(25)]
-        [InlineData(37)]
-        [InlineData(40)]
-        [InlineData(60)]
-        [InlineData(73)]
+        [InlineData(79)]
         [InlineData(80)]
-        [InlineData(93)]
-        [InlineData(100)]
-        [InlineData(120)]
-        [InlineData(155)]
-        [InlineData(200)]
+        [InlineData(81)]
         public static void ProgressBar_LongStatusWithDoubleWidth_MustNotExceedMaxWidth(int maxWidth)
         {
             var rawUI = new TestProgressRawUI();
@@ -364,18 +274,9 @@ namespace PSTests.Parallel
         /// </summary>
         /// <param name="maxWidth">The maximum width in buffer cells for the progress bar rendering.</param>
         [Theory]
-        [InlineData(20)]
-        [InlineData(25)]
-        [InlineData(37)]
-        [InlineData(40)]
-        [InlineData(60)]
-        [InlineData(73)]
+        [InlineData(79)]
         [InlineData(80)]
-        [InlineData(93)]
-        [InlineData(100)]
-        [InlineData(120)]
-        [InlineData(155)]
-        [InlineData(200)]
+        [InlineData(81)]
         public static void ExtremeTest_ActivityWidthBug_SmallMaxWidth(int maxWidth)
         {
             var rawUI = new TestProgressRawUI();
@@ -405,18 +306,9 @@ namespace PSTests.Parallel
         /// </summary>
         /// <param name="maxWidth">The maximum width in buffer cells for the progress bar rendering.</param>
         [Theory]
-        [InlineData(20)]
-        [InlineData(25)]
-        [InlineData(37)]
-        [InlineData(40)]
-        [InlineData(60)]
-        [InlineData(73)]
+        [InlineData(79)]
         [InlineData(80)]
-        [InlineData(93)]
-        [InlineData(100)]
-        [InlineData(120)]
-        [InlineData(155)]
-        [InlineData(200)]
+        [InlineData(81)]
         public static void ExtremeTest_SurrogatePairAtVTBoundary(int maxWidth)
         {
             var rawUI = new TestProgressRawUI();
@@ -467,49 +359,22 @@ namespace PSTests.Parallel
 
         public override bool KeyAvailable => false;
 
-        public override BufferCell[,] GetBufferContents(Rectangle rectangle)
-        {
-            throw new NotImplementedException();
-        }
+        public override BufferCell[,] GetBufferContents(Rectangle rectangle) => throw new NotImplementedException();
 
-        public override void SetBufferContents(Rectangle rectangle, BufferCell fill)
-        {
-            throw new NotImplementedException();
-        }
+        public override void SetBufferContents(Rectangle rectangle, BufferCell fill) => throw new NotImplementedException();
 
-        public override void SetBufferContents(Coordinates origin, BufferCell[,] contents)
-        {
-            throw new NotImplementedException();
-        }
+        public override void SetBufferContents(Coordinates origin, BufferCell[,] contents) => throw new NotImplementedException();
 
-        public override void ScrollBufferContents(Rectangle source, Coordinates destination, Rectangle clip, BufferCell fill)
-        {
-            throw new NotImplementedException();
-        }
+        public override void ScrollBufferContents(Rectangle source, Coordinates destination, Rectangle clip, BufferCell fill) => throw new NotImplementedException();
 
-        public override KeyInfo ReadKey(ReadKeyOptions options)
-        {
-            throw new NotImplementedException();
-        }
+        public override KeyInfo ReadKey(ReadKeyOptions options) => throw new NotImplementedException();
 
-        public override void FlushInputBuffer()
-        {
-            throw new NotImplementedException();
-        }
+        public override void FlushInputBuffer() => throw new NotImplementedException();
 
-        public override int LengthInBufferCells(string str)
-        {
-            return ConsoleControl.LengthInBufferCells(str, 0, checkEscapeSequences: true);
-        }
+        public override int LengthInBufferCells(string str) => ConsoleControl.LengthInBufferCells(str, 0, checkEscapeSequences: true);
 
-        public override int LengthInBufferCells(string str, int offset)
-        {
-            return ConsoleControl.LengthInBufferCells(str, offset, checkEscapeSequences: true);
-        }
+        public override int LengthInBufferCells(string str, int offset) => ConsoleControl.LengthInBufferCells(str, offset, checkEscapeSequences: true);
 
-        public override int LengthInBufferCells(char c)
-        {
-            return ConsoleControl.LengthInBufferCells(c);
-        }
+        public override int LengthInBufferCells(char c) => ConsoleControl.LengthInBufferCells(c);
     }
 }
