@@ -3184,7 +3184,7 @@ namespace System.Management.Automation
                 var o = getMemberBinderSite.Target.Invoke(getMemberBinderSite, current);
                 if (o != AutomationNull.Value)
                 {
-                    FlattenResults(o, result);
+                    result.Add(o);
                 }
                 else
                 {
@@ -3206,11 +3206,6 @@ namespace System.Management.Automation
 
             PropertyGetterWorker(getMemberBinderSite, enumerator, context, result);
 
-            if (result.Count == 1)
-            {
-                return result[0];
-            }
-
             if (result.Count == 0)
             {
                 if (context.IsStrictVersion(2))
@@ -3220,6 +3215,16 @@ namespace System.Management.Automation
                 }
 
                 return null;
+            }
+
+            foreach (var o in result)
+            {
+                FlattenResults(o, result);
+            }
+
+            if (result.Count == 1)
+            {
+                return result[0];
             }
 
             return result.ToArray();
@@ -3645,7 +3650,8 @@ namespace System.Management.Automation
     internal static class MemberInvocationLoggingOps
     {
         private static readonly Lazy<bool> DumpLogAMSIContent = new Lazy<bool>(
-            () => {
+            () =>
+            {
                 object result = Environment.GetEnvironmentVariable("__PSDumpAMSILogContent");
                 if (result != null && LanguagePrimitives.TryConvertTo(result, out int value))
                 {
