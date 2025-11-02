@@ -105,16 +105,6 @@ runs:
           const globalConfigChanged = files.some(file => file === '.globalconfig' || file === 'nuget.config' || file === 'global.json');
           console.log(`✓ Global config changed: ${globalConfigChanged}`);
 
-<<<<<<< HEAD
-          const packagingChanged = files.some(file => 
-            file.filename === '.github/workflows/windows-ci.yml' ||
-            file.filename.startsWith('assets/wix/') ||
-            file.filename === 'PowerShell.Common.props' ||
-            file.filename.match(/^src\/.*\.csproj$/) ||
-            file.filename.startsWith('test/packaging/windows/') ||
-            file.filename.startsWith('tools/packaging/') ||
-            file.filename.startsWith('tools/wix/')
-=======
           const packagingChanged = files.some(file =>
             file === '.github/workflows/windows-ci.yml' ||
             file === '.github/workflows/linux-ci.yml' ||
@@ -125,7 +115,6 @@ runs:
             file.startsWith('test/packaging/linux/') ||
             file.startsWith('tools/packaging/') ||
             file.startsWith('tools/wix/')
->>>>>>> a93688463 (Add reusable get-changed-files action and refactor existing actions (#26355))
           ) ||
             buildModuleChanged ||
             globalConfigChanged ||
@@ -146,18 +135,3 @@ runs:
           core.setOutput('globalConfigChanged', globalConfigChanged);
           core.setOutput('packagingChanged', packagingChanged);
           core.setOutput('source', source);
-<<<<<<< HEAD
-
-    - name: Capture outputs
-      run: |
-        Write-Verbose -Verbose "source: ${{ steps.filter.outputs.source }}"
-        Write-Verbose -Verbose "github: ${{ steps.filter.outputs.githubChanged }}"
-        Write-Verbose -Verbose "tools: ${{ steps.filter.outputs.toolsChanged }}"
-        Write-Verbose -Verbose "props: ${{ steps.filter.outputs.propsChanged }}"
-        Write-Verbose -Verbose "tests: ${{ steps.filter.outputs.testsChanged }}"
-        Write-Verbose -Verbose "mainSource: ${{ steps.filter.outputs.mainSourceChanged }}"
-        Write-Verbose -Verbose "buildModule: ${{ steps.filter.outputs.buildModuleChanged }}"
-        Write-Verbose -Verbose "packaging: ${{ steps.filter.outputs.packagingChanged }}"
-      shell: pwsh
-=======
->>>>>>> a93688463 (Add reusable get-changed-files action and refactor existing actions (#26355))
