@@ -3651,8 +3651,7 @@ namespace System.Management.Automation
     internal static class MemberInvocationLoggingOps
     {
         private static readonly Lazy<bool> DumpLogAMSIContent = new Lazy<bool>(
-            () =>
-            {
+            () => {
                 object result = Environment.GetEnvironmentVariable("__PSDumpAMSILogContent");
                 if (result != null && LanguagePrimitives.TryConvertTo(result, out int value))
                 {
