@@ -184,8 +184,6 @@ jobs:
       security-events: write
     with:
       runner_os: ubuntu-latest
-<<<<<<< HEAD
-=======
       test_results_artifact_name: testResults-xunit
 
   infrastructure_tests:
@@ -242,7 +240,6 @@ jobs:
   #     security-events: write
   #   with:
   #     runner_os: ubuntu-latest
->>>>>>> 0c40a84ab (Add merge conflict marker detection to linux-ci workflow and refactor existing actions to use reusable get-changed-files action (#26350))
 
   ready_to_merge:
     name: Linux ready to merge
@@ -254,12 +251,8 @@ jobs:
       - linux_test_unelevated_others
       - analyze
       - linux_packaging
-<<<<<<< HEAD
-=======
       - merge_conflict_check
       - infrastructure_tests
-      # - analyze
->>>>>>> 0c40a84ab (Add merge conflict marker detection to linux-ci workflow and refactor existing actions to use reusable get-changed-files action (#26350))
     if: always()
     uses: PowerShell/compliance/.github/workflows/ready-to-merge.yml@v1.0.0
     with:
