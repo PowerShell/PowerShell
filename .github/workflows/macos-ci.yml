@@ -171,8 +171,6 @@ jobs:
         import-module ./build.psm1
         start-psbootstrap -Scenario package
       shell: pwsh
-<<<<<<< HEAD
-=======
     - name: Build PowerShell and Create macOS package
       if: success()
       run: |-
@@ -227,7 +225,6 @@ jobs:
       with:
         name: macos-package
         path: "*.pkg"
->>>>>>> 0c40a84ab (Add merge conflict marker detection to linux-ci workflow and refactor existing actions to use reusable get-changed-files action (#26350))
   ready_to_merge:
     name: macos ready to merge
     needs:
