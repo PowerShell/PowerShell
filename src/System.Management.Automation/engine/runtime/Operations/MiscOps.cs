@@ -3217,9 +3217,9 @@ namespace System.Management.Automation
                 return null;
             }
 
-            foreach (var o in result)
+            for (int i = 0; i < result.Count; i++)
             {
-                FlattenResults(o, result);
+                FlattenResults(result[i], result);
             }
 
             if (result.Count == 1)
