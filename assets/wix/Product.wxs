@@ -49,6 +49,7 @@
       <?define ProductRegistration = "PowerShell.Core.LTS.x86"?>
     <?else?>
       <?define ProductRegistration = "PowerShell.Core.x86"?>
+      <?define UpgradeCode = $(var.UpgradeCodeRelease)?>
     <?endif?>
   <?endif?>
   <!-- Explorer context submenu entries. The ampersand denotes the keyboard shortcut. -->
