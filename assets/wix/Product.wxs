@@ -37,6 +37,7 @@
       <?define UpgradeCode = $(var.UpgradeCodeRelease)?>
     <?else?>
       <?define ProductRegistration = "PowerShell.Core.arm64"?>
+      <?define UpgradeCode = $(var.UpgradeCodeRelease)?>
     <?endif?>
   <?else?><!-- x86 -->
     <?define ExplorerContextMenuDialogText = "&$(var.ProductName) $(var.SimpleProductVersion) ($(sys.BUILDARCH))"?>
