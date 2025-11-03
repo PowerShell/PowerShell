@@ -407,7 +407,7 @@
               </RegistryKey>
 
               <RegistryKey Root="HKLM" Key="SOFTWARE\Microsoft\Windows NT\CurrentVersion\Update\TargetingInfo\PersistentDynamicInstalled" ForceCreateOnInstall="yes">
-                  <RegistryValue Type="string" Value="$(var.ProductVersion)" Name="$(var.ProductRegistration)" KeyPath="yes"/>
+                  <RegistryValue Type="string" Value="$(var.ProductVersion)" Name="$(var.ProductRegistration)"/>
               </RegistryKey>
 
             </Component>
