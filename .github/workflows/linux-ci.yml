@@ -186,7 +186,6 @@ jobs:
       security-events: write
     with:
       runner_os: ubuntu-latest
-      test_results_artifact_name: testResults-xunit
 
   infrastructure_tests:
     name: Infrastructure Tests
