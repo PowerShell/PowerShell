@@ -3870,6 +3870,7 @@ function New-MSIPackage
     Write-Log "Generating wxs file manifest..."
     $arguments = @{
         IsPreview              = $isPreview
+        IsLTS                  = $LTS
         ProductSourcePath      = $staging
         ProductName            = $ProductName
         ProductVersion         = $ProductVersion
