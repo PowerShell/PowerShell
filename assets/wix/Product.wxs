@@ -20,6 +20,7 @@
       <?define UpgradeCode = $(var.UpgradeCodePreview)?>
     <?elseif $(var.IsLTS)=True?>
       <?define ProductRegistration = "PowerShell.Core.LTS.x64"?>
+      <?define UpgradeCode = $(var.UpgradeCodeRelease)?>
     <?else?>
       <?define ProductRegistration = "PowerShell.Core.x64"?>
       <?define UpgradeCode = $(var.UpgradeCodeRelease)?>
