@@ -3830,11 +3830,6 @@ function New-MSIPackage
         $simpleProductVersion += '-preview'
     }
 
-    if ($LTS.IsPresent)
-    {
-        $simpleProductVersion += '-lts'
-    }
-
     $staging = "$PSScriptRoot/staging"
     New-StagingFolder -StagingPath $staging -PackageSourcePath $ProductSourcePath
 
