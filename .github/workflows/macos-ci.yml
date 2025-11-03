@@ -166,6 +166,8 @@ jobs:
     steps:
     - name: checkout
       uses: actions/checkout@v4.1.0
+      with:
+        fetch-depth: 1000
     - name: Bootstrap packaging
       if: success() || failure()
       run: |-
