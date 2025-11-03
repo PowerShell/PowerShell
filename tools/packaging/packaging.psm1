@@ -1262,13 +1262,6 @@ function New-UnixPackage {
                 try {
                     $Output = Start-NativeExecution { fpm $Arguments }
                 }
-<<<<<<< HEAD
-                catch {
-                    Write-Verbose -Message "!!!Handling error in FPM!!!" -Verbose -ErrorAction SilentlyContinue
-                    Write-Verbose -Message "$Output" -Verbose -ErrorAction SilentlyContinue
-                    Get-Error -InputObject $_
-                    throw
-=======
             } elseif ($Type -eq 'osxpkg') {
                 # Use native macOS packaging tools
                 if ($PSCmdlet.ShouldProcess("Create macOS package with pkgbuild/productbuild")) {
@@ -1333,7 +1326,6 @@ function New-UnixPackage {
                         Get-Error -InputObject $_
                         throw
                     }
->>>>>>> 47e8e900a (Replace fpm with native macOS packaging tools (pkgbuild/productbuild) (#26268))
                 }
             }
         } finally {
@@ -1515,8 +1507,6 @@ Class LinkInfo
     [string] $Destination
 }
 
-<<<<<<< HEAD
-=======
 function New-RpmSpec
 {
     param(
@@ -1827,7 +1817,6 @@ function New-MacOSPackage
     }
 }
 
->>>>>>> 47e8e900a (Replace fpm with native macOS packaging tools (pkgbuild/productbuild) (#26268))
 function Get-FpmArguments
 {
     param(
@@ -2040,9 +2029,6 @@ function Get-PackageDependencies
 
 function Test-Dependencies
 {
-<<<<<<< HEAD
-    foreach ($Dependency in "fpm") {
-=======
     # Note: RPM packages no longer require fpm; they use rpmbuild directly
     # macOS packages use pkgbuild and productbuild from Xcode Command Line Tools
     # DEB packages still use fpm
@@ -2060,7 +2046,6 @@ function Test-Dependencies
     }
     
     foreach ($Dependency in $Dependencies) {
->>>>>>> 47e8e900a (Replace fpm with native macOS packaging tools (pkgbuild/productbuild) (#26268))
         if (!(precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Scenario Package")) {
             # For Debian systems, try adding ruby gems to the path
             if ($Environment.IsDebianFamily) {
