@@ -164,16 +164,12 @@ jobs:
       - macos-latest
     steps:
     - name: checkout
-<<<<<<< HEAD
-      uses: actions/checkout@v4.1.0
-=======
       uses: actions/checkout@v5
       with:
         fetch-depth: 1000
     - uses: actions/setup-dotnet@v4
       with:
         global-json-file: ./global.json
->>>>>>> 47e8e900a (Replace fpm with native macOS packaging tools (pkgbuild/productbuild) (#26268))
     - name: Bootstrap packaging
       if: success()
       run: |-
