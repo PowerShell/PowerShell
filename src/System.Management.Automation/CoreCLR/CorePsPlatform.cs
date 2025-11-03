@@ -167,8 +167,13 @@ namespace System.Management.Automation
         internal static readonly string ConfigDirectory = Platform.SelectProductNameForDirectory(Platform.XDG_Type.CONFIG);
 #else
         // Gets the location for cache and config folders.
-        internal static readonly string CacheDirectory = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Microsoft\PowerShell";
-        internal static readonly string ConfigDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + @"\PowerShell";
+        internal static readonly string CacheDirectory = SafeDeriveFromSpecialFolder(
+            Environment.SpecialFolder.LocalApplicationData,
+            @"Microsoft\PowerShell");
+
+        internal static readonly string ConfigDirectory = SafeDeriveFromSpecialFolder(
+            Environment.SpecialFolder.Personal,
+            @"PowerShell");
 
         private static readonly Lazy<bool> _isStaSupported = new Lazy<bool>(() =>
         {
@@ -188,6 +193,30 @@ namespace System.Management.Automation
         private static bool? _isIoT = null;
         private static bool? _isWindowsDesktop = null;
 #endif
+
+        internal static bool TryDeriveFromCache(string path1, out string result)
+        {
+            if (CacheDirectory is null or [])
+            {
+                result = null;
+                return false;
+            }
+
+            result = Path.Combine(CacheDirectory, path1);
+            return true;
+        }
+
+        internal static bool TryDeriveFromCache(string path1, string path2, out string result)
+        {
+            if (CacheDirectory is null or [])
+            {
+                result = null;
+                return false;
+            }
+
+            result = Path.Combine(CacheDirectory, path1, path2);
+            return true;
+        }
 
         // format files
         internal static readonly string[] FormatFileNames = new string[]
@@ -216,6 +245,17 @@ namespace System.Management.Automation
 #else
             internal const string Home = "USERPROFILE";
 #endif
+        }
+
+        private static string SafeDeriveFromSpecialFolder(Environment.SpecialFolder specialFolder, string subPath)
+        {
+            string basePath = Environment.GetFolderPath(specialFolder, Environment.SpecialFolderOption.DoNotVerify);
+            if (string.IsNullOrWhiteSpace(basePath))
+            {
+                return string.Empty;
+            }
+
+            return Path.Join(basePath, subPath);
         }
 
 #if UNIX
@@ -360,7 +400,7 @@ namespace System.Management.Automation
                 _ => throw new NotSupportedException()
             };
 #else
-            return Environment.GetFolderPath(folder);
+            return Environment.GetFolderPath(folder, Environment.SpecialFolderOption.DoNotVerify);
 #endif
         }
 

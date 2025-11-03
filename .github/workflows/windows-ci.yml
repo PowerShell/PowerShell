@@ -56,6 +56,7 @@ jobs:
     # Set job outputs to values from filter step
     outputs:
       source: ${{ steps.filter.outputs.source }}
+      buildModuleChanged: ${{ steps.filter.outputs.buildModuleChanged }}
       packagingChanged: ${{ steps.filter.outputs.packagingChanged }}
     steps:
       - name: checkout
@@ -70,7 +71,7 @@ jobs:
   ci_build:
     name: Build PowerShell
     needs: changes
-    if: ${{ needs.changes.outputs.source == 'true' }}
+    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
     runs-on: windows-latest
     steps:
       - name: checkout
@@ -84,7 +85,7 @@ jobs:
     needs:
       - ci_build
       - changes
-    if: ${{ needs.changes.outputs.source == 'true' }}
+    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
     runs-on: windows-latest
     steps:
       - name: checkout
@@ -101,7 +102,7 @@ jobs:
     needs:
       - ci_build
       - changes
-    if: ${{ needs.changes.outputs.source == 'true' }}
+    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
     runs-on: windows-latest
     steps:
       - name: checkout
@@ -118,7 +119,7 @@ jobs:
     needs:
       - ci_build
       - changes
-    if: ${{ needs.changes.outputs.source == 'true' }}
+    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
     runs-on: windows-latest
     steps:
       - name: checkout
@@ -135,7 +136,7 @@ jobs:
     needs:
       - ci_build
       - changes
-    if: ${{ needs.changes.outputs.source == 'true' }}
+    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
     runs-on: windows-latest
     steps:
       - name: checkout
@@ -151,11 +152,22 @@ jobs:
     name: xUnit Tests
     needs:
       - changes
-    if: ${{ needs.changes.outputs.source == 'true' }}
+    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
     uses: ./.github/workflows/xunit-tests.yml
     with:
       runner_os: windows-latest
       test_results_artifact_name: testResults-xunit
+  analyze:
+    name: CodeQL Analysis
+    needs: changes
+    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
+    uses: ./.github/workflows/analyze-reusable.yml
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    with:
+      runner_os: windows-latest
   windows_packaging:
     name: Windows Packaging
     needs:
@@ -170,6 +182,7 @@ jobs:
       - windows_test_elevated_others
       - windows_test_unelevated_ci
       - windows_test_unelevated_others
+      - analyze
       - windows_packaging
     if: always()
     uses: PowerShell/compliance/.github/workflows/ready-to-merge.yml@v1.0.0
