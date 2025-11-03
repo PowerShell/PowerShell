@@ -403,6 +403,8 @@
                     The upgrade code is used in the key because it will change when we allow SxS       -->
               <RegistryKey Root="HKLM" Key="Software\Microsoft\PowerShellCore\InstalledVersions\$(var.UpgradeCode)" ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
                   <RegistryValue Type="string" Value="$(var.ProductSemanticVersion)" Name="SemanticVersion" KeyPath="yes"/>
+                  <RegistryValue Type="string" Value="[VersionFolder]" Name="InstallLocation" />
+                  <RegistryValue Type="string" Value="[ProductCode]" Name="ProductCode" />
               </RegistryKey>
 
               <!--HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Update\TargetingInfo\PersistentDynamicInstalled -->
