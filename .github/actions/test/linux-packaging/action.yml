@@ -84,6 +84,7 @@ runs:
     run: |-
       Import-Module ./tools/ci.psm1
       Install-CIPester
+    shell: pwsh
       
   - name: Validate Package Names
     run: |-
