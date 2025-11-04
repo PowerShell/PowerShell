@@ -19,7 +19,7 @@ The Docker implementation uses a multi-stage build to optimize the testing and r
 ### Multi-Stage Build Stages
 
 1. **asa-runner**: Main execution environment
-   - Base: `mcr.microsoft.com/dotnet/sdk:6.0-windowsservercore-ltsc2022`
+   - Base: `mcr.microsoft.com/dotnet/sdk:9.0-windowsservercore-ltsc2022`
    - Contains Attack Surface Analyzer CLI tools
    - Runs the complete test workflow
    - Generates reports in both `C:\work` and `C:\reports` directories
