@@ -16,7 +16,7 @@
     Skip building the MSI and only search for existing MSI files.
 
 .PARAMETER OutputPath
-    Directory where results will be saved. Defaults to current directory.
+    Directory where results will be saved. Defaults to './asa-results' subdirectory.
 
 .PARAMETER ContainerImage
     Docker container image to use. Defaults to mcr.microsoft.com/dotnet/sdk:9.0-windowsservercore-ltsc2022
@@ -57,7 +57,7 @@ param(
     [switch]$NoBuild,
 
     [Parameter()]
-    [string]$OutputPath = $PWD,
+    [string]$OutputPath = (Join-Path $PWD "asa-results"),
 
     [Parameter()]
     [string]$ContainerImage = "mcr.microsoft.com/dotnet/sdk:9.0-windowsservercore-ltsc2022",
@@ -386,7 +386,7 @@ Write-Log "Created container work directory: $containerWorkDir"
 try {
     # Use the static Dockerfile from the docker subfolder
     $dockerContextPath = Join-Path $PSScriptRoot "docker"
-    
+
     # Copy MSI to Docker build context
     $msiFileName = Split-Path $MsiPath -Leaf
     $destMsiPath = Join-Path $dockerContextPath $msiFileName
@@ -394,129 +394,124 @@ try {
     Copy-Item $MsiPath -Destination $destMsiPath
     $staticDockerfilePath = Join-Path $dockerContextPath "Dockerfile"
     Write-Log "Using static Dockerfile: $staticDockerfilePath"
-    
+
     if (-not (Test-Path $staticDockerfilePath)) {
         Write-Log "Static Dockerfile not found at: $staticDockerfilePath" -Level ERROR
         exit 1
     }
-    
+
     Write-Log "Docker build context: $dockerContextPath"
 
     # Build custom container image from static Dockerfile
     Write-Log "=========================================" -Level SUCCESS
     Write-Log "Building custom Attack Surface Analyzer container..." -Level SUCCESS
     Write-Log "=========================================" -Level SUCCESS
-    
-    $imageName = "powershell-asa-local:latest"
-    Write-Log "Building image: $imageName"
+
+    Write-Log "=========================================" -Level SUCCESS
+    Write-Log "Building ASA test container..." -Level SUCCESS
+    Write-Log "=========================================" -Level SUCCESS
     Write-Log "This may take several minutes..."
-    
-    docker build -t $imageName -f $staticDockerfilePath $dockerContextPath
-    
+
+    # Build the asa-reports stage specifically
+    $reportsImageName = "powershell-asa-reports:latest"
+    docker build --target asa-reports -t $reportsImageName -f $staticDockerfilePath $dockerContextPath
+
     if ($LASTEXITCODE -ne 0) {
         Write-Log "Docker build failed with exit code: $LASTEXITCODE" -Level ERROR
         exit 1
     }
-    
-    Write-Log "Container image built successfully" -Level SUCCESS
-    
-    # Run container with volume mount
-    Write-Log "=========================================" -Level SUCCESS
-    Write-Log "Starting Windows container..." -Level SUCCESS
-    Write-Log "=========================================" -Level SUCCESS
-    Write-Log "Container image: $imageName"
-    Write-Host ""
 
-    $containerName = "asa-test-$(Get-Date -Format 'yyyyMMdd-HHmmss')"
+    Write-Log "Build completed successfully" -Level SUCCESS
 
-    docker run --name $containerName `
-        --isolation process `
-        $imageName
-
-    if ($LASTEXITCODE -ne 0) {
-        Write-Log "Container execution failed with exit code: $LASTEXITCODE" -Level WARNING
-    }
-
-    # Copy results using docker cp from the reports directory in container
-    Write-Host ""
+    # Extract reports from the built image
     Write-Log "=========================================" -Level SUCCESS
-    Write-Log "Extracting results from container..." -Level SUCCESS
+    Write-Log "Extracting reports to: $OutputPath" -Level SUCCESS
     Write-Log "=========================================" -Level SUCCESS
+
+    $tempContainerName = "asa-reports-extract-$(Get-Date -Format 'yyyyMMdd-HHmmss')"
 
     try {
-        # Copy all files from container's reports directory to output
-        docker cp "${containerName}:C:/reports/." $OutputPath
-        
-        if ($LASTEXITCODE -eq 0) {
-            $resultFiles = Get-ChildItem -Path $OutputPath -ErrorAction SilentlyContinue
-            $copiedCount = $resultFiles.Count
-            
-            if ($copiedCount -eq 0) {
-                Write-Log "Warning: No result files found in container reports" -Level WARNING
-                
-                # Fallback: try to copy from work directory
-                Write-Log "Attempting fallback copy from work directory..." -Level WARNING
-                $fallbackFiles = @(
-                    "*_summary.json.txt",
-                    "*_results.json.txt",
-                    "*.sarif",
-                    "asa.sqlite",
-                    "install.log"
-                )
-                
-                $fallbackCount = 0
-                foreach ($pattern in $fallbackFiles) {
-                    $files = Get-ChildItem -Path $containerWorkDir -Filter $pattern -ErrorAction SilentlyContinue
-                    foreach ($file in $files) {
-                        $destPath = Join-Path $OutputPath $file.Name
-                        Copy-Item -Path $file.FullName -Destination $destPath -Force
-                        Write-Log "Fallback copied: $($file.Name)" -Level SUCCESS
-                        $fallbackCount++
-                    }
+        # Create a container from the reports image (but don't run it)
+        docker create --name $tempContainerName $reportsImageName
+
+        if ($LASTEXITCODE -ne 0) {
+            Write-Log "Failed to create temporary container for extraction" -Level ERROR
+            exit 1
+        }
+
+        # Try to extract known report file patterns individually
+        Write-Log "Extracting report files..." -Level INFO
+
+        $reportFilePatterns = @(
+            "asa.sqlite",
+            "*.txt",
+            "*.sarif",
+            "*.json",
+            "install.log"
+        )
+
+        $extractedAny = $false
+
+        foreach ($pattern in $reportFilePatterns) {
+            try {
+                Write-Log "Trying to extract pattern: $pattern" -Level INFO
+                docker cp "${tempContainerName}:/$pattern" $OutputPath 2>$null
+
+                if ($LASTEXITCODE -eq 0) {
+                    Write-Log "Successfully extracted: $pattern" -Level SUCCESS
+                    $extractedAny = $true
+                } else {
+                    Write-Log "Pattern not found or failed: $pattern" -Level INFO
                 }
-                $copiedCount = $fallbackCount
             }
-            else {
-                Write-Log "Successfully extracted $copiedCount file(s) from container:" -Level SUCCESS
-                $resultFiles | ForEach-Object {
-                    Write-Log "  - $($_.Name) ($([math]::Round($_.Length/1KB, 2)) KB)" -Level SUCCESS
-                }
+            catch {
+                Write-Log "Error extracting pattern $pattern : $_" -Level WARNING
             }
         }
-        else {
-            Write-Log "Failed to extract reports from container, attempting fallback..." -Level WARNING
-            # Fallback to original method
-            $resultFiles = @(
-                "*_summary.json.txt",
-                "*_results.json.txt",
-                "*.sarif",
-                "asa.sqlite",
-                "install.log"
-            )
-            
-            $copiedCount = 0
-            foreach ($pattern in $resultFiles) {
-                $files = Get-ChildItem -Path $containerWorkDir -Filter $pattern -ErrorAction SilentlyContinue
-                foreach ($file in $files) {
-                    $destPath = Join-Path $OutputPath $file.Name
-                    Copy-Item -Path $file.FullName -Destination $destPath -Force
-                    Write-Log "Fallback copied: $($file.Name)" -Level SUCCESS
-                    $copiedCount++
-                }
+
+        # Alternative approach: extract the entire reports directory if individual files don't work
+        if (-not $extractedAny) {
+            Write-Log "Trying to extract entire directory..." -Level INFO
+            docker cp "${tempContainerName}:/" "$OutputPath/reports" 2>$null
+
+            if ($LASTEXITCODE -eq 0) {
+                Write-Log "Successfully extracted reports directory" -Level SUCCESS
+                $extractedAny = $true
             }
+        }
+
+        if ($extractedAny) {
+            Write-Log "Report extraction completed successfully" -Level SUCCESS
+        } else {
+            Write-Log "No reports could be extracted - this may be normal if no issues were found" -Level WARNING
         }
     }
     finally {
-        # Clean up the named container
-        Write-Log "Cleaning up container: $containerName"
-        docker rm $containerName -f 2>$null
+        # Clean up the temporary container
+        docker rm $tempContainerName -f 2>$null
     }
 
+    # Check what files were extracted
+    Write-Host ""
+    Write-Log "=========================================" -Level SUCCESS
+    Write-Log "Checking extracted results..." -Level SUCCESS
+    Write-Log "=========================================" -Level SUCCESS
+
+    $resultFiles = Get-ChildItem -Path $OutputPath -ErrorAction SilentlyContinue
+    $copiedCount = $resultFiles.Count
+
     if ($copiedCount -eq 0) {
-        Write-Log "Warning: No result files found" -Level WARNING
+        Write-Log "Warning: No result files found in extracted output" -Level WARNING
     }
     else {
-        Write-Log "Total files extracted: $copiedCount" -Level SUCCESS
+        Write-Log "Successfully extracted $copiedCount file(s):" -Level SUCCESS
+        $resultFiles | ForEach-Object {
+            if ($_.PSIsContainer) {
+                Write-Log "  - $($_.Name) (directory)" -Level SUCCESS
+            } else {
+                Write-Log "  - $($_.Name) ($([math]::Round($_.Length/1KB, 2)) KB)" -Level SUCCESS
+            }
+        }
     }
 
     Write-Host ""
@@ -535,7 +530,7 @@ finally {
     else {
         Write-Log "Work directory preserved at: $containerWorkDir" -Level SUCCESS
     }
-    
+
     # Always cleanup MSI file from Docker build context
     if ($destMsiPath -and (Test-Path $destMsiPath)) {
         Write-Log "Cleaning up MSI file from Docker context..."

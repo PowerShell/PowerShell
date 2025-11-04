@@ -83,13 +83,16 @@ CMD Write-Host "=========================================" -ForegroundColor Gree
     Write-Host "Container ready. Reports available in C:\reports\" -ForegroundColor Cyan; \
     Write-Host "========================================="
 
-# Stage 2: Scratch layer with only the reports
-FROM scratch AS asa-reports
+# Stage 2: Reports-only layer using minimal Windows base
+FROM mcr.microsoft.com/windows/nanoserver:ltsc2022 AS asa-reports
 
-# Copy reports from the runner stage to scratch
-COPY --from=asa-runner C:/reports/ /reports/
+# Set working directory to root
+WORKDIR /
 
-# Stage 3: Final stage (still the runner for backward compatibility)
+# Copy only the report files from the runner stage to root level
+COPY --from=asa-runner C:/reports/ ./
+
+# Stage 3: Final stage (defaults to the runner for backward compatibility)
 FROM asa-runner AS final
 
 # Label for documentation

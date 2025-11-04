@@ -24,7 +24,7 @@ The Docker implementation uses a multi-stage build to optimize the testing and r
    - Runs the complete test workflow
    - Generates reports in both `C:\work` and `C:\reports` directories
 
-1. **asa-reports**: Minimal results layer  
+1. **asa-reports**: Minimal results layer
    - Base: `scratch` (empty base image)
    - Contains only the test reports from the runner stage
    - Enables clean extraction of results without container internals
@@ -107,13 +107,13 @@ docker run --rm --isolation process `
 
 ## Output Files
 
-The test will generate several output files:
+The test will generate output files in the `./asa-results/` directory (or your specified `-OutputPath`):
 
-- **`*_summary.json.txt`** - Summary of detected changes
-- **`*_results.json.txt`** - Detailed results in JSON format
-- **`*.sarif`** - SARIF format results (can be viewed in VS Code)
-- **`asa.sqlite`** - SQLite database with full analysis data
+- **`asa.sqlite`** - SQLite database with full analysis data (primary result file)
 - **`install.log`** - MSI installation log file
+- **`*_summary.json.txt`** - Summary of detected changes (if generated)
+- **`*_results.json.txt`** - Detailed results in JSON format (if generated)
+- **`*.sarif`** - SARIF format results (if generated, can be viewed in VS Code)
 
 ## Analyzing Results
 
