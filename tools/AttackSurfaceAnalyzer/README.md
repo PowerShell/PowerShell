@@ -17,7 +17,14 @@ Attack Surface Analyzer is a Microsoft tool that helps analyze changes to a syst
 - Windows 10/11 or Windows Server
 - Docker Desktop with Windows containers enabled
 - PowerShell 5.1 or later
-- A built PowerShell MSI file to test
+- (Optional) A pre-built PowerShell MSI file to test, or the script will build one for you
+
+### Build Prerequisites (if not providing -MsiPath)
+
+If you want the script to build the MSI automatically, ensure you have:
+- .NET SDK (as specified in global.json)
+- All PowerShell build dependencies (the script will use Start-PSBuild and Start-PSPackage)
+- See the main PowerShell README for full build prerequisites
 
 ## Quick Start
 
@@ -26,29 +33,34 @@ Attack Surface Analyzer is a Microsoft tool that helps analyze changes to a syst
 The simplest way to run ASA tests is using the provided PowerShell script:
 
 ```powershell
-# Run with automatic MSI detection
+# Build MSI and run ASA test automatically (default behavior)
 .\tools\AttackSurfaceAnalyzer\Run-AttackSurfaceAnalyzer.ps1
 
-# Run with specific MSI file
+# Run with specific MSI file (skips build)
 .\tools\AttackSurfaceAnalyzer\Run-AttackSurfaceAnalyzer.ps1 -MsiPath "C:\path\to\PowerShell.msi"
 
+# Search for existing MSI without building
+.\tools\AttackSurfaceAnalyzer\Run-AttackSurfaceAnalyzer.ps1 -NoBuild
+
 # Specify output directory for results
-.\tools\AttackSurfaceAnalyzer\Run-AttackSurfaceAnalyzer.ps1 -MsiPath "C:\path\to\PowerShell.msi" -OutputPath "C:\results"
+.\tools\AttackSurfaceAnalyzer\Run-AttackSurfaceAnalyzer.ps1 -OutputPath "C:\results"
 
 # Keep the temporary work directory for debugging
 .\tools\AttackSurfaceAnalyzer\Run-AttackSurfaceAnalyzer.ps1 -KeepWorkDirectory
 ```
 
 The script will:
+
+1. Build PowerShell MSI (if not provided via -MsiPath or -NoBuild)
 1. Find or use the specified MSI file
-2. Create a temporary work directory
-3. Start a Windows container
-4. Install Attack Surface Analyzer in the container
-5. Take a baseline snapshot
-6. Install the PowerShell MSI
-7. Take a post-installation snapshot
-8. Export comparison results
-9. Copy results back to your specified output directory
+1. Create a temporary work directory
+1. Start a Windows container
+1. Install Attack Surface Analyzer in the container
+1. Take a baseline snapshot
+1. Install the PowerShell MSI
+1. Take a post-installation snapshot
+1. Export comparison results
+1. Copy results back to your specified output directory
 
 ### Option 2: Using the Dockerfile
 

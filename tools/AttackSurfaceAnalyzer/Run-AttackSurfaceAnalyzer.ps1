@@ -9,8 +9,11 @@
     comparison results.
 
 .PARAMETER MsiPath
-    Path to the PowerShell MSI file to test. If not provided, the script will search
-    for an MSI in the artifacts directory.
+    Path to the PowerShell MSI file to test. If not provided, the script will build
+    a new MSI using Start-PSBuild.
+
+.PARAMETER NoBuild
+    Skip building the MSI and only search for existing MSI files.
 
 .PARAMETER OutputPath
     Directory where results will be saved. Defaults to current directory.
@@ -27,14 +30,22 @@
 .EXAMPLE
     .\Run-AttackSurfaceAnalyzer.ps1 -OutputPath "C:\results"
 
+.EXAMPLE
+    .\Run-AttackSurfaceAnalyzer.ps1 -NoBuild
+
 .NOTES
     Requires Docker Desktop with Windows containers enabled.
+    If MsiPath is not provided and NoBuild is not specified, the script will
+    import build.psm1 and build a new MSI package.
 #>
 
-[CmdletBinding()]
+[CmdletBinding(SupportsShouldProcess)]
 param(
     [Parameter()]
     [string]$MsiPath,
+
+    [Parameter()]
+    [switch]$NoBuild,
 
     [Parameter()]
     [string]$OutputPath = $PWD,
@@ -78,28 +89,97 @@ if (-not (Test-DockerAvailable)) {
     exit 1
 }
 
-# Find MSI if not provided
+# Find or build MSI if not provided
 if (-not $MsiPath) {
-    Write-Log "No MSI path provided, searching in artifacts directory..."
-    $possiblePaths = @(
-        "$PSScriptRoot\..\artifacts",
-        "$PSScriptRoot\..\"
-    )
-    
-    foreach ($path in $possiblePaths) {
-        if (Test-Path $path) {
-            $msiFiles = Get-ChildItem -Path $path -Filter "*.msi" -Recurse -ErrorAction SilentlyContinue
-            if ($msiFiles) {
-                $MsiPath = $msiFiles[0].FullName
-                Write-Log "Found MSI: $MsiPath" -Level SUCCESS
-                break
+    if ($NoBuild) {
+        Write-Log "No MSI path provided, searching in artifacts directory..."
+        $possiblePaths = @(
+            "$PSScriptRoot\..\..\artifacts",
+            "$PSScriptRoot\..\..\"
+        )
+        
+        foreach ($path in $possiblePaths) {
+            if (Test-Path $path) {
+                $msiFiles = Get-ChildItem -Path $path -Filter "*.msi" -Recurse -ErrorAction SilentlyContinue
+                if ($msiFiles) {
+                    $MsiPath = $msiFiles[0].FullName
+                    Write-Log "Found MSI: $MsiPath" -Level SUCCESS
+                    break
+                }
             }
         }
+        
+        if (-not $MsiPath) {
+            Write-Log "Could not find MSI file. Please specify -MsiPath parameter or remove -NoBuild to build a new MSI." -Level ERROR
+            exit 1
+        }
     }
-    
-    if (-not $MsiPath) {
-        Write-Log "Could not find MSI file. Please specify -MsiPath parameter." -Level ERROR
-        exit 1
+    else {
+        # Build the MSI
+        Write-Log "No MSI path provided, building PowerShell MSI..." -Level SUCCESS
+        
+        # Find the repository root
+        $repoRoot = $PSScriptRoot
+        while ($repoRoot -and -not (Test-Path (Join-Path $repoRoot "build.psm1"))) {
+            $repoRoot = Split-Path $repoRoot -Parent
+        }
+        
+        if (-not $repoRoot -or -not (Test-Path (Join-Path $repoRoot "build.psm1"))) {
+            Write-Log "Could not find build.psm1. Please run this script from the PowerShell repository." -Level ERROR
+            exit 1
+        }
+        
+        Write-Log "Repository root: $repoRoot"
+        
+        try {
+            # Import build module
+            Write-Log "Importing build.psm1..."
+            Import-Module (Join-Path $repoRoot "build.psm1") -Force
+            
+            # Build PowerShell
+            Write-Log "Starting PowerShell build (this may take several minutes)..."
+            $buildOutput = Join-Path $repoRoot "out"
+            Start-PSBuild -Configuration Release -Output $buildOutput
+            
+            if ($LASTEXITCODE -ne 0) {
+                Write-Log "Build failed with exit code: $LASTEXITCODE" -Level ERROR
+                exit 1
+            }
+            
+            Write-Log "Build completed successfully" -Level SUCCESS
+            
+            # Package the MSI
+            Write-Log "Creating MSI package..."
+            Start-PSPackage -Type msi -WindowsRuntime win7-x64
+            
+            if ($LASTEXITCODE -ne 0) {
+                Write-Log "Packaging failed with exit code: $LASTEXITCODE" -Level ERROR
+                exit 1
+            }
+            
+            Write-Log "MSI packaging completed successfully" -Level SUCCESS
+            
+            # Find the newly created MSI
+            $artifactsPath = Join-Path $repoRoot "artifacts"
+            if (Test-Path $artifactsPath) {
+                $msiFiles = Get-ChildItem -Path $artifactsPath -Filter "*.msi" -Recurse -ErrorAction SilentlyContinue | 
+                    Sort-Object LastWriteTime -Descending
+                if ($msiFiles) {
+                    $MsiPath = $msiFiles[0].FullName
+                    Write-Log "Built MSI: $MsiPath" -Level SUCCESS
+                }
+            }
+            
+            if (-not $MsiPath) {
+                Write-Log "MSI was built but could not be found in artifacts directory" -Level ERROR
+                exit 1
+            }
+        }
+        catch {
+            Write-Log "Error during build: $_" -Level ERROR
+            Write-Log $_.ScriptStackTrace -Level ERROR
+            exit 1
+        }
     }
 }
 
