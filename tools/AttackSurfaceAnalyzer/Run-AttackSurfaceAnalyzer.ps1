@@ -308,10 +308,7 @@ if (-not $MsiPath) {
             Write-Log "Running: Start-PSBuild -Runtime win7-x64 -Configuration Release"
             Start-PSBuild -Runtime win7-x64 -Configuration Release -ErrorAction Stop
 
-            if ($LASTEXITCODE -ne 0) {
-                Write-Log "Build failed with exit code: $LASTEXITCODE" -Level ERROR
-                exit 1
-            }
+            # (Removed redundant $LASTEXITCODE check after Start-PSBuild -ErrorAction Stop)
 
             Write-Log "Build completed successfully" -Level SUCCESS
 
