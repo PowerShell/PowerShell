@@ -443,7 +443,8 @@ try {
         Write-Log "Extracting report files..." -Level INFO
 
         # Extract standardized report files directly (no file listing needed)
-        Write-Log "Extracting standardized report files..." -Level INFO        # Extract files with standardized names (no wildcards needed)
+        # Extract files with standardized names (no wildcards needed)
+        Write-Log "Extracting standardized report files..." -Level INFO
         $reportFilePatterns = @(
             "asa.sqlite",
             "asa-results.sarif",
