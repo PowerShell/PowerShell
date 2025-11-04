@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 <#
 .SYNOPSIS
     Run Attack Surface Analyzer test locally using Docker to analyze PowerShell MSI installation.

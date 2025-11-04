@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 #Requires -Version 5.1
 <#
 .SYNOPSIS
