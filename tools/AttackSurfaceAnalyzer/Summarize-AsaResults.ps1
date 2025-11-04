@@ -13,15 +13,26 @@
 .PARAMETER ShowDetails
     Shows detailed information about each finding category.
 
+.PARAMETER IncludeInformationalEvent
+    Includes informational events in the analysis. By default, only WARNING and ERROR events are processed.
+
+.PARAMETER IncludeDebugEvent
+    Includes debug events in the analysis. By default, only WARNING and ERROR events are processed.
+
 .EXAMPLE
     .\Summarize-AsaResults.ps1
 
-    Summarizes the ASA results with basic statistics.
+    Summarizes the ASA results with basic statistics, showing only WARNING and ERROR events.
 
 .EXAMPLE
     .\Summarize-AsaResults.ps1 -ShowDetails
 
-    Shows detailed breakdown of findings by category..NOTES
+    Shows detailed breakdown of findings by category, filtering out informational and debug events.
+
+.EXAMPLE
+    .\Summarize-AsaResults.ps1 -IncludeInformationalEvent
+
+    Includes informational events along with WARNING and ERROR events in the analysis..NOTES
     Author: GitHub Copilot
     Version: 1.0
     Created for PowerShell ASA Analysis
@@ -33,25 +44,37 @@ param(
     [string]$Path = "asa-results\asa-results.json",
 
     [Parameter()]
-    [switch]$ShowDetails
+    [switch]$ShowDetails,
+
+    [Parameter()]
+    [switch]$IncludeInformationalEvent,
+
+    [Parameter()]
+    [switch]$IncludeDebugEvent
 )
 
 function Get-AsaSummary {
     param(
         [Parameter(Mandatory)]
-        [PSCustomObject]$AsaData
+        $AsaData,
+
+        [Parameter()]
+        [switch]$IncludeInformationalEvent,
+
+        [Parameter()]
+        [switch]$IncludeDebugEvent
     )
 
     # Extract metadata
-    $metadata = $AsaData.Metadata
-    $results = $AsaData.Results
+    $metadata = $AsaData["Metadata"]
+    $results = $AsaData["Results"]
 
     # Initialize counters
     $summary = @{
         Metadata = @{
-            Version = $metadata.'compare-version'
-            OS = $metadata.'compare-os'
-            OSVersion = $metadata.'compare-osversion'
+            Version = $metadata["compare-version"]
+            OS = $metadata["compare-os"]
+            OSVersion = $metadata["compare-osversion"]
             BaseRunId = ""
             CompareRunId = ""
         }
@@ -60,49 +83,60 @@ function Get-AsaSummary {
         AnalysisLevels = @{
             WARNING = 0
             ERROR = 0
-            INFO = 0
+            INFORMATION = 0
+            DEBUG = 0
         }
         RuleTypes = @{}
         FileIssuesByRule = @{}
+        FileExtensionSummary = @{}
         TimeSpan = $null
     }
 
     # Process each category
-    foreach ($categoryName in $results.PSObject.Properties.Name) {
-        $categoryData = $results.$categoryName
-        $categoryCount = $categoryData.Count
+    foreach ($categoryName in $results.Keys) {
+        $categoryData = $results[$categoryName]
 
         $summary.Categories[$categoryName] = @{
-            Count = $categoryCount
+            Count = 0
             Items = @()
         }
 
-        $summary.TotalFindings += $categoryCount
-
-        # Process items in category
+        # Process items in category with filtering
         foreach ($item in $categoryData) {
-            # Count analysis levels
-            if ($item.Analysis) {
-                $summary.AnalysisLevels[$item.Analysis]++
-            }
+            # Filter events based on analysis level
+            $analysisLevel = $item["Analysis"]
+            if ($analysisLevel) {
+                # Skip informational events unless explicitly included
+                if ($analysisLevel -eq "INFORMATION" -and -not $IncludeInformationalEvent) {
+                    continue
+                }
+                # Skip debug events unless explicitly included
+                if ($analysisLevel -eq "DEBUG" -and -not $IncludeDebugEvent) {
+                    continue
+                }
+                
+                $summary.AnalysisLevels[$analysisLevel]++
+            }            # If we reach here, the item passed the filter
+            $summary.Categories[$categoryName].Count++
+            $summary.TotalFindings++
 
             # Extract run IDs and calculate timespan
-            if ($item.BaseRunId) {
-                $summary.Metadata.BaseRunId = $item.BaseRunId
+            if ($item["BaseRunId"]) {
+                $summary.Metadata.BaseRunId = $item["BaseRunId"]
             }
-            if ($item.CompareRunId) {
-                $summary.Metadata.CompareRunId = $item.CompareRunId
+            if ($item["CompareRunId"]) {
+                $summary.Metadata.CompareRunId = $item["CompareRunId"]
             }
 
             # Process rules
-            foreach ($rule in $item.Rules) {
-                $ruleName = $rule.Name
+            foreach ($rule in $item["Rules"]) {
+                $ruleName = $rule["Name"]
                 if (-not $summary.RuleTypes.ContainsKey($ruleName)) {
                     $summary.RuleTypes[$ruleName] = @{
                         Count = 0
-                        Description = $rule.Description
-                        Flag = $rule.Flag
-                        Platforms = $rule.Platforms
+                        Description = $rule["Description"]
+                        Flag = $rule["Flag"]
+                        Platforms = $rule["Platforms"]
                         Categories = @{}
                     }
                 }
@@ -115,10 +149,11 @@ function Get-AsaSummary {
                 $summary.RuleTypes[$ruleName].Categories[$categoryName]++
 
                 # For file-related categories, track file extension if available
-                if ($categoryName -like "*FILE*" -and $item.Identity) {
-                    $fileExtension = [System.IO.Path]::GetExtension($item.Identity).ToLower()
+                if ($categoryName -like "*FILE*" -and $item["Identity"]) {
+                    $fileExtension = [System.IO.Path]::GetExtension($item["Identity"]).ToLower()
                     if (-not $fileExtension) { $fileExtension = "(no extension)" }
 
+                    # Track by rule and extension
                     if (-not $summary.FileIssuesByRule.ContainsKey($ruleName)) {
                         $summary.FileIssuesByRule[$ruleName] = @{}
                     }
@@ -126,14 +161,36 @@ function Get-AsaSummary {
                         $summary.FileIssuesByRule[$ruleName][$fileExtension] = 0
                     }
                     $summary.FileIssuesByRule[$ruleName][$fileExtension]++
+
+                    # Track overall file extension summary
+                    if (-not $summary.FileExtensionSummary.ContainsKey($fileExtension)) {
+                        $summary.FileExtensionSummary[$fileExtension] = @{
+                            Count = 0
+                            Rules = @{}
+                            Categories = @{}
+                        }
+                    }
+                    $summary.FileExtensionSummary[$fileExtension].Count++
+
+                    # Track which rules affect this extension
+                    if (-not $summary.FileExtensionSummary[$fileExtension].Rules.ContainsKey($ruleName)) {
+                        $summary.FileExtensionSummary[$fileExtension].Rules[$ruleName] = 0
+                    }
+                    $summary.FileExtensionSummary[$fileExtension].Rules[$ruleName]++
+
+                    # Track which categories this extension appears in
+                    if (-not $summary.FileExtensionSummary[$fileExtension].Categories.ContainsKey($categoryName)) {
+                        $summary.FileExtensionSummary[$fileExtension].Categories[$categoryName] = 0
+                    }
+                    $summary.FileExtensionSummary[$fileExtension].Categories[$categoryName]++
                 }
             }
 
             # Store item details for detailed view
             $summary.Categories[$categoryName].Items += @{
-                Identity = $item.Identity
-                Analysis = $item.Analysis
-                Rules = $item.Rules
+                Identity = $item["Identity"]
+                Analysis = $item["Analysis"]
+                Rules = $item["Rules"]
             }
         }
     }
@@ -159,7 +216,13 @@ function Write-ConsoleSummary {
         [hashtable]$Summary,
 
         [Parameter()]
-        [switch]$ShowDetails
+        [switch]$ShowDetails,
+
+        [Parameter()]
+        [switch]$IncludeInformationalEvent,
+
+        [Parameter()]
+        [switch]$IncludeDebugEvent
     )
 
     # Header
@@ -181,6 +244,14 @@ function Write-ConsoleSummary {
     Write-Host "Overall Statistics:" -ForegroundColor Yellow
     Write-Host "  Total Findings: $($Summary.TotalFindings)" -ForegroundColor White
 
+    # Show filtering information
+    $filterInfo = @()
+    if (-not $IncludeInformationalEvent) { $filterInfo += "INFORMATION events excluded" }
+    if (-not $IncludeDebugEvent) { $filterInfo += "DEBUG events excluded" }
+    if ($filterInfo.Count -gt 0) {
+        Write-Host "  Filtering: $($filterInfo -join ', ')" -ForegroundColor DarkYellow
+    }
+
     # Analysis Levels
     Write-Host "  Analysis Levels:" -ForegroundColor White
     foreach ($level in $Summary.AnalysisLevels.Keys | Sort-Object) {
@@ -188,7 +259,8 @@ function Write-ConsoleSummary {
         $color = switch ($level) {
             'ERROR' { 'Red' }
             'WARNING' { 'Yellow' }
-            'INFO' { 'Green' }
+            'INFORMATION' { 'Green' }
+            'DEBUG' { 'DarkGray' }
             default { 'White' }
         }
         Write-Host "    $level`: $count" -ForegroundColor $color
@@ -226,7 +298,8 @@ function Write-ConsoleSummary {
         $color = switch ($flag) {
             'ERROR' { 'Red' }
             'WARNING' { 'Yellow' }
-            'INFO' { 'Green' }
+            'INFORMATION' { 'Green' }
+            'DEBUG' { 'DarkGray' }
             default { 'White' }
         }
 
@@ -240,6 +313,37 @@ function Write-ConsoleSummary {
                 Write-Host "    Categories:" -ForegroundColor DarkGray
                 foreach ($cat in $rule.Value.Categories.GetEnumerator() | Sort-Object { $_.Value } -Descending) {
                     Write-Host "      $($cat.Key): $($cat.Value) occurrences" -ForegroundColor Gray
+                }
+            }
+        }
+    }
+
+    # File Extension Summary
+    if ($Summary.FileExtensionSummary.Count -gt 0) {
+        Write-Host ""
+        Write-Host "File Extension Analysis:" -ForegroundColor Yellow
+
+        $sortedExtensions = $Summary.FileExtensionSummary.GetEnumerator() |
+                           Sort-Object { $_.Value.Count } -Descending |
+                           Select-Object -First 15
+
+        foreach ($extEntry in $sortedExtensions) {
+            $extension = $extEntry.Key
+            $count = $extEntry.Value.Count
+            $displayExt = if ($extension -eq "(no extension)") { $extension } else { "*$extension" }
+
+            Write-Host "  $displayExt`: $count files" -ForegroundColor Cyan
+
+            if ($ShowDetails) {
+                # Show top rules for this extension
+                $topRulesForExt = $extEntry.Value.Rules.GetEnumerator() |
+                                 Sort-Object { $_.Value } -Descending |
+                                 Select-Object -First 3
+
+                foreach ($ruleEntry in $topRulesForExt) {
+                    $ruleName = $ruleEntry.Key
+                    $ruleCount = $ruleEntry.Value
+                    Write-Host "    $ruleName`: $ruleCount files" -ForegroundColor Gray
                 }
             }
         }
@@ -271,7 +375,8 @@ function Write-ConsoleSummary {
                 $color = switch ($flag) {
                     'ERROR' { 'Red' }
                     'WARNING' { 'Yellow' }
-                    'INFO' { 'Green' }
+                    'INFORMATION' { 'Green' }
+                    'DEBUG' { 'DarkGray' }
                     default { 'White' }
                 }
 
@@ -320,7 +425,8 @@ function Write-ConsoleSummary {
                 $color = switch ($level) {
                     'ERROR' { 'Red' }
                     'WARNING' { 'Yellow' }
-                    'INFO' { 'Green' }
+                    'INFORMATION' { 'Green' }
+                    'DEBUG' { 'DarkGray' }
                     default { 'White' }
                 }
 
@@ -345,14 +451,14 @@ try {
 
     # Load and parse JSON
     $jsonContent = Get-Content -Path $Path -Raw -Encoding UTF8
-    $asaData = $jsonContent | ConvertFrom-Json
+    $asaData = $jsonContent | ConvertFrom-Json -AsHashtable
 
     # Generate summary
     Write-Verbose "Analyzing ASA results..."
-    $summary = Get-AsaSummary -AsaData $asaData
+    $summary = Get-AsaSummary -AsaData $asaData -IncludeInformationalEvent:$IncludeInformationalEvent -IncludeDebugEvent:$IncludeDebugEvent
 
     # Output results to console
-    Write-ConsoleSummary -Summary $summary -ShowDetails:$ShowDetails
+    Write-ConsoleSummary -Summary $summary -ShowDetails:$ShowDetails -IncludeInformationalEvent:$IncludeInformationalEvent -IncludeDebugEvent:$IncludeDebugEvent
 }
 catch {
     Write-Error "Error processing ASA results: $($_.Exception.Message)"
