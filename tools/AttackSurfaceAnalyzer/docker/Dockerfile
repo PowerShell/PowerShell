@@ -56,39 +56,24 @@ RUN Write-Host "=========================================" -ForegroundColor Gree
     asa export-collect --outputsarif --savetodatabase; \
     if ($LASTEXITCODE -ne 0) { Write-Warning "Failed to export results with exit code: $LASTEXITCODE" }
 
-# Copy TXT result files to both work and reports directories
+# Copy and standardize SARIF result files
 RUN Write-Host "=========================================" -ForegroundColor Green; \
-    Write-Host "Copying TXT result files..." -ForegroundColor Green; \
-    Write-Host "========================================="; \
-    $txtFiles = Get-ChildItem -Path "*.txt" -ErrorAction SilentlyContinue; \
-    if ($txtFiles.Count -eq 0) { \
-        Write-Warning 'No TXT files found to copy' \
-    } else { \
-        $txtFiles | ForEach-Object { \
-            Write-Host "Copying: $($_.Name)"; \
-            if (-not (Test-Path $_.FullName)) { \
-                throw "Required TXT file not found: $($_.FullName)" \
-            }; \
-            Copy-Item -Path $_.FullName -Destination C:\work\ -ErrorAction Stop; \
-            Copy-Item -Path $_.FullName -Destination C:\reports\ -ErrorAction Stop \
-        } \
-    }
-
-# Copy SARIF result files to both work and reports directories
-RUN Write-Host "=========================================" -ForegroundColor Green; \
-    Write-Host "Copying SARIF result files..." -ForegroundColor Green; \
+    Write-Host "Processing SARIF result files..." -ForegroundColor Green; \
     Write-Host "========================================="; \
     $sarifFiles = Get-ChildItem -Path "*.sarif" -ErrorAction SilentlyContinue; \
     if ($sarifFiles.Count -eq 0) { \
-        Write-Warning 'No SARIF files found to copy' \
+        Write-Warning 'No SARIF files found - ASA may not have generated results' \
     } else { \
         $sarifFiles | ForEach-Object { \
-            Write-Host "Copying: $($_.Name)"; \
+            Write-Host "Found SARIF file: $($_.Name)"; \
             if (-not (Test-Path $_.FullName)) { \
-                throw "Required SARIF file not found: $($_.FullName)" \
+                throw "SARIF file not accessible: $($_.FullName)" \
             }; \
-            Copy-Item -Path $_.FullName -Destination C:\work\ -ErrorAction Stop; \
-            Copy-Item -Path $_.FullName -Destination C:\reports\ -ErrorAction Stop \
+            Write-Host "Copying to standard name: asa-results.sarif"; \
+            Copy-Item -Path $_.FullName -Destination C:\work\asa-results.sarif -ErrorAction Stop; \
+            Copy-Item -Path $_.FullName -Destination C:\reports\asa-results.sarif -ErrorAction Stop; \
+            Write-Host "Original filename preserved as: $($_.Name).original"; \
+            Copy-Item -Path $_.FullName -Destination "C:\reports\$($_.Name).original" -ErrorAction Stop \
         } \
     }
 
@@ -98,10 +83,9 @@ RUN Write-Host "=========================================" -ForegroundColor Gree
     Write-Host "========================================="; \
     if (Test-Path "asa.sqlite") { \
         Write-Host "Copying: asa.sqlite"; \
-        Copy-Item -Path "asa.sqlite" -Destination C:\work\ -ErrorAction Stop; \
         Copy-Item -Path "asa.sqlite" -Destination C:\reports\ -ErrorAction Stop \
     } else { \
-        Write-Warning 'SQLite database (asa.sqlite) not found - this may indicate ASA export issues' \
+        throw 'SQLite database (asa.sqlite) not found - this may indicate ASA export issues' \
     }
 
 # Copy installation log file

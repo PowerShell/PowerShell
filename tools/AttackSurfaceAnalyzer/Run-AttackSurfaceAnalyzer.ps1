@@ -442,30 +442,30 @@ try {
         # Try to extract known report file patterns individually
         Write-Log "Extracting report files..." -Level INFO
 
+        # Extract standardized report files directly (no file listing needed)
+        Write-Log "Extracting standardized report files..." -Level INFO        # Extract files with standardized names (no wildcards needed)
         $reportFilePatterns = @(
             "asa.sqlite",
-            "*.txt",
-            "*.sarif",
-            "*.json",
+            "asa-results.sarif",
             "install.log"
         )
-
+        
         $extractedAny = $false
 
-        foreach ($pattern in $reportFilePatterns) {
+        foreach ($filename in $reportFilePatterns) {
             try {
-                Write-Log "Trying to extract pattern: $pattern" -Level INFO
-                docker cp "${tempContainerName}:/$pattern" $OutputPath 2>$null
-
+                Write-Log "Trying to extract file: $filename" -Level INFO
+                docker cp "${tempContainerName}:/$filename" $OutputPath 2>$null
+                
                 if ($LASTEXITCODE -eq 0) {
-                    Write-Log "Successfully extracted: $pattern" -Level SUCCESS
+                    Write-Log "Successfully extracted: $filename" -Level SUCCESS
                     $extractedAny = $true
                 } else {
-                    Write-Log "Pattern not found or failed: $pattern" -Level INFO
+                    Write-Log "File not found: $filename" -Level INFO
                 }
             }
             catch {
-                Write-Log "Error extracting pattern $pattern : $_" -Level WARNING
+                Write-Log "Error extracting file $filename : $_" -Level WARNING
             }
         }
 
