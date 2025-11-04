@@ -35,8 +35,11 @@
 
 .NOTES
     Requires Docker Desktop with Windows containers enabled.
+    If Docker is not installed, the script will prompt to install it using winget.
     If MsiPath is not provided and NoBuild is not specified, the script will
     import build.psm1 and build a new MSI package.
+
+    Supports -WhatIf and -Confirm for Docker installation.
 #>
 
 [CmdletBinding(SupportsShouldProcess)]
@@ -82,11 +85,67 @@ function Test-DockerAvailable {
     }
 }
 
+function Test-WingetAvailable {
+    try {
+        $null = Get-Command winget -ErrorAction Stop
+        return $true
+    }
+    catch {
+        return $false
+    }
+}
+
+function Install-DockerDesktop {
+    [CmdletBinding(SupportsShouldProcess, ConfirmImpact="High")]
+    param()
+
+    if (-not (Test-WingetAvailable)) {
+        Write-Log "winget is not available. Please install winget (App Installer from Microsoft Store) or install Docker Desktop manually from https://www.docker.com/products/docker-desktop" -Level ERROR
+        return $false
+    }
+
+    if ($PSCmdlet.ShouldProcess("Docker Desktop", "Install using winget")) {
+        Write-Log "Installing Docker Desktop using winget..." -Level SUCCESS
+        Write-Log "This may take several minutes..."
+
+        try {
+            winget install docker.dockerdesktop --accept-package-agreements --accept-source-agreements
+
+            if ($LASTEXITCODE -eq 0) {
+                Write-Log "Docker Desktop installed successfully!" -Level SUCCESS
+                Write-Log "Please restart Docker Desktop and ensure Windows containers are enabled, then run this script again." -Level SUCCESS
+                return $true
+            }
+            else {
+                Write-Log "Docker Desktop installation failed with exit code: $LASTEXITCODE" -Level ERROR
+                return $false
+            }
+        }
+        catch {
+            Write-Log "Error installing Docker Desktop: $_" -Level ERROR
+            return $false
+        }
+    }
+    else {
+        Write-Log "Docker Desktop installation cancelled by user." -Level WARNING
+        return $false
+    }
+}
+
 # Verify Docker is available
 Write-Log "Checking Docker availability..."
 if (-not (Test-DockerAvailable)) {
-    Write-Log "Docker is not available. Please install Docker Desktop and ensure it's running with Windows containers enabled." -Level ERROR
-    exit 1
+    Write-Log "Docker is not available." -Level WARNING
+    Write-Log "Docker Desktop is required to run Attack Surface Analyzer tests in containers." -Level WARNING
+
+    if (Install-DockerDesktop) {
+        Write-Log "Docker Desktop has been installed. Please restart Docker Desktop and run this script again." -Level SUCCESS
+        exit 0
+    }
+    else {
+        Write-Log "Please install Docker Desktop manually from https://www.docker.com/products/docker-desktop and ensure it's running with Windows containers enabled." -Level ERROR
+        exit 1
+    }
 }
 
 # Find or build MSI if not provided
@@ -97,7 +156,7 @@ if (-not $MsiPath) {
             "$PSScriptRoot\..\..\artifacts",
             "$PSScriptRoot\..\..\"
         )
-        
+
         foreach ($path in $possiblePaths) {
             if (Test-Path $path) {
                 $msiFiles = Get-ChildItem -Path $path -Filter "*.msi" -Recurse -ErrorAction SilentlyContinue
@@ -108,7 +167,7 @@ if (-not $MsiPath) {
                 }
             }
         }
-        
+
         if (-not $MsiPath) {
             Write-Log "Could not find MSI file. Please specify -MsiPath parameter or remove -NoBuild to build a new MSI." -Level ERROR
             exit 1
@@ -117,59 +176,59 @@ if (-not $MsiPath) {
     else {
         # Build the MSI
         Write-Log "No MSI path provided, building PowerShell MSI..." -Level SUCCESS
-        
+
         # Find the repository root
         $repoRoot = $PSScriptRoot
         while ($repoRoot -and -not (Test-Path (Join-Path $repoRoot "build.psm1"))) {
             $repoRoot = Split-Path $repoRoot -Parent
         }
-        
+
         if (-not $repoRoot -or -not (Test-Path (Join-Path $repoRoot "build.psm1"))) {
             Write-Log "Could not find build.psm1. Please run this script from the PowerShell repository." -Level ERROR
             exit 1
         }
-        
+
         Write-Log "Repository root: $repoRoot"
-        
+
         try {
             # Import build module
             Write-Log "Importing build.psm1..."
             Import-Module (Join-Path $repoRoot "build.psm1") -Force
-            
+
             # Build PowerShell
             Write-Log "Starting PowerShell build (this may take several minutes)..."
             $buildOutput = Join-Path $repoRoot "out"
             Start-PSBuild -Configuration Release -Output $buildOutput
-            
+
             if ($LASTEXITCODE -ne 0) {
                 Write-Log "Build failed with exit code: $LASTEXITCODE" -Level ERROR
                 exit 1
             }
-            
+
             Write-Log "Build completed successfully" -Level SUCCESS
-            
+
             # Package the MSI
             Write-Log "Creating MSI package..."
             Start-PSPackage -Type msi -WindowsRuntime win7-x64
-            
+
             if ($LASTEXITCODE -ne 0) {
                 Write-Log "Packaging failed with exit code: $LASTEXITCODE" -Level ERROR
                 exit 1
             }
-            
+
             Write-Log "MSI packaging completed successfully" -Level SUCCESS
-            
+
             # Find the newly created MSI
             $artifactsPath = Join-Path $repoRoot "artifacts"
             if (Test-Path $artifactsPath) {
-                $msiFiles = Get-ChildItem -Path $artifactsPath -Filter "*.msi" -Recurse -ErrorAction SilentlyContinue | 
+                $msiFiles = Get-ChildItem -Path $artifactsPath -Filter "*.msi" -Recurse -ErrorAction SilentlyContinue |
                     Sort-Object LastWriteTime -Descending
                 if ($msiFiles) {
                     $MsiPath = $msiFiles[0].FullName
                     Write-Log "Built MSI: $MsiPath" -Level SUCCESS
                 }
             }
-            
+
             if (-not $MsiPath) {
                 Write-Log "MSI was built but could not be found in artifacts directory" -Level ERROR
                 exit 1
@@ -349,7 +408,7 @@ WORKDIR C:/work
     Write-Log "=========================================" -Level SUCCESS
     Write-Log "Copying results to output directory..." -Level SUCCESS
     Write-Log "=========================================" -Level SUCCESS
-    
+
     $resultFiles = @(
         "*_summary.json.txt",
         "*_results.json.txt",

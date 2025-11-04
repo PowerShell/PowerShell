@@ -108,10 +108,15 @@ Get-Content "*_summary.json.txt" | ConvertFrom-Json | Format-List
 
 ### Docker Not Available
 
-If you get an error that Docker is not available:
+If Docker is not installed, the script will prompt you to install it automatically using winget.
+
+To install manually:
+
 1. Install Docker Desktop from https://www.docker.com/products/docker-desktop
 2. Ensure Docker is running
 3. Switch to Windows containers (right-click Docker tray icon → "Switch to Windows containers")
+
+**Automatic Installation**: If you run the script without Docker installed, it will ask if you want to install Docker Desktop using `winget install docker.dockerdesktop`. After installation completes, restart Docker Desktop and run the script again.
 
 ### Container Fails to Start
 
