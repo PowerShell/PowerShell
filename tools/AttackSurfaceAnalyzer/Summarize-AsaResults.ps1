@@ -191,6 +191,7 @@ function Get-AsaSummary {
                 Identity = $item["Identity"]
                 Analysis = $item["Analysis"]
                 Rules = $item["Rules"]
+                Compare = $item["Compare"]
             }
         }
     }
@@ -435,37 +436,154 @@ function Write-ConsoleSummary {
 
             # Show individual file details for file-related categories
             if ($categoryName -like "*FILE*" -and $items.Count -gt 0) {
-                Write-Host ""
-                Write-Host "    Files:" -ForegroundColor DarkCyan
-
-                # Limit display to first 50 items to avoid overwhelming output
-                $displayLimit = [Math]::Min(50, $items.Count)
-                for ($i = 0; $i -lt $displayLimit; $i++) {
-                    $item = $items[$i]
-                    $identity = $item.Identity
-                    $analysis = $item.Analysis
-
-                    $color = switch ($analysis) {
-                        'ERROR' { 'Red' }
-                        'WARNING' { 'Yellow' }
-                        'INFORMATION' { 'Green' }
-                        'DEBUG' { 'DarkGray' }
-                        default { 'Gray' }
-                    }
-
-                    # Show triggered rules for this file
-                    if ($item.Rules -and $item.Rules.Count -gt 0) {
-                        $ruleNames = $item.Rules | ForEach-Object { $_.Name }
-                        Write-Host "      [$analysis] $identity" -ForegroundColor $color
-                        Write-Host "          Rules: $($ruleNames -join ', ')" -ForegroundColor DarkGray
-                    }
-                    else {
-                        Write-Host "      [$analysis] $identity" -ForegroundColor $color
-                    }
+                # Check if this category contains files with expired signatures
+                $expiredSigItems = $items | Where-Object {
+                    $_.Rules -and ($_.Rules | Where-Object { $_.Name -eq 'Binaries with expired signatures' })
                 }
 
-                if ($items.Count -gt $displayLimit) {
-                    Write-Host "      ... and $($items.Count - $displayLimit) more files" -ForegroundColor DarkGray
+                if ($expiredSigItems.Count -gt 0) {
+                    Write-Host ""
+                    Write-Host "    Files with Expired Signatures (grouped by Issuer):" -ForegroundColor DarkCyan
+
+                    # Group by issuer only
+                    $groupedByIssuer = @{}
+                    foreach ($item in $expiredSigItems) {
+                        if ($item.Compare -and $item.Compare.SignatureStatus -and $item.Compare.SignatureStatus.SigningCertificate) {
+                            $cert = $item.Compare.SignatureStatus.SigningCertificate
+                            $issuer = $cert.Issuer
+                            $notAfter = $cert.NotAfter
+                            $identity = $item.Identity
+
+                            if (-not $groupedByIssuer.ContainsKey($issuer)) {
+                                $groupedByIssuer[$issuer] = @()
+                            }
+                            $groupedByIssuer[$issuer] += [PSCustomObject]@{
+                                Identity = $identity
+                                NotAfter = $notAfter
+                            }
+                        }
+                    }
+
+                    # Display grouped results
+                    $sortedIssuers = $groupedByIssuer.GetEnumerator() | Sort-Object Name
+
+                    foreach ($issuerGroup in $sortedIssuers) {
+                        $issuer = $issuerGroup.Name
+                        $files = $issuerGroup.Value
+                        $fileCount = $files.Count
+
+                        Write-Host ""
+                        Write-Host "      Issuer: $issuer" -ForegroundColor Yellow
+                        Write-Host "      Files ($fileCount):" -ForegroundColor White
+
+                        # Sort files by expiration date (handle nulls safely)
+                        $sortedFiles = $files | Sort-Object {
+                            if ($_.NotAfter) {
+                                try { [DateTime]::Parse($_.NotAfter) }
+                                catch { [DateTime]::MaxValue }
+                            } else {
+                                [DateTime]::MaxValue
+                            }
+                        }
+
+                        # Show first 20 files per issuer
+                        $displayLimit = [Math]::Min(20, $fileCount)
+                        for ($i = 0; $i -lt $displayLimit; $i++) {
+                            $file = $sortedFiles[$i]
+
+                            # Get identity - handle both hashtable and PSCustomObject
+                            $filePath = if ($file -is [hashtable]) { $file['Identity'] } else { $file.Identity }
+
+                            # Format date without time
+                            $expirationDate = 'Unknown'
+                            $notAfterValue = if ($file -is [hashtable]) { $file['NotAfter'] } else { $file.NotAfter }
+                            if ($notAfterValue) {
+                                try {
+                                    $expirationDate = ([DateTime]::Parse($notAfterValue)).ToString('yyyy-MM-dd')
+                                }
+                                catch {
+                                    $expirationDate = 'Unknown'
+                                }
+                            }
+                            Write-Host "        [Expired: $expirationDate] $filePath" -ForegroundColor Gray
+                        }
+
+                        if ($fileCount -gt $displayLimit) {
+                            Write-Host "        ... and $($fileCount - $displayLimit) more files" -ForegroundColor DarkGray
+                        }
+                    }
+
+                    # Show other files (non-expired signature issues)
+                    $otherFiles = $items | Where-Object {
+                        -not ($_.Rules -and ($_.Rules | Where-Object { $_.Name -eq 'Binaries with expired signatures' }))
+                    }
+
+                    if ($otherFiles.Count -gt 0) {
+                        Write-Host ""
+                        Write-Host "    Other Files:" -ForegroundColor DarkCyan
+
+                        $displayLimit = [Math]::Min(20, $otherFiles.Count)
+                        for ($i = 0; $i -lt $displayLimit; $i++) {
+                            $item = $otherFiles[$i]
+                            $identity = $item.Identity
+                            $analysis = $item.Analysis
+
+                            $color = switch ($analysis) {
+                                'ERROR' { 'Red' }
+                                'WARNING' { 'Yellow' }
+                                'INFORMATION' { 'Green' }
+                                'DEBUG' { 'DarkGray' }
+                                default { 'Gray' }
+                            }
+
+                            if ($item.Rules -and $item.Rules.Count -gt 0) {
+                                $ruleNames = $item.Rules | ForEach-Object { $_.Name }
+                                Write-Host "      [$analysis] $identity" -ForegroundColor $color
+                                Write-Host "          Rules: $($ruleNames -join ', ')" -ForegroundColor DarkGray
+                            }
+                            else {
+                                Write-Host "      [$analysis] $identity" -ForegroundColor $color
+                            }
+                        }
+
+                        if ($otherFiles.Count -gt $displayLimit) {
+                            Write-Host "      ... and $($otherFiles.Count - $displayLimit) more files" -ForegroundColor DarkGray
+                        }
+                    }
+                }
+                else {
+                    # No expired signatures, show standard file listing
+                    Write-Host ""
+                    Write-Host "    Files:" -ForegroundColor DarkCyan
+
+                    $displayLimit = [Math]::Min(50, $items.Count)
+                    for ($i = 0; $i -lt $displayLimit; $i++) {
+                        $item = $items[$i]
+                        $identity = $item.Identity
+                        $analysis = $item.Analysis
+
+                        $color = switch ($analysis) {
+                            'ERROR' { 'Red' }
+                            'WARNING' { 'Yellow' }
+                            'INFORMATION' { 'Green' }
+                            'DEBUG' { 'DarkGray' }
+                            default { 'Gray' }
+                        }
+
+                        # Show triggered rules for this file
+                        if ($item.Rules -and $item.Rules.Count -gt 0) {
+                            $ruleNames = $item.Rules | ForEach-Object { $_.Name }
+                            Write-Host "      [$analysis] $identity" -ForegroundColor $color
+                            Write-Host "          Rules: $($ruleNames -join ', ')" -ForegroundColor DarkGray
+                        }
+                        else {
+                            Write-Host "      [$analysis] $identity" -ForegroundColor $color
+                        }
+                    }
+
+                    if ($items.Count -gt $displayLimit) {
+                        Write-Host "      ... and $($items.Count - $displayLimit) more files" -ForegroundColor DarkGray
+                    }
                 }
             }
             # Show details for non-file categories (users, groups, etc.)
