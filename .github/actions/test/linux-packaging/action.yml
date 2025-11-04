@@ -80,6 +80,12 @@ runs:
       Invoke-CIFinish
     shell: pwsh
 
+  - name: Install Pester
+    run: |-
+      Import-Module ./tools/ci.psm1
+      Install-CIPester
+    shell: pwsh
+      
   - name: Validate Package Names
     run: |-
       # Run Pester tests to validate package names
