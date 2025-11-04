@@ -327,19 +327,30 @@ if (-not $MsiPath) {
 
             Write-Log "MSI packaging completed successfully" -Level SUCCESS
 
-            # Find the newly created MSI
-            $artifactsPath = Join-Path $repoRoot "artifacts"
-            if (Test-Path $artifactsPath) {
-                $msiFiles = Get-ChildItem -Path $artifactsPath -Filter "*.msi" -Recurse -ErrorAction SilentlyContinue |
-                    Sort-Object LastWriteTime -Descending
-                if ($msiFiles) {
-                    $MsiPath = $msiFiles[0].FullName
-                    Write-Log "Built MSI: $MsiPath" -Level SUCCESS
+            # Find the newly created MSI at the repo root
+            Write-Log "Looking for MSI at repo root: $repoRoot"
+            $msiFiles = Get-ChildItem -Path $repoRoot -Filter "*.msi" -ErrorAction SilentlyContinue |
+                Sort-Object LastWriteTime -Descending
+            if ($msiFiles) {
+                $MsiPath = $msiFiles[0].FullName
+                Write-Log "Built MSI: $MsiPath" -Level SUCCESS
+            }
+            else {
+                # Also check artifacts directory as fallback
+                Write-Log "MSI not found at repo root, checking artifacts directory..."
+                $artifactsPath = Join-Path $repoRoot "artifacts"
+                if (Test-Path $artifactsPath) {
+                    $msiFiles = Get-ChildItem -Path $artifactsPath -Filter "*.msi" -Recurse -ErrorAction SilentlyContinue |
+                        Sort-Object LastWriteTime -Descending
+                    if ($msiFiles) {
+                        $MsiPath = $msiFiles[0].FullName
+                        Write-Log "Found MSI in artifacts: $MsiPath" -Level SUCCESS
+                    }
                 }
             }
 
             if (-not $MsiPath) {
-                Write-Log "MSI was built but could not be found in artifacts directory" -Level ERROR
+                Write-Log "MSI was built but could not be found in repo root or artifacts directory" -Level ERROR
                 exit 1
             }
         }
