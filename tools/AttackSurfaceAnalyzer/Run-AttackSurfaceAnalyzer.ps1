@@ -427,7 +427,9 @@ try {
     Write-Log "Container image: $imageName"
     Write-Host ""
 
-    docker run --rm `
+    $containerName = "asa-test-$(Get-Date -Format 'yyyyMMdd-HHmmss')"
+
+    docker run --name $containerName `
         --isolation process `
         -v "${containerWorkDir}:C:\work" `
         $imageName
@@ -436,36 +438,86 @@ try {
         Write-Log "Container execution failed with exit code: $LASTEXITCODE" -Level WARNING
     }
 
-    # Copy results to output directory
+    # Copy results using docker cp from the reports directory in container
     Write-Host ""
     Write-Log "=========================================" -Level SUCCESS
-    Write-Log "Copying results to output directory..." -Level SUCCESS
+    Write-Log "Extracting results from container..." -Level SUCCESS
     Write-Log "=========================================" -Level SUCCESS
 
-    $resultFiles = @(
-        "*_summary.json.txt",
-        "*_results.json.txt",
-        "*.sarif",
-        "asa.sqlite",
-        "install.log"
-    )
-
-    $copiedCount = 0
-    foreach ($pattern in $resultFiles) {
-        $files = Get-ChildItem -Path $containerWorkDir -Filter $pattern -ErrorAction SilentlyContinue
-        foreach ($file in $files) {
-            $destPath = Join-Path $OutputPath $file.Name
-            Copy-Item -Path $file.FullName -Destination $destPath -Force
-            Write-Log "Copied: $($file.Name) -> $destPath" -Level SUCCESS
-            $copiedCount++
+    try {
+        # Copy all files from container's reports directory to output
+        docker cp "${containerName}:C:/reports/." $OutputPath
+        
+        if ($LASTEXITCODE -eq 0) {
+            $resultFiles = Get-ChildItem -Path $OutputPath -ErrorAction SilentlyContinue
+            $copiedCount = $resultFiles.Count
+            
+            if ($copiedCount -eq 0) {
+                Write-Log "Warning: No result files found in container reports" -Level WARNING
+                
+                # Fallback: try to copy from work directory
+                Write-Log "Attempting fallback copy from work directory..." -Level WARNING
+                $fallbackFiles = @(
+                    "*_summary.json.txt",
+                    "*_results.json.txt",
+                    "*.sarif",
+                    "asa.sqlite",
+                    "install.log"
+                )
+                
+                $fallbackCount = 0
+                foreach ($pattern in $fallbackFiles) {
+                    $files = Get-ChildItem -Path $containerWorkDir -Filter $pattern -ErrorAction SilentlyContinue
+                    foreach ($file in $files) {
+                        $destPath = Join-Path $OutputPath $file.Name
+                        Copy-Item -Path $file.FullName -Destination $destPath -Force
+                        Write-Log "Fallback copied: $($file.Name)" -Level SUCCESS
+                        $fallbackCount++
+                    }
+                }
+                $copiedCount = $fallbackCount
+            }
+            else {
+                Write-Log "Successfully extracted $copiedCount file(s) from container:" -Level SUCCESS
+                $resultFiles | ForEach-Object {
+                    Write-Log "  - $($_.Name) ($([math]::Round($_.Length/1KB, 2)) KB)" -Level SUCCESS
+                }
+            }
         }
+        else {
+            Write-Log "Failed to extract reports from container, attempting fallback..." -Level WARNING
+            # Fallback to original method
+            $resultFiles = @(
+                "*_summary.json.txt",
+                "*_results.json.txt",
+                "*.sarif",
+                "asa.sqlite",
+                "install.log"
+            )
+            
+            $copiedCount = 0
+            foreach ($pattern in $resultFiles) {
+                $files = Get-ChildItem -Path $containerWorkDir -Filter $pattern -ErrorAction SilentlyContinue
+                foreach ($file in $files) {
+                    $destPath = Join-Path $OutputPath $file.Name
+                    Copy-Item -Path $file.FullName -Destination $destPath -Force
+                    Write-Log "Fallback copied: $($file.Name)" -Level SUCCESS
+                    $copiedCount++
+                }
+            }
+        }
+    }
+    finally {
+        # Clean up the named container
+        Write-Log "Cleaning up container: $containerName"
+        docker rm $containerName -f 2>$null
     }
 
     if ($copiedCount -eq 0) {
-        Write-Log "Warning: No result files found to copy" -Level WARNING
+        Write-Log "Warning: No result files found" -Level WARNING
     }
     else {
-        Write-Log "Copied $copiedCount result file(s)" -Level SUCCESS
+        Write-Log "Total files extracted: $copiedCount" -Level SUCCESS
     }
 
     Write-Host ""

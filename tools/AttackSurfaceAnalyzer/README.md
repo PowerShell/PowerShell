@@ -9,8 +9,36 @@ Attack Surface Analyzer is a Microsoft tool that helps analyze changes to a syst
 ## Files
 
 - **Run-AttackSurfaceAnalyzer.ps1** - PowerShell script to run ASA tests locally
-- **docker/Dockerfile** - Dockerfile for building a container image with ASA pre-installed
+- **docker/Dockerfile** - Multi-stage Dockerfile for building a container image with ASA pre-installed
 - **README.md** - This documentation file
+
+## Docker Architecture
+
+The Docker implementation uses a multi-stage build to optimize the testing and result extraction process:
+
+### Multi-Stage Build Stages
+
+1. **asa-runner**: Main execution environment
+   - Base: `mcr.microsoft.com/dotnet/sdk:6.0-windowsservercore-ltsc2022`
+   - Contains Attack Surface Analyzer CLI tools
+   - Runs the complete test workflow
+   - Generates reports in both `C:\work` and `C:\reports` directories
+
+1. **asa-reports**: Minimal results layer  
+   - Base: `scratch` (empty base image)
+   - Contains only the test reports from the runner stage
+   - Enables clean extraction of results without container internals
+
+1. **final**: Default stage (inherits from asa-runner)
+   - Provides backward compatibility
+   - Used when no specific build target is specified
+
+### Benefits
+
+- **Clean Result Extraction**: Reports are isolated in a dedicated layer
+- **Efficient Transfer**: Only test results are copied, not the entire container filesystem
+- **Fallback Support**: Script includes fallback to volume-based extraction if needed
+- **Minimal Footprint**: Final results layer contains only the necessary output files
 
 ## Prerequisites
 
@@ -22,6 +50,7 @@ Attack Surface Analyzer is a Microsoft tool that helps analyze changes to a syst
 ### Build Prerequisites (if not providing -MsiPath)
 
 If you want the script to build the MSI automatically, ensure you have:
+
 - .NET SDK (as specified in global.json)
 - All PowerShell build dependencies (the script will use Start-PSBuild and Start-PSPackage)
 - See the main PowerShell README for full build prerequisites
@@ -110,19 +139,21 @@ Get-Content "*_summary.json.txt" | ConvertFrom-Json | Format-List
 The script automatically handles Docker Desktop installation and startup:
 
 **If Docker Desktop is installed but not running:**
+
 - The script will automatically start Docker Desktop for you
 - It waits up to 60 seconds for Docker to become available
 - You'll be prompted for confirmation (supports `-Confirm` and `-WhatIf`)
 
 **If Docker Desktop is not installed:**
+
 - The script will prompt you to install it automatically using winget
 - After installation completes, start Docker Desktop and run the script again
 
 **Manual Installation:**
 
 1. Install Docker Desktop from https://www.docker.com/products/docker-desktop
-2. Ensure Docker is running
-3. Switch to Windows containers (right-click Docker tray icon → "Switch to Windows containers")
+1. Ensure Docker is running
+1. Switch to Windows containers (right-click Docker tray icon → "Switch to Windows containers")
 
 ### Container Fails to Start
 
@@ -166,8 +197,8 @@ To debug issues, keep the work directory and examine the files:
 These tools were extracted from the GitHub Actions workflow to allow local testing. If you need to integrate ASA testing back into a CI/CD pipeline, you can:
 
 1. Use the PowerShell script directly in your pipeline
-2. Build and push the Docker image to a registry
-3. Use the Dockerfile as a base for custom testing scenarios
+1. Build and push the Docker image to a registry
+1. Use the Dockerfile as a base for custom testing scenarios
 
 ## More Information
 
