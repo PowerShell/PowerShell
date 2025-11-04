@@ -476,21 +476,11 @@ function Write-ConsoleSummary {
                         Write-Host "      Issuer: $issuer" -ForegroundColor Yellow
                         Write-Host "      Files ($fileCount):" -ForegroundColor White
 
-                        # Sort files by expiration date (handle nulls safely)
-                        $sortedFiles = $files | Sort-Object {
-                            if ($_.NotAfter) {
-                                try { [DateTime]::Parse($_.NotAfter) }
-                                catch { [DateTime]::MaxValue }
-                            } else {
-                                [DateTime]::MaxValue
-                            }
-                        }
+                        # Sort files by full file path
+                        $sortedFiles = $files | Sort-Object Identity
 
-                        # Show first 20 files per issuer
-                        $displayLimit = [Math]::Min(20, $fileCount)
-                        for ($i = 0; $i -lt $displayLimit; $i++) {
-                            $file = $sortedFiles[$i]
-
+                        # Show all files
+                        foreach ($file in $sortedFiles) {
                             # Get identity - handle both hashtable and PSCustomObject
                             $filePath = if ($file -is [hashtable]) { $file['Identity'] } else { $file.Identity }
 
@@ -506,10 +496,6 @@ function Write-ConsoleSummary {
                                 }
                             }
                             Write-Host "        [Expired: $expirationDate] $filePath" -ForegroundColor Gray
-                        }
-
-                        if ($fileCount -gt $displayLimit) {
-                            Write-Host "        ... and $($fileCount - $displayLimit) more files" -ForegroundColor DarkGray
                         }
                     }
 
