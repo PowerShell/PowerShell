@@ -108,15 +108,22 @@ Get-Content "*_summary.json.txt" | ConvertFrom-Json | Format-List
 
 ### Docker Not Available
 
-If Docker is not installed, the script will prompt you to install it automatically using winget.
+The script automatically handles Docker Desktop installation and startup:
 
-To install manually:
+**If Docker Desktop is installed but not running:**
+- The script will automatically start Docker Desktop for you
+- It waits up to 60 seconds for Docker to become available
+- You'll be prompted for confirmation (supports `-Confirm` and `-WhatIf`)
+
+**If Docker Desktop is not installed:**
+- The script will prompt you to install it automatically using winget
+- After installation completes, start Docker Desktop and run the script again
+
+**Manual Installation:**
 
 1. Install Docker Desktop from https://www.docker.com/products/docker-desktop
 2. Ensure Docker is running
 3. Switch to Windows containers (right-click Docker tray icon → "Switch to Windows containers")
-
-**Automatic Installation**: If you run the script without Docker installed, it will ask if you want to install Docker Desktop using `winget install docker.dockerdesktop`. After installation completes, restart Docker Desktop and run the script again.
 
 ### Container Fails to Start
 

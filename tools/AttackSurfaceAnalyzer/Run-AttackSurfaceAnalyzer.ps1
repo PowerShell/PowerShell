@@ -35,11 +35,17 @@
 
 .NOTES
     Requires Docker Desktop with Windows containers enabled.
-    If Docker is not installed, the script will prompt to install it using winget.
-    If MsiPath is not provided and NoBuild is not specified, the script will
-    import build.psm1 and build a new MSI package.
 
-    Supports -WhatIf and -Confirm for Docker installation.
+    Docker Desktop Handling:
+    - If Docker Desktop is installed but not running, the script will start it automatically
+    - If Docker Desktop is not installed, the script will prompt to install it using winget
+    - Waits up to 60 seconds for Docker to become available after starting
+
+    Build Behavior:
+    - If MsiPath is not provided and NoBuild is not specified, the script will
+      import build.psm1 and build a new MSI package
+
+    Supports -WhatIf and -Confirm for Docker installation and startup.
 #>
 
 [CmdletBinding(SupportsShouldProcess)]
@@ -81,6 +87,79 @@ function Test-DockerAvailable {
         return $true
     }
     catch {
+        return $false
+    }
+}
+
+function Test-DockerDesktopInstalled {
+    # Check if Docker Desktop executable exists
+    $dockerDesktopPaths = @(
+        "${env:ProgramFiles}\Docker\Docker\Docker Desktop.exe",
+        "${env:ProgramFiles(x86)}\Docker\Docker\Docker Desktop.exe",
+        "${env:LOCALAPPDATA}\Programs\Docker\Docker Desktop.exe"
+    )
+
+    foreach ($path in $dockerDesktopPaths) {
+        if (Test-Path $path) {
+            return $path
+        }
+    }
+    return $null
+}
+
+function Test-DockerDesktopRunning {
+    $process = Get-Process -Name "Docker Desktop" -ErrorAction SilentlyContinue
+    return $null -ne $process
+}
+
+function Start-DockerDesktopApp {
+    [CmdletBinding(SupportsShouldProcess)]
+    param()
+
+    $dockerDesktopPath = Test-DockerDesktopInstalled
+
+    if (-not $dockerDesktopPath) {
+        Write-Log "Docker Desktop executable not found." -Level ERROR
+        return $false
+    }
+
+    if (Test-DockerDesktopRunning) {
+        Write-Log "Docker Desktop is already running." -Level SUCCESS
+        return $true
+    }
+
+    if ($PSCmdlet.ShouldProcess("Docker Desktop", "Start application")) {
+        Write-Log "Starting Docker Desktop..." -Level SUCCESS
+        Write-Log "This may take a minute for Docker to fully start..."
+
+        try {
+            Start-Process -FilePath $dockerDesktopPath -WindowStyle Hidden
+
+            # Wait for Docker to become available (up to 60 seconds)
+            $maxWaitSeconds = 60
+            $waitedSeconds = 0
+
+            while ($waitedSeconds -lt $maxWaitSeconds) {
+                Start-Sleep -Seconds 5
+                $waitedSeconds += 5
+                Write-Log "Waiting for Docker to start... ($waitedSeconds/$maxWaitSeconds seconds)"
+
+                if (Test-DockerAvailable) {
+                    Write-Log "Docker Desktop started successfully!" -Level SUCCESS
+                    return $true
+                }
+            }
+
+            Write-Log "Docker Desktop was started but is not responding yet. Please wait a moment and try again." -Level WARNING
+            return $false
+        }
+        catch {
+            Write-Log "Error starting Docker Desktop: $_" -Level ERROR
+            return $false
+        }
+    }
+    else {
+        Write-Log "Starting Docker Desktop cancelled by user." -Level WARNING
         return $false
     }
 }
@@ -135,16 +214,34 @@ function Install-DockerDesktop {
 # Verify Docker is available
 Write-Log "Checking Docker availability..."
 if (-not (Test-DockerAvailable)) {
-    Write-Log "Docker is not available." -Level WARNING
-    Write-Log "Docker Desktop is required to run Attack Surface Analyzer tests in containers." -Level WARNING
+    Write-Log "Docker is not responding." -Level WARNING
 
-    if (Install-DockerDesktop) {
-        Write-Log "Docker Desktop has been installed. Please restart Docker Desktop and run this script again." -Level SUCCESS
-        exit 0
+    # Check if Docker Desktop is installed but not running
+    if (Test-DockerDesktopInstalled) {
+        Write-Log "Docker Desktop is installed but not running." -Level WARNING
+
+        if (Start-DockerDesktopApp) {
+            Write-Log "Docker Desktop is now running and ready." -Level SUCCESS
+        }
+        else {
+            Write-Log "Failed to start Docker Desktop or it's taking longer than expected." -Level ERROR
+            Write-Log "Please start Docker Desktop manually and ensure Windows containers are enabled, then run this script again." -Level ERROR
+            exit 1
+        }
     }
     else {
-        Write-Log "Please install Docker Desktop manually from https://www.docker.com/products/docker-desktop and ensure it's running with Windows containers enabled." -Level ERROR
-        exit 1
+        # Docker Desktop is not installed
+        Write-Log "Docker Desktop is not installed." -Level WARNING
+        Write-Log "Docker Desktop is required to run Attack Surface Analyzer tests in containers." -Level WARNING
+
+        if (Install-DockerDesktop) {
+            Write-Log "Docker Desktop has been installed. Please restart Docker Desktop and run this script again." -Level SUCCESS
+            exit 0
+        }
+        else {
+            Write-Log "Please install Docker Desktop manually from https://www.docker.com/products/docker-desktop and ensure it's running with Windows containers enabled." -Level ERROR
+            exit 1
+        }
     }
 }
 
