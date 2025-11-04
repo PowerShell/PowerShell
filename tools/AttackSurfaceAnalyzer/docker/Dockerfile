@@ -56,6 +56,14 @@ RUN Write-Host "=========================================" -ForegroundColor Gree
     asa export-collect --savetodatabase --resultlevels WARNING,ERROR,FATAL --firstrunid before --secondrunid after; \
     if ($LASTEXITCODE -ne 0) { Write-Warning "Failed to export results with exit code: $LASTEXITCODE" }
 
+# Export comparison results
+RUN Write-Host "=========================================" -ForegroundColor Green; \
+    Write-Host "Exporting comparison results..." -ForegroundColor Green; \
+    Write-Host "========================================="; \
+    asa export-collect --readfromsavedcomparisons; \
+    if ($LASTEXITCODE -ne 0) { Write-Warning "Failed to export results with exit code: $LASTEXITCODE" }
+
+
 # Copy and standardize JSON result files
 RUN Write-Host "=========================================" -ForegroundColor Green; \
     Write-Host "Processing JSON result files..." -ForegroundColor Green; \
@@ -76,8 +84,6 @@ RUN Write-Host "=========================================" -ForegroundColor Gree
             Write-Host "Copying to standard name: asa-results.json"; \
             Copy-Item -Path $_.FullName -Destination C:\work\asa-results.json -ErrorAction Stop; \
             Copy-Item -Path $_.FullName -Destination C:\reports\asa-results.json -ErrorAction Stop; \
-            Write-Host "Original filename preserved as: $($_.Name).original"; \
-            Copy-Item -Path $_.FullName -Destination "C:\reports\$($_.Name).original" -ErrorAction Stop \
         } \
     }
 

@@ -8,7 +8,8 @@ Attack Surface Analyzer is a Microsoft tool that helps analyze changes to a syst
 
 ## Files
 
-- **Run-AttackSurfaceAnalyzer.ps1** - PowerShell script to run ASA tests locally
+- **Run-AttackSurfaceAnalyzer.ps1** - PowerShell script to run ASA tests with official MSIs
+- **Summarize-AsaResults.ps1** - PowerShell script to analyze and summarize ASA results
 - **docker/Dockerfile** - Multi-stage Dockerfile for building a container image with ASA pre-installed
 - **README.md** - This documentation file
 
@@ -45,43 +46,42 @@ The Docker implementation uses a multi-stage build to optimize the testing and r
 - Windows 10/11 or Windows Server
 - Docker Desktop with Windows containers enabled
 - PowerShell 5.1 or later
-- (Optional) A pre-built PowerShell MSI file to test, or the script will build one for you
+- **An official signed PowerShell MSI file** from a released build
 
-### Build Prerequisites (if not providing -MsiPath)
+### MSI Requirements
 
-If you want the script to build the MSI automatically, ensure you have:
+**Important:** This tool now requires an official, digitally signed PowerShell MSI from Microsoft releases:
 
-- .NET SDK (as specified in global.json)
-- All PowerShell build dependencies (the script will use Start-PSBuild and Start-PSPackage)
-- See the main PowerShell README for full build prerequisites
+- **Must be signed** by Microsoft Corporation
+- **Must be from an official release** (downloaded from [PowerShell Releases](https://github.com/PowerShell/PowerShell/releases))
+- **Local builds are not supported** - unsigned or development MSIs will be rejected
+- The script automatically verifies the digital signature before proceeding
+
+**Where to get official MSIs:**
+
+- Download from: https://github.com/PowerShell/PowerShell/releases
+- Look for files like: `PowerShell-7.x.x-win-x64.msi`
 
 ## Quick Start
 
 ### Option 1: Using the PowerShell Script (Recommended)
 
-The simplest way to run ASA tests is using the provided PowerShell script:
+The script requires an official signed PowerShell MSI file:
 
 ```powershell
-# Build MSI and run ASA test automatically (default behavior)
-.\tools\AttackSurfaceAnalyzer\Run-AttackSurfaceAnalyzer.ps1
+# Run ASA test with official MSI (MsiPath is required)
+.\tools\AttackSurfaceAnalyzer\Run-AttackSurfaceAnalyzer.ps1 -MsiPath "C:\path\to\PowerShell-7.4.0-win-x64.msi"
 
-# Run with specific MSI file (skips build)
-.\tools\AttackSurfaceAnalyzer\Run-AttackSurfaceAnalyzer.ps1 -MsiPath "C:\path\to\PowerShell.msi"
-
-# Search for existing MSI without building
-.\tools\AttackSurfaceAnalyzer\Run-AttackSurfaceAnalyzer.ps1 -NoBuild
-
-# Specify output directory for results
-.\tools\AttackSurfaceAnalyzer\Run-AttackSurfaceAnalyzer.ps1 -OutputPath "C:\results"
+# Specify custom output directory for results
+.\tools\AttackSurfaceAnalyzer\Run-AttackSurfaceAnalyzer.ps1 -MsiPath ".\PowerShell-7.4.0-win-x64.msi" -OutputPath "C:\asa-results"
 
 # Keep the temporary work directory for debugging
-.\tools\AttackSurfaceAnalyzer\Run-AttackSurfaceAnalyzer.ps1 -KeepWorkDirectory
+.\tools\AttackSurfaceAnalyzer\Run-AttackSurfaceAnalyzer.ps1 -MsiPath ".\PowerShell-7.4.0-win-x64.msi" -KeepWorkDirectory
 ```
 
 The script will:
 
-1. Build PowerShell MSI (if not provided via -MsiPath or -NoBuild)
-1. Find or use the specified MSI file
+1. **Verify MSI signature** - Ensures the MSI is officially signed by Microsoft Corporation
 1. Create a temporary work directory
 1. Build a custom Docker container from the static Dockerfile
 1. Start the Windows container with Attack Surface Analyzer
@@ -90,6 +90,8 @@ The script will:
 1. Take a post-installation snapshot
 1. Export comparison results
 1. Copy results back to your specified output directory
+
+**Security Note:** The script will reject any MSI that is not digitally signed by Microsoft Corporation to ensure analysis is performed only on official releases.
 
 ### Option 2: Using the Dockerfile
 
@@ -117,6 +119,28 @@ The test will generate output files in the `./asa-results/` directory (or your s
 
 ## Analyzing Results
 
+### Using the Summary Script (Recommended)
+
+Use the included summary script to get a comprehensive analysis:
+
+```powershell
+# Basic summary of ASA results
+.\tools\AttackSurfaceAnalyzer\Summarize-AsaResults.ps1
+
+# Detailed analysis with rule breakdowns
+.\tools\AttackSurfaceAnalyzer\Summarize-AsaResults.ps1 -ShowDetails
+
+# Analyze results from a specific location
+.\tools\AttackSurfaceAnalyzer\Summarize-AsaResults.ps1 -Path "C:\custom\path\asa-results.json" -ShowDetails
+```
+
+The summary script provides:
+
+- **Overall statistics** - Total findings, analysis levels, category breakdowns
+- **Rule analysis** - Which security rules were triggered and how often
+- **File analysis** - Detailed breakdown of file-related security issues by rule type
+- **Category cross-reference** - Shows which rules affect which categories
+
 ### Using VS Code
 
 The SARIF files can be opened directly in VS Code with the SARIF Viewer extension to see a formatted view of the findings.
@@ -124,8 +148,9 @@ The SARIF files can be opened directly in VS Code with the SARIF Viewer extensio
 ### Using PowerShell
 
 ```powershell
-# Read the summary file
-Get-Content "*_summary.json.txt" | ConvertFrom-Json | Format-List
+# Read the JSON results directly
+$results = Get-Content "asa-results\asa-results.json" | ConvertFrom-Json
+$results.Results.FILE_CREATED.Count  # Number of files created
 
 # Query the SQLite database (requires SQLite tools)
 # Example: List all file changes
@@ -161,6 +186,15 @@ The script automatically handles Docker Desktop installation and startup:
 - Check that Windows containers are enabled in Docker settings
 - Try pulling the base image manually: `docker pull mcr.microsoft.com/dotnet/sdk:9.0-windowsservercore-ltsc2022`
 
+### MSI Signature Verification Fails
+
+If you get signature verification errors:
+
+- **Ensure you're using an official MSI** from [PowerShell Releases](https://github.com/PowerShell/PowerShell/releases)
+- **Do not use local builds** - only signed release MSIs are supported  
+- **Check certificate validity** - very old MSIs may have expired certificates
+- **Verify file integrity** - redownload the MSI if it may be corrupted
+
 ### No Results Generated
 
 - Check the install.log file for MSI installation errors
@@ -169,12 +203,20 @@ The script automatically handles Docker Desktop installation and startup:
 
 ## Advanced Usage
 
-### Custom Container Image
+### Parameters
 
-You can specify a different container image:
+The `Run-AttackSurfaceAnalyzer.ps1` script supports these parameters:
+
+- **`-MsiPath`** (Required) - Path to the official signed PowerShell MSI file
+- **`-OutputPath`** (Optional) - Directory for results (defaults to `./asa-results`)
+- **`-ContainerImage`** (Optional) - Custom container base image
+- **`-KeepWorkDirectory`** (Optional) - Keep temp directory for debugging
+
+Example with custom container image:
 
 ```powershell
 .\tools\AttackSurfaceAnalyzer\Run-AttackSurfaceAnalyzer.ps1 `
+  -MsiPath ".\PowerShell-7.4.0-win-x64.msi" `
   -ContainerImage "mcr.microsoft.com/dotnet/sdk:8.0-windowsservercore-ltsc2022"
 ```
 
