@@ -33,6 +33,16 @@ runs:
           const includeDeleted = '${{ inputs.include-deleted }}' === 'true';
           let changedFiles = [];
 
+          // Define allowed file statuses based on includeDeleted setting
+          const allowedStatuses = includeDeleted 
+            ? ['added', 'modified', 'renamed', 'removed']
+            : ['added', 'modified', 'renamed'];
+
+          // Helper function to filter files by status
+          const filterByStatus = (files) => files
+            .filter(file => allowedStatuses.includes(file.status))
+            .map(file => file.filename);
+
           if (eventTypes.includes('pull_request') && context.eventName === 'pull_request') {
             console.log(`Getting files changed in PR #${context.payload.pull_request.number}`);
 
@@ -59,16 +69,7 @@ runs:
               console.log(`Note: This PR has ${allFiles.length} changed files. All files fetched using pagination.`);
             }
 
-            // Filter based on file status
-            changedFiles = allFiles
-              .filter(file => {
-                if (includeDeleted) {
-                  return file.status === 'added' || file.status === 'modified' || file.status === 'renamed' || file.status === 'removed';
-                } else {
-                  return file.status === 'added' || file.status === 'modified' || file.status === 'renamed';
-                }
-              })
-              .map(file => file.filename);
+            changedFiles = filterByStatus(allFiles);
 
           } else if (eventTypes.includes('push') && context.eventName === 'push') {
             console.log(`Getting files changed in push to ${context.ref}`);
@@ -80,16 +81,7 @@ runs:
               head: context.payload.after,
             });
 
-            // Filter based on file status
-            changedFiles = comparison.files
-              .filter(file => {
-                if (includeDeleted) {
-                  return file.status === 'added' || file.status === 'modified' || file.status === 'renamed' || file.status === 'removed';
-                } else {
-                  return file.status === 'added' || file.status === 'modified' || file.status === 'renamed';
-                }
-              })
-              .map(file => file.filename);
+            changedFiles = filterByStatus(comparison.files);
 
           } else {
             core.setFailed(`Unsupported event type: ${context.eventName}. Supported types: ${eventTypes.join(', ')}`);
