@@ -114,7 +114,7 @@ function Get-AsaSummary {
                 if ($analysisLevel -eq "DEBUG" -and -not $IncludeDebugEvent) {
                     continue
                 }
-                
+
                 $summary.AnalysisLevels[$analysisLevel]++
             }            # If we reach here, the item passed the filter
             $summary.Categories[$categoryName].Count++
@@ -431,6 +431,68 @@ function Write-ConsoleSummary {
                 }
 
                 Write-Host "    $level`: $count items" -ForegroundColor $color
+            }
+
+            # Show individual file details for file-related categories
+            if ($categoryName -like "*FILE*" -and $items.Count -gt 0) {
+                Write-Host ""
+                Write-Host "    Files:" -ForegroundColor DarkCyan
+
+                # Limit display to first 50 items to avoid overwhelming output
+                $displayLimit = [Math]::Min(50, $items.Count)
+                for ($i = 0; $i -lt $displayLimit; $i++) {
+                    $item = $items[$i]
+                    $identity = $item.Identity
+                    $analysis = $item.Analysis
+
+                    $color = switch ($analysis) {
+                        'ERROR' { 'Red' }
+                        'WARNING' { 'Yellow' }
+                        'INFORMATION' { 'Green' }
+                        'DEBUG' { 'DarkGray' }
+                        default { 'Gray' }
+                    }
+
+                    # Show triggered rules for this file
+                    if ($item.Rules -and $item.Rules.Count -gt 0) {
+                        $ruleNames = $item.Rules | ForEach-Object { $_.Name }
+                        Write-Host "      [$analysis] $identity" -ForegroundColor $color
+                        Write-Host "          Rules: $($ruleNames -join ', ')" -ForegroundColor DarkGray
+                    }
+                    else {
+                        Write-Host "      [$analysis] $identity" -ForegroundColor $color
+                    }
+                }
+
+                if ($items.Count -gt $displayLimit) {
+                    Write-Host "      ... and $($items.Count - $displayLimit) more files" -ForegroundColor DarkGray
+                }
+            }
+            # Show details for non-file categories (users, groups, etc.)
+            elseif ($items.Count -gt 0) {
+                Write-Host ""
+                Write-Host "    Items:" -ForegroundColor DarkCyan
+
+                $displayLimit = [Math]::Min(20, $items.Count)
+                for ($i = 0; $i -lt $displayLimit; $i++) {
+                    $item = $items[$i]
+                    $identity = $item.Identity
+                    $analysis = $item.Analysis
+
+                    $color = switch ($analysis) {
+                        'ERROR' { 'Red' }
+                        'WARNING' { 'Yellow' }
+                        'INFORMATION' { 'Green' }
+                        'DEBUG' { 'DarkGray' }
+                        default { 'Gray' }
+                    }
+
+                    Write-Host "      [$analysis] $identity" -ForegroundColor $color
+                }
+
+                if ($items.Count -gt $displayLimit) {
+                    Write-Host "      ... and $($items.Count - $displayLimit) more items" -ForegroundColor DarkGray
+                }
             }
         }
     }
