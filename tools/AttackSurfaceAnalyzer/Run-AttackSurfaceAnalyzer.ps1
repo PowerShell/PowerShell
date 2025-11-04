@@ -303,27 +303,26 @@ if (-not $MsiPath) {
                 exit 1
             }
 
-            # Build PowerShell
-            Write-Log "Starting PowerShell build (this may take several minutes)..."
-            Write-Log "Running: Start-PSBuild -Runtime win7-x64 -Configuration Release"
-            Start-PSBuild -Runtime win7-x64 -Configuration Release -ErrorAction Stop
-
-            # (Removed redundant $LASTEXITCODE check after Start-PSBuild -ErrorAction Stop)
-
-            Write-Log "Build completed successfully" -Level SUCCESS
+            try {
+                Start-PSBuild -Runtime win7-x64 -Configuration Release -ErrorAction Stop
+                Write-Log "Build completed successfully" -Level SUCCESS
+            }
+            catch {
+                Write-Log "Build failed: $_" -Level ERROR
+                exit 1
+            }
 
             # Package the MSI
             Write-Log "Creating MSI package..."
             Write-Log "Running: Start-PSPackage -Type msi -WindowsRuntime win7-x64"
-            Start-PSPackage -Type msi -WindowsRuntime win7-x64 -SkipReleaseChecks
-
-            if ($LASTEXITCODE -ne 0) {
-                Write-Log "Packaging failed with exit code: $LASTEXITCODE" -Level ERROR
+            try {
+                Start-PSPackage -Type msi -WindowsRuntime win7-x64 -SkipReleaseChecks
+                Write-Log "MSI packaging completed successfully" -Level SUCCESS
+            }
+            catch {
+                Write-Log "Packaging failed: $_" -Level ERROR
                 exit 1
             }
-
-            Write-Log "MSI packaging completed successfully" -Level SUCCESS
-
             # Find the newly created MSI at the repo root
             Write-Log "Looking for MSI at repo root: $repoRoot"
             $msiFiles = Get-ChildItem -Path $repoRoot -Filter "*.msi" -ErrorAction SilentlyContinue |
