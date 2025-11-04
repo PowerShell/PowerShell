@@ -449,14 +449,14 @@ try {
             "asa-results.sarif",
             "install.log"
         )
-        
+
         $extractedAny = $false
 
         foreach ($filename in $reportFilePatterns) {
             try {
                 Write-Log "Trying to extract file: $filename" -Level INFO
                 docker cp "${tempContainerName}:/$filename" $OutputPath 2>$null
-                
+
                 if ($LASTEXITCODE -eq 0) {
                     Write-Log "Successfully extracted: $filename" -Level SUCCESS
                     $extractedAny = $true
@@ -519,6 +519,112 @@ try {
     Write-Log "Attack Surface Analyzer test completed!" -Level SUCCESS
     Write-Log "=========================================" -Level SUCCESS
     Write-Log "Results saved to: $OutputPath" -Level SUCCESS
+
+    # Check for ASA GUI availability and launch interactive analysis
+    $dbPath = Join-Path $OutputPath "asa.sqlite"
+    $sarifPath = Join-Path $OutputPath "asa-results.sarif"
+
+    if (Test-Path $dbPath) {
+        # Check if ASA CLI is available
+        $asaAvailable = $false
+        try {
+            $asaVersion = asa --version 2>$null
+            if ($LASTEXITCODE -eq 0) {
+                $asaAvailable = $true
+                Write-Log "Attack Surface Analyzer CLI detected: $($asaVersion.Trim())" -Level INFO
+            }
+        }
+        catch {
+            # ASA not available via PATH
+        }
+
+        # Try dotnet tool global path if ASA not found in PATH
+        if (-not $asaAvailable) {
+            $globalToolsPath = "$env:USERPROFILE\.dotnet\tools\asa.exe"
+            if (Test-Path $globalToolsPath) {
+                try {
+                    $asaVersion = & $globalToolsPath --version 2>$null
+                    if ($LASTEXITCODE -eq 0) {
+                        $asaAvailable = $true
+                        Write-Log "Attack Surface Analyzer found in global tools: $($asaVersion.Trim())" -Level INFO
+                        # Use full path for subsequent commands
+                        $asaCommand = $globalToolsPath
+                    }
+                }
+                catch {
+                    # Global tools ASA not working
+                }
+            }
+        } else {
+            $asaCommand = "asa"
+        }
+
+        if ($asaAvailable) {
+            Write-Log "Launching Attack Surface Analyzer GUI for interactive analysis..." -Level SUCCESS
+            try {
+                # Launch ASA GUI with the database file
+                $asaProcess = Start-Process -FilePath $asaCommand -ArgumentList "gui", "--databasefilename", "`"$dbPath`"" -PassThru -NoNewWindow:$false
+
+                if ($asaProcess) {
+                    Write-Log "ASA GUI launched successfully (PID: $($asaProcess.Id))" -Level SUCCESS
+                    Write-Log "Interactive analysis interface is now available" -Level INFO
+                } else {
+                    Write-Log "Failed to launch ASA GUI" -Level WARNING
+                }
+            }
+            catch {
+                Write-Log "Error launching ASA GUI: $_" -Level WARNING
+                Write-Log "You can manually launch the GUI with: asa gui --databasefilename `"$dbPath`"" -Level INFO
+            }
+        } else {
+            Write-Log "Attack Surface Analyzer CLI not found" -Level INFO
+            Write-Log "Install ASA globally to enable GUI analysis: dotnet tool install -g Microsoft.CST.AttackSurfaceAnalyzer.CLI" -Level INFO
+            Write-Log "Then launch GUI manually with: asa gui --databasefilename `"$dbPath`"" -Level INFO
+        }
+    } else {
+        Write-Log "Database file not found - cannot launch ASA GUI" -Level WARNING
+    }
+
+    # Also check for VS Code integration for SARIF analysis
+    if (Test-Path $sarifPath) {
+        # Detect if running in VS Code
+        $isVSCode = $false
+
+        if ($env:VSCODE_PID -or $env:TERM_PROGRAM -eq "vscode" -or $env:VSCODE_INJECTION -eq "1") {
+            $isVSCode = $true
+        }
+
+        # Check if 'code' command is available
+        if (-not $isVSCode) {
+            try {
+                $codeVersion = & code --version 2>$null
+                if ($LASTEXITCODE -eq 0) {
+                    $isVSCode = $true
+                }
+            }
+            catch {
+                # 'code' command not available
+            }
+        }
+
+        if ($isVSCode) {
+            Write-Log "VS Code detected - opening SARIF file for complementary analysis..." -Level INFO
+            try {
+                & code $sarifPath
+                if ($LASTEXITCODE -eq 0) {
+                    Write-Log "SARIF file opened in VS Code: $sarifPath" -Level SUCCESS
+                } else {
+                    Write-Log "Failed to open SARIF file in VS Code" -Level WARNING
+                }
+            }
+            catch {
+                Write-Log "Error opening SARIF file in VS Code: $_" -Level WARNING
+            }
+        } else {
+            Write-Log "SARIF analysis file available at: $sarifPath" -Level INFO
+            Write-Log "Open this file in VS Code with the SARIF Viewer extension for detailed analysis" -Level INFO
+        }
+    }
 }
 finally {
     # Cleanup
