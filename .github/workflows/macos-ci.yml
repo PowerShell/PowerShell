@@ -157,7 +157,7 @@ jobs:
       - name: Verify xUnit test results
         uses: "./.github/actions/test/verify_xunit"
   PackageMac-macos_packaging:
-    name: macOS packaging (bootstrap only)
+    name: macOS packaging and testing
     needs:
       - changes
     if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
@@ -165,11 +165,14 @@ jobs:
       - macos-latest
     steps:
     - name: checkout
-      uses: actions/checkout@v4.1.0
+      uses: actions/checkout@v5
       with:
         fetch-depth: 1000
+    - uses: actions/setup-dotnet@v4
+      with:
+        global-json-file: ./global.json
     - name: Bootstrap packaging
-      if: success() || failure()
+      if: success()
       run: |-
         import-module ./build.psm1
         start-psbootstrap -Scenario package
@@ -187,14 +190,48 @@ jobs:
         $macOSRuntime = if ([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture -eq 'Arm64') { 'osx-arm64' } else { 'osx-x64' }
         Start-PSPackage -Type osxpkg -ReleaseTag $releaseTag -MacOSRuntime $macOSRuntime -SkipReleaseChecks
       shell: pwsh
-
+      
     - name: Install Pester
       if: success()
       run: |-
         Import-Module ./tools/ci.psm1
         Install-CIPester
       shell: pwsh
-
+      
+    - name: Test package contents
+      if: success()
+      run: |-
+        $env:PACKAGE_FOLDER = Get-Location
+        $testResultsPath = Join-Path $env:RUNNER_WORKSPACE "testResults"
+        if (-not (Test-Path $testResultsPath)) {
+          New-Item -ItemType Directory -Path $testResultsPath -Force | Out-Null
+        }
+        Import-Module Pester
+        $pesterConfig = New-PesterConfiguration
+        $pesterConfig.Run.Path = './tools/packaging/releaseTests/macOSPackage.tests.ps1'
+        $pesterConfig.Run.PassThru = $true
+        $pesterConfig.Output.Verbosity = 'Detailed'
+        $pesterConfig.TestResult.Enabled = $true
+        $pesterConfig.TestResult.OutputFormat = 'NUnitXml'
+        $pesterConfig.TestResult.OutputPath = Join-Path $testResultsPath "macOSPackage.xml"
+        $result = Invoke-Pester -Configuration $pesterConfig
+        if ($result.FailedCount -gt 0) {
+          throw "Package validation failed with $($result.FailedCount) failed test(s)"
+        }
+      shell: pwsh
+    - name: Publish and Upload Pester Test Results
+      if: always()
+      uses: "./.github/actions/test/process-pester-results"
+      with:
+        name: "macOSPackage"
+        testResultsFolder: "${{ runner.workspace }}/testResults"
+    - name: Upload package artifact
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: macos-package
+        path: "*.pkg"
+        
   ready_to_merge:
     name: macos ready to merge
     needs:
