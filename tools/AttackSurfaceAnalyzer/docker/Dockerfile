@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 # Multi-stage Dockerfile for Attack Surface Analyzer Testing
 # Stage 1: Build and run ASA tests
 # Stage 2: Extract reports to scratch layer
