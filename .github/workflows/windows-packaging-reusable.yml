@@ -24,9 +24,6 @@ jobs:
           - architecture: x64
             channel: preview
             runtimePrefix: win7
-          - architecture: x64
-            channel: stable
-            runtimePrefix: win7
           - architecture: x86
             channel: stable
             runtimePrefix: win7
@@ -90,4 +87,3 @@ jobs:
           path: |
             ${{ github.workspace }}/artifacts/**/*
             !${{ github.workspace }}/artifacts/**/*.pdb
-
