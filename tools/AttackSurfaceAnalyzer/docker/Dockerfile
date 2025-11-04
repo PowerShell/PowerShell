@@ -23,7 +23,7 @@ RUN New-Item -ItemType Directory -Path C:\reports -Force | Out-Null
 RUN Write-Host "=========================================" -ForegroundColor Green; \
     Write-Host "Taking baseline snapshot..." -ForegroundColor Green; \
     Write-Host "========================================="; \
-    asa collect -f -s -r -u -p -l --directories 'C:\Program Files\PowerShell,C:\Program Files (x86)\PowerShell'; \
+    asa collect -f -r -u -l --directories 'C:\Program Files\PowerShell,C:\Program Files (x86)\PowerShell' --runid before; \
     if ($LASTEXITCODE -ne 0) { Write-Error "Failed to take baseline snapshot"; exit 1 }
 
 # Copy the PowerShell MSI file from build context
@@ -46,32 +46,36 @@ RUN Write-Host "=========================================" -ForegroundColor Gree
 RUN Write-Host "=========================================" -ForegroundColor Green; \
     Write-Host "Taking post-installation snapshot..." -ForegroundColor Green; \
     Write-Host "========================================="; \
-    asa collect -f -s -r -u -p -l --directories 'C:\Program Files\PowerShell,C:\Program Files (x86)\PowerShell'; \
+    asa collect -f -r -u -l --directories 'C:\Program Files\PowerShell,C:\Program Files (x86)\PowerShell' --runid after; \
     if ($LASTEXITCODE -ne 0) { Write-Error "Failed to take post-installation snapshot"; exit 1 }
 
 # Export comparison results
 RUN Write-Host "=========================================" -ForegroundColor Green; \
     Write-Host "Exporting comparison results..." -ForegroundColor Green; \
     Write-Host "========================================="; \
-    asa export-collect --outputsarif --savetodatabase; \
+    asa export-collect --savetodatabase --resultlevels WARNING,ERROR,FATAL --firstrunid before --secondrunid after; \
     if ($LASTEXITCODE -ne 0) { Write-Warning "Failed to export results with exit code: $LASTEXITCODE" }
 
-# Copy and standardize SARIF result files
+# Copy and standardize JSON result files
 RUN Write-Host "=========================================" -ForegroundColor Green; \
-    Write-Host "Processing SARIF result files..." -ForegroundColor Green; \
+    Write-Host "Processing JSON result files..." -ForegroundColor Green; \
     Write-Host "========================================="; \
-    $sarifFiles = Get-ChildItem -Path "*.sarif" -ErrorAction SilentlyContinue; \
-    if ($sarifFiles.Count -eq 0) { \
-        Write-Warning 'No SARIF files found - ASA may not have generated results' \
+    $jsonFiles = Get-ChildItem -Path "*.json.txt" -ErrorAction SilentlyContinue; \
+    if ($jsonFiles.Count -eq 0) { \
+        Write-Warning 'No JSON.TXT files found - checking for .json files...'; \
+        $jsonFiles = Get-ChildItem -Path "*.json" -ErrorAction SilentlyContinue \
+    }; \
+    if ($jsonFiles.Count -eq 0) { \
+        throw 'No JSON files found - ASA may not have generated results' \
     } else { \
-        $sarifFiles | ForEach-Object { \
-            Write-Host "Found SARIF file: $($_.Name)"; \
+        $jsonFiles | ForEach-Object { \
+            Write-Host "Found JSON file: $($_.Name)"; \
             if (-not (Test-Path $_.FullName)) { \
-                throw "SARIF file not accessible: $($_.FullName)" \
+                throw "JSON file not accessible: $($_.FullName)" \
             }; \
-            Write-Host "Copying to standard name: asa-results.sarif"; \
-            Copy-Item -Path $_.FullName -Destination C:\work\asa-results.sarif -ErrorAction Stop; \
-            Copy-Item -Path $_.FullName -Destination C:\reports\asa-results.sarif -ErrorAction Stop; \
+            Write-Host "Copying to standard name: asa-results.json"; \
+            Copy-Item -Path $_.FullName -Destination C:\work\asa-results.json -ErrorAction Stop; \
+            Copy-Item -Path $_.FullName -Destination C:\reports\asa-results.json -ErrorAction Stop; \
             Write-Host "Original filename preserved as: $($_.Name).original"; \
             Copy-Item -Path $_.FullName -Destination "C:\reports\$($_.Name).original" -ErrorAction Stop \
         } \

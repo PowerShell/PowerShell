@@ -446,7 +446,7 @@ try {
         Write-Log "Extracting standardized report files..." -Level INFO        # Extract files with standardized names (no wildcards needed)
         $reportFilePatterns = @(
             "asa.sqlite",
-            "asa-results.sarif",
+            "asa-results.json",
             "install.log"
         )
 
@@ -522,7 +522,7 @@ try {
 
     # Check for ASA GUI availability and launch interactive analysis
     $dbPath = Join-Path $OutputPath "asa.sqlite"
-    $sarifPath = Join-Path $OutputPath "asa-results.sarif"
+    $jsonPath = Join-Path $OutputPath "asa-results.json"
 
     if (Test-Path $dbPath) {
         # Check if ASA CLI is available
@@ -585,8 +585,8 @@ try {
         Write-Log "Database file not found - cannot launch ASA GUI" -Level WARNING
     }
 
-    # Also check for VS Code integration for SARIF analysis
-    if (Test-Path $sarifPath) {
+    # Also check for VS Code integration for JSON analysis
+    if (Test-Path $jsonPath) {
         # Detect if running in VS Code
         $isVSCode = $false
 
@@ -608,21 +608,21 @@ try {
         }
 
         if ($isVSCode) {
-            Write-Log "VS Code detected - opening SARIF file for complementary analysis..." -Level INFO
+            Write-Log "VS Code detected - opening JSON results for analysis..." -Level INFO
             try {
-                & code $sarifPath
+                & code $jsonPath
                 if ($LASTEXITCODE -eq 0) {
-                    Write-Log "SARIF file opened in VS Code: $sarifPath" -Level SUCCESS
+                    Write-Log "JSON results file opened in VS Code: $jsonPath" -Level SUCCESS
                 } else {
-                    Write-Log "Failed to open SARIF file in VS Code" -Level WARNING
+                    Write-Log "Failed to open JSON file in VS Code" -Level WARNING
                 }
             }
             catch {
-                Write-Log "Error opening SARIF file in VS Code: $_" -Level WARNING
+                Write-Log "Error opening JSON file in VS Code: $_" -Level WARNING
             }
         } else {
-            Write-Log "SARIF analysis file available at: $sarifPath" -Level INFO
-            Write-Log "Open this file in VS Code with the SARIF Viewer extension for detailed analysis" -Level INFO
+            Write-Log "JSON analysis results available at: $jsonPath" -Level INFO
+            Write-Log "Open this file in VS Code or any JSON viewer for detailed analysis" -Level INFO
         }
     }
 }
