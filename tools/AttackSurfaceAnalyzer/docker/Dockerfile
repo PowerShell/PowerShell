@@ -56,26 +56,62 @@ RUN Write-Host "=========================================" -ForegroundColor Gree
     asa export-collect --outputsarif --savetodatabase; \
     if ($LASTEXITCODE -ne 0) { Write-Warning "Failed to export results with exit code: $LASTEXITCODE" }
 
-# Copy results to both work and reports directories
+# Copy TXT result files to both work and reports directories
 RUN Write-Host "=========================================" -ForegroundColor Green; \
-    Write-Host "Copying results to output directories..." -ForegroundColor Green; \
+    Write-Host "Copying TXT result files..." -ForegroundColor Green; \
     Write-Host "========================================="; \
-    Get-ChildItem -Path "*.txt" | ForEach-Object { \
-        Write-Host "Copying: $($_.Name)"; \
-        Copy-Item -Path $_.FullName -Destination C:\work\ -ErrorAction SilentlyContinue; \
-        Copy-Item -Path $_.FullName -Destination C:\reports\ -ErrorAction SilentlyContinue \
-    }; \
-    Get-ChildItem -Path "*.sarif" | ForEach-Object { \
-        Write-Host "Copying: $($_.Name)"; \
-        Copy-Item -Path $_.FullName -Destination C:\work\ -ErrorAction SilentlyContinue; \
-        Copy-Item -Path $_.FullName -Destination C:\reports\ -ErrorAction SilentlyContinue \
-    }; \
+    $txtFiles = Get-ChildItem -Path "*.txt" -ErrorAction SilentlyContinue; \
+    if ($txtFiles.Count -eq 0) { \
+        Write-Warning 'No TXT files found to copy' \
+    } else { \
+        $txtFiles | ForEach-Object { \
+            Write-Host "Copying: $($_.Name)"; \
+            if (-not (Test-Path $_.FullName)) { \
+                throw "Required TXT file not found: $($_.FullName)" \
+            }; \
+            Copy-Item -Path $_.FullName -Destination C:\work\ -ErrorAction Stop; \
+            Copy-Item -Path $_.FullName -Destination C:\reports\ -ErrorAction Stop \
+        } \
+    }
+
+# Copy SARIF result files to both work and reports directories
+RUN Write-Host "=========================================" -ForegroundColor Green; \
+    Write-Host "Copying SARIF result files..." -ForegroundColor Green; \
+    Write-Host "========================================="; \
+    $sarifFiles = Get-ChildItem -Path "*.sarif" -ErrorAction SilentlyContinue; \
+    if ($sarifFiles.Count -eq 0) { \
+        Write-Warning 'No SARIF files found to copy' \
+    } else { \
+        $sarifFiles | ForEach-Object { \
+            Write-Host "Copying: $($_.Name)"; \
+            if (-not (Test-Path $_.FullName)) { \
+                throw "Required SARIF file not found: $($_.FullName)" \
+            }; \
+            Copy-Item -Path $_.FullName -Destination C:\work\ -ErrorAction Stop; \
+            Copy-Item -Path $_.FullName -Destination C:\reports\ -ErrorAction Stop \
+        } \
+    }
+
+# Copy SQLite database file if it exists
+RUN Write-Host "=========================================" -ForegroundColor Green; \
+    Write-Host "Copying SQLite database..." -ForegroundColor Green; \
+    Write-Host "========================================="; \
     if (Test-Path "asa.sqlite") { \
         Write-Host "Copying: asa.sqlite"; \
-        Copy-Item -Path "asa.sqlite" -Destination C:\work\ -ErrorAction SilentlyContinue; \
-        Copy-Item -Path "asa.sqlite" -Destination C:\reports\ -ErrorAction SilentlyContinue \
+        Copy-Item -Path "asa.sqlite" -Destination C:\work\ -ErrorAction Stop; \
+        Copy-Item -Path "asa.sqlite" -Destination C:\reports\ -ErrorAction Stop \
+    } else { \
+        Write-Warning 'SQLite database (asa.sqlite) not found - this may indicate ASA export issues' \
+    }
+
+# Copy installation log file
+RUN Write-Host "=========================================" -ForegroundColor Green; \
+    Write-Host "Copying installation log..." -ForegroundColor Green; \
+    Write-Host "========================================="; \
+    if (-not (Test-Path "C:\work\install.log")) { \
+        throw "Required installation log file not found: C:\work\install.log" \
     }; \
-    Copy-Item -Path "C:\work\install.log" -Destination C:\reports\ -ErrorAction SilentlyContinue; \
+    Copy-Item -Path "C:\work\install.log" -Destination C:\reports\ -ErrorAction Stop; \
     Write-Host "Attack Surface Analyzer test completed!" -ForegroundColor Green
 
 # Default command shows completion message
