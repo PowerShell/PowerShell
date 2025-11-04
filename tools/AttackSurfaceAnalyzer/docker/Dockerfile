@@ -6,7 +6,7 @@
 # Stage 2: Extract reports to scratch layer
 
 # Stage 1: Test execution environment
-FROM mcr.microsoft.com/dotnet/sdk:9.0-windowsservercore-ltsc2022 AS asa-runner
+FROM mcr.microsoft.com/dotnet/sdk:9.0-windowsservercore-ltsc2022@sha256:28f3a59216a7f91dfc4730ea47e236e2ffbb519975725bf8231f57e69dab3ca8 AS asa-runner
 
 # Set shell to PowerShell for easier scripting
 SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
@@ -117,7 +117,7 @@ CMD Write-Host "=========================================" -ForegroundColor Gree
     Write-Host "========================================="
 
 # Stage 2: Reports-only layer using minimal Windows base
-FROM mcr.microsoft.com/windows/nanoserver:ltsc2022 AS asa-reports
+FROM mcr.microsoft.com/windows/nanoserver:ltsc2022@sha256:307874138e4dc064d0538b58c6f028419ab82fb15fcabaf6d5378ba32c235266 AS asa-reports
 
 # Set working directory to root
 WORKDIR /
