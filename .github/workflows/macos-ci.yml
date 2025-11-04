@@ -166,12 +166,35 @@ jobs:
     steps:
     - name: checkout
       uses: actions/checkout@v4.1.0
+      with:
+        fetch-depth: 1000
     - name: Bootstrap packaging
       if: success() || failure()
       run: |-
         import-module ./build.psm1
         start-psbootstrap -Scenario package
       shell: pwsh
+    - name: Build PowerShell and Create macOS package
+      if: success()
+      run: |-
+        import-module ./build.psm1
+        import-module ./tools/ci.psm1
+        import-module ./tools/packaging/packaging.psm1
+        Switch-PSNugetConfig -Source Public
+        Sync-PSTags -AddRemoteIfMissing
+        $releaseTag = Get-ReleaseTag
+        Start-PSBuild -Configuration Release -PSModuleRestore -ReleaseTag $releaseTag
+        $macOSRuntime = if ([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture -eq 'Arm64') { 'osx-arm64' } else { 'osx-x64' }
+        Start-PSPackage -Type osxpkg -ReleaseTag $releaseTag -MacOSRuntime $macOSRuntime -SkipReleaseChecks
+      shell: pwsh
+
+    - name: Install Pester
+      if: success()
+      run: |-
+        Import-Module ./tools/ci.psm1
+        Install-CIPester
+      shell: pwsh
+
   ready_to_merge:
     name: macos ready to merge
     needs:
