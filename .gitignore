@@ -83,6 +83,9 @@ TestsResults*.xml
 ParallelXUnitResults.xml
 xUnitResults.xml
 
+# Attack Surface Analyzer results
+asa-results/
+
 # Resharper settings
 PowerShell.sln.DotSettings.user
 *.msp
