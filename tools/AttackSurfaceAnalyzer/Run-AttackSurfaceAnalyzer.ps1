@@ -292,10 +292,21 @@ if (-not $MsiPath) {
             Write-Log "Importing build.psm1..."
             Import-Module (Join-Path $repoRoot "build.psm1") -Force
 
+            # Import packaging module
+            Write-Log "Importing packaging module..."
+            $packagingModulePath = Join-Path $repoRoot "tools\packaging\packaging.psm1"
+            if (Test-Path $packagingModulePath) {
+                Import-Module $packagingModulePath -Force
+            }
+            else {
+                Write-Log "Could not find packaging.psm1 at: $packagingModulePath" -Level ERROR
+                exit 1
+            }
+
             # Build PowerShell
             Write-Log "Starting PowerShell build (this may take several minutes)..."
-            $buildOutput = Join-Path $repoRoot "out"
-            Start-PSBuild -Configuration Release -Output $buildOutput
+            Write-Log "Running: Start-PSBuild -Runtime win7-x64 -Configuration Release"
+            Start-PSBuild -Runtime win7-x64 -Configuration Release -ErrorAction Stop
 
             if ($LASTEXITCODE -ne 0) {
                 Write-Log "Build failed with exit code: $LASTEXITCODE" -Level ERROR
@@ -306,7 +317,8 @@ if (-not $MsiPath) {
 
             # Package the MSI
             Write-Log "Creating MSI package..."
-            Start-PSPackage -Type msi -WindowsRuntime win7-x64
+            Write-Log "Running: Start-PSPackage -Type msi -WindowsRuntime win7-x64"
+            Start-PSPackage -Type msi -WindowsRuntime win7-x64 -SkipReleaseChecks
 
             if ($LASTEXITCODE -ne 0) {
                 Write-Log "Packaging failed with exit code: $LASTEXITCODE" -Level ERROR
