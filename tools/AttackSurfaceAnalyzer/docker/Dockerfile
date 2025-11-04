@@ -26,14 +26,21 @@ RUN Write-Host "=========================================" -ForegroundColor Gree
     asa collect -f -s -r -u -p -l --directories 'C:\Program Files\PowerShell,C:\Program Files (x86)\PowerShell'; \
     if ($LASTEXITCODE -ne 0) { Write-Error "Failed to take baseline snapshot"; exit 1 }
 
+# Copy the PowerShell MSI file from build context
+COPY *.msi ./powershell.msi
+
 # Install PowerShell MSI
 RUN Write-Host "=========================================" -ForegroundColor Green; \
     Write-Host "Installing PowerShell MSI..." -ForegroundColor Green; \
     Write-Host "========================================="; \
-    $msiFile = Get-ChildItem -Path C:\work -Filter *.msi | Select-Object -First 1 -ExpandProperty FullName; \
-    Write-Host "MSI file: $msiFile"; \
-    Start-Process msiexec.exe -ArgumentList "/i", $msiFile, "/quiet", "/norestart", "/l*v", "C:\work\install.log" -Wait -NoNewWindow; \
-    if ($LASTEXITCODE -ne 0) { Write-Warning "MSI installation returned exit code: $LASTEXITCODE"; Write-Host "Check install.log for details" }
+    Write-Host "MSI file: C:\work\powershell.msi"; \
+    $argumentList = '/i C:\work\powershell.msi /quiet /norestart /l*vx C:\work\install.log ADD_PATH=1'; \
+    Write-Host "Running: msiexec $argumentList"; \
+    $msiProcess = Start-Process msiexec.exe -ArgumentList $argumentList -Wait -NoNewWindow -PassThru; \
+    if ($msiProcess.ExitCode -ne 0) { \
+        Write-Host "MSI installation failed with exit code: $($msiProcess.ExitCode)"; \
+        throw "MSI installation failed. Check install.log for details" \
+    }
 
 # Take post-installation snapshot
 RUN Write-Host "=========================================" -ForegroundColor Green; \

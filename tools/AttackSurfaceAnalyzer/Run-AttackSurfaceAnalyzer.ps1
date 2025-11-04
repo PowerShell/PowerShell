@@ -384,14 +384,14 @@ New-Item -ItemType Directory -Force -Path $containerWorkDir | Out-Null
 Write-Log "Created container work directory: $containerWorkDir"
 
 try {
-    # Copy MSI to container work directory
-    $msiFileName = Split-Path $MsiPath -Leaf
-    $destMsiPath = Join-Path $containerWorkDir $msiFileName
-    Write-Log "Copying MSI to work directory..."
-    Copy-Item $MsiPath -Destination $destMsiPath
-
     # Use the static Dockerfile from the docker subfolder
     $dockerContextPath = Join-Path $PSScriptRoot "docker"
+    
+    # Copy MSI to Docker build context
+    $msiFileName = Split-Path $MsiPath -Leaf
+    $destMsiPath = Join-Path $dockerContextPath $msiFileName
+    Write-Log "Copying MSI to Docker build context..."
+    Copy-Item $MsiPath -Destination $destMsiPath
     $staticDockerfilePath = Join-Path $dockerContextPath "Dockerfile"
     Write-Log "Using static Dockerfile: $staticDockerfilePath"
     
@@ -431,7 +431,6 @@ try {
 
     docker run --name $containerName `
         --isolation process `
-        -v "${containerWorkDir}:C:\work" `
         $imageName
 
     if ($LASTEXITCODE -ne 0) {
@@ -535,5 +534,11 @@ finally {
     }
     else {
         Write-Log "Work directory preserved at: $containerWorkDir" -Level SUCCESS
+    }
+    
+    # Always cleanup MSI file from Docker build context
+    if ($destMsiPath -and (Test-Path $destMsiPath)) {
+        Write-Log "Cleaning up MSI file from Docker context..."
+        Remove-Item -Path $destMsiPath -Force -ErrorAction SilentlyContinue
     }
 }
