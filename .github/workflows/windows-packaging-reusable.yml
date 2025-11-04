@@ -27,7 +27,6 @@ jobs:
           - architecture: x64
             channel: stable
             runtimePrefix: win7
-            runASA: true
           - architecture: x86
             channel: stable
             runtimePrefix: win7
@@ -82,91 +81,6 @@ jobs:
           New-CodeCoverageAndTestPackage
           Invoke-CIFinish -Runtime ${{ matrix.runtimePrefix }}-${{ matrix.architecture }} -channel ${{ matrix.channel }}
         shell: pwsh
-
-      - name: Run Attack Surface Analyzer in Container
-        if: matrix.runASA == true
-        run: |
-          Write-Host "Running Attack Surface Analyzer in clean Windows container..."
-
-          # Find the MSI file that was built
-          $msiPath = Get-ChildItem -Path "$env:SYSTEM_ARTIFACTSDIRECTORY" -Filter "*.msi" -Recurse | Select-Object -First 1 -ExpandProperty FullName
-          if (-not $msiPath) {
-            throw "Could not find MSI file in artifacts directory"
-          }
-          Write-Host "Found MSI: $msiPath"
-
-          # Create a directory for container volume mount
-          $containerWorkDir = "$env:TEMP\asa-container-work"
-          New-Item -ItemType Directory -Force -Path $containerWorkDir | Out-Null
-
-          # Copy MSI to container work directory
-          $msiFileName = Split-Path $msiPath -Leaf
-          Copy-Item $msiPath -Destination "$containerWorkDir\$msiFileName"
-
-          # Create PowerShell script to run inside container
-          $scriptLines = @(
-            '# Install .NET tool (ASA)',
-            'Write-Host "Installing Attack Surface Analyzer in container..."',
-            'dotnet tool install -g Microsoft.CST.AttackSurfaceAnalyzer.CLI --version 2.3.328',
-            '$env:PATH += ";$env:USERPROFILE\.dotnet\tools"',
-            '',
-            '# Take baseline snapshot',
-            'Write-Host "Taking baseline snapshot..."',
-            '& "$env:USERPROFILE\.dotnet\tools\asa.exe" collect -f -s -r -u -p -l --directories "C:\Program Files\PowerShell,C:\Program Files (x86)\PowerShell"',
-            '',
-            '# Install the MSI',
-            'Write-Host "Installing PowerShell MSI..."',
-            '$msiFile = Get-ChildItem -Path C:\work -Filter *.msi | Select-Object -First 1 -ExpandProperty FullName',
-            'Start-Process msiexec.exe -ArgumentList "/i", $msiFile, "/quiet", "/norestart", "/l*v", "C:\work\install.log" -Wait -NoNewWindow',
-            '',
-            '# Take post-installation snapshot',
-            'Write-Host "Taking post-installation snapshot..."',
-            '& "$env:USERPROFILE\.dotnet\tools\asa.exe" collect -f -s -r -u -p -l --directories "C:\Program Files\PowerShell,C:\Program Files (x86)\PowerShell"',
-            '',
-            '# Export results',
-            'Write-Host "Exporting comparison results..."',
-            '& "$env:USERPROFILE\.dotnet\tools\asa.exe" export-collect --outputsarif --savetodatabase',
-            '',
-            '# Copy results to work directory',
-            'Write-Host "Copying results to work directory..."',
-            'Copy-Item -Path "*.txt" -Destination C:\work\ -ErrorAction SilentlyContinue',
-            'Copy-Item -Path "*.sarif" -Destination C:\work\ -ErrorAction SilentlyContinue',
-            'Copy-Item -Path "asa.sqlite" -Destination C:\work\ -ErrorAction SilentlyContinue',
-            '',
-            'Write-Host "Attack Surface Analyzer test completed in container."'
-          )
-
-          $scriptLines | Set-Content -Path "$containerWorkDir\run-asa.ps1"
-
-          # Run container with volume mount
-          Write-Host "Starting Windows container..."
-          docker run --rm `
-            --isolation process `
-            -v "${containerWorkDir}:C:\work" `
-            mcr.microsoft.com/dotnet/sdk:9.0-windowsservercore-ltsc2022 `
-            powershell -ExecutionPolicy Bypass -File C:\work\run-asa.ps1
-
-          # Copy results back to workspace
-          Write-Host "Copying results from container work directory to workspace..."
-          Copy-Item -Path "$containerWorkDir\*_summary.json.txt" -Destination $env:GITHUB_WORKSPACE -ErrorAction SilentlyContinue
-          Copy-Item -Path "$containerWorkDir\*_results.json.txt" -Destination $env:GITHUB_WORKSPACE -ErrorAction SilentlyContinue
-          Copy-Item -Path "$containerWorkDir\*.sarif" -Destination $env:GITHUB_WORKSPACE -ErrorAction SilentlyContinue
-          Copy-Item -Path "$containerWorkDir\asa.sqlite" -Destination $env:GITHUB_WORKSPACE -ErrorAction SilentlyContinue
-          Copy-Item -Path "$containerWorkDir\install.log" -Destination $env:GITHUB_WORKSPACE -ErrorAction SilentlyContinue
-
-          Write-Host "Attack Surface Analyzer container test completed successfully."
-        shell: pwsh
-
-      - name: Upload Attack Surface Analyzer Results
-        if: matrix.runASA == true && always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: attack-surface-analyzer-results-${{ matrix.architecture }}-${{ matrix.channel }}
-          path: |
-            ${{ github.workspace }}/*_summary.json.txt
-            ${{ github.workspace }}/*_results.json.txt
-            ${{ github.workspace }}/*.sarif
-            ${{ github.workspace }}/asa.sqlite
 
       - name: Upload Build Artifacts
         if: always()
