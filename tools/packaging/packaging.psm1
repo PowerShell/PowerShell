@@ -1233,34 +1233,89 @@ function New-UnixPackage {
         # Setup package dependencies
         $Dependencies = @(Get-PackageDependencies @packageDependenciesParams)
 
-        $Arguments = @()
-
-
-        $Arguments += Get-FpmArguments `
-            -Name $Name `
-            -Version $packageVersion `
-            -Iteration $Iteration `
-            -Description $Description `
-            -Type $Type `
-            -Dependencies $Dependencies `
-            -AfterInstallScript $AfterScriptInfo.AfterInstallScript `
-            -AfterRemoveScript $AfterScriptInfo.AfterRemoveScript `
-            -Staging $Staging `
-            -Destination $Destination `
-            -ManGzipFile $ManGzipInfo.GzipFile `
-            -ManDestination $ManGzipInfo.ManFile `
-            -LinkInfo $Links `
-            -AppsFolder $AppsFolder `
-            -Distribution $DebDistro `
-            -HostArchitecture $HostArchitecture `
-            -ErrorAction Stop
-
         # Build package
         try {
-            if ($PSCmdlet.ShouldProcess("Create $type package")) {
-                Write-Log "Creating package with fpm $Arguments..."
-                try {
-                    $Output = Start-NativeExecution { fpm $Arguments }
+            if ($Type -eq 'rpm') {
+                # Use rpmbuild directly for RPM packages
+                if ($PSCmdlet.ShouldProcess("Create RPM package with rpmbuild")) {
+                    Write-Log "Creating RPM package with rpmbuild..."
+                    
+                    # Create rpmbuild directory structure
+                    $rpmBuildRoot = Join-Path $env:HOME "rpmbuild"
+                    $specsDir = Join-Path $rpmBuildRoot "SPECS"
+                    $rpmsDir = Join-Path $rpmBuildRoot "RPMS"
+                    
+                    New-Item -ItemType Directory -Path $specsDir -Force | Out-Null
+                    New-Item -ItemType Directory -Path $rpmsDir -Force | Out-Null
+                    
+                    # Generate RPM spec file
+                    $specContent = New-RpmSpec `
+                        -Name $Name `
+                        -Version $packageVersion `
+                        -Iteration $Iteration `
+                        -Description $Description `
+                        -Dependencies $Dependencies `
+                        -AfterInstallScript $AfterScriptInfo.AfterInstallScript `
+                        -AfterRemoveScript $AfterScriptInfo.AfterRemoveScript `
+                        -Staging $Staging `
+                        -Destination $Destination `
+                        -ManGzipFile $ManGzipInfo.GzipFile `
+                        -ManDestination $ManGzipInfo.ManFile `
+                        -LinkInfo $Links `
+                        -Distribution $DebDistro `
+                        -HostArchitecture $HostArchitecture
+                    
+                    $specFile = Join-Path $specsDir "$Name.spec"
+                    $specContent | Out-File -FilePath $specFile -Encoding ascii
+                    Write-Verbose "Generated spec file: $specFile" -Verbose
+                    
+                    # Log the spec file content
+                    if ($env:GITHUB_ACTIONS -eq 'true') {
+                        Write-Host "::group::RPM Spec File Content"
+                        Write-Host $specContent
+                        Write-Host "::endgroup::"
+                    } else {
+                        Write-Verbose "RPM Spec File Content:`n$specContent" -Verbose
+                    }
+                    
+                    # Build RPM package
+                    try {
+                        # Use bash to properly handle rpmbuild arguments
+                        # Add --target for cross-architecture builds
+                        $targetArch = ""
+                        if ($HostArchitecture -ne "x86_64" -and $HostArchitecture -ne "noarch") {
+                            $targetArch = "--target $HostArchitecture"
+                        }
+                        $buildCmd = "rpmbuild -bb --quiet $targetArch --define '_topdir $rpmBuildRoot' --buildroot '$rpmBuildRoot/BUILDROOT' '$specFile'"
+                        Write-Verbose "Running: $buildCmd" -Verbose
+                        $Output = bash -c $buildCmd 2>&1
+                        $exitCode = $LASTEXITCODE
+                        
+                        if ($exitCode -ne 0) {
+                            throw "rpmbuild failed with exit code $exitCode"
+                        }
+                        
+                        # Find the generated RPM
+                        $rpmFile = Get-ChildItem -Path (Join-Path $rpmsDir $HostArchitecture) -Filter "*.rpm" -ErrorAction Stop | 
+                            Sort-Object -Property LastWriteTime -Descending | 
+                            Select-Object -First 1
+                        
+                        if ($rpmFile) {
+                            # Copy RPM to current location
+                            Copy-Item -Path $rpmFile.FullName -Destination $CurrentLocation -Force
+                            $Output = @("Created package {:path=>""$($rpmFile.Name)""}")
+                        } else {
+                            throw "RPM file not found after build"
+                        }
+                    }
+                    catch {
+                        Write-Verbose -Message "!!!Handling error in rpmbuild!!!" -Verbose -ErrorAction SilentlyContinue
+                        if ($Output) {
+                            Write-Verbose -Message "$Output" -Verbose -ErrorAction SilentlyContinue
+                        }
+                        Get-Error -InputObject $_
+                        throw
+                    }
                 }
             } elseif ($Type -eq 'osxpkg') {
                 # Use native macOS packaging tools
@@ -1336,6 +1391,16 @@ function New-UnixPackage {
                     Clear-MacOSLauncher
                 }
             }
+            
+            # Clean up rpmbuild directory if it was created
+            if ($Type -eq 'rpm') {
+                $rpmBuildRoot = Join-Path $env:HOME "rpmbuild"
+                if (Test-Path $rpmBuildRoot) {
+                    Write-Verbose "Cleaning up rpmbuild directory: $rpmBuildRoot" -Verbose
+                    Remove-Item -Path $rpmBuildRoot -Recurse -Force -ErrorAction SilentlyContinue
+                }
+            }
+            
             if ($AfterScriptInfo.AfterInstallScript) {
                 Remove-Item -ErrorAction 'silentlycontinue' $AfterScriptInfo.AfterInstallScript -Force
             }

@@ -101,6 +101,11 @@ function Invoke-CIFull
 # Implements the CI 'build_script' step
 function Invoke-CIBuild
 {
+    param(
+        [ValidateSet('Debug', 'Release', 'CodeCoverage', 'StaticAnalysis')]
+        [string]$Configuration = 'Release'
+    )
+
     $releaseTag = Get-ReleaseTag
     # check to be sure our test tags are correct
     $result = Get-PesterTag
@@ -115,7 +120,7 @@ function Invoke-CIBuild
         Start-PSBuild -Configuration 'CodeCoverage' -PSModuleRestore -CI -ReleaseTag $releaseTag
     }
 
-    Start-PSBuild -PSModuleRestore -Configuration 'Release' -CI -ReleaseTag $releaseTag -UseNuGetOrg
+    Start-PSBuild -PSModuleRestore -Configuration $Configuration -CI -ReleaseTag $releaseTag -UseNuGetOrg
     Save-PSOptions
 
     $options = (Get-PSOptions)
@@ -709,6 +714,14 @@ function Set-Path
     }
 }
 
+# Display environment variables in a log group for GitHub Actions
+function Show-Environment
+{
+    Write-LogGroupStart -Title 'Environment'
+    Get-ChildItem -Path env: | Out-String -width 9999 -Stream | Write-Verbose -Verbose
+    Write-LogGroupEnd -Title 'Environment'
+}
+
 # Bootstrap script for Linux and macOS
 function Invoke-BootstrapStage
 {
@@ -900,16 +913,36 @@ function New-LinuxPackage
             $packageObj = $package
         }
 
-        Write-Log -message "Artifacts directory: ${env:BUILD_ARTIFACTSTAGINGDIRECTORY}"
-        Copy-Item $packageObj.FullName -Destination "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}" -Force
+        # Determine artifacts directory (GitHub Actions or Azure DevOps)
+        $artifactsDir = if ($env:GITHUB_ACTIONS -eq 'true') {
+            "${env:GITHUB_WORKSPACE}/../packages"
+        } else {
+            "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}"
+        }
+        
+        # Ensure artifacts directory exists
+        if (-not (Test-Path $artifactsDir)) {
+            New-Item -ItemType Directory -Path $artifactsDir -Force | Out-Null
+        }
+        
+        Write-Log -message "Artifacts directory: $artifactsDir"
+        Copy-Item $packageObj.FullName -Destination $artifactsDir -Force
     }
 
     if ($IsLinux)
     {
+        # Determine artifacts directory (GitHub Actions or Azure DevOps)
+        $artifactsDir = if ($env:GITHUB_ACTIONS -eq 'true') {
+            "${env:GITHUB_WORKSPACE}/../packages"
+        } else {
+            "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}"
+        }
+        
         # Create and package Raspbian .tgz
+        # Build must be clean for Raspbian
         Start-PSBuild -PSModuleRestore -Clean -Runtime linux-arm -Configuration 'Release'
         $armPackage = Start-PSPackage @packageParams -Type tar-arm -SkipReleaseChecks
-        Copy-Item $armPackage -Destination "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}" -Force
+        Copy-Item $armPackage -Destination $artifactsDir -Force
     }
 }
 
