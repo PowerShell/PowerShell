@@ -390,134 +390,47 @@ try {
     Write-Log "Copying MSI to work directory..."
     Copy-Item $MsiPath -Destination $destMsiPath
 
-    # Create PowerShell script to run inside container
-    Write-Log "Creating container execution script..."
-    $scriptContent = @'
-# Install .NET tool (ASA)
-Write-Host "========================================="
-Write-Host "Installing Attack Surface Analyzer..."
-Write-Host "========================================="
-dotnet tool install -g Microsoft.CST.AttackSurfaceAnalyzer.CLI --version 2.3.328
-if ($LASTEXITCODE -ne 0) {
-    Write-Error "Failed to install Attack Surface Analyzer"
-    exit 1
-}
-$env:PATH += ";$env:USERPROFILE\.dotnet\tools"
+    # Use the static Dockerfile from the docker subfolder
+    $dockerContextPath = Join-Path $PSScriptRoot "docker"
+    $staticDockerfilePath = Join-Path $dockerContextPath "Dockerfile"
+    Write-Log "Using static Dockerfile: $staticDockerfilePath"
+    
+    if (-not (Test-Path $staticDockerfilePath)) {
+        Write-Log "Static Dockerfile not found at: $staticDockerfilePath" -Level ERROR
+        exit 1
+    }
+    
+    Write-Log "Docker build context: $dockerContextPath"
 
-# Verify ASA is available
-Write-Host ""
-Write-Host "Verifying ASA installation..."
-& "$env:USERPROFILE\.dotnet\tools\asa.exe" --version
-
-# Take baseline snapshot
-Write-Host ""
-Write-Host "========================================="
-Write-Host "Taking baseline snapshot..."
-Write-Host "========================================="
-& "$env:USERPROFILE\.dotnet\tools\asa.exe" collect -f -s -r -u -p -l --directories "C:\Program Files\PowerShell,C:\Program Files (x86)\PowerShell"
-if ($LASTEXITCODE -ne 0) {
-    Write-Error "Failed to take baseline snapshot"
-    exit 1
-}
-
-# Install the MSI
-Write-Host ""
-Write-Host "========================================="
-Write-Host "Installing PowerShell MSI..."
-Write-Host "========================================="
-$msiFile = Get-ChildItem -Path C:\work -Filter *.msi | Select-Object -First 1 -ExpandProperty FullName
-Write-Host "MSI file: $msiFile"
-Start-Process msiexec.exe -ArgumentList "/i", $msiFile, "/quiet", "/norestart", "/l*v", "C:\work\install.log" -Wait -NoNewWindow
-if ($LASTEXITCODE -ne 0) {
-    Write-Warning "MSI installation returned exit code: $LASTEXITCODE"
-    Write-Host "Check install.log for details"
-}
-
-# Take post-installation snapshot
-Write-Host ""
-Write-Host "========================================="
-Write-Host "Taking post-installation snapshot..."
-Write-Host "========================================="
-& "$env:USERPROFILE\.dotnet\tools\asa.exe" collect -f -s -r -u -p -l --directories "C:\Program Files\PowerShell,C:\Program Files (x86)\PowerShell"
-if ($LASTEXITCODE -ne 0) {
-    Write-Error "Failed to take post-installation snapshot"
-    exit 1
-}
-
-# Export results
-Write-Host ""
-Write-Host "========================================="
-Write-Host "Exporting comparison results..."
-Write-Host "========================================="
-& "$env:USERPROFILE\.dotnet\tools\asa.exe" export-collect --outputsarif --savetodatabase
-if ($LASTEXITCODE -ne 0) {
-    Write-Warning "Failed to export results with exit code: $LASTEXITCODE"
-}
-
-# Copy results to work directory
-Write-Host ""
-Write-Host "========================================="
-Write-Host "Copying results to work directory..."
-Write-Host "========================================="
-Get-ChildItem -Path "*.txt" | ForEach-Object {
-    Write-Host "Copying: $($_.Name)"
-    Copy-Item -Path $_.FullName -Destination C:\work\ -ErrorAction SilentlyContinue
-}
-Get-ChildItem -Path "*.sarif" | ForEach-Object {
-    Write-Host "Copying: $($_.Name)"
-    Copy-Item -Path $_.FullName -Destination C:\work\ -ErrorAction SilentlyContinue
-}
-if (Test-Path "asa.sqlite") {
-    Write-Host "Copying: asa.sqlite"
-    Copy-Item -Path "asa.sqlite" -Destination C:\work\ -ErrorAction SilentlyContinue
-}
-
-Write-Host ""
-Write-Host "========================================="
-Write-Host "Attack Surface Analyzer test completed!"
-Write-Host "========================================="
-'@
-
-    $scriptContent | Set-Content -Path (Join-Path $containerWorkDir "run-asa.ps1") -Encoding UTF8
-
-    # Build Dockerfile content for reference
-    Write-Log "Creating Dockerfile for reference..."
-    $dockerfileContent = @"
-# Dockerfile for Attack Surface Analyzer Testing
-# This file is created for reference and can be used to build a custom image
-# if you prefer not to use the inline script approach
-
-FROM mcr.microsoft.com/dotnet/sdk:9.0-windowsservercore-ltsc2022
-
-# Install Attack Surface Analyzer
-RUN dotnet tool install -g Microsoft.CST.AttackSurfaceAnalyzer.CLI --version 2.3.328
-
-# Add tools to PATH
-ENV PATH="\${PATH};C:/Users/ContainerAdministrator/.dotnet/tools"
-
-WORKDIR C:/work
-
-# The container expects:
-# - MSI file to be mounted to C:/work
-# - Script to be mounted to C:/work/run-asa.ps1
-# Run with: docker run --rm --isolation process -v "path:C:/work" <image> powershell -ExecutionPolicy Bypass -File C:/work/run-asa.ps1
-"@
-
-    $dockerfileContent | Set-Content -Path (Join-Path $containerWorkDir "Dockerfile") -Encoding UTF8
-
+    # Build custom container image from static Dockerfile
+    Write-Log "=========================================" -Level SUCCESS
+    Write-Log "Building custom Attack Surface Analyzer container..." -Level SUCCESS
+    Write-Log "=========================================" -Level SUCCESS
+    
+    $imageName = "powershell-asa-local:latest"
+    Write-Log "Building image: $imageName"
+    Write-Log "This may take several minutes..."
+    
+    docker build -t $imageName -f $staticDockerfilePath $dockerContextPath
+    
+    if ($LASTEXITCODE -ne 0) {
+        Write-Log "Docker build failed with exit code: $LASTEXITCODE" -Level ERROR
+        exit 1
+    }
+    
+    Write-Log "Container image built successfully" -Level SUCCESS
+    
     # Run container with volume mount
     Write-Log "=========================================" -Level SUCCESS
     Write-Log "Starting Windows container..." -Level SUCCESS
     Write-Log "=========================================" -Level SUCCESS
-    Write-Log "Container image: $ContainerImage"
-    Write-Log "This may take several minutes..."
+    Write-Log "Container image: $imageName"
     Write-Host ""
 
     docker run --rm `
         --isolation process `
         -v "${containerWorkDir}:C:\work" `
-        $ContainerImage `
-        powershell -ExecutionPolicy Bypass -File C:\work\run-asa.ps1
+        $imageName
 
     if ($LASTEXITCODE -ne 0) {
         Write-Log "Container execution failed with exit code: $LASTEXITCODE" -Level WARNING

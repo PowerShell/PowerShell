@@ -9,7 +9,7 @@ Attack Surface Analyzer is a Microsoft tool that helps analyze changes to a syst
 ## Files
 
 - **Run-AttackSurfaceAnalyzer.ps1** - PowerShell script to run ASA tests locally
-- **Dockerfile** - Dockerfile for building a container image with ASA pre-installed
+- **docker/Dockerfile** - Dockerfile for building a container image with ASA pre-installed
 - **README.md** - This documentation file
 
 ## Prerequisites
@@ -54,8 +54,8 @@ The script will:
 1. Build PowerShell MSI (if not provided via -MsiPath or -NoBuild)
 1. Find or use the specified MSI file
 1. Create a temporary work directory
-1. Start a Windows container
-1. Install Attack Surface Analyzer in the container
+1. Build a custom Docker container from the static Dockerfile
+1. Start the Windows container with Attack Surface Analyzer
 1. Take a baseline snapshot
 1. Install the PowerShell MSI
 1. Take a post-installation snapshot
@@ -64,17 +64,16 @@ The script will:
 
 ### Option 2: Using the Dockerfile
 
-If you prefer to build a custom image with ASA pre-installed:
+If you prefer to build and use the container image directly:
 
 ```powershell
-# Build the Docker image
-docker build -f tools\AttackSurfaceAnalyzer\Dockerfile -t powershell-asa-test .
+# Build the Docker image (Dockerfile is in docker subfolder with clean context)
+docker build -f tools\AttackSurfaceAnalyzer\docker\Dockerfile -t powershell-asa-test tools\AttackSurfaceAnalyzer\docker\
 
-# Run the container with your MSI
+# Run the container with your MSI (script is built into the container)
 docker run --rm --isolation process `
   -v "C:\path\to\msi\directory:C:\work" `
-  powershell-asa-test `
-  powershell -File C:\Scripts\Run-ASA-Test.ps1 -MsiPath C:\work\PowerShell.msi
+  powershell-asa-test
 ```
 
 ## Output Files
