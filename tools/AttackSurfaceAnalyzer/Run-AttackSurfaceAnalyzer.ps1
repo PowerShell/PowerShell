@@ -9,11 +9,8 @@
     comparison results.
 
 .PARAMETER MsiPath
-    Path to the PowerShell MSI file to test. If not provided, the script will build
-    a new MSI using Start-PSBuild.
-
-.PARAMETER NoBuild
-    Skip building the MSI and only search for existing MSI files.
+    Path to the official signed PowerShell MSI file to test. This must be a released,
+    signed MSI from the official PowerShell releases.
 
 .PARAMETER OutputPath
     Directory where results will be saved. Defaults to './asa-results' subdirectory.
@@ -25,36 +22,32 @@
     If specified, keeps the temporary work directory after the test completes.
 
 .EXAMPLE
-    .\Run-AttackSurfaceAnalyzer.ps1 -MsiPath "C:\path\to\PowerShell.msi"
+    .\Run-AttackSurfaceAnalyzer.ps1 -MsiPath "C:\path\to\PowerShell-7.4.0-win-x64.msi"
 
 .EXAMPLE
-    .\Run-AttackSurfaceAnalyzer.ps1 -OutputPath "C:\results"
-
-.EXAMPLE
-    .\Run-AttackSurfaceAnalyzer.ps1 -NoBuild
+    .\Run-AttackSurfaceAnalyzer.ps1 -MsiPath ".\PowerShell-7.4.0-win-x64.msi" -OutputPath "C:\asa-results"
 
 .NOTES
     Requires Docker Desktop with Windows containers enabled.
+    Requires an official signed PowerShell MSI file from a released build.
 
     Docker Desktop Handling:
     - If Docker Desktop is installed but not running, the script will start it automatically
     - If Docker Desktop is not installed, the script will prompt to install it using winget
     - Waits up to 60 seconds for Docker to become available after starting
 
-    Build Behavior:
-    - If MsiPath is not provided and NoBuild is not specified, the script will
-      import build.psm1 and build a new MSI package
+    MSI Requirements:
+    - The MSI must be digitally signed by Microsoft Corporation
+    - The MSI must be from an official PowerShell release
+    - Local builds or unsigned MSIs are not supported
 
     Supports -WhatIf and -Confirm for Docker installation and startup.
 #>
 
 [CmdletBinding(SupportsShouldProcess)]
 param(
-    [Parameter()]
+    [Parameter(Mandatory)]
     [string]$MsiPath,
-
-    [Parameter()]
-    [switch]$NoBuild,
 
     [Parameter()]
     [string]$OutputPath = (Join-Path $PWD "asa-results"),
@@ -79,6 +72,64 @@ function Write-Log {
         default { "White" }
     }
     Write-Host "[$timestamp] [$Level] $Message" -ForegroundColor $color
+}
+
+function Test-MsiSignature {
+    param(
+        [Parameter(Mandatory)]
+        [string]$MsiPath
+    )
+
+    Write-Log "Verifying MSI signature..." -Level INFO
+
+    try {
+        # Get the digital signature information
+        $signature = Get-AuthenticodeSignature -FilePath $MsiPath
+
+        if ($signature.Status -ne 'Valid') {
+            Write-Log "MSI signature is not valid. Status: $($signature.Status)" -Level ERROR
+            return $false
+        }
+
+        # Check if signed by Microsoft Corporation
+        $signerCertificate = $signature.SignerCertificate
+        if (-not $signerCertificate) {
+            Write-Log "No signer certificate found" -Level ERROR
+            return $false
+        }
+
+        $subject = $signerCertificate.Subject
+        Write-Log "Certificate subject: $subject" -Level INFO
+
+        # Check for Microsoft Corporation in the subject
+        if ($subject -notmatch "Microsoft Corporation" -and $subject -notmatch "CN=Microsoft Corporation") {
+            Write-Log "MSI is not signed by Microsoft Corporation" -Level ERROR
+            Write-Log "Expected: Microsoft Corporation" -Level ERROR
+            Write-Log "Found: $subject" -Level ERROR
+            return $false
+        }
+
+        # Check certificate validity
+        $validFrom = $signerCertificate.NotBefore
+        $validTo = $signerCertificate.NotAfter
+        $now = Get-Date
+
+        if ($now -lt $validFrom -or $now -gt $validTo) {
+            Write-Log "Certificate is not valid for current date" -Level ERROR
+            Write-Log "Valid from: $validFrom to: $validTo" -Level ERROR
+            return $false
+        }
+
+        Write-Log "MSI signature verification passed" -Level SUCCESS
+        Write-Log "Signed by: $($signerCertificate.Subject)" -Level SUCCESS
+        Write-Log "Valid from: $validFrom to: $validTo" -Level SUCCESS
+
+        return $true
+    }
+    catch {
+        Write-Log "Error verifying MSI signature: $_" -Level ERROR
+        return $false
+    }
 }
 
 function Test-DockerAvailable {
@@ -245,120 +296,7 @@ if (-not (Test-DockerAvailable)) {
     }
 }
 
-# Find or build MSI if not provided
-if (-not $MsiPath) {
-    if ($NoBuild) {
-        Write-Log "No MSI path provided, searching in artifacts directory..."
-        $possiblePaths = @(
-            "$PSScriptRoot\..\..\artifacts",
-            "$PSScriptRoot\..\..\"
-        )
-
-        foreach ($path in $possiblePaths) {
-            if (Test-Path $path) {
-                $msiFiles = Get-ChildItem -Path $path -Filter "*.msi" -Recurse -ErrorAction SilentlyContinue
-                if ($msiFiles) {
-                    $MsiPath = $msiFiles[0].FullName
-                    Write-Log "Found MSI: $MsiPath" -Level SUCCESS
-                    break
-                }
-            }
-        }
-
-        if (-not $MsiPath) {
-            Write-Log "Could not find MSI file. Please specify -MsiPath parameter or remove -NoBuild to build a new MSI." -Level ERROR
-            exit 1
-        }
-    }
-    else {
-        # Build the MSI
-        Write-Log "No MSI path provided, building PowerShell MSI..." -Level SUCCESS
-
-        # Find the repository root
-        $repoRoot = $PSScriptRoot
-        while ($repoRoot -and -not (Test-Path (Join-Path $repoRoot "build.psm1"))) {
-            $repoRoot = Split-Path $repoRoot -Parent
-        }
-
-        if (-not $repoRoot -or -not (Test-Path (Join-Path $repoRoot "build.psm1"))) {
-            Write-Log "Could not find build.psm1. Please run this script from the PowerShell repository." -Level ERROR
-            exit 1
-        }
-
-        Write-Log "Repository root: $repoRoot"
-
-        try {
-            # Import build module
-            Write-Log "Importing build.psm1..."
-            Import-Module (Join-Path $repoRoot "build.psm1") -Force
-
-            # Import packaging module
-            Write-Log "Importing packaging module..."
-            $packagingModulePath = Join-Path $repoRoot "tools\packaging\packaging.psm1"
-            if (Test-Path $packagingModulePath) {
-                Import-Module $packagingModulePath -Force
-            }
-            else {
-                Write-Log "Could not find packaging.psm1 at: $packagingModulePath" -Level ERROR
-                exit 1
-            }
-
-            try {
-                Start-PSBuild -Runtime win7-x64 -Configuration Release -ErrorAction Stop
-                Write-Log "Build completed successfully" -Level SUCCESS
-            }
-            catch {
-                Write-Log "Build failed: $_" -Level ERROR
-                exit 1
-            }
-
-            # Package the MSI
-            Write-Log "Creating MSI package..."
-            Write-Log "Running: Start-PSPackage -Type msi -WindowsRuntime win7-x64"
-            try {
-                Start-PSPackage -Type msi -WindowsRuntime win7-x64 -SkipReleaseChecks
-                Write-Log "MSI packaging completed successfully" -Level SUCCESS
-            }
-            catch {
-                Write-Log "Packaging failed: $_" -Level ERROR
-                exit 1
-            }
-            # Find the newly created MSI at the repo root
-            Write-Log "Looking for MSI at repo root: $repoRoot"
-            $msiFiles = Get-ChildItem -Path $repoRoot -Filter "*.msi" -ErrorAction SilentlyContinue |
-                Sort-Object LastWriteTime -Descending
-            if ($msiFiles) {
-                $MsiPath = $msiFiles[0].FullName
-                Write-Log "Built MSI: $MsiPath" -Level SUCCESS
-            }
-            else {
-                # Also check artifacts directory as fallback
-                Write-Log "MSI not found at repo root, checking artifacts directory..."
-                $artifactsPath = Join-Path $repoRoot "artifacts"
-                if (Test-Path $artifactsPath) {
-                    $msiFiles = Get-ChildItem -Path $artifactsPath -Filter "*.msi" -Recurse -ErrorAction SilentlyContinue |
-                        Sort-Object LastWriteTime -Descending
-                    if ($msiFiles) {
-                        $MsiPath = $msiFiles[0].FullName
-                        Write-Log "Found MSI in artifacts: $MsiPath" -Level SUCCESS
-                    }
-                }
-            }
-
-            if (-not $MsiPath) {
-                Write-Log "MSI was built but could not be found in repo root or artifacts directory" -Level ERROR
-                exit 1
-            }
-        }
-        catch {
-            Write-Log "Error during build: $_" -Level ERROR
-            Write-Log $_.ScriptStackTrace -Level ERROR
-            exit 1
-        }
-    }
-}
-
-# Verify MSI exists
+# Verify MSI exists and is properly signed
 if (-not (Test-Path $MsiPath)) {
     Write-Log "MSI file not found: $MsiPath" -Level ERROR
     exit 1
@@ -366,6 +304,13 @@ if (-not (Test-Path $MsiPath)) {
 
 $MsiPath = Resolve-Path $MsiPath
 Write-Log "Using MSI: $MsiPath"
+
+# Verify MSI signature
+if (-not (Test-MsiSignature -MsiPath $MsiPath)) {
+    Write-Log "MSI signature verification failed. Only official signed PowerShell MSIs are supported." -Level ERROR
+    Write-Log "Please download an official PowerShell MSI from: https://github.com/PowerShell/PowerShell/releases" -Level ERROR
+    exit 1
+}
 
 # Create output directory
 $OutputPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($OutputPath)
@@ -594,7 +539,7 @@ try {
         # Check if 'code' command is available
         if (-not $isVSCode) {
             try {
-                $codeVersion = & code --version 2>$null
+                $null = & code --version 2>$null
                 if ($LASTEXITCODE -eq 0) {
                     $isVSCode = $true
                 }
