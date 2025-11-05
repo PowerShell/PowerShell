@@ -299,11 +299,11 @@ Remove-Item pr*.diff -ErrorAction SilentlyContinue
 
 ## 6 — Branch naming convention
 
-**Format:** `backport-<pr-number>`
+**Format:** `backport-<pr-number>-release-<version>`
 
 Examples:
-- `backport-26193`
-- `backport-26334`
+- `backport-26193-release-7.5`
+- `backport-26334-release-7.4.1`
 
 Note: Automated bot uses format `backport/release/v<version>/<pr-number>-<commit-hash>`, but manual backports use the simpler `backport-<pr-number>` format.
 
