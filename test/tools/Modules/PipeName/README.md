@@ -14,4 +14,4 @@ $Listener = Start-PipeServer -PipeName $pipeName
 ## Stopping PipeName
 
 ```powershell
-Stop-PipeServer -PipeName $pipeName
+Stop-PipeServer
