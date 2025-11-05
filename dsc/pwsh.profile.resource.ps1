@@ -40,7 +40,7 @@ function PopulatePwshResource {
 
     $resource = [PwshResource]::new()
     $resource.profileType = $profileType
-    $resource.content = $fileExists ? (Get-Content -Path $profilePath -Raw) : $null
+    $resource.content = $fileExists ? (Get-Content -Path $profilePath) : $null
     $resource._exist = $fileExists
 
     return $resource
