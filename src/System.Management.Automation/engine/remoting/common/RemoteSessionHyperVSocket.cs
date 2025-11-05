@@ -1128,12 +1128,11 @@ namespace System.Management.Automation.Remoting
 
         internal static string ExtractFuzzedToken(ReadOnlySpan<byte> tokenResponse)
         {
-            // implementation
             string token = Encoding.UTF8.GetString(tokenResponse);
 
             if (token == null || !token.StartsWith("TOKEN ", StringComparison.Ordinal))
             {
-                return null; // caller method will write trace (while determining token info to expose as appropriate)
+                return null; // caller method will write trace (and determine when to expose token info as appropriate)
             }
 
             token = token.Substring(6).Trim(); // remove "TOKEN " prefix
