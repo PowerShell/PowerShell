@@ -275,7 +275,6 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The pipe stream.</returns>
         private async System.Threading.Tasks.ValueTask<System.IO.Stream> ConnectToNamedPipeAsync(System.Net.Http.SocketsHttpConnectionContext context, CancellationToken token)
         {
-
             int timeoutMs = checked((int)Math.Min(
                    int.MaxValue,
                    Math.Round(_connectionTimeout.TotalMilliseconds, MidpointRounding.AwayFromZero)
