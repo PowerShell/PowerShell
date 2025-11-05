@@ -2216,46 +2216,6 @@ function Get-RedHatPackageManager {
     }
 }
 
-<<<<<<< HEAD
-function Install-GlobalGem {
-    param(
-        [Parameter()]
-        [string]
-        $Sudo = "",
-
-        [Parameter(Mandatory)]
-        [string]
-        $GemName,
-
-        [Parameter(Mandatory)]
-        [string]
-        $GemVersion
-    )
-    try {
-        # We cannot guess if the user wants to run gem install as root on linux and windows,
-        # but macOs usually requires sudo
-        $gemsudo = ''
-        if($environment.IsMacOS -or $env:TF_BUILD) {
-            $gemsudo = $sudo
-        }
-
-        Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install $GemName -v $GemVersion --no-document"))
-
-    } catch {
-        Write-Warning "Installation of gem $GemName $GemVersion failed! Must resolve manually."
-        $logs = Get-ChildItem "/var/lib/gems/*/extensions/x86_64-linux/*/$GemName-*/gem_make.out" | Select-Object -ExpandProperty FullName
-        foreach ($log in $logs) {
-            Write-Verbose "Contents of: $log" -Verbose
-            Get-Content -Raw -Path $log -ErrorAction Ignore | ForEach-Object { Write-Verbose $_ -Verbose }
-            Write-Verbose "END Contents of: $log" -Verbose
-        }
-
-        throw
-    }
-}
-
-=======
->>>>>>> 7e1ef1f74 (Replace `fpm` with `dpkg-deb` for DEB package generation (#26281))
 function Start-PSBootstrap {
     [CmdletBinding()]
     param(
@@ -2267,16 +2227,12 @@ function Start-PSBootstrap {
         [switch]$BuildLinuxArm,
         [switch]$Force,
         [Parameter(Mandatory = $true)]
-<<<<<<< HEAD
-        [ValidateSet("Package", "DotNet", "Both")]
-=======
         # Package: Install dependencies for packaging tools (rpmbuild, dpkg-deb, pkgbuild, WiX)
         # DotNet: Install the .NET SDK
         # Both: Package and DotNet scenarios
         # Tools: Install .NET global tools (e.g., dotnet-format)
         # All: Install all dependencies (packaging, .NET SDK, and tools)
         [ValidateSet("Package", "DotNet", "Both", "Tools", "All")]
->>>>>>> 7e1ef1f74 (Replace `fpm` with `dpkg-deb` for DEB package generation (#26281))
         [string]$Scenario = "Package"
     )
 
@@ -2399,14 +2355,6 @@ function Start-PSBootstrap {
                 }
             }
 
-<<<<<<< HEAD
-            # Install [fpm](https://github.com/jordansissel/fpm)
-            if ($Scenario -eq 'Both' -or $Scenario -eq 'Package') {
-                Install-GlobalGem -Sudo $sudo -GemName "dotenv" -GemVersion "2.8.1"
-                Install-GlobalGem -Sudo $sudo -GemName "ffi" -GemVersion "1.16.3"
-                Install-GlobalGem -Sudo $sudo -GemName "fpm" -GemVersion "1.15.1"
-                Install-GlobalGem -Sudo $sudo -GemName "rexml" -GemVersion "3.2.5"
-=======
             if ($Scenario -in 'All', 'Both', 'Package') {
                 # For RPM-based systems, ensure rpmbuild is available
                 if ($environment.IsLinux -and ($environment.IsRedHatFamily -or $environment.IsSUSEFamily -or $environment.IsMariner)) {
@@ -2432,7 +2380,6 @@ function Start-PSBootstrap {
                         }
                     }
                 }
->>>>>>> 7e1ef1f74 (Replace `fpm` with `dpkg-deb` for DEB package generation (#26281))
             }
         }
 
