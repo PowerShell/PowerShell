@@ -209,12 +209,14 @@ namespace Microsoft.PowerShell.Commands
             // Configure Unix Domain Socket or Named Pipe connection if specified
             // Note: only one of these can be set at a time and both are null by default
             // unixSocket takes precedence if both are set
-            if (_unixSocket is not null) // Unix Domain Socket
+            if (_unixSocket is not null)
             {
+                // Unix Domain Socket
                 handler.ConnectCallback = ConnectToUnixSocket;
             }
-            else if (_pipeName is not null) // Named Pipe
+            else if (_pipeName is not null)
             {
+                // Named Pipe
                 handler.ConnectCallback = ConnectToNamedPipeAsync;
             }
 
@@ -246,8 +248,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (_skipCertificateCheck)
             {
-                handler.SslOptions.RemoteCertificateValidationCallback = delegate
-                { return true; };
+                handler.SslOptions.RemoteCertificateValidationCallback = delegate { return true; };
             }
 
             handler.AllowAutoRedirect = _allowAutoRedirect;
