@@ -6,45 +6,40 @@ using System.Text;
 using SharpFuzz;
 using System.Management.Automation.Remoting;
 
-public class Target
+namespace FuzzTests
 {
-    public static void ExtractToken(ReadOnlySpan<byte> tokenResponse)
+    public static class Program
     {
-        RemoteSessionHyperVSocketClient.ExtractToken(tokenResponse);
-    }
-}
-
-public static class Program
-{
-    public static void Main(string[] args)
-    {
-        FuzzTargetMethod(args);
-    }
-
-    public static void FuzzTargetMethod(string[] args)
-    {
-        if (args == null)
+        public static void Main(string[] args)
         {
-            Console.WriteLine("args was null");
-            args = new string[0];
+            FuzzTargetMethod(args);
         }
 
-        try
+        public static void FuzzTargetMethod(string[] args)
         {
-            Fuzzer.LibFuzzer.Run(Target.ExtractToken);
+            if (args == null)
+            {
+                Console.WriteLine("args was null");
+                args = Array.Empty<string>();
+            }
+
+            try
+            {
+                Fuzzer.LibFuzzer.Run(Target.ExtractToken);
+            }
+            catch (System.ArgumentNullException nex)
+            {
+                Console.WriteLine($"ArgumentNullException in main: {nex.Message}");
+                Console.WriteLine($"Stack Trace: {nex.StackTrace}");
+                Environment.Exit(1);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception in main: {ex.Message}");
+                Console.WriteLine($"Exception type: {ex.GetType()}");
+                Console.WriteLine($"Stack Trace: {ex.StackTrace}");
+                Environment.Exit(1);
+            }
         }
-        catch (System.ArgumentNullException nex)
-        {
-            Console.WriteLine($"ArgumentNullException in main: {nex.Message}");
-            Console.WriteLine($"Stack Trace: {nex.StackTrace}");
-            Environment.Exit(1);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Exception in main: {ex.Message}");
-            Console.WriteLine($"Exception type: {ex.GetType()}");
-            Console.WriteLine($"Stack Trace: {ex.StackTrace}");
-            Environment.Exit(1);
-        }
-    }
+    }    
 }
