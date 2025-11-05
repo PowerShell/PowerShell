@@ -235,9 +235,21 @@ Choose either tooling or Customer impact.
 **If there were merge conflicts**:
 Add a note in the PR description after the Risk section describing what conflicts occurred and how they were resolved.
 
-### Step 6: Clean up temporary files
+### Step 6: Add the CL label to the backport PR
 
-After successful PR creation, clean up any temporary files created during the process:
+After creating the backport PR, add the same changelog label (CL-*) from the original PR to the backport PR:
+
+```bash
+gh pr edit <backport-pr-number> --repo PowerShell/PowerShell --add-label "<original-cl-label>"
+```
+
+Example: `gh pr edit 26389 --repo PowerShell/PowerShell --add-label "CL-BuildPackaging"`
+
+This ensures the backport is properly categorized in the changelog for the release branch.
+
+### Step 7: Clean up temporary files
+
+After successful PR creation and labeling, clean up any temporary files created during the process:
 
 ```powershell
 Remove-Item pr*.diff -ErrorAction SilentlyContinue
@@ -253,6 +265,7 @@ Remove-Item pr*.diff -ErrorAction SilentlyContinue
 - [ ] If conflicts occurred, provided resolution summary to user
 - [ ] Branch pushed to origin
 - [ ] PR created with correct title format: `[<release-branch>] <original-title>`
+- [ ] CL label added to backport PR (matching original PR's CL label)
 - [ ] Temporary files cleaned up (pr*.diff)
 - [ ] PR body includes:
   - [ ] Backport reference: `Backport of (PR-number) to <release-branch>`
