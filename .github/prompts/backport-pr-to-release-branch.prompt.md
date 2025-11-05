@@ -153,7 +153,7 @@ Create a new PR with the following format:
 [<target-release-branch>] <original-pr-title>
 ```
 
-Example: `[release/v7.4] Github Workflow cleanup`
+Example: `[release/v7.4] GitHub Workflow cleanup`
 
 **Body:**
 ```
