@@ -464,7 +464,7 @@ Examples:
 ### Title
 Format: `[release/v<version>] <original-title>`
 
-Example: `[release/v7.4] Github Workflow cleanup`
+Example: `[release/v7.4] GitHub Workflow cleanup`
 
 ### Description
 The backport PR description includes:
