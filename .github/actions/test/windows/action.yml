@@ -5,6 +5,7 @@ inputs:
   purpose:
     required: false
     default: ''
+    type: string
   tagSet:
     required: false
     default: CI
