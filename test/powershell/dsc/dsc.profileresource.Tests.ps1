@@ -148,7 +148,7 @@ Describe "DSC PowerShell Profile resource elevated tests" -Tag "CI", 'RequireAdm
         New-Item -Path $testProfilePathAllUsersAllHosts -Value $testProfileContent -Force -ItemType File
 
         $originalPath = $env:PATH
-        $env:PATH += ";$PSHome"
+        $env:PATH += "$pathSeparator$PSHome"
     }
     AfterAll {
         $env:PATH = $originalPath
