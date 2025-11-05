@@ -231,13 +231,42 @@ Choose either tooling or Customer impact.
 - **Medium**: Changes non-critical features, adds new functionality, or modifies existing behavior
 - **Low**: Documentation, test-only changes, minor refactoring, or fixes with narrow scope
 - Justify your assessment based on the scope of changes and potential impact
+- **For CI/CD changes**: When backporting CI/CD infrastructure changes (workflows, build scripts, packaging), note in your justification that not taking these changes may create technical debt and make it difficult to apply future CI/CD changes that build on top of them. This doesn't change the risk level itself, but provides important context for why the change should be taken despite potentially higher risk
 
 **If there were merge conflicts**:
 Add a note in the PR description after the Risk section describing what conflicts occurred and how they were resolved.
 
-### Step 6: Clean up temporary files
+### Step 6: Add the CL label to the backport PR
 
-After successful PR creation, clean up any temporary files created during the process:
+After creating the backport PR, add the same changelog label (CL-*) from the original PR to the backport PR:
+
+```bash
+gh pr edit <backport-pr-number> --repo PowerShell/PowerShell --add-label "<original-cl-label>"
+```
+
+Example: `gh pr edit 26389 --repo PowerShell/PowerShell --add-label "CL-BuildPackaging"`
+
+This ensures the backport is properly categorized in the changelog for the release branch.
+
+### Step 7: Update the original PR's backport labels
+
+After successfully creating the backport PR, update the original PR to reflect that it has been backported:
+
+```bash
+gh pr edit <original-pr-number> --repo PowerShell/PowerShell --add-label "Backport-<version>.x-Migrated" --remove-label "Backport-<version>.x-Consider"
+```
+
+Example: `gh pr edit 26193 --repo PowerShell/PowerShell --add-label "Backport-7.5.x-Migrated" --remove-label "Backport-7.5.x-Consider"`
+
+Notes:
+- If the original PR had `Backport-<version>.x-Approved` instead of `Consider`, remove that label
+- This step helps track which PRs have been successfully backported
+- The `Migrated` label indicates the backport PR has been created (not necessarily merged)
+- The `Done` label should only be added once the backport PR is merged
+
+### Step 8: Clean up temporary files
+
+After successful PR creation and labeling, clean up any temporary files created during the process:
 
 ```powershell
 Remove-Item pr*.diff -ErrorAction SilentlyContinue
@@ -253,6 +282,8 @@ Remove-Item pr*.diff -ErrorAction SilentlyContinue
 - [ ] If conflicts occurred, provided resolution summary to user
 - [ ] Branch pushed to origin
 - [ ] PR created with correct title format: `[<release-branch>] <original-title>`
+- [ ] CL label added to backport PR (matching original PR's CL label)
+- [ ] Original PR labels updated (added Migrated, removed Consider/Approved)
 - [ ] Temporary files cleaned up (pr*.diff)
 - [ ] PR body includes:
   - [ ] Backport reference: `Backport of (PR-number) to <release-branch>`
@@ -269,13 +300,13 @@ Remove-Item pr*.diff -ErrorAction SilentlyContinue
 
 ## 6 — Branch naming convention
 
-**Format:** `backport-<pr-number>`
+**Format:** `backport/release/<version>/pr/<pr-number>`
 
 Examples:
-- `backport-26193`
-- `backport-26334`
+- `backport/release/v7.5/pr/26193`
+- `backport/release/v7.4.1/pr/26334`
 
-Note: Automated bot uses format `backport/release/v<version>/<pr-number>-<commit-hash>`, but manual backports use the simpler `backport-<pr-number>` format.
+Note: Automated bot uses format `backport/release/v<version>/<pr-number>-<commit-hash>`, but manual backports should use the format `backport/release/<version>/pr/<pr-number>` as shown above.
 
 ## 7 — Example backport PR
 
