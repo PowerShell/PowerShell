@@ -1,10 +1,11 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 param (
     [string]$libFuzzer = ".\libfuzzer-dotnet-windows.exe",
     [string]$project = ".\FuzzingApp\powershell-fuzz-tests.csproj",
     [Parameter(Mandatory=$true)]
     [string]$corpus,
-    [string]$dict = $null,
-    [int]$timeout = 10,
     [string]$command = "sharpfuzz.exe"
 )
 

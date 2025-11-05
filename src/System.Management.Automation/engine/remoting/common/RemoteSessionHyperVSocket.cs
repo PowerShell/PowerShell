@@ -435,7 +435,7 @@ namespace System.Management.Automation.Remoting
             cancellationToken.ThrowIfCancellationRequested();
 
             ReadOnlySpan<byte> responseBytes = Encoding.UTF8.GetBytes(responseString);
-            string responseToken = RemoteSessionHyperVSocketClient.ExtractFuzzedToken(responseBytes);
+            string responseToken = RemoteSessionHyperVSocketClient.ExtractToken(responseBytes);
 
             if (responseToken == null)
             {
@@ -1061,7 +1061,7 @@ namespace System.Management.Automation.Remoting
                 string token = ReceiveResponse(HyperVSocket, 1024); // either "PASS" or "FAIL"
 
                 ReadOnlySpan<byte> tokenResponseBytes = Encoding.UTF8.GetBytes(token);
-                string extractedToken = ExtractFuzzedToken(tokenResponseBytes);
+                string extractedToken = ExtractToken(tokenResponseBytes);
 
                 if (extractedToken == null)
                 {
@@ -1126,7 +1126,7 @@ namespace System.Management.Automation.Remoting
             }
         }
 
-        internal static string ExtractFuzzedToken(ReadOnlySpan<byte> tokenResponse)
+        internal static string ExtractToken(ReadOnlySpan<byte> tokenResponse)
         {
             string token = Encoding.UTF8.GetString(tokenResponse);
 

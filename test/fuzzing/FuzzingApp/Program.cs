@@ -1,13 +1,16 @@
-﻿using System;
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using System;
 using System.Text;
 using SharpFuzz;
 using System.Management.Automation.Remoting;
 
 public class Target
 {
-    public static void ExtractFuzzedToken(ReadOnlySpan<byte> tokenResponse)
+    public static void ExtractToken(ReadOnlySpan<byte> tokenResponse)
     {
-        RemoteSessionHyperVSocketClient.ExtractFuzzedToken(tokenResponse);
+        RemoteSessionHyperVSocketClient.ExtractToken(tokenResponse);
     }
 }
 
@@ -28,7 +31,7 @@ public static class Program
 
         try
         {
-            Fuzzer.LibFuzzer.Run(Target.ExtractFuzzedToken);
+            Fuzzer.LibFuzzer.Run(Target.ExtractToken);
         }
         catch (System.ArgumentNullException nex)
         {
