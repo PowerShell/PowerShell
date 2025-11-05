@@ -247,7 +247,23 @@ Example: `gh pr edit 26389 --repo PowerShell/PowerShell --add-label "CL-BuildPac
 
 This ensures the backport is properly categorized in the changelog for the release branch.
 
-### Step 7: Clean up temporary files
+### Step 7: Update the original PR's backport labels
+
+After successfully creating the backport PR, update the original PR to reflect that it has been backported:
+
+```bash
+gh pr edit <original-pr-number> --repo PowerShell/PowerShell --add-label "Backport-<version>.x-Migrated" --remove-label "Backport-<version>.x-Consider"
+```
+
+Example: `gh pr edit 26193 --repo PowerShell/PowerShell --add-label "Backport-7.5.x-Migrated" --remove-label "BackPort-7.5.x-Consider"`
+
+Notes:
+- If the original PR had `Backport-<version>.x-Approved` instead of `Consider`, remove that label
+- This step helps track which PRs have been successfully backported
+- The `Migrated` label indicates the backport PR has been created (not necessarily merged)
+- The `Done` label should only be added once the backport PR is merged
+
+### Step 8: Clean up temporary files
 
 After successful PR creation and labeling, clean up any temporary files created during the process:
 
@@ -266,6 +282,7 @@ Remove-Item pr*.diff -ErrorAction SilentlyContinue
 - [ ] Branch pushed to origin
 - [ ] PR created with correct title format: `[<release-branch>] <original-title>`
 - [ ] CL label added to backport PR (matching original PR's CL label)
+- [ ] Original PR labels updated (added Migrated, removed Consider/Approved)
 - [ ] Temporary files cleaned up (pr*.diff)
 - [ ] PR body includes:
   - [ ] Backport reference: `Backport of (PR-number) to <release-branch>`
