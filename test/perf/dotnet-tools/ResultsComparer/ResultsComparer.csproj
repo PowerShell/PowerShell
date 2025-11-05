@@ -9,7 +9,7 @@
     <PackageReference Include="CommandLineParser" Version="2.9.1" />
     <PackageReference Include="MarkdownLog.NS20" Version="0.10.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-    <PackageReference Include="BenchmarkDotNet" Version="0.15.4" />
-    <PackageReference Include="Perfolizer" Version="0.5.3" />
+    <PackageReference Include="BenchmarkDotNet" Version="0.15.5" />
+    <PackageReference Include="Perfolizer" Version="0.6.0" />
   </ItemGroup>
 </Project>
