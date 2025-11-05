@@ -1195,23 +1195,6 @@ function New-UnixPackage {
             # Generate After Install and After Remove scripts
             $AfterScriptInfo = New-AfterScripts -Link $Link -Distribution $DebDistro -Destination $Destination
 
-<<<<<<< HEAD
-            # there is a weird bug in fpm
-            # if the target of the powershell symlink exists, `fpm` aborts
-            # with a `utime` error on macOS.
-            # so we move it to make symlink broken
-            # refers to executable, does not vary by channel
-            $symlink_dest = "$Destination/pwsh"
-            $hack_dest = "./_fpm_symlink_hack_powershell"
-            if ($Environment.IsMacOS) {
-                if (Test-Path $symlink_dest) {
-                    Write-Warning "Move $symlink_dest to $hack_dest (fpm utime bug)"
-                    Start-NativeExecution ([ScriptBlock]::Create("$sudo mv $symlink_dest $hack_dest"))
-                }
-            }
-
-=======
->>>>>>> 7e1ef1f74 (Replace `fpm` with `dpkg-deb` for DEB package generation (#26281))
             # Generate gzip of man file
             $ManGzipInfo = New-ManGzip -IsPreview:$IsPreview -IsLTS:$LTS
 
@@ -1275,14 +1258,6 @@ function New-UnixPackage {
                 try {
                     $Output = Start-NativeExecution { fpm $Arguments }
                 }
-<<<<<<< HEAD
-                catch {
-                    Write-Verbose -Message "!!!Handling error in FPM!!!" -Verbose -ErrorAction SilentlyContinue
-                    Write-Verbose -Message "$Output" -Verbose -ErrorAction SilentlyContinue
-                    Get-Error -InputObject $_
-                    throw
-                }
-=======
             } elseif ($Type -eq 'deb') {
                 # Use native DEB package builder
                 if ($PSCmdlet.ShouldProcess("Create DEB package natively")) {
@@ -1343,7 +1318,6 @@ function New-UnixPackage {
             } else {
                 # Nothing should reach here
                 throw "Unknown package type: $Type"
->>>>>>> 7e1ef1f74 (Replace `fpm` with `dpkg-deb` for DEB package generation (#26281))
             }
         } finally {
             if ($Environment.IsMacOS) {
@@ -1371,18 +1345,8 @@ function New-UnixPackage {
         # Magic to get path output
         $createdPackage = Get-Item (Join-Path $CurrentLocation (($Output[-1] -split ":path=>")[-1] -replace '["{}]'))
 
-<<<<<<< HEAD
-        if ($Environment.IsMacOS) {
-            if ($PSCmdlet.ShouldProcess("Add distribution information and Fix PackageName"))
-            {
-                $createdPackage = New-MacOsDistributionPackage -FpmPackage $createdPackage -HostArchitecture $HostArchitecture -IsPreview:$IsPreview
-            }
-        }
-=======
         # For macOS with native tools, the package is already in the correct format
         # For other platforms, the package name from dpkg-deb/rpmbuild is sufficient
->>>>>>> 7e1ef1f74 (Replace `fpm` with `dpkg-deb` for DEB package generation (#26281))
-
         if (Test-Path $createdPackage)
         {
             Write-Verbose "Created package: $createdPackage" -Verbose
@@ -1508,11 +1472,8 @@ Class LinkInfo
     [string] $Destination
 }
 
-<<<<<<< HEAD
-function Get-FpmArguments
-=======
+
 function New-RpmSpec
->>>>>>> 7e1ef1f74 (Replace `fpm` with `dpkg-deb` for DEB package generation (#26281))
 {
     param(
         [Parameter(Mandatory,HelpMessage='Package Name')]
@@ -1527,14 +1488,6 @@ function New-RpmSpec
         [Parameter(Mandatory,HelpMessage='Package description')]
         [String]$Description,
 
-<<<<<<< HEAD
-        # From start-PSPackage without modification, already validated
-        # Values: deb, rpm, osxpkg
-        [Parameter(Mandatory,HelpMessage='Installer Type')]
-        [String]$Type,
-
-=======
->>>>>>> 7e1ef1f74 (Replace `fpm` with `dpkg-deb` for DEB package generation (#26281))
         [Parameter(Mandatory,HelpMessage='Staging folder for installation files')]
         [String]$Staging,
 
@@ -1550,7 +1503,6 @@ function New-RpmSpec
         [Parameter(Mandatory,HelpMessage='Symlink to powershell executable')]
         [LinkInfo[]]$LinkInfo,
 
-<<<<<<< HEAD
         [Parameter(HelpMessage='Packages required to install this package.  Not applicable for MacOS.')]
         [ValidateScript({
             if (!$Environment.IsMacOS -and $_.Count -eq 0)
@@ -1593,7 +1545,6 @@ function New-RpmSpec
             return $true
         })]
         [String]$AppsFolder,
-=======
         [Parameter(Mandatory,HelpMessage='Packages required to install this package')]
         [String[]]$Dependencies,
 
@@ -1603,70 +1554,10 @@ function New-RpmSpec
         [Parameter(Mandatory,HelpMessage='Script to run after the package removal.')]
         [String]$AfterRemoveScript,
 
->>>>>>> 7e1ef1f74 (Replace `fpm` with `dpkg-deb` for DEB package generation (#26281))
         [String]$Distribution = 'rhel.7',
         [string]$HostArchitecture
     )
 
-<<<<<<< HEAD
-    $Arguments = @(
-        "--force", "--verbose",
-        "--name", $Name,
-        "--version", $Version,
-        "--iteration", $Iteration,
-        "--maintainer", "PowerShell Team <PowerShellTeam@hotmail.com>",
-        "--vendor", "Microsoft Corporation",
-        "--url", "https://microsoft.com/powershell",
-        "--description", $Description,
-        "--architecture", $HostArchitecture,
-        "--category", "shells",
-        "-t", $Type,
-        "-s", "dir"
-    )
-    if ($Distribution -in $script:RedHatDistributions) {
-        $Arguments += @("--rpm-digest", "sha256")
-        $Arguments += @("--rpm-dist", $Distribution)
-        $Arguments += @("--rpm-os", "linux")
-        $Arguments += @("--license", "MIT")
-        $Arguments += @("--rpm-rpmbuild-define", "_build_id_links none")
-    } else {
-        $Arguments += @("--license", "MIT License")
-    }
-
-    if ($Environment.IsMacOS) {
-        $Arguments += @("--osxpkg-identifier-prefix", "com.microsoft")
-    }
-
-    foreach ($Dependency in $Dependencies) {
-        $Arguments += @("--depends", $Dependency)
-    }
-
-    if ($AfterInstallScript) {
-        $Arguments += @("--after-install", $AfterInstallScript)
-    }
-
-    if ($AfterRemoveScript) {
-        $Arguments += @("--after-remove", $AfterRemoveScript)
-    }
-
-    $Arguments += @(
-        "$Staging/=$Destination/",
-        "$ManGzipFile=$ManDestination"
-    )
-
-    foreach($link in $LinkInfo)
-    {
-        $linkArgument = "$($link.Source)=$($link.Destination)"
-        $Arguments += $linkArgument
-    }
-
-    if ($AppsFolder)
-    {
-        $Arguments += "$AppsFolder=/"
-    }
-
-    return $Arguments
-=======
     # RPM doesn't allow hyphens in version, so convert them to underscores
     # e.g., "7.6.0-preview.6" becomes Version: 7.6.0_preview.6
     $rpmVersion = $Version -replace '-', '_'
@@ -2143,7 +2034,6 @@ function New-MacOSPackage
             Remove-Item -Path $tempRoot -Recurse -Force -ErrorAction SilentlyContinue
         }
     }
->>>>>>> 7e1ef1f74 (Replace `fpm` with `dpkg-deb` for DEB package generation (#26281))
 }
 
 function Get-PackageDependencies
@@ -2218,27 +2108,6 @@ function Get-PackageDependencies
 
 function Test-Dependencies
 {
-<<<<<<< HEAD
-    foreach ($Dependency in "fpm") {
-        if (!(precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Scenario Package")) {
-            # These tools are not added to the path automatically on OpenSUSE 13.2
-            # try adding them to the path and re-tesing first
-            [string] $gemsPath = $null
-            [string] $depenencyPath = $null
-            $gemsPath = Get-ChildItem -Path /usr/lib64/ruby/gems | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName
-            if ($gemsPath) {
-                $depenencyPath  = Get-ChildItem -Path (Join-Path -Path $gemsPath -ChildPath "gems" -AdditionalChildPath $Dependency) -Recurse | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty DirectoryName
-                $originalPath = $env:PATH
-                $env:PATH = $ENV:PATH +":" + $depenencyPath
-                if ((precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Scenario Package")) {
-                    continue
-                }
-                else {
-                    $env:PATH = $originalPath
-                }
-            }
-
-=======
     # RPM packages use rpmbuild directly.
     # DEB packages use dpkg-deb directly.
     # macOS packages use pkgbuild and productbuild from Xcode Command Line Tools.
@@ -2258,7 +2127,6 @@ function Test-Dependencies
 
     foreach ($Dependency in $Dependencies) {
         if (!(precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Scenario Package")) {
->>>>>>> 7e1ef1f74 (Replace `fpm` with `dpkg-deb` for DEB package generation (#26281))
             throw "Dependency precheck failed!"
         }
     }
