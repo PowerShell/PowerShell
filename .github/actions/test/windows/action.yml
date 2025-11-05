@@ -13,15 +13,6 @@ inputs:
     required: false
     default: ctrf
     type: string
-  client-id:
-    required: true
-    type: string
-  tenant-id:
-    required: true
-    type: string
-  subscription-id:
-    required: true
-    type: string
 
 runs:
   using: composite

@@ -93,9 +93,6 @@ jobs:
         with:
           purpose: UnelevatedPesterTests
           tagSet: CI
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
   macos_test_elevated_ci:
     name: macOS Elevated CI
     needs:
@@ -113,9 +110,6 @@ jobs:
         with:
           purpose: ElevatedPesterTests
           tagSet: CI
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
   macos_test_unelevated_others:
     name: macOS Unelevated Others
     needs:
@@ -133,9 +127,6 @@ jobs:
         with:
           purpose: UnelevatedPesterTests
           tagSet: Others
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
   macos_test_elevated_others:
     name: macOS Elevated Others
     needs:
@@ -153,9 +144,6 @@ jobs:
         with:
           purpose: ElevatedPesterTests
           tagSet: Others
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
   xunit_tests:
     name: xUnit Tests
     needs:

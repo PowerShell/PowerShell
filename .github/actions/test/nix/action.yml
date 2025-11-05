@@ -14,18 +14,6 @@ inputs:
     required: false
     default: ctrf
     type: string
-  client-id:
-    description: 'Azure AD Application (Client) ID for authentication'
-    required: true
-    default: ''
-  tenant-id:
-    description: 'Azure AD Tenant ID for authentication'
-    required: true
-    default: ''
-  subscription-id:
-    description: 'Azure Subscription ID for authentication'
-    required: true
-    default: ''
 
 runs:
   using: composite
