@@ -63,6 +63,10 @@ jobs:
     inputs:
       targetType: inline
       script: |
+        $IsLTS = '$(LTS)' -eq 'true'
+        $IsStable = '$(STABLE)' -eq 'true'
+        $IsPreview = '$(PREVIEW)' -eq 'true'
+
         Write-Verbose -Verbose "Channel Selection - LTS: $(LTS), Stable: $(Stable), Preview: $(Preview)"
 
         $currentChannel = if ($IsLTS) { 'LTS' }
