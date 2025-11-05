@@ -172,7 +172,7 @@ namespace System.Management.Automation
         {
             tracer.WriteLine("Getting member with name {0}", memberName);
 
-            if (!(obj is ManagementBaseObject mgmtObject))
+            if (obj is not ManagementBaseObject mgmtObject)
             {
                 return null;
             }
@@ -364,7 +364,7 @@ namespace System.Management.Automation
         /// <param name="convertIfPossible">Instructs the adapter to convert before setting, if the adapter supports conversion.</param>
         protected override void PropertySet(PSProperty property, object setValue, bool convertIfPossible)
         {
-            if (!(property.baseObject is ManagementBaseObject mObj))
+            if (property.baseObject is not ManagementBaseObject mObj)
             {
                 throw new SetValueInvocationException("CannotSetNonManagementObjectMsg",
                     null,

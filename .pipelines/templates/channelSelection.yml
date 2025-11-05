@@ -1,0 +1,31 @@
+steps:
+- pwsh: |
+    # Determine LTS, Preview, or Stable
+    $metadata = Get-Content "$(Build.SourcesDirectory)/PowerShell/tools/metadata.json" -Raw | ConvertFrom-Json
+    $LTS = $metadata.LTSRelease.Latest
+    $Stable = $metadata.StableRelease.Latest
+    $isPreview = '$(OutputReleaseTag.releaseTag)' -match '-'
+
+    $IsLTS = [bool]$LTS
+    $IsStable = [bool]$Stable
+    $IsPreview = [bool]$isPreview
+
+    $channelVars = @{
+        IsLTS     = $IsLTS
+        IsStable  = $IsStable
+        IsPreview = $IsPreview
+    }
+
+    $trueCount = ($channelVars.Values | Where-Object { $_ }) | Measure-Object | Select-Object -ExpandProperty Count
+    if ($trueCount -gt 1) {
+        Write-Error "Only one of IsLTS, IsStable, or IsPreview can be true. Current values: IsLTS=$IsLTS, IsStable=$IsStable, IsPreview=$IsPreview"
+        exit 1
+    }
+
+    foreach ($name in $channelVars.Keys) {
+        $value = if ($channelVars[$name]) { 'true' } else { 'false' }
+        Write-Verbose -Message "Setting $name variable: $value" -Verbose
+        Write-Host "##vso[task.setvariable variable=$name;isOutput=true]$value"
+    }
+  name: ChannelSelection
+  displayName: Select Preview, Stable, or LTS Channel

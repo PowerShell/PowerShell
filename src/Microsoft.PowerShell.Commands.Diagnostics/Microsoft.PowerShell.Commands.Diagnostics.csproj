@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />
-    <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="10.0.0-preview.7.25380.108" />
+    <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="10.0.0-rc.2.25502.107" />
   </ItemGroup>
 
   <PropertyGroup>

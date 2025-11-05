@@ -83,11 +83,11 @@ extends:
         break: true  # always break the build on binskim issues in addition to TSA upload
       policheck:
         break: true  # always break the build on policheck issues. You can disable it by setting to 'false'
-              # APIScan requires a non-Ready-To-Run build
+      # APIScan requires a non-Ready-To-Run build
       apiscan:
         enabled: true
         softwareName: "PowerShell" # Default is repo name
-        versionNumber: "7.5" # Default is build number
+        versionNumber: "7.6" # Default is build number
         isLargeApp: false # Default: false.
         symbolsFolder: $(SymbolsServerUrl);$(ob_outputDirectory)
 #softwareFolder - relative path to a folder to be scanned. Default value is root of artifacts folder

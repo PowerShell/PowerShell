@@ -15,6 +15,16 @@
     "Architecture": null
   },
   {
+    "Pattern": "build.manifest",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "build.manifest.sig",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
     "Pattern": "clretwrc.dll",
     "FileType": "NonProduct",
     "Architecture": null

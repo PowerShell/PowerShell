@@ -8,6 +8,8 @@ on:
       - github-mirror
     paths:
       - "**"
+      - "*"
+      - ".globalconfig"
       - "!.vsts-ci/misc-analysis.yml"
       - "!.github/ISSUE_TEMPLATE/**"
       - "!.dependabot/config.yml"
@@ -18,11 +20,12 @@ on:
       - master
       - release/**
       - github-mirror
+      - "*-feature"
 
 # Path filters for PRs need to go into the changes job
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: ${{ contains(github.ref, 'merge')}}
 
 permissions:
@@ -38,6 +41,8 @@ env:
   POWERSHELL_TELEMETRY_OPTOUT: 1
   __SuppressAnsiEscapeSequences: 1
   nugetMultiFeedWarnLevel: none
+  SYSTEM_ARTIFACTSDIRECTORY: ${{ github.workspace }}/artifacts
+  BUILD_ARTIFACTSTAGINGDIRECTORY: ${{ github.workspace }}/artifacts
 jobs:
   changes:
     name: Change Detection
@@ -51,6 +56,8 @@ jobs:
     # Set job outputs to values from filter step
     outputs:
       source: ${{ steps.filter.outputs.source }}
+      buildModuleChanged: ${{ steps.filter.outputs.buildModuleChanged }}
+      packagingChanged: ${{ steps.filter.outputs.packagingChanged }}
     steps:
       - name: checkout
         uses: actions/checkout@v5
@@ -64,7 +71,7 @@ jobs:
   ci_build:
     name: Build PowerShell
     needs: changes
-    if: ${{ needs.changes.outputs.source == 'true' }}
+    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
     runs-on: windows-latest
     steps:
       - name: checkout
@@ -78,7 +85,7 @@ jobs:
     needs:
       - ci_build
       - changes
-    if: ${{ needs.changes.outputs.source == 'true' }}
+    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
     runs-on: windows-latest
     steps:
       - name: checkout
@@ -95,7 +102,7 @@ jobs:
     needs:
       - ci_build
       - changes
-    if: ${{ needs.changes.outputs.source == 'true' }}
+    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
     runs-on: windows-latest
     steps:
       - name: checkout
@@ -112,7 +119,7 @@ jobs:
     needs:
       - ci_build
       - changes
-    if: ${{ needs.changes.outputs.source == 'true' }}
+    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
     runs-on: windows-latest
     steps:
       - name: checkout
@@ -129,7 +136,7 @@ jobs:
     needs:
       - ci_build
       - changes
-    if: ${{ needs.changes.outputs.source == 'true' }}
+    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
     runs-on: windows-latest
     steps:
       - name: checkout
@@ -141,28 +148,42 @@ jobs:
         with:
           purpose: ElevatedPesterTests
           tagSet: Others
-  verify_xunit:
-    name: Verify xUnit test results
+  xunit_tests:
+    name: xUnit Tests
     needs:
-      - ci_build
       - changes
-    if: ${{ needs.changes.outputs.source == 'true' }}
-    runs-on: windows-latest
-    steps:
-      - name: checkout
-        uses: actions/checkout@v5
-        with:
-          fetch-depth: 1000
-      - name: Verify xUnit test results
-        uses: "./.github/actions/test/verify_xunit"
+    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
+    uses: ./.github/workflows/xunit-tests.yml
+    with:
+      runner_os: windows-latest
+      test_results_artifact_name: testResults-xunit
+  analyze:
+    name: CodeQL Analysis
+    needs: changes
+    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
+    uses: ./.github/workflows/analyze-reusable.yml
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    with:
+      runner_os: windows-latest
+  windows_packaging:
+    name: Windows Packaging
+    needs:
+      - changes
+    if: ${{ needs.changes.outputs.packagingChanged == 'true' }}
+    uses: ./.github/workflows/windows-packaging-reusable.yml
   ready_to_merge:
     name: windows ready to merge
     needs:
-      - verify_xunit
+      - xunit_tests
       - windows_test_elevated_ci
       - windows_test_elevated_others
       - windows_test_unelevated_ci
       - windows_test_unelevated_others
+      - analyze
+      - windows_packaging
     if: always()
     uses: PowerShell/compliance/.github/workflows/ready-to-merge.yml@v1.0.0
     with:

@@ -129,7 +129,7 @@ namespace System.Management.Automation
         /// <c>true</c> if the value matches the word as a wildcard pattern; otherwise, <c>false</c>.
         /// </returns>
         /// <remarks>
-        /// Wildcard pattern matching allows for flexible matching, where wilcards can represent 
+        /// Wildcard pattern matching allows for flexible matching, where wilcards can represent
         /// multiple characters in the input. This strategy is case-insensitive.
         /// </remarks>
         internal static readonly MatchStrategy WildcardPatternMatchIgnoreCase = (value, wordToComplete)
@@ -141,11 +141,11 @@ namespace System.Management.Automation
         /// Determines if the given value matches the specified word considering wildcard characters literally.
         /// </summary>
         /// <returns>
-        /// <c>true</c> if the value matches either the literal normalized word or the wildcard pattern with escaping; 
+        /// <c>true</c> if the value matches either the literal normalized word or the wildcard pattern with escaping;
         /// otherwise, <c>false</c>.
         /// </returns>
         /// <remarks>
-        /// This strategy first attempts a literal prefix match for performance and, if unsuccessful, escapes the word to complete to 
+        /// This strategy first attempts a literal prefix match for performance and, if unsuccessful, escapes the word to complete to
         /// handle any problematic wildcard characters before performing a wildcard match.
         /// </remarks>
         internal static readonly MatchStrategy WildcardPatternEscapeMatch = (value, wordToComplete)

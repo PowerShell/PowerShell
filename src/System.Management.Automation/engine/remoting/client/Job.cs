@@ -752,10 +752,10 @@ namespace System.Management.Automation
 
         private static Exception GetExceptionFromErrorRecord(ErrorRecord errorRecord)
         {
-            if (!(errorRecord.Exception is RuntimeException runtimeException))
+            if (errorRecord.Exception is not RuntimeException runtimeException)
                 return null;
 
-            if (!(runtimeException is RemoteException remoteException))
+            if (runtimeException is not RemoteException remoteException)
                 return null;
 
             PSPropertyInfo wasThrownFromThrow =
@@ -1911,7 +1911,7 @@ namespace System.Management.Automation
 
             foreach (Job j in ChildJobs)
             {
-                if (!(j is PSRemotingChildJob child)) continue;
+                if (j is not PSRemotingChildJob child) continue;
                 if (string.Equals(child.Runspace.ConnectionInfo.ComputerName, computerName,
                                 StringComparison.OrdinalIgnoreCase))
                 {
@@ -1934,7 +1934,7 @@ namespace System.Management.Automation
 
             foreach (Job j in ChildJobs)
             {
-                if (!(j is PSRemotingChildJob child)) continue;
+                if (j is not PSRemotingChildJob child) continue;
                 if (child.Runspace.InstanceId.Equals(runspace.InstanceId))
                 {
                     returnJobList.Add(child);
@@ -1957,7 +1957,7 @@ namespace System.Management.Automation
 
             foreach (Job j in ChildJobs)
             {
-                if (!(j is PSRemotingChildJob child)) continue;
+                if (j is not PSRemotingChildJob child) continue;
                 if (child.Helper.Equals(helper))
                 {
                     returnJobList.Add(child);

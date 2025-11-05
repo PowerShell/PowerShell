@@ -1174,7 +1174,7 @@ namespace System.Management.Automation.Runspaces
         internal static T ExtractPropertyAsWsManConnectionInfo<T>(RunspaceConnectionInfo rsCI,
             string property, T defaultValue)
         {
-            if (!(rsCI is WSManConnectionInfo wsCI))
+            if (rsCI is not WSManConnectionInfo wsCI)
             {
                 return defaultValue;
             }
@@ -2255,7 +2255,7 @@ namespace System.Management.Automation.Runspaces
                     DiscoveryExceptions.CommandNotFoundException);
             }
 
-            // Create a local ssh process (client) that conects to a remote sshd process (server) using a 'powershell' subsystem.
+            // Create a local ssh process (client) that connects to a remote sshd process (server) using a 'powershell' subsystem.
             //
             // Local ssh invoked as:
             //   windows:
