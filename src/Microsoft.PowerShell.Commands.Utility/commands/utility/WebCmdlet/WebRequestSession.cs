@@ -248,8 +248,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (_skipCertificateCheck)
             {
-                handler.SslOptions.RemoteCertificateValidationCallback = delegate
-                { return true; };
+                handler.SslOptions.RemoteCertificateValidationCallback = delegate { return true; };
             }
 
             handler.AllowAutoRedirect = _allowAutoRedirect;
@@ -277,8 +276,7 @@ namespace Microsoft.PowerShell.Commands
         {
             int timeoutMs = checked((int)Math.Min(
                    int.MaxValue,
-                   Math.Round(_connectionTimeout.TotalMilliseconds, MidpointRounding.AwayFromZero)
-            ));
+                   Math.Round(_connectionTimeout.TotalMilliseconds, MidpointRounding.AwayFromZero)));
 
             var stream = new System.IO.Pipes.NamedPipeClientStream(".", _pipeName!, System.IO.Pipes.PipeDirection.InOut, System.IO.Pipes.PipeOptions.Asynchronous);
             await stream.ConnectAsync(timeoutMs, token).ConfigureAwait(false);
