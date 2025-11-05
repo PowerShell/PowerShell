@@ -58,8 +58,8 @@ jobs:
       $dateTime = [datetime]::new($dateTime.Ticks - ($dateTime.Ticks % [timespan]::TicksPerSecond), $dateTime.Kind)
 
       $metadata = Get-Content -LiteralPath "$toolsDirectory/metadata.json" -ErrorAction Stop | ConvertFrom-Json
-      $stableRelease = $metadata.StableRelease.Latest
-      $ltsRelease = $metadata.LTSRelease.Latest
+      $stableRelease = $metadata.StableRelease.PublishToChannels
+      $ltsRelease = $metadata.LTSRelease.PublishToChannels
 
       Write-Verbose -Verbose "Writing $jsonFile contents:"
       $buildInfoJsonContent = Get-Content $jsonFile -Encoding UTF8NoBom -Raw
