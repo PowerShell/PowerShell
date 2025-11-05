@@ -37,14 +37,14 @@ public static class Program
         {
             Console.WriteLine($"ArgumentNullException in main: {nex.Message}");
             Console.WriteLine($"Stack Trace: {nex.StackTrace}");
-            // Environment.Exit(1);
+            Environment.Exit(1);
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Exception in main: {ex.Message}");
             Console.WriteLine($"Exception type: {ex.GetType()}");
             Console.WriteLine($"Stack Trace: {ex.StackTrace}");
-            // Environment.Exit(1);
+            Environment.Exit(1);
         }
     }
 }
