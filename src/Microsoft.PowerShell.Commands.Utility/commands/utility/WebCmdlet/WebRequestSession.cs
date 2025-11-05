@@ -278,6 +278,7 @@ namespace Microsoft.PowerShell.Commands
             int timeoutMs = checked((int)Math.Min(
                    int.MaxValue,
                    Math.Round(_connectionTimeout.TotalMilliseconds, MidpointRounding.AwayFromZero)));
+
             // Create the pipe client stream and connect
             var stream = new System.IO.Pipes.NamedPipeClientStream(".", _pipeName!, System.IO.Pipes.PipeDirection.InOut, System.IO.Pipes.PipeOptions.Asynchronous);
             await stream.ConnectAsync(timeoutMs, cancellationToken).ConfigureAwait(false);
@@ -295,6 +296,7 @@ namespace Microsoft.PowerShell.Commands
             // Create the socket and connect
             Socket socket = new(AddressFamily.Unix, SocketType.Stream, ProtocolType.IP);
             await socket.ConnectAsync(_unixSocket!, cancellationToken).ConfigureAwait(false);
+
             // The NetworkStream does not own the socket, so disposing the stream will not close the socket.
             return new NetworkStream(socket, ownsSocket: false);
         }
