@@ -1,36 +1,31 @@
 # Copyright (c) kestrun.
 # Licensed under the MIT License.
 
-Class PipeNameServer
-{
+Class PipeNameServer {
     [System.Management.Automation.Job]$Job
 
     PipeNameServer () { }
 
-    [String] GetStatus()
-    {
+    [String] GetStatus() {
         return $this.Job.JobStateInfo.State
     }
 }
 
 [PipeNameServer]$PipeServer
 
-function Get-PipeServer
-{
+function Get-PipeServer {
     [CmdletBinding()] [OutputType([PipeNameServer])]
     param()
     process { return [PipeNameServer]$Script:PipeServer }
 }
 
-function Get-PipeName
-{
+function Get-PipeName {
     [CmdletBinding()] [OutputType([string])]
     param()
     process { return [System.IO.Path]::GetRandomFileName() }
 }
 
-function Get-PipeServerUri
-{
+function Get-PipeServerUri {
     [CmdletBinding()] [OutputType([Uri])]
     param()
     process {
@@ -40,9 +35,10 @@ function Get-PipeServerUri
     }
 }
 
-function Start-PipeServer
-{
-    [CmdletBinding()] [OutputType([PipeNameServer])]
+function Start-PipeServer {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSPossibleIncorrectComparisonWithNull', '')]
+    [CmdletBinding()]
+    [OutputType([PipeNameServer])]
     param([Parameter(Mandatory)] [string] $PipeName)
 
     process {
@@ -56,14 +52,14 @@ function Start-PipeServer
             $headerTemplate = "HTTP/1.1 200 OK`r`nContent-Type: text/plain`r`nContent-Length: {0}`r`nConnection: close`r`n`r`n"
             $headers = [System.Text.Encoding]::ASCII.GetBytes([string]::Format($headerTemplate, $responseBodyBytes.Length))
 
-            for($i = 0; $i -lt 2; $i++) {
+            for ($i = 0; $i -lt 2; $i++) {
                 $server = [System.IO.Pipes.NamedPipeServerStream]::new($pn, [System.IO.Pipes.PipeDirection]::InOut, 1, [System.IO.Pipes.PipeTransmissionMode]::Byte, [System.IO.Pipes.PipeOptions]::Asynchronous)
                 try {
                     $server.WaitForConnection()
                     $reader = [System.IO.StreamReader]::new($server, [System.Text.Encoding]::ASCII, $false, 1024, $true)
-                    while(($line = $reader.ReadLine()) -ne $null) { if ($line -eq '') { break } }
-                    $server.Write($headers,0,$headers.Length)
-                    $server.Write($responseBodyBytes,0,$responseBodyBytes.Length)
+                    while (($line = $reader.ReadLine()) -ne $null) { if ($line -eq '') { break } }
+                    $server.Write($headers, 0, $headers.Length)
+                    $server.Write($responseBodyBytes, 0, $responseBodyBytes.Length)
                     $server.Flush()
                 } finally {
                     $server.Dispose()
@@ -77,9 +73,9 @@ function Start-PipeServer
     }
 }
 
-function Stop-PipeServer
-{
-    [CmdletBinding()] [OutputType([void])]
+function Stop-PipeServer {
+    [CmdletBinding()]
+    [OutputType([void])]
     param()
     process {
         if ($Script:PipeServer) {
@@ -89,4 +85,4 @@ function Stop-PipeServer
     }
 }
 
-Export-ModuleMember -Function Get-PipeServer,Get-PipeName,Get-PipeServerUri,Start-PipeServer,Stop-PipeServer
+Export-ModuleMember -Function Get-PipeServer, Get-PipeName, Get-PipeServerUri, Start-PipeServer, Stop-PipeServer
