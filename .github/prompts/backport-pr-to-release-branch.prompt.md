@@ -256,7 +256,7 @@ After successfully creating the backport PR, update the original PR to reflect t
 gh pr edit <original-pr-number> --repo PowerShell/PowerShell --add-label "Backport-<version>.x-Migrated" --remove-label "Backport-<version>.x-Consider"
 ```
 
-Example: `gh pr edit 26193 --repo PowerShell/PowerShell --add-label "Backport-7.5.x-Migrated" --remove-label "BackPort-7.5.x-Consider"`
+Example: `gh pr edit 26193 --repo PowerShell/PowerShell --add-label "Backport-7.5.x-Migrated" --remove-label "Backport-7.5.x-Consider"`
 
 Notes:
 - If the original PR had `Backport-<version>.x-Approved` instead of `Consider`, remove that label
