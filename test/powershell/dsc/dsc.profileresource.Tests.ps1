@@ -42,10 +42,20 @@ Describe "DSC PowerShell Profile Resource Tests" -Tag "CI" {
     AfterAll {
         # Restore original profile
         $testProfilePathCurrentUserCurrentHost = $PROFILE.CurrentUserCurrentHost
-        Copy-Item -Path "$TestDrive/currentuser-currenthost-profile.bak" -Destination $testProfilePathCurrentUserCurrentHost -Force -ErrorAction SilentlyContinue
+        if (Test-Path "$TestDrive/currentuser-currenthost-profile.bak") {
+            Copy-Item -Path "$TestDrive/currentuser-currenthost-profile.bak" -Destination $testProfilePathCurrentUserCurrentHost -Force -ErrorAction SilentlyContinue
+        }
+        else {
+            Remove-Item $testProfilePathCurrentUserCurrentHost -Force -ErrorAction SilentlyContinue
+        }
 
         $testProfilePathCurrentUserAllHosts = $PROFILE.CurrentUserAllHosts
-        Copy-Item -Path "$TestDrive/currentuser-allhosts-profile.bak" -Destination $testProfilePathCurrentUserAllHosts -Force -ErrorAction SilentlyContinue
+        if (Test-Path "$TestDrive/currentuser-allhosts-profile.bak") {
+            Copy-Item -Path "$TestDrive/currentuser-allhosts-profile.bak" -Destination $testProfilePathCurrentUserAllHosts -Force -ErrorAction SilentlyContinue
+        }
+        else {
+            Remove-Item $testProfilePathCurrentUserAllHosts -Force -ErrorAction SilentlyContinue
+        }
 
         $env:PATH = $originalPath
         Remove-Item -Path "$TestDrive/currentuser-currenthost-profile.bak" -Force -ErrorAction SilentlyContinue
@@ -144,10 +154,20 @@ Describe "DSC PowerShell Profile resource elevated tests" -Tag "CI", 'RequireAdm
         $env:PATH = $originalPath
 
         $testProfilePathAllUsersCurrentHost = $PROFILE.AllUsersCurrentHost
-        Copy-Item -Path "$TestDrive/allusers-currenthost-profile.bak" -Destination $testProfilePathAllUsersCurrentHost -Force -ErrorAction SilentlyContinue
+        if (Test-Path "$TestDrive/allusers-currenthost-profile.bak") {
+            Copy-Item -Path "$TestDrive/allusers-currenthost-profile.bak" -Destination $testProfilePathAllUsersCurrentHost -Force -ErrorAction SilentlyContinue
+        }
+        else {
+            Remove-Item $testProfilePathAllUsersCurrentHost -Force -ErrorAction SilentlyContinue
+        }
 
         $testProfilePathAllUsersAllHosts = $PROFILE.AllUsersAllHosts
-        Copy-Item -Path "$TestDrive/allusers-allhosts-profile.bak" -Destination $testProfilePathAllUsersAllHosts -Force -ErrorAction SilentlyContinue
+        if (Test-Path "$TestDrive/allusers-allhosts-profile.bak") {
+            Copy-Item -Path "$TestDrive/allusers-allhosts-profile.bak" -Destination $testProfilePathAllUsersAllHosts -Force -ErrorAction SilentlyContinue
+        }
+        else {
+            Remove-Item $testProfilePathAllUsersAllHosts -Force -ErrorAction SilentlyContinue
+        }
 
         Remove-Item -Path "$TestDrive/currentuser-allhosts-profile.bak" -Force -ErrorAction SilentlyContinue
         Remove-Item -Path "$TestDrive/allusers-allhosts-profile.bak" -Force -ErrorAction SilentlyContinue
