@@ -306,7 +306,7 @@ Examples:
 - `backport/release/v7.5/pr/26193`
 - `backport/release/v7.4.1/pr/26334`
 
-Note: Automated bot uses format `backport/release/v<version>/<pr-number>-<commit-hash>`, but manual backports use the simpler `backport-<pr-number>` format.
+Note: Automated bot uses format `backport/release/v<version>/<pr-number>-<commit-hash>`, but manual backports should use the format `backport/release/<version>/pr/<pr-number>` as shown above.
 
 ## 7 — Example backport PR
 
