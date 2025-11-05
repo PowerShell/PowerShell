@@ -66,20 +66,35 @@ Example: "Backport PR 26193 to release/v7.4"
 
 If the PR is not merged, stop and inform the user.
 
+4. Check if backport already exists or has been attempted:
+   ```powershell
+   gh pr list --repo PowerShell/PowerShell --search "in:title [release/v7.4] <original-title>" --state all
+   ```
+
+   If a backport PR already exists, inform the user and ask if they want to continue.
+
+5. Check backport labels to understand status:
+   - `Backport-7.4.x-Migrated`: Indicates previous backport attempt (may have failed or had issues)
+   - `Backport-7.4.x-Done`: Already backported successfully
+   - `Backport-7.4.x-Approved`: Ready for backporting
+   - `Backport-7.4.x-Consider`: Under consideration for backporting
+
+   If status is "Done", inform the user that backport may already be complete.
+
 ### Step 2: Create the backport branch
 
 1. Identify the correct remote to fetch from:
    ```bash
    git remote -v
    ```
-   
+
    Look for the remote that points to `https://github.com/PowerShell/PowerShell` (typically named `upstream` or `origin`). Use this remote name in subsequent commands.
 
 2. Ensure you have the latest changes from the target release branch:
    ```bash
    git fetch <remote-name> <target-release-branch>
    ```
-   
+
    Example: `git fetch upstream release/v7.4`
 
 3. Create a new branch from the target release branch:
@@ -99,8 +114,18 @@ If the PR is not merged, stop and inform the user.
 2. If conflicts occur:
    - Inform the user about the conflicts
    - List the conflicting files
-   - Figure out why there is a conflict and resolve it.
-   - Ask the user to review how you resolved the conflict, with a summary.
+   - Fetch the original PR diff to understand the changes:
+     ```bash
+     gh pr diff <pr-number> --repo PowerShell/PowerShell | Out-File pr-diff.txt
+     ```
+   - Review the diff to understand what the PR changed
+   - Figure out why there is a conflict and resolve it
+   - Create a summary of the conflict resolution:
+     * Which files had conflicts
+     * Nature of each conflict (parameter changes, code removal, etc.)
+     * How you resolved it
+     * Whether any manual adjustments were needed beyond accepting one side
+   - Ask the user to review your conflict resolution summary before continuing
    - After conflicts are resolved, continue with:
      ```bash
      git add <resolved-files>
@@ -132,7 +157,7 @@ Example: `[release/v7.4] Github Workflow cleanup`
 
 **Body:**
 ```
-Backport of (original-pr-number) to <target-release-branch>
+Backport of #<original-pr-number> to <target-release-branch>
 
 <!--
 DO NOT MODIFY THIS COMMENT. IT IS AUTO-GENERATED.
@@ -184,13 +209,51 @@ Choose either tooling or Customer impact.
 
 **Head branch:** `backport-<pr-number>` (e.g., `backport-26193`)
 
+#### Guidelines for Filling Out the PR Body
+
+**For Impact Section**:
+- If the original PR changed build/tooling/packaging, select "Tooling Impact"
+- If it fixes a user-facing bug or changes user-visible behavior, select "Customer Impact"
+- Copy relevant context from the original PR description
+- Be specific about what changed and why
+
+**For Regression Section**:
+- Mark "Yes" only if the original PR fixed a regression
+- Include when the regression was introduced if known
+
+**For Testing Section**:
+- Reference the original PR's testing approach
+- Note any additional backport-specific testing needed
+- Mention if manual testing was done to verify the backport
+
+**For Risk Assessment**:
+- **High**: Changes core functionality, packaging, build systems, or security-related code
+- **Medium**: Changes non-critical features, adds new functionality, or modifies existing behavior
+- **Low**: Documentation, test-only changes, minor refactoring, or fixes with narrow scope
+- Justify your assessment based on the scope of changes and potential impact
+
+**If there were merge conflicts**:
+Add a note in the PR description after the Risk section describing what conflicts occurred and how they were resolved.
+
+### Step 6: Clean up temporary files
+
+After successful PR creation, clean up any temporary files created during the process:
+
+```powershell
+Remove-Item pr*.diff -ErrorAction SilentlyContinue
+```
+
 ## 5 — Definition of Done (self-check list)
 
 - [ ] Original PR is verified as merged
+- [ ] Checked for existing backport PRs
+- [ ] Reviewed backport labels to understand status
 - [ ] Backport branch created from correct release branch
 - [ ] Merge commit cherry-picked successfully (or conflicts resolved)
+- [ ] If conflicts occurred, provided resolution summary to user
 - [ ] Branch pushed to origin
 - [ ] PR created with correct title format: `[<release-branch>] <original-title>`
+- [ ] Temporary files cleaned up (pr*.diff)
 - [ ] PR body includes:
   - [ ] Backport reference: `Backport of (PR-number) to <release-branch>`
   - [ ] Auto-generated comment with original PR number
@@ -307,6 +370,47 @@ When cherry-picking fails due to conflicts:
    ```
 3. Type 'Yes<enter>' when prompted to continue the script
 4. The script will create the PR
+
+### Understanding Conflict Patterns
+
+When resolving conflicts during backports, follow this approach:
+
+1. **Analyze the diff first**: Before resolving conflicts, fetch and review the original PR's diff to understand what changed:
+   ```powershell
+   gh pr diff <pr-number> --repo PowerShell/PowerShell | Out-File pr-diff.txt
+   ```
+
+2. **Identify conflict types**:
+   - **Parameter additions**: New parameters added to functions (e.g., ValidateSet values)
+   - **Code removal**: Features removed in main but still exist in release branch
+   - **Code additions**: New code blocks that don't exist in release branch
+   - **Refactoring conflicts**: Code structure changes between branches
+
+3. **Resolution priorities**:
+   - Preserve the intent of the backported change
+   - Keep release branch-specific code that doesn't conflict with the fix
+   - When in doubt, favor the incoming change from the backport
+   - Document significant manual changes in the PR description
+
+4. **Verification**:
+   - After resolving conflicts, verify the file compiles/runs
+   - Check that the resolved code matches the original PR's intent
+   - Look for orphaned code that references removed functions
+
+5. **Create a conflict resolution summary**:
+   - List which files had conflicts
+   - Briefly explain the nature of each conflict
+   - Describe how you resolved it
+   - Ask user to review the resolution before continuing
+
+### Context-Aware Conflict Resolution
+
+**Key Principle**: The release branch may have different code than main. Your goal is to apply the *change* from the PR, not necessarily make the code identical to main.
+
+**Common Scenarios**:
+1. **Function parameters differ**: If the release branch has fewer parameters than main, and the backport adds functionality unrelated to new parameters, keep the release branch parameters unless the new parameters are part of the fix
+2. **Dependencies removed in main**: If main removed a dependency but the release branch still has it, and the backport is unrelated to that dependency, keep the release branch code
+3. **New features in main**: If main has new features not in the release, focus on backporting only the specific fix, not the new features
 
 ## Bulk Backporting Approved PRs
 
