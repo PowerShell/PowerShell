@@ -281,10 +281,10 @@ Note: Automated bot uses format `backport/release/v<version>/<pr-number>-<commit
 
 Reference PR 26334 as the canonical example of a correct backport:
 
-**Original PR**: PR 26193 "Github Workflow cleanup"
+**Original PR**: PR 26193 "GitHub Workflow cleanup"
 
-**Backport PR**: PR 26334 "[release/v7.4] Github Workflow cleanup"
-- **Title**: `[release/v7.4] Github Workflow cleanup`
+**Backport PR**: PR 26334 "[release/v7.4] GitHub Workflow cleanup"
+- **Title**: `[release/v7.4] GitHub Workflow cleanup`
 - **Body**: Started with backport reference to original PR and release branch
 - **Branch**: `backport/release/v7.4/26193-4aff02475` (bot-created)
 - **Base**: `release/v7.4`
