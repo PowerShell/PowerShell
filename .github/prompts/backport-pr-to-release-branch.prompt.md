@@ -231,6 +231,7 @@ Choose either tooling or Customer impact.
 - **Medium**: Changes non-critical features, adds new functionality, or modifies existing behavior
 - **Low**: Documentation, test-only changes, minor refactoring, or fixes with narrow scope
 - Justify your assessment based on the scope of changes and potential impact
+- **For CI/CD changes**: When backporting CI/CD infrastructure changes (workflows, build scripts, packaging), note in your justification that not taking these changes may create technical debt and make it difficult to apply future CI/CD changes that build on top of them. This doesn't change the risk level itself, but provides important context for why the change should be taken despite potentially higher risk
 
 **If there were merge conflicts**:
 Add a note in the PR description after the Risk section describing what conflicts occurred and how they were resolved.
