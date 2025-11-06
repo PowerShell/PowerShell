@@ -16,4 +16,3 @@ namespace FuzzTests
         }
     }
 }
-
