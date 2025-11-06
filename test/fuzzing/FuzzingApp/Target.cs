@@ -2,8 +2,6 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Text;
-using SharpFuzz;
 using System.Management.Automation.Remoting;
 
 namespace FuzzTests
