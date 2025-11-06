@@ -2,13 +2,27 @@ steps:
 - pwsh: |
     # Determine LTS, Preview, or Stable
     $metadata = Get-Content "$(Build.SourcesDirectory)/PowerShell/tools/metadata.json" -Raw | ConvertFrom-Json
+    $releaseTag = '$(OutputReleaseTag.releaseTag)'
+
+    # Rebuild branches should be treated as preview builds
+    $isRebuildBranch = '$(Build.SourceBranch)' -match 'refs/heads/rebuild/.*-rebuild\.'
+
     $LTS = $metadata.LTSRelease.Latest
     $Stable = $metadata.StableRelease.Latest
-    $isPreview = '$(OutputReleaseTag.releaseTag)' -match '-'
+    $isPreview = $releaseTag -match '-'
 
-    $IsLTS = [bool]$LTS
-    $IsStable = [bool]$Stable
-    $IsPreview = [bool]$isPreview
+    # If this is a rebuild branch, force preview mode and ignore LTS metadata
+    if ($isRebuildBranch) {
+        $IsLTS = $false
+        $IsStable = $false
+        $IsPreview = $true
+        Write-Verbose -Message "Rebuild branch detected, forcing Preview channel" -Verbose
+    }
+    else {
+        $IsLTS = [bool]$LTS
+        $IsStable = [bool]$Stable
+        $IsPreview = [bool]$isPreview
+    }
 
     $channelVars = @{
         IsLTS     = $IsLTS
