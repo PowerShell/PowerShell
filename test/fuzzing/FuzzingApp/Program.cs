@@ -39,5 +39,5 @@ namespace FuzzTests
                 Environment.Exit(1);
             }
         }
-    }    
+    }
 }
