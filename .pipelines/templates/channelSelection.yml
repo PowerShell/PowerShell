@@ -1,7 +1,7 @@
 steps:
 - pwsh: |
     # Determine LTS, Preview, or Stable
-    $metadata = Get-Content "$repoRoot/tools/metadata.json" -Raw | ConvertFrom-Json
+    $metadata = Get-Content "$(Build.SourcesDirectory)/PowerShell/tools/metadata.json" -Raw | ConvertFrom-Json
     $LTS = $metadata.LTSRelease.Latest
     $Stable = $metadata.StableRelease.Latest
     $isPreview = '$(OutputReleaseTag.releaseTag)' -match '-'
