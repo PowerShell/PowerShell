@@ -23,8 +23,6 @@
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
     <PackageReference Include="System.IO.Packaging" Version="10.0.0-rc.2.25502.107" />
     <PackageReference Include="System.Net.Http.WinHttpHandler" Version="10.0.0-rc.2.25502.107" />
-    <!-- Removing due to NU1510 -->
-    <!-- PackageReference Include="System.Text.Encodings.Web" Version="9.0.2" /-->
     <!--
         the following package(s) are from https://github.com/dotnet/wcf
         they are pinned to the version 4.10.x due to a breaking change in newer versions.
