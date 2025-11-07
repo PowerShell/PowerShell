@@ -2,9 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Text;
 using SharpFuzz;
-using System.Management.Automation.Remoting;
 
 namespace FuzzTests
 {
@@ -27,7 +25,7 @@ namespace FuzzTests
             {
                 Fuzzer.LibFuzzer.Run(Target.ExtractToken);
             }
-            catch (System.ArgumentNullException nex)
+            catch (ArgumentNullException nex)
             {
                 Console.WriteLine($"ArgumentNullException in main: {nex.Message}");
                 Console.WriteLine($"Stack Trace: {nex.StackTrace}");
@@ -41,5 +39,5 @@ namespace FuzzTests
                 Environment.Exit(1);
             }
         }
-    }    
+    }
 }
