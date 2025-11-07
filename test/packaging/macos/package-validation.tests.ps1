@@ -1,51 +1,54 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 Describe "Verify macOS Package" {
     BeforeAll {
         Write-Verbose "In Describe BeforeAll" -Verbose
         Import-Module $PSScriptRoot/../../../build.psm1
-        
+
         # Find the macOS package
         $packagePath = $env:PACKAGE_FOLDER
         if (-not $packagePath) {
             $packagePath = Get-Location
         }
-        
+
         Write-Verbose "Looking for package in: $packagePath" -Verbose
         $package = Get-ChildItem -Path $packagePath -Filter "*.pkg" -ErrorAction SilentlyContinue | Select-Object -First 1
-        
+
         if (-not $package) {
             Write-Warning "No .pkg file found in $packagePath"
         } else {
             Write-Verbose "Found package: $($package.FullName)" -Verbose
         }
-        
+
         # Set up test directories
         $script:package = $package
         $script:expandDir = $null
         $script:payloadDir = $null
         $script:extractedFiles = @()
-        
+
         if ($package) {
             # Use TestDrive for temporary directories - pkgutil will create the expand directory
             $script:expandDir = Join-Path "TestDrive:" -ChildPath "package-contents-test"
             $expandDirResolved = (Resolve-Path "TestDrive:").ProviderPath
             $script:expandDir = Join-Path $expandDirResolved -ChildPath "package-contents-test"
-            
+
             Write-Verbose "Expanding package to: $($script:expandDir)" -Verbose
             # pkgutil will create the directory itself, so don't pre-create it
             Start-NativeExecution {
                 pkgutil --expand $package.FullName $script:expandDir
             }
-            
+
             # Extract the payload to verify files
             $script:payloadDir = Join-Path "TestDrive:" -ChildPath "package-payload-test"
             $payloadDirResolved = (Resolve-Path "TestDrive:").ProviderPath
             $script:payloadDir = Join-Path $payloadDirResolved -ChildPath "package-payload-test"
-            
+
             # Create payload directory since cpio needs it
             if (-not (Test-Path $script:payloadDir)) {
                 $null = New-Item -ItemType Directory -Path $script:payloadDir -Force
             }
-            
+
             $componentPkg = Get-ChildItem -Path $script:expandDir -Filter "*.pkg" -Recurse | Select-Object -First 1
             if ($componentPkg) {
                 Write-Verbose "Extracting payload from: $($componentPkg.FullName)" -Verbose
@@ -57,18 +60,18 @@ Describe "Verify macOS Package" {
                     Pop-Location
                 }
             }
-            
+
             # Get all extracted files for verification
             $script:extractedFiles = Get-ChildItem -Path $script:payloadDir -Recurse -ErrorAction SilentlyContinue
             Write-Verbose "Extracted $($script:extractedFiles.Count) files" -Verbose
         }
     }
-    
+
     AfterAll {
         # TestDrive automatically cleans up, but we can ensure cleanup happens
         # No manual cleanup needed as TestDrive handles it
     }
-    
+
     Context "Package existence and structure" {
         It "Package file should exist" {
             $script:package | Should -Not -BeNullOrEmpty -Because "A .pkg file should be created"
@@ -79,13 +82,12 @@ Describe "Verify macOS Package" {
             $script:package | Should -Not -BeNullOrEmpty
 
             # Regex pattern for valid macOS PKG package names.
-            # This pattern matches the validation used in release-validate-packagenames.yml
             # Valid examples:
-            # - powershell-7.4.13-osx-x64.pkg (Stable release)
-            # - powershell-7.6.0-preview.6-osx-x64.pkg (Preview version string)
-            # - powershell-7.4.13-rebuild.5-osx-arm64.pkg (Rebuild version)
-            # - powershell-lts-7.4.13-osx-arm64.pkg (LTS package)
-            $pkgPackageNamePattern = '^powershell-(lts-)?\d+\.\d+\.\d+\-([a-z]*.\d+\-)?osx\-(x64|arm64)\.pkg$'
+            # - powershell-7.4.13-osx-x64.pkg (Intel x64 - note: x64 with hyphens for compatibility)
+            # - powershell-7.4.13-osx-arm64.pkg (Apple Silicon)
+            # - powershell-preview-7.6.0-preview.6-osx-x64.pkg
+            # - powershell-lts-7.4.13-osx-arm64.pkg
+            $pkgPackageNamePattern = '^powershell(-preview|-lts)?-\d+\.\d+\.\d+(-[a-z]+\.\d+)?-osx-(x64|arm64)\.pkg$'
 
             $script:package.Name | Should -Match $pkgPackageNamePattern -Because "Package name should follow the standard naming convention"
         }
@@ -100,18 +102,18 @@ Describe "Verify macOS Package" {
             $script:expandDir | Should -Exist
             Get-ChildItem -Path $script:expandDir | Should -Not -BeNullOrEmpty
         }
-        
+
         It "Package should have a component package" {
             $componentPkg = Get-ChildItem -Path $script:expandDir -Filter "*.pkg" -Recurse -ErrorAction SilentlyContinue
             $componentPkg | Should -Not -BeNullOrEmpty -Because "Package should contain a component.pkg"
         }
-        
+
         It "Payload should extract successfully" {
             $script:payloadDir | Should -Exist
             $script:extractedFiles | Should -Not -BeNullOrEmpty -Because "Package payload should contain files"
         }
     }
-    
+
     Context "Required files in package" {
         BeforeAll {
             $expectedFilePatterns = @{
@@ -120,7 +122,7 @@ Describe "Verify macOS Package" {
                 "Man page" = "usr/local/share/man/man1/pwsh*.gz"
                 "Launcher application plist" = "Applications/PowerShell*.app/Contents/Info.plist"
             }
-            
+
             $testCases = @()
             foreach ($key in $expectedFilePatterns.Keys) {
                 $testCases += @{
@@ -128,23 +130,23 @@ Describe "Verify macOS Package" {
                     Pattern = $expectedFilePatterns[$key]
                 }
             }
-            
+
             $script:testCases = $testCases
         }
-        
+
         It "Should contain <Description>" -TestCases $script:testCases {
             param($Description, $Pattern)
-            
+
             $found = $script:extractedFiles | Where-Object { $_.FullName -like "*$Pattern*" }
             $found | Should -Not -BeNullOrEmpty -Because "$Description should exist in the package at path matching '$Pattern'"
         }
     }
-    
+
     Context "PowerShell binary verification" {
         It "PowerShell executable should be executable" {
             $pwshBinary = $script:extractedFiles | Where-Object { $_.FullName -like "*/pwsh" -and $_.FullName -like "*/microsoft/powershell/*" }
             $pwshBinary | Should -Not -BeNullOrEmpty
-            
+
             # Check if file has executable permissions (on Unix-like systems)
             if ($IsLinux -or $IsMacOS) {
                 $permissions = (Get-Item $pwshBinary[0].FullName).UnixFileMode
@@ -153,27 +155,27 @@ Describe "Verify macOS Package" {
             }
         }
     }
-    
+
     Context "Launcher application" {
         It "Launcher app should have proper bundle structure" {
             $plistFile = $script:extractedFiles | Where-Object { $_.FullName -like "*PowerShell*.app/Contents/Info.plist" }
             $plistFile | Should -Not -BeNullOrEmpty
-            
+
             # Verify the bundle has required components
             $appPath = Split-Path (Split-Path $plistFile[0].FullName -Parent) -Parent
             $macOSDir = Join-Path $appPath "Contents/MacOS"
             $resourcesDir = Join-Path $appPath "Contents/Resources"
-            
+
             Test-Path $macOSDir | Should -Be $true -Because "App bundle should have Contents/MacOS directory"
             Test-Path $resourcesDir | Should -Be $true -Because "App bundle should have Contents/Resources directory"
         }
-        
+
         It "Launcher script should exist and be executable" {
-            $launcherScript = $script:extractedFiles | Where-Object { 
-                $_.FullName -like "*PowerShell*.app/Contents/MacOS/PowerShell.sh" 
+            $launcherScript = $script:extractedFiles | Where-Object {
+                $_.FullName -like "*PowerShell*.app/Contents/MacOS/PowerShell.sh"
             }
             $launcherScript | Should -Not -BeNullOrEmpty -Because "Launcher script should exist"
-            
+
             if ($IsLinux -or $IsMacOS) {
                 $permissions = (Get-Item $launcherScript[0].FullName).UnixFileMode
                 $permissions.ToString() | Should -Match 'x' -Because "Launcher script should have execute permissions"

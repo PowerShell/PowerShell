@@ -1236,15 +1236,15 @@ function New-UnixPackage {
                 # Use rpmbuild directly for RPM packages
                 if ($PSCmdlet.ShouldProcess("Create RPM package with rpmbuild")) {
                     Write-Log "Creating RPM package with rpmbuild..."
-                    
+
                     # Create rpmbuild directory structure
                     $rpmBuildRoot = Join-Path $env:HOME "rpmbuild"
                     $specsDir = Join-Path $rpmBuildRoot "SPECS"
                     $rpmsDir = Join-Path $rpmBuildRoot "RPMS"
-                    
+
                     New-Item -ItemType Directory -Path $specsDir -Force | Out-Null
                     New-Item -ItemType Directory -Path $rpmsDir -Force | Out-Null
-                    
+
                     # Generate RPM spec file
                     $specContent = New-RpmSpec `
                         -Name $Name `
@@ -1261,11 +1261,11 @@ function New-UnixPackage {
                         -LinkInfo $Links `
                         -Distribution $DebDistro `
                         -HostArchitecture $HostArchitecture
-                    
+
                     $specFile = Join-Path $specsDir "$Name.spec"
                     $specContent | Out-File -FilePath $specFile -Encoding ascii
                     Write-Verbose "Generated spec file: $specFile" -Verbose
-                    
+
                     # Log the spec file content
                     if ($env:GITHUB_ACTIONS -eq 'true') {
                         Write-Host "::group::RPM Spec File Content"
@@ -1274,7 +1274,7 @@ function New-UnixPackage {
                     } else {
                         Write-Verbose "RPM Spec File Content:`n$specContent" -Verbose
                     }
-                    
+
                     # Build RPM package
                     try {
                         # Use bash to properly handle rpmbuild arguments
@@ -1287,16 +1287,16 @@ function New-UnixPackage {
                         Write-Verbose "Running: $buildCmd" -Verbose
                         $Output = bash -c $buildCmd 2>&1
                         $exitCode = $LASTEXITCODE
-                        
+
                         if ($exitCode -ne 0) {
                             throw "rpmbuild failed with exit code $exitCode"
                         }
-                        
+
                         # Find the generated RPM
-                        $rpmFile = Get-ChildItem -Path (Join-Path $rpmsDir $HostArchitecture) -Filter "*.rpm" -ErrorAction Stop | 
-                            Sort-Object -Property LastWriteTime -Descending | 
+                        $rpmFile = Get-ChildItem -Path (Join-Path $rpmsDir $HostArchitecture) -Filter "*.rpm" -ErrorAction Stop |
+                            Sort-Object -Property LastWriteTime -Descending |
                             Select-Object -First 1
-                        
+
                         if ($rpmFile) {
                             # Copy RPM to current location
                             Copy-Item -Path $rpmFile.FullName -Destination $CurrentLocation -Force
@@ -1334,7 +1334,7 @@ function New-UnixPackage {
                             -AfterRemoveScript $AfterScriptInfo.AfterRemoveScript `
                             -HostArchitecture $HostArchitecture `
                             -CurrentLocation $CurrentLocation
-                        
+
                         $Output = @("Created package {:path=>""$($result.PackageName)""}")
                     }
                     catch {
@@ -1345,7 +1345,7 @@ function New-UnixPackage {
                 # Use native macOS packaging tools
                 if ($PSCmdlet.ShouldProcess("Create macOS package with pkgbuild/productbuild")) {
                     Write-Log "Creating macOS package with native tools..."
-                    
+
                     $macPkgArgs = @{
                         Name = $Name
                         Version = $packageVersion
@@ -1360,7 +1360,7 @@ function New-UnixPackage {
                         HostArchitecture = $HostArchitecture
                         CurrentLocation = $CurrentLocation
                     }
-                    
+
                     try {
                         $packageFile = New-MacOSPackage @macPkgArgs
                         $Output = @("Created package {:path=>""$($packageFile.Name)""}")
@@ -1383,7 +1383,7 @@ function New-UnixPackage {
                     Clear-MacOSLauncher
                 }
             }
-            
+
             # Clean up rpmbuild directory if it was created
             if ($Type -eq 'rpm') {
                 $rpmBuildRoot = Join-Path $env:HOME "rpmbuild"
@@ -1392,7 +1392,7 @@ function New-UnixPackage {
                     Remove-Item -Path $rpmBuildRoot -Recurse -Force -ErrorAction SilentlyContinue
                 }
             }
-            
+
             if ($AfterScriptInfo.AfterInstallScript) {
                 Remove-Item -ErrorAction 'silentlycontinue' $AfterScriptInfo.AfterInstallScript -Force
             }
@@ -1486,13 +1486,13 @@ function New-MacOsDistributionPackage
 
     $resourcesDir = Join-Path -Path $tempDir -ChildPath 'resources'
     New-Item -ItemType Directory -Path $resourcesDir -Force > $null
-    
+
     # Copy background file to temp directory
     $backgroundFile = "$RepoRoot/assets/macDialog.png"
     if (Test-Path $backgroundFile) {
         Copy-Item -Path $backgroundFile -Destination $resourcesDir -Force
     }
-    
+
     # Copy the component package to temp directory
     $componentFileName = Split-Path -Leaf -Path $ComponentPackage
     $tempComponentPath = Join-Path -Path $tempDir -ChildPath $componentFileName
@@ -1508,7 +1508,7 @@ function New-MacOsDistributionPackage
 
     # Minimum OS version
     $minOSVersion = "11.0"  # macOS Big Sur minimum
-    
+
     # format distribution template with:
     # 0 - title
     # 1 - version
@@ -1519,8 +1519,10 @@ function New-MacOsDistributionPackage
     $PackagingStrings.OsxDistributionTemplate -f $PackageName, $Version, $componentFileName, $minOSVersion, $PackageIdentifier, $HostArchitecture | Out-File -Encoding utf8 -FilePath $distributionXmlPath -Force
 
     # Build final package path
-    $finalPackagePath = Join-Path $OutputDirectory "$PackageName-$Version-osx-$HostArchitecture.pkg"
-    
+    # Rename x86_64 to x64 for compatibility
+    $packageArchName = if ($HostArchitecture -eq "x86_64") { "x64" } else { $HostArchitecture }
+    $finalPackagePath = Join-Path $OutputDirectory "$PackageName-$Version-osx-$packageArchName.pkg"
+
     # Remove existing package if it exists
     if (Test-Path $finalPackagePath) {
         Write-Warning "Removing existing package: $finalPackagePath"
@@ -1539,7 +1541,7 @@ function New-MacOsDistributionPackage
                     --resources $resourcesDir `
                     $finalPackagePath
             }
-            
+
             if (Test-Path $finalPackagePath) {
                 Write-Log "Successfully created macOS package: $finalPackagePath"
             }
@@ -1609,7 +1611,7 @@ function New-RpmSpec
     # RPM doesn't allow hyphens in version, so convert them to underscores
     # e.g., "7.6.0-preview.6" becomes Version: 7.6.0_preview.6
     $rpmVersion = $Version -replace '-', '_'
-    
+
     # Build Release field with distribution suffix (e.g., "1.cm" or "1.rh")
     # Don't use RPM macros - build the full release string in PowerShell
     $rpmRelease = "$Iteration.$Distribution"
@@ -1635,7 +1637,7 @@ AutoReq:        no
     } else {
         # For cross-architecture builds, don't specify BuildArch in spec
         # The --target option will handle the architecture
-        
+
         # Disable automatic binary stripping for cross-arch builds
         # The native /bin/strip on x86_64 cannot process ARM64 binaries and would fail with:
         # "Unable to recognise the format of the input file"
@@ -1643,7 +1645,7 @@ AutoReq:        no
         # __strip: This macro controls the command used for stripping binaries during the build process.
         # /bin/true: A command that does nothing and always exits successfully, effectively bypassing the stripping process.
         $specContent += "%define __strip /bin/true`n"
-        
+
         # Disable debug package generation to prevent strip-related errors
         # Debug packages require binary stripping which fails for cross-arch builds
         # See: https://rpm-packaging-guide.github.io/#debugging
@@ -1900,11 +1902,11 @@ $(if ($extendedDescription) { $extendedDescription + "`n" })
         # Copy DEBIAN directory and data files to build root
         $buildDir = Join-Path $debBuildRoot "build"
         New-Item -ItemType Directory -Path $buildDir -Force | Out-Null
-        
+
         Write-Verbose "debianDir: $debianDir" -Verbose
         Write-Verbose "dataDir: $dataDir" -Verbose
         Write-Verbose "buildDir: $buildDir" -Verbose
-        
+
         # Use cp to preserve symlinks
         Start-NativeExecution { cp -a $debianDir "$buildDir/DEBIAN" }
         Start-NativeExecution { cp -a $dataDir/* $buildDir }
@@ -2014,14 +2016,14 @@ function New-MacOSPackage
             $linkDestDir = Join-Path $pkgRoot (Split-Path $link.Destination -Parent)
             New-Item -ItemType Directory -Path $linkDestDir -Force | Out-Null
             $finalLinkPath = Join-Path $pkgRoot $link.Destination
-            
+
             Write-Verbose "Creating symlink at $finalLinkPath" -Verbose
-            
+
             # Remove if exists
             if (Test-Path $finalLinkPath) {
                 Remove-Item $finalLinkPath -Force
             }
-            
+
             # Get the target of the original symlink and recreate it in the package root
             if (Test-Path $link.Source) {
                 $linkTarget = (Get-Item $link.Source).Target
@@ -2047,10 +2049,10 @@ function New-MacOSPackage
 
         # Build the component package using pkgbuild
         $pkgIdentifier = Get-MacOSPackageId -IsPreview:($Name -like '*-preview')
-        
+
         if ($PSCmdlet.ShouldProcess("Build component package with pkgbuild")) {
             Write-Log "Running pkgbuild to create component package..."
-            
+
             Start-NativeExecution -VerboseOutputOnError {
                 pkgbuild --root $pkgRoot `
                     --identifier $pkgIdentifier `
@@ -2059,7 +2061,7 @@ function New-MacOSPackage
                     --install-location "/" `
                     $componentPkgPath
             }
-            
+
             Write-Verbose "Component package created: $componentPkgPath" -Verbose
         }
 
@@ -2072,7 +2074,7 @@ function New-MacOSPackage
             -HostArchitecture $HostArchitecture `
             -PackageIdentifier $pkgIdentifier `
             -IsPreview:($Name -like '*-preview')
-        
+
         return $distributionPackage
     }
     finally {
