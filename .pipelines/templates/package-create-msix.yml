@@ -21,6 +21,8 @@ jobs:
       env:
         ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
+    - template: set-reporoot.yml@self
+
     - template: release-SetReleaseTagandContainerName.yml@self
 
     - task: DownloadPipelineArtifact@2
