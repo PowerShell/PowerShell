@@ -2,10 +2,10 @@
     "$schema": "https://aka.ms/dsc/schemas/v3/bundled/resource/manifest.json",
     "description": "Manage PowerShell profiles.",
     "tags": [
-        "linux",
-        "windows",
-        "macos",
-        "powershell"
+        "Linux",
+        "Windows",
+        "macOS",
+        "PowerShell"
     ],
     "type": "Microsoft.PowerShell/Profile",
     "version": "0.1.0",
@@ -52,7 +52,7 @@
         "embedded": {
             "$schema": "https://json-schema.org/draft/2020-12/schema",
             "title": "Profile",
-            "description": "A resource for managing PowerShell profiles.",
+            "description": "Manage PowerShell profiles.",
             "type": "object",
             "unevaluatedProperties": false,
             "required": [
@@ -62,7 +62,7 @@
                 "profileType": {
                     "type": "string",
                     "title": "Profile Type",
-                    "description": "The type of the profile. Can be 'AllUsersCurrentHost', 'AllUsersAllHosts', 'CurrentUserAllHosts', or 'CurrentUserCurrentHost'.",
+                    "description": "Defines which profile to manage. Valid values are: 'AllUsersCurrentHost', 'AllUsersAllHosts', 'CurrentUserAllHosts', and 'CurrentUserCurrentHost'.",
                     "enum": [
                         "AllUsersCurrentHost",
                         "AllUsersAllHosts",
@@ -78,7 +78,7 @@
                 },
                 "content": {
                     "title": "Content",
-                    "description": "The content of the profile.",
+                    "description": "Defines the content of the profile. If you don't specify this property, the resource doesn't manage the file contents. If you specify this property as an empty string, the resource removes all content from the file. If you specify this property as a non-empty string, the resource sets the file contents to the specified string. The resources retains newlines from this property without any modification.",
                     "type": "string"
                 },
                 "_exist": {
