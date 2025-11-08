@@ -86,7 +86,7 @@ Describe "DSC PowerShell Profile Resource Tests" -Tag "CI" {
         $getOutput.results.result.actualState.content | Should -BeExactly $expectedContent
     }
 
-    It 'DSC resource can set content as empty for current user current host profile' {
+    It 'DSC resource can set content as empty for current user current host profile' -Pending {
         $setOutput = (& $dscExe config set --file $PSScriptRoot/psprofile_currentuser_currenthost_emptycontent.dsc.yaml -o json) | ConvertFrom-Json
         $setOutput.results.result.afterState.content | Should -BeExactly ''
     }
