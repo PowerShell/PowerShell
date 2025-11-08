@@ -20,30 +20,39 @@ enum ProfileType {
 class PwshResource {
     [ProfileType] $profileType
     [string] $content
+    [string] $profilePath
     [bool] $_exist
 
     [string] ToJson() {
         return ([ordered] @{
             profileType = $this.profileType
             content    = $this.content
+            profilePath = $this.profilePath
+            _exist     = $this._exist
         }) | ConvertTo-Json -Compress -EnumsAsStrings
     }
-}
 
-function PopulatePwshResource {
-    param (
-        [ProfileType] $profileType
-    )
+    PwshResource([ProfileType] $profileType, [string] $content, [bool] $_exist) {
+        $this.profileType = $profileType
+        $this.content = $content
+        $this.profilePath = GetProfilePath -profileType $profileType
+        $this._exist = $_exist
+    }
 
-    $profilePath = GetProfilePath -profileType $profileType
-    $fileExists = Test-Path $profilePath
+    PwshResource([ProfileType] $profileType) {
+        $this.profileType = $profileType
+        $this.profilePath = GetProfilePath -profileType $profileType
 
-    $resource = [PwshResource]::new()
-    $resource.profileType = $profileType
-    $resource.content = $fileExists ? (Get-Content -Path $profilePath) : $null
-    $resource._exist = $fileExists
+        $fileExists = Test-Path $this.profilePath
+        if ($fileExists) {
+            $this.content = Get-Content -Path $this.profilePath
+        }
+        else {
+            $this.content = $null
+        }
 
-    return $resource
+        $this._exist = $fileExists
+    }
 }
 
 function GetProfilePath {
@@ -62,10 +71,10 @@ function GetProfilePath {
 }
 
 function ExportOperation {
-    $allUserCurrentHost = PopulatePwshResource -profileType 'AllUsersCurrentHost'
-    $allUsersAllHost = PopulatePwshResource -profileType 'AllUsersAllHosts'
-    $currentUserAllHost = PopulatePwshResource -profileType 'CurrentUserAllHosts'
-    $currentUserCurrentHost = PopulatePwshResource -profileType 'CurrentUserCurrentHost'
+    $allUserCurrentHost = [PwshResource]::new('AllUsersCurrentHost')
+    $allUsersAllHost = [PwshResource]::new('AllUsersAllHosts')
+    $currentUserAllHost = [PwshResource]::new('CurrentUserAllHosts')
+    $currentUserCurrentHost = [PwshResource]::new('CurrentUserCurrentHost')
 
     # Cannot use the ToJson() method here as we are adding a note property
     $allUserCurrentHost | Add-Member -NotePropertyName '_name' -NotePropertyValue 'AllUsersCurrentHost' -PassThru | ConvertTo-Json -Compress -EnumsAsStrings
@@ -76,31 +85,43 @@ function ExportOperation {
 
 function GetOperation {
     param (
-        [PwshResource] $InputResource
+        [Parameter(Mandatory = $true)]
+        [PwshResource] $InputResource,
+        [Parameter()]
+        [switch] $AsJson
     )
 
     $profilePath = GetProfilePath -profileType $InputResource.profileType.ToString()
+
+    $actualState = [PwshResource]::new($InputResource.profileType)
+
+    $actualState.profilePath = $profilePath
 
     $exists = Test-Path $profilePath
 
     if ($InputResource._exist -and $exists) {
         $content = Get-Content -Path $profilePath
-        $InputResource.Content = $content
+        $actualState.Content = $content
     }
     elseif ($InputResource._exist -and -not $exists) {
-        $InputResource.Content = $null
-        $InputResource._exist = $false
+        $actualState.Content = $null
+        $actualState._exist = $false
     }
     elseif (-not $InputResource._exist -and $exists) {
-        $InputResource.Content = Get-Content -Path $profilePath
-        $InputResource._exist = $true
+        $actualState.Content = Get-Content -Path $profilePath
+        $actualState._exist = $true
     }
     else {
-        $InputResource.Content = $null
-        $InputResource._exist = $false
+        $actualState.Content = $null
+        $actualState._exist = $false
     }
 
-    $InputResource.ToJson()
+    if ($AsJson) {
+        return $actualState.ToJson()
+    }
+    else {
+        return $actualState
+    }
 }
 
 function SetOperation {
@@ -108,42 +129,40 @@ function SetOperation {
         [PwshResource] $InputResource
     )
 
-    $profilePath = GetProfilePath -profileType $InputResource.profileType.ToString()
-    $profileExists = Test-Path $profilePath
+    $actualState = GetOperation -InputResource $InputResource
 
     if ($InputResource._exist) {
-        if ($InputResource.content) {
-            Set-Content -Path $profilePath -Value $InputResource.content
+        if (-not $actualState._exist) {
+            $null = New-Item -Path $actualState.profilePath -ItemType File -Force
         }
-        else  {
-            ## Do nothing if content is not specified
+
+        if ($null -ne $InputResource.content) {
+            Set-Content -Path $actualState.profilePath -Value $InputResource.content
         }
     }
-    elseif (-not $InputResource._exist -and $profileExists) {
-        Remove-Item -Path $profilePath -Force
-    }
-    elseif (-not $InputResource._exist -and -not $profileExists) {
-        # Do nothing
+    elseif ($actualState._exist) {
+        Remove-Item -Path $actualState.profilePath -Force
     }
 }
 
 $inputJson = $input | ConvertFrom-Json
 
 if ($inputJson) {
-    $InputResource = [PwshResource]::new()
-    $InputResource.profileType = $inputJson.profileType
-    $InputResource.content = $inputJson.content
-    $InputResource._exist = $inputJson._exist
+    $InputResource = [PwshResource]::new( $inputJson.profileType, $inputJson.content, $inputJson._exist )
 }
 
 switch ($Operation) {
     'get' {
-        GetOperation -InputResource $InputResource
+        GetOperation -InputResource $InputResource -AsJson
     }
     'set' {
         SetOperation -InputResource $InputResource
     }
     'export' {
+        if ($inputJson) {
+            throw "Input is not expected for export operation."
+        }
+
         ExportOperation
     }
 }

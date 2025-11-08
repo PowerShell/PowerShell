@@ -60,19 +60,6 @@
             ],
             "properties": {
                 "profileType": {
-                    "$ref": "#/$defs/ProfileType"
-                },
-                "content": {
-                    "title": "Content",
-                    "description": "The content of the profile.",
-                    "type": "string"
-                },
-                "_exist": {
-                    "$ref": "https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/v3/resource/properties/exist.json"
-                }
-            },
-            "$defs": {
-                "ProfileType": {
                     "type": "string",
                     "title": "Profile Type",
                     "description": "The type of the profile. Can be 'AllUsersCurrentHost', 'AllUsersAllHosts', 'CurrentUserAllHosts', or 'CurrentUserCurrentHost'.",
@@ -83,6 +70,25 @@
                         "CurrentUserCurrentHost"
                     ]
                 },
+                "profilePath": {
+                    "title": "Profile Path",
+                    "description": "The full path to the profile file.",
+                    "type": "string",
+                    "readOnly": true
+                },
+                "content": {
+                    "title": "Content",
+                    "description": "The content of the profile.",
+                    "type": "string"
+                },
+                "_exist": {
+                    "$ref": "https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/v3/resource/properties/exist.json"
+                },
+                "_name": {
+                    "$ref": "https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/v3/resource/properties/name.json"
+                }
+            },
+            "$defs": {
                 "https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/v3/resource/properties/exist.json": {
                     "$schema": "https://json-schema.org/draft/2020-12/schema",
                     "$id": "https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/v3/resource/properties/exist.json",
@@ -94,6 +100,14 @@
                         false,
                         true
                     ]
+                },
+                "https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/v3/resource/properties/name.json": {
+                    "$schema": "https://json-schema.org/draft/2020-12/schema",
+                    "$id": "https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/v3/resource/properties/name.json",
+                    "title": "Exported instance name",
+                    "description": "Returns a generated name for the resource instance from an export operation.",
+                    "readOnly": true,
+                    "type": "string"
                 }
             }
         }
