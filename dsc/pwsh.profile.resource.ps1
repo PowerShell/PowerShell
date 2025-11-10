@@ -160,9 +160,12 @@ switch ($Operation) {
     }
     'export' {
         if ($inputJson) {
-            throw "Input is not expected for export operation."
+            Write-Error "Input not supported for export operation"
+            exit 2
         }
 
         ExportOperation
     }
 }
+
+exit 0

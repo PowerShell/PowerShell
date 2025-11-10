@@ -48,6 +48,11 @@
         ],
         "input": "stdin"
     },
+    "exitCodes": {
+        "0": "Success",
+        "1": "Error",
+        "2": "Input not supported for export operation"
+    },
     "schema": {
         "embedded": {
             "$schema": "https://json-schema.org/draft/2020-12/schema",
