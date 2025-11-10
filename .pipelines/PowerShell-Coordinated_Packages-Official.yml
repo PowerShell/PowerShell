@@ -296,9 +296,20 @@ extends:
         - template: /.pipelines/templates/SetVersionVariables.yml@self
           parameters:
             ReleaseTagVar: $(ReleaseTagVar)
+        - template: /.pipelines/templates/rebuild-branch-check.yml@self
         - powershell: |
             $metadata = Get-Content '$(Build.SourcesDirectory)/PowerShell/tools/metadata.json' -Raw | ConvertFrom-Json
-            $LTS = $metadata.LTSRelease.Package
+
+            # Use the rebuild branch check from the template
+            $isRebuildBranch = '$(RebuildBranchCheck.IsRebuildBranch)' -eq 'true'
+
+            # Don't mark as LTS release for rebuild branches
+            $LTS = $metadata.LTSRelease.Package -and -not $isRebuildBranch
+
+            if ($isRebuildBranch) {
+              Write-Verbose -Message "Rebuild branch detected, not marking as LTS release" -Verbose
+            }
+
             @{ ReleaseVersion = "$(Version)"; LTSRelease = $LTS } | ConvertTo-Json | Out-File "$(Build.StagingDirectory)\release.json"
             Get-Content "$(Build.StagingDirectory)\release.json"
 
