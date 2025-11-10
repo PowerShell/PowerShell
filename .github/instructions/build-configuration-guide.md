@@ -1,3 +1,12 @@
+---
+applyTo:
+  - "build.psm1"
+  - "tools/ci.psm1"
+  - ".github/**/*.yml"
+  - ".github/**/*.yaml"
+  - ".pipelines/**/*.yml"
+---
+
 # Build Configuration Guide
 
 ## Choosing the Right Configuration
@@ -113,7 +122,7 @@ The `Switch-PSNugetConfig` function in `build.psm1` manages NuGet package source
 - **Public**: Uses public feeds (nuget.org and public Azure DevOps feeds)
   - Required for: CI/CD environments, public builds, packaging
   - Does not require authentication
-  
+
 - **Private**: Uses internal PowerShell team feeds
   - Required for: Internal development with preview packages
   - Requires authentication credentials

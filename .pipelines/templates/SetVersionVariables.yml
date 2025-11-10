@@ -1,49 +1,18 @@
 parameters:
-  ReleaseTagVar: v6.2.0
-  ReleaseTagVarName: ReleaseTagVar
-  CreateJson: 'no'
-  UseJson: 'yes'
+- name: ReleaseTagVar
+  default: v6.2.0
+- name: ReleaseTagVarName
+  default: ReleaseTagVar
+- name: CreateJson
+  default: 'no'
+- name: ob_restore_phase
+  type: boolean
+  default: true
 
 steps:
-- ${{ if eq(parameters['UseJson'],'yes') }}:
-  - task: DownloadBuildArtifacts@0
-    inputs:
-      artifactName: 'drop_prep_SetVars'
-      itemPattern: '*.json'
-      downloadPath: '$(System.ArtifactsDirectory)'
-    displayName: Download Build Info Json
-    env:
-      ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
-
-- powershell: |
-    $path = "./build.psm1"
-    if($env:REPOROOT){
-      Write-Verbose "reporoot already set to ${env:REPOROOT}" -Verbose
-      exit 0
-    }
-    if(Test-Path -Path $path)
-    {
-      Write-Verbose "reporoot detected at: ." -Verbose
-      $repoRoot = '.'
-    }
-    else{
-      $path = "./PowerShell/build.psm1"
-      if(Test-Path -Path $path)
-      {
-        Write-Verbose "reporoot detect at: ./PowerShell" -Verbose
-        $repoRoot = './PowerShell'
-      }
-    }
-    if($repoRoot) {
-      $vstsCommandString = "vso[task.setvariable variable=repoRoot]$repoRoot"
-      Write-Host ("sending " + $vstsCommandString)
-      Write-Host "##$vstsCommandString"
-    } else {
-      Write-Verbose -Verbose "repo not found"
-    }
-  displayName: 'Set repo Root'
-  env:
-    ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
+- template: set-reporoot.yml@self
+  parameters:
+    ob_restore_phase: ${{ parameters.ob_restore_phase }}
 
 - powershell: |
     $createJson = ("${{ parameters.CreateJson }}" -ne "no")
@@ -69,11 +38,11 @@ steps:
     Write-Host "##$vstsCommandString"
   displayName: 'Set ${{ parameters.ReleaseTagVarName }} and other version Variables'
   env:
-    ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
+    ob_restore_phase: ${{ parameters.ob_restore_phase }}
 
 - powershell: |
     Get-ChildItem -Path Env: | Out-String -Width 150
   displayName: Capture environment
   condition: succeededOrFailed()
   env:
-    ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
+    ob_restore_phase: ${{ parameters.ob_restore_phase }}
