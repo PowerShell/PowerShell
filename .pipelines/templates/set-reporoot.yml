@@ -12,14 +12,14 @@ steps:
     }
     if(Test-Path -Path $path)
     {
-      Write-Verbose "reporoot detect at: ." -Verbose
+      Write-Verbose "reporoot detected at: ." -Verbose
       $repoRoot = '.'
     }
     else{
       $path = "./PowerShell/build.psm1"
       if(Test-Path -Path $path)
       {
-        Write-Verbose "reporoot detect at: ./PowerShell" -Verbose
+        Write-Verbose "reporoot detected at: ./PowerShell" -Verbose
         $repoRoot = './PowerShell'
       }
     }
