@@ -5,6 +5,10 @@ steps:
     $releaseTag = '$(OutputReleaseTag.releaseTag)'
 
     # Rebuild branches should be treated as preview builds
+    # NOTE: The following regex is duplicated from rebuild-branch-check.yml.
+    # This duplication is necessary because channelSelection.yml does not call rebuild-branch-check.yml,
+    # and is used in contexts where that check may not have run.
+    # If you update this regex, also update it in rebuild-branch-check.yml to keep them in sync.
     $isRebuildBranch = '$(Build.SourceBranch)' -match 'refs/heads/rebuild/.*-rebuild\.'
 
     $LTS = $metadata.LTSRelease.Latest
