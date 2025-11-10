@@ -265,3 +265,9 @@ extends:
       dependsOn: [mac_package, windows_package, linux_package, nupkg, msixbundle]
       jobs:
       - template: /.pipelines/templates/uploadToAzure.yml@self
+
+    - stage: validatePackages
+      displayName: 'Validate Packages'
+      dependsOn: [upload]
+      jobs:
+      - template: /.pipelines/templates/release-validate-packagenames.yml@self
