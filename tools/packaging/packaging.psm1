@@ -284,6 +284,18 @@ function Start-PSPackage {
                 $createdSpdxPathSha = New-Item -Path $manifestSpdxPathSha -Force
                 Write-Verbose -Verbose "Created manifest.spdx.json.sha256 file: $createdSpdxPathSha"
             }
+
+            $bsiJsonPath = (Join-Path -Path $Source "_manifest\spdx_2.2\bsi.json")
+            if (-not (Test-Path -Path $bsiJsonPath)) {
+                $createdBsiJsonPath = New-Item -Path $bsiJsonPath -Force
+                Write-Verbose -Verbose "Created bsi.json file: $createdBsiJsonPath"
+            }
+
+            $manifestCatPath = (Join-Path -Path $Source "_manifest\spdx_2.2\manifest.cat")
+            if (-not (Test-Path -Path $manifestCatPath)) {
+                $createdCatPath = New-Item -Path $manifestCatPath -Force
+                Write-Verbose -Verbose "Created manifest.cat file: $createdCatPath"
+            }
         }
 
         # If building a symbols package, we add a zip of the parent to publish
