@@ -5519,6 +5519,7 @@ function Send-AzdoFile {
         Copy-Item -Path $Path -Destination $logFile
     }
 
+    Write-Verbose "Capture the log file as '$newName'" -Verbose
     if($env:TF_BUILD) {
         ## In Azure DevOps
         Write-Host "##vso[artifact.upload containerfolder=$newName;artifactname=$newName]$logFile"
@@ -5533,9 +5534,9 @@ function Send-AzdoFile {
         }
 
         Copy-Item -Path $logFile -Destination $destinationPath -Force -Verbose
+    } else {
+        Write-Warning "This environment is neither Azure Devops nor GitHub Actions. Cannot capture the log file in this environment."
     }
-
-    Write-Verbose "Log file captured as $newName" -Verbose
 }
 
 # Class used for serializing and deserialing a BOM into Json
