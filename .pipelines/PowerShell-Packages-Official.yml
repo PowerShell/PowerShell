@@ -260,6 +260,8 @@ extends:
       dependsOn: [windows_package]
       jobs:
       - template: /.pipelines/templates/package-create-msix.yml@self
+        parameters:
+          OfficialBuild: ${{ parameters.OfficialBuild }}
 
     - stage: upload
       dependsOn: [mac_package, windows_package, linux_package, nupkg, msixbundle]
