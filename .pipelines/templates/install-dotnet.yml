@@ -1,3 +1,8 @@
+parameters:
+- name: ob_restore_phase
+  type: boolean
+  default: true
+
 steps:
   - pwsh: |
       if (-not (Test-Path '$(RepoRoot)')) {
@@ -15,5 +20,5 @@ steps:
     displayName: 'Install dotnet SDK'
     workingDirectory: $(RepoRoot)
     env:
-       ob_restore_phase: true
+      ob_restore_phase: ${{ parameters.ob_restore_phase }}
 
