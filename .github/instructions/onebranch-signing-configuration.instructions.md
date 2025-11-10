@@ -69,10 +69,71 @@ jobs:
   steps:
     - checkout: self
       env:
-        ob_restore_phase: true
+        ob_restore_phase: true  # Steps before first signing operation
     - pwsh: |
-        # Sign artifacts
+        # Prepare artifacts for signing
+      env:
+        ob_restore_phase: true  # Steps before first signing operation
+    - task: onebranch.pipeline.signing@1
+      displayName: 'Sign artifacts'
+      # Signing step runs in build phase (no ob_restore_phase)
+    - pwsh: |
+        # Post-signing validation
+      # Post-signing steps run in build phase (no ob_restore_phase)
 ```
+
+## Restore Phase Usage with Signing
+
+**The restore phase (`ob_restore_phase: true`) should only be used in jobs that perform signing operations.** It separates preparation steps from the actual signing and build steps.
+
+### When to Use Restore Phase
+
+Use `ob_restore_phase: true` **only** in jobs where `ob_signing_setup_enabled: true`:
+
+```yaml
+jobs:
+- job: sign_artifacts
+  variables:
+    - name: ob_signing_setup_enabled
+      value: true  # Signing enabled
+  steps:
+    # Steps BEFORE first signing operation: use restore phase
+    - checkout: self
+      env:
+        ob_restore_phase: true
+    - template: prepare-for-signing.yml
+      parameters:
+        ob_restore_phase: true
+
+    # SIGNING STEP: runs in build phase (no ob_restore_phase)
+    - task: onebranch.pipeline.signing@1
+      displayName: 'Sign artifacts'
+
+    # Steps AFTER signing: run in build phase (no ob_restore_phase)
+    - pwsh: |
+        # Validation or packaging
+```
+
+### When NOT to Use Restore Phase
+
+**Do not use restore phase in build-only jobs** where `ob_signing_setup_enabled: false`:
+
+```yaml
+jobs:
+- job: build_artifacts
+  variables:
+    - name: ob_signing_setup_enabled
+      value: false  # No signing
+    - name: ob_sdl_codeSignValidation_enabled
+      value: false
+  steps:
+    - checkout: self
+      # NO ob_restore_phase - not needed without signing
+    - pwsh: |
+        Start-PSBuild
+```
+
+**Why?** The restore phase is part of OneBranch's signing infrastructure. Using it without signing enabled adds unnecessary overhead without benefit.
 
 ## Related Variables
 
@@ -84,8 +145,10 @@ Other OneBranch signing-related variables:
 
 1. **Separate build and signing stages**: Build artifacts in one job, sign in another
 2. **Disable signing in build stages**: Improves performance and clarifies intent
-3. **Always validate after signing**: Enable validation in signing stages to catch issues
-4. **Document the reason**: Add comments explaining why signing is disabled
+3. **Only use restore phase with signing**: The restore phase should only be used in jobs where signing is enabled (`ob_signing_setup_enabled: true`)
+4. **Restore phase before first signing step**: All steps before the first signing operation should use `ob_restore_phase: true`
+5. **Always validate after signing**: Enable validation in signing stages to catch issues
+6. **Document the reason**: Add comments explaining why signing is disabled or why restore phase is used
 
 ## Example: Split Build and Sign Pipeline
 
