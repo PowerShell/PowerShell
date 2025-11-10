@@ -5522,10 +5522,10 @@ function Send-AzdoFile {
     if($env:TF_BUILD) {
         ## In Azure DevOps
         Write-Host "##vso[artifact.upload containerfolder=$newName;artifactname=$newName]$logFile"
-    } elseif ($env:GITHUB_WORKFLOW -and $env:RUNNER_WORKSPACE) {
+    } elseif ($env:GITHUB_WORKFLOW -and $env:SYSTEM_ARTIFACTSDIRECTORY) {
         ## In GitHub Actions
-        $destinationPath = Join-Path -Path $env:RUNNER_WORKSPACE -ChildPath $newName
-        Write-Verbose "Upload $logFile in GitHub Action" -Verbose
+        $destinationPath = $env:SYSTEM_ARTIFACTSDIRECTORY
+        Write-Verbose "Upload '$logFile' to '$destinationPath' in GitHub Action" -Verbose
 
         # Create the folder if it does not exist
         if (!(Test-Path -Path $destinationPath)) {
