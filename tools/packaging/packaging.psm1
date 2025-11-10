@@ -5519,7 +5519,21 @@ function Send-AzdoFile {
         Copy-Item -Path $Path -Destination $logFile
     }
 
-    Write-Host "##vso[artifact.upload containerfolder=$newName;artifactname=$newName]$logFile"
+    if($env:TF_BUILD) {
+        ## In Azure DevOps
+        Write-Host "##vso[artifact.upload containerfolder=$newName;artifactname=$newName]$logFile"
+    } elseif ($env:GITHUB_WORKFLOW -and $env:RUNNER_WORKSPACE) {
+        ## In GitHub Actions
+        $destinationPath = Join-Path -Path $env:RUNNER_WORKSPACE -ChildPath $newName
+
+        # Create the folder if it does not exist
+        if (!(Test-Path -Path $destinationPath)) {
+            $null = New-Item -ItemType Directory -Path $destinationPath -Force
+        }
+
+        Copy-Item -Path $logFile -Destination $destinationPath -Force -Verbose
+    }
+
     Write-Verbose "Log file captured as $newName" -Verbose
 }
 
