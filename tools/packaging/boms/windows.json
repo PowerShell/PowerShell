@@ -1,5 +1,15 @@
 [
   {
+    "Pattern": "_manifest\\spdx_2.2\\bsi.json",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "_manifest\\spdx_2.2\\manifest.cat",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
     "Pattern": "Accessibility.dll",
     "FileType": "NonProduct",
     "Architecture": null
