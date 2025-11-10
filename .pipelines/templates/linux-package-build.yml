@@ -149,7 +149,7 @@ jobs:
       $isRebuildBranch = '$(RebuildBranchCheck.IsRebuildBranch)' -eq 'true'
 
       # Don't build LTS packages for rebuild branches
-      $LTS = ($metadata.LTSRelease.Package -eq 'True') -and -not $isRebuildBranch
+      $LTS = $metadata.LTSRelease.Package -and -not $isRebuildBranch
 
       if ($isRebuildBranch) {
         Write-Verbose -Message "Rebuild branch detected, skipping LTS package build" -Verbose
