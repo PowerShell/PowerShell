@@ -5525,6 +5525,7 @@ function Send-AzdoFile {
     } elseif ($env:GITHUB_WORKFLOW -and $env:RUNNER_WORKSPACE) {
         ## In GitHub Actions
         $destinationPath = Join-Path -Path $env:RUNNER_WORKSPACE -ChildPath $newName
+        Write-Verbose "Upload $logFile in GitHub Action" -Verbose
 
         # Create the folder if it does not exist
         if (!(Test-Path -Path $destinationPath)) {
