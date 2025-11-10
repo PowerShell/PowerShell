@@ -299,3 +299,9 @@ extends:
       dependsOn: [prep, mac_package, windows_package_sign, linux_package, nupkg, msixbundle]  # prep needed for BuildInfo JSON
       jobs:
       - template: /.pipelines/templates/uploadToAzure.yml@self
+
+    - stage: validatePackages
+      displayName: 'Validate Packages'
+      dependsOn: [upload]
+      jobs:
+      - template: /.pipelines/templates/release-validate-packagenames.yml@self
