@@ -61,6 +61,8 @@ jobs:
     parameters:
       nativePathRoot: '$(Agent.TempDirectory)'
 
+  - template: rebuild-branch-check.yml@self
+
   - download: CoOrdinatedBuildPipeline
     artifact: macosBinResults-${{ parameters.buildArchitecture }}
 
@@ -112,7 +114,15 @@ jobs:
       Write-Verbose -Verbose "metadata:"
       $metadata | Out-String | Write-Verbose -Verbose
 
-      $LTS = $metadata.LTSRelease.Package -eq 'True'
+      # Use the rebuild branch check from the template
+      $isRebuildBranch = '$(RebuildBranchCheck.IsRebuildBranch)' -eq 'true'
+
+      # Don't build LTS packages for rebuild branches
+      $LTS = $metadata.LTSRelease.Package -and -not $isRebuildBranch
+
+      if ($isRebuildBranch) {
+        Write-Verbose -Message "Rebuild branch detected, skipping LTS package build" -Verbose
+      }
 
       Write-Verbose -Verbose "LTS: $LTS"
 
@@ -220,14 +230,14 @@ jobs:
 
   - pwsh: |
       $signedPkg = Get-ChildItem -Path $(Pipeline.Workspace) -Filter "*osx*.zip" -File
-  
+
       $signedPkg | ForEach-Object {
         Write-Verbose -Verbose "Signed package zip: $_"
-  
+
         if (-not (Test-Path $_)) {
           throw "Package not found: $_"
         }
-  
+
         if (-not (Test-Path $(ob_outputDirectory))) {
           $null = New-Item -Path $(ob_outputDirectory) -ItemType Directory
         }
