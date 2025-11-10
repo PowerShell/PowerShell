@@ -2381,7 +2381,7 @@ function Start-PSBootstrap {
                         Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo $PackageManager install -y rpm-build")) -IgnoreExitcode
                     }
                 }
-                
+
                 # For Debian-based systems and Mariner, ensure dpkg-deb is available
                 if ($environment.IsLinux -and ($environment.IsDebianFamily -or $environment.IsMariner)) {
                     Write-Verbose -Verbose "Checking for dpkg-deb..."
@@ -2389,9 +2389,14 @@ function Start-PSBootstrap {
                         Write-Warning "dpkg-deb not found. Installing dpkg package..."
                         if ($environment.IsMariner) {
                             # For Mariner (Azure Linux), install the extended repo first to access dpkg.
+                            Write-Verbose -verbose "BEGIN: /etc/os-release content:"
+                            Get-Content /etc/os-release | Write-Verbose -verbose
+                            Write-Verbose -verbose "END: /etc/os-release content"
+
                             Write-Verbose -Verbose "Installing azurelinux-repos-extended for Mariner..."
-                            Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo $PackageManager install -y azurelinux-repos-extended")) -IgnoreExitcode
-                            Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo $PackageManager install -y dpkg")) -IgnoreExitcode
+
+                            Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo $PackageManager azurelinux-repos-extended")) -IgnoreExitcode -Verbose
+                            Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo $PackageManager dpkg")) -IgnoreExitcode -Verbose
                         } else {
                             Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo apt-get install -y dpkg")) -IgnoreExitcode
                         }

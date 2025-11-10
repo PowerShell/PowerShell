@@ -208,7 +208,7 @@ jobs:
         }
         Import-Module Pester
         $pesterConfig = New-PesterConfiguration
-        $pesterConfig.Run.Path = './tools/packaging/releaseTests/macOSPackage.tests.ps1'
+        $pesterConfig.Run.Path = './test/packaging/macos/package-validation.tests.ps1'
         $pesterConfig.Run.PassThru = $true
         $pesterConfig.Output.Verbosity = 'Detailed'
         $pesterConfig.TestResult.Enabled = $true
