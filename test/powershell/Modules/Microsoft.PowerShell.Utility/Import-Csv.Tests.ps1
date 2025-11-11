@@ -186,7 +186,7 @@ Describe "Import-Csv with different newlines" -Tags "CI" {
 Describe "Import-Csv containing #" -Tags "CI" {
     BeforeAll {
         $testColumnsWithQuotedHashtag = @'
-"#","b","c",
+"#","b","c"
 1,2,3
 '@
 
