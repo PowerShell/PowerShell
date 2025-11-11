@@ -1354,7 +1354,7 @@ namespace Microsoft.PowerShell.Commands
                 string rawLine = raw.ToString();
 
                 // File starts with '#' and contains '#Fields:' is W3C Extended Log File Format
-                if (values.Count > 0 && rawLine.StartsWith("#Fields: "))
+                if (rawLine.Length > 0 && rawLine.StartsWith("#Fields: ") && values.Count > 0)
                 {
                     values[0] = values[0].Substring(9);
                     Header = values;
