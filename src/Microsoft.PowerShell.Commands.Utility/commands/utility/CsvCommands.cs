@@ -1336,9 +1336,11 @@ namespace Microsoft.PowerShell.Commands
 
             var values = new List<string>(ValueCountGuestimate);
             var builder = new StringBuilder(LineLengthGuestimate);
+            var raw = new StringBuilder(LineLengthGuestimate);
+
             while ((Header == null) && (!this.EOF))
             {
-                ParseNextRecord(values, builder);
+                ParseNextRecord(values, builder, raw);
 
                 // Trim all trailing blankspaces and delimiters ( single/multiple ).
                 // If there is only one element in the row and if its a blankspace we dont trim it.
@@ -1349,13 +1351,15 @@ namespace Microsoft.PowerShell.Commands
                     values.RemoveAt(values.Count - 1);
                 }
 
+                string rawLine = raw.ToString();
+
                 // File starts with '#' and contains '#Fields:' is W3C Extended Log File Format
-                if (values.Count != 0 && values[0].StartsWith("#Fields: "))
+                if (values.Count > 0 && rawLine.StartsWith("#Fields: "))
                 {
                     values[0] = values[0].Substring(9);
                     Header = values;
                 }
-                else if (values.Count != 0 && values[0].StartsWith('#'))
+                else if (rawLine.Length > 0 && rawLine[0] == '#')
                 {
                     // Skip all lines starting with '#'
                 }
@@ -1380,9 +1384,10 @@ namespace Microsoft.PowerShell.Commands
             var prevalidated = false;
             var values = new List<string>(ValueCountGuestimate);
             var builder = new StringBuilder(LineLengthGuestimate);
+            var raw = new StringBuilder(LineLengthGuestimate);
             while (true)
             {
-                ParseNextRecord(values, builder);
+                ParseNextRecord(values, builder, raw);
                 if (values.Count == 0)
                     break;
 
@@ -1462,17 +1467,26 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Reads the next record from the file and returns parsed collection of string.
+        /// Reads the next record from the input stream and parses it into a list of field values.
         /// </summary>
-        /// <returns>
-        /// Parsed collection of strings.
-        /// </returns>
-        private void ParseNextRecord(List<string> result, StringBuilder current)
+        /// <param name="result">
+        /// Collects the parsed fields for the current record. This list is cleared before use.
+        /// </param>
+        /// <param name="current">
+        /// Temporary buffer used while building the current field. Cleared before each record.
+        /// </param>
+        /// <param name="rawLineOut">
+        /// Captures the raw text of the record as it’s read, used to determine if a line started with a '#' character or a '#Fields: ' directive
+        /// </param>
+        /// <remarks>
+        /// Handles quoted fields, embedded delimiters, escaped quotes, and newlines inside quotes.
+        /// Tries to behave like Excel when dealing with slightly malformed input.
+        /// </remarks>
+        private void ParseNextRecord(List<string> result, StringBuilder current, StringBuilder rawLineOut)
         {
             result.Clear();
-
-            // current string
             current.Clear();
+            rawLineOut.Clear();
 
             bool seenBeginQuote = false;
 
@@ -1480,6 +1494,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // Read the next character
                 char ch = ReadChar();
+                rawLineOut.Append(ch);
 
                 if (ch == _delimiter)
                 {

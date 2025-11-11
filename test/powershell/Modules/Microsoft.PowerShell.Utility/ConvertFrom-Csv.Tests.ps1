@@ -80,3 +80,50 @@ Describe "ConvertFrom-Csv DRT Unit Tests" -Tags "CI" {
         $result[1].Header2 | Should -BeExactly "2"
     }
 }
+
+Describe "ConvertFrom-Csv containing #" -Tags "CI" {
+    BeforeAll {
+        $testColumnsWithQuotedHashtag = @'
+"#","b","c",
+1,2,3
+'@
+
+        $testColumnsWithUnquotedHashtag = @'
+#,b,c
+1,2,3
+4,5,6
+'@
+
+        $testColumnsWithFields = @'
+#Fields: a b c
+1,2,3
+'@
+    }
+
+    It "Should handle quoted # in header" {
+        $actualData = $testColumnsWithQuotedHashtag | ConvertFrom-Csv
+
+        $actualLength = $($( $actualData | Get-Member) | Where-Object { $_.MemberType -eq "NoteProperty" }).Length
+
+        $actualLength | Should -Be 3
+        $actualData[0]."#" | Should -Be "1"
+    }
+
+    It "Should handle unquoted # in header as comment" {
+        $actualData = $testColumnsWithUnquotedHashtag | ConvertFrom-Csv
+
+        $actualLength = $($( $actualData | Get-Member) | Where-Object { $_.MemberType -eq "NoteProperty" }).Length
+
+        $actualLength | Should -Be 3
+        $actualData[0]."1" | Should -Be "4"
+    }
+
+    It "Should handle #Fields lines as header" {
+        $actualData = $testColumnsWithFields | ConvertFrom-Csv
+
+        $actualLength = $($( $actualData | Get-Member) | Where-Object { $_.MemberType -eq "NoteProperty" }).Length
+
+        $actualLength | Should -Be 3
+        $actualData[0]."a" | Should -Be "1"
+    }
+}

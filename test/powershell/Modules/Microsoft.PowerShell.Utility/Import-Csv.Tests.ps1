@@ -182,3 +182,59 @@ Describe "Import-Csv with different newlines" -Tags "CI" {
         $returnObject[1].h3 | Should -Be 23
     }
 }
+
+Describe "Import-Csv containing #" -Tags "CI" {
+    BeforeAll {
+        $testColumnsWithQuotedHashtag = @'
+"#","b","c",
+1,2,3
+'@
+
+        $testColumnsWithUnquotedHashtag = @'
+#,b,c
+1,2,3
+4,5,6
+'@
+
+        $testColumnsWithFields = @'
+#Fields: a b c
+1,2,3
+'@
+    }
+
+    It "Should handle quoted # in header" {
+        $testPath = Join-Path $TestDrive "QuotedHashtag.csv"
+        Set-Content $testPath -Value $testColumnsWithQuotedHashtag
+
+        $actualData = Get-ChildItem -Path $testPath | Import-Csv -Delimiter ','
+
+        $actualLength = $($( $actualData | Get-Member) | Where-Object { $_.MemberType -eq "NoteProperty" }).Length
+
+        $actualLength | Should -Be 3
+        $actualData[0]."#" | Should -Be "1"
+    }
+
+    It "Should handle unquoted # in header as comment" {
+        $testPath = Join-Path $TestDrive "UnquotedHashtag.csv"
+        Set-Content $testPath -Value $testColumnsWithUnquotedHashtag
+
+        $actualData = Get-ChildItem -Path $testPath | Import-Csv -Delimiter ','
+
+        $actualLength = $($( $actualData | Get-Member) | Where-Object { $_.MemberType -eq "NoteProperty" }).Length
+
+        $actualLength | Should -Be 3
+        $actualData[0]."1" | Should -Be "4"
+    }
+
+    It "Should handle #Fields lines as header" {
+        $testPath = Join-Path $TestDrive "Fields.csv"
+        Set-Content $testPath -Value $testColumnsWithFields
+
+        $actualData = Get-ChildItem -Path $testPath | Import-Csv -Delimiter ','
+
+        $actualLength = $($( $actualData | Get-Member) | Where-Object { $_.MemberType -eq "NoteProperty" }).Length
+
+        $actualLength | Should -Be 3
+        $actualData[0]."a" | Should -Be "1"
+    }
+}
