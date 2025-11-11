@@ -1336,44 +1336,52 @@ namespace Microsoft.PowerShell.Commands
 
             var values = new List<string>(ValueCountGuestimate);
             var builder = new StringBuilder(LineLengthGuestimate);
-            var raw = new StringBuilder(LineLengthGuestimate);
 
             while ((Header == null) && (!this.EOF))
             {
-                ParseNextRecord(values, builder, raw);
+                if (PeekNextChar('#'))
+                {
+                    ParseNextRecord(values, builder);
+                    TrimEmptiesAtEnd(values);
 
-                // Trim all trailing blankspaces and delimiters ( single/multiple ).
-                // If there is only one element in the row and if its a blankspace we dont trim it.
-                // A trailing delimiter is represented as a blankspace while being added to result collection
-                // which is getting trimmed along with blankspaces supplied through the CSV in the below loop.
-                while (values.Count > 1 && values[values.Count - 1].Equals(string.Empty))
-                {
-                    values.RemoveAt(values.Count - 1);
+                    if (values.Count != 0 && values[0].StartsWith("#Fields: "))
+                    {
+                        // W3C Extended Log File Format "#Fields: " directive
+                        values[0] = values[0].Substring(9);
+                        Header = values;
+                    }
+                    else
+                    {
+                        // Skip all lines starting with '#'
+                    }
+
+                    continue;
                 }
 
-                string rawLine = raw.ToString();
-
-                // File starts with '#' and contains '#Fields:' is W3C Extended Log File Format
-                if (rawLine.Length > 0 && rawLine.StartsWith("#Fields: ") && values.Count > 0)
-                {
-                    values[0] = values[0].Substring(9);
-                    Header = values;
-                }
-                else if (rawLine.Length > 0 && rawLine[0] == '#')
-                {
-                    // Skip all lines starting with '#'
-                }
-                else
-                {
-                    // This is not W3C Extended Log File Format
-                    // By default first line is Header
-                    Header = values;
-                }
+                // Normal CSV path: does not start with '#'
+                ParseNextRecord(values, builder);
+                TrimEmptiesAtEnd(values);
+                Header = values;
             }
 
             if (Header != null && Header.Count > 0)
             {
                 ValidatePropertyNames(Header);
+            }
+        }
+
+        /// <summary>
+        /// Trim all trailing blankspaces and delimiters ( single/multiple ).
+        /// If there is only one element in the row and if its a blankspace we dont trim it.
+        /// A trailing delimiter is represented as a blankspace while being added to result collection
+        /// which is getting trimmed along with blankspaces supplied through the CSV.
+        /// </summary>
+        /// <param name="values">The list of string values to trim trailing empty entries from.</param>
+        internal void TrimEmptiesAtEnd(List<string> values)
+        {
+            while (values.Count > 1 && values[values.Count - 1].Equals(string.Empty))
+            {
+                values.RemoveAt(values.Count - 1);
             }
         }
 
@@ -1384,10 +1392,9 @@ namespace Microsoft.PowerShell.Commands
             var prevalidated = false;
             var values = new List<string>(ValueCountGuestimate);
             var builder = new StringBuilder(LineLengthGuestimate);
-            var raw = new StringBuilder(LineLengthGuestimate);
             while (true)
             {
-                ParseNextRecord(values, builder, raw);
+                ParseNextRecord(values, builder);
                 if (values.Count == 0)
                     break;
 
@@ -1475,18 +1482,14 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="current">
         /// Temporary buffer used while building the current field. Cleared before each record.
         /// </param>
-        /// <param name="rawLineOut">
-        /// Captures the raw text of the record as it’s read, used to determine if a line started with a '#' character or a '#Fields: ' directive
-        /// </param>
         /// <remarks>
         /// Handles quoted fields, embedded delimiters, escaped quotes, and newlines inside quotes.
         /// Tries to behave like Excel when dealing with slightly malformed input.
         /// </remarks>
-        private void ParseNextRecord(List<string> result, StringBuilder current, StringBuilder rawLineOut)
+        private void ParseNextRecord(List<string> result, StringBuilder current)
         {
             result.Clear();
             current.Clear();
-            rawLineOut.Clear();
 
             bool seenBeginQuote = false;
 
@@ -1494,7 +1497,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 // Read the next character
                 char ch = ReadChar();
-                rawLineOut.Append(ch);
 
                 if (ch == _delimiter)
                 {
