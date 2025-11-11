@@ -1,0 +1,224 @@
+parameters:
+  runtime: x64
+
+jobs:
+- job: build_win_${{ parameters.runtime }}
+  displayName: Build Windows Packages ${{ parameters.runtime }}
+  condition: succeeded()
+  pool:
+    type: windows
+
+  variables:
+    - name: ob_sdl_codeSignValidation_enabled
+      value: false  # Skip signing validation in build-only stage
+    - name: ob_signing_setup_enabled
+      value: false  # Disable signing setup - this is a build-only stage, signing happens in separate stage
+    - name: ob_artifactBaseName
+      value: drop_windows_package_${{ parameters.runtime }}
+    - name: nugetMultiFeedWarnLevel
+      value: none
+    - name: NugetSecurityAnalysisWarningLevel
+      value: none
+    - name: skipNugetSecurityAnalysis
+      value: true
+    - group: DotNetPrivateBuildAccess
+    - group: certificate_logical_to_actual
+    - name: ob_outputDirectory
+      value: '$(Build.ArtifactStagingDirectory)\ONEBRANCH_ARTIFACT'
+    - name: ob_sdl_binskim_enabled
+      value: false  # Disable for build-only, enable in signing stage
+    - name: ob_sdl_tsa_configFile
+      value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+    - name: ob_sdl_credscan_suppressionsFile
+      value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+    - name: Runtime
+      value: ${{ parameters.runtime }}
+    - group: msixTools
+
+  steps:
+  - checkout: self
+    clean: true
+
+  - pwsh: |
+      Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
+    displayName: Capture environment
+
+  - template: /.pipelines/templates/SetVersionVariables.yml@self
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+      CreateJson: no
+      ob_restore_phase: false
+
+  - template: /.pipelines/templates/shouldSign.yml@self
+    parameters:
+      ob_restore_phase: false
+
+  - template: /.pipelines/templates/cloneToOfficialPath.yml@self
+    parameters:
+      nativePathRoot: '$(Agent.TempDirectory)'
+      ob_restore_phase: false
+
+  - template: rebuild-branch-check.yml@self
+
+  - download: CoOrdinatedBuildPipeline
+    artifact: drop_windows_build_windows_${{ parameters.runtime }}_release
+    displayName: Download signed artifacts
+    condition: ${{ ne(parameters.runtime, 'minSize') }}
+
+  - download: CoOrdinatedBuildPipeline
+    artifact: drop_windows_build_windows_x64_${{ parameters.runtime }}
+    displayName: Download minsize signed artifacts
+    condition: ${{ eq(parameters.runtime, 'minSize') }}
+
+  - pwsh: |
+      Write-Verbose -Verbose "signed artifacts"
+      Get-ChildItem "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_${{ parameters.runtime }}_release" -Recurse
+    displayName: 'Capture Downloaded Artifacts'
+    # Diagnostics is not critical it passes every time it runs
+    continueOnError: true
+
+  - template: /.pipelines/templates/install-dotnet.yml@self
+    parameters:
+      ob_restore_phase: false
+
+  - pwsh: |
+      $runtime = '$(Runtime)'
+      Write-Verbose -Verbose "runtime = '$(Runtime)'"
+
+      $signedFolder = switch ($runtime) {
+        'x64' { 'Signed-win7-x64' }
+        'x86' { 'Signed-win7-x86' }
+        'arm64' { 'Signed-win-arm64' }
+        'fxdependent' { 'Signed-fxdependent' }
+        'fxdependentWinDesktop' { 'Signed-fxdependent-win-desktop' }
+        'minsize' { 'Signed-win7-x64' }
+      }
+
+      Write-Verbose -Message "Init..." -Verbose
+
+      $repoRoot = "$env:REPOROOT"
+      Import-Module "$repoRoot\build.psm1"
+      Import-Module "$repoRoot\tools\packaging"
+
+      Start-PSBootstrap -Scenario Both
+
+      Find-Dotnet
+
+      $signedFilesPath, $psoptionsFilePath = if ($env:RUNTIME -eq 'minsize') {
+          "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_x64_${runtime}\$signedFolder"
+          "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_x64_${runtime}\psoptions\psoptions.json"
+        }
+        else {
+          "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_${runtime}_release\$signedFolder"
+          "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_${runtime}_release\psoptions\psoptions.json"
+        }
+
+      Write-Verbose -Verbose "signedFilesPath: $signedFilesPath"
+      Write-Verbose -Verbose "psoptionsFilePath: $psoptionsFilePath"
+
+      Write-Verbose -Message "checking pwsh exists in $signedFilesPath" -Verbose
+      if (-not (Test-Path $signedFilesPath\pwsh.exe)) {
+        throw "pwsh.exe not found in $signedFilesPath"
+      }
+
+      Write-Verbose -Message "Restoring PSOptions from $psoptionsFilePath" -Verbose
+
+      Restore-PSOptions -PSOptionsPath "$psoptionsFilePath"
+      Get-PSOptions | Write-Verbose -Verbose
+
+      $metadata = Get-Content "$repoRoot/tools/metadata.json" -Raw | ConvertFrom-Json
+
+      Write-Verbose -Verbose "metadata:"
+      $metadata | Out-String | Write-Verbose -Verbose
+
+      # Use the rebuild branch check from the template
+      $isRebuildBranch = '$(RebuildBranchCheck.IsRebuildBranch)' -eq 'true'
+
+      # Don't build LTS packages for rebuild branches
+      $LTS = $metadata.LTSRelease.Package -and -not $isRebuildBranch
+
+      if ($isRebuildBranch) {
+        Write-Verbose -Message "Rebuild branch detected, skipping LTS package build" -Verbose
+      }
+
+      Write-Verbose -Verbose "LTS: $LTS"
+
+      if ($LTS) {
+        Write-Verbose -Message "LTS Release: $LTS"
+      }
+
+      Start-PSBootstrap -Scenario Package
+
+      $WindowsRuntime = switch ($runtime) {
+        'x64' { 'win7-x64' }
+        'x86' { 'win7-x86' }
+        'arm64' { 'win-arm64' }
+        'fxdependent' { 'win7-x64' }
+        'fxdependentWinDesktop' { 'win7-x64' }
+        'minsize' { 'win7-x64' }
+      }
+
+      $packageTypes = switch ($runtime) {
+        'x64' { @('msi', 'zip', 'msix') }
+        'x86' { @('msi', 'zip', 'msix') }
+        'arm64' { @('msi', 'zip', 'msix') }
+        'fxdependent' { 'fxdependent' }
+        'fxdependentWinDesktop' { 'fxdependent-win-desktop' }
+        'minsize' { 'min-size' }
+      }
+
+      if (-not (Test-Path $(ob_outputDirectory))) {
+        New-Item -ItemType Directory -Path $(ob_outputDirectory) -Force
+      }
+
+      Set-Location $repoRoot
+
+      Start-PSPackage -Type $packageTypes -SkipReleaseChecks -WindowsRuntime $WindowsRuntime -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath -LTS:$LTS
+
+    displayName: 'Build Packages (Unsigned)'
+    env:
+      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+
+  # Copy unsigned packages to output directory
+  - pwsh: |
+      $runtime = '$(Runtime)'
+      Write-Verbose -Verbose "runtime = '$(Runtime)'"
+
+      $packageTypes = switch ($runtime) {
+        'x64' { @('msi', 'zip', 'msix') }
+        'x86' { @('msi', 'zip', 'msix') }
+        'arm64' { @('msi', 'zip', 'msix') }
+        'fxdependent' { 'fxdependent' }
+        'fxdependentWinDesktop' { 'fxdependent-win-desktop' }
+        'minsize' { 'min-size' }
+      }
+
+      if (-not (Test-Path $(ob_outputDirectory))) {
+        New-Item -ItemType Directory -Path $(ob_outputDirectory) -Force
+      }
+
+      if ($packageTypes -contains 'msi') {
+        $msiPkgNameFilter = "powershell-*.msi"
+        $msiPkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $msiPkgNameFilter -Recurse -File | Select-Object -ExpandProperty FullName
+        Write-Verbose -Verbose "unsigned msiPkgPath: $msiPkgPath"
+        Copy-Item -Path $msiPkgPath -Destination '$(ob_outputDirectory)' -Force -Verbose
+      }
+
+      if ($packageTypes -contains 'zip' -or $packageTypes -contains 'fxdependent' -or $packageTypes -contains 'min-size' -or $packageTypes -contains 'fxdependent-win-desktop') {
+        $zipPkgNameFilter = "powershell-*.zip"
+        $zipPkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $zipPkgNameFilter -Recurse -File | Select-Object -ExpandProperty FullName
+        Write-Verbose -Verbose "unsigned zipPkgPath: $zipPkgPath"
+        Copy-Item -Path $zipPkgPath -Destination '$(ob_outputDirectory)' -Force -Verbose
+      }
+
+      if ($packageTypes -contains 'msix') {
+        $msixPkgNameFilter = "powershell-*.msix"
+        $msixPkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $msixPkgNameFilter -Recurse -File | Select-Object -ExpandProperty FullName
+        Write-Verbose -Verbose "unsigned msixPkgPath: $msixPkgPath"
+        Copy-Item -Path $msixPkgPath -Destination '$(ob_outputDirectory)' -Force -Verbose
+      }
+    displayName: Copy unsigned packages to output directory
+
+  - pwsh: |
+      Get-ChildItem -Path $(ob_outputDirectory) -Recurse
+    displayName: 'List unsigned artifacts'

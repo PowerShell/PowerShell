@@ -39,8 +39,7 @@ jobs:
   - template: SetVersionVariables.yml@self
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
-      CreateJson: yes
-      UseJson: no
+      CreateJson: no
 
   - template: shouldSign.yml
 

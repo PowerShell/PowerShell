@@ -48,8 +48,7 @@ jobs:
     - template: ../SetVersionVariables.yml
       parameters:
         ReleaseTagVar: $(ReleaseTagVar)
-        CreateJson: yes
-        UseJson: no
+        CreateJson: no
 
     - template: ../insert-nuget-config-azfeed.yml
       parameters:

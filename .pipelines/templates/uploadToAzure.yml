@@ -34,8 +34,7 @@ jobs:
   - template: /.pipelines/templates/SetVersionVariables.yml@self
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
-      CreateJson: yes
-      UseJson: no
+      CreateJson: no
 
   - template: /.pipelines/templates/release-SetReleaseTagandContainerName.yml@self
 
