@@ -45,22 +45,22 @@ jobs:
       Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
     displayName: Capture environment
 
-  - template: /.pipelines/templates/SetVersionVariables.yml@self
+  - template: ../../SetVersionVariables.yml@self
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
       CreateJson: no
       ob_restore_phase: false
 
-  - template: /.pipelines/templates/shouldSign.yml@self
+  - template: ../../shouldSign.yml@self
     parameters:
       ob_restore_phase: false
 
-  - template: /.pipelines/templates/cloneToOfficialPath.yml@self
+  - template: ../../cloneToOfficialPath.yml@self
     parameters:
       nativePathRoot: '$(Agent.TempDirectory)'
       ob_restore_phase: false
 
-  - template: /.pipelines/templates/rebuild-branch-check.yml@self
+  - template: ../../rebuild-branch-check.yml@self
 
   - download: CoOrdinatedBuildPipeline
     artifact: drop_windows_build_windows_${{ parameters.runtime }}_release
