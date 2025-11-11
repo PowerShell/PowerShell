@@ -358,12 +358,12 @@ extends:
             This is typically done by the community 1-2 days after the release.
 
     - stage: PublishMsix
-      dependsOn:
+      dependsOn: 
         - setReleaseTagAndChangelog
         - PushGitTagAndMakeDraftPublic
       displayName: Publish MSIX to store
       variables:
-        ob_release_environment: Production
+        ob_release_environment: ${{ variables.releaseEnvironment }}
       jobs:
       - template: /.pipelines/templates/release-MSIX-Publish.yml@self
         parameters:

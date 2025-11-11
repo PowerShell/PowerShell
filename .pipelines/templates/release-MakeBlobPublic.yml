@@ -44,8 +44,7 @@ jobs:
     - template: /.pipelines/templates/SetVersionVariables.yml@self
       parameters:
         ReleaseTagVar: $(ReleaseTagVar)
-        CreateJson: yes
-        UseJson: no
+        CreateJson: no
 
     - pwsh: |
         Get-ChildItem Env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
@@ -131,8 +130,7 @@ jobs:
     - template: /.pipelines/templates/SetVersionVariables.yml@self
       parameters:
         ReleaseTagVar: $(ReleaseTagVar)
-        CreateJson: yes
-        UseJson: no
+        CreateJson: no
 
     - pwsh: |
         Get-ChildItem Env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
