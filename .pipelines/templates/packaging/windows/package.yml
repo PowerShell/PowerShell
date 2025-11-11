@@ -60,6 +60,8 @@ jobs:
       nativePathRoot: '$(Agent.TempDirectory)'
       ob_restore_phase: false
 
+  - template: rebuild-branch-check.yml@self
+
   - download: CoOrdinatedBuildPipeline
     artifact: drop_windows_build_windows_${{ parameters.runtime }}_release
     displayName: Download signed artifacts
@@ -135,7 +137,15 @@ jobs:
       Write-Verbose -Verbose "metadata:"
       $metadata | Out-String | Write-Verbose -Verbose
 
-      $LTS = $metadata.LTSRelease.Package -eq 'True'
+      # Use the rebuild branch check from the template
+      $isRebuildBranch = '$(RebuildBranchCheck.IsRebuildBranch)' -eq 'true'
+
+      # Don't build LTS packages for rebuild branches
+      $LTS = $metadata.LTSRelease.Package -and -not $isRebuildBranch
+
+      if ($isRebuildBranch) {
+        Write-Verbose -Message "Rebuild branch detected, skipping LTS package build" -Verbose
+      }
 
       Write-Verbose -Verbose "LTS: $LTS"
 

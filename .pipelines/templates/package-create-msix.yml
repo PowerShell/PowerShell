@@ -1,3 +1,8 @@
+parameters:
+  - name: OfficialBuild
+    type: boolean
+    default: false
+
 jobs:
 - job: CreateMSIXBundle
   displayName: Create .msixbundle file
@@ -49,7 +54,7 @@ jobs:
           **/*.msix
         targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
       displayName: Download windows x86 packages
-    
+
     # Finds the makeappx tool on the machine with image: 'onebranch.azurecr.io/windows/ltsc2022/vse2022:latest'
     - pwsh: |
         $cmd = Get-Command makeappx.exe -ErrorAction Ignore
@@ -99,12 +104,13 @@ jobs:
 
     - task: onebranch.pipeline.signing@1
       displayName: Sign MsixBundle
+      condition: eq('${{ parameters.OfficialBuild }}', 'true')
       inputs:
         command: 'sign'
         signing_profile: $(MSIXProfile)
         files_to_sign: '**/*.msixbundle'
         search_root: '$(BundleDir)'
-    
+
     - pwsh: |
         $signedBundle = Get-ChildItem -Path $(BundleDir) -Filter "*.msixbundle" -File
         Write-Verbose -Verbose "Signed bundle: $signedBundle"
@@ -126,12 +132,12 @@ jobs:
         Get-ChildItem -Path $(System.DefaultWorkingDirectory) -Recurse | Select-Object -ExpandProperty FullName
         Test-Path -Path '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDP-Private.xml' | Write-Verbose -Verbose
       displayName: Output Pipeline.Workspace and System.DefaultWorkingDirectory
-    
+
     - template: channelSelection.yml@self
 
     - pwsh: |
         $IsLTS = '$(ChannelSelection.IsLTS)' -eq 'true'
-        $IsStable = '$(ChannelSelection.IsStable)' -eq 'true' 
+        $IsStable = '$(ChannelSelection.IsStable)' -eq 'true'
         $IsPreview = '$(ChannelSelection.IsPreview)' -eq 'true'
 
         Write-Verbose -Verbose "Channel Selection - LTS: $IsLTS, Stable: $IsStable, Preview: $IsPreview"
@@ -161,11 +167,11 @@ jobs:
         $currentChannel = if ($IsLTS) { 'LTS' }
           elseif ($IsStable) { 'Stable' }
           elseif ($IsPreview) { 'Preview' }
-          else { 
+          else {
             Write-Error "No valid channel detected"
             exit 1
           }
-                       
+
         $config = $channelConfigs[$currentChannel]
         Write-Verbose -Verbose "Selected channel: $currentChannel"
         Write-Verbose -Verbose "App Store Name: $($config.AppStoreName)"
@@ -181,7 +187,7 @@ jobs:
           # Create namespace manager for XML with default namespace
           $nsManager = New-Object System.Xml.XmlNamespaceManager($pdpXml.NameTable)
           $nsManager.AddNamespace("pd", "http://schemas.microsoft.com/appx/2012/ProductDescription")
-          
+
           $appStoreNameElement = $pdpXml.SelectSingleNode("//pd:AppStoreName", $nsManager)
           if ($appStoreNameElement) {
             $appStoreNameElement.SetAttribute("_locID", $config.AppStoreName)
@@ -220,11 +226,29 @@ jobs:
         Write-Host "##vso[task.setvariable variable=SBConfigPath]$($sbConfigPath)"
 
         # These variables are used in the next tasks to determine which ServiceEndpoint to use
-        Write-Host "##vso[task.setvariable variable=LTS]$($IsLTS.ToString().ToLower())"
-        Write-Host "##vso[task.setvariable variable=STABLE]$($IsStable.ToString().ToLower())"
-        Write-Host "##vso[task.setvariable variable=PREVIEW]$($IsPreview.ToString().ToLower())"
+        $ltsValue = $IsLTS.ToString().ToLower()
+        $stableValue = $IsStable.ToString().ToLower()
+        $previewValue = $IsPreview.ToString().ToLower()
+
+        Write-Verbose -Verbose "About to set variables:"
+        Write-Verbose -Verbose "  LTS=$ltsValue"
+        Write-Verbose -Verbose "  STABLE=$stableValue"
+        Write-Verbose -Verbose "  PREVIEW=$previewValue"
+
+        Write-Host "##vso[task.setvariable variable=LTS]$ltsValue"
+        Write-Host "##vso[task.setvariable variable=STABLE]$stableValue"
+        Write-Host "##vso[task.setvariable variable=PREVIEW]$previewValue"
+
+        Write-Verbose -Verbose "Variables set successfully"
       name: UpdateConfigs
       displayName: Update PDPs and SBConfig.json
+
+    - pwsh: |
+        Write-Verbose -Verbose "Checking variables after UpdateConfigs:"
+        Write-Verbose -Verbose "LTS=$(LTS)"
+        Write-Verbose -Verbose "STABLE=$(STABLE)"
+        Write-Verbose -Verbose "PREVIEW=$(PREVIEW)"
+      displayName: Debug - Check Variables
 
     - task: MS-RDX-MRO.windows-store-publish.package-task.store-package@3
       displayName: 'Create StoreBroker Package (Preview)'
@@ -260,14 +284,14 @@ jobs:
         $submissionPackageDir = "$(System.DefaultWorkingDirectory)/SBOutDir"
         $jsonFile = "$submissionPackageDir/PowerShellStorePackage.json"
         $zipFile = "$submissionPackageDir/PowerShellStorePackage.zip"
-    
+
         if ((Test-Path $jsonFile) -and (Test-Path $zipFile)) {
           Write-Verbose -Verbose "Uploading StoreBroker Package files:"
           Write-Verbose -Verbose "JSON File: $jsonFile"
           Write-Verbose -Verbose "ZIP File: $zipFile"
 
           Copy-Item -Path $submissionPackageDir -Destination "$(ob_outputDirectory)" -Verbose -Recurse
-        } 
+        }
 
         else {
           Write-Error "Required files not found in $submissionPackageDir"
