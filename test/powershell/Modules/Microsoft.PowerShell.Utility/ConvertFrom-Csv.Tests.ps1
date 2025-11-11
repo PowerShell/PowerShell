@@ -84,7 +84,7 @@ Describe "ConvertFrom-Csv DRT Unit Tests" -Tags "CI" {
 Describe "ConvertFrom-Csv containing #" -Tags "CI" {
     BeforeAll {
         $testColumnsWithQuotedHashtag = @'
-"#","b","c",
+"#","b","c"
 1,2,3
 '@
 
