@@ -60,7 +60,7 @@ jobs:
       nativePathRoot: '$(Agent.TempDirectory)'
       ob_restore_phase: false
 
-  - template: rebuild-branch-check.yml@self
+  - template: /.pipelines/templates/rebuild-branch-check.yml@self
 
   - download: CoOrdinatedBuildPipeline
     artifact: drop_windows_build_windows_${{ parameters.runtime }}_release
