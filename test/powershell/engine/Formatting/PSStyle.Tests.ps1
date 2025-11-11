@@ -590,16 +590,16 @@ Billy Bob… Senior DevOps …  13
     }
 
     It "Format 'MatchInfo' object correctly" {
-        $str = 'mouclass     Mouse Class Driver     Mouse Class Driver     Kernel        Manual     Running    OK         TRUE        FALSE        12,288            32,768      0                                 C:\WINDOWS\system32\drivers\mouclass.sys         4,096'
-        $text = $str | Select-String 'mouse' | Out-String -Width 150
-
-        Write-Verbose "OutputRendering: $($PSStyle.OutputRendering)" -Verbose
-        Write-Verbose "Raw text: $($text.Replace("`e", "ESC"))" -Verbose
-
         $expected = @"
-mouclass     `e[7mMouse`e[0m Class Driver     Mouse Class Driver     Kernel        Manual     Running    OK         TRUE        FALSE        12,288            
-32,768      0                                 C:\WINDOWS\system32\drivers\mouclass.sys         4,096
+`e[32;1mb : `e[0mmouclass     `e[7mMouse`e[0m Class Driver     Mouse Class Driver     Kernel        Manual     Running    OK         TRUE        FALSE        12,288         `e[0m
+       32,768      0                                 C:\WINDOWS\system32\drivers\mouclass.sys         4,096
 "@
+
+        ## This string mimics the VT decorated string for a 'MatchInfo' object that matches the word 'mouse'.
+        $str = "mouclass     `e[7mMouse`e[0m Class Driver     Mouse Class Driver     Kernel        Manual     Running    OK         TRUE        FALSE        12,288            32,768      0                                 C:\WINDOWS\system32\drivers\mouclass.sys         4,096"
+        $obj = [pscustomobject] @{ b = $str }
+        $text = $obj | Format-List | Out-String -Width 150
+
         $text.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
     }
 }
