@@ -1,5 +1,9 @@
 parameters:
-  nativePathRoot: ''
+- name: nativePathRoot
+  default: ''
+- name: ob_restore_phase
+  type: boolean
+  default: true
 
 steps:
 - powershell: |
@@ -12,8 +16,16 @@ steps:
     else {
       Write-Verbose -Verbose -Message "No cleanup required."
     }
-    git clone --quiet $env:REPOROOT $nativePath
+    # REPOROOT must be set by the pipeline - this is where the repository was checked out
+    $sourceDir = $env:REPOROOT
+    if (-not $sourceDir) { throw "REPOROOT environment variable is not set. This step depends on REPOROOT being configured in the pipeline." }
+
+    $buildModulePath = Join-Path $sourceDir "build.psm1"
+    if (-not (Test-Path $buildModulePath)) { throw "build.psm1 not found at: $buildModulePath. REPOROOT must point to the PowerShell repository root." }
+
+    Write-Verbose -Verbose -Message "Cloning from: $sourceDir to $nativePath"
+    git clone --quiet $sourceDir $nativePath
   displayName: Clone PowerShell Repo to /PowerShell
   errorActionPreference: silentlycontinue
   env:
-    ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+    ob_restore_phase: ${{ parameters.ob_restore_phase }}
