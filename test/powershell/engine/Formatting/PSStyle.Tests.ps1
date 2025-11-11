@@ -488,7 +488,7 @@ Billy Bob… Senior DevOps …  13
         $text.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
     }
 
-    It "Word wrapping for string with escape sequences" {
+    It "Word wrapping for string with escape sequences (1)" {
        $expected = @"
 `e[32;1mLongDescription : `e[0m`e[33mPowerShell `e[0m
                   `e[33mscripting `e[0m
@@ -501,12 +501,75 @@ Billy Bob… Senior DevOps …  13
         $text.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
     }
 
-    It "Splitting multi-line string with escape sequences" {
+    It "Word wrapping for string with escape sequences (2)" {
+       $expected = @"
+`e[32;1mLongDescription : `e[0m`e[33mPowerShell`e[0m 
+                  scripting 
+                  language
+"@
+        $obj = [pscustomobject] @{ LongDescription = "`e[33mPowerShell`e[0m scripting language" }
+        $obj | Format-List | Out-String -Width 35 | Out-File $outFile
+
+        $text = Get-Content $outFile -Raw
+        $text.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
+    }
+
+    It "Word wrapping for string with escape sequences (3)" {
+       $expected = @"
+`e[32;1mLongDescription : `e[0m`e[33mPowerShell`e[0m 
+                  `e[32mscripting `e[0m
+                  `e[32mlanguage`e[0m
+"@
+        $obj = [pscustomobject] @{ LongDescription = "`e[33mPowerShell`e[0m `e[32mscripting language" }
+        $obj | Format-List | Out-String -Width 35 | Out-File $outFile
+
+        $text = Get-Content $outFile -Raw
+        $text.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
+    }
+
+    It "Word wrapping for string with escape sequences (4)" {
+       $expected = @"
+`e[32;1mLongDescription : `e[0m`e[33mPowerShell`e[0m 
+                  `e[32mscripting`e[0m 
+                  language
+"@
+        $obj = [pscustomobject] @{ LongDescription = "`e[33mPowerShell`e[0m `e[32mscripting`e[0m language" }
+        $obj | Format-List | Out-String -Width 35 | Out-File $outFile
+
+        $text = Get-Content $outFile -Raw
+        $text.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
+    }
+
+    It "Splitting multi-line string with escape sequences (1)" {
         $expected = @"
 `e[32;1mb : `e[0m`e[33mPowerShell is a task automation and configuration management program from Microsoft,`e[0m
     `e[33mconsisting of a command-line shell and the associated scripting language`e[0m
 "@
         $obj = [pscustomobject] @{ b = "`e[33mPowerShell is a task automation and configuration management program from Microsoft,`nconsisting of a command-line shell and the associated scripting language" }
+        $obj | Format-List | Out-File $outFile
+
+        $text = Get-Content $outFile -Raw
+        $text.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
+    }
+
+    It "Splitting multi-line string with escape sequences (2)" {
+        $expected = @"
+`e[32;1mb : `e[0m`e[33mPowerShell is a task automation and configuration management program from Microsoft,`e[0m
+    consisting of a command-line shell and the associated scripting language
+"@
+        $obj = [pscustomobject] @{ b = "`e[33mPowerShell is a task automation and configuration management program from Microsoft,`e[0m`nconsisting of a command-line shell and the associated scripting language" }
+        $obj | Format-List | Out-File $outFile
+
+        $text = Get-Content $outFile -Raw
+        $text.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
+    }
+
+    It "Splitting multi-line string with escape sequences (3)" {
+        $expected = @"
+`e[32;1mb : `e[0m`e[33mPowerShell is a task automation and configuration management program from Microsoft,`e[0m
+    `e[32mconsisting of a command-line shell and the associated scripting language`e[0m
+"@
+        $obj = [pscustomobject] @{ b = "`e[33mPowerShell is a task automation and configuration management program from Microsoft,`e[0m`n`e[32mconsisting of a command-line shell and the associated scripting language" }
         $obj | Format-List | Out-File $outFile
 
         $text = Get-Content $outFile -Raw
@@ -522,6 +585,19 @@ Billy Bob… Senior DevOps …  13
         $obj = [pscustomobject] @{ b = "`e[33mC:\repos\PowerShell\src\powershell-win-core\bin\Debug\net8.0\win7-x64\publish\pwsh.exe" }
         $obj | Format-List | Out-String -Width 40 | Out-File $outFile
 
+        $text = Get-Content $outFile -Raw
+        $text.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
+    }
+
+    It "Format 'MatchInfo' object correctly" {
+        $str = 'mouclass     Mouse Class Driver     Mouse Class Driver     Kernel        Manual     Running    OK         TRUE        FALSE        12,288            32,768      0                                 C:\WINDOWS\system32\drivers\mouclass.sys         4,096'
+        $matchInfo = $str | Select-String 'mouse'
+        $matchInfo | Out-String -Width 150 | Out-File $outFile
+
+        $expected = @"
+mouclass     `e[7mMouse`e[0m Class Driver     Mouse Class Driver     Kernel        Manual     Running    OK         TRUE        FALSE        12,288            
+32,768      0                                 C:\WINDOWS\system32\drivers\mouclass.sys         4,096
+"@
         $text = Get-Content $outFile -Raw
         $text.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
     }
