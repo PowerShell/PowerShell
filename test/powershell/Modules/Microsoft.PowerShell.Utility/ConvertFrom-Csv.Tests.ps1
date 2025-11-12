@@ -27,10 +27,10 @@ a,b,c
     }
 
     It "Should have expected results when using piped inputs" {
-        $csvContent   = Get-Content $testcsv
+        $csvContent = Get-Content $testcsv
         $actualresult = $csvContent | ConvertFrom-Csv
 
-        ,$actualresult | Should -BeOfType System.Array
+        , $actualresult | Should -BeOfType System.Array
         $actualresult[0] | Should -BeOfType PSCustomObject
 
         #Should have a name property in the result
@@ -42,10 +42,10 @@ a,b,c
     }
 
     It "Should actually delimit the output" {
-        $csvContent   = Get-Content $testcsv
+        $csvContent = Get-Content $testcsv
         $actualresult = $csvContent | ConvertFrom-Csv -Delimiter ";"
 
-        ,$actualresult | Should -BeOfType System.Array
+        , $actualresult | Should -BeOfType System.Array
         $actualresult[0] | Should -BeOfType PSCustomObject
 
         # ConvertFrom-Csv takes the first line of the input as a header by default
@@ -53,9 +53,9 @@ a,b,c
     }
 
     It "Should be able to have multiple columns" {
-        $actualData   = $testColumns | ConvertFrom-Csv
+        $actualData = $testColumns | ConvertFrom-Csv
 
-        $actualLength = $($( $actualData | Get-Member) | Where-Object {$_.MemberType -eq "NoteProperty" }).Length
+        $actualLength = $($( $actualData | Get-Member) | Where-Object { $_.MemberType -eq "NoteProperty" }).Length
 
         $actualLength | Should -Be 3
     }
@@ -72,7 +72,7 @@ Describe "ConvertFrom-Csv DRT Unit Tests" -Tags "CI" {
     It "Test ConvertFrom-Csv with pipelined InputObject and Header" {
         $inputObject = [pscustomobject]@{ First = 1; Second = 2 }
         $res = $inputObject | ConvertTo-Csv
-        $result = $res | ConvertFrom-Csv -Header "Header1","Header2"
+        $result = $res | ConvertFrom-Csv -Header "Header1", "Header2"
 
         $result[0].Header1 | Should -BeExactly "First"
         $result[0].Header2 | Should -BeExactly "Second"
@@ -95,7 +95,7 @@ Describe "ConvertFrom-Csv containing #" -Tags "CI" {
 '@
 
         $testColumnsWithFields = @'
-#Fields: a b c
+#Fields: a,b,c
 1,2,3
 '@
     }
