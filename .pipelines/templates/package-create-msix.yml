@@ -224,7 +224,7 @@ jobs:
     - task: MS-RDX-MRO.windows-store-publish.package-task.store-package@3
       displayName: 'Create StoreBroker Package'
       inputs:
-        serviceEndpoint: 'StoreAppPublish-Private'
+        serviceEndpoint: '$(ServiceConnection)'
         sbConfigPath: '$(SBConfigPath)'
         sourceFolder: '$(BundleDir)'
         contents: '*.msixBundle'
