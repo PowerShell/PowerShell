@@ -98,6 +98,10 @@ Describe "ConvertFrom-Csv containing #" -Tags "CI" {
 #Fields: a,b,c
 1,2,3
 '@
+        $testColumnsWithFieldsSpaceDelimited = @'
+#Fields: a b c
+1 2 3
+'@
     }
 
     It "Should handle quoted # in header" {
@@ -120,6 +124,18 @@ Describe "ConvertFrom-Csv containing #" -Tags "CI" {
 
     It "Should handle #Fields lines as header" {
         $actualData = $testColumnsWithFields | ConvertFrom-Csv
+
+        $actualLength = $($( $actualData | Get-Member) | Where-Object { $_.MemberType -eq "NoteProperty" }).Length
+
+        $actualLength | Should -Be 3
+        $actualData[0]."a" | Should -Be "1"
+    }
+
+    It "Should handle #Fields lines as header when space delimited" {
+        $testPath = Join-Path $TestDrive "FieldsSpace.csv"
+        Set-Content $testPath -Value $testColumnsWithFieldsSpaceDelimited
+
+        $actualData = Get-ChildItem -Path $testPath | Import-Csv -Delimiter ' '
 
         $actualLength = $($( $actualData | Get-Member) | Where-Object { $_.MemberType -eq "NoteProperty" }).Length
 
