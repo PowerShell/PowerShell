@@ -60,7 +60,7 @@ jobs:
       nativePathRoot: '$(Agent.TempDirectory)'
       ob_restore_phase: false
 
-  - template: rebuild-branch-check.yml@self
+  - template: /.pipelines/templates/rebuild-branch-check.yml@self
 
   - download: CoOrdinatedBuildPipeline
     artifact: drop_windows_build_windows_${{ parameters.runtime }}_release
@@ -223,4 +223,6 @@ jobs:
 
   - pwsh: |
       Get-ChildItem -Path $(ob_outputDirectory) -Recurse
-    displayName: 'List unsigned artifacts'
+    displayName: 'List artifacts'
+    env:
+      ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
