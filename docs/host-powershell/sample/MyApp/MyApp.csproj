@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <AssemblyName>MyApp</AssemblyName>
     <OutputType>Exe</OutputType>
     <RuntimeIdentifiers>win-x64;linux-x64;osx-x64</RuntimeIdentifiers>
@@ -10,9 +10,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.5.3" /> 
-    <PackageReference Include="Microsoft.PowerShell.Commands.Diagnostics" Version="7.5.3" />
-    <PackageReference Include="Microsoft.WSMan.Management" Version="7.5.3"/>
+    <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.5.4" /> 
+    <PackageReference Include="Microsoft.PowerShell.Commands.Diagnostics" Version="7.5.4" />
+    <PackageReference Include="Microsoft.WSMan.Management" Version="7.5.4"/>
   </ItemGroup>
 
 </Project>
