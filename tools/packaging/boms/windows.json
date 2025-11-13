@@ -4425,5 +4425,15 @@
     "Pattern": "System.Management.Automation.dll",
     "FileType": "Product",
     "Architecture": null
+  },
+  {
+    "Pattern": "pwsh.profile.dsc.resource.json",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "pwsh.profile.resource.ps1",
+    "FileType": "Product",
+    "Architecture": null
   }
 ]

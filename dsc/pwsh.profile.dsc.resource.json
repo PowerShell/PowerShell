@@ -1,0 +1,126 @@
+{
+    "$schema": "https://aka.ms/dsc/schemas/v3/bundled/resource/manifest.json",
+    "description": "Manage PowerShell profiles.",
+    "tags": [
+        "Linux",
+        "Windows",
+        "macOS",
+        "PowerShell"
+    ],
+    "type": "Microsoft.PowerShell/Profile",
+    "version": "0.1.0",
+    "get": {
+        "executable": "pwsh",
+        "args": [
+            "-NoLogo",
+            "-NonInteractive",
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-File",
+            "./pwsh.profile.resource.ps1",
+            "-operation",
+             "get"
+        ],
+        "input": "stdin"
+    },
+    "set": {
+        "executable": "pwsh",
+        "args": [
+            "-NoLogo",
+            "-NonInteractive",
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-File",
+            "./pwsh.profile.resource.ps1",
+            "-operation",
+            "set"
+        ],
+        "input": "stdin"
+    },
+    "export": {
+        "executable": "pwsh",
+        "args": [
+            "-NoLogo",
+            "-NonInteractive",
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-File",
+            "./pwsh.profile.resource.ps1",
+            "-operation",
+            "export"
+        ],
+        "input": "stdin"
+    },
+    "exitCodes": {
+        "0": "Success",
+        "1": "Error",
+        "2": "Input not supported for export operation"
+    },
+    "schema": {
+        "embedded": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "title": "Profile",
+            "description": "Manage PowerShell profiles.",
+            "type": "object",
+            "unevaluatedProperties": false,
+            "required": [
+                "profileType"
+            ],
+            "properties": {
+                "profileType": {
+                    "type": "string",
+                    "title": "Profile Type",
+                    "description": "Defines which profile to manage. Valid values are: 'AllUsersCurrentHost', 'AllUsersAllHosts', 'CurrentUserAllHosts', and 'CurrentUserCurrentHost'.",
+                    "enum": [
+                        "AllUsersCurrentHost",
+                        "AllUsersAllHosts",
+                        "CurrentUserAllHosts",
+                        "CurrentUserCurrentHost"
+                    ]
+                },
+                "profilePath": {
+                    "title": "Profile Path",
+                    "description": "The full path to the profile file.",
+                    "type": "string",
+                    "readOnly": true
+                },
+                "content": {
+                    "title": "Content",
+                    "description": "Defines the content of the profile. If you don't specify this property, the resource doesn't manage the file contents. If you specify this property as an empty string, the resource removes all content from the file. If you specify this property as a non-empty string, the resource sets the file contents to the specified string. The resources retains newlines from this property without any modification.",
+                    "type": "string"
+                },
+                "_exist": {
+                    "$ref": "https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/v3/resource/properties/exist.json"
+                },
+                "_name": {
+                    "$ref": "https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/v3/resource/properties/name.json"
+                }
+            },
+            "$defs": {
+                "https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/v3/resource/properties/exist.json": {
+                    "$schema": "https://json-schema.org/draft/2020-12/schema",
+                    "$id": "https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/v3/resource/properties/exist.json",
+                    "title": "Instance should exist",
+                    "description": "Indicates whether the DSC resource instance should exist.",
+                    "type": "boolean",
+                    "default": true,
+                    "enum": [
+                        false,
+                        true
+                    ]
+                },
+                "https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/v3/resource/properties/name.json": {
+                    "$schema": "https://json-schema.org/draft/2020-12/schema",
+                    "$id": "https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/v3/resource/properties/name.json",
+                    "title": "Exported instance name",
+                    "description": "Returns a generated name for the resource instance from an export operation.",
+                    "readOnly": true,
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
