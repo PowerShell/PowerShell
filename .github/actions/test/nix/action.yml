@@ -43,6 +43,48 @@ runs:
     with:
       global-json-file: ./global.json
 
+  - name: Set Package Name by Platform
+    id: set_package_name
+    shell: pwsh
+    run: |-
+      Import-Module ./.github/workflows/GHWorkflowHelper/GHWorkflowHelper.psm1
+      $platform = $env:RUNNER_OS
+      Write-Host "Runner platform: $platform"
+      if ($platform -eq 'Linux') {
+        $packageName = 'DSC-*-x86_64-linux.tar.gz'
+      } elseif ($platform -eq 'macOS') {
+        $packageName = 'DSC-*-x86_64-apple-darwin.tar.gz'
+      } else {
+        throw "Unsupported platform: $platform"
+      }
+
+      Set-GWVariable -Name "DSC_PACKAGE_NAME" -Value $packageName
+
+  - name: Get Latest DSC Package Version
+    shell: pwsh
+    run: |-
+      Import-Module ./.github/workflows/GHWorkflowHelper/GHWorkflowHelper.psm1
+      $releases = Invoke-RestMethod -Uri "https://api.github.com/repos/PowerShell/Dsc/releases"
+      $latestRelease = $releases | Where-Object { $v = $_.name.trim("v"); $semVer = [System.Management.Automation.SemanticVersion]::new($v); if ($semVer.Major -eq 3 -and $semVer.Minor -ge 2) { $_ } } | Select-Object -First 1
+      $latestVersion = $latestRelease.tag_name.TrimStart("v")
+      Write-Host "Latest DSC Version: $latestVersion"
+
+      $packageName = "$env:DSC_PACKAGE_NAME"
+
+      Write-Host "Package Name: $packageName"
+
+      $downloadUrl = $latestRelease.assets | Where-Object { $_.name -like "*$packageName*" } | Select-Object -First 1 | Select-Object -ExpandProperty browser_download_url
+      Write-Host "Download URL: $downloadUrl"
+
+      $tempPath = Get-GWTempPath
+
+      Invoke-RestMethod -Uri $downloadUrl -OutFile "$tempPath/DSC.tar.gz" -Verbose
+      New-Item -ItemType Directory -Path "$tempPath/DSC" -Force -Verbose
+      tar xvf "$tempPath/DSC.tar.gz" -C "$tempPath/DSC"
+      $dscRoot = "$tempPath/DSC"
+      Write-Host "DSC Root: $dscRoot"
+      Set-GWVariable -Name "DSC_ROOT" -Value $dscRoot
+
   - name: Bootstrap
     shell: pwsh
     run: |-
