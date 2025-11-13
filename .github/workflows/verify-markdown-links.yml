@@ -2,13 +2,13 @@ name: Verify Markdown Links
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main, master, release/v7.6 ]
     paths:
       - '**/*.md'
       - '.github/workflows/verify-markdown-links.yml'
       - '.github/actions/infrastructure/markdownlinks/**'
   pull_request:
-    branches: [ main, master ]
+    branches: [ main, master, release/v7.6 ]
     paths:
       - '**/*.md'
   schedule:
