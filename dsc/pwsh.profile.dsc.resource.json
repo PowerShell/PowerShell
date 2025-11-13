@@ -17,8 +17,10 @@
             "-NoProfile",
             "-ExecutionPolicy",
             "Bypass",
-            "-Command",
-            "$Input | ./pwsh.profile.resource.ps1 -operation 'get'"
+            "-File",
+            "./pwsh.profile.resource.ps1",
+            "-operation",
+             "get"
         ],
         "input": "stdin"
     },
@@ -30,8 +32,10 @@
             "-NoProfile",
             "-ExecutionPolicy",
             "Bypass",
-            "-Command",
-            "$Input | ./pwsh.profile.resource.ps1 -operation 'set'"
+            "-File",
+            "./pwsh.profile.resource.ps1",
+            "-operation",
+            "set"
         ],
         "input": "stdin"
     },
@@ -43,8 +47,10 @@
             "-NoProfile",
             "-ExecutionPolicy",
             "Bypass",
-            "-Command",
-            "$Input | ./pwsh.profile.resource.ps1 -operation 'export'"
+            "-File",
+            "./pwsh.profile.resource.ps1",
+            "-operation",
+            "export"
         ],
         "input": "stdin"
     },
