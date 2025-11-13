@@ -1377,7 +1377,7 @@ namespace Microsoft.PowerShell.Commands
         /// which is getting trimmed along with blankspaces supplied through the CSV.
         /// </summary>
         /// <param name="values">The list of string values to trim trailing empty entries from.</param>
-        internal void TrimEmptiesAtEnd(List<string> values)
+        private void TrimEmptiesAtEnd(List<string> values)
         {
             while (values.Count > 1 && values[values.Count - 1].Equals(string.Empty))
             {
