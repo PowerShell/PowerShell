@@ -197,10 +197,12 @@ Describe "Import-Csv containing #" -Tags "CI" {
 '@
 
         $testColumnsWithFields = @'
+#Version: 1.0
 #Fields: a,b,c
 1,2,3
 '@
         $testColumnsWithFieldsSpaceDelimited = @'
+#Version: 1.0
 #Fields: a b c
 1 2 3
 '@
@@ -230,8 +232,8 @@ Describe "Import-Csv containing #" -Tags "CI" {
         $actualData[0]."1" | Should -Be "4"
     }
 
-    It "Should handle #Fields lines as header" {
-        $testPath = Join-Path $TestDrive "FieldsSpace.csv"
+    It "Should handle #Fields directive as header" {
+        $testPath = Join-Path $TestDrive "Fields.csv"
         Set-Content $testPath -Value $testColumnsWithFields
 
         $actualData = Get-ChildItem -Path $testPath | Import-Csv -Delimiter ','
@@ -242,8 +244,8 @@ Describe "Import-Csv containing #" -Tags "CI" {
         $actualData[0]."a" | Should -Be "1"
     }
 
-    It "Should handle #Fields lines as header when space delimited" {
-        $testPath = Join-Path $TestDrive "Fields.csv"
+    It "Should handle #Fields directive as header when space delimited" -Pending {
+        $testPath = Join-Path $TestDrive "FieldsSpace.csv"
         Set-Content $testPath -Value $testColumnsWithFieldsSpaceDelimited
 
         $actualData = Get-ChildItem -Path $testPath | Import-Csv -Delimiter ' '

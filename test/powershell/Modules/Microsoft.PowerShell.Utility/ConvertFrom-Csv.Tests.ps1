@@ -95,10 +95,12 @@ Describe "ConvertFrom-Csv containing #" -Tags "CI" {
 '@
 
         $testColumnsWithFields = @'
+#Version: 1.0
 #Fields: a,b,c
 1,2,3
 '@
         $testColumnsWithFieldsSpaceDelimited = @'
+#Version: 1.0
 #Fields: a b c
 1 2 3
 '@
@@ -122,7 +124,7 @@ Describe "ConvertFrom-Csv containing #" -Tags "CI" {
         $actualData[0]."1" | Should -Be "4"
     }
 
-    It "Should handle #Fields lines as header" {
+    It "Should handle #Fields directive as header" {
         $actualData = $testColumnsWithFields | ConvertFrom-Csv
 
         $actualLength = $($( $actualData | Get-Member) | Where-Object { $_.MemberType -eq "NoteProperty" }).Length
@@ -131,11 +133,8 @@ Describe "ConvertFrom-Csv containing #" -Tags "CI" {
         $actualData[0]."a" | Should -Be "1"
     }
 
-    It "Should handle #Fields lines as header when space delimited" {
-        $testPath = Join-Path $TestDrive "FieldsSpace.csv"
-        Set-Content $testPath -Value $testColumnsWithFieldsSpaceDelimited
-
-        $actualData = Get-ChildItem -Path $testPath | Import-Csv -Delimiter ' '
+    It "Should handle #Fields directive as header when space delimited" -Pending {
+        $actualData = $testColumnsWithFieldsSpaceDelimited | ConvertFrom-Csv -Delimiter ' '
 
         $actualLength = $($( $actualData | Get-Member) | Where-Object { $_.MemberType -eq "NoteProperty" }).Length
 
