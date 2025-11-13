@@ -99,9 +99,19 @@ Describe "ConvertFrom-Csv containing #" -Tags "CI" {
 #Fields: a,b,c
 1,2,3
 '@
+        $testColumnsWithFieldsSwapped = @'
+#Fields: a,b,c
+#Version: 1.0
+1,2,3
+'@
         $testColumnsWithFieldsSpaceDelimited = @'
 #Version: 1.0
 #Fields: a b c
+1 2 3
+'@
+        $testColumnsWithFieldsSpaceDelimitedSwapped = @'
+#Fields: a b c
+#Version: 1.0
 1 2 3
 '@
     }
@@ -124,7 +134,7 @@ Describe "ConvertFrom-Csv containing #" -Tags "CI" {
         $actualData[0]."1" | Should -Be "4"
     }
 
-    It "Should handle #Fields directive as header" {
+    It "Should handle #Fields directive as header when #Fields directive is second line" {
         $actualData = $testColumnsWithFields | ConvertFrom-Csv
 
         $actualLength = $($( $actualData | Get-Member) | Where-Object { $_.MemberType -eq "NoteProperty" }).Length
@@ -133,8 +143,26 @@ Describe "ConvertFrom-Csv containing #" -Tags "CI" {
         $actualData[0]."a" | Should -Be "1"
     }
 
-    It "Should handle #Fields directive as header when space delimited" -Pending {
+    It "Should handle #Fields directive as header when #Fields directive is first line" -Pending {
+        $actualData = $testColumnsWithFieldsSwapped | ConvertFrom-Csv
+
+        $actualLength = $($( $actualData | Get-Member) | Where-Object { $_.MemberType -eq "NoteProperty" }).Length
+
+        $actualLength | Should -Be 3
+        $actualData[0]."a" | Should -Be "1"
+    }
+
+    It "Should handle #Fields directive as header when space delimited and when #Fields directive is second line" -Pending {
         $actualData = $testColumnsWithFieldsSpaceDelimited | ConvertFrom-Csv -Delimiter ' '
+
+        $actualLength = $($( $actualData | Get-Member) | Where-Object { $_.MemberType -eq "NoteProperty" }).Length
+
+        $actualLength | Should -Be 3
+        $actualData[0]."a" | Should -Be "1"
+    }
+
+    It "Should handle #Fields directive as header when space delimited and when #Fields directive is first line" -Pending {
+        $actualData = $testColumnsWithFieldsSpaceDelimitedSwapped | ConvertFrom-Csv -Delimiter ' '
 
         $actualLength = $($( $actualData | Get-Member) | Where-Object { $_.MemberType -eq "NoteProperty" }).Length
 

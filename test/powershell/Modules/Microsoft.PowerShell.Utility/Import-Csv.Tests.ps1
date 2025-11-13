@@ -201,9 +201,19 @@ Describe "Import-Csv containing #" -Tags "CI" {
 #Fields: a,b,c
 1,2,3
 '@
+        $testColumnsWithFieldsSwapped = @'
+#Fields: a,b,c
+#Version: 1.0
+1,2,3
+'@
         $testColumnsWithFieldsSpaceDelimited = @'
 #Version: 1.0
 #Fields: a b c
+1 2 3
+'@
+        $testColumnsWithFieldsSpaceDelimitedSwapped = @'
+#Fields: a b c
+#Version: 1.0
 1 2 3
 '@
     }
@@ -232,7 +242,7 @@ Describe "Import-Csv containing #" -Tags "CI" {
         $actualData[0]."1" | Should -Be "4"
     }
 
-    It "Should handle #Fields directive as header" {
+    It "Should handle #Fields directive as header when #Fields directive is second line" {
         $testPath = Join-Path $TestDrive "Fields.csv"
         Set-Content $testPath -Value $testColumnsWithFields
 
@@ -244,9 +254,33 @@ Describe "Import-Csv containing #" -Tags "CI" {
         $actualData[0]."a" | Should -Be "1"
     }
 
-    It "Should handle #Fields directive as header when space delimited" -Pending {
+    It "Should handle #Fields directive as header when #Fields directive is first line" -Pending {
+        $testPath = Join-Path $TestDrive "Fields.csv"
+        Set-Content $testPath -Value $testColumnsWithFieldsSwapped
+
+        $actualData = Get-ChildItem -Path $testPath | Import-Csv -Delimiter ','
+
+        $actualLength = $($( $actualData | Get-Member) | Where-Object { $_.MemberType -eq "NoteProperty" }).Length
+
+        $actualLength | Should -Be 3
+        $actualData[0]."a" | Should -Be "1"
+    }
+
+    It "Should handle #Fields directive as header when space delimited and when #Fields directive is second line" -Pending {
         $testPath = Join-Path $TestDrive "FieldsSpace.csv"
         Set-Content $testPath -Value $testColumnsWithFieldsSpaceDelimited
+
+        $actualData = Get-ChildItem -Path $testPath | Import-Csv -Delimiter ' '
+
+        $actualLength = $($( $actualData | Get-Member) | Where-Object { $_.MemberType -eq "NoteProperty" }).Length
+
+        $actualLength | Should -Be 3
+        $actualData[0]."a" | Should -Be "1"
+    }
+
+    It "Should handle #Fields directive as header when space delimited and when #Fields directive is first line" -Pending {
+        $testPath = Join-Path $TestDrive "FieldsSpace.csv"
+        Set-Content $testPath -Value $testColumnsWithFieldsSpaceDelimitedSwapped
 
         $actualData = Get-ChildItem -Path $testPath | Import-Csv -Delimiter ' '
 
