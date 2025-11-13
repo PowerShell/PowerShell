@@ -2026,7 +2026,7 @@ $result
 
             foreach (char t in computerName)
             {
-                if (char.IsAsciiLetter(t) || t is '-' )
+                if (char.IsAsciiLetter(t) || t is '-')
                 {
                     hasAsciiLetterOrHyphen = true;
                 }
