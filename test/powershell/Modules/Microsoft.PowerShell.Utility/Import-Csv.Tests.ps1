@@ -45,7 +45,7 @@ Describe "Import-Csv Double Quote Delimiter" -Tags "CI" {
         @{ name = "quote with empty value"  ; expectedHeader = "a1,H1,a3"; file = "EmptyValue.csv"      ; content = $empyValueCsv       ; delimiter = '"' }
         @{ name = "quote with value"        ; expectedHeader = "a1,a2,a3"; file = "WithValue.csv"       ; content = $withValueCsv       ; delimiter = '"' }
         @{ name = "value enclosed in quote" ; expectedHeader = "a1,a2,a3"; file = "QuotedCharacter.csv" ; content = $quotedCharacterCsv ; delimiter = ',' }
-    ){
+){
         param($expectedHeader, $file, $content, $delimiter)
 
         $testPath = Join-Path $TestDrive $file
@@ -68,7 +68,7 @@ Describe "Import-Csv Double Quote Delimiter" -Tags "CI" {
         @{ name = "quote with empty value"  ; expectedHeader = "a1,H1,a3"; file = "EmptyValue.csv"      ; content = $empyValueCsv       ; delimiter = '"' }
         @{ name = "quote with value"        ; expectedHeader = "a1,a2,a3"; file = "WithValue.csv"       ; content = $withValueCsv       ; delimiter = '"' }
         @{ name = "value enclosed in quote" ; expectedHeader = "a1,a2,a3"; file = "QuotedCharacter.csv" ; content = $quotedCharacterCsv ; delimiter = ',' }
-    ){
+){
         param($expectedHeader, $file, $content, $delimiter)
 
         $testPath = Join-Path $TestDrive $file
@@ -167,7 +167,7 @@ Describe "Import-Csv with different newlines" -Tags "CI" {
         @{ name = "CR"; newline = "`r" }
         @{ name = "LF"; newline = "`n" }
         @{ name = "CRLF"; newline = "`r`n" }
-) {
+        ) {
         param($newline)
         $csvFile = Join-Path $TestDrive -ChildPath $((New-Guid).Guid)
         $delimiter = ','

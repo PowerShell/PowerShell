@@ -53,7 +53,7 @@ a,b,c
     }
 
     It "Should be able to have multiple columns" {
-        $actualData = $testColumns | ConvertFrom-Csv
+        $actualData   = $testColumns | ConvertFrom-Csv
 
         $actualLength = $($( $actualData | Get-Member) | Where-Object {$_.MemberType -eq "NoteProperty" }).Length
 
