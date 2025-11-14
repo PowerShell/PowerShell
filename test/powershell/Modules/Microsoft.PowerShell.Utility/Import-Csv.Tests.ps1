@@ -45,7 +45,7 @@ Describe "Import-Csv Double Quote Delimiter" -Tags "CI" {
         @{ name = "quote with empty value"  ; expectedHeader = "a1,H1,a3"; file = "EmptyValue.csv"      ; content = $empyValueCsv       ; delimiter = '"' }
         @{ name = "quote with value"        ; expectedHeader = "a1,a2,a3"; file = "WithValue.csv"       ; content = $withValueCsv       ; delimiter = '"' }
         @{ name = "value enclosed in quote" ; expectedHeader = "a1,a2,a3"; file = "QuotedCharacter.csv" ; content = $quotedCharacterCsv ; delimiter = ',' }
-    ) {
+    ){
         param($expectedHeader, $file, $content, $delimiter)
 
         $testPath = Join-Path $TestDrive $file
@@ -68,7 +68,7 @@ Describe "Import-Csv Double Quote Delimiter" -Tags "CI" {
         @{ name = "quote with empty value"  ; expectedHeader = "a1,H1,a3"; file = "EmptyValue.csv"      ; content = $empyValueCsv       ; delimiter = '"' }
         @{ name = "quote with value"        ; expectedHeader = "a1,a2,a3"; file = "WithValue.csv"       ; content = $withValueCsv       ; delimiter = '"' }
         @{ name = "value enclosed in quote" ; expectedHeader = "a1,a2,a3"; file = "QuotedCharacter.csv" ; content = $quotedCharacterCsv ; delimiter = ',' }
-    ) {
+    ){
         param($expectedHeader, $file, $content, $delimiter)
 
         $testPath = Join-Path $TestDrive $file
@@ -98,22 +98,22 @@ Describe "Import-Csv File Format Tests" -Tags "CI" {
         $TestImportCsv_W3C_ELF = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath TestImportCsv_W3C_ELF.csv
 
         $testCSVfiles = $TestImportCsv_NoHeader, $TestImportCsv_WithHeader, $TestImportCsv_W3C_ELF
-        $orginalHeader = "Column1", "Column2", "Column 3"
-        $customHeader = "test1", "test2", "test3"
+        $orginalHeader = "Column1","Column2","Column 3"
+        $customHeader = "test1","test2","test3"
     }
     # Test set is the same for all file formats
     foreach ($testCsv in $testCSVfiles) {
-        $FileName = (Get-ChildItem $testCsv).Name
+       $FileName = (Get-ChildItem $testCsv).Name
         Context "Next test file: $FileName" {
             BeforeAll {
-                $CustomHeaderParams = @{Header = $customHeader; Delimiter = "," }
+                $CustomHeaderParams = @{Header = $customHeader; Delimiter = ","}
                 if ($FileName -eq "TestImportCsv_NoHeader.csv") {
                     # The file does not have header
                     # (w/o Delimiter here we get throw (bug?))
-                    $HeaderParams = @{Header = $orginalHeader; Delimiter = "," }
+                    $HeaderParams = @{Header = $orginalHeader; Delimiter = ","}
                 } else {
                     # The files have header
-                    $HeaderParams = @{Delimiter = "," }
+                    $HeaderParams = @{Delimiter = ","}
                 }
 
             }
@@ -148,7 +148,7 @@ Describe "Import-Csv #Type Tests" -Tags "CI" {
         Remove-Item -Path $testfile -Force -ErrorAction SilentlyContinue
         $processlist = (Get-Process)[0..1]
         $processlist | Export-Csv -Path $testfile -Force -IncludeTypeInformation
-        $expectedProcessTypes = "System.Diagnostics.Process", "CSV:System.Diagnostics.Process"
+        $expectedProcessTypes = "System.Diagnostics.Process","CSV:System.Diagnostics.Process"
     }
 
     It "Test import-csv import Object" {
@@ -167,7 +167,7 @@ Describe "Import-Csv with different newlines" -Tags "CI" {
         @{ name = "CR"; newline = "`r" }
         @{ name = "LF"; newline = "`n" }
         @{ name = "CRLF"; newline = "`r`n" }
-    ) {
+) {
         param($newline)
         $csvFile = Join-Path $TestDrive -ChildPath $((New-Guid).Guid)
         $delimiter = ','
