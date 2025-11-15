@@ -91,3 +91,38 @@ Describe "SkipCACheck and SkipCNCheck PSSession options are required for New-PSS
         $er.Exception.ErrorCode | Should -Be $expectedErrorCode
     }
 }
+
+Describe "New-PSSession -UseWindowsPowerShell switch parameter" -Tag "CI" {
+
+    BeforeAll {
+        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+
+        if (-not $IsWindows) {
+            $PSDefaultParameterValues['it:skip'] = $true
+        }
+    }
+
+    AfterAll {
+        $global:PSDefaultParameterValues = $originalDefaultParameterValues
+    }
+
+    It "Should respect explicit -UseWindowsPowerShell:`$false parameter value" {
+        # -UseWindowsPowerShell:$false should behave the same as not specifying the parameter
+        # When UseWindowsPowerShell is not specified (or explicitly false), it should attempt
+        # to connect via WinRM to localhost, which will fail if WinRM is not configured
+
+        $errorWithFalse = { New-PSSession -UseWindowsPowerShell:$false -ErrorAction Stop } | 
+            Should -Throw -PassThru
+        
+        $errorWithoutParameter = { New-PSSession -ErrorAction Stop } | 
+            Should -Throw -PassThru
+
+        # Both should produce connection errors (since WinRM is not configured in test environment)
+        # NOT create a Windows PowerShell session
+        $errorWithFalse.Exception.Message | Should -Match 'connect|WinRM|localhost'
+        $errorWithoutParameter.Exception.Message | Should -Match 'connect|WinRM|localhost'
+        
+        # Both errors should be similar (not exact match due to timing/detail differences)
+        $errorWithFalse.Exception.GetType() | Should -Be $errorWithoutParameter.Exception.GetType()
+    }
+}
