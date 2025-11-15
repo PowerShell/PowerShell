@@ -96,7 +96,33 @@ Describe "Split-Path" -Tags "CI" {
 	Split-Path -Parent "\\server1\share1"        | Should -BeExactly "${dirSep}${dirSep}server1"
     }
 
-    It 'Does not split a drive leter'{
-    Split-Path -Path 'C:\' | Should -BeNullOrEmpty
+    It 'Does not split a drive leter' {
+        Split-Path -Path 'C:\' | Should -BeNullOrEmpty
+    }
+
+    It "Should handle explicit -Qualifier:$false parameter value correctly" {
+        # When -Qualifier:$false is specified, it should behave like -Parent (default)
+        # For env:PATH, the parent is empty string
+        $result = Split-Path -Path "env:PATH" -Qualifier:$false
+        $result | Should -BeNullOrEmpty
+    }
+
+    It "Should handle explicit -NoQualifier:`$false parameter value correctly" {
+        # When -NoQualifier:$false is specified, it should behave like -Parent (default)
+        # For env:PATH with no qualifier, we expect empty string (parent of PATH in env drive)
+        $result = Split-Path -Path "env:PATH" -NoQualifier:$false
+        $result | Should -BeNullOrEmpty
+    }
+
+    It "Should handle explicit -Leaf:`$false parameter value correctly" {
+        # When -Leaf:$false is specified, it should behave like -Parent (default)
+        $dirSep = [string]([System.IO.Path]::DirectorySeparatorChar)
+        Split-Path -Path "/usr/bin" -Leaf:$false | Should -BeExactly "${dirSep}usr"
+    }
+
+    It "Should handle explicit -IsAbsolute:`$false parameter value correctly" {
+        # When -IsAbsolute:$false is specified, it should behave like -Parent (default)
+        $dirSep = [string]([System.IO.Path]::DirectorySeparatorChar)
+        Split-Path -Path "fs:/usr/bin" -IsAbsolute:$false | Should -BeExactly "fs:${dirSep}usr"
     }
 }
