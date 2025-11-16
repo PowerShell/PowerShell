@@ -1,8 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="../Test.Common.props"/>
 
   <PropertyGroup>
+    <OutputType>Exe</OutputType>
     <Description>PowerShell hosting SDK xUnit Tests</Description>
     <AssemblyName>powershell-hosting-tests</AssemblyName>
   </PropertyGroup>
@@ -14,13 +15,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="xunit" Version="2.4.1" />
-    <PackageReference Include="XunitXml.TestLogger" Version="2.0.0" />
+    <PackageReference Include="xunit.v3.mtp-v2" Version="3.2.0" />
     <!-- The version of Microsoft.PowerShell.SDK should be the version we are releasing, so the tests use the correct SDK before publishing to NuGet.org -->
     <PackageReference Include="Microsoft.PowerShell.SDK" Version="$(RELEASE_VERSION)" />
-    <PackageReference Include="Xunit.SkippableFact" Version="1.3.6" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.1" />
     <PackageReference Include="System.ServiceModel.Duplex" Version="4.10.3" NoWarn="NU1605" />
     <PackageReference Include="System.ServiceModel.Http" Version="4.10.3" NoWarn="NU1605" />
     <PackageReference Include="System.ServiceModel.NetTcp" Version="4.10.3" NoWarn="NU1605" />
