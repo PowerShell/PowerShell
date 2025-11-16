@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation.
+﻿# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 # This is a Pester test suite which validate the Web cmdlets.
@@ -1733,26 +1733,18 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             "ReadOnly test content" | Out-File -FilePath $readOnlyFile -Encoding utf8
             Set-ItemProperty -Path $readOnlyFile -Name IsReadOnly -Value $true
 
-            try {
-                $form = @{TestFile = [System.IO.FileInfo]$readOnlyFile}
-                $uri = Get-WebListenerUrl -Test 'Multipart'
-                $response = Invoke-WebRequest -Uri $uri -Form $form -Method 'POST'
-                $result = $response.Content | ConvertFrom-Json
+            $form = @{TestFile = [System.IO.FileInfo]$readOnlyFile}
+            $uri = Get-WebListenerUrl -Test 'Multipart'
+            $response = Invoke-WebRequest -Uri $uri -Form $form -Method 'POST'
+            $result = $response.Content | ConvertFrom-Json
 
-                $result.Headers.'Content-Type' | Should -Match 'multipart/form-data'
-                $result.Files.Count | Should -Be 1
+            $result.Headers.'Content-Type' | Should -Match 'multipart/form-data'
+            $result.Files.Count | Should -Be 1
 
-                $result.Files[0].Name | Should -BeExactly "TestFile"
-                $result.Files[0].FileName | Should -BeExactly "readonly-test.txt"
-                $result.Files[0].ContentType | Should -BeExactly 'application/octet-stream'
-                $result.Files[0].Content | Should -Match "ReadOnly test content"
-            } finally {
-                # Clean up: remove read-only attribute before cleanup
-                if (Test-Path $readOnlyFile) {
-                    Set-ItemProperty -Path $readOnlyFile -Name IsReadOnly -Value $false
-                    Remove-Item -Path $readOnlyFile -Force
-                }
-            }
+            $result.Files[0].Name | Should -BeExactly "TestFile"
+            $result.Files[0].FileName | Should -BeExactly "readonly-test.txt"
+            $result.Files[0].ContentType | Should -BeExactly 'application/octet-stream'
+            $result.Files[0].Content | Should -Match "ReadOnly test content"
         }
 
         It "Verifies Invoke-WebRequest -Form sets Content-Disposition FileName and FileNameStar." {
@@ -3602,25 +3594,17 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
             "ReadOnly test content" | Out-File -FilePath $readOnlyFile -Encoding utf8
             Set-ItemProperty -Path $readOnlyFile -Name IsReadOnly -Value $true
 
-            try {
-                $form = @{TestFile = [System.IO.FileInfo]$readOnlyFile}
-                $uri = Get-WebListenerUrl -Test 'Multipart'
-                $result = Invoke-RestMethod -Uri $uri -Form $form -Method 'POST'
+            $form = @{TestFile = [System.IO.FileInfo]$readOnlyFile}
+            $uri = Get-WebListenerUrl -Test 'Multipart'
+            $result = Invoke-RestMethod -Uri $uri -Form $form -Method 'POST'
 
-                $result.Headers.'Content-Type' | Should -Match 'multipart/form-data'
-                $result.Files.Count | Should -Be 1
+            $result.Headers.'Content-Type' | Should -Match 'multipart/form-data'
+            $result.Files.Count | Should -Be 1
 
-                $result.Files[0].Name | Should -Be "TestFile"
-                $result.Files[0].FileName | Should -Be "readonly-test.txt"
-                $result.Files[0].ContentType | Should -Be 'application/octet-stream'
-                $result.Files[0].Content | Should -Match "ReadOnly test content"
-            } finally {
-                # Clean up: remove read-only attribute before cleanup
-                if (Test-Path $readOnlyFile) {
-                    Set-ItemProperty -Path $readOnlyFile -Name IsReadOnly -Value $false
-                    Remove-Item -Path $readOnlyFile -Force
-                }
-            }
+            $result.Files[0].Name | Should -Be "TestFile"
+            $result.Files[0].FileName | Should -Be "readonly-test.txt"
+            $result.Files[0].ContentType | Should -Be 'application/octet-stream'
+            $result.Files[0].Content | Should -Match "ReadOnly test content"
         }
 
         It "Verifies Invoke-RestMethod -Form sets Content-Disposition FileName and FileNameStar." {
