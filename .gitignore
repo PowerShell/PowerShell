@@ -82,6 +82,8 @@ Temporary Items
 TestsResults*.xml
 ParallelXUnitResults.xml
 xUnitResults.xml
+xUnitTestResults.xml
+coverage.xml
 
 # Attack Surface Analyzer results
 asa-results/
