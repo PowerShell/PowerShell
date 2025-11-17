@@ -233,6 +233,7 @@ DUPLICATE key '{fullName}' from '{strongAssemblyName}' (IsObsolete? {isTypeObsol
             switch (hashAlgorithm)
             {
                 case AssemblyHashAlgorithm.Sha1:
+                    // codeql[cs/weak-crypto] SHA-1 hash algorithm is only provided for backwards compatbility and SHA-2 algorithm and its variants are supported.
                     hashImpl = SHA1.Create();
                     break;
                 case AssemblyHashAlgorithm.Sha256:
