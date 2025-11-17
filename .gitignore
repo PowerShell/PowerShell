@@ -87,7 +87,7 @@ xUnitResults.xml
 asa-results/
 
 # Resharper settings
-PowerShell.sln.DotSettings.user
+PowerShell.slnx.DotSettings.user
 *.msp
 StyleCop.Cache
 
