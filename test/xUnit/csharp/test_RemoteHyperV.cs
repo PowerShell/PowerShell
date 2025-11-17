@@ -13,7 +13,6 @@ using System.Text;
 using System.Reflection;
 using System.Threading.Tasks;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace PSTests.Sequential
 {
@@ -25,7 +24,7 @@ namespace PSTests.Sequential
         {
             if (!System.Management.Automation.Platform.IsWindows)
             {
-                throw new SkipException("RemoteHyperVTests are only supported on Windows.");
+                Assert.Skip("RemoteHyperVTests are only supported on Windows.");
             }
 
             _output = output;

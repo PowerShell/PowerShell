@@ -108,10 +108,10 @@ namespace PSTests.Parallel
             Assert.Equal("attr", member.Name);
         }
 
-        [SkippableFact]
+        [Fact]
         public static void TestCimInstanceProperty()
         {
-            Skip.IfNot(Platform.IsWindows);
+            Assert.SkipUnless(Platform.IsWindows, "Only supported on Windows");
             var iss = InitialSessionState.CreateDefault2();
             iss.Commands.Add(new SessionStateCmdletEntry("Get-CimInstance", typeof(Microsoft.Management.Infrastructure.CimCmdlets.GetCimInstanceCommand), null));
             using (var ps = PowerShell.Create(iss))

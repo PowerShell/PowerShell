@@ -10,12 +10,11 @@ using System.Reflection;
 using System.Threading;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using PSTests.Internal;
+using TestOrder.TestCaseOrdering;
 using Xunit;
 
 namespace PSTests.Sequential
 {
-    [TestCaseOrderer("TestOrder.TestCaseOrdering.PriorityOrderer", "powershell-tests")]
     public class PowerShellPolicyFixture : IDisposable
     {
         private const string ConfigFileName = "powershell.config.json";
@@ -399,6 +398,7 @@ namespace PSTests.Sequential
         #endregion
     }
 
+    [TestCaseOrderer(typeof(SourceDeclarationOrderer))]
     public class PowerShellPolicyTests : IClassFixture<PowerShellPolicyFixture>
     {
         private readonly PowerShellPolicyFixture fixture;
@@ -408,7 +408,7 @@ namespace PSTests.Sequential
             this.fixture = fixture;
         }
 
-        [Fact, Priority(1)]
+        [Fact]
         public void PowerShellConfig_GetPowerShellPolicies_BothConfigFilesNotEmpty()
         {
             fixture.SetupConfigFile1();
@@ -424,7 +424,7 @@ namespace PSTests.Sequential
             fixture.CompareTwoPolicies(userPolicies, fixture.CurrentUserPolicies);
         }
 
-        [Fact, Priority(2)]
+        [Fact]
         public void PowerShellConfig_GetPowerShellPolicies_EmptyUserConfig()
         {
             fixture.SetupConfigFile2();
@@ -439,7 +439,7 @@ namespace PSTests.Sequential
             fixture.CompareTwoPolicies(sysPolicies, fixture.SystemWidePolicies);
         }
 
-        [Fact, Priority(3)]
+        [Fact]
         public void PowerShellConfig_GetPowerShellPolicies_EmptySystemConfig()
         {
             fixture.SetupConfigFile3();
@@ -454,7 +454,7 @@ namespace PSTests.Sequential
             fixture.CompareTwoPolicies(userPolicies, fixture.CurrentUserPolicies);
         }
 
-        [Fact, Priority(4)]
+        [Fact]
         public void PowerShellConfig_GetPowerShellPolicies_BothConfigFilesEmpty()
         {
             fixture.SetupConfigFile4();
@@ -467,7 +467,7 @@ namespace PSTests.Sequential
             Assert.Null(userPolicies);
         }
 
-        [Fact, Priority(5)]
+        [Fact]
         public void PowerShellConfig_GetPowerShellPolicies_BothConfigFilesNotExist()
         {
             fixture.CleanupConfigFiles();
@@ -480,7 +480,7 @@ namespace PSTests.Sequential
             Assert.Null(userPolicies);
         }
 
-        [Fact, Priority(6)]
+        [Fact]
         public void Utils_GetPolicySetting_BothConfigFilesNotEmpty()
         {
             fixture.SetupConfigFile1();
@@ -579,7 +579,7 @@ namespace PSTests.Sequential
             fixture.CompareConsoleSessionConfiguration(consoleSessionConfiguration, fixture.SystemWidePolicies.ConsoleSessionConfiguration);
         }
 
-        [Fact, Priority(7)]
+        [Fact]
         public void Utils_GetPolicySetting_EmptyUserConfig()
         {
             fixture.SetupConfigFile2();
@@ -678,7 +678,7 @@ namespace PSTests.Sequential
             fixture.CompareConsoleSessionConfiguration(consoleSessionConfiguration, fixture.SystemWidePolicies.ConsoleSessionConfiguration);
         }
 
-        [Fact, Priority(8)]
+        [Fact]
         public void Utils_GetPolicySetting_EmptySystemConfig()
         {
             fixture.SetupConfigFile3();
@@ -778,7 +778,7 @@ namespace PSTests.Sequential
             fixture.CompareConsoleSessionConfiguration(consoleSessionConfiguration, null);
         }
 
-        [Fact, Priority(9)]
+        [Fact]
         public void Utils_GetPolicySetting_BothConfigFilesEmpty()
         {
             fixture.SetupConfigFile4();
@@ -878,7 +878,7 @@ namespace PSTests.Sequential
             fixture.CompareConsoleSessionConfiguration(consoleSessionConfiguration, null);
         }
 
-        [Fact, Priority(10)]
+        [Fact]
         public void Utils_GetPolicySetting_BothConfigFilesNotExist()
         {
             fixture.CleanupConfigFiles();
@@ -978,7 +978,7 @@ namespace PSTests.Sequential
             fixture.CompareConsoleSessionConfiguration(consoleSessionConfiguration, null);
         }
 
-        [Fact, Priority(11)]
+        [Fact]
         public void PowerShellConfig_GetPowerShellPolicies_BrokenSystemConfig()
         {
             fixture.SetupConfigFile5();
