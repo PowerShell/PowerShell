@@ -2114,6 +2114,22 @@ function Get-PackageDependencies
 
         # These should match those in the Dockerfiles, but exclude tools like Git, which, and curl
         $Dependencies = @()
+
+        # ICU version range follows .NET runtime policy.
+        # See: https://github.com/dotnet/runtime/blob/3fe8518d51bbcaa179bbe275b2597fbe1b88bc5a/src/native/libs/System.Globalization.Native/pal_icushim.c#L235-L243
+        #
+        # Version range rationale:
+        # - The runtime supports ICU versions >= the version it was built against
+        #   and <= that version + 30, to allow sufficient headroom for future releases.
+        # - ICU typically releases about twice per year, so +30 provides roughly
+        #   15 years of forward compatibility.
+        # - On some platforms, the minimum supported version may be lower
+        #   than the build version and we know that older versions just works.
+        #
+        $MinICUVersion = 60                    # runtime minimum supported
+        $BuildICUVersion = 76                  # current build version
+        $MaxICUVersion = $BuildICUVersion + 30 # headroom
+
         if ($Distribution -eq 'deb') {
             $Dependencies = @(
                 "libc6",
@@ -2121,10 +2137,9 @@ function Get-PackageDependencies
                 "libgssapi-krb5-2",
                 "libstdc++6",
                 "zlib1g",
-                "libicu76|libicu74|libicu72|libicu71|libicu70|libicu69|libicu68|libicu67|libicu66|libicu65|libicu63|libicu60|libicu57|libicu55|libicu52",
+                (($MaxICUVersion..$MinICUVersion).ForEach{ "libicu$_" } -join '|'),
                 "libssl3|libssl1.1|libssl1.0.2|libssl1.0.0"
             )
-
         } elseif ($Distribution -eq 'rh') {
             $Dependencies = @(
                 "openssl-libs",
