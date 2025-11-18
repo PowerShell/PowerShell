@@ -335,7 +335,7 @@ namespace System.Management.Automation
                     foundStart = true;
                     continue;
                 }
-                
+
                 if (foundStart && pattern[index] is ']')
                 {
                     result = true;
@@ -524,7 +524,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
-        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected WildcardPatternException(SerializationInfo info,
                                         StreamingContext context)
         {

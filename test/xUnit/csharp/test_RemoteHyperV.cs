@@ -20,7 +20,6 @@ namespace PSTests.Sequential
     public class RemoteHyperVTests
     {
         private static ITestOutputHelper _output;
-        private static TimeSpan timeout = TimeSpan.FromSeconds(15);
 
         public RemoteHyperVTests(ITestOutputHelper output)
         {
@@ -63,12 +62,48 @@ namespace PSTests.Sequential
             }
         }
 
+        private static void SendResponse(string name, Socket client, Queue<(byte[] bytes, int delayMs)> serverResponses)
+        {
+            if (serverResponses.Count > 0)
+            {
+                _output.WriteLine($"Mock {name} ----------------------------------------------------");
+                var respTuple = serverResponses.Dequeue();
+                var resp = respTuple.bytes;
+
+                if (respTuple.delayMs > 0)
+                {
+                    _output.WriteLine($"Mock {name} - delaying response by {respTuple.delayMs} ms");
+                    Thread.Sleep(respTuple.delayMs);
+                }
+                if (resp.Length > 0) {
+                    client.Send(resp, resp.Length, SocketFlags.None);
+                    _output.WriteLine($"Mock {name} - sent response: " + Encoding.ASCII.GetString(resp));
+                }
+            }
+        }
+
         private static void StartHandshakeServer(
             string name,
             int port,
-            IEnumerable<(string message,
-            Encoding encoding)> expectedClientSends,
+            IEnumerable<(string message, Encoding encoding)> expectedClientSends,
             IEnumerable<(string message, Encoding encoding)> serverResponses,
+            bool verifyConnectionClosed,
+            CancellationToken cancellationToken,
+            bool sendFirst = false)
+        {
+            IEnumerable<(string message, Encoding encoding, int delayMs)> serverResponsesWithDelay = new List<(string message, Encoding encoding, int delayMs)>();
+            foreach (var item in serverResponses)
+            {
+                ((List<(string message, Encoding encoding, int delayMs)>)serverResponsesWithDelay).Add((item.message, item.encoding, 1));
+            }
+            StartHandshakeServer(name, port, expectedClientSends, serverResponsesWithDelay, verifyConnectionClosed, cancellationToken, sendFirst);
+        }
+
+        private static void StartHandshakeServer(
+            string name,
+            int port,
+            IEnumerable<(string message, Encoding encoding)> expectedClientSends,
+            IEnumerable<(string message, Encoding encoding, int delayMs)> serverResponses,
             bool verifyConnectionClosed,
             CancellationToken cancellationToken,
             bool sendFirst = false)
@@ -80,17 +115,27 @@ namespace PSTests.Sequential
                 expectedMessages.Enqueue((message: item.message, bytes: itemBytes, encoding: item.encoding));
             }
 
-            var serverResponseBytes = new Queue<byte[]>();
+            var serverResponseBytes = new Queue<(byte[] bytes, int delayMs)>();
             foreach (var item in serverResponses)
             {
-                serverResponseBytes.Enqueue(item.encoding.GetBytes(item.message));
+                (byte[] bytes, int delayMs) queueItem = (item.encoding.GetBytes(item.message), item.delayMs);
+                serverResponseBytes.Enqueue(queueItem);
             }
 
-            StartHandshakeServer(name, port, expectedMessages, serverResponseBytes, verifyConnectionClosed, cancellationToken, sendFirst);
+            _output.WriteLine($"Mock {name} - starting listener on port {port} with {expectedMessages.Count} expected messages and {serverResponseBytes.Count} responses.");
+            StartHandshakeServerImplementation(name, port, expectedMessages, serverResponseBytes, verifyConnectionClosed, cancellationToken, sendFirst);
         }
 
-        private static void StartHandshakeServer(string name, int port, Queue<(string message, byte[] bytes, Encoding encoding)> expectedClientSends, Queue<byte[]> serverResponses, bool verifyConnectionClosed, CancellationToken cancellationToken, bool sendFirst = false)
+        private static void StartHandshakeServerImplementation(
+            string name,
+            int port,
+            Queue<(string message, byte[] bytes, Encoding encoding)> expectedClientSends,
+            Queue<(byte[] bytes, int delayMs)> serverResponses,
+            bool verifyConnectionClosed,
+            CancellationToken cancellationToken,
+            bool sendFirst = false)
         {
+            DateTime startTime = DateTime.UtcNow;
             var buffer = new byte[1024];
             var listener = new TcpListener(IPAddress.Loopback, port);
             listener.Start();
@@ -101,19 +146,16 @@ namespace PSTests.Sequential
                     if (sendFirst)
                     {
                         // Send the first message from the serverResponses queue
-                        if (serverResponses.Count > 0)
-                        {
-                            var resp = serverResponses.Dequeue();
-                            client.Send(resp, resp.Length, SocketFlags.None);
-                            _output.WriteLine($"Mock {name} - sent response: " + Encoding.ASCII.GetString(resp));
-                        }
+                        SendResponse(name, client, serverResponses);
                     }
 
                     while (expectedClientSends.Count > 0)
                     {
+                        _output.WriteLine($"Mock {name} - time elapsed: {(DateTime.UtcNow - startTime).TotalMilliseconds} milliseconds");
                         client.ReceiveTimeout = 2 * 1000; // 2 seconds timeout for receiving data
                         cancellationToken.ThrowIfCancellationRequested();
                         var expectedMessage = expectedClientSends.Dequeue();
+                        _output.WriteLine($"Mock {name} - remaining expected messages: {expectedClientSends.Count}");
                         var expected = expectedMessage.bytes;
                         Array.Clear(buffer, 0, buffer.Length);
                         int received = client.Receive(buffer);
@@ -143,12 +185,7 @@ namespace PSTests.Sequential
                             throw new Exception(errorMessage);
                         }
                         _output.WriteLine($"Mock {name} - received expected message: " + expectedString);
-                        if (serverResponses.Count > 0)
-                        {
-                            var resp = serverResponses.Dequeue();
-                            client.Send(resp, resp.Length, SocketFlags.None);
-                            _output.WriteLine($"Mock {name} - sent response: " + Encoding.ASCII.GetString(resp));
-                        }
+                        SendResponse(name, client, serverResponses);
                     }
 
                     if (verifyConnectionClosed)
@@ -178,6 +215,7 @@ namespace PSTests.Sequential
                         }
                         catch (ObjectDisposedException)
                         {
+                            _output.WriteLine($"Mock {name} - socket already closed.");
                             // Socket already closed
                         }
                     }
@@ -185,8 +223,16 @@ namespace PSTests.Sequential
 
                 _output.WriteLine($"Mock {name} - on port {port} completed successfully.");
             }
+            catch (Exception ex)
+            {
+                _output.WriteLine($"Mock {name} - Exception: {ex.Message} {ex.GetType().FullName}");
+                _output.WriteLine(ex.StackTrace);
+                throw;
+            }
             finally
             {
+                _output.WriteLine($"Mock {name} - remaining expected messages: {expectedClientSends.Count}");
+                _output.WriteLine($"Mock {name} - stopping listener on port {port}.");
                 listener.Stop();
             }
         }
@@ -615,8 +661,106 @@ namespace PSTests.Sequential
             using (var client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
             {
                 ConnectWithRetry(client, IPAddress.Loopback, port, _output);
-                System.Management.Automation.Remoting.RemoteSessionHyperVSocketServer.ValidateToken(client, expectedToken);
+                System.Management.Automation.Remoting.RemoteSessionHyperVSocketServer.ValidateToken(client, expectedToken, DateTimeOffset.UtcNow, 1);
                 System.Threading.Thread.Sleep(100); // Allow time for server to process
+            }
+
+            await serverTask;
+        }
+
+        [SkippableTheory]
+        [InlineData(5500, "A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond.", "SocketException")] // test the socket timeout
+        [InlineData(3200, "canceled", "System.OperationCanceledException")] // test the cancellation token
+        [InlineData(10, "", "")]
+        public async Task ValidateTokenTimeoutFails(int timeoutMs, string expectedMessage, string expectedExceptionType = "SocketException")
+        {
+            string token = "testToken";
+            string expectedToken = token;
+            int port = 50000 + (int)(DateTime.Now.Ticks % 10000);
+
+            var expectedClientSends = new List<(string message, Encoding encoding, int delayMs)>{
+                (message: "VERSION", encoding: Encoding.ASCII, delayMs: timeoutMs), // Response to VERSION
+                (message: "VERSION_2", encoding: Encoding.ASCII, delayMs: timeoutMs), // Response to VERSION_2
+                (message: $"TOKEN {token}", encoding: Encoding.ASCII, delayMs: 1)
+            };
+
+            var serverResponses = new List<(string message, Encoding encoding)>{
+                (message: "VERSION_2", encoding: Encoding.ASCII), // Response to VERSION_2
+                (message: "PASS", encoding: Encoding.ASCII), // Response to VERSION_2
+                (message: "PASS", encoding: Encoding.ASCII) // Response to token
+            };
+
+            using var cts = new CancellationTokenSource(TimeSpan.FromMinutes(1));
+            var serverTask = Task.Run(() => StartHandshakeServer("Client", port, serverResponses, expectedClientSends, verifyConnectionClosed: true, cts.Token, sendFirst: true), cts.Token);
+
+            using (var client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
+            {
+                ConnectWithRetry(client, IPAddress.Loopback, port, _output);
+                if (expectedMessage.Length > 0)
+                {
+                    var exception = Record.Exception(
+                        () => System.Management.Automation.Remoting.RemoteSessionHyperVSocketServer.ValidateToken(client, expectedToken, DateTimeOffset.UtcNow, 5)); // set the timeout to  5 seconds or 5000 ms
+                    Assert.NotNull(exception);
+                    string exceptionType = exception.GetType().FullName;
+                    _output.WriteLine($"Caught exception of type {exceptionType} with message: {exception.Message}");
+                    Assert.Contains(expectedExceptionType, exceptionType, StringComparison.OrdinalIgnoreCase);
+                    Assert.Contains(expectedMessage, exception.Message, StringComparison.OrdinalIgnoreCase);
+                }
+                else
+                {
+                    System.Management.Automation.Remoting.RemoteSessionHyperVSocketServer.ValidateToken(client, expectedToken, DateTimeOffset.UtcNow, 5);
+                }
+                System.Threading.Thread.Sleep(100); // Allow time for server to process
+            }
+
+            if (expectedMessage.Length == 0)
+            {
+                await serverTask;
+            }
+        }
+
+        [SkippableFact]
+        public async Task ValidateTokenTimeoutDoesAffectSession()
+        {
+            string token = "testToken";
+            string expectedToken = token;
+            int port = 50000 + (int)(DateTime.Now.Ticks % 10000);
+
+            var expectedClientSends = new List<(string message, Encoding encoding, int delayMs)>{
+                (message: "VERSION", encoding: Encoding.ASCII, delayMs: 1), // Response to VERSION
+                (message: "VERSION_2", encoding: Encoding.ASCII, delayMs: 1), // Response to VERSION_2
+                (message: $"TOKEN {token}", encoding: Encoding.ASCII, delayMs: 1),
+                (message: string.Empty, encoding: Encoding.ASCII, delayMs: 99), // Send some data after the handshake
+                (message: string.Empty, encoding: Encoding.ASCII, delayMs: 100), // Send some data after the handshake
+                (message: string.Empty, encoding: Encoding.ASCII, delayMs: 101),  // Send some data after the handshake
+                (message: string.Empty, encoding: Encoding.ASCII, delayMs: 102),  // Send some data after the handshake
+                (message: string.Empty, encoding: Encoding.ASCII, delayMs: 103)  // Send some data after the handshake
+            };
+
+            var serverResponses = new List<(string message, Encoding encoding)>{
+                (message: "VERSION_2", encoding: Encoding.ASCII), // Response to VERSION_2
+                (message: "PASS", encoding: Encoding.ASCII), // Response to VERSION_2
+                (message: "PASS", encoding: Encoding.ASCII), // Response to token
+                (message: "PSRP-Message0", encoding: Encoding.ASCII), // Indicate server is ready to receive data
+                (message: "PSRP-Message1", encoding: Encoding.ASCII), // Indicate server is ready to receive data
+                (message: "PSRP-Message2", encoding: Encoding.ASCII),  // Indicate server is ready to receive data
+                (message: "PSRP-Message3", encoding: Encoding.ASCII),  // Indicate server is ready to receive data
+                (message: "PSRP-Message4", encoding: Encoding.ASCII)  //
+
+            };
+
+            using var cts = new CancellationTokenSource(TimeSpan.FromMinutes(2));
+            var serverTask = Task.Run(() => StartHandshakeServer("Client", port, serverResponses, expectedClientSends, verifyConnectionClosed: false, cts.Token, sendFirst: true), cts.Token);
+
+            using (var client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
+            {
+                ConnectWithRetry(client, IPAddress.Loopback, port, _output);
+                System.Management.Automation.Remoting.RemoteSessionHyperVSocketServer.ValidateToken(client, expectedToken, DateTimeOffset.UtcNow, 5);
+                for (int i = 0; i < 5; i++)
+                {
+                    System.Threading.Thread.Sleep(1500);
+                    client.Send(Encoding.ASCII.GetBytes($"PSRP-Message{i}")); // Send some data after the handshake
+                }
             }
 
             await serverTask;
@@ -649,8 +793,9 @@ namespace PSTests.Sequential
             using (var client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
             {
                 ConnectWithRetry(client, IPAddress.Loopback, port, _output);
+                DateTimeOffset tokenCreationTime = DateTimeOffset.UtcNow; // Token created 10 minutes ago
                 var exception = Assert.Throws<System.Management.Automation.Remoting.PSDirectException>(
-                    () => System.Management.Automation.Remoting.RemoteSessionHyperVSocketServer.ValidateToken(client, expectedToken));
+                    () => System.Management.Automation.Remoting.RemoteSessionHyperVSocketServer.ValidateToken(client, expectedToken, tokenCreationTime, 5));
                 System.Threading.Thread.Sleep(100); // Allow time for server to process
                 Assert.Contains("The credential is invalid.", exception.Message);
             }

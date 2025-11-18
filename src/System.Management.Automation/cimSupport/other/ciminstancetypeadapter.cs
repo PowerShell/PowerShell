@@ -267,7 +267,7 @@ namespace Microsoft.PowerShell.Cim
         /// <returns></returns>
         public override Collection<string> GetTypeNameHierarchy(object baseObject)
         {
-            if (!(baseObject is CimInstance cimInstance))
+            if (baseObject is not CimInstance cimInstance)
             {
                 throw new ArgumentNullException(nameof(baseObject));
             }
@@ -343,7 +343,7 @@ namespace Microsoft.PowerShell.Cim
                 return false;
             }
 
-            if (!(adaptedProperty.Tag is CimProperty cimProperty))
+            if (adaptedProperty.Tag is not CimProperty cimProperty)
             {
                 return false;
             }

@@ -258,30 +258,7 @@ namespace System.Management.Automation.Remoting
                 listenSocket.Listen(1);
                 HyperVSocket = listenSocket.Accept();
 
-                TimeSpan timeout = TimeSpan.FromMinutes(MAX_TOKEN_LIFE_MINUTES);
-                DateTimeOffset timeoutExpiry = tokenCreationTime.Add(timeout);
-                DateTimeOffset now = DateTimeOffset.UtcNow;
-
-                // Calculate remaining time and create cancellation token
-                TimeSpan remainingTime = timeoutExpiry - now;
-
-                // Check if the token has already expired
-                if (remainingTime <= TimeSpan.Zero)
-                {
-                    throw new PSDirectException(
-                        PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.InvalidCredential, "Token has expired"));
-                }
-
-                // Set socket timeout for receive operations to prevent indefinite blocking
-                int timeoutMs = (int)remainingTime.TotalMilliseconds;
-                HyperVSocket.ReceiveTimeout = timeoutMs;
-                HyperVSocket.SendTimeout = timeoutMs;
-
-                // Create a cancellation token that will be cancelled when the timeout expires
-                using var cancellationTokenSource = new CancellationTokenSource(remainingTime);
-                CancellationToken cancellationToken = cancellationTokenSource.Token;
-
-                ValidateToken(HyperVSocket, token, cancellationToken);
+                ValidateToken(HyperVSocket, token, tokenCreationTime, MAX_TOKEN_LIFE_MINUTES * 60);
 
                 Stream = new NetworkStream(HyperVSocket, true);
 
@@ -389,9 +366,33 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="socket">The connected HyperVSocket.</param>
         /// <param name="token">The expected token string.</param>
-        /// <param name="cancellationToken">Cancellation token for timeout handling.</param>
-        internal static void ValidateToken(Socket socket, string token, CancellationToken cancellationToken = default)
+        /// <param name="tokenCreationTime">The creation time of the token.</param>
+        /// <param name="maxTokenLifeSeconds">The maximum lifetime of the token in seconds.</param>
+        internal static void ValidateToken(Socket socket, string token, DateTimeOffset tokenCreationTime, int maxTokenLifeSeconds)
         {
+            TimeSpan timeout = TimeSpan.FromSeconds(maxTokenLifeSeconds);
+            DateTimeOffset timeoutExpiry = tokenCreationTime.Add(timeout);
+            DateTimeOffset now = DateTimeOffset.UtcNow;
+
+            // Calculate remaining time and create cancellation token
+            TimeSpan remainingTime = timeoutExpiry - now;
+
+            // Check if the token has already expired
+            if (remainingTime <= TimeSpan.Zero)
+            {
+                throw new PSDirectException(
+                    PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.InvalidCredential, "Token has expired"));
+            }
+
+            // Create a cancellation token that will be cancelled when the timeout expires
+            using var cancellationTokenSource = new CancellationTokenSource(remainingTime);
+            CancellationToken cancellationToken = cancellationTokenSource.Token;
+
+            // Set socket timeout for receive operations to prevent indefinite blocking
+            int timeoutMs = (int)remainingTime.TotalMilliseconds;
+            socket.ReceiveTimeout = timeoutMs;
+            socket.SendTimeout = timeoutMs;
+
             // Check for cancellation before starting validation
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -430,9 +431,13 @@ namespace System.Management.Automation.Remoting
             // So we expect a response of length 6 + 100 = 106 characters.
             responseString = RemoteSessionHyperVSocketClient.ReceiveResponse(socket, 110);
 
+            // Final check if we got the token before the timeout
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (string.IsNullOrEmpty(responseString) || !responseString.StartsWith("TOKEN ", StringComparison.Ordinal))
+            ReadOnlySpan<byte> responseBytes = Encoding.UTF8.GetBytes(responseString);
+            string responseToken = RemoteSessionHyperVSocketClient.ExtractToken(responseBytes);
+
+            if (responseToken == null)
             {
                 socket.Send("FAIL"u8);
                 // If the response is not in the expected format, we throw an exception.
@@ -441,9 +446,6 @@ namespace System.Management.Automation.Remoting
                 throw new PSDirectException(
                     PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.HyperVInvalidResponse, "Client", "Token Response"));
             }
-
-            // Extract the token from the response.
-            string responseToken = responseString.Substring(6).Trim();
 
             if (!string.Equals(responseToken, token, StringComparison.Ordinal))
             {
@@ -454,6 +456,9 @@ namespace System.Management.Automation.Remoting
 
             // Acknowledge the token is valid with "PASS".
             socket.Send("PASS"u8);
+
+            socket.ReceiveTimeout = 0; // Disable the timeout after successful validation
+            socket.SendTimeout = 0;
         }
     }
 
@@ -1054,14 +1059,18 @@ namespace System.Management.Automation.Remoting
                 // allowing a significant larger size, allows the broker to make almost arbitrary changes,
                 // without breaking the client.
                 string token = ReceiveResponse(HyperVSocket, 1024); // either "PASS" or "FAIL"
-                if (token == null || !token.StartsWith("TOKEN ", StringComparison.Ordinal))
+
+                ReadOnlySpan<byte> tokenResponseBytes = Encoding.UTF8.GetBytes(token);
+                string extractedToken = ExtractToken(tokenResponseBytes);
+
+                if (extractedToken == null)
                 {
                     s_tracer.WriteLine("ExchangeCredentialsAndConfiguration: Server did not respond with a valid token. Response: {0}", token);
                     throw new PSDirectException(
                         PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.HyperVInvalidResponse, "Broker", "Token " + token));
                 }
 
-                token = token.Substring(6); // remove "TOKEN " prefix
+                token = extractedToken;
 
                 HyperVSocket.Send("PASS"u8); // acknowledge the token
                 return (true, token);
@@ -1115,6 +1124,25 @@ namespace System.Management.Automation.Remoting
             {
                 pool.Return(responseBuffer);
             }
+        }
+
+        internal static string ExtractToken(ReadOnlySpan<byte> tokenResponse)
+        {
+            string token = Encoding.UTF8.GetString(tokenResponse);
+
+            if (token == null || !token.StartsWith("TOKEN ", StringComparison.Ordinal))
+            {
+                return null; // caller method will write trace (and determine when to expose token info as appropriate)
+            }
+
+            token = token.Substring(6).Trim(); // remove "TOKEN " prefix
+
+            if (token.Length == 0)
+            {
+                return null;
+            }
+
+            return token;
         }
 
         /// <summary>
