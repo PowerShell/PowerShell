@@ -100,7 +100,7 @@ Describe "Split-Path" -Tags "CI" {
         Split-Path -Path 'C:\' | Should -BeNullOrEmpty
     }
 
-    It "Should handle explicit -Qualifier:$false parameter value correctly" {
+    It "Should handle explicit -Qualifier:`$false parameter value correctly" {
         # When -Qualifier:$false is specified, it should behave like -Parent (default)
         # For env:PATH, the parent is empty string
         $result = Split-Path -Path "env:PATH" -Qualifier:$false
