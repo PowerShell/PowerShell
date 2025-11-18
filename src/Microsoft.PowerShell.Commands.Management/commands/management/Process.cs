@@ -1903,7 +1903,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (CommandNotFoundException)
             {
-                // codeql[cs/microsoft/command-line-injection-shell-execution] - This is expected Poweshell behavior where user inputted paths are supported for the context of this method. The user assumes trust for the file path they are specifying and the process is on the user's system except for remoting in which case restricted remoting security guidelines should be used.
+                // codeql[cs/microsoft/command-line-injection-shell-execution] - This is expected PowerShell behavior where user inputted paths are supported for the context of this method. The user assumes trust for the file path they are specifying and the process is on the user's system except for remoting in which case restricted remoting security guidelines should be used.
                 startInfo.FileName = FilePath;
 #if UNIX
                 // Arguments are passed incorrectly to the executable used for ShellExecute and not to filename https://github.com/dotnet/corefx/issues/30718
@@ -1932,6 +1932,7 @@ namespace Microsoft.PowerShell.Commands
                     return;
                 }
 
+                // codeql[cs/microsoft/command-line-injection] - This is expected PowerShell behavior where user inputted path to working directory is supported for the context of this method. The user assumes trust for the working directory path they are specifying and the process is on the user's system except for remoting in which case restricted remoting security guidelines should be used.
                 startInfo.WorkingDirectory = WorkingDirectory;
             }
             else
@@ -1940,6 +1941,7 @@ namespace Microsoft.PowerShell.Commands
                 var currentDirectory = PathUtils.ResolveFilePath(this.SessionState.Path.CurrentFileSystemLocation.Path, this, isLiteralPath: true);
                 if (Directory.Exists(currentDirectory))
                 {
+                    // codeql[cs/microsoft/command-line-injection] - This is expected PowerShell behavior where current directory path is supported for the context of this method. The user assumes trust for the current directory path and the process is on the user's system except for remoting in which case restricted remoting security guidelines should be used.
                     startInfo.WorkingDirectory = currentDirectory;
                 }
             }
