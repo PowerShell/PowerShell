@@ -274,7 +274,7 @@ namespace Microsoft.PowerShell.Commands
             if (Append.IsPresent && NoHeader.IsPresent)
             {
                 InvalidOperationException exception = new(CsvCommandStrings.CannotSpecifyAppendAndNoHeader);
-                ErrorRecord errorRecord = new(exception, "CannotSpecifyAppendAndNoHeader", ErrorCategory.InvalidArgument, null);
+                ErrorRecord errorRecord = new(exception, "CannotSpecifyBothAppendAndNoHeader", ErrorCategory.InvalidArgument, null);
                 this.ThrowTerminatingError(errorRecord);
             }
 
