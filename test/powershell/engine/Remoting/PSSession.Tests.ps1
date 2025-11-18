@@ -111,18 +111,33 @@ Describe "New-PSSession -UseWindowsPowerShell switch parameter" -Tag "CI" {
         # When UseWindowsPowerShell is not specified (or explicitly false), it should attempt
         # to connect via WinRM to localhost, which will fail if WinRM is not configured
 
-        $errorWithFalse = { New-PSSession -UseWindowsPowerShell:$false -ErrorAction Stop } | 
-            Should -Throw -PassThru
-        
-        $errorWithoutParameter = { New-PSSession -ErrorAction Stop } | 
-            Should -Throw -PassThru
+        # Test 1: -UseWindowsPowerShell:$true should create a Windows PowerShell 5.1 session
+        $session = $null
+        try {
+            $session = New-PSSession -UseWindowsPowerShell:$true -ErrorAction Stop
+            $session | Should -Not -BeNullOrEmpty
 
-        # Both should produce connection errors (since WinRM is not configured in test environment)
-        # NOT create a Windows PowerShell session
-        $errorWithFalse.Exception.Message | Should -Match 'connect|WinRM|localhost'
-        $errorWithoutParameter.Exception.Message | Should -Match 'connect|WinRM|localhost'
-        
-        # Both errors should be similar (not exact match due to timing/detail differences)
-        $errorWithFalse.Exception.GetType() | Should -Be $errorWithoutParameter.Exception.GetType()
+            # Verify it's Windows PowerShell 5.1
+            $version = Invoke-Command -Session $session -ScriptBlock { $PSVersionTable.PSVersion }
+            $version.Major | Should -Be 5
+            $version.Minor | Should -Be 1
+        }
+        finally {
+            if ($session) { Remove-PSSession $session -ErrorAction SilentlyContinue }
+        }
+
+        # Test 2: -UseWindowsPowerShell:$false should create a PowerShell Core session via WinRM
+        $session = $null
+        try {
+            $session = New-PSSession -UseWindowsPowerShell:$false -ErrorAction Stop
+            $session | Should -Not -BeNullOrEmpty
+
+            # Verify it's PowerShell Core (not Windows PowerShell 5.1)
+            $version = Invoke-Command -Session $session -ScriptBlock { $PSVersionTable.PSVersion }
+            $version.Major | Should -BeGreaterOrEqual 6
+        }
+        finally {
+            if ($session) { Remove-PSSession $session -ErrorAction SilentlyContinue }
+        }
     }
 }
