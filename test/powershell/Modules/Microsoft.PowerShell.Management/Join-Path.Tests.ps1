@@ -84,4 +84,33 @@ Describe "Join-Path cmdlet tests" -Tags "CI" {
     $result = Join-Path -Path $Path -ChildPath $ChildPath
     $result | Should -BeExactly $ExpectedResult
   }
+  It "should change extension when -Extension parameter is specified" {
+    $result = Join-Path -Path "C:\folder" -ChildPath "file.txt" -Extension ".log"
+    $result | Should -BeExactly "C:\folder\file.log"
+  }
+  It "should add extension to file without extension" {
+    $result = Join-Path -Path "C:\folder" -ChildPath "file" -Extension ".txt"
+    $result | Should -BeExactly "C:\folder\file.txt"
+  }
+  It "should remove extension when empty string is specified" {
+    $result = Join-Path -Path "C:\folder" -ChildPath "file.txt" -Extension ""
+    $result | Should -BeExactly "C:\folder\file"
+  }
+  It "should change extension for multiple paths" {
+    $result = Join-Path -Path "C:\folder1", "C:\folder2" -ChildPath "file.txt" -Extension ".log"
+    $result.Count | Should -Be 2
+    $result[0] | Should -BeExactly "C:\folder1\file.log"
+    $result[1] | Should -BeExactly "C:\folder2\file.log"
+  }
+  It "should handle extension with or without leading dot" {
+    $result1 = Join-Path -Path "C:\folder" -ChildPath "file.txt" -Extension ".log"
+    $result2 = Join-Path -Path "C:\folder" -ChildPath "file.txt" -Extension "log"
+    $result1 | Should -BeExactly "C:\folder\file.log"
+    $result2 | Should -BeExactly "C:\folder\file.log"
+  }
+  It "should accept Extension from pipeline by property name" {
+    $obj = [PSCustomObject]@{ Path = "C:\folder"; ChildPath = "file.txt"; Extension = ".log" }
+    $result = $obj | Join-Path
+    $result | Should -BeExactly "C:\folder\file.log"
+  }
 }

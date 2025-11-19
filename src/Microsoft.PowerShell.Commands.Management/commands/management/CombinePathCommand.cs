@@ -51,6 +51,12 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public SwitchParameter Resolve { get; set; }
 
+        /// <summary>
+        /// Gets or sets the extension to use for the resulting path.
+        /// </summary>
+        [Parameter(ValueFromPipelineByPropertyName = true)]
+        public string Extension { get; set; }
+
         #endregion Parameters
 
         #region Command code
@@ -126,6 +132,16 @@ namespace Microsoft.PowerShell.Commands
                             pathNotFound.ErrorRecord,
                             pathNotFound));
                     continue;
+                }
+                // Change extension if specified
+                if (Extension != null && joinedPath != null)
+                {
+                    joinedPath = System.IO.Path.ChangeExtension(joinedPath, Extension);
+                    // Remove trailing dot when extension is empty string
+                    if (Extension.Length == 0 && joinedPath.EndsWith('.'))
+                    {
+                        joinedPath = joinedPath.Substring(0, joinedPath.Length - 1);
+                    }
                 }
 
                 if (Resolve)
