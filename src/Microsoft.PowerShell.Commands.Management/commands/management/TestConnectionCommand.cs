@@ -264,7 +264,6 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (var targetName in TargetName)
             {
-
                 if (MtuSize)
                 {
                     ProcessMTUSize(targetName);
