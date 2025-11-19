@@ -1,0 +1,27 @@
+# This file will have a workflow that only runs when the working-groups.json file is updated.
+# It will update the README for the working groups based on the latest changes.
+# It will then update the PR with a commit updating the workinggrouptest.md file (initially to test) before we change this to the current working-group-definitions.md file
+name: Update Working Group definitions README
+on:
+  pull_request:
+    paths:
+      - 'docs/community/working-groups.json'
+    types: [opened, synchronize]
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Update working group README
+        run: |
+          echo "Updating working group README..."
+          # Here you would add the script or command to update the README based on the working-groups.json file.
+          # For example, you might run a script that generates the README from the JSON file.
+          echo "Working group README updated successfully."
+
+      - name: Commit changes
+        run: |
+          git config --local user.name "GitHub Action"
+          git config --local user.email "
