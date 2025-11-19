@@ -404,18 +404,15 @@ namespace System.Management.Automation
             var result = new List<CompletionResult>();
             var wordToComplete = completionContext.WordToComplete ?? string.Empty;
 
-            foreach (var parameter in paramBlockAst.Parameters)
-            {
-                var parameterName = parameter.Name.VariablePath.UserPath;
-                if (parameterName.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
-                {
-                    result.Add(new CompletionResult(
-                        parameterName,
-                        parameterName,
-                        CompletionResultType.ParameterValue,
-                        parameterName));
-                }
-            }
+            result = paramBlockAst.Parameters
+                .Select(parameter => parameter.Name.VariablePath.UserPath)
+                .Where(parameterName => parameterName.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
+                .Select(parameterName => new CompletionResult(
+                    parameterName,
+                    parameterName,
+                    CompletionResultType.ParameterValue,
+                    parameterName))
+                .ToList();
 
             return result.Count > 0 ? result : null;
         }
