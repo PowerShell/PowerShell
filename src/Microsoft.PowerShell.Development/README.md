@@ -259,6 +259,83 @@ if (!$result.Success) {
 
 ---
 
+### 5. AI Error Context (`Get-AIErrorContext`)
+
+Analyze PowerShell errors with AI-friendly context, root cause analysis, and suggested fixes.
+
+**Problem Solved:**
+- Errors are unstructured text, hard for AI to parse
+- No root cause explanation
+- No suggested fixes
+- Missing documentation links
+- Unknown severity level
+
+**Solution:**
+```powershell
+# Run a command that fails
+Get-ChildItem C:\NonExistent
+
+# Analyze the error
+$Error[0] | Get-AIErrorContext
+
+# Returns structured context:
+ErrorId           : PathNotFound
+Category          : ObjectNotFound
+Severity          : Error
+SimplifiedMessage : Cannot find path because it does not exist
+RootCause         : The specified file or path does not exist
+SuggestedFixes    : {Verify the file path, Use Test-Path, Check for typos...}
+DocumentationLinks: {https://docs.microsoft.com/powershell/...}
+File              : script.ps1
+Line              : 42
+Column            : 5
+```
+
+**Common Error Patterns Recognized:**
+- Command not found
+- Parameter binding errors
+- File not found
+- Permission denied
+- Compilation errors (C#, Rust, etc.)
+- Package not found
+- Type mismatch
+- Timeout
+- Out of memory
+- Null reference
+- Module not found
+
+**Real-World Usage:**
+```powershell
+# Analyze last 10 errors
+Get-AIErrorContext -Last 10 | Format-ForAI | Out-File errors.json
+
+# Detailed analysis with suggestions
+Get-AIErrorContext -Detailed -Verbose
+
+# Integration with builds
+$build = Invoke-CliTool dotnet build -CategorizeErrors
+if (!$build.Success) {
+    # Get AI-friendly error context
+    Get-AIErrorContext -Last 5 | ForEach-Object {
+        Write-Host "Error: $($_.SimplifiedMessage)"
+        Write-Host "Fix: $($_.SuggestedFixes[0])"
+    }
+}
+```
+
+**Benefits:**
+- 11+ built-in error patterns
+- Severity classification (Critical/Error/Warning)
+- Root cause explanations
+- Actionable suggestions
+- Documentation links
+- Location info (file, line, column)
+- Structured output for AI tools
+
+**See also:** [AI Error Context Documentation](/.claude/docs/ai-error-context.md)
+
+---
+
 ## Cmdlet Reference
 
 ### Get-ProjectContext
@@ -343,6 +420,14 @@ if (!$result.Success) {
   - `-Timeout` - Timeout in milliseconds (default: 300000 = 5 minutes)
   - `-CategorizeErrors` - Parse errors into structured objects
 - **Returns:** CliToolResult object
+
+### Get-AIErrorContext
+- **Parameters:**
+  - `-ErrorRecord` - Error record to analyze (from pipeline)
+  - `-Index` - Error index from $Error variable (default: 0 = most recent)
+  - `-Last` - Analyze last N errors
+  - `-Detailed` - Include detailed analysis in verbose output
+- **Returns:** AIErrorContext object
 
 ---
 
