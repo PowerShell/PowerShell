@@ -295,15 +295,7 @@ namespace System.Management.Automation
             if (switchStatementAst != null)
             {
                 // Verify that the lastAst is one of the clause conditions (not in the body)
-                bool isClauseCondition = false;
-                foreach (var clause in switchStatementAst.Clauses)
-                {
-                    if (clause.Item1 == lastAst)
-                    {
-                        isClauseCondition = true;
-                        break;
-                    }
-                }
+                bool isClauseCondition = switchStatementAst.Clauses.Any(clause => clause.Item1 == lastAst);
 
                 if (!isClauseCondition)
                 {
