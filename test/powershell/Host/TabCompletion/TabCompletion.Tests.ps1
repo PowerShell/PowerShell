@@ -4072,6 +4072,7 @@ function Test-Func {
             $completionTexts[0] | Should -BeExactly "ScriptParam1"
             $completionTexts[1] | Should -BeExactly "ScriptParam2"
         }
+    }
 
     Context "Tab completion for `$PSBoundParameters access patterns" {
         It "Should complete parameter names for ContainsKey method" {
@@ -4147,6 +4148,4 @@ function Test-Func {
             $paramCompletion | Should -BeNullOrEmpty
         }
     }
-    }
-
 }

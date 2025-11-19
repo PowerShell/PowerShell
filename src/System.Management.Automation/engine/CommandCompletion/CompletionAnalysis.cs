@@ -286,7 +286,7 @@ namespace System.Management.Automation
         private static List<CompletionResult> CompleteAgainstSwitchCaseCondition(CompletionContext completionContext)
         {
             var lastAst = completionContext.RelatedAsts.Last();
-            
+
             PipelineAst conditionPipeline = null;
             Ast switchAst = null;
 
@@ -317,7 +317,7 @@ namespace System.Management.Automation
             {
                 // Check for incomplete switch parsed as ErrorStatementAst
                 var errorStatementAst = lastAst.Parent as ErrorStatementAst;
-                if (errorStatementAst == null || errorStatementAst.Kind == null || 
+                if (errorStatementAst == null || errorStatementAst.Kind == null ||
                     errorStatementAst.Kind.Kind != TokenKind.Switch)
                 {
                     return null;
@@ -438,7 +438,7 @@ namespace System.Management.Automation
         private static List<CompletionResult> CompleteAgainstPSBoundParametersAccess(CompletionContext completionContext)
         {
             var lastAst = completionContext.RelatedAsts.Last();
-            
+
             // Must be a string constant
             if (!(lastAst is StringConstantExpressionAst stringAst))
             {
@@ -451,7 +451,7 @@ namespace System.Management.Automation
             if (lastAst.Parent is InvokeMemberExpressionAst invokeMemberAst)
             {
                 var memberName = invokeMemberAst.Member as StringConstantExpressionAst;
-                if (memberName != null && 
+                if (memberName != null &&
                     (memberName.Value.Equals("ContainsKey", StringComparison.OrdinalIgnoreCase) ||
                      memberName.Value.Equals("Remove", StringComparison.OrdinalIgnoreCase)))
                 {
