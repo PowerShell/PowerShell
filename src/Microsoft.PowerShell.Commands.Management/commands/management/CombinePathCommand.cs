@@ -133,10 +133,12 @@ namespace Microsoft.PowerShell.Commands
                             pathNotFound));
                     continue;
                 }
+
                 // Change extension if specified
                 if (Extension != null && joinedPath != null)
                 {
                     joinedPath = System.IO.Path.ChangeExtension(joinedPath, Extension);
+
                     // Remove trailing dot when extension is empty string
                     if (Extension.Length == 0 && joinedPath.EndsWith('.'))
                     {
