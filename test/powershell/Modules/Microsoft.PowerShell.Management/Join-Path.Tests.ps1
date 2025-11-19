@@ -120,6 +120,15 @@ Describe "Join-Path cmdlet tests" -Tags "CI" {
     $result = Join-Path -Path "C:\folder" -ChildPath "subfolder" "file.txt" -Extension ".log"
     $result | Should -BeExactly "C:\folder\subfolder\file.log"
   }
+  It "should resolve path when -Extension changes to existing file" {
+    New-Item -Path TestDrive:\testfile.log -ItemType File -Force | Out-Null
+    $result = Join-Path -Path TestDrive: -ChildPath "testfile.txt" -Extension ".log" -Resolve
+    $result | Should -BeLike "*testfile.log"
+  }
+  It "should throw error when -Extension changes to non-existing file with -Resolve" {
+    { Join-Path -Path TestDrive: -ChildPath "testfile.txt" -Extension ".nonexistent" -Resolve -ErrorAction Stop; Throw "Previous statement unexpectedly succeeded..." } |
+      Should -Throw -ErrorId "PathNotFound,Microsoft.PowerShell.Commands.JoinPathCommand"
+  }
   It "should accept Extension from pipeline by property name" {
     $obj = [PSCustomObject]@{ Path = "C:\folder"; ChildPath = "file.txt"; Extension = ".log" }
     $result = $obj | Join-Path
