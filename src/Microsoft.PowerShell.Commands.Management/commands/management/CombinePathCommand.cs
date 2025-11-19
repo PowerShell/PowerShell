@@ -53,6 +53,14 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Gets or sets the extension to use for the resulting path.
+        /// <para>
+        /// Behavior:
+        /// - If the path has an existing extension, it will be replaced with the specified extension.
+        /// - If the path does not have an extension, the specified extension will be added.
+        /// - If an empty string is provided, any existing extension will be removed.
+        /// - A leading dot in the extension is optional; if omitted, one will be added automatically.
+        /// - If the path refers to a directory, the extension is not added or modified.
+        /// </para>
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public string Extension { get; set; }
