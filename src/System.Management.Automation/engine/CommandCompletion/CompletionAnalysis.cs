@@ -324,18 +324,7 @@ namespace System.Management.Automation
                 }
 
                 // For ErrorStatementAst, the case value is in Bodies, condition is in Conditions
-                bool isInBodies = false;
-                if (errorStatementAst.Bodies != null)
-                {
-                    foreach (var body in errorStatementAst.Bodies)
-                    {
-                        if (body == lastAst)
-                        {
-                            isInBodies = true;
-                            break;
-                        }
-                    }
-                }
+                bool isInBodies = errorStatementAst.Bodies != null && errorStatementAst.Bodies.Any(body => body == lastAst);
 
                 if (!isInBodies)
                 {
