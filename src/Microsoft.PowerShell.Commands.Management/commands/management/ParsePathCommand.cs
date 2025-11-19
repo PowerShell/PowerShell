@@ -389,7 +389,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    // None of the switch parameters are true: handle -Parent or -LiteralPath
+                    // None of the switch parameters are true: default to -Parent behavior
                     try
                     {
                         result =
