@@ -148,7 +148,7 @@ namespace Microsoft.PowerShell.Commands
                     joinedPath = System.IO.Path.ChangeExtension(joinedPath, Extension);
 
                     // Remove trailing dot when extension is empty string
-                    if (Extension.Length == 0 && joinedPath.EndsWith('.'))
+                    if (Extension.Length == 0 && joinedPath.EndsWith('.', StringComparison.Ordinal))
                     {
                         joinedPath = joinedPath.Substring(0, joinedPath.Length - 1);
                     }
