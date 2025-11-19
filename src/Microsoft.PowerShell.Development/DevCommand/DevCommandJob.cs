@@ -32,7 +32,7 @@ namespace Microsoft.PowerShell.Development.DevCommand
     /// <summary>
     /// Job for executing development commands asynchronously.
     /// </summary>
-    public class DevCommandJob : Job
+    public class DevCommandJob : Job, IDisposable
     {
         private readonly string _tool;
         private readonly string _arguments;
@@ -45,6 +45,7 @@ namespace Microsoft.PowerShell.Development.DevCommand
         private readonly object _lockObject = new object();
         private int _nextOutputIndex = 0;
         private readonly DateTime _startTime;
+        private bool _disposed = false;
 
         public DevCommandJob(string command, string arguments, string workingDirectory, string name)
             : base(command, name)
@@ -111,9 +112,20 @@ namespace Microsoft.PowerShell.Development.DevCommand
                     status.EndTime = DateTime.Now;
                     status.Duration = status.EndTime.Value - _startTime;
 
-                    if (_process != null && _process.HasExited)
+                    // Access _process safely within the lock
+                    if (_process != null)
                     {
-                        status.ExitCode = _process.ExitCode;
+                        try
+                        {
+                            if (_process.HasExited)
+                            {
+                                status.ExitCode = _process.ExitCode;
+                            }
+                        }
+                        catch (InvalidOperationException)
+                        {
+                            // Process may have been disposed
+                        }
                     }
                 }
                 else
@@ -171,34 +183,46 @@ namespace Microsoft.PowerShell.Development.DevCommand
 
             ThreadPool.QueueUserWorkItem(_ =>
             {
+                Process process = null;
                 try
                 {
-                    _process = new Process
+                    lock (_lockObject)
                     {
-                        StartInfo = new ProcessStartInfo
+                        if (_disposed)
                         {
-                            FileName = _tool,
-                            Arguments = _arguments,
-                            UseShellExecute = false,
-                            RedirectStandardOutput = true,
-                            RedirectStandardError = true,
-                            RedirectStandardInput = false,
-                            CreateNoWindow = true,
-                            WorkingDirectory = _workingDirectory ?? Environment.CurrentDirectory
+                            SetJobState(JobState.Stopped);
+                            return;
                         }
-                    };
 
-                    _process.OutputDataReceived += OnOutputDataReceived;
-                    _process.ErrorDataReceived += OnErrorDataReceived;
+                        process = new Process
+                        {
+                            StartInfo = new ProcessStartInfo
+                            {
+                                FileName = _tool,
+                                Arguments = _arguments,
+                                UseShellExecute = false,
+                                RedirectStandardOutput = true,
+                                RedirectStandardError = true,
+                                RedirectStandardInput = false,
+                                CreateNoWindow = true,
+                                WorkingDirectory = _workingDirectory ?? Environment.CurrentDirectory
+                            }
+                        };
 
-                    _process.Start();
-                    _process.BeginOutputReadLine();
-                    _process.BeginErrorReadLine();
+                        process.OutputDataReceived += OnOutputDataReceived;
+                        process.ErrorDataReceived += OnErrorDataReceived;
 
-                    _process.WaitForExit();
+                        _process = process;
+                    }
+
+                    process.Start();
+                    process.BeginOutputReadLine();
+                    process.BeginErrorReadLine();
+
+                    process.WaitForExit();
 
                     // Determine final state based on exit code
-                    if (_process.ExitCode == 0)
+                    if (process.ExitCode == 0)
                     {
                         SetJobState(JobState.Completed);
                     }
@@ -214,6 +238,26 @@ namespace Microsoft.PowerShell.Development.DevCommand
                         _errorLines.Add($"Error starting process: {ex.Message}");
                     }
                     SetJobState(JobState.Failed);
+
+                    // Dispose process on error
+                    if (process != null)
+                    {
+                        try
+                        {
+                            process.OutputDataReceived -= OnOutputDataReceived;
+                            process.ErrorDataReceived -= OnErrorDataReceived;
+                            process.Dispose();
+                        }
+                        catch
+                        {
+                            // Ignore disposal errors
+                        }
+
+                        lock (_lockObject)
+                        {
+                            _process = null;
+                        }
+                    }
                 }
             });
         }
@@ -263,17 +307,76 @@ namespace Microsoft.PowerShell.Development.DevCommand
 
         public override void StopJob()
         {
-            try
+            lock (_lockObject)
             {
-                if (_process != null && !_process.HasExited)
+                try
                 {
-                    _process.Kill();
-                    SetJobState(JobState.Stopped);
+                    if (_process != null && !_process.HasExited)
+                    {
+                        _process.Kill();
+                    }
+                }
+                catch (InvalidOperationException)
+                {
+                    // Process may have already exited
+                }
+                catch (System.ComponentModel.Win32Exception)
+                {
+                    // Process may not be accessible
                 }
             }
-            catch
+
+            SetJobState(JobState.Stopped);
+        }
+
+        /// <summary>
+        /// Dispose method for IDisposable pattern.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Protected dispose method for inheritance.
+        /// </summary>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
             {
-                // Process may have already exited
+                if (disposing)
+                {
+                    lock (_lockObject)
+                    {
+                        if (_process != null)
+                        {
+                            try
+                            {
+                                // Unregister event handlers
+                                _process.OutputDataReceived -= OnOutputDataReceived;
+                                _process.ErrorDataReceived -= OnErrorDataReceived;
+
+                                // Kill if still running
+                                if (!_process.HasExited)
+                                {
+                                    _process.Kill();
+                                    _process.WaitForExit(1000); // Wait up to 1 second
+                                }
+                            }
+                            catch
+                            {
+                                // Ignore exceptions during disposal
+                            }
+                            finally
+                            {
+                                _process.Dispose();
+                                _process = null;
+                            }
+                        }
+                    }
+                }
+                _disposed = true;
             }
         }
 
