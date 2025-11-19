@@ -167,6 +167,98 @@ $failures = $result.tests | Where-Object { $_.status -eq "failed" }
 
 ---
 
+### 4. CLI Tool Registry (`Register-CliTool`, `Invoke-CliTool`)
+
+Normalize different CLI tools to have consistent interfaces and structured error handling.
+
+**Problem Solved:**
+- Every tool has different syntax (git: `-m`, npm: `--message`, cargo: `-m`)
+- Error parsing is tool-specific and brittle
+- No consistent way to invoke tools programmatically
+- Exit codes have different meanings per tool
+
+**Solution:**
+```powershell
+# Get pre-registered tools (git, npm, cargo, dotnet, pip, docker, kubectl)
+Get-CliTool
+
+# Invoke with normalized interface
+Invoke-CliTool git commit -Parameters @{Message="fix: bug"; Verbose=$true}
+# Automatically translates to: git commit -m "fix: bug" -v
+
+Invoke-CliTool npm install express -Parameters @{SaveDev=$true}
+# Automatically translates to: npm install express --save-dev
+
+# With structured error analysis
+$result = Invoke-CliTool cargo build -Parameters @{Release=$true} -CategorizeErrors
+if (!$result.Success) {
+    $result.CategorizedErrors | Format-ForAI
+}
+```
+
+**Pre-registered Tools:**
+- `git` - Version control (status, add, commit, push, pull, clone, log)
+- `npm` - Node.js package manager (install, test, run, publish)
+- `cargo` - Rust build tool (build, test, run, check)
+- `dotnet` - .NET SDK (build, test, run, restore, publish)
+- `pip` - Python packages (install, uninstall, list)
+- `docker` - Containers (build, run, ps, stop, images)
+- `kubectl` - Kubernetes (get, describe, apply, delete)
+
+**Register Custom Tools:**
+```powershell
+Register-CliTool -Name "gradle" `
+    -ParameterMappings @{
+        "Verbose" = "-v"
+        "Quiet" = "-q"
+    } `
+    -ErrorPatterns @{
+        "FAILURE:" = "Error"
+        "WARNING:" = "Warning"
+    } `
+    -CommonCommands @("build", "test", "clean")
+```
+
+**Structured Result:**
+```powershell
+$result = Invoke-CliTool dotnet build -CategorizeErrors
+
+# Returns:
+ToolName          : dotnet
+Command           : dotnet build
+ExitCode          : 1
+ExitCodeCategory  : Error
+Success           : False
+Duration          : 00:00:12.34
+Output            : [array of output lines]
+Errors            : [array of error lines]
+CategorizedErrors : [structured error objects with File, Line, Column, Severity]
+```
+
+**Real-World Example:**
+```powershell
+# Cross-platform build script
+$ctx = Get-ProjectContext
+
+switch ($ctx.ProjectType) {
+    "Node.js" { $result = Invoke-CliTool npm test -CategorizeErrors }
+    "Rust"    { $result = Invoke-CliTool cargo test -CategorizeErrors }
+    ".NET"    { $result = Invoke-CliTool dotnet test -CategorizeErrors }
+}
+
+# Unified error handling
+if (!$result.Success) {
+    $result.CategorizedErrors |
+        Where-Object {$_.Severity -eq "Error"} |
+        Format-ForAI |
+        Out-File errors.json
+}
+```
+
+**See also:** [CLI Tool Registry Documentation](/.claude/docs/cli-tool-registry.md)
+
+---
+
 ## Cmdlet Reference
 
 ### Get-ProjectContext
@@ -218,6 +310,39 @@ $failures = $result.tests | Where-Object { $_.status -eq "failed" }
   - `-IncludeTypeInfo` - Include PowerShell type information
   - `-InputObject` - Object(s) to format (from pipeline)
 - **Returns:** Formatted string
+
+### Register-CliTool
+- **Parameters:**
+  - `-Name` - Tool name (required)
+  - `-ExecutablePath` - Path to executable (default: same as name)
+  - `-Description` - Tool description
+  - `-ParameterMappings` - Hashtable of normalized names to actual flags
+  - `-ErrorPatterns` - Hashtable of error patterns to categories
+  - `-ExitCodeMappings` - Hashtable of exit code meanings
+  - `-CommonCommands` - Array of common commands
+  - `-HelpUrl` - URL to tool documentation
+  - `-PassThru` - Return the registered tool definition
+- **Returns:** Nothing (or CliToolDefinition if -PassThru)
+
+### Get-CliTool
+- **Parameters:**
+  - `-Name` - Tool name (supports wildcards, optional)
+- **Returns:** CliToolDefinition object(s)
+
+### Unregister-CliTool
+- **Parameters:**
+  - `-Name` - Tool name to unregister (required)
+- **Returns:** Nothing
+
+### Invoke-CliTool
+- **Parameters:**
+  - `-Tool` - Tool name (required, must be registered)
+  - `-Arguments` - Arguments to pass to tool
+  - `-Parameters` - Hashtable of normalized parameters
+  - `-WorkingDirectory` - Working directory (default: current)
+  - `-Timeout` - Timeout in milliseconds (default: 300000 = 5 minutes)
+  - `-CategorizeErrors` - Parse errors into structured objects
+- **Returns:** CliToolResult object
 
 ---
 

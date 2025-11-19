@@ -16,6 +16,7 @@ CmdletsToExport=@(
     "Receive-DevCommandOutput",
     "Register-CliTool",
     "Get-CliTool",
+    "Unregister-CliTool",
     "Invoke-CliTool",
     "Format-ForAI",
     "Get-AIErrorContext"
