@@ -188,7 +188,7 @@ Describe "Export-Csv" -Tags "CI" {
     }
 
     It "Should throw when -Append and -NoHeader are specified together" {
-        { $P1 | Export-Csv -Path $testCsv -Append -NoHeader -ErrorAction Stop } | Should -Throw -ErrorId "CannotSpecifyAppendAndNoHeader,Microsoft.PowerShell.Commands.ExportCsvCommand"
+        { $P1 | Export-Csv -Path $testCsv -Append -NoHeader -ErrorAction Stop } | Should -Throw -ErrorId "CannotSpecifyBothAppendAndNoHeader,Microsoft.PowerShell.Commands.ExportCsvCommand"
     }
 
     It "First line should be #TYPE if -IncludeTypeInformation used and pstypenames object property is empty" {
