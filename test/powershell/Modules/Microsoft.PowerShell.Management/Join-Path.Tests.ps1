@@ -108,6 +108,18 @@ Describe "Join-Path cmdlet tests" -Tags "CI" {
     $result1 | Should -BeExactly "C:\folder\file.log"
     $result2 | Should -BeExactly "C:\folder\file.log"
   }
+  It "should replace only the last extension for files with multiple dots" {
+    $result = Join-Path -Path "C:\folder" -ChildPath "file.backup.txt" -Extension ".log"
+    $result | Should -BeExactly "C:\folder\file.backup.log"
+  }
+  It "should add extension to directory-like path" {
+    $result = Join-Path -Path "C:\folder" -ChildPath "subfolder" -Extension ".log"
+    $result | Should -BeExactly "C:\folder\subfolder.log"
+  }
+  It "should change extension when joining multiple child path segments" {
+    $result = Join-Path -Path "C:\folder" -ChildPath "subfolder" "file.txt" -Extension ".log"
+    $result | Should -BeExactly "C:\folder\subfolder\file.log"
+  }
   It "should accept Extension from pipeline by property name" {
     $obj = [PSCustomObject]@{ Path = "C:\folder"; ChildPath = "file.txt"; Extension = ".log" }
     $result = $obj | Join-Path
