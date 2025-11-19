@@ -2211,11 +2211,11 @@ namespace System.Management.Automation.Runspaces
                     CommandTypes.Application,
                     SearchResolutionOptions.None,
                     CommandOrigin.Internal,
-                    context) as ApplicationInfo;
+                    context);
 
-                if (cmdInfo != null)
+                if (cmdInfo is ApplicationInfo appInfo)
                 {
-                    filePath = cmdInfo.Path;
+                    filePath = appInfo.Path;
                 }
             }
             else
@@ -2273,13 +2273,13 @@ namespace System.Management.Automation.Runspaces
             //     Subsystem powershell /usr/local/bin/pwsh -SSHServerMode -NoLogo -NoProfile
 
             // codeql[cs/microsoft/command-line-injection-shell-execution] - This is expected Poweshell behavior where user inputted paths are supported for the context of this method. The user assumes trust for the file path specified, so any file executed in the runspace would be in the user's local system/process or a system they have access to in which case restricted remoting security guidelines should be used.
-            System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo(filePath);
+            ProcessStartInfo startInfo = new(filePath);
 
             // pass "-i identity_file" command line argument to ssh if KeyFilePath is set
             // if KeyFilePath is not set, then ssh will use IdentityFile / IdentityAgent from ssh_config if defined else none by default
             if (!string.IsNullOrEmpty(this.KeyFilePath))
             {
-                if (!System.IO.File.Exists(this.KeyFilePath))
+                if (!File.Exists(this.KeyFilePath))
                 {
                     throw new FileNotFoundException(
                         StringUtil.Format(RemotingErrorIdStrings.KeyFileNotFound, this.KeyFilePath));
@@ -2326,7 +2326,7 @@ namespace System.Management.Automation.Runspaces
             // note that ssh expects IPv6 addresses to not be enclosed in square brackets so trim them if present
             startInfo.ArgumentList.Add(string.Create(CultureInfo.InvariantCulture, $@"-s {this.ComputerName.TrimStart('[').TrimEnd(']')} {this.Subsystem}"));
 
-            startInfo.WorkingDirectory = System.IO.Path.GetDirectoryName(filePath);
+            startInfo.WorkingDirectory = Path.GetDirectoryName(filePath);
             startInfo.CreateNoWindow = true;
             startInfo.UseShellExecute = false;
 
@@ -2580,7 +2580,7 @@ namespace System.Management.Automation.Runspaces
             // Allocate the unmanaged array to hold each string pointer.
             // It needs to have an extra element to null terminate the array.
             arrPtr = (byte**)Marshal.AllocHGlobal(sizeof(IntPtr) * arrLength);
-            System.Diagnostics.Debug.Assert(arrPtr != null, "Invalid array ptr");
+            Debug.Assert(arrPtr != null, "Invalid array ptr");
 
             // Zero the memory so that if any of the individual string allocations fails,
             // we can loop through the array to free any that succeeded.
@@ -2597,7 +2597,7 @@ namespace System.Management.Automation.Runspaces
                 byte[] byteArr = System.Text.Encoding.UTF8.GetBytes(arr[i]);
 
                 arrPtr[i] = (byte*)Marshal.AllocHGlobal(byteArr.Length + 1); // +1 for null termination
-                System.Diagnostics.Debug.Assert(arrPtr[i] != null, "Invalid array ptr");
+                Debug.Assert(arrPtr[i] != null, "Invalid array ptr");
 
                 Marshal.Copy(byteArr, 0, (IntPtr)arrPtr[i], byteArr.Length); // copy over the data from the managed byte array
                 arrPtr[i][byteArr.Length] = (byte)'\0'; // null terminate
@@ -2641,13 +2641,13 @@ namespace System.Management.Automation.Runspaces
         /// P-Invoking native APIs.
         /// </summary>
         private static int StartSSHProcessImpl(
-            System.Diagnostics.ProcessStartInfo startInfo,
-            out StreamWriter stdInWriterVar,
-            out StreamReader stdOutReaderVar,
-            out StreamReader stdErrReaderVar)
+            ProcessStartInfo startInfo,
+            out StreamWriter stdInWriter,
+            out StreamReader stdOutReader,
+            out StreamReader stdErrReader)
         {
             Exception ex = null;
-            System.Diagnostics.Process sshProcess = null;
+            Process sshProcess = null;
             //
             // These std pipe handles are bound to managed Reader/Writer objects and returned to the transport
             // manager object, which uses them for PSRP communication.  The lifetime of these handles are then
@@ -2668,7 +2668,7 @@ namespace System.Management.Automation.Runspaces
             catch (InvalidOperationException e) { ex = e; }
             catch (ArgumentException e) { ex = e; }
             catch (FileNotFoundException e) { ex = e; }
-            catch (System.ComponentModel.Win32Exception e) { ex = e; }
+            catch (Win32Exception e) { ex = e; }
 
             if ((ex != null) ||
                 (sshProcess == null) ||
@@ -2680,9 +2680,9 @@ namespace System.Management.Automation.Runspaces
             }
 
             // Create the std in writer/readers needed for communication with ssh.exe.
-            stdInWriterVar = null;
-            stdOutReaderVar = null;
-            stdErrReaderVar = null;
+            StreamWriter stdInWriterVar = null;
+            StreamReader stdOutReaderVar = null;
+            StreamReader stdErrReaderVar = null;
             try
             {
                 stdInWriterVar = new StreamWriter(new NamedPipeServerStream(PipeDirection.Out, true, true, stdInPipeServer));
@@ -2693,19 +2693,40 @@ namespace System.Management.Automation.Runspaces
             {
                 if (stdInWriterVar != null) { stdInWriterVar.Dispose(); } else { stdInPipeServer.Dispose(); }
 
-                if (stdOutReaderVar != null) { stdInWriterVar.Dispose(); } else { stdOutPipeServer.Dispose(); }
+                if (stdOutReaderVar != null) { stdOutReaderVar.Dispose(); } else { stdOutPipeServer.Dispose(); }
 
-                if (stdErrReaderVar != null) { stdInWriterVar.Dispose(); } else { stdErrPipeServer.Dispose(); }
+                if (stdErrReaderVar != null) { stdErrReaderVar.Dispose(); } else { stdErrPipeServer.Dispose(); }
 
                 throw;
             }
+
+            // On Windows, the ssh process may exit upon error but leave the pipes open, which could result in a hang.
+            // So, we close the pipe handles when the ssh process exits to avoid this situation.
+            sshProcess.EnableRaisingEvents = true;
+            sshProcess.Exited += (sender, args) =>
+            {
+                try
+                {
+                    Utils.SafeDispose(stdInWriterVar);
+                    Utils.SafeDispose(stdOutReaderVar);
+                    Utils.SafeDispose(stdErrReaderVar);
+                }
+                catch
+                {
+                    // Ignore all exceptions in the event handler.
+                }
+            };
+
+            stdInWriter = stdInWriterVar;
+            stdOutReader = stdOutReaderVar;
+            stdErrReader = stdErrReaderVar;
 
             return sshProcess.Id;
         }
 
         private static void KillSSHProcessImpl(int pid)
         {
-            using (var sshProcess = System.Diagnostics.Process.GetProcessById(pid))
+            using (var sshProcess = Process.GetProcessById(pid))
             {
                 if ((sshProcess != null) && (sshProcess.Handle != IntPtr.Zero) && !sshProcess.HasExited)
                 {
@@ -2736,7 +2757,7 @@ namespace System.Management.Automation.Runspaces
             SafeFileHandle stdInPipeClient = null;
             SafeFileHandle stdOutPipeClient = null;
             SafeFileHandle stdErrPipeClient = null;
-            string randomName = System.IO.Path.GetFileNameWithoutExtension(System.IO.Path.GetRandomFileName());
+            string randomName = Path.GetFileNameWithoutExtension(Path.GetRandomFileName());
 
             try
             {

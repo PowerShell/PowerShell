@@ -70,3 +70,24 @@ Describe "SSHConnection parameter hashtable type conversions" -Tags 'Feature', '
         $err.FullyQualifiedErrorId | Should -Match 'PSSessionOpenFailed'
     }
 }
+
+Describe "No hangs when host doesn't exist" -Tag "CI" {
+    $testCases = @(
+        @{
+            Name = 'Verifies no hang for New-PSSession with non-existing host name'
+            ScriptBlock = { New-PSSession -HostName "test-notexist" -UserName "test" -ErrorAction Stop }
+            FullyQualifiedErrorId = 'PSSessionOpenFailed'
+        },
+        @{
+            Name = 'Verifies no hang for Invoke-Command with non-existing host name'
+            ScriptBlock = { Invoke-Command -HostName "test-notexist" -UserName "test" -ScriptBlock { 1 } -ErrorAction Stop }
+            FullyQualifiedErrorId = 'PSSessionStateBroken'
+        }
+    )
+
+    It "<Name>" -TestCases $testCases {
+        param ($ScriptBlock, $FullyQualifiedErrorId)
+
+        $ScriptBlock | Should -Throw -ErrorId $FullyQualifiedErrorId -ExceptionType 'System.Management.Automation.Remoting.PSRemotingTransportException'
+    }
+}
