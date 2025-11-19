@@ -505,19 +505,17 @@ namespace System.Management.Automation
                 quoteChar = "\"";
             }
 
-            foreach (var parameter in paramBlockAst.Parameters)
-            {
-                var parameterName = parameter.Name.VariablePath.UserPath;
-                if (parameterName.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
-                {
-                    var completionText = quoteChar + parameterName + quoteChar;
-                    result.Add(new CompletionResult(
-                        completionText,
-                        parameterName,
-                        CompletionResultType.ParameterValue,
-                        parameterName));
-                }
-            }
+            result.AddRange(
+                paramBlockAst.Parameters
+                    .Select(parameter => parameter.Name.VariablePath.UserPath)
+                    .Where(parameterName => parameterName.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
+                    .Select(parameterName =>
+                        new CompletionResult(
+                            quoteChar + parameterName + quoteChar,
+                            parameterName,
+                            CompletionResultType.ParameterValue,
+                            parameterName))
+            );
 
             return result.Count > 0 ? result : null;
         }
