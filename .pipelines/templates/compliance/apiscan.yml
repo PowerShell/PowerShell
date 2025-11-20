@@ -4,8 +4,6 @@
 jobs:
   - job: APIScan
     variables:
-      - name: runCodesignValidationInjection
-        value : false
       - name: NugetSecurityAnalysisWarningLevel
         value: none
       - name: ReleaseTagVar
