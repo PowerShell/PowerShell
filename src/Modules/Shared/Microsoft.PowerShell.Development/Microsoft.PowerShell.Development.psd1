@@ -25,12 +25,21 @@ CmdletsToExport=@(
     "Save-WorkflowStep",
     "Get-Workflow",
     "Invoke-Workflow",
-    "Remove-Workflow"
+    "Remove-Workflow",
+    "Get-TerminalSnapshot",
+    "Get-CodeContext",
+    "New-AIPrompt"
 )
 AliasesToExport = @(
-    "gpc",      # Get-ProjectContext
-    "devcmd",   # Start-DevCommand
-    "fai"       # Format-ForAI
+    "gpc",        # Get-ProjectContext
+    "devcmd",     # Start-DevCommand
+    "fai",        # Format-ForAI
+    "gts",        # Get-TerminalSnapshot
+    "snapshot",   # Get-TerminalSnapshot
+    "gcc",        # Get-CodeContext
+    "context",    # Get-CodeContext
+    "prompt",     # New-AIPrompt
+    "aiprompt"    # New-AIPrompt
 )
 NestedModules="Microsoft.PowerShell.Development.dll"
 HelpInfoURI = 'https://aka.ms/powershell75-help'
