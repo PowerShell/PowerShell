@@ -57,7 +57,11 @@ CmdletsToExport=@(
     "Unregister-RemoteTarget",
     "Test-RemoteTarget",
     "Invoke-DistributedWorkflow",
-    "Invoke-RemoteCommand"
+    "Invoke-RemoteCommand",
+    # Secure Versions (Production-Ready)
+    "Start-MCPServerSecure",
+    "Convert-AIResponseSecure",
+    "Invoke-AISuggestionsSecure"
 )
 AliasesToExport = @(
     # Core Features
