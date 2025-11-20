@@ -10,6 +10,7 @@
     <ProjectReference Include="..\Microsoft.PowerShell.Commands.Management\Microsoft.PowerShell.Commands.Management.csproj" />
     <ProjectReference Include="..\Microsoft.PowerShell.Commands.Utility\Microsoft.PowerShell.Commands.Utility.csproj" />
     <ProjectReference Include="..\Microsoft.PowerShell.ConsoleHost\Microsoft.PowerShell.ConsoleHost.csproj" />
+    <ProjectReference Include="..\Microsoft.PowerShell.Development\Microsoft.PowerShell.Development.csproj" />
     <ProjectReference Include="..\Microsoft.PowerShell.Security\Microsoft.PowerShell.Security.csproj" />
     <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />
   </ItemGroup>

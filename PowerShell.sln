@@ -25,6 +25,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.WSMan.Management"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.PowerShell.Security", "src\Microsoft.PowerShell.Security\Microsoft.PowerShell.Security.csproj", "{C4F81816-C87A-4ABF-8A37-24AC16A0A6CF}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.PowerShell.Development", "src\Microsoft.PowerShell.Development\Microsoft.PowerShell.Development.csproj", "{D1234567-89AB-CDEF-0123-456789ABCDEF}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.WSMan.Runtime", "src\Microsoft.WSMan.Runtime\Microsoft.WSMan.Runtime.csproj", "{D9CCCB67-4EBE-4854-AB52-C0129DC5BAE4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "powershell-unix", "src\powershell-unix\powershell-unix.csproj", "{73EA0BE6-C0C5-4B56-A5AA-DADA4C01D690}"
@@ -138,6 +140,14 @@ Global
 		{C4F81816-C87A-4ABF-8A37-24AC16A0A6CF}.Linux|Any CPU.Build.0 = Linux|Any CPU
 		{C4F81816-C87A-4ABF-8A37-24AC16A0A6CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C4F81816-C87A-4ABF-8A37-24AC16A0A6CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1234567-89AB-CDEF-0123-456789ABCDEF}.CodeCoverage|Any CPU.ActiveCfg = CodeCoverage|Any CPU
+		{D1234567-89AB-CDEF-0123-456789ABCDEF}.CodeCoverage|Any CPU.Build.0 = CodeCoverage|Any CPU
+		{D1234567-89AB-CDEF-0123-456789ABCDEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1234567-89AB-CDEF-0123-456789ABCDEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1234567-89AB-CDEF-0123-456789ABCDEF}.Linux|Any CPU.ActiveCfg = Linux|Any CPU
+		{D1234567-89AB-CDEF-0123-456789ABCDEF}.Linux|Any CPU.Build.0 = Linux|Any CPU
+		{D1234567-89AB-CDEF-0123-456789ABCDEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1234567-89AB-CDEF-0123-456789ABCDEF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D9CCCB67-4EBE-4854-AB52-C0129DC5BAE4}.CodeCoverage|Any CPU.ActiveCfg = CodeCoverage|Any CPU
 		{D9CCCB67-4EBE-4854-AB52-C0129DC5BAE4}.CodeCoverage|Any CPU.Build.0 = CodeCoverage|Any CPU
 		{D9CCCB67-4EBE-4854-AB52-C0129DC5BAE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
