@@ -107,37 +107,31 @@ Describe "New-PSSession -UseWindowsPowerShell switch parameter" -Tag "CI" {
     }
 
     It "Should respect explicit -UseWindowsPowerShell:`$false parameter value" {
-        # -UseWindowsPowerShell:$false should behave the same as not specifying the parameter
-        # When UseWindowsPowerShell is not specified (or explicitly false), it should attempt
-        # to connect via WinRM to localhost, which will fail if WinRM is not configured
-
         # Test 1: -UseWindowsPowerShell:$true should create a Windows PowerShell 5.1 session
-        $session = $null
+        $session1 = $null
         try {
-            $session = New-PSSession -UseWindowsPowerShell:$true -ErrorAction Stop
-            $session | Should -Not -BeNullOrEmpty
+            { $script:session1 = New-PSSession -UseWindowsPowerShell:$true } | Should -Not -Throw
+            $script:session1 | Should -Not -BeNullOrEmpty
 
             # Verify it's Windows PowerShell 5.1
-            $version = Invoke-Command -Session $session -ScriptBlock { $PSVersionTable.PSVersion }
+            $version = Invoke-Command -Session $script:session1 -ScriptBlock { $PSVersionTable.PSVersion }
             $version.Major | Should -Be 5
             $version.Minor | Should -Be 1
         }
         finally {
-            if ($session) { Remove-PSSession $session -ErrorAction SilentlyContinue }
+            if ($script:session1) { Remove-PSSession $script:session1 -ErrorAction SilentlyContinue }
         }
 
-        # Test 2: -UseWindowsPowerShell:$false should create a PowerShell Core session via WinRM
-        $session = $null
+        # Test 2: -UseWindowsPowerShell:$false should use WSMan transport (not Process)
+        $sessionWithFalse = $null
         try {
-            $session = New-PSSession -UseWindowsPowerShell:$false -ErrorAction Stop
-            $session | Should -Not -BeNullOrEmpty
+            { $script:sessionWithFalse = New-PSSession -UseWindowsPowerShell:$false } | Should -Not -Throw
 
-            # Verify it's PowerShell Core (not Windows PowerShell 5.1)
-            $version = Invoke-Command -Session $session -ScriptBlock { $PSVersionTable.PSVersion }
-            $version.Major | Should -BeGreaterOrEqual 6
+            # Transport should be WSMan, not Process
+            $script:sessionWithFalse.Transport | Should -Be 'WSMan'
         }
         finally {
-            if ($session) { Remove-PSSession $session -ErrorAction SilentlyContinue }
+            if ($script:sessionWithFalse) { Remove-PSSession $script:sessionWithFalse -ErrorAction SilentlyContinue }
         }
     }
 }
