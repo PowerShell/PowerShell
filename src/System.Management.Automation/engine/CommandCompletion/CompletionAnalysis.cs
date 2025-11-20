@@ -418,7 +418,7 @@ namespace System.Management.Automation
             var lastAst = completionContext.RelatedAsts.Last();
 
             // Must be a string constant
-            if (!(lastAst is StringConstantExpressionAst stringAst))
+            if (lastAst is not StringConstantExpressionAst stringAst)
             {
                 return null;
             }
