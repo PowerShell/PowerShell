@@ -392,10 +392,9 @@ namespace System.Management.Automation
             }
 
             // Generate completion results from parameter names
-            var result = new List<CompletionResult>();
             var wordToComplete = completionContext.WordToComplete ?? string.Empty;
 
-            result = paramBlockAst.Parameters
+            var result = paramBlockAst.Parameters
                 .Select(parameter => parameter.Name.VariablePath.UserPath)
                 .Where(parameterName => parameterName.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
                 .Select(parameterName => new CompletionResult(
