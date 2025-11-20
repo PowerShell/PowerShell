@@ -441,7 +441,7 @@ namespace System.Management.Automation
                 targetAst = indexAst.Target;
             }
 
-            if (targetAst == null)
+            if (targetAst is null)
             {
                 return null;
             }
