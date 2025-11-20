@@ -282,6 +282,18 @@ function Start-PSPackage {
                 $createdSpdxPathSha = New-Item -Path $manifestSpdxPathSha -Force
                 Write-Verbose -Verbose "Created manifest.spdx.json.sha256 file: $createdSpdxPathSha"
             }
+
+            $bsiJsonPath = (Join-Path -Path $Source "_manifest\spdx_2.2\bsi.json")
+            if (-not (Test-Path -Path $bsiJsonPath)) {
+                $createdBsiJsonPath = New-Item -Path $bsiJsonPath -Force
+                Write-Verbose -Verbose "Created bsi.json file: $createdBsiJsonPath"
+            }
+
+            $manifestCatPath = (Join-Path -Path $Source "_manifest\spdx_2.2\manifest.cat")
+            if (-not (Test-Path -Path $manifestCatPath)) {
+                $createdCatPath = New-Item -Path $manifestCatPath -Force
+                Write-Verbose -Verbose "Created manifest.cat file: $createdCatPath"
+            }
         }
 
         # If building a symbols package, we add a zip of the parent to publish
@@ -5271,8 +5283,24 @@ function Send-AzdoFile {
         Copy-Item -Path $Path -Destination $logFile
     }
 
-    Write-Host "##vso[artifact.upload containerfolder=$newName;artifactname=$newName]$logFile"
-    Write-Verbose "Log file captured as $newName" -Verbose
+    Write-Verbose "Capture the log file as '$newName'" -Verbose
+    if($env:TF_BUILD) {
+        ## In Azure DevOps
+        Write-Host "##vso[artifact.upload containerfolder=$newName;artifactname=$newName]$logFile"
+    } elseif ($env:GITHUB_WORKFLOW -and $env:SYSTEM_ARTIFACTSDIRECTORY) {
+        ## In GitHub Actions
+        $destinationPath = $env:SYSTEM_ARTIFACTSDIRECTORY
+        Write-Verbose "Upload '$logFile' to '$destinationPath' in GitHub Action" -Verbose
+
+        # Create the folder if it does not exist
+        if (!(Test-Path -Path $destinationPath)) {
+            $null = New-Item -ItemType Directory -Path $destinationPath -Force
+        }
+
+        Copy-Item -Path $logFile -Destination $destinationPath -Force -Verbose
+    } else {
+        Write-Warning "This environment is neither Azure Devops nor GitHub Actions. Cannot capture the log file in this environment."
+    }
 }
 
 # Class used for serializing and deserialing a BOM into Json
