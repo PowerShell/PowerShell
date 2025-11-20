@@ -59,7 +59,6 @@ namespace Microsoft.PowerShell.Commands
         /// - If the path does not have an extension, the specified extension will be added.
         /// - If an empty string is provided, any existing extension will be removed.
         /// - A leading dot in the extension is optional; if omitted, one will be added automatically.
-        /// - If the path refers to a directory, the extension is not added or modified.
         /// </para>
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
