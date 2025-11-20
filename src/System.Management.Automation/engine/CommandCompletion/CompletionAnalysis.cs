@@ -447,9 +447,8 @@ namespace System.Management.Automation
             }
 
             // Check if target is $PSBoundParameters
-            var variableAst = targetAst as VariableExpressionAst;
-            if (variableAst == null ||
-                !variableAst.VariablePath.UserPath.Equals("PSBoundParameters", StringComparison.OrdinalIgnoreCase))
+            if (targetAst is not VariableExpressionAst variableAst ||
+    !variableAst.VariablePath.UserPath.Equals("PSBoundParameters", StringComparison.OrdinalIgnoreCase))
             {
                 return null;
             }
