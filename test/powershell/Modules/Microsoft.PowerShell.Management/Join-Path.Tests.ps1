@@ -85,40 +85,40 @@ Describe "Join-Path cmdlet tests" -Tags "CI" {
     $result | Should -BeExactly $ExpectedResult
   }
   It "should change extension when -Extension parameter is specified" {
-    $result = Join-Path -Path "C:\folder" -ChildPath "file.txt" -Extension ".log"
-    $result | Should -BeExactly "C:\folder\file.log"
+    $result = Join-Path -Path "folder" -ChildPath "file.txt" -Extension ".log"
+    $result | Should -BeExactly "folder${SepChar}file.log"
   }
   It "should add extension to file without extension" {
-    $result = Join-Path -Path "C:\folder" -ChildPath "file" -Extension ".txt"
-    $result | Should -BeExactly "C:\folder\file.txt"
+    $result = Join-Path -Path "folder" -ChildPath "file" -Extension ".txt"
+    $result | Should -BeExactly "folder${SepChar}file.txt"
   }
   It "should remove extension when empty string is specified" {
-    $result = Join-Path -Path "C:\folder" -ChildPath "file.txt" -Extension ""
-    $result | Should -BeExactly "C:\folder\file"
+    $result = Join-Path -Path "folder" -ChildPath "file.txt" -Extension ""
+    $result | Should -BeExactly "folder${SepChar}file"
   }
   It "should change extension for multiple paths" {
-    $result = Join-Path -Path "C:\folder1", "C:\folder2" -ChildPath "file.txt" -Extension ".log"
+    $result = Join-Path -Path "folder1", "folder2" -ChildPath "file.txt" -Extension ".log"
     $result.Count | Should -Be 2
-    $result[0] | Should -BeExactly "C:\folder1\file.log"
-    $result[1] | Should -BeExactly "C:\folder2\file.log"
+    $result[0] | Should -BeExactly "folder1${SepChar}file.log"
+    $result[1] | Should -BeExactly "folder2${SepChar}file.log"
   }
   It "should handle extension with or without leading dot" {
-    $result1 = Join-Path -Path "C:\folder" -ChildPath "file.txt" -Extension ".log"
-    $result2 = Join-Path -Path "C:\folder" -ChildPath "file.txt" -Extension "log"
-    $result1 | Should -BeExactly "C:\folder\file.log"
-    $result2 | Should -BeExactly "C:\folder\file.log"
+    $result1 = Join-Path -Path "folder" -ChildPath "file.txt" -Extension ".log"
+    $result2 = Join-Path -Path "folder" -ChildPath "file.txt" -Extension "log"
+    $result1 | Should -BeExactly "folder${SepChar}file.log"
+    $result2 | Should -BeExactly "folder${SepChar}file.log"
   }
   It "should replace only the last extension for files with multiple dots" {
-    $result = Join-Path -Path "C:\folder" -ChildPath "file.backup.txt" -Extension ".log"
-    $result | Should -BeExactly "C:\folder\file.backup.log"
+    $result = Join-Path -Path "folder" -ChildPath "file.backup.txt" -Extension ".log"
+    $result | Should -BeExactly "folder${SepChar}file.backup.log"
   }
   It "should add extension to directory-like path" {
-    $result = Join-Path -Path "C:\folder" -ChildPath "subfolder" -Extension ".log"
-    $result | Should -BeExactly "C:\folder\subfolder.log"
+    $result = Join-Path -Path "folder" -ChildPath "subfolder" -Extension ".log"
+    $result | Should -BeExactly "folder${SepChar}subfolder.log"
   }
   It "should change extension when joining multiple child path segments" {
-    $result = Join-Path -Path "C:\folder" -ChildPath "subfolder" "file.txt" -Extension ".log"
-    $result | Should -BeExactly "C:\folder\subfolder\file.log"
+    $result = Join-Path -Path "folder" -ChildPath "subfolder" "file.txt" -Extension ".log"
+    $result | Should -BeExactly "folder${SepChar}subfolder${SepChar}file.log"
   }
   It "should resolve path when -Extension changes to existing file" {
     New-Item -Path TestDrive:\testfile.log -ItemType File -Force | Out-Null
@@ -130,8 +130,8 @@ Describe "Join-Path cmdlet tests" -Tags "CI" {
       Should -Throw -ErrorId "PathNotFound,Microsoft.PowerShell.Commands.JoinPathCommand"
   }
   It "should accept Extension from pipeline by property name" {
-    $obj = [PSCustomObject]@{ Path = "C:\folder"; ChildPath = "file.txt"; Extension = ".log" }
+    $obj = [PSCustomObject]@{ Path = "folder"; ChildPath = "file.txt"; Extension = ".log" }
     $result = $obj | Join-Path
-    $result | Should -BeExactly "C:\folder\file.log"
+    $result | Should -BeExactly "folder${SepChar}file.log"
   }
 }
