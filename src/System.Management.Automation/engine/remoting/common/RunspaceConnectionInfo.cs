@@ -2711,9 +2711,9 @@ namespace System.Management.Automation.Runspaces
                     Utils.SafeDispose(stdOutReaderVar);
                     Utils.SafeDispose(stdErrReaderVar);
                 }
-                catch
+                catch (Exception)
                 {
-                    // Ignore all exceptions in the event handler.
+                    // Ignore all non-critical exceptions in the event handler.
                 }
             };
 
