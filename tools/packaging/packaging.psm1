@@ -515,6 +515,7 @@ function Start-PSPackage {
                     AssetsPath = "$RepoRoot\assets"
                     ProductTargetArchitecture = $TargetArchitecture
                     Force = $Force
+                    LTS = $LTS
             }
 
                 if ($PSCmdlet.ShouldProcess("Create MSI Package")) {
@@ -3831,7 +3832,9 @@ function New-MSIPackage
         # Force overwrite of package
         [Switch] $Force,
 
-        [string] $CurrentLocation = (Get-Location)
+        [string] $CurrentLocation = (Get-Location),
+
+        [switch] $LTS
     )
 
     $wixPaths = Get-WixPath -IsProductArchitectureArm ($ProductTargetArchitecture -eq "arm64")
@@ -3893,6 +3896,7 @@ function New-MSIPackage
     Write-Log "Generating wxs file manifest..."
     $arguments = @{
         IsPreview              = $isPreview
+        IsLTS                  = $LTS
         ProductSourcePath      = $staging
         ProductName            = $ProductName
         ProductVersion         = $ProductVersion
