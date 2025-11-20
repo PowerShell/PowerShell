@@ -428,10 +428,9 @@ namespace System.Management.Automation
             // Check for method invocation: $PSBoundParameters.ContainsKey('...') or $PSBoundParameters.Remove('...')
             if (lastAst.Parent is InvokeMemberExpressionAst invokeMemberAst)
             {
-                var memberName = invokeMemberAst.Member as StringConstantExpressionAst;
-                if (memberName != null &&
-                    (memberName.Value.Equals("ContainsKey", StringComparison.OrdinalIgnoreCase) ||
-                     memberName.Value.Equals("Remove", StringComparison.OrdinalIgnoreCase)))
+                if (invokeMemberAst.Member is StringConstantExpressionAst memberName &&
+    (memberName.Value.Equals("ContainsKey", StringComparison.OrdinalIgnoreCase) ||
+     memberName.Value.Equals("Remove", StringComparison.OrdinalIgnoreCase)))
                 {
                     targetAst = invokeMemberAst.Expression;
                 }
