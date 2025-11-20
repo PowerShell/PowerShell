@@ -484,7 +484,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
             }
 
-            // If all visible Properties are Remote Properties the object is still considered PropertyLess
+            // If all visible properties are remote properties the object is still considered propertyless
             return true;
         }
 
