@@ -291,8 +291,7 @@ namespace System.Management.Automation
             Ast switchAst = null;
 
             // Check if we're in a switch statement (complete) or error statement (incomplete switch)
-            var switchStatementAst = lastAst.Parent as SwitchStatementAst;
-            if (switchStatementAst != null)
+            if (lastAst.Parent is SwitchStatementAst switchStatementAst)
             {
                 // Verify that the lastAst is one of the clause conditions (not in the body)
                 bool isClauseCondition = switchStatementAst.Clauses.Any(clause => clause.Item1 == lastAst);
