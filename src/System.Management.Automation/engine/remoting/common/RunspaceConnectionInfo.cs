@@ -2642,9 +2642,9 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         private static int StartSSHProcessImpl(
             ProcessStartInfo startInfo,
-            out StreamWriter stdInWriter,
-            out StreamReader stdOutReader,
-            out StreamReader stdErrReader)
+            out StreamWriter stdInWriterVar,
+            out StreamReader stdOutReaderVar,
+            out StreamReader stdErrReaderVar)
         {
             Exception ex = null;
             Process sshProcess = null;
@@ -2680,9 +2680,9 @@ namespace System.Management.Automation.Runspaces
             }
 
             // Create the std in writer/readers needed for communication with ssh.exe.
-            StreamWriter stdInWriterVar = null;
-            StreamReader stdOutReaderVar = null;
-            StreamReader stdErrReaderVar = null;
+            stdInWriterVar = null;
+            stdOutReaderVar = null;
+            stdErrReaderVar = null;
             try
             {
                 stdInWriterVar = new StreamWriter(new NamedPipeServerStream(PipeDirection.Out, true, true, stdInPipeServer));
@@ -2699,27 +2699,6 @@ namespace System.Management.Automation.Runspaces
 
                 throw;
             }
-
-            // On Windows, the ssh process may exit upon error but leave the pipes open, which could result in a hang.
-            // So, we close the pipe handles when the ssh process exits to avoid this situation.
-            sshProcess.EnableRaisingEvents = true;
-            sshProcess.Exited += (sender, args) =>
-            {
-                try
-                {
-                    stdInWriterVar.Dispose();
-                    stdOutReaderVar.Dispose();
-                    stdErrReaderVar.Dispose();
-                }
-                catch (Exception)
-                {
-                    // Ignore all non-critical exceptions in the event handler.
-                }
-            };
-
-            stdInWriter = stdInWriterVar;
-            stdOutReader = stdOutReaderVar;
-            stdErrReader = stdErrReaderVar;
 
             return sshProcess.Id;
         }
@@ -2850,17 +2829,17 @@ namespace System.Management.Automation.Runspaces
             catch (Exception)
             {
                 stdInPipeServer?.Dispose();
-                stdInPipeClient?.Dispose();
                 stdOutPipeServer?.Dispose();
-                stdOutPipeClient?.Dispose();
                 stdErrPipeServer?.Dispose();
-                stdErrPipeClient?.Dispose();
 
                 throw;
             }
             finally
             {
                 lpProcessInformation.Dispose();
+                stdInPipeClient?.Dispose();
+                stdOutPipeClient?.Dispose();
+                stdErrPipeClient?.Dispose();
             }
         }
 
