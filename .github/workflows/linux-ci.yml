@@ -160,17 +160,18 @@ jobs:
       runner_os: ubuntu-latest
       test_results_artifact_name: testResults-xunit
 
-  analyze:
-    name: CodeQL Analysis
-    needs: changes
-    if: ${{ needs.changes.outputs.source == 'true' }}
-    uses: ./.github/workflows/analyze-reusable.yml
-    permissions:
-      actions: read
-      contents: read
-      security-events: write
-    with:
-      runner_os: ubuntu-latest
+  ## Temporarily disable the CodeQL analysis on Linux as it doesn't work for .NET SDK 10-rc.2.
+  # analyze:
+  #   name: CodeQL Analysis
+  #   needs: changes
+  #   if: ${{ needs.changes.outputs.source == 'true' }}
+  #   uses: ./.github/workflows/analyze-reusable.yml
+  #   permissions:
+  #     actions: read
+  #     contents: read
+  #     security-events: write
+  #   with:
+  #     runner_os: ubuntu-latest
 
   ready_to_merge:
     name: Linux ready to merge
