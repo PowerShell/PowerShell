@@ -469,7 +469,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             List<MshResolvedExpressionParameterAssociation> allProperties = AssociationManager.ExpandAll(so);
 
-            //Fast Exit if there is no visible properties
+            //Fast Exit if there are no visible properties
             if (allProperties.Count == 0)
             {
                 return true;
