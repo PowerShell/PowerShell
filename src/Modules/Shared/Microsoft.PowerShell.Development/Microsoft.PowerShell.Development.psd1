@@ -8,6 +8,7 @@ CompatiblePSEditions = @("Core")
 PowerShellVersion="7.0"
 FunctionsToExport = @()
 CmdletsToExport=@(
+    # Core Features
     "Get-ProjectContext",
     "Start-DevCommand",
     "Get-DevCommandStatus",
@@ -28,18 +29,63 @@ CmdletsToExport=@(
     "Remove-Workflow",
     "Get-TerminalSnapshot",
     "Get-CodeContext",
-    "New-AIPrompt"
+    "New-AIPrompt",
+    # MCP Server
+    "Start-MCPServer",
+    "Stop-MCPServer",
+    "Get-MCPServerStatus",
+    # AI Response Parser
+    "Convert-AIResponse",
+    "Invoke-AISuggestions",
+    # Session Replay
+    "Start-SessionRecording",
+    "Stop-SessionRecording",
+    "Add-SessionMarker",
+    "Add-SessionAnnotation",
+    "Get-RecordedSession",
+    "Invoke-SessionReplay",
+    "Remove-RecordedSession",
+    # Smart Suggestions
+    "Get-SmartSuggestion",
+    "Enable-SmartSuggestionLearning",
+    "Clear-SmartSuggestionPatterns",
+    "Get-SmartSuggestionStats",
+    "Update-SmartSuggestionHistory",
+    # Distributed Workflows
+    "Register-RemoteTarget",
+    "Get-RemoteTarget",
+    "Unregister-RemoteTarget",
+    "Test-RemoteTarget",
+    "Invoke-DistributedWorkflow",
+    "Invoke-RemoteCommand"
 )
 AliasesToExport = @(
-    "gpc",        # Get-ProjectContext
-    "devcmd",     # Start-DevCommand
-    "fai",        # Format-ForAI
-    "gts",        # Get-TerminalSnapshot
-    "snapshot",   # Get-TerminalSnapshot
-    "gcc",        # Get-CodeContext
-    "context",    # Get-CodeContext
-    "prompt",     # New-AIPrompt
-    "aiprompt"    # New-AIPrompt
+    # Core Features
+    "gpc",         # Get-ProjectContext
+    "devcmd",      # Start-DevCommand
+    "fai",         # Format-ForAI
+    "gts",         # Get-TerminalSnapshot
+    "snapshot",    # Get-TerminalSnapshot
+    "gcc",         # Get-CodeContext
+    "context",     # Get-CodeContext
+    "prompt",      # New-AIPrompt
+    "aiprompt",    # New-AIPrompt
+    # AI Response Parser
+    "parse-ai",    # Convert-AIResponse
+    "aiparse",     # Convert-AIResponse
+    "apply-ai",    # Invoke-AISuggestions
+    "aiapply",     # Invoke-AISuggestions
+    # Session Replay
+    "rec",         # Start-SessionRecording
+    "record",      # Start-SessionRecording
+    "getsessions", # Get-RecordedSession
+    "replay",      # Invoke-SessionReplay
+    # Smart Suggestions
+    "suggest",     # Get-SmartSuggestion
+    "ss",          # Get-SmartSuggestion
+    # Distributed Workflows
+    "distflow",    # Invoke-DistributedWorkflow
+    "remcmd"       # Invoke-RemoteCommand
 )
 NestedModules="Microsoft.PowerShell.Development.dll"
 HelpInfoURI = 'https://aka.ms/powershell75-help'
