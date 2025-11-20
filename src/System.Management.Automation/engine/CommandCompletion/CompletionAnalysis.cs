@@ -423,7 +423,7 @@ namespace System.Management.Automation
                 return null;
             }
 
-            Ast targetAst = null;
+            ExpressionAst targetAst = null;
 
             // Check for method invocation: $PSBoundParameters.ContainsKey('...') or $PSBoundParameters.Remove('...')
             if (lastAst.Parent is InvokeMemberExpressionAst invokeMemberAst)
