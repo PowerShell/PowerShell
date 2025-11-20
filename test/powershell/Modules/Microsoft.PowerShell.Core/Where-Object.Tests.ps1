@@ -152,7 +152,7 @@ Describe "Where-Object" -Tags "CI" {
             )
         }
 
-        It "-EQ:$false should behave like default boolean evaluation" {
+        It "-EQ:`$false should behave like default boolean evaluation" {
             # With -EQ:False, the parameter is not specified, so default boolean evaluation applies
             # "... | Where-Object Name" is equivalent to "... | Where-Object {$true -eq $_.Name}"
             # Non-empty strings are truthy
