@@ -19,7 +19,13 @@ CmdletsToExport=@(
     "Unregister-CliTool",
     "Invoke-CliTool",
     "Format-ForAI",
-    "Get-AIErrorContext"
+    "Get-AIErrorContext",
+    "Start-WorkflowRecording",
+    "Stop-WorkflowRecording",
+    "Save-WorkflowStep",
+    "Get-Workflow",
+    "Invoke-Workflow",
+    "Remove-Workflow"
 )
 AliasesToExport = @(
     "gpc",      # Get-ProjectContext
