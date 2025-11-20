@@ -92,6 +92,7 @@ jobs:
         with:
           purpose: UnelevatedPesterTests
           tagSet: CI
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   macos_test_elevated_ci:
     name: macOS Elevated CI
     needs:
@@ -109,6 +110,7 @@ jobs:
         with:
           purpose: ElevatedPesterTests
           tagSet: CI
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   macos_test_unelevated_others:
     name: macOS Unelevated Others
     needs:
@@ -126,6 +128,7 @@ jobs:
         with:
           purpose: UnelevatedPesterTests
           tagSet: Others
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   macos_test_elevated_others:
     name: macOS Elevated Others
     needs:
@@ -143,6 +146,7 @@ jobs:
         with:
           purpose: ElevatedPesterTests
           tagSet: Others
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   xunit_tests:
     name: xUnit Tests
     needs:
