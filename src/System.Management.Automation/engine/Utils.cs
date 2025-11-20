@@ -1613,17 +1613,6 @@ namespace System.Management.Automation
 
             return defaultValue;
         }
-
-        internal static void SafeDispose(IDisposable disposable)
-        {
-            if (disposable is { })
-            {
-                lock (disposable)
-                {
-                    disposable.Dispose();
-                }
-            }
-        }
     }
 }
 
