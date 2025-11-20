@@ -2707,9 +2707,9 @@ namespace System.Management.Automation.Runspaces
             {
                 try
                 {
-                    Utils.SafeDispose(stdInWriterVar);
-                    Utils.SafeDispose(stdOutReaderVar);
-                    Utils.SafeDispose(stdErrReaderVar);
+                    stdInWriterVar.Dispose();
+                    stdOutReaderVar.Dispose();
+                    stdErrReaderVar.Dispose();
                 }
                 catch (Exception)
                 {

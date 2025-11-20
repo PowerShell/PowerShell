@@ -1781,17 +1781,14 @@ namespace System.Management.Automation.Remoting.Client
             var connectionTimer = Interlocked.Exchange(ref _connectionTimer, null);
             connectionTimer?.Dispose();
 
-            // On Windows, the stdIn, stdOut, stdErr writer/readers are also disposed in the 'Exited' event of the ssh process.
-            // In that case, the 'Dispose' method could be called in parallel on them, which might result in a race condition.
-            // So, we handle their disposal here in a thread-safe manner.
             var stdInWriter = Interlocked.Exchange(ref _stdInWriter, null);
-            Utils.SafeDispose(stdInWriter);
+            stdInWriter?.Dispose();
 
             var stdOutReader = Interlocked.Exchange(ref _stdOutReader, null);
-            Utils.SafeDispose(stdOutReader);
+            stdOutReader?.Dispose();
 
             var stdErrReader = Interlocked.Exchange(ref _stdErrReader, null);
-            Utils.SafeDispose(stdErrReader);
+            stdErrReader?.Dispose();
 
             // The CloseConnection() method can be called multiple times from multiple places.
             // Set the _sshProcessId to zero here so that we go through the work of finding
