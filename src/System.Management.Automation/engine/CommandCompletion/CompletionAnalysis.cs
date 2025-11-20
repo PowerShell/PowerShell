@@ -428,8 +428,8 @@ namespace System.Management.Automation
             if (lastAst.Parent is InvokeMemberExpressionAst invokeMemberAst)
             {
                 if (invokeMemberAst.Member is StringConstantExpressionAst memberName &&
-    (memberName.Value.Equals("ContainsKey", StringComparison.OrdinalIgnoreCase) ||
-     memberName.Value.Equals("Remove", StringComparison.OrdinalIgnoreCase)))
+                    (memberName.Value.Equals("ContainsKey", StringComparison.OrdinalIgnoreCase) ||
+                     memberName.Value.Equals("Remove", StringComparison.OrdinalIgnoreCase)))
                 {
                     targetAst = invokeMemberAst.Expression;
                 }
