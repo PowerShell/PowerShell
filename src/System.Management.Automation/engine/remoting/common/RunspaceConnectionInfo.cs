@@ -2836,10 +2836,8 @@ namespace System.Management.Automation.Runspaces
             }
             finally
             {
+                lpStartupInfo.Dispose();
                 lpProcessInformation.Dispose();
-                stdInPipeClient?.Dispose();
-                stdOutPipeClient?.Dispose();
-                stdErrPipeClient?.Dispose();
             }
         }
 
