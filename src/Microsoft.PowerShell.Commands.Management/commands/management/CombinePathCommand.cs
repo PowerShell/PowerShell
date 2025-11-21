@@ -53,6 +53,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Gets or sets the extension to use for the resulting path.
+        /// If not specified, the original extension (if any) is preserved.
         /// <para>
         /// Behavior:
         /// - If the path has an existing extension, it will be replaced with the specified extension.
@@ -62,6 +63,7 @@ namespace Microsoft.PowerShell.Commands
         /// </para>
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
+        [ValidateNotNull]
         public string Extension { get; set; }
 
         #endregion Parameters
