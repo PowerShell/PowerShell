@@ -566,7 +566,7 @@ namespace Microsoft.PowerShell.Commands
                 ParameterSetName == ReceivePSSessionCommand.ComputerInstanceIdParameterSet)
             {
                 // Create the WSManConnectionInfo object for the specified computer name.
-                string scheme = UseSSL.IsPresent ? WSManConnectionInfo.HttpsScheme : WSManConnectionInfo.HttpScheme;
+                string scheme = UseSSL.IsSpecified ? WSManConnectionInfo.HttpsScheme : WSManConnectionInfo.HttpScheme;
 
                 connectionInfo.Scheme = scheme;
                 connectionInfo.ComputerName = ResolveComputerName(ComputerName);

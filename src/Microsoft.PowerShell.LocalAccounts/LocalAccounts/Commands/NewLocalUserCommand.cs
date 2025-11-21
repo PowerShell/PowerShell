@@ -207,7 +207,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            if (this.HasParameter("AccountExpires") && AccountNeverExpires.IsPresent)
+            if (this.HasParameter("AccountExpires") && AccountNeverExpires.IsSpecified)
             {
                 InvalidParametersException ex = new InvalidParametersException("AccountExpires", "AccountNeverExpires");
                 ThrowTerminatingError(ex.MakeErrorRecord());
@@ -255,11 +255,11 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    if (AccountNeverExpires.IsPresent)
+                    if (AccountNeverExpires.IsSpecified)
                         user.AccountExpires = null;
 
                     // Password will be null if NoPassword was given
-                    user = sam.CreateLocalUser(user, Password, PasswordNeverExpires.IsPresent);
+                    user = sam.CreateLocalUser(user, Password, PasswordNeverExpires.IsSpecified);
 
                     WriteObject(user);
                 }

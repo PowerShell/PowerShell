@@ -1198,7 +1198,7 @@ $result
         protected override void ProcessRecord()
         {
             object[] flags = new object[] { 1, 0 };
-            if (Force.IsPresent)
+            if (Force.IsSpecified)
                 flags[0] = forcedShutdown;
 
             ProcessWSManProtocol(flags);

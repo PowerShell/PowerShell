@@ -143,7 +143,7 @@ namespace Microsoft.PowerShell.Cmdletization
                     queryJob.SuppressOutputForwarding = true;
                 }
 
-                bool discardNonPipelineResults = (actionAgainstResults != null) || !this.AsJob.IsPresent;
+                bool discardNonPipelineResults = (actionAgainstResults != null) || !this.AsJob.IsSpecified;
                 HandleJobOutput(
                     queryJob,
                     sessionForJob,
@@ -225,7 +225,7 @@ namespace Microsoft.PowerShell.Cmdletization
 
             if (methodInvocationJob != null)
             {
-                bool discardNonPipelineResults = !this.AsJob.IsPresent;
+                bool discardNonPipelineResults = !this.AsJob.IsSpecified;
                 HandleJobOutput(
                     methodInvocationJob,
                     sessionForJob,
@@ -379,7 +379,7 @@ namespace Microsoft.PowerShell.Cmdletization
                 StartableJob childJob = this.DoCreateQueryJob(sessionForJob, query, actionAgainstResults: null);
                 if (childJob != null)
                 {
-                    if (!this.AsJob.IsPresent)
+                    if (!this.AsJob.IsSpecified)
                     {
                         _parentJob.AddChildJobAndPotentiallyBlock(this.Cmdlet, childJob, ThrottlingJob.ChildJobFlags.None);
                     }
@@ -416,7 +416,7 @@ namespace Microsoft.PowerShell.Cmdletization
                             objectInstance,
                             methodInvocationInfo,
                             passThru,
-                            closureOverAsJob.IsPresent);
+                            closureOverAsJob.IsSpecified);
 
                         if (methodInvocationJob != null)
                         {
@@ -426,7 +426,7 @@ namespace Microsoft.PowerShell.Cmdletization
 
                 if (queryJob != null)
                 {
-                    if (!this.AsJob.IsPresent)
+                    if (!this.AsJob.IsSpecified)
                     {
                         _parentJob.AddChildJobAndPotentiallyBlock(this.Cmdlet, queryJob, ThrottlingJob.ChildJobFlags.CreatesChildJobs);
                     }
@@ -583,10 +583,10 @@ namespace Microsoft.PowerShell.Cmdletization
 
             foreach (TSession sessionForJob in this.GetSessionsToActAgainst(objectInstance))
             {
-                StartableJob childJob = this.DoCreateInstanceMethodInvocationJob(sessionForJob, objectInstance, methodInvocationInfo, passThru, this.AsJob.IsPresent);
+                StartableJob childJob = this.DoCreateInstanceMethodInvocationJob(sessionForJob, objectInstance, methodInvocationInfo, passThru, this.AsJob.IsSpecified);
                 if (childJob != null)
                 {
-                    if (!this.AsJob.IsPresent)
+                    if (!this.AsJob.IsSpecified)
                     {
                         _parentJob.AddChildJobAndPotentiallyBlock(this.Cmdlet, childJob, ThrottlingJob.ChildJobFlags.None);
                     }
@@ -611,7 +611,7 @@ namespace Microsoft.PowerShell.Cmdletization
                 StartableJob childJob = this.DoCreateStaticMethodInvocationJob(sessionForJob, methodInvocationInfo);
                 if (childJob != null)
                 {
-                    if (!this.AsJob.IsPresent)
+                    if (!this.AsJob.IsSpecified)
                     {
                         _parentJob.AddChildJobAndPotentiallyBlock(this.Cmdlet, childJob, ThrottlingJob.ChildJobFlags.None);
                     }
@@ -628,15 +628,15 @@ namespace Microsoft.PowerShell.Cmdletization
         /// </summary>
         public override void BeginProcessing()
         {
-            if (this.AsJob.IsPresent)
+            if (this.AsJob.IsSpecified)
             {
                 MshCommandRuntime commandRuntime = (MshCommandRuntime)this.Cmdlet.CommandRuntime; // PSCmdlet.CommandRuntime is always MshCommandRuntime
                 string conflictingParameter = null;
-                if (commandRuntime.WhatIf.IsPresent)
+                if (commandRuntime.WhatIf.IsSpecified)
                 {
                     conflictingParameter = "WhatIf";
                 }
-                else if (commandRuntime.Confirm.IsPresent)
+                else if (commandRuntime.Confirm.IsSpecified)
                 {
                     conflictingParameter = "Confirm";
                 }
@@ -656,7 +656,7 @@ namespace Microsoft.PowerShell.Cmdletization
                 jobName: this.GenerateParentJobName(),
                 jobTypeName: CIMJobType,
                 maximumConcurrentChildJobs: this.ThrottleLimit,
-                cmdletMode: !this.AsJob.IsPresent);
+                cmdletMode: !this.AsJob.IsSpecified);
         }
 
         /// <summary>
@@ -665,7 +665,7 @@ namespace Microsoft.PowerShell.Cmdletization
         public override void EndProcessing()
         {
             _parentJob.EndOfChildJobs();
-            if (this.AsJob.IsPresent)
+            if (this.AsJob.IsSpecified)
             {
                 this.Cmdlet.WriteObject(_parentJob);
                 this.Cmdlet.JobRepository.Add(_parentJob);

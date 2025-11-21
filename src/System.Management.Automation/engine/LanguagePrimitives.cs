@@ -1005,7 +1005,7 @@ namespace System.Management.Automation
             }
 
             if (objType == typeof(SwitchParameter))
-                return ((SwitchParameter)obj).ToBool();
+                return ((SwitchParameter)obj).IsSpecified;
 
             IList objectArray = obj as IList;
             if (objectArray != null)
@@ -3305,7 +3305,7 @@ namespace System.Management.Automation
                                                          TypeTable backupTable)
         {
             typeConversion.WriteLine("Converting SwitchParameter to boolean.");
-            return ((SwitchParameter)valueToConvert).ToBool();
+            return ((SwitchParameter)valueToConvert).IsSpecified;
         }
 
         private static bool ConvertIListToBool(object valueToConvert,
