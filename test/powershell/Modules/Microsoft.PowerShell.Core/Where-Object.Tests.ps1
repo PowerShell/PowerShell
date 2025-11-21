@@ -280,5 +280,104 @@ Describe "Where-Object" -Tags "CI" {
             # Similar behavior for -Like:$false with -Value
             { $testData | Where-Object Name -Like:$false -Value 'A*' } | Should -Throw -ErrorId 'OperatorNotSpecified,Microsoft.PowerShell.Commands.WhereObjectCommand'
         }
+
+        It "-CEQ:`$false should behave like default boolean evaluation" {
+            # With -CEQ:$false, the parameter is not specified, so default boolean evaluation applies
+            $result = $testData | Where-Object Name -CEQ:$false
+            $result | Should -HaveCount 3
+        }
+
+        It "-CNE:`$false should behave like default boolean evaluation" {
+            # With -CNE:$false, the parameter is not specified, so default boolean evaluation applies
+            $result = $testData | Where-Object Name -CNE:$false
+            $result | Should -HaveCount 3
+        }
+
+        It "-CGT:`$false should behave like default boolean evaluation" {
+            # With -CGT:$false, the parameter is not specified, so default boolean evaluation applies
+            $result = $testData | Where-Object Age -CGT:$false
+            $result | Should -HaveCount 3
+        }
+
+        It "-CLT:`$false should behave like default boolean evaluation" {
+            # With -CLT:$false, the parameter is not specified, so default boolean evaluation applies
+            $result = $testData | Where-Object Age -CLT:$false
+            $result | Should -HaveCount 3
+        }
+
+        It "-CGE:`$false should behave like default boolean evaluation" {
+            # With -CGE:$false, the parameter is not specified, so default boolean evaluation applies
+            $result = $testData | Where-Object Age -CGE:$false
+            $result | Should -HaveCount 3
+        }
+
+        It "-CLE:`$false should behave like default boolean evaluation" {
+            # With -CLE:$false, the parameter is not specified, so default boolean evaluation applies
+            $result = $testData | Where-Object Age -CLE:$false
+            $result | Should -HaveCount 3
+        }
+
+        It "-CLike:`$false should behave like default boolean evaluation" {
+            # With -CLike:$false, the parameter is not specified, so default boolean evaluation applies
+            $result = $testData | Where-Object City -CLike:$false
+            $result | Should -HaveCount 3
+        }
+
+        It "-CNotLike:`$false should behave like default boolean evaluation" {
+            # With -CNotLike:$false, the parameter is not specified, so default boolean evaluation applies
+            $result = $testData | Where-Object City -CNotLike:$false
+            $result | Should -HaveCount 3
+        }
+
+        It "-CMatch:`$false should behave like default boolean evaluation" {
+            # With -CMatch:$false, the parameter is not specified, so default boolean evaluation applies
+            $result = $testData | Where-Object Name -CMatch:$false
+            $result | Should -HaveCount 3
+        }
+
+        It "-CNotMatch:`$false should behave like default boolean evaluation" {
+            # With -CNotMatch:$false, the parameter is not specified, so default boolean evaluation applies
+            $result = $testData | Where-Object Name -CNotMatch:$false
+            $result | Should -HaveCount 3
+        }
+
+        It "-CContains:`$false should behave like default boolean evaluation" {
+            # With -CContains:$false, the parameter is not specified, so default boolean evaluation applies
+            $result = $testData | Where-Object Name -CContains:$false
+            $result | Should -HaveCount 3
+        }
+
+        It "-CNotContains:`$false should behave like default boolean evaluation" {
+            # With -CNotContains:$false, the parameter is not specified, so default boolean evaluation applies
+            $result = $testData | Where-Object Name -CNotContains:$false
+            $result | Should -HaveCount 3
+        }
+
+        It "-CIn:`$false should behave like default boolean evaluation" {
+            # With -CIn:$false, the parameter is not specified, so default boolean evaluation applies
+            $result = $testData | Where-Object Name -CIn:$false
+            $result | Should -HaveCount 3
+        }
+
+        It "-CNotIn:`$false should behave like default boolean evaluation" {
+            # With -CNotIn:$false, the parameter is not specified, so default boolean evaluation applies
+            $result = $testData | Where-Object Name -CNotIn:$false
+            $result | Should -HaveCount 3
+        }
+
+        It "-CEQ:`$false with -Value should throw an error requiring an operator" {
+            # Similar behavior for -CEQ:$false with -Value
+            { $testData | Where-Object Name -CEQ:$false -Value 'Alice' } | Should -Throw -ErrorId 'OperatorNotSpecified,Microsoft.PowerShell.Commands.WhereObjectCommand'
+        }
+
+        It "-CGT:`$false with -Value should throw an error requiring an operator" {
+            # Similar behavior for -CGT:$false with -Value
+            { $testData | Where-Object Age -CGT:$false -Value 25 } | Should -Throw -ErrorId 'OperatorNotSpecified,Microsoft.PowerShell.Commands.WhereObjectCommand'
+        }
+
+        It "-CLike:`$false with -Value should throw an error requiring an operator" {
+            # Similar behavior for -CLike:$false with -Value
+            { $testData | Where-Object Name -CLike:$false -Value 'A*' } | Should -Throw -ErrorId 'OperatorNotSpecified,Microsoft.PowerShell.Commands.WhereObjectCommand'
+        }
     }
 }
