@@ -141,8 +141,8 @@ namespace Microsoft.PowerShell.Commands
                     continue;
                 }
 
-                // Change extension if specified
-                if (Extension != null && joinedPath != null)
+                // If Extension parameter is present it is not null due to [ValidateNotNull].
+                if (Extension is not null)
                 {
                     joinedPath = System.IO.Path.ChangeExtension(joinedPath, Extension.Length == 0 ? null : Extension);
                 }
