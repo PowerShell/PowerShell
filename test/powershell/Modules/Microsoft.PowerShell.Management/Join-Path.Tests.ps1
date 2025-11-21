@@ -84,13 +84,46 @@ Describe "Join-Path cmdlet tests" -Tags "CI" {
     $result = Join-Path -Path $Path -ChildPath $ChildPath
     $result | Should -BeExactly $ExpectedResult
   }
-  It "should change extension when -Extension parameter is specified" {
-    $result = Join-Path -Path "folder" -ChildPath "file.txt" -Extension ".log"
-    $result | Should -BeExactly "folder${SepChar}file.log"
-  }
-  It "should add extension to file without extension" {
-    $result = Join-Path -Path "folder" -ChildPath "file" -Extension ".txt"
-    $result | Should -BeExactly "folder${SepChar}file.txt"
+  It "should handle extension parameter: <TestName>" -TestCases @(
+    @{
+      TestName = "change extension"
+      Path = "folder"
+      ChildPath = "file.txt"
+      Extension = ".log"
+      ExpectedResult = "folder${SepChar}file.log"
+    }
+    @{
+      TestName = "add extension to file without extension"
+      Path = "folder"
+      ChildPath = "file"
+      Extension = ".txt"
+      ExpectedResult = "folder${SepChar}file.txt"
+    }
+    @{
+      TestName = "extension without leading dot"
+      Path = "folder"
+      ChildPath = "file.txt"
+      Extension = "log"
+      ExpectedResult = "folder${SepChar}file.log"
+    }
+    @{
+      TestName = "double extension with dot"
+      Path = "folder"
+      ChildPath = "file.txt"
+      Extension = ".tar.gz"
+      ExpectedResult = "folder${SepChar}file.tar.gz"
+    }
+    @{
+      TestName = "double extension without dot"
+      Path = "folder"
+      ChildPath = "file.txt"
+      Extension = "tar.gz"
+      ExpectedResult = "folder${SepChar}file.tar.gz"
+    }
+  ) {
+    param($TestName, $Path, $ChildPath, $Extension, $ExpectedResult)
+    $result = Join-Path -Path $Path -ChildPath $ChildPath -Extension $Extension
+    $result | Should -BeExactly $ExpectedResult
   }
   It "should remove extension when empty string is specified" {
     $result = Join-Path -Path "folder" -ChildPath "file.txt" -Extension ""
@@ -105,12 +138,6 @@ Describe "Join-Path cmdlet tests" -Tags "CI" {
     $result.Count | Should -Be 2
     $result[0] | Should -BeExactly "folder1${SepChar}file.log"
     $result[1] | Should -BeExactly "folder2${SepChar}file.log"
-  }
-  It "should handle extension with or without leading dot" {
-    $result1 = Join-Path -Path "folder" -ChildPath "file.txt" -Extension ".log"
-    $result2 = Join-Path -Path "folder" -ChildPath "file.txt" -Extension "log"
-    $result1 | Should -BeExactly "folder${SepChar}file.log"
-    $result2 | Should -BeExactly "folder${SepChar}file.log"
   }
   It "should replace only the last extension for files with multiple dots" {
     $result = Join-Path -Path "folder" -ChildPath "file.backup.txt" -Extension ".log"
