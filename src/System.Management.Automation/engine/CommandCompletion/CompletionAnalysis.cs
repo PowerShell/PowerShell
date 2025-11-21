@@ -374,18 +374,7 @@ namespace System.Management.Automation
 
             // Generate completion results from parameter names
             var wordToComplete = completionContext.WordToComplete ?? string.Empty;
-
-            var result = paramBlockAst.Parameters
-                .Select(parameter => parameter.Name.VariablePath.UserPath)
-                .Where(parameterName => parameterName.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
-                .Select(parameterName => new CompletionResult(
-                    parameterName,
-                    parameterName,
-                    CompletionResultType.ParameterValue,
-                    parameterName))
-                .ToList();
-
-            return result.Count > 0 ? result : null;
+            return CreateParameterCompletionResults(paramBlockAst, wordToComplete);
         }
 
         /// <summary>
@@ -454,18 +443,7 @@ namespace System.Management.Automation
                 quoteChar = "\"";
             }
 
-            var result = paramBlockAst.Parameters
-                .Select(parameter => parameter.Name.VariablePath.UserPath)
-                .Where(parameterName => parameterName.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
-                .Select(parameterName =>
-                    new CompletionResult(
-                        quoteChar + parameterName + quoteChar,
-                        parameterName,
-                        CompletionResultType.ParameterValue,
-                        parameterName))
-                .ToList();
-
-            return result.Count > 0 ? result : null;
+            return CreateParameterCompletionResults(paramBlockAst, wordToComplete, quoteChar);
         }
 
         /// <summary>
@@ -495,6 +473,32 @@ namespace System.Management.Automation
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Creates completion results from parameter names with optional quote wrapping.
+        /// </summary>
+        /// <param name="paramBlockAst">The parameter block containing parameters to complete.</param>
+        /// <param name="wordToComplete">The partial word to match against parameter names.</param>
+        /// <param name="quoteChar">Optional quote character to wrap completion text (empty string for no quotes).</param>
+        /// <returns>A list of completion results, or null if no matches found.</returns>
+        private static List<CompletionResult> CreateParameterCompletionResults(
+            ParamBlockAst paramBlockAst,
+            string wordToComplete,
+            string quoteChar = "")
+        {
+            var result = paramBlockAst.Parameters
+                .Select(parameter => parameter.Name.VariablePath.UserPath)
+                .Where(parameterName => parameterName.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
+                .Select(parameterName =>
+                    new CompletionResult(
+                        quoteChar + parameterName + quoteChar,
+                        parameterName,
+                        CompletionResultType.ParameterValue,
+                        parameterName))
+                .ToList();
+
+            return result.Count > 0 ? result : null;
         }
 
         private static bool CompleteOperator(Token tokenAtCursor, Ast lastAst)
