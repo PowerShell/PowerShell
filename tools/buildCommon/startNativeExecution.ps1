@@ -16,7 +16,7 @@ function script:Start-NativeExecution {
     $ErrorActionPreference = "Continue"
     Write-Verbose "Executing: $ScriptBlock"
     try {
-	$cwd = Get-Location
+        $cwd = Get-Location
 
         if ($VerboseOutputOnError.IsPresent) {
             $output = & $ScriptBlock 2>&1
