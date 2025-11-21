@@ -271,10 +271,10 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Validate that Append and NoHeader are not specified together.
-            if (Append.IsPresent && NoHeader.IsPresent)
+            if (Append && NoHeader)
             {
                 InvalidOperationException exception = new(CsvCommandStrings.CannotSpecifyAppendAndNoHeader);
-                ErrorRecord errorRecord = new(exception, "CannotSpecifyBothAppendAndNoHeader", ErrorCategory.InvalidArgument, null);
+                ErrorRecord errorRecord = new(exception, "CannotSpecifyBothAppendAndNoHeader", ErrorCategory.InvalidData, null);
                 this.ThrowTerminatingError(errorRecord);
             }
 
