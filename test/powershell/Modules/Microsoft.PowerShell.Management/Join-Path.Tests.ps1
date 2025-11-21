@@ -96,6 +96,10 @@ Describe "Join-Path cmdlet tests" -Tags "CI" {
     $result = Join-Path -Path "folder" -ChildPath "file.txt" -Extension ""
     $result | Should -BeExactly "folder${SepChar}file"
   }
+  It "should preserve dots in base name when removing extension with empty string" {
+    $result = Join-Path -Path "folder" -ChildPath "file...txt" -Extension ""
+    $result | Should -BeExactly "folder${SepChar}file.."
+  }
   It "should change extension for multiple paths" {
     $result = Join-Path -Path "folder1", "folder2" -ChildPath "file.txt" -Extension ".log"
     $result.Count | Should -Be 2
@@ -111,6 +115,10 @@ Describe "Join-Path cmdlet tests" -Tags "CI" {
   It "should replace only the last extension for files with multiple dots" {
     $result = Join-Path -Path "folder" -ChildPath "file.backup.txt" -Extension ".log"
     $result | Should -BeExactly "folder${SepChar}file.backup.log"
+  }
+  It "should preserve dots in base name when changing extension" {
+    $result = Join-Path -Path "folder" -ChildPath "file...txt" -Extension ".md"
+    $result | Should -BeExactly "folder${SepChar}file...md"
   }
   It "should add extension to directory-like path" {
     $result = Join-Path -Path "folder" -ChildPath "subfolder" -Extension ".log"

@@ -144,13 +144,7 @@ namespace Microsoft.PowerShell.Commands
                 // Change extension if specified
                 if (Extension != null && joinedPath != null)
                 {
-                    joinedPath = System.IO.Path.ChangeExtension(joinedPath, Extension);
-
-                    // Remove trailing dot when extension is empty string
-                    if (Extension.Length == 0)
-                    {
-                        joinedPath = joinedPath.TrimEnd('.');
-                    }
+                    joinedPath = System.IO.Path.ChangeExtension(joinedPath, Extension.Length == 0 ? null : Extension);
                 }
 
                 if (Resolve)
