@@ -365,26 +365,7 @@ namespace System.Management.Automation
             }
 
             // Find the nearest param block by traversing up the AST
-            ParamBlockAst paramBlockAst = null;
-            Ast current = switchAst.Parent;
-            while (current != null)
-            {
-                if (current is FunctionDefinitionAst functionDefinitionAst)
-                {
-                    paramBlockAst = functionDefinitionAst.Body?.ParamBlock;
-                    break;
-                }
-                else if (current is ScriptBlockAst scriptBlockAst)
-                {
-                    paramBlockAst = scriptBlockAst.ParamBlock;
-                    if (paramBlockAst != null)
-                    {
-                        break;
-                    }
-                }
-
-                current = current.Parent;
-            }
+            var paramBlockAst = FindNearestParamBlock(switchAst.Parent);
 
             if (paramBlockAst == null || paramBlockAst.Parameters.Count == 0)
             {
@@ -452,26 +433,7 @@ namespace System.Management.Automation
             }
 
             // Find the nearest param block
-            ParamBlockAst paramBlockAst = null;
-            Ast current = lastAst.Parent;
-            while (current != null)
-            {
-                if (current is FunctionDefinitionAst functionDefinitionAst)
-                {
-                    paramBlockAst = functionDefinitionAst.Body?.ParamBlock;
-                    break;
-                }
-                else if (current is ScriptBlockAst scriptBlockAst)
-                {
-                    paramBlockAst = scriptBlockAst.ParamBlock;
-                    if (paramBlockAst != null)
-                    {
-                        break;
-                    }
-                }
-
-                current = current.Parent;
-            }
+            var paramBlockAst = FindNearestParamBlock(lastAst.Parent);
 
             if (paramBlockAst == null || paramBlockAst.Parameters.Count == 0)
             {
@@ -479,7 +441,6 @@ namespace System.Management.Automation
             }
 
             // Generate completion results from parameter names
-            var result = new List<CompletionResult>();
             var wordToComplete = completionContext.WordToComplete ?? string.Empty;
 
             // Determine quote style based on the string constant type
@@ -493,19 +454,47 @@ namespace System.Management.Automation
                 quoteChar = "\"";
             }
 
-            result.AddRange(
-                paramBlockAst.Parameters
-                    .Select(parameter => parameter.Name.VariablePath.UserPath)
-                    .Where(parameterName => parameterName.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
-                    .Select(parameterName =>
-                        new CompletionResult(
-                            quoteChar + parameterName + quoteChar,
-                            parameterName,
-                            CompletionResultType.ParameterValue,
-                            parameterName))
-            );
+            var result = paramBlockAst.Parameters
+                .Select(parameter => parameter.Name.VariablePath.UserPath)
+                .Where(parameterName => parameterName.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
+                .Select(parameterName =>
+                    new CompletionResult(
+                        quoteChar + parameterName + quoteChar,
+                        parameterName,
+                        CompletionResultType.ParameterValue,
+                        parameterName))
+                .ToList();
 
             return result.Count > 0 ? result : null;
+        }
+
+        /// <summary>
+        /// Finds the nearest ParamBlockAst by traversing up the AST hierarchy.
+        /// </summary>
+        /// <param name="startAst">The AST node to start searching from.</param>
+        /// <returns>The nearest ParamBlockAst if found; otherwise, null.</returns>
+        private static ParamBlockAst FindNearestParamBlock(Ast startAst)
+        {
+            Ast current = startAst;
+            while (current != null)
+            {
+                if (current is FunctionDefinitionAst functionDefinitionAst)
+                {
+                    return functionDefinitionAst.Body?.ParamBlock;
+                }
+                else if (current is ScriptBlockAst scriptBlockAst)
+                {
+                    var paramBlock = scriptBlockAst.ParamBlock;
+                    if (paramBlock != null)
+                    {
+                        return paramBlock;
+                    }
+                }
+
+                current = current.Parent;
+            }
+
+            return null;
         }
 
         private static bool CompleteOperator(Token tokenAtCursor, Ast lastAst)
