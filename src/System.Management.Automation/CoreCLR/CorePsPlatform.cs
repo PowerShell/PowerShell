@@ -168,9 +168,16 @@ namespace System.Management.Automation
         internal static readonly string DefaultPSContentDirectory = Path.Combine(Platform.SelectProductNameForDirectory(Platform.XDG_Type.DATA), "PowerShell");
 #else
         // Gets the location for cache and config folders.
-        internal static readonly string CacheDirectory = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Microsoft\PowerShell";
-        internal static readonly string ConfigDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + @"\PowerShell";
         internal static readonly string DefaultPSContentDirectory = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\PowerShell";
+
+        internal static readonly string CacheDirectory = SafeDeriveFromSpecialFolder(
+            Environment.SpecialFolder.LocalApplicationData,
+            @"Microsoft\PowerShell");
+
+        internal static readonly string ConfigDirectory = SafeDeriveFromSpecialFolder(
+            Environment.SpecialFolder.Personal,
+            @"PowerShell");
+
         private static readonly Lazy<bool> _isStaSupported = new Lazy<bool>(() =>
         {
             int result = Interop.Windows.CoInitializeEx(IntPtr.Zero, Interop.Windows.COINIT_APARTMENTTHREADED);
@@ -189,6 +196,30 @@ namespace System.Management.Automation
         private static bool? _isIoT = null;
         private static bool? _isWindowsDesktop = null;
 #endif
+
+        internal static bool TryDeriveFromCache(string path1, out string result)
+        {
+            if (CacheDirectory is null or [])
+            {
+                result = null;
+                return false;
+            }
+
+            result = Path.Combine(CacheDirectory, path1);
+            return true;
+        }
+
+        internal static bool TryDeriveFromCache(string path1, string path2, out string result)
+        {
+            if (CacheDirectory is null or [])
+            {
+                result = null;
+                return false;
+            }
+
+            result = Path.Combine(CacheDirectory, path1, path2);
+            return true;
+        }
 
         // format files
         internal static readonly string[] FormatFileNames = new string[]
@@ -217,6 +248,17 @@ namespace System.Management.Automation
 #else
             internal const string Home = "USERPROFILE";
 #endif
+        }
+
+        private static string SafeDeriveFromSpecialFolder(Environment.SpecialFolder specialFolder, string subPath)
+        {
+            string basePath = Environment.GetFolderPath(specialFolder, Environment.SpecialFolderOption.DoNotVerify);
+            if (string.IsNullOrWhiteSpace(basePath))
+            {
+                return string.Empty;
+            }
+
+            return Path.Join(basePath, subPath);
         }
 
 #if UNIX
@@ -361,7 +403,7 @@ namespace System.Management.Automation
                 _ => throw new NotSupportedException()
             };
 #else
-            return Environment.GetFolderPath(folder);
+            return Environment.GetFolderPath(folder, Environment.SpecialFolderOption.DoNotVerify);
 #endif
         }
 
@@ -638,25 +680,29 @@ namespace System.Management.Automation
                         return DirectoryOwnerFullGroupReadExecOtherReadExec;
                     }
 
-                    Span<char> modeCharacters = stackalloc char[10];
-                    modeCharacters[0] = itemTypeTable[ItemType];
-                    bool isExecutable;
-
                     UnixFileMode modeInfo = (UnixFileMode)Mode;
-                    modeCharacters[1] = modeInfo.HasFlag(UnixFileMode.UserRead) ? CanRead : NoPerm;
-                    modeCharacters[2] = modeInfo.HasFlag(UnixFileMode.UserWrite) ? CanWrite : NoPerm;
-                    isExecutable = modeInfo.HasFlag(UnixFileMode.UserExecute);
-                    modeCharacters[3] = modeInfo.HasFlag(UnixFileMode.SetUser) ? (isExecutable ? SetAndExec : SetAndNotExec) : (isExecutable ? CanExecute : NoPerm);
 
-                    modeCharacters[4] = modeInfo.HasFlag(UnixFileMode.GroupRead) ? CanRead : NoPerm;
-                    modeCharacters[5] = modeInfo.HasFlag(UnixFileMode.GroupWrite) ? CanWrite : NoPerm;
-                    isExecutable = modeInfo.HasFlag(UnixFileMode.GroupExecute);
-                    modeCharacters[6] = modeInfo.HasFlag(UnixFileMode.SetGroup) ? (isExecutable ? SetAndExec : SetAndNotExec) : (isExecutable ? CanExecute : NoPerm);
+                    Span<char> modeCharacters = [
+                        itemTypeTable[ItemType],
 
-                    modeCharacters[7] = modeInfo.HasFlag(UnixFileMode.OtherRead) ? CanRead : NoPerm;
-                    modeCharacters[8] = modeInfo.HasFlag(UnixFileMode.OtherWrite) ? CanWrite : NoPerm;
-                    isExecutable = modeInfo.HasFlag(UnixFileMode.OtherExecute);
-                    modeCharacters[9] = modeInfo.HasFlag(UnixFileMode.StickyBit) ? (isExecutable ? StickyAndExec : StickyAndNotExec) : (isExecutable ? CanExecute : NoPerm);
+                        modeInfo.HasFlag(UnixFileMode.UserRead) ? CanRead : NoPerm,
+                        modeInfo.HasFlag(UnixFileMode.UserWrite) ? CanWrite : NoPerm,
+                        modeInfo.HasFlag(UnixFileMode.SetUser) ?
+                            (modeInfo.HasFlag(UnixFileMode.UserExecute) ? SetAndExec : SetAndNotExec) :
+                            (modeInfo.HasFlag(UnixFileMode.UserExecute) ? CanExecute : NoPerm),
+
+                        modeInfo.HasFlag(UnixFileMode.GroupRead) ? CanRead : NoPerm,
+                        modeInfo.HasFlag(UnixFileMode.GroupWrite) ? CanWrite : NoPerm,
+                        modeInfo.HasFlag(UnixFileMode.SetGroup) ?
+                            (modeInfo.HasFlag(UnixFileMode.GroupExecute) ? SetAndExec : SetAndNotExec) :
+                            (modeInfo.HasFlag(UnixFileMode.GroupExecute) ? CanExecute : NoPerm),
+
+                        modeInfo.HasFlag(UnixFileMode.OtherRead) ? CanRead : NoPerm,
+                        modeInfo.HasFlag(UnixFileMode.OtherWrite) ? CanWrite : NoPerm,
+                        modeInfo.HasFlag(UnixFileMode.StickyBit) ?
+                            (modeInfo.HasFlag(UnixFileMode.OtherExecute) ? StickyAndExec : StickyAndNotExec) :
+                            (modeInfo.HasFlag(UnixFileMode.OtherExecute) ? CanExecute : NoPerm),
+                    ];
 
                     return new string(modeCharacters);
                 }

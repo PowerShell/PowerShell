@@ -6,33 +6,33 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
         BeforeAll {
            $testCases = @(
                 @{
-                    ScriptBlock              = { function foo { param([ValidateCount(-1,2)] [string[]] $bar) }; foo }
+                    ScriptBlock              = { function Test-ArrayCount { param([ValidateCount(-1,2)] [string[]] $Items) }; Test-ArrayCount }
                     FullyQualifiedErrorId    = "ExceptionConstructingAttribute"
                     InnerErrorId             = ""
                 }
                 @{
-                    ScriptBlock              = { function foo { param([ValidateCount(1,-1)] [string[]] $bar) }; foo }
+                    ScriptBlock              = { function Test-ArrayCount { param([ValidateCount(1,-1)] [string[]] $Items) }; Test-ArrayCount }
                     FullyQualifiedErrorId    = "ExceptionConstructingAttribute"
                     InnerErrorId             = ""
                 }
                 @{
-                    ScriptBlock             = { function foo { param([ValidateCount(2, 1)] [string[]] $bar) }; foo }
+                    ScriptBlock             = { function Test-ArrayCount { param([ValidateCount(2, 1)] [string[]] $Items) }; Test-ArrayCount }
                     FullyQualifiedErrorId   = "ValidateRangeMaxLengthSmallerThanMinLength"
                     InnerErrorId            = ""
                 }
                 @{
-                    ScriptBlock             = { function foo { param([ValidateCount(2, 2)] [string[]] $bar) }; foo 1 }
-                    FullyQualifiedErrorId   = "ParameterArgumentValidationError,foo"
+                    ScriptBlock             = { function Test-ArrayCount { param([ValidateCount(2, 2)] [string[]] $Items) }; Test-ArrayCount 1 }
+                    FullyQualifiedErrorId   = "ParameterArgumentValidationError,Test-ArrayCount"
                     InnerErrorId            = "ValidateCountExactFailure"
                 }
                 @{
-                    ScriptBlock             = { function foo { param([ValidateCount(2, 3)] [string[]] $bar) }; foo 1 }
-                    FullyQualifiedErrorId   = "ParameterArgumentValidationError,foo"
+                    ScriptBlock             = { function Test-ArrayCount { param([ValidateCount(2, 3)] [string[]] $Items) }; Test-ArrayCount 1 }
+                    FullyQualifiedErrorId   = "ParameterArgumentValidationError,Test-ArrayCount"
                     InnerErrorId            = "ValidateCountMinMaxFailure"
                 }
                 @{
-                    ScriptBlock             = { function foo { param([ValidateCount(2, 3)] [string[]] $bar) }; foo 1,2,3,4 }
-                    FullyQualifiedErrorId   = "ParameterArgumentValidationError,foo"
+                    ScriptBlock             = { function Test-ArrayCount { param([ValidateCount(2, 3)] [string[]] $Items) }; Test-ArrayCount 1,2,3,4 }
+                    FullyQualifiedErrorId   = "ParameterArgumentValidationError,Test-ArrayCount"
                     InnerErrorId            = "ValidateCountMinMaxFailure"
                 }
            )
@@ -41,14 +41,14 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
         It 'Exception: <FullyQualifiedErrorId>:<InnerErrorId>' -TestCases $testCases {
             param($ScriptBlock, $FullyQualifiedErrorId, $InnerErrorId)
 
-            $ScriptBlock | Should -Throw -ErrorId $FullyQualifiedErrorId
+            $err = $ScriptBlock | Should -Throw -ErrorId $FullyQualifiedErrorId -PassThru
             if ($InnerErrorId) {
-                $error[0].exception.innerexception.errorrecord.FullyQualifiedErrorId | Should -Be $InnerErrorId
+                $err.exception.innerexception.errorrecord.FullyQualifiedErrorId | Should -Be $InnerErrorId
             }
         }
 
         It 'No Exception: valid argument count' {
-            { function foo { param([ValidateCount(2, 4)] [string[]] $bar) }; foo 1,2,3,4 } | Should -Not -Throw
+            { function Test-ArrayCount { param([ValidateCount(2, 4)] [string[]] $Items) }; Test-ArrayCount 1,2,3,4 } | Should -Not -Throw
         }
     }
 
@@ -56,22 +56,22 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
         BeforeAll {
             $testCases = @(
                 @{
-                    ScriptBlock             = { function foo { param([ValidateRange('xPositive')] $bar) }; foo }
+                    ScriptBlock             = { function Test-NumericRange { param([ValidateRange('xPositive')] $Number) }; Test-NumericRange }
                     FullyQualifiedErrorId   = "ExceptionConstructingAttribute"
                     InnerErrorId            = "SubstringDisambiguationEnumParseThrewAnException"
                 }
                 @{
-                    ScriptBlock             = { function foo { param([ValidateRange(2,1)] [int] $bar) }; foo }
+                    ScriptBlock             = { function Test-NumericRange { param([ValidateRange(2,1)] [int] $Number) }; Test-NumericRange }
                     FullyQualifiedErrorId   = "MaxRangeSmallerThanMinRange"
                     InnerErrorId            = ""
                 }
                 @{
-                    ScriptBlock             = { function foo { param([ValidateRange("one",10)] $bar) }; foo }
+                    ScriptBlock             = { function Test-NumericRange { param([ValidateRange("one",10)] $Number) }; Test-NumericRange }
                     FullyQualifiedErrorId   = "MinRangeNotTheSameTypeOfMaxRange"
                     InnerErrorId            = ""
                 }
                 @{
-                    ScriptBlock             = { function foo { param([ValidateRange(1,"two")] $bar) }; foo }
+                    ScriptBlock             = { function Test-NumericRange { param([ValidateRange(1,"two")] $Number) }; Test-NumericRange }
                     FullyQualifiedErrorId   = "MinRangeNotTheSameTypeOfMaxRange"
                     InnerErrorId            = ""
                 }
@@ -81,9 +81,9 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
         It 'Exception: <FullyQualifiedErrorId>:<InnerErrorId>' -TestCases $testCases {
             param($ScriptBlock, $FullyQualifiedErrorId, $InnerErrorId)
 
-            $ScriptBlock | Should -Throw -ErrorId $FullyQualifiedErrorId
+            $err = $ScriptBlock | Should -Throw -ErrorId $FullyQualifiedErrorId -PassThru
             if ($InnerErrorId) {
-                $error[0].exception.innerexception.errorrecord.FullyQualifiedErrorId | Should -Be $InnerErrorId
+                $err.exception.innerexception.errorrecord.FullyQualifiedErrorId | Should -Be $InnerErrorId
             }
         }
     }
@@ -91,25 +91,25 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
         BeforeAll {
            $testCases = @(
                 @{
-                    ScriptBlock             = { function foo { param([ValidateRange(1,10)] [int] $bar) }; foo -1 }
-                    FullyQualifiedErrorId   = "ParameterArgumentValidationError,foo"
+                    ScriptBlock             = { function Test-NumericRange { param([ValidateRange(1,10)] [int] $Number) }; Test-NumericRange -1 }
+                    FullyQualifiedErrorId   = "ParameterArgumentValidationError,Test-NumericRange"
                     InnerErrorId            = "ValidateRangeTooSmall"
                 }
                 @{
-                    ScriptBlock             = { function foo { param([ValidateRange(1,10)] [int] $bar) }; foo 11 }
-                    FullyQualifiedErrorId   = "ParameterArgumentValidationError,foo"
+                    ScriptBlock             = { function Test-NumericRange { param([ValidateRange(1,10)] [int] $Number) }; Test-NumericRange 11 }
+                    FullyQualifiedErrorId   = "ParameterArgumentValidationError,Test-NumericRange"
                     InnerErrorId            = "ValidateRangeTooBig"
                 }
                 @{
-                    ScriptBlock             = { function foo { param([ValidateRange(1,10)] $bar) }; foo "one" }
-                    FullyQualifiedErrorId   = "ParameterArgumentValidationError,foo"
+                    ScriptBlock             = { function Test-NumericRange { param([ValidateRange(1,10)] $Number) }; Test-NumericRange "one" }
+                    FullyQualifiedErrorId   = "ParameterArgumentValidationError,Test-NumericRange"
                     InnerErrorId            = "ValidationRangeElementType"
                 }
            )
 
             $validTestCases = @(
                @{
-                   ScriptBlock = { function foo { param([ValidateRange(1,10)] [int] $bar) }; foo 5 }
+                   ScriptBlock = { function Test-NumericRange { param([ValidateRange(1,10)] [int] $Number) }; Test-NumericRange 5 }
                 }
            )
         }
@@ -117,9 +117,9 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
         It 'Exception: <FullyQualifiedErrorId>:<InnerErrorId>' -TestCases $testCases {
             param($ScriptBlock, $FullyQualifiedErrorId, $InnerErrorId)
 
-            $ScriptBlock | Should -Throw -ErrorId $FullyQualifiedErrorId
+            $err = $ScriptBlock | Should -Throw -ErrorId $FullyQualifiedErrorId -PassThru
             if ($InnerErrorId) {
-                $error[0].exception.innerexception.errorrecord.FullyQualifiedErrorId | Should -Be $InnerErrorId
+                $err.exception.innerexception.errorrecord.FullyQualifiedErrorId | Should -Be $InnerErrorId
             }
         }
 
@@ -133,115 +133,115 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
         BeforeAll {
            $testCases = @(
                 @{
-                    ScriptBlock             = { function foo { param([ValidateRange("Positive")] [int] $bar) }; foo -1 }
+                    ScriptBlock             = { function Test-NumericRange { param([ValidateRange("Positive")] [int] $Number) }; Test-NumericRange -1 }
                     RangeType               = "Positive"
-                    FullyQualifiedErrorId   = "ParameterArgumentValidationError,foo"
+                    FullyQualifiedErrorId   = "ParameterArgumentValidationError,Test-NumericRange"
                     InnerErrorId            = "ValidateRangePositiveFailure"
                 }
                 @{
-                    ScriptBlock             = { function foo { param([ValidateRange("Positive")] [int] $bar) }; foo 0 }
+                    ScriptBlock             = { function Test-NumericRange { param([ValidateRange("Positive")] [int] $Number) }; Test-NumericRange 0 }
                     RangeType               = "Positive"
-                    FullyQualifiedErrorId   = "ParameterArgumentValidationError,foo"
+                    FullyQualifiedErrorId   = "ParameterArgumentValidationError,Test-NumericRange"
                     InnerErrorId            = "ValidateRangePositiveFailure"
                 }
                 @{
-                    ScriptBlock             = { function foo { param([ValidateRange("Positive")] $bar) }; foo "one" }
+                    ScriptBlock             = { function Test-NumericRange { param([ValidateRange("Positive")] $Number) }; Test-NumericRange "one" }
                     RangeType               = "Positive"
-                    FullyQualifiedErrorId   = "ParameterArgumentValidationError,foo"
+                    FullyQualifiedErrorId   = "ParameterArgumentValidationError,Test-NumericRange"
                     InnerErrorId            = ""
                 }
                 @{
-                    ScriptBlock             = { function foo { param([ValidateRange('NonNegative')] [int] $bar) }; foo -1 }
+                    ScriptBlock             = { function Test-NumericRange { param([ValidateRange('NonNegative')] [int] $Number) }; Test-NumericRange -1 }
                     RangeType               = "NonNegative"
-                    FullyQualifiedErrorId   = "ParameterArgumentValidationError,foo"
+                    FullyQualifiedErrorId   = "ParameterArgumentValidationError,Test-NumericRange"
                     InnerErrorId            = "ValidateRangeNonNegativeFailure"
                 }
                 @{
-                   ScriptBlock              = { function foo { param([ValidateRange('NonNegative')] $bar) }; foo "one" }
+                   ScriptBlock              = { function Test-NumericRange { param([ValidateRange('NonNegative')] $Number) }; Test-NumericRange "one" }
                    RangeType                = "NonNegative"
-                   FullyQualifiedErrorId    = "ParameterArgumentValidationError,foo"
+                   FullyQualifiedErrorId    = "ParameterArgumentValidationError,Test-NumericRange"
                    InnerErrorId             = ""
                 }
                 @{
-                    ScriptBlock             = { function foo { param([ValidateRange('Negative')] [int] $bar) }; foo 1 }
+                    ScriptBlock             = { function Test-NumericRange { param([ValidateRange('Negative')] [int] $Number) }; Test-NumericRange 1 }
                     RangeType               = "Negative"
-                    FullyQualifiedErrorId   = "ParameterArgumentValidationError,foo"
+                    FullyQualifiedErrorId   = "ParameterArgumentValidationError,Test-NumericRange"
                     InnerErrorId            = "ValidateRangeNegativeFailure"
                 }
                 @{
-                    ScriptBlock             = { function foo { param([ValidateRange('Negative')] [int] $bar) }; foo 0 }
+                    ScriptBlock             = { function Test-NumericRange { param([ValidateRange('Negative')] [int] $Number) }; Test-NumericRange 0 }
                     RangeType               = "Negative"
-                    FullyQualifiedErrorId   = "ParameterArgumentValidationError,foo"
+                    FullyQualifiedErrorId   = "ParameterArgumentValidationError,Test-NumericRange"
                     InnerErrorId            = "ValidateRangeNegativeFailure"
                 }
                 @{
-                    ScriptBlock             = { function foo { param([ValidateRange('Negative')] $bar) }; foo "one" }
+                    ScriptBlock             = { function Test-NumericRange { param([ValidateRange('Negative')] $Number) }; Test-NumericRange "one" }
                     RangeType               = "Negative"
-                    FullyQualifiedErrorId   = "ParameterArgumentValidationError,foo"
+                    FullyQualifiedErrorId   = "ParameterArgumentValidationError,Test-NumericRange"
                     InnerErrorId            = ""
                 }
                 @{
-                    ScriptBlock             = { function foo { param([ValidateRange('NonPositive')] $bar) }; foo 1 }
+                    ScriptBlock             = { function Test-NumericRange { param([ValidateRange('NonPositive')] $Number) }; Test-NumericRange 1 }
                     RangeType               = "NonPositive"
-                    FullyQualifiedErrorId   = "ParameterArgumentValidationError,foo"
+                    FullyQualifiedErrorId   = "ParameterArgumentValidationError,Test-NumericRange"
                     InnerErrorId            = "ValidateRangeNonPositiveFailure"
                 }
                 @{
-                    ScriptBlock             = { function foo { param([ValidateRange('NonPositive')] $bar) }; foo "one" }
+                    ScriptBlock             = { function Test-NumericRange { param([ValidateRange('NonPositive')] $Number) }; Test-NumericRange "one" }
                     RangeType               = "NonPositive"
-                    FullyQualifiedErrorId   = "ParameterArgumentValidationError,foo"
+                    FullyQualifiedErrorId   = "ParameterArgumentValidationError,Test-NumericRange"
                     InnerErrorId            = ""
                 }
            )
 
            $validTestCases = @(
                 @{
-                   ScriptBlock  = { function foo { param([ValidateRange("Positive")] [int] $bar) }; foo 15 }
+                   ScriptBlock  = { function Test-NumericRange { param([ValidateRange("Positive")] [int] $Number) }; Test-NumericRange 15 }
                    RangeType    = "Positive"
                    TestValue    = 15
                 }
                 @{
-                   ScriptBlock  = { function foo { param([ValidateRange("Positive")] [double]$bar) }; foo ([double]::MaxValue) };
+                   ScriptBlock  = { function Test-NumericRange { param([ValidateRange("Positive")] [double]$Number) }; Test-NumericRange ([double]::MaxValue) };
                    RangeType    = "Positive"
                    TestValue    = [double]::MaxValue
                 }
                 @{
-                   ScriptBlock  = { function foo { param([ValidateRange('NonNegative')] [int] $bar) }; foo 0 }
+                   ScriptBlock  = { function Test-NumericRange { param([ValidateRange('NonNegative')] [int] $Number) }; Test-NumericRange 0 }
                    RangeType    = "NonNegative"
                    TestValue    = 0
                 }
                 @{
-                   ScriptBlock  = { function foo { param([ValidateRange('NonNegative')] [int] $bar) }; foo 15 }
+                   ScriptBlock  = { function Test-NumericRange { param([ValidateRange('NonNegative')] [int] $Number) }; Test-NumericRange 15 }
                    RangeType    = "NonNegative"
                    TestValue    = 15
                 }
                 @{
-                   ScriptBlock  = { function foo { param([ValidateRange('NonNegative')] [double]$bar) }; foo ([double]::MaxValue) };
+                   ScriptBlock  = { function Test-NumericRange { param([ValidateRange('NonNegative')] [double]$Number) }; Test-NumericRange ([double]::MaxValue) };
                    RangeType    = "NonNegative"
                    TestValue    = [double]::MaxValue
                 }
                 @{
-                    ScriptBlock = { function foo { param([ValidateRange('Negative')] [int] $bar) }; foo -15 }
+                    ScriptBlock = { function Test-NumericRange { param([ValidateRange('Negative')] [int] $Number) }; Test-NumericRange -15 }
                     RangeType   = "Negative"
                     TestValue   = -15
                 }
                 @{
-                    ScriptBlock = { function foo { param([ValidateRange('Negative')] [double]$bar) }; foo ([double]::MinValue) };
+                    ScriptBlock = { function Test-NumericRange { param([ValidateRange('Negative')] [double]$Number) }; Test-NumericRange ([double]::MinValue) };
                     TestValue   = [double]::MinValue
                     RangeType   = "Negative"
                 }
                 @{
-                    ScriptBlock = { function foo { param([ValidateRange('NonPositive')] [int] $bar) }; foo 0 }
+                    ScriptBlock = { function Test-NumericRange { param([ValidateRange('NonPositive')] [int] $Number) }; Test-NumericRange 0 }
                     RangeType   = "NonPositive"
                     TestValue   = 0
                 }
                 @{
-                    ScriptBlock = { function foo { param([ValidateRange('NonPositive')] [int] $bar) }; foo -15 }
+                    ScriptBlock = { function Test-NumericRange { param([ValidateRange('NonPositive')] [int] $Number) }; Test-NumericRange -15 }
                     RangeType   = "NonPositive"
                     TestValue   = -15
                 }
                 @{
-                    ScriptBlock = { function foo { param([ValidateRange('NonPositive')] [double]$bar) }; foo ([double]::MinValue) }
+                    ScriptBlock = { function Test-NumericRange { param([ValidateRange('NonPositive')] [double]$Number) }; Test-NumericRange ([double]::MinValue) }
                     RangeType   = "NonPositive"
                     TestValue   = [double]::MinValue
                 }
@@ -251,15 +251,79 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
         It 'Exception: <FullyQualifiedErrorId>:<InnerErrorId>, RangeType: <RangeType>' -TestCases $testCases {
             param($ScriptBlock, $RangeType, $FullyQualifiedErrorId, $InnerErrorId)
 
-            $ScriptBlock | Should -Throw -ErrorId $FullyQualifiedErrorId
+            $err = $ScriptBlock | Should -Throw -ErrorId $FullyQualifiedErrorId -PassThru
             if ($InnerErrorId) {
-                $error[0].exception.innerexception.errorrecord.FullyQualifiedErrorId | Should -Be $InnerErrorId
+                $err.exception.innerexception.errorrecord.FullyQualifiedErrorId | Should -Be $InnerErrorId
             }
         }
 
         It 'No Exception: RangeType: <RangeType> - argument "<TestValue>"' -TestCases $validTestCases {
             param($ScriptBlock, $RangeType, $testValue)
                 $ScriptBlock | Should -Not -Throw
+        }
+    }
+
+    Context "ValidateLength" {
+        BeforeAll {
+            $testCases = @(
+                @{
+                    ScriptBlock             = { function Test-StringLength { param([ValidateLength(2, 5)] [string] $InputString) }; Test-StringLength "a" }
+                    FullyQualifiedErrorId   = "ParameterArgumentValidationError,Test-StringLength"
+                    InnerErrorId            = "ValidateLengthMinLengthFailure"
+                }
+                @{
+                    ScriptBlock             = { function Test-StringLength { param([ValidateLength(2, 5)] [string] $InputString) }; Test-StringLength "abcdef" }
+                    FullyQualifiedErrorId   = "ParameterArgumentValidationError,Test-StringLength"
+                    InnerErrorId            = "ValidateLengthMaxLengthFailure"
+                }
+                @{
+                    ScriptBlock             = { function Test-StringLength { param([ValidateLength(2, 5)] $InputString) }; Test-StringLength 123 }
+                    FullyQualifiedErrorId   = "ParameterArgumentValidationError,Test-StringLength"
+                    InnerErrorId            = "ValidateLengthNotString"
+                }
+            )
+
+            $validTestCases = @(
+                @{
+                    ScriptBlock  = { function Test-StringLength { param([ValidateLength(2, 5)] [string] $InputString) }; Test-StringLength "abc" }
+                }
+                @{
+                    ScriptBlock  = { function Test-StringLength { param([ValidateLength(2, 5)] [string] $InputString) }; Test-StringLength "ab" }
+                }
+                @{
+                    ScriptBlock  = { function Test-StringLength { param([ValidateLength(2, 5)] [string] $InputString) }; Test-StringLength "abcde" }
+                }
+            )
+        }
+
+        It 'Exception: <FullyQualifiedErrorId>:<InnerErrorId>' -TestCases $testCases {
+            param($ScriptBlock, $FullyQualifiedErrorId, $InnerErrorId)
+
+            $err = $ScriptBlock | Should -Throw -ErrorId $FullyQualifiedErrorId -PassThru
+            if ($InnerErrorId) {
+                $err.exception.innerexception.errorrecord.FullyQualifiedErrorId | Should -Be $InnerErrorId
+            }
+        }
+
+        It 'No Exception: valid string length' -TestCases $validTestCases {
+            param($ScriptBlock)
+            $ScriptBlock | Should -Not -Throw
+        }
+
+        It 'ValidateLength error message should be properly formatted' {
+            function Test-ValidateLengthMax { param([ValidateLength(0,2)] [string] $Value) $Value }
+            function Test-ValidateLengthMin { param([ValidateLength(5,10)] [string] $Value) $Value }
+
+            $TestStringTooLong = "11111"
+            $TestStringTooShort = "123"
+            $ExpectedMaxLength = 2
+            $ExpectedMinLength = 5
+
+            $err = { Test-ValidateLengthMax $TestStringTooLong } | Should -Throw -ErrorId "ParameterArgumentValidationError,Test-ValidateLengthMax" -PassThru
+            $err.Exception.InnerException.Message | Should -Match ".+\($($TestStringTooLong.Length)\).+\`"$ExpectedMaxLength\`""
+
+            $err = { Test-ValidateLengthMin $TestStringTooShort } | Should -Throw -ErrorId "ParameterArgumentValidationError,Test-ValidateLengthMin" -PassThru
+            $err.Exception.InnerException.Message | Should -Match ".+\($($TestStringTooShort.Length)\).+\`"$ExpectedMinLength\`""
         }
     }
 

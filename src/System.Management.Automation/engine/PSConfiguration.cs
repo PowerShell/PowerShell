@@ -92,7 +92,10 @@ namespace System.Management.Automation.Configuration
             // Note: This directory may or may not exist depending upon the execution scenario.
             // Writes will attempt to create the directory if it does not already exist.
             perUserConfigDirectory = Platform.ConfigDirectory;
-            perUserConfigFile = Path.Combine(perUserConfigDirectory, ConfigFileName);
+            if (!string.IsNullOrEmpty(perUserConfigDirectory))
+            {
+                perUserConfigFile = Path.Combine(perUserConfigDirectory, ConfigFileName);
+            }
 
             emptyConfig = new JObject();
             configRoots = new JObject[2];
@@ -429,6 +432,11 @@ namespace System.Management.Automation.Configuration
         private T ReadValueFromFile<T>(ConfigScope scope, string key, T defaultValue = default)
         {
             string fileName = GetConfigFilePath(scope);
+            if (string.IsNullOrEmpty(fileName))
+            {
+                return defaultValue;
+            }
+
             JObject configData = configRoots[(int)scope];
 
             if (configData == null)

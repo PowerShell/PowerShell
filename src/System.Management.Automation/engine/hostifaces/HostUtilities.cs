@@ -1,10 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
@@ -12,26 +10,10 @@ using System.Management.Automation.Runspaces;
 using System.Management.Automation.Subsystem.Feedback;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Text.RegularExpressions;
-
-using Microsoft.PowerShell.Commands;
 using Microsoft.PowerShell.Commands.Internal.Format;
 
 namespace System.Management.Automation
 {
-    internal enum SuggestionMatchType
-    {
-        /// <summary>Match on a command.</summary>
-        Command = 0,
-        /// <summary>Match based on exception message.</summary>
-        Error = 1,
-        /// <summary>Match by running a script block.</summary>
-        Dynamic = 2,
-
-        /// <summary>Match by fully qualified ErrorId.</summary>
-        ErrorId = 3
-    }
-
     #region Public HostUtilities Class
 
     /// <summary>
@@ -42,31 +24,6 @@ namespace System.Management.Automation
         #region Internal Access
 
         private static readonly char s_actionIndicator = HostSupportUnicode() ? '\u27a4' : '>';
-
-        private static readonly string s_checkForCommandInCurrentDirectoryScript = @"
-            [System.Diagnostics.DebuggerHidden()]
-            param()
-
-            $foundSuggestion = $false
-
-            if($lastError -and
-                ($lastError.Exception -is ""System.Management.Automation.CommandNotFoundException""))
-            {
-                $escapedCommand = [System.Management.Automation.WildcardPattern]::Escape($lastError.TargetObject)
-                $foundSuggestion = @(Get-Command ($ExecutionContext.SessionState.Path.Combine(""."", $escapedCommand)) -ErrorAction Ignore).Count -gt 0
-            }
-
-            $foundSuggestion
-        ";
-
-        private static readonly string s_createCommandExistsInCurrentDirectoryScript = @"
-            [System.Diagnostics.DebuggerHidden()]
-            param([string] $formatString)
-
-            $formatString -f $lastError.TargetObject,"".\$($lastError.TargetObject)""
-        ";
-
-        private static readonly List<Hashtable> s_suggestions = InitializeSuggestions();
 
         private static bool HostSupportUnicode()
         {
@@ -85,23 +42,6 @@ namespace System.Management.Automation
                 string.Empty;
 
             return ctype.EndsWith("UTF8") || ctype.EndsWith("UTF-8");
-        }
-
-        private static List<Hashtable> InitializeSuggestions()
-        {
-            var suggestions = new List<Hashtable>()
-            {
-                NewSuggestion(
-                    id: 3,
-                    category: "General",
-                    matchType: SuggestionMatchType.Dynamic,
-                    rule: ScriptBlock.CreateDelayParsedScriptBlock(s_checkForCommandInCurrentDirectoryScript, isProductCode: true),
-                    suggestion: ScriptBlock.CreateDelayParsedScriptBlock(s_createCommandExistsInCurrentDirectoryScript, isProductCode: true),
-                    suggestionArgs: new object[] { SuggestionStrings.Suggestion_CommandExistsInCurrentDirectory_Legacy },
-                    enabled: true)
-            };
-
-            return suggestions;
         }
 
         #region GetProfileCommands
@@ -218,10 +158,11 @@ namespace System.Management.Automation
             else
             {
                 basePath = GetAllUsersFolderPath(shellId);
-                if (string.IsNullOrEmpty(basePath))
-                {
-                    return string.Empty;
-                }
+            }
+
+            if (string.IsNullOrEmpty(basePath))
+            {
+                return string.Empty;
             }
 
             string profileName = useTestProfile ? "profile_test.ps1" : "profile.ps1";
@@ -290,303 +231,6 @@ namespace System.Management.Automation
             }
 
             return returnValue.ToString();
-        }
-
-        internal static List<string> GetSuggestion(Runspace runspace)
-        {
-            if (!(runspace is LocalRunspace localRunspace))
-            {
-                return new List<string>();
-            }
-
-            // Get the last value of $?
-            bool questionMarkVariableValue = localRunspace.ExecutionContext.QuestionMarkVariableValue;
-
-            // Get the last history item
-            History history = localRunspace.History;
-            HistoryInfo[] entries = history.GetEntries(-1, 1, true);
-
-            if (entries.Length == 0)
-                return new List<string>();
-
-            HistoryInfo lastHistory = entries[0];
-
-            // Get the last error
-            ArrayList errorList = (ArrayList)localRunspace.GetExecutionContext.DollarErrorVariable;
-            object lastError = null;
-
-            if (errorList.Count > 0)
-            {
-                lastError = errorList[0] as Exception;
-                ErrorRecord lastErrorRecord = null;
-
-                // The error was an actual ErrorRecord
-                if (lastError == null)
-                {
-                    lastErrorRecord = errorList[0] as ErrorRecord;
-                }
-                else if (lastError is RuntimeException)
-                {
-                    lastErrorRecord = ((RuntimeException)lastError).ErrorRecord;
-                }
-
-                // If we got information about the error invocation,
-                // we can be more careful with the errors we pass along
-                if ((lastErrorRecord != null) && (lastErrorRecord.InvocationInfo != null))
-                {
-                    if (lastErrorRecord.InvocationInfo.HistoryId == lastHistory.Id)
-                        lastError = lastErrorRecord;
-                    else
-                        lastError = null;
-                }
-            }
-
-            Runspace oldDefault = null;
-            bool changedDefault = false;
-            if (Runspace.DefaultRunspace != runspace)
-            {
-                oldDefault = Runspace.DefaultRunspace;
-                changedDefault = true;
-                Runspace.DefaultRunspace = runspace;
-            }
-
-            List<string> suggestions = null;
-
-            try
-            {
-                suggestions = GetSuggestion(lastHistory, lastError, errorList);
-            }
-            finally
-            {
-                if (changedDefault)
-                {
-                    Runspace.DefaultRunspace = oldDefault;
-                }
-            }
-
-            // Restore $?
-            localRunspace.ExecutionContext.QuestionMarkVariableValue = questionMarkVariableValue;
-            return suggestions;
-        }
-
-        [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly")]
-        internal static List<string> GetSuggestion(HistoryInfo lastHistory, object lastError, ArrayList errorList)
-        {
-            var returnSuggestions = new List<string>();
-
-            PSModuleInfo invocationModule = new PSModuleInfo(true);
-            invocationModule.SessionState.PSVariable.Set("lastHistory", lastHistory);
-            invocationModule.SessionState.PSVariable.Set("lastError", lastError);
-
-            int initialErrorCount = 0;
-
-            // Go through all of the suggestions
-            foreach (Hashtable suggestion in s_suggestions)
-            {
-                initialErrorCount = errorList.Count;
-
-                // Make sure the rule is enabled
-                if (!LanguagePrimitives.IsTrue(suggestion["Enabled"]))
-                    continue;
-
-                SuggestionMatchType matchType = (SuggestionMatchType)LanguagePrimitives.ConvertTo(
-                    suggestion["MatchType"],
-                    typeof(SuggestionMatchType),
-                    CultureInfo.InvariantCulture);
-
-                // If this is a dynamic match, evaluate the ScriptBlock
-                if (matchType == SuggestionMatchType.Dynamic)
-                {
-                    object result = null;
-
-                    ScriptBlock evaluator = suggestion["Rule"] as ScriptBlock;
-                    if (evaluator == null)
-                    {
-                        suggestion["Enabled"] = false;
-
-                        throw new ArgumentException(
-                            SuggestionStrings.RuleMustBeScriptBlock, "Rule");
-                    }
-
-                    try
-                    {
-                        result = invocationModule.Invoke(evaluator, null);
-                    }
-                    catch (Exception)
-                    {
-                        // Catch-all OK. This is a third-party call-out.
-                        suggestion["Enabled"] = false;
-                        continue;
-                    }
-
-                    // If it returned results, evaluate its suggestion
-                    if (LanguagePrimitives.IsTrue(result))
-                    {
-                        string suggestionText = GetSuggestionText(suggestion["Suggestion"], (object[])suggestion["SuggestionArgs"], invocationModule);
-
-                        if (!string.IsNullOrEmpty(suggestionText))
-                        {
-                            string returnString = string.Format(
-                                CultureInfo.CurrentCulture,
-                                "Suggestion [{0},{1}]: {2}",
-                                (int)suggestion["Id"],
-                                (string)suggestion["Category"],
-                                suggestionText);
-
-                            returnSuggestions.Add(returnString);
-                        }
-                    }
-                }
-                else
-                {
-                    string matchText = string.Empty;
-
-                    // Otherwise, this is a Regex match against the
-                    // command or error
-                    if (matchType == SuggestionMatchType.Command)
-                    {
-                        matchText = lastHistory.CommandLine;
-                    }
-                    else if (matchType == SuggestionMatchType.Error)
-                    {
-                        if (lastError != null)
-                        {
-                            Exception lastException = lastError as Exception;
-                            if (lastException != null)
-                            {
-                                matchText = lastException.Message;
-                            }
-                            else
-                            {
-                                matchText = lastError.ToString();
-                            }
-                        }
-                    }
-                    else if (matchType == SuggestionMatchType.ErrorId)
-                    {
-                        if (lastError != null && lastError is ErrorRecord errorRecord)
-                        {
-                            matchText = errorRecord.FullyQualifiedErrorId;
-                        }
-                    }
-                    else
-                    {
-                        suggestion["Enabled"] = false;
-
-                        throw new ArgumentException(
-                            SuggestionStrings.InvalidMatchType,
-                            "MatchType");
-                    }
-
-                    // If the text matches, evaluate the suggestion
-                    if (Regex.IsMatch(matchText, (string)suggestion["Rule"], RegexOptions.IgnoreCase))
-                    {
-                        string suggestionText = GetSuggestionText(suggestion["Suggestion"], (object[])suggestion["SuggestionArgs"], invocationModule);
-
-                        if (!string.IsNullOrEmpty(suggestionText))
-                        {
-                            string returnString = string.Format(
-                                CultureInfo.CurrentCulture,
-                                "Suggestion [{0},{1}]: {2}",
-                                (int)suggestion["Id"],
-                                (string)suggestion["Category"],
-                                suggestionText);
-
-                            returnSuggestions.Add(returnString);
-                        }
-                    }
-                }
-
-                // If the rule generated an error, disable it
-                if (errorList.Count != initialErrorCount)
-                {
-                    suggestion["Enabled"] = false;
-                }
-            }
-
-            return returnSuggestions;
-        }
-
-        /// <summary>
-        /// Create suggestion with string rule and scriptblock suggestion.
-        /// </summary>
-        /// <param name="id">Identifier for the suggestion.</param>
-        /// <param name="category">Category for the suggestion.</param>
-        /// <param name="matchType">Suggestion match type.</param>
-        /// <param name="rule">Rule to match.</param>
-        /// <param name="suggestion">Scriptblock to run that returns the suggestion.</param>
-        /// <param name="suggestionArgs">Arguments to pass to suggestion scriptblock.</param>
-        /// <param name="enabled">True if the suggestion is enabled.</param>
-        /// <returns>Hashtable representing the suggestion.</returns>
-        private static Hashtable NewSuggestion(int id, string category, SuggestionMatchType matchType, string rule, ScriptBlock suggestion, object[] suggestionArgs, bool enabled)
-        {
-            Hashtable result = new Hashtable(StringComparer.CurrentCultureIgnoreCase);
-
-            result["Id"] = id;
-            result["Category"] = category;
-            result["MatchType"] = matchType;
-            result["Rule"] = rule;
-            result["Suggestion"] = suggestion;
-            result["SuggestionArgs"] = suggestionArgs;
-            result["Enabled"] = enabled;
-
-            return result;
-        }
-
-        /// <summary>
-        /// Create suggestion with scriptblock rule and suggestion.
-        /// </summary>
-        private static Hashtable NewSuggestion(int id, string category, SuggestionMatchType matchType, ScriptBlock rule, ScriptBlock suggestion, bool enabled)
-        {
-            Hashtable result = new Hashtable(StringComparer.CurrentCultureIgnoreCase);
-
-            result["Id"] = id;
-            result["Category"] = category;
-            result["MatchType"] = matchType;
-            result["Rule"] = rule;
-            result["Suggestion"] = suggestion;
-            result["Enabled"] = enabled;
-
-            return result;
-        }
-
-        /// <summary>
-        /// Create suggestion with scriptblock rule and scriptblock suggestion with arguments.
-        /// </summary>
-        private static Hashtable NewSuggestion(int id, string category, SuggestionMatchType matchType, ScriptBlock rule, ScriptBlock suggestion, object[] suggestionArgs, bool enabled)
-        {
-            Hashtable result = NewSuggestion(id, category, matchType, rule, suggestion, enabled);
-            result.Add("SuggestionArgs", suggestionArgs);
-
-            return result;
-        }
-
-        /// <summary>
-        /// Get suggestion text from suggestion scriptblock with arguments.
-        /// </summary>
-        private static string GetSuggestionText(object suggestion, object[] suggestionArgs, PSModuleInfo invocationModule)
-        {
-            if (suggestion is ScriptBlock)
-            {
-                ScriptBlock suggestionScript = (ScriptBlock)suggestion;
-
-                object result = null;
-                try
-                {
-                    result = invocationModule.Invoke(suggestionScript, suggestionArgs);
-                }
-                catch (Exception)
-                {
-                    // Catch-all OK. This is a third-party call-out.
-                    return string.Empty;
-                }
-
-                return (string)LanguagePrimitives.ConvertTo(result, typeof(string), CultureInfo.CurrentCulture);
-            }
-            else
-            {
-                return (string)LanguagePrimitives.ConvertTo(suggestion, typeof(string), CultureInfo.CurrentCulture);
-            }
         }
 
         /// <summary>

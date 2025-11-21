@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands
     /// isExistingProperty is needed to distinguish whether a property exists and its value is null or
     /// the property does not exist at all.
     /// </summary>
-    internal class ObjectCommandPropertyValue
+    internal sealed class ObjectCommandPropertyValue
     {
         private ObjectCommandPropertyValue() { }
 
@@ -77,7 +77,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>True if both the objects are same or else returns false.</returns>
         public override bool Equals(object inputObject)
         {
-            if (!(inputObject is ObjectCommandPropertyValue objectCommandPropertyValueObject))
+            if (inputObject is not ObjectCommandPropertyValue objectCommandPropertyValueObject)
             {
                 return false;
             }
@@ -136,7 +136,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// ObjectCommandComparer class.
     /// </summary>
-    internal class ObjectCommandComparer : IComparer
+    internal sealed class ObjectCommandComparer : IComparer
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ObjectCommandComparer"/> class.

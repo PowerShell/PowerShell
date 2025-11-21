@@ -4,21 +4,22 @@
 <#
   PowerShell Diagnostics Module
   This module contains a set of wrapper scripts that
-  enable a user to use ETW tracing in Windows
-  PowerShell.
+  enable a user to use ETW tracing in PowerShell 7.
  #>
 
-$script:Logman="$env:windir\system32\logman.exe"
-$script:wsmanlogfile = "$env:windir\system32\wsmtraces.log"
-$script:wsmprovfile = "$env:windir\system32\wsmtraceproviders.txt"
+$script:windir = [System.Environment]::GetEnvironmentVariable("windir", [System.EnvironmentVariableTarget]::Machine)
+
+$script:Logman = "${script:windir}\system32\logman.exe"
+$script:wsmanlogfile = "${script:windir}\system32\wsmtraces.log"
+$script:wsmprovfile = "${script:windir}\system32\wsmtraceproviders.txt"
 $script:wsmsession = "wsmlog"
 $script:pssession = "PSTrace"
-$script:psprovidername="Microsoft-Windows-PowerShell"
+$script:psprovidername = "PowerShellCore"
 $script:wsmprovidername = "Microsoft-Windows-WinRM"
 $script:oplog = "/Operational"
-$script:analyticlog="/Analytic"
-$script:debuglog="/Debug"
-$script:wevtutil="$env:windir\system32\wevtutil.exe"
+$script:analyticlog = "/Analytic"
+$script:debuglog = "/Debug"
+$script:wevtutil = "${script:windir}\system32\wevtutil.exe"
 $script:slparam = "sl"
 $script:glparam = "gl"
 
@@ -169,7 +170,6 @@ function Enable-PSWSManCombinedTrace
 
     $provfile = [io.path]::GetTempFilename()
 
-    $traceFileName = [string][Guid]::NewGuid()
     if ($DoNotOverwriteExistingTrace) {
         $fileName = [string][guid]::newguid()
         $logfile = $PSHOME + "\\Traces\\PSTrace_$fileName.etl"
@@ -177,8 +177,8 @@ function Enable-PSWSManCombinedTrace
         $logfile = $PSHOME + "\\Traces\\PSTrace.etl"
     }
 
-    "Microsoft-Windows-PowerShell 0 5" | Out-File $provfile -Encoding ascii
-    "Microsoft-Windows-WinRM 0 5" | Out-File $provfile -Encoding ascii -Append
+    "$script:psprovidername 0 5" | Out-File $provfile -Encoding ascii
+    "$script:wsmprovidername 0 5" | Out-File $provfile -Encoding ascii -Append
 
     if (!(Test-Path $PSHOME\Traces))
     {
@@ -192,7 +192,7 @@ function Enable-PSWSManCombinedTrace
 
     Start-Trace -SessionName $script:pssession -OutputFilePath $logfile -ProviderFilePath $provfile -ETS
 
-    Remove-Item $provfile -Force -ea 0
+    Remove-Item $provfile -Force -ErrorAction SilentlyContinue
 }
 
 function Disable-PSWSManCombinedTrace

@@ -29,7 +29,7 @@ variables:
 
 resources:
   repositories:
-    - repository: templates
+    - repository: onebranchTemplates
       type: git
       name: OneBranch.Pipelines/GovernedTemplates
       ref: refs/heads/main
@@ -44,7 +44,7 @@ resources:
             - releases/*
 
 extends:
-  template: v2/Microsoft.Official.yml@templates
+  template: v2/Microsoft.Official.yml@onebranchTemplates
   parameters:
     platform:
       name: 'windows_undocked' # windows undocked
@@ -68,10 +68,9 @@ extends:
         suppressionsFile: $(Build.SourcesDirectory)\.config\suppress.json
       binskim:
         enabled: false
+        exactToolVersion: 4.4.2
       # APIScan requires a non-Ready-To-Run build
       apiscan:
-        enabled: false
-      asyncSDL:
         enabled: false
       tsaOptionsFile: .config/tsaoptions.json
 
@@ -100,7 +99,6 @@ extends:
           - template: .pipelines/templates/SetVersionVariables.yml@self
             parameters:
               ReleaseTagVar: $(ReleaseTagVar)
-              UseJson: no
 
           - pwsh: |
               Write-Verbose -Verbose 'PowerShell Version: $(version)'

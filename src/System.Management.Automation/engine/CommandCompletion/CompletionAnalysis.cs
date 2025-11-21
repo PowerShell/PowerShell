@@ -262,7 +262,7 @@ namespace System.Management.Automation
             if (lastAst.Parent is CommandExpressionAst)
             {
                 // Handle "switch -file m<tab>" or "switch -file *.ps1<tab>"
-                if (!(lastAst.Parent.Parent is PipelineAst pipeline))
+                if (lastAst.Parent.Parent is not PipelineAst pipeline)
                 {
                     return false;
                 }
@@ -1503,7 +1503,7 @@ namespace System.Management.Automation
             {
                 return false;
             }
-             
+
             if (inferredTypes.Count == 0)
             {
                 return false;
@@ -2613,7 +2613,7 @@ namespace System.Management.Automation
 
             return result;
         }
-      
+
         private static List<CompletionResult> CompleteUsingKeywords(int cursorOffset, Token[] tokens, ref int replacementIndex, ref int replacementLength)
         {
             var result = new List<CompletionResult>();

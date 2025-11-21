@@ -323,7 +323,7 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 
-    internal class EventWriteException : Exception
+    internal sealed class EventWriteException : Exception
     {
         internal EventWriteException(string msg, Exception innerException)
             : base(msg, innerException)

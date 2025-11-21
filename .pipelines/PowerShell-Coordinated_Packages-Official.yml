@@ -1,4 +1,3 @@
-name: bins-$(BUILD.SOURCEBRANCHNAME)-$(Build.BuildId)
 trigger: none
 
 parameters:
@@ -30,6 +29,11 @@ parameters:
     displayName: Debugging - Enable CodeQL and set cadence to 1 hour
     type: boolean
     default: false
+  - name: OfficialBuild
+    type: boolean
+    default: false
+
+name: bins-$(BUILD.SOURCEBRANCHNAME)-prod.${{ parameters.OfficialBuild }}-$(Build.BuildId)
 
 resources:
   repositories:
@@ -65,7 +69,7 @@ variables:
   - name: __DOTNET_RUNTIME_FEED
     value: ${{ parameters.InternalSDKBlobURL }}
   - name: LinuxContainerImage
-    value: onebranch.azurecr.io/linux/ubuntu-2004:latest
+    value: mcr.microsoft.com/onebranch/azurelinux/build:3.0
   - name: WindowsContainerImage
     value: onebranch.azurecr.io/windows/ltsc2019/vse2022:latest
   - name: CDP_DEFINITION_BUILD_COUNT
@@ -87,10 +91,19 @@ variables:
       value: true
     ${{ else }}:
       value: false
-
+  - name: templateFile
+    value: ${{ iif ( parameters.OfficialBuild, 'v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates', 'v2/OneBranch.NonOfficial.CrossPlat.yml@onebranchTemplates' ) }}
+  # Fix for BinSkim ICU package error in Linux containers
+  - name: DOTNET_SYSTEM_GLOBALIZATION_INVARIANT
+    value: true
+  # Disable BinSkim at job level to override NonOfficial template defaults
+  - name: ob_sdl_binskim_enabled
+    value: false
+  - name: ps_official_build
+    value: ${{ parameters.OfficialBuild }}
 
 extends:
-  template: v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates
+  template: ${{ variables.templateFile }}
   parameters:
     customTags: 'ES365AIMigrationTooling'
     featureFlags:
@@ -98,6 +111,7 @@ extends:
           Network: KS3
       WindowsHostVersion:
           Network: KS3
+      incrementalSDLBinaryAnalysis: true
     globalSdl:
       disableLegacyManifest: true
       # disabled Armorty as we dont have any ARM templates to scan. It fails on some sample ARM templates.
@@ -116,19 +130,13 @@ extends:
       cg:
         enabled: true
         ignoreDirectories: '.devcontainer,demos,docker,docs,src,test,tools/packaging'
-      asyncSdl:
-        enabled: true
-        forStages: [prep, macos, linux, windows, test_and_release_artifacts]
-        credscan:
-          enabled: true
-          scanFolder:  $(Build.SourcesDirectory)
-          suppressionsFile: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
-        binskim:
-          enabled: false
-        # APIScan requires a non-Ready-To-Run build
-        apiscan:
-          enabled: false
-        tsaOptionsFile: .config\tsaoptions.json
+      binskim:
+        enabled: false
+        exactToolVersion: 4.4.2
+      # APIScan requires a non-Ready-To-Run build
+      apiscan:
+        enabled: false
+      tsaOptionsFile: .config\tsaoptions.json
 
     stages:
     - stage: prep
@@ -136,7 +144,7 @@ extends:
       - job: SetVars
         displayName: Set Variables
         pool:
-          type: windows
+          type: linux
 
         variables:
           - name: ob_outputDirectory
@@ -170,7 +178,6 @@ extends:
           parameters:
             ReleaseTagVar: $(ReleaseTagVar)
             CreateJson: yes
-            UseJson: no
 
     - stage: macos
       displayName: macOS - build and sign
@@ -289,9 +296,20 @@ extends:
         - template: /.pipelines/templates/SetVersionVariables.yml@self
           parameters:
             ReleaseTagVar: $(ReleaseTagVar)
+        - template: /.pipelines/templates/rebuild-branch-check.yml@self
         - powershell: |
             $metadata = Get-Content '$(Build.SourcesDirectory)/PowerShell/tools/metadata.json' -Raw | ConvertFrom-Json
-            $LTS = $metadata.LTSRelease.Package
+
+            # Use the rebuild branch check from the template
+            $isRebuildBranch = '$(RebuildBranchCheck.IsRebuildBranch)' -eq 'true'
+
+            # Don't mark as LTS release for rebuild branches
+            $LTS = $metadata.LTSRelease.Package -and -not $isRebuildBranch
+
+            if ($isRebuildBranch) {
+              Write-Verbose -Message "Rebuild branch detected, not marking as LTS release" -Verbose
+            }
+
             @{ ReleaseVersion = "$(Version)"; LTSRelease = $LTS } | ConvertTo-Json | Out-File "$(Build.StagingDirectory)\release.json"
             Get-Content "$(Build.StagingDirectory)\release.json"
 
