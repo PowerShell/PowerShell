@@ -108,24 +108,25 @@ Describe "New-PSSession -UseWindowsPowerShell switch parameter" -Tag "CI" {
 
     It "Should respect explicit -UseWindowsPowerShell:`$false parameter value" {
         # Test 1: -UseWindowsPowerShell:$true should create a Windows PowerShell 5.1 session
-        $session1 = $null
+        $sessionWithTrue = $null
         try {
-            { $script:session1 = New-PSSession -UseWindowsPowerShell:$true } | Should -Not -Throw
-            $script:session1 | Should -Not -BeNullOrEmpty
+            { $script:sessionWithTrue = New-PSSession -UseWindowsPowerShell:$true } | Should -Not -Throw
+            $script:sessionWithTrue | Should -Not -BeNullOrEmpty
 
             # Verify it's Windows PowerShell 5.1
-            $version = Invoke-Command -Session $script:session1 -ScriptBlock { $PSVersionTable.PSVersion }
+            $version = Invoke-Command -Session $script:sessionWithTrue -ScriptBlock { $PSVersionTable.PSVersion }
             $version.Major | Should -Be 5
             $version.Minor | Should -Be 1
         }
         finally {
-            if ($script:session1) { Remove-PSSession $script:session1 -ErrorAction SilentlyContinue }
+            if ($script:sessionWithTrue) { Remove-PSSession $script:sessionWithTrue -ErrorAction SilentlyContinue }
         }
 
         # Test 2: -UseWindowsPowerShell:$false should use WSMan transport (not Process)
         $sessionWithFalse = $null
         try {
             { $script:sessionWithFalse = New-PSSession -UseWindowsPowerShell:$false } | Should -Not -Throw
+            $script:sessionWithFalse | Should -Not -BeNullOrEmpty
 
             # Transport should be WSMan, not Process
             $script:sessionWithFalse.Transport | Should -Be 'WSMan'
