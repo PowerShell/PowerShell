@@ -96,7 +96,7 @@ extends:
           ob_createvpack_verbose: true
 
         steps:
-          - template: .pipelines/templates/SetVersionVariables.yml@self
+          - template: /.pipelines/templates/SetVersionVariables.yml@self
             parameters:
               ReleaseTagVar: $(ReleaseTagVar)
 

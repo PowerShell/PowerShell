@@ -49,18 +49,18 @@ jobs:
       sudo chown $env:USER "$(Agent.TempDirectory)/PowerShell"
     displayName: 'Create $(Agent.TempDirectory)/PowerShell'
 
-  - template: SetVersionVariables.yml@self
+  - template: /.pipelines/templates/SetVersionVariables.yml@self
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
       CreateJson: no
 
-  - template: shouldSign.yml
+  - template: /.pipelines/templates/shouldSign.yml@self
 
-  - template: cloneToOfficialPath.yml
+  - template: /.pipelines/templates/cloneToOfficialPath.yml@self
     parameters:
       nativePathRoot: '$(Agent.TempDirectory)'
 
-  - template: rebuild-branch-check.yml@self
+  - template: /.pipelines/templates/rebuild-branch-check.yml@self
 
   - download: CoOrdinatedBuildPipeline
     artifact: macosBinResults-${{ parameters.buildArchitecture }}
