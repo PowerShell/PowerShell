@@ -64,6 +64,8 @@ Import-Module ./build.psm1
 Start-PSBuild -UseNuGetOrg
 ```
 
+> The PowerShell project by default references packages from the private Azure Artifacts feed, which requires authentication. The `-UseNuGetOrg` flag reconfigures the build to use the public NuGet.org feed instead.
+
 Congratulations! If everything went right, PowerShell is now built.
 The `Start-PSBuild` script will output the location of the executable:
 
