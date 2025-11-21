@@ -709,23 +709,31 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Gets the PSContent path from PowerShell.config.json or falls back to platform defaults.
+        /// When PSContentPath experimental feature is enabled, returns the configured path or default location.
         /// </summary>
-        /// <returns>The PSContent directory path</returns>
+        /// <returns>The PSContent directory path (never null).</returns>
         internal static string GetPSContentPath(bool setModulePath = false)
         {
             try
             {
                 if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSContentPath))
                 {
-                    return PowerShellConfig.Instance.GetPSContentPath();
+                    string contentPath = PowerShellConfig.Instance.GetPSContentPath();
+                    // GetPSContentPath now returns default location if not configured,
+                    // so this should never be null, but add defensive check for safety
+                    if (!string.IsNullOrEmpty(contentPath))
+                    {
+                        return contentPath;
+                    }
                 }
             }
             catch (Exception)
             {
-                // On Startup there is a cirular dependency between PowerShellConfig and Utils.
+                // On startup there is a circular dependency between PowerShellConfig and Utils.
+                // Fall through to platform defaults below to avoid breaking PowerShell initialization.
             }
 
-            // Fall back to platform defaults
+            // Fall back to platform defaults when feature is disabled or during initialization
             if (setModulePath)
             {
                 return PowerShellConfig.Instance.GetModulePath(ConfigScope.CurrentUser) ?? 

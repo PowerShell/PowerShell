@@ -204,6 +204,16 @@ namespace System.Management.Automation
             if (forCurrentUser)
             {
                 basePath = Utils.GetPSContentPath();
+                // GetPSContentPath should always return a valid path when called
+                if (string.IsNullOrEmpty(basePath))
+                {
+                    // Defensive fallback - should not happen in normal operation
+#if UNIX
+                    basePath = Platform.SelectProductNameForDirectory(Platform.XDG_Type.DATA);
+#else
+                    basePath = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + @"\PowerShell";
+#endif
+                }
             }
             else
             {

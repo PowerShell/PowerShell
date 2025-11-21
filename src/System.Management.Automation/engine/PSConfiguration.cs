@@ -65,8 +65,8 @@ namespace System.Management.Automation.Configuration
         private string perUserConfigFile;
         private string perUserConfigDirectory;
 
-        // Flag to track if migration has been checked
-        private bool migrationChecked = false;
+        // Flag to track if migration has been checked (lazy initialization to avoid circular dependency)
+        private int migrationChecked = 0;
 
         // Note: JObject and JsonSerializer are thread safe.
         // Root Json objects corresponding to the configuration file for 'AllUsers' and 'CurrentUser' respectively.
@@ -99,6 +99,9 @@ namespace System.Management.Automation.Configuration
             serializer = JsonSerializer.Create(new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None, MaxDepth = 10 });
 
             fileLock = new ReaderWriterLockSlim();
+
+            // Note: PSContentPath user config migration is NOT performed here to avoid circular dependency with ExperimentalFeature.
+            // It will be performed lazily on first access to GetPSContentPath().
         }
 
         private string GetConfigFilePath(ConfigScope scope)
@@ -146,16 +149,22 @@ namespace System.Management.Automation.Configuration
 
         /// <summary>
         /// Gets the PSContentPath from the configuration file.
+        /// If not configured, returns the default location without creating the config file.
+        /// This ensures PowerShell works on read-only file systems and avoids creating unnecessary files.
         /// </summary>
-        /// <returns>The configured PSContentPath if found, null otherwise.</returns>
+        /// <returns>The configured PSContentPath if found, otherwise the default location (never null).</returns>
         internal string GetPSContentPath()
         {
+            // Perform migration check on first call to avoid circular dependency with ExperimentalFeature
+            CheckAndPerformPSContentPathMigrationOnce();
+
             string contentPath = ReadValueFromFile<string>(ConfigScope.CurrentUser, Constants.PSUserContentPathEnvVar);
             if (!string.IsNullOrEmpty(contentPath))
             {
                 contentPath = Environment.ExpandEnvironmentVariables(contentPath);
             }
-            return contentPath;
+            // Returns default LocalAppData path if not configured
+            return contentPath ?? Platform.DefaultPSContentDirectory;
         }
 
         /// <summary>
@@ -419,9 +428,6 @@ namespace System.Management.Automation.Configuration
         /// <param name="defaultValue">The default value to return if the key is not present.</param>
         private T ReadValueFromFile<T>(ConfigScope scope, string key, T defaultValue = default)
         {
-            // Check for PSContentPath migration on first config access
-            CheckForMigrationOnFirstAccess();
-
             string fileName = GetConfigFilePath(scope);
             JObject configData = configRoots[(int)scope];
 
@@ -643,36 +649,19 @@ namespace System.Management.Automation.Configuration
             catch (Exception)
             {
                 // Migration failed, but don't break the system
-                // Log the error if logging is available
+                // TODO:: What should we do when we fail?
             }
         }
 
         /// <summary>
-        /// Checks for migration on first configuration access to avoid circular dependencies.
+        /// Ensures migration is checked exactly once, using thread-safe lazy initialization.
+        /// This is called from GetPSContentPath() to avoid circular dependency with ExperimentalFeature.
         /// </summary>
-        private void CheckForMigrationOnFirstAccess()
+        private void CheckAndPerformPSContentPathMigrationOnce()
         {
-            if (migrationChecked)
+            if (Interlocked.CompareExchange(ref migrationChecked, 1, 0) == 0)
             {
-                return;
-            }
-
-            migrationChecked = true;
-
-            try
-            {
-                // Only perform migration if PSContentPath experimental feature is enabled
-                // This is safe to call here because ExperimentalFeature will be initialized by now
-                if (!ExperimentalFeature.IsEnabled(ExperimentalFeature.PSContentPath))
-                {
-                    return;
-                }
-
                 CheckAndPerformPSContentPathMigration();
-            }
-            catch
-            {
-                // Migration is best-effort; don't fail config access if it fails
             }
         }
 
@@ -683,6 +672,12 @@ namespace System.Management.Automation.Configuration
         {
             try
             {
+                // Only perform migration if PSContentPath experimental feature is enabled
+                if (!ExperimentalFeature.IsEnabled(ExperimentalFeature.PSContentPath))
+                {
+                    return;
+                }
+
                 string oldConfigFile = Path.Combine(Platform.ConfigDirectory, ConfigFileName);
                 string newConfigFile = Path.Combine(Platform.DefaultPSContentDirectory, ConfigFileName);
                 

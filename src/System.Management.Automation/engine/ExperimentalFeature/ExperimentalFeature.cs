@@ -128,7 +128,7 @@ namespace System.Management.Automation
                     description: "Serialize enums based on long or ulong as an numeric value rather than the string representation when using ConvertTo-Json."),
                 new ExperimentalFeature(
                     name: PSContentPath,
-                    description: "Moves PS content to the new default location in LocalAppData/PowerShell and allows users to specify the content path."
+                    description: "Moves PS content (modules, scripts, help, and profiles) to the new default location in LocalAppData/PowerShell and allows users to specify the content path."
                 )
             };
 
