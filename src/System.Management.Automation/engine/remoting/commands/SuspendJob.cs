@@ -335,7 +335,7 @@ namespace Microsoft.PowerShell.Commands
                 _waitForJobs.WaitOne();
             }
 
-            if (_warnInvalidState) 
+            if (_warnInvalidState)
             {
                 WriteWarning(RemotingErrorIdStrings.SuspendJobInvalidJobState);
             }
