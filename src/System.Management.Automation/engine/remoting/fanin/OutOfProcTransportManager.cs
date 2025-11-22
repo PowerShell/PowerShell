@@ -1733,7 +1733,7 @@ namespace System.Management.Automation.Remoting.Client
                     bool sshTerminated = false;
                     try
                     {
-                        using (var sshProcess = System.Diagnostics.Process.GetProcessById(_sshProcessId))
+                        using (var sshProcess = Process.GetProcessById(_sshProcessId))
                         {
                             sshTerminated = sshProcess == null || sshProcess.Handle == IntPtr.Zero || sshProcess.HasExited;
                         }
@@ -1847,7 +1847,7 @@ namespace System.Management.Automation.Remoting.Client
                         // Messages in error stream from ssh are unreliable, and may just be warnings or
                         // banner text.
                         // So just report the messages but don't act on them.
-                        System.Console.WriteLine(error);
+                        Console.WriteLine(error);
                     }
                     catch (IOException)
                     { }
@@ -1907,10 +1907,10 @@ namespace System.Management.Automation.Remoting.Client
                         break;
                     }
 
-                    if (data.StartsWith(System.Management.Automation.Remoting.Server.FormattedErrorTextWriter.ErrorPrefix, StringComparison.OrdinalIgnoreCase))
+                    if (data.StartsWith(OutOfProcessTextWriter.ErrorPrefix, StringComparison.OrdinalIgnoreCase))
                     {
                         // Error message from the server.
-                        string errorData = data.Substring(System.Management.Automation.Remoting.Server.FormattedErrorTextWriter.ErrorPrefix.Length);
+                        string errorData = data.Substring(OutOfProcessTextWriter.ErrorPrefix.Length);
                         HandleErrorDataReceived(errorData);
                     }
                     else
