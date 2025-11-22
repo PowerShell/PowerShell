@@ -128,8 +128,6 @@ Describe "Set-Location" -Tags "CI" {
         }
     }
 
-
-    # Issue #25282: Set-Location fails for paths with special characters when switching drives
     Context "Set-Location with special characters in path" {
 
         BeforeAll {

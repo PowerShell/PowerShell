@@ -307,15 +307,12 @@ namespace System.Management.Automation
                     // not a slash-terminated path to the root of a drive,
                     // set the path to the current working directory of that drive.
                     string colonTerminatedVolume = CurrentDrive.Name + ':';
-                    if (path.Length == colonTerminatedVolume.Length)
+                    if (path.Length == colonTerminatedVolume.Length && CurrentDrive.VolumeSeparatedByColon)
                     {
-                        if (CurrentDrive.VolumeSeparatedByColon)
-                        {
-                            // The restored path should be treated as a literal path to avoid
-                            // wildcard expansion issues with special characters (e.g., brackets)
-                            pathRestoredFromDrive = true;
-                            path = Path.Combine(colonTerminatedVolume + Path.DirectorySeparatorChar, CurrentDrive.CurrentLocation);
-                        }
+                        // The restored path should be treated as a literal path to avoid
+                        // wildcard expansion issues with special characters (e.g., brackets)
+                        pathRestoredFromDrive = true;
+                        path = Path.Combine(colonTerminatedVolume + Path.DirectorySeparatorChar, CurrentDrive.CurrentLocation);
                     }
 
                     // Now that the current working drive is set,
