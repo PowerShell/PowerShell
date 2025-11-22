@@ -732,18 +732,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>True if the drive can be persisted or else false.</returns>
         private static bool IsSupportedDriveForPersistence(PSDriveInfo drive)
         {
-            bool isSupportedDriveForPersistence = false;
-            if (drive != null && !string.IsNullOrEmpty(drive.Name) && drive.Name.Length == 1)
-            {
-                char driveChar = Convert.ToChar(drive.Name, CultureInfo.InvariantCulture);
-
-                if (char.ToUpperInvariant(driveChar) >= 'A' && char.ToUpperInvariant(driveChar) <= 'Z')
-                {
-                    isSupportedDriveForPersistence = true;
-                }
-            }
-
-            return isSupportedDriveForPersistence;
+            return drive is { Name.Length: 1 } && char.IsAsciiLetter(drive.Name[0]);
         }
 
         /// <summary>
