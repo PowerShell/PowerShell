@@ -259,7 +259,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     _cachedBuilder.Append(headPadding).Append(str);
                 }
 
-                if (str.Contains(ValueStringDecorated.ESC) && !str.EndsWith(reset))
+                if (str.Contains(ValueStringDecorated.ESC) && !str.AsSpan().TrimEnd().EndsWith(reset, StringComparison.Ordinal))
                 {
                     _cachedBuilder.Append(reset);
                 }
