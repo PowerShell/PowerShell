@@ -1559,7 +1559,7 @@ namespace System.Management.Automation
 
             if (this.CanShouldProcessAutoConfirm())
             {
-                if (this.Verbose)
+                if (IsWriteVerboseEnabled())
                 {
                     // 2005/05/24 908827
                     // WriteDebug/WriteVerbose/WriteProgress/WriteWarning should only be callable from the main thread
@@ -1639,7 +1639,7 @@ namespace System.Management.Automation
 
             if (this.CanShouldProcessAutoConfirm())
             {
-                if (this.Verbose)
+                if (IsWriteVerboseEnabled())
                 {
                     return ShouldProcessPossibleOptimization.AutoYes_CanCallShouldProcessAsynchronously;
                 }
