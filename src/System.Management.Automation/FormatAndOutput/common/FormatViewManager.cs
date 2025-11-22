@@ -467,25 +467,32 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         internal static bool IsPropertyLessObject(PSObject so)
         {
-            List<MshResolvedExpressionParameterAssociation> allProperties = AssociationManager.ExpandAll(so);
+            // Using an enumerator to avoid the ExpandAll costs
+            var propertiesEnumerator = so.Properties.GetEnumerator();
 
-            // Fast Exit if there are no visible properties
-            if (allProperties.Count == 0)
+            try
             {
+                // Manually enumerate properties - Maximum iterations : 6 (5 Remoting properties + 1)
+                while (propertiesEnumerator.MoveNext())
+                {
+                    var property = propertiesEnumerator.Current;
+            
+                    // Skip remoting properties
+                    if (IsNotRemotingProperty(property.Name))
+                    {
+                        // Found a non-remoting property - object is NOT propertyless
+                        return false;
+                    }
+                }
+        
+                // Only remoting properties found (or no properties at all)
                 return true;
             }
-
-            // Handling Skipping Remoting Properties
-            foreach (MshResolvedExpressionParameterAssociation property in allProperties)
+            finally
             {
-                if (IsNotRemotingProperty(property.ResolvedExpression.ToString()))
-                {
-                    return false;
-                }
+                // Clean up the enumerator if it's IDisposable
+                (propertiesEnumerator as IDisposable)?.Dispose();
             }
-
-            // If all visible properties are remote properties the object is still considered propertyless
-            return true;
         }
 
         private static bool IsNotRemotingProperty(string name)
