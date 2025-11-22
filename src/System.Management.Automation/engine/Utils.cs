@@ -17,6 +17,7 @@ using System.Numerics;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security;
+using System.Text.Json;
 #if !UNIX
 using System.Security.Principal;
 #endif
@@ -704,6 +705,49 @@ namespace System.Management.Automation
         /// e.g. ~\Documents\WindowsPowerShell\Modules and %ProgramFiles%\WindowsPowerShell\Modules.
         /// </summary>
         internal static readonly string ModuleDirectory = Path.Combine(ProductNameForDirectory, "Modules");
+
+        /// <summary>
+        /// Gets the PSContent path from PowerShell.config.json or falls back to platform defaults.
+        /// When PSContentPath experimental feature is enabled, returns the configured path or default location.
+        /// </summary>
+        /// <returns>The PSContent directory path (never null).</returns>
+        internal static string GetPSContentPath(bool setModulePath = false)
+        {
+            try
+            {
+                if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSContentPath))
+                {
+                    string contentPath = PowerShellConfig.Instance.GetPSContentPath();
+                    // GetPSContentPath now returns default location if not configured,
+                    // so this should never be null, but add defensive check for safety
+                    if (!string.IsNullOrEmpty(contentPath))
+                    {
+                        return contentPath;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // On startup there is a circular dependency between PowerShellConfig and Utils.
+                // Fall through to platform defaults below to avoid breaking PowerShell initialization.
+            }
+
+            // Fall back to platform defaults when feature is disabled or during initialization
+            if (setModulePath)
+            {
+                return PowerShellConfig.Instance.GetModulePath(ConfigScope.CurrentUser) ?? 
+#if UNIX
+                       Platform.SelectProductNameForDirectory(Platform.XDG_Type.DATA);
+#else
+                       Environment.GetFolderPath(Environment.SpecialFolder.Personal) + @"\PowerShell";
+#endif
+            }
+#if UNIX
+            return Platform.SelectProductNameForDirectory(Platform.XDG_Type.DATA);
+#else
+            return Environment.GetFolderPath(Environment.SpecialFolder.Personal) + @"\PowerShell";
+#endif
+        }
 
         internal static readonly ConfigScope[] SystemWideOnlyConfig = new[] { ConfigScope.AllUsers };
         internal static readonly ConfigScope[] CurrentUserOnlyConfig = new[] { ConfigScope.CurrentUser };
