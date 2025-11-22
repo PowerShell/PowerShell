@@ -115,40 +115,58 @@ Describe "Join-Path cmdlet tests" -Tags "CI" {
       Extension = "tar.gz"
       ExpectedChildPath = "file.tar.gz"
     }
+    @{
+      TestName = "remove extension with empty string"
+      ChildPath = "file.txt"
+      Extension = ""
+      ExpectedChildPath = "file"
+    }
+    @{
+      TestName = "preserve dots in base name when removing extension with empty string"
+      ChildPath = "file...txt"
+      Extension = ""
+      ExpectedChildPath = "file.."
+    }
+    @{
+      TestName = "replace only the last extension for files with multiple dots"
+      ChildPath = "file.backup.txt"
+      Extension = ".log"
+      ExpectedChildPath = "file.backup.log"
+    }
+    @{
+      TestName = "preserve dots in base name when changing extension"
+      ChildPath = "file...txt"
+      Extension = ".md"
+      ExpectedChildPath = "file...md"
+    }
+    @{
+      TestName = "add extension to directory-like path"
+      ChildPath = "subfolder"
+      Extension = ".log"
+      ExpectedChildPath = "subfolder.log"
+    }
   ) {
     param($TestName, $ChildPath, $Extension, $ExpectedChildPath)
     $result = Join-Path -Path "folder" -ChildPath $ChildPath -Extension $Extension
     $result | Should -BeExactly "folder${SepChar}${ExpectedChildPath}"
   }
-  It "should remove extension when empty string is specified" {
-    $result = Join-Path -Path "folder" -ChildPath "file.txt" -Extension ""
-    $result | Should -BeExactly "folder${SepChar}file"
-  }
-  It "should preserve dots in base name when removing extension with empty string" {
-    $result = Join-Path -Path "folder" -ChildPath "file...txt" -Extension ""
-    $result | Should -BeExactly "folder${SepChar}file.."
+  It "should handle extension parameter with multiple child path segments: <TestName>" -TestCases @(
+    @{
+      TestName = "change extension when joining multiple child path segments"
+      ChildPaths = @("subfolder", "file.txt")
+      Extension = ".log"
+      ExpectedPath = "folder${SepChar}subfolder${SepChar}file.log"
+    }
+  ) {
+    param($TestName, $ChildPaths, $Extension, $ExpectedPath)
+    $result = Join-Path -Path "folder" -ChildPath $ChildPaths -Extension $Extension
+    $result | Should -BeExactly $ExpectedPath
   }
   It "should change extension for multiple paths" {
     $result = Join-Path -Path "folder1", "folder2" -ChildPath "file.txt" -Extension ".log"
     $result.Count | Should -Be 2
     $result[0] | Should -BeExactly "folder1${SepChar}file.log"
     $result[1] | Should -BeExactly "folder2${SepChar}file.log"
-  }
-  It "should replace only the last extension for files with multiple dots" {
-    $result = Join-Path -Path "folder" -ChildPath "file.backup.txt" -Extension ".log"
-    $result | Should -BeExactly "folder${SepChar}file.backup.log"
-  }
-  It "should preserve dots in base name when changing extension" {
-    $result = Join-Path -Path "folder" -ChildPath "file...txt" -Extension ".md"
-    $result | Should -BeExactly "folder${SepChar}file...md"
-  }
-  It "should add extension to directory-like path" {
-    $result = Join-Path -Path "folder" -ChildPath "subfolder" -Extension ".log"
-    $result | Should -BeExactly "folder${SepChar}subfolder.log"
-  }
-  It "should change extension when joining multiple child path segments" {
-    $result = Join-Path -Path "folder" -ChildPath "subfolder" "file.txt" -Extension ".log"
-    $result | Should -BeExactly "folder${SepChar}subfolder${SepChar}file.log"
   }
   It "should resolve path when -Extension changes to existing file" {
     New-Item -Path TestDrive:\testfile.log -ItemType File -Force | Out-Null
