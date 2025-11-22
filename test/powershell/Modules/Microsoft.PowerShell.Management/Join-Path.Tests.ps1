@@ -87,43 +87,38 @@ Describe "Join-Path cmdlet tests" -Tags "CI" {
   It "should handle extension parameter: <TestName>" -TestCases @(
     @{
       TestName = "change extension"
-      Path = "folder"
       ChildPath = "file.txt"
       Extension = ".log"
-      ExpectedResult = "folder${SepChar}file.log"
+      ExpectedChildPath = "file.log"
     }
     @{
       TestName = "add extension to file without extension"
-      Path = "folder"
       ChildPath = "file"
       Extension = ".txt"
-      ExpectedResult = "folder${SepChar}file.txt"
+      ExpectedChildPath = "file.txt"
     }
     @{
       TestName = "extension without leading dot"
-      Path = "folder"
       ChildPath = "file.txt"
       Extension = "log"
-      ExpectedResult = "folder${SepChar}file.log"
+      ExpectedChildPath = "file.log"
     }
     @{
       TestName = "double extension with dot"
-      Path = "folder"
       ChildPath = "file.txt"
       Extension = ".tar.gz"
-      ExpectedResult = "folder${SepChar}file.tar.gz"
+      ExpectedChildPath = "file.tar.gz"
     }
     @{
       TestName = "double extension without dot"
-      Path = "folder"
       ChildPath = "file.txt"
       Extension = "tar.gz"
-      ExpectedResult = "folder${SepChar}file.tar.gz"
+      ExpectedChildPath = "file.tar.gz"
     }
   ) {
-    param($TestName, $Path, $ChildPath, $Extension, $ExpectedResult)
-    $result = Join-Path -Path $Path -ChildPath $ChildPath -Extension $Extension
-    $result | Should -BeExactly $ExpectedResult
+    param($TestName, $ChildPath, $Extension, $ExpectedChildPath)
+    $result = Join-Path -Path "folder" -ChildPath $ChildPath -Extension $Extension
+    $result | Should -BeExactly "folder${SepChar}${ExpectedChildPath}"
   }
   It "should remove extension when empty string is specified" {
     $result = Join-Path -Path "folder" -ChildPath "file.txt" -Extension ""
