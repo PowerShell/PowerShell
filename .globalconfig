@@ -1642,7 +1642,7 @@ dotnet_diagnostic.SA1017.severity = none
 
 # SA1018: Nullable type symbols should be spaced correctly
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1018.md
-dotnet_diagnostic.SA1018.severity = none
+dotnet_diagnostic.SA1018.severity = warning
 
 # SA1019: Member access symbols should be spaced correctly
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1019.md
