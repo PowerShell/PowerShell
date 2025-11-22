@@ -244,6 +244,7 @@ namespace System.Management.Automation
             string driveName = null;
             ProviderInfo provider = null;
             string providerId = null;
+            bool pathRestoredFromDrive = false;
 
             switch (originalPath)
             {
@@ -306,9 +307,15 @@ namespace System.Management.Automation
                     // not a slash-terminated path to the root of a drive,
                     // set the path to the current working directory of that drive.
                     string colonTerminatedVolume = CurrentDrive.Name + ':';
-                    if (CurrentDrive.VolumeSeparatedByColon && (path.Length == colonTerminatedVolume.Length))
+                    if (path.Length == colonTerminatedVolume.Length)
                     {
-                        path = Path.Combine(colonTerminatedVolume + Path.DirectorySeparatorChar, CurrentDrive.CurrentLocation);
+                        if (CurrentDrive.VolumeSeparatedByColon)
+                        {
+                            // The restored path should be treated as a literal path to avoid
+                            // wildcard expansion issues with special characters (e.g., brackets)
+                            pathRestoredFromDrive = true;
+                            path = Path.Combine(colonTerminatedVolume + Path.DirectorySeparatorChar, CurrentDrive.CurrentLocation);
+                        }
                     }
 
                     // Now that the current working drive is set,
@@ -321,6 +328,14 @@ namespace System.Management.Automation
             if (CurrentDrive != null)
             {
                 context.Drive = CurrentDrive;
+            }
+
+            // Suppress wildcard expansion when using literal path or when the path
+            // was restored from a drive's current location to avoid issues with
+            // special characters like brackets
+            if (literalPath || pathRestoredFromDrive)
+            {
+                context.SuppressWildcardExpansion = true;
             }
 
             CmdletProvider providerInstance = null;

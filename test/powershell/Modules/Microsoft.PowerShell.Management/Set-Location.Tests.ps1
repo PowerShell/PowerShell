@@ -128,6 +128,224 @@ Describe "Set-Location" -Tags "CI" {
         }
     }
 
+
+    # Issue #25282: Set-Location fails for paths with special characters when switching drives
+    Context "Set-Location with special characters in path" {
+
+        BeforeAll {
+            # Find an available drive letter for subst
+            $script:availableDrive = $null
+            foreach ($letter in 'T','U','V','W','X','Y','Z') {
+                if (-not (Test-Path "${letter}:\")) {
+                    $script:availableDrive = $letter
+                    break
+                }
+            }
+
+            if (-not $script:availableDrive) {
+                throw "No available drive letter found for subst"
+            }
+
+            $script:oldLocation = Get-Location
+            # Create a temporary directory for subst (physical drive)
+            $script:tempRoot = New-Item -Path "$env:TEMP\TestDrive_$([guid]::NewGuid())" -ItemType Directory -Force
+            # Create a subst drive (physical Windows drive)
+            & subst "${script:availableDrive}:" $script:tempRoot.FullName
+            Start-Sleep -Milliseconds 200
+
+            # Create directories with special characters on both drives
+            # Physical drive with brackets
+            $script:testDirPhysical = New-Item -Path "${script:availableDrive}:\Test [Folder] physical" -ItemType Directory -Force
+            # C: drive with brackets
+            $script:testDirC = New-Item -Path "$env:TEMP\Test [Folder] c" -ItemType Directory -Force
+
+            # Create a PSDrive that points to a path with special characters
+            $script:psDrivePath = New-Item -Path "$env:TEMP\PSDrive [Root]" -ItemType Directory -Force
+            $script:testDirPSDrive = New-Item -Path "$($script:psDrivePath.FullName)\Test [Folder] psdrive" -ItemType Directory -Force
+            New-PSDrive -Name 'TestPS' -PSProvider FileSystem -Root $script:psDrivePath.FullName -Scope Global | Out-Null
+        }
+
+        AfterAll {
+            Set-Location C:\
+            if ($script:availableDrive) {
+                & subst "${script:availableDrive}:" /D 2>$null
+                Start-Sleep -Milliseconds 200
+            }
+            if (Get-PSDrive -Name 'TestPS' -ErrorAction SilentlyContinue) {
+                Remove-PSDrive -Name 'TestPS' -Force -ErrorAction SilentlyContinue
+            }
+            if ($script:tempRoot -and (Test-Path $script:tempRoot)) {
+                Remove-Item $script:tempRoot -Recurse -Force -ErrorAction SilentlyContinue
+            }
+            if ($script:testDirC -and (Test-Path $script:testDirC)) {
+                Remove-Item $script:testDirC -Recurse -Force -ErrorAction SilentlyContinue
+            }
+            if ($script:psDrivePath -and (Test-Path $script:psDrivePath)) {
+                Remove-Item $script:psDrivePath -Recurse -Force -ErrorAction SilentlyContinue
+            }
+            if ($script:oldLocation) {
+                Set-Location $script:oldLocation
+            }
+        }
+
+        It "Should navigate to directory with brackets using escaped path" {
+            # Reproduce the exact issue: navigate using escaped brackets
+            $escapedPath = "${script:availableDrive}:\Test ``[Folder``] physical"
+            Set-Location $escapedPath
+            $expectedPath = $script:testDirPhysical.FullName
+            (Get-Location).Path | Should -BeExactly $expectedPath
+        }
+
+        It "Should restore path with brackets when switching from physical drive to C: and back" {
+            # Step 1: Navigate to physical drive directory with brackets (using escaped path)
+            $escapedPath = "${script:availableDrive}:\Test ``[Folder``] physical"
+            Set-Location $escapedPath
+            $expectedPath = (Get-Location).Path
+
+            # Step 2: Switch to C: drive
+            Set-Location 'C:\'
+
+            # Step 3: Switch back using drive letter only - this is where the bug occurred
+            Set-Location "${script:availableDrive}:"
+
+            # Verify we're back in the directory with brackets
+            (Get-Location).Path | Should -BeExactly $expectedPath
+        }
+
+        It "Should restore path with brackets when switching from C: to physical drive and back" {
+            # Step 1: Navigate to C: directory with brackets (using escaped path)
+            $escapedPath = "$env:TEMP\Test ``[Folder``] c"
+            Set-Location $escapedPath
+            $expectedPathC = (Get-Location).Path
+
+            # Step 2: Switch to physical drive
+            Set-Location "${script:availableDrive}:\"
+
+            # Step 3: Switch back to C: using drive letter only
+            Set-Location 'C:'
+
+            # Verify we're back in the C: directory with brackets
+            (Get-Location).Path | Should -BeExactly $expectedPathC
+        }
+
+        It "Should handle multiple round-trips between drives with special characters" {
+            # Navigate to physical drive directory
+            $escapedPathPhysical = "${script:availableDrive}:\Test ``[Folder``] physical"
+            Set-Location $escapedPathPhysical
+            $expectedPathPhysical = (Get-Location).Path
+
+            # Navigate to C: directory
+            $escapedPathC = "$env:TEMP\Test ``[Folder``] c"
+            Set-Location $escapedPathC
+            $expectedPathC = (Get-Location).Path
+
+            # Round-trip 1: C: -> Physical -> C:
+            Set-Location "${script:availableDrive}:"
+            (Get-Location).Path | Should -BeExactly $expectedPathPhysical
+
+            Set-Location 'C:'
+            (Get-Location).Path | Should -BeExactly $expectedPathC
+
+            # Round-trip 2: C: -> Physical -> C:
+            Set-Location "${script:availableDrive}:"
+            (Get-Location).Path | Should -BeExactly $expectedPathPhysical
+
+            Set-Location 'C:'
+            (Get-Location).Path | Should -BeExactly $expectedPathC
+        }
+
+        It "Should restore path with brackets when switching from PSDrive to C: and back" {
+            # Step 1: Navigate to PSDrive directory with brackets
+            $escapedPath = "TestPS:\Test ``[Folder``] psdrive"
+            Set-Location $escapedPath
+            $expectedPath = (Get-Location).Path
+
+            # Step 2: Switch to C: drive
+            Set-Location 'C:\'
+
+            # Step 3: Switch back to PSDrive using drive letter only
+            Set-Location 'TestPS:'
+
+            # Verify we're back in the PSDrive directory with brackets
+            (Get-Location).Path | Should -BeExactly $expectedPath
+        }
+
+        It "Should restore path with brackets when switching from C: to PSDrive and back" {
+            # Step 1: Navigate to C: directory with brackets
+            $escapedPathC = "$env:TEMP\Test ``[Folder``] c"
+            Set-Location $escapedPathC
+            $expectedPathC = (Get-Location).Path
+
+            # Step 2: Switch to PSDrive
+            Set-Location 'TestPS:\'
+
+            # Step 3: Switch back to C: using drive letter only
+            Set-Location 'C:'
+
+            # Verify we're back in the C: directory with brackets
+            (Get-Location).Path | Should -BeExactly $expectedPathC
+        }
+
+        It "Should handle multiple round-trips between PSDrive and C: with special characters" {
+            # Navigate to PSDrive directory
+            $escapedPathPS = "TestPS:\Test ``[Folder``] psdrive"
+            Set-Location $escapedPathPS
+            $expectedPathPS = (Get-Location).Path
+
+            # Navigate to C: directory
+            $escapedPathC = "$env:TEMP\Test ``[Folder``] c"
+            Set-Location $escapedPathC
+            $expectedPathC = (Get-Location).Path
+
+            # Round-trip 1: C: -> PSDrive -> C:
+            Set-Location 'TestPS:'
+            (Get-Location).Path | Should -BeExactly $expectedPathPS
+
+            Set-Location 'C:'
+            (Get-Location).Path | Should -BeExactly $expectedPathC
+
+            # Round-trip 2: C: -> PSDrive -> C:
+            Set-Location 'TestPS:'
+            (Get-Location).Path | Should -BeExactly $expectedPathPS
+
+            Set-Location 'C:'
+            (Get-Location).Path | Should -BeExactly $expectedPathC
+        }
+
+        It "Should not change location when using same-drive syntax on current drive" {
+            # Navigate to a path with brackets
+            $escapedPath = "${script:availableDrive}:\Test ``[Folder``] physical"
+            Set-Location $escapedPath
+            $currentPath = (Get-Location).Path
+
+            # Use same-drive syntax - should stay in same location
+            Set-Location "${script:availableDrive}:"
+            (Get-Location).Path | Should -BeExactly $currentPath
+        }
+
+        It "Should not change location when using same-drive syntax on C: drive" {
+            # Navigate to C: directory with brackets
+            $escapedPath = "$env:TEMP\Test ``[Folder``] c"
+            Set-Location $escapedPath
+            $currentPath = (Get-Location).Path
+
+            # Use same-drive syntax - should stay in same location
+            Set-Location 'C:'
+            (Get-Location).Path | Should -BeExactly $currentPath
+        }
+
+        It "Should not change location when using same-drive syntax on PSDrive" {
+            # Navigate to PSDrive directory with brackets
+            $escapedPath = "TestPS:\Test ``[Folder``] psdrive"
+            Set-Location $escapedPath
+            $currentPath = (Get-Location).Path
+
+            # Use same-drive syntax - should stay in same location
+            Set-Location 'TestPS:'
+            (Get-Location).Path | Should -BeExactly $currentPath
+        }
+    }
+
     Context 'Set-Location with last location history' {
 
         It 'Should go to last location when specifying minus as a path' {
