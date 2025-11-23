@@ -270,6 +270,14 @@ namespace Microsoft.PowerShell.Commands
                 this.ThrowTerminatingError(errorRecord);
             }
 
+            // Validate that Append and NoHeader are not specified together.
+            if (Append && NoHeader)
+            {
+                InvalidOperationException exception = new(CsvCommandStrings.CannotSpecifyAppendAndNoHeader);
+                ErrorRecord errorRecord = new(exception, "CannotSpecifyBothAppendAndNoHeader", ErrorCategory.InvalidData, null);
+                this.ThrowTerminatingError(errorRecord);
+            }
+
             _shouldProcess = ShouldProcess(Path);
             if (!_shouldProcess)
             {

@@ -187,6 +187,10 @@ Describe "Export-Csv" -Tags "CI" {
         $results[1].PSObject.properties.Name | Should -Not -Contain 'third'
     }
 
+    It "Should throw when -Append and -NoHeader are specified together" {
+        { $P1 | Export-Csv -Path $testCsv -Append -NoHeader -ErrorAction Stop } | Should -Throw -ErrorId "CannotSpecifyBothAppendAndNoHeader,Microsoft.PowerShell.Commands.ExportCsvCommand"
+    }
+
     It "First line should be #TYPE if -IncludeTypeInformation used and pstypenames object property is empty" {
         $object = [PSCustomObject]@{first = 1}
         $pstypenames = $object.pstypenames | ForEach-Object -Process {$_}
