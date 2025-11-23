@@ -42,6 +42,11 @@ namespace Microsoft.PowerShell.Commands
         private object _prop;
 
         /// <summary>
+        /// Optional parameter for excluding properties from formatting.
+        /// </summary>
+        [Parameter]
+        public string[] ExcludeProperty { get; set; }
+
         /// Optional, non positional parameter.
         /// </summary>
         /// <value></value>
@@ -81,10 +86,23 @@ namespace Microsoft.PowerShell.Commands
                 parameters.mshParameterList = processor.ProcessParameters(new object[] { _prop }, invocationContext);
             }
 
+            if (ExcludeProperty != null)
+            {
+                parameters.excludePropertyFilter = new Microsoft.PowerShell.Commands.Internal.Format.PSPropertyExpressionFilter(ExcludeProperty);
+                // ExcludeProperty implies -Property * for better UX
+                if (_prop == null)
+                {
+                    ParameterProcessor processor = new(new FormatWideParameterDefinition());
+                    TerminatingErrorContext invocationContext = new(this);
+                    parameters.mshParameterList = processor.ProcessParameters(new object[] { "*" }, invocationContext);
+                }
+            }
+
             if (!string.IsNullOrEmpty(this.View))
             {
                 // we have a view command line switch
-                if (parameters.mshParameterList.Count != 0)
+                // View cannot be used with Property or ExcludeProperty
+                if (parameters.mshParameterList.Count != 0 || ExcludeProperty != null)
                 {
                     ReportCannotSpecifyViewAndProperty();
                 }

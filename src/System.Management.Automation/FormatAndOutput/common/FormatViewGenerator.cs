@@ -348,7 +348,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         protected DataBaseInfo dataBaseInfo = new DataBaseInfo();
 
         protected List<MshResolvedExpressionParameterAssociation> activeAssociationList = null;
-        protected FormattingCommandLineParameters inputParameters = null;
 
         protected string GetExpressionDisplayValue(PSObject so, int enumerationLimit, PSPropertyExpression ex,
                     FieldFormattingDirective directive)
