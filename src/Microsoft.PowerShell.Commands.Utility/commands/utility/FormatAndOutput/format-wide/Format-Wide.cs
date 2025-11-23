@@ -42,14 +42,14 @@ namespace Microsoft.PowerShell.Commands
         private object _prop;
 
         /// <summary>
-        /// Optional parameter for excluding properties from formatting.
+        /// Gets or sets the properties to exclude from formatting.
         /// </summary>
         [Parameter]
         public string[] ExcludeProperty { get; set; }
 
-        /// Optional, non positional parameter.
+        /// <summary>
+        /// Gets or sets a value indicating whether to autosize the output.
         /// </summary>
-        /// <value></value>
         [Parameter]
         public SwitchParameter AutoSize
         {
@@ -89,6 +89,7 @@ namespace Microsoft.PowerShell.Commands
             if (ExcludeProperty != null)
             {
                 parameters.excludePropertyFilter = new Microsoft.PowerShell.Commands.Internal.Format.PSPropertyExpressionFilter(ExcludeProperty);
+
                 // ExcludeProperty implies -Property * for better UX
                 if (_prop == null)
                 {
