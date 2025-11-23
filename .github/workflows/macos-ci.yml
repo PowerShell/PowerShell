@@ -46,7 +46,7 @@ jobs:
   changes:
     name: Change Detection
     runs-on: ubuntu-latest
-    if: startsWith(github.repository_owner, 'azure') || github.repository_owner == 'PowerShell'
+    if: startsWith(github.repository_owner, 'azure') || github.repository_owner == 'PowerShell' || github.repository_owner == 'GregoireLD'
     # Required permissions
     permissions:
       pull-requests: read
