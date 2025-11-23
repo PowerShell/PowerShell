@@ -206,6 +206,34 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Converts the wildcard pattern to its regular expression equivalent.
+        /// </summary>
+        /// <returns>
+        /// A string that represents the regular expression equivalent of the wildcard pattern.
+        /// </returns>
+        /// <remarks>
+        /// This method converts PowerShell wildcard patterns to regular expression patterns.
+        /// The conversion follows these rules:
+        /// <list type="bullet">
+        /// <item><description>* (asterisk) converts to .* (matches any string)</description></item>
+        /// <item><description>? (question mark) converts to . (matches any single character)</description></item>
+        /// <item><description>[abc] (bracket expression) converts to [abc] (matches any character in the set)</description></item>
+        /// <item><description>Literal characters are escaped as needed for regex</description></item>
+        /// </list>
+        /// </remarks>
+        /// <example>
+        /// <code>
+        /// var pattern = new WildcardPattern("*.txt");
+        /// string regex = pattern.ToRegex();
+        /// // Returns: ".*\.txt$" or similar regex pattern
+        /// </code>
+        /// </example>
+        public string ToRegex()
+        {
+            return PatternConvertedToRegex;
+        }
+
+        /// <summary>
         /// Escape special chars, except for those specified in <paramref name="charsNotToEscape"/>, in a string by replacing them with their escape codes.
         /// </summary>
         /// <param name="pattern">The input string containing the text to convert.</param>
