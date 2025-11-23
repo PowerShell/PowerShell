@@ -7644,6 +7644,9 @@ namespace System.Management.Automation
                         // Ignore non-public types
                         if (!TypeResolver.IsPublic(type)) { continue; }
 
+                        // Ignore types with Hidden attribute
+                        if (type.IsDefined(typeof(HiddenAttribute), false)) { continue; }
+
                         HandleNamespace(entries, type.Namespace);
                         HandleType(entries, type.FullName, type.Name, type);
                     }
@@ -7848,7 +7851,7 @@ namespace System.Management.Automation
             {
                 var scriptBlockAst = (ScriptBlockAst)context.RelatedAsts[0];
                 var typeAsts = scriptBlockAst.FindAll(static ast => ast is TypeDefinitionAst, false).Cast<TypeDefinitionAst>();
-                foreach (var typeAst in typeAsts.Where(ast => pattern.IsMatch(ast.Name)))
+                foreach (var typeAst in typeAsts.Where(ast => pattern.IsMatch(ast.Name) && !ast.IsHidden))
                 {
                     string toolTipPrefix = string.Empty;
                     if (typeAst.IsInterface)

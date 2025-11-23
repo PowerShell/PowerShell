@@ -735,6 +735,45 @@ visibleX visibleY
         It "Tab completion should not return a hidden member" { $completions.CompletionMatches.Count | Should -Be 0 }
 }
 
+Describe 'HiddenAttribute on Class Test' -Tags "CI" {
+    BeforeAll {
+        # Define a class with HiddenAttribute using C#
+        $hiddenClassSource = @"
+using System.Management.Automation;
+
+[Hidden]
+public class HiddenTestClass
+{
+    public string Name { get; set; }
+    public int Value { get; set; }
+}
+"@
+        Add-Type -TypeDefinition $hiddenClassSource
+    }
+
+    It "Should be able to create an instance of hidden class" {
+        $instance = [HiddenTestClass]::new()
+        $instance.Name = "Test"
+        $instance.Value = 42
+        $instance.Name | Should -Be "Test"
+        $instance.Value | Should -Be 42
+    }
+
+    It "HiddenAttribute should be present on the class" {
+        $hiddenAttr = [HiddenTestClass].GetCustomAttributes([System.Management.Automation.HiddenAttribute], $false)
+        $hiddenAttr.Count | Should -BeGreaterThan 0
+    }
+
+    It "Hidden class should not appear in type name completion" {
+        # Get tab completion results for type names starting with "HiddenTest"
+        $result = TabExpansion2 -inputScript '[HiddenTest' -cursorColumn '[HiddenTest'.Length
+        $completions = $result.CompletionMatches | Where-Object { $_.CompletionText -eq 'HiddenTestClass' }
+
+        # HiddenTestClass should not be in completion results
+        $completions | Should -BeNullOrEmpty
+    }
+}
+
 Describe 'BaseMethodCall Test ' -Tags "CI" {
         It "Derived class method call" {"abc".ToString() | Should -BeExactly "abc" }
         # call [object] ToString() method as a base class method.
