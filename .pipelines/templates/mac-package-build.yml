@@ -15,8 +15,6 @@ jobs:
   variables:
     - name: HOMEBREW_NO_ANALYTICS
       value: 1
-    - name: runCodesignValidationInjection
-      value: false
     - name: nugetMultiFeedWarnLevel
       value: none
     - name: NugetSecurityAnalysisWarningLevel
