@@ -106,7 +106,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.CodeAnalysis.Common",
-          "Version": "4.14.0"
+          "Version": "5.0.0"
         }
       },
       "DevelopmentDependency": false
@@ -116,7 +116,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.CodeAnalysis.CSharp",
-          "Version": "4.14.0"
+          "Version": "5.0.0"
         }
       },
       "DevelopmentDependency": false
