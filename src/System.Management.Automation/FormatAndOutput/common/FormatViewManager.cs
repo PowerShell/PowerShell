@@ -465,45 +465,18 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// </summary>
     internal static class OutOfBandFormatViewManager
     {
-        internal static bool IsPropertyLessObject(PSObject so)
-        {
-            // Using an enumerator to avoid the ExpandAll costs
-            var propertiesEnumerator = so.Properties.GetEnumerator();
-
-            try
-            {
-                // Manually enumerate properties - Maximum iterations : 6 (5 Remoting properties + 1)
-                while (propertiesEnumerator.MoveNext())
-                {
-                    var property = propertiesEnumerator.Current;
-            
-                    // Skip remoting properties
-                    if (IsNotRemotingProperty(property.Name))
-                    {
-                        // Found a non-remoting property - object is NOT propertyless
-                        return false;
-                    }
-                }
-        
-                // Only remoting properties found (or no properties at all)
-                return true;
-            }
-            finally
-            {
-                // Clean up the enumerator if it's IDisposable
-                (propertiesEnumerator as IDisposable)?.Dispose();
-            }
-        }
-
         private static bool IsNotRemotingProperty(string name)
         {
             var isRemotingPropertyName = name.Equals(RemotingConstants.ComputerNameNoteProperty, StringComparison.OrdinalIgnoreCase)
                    || name.Equals(RemotingConstants.ShowComputerNameNoteProperty, StringComparison.OrdinalIgnoreCase)
                    || name.Equals(RemotingConstants.RunspaceIdNoteProperty, StringComparison.OrdinalIgnoreCase)
-                   || name.Equals(RemotingConstants.SourceJobInstanceId, StringComparison.OrdinalIgnoreCase)
-                   || name.Equals(RemotingConstants.EventObject, StringComparison.OrdinalIgnoreCase);
+                   || name.Equals(RemotingConstants.SourceJobInstanceId, StringComparison.OrdinalIgnoreCase);
             return !isRemotingPropertyName;
         }
+
+        private static readonly MemberNamePredicate NameIsNotRemotingProperty = IsNotRemotingProperty;
+
+        internal static bool HasNonRemotingProperties(PSObject so) => so.GetFirstPropertyOrDefault(NameIsNotRemotingProperty) != null;
 
         internal static FormatEntryData GenerateOutOfBandData(TerminatingErrorContext errorContext, PSPropertyExpressionFactory expressionFactory,
                     TypeInfoDataBase db, PSObject so, int enumerationLimit, bool useToStringFallback, out List<ErrorRecord> errors)
@@ -530,15 +503,20 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
             else
             {
-                // If we have a scalar type, or no visible properties, we fallback to a ToString call
                 if (DefaultScalarTypes.IsTypeInList(typeNames)
-                    || IsPropertyLessObject(so))
+                    || !HasNonRemotingProperties(so))
                 {
                     // we force a ToString() on well known types
                     return GenerateOutOfBandObjectAsToString(so);
                 }
 
                 if (!useToStringFallback)
+                {
+                    return null;
+                }
+
+                // we must check we have enough properties for a list view
+                if (new PSPropertyExpression("*").ResolveNames(so).Count == 0)
                 {
                     return null;
                 }
