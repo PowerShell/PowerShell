@@ -472,7 +472,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                    || name.Equals(RemotingConstants.RunspaceIdNoteProperty, StringComparison.OrdinalIgnoreCase)
                    || name.Equals(RemotingConstants.SourceJobInstanceId, StringComparison.OrdinalIgnoreCase)
                    || name.Equals(RemotingConstants.EventObject, StringComparison.OrdinalIgnoreCase)
-                   || name.Equals("PSTypeNames", StringComparison.OrdinalIgnoreCase);
+                   || name.Equals(PSObject.PSTypeNames, StringComparison.OrdinalIgnoreCase);
             return !isRemotingPropertyName;
         }
 
