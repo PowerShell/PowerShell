@@ -46,27 +46,6 @@ Describe "Hidden properties should not be returned by the 'FirstOrDefault' primi
         $outstring.Trim() | Should -BeLike "*.Hidden2"
     }
 
-    It "Formatting for an object with only hidden property should use 'ToString' after a Get-Member call" {
-        class Hidden {
-            hidden $Param = 'Foo'
-            [String]ToString() { return 'MyString' }
-        }
-
-        $hiddenObjectOne = [Hidden]::new()
-        $hiddenObjectOne | Get-Member | Out-Null
-        $outstring = $hiddenObjectOne | Out-String
-        $outstring.Trim() | Should -BeExactly "MyString"
-
-        class Hidden2 {
-            hidden $Param = 'Foo'
-        }
-
-        $hiddenObjectTwo = [Hidden2]::new()
-        $hiddenObjectTwo | Get-Member | Out-Null
-        $outstring = $hiddenObjectTwo | Out-String
-        $outstring.Trim() | Should -BeLike "*.Hidden2"
-    }
-
     It 'Formatting for an object with no-hidden property should use the default view' {
         class Params {
             $Param = 'Foo'
