@@ -13,6 +13,42 @@ using System.Management.Automation.Runspaces;
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
     /// <summary>
+    /// Helper class to do wildcard matching on PSPropertyExpressions.
+    /// </summary>
+    internal sealed class PSPropertyExpressionFilter
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PSPropertyExpressionFilter"/> class
+        /// with the specified array of patterns.
+        /// </summary>
+        /// <param name="wildcardPatternsStrings">Array of pattern strings to use.</param>
+        internal PSPropertyExpressionFilter(string[] wildcardPatternsStrings)
+        {
+            ArgumentNullException.ThrowIfNull(wildcardPatternsStrings);
+
+            _wildcardPatterns = new WildcardPattern[wildcardPatternsStrings.Length];
+            for (int k = 0; k < wildcardPatternsStrings.Length; k++)
+            {
+                _wildcardPatterns[k] = WildcardPattern.Get(wildcardPatternsStrings[k], WildcardOptions.IgnoreCase);
+            }
+        }
+
+        /// <summary>
+        /// Try to match the expression against the array of wildcard patterns.
+        /// The first match shortcircuits the search.
+        /// </summary>
+        /// <param name="expression">PSPropertyExpression to test against.</param>
+        /// <returns>True if there is a match, else false.</returns>
+        internal bool IsMatch(PSPropertyExpression expression)
+        {
+            string expressionString = expression.ToString();
+            return _wildcardPatterns.Any(pattern => pattern.IsMatch(expressionString));
+        }
+
+        private readonly WildcardPattern[] _wildcardPatterns;
+    }
+
+    /// <summary>
     /// Base class defining the formatting context and the
     /// formatting context manager (stack based)
     /// </summary>
@@ -729,6 +765,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         [Parameter(Position = 0)]
         public object[] Property { get; set; }
 
+        /// <summary>
+        /// Optional parameter for excluding properties from formatting.
+        /// </summary>
+        [Parameter]
+        public string[] ExcludeProperty { get; set; }
+
         #endregion
 
         internal override FormattingCommandLineParameters GetCommandLineParameters()
@@ -765,10 +807,30 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 parameters.mshParameterList = processor.ProcessParameters(Property, invocationContext);
             }
 
+            if (ExcludeProperty != null)
+            {
+                parameters.excludePropertyFilter = new PSPropertyExpressionFilter(ExcludeProperty);
+                // ExcludeProperty implies -Property * for better UX
+                if (Property == null || Property.Length == 0)
+                {
+                    CommandParameterDefinition def;
+
+                    if (isTable)
+                        def = new FormatTableParameterDefinition();
+                    else
+                        def = new FormatListParameterDefinition();
+                    ParameterProcessor processor = new ParameterProcessor(def);
+                    TerminatingErrorContext invocationContext = new TerminatingErrorContext(this);
+
+                    parameters.mshParameterList = processor.ProcessParameters(new object[] { "*" }, invocationContext);
+                }
+            }
+
             if (!string.IsNullOrEmpty(this.View))
             {
                 // we have a view command line switch
-                if (parameters.mshParameterList.Count != 0)
+                // View cannot be used with Property or ExcludeProperty
+                if (parameters.mshParameterList.Count != 0 || ExcludeProperty != null)
                 {
                     ReportCannotSpecifyViewAndProperty();
                 }
