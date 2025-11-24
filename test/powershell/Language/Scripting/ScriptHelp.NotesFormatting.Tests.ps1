@@ -2,11 +2,6 @@
 # Licensed under the MIT License.
 
 Describe 'Comment-based help NOTES section formatting' -Tags "CI", "Feature" {
-    BeforeAll {
-        # Use an existing cmdlet with NOTES section for testing
-        $helpWithNotes = Get-Help Remove-PSSession -Full
-    }
-
     It 'NOTES section should have only one blank line after header (not two)' {
         # Get the full help output as a string
         $helpText = Get-Help Remove-PSSession -Full | Out-String
@@ -56,6 +51,7 @@ Describe 'Comment-based help NOTES section formatting' -Tags "CI", "Feature" {
         $contentLine | Should -Not -BeNullOrEmpty
 
         # Count leading spaces - should be 4, not 8
+        # Store capture group immediately to avoid issues with $matches being overwritten
         if ($contentLine -match '^(\s+)') {
             $leadingSpaces = $matches[1]
             $indentation = $leadingSpaces.Length
