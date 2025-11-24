@@ -8,7 +8,6 @@ on:
       - master
       - release/**
       - github-mirror
-      - KludgeFix
     paths:
       - "**"
       - "*"
@@ -23,7 +22,6 @@ on:
       - release/**
       - github-mirror
       - "*-feature"
-      - KludgeFix
 # Path filters for PRs need to go into the changes job
 
 concurrency:
@@ -46,7 +44,7 @@ jobs:
   changes:
     name: Change Detection
     runs-on: ubuntu-latest
-    if: startsWith(github.repository_owner, 'azure') || github.repository_owner == 'PowerShell' || github.repository_owner == 'GregoireLD'
+    if: startsWith(github.repository_owner, 'azure') || github.repository_owner == 'PowerShell'
     # Required permissions
     permissions:
       pull-requests: read
@@ -68,7 +66,7 @@ jobs:
 
   ci_build:
     name: Build PowerShell
-    runs-on: macos-15
+    runs-on: macos-15-large
     needs: changes
     if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
     steps:
@@ -84,7 +82,7 @@ jobs:
       - ci_build
       - changes
     if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
-    runs-on: macos-15
+    runs-on: macos-15-large
     steps:
       - name: checkout
         uses: actions/checkout@v6
@@ -102,7 +100,7 @@ jobs:
       - ci_build
       - changes
     if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
-    runs-on: macos-15
+    runs-on: macos-15-large
     steps:
       - name: checkout
         uses: actions/checkout@v6
@@ -120,7 +118,7 @@ jobs:
       - ci_build
       - changes
     if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
-    runs-on: macos-15
+    runs-on: macos-15-large
     steps:
       - name: checkout
         uses: actions/checkout@v6
@@ -138,7 +136,7 @@ jobs:
       - ci_build
       - changes
     if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
-    runs-on: macos-15
+    runs-on: macos-15-large
     steps:
       - name: checkout
         uses: actions/checkout@v6
@@ -157,7 +155,7 @@ jobs:
     if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
     uses: ./.github/workflows/xunit-tests.yml
     with:
-      runner_os: macos-15
+      runner_os: macos-15-large
       test_results_artifact_name: testResults-xunit
   PackageMac-macos_packaging:
     name: macOS packaging and testing
@@ -165,7 +163,7 @@ jobs:
       - changes
     if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
     runs-on:
-      - macos-15
+      - macos-15-large
     steps:
     - name: checkout
       uses: actions/checkout@v6
