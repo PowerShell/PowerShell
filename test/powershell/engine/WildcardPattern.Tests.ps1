@@ -12,7 +12,8 @@ Describe "WildcardPattern.ToRegex Tests" -Tags "CI" {
         It "Converts question mark wildcard to regex" {
             $pattern = [System.Management.Automation.WildcardPattern]::new("test?.log")
             $regex = $pattern.ToRegex()
-            $regex | Should -Match "test.*\.log"
+            # ? converts to . (matches exactly one character), not .*
+            $regex | Should -BeExactly '^test.\.log$'
         }
 
         It "Converts bracket expression to regex" {
@@ -97,10 +98,11 @@ Describe "WildcardPattern.ToRegex Tests" -Tags "CI" {
         }
 
         It "Handles escaped wildcard characters" {
-            $pattern = [System.Management.Automation.WildcardPattern]::new("file`*.txt")
+            # Use single quotes to preserve the backtick escape character
+            $pattern = [System.Management.Automation.WildcardPattern]::new('file`*.txt')
             $regex = $pattern.ToRegex()
-            # The asterisk should be escaped in the regex
-            $regex | Should -Match "file.*\.txt"
+            # The backtick-escaped asterisk should become a literal asterisk in the regex (escaped as \*)
+            $regex | Should -BeExactly '^file\*\.txt$'
         }
     }
 
