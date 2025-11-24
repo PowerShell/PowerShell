@@ -2303,7 +2303,7 @@ function Start-PSBootstrap {
                 # Packaging tools
                 # Note: ruby-dev, libffi-dev, g++, and make are no longer needed for DEB packaging
                 # DEB packages now use native dpkg-deb (pre-installed)
-                if ($Scenario -eq 'Both' -or $Scenario -eq 'Package') { $Deps += "groff", "rpm" }
+                if ($Scenario -in 'All', 'Both', 'Package') { $Deps += "groff", "rpm" }
 
                 # Install dependencies
                 # change the fontend from apt-get to noninteractive
@@ -2329,7 +2329,7 @@ function Start-PSBootstrap {
                 # Packaging tools
                 # Note: ruby-devel and libffi-devel are no longer needed
                 # RPM packages use rpmbuild, DEB packages use dpkg-deb
-                if ($Scenario -eq 'Both' -or $Scenario -eq 'Package') { $Deps += "rpm-build", "groff" }
+                if ($Scenario -in 'All', 'Both', 'Package') { $Deps += "rpm-build", "groff" }
 
                 $PackageManager = Get-RedHatPackageManager
 
@@ -2351,7 +2351,7 @@ function Start-PSBootstrap {
 
                 # Packaging tools
                 # Note: ruby-devel and libffi-devel are no longer needed for packaging
-                if ($Scenario -eq 'Both' -or $Scenario -eq 'Package') { $Deps += "rpmbuild", "groff" }
+                if ($Scenario -in 'All', 'Both', 'Package') { $Deps += "rpmbuild", "groff" }
 
                 $PackageManager = "zypper --non-interactive install"
                 $baseCommand = "$sudo $PackageManager"
@@ -2413,8 +2413,8 @@ function Start-PSBootstrap {
 
                             Write-Verbose -Verbose "Installing azurelinux-repos-extended for Mariner..."
 
-                            Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo $PackageManager azurelinux-repos-extended")) -IgnoreExitcode -Verbose
-                            Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo $PackageManager dpkg")) -IgnoreExitcode -Verbose
+                            Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo $PackageManager install -y azurelinux-repos-extended")) -IgnoreExitcode
+                            Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo $PackageManager install -y dpkg")) -IgnoreExitcode
                         } else {
                             Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo apt-get install -y dpkg")) -IgnoreExitcode
                         }
@@ -2477,7 +2477,7 @@ function Start-PSBootstrap {
                 $psInstallFile = [System.IO.Path]::Combine($PSScriptRoot, "tools", "install-powershell.ps1")
                 & $psInstallFile -AddToPath
             }
-            if ($Scenario -eq 'Both' -or $Scenario -eq 'Package') {
+            if ($Scenario -in 'All', 'Both', 'Package') {
                 Import-Module "$PSScriptRoot\tools\wix\wix.psm1"
                 $isArm64 = "$env:RUNTIME" -eq 'arm64'
                 Install-Wix -arm64:$isArm64

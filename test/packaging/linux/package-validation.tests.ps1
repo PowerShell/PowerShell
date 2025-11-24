@@ -61,16 +61,17 @@ Describe "Linux Package Name Validation" {
             # - powershell-preview_7.6.0-preview.6-1.deb_amd64.deb
             # - powershell-lts_7.4.13-1.deb_amd64.deb
             # - powershell_7.4.13-1.deb_amd64.deb
+            # - powershell_7.6.0~rc.1-1.deb_amd64.deb
             # Breakdown:
             # ^powershell            : Starts with 'powershell'
             # (-preview|-lts)?       : Optionally '-preview' or '-lts'
             # _\d+\.\d+\.\d+         : Underscore followed by version number (e.g., _7.6.0)
-            # (-[a-z]+\.\d+)?        : Optional dash, letters, dot, and digits (e.g., -preview.6)
-            # -1                     : Literal '-1'
+            # ([\-~][a-z]*.d+)?      : Optional dash or tilde, letters, dot, and digits (e.g., -preview.6 or ~rc.1)
+            # -\d                    : Dash followed by iteration digit
             # \.deb_                 : Literal '.deb_'
             # (amd64|arm64)          : Architecture
             # \.deb$                 : File extension
-            $debPackageNamePattern = '^powershell(-preview|-lts)?_\d+\.\d+\.\d+(-[a-z]+\.\d+)?-1\.deb_(amd64|arm64)\.deb$'
+            $debPackageNamePattern = '^powershell(-preview|-lts)?_\d+\.\d+\.\d+([\-~][a-z]*\.\d+)?-\d\.deb_(amd64|arm64)\.deb$'
 
             foreach ($package in $debPackages) {
                 if ($package.Name -notmatch $debPackageNamePattern) {

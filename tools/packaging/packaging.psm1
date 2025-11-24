@@ -1351,6 +1351,8 @@ function New-UnixPackage {
                     }
                     catch {
                         Write-Verbose -Message "!!!Handling error in native DEB creation!!!" -Verbose -ErrorAction SilentlyContinue
+                        Get-Error -InputObject $_
+                        throw
                     }
                 }
             } elseif ($Type -eq 'osxpkg') {
@@ -1814,8 +1816,7 @@ Installed-Size: $installedSizeKB
 Priority: optional
 Section: shells
 Homepage: https://microsoft.com/powershell
-Depends: $(if ($Dependencies) { $Dependencies -join ', ' })
-Description: $shortDescription
+$(if ($Dependencies -and $Dependencies.Count -gt 0) { "Depends: $($Dependencies -join ', ')`n" })Description: $shortDescription
 $(if ($extendedDescription) { $extendedDescription + "`n" })
 "@
 
@@ -1823,7 +1824,9 @@ $(if ($extendedDescription) { $extendedDescription + "`n" })
         $controlContent | Out-File -FilePath $controlFile -Encoding ascii -NoNewline
 
         Write-Verbose "Control file created: $controlFile" -Verbose
-        Write-LogGroup -Title "DEB Control File Content" -Message $controlContent
+        Write-LogGroupStart -Title "DEB Control File Content"
+        Write-Verbose $controlContent -Verbose
+        Write-LogGroupEnd -Title "DEB Control File Content"
 
         # Copy postinst script if provided
         if ($AfterInstallScript -and (Test-Path $AfterInstallScript)) {
@@ -1906,7 +1909,7 @@ $(if ($extendedDescription) { $extendedDescription + "`n" })
         Write-Verbose "MD5 sums file created: $md5sumsFile" -Verbose
 
         # Build the package using dpkg-deb
-        $debFileName = "${Name}_${Version}-${Iteration}_${HostArchitecture}.deb"
+        $debFileName = "${Name}_${Version}-${Iteration}.deb_${HostArchitecture}.deb"
         $debFilePath = Join-Path $CurrentLocation $debFileName
 
         Write-Verbose "Building DEB package: $debFileName" -Verbose
@@ -2193,6 +2196,16 @@ function Test-Dependencies
     # Check for 'rpmbuild' and 'dpkg-deb' on Azure Linux.
     if ($Environment.IsMariner) {
         $Dependencies += "dpkg-deb"
+        $Dependencies += "rpmbuild"
+    }
+    
+    # Check for dpkg-deb on Debian-based systems
+    if ($Environment.IsDebianFamily) {
+        $Dependencies += "dpkg-deb"
+    }
+    
+    # Check for rpmbuild on RPM-based systems
+    if ($Environment.IsRedHatFamily -or $Environment.IsSUSEFamily) {
         $Dependencies += "rpmbuild"
     }
 
