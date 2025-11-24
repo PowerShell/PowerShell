@@ -225,7 +225,7 @@ namespace System.Management.Automation
         /// <code>
         /// var pattern = new WildcardPattern("*.txt");
         /// string regex = pattern.ToRegex();
-        /// // Returns: ".*\.txt$" or similar regex pattern
+        /// // Returns: "\.txt$"
         /// </code>
         /// </example>
         public string ToRegex()
