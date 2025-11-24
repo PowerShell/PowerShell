@@ -6,7 +6,7 @@ Describe "WildcardPattern.ToRegex Tests" -Tags "CI" {
         It "Converts asterisk wildcard to regex" {
             $pattern = [System.Management.Automation.WildcardPattern]::new("*.txt")
             $regex = $pattern.ToRegex()
-            $regex | Should -Match "\.txt"
+            $regex | Should -BeExactly '\.txt$'
         }
 
         It "Converts question mark wildcard to regex" {
@@ -19,13 +19,13 @@ Describe "WildcardPattern.ToRegex Tests" -Tags "CI" {
         It "Converts bracket expression to regex" {
             $pattern = [System.Management.Automation.WildcardPattern]::new("file[0-9].txt")
             $regex = $pattern.ToRegex()
-            $regex | Should -Match "\[0-9\]"
+            $regex | Should -BeExactly '^file[0-9]\.txt$'
         }
 
         It "Escapes regex special characters" {
             $pattern = [System.Management.Automation.WildcardPattern]::new("test.log")
             $regex = $pattern.ToRegex()
-            $regex | Should -Match "test\\\.log"
+            $regex | Should -BeExactly '^test\.log$'
         }
     }
 
@@ -33,13 +33,13 @@ Describe "WildcardPattern.ToRegex Tests" -Tags "CI" {
         It "Respects IgnoreCase option" {
             $pattern = [System.Management.Automation.WildcardPattern]::new("TEST", [System.Management.Automation.WildcardOptions]::IgnoreCase)
             $regex = $pattern.ToRegex()
-            $regex | Should -Not -BeNullOrEmpty
+            $regex | Should -BeExactly '^TEST$'
         }
 
         It "Respects CultureInvariant option" {
             $pattern = [System.Management.Automation.WildcardPattern]::new("test", [System.Management.Automation.WildcardOptions]::CultureInvariant)
             $regex = $pattern.ToRegex()
-            $regex | Should -Not -BeNullOrEmpty
+            $regex | Should -BeExactly '^test$'
         }
     }
 
@@ -110,7 +110,7 @@ Describe "WildcardPattern.ToRegex Tests" -Tags "CI" {
         It "Handles multiple wildcards" {
             $pattern = [System.Management.Automation.WildcardPattern]::new("*test*file*.txt")
             $regex = $pattern.ToRegex()
-            $regex | Should -Not -BeNullOrEmpty
+            $regex | Should -BeExactly 'test.*file.*\.txt$'
 
             $regexObj = [regex]::new($regex)
             $regexObj.IsMatch("mytestmyfile123.txt") | Should -BeTrue
@@ -119,7 +119,7 @@ Describe "WildcardPattern.ToRegex Tests" -Tags "CI" {
         It "Handles pattern with multiple bracket expressions" {
             $pattern = [System.Management.Automation.WildcardPattern]::new("file[0-9][a-z].txt")
             $regex = $pattern.ToRegex()
-            $regex | Should -Not -BeNullOrEmpty
+            $regex | Should -BeExactly '^file[0-9][a-z]\.txt$'
 
             $regexObj = [regex]::new($regex)
             $regexObj.IsMatch("file5a.txt") | Should -BeTrue
