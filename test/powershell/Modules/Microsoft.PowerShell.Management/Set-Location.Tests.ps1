@@ -151,7 +151,7 @@ Describe "Set-Location" -Tags "CI" {
         }
 
         AfterAll {
-            Set-Location C:\
+            Set-Location $(if ($IsWindows) { 'C:\' } else { '/' })
 
             if (Get-PSDrive -Name 'TestPS1' -ErrorAction SilentlyContinue) {
                 Remove-PSDrive -Name 'TestPS1' -Force -ErrorAction SilentlyContinue
