@@ -24,10 +24,8 @@ runs:
   - name: Capture Environment
     if: success() || failure()
     run: |-
-      Import-Module ./build.psm1
-      Write-LogGroupStart -Title 'Environment'
-      Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
-      Write-LogGroupEnd -Title 'Environment'
+      Import-Module ./tools/ci.psm1
+      Show-Environment
     shell: pwsh
 
   - name: Download Build Artifacts
