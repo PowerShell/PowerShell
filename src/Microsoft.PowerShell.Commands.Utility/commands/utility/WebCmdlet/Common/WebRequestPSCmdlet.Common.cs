@@ -2004,7 +2004,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="file">The file to use for the <see cref="StreamContent"/></param>
         private static StreamContent GetMultipartFileContent(object fieldName, FileInfo file)
         {
-            StreamContent result = GetMultipartStreamContent(fieldName: fieldName, stream: new FileStream(file.FullName, FileMode.Open));
+            StreamContent result = GetMultipartStreamContent(fieldName: fieldName, stream: new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.Read));
 
             result.Headers.ContentDisposition.FileName = file.Name;
             result.Headers.ContentDisposition.FileNameStar = file.Name;

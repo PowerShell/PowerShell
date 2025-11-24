@@ -56,7 +56,7 @@ jobs:
       buildModuleChanged: ${{ steps.filter.outputs.buildModuleChanged }}
     steps:
       - name: checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Change Detection
         id: filter
@@ -71,7 +71,7 @@ jobs:
     if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
     steps:
       - name: checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 1000
       - name: Build
@@ -85,7 +85,7 @@ jobs:
     runs-on: macos-15-large
     steps:
       - name: checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 1000
       - name: macOS Unelevated CI
@@ -93,6 +93,7 @@ jobs:
         with:
           purpose: UnelevatedPesterTests
           tagSet: CI
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   macos_test_elevated_ci:
     name: macOS Elevated CI
     needs:
@@ -102,7 +103,7 @@ jobs:
     runs-on: macos-15-large
     steps:
       - name: checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 1000
       - name: macOS Elevated CI
@@ -110,6 +111,7 @@ jobs:
         with:
           purpose: ElevatedPesterTests
           tagSet: CI
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   macos_test_unelevated_others:
     name: macOS Unelevated Others
     needs:
@@ -119,7 +121,7 @@ jobs:
     runs-on: macos-15-large
     steps:
       - name: checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 1000
       - name: macOS Unelevated Others
@@ -127,6 +129,7 @@ jobs:
         with:
           purpose: UnelevatedPesterTests
           tagSet: Others
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   macos_test_elevated_others:
     name: macOS Elevated Others
     needs:
@@ -136,7 +139,7 @@ jobs:
     runs-on: macos-15-large
     steps:
       - name: checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 1000
       - name: macOS Elevated Others
@@ -144,6 +147,7 @@ jobs:
         with:
           purpose: ElevatedPesterTests
           tagSet: Others
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   xunit_tests:
     name: xUnit Tests
     needs:
@@ -162,7 +166,7 @@ jobs:
       - macos-15-large
     steps:
     - name: checkout
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
       with:
         fetch-depth: 1000
     - uses: actions/setup-dotnet@v5
@@ -205,7 +209,7 @@ jobs:
         }
         Import-Module Pester
         $pesterConfig = New-PesterConfiguration
-        $pesterConfig.Run.Path = './tools/packaging/releaseTests/macOSPackage.tests.ps1'
+        $pesterConfig.Run.Path = './test/packaging/macos/package-validation.tests.ps1'
         $pesterConfig.Run.PassThru = $true
         $pesterConfig.Output.Verbosity = 'Detailed'
         $pesterConfig.TestResult.Enabled = $true

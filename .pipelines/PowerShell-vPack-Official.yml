@@ -159,7 +159,6 @@ extends:
             parameters:
               ReleaseTagVar: $(ReleaseTagVar)
               CreateJson: yes
-              UseJson: no
 
           - pwsh: |
               $version = '$(Version)'
