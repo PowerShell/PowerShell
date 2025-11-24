@@ -2413,8 +2413,8 @@ function Start-PSBootstrap {
 
                             Write-Verbose -Verbose "Installing azurelinux-repos-extended for Mariner..."
 
-                            Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo $PackageManager install -y azurelinux-repos-extended")) -IgnoreExitcode
-                            Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo $PackageManager install -y dpkg")) -IgnoreExitcode
+                            Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo $PackageManager azurelinux-repos-extended")) -IgnoreExitcode
+                            Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo $PackageManager dpkg")) -IgnoreExitcode
                         } else {
                             Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo apt-get install -y dpkg")) -IgnoreExitcode
                         }
