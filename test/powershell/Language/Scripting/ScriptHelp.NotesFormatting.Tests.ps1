@@ -57,7 +57,8 @@ Describe 'Comment-based help NOTES section formatting' -Tags "CI", "Feature" {
 
         # Count leading spaces - should be 4, not 8
         if ($contentLine -match '^(\s+)') {
-            $indentation = $matches[1].Length
+            $leadingSpaces = $matches[1]
+            $indentation = $leadingSpaces.Length
             $indentation | Should -Be 4 -Because "NOTES content should be indented 4 spaces, not 8 (bug was nested leftIndent causing 4+4=8)"
         } else {
             throw "Expected NOTES content to be indented, but found no leading whitespace"
