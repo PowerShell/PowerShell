@@ -805,8 +805,8 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Specify that the member is hidden for the purposes of cmdlets like Get-Member and that the
-    /// member is not displayed by default by Format-* cmdlets.
+    /// Specify that the type or member is hidden from type/member completion and that the
+    /// member is not displayed by default by Format-* cmdlets or Get-Member.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Method | AttributeTargets.Constructor | AttributeTargets.Event)]
     public sealed class HiddenAttribute : ParsingBaseAttribute
