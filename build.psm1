@@ -2390,7 +2390,6 @@ function Start-PSBootstrap {
                 }
             }
 
-            if ($Scenario -eq 'Both' -or $Scenario -eq 'Package') {
             if ($Scenario -in 'All', 'Both', 'Package') {
                 # For RPM-based systems, ensure rpmbuild is available
                 if ($environment.IsLinux -and ($environment.IsRedHatFamily -or $environment.IsSUSEFamily -or $environment.IsMariner)) {
