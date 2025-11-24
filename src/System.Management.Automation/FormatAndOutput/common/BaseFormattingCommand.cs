@@ -813,12 +813,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // ExcludeProperty implies -Property * for better UX
                 if (Property == null || Property.Length == 0)
                 {
-                    CommandParameterDefinition def;
-
-                    if (isTable)
-                        def = new FormatTableParameterDefinition();
-                    else
-                        def = new FormatListParameterDefinition();
+                    CommandParameterDefinition def = isTable
+                        ? new FormatTableParameterDefinition()
+                        : new FormatListParameterDefinition();
                     ParameterProcessor processor = new ParameterProcessor(def);
                     TerminatingErrorContext invocationContext = new TerminatingErrorContext(this);
 
