@@ -62,13 +62,18 @@ namespace Microsoft.PowerShell.Commands
             public readonly PSCmdlet Cmdlet;
 
             /// <summary>
+            /// Gets the SkipUnsupportedTypes setting.
+            /// </summary>
+            public readonly bool SkipUnsupportedTypes;
+
+            /// <summary>
             /// Initializes a new instance of the <see cref="ConvertToJsonContext"/> struct.
             /// </summary>
             /// <param name="maxDepth">The maximum depth to visit the object.</param>
             /// <param name="enumsAsStrings">Indicates whether to use enum names for the JSON conversion.</param>
             /// <param name="compressOutput">Indicates whether to get the compressed output.</param>
             public ConvertToJsonContext(int maxDepth, bool enumsAsStrings, bool compressOutput)
-                : this(maxDepth, enumsAsStrings, compressOutput, StringEscapeHandling.Default, targetCmdlet: null, CancellationToken.None)
+                : this(maxDepth, enumsAsStrings, compressOutput, StringEscapeHandling.Default, skipUnsupportedTypes: false, targetCmdlet: null, CancellationToken.None)
             {
             }
 
@@ -88,6 +93,28 @@ namespace Microsoft.PowerShell.Commands
                 StringEscapeHandling stringEscapeHandling,
                 PSCmdlet targetCmdlet,
                 CancellationToken cancellationToken)
+                : this(maxDepth, enumsAsStrings, compressOutput, stringEscapeHandling, skipUnsupportedTypes: false, targetCmdlet, cancellationToken)
+            {
+            }
+
+            /// <summary>
+            /// Initializes a new instance of the <see cref="ConvertToJsonContext"/> struct.
+            /// </summary>
+            /// <param name="maxDepth">The maximum depth to visit the object.</param>
+            /// <param name="enumsAsStrings">Indicates whether to use enum names for the JSON conversion.</param>
+            /// <param name="compressOutput">Indicates whether to get the compressed output.</param>
+            /// <param name="stringEscapeHandling">Specifies how strings are escaped when writing JSON text.</param>
+            /// <param name="skipUnsupportedTypes">Indicates whether to skip properties that cannot be converted to JSON.</param>
+            /// <param name="targetCmdlet">Specifies the cmdlet that is calling this method.</param>
+            /// <param name="cancellationToken">Specifies the cancellation token for cancelling the operation.</param>
+            public ConvertToJsonContext(
+                int maxDepth,
+                bool enumsAsStrings,
+                bool compressOutput,
+                StringEscapeHandling stringEscapeHandling,
+                bool skipUnsupportedTypes,
+                PSCmdlet targetCmdlet,
+                CancellationToken cancellationToken)
             {
                 this.MaxDepth = maxDepth;
                 this.CancellationToken = cancellationToken;
@@ -95,6 +122,7 @@ namespace Microsoft.PowerShell.Commands
                 this.EnumsAsStrings = enumsAsStrings;
                 this.CompressOutput = compressOutput;
                 this.Cmdlet = targetCmdlet;
+                this.SkipUnsupportedTypes = skipUnsupportedTypes;
             }
         }
 
@@ -749,6 +777,12 @@ namespace Microsoft.PowerShell.Commands
                 string name = entry.Key as string;
                 if (name == null)
                 {
+                    if (context.SkipUnsupportedTypes)
+                    {
+                        // Skip this entry if SkipUnsupportedTypes is enabled
+                        continue;
+                    }
+
                     // use the error string that matches the message from JavaScriptSerializer
                     string errorMsg = string.Format(
                         CultureInfo.CurrentCulture,

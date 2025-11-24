@@ -156,4 +156,181 @@ Describe 'ConvertTo-Json' -tags "CI" {
         $actual = ConvertTo-Json -Compress -InputObject $obj
         $actual | Should -Be '{"Positive":18446744073709551615,"Negative":-18446744073709551615}'
     }
+
+    Context 'SkipUnsupportedTypes parameter' {
+        It 'Should throw error for dictionary with non-string keys without SkipUnsupportedTypes' {
+            $dict = @{ 1 = 'one'; 2 = 'two' }
+            { $dict | ConvertTo-Json } | Should -Throw -ErrorId 'NonStringKeyInDictionary,Microsoft.PowerShell.Commands.ConvertToJsonCommand'
+        }
+
+        It 'Should skip dictionary with non-string keys with SkipUnsupportedTypes' {
+            $dict = @{ 1 = 'one'; 2 = 'two' }
+            $json = $dict | ConvertTo-Json -SkipUnsupportedTypes
+            # The result should be an empty object since all keys were skipped
+            $json | ConvertFrom-Json | Get-Member -MemberType NoteProperty | Should -HaveCount 0
+        }
+
+        It 'Should throw error for Exception.Data without SkipUnsupportedTypes' {
+            try {
+                1/0
+            } catch {
+                $err = $_
+            }
+            { $err | ConvertTo-Json -Depth 2 -WarningAction SilentlyContinue } | Should -Throw -ErrorId 'NonStringKeyInDictionary,Microsoft.PowerShell.Commands.ConvertToJsonCommand'
+        }
+
+        It 'Should convert Exception with SkipUnsupportedTypes' {
+            try {
+                1/0
+            } catch {
+                $err = $_
+            }
+            $json = $err | ConvertTo-Json -Depth 2 -SkipUnsupportedTypes -WarningAction SilentlyContinue
+            $json | Should -Not -BeNullOrEmpty
+            $result = $json | ConvertFrom-Json
+            $result.Exception | Should -Not -BeNullOrEmpty
+            $result.Exception.Message | Should -Be 'Attempted to divide by zero.'
+        }
+
+        It 'Should convert mixed dictionary with string and non-string keys' {
+            $dict = @{ 'key1' = 'value1'; 1 = 'value2'; 'key2' = 'value3' }
+            $json = $dict | ConvertTo-Json -SkipUnsupportedTypes
+            $result = $json | ConvertFrom-Json
+            # Only string keys should be preserved
+            $result.key1 | Should -Be 'value1'
+            $result.key2 | Should -Be 'value3'
+            # Non-string key should be skipped
+            $result.PSObject.Properties.Name | Should -Not -Contain '1'
+        }
+
+        It 'Should work normally for objects with string keys only' {
+            $obj = [PSCustomObject]@{ Name = 'Test'; Value = 123 }
+            $json1 = $obj | ConvertTo-Json
+            $json2 = $obj | ConvertTo-Json -SkipUnsupportedTypes
+            $json1 | Should -Be $json2
+        }
+
+        It 'Should work for nested objects with unsupported types' {
+            $nested = @{
+                'outer' = 'value1'
+                'inner' = @{
+                    'string_key' = 'value2'
+                    1 = 'should_be_skipped'
+                }
+            }
+            $json = $nested | ConvertTo-Json -Depth 3 -SkipUnsupportedTypes
+            $result = $json | ConvertFrom-Json
+            $result.outer | Should -Be 'value1'
+            $result.inner.string_key | Should -Be 'value2'
+            $result.inner.PSObject.Properties.Name | Should -Not -Contain '1'
+        }
+
+        It 'Should throw error when -SkipUnsupportedTypes:$false is explicitly specified' {
+            $dict = @{ 1 = 'one'; 2 = 'two' }
+            { $dict | ConvertTo-Json -SkipUnsupportedTypes:$false } | Should -Throw -ErrorId 'NonStringKeyInDictionary,Microsoft.PowerShell.Commands.ConvertToJsonCommand'
+        }
+
+        It 'Should behave the same with -SkipUnsupportedTypes:$false and without parameter' {
+            $dict = @{ 1 = 'one'; 2 = 'two' }
+            # Both should throw the same error
+            $error1 = $null
+            $error2 = $null
+            try { $dict | ConvertTo-Json } catch { $error1 = $_ }
+            try { $dict | ConvertTo-Json -SkipUnsupportedTypes:$false } catch { $error2 = $_ }
+            $error1.Exception.Message | Should -Be $error2.Exception.Message
+            $error1.FullyQualifiedErrorId | Should -Be $error2.FullyQualifiedErrorId
+        }
+
+        # Backward compatibility tests
+        It 'Should maintain backward compatibility - string key dictionaries work without changes' {
+            # This test ensures existing scripts continue to work
+            $dict = @{ 'key1' = 'value1'; 'key2' = 'value2' }
+            $json = $dict | ConvertTo-Json
+            $result = $json | ConvertFrom-Json
+            $result.key1 | Should -Be 'value1'
+            $result.key2 | Should -Be 'value2'
+        }
+
+        It 'Should maintain backward compatibility - default error behavior unchanged' {
+            # This test ensures the default behavior (throwing error) is unchanged
+            # when SkipUnsupportedTypes is not specified
+            $dict = @{ 1 = 'one' }
+            { $dict | ConvertTo-Json } | Should -Throw -ErrorId 'NonStringKeyInDictionary,Microsoft.PowerShell.Commands.ConvertToJsonCommand'
+        }
+
+        It 'Should maintain backward compatibility - complex objects work without changes' {
+            # This test ensures existing complex object serialization still works
+            $obj = [PSCustomObject]@{
+                Name = 'Test'
+                Value = 123
+                Nested = @{
+                    'inner' = 'data'
+                }
+            }
+            $json = $obj | ConvertTo-Json -Depth 3
+            $result = $json | ConvertFrom-Json
+            $result.Name | Should -Be 'Test'
+            $result.Value | Should -Be 123
+            $result.Nested.inner | Should -Be 'data'
+        }
+
+        # Constructor backward compatibility tests
+        It 'Should allow calling 3-parameter constructor (backward compatibility)' {
+            # This tests that existing code using the 3-parameter constructor still works
+            $context = [Microsoft.PowerShell.Commands.JsonObject+ConvertToJsonContext]::new(10, $true, $false)
+            $context.MaxDepth | Should -Be 10
+            $context.EnumsAsStrings | Should -BeTrue
+            $context.CompressOutput | Should -BeFalse
+        }
+
+        It 'Should allow calling 6-parameter constructor (backward compatibility)' {
+            # This tests that existing code using the 6-parameter constructor still works
+            $context = [Microsoft.PowerShell.Commands.JsonObject+ConvertToJsonContext]::new(
+                5,
+                $false,
+                $true,
+                [Newtonsoft.Json.StringEscapeHandling]::Default,
+                $null,
+                [System.Threading.CancellationToken]::None
+            )
+            $context.MaxDepth | Should -Be 5
+            $context.EnumsAsStrings | Should -BeFalse
+            $context.CompressOutput | Should -BeTrue
+        }
+
+        It 'Should allow calling 7-parameter constructor with SkipUnsupportedTypes' {
+            # This tests the new 7-parameter constructor
+            $context = [Microsoft.PowerShell.Commands.JsonObject+ConvertToJsonContext]::new(
+                3,
+                $true,
+                $false,
+                [Newtonsoft.Json.StringEscapeHandling]::EscapeHtml,
+                $true,
+                $null,
+                [System.Threading.CancellationToken]::None
+            )
+            $context.MaxDepth | Should -Be 3
+            $context.EnumsAsStrings | Should -BeTrue
+            $context.CompressOutput | Should -BeFalse
+            $context.SkipUnsupportedTypes | Should -BeTrue
+        }
+
+        # New feature tests (SkipUnsupportedTypes field)
+        It 'Should have SkipUnsupportedTypes default to false in 3-parameter constructor' {
+            $context = [Microsoft.PowerShell.Commands.JsonObject+ConvertToJsonContext]::new(10, $true, $false)
+            $context.SkipUnsupportedTypes | Should -Be $false -Because 'SkipUnsupportedTypes should default to false'
+        }
+
+        It 'Should have SkipUnsupportedTypes default to false in 6-parameter constructor' {
+            $context = [Microsoft.PowerShell.Commands.JsonObject+ConvertToJsonContext]::new(
+                5,
+                $false,
+                $true,
+                [Newtonsoft.Json.StringEscapeHandling]::Default,
+                $null,
+                [System.Threading.CancellationToken]::None
+            )
+            $context.SkipUnsupportedTypes | Should -Be $false -Because 'SkipUnsupportedTypes should default to false'
+        }
+    }
 }
