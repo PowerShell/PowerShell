@@ -71,7 +71,7 @@ Describe "SSHConnection parameter hashtable type conversions" -Tags 'Feature', '
     }
 }
 
-Describe "No hangs when host doesn't exist" -Tag "CI" {
+Describe "No hangs when host doesn't exist" -Tags "CI" {
     $testCases = @(
         @{
             Name = 'Verifies no hang for New-PSSession with non-existing host name'
