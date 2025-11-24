@@ -134,8 +134,8 @@ Describe "Set-Location" -Tags "CI" {
             $oldLocation = Get-Location
 
             # Create temporary directories for PSDrives
-            $tempRoot1 = New-Item -Path "$env:TEMP\TestPSDrive1_$([guid]::NewGuid())" -ItemType Directory -Force
-            $tempRoot2 = New-Item -Path "$env:TEMP\TestPSDrive2_$([guid]::NewGuid())" -ItemType Directory -Force
+            $tempRoot1 = New-Item -Path (Join-Path ([System.IO.Path]::GetTempPath()) "TestPSDrive1_$([guid]::NewGuid())") -ItemType Directory -Force
+            $tempRoot2 = New-Item -Path (Join-Path ([System.IO.Path]::GetTempPath()) "TestPSDrive2_$([guid]::NewGuid())") -ItemType Directory -Force
 
             # Create nested directories with special characters (brackets)
             # Structure: TestPS1:\Parent [Folder]\Child [Folder]
