@@ -240,19 +240,8 @@ jobs:
       - linux_packaging
       - merge_conflict_check
       - infrastructure_tests
-
-<<<<<<< HEAD
-=======
-      - linux_packaging
-      - merge_conflict_check
-      - infrastructure_tests
->>>>>>> 0c40a84ab (Add merge conflict marker detection to linux-ci workflow and refactor existing actions to use reusable get-changed-files action (#26350))
       # - analyze
-      - linux_packaging
-    if: always()
-    uses: PowerShell/compliance/.github/workflows/ready-to-merge.yml@v1.0.0
-    with:
-      needs_context: ${{ toJson(needs) }}
+
   linux_packaging:
     name: Linux Packaging
     needs:
