@@ -2249,43 +2249,6 @@ function Get-RedHatPackageManager {
     }
 }
 
-function Install-GlobalGem {
-    param(
-        [Parameter()]
-        [string]
-        $Sudo = "",
-
-        [Parameter(Mandatory)]
-        [string]
-        $GemName,
-
-        [Parameter(Mandatory)]
-        [string]
-        $GemVersion
-    )
-    try {
-        # We cannot guess if the user wants to run gem install as root on linux and windows,
-        # but macOs usually requires sudo
-        $gemsudo = ''
-        if($environment.IsMacOS -or $env:TF_BUILD -or $env:GITHUB_ACTIONS) {
-            $gemsudo = $sudo
-        }
-
-        Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install $GemName -v $GemVersion --no-document"))
-
-    } catch {
-        Write-Warning "Installation of gem $GemName $GemVersion failed! Must resolve manually."
-        $logs = Get-ChildItem "/var/lib/gems/*/extensions/x86_64-linux/*/$GemName-*/gem_make.out" | Select-Object -ExpandProperty FullName
-        foreach ($log in $logs) {
-            Write-Verbose "Contents of: $log" -Verbose
-            Get-Content -Raw -Path $log -ErrorAction Ignore | ForEach-Object { Write-Verbose $_ -Verbose }
-            Write-Verbose "END Contents of: $log" -Verbose
-        }
-
-        throw
-    }
-}
-
 function Start-PSBootstrap {
     [CmdletBinding()]
     param(
@@ -2297,7 +2260,12 @@ function Start-PSBootstrap {
         [switch]$BuildLinuxArm,
         [switch]$Force,
         [Parameter(Mandatory = $true)]
-        [ValidateSet("Package", "DotNet", "Both")]
+        # Package: Install dependencies for packaging tools (rpmbuild, dpkg-deb, pkgbuild, WiX)
+        # DotNet: Install the .NET SDK
+        # Both: Package and DotNet scenarios
+        # Tools: Install .NET global tools (e.g., dotnet-format)
+        # All: Install all dependencies (packaging, .NET SDK, and tools)
+        [ValidateSet("Package", "DotNet", "Both", "Tools", "All")]
         [string]$Scenario = "Package"
     )
 
@@ -2333,7 +2301,9 @@ function Start-PSBootstrap {
                 elseif ($environment.IsUbuntu18) { $Deps += "libicu60"}
 
                 # Packaging tools
-                if ($Scenario -eq 'Both' -or $Scenario -eq 'Package') { $Deps += "ruby-dev", "groff", "libffi-dev", "rpm", "g++", "make" }
+                # Note: ruby-dev, libffi-dev, g++, and make are no longer needed for DEB packaging
+                # DEB packages now use native dpkg-deb (pre-installed)
+                if ($Scenario -eq 'Both' -or $Scenario -eq 'Package') { $Deps += "groff", "rpm" }
 
                 # Install dependencies
                 # change the fontend from apt-get to noninteractive
@@ -2357,7 +2327,9 @@ function Start-PSBootstrap {
                 $Deps += "libicu", "openssl-libs"
 
                 # Packaging tools
-                if ($Scenario -eq 'Both' -or $Scenario -eq 'Package') { $Deps += "ruby-devel", "rpm-build", "groff", 'libffi-devel', "gcc-c++" }
+                # Note: ruby-devel and libffi-devel are no longer needed
+                # RPM packages use rpmbuild, DEB packages use dpkg-deb
+                if ($Scenario -eq 'Both' -or $Scenario -eq 'Package') { $Deps += "rpm-build", "groff" }
 
                 $PackageManager = Get-RedHatPackageManager
 
@@ -2378,7 +2350,8 @@ function Start-PSBootstrap {
                 $Deps += "wget"
 
                 # Packaging tools
-                if ($Scenario -eq 'Both' -or $Scenario -eq 'Package') { $Deps += "ruby-devel", "rpmbuild", "groff", 'libffi-devel', "gcc" }
+                # Note: ruby-devel and libffi-devel are no longer needed for packaging
+                if ($Scenario -eq 'Both' -or $Scenario -eq 'Package') { $Deps += "rpmbuild", "groff" }
 
                 $PackageManager = "zypper --non-interactive install"
                 $baseCommand = "$sudo $PackageManager"
@@ -2417,23 +2390,29 @@ function Start-PSBootstrap {
                 }
             }
 
-            # Install [fpm](https://github.com/jordansissel/fpm)
-            # Note: fpm is now only needed for DEB and macOS packages; RPM packages use rpmbuild directly
-            if ($Scenario -eq 'Both' -or $Scenario -eq 'Package') {
-                # Install fpm on Debian-based systems, macOS, and Mariner (where DEB packages are built)
-                if (($environment.IsLinux -and ($environment.IsDebianFamily -or $environment.IsMariner)) -or $environment.IsMacOS) {
-                    Install-GlobalGem -Sudo $sudo -GemName "dotenv" -GemVersion "2.8.1"
-                    Install-GlobalGem -Sudo $sudo -GemName "ffi" -GemVersion "1.16.3"
-                    Install-GlobalGem -Sudo $sudo -GemName "fpm" -GemVersion "1.15.1"
-                    Install-GlobalGem -Sudo $sudo -GemName "rexml" -GemVersion "3.2.5"
-                }
-                
+            if ($Scenario -in 'All', 'Both', 'Package') {
                 # For RPM-based systems, ensure rpmbuild is available
                 if ($environment.IsLinux -and ($environment.IsRedHatFamily -or $environment.IsSUSEFamily -or $environment.IsMariner)) {
                     Write-Verbose -Verbose "Checking for rpmbuild..."
                     if (!(Get-Command rpmbuild -ErrorAction SilentlyContinue)) {
                         Write-Warning "rpmbuild not found. Installing rpm-build package..."
                         Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo $PackageManager install -y rpm-build")) -IgnoreExitcode
+                    }
+                }
+                
+                # For Debian-based systems and Mariner, ensure dpkg-deb is available
+                if ($environment.IsLinux -and ($environment.IsDebianFamily -or $environment.IsMariner)) {
+                    Write-Verbose -Verbose "Checking for dpkg-deb..."
+                    if (!(Get-Command dpkg-deb -ErrorAction SilentlyContinue)) {
+                        Write-Warning "dpkg-deb not found. Installing dpkg package..."
+                        if ($environment.IsMariner) {
+                            # For Mariner (Azure Linux), install the extended repo first to access dpkg.
+                            Write-Verbose -Verbose "Installing azurelinux-repos-extended for Mariner..."
+                            Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo $PackageManager azurelinux-repos-extended")) -IgnoreExitcode
+                            Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo $PackageManager dpkg")) -IgnoreExitcode
+                        } else {
+                            Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo apt-get install -y dpkg")) -IgnoreExitcode
+                        }
                     }
                 }
             }
