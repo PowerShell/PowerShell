@@ -4133,7 +4133,7 @@ function Test-Func {
             $completionTexts[1] | Should -BeExactly '"Param2"'
         }
 
-        It "Should not complete for non-PSBoundParameters variable" {
+        It "Should not complete for non-PSBoundParameters variable with indexer" {
             $inputScript = @"
 function Test-Func {
     param([string]`$Param1)
@@ -4145,6 +4145,51 @@ function Test-Func {
             $res = TabExpansion2 -inputScript $inputScript -cursorColumn $cursorPosition
             # Should not return Param1 as completion
             $paramCompletion = $res.CompletionMatches | Where-Object { $_.CompletionText -eq "'Param1'" }
+            $paramCompletion | Should -BeNullOrEmpty
+        }
+
+        It "Should not complete for non-PSBoundParameters variable with ContainsKey" {
+            $inputScript = @"
+function Test-Func {
+    param([string]`$Param1)
+    `$hash = @{}
+    if (`$hash.ContainsKey('P')) { }
+}
+"@
+            $cursorPosition = $inputScript.IndexOf("'P'") + 2
+            $res = TabExpansion2 -inputScript $inputScript -cursorColumn $cursorPosition
+            # Should not return Param1 as completion
+            $paramCompletion = $res.CompletionMatches | Where-Object { $_.CompletionText -eq "'Param1'" }
+            $paramCompletion | Should -BeNullOrEmpty
+        }
+
+        It "Should not complete for non-PSBoundParameters variable with Remove" {
+            $inputScript = @"
+function Test-Func {
+    param([string]`$Param1)
+    `$hash = @{}
+    `$hash.Remove('P')
+}
+"@
+            $cursorPosition = $inputScript.IndexOf("'P'") + 2
+            $res = TabExpansion2 -inputScript $inputScript -cursorColumn $cursorPosition
+            # Should not return Param1 as completion
+            $paramCompletion = $res.CompletionMatches | Where-Object { $_.CompletionText -eq "'Param1'" }
+            $paramCompletion | Should -BeNullOrEmpty
+        }
+
+        It "Should not complete for non-PSBoundParameters variable with double quotes" {
+            $inputScript = @"
+function Test-Func {
+    param([string]`$Param1)
+    `$hash = @{}
+    if (`$hash.ContainsKey("P")) { }
+}
+"@
+            $cursorPosition = $inputScript.IndexOf('"P"') + 2
+            $res = TabExpansion2 -inputScript $inputScript -cursorColumn $cursorPosition
+            # Should not return Param1 as completion
+            $paramCompletion = $res.CompletionMatches | Where-Object { $_.CompletionText -eq '"Param1"' }
             $paramCompletion | Should -BeNullOrEmpty
         }
     }
