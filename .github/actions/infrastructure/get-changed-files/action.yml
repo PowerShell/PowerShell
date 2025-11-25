@@ -79,16 +79,14 @@ runs:
 
           // Apply filter if provided
           if (filter) {
-            const filterLower = filter.toLowerCase();
             const beforeFilter = changedFiles.length;
             changedFiles = changedFiles.filter(file => {
-              const fileLower = file.toLowerCase();
               // Support simple patterns like "*.md" or ".github/"
-              if (filterLower.startsWith('*.')) {
-                const ext = filterLower.substring(1);
-                return fileLower.endsWith(ext);
+              if (filter.startsWith('*.')) {
+                const ext = filter.substring(1);
+                return file.endsWith(ext);
               } else {
-                return fileLower.startsWith(filterLower);
+                return file.startsWith(filter);
               }
             });
             console.log(`Filter '${filter}' applied: ${beforeFilter} → ${changedFiles.length} files`);
