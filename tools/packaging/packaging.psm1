@@ -1909,7 +1909,7 @@ $(if ($extendedDescription) { $extendedDescription + "`n" })
         Write-Verbose "MD5 sums file created: $md5sumsFile" -Verbose
 
         # Build the package using dpkg-deb
-        $debFileName = "${Name}_${Version}-${Iteration}.deb_${HostArchitecture}.deb"
+        $debFileName = "${Name}_${Version}-${Iteration}_${HostArchitecture}.deb"
         $debFilePath = Join-Path $CurrentLocation $debFileName
 
         Write-Verbose "Building DEB package: $debFileName" -Verbose
