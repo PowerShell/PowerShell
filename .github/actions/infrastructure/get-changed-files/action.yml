@@ -78,15 +78,18 @@ runs:
           }
 
           // Apply filter if provided
+          // Note: Filter matching is intentionally case-insensitive for cross-platform consistency
           if (filter) {
+            const filterLower = filter.toLowerCase();
             const beforeFilter = changedFiles.length;
             changedFiles = changedFiles.filter(file => {
+              const fileLower = file.toLowerCase();
               // Support simple patterns like "*.md" or ".github/"
-              if (filter.startsWith('*.')) {
-                const ext = filter.substring(1);
-                return file.endsWith(ext);
+              if (filterLower.startsWith('*.')) {
+                const ext = filterLower.substring(1);
+                return fileLower.endsWith(ext);
               } else {
-                return file.startsWith(filter);
+                return fileLower.startsWith(filterLower);
               }
             });
             console.log(`Filter '${filter}' applied: ${beforeFilter} → ${changedFiles.length} files`);
