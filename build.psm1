@@ -2415,10 +2415,6 @@ function Start-PSBootstrap {
 
                             Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo $PackageManager azurelinux-repos-extended")) -IgnoreExitcode -Verbose
                             Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo $PackageManager dpkg")) -IgnoreExitcode -Verbose
-
-                            Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo $PackageManager azurelinux-repos-extended")) -IgnoreExitcode -Verbose
-                            Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo $PackageManager dpkg")) -IgnoreExitcode -Verbose
->>>>>>> e7bf5621b (Improve ADO package build and validation across platforms (#26398))
                         } else {
                             Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo apt-get install -y dpkg")) -IgnoreExitcode
                         }
