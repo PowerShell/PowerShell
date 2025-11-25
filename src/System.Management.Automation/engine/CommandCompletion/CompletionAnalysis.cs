@@ -307,8 +307,7 @@ namespace System.Management.Automation
             else
             {
                 // Check for incomplete switch parsed as ErrorStatementAst
-                var errorStatementAst = lastAst.Parent as ErrorStatementAst;
-                if (errorStatementAst == null || errorStatementAst.Kind == null ||
+                if (lastAst.Parent is not ErrorStatementAst errorStatementAst || errorStatementAst.Kind == null ||
                     errorStatementAst.Kind.Kind != TokenKind.Switch)
                 {
                     return null;
