@@ -2775,7 +2775,21 @@ namespace System.Management.Automation.Language
         {
             get
             {
-                _isHidden ??= Attributes.Any(attr => attr.TypeName.GetReflectionAttributeType() == typeof(HiddenAttribute));
+                _isHidden ??= Attributes.Any(attr =>
+                {
+                    var reflectionType = attr.TypeName.GetReflectionAttributeType();
+                    if (reflectionType == typeof(HiddenAttribute))
+                    {
+                        return true;
+                    }
+
+                    // For inline definitions, GetReflectionAttributeType() may return null at tab completion time
+                    // because the type hasn't been compiled yet. Check the type name as a string fallback.
+                    var typeName = attr.TypeName.FullName;
+                    return typeName.Equals("hidden", StringComparison.OrdinalIgnoreCase) ||
+                           typeName.Equals("HiddenAttribute", StringComparison.OrdinalIgnoreCase) ||
+                           typeName.Equals("System.Management.Automation.HiddenAttribute", StringComparison.OrdinalIgnoreCase);
+                });
 
                 return _isHidden.Value;
             }

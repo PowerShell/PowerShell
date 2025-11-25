@@ -7847,10 +7847,13 @@ namespace System.Management.Automation
             }
 
             // this is a temporary fix. Only the type defined in the same script get complete. Need to use using Module when that is available.
-            if (context.RelatedAsts != null && context.RelatedAsts.Count > 0)
+            // Search from InputAst (entire input buffer) first to handle inline class definitions like: [hidden()] class Test1{} [Test1
+            // If InputAst is not available, fall back to RelatedAsts (cursor-adjacent ASTs only)
+            Ast astToSearch = context.InputAst ?? (context.RelatedAsts != null && context.RelatedAsts.Count > 0 ? context.RelatedAsts[0] : null);
+
+            if (astToSearch != null)
             {
-                var scriptBlockAst = (ScriptBlockAst)context.RelatedAsts[0];
-                var typeAsts = scriptBlockAst.FindAll(static ast => ast is TypeDefinitionAst, false).Cast<TypeDefinitionAst>();
+                var typeAsts = astToSearch.FindAll(static ast => ast is TypeDefinitionAst, searchNestedScriptBlocks: true).Cast<TypeDefinitionAst>();
                 foreach (var typeAst in typeAsts.Where(ast => pattern.IsMatch(ast.Name) && !ast.IsHidden))
                 {
                     string toolTipPrefix = string.Empty;
