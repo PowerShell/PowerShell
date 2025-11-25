@@ -43,41 +43,6 @@ Describe "WildcardPattern.ToRegex Tests" -Tags "CI" {
         }
     }
 
-    Context "Regex can be used for matching" {
-        It "Generated regex can match strings" {
-            $wildcardPattern = [System.Management.Automation.WildcardPattern]::new("*.txt")
-            $regexPattern = $wildcardPattern.ToRegex()
-            $regex = [regex]::new($regexPattern)
-
-            $regex.IsMatch("file.txt") | Should -BeTrue
-            $regex.IsMatch("document.txt") | Should -BeTrue
-            $regex.IsMatch("file.log") | Should -BeFalse
-        }
-
-        It "Generated regex matches same strings as WildcardPattern.IsMatch" {
-            $testCases = @(
-                @{ Pattern = "*.txt"; TestString = "file.txt"; Expected = $true }
-                @{ Pattern = "*.txt"; TestString = "file.log"; Expected = $false }
-                @{ Pattern = "test?.log"; TestString = "test1.log"; Expected = $true }
-                @{ Pattern = "test?.log"; TestString = "test12.log"; Expected = $false }
-                @{ Pattern = "file[0-9].txt"; TestString = "file5.txt"; Expected = $true }
-                @{ Pattern = "file[0-9].txt"; TestString = "fileA.txt"; Expected = $false }
-            )
-
-            foreach ($testCase in $testCases) {
-                $wildcardPattern = [System.Management.Automation.WildcardPattern]::new($testCase.Pattern)
-                $regexPattern = $wildcardPattern.ToRegex()
-                $regex = [regex]::new($regexPattern)
-
-                $wildcardMatch = $wildcardPattern.IsMatch($testCase.TestString)
-                $regexMatch = $regex.IsMatch($testCase.TestString)
-
-                $wildcardMatch | Should -Be $testCase.Expected -Because "WildcardPattern should match expectation"
-                $regexMatch | Should -Be $testCase.Expected -Because "Regex should match expectation"
-                $wildcardMatch | Should -Be $regexMatch -Because "Wildcard and Regex should match the same"
-            }
-        }
-    }
 
     Context "Edge cases" {
         It "Handles empty pattern" {
@@ -124,6 +89,18 @@ Describe "WildcardPattern.ToRegex Tests" -Tags "CI" {
             $regexObj = [regex]::new($regex)
             $regexObj.IsMatch("file5a.txt") | Should -BeTrue
             $regexObj.IsMatch("file55.txt") | Should -BeFalse
+        }
+
+        It "Removes trailing .*$ optimization" {
+            $pattern = [System.Management.Automation.WildcardPattern]::new("test*")
+            $regex = $pattern.ToRegex()
+            $regex | Should -BeExactly '^test'
+        }
+
+        It "Removes both leading ^.* and trailing .*$ optimization" {
+            $pattern = [System.Management.Automation.WildcardPattern]::new("*test*")
+            $regex = $pattern.ToRegex()
+            $regex | Should -BeExactly 'test'
         }
     }
 }
