@@ -62,8 +62,11 @@ namespace System.Management.Automation.Configuration
         private string systemWideConfigDirectory;
 
         // The json file containing the per-user configuration settings.
-        private readonly string perUserConfigFile;
-        private readonly string perUserConfigDirectory;
+        private string perUserConfigFile;
+        private string perUserConfigDirectory;
+
+        // Flag to track if migration has been checked (lazy initialization to avoid circular dependency)
+        private int migrationChecked = 0;
 
         // Note: JObject and JsonSerializer are thread safe.
         // Root Json objects corresponding to the configuration file for 'AllUsers' and 'CurrentUser' respectively.
@@ -99,6 +102,9 @@ namespace System.Management.Automation.Configuration
             serializer = JsonSerializer.Create(new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None, MaxDepth = 10 });
 
             fileLock = new ReaderWriterLockSlim();
+
+            // Note: PSContentPath user config migration is NOT performed here to avoid circular dependency with ExperimentalFeature.
+            // It will be performed lazily on first access to GetPSContentPath().
         }
 
         private string GetConfigFilePath(ConfigScope scope)
@@ -142,6 +148,42 @@ namespace System.Management.Automation.Configuration
             }
 
             return modulePath;
+        }
+
+        /// <summary>
+        /// Gets the PSContentPath from the configuration file.
+        /// If not configured, returns the default location without creating the config file.
+        /// This ensures PowerShell works on read-only file systems and avoids creating unnecessary files.
+        /// </summary>
+        /// <returns>The configured PSContentPath if found, otherwise the default location (never null).</returns>
+        internal string GetPSContentPath()
+        {
+            // Perform migration check on first call to avoid circular dependency with ExperimentalFeature
+            CheckAndPerformPSContentPathMigrationOnce();
+
+            string contentPath = ReadValueFromFile<string>(ConfigScope.CurrentUser, Constants.PSUserContentPathEnvVar);
+            if (!string.IsNullOrEmpty(contentPath))
+            {
+                contentPath = Environment.ExpandEnvironmentVariables(contentPath);
+            }
+            // Returns default LocalAppData path if not configured
+            return contentPath ?? Platform.DefaultPSContentDirectory;
+        }
+
+        /// <summary>
+        /// Sets the PSContentPath in the configuration file.
+        /// </summary>
+        /// <param name="path">The path to set as PSContentPath.</param>
+        internal void SetPSContentPath(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+            {
+                RemoveValueFromFile<string>(ConfigScope.CurrentUser, Constants.PSUserContentPathEnvVar);
+            }
+            else
+            {
+                WriteValueToFile<string>(ConfigScope.CurrentUser, Constants.PSUserContentPathEnvVar, path);
+            }
         }
 
         /// <summary>
@@ -596,6 +638,90 @@ namespace System.Management.Automation.Configuration
             if (File.Exists(fileName))
             {
                 UpdateValueInFile<T>(scope, key, default(T), false);
+            }
+        }
+
+        internal void MigrateUserConfig(string oldPath, string newPath)
+        {
+            try
+            {
+                // Ensure new directory exists
+                Directory.CreateDirectory(Path.GetDirectoryName(newPath));
+
+                // Copy the config file
+                File.Copy(oldPath, newPath);
+
+                perUserConfigDirectory = Path.GetDirectoryName(newPath);
+                perUserConfigFile = newPath;
+            }
+            catch (Exception)
+            {
+                // Migration failed, but don't break the system
+                // TODO:: What should we do when we fail?
+            }
+        }
+
+        /// <summary>
+        /// Ensures migration is checked exactly once, using thread-safe lazy initialization.
+        /// This is called from GetPSContentPath() to avoid circular dependency with ExperimentalFeature.
+        /// </summary>
+        private void CheckAndPerformPSContentPathMigrationOnce()
+        {
+            if (Interlocked.CompareExchange(ref migrationChecked, 1, 0) == 0)
+            {
+                CheckAndPerformPSContentPathMigration();
+            }
+        }
+
+        /// <summary>
+        /// Checks if PSContentPath migration is needed and performs it if the experimental feature is enabled.
+        /// </summary>
+        private void CheckAndPerformPSContentPathMigration()
+        {
+            try
+            {
+                // Only perform migration if PSContentPath experimental feature is enabled
+                if (!ExperimentalFeature.IsEnabled(ExperimentalFeature.PSContentPath))
+                {
+                    return;
+                }
+
+                string oldConfigFile = Path.Combine(Platform.ConfigDirectory, ConfigFileName);
+                string newConfigFile = Path.Combine(Platform.DefaultPSContentDirectory, ConfigFileName);
+                
+                // If paths are the same, no migration needed
+                if (string.Equals(oldConfigFile, newConfigFile, StringComparison.OrdinalIgnoreCase))
+                {
+                    return;
+                }
+                
+                // Always update to use the new location when experimental feature is enabled
+                string newConfigDir = Path.GetDirectoryName(newConfigFile);
+                
+                // If migration was already completed (new config exists), just update paths
+                if (File.Exists(newConfigFile))
+                {
+                    perUserConfigDirectory = newConfigDir;
+                    perUserConfigFile = newConfigFile;
+                    return;
+                }
+                
+                // If old config exists and needs migration, perform the migration
+                if (File.Exists(oldConfigFile))
+                {
+                    MigrateUserConfig(oldConfigFile, newConfigFile);
+                }
+                else
+                {
+                    // No existing config, but still use new location going forward
+                    perUserConfigDirectory = newConfigDir;
+                    perUserConfigFile = newConfigFile;
+                }
+            }
+            catch
+            {
+                // Migration is best-effort; don't fail PowerShell startup if it fails
+                // The user can manually copy the file if needed
             }
         }
     }
