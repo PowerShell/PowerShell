@@ -54,12 +54,15 @@ Describe "WildcardPattern.ToRegex Tests" -Tags "CI" {
             $regexObj.IsMatch("") | Should -BeTrue
         }
 
-        It "Handles escaped wildcard characters" {
-            # Use single quotes to preserve the backtick escape character
-            $pattern = [System.Management.Automation.WildcardPattern]::new('file`*.txt')
-            $regex = $pattern.ToRegex()
-            # The backtick-escaped asterisk should become a literal asterisk in the regex (escaped as \*)
-            $regex | Should -BeExactly '^file\*\.txt$'
+        It "Handles escaped '<Char>' wildcard character" -TestCases @(
+            @{ Char = '*'; Pattern = 'file`*.txt'; Expected = '^file\*\.txt$' }
+            @{ Char = '?'; Pattern = 'file`?.txt'; Expected = '^file\?\.txt$' }
+            @{ Char = '['; Pattern = 'file`[.txt'; Expected = '^file\[\.txt$' }
+            @{ Char = ']'; Pattern = 'file`].txt'; Expected = '^file]\.txt$' }
+        ) {
+            param($Char, $Pattern, $Expected)
+            $wildcardPattern = [System.Management.Automation.WildcardPattern]::new($Pattern)
+            $wildcardPattern.ToRegex() | Should -BeExactly $Expected
         }
     }
 }
