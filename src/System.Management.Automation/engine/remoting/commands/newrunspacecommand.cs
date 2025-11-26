@@ -798,7 +798,7 @@ namespace Microsoft.PowerShell.Commands
 
             ResolveComputerNames(ComputerName, out resolvedComputerNames);
 
-            ValidateComputerName(resolvedComputerNames);
+            RemotingUtils.ValidateComputerName(this, resolvedComputerNames);
 
             // Do for each machine
             for (int i = 0; i < resolvedComputerNames.Length; i++)
@@ -1087,7 +1087,7 @@ namespace Microsoft.PowerShell.Commands
             int index = 0;
             foreach (var computerName in resolvedComputerNames)
             {
-                ParseSshHostName(computerName, out string host, out string userName, out int port);
+                RemotingUtils.ParseSshHostName(this, computerName, out string host, out string userName, out int port);
 
                 var sshConnectionInfo = new SSHConnectionInfo(
                     userName,
