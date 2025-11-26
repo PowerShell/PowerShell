@@ -251,8 +251,7 @@ namespace System.Management.Automation
         {
             Tuple<Token, Ast> fileConditionTuple;
 
-            var errorStatement = lastAst as ErrorStatementAst;
-            if (errorStatement != null && errorStatement.Flags != null && errorStatement.Kind != null && tokenBeforeCursor != null &&
+            if (lastAst is ErrorStatementAst errorStatement && errorStatement.Flags is not null && errorStatement.Kind is not null && tokenBeforeCursor is not null &&
                 errorStatement.Kind.Kind.Equals(TokenKind.Switch) && errorStatement.Flags.TryGetValue("file", out fileConditionTuple))
             {
                 // Handle "switch -file <tab>"
@@ -267,14 +266,13 @@ namespace System.Management.Automation
                     return false;
                 }
 
-                errorStatement = pipeline.Parent as ErrorStatementAst;
-                if (errorStatement == null || errorStatement.Kind == null || errorStatement.Flags == null)
+                if (pipeline.Parent is not ErrorStatementAst parentErrorStatement || parentErrorStatement.Kind is null || parentErrorStatement.Flags is null)
                 {
                     return false;
                 }
 
-                return (errorStatement.Kind.Kind.Equals(TokenKind.Switch) &&
-                        errorStatement.Flags.TryGetValue("file", out fileConditionTuple) && fileConditionTuple.Item2 == pipeline);
+                return (parentErrorStatement.Kind.Kind.Equals(TokenKind.Switch) &&
+                        parentErrorStatement.Flags.TryGetValue("file", out fileConditionTuple) && fileConditionTuple.Item2 == pipeline);
             }
 
             return false;
@@ -307,7 +305,7 @@ namespace System.Management.Automation
             else
             {
                 // Check for incomplete switch parsed as ErrorStatementAst
-                if (lastAst.Parent is not ErrorStatementAst errorStatementAst || errorStatementAst.Kind == null ||
+                if (lastAst.Parent is not ErrorStatementAst errorStatementAst || errorStatementAst.Kind is null ||
                     errorStatementAst.Kind.Kind != TokenKind.Switch)
                 {
                     return null;
@@ -334,30 +332,26 @@ namespace System.Management.Automation
                 return null;
             }
 
-            var commandExpressionAst = conditionPipeline.PipelineElements[0] as CommandExpressionAst;
-            if (commandExpressionAst == null)
+            if (conditionPipeline.PipelineElements[0] is not CommandExpressionAst commandExpressionAst)
             {
                 return null;
             }
 
             // Check if the expression is a member access on $PSBoundParameters.Keys
-            var memberExpressionAst = commandExpressionAst.Expression as MemberExpressionAst;
-            if (memberExpressionAst == null)
+            if (commandExpressionAst.Expression is not MemberExpressionAst memberExpressionAst)
             {
                 return null;
             }
 
             // Check if the target is $PSBoundParameters
-            var variableExpressionAst = memberExpressionAst.Expression as VariableExpressionAst;
-            if (variableExpressionAst == null ||
+            if (memberExpressionAst.Expression is not VariableExpressionAst variableExpressionAst ||
                 !variableExpressionAst.VariablePath.UserPath.Equals("PSBoundParameters", StringComparison.OrdinalIgnoreCase))
             {
                 return null;
             }
 
             // Check if the member is "Keys"
-            var memberNameAst = memberExpressionAst.Member as StringConstantExpressionAst;
-            if (memberNameAst == null ||
+            if (memberExpressionAst.Member is not StringConstantExpressionAst memberNameAst ||
                 !memberNameAst.Value.Equals("Keys", StringComparison.OrdinalIgnoreCase))
             {
                 return null;
