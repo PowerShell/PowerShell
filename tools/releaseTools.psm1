@@ -867,8 +867,8 @@ function Invoke-PRBackport {
         )
         $continue = $false
         while(!$continue) {
-            $input= Read-Host -Prompt ($Message + "`nType 'Yes<enter>' to continue 'No<enter>' to exit")
-            switch($input) {
+            $confirm= Read-Host -Prompt ($Message + "`nType 'Yes<enter>' to continue 'No<enter>' to exit")
+            switch($confirm) {
                 'yes' {
                     $continue= $true
                 }
