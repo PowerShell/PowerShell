@@ -212,7 +212,7 @@ namespace System.Management.Automation
         /// A string that represents the regular expression equivalent of the wildcard pattern.
         /// </returns>
         /// <remarks>
-        /// This method converts PowerShell wildcard patterns to regular expression patterns.
+        /// This method converts a wildcard pattern to a regular expression pattern.
         /// The conversion follows these rules:
         /// <list type="bullet">
         /// <item><description>* (asterisk) converts to .* (matches any string)</description></item>
