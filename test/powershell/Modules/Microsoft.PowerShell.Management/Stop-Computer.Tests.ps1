@@ -42,6 +42,23 @@ try
             }
         }
 
+        It "Should support -Comment parameter" {
+            Set-TesthookResult -testhookName $restartTesthookResultName -value $defaultResultValue
+            $comment = "Testing comment"
+            Stop-Computer -Comment $comment -ErrorAction Stop | Should -BeNullOrEmpty
+        }
+
+        It "Should support Reason types" {
+            $ReasonList =  "Application", "Hardware", "OperatingSystem", "Other", "Power", "Software", "System", `
+            "BlueScreen", "Disk", "Environment", "Driver", "HotFix", "HotFixUninstall", "Unresponsive", "Installation", `
+                "Maintenance", "MMC", "NetworkConnectivity", "NetworkCard", "Other", "OtherDriver", "PowerSupply", "Processor", "Reconfigure", `
+                "SecurityIssue", "SecurityPatch","SecurityPatchUninstallation", "ServicePack", "ServicePackUninstallation", "TerminalServices", `
+                "Unstable", "Upgrade", "WMI"
+            foreach ( $reason in $ReasonList ) {
+                Stop-Computer Reason $reason | Should -BeNullOrEmpty
+            }
+        }
+
         Context "Stop-Computer Error Conditions" {
             It "Should return the proper error when it occurs" {
                 Set-TesthookResult -testhookName $stopTesthookResultName -Value 0x300000
