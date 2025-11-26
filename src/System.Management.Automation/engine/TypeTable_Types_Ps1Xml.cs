@@ -565,9 +565,7 @@ namespace System.Management.Automation.Runspaces
                 typeName,
                 new PSScriptProperty(
                     @"DisplayName",
-                    GetScriptBlock(@"if ($this.Name.IndexOf('-') -lt 0)
-          {
-          if ($null -ne $this.ResolvedCommand)
+                    GetScriptBlock(@"if ($null -ne $this.ResolvedCommand)
           {
           $this.Name + "" -> "" + $this.ResolvedCommand.Name
           }
@@ -575,11 +573,7 @@ namespace System.Management.Automation.Runspaces
           {
           $this.Name + "" -> "" + $this.Definition
           }
-          }
-          else
-          {
-          $this.Name
-          }"),
+          "),
                     setterScript: null,
                     shouldCloneOnAccess: true),
                 typeMembers,

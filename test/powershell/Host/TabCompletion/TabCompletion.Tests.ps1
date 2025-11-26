@@ -1125,6 +1125,163 @@ param([ValidatePattern(
         $res.CompletionMatches[1].CompletionText | Should -BeExactly '$DemoVar2'
     }
 
+    It 'Should include parameter help message in tool tip - SingleMatch <SingleMatch>' -TestCases @(
+        @{ SingleMatch = $true }
+        @{ SingleMatch = $false }
+    ) {
+        param ($SingleMatch)
+
+        Function Test-Function {
+            param (
+                [Parameter(HelpMessage = 'Some help message')]
+                $ParamWithHelp,
+
+                $ParamWithoutHelp
+            )
+        }
+
+        $expected = '[Object] ParamWithHelp - Some help message'
+
+        if ($SingleMatch) {
+            $Script = 'Test-Function -ParamWithHelp'
+            $res = (TabExpansion2 -inputScript $Script).CompletionMatches
+        }
+        else {
+            $Script = 'Test-Function -'
+            $res = (TabExpansion2 -inputScript $Script).CompletionMatches | Where-Object CompletionText -eq '-ParamWithHelp'
+        }
+
+        $res.Count | Should -Be 1
+        $res.CompletionText | Should -BeExactly '-ParamWithHelp'
+        $res.ToolTip | Should -BeExactly $expected
+    }
+
+    It 'Should include parameter help resource message in tool tip - SingleMatch <SingleMatch>' -TestCases @(
+        @{ SingleMatch = $true }
+        @{ SingleMatch = $false }
+    ) {
+        param ($SingleMatch)
+
+        $expected = '`[string`] Activity - *'
+
+        if ($SingleMatch) {
+            $Script = 'Write-Progress -Activity'
+            $res = (TabExpansion2 -inputScript $Script).CompletionMatches
+        }
+        else {
+            $Script = 'Write-Progress -'
+            $res = (TabExpansion2 -inputScript $Script).CompletionMatches | Where-Object CompletionText -eq '-Activity'
+        }
+
+        $res.Count | Should -Be 1
+        $res.CompletionText | Should -BeExactly '-Activity'
+        $res.ToolTip | Should -BeLikeExactly $expected
+    }
+
+    It 'Should skip empty parameter HelpMessage with multiple parameters - SingleMatch <SingleMatch>' -TestCases @(
+        @{ SingleMatch = $true }
+        @{ SingleMatch = $false }
+    ) {
+        param ($SingleMatch)
+
+        Function Test-Function {
+            [CmdletBinding(DefaultParameterSetName = 'SetWithoutHelp')]
+            param (
+                [Parameter(ParameterSetName = 'SetWithHelp', HelpMessage = 'Help Message')]
+                [Parameter(ParameterSetName = 'SetWithoutHelp')]
+                [string]
+                $ParamWithHelp,
+                
+                [Parameter(ParameterSetName = 'SetWithHelp')]
+                [switch]
+                $ParamWithoutHelp
+            )
+        }
+
+        $expected = '[string] ParamWithHelp - Help Message'
+
+        if ($SingleMatch) {
+            $Script = 'Test-Function -ParamWithHelp'
+            $res = (TabExpansion2 -inputScript $Script).CompletionMatches
+        }
+        else {
+            $Script = 'Test-Function -'
+            $res = (TabExpansion2 -inputScript $Script).CompletionMatches | Where-Object CompletionText -eq '-ParamWithHelp'
+        }
+
+        $res.Count | Should -Be 1
+        $res.CompletionText | Should -BeExactly '-ParamWithHelp'
+        $res.ToolTip | Should -BeExactly $expected
+    }
+
+    It 'Should retrieve help message from dynamic parameter' {
+        Function Test-Function {
+            [CmdletBinding()]
+            param ()
+            dynamicparam {
+                $attr = [System.Management.Automation.ParameterAttribute]@{
+                    HelpMessage = "Howdy partner"
+                }
+                $attrCollection = [System.Collections.ObjectModel.Collection[System.Attribute]]::new()
+                $attrCollection.Add($attr)
+
+                $dynParam = [System.Management.Automation.RuntimeDefinedParameter]::new('DynamicParam', [string], $attrCollection)
+
+                $paramDictionary = [System.Management.Automation.RuntimeDefinedParameterDictionary]::new()
+                $paramDictionary.Add('DynamicParam', $dynParam)
+                $paramDictionary
+            }
+
+            end {}
+        }
+
+        $expected = '[string] DynamicParam - Howdy partner'
+        $Script = 'Test-Function -'
+        $res = (TabExpansion2 -inputScript $Script).CompletionMatches | Where-Object CompletionText -eq '-DynamicParam'
+        $res.Count | Should -Be 1
+        $res.CompletionText | Should -BeExactly '-DynamicParam'
+        $res.ToolTip | Should -BeExactly $expected
+    }
+
+    It 'Should have type and name for parameter without help message' {
+        Function Test-Function {
+            param (
+                [Parameter()]
+                $WithParamAttribute,
+
+                $WithoutParamAttribute
+            )
+        }
+
+        $Script = 'Test-Function -'
+        $res = (TabExpansion2 -inputScript $Script).CompletionMatches |
+            Where-Object CompletionText -in '-WithParamAttribute', '-WithoutParamAttribute' |
+            Sort-Object CompletionText
+        $res.Count | Should -Be 2
+
+        $res.CompletionText[0] | Should -BeExactly '-WithoutParamAttribute'
+        $res.ToolTip[0] | Should -BeExactly '[Object] WithoutParamAttribute'
+
+        $res.CompletionText[1] | Should -BeExactly '-WithParamAttribute'
+        $res.ToolTip[1] | Should -BeExactly '[Object] WithParamAttribute'
+    }
+
+    It 'Should ignore errors when faling to get HelpMessage resource' {
+        Function Test-Function {
+            param (
+                [Parameter(HelpMessageBaseName="invalid", HelpMessageResourceId="SomeId")]
+                $InvalidHelpParam
+            )
+        }
+
+        $expected = '[Object] InvalidHelpParam'
+        $Script = 'Test-Function -InvalidHelpParam'
+        $res = (TabExpansion2 -inputScript $Script).CompletionMatches
+        $res.Count | Should -Be 1
+        $res.CompletionText | Should -BeExactly '-InvalidHelpParam'
+        $res.ToolTip | Should -BeExactly $expected
+    }
+
     Context 'Start-Process -Verb parameter completion' {
         BeforeAll {
             function GetProcessInfoVerbs([string]$path, [switch]$singleQuote, [switch]$doubleQuote) {
@@ -1772,8 +1929,12 @@ param([ValidatePattern(
 
     Context NativeCommand {
         BeforeAll {
-            $nativeCommand = (Get-Command -CommandType Application -TotalCount 1).Name
+            ## Find a native command that is not 'pwsh'. We will use 'pwsh' for fallback completer tests later.
+            $nativeCommand = Get-Command -CommandType Application -TotalCount 2 |
+                Where-Object Name -NotLike pwsh* |
+                Select-Object -First 1
         }
+
         It 'Completes native commands with -' {
             Register-ArgumentCompleter -Native -CommandName $nativeCommand -ScriptBlock {
                 param($wordToComplete, $ast, $cursorColumn)
@@ -1836,6 +1997,52 @@ param([ValidatePattern(
             $res = TabExpansion2 -inputScript $line -cursorColumn $line.Length
             $res.CompletionMatches | Should -HaveCount 1
             $res.CompletionMatches.CompletionText | Should -BeExactly "-option"
+        }
+
+        It 'Covers an arbitrary unbound native command with -t' {
+            ## Register a completer for $nativeCommand.
+            Register-ArgumentCompleter -Native -CommandName $nativeCommand -ScriptBlock {
+                param($wordToComplete, $ast, $cursorColumn)
+                if ($wordToComplete -eq '-t') {
+                    return "-terminal"
+                }
+            }
+
+            ## Register a fallback native command completer.
+            Register-ArgumentCompleter -NativeFallback -ScriptBlock {
+                param($wordToComplete, $ast, $cursorColumn)
+                if ($wordToComplete -eq '-t') {
+                    return "-testing"
+                }
+            }
+
+            ## The specific completer will be used if it exists.
+            $line = "$nativeCommand -t"
+            $res = TabExpansion2 -inputScript $line -cursorColumn $line.Length
+            $res.CompletionMatches | Should -HaveCount 1
+            $res.CompletionMatches.CompletionText | Should -BeExactly "-terminal"
+
+            ## Otherwise, the fallback completer will kick in.
+            $line = "pwsh -t"
+            $res = TabExpansion2 -inputScript $line -cursorColumn $line.Length
+            $res.CompletionMatches | Should -HaveCount 1
+            $res.CompletionMatches.CompletionText | Should -BeExactly "-testing"
+
+            ## Remove the completer for $nativeCommand.
+            Register-ArgumentCompleter -Native -CommandName $nativeCommand -ScriptBlock $null
+
+            ## The fallback completer will be used for $nativeCommand.
+            $line = "$nativeCommand -t"
+            $res = TabExpansion2 -inputScript $line -cursorColumn $line.Length
+            $res.CompletionMatches | Should -HaveCount 1
+            $res.CompletionMatches.CompletionText | Should -BeExactly "-testing"
+
+            ## Remove the fallback completer for $nativeCommand.
+            Register-ArgumentCompleter -NativeFallback -ScriptBlock $null
+
+            ## The fallback completer will be used for $nativeCommand.
+            $res = TabExpansion2 -inputScript $line -cursorColumn $line.Length
+            $res.CompletionMatches | Should -HaveCount 0
         }
     }
 
@@ -2256,6 +2463,42 @@ param ($Param1)
             $Text.Length - $Text.Replace('`','').Length | Should -Be $LiteralBacktickDouble
 
             Remove-Item -LiteralPath $LiteralPath
+        }
+
+        It "Should add single quotes if there are double quotes in bare word file path" {
+			$BadQuote = [char]8220
+		    $TestFile1 = Join-Path -Path $TestDrive -ChildPath "Test1${BadQuote}File"
+            $null = New-Item -Path $TestFile1 -Force
+            $res = TabExpansion2 -inputScript "Get-ChildItem -Path $TestDrive\"
+            ($res.CompletionMatches | Where-Object ListItemText -Like "Test1?File").CompletionText | Should -Be "'$TestFile1'"
+            Remove-Item -LiteralPath $TestFile1 -Force
+        }
+
+        It "Should escape double quote if the input string uses double quotes" {
+			$BadQuote = [char]8220
+		    $TestFile1 = Join-Path -Path $TestDrive -ChildPath "Test1${BadQuote}File"
+            $null = New-Item -Path $TestFile1 -Force
+            $res = TabExpansion2 -inputScript "Get-ChildItem -Path `"$TestDrive\"
+            $Expected = "`"$($TestFile1.Insert($TestFile1.LastIndexOf($BadQuote), '`'))`""
+            ($res.CompletionMatches | Where-Object ListItemText -Like "Test1?File").CompletionText | Should -Be $Expected
+            Remove-Item -LiteralPath $TestFile1 -Force
+        }
+
+        It "Should escape single quotes in file paths" {
+			$SingleQuote = "'"
+		    $TestFile1 = Join-Path -Path $TestDrive -ChildPath "Test1${SingleQuote}File"
+            $null = New-Item -Path $TestFile1 -Force
+            # Regardless if the input string was singlequoted or not, we expect to add surrounding single quotes and
+            # escape the single quote in the file path with another singlequote.
+            $Expected = "'$($TestFile1.Insert($TestFile1.LastIndexOf($SingleQuote), "'"))'"
+
+            $res = TabExpansion2 -inputScript "Get-ChildItem -Path '$TestDrive\"
+            ($res.CompletionMatches | Where-Object ListItemText -Like "Test1?File").CompletionText | Should -Be $Expected
+
+            $res = TabExpansion2 -inputScript "Get-ChildItem -Path $TestDrive\"
+            ($res.CompletionMatches | Where-Object ListItemText -Like "Test1?File").CompletionText | Should -Be $Expected
+
+            Remove-Item -LiteralPath $TestFile1 -Force
         }
     }
 

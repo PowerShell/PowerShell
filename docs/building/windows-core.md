@@ -54,10 +54,14 @@ If you have any problems installing `dotnet`, please see their [documentation][c
 
 We maintain a [PowerShell module](../../build.psm1) with the function `Start-PSBuild` to build PowerShell.
 
+We do not recommend using Visual Studio Dev Environment Terminal to build the source code.
+
 ```powershell
 Import-Module ./build.psm1
 Start-PSBuild -Clean -PSModuleRestore -UseNuGetOrg
 ```
+
+> The PowerShell project by default references packages from the private Azure Artifacts feed, which requires authentication. The `-UseNuGetOrg` flag reconfigures the build to use the public NuGet.org feed instead.
 
 Congratulations! If everything went right, PowerShell is now built and executable as `./src/powershell-win-core/bin/Debug/net6.0/win7-x64/publish/pwsh.exe`.
 

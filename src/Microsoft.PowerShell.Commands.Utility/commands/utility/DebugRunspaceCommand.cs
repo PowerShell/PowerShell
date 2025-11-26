@@ -265,6 +265,15 @@ namespace Microsoft.PowerShell.Commands
                 // Set up host script debugger to debug the runspace.
                 _debugger.DebugRunspace(_runspace, breakAll: BreakAll);
 
+                _runspace.IsRemoteDebuggerAttached = true;
+                _runspace.Events?.GenerateEvent(
+                    PSEngineEvent.OnDebugAttach,
+                    sender: null,
+                    args: Array.Empty<object>(),
+                    extraData: null,
+                    processInCurrentThread: true,
+                    waitForCompletionInCurrentThread: false);
+
                 while (_debugging)
                 {
                     // Wait for running script.
@@ -307,6 +316,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 _runspace.AvailabilityChanged -= HandleRunspaceAvailabilityChanged;
                 _debugger.NestedDebuggingCancelledEvent -= HandleDebuggerNestedDebuggingCancelledEvent;
+                _runspace.IsRemoteDebuggerAttached = false;
                 _debugger.StopDebugRunspace(_runspace);
                 _newRunningScriptEvent.Dispose();
             }

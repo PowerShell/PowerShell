@@ -338,10 +338,7 @@ namespace System.Management.Automation.Language
 
         internal static bool IsWithin(this IScriptExtent extentToTest, IScriptExtent extent)
         {
-            return extentToTest.StartLineNumber >= extent.StartLineNumber &&
-                   extentToTest.EndLineNumber <= extent.EndLineNumber &&
-                   extentToTest.StartColumnNumber >= extent.StartColumnNumber &&
-                   extentToTest.EndColumnNumber <= extent.EndColumnNumber;
+            return extentToTest.StartOffset >= extent.StartOffset && extentToTest.EndOffset <= extent.EndOffset;
         }
 
         internal static bool IsAfter(this IScriptExtent extent, int line, int column)

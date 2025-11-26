@@ -1441,8 +1441,11 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                _binaryOperator = TokenKind.Ieq;
-                _forceBooleanEvaluation = false;
+                if (value)
+                {
+                    _binaryOperator = TokenKind.Ieq;
+                    _forceBooleanEvaluation = false;
+                }
             }
         }
 
@@ -1459,7 +1462,10 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                _binaryOperator = TokenKind.Ceq;
+                if (value)
+                {
+                    _binaryOperator = TokenKind.Ceq;
+                }
             }
         }
 
@@ -1477,7 +1483,10 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                _binaryOperator = TokenKind.Ine;
+                if (value)
+                {
+                    _binaryOperator = TokenKind.Ine;
+                }
             }
         }
 
@@ -1494,7 +1503,10 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                _binaryOperator = TokenKind.Cne;
+                if (value)
+                {
+                    _binaryOperator = TokenKind.Cne;
+                }
             }
         }
 
@@ -1512,7 +1524,10 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                _binaryOperator = TokenKind.Igt;
+                if (value)
+                {
+                    _binaryOperator = TokenKind.Igt;
+                }
             }
         }
 
@@ -1529,7 +1544,10 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                _binaryOperator = TokenKind.Cgt;
+                if (value)
+                {
+                    _binaryOperator = TokenKind.Cgt;
+                }
             }
         }
 
@@ -1547,7 +1565,10 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                _binaryOperator = TokenKind.Ilt;
+                if (value)
+                {
+                    _binaryOperator = TokenKind.Ilt;
+                }
             }
         }
 
@@ -1564,7 +1585,10 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                _binaryOperator = TokenKind.Clt;
+                if (value)
+                {
+                    _binaryOperator = TokenKind.Clt;
+                }
             }
         }
 
@@ -1582,7 +1606,10 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                _binaryOperator = TokenKind.Ige;
+                if (value)
+                {
+                    _binaryOperator = TokenKind.Ige;
+                }
             }
         }
 
@@ -1599,7 +1626,10 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                _binaryOperator = TokenKind.Cge;
+                if (value)
+                {
+                    _binaryOperator = TokenKind.Cge;
+                }
             }
         }
 
@@ -1617,7 +1647,10 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                _binaryOperator = TokenKind.Ile;
+                if (value)
+                {
+                    _binaryOperator = TokenKind.Ile;
+                }
             }
         }
 
@@ -1634,7 +1667,10 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                _binaryOperator = TokenKind.Cle;
+                if (value)
+                {
+                    _binaryOperator = TokenKind.Cle;
+                }
             }
         }
 
@@ -1652,7 +1688,10 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                _binaryOperator = TokenKind.Ilike;
+                if (value)
+                {
+                    _binaryOperator = TokenKind.Ilike;
+                }
             }
         }
 
@@ -1669,7 +1708,10 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                _binaryOperator = TokenKind.Clike;
+                if (value)
+                {
+                    _binaryOperator = TokenKind.Clike;
+                }
             }
         }
 
@@ -1687,7 +1729,10 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                _binaryOperator = TokenKind.Inotlike;
+                if (value)
+                {
+                    _binaryOperator = TokenKind.Inotlike;
+                }
             }
         }
 
@@ -1704,7 +1749,10 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                _binaryOperator = TokenKind.Cnotlike;
+                if (value)
+                {
+                    _binaryOperator = TokenKind.Cnotlike;
+                }
             }
         }
 
@@ -1722,7 +1770,10 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                _binaryOperator = TokenKind.Imatch;
+                if (value)
+                {
+                    _binaryOperator = TokenKind.Imatch;
+                }
             }
         }
 
@@ -1739,7 +1790,10 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                _binaryOperator = TokenKind.Cmatch;
+                if (value)
+                {
+                    _binaryOperator = TokenKind.Cmatch;
+                }
             }
         }
 
@@ -1757,7 +1811,10 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                _binaryOperator = TokenKind.Inotmatch;
+                if (value)
+                {
+                    _binaryOperator = TokenKind.Inotmatch;
+                }
             }
         }
 
@@ -1774,7 +1831,10 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                _binaryOperator = TokenKind.Cnotmatch;
+                if (value)
+                {
+                    _binaryOperator = TokenKind.Cnotmatch;
+                }
             }
         }
 
@@ -1792,7 +1852,10 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                _binaryOperator = TokenKind.Icontains;
+                if (value)
+                {
+                    _binaryOperator = TokenKind.Icontains;
+                }
             }
         }
 
@@ -1809,7 +1872,10 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                _binaryOperator = TokenKind.Ccontains;
+                if (value)
+                {
+                    _binaryOperator = TokenKind.Ccontains;
+                }
             }
         }
 
@@ -1827,7 +1893,10 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                _binaryOperator = TokenKind.Inotcontains;
+                if (value)
+                {
+                    _binaryOperator = TokenKind.Inotcontains;
+                }
             }
         }
 
@@ -1844,7 +1913,10 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                _binaryOperator = TokenKind.Cnotcontains;
+                if (value)
+                {
+                    _binaryOperator = TokenKind.Cnotcontains;
+                }
             }
         }
 
@@ -1862,7 +1934,10 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                _binaryOperator = TokenKind.In;
+                if (value)
+                {
+                    _binaryOperator = TokenKind.In;
+                }
             }
         }
 
@@ -1879,7 +1954,10 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                _binaryOperator = TokenKind.Cin;
+                if (value)
+                {
+                    _binaryOperator = TokenKind.Cin;
+                }
             }
         }
 
@@ -1897,7 +1975,10 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                _binaryOperator = TokenKind.Inotin;
+                if (value)
+                {
+                    _binaryOperator = TokenKind.Inotin;
+                }
             }
         }
 
@@ -1914,7 +1995,10 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                _binaryOperator = TokenKind.Cnotin;
+                if (value)
+                {
+                    _binaryOperator = TokenKind.Cnotin;
+                }
             }
         }
 
@@ -1931,7 +2015,10 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                _binaryOperator = TokenKind.Is;
+                if (value)
+                {
+                    _binaryOperator = TokenKind.Is;
+                }
             }
         }
 
@@ -1948,7 +2035,10 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                _binaryOperator = TokenKind.IsNot;
+                if (value)
+                {
+                    _binaryOperator = TokenKind.IsNot;
+                }
             }
         }
 
@@ -1965,7 +2055,10 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                _binaryOperator = TokenKind.Not;
+                if (value)
+                {
+                    _binaryOperator = TokenKind.Not;
+                }
             }
         }
 
@@ -2018,7 +2111,7 @@ namespace Microsoft.PowerShell.Commands
 
         private object GetLikeRHSOperand(object operand)
         {
-            if (!(operand is string val))
+            if (operand is not string val)
             {
                 return operand;
             }

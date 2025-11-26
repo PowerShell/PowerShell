@@ -106,7 +106,7 @@ namespace Microsoft.PowerShell.Commands
                 _cancellationSource.Dispose();
             }
         }
-        
+
         private readonly List<object> _inputObjects = new();
         private JsonObject.ConvertToJsonContext _context;
 
