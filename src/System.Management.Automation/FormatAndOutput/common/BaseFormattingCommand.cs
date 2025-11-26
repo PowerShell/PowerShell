@@ -9,44 +9,10 @@ using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
+using Microsoft.PowerShell.Commands;
 
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
-    /// <summary>
-    /// Helper class to do wildcard matching on PSPropertyExpressions.
-    /// </summary>
-    internal sealed class PSPropertyExpressionFilter
-    {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="PSPropertyExpressionFilter"/> class
-        /// with the specified array of patterns.
-        /// </summary>
-        /// <param name="wildcardPatternsStrings">Array of pattern strings to use.</param>
-        internal PSPropertyExpressionFilter(string[] wildcardPatternsStrings)
-        {
-            ArgumentNullException.ThrowIfNull(wildcardPatternsStrings);
-
-            _wildcardPatterns = new WildcardPattern[wildcardPatternsStrings.Length];
-            for (int k = 0; k < wildcardPatternsStrings.Length; k++)
-            {
-                _wildcardPatterns[k] = WildcardPattern.Get(wildcardPatternsStrings[k], WildcardOptions.IgnoreCase);
-            }
-        }
-
-        /// <summary>
-        /// Try to match the expression against the array of wildcard patterns.
-        /// The first match shortcircuits the search.
-        /// </summary>
-        /// <param name="expression">PSPropertyExpression to test against.</param>
-        /// <returns>True if there is a match, else false.</returns>
-        internal bool IsMatch(PSPropertyExpression expression)
-        {
-            string expressionString = expression.ToString();
-            return _wildcardPatterns.Any(pattern => pattern.IsMatch(expressionString));
-        }
-
-        private readonly WildcardPattern[] _wildcardPatterns;
-    }
 
     /// <summary>
     /// Base class defining the formatting context and the

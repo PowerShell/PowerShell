@@ -88,7 +88,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (ExcludeProperty != null)
             {
-                parameters.excludePropertyFilter = new Microsoft.PowerShell.Commands.Internal.Format.PSPropertyExpressionFilter(ExcludeProperty);
+                parameters.excludePropertyFilter = new PSPropertyExpressionFilter(ExcludeProperty);
 
                 // ExcludeProperty implies -Property * for better UX
                 if (_prop == null)
