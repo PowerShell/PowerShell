@@ -79,6 +79,18 @@ namespace Microsoft.PowerShell.Commands
         {
             FormattingCommandLineParameters parameters = new();
 
+            // Check View conflicts first (before any auto-expansion)
+            if (!string.IsNullOrEmpty(this.View))
+            {
+                // View cannot be used with Property or ExcludeProperty
+                if (_prop != null || ExcludeProperty != null)
+                {
+                    ReportCannotSpecifyViewAndProperty();
+                }
+
+                parameters.viewName = this.View;
+            }
+
             if (_prop != null)
             {
                 ParameterProcessor processor = new(new FormatWideParameterDefinition());
@@ -91,24 +103,12 @@ namespace Microsoft.PowerShell.Commands
                 parameters.excludePropertyFilter = new PSPropertyExpressionFilter(ExcludeProperty);
 
                 // ExcludeProperty implies -Property * for better UX
-                if (_prop == null)
+                if (_prop is null)
                 {
                     ParameterProcessor processor = new(new FormatWideParameterDefinition());
                     TerminatingErrorContext invocationContext = new(this);
                     parameters.mshParameterList = processor.ProcessParameters(new object[] { "*" }, invocationContext);
                 }
-            }
-
-            if (!string.IsNullOrEmpty(this.View))
-            {
-                // we have a view command line switch
-                // View cannot be used with Property or ExcludeProperty
-                if (parameters.mshParameterList.Count != 0 || ExcludeProperty != null)
-                {
-                    ReportCannotSpecifyViewAndProperty();
-                }
-
-                parameters.viewName = this.View;
             }
 
             // we cannot specify -column and -autosize, they are mutually exclusive

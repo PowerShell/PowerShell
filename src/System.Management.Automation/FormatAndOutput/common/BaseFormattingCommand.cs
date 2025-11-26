@@ -759,6 +759,18 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal void GetCommandLineProperties(FormattingCommandLineParameters parameters, bool isTable)
         {
+            // Check View conflicts first (before any auto-expansion)
+            if (!string.IsNullOrEmpty(this.View))
+            {
+                // View cannot be used with Property or ExcludeProperty
+                if ((Property != null && Property.Length != 0) || ExcludeProperty != null)
+                {
+                    ReportCannotSpecifyViewAndProperty();
+                }
+
+                parameters.viewName = this.View;
+            }
+
             if (Property != null)
             {
                 CommandParameterDefinition def;
@@ -776,8 +788,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (ExcludeProperty != null)
             {
                 parameters.excludePropertyFilter = new PSPropertyExpressionFilter(ExcludeProperty);
+
                 // ExcludeProperty implies -Property * for better UX
-                if (Property == null || Property.Length == 0)
+                if (Property is null || Property.Length == 0)
                 {
                     CommandParameterDefinition def = isTable
                         ? new FormatTableParameterDefinition()
@@ -787,18 +800,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                     parameters.mshParameterList = processor.ProcessParameters(new object[] { "*" }, invocationContext);
                 }
-            }
-
-            if (!string.IsNullOrEmpty(this.View))
-            {
-                // we have a view command line switch
-                // View cannot be used with Property or ExcludeProperty
-                if (parameters.mshParameterList.Count != 0 || ExcludeProperty != null)
-                {
-                    ReportCannotSpecifyViewAndProperty();
-                }
-
-                parameters.viewName = this.View;
             }
         }
     }

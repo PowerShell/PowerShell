@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
-using System.Linq;
 using System.Collections.ObjectModel;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
@@ -233,13 +232,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             this.activeAssociationList = AssociationManager.SetupActiveProperties(mshParameterList, so, this.expressionFactory);
 
-            // Apply ExcludeProperty filter if specified
-            if (this.parameters != null && this.parameters.excludePropertyFilter != null)
-            {
-                this.activeAssociationList = this.activeAssociationList
-                    .Where(item => !this.parameters.excludePropertyFilter.IsMatch(item.ResolvedExpression))
-                    .ToList();
-            }
+            ApplyExcludePropertyFilter();
         }
     }
 }

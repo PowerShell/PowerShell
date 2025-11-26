@@ -67,6 +67,18 @@ namespace Microsoft.PowerShell.Commands
         {
             FormattingCommandLineParameters parameters = new();
 
+            // Check View conflicts first (before any auto-expansion)
+            if (!string.IsNullOrEmpty(this.View))
+            {
+                // View cannot be used with Property or ExcludeProperty
+                if ((_props != null && _props.Length != 0) || ExcludeProperty != null)
+                {
+                    ReportCannotSpecifyViewAndProperty();
+                }
+
+                parameters.viewName = this.View;
+            }
+
             if (_props != null)
             {
                 ParameterProcessor processor = new(new FormatObjectParameterDefinition());
@@ -79,24 +91,12 @@ namespace Microsoft.PowerShell.Commands
                 parameters.excludePropertyFilter = new PSPropertyExpressionFilter(ExcludeProperty);
 
                 // ExcludeProperty implies -Property * for better UX
-                if (_props == null || _props.Length == 0)
+                if (_props is null || _props.Length == 0)
                 {
                     ParameterProcessor processor = new(new FormatObjectParameterDefinition());
                     TerminatingErrorContext invocationContext = new(this);
                     parameters.mshParameterList = processor.ProcessParameters(new object[] { "*" }, invocationContext);
                 }
-            }
-
-            if (!string.IsNullOrEmpty(this.View))
-            {
-                // we have a view command line switch
-                // View cannot be used with Property or ExcludeProperty
-                if (parameters.mshParameterList.Count != 0 || ExcludeProperty != null)
-                {
-                    ReportCannotSpecifyViewAndProperty();
-                }
-
-                parameters.viewName = this.View;
             }
 
             parameters.groupByParameter = this.ProcessGroupByParameter();

@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
-using System.Linq;
 using System.Collections.ObjectModel;
 using System.Management.Automation;
 
@@ -155,20 +154,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             this.activeAssociationList = null;
             return wve;
-        }
-
-        /// <summary>
-        /// Apply ExcludeProperty filter to activeAssociationList if specified.
-        /// This method filters and updates "activeAssociationList" instance property.
-        /// </summary>
-        private void ApplyExcludePropertyFilter()
-        {
-            if (this.parameters != null && this.parameters.excludePropertyFilter != null)
-            {
-                this.activeAssociationList = this.activeAssociationList
-                    .Where(item => !this.parameters.excludePropertyFilter.IsMatch(item.ResolvedExpression))
-                    .ToList();
-            }
         }
 
         private void SetUpActiveProperty(PSObject so)
