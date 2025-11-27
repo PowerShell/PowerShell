@@ -13,7 +13,6 @@ using Microsoft.PowerShell.Commands;
 
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
-
     /// <summary>
     /// Base class defining the formatting context and the
     /// formatting context manager (stack based)
@@ -763,7 +762,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (!string.IsNullOrEmpty(this.View))
             {
                 // View cannot be used with Property or ExcludeProperty
-                if ((Property != null && Property.Length != 0) || ExcludeProperty != null)
+                if ((Property is not null && Property.Length != 0) || (ExcludeProperty is not null && ExcludeProperty.Length != 0))
                 {
                     ReportCannotSpecifyViewAndProperty();
                 }
@@ -785,7 +784,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 parameters.mshParameterList = processor.ProcessParameters(Property, invocationContext);
             }
 
-            if (ExcludeProperty != null)
+            if (ExcludeProperty is not null)
             {
                 parameters.excludePropertyFilter = new PSPropertyExpressionFilter(ExcludeProperty);
 

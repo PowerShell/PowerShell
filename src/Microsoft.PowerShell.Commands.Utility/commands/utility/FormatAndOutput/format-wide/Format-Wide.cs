@@ -83,7 +83,7 @@ namespace Microsoft.PowerShell.Commands
             if (!string.IsNullOrEmpty(this.View))
             {
                 // View cannot be used with Property or ExcludeProperty
-                if (_prop != null || ExcludeProperty != null)
+                if (_prop is not null || (ExcludeProperty is not null && ExcludeProperty.Length != 0))
                 {
                     ReportCannotSpecifyViewAndProperty();
                 }
@@ -98,7 +98,7 @@ namespace Microsoft.PowerShell.Commands
                 parameters.mshParameterList = processor.ProcessParameters(new object[] { _prop }, invocationContext);
             }
 
-            if (ExcludeProperty != null)
+            if (ExcludeProperty is not null)
             {
                 parameters.excludePropertyFilter = new PSPropertyExpressionFilter(ExcludeProperty);
 
