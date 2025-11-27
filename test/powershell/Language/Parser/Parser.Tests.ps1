@@ -1452,21 +1452,24 @@ foo``u{2195}abc
             $result[0] | Should -BeExactly '-foo=bar.baz'
         }
 
-        # Native commands
+        # Native commands (using testexe for cross-platform support)
         It "Native command should receive hyphen-prefixed argument with dot as single argument" {
-            $result = cmd /c echo -foo.bar
-            $result | Should -BeExactly '-foo.bar'
+            $result = testexe -echoargs -foo.bar
+            $result | Should -HaveCount 1
+            $result | Should -BeExactly 'Arg 0 is <-foo.bar>'
         }
 
         It "Native command should receive argument with equals and dot as single argument" {
-            $result = cmd /c echo -foo=bar.baz
-            $result | Should -BeExactly '-foo=bar.baz'
+            $result = testexe -echoargs -foo=bar.baz
+            $result | Should -HaveCount 1
+            $result | Should -BeExactly 'Arg 0 is <-foo=bar.baz>'
         }
 
         It "Native command via splatting should receive hyphen-prefixed argument with dot as single argument" {
-            function Wrapper { cmd /c echo @Args }
+            function Wrapper { testexe -echoargs @Args }
             $result = Wrapper -foo.bar
-            $result | Should -BeExactly '-foo.bar'
+            $result | Should -HaveCount 1
+            $result | Should -BeExactly 'Arg 0 is <-foo.bar>'
         }
 
         # Backward compatibility - parameter binding
