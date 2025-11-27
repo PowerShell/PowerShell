@@ -43,6 +43,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (rawMshParameterList != null && rawMshParameterList.Count > 0)
             {
                 this.activeAssociationList = AssociationManager.ExpandTableParameters(rawMshParameterList, so);
+                ApplyExcludePropertyFilter();
                 return;
             }
 
@@ -59,6 +60,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         new PSPropertyExpression(RemotingConstants.ComputerNameNoteProperty)));
                 }
 
+                ApplyExcludePropertyFilter();
                 return;
             }
 
@@ -69,6 +71,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // Remove PSComputerName and PSShowComputerName from the display as needed.
                 AssociationManager.HandleComputerNameProperties(so, activeAssociationList);
                 FilterActiveAssociationList();
+                ApplyExcludePropertyFilter();
                 return;
             }
 

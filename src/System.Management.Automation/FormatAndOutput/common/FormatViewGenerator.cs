@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Collections.ObjectModel;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
@@ -348,7 +349,19 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         protected DataBaseInfo dataBaseInfo = new DataBaseInfo();
 
         protected List<MshResolvedExpressionParameterAssociation> activeAssociationList = null;
-        protected FormattingCommandLineParameters inputParameters = null;
+        /// <summary>
+        /// Apply ExcludeProperty filter to activeAssociationList if specified.
+        /// This method filters and updates "activeAssociationList" instance property.
+        /// </summary>
+        protected void ApplyExcludePropertyFilter()
+        {
+            if (this.parameters is not null && this.parameters.excludePropertyFilter is not null)
+            {
+                this.activeAssociationList = this.activeAssociationList
+                    .Where(item => !this.parameters.excludePropertyFilter.IsMatch(item.ResolvedExpression))
+                    .ToList();
+            }
+        }
 
         protected string GetExpressionDisplayValue(PSObject so, int enumerationLimit, PSPropertyExpression ex,
                     FieldFormattingDirective directive)
