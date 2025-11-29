@@ -155,7 +155,7 @@ extends:
             env:
               ob_restore_phase: true
 
-          - template: .pipelines/templates/SetVersionVariables.yml@self
+          - template: /.pipelines/templates/SetVersionVariables.yml@self
             parameters:
               ReleaseTagVar: $(ReleaseTagVar)
               CreateJson: yes
