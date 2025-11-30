@@ -417,7 +417,7 @@ function Start-PSBuild {
     $dotnetCLIInstalledVersion = Find-RequiredSDK $dotnetCLIRequiredVersion
 
     If ($dotnetCLIInstalledVersion -ne $dotnetCLIRequiredVersion) {
-        Write-Warning @"
+        Write-Error @"
 The currently installed .NET Command Line Tools is not the required version.
 
 Installed version: $dotnetCLIInstalledVersion
