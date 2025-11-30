@@ -1,5 +1,4 @@
 {
-  "$schema": "https://json.schemastore.org/component-detection-manifest.json",
   "Registrations": [
     {
       "Component": {
@@ -66,7 +65,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Markdig.Signed",
-          "Version": "0.43.0"
+          "Version": "0.44.0"
         }
       },
       "DevelopmentDependency": false
@@ -106,7 +105,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.CodeAnalysis.Common",
-          "Version": "4.14.0"
+          "Version": "5.0.0"
         }
       },
       "DevelopmentDependency": false
@@ -116,7 +115,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.CodeAnalysis.CSharp",
-          "Version": "4.14.0"
+          "Version": "5.0.0"
         }
       },
       "DevelopmentDependency": false
@@ -751,5 +750,6 @@
       },
       "DevelopmentDependency": false
     }
-  ]
+  ],
+  "$schema": "https://json.schemastore.org/component-detection-manifest.json"
 }
