@@ -7,8 +7,6 @@ jobs:
   variables:
   - name: ob_sdl_sbom_enabled
     value: true
-  - name: runCodesignValidationInjection
-    value: false
   - name: NugetSecurityAnalysisWarningLevel
     value: none
   - name: DOTNET_NOLOGO

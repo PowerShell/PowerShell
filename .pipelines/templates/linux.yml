@@ -10,8 +10,6 @@ jobs:
   pool:
     type: linux
   variables:
-  - name: runCodesignValidationInjection
-    value: false
   - name: NugetSecurityAnalysisWarningLevel
     value: none
   - name: DOTNET_NOLOGO
@@ -139,8 +137,6 @@ jobs:
   pool:
     type: windows
   variables:
-  - name: runCodesignValidationInjection
-    value: false
   - name: NugetSecurityAnalysisWarningLevel
     value: none
   - name: DOTNET_NOLOGO
