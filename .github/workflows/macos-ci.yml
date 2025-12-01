@@ -56,7 +56,7 @@ jobs:
       buildModuleChanged: ${{ steps.filter.outputs.buildModuleChanged }}
     steps:
       - name: checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Change Detection
         id: filter
@@ -71,7 +71,7 @@ jobs:
     if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
     steps:
       - name: checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 1000
       - name: Build
@@ -85,7 +85,7 @@ jobs:
     runs-on: macos-15-large
     steps:
       - name: checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 1000
       - name: macOS Unelevated CI
@@ -103,7 +103,7 @@ jobs:
     runs-on: macos-15-large
     steps:
       - name: checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 1000
       - name: macOS Elevated CI
@@ -121,7 +121,7 @@ jobs:
     runs-on: macos-15-large
     steps:
       - name: checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 1000
       - name: macOS Unelevated Others
@@ -139,7 +139,7 @@ jobs:
     runs-on: macos-15-large
     steps:
       - name: checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 1000
       - name: macOS Elevated Others
@@ -166,7 +166,7 @@ jobs:
       - macos-15-large
     steps:
     - name: checkout
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
       with:
         fetch-depth: 1000
     - uses: actions/setup-dotnet@v5
