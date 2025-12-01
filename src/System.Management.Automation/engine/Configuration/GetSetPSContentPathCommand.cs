@@ -12,15 +12,15 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implements Get-PSContentPath cmdlet.
     /// </summary>
-    /// TODO:: Add helpURI
-    [Cmdlet(VerbsCommon.Get, "PSContentPath", HelpUri = "https://go.microsoft.com/fwlink/?linkid=")]
+    [Cmdlet(VerbsCommon.Get, "PSContentPath", HelpUri = "https://go.microsoft.com/fwlink/?linkid=2344910")]
     [Experimental(ExperimentalFeature.PSContentPath, ExperimentAction.Show)]
     public class GetPSContentPathCommand : PSCmdlet
     {
         /// <summary>
-        /// ProcessRecord method of this cmdlet.
+        /// EndProcessing method of this cmdlet.
+        /// Main logic is in EndProcessing to ensure all pipeline input is processed first.
         /// </summary>
-        protected override void ProcessRecord()
+        protected override void EndProcessing()
         {
             try
             {
@@ -41,8 +41,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implements Set-PSContentPath cmdlet.
     /// </summary>
-    /// TODO:: Add helpURI
-    [Cmdlet(VerbsCommon.Set, "PSContentPath", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?linkid=")]
+    [Cmdlet(VerbsCommon.Set, "PSContentPath", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?linkid=2344807")]
     [Experimental(ExperimentalFeature.PSContentPath, ExperimentAction.Show)]
     public class SetPSContentPathCommand : PSCmdlet
     {
@@ -53,23 +52,40 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string Path { get; set; }
 
+        private string validatedPath = null;
+
         /// <summary>
         /// ProcessRecord method of this cmdlet.
+        /// Validates each path from the pipeline and stores the last valid one.
         /// </summary>
         protected override void ProcessRecord()
         {
-            // Validate the path before processing
-            if (!ValidatePath(Path))
+            // Validate the path from pipeline input
+            if (ValidatePath(Path))
             {
-                return; // Error already written in ValidatePath
+                // Store the last valid path from pipeline
+                validatedPath = Path;
+            }
+        }
+
+        /// <summary>
+        /// EndProcessing method of this cmdlet.
+        /// Main logic is in EndProcessing to use the last valid path from the pipeline.
+        /// </summary>
+        protected override void EndProcessing()
+        {
+            // If no valid path was found, exit early
+            if (validatedPath == null)
+            {
+                return;
             }
 
-            if (ShouldProcess($"PSContentPath = {Path}", "Set PSContentPath"))
+            if (ShouldProcess($"PSContentPath = {validatedPath}", "Set PSContentPath"))
             {
                 try
                 {
-                    PowerShellConfig.Instance.SetPSContentPath(Path);
-                    WriteVerbose($"Successfully set PSContentPath to '{Path}'");
+                    PowerShellConfig.Instance.SetPSContentPath(validatedPath);
+                    WriteVerbose($"Successfully set PSContentPath to '{validatedPath}'");
                     WriteWarning("PSContentPath changes will take effect after restarting PowerShell.");
                 }
                 catch (Exception ex)
@@ -78,7 +94,7 @@ namespace Microsoft.PowerShell.Commands
                         ex,
                         "SetPSContentPathFailed",
                         ErrorCategory.WriteError,
-                        Path));
+                        validatedPath));
                 }
             }
         }

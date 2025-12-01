@@ -721,7 +721,7 @@ namespace System.Management.Automation
 #if UNIX
             return Platform.SelectProductNameForDirectory(Platform.XDG_Type.DATA);
 #else
-            return Environment.GetFolderPath(Environment.SpecialFolder.Personal) + @"\PowerShell";
+            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "PowerShell");
 #endif
         }
 

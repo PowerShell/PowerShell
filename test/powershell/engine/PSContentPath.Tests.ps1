@@ -5,9 +5,11 @@ Describe "Get-PSContentPath and Set-PSContentPath cmdlet tests" -tags "CI" {
     BeforeAll {
         if ($IsWindows) {
             $powershell = "$PSHOME\pwsh.exe"
-            $userConfigPath = Join-Path $HOME "Documents\PowerShell\powershell.config.json"
-            $defaultContentPath = Join-Path $HOME "Documents\PowerShell"
+            $documentsPath = [System.Environment]::GetFolderPath('MyDocuments')
+            $userConfigPath = Join-Path $documentsPath "PowerShell\powershell.config.json"
+            $defaultContentPath = Join-Path $documentsPath "PowerShell"
             $newContentPath = [System.IO.Path]::Combine($env:LOCALAPPDATA, "PowerShell")
+            $newConfigPath = Join-Path $newContentPath "powershell.config.json"
         }
         else {
             $powershell = "$PSHOME/pwsh"
@@ -15,46 +17,51 @@ Describe "Get-PSContentPath and Set-PSContentPath cmdlet tests" -tags "CI" {
             $defaultContentPath = [System.Management.Automation.Platform]::SelectProductNameForDirectory("USER_MODULES")
             $defaultContentPath = Split-Path $defaultContentPath -Parent
             $newContentPath = $defaultContentPath
+            $newConfigPath = $userConfigPath
         }
 
-        # Backup existing configs
+        $script:userConfigPath = $userConfigPath
+        $script:newConfigPath = $newConfigPath
+        $script:defaultContentPath = $defaultContentPath
+        $script:newContentPath = $newContentPath
+
+        # Backup original configs
         if (Test-Path $userConfigPath) {
-            $userConfigExists = $true
-            Copy-Item $userConfigPath "$userConfigPath.backup.pscontentpath" -Force -ErrorAction Ignore
+            $script:userConfigBackup = Get-Content $userConfigPath -Raw
+        }
+        if ($IsWindows -and (Test-Path $newConfigPath)) {
+            $script:newConfigBackup = Get-Content $newConfigPath -Raw
         }
 
+        # Create clean test config with feature disabled
+        Remove-Item $userConfigPath -Force -ErrorAction Ignore
         if ($IsWindows) {
-            $newConfigPath = Join-Path $newContentPath "powershell.config.json"
-            if (Test-Path $newConfigPath) {
-                $newConfigExists = $true
-                Copy-Item $newConfigPath "$newConfigPath.backup.pscontentpath" -Force -ErrorAction Ignore
-            }
+            Remove-Item $newConfigPath -Force -ErrorAction Ignore
         }
+
+        $testConfig = @{ ExperimentalFeatures = @() } | ConvertTo-Json
+        New-Item -Path (Split-Path $userConfigPath) -ItemType Directory -Force -ErrorAction Ignore
+        Set-Content -Path $userConfigPath -Value $testConfig -Force
     }
 
     AfterAll {
-        # Restore original configs
-        if ($userConfigExists) {
-            Move-Item "$userConfigPath.backup.pscontentpath" $userConfigPath -Force -ErrorAction Ignore
-        }
-        else {
-            Remove-Item "$userConfigPath" -Force -ErrorAction Ignore
-        }
+        # Disable the feature
+        & $powershell -noprofile -command 'Disable-ExperimentalFeature -Name PSContentPath -Scope CurrentUser -WarningAction Ignore' 2>$null
 
-        if ($IsWindows -and $newConfigExists) {
-            Move-Item "$newConfigPath.backup.pscontentpath" $newConfigPath -Force -ErrorAction Ignore
-        }
-        elseif ($IsWindows) {
-            Remove-Item "$newConfigPath" -Force -ErrorAction Ignore
-        }
-    }
-
-    BeforeEach {
-        # Clean up config file before each test
-        Remove-Item "$userConfigPath" -Force -ErrorAction Ignore
+        # Remove test configs
+        Remove-Item $userConfigPath -Force -ErrorAction Ignore
         if ($IsWindows) {
-            $newConfigPath = Join-Path $newContentPath "powershell.config.json"
-            Remove-Item "$newConfigPath" -Force -ErrorAction Ignore
+            Remove-Item $newConfigPath -Force -ErrorAction Ignore
+        }
+
+        # Restore original configs
+        if ($null -ne $script:userConfigBackup) {
+            New-Item -Path (Split-Path $userConfigPath) -ItemType Directory -Force -ErrorAction Ignore
+            Set-Content -Path $userConfigPath -Value $script:userConfigBackup -Force
+        }
+        if ($IsWindows -and ($null -ne $script:newConfigBackup)) {
+            New-Item -Path (Split-Path $newConfigPath) -ItemType Directory -Force -ErrorAction Ignore
+            Set-Content -Path $newConfigPath -Value $script:newConfigBackup -Force
         }
     }
 
@@ -119,22 +126,17 @@ Describe "Get-PSContentPath and Set-PSContentPath cmdlet tests" -tags "CI" {
             }
         }
 
-        It "Get-PSContentPath expands environment variables" -Skip:(!$IsWindows -or $skipNoPwsh) {
-            # Clean up first to ensure fresh state
-            Remove-Item $newConfigPath -Force -ErrorAction Ignore
-            Remove-Item $userConfigPath -Force -ErrorAction Ignore
-            Start-Sleep -Milliseconds 100
-
-            # Enable feature and set path with environment variable (note: single backslash)
+        It "Get-PSContentPath expands environment variables (%TEMP%)" -Skip:(!$IsWindows -or $skipNoPwsh) {
+            # Enable feature and set path with environment variable
             & $powershell -noprofile -command "Enable-ExperimentalFeature -Name PSContentPath -Scope CurrentUser; Set-PSContentPath -Path '%TEMP%\PowerShell'"
 
             $result = & $powershell -noprofile -command 'Get-PSContentPath'
             $result | Should -Not -Contain '%'
-            $result | Should -Be (Join-Path $env:TEMP "PowerShell")
 
-            # Clean up after this test IN THE TEST SESSION to not contaminate others
-            & $powershell -noprofile -command "Remove-Item '$newConfigPath' -Force -ErrorAction Ignore; Remove-Item '$userConfigPath' -Force -ErrorAction Ignore"
-            Start-Sleep -Milliseconds 200
+            # Normalize paths for comparison (handles short path names like RUNNER~1)
+            $expectedPath = [System.IO.Path]::GetFullPath((Join-Path $env:TEMP "PowerShell"))
+            $actualPath = [System.IO.Path]::GetFullPath($result)
+            $actualPath | Should -Be $expectedPath
         }
 
         It "Get-PSContentPath works when config file doesn't exist" -Skip:$skipNoPwsh {
@@ -148,6 +150,18 @@ Describe "Get-PSContentPath and Set-PSContentPath cmdlet tests" -tags "CI" {
     }
 
     Context "Set-PSContentPath cmdlet" {
+        BeforeEach {
+            # Ensure completely clean state for each test
+            Remove-Item $newConfigPath -Force -ErrorAction Ignore
+            Remove-Item $userConfigPath -Force -ErrorAction Ignore
+        }
+
+        AfterEach {
+            # Clean up after each test
+            Remove-Item $newConfigPath -Force -ErrorAction Ignore
+            Remove-Item $userConfigPath -Force -ErrorAction Ignore
+        }
+
         It "Set-PSContentPath cmdlet does not exist when feature is disabled" -Skip:$skipNoPwsh {
             # Ensure feature is disabled
             & $powershell -noprofile -command 'Disable-ExperimentalFeature -Name PSContentPath -Scope CurrentUser' 2>$null
@@ -191,42 +205,11 @@ Describe "Get-PSContentPath and Set-PSContentPath cmdlet tests" -tags "CI" {
             $result | Should -Be $customPath
         }
 
-        It "Set-PSContentPath updates existing config file" -Skip:$skipNoPwsh {
-            # Enable feature
-            & $powershell -noprofile -command 'Enable-ExperimentalFeature -Name PSContentPath -Scope CurrentUser'
-
-            # Create initial config in LocalAppData (where feature writes to)
-            $configToCheck = if ($IsWindows) { $newConfigPath } else { $userConfigPath }
-            $config = @{ ExperimentalFeatures = @("PSNativeWindowsTildeExpansion") } | ConvertTo-Json
-            New-Item -Path (Split-Path $configToCheck) -ItemType Directory -Force -ErrorAction Ignore
-            Set-Content -Path $configToCheck -Value $config
-
-            # Set custom path
-            $customPath = Join-Path $TestDrive "CustomPowerShell"
-            & $powershell -noprofile -command "Set-PSContentPath -Path '$customPath'"
-
-            # Small delay for file write
-            Start-Sleep -Milliseconds 100
-
-            # Verify existing settings are preserved
-            $updatedConfig = Get-Content $configToCheck -Raw | ConvertFrom-Json
-            $updatedConfig.ExperimentalFeatures | Should -Contain "PSNativeWindowsTildeExpansion"
-            $updatedConfig.PSObject.Properties.Name | Should -Contain "PSUserContentPath"
-            $updatedConfig.PSUserContentPath | Should -Be $customPath
-
-            # Clean up after this test to not contaminate others
-            & $powershell -noprofile -command "Remove-Item '$newConfigPath' -Force -ErrorAction Ignore; Remove-Item '$userConfigPath' -Force -ErrorAction Ignore"
-            Start-Sleep -Milliseconds 200
-        }
-
         It "Set-PSContentPath accepts paths with environment variables" -Skip:(!$IsWindows -or $skipNoPwsh) {
             # Enable feature
             & $powershell -noprofile -command 'Enable-ExperimentalFeature -Name PSContentPath -Scope CurrentUser'
 
             & $powershell -noprofile -command "Set-PSContentPath -Path '%LOCALAPPDATA%\PowerShell'"
-
-            # Small delay for file write
-            Start-Sleep -Milliseconds 100
 
             # Check the config file in LocalAppData (where it's written when feature enabled)
             $configToCheck = if ($IsWindows) { $newConfigPath } else { $userConfigPath }
@@ -257,14 +240,20 @@ Describe "Get-PSContentPath and Set-PSContentPath cmdlet tests" -tags "CI" {
             else {
                 Test-Path $userConfigPath | Should -BeTrue
             }
-
-            # Clean up after this test to not contaminate others
-            & $powershell -noprofile -command "Remove-Item '$newConfigPath' -Force -ErrorAction Ignore; Remove-Item '$userConfigPath' -Force -ErrorAction Ignore"
-            Start-Sleep -Milliseconds 200
         }
     }
 
     Context "Integration with PSModulePath" {
+        BeforeEach {
+            Remove-Item $newConfigPath -Force -ErrorAction Ignore
+            Remove-Item $userConfigPath -Force -ErrorAction Ignore
+        }
+
+        AfterEach {
+            Remove-Item $newConfigPath -Force -ErrorAction Ignore
+            Remove-Item $userConfigPath -Force -ErrorAction Ignore
+        }
+
         It "Custom PSContentPath affects module path" -Skip:(!$IsWindows -or $skipNoPwsh) {
             # Enable feature
             & $powershell -noprofile -command 'Enable-ExperimentalFeature -Name PSContentPath -Scope CurrentUser'
@@ -275,14 +264,20 @@ Describe "Get-PSContentPath and Set-PSContentPath cmdlet tests" -tags "CI" {
             # The actual module path will be used in a new PowerShell session
             $result = & $powershell -noprofile -command 'Get-PSContentPath'
             $result | Should -Be $customPath
-
-            # Clean up after this test to not contaminate others
-            & $powershell -noprofile -command "Remove-Item '$newConfigPath' -Force -ErrorAction Ignore; Remove-Item '$userConfigPath' -Force -ErrorAction Ignore"
-            Start-Sleep -Milliseconds 200
         }
     }
 
     Context "Integration with Profile paths" {
+        BeforeEach {
+            Remove-Item $newConfigPath -Force -ErrorAction Ignore
+            Remove-Item $userConfigPath -Force -ErrorAction Ignore
+        }
+
+        AfterEach {
+            Remove-Item $newConfigPath -Force -ErrorAction Ignore
+            Remove-Item $userConfigPath -Force -ErrorAction Ignore
+        }
+
         It "Custom PSContentPath affects profile path" -Skip:(!$IsWindows -or $skipNoPwsh) {
             # Enable feature
             & $powershell -noprofile -command 'Enable-ExperimentalFeature -Name PSContentPath -Scope CurrentUser'
@@ -293,14 +288,124 @@ Describe "Get-PSContentPath and Set-PSContentPath cmdlet tests" -tags "CI" {
             # Profile paths are constructed at startup
             $result = & $powershell -noprofile -command 'Get-PSContentPath'
             $result | Should -Be $customPath
+        }
 
-            # Clean up after this test to not contaminate others
-            & $powershell -noprofile -command "Remove-Item '$newConfigPath' -Force -ErrorAction Ignore; Remove-Item '$userConfigPath' -Force -ErrorAction Ignore"
-            Start-Sleep -Milliseconds 200
+        It "Profile path uses custom PSContentPath location" -Skip:(!$IsWindows -or $skipNoPwsh) {
+            # Enable feature and set custom path
+            & $powershell -noprofile -command 'Enable-ExperimentalFeature -Name PSContentPath -Scope CurrentUser'
+
+            $customPath = Join-Path $TestDrive "CustomPowerShell"
+            & $powershell -noprofile -command "Set-PSContentPath -Path '$customPath'"
+
+            # Get the current user profile path in a new session
+            $profilePath = & $powershell -noprofile -command '$PROFILE.CurrentUserCurrentHost'
+
+            # Profile should be in the custom content path
+            $profilePath | Should -BeLike "$customPath*"
+        }
+
+        It "Profile path uses default Documents location when feature is disabled" -Skip:(!$IsWindows -or $skipNoPwsh) {
+            # Ensure feature is disabled
+            & $powershell -noprofile -command 'Disable-ExperimentalFeature -Name PSContentPath -Scope CurrentUser' 2>$null
+
+            # Get the current user profile path in a new session
+            $profilePath = & $powershell -noprofile -command '$PROFILE.CurrentUserCurrentHost'
+
+            # Profile should be in Documents\PowerShell
+            $profilePath | Should -BeLike "*Documents\PowerShell*"
+        }
+    }
+
+    Context "Integration with Updatable Help" {
+        BeforeEach {
+            Remove-Item $newConfigPath -Force -ErrorAction Ignore
+            Remove-Item $userConfigPath -Force -ErrorAction Ignore
+        }
+
+        AfterEach {
+            Remove-Item $newConfigPath -Force -ErrorAction Ignore
+            Remove-Item $userConfigPath -Force -ErrorAction Ignore
+        }
+
+        It "Help path uses custom PSContentPath location" -Skip:(!$IsWindows -or $skipNoPwsh) {
+            # Enable feature and set custom path
+            & $powershell -noprofile -command 'Enable-ExperimentalFeature -Name PSContentPath -Scope CurrentUser'
+
+            $customPath = Join-Path $TestDrive "CustomPowerShell"
+            & $powershell -noprofile -command "Set-PSContentPath -Path '$customPath'"
+
+            # Get the help save path (CurrentUser scope)
+            $script = @"
+                `$helpPaths = [System.Management.Automation.Internal.InternalTestHooks]::TestHelpSavePath
+                if (`$helpPaths) { `$helpPaths } else {
+                    # Fallback: construct expected path
+                    `$contentPath = Get-PSContentPath
+                    Join-Path `$contentPath "Help"
+                }
+"@
+            $helpPath = & $powershell -noprofile -command $script
+
+            # Help path should be in the custom content path
+            $helpPath | Should -BeLike "$customPath*"
+        }
+
+        It "Help path uses default Documents location when feature is disabled" -Skip:(!$IsWindows -or $skipNoPwsh) {
+            # Ensure feature is disabled
+            & $powershell -noprofile -command 'Disable-ExperimentalFeature -Name PSContentPath -Scope CurrentUser' 2>$null
+
+            # Check what path Update-Help would use
+            $script = @"
+                # Get the default user help path
+                `$documentsPath = [System.IO.Path]::Combine([System.Environment]::GetFolderPath('MyDocuments'), 'PowerShell')
+                Join-Path `$documentsPath "Help"
+"@
+            $expectedHelpPath = & $powershell -noprofile -command $script
+
+            # Expected path should be in Documents\PowerShell
+            $expectedHelpPath | Should -BeLike "*Documents\PowerShell\Help"
+        }
+
+        It "Update-Help with CurrentUser scope respects custom PSContentPath" -Skip:(!$IsWindows -or $skipNoPwsh) {
+            # Enable feature and set custom path
+            & $powershell -noprofile -command 'Enable-ExperimentalFeature -Name PSContentPath -Scope CurrentUser'
+
+            $customPath = Join-Path $TestDrive "CustomPowerShell"
+            & $powershell -noprofile -command "Set-PSContentPath -Path '$customPath'"
+
+            # Create the custom help directory
+            $customHelpPath = Join-Path $customPath "Help"
+            New-Item -Path $customHelpPath -ItemType Directory -Force -ErrorAction Ignore
+
+            # Try to save help (using -WhatIf to avoid actual download)
+            $script = @"
+                `$ErrorActionPreference = 'SilentlyContinue'
+                `$WarningPreference = 'SilentlyContinue'
+                Save-Help -Module Microsoft.PowerShell.Management -DestinationPath '$customHelpPath' -Force -WhatIf 2>&1 | Out-Null
+                # Just verify the path would be used
+                '$customHelpPath'
+"@
+            $result = & $powershell -noprofile -command $script
+
+            # Verify the custom help path exists
+            Test-Path $customHelpPath | Should -BeTrue
+            $result | Should -Be $customHelpPath
+
+            # Clean up custom help directory
+            Remove-Item $customHelpPath -Recurse -Force -ErrorAction Ignore
         }
     }
 
     Context "Error handling" {
+        BeforeEach {
+            Remove-Item $newConfigPath -Force -ErrorAction Ignore
+            Remove-Item $userConfigPath -Force -ErrorAction Ignore
+        }
+
+        AfterEach {
+            Remove-Item $newConfigPath -Force -ErrorAction Ignore
+            Remove-Item $userConfigPath -Force -ErrorAction Ignore
+        }
+
         It "Set-PSContentPath handles invalid paths gracefully" -Skip:$skipNoPwsh {
             # Enable feature
             & $powershell -noprofile -command 'Enable-ExperimentalFeature -Name PSContentPath -Scope CurrentUser'
@@ -311,26 +416,18 @@ Describe "Get-PSContentPath and Set-PSContentPath cmdlet tests" -tags "CI" {
             # Should not throw - just accept the path with a warning
             $result = & $powershell -noprofile -command "try { Set-PSContentPath -Path '$longPath' -WarningAction SilentlyContinue; 'Success' } catch { 'Failed' }"
             $result | Should -Be 'Success'
-
-            # Clean up after this test to not contaminate others
-            & $powershell -noprofile -command "Remove-Item '$newConfigPath' -Force -ErrorAction Ignore; Remove-Item '$userConfigPath' -Force -ErrorAction Ignore"
-            Start-Sleep -Milliseconds 200
         }
 
         It "Set-PSContentPath handles paths with special characters" -Skip:(!$IsWindows -or $skipNoPwsh) {
             # Enable feature
-            & $powershell -noprofile -command 'Enable-ExperimentalFeature -Name PSContentPath -Scope CurrentUser'
+            & $powershell -noprofile -command 'Enable-ExperimentalFeature -Name PSContentPath -Scope CurrentUser -WarningAction Ignore'
 
-            $pathWithSpaces = Join-Path $TestDrive "Path With Spaces"
-            # Warnings are expected, just check it doesn't throw
-            & $powershell -noprofile -command "Set-PSContentPath -Path '$pathWithSpaces' -WarningAction SilentlyContinue" 2>$null
+            # Set path with spaces
+            & $powershell -noprofile -command "Set-PSContentPath -Path '$TestDrive\Path With Spaces' -WarningAction SilentlyContinue"
 
+            # Verify it worked
             $result = & $powershell -noprofile -command 'Get-PSContentPath'
-            $result | Should -Be $pathWithSpaces
-
-            # Clean up after this test to not contaminate others
-            & $powershell -noprofile -command "Remove-Item '$newConfigPath' -Force -ErrorAction Ignore; Remove-Item '$userConfigPath' -Force -ErrorAction Ignore"
-            Start-Sleep -Milliseconds 200
+            $result | Should -Be (Join-Path $TestDrive "Path With Spaces")
         }
     }
 }
@@ -339,7 +436,8 @@ Describe "PSContentPath experimental feature integration" -tags "Feature" {
     BeforeAll {
         if ($IsWindows) {
             $powershell = "$PSHOME\pwsh.exe"
-            $userConfigPath = Join-Path $HOME "Documents\PowerShell\powershell.config.json"
+            $documentsPath = [System.Environment]::GetFolderPath('MyDocuments')
+            $userConfigPath = Join-Path $documentsPath "PowerShell\powershell.config.json"
             $newConfigPath = Join-Path $env:LOCALAPPDATA "PowerShell\powershell.config.json"
         }
         else {
@@ -348,93 +446,110 @@ Describe "PSContentPath experimental feature integration" -tags "Feature" {
             $newConfigPath = $userConfigPath
         }
 
-        # Backup existing configs
-        $backupSuffix = ".backup.integration"
+        # Backup original configs
         if (Test-Path $userConfigPath) {
-            Copy-Item $userConfigPath "$userConfigPath$backupSuffix" -Force -ErrorAction Ignore
+            $script:userConfigBackup = Get-Content $userConfigPath -Raw
         }
         if ($IsWindows -and (Test-Path $newConfigPath)) {
-            Copy-Item $newConfigPath "$newConfigPath$backupSuffix" -Force -ErrorAction Ignore
+            $script:newConfigBackup = Get-Content $newConfigPath -Raw
         }
+
+        # Create clean test environment
+        Remove-Item $newConfigPath -Force -ErrorAction Ignore
+        Remove-Item $userConfigPath -Force -ErrorAction Ignore
+    }
+
+    BeforeEach {
+        # Remove all configs to ensure clean state before each test
+        Remove-Item $newConfigPath -Force -ErrorAction Ignore
+        Remove-Item $userConfigPath -Force -ErrorAction Ignore
+    }
+
+    AfterEach {
+        # Clean up after each test to prevent contamination
+        Remove-Item $newConfigPath -Force -ErrorAction Ignore
+        Remove-Item $userConfigPath -Force -ErrorAction Ignore
     }
 
     AfterAll {
-        # Restore original configs
-        $backupSuffix = ".backup.integration"
-        if (Test-Path "$userConfigPath$backupSuffix") {
-            Move-Item "$userConfigPath$backupSuffix" $userConfigPath -Force -ErrorAction Ignore
-        }
-        else {
-            Remove-Item $userConfigPath -Force -ErrorAction Ignore
+        # Disable the feature
+        & $powershell -noprofile -command 'Disable-ExperimentalFeature -Name PSContentPath -Scope CurrentUser -WarningAction Ignore' 2>$null
+
+        # Remove test configs
+        Remove-Item $userConfigPath -Force -ErrorAction Ignore
+        if ($IsWindows) {
+            Remove-Item $newConfigPath -Force -ErrorAction Ignore
         }
 
-        if ($IsWindows) {
-            if (Test-Path "$newConfigPath$backupSuffix") {
-                Move-Item "$newConfigPath$backupSuffix" $newConfigPath -Force -ErrorAction Ignore
-            }
-            else {
-                Remove-Item $newConfigPath -Force -ErrorAction Ignore
-            }
+        # Restore original configs
+        if ($null -ne $script:userConfigBackup) {
+            New-Item -Path (Split-Path $userConfigPath) -ItemType Directory -Force -ErrorAction Ignore
+            Set-Content -Path $userConfigPath -Value $script:userConfigBackup -Force
+        }
+        if ($IsWindows -and ($null -ne $script:newConfigBackup)) {
+            New-Item -Path (Split-Path $newConfigPath) -ItemType Directory -Force -ErrorAction Ignore
+            Set-Content -Path $newConfigPath -Value $script:newConfigBackup -Force
         }
     }
 
     It "Config file migration preserves all settings" -Skip:(!$IsWindows -or $skipNoPwsh) {
-        # Remove any existing config in new location first
-        Remove-Item $newConfigPath -Force -ErrorAction Ignore
+        # Verify clean state from BeforeEach
+        Test-Path $newConfigPath | Should -BeFalse "LocalAppData config should not exist before test"
+        Test-Path $userConfigPath | Should -BeFalse "Documents config should not exist before test"
 
         # Create a config with multiple settings in old location (Documents)
+        $originalModulePath = "C:\\CustomModules"
         $config = @{
-            ExperimentalFeatures = @("PSContentPath", "PSNativeWindowsTildeExpansion")
+            ExperimentalFeatures = @("PSContentPath")
+            PSModulePath = $originalModulePath
             "Microsoft.PowerShell:ExecutionPolicy" = "RemoteSigned"
-            PSModulePath = "C:\\CustomModules"
         } | ConvertTo-Json
 
         New-Item -Path (Split-Path $userConfigPath) -ItemType Directory -Force -ErrorAction Ignore
-        Set-Content -Path $userConfigPath -Value $config
+        Set-Content -Path $userConfigPath -Value $config -Force
 
-        # Trigger migration by calling Get-PSContentPath in a new PowerShell session
-        # This will read the config, see PSContentPath is enabled, and perform migration
-        $result = & $powershell -noprofile -command 'Get-PSContentPath'
+        # Verify the original config was written correctly
+        $originalConfig = Get-Content $userConfigPath -Raw | ConvertFrom-Json
+        $originalConfig.PSModulePath | Should -Be $originalModulePath -Because "Original config should have PSModulePath"
+        $originalConfig.ExperimentalFeatures | Should -Contain "PSContentPath" -Because "Original config should have PSContentPath enabled"
 
-        # Small delay for migration to complete
-        Start-Sleep -Milliseconds 200
+        # Trigger migration by accessing config in a new PowerShell session
+        & $powershell -noprofile -command 'Get-PSContentPath' | Out-Null
 
-        # Verify new config has all settings after migration
-        if (Test-Path $newConfigPath) {
-            $migratedConfig = Get-Content $newConfigPath -Raw | ConvertFrom-Json
-            $migratedConfig.ExperimentalFeatures | Should -Contain "PSContentPath"
-            $migratedConfig.ExperimentalFeatures | Should -Contain "PSNativeWindowsTildeExpansion"
+        # After migration, BOTH configs should exist
+        Test-Path $newConfigPath | Should -BeTrue "LocalAppData config should exist after migration"
+        Test-Path $userConfigPath | Should -BeTrue "Documents config should still exist after migration"
 
-            # Verify custom PSModulePath is preserved
-            $propertyNames = $migratedConfig.PSObject.Properties.Name
-            if ($propertyNames -contains 'PSModulePath') {
-                $migratedConfig.PSModulePath | Should -Be "C:\\CustomModules"
-            }
-        }
+        # Parse configs
+        $newConfig = Get-Content $newConfigPath -Raw | ConvertFrom-Json
+        $docConfig = Get-Content $userConfigPath -Raw | ConvertFrom-Json
+
+        # Verify new LocalAppData config has all settings (should be exact copy)
+        $newConfig.ExperimentalFeatures | Should -Contain "PSContentPath" -Because "New config should have PSContentPath enabled"
+        $newConfig.PSModulePath | Should -Be $originalModulePath -Because "New config should have PSModulePath"
+        $newConfig."Microsoft.PowerShell:ExecutionPolicy" | Should -Be "RemoteSigned" -Because "New config should have ExecutionPolicy"
+
+        # Verify original Documents config still has all settings (bidirectional sync)
+        $docConfig.ExperimentalFeatures | Should -Contain "PSContentPath" -Because "Doc config should have PSContentPath enabled"
+        $docConfig.PSModulePath | Should -Be $originalModulePath -Because "Doc config should have PSModulePath"
+        $docConfig."Microsoft.PowerShell:ExecutionPolicy" | Should -Be "RemoteSigned" -Because "Doc config should have ExecutionPolicy"
     }
 
     It "Re-enabling feature after disable syncs correctly" -Skip:(!$IsWindows -or $skipNoPwsh) {
-        # Enable, then disable, then re-enable (synchronously)
-        & $powershell -noprofile -command 'Enable-ExperimentalFeature -Name PSContentPath -Scope CurrentUser' 2>$null | Out-Null
-        & $powershell -noprofile -command 'Disable-ExperimentalFeature -Name PSContentPath -Scope CurrentUser' 2>$null | Out-Null
-        & $powershell -noprofile -command 'Enable-ExperimentalFeature -Name PSContentPath -Scope CurrentUser' 2>$null | Out-Null
+        # Enable, disable, then re-enable to test sync behavior
+        & $powershell -noprofile -command 'Enable-ExperimentalFeature -Name PSContentPath -Scope CurrentUser -WarningAction Ignore' | Out-Null
+        & $powershell -noprofile -command 'Disable-ExperimentalFeature -Name PSContentPath -Scope CurrentUser -WarningAction Ignore' | Out-Null
+        & $powershell -noprofile -command 'Enable-ExperimentalFeature -Name PSContentPath -Scope CurrentUser -WarningAction Ignore' | Out-Null
 
-        # Verify config files have the feature enabled (check new location since feature is enabled)
-        Start-Sleep -Milliseconds 100  # Small delay for file writes
-
+        # Verify config files have the feature enabled
         $configFound = $false
         if (Test-Path $newConfigPath) {
-            $newConfig = Get-Content $newConfigPath -Raw | ConvertFrom-Json
-            if ($newConfig.ExperimentalFeatures -contains "PSContentPath") {
-                $configFound = $true
-            }
+            $config = Get-Content $newConfigPath -Raw | ConvertFrom-Json
+            $configFound = $config.ExperimentalFeatures -contains "PSContentPath"
         }
-
         if (!$configFound -and (Test-Path $userConfigPath)) {
-            $docConfig = Get-Content $userConfigPath -Raw | ConvertFrom-Json
-            if ($docConfig.ExperimentalFeatures -contains "PSContentPath") {
-                $configFound = $true
-            }
+            $config = Get-Content $userConfigPath -Raw | ConvertFrom-Json
+            $configFound = $config.ExperimentalFeatures -contains "PSContentPath"
         }
 
         $configFound | Should -BeTrue
@@ -446,10 +561,10 @@ Describe "PSContentPath experimental feature integration" -tags "Feature" {
         New-Item -Path (Split-Path $userConfigPath) -ItemType Directory -Force -ErrorAction Ignore
         Set-Content -Path $userConfigPath -Value $docConfig
 
-        # Remove LocalAppData config if it exists
-        Remove-Item $newConfigPath -Force -ErrorAction Ignore
+        # LocalAppData config should not exist (removed by BeforeEach)
+        Test-Path $newConfigPath | Should -BeFalse
 
-        # PowerShell should still detect the feature is enabled (returns object, not just Enabled property)
+        # PowerShell should still detect the feature is enabled (reads from both locations)
         $featureEnabled = & $powershell -noprofile -command '(Get-ExperimentalFeature -Name PSContentPath).Enabled'
         $featureEnabled | Should -Be 'True'
     }

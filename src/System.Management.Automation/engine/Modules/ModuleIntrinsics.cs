@@ -965,7 +965,7 @@ namespace System.Management.Automation
         /// <returns>Personal module path.</returns>
         internal static string GetPersonalModulePath()
         {
-            return Path.Combine(Utils.GetPSContentPath, "Modules");
+            return Path.Combine(Utils.GetPSContentPath(), "Modules");
         }
 
         /// <summary>
@@ -1311,11 +1311,14 @@ namespace System.Management.Automation
 
             // PowerShell specific paths including if set in powershell.config.json file we want to exclude
             var excludeModulePaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
-                GetPersonalModulePath(),
+                GetPersonalModulePath(),  // This returns the current user module path (Documents or LocalAppData based on PSContentPath)
                 GetSharedModulePath(),
                 GetPSHomeModulePath(),
                 PowerShellConfig.Instance.GetModulePath(ConfigScope.AllUsers),
-                PowerShellConfig.Instance.GetModulePath(ConfigScope.CurrentUser)
+                PowerShellConfig.Instance.GetModulePath(ConfigScope.CurrentUser),
+                // Also exclude the default Documents location to handle migration scenarios
+                // where PSContentPath moved content to LocalAppData but Documents path might still be in PSModulePath
+                Path.Combine(Platform.ConfigDirectory, "Modules")
             };
 
             var modulePathList = new List<string>();
