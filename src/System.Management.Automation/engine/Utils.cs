@@ -712,37 +712,13 @@ namespace System.Management.Automation
         /// When PSContentPath experimental feature is enabled, returns the configured path or default location.
         /// </summary>
         /// <returns>The PSContent directory path (never null).</returns>
-        internal static string GetPSContentPath(bool setModulePath = false)
+        internal static string GetPSContentPath()
         {
-            try
+            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSContentPath))
             {
-                if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSContentPath))
-                {
-                    string contentPath = PowerShellConfig.Instance.GetPSContentPath();
-                    // GetPSContentPath now returns default location if not configured,
-                    // so this should never be null, but add defensive check for safety
-                    if (!string.IsNullOrEmpty(contentPath))
-                    {
-                        return contentPath;
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                // On startup there is a circular dependency between PowerShellConfig and Utils.
-                // Fall through to platform defaults below to avoid breaking PowerShell initialization.
+                return PowerShellConfig.Instance.GetPSContentPath();
             }
 
-            // Fall back to platform defaults when feature is disabled or during initialization
-            if (setModulePath)
-            {
-                return PowerShellConfig.Instance.GetModulePath(ConfigScope.CurrentUser) ?? 
-#if UNIX
-                       Platform.SelectProductNameForDirectory(Platform.XDG_Type.DATA);
-#else
-                       Environment.GetFolderPath(Environment.SpecialFolder.Personal) + @"\PowerShell";
-#endif
-            }
 #if UNIX
             return Platform.SelectProductNameForDirectory(Platform.XDG_Type.DATA);
 #else

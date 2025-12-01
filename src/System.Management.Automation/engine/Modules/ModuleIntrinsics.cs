@@ -965,18 +965,7 @@ namespace System.Management.Automation
         /// <returns>Personal module path.</returns>
         internal static string GetPersonalModulePath()
         {
-            string contentPath = Utils.GetPSContentPath();
-            // GetPSContentPath should never return null when experimental feature is enabled,
-            // but add defensive check for safety
-            if (string.IsNullOrEmpty(contentPath))
-            {
-#if UNIX
-                contentPath = Platform.SelectProductNameForDirectory(Platform.XDG_Type.DATA);
-#else
-                contentPath = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + @"\PowerShell";
-#endif
-            }
-            return Path.Combine(contentPath, "Modules");
+            return Path.Combine(Utils.GetPSContentPath, "Modules");
         }
 
         /// <summary>
@@ -1373,14 +1362,9 @@ namespace System.Management.Automation
             }
 #endif
             string allUsersModulePath = PowerShellConfig.Instance.GetModulePath(ConfigScope.AllUsers);
-            string personalModulePath = Utils.GetPSContentPath(true) ?? string.Empty;
+            string personalModulePath = PowerShellConfig.Instance.GetModulePath(ConfigScope.CurrentUser) ?? GetPersonalModulePath();
             string newModulePathString = GetModulePath(currentModulePath, allUsersModulePath, personalModulePath);
 
-            if (!string.IsNullOrEmpty(personalModulePath))
-            {
-                Environment.SetEnvironmentVariable(Constants.PSUserContentPathEnvVar, personalModulePath);
-            }
-            
             if (!string.IsNullOrEmpty(newModulePathString))
             {
                 Environment.SetEnvironmentVariable(Constants.PSModulePathEnvVar, newModulePathString);
