@@ -105,6 +105,29 @@ Describe "Set-Content cmdlet tests" -Tags "CI" {
             Get-Content -Path ${altStreamDirectory2} -Stream ${streamName} | Should -BeExactly $stringData
         }
     }
+
+    Context "Set-Content -WhatIf should emit a single message" {
+        BeforeAll {
+            $whatIfFile = Join-Path $TESTDRIVE "whatif.txt"
+            # Ensure file exists so Set-Content will perform truncate + write path
+            Set-Content -Path $whatIfFile -Value "seed"
+        }
+        AfterAll {
+            Remove-Item -Path $whatIfFile -Force -ErrorAction SilentlyContinue
+        }
+        It "should produce one WhatIf message when setting content" {
+            $transcriptPath = Join-Path $TESTDRIVE 'whatif-transcript.txt'
+            Start-Transcript -Path $transcriptPath -Force | Out-Null
+            try {
+                Set-Content -Path $whatIfFile -Value "new" -WhatIf
+            }
+            finally {
+                Stop-Transcript | Out-Null
+            }
+            $text = Get-Content -Path $transcriptPath -Raw
+            ($text -split "`r?`n") | Where-Object { $_ -match '^What if:' } | Measure-Object | Select-Object -ExpandProperty Count | Should -Be 1
+        }
+    }
 }
 
 Describe "Set-Content should work for PSDrive with UNC path as root" -Tags @('CI', 'RequireAdminOnWindows') {
