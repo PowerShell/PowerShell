@@ -35,7 +35,7 @@ namespace Microsoft.PowerShell.Commands
             CmdletProviderContext context = new(currentContext.ExecutionContext, CommandOrigin.Internal)
             {
                 SuppressWildcardExpansion = currentContext.SuppressWildcardExpansion,
-                Filter = currentContext.Filter
+                Filter = currentContext.Filter,
             };
 
             foreach (string path in paths)
