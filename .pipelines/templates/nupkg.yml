@@ -41,8 +41,7 @@ jobs:
   - template: SetVersionVariables.yml@self
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
-      CreateJson: yes
-      UseJson: no
+      CreateJson: no
 
   - template: shouldSign.yml
 
@@ -94,15 +93,7 @@ jobs:
     parameters:
       repoRoot: $(PowerShellRoot)
 
-  - task: NuGetToolInstaller@1
-    displayName: 'Install NuGet.exe'
-
-  - task: UseDotNet@2
-    displayName: 'Use .NET Core sdk'
-    inputs:
-      useGlobalJson: true
-      packageType: 'sdk'
-      workingDirectory: '$(PowerShellRoot)'
+  - template: /.pipelines/templates/install-dotnet.yml@self
 
   - pwsh: |
       Set-Location -Path '$(PowerShellRoot)'

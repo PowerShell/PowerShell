@@ -111,7 +111,7 @@ namespace System.Management.Automation
                 sessionState.IsProviderLoaded(fileSystemProviderName);
 
             string? environmentCurrentDirectory = null;
-            
+
             try
             {
                 environmentCurrentDirectory = Directory.GetCurrentDirectory();

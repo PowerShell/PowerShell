@@ -194,7 +194,7 @@ namespace System.Management.Automation
 
         internal static bool ModuleAnalysisViaGetModuleRequired(object modulePathObj, bool hadCmdlets, bool hadFunctions, bool hadAliases)
         {
-            if (!(modulePathObj is string modulePath))
+            if (modulePathObj is not string modulePath)
                 return true;
 
             if (modulePath.EndsWith(StringLiterals.PowerShellModuleFileExtension, StringComparison.OrdinalIgnoreCase))
@@ -256,7 +256,7 @@ namespace System.Management.Automation
                     return ModuleAnalysisViaGetModuleRequired(nestedModule, hadCmdlets, hadFunctions, hadAliases);
                 }
 
-                if (!(nestedModules is object[] nestedModuleArray))
+                if (nestedModules is not object[] nestedModuleArray)
                     return true;
 
                 foreach (var element in nestedModuleArray)
@@ -664,6 +664,11 @@ namespace System.Management.Automation
 
         public void QueueSerialization()
         {
+            if (string.IsNullOrEmpty(s_cacheStoreLocation))
+            {
+                return;
+            }
+
             // We expect many modules to rapidly call for serialization.
             // Instead of doing it right away, we'll queue a task that starts writing
             // after it seems like we've stopped adding stuff to write out.  This is
@@ -1121,7 +1126,7 @@ namespace System.Management.Automation
                 cacheFileName = string.Create(CultureInfo.InvariantCulture, $"{cacheFileName}-{hashString}");
             }
 
-            s_cacheStoreLocation = Path.Combine(Platform.CacheDirectory, cacheFileName);
+            Platform.TryDeriveFromCache(cacheFileName, out s_cacheStoreLocation);
         }
     }
 

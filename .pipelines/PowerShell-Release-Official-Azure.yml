@@ -13,8 +13,11 @@ parameters: # parameters are shown up in ADO UI in a build queue time
     displayName: Skip Signing
     type: string
     default: 'NO'
+  - name: OfficialBuild
+    type: boolean
+    default: false
 
-name: ev2-$(BUILD.SOURCEBRANCHNAME)-$(Build.BuildId)
+name: ev2-$(BUILD.SOURCEBRANCHNAME)-prod.${{ parameters.OfficialBuild }}-$(Build.BuildId)
 
 variables:
   - name: CDP_DEFINITION_BUILD_COUNT
@@ -44,12 +47,14 @@ variables:
   - name: WindowsContainerImage
     value: 'onebranch.azurecr.io/windows/ltsc2022/vse2022:latest'
   - name: LinuxContainerImage
-    value: mcr.microsoft.com/onebranch/cbl-mariner/build:2.0
+    value: mcr.microsoft.com/onebranch/azurelinux/build:3.0
   - group: PoolNames
+  - name: templateFile
+    value: ${{ iif ( parameters.OfficialBuild, 'v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates', 'v2/OneBranch.NonOfficial.CrossPlat.yml@onebranchTemplates' ) }}
 
 resources:
   repositories:
-    - repository: templates
+    - repository: onebranchTemplates
       type: git
       name: OneBranch.Pipelines/GovernedTemplates
       ref: refs/heads/main
@@ -67,13 +72,14 @@ resources:
             - releases/*
 
 extends:
-  template: v2/OneBranch.Official.CrossPlat.yml@templates
+  template: ${{ variables.templateFile }}
   parameters:
     featureFlags:
       WindowsHostVersion:
         Version: 2022
         Network: Netlock
       linuxEsrpSigning: true
+      incrementalSDLBinaryAnalysis: true
     cloudvault:
       enabled: false
     globalSdl:
@@ -81,9 +87,6 @@ extends:
       # disabled Armory as we dont have any ARM templates to scan. It fails on some sample ARM templates.
       armory:
         enabled: false
-      asyncSdl:
-        enabled: true
-        tsaOptionsFile: .config/tsaoptions.json
       tsa:
         enabled: true
       credscan:
@@ -92,6 +95,7 @@ extends:
         suppressionsFile: $(Build.SourcesDirectory)\.config\suppress.json
       binskim:
         break: false # always break the build on binskim issues in addition to TSA upload
+        exactToolVersion: 4.4.2
       policheck:
         break: true # always break the build on policheck issues. You can disable it by setting to 'false'
       tsaOptionsFile: .config\tsaoptions.json
