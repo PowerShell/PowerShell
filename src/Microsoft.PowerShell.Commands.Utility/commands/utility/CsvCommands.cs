@@ -1803,6 +1803,10 @@ namespace Microsoft.PowerShell.Commands
                         // [CultureInfo]::GetCultures("AllCultures") | % { ([CultureInfo]($_.Name)).TextInfo.ListSeparator } | ? Length -ne 1
                         delimiter = CultureInfo.CurrentCulture.TextInfo.ListSeparator[0];
                     }
+                    else
+                    {
+                        delimiter = ImportExportCSVHelper.CSVDelimiter;
+                    }
 
                     break;
                 default:
