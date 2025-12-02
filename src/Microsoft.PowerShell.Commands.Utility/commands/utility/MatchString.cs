@@ -1517,7 +1517,7 @@ namespace Microsoft.PowerShell.Commands
                 // No results in any files.
                 if (Quiet)
                 {
-                    var res = List ? null : Boxed.False;
+                    var res = Boxed.False;
                     WriteObject(res);
                 }
             }
