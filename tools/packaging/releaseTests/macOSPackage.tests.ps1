@@ -74,7 +74,28 @@ Describe "Verify macOS Package" {
             $script:package | Should -Not -BeNullOrEmpty -Because "A .pkg file should be created"
             $script:package.Extension | Should -Be ".pkg"
         }
-        
+
+        It "Package name should follow correct naming convention" {
+            $script:package | Should -Not -BeNullOrEmpty
+
+            # Regex pattern for valid macOS PKG package names.
+            # This pattern matches the validation used in release-validate-packagenames.yml
+            # Valid examples:
+            # - powershell-7.4.13-osx-x64.pkg (Stable release)
+            # - powershell-7.6.0-preview.6-osx-x64.pkg (Preview version string)
+            # - powershell-7.4.13-rebuild.5-osx-arm64.pkg (Rebuild version)
+            # - powershell-lts-7.4.13-osx-arm64.pkg (LTS package)
+            $pkgPackageNamePattern = '^powershell-(lts-)?\d+\.\d+\.\d+\-([a-z]*.\d+\-)?osx\-(x64|arm64)\.pkg$'
+
+            $script:package.Name | Should -Match $pkgPackageNamePattern -Because "Package name should follow the standard naming convention"
+        }
+
+        It "Package name should NOT use x86_64 with underscores" {
+            $script:package | Should -Not -BeNullOrEmpty
+
+            $script:package.Name | Should -Not -Match 'x86_64' -Because "Package should use 'x64' not 'x86_64' (with underscores) for compatibility"
+        }
+
         It "Package should expand successfully" {
             $script:expandDir | Should -Exist
             Get-ChildItem -Path $script:expandDir | Should -Not -BeNullOrEmpty
