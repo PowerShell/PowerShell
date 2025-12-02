@@ -178,7 +178,6 @@ extends:
           parameters:
             ReleaseTagVar: $(ReleaseTagVar)
             CreateJson: yes
-            UseJson: no
 
     - stage: macos
       displayName: macOS - build and sign
