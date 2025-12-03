@@ -12,7 +12,6 @@ using Microsoft.PowerShell.Commands.Internal.Format;
 
 namespace Microsoft.PowerShell.Commands
 {
-
     internal sealed class SelectObjectExpressionParameterDefinition : CommandParameterDefinition
     {
         protected override void SetEntries()

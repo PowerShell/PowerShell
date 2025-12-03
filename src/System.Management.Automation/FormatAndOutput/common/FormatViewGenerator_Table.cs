@@ -40,43 +40,45 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 rawMshParameterList = parameters.mshParameterList;
 
             // check if we received properties from the command line
-            if (rawMshParameterList != null && rawMshParameterList.Count > 0)
+            if (rawMshParameterList is not null && rawMshParameterList.Count > 0)
             {
                 this.activeAssociationList = AssociationManager.ExpandTableParameters(rawMshParameterList, so);
-                ApplyExcludePropertyFilter();
-                return;
             }
-
-            // we did not get any properties:
-            // try to get properties from the default property set of the object
-            this.activeAssociationList = AssociationManager.ExpandDefaultPropertySet(so, this.expressionFactory);
-            if (this.activeAssociationList.Count > 0)
+            else
             {
-                // we got a valid set of properties from the default property set..add computername for
-                // remoteobjects (if available)
-                if (PSObjectHelper.ShouldShowComputerNameProperty(so))
+                // we did not get any properties:
+                // try to get properties from the default property set of the object
+                this.activeAssociationList = AssociationManager.ExpandDefaultPropertySet(so, this.expressionFactory);
+                if (this.activeAssociationList.Count > 0)
                 {
-                    activeAssociationList.Add(new MshResolvedExpressionParameterAssociation(null,
-                        new PSPropertyExpression(RemotingConstants.ComputerNameNoteProperty)));
+                    // we got a valid set of properties from the default property set..add computername for
+                    // remoteobjects (if available)
+                    if (PSObjectHelper.ShouldShowComputerNameProperty(so))
+                    {
+                        activeAssociationList.Add(new MshResolvedExpressionParameterAssociation(null,
+                            new PSPropertyExpression(RemotingConstants.ComputerNameNoteProperty)));
+                    }
                 }
-
-                ApplyExcludePropertyFilter();
-                return;
+                else
+                {
+                    // we failed to get anything from the default property set
+                    this.activeAssociationList = AssociationManager.ExpandAll(so);
+                    if (this.activeAssociationList.Count > 0)
+                    {
+                        // Remove PSComputerName and PSShowComputerName from the display as needed.
+                        AssociationManager.HandleComputerNameProperties(so, activeAssociationList);
+                        FilterActiveAssociationList();
+                    }
+                    else
+                    {
+                        // we were unable to retrieve any properties, so we leave an empty list
+                        this.activeAssociationList = new List<MshResolvedExpressionParameterAssociation>();
+                        return;
+                    }
+                }
             }
 
-            // we failed to get anything from the default property set
-            this.activeAssociationList = AssociationManager.ExpandAll(so);
-            if (this.activeAssociationList.Count > 0)
-            {
-                // Remove PSComputerName and PSShowComputerName from the display as needed.
-                AssociationManager.HandleComputerNameProperties(so, activeAssociationList);
-                FilterActiveAssociationList();
-                ApplyExcludePropertyFilter();
-                return;
-            }
-
-            // we were unable to retrieve any properties, so we leave an empty list
-            this.activeAssociationList = new List<MshResolvedExpressionParameterAssociation>();
+            ApplyExcludePropertyFilter();
         }
 
         /// <summary>
