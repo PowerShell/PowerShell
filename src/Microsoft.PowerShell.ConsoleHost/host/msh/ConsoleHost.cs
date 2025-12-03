@@ -1781,7 +1781,18 @@ namespace Microsoft.PowerShell
                 // since the ConsoleHostStartupException is uncaught
                 // higher in the call stack and the whole process
                 // will exit soon
-                throw new ConsoleHostStartupException(ConsoleHostStrings.ShellCannotBeStarted, e);
+                StringBuilder sb = new();
+                sb.AppendLine(e.StackTrace);
+
+                Exception inner = e.InnerException;
+                while (inner is { })
+                {
+                    sb.AppendLine("--- inner exception ---");
+                    sb.AppendLine(inner.StackTrace);
+                    inner = inner.InnerException;
+                }
+
+                throw new ConsoleHostStartupException(sb.ToString(), e);
             }
             finally
             {
