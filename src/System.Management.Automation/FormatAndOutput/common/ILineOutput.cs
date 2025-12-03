@@ -9,6 +9,7 @@ using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 using System.Text;
 
+
 // interfaces for host interaction
 
 namespace Microsoft.PowerShell.Commands.Internal.Format
@@ -50,14 +51,49 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 str = valueStrDec.ToString(OutputRendering.PlainText);
             }
 
+            // Use StringInfo to enumerate grapheme clusters
             int length = 0;
-            for (; offset < str.Length; offset++)
+            System.Globalization.StringInfo si = new System.Globalization.StringInfo(str);
+            int[] textElementIndexes = System.Globalization.StringInfo.ParseCombiningCharacters(str);
+            for (int i = 0; i < textElementIndexes.Length; i++)
             {
-                length += CharLengthInBufferCells(str[offset]);
+                if (i < offset) continue;
+                int start = textElementIndexes[i];
+                int graphemeLength = (i + 1 < textElementIndexes.Length)
+                    ? textElementIndexes[i + 1] - textElementIndexes[i]
+                    : str.Length - textElementIndexes[i];
+                string grapheme = str.Substring(start, graphemeLength);
+                length += GraphemeLengthInBufferCells(grapheme);
             }
-
             return length;
         }
+                /// <summary>
+                /// Calculate the buffer cell length of a grapheme cluster (text element).
+                /// </summary>
+                /// <param name="grapheme">A string representing a single grapheme cluster.</param>
+                /// <returns>Number of buffer cells the grapheme needs to take.</returns>
+                protected virtual int GraphemeLengthInBufferCells(string grapheme)
+                {
+                    if (string.IsNullOrEmpty(grapheme))
+                        return 0;
+
+                    // Check if the grapheme is an emoji (basic Unicode ranges)
+                    int codePoint = char.ConvertToUtf32(grapheme, 0);
+                    // Emoji ranges: Emoticons, Misc Symbols, Dingbats, Transport, etc.
+                    if ((codePoint >= 0x1F600 && codePoint <= 0x1F64F) || // Emoticons
+                        (codePoint >= 0x1F300 && codePoint <= 0x1F5FF) || // Misc Symbols & Pictographs
+                        (codePoint >= 0x1F680 && codePoint <= 0x1F6FF) || // Transport & Map
+                        (codePoint >= 0x2600 && codePoint <= 0x26FF)   || // Misc symbols
+                        (codePoint >= 0x2700 && codePoint <= 0x27BF)   || // Dingbats
+                        (codePoint >= 0x1F900 && codePoint <= 0x1F9FF) || // Supplemental Symbols & Pictographs
+                        (codePoint >= 0x1FA70 && codePoint <= 0x1FAFF) || // Symbols & Pictographs Extended-A
+                        (codePoint >= 0x1F1E6 && codePoint <= 0x1F1FF))   // Regional Indicator Symbols
+                    {
+                        return 2;
+                    }
+                    // Default width for other graphemes
+                    return 1;
+            }
 
         /// <summary>
         /// Calculate the buffer cell length of the given character.
