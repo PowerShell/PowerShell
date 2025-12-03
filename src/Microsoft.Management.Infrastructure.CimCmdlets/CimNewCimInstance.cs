@@ -280,33 +280,41 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 }
             }
 
+            // Manual use of IDictionaryEnumerator instead of foreach to avoid DictionaryEntry box allocations.
             IDictionaryEnumerator enumerator = properties.GetEnumerator();
-            while (enumerator.MoveNext())
+            try
             {
-                CimFlags flag = CimFlags.None;
-                string propertyName = enumerator.Key.ToString().Trim();
-                if (keys.Contains(propertyName, StringComparer.OrdinalIgnoreCase))
+                while (enumerator.MoveNext())
                 {
-                    flag = CimFlags.Key;
-                }
+                    CimFlags flag = CimFlags.None;
+                    string propertyName = enumerator.Key.ToString().Trim();
+                    if (keys.Contains(propertyName, StringComparer.OrdinalIgnoreCase))
+                    {
+                        flag = CimFlags.Key;
+                    }
 
-                object propertyValue = GetBaseObject(enumerator.Value);
+                    object propertyValue = GetBaseObject(enumerator.Value);
 
-                DebugHelper.WriteLog("Create and add new property to ciminstance: name = {0}; value = {1}; flags = {2}", 5, propertyName, propertyValue, flag);
+                    DebugHelper.WriteLog("Create and add new property to ciminstance: name = {0}; value = {1}; flags = {2}", 5, propertyName, propertyValue, flag);
 
-                if (propertyValue is PSReference cimReference)
-                {
-                    CimProperty newProperty = CimProperty.Create(propertyName, GetBaseObject(cimReference.Value), CimType.Reference, flag);
-                    cimInstance.CimInstanceProperties.Add(newProperty);
+                    if (propertyValue is PSReference cimReference)
+                    {
+                        CimProperty newProperty = CimProperty.Create(propertyName, GetBaseObject(cimReference.Value), CimType.Reference, flag);
+                        cimInstance.CimInstanceProperties.Add(newProperty);
+                    }
+                    else
+                    {
+                        CimProperty newProperty = CimProperty.Create(
+                            propertyName,
+                            propertyValue,
+                            flag);
+                        cimInstance.CimInstanceProperties.Add(newProperty);
+                    }
                 }
-                else
-                {
-                    CimProperty newProperty = CimProperty.Create(
-                        propertyName,
-                        propertyValue,
-                        flag);
-                    cimInstance.CimInstanceProperties.Add(newProperty);
-                }
+            }
+            finally
+            {
+                (enumerator as IDisposable)?.Dispose();
             }
 
             return cimInstance;
