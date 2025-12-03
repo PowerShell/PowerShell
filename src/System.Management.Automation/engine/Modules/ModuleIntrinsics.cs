@@ -1272,6 +1272,12 @@ namespace System.Management.Automation
 
         private static string UpdatePath(string path, string pathToAdd, ref int insertIndex)
         {
+            Console.WriteLine("---- UpdatePath ----");
+            Console.WriteLine("path: " + path);
+            Console.WriteLine("pathToAdd: " + pathToAdd);
+            Console.WriteLine("insertIndex: " + insertIndex);
+            Console.WriteLine("-------- END --------");
+
             if (!string.IsNullOrEmpty(pathToAdd))
             {
                 path = AddToPath(path, pathToAdd, insertIndex);
