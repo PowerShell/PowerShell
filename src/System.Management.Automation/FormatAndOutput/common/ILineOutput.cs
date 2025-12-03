@@ -51,9 +51,22 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             int length = 0;
-            for (; offset < str.Length; offset++)
+            for (int i = offset; i < str.Length; i++)
             {
-                length += CharLengthInBufferCells(str[offset]);
+                char c = str[i];
+                
+                // Check if this is a high surrogate (first part of a surrogate pair)
+                if (char.IsHighSurrogate(c) && i + 1 < str.Length && char.IsLowSurrogate(str[i + 1]))
+                {
+                    // This is a surrogate pair - get the full codepoint
+                    int codePoint = char.ConvertToUtf32(c, str[i + 1]);
+                    length += CodePointLengthInBufferCells(codePoint);
+                    i++; // Skip the low surrogate since we've already processed the pair
+                }
+                else
+                {
+                    length += CharLengthInBufferCells(c);
+                }
             }
 
             return length;
@@ -120,8 +133,50 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         #region Helpers
 
+        protected static int CodePointLengthInBufferCells(int codePoint)
+        {
+            // Emoji and symbol ranges (most emojis are wide/2-cell)
+            // Based on Unicode standard emoji ranges
+            if ((codePoint >= 0x1F300 && codePoint <= 0x1F9FF) || // Miscellaneous Symbols and Pictographs, Emoticons, etc.
+                (codePoint >= 0x1F000 && codePoint <= 0x1F02F) || // Mahjong Tiles, Domino Tiles
+                (codePoint >= 0x1F0A0 && codePoint <= 0x1F0FF) || // Playing Cards
+                (codePoint >= 0x1F100 && codePoint <= 0x1F64F) || // Enclosed Alphanumeric Supplement, Emoticons
+                (codePoint >= 0x1F680 && codePoint <= 0x1F6FF) || // Transport and Map Symbols
+                (codePoint >= 0x1F900 && codePoint <= 0x1F9FF) || // Supplemental Symbols and Pictographs
+                (codePoint >= 0x1FA00 && codePoint <= 0x1FA6F) || // Chess Symbols, Symbols and Pictographs Extended-A
+                (codePoint >= 0x1FA70 && codePoint <= 0x1FAFF) || // Symbols and Pictographs Extended-A
+                (codePoint >= 0x2600 && codePoint <= 0x26FF) ||   // Miscellaneous Symbols (includes some emojis)
+                (codePoint >= 0x2700 && codePoint <= 0x27BF) ||   // Dingbats
+                (codePoint >= 0x1F170 && codePoint <= 0x1F251) || // Enclosed Alphanumeric Supplement
+                (codePoint >= 0x1F3FB && codePoint <= 0x1F3FF) || // Emoji skin tone modifiers
+                (codePoint >= 0x20000 && codePoint <= 0x2FFFD) || // CJK Extension B-F
+                (codePoint >= 0x30000 && codePoint <= 0x3FFFD))   // CJK Extension G and beyond
+            {
+                return 2;
+            }
+
+            // For BMP characters, use the existing logic
+            if (codePoint <= 0xFFFF)
+            {
+                return CharLengthInBufferCells((char)codePoint);
+            }
+
+            // Default for other supplementary characters
+            return 2;
+        }
+
         protected static int CharLengthInBufferCells(char c)
         {
+            // Check for BMP emojis that are 2 cells wide
+            // These are common emoji characters that don't require surrogate pairs
+            if ((c >= 0x2600 && c <= 0x26FF) ||  // Miscellaneous Symbols (many emojis)
+                (c >= 0x2700 && c <= 0x27BF) ||  // Dingbats
+                (c >= 0x2300 && c <= 0x23FF) ||  // Miscellaneous Technical
+                (c >= 0x2B50 && c <= 0x2B55))    // Stars and other symbols
+            {
+                return 2;
+            }
+
             // The following is based on http://www.cl.cam.ac.uk/~mgk25/c/wcwidth.c
             // which is derived from https://www.unicode.org/Public/UCD/latest/ucd/EastAsianWidth.txt
             bool isWide = c >= 0x1100 &&
@@ -136,10 +191,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                  ((uint)(c - 0xff00) <= (0xff60 - 0xff00)) || /* Fullwidth Forms */
                  ((uint)(c - 0xffe0) <= (0xffe6 - 0xffe0)));
 
-            // We can ignore these ranges because .Net strings use surrogate pairs
-            // for this range and we do not handle surrogate pairs.
-            // (c >= 0x20000 && c <= 0x2fffd) ||
-            // (c >= 0x30000 && c <= 0x3fffd)
             return 1 + (isWide ? 1 : 0);
         }
 
@@ -167,8 +218,29 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     break;
                 }
 
-                // compute the cell number for the current character
-                currCharDisplayLen = this.Length(str[k]);
+                // compute the cell number for the current character or surrogate pair
+                if (startFromHead && char.IsHighSurrogate(str[k]) && k + 1 <= kFinal && char.IsLowSurrogate(str[k + 1]))
+                {
+                    // This is a surrogate pair when going forward
+                    int codePoint = char.ConvertToUtf32(str[k], str[k + 1]);
+                    currCharDisplayLen = CodePointLengthInBufferCells(codePoint);
+                }
+                else if (!startFromHead && char.IsLowSurrogate(str[k]) && k - 1 >= kFinal && char.IsHighSurrogate(str[k - 1]))
+                {
+                    // This is a surrogate pair when going backward - skip it since we'll process with the high surrogate
+                    k = startFromHead ? (k + 1) : (k - 1);
+                    continue;
+                }
+                else if (!startFromHead && char.IsHighSurrogate(str[k]) && k + 1 < str.Length && char.IsLowSurrogate(str[k + 1]))
+                {
+                    // We're at the high surrogate going backward - process the pair
+                    int codePoint = char.ConvertToUtf32(str[k], str[k + 1]);
+                    currCharDisplayLen = CodePointLengthInBufferCells(codePoint);
+                }
+                else
+                {
+                    currCharDisplayLen = CharLengthInBufferCells(str[k]);
+                }
 
                 if (filledDisplayCellsCount + currCharDisplayLen > displayCells)
                 {
@@ -178,7 +250,21 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 // keep adding, we fit
                 filledDisplayCellsCount += currCharDisplayLen;
-                charactersAdded++;
+                
+                // Count the number of char units (1 for BMP, 2 for surrogate pairs)
+                if (startFromHead && char.IsHighSurrogate(str[k]) && k + 1 <= kFinal && char.IsLowSurrogate(str[k + 1]))
+                {
+                    charactersAdded += 2; // surrogate pair
+                    k++; // skip the low surrogate
+                }
+                else if (!startFromHead && char.IsHighSurrogate(str[k]) && k + 1 < str.Length && char.IsLowSurrogate(str[k + 1]))
+                {
+                    charactersAdded += 2; // surrogate pair
+                }
+                else
+                {
+                    charactersAdded++;
+                }
 
                 // check if we fit exactly
                 if (filledDisplayCellsCount == displayCells)
