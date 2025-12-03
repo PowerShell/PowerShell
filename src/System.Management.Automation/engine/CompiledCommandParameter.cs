@@ -170,7 +170,7 @@ namespace System.Management.Automation
             {
                 switch (attr)
                 {
-                    case ExperimentalAttribute _:
+                    case ExperimentalAttribute:
                     case ParameterAttribute param when param.ToHide:
                         break;
                     default:
