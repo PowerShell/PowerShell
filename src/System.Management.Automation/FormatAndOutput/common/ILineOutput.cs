@@ -1,3 +1,4 @@
+using Wcwidth;
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
@@ -50,14 +51,41 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 str = valueStrDec.ToString(OutputRendering.PlainText);
             }
 
+            // Use StringInfo to enumerate grapheme clusters
             int length = 0;
-            for (; offset < str.Length; offset++)
+            System.Globalization.StringInfo si = new System.Globalization.StringInfo(str);
+            int[] textElementIndexes = System.Globalization.StringInfo.ParseCombiningCharacters(str);
+            for (int i = 0; i < textElementIndexes.Length; i++)
             {
-                length += CharLengthInBufferCells(str[offset]);
+                if (i < offset) continue;
+                int start = textElementIndexes[i];
+                int graphemeLength = (i + 1 < textElementIndexes.Length)
+                    ? textElementIndexes[i + 1] - textElementIndexes[i]
+                    : str.Length - textElementIndexes[i];
+                string grapheme = str.Substring(start, graphemeLength);
+                length += GraphemeLengthInBufferCells(grapheme);
             }
-
             return length;
         }
+                /// <summary>
+                /// Calculate the buffer cell length of a grapheme cluster (text element).
+                /// </summary>
+                /// <param name="grapheme">A string representing a single grapheme cluster.</param>
+                /// <returns>Number of buffer cells the grapheme needs to take.</returns>
+                protected virtual int GraphemeLengthInBufferCells(string grapheme)
+                {
+                    // For most cases, use the width of the first char as a fallback.
+                    // For emoji and complex clusters, this can be improved with a Unicode width library.
+                if (string.IsNullOrEmpty(grapheme))
+                    return 0;
+
+                // Use Wcwidth.Net to determine the display width of the grapheme
+                if (string.IsNullOrEmpty(grapheme))
+                    return 0;
+
+                // Wcwidth.Net expects a string, returns the width in cells
+                return Wcwidth.Wcwidth.GetWidth(grapheme);
+            }
 
         /// <summary>
         /// Calculate the buffer cell length of the given character.
