@@ -1,4 +1,3 @@
-using Wcwidth;
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
@@ -9,6 +8,7 @@ using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 using System.Text;
+
 
 // interfaces for host interaction
 
@@ -74,17 +74,25 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 /// <returns>Number of buffer cells the grapheme needs to take.</returns>
                 protected virtual int GraphemeLengthInBufferCells(string grapheme)
                 {
-                    // For most cases, use the width of the first char as a fallback.
-                    // For emoji and complex clusters, this can be improved with a Unicode width library.
-                if (string.IsNullOrEmpty(grapheme))
-                    return 0;
+                    if (string.IsNullOrEmpty(grapheme))
+                        return 0;
 
-                // Use Wcwidth.Net to determine the display width of the grapheme
-                if (string.IsNullOrEmpty(grapheme))
-                    return 0;
-
-                // Wcwidth.Net expects a string, returns the width in cells
-                return Wcwidth.Wcwidth.GetWidth(grapheme);
+                    // Check if the grapheme is an emoji (basic Unicode ranges)
+                    int codePoint = char.ConvertToUtf32(grapheme, 0);
+                    // Emoji ranges: Emoticons, Misc Symbols, Dingbats, Transport, etc.
+                    if ((codePoint >= 0x1F600 && codePoint <= 0x1F64F) || // Emoticons
+                        (codePoint >= 0x1F300 && codePoint <= 0x1F5FF) || // Misc Symbols & Pictographs
+                        (codePoint >= 0x1F680 && codePoint <= 0x1F6FF) || // Transport & Map
+                        (codePoint >= 0x2600 && codePoint <= 0x26FF)   || // Misc symbols
+                        (codePoint >= 0x2700 && codePoint <= 0x27BF)   || // Dingbats
+                        (codePoint >= 0x1F900 && codePoint <= 0x1F9FF) || // Supplemental Symbols & Pictographs
+                        (codePoint >= 0x1FA70 && codePoint <= 0x1FAFF) || // Symbols & Pictographs Extended-A
+                        (codePoint >= 0x1F1E6 && codePoint <= 0x1F1FF))   // Regional Indicator Symbols
+                    {
+                        return 2;
+                    }
+                    // Default width for other graphemes
+                    return 1;
             }
 
         /// <summary>
