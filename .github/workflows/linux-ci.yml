@@ -231,6 +231,20 @@ jobs:
   #   with:
   #     runner_os: ubuntu-latest
 
+  linux_packaging:
+    name: Linux Packaging
+    needs:
+      - changes
+    if: ${{ needs.changes.outputs.packagingChanged == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Linux Packaging
+        uses: "./.github/actions/test/linux-packaging"
+
   ready_to_merge:
     name: Linux ready to merge
     needs:
@@ -247,16 +261,3 @@ jobs:
     uses: PowerShell/compliance/.github/workflows/ready-to-merge.yml@v1.0.0
     with:
       needs_context: ${{ toJson(needs) }}
-  linux_packaging:
-    name: Linux Packaging
-    needs:
-      - changes
-    if: ${{ needs.changes.outputs.packagingChanged == 'true' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: checkout
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-      - name: Linux Packaging
-        uses: "./.github/actions/test/linux-packaging"
