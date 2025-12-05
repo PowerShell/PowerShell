@@ -4161,13 +4161,18 @@ namespace System.Management.Automation
 
         internal void TraceLine(IScriptExtent extent)
         {
-            string msg = PositionUtilities.BriefMessage(extent.StartScriptPosition);
+            string msg = PositionUtilities.BriefMessage(extent);
             InternalHostUserInterface ui = (InternalHostUserInterface)_context.EngineHostInterface.UI;
 
             ActionPreference pref = _context.PSDebugTraceStep ?
                 ActionPreference.Inquire : ActionPreference.Continue;
 
-            ui.WriteDebugLine(msg, ref pref);
+            // Write each line separately so each gets the DEBUG: prefix
+            string[] lines = msg.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
+            foreach (string line in lines)
+            {
+                ui.WriteDebugLine(line, ref pref);
+            }
 
             if (pref == ActionPreference.Continue)
                 _context.PSDebugTraceStep = false;
