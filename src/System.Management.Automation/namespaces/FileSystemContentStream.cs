@@ -80,6 +80,7 @@ namespace Microsoft.PowerShell.Commands
         // True to remove trailing delimiter from end of string, false to leave as is.
         private readonly bool _suppressLastDelimiter = false;
 
+        // To track if we are writing the first line so we can conditionally prepend delimiters
         private bool _isFirstLine = true;
 
         /// <summary>
