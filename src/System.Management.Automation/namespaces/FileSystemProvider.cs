@@ -7203,16 +7203,16 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private sealed class InodeTracker
         {
-            private readonly HashSet<(UInt64, UInt64)> _visitations;
+            private readonly HashSet<(ulong, ulong)> _visitations;
 
             /// <summary>
             /// Construct a new InodeTracker with an initial path.
             /// </summary>
             internal InodeTracker(string path)
             {
-                _visitations = new HashSet<(UInt64, UInt64)>();
+                _visitations = new HashSet<(ulong, ulong)>();
 
-                if (InternalSymbolicLinkLinkCodeMethods.GetInodeData(path, out (UInt64, UInt64) inodeData))
+                if (InternalSymbolicLinkLinkCodeMethods.GetInodeData(path, out (ulong, ulong) inodeData))
                 {
                     _visitations.Add(inodeData);
                 }
@@ -7232,7 +7232,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 bool returnValue = false;
 
-                if (InternalSymbolicLinkLinkCodeMethods.GetInodeData(path, out (UInt64, UInt64) inodeData))
+                if (InternalSymbolicLinkLinkCodeMethods.GetInodeData(path, out (ulong, ulong) inodeData))
                 {
                     returnValue = _visitations.Add(inodeData);
                 }
