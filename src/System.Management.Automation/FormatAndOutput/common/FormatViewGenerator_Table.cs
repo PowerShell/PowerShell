@@ -34,51 +34,50 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 _tableBody = (TableControlBody)this.dataBaseInfo.view.mainControl;
             }
 
-            List<MshParameter> rawMshParameterList = null;
+            // Build the active association list (with ExcludeProperty filter applied)
+            _ = GetActiveAssociationList(so);
+        }
 
-            if (parameters != null)
-                rawMshParameterList = parameters.mshParameterList;
+        /// <summary>
+        /// Builds the raw association list for table formatting.
+        /// </summary>
+        protected override List<MshResolvedExpressionParameterAssociation> BuildRawAssociationList(PSObject so)
+        {
+            List<MshParameter> rawMshParameterList = this.parameters?.mshParameterList;
 
             // check if we received properties from the command line
             if (rawMshParameterList is not null && rawMshParameterList.Count > 0)
             {
-                this.activeAssociationList = AssociationManager.ExpandTableParameters(rawMshParameterList, so);
-            }
-            else
-            {
-                // we did not get any properties:
-                // try to get properties from the default property set of the object
-                this.activeAssociationList = AssociationManager.ExpandDefaultPropertySet(so, this.expressionFactory);
-                if (this.activeAssociationList.Count > 0)
-                {
-                    // we got a valid set of properties from the default property set..add computername for
-                    // remoteobjects (if available)
-                    if (PSObjectHelper.ShouldShowComputerNameProperty(so))
-                    {
-                        activeAssociationList.Add(new MshResolvedExpressionParameterAssociation(null,
-                            new PSPropertyExpression(RemotingConstants.ComputerNameNoteProperty)));
-                    }
-                }
-                else
-                {
-                    // we failed to get anything from the default property set
-                    this.activeAssociationList = AssociationManager.ExpandAll(so);
-                    if (this.activeAssociationList.Count > 0)
-                    {
-                        // Remove PSComputerName and PSShowComputerName from the display as needed.
-                        AssociationManager.HandleComputerNameProperties(so, activeAssociationList);
-                        FilterActiveAssociationList();
-                    }
-                    else
-                    {
-                        // we were unable to retrieve any properties, so we leave an empty list
-                        this.activeAssociationList = new List<MshResolvedExpressionParameterAssociation>();
-                        return;
-                    }
-                }
+                return AssociationManager.ExpandTableParameters(rawMshParameterList, so);
             }
 
-            ApplyExcludePropertyFilter();
+            // we did not get any properties:
+            // try to get properties from the default property set of the object
+            var list = AssociationManager.ExpandDefaultPropertySet(so, this.expressionFactory);
+            if (list.Count > 0)
+            {
+                // we got a valid set of properties from the default property set..add computername for
+                // remoteobjects (if available)
+                if (PSObjectHelper.ShouldShowComputerNameProperty(so))
+                {
+                    list.Add(new MshResolvedExpressionParameterAssociation(null,
+                        new PSPropertyExpression(RemotingConstants.ComputerNameNoteProperty)));
+                }
+
+                return list;
+            }
+
+            // we failed to get anything from the default property set
+            list = AssociationManager.ExpandAll(so);
+            if (list.Count > 0)
+            {
+                // Remove PSComputerName and PSShowComputerName from the display as needed.
+                AssociationManager.HandleComputerNameProperties(so, list);
+                return LimitAssociationListSize(list);
+            }
+
+            // we were unable to retrieve any properties, so we leave an empty list
+            return new List<MshResolvedExpressionParameterAssociation>();
         }
 
         /// <summary>
@@ -129,30 +128,29 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// Method to filter resolved expressions as per table view needs.
+        /// Limits the association list size for table view.
         /// For v1.0, table view supports only 10 properties.
-        ///
-        /// This method filters and updates "activeAssociationList" instance property.
         /// </summary>
-        /// <returns>None.</returns>
-        /// <remarks>This method updates "activeAssociationList" instance property.</remarks>
-        private void FilterActiveAssociationList()
+        /// <param name="list">The list to limit.</param>
+        /// <returns>The limited list.</returns>
+        private static List<MshResolvedExpressionParameterAssociation> LimitAssociationListSize(
+            List<MshResolvedExpressionParameterAssociation> list)
         {
-            // we got a valid set of properties from the default property set
-            // make sure we do not have too many properties
-
             // NOTE: this is an arbitrary number, chosen to be a sensitive default
-            const int nMax = 10;
+            const int maxCount = 10;
 
-            if (activeAssociationList.Count > nMax)
+            if (list.Count <= maxCount)
             {
-                List<MshResolvedExpressionParameterAssociation> tmp = this.activeAssociationList;
-                this.activeAssociationList = new List<MshResolvedExpressionParameterAssociation>();
-                for (int k = 0; k < nMax; k++)
-                    this.activeAssociationList.Add(tmp[k]);
+                return list;
             }
 
-            return;
+            var result = new List<MshResolvedExpressionParameterAssociation>(maxCount);
+            for (int k = 0; k < maxCount; k++)
+            {
+                result.Add(list[k]);
+            }
+
+            return result;
         }
 
         private TableHeaderInfo GenerateTableHeaderInfoFromDataBaseInfo(PSObject so)
@@ -228,9 +226,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             thi.hideHeader = this.HideHeaders;
             thi.repeatHeader = this.RepeatHeader;
 
-            for (int k = 0; k < this.activeAssociationList.Count; k++)
+            for (int k = 0; k < this.ActiveAssociationList.Count; k++)
             {
-                MshResolvedExpressionParameterAssociation a = this.activeAssociationList[k];
+                MshResolvedExpressionParameterAssociation a = this.ActiveAssociationList[k];
                 TableColumnInfo ci = new TableColumnInfo();
 
                 // set the label of the column
@@ -241,7 +239,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         ci.propertyName = (string)key;
                 }
 
-                ci.propertyName ??= this.activeAssociationList[k].ResolvedExpression.ToString();
+                ci.propertyName ??= this.ActiveAssociationList[k].ResolvedExpression.ToString();
 
                 // set the width of the table
                 if (a.OriginatingParameter != null)
@@ -473,13 +471,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private TableRowEntry GenerateTableRowEntryFromFromProperties(PSObject so, int enumerationLimit)
         {
             TableRowEntry tre = new TableRowEntry();
-            for (int k = 0; k < this.activeAssociationList.Count; k++)
+            for (int k = 0; k < this.ActiveAssociationList.Count; k++)
             {
                 FormatPropertyField fpf = new FormatPropertyField();
                 FieldFormattingDirective directive = null;
-                if (activeAssociationList[k].OriginatingParameter != null)
+                if (ActiveAssociationList[k].OriginatingParameter != null)
                 {
-                    directive = activeAssociationList[k].OriginatingParameter.GetEntry(FormatParameterDefinitionKeys.FormatStringEntryKey) as FieldFormattingDirective;
+                    directive = ActiveAssociationList[k].OriginatingParameter.GetEntry(FormatParameterDefinitionKeys.FormatStringEntryKey) as FieldFormattingDirective;
                 }
 
                 if (directive is null)
@@ -488,7 +486,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     directive.isTable = true;
                 }
 
-                fpf.propertyValue = this.GetExpressionDisplayValue(so, enumerationLimit, this.activeAssociationList[k].ResolvedExpression, directive);
+                fpf.propertyValue = this.GetExpressionDisplayValue(so, enumerationLimit, this.ActiveAssociationList[k].ResolvedExpression, directive);
                 tre.formatPropertyFieldList.Add(fpf);
             }
 

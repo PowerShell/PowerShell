@@ -30,9 +30,15 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 _listBody = (ListControlBody)this.dataBaseInfo.view.mainControl;
             }
+        }
 
-            this.parameters = parameters;
-            SetUpActiveProperties(so);
+        /// <summary>
+        /// Builds the raw association list for list formatting.
+        /// </summary>
+        protected override List<MshResolvedExpressionParameterAssociation> BuildRawAssociationList(PSObject so)
+        {
+            List<MshParameter> mshParameterList = this.parameters?.mshParameterList;
+            return AssociationManager.SetupActiveProperties(mshParameterList, so, this.expressionFactory);
         }
 
         /// <summary>
@@ -178,17 +184,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private ListViewEntry GenerateListViewEntryFromProperties(PSObject so, int enumerationLimit)
         {
-            // compute active properties every time
-            if (this.activeAssociationList == null)
-            {
-                SetUpActiveProperties(so);
-            }
+            // Get active association list (with ExcludeProperty filter applied)
+            var associationList = GetActiveAssociationList(so);
 
             ListViewEntry lve = new ListViewEntry();
 
-            for (int k = 0; k < this.activeAssociationList.Count; k++)
+            for (int k = 0; k < associationList.Count; k++)
             {
-                MshResolvedExpressionParameterAssociation a = this.activeAssociationList[k];
+                MshResolvedExpressionParameterAssociation a = associationList[k];
                 ListViewField lvf = new ListViewField();
 
                 if (a.OriginatingParameter != null)
@@ -219,20 +222,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 lve.listViewFieldList.Add(lvf);
             }
 
-            this.activeAssociationList = null;
+            ResetActiveAssociationList();
             return lve;
-        }
-
-        private void SetUpActiveProperties(PSObject so)
-        {
-            List<MshParameter> mshParameterList = null;
-
-            if (this.parameters != null)
-                mshParameterList = this.parameters.mshParameterList;
-
-            this.activeAssociationList = AssociationManager.SetupActiveProperties(mshParameterList, so, this.expressionFactory);
-
-            ApplyExcludePropertyFilter();
         }
     }
 }
