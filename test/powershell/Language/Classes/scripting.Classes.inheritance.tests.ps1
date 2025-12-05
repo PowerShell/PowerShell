@@ -123,6 +123,103 @@ class ClassWithStaticAbstractInterface : IInterfaceWithStaticAbstractProperty {
         [InterfaceStaticAbstractPropertyTest]::GetSetter[ClassWithStaticAbstractInterface]() | Should -Be 4
     }
 
+    It 'can implement .NET interface static methods' {
+        Add-Type -TypeDefinition @'
+public interface IInterfaceWithStaticAbstractMethod
+{
+    static abstract int GetNoParameters();
+    static abstract int GetOneParameter(string value);
+    static abstract int GetTwoParameters(string value, int multiplier);
+}
+
+public static class InterfaceStaticAbstractMethodTest
+{
+    public static int GetNoParameters<T>() where T : IInterfaceWithStaticAbstractMethod
+        => T.GetNoParameters();
+
+    public static int GetOneParameter<T>(string value) where T : IInterfaceWithStaticAbstractMethod
+        => T.GetOneParameter(value);
+
+    public static int GetTwoParameters<T>(string value, int multiplier) where T : IInterfaceWithStaticAbstractMethod
+        => T.GetTwoParameters(value, multiplier);
+}
+'@
+
+        $C1 = Invoke-Expression @'
+class ClassWithStaticAbstractMethodInterface : IInterfaceWithStaticAbstractMethod {
+    static [int] GetNoParameters() { return 1 }
+    static [int] GetOneParameter([string]$Value) { return [int]$Value }
+    static [int] GetTwoParameters([string]$Value, [int]$Multiplier) { return ([int]$Value) * $Multiplier }
+    # Tests that the override uses the parameters when matching against the interface
+    static [int] GetTwoParameters([string]$Value, [string]$Multiplier) { return -1 }
+}
+[ClassWithStaticAbstractMethodInterface]
+'@
+
+            $v = $C1::GetNoParameters()
+            $v | Should -Be 1
+            $v | Should -BeOfType ([int])
+
+            $v = $C1::GetOneParameter("2")
+            $v | Should -Be 2
+            $v | Should -BeOfType ([int])
+
+            $v = $C1::GetTwoParameters("3", 3)
+            $v | Should -Be 9
+            $v | Should -BeOfType ([int])
+
+            $v = $C1::GetTwoParameters("3", "3")
+            $v | Should -Be -1
+            $v | Should -BeOfType ([int])
+
+            [InterfaceStaticAbstractMethodTest]::GetNoParameters[ClassWithStaticAbstractMethodInterface]() | Should -Be 1
+            [InterfaceStaticAbstractMethodTest]::GetOneParameter[ClassWithStaticAbstractMethodInterface]("2") | Should -Be 2
+            [InterfaceStaticAbstractMethodTest]::GetTwoParameters[ClassWithStaticAbstractMethodInterface]("2", 2) | Should -Be 4
+    }
+
+    It 'can implement .NET interface static protected methods' {
+        Add-Type -TypeDefinition @'
+public interface IInterfaceWithStaticAbstractProtectedMethod
+{
+    protected static abstract int ProtectedMeth();
+    protected internal static abstract int ProtectedInternalMeth(string value);
+}
+'@
+
+        $C1 = Invoke-Expression @'
+class ClassWithStaticAbstractProtectedMethodInterface : IInterfaceWithStaticAbstractProtectedMethod {
+    static [int] ProtectedMeth() { return 1 }
+    static [int] ProtectedInternalMeth([string]$Value) { return [int]$Value }
+}
+[ClassWithStaticAbstractProtectedMethodInterface]
+'@
+
+            $v = $C1::ProtectedMeth()
+            $v | Should -Be 1
+            $v | Should -BeOfType ([int])
+
+            $v = $C1::ProtectedInternalMeth("2")
+            $v | Should -Be 2
+            $v | Should -BeOfType ([int])
+    }
+
+    It 'fails to implement .NET interface static internal methods' {
+        Add-Type -TypeDefinition @'
+public interface IInterfaceWithStaticAbstractInternalMethod
+{
+    internal static abstract int Test();
+}
+'@
+
+        {
+            Invoke-Expression @'
+class ClassWithStaticAbstractInternalMethodInterface : IInterfaceWithStaticAbstractInternalMethod {
+    static [int] Test() { return 1 }
+}
+'@
+        } | Should -Throw -ExceptionType ([System.Management.Automation.ParseException])
+    }
+
     It 'allows use of defined later type as a property type' {
         class A { static [B]$b }
         class B : A {}
