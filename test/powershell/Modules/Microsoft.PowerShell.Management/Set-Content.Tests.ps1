@@ -120,7 +120,7 @@ Describe "Set-Content cmdlet tests" -Tags "CI" {
             { $content | Set-Content -Path $testPath -Delimiter "`n" -AsByteStream -ErrorAction Stop } | Should -Throw -ErrorId 'GetContentWriterArgumentError'
         }
 
-        It "Should throw an exception if -NoTrailingDelimiter and is used without -Delimiter parameter" {
+        It "Should throw an exception if -NoTrailingDelimiter is used without -Delimiter parameter" {
             { $content | Set-Content -Path $testPath -NoTrailingDelimiter -ErrorAction Stop } | Should -Throw -ErrorId 'GetContentWriterArgumentError'
         }
 
