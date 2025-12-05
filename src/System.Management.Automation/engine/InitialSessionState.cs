@@ -1599,6 +1599,10 @@ namespace System.Management.Automation.Runspaces
             ss.Commands.Add(BuiltInAliases);
 
             ss.ImportCorePSSnapIn();
+            
+            // Register experimental feature cmdlets conditionally
+            ss.RegisterExperimentalFeatureCmdlets();
+            
             ss.LanguageMode = PSLanguageMode.FullLanguage;
             ss.AuthorizationManager = new Microsoft.PowerShell.PSAuthorizationManager(Utils.DefaultPowerShellShellID);
 
@@ -3799,6 +3803,26 @@ namespace System.Management.Automation.Runspaces
             return coreSnapin;
         }
 
+        /// <summary>
+        /// Register cmdlets that are only available when their associated experimental features are enabled.
+        /// </summary>
+        private void RegisterExperimentalFeatureCmdlets()
+        {
+            string helpFile = typeof(GetPSContentPathCommand).Assembly.Location + "-help.xml";
+
+            // Register PSContentPath cmdlets if the experimental feature is enabled
+            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSContentPath))
+            {
+                var getPSContentPathEntry = new SessionStateCmdletEntry("Get-PSContentPath", typeof(GetPSContentPathCommand), helpFile);
+                getPSContentPathEntry.Visibility = this.DefaultCommandVisibility;
+                this.Commands.Add(getPSContentPathEntry);
+
+                var setPSContentPathEntry = new SessionStateCmdletEntry("Set-PSContentPath", typeof(SetPSContentPathCommand), helpFile);
+                setPSContentPathEntry.Visibility = this.DefaultCommandVisibility;
+                this.Commands.Add(setPSContentPathEntry);
+            }
+        }
+
         internal PSSnapInInfo ImportPSSnapIn(PSSnapInInfo psSnapInInfo, out PSSnapInException warning)
         {
             ArgumentNullException.ThrowIfNull(psSnapInInfo);
@@ -5249,10 +5273,24 @@ end {
                     }
                 }
 
-                Diagnostics.Assert(cmdletsCheck.Count == cmdlets.Count, "new Cmdlet added to System.Management.Automation.dll - update InitializeCoreCmdletsAndProviders");
+                // Exclude dynamically registered cmdlets (registered based on experimental features)
+                var dynamicCmdlets = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    "Get-PSContentPath",
+                    "Set-PSContentPath"
+                };
+                
+                var expectedCmdletCount = cmdletsCheck.Count - cmdletsCheck.Keys.Count(key => dynamicCmdlets.Contains(key));
+                Diagnostics.Assert(expectedCmdletCount == cmdlets.Count, "new Cmdlet added to System.Management.Automation.dll - update InitializeCoreCmdletsAndProviders");
 
                 foreach (var pair in cmdletsCheck)
                 {
+                    // Skip dynamic cmdlets - they are registered conditionally based on experimental features
+                    if (dynamicCmdlets.Contains(pair.Key))
+                    {
+                        continue;
+                    }
+
                     SessionStateCmdletEntry other;
                     if (cmdlets.TryGetValue(pair.Key, out other))
                     {
