@@ -58,7 +58,6 @@ jobs:
   - template: /.pipelines/templates/cloneToOfficialPath.yml@self
     parameters:
       nativePathRoot: '$(Agent.TempDirectory)'
-      ob_restore_phase: false
 
   - template: /.pipelines/templates/rebuild-branch-check.yml@self
 
