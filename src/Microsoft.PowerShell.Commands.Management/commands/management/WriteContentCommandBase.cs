@@ -66,8 +66,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private bool _contentWritersOpen;
 
-        private readonly List<object> _contentBuffer = new();
-
         #endregion private Data
 
         #region Command code
@@ -89,32 +87,15 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Processes content into buffer.
+        /// Appends the content to the specified item.
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (Value != null)
-            {
-                foreach (object content in Value)
-                {
-                    if (content is object[] contentArray)
-                    {
-                        _contentBuffer.AddRange(contentArray);
-                    }
-                    else
-                    {
-                        _contentBuffer.Add(content);
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Writes the buffered contents at the end.
-        /// </summary>
-        protected override void EndProcessing()
-        {
             CmdletProviderContext currentContext = GetCurrentContext();
+
+            // Initialize the content
+
+            _content ??= Array.Empty<object>();
 
             if (_pipingPaths)
             {
@@ -154,7 +135,7 @@ namespace Microsoft.PowerShell.Commands
                         IList result = null;
                         try
                         {
-                            result = holder.Writer.Write(_contentBuffer);
+                            result = holder.Writer.Write(_content);
                         }
                         catch (Exception e) // Catch-all OK. 3rd party callout
                         {
@@ -198,10 +179,15 @@ namespace Microsoft.PowerShell.Commands
                     _contentWritersOpen = false;
                     contentStreams = new List<ContentHolder>();
                 }
-
-                // Dispose of content writers
-                Dispose(true);
             }
+        }
+
+        /// <summary>
+        /// Closes all the content writers.
+        /// </summary>
+        protected override void EndProcessing()
+        {
+            Dispose(true);
         }
 
         #endregion Command code
