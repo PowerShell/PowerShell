@@ -401,7 +401,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Try to match the expression against the array of wildcard patterns.
-        /// The first match shortcircuits the search.
+        /// The first match short-circuits the search.
         /// </summary>
         /// <param name="expression">PSPropertyExpression to test against.</param>
         /// <returns>True if there is a match, else false.</returns>
