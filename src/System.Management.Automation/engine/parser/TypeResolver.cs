@@ -744,6 +744,7 @@ namespace System.Management.Automation
                     { typeof(float),                                       new[] { "float", "single" } },
                     { typeof(Guid),                                        new[] { "guid" } },
                     { typeof(Hashtable),                                   new[] { "hashtable" } },
+                    { typeof(HiddenAttribute),                             new[] { "Hidden" } },
                     { typeof(int),                                         new[] { "int", "int32" } },
                     { typeof(Int16),                                       new[] { "short", "int16" } },
                     { typeof(long),                                        new[] { "long", "int64" } },
