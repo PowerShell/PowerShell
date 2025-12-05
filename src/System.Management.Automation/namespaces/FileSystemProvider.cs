@@ -7626,7 +7626,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// True to remove trailing delimiter from end of string, False to leave as is.
+        /// True to remove trailing delimiter from end of string, false to leave as is.
         /// </summary>
         [Parameter]
         public SwitchParameter NoTrailingDelimiter
