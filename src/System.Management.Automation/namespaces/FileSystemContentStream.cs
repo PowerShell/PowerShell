@@ -77,7 +77,7 @@ namespace Microsoft.PowerShell.Commands
         // False to add a newline to the end of the output string, true if not.
         private readonly bool _suppressNewline = false;
 
-        // True to remove trailing delimiter from end of string, False to leave as is.
+        // True to remove trailing delimiter from end of string, false to leave as is.
         private readonly bool _suppressLastDelimiter = false;
 
         private bool _isFirstLine = true;
