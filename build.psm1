@@ -2065,10 +2065,10 @@ function Start-PSxUnit {
         }
 
         $extraParams += @(
-            "--report-xunit --report-xunit-filename $xUnitTestResultsFile"
+            "--report-xunit --report-xunit-filename $xUnitTestResultsFile --results-directory ."
             )
 
-        dotnet test @extraParams --configuration $Options.configuration
+        dotnet test @extraParams --configuration $Options.configuration --no-progress
 
         Publish-TestResults -Path $xUnitTestResultsFile -Type 'XUnit' -Title 'Xunit Sequential'
     }
