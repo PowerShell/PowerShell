@@ -1187,16 +1187,17 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else if (_usingDelimiter)
                 {
-                    bool prependDelimiter = _suppressLastDelimiter && !_isFirstLine;
-
-                    if (prependDelimiter)
+                    // Prepend delimiter for all lines except first one if we suppress last delimiter
+                    if (_suppressLastDelimiter && !_isFirstLine)
                     {
                         _writer.Write(_delimiter);
-                        _writer.Write(contentToWrite);
                     }
-                    else
+
+                    _writer.Write(contentToWrite);
+
+                    // Always append delimter if we don't suppress last delimiter
+                    if (!_suppressLastDelimiter)
                     {
-                        _writer.Write(contentToWrite);
                         _writer.Write(_delimiter);
                     }
                 }
