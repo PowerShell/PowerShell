@@ -463,7 +463,7 @@ namespace System.Management.Automation
                 if (value != null)
                 {
                     var typeObject = value.GetType();
-                    
+
                     if (typeObject.FullName.Equals("System.Management.Automation.PSObject", StringComparison.Ordinal))
                     {
                         var psobjectPropertyList = new List<PSMemberNameAndType>();
@@ -484,7 +484,7 @@ namespace System.Management.Automation
                     {
                         type = new PSTypeName(typeObject);
                     }
-                    
+
                     return true;
                 }
             }
@@ -2727,7 +2727,7 @@ namespace System.Management.Automation
 
                         continue;
                     }
-                    
+
                     if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IList<>))
                     {
                         var valueType = type.GetGenericArguments()[0];
@@ -2884,12 +2884,12 @@ namespace System.Management.Automation
             /// If set, we only look for local/private assignments in the scope of the variable we are inferring.
             /// </summary>
             internal bool LocalScopeOnly;
-            
+
             /// <summary>
             /// The current scope is local to the variable that is being inferred.
             /// </summary>
             internal bool ScopeIsLocal;
-            
+
             /// <summary>
             /// The variable that we are trying to determine the type of.
             /// </summary>
@@ -2899,23 +2899,23 @@ namespace System.Management.Automation
             /// The last type constraint applied to the variable. This takes priority when determining the type of the variable.
             /// </summary>
             internal ITypeName LastConstraint;
-            
+
             /// <summary>
             /// The last ast that assigned a value to the variable. This determines the value of the variable unless a type constraint has been applied.
             /// </summary>
             internal Ast LastAssignment;
-            
+
             /// <summary>
             /// The inferred type from the most recent assignment. This is only used for stream redirections to variables, or the special OutVariable common parameters.
             /// </summary>
             internal PSTypeName LastAssignmentType;
-            
+
             /// <summary>
             /// Whether or not the types from the last assignment should be enumerated.
             /// For assignments made by the PipelineVariable parameter or the foreach statement.
             /// </summary>
             internal bool EnumerateAssignment;
-            
+
             /// <summary>
             /// Whether or not the last assignment was via command redirection.
             /// </summary>
