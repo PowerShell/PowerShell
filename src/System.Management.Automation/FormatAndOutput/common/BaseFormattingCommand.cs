@@ -9,6 +9,7 @@ using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
+using Microsoft.PowerShell.Commands;
 
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
@@ -729,6 +730,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         [Parameter(Position = 0)]
         public object[] Property { get; set; }
 
+        /// <summary>
+        /// Optional parameter for excluding properties from formatting.
+        /// </summary>
+        [Parameter]
+        public string[] ExcludeProperty { get; set; }
+
         #endregion
 
         internal override FormattingCommandLineParameters GetCommandLineParameters()
@@ -751,6 +758,18 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal void GetCommandLineProperties(FormattingCommandLineParameters parameters, bool isTable)
         {
+            // Check View conflicts first (before any auto-expansion)
+            if (!string.IsNullOrEmpty(this.View))
+            {
+                // View cannot be used with Property or ExcludeProperty
+                if ((Property is not null && Property.Length != 0) || (ExcludeProperty is not null && ExcludeProperty.Length != 0))
+                {
+                    ReportCannotSpecifyViewAndProperty();
+                }
+
+                parameters.viewName = this.View;
+            }
+
             if (Property != null)
             {
                 CommandParameterDefinition def;
@@ -765,15 +784,21 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 parameters.mshParameterList = processor.ProcessParameters(Property, invocationContext);
             }
 
-            if (!string.IsNullOrEmpty(this.View))
+            if (ExcludeProperty is not null)
             {
-                // we have a view command line switch
-                if (parameters.mshParameterList.Count != 0)
-                {
-                    ReportCannotSpecifyViewAndProperty();
-                }
+                parameters.excludePropertyFilter = new PSPropertyExpressionFilter(ExcludeProperty);
 
-                parameters.viewName = this.View;
+                // ExcludeProperty implies -Property * for better UX
+                if (Property is null || Property.Length == 0)
+                {
+                    CommandParameterDefinition def = isTable
+                        ? new FormatTableParameterDefinition()
+                        : new FormatListParameterDefinition();
+                    ParameterProcessor processor = new ParameterProcessor(def);
+                    TerminatingErrorContext invocationContext = new TerminatingErrorContext(this);
+
+                    parameters.mshParameterList = processor.ProcessParameters(new object[] { "*" }, invocationContext);
+                }
             }
         }
     }

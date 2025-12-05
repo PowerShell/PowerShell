@@ -13,7 +13,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                 PSObject so, TypeInfoDataBase db, FormattingCommandLineParameters parameters)
         {
             base.Initialize(errorContext, expressionFactory, so, db, parameters);
-            this.inputParameters = parameters;
         }
 
         internal override FormatStartData GenerateStartData(PSObject so)
@@ -159,39 +158,37 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private void SetUpActiveProperty(PSObject so)
         {
-            List<MshParameter> rawMshParameterList = null;
-
-            if (this.inputParameters != null)
-                rawMshParameterList = this.inputParameters.mshParameterList;
+            List<MshParameter> rawMshParameterList = this.parameters?.mshParameterList;
 
             // check if we received properties from the command line
-            if (rawMshParameterList != null && rawMshParameterList.Count > 0)
+            if (rawMshParameterList is not null && rawMshParameterList.Count > 0)
             {
                 this.activeAssociationList = AssociationManager.ExpandParameters(rawMshParameterList, so);
-                return;
             }
-
-            // we did not get any properties:
-            // try to get the display property of the object
-            PSPropertyExpression displayNameExpression = PSObjectHelper.GetDisplayNameExpression(so, this.expressionFactory);
-            if (displayNameExpression != null)
+            else
             {
-                this.activeAssociationList = new List<MshResolvedExpressionParameterAssociation>();
-                this.activeAssociationList.Add(new MshResolvedExpressionParameterAssociation(null, displayNameExpression));
-                return;
+                // we did not get any properties:
+                // try to get the display property of the object
+                PSPropertyExpression displayNameExpression = PSObjectHelper.GetDisplayNameExpression(so, this.expressionFactory);
+                if (displayNameExpression is not null)
+                {
+                    this.activeAssociationList = new List<MshResolvedExpressionParameterAssociation>();
+                    this.activeAssociationList.Add(new MshResolvedExpressionParameterAssociation(null, displayNameExpression));
+                }
+                else
+                {
+                    // try to get the default property set (we will use the first property)
+                    this.activeAssociationList = AssociationManager.ExpandDefaultPropertySet(so, this.expressionFactory);
+                    if (this.activeAssociationList.Count == 0)
+                    {
+                        // we failed to get anything from the default property set
+                        // just get all the properties
+                        this.activeAssociationList = AssociationManager.ExpandAll(so);
+                    }
+                }
             }
 
-            // try to get the default property set (we will use the first property)
-            this.activeAssociationList = AssociationManager.ExpandDefaultPropertySet(so, this.expressionFactory);
-            if (this.activeAssociationList.Count > 0)
-            {
-                // we got a valid set of properties from the default property set
-                return;
-            }
-
-            // we failed to get anything from the default property set
-            // just get all the properties
-            this.activeAssociationList = AssociationManager.ExpandAll(so);
+            ApplyExcludePropertyFilter();
         }
     }
 }
