@@ -358,6 +358,6 @@
     <value>The Delimiter and NoNewLine parameters cannot be used together.</value>
   </data>
   <data name="CannotUseNoTrailingDelimiterWithoutDelimiterParameter" xml:space="preserve">
-    <value>Cannot use NoTrailingDelimiter without Delimiter parameter.</value>
+    <value>The NoTrailingDelimiter parameter requires the Delimiter parameter to be specified.</value>
   </data>
 </root>
