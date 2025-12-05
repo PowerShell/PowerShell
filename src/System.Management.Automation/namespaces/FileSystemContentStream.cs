@@ -80,6 +80,8 @@ namespace Microsoft.PowerShell.Commands
         // True to remove trailing delimiter from end of string, False to leave as is.
         private readonly bool _suppressLastDelimiter = false;
 
+        private bool _isFirstLine = true;
+
         /// <summary>
         /// Constructor for the content stream.
         /// </summary>
@@ -1136,28 +1138,25 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         public IList Write(IList content)
         {
-            if (content == null || content.Count == 0) 
-            { 
-                return content;
-            }
-
-            // Write all lines except last and insert delimiters if specified
-            for (int i = 0; i < content.Count - 1; i++)
+            foreach (object line in content)
             {
-                WriteObject(
-                    content[i],
-                    writeDelimiter: _usingDelimiter);
+                if (line is object[] contentArray)
+                {
+                    foreach (object obj in contentArray)
+                    {
+                        WriteObject(obj);
+                    }
+                }
+                else
+                {
+                    WriteObject(line);
+                }
             }
-
-            // Write last line and remove last delimiter if required to be suppressed
-            WriteObject(
-                content[content.Count - 1],
-                writeDelimiter: !(_usingDelimiter && _suppressLastDelimiter));
 
             return content;
         }
 
-        private void WriteObject(object content, bool writeDelimiter)
+        private void WriteObject(object content)
         {
             if (content == null)
             {
@@ -1187,9 +1186,16 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else if (_usingDelimiter)
                 {
+                    // Prepend delimiter for all lines except first one if we suppress last delimiter
+                    if (_suppressLastDelimiter && !_isFirstLine)
+                    {
+                        _writer.Write(_delimiter);
+                    }
+
                     _writer.Write(contentToWrite);
 
-                    if (writeDelimiter)
+                    // Always append delimter if we don't suppress last delimiter
+                    if (!_suppressLastDelimiter)
                     {
                         _writer.Write(_delimiter);
                     }
@@ -1198,6 +1204,8 @@ namespace Microsoft.PowerShell.Commands
                 {
                     _writer.WriteLine(contentToWrite);
                 }
+
+                _isFirstLine = false;
             }
         }
 
