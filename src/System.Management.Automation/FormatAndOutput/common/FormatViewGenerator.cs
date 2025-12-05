@@ -360,8 +360,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// Subclasses override this to provide cmdlet-specific property expansion logic.
         /// </summary>
         /// <param name="so">The object to build the association list for.</param>
+        /// <param name="propertyList">The list of properties specified by the user, or null if not specified.</param>
         /// <returns>The raw association list, or null if not applicable.</returns>
-        protected virtual List<MshResolvedExpressionParameterAssociation> BuildRawAssociationList(PSObject so)
+        protected virtual List<MshResolvedExpressionParameterAssociation> BuildRawAssociationList(PSObject so, List<MshParameter> propertyList)
         {
             return null;
         }
@@ -376,8 +377,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             if (_activeAssociationList is null)
             {
-                var rawList = BuildRawAssociationList(so);
-                _activeAssociationList = ApplyExcludeFilter(rawList);
+                var propertyList = parameters?.mshParameterList;
+                var excludeFilter = parameters?.excludePropertyFilter;
+                var rawList = BuildRawAssociationList(so, propertyList);
+                _activeAssociationList = ApplyExcludeFilter(rawList, excludeFilter);
             }
 
             return _activeAssociationList;
@@ -409,17 +412,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return associationList
                 .Where(item => !excludeFilter.IsMatch(item.ResolvedExpression))
                 .ToList();
-        }
-
-        /// <summary>
-        /// Applies the ExcludeProperty filter to the given association list.
-        /// </summary>
-        /// <param name="associationList">The list to filter.</param>
-        /// <returns>The filtered list, or the original list if no filter is specified.</returns>
-        private List<MshResolvedExpressionParameterAssociation> ApplyExcludeFilter(
-            List<MshResolvedExpressionParameterAssociation> associationList)
-        {
-            return ApplyExcludeFilter(associationList, parameters?.excludePropertyFilter);
         }
 
         protected string GetExpressionDisplayValue(PSObject so, int enumerationLimit, PSPropertyExpression ex,

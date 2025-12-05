@@ -35,10 +35,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Builds the raw association list for list formatting.
         /// </summary>
-        protected override List<MshResolvedExpressionParameterAssociation> BuildRawAssociationList(PSObject so)
+        protected override List<MshResolvedExpressionParameterAssociation> BuildRawAssociationList(PSObject so, List<MshParameter> propertyList)
         {
-            List<MshParameter> mshParameterList = this.parameters?.mshParameterList;
-            return AssociationManager.SetupActiveProperties(mshParameterList, so, this.expressionFactory);
+            return AssociationManager.SetupActiveProperties(propertyList, so, this.expressionFactory);
         }
 
         /// <summary>

@@ -18,14 +18,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Builds the raw association list for wide formatting.
         /// </summary>
-        protected override List<MshResolvedExpressionParameterAssociation> BuildRawAssociationList(PSObject so)
+        protected override List<MshResolvedExpressionParameterAssociation> BuildRawAssociationList(PSObject so, List<MshParameter> propertyList)
         {
-            List<MshParameter> rawMshParameterList = this.parameters?.mshParameterList;
-
             // check if we received properties from the command line
-            if (rawMshParameterList is not null && rawMshParameterList.Count > 0)
+            if (propertyList is not null && propertyList.Count > 0)
             {
-                return AssociationManager.ExpandParameters(rawMshParameterList, so);
+                return AssociationManager.ExpandParameters(propertyList, so);
             }
 
             // we did not get any properties:
