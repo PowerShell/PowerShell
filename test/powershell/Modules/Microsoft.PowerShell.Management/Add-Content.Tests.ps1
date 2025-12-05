@@ -126,7 +126,6 @@ Describe "Add-Content cmdlet tests" -Tags "CI" {
             Get-Content -Path $testPath -Raw | Should -BeExactly $stringData
         }
 
-
         It "Should append to file with commas as delimiter and suppress final delimiter" {
             $stringData = "a,b,c"
 
