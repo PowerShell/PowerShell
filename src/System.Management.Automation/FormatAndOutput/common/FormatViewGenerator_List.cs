@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 _listBody = (ListControlBody)this.dataBaseInfo.view.mainControl;
             }
 
-            this.inputParameters = parameters;
+            this.parameters = parameters;
             SetUpActiveProperties(so);
         }
 
@@ -227,10 +227,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             List<MshParameter> mshParameterList = null;
 
-            if (this.inputParameters != null)
-                mshParameterList = this.inputParameters.mshParameterList;
+            if (this.parameters != null)
+                mshParameterList = this.parameters.mshParameterList;
 
             this.activeAssociationList = AssociationManager.SetupActiveProperties(mshParameterList, so, this.expressionFactory);
+
+            ApplyExcludePropertyFilter();
         }
     }
 }
