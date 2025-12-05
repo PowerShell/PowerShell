@@ -2065,7 +2065,7 @@ function Start-PSxUnit {
         }
 
         $extraParams += @(
-            "--report-xunit --report-xunit-filename $xUnitTestResultsFile --results-directory ."
+            "--report-xunit", "--report-xunit-filename", $xUnitTestResultsFile, "--results-directory", "."
             )
 
         dotnet test @extraParams --configuration $Options.configuration --no-progress
