@@ -229,19 +229,6 @@ jobs:
   #     contents: read
   #     security-events: write
   #   with:
-  ready_to_merge:
-    name: Linux ready to merge
-    needs:
-      - xunit_tests
-      - linux_test_elevated_ci
-      - linux_test_elevated_others
-      - linux_test_unelevated_ci
-      - linux_test_unelevated_others
-      - linux_packaging
-      - merge_conflict_check
-      - infrastructure_tests
-      # - analyze
-
   linux_packaging:
     name: Linux Packaging
     needs:
@@ -256,3 +243,16 @@ jobs:
           fetch-depth: 0
       - name: Linux Packaging
         uses: "./.github/actions/test/linux-packaging"
+
+  ready_to_merge:
+    name: Linux ready to merge
+    needs:
+      - xunit_tests
+      - linux_test_elevated_ci
+      - linux_test_elevated_others
+      - linux_test_unelevated_ci
+      - linux_test_unelevated_others
+      - linux_packaging
+      - merge_conflict_check
+      - infrastructure_tests
+      # - analyze
