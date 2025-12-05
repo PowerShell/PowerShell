@@ -268,6 +268,66 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Name | Should -Be 'System.Management.ManagementObject#root\cimv2\Win32_Process'
     }
 
+    It "Infers type from parameter in classic function definition" {
+        $res = [AstTypeInference]::InferTypeOf(({
+            function MyFunction ([int]$param1)
+            {
+                $param1
+            }
+        }.Ast.FindAll({param($Ast) $Ast -is [Language.VariableExpressionAst]}, $true) | Select-Object -Last 1 ))
+        $res.Name | Should -Be 'System.Int32'
+    }
+
+    It "Infers type from binary expression with a bool operator as bool" {
+        $res = [AstTypeInference]::InferTypeOf( {
+                (1..10) -contains 5
+            }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.Boolean'
+    }
+
+    It "Infers type from binary expression with a string operator as string" {
+        $res = [AstTypeInference]::InferTypeOf( {
+                (1..10) -join ','
+            }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.String'
+    }
+
+    It "Infers type from binary expression with a split operator as string array" {
+        $res = [AstTypeInference]::InferTypeOf( {
+                "Test:Value" -split ':'
+            }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.String[]'
+    }
+
+    It "Infers type from binary expression with a comparison operator as bool + the left hand side type" {
+        $res = [AstTypeInference]::InferTypeOf( {
+                ("Hello", "World") -eq "Hello"
+            }.Ast)
+        $res.Count | Should -Be 2
+        $res.Name[0] | Should -Be 'System.Boolean'
+        $res.Name[1] | Should -Be 'System.String[]'
+    }
+
+    It "Infers type from binary expression with a null coalescing operator as left and right hand side types" {
+        $res = [AstTypeInference]::InferTypeOf( {
+                "NotNull" ?? 10
+            }.Ast)
+        $res.Count | Should -Be 2
+        $res.Name[0] | Should -Be 'System.String'
+        $res.Name[1] | Should -Be 'System.Int32'
+    }
+
+    It "Infers type from binary expression with an overridden operator" {
+        $res = [AstTypeInference]::InferTypeOf( {
+                (Get-Date) - (Get-Date)
+            }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.TimeSpan'
+    }
+
     It "Infers type from DATA statement" {
         $res = [AstTypeInference]::InferTypeOf( {
                 DATA {
@@ -361,10 +421,8 @@ Describe "Type inference Tests" -tags "CI" {
 
     It "Infers type from foreach-object of integer" {
         $res = [AstTypeInference]::InferTypeOf( { [int[]] $i = 1..20; $i | ForEach-Object {$_ * 10} }.Ast)
-        $res.Count | Should -Be 2
-        foreach ($r in $res) {
-            $r.Name -In 'System.Int32', 'System.Int32[]' | Should -BeTrue
-        }
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.Int32'
     }
 
     It "Infers type from generic new" {
@@ -386,9 +444,9 @@ Describe "Type inference Tests" -tags "CI" {
 
     It "Infers type from foreach-object with begin/end" {
         $res = [AstTypeInference]::InferTypeOf( { [int[]] $i = 1..20; $i | ForEach-Object -Begin {"Hi"} {$_ * 10} -End {[int]} }.Ast)
-        $res.Count | Should -Be 4
+        $res.Count | Should -Be 3
         foreach ($r in $res) {
-            $r.Name -In 'System.Int32', 'System.Int32[]', 'System.String', 'System.Type' | Should -BeTrue
+            $r.Name -In 'System.Int32', 'System.String', 'System.Type' | Should -BeTrue
         }
     }
 
@@ -442,6 +500,14 @@ Describe "Type inference Tests" -tags "CI" {
             Remove-TypeData -TypeName InferScriptPropLevel1
             Remove-TypeData -TypeName InferScriptPropLevel2
         }
+    }
+
+    It 'Infers typeof pipeline chain' {
+        $ast = {New-TimeSpan && New-Guid}.Ast
+        $typeNames = [AstTypeInference]::InferTypeof($ast, [TypeInferenceRuntimePermissions]::AllowSafeEval)
+        $typeNames.Count | Should -Be 2
+        $typeNames[0] | Should -Be 'System.TimeSpan'
+        $typeNames[1] | Should -Be 'System.Guid'
     }
 
     It "Infers typeof pscustomobject" {
@@ -594,8 +660,10 @@ Describe "Type inference Tests" -tags "CI" {
     }
 
     It "Infers type from variable with AllowSafeEval" {
-        function Hide-GetProcess { Get-Process }
-        $p = Hide-GetProcess
+        # Invoke-Expression is used to "hide" Get-Process from the type inference.
+        # If the typeinference code is updated to handle Invoke-Expression, this test will need to find some other way to set $p
+        # so that the type inference can't figure it out without evaluating the variable value
+        $p = Invoke-Expression -Command 'Get-Process'
         $res = [AstTypeInference]::InferTypeOf( { $p }.Ast, [TypeInferenceRuntimePermissions]::AllowSafeEval)
         $res.Name | Should -Be 'System.Diagnostics.Process'
     }
@@ -616,16 +684,6 @@ Describe "Type inference Tests" -tags "CI" {
 
         $res = [AstTypeInference]::InferTypeOf( $ast.EndBlock.Statements[0])
         $res.Name | Should -Be 'System.Int32'
-    }
-
-    It 'Infers type from attributed expession' {
-        $res = [AstTypeInference]::InferTypeOf( {
-                [ValidateRange(1, 2)]
-                [int]$i = 1
-            }.Ast)
-
-        $res.Count | Should -Be 1
-        $res.Name | Should -Be System.Int32
     }
 
     It 'Infers type from if statement' {
@@ -1139,6 +1197,18 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Name | Should -Be System.String
     }
 
+    It 'Ignores assignment when a variable is declared and used within the same commandAst' {
+        $variableAst = { Get-Random 2>variable:RandomError1 -InputObject ($RandomError1) }.Ast.FindAll({ param($a) $a -is [Language.VariableExpressionAst] }, $true) | select -Last 1
+        $res = [AstTypeInference]::InferTypeOf($variableAst)
+        $res.Count | Should -Be 0
+    }
+
+    It 'Ignores the last assignment when a variable is reused' {
+        $variableAst = { $x = New-Guid; $x = $x.Where{$_} }.Ast.FindAll({ param($a) $a -is [Language.VariableExpressionAst] }, $true) | select -Last 1
+        $res = [AstTypeInference]::InferTypeOf($variableAst)
+        $res.Name | Should -Be System.Guid
+    }
+
     $catchClauseTypes = @(
         @{ Type = 'System.ArgumentException' }
         @{ Type = 'System.ArgumentNullException' }
@@ -1399,7 +1469,8 @@ Describe "Type inference Tests" -tags "CI" {
 
     It 'Infers closest variable type' {
         $res = [AstTypeInference]::InferTypeOf( { [string]$TestVar = "";[hashtable]$TestVar = @{};$TestVar }.Ast)
-        $res.Name | Select-Object -Last 1 | Should -Be "System.Collections.Hashtable"
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be "System.Collections.Hashtable"
     }
 
     It 'Infers closest variable type and ignores unrelated param blocks' {
@@ -1420,6 +1491,26 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Count | Should -Be 0
     }
 
+    It 'Infers right side of assignment expression' {
+        $res = [AstTypeInference]::InferTypeOf( { $Test1 = "Hello" }.Ast.Find({param($ast) $ast -is [Language.AssignmentStatementAst]}, $true))
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be "System.String"
+    }
+
+    It 'Infers left side of assignment expression when it is a ConvertExpression' {
+        $res = [AstTypeInference]::InferTypeOf( { [string]$Test1 = 42 }.Ast.Find({param($ast) $ast -is [Language.AssignmentStatementAst]}, $true))
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be "System.String"
+    }
+
+    It 'Infers left side of assignment expression when there is a ConvertExpression among other attributes' {
+        $res = [AstTypeInference]::InferTypeOf( {
+            [ValidateLength()] [string] [ValidatePattern()]$Test1 = 42
+        }.Ast.Find({param($ast) $ast -is [Language.AssignmentStatementAst]}, $true))
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be "System.String"
+    }
+
     It 'Infers type of all scope variable after variable assignment' {
         $res = [AstTypeInference]::InferTypeOf( { $true = "Hello";$true }.Ast)
         $res.Count | Should -Be 1
@@ -1430,6 +1521,30 @@ Describe "Type inference Tests" -tags "CI" {
         $res = [AstTypeInference]::InferTypeOf( { $Host = "Hello";$Host }.Ast, [TypeInferenceRuntimePermissions]::AllowSafeEval)
         $res.Count | Should -Be 1
         $res.Name | Should -Be 'System.Management.Automation.Internal.Host.InternalHost'
+    }
+
+    It 'Infers type of variable assigned inside do while loop' {
+        $res = [AstTypeInference]::InferTypeOf(({
+            do
+            {
+                $Test = 1
+                $Test
+            }
+            while (1)
+        }.Ast.FindAll({param($Ast) $Ast -is [Language.VariableExpressionAst]}, $true) | Select-Object -Last 1 ))
+        $res.Name | Should -Be 'System.Int32'
+    }
+
+    It 'Infers type of variable assigned inside do until loop' {
+        $res = [AstTypeInference]::InferTypeOf(({
+            do
+            {
+                $Test = 1
+                $Test
+            }
+            until ($null = gci)
+        }.Ast.FindAll({param($Ast) $Ast -is [Language.VariableExpressionAst] -and $Ast.VariablePath.UserPath -eq 'Test'}, $true) | Select-Object -Last 1 ))
+        $res.Name | Should -Be 'System.Int32'
     }
 
     It 'Infers type of external applications' {
@@ -1443,6 +1558,290 @@ Describe "Type inference Tests" -tags "CI" {
             $true
         )
         $null = [AstTypeInference]::InferTypeOf($FoundAst)
+    }
+
+    It 'Ignores type constraint defined outside of scope' {
+        $res = [AstTypeInference]::InferTypeOf(({
+            function Outer
+            {
+                [string] $Test = "Hello"
+                function Inner
+                {
+                    $Test = 2
+                    $Test
+                }
+            }
+        }.Ast.FindAll({param($Ast) $Ast -is [Language.VariableExpressionAst]}, $true) | Select-Object -Last 1 ))
+        $res.Name | Should -Be 'System.Int32'
+    }
+
+    It 'Considers the type constraint defined outside of scope when dot sourcing' {
+        $res = [AstTypeInference]::InferTypeOf(({
+            [string] $Test = "Hello"
+            . {$Test = 2; $Test}
+        }.Ast.FindAll({param($Ast) $Ast -is [Language.VariableExpressionAst]}, $true) | Select-Object -Last 1 ))
+        $res.Name | Should -Be 'System.String'
+    }
+
+    It 'Infers type of ref assigned variable' {
+        $res = [AstTypeInference]::InferTypeOf(({
+            $MyRefVar = $null
+            $null = [System.Management.Automation.Language.Parser]::ParseInput("", [ref] $MyRefVar, [ref] $null)
+            $MyRefVar
+        }.Ast.FindAll({param($Ast) $Ast -is [Language.VariableExpressionAst]}, $true) | Select-Object -Last 1 ))
+        $res.Name | Should -Be 'System.Management.Automation.Language.Token[]'
+    }
+
+    It 'Infers type of variable assigned with New/Set-Variable' {
+        $res = [AstTypeInference]::InferTypeOf( {
+            New-Variable -Name Var1 -Value $true | Out-Null
+            New-Variable -Name Var2 -Value "Hello" | Out-Null
+            $Var1
+            $Var2
+        }.Ast)
+        $res[0].Name | Should -Be 'System.Boolean'
+        $res[1].Name | Should -Be 'System.String'
+    }
+
+    It 'Infers type of variable assigned with <ParameterName> common parameter' -TestCases @(
+        @{ParameterName = "WarningVariable";     ExpectedType = [List[WarningRecord]]}
+        @{ParameterName = "wv";                  ExpectedType = [List[WarningRecord]]}
+        @{ParameterName = "ErrorVariable";       ExpectedType = [List[ErrorRecord]]}
+        @{ParameterName = "ev";                  ExpectedType = [List[ErrorRecord]]}
+        @{ParameterName = "InformationVariable"; ExpectedType = [List[InformationalRecord]]}
+        @{ParameterName = "iv";                  ExpectedType = [List[InformationalRecord]]}
+        @{ParameterName = "OutVariable";         ExpectedType = [guid]}
+        @{ParameterName = "ov";                  ExpectedType = [guid]}
+        @{ParameterName = "PipelineVariable";    ExpectedType = [guid]}
+        @{ParameterName = "pv";                  ExpectedType = [guid]}
+    ) -Test {
+            param($ParameterName, $ExpectedType)
+            $Ast = [scriptblock]::Create("New-Guid -$ParameterName MyOutVar | % {`$MyOutVar}").Ast.FindAll({
+                param($Ast)
+                $Ast -is [Language.VariableExpressionAst]
+            }, $true) | Select-Object -Last 1
+            $res = [AstTypeInference]::InferTypeOf($Ast)
+            $res.Type | Should -Be $ExpectedType
+        }
+
+    It 'Infers type of variable assigned via Data statement' {
+        $res = [AstTypeInference]::InferTypeOf(({
+            Data MyDataVar {"Hello"}
+            $MyDataVar
+        }.Ast.FindAll({param($Ast) $Ast -is [Language.VariableExpressionAst]}, $true) | Select-Object -Last 1 ))
+        $res.Name | Should -Be 'System.String'
+    }
+
+    It 'Infers type of well known variable with global scope' {
+        $res = [AstTypeInference]::InferTypeOf({$global:true}.Ast)
+        $res.Name | Should -Be 'System.Boolean'
+    }
+
+    It 'Infers parameter type from closest parameter' {
+        $res = [AstTypeInference]::InferTypeOf( ({
+            param([string]$Param1)
+            function TestFunction {param([bool]$Param1) $Param1}
+        }.Ast.FindAll({param($Ast) $Ast -is [Language.VariableExpressionAst]}, $true) | Select-Object -Last 1 ))
+        $res.Name | Should -Be 'System.Boolean'
+    }
+
+    It 'Infers variable type from closest foreach statement' {
+        $res = [AstTypeInference]::InferTypeOf( ({
+            foreach ($X in 1..10)
+            {
+                $X
+            }
+            foreach ($X in New-Guid)
+            {
+                $X
+            }
+        }.Ast.FindAll({param($Ast) $Ast -is [Language.VariableExpressionAst]}, $true) | Select-Object -Last 1 ))
+        $res.Name | Should -Be 'System.Guid'
+    }
+
+    It 'Infers global variable type in child scope' {
+        $res = [AstTypeInference]::InferTypeOf( ({
+            $Global:GlobalTest1 = "Hello"
+            function TestFunction {$GlobalTest1}
+        }.Ast.FindAll({param($Ast) $Ast -is [Language.VariableExpressionAst]}, $true) | Select-Object -Last 1 ))
+        $res.Name | Should -Be 'System.String'
+    }
+
+    It 'Does not infer private variable type in child scope' {
+        $res = [AstTypeInference]::InferTypeOf( ({
+            $Private:PrivateTest1 = "Hello"
+            function TestFunction {$PrivateTest1}
+        }.Ast.FindAll({param($Ast) $Ast -is [Language.VariableExpressionAst]}, $true) | Select-Object -Last 1 ))
+        $res.Count | Should -Be 0
+    }
+
+    It 'Infers variable assigned with an attribute' {
+        $res = [AstTypeInference]::InferTypeOf( ({
+            [ValidateNotNull()]$ValidatedVar1 = New-Guid
+            $ValidatedVar1
+        }.Ast.FindAll({param($Ast) $Ast -is [Language.VariableExpressionAst]}, $true) | Select-Object -Last 1 ))
+        $res.Name | Should -Be 'System.Guid'
+    }
+
+    It 'Infers variable assigned with multiple type constraints' {
+        $res = [AstTypeInference]::InferTypeOf( ({
+            [int] [string]$MultiConstraintVar1 = "10"
+            $MultiConstraintVar1
+        }.Ast.FindAll({param($Ast) $Ast -is [Language.VariableExpressionAst]}, $true) | Select-Object -Last 1 ))
+        $res.Name | Should -Be 'System.Int32'
+    }
+
+    It 'Infers variable assigned by redirection' {
+        $res = [AstTypeInference]::InferTypeOf( ({
+            New-Guid *>&1 1>variable:RedirVar1; $RedirVar1
+        }.Ast.FindAll({param($Ast) $Ast -is [Language.VariableExpressionAst]}, $true) | Select-Object -Last 1 ))
+        $ExpectedTypeNames = @(
+            [ErrorRecord].FullName
+            [WarningRecord].FullName
+            [VerboseRecord].FullName
+            [DebugRecord].FullName
+            [InformationRecord].FullName
+            [guid].FullName
+        ) -join ';'
+        $res.Name -join ';' | Should -Be $ExpectedTypeNames
+    }
+
+    It 'Infers variables assigned by redirection from specific streams' {
+        $VarAsts = [List[Language.Ast]]{
+            [void](New-Guid 1>variable:RedirSuccess 2>variable:RedirError 3>variable:RedirWarning 4>variable:RedirVerbose 5>variable:RedirDebug 6>variable:RedirInfo)
+            $RedirSuccess
+            $RedirError
+            $RedirWarning
+            $RedirVerbose
+            $RedirDebug
+            $RedirInfo
+        }.Ast.FindAll({param($Ast) $Ast -is [Language.VariableExpressionAst]}, $true)
+        $ExpectedTypeNames = @(
+            [guid].FullName
+            [ErrorRecord].FullName
+            [WarningRecord].FullName
+            [VerboseRecord].FullName
+            [DebugRecord].FullName
+            [InformationRecord].FullName
+        )
+
+        for ($i = 0; $i -lt $VarAsts.Count; $i++)
+        {
+            $res = [AstTypeInference]::InferTypeOf($VarAsts[$i])
+            $res.Name | Should -Be $ExpectedTypeNames[$i]
+        }
+    }
+
+    It 'Should infer output from anonymous function' {
+        $res = [AstTypeInference]::InferTypeOf( { & {"Hello"} }.Ast)
+        $res.Name | Should -Be 'System.String'
+    }
+
+    It 'Should infer output from function without OutputType attribute' {
+        function MyHello{"Hello"}
+        $res = [AstTypeInference]::InferTypeOf( { MyHello }.Ast)
+        $res.Name | Should -Be 'System.String'
+    }
+
+    It 'Infers type of command with all streams redirected to Success stream' {
+        $res = [AstTypeInference]::InferTypeOf( { Get-PSDrive *>&1 }.Ast)
+        $ExpectedTypeNames = @(
+            [ErrorRecord].FullName
+            [WarningRecord].FullName
+            [VerboseRecord].FullName
+            [DebugRecord].FullName
+            [InformationRecord].FullName
+            [PSDriveInfo].FullName
+        ) -join ';'
+        $res.Name -join ';' | Should -Be $ExpectedTypeNames
+    }
+
+    It 'Infers type of command with success stream redirected' {
+        $res = [AstTypeInference]::InferTypeOf( { Get-PSDrive *>&1 1>$null }.Ast)
+        $res.Count | Should -Be 0
+    }
+
+    It 'Infers type of command with some streams redirected to success' {
+        $res = [AstTypeInference]::InferTypeOf( { Get-PSDrive 3>&1 4>&1 }.Ast)
+        $res.Count | Should -Be 3
+        $ExpectedTypeNames = @(
+            [PSDriveInfo].FullName
+            [VerboseRecord].FullName
+            [WarningRecord].FullName
+        ) -join ';'
+        ($res.Name | Sort-Object) -join ';' | Should -Be $ExpectedTypeNames
+    }
+
+    It 'Infers type of command with other streams redirected to success' {
+        $res = [AstTypeInference]::InferTypeOf( { Get-PSDrive 2>&1 5>&1 6>&1 }.Ast)
+        $res.Count | Should -Be 4
+        $ExpectedTypeNames = @(
+            [DebugRecord].FullName
+            [ErrorRecord].FullName
+            [InformationRecord].FullName
+            [PSDriveInfo].FullName
+        ) -join ';'
+        ($res.Name | Sort-Object) -join ';' | Should -Be $ExpectedTypeNames
+    }
+
+    It 'Should only consider assignments wrapped in parentheses to be a part of the output in a Named block' {
+        $res = [AstTypeInference]::InferTypeOf( { [string]$Assignment1 = "Hello"; ([int]$Assignment2 = 42) }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.Int32'
+    }
+
+    It 'Should only consider assignments wrapped in parentheses to be a part of the output in a Statement block' {
+        $res = [AstTypeInference]::InferTypeOf( { if ($true){ [string]$Assignment1 = "Hello"; ([int]$Assignment2 = 42) }}.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.Int32'
+    }
+
+    It 'Should only consider increments/decrements wrapped in parentheses to be a part of the output in a Named block' {
+        $res = [AstTypeInference]::InferTypeOf( {
+            [Int16]$Int16 = 1; [Int32]$Int32 = 1; [Int64]$Int64 = 1; [System.Int128]$Int128 = 1;
+
+            $Int16++; $Int32--; ++$Int64; --$Int128}.Ast)
+        $res.Count | Should -Be 0
+
+        $res = [AstTypeInference]::InferTypeOf( {
+            [UInt16]$Uint16 = 1; [UInt32]$Uint32 = 1; [UInt64]$Uint64 = 1; [System.UInt128]$Uint128 = 1
+
+            ($Uint16++); ($Uint32--); (++$Uint64); (--$Uint128) }.Ast)
+        $res.Count | Should -Be 4
+        $res.Name -join ',' | Should -Be ('System.UInt16', 'System.UInt32', 'System.UInt64', 'System.UInt128' -join ',')
+    }
+
+    It 'Should only consider increments/decrements wrapped in parentheses to be a part of the output in a Statement block' {
+        $res = [AstTypeInference]::InferTypeOf( {if ($true){
+            [Int16]$Int16 = 1; [Int32]$Int32 = 1; [Int64]$Int64 = 1; [System.Int128]$Int128 = 1;
+
+            $Int16++; $Int32--; ++$Int64; --$Int128}}.Ast)
+        $res.Count | Should -Be 0
+
+        $res = [AstTypeInference]::InferTypeOf( {if ($true){
+            [UInt16]$Uint16 = 1; [UInt32]$Uint32 = 1; [UInt64]$Uint64 = 1; [System.UInt128]$Uint128 = 1
+
+            ($Uint16++); ($Uint32--); (++$Uint64); (--$Uint128) }}.Ast)
+        $res.Count | Should -Be 4
+        $res.Name -join ',' | Should -Be ('System.UInt16', 'System.UInt32', 'System.UInt64', 'System.UInt128' -join ',')
+    }
+
+    It 'Redirected increments/decrements should be considered part of the output in a Named block' {
+        $res = [AstTypeInference]::InferTypeOf( {
+            [Int16]$Int16 = 1; [Int32]$Int32 = 1; [Int64]$Int64 = 1; [System.Int128]$Int128 = 1;
+
+            $Int16++ *>&1; $Int32-- *>&1; ++$Int64 *>&1; --$Int128 *>&1}.Ast)
+        $res.Count | Should -Be 4
+        $res.Name -join ',' | Should -Be ('System.Int16', 'System.Int32', 'System.Int64', 'System.Int128' -join ',')
+    }
+
+    It 'Redirected increments/decrements should be considered part of the output in a Statement block' {
+        $res = [AstTypeInference]::InferTypeOf( {if ($true){
+            [Int16]$Int16 = 1; [Int32]$Int32 = 1; [Int64]$Int64 = 1; [System.Int128]$Int128 = 1;
+
+            $Int16++ *>&1; $Int32-- *>&1; ++$Int64 *>&1; --$Int128 *>&1}}.Ast)
+        $res.Count | Should -Be 4
+        $res.Name -join ',' | Should -Be ('System.Int16', 'System.Int32', 'System.Int64', 'System.Int128' -join ',')
     }
 }
 

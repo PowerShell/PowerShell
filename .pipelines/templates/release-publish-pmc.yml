@@ -1,90 +1,37 @@
-parameters:
-  - name: skipPublish
-    default: false
-    type: boolean
-
-jobs:
-- job: PMCPublish
-  displayName: Publish to PMC
-  condition: succeeded()
-  pool:
-    type: linux
-    isCustom: true
-    name: PowerShell1ES
-    demands:
-    - ImageOverride -equals PSMMSUbuntu20.04-Secure
+stages:
+- stage: 'Prod_Release'
+  displayName: 'Deploy packages to PMC with EV2'
+  dependsOn:
+  - PrepForEV2
   variables:
-  - name: runCodesignValidationInjection
-    value: false
-  - name: NugetSecurityAnalysisWarningLevel
-    value: none
-  - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
-    value: 1
-  - group: 'mscodehub-code-read-akv'
-  - group: 'packages.microsoft.com'
-  - name: ob_outputDirectory
-    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
-  - name: ob_sdl_codeSignValidation_enabled
-    value: false
-  - name: ob_sdl_binskim_enabled
-    value: false
-  - name: ob_sdl_tsa_configFile
-    value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
-  - name: ob_sdl_credscan_suppressionsFile
-    value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+    - name: ob_release_environment
+      value: "Production"
+    - name: repoRoot
+      value: $(Build.SourcesDirectory)
+  jobs:
+  - job: Prod_ReleaseJob
+    displayName: Publish to PMC
+    pool:
+      type: release
 
-  steps:
-  - checkout: self ## the global setting on lfs didn't work
-    lfs: false
+    steps:
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        targetPath: '$(Pipeline.Workspace)'
+        artifact: drop_PrepForEV2_CopyEv2FilesToArtifact
+      displayName: 'Download drop_PrepForEV2_CopyEv2FilesToArtifact artifact that has all files needed'
 
-  - template: release-SetReleaseTagAndContainerName.yml
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        buildType: 'current'
+        targetPath: '$(Pipeline.Workspace)'
+      displayName: 'Download to get EV2 Files'
 
-  - pwsh: |
-      $packageVersion = '$(ReleaseTag)'.ToLowerInvariant() -replace '^v',''
-      $vstsCommandString = "vso[task.setvariable variable=packageVersion]$packageVersion"
-      Write-Host "sending " + $vstsCommandString
-      Write-Host "##$vstsCommandString"
-    displayName: Set Package version
-
-  - pwsh: |
-      $branch = 'mirror-target'
-      $gitArgs = "clone",
-      "--verbose",
-      "--branch",
-      "$branch",
-      "https://$(mscodehubCodeReadPat)@mscodehub.visualstudio.com/PowerShellCore/_git/Internal-PowerShellTeam-Tools",
-      '$(Pipeline.Workspace)/tools'
-      $gitArgs | Write-Verbose -Verbose
-      git $gitArgs
-    displayName: Clone Internal-PowerShellTeam-Tools from MSCodeHub
-
-  - task: PipAuthenticate@1
-    inputs:
-      artifactFeeds: 'pmc'
-      pythonDownloadServiceConnections: pmcDownload
-
-  - pwsh: |
-      pip install pmc-cli==1.12.0
-
-      $newPath = (resolve-path '~/.local/bin').providerpath
-      $vstsCommandString = "vso[task.setvariable variable=PATH]${env:PATH}:$newPath"
-      Write-Host "sending " + $vstsCommandString
-      Write-Host "##$vstsCommandString"
-    displayName: Install pmc cli
-
-  - pwsh: |
-      $metadata = Get-Content -Path "$(Build.SourcesDirectory)/tools/metadata.json" -Raw | ConvertFrom-Json
-      $params = @{
-          ReleaseTag = "$(ReleaseTag)"
-          AadClientId = "$(PmcCliClientID)"
-          BlobFolderName = "$(ReleaseTag)"
-          LTS = $metadata.LTSRelease.Latest
-          ForProduction = $true
-          SkipPublish = $${{ parameters.skipPublish }}
-          MappingFilePath = '$(System.DefaultWorkingDirectory)/tools/packages.microsoft.com/mapping.json'
-      }
-
-      $params | Out-String -width 9999 -Stream | write-Verbose -Verbose
-
-      & '$(Pipeline.Workspace)/tools/packages.microsoft.com-v4/releaseLinuxPackages.ps1' @params
-    displayName: Run release script
+    - task: vsrm-ev2.vss-services-ev2.adm-release-task.ExpressV2Internal@1
+      displayName: 'Ev2: Push to PMC'
+      inputs:
+        UseServerMonitorTask: true
+        EndpointProviderType: ApprovalService
+        ApprovalServiceEnvironment: Production
+        ServiceRootPath: '$(Pipeline.Workspace)/drop_PrepForEV2_CopyEV2FilesToArtifact/EV2Specs/ServiceGroupRoot'
+        RolloutSpecPath: '$(Pipeline.Workspace)/drop_PrepForEV2_CopyEV2FilesToArtifact/EV2Specs/ServiceGroupRoot/RolloutSpec.json'

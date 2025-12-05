@@ -5,6 +5,12 @@ parameters:
   - name: SBOM
     type: boolean
     default: false
+  - name: RELEASETAG
+    type: string
+    default: 'Not Initialized'
+  - name: VERSION
+    type: string
+    default: 'Not Initialized'
 
 variables:
   - name: ob_signing_setup_enabled            
@@ -13,7 +19,7 @@ variables:
     value: ${{ parameters.SBOM }}
   - name: runCodesignValidationInjection
     value: false
-  - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
+  - name: DOTNET_NOLOGO
     value: 1
   - group: 'mscodehub-code-read-akv'
   - group: 'Azure Blob variable group'
@@ -30,3 +36,7 @@ variables:
     value: ${{ parameters.REPOROOT }}\.config\suppress.json
   - name: ob_sdl_codeql_compiled_enabled
     value: false
+  - name: ReleaseTag
+    value: ${{ parameters.RELEASETAG }}
+  - name: Version
+    value: ${{ parameters.VERSION }}

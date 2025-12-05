@@ -25,18 +25,16 @@ jobs:
     env:
       ob_restore_phase: true
 
+  - template: /.pipelines/templates/SetVersionVariables.yml@self
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+
   - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
     parameters:
-      repoRoot: $(Build.SourcesDirectory)/PowerShell
+      repoRoot: $(RepoRoot)
       ob_restore_phase: true
 
-  - pwsh: |
-      Import-Module $(Build.SourcesDirectory)/PowerShell/build.psm1
-      Start-PSBootstrap
-    displayName: Bootstrap
-    env:
-      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
-      ob_restore_phase: true
+  - template: /.pipelines/templates/install-dotnet.yml@self
 
   - pwsh: |
       New-Item -Path '$(ob_outputDirectory)' -ItemType Directory -Force
@@ -92,18 +90,16 @@ jobs:
     env:
       ob_restore_phase: true
 
+  - template: /.pipelines/templates/SetVersionVariables.yml@self
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+
   - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
     parameters:
       repoRoot: $(Build.SourcesDirectory)/PowerShell
       ob_restore_phase: true
 
-  - pwsh: |
-      Import-Module $(Build.SourcesDirectory)/PowerShell/build.psm1
-      Start-PSBootstrap
-    displayName: Bootstrap
-    env:
-      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
-      ob_restore_phase: true
+  - template: /.pipelines/templates/install-dotnet.yml@self
 
   - pwsh: |
       New-Item -Path '$(ob_outputDirectory)' -ItemType Directory -Force

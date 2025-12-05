@@ -251,8 +251,7 @@ namespace System.Management.Automation
         {
             Tuple<Token, Ast> fileConditionTuple;
 
-            var errorStatement = lastAst as ErrorStatementAst;
-            if (errorStatement != null && errorStatement.Flags != null && errorStatement.Kind != null && tokenBeforeCursor != null &&
+            if (lastAst is ErrorStatementAst errorStatement && errorStatement.Flags is not null && errorStatement.Kind is not null && tokenBeforeCursor is not null &&
                 errorStatement.Kind.Kind.Equals(TokenKind.Switch) && errorStatement.Flags.TryGetValue("file", out fileConditionTuple))
             {
                 // Handle "switch -file <tab>"
@@ -262,22 +261,237 @@ namespace System.Management.Automation
             if (lastAst.Parent is CommandExpressionAst)
             {
                 // Handle "switch -file m<tab>" or "switch -file *.ps1<tab>"
-                if (!(lastAst.Parent.Parent is PipelineAst pipeline))
+                if (lastAst.Parent.Parent is not PipelineAst pipeline)
                 {
                     return false;
                 }
 
-                errorStatement = pipeline.Parent as ErrorStatementAst;
-                if (errorStatement == null || errorStatement.Kind == null || errorStatement.Flags == null)
+                if (pipeline.Parent is not ErrorStatementAst parentErrorStatement || parentErrorStatement.Kind is null || parentErrorStatement.Flags is null)
                 {
                     return false;
                 }
 
-                return (errorStatement.Kind.Kind.Equals(TokenKind.Switch) &&
-                        errorStatement.Flags.TryGetValue("file", out fileConditionTuple) && fileConditionTuple.Item2 == pipeline);
+                return (parentErrorStatement.Kind.Kind.Equals(TokenKind.Switch) &&
+                        parentErrorStatement.Flags.TryGetValue("file", out fileConditionTuple) && fileConditionTuple.Item2 == pipeline);
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Check if we should complete parameter names for switch cases on $PSBoundParameters.Keys
+        /// </summary>
+        private static List<CompletionResult> CompleteAgainstSwitchCaseCondition(CompletionContext completionContext)
+        {
+            var lastAst = completionContext.RelatedAsts.Last();
+
+            PipelineAst conditionPipeline = null;
+            Ast switchAst = null;
+
+            // Check if we're in a switch statement (complete) or error statement (incomplete switch)
+            if (lastAst.Parent is SwitchStatementAst switchStatementAst)
+            {
+                // Verify that the lastAst is one of the clause conditions (not in the body)
+                bool isClauseCondition = switchStatementAst.Clauses.Any(clause => clause.Item1 == lastAst);
+
+                if (!isClauseCondition)
+                {
+                    return null;
+                }
+
+                conditionPipeline = switchStatementAst.Condition as PipelineAst;
+                switchAst = switchStatementAst;
+            }
+            else
+            {
+                // Check for incomplete switch parsed as ErrorStatementAst
+                if (lastAst.Parent is not ErrorStatementAst errorStatementAst || errorStatementAst.Kind is null ||
+                    errorStatementAst.Kind.Kind != TokenKind.Switch)
+                {
+                    return null;
+                }
+
+                // For ErrorStatementAst, the case value is in Bodies, condition is in Conditions
+                bool isInBodies = errorStatementAst.Bodies != null && errorStatementAst.Bodies.Any(body => body == lastAst);
+
+                if (!isInBodies)
+                {
+                    return null;
+                }
+
+                // Get the condition from ErrorStatementAst.Conditions
+                if (errorStatementAst.Conditions != null && errorStatementAst.Conditions.Count > 0)
+                {
+                    conditionPipeline = errorStatementAst.Conditions[0] as PipelineAst;
+                }
+                switchAst = errorStatementAst;
+            }
+
+            if (conditionPipeline == null || conditionPipeline.PipelineElements.Count != 1)
+            {
+                return null;
+            }
+
+            if (conditionPipeline.PipelineElements[0] is not CommandExpressionAst commandExpressionAst)
+            {
+                return null;
+            }
+
+            // Check if the expression is a member access on $PSBoundParameters.Keys
+            if (commandExpressionAst.Expression is not MemberExpressionAst memberExpressionAst)
+            {
+                return null;
+            }
+
+            // Check if the target is $PSBoundParameters
+            if (memberExpressionAst.Expression is not VariableExpressionAst variableExpressionAst ||
+                !variableExpressionAst.VariablePath.UserPath.Equals("PSBoundParameters", StringComparison.OrdinalIgnoreCase))
+            {
+                return null;
+            }
+
+            // Check if the member is "Keys"
+            if (memberExpressionAst.Member is not StringConstantExpressionAst memberNameAst ||
+                !memberNameAst.Value.Equals("Keys", StringComparison.OrdinalIgnoreCase))
+            {
+                return null;
+            }
+
+            // Find the nearest param block by traversing up the AST
+            var paramBlockAst = FindNearestParamBlock(switchAst.Parent);
+
+            if (paramBlockAst == null || paramBlockAst.Parameters.Count == 0)
+            {
+                return null;
+            }
+
+            // Generate completion results from parameter names
+            var wordToComplete = completionContext.WordToComplete ?? string.Empty;
+            return CreateParameterCompletionResults(paramBlockAst, wordToComplete);
+        }
+
+        /// <summary>
+        /// Check if we should complete parameter names for $PSBoundParameters access patterns
+        /// Supports: $PSBoundParameters.ContainsKey('...'), $PSBoundParameters['...'], $PSBoundParameters.Remove('...')
+        /// </summary>
+        private static List<CompletionResult> CompleteAgainstPSBoundParametersAccess(CompletionContext completionContext)
+        {
+            var lastAst = completionContext.RelatedAsts.Last();
+
+            // Must be a string constant
+            if (lastAst is not StringConstantExpressionAst stringAst)
+            {
+                return null;
+            }
+
+            ExpressionAst targetAst = null;
+
+            // Check for method invocation: $PSBoundParameters.ContainsKey('...') or $PSBoundParameters.Remove('...')
+            if (lastAst.Parent is InvokeMemberExpressionAst invokeMemberAst)
+            {
+                if (invokeMemberAst.Member is StringConstantExpressionAst memberName &&
+                    (memberName.Value.Equals("ContainsKey", StringComparison.OrdinalIgnoreCase) ||
+                     memberName.Value.Equals("Remove", StringComparison.OrdinalIgnoreCase)))
+                {
+                    targetAst = invokeMemberAst.Expression;
+                }
+            }
+            // Check for indexer: $PSBoundParameters['...']
+            else if (lastAst.Parent is IndexExpressionAst indexAst)
+            {
+                targetAst = indexAst.Target;
+            }
+
+            if (targetAst is null)
+            {
+                return null;
+            }
+
+            // Check if target is $PSBoundParameters
+            if (targetAst is not VariableExpressionAst variableAst ||
+                !variableAst.VariablePath.UserPath.Equals("PSBoundParameters", StringComparison.OrdinalIgnoreCase))
+            {
+                return null;
+            }
+
+            // Find the nearest param block
+            var paramBlockAst = FindNearestParamBlock(lastAst.Parent);
+
+            if (paramBlockAst == null || paramBlockAst.Parameters.Count == 0)
+            {
+                return null;
+            }
+
+            // Generate completion results from parameter names
+            var wordToComplete = completionContext.WordToComplete ?? string.Empty;
+
+            // Determine quote style based on the string constant type
+            string quoteChar = string.Empty;
+            if (stringAst.StringConstantType == StringConstantType.SingleQuoted)
+            {
+                quoteChar = "'";
+            }
+            else if (stringAst.StringConstantType == StringConstantType.DoubleQuoted)
+            {
+                quoteChar = "\"";
+            }
+
+            return CreateParameterCompletionResults(paramBlockAst, wordToComplete, quoteChar);
+        }
+
+        /// <summary>
+        /// Finds the nearest ParamBlockAst by traversing up the AST hierarchy.
+        /// </summary>
+        /// <param name="startAst">The AST node to start searching from.</param>
+        /// <returns>The nearest ParamBlockAst if found; otherwise, null.</returns>
+        private static ParamBlockAst FindNearestParamBlock(Ast startAst)
+        {
+            Ast current = startAst;
+            while (current != null)
+            {
+                if (current is FunctionDefinitionAst functionDefinitionAst)
+                {
+                    return functionDefinitionAst.Body?.ParamBlock;
+                }
+                else if (current is ScriptBlockAst scriptBlockAst)
+                {
+                    var paramBlock = scriptBlockAst.ParamBlock;
+                    if (paramBlock != null)
+                    {
+                        return paramBlock;
+                    }
+                }
+
+                current = current.Parent;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Creates completion results from parameter names with optional quote wrapping.
+        /// </summary>
+        /// <param name="paramBlockAst">The parameter block containing parameters to complete.</param>
+        /// <param name="wordToComplete">The partial word to match against parameter names.</param>
+        /// <param name="quoteChar">Optional quote character to wrap completion text (empty string for no quotes).</param>
+        /// <returns>A list of completion results, or null if no matches found.</returns>
+        private static List<CompletionResult> CreateParameterCompletionResults(
+            ParamBlockAst paramBlockAst,
+            string wordToComplete,
+            string quoteChar = "")
+        {
+            var result = paramBlockAst.Parameters
+                .Select(parameter => parameter.Name.VariablePath.UserPath)
+                .Where(parameterName => parameterName.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
+                .Select(parameterName =>
+                    new CompletionResult(
+                        quoteChar + parameterName + quoteChar,
+                        parameterName,
+                        CompletionResultType.ParameterValue,
+                        parameterName))
+                .ToList();
+
+            return result.Count > 0 ? result : null;
         }
 
         private static bool CompleteOperator(Token tokenAtCursor, Ast lastAst)
@@ -516,6 +730,13 @@ namespace System.Management.Automation
                         {
                             // Handles quoted string inside index expression like: $PSVersionTable["<Tab>"]
                             completionContext.WordToComplete = (tokenAtCursor as StringToken).Value;
+                            // Check for $PSBoundParameters indexer first
+                            var psBoundResult = CompleteAgainstPSBoundParametersAccess(completionContext);
+                            if (psBoundResult != null && psBoundResult.Count > 0)
+                            {
+                                return psBoundResult;
+                            }
+
                             return CompletionCompleters.CompleteIndexExpression(completionContext, indexExpressionAst.Target);
                         }
 
@@ -691,6 +912,19 @@ namespace System.Management.Automation
                                 if (TryGetCompletionsForVariableAssignment(completionContext, assignmentAst2, out List<CompletionResult> completions))
                                 {
                                     return completions;
+                                }
+                            }
+                            else if (lastAst is VariableExpressionAst && lastAst.Parent is ParameterAst paramAst && paramAst.Attributes.Count > 0)
+                            {
+                                foreach (AttributeBaseAst attribute in paramAst.Attributes)
+                                {
+                                    if (IsCursorWithinOrJustAfterExtent(_cursorPosition, attribute.Extent))
+                                    {
+                                        completionContext.ReplacementIndex = replacementIndex += tokenAtCursor.Text.Length;
+                                        completionContext.ReplacementLength = replacementLength = 0;
+                                        result = GetResultForAttributeArgument(completionContext, ref replacementIndex, ref replacementLength);
+                                        break;
+                                    }
                                 }
                             }
                             else
@@ -928,6 +1162,18 @@ namespace System.Management.Automation
                                     {
                                         result = GetResultForAttributeArgument(completionContext, ref replacementIndex, ref replacementLength);
                                     }
+
+                                    if (lastAst is VariableExpressionAst && lastAst.Parent is ParameterAst paramAst && paramAst.Attributes.Count > 0)
+                                    {
+                                        foreach (AttributeBaseAst attribute in paramAst.Attributes)
+                                        {
+                                            if (IsCursorWithinOrJustAfterExtent(_cursorPosition, attribute.Extent))
+                                            {
+                                                result = GetResultForAttributeArgument(completionContext, ref replacementIndex, ref replacementLength);
+                                                break;
+                                            }
+                                        }
+                                    }
                                     break;
 
                                 case TokenKind.Ieq:
@@ -1000,6 +1246,21 @@ namespace System.Management.Automation
                                         {
                                             completionContext.ReplacementLength = replacementLength = 0;
                                             result = GetResultForAttributeArgument(completionContext, ref replacementIndex, ref replacementLength);
+                                            break;
+                                        }
+
+                                        if (lastAst is VariableExpressionAst && lastAst.Parent is ParameterAst paramAst && paramAst.Attributes.Count > 0)
+                                        {
+                                            foreach (AttributeBaseAst attribute in paramAst.Attributes)
+                                            {
+                                                if (IsCursorWithinOrJustAfterExtent(_cursorPosition, attribute.Extent))
+                                                {
+                                                    completionContext.ReplacementLength = replacementLength = 0;
+                                                    result = GetResultForAttributeArgument(completionContext, ref replacementIndex, ref replacementLength);
+                                                    break;
+                                                }
+                                            }
+
                                             break;
                                         }
 
@@ -1421,18 +1682,115 @@ namespace System.Management.Automation
         {
             if (SafeExprEvaluator.TrySafeEval(memberExpression, context.ExecutionContext, out var evalValue))
             {
-                if (evalValue is null)
+                if (evalValue is not null)
                 {
+                    Type type = evalValue.GetType();
+                    if (type.IsEnum)
+                    {
+                        return GetResultForEnum(type, context);
+                    }
+
                     return null;
                 }
+            }
 
-                Type type = evalValue.GetType();
-                if (type.IsEnum)
+            _ = TryGetInferredCompletionsForAssignment(memberExpression, context, out List<CompletionResult> result);
+            return result;
+        }
+
+        private static bool TryGetInferredCompletionsForAssignment(Ast expression, CompletionContext context, out List<CompletionResult> result)
+        {
+            result = null;
+            IList<PSTypeName> inferredTypes;
+            if (expression.Parent is ConvertExpressionAst convertExpression)
+            {
+                inferredTypes = new PSTypeName[] { new(convertExpression.Type.TypeName) };
+            }
+            else if (expression is MemberExpressionAst)
+            {
+                inferredTypes = AstTypeInference.InferTypeOf(expression);
+            }
+            else if (expression is VariableExpressionAst varExpression)
+            {
+                PSTypeName typeConstraint = CompletionCompleters.GetLastDeclaredTypeConstraint(varExpression, context.TypeInferenceContext);
+                if (typeConstraint is null)
                 {
-                    return GetResultForEnum(type, context);
+                    return false;
+                }
+
+                inferredTypes = new PSTypeName[] { typeConstraint };
+            }
+            else
+            {
+                return false;
+            }
+
+            if (inferredTypes.Count == 0)
+            {
+                return false;
+            }
+
+            var values = new SortedSet<string>();
+            foreach (PSTypeName type in inferredTypes)
+            {
+                Type loadedType = type.Type;
+                if (loadedType is not null)
+                {
+                    if (loadedType.IsEnum)
+                    {
+                        foreach (string value in Enum.GetNames(loadedType))
+                        {
+                            _ = values.Add(value);
+                        }
+                    }
+                }
+                else if (type is not null && type.TypeDefinitionAst.IsEnum)
+                {
+                    foreach (MemberAst member in type.TypeDefinitionAst.Members)
+                    {
+                        if (member is PropertyMemberAst property)
+                        {
+                            _ = values.Add(property.Name);
+                        }
+                    }
                 }
             }
-            return null;
+
+            string wordToComplete;
+            if (string.IsNullOrEmpty(context.WordToComplete))
+            {
+                if (context.TokenAtCursor is not null && context.TokenAtCursor.Kind != TokenKind.Equals)
+                {
+                    wordToComplete = context.TokenAtCursor.Text + "*";
+                }
+                else
+                {
+                    wordToComplete = "*";
+                }
+            }
+            else
+            {
+                wordToComplete = context.WordToComplete + "*";
+            }
+
+            result = new List<CompletionResult>();
+            var pattern = new WildcardPattern(wordToComplete, WildcardOptions.IgnoreCase);
+            foreach (string name in values)
+            {
+                string quotedName = GetQuotedString(name, context);
+                if (pattern.IsMatch(quotedName))
+                {
+                    result.Add(new CompletionResult(quotedName, name, CompletionResultType.Property, name));
+                }
+            }
+
+            if (result.Count == 0)
+            {
+                result = null;
+                return false;
+            }
+
+            return true;
         }
 
         private static bool TryGetCompletionsForVariableAssignment(
@@ -1501,7 +1859,7 @@ namespace System.Management.Automation
             // If the assignment itself was unconstrained, the variable still might be
             if (!TryGetTypeConstraintOnVariable(completionContext, variableAst.VariablePath.UserPath, out typeConstraint, out setConstraint))
             {
-                return false;
+                return TryGetInferredCompletionsForAssignment(variableAst, completionContext, out completions);
             }
 
             // Again try the [ValidateSet()] constraint first
@@ -1778,6 +2136,21 @@ namespace System.Management.Automation
 
             string strValue = constantString != null ? constantString.Value : expandableString.Value;
 
+            // Check for switch case completion on $PSBoundParameters.Keys
+            completionContext.WordToComplete = strValue;
+            var switchCaseResult = CompleteAgainstSwitchCaseCondition(completionContext);
+            if (switchCaseResult != null && switchCaseResult.Count > 0)
+            {
+                return switchCaseResult;
+            }
+
+            // Check for $PSBoundParameters access patterns (ContainsKey, indexer, Remove)
+            var psBoundResult = CompleteAgainstPSBoundParametersAccess(completionContext);
+            if (psBoundResult != null && psBoundResult.Count > 0)
+            {
+                return psBoundResult;
+            }
+
             bool shouldContinue;
             List<CompletionResult> result = GetResultForEnumPropertyValueOfDSCResource(completionContext, strValue, ref replacementIndex, ref replacementLength, out shouldContinue);
             if (!shouldContinue || (result != null && result.Count > 0))
@@ -1939,6 +2312,20 @@ namespace System.Management.Automation
             var tokenAtCursorText = tokenAtCursor.Text;
             completionContext.WordToComplete = tokenAtCursorText;
 
+            // Check for switch case completion on $PSBoundParameters.Keys
+            var switchCaseResult = CompleteAgainstSwitchCaseCondition(completionContext);
+            if (switchCaseResult != null && switchCaseResult.Count > 0)
+            {
+                return switchCaseResult;
+            }
+
+            // Check for $PSBoundParameters access patterns (ContainsKey, indexer, Remove)
+            var psBoundResult = CompleteAgainstPSBoundParametersAccess(completionContext);
+            if (psBoundResult != null && psBoundResult.Count > 0)
+            {
+                return psBoundResult;
+            }
+
             if (lastAst.Parent is BreakStatementAst || lastAst.Parent is ContinueStatementAst)
             {
                 return CompleteLoopLabel(completionContext);
@@ -1963,7 +2350,12 @@ namespace System.Management.Automation
                         switch (usingState.UsingStatementKind)
                         {
                             case UsingStatementKind.Assembly:
-                                break;
+                                HashSet<string> assemblyExtensions = new(StringComparer.OrdinalIgnoreCase)
+                                {
+                                    StringLiterals.PowerShellILAssemblyExtension
+                                };
+                                return CompletionCompleters.CompleteFilename(completionContext, containerOnly: false, assemblyExtensions).ToList();
+
                             case UsingStatementKind.Command:
                                 break;
                             case UsingStatementKind.Module:
@@ -1998,9 +2390,25 @@ namespace System.Management.Automation
                     }
                 }
             }
-            if (completionContext.TokenAtCursor.TokenFlags == TokenFlags.MemberName && (lastAst is NamedAttributeArgumentAst || lastAst.Parent is NamedAttributeArgumentAst))
+
+            if (completionContext.TokenAtCursor.TokenFlags == TokenFlags.MemberName)
             {
-                result = GetResultForAttributeArgument(completionContext, ref replacementIndex, ref replacementLength);
+                if (lastAst is NamedAttributeArgumentAst || lastAst.Parent is NamedAttributeArgumentAst)
+                {
+                    result = GetResultForAttributeArgument(completionContext, ref replacementIndex, ref replacementLength);
+                }
+                else if (lastAst is VariableExpressionAst && lastAst.Parent is ParameterAst paramAst && paramAst.Attributes.Count > 0)
+                {
+                    foreach (AttributeBaseAst attribute in paramAst.Attributes)
+                    {
+                        if (IsCursorWithinOrJustAfterExtent(completionContext.CursorPosition, attribute.Extent))
+                        {
+                            result = GetResultForAttributeArgument(completionContext, ref replacementIndex, ref replacementLength);
+                            break;
+                        }
+                    }
+                }
+
                 if (result is not null)
                 {
                     return result;
@@ -2455,7 +2863,7 @@ namespace System.Management.Automation
 
             return result;
         }
-      
+
         private static List<CompletionResult> CompleteUsingKeywords(int cursorOffset, Token[] tokens, ref int replacementIndex, ref int replacementLength)
         {
             var result = new List<CompletionResult>();

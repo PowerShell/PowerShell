@@ -43,6 +43,7 @@ $Script:powershell_team = @(
     "Patrick Meinecke"
     "Steven Bucher"
     "PowerShell Team Bot"
+    "Justin Chung"
 )
 
 # They are very active contributors, so we keep their email-login mappings here to save a few queries to Github.
@@ -150,12 +151,19 @@ function Get-ChangeLog
         [Parameter(Mandatory = $true)]
         [string]$ThisReleaseTag,
 
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory = $false)]
         [string]$Token,
 
         [Parameter()]
         [switch]$HasCherryPick
     )
+
+    if(-not $Token) {
+        $Token = Get-GHDefaultAuthToken
+        if(-not $Token) {
+            throw "No GitHub Auth Token provided"
+        }
+    }
 
     $tag_hash = git rev-parse "$LastReleaseTag^0"
     $format = '%H||%P||%aN||%aE||%s'
@@ -358,6 +366,29 @@ function Get-ChangeLog
     PrintChangeLog -clSection $clDocs -sectionTitle 'Documentation and Help Content'
 
     Write-Output "[${version}]: https://github.com/PowerShell/PowerShell/compare/${LastReleaseTag}...${ThisReleaseTag}`n"
+}
+
+function Get-GHDefaultAuthToken {
+    $IsGHCLIInstalled = $false
+    if (Get-command -CommandType Application -Name gh -ErrorAction SilentlyContinue) {
+        $IsGHCLIInstalled = $true
+    } else {
+        Write-Error -Message "GitHub CLI is not installed. Please install it from https://cli.github.com/" -ErrorAction Stop
+    }
+
+    if ($IsGHCLIInstalled) {
+        try {
+            $Token = & gh auth token
+        } catch {
+            Write-Error -Message "Please login to GitHub CLI using 'gh auth login'"
+        }
+    }
+
+    if (-not $Token) {
+        $Token = Read-Host -Prompt "Enter GitHub Auth Token"
+    }
+
+    return $Token
 }
 
 function PrintChangeLog($clSection, $sectionTitle, [switch] $Compress) {

@@ -1,6 +1,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingConvertToSecureStringWithPlainText', '')]
+param()
+
 Set-StrictMode -Version 3.0
 
 $ErrorActionPreference = 'continue'
@@ -17,8 +20,15 @@ if(Test-Path $dotNetPath)
 
 # import build into the global scope so it can be used by packaging
 # argumentList $true says ignore tha we may not be able to build
-Import-Module (Join-Path $repoRoot 'build.psm1') -Verbose -Scope Global -ArgumentList $true
-Import-Module (Join-Path $repoRoot 'tools\packaging') -Verbose -Scope Global
+Write-Verbose "Importing build.psm1" -Verbose
+Import-Module (Join-Path $repoRoot 'build.psm1') -Scope Global -ArgumentList $true
+$buildCommands = Get-Command -Module build
+Write-Verbose "Imported build.psm1 commands: $($buildCommands.Count)" -Verbose
+
+Write-Verbose "Importing packaging.psm1" -Verbose
+Import-Module (Join-Path $repoRoot 'tools\packaging') -Scope Global
+$packagingCommands = Get-Command -Module packaging
+Write-Verbose "Imported packaging.psm1 commands: $($packagingCommands.Count)" -Verbose
 
 # import the windows specific functcion only in Windows PowerShell or on Windows
 if($PSVersionTable.PSEdition -eq 'Desktop' -or $IsWindows)
@@ -91,6 +101,11 @@ function Invoke-CIFull
 # Implements the CI 'build_script' step
 function Invoke-CIBuild
 {
+    param(
+        [ValidateSet('Debug', 'Release', 'CodeCoverage', 'StaticAnalysis')]
+        [string]$Configuration = 'Release'
+    )
+
     $releaseTag = Get-ReleaseTag
     # check to be sure our test tags are correct
     $result = Get-PesterTag
@@ -105,7 +120,7 @@ function Invoke-CIBuild
         Start-PSBuild -Configuration 'CodeCoverage' -PSModuleRestore -CI -ReleaseTag $releaseTag
     }
 
-    Start-PSBuild -PSModuleRestore -Configuration 'Release' -CI -ReleaseTag $releaseTag -UseNuGetOrg
+    Start-PSBuild -PSModuleRestore -Configuration $Configuration -CI -ReleaseTag $releaseTag -UseNuGetOrg
     Save-PSOptions
 
     $options = (Get-PSOptions)
@@ -181,8 +196,6 @@ function Invoke-CIInstall
     }
 
     Set-BuildVariable -Name TestPassed -Value False
-    Write-Verbose -Verbose -Message "Calling Start-PSBootstrap from Invoke-CIInstall"
-    Start-PSBootstrap
 }
 
 function Invoke-CIxUnit
@@ -215,6 +228,45 @@ function Invoke-CIxUnit
     }
 }
 
+# Install Pester module if not already installed with a compatible version
+function Install-CIPester
+{
+    [CmdletBinding()]
+    param(
+        [string]$MinimumVersion = '5.0.0',
+        [string]$MaximumVersion = '5.99.99',
+        [switch]$Force
+    )
+
+    Write-Verbose "Checking for Pester module (required: $MinimumVersion - $MaximumVersion)" -Verbose
+
+    # Check if a compatible version of Pester is already installed
+    $installedPester = Get-Module -Name Pester -ListAvailable | 
+        Where-Object { $_.Version -ge $MinimumVersion -and $_.Version -le $MaximumVersion } |
+        Sort-Object -Property Version -Descending |
+        Select-Object -First 1
+
+    if ($installedPester -and -not $Force) {
+        Write-Host "Pester version $($installedPester.Version) is already installed and meets requirements" -ForegroundColor Green
+        return
+    }
+
+    if ($Force) {
+        Write-Host "Installing Pester module (forced)" -ForegroundColor Yellow
+    } else {
+        Write-Host "Installing Pester module" -ForegroundColor Yellow
+    }
+
+    try {
+        Install-Module -Name Pester -Force -SkipPublisherCheck -MaximumVersion $MaximumVersion -ErrorAction Stop
+        Write-Host "Successfully installed Pester module" -ForegroundColor Green
+    }
+    catch {
+        Write-Error "Failed to install Pester module: $_"
+        throw
+    }
+}
+
 # Implement CI 'Test_script'
 function Invoke-CITest
 {
@@ -224,8 +276,11 @@ function Invoke-CITest
         [string] $Purpose,
         [ValidateSet('CI', 'Others')]
         [string] $TagSet,
-        [string] $TitlePrefix
+        [string] $TitlePrefix,
+        [string] $OutputFormat = "NUnitXml"
     )
+
+    Write-Verbose -Verbose "CI test: OutputFormat: $OutputFormat"
 
     # Set locale correctly for Linux CIs
     Set-CorrectLocale
@@ -249,7 +304,7 @@ function Invoke-CITest
 
     if($IsLinux -or $IsMacOS)
     {
-        return Invoke-LinuxTestsCore -Purpose $Purpose -ExcludeTag $ExcludeTag -TagSet $TagSet -TitlePrefix $TitlePrefix
+        return Invoke-LinuxTestsCore -Purpose $Purpose -ExcludeTag $ExcludeTag -TagSet $TagSet -TitlePrefix $TitlePrefix -OutputFormat $OutputFormat
     }
 
     # CoreCLR
@@ -281,12 +336,14 @@ function Invoke-CITest
             Terse = $true
             Tag = @()
             ExcludeTag = $ExcludeTag + 'RequireAdminOnWindows'
+            OutputFormat = $OutputFormat
         }
 
         $title = "Pester Unelevated - $TagSet"
         if ($TitlePrefix) {
             $title = "$TitlePrefix - $title"
         }
+        Write-Verbose -Verbose "Starting Pester with output format $($arguments.OutputFormat)"
         Start-PSPester @arguments -Title $title
 
         # Fail the build, if tests failed
@@ -314,7 +371,10 @@ function Invoke-CITest
             if ($TitlePrefix) {
                 $title = "$TitlePrefix - $title"
             }
-            Start-PSPester @arguments -Title $title
+
+            # We just built the test tools, we don't need to rebuild them
+            Write-Verbose -Verbose "Starting Pester with output format $($arguments.OutputFormat)"
+            Start-PSPester @arguments -Title $title -SkipTestToolBuild
 
             # Fail the build, if tests failed
             Test-PSPesterResults -TestResultsFile $expFeatureTestResultFile
@@ -328,12 +388,15 @@ function Invoke-CITest
             OutputFile = $testResultsAdminFile
             Tag = @('RequireAdminOnWindows')
             ExcludeTag = $ExcludeTag
+            OutputFormat = $OutputFormat
         }
 
         $title = "Pester Elevated - $TagSet"
         if ($TitlePrefix) {
             $title = "$TitlePrefix - $title"
         }
+
+        Write-Verbose -Verbose "Starting Pester with output format $($arguments.OutputFormat)"
         Start-PSPester @arguments -Title $title
 
         # Fail the build, if tests failed
@@ -364,7 +427,10 @@ function Invoke-CITest
             if ($TitlePrefix) {
                 $title = "$TitlePrefix - $title"
             }
-            Start-PSPester @arguments -Title $title
+
+            Write-Verbose -Verbose "Starting Pester with output format $($arguments.OutputFormat)"
+            # We just built the test tools, we don't need to rebuild them
+            Start-PSPester @arguments -Title $title -SkipTestToolBuild
 
             # Fail the build, if tests failed
             Test-PSPesterResults -TestResultsFile $expFeatureTestResultFile
@@ -381,8 +447,6 @@ function New-CodeCoverageAndTestPackage
 
     if (Test-DailyBuild)
     {
-        Start-PSBootstrap -Verbose
-
         Start-PSBuild -Configuration 'CodeCoverage' -Clean
 
         $codeCoverageOutput = Split-Path -Parent (Get-PSOutput)
@@ -437,6 +501,18 @@ function Push-Artifact
     if ($env:TF_BUILD) {
         # In Azure DevOps
         Write-Host "##vso[artifact.upload containerfolder=$artifactName;artifactname=$artifactName;]$Path"
+    } elseif ($env:GITHUB_WORKFLOW -and $env:RUNNER_WORKSPACE) {
+        # In GitHub Actions
+        $destinationPath = Join-Path -Path $env:RUNNER_WORKSPACE -ChildPath $artifactName
+
+        # Create the folder if it does not exist
+        if (!(Test-Path -Path $destinationPath)) {
+            $null = New-Item -ItemType Directory -Path $destinationPath -Force
+        }
+
+        Copy-Item -Path $Path -Destination $destinationPath -Force -Verbose
+    } else {
+        Write-Warning "Push-Artifact is not supported in this environment."
     }
 }
 
@@ -584,7 +660,7 @@ function Invoke-CIFinish
 
                 # Install the latest Pester and import it
                 $maximumPesterVersion = '4.99'
-                Install-Module Pester -Force -SkipPublisherCheck -MaximumVersion $maximumPesterVersion
+                Install-CIPester -MinimumVersion '4.0.0' -MaximumVersion $maximumPesterVersion -Force
                 Import-Module Pester -Force -MaximumVersion $maximumPesterVersion
 
                 $testResultPath = Join-Path -Path $env:TEMP -ChildPath "win-package-$channel-$runtime.xml"
@@ -651,6 +727,14 @@ function Set-Path
     }
 }
 
+# Display environment variables in a log group for GitHub Actions
+function Show-Environment
+{
+    Write-LogGroupStart -Title 'Environment'
+    Get-ChildItem -Path env: | Out-String -width 9999 -Stream | Write-Verbose -Verbose
+    Write-LogGroupEnd -Title 'Environment'
+}
+
 # Bootstrap script for Linux and macOS
 function Invoke-BootstrapStage
 {
@@ -658,7 +742,7 @@ function Invoke-BootstrapStage
     Write-Log -Message "Executing ci.psm1 Bootstrap Stage"
     # Make sure we have all the tags
     Sync-PSTags -AddRemoteIfMissing
-    Start-PSBootstrap -Package:$createPackages
+    Start-PSBootstrap -Scenario Package:$createPackages
 }
 
 # Run pester tests for Linux and macOS
@@ -670,7 +754,8 @@ function Invoke-LinuxTestsCore
         [string] $Purpose = 'All',
         [string[]] $ExcludeTag = @('Slow', 'Feature', 'Scenario'),
         [string] $TagSet = 'CI',
-        [string] $TitlePrefix
+        [string] $TitlePrefix,
+        [string] $OutputFormat = "NUnitXml"
     )
 
     $output = Split-Path -Parent (Get-PSOutput -Options (Get-PSOptions))
@@ -683,12 +768,13 @@ function Invoke-LinuxTestsCore
     $sudoResultsWithExpFeatures = $null
 
     $noSudoPesterParam = @{
-        'BinDir'     = $output
-        'PassThru'   = $true
-        'Terse'      = $true
-        'Tag'        = @()
-        'ExcludeTag' = $testExcludeTag
-        'OutputFile' = $testResultsNoSudo
+        'BinDir'       = $output
+        'PassThru'     = $true
+        'Terse'        = $true
+        'Tag'          = @()
+        'ExcludeTag'   = $testExcludeTag
+        'OutputFile'   = $testResultsNoSudo
+        'OutputFormat' = $OutputFormat
     }
 
     # Get the experimental feature names and the tests associated with them
@@ -726,7 +812,7 @@ function Invoke-LinuxTestsCore
             if ($TitlePrefix) {
                 $title = "$TitlePrefix - $title"
             }
-            $passThruResult = Start-PSPester @noSudoPesterParam -Title $title
+            $passThruResult = Start-PSPester @noSudoPesterParam -Title $title -SkipTestToolBuild
 
             $noSudoResultsWithExpFeatures += $passThruResult
         }
@@ -741,6 +827,7 @@ function Invoke-LinuxTestsCore
         $sudoPesterParam['ExcludeTag'] = $ExcludeTag
         $sudoPesterParam['Sudo'] = $true
         $sudoPesterParam['OutputFile'] = $testResultsSudo
+        $sudoPesterParam['OutputFormat'] = $OutputFormat
 
         $title = "Pester Sudo - $TagSet"
         if ($TitlePrefix) {
@@ -773,7 +860,9 @@ function Invoke-LinuxTestsCore
             if ($TitlePrefix) {
                 $title = "$TitlePrefix - $title"
             }
-            $passThruResult = Start-PSPester @sudoPesterParam -Title $title
+
+            # We just built the test tools for the main test run, we don't need to rebuild them
+            $passThruResult = Start-PSPester @sudoPesterParam -Title $title -SkipTestToolBuild
 
             $sudoResultsWithExpFeatures += $passThruResult
         }
@@ -837,16 +926,36 @@ function New-LinuxPackage
             $packageObj = $package
         }
 
-        Write-Log -message "Artifacts directory: ${env:BUILD_ARTIFACTSTAGINGDIRECTORY}"
-        Copy-Item $packageObj.FullName -Destination "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}" -Force
+        # Determine artifacts directory (GitHub Actions or Azure DevOps)
+        $artifactsDir = if ($env:GITHUB_ACTIONS -eq 'true') {
+            "${env:GITHUB_WORKSPACE}/../packages"
+        } else {
+            "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}"
+        }
+        
+        # Ensure artifacts directory exists
+        if (-not (Test-Path $artifactsDir)) {
+            New-Item -ItemType Directory -Path $artifactsDir -Force | Out-Null
+        }
+        
+        Write-Log -message "Artifacts directory: $artifactsDir"
+        Copy-Item $packageObj.FullName -Destination $artifactsDir -Force
     }
 
     if ($IsLinux)
     {
+        # Determine artifacts directory (GitHub Actions or Azure DevOps)
+        $artifactsDir = if ($env:GITHUB_ACTIONS -eq 'true') {
+            "${env:GITHUB_WORKSPACE}/../packages"
+        } else {
+            "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}"
+        }
+        
         # Create and package Raspbian .tgz
+        # Build must be clean for Raspbian
         Start-PSBuild -PSModuleRestore -Clean -Runtime linux-arm -Configuration 'Release'
         $armPackage = Start-PSPackage @packageParams -Type tar-arm -SkipReleaseChecks
-        Copy-Item $armPackage -Destination "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}" -Force
+        Copy-Item $armPackage -Destination $artifactsDir -Force
     }
 }
 
@@ -905,5 +1014,228 @@ function Invoke-InitializeContainerStage {
 
       # Cannot do this for a PR
       Write-Host "##vso[build.addbuildtag]$($selectedImage.JobName)"
+    }
+}
+
+Function Test-MergeConflictMarker
+{
+    <#
+    .SYNOPSIS
+        Checks files for Git merge conflict markers and outputs results for GitHub Actions.
+    .DESCRIPTION
+        Scans the specified files for Git merge conflict markers (<<<<<<<, =======, >>>>>>>)
+        and generates console output, GitHub Actions outputs, and job summary.
+        Designed for use in GitHub Actions workflows.
+    .PARAMETER File
+        Array of file paths (relative or absolute) to check for merge conflict markers.
+    .PARAMETER WorkspacePath
+        Base workspace path for resolving relative paths. Defaults to current directory.
+    .PARAMETER OutputPath
+        Path to write GitHub Actions outputs. Defaults to $env:GITHUB_OUTPUT.
+    .PARAMETER SummaryPath
+        Path to write GitHub Actions job summary. Defaults to $env:GITHUB_STEP_SUMMARY.
+    .EXAMPLE
+        Test-MergeConflictMarker -File @('file1.txt', 'file2.cs') -WorkspacePath $env:GITHUB_WORKSPACE
+    #>
+    [CmdletBinding()]
+    param(
+        [Parameter()]
+        [AllowEmptyCollection()]
+        [string[]] $File = @(),
+
+        [Parameter()]
+        [string] $WorkspacePath = $PWD,
+
+        [Parameter()]
+        [string] $OutputPath = $env:GITHUB_OUTPUT,
+
+        [Parameter()]
+        [string] $SummaryPath = $env:GITHUB_STEP_SUMMARY
+    )
+
+    Write-Host "Starting merge conflict marker check..." -ForegroundColor Cyan
+
+    # Helper function to write outputs when no files to check
+    function Write-NoFilesOutput {
+        param(
+            [string]$Message,
+            [string]$OutputPath,
+            [string]$SummaryPath
+        )
+        
+        # Output results to GitHub Actions
+        if ($OutputPath) {
+            "files-checked=0" | Out-File -FilePath $OutputPath -Append -Encoding utf8
+            "conflicts-found=0" | Out-File -FilePath $OutputPath -Append -Encoding utf8
+        }
+        
+        # Create GitHub Actions job summary
+        if ($SummaryPath) {
+            $summaryContent = @"
+# Merge Conflict Marker Check Results
+
+## Summary
+- **Files Checked:** 0
+- **Files with Conflicts:** 0
+
+## ℹ️ No Files to Check
+
+$Message
+
+"@
+            $summaryContent | Out-File -FilePath $SummaryPath -Encoding utf8
+        }
+    }
+
+    # Handle empty file list (e.g., when PR only deletes files)
+    if ($File.Count -eq 0) {
+        Write-Host "No files to check (empty file list)" -ForegroundColor Yellow
+        Write-NoFilesOutput -Message "No files were provided for checking (this can happen when a PR only deletes files)." -OutputPath $OutputPath -SummaryPath $SummaryPath
+        return
+    }
+
+    # Filter out *.cs files from merge conflict checking
+    $filesToCheck = @($File | Where-Object { $_ -notlike "*.cs" })
+    $filteredCount = $File.Count - $filesToCheck.Count
+    
+    if ($filteredCount -gt 0) {
+        Write-Host "Filtered out $filteredCount *.cs file(s) from merge conflict checking" -ForegroundColor Yellow
+    }
+    
+    if ($filesToCheck.Count -eq 0) {
+        Write-Host "No files to check after filtering (all files were *.cs)" -ForegroundColor Yellow
+        Write-NoFilesOutput -Message "All $filteredCount file(s) were filtered out (*.cs files are excluded from merge conflict checking)." -OutputPath $OutputPath -SummaryPath $SummaryPath
+        return
+    }
+
+    Write-Host "Checking $($filesToCheck.Count) changed files for merge conflict markers" -ForegroundColor Cyan
+
+    # Convert relative paths to absolute paths for processing
+    $absolutePaths = $filesToCheck | ForEach-Object {
+        if ([System.IO.Path]::IsPathRooted($_)) {
+            $_
+        } else {
+            Join-Path $WorkspacePath $_
+        }
+    }
+
+    $filesWithConflicts = @()
+    $filesChecked = 0
+
+    foreach ($filePath in $absolutePaths) {
+        # Check if file exists (might be deleted)
+        if (-not (Test-Path $filePath)) {
+            Write-Verbose "  Skipping deleted file: $filePath"
+            continue
+        }
+
+        # Skip binary files and directories
+        if ((Get-Item $filePath) -is [System.IO.DirectoryInfo]) {
+            continue
+        }
+
+        $filesChecked++
+        
+        # Get relative path for display
+        $relativePath = if ($WorkspacePath -and $filePath.StartsWith($WorkspacePath)) {
+            $filePath.Substring($WorkspacePath.Length).TrimStart([System.IO.Path]::DirectorySeparatorChar, [System.IO.Path]::AltDirectorySeparatorChar)
+        } else {
+            $filePath
+        }
+        
+        Write-Host "  Checking: $relativePath" -ForegroundColor Gray
+
+        # Search for conflict markers using Select-String
+        try {
+            # Git conflict markers are 7 characters followed by a space or end of line
+            # Regex pattern breakdown:
+            #   ^            - Matches the start of a line
+            #   (<{7}|={7}|>{7}) - Matches exactly 7 consecutive '<', '=', or '>' characters (Git conflict markers)
+            #   (\s|$)       - Ensures the marker is followed by whitespace or end of line
+            $pattern = '^(<{7}|={7}|>{7})(\s|$)'
+            $matchedLines = Select-String -Path $filePath -Pattern $pattern -AllMatches -ErrorAction Stop
+
+            if ($matchedLines) {
+                # Collect marker details with line numbers (Select-String provides LineNumber automatically)
+                $markerDetails = @()
+
+                foreach ($match in $matchedLines) {
+                    $markerDetails += [PSCustomObject]@{
+                        Marker = $match.Matches[0].Groups[1].Value
+                        Line = $match.LineNumber
+                    }
+                }
+
+                $filesWithConflicts += [PSCustomObject]@{
+                    File = $relativePath
+                    MarkerDetails = $markerDetails
+                }
+
+                Write-Host "  ❌ CONFLICT MARKERS FOUND in $relativePath" -ForegroundColor Red
+                foreach ($detail in $markerDetails) {
+                    Write-Host "     Line $($detail.Line): $($detail.Marker)" -ForegroundColor Red
+                }
+            }
+        }
+        catch {
+            # Skip files that can't be read (likely binary)
+            Write-Verbose "  Skipping unreadable file: $relativePath"
+        }
+    }
+
+    # Output results to GitHub Actions
+    if ($OutputPath) {
+        "files-checked=$filesChecked" | Out-File -FilePath $OutputPath -Append -Encoding utf8
+        "conflicts-found=$($filesWithConflicts.Count)" | Out-File -FilePath $OutputPath -Append -Encoding utf8
+    }
+
+    Write-Host "`nSummary:" -ForegroundColor Cyan
+    Write-Host "  Files checked: $filesChecked" -ForegroundColor Cyan
+    Write-Host "  Files with conflicts: $($filesWithConflicts.Count)" -ForegroundColor Cyan
+
+    # Create GitHub Actions job summary
+    if ($SummaryPath) {
+        $summaryContent = @"
+# Merge Conflict Marker Check Results
+
+## Summary
+- **Files Checked:** $filesChecked
+- **Files with Conflicts:** $($filesWithConflicts.Count)
+
+"@
+
+        if ($filesWithConflicts.Count -gt 0) {
+            Write-Host "`n❌ Merge conflict markers detected in the following files:" -ForegroundColor Red
+
+            $summaryContent += "`n## ❌ Conflicts Detected`n`n"
+            $summaryContent += "The following files contain merge conflict markers:`n`n"
+
+            foreach ($fileInfo in $filesWithConflicts) {
+                Write-Host "  - $($fileInfo.File)" -ForegroundColor Red
+
+                $summaryContent += "### 📄 ``$($fileInfo.File)```n`n"
+                $summaryContent += "| Line | Marker |`n"
+                $summaryContent += "|------|--------|`n"
+
+                foreach ($detail in $fileInfo.MarkerDetails) {
+                    Write-Host "     Line $($detail.Line): $($detail.Marker)" -ForegroundColor Red
+                    $summaryContent += "| $($detail.Line) | ``$($detail.Marker)`` |`n"
+                }
+                $summaryContent += "`n"
+            }
+
+            $summaryContent += "`n**Action Required:** Please resolve these conflicts before merging.`n"
+            Write-Host "`nPlease resolve these conflicts before merging." -ForegroundColor Red
+        } else {
+            Write-Host "`n✅ No merge conflict markers found" -ForegroundColor Green
+            $summaryContent += "`n## ✅ No Conflicts Found`n`nAll checked files are free of merge conflict markers.`n"
+        }
+
+        $summaryContent | Out-File -FilePath $SummaryPath -Encoding utf8
+    }
+
+    # Exit with error if conflicts found
+    if ($filesWithConflicts.Count -gt 0) {
+        throw "Merge conflict markers detected in $($filesWithConflicts.Count) file(s)"
     }
 }

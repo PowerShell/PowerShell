@@ -734,10 +734,8 @@ namespace Microsoft.PowerShell.Commands
         #endregion
 
         #region trace
-
-        [TraceSourceAttribute("GetHelpCommand ", "GetHelpCommand ")]
-        private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("GetHelpCommand ", "GetHelpCommand ");
-
+        [TraceSource("GetHelpCommand", "GetHelpCommand")]
+        private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("GetHelpCommand", "GetHelpCommand");
         #endregion
     }
 

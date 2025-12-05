@@ -31,7 +31,7 @@ namespace System.Management.Automation.Remoting
     /// </summary>
     internal class ServerRemoteSessionDSHandlerStateMachine
     {
-        [TraceSourceAttribute("ServerRemoteSessionDSHandlerStateMachine", "ServerRemoteSessionDSHandlerStateMachine")]
+        [TraceSource("ServerRemoteSessionDSHandlerStateMachine", "ServerRemoteSessionDSHandlerStateMachine")]
         private static readonly PSTraceSource s_trace = PSTraceSource.GetTracer("ServerRemoteSessionDSHandlerStateMachine", "ServerRemoteSessionDSHandlerStateMachine");
 
         private readonly ServerRemoteSession _session;

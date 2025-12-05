@@ -14,7 +14,7 @@ jobs:
     value: false
   - name: NugetSecurityAnalysisWarningLevel
     value: none
-  - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
+  - name: DOTNET_NOLOGO
     value: 1
   - group: DotNetPrivateBuildAccess
   - group: certificate_logical_to_actual
@@ -65,6 +65,8 @@ jobs:
       AnalyzeInPipeline: false
       Language: csharp
 
+  - template: /.pipelines/templates/install-dotnet.yml@self
+
   - pwsh: |
       $runtime = switch ($env:Architecture)
         {
@@ -88,7 +90,7 @@ jobs:
       Import-Module -Name $(PowerShellRoot)/build.psm1 -Force
       $buildWithSymbolsPath = New-Item -ItemType Directory -Path $(Pipeline.Workspace)/Symbols_$(Architecture) -Force
 
-      Start-PSBootstrap -Package
+      Start-PSBootstrap -Scenario Package
       $null = New-Item -ItemType Directory -Path $buildWithSymbolsPath -Force -Verbose
 
       $ReleaseTagParam = @{}
@@ -137,7 +139,7 @@ jobs:
         }
 
       Import-Module -Name $(PowerShellRoot)/build.psm1 -Force
-      Start-PSBootstrap
+      Find-Dotnet
 
       ## Build global tool
       Write-Verbose -Message "Building PowerShell global tool for Windows.x64" -Verbose
@@ -200,6 +202,7 @@ jobs:
   - template: /.pipelines/templates/obp-file-signing.yml@self
     parameters:
       binPath: '$(Pipeline.Workspace)/Symbols_$(Architecture)'
+      OfficialBuild: $(ps_official_build)
 
   ## first we sign all the files in the bin folder
   - ${{ if eq(variables['Architecture'], 'fxdependent') }}:
@@ -207,6 +210,7 @@ jobs:
       parameters:
         binPath: '$(GlobalToolArtifactPath)/publish/PowerShell.Windows.x64/release'
         globalTool: 'true'
+        OfficialBuild: $(ps_official_build)
 
   - pwsh: |
       Get-ChildItem '$(GlobalToolArtifactPath)/obj/PowerShell.Windows.x64/release'
@@ -232,7 +236,8 @@ jobs:
         #>
 
       Import-Module -Name $(PowerShellRoot)/build.psm1 -Force
-      Start-PSBootstrap
+      Find-Dotnet
+
       $packagingStrings = Import-PowerShellDataFile "$(PowerShellRoot)\tools\packaging\packaging.strings.psd1"
 
       $outputPath = Join-Path '$(ob_outputDirectory)' 'globaltool'
@@ -267,11 +272,11 @@ jobs:
         'Microsoft.PowerShell.PSResourceGet'
         'Microsoft.PowerShell.Archive'
         'PSReadLine'
-        'ThreadJob'
+        'Microsoft.PowerShell.ThreadJob'
       )
 
       $sourceModulePath = Join-Path '$(GlobalToolArtifactPath)' 'publish' 'PowerShell.Windows.x64' 'release' 'Modules'
-      $destModulesPath = Join-Path "$outputPath" 'temp' 'tools' 'net9.0' 'any' 'modules'
+      $destModulesPath = Join-Path "$outputPath" 'temp' 'tools' 'net10.0' 'any' 'modules'
 
       $modulesToCopy | ForEach-Object {
         $modulePath = Join-Path $sourceModulePath $_
@@ -279,7 +284,7 @@ jobs:
       }
 
       # Copy ref assemblies
-      Copy-Item '$(Pipeline.Workspace)/Symbols_$(Architecture)/ref' "$outputPath\temp\tools\net9.0\any\ref" -Recurse -Force
+      Copy-Item '$(Pipeline.Workspace)/Symbols_$(Architecture)/ref' "$outputPath\temp\tools\net10.0\any\ref" -Recurse -Force
 
       $contentPath = Join-Path "$outputPath\temp" 'content'
       $contentFilesPath = Join-Path "$outputPath\temp" 'contentFiles'
@@ -287,14 +292,14 @@ jobs:
       Remove-Item -Path $contentPath,$contentFilesPath -Recurse -Force
 
       # remove PDBs to reduce the size of the nupkg
-      Remove-Item -Path "$outputPath\temp\tools\net9.0\any\*.pdb" -Recurse -Force
+      Remove-Item -Path "$outputPath\temp\tools\net10.0\any\*.pdb" -Recurse -Force
 
       # create powershell.config.json
       $config = [ordered]@{}
       $config.Add("Microsoft.PowerShell:ExecutionPolicy", "RemoteSigned")
       $config.Add("WindowsPowerShellCompatibilityModuleDenyList", @("PSScheduledJob", "BestPractices", "UpdateServices"))
 
-      $configPublishPath = Join-Path "$outputPath" 'temp' 'tools' 'net9.0' 'any' "powershell.config.json"
+      $configPublishPath = Join-Path "$outputPath" 'temp' 'tools' 'net10.0' 'any' "powershell.config.json"
       Set-Content -Path $configPublishPath -Value ($config | ConvertTo-Json) -Force -ErrorAction Stop
 
       Compress-Archive -Path "$outputPath\temp\*" -DestinationPath "$outputPath\$nupkgName" -Force

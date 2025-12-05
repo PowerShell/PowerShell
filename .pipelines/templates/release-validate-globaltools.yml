@@ -38,44 +38,13 @@ jobs:
         Get-ChildItem "$(Pipeline.Workspace)/PSPackagesOfficial/drop_nupkg_build_nupkg" -Recurse
       displayName: 'Capture Downloaded Artifacts'
 
-    - pwsh: |
-        $repoRoot = "$(Build.SourcesDirectory)/PowerShell"
-        $dotnetMetadataPath = "$repoRoot/DotnetRuntimeMetadata.json"
-        $dotnetMetadataJson = Get-Content $dotnetMetadataPath -Raw | ConvertFrom-Json
-
-        # Channel is like: $Channel = "5.0.1xx-preview2"
-        $Channel = $dotnetMetadataJson.sdk.channel
-
-        $sdkVersion = (Get-Content "$repoRoot/global.json" -Raw | ConvertFrom-Json).sdk.version
-        Import-Module "$repoRoot/build.psm1" -Force
-
-        Find-Dotnet
-
-        if(-not (Get-PackageSource -Name 'dotnet' -ErrorAction SilentlyContinue))
-        {
-            $nugetFeed = ([xml](Get-Content $repoRoot/nuget.config -Raw)).Configuration.packagesources.add | Where-Object { $_.Key -eq 'dotnet' } | Select-Object -ExpandProperty Value
-            if ($nugetFeed) {
-              Register-PackageSource -Name 'dotnet' -Location $nugetFeed -ProviderName NuGet
-              Write-Verbose -Message "Register new package source 'dotnet'" -verbose
-            }
-        }
-
-        ## Install latest version from the channel
-
-        #Install-Dotnet -Channel "$Channel" -Version $sdkVersion
-        Start-PSBootstrap
-
-        Write-Verbose -Message "Installing .NET SDK completed." -Verbose
-
-      displayName: Install .NET
-      env:
-        __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+    - template: /.pipelines/templates/install-dotnet.yml@self
 
     - pwsh: |
         $repoRoot = "$(Build.SourcesDirectory)/PowerShell"
-        $env:DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
-        Import-Module "$repoRoot/build.psm1" -Force
-        Start-PSBootstrap
+
+        Import-Module "$repoRoot/build.psm1" -Force -Verbose
+        Start-PSBootstrap -Scenario Dotnet
 
         $toolPath = New-Item -ItemType Directory "$(System.DefaultWorkingDirectory)/toolPath" | Select-Object -ExpandProperty FullName
 
@@ -85,7 +54,7 @@ jobs:
         $packageName = '${{ parameters.globalToolPackageName }}'
         Write-Verbose -Verbose "Installing $packageName"
 
-        dotnet tool install --add-source "$ENV:PIPELINE_WORKSPACE/PSPackagesOfficial/drop_nupkg_build_nupkg" --tool-path $toolPath --version '$(Version)' $packageName
+        dotnet tool install --add-source "$ENV:PIPELINE_WORKSPACE/PSPackagesOfficial/drop_nupkg_build_nupkg" --tool-path $toolPath --version '$(OutputVersion.Version)' $packageName
 
         Get-ChildItem -Path $toolPath
 
@@ -108,8 +77,9 @@ jobs:
 
     - pwsh: |
         $repoRoot = "$(Build.SourcesDirectory)/PowerShell"
-        Import-Module "$repoRoot/build.psm1" -Force
-        Start-PSBootstrap
+
+        Import-Module "$repoRoot/build.psm1" -Force -Verbose
+        Start-PSBootstrap -Scenario Dotnet
 
         $exeName = if ($IsWindows) { "pwsh.exe" } else { "pwsh" }
 
@@ -133,7 +103,7 @@ jobs:
 
         $versionFound = & $toolPath -c '$PSVersionTable.PSVersion.ToString()'
 
-        if ( '$(Version)' -ne $versionFound)
+        if ( '$(OutputVersion.Version)' -ne $versionFound)
         {
             throw "Expected version of global tool not found. Installed version is $versionFound"
         }

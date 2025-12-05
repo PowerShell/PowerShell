@@ -8,8 +8,7 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Internal.Host;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
-
-using Dbg = System.Management.Automation.Diagnostics;
+using System.Threading;
 
 namespace System.Management.Automation.Internal
 {
@@ -131,6 +130,13 @@ namespace System.Management.Automation.Internal
                 return (mcr != null && mcr.IsStopping);
             }
         }
+
+        /// <summary>
+        /// Gets the CancellationToken that is signaled when the pipeline is stopping.
+        /// </summary>
+        internal CancellationToken StopToken => commandRuntime is MshCommandRuntime mcr
+            ? mcr.PipelineProcessor.PipelineStopToken
+            : default;
 
         /// <summary>
         /// The information about the command.

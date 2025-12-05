@@ -1,0 +1,145 @@
+trigger: none
+
+parameters: # parameters are shown up in ADO UI in a build queue time
+- name: 'createVPack'
+  displayName: 'Create and Submit VPack'
+  type: boolean
+  default: true
+- name: 'debug'
+  displayName: 'Enable debug output'
+  type: boolean
+  default: false
+- name: 'ReleaseTagVar'
+  type: string
+  displayName: 'Release Tag Var:'
+  default: 'fromBranch'
+
+name: msixbundle_vPack_$(date:yyMM).$(date:dd)$(rev:rrr)
+
+variables:
+  CDP_DEFINITION_BUILD_COUNT: $[counter('', 0)]
+  system.debug: ${{ parameters.debug }}
+  BuildSolution: $(Build.SourcesDirectory)\dirs.proj
+  ReleaseTagVar: ${{ parameters.ReleaseTagVar }}
+  BuildConfiguration: Release
+  WindowsContainerImage: 'onebranch.azurecr.io/windows/ltsc2019/vse2022:latest'
+  Codeql.Enabled: false  #  pipeline is not building artifacts; it repackages existing artifacts into a vpack
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+  POWERSHELL_TELEMETRY_OPTOUT: 1
+
+resources:
+  repositories:
+    - repository: onebranchTemplates
+      type: git
+      name: OneBranch.Pipelines/GovernedTemplates
+      ref: refs/heads/main
+
+  pipelines:
+    - pipeline: PSPackagesOfficial
+      source: 'PowerShell-Packages-Official'
+      trigger:
+        branches:
+          include:
+            - master
+            - releases/*
+
+extends:
+  template: v2/Microsoft.Official.yml@onebranchTemplates
+  parameters:
+    platform:
+      name: 'windows_undocked' # windows undocked
+
+    cloudvault:
+      enabled: false
+
+    globalSdl:
+      useCustomPolicy: true # for signing code
+      disableLegacyManifest: true
+      # disabled Armory as we dont have any ARM templates to scan. It fails on some sample ARM templates.
+      armory:
+        enabled: false
+      sbom:
+        enabled: true
+      compiled:
+        enabled: false
+      credscan:
+        enabled: true
+        scanFolder:  $(Build.SourcesDirectory)
+        suppressionsFile: $(Build.SourcesDirectory)\.config\suppress.json
+      binskim:
+        enabled: false
+        exactToolVersion: 4.4.2
+      # APIScan requires a non-Ready-To-Run build
+      apiscan:
+        enabled: false
+      tsaOptionsFile: .config/tsaoptions.json
+
+    stages:
+    - stage: build
+      jobs:
+      - job: main
+        pool:
+          type: windows
+
+        variables:
+          ob_outputDirectory: '$(BUILD.SOURCESDIRECTORY)\out'
+          ob_createvpack_enabled: ${{ parameters.createVPack }}
+          ob_createvpack_packagename: 'PowerShell.app'
+          ob_createvpack_owneralias: 'dongbow'
+          ob_createvpack_description: 'VPack for the PowerShell Application'
+          ob_createvpack_targetDestinationDirectory: '$(Destination)'
+          ob_createvpack_propsFile: false
+          ob_createvpack_provData: true
+          ob_createvpack_metadata: '$(Build.SourceVersion)'
+          ob_createvpack_versionAs: string
+          ob_createvpack_version: '$(version)'
+          ob_createvpack_verbose: true
+
+        steps:
+          - template: .pipelines/templates/SetVersionVariables.yml@self
+            parameters:
+              ReleaseTagVar: $(ReleaseTagVar)
+
+          - pwsh: |
+              Write-Verbose -Verbose 'PowerShell Version: $(version)'
+              if('$(version)' -match '-') {
+                  throw "Don't release a preview build msixbundle package"
+              }
+            displayName: Stop any preview release
+
+          - download: PSPackagesOfficial
+            artifact: 'drop_msixbundle_CreateMSIXBundle'
+            displayName: Download package
+
+          - pwsh: |
+              $payloadDir = '$(Pipeline.Workspace)\PSPackagesOfficial\drop_msixbundle_CreateMSIXBundle'
+              Get-ChildItem $payloadDir -Recurse | Out-String -Width 150
+              $vstsCommandString = "vso[task.setvariable variable=PayloadDir]$payloadDir"
+              Write-Host "sending " + $vstsCommandString
+              Write-Host "##$vstsCommandString"
+            displayName: 'Capture Artifact Listing'
+
+          - pwsh: |
+              $bundlePackage = Get-ChildItem '$(PayloadDir)\*.msixbundle'
+              Write-Verbose -Verbose ("MSIX bundle package: " + $bundlePackage.FullName -join ', ')
+              if ($bundlePackage.Count -ne 1) {
+                  throw "Expected to find 1 MSIX bundle package, but found $($bundlePackage.Count)"
+              }
+
+              if (-not (Test-Path '$(ob_outputDirectory)' -PathType Container)) {
+                  $null = New-Item '$(ob_outputDirectory)' -ItemType Directory -ErrorAction Stop
+              }
+
+              $targetPath = Join-Path '$(ob_outputDirectory)' 'Microsoft.PowerShell_8wekyb3d8bbwe.msixbundle'
+              Copy-Item -Verbose -Path $bundlePackage.FullName -Destination $targetPath
+            displayName: 'Stage msixbundle for vpack'
+
+          - pwsh: |
+              Write-Verbose "VPack Version: $(ob_createvpack_version)" -Verbose
+              $vpackFiles = Get-ChildItem -Path $(ob_outputDirectory)\* -Recurse
+              if($vpackFiles.Count -eq 0) {
+                  throw "No files found in $(ob_outputDirectory)"
+              }
+              $vpackFiles | Out-String -Width 150
+            displayName: Debug Output Directory and Version
+            condition: succeededOrFailed()

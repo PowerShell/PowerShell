@@ -94,10 +94,10 @@ internal static class WinTrustMethods
         public IntPtr pbData;
     }
 
-    [StructLayoutAttribute(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential)]
     internal struct CRYPT_ALGORITHM_IDENTIFIER
     {
-        [MarshalAsAttribute(UnmanagedType.LPStr)] public string pszObjId;
+        [MarshalAs(UnmanagedType.LPStr)] public string pszObjId;
         public CRYPT_ATTR_BLOB Parameters;
     }
 
@@ -158,7 +158,7 @@ internal static class WinTrustMethods
         public IntPtr hSorted;
     }
 
-    [StructLayoutAttribute(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential)]
     internal struct WINTRUST_DATA
     {
         public uint cbStruct;
@@ -184,7 +184,7 @@ internal static class WinTrustMethods
         public IntPtr pgKnownSubject;
     }
 
-    [StructLayoutAttribute(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential)]
     internal struct WINTRUST_BLOB_INFO
     {
         public uint cbStruct;

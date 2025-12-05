@@ -2860,7 +2860,7 @@ namespace System.Management.Automation.Runspaces
             // Ensure that user name contains no invalid path characters.
             // MSDN indicates that logon names cannot contain any of these invalid characters,
             // but this check will ensure safety.
-            if (userName.IndexOfAny(System.IO.Path.GetInvalidPathChars()) > -1)
+            if (PathUtils.ContainsInvalidPathChars(userName))
             {
                 throw new PSInvalidOperationException(RemotingErrorIdStrings.InvalidUserDriveName);
             }
@@ -4527,6 +4527,14 @@ end {
                     ScopedItemOptions.None,
                     new ArgumentTypeConverterAttribute(typeof(System.Text.Encoding))),
 
+                // Variable which controls the encoding for decoding data from a NativeCommand
+                new SessionStateVariableEntry(
+                    SpecialVariables.PSApplicationOutputEncoding,
+                    null,
+                    RunspaceInit.PSApplicationOutputEncodingDescription,
+                    ScopedItemOptions.None,
+                    new ArgumentTypeConverterAttribute(typeof(Encoding))),
+
                 // Preferences
                 //
                 // NTRAID#Windows Out Of Band Releases-931461-2006/03/13
@@ -5470,6 +5478,7 @@ end {
                 { "Get-Module",                        new SessionStateCmdletEntry("Get-Module", typeof(GetModuleCommand), helpFile) },
                 { "Get-PSHostProcessInfo",             new SessionStateCmdletEntry("Get-PSHostProcessInfo", typeof(GetPSHostProcessInfoCommand), helpFile) },
                 { "Get-PSSession",                     new SessionStateCmdletEntry("Get-PSSession", typeof(GetPSSessionCommand), helpFile) },
+                { "Get-PSSubsystem",                   new SessionStateCmdletEntry("Get-PSSubsystem", typeof(Subsystem.GetPSSubsystemCommand), helpFile) },
                 { "Import-Module",                     new SessionStateCmdletEntry("Import-Module", typeof(ImportModuleCommand), helpFile) },
                 { "Invoke-Command",                    new SessionStateCmdletEntry("Invoke-Command", typeof(InvokeCommandCommand), helpFile) },
                 { "Invoke-History",                    new SessionStateCmdletEntry("Invoke-History", typeof(InvokeHistoryCommand), helpFile) },
@@ -5509,11 +5518,6 @@ end {
                 { "Out-LineOutput",                    new SessionStateCmdletEntry("Out-LineOutput", typeof(OutLineOutputCommand), helpFile) },
                 { "Format-Default",                    new SessionStateCmdletEntry("Format-Default", typeof(FormatDefaultCommand), helpFile) },
             };
-
-            if (ExperimentalFeature.IsEnabled("PSSubsystemPluginModel"))
-            {
-                cmdlets.Add("Get-PSSubsystem", new SessionStateCmdletEntry("Get-PSSubsystem", typeof(Subsystem.GetPSSubsystemCommand), helpFile));
-            }
 
 #if UNIX
             cmdlets.Add("Switch-Process", new SessionStateCmdletEntry("Switch-Process", typeof(SwitchProcessCommand), helpFile));

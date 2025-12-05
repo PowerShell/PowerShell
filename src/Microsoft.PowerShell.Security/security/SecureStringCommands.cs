@@ -311,8 +311,7 @@ namespace Microsoft.PowerShell.Commands
                 byte[] iv = null;
 
                 // If this is a V2 package
-                if (String.IndexOf(SecureStringHelper.SecureStringExportHeader,
-                        StringComparison.OrdinalIgnoreCase) == 0)
+                if (String.StartsWith(SecureStringHelper.SecureStringExportHeader, StringComparison.OrdinalIgnoreCase))
                 {
                     try
                     {

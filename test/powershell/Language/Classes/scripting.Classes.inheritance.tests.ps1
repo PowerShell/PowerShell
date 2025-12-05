@@ -80,6 +80,49 @@ Describe 'Classes inheritance syntax' -Tags "CI" {
         $getter.Attributes -band [System.Reflection.MethodAttributes]::Virtual | Should -Be ([System.Reflection.MethodAttributes]::Virtual)
     }
 
+    It 'can implement .NET interface static properties' {
+        Add-Type -TypeDefinition @'
+public interface IInterfaceWithStaticAbstractProperty
+{
+    static abstract int Getter { get; }
+    static abstract int Setter { get; set; }
+}
+
+public static class InterfaceStaticAbstractPropertyTest
+{
+    public static int GetGetter<T>() where T : IInterfaceWithStaticAbstractProperty
+        => T.Getter;
+
+    public static int GetSetter<T>() where T : IInterfaceWithStaticAbstractProperty
+        => T.Setter;
+
+    public static int SetSetter<T>(int value) where T : IInterfaceWithStaticAbstractProperty
+        => T.Setter = value;
+}
+'@
+
+        $C1 = Invoke-Expression @'
+class ClassWithStaticAbstractInterface : IInterfaceWithStaticAbstractProperty {
+    static [int]$Getter = 1
+    static [int]$Setter = 2
+}
+
+[ClassWithStaticAbstractInterface]
+'@
+
+        $C1::Getter | Should -Be 1
+        $C1::Getter | Should -BeOfType ([int])
+        $C1::Setter | Should -Be 2
+        $C1::Setter | Should -BeOfType ([int])
+        $C1::Setter = 3
+        $C1::Setter | Should -Be 3
+
+        [InterfaceStaticAbstractPropertyTest]::GetGetter[ClassWithStaticAbstractInterface]() | Should -Be 1
+        [InterfaceStaticAbstractPropertyTest]::GetSetter[ClassWithStaticAbstractInterface]() | Should -Be 3
+        [InterfaceStaticAbstractPropertyTest]::SetSetter[ClassWithStaticAbstractInterface](4)
+        [InterfaceStaticAbstractPropertyTest]::GetSetter[ClassWithStaticAbstractInterface]() | Should -Be 4
+    }
+
     It 'allows use of defined later type as a property type' {
         class A { static [B]$b }
         class B : A {}
@@ -670,5 +713,211 @@ Describe 'Base type has abstract properties' -Tags "CI" {
         $failure | Should -Not -BeNullOrEmpty
         $failure.FullyQualifiedErrorId | Should -BeExactly "TypeCreationError"
         $failure.Exception.Message | Should -BeLike "*'get_Exists'*"
+    }
+}
+
+Describe 'Classes inheritance with protected and protected internal members in base class' -Tags 'CI' {
+
+    BeforeAll {
+        Set-StrictMode -Version 3
+        $c1DefinitionProtectedInternal = @'
+            public class C1ProtectedInternal
+            {
+                protected internal string InstanceField = "C1_InstanceField";
+                protected internal string InstanceProperty { get; set; } = "C1_InstanceProperty";
+                protected internal string InstanceMethod() { return "C1_InstanceMethod"; }
+
+                protected internal virtual string VirtualProperty1 { get; set; } = "C1_VirtualProperty1";
+                protected internal virtual string VirtualProperty2 { get; set; } = "C1_VirtualProperty2";
+                protected internal virtual string VirtualMethod1() { return "C1_VirtualMethod1"; }
+                protected internal virtual string VirtualMethod2() { return "C1_VirtualMethod2"; }
+
+                public string CtorUsed {  get; set; }
+                public C1ProtectedInternal() { CtorUsed = "default ctor"; }
+                protected internal C1ProtectedInternal(string p1) { CtorUsed = "C1_ctor_1args:" + p1; }
+            }
+'@
+        $c2DefinitionProtectedInternal = @'
+            class C2ProtectedInternal : C1ProtectedInternal {
+                C2ProtectedInternal() : base() { $this.VirtualProperty2 = 'C2_VirtualProperty2' }
+                C2ProtectedInternal([string]$p1) : base($p1) { $this.VirtualProperty2 = 'C2_VirtualProperty2' }
+
+                [string]GetInstanceField() { return $this.InstanceField }
+                [string]SetInstanceField([string]$value) { $this.InstanceField = $value; return $this.InstanceField }
+                [string]GetInstanceProperty() { return $this.InstanceProperty }
+                [string]SetInstanceProperty([string]$value) { $this.InstanceProperty = $value; return $this.InstanceProperty }
+                [string]CallInstanceMethod() { return $this.InstanceMethod() }
+
+                [string]GetVirtualProperty1() { return $this.VirtualProperty1 }
+                [string]SetVirtualProperty1([string]$value) { $this.VirtualProperty1 = $value; return $this.VirtualProperty1 }
+                [string]CallVirtualMethod1() { return $this.VirtualMethod1() }
+
+                [string]$VirtualProperty2
+                [string]VirtualMethod2() { return 'C2_VirtualMethod2' }
+                # Note: Overriding a virtual property in a derived PowerShell class prevents access to the
+                #       base property via simple typecast ([base]$this).VirtualProperty2.
+                [string]GetVirtualProperty2() { return $this.VirtualProperty2 }
+                [string]SetVirtualProperty2([string]$value) { $this.VirtualProperty2 = $value; return $this.VirtualProperty2 }
+                [string]CallVirtualMethod2Base() { return ([C1ProtectedInternal]$this).VirtualMethod2() }
+                [string]CallVirtualMethod2Derived() { return $this.VirtualMethod2() }
+
+                [string]GetInstanceMemberDynamic([string]$name) { return $this.$name }
+                [string]SetInstanceMemberDynamic([string]$name, [string]$value) { $this.$name = $value; return $this.$name }
+                [string]CallInstanceMemberDynamic([string]$name) { return $this.$name() }
+            }
+
+            [C2ProtectedInternal]
+'@
+
+        Add-Type -TypeDefinition $c1DefinitionProtectedInternal
+        Add-Type -TypeDefinition (($c1DefinitionProtectedInternal -creplace 'C1ProtectedInternal', 'C1Protected') -creplace 'protected internal', 'protected')
+
+        $testCases = @(
+            @{ accessType = 'protected'; derivedType = Invoke-Expression ($c2DefinitionProtectedInternal -creplace 'ProtectedInternal', 'Protected') }
+            @{ accessType = 'protected internal'; derivedType = Invoke-Expression $c2DefinitionProtectedInternal }
+        )
+    }
+
+    AfterAll {
+        Set-StrictMode -Off
+    }
+
+    Context 'Derived class can access instance base class members' {
+
+        It 'can call protected internal .NET method Object.MemberwiseClone()' {
+            class CNetMethod {
+                [string]$Foo
+                [object]CloneIt() { return $this.MemberwiseClone() }
+            }
+            $c1 = [CNetMethod]::new()
+            $c1.Foo = 'bar'
+            $c2 = $c1.CloneIt()
+            $c2.Foo | Should -Be 'bar'
+        }
+
+        It 'can call <accessType> base ctor' -TestCases $testCases {
+            param($derivedType)
+            $derivedType::new('foo').CtorUsed | Should -Be 'C1_ctor_1args:foo'
+        }
+
+        It 'can access <accessType> base field' -TestCases $testCases {
+            param($derivedType)
+            $c2 = $derivedType::new()
+            $c2.GetInstanceField() | Should -Be 'C1_InstanceField'
+            $c2.SetInstanceField('foo_InstanceField') | Should -Be 'foo_InstanceField'
+        }
+
+        It 'can access <accessType> base property' -TestCases $testCases {
+            param($derivedType)
+            $c2 = $derivedType::new()
+            $c2.GetInstanceProperty() | Should -Be 'C1_InstanceProperty'
+            $c2.SetInstanceProperty('foo_InstanceProperty') | Should -Be 'foo_InstanceProperty'
+        }
+
+        It 'can call <accessType> base method' -TestCases $testCases {
+            param($derivedType)
+            $derivedType::new().CallInstanceMethod() | Should -Be 'C1_InstanceMethod'
+        }
+
+        It 'can access <accessType> virtual base property' -TestCases $testCases {
+            param($derivedType)
+            $c2 = $derivedType::new()
+            $c2.GetVirtualProperty1() | Should -Be 'C1_VirtualProperty1'
+            $c2.SetVirtualProperty1('foo_VirtualProperty1') | Should -Be 'foo_VirtualProperty1'
+        }
+
+        It 'can call <accessType> virtual base method' -TestCases $testCases {
+            param($derivedType)
+            $derivedType::new().CallVirtualMethod1() | Should -Be 'C1_VirtualMethod1'
+        }
+    }
+
+    Context 'Derived class can override virtual base class members' {
+
+        It 'can override <accessType> virtual base property' -TestCases $testCases {
+            param($derivedType)
+            $c2 = $derivedType::new()
+            $c2.GetVirtualProperty2() | Should -Be 'C2_VirtualProperty2'
+            $c2.SetVirtualProperty2('foo_VirtualProperty2') | Should -Be 'foo_VirtualProperty2'
+        }
+
+        It 'can override <accessType> virtual base method' -TestCases $testCases {
+            param($derivedType)
+            $c2 = $derivedType::new()
+            $c2.CallVirtualMethod2Base() | Should -Be 'C1_VirtualMethod2'
+            $c2.CallVirtualMethod2Derived() | Should -Be 'C2_VirtualMethod2'
+        }
+    }
+
+    Context 'Derived class can access instance base class members dynamically' {
+
+        It 'can access <accessType> base fields and properties' -TestCases $testCases {
+            param($derivedType)
+            $c2 = $derivedType::new()
+            $c2.GetInstanceMemberDynamic('InstanceField') | Should -Be 'C1_InstanceField'
+            $c2.GetInstanceMemberDynamic('InstanceProperty') | Should -Be 'C1_InstanceProperty'
+            $c2.GetInstanceMemberDynamic('VirtualProperty1') | Should -Be 'C1_VirtualProperty1'
+            $c2.SetInstanceMemberDynamic('InstanceField', 'foo1') | Should -Be 'foo1'
+            $c2.SetInstanceMemberDynamic('InstanceProperty', 'foo2') | Should -Be 'foo2'
+            $c2.SetInstanceMemberDynamic('VirtualProperty1', 'foo3') | Should -Be 'foo3'
+        }
+
+        It 'can call <accessType> base methods' -TestCases $testCases {
+            param($derivedType)
+            $c2 = $derivedType::new()
+            $c2.CallInstanceMemberDynamic('InstanceMethod') | Should -Be 'C1_InstanceMethod'
+            $c2.CallInstanceMemberDynamic('VirtualMethod1') | Should -Be 'C1_VirtualMethod1'
+        }
+    }
+
+    Context 'Base class members are not accessible outside class scope' {
+
+        BeforeAll {
+            $instanceTest = {
+                $c2 = $derivedType::new()
+                { $null = $c2.InstanceField } | Should -Throw -ErrorId 'PropertyNotFoundStrict'
+                { $null = $c2.InstanceProperty } | Should -Throw -ErrorId 'PropertyNotFoundStrict'
+                { $null = $c2.VirtualProperty1 } | Should -Throw -ErrorId 'PropertyNotFoundStrict'
+                { $c2.InstanceField = 'foo' } | Should -Throw -ErrorId 'PropertyAssignmentException'
+                { $c2.InstanceProperty = 'foo' } | Should -Throw -ErrorId 'PropertyAssignmentException'
+                { $c2.VirtualProperty1 = 'foo' } | Should -Throw -ErrorId 'PropertyAssignmentException'
+                { $derivedType::new().InstanceMethod() } | Should -Throw -ErrorId 'MethodNotFound'
+                { $derivedType::new().VirtualMethod1() } | Should -Throw -ErrorId 'MethodNotFound'
+                foreach ($name in @('InstanceField', 'InstanceProperty', 'VirtualProperty1')) {
+                    { $null = $c2.$name } | Should -Throw -ErrorId 'PropertyNotFoundStrict'
+                    { $c2.$name = 'foo' } | Should -Throw -ErrorId 'PropertyAssignmentException'
+                }
+                foreach ($name in @('InstanceMethod', 'VirtualMethod1')) {
+                    { $c2.$name() } | Should -Throw -ErrorId 'MethodNotFound'
+                }
+            }
+            $c3UnrelatedType = Invoke-Expression @"
+                class C3Unrelated {
+                    [void]RunInstanceTest([type]`$derivedType) { $instanceTest }
+                }
+                [C3Unrelated]
+"@
+            $negativeTestCases = $testCases.ForEach({
+                    $item = $_.Clone()
+                    $item['scopeType'] = 'null scope'
+                    $item['classScope'] = $null
+                    $item
+                    $item = $_.Clone()
+                    $item['scopeType'] = 'unrelated class scope'
+                    $item['classScope'] = $c3UnrelatedType
+                    $item
+                })
+        }
+
+        It 'cannot access <accessType> instance base members in <scopeType>' -TestCases $negativeTestCases {
+            param($derivedType, $classScope)
+            if ($null -eq $classScope) {
+                $instanceTest.Invoke()
+            }
+            else {
+                $c3 = $classScope::new()
+                $c3.RunInstanceTest($derivedType)
+            }
+        }
     }
 }

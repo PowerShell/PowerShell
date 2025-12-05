@@ -1723,7 +1723,7 @@ namespace System.Management.Automation
                     // It still might be an PSObject wrapping an PSReference
                     if (originalArgumentReference == null)
                     {
-                        if (!(originalArgument is PSObject originalArgumentObj))
+                        if (originalArgument is not PSObject originalArgumentObj)
                         {
                             continue;
                         }
@@ -2835,7 +2835,7 @@ namespace System.Management.Automation
 
                 // Get the public or protected getter
                 MethodInfo propertyGetter = property.GetGetMethod(true);
-                if (propertyGetter != null && (propertyGetter.IsPublic || propertyGetter.IsFamily))
+                if (propertyGetter != null && (propertyGetter.IsPublic || propertyGetter.IsFamily || propertyGetter.IsFamilyOrAssembly))
                 {
                     this.isStatic = propertyGetter.IsStatic;
                     // Delegate is initialized later to avoid jit if it's not called
@@ -2847,7 +2847,7 @@ namespace System.Management.Automation
 
                 // Get the public or protected setter
                 MethodInfo propertySetter = property.GetSetMethod(true);
-                if (propertySetter != null && (propertySetter.IsPublic || propertySetter.IsFamily))
+                if (propertySetter != null && (propertySetter.IsPublic || propertySetter.IsFamily || propertySetter.IsFamilyOrAssembly))
                 {
                     this.isStatic = propertySetter.IsStatic;
                 }
@@ -3860,7 +3860,7 @@ namespace System.Management.Automation
 
         private static bool PropertyIsStatic(PSProperty property)
         {
-            if (!(property.adapterData is PropertyCacheEntry entry))
+            if (property.adapterData is not PropertyCacheEntry entry)
             {
                 return false;
             }

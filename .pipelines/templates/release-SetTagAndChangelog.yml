@@ -1,0 +1,51 @@
+jobs:
+- job: setTagAndChangelog
+  displayName: Set Tag and Upload Changelog
+  condition: succeeded()
+  pool:
+    type: windows
+  variables:
+  - group: 'mscodehub-code-read-akv'
+  - name: ob_outputDirectory
+    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  - name: ob_sdl_credscan_suppressionsFile
+    value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+  - name: ob_sdl_tsa_configFile
+    value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+  steps:
+  - template: release-SetReleaseTagandContainerName.yml@self
+
+  - checkout: self
+    clean: true
+    env:
+      ob_restore_phase: true
+
+  - pwsh: |
+      Write-Verbose -Verbose "Release Tag: $(OutputReleaseTag.releaseTag)"
+      $releaseVersion = '$(OutputReleaseTag.releaseTag)' -replace '^v',''
+      Write-Verbose -Verbose "Release Version: $releaseVersion"
+      $semanticVersion = [System.Management.Automation.SemanticVersion]$releaseVersion
+
+      $isPreview = $semanticVersion.PreReleaseLabel -ne $null
+
+      $fileName = if ($isPreview) {
+        "preview.md"
+      }
+      else {
+        $semanticVersion.Major.ToString() + "." + $semanticVersion.Minor.ToString() + ".md"
+      }
+
+      $filePath = "$(Build.SourcesDirectory)/PowerShell/CHANGELOG/$fileName"
+      Write-Verbose -Verbose "Selected Log file: $filePath"
+
+      if (-not (Test-Path -Path $filePath)) {
+        Write-Error "Changelog file not found: $filePath"
+        exit 1
+      }
+      
+      Write-Verbose -Verbose "Creating output directory for CHANGELOG: $(ob_outputDirectory)/CHANGELOG"
+      New-Item -Path $(ob_outputDirectory)/CHANGELOG -ItemType Directory -Force
+      Copy-Item -Path $filePath -Destination $(ob_outputDirectory)/CHANGELOG
+    displayName: Upload Changelog
+
+  - template: channelSelection.yml@self

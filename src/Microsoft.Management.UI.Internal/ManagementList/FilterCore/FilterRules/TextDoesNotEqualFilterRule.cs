@@ -10,16 +10,24 @@ namespace Microsoft.Management.UI.Internal
     /// check if it is not equal to the rule's value.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
-    [Serializable]
     public class TextDoesNotEqualFilterRule : TextEqualsFilterRule
     {
         /// <summary>
-        /// Initializes a new instance of the TextDoesNotEqualFilterRule class.
+        /// Initializes a new instance of the <see cref="TextDoesNotEqualFilterRule"/> class.
         /// </summary>
         public TextDoesNotEqualFilterRule()
         {
             this.DisplayName = UICultureResources.FilterRule_DoesNotEqual;
             this.DefaultNullValueEvaluation = true;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TextDoesNotEqualFilterRule"/> class.
+        /// </summary>
+        /// <param name="source">The source to initialize from.</param>
+        public TextDoesNotEqualFilterRule(TextDoesNotEqualFilterRule source)
+            : base(source)
+        {
         }
 
         /// <summary>

@@ -27,7 +27,7 @@ function Start-ClearlyDefinedHarvest {
         $coordinates = Get-ClearlyDefinedCoordinates @PSBoundParameters
         $body = @{tool='package';coordinates=$coordinates} | convertto-json
         Write-Verbose $body -Verbose
-        (Invoke-WebRequest -Method Post  -Uri 'https://api.clearlydefined.io/harvest' -Body $body -ContentType 'application/json').Content
+        (Invoke-WebRequest -Method Post  -Uri 'https://api.clearlydefined.io/harvest' -Body $body -ContentType 'application/json' -MaximumRetryCount 5 -RetryIntervalSec 60 -Verbose).Content
     }
 }
 
@@ -117,7 +117,7 @@ Function Get-ClearlyDefinedData {
                 continue
             }
 
-            Invoke-RestMethod  -Uri "https://api.clearlydefined.io/definitions/$coordinates" | ForEach-Object {
+            Invoke-RestMethod  -Uri "https://api.clearlydefined.io/definitions/$coordinates" -MaximumRetryCount 5 -RetryIntervalSec 60 | ForEach-Object {
                 [bool] $harvested = if ($_.licensed.declared) { $true } else { $false }
                 Add-Member -NotePropertyName cachedTime -NotePropertyValue (get-date) -InputObject $_ -PassThru | Add-Member -NotePropertyName harvested -NotePropertyValue $harvested -PassThru
                 if ($_.harvested) {

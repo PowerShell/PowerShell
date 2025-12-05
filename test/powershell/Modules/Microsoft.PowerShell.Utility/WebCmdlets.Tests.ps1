@@ -284,7 +284,7 @@ function ExecuteWebRequest {
     return $result
 }
 
-[string] $verboseEncodingPrefix = 'Content encoding: '
+[string] $debugEncodingPrefix = 'WebResponse content encoding: '
 # This function calls Invoke-WebRequest with the given uri and
 # parses the verbose output to determine the encoding used for the content.
 function ExecuteRestMethod {
@@ -297,37 +297,39 @@ function ExecuteRestMethod {
         $UseBasicParsing
     )
     $result = @{Output = $null; Error = $null; Encoding = $null; Content = $null}
-    $verbosePreferenceSave = $VerbosePreference
-    $VerbosePreference = 'Continue'
+    $debugPreferenceSave = $DebugPreference
+    $DebugPreference = 'Continue'
     try {
-        $verboseFile = Join-Path $TestDrive -ChildPath ExecuteRestMethod.verbose.txt
-        $result.Output = Invoke-RestMethod -Uri $Uri -UseBasicParsing:$UseBasicParsing.IsPresent -Verbose 4>$verboseFile
+        $debugFile = Join-Path $TestDrive -ChildPath ExecuteRestMethod.debug.txt
+        $result.Output = Invoke-RestMethod -Uri $Uri -UseBasicParsing:$UseBasicParsing.IsPresent 5>$debugFile
         $result.Content = $result.Output
 
-        if (Test-Path -Path $verboseFile) {
-            $result.Verbose = Get-Content -Path $verboseFile
-            foreach ($item in $result.Verbose) {
+        # Invoke-RestMethod does not return encoding as part of an object, only in debug output, so we parse the debug output for the purposes of verifying the test.
+        # This debug output is defined in InvokeRestMethodCommand.Common.cs ProcessResponse()
+        if (Test-Path -Path $debugFile) {
+            $result.Debug = Get-Content -Path $debugFile
+            foreach ($item in $result.Debug) {
                 $line = $item.Trim()
-                if ($line.StartsWith($verboseEncodingPrefix)) {
-                    $encodingName = $item.SubString($verboseEncodingPrefix.Length).Trim()
+                if ($line.StartsWith($debugEncodingPrefix)) {
+                    $encodingName = [int]::Parse($item.SubString($EncodingPrefix.Length).Split('CodePage: ')[1].Trim())
                     $result.Encoding = [System.Text.Encoding]::GetEncoding($encodingName)
                     break
                 }
             }
-            if ($result.Encoding -eq $null) {
-                throw "Encoding not found in verbose output. Lines: $($result.Verbose.Count) Content:$($result.Verbose)"
+            if ($null -eq $result.Encoding) {
+                throw "Encoding not found in debug output. Lines: $($result.Debug.Count) Content:$($result.Debug)"
             }
         }
 
-        if ($result.Verbose -eq $null) {
-            throw "No verbose output was found"
+        if ($null -eq $result.Debug) {
+            throw "No debug output was found"
         }
     } catch {
         $result.Error = $_ | Select-Object * | Out-String
     } finally {
-        $VerbosePreference = $verbosePreferenceSave
-        if (Test-Path -Path $verboseFile) {
-            Remove-Item -Path $verboseFile -ErrorAction SilentlyContinue
+        $DebugPreference = $debugPreferenceSave
+        if (Test-Path -Path $debugFile) {
+            Remove-Item -Path $debugFile -ErrorAction SilentlyContinue
         }
     }
 
@@ -1723,6 +1725,26 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $result.Files[0].FileName | Should -BeExactly $file1Name
             $result.Files[0].ContentType | Should -BeExactly 'application/octet-stream'
             $result.Files[0].Content | Should -Match $file1Contents
+        }
+
+        It "Verifies Invoke-WebRequest -Form supports read-only file values" {
+            # Create a read-only test file
+            $readOnlyFile = Join-Path $TestDrive "readonly-test.txt"
+            "ReadOnly test content" | Out-File -FilePath $readOnlyFile -Encoding utf8
+            Set-ItemProperty -Path $readOnlyFile -Name IsReadOnly -Value $true
+
+            $form = @{TestFile = [System.IO.FileInfo]$readOnlyFile}
+            $uri = Get-WebListenerUrl -Test 'Multipart'
+            $response = Invoke-WebRequest -Uri $uri -Form $form -Method 'POST'
+            $result = $response.Content | ConvertFrom-Json
+
+            $result.Headers.'Content-Type' | Should -Match 'multipart/form-data'
+            $result.Files.Count | Should -Be 1
+
+            $result.Files[0].Name | Should -BeExactly "TestFile"
+            $result.Files[0].FileName | Should -BeExactly "readonly-test.txt"
+            $result.Files[0].ContentType | Should -BeExactly 'application/octet-stream'
+            $result.Files[0].Content | Should -Match "ReadOnly test content"
         }
 
         It "Verifies Invoke-WebRequest -Form sets Content-Disposition FileName and FileNameStar." {
@@ -3564,6 +3586,25 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
             $result.Files[0].FileName | Should -Be $file1Name
             $result.Files[0].ContentType | Should -Be 'application/octet-stream'
             $result.Files[0].Content | Should -Match $file1Contents
+        }
+
+        It "Verifies Invoke-RestMethod -Form supports read-only file values" {
+            # Create a read-only test file
+            $readOnlyFile = Join-Path $TestDrive "readonly-test.txt"
+            "ReadOnly test content" | Out-File -FilePath $readOnlyFile -Encoding utf8
+            Set-ItemProperty -Path $readOnlyFile -Name IsReadOnly -Value $true
+
+            $form = @{TestFile = [System.IO.FileInfo]$readOnlyFile}
+            $uri = Get-WebListenerUrl -Test 'Multipart'
+            $result = Invoke-RestMethod -Uri $uri -Form $form -Method 'POST'
+
+            $result.Headers.'Content-Type' | Should -Match 'multipart/form-data'
+            $result.Files.Count | Should -Be 1
+
+            $result.Files[0].Name | Should -Be "TestFile"
+            $result.Files[0].FileName | Should -Be "readonly-test.txt"
+            $result.Files[0].ContentType | Should -Be 'application/octet-stream'
+            $result.Files[0].Content | Should -Match "ReadOnly test content"
         }
 
         It "Verifies Invoke-RestMethod -Form sets Content-Disposition FileName and FileNameStar." {

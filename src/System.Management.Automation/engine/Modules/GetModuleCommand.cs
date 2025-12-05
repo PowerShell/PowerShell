@@ -586,24 +586,25 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// PSEditionArgumentCompleter for PowerShell Edition names.
+    /// Provides argument completion for PSEdition parameter.
     /// </summary>
     public class PSEditionArgumentCompleter : IArgumentCompleter
     {
         /// <summary>
-        /// CompleteArgument.
+        /// Returns completion results for PSEdition parameter.
         /// </summary>
-        public IEnumerable<CompletionResult> CompleteArgument(string commandName, string parameterName, string wordToComplete, CommandAst commandAst, IDictionary fakeBoundParameters)
-        {
-            var wordToCompletePattern = WildcardPattern.Get(string.IsNullOrWhiteSpace(wordToComplete) ? "*" : wordToComplete + "*", WildcardOptions.IgnoreCase);
-
-            foreach (var edition in Utils.AllowedEditionValues)
-            {
-                if (wordToCompletePattern.IsMatch(edition))
-                {
-                    yield return new CompletionResult(edition, edition, CompletionResultType.Text, edition);
-                }
-            }
-        }
+        /// <param name="commandName">The command name.</param>
+        /// <param name="parameterName">The parameter name.</param>
+        /// <param name="wordToComplete">The word to complete.</param>
+        /// <param name="commandAst">The command AST.</param>
+        /// <param name="fakeBoundParameters">The fake bound parameters.</param>
+        /// <returns>List of completion results.</returns>
+        public IEnumerable<CompletionResult> CompleteArgument(
+            string commandName,
+            string parameterName,
+            string wordToComplete,
+            CommandAst commandAst,
+            IDictionary fakeBoundParameters)
+                => CompletionHelpers.GetMatchingResults(wordToComplete, possibleCompletionValues: Utils.AllowedEditionValues);
     }
 }

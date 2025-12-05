@@ -1,0 +1,158 @@
+name: nix_test
+description: 'Test PowerShell on non-Windows platforms'
+
+inputs:
+  purpose:
+    required: false
+    default: ''
+    type: string
+  tagSet:
+    required: false
+    default: CI
+    type: string
+  ctrfFolder:
+    required: false
+    default: ctrf
+    type: string
+  GITHUB_TOKEN:
+    description: 'GitHub token for API authentication'
+    required: true
+
+runs:
+  using: composite
+  steps:
+  - name: Capture Environment
+    if: success() || failure()
+    run: |-
+      Import-Module ./tools/ci.psm1
+      Show-Environment
+    shell: pwsh
+
+  - name: Download Build Artifacts
+    uses: actions/download-artifact@v4
+    with:
+      path: "${{ github.workspace }}"
+
+  - name: Capture Artifacts Directory
+    continue-on-error: true
+    run: |-
+      Import-Module ./build.psm1
+      Write-LogGroupStart -Title 'Artifacts Directory'
+      Get-ChildItem "${{ github.workspace }}/build/*" -Recurse
+      Write-LogGroupEnd -Title 'Artifacts Directory'
+    shell: pwsh
+
+  - uses: actions/setup-dotnet@v4
+    with:
+      global-json-file: ./global.json
+
+  - name: Set Package Name by Platform
+    id: set_package_name
+    shell: pwsh
+    run: |-
+      Import-Module ./.github/workflows/GHWorkflowHelper/GHWorkflowHelper.psm1
+      $platform = $env:RUNNER_OS
+      Write-Host "Runner platform: $platform"
+      if ($platform -eq 'Linux') {
+        $packageName = 'DSC-*-x86_64-linux.tar.gz'
+      } elseif ($platform -eq 'macOS') {
+        $packageName = 'DSC-*-x86_64-apple-darwin.tar.gz'
+      } else {
+        throw "Unsupported platform: $platform"
+      }
+
+      Set-GWVariable -Name "DSC_PACKAGE_NAME" -Value $packageName
+
+  - name: Get Latest DSC Package Version
+    shell: pwsh
+    run: |-
+      Import-Module ./.github/workflows/GHWorkflowHelper/GHWorkflowHelper.psm1
+      $headers = @{
+        Authorization = "Bearer ${{ inputs.GITHUB_TOKEN }}"
+      }
+      $releases = Invoke-RestMethod -Uri "https://api.github.com/repos/PowerShell/Dsc/releases" -Headers $headers
+      $latestRelease = $releases | Where-Object { $v = $_.name.trim("v"); $semVer = [System.Management.Automation.SemanticVersion]::new($v); if ($semVer.Major -eq 3 -and $semVer.Minor -ge 2) { $_ } } | Select-Object -First 1
+      $latestVersion = $latestRelease.tag_name.TrimStart("v")
+      Write-Host "Latest DSC Version: $latestVersion"
+
+      $packageName = "$env:DSC_PACKAGE_NAME"
+
+      Write-Host "Package Name: $packageName"
+
+      $downloadUrl = $latestRelease.assets | Where-Object { $_.name -like "*$packageName*" } | Select-Object -First 1 | Select-Object -ExpandProperty browser_download_url
+      Write-Host "Download URL: $downloadUrl"
+
+      $tempPath = Get-GWTempPath
+
+      Invoke-RestMethod -Uri $downloadUrl -OutFile "$tempPath/DSC.tar.gz" -Verbose -Headers $headers
+      New-Item -ItemType Directory -Path "$tempPath/DSC" -Force -Verbose
+      tar xvf "$tempPath/DSC.tar.gz" -C "$tempPath/DSC"
+      $dscRoot = "$tempPath/DSC"
+      Write-Host "DSC Root: $dscRoot"
+      Set-GWVariable -Name "DSC_ROOT" -Value $dscRoot
+
+  - name: Bootstrap
+    shell: pwsh
+    run: |-
+      Import-Module ./build.psm1
+      Write-LogGroupStart -Title 'Bootstrap'
+      Import-Module ./tools/ci.psm1
+      Invoke-CIInstall -SkipUser
+      Write-LogGroupEnd -Title 'Bootstrap'
+
+  - name: Extract Files
+    uses: actions/github-script@v7.0.0
+    env:
+      DESTINATION_FOLDER: "${{ github.workspace }}/bins"
+      ARCHIVE_FILE_PATTERNS: "${{ github.workspace }}/build/build.zip"
+    with:
+      script: |-
+        const fs = require('fs').promises
+        const path = require('path')
+        const target = path.resolve(process.env.DESTINATION_FOLDER)
+        const patterns = process.env.ARCHIVE_FILE_PATTERNS
+        const globber = await glob.create(patterns)
+        await io.mkdirP(path.dirname(target))
+        for await (const file of globber.globGenerator()) {
+          if ((await fs.lstat(file)).isDirectory()) continue
+          await exec.exec(`7z x ${file} -o${target} -aoa`)
+        }
+
+  - name: Fix permissions
+    continue-on-error: true
+    run: |-
+      find "${{ github.workspace }}/bins" -type d -exec chmod +rwx {} \;
+      find "${{ github.workspace }}/bins" -type f -exec chmod +rw {} \;
+    shell: bash
+
+  - name: Capture Extracted Build ZIP
+    continue-on-error: true
+    run: |-
+      Import-Module ./build.psm1
+      Write-LogGroupStart -Title 'Extracted Build ZIP'
+      Get-ChildItem "${{ github.workspace }}/bins/*" -Recurse -ErrorAction SilentlyContinue
+      Write-LogGroupEnd -Title 'Extracted Build ZIP'
+    shell: pwsh
+
+  - name: Test
+    if: success()
+    run: |-
+      Import-Module ./tools/ci.psm1
+      Restore-PSOptions -PSOptionsPath '${{ github.workspace }}/build/psoptions.json'
+      $options = (Get-PSOptions)
+      $rootPath = '${{ github.workspace }}/bins'
+      $originalRootPath = Split-Path -path $options.Output
+      $path = Join-Path -path $rootPath -ChildPath (split-path -leaf -path $originalRootPath)
+      $pwshPath = Join-Path -path $path -ChildPath 'pwsh'
+      chmod a+x $pwshPath
+      $options.Output = $pwshPath
+      Set-PSOptions $options
+      Invoke-CITest -Purpose '${{ inputs.purpose }}' -TagSet '${{ inputs.tagSet }}' -TitlePrefix '${{ inputs.buildName }}' -OutputFormat NUnitXml
+    shell: pwsh
+
+  - name: Convert, Publish, and Upload Pester Test Results
+    uses: "./.github/actions/test/process-pester-results"
+    with:
+      name: "${{ inputs.purpose }}-${{ inputs.tagSet }}"
+      testResultsFolder: "${{ runner.workspace }}/testResults"
+      ctrfFolder: "${{ inputs.ctrfFolder }}"

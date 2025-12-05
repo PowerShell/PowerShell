@@ -390,6 +390,9 @@ namespace System.Management.Automation
             WriteProgress(sourceId, progressRecord, false);
         }
 
+        internal bool IsWriteProgressEnabled()
+            => WriteHelper_ShouldWrite(ProgressPreference, lastProgressContinueStatus);
+
         internal void WriteProgress(
                 Int64 sourceId,
                 ProgressRecord progressRecord,
@@ -471,6 +474,9 @@ namespace System.Management.Automation
         {
             WriteDebug(new DebugRecord(text));
         }
+
+        internal bool IsWriteDebugEnabled()
+            => WriteHelper_ShouldWrite(DebugPreference, lastDebugContinueStatus);
 
         /// <summary>
         /// Display debug information.
@@ -566,6 +572,9 @@ namespace System.Management.Automation
             WriteVerbose(new VerboseRecord(text));
         }
 
+        internal bool IsWriteVerboseEnabled()
+            => WriteHelper_ShouldWrite(VerbosePreference, lastVerboseContinueStatus);
+
         /// <summary>
         /// Display verbose information.
         /// </summary>
@@ -660,6 +669,9 @@ namespace System.Management.Automation
             WriteWarning(new WarningRecord(text));
         }
 
+        internal bool IsWriteWarningEnabled()
+            => WriteHelper_ShouldWrite(WarningPreference, lastWarningContinueStatus);
+
         /// <summary>
         /// Display warning information.
         /// </summary>
@@ -732,6 +744,9 @@ namespace System.Management.Automation
         {
             WriteInformation(informationRecord, false);
         }
+
+        internal bool IsWriteInformationEnabled()
+            => WriteHelper_ShouldWrite(InformationPreference, lastInformationContinueStatus);
 
         /// <summary>
         /// Display tagged object information.
@@ -2345,7 +2360,7 @@ namespace System.Management.Automation
             {
                 if (permittedToWrite == null)
                     throw PSTraceSource.NewArgumentNullException(nameof(permittedToWrite));
-                if (!(permittedToWrite.commandRuntime is MshCommandRuntime mcr))
+                if (permittedToWrite.commandRuntime is not MshCommandRuntime mcr)
                     throw PSTraceSource.NewArgumentNullException("permittedToWrite.CommandRuntime");
                 _pp = mcr.PipelineProcessor;
                 if (_pp == null)
@@ -2977,21 +2992,19 @@ namespace System.Management.Automation
             {
                 // WhatIf not relevant, it never gets this far in that case
                 if (Confirm)
-                    return ConfirmImpact.Low;
-                if (Debug)
                 {
-                    if (IsConfirmFlagSet) // -Debug -Confirm:$false
-                        return ConfirmImpact.None;
                     return ConfirmImpact.Low;
                 }
 
-                if (IsConfirmFlagSet) // -Confirm:$false
+                if (IsConfirmFlagSet)
+                {
+                    // -Confirm:$false
                     return ConfirmImpact.None;
+                }
 
                 if (!_isConfirmPreferenceCached)
                 {
-                    bool defaultUsed = false;
-                    _confirmPreference = Context.GetEnumPreference(SpecialVariables.ConfirmPreferenceVarPath, _confirmPreference, out defaultUsed);
+                    _confirmPreference = Context.GetEnumPreference(SpecialVariables.ConfirmPreferenceVarPath, _confirmPreference, out _);
                     _isConfirmPreferenceCached = true;
                 }
 

@@ -488,7 +488,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (EffectiveParameterSet == MyParameterSet.RandomListItem)
             {
-                if (ParameterSetName == ShuffleParameterSet)
+                if (Shuffle)
                 {
                     // this allows for $null to be in an array passed to InputObject
                     foreach (object item in InputObject ?? _nullInArray)
@@ -561,7 +561,7 @@ namespace Microsoft.PowerShell.Commands
     /// methods using the NextBytes() primitive based on the CLR implementation:
     ///     https://referencesource.microsoft.com/#mscorlib/system/random.cs.
     /// </summary>
-    internal class PolymorphicRandomNumberGenerator
+    internal sealed class PolymorphicRandomNumberGenerator
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="PolymorphicRandomNumberGenerator"/> class.

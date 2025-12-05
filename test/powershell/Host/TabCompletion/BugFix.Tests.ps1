@@ -43,6 +43,28 @@ Describe "Tab completion bug fix" -Tags "CI" {
         $result[0].CompletionText | Should -BeExactly '$ErrorActionPreference'
     }
 
+    It "Issue#24756 - Wildcard completions should not return early due to missing results in one container" -Skip:(!$IsWindows) {
+        try
+        {
+            $keys = New-Item -Path @(
+                'HKCU:\AB1'
+                'HKCU:\AB2'
+                'HKCU:\AB2\Test'
+            )
+
+            $res = TabExpansion2 -inputScript 'Get-ChildItem -Path HKCU:\AB?\'
+            $res.CompletionMatches.Count | Should -Be 1
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly "HKCU:\AB2\Test"
+        }
+        finally
+        {
+            if ($keys)
+            {
+                Remove-Item -Path HKCU:\AB? -Recurse -ErrorAction SilentlyContinue
+            }
+        }
+    }
+
     Context "Issue#3416 - 'Select-Object'" {
         BeforeAll {
             $DatetimeProperties = @((Get-Date).psobject.baseobject.psobject.properties) | Sort-Object -Property Name
@@ -102,6 +124,29 @@ Describe "Tab completion bug fix" -Tags "CI" {
         {
             [runspace]::DefaultRunspace = $OldRunspace
             $Runspace.Dispose()
+        }
+    }
+
+    It "Issue#26277 - [CompletionCompleters]::CompleteFilename('') should work" {
+        $testDir = Join-Path $TestDrive "TempTestDir"
+        $file1 = Join-Path $testDir "abc.ps1"
+        $file2 = Join-Path $testDir "def.py"
+
+        New-Item -ItemType Directory -Path $testDir > $null
+        New-Item -ItemType File -Path $file1 > $null
+        New-Item -ItemType File -Path $file2 > $null
+
+        try {
+            Push-Location -Path $testDir
+            $result = [System.Management.Automation.CompletionCompleters]::CompleteFilename("")
+            $result | Should -Not -Be $null
+            $result | Measure-Object | ForEach-Object -MemberName Count | Should -Be 2
+
+            $item1, $item2 = @($result)
+            $item1.ListItemText | Should -BeExactly 'abc.ps1'
+            $item2.ListItemText | Should -BeExactly 'def.py'
+        } finally {
+            Pop-Location
         }
     }
 }

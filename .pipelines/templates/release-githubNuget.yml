@@ -1,0 +1,203 @@
+parameters:
+  - name: skipPublish
+    type: boolean
+
+jobs:
+- job: GithubReleaseDraft
+  displayName: Create GitHub Release Draft
+  condition: succeeded()
+  pool:
+    type: release
+    os: windows
+  templateContext:
+    inputs:
+      - input: pipelineArtifact
+        artifactName: drop_setReleaseTagAndChangelog_SetTagAndChangelog
+      - input: pipelineArtifact
+        pipeline: PSPackagesOfficial
+        artifactName: drop_upload_upload_packages
+  variables:
+    - template: ./variable/release-shared.yml@self
+      parameters:
+        RELEASETAG: $[ stageDependencies.setReleaseTagAndChangelog.setTagAndChangelog.outputs['OutputReleaseTag.releaseTag'] ]
+
+  steps:
+  - task: PowerShell@2
+    inputs:
+      targetType: inline
+      script: |
+        Write-Verbose -Verbose "Release Tag: $(ReleaseTag)"
+        Get-ChildItem Env: | Out-String -Stream | Write-Verbose -Verbose
+    displayName: 'Capture Environment Variables'
+
+  - task: PowerShell@2
+    inputs:
+      targetType: inline
+      script: |
+        $Path = "$(Pipeline.Workspace)/GitHubPackages"
+        $OutputPath = Join-Path $Path 'hashes.sha256'
+        $packages  = Get-ChildItem -Path $Path -Include * -Recurse -File
+        $checksums = $packages |
+            ForEach-Object {
+                Write-Verbose -Verbose "Generating checksum file for $($_.FullName)"
+                $packageName = $_.Name
+                $hash = (Get-FileHash -Path $_.FullName -Algorithm SHA256).Hash.ToLower()
+                # the '*' before the packagename signifies it is a binary
+                "$hash *$packageName"
+            }
+        $checksums | Out-File -FilePath $OutputPath -Force
+        $fileContent = Get-Content -Path $OutputPath -Raw | Out-String
+        Write-Verbose -Verbose -Message $fileContent
+    displayName: Add sha256 hashes
+  
+  - task: PowerShell@2
+    inputs:
+      targetType: inline
+      script: |
+        Get-ChildItem $(Pipeline.Workspace) -recurse | Select-Object -ExpandProperty FullName
+    displayName: List all files in the workspace
+
+  - task: PowerShell@2
+    inputs:
+      targetType: inline
+      script: |
+        $releaseVersion = '$(ReleaseTag)' -replace '^v',''
+        Write-Verbose -Verbose "Available modules: "
+        Get-Module | Write-Verbose -Verbose
+
+        $filePath = Get-ChildItem -Path "$(Pipeline.Workspace)/CHANGELOG" -Filter '*.md' | Select-Object -First 1 -ExpandProperty FullName
+  
+        if (-not (Test-Path $filePath)) {
+          throw "$filePath not found"
+        }
+  
+        $changelog = Get-Content -Path $filePath
+  
+        $headingPattern = "^## \[\d+\.\d+\.\d+"
+        $headingStartLines = $changelog | Select-String -Pattern $headingPattern | Select-Object -ExpandProperty LineNumber
+        $startLine = $headingStartLines[0]
+        $endLine = $headingStartLines[1] - 1
+  
+        $clContent = $changelog | Select-Object -Skip ($startLine-1) -First ($endLine - $startLine) | Out-String
+
+        $StringBuilder = [System.Text.StringBuilder]::new($clContent, $clContent.Length + 2kb)
+        $StringBuilder.AppendLine().AppendLine() > $null
+        $StringBuilder.AppendLine("### SHA256 Hashes of the release artifacts").AppendLine() > $null
+        Get-ChildItem -Path "$(Pipeline.Workspace)/GitHubPackages/" -File | ForEach-Object {
+            $PackageName = $_.Name
+            $SHA256 = (Get-FileHash -Path $_.FullName -Algorithm SHA256).Hash
+            $StringBuilder.AppendLine("- $PackageName").AppendLine("  - $SHA256") > $null
+        }
+
+        $clContent = $StringBuilder.ToString()
+  
+        Write-Verbose -Verbose "Selected content: `n$clContent"
+
+        $releaseNotesFilePath = "$(Pipeline.Workspace)/release-notes.md"
+        $clContent | Out-File -FilePath $releaseNotesFilePath -Encoding utf8
+  
+        Write-Host "##vso[task.setvariable variable=ReleaseNotesFilePath;]$releaseNotesFilePath"
+  
+        #if name has prelease then make prerelease true as a variable
+        if ($releaseVersion -like '*-*') {
+            Write-Host "##vso[task.setvariable variable=IsPreRelease;]true"
+        } else {
+            Write-Host "##vso[task.setvariable variable=IsPreRelease;]false"
+        }
+    displayName: Set variables for GitHub release task
+
+  - task: PowerShell@2
+    inputs:
+      targetType: inline
+      script: |
+        Write-Host "ReleaseNotes content:"
+        Get-Content "$(Pipeline.Workspace)/release-notes.md" -Raw | Out-String -width 9999 | Write-Host
+    displayName: Verify Release Notes
+
+  - task: PowerShell@2
+    inputs:
+      targetType: inline
+      script: |
+        $middleURL = ''
+        $tagString = "$(ReleaseTag)"
+        Write-Verbose -Verbose "Use the following command to push the tag:"
+        if ($tagString -match '-preview') {
+          $middleURL = "preview"
+        }
+        elseif ($tagString -match '(\d+\.\d+)') {
+          $middleURL = $matches[1]
+        }
+        $endURL = $tagString -replace '^v|\.', ''
+        $message = "https://github.com/PowerShell/PowerShell/blob/master/CHANGELOG/$middleURL.md#$endURL"
+        Write-Verbose -Verbose "git tag -a $(ReleaseTag) $env:BUILD_SOURCEVERSION -m $message"
+    displayName: Git Push Tag Command
+
+  - task: GitHubRelease@1
+    inputs:
+      gitHubConnection: GitHubReleasePAT
+      repositoryName: PowerShell/PowerShell
+      target: master
+      assets: '$(Pipeline.Workspace)/GitHubPackages/*'
+      tagSource: 'userSpecifiedTag'
+      tag: '$(ReleaseTag)'
+      title: "$(ReleaseTag) Release of PowerShell"
+      isDraft: true
+      addChangeLog: false
+      action: 'create'
+      releaseNotesFilePath: '$(ReleaseNotesFilePath)'
+      isPrerelease: '$(IsPreRelease)'
+
+- job: NuGetPublish
+  displayName: Publish to NuGet
+  condition: succeeded()
+  pool:
+    type: release
+    os: windows
+  templateContext:
+    inputs:
+      - input: pipelineArtifact
+        pipeline: PSPackagesOfficial
+        artifactName: drop_upload_upload_packages
+  variables:
+  - template: ./variable/release-shared.yml@self
+    parameters:
+      VERSION: $[ stageDependencies.setReleaseTagAndChangelog.SetTagAndChangelog.outputs['OutputVersion.Version'] ]
+
+  steps:
+  - task: PowerShell@2
+    inputs:
+      targetType: inline
+      script: |
+        Write-Verbose -Verbose "Version: $(Version)"
+        Get-ChildItem Env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
+    displayName: 'Capture Environment Variables'
+
+  - task: PowerShell@2
+    inputs:
+      targetType: inline
+      script: |
+        #Exclude all global tool packages. Their names start with 'PowerShell.'
+        $null = New-Item -ItemType Directory -Path "$(Pipeline.Workspace)/release"
+        Copy-Item "$(Pipeline.Workspace)/NuGetPackages/*.nupkg" -Destination "$(Pipeline.Workspace)/release" -Exclude "PowerShell.*.nupkg" -Force -Verbose
+
+        $releaseVersion = '$(Version)'
+        $globalToolPath = "$(Pipeline.Workspace)/NuGetPackages/PowerShell.$releaseVersion.nupkg"
+
+        if ($releaseVersion -notlike '*-*') {
+            # Copy the global tool package for stable releases
+            Copy-Item $globalToolPath -Destination "$(Pipeline.Workspace)/release"
+        }
+
+        Write-Verbose -Verbose "The .nupkgs below will be pushed:"
+        Get-ChildItem "$(Pipeline.Workspace)/release" -recurse
+    displayName: Download and capture nupkgs
+    condition: and(ne('${{ parameters.skipPublish }}', 'true'), succeeded())
+
+  - task: NuGetCommand@2
+    displayName: 'NuGet push'
+    condition: and(ne('${{ parameters.skipPublish }}', 'true'), succeeded())
+    inputs:
+      command: push
+      packagesToPush: '$(Pipeline.Workspace)/release/*.nupkg'
+      nuGetFeedType: external
+      publishFeedCredentials: PowerShellNuGetOrgPush

@@ -1536,7 +1536,16 @@ namespace System.Management.Automation
 
         internal void OnSequencePointHit(FunctionContext functionContext)
         {
-            if (_context.ShouldTraceStatement && !_callStack.Last().IsFrameHidden && !functionContext._debuggerStepThrough)
+            // TraceLine uses ColumnNumber and expects it to be 1 based. For
+            // extents added by the engine and not user code the value can be
+            // set to 0 causing an exception. This skips those types of extents
+            // as tracing them wouldn't be useful for the end user anyway.
+            if (_context.ShouldTraceStatement &&
+                !_callStack.Last().IsFrameHidden &&
+                !functionContext._debuggerStepThrough &&
+                functionContext.CurrentPosition is not EmptyScriptExtent &&
+                (functionContext.CurrentPosition is InternalScriptExtent ||
+                   functionContext.CurrentPosition.StartColumnNumber > 0))
             {
                 TraceLine(functionContext.CurrentPosition);
             }
@@ -2075,8 +2084,8 @@ namespace System.Management.Automation
                     else
                     {
                         tuple.Item1.Add(breakpoint.SequencePointIndex, new List<LineBreakpoint> { breakpoint });
-                    } 
-                    
+                    }
+
                     // We need to keep track of any breakpoints that are bound in each script because they may
                     // need to be rebound if the script changes.
                     var boundBreakpoints = _boundBreakpoints[currentScriptFile].Item2;
@@ -2090,7 +2099,7 @@ namespace System.Management.Automation
             }
 
             // Here could check if all breakpoints for the current functionContext were bound, but because there is no atomic
-            // api for conditional removal we either need to lock, or do some trickery that has possibility of race conditions. 
+            // api for conditional removal we either need to lock, or do some trickery that has possibility of race conditions.
             // Instead we keep the item in the dictionary with 0 breakpoint count. This should not be a big issue,
             // because it is single entry per file that had breakpoints, so there won't be thousands of files in a session.
         }
@@ -2359,7 +2368,7 @@ namespace System.Management.Automation
             //
             // Otherwise let root script debugger handle it.
             //
-            if (!(_context.CurrentRunspace is LocalRunspace localRunspace))
+            if (_context.CurrentRunspace is not LocalRunspace localRunspace)
             {
                 throw new PSInvalidOperationException(
                     DebuggerStrings.CannotProcessDebuggerCommandNotStopped,
@@ -3820,7 +3829,7 @@ namespace System.Management.Automation
                 }
 
                 // Get nested debugger runspace info.
-                if (!(senderDebugger is NestedRunspaceDebugger nestedDebugger)) { return; }
+                if (senderDebugger is not NestedRunspaceDebugger nestedDebugger) { return; }
 
                 PSMonitorRunspaceType runspaceType = nestedDebugger.RunspaceType;
 
@@ -4677,7 +4686,7 @@ namespace System.Management.Automation
         private object DrainAndBlockRemoteOutput()
         {
             // We do this only for remote runspaces.
-            if (!(_runspace is RemoteRunspace remoteRunspace)) { return null; }
+            if (_runspace is not RemoteRunspace remoteRunspace) { return null; }
 
             var runningPowerShell = remoteRunspace.GetCurrentBasePowerShell();
             if (runningPowerShell != null)

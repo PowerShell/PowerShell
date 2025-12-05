@@ -1,0 +1,107 @@
+trigger: none
+
+parameters: # parameters are shown up in ADO UI in a build queue time
+  - name: 'debug'
+    displayName: 'Enable debug output'
+    type: boolean
+    default: false
+  - name: skipPublish
+    displayName: Skip PMC Publish
+    type: boolean
+    default: false
+  - name: SKIP_SIGNING
+    displayName: Skip Signing
+    type: string
+    default: 'NO'
+  - name: OfficialBuild
+    type: boolean
+    default: false
+
+name: ev2-$(BUILD.SOURCEBRANCHNAME)-prod.${{ parameters.OfficialBuild }}-$(Build.BuildId)
+
+variables:
+  - name: CDP_DEFINITION_BUILD_COUNT
+    value: $[counter('', 0)]
+  - name: system.debug
+    value: ${{ parameters.debug }}
+  - name: ENABLE_PRS_DELAYSIGN
+    value: 1
+  - name: ROOT
+    value: $(Build.SourcesDirectory)
+  - name: REPOROOT
+    value: $(Build.SourcesDirectory)
+  - name: OUTPUTROOT
+    value: $(REPOROOT)\out
+  - name: NUGET_XMLDOC_MODE
+    value: none
+  - name: nugetMultiFeedWarnLevel
+    value: none
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+  - name: skipNugetSecurityAnalysis
+    value: true
+  - name: ob_outputDirectory
+    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  - name: ob_sdl_tsa_configFile
+    value: $(Build.SourcesDirectory)\.config\tsaoptions.json
+  - name: WindowsContainerImage
+    value: 'onebranch.azurecr.io/windows/ltsc2022/vse2022:latest'
+  - name: LinuxContainerImage
+    value: mcr.microsoft.com/onebranch/azurelinux/build:3.0
+  - group: PoolNames
+  - name: templateFile
+    value: ${{ iif ( parameters.OfficialBuild, 'v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates', 'v2/OneBranch.NonOfficial.CrossPlat.yml@onebranchTemplates' ) }}
+
+resources:
+  repositories:
+    - repository: onebranchTemplates
+      type: git
+      name: OneBranch.Pipelines/GovernedTemplates
+      ref: refs/heads/main
+
+  pipelines:
+    - pipeline: CoOrdinatedBuildPipeline
+      source: 'PowerShell-Coordinated Binaries-Official'
+
+    - pipeline: PSPackagesOfficial
+      source: 'PowerShell-Packages-Official'
+      trigger:
+        branches:
+          include:
+            - master
+            - releases/*
+
+extends:
+  template: ${{ variables.templateFile }}
+  parameters:
+    featureFlags:
+      WindowsHostVersion:
+        Version: 2022
+        Network: Netlock
+      linuxEsrpSigning: true
+      incrementalSDLBinaryAnalysis: true
+    cloudvault:
+      enabled: false
+    globalSdl:
+      disableLegacyManifest: true
+      # disabled Armory as we dont have any ARM templates to scan. It fails on some sample ARM templates.
+      armory:
+        enabled: false
+      tsa:
+        enabled: true
+      credscan:
+        enabled: true
+        scanFolder:  $(Build.SourcesDirectory)
+        suppressionsFile: $(Build.SourcesDirectory)\.config\suppress.json
+      binskim:
+        break: false # always break the build on binskim issues in addition to TSA upload
+        exactToolVersion: 4.4.2
+      policheck:
+        break: true # always break the build on policheck issues. You can disable it by setting to 'false'
+      tsaOptionsFile: .config\tsaoptions.json
+    stages:
+      - template: /.pipelines/templates/release-prep-for-ev2.yml@self
+        parameters:
+          skipPublish: ${{ parameters.skipPublish }}
+
+      - template: /.pipelines/templates/release-publish-pmc.yml@self

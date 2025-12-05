@@ -35,7 +35,7 @@ namespace Microsoft.PowerShell.Commands
         /// An instance of the PSTraceSource class used for trace output
         /// using "FileSystemContentStream" as the category.
         /// </summary>
-        [Dbg.TraceSourceAttribute(
+        [Dbg.TraceSource(
             "FileSystemContentStream",
             "The provider content reader and writer for the file system")]
         private static readonly Dbg.PSTraceSource s_tracer =
@@ -1556,26 +1556,6 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return _byteCount;
-        }
-
-        private static class NativeMethods
-        {
-            // Default values
-            private const int MAX_DEFAULTCHAR = 2;
-            private const int MAX_LEADBYTES = 12;
-
-            [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-            internal struct CPINFO
-            {
-                [MarshalAs(UnmanagedType.U4)]
-                internal int MaxCharSize;
-
-                [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_DEFAULTCHAR)]
-                public byte[] DefaultChar;
-
-                [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_LEADBYTES)]
-                public byte[] LeadBytes;
-            }
         }
     }
 

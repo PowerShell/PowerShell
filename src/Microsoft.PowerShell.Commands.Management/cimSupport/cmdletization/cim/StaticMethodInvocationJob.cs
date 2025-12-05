@@ -11,7 +11,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
     /// <summary>
     /// Job wrapping invocation of a static CIM method.
     /// </summary>
-    internal class StaticMethodInvocationJob : ExtrinsicMethodInvocationJob
+    internal sealed class StaticMethodInvocationJob : ExtrinsicMethodInvocationJob
     {
         internal StaticMethodInvocationJob(CimJobContext jobContext, MethodInvocationInfo methodInvocationInfo)
                 : base(jobContext, false /* passThru */, jobContext.CmdletizationClassName, methodInvocationInfo)

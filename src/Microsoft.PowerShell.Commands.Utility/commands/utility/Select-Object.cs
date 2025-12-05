@@ -53,7 +53,7 @@ namespace Microsoft.PowerShell.Commands
         private readonly WildcardPattern[] _wildcardPatterns;
     }
 
-    internal class SelectObjectExpressionParameterDefinition : CommandParameterDefinition
+    internal sealed class SelectObjectExpressionParameterDefinition : CommandParameterDefinition
     {
         protected override void SetEntries()
         {
@@ -179,7 +179,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "IndexParameter")]
-        [ValidateRangeAttribute(0, int.MaxValue)]
+        [ValidateRange(0, int.MaxValue)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public int[] Index
         {
@@ -202,7 +202,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "SkipIndexParameter")]
-        [ValidateRangeAttribute(0, int.MaxValue)]
+        [ValidateRange(0, int.MaxValue)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public int[] SkipIndex
         {
@@ -866,7 +866,7 @@ namespace Microsoft.PowerShell.Commands
     [SuppressMessage("Microsoft.Usage", "CA2237:MarkISerializableTypesWithSerializable", Justification = "This exception is internal and never thrown by any public API")]
     [SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors", Justification = "This exception is internal and never thrown by any public API")]
     [SuppressMessage("Microsoft.Design", "CA1064:ExceptionsShouldBePublic", Justification = "This exception is internal and never thrown by any public API")]
-    internal class SelectObjectException : SystemException
+    internal sealed class SelectObjectException : SystemException
     {
         internal ErrorRecord ErrorRecord { get; }
 

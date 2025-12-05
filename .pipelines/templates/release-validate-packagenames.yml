@@ -16,29 +16,17 @@ jobs:
   - checkout: self
     clean: true
 
-  - template: release-SetReleaseTagAndContainerName.yml
+  - template: release-SetReleaseTagandContainerName.yml
 
   - pwsh: |
        Get-ChildItem ENV: | Out-String -width 9999 -Stream | write-Verbose -Verbose
     displayName: Capture environment
 
   - pwsh: |
-      $name = "{0}_{1:x}" -f '$(releaseTag)', (Get-Date).Ticks
+      $name = "{0}_{1:x}" -f '$(OutputReleaseTag.releaseTag)', (Get-Date).Ticks
       Write-Host $name
       Write-Host "##vso[build.updatebuildnumber]$name"
     displayName: Set Release Name
-
-  - pwsh: |
-      $azureRmModule = Get-InstalledModule AzureRM -ErrorAction SilentlyContinue -Verbose
-      if ($azureRmModule) {
-        Write-Host 'AzureRM module exists. Removing it'
-        Uninstall-AzureRm
-        Write-Host 'AzureRM module removed'
-      }
-
-      Install-Module -Name Az.Storage -Force -AllowClobber -Scope CurrentUser -Verbose
-
-    displayName: Remove AzRM modules and install Az.Storage
 
   - task: AzurePowerShell@5
     displayName: Upload packages to blob
@@ -50,7 +38,7 @@ jobs:
       inline: |
         $storageAccount = Get-AzStorageAccount -ResourceGroupName '$(StorageResourceGroup)' -Name '$(StorageAccount)'
         $ctx = $storageAccount.Context
-        $container = '$(AzureVersion)'
+        $container = '$(OutputVersion.AzureVersion)'
 
         $destinationPath = '$(System.ArtifactsDirectory)'
         $blobList = Get-AzStorageBlob -Container $container -Context $ctx
@@ -94,7 +82,7 @@ jobs:
   - pwsh: |
       $message = @()
       Get-ChildItem $(System.ArtifactsDirectory)\* -recurse -filter *.pkg | ForEach-Object {
-          if($_.Name -notmatch 'powershell-(lts-)?\d+\.\d+\.\d+\-([a-z]*.\d+\-)?osx(\.10\.12)?\-(x64|arm64)\.pkg')
+          if($_.Name -notmatch 'powershell-(lts-)?\d+\.\d+\.\d+\-([a-z]*.\d+\-)?osx\-(x64|arm64)\.pkg')
           {
               $messageInstance = "$($_.Name) is not a valid package name"
               $message += $messageInstance

@@ -4,6 +4,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Management.Automation;
@@ -112,26 +113,28 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="commandAst">The command AST.</param>
         /// <param name="fakeBoundParameters">The fake bound parameters.</param>
         /// <returns>List of Completion Results.</returns>
-        public IEnumerable<CompletionResult> CompleteArgument(string commandName, string parameterName, string wordToComplete, CommandAst commandAst, IDictionary fakeBoundParameters)
+        public IEnumerable<CompletionResult> CompleteArgument(
+            string commandName,
+            string parameterName,
+            string wordToComplete,
+            CommandAst commandAst,
+            IDictionary fakeBoundParameters)
         {
-            if (fakeBoundParameters == null)
+            SortedSet<string> expirmentalFeatures = new(StringComparer.OrdinalIgnoreCase);
+
+            foreach (ExperimentalFeature feature in GetExperimentalFeatures())
             {
-                throw PSTraceSource.NewArgumentNullException(nameof(fakeBoundParameters));
+                expirmentalFeatures.Add(feature.Name);
             }
 
-            var commandInfo = new CmdletInfo("Get-ExperimentalFeature", typeof(GetExperimentalFeatureCommand));
-            var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace)
-                .AddCommand(commandInfo)
-                .AddParameter("Name", wordToComplete + "*");
+            return CompletionHelpers.GetMatchingResults(wordToComplete, expirmentalFeatures);
+        }
 
-            HashSet<string> names = new HashSet<string>();
-            var results = ps.Invoke<ExperimentalFeature>();
-            foreach (var result in results)
-            {
-                names.Add(result.Name);
-            }
-
-            return names.Order().Select(static name => new CompletionResult(name, name, CompletionResultType.Text, name));
+        private static Collection<ExperimentalFeature> GetExperimentalFeatures()
+        {
+            using var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
+            ps.AddCommand("Get-ExperimentalFeature");
+            return ps.Invoke<ExperimentalFeature>();
         }
     }
 }

@@ -1,10 +1,25 @@
 parameters:
-  jobName: ""
-  displayName: ""
-  jobtype: ""
-  artifactName: ""
-  packageNamePattern: ""
-  arm64: "no"
+  - name: jobName
+    type: string
+    default: ""
+  - name: displayName
+    type: string
+    default: ""
+  - name: jobtype
+    type: string
+    default: ""
+  - name: artifactName
+    type: string
+    default: ""
+  - name: packageNamePattern
+    type: string
+    default: ""
+  - name: arm64
+    type: string
+    default: "no"
+  - name: enableCredScan
+    type: boolean
+    default: true
 
 jobs:
 - job: ${{ parameters.jobName }}
@@ -19,6 +34,8 @@ jobs:
     value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
   - name: ob_sdl_tsa_configFile
     value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+  - name: ob_sdl_credscan_enabled
+    value: ${{ parameters.enableCredScan }}
 
   pool:
     type: ${{ parameters.jobtype }}
@@ -44,38 +61,7 @@ jobs:
         Get-ChildItem "$(Pipeline.Workspace)/PSPackagesOfficial/$artifactName" -Recurse
       displayName: 'Capture Downloaded Artifacts'
 
-    - pwsh: |
-        $repoRoot = "$(Build.SourcesDirectory)/PowerShell"
-        $dotnetMetadataPath = "$repoRoot/DotnetRuntimeMetadata.json"
-        $dotnetMetadataJson = Get-Content $dotnetMetadataPath -Raw | ConvertFrom-Json
-
-        # Channel is like: $Channel = "5.0.1xx-preview2"
-        $Channel = $dotnetMetadataJson.sdk.channel
-
-        $sdkVersion = (Get-Content "$repoRoot/global.json" -Raw | ConvertFrom-Json).sdk.version
-        Import-Module "$repoRoot/build.psm1" -Force
-
-        Find-Dotnet
-
-        if(-not (Get-PackageSource -Name 'dotnet' -ErrorAction SilentlyContinue))
-        {
-            $nugetFeed = ([xml](Get-Content $repoRoot/nuget.config -Raw)).Configuration.packagesources.add | Where-Object { $_.Key -eq 'dotnet' } | Select-Object -ExpandProperty Value
-            if ($nugetFeed) {
-              Register-PackageSource -Name 'dotnet' -Location $nugetFeed -ProviderName NuGet
-              Write-Verbose -Message "Register new package source 'dotnet'" -verbose
-            }
-        }
-
-        ## Install latest version from the channel
-
-        #Install-Dotnet -Channel "$Channel" -Version $sdkVersion
-        Start-PSBootstrap
-
-        Write-Verbose -Message "Installing .NET SDK completed." -Verbose
-
-      displayName: Install .NET
-      env:
-        __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+    - template: /.pipelines/templates/install-dotnet.yml@self
 
     - pwsh: |
         $artifactName = '$(artifactName)'
@@ -107,7 +93,7 @@ jobs:
         $artifactName = '$(artifactName)'
         $rootPath = "$(Pipeline.Workspace)/PSPackagesOfficial/$artifactName"
 
-        $env:DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
+        $env:DOTNET_NOLOGO=1
         Import-Module "$repoRoot/build.psm1" -Force
         Find-Dotnet -SetDotnetRoot
         Write-Verbose -Verbose "DOTNET_ROOT: $env:DOTNET_ROOT"

@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
+Describe 'Group policy settings tests' -Tags @('CI', 'RequireAdminOnWindows') {
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
         if ( ! $IsWindows ) {

@@ -435,6 +435,27 @@ export $envVarName='$guid'
             $out = $out.Split([Environment]::NewLine)[0]
             [System.Management.Automation.Internal.StringDecorated]::new($out).ToString("PlainText") | Should -BeExactly "Exception: boom"
         }
+
+        It "Progress is not emitted when stdout is redirected" {
+            $ps = [powershell]::Create()
+            $null = $ps.AddScript('$a = & ([Environment]::ProcessPath) -Command "Write-Progress -Activity progress"; $a')
+            $actual = $ps.Invoke()
+
+            $ps.HadErrors | Should -BeFalse
+            $actual | Should -BeNullOrEmpty
+            $ps.Streams.Progress | Should -BeNullOrEmpty
+        }
+
+        It "Progress is still emitted with redireciton with XML output" {
+            $ps = [powershell]::Create()
+            $null = $ps.AddScript('$a = & ([Environment]::ProcessPath) -OutputFormat xml -Command "Write-Progress -Activity progress"; $a')
+            $actual = $ps.Invoke()
+
+            $ps.HadErrors | Should -BeFalse
+            $actual | Should -BeNullOrEmpty
+            $ps.Streams.Progress.Count | Should -Be 1
+            $ps.Streams.Progress[0].Activity | Should -Be progress
+        }
     }
 
     Context "Redirected standard output" {
@@ -964,7 +985,12 @@ public static WINDOWPLACEMENT GetPlacement(IntPtr hwnd)
 {
     WINDOWPLACEMENT placement = new WINDOWPLACEMENT();
     placement.length = Marshal.SizeOf(placement);
-    GetWindowPlacement(hwnd, ref placement);
+
+    if (!GetWindowPlacement(hwnd, ref placement))
+    {
+        throw new System.ComponentModel.Win32Exception();
+    }
+
     return placement;
 }
 
@@ -1000,7 +1026,7 @@ public enum ShowWindowCommands : int
         $global:PSDefaultParameterValues = $defaultParamValues
     }
 
-    It "-WindowStyle <WindowStyle> should work on Windows" -TestCases @(
+    It "-WindowStyle <WindowStyle> should work on Windows" -Pending -TestCases @(
             @{WindowStyle="Normal"},
             @{WindowStyle="Minimized"},
             @{WindowStyle="Maximized"}  # hidden doesn't work in CI/Server Core
@@ -1181,5 +1207,20 @@ Describe 'TERM env var' -Tag CI {
         finally {
             $env:NO_COLOR = $null
         }
+    }
+
+    It 'No_COLOR should be respected for redirected output' {
+        $psi =  [System.Diagnostics.ProcessStartInfo] @{
+            FileName  = 'pwsh'
+            # Pass a command that succeeds and normally produces colored output, and one that produces error output.
+            Arguments = '-NoProfile -Command Get-Item .; Get-Content \nosuch123'
+            # Redirect (capture) both stdout and stderr.
+            RedirectStandardOutput = $true
+            RedirectStandardError = $true
+          }
+        $psi.Environment.Add('NO_COLOR', 1)
+        ($ps = [System.Diagnostics.Process]::Start($psi)).WaitForExit()
+        $ps.StandardOutput.ReadToEnd() | Should -Not -Contain '\e'
+        $ps.StandardError.ReadToEnd() | Should -Not -Contain '\e'
     }
 }

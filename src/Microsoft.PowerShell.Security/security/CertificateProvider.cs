@@ -3309,20 +3309,30 @@ namespace Microsoft.PowerShell.Commands
     public sealed class DnsNameProperty
     {
         private readonly List<DnsNameRepresentation> _dnsList = new();
-        private readonly System.Globalization.IdnMapping idnMapping = new();
+        private readonly IdnMapping idnMapping = new();
 
-        private const string dnsNamePrefix = "DNS Name=";
         private const string distinguishedNamePrefix = "CN=";
 
         /// <summary>
         /// Get property of DnsNameList.
         /// </summary>
-        public List<DnsNameRepresentation> DnsNameList
+        public List<DnsNameRepresentation> DnsNameList => _dnsList;
+
+        private DnsNameRepresentation GetDnsNameRepresentation(string dnsName)
         {
-            get
+            string unicodeName;
+
+            try
             {
-                return _dnsList;
+                unicodeName = idnMapping.GetUnicode(dnsName);
             }
+            catch (ArgumentException)
+            {
+                // The name is not valid Punycode, assume it's valid ASCII.
+                unicodeName = dnsName;
+            }
+
+            return new DnsNameRepresentation(dnsName, unicodeName);
         }
 
         /// <summary>
@@ -3330,61 +3340,32 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public DnsNameProperty(X509Certificate2 cert)
         {
-            string name;
-            string unicodeName;
-            DnsNameRepresentation dnsName;
             _dnsList = new List<DnsNameRepresentation>();
 
             // extract DNS name from subject distinguish name
             // if it exists and does not contain a comma
             // a comma, indicates it is not a DNS name
-            if (cert.Subject.StartsWith(distinguishedNamePrefix, System.StringComparison.OrdinalIgnoreCase) &&
+            if (cert.Subject.StartsWith(distinguishedNamePrefix, StringComparison.OrdinalIgnoreCase) &&
                 !cert.Subject.Contains(','))
             {
-                name = cert.Subject.Substring(distinguishedNamePrefix.Length);
-                try
-                {
-                    unicodeName = idnMapping.GetUnicode(name);
-                }
-                catch (System.ArgumentException)
-                {
-                    // The name is not valid punyCode, assume it's valid ascii.
-                    unicodeName = name;
-                }
-
-                dnsName = new DnsNameRepresentation(name, unicodeName);
+                string parsedSubjectDistinguishedDnsName = cert.Subject.Substring(distinguishedNamePrefix.Length);
+                DnsNameRepresentation dnsName = GetDnsNameRepresentation(parsedSubjectDistinguishedDnsName);
                 _dnsList.Add(dnsName);
             }
 
+            // Extract DNS names from SAN extensions
             foreach (X509Extension extension in cert.Extensions)
             {
-                // Filter to the OID for Subject Alternative Name
-                if (extension.Oid.Value == "2.5.29.17")
+                if (extension is X509SubjectAlternativeNameExtension sanExtension)
                 {
-                    string[] names = extension.Format(true).Split(Environment.NewLine);
-                    foreach (string nameLine in names)
+                    foreach (string dnsNameEntry in sanExtension.EnumerateDnsNames())
                     {
-                        // Get the part after 'DNS Name='
-                        if (nameLine.StartsWith(dnsNamePrefix, System.StringComparison.InvariantCultureIgnoreCase))
+                        DnsNameRepresentation dnsName = GetDnsNameRepresentation(dnsNameEntry);
+
+                        // Only add the name if it is not the same as an existing name.
+                        if (!_dnsList.Contains(dnsName))
                         {
-                            name = nameLine.Substring(dnsNamePrefix.Length);
-                            try
-                            {
-                                unicodeName = idnMapping.GetUnicode(name);
-                            }
-                            catch (System.ArgumentException)
-                            {
-                                // The name is not valid punyCode, assume it's valid ascii.
-                                unicodeName = name;
-                            }
-
-                            dnsName = new DnsNameRepresentation(name, unicodeName);
-
-                            // Only add the name if it is not the same as an existing name.
-                            if (!_dnsList.Contains(dnsName))
-                            {
-                                _dnsList.Add(dnsName);
-                            }
+                            _dnsList.Add(dnsName);
                         }
                     }
                 }
@@ -3478,8 +3459,7 @@ namespace Microsoft.PowerShell.Commands
                 return false;
 
             uint SessionId;
-            uint ProcessId = (uint)System.Diagnostics.Process.GetCurrentProcess().Id;
-            if (!SMASecurity.NativeMethods.ProcessIdToSessionId(ProcessId, out SessionId))
+            if (!SMASecurity.NativeMethods.ProcessIdToSessionId((uint)Environment.ProcessId, out SessionId))
                 return false;
 
             if (SessionId == 0)

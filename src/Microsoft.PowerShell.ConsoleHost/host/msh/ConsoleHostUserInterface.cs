@@ -578,7 +578,7 @@ namespace Microsoft.PowerShell
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal void WriteToConsole(char c, bool transcribeResult)
         {
-            ReadOnlySpan<char> value = stackalloc char[1] { c };
+            ReadOnlySpan<char> value = [c];
             WriteToConsole(value, transcribeResult);
         }
 
@@ -709,9 +709,14 @@ namespace Microsoft.PowerShell
         /// </exception>
         public override void Write(string value)
         {
-            WriteImpl(value, newLine: false);
+            lock (_instanceLock)
+            {
+                WriteImpl(value, newLine: false);
+            }
         }
 
+        // The WriteImpl() method should always be called within a lock on _instanceLock
+        // to ensure thread safety and prevent issues in multi-threaded scenarios.
         private void WriteImpl(string value, bool newLine)
         {
             if (string.IsNullOrEmpty(value) && !newLine)
@@ -845,7 +850,10 @@ namespace Microsoft.PowerShell
         /// </exception>
         public override void WriteLine(string value)
         {
-            this.WriteImpl(value, newLine: true);
+            lock (_instanceLock)
+            {
+                this.WriteImpl(value, newLine: true);
+            }
         }
 
         /// <summary>
@@ -862,7 +870,10 @@ namespace Microsoft.PowerShell
         /// </exception>
         public override void WriteLine()
         {
-            this.WriteImpl(Environment.NewLine, newLine: false);
+            lock (_instanceLock)
+            {
+                this.WriteImpl(Environment.NewLine, newLine: false);
+            }
         }
 
         #region Word Wrapping
@@ -1331,13 +1342,6 @@ namespace Microsoft.PowerShell
         {
             Dbg.Assert(record != null, "WriteProgress called with null ProgressRecord");
 
-            if (Console.IsOutputRedirected)
-            {
-                // Do not write progress bar when the stdout is redirected.
-                return;
-            }
-
-            // We allow only one thread at a time to update the progress state.)
             if (_parent.ErrorFormat == Serialization.DataFormat.XML)
             {
                 PSObject obj = new PSObject();
@@ -1345,8 +1349,14 @@ namespace Microsoft.PowerShell
                 obj.Properties.Add(new PSNoteProperty("Record", record));
                 _parent.ErrorSerializer.Serialize(obj, "progress");
             }
+            else if (Console.IsOutputRedirected)
+            {
+                // Do not write progress bar when the stdout is redirected.
+                return;
+            }
             else
             {
+                // We allow only one thread at a time to update the progress state.)
                 lock (_instanceLock)
                 {
                     HandleIncomingProgressRecord(sourceId, record);
@@ -1386,6 +1396,7 @@ namespace Microsoft.PowerShell
                 }
                 else
                 {
+                    value = GetOutputString(value, SupportsVirtualTerminal);
                     Console.Error.WriteLine(value);
                 }
             }
@@ -2251,7 +2262,7 @@ namespace Microsoft.PowerShell
         private readonly ConsoleHostRawUserInterface _rawui;
         private readonly ConsoleHost _parent;
 
-        [TraceSourceAttribute("ConsoleHostUserInterface", "Console host's subclass of S.M.A.Host.Console")]
+        [TraceSource("ConsoleHostUserInterface", "Console host's subclass of S.M.A.Host.Console")]
         private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("ConsoleHostUserInterface", "Console host's subclass of S.M.A.Host.Console");
     }
 }   // namespace

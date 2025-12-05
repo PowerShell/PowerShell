@@ -1,0 +1,137 @@
+name: Path Filters
+description: 'Path Filters'
+inputs:
+  GITHUB_TOKEN:
+    description: 'GitHub token'
+    required: true
+outputs:
+  source:
+    description: 'Source code changes (composite of all changes)'
+    value: ${{ steps.filter.outputs.source }}
+  githubChanged:
+    description: 'GitHub workflow changes'
+    value: ${{ steps.filter.outputs.githubChanged }}
+  toolsChanged:
+    description: 'Tools changes'
+    value: ${{ steps.filter.outputs.toolsChanged }}
+  propsChanged:
+    description: 'Props changes'
+    value: ${{ steps.filter.outputs.propsChanged }}
+  testsChanged:
+    description: 'Tests changes'
+    value: ${{ steps.filter.outputs.testsChanged }}
+  mainSourceChanged:
+    description: 'Main source code changes (any changes in src/)'
+    value: ${{ steps.filter.outputs.mainSourceChanged }}
+  buildModuleChanged:
+    description: 'Build module changes'
+    value: ${{ steps.filter.outputs.buildModuleChanged }}
+  packagingChanged:
+    description: 'Packaging related changes'
+    value: ${{ steps.filter.outputs.packagingChanged }}
+runs:
+  using: composite
+  steps:
+    - name: Get changed files
+      id: get-files
+      if: github.event_name == 'pull_request'
+      uses: "./.github/actions/infrastructure/get-changed-files"
+
+    - name: Check if GitHubWorkflowChanges is present
+      id: filter
+      uses: actions/github-script@v7.0.1
+      env:
+        FILES_JSON: ${{ steps.get-files.outputs.files }}
+      with:
+        github-token: ${{ inputs.GITHUB_TOKEN }}
+        script: |
+          console.log(`Event Name: ${context.eventName}`);
+
+          // Just say everything changed if this is not a PR
+          if (context.eventName !== 'pull_request') {
+            console.log('Not a pull request, setting all outputs to true');
+            core.setOutput('toolsChanged', true);
+            core.setOutput('githubChanged', true);
+            core.setOutput('propsChanged', true);
+            core.setOutput('testsChanged', true);
+            core.setOutput('mainSourceChanged', true);
+            core.setOutput('buildModuleChanged', true);
+            core.setOutput('source', true);
+            return;
+          }
+
+          // Get files from environment variable (secure against injection)
+          const files = JSON.parse(process.env.FILES_JSON || '[]');
+
+          // Calculate hash for verification (matches get-changed-files action)
+          const crypto = require('crypto');
+          const filesJson = JSON.stringify(files.sort());
+          const hash = crypto.createHash('sha256').update(filesJson).digest('hex').substring(0, 8);
+          console.log(`Received ${files.length} files (hash: ${hash})`);
+
+          // Analyze changes with detailed logging
+          core.startGroup('Path Filter Analysis');
+
+          const actionsChanged = files.some(file => file.startsWith('.github/actions'));
+          console.log(`✓ Actions changed: ${actionsChanged}`);
+
+          const workflowsChanged = files.some(file => file.startsWith('.github/workflows'));
+          console.log(`✓ Workflows changed: ${workflowsChanged}`);
+
+          const githubChanged = actionsChanged || workflowsChanged;
+          console.log(`→ GitHub changed (actions OR workflows): ${githubChanged}`);
+
+          const toolsCiPsm1Changed = files.some(file => file === 'tools/ci.psm1');
+          console.log(`✓ tools/ci.psm1 changed: ${toolsCiPsm1Changed}`);
+
+          const toolsBuildCommonChanged = files.some(file => file.startsWith('tools/buildCommon/'));
+          console.log(`✓ tools/buildCommon/ changed: ${toolsBuildCommonChanged}`);
+
+          const toolsChanged = toolsCiPsm1Changed || toolsBuildCommonChanged;
+          console.log(`→ Tools changed: ${toolsChanged}`);
+
+          const propsChanged = files.some(file => file.endsWith('.props'));
+          console.log(`✓ Props files changed: ${propsChanged}`);
+
+          const testsChanged = files.some(file => file.startsWith('test/powershell/') || file.startsWith('test/tools/') || file.startsWith('test/xUnit/'));
+          console.log(`✓ Tests changed: ${testsChanged}`);
+
+          const mainSourceChanged = files.some(file => file.startsWith('src/'));
+          console.log(`✓ Main source (src/) changed: ${mainSourceChanged}`);
+
+          const buildModuleChanged = files.some(file => file === 'build.psm1');
+          console.log(`✓ build.psm1 changed: ${buildModuleChanged}`);
+
+          const globalConfigChanged = files.some(file => file === '.globalconfig' || file === 'nuget.config' || file === 'global.json');
+          console.log(`✓ Global config changed: ${globalConfigChanged}`);
+
+          const packagingChanged = files.some(file =>
+            file === '.github/workflows/windows-ci.yml' ||
+            file === '.github/workflows/linux-ci.yml' ||
+            file.startsWith('assets/wix/') ||
+            file === 'PowerShell.Common.props' ||
+            file.match(/^src\/.*\.csproj$/) ||
+            file.startsWith('test/packaging/windows/') ||
+            file.startsWith('test/packaging/linux/') ||
+            file.startsWith('tools/packaging/') ||
+            file.startsWith('tools/wix/')
+          ) ||
+            buildModuleChanged ||
+            globalConfigChanged ||
+            toolsCiPsm1Changed;
+          console.log(`→ Packaging changed: ${packagingChanged}`);
+
+          const source = mainSourceChanged || toolsChanged || githubChanged || propsChanged || testsChanged || globalConfigChanged;
+          console.log(`→ Source (composite): ${source}`);
+
+          core.endGroup();
+
+          core.setOutput('toolsChanged', toolsChanged);
+          core.setOutput('githubChanged', githubChanged);
+          core.setOutput('propsChanged', propsChanged);
+          core.setOutput('testsChanged', testsChanged);
+          core.setOutput('mainSourceChanged', mainSourceChanged);
+          core.setOutput('buildModuleChanged', buildModuleChanged);
+          core.setOutput('globalConfigChanged', globalConfigChanged);
+          core.setOutput('packagingChanged', packagingChanged);
+          core.setOutput('source', source);

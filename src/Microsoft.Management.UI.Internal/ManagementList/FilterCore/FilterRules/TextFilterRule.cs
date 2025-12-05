@@ -14,7 +14,6 @@ namespace Microsoft.Management.UI.Internal
     /// evaluating string operations.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
-    [Serializable]
     public abstract class TextFilterRule : SingleValueComparableValueFilterRule<string>
     {
         /// <summary>
@@ -62,12 +61,23 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Initializes a new instance of the TextFilterRule class.
+        /// Initializes a new instance of the <see cref="TextFilterRule"/> class.
         /// </summary>
         protected TextFilterRule()
         {
             this.IgnoreCase = true;
             this.CultureInvariant = false;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the  <see cref="TextFilterRule"/> class.
+        /// </summary>
+        /// <param name="source">The source to initialize from.</param>
+        protected TextFilterRule(TextFilterRule source)
+            : base(source)
+        {
+            this.IgnoreCase = source.IgnoreCase;
+            this.CultureInvariant = source.CultureInvariant;
         }
 
         /// <summary>

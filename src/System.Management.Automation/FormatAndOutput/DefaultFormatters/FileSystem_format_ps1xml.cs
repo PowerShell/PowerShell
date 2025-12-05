@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace System.Management.Automation.Runspaces
 {
@@ -48,7 +49,10 @@ namespace System.Management.Automation.Runspaces
                     .AddHeader(Alignment.Left, label: "UnixMode", width: 10)
                     .AddHeader(Alignment.Right, label: "User", width: 10)
                     .AddHeader(Alignment.Left, label: "Group", width: 10)
-                    .AddHeader(Alignment.Right, label: "LastWriteTime", width: 16)
+                    .AddHeader(
+                        Alignment.Right,
+                        label: "LastWriteTime",
+                        width: String.Format(CultureInfo.CurrentCulture, "{0:d} {0:HH}:{0:mm}", CultureInfo.CurrentCulture.Calendar.MaxSupportedDateTime).Length)
                     .AddHeader(Alignment.Right, label: "Size", width: 12)
                     .AddHeader(Alignment.Left, label: "Name")
                     .StartRowDefinition(wrap: true)

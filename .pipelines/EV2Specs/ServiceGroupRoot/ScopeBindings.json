@@ -1,0 +1,23 @@
+{
+  "$schema": "https://ev2schema.azure.net/schemas/2020-01-01/scopeBindings.json",
+  "contentVersion": "0.0.0.1",
+  "scopeBindings": [
+    {
+      "scopeTagName": "Global",
+      "bindings": [
+        {
+          "find": "__SUBSCRIPTION_ID__",
+          "replaceWith": "$azureSubscriptionId()"
+        },
+        {
+          "find": "__RESOURCE_GROUP__",
+          "replaceWith": "$azureResourceGroup()"
+        },
+        {
+          "find": "__BUILD_VERSION__",
+          "replaceWith": "$buildVersion()"
+        }
+      ]
+    }
+  ]
+}

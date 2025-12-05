@@ -293,7 +293,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Overrides <see cref="System.Object.ToString"/>
+        /// Overrides <see cref="object.ToString"/>
         /// </summary>
         /// <returns>
         /// "parent = a id = b act = c stat = d cur = e pct = f sec = g type = h" where
@@ -429,28 +429,28 @@ namespace System.Management.Automation
 
         #region DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell
 
-        [DataMemberAttribute]
+        [DataMember]
         private readonly int id;
 
-        [DataMemberAttribute]
+        [DataMember]
         private int parentId = -1;
 
-        [DataMemberAttribute]
+        [DataMember]
         private string activity;
 
-        [DataMemberAttribute]
+        [DataMember]
         private string status;
 
-        [DataMemberAttribute]
+        [DataMember]
         private string currentOperation;
 
-        [DataMemberAttribute]
+        [DataMember]
         private int percent = -1;
 
-        [DataMemberAttribute]
+        [DataMember]
         private int secondsRemaining = -1;
 
-        [DataMemberAttribute]
+        [DataMember]
         private ProgressRecordType type = ProgressRecordType.Processing;
 
         #endregion

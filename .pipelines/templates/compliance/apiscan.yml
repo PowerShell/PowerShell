@@ -12,15 +12,11 @@ jobs:
         value: fromBranch
       # Defines the variables APIScanClient, APIScanTenant and APIScanSecret
       - group: PS-PS-APIScan
-      # PAT permissions NOTE: Declare a SymbolServerPAT variable in this group with a 'microsoft' organizanization scoped PAT with 'Symbols' Read permission.
-      # A PAT in the wrong org will give a single Error 203. No PAT will give a single Error 401, and individual pdbs may be missing even if permissions are correct.
-      - group: symbols
       - name: branchCounterKey
         value: $[format('{0:yyyyMMdd}-{1}', pipeline.startTime,variables['Build.SourceBranch'])]
       - name: branchCounter
         value: $[counter(variables['branchCounterKey'], 1)]
       - group: DotNetPrivateBuildAccess
-      - group: Azure Blob variable group
       - group: ReleasePipelineSecrets
       - group: mscodehub-feed-read-general
       - group: mscodehub-feed-read-akv
@@ -54,21 +50,18 @@ jobs:
     - template: ../SetVersionVariables.yml
       parameters:
         ReleaseTagVar: $(ReleaseTagVar)
-        CreateJson: yes
-        UseJson: no
+        CreateJson: no
 
     - template: ../insert-nuget-config-azfeed.yml
       parameters:
         repoRoot: '$(repoRoot)'
 
-    - pwsh: |
-        Import-Module .\build.psm1 -force
-        Start-PSBootstrap
-      workingDirectory: '$(repoRoot)'
-      retryCountOnTaskFailure: 2
-      displayName: 'Bootstrap'
-      env:
-        __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+    - task: UseDotNet@2
+      displayName: 'Use .NET Core sdk'
+      inputs:
+        useGlobalJson: true
+        packageType: 'sdk'
+        workingDirectory: $(Build.SourcesDirectory)"
 
     - pwsh: |
         Import-Module .\build.psm1 -force
@@ -79,47 +72,6 @@ jobs:
       displayName: Install dotnet-symbol
       workingDirectory: '$(repoRoot)'
       retryCountOnTaskFailure: 2
-
-    - pwsh: |
-        $modules = 'Az.Accounts', 'Az.Storage'
-        foreach($module in $modules) {
-          if(!(get-module $module -listavailable)) {
-            Write-Verbose "installing $module..." -verbose
-            Install-Module $module -force -AllowClobber
-          } else {
-            Write-Verbose "$module already installed." -verbose
-          }
-        }
-      displayName: Install PowerShell modules
-      workingDirectory: '$(repoRoot)'
-
-    - task: AzurePowerShell@5
-      displayName: Download winverify-private Artifacts
-      inputs:
-        azureSubscription: az-blob-cicd-infra
-        scriptType: inlineScript
-        azurePowerShellVersion: LatestVersion
-        workingDirectory: '$(repoRoot)'
-        pwsh: true
-        inline: |
-          # download smybols for getfilesiginforedist.dll
-          $downloadsDirectory = '$(Build.ArtifactStagingDirectory)/downloads'
-          $uploadedDirectory = '$(Build.ArtifactStagingDirectory)/uploaded'
-          $storageAccountName = "pscoretestdata"
-          $containerName = 'winverify-private'
-          $winverifySymbolsPath = New-Item -ItemType Directory -Path '$(System.ArtifactsDirectory)/winverify-symbols' -Force
-          $dllName = 'getfilesiginforedist.dll'
-          $winverifySymbolsDllPath = Join-Path $winverifySymbolsPath $dllName
-
-          $context = New-AzStorageContext -StorageAccountName $storageAccountName -UseConnectedAccount
-
-          Get-AzStorageBlobContent -Container $containerName -Blob $dllName -Destination $winverifySymbolsDllPath -Context $context
-
-    - pwsh: |
-        Get-ChildItem -Path '$(System.ArtifactsDirectory)/winverify-symbols'
-      displayName: Capture winverify-private Artifacts
-      workingDirectory: '$(repoRoot)'
-      condition: succeededOrFailed()
 
     - task: CodeQL3000Init@0 # Add CodeQL Init task right before your 'Build' step.
       displayName: 🔏 CodeQL 3000 Init
@@ -139,10 +91,37 @@ jobs:
           Remove-Item -Recurse -Force $OutputFolder/ref
         }
 
-        Copy-Item -Path "$OutputFolder\*" -Destination '$(ob_outputDirectory)' -Recurse -Verbose
+        $Destination = '$(ob_outputDirectory)'
+        if (-not (Test-Path $Destination)) {
+          Write-Verbose -Verbose -Message "Creating destination folder '$Destination'"
+          $null = mkdir $Destination
+        }
 
+        Copy-Item -Path "$OutputFolder\*" -Destination $Destination -Recurse -Verbose
       workingDirectory: '$(repoRoot)'
       displayName: 'Build PowerShell Source'
+
+    - pwsh: |
+        # Only keep windows runtimes
+        Write-Verbose -Verbose -Message "Deleting non-win-x64 runtimes ..."
+        Get-ChildItem -Path '$(ob_outputDirectory)\runtimes\*' | Where-Object {$_.FullName -notmatch '.*\\runtimes\\win'} | Foreach-Object {
+          Write-Verbose -Verbose -Message "Deleting $($_.FullName)"
+          Remove-Item -Path $_.FullName -Recurse -Force
+        }
+
+        # Remove win-x86/arm/arm64 runtimes due to issues with those runtimes
+        Write-Verbose -Verbose -Message "Temporarily deleting win-x86/arm/arm64 runtimes ..."
+        Get-ChildItem -Path '$(ob_outputDirectory)\runtimes\*' | Where-Object {$_.FullName -match '.*\\runtimes\\win-(x86|arm)'} | Foreach-Object {
+          Write-Verbose -Verbose -Message "Deleting $($_.FullName)"
+          Remove-Item -Path $_.FullName -Recurse -Force
+        }
+
+        Write-Host
+        Write-Verbose -Verbose -Message "Show content in 'runtimes' folder:"
+        Get-ChildItem -Path '$(ob_outputDirectory)\runtimes'
+        Write-Host
+      workingDirectory: '$(repoRoot)'
+      displayName: 'Remove unused runtimes'
 
     - task: CodeQL3000Finalize@0 # Add CodeQL Finalize task right after your 'Build' step.
       displayName: 🔏 CodeQL 3000 Finalize

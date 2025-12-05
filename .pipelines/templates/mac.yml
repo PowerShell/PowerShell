@@ -39,9 +39,12 @@ jobs:
       sudo chown $env:USER "$(Agent.TempDirectory)/PowerShell"
     displayName: 'Create $(Agent.TempDirectory)/PowerShell'
 
+    ## We cross compile for arm64, so the arch is always x64
+  - template: /.pipelines/templates/install-dotnet.yml@self
+
   - pwsh: |
       Import-Module $(PowerShellRoot)/build.psm1 -Force
-      Start-PSBootstrap -Package
+      Start-PSBootstrap -Scenario Package
     displayName: 'Bootstrap VM'
     env:
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
@@ -141,5 +144,6 @@ jobs:
   - template: /.pipelines/templates/obp-file-signing.yml@self
     parameters:
       binPath: $(DropRootPath)
+      OfficialBuild: $(ps_official_build)
 
   - template: /.pipelines/templates/step/finalize.yml@self

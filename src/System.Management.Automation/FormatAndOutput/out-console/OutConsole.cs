@@ -14,7 +14,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Null sink to absorb pipeline output.
     /// </summary>
-    [CmdletAttribute("Out", "Null", SupportsShouldProcess = false,
+    [Cmdlet("Out", "Null", SupportsShouldProcess = false,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096792", RemotingCapability = RemotingCapability.None)]
     public class OutNullCommand : PSCmdlet
     {

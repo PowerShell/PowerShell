@@ -173,7 +173,7 @@ namespace Microsoft.WSMan.Management
     [ComImport]
     [TypeLibType((short)4304)]
 #if CORECLR
-    [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIUnknown)]
+    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 #else
     [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIDispatch)]
 #endif
@@ -255,7 +255,7 @@ namespace Microsoft.WSMan.Management
     [ComImport]
     [TypeLibType((short)4288)]
 #if CORECLR
-    [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIUnknown)]
+    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 #else
     [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIDispatch)]
 #endif
@@ -312,7 +312,7 @@ namespace Microsoft.WSMan.Management
     [ComImport]
     [TypeLibType((short)4288)]
 #if CORECLR
-    [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIUnknown)]
+    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 #else
     [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIDispatch)]
 #endif
@@ -336,7 +336,7 @@ namespace Microsoft.WSMan.Management
     [ComImport]
     [TypeLibType((short)4288)]
 #if CORECLR
-    [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIUnknown)]
+    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 #else
     [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIDispatch)]
 #endif
@@ -386,7 +386,7 @@ namespace Microsoft.WSMan.Management
     [ComImport]
     [TypeLibType((short)4288)]
 #if CORECLR
-    [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIUnknown)]
+    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 #else
     [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIDispatch)]
 #endif
@@ -450,7 +450,7 @@ namespace Microsoft.WSMan.Management
     [TypeLibType((short)4304)]
     [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
 #if CORECLR
-    [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIUnknown)]
+    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 #else
     [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIDispatch)]
 #endif
@@ -706,7 +706,7 @@ namespace Microsoft.WSMan.Management
     [ComImport]
     [TypeLibType((short)4288)]
 #if CORECLR
-    [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIUnknown)]
+    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 #else
     [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIDispatch)]
 #endif
@@ -860,7 +860,7 @@ namespace Microsoft.WSMan.Management
     [ComImport]
     [TypeLibType((short)4288)]
 #if CORECLR
-    [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIUnknown)]
+    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 #else
     [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIDispatch)]
 #endif
@@ -1005,7 +1005,7 @@ namespace Microsoft.WSMan.Management
     [ComImport]
     [TypeLibType((short)400)]
 #if CORECLR
-    [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIUnknown)]
+    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 #else
     [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIDispatch)]
 #endif

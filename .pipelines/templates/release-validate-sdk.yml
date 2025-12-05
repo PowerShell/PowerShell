@@ -46,47 +46,15 @@ jobs:
         Get-ChildItem "$(Pipeline.Workspace)/PSPackagesOfficial/drop_nupkg_build_nupkg" -Recurse
       displayName: 'Capture Downloaded Artifacts'
 
-    - pwsh: |
-        $repoRoot = "$(Build.SourcesDirectory)"
-
-        $dotnetMetadataPath = "$repoRoot/DotnetRuntimeMetadata.json"
-        $dotnetMetadataJson = Get-Content $dotnetMetadataPath -Raw | ConvertFrom-Json
-
-        # Channel is like: $Channel = "5.0.1xx-preview2"
-        $Channel = $dotnetMetadataJson.sdk.channel
-
-        $sdkVersion = (Get-Content "$repoRoot/global.json" -Raw | ConvertFrom-Json).sdk.version
-        Import-Module "$repoRoot/build.psm1" -Force
-
-        Find-Dotnet
-
-        if(-not (Get-PackageSource -Name 'dotnet' -ErrorAction SilentlyContinue))
-        {
-            $nugetFeed = ([xml](Get-Content $repoRoot/nuget.config -Raw)).Configuration.packagesources.add | Where-Object { $_.Key -eq 'dotnet' } | Select-Object -ExpandProperty Value
-
-            if ($nugetFeed) {
-              Register-PackageSource -Name 'dotnet' -Location $nugetFeed -ProviderName NuGet
-              Write-Verbose -Message "Register new package source 'dotnet'" -verbose
-            }
-        }
-
-        ## Install latest version from the channel
-        #Install-Dotnet -Channel "$Channel" -Version $sdkVersion
-
-        Start-PSBootstrap
-
-        Write-Verbose -Message "Installing .NET SDK completed." -Verbose
-
-      displayName: Install .NET
-      env:
-        __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+    - template: /.pipelines/templates/install-dotnet.yml@self
 
     - pwsh: |
         $repoRoot = "$(Build.SourcesDirectory)"
 
-        $env:DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
-        Import-Module "$repoRoot/build.psm1" -Force
-        Start-PSBootstrap
+        Import-Module "$repoRoot/build.psm1" -Force -Verbose
+        Start-PSBootstrap -Scenario Dotnet
+
+        $env:DOTNET_NOLOGO=1
 
         $localLocation = "$(Pipeline.Workspace)/PSPackagesOfficial/drop_nupkg_build_nupkg"
         $xmlElement = @"
@@ -95,7 +63,7 @@ jobs:
         </packageSources>
         "@
 
-        $releaseVersion = '$(Version)'
+        $releaseVersion = '$(OutputVersion.Version)'
 
         Write-Verbose -Message "Release Version: $releaseVersion" -Verbose
 
@@ -115,10 +83,6 @@ jobs:
         $updateNugetContent | Out-File $nugetPath -Encoding ascii
 
         Get-Content $nugetPath
-
-        # Add workaround to unblock xUnit testing see issue: https://github.com/dotnet/sdk/issues/26462
-        $dotnetPath = if ($IsWindows) { "$env:LocalAppData\Microsoft\dotnet" } else { "$env:HOME/.dotnet" }
-        $env:DOTNET_ROOT = $dotnetPath
 
         dotnet --info
         dotnet restore

@@ -24,10 +24,6 @@ using Microsoft.Management.Infrastructure.Options;
 using Microsoft.Win32;
 using Dbg = System.Management.Automation;
 
-// FxCop suppressions for resource strings:
-[module: SuppressMessage("Microsoft.Naming", "CA1703:ResourceStringsShouldBeSpelledCorrectly", Scope = "resource", Target = "ComputerResources.resources", MessageId = "unjoined")]
-[module: SuppressMessage("Microsoft.Naming", "CA1701:ResourceStringCompoundWordsShouldBeCasedCorrectly", Scope = "resource", Target = "ComputerResources.resources", MessageId = "UpTime")]
-
 namespace Microsoft.PowerShell.Commands
 {
     #region Restart-Computer
@@ -2023,54 +2019,24 @@ $result
         /// <returns></returns>
         internal static bool IsComputerNameValid(string computerName)
         {
-            bool allDigits = true;
+            bool hasAsciiLetterOrHyphen = false;
 
             if (computerName.Length >= 64)
                 return false;
 
             foreach (char t in computerName)
             {
-                if (t >= 'A' && t <= 'Z' ||
-                    t >= 'a' && t <= 'z')
+                if (char.IsAsciiLetter(t) || t is '-')
                 {
-                    allDigits = false;
-                    continue;
+                    hasAsciiLetterOrHyphen = true;
                 }
-                else if (t >= '0' && t <= '9')
-                {
-                    continue;
-                }
-                else if (t == '-')
-                {
-                    allDigits = false;
-                    continue;
-                }
-                else
+                else if (!char.IsAsciiDigit(t))
                 {
                     return false;
                 }
             }
 
-            return !allDigits;
-        }
-
-        /// <summary>
-        /// System Restore APIs are not supported on the ARM platform. Skip the system restore operation is necessary.
-        /// </summary>
-        /// <param name="cmdlet"></param>
-        /// <returns></returns>
-        internal static bool SkipSystemRestoreOperationForARMPlatform(PSCmdlet cmdlet)
-        {
-            bool retValue = false;
-            if (PsUtils.IsRunningOnProcessorArchitectureARM())
-            {
-                var ex = new InvalidOperationException(ComputerResources.SystemRestoreNotSupported);
-                var er = new ErrorRecord(ex, "SystemRestoreNotSupported", ErrorCategory.InvalidOperation, null);
-                cmdlet.WriteError(er);
-                retValue = true;
-            }
-
-            return retValue;
+            return hasAsciiLetterOrHyphen;
         }
 
         /// <summary>

@@ -13,16 +13,24 @@ namespace Microsoft.Management.UI.Internal
     /// The generic parameter.
     /// </typeparam>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
-    [Serializable]
     public class DoesNotEqualFilterRule<T> : EqualsFilterRule<T> where T : IComparable
     {
         /// <summary>
-        /// Initializes a new instance of the DoesNotEqualFilterRule class.
+        /// Initializes a new instance of the <see cref="DoesNotEqualFilterRule{T}"/> class.
         /// </summary>
         public DoesNotEqualFilterRule()
         {
             this.DisplayName = UICultureResources.FilterRule_DoesNotEqual;
             this.DefaultNullValueEvaluation = true;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DoesNotEqualFilterRule{T}"/> class.
+        /// </summary>
+        /// <param name="source">The source to initialize from.</param>
+        public DoesNotEqualFilterRule(DoesNotEqualFilterRule<T> source)
+            : base(source)
+        {
         }
 
         /// <summary>

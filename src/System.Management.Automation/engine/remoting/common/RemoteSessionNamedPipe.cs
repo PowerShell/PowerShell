@@ -12,7 +12,6 @@ using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Threading;
-using System.Threading.Tasks;
 
 using Microsoft.Win32.SafeHandles;
 
@@ -454,7 +453,7 @@ namespace System.Management.Automation.Remoting
             SafePipeHandle pipeHandle = NamedPipeNative.CreateNamedPipe(
                 fullPipeName,
                 NamedPipeNative.PIPE_ACCESS_DUPLEX | NamedPipeNative.FILE_FLAG_FIRST_PIPE_INSTANCE | NamedPipeNative.FILE_FLAG_OVERLAPPED,
-                NamedPipeNative.PIPE_TYPE_MESSAGE | NamedPipeNative.PIPE_READMODE_MESSAGE,
+                NamedPipeNative.PIPE_TYPE_MESSAGE | NamedPipeNative.PIPE_READMODE_MESSAGE | NamedPipeNative.PIPE_REJECT_REMOTE_CLIENTS,
                 1,
                 _namedPipeBufferSizeForRemoting,
                 _namedPipeBufferSizeForRemoting,
@@ -500,13 +499,14 @@ namespace System.Management.Automation.Remoting
         {
             s_syncObject = new object();
 
-            // All PowerShell instances will start with the named pipe
-            // and listener created and running.
-            IPCNamedPipeServerEnabled = true;
+            // Unless opt-out, all PowerShell instances will start with the named-pipe listener created and running.
+            IPCNamedPipeServerEnabled = !Utils.GetEnvironmentVariableAsBool(name: "POWERSHELL_DIAGNOSTICS_OPTOUT", defaultValue: false);
 
-            CreateIPCNamedPipeServerSingleton();
-
-            CreateProcessExitHandler();
+            if (IPCNamedPipeServerEnabled)
+            {
+                CreateIPCNamedPipeServerSingleton();
+                CreateProcessExitHandler();
+            }
         }
 
         #endregion

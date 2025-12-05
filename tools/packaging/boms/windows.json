@@ -1,3478 +1,4619 @@
 [
   {
     "Pattern": "_manifest\\spdx_2.2\\bsi.json",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "_manifest\\spdx_2.2\\manifest.cat",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Accessibility.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "build.manifest",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "build.manifest.sig",
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "clretwrc.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "clrgc.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "clrgcexp.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "clrjit.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "coreclr.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "createdump.exe",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "cs/Microsoft.CodeAnalysis.CSharp.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "cs/Microsoft.CodeAnalysis.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "cs/Microsoft.VisualBasic.Forms.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "cs/PresentationCore.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "cs/PresentationFramework.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "cs/PresentationUI.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "cs/ReachFramework.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "cs/System.Private.ServiceModel.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "cs/System.Web.Services.Description.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "cs/System.Windows.Controls.Ribbon.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "cs/System.Windows.Forms.Design.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "cs/System.Windows.Forms.Primitives.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "cs/System.Windows.Forms.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "cs/System.Windows.Input.Manipulations.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "cs/System.Xaml.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "cs/UIAutomationClient.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "cs/UIAutomationClientSideProviders.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "cs/UIAutomationProvider.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "cs/UIAutomationTypes.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "cs/WindowsBase.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "cs/WindowsFormsIntegration.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "cs\\System.ServiceModel.Http.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "cs\\System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "cs\\System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "cs\\System.ServiceModel.Primitives.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "D3DCompiler_47_cor3.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": [
+      "x64, x86"
+    ]
   },
   {
     "Pattern": "de/Microsoft.CodeAnalysis.CSharp.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "de/Microsoft.CodeAnalysis.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "de/Microsoft.VisualBasic.Forms.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "de/PresentationCore.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "de/PresentationFramework.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "de/PresentationUI.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "de/ReachFramework.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "de/System.Private.ServiceModel.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "de/System.Web.Services.Description.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "de/System.Windows.Controls.Ribbon.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "de/System.Windows.Forms.Design.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "de/System.Windows.Forms.Primitives.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "de/System.Windows.Forms.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "de/System.Windows.Input.Manipulations.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "de/System.Xaml.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "de/UIAutomationClient.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "de/UIAutomationClientSideProviders.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "de/UIAutomationProvider.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "de/UIAutomationTypes.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "de/WindowsBase.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "de/WindowsFormsIntegration.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "de\\System.ServiceModel.Http.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "de\\System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "de\\System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "de\\System.ServiceModel.Primitives.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "DirectWriteForwarder.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "en-US/default.help.txt",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "es/Microsoft.CodeAnalysis.CSharp.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "es/Microsoft.CodeAnalysis.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "es/Microsoft.VisualBasic.Forms.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "es/PresentationCore.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "es/PresentationFramework.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "es/PresentationUI.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "es/ReachFramework.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "es/System.Private.ServiceModel.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "es/System.Web.Services.Description.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "es/System.Windows.Controls.Ribbon.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "es/System.Windows.Forms.Design.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "es/System.Windows.Forms.Primitives.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "es/System.Windows.Forms.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "es/System.Windows.Input.Manipulations.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "es/System.Xaml.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "es/UIAutomationClient.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "es/UIAutomationClientSideProviders.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "es/UIAutomationProvider.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "es/UIAutomationTypes.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "es/WindowsBase.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "es/WindowsFormsIntegration.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "es\\System.ServiceModel.Http.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "es\\System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "es\\System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "es\\System.ServiceModel.Primitives.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "fr/Microsoft.CodeAnalysis.CSharp.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "fr/Microsoft.CodeAnalysis.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "fr/Microsoft.VisualBasic.Forms.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "fr/PresentationCore.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "fr/PresentationFramework.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "fr/PresentationUI.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "fr/ReachFramework.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "fr/System.Private.ServiceModel.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "fr/System.Web.Services.Description.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "fr/System.Windows.Controls.Ribbon.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "fr/System.Windows.Forms.Design.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "fr/System.Windows.Forms.Primitives.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "fr/System.Windows.Forms.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "fr/System.Windows.Input.Manipulations.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "fr/System.Xaml.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "fr/UIAutomationClient.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "fr/UIAutomationClientSideProviders.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "fr/UIAutomationProvider.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "fr/UIAutomationTypes.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "fr/WindowsBase.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "fr/WindowsFormsIntegration.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "fr\\System.ServiceModel.Http.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "fr\\System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "fr\\System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "fr\\System.ServiceModel.Primitives.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "getfilesiginforedist.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "getfilesiginforedistwrapper.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "hostfxr.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "hostpolicy.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Humanizer.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "it/Microsoft.CodeAnalysis.CSharp.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "it/Microsoft.CodeAnalysis.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "it/Microsoft.VisualBasic.Forms.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "it/PresentationCore.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "it/PresentationFramework.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "it/PresentationUI.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "it/ReachFramework.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "it/System.Private.ServiceModel.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "it/System.Web.Services.Description.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "it/System.Windows.Controls.Ribbon.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "it/System.Windows.Forms.Design.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "it/System.Windows.Forms.Primitives.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "it/System.Windows.Forms.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "it/System.Windows.Input.Manipulations.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "it/System.Xaml.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "it/UIAutomationClient.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "it/UIAutomationClientSideProviders.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "it/UIAutomationProvider.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "it/UIAutomationTypes.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "it/WindowsBase.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "it/WindowsFormsIntegration.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "it\\System.ServiceModel.Http.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "it\\System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "it\\System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "it\\System.ServiceModel.Primitives.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ja/Microsoft.CodeAnalysis.CSharp.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ja/Microsoft.CodeAnalysis.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ja/Microsoft.VisualBasic.Forms.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ja/PresentationCore.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ja/PresentationFramework.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ja/PresentationUI.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ja/ReachFramework.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "ja/System.Private.ServiceModel.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ja/System.Web.Services.Description.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ja/System.Windows.Controls.Ribbon.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ja/System.Windows.Forms.Design.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ja/System.Windows.Forms.Primitives.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ja/System.Windows.Forms.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ja/System.Windows.Input.Manipulations.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ja/System.Xaml.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ja/UIAutomationClient.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ja/UIAutomationClientSideProviders.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ja/UIAutomationProvider.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ja/UIAutomationTypes.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ja/WindowsBase.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ja/WindowsFormsIntegration.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ja\\System.ServiceModel.Http.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ja\\System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ja\\System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ja\\System.ServiceModel.Primitives.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Json.More.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "JsonPointer.Net.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "JsonSchema.Net.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ko/Microsoft.CodeAnalysis.CSharp.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ko/Microsoft.CodeAnalysis.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ko/Microsoft.VisualBasic.Forms.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ko/PresentationCore.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ko/PresentationFramework.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ko/PresentationUI.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ko/ReachFramework.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "ko/System.Private.ServiceModel.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ko/System.Web.Services.Description.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ko/System.Windows.Controls.Ribbon.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ko/System.Windows.Forms.Design.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ko/System.Windows.Forms.Primitives.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ko/System.Windows.Forms.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ko/System.Windows.Input.Manipulations.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ko/System.Xaml.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ko/UIAutomationClient.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ko/UIAutomationClientSideProviders.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ko/UIAutomationProvider.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ko/UIAutomationTypes.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ko/WindowsBase.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ko/WindowsFormsIntegration.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ko\\System.ServiceModel.Http.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ko\\System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ko\\System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ko\\System.ServiceModel.Primitives.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Markdig.Signed.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Microsoft.ApplicationInsights.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Microsoft.Bcl.AsyncInterfaces.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Microsoft.CodeAnalysis.CSharp.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Microsoft.CodeAnalysis.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Microsoft.CSharp.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Microsoft.Extensions.ObjectPool.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Microsoft.Management.Infrastructure.CimCmdlets.xml",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Microsoft.Management.Infrastructure.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Microsoft.Management.Infrastructure.Native.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Microsoft.Management.Infrastructure.Native.Unmanaged.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Microsoft.PowerShell.Commands.Diagnostics.xml",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Microsoft.PowerShell.Commands.Management.xml",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Microsoft.PowerShell.Commands.Utility.xml",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Microsoft.PowerShell.ConsoleHost.xml",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Microsoft.PowerShell.CoreCLR.Eventing.xml",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Microsoft.PowerShell.GraphicalHost.dll.config",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Microsoft.PowerShell.GraphicalHost.xml",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Microsoft.PowerShell.MarkdownRender.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Microsoft.PowerShell.SDK.xml",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Microsoft.PowerShell.Security.xml",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Microsoft.VisualBasic.Core.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Microsoft.VisualBasic.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Microsoft.VisualBasic.Forms.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Microsoft.Win32.Primitives.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Microsoft.Win32.Registry.AccessControl.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Microsoft.Win32.Registry.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Microsoft.Win32.SystemEvents.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Microsoft.WSMan.Management.xml",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Microsoft.WSMan.Runtime.xml",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Modules/Microsoft.PowerShell.Archive/*.cat",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Modules/Microsoft.PowerShell.Archive/*.ps?1",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/dependencies/*.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/LICENSE",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/Microsoft.PowerShell.PSResourceGet.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/Microsoft.PowerShell.PSResourceGet.psd1",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/Microsoft.PowerShell.PSResourceGet.psm1",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/Notice.txt",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/PSGet.Format.ps1xml",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Modules/Microsoft.PowerShell.Utility/Microsoft.PowerShell.Utility.psd1",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Modules/PackageManagement/*.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Modules/PackageManagement/*.mof",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Modules/PackageManagement/*.ps?1",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Modules/PackageManagement/*.ps1xml",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Modules/PowerShellGet/*.mfl",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Modules/PowerShellGet/*.mof",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Modules/PowerShellGet/*.ps?1",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Modules/PowerShellGet/*.ps1xml",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Modules/PSReadLine/*.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Modules/PSReadLine/*.ps?1",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Modules/PSReadLine/*.ps1",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Modules/PSReadLine/*.ps1xml",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Modules/PSReadLine/*.txt",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "Modules/ThreadJob/*.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "Modules/ThreadJob/*.psd1",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Modules\\Microsoft.PowerShell.PSResourceGet\\Microsoft.PowerShell.PSResourceGet.pdb",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Modules\\Microsoft.PowerShell.PSResourceGet\\PSResourceRepository.adml",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Modules\\Microsoft.PowerShell.PSResourceGet\\PSResourceRepository.admx",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "Modules\\Microsoft.PowerShell.ThreadJob\\.signature.p7s",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "Modules\\Microsoft.PowerShell.ThreadJob\\en-us\\Microsoft.PowerShell.ThreadJob.dll-Help.xml",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "Modules\\Microsoft.PowerShell.ThreadJob\\LICENSE",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "Modules\\Microsoft.PowerShell.ThreadJob\\ThirdPartyNotices.txt",
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Modules\\PSReadLine\\.signature.p7s",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "mscordaccore_*.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "mscordaccore.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "mscordbi.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "mscorlib.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "mscorrc.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "msquic.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "netstandard.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Newtonsoft.Json.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "PenImc_cor3.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "pl/Microsoft.CodeAnalysis.CSharp.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "pl/Microsoft.CodeAnalysis.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "pl/Microsoft.VisualBasic.Forms.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "pl/PresentationCore.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "pl/PresentationFramework.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "pl/PresentationUI.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "pl/ReachFramework.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "pl/System.Private.ServiceModel.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "pl/System.Web.Services.Description.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "pl/System.Windows.Controls.Ribbon.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "pl/System.Windows.Forms.Design.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "pl/System.Windows.Forms.Primitives.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "pl/System.Windows.Forms.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "pl/System.Windows.Input.Manipulations.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "pl/System.Xaml.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "pl/UIAutomationClient.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "pl/UIAutomationClientSideProviders.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "pl/UIAutomationProvider.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "pl/UIAutomationTypes.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "pl/WindowsBase.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "pl/WindowsFormsIntegration.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "pl\\System.ServiceModel.Http.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "pl\\System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "pl\\System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "pl\\System.ServiceModel.Primitives.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "powershell.config.json",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "PowerShell.Core.Instrumentation.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "PowerShell.Core.Instrumentation.man",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "PowerShellCoreExecutionPolicy.adml",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "PowerShellCoreExecutionPolicy.admx",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "PresentationCore.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "PresentationFramework-SystemCore.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "PresentationFramework-SystemData.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "PresentationFramework-SystemDrawing.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "PresentationFramework-SystemXml.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "PresentationFramework-SystemXmlLinq.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "PresentationFramework.Aero.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "PresentationFramework.Aero2.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "PresentationFramework.AeroLite.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "PresentationFramework.Classic.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "PresentationFramework.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "PresentationFramework.Fluent.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "PresentationFramework.Luna.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "PresentationFramework.Royale.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "PresentationNative_cor3.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "PresentationUI.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "preview/pwsh-preview.cmd",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "psoptions.json",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "pt-BR/Microsoft.CodeAnalysis.CSharp.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "pt-BR/Microsoft.CodeAnalysis.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "pt-BR/Microsoft.VisualBasic.Forms.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "pt-BR/PresentationCore.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "pt-BR/PresentationFramework.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "pt-BR/PresentationUI.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "pt-BR/ReachFramework.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "pt-BR/System.Private.ServiceModel.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "pt-BR/System.Web.Services.Description.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "pt-BR/System.Windows.Controls.Ribbon.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "pt-BR/System.Windows.Forms.Design.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "pt-BR/System.Windows.Forms.Primitives.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "pt-BR/System.Windows.Forms.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "pt-BR/System.Windows.Input.Manipulations.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "pt-BR/System.Xaml.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "pt-BR/UIAutomationClient.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "pt-BR/UIAutomationClientSideProviders.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "pt-BR/UIAutomationProvider.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "pt-BR/UIAutomationTypes.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "pt-BR/WindowsBase.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "pt-BR/WindowsFormsIntegration.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "pt-BR\\System.ServiceModel.Http.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "pt-BR\\System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "pt-BR\\System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "pt-BR\\System.ServiceModel.Primitives.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "pwrshplugin.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "pwsh.deps.json",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "pwsh.runtimeconfig.json",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "pwsh.xml",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ReachFramework.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/Microsoft.CSharp.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/Microsoft.VisualBasic.Core.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/Microsoft.VisualBasic.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/Microsoft.Win32.Primitives.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/Microsoft.Win32.Registry.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/mscorlib.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/netstandard.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.AppContext.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Buffers.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Collections.Concurrent.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Collections.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Collections.Immutable.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Collections.NonGeneric.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Collections.Specialized.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.ComponentModel.Annotations.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.ComponentModel.DataAnnotations.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.ComponentModel.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.ComponentModel.EventBasedAsync.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.ComponentModel.Primitives.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.ComponentModel.TypeConverter.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Configuration.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Console.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Core.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Data.Common.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Data.DataSetExtensions.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Data.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Diagnostics.Contracts.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Diagnostics.Debug.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Diagnostics.DiagnosticSource.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Diagnostics.FileVersionInfo.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Diagnostics.Process.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Diagnostics.StackTrace.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Diagnostics.TextWriterTraceListener.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Diagnostics.Tools.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Diagnostics.TraceSource.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Diagnostics.Tracing.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Drawing.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Drawing.Primitives.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Dynamic.Runtime.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Formats.Asn1.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Formats.Tar.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Globalization.Calendars.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Globalization.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Globalization.Extensions.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.IO.Compression.Brotli.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.IO.Compression.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.IO.Compression.FileSystem.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.IO.Compression.ZipFile.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.IO.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.IO.FileSystem.AccessControl.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.IO.FileSystem.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.IO.FileSystem.DriveInfo.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.IO.FileSystem.Primitives.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.IO.FileSystem.Watcher.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.IO.IsolatedStorage.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.IO.MemoryMappedFiles.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.IO.Pipes.AccessControl.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.IO.Pipes.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.IO.UnmanagedMemoryStream.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Linq.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Linq.Expressions.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Linq.Parallel.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Linq.Queryable.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Memory.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Net.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Net.Http.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Net.Http.Json.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Net.HttpListener.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Net.Mail.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Net.NameResolution.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Net.NetworkInformation.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Net.Ping.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Net.Primitives.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Net.Quic.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Net.Requests.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Net.Security.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Net.ServicePoint.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Net.Sockets.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Net.WebClient.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Net.WebHeaderCollection.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Net.WebProxy.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Net.WebSockets.Client.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Net.WebSockets.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Numerics.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Numerics.Vectors.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.ObjectModel.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Reflection.DispatchProxy.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Reflection.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Reflection.Emit.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Reflection.Emit.ILGeneration.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Reflection.Emit.Lightweight.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Reflection.Extensions.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Reflection.Metadata.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Reflection.Primitives.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Reflection.TypeExtensions.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Resources.Reader.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Resources.ResourceManager.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Resources.Writer.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Runtime.CompilerServices.Unsafe.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Runtime.CompilerServices.VisualC.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Runtime.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Runtime.Extensions.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Runtime.Handles.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Runtime.InteropServices.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Runtime.InteropServices.JavaScript.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Runtime.InteropServices.RuntimeInformation.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Runtime.Intrinsics.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Runtime.Loader.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Runtime.Numerics.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Runtime.Serialization.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Runtime.Serialization.Formatters.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Runtime.Serialization.Json.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Runtime.Serialization.Primitives.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Runtime.Serialization.Xml.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Security.AccessControl.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Security.Claims.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Security.Cryptography.Algorithms.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Security.Cryptography.Cng.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Security.Cryptography.Csp.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Security.Cryptography.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Security.Cryptography.Encoding.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Security.Cryptography.OpenSsl.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Security.Cryptography.Primitives.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Security.Cryptography.X509Certificates.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Security.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Security.Principal.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Security.Principal.Windows.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Security.SecureString.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.ServiceModel.Web.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.ServiceProcess.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Text.Encoding.CodePages.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Text.Encoding.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Text.Encoding.Extensions.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Text.Encodings.Web.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Text.Json.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Text.RegularExpressions.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Threading.Channels.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Threading.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Threading.Overlapped.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Threading.Tasks.Dataflow.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Threading.Tasks.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Threading.Tasks.Extensions.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Threading.Tasks.Parallel.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Threading.Thread.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Threading.ThreadPool.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Threading.Timer.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Transactions.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Transactions.Local.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.ValueTuple.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Web.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Web.HttpUtility.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Windows.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Xml.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Xml.Linq.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Xml.ReaderWriter.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Xml.Serialization.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Xml.XDocument.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Xml.XmlDocument.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Xml.XmlSerializer.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Xml.XPath.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/System.Xml.XPath.XDocument.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref/WindowsBase.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ref\\System.IO.Pipelines.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ref\\System.Linq.AsyncEnumerable.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ref\\System.Net.ServerSentEvents.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ref\\System.Threading.AccessControl.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ru/Microsoft.CodeAnalysis.CSharp.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ru/Microsoft.CodeAnalysis.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ru/Microsoft.VisualBasic.Forms.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ru/PresentationCore.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ru/PresentationFramework.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ru/PresentationUI.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ru/ReachFramework.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "ru/System.Private.ServiceModel.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ru/System.Web.Services.Description.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ru/System.Windows.Controls.Ribbon.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ru/System.Windows.Forms.Design.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ru/System.Windows.Forms.Primitives.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ru/System.Windows.Forms.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ru/System.Windows.Input.Manipulations.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ru/System.Xaml.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ru/UIAutomationClient.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ru/UIAutomationClientSideProviders.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ru/UIAutomationProvider.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ru/UIAutomationTypes.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ru/WindowsBase.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ru/WindowsFormsIntegration.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ru\\System.ServiceModel.Http.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ru\\System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ru\\System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ru\\System.ServiceModel.Primitives.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/base.xsd",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/baseConditional.xsd",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/block.xsd",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/blockCommon.xsd",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/blockSoftware.xsd",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/command.xsd",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/conditionSet.xsd",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/developer.xsd",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/developerCommand.rld",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/developerCommand.xsd",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/developerDscResource.xsd",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/developerManaged.xsd",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/developerManagedClass.xsd",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/developerManagedConstructor.xsd",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/developerManagedDelegate.xsd",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/developerManagedEnumeration.xsd",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/developerManagedEvent.xsd",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/developerManagedField.xsd",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/developerManagedInterface.xsd",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/developerManagedMethod.xsd",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/developerManagedNamespace.xsd",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/developerManagedOperator.xsd",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/developerManagedOverload.xsd",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/developerManagedProperty.xsd",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/developerManagedStructure.xsd",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/developerReference.xsd",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/developerStructure.xsd",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/developerXaml.xsd",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/endUser.xsd",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/hierarchy.xsd",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/inline.xsd",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/inlineCommon.xsd",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/inlineSoftware.xsd",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/inlineUi.xsd",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/ITPro.xsd",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/Maml_HTML_Style.xsl",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/Maml_HTML.xsl",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/Maml.rld",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/Maml.tbr",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/Maml.xsd",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/Maml.xsx",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/ManagedDeveloper.xsd",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/ManagedDeveloperStructure.xsd",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/ProviderHelp.xsd",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/shellExecute.xsd",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/structure.xsd",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/structureGlossary.xsd",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/structureList.xsd",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/structureProcedure.xsd",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/structureTable.xsd",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/structureTaskExecution.xsd",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/task.xsd",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "Schemas/PSMaml/troubleshooting.xsd",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "sni.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.AppContext.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Buffers.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.CodeDom.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Collections.Concurrent.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Collections.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Collections.Immutable.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Collections.NonGeneric.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Collections.Specialized.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.ComponentModel.Annotations.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.ComponentModel.Composition.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.ComponentModel.Composition.Registration.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.ComponentModel.DataAnnotations.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.ComponentModel.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.ComponentModel.EventBasedAsync.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.ComponentModel.Primitives.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.ComponentModel.TypeConverter.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Configuration.ConfigurationManager.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Configuration.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Console.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Core.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Data.Common.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Data.DataSetExtensions.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Data.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Data.Odbc.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Data.OleDb.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Data.SqlClient.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Design.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Diagnostics.Contracts.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Diagnostics.Debug.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Diagnostics.DiagnosticSource.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Diagnostics.EventLog.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Diagnostics.EventLog.Messages.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Diagnostics.FileVersionInfo.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Diagnostics.PerformanceCounter.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Diagnostics.Process.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Diagnostics.StackTrace.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Diagnostics.TextWriterTraceListener.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Diagnostics.Tools.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Diagnostics.TraceSource.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Diagnostics.Tracing.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.DirectoryServices.AccountManagement.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.DirectoryServices.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.DirectoryServices.Protocols.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Drawing.Common.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Drawing.Design.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Drawing.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Drawing.Primitives.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Dynamic.Runtime.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Formats.Asn1.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Formats.Nrbf.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Formats.Tar.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Globalization.Calendars.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Globalization.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Globalization.Extensions.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.IO.Compression.Brotli.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.IO.Compression.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.IO.Compression.FileSystem.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.IO.Compression.Native.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.IO.Compression.ZipFile.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.IO.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.IO.FileSystem.AccessControl.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.IO.FileSystem.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.IO.FileSystem.DriveInfo.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.IO.FileSystem.Primitives.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.IO.FileSystem.Watcher.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.IO.IsolatedStorage.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.IO.MemoryMappedFiles.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.IO.Packaging.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.IO.Pipelines.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.IO.Pipes.AccessControl.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.IO.Pipes.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.IO.Ports.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.IO.UnmanagedMemoryStream.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "System.Linq.AsyncEnumerable.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Linq.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Linq.Expressions.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Linq.Parallel.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Linq.Queryable.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Management.Automation.xml",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Management.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Memory.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Net.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Net.Http.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Net.Http.Json.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Net.Http.WinHttpHandler.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Net.HttpListener.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Net.Mail.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Net.NameResolution.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Net.NetworkInformation.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Net.Ping.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Net.Primitives.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Net.Quic.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Net.Requests.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Net.Security.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "System.Net.ServerSentEvents.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Net.ServicePoint.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Net.Sockets.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Net.WebClient.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Net.WebHeaderCollection.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Net.WebProxy.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Net.WebSockets.Client.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Net.WebSockets.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Numerics.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Numerics.Vectors.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.ObjectModel.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Printing.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Private.CoreLib.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Private.DataContractSerialization.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "System.Private.ServiceModel.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Private.Uri.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Private.Windows.Core.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "System.Private.Windows.GdiPlus.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Private.Xml.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Private.Xml.Linq.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Reflection.Context.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Reflection.DispatchProxy.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Reflection.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Reflection.Emit.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Reflection.Emit.ILGeneration.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Reflection.Emit.Lightweight.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Reflection.Extensions.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Reflection.Metadata.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Reflection.Primitives.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Reflection.TypeExtensions.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Resources.Extensions.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Resources.Reader.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Resources.ResourceManager.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Resources.Writer.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Runtime.Caching.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Runtime.CompilerServices.Unsafe.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Runtime.CompilerServices.VisualC.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Runtime.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Runtime.Extensions.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Runtime.Handles.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Runtime.InteropServices.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Runtime.InteropServices.JavaScript.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Runtime.InteropServices.RuntimeInformation.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Runtime.Intrinsics.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Runtime.Loader.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Runtime.Numerics.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Runtime.Serialization.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Runtime.Serialization.Formatters.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Runtime.Serialization.Json.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Runtime.Serialization.Primitives.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Runtime.Serialization.Xml.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Security.AccessControl.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Security.Claims.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Security.Cryptography.Algorithms.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Security.Cryptography.Cng.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Security.Cryptography.Csp.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Security.Cryptography.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Security.Cryptography.Encoding.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Security.Cryptography.OpenSsl.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Security.Cryptography.Pkcs.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Security.Cryptography.Primitives.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Security.Cryptography.ProtectedData.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Security.Cryptography.X509Certificates.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Security.Cryptography.Xml.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Security.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Security.Permissions.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Security.Principal.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Security.Principal.Windows.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Security.SecureString.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.ServiceModel.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.ServiceModel.Duplex.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.ServiceModel.Http.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "System.ServiceModel.NetFramingBase.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.ServiceModel.NetTcp.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.ServiceModel.Primitives.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.ServiceModel.Security.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.ServiceModel.Syndication.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.ServiceModel.Web.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.ServiceProcess.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.ServiceProcess.ServiceController.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Speech.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Text.Encoding.CodePages.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Text.Encoding.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Text.Encoding.Extensions.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Text.Encodings.Web.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Text.Json.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Text.RegularExpressions.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Threading.AccessControl.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Threading.Channels.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Threading.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Threading.Overlapped.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Threading.Tasks.Dataflow.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Threading.Tasks.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Threading.Tasks.Extensions.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Threading.Tasks.Parallel.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Threading.Thread.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Threading.ThreadPool.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Threading.Timer.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Transactions.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Transactions.Local.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.ValueTuple.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Web.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Web.HttpUtility.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Web.Services.Description.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Windows.Controls.Ribbon.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Windows.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Windows.Extensions.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Windows.Forms.Design.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Windows.Forms.Design.Editors.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Windows.Forms.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Windows.Forms.Primitives.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Windows.Input.Manipulations.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Windows.Presentation.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "System.Windows.Primitives.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Xaml.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Xml.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Xml.Linq.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Xml.ReaderWriter.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Xml.Serialization.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Xml.XDocument.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Xml.XmlDocument.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Xml.XmlSerializer.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Xml.XPath.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "System.Xml.XPath.XDocument.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "ThirdPartyNotices.txt",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "tr/Microsoft.CodeAnalysis.CSharp.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "tr/Microsoft.CodeAnalysis.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "tr/Microsoft.VisualBasic.Forms.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "tr/PresentationCore.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "tr/PresentationFramework.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "tr/PresentationUI.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "tr/ReachFramework.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "tr/System.Private.ServiceModel.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "tr/System.Web.Services.Description.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "tr/System.Windows.Controls.Ribbon.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "tr/System.Windows.Forms.Design.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "tr/System.Windows.Forms.Primitives.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "tr/System.Windows.Forms.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "tr/System.Windows.Input.Manipulations.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "tr/System.Xaml.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "tr/UIAutomationClient.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "tr/UIAutomationClientSideProviders.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "tr/UIAutomationProvider.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "tr/UIAutomationTypes.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "tr/WindowsBase.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "tr/WindowsFormsIntegration.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "tr\\System.ServiceModel.Http.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "tr\\System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "tr\\System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "tr\\System.ServiceModel.Primitives.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "UIAutomationClient.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "UIAutomationClientSideProviders.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "UIAutomationProvider.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "UIAutomationTypes.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "vcruntime140_cor3.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "WindowsBase.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "WindowsFormsIntegration.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "wpfgfx_cor3.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "zh-Hans/Microsoft.CodeAnalysis.CSharp.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "zh-Hans/Microsoft.CodeAnalysis.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "zh-Hans/Microsoft.VisualBasic.Forms.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "zh-Hans/PresentationCore.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "zh-Hans/PresentationFramework.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "zh-Hans/PresentationUI.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "zh-Hans/ReachFramework.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "zh-Hans/System.Private.ServiceModel.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "zh-Hans/System.Web.Services.Description.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "zh-Hans/System.Windows.Controls.Ribbon.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "zh-Hans/System.Windows.Forms.Design.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "zh-Hans/System.Windows.Forms.Primitives.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "zh-Hans/System.Windows.Forms.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "zh-Hans/System.Windows.Input.Manipulations.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "zh-Hans/System.Xaml.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "zh-Hans/UIAutomationClient.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "zh-Hans/UIAutomationClientSideProviders.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "zh-Hans/UIAutomationProvider.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "zh-Hans/UIAutomationTypes.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "zh-Hans/WindowsBase.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "zh-Hans/WindowsFormsIntegration.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "zh-Hans\\System.ServiceModel.Http.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "zh-Hans\\System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "zh-Hans\\System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "zh-Hans\\System.ServiceModel.Primitives.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "zh-Hant/Microsoft.CodeAnalysis.CSharp.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "zh-Hant/Microsoft.CodeAnalysis.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "zh-Hant/Microsoft.VisualBasic.Forms.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "zh-Hant/PresentationCore.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "zh-Hant/PresentationFramework.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "zh-Hant/PresentationUI.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "zh-Hant/ReachFramework.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "zh-Hant/System.Private.ServiceModel.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "zh-Hant/System.Web.Services.Description.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "zh-Hant/System.Windows.Controls.Ribbon.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "zh-Hant/System.Windows.Forms.Design.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "zh-Hant/System.Windows.Forms.Primitives.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "zh-Hant/System.Windows.Forms.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "zh-Hant/System.Windows.Input.Manipulations.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "zh-Hant/System.Xaml.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "zh-Hant/UIAutomationClient.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "zh-Hant/UIAutomationClientSideProviders.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "zh-Hant/UIAutomationProvider.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "zh-Hant/UIAutomationTypes.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "zh-Hant/WindowsBase.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "zh-Hant/WindowsFormsIntegration.resources.dll",
-    "FileType": "NonProduct"
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "zh-Hant\\System.ServiceModel.Http.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "zh-Hant\\System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "zh-Hant\\System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "zh-Hant\\System.ServiceModel.Primitives.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
   },
   {
     "Pattern": "_manifest/spdx_2.2/manifest.spdx.json",
-    "FileType": "Product"
+    "FileType": "Product",
+    "Architecture": null
   },
   {
     "Pattern": "_manifest/spdx_2.2/manifest.spdx.json.sha256",
-    "FileType": "Product"
+    "FileType": "Product",
+    "Architecture": null
   },
   {
     "Pattern": "assets/Powershell_av_colors.ico",
-    "FileType": "Product"
+    "FileType": "Product",
+    "Architecture": null
   },
   {
     "Pattern": "assets/Powershell_avatar.ico",
-    "FileType": "Product"
+    "FileType": "Product",
+    "Architecture": null
   },
   {
     "Pattern": "assets/Powershell_black.ico",
-    "FileType": "Product"
+    "FileType": "Product",
+    "Architecture": null
   },
   {
     "Pattern": "assets/ps_black_32x32.ico",
-    "FileType": "Product"
+    "FileType": "Product",
+    "Architecture": null
   },
   {
     "Pattern": "Install-PowerShellRemoting.ps1",
-    "FileType": "Product"
+    "FileType": "Product",
+    "Architecture": null
   },
   {
     "Pattern": "InstallPSCorePolicyDefinitions.ps1",
-    "FileType": "Product"
+    "FileType": "Product",
+    "Architecture": null
   },
   {
     "Pattern": "LICENSE.txt",
-    "FileType": "Product"
+    "FileType": "Product",
+    "Architecture": null
   },
   {
     "Pattern": "Microsoft.Management.Infrastructure.CimCmdlets.dll",
-    "FileType": "Product"
+    "FileType": "Product",
+    "Architecture": null
   },
   {
     "Pattern": "Microsoft.PowerShell.Commands.Diagnostics.dll",
-    "FileType": "Product"
+    "FileType": "Product",
+    "Architecture": null
   },
   {
     "Pattern": "Microsoft.PowerShell.Commands.Management.dll",
-    "FileType": "Product"
+    "FileType": "Product",
+    "Architecture": null
   },
   {
     "Pattern": "Microsoft.PowerShell.Commands.Utility.dll",
-    "FileType": "Product"
+    "FileType": "Product",
+    "Architecture": null
   },
   {
     "Pattern": "Microsoft.PowerShell.ConsoleHost.dll",
-    "FileType": "Product"
+    "FileType": "Product",
+    "Architecture": null
   },
   {
     "Pattern": "Microsoft.PowerShell.CoreCLR.Eventing.dll",
-    "FileType": "Product"
+    "FileType": "Product",
+    "Architecture": null
   },
   {
     "Pattern": "Microsoft.PowerShell.GraphicalHost.dll",
-    "FileType": "Product"
+    "FileType": "Product",
+    "Architecture": null
   },
   {
     "Pattern": "Microsoft.PowerShell.SDK.dll",
-    "FileType": "Product"
+    "FileType": "Product",
+    "Architecture": null
   },
   {
     "Pattern": "Microsoft.PowerShell.Security.dll",
-    "FileType": "Product"
+    "FileType": "Product",
+    "Architecture": null
   },
   {
     "Pattern": "Microsoft.WSMan.Management.dll",
-    "FileType": "Product"
+    "FileType": "Product",
+    "Architecture": null
   },
   {
     "Pattern": "Microsoft.WSMan.Runtime.dll",
-    "FileType": "Product"
+    "FileType": "Product",
+    "Architecture": null
   },
   {
     "Pattern": "Modules/CimCmdlets/CimCmdlets.psd1",
-    "FileType": "Product"
+    "FileType": "Product",
+    "Architecture": null
   },
   {
     "Pattern": "Modules/Microsoft.PowerShell.Diagnostics/Diagnostics.format.ps1xml",
-    "FileType": "Product"
+    "FileType": "Product",
+    "Architecture": null
   },
   {
     "Pattern": "Modules/Microsoft.PowerShell.Diagnostics/Event.format.ps1xml",
-    "FileType": "Product"
+    "FileType": "Product",
+    "Architecture": null
   },
   {
     "Pattern": "Modules/Microsoft.PowerShell.Diagnostics/GetEvent.types.ps1xml",
-    "FileType": "Product"
+    "FileType": "Product",
+    "Architecture": null
   },
   {
     "Pattern": "Modules/Microsoft.PowerShell.Diagnostics/Microsoft.PowerShell.Diagnostics.psd1",
-    "FileType": "Product"
+    "FileType": "Product",
+    "Architecture": null
   },
   {
     "Pattern": "Modules/Microsoft.PowerShell.Host/Microsoft.PowerShell.Host.psd1",
-    "FileType": "Product"
+    "FileType": "Product",
+    "Architecture": null
   },
   {
     "Pattern": "Modules/Microsoft.PowerShell.Management/Microsoft.PowerShell.Management.psd1",
-    "FileType": "Product"
+    "FileType": "Product",
+    "Architecture": null
   },
   {
     "Pattern": "Modules/Microsoft.PowerShell.Security/Microsoft.PowerShell.Security.psd1",
-    "FileType": "Product"
+    "FileType": "Product",
+    "Architecture": null
   },
   {
     "Pattern": "Modules/Microsoft.PowerShell.Security/Security.types.ps1xml",
-    "FileType": "Product"
+    "FileType": "Product",
+    "Architecture": null
   },
   {
     "Pattern": "Modules/Microsoft.WSMan.Management/Microsoft.WSMan.Management.psd1",
-    "FileType": "Product"
+    "FileType": "Product",
+    "Architecture": null
   },
   {
     "Pattern": "Modules/Microsoft.WSMan.Management/WSMan.format.ps1xml",
-    "FileType": "Product"
+    "FileType": "Product",
+    "Architecture": null
   },
   {
     "Pattern": "Modules/PSDiagnostics/PSDiagnostics.psd1",
-    "FileType": "Product"
+    "FileType": "Product",
+    "Architecture": null
   },
   {
     "Pattern": "Modules/PSDiagnostics/PSDiagnostics.psm1",
-    "FileType": "Product"
+    "FileType": "Product",
+    "Architecture": null
   },
   {
     "Pattern": "Modules\\Microsoft.PowerShell.PSResourceGet\\InstallPSResourceGetPolicyDefinitions.ps1",
-    "FileType": "Product"
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "Modules\\Microsoft.PowerShell.ThreadJob\\Microsoft.PowerShell.ThreadJob.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "Modules\\Microsoft.PowerShell.ThreadJob\\Microsoft.PowerShell.ThreadJob.psd1",
+    "FileType": "Product",
+    "Architecture": null
   },
   {
     "Pattern": "pwsh.dll",
-    "FileType": "Product"
+    "FileType": "Product",
+    "Architecture": null
   },
   {
     "Pattern": "pwsh.exe",
-    "FileType": "Product"
+    "FileType": "Product",
+    "Architecture": null
   },
   {
     "Pattern": "RegisterManifest.ps1",
-    "FileType": "Product"
+    "FileType": "Product",
+    "Architecture": null
   },
   {
     "Pattern": "RegisterMicrosoftUpdate.ps1",
-    "FileType": "Product"
+    "FileType": "Product",
+    "Architecture": null
   },
   {
     "Pattern": "System.Management.Automation.dll",
-    "FileType": "Product"
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "pwsh.profile.dsc.resource.json",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "pwsh.profile.resource.ps1",
+    "FileType": "Product",
+    "Architecture": null
   }
 ]

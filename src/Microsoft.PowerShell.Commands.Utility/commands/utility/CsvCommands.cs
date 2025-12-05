@@ -218,8 +218,8 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets encoding optional flag.
         /// </summary>
         [Parameter]
-        [ArgumentToEncodingTransformationAttribute]
-        [ArgumentEncodingCompletionsAttribute]
+        [ArgumentToEncodingTransformation]
+        [ArgumentEncodingCompletions]
         [ValidateNotNullOrEmpty]
         public Encoding Encoding
         {
@@ -267,6 +267,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 InvalidOperationException exception = new(CsvCommandStrings.CannotSpecifyPathAndLiteralPath);
                 ErrorRecord errorRecord = new(exception, "CannotSpecifyPathAndLiteralPath", ErrorCategory.InvalidData, null);
+                this.ThrowTerminatingError(errorRecord);
+            }
+
+            // Validate that Append and NoHeader are not specified together.
+            if (Append && NoHeader)
+            {
+                InvalidOperationException exception = new(CsvCommandStrings.CannotSpecifyAppendAndNoHeader);
+                ErrorRecord errorRecord = new(exception, "CannotSpecifyBothAppendAndNoHeader", ErrorCategory.InvalidData, null);
                 this.ThrowTerminatingError(errorRecord);
             }
 
@@ -602,8 +610,8 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets encoding optional flag.
         /// </summary>
         [Parameter]
-        [ArgumentToEncodingTransformationAttribute]
-        [ArgumentEncodingCompletionsAttribute]
+        [ArgumentToEncodingTransformation]
+        [ArgumentEncodingCompletions]
         [ValidateNotNullOrEmpty]
         public Encoding Encoding
         {
@@ -885,7 +893,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Helper class for Export-Csv and ConvertTo-Csv.
     /// </summary>
-    internal class ExportCsvHelper : IDisposable
+    internal sealed class ExportCsvHelper : IDisposable
     {
         private readonly char _delimiter;
         private readonly BaseCsvWritingCommand.QuoteKind _quoteKind;
@@ -959,7 +967,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Converted string.</returns>
         internal string ConvertPropertyNamesCSV(IList<string> propertyNames)
         {
-            ArgumentNullException.ThrowIfNull(propertyNames); 
+            ArgumentNullException.ThrowIfNull(propertyNames);
 
             _outputString.Clear();
             bool first = true;
@@ -994,7 +1002,7 @@ namespace Microsoft.PowerShell.Commands
                             AppendStringWithEscapeAlways(_outputString, propertyName);
                             break;
                         case BaseCsvWritingCommand.QuoteKind.AsNeeded:
-                            
+
                             if (propertyName.AsSpan().IndexOfAny(_delimiter, '\n', '"') != -1)
                             {
                                 AppendStringWithEscapeAlways(_outputString, propertyName);
@@ -1023,7 +1031,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         internal string ConvertPSObjectToCSV(PSObject mshObject, IList<string> propertyNames)
         {
-            ArgumentNullException.ThrowIfNull(propertyNames); 
+            ArgumentNullException.ThrowIfNull(propertyNames);
 
             _outputString.Clear();
             bool first = true;
@@ -1044,7 +1052,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (dictionary.Contains(propertyName))
                     {
-                        value = dictionary[propertyName].ToString();
+                        value = dictionary[propertyName]?.ToString();
                     }
                     else if (mshObject.Properties[propertyName] is PSPropertyInfo property)
                     {
@@ -1109,7 +1117,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>ToString() value.</returns>
         internal static string GetToStringValueForProperty(PSPropertyInfo property)
         {
-            ArgumentNullException.ThrowIfNull(property); 
+            ArgumentNullException.ThrowIfNull(property);
 
             string value = null;
             try
@@ -1224,7 +1232,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Helper class to import single CSV file.
     /// </summary>
-    internal class ImportCsvHelper
+    internal sealed class ImportCsvHelper
     {
         #region constructor
 
@@ -1271,7 +1279,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal ImportCsvHelper(PSCmdlet cmdlet, char delimiter, IList<string> header, string typeName, StreamReader streamReader)
         {
-            ArgumentNullException.ThrowIfNull(cmdlet); 
+            ArgumentNullException.ThrowIfNull(cmdlet);
             ArgumentNullException.ThrowIfNull(streamReader);
 
             _cmdlet = cmdlet;

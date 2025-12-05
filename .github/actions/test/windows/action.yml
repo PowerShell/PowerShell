@@ -1,0 +1,107 @@
+name: windows_test
+description: 'Test PowerShell on Windows'
+
+inputs:
+  purpose:
+    required: false
+    default: ''
+    type: string
+  tagSet:
+    required: false
+    default: CI
+    type: string
+  ctrfFolder:
+    required: false
+    default: ctrf
+    type: string
+  GITHUB_TOKEN:
+    description: 'GitHub token for API authentication'
+    required: true
+
+runs:
+  using: composite
+  steps:
+  - name: Capture Environment
+    if: success() || failure()
+    run: |-
+      Import-Module ./tools/ci.psm1
+      Show-Environment
+    shell: pwsh
+
+  - name: Download Build Artifacts
+    uses: actions/download-artifact@v4
+    with:
+      path: "${{ github.workspace }}"
+
+  - name: Capture Artifacts Directory
+    continue-on-error: true
+    run: |-
+      Import-Module ./build.psm1
+      Write-LogGroupStart -Title 'Artifacts Directory'
+      Get-ChildItem "${{ github.workspace }}/build/*" -Recurse
+      Write-LogGroupEnd -Title 'Artifacts Directory'
+    shell: pwsh
+
+  - uses: actions/setup-dotnet@v4
+    with:
+      global-json-file: .\global.json
+
+  - name: Get Latest DSC Package Version
+    shell: pwsh
+    run: |-
+      Import-Module .\.github\workflows\GHWorkflowHelper\GHWorkflowHelper.psm1
+      $headers = @{
+        Authorization = "Bearer ${{ inputs.GITHUB_TOKEN }}"
+      }
+      $releases = Invoke-RestMethod -Uri "https://api.github.com/repos/PowerShell/Dsc/releases" -Headers $headers
+      $latestRelease = $releases | Where-Object { $v = $_.name.trim("v"); $semVer = [System.Management.Automation.SemanticVersion]::new($v); if ($semVer.Major -eq 3 -and $semVer.Minor -ge 2) { $_ } } | Select-Object -First 1
+      $latestVersion = $latestRelease.tag_name.TrimStart("v")
+      Write-Host "Latest DSC Version: $latestVersion"
+
+      $downloadUrl = $latestRelease.assets | Where-Object { $_.name -like "DSC-*-x86_64-pc-windows-msvc.zip" } | Select-Object -First 1 | Select-Object -ExpandProperty browser_download_url
+      Write-Host "Download URL: $downloadUrl"
+      $tempPath = Get-GWTempPath
+      Invoke-RestMethod -Uri $downloadUrl -OutFile "$tempPath\DSC.zip" -Headers $headers
+
+      $null = New-Item -ItemType Directory -Path "$tempPath\DSC" -Force
+      Expand-Archive -Path "$tempPath\DSC.zip" -DestinationPath "$tempPath\DSC" -Force
+      $dscRoot = "$tempPath\DSC"
+      Write-Host "DSC Root: $dscRoot"
+      Set-GWVariable -Name "DSC_ROOT" -Value $dscRoot
+
+  - name: Bootstrap
+    shell: powershell
+    run: |-
+      Import-Module ./build.psm1
+      Write-LogGroupStart -Title 'Bootstrap'
+      Write-Host "Old Path:"
+      Write-Host $env:Path
+      $dotnetPath = Join-Path $env:SystemDrive 'Program Files\dotnet'
+      $paths = $env:Path -split ";" | Where-Object { -not $_.StartsWith($dotnetPath) }
+      $env:Path = $paths -join ";"
+      Write-Host "New Path:"
+      Write-Host $env:Path
+      # Bootstrap
+      Import-Module .\tools\ci.psm1
+      Invoke-CIInstall
+      Write-LogGroupEnd -Title 'Bootstrap'
+
+  - name: Test
+    if: success()
+    run: |-
+      Import-Module .\build.psm1 -force
+      Import-Module .\tools\ci.psm1
+      Restore-PSOptions -PSOptionsPath '${{ github.workspace }}\build\psoptions.json'
+      $options = (Get-PSOptions)
+      $path = split-path -path $options.Output
+      $rootPath = split-Path -path $path
+      Expand-Archive -Path '${{ github.workspace }}\build\build.zip' -DestinationPath $rootPath -Force
+      Invoke-CITest -Purpose '${{ inputs.purpose }}' -TagSet '${{ inputs.tagSet }}' -OutputFormat NUnitXml
+    shell: pwsh
+
+  - name: Convert, Publish, and Upload Pester Test Results
+    uses: "./.github/actions/test/process-pester-results"
+    with:
+      name: "${{ inputs.purpose }}-${{ inputs.tagSet }}"
+      testResultsFolder: ${{ runner.workspace }}\testResults
+      ctrfFolder: "${{ inputs.ctrfFolder }}"

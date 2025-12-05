@@ -44,7 +44,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// </summary>
         /// <value></value>
-        [ValidateRangeAttribute(1, int.MaxValue)]
+        [ValidateRange(1, int.MaxValue)]
         [Parameter]
         public int Depth
         {

@@ -16,7 +16,6 @@ using System.Management.Automation.Language;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
-using System.Security;
 using System.Security.Principal;
 using System.Text;
 using System.Threading;
@@ -1604,7 +1603,7 @@ namespace Microsoft.PowerShell.Commands
     [OutputType(typeof(Process))]
     public sealed class StartProcessCommand : PSCmdlet, IDisposable
     {
-        private ManualResetEvent _waithandle = null;
+        private readonly CancellationTokenSource _cancellationTokenSource = new();
         private bool _isDefaultSetParameterSpecified = false;
 
         #region Parameters
@@ -1677,7 +1676,7 @@ namespace Microsoft.PowerShell.Commands
         private SwitchParameter _loaduserprofile = SwitchParameter.Present;
 
         /// <summary>
-        /// Starts process in a new window.
+        /// Starts process in the current console window.
         /// </summary>
         [Parameter(ParameterSetName = "Default")]
         [Alias("nnw")]
@@ -1904,6 +1903,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (CommandNotFoundException)
             {
+                // codeql[cs/microsoft/command-line-injection-shell-execution] - This is expected Poweshell behavior where user inputted paths are supported for the context of this method. The user assumes trust for the file path they are specifying and the process is on the user's system except for remoting in which case restricted remoting security guidelines should be used.
                 startInfo.FileName = FilePath;
 #if UNIX
                 // Arguments are passed incorrectly to the executable used for ShellExecute and not to filename https://github.com/dotnet/corefx/issues/30718
@@ -1965,7 +1965,9 @@ namespace Microsoft.PowerShell.Commands
 
                 startInfo.WindowStyle = _windowstyle;
 
-                if (_nonewwindow)
+                // When starting a process as another user, the 'CreateNoWindow' property value is ignored and a new window is created.
+                // See details at https://learn.microsoft.com/dotnet/api/system.diagnostics.processstartinfo.createnowindow?view=net-9.0#remarks
+                if (_nonewwindow && _credential is null)
                 {
                     startInfo.CreateNoWindow = _nonewwindow;
                 }
@@ -2062,7 +2064,7 @@ namespace Microsoft.PowerShell.Commands
             Process process = null;
 
 #if !UNIX
-            ProcessCollection jobObject = null;
+            using JobProcessCollection jobObject = new();
             bool? jobAssigned = null;
 #endif
             if (startInfo.UseShellExecute)
@@ -2100,7 +2102,6 @@ namespace Microsoft.PowerShell.Commands
                 // https://github.com/PowerShell/PowerShell/issues/17033
                 if (Wait)
                 {
-                    jobObject = new();
                     jobAssigned = jobObject.AssignProcessToJobObject(processInfo.Process);
                 }
 
@@ -2151,23 +2152,20 @@ namespace Microsoft.PowerShell.Commands
                     if (!process.HasExited)
                     {
 #if UNIX
-                        process.WaitForExit();
+                        process.WaitForExitAsync(_cancellationTokenSource.Token).GetAwaiter().GetResult();
 #else
-                        _waithandle = new ManualResetEvent(false);
-
-                        // Create and start the job object. This may have
-                        // already been done in StartWithCreateProcess.
-                        jobObject ??= new();
+                        // Add the process to the job, this may have already
+                        // been done in StartWithCreateProcess.
                         if (jobAssigned == true || (jobAssigned is null && jobObject.AssignProcessToJobObject(process.SafeHandle)))
                         {
                             // Wait for the job object to finish
-                            jobObject.WaitOne(_waithandle);
+                            jobObject.WaitForExit(_cancellationTokenSource.Token);
                         }
                         else
                         {
                             // WinBlue: 27537 Start-Process -Wait doesn't work in a remote session on Windows 7 or lower.
                             // A Remote session is in it's own job and nested job support was only added in Windows 8/Server 2012.
-                            process.WaitForExit();
+                            process.WaitForExitAsync(_cancellationTokenSource.Token).GetAwaiter().GetResult();
                         }
 #endif
                     }
@@ -2183,7 +2181,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Implements ^c, after creating a process.
         /// </summary>
-        protected override void StopProcessing() => _waithandle?.Set();
+        protected override void StopProcessing() => _cancellationTokenSource.Cancel();
 
         #endregion
 
@@ -2200,11 +2198,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void Dispose(bool isDisposing)
         {
-            if (_waithandle != null)
-            {
-                _waithandle.Dispose();
-                _waithandle = null;
-            }
+            _cancellationTokenSource.Dispose();
         }
 
         #endregion
@@ -2413,32 +2407,59 @@ namespace Microsoft.PowerShell.Commands
 
         private void SetStartupInfo(ProcessStartInfo startinfo, ref ProcessNativeMethods.STARTUPINFO lpStartupInfo, ref int creationFlags)
         {
-            bool hasRedirection = false;
+            // If we are starting a process using the current console window, we need to set its standard handles
+            // explicitly when they are not redirected because otherwise they won't be set and the new process will
+            // fail with the "invalid handle" error.
+            //
+            // However, if we are starting a process with a new console window, we should not explicitly set those
+            // standard handles when they are not redirected, but instead let Windows figure out the default to use
+            // when creating the process. Otherwise, the standard input handles of the current window and the new
+            // window will get weirdly tied together and cause problems.
+            bool hasRedirection = startinfo.CreateNoWindow
+                || _redirectstandardinput is not null
+                || _redirectstandardoutput is not null
+                || _redirectstandarderror is not null;
+
             // RedirectionStandardInput
             if (_redirectstandardinput != null)
             {
-                hasRedirection = true;
                 startinfo.RedirectStandardInput = true;
                 _redirectstandardinput = ResolveFilePath(_redirectstandardinput);
                 lpStartupInfo.hStdInput = GetSafeFileHandleForRedirection(_redirectstandardinput, FileMode.Open);
+            }
+            else if (startinfo.CreateNoWindow)
+            {
+                lpStartupInfo.hStdInput = new SafeFileHandle(
+                    ProcessNativeMethods.GetStdHandle(-10),
+                    ownsHandle: false);
             }
 
             // RedirectionStandardOutput
             if (_redirectstandardoutput != null)
             {
-                hasRedirection = true;
                 startinfo.RedirectStandardOutput = true;
                 _redirectstandardoutput = ResolveFilePath(_redirectstandardoutput);
                 lpStartupInfo.hStdOutput = GetSafeFileHandleForRedirection(_redirectstandardoutput, FileMode.Create);
+            }
+            else if (startinfo.CreateNoWindow)
+            {
+                lpStartupInfo.hStdOutput = new SafeFileHandle(
+                    ProcessNativeMethods.GetStdHandle(-11),
+                    ownsHandle: false);
             }
 
             // RedirectionStandardError
             if (_redirectstandarderror != null)
             {
-                hasRedirection = true;
                 startinfo.RedirectStandardError = true;
                 _redirectstandarderror = ResolveFilePath(_redirectstandarderror);
                 lpStartupInfo.hStdError = GetSafeFileHandleForRedirection(_redirectstandarderror, FileMode.Create);
+            }
+            else if (startinfo.CreateNoWindow)
+            {
+                lpStartupInfo.hStdError = new SafeFileHandle(
+                    ProcessNativeMethods.GetStdHandle(-12),
+                    ownsHandle: false);
             }
 
             if (hasRedirection)
@@ -2672,7 +2693,7 @@ namespace Microsoft.PowerShell.Commands
             // -Verb is not supported on non-Windows platforms as well as Windows headless SKUs
             if (!Platform.IsWindowsDesktop)
             {
-                yield break;
+                return Array.Empty<CompletionResult>();
             }
 
             // Completion: Start-Process -FilePath <path> -Verb <wordToComplete>
@@ -2684,12 +2705,7 @@ namespace Microsoft.PowerShell.Commands
                 // Complete file verbs if extension exists
                 if (Path.HasExtension(filePath))
                 {
-                    foreach (string verb in CompleteFileVerbs(filePath, wordToComplete))
-                    {
-                        yield return new CompletionResult(verb);
-                    }
-
-                    yield break;
+                    return CompleteFileVerbs(wordToComplete, filePath);
                 }
 
                 // Otherwise check if command is an Application to resolve executable full path with extension
@@ -2707,112 +2723,26 @@ namespace Microsoft.PowerShell.Commands
                 // Start-Process & Get-Command select first found application based on PATHEXT environment variable
                 if (commands.Count >= 1)
                 {
-                    foreach (string verb in CompleteFileVerbs(commands[0].Source, wordToComplete))
-                    {
-                        yield return new CompletionResult(verb);
-                    }
+                    return CompleteFileVerbs(wordToComplete, filePath: commands[0].Source);
                 }
             }
+
+            return Array.Empty<CompletionResult>();
         }
 
         /// <summary>
         /// Completes file verbs.
         /// </summary>
-        /// <param name="filePath">The file path to get verbs.</param>
         /// <param name="wordToComplete">The word to complete.</param>
+        /// <param name="filePath">The file path to get verbs.</param>
         /// <returns>List of file verbs to complete.</returns>
-        private static IEnumerable<string> CompleteFileVerbs(string filePath, string wordToComplete)
-        {
-            var verbPattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
-
-            string[] verbs = new ProcessStartInfo(filePath).Verbs;
-
-            foreach (string verb in verbs)
-            {
-                if (verbPattern.IsMatch(verb))
-                {
-                    yield return verb;
-                }
-            }
-        }
+        private static IEnumerable<CompletionResult> CompleteFileVerbs(string wordToComplete, string filePath)
+            => CompletionHelpers.GetMatchingResults(
+                wordToComplete,
+                possibleCompletionValues: new ProcessStartInfo(filePath).Verbs);
     }
 
 #if !UNIX
-    /// <summary>
-    /// ProcessCollection is a helper class used by Start-Process -Wait cmdlet to monitor the
-    /// child processes created by the main process hosted by the Start-process cmdlet.
-    /// </summary>
-    internal class ProcessCollection
-    {
-        /// <summary>
-        /// JobObjectHandle is a reference to the job object used to track
-        /// the child processes created by the main process hosted by the Start-Process cmdlet.
-        /// </summary>
-        private readonly Microsoft.PowerShell.Commands.SafeJobHandle _jobObjectHandle;
-
-        /// <summary>
-        /// ProcessCollection constructor.
-        /// </summary>
-        internal ProcessCollection()
-        {
-            IntPtr jobObjectHandleIntPtr = NativeMethods.CreateJobObject(IntPtr.Zero, null);
-            _jobObjectHandle = new SafeJobHandle(jobObjectHandleIntPtr);
-        }
-
-        /// <summary>
-        /// Start API assigns the process to the JobObject and starts monitoring
-        /// the child processes hosted by the process created by Start-Process cmdlet.
-        /// </summary>
-        internal bool AssignProcessToJobObject(SafeProcessHandle process)
-        {
-            // Add the process to the job object
-            bool result = Interop.Windows.AssignProcessToJobObject(
-                _jobObjectHandle.DangerousGetHandle(),
-                process.DangerousGetHandle());
-            return result;
-        }
-
-        /// <summary>
-        /// Checks to see if the JobObject is empty (has no assigned processes).
-        /// If job is empty the auto reset event supplied as input would be set.
-        /// </summary>
-        internal void CheckJobStatus(object stateInfo)
-        {
-            ManualResetEvent emptyJobAutoEvent = (ManualResetEvent)stateInfo;
-            int dwSize = 0;
-            const int JOB_OBJECT_BASIC_PROCESS_ID_LIST = 3;
-            JOBOBJECT_BASIC_PROCESS_ID_LIST JobList = new();
-
-            dwSize = Marshal.SizeOf(JobList);
-            if (NativeMethods.QueryInformationJobObject(_jobObjectHandle,
-                JOB_OBJECT_BASIC_PROCESS_ID_LIST,
-                ref JobList, dwSize, IntPtr.Zero))
-            {
-                if (JobList.NumberOfAssignedProcess == 0)
-                {
-                    emptyJobAutoEvent.Set();
-                }
-            }
-        }
-
-        /// <summary>
-        /// WaitOne blocks the current thread until the current instance receives a signal, using
-        /// a System.TimeSpan to measure the time interval and specifying whether to
-        /// exit the synchronization domain before the wait.
-        /// </summary>
-        /// <param name="waitHandleToUse">
-        /// WaitHandle to use for waiting on the job object.
-        /// </param>
-        internal void WaitOne(ManualResetEvent waitHandleToUse)
-        {
-            TimerCallback jobObjectStatusCb = this.CheckJobStatus;
-            using (Timer stateTimer = new(jobObjectStatusCb, waitHandleToUse, 0, 1000))
-            {
-                waitHandleToUse.WaitOne();
-            }
-        }
-    }
-
     /// <summary>
     /// ProcessInformation is a helper class that wraps the native PROCESS_INFORMATION structure
     /// returned by CreateProcess or CreateProcessWithLogon. It ensures the process and thread
@@ -2851,36 +2781,11 @@ namespace Microsoft.PowerShell.Commands
         ~ProcessInformation() => Dispose();
     }
 
-    /// <summary>
-    /// JOBOBJECT_BASIC_PROCESS_ID_LIST Contains the process identifier list for a job object.
-    /// If the job is nested, the process identifier list consists of all
-    /// processes associated with the job and its child jobs.
-    /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
-    internal struct JOBOBJECT_BASIC_PROCESS_ID_LIST
-    {
-        /// <summary>
-        /// The number of process identifiers to be stored in ProcessIdList.
-        /// </summary>
-        public uint NumberOfAssignedProcess;
-
-        /// <summary>
-        /// The number of process identifiers returned in the ProcessIdList buffer.
-        /// If this number is less than NumberOfAssignedProcesses, increase
-        /// the size of the buffer to accommodate the complete list.
-        /// </summary>
-        public uint NumberOfProcessIdsInList;
-
-        /// <summary>
-        /// A variable-length array of process identifiers returned by this call.
-        /// Array elements 0 through NumberOfProcessIdsInList minus 1
-        /// contain valid process identifiers.
-        /// </summary>
-        public IntPtr ProcessIdList;
-    }
-
     internal static class ProcessNativeMethods
     {
+        [DllImport(PinvokeDllNames.GetStdHandleDllName, SetLastError = true)]
+        public static extern IntPtr GetStdHandle(int whichHandle);
+
         [DllImport(PinvokeDllNames.CreateProcessWithLogonWDllName, CharSet = CharSet.Unicode, SetLastError = true, ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool CreateProcessWithLogonW(string userName,
@@ -2936,7 +2841,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        internal class SECURITY_ATTRIBUTES
+        internal sealed class SECURITY_ATTRIBUTES
         {
             public int nLength;
             public SafeLocalMemHandle lpSecurityDescriptor;
@@ -2974,7 +2879,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        internal class STARTUPINFO
+        internal sealed class STARTUPINFO
         {
             public int cb;
             public IntPtr lpReserved;
@@ -3035,21 +2940,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 Dispose(true);
             }
-        }
-    }
-
-    [SuppressUnmanagedCodeSecurity]
-    internal sealed class SafeJobHandle : SafeHandleZeroOrMinusOneIsInvalid
-    {
-        internal SafeJobHandle(IntPtr jobHandle)
-            : base(true)
-        {
-            base.SetHandle(jobHandle);
-        }
-
-        protected override bool ReleaseHandle()
-        {
-            return Interop.Windows.CloseHandle(base.handle);
         }
     }
 #endif

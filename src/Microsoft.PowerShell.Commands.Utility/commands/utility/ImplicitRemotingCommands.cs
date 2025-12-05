@@ -73,8 +73,8 @@ namespace Microsoft.PowerShell.Commands
         /// Encoding optional flag.
         /// </summary>
         [Parameter]
-        [ArgumentToEncodingTransformationAttribute]
-        [ArgumentEncodingCompletionsAttribute]
+        [ArgumentToEncodingTransformation]
+        [ArgumentEncodingCompletions]
         [ValidateNotNullOrEmpty]
         public Encoding Encoding
         {
@@ -1705,7 +1705,7 @@ namespace Microsoft.PowerShell.Commands
         internal List<CommandMetadata> GetRemoteCommandMetadata(out Dictionary<string, string> alias2resolvedCommandName)
         {
             bool isReleaseCandidateBackcompatibilityMode =
-                this.Session.Runspace.GetRemoteProtocolVersion() == RemotingConstants.ProtocolVersionWin7RC;
+                this.Session.Runspace.GetRemoteProtocolVersion() == RemotingConstants.ProtocolVersion_2_0;
 
             alias2resolvedCommandName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             if ((this.CommandName == null) || (this.CommandName.Length == 0) ||
@@ -1916,7 +1916,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion
     }
 
-    internal class ImplicitRemotingCodeGenerator
+    internal sealed class ImplicitRemotingCodeGenerator
     {
         internal static readonly Version VersionOfScriptWriter = new(1, 0);
 
@@ -2620,7 +2620,7 @@ function Get-PSImplicitRemotingSession
 
         private string GenerateAllowRedirectionParameter()
         {
-            if (!(_remoteRunspaceInfo.Runspace.ConnectionInfo is WSManConnectionInfo wsmanConnectionInfo))
+            if (_remoteRunspaceInfo.Runspace.ConnectionInfo is not WSManConnectionInfo wsmanConnectionInfo)
             {
                 return string.Empty;
             }
@@ -2646,7 +2646,7 @@ function Get-PSImplicitRemotingSession
                 return string.Empty;
             }
 
-            if (!(_remoteRunspaceInfo.Runspace.ConnectionInfo is WSManConnectionInfo wsmanConnectionInfo))
+            if (_remoteRunspaceInfo.Runspace.ConnectionInfo is not WSManConnectionInfo wsmanConnectionInfo)
             {
                 return string.Empty;
             }

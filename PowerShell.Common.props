@@ -58,6 +58,11 @@
       <PSCoreFileVersion Condition = "'$(ReleaseTagSemVersionPart)' != ''">$(ReleaseTagVersionPart).$(ReleaseTagSemVersionPart)</PSCoreFileVersion>
       <!-- Create the version if we have a release build -->
       <PSCoreFileVersion Condition = "'$(PSCoreFileVersion)' == ''">$(ReleaseTagVersionPart).$(GAIncrementValue)</PSCoreFileVersion>
+      <!-- Set 'FileVersion' and 'AssemblyVersion' explicitly:
+           - make 'FileVersion' the same as 'PSCoreFileVersion'
+           - make 'AssemblyVersion' be the 'PSCoreFileVersion' with the 'Build' field set to 0, so the assembly version doesn't change for servicing releases -->
+      <FileVersion>$(PSCoreFileVersion)</FileVersion>
+      <AssemblyVersion>$([System.Version]::Parse($(PSCoreFileVersion)).Major).$([System.Version]::Parse($(PSCoreFileVersion)).Minor).0.$([System.Version]::Parse($(PSCoreFileVersion)).Revision)</AssemblyVersion>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -84,7 +89,7 @@
       -->
 
       <!--
-            Here we define explicitly 'Version' to set 'FileVersion' and 'AssemblyVersion' by 'GetAssemblyVersion' target in 'Microsoft.NET.GenerateAssemblyInfo.targets'.
+            Here we define explicitly 'Version' to set 'FileVersion' and 'AssemblyVersion' when they are not explicitly set.
             Here we define explicitly 'InformationalVersion' because by default it is defined as 'Version' by 'GetAssemblyVersion' target in 'Microsoft.NET.GenerateAssemblyInfo.targets'.
       -->
       <Version>$(PSCoreFileVersion)</Version>
@@ -139,7 +144,7 @@
     <Copyright>(c) Microsoft Corporation.</Copyright>
     <AssemblyTitle>PowerShell 7</AssemblyTitle>
 
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <LangVersion>13.0</LangVersion>
 
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -171,10 +176,43 @@
     <DebugType>portable</DebugType>
   </PropertyGroup>
 
-  <!-- Define all OS, release configuration properties -->
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+  <!-- Define properties for Framework dependent deployments in Packages
+        https://learn.microsoft.com/en-us/dotnet/core/project-sdk/msbuild-props#apphostdotnetsearch
+        For FxDependent, we want to search for the apphost in the Environment or global location,
+        as this was not causing any issues.
+        For FxDependentDeployment, we want to search ONLY in global location.
+        For SelfContained, we want to search in the app local location.
+  -->
+  <PropertyGroup Condition=" '$(AppDeployment)' == 'FxDependent' ">
+    <!-- Specify both to keep existing behavior because we have not had complaints about this scenario -->
+    <AppHostDotNetSearch>EnvironmentVariable;Global</AppHostDotNetSearch>
+    <PublishReadyToRun>false</PublishReadyToRun>
+    <PublishReadyToRunEmitSymbols>false</PublishReadyToRunEmitSymbols>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(AppDeployment)' == 'FxDependentDeployment' ">
+    <!-- If we specify Environment too, it searches that first, no matter what order we specify-->
+    <AppHostDotNetSearch>Global</AppHostDotNetSearch>
+  </PropertyGroup>
+
+  <!-- Enable ready-to-run only for Release configuration -->
+  <PropertyGroup Condition=" '$(AppDeployment)' == 'FxDependentDeployment' And '$(Configuration)' == 'Release' ">
     <PublishReadyToRun>true</PublishReadyToRun>
     <PublishReadyToRunEmitSymbols>true</PublishReadyToRunEmitSymbols>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(AppDeployment)' == 'SelfContained' ">
+    <AppHostDotNetSearch>AppLocal</AppHostDotNetSearch>
+  </PropertyGroup>
+
+  <!-- Enable ready-to-run only for Release configuration -->
+  <PropertyGroup Condition=" '$(AppDeployment)' == 'SelfContained' And '$(Configuration)' == 'Release' ">
+    <PublishReadyToRun>true</PublishReadyToRun>
+    <PublishReadyToRunEmitSymbols>true</PublishReadyToRunEmitSymbols>
+  </PropertyGroup>
+
+  <!-- Define all OS, release configuration properties -->
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <Optimize>true</Optimize>
     <DebugType>portable</DebugType>
   </PropertyGroup>
