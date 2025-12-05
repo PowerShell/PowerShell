@@ -99,7 +99,6 @@ extends:
           - template: .pipelines/templates/SetVersionVariables.yml@self
             parameters:
               ReleaseTagVar: $(ReleaseTagVar)
-              UseJson: no
 
           - pwsh: |
               Write-Verbose -Verbose 'PowerShell Version: $(version)'
