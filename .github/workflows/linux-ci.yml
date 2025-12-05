@@ -256,3 +256,7 @@ jobs:
       - merge_conflict_check
       - infrastructure_tests
       # - analyze
+    if: always()
+    uses: PowerShell/compliance/.github/workflows/ready-to-merge.yml@v1.0.0
+    with:
+      needs_context: ${{ toJson(needs) }}
