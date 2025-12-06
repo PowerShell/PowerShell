@@ -67,6 +67,20 @@ jobs:
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  merge_conflict_check:
+    name: Check for Merge Conflict Markers
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' && (startsWith(github.repository_owner, 'azure') || github.repository_owner == 'PowerShell')
+    permissions:
+      pull-requests: read
+      contents: read
+    steps:
+      - name: checkout
+        uses: actions/checkout@v5
+
+      - name: Check for merge conflict markers
+        uses: "./.github/actions/infrastructure/merge-conflict-checker"
+
   ci_build:
     name: Build PowerShell
     runs-on: ubuntu-latest
@@ -162,6 +176,48 @@ jobs:
       runner_os: ubuntu-latest
       test_results_artifact_name: testResults-xunit
 
+  infrastructure_tests:
+    name: Infrastructure Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+
+      - name: Install Pester
+        shell: pwsh
+        run: |
+          Import-Module ./tools/ci.psm1
+          Install-CIPester
+
+      - name: Run Infrastructure Tests
+        shell: pwsh
+        run: |
+          $testResultsFolder = Join-Path $PWD "testResults"
+          New-Item -ItemType Directory -Path $testResultsFolder -Force | Out-Null
+
+          $config = New-PesterConfiguration
+          $config.Run.Path = './test/infrastructure/'
+          $config.Run.PassThru = $true
+          $config.TestResult.Enabled = $true
+          $config.TestResult.OutputFormat = 'NUnitXml'
+          $config.TestResult.OutputPath = "$testResultsFolder/InfrastructureTests.xml"
+          $config.Output.Verbosity = 'Detailed'
+
+          $result = Invoke-Pester -Configuration $config
+
+          if ($result.FailedCount -gt 0 -or $result.Result -eq 'Failed') {
+            throw "Infrastructure tests failed"
+          }
+
+      - name: Publish Test Results
+        uses: "./.github/actions/test/process-pester-results"
+        if: always()
+        with:
+          name: "InfrastructureTests"
+          testResultsFolder: "${{ github.workspace }}/testResults"
+
   ## Temporarily disable the CodeQL analysis on Linux as it doesn't work for .NET SDK 10-rc.2.
   # analyze:
   #   name: CodeQL Analysis
@@ -173,22 +229,6 @@ jobs:
   #     contents: read
   #     security-events: write
   #   with:
-  #     runner_os: ubuntu-latest
-
-  ready_to_merge:
-    name: Linux ready to merge
-    needs:
-      - xunit_tests
-      - linux_test_elevated_ci
-      - linux_test_elevated_others
-      - linux_test_unelevated_ci
-      - linux_test_unelevated_others
-      # - analyze
-      - linux_packaging
-    if: always()
-    uses: PowerShell/compliance/.github/workflows/ready-to-merge.yml@v1.0.0
-    with:
-      needs_context: ${{ toJson(needs) }}
   linux_packaging:
     name: Linux Packaging
     needs:
@@ -203,3 +243,20 @@ jobs:
           fetch-depth: 0
       - name: Linux Packaging
         uses: "./.github/actions/test/linux-packaging"
+
+  ready_to_merge:
+    name: Linux ready to merge
+    needs:
+      - xunit_tests
+      - linux_test_elevated_ci
+      - linux_test_elevated_others
+      - linux_test_unelevated_ci
+      - linux_test_unelevated_others
+      - linux_packaging
+      - merge_conflict_check
+      - infrastructure_tests
+      # - analyze
+    if: always()
+    uses: PowerShell/compliance/.github/workflows/ready-to-merge.yml@v1.0.0
+    with:
+      needs_context: ${{ toJson(needs) }}

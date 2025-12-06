@@ -228,6 +228,45 @@ function Invoke-CIxUnit
     }
 }
 
+# Install Pester module if not already installed with a compatible version
+function Install-CIPester
+{
+    [CmdletBinding()]
+    param(
+        [string]$MinimumVersion = '5.0.0',
+        [string]$MaximumVersion = '5.99.99',
+        [switch]$Force
+    )
+
+    Write-Verbose "Checking for Pester module (required: $MinimumVersion - $MaximumVersion)" -Verbose
+
+    # Check if a compatible version of Pester is already installed
+    $installedPester = Get-Module -Name Pester -ListAvailable | 
+        Where-Object { $_.Version -ge $MinimumVersion -and $_.Version -le $MaximumVersion } |
+        Sort-Object -Property Version -Descending |
+        Select-Object -First 1
+
+    if ($installedPester -and -not $Force) {
+        Write-Host "Pester version $($installedPester.Version) is already installed and meets requirements" -ForegroundColor Green
+        return
+    }
+
+    if ($Force) {
+        Write-Host "Installing Pester module (forced)" -ForegroundColor Yellow
+    } else {
+        Write-Host "Installing Pester module" -ForegroundColor Yellow
+    }
+
+    try {
+        Install-Module -Name Pester -Force -SkipPublisherCheck -MaximumVersion $MaximumVersion -ErrorAction Stop
+        Write-Host "Successfully installed Pester module" -ForegroundColor Green
+    }
+    catch {
+        Write-Error "Failed to install Pester module: $_"
+        throw
+    }
+}
+
 # Implement CI 'Test_script'
 function Invoke-CITest
 {
@@ -621,7 +660,7 @@ function Invoke-CIFinish
 
                 # Install the latest Pester and import it
                 $maximumPesterVersion = '4.99'
-                Install-Module Pester -Force -SkipPublisherCheck -MaximumVersion $maximumPesterVersion
+                Install-CIPester -MinimumVersion '4.0.0' -MaximumVersion $maximumPesterVersion -Force
                 Import-Module Pester -Force -MaximumVersion $maximumPesterVersion
 
                 $testResultPath = Join-Path -Path $env:TEMP -ChildPath "win-package-$channel-$runtime.xml"
