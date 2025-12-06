@@ -348,19 +348,70 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         protected DataBaseInfo dataBaseInfo = new DataBaseInfo();
 
-        protected List<MshResolvedExpressionParameterAssociation> activeAssociationList = null;
+        private List<MshResolvedExpressionParameterAssociation> _activeAssociationList;
+
         /// <summary>
-        /// Apply ExcludeProperty filter to activeAssociationList if specified.
-        /// This method filters and updates "activeAssociationList" instance property.
+        /// Gets the current active association list.
         /// </summary>
-        protected void ApplyExcludePropertyFilter()
+        protected List<MshResolvedExpressionParameterAssociation> ActiveAssociationList => _activeAssociationList;
+
+        /// <summary>
+        /// Builds the raw association list for the given object.
+        /// Subclasses override this to provide cmdlet-specific property expansion logic.
+        /// </summary>
+        /// <param name="so">The object to build the association list for.</param>
+        /// <param name="propertyList">The list of properties specified by the user, or null if not specified.</param>
+        /// <returns>The raw association list, or null if not applicable.</returns>
+        protected virtual List<MshResolvedExpressionParameterAssociation> BuildRawAssociationList(PSObject so, List<MshParameter> propertyList)
         {
-            if (this.parameters is not null && this.parameters.excludePropertyFilter is not null)
+            return null;
+        }
+
+        /// <summary>
+        /// Gets the active association list for the given object, with ExcludeProperty filter applied.
+        /// If the list is not yet built, it will be built using BuildRawAssociationList.
+        /// </summary>
+        /// <param name="so">The object to get the association list for.</param>
+        /// <returns>The filtered association list.</returns>
+        protected List<MshResolvedExpressionParameterAssociation> GetActiveAssociationList(PSObject so)
+        {
+            if (_activeAssociationList is null)
             {
-                this.activeAssociationList = this.activeAssociationList
-                    .Where(item => !this.parameters.excludePropertyFilter.IsMatch(item.ResolvedExpression))
-                    .ToList();
+                var propertyList = parameters?.mshParameterList;
+                var excludeFilter = parameters?.excludePropertyFilter;
+                var rawList = BuildRawAssociationList(so, propertyList);
+                _activeAssociationList = ApplyExcludeFilter(rawList, excludeFilter);
             }
+
+            return _activeAssociationList;
+        }
+
+        /// <summary>
+        /// Resets the active association list, forcing it to be rebuilt on next access.
+        /// </summary>
+        protected void ResetActiveAssociationList()
+        {
+            _activeAssociationList = null;
+        }
+
+        /// <summary>
+        /// Applies the ExcludeProperty filter to the given association list.
+        /// </summary>
+        /// <param name="associationList">The list to filter.</param>
+        /// <param name="excludeFilter">The exclude filter to apply.</param>
+        /// <returns>The filtered list, or the original list if no filter is specified.</returns>
+        internal static List<MshResolvedExpressionParameterAssociation> ApplyExcludeFilter(
+            List<MshResolvedExpressionParameterAssociation> associationList,
+            PSPropertyExpressionFilter excludeFilter)
+        {
+            if (associationList is null || excludeFilter is null)
+            {
+                return associationList;
+            }
+
+            return associationList
+                .Where(item => !excludeFilter.IsMatch(item.ResolvedExpression))
+                .ToList();
         }
 
         protected string GetExpressionDisplayValue(PSObject so, int enumerationLimit, PSPropertyExpression ex,

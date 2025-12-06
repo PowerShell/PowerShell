@@ -3,7 +3,6 @@
 
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Collections.ObjectModel;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
@@ -514,13 +513,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             List<MshResolvedExpressionParameterAssociation> activeAssociationList =
                         AssociationManager.SetupActiveProperties(parameterList, so, _expressionFactory);
 
-            // Apply ExcludeProperty filter if specified
-            if (_parameters != null && _parameters.excludePropertyFilter != null)
-            {
-                activeAssociationList = activeAssociationList
-                    .Where(item => !_parameters.excludePropertyFilter.IsMatch(item.ResolvedExpression))
-                    .ToList();
-            }
+            // Apply ExcludeProperty filter using the centralized method
+            activeAssociationList = ViewGenerator.ApplyExcludeFilter(activeAssociationList, _parameters?.excludePropertyFilter);
 
             // create a format entry
             FormatEntry fe = new FormatEntry();
