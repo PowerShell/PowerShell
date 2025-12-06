@@ -20,14 +20,17 @@ Describe "WildcardPattern.ToRegex Tests" -Tags "CI" {
     }
 
     It "Converts '<Pattern>' with <OptionName> option" -TestCases @(
-        @{ Pattern = 'TEST'; OptionName = 'IgnoreCase'; Option = [System.Management.Automation.WildcardOptions]::IgnoreCase; Expected = '^TEST$' }
-        @{ Pattern = 'test'; OptionName = 'CultureInvariant'; Option = [System.Management.Automation.WildcardOptions]::CultureInvariant; Expected = '^test$' }
+        @{ Pattern = 'TEST'; OptionName = 'IgnoreCase'; Option = [System.Management.Automation.WildcardOptions]::IgnoreCase; Expected = '^TEST$'; ExpectedRegexOptions = 'IgnoreCase, Singleline'; TestString = 'test'; ExpectedMatch = $true }
+        @{ Pattern = 'test'; OptionName = 'CultureInvariant'; Option = [System.Management.Automation.WildcardOptions]::CultureInvariant; Expected = '^test$'; ExpectedRegexOptions = 'Singleline, CultureInvariant'; TestString = 'test'; ExpectedMatch = $true }
+        @{ Pattern = 'test*'; OptionName = 'Compiled'; Option = [System.Management.Automation.WildcardOptions]::Compiled; Expected = '^test'; ExpectedRegexOptions = 'Compiled, Singleline'; TestString = 'testing'; ExpectedMatch = $true }
     ) {
-        param($Pattern, $OptionName, $Option, $Expected)
+        param($Pattern, $OptionName, $Option, $Expected, $ExpectedRegexOptions, $TestString, $ExpectedMatch)
         $wildcardPattern = [System.Management.Automation.WildcardPattern]::new($Pattern, $Option)
         $regex = $wildcardPattern.ToRegex()
         $regex | Should -BeOfType ([regex])
         $regex.ToString() | Should -BeExactly $Expected
+        $regex.Options.ToString() | Should -BeExactly $ExpectedRegexOptions
+        $regex.IsMatch($TestString) | Should -Be $ExpectedMatch
     }
 
     It "Regex from '<Pattern>' matches '<TestString>': <ShouldMatch>" -TestCases @(
