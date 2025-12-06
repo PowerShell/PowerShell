@@ -63,6 +63,9 @@ namespace System.Management.Automation
         // we convert a wildcard pattern to a predicate
         private Predicate<string> _isMatch;
 
+        // cached regex for ToRegex() method
+        private Regex _regex;
+
         // static match-all delegate that is shared by all WildcardPattern instances
         private static readonly Predicate<string> s_matchAll = _ => true;
 
@@ -72,18 +75,6 @@ namespace System.Management.Automation
         // Options that control match behavior.
         // Default is WildcardOptions.None.
         internal WildcardOptions Options { get; }
-
-        /// <summary>
-        /// Wildcard pattern converted to regex pattern.
-        /// </summary>
-        internal string PatternConvertedToRegex
-        {
-            get
-            {
-                var patternRegex = WildcardPatternToRegexParser.Parse(this);
-                return patternRegex.ToString();
-            }
-        }
 
         /// <summary>
         /// Initializes and instance of the WildcardPattern class
@@ -209,10 +200,11 @@ namespace System.Management.Automation
         /// Converts the wildcard pattern to its regular expression equivalent.
         /// </summary>
         /// <returns>
-        /// A string that represents the regular expression equivalent of the wildcard pattern.
+        /// A <see cref="Regex"/> object that represents the regular expression equivalent of the wildcard pattern.
+        /// The regex is configured with options matching the wildcard pattern's options.
         /// </returns>
         /// <remarks>
-        /// This method converts a wildcard pattern to a regular expression pattern.
+        /// This method converts a wildcard pattern to a regular expression.
         /// The conversion follows these rules:
         /// <list type="bullet">
         /// <item><description>* (asterisk) converts to .* (matches any string)</description></item>
@@ -220,17 +212,18 @@ namespace System.Management.Automation
         /// <item><description>[abc] (bracket expression) converts to [abc] (matches any character in the set)</description></item>
         /// <item><description>Literal characters are escaped as needed for regex</description></item>
         /// </list>
+        /// The returned Regex instance is cached for subsequent calls.
         /// </remarks>
         /// <example>
         /// <code>
         /// var pattern = new WildcardPattern("*.txt");
-        /// string regex = pattern.ToRegex();
-        /// // Returns: "\.txt$"
+        /// Regex regex = pattern.ToRegex();
+        /// // regex.ToString() returns: "^.*\.txt$"
         /// </code>
         /// </example>
-        public string ToRegex()
+        public Regex ToRegex()
         {
-            return PatternConvertedToRegex;
+            return _regex ??= WildcardPatternToRegexParser.Parse(this);
         }
 
         /// <summary>
