@@ -351,9 +351,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private List<MshResolvedExpressionParameterAssociation> _activeAssociationList;
 
         /// <summary>
-        /// Gets the current active association list for read-only access.
+        /// Gets the current active association list.
         /// </summary>
-        protected IReadOnlyList<MshResolvedExpressionParameterAssociation> ActiveAssociationList => _activeAssociationList;
+        protected List<MshResolvedExpressionParameterAssociation> ActiveAssociationList => _activeAssociationList;
 
         /// <summary>
         /// Builds the raw association list for the given object.
