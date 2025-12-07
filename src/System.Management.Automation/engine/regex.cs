@@ -63,9 +63,6 @@ namespace System.Management.Automation
         // we convert a wildcard pattern to a predicate
         private Predicate<string> _isMatch;
 
-        // cached regex for ToRegex() method
-        private Regex _regex;
-
         // static match-all delegate that is shared by all WildcardPattern instances
         private static readonly Predicate<string> s_matchAll = _ => true;
 
@@ -212,7 +209,6 @@ namespace System.Management.Automation
         /// <item><description>[abc] (bracket expression) converts to [abc] (matches any character in the set)</description></item>
         /// <item><description>Literal characters are escaped as needed for regex</description></item>
         /// </list>
-        /// The returned Regex instance is cached for subsequent calls.
         /// </remarks>
         /// <example>
         /// <code>
@@ -223,7 +219,7 @@ namespace System.Management.Automation
         /// </example>
         public Regex ToRegex()
         {
-            return _regex ??= WildcardPatternToRegexParser.Parse(this);
+            return WildcardPatternToRegexParser.Parse(this);
         }
 
         /// <summary>

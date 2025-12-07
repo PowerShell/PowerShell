@@ -73,11 +73,5 @@ Describe "WildcardPattern.ToRegex Tests" -Tags "CI" {
             $regex.ToString() | Should -BeExactly $Expected
         }
 
-        It "Returns cached Regex instance on subsequent calls" {
-            $wildcardPattern = [System.Management.Automation.WildcardPattern]::new("*.txt")
-            $regex1 = $wildcardPattern.ToRegex()
-            $regex2 = $wildcardPattern.ToRegex()
-            [object]::ReferenceEquals($regex1, $regex2) | Should -BeTrue
-        }
     }
 }
