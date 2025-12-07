@@ -17,8 +17,6 @@ variables:
     value: false
   - name: ob_sdl_sbom_enabled
     value: ${{ parameters.SBOM }}
-  - name: runCodesignValidationInjection
-    value: false
   - name: DOTNET_NOLOGO
     value: 1
   - group: 'mscodehub-code-read-akv'
