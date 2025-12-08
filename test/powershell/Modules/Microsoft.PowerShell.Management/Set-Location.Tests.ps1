@@ -180,6 +180,24 @@ Describe "Set-Location" -Tags "CI" {
             (Get-Location).Path | Should -Be $tempPath
             { Set-Location + } | Should -Throw -ErrorId 'System.InvalidOperationException,Microsoft.PowerShell.Commands.SetLocationCommand'
         }
+
+        It 'Should go to last location back, even if any path contains wildcard' {
+            $initialLocation = (Get-Location).Path
+            $wildcardLocation = 'TestDrive:\[Folder]'
+            New-Item $wildcardLocation -Type Directory
+
+            Set-Location -LiteralPath $wildcardLocation
+            Set-Location -
+            (Get-Location).Path | Should -Be $initialLocation
+            Set-Location +
+            (Get-Location).Path | Should -Be $wildcardLocation
+
+            Set-Location -LiteralPath $initialLocation
+            Set-Location -
+            (Get-Location).Path | Should -Be $wildcardLocation
+            Set-Location +
+            (Get-Location).Path | Should -Be $initialLocation
+        }
     }
 
     It 'Should nativate to literal path "<path>"' -TestCases @(
