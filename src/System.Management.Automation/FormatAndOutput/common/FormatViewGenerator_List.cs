@@ -183,8 +183,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private ListViewEntry GenerateListViewEntryFromProperties(PSObject so, int enumerationLimit)
         {
-            // Get active association list (with ExcludeProperty filter applied)
-            var associationList = GetActiveAssociationList(so);
+            // Build active association list (with ExcludeProperty filter applied)
+            var associationList = BuildActiveAssociationList(so);
 
             ListViewEntry lve = new ListViewEntry();
 
@@ -220,8 +220,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 lvf.formatPropertyField.propertyValue = this.GetExpressionDisplayValue(so, enumerationLimit, a.ResolvedExpression, directive);
                 lve.listViewFieldList.Add(lvf);
             }
-
-            ResetActiveAssociationList();
             return lve;
         }
     }

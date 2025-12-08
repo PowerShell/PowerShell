@@ -163,8 +163,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private WideViewEntry GenerateWideViewEntryFromProperties(PSObject so, int enumerationLimit)
         {
-            // Get active association list (with ExcludeProperty filter applied)
-            var associationList = GetActiveAssociationList(so);
+            // Build active association list (with ExcludeProperty filter applied)
+            var associationList = BuildActiveAssociationList(so);
 
             WideViewEntry wve = new WideViewEntry();
             FormatPropertyField fpf = new FormatPropertyField();
@@ -182,8 +182,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 fpf.propertyValue = this.GetExpressionDisplayValue(so, enumerationLimit, a.ResolvedExpression, directive);
             }
-
-            ResetActiveAssociationList();
             return wve;
         }
     }

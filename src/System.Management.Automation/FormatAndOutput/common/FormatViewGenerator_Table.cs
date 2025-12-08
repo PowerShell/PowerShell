@@ -14,6 +14,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         // tableBody to use for this instance of the ViewGenerator;
         private TableControlBody _tableBody;
 
+        private List<MshResolvedExpressionParameterAssociation> _activeAssociationList;
+
+        /// <summary>
+        /// Gets the cached active association list.
+        /// </summary>
+        private List<MshResolvedExpressionParameterAssociation> ActiveAssociationList => _activeAssociationList;
+
         internal override void Initialize(TerminatingErrorContext terminatingErrorContext, PSPropertyExpressionFactory mshExpressionFactory, TypeInfoDataBase db, ViewDefinition view, FormattingCommandLineParameters formatParameters)
         {
             base.Initialize(terminatingErrorContext, mshExpressionFactory, db, view, formatParameters);
@@ -35,7 +42,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             // Build the active association list (with ExcludeProperty filter applied)
-            _ = GetActiveAssociationList(so);
+            _activeAssociationList = BuildActiveAssociationList(so);
         }
 
         /// <summary>

@@ -348,13 +348,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         protected DataBaseInfo dataBaseInfo = new DataBaseInfo();
 
-        private List<MshResolvedExpressionParameterAssociation> _activeAssociationList;
-
-        /// <summary>
-        /// Gets the current active association list.
-        /// </summary>
-        protected List<MshResolvedExpressionParameterAssociation> ActiveAssociationList => _activeAssociationList;
-
         /// <summary>
         /// Builds the raw association list for the given object.
         /// Subclasses override this to provide cmdlet-specific property expansion logic.
@@ -368,30 +361,16 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// Gets the active association list for the given object, with ExcludeProperty filter applied.
-        /// If the list is not yet built, it will be built using BuildRawAssociationList.
+        /// Builds the active association list for the given object, with ExcludeProperty filter applied.
         /// </summary>
-        /// <param name="so">The object to get the association list for.</param>
+        /// <param name="so">The object to build the association list for.</param>
         /// <returns>The filtered association list.</returns>
-        protected List<MshResolvedExpressionParameterAssociation> GetActiveAssociationList(PSObject so)
+        protected List<MshResolvedExpressionParameterAssociation> BuildActiveAssociationList(PSObject so)
         {
-            if (_activeAssociationList is null)
-            {
-                var propertyList = parameters?.mshParameterList;
-                var excludeFilter = parameters?.excludePropertyFilter;
-                var rawList = BuildRawAssociationList(so, propertyList);
-                _activeAssociationList = ApplyExcludeFilter(rawList, excludeFilter);
-            }
-
-            return _activeAssociationList;
-        }
-
-        /// <summary>
-        /// Resets the active association list, forcing it to be rebuilt on next access.
-        /// </summary>
-        protected void ResetActiveAssociationList()
-        {
-            _activeAssociationList = null;
+            var propertyList = parameters?.mshParameterList;
+            var excludeFilter = parameters?.excludePropertyFilter;
+            var rawList = BuildRawAssociationList(so, propertyList);
+            return ApplyExcludeFilter(rawList, excludeFilter);
         }
 
         /// <summary>
