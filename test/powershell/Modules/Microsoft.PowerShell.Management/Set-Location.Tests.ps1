@@ -183,8 +183,9 @@ Describe "Set-Location" -Tags "CI" {
 
         It 'Should go to last location back, even if any path contains wildcard' {
             $initialLocation = (Get-Location).Path
-            $wildcardLocation = 'TestDrive:\[Folder]'
-            New-Item $wildcardLocation -Type Directory
+            $wildcardPath = 'TestDrive:\[Folder]'
+            # Use the return path of `New-Item` to avoid incorrect results caused by the different slash directions of path separators on different operating systems.
+            $wildcardLocation = (New-Item $wildcardPath -Type Directory).FullName
 
             Set-Location -LiteralPath $wildcardLocation
             Set-Location -
@@ -267,7 +268,7 @@ Describe "Set-Location" -Tags "CI" {
             #root is / on linux and Mac, so it's not happy with this check.
             Set-Location 'TestDrive:\'
             $DriveRoot = (Get-Location).path
-            New-Item -Path 'TestDrive:\Directory1' -Name 'Directory2' -ItemType Directory
+            New-Item -Path 'TestDrive:\Directory1' -Name 'Directory2' -ItemType Directory -ErrorAction Ignore
             Set-Location 'TestDrive:\Directory1\Directory2'
             cd\
             (Get-Location).Path | Should -BeExactly $DriveRoot
