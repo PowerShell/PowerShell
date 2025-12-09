@@ -39,18 +39,22 @@ namespace System.Management.Automation
         private static readonly string s_windowsPowerShellPSHomeModulePath =
             Path.Combine(System.Environment.SystemDirectory, "WindowsPowerShell", "v1.0", "Modules");
 
+        static ModuleIntrinsics()
+        {
+            // Initialize the module path.
+            SetModulePath();
+        }
+
         internal ModuleIntrinsics(ExecutionContext context)
         {
             _context = context;
-
-            // And initialize the module path...
-            SetModulePath();
+            ModuleTable = new Dictionary<string, PSModuleInfo>(StringComparer.OrdinalIgnoreCase);
         }
 
         private readonly ExecutionContext _context;
 
         // Holds the module collection...
-        internal Dictionary<string, PSModuleInfo> ModuleTable { get; } = new Dictionary<string, PSModuleInfo>(StringComparer.OrdinalIgnoreCase);
+        internal Dictionary<string, PSModuleInfo> ModuleTable { get; }
 
         private const int MaxModuleNestingDepth = 10;
 
@@ -1087,34 +1091,46 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="pathToScan">'Combined path' string to analyze; can not be null.</param>
         /// <param name="pathToLookFor">Path to search for; can not be another 'combined path' (semicolon-separated); can not be null.</param>
-        /// <returns>Index of pathToLookFor in pathToScan; -1 if not found.</returns>
-        private static int PathContainsSubstring(string pathToScan, string pathToLookFor)
+        /// <returns> <see langword="true"/> if <paramref name="pathToLookFor"/> is found in <paramref name="pathToScan"/>. Otherwise, <see langword="false"/> </returns>
+        private static bool PathContainsSubstring(string pathToScan, string pathToLookFor)
         {
-            // we don't support if any of the args are null - parent function should ensure this; empty values are ok
-            Diagnostics.Assert(pathToScan != null, "pathToScan should not be null according to contract of the function");
-            Diagnostics.Assert(pathToLookFor != null, "pathToLookFor should not be null according to contract of the function");
+            // We don't support if any of the args are null - parent function should ensure this; empty values are OK.
+            Dbg.Assert(pathToScan != null, "pathToScan should not be null according to contract of the function");
+            Dbg.Assert(pathToLookFor != null, "pathToLookFor should not be null according to contract of the function");
 
-            int pos = 0; // position of the current substring in pathToScan
-            string[] substrings = pathToScan.Split(Path.PathSeparator, StringSplitOptions.None); // we want to process empty entries
-            string goodPathToLookFor = pathToLookFor.Trim().TrimEnd(Path.DirectorySeparatorChar); // trailing backslashes and white-spaces will mess up equality comparison
+            if (pathToLookFor.Length is 0)
+            {
+                // An empty path to look for is always considered found in 'pathToScan'.
+                return true;
+            }
+
+            if (pathToScan.Length is 0)
+            {
+                // The 'pathToScan' is empty, while 'pathToLookFor' is not - so it can not be found.
+                return false;
+            }
+
+            string[] substrings = pathToScan.Split(
+                Path.PathSeparator,
+                StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+            // Remove the trailing directory separators and white spaces.
+            string goodPathToLookFor = pathToLookFor.Trim().TrimEnd(Path.DirectorySeparatorChar);
             foreach (string substring in substrings)
             {
-                string goodSubstring = substring.Trim().TrimEnd(Path.DirectorySeparatorChar);  // trailing backslashes and white-spaces will mess up equality comparison
+                // Remove the trailing directory separators. Trailing white spaces were already removed by 'StringSplitOptions.TrimEntries'.
+                string goodSubstring = substring.TrimEnd(Path.DirectorySeparatorChar);
 
                 // We have to use equality comparison on individual substrings (as opposed to simple 'string.IndexOf' or 'string.Contains')
-                // because of cases like { pathToScan="C:\Temp\MyDir\MyModuleDir", pathToLookFor="C:\Temp" }
-
+                // because of cases like { pathToScan="C:\Temp\MyDir\MyModuleDir", pathToLookFor="C:\Temp" }.
                 if (string.Equals(goodSubstring, goodPathToLookFor, StringComparison.OrdinalIgnoreCase))
                 {
-                    return pos; // match found - return index of it in the 'pathToScan' string
-                }
-                else
-                {
-                    pos += substring.Length + 1; // '1' is for trailing semicolon
+                    return true;
                 }
             }
-            // if we are here, that means a match was not found
-            return -1;
+
+            // If we reach here, that means a match was not found.
+            return false;
         }
 
         /// <summary>
@@ -1124,48 +1140,60 @@ namespace System.Management.Automation
         /// <param name="pathToAdd">Collection of individual paths to add.</param>
         /// <param name="insertPosition">-1 to append to the end; 0 to insert in the beginning of the string; etc...</param>
         /// <returns>Result string.</returns>
-        private static string AddToPath(string basePath, string pathToAdd, int insertPosition)
+        private static string UpdatePath(string basePath, string pathToAdd, ref int insertPosition)
         {
             // we don't support if any of the args are null - parent function should ensure this; empty values are ok
-            Diagnostics.Assert(basePath != null, "basePath should not be null according to contract of the function");
-            Diagnostics.Assert(pathToAdd != null, "pathToAdd should not be null according to contract of the function");
+            Dbg.Assert(basePath != null, "basePath should not be null according to contract of the function");
+            Dbg.Assert(pathToAdd != null, "pathToAdd should not be null according to contract of the function");
 
-            StringBuilder result = new StringBuilder(basePath);
-
-            if (!string.IsNullOrEmpty(pathToAdd)) // we don't want to append empty paths
+            if (string.IsNullOrEmpty(pathToAdd))
             {
-                foreach (string subPathToAdd in pathToAdd.Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries)) // in case pathToAdd is a 'combined path' (semicolon-separated)
-                {
-                    int position = PathContainsSubstring(result.ToString(), subPathToAdd); // searching in effective 'result' value ensures that possible duplicates in pathsToAdd are handled correctly
-                    if (position == -1) // subPathToAdd not found - add it
-                    {
-                        if (insertPosition == -1 || insertPosition > basePath.Length) // append subPathToAdd to the end
-                        {
-                            bool endsWithPathSeparator = false;
-                            if (result.Length > 0)
-                            {
-                                endsWithPathSeparator = (result[result.Length - 1] == Path.PathSeparator);
-                            }
+                // we don't want to append empty paths.
+                return basePath;
+            }
 
-                            if (endsWithPathSeparator)
-                            {
-                                result.Append(subPathToAdd);
-                            }
-                            else
-                            {
-                                result.Append(Path.PathSeparator + subPathToAdd);
-                            }
-                        }
-                        else if (insertPosition > result.Length)
-                        {
-                            // handle case where path is a singleton with no path separator already
-                            result.Append(Path.PathSeparator).Append(subPathToAdd);
-                        }
-                        else // insert at the requested location (this is used by DSC (<Program Files> location) and by 'user-specific location' (SpecialFolder.MyDocuments or EVT.User))
-                        {
-                            result.Insert(insertPosition, subPathToAdd + Path.PathSeparator);
-                        }
+            StringBuilder result = new(basePath);
+            // The 'pathToAdd' could be a 'combined path' (semicolon-separated).
+            foreach (string subPathToAdd in pathToAdd.Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+            {
+                if (string.IsNullOrEmpty(subPathToAdd))
+                {
+                    // Extreme case: empty path after trimming - skip it.
+                    continue;
+                }
+
+                // Searching in effective 'result' value ensures that possible duplicates in pathsToAdd are handled correctly.
+                if (PathContainsSubstring(result.ToString(), subPathToAdd))
+                {
+                    // The 'subPathToAdd' was already found - skip it.
+                    continue;
+                }
+
+                // The 'subPathToAdd' was not found - add it.
+                if (insertPosition is -1 || insertPosition >= result.Length)
+                {
+                    // Append 'subPathToAdd' to the end.
+                    if (result.Length > 0 && result[^1] == Path.PathSeparator)
+                    {
+                        result.Append(subPathToAdd);
                     }
+                    else
+                    {
+                        result.Append(Path.PathSeparator).Append(subPathToAdd);
+                    }
+
+                    // Next insertion should happen at the end.
+                    insertPosition = result.Length;
+                }
+                else
+                {
+                    // Insert at the requested location.
+                    // This is used by the user-specific module path, the shared module path (<Program Files> location), and the PSHome module path.
+                    string strToInsert = subPathToAdd + Path.PathSeparator;
+                    result.Insert(insertPosition, strToInsert);
+
+                    // Next insertion should happen after the just inserted string.
+                    insertPosition += strToInsert.Length;
                 }
             }
 
@@ -1218,7 +1246,7 @@ namespace System.Management.Automation
             string psHomeModulePath = GetPSHomeModulePath(); // $PSHome\Modules location
 
             // If the variable isn't set, then set it to the default value
-            if (currentProcessModulePath == null)  // EVT.Process does Not exist - really corner case
+            if (string.IsNullOrEmpty(currentProcessModulePath))  // EVT.Process does Not exist - really corner case
             {
                 // Handle the default case...
                 if (string.IsNullOrEmpty(hkcuUserModulePath)) // EVT.User does Not exist -> set to <SpecialFolder.MyDocuments> location
@@ -1268,30 +1296,6 @@ namespace System.Management.Automation
             }
 
             return currentProcessModulePath;
-        }
-
-        private static string UpdatePath(string path, string pathToAdd, ref int insertIndex)
-        {
-            if (Environment.GetEnvironmentVariable("_debug_me_") is string)
-            {
-                Console.WriteLine("---- UpdatePath ----");
-                Console.WriteLine("path: " + path);
-                Console.WriteLine("pathToAdd: " + pathToAdd);
-                Console.WriteLine("insertIndex: " + insertIndex);
-                Console.WriteLine("-------- END --------");
-            }
-
-            if (!string.IsNullOrEmpty(pathToAdd))
-            {
-                path = AddToPath(path, pathToAdd, insertIndex);
-                insertIndex = path.IndexOf(Path.PathSeparator, PathContainsSubstring(path, pathToAdd));
-                if (insertIndex != -1)
-                {
-                    // advance past the path separator
-                    insertIndex++;
-                }
-            }
-            return path;
         }
 
         /// <summary>
@@ -1367,11 +1371,16 @@ namespace System.Management.Automation
         {
             string currentModulePath = GetExpandedEnvironmentVariable(Constants.PSModulePathEnvVar, EnvironmentVariableTarget.Process);
 #if !UNIX
-            // if the current process and user env vars are the same, it means we need to append the machine one as it's incomplete
-            // otherwise, the user modified it and we should use the process one
+            // if the current process and user env vars are the same, it means we need to append the machine one as it's incomplete.
+            // Otherwise, the user modified it and we should use the process one.
             if (string.CompareOrdinal(GetExpandedEnvironmentVariable(Constants.PSModulePathEnvVar, EnvironmentVariableTarget.User), currentModulePath) == 0)
             {
-                currentModulePath = currentModulePath + Path.PathSeparator + GetExpandedEnvironmentVariable(Constants.PSModulePathEnvVar, EnvironmentVariableTarget.Machine);
+                string machineScopeValue = GetExpandedEnvironmentVariable(Constants.PSModulePathEnvVar, EnvironmentVariableTarget.Machine);
+                currentModulePath = string.IsNullOrEmpty(currentModulePath)
+                    ? machineScopeValue
+                    : string.IsNullOrEmpty(machineScopeValue)
+                        ? currentModulePath
+                        : string.Concat(currentModulePath, Path.PathSeparator, machineScopeValue);
             }
 #endif
             string allUsersModulePath = PowerShellConfig.Instance.GetModulePath(ConfigScope.AllUsers);
