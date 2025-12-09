@@ -11,7 +11,7 @@
 - Update `Microsoft.PowerShell.PSResourceGet` to `v1.2.0-preview5` (#26590)
 - Make the experimental feature `PSFeedbackProvider` stable (#26502)
 - Fix a regression in the API `CompletionCompleters.CompleteFilename()` that causes null reference exception (#26487)
-- Add Delimiter parameter to `Get-Clipboard` (#26572)
+- Add Delimiter parameter to `Get-Clipboard` (#26572) (Thanks @MartinGC94!)
 - Close pipe client handles after creating the child ssh process (#26564)
 - Make some experimental features stable (#26490)
 - DSC v3 resource for Powershell Profile (#26447)
