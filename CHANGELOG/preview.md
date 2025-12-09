@@ -31,12 +31,6 @@
 
 <details>
 
-<summary>
-
-<p>We thank the following contributors!</p>
-
-</summary>
-
 <ul>
 <li>Fix template path for rebuild branch check in package.yml (#26560)</li>
 <li>Update the macos package name for preview releases to match the previous pattern (#26576)</li>
