@@ -348,19 +348,49 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         protected DataBaseInfo dataBaseInfo = new DataBaseInfo();
 
-        protected List<MshResolvedExpressionParameterAssociation> activeAssociationList = null;
         /// <summary>
-        /// Apply ExcludeProperty filter to activeAssociationList if specified.
-        /// This method filters and updates "activeAssociationList" instance property.
+        /// Builds the raw association list for the given object.
+        /// Subclasses override this to provide cmdlet-specific property expansion logic.
         /// </summary>
-        protected void ApplyExcludePropertyFilter()
+        /// <param name="so">The object to build the association list for.</param>
+        /// <param name="propertyList">The list of properties specified by the user, or null if not specified.</param>
+        /// <returns>The raw association list, or null if not applicable.</returns>
+        protected virtual List<MshResolvedExpressionParameterAssociation> BuildRawAssociationList(PSObject so, List<MshParameter> propertyList)
         {
-            if (this.parameters is not null && this.parameters.excludePropertyFilter is not null)
+            return null;
+        }
+
+        /// <summary>
+        /// Builds the active association list for the given object, with ExcludeProperty filter applied.
+        /// </summary>
+        /// <param name="so">The object to build the association list for.</param>
+        /// <returns>The filtered association list.</returns>
+        protected List<MshResolvedExpressionParameterAssociation> BuildActiveAssociationList(PSObject so)
+        {
+            var propertyList = parameters?.mshParameterList;
+            var excludeFilter = parameters?.excludePropertyFilter;
+            var rawList = BuildRawAssociationList(so, propertyList);
+            return ApplyExcludeFilter(rawList, excludeFilter);
+        }
+
+        /// <summary>
+        /// Applies the ExcludeProperty filter to the given association list.
+        /// </summary>
+        /// <param name="associationList">The list to filter.</param>
+        /// <param name="excludeFilter">The exclude filter to apply.</param>
+        /// <returns>The filtered list, or the original list if no filter is specified.</returns>
+        internal static List<MshResolvedExpressionParameterAssociation> ApplyExcludeFilter(
+            List<MshResolvedExpressionParameterAssociation> associationList,
+            PSPropertyExpressionFilter excludeFilter)
+        {
+            if (associationList is null || excludeFilter is null)
             {
-                this.activeAssociationList = this.activeAssociationList
-                    .Where(item => !this.parameters.excludePropertyFilter.IsMatch(item.ResolvedExpression))
-                    .ToList();
+                return associationList;
             }
+
+            return associationList
+                .Where(item => !excludeFilter.IsMatch(item.ResolvedExpression))
+                .ToList();
         }
 
         protected string GetExpressionDisplayValue(PSObject so, int enumerationLimit, PSPropertyExpression ex,
