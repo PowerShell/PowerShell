@@ -1086,7 +1086,7 @@ namespace System.Management.Automation
         /// Adds paths to a 'combined path' string (like %Path% or %PSModulePath%) if they are not already there.
         /// </summary>
         /// <param name="basePath">Path string (like %Path% or %PSModulePath%).</param>
-        /// <param name="pathToAdd">Collection of individual paths to add.</param>
+        /// <param name="pathToAdd">An individual path to add, or multiple paths separated by the path separator character.</param>
         /// <param name="insertPosition">-1 to append to the end; 0 to insert in the beginning of the string; etc...</param>
         /// <returns>Result string.</returns>
         private static string UpdatePath(string basePath, string pathToAdd, ref int insertPosition)
