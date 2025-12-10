@@ -392,9 +392,10 @@ export $envVarName='$guid'
             $CustomSettingsFile = Join-Path -Path $TestDrive -ChildPath 'powershell.test.json'
             $mPath1 = Join-Path $PSHOME 'Modules'
             $mPath2 = Join-Path $TestDrive 'NonExist'
+            $pathSep = [System.IO.Path]::PathSeparator
 
             ## Use multiple paths in the setting.
-            $ModulePath = "$mPath1;$mPath2".Replace('\', "\\")
+            $ModulePath = "${mPath1}${pathSep}${mPath2}".Replace('\', "\\")
             Set-Content -Path $CustomSettingsfile -Value "{`"Microsoft.PowerShell:ExecutionPolicy`":`"Unrestricted`", `"PSModulePath`": `"$ModulePath`" }" -ErrorAction Stop
         }
 
@@ -402,9 +403,9 @@ export $envVarName='$guid'
             $psModulePath = & $powershell -NoProfile -SettingsFile $CustomSettingsFile -Command '$env:PSModulePath'
 
             ## $mPath1 already exists in the value of env PSModulePath, so it won't be added again.
-            $psModulePath.Contains("$mPath1;", [System.StringComparison]::OrdinalIgnoreCase) | Should -BeTrue
+            $psModulePath.Contains("${mPath1}${pathSep}", [System.StringComparison]::OrdinalIgnoreCase) | Should -BeTrue
             ## $mPath2 should be added at the index position 0.
-            $psModulePath.StartsWith("$mPath2;", [System.StringComparison]::OrdinalIgnoreCase) | Should -BeTrue
+            $psModulePath.StartsWith("${mPath2}${pathSep}", [System.StringComparison]::OrdinalIgnoreCase) | Should -BeTrue
         }
     }
 

@@ -2254,14 +2254,15 @@ namespace Microsoft.PowerShell
             }
 
             // Print the stack trace.
-            var sb = new StringBuilder(capacity: e.StackTrace.Length * 2)
+            var sb = new StringBuilder(capacity: 100)
                 .AppendLine()
+                .AppendLine($"--- {e.GetType().FullName} ---")
                 .AppendLine(e.StackTrace);
 
             Exception inner = e.InnerException;
             while (inner is { })
             {
-                sb.AppendLine("--- inner exception ---");
+                sb.AppendLine($"--- inner {inner.GetType().FullName} ---");
                 sb.AppendLine(inner.StackTrace);
                 inner = inner.InnerException;
             }
