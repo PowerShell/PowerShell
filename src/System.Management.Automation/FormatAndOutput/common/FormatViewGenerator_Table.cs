@@ -16,11 +16,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private List<MshResolvedExpressionParameterAssociation> _activeAssociationList;
 
-        /// <summary>
-        /// Gets the cached active association list.
-        /// </summary>
-        private List<MshResolvedExpressionParameterAssociation> ActiveAssociationList => _activeAssociationList;
-
         internal override void Initialize(TerminatingErrorContext terminatingErrorContext, PSPropertyExpressionFactory mshExpressionFactory, TypeInfoDataBase db, ViewDefinition view, FormattingCommandLineParameters formatParameters)
         {
             base.Initialize(terminatingErrorContext, mshExpressionFactory, db, view, formatParameters);
@@ -231,9 +226,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             thi.hideHeader = this.HideHeaders;
             thi.repeatHeader = this.RepeatHeader;
 
-            for (int k = 0; k < this.ActiveAssociationList.Count; k++)
+            for (int k = 0; k < _activeAssociationList.Count; k++)
             {
-                MshResolvedExpressionParameterAssociation a = this.ActiveAssociationList[k];
+                MshResolvedExpressionParameterAssociation a = _activeAssociationList[k];
                 TableColumnInfo ci = new TableColumnInfo();
 
                 // set the label of the column
@@ -244,7 +239,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         ci.propertyName = (string)key;
                 }
 
-                ci.propertyName ??= this.ActiveAssociationList[k].ResolvedExpression.ToString();
+                ci.propertyName ??= _activeAssociationList[k].ResolvedExpression.ToString();
 
                 // set the width of the table
                 if (a.OriginatingParameter != null)
@@ -476,13 +471,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private TableRowEntry GenerateTableRowEntryFromFromProperties(PSObject so, int enumerationLimit)
         {
             TableRowEntry tre = new TableRowEntry();
-            for (int k = 0; k < this.ActiveAssociationList.Count; k++)
+            for (int k = 0; k < _activeAssociationList.Count; k++)
             {
                 FormatPropertyField fpf = new FormatPropertyField();
                 FieldFormattingDirective directive = null;
-                if (ActiveAssociationList[k].OriginatingParameter != null)
+                if (_activeAssociationList[k].OriginatingParameter != null)
                 {
-                    directive = ActiveAssociationList[k].OriginatingParameter.GetEntry(FormatParameterDefinitionKeys.FormatStringEntryKey) as FieldFormattingDirective;
+                    directive = _activeAssociationList[k].OriginatingParameter.GetEntry(FormatParameterDefinitionKeys.FormatStringEntryKey) as FieldFormattingDirective;
                 }
 
                 if (directive is null)
@@ -491,7 +486,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     directive.isTable = true;
                 }
 
-                fpf.propertyValue = this.GetExpressionDisplayValue(so, enumerationLimit, this.ActiveAssociationList[k].ResolvedExpression, directive);
+                fpf.propertyValue = this.GetExpressionDisplayValue(so, enumerationLimit, _activeAssociationList[k].ResolvedExpression, directive);
                 tre.formatPropertyFieldList.Add(fpf);
             }
 
