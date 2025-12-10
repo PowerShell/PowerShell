@@ -221,25 +221,13 @@ jobs:
           Write-Error "SBConfig file not found: $sbConfigPath"
           exit 1
         }
-
         Write-Host "##vso[task.setvariable variable=ServiceConnection]$($config.ServiceEndpoint)"
         Write-Host "##vso[task.setvariable variable=SBConfigPath]$($sbConfigPath)"
 
         # These variables are used in the next tasks to determine which ServiceEndpoint to use
-        $ltsValue = $IsLTS.ToString().ToLower()
-        $stableValue = $IsStable.ToString().ToLower()
-        $previewValue = $IsPreview.ToString().ToLower()
-        
-        Write-Verbose -Verbose "About to set variables:"
-        Write-Verbose -Verbose "  LTS=$ltsValue"
-        Write-Verbose -Verbose "  STABLE=$stableValue"
-        Write-Verbose -Verbose "  PREVIEW=$previewValue"
-        
-        Write-Host "##vso[task.setvariable variable=LTS]$ltsValue"
-        Write-Host "##vso[task.setvariable variable=STABLE]$stableValue"
-        Write-Host "##vso[task.setvariable variable=PREVIEW]$previewValue"
-        
-        Write-Verbose -Verbose "Variables set successfully"
+        Write-Host "##vso[task.setvariable variable=LTS]$($IsLTS.ToString().ToLower())"
+        Write-Host "##vso[task.setvariable variable=STABLE]$($IsStable.ToString().ToLower())"
+        Write-Host "##vso[task.setvariable variable=PREVIEW]$($IsPreview.ToString().ToLower())"
       name: UpdateConfigs
       displayName: Update PDPs and SBConfig.json
 
@@ -251,9 +239,10 @@ jobs:
       displayName: Debug - Check Variables
 
     - task: MS-RDX-MRO.windows-store-publish.package-task.store-package@3
-      displayName: 'Create StoreBroker Package'
+      displayName: 'Create StoreBroker Package (Preview)'
+      condition: eq('$(PREVIEW)', 'true')
       inputs:
-        serviceEndpoint: '$(ServiceConnection)'
+        serviceEndpoint: 'StoreAppPublish-Preview'
         sbConfigPath: '$(SBConfigPath)'
         sourceFolder: '$(BundleDir)'
         contents: '*.msixBundle'
@@ -261,10 +250,17 @@ jobs:
         pdpPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDP/PDP'
         pdpMediaPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDP/PDP-Media'
 
-    - pwsh: |
-        Get-Item -Path "$(System.DefaultWorkingDirectory)/SBLog.txt" -ErrorAction SilentlyContinue |
-          Copy-Item -Destination "$(ob_outputDirectory)" -Verbose
-      displayName: Upload Store Failure Log
+    - task: MS-RDX-MRO.windows-store-publish.package-task.store-package@3
+      displayName: 'Create StoreBroker Package (Stable/LTS)'
+      condition: or(eq('$(STABLE)', 'true'), eq('$(LTS)', 'true'))
+      inputs:
+        serviceEndpoint: 'StoreAppPublish-Stable'
+        sbConfigPath: '$(SBConfigPath)'
+        sourceFolder: '$(BundleDir)'
+        contents: '*.msixBundle'
+        outSBName: 'PowerShellStorePackage'
+        pdpPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDP/PDP'
+        pdpMediaPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDP/PDP-Media'
       condition: failed()
 
     - pwsh: |
