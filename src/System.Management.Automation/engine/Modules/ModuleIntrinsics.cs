@@ -10,9 +10,7 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Text;
 using System.Threading;
-
 using Microsoft.PowerShell.Commands;
-using Microsoft.Win32;
 
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -180,11 +178,9 @@ namespace System.Management.Automation
 
                         sb.SessionState = ss;
                     }
-                    else
+                    else if (moduleCode is string sbText)
                     {
-                        var sbText = moduleCode as string;
-                        if (sbText != null)
-                            sb = ScriptBlock.Create(_context, sbText);
+                        sb = ScriptBlock.Create(_context, sbText);
                     }
                 }
 
@@ -1087,53 +1083,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Checks if a particular string (path) is a member of 'combined path' string (like %Path% or %PSModulePath%)
-        /// </summary>
-        /// <param name="pathToScan">'Combined path' string to analyze; can not be null.</param>
-        /// <param name="pathToLookFor">Path to search for; can not be another 'combined path' (semicolon-separated); can not be null.</param>
-        /// <returns> <see langword="true"/> if <paramref name="pathToLookFor"/> is found in <paramref name="pathToScan"/>. Otherwise, <see langword="false"/> </returns>
-        private static bool PathContainsSubstring(string pathToScan, string pathToLookFor)
-        {
-            // We don't support if any of the args are null - parent function should ensure this; empty values are OK.
-            Dbg.Assert(pathToScan != null, "pathToScan should not be null according to contract of the function");
-            Dbg.Assert(pathToLookFor != null, "pathToLookFor should not be null according to contract of the function");
-
-            if (pathToLookFor.Length is 0)
-            {
-                // An empty path to look for is always considered found in 'pathToScan'.
-                return true;
-            }
-
-            if (pathToScan.Length is 0)
-            {
-                // The 'pathToScan' is empty, while 'pathToLookFor' is not - so it can not be found.
-                return false;
-            }
-
-            string[] substrings = pathToScan.Split(
-                Path.PathSeparator,
-                StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-
-            // Remove the trailing directory separators and white spaces.
-            string goodPathToLookFor = pathToLookFor.Trim().TrimEnd(Path.DirectorySeparatorChar);
-            foreach (string substring in substrings)
-            {
-                // Remove the trailing directory separators. Trailing white spaces were already removed by 'StringSplitOptions.TrimEntries'.
-                string goodSubstring = substring.TrimEnd(Path.DirectorySeparatorChar);
-
-                // We have to use equality comparison on individual substrings (as opposed to simple 'string.IndexOf' or 'string.Contains')
-                // because of cases like { pathToScan="C:\Temp\MyDir\MyModuleDir", pathToLookFor="C:\Temp" }.
-                if (string.Equals(goodSubstring, goodPathToLookFor, StringComparison.OrdinalIgnoreCase))
-                {
-                    return true;
-                }
-            }
-
-            // If we reach here, that means a match was not found.
-            return false;
-        }
-
-        /// <summary>
         /// Adds paths to a 'combined path' string (like %Path% or %PSModulePath%) if they are not already there.
         /// </summary>
         /// <param name="basePath">Path string (like %Path% or %PSModulePath%).</param>
@@ -1146,42 +1095,51 @@ namespace System.Management.Automation
             Dbg.Assert(basePath != null, "basePath should not be null according to contract of the function");
             Dbg.Assert(pathToAdd != null, "pathToAdd should not be null according to contract of the function");
 
-            if (string.IsNullOrEmpty(pathToAdd))
+            // The 'pathToAdd' could be a 'combined path' (path-separator-separated).
+            string[] newPaths = pathToAdd.Split(
+                Path.PathSeparator,
+                StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+            if (newPaths.Length is 0)
             {
-                // we don't want to append empty paths.
+                // The 'pathToAdd' doesn't really contain any paths to add.
                 return basePath;
             }
 
-            StringBuilder result = new(basePath);
-            // The 'pathToAdd' could be a 'combined path' (semicolon-separated).
-            foreach (string subPathToAdd in pathToAdd.Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+            var result = new StringBuilder(basePath);
+            var addedPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            string[] initialPaths = basePath.Split(
+                Path.PathSeparator,
+                StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+            foreach (string p in initialPaths)
             {
-                if (string.IsNullOrEmpty(subPathToAdd))
+                // Remove the trailing directory separators.
+                // Trailing white spaces were already removed by 'StringSplitOptions.TrimEntries'.
+                addedPaths.Add(NormalizePath(p));
+            }
+
+            foreach (string subPathToAdd in newPaths)
+            {
+                // Remove the trailing directory separators.
+                // Trailing white spaces were already removed by 'StringSplitOptions.TrimEntries'.
+                string normalizedPath = NormalizePath(subPathToAdd);
+                if (addedPaths.Contains(normalizedPath))
                 {
-                    // Extreme case: empty path after trimming - skip it.
+                    // The normalized sub path was already added - skip it.
                     continue;
                 }
 
-                // Searching in effective 'result' value ensures that possible duplicates in pathsToAdd are handled correctly.
-                if (PathContainsSubstring(result.ToString(), subPathToAdd))
-                {
-                    // The 'subPathToAdd' was already found - skip it.
-                    continue;
-                }
-
-                // The 'subPathToAdd' was not found - add it.
+                // The normalized sub path was not found - add it.
                 if (insertPosition is -1 || insertPosition >= result.Length)
                 {
-                    // Append 'subPathToAdd' to the end.
-                    if (result.Length > 0 && result[^1] == Path.PathSeparator)
+                    // Append the normalized sub path to the end.
+                    if (result.Length > 0 && result[^1] != Path.PathSeparator)
                     {
-                        result.Append(subPathToAdd);
-                    }
-                    else
-                    {
-                        result.Append(Path.PathSeparator).Append(subPathToAdd);
+                        result.Append(Path.PathSeparator);
                     }
 
+                    result.Append(normalizedPath);
                     // Next insertion should happen at the end.
                     insertPosition = result.Length;
                 }
@@ -1189,15 +1147,31 @@ namespace System.Management.Automation
                 {
                     // Insert at the requested location.
                     // This is used by the user-specific module path, the shared module path (<Program Files> location), and the PSHome module path.
-                    string strToInsert = subPathToAdd + Path.PathSeparator;
+                    string strToInsert = normalizedPath + Path.PathSeparator;
                     result.Insert(insertPosition, strToInsert);
 
                     // Next insertion should happen after the just inserted string.
                     insertPosition += strToInsert.Length;
                 }
+
+                // Add it to the set.
+                addedPaths.Add(normalizedPath);
             }
 
             return result.ToString();
+
+            // Local function to normalize a path by removing trailing directory separators.
+            static string NormalizePath(string path)
+            {
+                string normalizedPath = path.TrimEnd(Path.DirectorySeparatorChar);
+                if (normalizedPath.Length is 0)
+                {
+                    // If the 'path' is '\' or '/' only, we need to keep the ending directory separator.
+                    normalizedPath = Path.DirectorySeparatorChar.ToString();
+                }
+
+                return normalizedPath;
+            }
         }
 
         /// <summary>

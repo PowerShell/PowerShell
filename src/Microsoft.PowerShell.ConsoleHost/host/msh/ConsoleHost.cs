@@ -2254,20 +2254,16 @@ namespace Microsoft.PowerShell
             }
 
             // Print the stack trace.
-            var sb = new StringBuilder(capacity: 100)
-                .AppendLine()
-                .AppendLine($"--- {e.GetType().FullName} ---")
-                .AppendLine(e.StackTrace);
+            Console.Error.WriteLine($"\n--- {e.GetType().FullName} ---");
+            Console.Error.WriteLine(e.StackTrace);
 
             Exception inner = e.InnerException;
             while (inner is { })
             {
-                sb.AppendLine($"--- inner {inner.GetType().FullName} ---");
-                sb.AppendLine(inner.StackTrace);
+                Console.Error.WriteLine($"--- inner {inner.GetType().FullName} ---");
+                Console.Error.WriteLine(inner.StackTrace);
                 inner = inner.InnerException;
             }
-
-            Console.Error.WriteLine(sb.ToString());
         }
 
         /// <summary>
