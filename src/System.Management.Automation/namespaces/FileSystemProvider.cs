@@ -5840,9 +5840,12 @@ namespace Microsoft.PowerShell.Commands
 
                     // Check destination existence once to avoid expensive duplicate check
                     bool destinationExists = ItemExists(destination);
+                    bool shouldAppendDirName = false;
+
                     if (destinationExists && IsItemContainer(destination))
                     {
-                        destination = MakePath(destination, dir.Name);
+                        // Destination exists and is a container, append directory name
+                        shouldAppendDirName = true;
                     }
                     else if (!destinationExists)
                     {
@@ -5851,6 +5854,11 @@ namespace Microsoft.PowerShell.Commands
                         // multiple items with wildcards.
                         // CreateDirectory will create all parent directories as needed.
                         CreateDirectory(destination, false);
+                        shouldAppendDirName = true;
+                    }
+
+                    if (shouldAppendDirName)
+                    {
                         destination = MakePath(destination, dir.Name);
                     }
 
