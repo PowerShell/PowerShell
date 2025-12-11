@@ -1502,44 +1502,6 @@ namespace System.Management.Automation
                         }
                         else
                         {
-                            // When moving multiple items to a non-existent destination, create the
-                            // destination directory first to ensure all items preserve their names.
-                            // This prevents the first item from being renamed to the destination.
-                            if (providerPaths.Count > 1 && providerDestinationPaths.Count == 0 && destinationProvider != null)
-                            {
-                                try
-                                {
-                                    context.WriteVerbose($"Creating destination directory for multiple item move: {destinationProviderInternalPath}");
-                                    CmdletProvider destinationProviderInstance = GetProviderInstance(destinationProvider);
-                                    if (destinationProviderInstance != null)
-                                    {
-                                        // Use destinationContext to avoid polluting the main context with creation output
-                                        NewItemPrivate(
-                                            destinationProviderInstance,
-                                            destinationProviderInternalPath,
-                                            "Directory",
-                                            null,
-                                            destinationContext);
-                                        context.WriteVerbose($"Successfully created destination directory");
-                                    }
-                                    else
-                                    {
-                                        context.WriteVerbose($"Destination provider instance is null");
-                                    }
-                                }
-                                catch (Exception e)
-                                {
-                                    // If creation fails, write a warning but continue with the move.
-                                    // The provider will handle any remaining errors during the actual move.
-                                    context.WriteVerbose($"Failed to create destination directory: {e.Message}");
-                                    context.WriteDebug($"Failed to create destination directory: {e.Message}");
-                                }
-                            }
-                            else
-                            {
-                                context.WriteVerbose($"Not creating destination: providerPaths.Count={providerPaths.Count}, providerDestinationPaths.Count={providerDestinationPaths.Count}, destinationProvider={(destinationProvider != null ? "not null" : "null")}");
-                            }
-
                             foreach (string providerPath in providerPaths)
                             {
                                 MoveItemPrivate(providerInstance, providerPath, destinationProviderInternalPath, context);

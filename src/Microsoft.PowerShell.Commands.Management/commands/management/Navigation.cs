@@ -2984,21 +2984,49 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            foreach (string path in Path)
+            // When moving multiple items with wildcards to a non-existent destination,
+            // we need to create the destination directory first to ensure all items
+            // preserve their directory structure. Otherwise, the first directory gets
+            // renamed to the destination, and subsequent items are moved into it.
+            
+            if (!base.SuppressWildcardExpansion)
             {
-                if (base.SuppressWildcardExpansion)
-                {
-                    MoveItem(path, literalPath: true);
-                }
-                else
+                // First, collect all resolved paths to determine if we're moving multiple items
+                var allResolvedPaths = new List<string>();
+                foreach (string path in Path)
                 {
                     Collection<PathInfo> resolvedPaths = GetResolvedPaths(path);
-
                     foreach (PathInfo resolvedPathInfo in resolvedPaths)
                     {
-                        string resolvedPath = resolvedPathInfo.Path;
-                        MoveItem(resolvedPath, literalPath: true);
+                        allResolvedPaths.Add(resolvedPathInfo.Path);
                     }
+                }
+
+                // If moving multiple items and destination doesn't exist, create it first
+                if (allResolvedPaths.Count > 1 && !InvokeProvider.Item.Exists(Destination))
+                {
+                    try
+                    {
+                        InvokeProvider.Item.New(Destination, "Directory", null);
+                    }
+                    catch (Exception)
+                    {
+                        // If creation fails, continue anyway - the move operation will handle the error
+                    }
+                }
+
+                // Now proceed with the moves
+                foreach (string resolvedPath in allResolvedPaths)
+                {
+                    MoveItem(resolvedPath, literalPath: true);
+                }
+            }
+            else
+            {
+                // Literal path mode - process each path directly
+                foreach (string path in Path)
+                {
+                    MoveItem(path, literalPath: true);
                 }
             }
         }
