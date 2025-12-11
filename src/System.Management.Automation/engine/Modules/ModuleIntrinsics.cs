@@ -1106,7 +1106,7 @@ namespace System.Management.Automation
                 return basePath;
             }
 
-            var result = new StringBuilder(basePath);
+            var result = new StringBuilder(basePath, capacity: basePath.Length + pathToAdd.Length + newPaths.Length);
             var addedPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             string[] initialPaths = basePath.Split(
                 Path.PathSeparator,
@@ -1116,14 +1116,14 @@ namespace System.Management.Automation
             {
                 // Remove the trailing directory separators.
                 // Trailing white spaces were already removed by 'StringSplitOptions.TrimEntries'.
-                addedPaths.Add(NormalizePath(p));
+                addedPaths.Add(Path.TrimEndingDirectorySeparator(p));
             }
 
             foreach (string subPathToAdd in newPaths)
             {
                 // Remove the trailing directory separators.
                 // Trailing white spaces were already removed by 'StringSplitOptions.TrimEntries'.
-                string normalizedPath = NormalizePath(subPathToAdd);
+                string normalizedPath = Path.TrimEndingDirectorySeparator(subPathToAdd);
                 if (addedPaths.Contains(normalizedPath))
                 {
                     // The normalized sub path was already added - skip it.
@@ -1159,19 +1159,6 @@ namespace System.Management.Automation
             }
 
             return result.ToString();
-
-            // Local function to normalize a path by removing trailing directory separators.
-            static string NormalizePath(string path)
-            {
-                string normalizedPath = path.TrimEnd(Path.DirectorySeparatorChar);
-                if (normalizedPath.Length is 0)
-                {
-                    // If the 'path' is '\' or '/' only, we need to keep the ending directory separator.
-                    normalizedPath = Path.DirectorySeparatorChar.ToString();
-                }
-
-                return normalizedPath;
-            }
         }
 
         /// <summary>
