@@ -5838,6 +5838,15 @@ namespace Microsoft.PowerShell.Commands
                     // Get the DirectoryInfo
                     DirectoryInfo dir = new DirectoryInfo(path);
 
+                    if (!ItemExists(destination))
+                    {
+                        string parentDir = Path.GetDirectoryName(destination);
+                        if (!string.IsNullOrEmpty(parentDir) && Directory.Exists(parentDir))
+                        {
+                            Directory.CreateDirectory(destination);
+                        }
+                    }
+                    
                     if (ItemExists(destination) &&
                         IsItemContainer(destination))
                     {
