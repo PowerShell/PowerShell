@@ -5838,12 +5838,13 @@ namespace Microsoft.PowerShell.Commands
                     // Get the DirectoryInfo
                     DirectoryInfo dir = new DirectoryInfo(path);
 
-                    if (ItemExists(destination) &&
-                        IsItemContainer(destination))
+                    // Check destination existence once to avoid expensive duplicate check
+                    bool destinationExists = ItemExists(destination);
+                    if (destinationExists && IsItemContainer(destination))
                     {
                         destination = MakePath(destination, dir.Name);
                     }
-                    else if (!ItemExists(destination))
+                    else if (!destinationExists)
                     {
                         // When destination doesn't exist, treat it as a container to preserve
                         // the source directory name. This ensures consistent behavior when moving
