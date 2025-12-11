@@ -5846,12 +5846,18 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else if (!destinationExists)
                     {
-                        // When destination doesn't exist, treat it as a container to preserve
-                        // the source directory name. This ensures consistent behavior when moving
-                        // multiple items with wildcards.
-                        // CreateDirectory will create all parent directories as needed.
-                        CreateDirectory(destination, false);
-                        destination = MakePath(destination, dir.Name);
+                        // When destination doesn't exist, check if parent exists to determine intent:
+                        // - Parent exists: User wants to move into a new subdirectory (wildcard scenario)
+                        // - Parent doesn't exist: User wants to rename/move to a new location
+                        string parentPath = GetParentPath(destination, null);
+                        if (!string.IsNullOrEmpty(parentPath) && ItemExists(parentPath) && IsItemContainer(parentPath))
+                        {
+                            // Parent exists and is a container, so treat destination as a new container
+                            // This ensures consistent behavior when moving multiple items with wildcards.
+                            CreateDirectory(destination, false);
+                            destination = MakePath(destination, dir.Name);
+                        }
+                        // else: destination parent doesn't exist, treat as rename operation
                     }
 
                     // Don't allow moving a directory into itself or its sub-directory.
