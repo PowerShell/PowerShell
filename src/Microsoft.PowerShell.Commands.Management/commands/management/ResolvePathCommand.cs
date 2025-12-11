@@ -130,7 +130,7 @@ namespace Microsoft.PowerShell.Commands
                 try
                 {
                     // Since there is only one base path, it should be parsed literally.
-                    _relativeBasePath = SessionState.Path.GetUnresolvedProviderPathFromPSPath(_relativeBasePath, CmdletProviderContext, out _, out _relativeDrive);
+                    _relativeBasePath = SessionState.Path.GetUnresolvedProviderPathFromPSPath(RelativeBasePath, CmdletProviderContext, out _, out _relativeDrive);
                 }
                 catch (ProviderNotFoundException providerNotFound)
                 {
