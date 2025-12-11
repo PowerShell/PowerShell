@@ -2485,13 +2485,13 @@ function Start-PSBootstrap {
             Write-LogGroupEnd -Title "Install Windows Dependencies"
         }
 
+        # Ensure dotnet is available
+        Find-Dotnet
+
         if (-not $env:TF_BUILD) {
             if ($Scenario -eq 'DotNet' -or $Scenario -eq 'Both') {
                 Write-LogGroupStart -Title "Install .NET SDK"
                 Write-Log -message "Installing .NET global tools"
-
-                # Ensure dotnet is available
-                Find-Dotnet
 
                 # Install dotnet-format
                 Write-Verbose -Verbose "Installing dotnet-format global tool"
