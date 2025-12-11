@@ -130,7 +130,7 @@ Describe "Move-Item tests" -Tag "CI" {
         }
         
         It "Should preserve directory structure when moving with wildcard to non-existent destination" {
-            Move-Item -Path "$sourcePath/*" -Destination "$destPath/app"
+            Move-Item -Path "$sourcePath/*" -Destination "$destPath/app" -Verbose
             
             # Verify all items were moved
             "$sourcePath/bin" | Should -Not -Exist
