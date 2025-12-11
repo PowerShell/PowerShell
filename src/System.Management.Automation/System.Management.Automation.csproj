@@ -40,7 +40,7 @@
     <PackageReference Include="System.Security.Permissions" Version="10.0.0" />
     <!-- the following package(s) are from the powershell org -->
     <PackageReference Include="Microsoft.Management.Infrastructure" Version="3.0.0" />
-    <PackageReference Include="Microsoft.PowerShell.Native" Version="700.0.0-preview.1" />
+    <PackageReference Include="Microsoft.PowerShell.Native" Version="700.0.0-preview.2" />
     <!-- Signing APIs -->
   <PackageReference Include="Microsoft.Security.Extensions" Version="1.4.0" />
   </ItemGroup>
