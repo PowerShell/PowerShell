@@ -1502,6 +1502,27 @@ namespace System.Management.Automation
                         }
                         else
                         {
+                            // When moving multiple items to a non-existent destination, create the
+                            // destination directory first to ensure all items preserve their names.
+                            // This prevents the first item from being renamed to the destination.
+                            if (providerPaths.Count > 1 && providerDestinationPaths.Count == 0)
+                            {
+                                try
+                                {
+                                    NewItemPrivate(
+                                        providerInstance,
+                                        destinationProviderInternalPath,
+                                        "Directory",
+                                        null,
+                                        context);
+                                }
+                                catch
+                                {
+                                    // If creation fails (e.g., destination already exists due to race condition),
+                                    // continue with the move. The provider will handle any remaining errors.
+                                }
+                            }
+
                             foreach (string providerPath in providerPaths)
                             {
                                 MoveItemPrivate(providerInstance, providerPath, destinationProviderInternalPath, context);
