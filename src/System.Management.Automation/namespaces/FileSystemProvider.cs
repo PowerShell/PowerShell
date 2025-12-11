@@ -5843,6 +5843,19 @@ namespace Microsoft.PowerShell.Commands
                     {
                         destination = MakePath(destination, dir.Name);
                     }
+                    else if (!ItemExists(destination))
+                    {
+                        // When destination doesn't exist, check if its parent exists.
+                        // If so, treat destination as a container to preserve the source directory name.
+                        // This ensures consistent behavior when moving multiple items with wildcards.
+                        string parentPath = GetParentPath(destination, null);
+                        if (!string.IsNullOrEmpty(parentPath) && ItemExists(parentPath))
+                        {
+                            // Create the destination directory first
+                            CreateDirectory(destination, false);
+                            destination = MakePath(destination, dir.Name);
+                        }
+                    }
 
                     // Don't allow moving a directory into itself or its sub-directory.
                     string pathWithoutEndingSeparator = Path.TrimEndingDirectorySeparator(path);

@@ -110,4 +110,39 @@ Describe "Move-Item tests" -Tag "CI" {
             $renameToPath | Should -FileContentMatchExactly $booContent
         }
     }
+
+    Context "Move-Item with wildcard source and non-existent destination" {
+        BeforeEach {
+            $sourcePath = "$TESTDRIVE/install"
+            $destPath = "$TESTDRIVE/copy"
+            
+            # Setup directory structure
+            New-Item -ItemType Directory -Path "$sourcePath/bin" -Force | Out-Null
+            New-Item -ItemType File -Path "$sourcePath/bin/test.dll" | Out-Null
+            New-Item -ItemType Directory -Path "$sourcePath/lib" | Out-Null
+            New-Item -ItemType File -Path "$sourcePath/ReadMe.md" -Value "readme content" | Out-Null
+            New-Item -ItemType Directory -Path $destPath | Out-Null
+        }
+        
+        AfterEach {
+            Remove-Item "$TESTDRIVE/install" -Recurse -Force -ErrorAction SilentlyContinue
+            Remove-Item "$TESTDRIVE/copy" -Recurse -Force -ErrorAction SilentlyContinue
+        }
+        
+        It "Should preserve directory structure when moving with wildcard to non-existent destination" {
+            Move-Item -Path "$sourcePath/*" -Destination "$destPath/app"
+            
+            # Verify all items were moved
+            "$sourcePath/bin" | Should -Not -Exist
+            "$sourcePath/lib" | Should -Not -Exist
+            "$sourcePath/ReadMe.md" | Should -Not -Exist
+            
+            # Verify directory structure is preserved (bin should not be flattened)
+            "$destPath/app/bin" | Should -Exist
+            "$destPath/app/bin/test.dll" | Should -Exist
+            "$destPath/app/lib" | Should -Exist
+            "$destPath/app/ReadMe.md" | Should -Exist
+            "$destPath/app/ReadMe.md" | Should -FileContentMatchExactly "readme content"
+        }
+    }
 }
