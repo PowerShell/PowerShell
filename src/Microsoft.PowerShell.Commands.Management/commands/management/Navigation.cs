@@ -3007,7 +3007,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     try
                     {
-                        InvokeProvider.Item.New(Destination, "Directory", null);
+                        InvokeProvider.Item.New(Destination, null, "Directory", null, CmdletProviderContext);
                     }
                     catch (Exception)
                     {
