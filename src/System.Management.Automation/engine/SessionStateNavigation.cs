@@ -1509,6 +1509,7 @@ namespace System.Management.Automation
                             {
                                 try
                                 {
+                                    context.WriteVerbose($"Creating destination directory for multiple item move: {destinationProviderInternalPath}");
                                     CmdletProvider destinationProviderInstance = GetProviderInstance(destinationProvider);
                                     if (destinationProviderInstance != null)
                                     {
@@ -1519,14 +1520,24 @@ namespace System.Management.Automation
                                             "Directory",
                                             null,
                                             destinationContext);
+                                        context.WriteVerbose($"Successfully created destination directory");
+                                    }
+                                    else
+                                    {
+                                        context.WriteVerbose($"Destination provider instance is null");
                                     }
                                 }
                                 catch (Exception e)
                                 {
                                     // If creation fails, write a warning but continue with the move.
                                     // The provider will handle any remaining errors during the actual move.
+                                    context.WriteVerbose($"Failed to create destination directory: {e.Message}");
                                     context.WriteDebug($"Failed to create destination directory: {e.Message}");
                                 }
+                            }
+                            else
+                            {
+                                context.WriteVerbose($"Not creating destination: providerPaths.Count={providerPaths.Count}, providerDestinationPaths.Count={providerDestinationPaths.Count}, destinationProvider={(destinationProvider != null ? "not null" : "null")}");
                             }
 
                             foreach (string providerPath in providerPaths)
