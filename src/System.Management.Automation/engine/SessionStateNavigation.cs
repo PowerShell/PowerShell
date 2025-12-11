@@ -1509,8 +1509,9 @@ namespace System.Management.Automation
                             {
                                 try
                                 {
+                                    CmdletProvider destinationProviderInstance = GetProviderInstance(destinationProvider);
                                     NewItemPrivate(
-                                        providerInstance,
+                                        destinationProviderInstance,
                                         destinationProviderInternalPath,
                                         "Directory",
                                         null,
