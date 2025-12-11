@@ -2485,19 +2485,21 @@ function Start-PSBootstrap {
             Write-LogGroupEnd -Title "Install Windows Dependencies"
         }
 
-        if ($Scenario -eq 'DotNet' -or $Scenario -eq 'Both') {
-            Write-LogGroupStart -Title "Install .NET SDK"
-            Write-Log -message "Installing .NET global tools"
+        if (-not $env:TF_BUILD) {
+            if ($Scenario -eq 'DotNet' -or $Scenario -eq 'Both') {
+                Write-LogGroupStart -Title "Install .NET SDK"
+                Write-Log -message "Installing .NET global tools"
 
-            # Ensure dotnet is available
-            Find-Dotnet
+                # Ensure dotnet is available
+                Find-Dotnet
 
-            # Install dotnet-format
-            Write-Verbose -Verbose "Installing dotnet-format global tool"
-            Start-NativeExecution {
-                dotnet tool install --global dotnet-format
+                # Install dotnet-format
+                Write-Verbose -Verbose "Installing dotnet-format global tool"
+                Start-NativeExecution {
+                    dotnet tool install --global dotnet-format
+                }
+                Write-LogGroupEnd -Title "Install .NET Global Tools"
             }
-            Write-LogGroupEnd -Title "Install .NET Global Tools"
         }
 
         if ($env:TF_BUILD) {
