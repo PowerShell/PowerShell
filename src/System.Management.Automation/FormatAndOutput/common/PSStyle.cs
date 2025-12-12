@@ -43,6 +43,36 @@ namespace System.Management.Automation
     public sealed class PSStyle
     {
         /// <summary>
+        /// Decorates message by prepending given color escape.
+        /// </summary>
+        /// <param name="message">
+        /// String to colorize.
+        /// </param>
+        /// <param name="colorEscape">
+        /// ANSI color and/or font escape sequence.
+        /// </param>
+        /// <returns>
+        /// Decorated string, never null.
+        /// </returns>
+        public static string Decorate(string message, string colorEscape)
+            => (colorEscape ?? string.Empty) + (message ?? string.Empty);
+
+        /// <summary>
+        /// Decorates message by prepending given color escape, then resets it.
+        /// </summary>
+        /// <param name="message">
+        /// String to colorize.
+        /// </param>
+        /// <param name="colorEscape">
+        /// ANSI color and/or font escape sequence.
+        /// </param>
+        /// <returns>
+        /// Decorated string.
+        /// </returns>
+        public static string DecorateAndReset(string message, string colorEscape)
+            => Decorate(message, colorEscape) + Instance.Reset;
+
+        /// <summary>
         /// Contains foreground colors.
         /// </summary>
         public sealed class ForegroundColor
@@ -637,6 +667,78 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Contains formatting styles for user prompts.
+        /// </summary>
+        public sealed class PromptFormatting
+        {
+            private string _caption = "\x1b[1m";
+
+            /// <summary>
+            /// Gets or sets style for prompt caption.
+            /// </summary>
+            public string Caption
+            {
+                get => _caption;
+                set => _caption = ValidateNoContent(value);
+            }
+
+            private string _message = string.Empty;
+
+            /// <summary>
+            /// Gets or sets style for prompt message.
+            /// </summary>
+            public string Message
+            {
+                get => _message;
+                set => _message = ValidateNoContent(value);
+            }
+
+            private string _help = string.Empty;
+
+            /// <summary>
+            /// Gets or sets style for any prompt help.
+            /// </summary>
+            public string Help
+            {
+                get => _help;
+                set => _help = ValidateNoContent(value);
+            }
+
+            private string _choiceDefault = "\x1b[33;1m";
+
+            /// <summary>
+            /// Gets or sets style for choices selected by default.
+            /// </summary>
+            public string ChoiceDefault
+            {
+                get => _choiceDefault;
+                set => _choiceDefault = ValidateNoContent(value);
+            }
+
+            private string _choiceOther = "\x1b[1m";
+
+            /// <summary>
+            /// Gets or sets style for choices not selected by default.
+            /// </summary>
+            public string ChoiceOther
+            {
+                get => _choiceOther;
+                set => _choiceOther = ValidateNoContent(value);
+            }
+
+            private string _choiceHelp = string.Empty;
+
+            /// <summary>
+            /// Gets or sets style for choice displaying help.
+            /// </summary>
+            public string ChoiceHelp
+            {
+                get => _choiceHelp;
+                set => _choiceHelp = ValidateNoContent(value);
+            }
+        }
+
+        /// <summary>
         /// Gets or sets the rendering mode for output.
         /// </summary>
         public OutputRendering OutputRendering { get; set; } = OutputRendering.Host;
@@ -762,6 +864,11 @@ namespace System.Management.Automation
         /// </summary>
         public FileInfoFormatting FileInfo { get; }
 
+        /// <summary>
+        /// Gets Prompt colors.
+        /// </summary>
+        public PromptFormatting Prompt { get; }
+
         private static readonly PSStyle s_psstyle = new PSStyle();
 
         private PSStyle()
@@ -771,6 +878,7 @@ namespace System.Management.Automation
             Foreground = new ForegroundColor();
             Background = new BackgroundColor();
             FileInfo = new FileInfoFormatting();
+            Prompt = new PromptFormatting();
         }
 
         private static string ValidateNoContent(string text)
