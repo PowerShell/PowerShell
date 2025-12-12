@@ -262,9 +262,28 @@ function Get-ChangeLog
     $clExperimental = @()
 
     foreach ($commit in $new_commits) {
+        $prTitle = $commit.Subject
+        Write-Verbose "subject: $prTitle"
         Write-Verbose "authorname: $($commit.AuthorName)"
-        if ($commit.AuthorEmail.EndsWith("@microsoft.com") -or $powershell_team -contains $commit.AuthorName -or $Script:attribution_ignore_list -contains $commit.AuthorEmail) {
-            $commit.ChangeLogMessage = "- {0}" -f (Get-ChangeLogMessage $commit.Subject)
+
+        if ($prTitle -match '^\[release/v\d.\d\] ') {
+            ## The commit was from a backport PR. We need to get the real author in this case.
+            $userPattern = 'Triggered by @.+ on behalf of @(.+)'
+            if ($commit.Body -match $userPattern) {
+                $commit.AuthorGitHubLogin = $Matches.1
+                Write-Verbose "backport pr. real author login: $($commit.AuthorGitHubLogin)"
+            } else {
+                throw "The commit is from a backported PR but the PR description failed to match the pattern '$userPattern'. Was the template for backport PRs changed?\nPR Title: $prTitle"
+            }
+        }
+
+        if ($commit.AuthorGitHubLogin) {
+            $commit.ChangeLogMessage = ("- {0} (Thanks @{1}!)" -f (Get-ChangeLogMessage $prTitle), $commit.AuthorGitHubLogin)
+            $commit.ThankYouMessage = ("@{0}" -f ($commit.AuthorGitHubLogin))
+        } elseif ($commit.AuthorEmail.EndsWith("@microsoft.com") -or
+                  $powershell_team -contains $commit.AuthorName -or
+                  $Script:attribution_ignore_list -contains $commit.AuthorEmail) {
+            $commit.ChangeLogMessage = "- {0}" -f (Get-ChangeLogMessage $prTitle)
         } else {
             if ($community_login_map.ContainsKey($commit.AuthorEmail)) {
                 $commit.AuthorGitHubLogin = $community_login_map[$commit.AuthorEmail]
@@ -280,7 +299,7 @@ function Get-ChangeLog
                     $community_login_map[$commit.AuthorEmail] = $commit.AuthorGitHubLogin
                 }
             }
-            $commit.ChangeLogMessage = ("- {0} (Thanks @{1}!)" -f (Get-ChangeLogMessage $commit.Subject), $commit.AuthorGitHubLogin)
+            $commit.ChangeLogMessage = ("- {0} (Thanks @{1}!)" -f (Get-ChangeLogMessage $prTitle), $commit.AuthorGitHubLogin)
             $commit.ThankYouMessage = ("@{0}" -f ($commit.AuthorGitHubLogin))
         }
 
@@ -424,6 +443,9 @@ function Get-ChangeLogMessage
             return $OriginalMessage.replace($Matches.0,'') + " (Internal $($Matches.1))"
         }
         '^Build\(deps\): ' {
+            return $OriginalMessage.replace($Matches.0,'')
+        }
+        '^\[release/v\d.\d\] ' {
             return $OriginalMessage.replace($Matches.0,'')
         }
         default {
