@@ -43,7 +43,7 @@ namespace System.Management.Automation
     public sealed class PSStyle
     {
         /// <summary>
-        /// Decorates message by prepending given color escape, then resets if requested.
+        /// Decorates message by prepending given color escape.
         /// </summary>
         /// <param name="message">
         /// String to colorize.
@@ -51,14 +51,26 @@ namespace System.Management.Automation
         /// <param name="colorEscape">
         /// ANSI color and/or font escape sequence.
         /// </param>
-        /// <param name="reset">
-        /// If given, the color is reset to default (not necessarily previous) setting.
+        /// <returns>
+        /// Decorated string, never null.
+        /// </returns>
+        public static string Decorate(string message, string colorEscape)
+            => (colorEscape ?? string.Empty) + (message ?? string.Empty);
+
+        /// <summary>
+        /// Decorates message by prepending given color escape, then resets it.
+        /// </summary>
+        /// <param name="message">
+        /// String to colorize.
+        /// </param>
+        /// <param name="colorEscape">
+        /// ANSI color and/or font escape sequence.
         /// </param>
         /// <returns>
         /// Decorated string.
         /// </returns>
-        public static string Decorate(string message, string colorEscape, bool reset = true)
-            => colorEscape + message + (reset ? Instance.Reset : string.Empty);
+        public static string DecorateAndReset(string message, string colorEscape)
+            => Decorate(message, colorEscape) + Instance.Reset;
 
         /// <summary>
         /// Contains foreground colors.
@@ -659,9 +671,7 @@ namespace System.Management.Automation
         /// </summary>
         public sealed class PromptFormatting
         {
-            // TODO: use PSStyle.Foreground
-            // TODO: create a class AnsiEscape with ValidateNoContent in string ctor
-            private string _caption = "\x1b[33;1m";
+            private string _caption = "\x1b[1m";
 
             /// <summary>
             /// Gets or sets style for prompt caption.
@@ -672,7 +682,7 @@ namespace System.Management.Automation
                 set => _caption = ValidateNoContent(value);
             }
 
-            private string _message = "\x1b[0m";
+            private string _message = string.Empty;
 
             /// <summary>
             /// Gets or sets style for prompt message.
@@ -683,7 +693,7 @@ namespace System.Management.Automation
                 set => _message = ValidateNoContent(value);
             }
 
-            private string _help = "\x1b[0m";
+            private string _help = string.Empty;
 
             /// <summary>
             /// Gets or sets style for any prompt help.
@@ -694,7 +704,7 @@ namespace System.Management.Automation
                 set => _help = ValidateNoContent(value);
             }
 
-            private string _choiceDefault = "\x1b[97;44m";
+            private string _choiceDefault = "\x1b[33;1m";
 
             /// <summary>
             /// Gets or sets style for choices selected by default.
@@ -705,7 +715,7 @@ namespace System.Management.Automation
                 set => _choiceDefault = ValidateNoContent(value);
             }
 
-            private string _choiceOther = "\x1b[34m";
+            private string _choiceOther = "\x1b[1m";
 
             /// <summary>
             /// Gets or sets style for choices not selected by default.
@@ -716,7 +726,7 @@ namespace System.Management.Automation
                 set => _choiceOther = ValidateNoContent(value);
             }
 
-            private string _choiceHelp = "\x1b[0m";
+            private string _choiceHelp = string.Empty;
 
             /// <summary>
             /// Gets or sets style for choice displaying help.
