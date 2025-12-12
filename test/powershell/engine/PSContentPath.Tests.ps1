@@ -127,28 +127,21 @@ Describe "Get-PSContentPath and Set-PSContentPath cmdlet tests" -tags "CI" {
         }
 
         It "Get-PSContentPath expands environment variables (%TEMP%)" -Skip:(!$IsWindows -or $skipNoPwsh) {
-            # Run in single session to avoid migration interference
-            $script = @"
-                `$ErrorActionPreference = 'Stop'
-                Enable-ExperimentalFeature -Name PSContentPath -Scope CurrentUser -WarningAction Ignore
-                Set-PSContentPath -Path '%TEMP%\PowerShell' -ErrorAction Stop
-                Get-PSContentPath
-"@
-            $result = & $powershell -noprofile -command $script 2>&1
+            # Enable feature first
+            & $powershell -noprofile -command 'Enable-ExperimentalFeature -Name PSContentPath -Scope CurrentUser -WarningAction Ignore'
 
-            # Filter out any error messages, just get the path
-            $pathResult = $result | Where-Object { $_ -is [string] -and $_ -notmatch '^Set-PSContentPath:' } | Select-Object -Last 1
+            # Set path with environment variable
+            & $powershell -noprofile -command "Set-PSContentPath -Path '%TEMP%\PowerShell'"
 
-            if (-not $pathResult) {
-                Write-Host "Command output: $result" -ForegroundColor Red
-                throw "Set-PSContentPath or Get-PSContentPath failed"
-            }
+            # Get the path - should be expanded
+            $result = & $powershell -noprofile -command 'Get-PSContentPath'
 
-            $pathResult | Should -Not -Contain '%'
+            # Verify no environment variable syntax remains
+            $result | Should -Not -Contain '%'
 
             # Normalize paths for comparison (handles short path names like RUNNER~1)
             $expectedPath = [System.IO.Path]::GetFullPath((Join-Path $env:TEMP "PowerShell"))
-            $actualPath = [System.IO.Path]::GetFullPath($pathResult)
+            $actualPath = [System.IO.Path]::GetFullPath($result)
             $actualPath | Should -Be $expectedPath
         }
 
