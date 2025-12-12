@@ -403,7 +403,11 @@ export $envVarName='$guid'
             $psModulePath = & $powershell -NoProfile -SettingsFile $CustomSettingsFile -Command '$env:PSModulePath'
 
             ## $mPath1 already exists in the value of env PSModulePath, so it won't be added again.
-            $psModulePath.Contains("${mPath1}${pathSep}", [System.StringComparison]::OrdinalIgnoreCase) | Should -BeTrue
+            $index = $psModulePath.IndexOf("${mPath1}${pathSep}", [System.StringComparison]::OrdinalIgnoreCase)
+            $index | Should -BeGreaterThan 0
+            $index += $mPath1.Length
+            $psModulePath.IndexOf($mPath1, $index, [System.StringComparison]::OrdinalIgnoreCase) | Should -BeExactly -1
+
             ## $mPath2 should be added at the index position 0.
             $psModulePath.StartsWith("${mPath2}${pathSep}", [System.StringComparison]::OrdinalIgnoreCase) | Should -BeTrue
         }
