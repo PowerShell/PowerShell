@@ -711,7 +711,7 @@ Fix steps:
         if ((Test-ShouldGenerateExperimentalFeatures -Runtime $Options.Runtime)) {
             Write-Verbose "Build experimental feature list by running 'Get-ExperimentalFeature'" -Verbose
             $json = & $publishPath\pwsh -noprofile -command {
-                $expFeatures = Get-ExperimentalFeature | ForEach-Object -MemberName Name
+                $expFeatures = Get-ExperimentalFeature | Where-Object { $_.Name -ne 'PSContentPath' } | ForEach-Object -MemberName Name
                 ConvertTo-Json $expFeatures
             }
         } else {
