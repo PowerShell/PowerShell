@@ -127,15 +127,28 @@ Describe "Get-PSContentPath and Set-PSContentPath cmdlet tests" -tags "CI" {
         }
 
         It "Get-PSContentPath expands environment variables (%TEMP%)" -Skip:(!$IsWindows -or $skipNoPwsh) {
-            # Enable feature and set path with environment variable
-            & $powershell -noprofile -command "Enable-ExperimentalFeature -Name PSContentPath -Scope CurrentUser; Set-PSContentPath -Path '%TEMP%\PowerShell'"
+            # Run in single session to avoid migration interference
+            $script = @"
+                `$ErrorActionPreference = 'Stop'
+                Enable-ExperimentalFeature -Name PSContentPath -Scope CurrentUser -WarningAction Ignore
+                Set-PSContentPath -Path '%TEMP%\PowerShell' -ErrorAction Stop
+                Get-PSContentPath
+"@
+            $result = & $powershell -noprofile -command $script 2>&1
 
-            $result = & $powershell -noprofile -command 'Get-PSContentPath'
-            $result | Should -Not -Contain '%'
+            # Filter out any error messages, just get the path
+            $pathResult = $result | Where-Object { $_ -is [string] -and $_ -notmatch '^Set-PSContentPath:' } | Select-Object -Last 1
+
+            if (-not $pathResult) {
+                Write-Host "Command output: $result" -ForegroundColor Red
+                throw "Set-PSContentPath or Get-PSContentPath failed"
+            }
+
+            $pathResult | Should -Not -Contain '%'
 
             # Normalize paths for comparison (handles short path names like RUNNER~1)
             $expectedPath = [System.IO.Path]::GetFullPath((Join-Path $env:TEMP "PowerShell"))
-            $actualPath = [System.IO.Path]::GetFullPath($result)
+            $actualPath = [System.IO.Path]::GetFullPath($pathResult)
             $actualPath | Should -Be $expectedPath
         }
 
