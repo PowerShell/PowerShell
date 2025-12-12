@@ -46,6 +46,26 @@ $Script:powershell_team = @(
     "Justin Chung"
 )
 
+$script:psteam_logins = @(
+    'andyleejordan'
+    'TravisEz13'
+    'daxian-dbw'
+    'adityapatwardhan'
+    'SteveL-MSFT'
+    'dependabot[bot]'
+    'pwshBot'
+    'jshigetomi'
+    'SeeminglyScience'
+    'anamnavi'
+    'sdwheeler'
+    'Copilot'
+    'copilot-swe-agent'
+    'app/copilot-swe-agent'
+    'StevenBucher98'
+    'alerickson'
+    'tgauth'
+)
+
 # They are very active contributors, so we keep their email-login mappings here to save a few queries to Github.
 $Script:community_login_map = @{
     "darpa@yandex.ru" = "iSazonov"
@@ -262,35 +282,57 @@ function Get-ChangeLog
     $clExperimental = @()
 
     foreach ($commit in $new_commits) {
-        $prTitle = $commit.Subject
-        Write-Verbose "subject: $prTitle"
+        $commitSubject = $commit.Subject
+        $prNumber = $commit.PullRequest
+        Write-Verbose "subject: $commitSubject"
         Write-Verbose "authorname: $($commit.AuthorName)"
 
-        if ($prTitle -match '^\[release/v\d.\d\] ') {
+        try {
+            $pr = Invoke-RestMethod `
+                -Uri "https://api.github.com/repos/PowerShell/PowerShell/pulls/$prNumber" `
+                -Headers $header `
+                -ErrorAction Stop `
+                -Verbose:$false ## Always disable verbose to avoid noise when we debug this function.
+        } catch {
+            ## A commit may not have corresponding GitHub PRs. In that case, we will get status code 404 (Not Found).
+            ## Otherwise, let the error bubble up.
+            if ($_.Exception.Response.StatusCode -ne '404') {
+                throw
+            }
+        }
+
+        if ($commitSubject -match '^\[release/v\d.\d\] ') {
             ## The commit was from a backport PR. We need to get the real author in this case.
+            if (-not $pr) {
+                throw "The commit is from a backport PR (#$prNumber), but the PR cannot be found.`nPR Title: $commitSubject"
+            }
+
             $userPattern = 'Triggered by @.+ on behalf of @(.+)'
-            if ($commit.Body -match $userPattern) {
-                $commit.AuthorGitHubLogin = $Matches.1
-                Write-Verbose "backport pr. real author login: $($commit.AuthorGitHubLogin)"
+            if ($pr.body -match $userPattern) {
+                $commit.AuthorGitHubLogin = ($Matches.1).Trim()
+                Write-Verbose "backport PR. real author login: $($commit.AuthorGitHubLogin)"
             } else {
-                throw "The commit is from a backported PR but the PR description failed to match the pattern '$userPattern'. Was the template for backport PRs changed?\nPR Title: $prTitle"
+                throw "The commit is from a backport PR (#$prNumber), but the PR description failed to match the pattern '$userPattern'. Was the template for backport PRs changed?`nPR Title: $commitSubject"
             }
         }
 
         if ($commit.AuthorGitHubLogin) {
-            $commit.ChangeLogMessage = ("- {0} (Thanks @{1}!)" -f (Get-ChangeLogMessage $prTitle), $commit.AuthorGitHubLogin)
-            $commit.ThankYouMessage = ("@{0}" -f ($commit.AuthorGitHubLogin))
-        } elseif ($commit.AuthorEmail.EndsWith("@microsoft.com") -or
-                  $powershell_team -contains $commit.AuthorName -or
-                  $Script:attribution_ignore_list -contains $commit.AuthorEmail) {
-            $commit.ChangeLogMessage = "- {0}" -f (Get-ChangeLogMessage $prTitle)
+            if ($script:psteam_logins -contains $commit.AuthorGitHubLogin) {
+                $commit.ChangeLogMessage = "- {0}" -f (Get-ChangeLogMessage $commitSubject)
+            } else {
+                $commit.ChangeLogMessage = ("- {0} (Thanks @{1}!)" -f (Get-ChangeLogMessage $commitSubject), $commit.AuthorGitHubLogin)
+                $commit.ThankYouMessage = ("@{0}" -f ($commit.AuthorGitHubLogin))
+            }
+        } elseif ($commit.AuthorEmail.EndsWith("@microsoft.com") -or $powershell_team -contains $commit.AuthorName -or $Script:attribution_ignore_list -contains $commit.AuthorEmail) {
+            $commit.ChangeLogMessage = "- {0}" -f (Get-ChangeLogMessage $commitSubject)
         } else {
             if ($community_login_map.ContainsKey($commit.AuthorEmail)) {
                 $commit.AuthorGitHubLogin = $community_login_map[$commit.AuthorEmail]
             } else {
                 $uri = "https://api.github.com/repos/PowerShell/PowerShell/commits/$($commit.Hash)"
                 try{
-                    $response = Invoke-WebRequest -Uri $uri -Method Get -Headers $header -ErrorAction Ignore
+                    ## Always disable verbose to avoid noise when we debug this function.
+                    $response = Invoke-WebRequest -Uri $uri -Method Get -Headers $header -ErrorAction Ignore -Verbose:$false
                 } catch{}
                 if($response)
                 {
@@ -299,7 +341,8 @@ function Get-ChangeLog
                     $community_login_map[$commit.AuthorEmail] = $commit.AuthorGitHubLogin
                 }
             }
-            $commit.ChangeLogMessage = ("- {0} (Thanks @{1}!)" -f (Get-ChangeLogMessage $prTitle), $commit.AuthorGitHubLogin)
+
+            $commit.ChangeLogMessage = ("- {0} (Thanks @{1}!)" -f (Get-ChangeLogMessage $commitSubject), $commit.AuthorGitHubLogin)
             $commit.ThankYouMessage = ("@{0}" -f ($commit.AuthorGitHubLogin))
         }
 
@@ -308,16 +351,6 @@ function Get-ChangeLog
         }
 
         ## Get the labels for the PR
-        try {
-            $pr = Invoke-RestMethod -Uri "https://api.github.com/repos/PowerShell/PowerShell/pulls/$($commit.PullRequest)" -Headers $header -ErrorAction SilentlyContinue
-        }
-        catch {
-            if ($_.Exception.Response.StatusCode -eq '404') {
-                $pr = $null
-                #continue
-            }
-        }
-
         if($pr)
         {
             $clLabel = $pr.labels | Where-Object { $_.Name -match "^CL-"}
@@ -347,7 +380,7 @@ function Get-ChangeLog
                 "CL-Tools" { $clTools += $commit }
                 "CL-Untagged" { $clUntagged += $commit }
                 "CL-NotInBuild" { continue }
-                Default { throw "unknown tag '$cLabel' for PR: '$($commit.PullRequest)'" }
+                Default { throw "unknown tag '$cLabel' for PR: '$prNumber'" }
             }
         }
     }
