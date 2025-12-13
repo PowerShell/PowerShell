@@ -3374,16 +3374,18 @@ namespace Microsoft.PowerShell.Commands
                 // If the items see if we need to check the age of the file...
                 if (result && itemExistsDynamicParameters != null)
                 {
-                    DateTime lastWriteTime = fsinfo.LastWriteTime;
+                    DateTime lastWriteTimeUtc = fsinfo.LastWriteTimeUtc;
 
-                    if (itemExistsDynamicParameters.OlderThan.HasValue)
+                    if (itemExistsDynamicParameters.OlderThan is { } olderThan)
                     {
-                        result &= lastWriteTime < itemExistsDynamicParameters.OlderThan.Value;
+                        DateTime olderThanUtc = olderThan.ToUniversalTime();
+                        result &= lastWriteTimeUtc < olderThanUtc;
                     }
 
-                    if (itemExistsDynamicParameters.NewerThan.HasValue)
+                    if (itemExistsDynamicParameters.NewerThan is { } newerThan)
                     {
-                        result &= lastWriteTime > itemExistsDynamicParameters.NewerThan.Value;
+                        DateTime newerThanUtc = newerThan.ToUniversalTime();
+                        result &= lastWriteTimeUtc > newerThanUtc;
                     }
                 }
             }
