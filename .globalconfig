@@ -1498,7 +1498,7 @@ dotnet_diagnostic.IDE0100.severity = warning
 
 # IDE0110: RemoveUnnecessaryDiscard
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0110
-dotnet_diagnostic.IDE0110.severity = suggestion
+dotnet_diagnostic.IDE0110.severity = warning
 
 # IDE0120: SimplifyLINQExpression
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0120
