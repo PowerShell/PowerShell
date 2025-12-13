@@ -77,6 +77,15 @@ namespace Microsoft.PowerShell.Commands
         public StringEscapeHandling EscapeHandling { get; set; } = StringEscapeHandling.Default;
 
         /// <summary>
+        /// Gets or sets the SkipUnsupportedTypes property.
+        /// If the SkipUnsupportedTypes property is set to true, properties that cannot be
+        /// converted to JSON will be silently skipped. Otherwise, an exception will be thrown
+        /// when such properties are encountered.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter SkipUnsupportedTypes { get; set; }
+
+        /// <summary>
         /// IDisposable implementation, dispose of any disposable resources created by the cmdlet.
         /// </summary>
         public void Dispose()
@@ -123,6 +132,7 @@ namespace Microsoft.PowerShell.Commands
                     EnumsAsStrings.IsPresent,
                     Compress.IsPresent,
                     EscapeHandling,
+                    SkipUnsupportedTypes,
                     targetCmdlet: this,
                     _cancellationSource.Token);
 
