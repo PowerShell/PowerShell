@@ -9,6 +9,8 @@ using System.Linq;
 using System.Management.Automation.Internal;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading;
 
 using Microsoft.PowerShell;
@@ -277,7 +279,9 @@ namespace System.Management.Automation.Language
             internal readonly TypeBuilder _staticHelpersTypeBuilder;
             private readonly Dictionary<string, PropertyMemberAst> _definedProperties;
             private readonly Dictionary<string, List<Tuple<FunctionMemberAst, Type[]>>> _definedMethods;
+            private HashSet<Type> _interfaces;
             private Dictionary<Tuple<string, Type>, PropertyInfo> _abstractProperties;
+            private Dictionary<Tuple<string, Type, string>, MethodInfo> _interfaceMethods;
             internal readonly List<(string fieldName, IParameterMetadataProvider bodyAst, bool isStatic)> _fieldsToInitForMemberFunctions;
             private bool _baseClassHasDefaultCtor;
 
@@ -449,20 +453,9 @@ namespace System.Management.Automation.Language
             {
                 if (_abstractProperties == null)
                 {
+
                     _abstractProperties = new Dictionary<Tuple<string, Type>, PropertyInfo>();
-                    var allInterfaces = new HashSet<Type>();
-
-                    // TypeBuilder.GetInterfaces() returns only the interfaces that was explicitly passed to its constructor.
-                    // During compilation the interface hierarchy is flattened, so we only need to resolve one level of ancestral interfaces.
-                    foreach (var interfaceType in _typeBuilder.GetInterfaces())
-                    {
-                        foreach (var parentInterface in interfaceType.GetInterfaces())
-                        {
-                            allInterfaces.Add(parentInterface);
-                        }
-
-                        allInterfaces.Add(interfaceType);
-                    }
+                    var allInterfaces = GetImplementingInterfaces();
 
                     foreach (var interfaceType in allInterfaces)
                     {
@@ -485,6 +478,74 @@ namespace System.Management.Automation.Language
                 }
 
                 return _abstractProperties.TryGetValue(Tuple.Create(name, type), out interfaceProperty);
+            }
+
+            private bool ShouldImplementMethod(
+                string name,
+                Type returnType,
+                Type[] parameterTypes,
+                [NotNullWhen(true)] out MethodInfo interfaceMethod)
+            {
+                if (_interfaceMethods == null)
+                {
+                    _interfaceMethods = new Dictionary<Tuple<string, Type, string>, MethodInfo>();
+                    var allInterfaces = GetImplementingInterfaces();
+
+                    // We include NonPublic so we can also get protected interface methods.
+                    BindingFlags methodFlags = BindingFlags.Public |
+                        BindingFlags.NonPublic |
+                        BindingFlags.Instance |
+                        BindingFlags.Static;
+
+                    foreach (var interfaceType in allInterfaces)
+                    {
+                        foreach (var method in interfaceType.GetMethods(methodFlags))
+                        {
+                            if (!(method.IsFamily || method.IsFamilyOrAssembly || method.IsPublic))
+                            {
+                                // We want public and protected only, no internal or private.
+                                continue;
+                            }
+
+                            Type[] methodParameters = method.GetParameters().Select(p => p.ParameterType).ToArray();
+                            string methodParametersId = GetTypeArrayId(methodParameters);
+                            _interfaceMethods.Add(Tuple.Create(method.Name, method.ReturnType, methodParametersId), method);
+                        }
+                    }
+                }
+
+                string parameterTypeId = GetTypeArrayId(parameterTypes);
+                return _interfaceMethods.TryGetValue(Tuple.Create(name, returnType, parameterTypeId), out interfaceMethod);
+            }
+
+            private HashSet<Type> GetImplementingInterfaces()
+            {
+                if (_interfaces == null)
+                {
+                    _interfaces = new HashSet<Type>();
+
+                    // TypeBuilder.GetInterfaces() returns only the interfaces that was explicitly passed to its constructor.
+                    // During compilation the interface hierarchy is flattened, so we only need to resolve one level of ancestral interfaces.
+                    foreach (var interfaceType in _typeBuilder.GetInterfaces())
+                    {
+                        foreach (var parentInterface in interfaceType.GetInterfaces())
+                        {
+                            _interfaces.Add(parentInterface);
+                        }
+
+                        _interfaces.Add(interfaceType);
+                    }
+                }
+
+                return _interfaces;
+            }
+
+            private static string GetTypeArrayId(Type[] types)
+            {
+                string typeId = string.Join(string.Empty, types.Select(t => t.AssemblyQualifiedName));
+                byte[] typeHash = SHA256.HashData(Encoding.UTF8.GetBytes(typeId));
+
+                return Convert.ToHexString(typeHash);
             }
 
             public void DefineMembers()
@@ -884,12 +945,20 @@ namespace System.Management.Automation.Language
                     return;
                 }
 
+                var returnType = functionMemberAst.GetReturnType();
                 var attributes = functionMemberAst.IsPublic
                                      ? Reflection.MethodAttributes.Public
                                      : Reflection.MethodAttributes.Private;
+                MethodInfo interfaceBaseMethod = null;
                 if (functionMemberAst.IsStatic)
                 {
                     attributes |= Reflection.MethodAttributes.Static;
+
+                    ShouldImplementMethod(
+                        functionMemberAst.Name,
+                        returnType,
+                        parameterTypes,
+                        out interfaceBaseMethod);
                 }
                 else
                 {
@@ -902,7 +971,6 @@ namespace System.Management.Automation.Language
                     attributes |= Reflection.MethodAttributes.Virtual;
                 }
 
-                var returnType = functionMemberAst.GetReturnType();
                 if (returnType == null)
                 {
                     _parser.ReportError(functionMemberAst.ReturnType.Extent,
@@ -922,6 +990,11 @@ namespace System.Management.Automation.Language
                 var ilGenerator = method.GetILGenerator();
                 DefineMethodBody(functionMemberAst, ilGenerator, GetMetaDataName(method.Name, parameterTypes.Length), functionMemberAst.IsStatic, parameterTypes, returnType,
                     (i, n) => method.DefineParameter(i, ParameterAttributes.None, n));
+
+                if (interfaceBaseMethod != null)
+                {
+                    _typeBuilder.DefineMethodOverride(method, interfaceBaseMethod);
+                }
             }
 
             private void DefineConstructor(IParameterMetadataProvider ipmp, ReadOnlyCollection<AttributeAst> attributeAsts, bool isHidden, Reflection.MethodAttributes methodAttributes, Type[] parameterTypes)
