@@ -525,9 +525,9 @@ namespace System.Management.Automation
                     {
                         return (T)(object)XmlConvert.ToBoolean(stringValue);
                     }
-                    else if (typeof(T) == typeof(UInt16))
+                    else if (typeof(T) == typeof(ushort))
                     {
-                        return (T)(object)UInt16.Parse(stringValue, CultureInfo.InvariantCulture);
+                        return (T)(object)ushort.Parse(stringValue, CultureInfo.InvariantCulture);
                     }
                     else if (typeof(T) == typeof(byte[]))
                     {
@@ -651,7 +651,7 @@ namespace System.Management.Automation
             {
                 get
                 {
-                    UInt16 moduleTypeInt = GetPropertyValue<UInt16>(_baseObject, "ModuleType", 0);
+                    ushort moduleTypeInt = GetPropertyValue<ushort>(_baseObject, "ModuleType", 0);
                     DiscoveredModuleType moduleType = (DiscoveredModuleType)moduleTypeInt;
                     bool isPsCimModule = (moduleType == DiscoveredModuleType.Cim);
                     return isPsCimModule;
