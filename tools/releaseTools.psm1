@@ -46,6 +46,7 @@ $Script:powershell_team = @(
     "Justin Chung"
 )
 
+# The powershell team members GitHub logins. We use them to decide if the original author of a backport PR is from the team.
 $script:psteam_logins = @(
     'andyleejordan'
     'TravisEz13'
@@ -301,7 +302,7 @@ function Get-ChangeLog
             }
         }
 
-        if ($commitSubject -match '^\[release/v\d.\d\] ') {
+        if ($commitSubject -match '^\[release/v\d\.\d\] ') {
             ## The commit was from a backport PR. We need to get the real author in this case.
             if (-not $pr) {
                 throw "The commit is from a backport PR (#$prNumber), but the PR cannot be found.`nPR Title: $commitSubject"
@@ -487,7 +488,7 @@ function Get-ChangeLogMessage
         '^Build\(deps\): ' {
             return $OriginalMessage.replace($Matches.0,'')
         }
-        '^\[release/v\d.\d\] ' {
+        '^\[release/v\d\.\d\] ' {
             return $OriginalMessage.replace($Matches.0,'')
         }
         default {
