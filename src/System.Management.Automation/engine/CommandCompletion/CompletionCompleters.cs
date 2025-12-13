@@ -2462,6 +2462,15 @@ namespace System.Management.Automation
                         NativeCompletionSetLocationCommand(context, parameterName, result);
                         break;
                     }
+                case "Resolve-Path":
+                    {
+                        if (parameterName.Equals("RelativeBasePath", StringComparison.OrdinalIgnoreCase))
+                        {
+                            NativeCompletionPathArgument(context, "LiteralPath", result);
+                            break;
+                        }
+                        goto default;
+                    }
                 case "Move-Item":
                 case "Copy-Item":
                     {

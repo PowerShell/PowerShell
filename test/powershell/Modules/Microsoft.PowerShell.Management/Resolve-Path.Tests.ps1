@@ -176,3 +176,22 @@ Describe "Resolve-Path returns proper path" -Tag "CI" {
         (Resolve-Path -Path $Path -RelativeBasePath $BasePath -Force:$Force).Path | Should -BeExactly $ExpectedResult
     }
 }
+
+Describe "If the path specified by the parameter `-RelativeBasePath` contains wildcard characters, the command `Resolve-Path` should not produce any errors." -Tags "CI" {
+    BeforeAll {
+        $testFolder = 'TestDrive:\[Folder]'
+        New-Item -ItemType Directory -Path $testFolder
+        Push-Location -LiteralPath $testFolder
+    }
+
+    It "Should succeed in resolving a path when the relative base path contains a wildcard character" {
+        Resolve-Path -LiteralPath . -RelativeBasePath .           | Should -BeTrue
+        Resolve-Path -LiteralPath . -RelativeBasePath . -Relative | Should -BeTrue
+        Resolve-Path -Path .        -RelativeBasePath .           | Should -BeTrue
+        Resolve-Path -Path .        -RelativeBasePath . -Relative | Should -BeTrue
+    }
+
+    AfterAll {
+        Pop-Location
+    }
+}
