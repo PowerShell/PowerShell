@@ -296,7 +296,7 @@ function Get-ChangeLog
         } catch {
             ## A commit may not have corresponding GitHub PRs. In that case, we will get status code 404 (Not Found).
             ## Otherwise, let the error bubble up.
-            if ($_.Exception.Response.StatusCode -ne '404') {
+            if ($_.Exception.Response.StatusCode -ne 404) {
                 throw
             }
         }
@@ -329,15 +329,24 @@ function Get-ChangeLog
             if ($community_login_map.ContainsKey($commit.AuthorEmail)) {
                 $commit.AuthorGitHubLogin = $community_login_map[$commit.AuthorEmail]
             } else {
-                $uri = "https://api.github.com/repos/PowerShell/PowerShell/commits/$($commit.Hash)"
                 try{
                     ## Always disable verbose to avoid noise when we debug this function.
-                    $response = Invoke-WebRequest -Uri $uri -Method Get -Headers $header -ErrorAction Ignore -Verbose:$false
-                } catch{}
+                    $response = Invoke-RestMethod `
+                        -Uri "https://api.github.com/repos/PowerShell/PowerShell/commits/$($commit.Hash)" `
+                        -Headers $header `
+                        -ErrorAction Stop `
+                        -Verbose:$false
+                } catch {
+                    ## A commit could be available in ADO only. In that case, we will get status code 422 (UnprocessableEntity).
+                    ## Otherwise, let the error bubble up.
+                    if ($_.Exception.Response.StatusCode -ne 422) {
+                        throw
+                    }
+                }
+
                 if($response)
                 {
-                    $content = ConvertFrom-Json -InputObject $response.Content
-                    $commit.AuthorGitHubLogin = $content.author.login
+                    $commit.AuthorGitHubLogin = $response.author.login
                     $community_login_map[$commit.AuthorEmail] = $commit.AuthorGitHubLogin
                 }
             }
@@ -922,8 +931,8 @@ function Invoke-PRBackport {
         )
         $continue = $false
         while(!$continue) {
-            $input= Read-Host -Prompt ($Message + "`nType 'Yes<enter>' to continue 'No<enter>' to exit")
-            switch($input) {
+            $value = Read-Host -Prompt ($Message + "`nType 'Yes<enter>' to continue 'No<enter>' to exit")
+            switch($value) {
                 'yes' {
                     $continue= $true
                 }
