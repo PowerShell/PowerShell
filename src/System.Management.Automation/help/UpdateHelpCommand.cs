@@ -182,14 +182,14 @@ namespace Microsoft.PowerShell.Commands
 
                     _isInitialized = true;
                 }
-                
-                // check if there is an UI, if not Throw out terminating error. 
+
+                // check if there is an UI, if not Throw out terminating error.
                 var cultures = _language ?? _helpSystem.GetCurrentUICulture();
-                if (!cultures.Any()) 
-                {                    
+                if (!cultures.Any())
+                {
                     string cultureString = string.IsNullOrEmpty(CultureInfo.CurrentCulture.Name) ? CultureInfo.CurrentCulture.DisplayName : CultureInfo.CurrentCulture.Name;
                     string errMsg = StringUtil.Format(HelpDisplayStrings.FailedToUpdateHelpWithLocaleNoUICulture, cultureString);
-                    ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "FailedToUpdateHelpWithLocaleNoUICulture", ErrorCategory.InvalidOperation, targetObject: null);                    
+                    ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "FailedToUpdateHelpWithLocaleNoUICulture", ErrorCategory.InvalidOperation, targetObject: null);
                     ThrowTerminatingError(error);
                 }
 
