@@ -37,6 +37,7 @@ $Script:powershell_team = @(
     "dependabot-preview[bot]"
     "dependabot[bot]"
     "github-actions[bot]"
+    "Copilot"
     "Anam Navied"
     "Andrew Schwartzmeyer"
     "Jason Helmick"
@@ -74,11 +75,6 @@ $Script:community_login_map = @{
     "github@markekraus.com" = "markekraus"
     "info@powercode-consulting.se" = "powercode"
 }
-
-# Ignore dependency bumping bot (Dependabot):
-$Script:attribution_ignore_list = @(
-    'dependabot[bot]@users.noreply.github.com'
-)
 
 ##############################
 #.SYNOPSIS
@@ -324,7 +320,7 @@ function Get-ChangeLog
                 $commit.ChangeLogMessage = ("- {0} (Thanks @{1}!)" -f (Get-ChangeLogMessage $commitSubject), $commit.AuthorGitHubLogin)
                 $commit.ThankYouMessage = ("@{0}" -f ($commit.AuthorGitHubLogin))
             }
-        } elseif ($commit.AuthorEmail.EndsWith("@microsoft.com") -or $powershell_team -contains $commit.AuthorName -or $Script:attribution_ignore_list -contains $commit.AuthorEmail) {
+        } elseif ($commit.AuthorEmail.EndsWith("@microsoft.com") -or $powershell_team -contains $commit.AuthorName) {
             $commit.ChangeLogMessage = "- {0}" -f (Get-ChangeLogMessage $commitSubject)
         } else {
             if ($community_login_map.ContainsKey($commit.AuthorEmail)) {
