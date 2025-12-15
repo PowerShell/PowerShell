@@ -1039,7 +1039,7 @@ namespace System.Management.Automation.Language
                 // Handle ITuple types (System.Tuple, System.ValueTuple, etc.)
                 // 3 possibilities - too few, exact, or too many elements.
 
-                var getTupleLengthExpr = Expression.Property(target.Expression.Cast(typeof(System.Runtime.CompilerServices.ITuple)), CachedReflectionInfo.ITuple_Length);
+                var getTupleLengthExpr = Expression.Property(target.Expression.Cast(typeof(ITuple)), CachedReflectionInfo.ITuple_Length);
 
                 var restrictions = target.PSGetTypeRestriction().Merge(
                     BindingRestrictions.GetExpressionRestriction(Expression.Equal(getTupleLengthExpr,
