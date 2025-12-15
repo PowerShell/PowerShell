@@ -1033,6 +1033,126 @@ namespace System.Management.Automation.Language
                     restrictions)).WriteToDebugLog(this);
             }
 
+            var iTuple = target.Value as System.Runtime.CompilerServices.ITuple;
+            if (iTuple is not null)
+            {
+                // Handle ITuple types (System.Tuple, System.ValueTuple, etc.)
+                // 3 possibilities - too few, exact, or too many elements.
+
+                var getTupleLengthExpr = Expression.Property(target.Expression.Cast(typeof(System.Runtime.CompilerServices.ITuple)), CachedReflectionInfo.ITuple_Length);
+
+                var restrictions = target.PSGetTypeRestriction().Merge(
+                    BindingRestrictions.GetExpressionRestriction(Expression.Equal(getTupleLengthExpr,
+                                                                                  ExpressionCache.Constant(iTuple.Length))));
+
+                int i;
+                Expression[] newArrayElements = new Expression[_elements];
+                var temp = Expression.Variable(typeof(System.Runtime.CompilerServices.ITuple));
+                if (iTuple.Length <= _elements)
+                {
+                    // Too few or exact, create an array with the correct number assigned, fill in null for the extras
+
+                    for (i = 0; i < iTuple.Length; ++i)
+                    {
+                        newArrayElements[i] =
+                            Expression.Call(temp, CachedReflectionInfo.ITuple_get_Item, ExpressionCache.Constant(i));
+                    }
+
+                    for (; i < _elements; ++i)
+                    {
+                        newArrayElements[i] = ExpressionCache.NullConstant;
+                    }
+                }
+                else
+                {
+                    // Too many, create an array with the correct number assigned, and the last element contains
+                    // all the extras.
+                    for (i = 0; i < _elements - 1; ++i)
+                    {
+                        newArrayElements[i] =
+                            Expression.Call(temp, CachedReflectionInfo.ITuple_get_Item, ExpressionCache.Constant(i));
+                    }
+
+                    newArrayElements[_elements - 1] =
+                        Expression.Call(CachedReflectionInfo.EnumerableOps_GetTupleSlice, temp, ExpressionCache.Constant(_elements - 1)).Cast(typeof(object));
+                }
+
+                return (new DynamicMetaObject(
+                    Expression.Block(
+                        new[] { temp },
+                        Expression.Assign(temp, target.Expression.Cast(typeof(System.Runtime.CompilerServices.ITuple))),
+                        Expression.NewArrayInit(typeof(object), newArrayElements)),
+                    restrictions)).WriteToDebugLog(this);
+            }
+
+            // Handle types with Deconstruct method (DictionaryEntry, KeyValuePair<,>, etc.)
+            var deconstructMethod = EnumerableOps.GetDeconstructMethod(target.Value.GetType());
+            if (deconstructMethod is not null)
+            {
+                var paramCount = deconstructMethod.GetParameters().Length;
+                var restrictions = target.PSGetTypeRestriction();
+
+                Expression[] newArrayElements = new Expression[_elements];
+                var methodExpr = Expression.Constant(deconstructMethod, typeof(MethodInfo));
+
+                if (paramCount <= _elements)
+                {
+                    // Fewer or exact deconstructed values than variables
+                    // Call InvokeDeconstruct and extract each element, fill extras with null
+                    var tempArray = Expression.Variable(typeof(object[]), "deconstructed");
+                    var invokeExpr = Expression.Call(
+                        CachedReflectionInfo.EnumerableOps_InvokeDeconstruct,
+                        target.Expression.Cast(typeof(object)),
+                        methodExpr);
+
+                    for (int i = 0; i < paramCount; i++)
+                    {
+                        newArrayElements[i] = Expression.ArrayIndex(tempArray, ExpressionCache.Constant(i));
+                    }
+
+                    for (int i = paramCount; i < _elements; i++)
+                    {
+                        newArrayElements[i] = ExpressionCache.NullConstant;
+                    }
+
+                    return (new DynamicMetaObject(
+                        Expression.Block(
+                            new[] { tempArray },
+                            Expression.Assign(tempArray, invokeExpr),
+                            Expression.NewArrayInit(typeof(object), newArrayElements)),
+                        restrictions)).WriteToDebugLog(this);
+                }
+                else
+                {
+                    // More deconstructed values than variables
+                    // First N-1 get individual values, last gets remaining as array
+                    // Note: GetDeconstructSlice takes the already-deconstructed array (tempArray)
+                    // to avoid calling Deconstruct() multiple times.
+                    var tempArray = Expression.Variable(typeof(object[]), "deconstructed");
+                    var invokeExpr = Expression.Call(
+                        CachedReflectionInfo.EnumerableOps_InvokeDeconstruct,
+                        target.Expression.Cast(typeof(object)),
+                        methodExpr);
+
+                    for (int i = 0; i < _elements - 1; i++)
+                    {
+                        newArrayElements[i] = Expression.ArrayIndex(tempArray, ExpressionCache.Constant(i));
+                    }
+
+                    newArrayElements[_elements - 1] = Expression.Call(
+                        CachedReflectionInfo.EnumerableOps_GetDeconstructSlice,
+                        tempArray,
+                        ExpressionCache.Constant(_elements - 1)).Cast(typeof(object));
+
+                    return (new DynamicMetaObject(
+                        Expression.Block(
+                            new[] { tempArray },
+                            Expression.Assign(tempArray, invokeExpr),
+                            Expression.NewArrayInit(typeof(object), newArrayElements)),
+                        restrictions)).WriteToDebugLog(this);
+                }
+            }
+
             // We have a single element, the rest must be null.
             return (new DynamicMetaObject(
                 Expression.NewArrayInit(typeof(object), Enumerable.Repeat(ExpressionCache.NullConstant, _elements - 1)
