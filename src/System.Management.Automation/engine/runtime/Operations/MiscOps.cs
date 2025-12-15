@@ -3684,17 +3684,7 @@ namespace System.Management.Automation
                     continue;
                 }
 
-                bool allOut = true;
-                foreach (var param in parameters)
-                {
-                    if (!param.IsOut)
-                    {
-                        allOut = false;
-                        break;
-                    }
-                }
-
-                if (allOut)
+                if (parameters.All(param => param.IsOut))
                 {
                     return method;
                 }
