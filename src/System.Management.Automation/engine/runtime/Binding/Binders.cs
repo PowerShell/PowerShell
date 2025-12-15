@@ -1033,8 +1033,7 @@ namespace System.Management.Automation.Language
                     restrictions)).WriteToDebugLog(this);
             }
 
-            var iTuple = target.Value as System.Runtime.CompilerServices.ITuple;
-            if (iTuple is not null)
+            if (target.Value is ITuple iTuple)
             {
                 // Handle ITuple types (System.Tuple, System.ValueTuple, etc.)
                 // 3 possibilities - too few, exact, or too many elements.
@@ -1047,7 +1046,7 @@ namespace System.Management.Automation.Language
 
                 int i;
                 Expression[] newArrayElements = new Expression[_elements];
-                var temp = Expression.Variable(typeof(System.Runtime.CompilerServices.ITuple));
+                var temp = Expression.Variable(typeof(ITuple));
                 if (iTuple.Length <= _elements)
                 {
                     // Too few or exact, create an array with the correct number assigned, fill in null for the extras
