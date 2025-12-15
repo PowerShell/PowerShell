@@ -46,7 +46,7 @@ jobs:
           Write-Host "Completed xUnit test run."
 
       - name: Upload xUnit results
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         if: always()
         with:
           name: ${{ inputs.test_results_artifact_name }}
