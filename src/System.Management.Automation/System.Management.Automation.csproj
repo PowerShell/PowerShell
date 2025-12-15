@@ -32,12 +32,12 @@
     <!-- the Application Insights package -->
     <PackageReference Include="Microsoft.ApplicationInsights" Version="2.23.0" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
-    <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="10.0.0" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.0" />
-    <PackageReference Include="System.DirectoryServices" Version="10.0.0" />
-    <PackageReference Include="System.Management" Version="10.0.0" />
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.0" />
-    <PackageReference Include="System.Security.Permissions" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="10.0.1" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.1" />
+    <PackageReference Include="System.DirectoryServices" Version="10.0.1" />
+    <PackageReference Include="System.Management" Version="10.0.1" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.1" />
+    <PackageReference Include="System.Security.Permissions" Version="10.0.1" />
     <!-- the following package(s) are from the powershell org -->
     <PackageReference Include="Microsoft.Management.Infrastructure" Version="3.0.0" />
     <PackageReference Include="Microsoft.PowerShell.Native" Version="700.0.0-preview.2" />
