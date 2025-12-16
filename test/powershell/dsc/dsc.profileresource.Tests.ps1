@@ -160,8 +160,6 @@ Describe "DSC PowerShell Profile resource elevated tests" -Tag "CI", 'RequireAdm
         $testProfilePathAllUsersAllHosts = $PROFILE.AllUsersAllHosts
         Copy-Item -Path $testProfilePathAllUsersAllHosts -Destination "$TestDrive/allusers-allhosts-profile.bak" -Force -ErrorAction SilentlyContinue
         New-Item -Path $testProfilePathAllUsersAllHosts -Value $testProfileContent -Force -ItemType File
-
-        $env:PATH += "$pathSeparator$PSHome"
     }
     AfterAll {
         if ($skipCleanup) {
