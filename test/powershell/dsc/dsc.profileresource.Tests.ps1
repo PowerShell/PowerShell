@@ -4,8 +4,10 @@
 Describe "DSC PowerShell Profile Resource Tests" -Tag "CI" {
     BeforeAll {
         $DSC_ROOT = $env:DSC_ROOT
+        $skipCleanup = $false
 
         if (-not (Test-Path -Path $DSC_ROOT)) {
+            $skipCleanup = $true
             throw "DSC_ROOT environment variable is not set or path does not exist."
         }
 
@@ -40,6 +42,10 @@ Describe "DSC PowerShell Profile Resource Tests" -Tag "CI" {
         New-Item -Path $testProfilePathCurrentUserAllHosts -Value $testProfileContent -Force -ItemType File
     }
     AfterAll {
+        if ($skipCleanup) {
+            return
+        }
+
         # Restore original profile
         $testProfilePathCurrentUserCurrentHost = $PROFILE.CurrentUserCurrentHost
         if (Test-Path "$TestDrive/currentuser-currenthost-profile.bak") {
@@ -118,16 +124,19 @@ Describe "DSC PowerShell Profile Resource Tests" -Tag "CI" {
 Describe "DSC PowerShell Profile resource elevated tests" -Tag "CI", 'RequireAdminOnWindows', 'RequireSudoOnUnix' {
     BeforeAll {
         $DSC_ROOT = $env:DSC_ROOT
+        $skipCleanup = $false
 
         if (-not (Test-Path -Path $DSC_ROOT)) {
+            $skipCleanup = $true
             throw "DSC_ROOT environment variable is not set or path does not exist."
         }
 
         Write-Verbose "DSC_ROOT is set to $DSC_ROOT" -Verbose
+
+        $originalPath = $env:PATH
+
         $pathSeparator = [System.IO.Path]::PathSeparator
-
         $env:PATH += "$pathSeparator$DSC_ROOT"
-
         $env:PATH += "$pathSeparator$PSHome"
 
         Write-Verbose "Updated PATH to include DSC_ROOT: $env:PATH" -Verbose
@@ -151,11 +160,12 @@ Describe "DSC PowerShell Profile resource elevated tests" -Tag "CI", 'RequireAdm
         $testProfilePathAllUsersAllHosts = $PROFILE.AllUsersAllHosts
         Copy-Item -Path $testProfilePathAllUsersAllHosts -Destination "$TestDrive/allusers-allhosts-profile.bak" -Force -ErrorAction SilentlyContinue
         New-Item -Path $testProfilePathAllUsersAllHosts -Value $testProfileContent -Force -ItemType File
-
-        $originalPath = $env:PATH
-        $env:PATH += "$pathSeparator$PSHome"
     }
     AfterAll {
+        if ($skipCleanup) {
+            return
+        }
+
         $env:PATH = $originalPath
 
         $testProfilePathAllUsersCurrentHost = $PROFILE.AllUsersCurrentHost
