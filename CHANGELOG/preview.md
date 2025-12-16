@@ -4,7 +4,7 @@
 
 ### Engine Updates and Fixes
 
-- Properly Expand Aliases to their actual ResolvedCommand (#26571)
+- Properly Expand Aliases to their actual ResolvedCommand (#26571) (Thanks @kilasuit!)
 
 ### General Cmdlet Updates and Fixes
 
@@ -14,7 +14,7 @@
 - Add Delimiter parameter to `Get-Clipboard` (#26572) (Thanks @MartinGC94!)
 - Close pipe client handles after creating the child ssh process (#26564)
 - Make some experimental features stable (#26490)
-- DSC v3 resource for Powershell Profile (#26447)
+- DSC v3 resource for PowerShell Profile (#26447)
 
 ### Tools
 
@@ -31,13 +31,19 @@
 
 <details>
 
+<summary>
+
+<p>Expand to see details.</p>
+
+</summary>
+
 <ul>
 <li>Fix template path for rebuild branch check in package.yml (#26560)</li>
 <li>Update the macos package name for preview releases to match the previous pattern (#26576)</li>
 <li>Add rebuild branch support with conditional MSIX signing (#26573)</li>
 <li>Update the WCF packages to the latest version that is compatible with v4.10.3 (#26503)</li>
 <li>Improve ADO package build and validation across platforms (#26532)</li>
-<li>Mirror .NET/runtime ICU version range in PowerShell (#26563)</li>
+<li>Mirror .NET/runtime ICU version range in PowerShell (#26563) (Thanks @kasperk81!)</li>
 <li>Update the macos package name for preview releases to match the previous pattern (#26562)</li>
 <li>Fix condition syntax for StoreBroker package tasks in MSIX pipeline (#26561)</li>
 <li>Move package validation to package pipeline (#26558)</li>
@@ -52,7 +58,7 @@
 <li>Fix build to only enable ready-to-run for the Release configuration (#26481)</li>
 <li>Integrate Windows packaging into windows-ci workflow using reusable workflow (#26468)</li>
 <li>Update outdated package references (#26471)</li>
-<li>Github Workflow cleanup (#26439)</li>
+<li>GitHub Workflow cleanup (#26439)</li>
 <li>Update PSResourceGet package version to preview4 (#26438)</li>
 <li>Update PSReadLine to v2.4.5 (#26446)</li>
 <li>Add network isolation policy parameter to vPack pipeline (#26444)</li>
