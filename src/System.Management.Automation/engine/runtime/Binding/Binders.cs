@@ -1079,7 +1079,7 @@ namespace System.Management.Automation.Language
                 return (new DynamicMetaObject(
                     Expression.Block(
                         new[] { temp },
-                        Expression.Assign(temp, target.Expression.Cast(typeof(System.Runtime.CompilerServices.ITuple))),
+                        Expression.Assign(temp, target.Expression.Cast(typeof(ITuple))),
                         Expression.NewArrayInit(typeof(object), newArrayElements)),
                     restrictions)).WriteToDebugLog(this);
             }

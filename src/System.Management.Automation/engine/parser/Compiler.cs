@@ -298,10 +298,10 @@ namespace System.Management.Automation.Language
             typeof(IList).GetMethod("get_Item");
 
         internal static readonly PropertyInfo ITuple_Length =
-            typeof(System.Runtime.CompilerServices.ITuple).GetProperty(nameof(System.Runtime.CompilerServices.ITuple.Length));
+            typeof(ITuple).GetProperty(nameof(ITuple.Length));
 
         internal static readonly MethodInfo ITuple_get_Item =
-            typeof(System.Runtime.CompilerServices.ITuple).GetMethod("get_Item");
+            typeof(ITuple).GetMethod("get_Item");
 
         internal static readonly MethodInfo InterpreterError_NewInterpreterException =
             typeof(InterpreterError).GetMethod(nameof(InterpreterError.NewInterpreterException), StaticFlags);

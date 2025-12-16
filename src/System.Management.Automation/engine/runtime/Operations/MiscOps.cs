@@ -3648,7 +3648,7 @@ namespace System.Management.Automation
         /// <param name="tuple">The tuple to slice.</param>
         /// <param name="startIndex">The starting index.</param>
         /// <returns>An array containing the remaining elements.</returns>
-        internal static object[] GetTupleSlice(System.Runtime.CompilerServices.ITuple tuple, int startIndex)
+        internal static object[] GetTupleSlice(ITuple tuple, int startIndex)
         {
             int countElements = tuple.Length - startIndex;
             object[] result = new object[countElements];
