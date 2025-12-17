@@ -2489,8 +2489,8 @@ function Start-PSBootstrap {
         Find-Dotnet
 
         if (-not $env:TF_BUILD) {
-            if ($Scenario -eq 'DotNet' -or $Scenario -eq 'Both') {
-                Write-LogGroupStart -Title "Install .NET SDK"
+            if ($Scenario -in 'All', 'Tools') {
+                Write-LogGroupStart -Title "Install .NET Global Tools"
                 Write-Log -message "Installing .NET global tools"
 
                 # Install dotnet-format
