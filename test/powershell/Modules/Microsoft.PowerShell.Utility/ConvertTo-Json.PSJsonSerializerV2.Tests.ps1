@@ -7,36 +7,86 @@ BeforeDiscovery {
 
 Describe 'ConvertTo-Json with PSJsonSerializerV2' -Tags "CI" {
     Context "Default values and limits" {
-        It "V2: Default depth should be 64" -Skip:(-not $script:isV2Enabled) {
-            # Create a 64-level deep object
+        It "V2: Default depth should be unlimited" -Skip:(-not $script:isV2Enabled) {
+            # Create a 200-level deep object - should work with unlimited default depth
             $obj = @{ level = 0 }
-            for ($i = 1; $i -le 63; $i++) {
+            for ($i = 1; $i -lt 200; $i++) {
                 $obj = @{ level = $i; child = $obj }
             }
-            # This should work without truncation at default depth 64
+            # This should work without truncation at unlimited default depth
             $json = $obj | ConvertTo-Json -Compress -WarningVariable warn -WarningAction SilentlyContinue
-            $json | Should -Match '"level":63'
+            $json | Should -Match '"level":199'
+            $warn | Should -BeNullOrEmpty
         }
 
         It "V2: Large depth values should be allowed" -Skip:(-not $script:isV2Enabled) {
             { ConvertTo-Json -InputObject @{a=1} -Depth 10000 } | Should -Not -Throw
         }
 
-        It "V2: Depth -1 should work as unlimited" -Skip:(-not $script:isV2Enabled) {
-            $obj = @{ level = 0 }
-            for ($i = 1; $i -lt 200; $i++) {
-                $obj = @{ level = $i; child = $obj }
-            }
-            $json = $obj | ConvertTo-Json -Depth -1 -Compress -WarningAction SilentlyContinue
-            $json | Should -Match '"level":199'
+        It "V2: Depth 0 or negative should throw" -Skip:(-not $script:isV2Enabled) {
+            { ConvertTo-Json -InputObject @{a=1} -Depth 0 } | Should -Throw
+            { ConvertTo-Json -InputObject @{a=1} -Depth -1 } | Should -Throw
+            { ConvertTo-Json -InputObject @{a=1} -Depth -2 } | Should -Throw
         }
 
-        It "V2: Negative depth other than -1 should throw" -Skip:(-not $script:isV2Enabled) {
-            { ConvertTo-Json -InputObject @{a=1} -Depth -2 } | Should -Throw
+        It "V2: Minimum depth of 1 should work" -Skip:(-not $script:isV2Enabled) {
+            $obj = @{ a = @{ b = 1 } }
+            $json = $obj | ConvertTo-Json -Depth 1 -Compress -WarningVariable warn -WarningAction SilentlyContinue
+            $json | Should -Match '"a":'
+            $warn | Should -Not -BeNullOrEmpty  # depth exceeded warning
         }
 
         It "Legacy: Depth over 100 should throw when V2 is disabled" -Skip:$script:isV2Enabled {
             { ConvertTo-Json -InputObject @{a=1} -Depth 101 } | Should -Throw
+        }
+    }
+
+    Context "Circular reference detection" {
+        It "V2: Should detect self-referencing object" -Skip:(-not $script:isV2Enabled) {
+            $obj = [pscustomobject]@{ Name = "Test"; Self = $null }
+            $obj.Self = $obj
+            $json = $obj | ConvertTo-Json -Compress -WarningVariable warn -WarningAction SilentlyContinue
+            $json | Should -Not -BeNullOrEmpty
+            $warn | Should -Not -BeNullOrEmpty
+            $warn | Should -Match 'Circular reference'
+        }
+
+        It "V2: Should detect circular reference in nested objects" -Skip:(-not $script:isV2Enabled) {
+            $parent = [pscustomobject]@{ Name = "Parent"; Child = $null }
+            $child = [pscustomobject]@{ Name = "Child"; Parent = $null }
+            $parent.Child = $child
+            $child.Parent = $parent
+            $json = $parent | ConvertTo-Json -Compress -WarningVariable warn -WarningAction SilentlyContinue
+            $json | Should -Not -BeNullOrEmpty
+            $warn | Should -Not -BeNullOrEmpty
+            $warn | Should -Match 'Circular reference'
+        }
+
+        It "V2: Should detect circular reference in hashtable" -Skip:(-not $script:isV2Enabled) {
+            $hash = @{ Name = "Test" }
+            $hash.Self = $hash
+            $json = $hash | ConvertTo-Json -Compress -WarningVariable warn -WarningAction SilentlyContinue
+            $json | Should -Not -BeNullOrEmpty
+            $warn | Should -Not -BeNullOrEmpty
+            $warn | Should -Match 'Circular reference'
+        }
+
+        It "V2: Should detect circular reference in array" -Skip:(-not $script:isV2Enabled) {
+            $arr = @(1, 2, $null)
+            $arr[2] = $arr
+            $json = ConvertTo-Json -InputObject $arr -Compress -WarningVariable warn -WarningAction SilentlyContinue
+            $json | Should -Not -BeNullOrEmpty
+            $warn | Should -Not -BeNullOrEmpty
+            $warn | Should -Match 'Circular reference'
+        }
+
+        It "V2: Should handle same object appearing multiple times (not circular)" -Skip:(-not $script:isV2Enabled) {
+            $shared = @{ value = 42 }
+            $obj = @{ first = $shared; second = $shared }
+            # Same object appearing in different branches is fine, not circular
+            $json = $obj | ConvertTo-Json -Compress -WarningVariable warn -WarningAction SilentlyContinue
+            $json | Should -Match '"value":42'
+            # Note: This may or may not produce a warning depending on implementation
         }
     }
 
@@ -51,8 +101,8 @@ Describe 'ConvertTo-Json with PSJsonSerializerV2' -Tags "CI" {
         It "V2: Should convert deep objects to string when depth exceeded" -Skip:(-not $script:isV2Enabled) {
             $inner = [pscustomobject]@{ value = "deep" }
             $outer = [pscustomobject]@{ child = $inner }
-            $json = $outer | ConvertTo-Json -Depth 0 -Compress -WarningVariable warn -WarningAction SilentlyContinue
-            # At depth 0, child should be converted to string
+            $json = $outer | ConvertTo-Json -Depth 1 -Compress -WarningVariable warn -WarningAction SilentlyContinue
+            # At depth 1, child should be converted to string
             $json | Should -Match '"child":'
             $warn | Should -Not -BeNullOrEmpty
         }
