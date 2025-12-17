@@ -2,9 +2,7 @@
 # Licensed under the MIT License.
 
 BeforeDiscovery {
-    # Check if V2 is enabled using Get-ExperimentalFeature
-    $script:v2Feature = Get-ExperimentalFeature -Name PSJsonSerializerV2 -ErrorAction SilentlyContinue
-    $script:isV2Enabled = $script:v2Feature -and $script:v2Feature.Enabled
+    $script:isV2Enabled = $EnabledExperimentalFeatures.Contains('PSJsonSerializerV2')
 }
 
 Describe 'ConvertTo-Json with PSJsonSerializerV2' -Tags "CI" {
@@ -60,7 +58,7 @@ Describe 'ConvertTo-Json with PSJsonSerializerV2' -Tags "CI" {
         }
     }
 
-    Context "Non-string dictionary keys (Issue #5749)" {
+    Context "Non-string dictionary keys" {
         It "V2: Should serialize dictionary with integer keys" -Skip:(-not $script:isV2Enabled) {
             $dict = @{ 1 = "one"; 2 = "two" }
             $json = $dict | ConvertTo-Json -Compress
