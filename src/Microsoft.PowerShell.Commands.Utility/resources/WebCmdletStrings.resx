@@ -246,6 +246,9 @@
   <data name="JsonMaxDepthReached" xml:space="preserve">
     <value>Resulting JSON is truncated as serialization has exceeded the set depth of {0}.</value>
   </data>
+  <data name="JsonDepthExceedsLimit" xml:space="preserve">
+    <value>The value {0} is not valid for the Depth parameter. The valid range is 0 to {1}. To use higher values, enable the PSJsonSerializerV2 experimental feature.</value>
+  </data>
   <data name="WebSessionConnectionRecreated" xml:space="preserve">
     <value>The WebSession properties were changed between requests forcing all HTTP connections in the session to be recreated.</value>
   </data>

@@ -19,6 +19,11 @@ namespace Microsoft.PowerShell.Commands
     [OutputType(typeof(string))]
     public class ConvertToJsonCommand : PSCmdlet, IDisposable
     {
+        private const int DefaultDepth = 2;
+        private const int DefaultDepthV2 = 64;
+        private const int DepthAllowed = 100;
+        private const int DepthAllowedV2 = 1000;
+
         /// <summary>
         /// Gets or sets the InputObject property.
         /// </summary>
@@ -26,19 +31,35 @@ namespace Microsoft.PowerShell.Commands
         [AllowNull]
         public object InputObject { get; set; }
 
-        private int _depth = 2;
+        private int? _depth;
 
         private readonly CancellationTokenSource _cancellationSource = new();
 
         /// <summary>
         /// Gets or sets the Depth property.
+        /// When PSJsonSerializerV2 is enabled: default is 64, max is 1000.
+        /// Otherwise: default is 2, max is 100.
         /// </summary>
         [Parameter]
-        [ValidateRange(0, 100)]
+        [ValidateRange(0, DepthAllowedV2)]
         public int Depth
         {
-            get { return _depth; }
-            set { _depth = value; }
+            get
+            {
+                if (_depth.HasValue)
+                {
+                    return _depth.Value;
+                }
+
+                return ExperimentalFeature.IsEnabled(ExperimentalFeature.PSJsonSerializerV2)
+                    ? DefaultDepthV2
+                    : DefaultDepth;
+            }
+
+            set
+            {
+                _depth = value;
+            }
         }
 
         /// <summary>
@@ -107,6 +128,31 @@ namespace Microsoft.PowerShell.Commands
         protected override void ProcessRecord()
         {
             _inputObjects.Add(InputObject);
+        }
+
+        /// <summary>
+        /// Validate parameters and prepare for processing.
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            // When PSJsonSerializerV2 is not enabled, enforce the legacy max depth limit
+            if (!ExperimentalFeature.IsEnabled(ExperimentalFeature.PSJsonSerializerV2))
+            {
+                if (_depth.HasValue && _depth.Value > DepthAllowed)
+                {
+                    var errorRecord = new ErrorRecord(
+                        new ArgumentException(
+                            string.Format(
+                                System.Globalization.CultureInfo.CurrentCulture,
+                                WebCmdletStrings.JsonDepthExceedsLimit,
+                                _depth.Value,
+                                DepthAllowed)),
+                        "DepthExceedsLimit",
+                        ErrorCategory.InvalidArgument,
+                        _depth.Value);
+                    ThrowTerminatingError(errorRecord);
+                }
+            }
         }
 
         /// <summary>
