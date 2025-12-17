@@ -1817,7 +1817,7 @@ namespace System.Management.Automation
                                 return false;
                             }
                         }
-                        i += extraParamsCount;
+                        i += extraParamsCount - 1;
 
                         candidate.SetExtraParamsCount(extraParamsCount, elementType!);
                     }
