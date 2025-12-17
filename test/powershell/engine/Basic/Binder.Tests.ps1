@@ -374,6 +374,42 @@ public class DynamicClass : DynamicObject
             $il.Emit([System.Reflection.Emit.OpCodes]::Call, [string].GetMethod('Join', [type[]]@([char], [string[]])))
             $il.Emit([System.Reflection.Emit.OpCodes]::Ret)
 
+            $methodWithNameConflict = $typeBuilder.DefineMethod(
+                'MethodWithNameConflictWithDefaults',
+                [System.Reflection.MethodAttributes]'Public, Static',
+                [string],
+                [type[]]@([string], [string], [string]))
+
+            for ($i = 0; $i -lt 3; $i++) {
+                $param = $methodWithNameConflict.DefineParameter(
+                    $i + 1,
+                    [System.Reflection.ParameterAttributes]'HasDefault, Optional',
+                    "arg0")
+                $param.SetConstant("default$i")
+            }
+
+            $il = $methodWithNameConflict.GetILGenerator()
+            $il.Emit([System.Reflection.Emit.OpCodes]::Ldc_I4_S, 45)  # '-'
+            $il.Emit([System.Reflection.Emit.OpCodes]::Ldc_I4_3)
+            $il.Emit([System.Reflection.Emit.OpCodes]::Newarr, [string])
+            $il.Emit([System.Reflection.Emit.OpCodes]::Dup)
+            $il.Emit([System.Reflection.Emit.OpCodes]::Ldc_I4_0)
+            $il.Emit([System.Reflection.Emit.OpCodes]::Ldarg_0)
+            $il.Emit([System.Reflection.Emit.OpCodes]::Stelem_Ref)
+
+            $il.Emit([System.Reflection.Emit.OpCodes]::Dup)
+            $il.Emit([System.Reflection.Emit.OpCodes]::Ldc_I4_1)
+            $il.Emit([System.Reflection.Emit.OpCodes]::Ldarg_1)
+            $il.Emit([System.Reflection.Emit.OpCodes]::Stelem_Ref)
+
+            $il.Emit([System.Reflection.Emit.OpCodes]::Dup)
+            $il.Emit([System.Reflection.Emit.OpCodes]::Ldc_I4_2)
+            $il.Emit([System.Reflection.Emit.OpCodes]::Ldarg_2)
+            $il.Emit([System.Reflection.Emit.OpCodes]::Stelem_Ref)
+
+            $il.Emit([System.Reflection.Emit.OpCodes]::Call, [string].GetMethod('Join', [type[]]@([char], [string[]])))
+            $il.Emit([System.Reflection.Emit.OpCodes]::Ret)
+
             $TestClass = $typeBuilder.CreateType()
         }
 
@@ -395,6 +431,26 @@ public class DynamicClass : DynamicObject
 
         It "Calls method with argument name conflict last match set" {
             $TestClass::MethodWithNameConflict('foo', 'bar', arg0: 'test') | Should -Be foo-bar-test
+        }
+
+        It "Calls method with argument name conflict with defaults - no values" {
+            $TestClass::MethodWithNameConflictWithDefaults() | Should -Be default0-default1-default2
+        }
+
+        It "Calls method with argument name conflict with defaults - set positionally" {
+            $TestClass::MethodWithNameConflictWithDefaults(1, 2, 3) | Should -Be 1-2-3
+        }
+
+        It "Calls method with argument name conflict with defaults - named with no positionals" {
+            $TestClass::MethodWithNameConflictWithDefaults(arg0: 'test') | Should -Be test-default1-default2
+        }
+
+        It "Calls method with argument name conflict with defaults - named with first positional" {
+            $TestClass::MethodWithNameConflictWithDefaults(1, arg0: 'test') | Should -Be 1-test-default2
+        }
+
+        It "Calls method with argument name conflict with defaults - named with 2 positionals" {
+            $TestClass::MethodWithNameConflictWithDefaults(1, 2, arg0: 'test') | Should -Be 1-2-test
         }
     }
 
