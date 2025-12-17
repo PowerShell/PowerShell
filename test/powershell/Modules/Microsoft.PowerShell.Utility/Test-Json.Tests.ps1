@@ -493,7 +493,7 @@ Describe "Test-Json" -Tags "CI" {
 
         $result | Should -BeFalse
         # Should report error only for the invalid item, not for valid items
-        $errorVar.Count | Should -BeGreaterOrEqual 1
+        $errorVar.Count | Should -BeGreaterThan 0
         $errorVar[0].Exception.Message | Should -Match "/ports/1"
     }
 
