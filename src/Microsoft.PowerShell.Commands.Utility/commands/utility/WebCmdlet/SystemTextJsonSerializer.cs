@@ -118,7 +118,7 @@ namespace Microsoft.PowerShell.Commands
     /// - Support for PSObject with extended/adapted properties
     /// - Support for non-string dictionary keys (converted via ToString())
     /// - Respects JsonIgnoreAttribute and PowerShell's HiddenAttribute
-    /// - Special handling for Int64/UInt64 enums (JavaScript precision issue)
+    /// - Special handling for Int64/UInt64 enums (JavaScript precision issue).
     /// </para>
     /// </remarks>
     internal sealed class PowerShellJsonWriter
@@ -149,8 +149,10 @@ namespace Microsoft.PowerShell.Commands
         {
             /// <summary>Write a value (may be primitive or complex).</summary>
             WriteValue,
+
             /// <summary>Write end of JSON object.</summary>
             EndObject,
+
             /// <summary>Write end of JSON array.</summary>
             EndArray,
         }
@@ -569,7 +571,7 @@ namespace Microsoft.PowerShell.Commands
 
             var entries = new List<(string Key, object? Value)>
             {
-                ("value", null)
+                ("value", null),
             };
 
             CollectExtendedProperties(entries, pso, writtenKeys: null, currentDepth, isCustomObject: false);
