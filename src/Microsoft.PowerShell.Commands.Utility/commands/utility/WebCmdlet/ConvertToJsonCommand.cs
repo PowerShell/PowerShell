@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Numerics;
@@ -337,9 +338,41 @@ namespace Microsoft.PowerShell.Commands
 
                 // Add custom converters for PowerShell-specific types
                 options.Converters.Add(new JsonConverterInt64Enum());
-                options.Converters.Add(new JsonConverterPSObject(cmdlet));
+                options.Converters.Add(new JsonConverterBigInteger());
+                options.Converters.Add(new JsonConverterNullString());
+                options.Converters.Add(new JsonConverterDBNull());
+                options.Converters.Add(new JsonConverterPSObject(cmdlet, maxDepth));
 
-                return System.Text.Json.JsonSerializer.Serialize(objectToProcess, objectToProcess.GetType(), options);
+                // Handle JObject specially to avoid IEnumerable serialization
+                if (objectToProcess is Newtonsoft.Json.Linq.JObject jObj)
+                {
+                    // Serialize JObject directly using our custom logic
+                    using var stream = new System.IO.MemoryStream();
+                    using (var writer = new Utf8JsonWriter(stream, new JsonWriterOptions { Indented = !compressOutput, Encoder = GetEncoder(stringEscapeHandling) }))
+                    {
+                        writer.WriteStartObject();
+                        foreach (var prop in jObj.Properties())
+                        {
+                            writer.WritePropertyName(prop.Name);
+                            var value = prop.Value.Type switch
+                            {
+                                Newtonsoft.Json.Linq.JTokenType.String => prop.Value.ToObject<string>(),
+                                Newtonsoft.Json.Linq.JTokenType.Integer => prop.Value.ToObject<long>(),
+                                Newtonsoft.Json.Linq.JTokenType.Float => prop.Value.ToObject<double>(),
+                                Newtonsoft.Json.Linq.JTokenType.Boolean => prop.Value.ToObject<bool>(),
+                                Newtonsoft.Json.Linq.JTokenType.Null => (object?)null,
+                                _ => prop.Value.ToString()
+                            };
+                            System.Text.Json.JsonSerializer.Serialize(writer, value, options);
+                        }
+                        writer.WriteEndObject();
+                    }
+                    return System.Text.Encoding.UTF8.GetString(stream.ToArray());
+                }
+
+                // Wrap in PSObject to ensure ETS properties are preserved
+                var pso = PSObject.AsPSObject(objectToProcess);
+                return System.Text.Json.JsonSerializer.Serialize(pso, typeof(PSObject), options);
             }
             catch (OperationCanceledException)
             {
@@ -365,10 +398,12 @@ namespace Microsoft.PowerShell.Commands
     internal sealed class JsonConverterPSObject : System.Text.Json.Serialization.JsonConverter<PSObject>
     {
         private readonly PSCmdlet? _cmdlet;
+        private readonly int _maxDepth;
 
-        public JsonConverterPSObject(PSCmdlet? cmdlet)
+        public JsonConverterPSObject(PSCmdlet? cmdlet, int maxDepth)
         {
             _cmdlet = cmdlet;
+            _maxDepth = maxDepth;
         }
 
         public override PSObject? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
@@ -386,13 +421,50 @@ namespace Microsoft.PowerShell.Commands
 
             var obj = pso.BaseObject;
 
+            // Check if PSObject has Extended/Adapted properties
+            bool hasETSProperties = pso.Properties.Match("*", PSMemberTypes.NoteProperty | PSMemberTypes.AliasProperty).Count > 0;
+
             // Handle special types - check for null-like objects
-            if (LanguagePrimitives.IsNull(obj) || obj is DBNull)
+            if (LanguagePrimitives.IsNull(obj) || obj is DBNull or System.Management.Automation.Language.NullString)
             {
-                writer.WriteNullValue();
+                // If there are ETS properties, serialize as object with those properties
+                if (hasETSProperties)
+                {
+                    writer.WriteStartObject();
+                    writer.WritePropertyName("value");
+                    writer.WriteNullValue();
+                    AppendPSProperties(writer, pso, options, excludeBaseProperties: true);
+                    writer.WriteEndObject();
+                }
+                else
+                {
+                    writer.WriteNullValue();
+                }
                 return;
             }
 
+            // Handle Newtonsoft.Json.Linq.JObject by converting properties manually
+            if (obj is Newtonsoft.Json.Linq.JObject jObject)
+            {
+                writer.WriteStartObject();
+                foreach (var prop in jObject.Properties())
+                {
+                    writer.WritePropertyName(prop.Name);
+                    // Convert JToken value to appropriate .NET type
+                    var value = prop.Value.Type switch
+                    {
+                        Newtonsoft.Json.Linq.JTokenType.String => prop.Value.ToObject<string>(),
+                        Newtonsoft.Json.Linq.JTokenType.Integer => prop.Value.ToObject<long>(),
+                        Newtonsoft.Json.Linq.JTokenType.Float => prop.Value.ToObject<double>(),
+                        Newtonsoft.Json.Linq.JTokenType.Boolean => prop.Value.ToObject<bool>(),
+                        Newtonsoft.Json.Linq.JTokenType.Null => (object?)null,
+                        _ => prop.Value.ToString()
+                    };
+                    System.Text.Json.JsonSerializer.Serialize(writer, value, options);
+                }
+                writer.WriteEndObject();
+                return;
+            }
             // If PSObject wraps a primitive type, serialize the base object directly
             if (IsPrimitiveType(obj))
             {
@@ -430,7 +502,12 @@ namespace Microsoft.PowerShell.Commands
                 || obj is Uri;
         }
 
-        private static void SerializeDictionary(Utf8JsonWriter writer, PSObject pso, IDictionary dict, JsonSerializerOptions options)
+        private static bool IsPrimitiveTypeOrNull(object? obj)
+        {
+            return obj is null || IsPrimitiveType(obj);
+        }
+
+        private void SerializeDictionary(Utf8JsonWriter writer, PSObject pso, IDictionary dict, JsonSerializerOptions options)
         {
             writer.WriteStartObject();
 
@@ -439,7 +516,36 @@ namespace Microsoft.PowerShell.Commands
             {
                 string key = entry.Key?.ToString() ?? string.Empty;
                 writer.WritePropertyName(key);
-                System.Text.Json.JsonSerializer.Serialize(writer, entry.Value, options);
+                
+                // If maxDepth is 0, convert non-primitive values to string
+                if (_maxDepth == 0 && entry.Value is not null && !IsPrimitiveTypeOrNull(entry.Value))
+                {
+                    writer.WriteStringValue(entry.Value.ToString());
+                }
+                // Handle Newtonsoft.Json.Linq.JObject specially
+                else if (entry.Value is Newtonsoft.Json.Linq.JObject jObject)
+                {
+                    writer.WriteStartObject();
+                    foreach (var prop in jObject.Properties())
+                    {
+                        writer.WritePropertyName(prop.Name);
+                        var value = prop.Value.Type switch
+                        {
+                            Newtonsoft.Json.Linq.JTokenType.String => prop.Value.ToObject<string>(),
+                            Newtonsoft.Json.Linq.JTokenType.Integer => prop.Value.ToObject<long>(),
+                            Newtonsoft.Json.Linq.JTokenType.Float => prop.Value.ToObject<double>(),
+                            Newtonsoft.Json.Linq.JTokenType.Boolean => prop.Value.ToObject<bool>(),
+                            Newtonsoft.Json.Linq.JTokenType.Null => (object?)null,
+                            _ => prop.Value.ToString()
+                        };
+                        System.Text.Json.JsonSerializer.Serialize(writer, value, options);
+                    }
+                    writer.WriteEndObject();
+                }
+                else
+                {
+                    System.Text.Json.JsonSerializer.Serialize(writer, entry.Value, options);
+                }
             }
 
             // Add PSObject extended properties
@@ -448,14 +554,14 @@ namespace Microsoft.PowerShell.Commands
             writer.WriteEndObject();
         }
 
-        private static void SerializeAsObject(Utf8JsonWriter writer, PSObject pso, JsonSerializerOptions options)
+        private void SerializeAsObject(Utf8JsonWriter writer, PSObject pso, JsonSerializerOptions options)
         {
             writer.WriteStartObject();
             AppendPSProperties(writer, pso, options, excludeBaseProperties: false);
             writer.WriteEndObject();
         }
 
-        private static void AppendPSProperties(Utf8JsonWriter writer, PSObject pso, JsonSerializerOptions options, bool excludeBaseProperties)
+        private void AppendPSProperties(Utf8JsonWriter writer, PSObject pso, JsonSerializerOptions options, bool excludeBaseProperties)
         {
             var memberTypes = excludeBaseProperties
                 ? PSMemberViewTypes.Extended
@@ -477,7 +583,26 @@ namespace Microsoft.PowerShell.Commands
                 {
                     var value = prop.Value;
                     writer.WritePropertyName(prop.Name);
-                    System.Text.Json.JsonSerializer.Serialize(writer, value, options);
+                    
+                    // If maxDepth is 0, convert non-primitive values to string
+                    if (_maxDepth == 0 && value is not null && !IsPrimitiveTypeOrNull(value))
+                    {
+                        writer.WriteStringValue(value.ToString());
+                    }
+                    else
+                    {
+                        // Handle null values directly (including AutomationNull)
+                        if (LanguagePrimitives.IsNull(value))
+                        {
+                            writer.WriteNullValue();
+                        }
+                        else
+                        {
+                            // Wrap value in PSObject to ensure custom converters are applied
+                            var psoValue = PSObject.AsPSObject(value);
+                            System.Text.Json.JsonSerializer.Serialize(writer, psoValue, typeof(PSObject), options);
+                        }
+                    }
                 }
                 catch
                 {
@@ -527,6 +652,55 @@ namespace Microsoft.PowerShell.Commands
         {
             // Convert to string to avoid JavaScript precision issues with large integers
             writer.WriteStringValue(value.ToString("D"));
+        }
+    }
+
+    /// <summary>
+    /// JsonConverter for NullString to serialize as null.
+    /// </summary>
+    internal sealed class JsonConverterNullString : System.Text.Json.Serialization.JsonConverter<System.Management.Automation.Language.NullString>
+    {
+        public override System.Management.Automation.Language.NullString? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Write(Utf8JsonWriter writer, System.Management.Automation.Language.NullString value, JsonSerializerOptions options)
+        {
+            writer.WriteNullValue();
+        }
+    }
+
+    /// <summary>
+    /// JsonConverter for DBNull to serialize as null.
+    /// </summary>
+    internal sealed class JsonConverterDBNull : System.Text.Json.Serialization.JsonConverter<DBNull>
+    {
+        public override DBNull? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Write(Utf8JsonWriter writer, DBNull value, JsonSerializerOptions options)
+        {
+            writer.WriteNullValue();
+        }
+    }
+
+    /// <summary>
+    /// JsonConverter for BigInteger to serialize as number string.
+    /// </summary>
+    internal sealed class JsonConverterBigInteger : System.Text.Json.Serialization.JsonConverter<BigInteger>
+    {
+        public override BigInteger Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Write(Utf8JsonWriter writer, BigInteger value, JsonSerializerOptions options)
+        {
+            // Write as number string to preserve precision
+            writer.WriteRawValue(value.ToString(CultureInfo.InvariantCulture));
         }
     }
 
