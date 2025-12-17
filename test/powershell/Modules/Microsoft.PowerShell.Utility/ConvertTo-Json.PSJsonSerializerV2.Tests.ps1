@@ -192,17 +192,32 @@ Describe 'ConvertTo-Json with PSJsonSerializerV2' -Tags "CI" {
     }
 
     Context "Backward compatibility" {
-        It "V2: Should still support Newtonsoft JObject" -Skip:(-not $script:isV2Enabled) {
+        It "Should still support Newtonsoft JObject" {
             $jobj = New-Object Newtonsoft.Json.Linq.JObject
             $jobj.Add("key", [Newtonsoft.Json.Linq.JToken]::FromObject("value"))
             $json = @{ data = $jobj } | ConvertTo-Json -Compress -Depth 2
             $json | Should -Match '"key":\s*"value"'
         }
 
-        It "V2: Depth parameter should work" -Skip:(-not $script:isV2Enabled) {
+        It "Depth parameter should work" {
             $obj = @{ a = @{ b = 1 } }
             $json = $obj | ConvertTo-Json -Depth 2 -Compress
             $json | Should -BeExactly '{"a":{"b":1}}'
+        }
+
+        It "AsArray parameter should work" {
+            $json = @{a=1} | ConvertTo-Json -AsArray -Compress
+            $json | Should -BeExactly '[{"a":1}]'
+        }
+
+        It "Multiple objects from pipeline should be serialized as array" {
+            $json = 1, 2, 3 | ConvertTo-Json -Compress
+            $json | Should -BeExactly '[1,2,3]'
+        }
+
+        It "Multiple objects from pipeline with AsArray should work" {
+            $json = @{a=1}, @{b=2} | ConvertTo-Json -AsArray -Compress
+            $json | Should -Match '^\[.*\]$'
         }
     }
 }
