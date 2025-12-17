@@ -249,6 +249,9 @@
   <data name="JsonDepthExceedsLimit" xml:space="preserve">
     <value>The value {0} is not valid for the Depth parameter. The valid range is 0 to {1}. To use higher values, enable the PSJsonSerializerV2 experimental feature.</value>
   </data>
+  <data name="JsonDepthMustBeNonNegative" xml:space="preserve">
+    <value>The value {0} is not valid for the Depth parameter. The value must be -1 (unlimited) or a non-negative number.</value>
+  </data>
   <data name="WebSessionConnectionRecreated" xml:space="preserve">
     <value>The WebSession properties were changed between requests forcing all HTTP connections in the session to be recreated.</value>
   </data>

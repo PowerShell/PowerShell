@@ -20,12 +20,21 @@ Describe 'ConvertTo-Json with PSJsonSerializerV2' -Tags "CI" {
             $json | Should -Match '"level":63'
         }
 
-        It "V2: Depth up to 1000 should be allowed" -Skip:(-not $script:isV2Enabled) {
-            { ConvertTo-Json -InputObject @{a=1} -Depth 1000 } | Should -Not -Throw
+        It "V2: Large depth values should be allowed" -Skip:(-not $script:isV2Enabled) {
+            { ConvertTo-Json -InputObject @{a=1} -Depth 10000 } | Should -Not -Throw
         }
 
-        It "V2: Depth over 1000 should throw" -Skip:(-not $script:isV2Enabled) {
-            { ConvertTo-Json -InputObject @{a=1} -Depth 1001 } | Should -Throw
+        It "V2: Depth -1 should work as unlimited" -Skip:(-not $script:isV2Enabled) {
+            $obj = @{ level = 0 }
+            for ($i = 1; $i -lt 200; $i++) {
+                $obj = @{ level = $i; child = $obj }
+            }
+            $json = $obj | ConvertTo-Json -Depth -1 -Compress -WarningAction SilentlyContinue
+            $json | Should -Match '"level":199'
+        }
+
+        It "V2: Negative depth other than -1 should throw" -Skip:(-not $script:isV2Enabled) {
+            { ConvertTo-Json -InputObject @{a=1} -Depth -2 } | Should -Throw
         }
 
         It "Legacy: Depth over 100 should throw when V2 is disabled" -Skip:$script:isV2Enabled {

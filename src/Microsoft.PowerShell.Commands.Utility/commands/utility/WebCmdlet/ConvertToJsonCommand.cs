@@ -22,7 +22,6 @@ namespace Microsoft.PowerShell.Commands
         private const int DefaultDepth = 2;
         private const int DefaultDepthV2 = 64;
         private const int DepthAllowed = 100;
-        private const int DepthAllowedV2 = 1000;
 
         /// <summary>
         /// Gets or sets the InputObject property.
@@ -41,14 +40,14 @@ namespace Microsoft.PowerShell.Commands
         /// Otherwise: default is 2, max is 100.
         /// </summary>
         [Parameter]
-        [ValidateRange(0, DepthAllowedV2)]
         public int Depth
         {
             get
             {
                 if (_depth.HasValue)
                 {
-                    return _depth.Value;
+                    // -1 means unlimited depth
+                    return _depth.Value == -1 ? int.MaxValue : _depth.Value;
                 }
 
                 return ExperimentalFeature.IsEnabled(ExperimentalFeature.PSJsonSerializerV2)
@@ -135,22 +134,44 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            // When PSJsonSerializerV2 is not enabled, enforce the legacy max depth limit
-            if (!ExperimentalFeature.IsEnabled(ExperimentalFeature.PSJsonSerializerV2))
+            if (_depth.HasValue)
             {
-                if (_depth.HasValue && _depth.Value > DepthAllowed)
+                bool isV2Enabled = ExperimentalFeature.IsEnabled(ExperimentalFeature.PSJsonSerializerV2);
+
+                if (isV2Enabled)
                 {
-                    var errorRecord = new ErrorRecord(
-                        new ArgumentException(
-                            string.Format(
-                                System.Globalization.CultureInfo.CurrentCulture,
-                                WebCmdletStrings.JsonDepthExceedsLimit,
-                                _depth.Value,
-                                DepthAllowed)),
-                        "DepthExceedsLimit",
-                        ErrorCategory.InvalidArgument,
-                        _depth.Value);
-                    ThrowTerminatingError(errorRecord);
+                    // V2: -1 is allowed (unlimited), but -2 or less is an error
+                    if (_depth.Value < -1)
+                    {
+                        var errorRecord = new ErrorRecord(
+                            new ArgumentException(
+                                string.Format(
+                                    System.Globalization.CultureInfo.CurrentCulture,
+                                    WebCmdletStrings.JsonDepthMustBeNonNegative,
+                                    _depth.Value)),
+                            "DepthMustBeNonNegative",
+                            ErrorCategory.InvalidArgument,
+                            _depth.Value);
+                        ThrowTerminatingError(errorRecord);
+                    }
+                }
+                else
+                {
+                    // Legacy: only 0 to DepthAllowed is valid
+                    if (_depth.Value < 0 || _depth.Value > DepthAllowed)
+                    {
+                        var errorRecord = new ErrorRecord(
+                            new ArgumentException(
+                                string.Format(
+                                    System.Globalization.CultureInfo.CurrentCulture,
+                                    WebCmdletStrings.JsonDepthExceedsLimit,
+                                    _depth.Value,
+                                    DepthAllowed)),
+                            "DepthExceedsLimit",
+                            ErrorCategory.InvalidArgument,
+                            _depth.Value);
+                        ThrowTerminatingError(errorRecord);
+                    }
                 }
             }
         }
