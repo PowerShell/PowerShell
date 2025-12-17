@@ -7195,6 +7195,8 @@ namespace System.Management.Automation.Language
                     {
                         IEnumerable<Expression> elements = args
                             .Skip(i)
+                            // If the params arg isn't actually specified, args[i] will be null.
+                            .Where(a => a is not null)
                             .Select(a =>
                                 a.CastOrConvertMethodArgument(
                                     paramElementType,
@@ -7226,6 +7228,7 @@ namespace System.Management.Automation.Language
                 else if (i >= args.Length || args[i] == null)
                 {
                     // We don't log the default value for an optional parameter, as it's not specified by the user.
+                    // args[i] will be null if the parameter is optional and not specified by the caller.
                     Diagnostics.Assert(
                         parameters[i].IsOptional,
                         "if there are too few arguments, FindBestMethod should only succeed if parameters are optional");

@@ -1208,7 +1208,8 @@ namespace System.Management.Automation
 
             /// <summary>
             /// Update the internal state that tracks how many caller supplied
-            /// extra params have been supplied as individual objects rather.
+            /// extra params have been supplied as individual objects rather
+            /// than as an array.
             /// </summary>
             /// <param name="count">
             /// The number of individual arguments supplied for the extra params arg.
@@ -1414,7 +1415,9 @@ namespace System.Management.Automation
         /// <param name="errorMsg">If no best method, the error message (format string) to use in the error message.</param>
         /// <param name="expandParamsOnBest">True if the best method's last parameter is a params method.</param>
         /// <param name="callNonVirtually">True if best method should be called as non-virtual.</param>
-        /// <param name="argumentMap">Maps the index of the MethodInformation parameter to the index of the argument to use.</param>
+        /// <param name="argumentMap">
+        /// Maps the index of the MethodInformation parameter to the index of the argument to use, value is null if the caller did not provide a value for that argument.
+        /// </param>
         internal static MethodInformation FindBestMethod(
             MethodInformation[] methods,
             PSMethodInvocationConstraints invocationConstraints,
@@ -1679,7 +1682,7 @@ namespace System.Management.Automation
                 + If there are no remaining parameters the overload is not
                   valid.
             + If named, argument is set to the parameter for that name
-              + If there is not match for the name or it has already been set
+              + If there is no match for the name or it has already been set
                 positionally, the overload is not valid.
             + If the argument is mapped to a param array
                 + If named, only that argument is set as the param value
@@ -1742,7 +1745,7 @@ namespace System.Management.Automation
                 if (paramInfo.isParamArray)
                 {
                     // First determine how many args there are for the param arg.
-                    // This checks up the the end of the arguments or the next
+                    // This checks up to the end of the arguments or the next
                     // named argument.
                     int extraParamsCount = 1;
                     for (int j = i + 1; j < arguments.Length; j++)
@@ -2349,7 +2352,6 @@ namespace System.Management.Automation
         internal ParameterInformation[] parameters;
         internal bool hasVarArgs;
         internal bool hasOptional;
-        internal int optionalCount;
         internal bool isGeneric;
 
         private bool _useReflection;
@@ -2375,7 +2377,6 @@ namespace System.Management.Automation
                 if (methodParameters[i].IsOptional)
                 {
                     hasOptional = true;
-                    optionalCount++;
                 }
             }
 
@@ -2764,7 +2765,7 @@ namespace System.Management.Automation
     /// </summary>
     internal class ParameterInformation
     {
-        internal string name;
+        internal readonly string name;
         internal Type parameterType;
         internal object defaultValue;
         internal bool isOptional;

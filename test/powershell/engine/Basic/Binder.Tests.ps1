@@ -29,6 +29,8 @@ public class TestClass
     public static string OverloadWithDefaults(string value1, int value2, string default1 = "foo", string default2 = null) => $"{value1}-{value2}-{default1}-{default2}";
 
     public static string Params(string value, params string[] remainder) => $"{value}-" + string.Join("-", remainder);
+    
+    public static string ParamsWithCastableParams(string value, params char[] remainder) => $"{value}-" + string.Join("-", remainder);
 
     public static string ParamsWithDefault(string value, string defaultArg = "foo", params string[] remainder) => $"{value}-{defaultArg}-" + string.Join("-", remainder);
 
@@ -207,6 +209,26 @@ public class DynamicClass : DynamicObject
             [BinderTests.TestClass]::Params(remainder: "second", value: "first") | Should -Be first-second
         }
 
+        It "Calls params with castable params type as single value" {
+            [BinderTests.TestClass]::ParamsWithCastableParams("first", "A") | Should -Be first-A
+        }
+
+        It "Calls params with castable params type as pre casted single value" {
+            [BinderTests.TestClass]::ParamsWithCastableParams("first", [char]"A") | Should -Be first-A
+        }
+
+        It "Calls params with castable params type as pre casted single array value" {
+            [BinderTests.TestClass]::ParamsWithCastableParams("first", [char[]]@("A", "B", "C")) | Should -Be first-A-B-C
+        }
+
+        It "Calls params with castable params type as multiple values" {
+            [BinderTests.TestClass]::ParamsWithCastableParams("first", "A", "B", "C") | Should -Be first-A-B-C
+        }
+
+        It "Calls params with castable params type as single string value" {
+            [BinderTests.TestClass]::ParamsWithCastableParams("first", "ABC") | Should -Be first-A-B-C
+        }
+
         It "Calls params with default value and no params" {
             [BinderTests.TestClass]::ParamsWithDefault("first") | Should -Be first-foo-
         }
@@ -265,7 +287,7 @@ public class DynamicClass : DynamicObject
             [string]$err | Should -Be 'Cannot find an overload for "ParamsWithDefault" and the argument count: "3".'
         }
 
-        It "Fails with params where defualt set positionally as well as through named argument" {
+        It "Fails with params where default set positionally as well as through named argument" {
             $err = { [BinderTests.TestClass]::ParamsWithDefault("first", "second", "third", defaultArg: "bar") } | Should -Throw -PassThru
             [string]$err | Should -Be 'Cannot find an overload for "ParamsWithDefault" and the argument count: "4".'
         }
