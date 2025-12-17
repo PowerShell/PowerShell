@@ -36,7 +36,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Gets or sets the Depth property.
-        /// When PSJsonSerializerV2 is enabled: default is 64, max is 1000.
+        /// When PSJsonSerializerV2 is enabled: default is 64, no upper limit (-1 for unlimited).
         /// Otherwise: default is 2, max is 100.
         /// </summary>
         [Parameter]
