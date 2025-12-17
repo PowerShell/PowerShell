@@ -62,7 +62,7 @@ namespace Microsoft.PowerShell.Commands
                         context.EnumsAsStrings,
                         context.Cmdlet,
                         context.CancellationToken);
-                    serializer.WriteValue(writer, objectToProcess, currentDepth: 0);
+                    serializer.WriteValue(writer, objectToProcess);
                 }
 
                 return Encoding.UTF8.GetString(stream.ToArray());
@@ -104,18 +104,17 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// Writes PowerShell objects to JSON with manual depth tracking.
+    /// Writes PowerShell objects to JSON using an iterative (non-recursive) approach.
     /// </summary>
     /// <remarks>
     /// <para>
-    /// This class writes JSON directly to Utf8JsonWriter instead of using
-    /// JsonSerializer.Serialize() with custom converters. This approach avoids
-    /// issues with System.Text.Json's internal depth tracking when converters
-    /// call Serialize() recursively.
+    /// This class uses an explicit stack instead of recursion to avoid stack overflow
+    /// when serializing deeply nested objects. This allows safe handling of any depth
+    /// up to the configured maximum without risking call stack exhaustion.
     /// </para>
     /// <para>
     /// Key features:
-    /// - Manual depth tracking with graceful degradation (string conversion) on depth exceeded
+    /// - Iterative depth tracking with graceful degradation (string conversion) on depth exceeded
     /// - Support for PSObject with extended/adapted properties
     /// - Support for non-string dictionary keys (converted via ToString())
     /// - Respects JsonIgnoreAttribute and PowerShell's HiddenAttribute
@@ -141,14 +140,100 @@ namespace Microsoft.PowerShell.Commands
             _cancellationToken = cancellationToken;
         }
 
+        #region Stack-based Task Types
+
+        /// <summary>
+        /// Represents the type of task to be processed.
+        /// </summary>
+        private enum TaskType
+        {
+            /// <summary>Write a value (may be primitive or complex).</summary>
+            WriteValue,
+            /// <summary>Write end of JSON object.</summary>
+            EndObject,
+            /// <summary>Write end of JSON array.</summary>
+            EndArray,
+        }
+
+        /// <summary>
+        /// Represents a task on the processing stack.
+        /// </summary>
+        private readonly struct WriteTask
+        {
+            public readonly TaskType Type;
+            public readonly string? PropertyName;
+            public readonly object? Value;
+            public readonly PSObject? PSObject;
+            public readonly int Depth;
+
+            private WriteTask(TaskType type, string? propertyName, object? value, PSObject? pso, int depth)
+            {
+                Type = type;
+                PropertyName = propertyName;
+                Value = value;
+                PSObject = pso;
+                Depth = depth;
+            }
+
+            public static WriteTask ForValue(object? value, int depth, string? propertyName = null)
+                => new(TaskType.WriteValue, propertyName, value, value as PSObject, depth);
+
+            public static WriteTask ForValueWithPSObject(object? value, PSObject? pso, int depth, string? propertyName = null)
+                => new(TaskType.WriteValue, propertyName, value, pso, depth);
+
+            public static WriteTask ForEndObject() => new(TaskType.EndObject, null, null, null, 0);
+
+            public static WriteTask ForEndArray() => new(TaskType.EndArray, null, null, null, 0);
+        }
+
+        #endregion
+
         #region Main Entry Point
 
         /// <summary>
-        /// Writes a value to JSON, handling all PowerShell-specific types.
+        /// Writes a value to JSON using an iterative approach.
         /// </summary>
-        internal void WriteValue(Utf8JsonWriter writer, object? value, int currentDepth)
+        internal void WriteValue(Utf8JsonWriter writer, object? value)
         {
-            _cancellationToken.ThrowIfCancellationRequested();
+            var stack = new Stack<WriteTask>();
+            stack.Push(WriteTask.ForValue(value, 0));
+
+            while (stack.Count > 0)
+            {
+                _cancellationToken.ThrowIfCancellationRequested();
+
+                var task = stack.Pop();
+
+                switch (task.Type)
+                {
+                    case TaskType.EndObject:
+                        writer.WriteEndObject();
+                        break;
+
+                    case TaskType.EndArray:
+                        writer.WriteEndArray();
+                        break;
+
+                    case TaskType.WriteValue:
+                        ProcessWriteValue(writer, stack, task);
+                        break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Processes a WriteValue task.
+        /// </summary>
+        private void ProcessWriteValue(Utf8JsonWriter writer, Stack<WriteTask> stack, WriteTask task)
+        {
+            // Write property name if present
+            if (task.PropertyName is not null)
+            {
+                writer.WritePropertyName(task.PropertyName);
+            }
+
+            object? value = task.Value;
+            int currentDepth = task.Depth;
 
             // Handle null
             if (value is null || LanguagePrimitives.IsNull(value))
@@ -158,11 +243,11 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Unwrap PSObject and get base object
-            PSObject? pso = value as PSObject;
+            PSObject? pso = task.PSObject ?? (value as PSObject);
             object baseObject = pso?.BaseObject ?? value;
 
             // Handle special null-like values (NullString, DBNull)
-            if (TryWriteNullLike(writer, baseObject, pso, currentDepth))
+            if (TryWriteNullLike(writer, stack, baseObject, pso, currentDepth))
             {
                 return;
             }
@@ -187,8 +272,8 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            // Handle complex types
-            WriteComplexValue(writer, baseObject, pso, currentDepth);
+            // Handle complex types by pushing tasks onto the stack
+            ProcessComplexValue(writer, stack, baseObject, pso, currentDepth);
         }
 
         #endregion
@@ -305,108 +390,103 @@ namespace Microsoft.PowerShell.Commands
         #region Complex Types
 
         /// <summary>
-        /// Writes a complex value (dictionary, array, or object).
+        /// Processes a complex value by pushing appropriate tasks onto the stack.
         /// </summary>
-        private void WriteComplexValue(Utf8JsonWriter writer, object value, PSObject? pso, int currentDepth)
+        private static void ProcessComplexValue(Utf8JsonWriter writer, Stack<WriteTask> stack, object value, PSObject? pso, int currentDepth)
         {
             // Handle Newtonsoft.Json JObject (for backward compatibility)
             if (value is Newtonsoft.Json.Linq.JObject jObject)
             {
-                WriteDictionary(writer, jObject.ToObject<Dictionary<string, object?>>()!, currentDepth, pso: null);
+                ProcessDictionary(writer, stack, jObject.ToObject<Dictionary<string, object?>>()!, null, currentDepth);
                 return;
             }
 
             // Handle dictionaries
             if (value is IDictionary dict)
             {
-                WriteDictionary(writer, dict, currentDepth, pso);
+                ProcessDictionary(writer, stack, dict, pso, currentDepth);
                 return;
             }
 
             // Handle enumerables (arrays, lists, etc.)
             if (value is IEnumerable enumerable)
             {
-                WriteArray(writer, enumerable, currentDepth);
+                ProcessArray(writer, stack, enumerable, currentDepth);
                 return;
             }
 
             // Handle custom objects (classes, structs)
-            WriteCustomObject(writer, value, pso, currentDepth);
+            ProcessCustomObject(writer, stack, value, pso, currentDepth);
         }
 
         /// <summary>
-        /// Writes a dictionary as a JSON object.
+        /// Processes a dictionary by pushing tasks for each entry onto the stack.
         /// </summary>
-        /// <remarks>
-        /// Non-string keys are converted to strings via ToString().
-        /// This enables serialization of dictionaries like Exception.Data.
-        /// </remarks>
-        private void WriteDictionary(Utf8JsonWriter writer, IDictionary dict, int currentDepth, PSObject? pso)
+        private static void ProcessDictionary(Utf8JsonWriter writer, Stack<WriteTask> stack, IDictionary dict, PSObject? pso, int currentDepth)
         {
             writer.WriteStartObject();
+
+            // Collect entries to push in reverse order (stack is LIFO)
+            var entries = new List<(string Key, object? Value)>();
 
             foreach (DictionaryEntry entry in dict)
             {
                 string key = entry.Key?.ToString() ?? string.Empty;
-                writer.WritePropertyName(key);
-                WriteValue(writer, entry.Value, currentDepth + 1);
+                entries.Add((key, entry.Value));
             }
 
+            // Add extended properties if present
             if (pso is not null)
             {
-                AppendExtendedProperties(writer, pso, dict, currentDepth, isCustomObject: false);
+                CollectExtendedProperties(entries, pso, dict, currentDepth, isCustomObject: false);
             }
 
-            writer.WriteEndObject();
+            // Push EndObject first (will be processed last)
+            stack.Push(WriteTask.ForEndObject());
+
+            // Push entries in reverse order
+            for (int i = entries.Count - 1; i >= 0; i--)
+            {
+                stack.Push(WriteTask.ForValue(entries[i].Value, currentDepth + 1, entries[i].Key));
+            }
         }
 
         /// <summary>
-        /// Writes an enumerable as a JSON array.
+        /// Processes an array by pushing tasks for each element onto the stack.
         /// </summary>
-        private void WriteArray(Utf8JsonWriter writer, IEnumerable enumerable, int currentDepth)
+        private static void ProcessArray(Utf8JsonWriter writer, Stack<WriteTask> stack, IEnumerable enumerable, int currentDepth)
         {
             writer.WriteStartArray();
 
+            // Collect items to push in reverse order
+            var items = new List<object?>();
             foreach (object? item in enumerable)
             {
-                WriteValue(writer, item, currentDepth + 1);
+                items.Add(item);
             }
 
-            writer.WriteEndArray();
+            // Push EndArray first (will be processed last)
+            stack.Push(WriteTask.ForEndArray());
+
+            // Push items in reverse order
+            for (int i = items.Count - 1; i >= 0; i--)
+            {
+                stack.Push(WriteTask.ForValue(items[i], currentDepth + 1));
+            }
         }
 
         /// <summary>
-        /// Writes a custom object (class or struct) as a JSON object.
+        /// Processes a custom object by pushing tasks for each property onto the stack.
         /// </summary>
-        private void WriteCustomObject(Utf8JsonWriter writer, object value, PSObject? pso, int currentDepth)
+        private static void ProcessCustomObject(Utf8JsonWriter writer, Stack<WriteTask> stack, object value, PSObject? pso, int currentDepth)
         {
             writer.WriteStartObject();
 
             Type type = value.GetType();
+            var entries = new List<(string Key, object? Value)>();
             var writtenProperties = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-            // Write public fields
-            WriteFields(writer, value, type, currentDepth, writtenProperties);
-
-            // Write public properties
-            WriteProperties(writer, value, type, currentDepth, writtenProperties);
-
-            // Add extended properties from PSObject
-            if (pso is not null)
-            {
-                AppendExtendedProperties(writer, pso, writtenProperties, currentDepth, isCustomObject: true);
-            }
-
-            writer.WriteEndObject();
-        }
-
-        private void WriteFields(
-            Utf8JsonWriter writer,
-            object value,
-            Type type,
-            int currentDepth,
-            HashSet<string> writtenProperties)
-        {
+            // Collect public fields
             foreach (FieldInfo field in type.GetFields(BindingFlags.Public | BindingFlags.Instance))
             {
                 if (ShouldSkipMember(field))
@@ -415,19 +495,11 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 object? fieldValue = TryGetFieldValue(field, value);
-                writer.WritePropertyName(field.Name);
-                WriteValue(writer, fieldValue, currentDepth + 1);
+                entries.Add((field.Name, fieldValue));
                 writtenProperties.Add(field.Name);
             }
-        }
 
-        private void WriteProperties(
-            Utf8JsonWriter writer,
-            object value,
-            Type type,
-            int currentDepth,
-            HashSet<string> writtenProperties)
-        {
+            // Collect public properties
             foreach (PropertyInfo property in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
             {
                 if (ShouldSkipMember(property))
@@ -442,9 +514,23 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 object? propertyValue = TryGetPropertyValue(getter, value);
-                writer.WritePropertyName(property.Name);
-                WriteValue(writer, propertyValue, currentDepth + 1);
+                entries.Add((property.Name, propertyValue));
                 writtenProperties.Add(property.Name);
+            }
+
+            // Add extended properties from PSObject
+            if (pso is not null)
+            {
+                CollectExtendedProperties(entries, pso, writtenProperties, currentDepth, isCustomObject: true);
+            }
+
+            // Push EndObject first (will be processed last)
+            stack.Push(WriteTask.ForEndObject());
+
+            // Push entries in reverse order
+            for (int i = entries.Count - 1; i >= 0; i--)
+            {
+                stack.Push(WriteTask.ForValue(entries[i].Value, currentDepth + 1, entries[i].Key));
             }
         }
 
@@ -455,7 +541,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Handles NullString and DBNull values, which may have extended properties.
         /// </summary>
-        private bool TryWriteNullLike(Utf8JsonWriter writer, object value, PSObject? pso, int currentDepth)
+        private static bool TryWriteNullLike(Utf8JsonWriter writer, Stack<WriteTask> stack, object value, PSObject? pso, int currentDepth)
         {
             if (value != System.Management.Automation.Language.NullString.Value && value != DBNull.Value)
             {
@@ -464,7 +550,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (pso is not null && HasExtendedProperties(pso))
             {
-                WriteObjectWithNullValue(writer, pso, currentDepth);
+                ProcessObjectWithNullValue(writer, stack, pso, currentDepth);
             }
             else
             {
@@ -475,22 +561,34 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Writes an object with a null base value but with extended properties.
+        /// Processes an object with a null base value but with extended properties.
         /// </summary>
-        private void WriteObjectWithNullValue(Utf8JsonWriter writer, PSObject pso, int currentDepth)
+        private static void ProcessObjectWithNullValue(Utf8JsonWriter writer, Stack<WriteTask> stack, PSObject pso, int currentDepth)
         {
             writer.WriteStartObject();
-            writer.WritePropertyName("value");
-            writer.WriteNullValue();
-            AppendExtendedProperties(writer, pso, writtenKeys: null, currentDepth, isCustomObject: false);
-            writer.WriteEndObject();
+
+            var entries = new List<(string Key, object? Value)>
+            {
+                ("value", null)
+            };
+
+            CollectExtendedProperties(entries, pso, writtenKeys: null, currentDepth, isCustomObject: false);
+
+            // Push EndObject first
+            stack.Push(WriteTask.ForEndObject());
+
+            // Push entries in reverse order
+            for (int i = entries.Count - 1; i >= 0; i--)
+            {
+                stack.Push(WriteTask.ForValue(entries[i].Value, currentDepth + 1, entries[i].Key));
+            }
         }
 
         /// <summary>
-        /// Appends extended (and optionally adapted) properties from a PSObject.
+        /// Collects extended (and optionally adapted) properties from a PSObject.
         /// </summary>
-        private void AppendExtendedProperties(
-            Utf8JsonWriter writer,
+        private static void CollectExtendedProperties(
+            List<(string Key, object? Value)> entries,
             PSObject pso,
             object? writtenKeys,
             int currentDepth,
@@ -518,8 +616,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 object? propValue = TryGetPSPropertyValue(prop);
-                writer.WritePropertyName(prop.Name);
-                WriteValue(writer, propValue, currentDepth + 1);
+                entries.Add((prop.Name, propValue));
             }
         }
 
