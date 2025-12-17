@@ -329,6 +329,7 @@ namespace Microsoft.PowerShell.Commands
                     MaxDepth = maxDepth,
                     DefaultIgnoreCondition = JsonIgnoreCondition.Never,
                     Encoder = GetEncoder(stringEscapeHandling),
+                    ReferenceHandler = ReferenceHandler.IgnoreCycles,
                 };
 
                 if (enumsAsStrings)
