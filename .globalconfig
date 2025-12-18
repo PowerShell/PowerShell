@@ -1482,7 +1482,7 @@ dotnet_diagnostic.IDE0082.severity = warning
 
 # IDE0083: UseNotPattern
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0083
-dotnet_diagnostic.IDE0083.severity = silent
+dotnet_diagnostic.IDE0083.severity = warning
 
 # IDE0084: UseIsNotExpression
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0084
