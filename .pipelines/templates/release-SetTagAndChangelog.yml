@@ -20,6 +20,8 @@ jobs:
     env:
       ob_restore_phase: true
 
+  - template: set-reporoot.yml@self
+
   - pwsh: |
       Write-Verbose -Verbose "Release Tag: $(OutputReleaseTag.releaseTag)"
       $releaseVersion = '$(OutputReleaseTag.releaseTag)' -replace '^v',''
@@ -42,7 +44,7 @@ jobs:
         Write-Error "Changelog file not found: $filePath"
         exit 1
       }
-      
+
       Write-Verbose -Verbose "Creating output directory for CHANGELOG: $(ob_outputDirectory)/CHANGELOG"
       New-Item -Path $(ob_outputDirectory)/CHANGELOG -ItemType Directory -Force
       Copy-Item -Path $filePath -Destination $(ob_outputDirectory)/CHANGELOG
