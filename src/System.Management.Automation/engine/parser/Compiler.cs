@@ -978,8 +978,11 @@ namespace System.Management.Automation.Language
                 return (Array.Empty<string>(), Array.Empty<Expression>());
             }
 
-            // argNames when provided to the CallInfo in left to right order
-            // with the last name corresponding to the last argument.
+            // argNames when provided to the CallInfo are in left to right
+            // order. The named arguments contains only the names of the named
+            // arguments and not any positional args. So the first named arg
+            // corresponds to the parameter value at position (0 indexed)
+            // ci.ArgumentCount - ci.ArgumentNames.Count in the binder.
             var argNames = new List<string>(arguments.Count);
             var argExpressions = new Expression[arguments.Count];
             for (int i = 0; i < argExpressions.Length; i++)
