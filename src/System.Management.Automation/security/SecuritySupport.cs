@@ -749,7 +749,7 @@ namespace System.Management.Automation.Internal
         /// <returns>Int.</returns>
         internal static int GetIntFromDWORD(DWORD n)
         {
-            Int64 n64 = n - 0x100000000L;
+            long n64 = n - 0x100000000L;
             return (int)n64;
         }
     }
