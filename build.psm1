@@ -2485,19 +2485,21 @@ function Start-PSBootstrap {
             Write-LogGroupEnd -Title "Install Windows Dependencies"
         }
 
-        if ($Scenario -in 'All', 'Tools') {
-            Write-LogGroupStart -Title "Install .NET Global Tools"
-            Write-Log -message "Installing .NET global tools"
+        # Ensure dotnet is available
+        Find-Dotnet
 
-            # Ensure dotnet is available
-            Find-Dotnet
+        if (-not $env:TF_BUILD) {
+            if ($Scenario -in 'All', 'Tools') {
+                Write-LogGroupStart -Title "Install .NET Global Tools"
+                Write-Log -message "Installing .NET global tools"
 
-            # Install dotnet-format
-            Write-Verbose -Verbose "Installing dotnet-format global tool"
-            Start-NativeExecution {
-                dotnet tool install --global dotnet-format
+                # Install dotnet-format
+                Write-Verbose -Verbose "Installing dotnet-format global tool"
+                Start-NativeExecution {
+                    dotnet tool install --global dotnet-format
+                }
+                Write-LogGroupEnd -Title "Install .NET Global Tools"
             }
-            Write-LogGroupEnd -Title "Install .NET Global Tools"
         }
 
         if ($env:TF_BUILD) {
