@@ -18,7 +18,7 @@ namespace System.Management.Automation.SecurityAccountsManager
         {
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0051:Remove unused private members")]
         internal static string Format(string str)
         {
             return string.Format(CultureInfo.CurrentCulture, str);
