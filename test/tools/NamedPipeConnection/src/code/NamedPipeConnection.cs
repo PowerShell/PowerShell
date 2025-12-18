@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.CustomNamedPipeConnection
 
     /// <summary>
     /// This class is based on PowerShell core source code, and handles creating
-    /// a client side named pipe object that can connect to a running PowerShell 
+    /// a client side named pipe object that can connect to a running PowerShell
     /// process by its process Id.
     /// </summary>
     internal sealed class NamedPipeClient : IDisposable
@@ -346,7 +346,7 @@ namespace Microsoft.PowerShell.CustomNamedPipeConnection
         }
 
         #endregion
-    
+
         #region Public Methods
 
         /// <summary>
@@ -447,7 +447,7 @@ namespace Microsoft.PowerShell.CustomNamedPipeConnection
         }
 
         #endregion
-    
+
         #region Private Methods
 
         private void CloseConnection()
@@ -576,7 +576,7 @@ namespace Microsoft.PowerShell.CustomNamedPipeConnection
                 typeTable: TypeTable.LoadDefaultTypeFiles(),
                 applicationArguments: null,
                 name: Name);
-            
+
             _openAsync = new ManualResetEvent(false);
             _runspace.StateChanged += HandleRunspaceStateChanged;
 
