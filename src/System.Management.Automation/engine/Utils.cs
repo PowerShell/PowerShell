@@ -17,6 +17,7 @@ using System.Numerics;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security;
+using System.Text.Json;
 #if !UNIX
 using System.Security.Principal;
 #endif
@@ -704,6 +705,25 @@ namespace System.Management.Automation
         /// e.g. ~\Documents\WindowsPowerShell\Modules and %ProgramFiles%\WindowsPowerShell\Modules.
         /// </summary>
         internal static readonly string ModuleDirectory = Path.Combine(ProductNameForDirectory, "Modules");
+
+        /// <summary>
+        /// Gets the PSContent path from PowerShell.config.json or falls back to platform defaults.
+        /// When PSContentPath experimental feature is enabled, returns the configured path or default location.
+        /// </summary>
+        /// <returns>The PSContent directory path (never null).</returns>
+        internal static string GetPSContentPath()
+        {
+            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSContentPath))
+            {
+                return PowerShellConfig.Instance.GetPSContentPath();
+            }
+
+#if UNIX
+            return Platform.SelectProductNameForDirectory(Platform.XDG_Type.DATA);
+#else
+            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "PowerShell");
+#endif
+        }
 
         internal static readonly ConfigScope[] SystemWideOnlyConfig = new[] { ConfigScope.AllUsers };
         internal static readonly ConfigScope[] CurrentUserOnlyConfig = new[] { ConfigScope.CurrentUser };
