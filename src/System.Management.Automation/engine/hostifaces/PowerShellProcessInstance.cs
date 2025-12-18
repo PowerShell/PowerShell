@@ -34,9 +34,26 @@ namespace System.Management.Automation.Runspaces
         static PowerShellProcessInstance()
         {
 #if UNIX
-            PwshExePath = Path.Combine(Utils.DefaultPowerShellAppBase, "pwsh");
+            const string exeName = "pwsh";
 #else
-            PwshExePath = Path.Combine(Utils.DefaultPowerShellAppBase, "pwsh.exe");
+            const string exeName = "pwsh.exe";
+#endif
+            PwshExePath = Path.Combine(Utils.DefaultPowerShellAppBase, exeName);
+            if (!File.Exists(PwshExePath))
+            {
+                // Fallback to the currently running process path if the computed path doesn't exist.
+                // This handles scenarios like Alpine Linux containers where PowerShell is installed as a dotnet tool
+                // and the computed path points to a non-existent or incompatible binary.
+                // Only use the host process if it is pwsh/pwsh.exe to avoid accidentally using a different executable.
+                var processPath = System.Environment.ProcessPath;
+                if (!string.IsNullOrEmpty(processPath) && 
+                    Path.GetFileName(processPath) == exeName)
+                {
+                    PwshExePath = processPath;
+                }
+            }
+
+#if !UNIX
             var winPowerShellDir = Utils.GetApplicationBaseFromRegistry(Utils.DefaultPowerShellShellID);
             WinPwshExePath = string.IsNullOrEmpty(winPowerShellDir) ? null : Path.Combine(winPowerShellDir, "powershell.exe");
 #endif
