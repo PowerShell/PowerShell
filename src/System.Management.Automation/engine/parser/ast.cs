@@ -7420,6 +7420,7 @@ namespace System.Management.Automation.Language
             Label = label ?? throw PSTraceSource.NewArgumentNullException(nameof(label));
             Expression = expression ?? throw PSTraceSource.NewArgumentNullException(nameof(expression));
 
+            SetParent(label);
             SetParent(expression);
         }
 
@@ -7460,6 +7461,14 @@ namespace System.Management.Automation.Language
                 if (action == AstVisitAction.SkipChildren)
                 {
                     return visitor.CheckForPostAction(this, AstVisitAction.Continue);
+                }
+                if (action == AstVisitAction.Continue)
+                {
+                    action = Label.InternalVisit(visitor);
+                }
+                if (action == AstVisitAction.Continue)
+                {
+                    action = Expression.InternalVisit(visitor);
                 }
             }
 
