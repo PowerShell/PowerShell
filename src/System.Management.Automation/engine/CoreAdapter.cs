@@ -1695,8 +1695,10 @@ namespace System.Management.Automation
                 + Otherwise, the overload is not valid.
 
             A caveat is when encountering arg names that are not unique (case
-            insensitive). Only the last parameter with that name can be set by
-            name and only if the preceding ones have been set positionally.
+            insensitive). Only the first remaining parameter from the candidate
+            list with that name can be set by that name. Any existing
+            candidates already set positionally are ignored when matching by
+            name.
             */
             selectedCandidate = null;
 

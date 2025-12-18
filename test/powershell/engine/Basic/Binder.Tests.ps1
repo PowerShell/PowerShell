@@ -106,7 +106,7 @@ public class DynamicClass : DynamicObject
             } | Should -Throw "Cannot find an overload for ""OverloadWithSameNameDifferentCase"" and the argument count: ""2"""
         }
 
-        It "Failed to use named arg with overload arg name that differs by case multiple times" {
+        It "Fails to use named arg with overload arg name that differs by case multiple times" {
             {
                 [BinderTests.TestClass]::OverloadWithMultipleSameNameDifferentCase(value: 'foo', value_: 'bar', value__: 'test')
             } | Should -Throw "Cannot find an overload for ""OverloadWithMultipleSameNameDifferentCase"" and the argument count: ""3"""
