@@ -24,7 +24,6 @@ using NewtonsoftStringEscapeHandling = Newtonsoft.Json.StringEscapeHandling;
 
 namespace Microsoft.PowerShell.Commands
 {
-
     /// <summary>
     /// The ConvertTo-Json V2 command using System.Text.Json.
     /// This experimental version provides improved performance and better .NET integration.
@@ -73,7 +72,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter AsArray { get; set; }
 
         /// <summary>
-        /// Specifies how strings are escaped when writing JSON text.
+        /// Gets or sets how strings are escaped when writing JSON text.
         /// </summary>
         [Parameter]
         public NewtonsoftStringEscapeHandling EscapeHandling { get; set; } = NewtonsoftStringEscapeHandling.Default;
@@ -90,6 +89,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Implementation of IDisposable.
         /// </summary>
+        /// <param name="disposing">True if called from Dispose(), false if called from finalizer.</param>
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
@@ -268,7 +268,9 @@ namespace Microsoft.PowerShell.Commands
             // Handle NullString and DBNull (check for extended properties first)
             if (baseObject is System.Management.Automation.Language.NullString || baseObject is DBNull)
             {
-                if (pso is not null && pso.Properties.Any(p => p.MemberType == PSMemberTypes.NoteProperty || p.MemberType == PSMemberTypes.ScriptProperty))
+                bool hasExtendedProperties = pso is not null &&
+                    pso.Properties.Any(p => p.MemberType == PSMemberTypes.NoteProperty || p.MemberType == PSMemberTypes.ScriptProperty);
+                if (hasExtendedProperties)
                 {
                     // Has extended properties - process as object
                     WriteObject(writer, baseObject, pso, currentDepth);
@@ -446,6 +448,7 @@ namespace Microsoft.PowerShell.Commands
             foreach (var prop in jObject.Properties())
             {
                 writer.WritePropertyName(prop.Name);
+
                 // Convert JToken to native object for serialization
                 object? value = prop.Value?.ToObject<object>();
                 WriteValue(writer, value, currentDepth + 1);
@@ -604,5 +607,4 @@ namespace Microsoft.PowerShell.Commands
                    !prop.IsDefined(typeof(HiddenAttribute));
         }
     }
-
 }

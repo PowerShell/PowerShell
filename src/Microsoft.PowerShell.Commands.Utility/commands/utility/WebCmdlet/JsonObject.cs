@@ -483,7 +483,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public static string ConvertToJson(object objectToProcess, in ConvertToJsonContext context)
         {
-
             try
             {
                 // Pre-process the object so that it serializes the same, except that properties whose
