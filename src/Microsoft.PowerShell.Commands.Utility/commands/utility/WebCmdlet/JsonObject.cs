@@ -483,11 +483,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public static string ConvertToJson(object objectToProcess, in ConvertToJsonContext context)
         {
-            // Use System.Text.Json when PSJsonSerializerV2 experimental feature is enabled
-            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSJsonSerializerV2))
-            {
-                return SystemTextJsonSerializer.ConvertToJson(objectToProcess, in context);
-            }
 
             try
             {
