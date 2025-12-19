@@ -1493,8 +1493,7 @@ function New-MacOsDistributionPackage
     }
 
     # Create a temp directory to store the needed files
-    $tempDir = Join-Path ([System.IO.Path]::GetTempPath()) ([System.IO.Path]::GetRandomFileName())
-    New-Item -ItemType Directory -Path $tempDir -Force > $null
+    $tempDir = New-TempFolder
 
     $resourcesDir = Join-Path -Path $tempDir -ChildPath 'resources'
     New-Item -ItemType Directory -Path $resourcesDir -Force > $null
