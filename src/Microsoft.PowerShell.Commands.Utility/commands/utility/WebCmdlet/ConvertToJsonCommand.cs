@@ -323,10 +323,15 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
+                // Reset depth tracking for this serialization
+                JsonConverterPSObject.ResetDepthTracking();
+
                 var options = new JsonSerializerOptions()
                 {
                     WriteIndented = !compressOutput,
-                    MaxDepth = maxDepth,
+                    // Use maximum allowed depth to avoid System.Text.Json exceptions
+                    // Actual depth limiting is handled by JsonConverterPSObject
+                    MaxDepth = 1000,
                     DefaultIgnoreCondition = JsonIgnoreCondition.Never,
                     Encoder = GetEncoder(stringEscapeHandling),
                     ReferenceHandler = ReferenceHandler.IgnoreCycles,
@@ -401,6 +406,19 @@ namespace Microsoft.PowerShell.Commands
         private readonly PSCmdlet? _cmdlet;
         private readonly int _maxDepth;
 
+        // Depth tracking across recursive calls
+        private static readonly AsyncLocal<int> s_currentDepth = new();
+        private static readonly AsyncLocal<bool> s_warningWritten = new();
+
+        /// <summary>
+        /// Reset depth tracking for a new serialization operation.
+        /// </summary>
+        public static void ResetDepthTracking()
+        {
+            s_currentDepth.Value = 0;
+            s_warningWritten.Value = false;
+        }
+
         public JsonConverterPSObject(PSCmdlet? cmdlet, int maxDepth)
         {
             _cmdlet = cmdlet;
@@ -422,72 +440,149 @@ namespace Microsoft.PowerShell.Commands
 
             var obj = pso.BaseObject;
 
-            // Check if PSObject has Extended/Adapted properties
-            bool hasETSProperties = pso.Properties.Match("*", PSMemberTypes.NoteProperty | PSMemberTypes.AliasProperty).Count > 0;
+            // Check depth limit BEFORE incrementing
+            int currentDepth = s_currentDepth.Value;
+            if (currentDepth > _maxDepth)
+            {
+                WriteDepthExceeded(writer, pso, obj);
+                return;
+            }
 
-            // Handle special types - check for null-like objects
+            // Handle special types - check for null-like objects (no depth increment needed)
             if (LanguagePrimitives.IsNull(obj) || obj is DBNull or System.Management.Automation.Language.NullString)
             {
-                // If there are ETS properties, serialize as object with those properties
-                if (hasETSProperties)
+                // Check if PSObject has Extended/Adapted properties
+                bool hasETSProps = pso.Properties.Match("*", PSMemberTypes.NoteProperty | PSMemberTypes.AliasProperty).Count > 0;
+                if (hasETSProps)
                 {
-                    writer.WriteStartObject();
-                    writer.WritePropertyName("value");
-                    writer.WriteNullValue();
-                    AppendPSProperties(writer, pso, options, excludeBaseProperties: true);
-                    writer.WriteEndObject();
+                    s_currentDepth.Value = currentDepth + 1;
+                    try
+                    {
+                        writer.WriteStartObject();
+                        writer.WritePropertyName("value");
+                        writer.WriteNullValue();
+                        AppendPSProperties(writer, pso, options, excludeBaseProperties: true);
+                        writer.WriteEndObject();
+                    }
+                    finally
+                    {
+                        s_currentDepth.Value = currentDepth;
+                    }
                 }
                 else
                 {
                     writer.WriteNullValue();
                 }
+
                 return;
             }
 
             // Handle Newtonsoft.Json.Linq.JObject by converting properties manually
             if (obj is Newtonsoft.Json.Linq.JObject jObject)
             {
-                writer.WriteStartObject();
-                foreach (var prop in jObject.Properties())
+                s_currentDepth.Value = currentDepth + 1;
+                try
                 {
-                    writer.WritePropertyName(prop.Name);
-                    // Convert JToken value to appropriate .NET type
-                    var value = prop.Value.Type switch
+                    writer.WriteStartObject();
+                    foreach (var prop in jObject.Properties())
                     {
-                        Newtonsoft.Json.Linq.JTokenType.String => prop.Value.ToObject<string>(),
-                        Newtonsoft.Json.Linq.JTokenType.Integer => prop.Value.ToObject<long>(),
-                        Newtonsoft.Json.Linq.JTokenType.Float => prop.Value.ToObject<double>(),
-                        Newtonsoft.Json.Linq.JTokenType.Boolean => prop.Value.ToObject<bool>(),
-                        Newtonsoft.Json.Linq.JTokenType.Null => (object?)null,
-                        _ => prop.Value.ToString()
-                    };
-                    System.Text.Json.JsonSerializer.Serialize(writer, value, options);
+                        writer.WritePropertyName(prop.Name);
+                        WriteJTokenValue(writer, prop.Value, options);
+                    }
+
+                    writer.WriteEndObject();
                 }
-                writer.WriteEndObject();
+                finally
+                {
+                    s_currentDepth.Value = currentDepth;
+                }
+
                 return;
             }
-            // If PSObject wraps a primitive type, serialize the base object directly
+
+            // If PSObject wraps a primitive type, serialize the base object directly (no depth increment)
             if (IsPrimitiveType(obj))
             {
                 System.Text.Json.JsonSerializer.Serialize(writer, obj, obj.GetType(), options);
                 return;
             }
 
-            // For dictionaries and collections, convert to appropriate structure
-            if (obj is IDictionary dict)
+            // For dictionaries, collections, and custom objects - increment depth
+            s_currentDepth.Value = currentDepth + 1;
+            try
             {
-                SerializeDictionary(writer, pso, dict, options);
-                return;
+                if (obj is IDictionary dict)
+                {
+                    SerializeDictionary(writer, pso, dict, options);
+                }
+                else if (obj is IEnumerable enumerable and not string)
+                {
+                    SerializeEnumerable(writer, enumerable, options);
+                }
+                else
+                {
+                    // For custom objects, serialize as dictionary with properties
+                    SerializeAsObject(writer, pso, options);
+                }
+            }
+            finally
+            {
+                s_currentDepth.Value = currentDepth;
+            }
+        }
+
+        private void WriteDepthExceeded(Utf8JsonWriter writer, PSObject pso, object obj)
+        {
+            // Write warning once
+            if (!s_warningWritten.Value && _cmdlet is not null)
+            {
+                s_warningWritten.Value = true;
+                string warningMessage = string.Format(
+                    System.Globalization.CultureInfo.CurrentCulture,
+                    "Resulting JSON is truncated as serialization has exceeded the set depth of {0}.",
+                    _maxDepth);
+                _cmdlet.WriteWarning(warningMessage);
             }
 
-            if (obj is IEnumerable enumerable and not string)
+            // Convert to string when depth exceeded
+            string stringValue = pso.ImmediateBaseObjectIsEmpty
+                ? LanguagePrimitives.ConvertTo<string>(pso)
+                : LanguagePrimitives.ConvertTo<string>(obj);
+            writer.WriteStringValue(stringValue);
+        }
+
+        private static void WriteJTokenValue(Utf8JsonWriter writer, Newtonsoft.Json.Linq.JToken token, JsonSerializerOptions options)
+        {
+            var value = token.Type switch
             {
-                System.Text.Json.JsonSerializer.Serialize(writer, enumerable, options);
-                return;
+                Newtonsoft.Json.Linq.JTokenType.String => token.ToObject<string>(),
+                Newtonsoft.Json.Linq.JTokenType.Integer => token.ToObject<long>(),
+                Newtonsoft.Json.Linq.JTokenType.Float => token.ToObject<double>(),
+                Newtonsoft.Json.Linq.JTokenType.Boolean => token.ToObject<bool>(),
+                Newtonsoft.Json.Linq.JTokenType.Null => (object?)null,
+                _ => token.ToString()
+            };
+            System.Text.Json.JsonSerializer.Serialize(writer, value, options);
+        }
+
+        private void SerializeEnumerable(Utf8JsonWriter writer, IEnumerable enumerable, JsonSerializerOptions options)
+        {
+            writer.WriteStartArray();
+            foreach (var item in enumerable)
+            {
+                if (item is null)
+                {
+                    writer.WriteNullValue();
+                }
+                else
+                {
+                    var psoItem = PSObject.AsPSObject(item);
+                    // Recursive call - Write will handle depth tracking
+                    Write(writer, psoItem, options);
+                }
             }
 
-            // For custom objects, serialize as dictionary with properties
-            SerializeAsObject(writer, pso, options);
+            writer.WriteEndArray();
         }
 
         private static bool IsPrimitiveType(object obj)
@@ -500,7 +595,8 @@ namespace Microsoft.PowerShell.Commands
                 || obj is DateTime
                 || obj is DateTimeOffset
                 || obj is Guid
-                || obj is Uri;
+                || obj is Uri
+                || obj is BigInteger;
         }
 
         private static bool IsPrimitiveTypeOrNull(object? obj)
@@ -517,42 +613,31 @@ namespace Microsoft.PowerShell.Commands
             {
                 string key = entry.Key?.ToString() ?? string.Empty;
                 writer.WritePropertyName(key);
-                
-                // If maxDepth is 0, convert non-primitive values to string
-                if (_maxDepth == 0 && entry.Value is not null && !IsPrimitiveTypeOrNull(entry.Value))
-                {
-                    writer.WriteStringValue(entry.Value.ToString());
-                }
-                // Handle Newtonsoft.Json.Linq.JObject specially
-                else if (entry.Value is Newtonsoft.Json.Linq.JObject jObject)
-                {
-                    writer.WriteStartObject();
-                    foreach (var prop in jObject.Properties())
-                    {
-                        writer.WritePropertyName(prop.Name);
-                        var value = prop.Value.Type switch
-                        {
-                            Newtonsoft.Json.Linq.JTokenType.String => prop.Value.ToObject<string>(),
-                            Newtonsoft.Json.Linq.JTokenType.Integer => prop.Value.ToObject<long>(),
-                            Newtonsoft.Json.Linq.JTokenType.Float => prop.Value.ToObject<double>(),
-                            Newtonsoft.Json.Linq.JTokenType.Boolean => prop.Value.ToObject<bool>(),
-                            Newtonsoft.Json.Linq.JTokenType.Null => (object?)null,
-                            _ => prop.Value.ToString()
-                        };
-                        System.Text.Json.JsonSerializer.Serialize(writer, value, options);
-                    }
-                    writer.WriteEndObject();
-                }
-                else
-                {
-                    System.Text.Json.JsonSerializer.Serialize(writer, entry.Value, options);
-                }
+                WriteValue(writer, entry.Value, options);
             }
 
             // Add PSObject extended properties
             AppendPSProperties(writer, pso, options, excludeBaseProperties: true);
 
             writer.WriteEndObject();
+        }
+
+        private void WriteValue(Utf8JsonWriter writer, object? value, JsonSerializerOptions options)
+        {
+            if (value is null)
+            {
+                writer.WriteNullValue();
+            }
+            else if (IsPrimitiveType(value))
+            {
+                System.Text.Json.JsonSerializer.Serialize(writer, value, value.GetType(), options);
+            }
+            else
+            {
+                // Non-primitive: wrap in PSObject and call Write for depth tracking
+                var psoValue = PSObject.AsPSObject(value);
+                Write(writer, psoValue, options);
+            }
         }
 
         private void SerializeAsObject(Utf8JsonWriter writer, PSObject pso, JsonSerializerOptions options)
@@ -584,7 +669,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     var value = prop.Value;
                     writer.WritePropertyName(prop.Name);
-                    
+
                     // If maxDepth is 0, convert non-primitive values to string
                     if (_maxDepth == 0 && value is not null && !IsPrimitiveTypeOrNull(value))
                     {
