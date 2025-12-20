@@ -33,7 +33,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     /// <remarks>
     /// This class is shown when PSJsonSerializerV2 experimental feature is enabled.
-    /// V2 uses System.Text.Json with circular reference detection and unlimited depth by default.
+    /// V2 uses System.Text.Json with V1-compatible depth handling.
     /// </remarks>
     [Experimental(ExperimentalFeature.PSJsonSerializerV2, ExperimentAction.Show)]
     [Cmdlet(VerbsData.ConvertTo, "Json", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096925", RemotingCapability = RemotingCapability.None)]
@@ -51,12 +51,12 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Gets or sets the Depth property.
-        /// Default is 64. Maximum allowed depth is 1000 due to System.Text.Json limitations.
+        /// Default is 2. Maximum allowed is 1000.
         /// Use 0 to serialize only top-level properties.
         /// </summary>
         [Parameter]
         [ValidateRange(0, 1000)]
-        public int Depth { get; set; } = 64;
+        public int Depth { get; set; } = 2;
 
         /// <summary>
         /// Gets or sets the Compress property.
@@ -232,7 +232,6 @@ namespace Microsoft.PowerShell.Commands
                     MaxDepth = 1000,
                     DefaultIgnoreCondition = JsonIgnoreCondition.Never,
                     Encoder = GetEncoder(stringEscapeHandling),
-                    ReferenceHandler = ReferenceHandler.IgnoreCycles,
                 };
 
                 if (enumsAsStrings)
