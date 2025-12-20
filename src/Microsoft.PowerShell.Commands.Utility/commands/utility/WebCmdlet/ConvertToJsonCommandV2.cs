@@ -127,6 +127,21 @@ namespace Microsoft.PowerShell.Commands
         private readonly List<object?> _inputObjects = new();
 
         /// <summary>
+        /// Validate parameter combinations.
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            if (JsonSerializerOptions is not null && MyInvocation.BoundParameters.ContainsKey("Depth"))
+            {
+                ThrowTerminatingError(new ErrorRecord(
+                    new ArgumentException("The -Depth and -JsonSerializerOptions parameters cannot be used together. Use JsonSerializerOptions.MaxDepth to control depth."),
+                    "DepthAndJsonSerializerOptionsAreMutuallyExclusive",
+                    ErrorCategory.InvalidArgument,
+                    null));
+            }
+        }
+
+        /// <summary>
         /// Caching the input objects for the command.
         /// </summary>
         protected override void ProcessRecord()
@@ -149,20 +164,12 @@ namespace Microsoft.PowerShell.Commands
                 {
                     // Direct STJ mode - bypasses V1-compatible processing
                     // Custom JsonConverters will work, but ETS properties are not serialized
+                    // Depth is controlled by JsonSerializerOptions.MaxDepth (default 64)
                     try
                     {
-                        var options = JsonSerializerOptions;
-
-                        // If user hasn't set MaxDepth, apply the -Depth parameter
-                        if (options.MaxDepth == 0)
-                        {
-                            options = new JsonSerializerOptions(options);
-                            options.MaxDepth = Depth;
-                        }
-
                         // Unwrap PSObject to get the base object for direct STJ serialization
                         var objToSerialize = objectToProcess is PSObject pso ? pso.BaseObject : objectToProcess;
-                        output = System.Text.Json.JsonSerializer.Serialize(objToSerialize, options);
+                        output = System.Text.Json.JsonSerializer.Serialize(objToSerialize, JsonSerializerOptions);
                     }
                     catch (OperationCanceledException)
                     {
