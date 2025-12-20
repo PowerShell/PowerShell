@@ -215,10 +215,7 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                // Reset depth tracking for this serialization
-                JsonConverterPSObject.ResetDepthTracking();
-
-                var options = new JsonSerializerOptions()
+                                var options = new JsonSerializerOptions()
                 {
                     WriteIndented = !compressOutput,
                     // Use maximum allowed depth to avoid System.Text.Json exceptions
@@ -298,16 +295,8 @@ namespace Microsoft.PowerShell.Commands
         private readonly PSCmdlet? _cmdlet;
         private readonly int _maxDepth;
 
-        // Warning tracking
-        private static readonly AsyncLocal<bool> s_warningWritten = new();
-
-        /// <summary>
-        /// Reset depth tracking for a new serialization operation.
-        /// </summary>
-        public static void ResetDepthTracking()
-        {
-            s_warningWritten.Value = false;
-        }
+        // Warning tracking (instance variable, reset per serialization)
+        private bool _warningWritten;
 
         public JsonConverterPSObject(PSCmdlet? cmdlet, int maxDepth)
         {
@@ -400,9 +389,9 @@ namespace Microsoft.PowerShell.Commands
         private void WriteDepthExceeded(Utf8JsonWriter writer, PSObject pso, object obj)
         {
             // Write warning once
-            if (!s_warningWritten.Value && _cmdlet is not null)
+            if (!_warningWritten && _cmdlet is not null)
             {
-                s_warningWritten.Value = true;
+                _warningWritten = true;
                 string warningMessage = string.Format(
                     System.Globalization.CultureInfo.CurrentCulture,
                     "Resulting JSON is truncated as serialization has exceeded the set depth of {0}.",
