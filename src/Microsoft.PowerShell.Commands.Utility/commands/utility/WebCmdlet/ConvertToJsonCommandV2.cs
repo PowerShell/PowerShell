@@ -298,8 +298,7 @@ namespace Microsoft.PowerShell.Commands
         private readonly PSCmdlet? _cmdlet;
         private readonly int _maxDepth;
 
-        // Depth tracking across recursive calls
-        private static readonly AsyncLocal<int> s_currentDepth = new();
+        // Warning tracking
         private static readonly AsyncLocal<bool> s_warningWritten = new();
 
         /// <summary>
@@ -307,7 +306,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public static void ResetDepthTracking()
         {
-            s_currentDepth.Value = 0;
             s_warningWritten.Value = false;
         }
 
@@ -332,7 +330,7 @@ namespace Microsoft.PowerShell.Commands
 
             var obj = pso.BaseObject;
 
-            int currentDepth = s_currentDepth.Value;
+            int currentDepth = writer.CurrentDepth;
 
             // Handle special types - check for null-like objects (no depth increment needed)
             if (LanguagePrimitives.IsNull(obj) || obj is DBNull or System.Management.Automation.Language.NullString)
@@ -341,19 +339,11 @@ namespace Microsoft.PowerShell.Commands
                 bool hasETSProps = pso.Properties.Match("*", PSMemberTypes.NoteProperty | PSMemberTypes.AliasProperty).Count > 0;
                 if (hasETSProps)
                 {
-                    s_currentDepth.Value = currentDepth + 1;
-                    try
-                    {
-                        writer.WriteStartObject();
-                        writer.WritePropertyName("value");
-                        writer.WriteNullValue();
-                        AppendPSProperties(writer, pso, options, excludeBaseProperties: true);
-                        writer.WriteEndObject();
-                    }
-                    finally
-                    {
-                        s_currentDepth.Value = currentDepth;
-                    }
+                    writer.WriteStartObject();
+                    writer.WritePropertyName("value");
+                    writer.WriteNullValue();
+                    AppendPSProperties(writer, pso, options, excludeBaseProperties: true);
+                    writer.WriteEndObject();
                 }
                 else
                 {
@@ -366,22 +356,14 @@ namespace Microsoft.PowerShell.Commands
             // Handle Newtonsoft.Json.Linq.JObject by converting properties manually
             if (obj is Newtonsoft.Json.Linq.JObject jObject)
             {
-                s_currentDepth.Value = currentDepth + 1;
-                try
+                writer.WriteStartObject();
+                foreach (var prop in jObject.Properties())
                 {
-                    writer.WriteStartObject();
-                    foreach (var prop in jObject.Properties())
-                    {
-                        writer.WritePropertyName(prop.Name);
-                        WriteJTokenValue(writer, prop.Value, options);
-                    }
+                    writer.WritePropertyName(prop.Name);
+                    WriteJTokenValue(writer, prop.Value, options);
+                }
 
-                    writer.WriteEndObject();
-                }
-                finally
-                {
-                    s_currentDepth.Value = currentDepth;
-                }
+                writer.WriteEndObject();
 
                 return;
             }
@@ -399,27 +381,19 @@ namespace Microsoft.PowerShell.Commands
                 WriteDepthExceeded(writer, pso, obj);
                 return;
             }
-            // For dictionaries, collections, and custom objects - increment depth
-            s_currentDepth.Value = currentDepth + 1;
-            try
+            // For dictionaries, collections, and custom objects
+            if (obj is IDictionary dict)
             {
-                if (obj is IDictionary dict)
-                {
-                    SerializeDictionary(writer, pso, dict, options);
-                }
-                else if (obj is IEnumerable enumerable and not string)
-                {
-                    SerializeEnumerable(writer, enumerable, options);
-                }
-                else
-                {
-                    // For custom objects, serialize as dictionary with properties
-                    SerializeAsObject(writer, pso, options);
-                }
+                SerializeDictionary(writer, pso, dict, options);
             }
-            finally
+            else if (obj is IEnumerable enumerable and not string)
             {
-                s_currentDepth.Value = currentDepth;
+                SerializeEnumerable(writer, enumerable, options);
+            }
+            else
+            {
+                // For custom objects, serialize as dictionary with properties
+                SerializeAsObject(writer, pso, options);
             }
         }
 
