@@ -94,14 +94,6 @@ namespace Microsoft.PowerShell.Commands
         public NewtonsoftStringEscapeHandling EscapeHandling { get; set; } = NewtonsoftStringEscapeHandling.Default;
 
         /// <summary>
-        /// Gets or sets custom JsonSerializerOptions for advanced scenarios.
-        /// When specified, bypasses V1-compatible processing and uses STJ directly.
-        /// Note: ETS properties will not be serialized in this mode.
-        /// </summary>
-        [Parameter]
-        public JsonSerializerOptions? JsonSerializerOptions { get; set; }
-
-        /// <summary>
         /// IDisposable implementation, dispose of any disposable resources created by the cmdlet.
         /// </summary>
         public void Dispose()
@@ -127,21 +119,6 @@ namespace Microsoft.PowerShell.Commands
         private readonly List<object?> _inputObjects = new();
 
         /// <summary>
-        /// Validate parameter combinations.
-        /// </summary>
-        protected override void BeginProcessing()
-        {
-            if (JsonSerializerOptions is not null && MyInvocation.BoundParameters.ContainsKey("Depth"))
-            {
-                ThrowTerminatingError(new ErrorRecord(
-                    new ArgumentException("The -Depth and -JsonSerializerOptions parameters cannot be used together. Use JsonSerializerOptions.MaxDepth to control depth."),
-                    "DepthAndJsonSerializerOptionsAreMutuallyExclusive",
-                    ErrorCategory.InvalidArgument,
-                    null));
-            }
-        }
-
-        /// <summary>
         /// Caching the input objects for the command.
         /// </summary>
         protected override void ProcessRecord()
@@ -158,36 +135,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 object? objectToProcess = (_inputObjects.Count > 1 || AsArray) ? (_inputObjects.ToArray() as object) : _inputObjects[0];
 
-                string? output;
-
-                if (JsonSerializerOptions is not null)
-                {
-                    // Direct STJ mode - bypasses V1-compatible processing
-                    // Custom JsonConverters will work, but ETS properties are not serialized
-                    // Depth is controlled by JsonSerializerOptions.MaxDepth (default 64)
-                    try
-                    {
-                        // Unwrap PSObject to get the base object for direct STJ serialization
-                        var objToSerialize = objectToProcess is PSObject pso ? pso.BaseObject : objectToProcess;
-                        output = System.Text.Json.JsonSerializer.Serialize(objToSerialize, JsonSerializerOptions);
-                    }
-                    catch (OperationCanceledException)
-                    {
-                        output = null;
-                    }
-                }
-                else
-                {
-                    // V1-compatible mode
-                    output = SystemTextJsonSerializer.ConvertToJson(
-                        objectToProcess,
-                        Depth,
-                        EnumsAsStrings.IsPresent,
-                        Compress.IsPresent,
-                        EscapeHandling,
-                        this,
-                        _cancellationSource.Token);
-                }
+                string? output = SystemTextJsonSerializer.ConvertToJson(
+                    objectToProcess,
+                    Depth,
+                    EnumsAsStrings.IsPresent,
+                    Compress.IsPresent,
+                    EscapeHandling,
+                    this,
+                    _cancellationSource.Token);
 
                 // null is returned only if the pipeline is stopping (e.g. ctrl+c is signaled).
                 // in that case, we shouldn't write the null to the output pipe.
