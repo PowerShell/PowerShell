@@ -38,7 +38,7 @@ namespace Microsoft.PowerShell.Commands
     [Experimental(ExperimentalFeature.PSJsonSerializerV2, ExperimentAction.Show)]
     [Cmdlet(VerbsData.ConvertTo, "Json", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096925", RemotingCapability = RemotingCapability.None)]
     [OutputType(typeof(string))]
-    public class ConvertToJsonCommandV2 : PSCmdlet, IDisposable
+    public class ConvertToJsonCommandV2 : PSCmdlet
     {
         /// <summary>
         /// Gets or sets the InputObject property.
@@ -46,8 +46,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
         [AllowNull]
         public object? InputObject { get; set; }
-
-        private readonly CancellationTokenSource _cancellationSource = new();
 
         /// <summary>
         /// Gets or sets the Depth property.
@@ -93,29 +91,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public NewtonsoftStringEscapeHandling EscapeHandling { get; set; } = NewtonsoftStringEscapeHandling.Default;
 
-        /// <summary>
-        /// IDisposable implementation, dispose of any disposable resources created by the cmdlet.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Implementation of IDisposable for both manual Dispose() and finalizer-called disposal of resources.
-        /// </summary>
-        /// <param name="disposing">
-        /// Specified as true when Dispose() was called, false if this is called from the finalizer.
-        /// </param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                _cancellationSource.Dispose();
-            }
-        }
-
         private readonly List<object?> _inputObjects = new();
 
         /// <summary>
@@ -142,7 +117,7 @@ namespace Microsoft.PowerShell.Commands
                     Compress.IsPresent,
                     EscapeHandling,
                     this,
-                    _cancellationSource.Token);
+                    PipelineStopToken);
 
                 // null is returned only if the pipeline is stopping (e.g. ctrl+c is signaled).
                 // in that case, we shouldn't write the null to the output pipe.
@@ -151,14 +126,6 @@ namespace Microsoft.PowerShell.Commands
                     WriteObject(output);
                 }
             }
-        }
-
-        /// <summary>
-        /// Process the Ctrl+C signal.
-        /// </summary>
-        protected override void StopProcessing()
-        {
-            _cancellationSource.Cancel();
         }
     }
 
@@ -214,26 +181,16 @@ namespace Microsoft.PowerShell.Commands
                 {
                     // Serialize JObject directly using our custom logic
                     using var stream = new System.IO.MemoryStream();
-                    using (var writer = new Utf8JsonWriter(stream, new JsonWriterOptions { Indented = !compressOutput, Encoder = GetEncoder(stringEscapeHandling) }))
+                    using var writer = new Utf8JsonWriter(stream, new JsonWriterOptions { Indented = !compressOutput, Encoder = GetEncoder(stringEscapeHandling) });
+                    writer.WriteStartObject();
+                    foreach (var prop in jObj.Properties())
                     {
-                        writer.WriteStartObject();
-                        foreach (var prop in jObj.Properties())
-                        {
-                            writer.WritePropertyName(prop.Name);
-                            var value = prop.Value.Type switch
-                            {
-                                Newtonsoft.Json.Linq.JTokenType.String => prop.Value.ToObject<string>(),
-                                Newtonsoft.Json.Linq.JTokenType.Integer => prop.Value.ToObject<long>(),
-                                Newtonsoft.Json.Linq.JTokenType.Float => prop.Value.ToObject<double>(),
-                                Newtonsoft.Json.Linq.JTokenType.Boolean => prop.Value.ToObject<bool>(),
-                                Newtonsoft.Json.Linq.JTokenType.Null => (object?)null,
-                                _ => prop.Value.ToString(),
-                            };
-                            System.Text.Json.JsonSerializer.Serialize(writer, value, options);
-                        }
-
-                        writer.WriteEndObject();
+                        writer.WritePropertyName(prop.Name);
+                        WriteJTokenValue(writer, prop.Value, options);
                     }
+
+                    writer.WriteEndObject();
+                    writer.Flush();
 
                     return System.Text.Encoding.UTF8.GetString(stream.ToArray());
                 }
@@ -257,6 +214,23 @@ namespace Microsoft.PowerShell.Commands
                 NewtonsoftStringEscapeHandling.EscapeHtml => JavaScriptEncoder.Create(UnicodeRanges.BasicLatin),
                 _ => JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
             };
+        }
+
+        /// <summary>
+        /// Writes a Newtonsoft JToken value to the Utf8JsonWriter.
+        /// </summary>
+        internal static void WriteJTokenValue(Utf8JsonWriter writer, Newtonsoft.Json.Linq.JToken token, JsonSerializerOptions options)
+        {
+            var value = token.Type switch
+            {
+                Newtonsoft.Json.Linq.JTokenType.String => token.ToObject<string>(),
+                Newtonsoft.Json.Linq.JTokenType.Integer => token.ToObject<long>(),
+                Newtonsoft.Json.Linq.JTokenType.Float => token.ToObject<double>(),
+                Newtonsoft.Json.Linq.JTokenType.Boolean => token.ToObject<bool>(),
+                Newtonsoft.Json.Linq.JTokenType.Null => (object?)null,
+                _ => token.ToString(),
+            };
+            System.Text.Json.JsonSerializer.Serialize(writer, value, options);
         }
     }
 
@@ -322,7 +296,7 @@ namespace Microsoft.PowerShell.Commands
                 foreach (var prop in jObject.Properties())
                 {
                     writer.WritePropertyName(prop.Name);
-                    WriteJTokenValue(writer, prop.Value, options);
+                    SystemTextJsonSerializer.WriteJTokenValue(writer, prop.Value, options);
                 }
 
                 writer.WriteEndObject();
@@ -349,7 +323,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 SerializeDictionary(writer, pso, dict, options);
             }
-            else if (obj is IEnumerable enumerable and not string)
+            else if (obj is IEnumerable enumerable)
             {
                 SerializeEnumerable(writer, enumerable, options);
             }
@@ -378,20 +352,6 @@ namespace Microsoft.PowerShell.Commands
                 ? LanguagePrimitives.ConvertTo<string>(pso)
                 : LanguagePrimitives.ConvertTo<string>(obj);
             writer.WriteStringValue(stringValue);
-        }
-
-        private static void WriteJTokenValue(Utf8JsonWriter writer, Newtonsoft.Json.Linq.JToken token, JsonSerializerOptions options)
-        {
-            var value = token.Type switch
-            {
-                Newtonsoft.Json.Linq.JTokenType.String => token.ToObject<string>(),
-                Newtonsoft.Json.Linq.JTokenType.Integer => token.ToObject<long>(),
-                Newtonsoft.Json.Linq.JTokenType.Float => token.ToObject<double>(),
-                Newtonsoft.Json.Linq.JTokenType.Boolean => token.ToObject<bool>(),
-                Newtonsoft.Json.Linq.JTokenType.Null => (object?)null,
-                _ => token.ToString(),
-            };
-            System.Text.Json.JsonSerializer.Serialize(writer, value, options);
         }
 
         private void SerializeEnumerable(Utf8JsonWriter writer, IEnumerable enumerable, JsonSerializerOptions options)

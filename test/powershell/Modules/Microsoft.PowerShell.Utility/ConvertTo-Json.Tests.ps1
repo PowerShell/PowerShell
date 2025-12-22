@@ -156,4 +156,84 @@ Describe 'ConvertTo-Json' -tags "CI" {
         $actual = ConvertTo-Json -Compress -InputObject $obj
         $actual | Should -Be '{"Positive":18446744073709551615,"Negative":-18446744073709551615}'
     }
+
+    It 'Should serialize Uri correctly' {
+        $uri = [uri]"https://example.com/path"
+        $json = $uri | ConvertTo-Json -Compress
+        $json | Should -BeExactly '"https://example.com/path"'
+    }
+
+    It 'Should serialize enums as numbers by default' {
+        $json = [System.DayOfWeek]::Monday | ConvertTo-Json
+        $json | Should -BeExactly '1'
+    }
+
+    It 'Should serialize enums as strings with -EnumsAsStrings' {
+        $json = [System.DayOfWeek]::Monday | ConvertTo-Json -EnumsAsStrings
+        $json | Should -BeExactly '"Monday"'
+    }
+
+    It 'Should serialize null correctly' {
+        $null | ConvertTo-Json | Should -BeExactly 'null'
+    }
+
+    It 'Should serialize arrays correctly' {
+        $arr = @(1, 2, 3)
+        $json = $arr | ConvertTo-Json -Compress
+        $json | Should -BeExactly '[1,2,3]'
+    }
+
+    It 'Should serialize hashtable correctly' {
+        $hash = [ordered]@{ a = 1; b = 2 }
+        $json = $hash | ConvertTo-Json -Compress
+        $json | Should -BeExactly '{"a":1,"b":2}'
+    }
+
+    It 'Should serialize nested objects correctly' {
+        $obj = [pscustomobject]@{
+            name = "test"
+            child = [pscustomobject]@{
+                value = 42
+            }
+        }
+        $json = $obj | ConvertTo-Json -Compress
+        $json | Should -BeExactly '{"name":"test","child":{"value":42}}'
+    }
+
+    It 'Should not escape by default' {
+        $json = @{ text = "<>&" } | ConvertTo-Json -Compress
+        $json | Should -BeExactly '{"text":"<>&"}'
+    }
+
+    It 'Should escape HTML with -EscapeHandling EscapeHtml' {
+        $json = @{ text = "<>&" } | ConvertTo-Json -Compress -EscapeHandling EscapeHtml
+        $json | Should -Match '\\u003C'
+        $json | Should -Match '\\u003E'
+        $json | Should -Match '\\u0026'
+    }
+
+    It 'Should escape non-ASCII with -EscapeHandling EscapeNonAscii' {
+        $json = @{ text = "日本語" } | ConvertTo-Json -Compress -EscapeHandling EscapeNonAscii
+        $json | Should -Match '\\u'
+    }
+
+    It 'Depth parameter should work' {
+        $obj = @{ a = @{ b = 1 } }
+        $json = $obj | ConvertTo-Json -Depth 2 -Compress
+        $json | Should -BeExactly '{"a":{"b":1}}'
+    }
+
+    It 'AsArray parameter should work' {
+        $json = @{a=1} | ConvertTo-Json -AsArray -Compress
+        $json | Should -BeExactly '[{"a":1}]'
+    }
+
+    It 'Multiple objects from pipeline should be serialized as array' {
+        $json = 1, 2, 3 | ConvertTo-Json -Compress
+        $json | Should -BeExactly '[1,2,3]'
+    }
+
+    It 'Depth over 100 should throw' {
+        { ConvertTo-Json -InputObject @{a=1} -Depth 101 } | Should -Throw
+    }
 }
