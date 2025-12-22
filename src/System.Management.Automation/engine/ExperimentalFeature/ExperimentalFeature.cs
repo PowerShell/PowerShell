@@ -114,7 +114,7 @@ namespace System.Management.Automation
                 ),
                 new ExperimentalFeature(
                     name: PSJsonSerializerV2,
-                    description: "Use System.Text.Json with improved defaults for ConvertTo-Json: Depth default 64 (was 2), no upper limit (-1 for unlimited)."
+                    description: "Use System.Text.Json for ConvertTo-Json with V1-compatible behavior and support for non-string dictionary keys."
                 ),
                 new ExperimentalFeature(
                     name: PSProfileDSCResource,

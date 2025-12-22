@@ -121,8 +121,3 @@ tmp/*
 
 # Ignore CTRF report files
 crtf/*
-# Work in progress files
-work_progress.md
-*_test*.ps1
-*_test*.json
-*_test*.txt
