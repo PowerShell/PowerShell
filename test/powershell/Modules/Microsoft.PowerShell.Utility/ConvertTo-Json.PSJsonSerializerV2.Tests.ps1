@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 BeforeDiscovery {
-    $script:isV2Enabled = $EnabledExperimentalFeatures.Contains('PSJsonSerializerV2')
+    $isV2Enabled = $EnabledExperimentalFeatures.Contains('PSJsonSerializerV2')
 }
 
 Describe 'ConvertTo-Json with PSJsonSerializerV2' -Tags "CI" {
@@ -130,14 +130,14 @@ Describe 'ConvertTo-Json with PSJsonSerializerV2' -Tags "CI" {
         }
     }
 
-    Context "V1 only - Legacy limits" {
-        It "Depth over 100 should throw when V2 is disabled" -Skip:$script:isV2Enabled {
+    Context "V1/V2 compatible - Depth limits" {
+        It "Depth over 100 should throw" {
             { ConvertTo-Json -InputObject @{a=1} -Depth 101 } | Should -Throw
         }
     }
 
     Context "V2 only - Depth exceeded warning" {
-        It "Should output warning when depth is exceeded" -Skip:(-not $script:isV2Enabled) {
+        It "Should output warning when depth is exceeded" -Skip:(-not $isV2Enabled) {
             $a = @{ a = @{ b = @{ c = @{ d = 1 } } } }
             $json = $a | ConvertTo-Json -Depth 2 -WarningVariable warn -WarningAction SilentlyContinue
             $json | Should -Not -BeNullOrEmpty
@@ -146,14 +146,14 @@ Describe 'ConvertTo-Json with PSJsonSerializerV2' -Tags "CI" {
     }
 
     Context "V2 only - Non-string dictionary keys" {
-        It "Should serialize dictionary with integer keys" -Skip:(-not $script:isV2Enabled) {
+        It "Should serialize dictionary with integer keys" -Skip:(-not $isV2Enabled) {
             $dict = @{ 1 = "one"; 2 = "two" }
             $json = $dict | ConvertTo-Json -Compress
             $json | Should -Match '"1":\s*"one"'
             $json | Should -Match '"2":\s*"two"'
         }
 
-        It "Should serialize Exception.Data with non-string keys" -Skip:(-not $script:isV2Enabled) {
+        It "Should serialize Exception.Data with non-string keys" -Skip:(-not $isV2Enabled) {
             $ex = [System.Exception]::new("test")
             $ex.Data.Add(1, "value1")
             $ex.Data.Add("key", "value2")
@@ -162,7 +162,7 @@ Describe 'ConvertTo-Json with PSJsonSerializerV2' -Tags "CI" {
     }
 
     Context "V2 only - HiddenAttribute" {
-        It "Should not serialize hidden properties in PowerShell class" -Skip:(-not $script:isV2Enabled) {
+        It "Should not serialize hidden properties in PowerShell class" -Skip:(-not $isV2Enabled) {
             class TestHiddenClass {
                 [string] $Visible
                 hidden [string] $Hidden
@@ -177,7 +177,7 @@ Describe 'ConvertTo-Json with PSJsonSerializerV2' -Tags "CI" {
     }
 
     Context "V2 only - Guid serialization" {
-        It "Should serialize Guid as string consistently" -Skip:(-not $script:isV2Enabled) {
+        It "Should serialize Guid as string consistently" -Skip:(-not $isV2Enabled) {
             $guid = [guid]"12345678-1234-1234-1234-123456789abc"
             # Both methods should produce the same string output (unlike V1 which is inconsistent)
             $jsonPipeline = $guid | ConvertTo-Json -Compress

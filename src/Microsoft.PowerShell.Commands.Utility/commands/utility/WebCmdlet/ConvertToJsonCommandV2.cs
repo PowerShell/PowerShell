@@ -51,11 +51,11 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Gets or sets the Depth property.
-        /// Default is 2. Maximum allowed is 1000.
+        /// Default is 2. Maximum allowed is 100.
         /// Use 0 to serialize only top-level properties.
         /// </summary>
         [Parameter]
-        [ValidateRange(0, 1000)]
+        [ValidateRange(0, 100)]
         public int Depth { get; set; } = 2;
 
         /// <summary>
@@ -189,8 +189,8 @@ namespace Microsoft.PowerShell.Commands
                                 var options = new JsonSerializerOptions()
                 {
                     WriteIndented = !compressOutput,
-                    // Use maximum allowed depth to avoid System.Text.Json exceptions
-                    // Actual depth limiting is handled by JsonConverterPSObject
+                    // Set high value to avoid System.Text.Json exceptions
+                    // User-specified depth is enforced by JsonConverterPSObject (max 100 via ValidateRange)
                     MaxDepth = 1000,
                     DefaultIgnoreCondition = JsonIgnoreCondition.Never,
                     Encoder = GetEncoder(stringEscapeHandling),
