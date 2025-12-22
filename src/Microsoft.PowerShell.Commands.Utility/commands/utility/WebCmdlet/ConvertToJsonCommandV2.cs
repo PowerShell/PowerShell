@@ -189,6 +189,7 @@ namespace Microsoft.PowerShell.Commands
                 var options = new JsonSerializerOptions()
                 {
                     WriteIndented = !compressOutput,
+
                     // Set high value to avoid System.Text.Json exceptions
                     // User-specified depth is enforced by JsonConverterPSObject (max 100 via ValidateRange)
                     MaxDepth = 1000,
@@ -230,8 +231,10 @@ namespace Microsoft.PowerShell.Commands
                             };
                             System.Text.Json.JsonSerializer.Serialize(writer, value, options);
                         }
+
                         writer.WriteEndObject();
                     }
+
                     return System.Text.Encoding.UTF8.GetString(stream.ToArray());
                 }
 
