@@ -86,7 +86,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter AsArray { get; set; }
 
         /// <summary>
-        /// Specifies how strings are escaped when writing JSON text.
+        /// Gets or sets how strings are escaped when writing JSON text.
         /// If the EscapeHandling property is set to EscapeHtml, the result JSON string will
         /// be returned with HTML (&lt;, &gt;, &amp;, ', ") and control characters (e.g. newline) are escaped.
         /// </summary>
@@ -186,7 +186,7 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                                var options = new JsonSerializerOptions()
+                var options = new JsonSerializerOptions()
                 {
                     WriteIndented = !compressOutput,
                     // Set high value to avoid System.Text.Json exceptions
@@ -226,7 +226,7 @@ namespace Microsoft.PowerShell.Commands
                                 Newtonsoft.Json.Linq.JTokenType.Float => prop.Value.ToObject<double>(),
                                 Newtonsoft.Json.Linq.JTokenType.Boolean => prop.Value.ToObject<bool>(),
                                 Newtonsoft.Json.Linq.JTokenType.Null => (object?)null,
-                                _ => prop.Value.ToString()
+                                _ => prop.Value.ToString(),
                             };
                             System.Text.Json.JsonSerializer.Serialize(writer, value, options);
                         }
@@ -340,6 +340,7 @@ namespace Microsoft.PowerShell.Commands
                 WriteDepthExceeded(writer, pso, obj);
                 return;
             }
+
             // For dictionaries, collections, and custom objects
             if (obj is IDictionary dict)
             {
@@ -385,7 +386,7 @@ namespace Microsoft.PowerShell.Commands
                 Newtonsoft.Json.Linq.JTokenType.Float => token.ToObject<double>(),
                 Newtonsoft.Json.Linq.JTokenType.Boolean => token.ToObject<bool>(),
                 Newtonsoft.Json.Linq.JTokenType.Null => (object?)null,
-                _ => token.ToString()
+                _ => token.ToString(),
             };
             System.Text.Json.JsonSerializer.Serialize(writer, value, options);
         }
@@ -402,6 +403,7 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     var psoItem = PSObject.AsPSObject(item);
+
                     // Recursive call - Write will handle depth tracking
                     Write(writer, psoItem, options);
                 }
@@ -614,5 +616,4 @@ namespace Microsoft.PowerShell.Commands
             writer.WriteRawValue(value.ToString(CultureInfo.InvariantCulture));
         }
     }
-
 }
