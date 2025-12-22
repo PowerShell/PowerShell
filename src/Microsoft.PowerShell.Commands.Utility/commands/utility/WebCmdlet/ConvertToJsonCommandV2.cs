@@ -23,17 +23,15 @@ using System.Threading;
 using Newtonsoft.Json;
 
 using NewtonsoftStringEscapeHandling = Newtonsoft.Json.StringEscapeHandling;
-using StjJsonIgnoreAttribute = System.Text.Json.Serialization.JsonIgnoreAttribute;
 
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// The ConvertTo-Json command (V2 - System.Text.Json implementation).
+    /// The ConvertTo-Json command.
     /// This command converts an object to a Json string representation.
     /// </summary>
     /// <remarks>
     /// This class is shown when PSJsonSerializerV2 experimental feature is enabled.
-    /// V2 uses System.Text.Json with V1-compatible depth handling.
     /// </remarks>
     [Experimental(ExperimentalFeature.PSJsonSerializerV2, ExperimentAction.Show)]
     [Cmdlet(VerbsData.ConvertTo, "Json", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096925", RemotingCapability = RemotingCapability.None)]
