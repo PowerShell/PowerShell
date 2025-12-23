@@ -22,10 +22,45 @@ using System.Threading;
 
 using Newtonsoft.Json;
 
-using NewtonsoftStringEscapeHandling = Newtonsoft.Json.StringEscapeHandling;
-
 namespace Microsoft.PowerShell.Commands
 {
+    /// <summary>
+    /// Specifies how strings are escaped when writing JSON text.
+    /// </summary>
+    public enum JsonStringEscapeHandling
+    {
+        /// <summary>
+        /// Only control characters (e.g. newline) are escaped.
+        /// </summary>
+        Default = 0,
+
+        /// <summary>
+        /// All non-ASCII and control characters are escaped.
+        /// </summary>
+        EscapeNonAscii = 1,
+
+        /// <summary>
+        /// HTML (&lt;, &gt;, &amp;, ', ") and control characters are escaped.
+        /// </summary>
+        EscapeHtml = 2,
+    }
+
+    /// <summary>
+    /// Transforms Newtonsoft.Json.StringEscapeHandling to JsonStringEscapeHandling for backward compatibility.
+    /// </summary>
+    internal sealed class StringEscapeHandlingTransformationAttribute : ArgumentTransformationAttribute
+    {
+        public override object Transform(EngineIntrinsics engineIntrinsics, object inputData)
+        {
+            if (inputData is Newtonsoft.Json.StringEscapeHandling newtonsoftValue)
+            {
+                return (JsonStringEscapeHandling)(int)newtonsoftValue;
+            }
+
+            return inputData;
+        }
+    }
+
     /// <summary>
     /// The ConvertTo-Json command.
     /// This command converts an object to a Json string representation.
@@ -87,7 +122,8 @@ namespace Microsoft.PowerShell.Commands
         /// be returned with HTML (&lt;, &gt;, &amp;, ', ") and control characters (e.g. newline) are escaped.
         /// </summary>
         [Parameter]
-        public NewtonsoftStringEscapeHandling EscapeHandling { get; set; } = NewtonsoftStringEscapeHandling.Default;
+        [StringEscapeHandlingTransformation]
+        public JsonStringEscapeHandling EscapeHandling { get; set; } = JsonStringEscapeHandling.Default;
 
         private readonly List<object?> _inputObjects = new();
 
@@ -140,7 +176,7 @@ namespace Microsoft.PowerShell.Commands
             int maxDepth,
             bool enumsAsStrings,
             bool compressOutput,
-            NewtonsoftStringEscapeHandling stringEscapeHandling,
+            JsonStringEscapeHandling stringEscapeHandling,
             PSCmdlet? cmdlet,
             CancellationToken cancellationToken)
         {
@@ -185,13 +221,13 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private static JavaScriptEncoder GetEncoder(NewtonsoftStringEscapeHandling escapeHandling)
+        private static JavaScriptEncoder GetEncoder(JsonStringEscapeHandling escapeHandling)
         {
             return escapeHandling switch
             {
-                NewtonsoftStringEscapeHandling.Default => JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-                NewtonsoftStringEscapeHandling.EscapeNonAscii => JavaScriptEncoder.Default,
-                NewtonsoftStringEscapeHandling.EscapeHtml => JavaScriptEncoder.Create(UnicodeRanges.BasicLatin),
+                JsonStringEscapeHandling.Default => JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+                JsonStringEscapeHandling.EscapeNonAscii => JavaScriptEncoder.Default,
+                JsonStringEscapeHandling.EscapeHtml => JavaScriptEncoder.Create(UnicodeRanges.BasicLatin),
                 _ => JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
             };
         }
