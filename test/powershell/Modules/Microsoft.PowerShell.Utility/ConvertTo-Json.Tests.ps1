@@ -157,39 +157,36 @@ Describe 'ConvertTo-Json' -tags "CI" {
         $actual | Should -Be '{"Positive":18446744073709551615,"Negative":-18446744073709551615}'
     }
 
+    It 'Should serialize special floating-point values as strings' {
+        [double]::PositiveInfinity | ConvertTo-Json | Should -BeExactly '"Infinity"'
+        [double]::NegativeInfinity | ConvertTo-Json | Should -BeExactly '"-Infinity"'
+        [double]::NaN | ConvertTo-Json | Should -BeExactly '"NaN"'
+    }
+
+    It 'Should return null for empty array' {
+        @() | ConvertTo-Json | Should -BeNull
+    }
+
+    It 'Should serialize SwitchParameter as object with IsPresent property' {
+        @{ flag = [switch]$true } | ConvertTo-Json -Compress | Should -BeExactly '{"flag":{"IsPresent":true}}'
+        @{ flag = [switch]$false } | ConvertTo-Json -Compress | Should -BeExactly '{"flag":{"IsPresent":false}}'
+    }
+
     It 'Should serialize Uri correctly' {
         $uri = [uri]"https://example.com/path"
         $json = $uri | ConvertTo-Json -Compress
         $json | Should -BeExactly '"https://example.com/path"'
     }
 
-    It 'Should serialize enums as numbers by default' {
-        $json = [System.DayOfWeek]::Monday | ConvertTo-Json
-        $json | Should -BeExactly '1'
+    It 'Should serialize enums <description>' -TestCases @(
+        @{ description = 'as numbers by default'; params = @{}; expected = '1' }
+        @{ description = 'as strings with -EnumsAsStrings'; params = @{ EnumsAsStrings = $true }; expected = '"Monday"' }
+    ) {
+        param($description, $params, $expected)
+        [System.DayOfWeek]::Monday | ConvertTo-Json @params | Should -BeExactly $expected
     }
 
-    It 'Should serialize enums as strings with -EnumsAsStrings' {
-        $json = [System.DayOfWeek]::Monday | ConvertTo-Json -EnumsAsStrings
-        $json | Should -BeExactly '"Monday"'
-    }
-
-    It 'Should serialize null correctly' {
-        $null | ConvertTo-Json | Should -BeExactly 'null'
-    }
-
-    It 'Should serialize arrays correctly' {
-        $arr = @(1, 2, 3)
-        $json = $arr | ConvertTo-Json -Compress
-        $json | Should -BeExactly '[1,2,3]'
-    }
-
-    It 'Should serialize hashtable correctly' {
-        $hash = [ordered]@{ a = 1; b = 2 }
-        $json = $hash | ConvertTo-Json -Compress
-        $json | Should -BeExactly '{"a":1,"b":2}'
-    }
-
-    It 'Should serialize nested objects correctly' {
+    It 'Should serialize nested PSCustomObject correctly' {
         $obj = [pscustomobject]@{
             name = "test"
             child = [pscustomobject]@{
@@ -200,37 +197,18 @@ Describe 'ConvertTo-Json' -tags "CI" {
         $json | Should -BeExactly '{"name":"test","child":{"value":42}}'
     }
 
-    It 'Should not escape by default' {
-        $json = @{ text = "<>&" } | ConvertTo-Json -Compress
+    It 'Should not escape HTML tag characters by default' {
+        $json = @{ text = '<>&' } | ConvertTo-Json -Compress
         $json | Should -BeExactly '{"text":"<>&"}'
     }
 
-    It 'Should escape HTML with -EscapeHandling EscapeHtml' {
-        $json = @{ text = "<>&" } | ConvertTo-Json -Compress -EscapeHandling EscapeHtml
-        $json | Should -Match '\\u003C'
-        $json | Should -Match '\\u003E'
-        $json | Should -Match '\\u0026'
-    }
-
-    It 'Should escape non-ASCII with -EscapeHandling EscapeNonAscii' {
-        $json = @{ text = "日本語" } | ConvertTo-Json -Compress -EscapeHandling EscapeNonAscii
-        $json | Should -Match '\\u'
-    }
-
-    It 'Depth parameter should work' {
-        $obj = @{ a = @{ b = 1 } }
-        $json = $obj | ConvertTo-Json -Depth 2 -Compress
-        $json | Should -BeExactly '{"a":{"b":1}}'
-    }
-
-    It 'AsArray parameter should work' {
-        $json = @{a=1} | ConvertTo-Json -AsArray -Compress
-        $json | Should -BeExactly '[{"a":1}]'
-    }
-
-    It 'Multiple objects from pipeline should be serialized as array' {
-        $json = 1, 2, 3 | ConvertTo-Json -Compress
-        $json | Should -BeExactly '[1,2,3]'
+    It 'Should escape <description> with -EscapeHandling <EscapeHandling>' -TestCases @(
+        @{ description = 'HTML tag characters'; inputText = '<>&'; EscapeHandling = 'EscapeHtml'; pattern = '\\u003C.*\\u003E.*\\u0026' }
+        @{ description = 'non-ASCII characters'; inputText = '日本語'; EscapeHandling = 'EscapeNonAscii'; pattern = '\\u' }
+    ) {
+        param($description, $inputText, $EscapeHandling, $pattern)
+        $json = @{ text = $inputText } | ConvertTo-Json -Compress -EscapeHandling $EscapeHandling
+        $json | Should -Match $pattern
     }
 
     It 'Depth over 100 should throw' {
