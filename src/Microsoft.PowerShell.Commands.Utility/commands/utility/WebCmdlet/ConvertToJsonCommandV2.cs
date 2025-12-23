@@ -173,25 +173,7 @@ namespace Microsoft.PowerShell.Commands
                 options.Converters.Add(new JsonConverterNullString());
                 options.Converters.Add(new JsonConverterDBNull());
                 options.Converters.Add(new JsonConverterPSObject(cmdlet, maxDepth));
-
-                // Handle JObject specially to avoid IEnumerable serialization
-                if (objectToProcess is Newtonsoft.Json.Linq.JObject jObj)
-                {
-                    // Serialize JObject directly using our custom logic
-                    using var stream = new System.IO.MemoryStream();
-                    using var writer = new Utf8JsonWriter(stream, new JsonWriterOptions { Indented = !compressOutput, Encoder = GetEncoder(stringEscapeHandling) });
-                    writer.WriteStartObject();
-                    foreach (var prop in jObj.Properties())
-                    {
-                        writer.WritePropertyName(prop.Name);
-                        WriteJTokenValue(writer, prop.Value, options);
-                    }
-
-                    writer.WriteEndObject();
-                    writer.Flush();
-
-                    return System.Text.Encoding.UTF8.GetString(stream.ToArray());
-                }
+                options.Converters.Add(new JsonConverterJObject());
 
                 // Wrap in PSObject to ensure ETS properties are preserved
                 var pso = PSObject.AsPSObject(objectToProcess);
@@ -212,23 +194,6 @@ namespace Microsoft.PowerShell.Commands
                 NewtonsoftStringEscapeHandling.EscapeHtml => JavaScriptEncoder.Create(UnicodeRanges.BasicLatin),
                 _ => JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
             };
-        }
-
-        /// <summary>
-        /// Writes a Newtonsoft JToken value to the Utf8JsonWriter.
-        /// </summary>
-        internal static void WriteJTokenValue(Utf8JsonWriter writer, Newtonsoft.Json.Linq.JToken token, JsonSerializerOptions options)
-        {
-            var value = token.Type switch
-            {
-                Newtonsoft.Json.Linq.JTokenType.String => token.ToObject<string>(),
-                Newtonsoft.Json.Linq.JTokenType.Integer => token.ToObject<long>(),
-                Newtonsoft.Json.Linq.JTokenType.Float => token.ToObject<double>(),
-                Newtonsoft.Json.Linq.JTokenType.Boolean => token.ToObject<bool>(),
-                Newtonsoft.Json.Linq.JTokenType.Null => (object?)null,
-                _ => token.ToString(),
-            };
-            System.Text.Json.JsonSerializer.Serialize(writer, value, options);
         }
     }
 
@@ -287,18 +252,10 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            // Handle Newtonsoft.Json.Linq.JObject by converting properties manually
+            // Handle Newtonsoft.Json.Linq.JObject by delegating to JsonConverterJObject
             if (obj is Newtonsoft.Json.Linq.JObject jObject)
             {
-                writer.WriteStartObject();
-                foreach (var prop in jObject.Properties())
-                {
-                    writer.WritePropertyName(prop.Name);
-                    SystemTextJsonSerializer.WriteJTokenValue(writer, prop.Value, options);
-                }
-
-                writer.WriteEndObject();
-
+                System.Text.Json.JsonSerializer.Serialize(writer, jObject, options);
                 return;
             }
 
@@ -575,6 +532,43 @@ namespace Microsoft.PowerShell.Commands
         {
             // Write as number string to preserve precision
             writer.WriteRawValue(value.ToString(CultureInfo.InvariantCulture));
+        }
+    }
+
+    /// <summary>
+    /// Custom JsonConverter for Newtonsoft.Json.Linq.JObject to isolate Newtonsoft-related code.
+    /// </summary>
+    internal sealed class JsonConverterJObject : System.Text.Json.Serialization.JsonConverter<Newtonsoft.Json.Linq.JObject>
+    {
+        public override Newtonsoft.Json.Linq.JObject Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Write(Utf8JsonWriter writer, Newtonsoft.Json.Linq.JObject jObject, JsonSerializerOptions options)
+        {
+            writer.WriteStartObject();
+            foreach (var prop in jObject.Properties())
+            {
+                writer.WritePropertyName(prop.Name);
+                WriteJTokenValue(writer, prop.Value, options);
+            }
+
+            writer.WriteEndObject();
+        }
+
+        private static void WriteJTokenValue(Utf8JsonWriter writer, Newtonsoft.Json.Linq.JToken token, JsonSerializerOptions options)
+        {
+            var value = token.Type switch
+            {
+                Newtonsoft.Json.Linq.JTokenType.String => token.ToObject<string>(),
+                Newtonsoft.Json.Linq.JTokenType.Integer => token.ToObject<long>(),
+                Newtonsoft.Json.Linq.JTokenType.Float => token.ToObject<double>(),
+                Newtonsoft.Json.Linq.JTokenType.Boolean => token.ToObject<bool>(),
+                Newtonsoft.Json.Linq.JTokenType.Null => (object?)null,
+                _ => token.ToString(),
+            };
+            System.Text.Json.JsonSerializer.Serialize(writer, value, options);
         }
     }
 }
