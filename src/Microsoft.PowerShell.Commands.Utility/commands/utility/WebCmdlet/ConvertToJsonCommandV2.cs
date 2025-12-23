@@ -474,6 +474,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     writer.WriteNullValue();
                 }
+
                 // If maxDepth is 0, convert non-primitive values to string
                 else if (_maxDepth == 0 && !IsPrimitiveTypeOrNull(value))
                 {
