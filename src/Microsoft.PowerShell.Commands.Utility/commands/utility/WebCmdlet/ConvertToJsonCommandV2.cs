@@ -206,6 +206,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     options.Converters.Add(new JsonConverterInt64Enum());
                 }
+
                 options.Converters.Add(new JsonConverterBigInteger());
                 options.Converters.Add(new JsonConverterNullString());
                 options.Converters.Add(new JsonConverterDBNull());
