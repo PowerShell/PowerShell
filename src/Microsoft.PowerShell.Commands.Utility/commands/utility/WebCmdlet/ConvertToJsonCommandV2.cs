@@ -20,8 +20,6 @@ using System.Text.Json.Serialization;
 using System.Text.Unicode;
 using System.Threading;
 
-using Newtonsoft.Json;
-
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
@@ -142,7 +140,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (_inputObjects.Count > 0)
             {
-                object? objectToProcess = (_inputObjects.Count > 1 || AsArray) ? (_inputObjects.ToArray() as object) : _inputObjects[0];
+                object? objectToProcess = (_inputObjects.Count > 1 || AsArray) ? (object)_inputObjects : _inputObjects[0];
 
                 string? output = SystemTextJsonSerializer.ConvertToJson(
                     objectToProcess,
@@ -204,7 +202,10 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Add custom converters for PowerShell-specific types
-                options.Converters.Add(new JsonConverterInt64Enum());
+                if (!ExperimentalFeature.IsEnabled(ExperimentalFeature.PSSerializeJSONLongEnumAsNumber))
+                {
+                    options.Converters.Add(new JsonConverterInt64Enum());
+                }
                 options.Converters.Add(new JsonConverterBigInteger());
                 options.Converters.Add(new JsonConverterNullString());
                 options.Converters.Add(new JsonConverterDBNull());
@@ -221,16 +222,14 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private static JavaScriptEncoder GetEncoder(JsonStringEscapeHandling escapeHandling)
-        {
-            return escapeHandling switch
+        private static JavaScriptEncoder GetEncoder(JsonStringEscapeHandling escapeHandling) =>
+            escapeHandling switch
             {
                 JsonStringEscapeHandling.Default => JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
                 JsonStringEscapeHandling.EscapeNonAscii => JavaScriptEncoder.Default,
                 JsonStringEscapeHandling.EscapeHtml => JavaScriptEncoder.Create(UnicodeRanges.BasicLatin),
                 _ => JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
             };
-        }
     }
 
     /// <summary>
@@ -255,7 +254,7 @@ namespace Microsoft.PowerShell.Commands
             throw new NotImplementedException();
         }
 
-        public override void Write(Utf8JsonWriter writer, PSObject pso, JsonSerializerOptions options)
+        public override void Write(Utf8JsonWriter writer, PSObject? pso, JsonSerializerOptions options)
         {
             if (LanguagePrimitives.IsNull(pso))
             {
@@ -263,21 +262,37 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            var obj = pso.BaseObject;
+            var obj = pso!.BaseObject;
 
             int currentDepth = writer.CurrentDepth;
 
             // Handle special types - check for null-like objects (no depth increment needed)
             if (LanguagePrimitives.IsNull(obj) || obj is DBNull or System.Management.Automation.Language.NullString)
             {
-                // Check if PSObject has Extended/Adapted properties
-                bool hasETSProps = pso.Properties.Match("*", PSMemberTypes.NoteProperty | PSMemberTypes.AliasProperty).Count > 0;
-                if (hasETSProps)
+                // Single enumeration: write properties directly as we find them
+                var etsProperties = new PSMemberInfoIntegratingCollection<PSPropertyInfo>(
+                    pso,
+                    PSObject.GetPropertyCollection(PSMemberViewTypes.Extended));
+
+                bool wroteStart = false;
+                foreach (var prop in etsProperties)
                 {
-                    writer.WriteStartObject();
-                    writer.WritePropertyName("value");
-                    writer.WriteNullValue();
-                    AppendPSProperties(writer, pso, options, excludeBaseProperties: true);
+                    if (!ShouldSkipProperty(prop))
+                    {
+                        if (!wroteStart)
+                        {
+                            writer.WriteStartObject();
+                            writer.WritePropertyName("value");
+                            writer.WriteNullValue();
+                            wroteStart = true;
+                        }
+
+                        WriteProperty(writer, prop, options);
+                    }
+                }
+
+                if (wroteStart)
+                {
                     writer.WriteEndObject();
                 }
                 else
@@ -339,9 +354,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Convert to string when depth exceeded
-            string stringValue = pso.ImmediateBaseObjectIsEmpty
-                ? LanguagePrimitives.ConvertTo<string>(pso)
-                : LanguagePrimitives.ConvertTo<string>(obj);
+            string stringValue = LanguagePrimitives.ConvertTo<string>(pso.ImmediateBaseObjectIsEmpty ? pso : obj);
             writer.WriteStringValue(stringValue);
         }
 
@@ -440,42 +453,42 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (var prop in properties)
             {
-                // Skip properties with JsonIgnore attribute or Hidden attribute
                 if (ShouldSkipProperty(prop))
                 {
                     continue;
                 }
 
-                try
-                {
-                    var value = prop.Value;
-                    writer.WritePropertyName(prop.Name);
+                WriteProperty(writer, prop, options);
+            }
+        }
 
-                    // If maxDepth is 0, convert non-primitive values to string
-                    if (_maxDepth == 0 && value is not null && !IsPrimitiveTypeOrNull(value))
-                    {
-                        writer.WriteStringValue(value.ToString());
-                    }
-                    else
-                    {
-                        // Handle null values directly (including AutomationNull)
-                        if (LanguagePrimitives.IsNull(value))
-                        {
-                            writer.WriteNullValue();
-                        }
-                        else
-                        {
-                            // Wrap value in PSObject to ensure custom converters are applied
-                            var psoValue = PSObject.AsPSObject(value);
-                            System.Text.Json.JsonSerializer.Serialize(writer, psoValue, typeof(PSObject), options);
-                        }
-                    }
-                }
-                catch
+        private void WriteProperty(Utf8JsonWriter writer, PSPropertyInfo prop, JsonSerializerOptions options)
+        {
+            try
+            {
+                var value = prop.Value;
+                writer.WritePropertyName(prop.Name);
+
+                // Handle null values directly (including AutomationNull)
+                if (LanguagePrimitives.IsNull(value))
                 {
-                    // Skip properties that throw on access
-                    continue;
+                    writer.WriteNullValue();
                 }
+                // If maxDepth is 0, convert non-primitive values to string
+                else if (_maxDepth == 0 && !IsPrimitiveTypeOrNull(value))
+                {
+                    writer.WriteStringValue(value!.ToString());
+                }
+                else
+                {
+                    // Wrap value in PSObject to ensure custom converters are applied
+                    var psoValue = PSObject.AsPSObject(value);
+                    System.Text.Json.JsonSerializer.Serialize(writer, psoValue, typeof(PSObject), options);
+                }
+            }
+            catch
+            {
+                // Skip properties that throw on access - write nothing for this property
             }
         }
 
@@ -487,9 +500,16 @@ namespace Microsoft.PowerShell.Commands
                 return true;
             }
 
-            // Note: JsonIgnoreAttribute check would require reflection on the underlying member
-            // which may not be available for all PSPropertyInfo types. For now, we rely on
-            // IsHidden to filter properties that should not be serialized.
+            // Check for JsonIgnoreAttribute on the underlying member
+            if (prop is PSProperty psProperty)
+            {
+                if (psProperty.adapterData is MemberInfo memberInfo &&
+                    memberInfo.GetCustomAttribute<System.Text.Json.Serialization.JsonIgnoreAttribute>() is not null)
+                {
+                    return true;
+                }
+            }
+
             return false;
         }
     }
