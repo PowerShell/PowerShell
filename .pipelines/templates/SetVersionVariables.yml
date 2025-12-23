@@ -10,7 +10,7 @@ parameters:
   default: true
 
 steps:
-- template: set-reporoot.yml@self
+- template: /.pipelines/templates/set-reporoot.yml@self
   parameters:
     ob_restore_phase: ${{ parameters.ob_restore_phase }}
 
