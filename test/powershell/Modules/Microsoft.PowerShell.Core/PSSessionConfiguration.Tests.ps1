@@ -632,7 +632,7 @@ namespace PowershellTestConfigNamespace
 
         It "Emits error with correct member names when invalid parameters are provided to New-PSSessionConfigurationFile" {
              $err = { New-PSSessionConfigurationFile -Path TestDrive:/test.pssc -VisibleCmdlets @(1) -ErrorAction Stop } | Should -Throw -PassThru
-             ([string]$err) | Should -Be 'The member 'VisibleCmdlets' must be an array consisting of either string or hashtable elements.'
+             ([string]$err) | Should -Be "The member 'VisibleCmdlets' must be an array consisting of either string or hashtable elements."
         }
     }
 
