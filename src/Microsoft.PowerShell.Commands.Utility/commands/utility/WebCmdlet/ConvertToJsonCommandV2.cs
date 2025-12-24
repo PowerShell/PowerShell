@@ -140,7 +140,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (_inputObjects.Count > 0)
             {
-                object? objectToProcess = (_inputObjects.Count > 1 || AsArray) ? (object)_inputObjects : _inputObjects[0];
+                object? objectToProcess = (_inputObjects.Count > 1 || AsArray) ? _inputObjects : _inputObjects[0];
 
                 string? output = SystemTextJsonSerializer.ConvertToJson(
                     objectToProcess,
