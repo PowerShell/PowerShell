@@ -214,4 +214,101 @@ Describe 'ConvertTo-Json' -tags "CI" {
     It 'Depth over 100 should throw' {
         { ConvertTo-Json -InputObject @{a=1} -Depth 101 } | Should -Throw
     }
+
+    Context 'Nested raw object serialization' {
+        BeforeAll {
+            class TestClassWithFileInfo {
+                [System.IO.FileInfo]$File
+            }
+
+            $script:testFilePath = Join-Path $PSHOME 'pwsh.dll'
+            if (-not (Test-Path $script:testFilePath)) {
+                $script:testFilePath = Join-Path $PSHOME 'System.Management.Automation.dll'
+            }
+        }
+
+        It 'Typed property with raw FileInfo should serialize Base properties only' {
+            $obj = [TestClassWithFileInfo]::new()
+            $obj.File = [System.IO.FileInfo]::new($script:testFilePath)
+
+            $json = $obj | ConvertTo-Json -Depth 2
+            $parsed = $json | ConvertFrom-Json
+
+            $parsed.File.PSObject.Properties.Name.Count | Should -Be 17
+        }
+
+        It 'Typed property loses PSObject wrapper from Get-Item' {
+            $obj = [TestClassWithFileInfo]::new()
+            $obj.File = Get-Item $script:testFilePath
+
+            $json = $obj | ConvertTo-Json -Depth 2
+            $parsed = $json | ConvertFrom-Json
+
+            $parsed.File.PSObject.Properties.Name.Count | Should -Be 17
+        }
+
+        It 'PSCustomObject with Get-Item preserves Extended properties' {
+            $obj = [PSCustomObject]@{
+                File = Get-Item $script:testFilePath
+            }
+
+            $json = $obj | ConvertTo-Json -Depth 2
+            $parsed = $json | ConvertFrom-Json
+
+            $parsed.File.PSObject.Properties.Name.Count | Should -BeGreaterThan 17
+            $parsed.File.PSObject.Properties.Name | Should -Contain 'PSPath'
+        }
+
+        It 'PSCustomObject with raw FileInfo should serialize Base properties only' {
+            $obj = [PSCustomObject]@{
+                File = [System.IO.FileInfo]::new($script:testFilePath)
+            }
+
+            $json = $obj | ConvertTo-Json -Depth 2
+            $parsed = $json | ConvertFrom-Json
+
+            $parsed.File.PSObject.Properties.Name.Count | Should -Be 17
+            $parsed.File.PSObject.Properties.Name | Should -Not -Contain 'PSPath'
+        }
+
+        It 'Hashtable with raw FileInfo should serialize Base properties only' {
+            $hash = @{
+                File = [System.IO.FileInfo]::new($script:testFilePath)
+            }
+
+            $json = $hash | ConvertTo-Json -Depth 2
+            $parsed = $json | ConvertFrom-Json
+
+            $parsed.File.PSObject.Properties.Name.Count | Should -Be 17
+        }
+
+        It 'Hashtable with Get-Item preserves Extended properties' {
+            $hash = @{
+                File = Get-Item $script:testFilePath
+            }
+
+            $json = $hash | ConvertTo-Json -Depth 2
+            $parsed = $json | ConvertFrom-Json
+
+            $parsed.File.PSObject.Properties.Name.Count | Should -BeGreaterThan 17
+        }
+
+        It 'Array of raw FileInfo should serialize with Adapted properties' {
+            $arr = @([System.IO.FileInfo]::new($script:testFilePath))
+
+            $json = $arr | ConvertTo-Json -Depth 2
+            $parsed = $json | ConvertFrom-Json
+
+            $parsed[0].PSObject.Properties.Name.Count | Should -Be 24
+        }
+
+        It 'Array of Get-Item FileInfo preserves Extended properties' {
+            $arr = @(Get-Item $script:testFilePath)
+
+            $json = $arr | ConvertTo-Json -Depth 2
+            $parsed = $json | ConvertFrom-Json
+
+            $parsed[0].PSObject.Properties.Name.Count | Should -BeGreaterThan 24
+        }
+    }
 }
