@@ -61,7 +61,7 @@ namespace Microsoft.PowerShell.Commands
 
     /// <summary>
     /// The ConvertTo-Json command.
-    /// This command converts an object to a Json string representation.
+    /// This command converts an object to a JSON string representation.
     /// </summary>
     /// <remarks>
     /// This class is shown when PSJsonSerializerV2 experimental feature is enabled.
