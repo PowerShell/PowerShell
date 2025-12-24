@@ -25,6 +25,10 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Specifies how strings are escaped when writing JSON text.
     /// </summary>
+    /// <remarks>
+    /// The numeric values must match Newtonsoft.Json.StringEscapeHandling for backward compatibility.
+    /// Do not change these values.
+    /// </remarks>
     public enum JsonStringEscapeHandling
     {
         /// <summary>
@@ -49,14 +53,7 @@ namespace Microsoft.PowerShell.Commands
     internal sealed class StringEscapeHandlingTransformationAttribute : ArgumentTransformationAttribute
     {
         public override object Transform(EngineIntrinsics engineIntrinsics, object inputData)
-        {
-            if (inputData is Newtonsoft.Json.StringEscapeHandling newtonsoftValue)
-            {
-                return (JsonStringEscapeHandling)(int)newtonsoftValue;
-            }
-
-            return inputData;
-        }
+            => inputData is Newtonsoft.Json.StringEscapeHandling newtonsoftValue ? (JsonStringEscapeHandling)(int)newtonsoftValue : inputData;
     }
 
     /// <summary>
@@ -213,7 +210,6 @@ namespace Microsoft.PowerShell.Commands
                 options.Converters.Add(new JsonConverterPSObject(cmdlet, maxDepth));
                 options.Converters.Add(new JsonConverterJObject());
 
-                // Wrap in PSObject to ensure ETS properties are preserved
                 var pso = PSObject.AsPSObject(objectToProcess);
                 return System.Text.Json.JsonSerializer.Serialize(pso, typeof(PSObject), options);
             }
@@ -241,7 +237,6 @@ namespace Microsoft.PowerShell.Commands
         private readonly PSCmdlet? _cmdlet;
         private readonly int _maxDepth;
 
-        // Warning tracking (instance variable, reset per serialization)
         private bool _warningWritten;
 
         public JsonConverterPSObject(PSCmdlet? cmdlet, int maxDepth)
@@ -314,7 +309,7 @@ namespace Microsoft.PowerShell.Commands
             // If PSObject wraps a primitive type, serialize the base object directly (no depth increment)
             if (IsPrimitiveType(obj))
             {
-                System.Text.Json.JsonSerializer.Serialize(writer, obj, obj.GetType(), options);
+                SerializePrimitive(writer, obj, options);
                 return;
             }
 
@@ -399,6 +394,53 @@ namespace Microsoft.PowerShell.Commands
             return obj is null || IsPrimitiveType(obj);
         }
 
+        private static void SerializePrimitive(Utf8JsonWriter writer, object obj, JsonSerializerOptions options)
+        {
+            // Handle special floating-point values (Infinity, NaN) as strings for V1 compatibility
+            if (obj is double d)
+            {
+                if (double.IsPositiveInfinity(d))
+                {
+                    writer.WriteStringValue("Infinity");
+                    return;
+                }
+
+                if (double.IsNegativeInfinity(d))
+                {
+                    writer.WriteStringValue("-Infinity");
+                    return;
+                }
+
+                if (double.IsNaN(d))
+                {
+                    writer.WriteStringValue("NaN");
+                    return;
+                }
+            }
+            else if (obj is float f)
+            {
+                if (float.IsPositiveInfinity(f))
+                {
+                    writer.WriteStringValue("Infinity");
+                    return;
+                }
+
+                if (float.IsNegativeInfinity(f))
+                {
+                    writer.WriteStringValue("-Infinity");
+                    return;
+                }
+
+                if (float.IsNaN(f))
+                {
+                    writer.WriteStringValue("NaN");
+                    return;
+                }
+            }
+
+            System.Text.Json.JsonSerializer.Serialize(writer, obj, obj.GetType(), options);
+        }
+
         private void SerializeDictionary(Utf8JsonWriter writer, PSObject pso, IDictionary dict, JsonSerializerOptions options)
         {
             writer.WriteStartObject();
@@ -412,42 +454,120 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Add PSObject extended properties
-            AppendPSProperties(writer, pso, options, excludeBaseProperties: true);
+            AppendPSProperties(writer, pso, options, PSMemberViewTypes.Extended);
 
             writer.WriteEndObject();
         }
 
         private void WriteValue(Utf8JsonWriter writer, object? value, JsonSerializerOptions options)
         {
-            if (value is null)
+            if (value is null or DBNull or System.Management.Automation.Language.NullString)
             {
                 writer.WriteNullValue();
             }
             else if (IsPrimitiveType(value))
             {
-                System.Text.Json.JsonSerializer.Serialize(writer, value, value.GetType(), options);
+                SerializePrimitive(writer, value, options);
+            }
+            else if (value is Newtonsoft.Json.Linq.JObject jObject)
+            {
+                System.Text.Json.JsonSerializer.Serialize(writer, jObject, options);
             }
             else
             {
-                // Non-primitive: wrap in PSObject and call Write for depth tracking
-                var psoValue = PSObject.AsPSObject(value);
-                Write(writer, psoValue, options);
+                // Check if value was originally a PSObject (preserves Extended/Adapted properties)
+                // or a raw .NET object (serialize with Base properties only for V1 compatibility)
+                if (value is PSObject psoValue)
+                {
+                    Write(writer, psoValue, options);
+                }
+                else
+                {
+                    var pso = PSObject.AsPSObject(value);
+                    SerializeRawValue(writer, pso, options);
+                }
             }
         }
 
         private void SerializeAsObject(Utf8JsonWriter writer, PSObject pso, JsonSerializerOptions options)
         {
             writer.WriteStartObject();
-            AppendPSProperties(writer, pso, options, excludeBaseProperties: false);
+            AppendPSProperties(writer, pso, options, PSMemberViewTypes.Extended | PSMemberViewTypes.Adapted);
             writer.WriteEndObject();
         }
 
-        private void AppendPSProperties(Utf8JsonWriter writer, PSObject pso, JsonSerializerOptions options, bool excludeBaseProperties)
+        /// <summary>
+        /// Serializes a raw .NET object with Base properties only (V1 compatible behavior).
+        /// </summary>
+        private void SerializeRawValue(Utf8JsonWriter writer, PSObject pso, JsonSerializerOptions options)
         {
-            var memberTypes = excludeBaseProperties
-                ? PSMemberViewTypes.Extended
-                : (PSMemberViewTypes.Extended | PSMemberViewTypes.Adapted);
+            object obj = pso.BaseObject;
 
+            // Primitive types: serialize directly
+            if (IsPrimitiveType(obj))
+            {
+                SerializePrimitive(writer, obj, options);
+                return;
+            }
+
+            // Check depth limit
+            int currentDepth = writer.CurrentDepth;
+            if (currentDepth > _maxDepth)
+            {
+                WriteDepthExceeded(writer, pso, obj);
+                return;
+            }
+
+            // Dictionary: serialize with standard dictionary handling
+            if (obj is IDictionary dict)
+            {
+                SerializeDictionary(writer, pso, dict, options);
+                return;
+            }
+
+            // Enumerable: serialize with raw item handling
+            if (obj is IEnumerable enumerable)
+            {
+                SerializeEnumerableRaw(writer, enumerable, options);
+                return;
+            }
+
+            // Object: serialize with Base properties only (MemberType == Property)
+            writer.WriteStartObject();
+            AppendBaseProperties(writer, pso, options);
+            writer.WriteEndObject();
+        }
+
+        /// <summary>
+        /// Serializes an enumerable with raw .NET object handling (Base properties only).
+        /// </summary>
+        private void SerializeEnumerableRaw(Utf8JsonWriter writer, IEnumerable enumerable, JsonSerializerOptions options)
+        {
+            writer.WriteStartArray();
+            foreach (var item in enumerable)
+            {
+                if (item is null)
+                {
+                    writer.WriteNullValue();
+                }
+                else if (item is PSObject psoItem)
+                {
+                    // Existing PSObject: use standard serialization
+                    Write(writer, psoItem, options);
+                }
+                else
+                {
+                    // Raw object: serialize with Base properties only
+                    var pso = PSObject.AsPSObject(item);
+                    SerializeRawValue(writer, pso, options);
+                }
+            }
+
+            writer.WriteEndArray();
+        }
+
+        private void AppendPSProperties(Utf8JsonWriter writer, PSObject pso, JsonSerializerOptions options, PSMemberViewTypes memberTypes)
+        {
             var properties = new PSMemberInfoIntegratingCollection<PSPropertyInfo>(
                 pso,
                 PSObject.GetPropertyCollection(memberTypes));
@@ -460,6 +580,64 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 WriteProperty(writer, prop, options);
+            }
+        }
+
+        /// <summary>
+        /// Appends only base .NET properties (MemberType == Property) for V1 compatibility.
+        /// </summary>
+        private void AppendBaseProperties(Utf8JsonWriter writer, PSObject pso, JsonSerializerOptions options)
+        {
+            // Use Adapted view which includes .NET properties via DotNetAdapter
+            var properties = new PSMemberInfoIntegratingCollection<PSPropertyInfo>(
+                pso,
+                PSObject.GetPropertyCollection(PSMemberViewTypes.Adapted));
+
+            foreach (var prop in properties)
+            {
+                // Filter to only Property type (excludes CodeProperty, ScriptProperty, etc.)
+                if (prop.MemberType != PSMemberTypes.Property)
+                {
+                    continue;
+                }
+
+                if (ShouldSkipProperty(prop))
+                {
+                    continue;
+                }
+
+                WritePropertyRaw(writer, prop, options);
+            }
+        }
+
+        /// <summary>
+        /// Writes a property value, treating nested objects as raw (Base properties only).
+        /// </summary>
+        private void WritePropertyRaw(Utf8JsonWriter writer, PSPropertyInfo prop, JsonSerializerOptions options)
+        {
+            try
+            {
+                var value = prop.Value;
+                writer.WritePropertyName(prop.Name);
+
+                if (LanguagePrimitives.IsNull(value))
+                {
+                    writer.WriteNullValue();
+                }
+                else if (_maxDepth == 0 && !IsPrimitiveTypeOrNull(value))
+                {
+                    writer.WriteStringValue(value!.ToString());
+                }
+                else
+                {
+                    // Always treat nested values as raw objects (V1 compatible)
+                    var psoValue = PSObject.AsPSObject(value);
+                    SerializeRawValue(writer, psoValue, options);
+                }
+            }
+            catch
+            {
+                // Skip properties that throw on access
             }
         }
 
@@ -483,9 +661,19 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    // Wrap value in PSObject to ensure custom converters are applied
-                    var psoValue = PSObject.AsPSObject(value);
-                    System.Text.Json.JsonSerializer.Serialize(writer, psoValue, typeof(PSObject), options);
+                    // Check if value was originally a PSObject (preserves Extended/Adapted properties)
+                    // or a raw .NET object (serialize with Base properties only for V1 compatibility)
+                    if (value is PSObject psoValue)
+                    {
+                        // Existing PSObject: use standard serialization (Extended | Adapted)
+                        System.Text.Json.JsonSerializer.Serialize(writer, psoValue, typeof(PSObject), options);
+                    }
+                    else
+                    {
+                        // Raw object: serialize with Base properties only (V1 compatible)
+                        var pso = PSObject.AsPSObject(value);
+                        SerializeRawValue(writer, pso, options);
+                    }
                 }
             }
             catch
