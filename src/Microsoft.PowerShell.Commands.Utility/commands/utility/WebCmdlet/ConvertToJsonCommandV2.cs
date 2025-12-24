@@ -263,7 +263,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            var obj = pso!.BaseObject;
+            object? obj = pso.BaseObject;
 
             int currentDepth = writer.CurrentDepth;
 
