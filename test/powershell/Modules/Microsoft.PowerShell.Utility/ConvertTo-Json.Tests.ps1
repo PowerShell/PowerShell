@@ -21,17 +21,20 @@ Describe 'ConvertTo-Json' -tags "CI" {
         $jsonFormat | Should -Match '"TestValue3": 99999'
     }
 
-    It "StopProcessing should succeed" -Pending:$true {
+	It "StopProcessing should succeed" -Pending:$true {
         $ps = [PowerShell]::Create()
         $null = $ps.AddScript({
             $obj = [PSCustomObject]@{P1 = ''; P2 = ''; P3 = ''; P4 = ''; P5 = ''; P6 = ''}
             $obj.P1 = $obj.P2 = $obj.P3 = $obj.P4 = $obj.P5 = $obj.P6 = $obj
             1..100 | ForEach-Object { $obj } | ConvertTo-Json -Depth 10 -Verbose
+            # the conversion is expected to take some time, this throw is in case it doesn't
             throw "Should not have thrown exception"
         })
         $null = $ps.BeginInvoke()
+        # wait for verbose message from ConvertTo-Json to ensure cmdlet is processing
         Wait-UntilTrue { $ps.Streams.Verbose.Count -gt 0 } | Should -BeTrue
         $null = $ps.BeginStop($null, $null)
+        # wait a bit to ensure state has changed, not using synchronous Stop() to avoid blocking Pester
         Start-Sleep -Milliseconds 100
         $ps.InvocationStateInfo.State | Should -BeExactly "Stopped"
         $ps.Dispose()
@@ -54,12 +57,15 @@ Describe 'ConvertTo-Json' -tags "CI" {
                 Bool = $False
             }
 
+        $ExpectedOutput = '{
+  "FirstLevel1": "System.Collections.Hashtable",
+  "FirstLevel2": "System.Collections.Hashtable",
+  "Integer": 10,
+  "Bool": false
+}'
+
         $output = $ComplexObject | ConvertTo-Json -Depth 0
-        $parsed = $output | ConvertFrom-Json
-        $parsed.FirstLevel1 | Should -BeExactly 'System.Collections.Hashtable'
-        $parsed.FirstLevel2 | Should -BeExactly 'System.Collections.Hashtable'
-        $parsed.Integer | Should -Be 10
-        $parsed.Bool | Should -BeFalse
+        $output | Should -Be $ExpectedOutput
     }
 
     It "The result string is packed in an array symbols when AsArray parameter is used." {
@@ -75,16 +81,16 @@ Describe 'ConvertTo-Json' -tags "CI" {
         $output | Should -BeExactly '1'
     }
 
-    It "The result string should <n>." -TestCases @(
-        @{name = "be not escaped by default";                     params = @{};                              pattern = '"abc":\s*"''def''"' }
-        @{name = "be not escaped with '-EscapeHandling Default'"; params = @{EscapeHandling = 'Default'};    pattern = '"abc":\s*"''def''"' }
-        @{name = "be escaped with '-EscapeHandling EscapeHtml'";  params = @{EscapeHandling = 'EscapeHtml'}; pattern = '\\u0027def\\u0027' }
+    It "The result string should <Name>." -TestCases @(
+        @{name = "be not escaped by default.";                     params = @{};                              expected = "{$newline  ""abc"": ""'def'""$newline}" }
+        @{name = "be not escaped with '-EscapeHandling Default'."; params = @{EscapeHandling = 'Default'};    expected = "{$newline  ""abc"": ""'def'""$newline}" }
+        @{name = "be escaped with '-EscapeHandling EscapeHtml'.";  params = @{EscapeHandling = 'EscapeHtml'}; expected = "{$newline  ""abc"": ""\u0027def\u0027""$newline}" }
     ) {
-        param ($name, $params, $pattern)
+        param ($name, $params ,$expected)
 
-        $json = @{ 'abc' = "'def'" } | ConvertTo-Json @params
-        $json | Should -Match $pattern
+        @{ 'abc' = "'def'" } | ConvertTo-Json @params | Should -BeExactly $expected
     }
+
     It "Should handle null" {
         [pscustomobject] @{ prop=$null } | ConvertTo-Json -Compress | Should -BeExactly '{"prop":null}'
         $null | ConvertTo-Json -Compress | Should -Be 'null'
@@ -96,10 +102,19 @@ Describe 'ConvertTo-Json' -tags "CI" {
         [ordered]@{
             a = $null;
             b = [System.Management.Automation.Internal.AutomationNull]::Value;
-        } | ConvertTo-Json -Compress | Should -BeExactly '{"a":null,"b":null}'
+            c = [System.DBNull]::Value;
+            d = [NullString]::Value
+        } | ConvertTo-Json -Compress | Should -BeExactly '{"a":null,"b":null,"c":null,"d":null}'
 
         ConvertTo-Json ([System.Management.Automation.Internal.AutomationNull]::Value) | Should -BeExactly 'null'
         ConvertTo-Json ([NullString]::Value) | Should -BeExactly 'null'
+
+        ConvertTo-Json -Compress @(
+            $null,
+            [System.Management.Automation.Internal.AutomationNull]::Value,
+            [System.DBNull]::Value,
+            [NullString]::Value
+        ) | Should -BeExactly '[null,null,null,null]'
     }
 
     It "Should handle the ETS properties added to 'DBNull.Value' and 'NullString.Value'" {
@@ -108,9 +123,7 @@ Describe 'ConvertTo-Json' -tags "CI" {
             $p1 = Add-Member -InputObject ([System.DBNull]::Value) -MemberType NoteProperty -Name dbnull -Value 'dbnull' -PassThru
             $p2 = Add-Member -InputObject ([NullString]::Value) -MemberType NoteProperty -Name nullstr -Value 'nullstr' -PassThru
 
-            $result = $p1, $p2 | ConvertTo-Json -Compress | ConvertFrom-Json
-            $result[0].dbnull | Should -BeExactly 'dbnull'
-            $result[1].nullstr | Should -BeExactly 'nullstr'
+            $p1, $p2 | ConvertTo-Json -Compress | Should -BeExactly '[{"value":null,"dbnull":"dbnull"},{"value":null,"nullstr":"nullstr"}]'
         }
         finally
         {
@@ -123,8 +136,9 @@ Describe 'ConvertTo-Json' -tags "CI" {
         $date = "2021-06-24T15:54:06.796999-07:00"
         $d = [DateTime]::Parse($date)
 
-        $result = $d | ConvertTo-Json | ConvertFrom-Json
-        $result | Should -Be $d
+        # need to use wildcard here due to some systems may be configured with different culture setting showing time in different format
+        $d | ConvertTo-Json -Compress | Should -BeLike '"2021-06-24T*'
+        $d | ConvertTo-Json | ConvertFrom-Json | Should -Be $d
     }
 
     It 'Should not serialize ETS properties added to String' {
@@ -144,14 +158,9 @@ Describe 'ConvertTo-Json' -tags "CI" {
     }
 
     It 'Should serialize special floating-point values as strings' {
-        $result = [double]::PositiveInfinity | ConvertTo-Json
-        $result | Should -BeIn @('"Infinity"', '"∞"')
-
-        $result = [double]::NegativeInfinity | ConvertTo-Json
-        $result | Should -BeIn @('"-Infinity"', '"-∞"')
-
-        $result = [double]::NaN | ConvertTo-Json
-        $result | Should -BeIn @('"NaN"', '"非数値 (NaN)"')
+        [double]::PositiveInfinity | ConvertTo-Json | Should -BeExactly '"Infinity"'
+        [double]::NegativeInfinity | ConvertTo-Json | Should -BeExactly '"-Infinity"'
+        [double]::NaN | ConvertTo-Json | Should -BeExactly '"NaN"'
     }
 
     It 'Should return null for empty array' {
