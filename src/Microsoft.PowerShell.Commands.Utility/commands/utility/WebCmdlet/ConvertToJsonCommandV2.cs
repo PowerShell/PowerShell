@@ -691,6 +691,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             var pso = PSObject.AsPSObject(value);
+
             // Object: serialize with Base properties only
             writer.WriteStartObject();
             AppendBaseProperties(writer, pso, options);
