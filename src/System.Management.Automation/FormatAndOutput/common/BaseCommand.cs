@@ -251,20 +251,24 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             if (disposing)
             {
+                if (this.implementation != null)
+                {
+                    this.implementation.Dispose();
+                    this.implementation = null;
+                }
+
+#pragma warning disable CS0618 // Type or member is obsolete - Call is required for backwards compatibility
                 InternalDispose();
+#pragma warning restore CS0618 // Type or member is obsolete - Call is required for backwards compatibility
             }
         }
 
         /// <summary>
         /// Do-nothing implementation: derived classes will override as see fit.
         /// </summary>
+        [Obsolete("Derived classes should override Dispose(bool disposing) instead.", false)]
         protected virtual void InternalDispose()
         {
-            if (this.implementation == null)
-                return;
-
-            this.implementation.Dispose();
-            this.implementation = null;
         }
         #endregion
     }
