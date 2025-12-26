@@ -6,18 +6,10 @@ BeforeDiscovery {
 }
 
 Describe 'ConvertTo-Json PSJsonSerializerV2 specific behavior' -Tags "CI" -Skip:(-not $isV2Enabled) {
-    It 'Should output warning when depth is exceeded' {
-        $a = @{ a = @{ b = @{ c = @{ d = 1 } } } }
-        $json = $a | ConvertTo-Json -Depth 2 -WarningVariable warn -WarningAction SilentlyContinue
-        $json | Should -Not -BeNullOrEmpty
-        $warn | Should -Not -BeNullOrEmpty
-    }
-
     It 'Should serialize dictionary with integer keys' {
         $dict = @{ 1 = "one"; 2 = "two" }
         $json = $dict | ConvertTo-Json -Compress
-        $json | Should -Match '"1":\s*"one"'
-        $json | Should -Match '"2":\s*"two"'
+        $json | Should -BeIn @('{"1":"one","2":"two"}', '{"2":"two","1":"one"}')
     }
 
     It 'Should serialize Exception.Data with non-string keys' {
@@ -40,11 +32,27 @@ Describe 'ConvertTo-Json PSJsonSerializerV2 specific behavior' -Tags "CI" -Skip:
         $json | Should -Not -Match 'Hidden'
     }
 
+    # V2 improvement: Guid is serialized consistently (V1 had inconsistency between Pipeline and InputObject)
     It 'Should serialize Guid as string consistently' {
         $guid = [guid]"12345678-1234-1234-1234-123456789abc"
         $jsonPipeline = $guid | ConvertTo-Json -Compress
         $jsonInputObject = ConvertTo-Json -InputObject $guid -Compress
         $jsonPipeline | Should -BeExactly '"12345678-1234-1234-1234-123456789abc"'
         $jsonInputObject | Should -BeExactly '"12345678-1234-1234-1234-123456789abc"'
+    }
+
+    # V2 design: Array elements use Base properties only (consistent behavior)
+    # This differs from V1 where array elements sometimes had Extended properties
+    Context 'Array element serialization' {
+        It 'Should serialize array elements with Base properties only' {
+            $file = Get-Item $PSHOME
+            $pso = [PSCustomObject]@{ Items = @($file) }
+
+            $json = $pso | ConvertTo-Json -Depth 2 -Compress
+            # PSPath is an Extended property - V2 uses Base properties for array elements
+            $json | Should -Not -Match 'PSPath'
+            # Name is a Base property - should be present
+            $json | Should -Match '"Name"'
+        }
     }
 }

@@ -311,4 +311,49 @@ Describe 'ConvertTo-Json' -tags "CI" {
             $parsed[0].PSObject.Properties.Name.Count | Should -BeGreaterThan 24
         }
     }
+
+    Context 'STJ-native scalar types serialization consistency' {
+        # These types are serialized identically via Pipeline and InputObject
+        It 'Should serialize DateTime consistently via Pipeline and InputObject' {
+            $dt = [datetime]"2024-01-15T10:30:00"
+            $jsonPipeline = $dt | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $dt -Compress
+            $jsonPipeline | Should -BeExactly $jsonInputObject
+        }
+
+        It 'Should serialize TimeSpan consistently via Pipeline and InputObject' {
+            $ts = [timespan]::FromHours(2.5)
+            $jsonPipeline = $ts | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $ts -Compress
+            $jsonPipeline | Should -BeExactly $jsonInputObject
+        }
+
+        It 'Should serialize Version consistently via Pipeline and InputObject' {
+            $ver = [version]"1.2.3.4"
+            $jsonPipeline = $ver | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $ver -Compress
+            $jsonPipeline | Should -BeExactly $jsonInputObject
+        }
+    }
+
+    Context 'PSObject vs raw object distinction' {
+        # Non-scalar types may differ between Pipeline (PSObject) and InputObject (raw)
+        # Pipeline wraps objects in PSObject, adding Extended/Adapted properties
+        It 'Should serialize IPAddress with Extended properties via Pipeline' {
+            $ip = [System.Net.IPAddress]::Parse("192.168.1.1")
+            $jsonPipeline = $ip | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $ip -Compress
+            # Pipeline includes IPAddressToString (Extended property)
+            $jsonPipeline | Should -Match 'IPAddressToString'
+            # InputObject does not include Extended properties
+            $jsonInputObject | Should -Not -Match 'IPAddressToString'
+        }
+    }
+
+    It 'Should output warning when depth is exceeded' {
+        $a = @{ a = @{ b = @{ c = @{ d = 1 } } } }
+        $json = $a | ConvertTo-Json -Depth 2 -WarningVariable warn -WarningAction SilentlyContinue
+        $json | Should -Not -BeNullOrEmpty
+        $warn | Should -Not -BeNullOrEmpty
+    }
 }
