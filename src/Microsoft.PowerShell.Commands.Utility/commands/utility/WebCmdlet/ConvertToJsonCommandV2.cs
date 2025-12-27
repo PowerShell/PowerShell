@@ -204,9 +204,11 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 options.Converters.Add(new JsonConverterBigInteger());
+                options.Converters.Add(new JsonConverterDouble());
+                options.Converters.Add(new JsonConverterFloat());
                 options.Converters.Add(new JsonConverterNullString());
                 options.Converters.Add(new JsonConverterDBNull());
-                options.Converters.Add(new JsonConverterPSObject(cmdlet, maxDepth));
+                options.Converters.Add(new JsonConverterPSObject(cmdlet, maxDepth, basePropertiesOnly: false));
                 options.Converters.Add(new JsonConverterRawObject(cmdlet, maxDepth));
                 options.Converters.Add(new JsonConverterJObject());
 
@@ -248,7 +250,7 @@ namespace Microsoft.PowerShell.Commands
 
         private bool _warningWritten;
 
-        public JsonConverterPSObject(PSCmdlet? cmdlet, int maxDepth, bool basePropertiesOnly = false)
+        public JsonConverterPSObject(PSCmdlet? cmdlet, int maxDepth, bool basePropertiesOnly)
         {
             _cmdlet = cmdlet;
             _maxDepth = maxDepth;
@@ -600,6 +602,68 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
+    /// JsonConverter for double to serialize Infinity and NaN as strings for V1 compatibility.
+    /// </summary>
+    internal sealed class JsonConverterDouble : System.Text.Json.Serialization.JsonConverter<double>
+    {
+        public override double Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Write(Utf8JsonWriter writer, double value, JsonSerializerOptions options)
+        {
+            if (double.IsPositiveInfinity(value))
+            {
+                writer.WriteStringValue("Infinity");
+            }
+            else if (double.IsNegativeInfinity(value))
+            {
+                writer.WriteStringValue("-Infinity");
+            }
+            else if (double.IsNaN(value))
+            {
+                writer.WriteStringValue("NaN");
+            }
+            else
+            {
+                writer.WriteNumberValue(value);
+            }
+        }
+    }
+
+    /// <summary>
+    /// JsonConverter for float to serialize Infinity and NaN as strings for V1 compatibility.
+    /// </summary>
+    internal sealed class JsonConverterFloat : System.Text.Json.Serialization.JsonConverter<float>
+    {
+        public override float Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Write(Utf8JsonWriter writer, float value, JsonSerializerOptions options)
+        {
+            if (float.IsPositiveInfinity(value))
+            {
+                writer.WriteStringValue("Infinity");
+            }
+            else if (float.IsNegativeInfinity(value))
+            {
+                writer.WriteStringValue("-Infinity");
+            }
+            else if (float.IsNaN(value))
+            {
+                writer.WriteStringValue("NaN");
+            }
+            else
+            {
+                writer.WriteNumberValue(value);
+            }
+        }
+    }
+
+    /// <summary>
     /// Custom JsonConverter for Newtonsoft.Json.Linq.JObject to isolate Newtonsoft-related code.
     /// </summary>
     internal sealed class JsonConverterJObject : System.Text.Json.Serialization.JsonConverter<Newtonsoft.Json.Linq.JObject>
@@ -638,16 +702,13 @@ namespace Microsoft.PowerShell.Commands
 
     /// <summary>
     /// Wrapper class for raw .NET objects to distinguish them from PSObjects at the type level.
-    /// This enables separate JsonConverter handling for raw objects (Base properties only).
+    /// Inherits from PSObject to avoid rewrapping when passed to JsonConverterPSObject.
     /// </summary>
-    internal sealed class RawObjectWrapper
+    internal sealed class RawObjectWrapper : PSObject
     {
-        public RawObjectWrapper(object value)
+        public RawObjectWrapper(object value) : base(value)
         {
-            Value = value;
         }
-
-        public object Value { get; }
     }
 
     /// <summary>
@@ -673,8 +734,8 @@ namespace Microsoft.PowerShell.Commands
 
         public override void Write(Utf8JsonWriter writer, RawObjectWrapper wrapper, JsonSerializerOptions options)
         {
-            var pso = PSObject.AsPSObject(wrapper.Value);
-            _psoConverter.Write(writer, pso, options);
+            // RawObjectWrapper inherits from PSObject, so no rewrapping needed
+            _psoConverter.Write(writer, wrapper, options);
         }
     }
 
@@ -727,53 +788,7 @@ namespace Microsoft.PowerShell.Commands
 
         public static void SerializePrimitive(Utf8JsonWriter writer, object obj, JsonSerializerOptions options)
         {
-            // Handle special floating-point values (Infinity, NaN) as strings for V1 compatibility
-            if (obj is double d)
-            {
-                if (double.IsPositiveInfinity(d))
-                {
-                    writer.WriteStringValue("Infinity");
-                    return;
-                }
-
-                if (double.IsNegativeInfinity(d))
-                {
-                    writer.WriteStringValue("-Infinity");
-                    return;
-                }
-
-                if (double.IsNaN(d))
-                {
-                    writer.WriteStringValue("NaN");
-                    return;
-                }
-            }
-            else if (obj is float f)
-            {
-                if (float.IsPositiveInfinity(f))
-                {
-                    writer.WriteStringValue("Infinity");
-                    return;
-                }
-
-                if (float.IsNegativeInfinity(f))
-                {
-                    writer.WriteStringValue("-Infinity");
-                    return;
-                }
-
-                if (float.IsNaN(f))
-                {
-                    writer.WriteStringValue("NaN");
-                    return;
-                }
-            }
-            else if (obj is BigInteger bi)
-            {
-                writer.WriteRawValue(bi.ToString(CultureInfo.InvariantCulture));
-                return;
-            }
-
+            // Custom converters handle special cases (BigInteger, double/float Infinity/NaN)
             System.Text.Json.JsonSerializer.Serialize(writer, obj, obj.GetType(), options);
         }
 
