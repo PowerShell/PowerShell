@@ -272,8 +272,6 @@ namespace Microsoft.PowerShell.Commands
 
             object? obj = pso.BaseObject;
 
-            int currentDepth = writer.CurrentDepth;
-
             // Handle special types - check for null-like objects (no depth increment needed)
             if (obj is null || obj is DBNull or System.Management.Automation.Language.NullString)
             {
@@ -328,7 +326,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Check depth limit for complex types only (after scalar type check)
-            if (currentDepth > _maxDepth)
+            if (writer.CurrentDepth > _maxDepth)
             {
                 WriteDepthExceeded(writer, pso, obj);
                 return;
