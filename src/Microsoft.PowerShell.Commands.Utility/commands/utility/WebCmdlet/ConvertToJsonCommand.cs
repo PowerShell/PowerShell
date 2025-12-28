@@ -15,6 +15,10 @@ namespace Microsoft.PowerShell.Commands
     /// The ConvertTo-Json command.
     /// This command converts an object to a Json string representation.
     /// </summary>
+    /// <remarks>
+    /// This class is hidden when PSJsonSerializerV2 experimental feature is enabled.
+    /// </remarks>
+    [Experimental(ExperimentalFeature.PSJsonSerializerV2, ExperimentAction.Hide)]
     [Cmdlet(VerbsData.ConvertTo, "Json", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096925", RemotingCapability = RemotingCapability.None)]
     [OutputType(typeof(string))]
     public class ConvertToJsonCommand : PSCmdlet, IDisposable
