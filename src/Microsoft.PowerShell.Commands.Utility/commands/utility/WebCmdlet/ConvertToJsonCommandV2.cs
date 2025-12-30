@@ -16,6 +16,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 using System.Text.Unicode;
 using System.Threading;
 
@@ -206,6 +207,7 @@ namespace Microsoft.PowerShell.Commands
                 options.Converters.Add(new JsonConverterBigInteger());
                 options.Converters.Add(new JsonConverterDouble());
                 options.Converters.Add(new JsonConverterFloat());
+                options.Converters.Add(new JsonConverterType());
                 options.Converters.Add(new JsonConverterNullString());
                 options.Converters.Add(new JsonConverterDBNull());
                 options.Converters.Add(new JsonConverterPSObject(cmdlet, maxDepth, basePropertiesOnly: false));
@@ -504,6 +506,12 @@ namespace Microsoft.PowerShell.Commands
                 {
                     writer.WriteStringValue(value!.ToString());
                 }
+
+                // Scalar types: use SerializePrimitive (handles BigInteger, Type, etc.)
+                else if (JsonSerializerHelper.IsStjNativeScalarType(value))
+                {
+                    JsonSerializerHelper.SerializePrimitive(writer, value, options);
+                }
                 else if (value is PSObject psoValue)
                 {
                     // Existing PSObject: use PSObject serialization (Extended/Adapted properties)
@@ -662,6 +670,28 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
+    /// JsonConverter for System.Type to serialize as AssemblyQualifiedName string for V1 compatibility.
+    /// </summary>
+    internal sealed class JsonConverterType : System.Text.Json.Serialization.JsonConverter<Type>
+    {
+        public override bool CanConvert(Type typeToConvert)
+        {
+            // Handle Type and all derived types (e.g., RuntimeType)
+            return typeof(Type).IsAssignableFrom(typeToConvert);
+        }
+
+        public override Type Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Write(Utf8JsonWriter writer, Type value, JsonSerializerOptions options)
+        {
+            writer.WriteStringValue(value.AssemblyQualifiedName);
+        }
+    }
+
+    /// <summary>
     /// Custom JsonConverter for Newtonsoft.Json.Linq.JObject to isolate Newtonsoft-related code.
     /// </summary>
     internal sealed class JsonConverterJObject : System.Text.Json.Serialization.JsonConverter<Newtonsoft.Json.Linq.JObject>
@@ -746,7 +776,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Determines if STJ natively serializes the type as a scalar (string, number, boolean).
-        /// Results are cached per type for performance. The first instance of each type determines the cached result.
+        /// Uses JsonTypeInfoKind to classify types. Results are cached per type for performance.
         /// </summary>
         public static bool IsStjNativeScalarType(object obj)
         {
@@ -755,6 +785,13 @@ namespace Microsoft.PowerShell.Commands
             // Special cases: types that need custom handling but should be treated as scalars
             // BigInteger: STJ serializes as object, but V1 serializes as number
             if (type == typeof(BigInteger))
+            {
+                return true;
+            }
+
+            // System.Type: STJ reports JsonTypeInfoKind.None but cannot serialize it
+            // Use JsonConverterType to serialize as AssemblyQualifiedName (V1 compatibility)
+            if (typeof(Type).IsAssignableFrom(type))
             {
                 return true;
             }
@@ -770,23 +807,19 @@ namespace Microsoft.PowerShell.Commands
                 return true;
             }
 
-            return s_stjNativeScalarTypeCache.GetOrAdd(type, _ =>
+            return s_stjNativeScalarTypeCache.GetOrAdd(type, static t =>
             {
-                try
-                {
-                    var json = System.Text.Json.JsonSerializer.Serialize(obj, type);
-                    return json.Length > 0 && json[0] != '{' && json[0] != '[';
-                }
-                catch
-                {
-                    return false;
-                }
+                var typeInfo = JsonSerializerOptions.Default.GetTypeInfo(t);
+                return typeInfo.Kind == JsonTypeInfoKind.None;
             });
         }
 
         public static void SerializePrimitive(Utf8JsonWriter writer, object obj, JsonSerializerOptions options)
         {
-            // Custom converters handle special cases (BigInteger, double/float Infinity/NaN)
+            // Delegate to STJ - custom converters handle special cases:
+            // - JsonConverterBigInteger: BigInteger as number string
+            // - JsonConverterDouble/Float: Infinity/NaN as string
+            // - JsonConverterType: Type as AssemblyQualifiedName
             System.Text.Json.JsonSerializer.Serialize(writer, obj, obj.GetType(), options);
         }
 
