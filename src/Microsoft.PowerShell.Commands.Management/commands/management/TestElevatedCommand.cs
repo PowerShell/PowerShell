@@ -9,7 +9,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// A command to determine if the current PowerShell session is running with elevated (administrator) privileges.
     /// </summary>
-    [Cmdlet(VerbsDiagnostic.Test, "Elevated", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097231")]
+    [Cmdlet(VerbsDiagnostic.Test, "Elevated")]
     [OutputType(typeof(bool))]
     public class TestElevatedCommand : PSCmdlet
     {
