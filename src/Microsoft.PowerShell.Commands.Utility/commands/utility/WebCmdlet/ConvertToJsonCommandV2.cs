@@ -373,20 +373,7 @@ namespace Microsoft.PowerShell.Commands
             writer.WriteStartArray();
             foreach (var item in enumerable)
             {
-                if (item is null)
-                {
-                    writer.WriteNullValue();
-                }
-                else if (item is PSObject psoItem)
-                {
-                    // Existing PSObject: use PSObject serialization (Extended/Adapted properties)
-                    Write(writer, psoItem, options);
-                }
-                else
-                {
-                    // Raw object: delegate to JsonConverterRawObject (Base properties only)
-                    System.Text.Json.JsonSerializer.Serialize(writer, new RawObjectWrapper(item), typeof(RawObjectWrapper), options);
-                }
+                WriteValue(writer, item, options);
             }
 
             writer.WriteEndArray();
@@ -415,7 +402,8 @@ namespace Microsoft.PowerShell.Commands
 
         private void WriteValue(Utf8JsonWriter writer, object? value, JsonSerializerOptions options)
         {
-            if (value is null or DBNull or System.Management.Automation.Language.NullString)
+            // Handle null values (including AutomationNull)
+            if (LanguagePrimitives.IsNull(value) || value is DBNull)
             {
                 writer.WriteNullValue();
             }
@@ -495,32 +483,14 @@ namespace Microsoft.PowerShell.Commands
                 var value = prop.Value;
                 writer.WritePropertyName(prop.Name);
 
-                // Handle null values directly (including AutomationNull)
-                if (LanguagePrimitives.IsNull(value))
+                // If maxDepth is 0 and value is non-null non-scalar, convert to string
+                if (_maxDepth == 0 && value is not null && !JsonSerializerHelper.IsStjNativeScalarType(value))
                 {
-                    writer.WriteNullValue();
-                }
-
-                // If maxDepth is 0, convert non-scalar values to string
-                else if (_maxDepth == 0 && !JsonSerializerHelper.IsStjNativeScalarType(value))
-                {
-                    writer.WriteStringValue(value!.ToString());
-                }
-
-                // Scalar types: use SerializePrimitive (handles BigInteger, Type, etc.)
-                else if (JsonSerializerHelper.IsStjNativeScalarType(value))
-                {
-                    JsonSerializerHelper.SerializePrimitive(writer, value, options);
-                }
-                else if (value is PSObject psoValue)
-                {
-                    // Existing PSObject: use PSObject serialization (Extended/Adapted properties)
-                    System.Text.Json.JsonSerializer.Serialize(writer, psoValue, typeof(PSObject), options);
+                    writer.WriteStringValue(value.ToString());
                 }
                 else
                 {
-                    // Raw object: delegate to JsonConverterRawObject (Base properties only)
-                    System.Text.Json.JsonSerializer.Serialize(writer, new RawObjectWrapper(value), typeof(RawObjectWrapper), options);
+                    WriteValue(writer, value, options);
                 }
             }
             catch
