@@ -60,6 +60,33 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// True if the current session is running with elevated (administrator) privileges.
+        /// </summary>
+        public static bool IsElevated
+        {
+            get
+            {
+                if (_isElevated.HasValue)
+                {
+                    return _isElevated.Value;
+                }
+
+#if UNIX
+                // On Unix, check if the effective user ID is 0 (root)
+                _isElevated = Interop.Unix.GetEuid() == 0;
+#else
+                // On Windows, check if running as administrator
+                using (var identity = System.Security.Principal.WindowsIdentity.GetCurrent())
+                {
+                    var principal = new System.Security.Principal.WindowsPrincipal(identity);
+                    _isElevated = principal.IsInRole(System.Security.Principal.WindowsBuiltInRole.Administrator);
+                }
+#endif
+                return _isElevated.Value;
+            }
+        }
+
+        /// <summary>
         /// True if the underlying system is NanoServer.
         /// </summary>
         public static bool IsNanoServer
@@ -193,6 +220,7 @@ namespace System.Management.Automation
         private static bool? _isIoT = null;
         private static bool? _isWindowsDesktop = null;
 #endif
+        private static bool? _isElevated = null;
 
         internal static bool TryDeriveFromCache(string path1, out string result)
         {
