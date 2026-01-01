@@ -599,9 +599,14 @@ namespace System.Management.Automation
                             commandInfo = new CmdletInfo("Start-Job", typeof(StartJobCommand));
                         }
                     }
-                    catch
+                    catch (CommandNotFoundException)
                     {
-                        // Fall back to Start-Job if Start-ThreadJob lookup fails
+                        // Fall back to Start-Job if Start-ThreadJob is not found
+                        commandInfo = new CmdletInfo("Start-Job", typeof(StartJobCommand));
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        // Fall back to Start-Job if cmdlet lookup fails
                         commandInfo = new CmdletInfo("Start-Job", typeof(StartJobCommand));
                     }
                 }
