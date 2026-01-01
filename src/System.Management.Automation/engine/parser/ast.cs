@@ -5768,6 +5768,11 @@ namespace System.Management.Automation.Language
         public bool Background { get; internal set; }
 
         /// <summary>
+        /// Indicates that this pipeline should be run in the background as a ThreadJob.
+        /// </summary>
+        public bool BackgroundThreadJob { get; internal set; }
+
+        /// <summary>
         /// If the pipeline represents a pure expression, the expression is returned, otherwise null is returned.
         /// </summary>
         public override ExpressionAst GetPureExpression()
@@ -5793,7 +5798,9 @@ namespace System.Management.Automation.Language
         public override Ast Copy()
         {
             var newPipelineElements = CopyElements(this.PipelineElements);
-            return new PipelineAst(this.Extent, newPipelineElements, this.Background);
+            var copy = new PipelineAst(this.Extent, newPipelineElements, this.Background);
+            copy.BackgroundThreadJob = this.BackgroundThreadJob;
+            return copy;
         }
 
         #region Visitors

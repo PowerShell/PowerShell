@@ -4975,10 +4975,17 @@ namespace System.Management.Automation.Language
                     return ScanNumber(c);
 
                 case '&':
-                    if (PeekChar() == '&')
+                    c1 = PeekChar();
+                    if (c1 == '&')
                     {
                         SkipChar();
                         return NewToken(TokenKind.AndAnd);
+                    }
+
+                    if (c1 == '!')
+                    {
+                        SkipChar();
+                        return NewToken(TokenKind.AmpersandExclaim);
                     }
 
                     return NewToken(TokenKind.Ampersand);
