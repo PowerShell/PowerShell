@@ -590,10 +590,18 @@ namespace System.Management.Automation
                 CmdletInfo commandInfo;
                 if (pipelineAst.BackgroundThreadJob)
                 {
-                    commandInfo = context.SessionState.InvokeCommand.GetCmdlet("Start-ThreadJob");
-                    if (commandInfo == null)
+                    try
                     {
-                        // Fall back to Start-Job if Start-ThreadJob is not available
+                        commandInfo = context.SessionState.InvokeCommand.GetCmdlet("Start-ThreadJob");
+                        if (commandInfo == null)
+                        {
+                            // Fall back to Start-Job if Start-ThreadJob is not available
+                            commandInfo = new CmdletInfo("Start-Job", typeof(StartJobCommand));
+                        }
+                    }
+                    catch
+                    {
+                        // Fall back to Start-Job if Start-ThreadJob lookup fails
                         commandInfo = new CmdletInfo("Start-Job", typeof(StartJobCommand));
                     }
                 }
