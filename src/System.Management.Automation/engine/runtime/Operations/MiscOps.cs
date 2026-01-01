@@ -585,7 +585,23 @@ namespace System.Management.Automation
 
                 updatedScriptblock.Append(scriptblockBodyString.AsSpan(position));
                 var sb = ScriptBlock.Create(updatedScriptblock.ToString());
-                var commandInfo = new CmdletInfo("Start-Job", typeof(StartJobCommand));
+                
+                // Use Start-ThreadJob if BackgroundThreadJob is set, otherwise use Start-Job
+                CmdletInfo commandInfo;
+                if (pipelineAst.BackgroundThreadJob)
+                {
+                    commandInfo = context.SessionState.InvokeCommand.GetCmdlet("Start-ThreadJob");
+                    if (commandInfo == null)
+                    {
+                        // Fall back to Start-Job if Start-ThreadJob is not available
+                        commandInfo = new CmdletInfo("Start-Job", typeof(StartJobCommand));
+                    }
+                }
+                else
+                {
+                    commandInfo = new CmdletInfo("Start-Job", typeof(StartJobCommand));
+                }
+                
                 commandProcessor = context.CommandDiscovery.LookupCommandProcessor(commandInfo, CommandOrigin.Internal, false, context.EngineSessionState);
 
                 var workingDirectoryParameter = CommandParameterInternal.CreateParameterWithArgument(
