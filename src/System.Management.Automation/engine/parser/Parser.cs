@@ -5938,6 +5938,24 @@ namespace System.Management.Automation.Language
                         background = true;
                         goto default;
 
+                    // ThreadJob background operator
+                    case TokenKind.AmpersandExclaim:
+                        SkipToken();
+                        nextToken = PeekToken();
+
+                        switch (nextToken.Kind)
+                        {
+                            case TokenKind.AndAnd:
+                            case TokenKind.OrOr:
+                                SkipToken();
+                                ReportError(nextToken.Extent, nameof(ParserStrings.BackgroundOperatorInPipelineChain), ParserStrings.BackgroundOperatorInPipelineChain);
+                                return new ErrorStatementAst(ExtentOf(currentPipelineChain ?? nextPipeline, nextToken.Extent));
+                        }
+
+                        background = true;
+                        nextPipeline.BackgroundThreadJob = true;
+                        goto default;
+
                     // No more chain operators -- return
                     default:
                         // If we haven't seen a chain yet, pass through the pipeline
