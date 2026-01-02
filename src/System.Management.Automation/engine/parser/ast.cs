@@ -5540,11 +5540,6 @@ namespace System.Management.Automation.Language
         protected ChainableAst(IScriptExtent extent) : base(extent)
         {
         }
-
-        /// <summary>
-        /// Indicates that this pipeline should be run in the background as a ThreadJob.
-        /// </summary>
-        public bool BackgroundThreadJob { get; internal set; }
     }
 
     /// <summary>
@@ -5682,6 +5677,11 @@ namespace System.Management.Automation.Language
         {
             return null;
         }
+
+        /// <summary>
+        /// Indicates that this pipeline should be run in the background as a ThreadJob.
+        /// </summary>
+        public bool BackgroundThreadJob { get; internal set; }
     }
 
     /// <summary>
