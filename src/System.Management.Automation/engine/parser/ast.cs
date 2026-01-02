@@ -5540,6 +5540,11 @@ namespace System.Management.Automation.Language
         protected ChainableAst(IScriptExtent extent) : base(extent)
         {
         }
+
+        /// <summary>
+        /// Indicates that this pipeline should be run in the background as a ThreadJob.
+        /// </summary>
+        public bool BackgroundThreadJob { get; internal set; }
     }
 
     /// <summary>
@@ -5610,7 +5615,9 @@ namespace System.Management.Automation.Language
         /// </returns>
         public override Ast Copy()
         {
-            return new PipelineChainAst(Extent, CopyElement(LhsPipelineChain), CopyElement(RhsPipeline), Operator, Background);
+            var copy = new PipelineChainAst(Extent, CopyElement(LhsPipelineChain), CopyElement(RhsPipeline), Operator, Background);
+            copy.BackgroundThreadJob = this.BackgroundThreadJob;
+            return copy;
         }
 
         internal override object Accept(ICustomAstVisitor visitor)
@@ -5766,11 +5773,6 @@ namespace System.Management.Automation.Language
         /// Indicates that this pipeline should be run in the background.
         /// </summary>
         public bool Background { get; internal set; }
-
-        /// <summary>
-        /// Indicates that this pipeline should be run in the background as a ThreadJob.
-        /// </summary>
-        public bool BackgroundThreadJob { get; internal set; }
 
         /// <summary>
         /// If the pipeline represents a pure expression, the expression is returned, otherwise null is returned.
