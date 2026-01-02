@@ -593,11 +593,8 @@ namespace System.Management.Automation
                     try
                     {
                         commandInfo = context.SessionState.InvokeCommand.GetCmdlet("Start-ThreadJob");
-                        if (commandInfo == null)
-                        {
-                            // Fall back to Start-Job if Start-ThreadJob is not available
-                            commandInfo = new CmdletInfo("Start-Job", typeof(StartJobCommand));
-                        }
+                        // Fall back to Start-Job if Start-ThreadJob is not available
+                        commandInfo ??= new CmdletInfo("Start-Job", typeof(StartJobCommand));
                     }
                     catch (CommandNotFoundException)
                     {
