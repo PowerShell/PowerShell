@@ -239,7 +239,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// Custom JsonConverter for PSObject that handles PowerShell-specific serialization.
+    /// JSON converter for PSObject type.
     /// </summary>
     internal sealed class JsonConverterPSObject : System.Text.Json.Serialization.JsonConverter<PSObject>
     {
