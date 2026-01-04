@@ -886,12 +886,6 @@ namespace Microsoft.PowerShell.Commands
             var typeInfo = JsonSerializerOptions.Default.GetTypeInfo(value.GetType());
             foreach (var propInfo in typeInfo.Properties)
             {
-                // Skip write-only properties
-                if (propInfo.Get is null)
-                {
-                    continue;
-                }
-
                 WriteProperty(writer, value, propInfo, options);
             }
 
@@ -900,9 +894,15 @@ namespace Microsoft.PowerShell.Commands
 
         private void WriteProperty(Utf8JsonWriter writer, object obj, JsonPropertyInfo propInfo, JsonSerializerOptions options)
         {
+            // Skip write-only properties
+            if (propInfo.Get is null)
+            {
+                return;
+            }
+
             try
             {
-                var value = propInfo.Get!(obj);
+                var value = propInfo.Get(obj);
                 writer.WritePropertyName(propInfo.Name);
 
                 // If maxDepth is 0 and value is non-null non-scalar, convert to string
@@ -937,21 +937,14 @@ namespace Microsoft.PowerShell.Commands
         {
             var type = obj.GetType();
 
-            // Special cases: types that need custom handling but should be treated as scalars
-            // BigInteger: STJ serializes as object, but V1 serializes as number
+            // BigInteger: STJ serializes as object (Kind=Object), but V1 serializes as number
+            // Must check explicitly since Kind != None
             if (type == typeof(BigInteger))
             {
                 return true;
             }
 
-            // System.Type: STJ reports JsonTypeInfoKind.None but cannot serialize it
-            // Use PSJsonTypeConverter to serialize as AssemblyQualifiedName (V1 compatibility)
-            if (typeof(Type).IsAssignableFrom(type))
-            {
-                return true;
-            }
-
-            // Infinity/NaN: STJ throws, but V1 serializes as string
+            // Infinity/NaN: STJ throws ArgumentException, but V1 serializes as string
             if (obj is double d && (double.IsInfinity(d) || double.IsNaN(d)))
             {
                 return true;
@@ -1005,7 +998,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public static void WriteValue(Utf8JsonWriter writer, object? value, JsonSerializerOptions options)
         {
-            if (LanguagePrimitives.IsNull(value) || value is DBNull)
+            if (LanguagePrimitives.IsNull(value))
             {
                 writer.WriteNullValue();
             }
