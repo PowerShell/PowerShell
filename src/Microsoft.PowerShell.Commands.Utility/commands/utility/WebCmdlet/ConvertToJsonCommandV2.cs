@@ -1009,13 +1009,10 @@ namespace Microsoft.PowerShell.Commands
             {
                 writer.WriteNullValue();
             }
-            else if (value is PSObject psoValue)
-            {
-                System.Text.Json.JsonSerializer.Serialize(writer, psoValue, typeof(PSObject), options);
-            }
             else
             {
-                System.Text.Json.JsonSerializer.Serialize(writer, value, value.GetType(), options);
+                Type typeToProcess = value is PSObject ? typeof(PSObject) : value.GetType();
+                System.Text.Json.JsonSerializer.Serialize(writer, value, typeToProcess, options);
             }
         }
     }
