@@ -705,21 +705,16 @@ namespace Microsoft.PowerShell.Commands
 
         public override bool CanConvert(Type typeToConvert)
         {
-            // Don't handle PSObject - it has its own converter
-            if (typeToConvert == typeof(PSObject) || typeof(PSObject).IsAssignableFrom(typeToConvert))
-            {
-                return false;
-            }
-
-            // Don't handle types that have dedicated converters
-            if (typeToConvert == typeof(BigInteger) ||
-                typeToConvert == typeof(System.Management.Automation.Language.NullString) ||
-                typeToConvert == typeof(DBNull) ||
-                typeof(Type).IsAssignableFrom(typeToConvert) ||
-                typeToConvert == typeof(Newtonsoft.Json.Linq.JObject))
-            {
-                return false;
-            }
+            // Types with dedicated converters should be handled before reaching this factory
+            Debug.Assert(
+                typeToConvert != typeof(PSObject) &&
+                !typeof(PSObject).IsAssignableFrom(typeToConvert) &&
+                typeToConvert != typeof(BigInteger) &&
+                typeToConvert != typeof(System.Management.Automation.Language.NullString) &&
+                typeToConvert != typeof(DBNull) &&
+                !typeof(Type).IsAssignableFrom(typeToConvert) &&
+                typeToConvert != typeof(Newtonsoft.Json.Linq.JObject),
+                $"Type {typeToConvert} should be handled by its dedicated converter");
 
             // Check if STJ handles this type as a scalar
             var typeInfo = JsonSerializerOptions.Default.GetTypeInfo(typeToConvert);
