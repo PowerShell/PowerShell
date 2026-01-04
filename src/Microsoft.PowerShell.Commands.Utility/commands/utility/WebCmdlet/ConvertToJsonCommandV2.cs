@@ -219,14 +219,8 @@ namespace Microsoft.PowerShell.Commands
 
                 // PSObject uses JsonConverterPSObject (Extended/Adapted properties)
                 // Raw objects use TruncatingConverterFactory (Base properties only)
-                if (objectToProcess is PSObject pso)
-                {
-                    return System.Text.Json.JsonSerializer.Serialize(pso, typeof(PSObject), options);
-                }
-                else
-                {
-                    return System.Text.Json.JsonSerializer.Serialize(objectToProcess, objectToProcess.GetType(), options);
-                }
+                Type typeToProcess = objectToProcess is PSObject ? typeof(PSObject) : objectToProcess.GetType();
+                System.Text.Json.JsonSerializer.Serialize(objectToProcess, typeToProcess, options);
             }
             catch (OperationCanceledException)
             {
