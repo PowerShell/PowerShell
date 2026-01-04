@@ -7,6 +7,7 @@ using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
@@ -187,7 +188,7 @@ namespace Microsoft.PowerShell.Commands
                     WriteIndented = !compressOutput,
 
                     // Set high value to avoid System.Text.Json exceptions
-                    // User-specified depth is enforced by JsonConverterPSObject (max 100 via ValidateRange)
+                    // User-specified depth is enforced by PSJsonPSObjectConverter (max 100 via ValidateRange)
                     MaxDepth = 1000,
                     DefaultIgnoreCondition = JsonIgnoreCondition.Never,
                     Encoder = GetEncoder(stringEscapeHandling),
@@ -198,29 +199,30 @@ namespace Microsoft.PowerShell.Commands
                     options.Converters.Add(new JsonStringEnumConverter());
                 }
 
-                // Add custom converters for PowerShell-specific types
+                // Add custom converters for PowerShell-specific types (alphabetical order)
+                options.Converters.Add(new PSJsonBigIntegerConverter());
+                options.Converters.Add(new PSJsonDBNullConverter());
+                options.Converters.Add(new PSJsonDoubleConverter());
+                options.Converters.Add(new PSJsonFloatConverter());
+
                 if (!ExperimentalFeature.IsEnabled(ExperimentalFeature.PSSerializeJSONLongEnumAsNumber))
                 {
-                    options.Converters.Add(new JsonConverterInt64Enum());
+                    options.Converters.Add(new PSJsonInt64EnumConverter());
                 }
 
-                options.Converters.Add(new JsonConverterBigInteger());
-                options.Converters.Add(new JsonConverterDouble());
-                options.Converters.Add(new JsonConverterFloat());
-                options.Converters.Add(new JsonConverterType());
-                options.Converters.Add(new JsonConverterNullString());
-                options.Converters.Add(new JsonConverterDBNull());
-                options.Converters.Add(new JsonConverterPSObject(cmdlet, maxDepth));
-                options.Converters.Add(new JsonConverterJObject());
+                options.Converters.Add(new PSJsonJObjectConverter());
+                options.Converters.Add(new PSJsonNullStringConverter());
+                options.Converters.Add(new PSJsonPSObjectConverter(cmdlet, maxDepth));
+                options.Converters.Add(new PSJsonTypeConverter());
 
-                // TruncatingConverterFactory must be last - it handles all non-primitive types
+                // PSJsonCompositeConverterFactory must be last - it handles all non-primitive types
                 // that don't have dedicated converters above
-                options.Converters.Add(new TruncatingConverterFactory(cmdlet, maxDepth));
+                options.Converters.Add(new PSJsonCompositeConverterFactory(cmdlet, maxDepth));
 
-                // PSObject uses JsonConverterPSObject (Extended/Adapted properties)
-                // Raw objects use TruncatingConverterFactory (Base properties only)
+                // PSObject uses PSJsonPSObjectConverter (Extended/Adapted properties)
+                // Raw objects use PSJsonCompositeConverterFactory (Base properties only)
                 Type typeToProcess = objectToProcess is PSObject ? typeof(PSObject) : objectToProcess.GetType();
-                System.Text.Json.JsonSerializer.Serialize(objectToProcess, typeToProcess, options);
+                return System.Text.Json.JsonSerializer.Serialize(objectToProcess, typeToProcess, options);
             }
             catch (OperationCanceledException)
             {
@@ -241,14 +243,14 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// JSON converter for PSObject type.
     /// </summary>
-    internal sealed class JsonConverterPSObject : System.Text.Json.Serialization.JsonConverter<PSObject>
+    internal sealed class PSJsonPSObjectConverter : System.Text.Json.Serialization.JsonConverter<PSObject>
     {
         private readonly PSCmdlet? _cmdlet;
         private readonly int _maxDepth;
 
         private bool _warningWritten;
 
-        public JsonConverterPSObject(PSCmdlet? cmdlet, int maxDepth)
+        public PSJsonPSObjectConverter(PSCmdlet? cmdlet, int maxDepth)
         {
             _cmdlet = cmdlet;
             _maxDepth = maxDepth;
@@ -267,69 +269,101 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            object? obj = pso.BaseObject;
+            object obj = pso.BaseObject;
+            Debug.Assert(obj is not null, "PSObject.BaseObject should never be null");
 
-            // Handle special types - check for null-like objects (no depth increment needed)
-            if (obj is null || obj is DBNull or System.Management.Automation.Language.NullString)
+            if (TryWriteNullLikeValue(writer, pso, obj, options))
             {
-                // Single enumeration: write properties directly as we find them
-                var etsProperties = new PSMemberInfoIntegratingCollection<PSPropertyInfo>(
-                    pso,
-                    PSObject.GetPropertyCollection(PSMemberViewTypes.Extended));
-
-                bool isNull = true;
-                foreach (var prop in etsProperties)
-                {
-                    if (JsonSerializerHelper.ShouldSkipProperty(prop))
-                    {
-                        continue;
-                    }
-
-                    if (isNull)
-                    {
-                        writer.WriteStartObject();
-                        writer.WritePropertyName("value");
-                        writer.WriteNullValue();
-                        isNull = false;
-                    }
-
-                    WriteProperty(writer, prop, options);
-                }
-
-                if (isNull)
-                {
-                    writer.WriteNullValue();
-                }
-                else
-                {
-                    writer.WriteEndObject();
-                }
-
                 return;
             }
 
-            // Handle Newtonsoft.Json.Linq.JObject by delegating to JsonConverterJObject
+            if (TryWriteScalar(writer, obj, options))
+            {
+                return;
+            }
+
+            if (TryWriteDepthExceeded(writer, pso, obj))
+            {
+                return;
+            }
+
+            WriteComposite(writer, pso, obj, options);
+        }
+
+        private bool TryWriteNullLikeValue(Utf8JsonWriter writer, PSObject pso, object obj, JsonSerializerOptions options)
+        {
+            if (obj is not (DBNull or System.Management.Automation.Language.NullString))
+            {
+                return false;
+            }
+
+            // Check for ETS properties
+            var etsProperties = new PSMemberInfoIntegratingCollection<PSPropertyInfo>(
+                pso,
+                PSObject.GetPropertyCollection(PSMemberViewTypes.Extended));
+
+            bool hasProperties = false;
+            foreach (var prop in etsProperties)
+            {
+                if (JsonSerializerHelper.ShouldSkipProperty(prop))
+                {
+                    continue;
+                }
+
+                if (!hasProperties)
+                {
+                    writer.WriteStartObject();
+                    writer.WritePropertyName("value");
+                    writer.WriteNullValue();
+                    hasProperties = true;
+                }
+
+                WriteProperty(writer, prop, options);
+            }
+
+            if (hasProperties)
+            {
+                writer.WriteEndObject();
+            }
+            else
+            {
+                writer.WriteNullValue();
+            }
+
+            return true;
+        }
+
+        private static bool TryWriteScalar(Utf8JsonWriter writer, object obj, JsonSerializerOptions options)
+        {
+            // JObject needs special handling before scalar check
             if (obj is Newtonsoft.Json.Linq.JObject jObject)
             {
                 System.Text.Json.JsonSerializer.Serialize(writer, jObject, options);
-                return;
+                return true;
             }
 
-            // If STJ natively serializes this type as scalar, use STJ directly (no depth increment)
-            if (JsonSerializerHelper.IsStjNativeScalarType(obj))
+            if (!JsonSerializerHelper.IsStjNativeScalarType(obj))
             {
-                JsonSerializerHelper.SerializePrimitive(writer, obj, options);
-                return;
+                return false;
             }
 
-            // Check depth limit for complex types only (after scalar type check)
-            if (writer.CurrentDepth > _maxDepth)
+            JsonSerializerHelper.SerializePrimitive(writer, obj, options);
+            return true;
+        }
+
+        private bool TryWriteDepthExceeded(Utf8JsonWriter writer, PSObject pso, object obj)
+        {
+            if (writer.CurrentDepth <= _maxDepth)
             {
-                WriteDepthExceeded(writer, pso, obj);
-                return;
+                return false;
             }
 
-            // For dictionaries, collections, and custom objects
+            WriteDepthExceeded(writer, pso, obj);
+            return true;
+        }
+
+        private void WriteComposite(Utf8JsonWriter writer, PSObject pso, object obj, JsonSerializerOptions options)
+        {
             if (obj is IDictionary dict)
             {
                 SerializeDictionary(writer, pso, dict, options);
@@ -340,7 +374,6 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                // For custom objects, serialize as dictionary with properties
                 SerializeAsObject(writer, pso, options);
             }
         }
@@ -363,7 +396,7 @@ namespace Microsoft.PowerShell.Commands
             writer.WriteStringValue(stringValue);
         }
 
-        private void SerializeEnumerable(Utf8JsonWriter writer, IEnumerable enumerable, JsonSerializerOptions options)
+        private static void SerializeEnumerable(Utf8JsonWriter writer, IEnumerable enumerable, JsonSerializerOptions options)
         {
             writer.WriteStartArray();
             foreach (var item in enumerable)
@@ -392,36 +425,10 @@ namespace Microsoft.PowerShell.Commands
             writer.WriteEndObject();
         }
 
-        private void WriteValue(Utf8JsonWriter writer, object? value, JsonSerializerOptions options)
+        private static void WriteValue(Utf8JsonWriter writer, object? value, JsonSerializerOptions options)
         {
-            // Handle null values (including AutomationNull)
-            if (LanguagePrimitives.IsNull(value) || value is DBNull)
-            {
-                writer.WriteNullValue();
-            }
-            else if (value is Newtonsoft.Json.Linq.JObject jObject)
-            {
-                System.Text.Json.JsonSerializer.Serialize(writer, jObject, options);
-            }
-            else if (value is PSObject psoValue)
-            {
-                // Existing PSObject: use PSObject serialization (Extended/Adapted properties)
-                Write(writer, psoValue, options);
-            }
-            else
-            {
-                // Raw object: check if STJ natively handles this type
-                if (JsonSerializerHelper.IsStjNativeScalarType(value))
-                {
-                    // STJ handles this type natively as scalar
-                    JsonSerializerHelper.SerializePrimitive(writer, value, options);
-                }
-                else
-                {
-                    // Not a native scalar type - delegate to TruncatingConverterFactory (Base properties only)
-                    System.Text.Json.JsonSerializer.Serialize(writer, value, value.GetType(), options);
-                }
-            }
+            // Delegate to JsonSerializerHelper for consistent serialization
+            JsonSerializerHelper.WriteValue(writer, value, options);
         }
 
         private void SerializeAsObject(Utf8JsonWriter writer, PSObject pso, JsonSerializerOptions options)
@@ -480,7 +487,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// JsonConverter for Int64/UInt64 enums to avoid JavaScript precision issues.
     /// </summary>
-    internal sealed class JsonConverterInt64Enum : System.Text.Json.Serialization.JsonConverter<Enum>
+    internal sealed class PSJsonInt64EnumConverter : System.Text.Json.Serialization.JsonConverter<Enum>
     {
         public override bool CanConvert(Type typeToConvert)
         {
@@ -508,7 +515,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// JsonConverter for NullString to serialize as null.
     /// </summary>
-    internal sealed class JsonConverterNullString : System.Text.Json.Serialization.JsonConverter<System.Management.Automation.Language.NullString>
+    internal sealed class PSJsonNullStringConverter : System.Text.Json.Serialization.JsonConverter<System.Management.Automation.Language.NullString>
     {
         public override System.Management.Automation.Language.NullString? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
@@ -524,7 +531,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// JsonConverter for DBNull to serialize as null.
     /// </summary>
-    internal sealed class JsonConverterDBNull : System.Text.Json.Serialization.JsonConverter<DBNull>
+    internal sealed class PSJsonDBNullConverter : System.Text.Json.Serialization.JsonConverter<DBNull>
     {
         public override DBNull? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
@@ -540,7 +547,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// JsonConverter for BigInteger to serialize as number string.
     /// </summary>
-    internal sealed class JsonConverterBigInteger : System.Text.Json.Serialization.JsonConverter<BigInteger>
+    internal sealed class PSJsonBigIntegerConverter : System.Text.Json.Serialization.JsonConverter<BigInteger>
     {
         public override BigInteger Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
@@ -557,7 +564,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// JsonConverter for double to serialize Infinity and NaN as strings for V1 compatibility.
     /// </summary>
-    internal sealed class JsonConverterDouble : System.Text.Json.Serialization.JsonConverter<double>
+    internal sealed class PSJsonDoubleConverter : System.Text.Json.Serialization.JsonConverter<double>
     {
         public override double Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
@@ -588,7 +595,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// JsonConverter for float to serialize Infinity and NaN as strings for V1 compatibility.
     /// </summary>
-    internal sealed class JsonConverterFloat : System.Text.Json.Serialization.JsonConverter<float>
+    internal sealed class PSJsonFloatConverter : System.Text.Json.Serialization.JsonConverter<float>
     {
         public override float Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
@@ -619,7 +626,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// JsonConverter for System.Type to serialize as AssemblyQualifiedName string for V1 compatibility.
     /// </summary>
-    internal sealed class JsonConverterType : System.Text.Json.Serialization.JsonConverter<Type>
+    internal sealed class PSJsonTypeConverter : System.Text.Json.Serialization.JsonConverter<Type>
     {
         public override bool CanConvert(Type typeToConvert)
         {
@@ -641,7 +648,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Custom JsonConverter for Newtonsoft.Json.Linq.JObject to isolate Newtonsoft-related code.
     /// </summary>
-    internal sealed class JsonConverterJObject : System.Text.Json.Serialization.JsonConverter<Newtonsoft.Json.Linq.JObject>
+    internal sealed class PSJsonJObjectConverter : System.Text.Json.Serialization.JsonConverter<Newtonsoft.Json.Linq.JObject>
     {
         public override Newtonsoft.Json.Linq.JObject Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
@@ -679,13 +686,18 @@ namespace Microsoft.PowerShell.Commands
     /// JsonConverterFactory that dispatches to appropriate converters for non-primitive types.
     /// Handles depth control and truncation for Dictionary, Enumerable, and composite objects.
     /// </summary>
-    internal sealed class TruncatingConverterFactory : JsonConverterFactory
+    internal sealed class PSJsonCompositeConverterFactory : JsonConverterFactory
     {
         private readonly PSCmdlet? _cmdlet;
         private readonly int _maxDepth;
         private bool _warningWritten;
 
-        public TruncatingConverterFactory(PSCmdlet? cmdlet, int maxDepth)
+        // Cached converter instances (one per converter type)
+        private PSJsonDictionaryConverter? _dictionaryConverter;
+        private PSJsonEnumerableConverter? _enumerableConverter;
+        private PSJsonCompositeConverter? _compositeConverter;
+
+        public PSJsonCompositeConverterFactory(PSCmdlet? cmdlet, int maxDepth)
         {
             _cmdlet = cmdlet;
             _maxDepth = maxDepth;
@@ -716,23 +728,19 @@ namespace Microsoft.PowerShell.Commands
 
         public override JsonConverter CreateConverter(Type typeToConvert, JsonSerializerOptions options)
         {
-            // Create the appropriate generic converter
-            Type converterType;
-
+            // Return cached non-generic converter instance
             if (typeof(IDictionary).IsAssignableFrom(typeToConvert))
             {
-                converterType = typeof(JsonConverterDictionary<>).MakeGenericType(typeToConvert);
+                return _dictionaryConverter ??= new PSJsonDictionaryConverter(this);
             }
             else if (typeof(IEnumerable).IsAssignableFrom(typeToConvert))
             {
-                converterType = typeof(JsonConverterEnumerable<>).MakeGenericType(typeToConvert);
+                return _enumerableConverter ??= new PSJsonEnumerableConverter(this);
             }
             else
             {
-                converterType = typeof(JsonConverterComposite<>).MakeGenericType(typeToConvert);
+                return _compositeConverter ??= new PSJsonCompositeConverter(this);
             }
-
-            return (JsonConverter)Activator.CreateInstance(converterType, this)!;
         }
 
         internal void WriteDepthExceeded(Utf8JsonWriter writer, object obj)
@@ -754,30 +762,33 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// Generic JsonConverter for Dictionary types (IDictionary).
+    /// Non-generic JsonConverter for Dictionary types (IDictionary).
     /// </summary>
-#pragma warning disable CA1812 // Instantiated via Activator.CreateInstance in TruncatingConverterFactory
-    internal sealed class JsonConverterDictionary<T> : JsonConverter<T> where T : IDictionary
+    internal sealed class PSJsonDictionaryConverter : JsonConverter<object>
     {
-        private readonly TruncatingConverterFactory _factory;
+        private readonly PSJsonCompositeConverterFactory _factory;
 
-        public JsonConverterDictionary(TruncatingConverterFactory factory)
+        public PSJsonDictionaryConverter(PSJsonCompositeConverterFactory factory)
         {
             _factory = factory;
         }
 
-        public override T? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override bool CanConvert(Type typeToConvert) => typeof(IDictionary).IsAssignableFrom(typeToConvert);
+
+        public override object? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             throw new NotImplementedException();
         }
 
-        public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
+        public override void Write(Utf8JsonWriter writer, object value, JsonSerializerOptions options)
         {
             if (value is null)
             {
                 writer.WriteNullValue();
                 return;
             }
+
+            var dict = (IDictionary)value;
 
             // Check depth limit
             if (writer.CurrentDepth > _factory.MaxDepth)
@@ -788,7 +799,7 @@ namespace Microsoft.PowerShell.Commands
 
             writer.WriteStartObject();
 
-            foreach (DictionaryEntry entry in value)
+            foreach (DictionaryEntry entry in dict)
             {
                 string key = entry.Key?.ToString() ?? string.Empty;
                 writer.WritePropertyName(key);
@@ -800,27 +811,25 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// Generic JsonConverter for Enumerable types (IEnumerable, excluding IDictionary).
+    /// Non-generic JsonConverter for Enumerable types (IEnumerable, excluding IDictionary).
     /// </summary>
-#pragma warning disable CA1812 // Instantiated via Activator.CreateInstance in TruncatingConverterFactory
-    internal sealed class JsonConverterEnumerable<T> : JsonConverter<T> where T : IEnumerable
+    internal sealed class PSJsonEnumerableConverter : JsonConverter<object>
     {
-        // Field kept for consistency with other converters in CreateConverter pattern
-#pragma warning disable IDE0052 // Remove unread private member
-        private readonly TruncatingConverterFactory _factory;
-#pragma warning restore IDE0052
+        private readonly PSJsonCompositeConverterFactory _factory;
 
-        public JsonConverterEnumerable(TruncatingConverterFactory factory)
+        public PSJsonEnumerableConverter(PSJsonCompositeConverterFactory factory)
         {
             _factory = factory;
         }
 
-        public override T? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override bool CanConvert(Type typeToConvert) => typeof(IEnumerable).IsAssignableFrom(typeToConvert);
+
+        public override object? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             throw new NotImplementedException();
         }
 
-        public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
+        public override void Write(Utf8JsonWriter writer, object value, JsonSerializerOptions options)
         {
             if (value is null)
             {
@@ -828,9 +837,11 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
+            var enumerable = (IEnumerable)value;
+
             writer.WriteStartArray();
 
-            foreach (var item in value)
+            foreach (var item in enumerable)
             {
                 JsonSerializerHelper.WriteValue(writer, item, options);
             }
@@ -840,25 +851,26 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// Generic JsonConverter for composite objects (non-primitive, non-collection types).
-    /// Serializes only base .NET properties using reflection.
+    /// Non-generic JsonConverter for composite objects (non-primitive, non-collection types).
+    /// Uses JsonTypeInfo to enumerate properties, leveraging STJ's internal caching and JsonIgnore handling.
     /// </summary>
-#pragma warning disable CA1812 // Instantiated via Activator.CreateInstance in TruncatingConverterFactory
-    internal sealed class JsonConverterComposite<T> : JsonConverter<T>
+    internal sealed class PSJsonCompositeConverter : JsonConverter<object>
     {
-        private readonly TruncatingConverterFactory _factory;
+        private readonly PSJsonCompositeConverterFactory _factory;
 
-        public JsonConverterComposite(TruncatingConverterFactory factory)
+        public PSJsonCompositeConverter(PSJsonCompositeConverterFactory factory)
         {
             _factory = factory;
         }
 
-        public override T? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override bool CanConvert(Type typeToConvert) => true;
+
+        public override object? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             throw new NotImplementedException();
         }
 
-        public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
+        public override void Write(Utf8JsonWriter writer, object value, JsonSerializerOptions options)
         {
             if (value is null)
             {
@@ -875,37 +887,28 @@ namespace Microsoft.PowerShell.Commands
 
             writer.WriteStartObject();
 
-            // Use PSObject to enumerate base properties (Adapted view, Property type only)
-            var pso = PSObject.AsPSObject(value);
-            var properties = new PSMemberInfoIntegratingCollection<PSPropertyInfo>(
-                pso,
-                PSObject.GetPropertyCollection(PSMemberViewTypes.Adapted));
-
-            foreach (var prop in properties)
+            // Use JsonTypeInfo to enumerate properties - leverages STJ caching and handles JsonIgnore automatically
+            var typeInfo = JsonSerializerOptions.Default.GetTypeInfo(value.GetType());
+            foreach (var propInfo in typeInfo.Properties)
             {
-                // Filter to only Property type (excludes CodeProperty, ScriptProperty, etc.)
-                if (prop.MemberType != PSMemberTypes.Property)
+                // Skip write-only properties
+                if (propInfo.Get is null)
                 {
                     continue;
                 }
 
-                if (JsonSerializerHelper.ShouldSkipProperty(prop))
-                {
-                    continue;
-                }
-
-                WriteProperty(writer, prop, options);
+                WriteProperty(writer, value, propInfo, options);
             }
 
             writer.WriteEndObject();
         }
 
-        private void WriteProperty(Utf8JsonWriter writer, PSPropertyInfo prop, JsonSerializerOptions options)
+        private void WriteProperty(Utf8JsonWriter writer, object obj, JsonPropertyInfo propInfo, JsonSerializerOptions options)
         {
             try
             {
-                var value = prop.Value;
-                writer.WritePropertyName(prop.Name);
+                var value = propInfo.Get!(obj);
+                writer.WritePropertyName(propInfo.Name);
 
                 // If maxDepth is 0 and value is non-null non-scalar, convert to string
                 if (_factory.MaxDepth == 0 && value is not null && !JsonSerializerHelper.IsStjNativeScalarType(value))
@@ -947,7 +950,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // System.Type: STJ reports JsonTypeInfoKind.None but cannot serialize it
-            // Use JsonConverterType to serialize as AssemblyQualifiedName (V1 compatibility)
+            // Use PSJsonTypeConverter to serialize as AssemblyQualifiedName (V1 compatibility)
             if (typeof(Type).IsAssignableFrom(type))
             {
                 return true;
@@ -974,9 +977,9 @@ namespace Microsoft.PowerShell.Commands
         public static void SerializePrimitive(Utf8JsonWriter writer, object obj, JsonSerializerOptions options)
         {
             // Delegate to STJ - custom converters handle special cases:
-            // - JsonConverterBigInteger: BigInteger as number string
-            // - JsonConverterDouble/Float: Infinity/NaN as string
-            // - JsonConverterType: Type as AssemblyQualifiedName
+            // - PSJsonBigIntegerConverter: BigInteger as number string
+            // - PSJsonDoubleConverter/Float: Infinity/NaN as string
+            // - PSJsonTypeConverter: Type as AssemblyQualifiedName
             System.Text.Json.JsonSerializer.Serialize(writer, obj, obj.GetType(), options);
         }
 
@@ -1003,7 +1006,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Writes a value to the JSON writer, handling null, PSObject, and raw objects.
-        /// Used by TruncatingConverterFactory converters for consistent value serialization.
+        /// Used by PSJsonCompositeConverterFactory converters for consistent value serialization.
         /// </summary>
         public static void WriteValue(Utf8JsonWriter writer, object? value, JsonSerializerOptions options)
         {
