@@ -212,12 +212,15 @@ namespace Microsoft.PowerShell.Commands
 
                 options.Converters.Add(new PSJsonJObjectConverter());
                 options.Converters.Add(new PSJsonNullStringConverter());
-                options.Converters.Add(new PSJsonPSObjectConverter(cmdlet, maxDepth));
                 options.Converters.Add(new PSJsonTypeConverter());
+
+                // Create factory first, then pass to PSJsonPSObjectConverter for shared state
+                var factory = new PSJsonCompositeConverterFactory(cmdlet, maxDepth);
+                options.Converters.Add(new PSJsonPSObjectConverter(factory));
 
                 // PSJsonCompositeConverterFactory must be last - it handles all non-primitive types
                 // that don't have dedicated converters above
-                options.Converters.Add(new PSJsonCompositeConverterFactory(cmdlet, maxDepth));
+                options.Converters.Add(factory);
 
                 // PSObject uses PSJsonPSObjectConverter (Extended/Adapted properties)
                 // Raw objects use PSJsonCompositeConverterFactory (Base properties only)
@@ -245,15 +248,11 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     internal sealed class PSJsonPSObjectConverter : System.Text.Json.Serialization.JsonConverter<PSObject>
     {
-        private readonly PSCmdlet? _cmdlet;
-        private readonly int _maxDepth;
+        private readonly PSJsonCompositeConverterFactory _factory;
 
-        private bool _warningWritten;
-
-        public PSJsonPSObjectConverter(PSCmdlet? cmdlet, int maxDepth)
+        public PSJsonPSObjectConverter(PSJsonCompositeConverterFactory factory)
         {
-            _cmdlet = cmdlet;
-            _maxDepth = maxDepth;
+            _factory = factory;
         }
 
         public override PSObject? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
@@ -353,7 +352,7 @@ namespace Microsoft.PowerShell.Commands
 
         private bool TryWriteDepthExceeded(Utf8JsonWriter writer, PSObject pso, object obj)
         {
-            if (writer.CurrentDepth <= _maxDepth)
+            if (writer.CurrentDepth <= _factory.MaxDepth)
             {
                 return false;
             }
@@ -380,16 +379,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void WriteDepthExceeded(Utf8JsonWriter writer, PSObject pso, object obj)
         {
-            // Write warning once
-            if (!_warningWritten && _cmdlet is not null)
-            {
-                _warningWritten = true;
-                string warningMessage = string.Format(
-                    CultureInfo.CurrentCulture,
-                    "Resulting JSON is truncated as serialization has exceeded the set depth of {0}.",
-                    _maxDepth);
-                _cmdlet.WriteWarning(warningMessage);
-            }
+            _factory.WriteWarningOnce();
 
             // Convert to string when depth exceeded
             string stringValue = LanguagePrimitives.ConvertTo<string>(pso.ImmediateBaseObjectIsEmpty ? pso : obj);
@@ -468,7 +458,7 @@ namespace Microsoft.PowerShell.Commands
                 writer.WritePropertyName(prop.Name);
 
                 // If maxDepth is 0 and value is non-null non-scalar, convert to string
-                if (_maxDepth == 0 && value is not null && !JsonSerializerHelper.IsStjNativeScalarType(value))
+                if (_factory.MaxDepth == 0 && value is not null && !JsonSerializerHelper.IsStjNativeScalarType(value))
                 {
                     writer.WriteStringValue(value.ToString());
                 }
@@ -738,7 +728,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        internal void WriteDepthExceeded(Utf8JsonWriter writer, object obj)
+        internal void WriteWarningOnce()
         {
             if (!_warningWritten && _cmdlet is not null)
             {
@@ -749,7 +739,11 @@ namespace Microsoft.PowerShell.Commands
                     _maxDepth);
                 _cmdlet.WriteWarning(warningMessage);
             }
+        }
 
+        internal void WriteDepthExceeded(Utf8JsonWriter writer, object obj)
+        {
+            WriteWarningOnce();
             writer.WriteStringValue(obj.ToString());
         }
 
