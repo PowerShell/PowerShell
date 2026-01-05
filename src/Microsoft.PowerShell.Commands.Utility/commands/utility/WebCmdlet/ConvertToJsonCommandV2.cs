@@ -228,9 +228,9 @@ namespace Microsoft.PowerShell.Commands
                 options.Converters.Add(new PSJsonNullStringConverter());
                 options.Converters.Add(new PSJsonTypeConverter());
 
-                // Create factory first, then pass to PSJsonPSObjectConverter for shared state
+                // PSJsonPSObjectConverter handles PSObject with Extended/Adapted properties
                 var factory = new PSJsonCompositeConverterFactory(cmdlet);
-                options.Converters.Add(new PSJsonPSObjectConverter(factory));
+                options.Converters.Add(new PSJsonPSObjectConverter(cmdlet));
 
                 // PSJsonCompositeConverterFactory must be last - it handles all non-primitive types
                 // that don't have dedicated converters above
@@ -262,12 +262,14 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     internal sealed class PSJsonPSObjectConverter : System.Text.Json.Serialization.JsonConverter<PSObject>
     {
-        private readonly PSJsonCompositeConverterFactory _factory;
+        private readonly ConvertToJsonCommandV2? _cmdlet;
 
-        public PSJsonPSObjectConverter(PSJsonCompositeConverterFactory factory)
+        public PSJsonPSObjectConverter(ConvertToJsonCommandV2? cmdlet)
         {
-            _factory = factory;
+            _cmdlet = cmdlet;
         }
+
+        private int MaxDepth => _cmdlet?.Depth ?? 2;
 
         public override PSObject? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
@@ -403,7 +405,7 @@ namespace Microsoft.PowerShell.Commands
 
         private bool TryWriteDepthExceeded(Utf8JsonWriter writer, PSObject pso, object obj, JsonSerializerOptions options)
         {
-            if (writer.CurrentDepth <= _factory.MaxDepth)
+            if (writer.CurrentDepth <= MaxDepth)
             {
                 return false;
             }
@@ -430,7 +432,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void WriteDepthExceeded(Utf8JsonWriter writer, PSObject pso, object obj, JsonSerializerOptions options)
         {
-            _factory.WriteWarningOnce();
+            _cmdlet?.WriteWarningOnce();
 
             // Pure PSObject: convert to string only (V1 behavior)
             if (pso.ImmediateBaseObjectIsEmpty)
@@ -586,7 +588,7 @@ namespace Microsoft.PowerShell.Commands
                 writer.WritePropertyName(prop.Name);
 
                 // If maxDepth is 0 and value is non-null non-scalar, convert to string
-                if (_factory.MaxDepth == 0 && value is not null && !JsonSerializerHelper.IsStjNativeScalarType(value))
+                if (MaxDepth == 0 && value is not null && !JsonSerializerHelper.IsStjNativeScalarType(value))
                 {
                     writer.WriteStringValue(value.ToString());
                 }
