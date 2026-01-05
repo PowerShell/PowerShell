@@ -1048,8 +1048,10 @@ namespace Microsoft.PowerShell.Commands
         {
             var type = obj.GetType();
 
-            // BigInteger: STJ serializes as object (Kind=Object), but V1 serializes as number
-            // Must check explicitly since Kind != None
+            // BigInteger: STJ serializes as object (Kind=Object), but V1 serializes as number.
+            // Using JsonSerializerOptions.Default returns Kind=Object; using local options with
+            // our custom PSJsonBigIntegerConverter would return Kind=None.
+            // Must check explicitly since we use Default options here.
             if (type == typeof(BigInteger))
             {
                 return true;
