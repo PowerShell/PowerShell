@@ -281,7 +281,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            if (TryWriteDepthExceeded(writer, pso, obj))
+            if (TryWriteDepthExceeded(writer, pso, obj, options))
             {
                 return;
             }
@@ -350,14 +350,14 @@ namespace Microsoft.PowerShell.Commands
             return true;
         }
 
-        private bool TryWriteDepthExceeded(Utf8JsonWriter writer, PSObject pso, object obj)
+        private bool TryWriteDepthExceeded(Utf8JsonWriter writer, PSObject pso, object obj, JsonSerializerOptions options)
         {
             if (writer.CurrentDepth <= _factory.MaxDepth)
             {
                 return false;
             }
 
-            WriteDepthExceeded(writer, pso, obj);
+            WriteDepthExceeded(writer, pso, obj, options);
             return true;
         }
 
@@ -377,13 +377,53 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private void WriteDepthExceeded(Utf8JsonWriter writer, PSObject pso, object obj)
+        private void WriteDepthExceeded(Utf8JsonWriter writer, PSObject pso, object obj, JsonSerializerOptions options)
         {
             _factory.WriteWarningOnce();
 
-            // Convert to string when depth exceeded
-            string stringValue = LanguagePrimitives.ConvertTo<string>(pso.ImmediateBaseObjectIsEmpty ? pso : obj);
-            writer.WriteStringValue(stringValue);
+            // Pure PSObject: convert to string only (V1 behavior)
+            if (pso.ImmediateBaseObjectIsEmpty)
+            {
+                string stringValue = LanguagePrimitives.ConvertTo<string>(pso);
+                writer.WriteStringValue(stringValue);
+                return;
+            }
+
+            // Non-pure PSObject: check for ETS properties (V1 AddPsProperties behavior)
+            // Include Extended and Adapted properties like V1 does for custom objects
+            var etsProperties = new PSMemberInfoIntegratingCollection<PSPropertyInfo>(
+                pso,
+                PSObject.GetPropertyCollection(PSMemberViewTypes.Extended | PSMemberViewTypes.Adapted));
+
+            bool hasProperties = false;
+            string baseStringValue = LanguagePrimitives.ConvertTo<string>(obj);
+
+            foreach (var prop in etsProperties)
+            {
+                if (JsonSerializerHelper.ShouldSkipProperty(prop))
+                {
+                    continue;
+                }
+
+                if (!hasProperties)
+                {
+                    writer.WriteStartObject();
+                    writer.WritePropertyName("value");
+                    writer.WriteStringValue(baseStringValue);
+                    hasProperties = true;
+                }
+
+                WriteProperty(writer, prop, options);
+            }
+
+            if (hasProperties)
+            {
+                writer.WriteEndObject();
+            }
+            else
+            {
+                writer.WriteStringValue(baseStringValue);
+            }
         }
 
         private static void SerializeEnumerable(Utf8JsonWriter writer, IEnumerable enumerable, JsonSerializerOptions options)
