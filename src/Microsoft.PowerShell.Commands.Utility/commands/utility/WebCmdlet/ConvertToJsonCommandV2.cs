@@ -1055,6 +1055,13 @@ namespace Microsoft.PowerShell.Commands
                 return true;
             }
 
+            // System.Object has Kind=None but serializes as {} (not a scalar)
+            // See: https://source.dot.net/#System.Text.Json/System/Text/Json/Serialization/Metadata/JsonTypeInfo.cs,1337
+            if (type == typeof(object))
+            {
+                return false;
+            }
+
             // GetTypeInfo() has internal caching, no need for additional cache
             var typeInfo = JsonSerializerOptions.Default.GetTypeInfo(type);
             return typeInfo.Kind == JsonTypeInfoKind.None;
