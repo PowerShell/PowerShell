@@ -187,7 +187,7 @@ namespace Microsoft.PowerShell.Commands
             bool enumsAsStrings,
             bool compressOutput,
             JsonStringEscapeHandling stringEscapeHandling,
-            ConvertToJsonCommandV2? cmdlet,
+            ConvertToJsonCommandV2 cmdlet,
             CancellationToken cancellationToken)
         {
             if (objectToProcess is null)
@@ -262,14 +262,14 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     internal sealed class PSJsonPSObjectConverter : System.Text.Json.Serialization.JsonConverter<PSObject>
     {
-        private readonly ConvertToJsonCommandV2? _cmdlet;
+        private readonly ConvertToJsonCommandV2 _cmdlet;
 
-        public PSJsonPSObjectConverter(ConvertToJsonCommandV2? cmdlet)
+        public PSJsonPSObjectConverter(ConvertToJsonCommandV2 cmdlet)
         {
             _cmdlet = cmdlet;
         }
 
-        private int MaxDepth => _cmdlet?.Depth ?? 2;
+        private int MaxDepth => _cmdlet.Depth;
 
         public override PSObject? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
@@ -432,7 +432,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void WriteDepthExceeded(Utf8JsonWriter writer, PSObject pso, object obj, JsonSerializerOptions options)
         {
-            _cmdlet?.WriteWarningOnce();
+            _cmdlet.WriteWarningOnce();
 
             // Pure PSObject: convert to string only (V1 behavior)
             if (pso.ImmediateBaseObjectIsEmpty)
@@ -808,14 +808,14 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     internal sealed class PSJsonCompositeConverterFactory : JsonConverterFactory
     {
-        private readonly ConvertToJsonCommandV2? _cmdlet;
+        private readonly ConvertToJsonCommandV2 _cmdlet;
 
         // Cached converter instances (one per converter type)
         private PSJsonDictionaryConverter? _dictionaryConverter;
         private PSJsonEnumerableConverter? _enumerableConverter;
         private PSJsonCompositeConverter? _compositeConverter;
 
-        public PSJsonCompositeConverterFactory(ConvertToJsonCommandV2? cmdlet)
+        public PSJsonCompositeConverterFactory(ConvertToJsonCommandV2 cmdlet)
         {
             _cmdlet = cmdlet;
         }
@@ -857,7 +857,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal void WriteWarningOnce()
         {
-            _cmdlet?.WriteWarningOnce();
+            _cmdlet.WriteWarningOnce();
         }
 
         internal void WriteDepthExceeded(Utf8JsonWriter writer, object obj)
@@ -866,7 +866,7 @@ namespace Microsoft.PowerShell.Commands
             writer.WriteStringValue(obj.ToString());
         }
 
-        internal int MaxDepth => _cmdlet?.Depth ?? 2;
+        internal int MaxDepth => _cmdlet.Depth;
     }
 
     /// <summary>
