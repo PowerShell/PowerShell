@@ -5,7 +5,6 @@
 
 using System;
 using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -1002,11 +1001,9 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     internal static class JsonSerializerHelper
     {
-        private static readonly ConcurrentDictionary<Type, bool> s_stjNativeScalarTypeCache = new();
-
         /// <summary>
         /// Determines if STJ natively serializes the type as a scalar (string, number, boolean).
-        /// Uses JsonTypeInfoKind to classify types. Results are cached per type for performance.
+        /// Uses JsonTypeInfoKind to classify types.
         /// </summary>
         public static bool IsStjNativeScalarType(object obj)
         {
@@ -1019,22 +1016,9 @@ namespace Microsoft.PowerShell.Commands
                 return true;
             }
 
-            // Infinity/NaN: STJ throws ArgumentException, but V1 serializes as string
-            if (obj is double d && (double.IsInfinity(d) || double.IsNaN(d)))
-            {
-                return true;
-            }
-
-            if (obj is float f && (float.IsInfinity(f) || float.IsNaN(f)))
-            {
-                return true;
-            }
-
-            return s_stjNativeScalarTypeCache.GetOrAdd(type, static t =>
-            {
-                var typeInfo = JsonSerializerOptions.Default.GetTypeInfo(t);
-                return typeInfo.Kind == JsonTypeInfoKind.None;
-            });
+            // GetTypeInfo() has internal caching, no need for additional cache
+            var typeInfo = JsonSerializerOptions.Default.GetTypeInfo(type);
+            return typeInfo.Kind == JsonTypeInfoKind.None;
         }
 
         public static void SerializePrimitive(Utf8JsonWriter writer, object obj, JsonSerializerOptions options)
