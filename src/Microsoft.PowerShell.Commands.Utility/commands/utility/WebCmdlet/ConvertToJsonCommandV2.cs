@@ -121,6 +121,23 @@ namespace Microsoft.PowerShell.Commands
         [StringEscapeHandlingTransformation]
         public JsonStringEscapeHandling EscapeHandling { get; set; } = JsonStringEscapeHandling.Default;
 
+        private bool _warningWritten;
+
+        /// <summary>
+        /// Writes a warning message once when depth is exceeded.
+        /// </summary>
+        internal void WriteWarningOnce()
+        {
+            if (!_warningWritten)
+            {
+                _warningWritten = true;
+                WriteWarning(string.Format(
+                    CultureInfo.CurrentCulture,
+                    WebCmdletStrings.JsonMaxDepthReached,
+                    Depth));
+            }
+        }
+
         private readonly List<object?> _inputObjects = new();
 
         /// <summary>
@@ -142,7 +159,6 @@ namespace Microsoft.PowerShell.Commands
 
                 string? output = SystemTextJsonSerializer.ConvertToJson(
                     objectToProcess,
-                    Depth,
                     EnumsAsStrings.IsPresent,
                     Compress.IsPresent,
                     EscapeHandling,
@@ -169,11 +185,10 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public static string? ConvertToJson(
             object? objectToProcess,
-            int maxDepth,
             bool enumsAsStrings,
             bool compressOutput,
             JsonStringEscapeHandling stringEscapeHandling,
-            PSCmdlet? cmdlet,
+            ConvertToJsonCommandV2? cmdlet,
             CancellationToken cancellationToken)
         {
             if (objectToProcess is null)
@@ -215,7 +230,7 @@ namespace Microsoft.PowerShell.Commands
                 options.Converters.Add(new PSJsonTypeConverter());
 
                 // Create factory first, then pass to PSJsonPSObjectConverter for shared state
-                var factory = new PSJsonCompositeConverterFactory(cmdlet, maxDepth);
+                var factory = new PSJsonCompositeConverterFactory(cmdlet);
                 options.Converters.Add(new PSJsonPSObjectConverter(factory));
 
                 // PSJsonCompositeConverterFactory must be last - it handles all non-primitive types
@@ -755,19 +770,16 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     internal sealed class PSJsonCompositeConverterFactory : JsonConverterFactory
     {
-        private readonly PSCmdlet? _cmdlet;
-        private readonly int _maxDepth;
-        private bool _warningWritten;
+        private readonly ConvertToJsonCommandV2? _cmdlet;
 
         // Cached converter instances (one per converter type)
         private PSJsonDictionaryConverter? _dictionaryConverter;
         private PSJsonEnumerableConverter? _enumerableConverter;
         private PSJsonCompositeConverter? _compositeConverter;
 
-        public PSJsonCompositeConverterFactory(PSCmdlet? cmdlet, int maxDepth)
+        public PSJsonCompositeConverterFactory(ConvertToJsonCommandV2? cmdlet)
         {
             _cmdlet = cmdlet;
-            _maxDepth = maxDepth;
         }
 
         public override bool CanConvert(Type typeToConvert)
@@ -807,15 +819,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal void WriteWarningOnce()
         {
-            if (!_warningWritten && _cmdlet is not null)
-            {
-                _warningWritten = true;
-                string warningMessage = string.Format(
-                    CultureInfo.CurrentCulture,
-                    "Resulting JSON is truncated as serialization has exceeded the set depth of {0}.",
-                    _maxDepth);
-                _cmdlet.WriteWarning(warningMessage);
-            }
+            _cmdlet?.WriteWarningOnce();
         }
 
         internal void WriteDepthExceeded(Utf8JsonWriter writer, object obj)
@@ -824,7 +828,7 @@ namespace Microsoft.PowerShell.Commands
             writer.WriteStringValue(obj.ToString());
         }
 
-        internal int MaxDepth => _maxDepth;
+        internal int MaxDepth => _cmdlet?.Depth ?? 2;
     }
 
     /// <summary>
