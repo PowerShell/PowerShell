@@ -1078,6 +1078,13 @@ namespace Microsoft.PowerShell.Commands
             System.Text.Json.JsonSerializer.Serialize(writer, obj, obj.GetType(), options);
         }
 
+        /// <summary>
+        /// Determines if a property should be skipped during serialization.
+        /// Checks for Hidden attribute and JsonIgnoreAttribute.
+        /// Note: This is only called for PSObject-wrapped objects (via PSJsonPSObjectConverter).
+        /// Script-defined classes passed as raw objects go through PSJsonCompositeConverter,
+        /// which uses STJ's JsonTypeInfo.Properties and does not call this method.
+        /// </summary>
         public static bool ShouldSkipProperty(PSPropertyInfo prop)
         {
             // Check for Hidden attribute
