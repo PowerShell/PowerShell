@@ -290,7 +290,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            if (TryWriteScalar(writer, obj, options))
+            if (TryWriteScalar(writer, pso, obj, options))
             {
                 return;
             }
@@ -346,7 +346,7 @@ namespace Microsoft.PowerShell.Commands
             return true;
         }
 
-        private static bool TryWriteScalar(Utf8JsonWriter writer, object obj, JsonSerializerOptions options)
+        private static bool TryWriteScalar(Utf8JsonWriter writer, PSObject pso, object obj, JsonSerializerOptions options)
         {
             // JObject needs special handling before scalar check
             if (obj is Newtonsoft.Json.Linq.JObject jObject)
@@ -360,8 +360,45 @@ namespace Microsoft.PowerShell.Commands
                 return false;
             }
 
+            // V1 primitive types always serialize as scalars, ignoring ETS properties
+            // Non-primitive STJ scalar types (Version, IPAddress, etc.) serialize as objects if they have ETS properties
+            if (!IsV1PrimitiveType(obj.GetType()))
+            {
+                var extendedProps = new PSMemberInfoIntegratingCollection<PSPropertyInfo>(
+                    pso,
+                    PSObject.GetPropertyCollection(PSMemberViewTypes.Extended));
+
+                foreach (var prop in extendedProps)
+                {
+                    if (!JsonSerializerHelper.ShouldSkipProperty(prop))
+                    {
+                        return false;  // Has ETS properties, don't serialize as scalar
+                    }
+                }
+            }
+
             JsonSerializerHelper.SerializePrimitive(writer, obj, options);
             return true;
+        }
+
+        /// <summary>
+        /// Returns true for types that V1 treats as primitives (ETS properties are always ignored).
+        /// </summary>
+        private static bool IsV1PrimitiveType(Type type)
+        {
+            return type == typeof(string) ||
+                   type == typeof(char) ||
+                   type == typeof(bool) ||
+                   type == typeof(DateTime) ||
+                   type == typeof(DateTimeOffset) ||
+                   type == typeof(Guid) ||
+                   type == typeof(Uri) ||
+                   type == typeof(double) ||
+                   type == typeof(float) ||
+                   type == typeof(decimal) ||
+                   type == typeof(BigInteger) ||
+                   type.IsPrimitive ||
+                   type.IsEnum;
         }
 
         private bool TryWriteDepthExceeded(Utf8JsonWriter writer, PSObject pso, object obj, JsonSerializerOptions options)
@@ -589,7 +626,7 @@ namespace Microsoft.PowerShell.Commands
         public override void Write(Utf8JsonWriter writer, Enum value, JsonSerializerOptions options)
         {
             // Convert to string to avoid JavaScript precision issues with large integers
-            writer.WriteStringValue(value.ToString("D"));
+            writer.WriteStringValue(value.ToString());
         }
     }
 
