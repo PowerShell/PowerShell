@@ -348,6 +348,19 @@ Describe 'ConvertTo-Json' -tags "CI" {
             # InputObject does not include Extended properties
             $jsonInputObject | Should -Not -Match 'IPAddressToString'
         }
+
+        It 'Should serialize array with ETS properties via InputObject and comma pipeline' {
+            $arr = @(1, 2, 3)
+            $arrWithEts = Add-Member -InputObject $arr -MemberType NoteProperty -Name MyProp -Value "test" -PassThru
+
+            # -InputObject preserves PSObject wrapper with ETS
+            $jsonInputObject = ConvertTo-Json -InputObject $arrWithEts -Compress
+            $jsonInputObject | Should -BeExactly '{"value":[1,2,3],"MyProp":"test"}'
+
+            # Comma operator prevents array unwrapping, preserving PSObject wrapper
+            $jsonCommaPipeline = ,$arrWithEts | ConvertTo-Json -Compress
+            $jsonCommaPipeline | Should -BeExactly '{"value":[1,2,3],"MyProp":"test"}'
+        }
     }
 
     It 'Should output warning when depth is exceeded' {

@@ -369,7 +369,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else if (obj is IEnumerable enumerable)
             {
-                SerializeEnumerable(writer, enumerable, options);
+                SerializeEnumerableWithEts(writer, pso, enumerable, options);
             }
             else
             {
@@ -435,6 +435,43 @@ namespace Microsoft.PowerShell.Commands
             }
 
             writer.WriteEndArray();
+        }
+
+        private void SerializeEnumerableWithEts(Utf8JsonWriter writer, PSObject pso, IEnumerable enumerable, JsonSerializerOptions options)
+        {
+            // Check for ETS properties (Extended only, like V1)
+            var etsProperties = new PSMemberInfoIntegratingCollection<PSPropertyInfo>(
+                pso,
+                PSObject.GetPropertyCollection(PSMemberViewTypes.Extended));
+
+            // Collect ETS properties that should be serialized
+            var propsToSerialize = new List<PSPropertyInfo>();
+            foreach (var prop in etsProperties)
+            {
+                if (!JsonSerializerHelper.ShouldSkipProperty(prop))
+                {
+                    propsToSerialize.Add(prop);
+                }
+            }
+
+            if (propsToSerialize.Count == 0)
+            {
+                // No ETS properties, serialize as plain array
+                SerializeEnumerable(writer, enumerable, options);
+                return;
+            }
+
+            // Has ETS properties: serialize as {"value":[...],"prop":"..."}
+            writer.WriteStartObject();
+            writer.WritePropertyName("value");
+            SerializeEnumerable(writer, enumerable, options);
+
+            foreach (var prop in propsToSerialize)
+            {
+                WriteProperty(writer, prop, options);
+            }
+
+            writer.WriteEndObject();
         }
 
         private void SerializeDictionary(Utf8JsonWriter writer, PSObject pso, IDictionary dict, JsonSerializerOptions options)
