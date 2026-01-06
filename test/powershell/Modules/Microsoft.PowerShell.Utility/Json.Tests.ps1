@@ -1262,8 +1262,7 @@ Describe "Validate Json serialization" -Tags "CI" {
              }
             @{
                 TestInput = 127
-                ToJson = '""'
-                ToJsonV2 = '"\u007F"'
+                ToJson = if ([ExperimentalFeature]::IsEnabled("PSJsonSerializerV2")) { '"\u007F"' } else { '""' }
                 FromJson = ''
              }
         )
@@ -1290,13 +1289,7 @@ Describe "Validate Json serialization" -Tags "CI" {
                     $result.FromJson | Should -Match $testCase.FromJson
                 }
 
-                # Use ToJsonV2 if available and PSJsonSerializerV2 is enabled
-                $expectedToJson = $testCase.ToJson
-                if ($testCase.ToJsonV2 -and (Get-ExperimentalFeature PSJsonSerializerV2).Enabled)
-                {
-                    $expectedToJson = $testCase.ToJsonV2
-                }
-                $result.ToJson | Should -Be $expectedToJson
+                $result.ToJson | Should -Be $testCase.ToJson
             }
         }
 

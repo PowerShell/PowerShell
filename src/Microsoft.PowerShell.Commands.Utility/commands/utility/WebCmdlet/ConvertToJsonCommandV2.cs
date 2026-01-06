@@ -229,15 +229,12 @@ namespace Microsoft.PowerShell.Commands
                 options.Converters.Add(new PSJsonTypeConverter());
 
                 // PSJsonPSObjectConverter handles PSObject with Extended/Adapted properties
-                var factory = new PSJsonCompositeConverterFactory(cmdlet);
                 options.Converters.Add(new PSJsonPSObjectConverter(cmdlet));
-
-                // PSJsonCompositeConverterFactory must be last - it handles all non-primitive types
-                // that don't have dedicated converters above
-                options.Converters.Add(factory);
 
                 // PSObject uses PSJsonPSObjectConverter (Extended/Adapted properties)
                 // Raw objects use PSJsonCompositeConverterFactory (Base properties only)
+                options.Converters.Add(new PSJsonCompositeConverterFactory(cmdlet));
+
                 Type typeToProcess = objectToProcess is PSObject ? typeof(PSObject) : objectToProcess.GetType();
                 return System.Text.Json.JsonSerializer.Serialize(objectToProcess, typeToProcess, options);
             }
@@ -307,6 +304,7 @@ namespace Microsoft.PowerShell.Commands
 
         private bool TryWriteNullLikeValue(Utf8JsonWriter writer, PSObject pso, object obj, JsonSerializerOptions options)
         {
+            // Process only DBNull and NullString, adding ETS properties as needed
             if (obj is not (DBNull or System.Management.Automation.Language.NullString))
             {
                 return false;
@@ -362,8 +360,8 @@ namespace Microsoft.PowerShell.Commands
                 return false;
             }
 
-            // V1 primitive types always serialize as scalars, ignoring ETS properties
-            // Non-primitive STJ scalar types (Version, IPAddress, etc.) serialize as objects if they have ETS properties
+            // V1 skips ETS properties for string and DateTime (see AppendPsProperties).
+            // Other STJ scalar types (Version, IPAddress, etc.) include ETS properties if present.
             if (!IsV1PrimitiveType(obj.GetType()))
             {
                 var extendedProps = new PSMemberInfoIntegratingCollection<PSPropertyInfo>(
@@ -434,7 +432,7 @@ namespace Microsoft.PowerShell.Commands
         {
             _cmdlet.WriteWarningOnce();
 
-            // Pure PSObject: convert to string only (V1 behavior)
+            // Pure PSObject: LanguagePrimitives.ConvertTo() adds ETS properties, no need to add them manually
             if (pso.ImmediateBaseObjectIsEmpty)
             {
                 string stringValue = LanguagePrimitives.ConvertTo<string>(pso);
@@ -582,32 +580,35 @@ namespace Microsoft.PowerShell.Commands
 
         private void WriteProperty(Utf8JsonWriter writer, PSPropertyInfo prop, JsonSerializerOptions options)
         {
+            // V1 behavior: if property access throws, write null instead of skipping
+            object? value = null;
             try
             {
-                var value = prop.Value;
-                writer.WritePropertyName(prop.Name);
-
-                // If maxDepth is 0 and value is non-null non-scalar, handle depth exceeded
-                if (MaxDepth == 0 && value is not null && !JsonSerializerHelper.IsStjNativeScalarType(value))
-                {
-                    // PSObject may have ETS properties that need to be serialized
-                    if (value is PSObject pso)
-                    {
-                        WriteDepthExceeded(writer, pso, pso.BaseObject, options);
-                    }
-                    else
-                    {
-                        writer.WriteStringValue(value.ToString());
-                    }
-                }
-                else
-                {
-                    WriteValue(writer, value, options);
-                }
+                value = prop.Value;
             }
             catch
             {
-                // Skip properties that throw on access - write nothing for this property
+                // Property access threw - value remains null (V1 behavior)
+            }
+
+            writer.WritePropertyName(prop.Name);
+
+            // If maxDepth is 0 and value is non-null non-scalar, handle depth exceeded
+            if (MaxDepth == 0 && value is not null && !JsonSerializerHelper.IsStjNativeScalarType(value))
+            {
+                // PSObject may have ETS properties that need to be serialized
+                if (value is PSObject pso)
+                {
+                    WriteDepthExceeded(writer, pso, pso.BaseObject, options);
+                }
+                else
+                {
+                    writer.WriteStringValue(value.ToString());
+                }
+            }
+            else
+            {
+                WriteValue(writer, value, options);
             }
         }
     }

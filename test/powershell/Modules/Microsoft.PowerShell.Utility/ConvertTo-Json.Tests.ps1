@@ -1,4 +1,4 @@
-﻿# Copyright (c) Microsoft Corporation.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe 'ConvertTo-Json' -tags "CI" {
     BeforeAll {
