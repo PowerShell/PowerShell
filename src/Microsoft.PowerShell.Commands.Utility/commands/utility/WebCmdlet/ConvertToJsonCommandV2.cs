@@ -346,7 +346,7 @@ namespace Microsoft.PowerShell.Commands
             return true;
         }
 
-        private static bool TryWriteScalar(Utf8JsonWriter writer, PSObject pso, object obj, JsonSerializerOptions options)
+        private bool TryWriteScalar(Utf8JsonWriter writer, PSObject pso, object obj, JsonSerializerOptions options)
         {
             // JObject needs special handling before scalar check
             if (obj is Newtonsoft.Json.Linq.JObject jObject)
@@ -360,45 +360,52 @@ namespace Microsoft.PowerShell.Commands
                 return false;
             }
 
-            // V1 skips ETS properties for string and DateTime (see AppendPsProperties).
-            // Other STJ scalar types (Version, IPAddress, etc.) include ETS properties if present.
-            if (!IsV1PrimitiveType(obj.GetType()))
+            // V1 skips ETS properties for string and DateTime only (see AppendPsProperties).
+            // Other scalar types go through AddPsProperties which adds ETS if present.
+            if (!IsV1EtsSkipType(obj.GetType()))
             {
                 var extendedProps = new PSMemberInfoIntegratingCollection<PSPropertyInfo>(
                     pso,
                     PSObject.GetPropertyCollection(PSMemberViewTypes.Extended));
 
+                var propsToSerialize = new List<PSPropertyInfo>();
                 foreach (var prop in extendedProps)
                 {
                     if (!JsonSerializerHelper.ShouldSkipProperty(prop))
                     {
-                        return false;  // Has ETS properties, don't serialize as scalar
+                        propsToSerialize.Add(prop);
                     }
+                }
+
+                if (propsToSerialize.Count > 0)
+                {
+                    // V1 AddPsProperties behavior: {"value":scalar,"etsprop":"..."}
+                    writer.WriteStartObject();
+                    writer.WritePropertyName("value");
+                    JsonSerializerHelper.SerializePrimitive(writer, obj, options);
+
+                    foreach (var prop in propsToSerialize)
+                    {
+                        WriteProperty(writer, prop, options);
+                    }
+
+                    writer.WriteEndObject();
+                    return true;
                 }
             }
 
+            // No ETS properties, or string/DateTime type - serialize as plain scalar
             JsonSerializerHelper.SerializePrimitive(writer, obj, options);
             return true;
         }
 
         /// <summary>
-        /// Returns true for types that V1 treats as primitives (ETS properties are always ignored).
+        /// Returns true for types where V1 skips ETS properties (string and DateTime only).
+        /// See AppendPsProperties in JsonObject.cs.
         /// </summary>
-        private static bool IsV1PrimitiveType(Type type)
+        private static bool IsV1EtsSkipType(Type type)
         {
-            return type == typeof(string) ||
-                   type == typeof(char) ||
-                   type == typeof(bool) ||
-                   type == typeof(DateTime) ||
-                   type == typeof(DateTimeOffset) ||
-                   type == typeof(Guid) ||
-                   type == typeof(Uri) ||
-                   type == typeof(double) ||
-                   type == typeof(float) ||
-                   type == typeof(decimal) ||
-                   type == typeof(BigInteger) ||
-                   type.IsPrimitive ||
-                   type.IsEnum;
+            return type == typeof(string) || type == typeof(DateTime);
         }
 
         private bool TryWriteDepthExceeded(Utf8JsonWriter writer, PSObject pso, object obj, JsonSerializerOptions options)
