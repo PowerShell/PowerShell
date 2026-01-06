@@ -587,10 +587,18 @@ namespace Microsoft.PowerShell.Commands
                 var value = prop.Value;
                 writer.WritePropertyName(prop.Name);
 
-                // If maxDepth is 0 and value is non-null non-scalar, convert to string
+                // If maxDepth is 0 and value is non-null non-scalar, handle depth exceeded
                 if (MaxDepth == 0 && value is not null && !JsonSerializerHelper.IsStjNativeScalarType(value))
                 {
-                    writer.WriteStringValue(value.ToString());
+                    // PSObject may have ETS properties that need to be serialized
+                    if (value is PSObject pso)
+                    {
+                        WriteDepthExceeded(writer, pso, pso.BaseObject, options);
+                    }
+                    else
+                    {
+                        writer.WriteStringValue(value.ToString());
+                    }
                 }
                 else
                 {

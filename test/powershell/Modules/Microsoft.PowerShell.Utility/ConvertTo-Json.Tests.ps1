@@ -403,5 +403,18 @@ Describe 'ConvertTo-Json' -tags "CI" {
             $json | Should -BeExactly '{"inner":{"Name":"test","ETSProp":"ets"}}'
         }
 
+        It 'Non-pure PSObject (FileInfo) with ETS properties includes ETS when depth exceeded' {
+            $file = Get-Item $PSHOME/pwsh.exe
+            $pso = [PSObject]::new($file)
+            $pso | Add-Member -NotePropertyName CustomExt -NotePropertyValue 'extended_value'
+            $outer = [PSCustomObject]@{ File = $pso }
+
+            $result = $outer | ConvertTo-Json -Depth 0 -WarningAction SilentlyContinue
+            $parsed = $result | ConvertFrom-Json
+
+            $parsed.File.CustomExt | Should -BeExactly 'extended_value'
+            $parsed.File.value | Should -BeLike '*pwsh.exe'
+        }
+
     }
 }
