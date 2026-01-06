@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation.
+﻿# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe 'ConvertTo-Json' -tags "CI" {
     BeforeAll {
@@ -368,5 +368,37 @@ Describe 'ConvertTo-Json' -tags "CI" {
         $json = $a | ConvertTo-Json -Depth 2 -WarningVariable warn -WarningAction SilentlyContinue
         $json | Should -Not -BeNullOrEmpty
         $warn | Should -Not -BeNullOrEmpty
+    }
+
+    Context 'Depth exceeded behavior for PSObject with ETS properties' {
+        It 'Pure PSObject with ETS properties converts to string when depth exceeded' {
+            $pso = [PSCustomObject]@{ Name = 'test' }
+            $pso | Add-Member -NotePropertyName ETSProp -NotePropertyValue 'ets'
+            $nested = @{ inner = $pso }
+
+            $json = $nested | ConvertTo-Json -Depth 0 -Compress -WarningAction SilentlyContinue
+            # Pure PSObject uses ToString() which includes all properties
+            $json | Should -BeExactly '{"inner":"@{Name=test; ETSProp=ets}"}'
+        }
+
+        It 'Non-pure PSObject with ETS properties converts to string when depth exceeded' {
+            $version = [version]'1.2.3'
+            $version | Add-Member -NotePropertyName ETSProp -NotePropertyValue 'ets'
+            $nested = @{ inner = $version }
+
+            $json = $nested | ConvertTo-Json -Depth 0 -Compress -WarningAction SilentlyContinue
+            # Non-pure PSObject (Version) uses ToString() of base object
+            $json | Should -BeExactly '{"inner":"1.2.3"}'
+        }
+
+        It 'Pure PSObject with ETS properties serializes normally within depth limit' {
+            $pso = [PSCustomObject]@{ Name = 'test' }
+            $pso | Add-Member -NotePropertyName ETSProp -NotePropertyValue 'ets'
+            $nested = @{ inner = $pso }
+
+            $json = $nested | ConvertTo-Json -Depth 2 -Compress -WarningAction SilentlyContinue
+            $json | Should -BeExactly '{"inner":{"Name":"test","ETSProp":"ets"}}'
+        }
+
     }
 }
