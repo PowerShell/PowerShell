@@ -137,6 +137,15 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+        /// <summary>
+        /// Writes truncated output when depth limit is exceeded.
+        /// </summary>
+        internal void WriteDepthExceeded(Utf8JsonWriter writer, object obj)
+        {
+            WriteWarningOnce();
+            writer.WriteStringValue(obj.ToString());
+        }
+
         private readonly List<object?> _inputObjects = new();
 
         /// <summary>
@@ -859,30 +868,17 @@ namespace Microsoft.PowerShell.Commands
             // Return cached non-generic converter instance
             if (typeof(IDictionary).IsAssignableFrom(typeToConvert))
             {
-                return _dictionaryConverter ??= new PSJsonDictionaryConverter(this);
+                return _dictionaryConverter ??= new PSJsonDictionaryConverter(_cmdlet);
             }
             else if (typeof(IEnumerable).IsAssignableFrom(typeToConvert))
             {
-                return _enumerableConverter ??= new PSJsonEnumerableConverter(this);
+                return _enumerableConverter ??= new PSJsonEnumerableConverter(_cmdlet);
             }
             else
             {
-                return _compositeConverter ??= new PSJsonCompositeConverter(this);
+                return _compositeConverter ??= new PSJsonCompositeConverter(_cmdlet);
             }
         }
-
-        internal void WriteWarningOnce()
-        {
-            _cmdlet.WriteWarningOnce();
-        }
-
-        internal void WriteDepthExceeded(Utf8JsonWriter writer, object obj)
-        {
-            WriteWarningOnce();
-            writer.WriteStringValue(obj.ToString());
-        }
-
-        internal int MaxDepth => _cmdlet.Depth;
     }
 
     /// <summary>
@@ -890,11 +886,11 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     internal sealed class PSJsonDictionaryConverter : JsonConverter<object>
     {
-        private readonly PSJsonCompositeConverterFactory _factory;
+        private readonly ConvertToJsonCommandV2 _cmdlet;
 
-        public PSJsonDictionaryConverter(PSJsonCompositeConverterFactory factory)
+        public PSJsonDictionaryConverter(ConvertToJsonCommandV2 cmdlet)
         {
-            _factory = factory;
+            _cmdlet = cmdlet;
         }
 
         public override bool CanConvert(Type typeToConvert) => typeof(IDictionary).IsAssignableFrom(typeToConvert);
@@ -915,9 +911,9 @@ namespace Microsoft.PowerShell.Commands
             var dict = (IDictionary)value;
 
             // Check depth limit
-            if (writer.CurrentDepth > _factory.MaxDepth)
+            if (writer.CurrentDepth > _cmdlet.Depth)
             {
-                _factory.WriteDepthExceeded(writer, value);
+                _cmdlet.WriteDepthExceeded(writer, value);
                 return;
             }
 
@@ -939,11 +935,11 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     internal sealed class PSJsonEnumerableConverter : JsonConverter<object>
     {
-        private readonly PSJsonCompositeConverterFactory _factory;
+        private readonly ConvertToJsonCommandV2 _cmdlet;
 
-        public PSJsonEnumerableConverter(PSJsonCompositeConverterFactory factory)
+        public PSJsonEnumerableConverter(ConvertToJsonCommandV2 cmdlet)
         {
-            _factory = factory;
+            _cmdlet = cmdlet;
         }
 
         public override bool CanConvert(Type typeToConvert) => typeof(IEnumerable).IsAssignableFrom(typeToConvert);
@@ -980,11 +976,11 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     internal sealed class PSJsonCompositeConverter : JsonConverter<object>
     {
-        private readonly PSJsonCompositeConverterFactory _factory;
+        private readonly ConvertToJsonCommandV2 _cmdlet;
 
-        public PSJsonCompositeConverter(PSJsonCompositeConverterFactory factory)
+        public PSJsonCompositeConverter(ConvertToJsonCommandV2 cmdlet)
         {
-            _factory = factory;
+            _cmdlet = cmdlet;
         }
 
         public override bool CanConvert(Type typeToConvert) => true;
@@ -1003,9 +999,9 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Check depth limit
-            if (writer.CurrentDepth > _factory.MaxDepth)
+            if (writer.CurrentDepth > _cmdlet.Depth)
             {
-                _factory.WriteDepthExceeded(writer, value);
+                _cmdlet.WriteDepthExceeded(writer, value);
                 return;
             }
 
@@ -1035,7 +1031,7 @@ namespace Microsoft.PowerShell.Commands
                 writer.WritePropertyName(propInfo.Name);
 
                 // If maxDepth is 0 and value is non-null non-scalar, convert to string
-                if (_factory.MaxDepth == 0 && value is not null && !JsonSerializerHelper.IsStjNativeScalarType(value))
+                if (_cmdlet.Depth == 0 && value is not null && !JsonSerializerHelper.IsStjNativeScalarType(value))
                 {
                     writer.WriteStringValue(value.ToString());
                 }
