@@ -133,11 +133,14 @@ Describe 'ConvertTo-Json' -tags "CI" {
     }
 
     It 'Should not serialize ETS properties added to DateTime' {
-        $date = "2021-06-24T15:54:06.796999-07:00"
-        $d = [DateTime]::Parse($date)
+        # Use UTC to avoid timezone conversion issues across different systems
+        $d = [DateTime]::new(2021, 6, 24, 12, 0, 0, [DateTimeKind]::Utc)
+        $d = Add-Member -InputObject $d -MemberType NoteProperty -Name ETSProp -Value 'test' -PassThru
 
-        # need to use wildcard here due to some systems may be configured with different culture setting showing time in different format
-        $d | ConvertTo-Json -Compress | Should -BeLike '"2021-06-24T*'
+        # DateTime should serialize as ISO string, not object with ETS properties
+        $json = $d | ConvertTo-Json -Compress
+        $json | Should -BeLike '"2021-06-24T12:00:00*'
+        $json | Should -Not -Match 'ETSProp'
         $d | ConvertTo-Json | ConvertFrom-Json | Should -Be $d
     }
 
