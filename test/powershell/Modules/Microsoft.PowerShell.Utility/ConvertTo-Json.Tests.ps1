@@ -150,6 +150,13 @@ Describe 'ConvertTo-Json' -tags "CI" {
         $t | ConvertTo-Json -Compress | Should -BeExactly "`"$text`""
     }
 
+    It 'Should serialize ETS properties added to Uri as object with value' {
+        # Uri is not string/DateTime, so ETS properties should be included
+        $uri = [Uri]"http://example.com"
+        $u = Add-Member -InputObject $uri -MemberType NoteProperty -Name MyProp -Value 'test' -PassThru
+        $u | ConvertTo-Json -Compress | Should -BeExactly '{"value":"http://example.com","MyProp":"test"}'
+    }
+
     It 'Should serialize BigInteger values' {
         $obj = [Ordered]@{
             Positive = 18446744073709551615n
