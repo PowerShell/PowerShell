@@ -514,7 +514,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            // Has ETS properties: serialize as {"value":[...],"prop":"..."}
+            // Has ETS properties: serialize as {"value":[...],"etsprop":"..."}
             writer.WriteStartObject();
             writer.WritePropertyName("value");
             SerializeEnumerable(writer, enumerable, options);
