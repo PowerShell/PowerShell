@@ -524,7 +524,17 @@ namespace Microsoft.PowerShell.Commands
                             break;
 
                         case 'W':
-                            sb.Append(dateTime.DayOfYear / 7);
+                            var week = CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(
+                                dateTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
+                            if (dateTime.DayOfYear < 7 && week > 50)
+                            {
+                                sb.Append("00");
+                            }
+                            else
+                            {
+                                sb.AppendFormat("{0:00}", week);
+                            }
+                            
                             break;
 
                         case 'w':
