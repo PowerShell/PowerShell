@@ -47,12 +47,4 @@ Describe 'ConvertTo-Json PSJsonSerializerV2 specific behavior' -Tags "CI" {
         $json | Should -Not -Match 'Hidden'
     }
 
-    # V2 improvement: Guid is serialized consistently (V1 had inconsistency between Pipeline and InputObject)
-    It 'Should serialize Guid as string consistently' {
-        $guid = [guid]"12345678-1234-1234-1234-123456789abc"
-        $jsonPipeline = $guid | ConvertTo-Json -Compress
-        $jsonInputObject = ConvertTo-Json -InputObject $guid -Compress
-        $jsonPipeline | Should -BeExactly '"12345678-1234-1234-1234-123456789abc"'
-        $jsonInputObject | Should -BeExactly '"12345678-1234-1234-1234-123456789abc"'
-    }
 }

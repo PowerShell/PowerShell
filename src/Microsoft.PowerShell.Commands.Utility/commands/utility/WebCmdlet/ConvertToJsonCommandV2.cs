@@ -324,32 +324,29 @@ namespace Microsoft.PowerShell.Commands
                 pso,
                 PSObject.GetPropertyCollection(PSMemberViewTypes.Extended));
 
-            bool hasProperties = false;
-            foreach (var prop in etsProperties)
+            if (etsProperties.Count <= 0)
             {
-                if (JsonSerializerHelper.ShouldSkipProperty(prop))
-                {
-                    continue;
-                }
-
-                if (!hasProperties)
-                {
-                    writer.WriteStartObject();
-                    writer.WritePropertyName("value");
-                    writer.WriteNullValue();
-                    hasProperties = true;
-                }
-
-                WriteProperty(writer, prop, options);
-            }
-
-            if (hasProperties)
-            {
-                writer.WriteEndObject();
+                // No ETS properties - serialize as null
+                writer.WriteNullValue();
             }
             else
             {
+                // Has ETS properties - serialize with ETS
+                writer.WriteStartObject();
+                writer.WritePropertyName("value");
                 writer.WriteNullValue();
+
+                foreach (var prop in etsProperties)
+                {
+                    if (JsonSerializerHelper.ShouldSkipProperty(prop))
+                    {
+                        continue;
+                    }
+
+                    WriteProperty(writer, prop, options);
+                }
+
+                writer.WriteEndObject();
             }
 
             return true;
@@ -377,24 +374,20 @@ namespace Microsoft.PowerShell.Commands
                     pso,
                     PSObject.GetPropertyCollection(PSMemberViewTypes.Extended));
 
-                var propsToSerialize = new List<PSPropertyInfo>();
-                foreach (var prop in extendedProps)
-                {
-                    if (!JsonSerializerHelper.ShouldSkipProperty(prop))
-                    {
-                        propsToSerialize.Add(prop);
-                    }
-                }
-
-                if (propsToSerialize.Count > 0)
+                if (extendedProps.Count > 0)
                 {
                     // V1 AddPsProperties behavior: {"value":scalar,"etsprop":"..."}
                     writer.WriteStartObject();
                     writer.WritePropertyName("value");
                     JsonSerializerHelper.SerializePrimitive(writer, obj, options);
 
-                    foreach (var prop in propsToSerialize)
+                    foreach (var prop in extendedProps)
                     {
+                        if (JsonSerializerHelper.ShouldSkipProperty(prop))
+                        {
+                            continue;
+                        }
+
                         WriteProperty(writer, prop, options);
                     }
 
@@ -462,34 +455,32 @@ namespace Microsoft.PowerShell.Commands
                 pso,
                 PSObject.GetPropertyCollection(PSMemberViewTypes.Extended | PSMemberViewTypes.Adapted));
 
-            bool hasProperties = false;
+            // LanguagePrimitives.ConvertTo() adds ETS properties automatically
             string baseStringValue = LanguagePrimitives.ConvertTo<string>(obj);
 
-            foreach (var prop in etsProperties)
+            if (etsProperties.Count <= 0)
             {
-                if (JsonSerializerHelper.ShouldSkipProperty(prop))
-                {
-                    continue;
-                }
-
-                if (!hasProperties)
-                {
-                    writer.WriteStartObject();
-                    writer.WritePropertyName("value");
-                    writer.WriteStringValue(baseStringValue);
-                    hasProperties = true;
-                }
-
-                WriteProperty(writer, prop, options);
-            }
-
-            if (hasProperties)
-            {
-                writer.WriteEndObject();
+                // No ETS properties - serialize as string
+                writer.WriteStringValue(baseStringValue);
             }
             else
             {
+                // Has ETS properties - serialize with ETS
+                writer.WriteStartObject();
+                writer.WritePropertyName("value");
                 writer.WriteStringValue(baseStringValue);
+
+                foreach (var prop in etsProperties)
+                {
+                    if (JsonSerializerHelper.ShouldSkipProperty(prop))
+                    {
+                        continue;
+                    }
+
+                    WriteProperty(writer, prop, options);
+                }
+
+                writer.WriteEndObject();
             }
         }
 
@@ -511,17 +502,7 @@ namespace Microsoft.PowerShell.Commands
                 pso,
                 PSObject.GetPropertyCollection(PSMemberViewTypes.Extended));
 
-            // Collect ETS properties that should be serialized
-            var propsToSerialize = new List<PSPropertyInfo>();
-            foreach (var prop in etsProperties)
-            {
-                if (!JsonSerializerHelper.ShouldSkipProperty(prop))
-                {
-                    propsToSerialize.Add(prop);
-                }
-            }
-
-            if (propsToSerialize.Count == 0)
+            if (etsProperties.Count <= 0)
             {
                 // No ETS properties, serialize as plain array
                 SerializeEnumerable(writer, enumerable, options);
@@ -533,8 +514,13 @@ namespace Microsoft.PowerShell.Commands
             writer.WritePropertyName("value");
             SerializeEnumerable(writer, enumerable, options);
 
-            foreach (var prop in propsToSerialize)
+            foreach (var prop in etsProperties)
             {
+                if (JsonSerializerHelper.ShouldSkipProperty(prop))
+                {
+                    continue;
+                }
+
                 WriteProperty(writer, prop, options);
             }
 
@@ -582,6 +568,11 @@ namespace Microsoft.PowerShell.Commands
             var properties = new PSMemberInfoIntegratingCollection<PSPropertyInfo>(
                 pso,
                 PSObject.GetPropertyCollection(memberTypes));
+
+            if (properties.Count <= 0)
+            {
+                return;
+            }
 
             foreach (var prop in properties)
             {
@@ -1025,24 +1016,27 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
+            // V1 behavior: if property access throws, write null instead of skipping
+            object? value = null;
             try
             {
-                var value = propInfo.Get(obj);
-                writer.WritePropertyName(propInfo.Name);
-
-                // If maxDepth is 0 and value is non-null non-scalar, convert to string
-                if (_cmdlet.Depth == 0 && value is not null && !JsonSerializerHelper.IsStjNativeScalarType(value))
-                {
-                    writer.WriteStringValue(value.ToString());
-                }
-                else
-                {
-                    JsonSerializerHelper.WriteValue(writer, value, options);
-                }
+                value = propInfo.Get(obj);
             }
             catch
             {
-                // Skip properties that throw on access
+                // Property access threw - value remains null (V1 behavior)
+            }
+
+            writer.WritePropertyName(propInfo.Name);
+
+            // If maxDepth is 0 and value is non-null non-scalar, convert to string
+            if (_cmdlet.Depth == 0 && value is not null && !JsonSerializerHelper.IsStjNativeScalarType(value))
+            {
+                writer.WriteStringValue(value.ToString());
+            }
+            else
+            {
+                JsonSerializerHelper.WriteValue(writer, value, options);
             }
         }
     }
