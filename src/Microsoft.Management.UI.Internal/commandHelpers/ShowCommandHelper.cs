@@ -679,7 +679,8 @@ Function PSGetSerializedShowCommandInfo
         /// <returns>The host window, if it is present or null if it is not.</returns>
         internal static Window GetHostWindow(PSCmdlet cmdlet)
         {
-            PSPropertyInfo windowProperty = cmdlet.Host.PrivateData.Properties["Window"];
+            // The 'PrivateData' property may have null value for the default host or custom host.
+            PSPropertyInfo windowProperty = cmdlet.Host.PrivateData?.Properties["Window"];
             if (windowProperty == null)
             {
                 return null;
