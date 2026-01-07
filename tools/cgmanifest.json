@@ -46,7 +46,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "JsonPointer.Net",
-          "Version": "6.0.0"
+          "Version": "6.0.1"
         }
       },
       "DevelopmentDependency": false
@@ -56,7 +56,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "JsonSchema.Net",
-          "Version": "7.4.0"
+          "Version": "8.0.4"
         }
       },
       "DevelopmentDependency": false
