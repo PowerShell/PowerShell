@@ -35,7 +35,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
-                    InvokeProvider.Content.Clear(path, context);
+                    InvokeProvider.Content.Clear(path, context, confirm: false);
                     context.ThrowFirstErrorOrDoNothing(true);
                 }
                 catch (PSNotSupportedException)
