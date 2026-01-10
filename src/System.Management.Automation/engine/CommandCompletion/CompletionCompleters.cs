@@ -7645,6 +7645,9 @@ namespace System.Management.Automation
                         // Ignore non-public types
                         if (!TypeResolver.IsPublic(type)) { continue; }
 
+                        // Ignore types with Hidden attribute
+                        if (type.IsDefined(typeof(HiddenAttribute), false)) { continue; }
+
                         HandleNamespace(entries, type.Namespace);
                         HandleType(entries, type.FullName, type.Name, type);
                     }
@@ -7845,11 +7848,14 @@ namespace System.Management.Automation
             }
 
             // this is a temporary fix. Only the type defined in the same script get complete. Need to use using Module when that is available.
-            if (context.RelatedAsts != null && context.RelatedAsts.Count > 0)
+            // Search from InputAst (entire input buffer) first to handle inline class definitions like: [hidden()] class Test1{} [Test1
+            // If InputAst is not available, fall back to RelatedAsts (cursor-adjacent ASTs only)
+            Ast astToSearch = context.InputAst ?? (context.RelatedAsts != null && context.RelatedAsts.Count > 0 ? context.RelatedAsts[0] : null);
+
+            if (astToSearch != null)
             {
-                var scriptBlockAst = (ScriptBlockAst)context.RelatedAsts[0];
-                var typeAsts = scriptBlockAst.FindAll(static ast => ast is TypeDefinitionAst, false).Cast<TypeDefinitionAst>();
-                foreach (var typeAst in typeAsts.Where(ast => pattern.IsMatch(ast.Name)))
+                var typeAsts = astToSearch.FindAll(static ast => ast is TypeDefinitionAst, searchNestedScriptBlocks: true).Cast<TypeDefinitionAst>();
+                foreach (var typeAst in typeAsts.Where(ast => pattern.IsMatch(ast.Name) && !ast.IsHidden))
                 {
                     string toolTipPrefix = string.Empty;
                     if (typeAst.IsInterface)

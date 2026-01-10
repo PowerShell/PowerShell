@@ -99,6 +99,10 @@ Describe "Type accelerators" -Tags "CI" {
                     Type        = [System.Collections.Hashtable]
                 }
                 @{
+                    Accelerator = 'Hidden'
+                    Type        = [System.Management.Automation.HiddenAttribute]
+                }
+                @{
                     Accelerator = 'int'
                     Type        = [System.Int32]
                 }
@@ -418,11 +422,11 @@ Describe "Type accelerators" -Tags "CI" {
 
             if ( !$IsWindows )
             {
-                $totalAccelerators = 102
+                $totalAccelerators = 103
             }
             else
             {
-                $totalAccelerators = 107
+                $totalAccelerators = 108
 
                 $extraFullPSAcceleratorTestCases = @(
                     @{
