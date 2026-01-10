@@ -22,6 +22,7 @@ namespace System.Management.Automation
         internal const string EngineSource = "PSEngine";
         internal const string PSSerializeJSONLongEnumAsNumber = nameof(PSSerializeJSONLongEnumAsNumber);
         internal const string PSProfileDSCResource = "PSProfileDSCResource";
+        internal const string PSJsonSerializerV2 = nameof(PSJsonSerializerV2);
 
         #endregion
 
@@ -110,6 +111,10 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: PSSerializeJSONLongEnumAsNumber,
                     description: "Serialize enums based on long or ulong as an numeric value rather than the string representation when using ConvertTo-Json."
+                ),
+                new ExperimentalFeature(
+                    name: PSJsonSerializerV2,
+                    description: "Use System.Text.Json for ConvertTo-Json with V1-compatible behavior and support for non-string dictionary keys."
                 ),
                 new ExperimentalFeature(
                     name: PSProfileDSCResource,
