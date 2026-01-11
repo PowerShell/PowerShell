@@ -9,6 +9,7 @@ using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 using System.Text;
 
+
 // interfaces for host interaction
 
 namespace Microsoft.PowerShell.Commands.Internal.Format
@@ -50,14 +51,49 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 str = valueStrDec.ToString(OutputRendering.PlainText);
             }
 
+            // Use StringInfo to enumerate grapheme clusters
             int length = 0;
-            for (; offset < str.Length; offset++)
+            System.Globalization.StringInfo si = new System.Globalization.StringInfo(str);
+            int[] textElementIndexes = System.Globalization.StringInfo.ParseCombiningCharacters(str);
+            for (int i = 0; i < textElementIndexes.Length; i++)
             {
-                length += CharLengthInBufferCells(str[offset]);
+                if (i < offset) continue;
+                int start = textElementIndexes[i];
+                int graphemeLength = (i + 1 < textElementIndexes.Length)
+                    ? textElementIndexes[i + 1] - textElementIndexes[i]
+                    : str.Length - textElementIndexes[i];
+                string grapheme = str.Substring(start, graphemeLength);
+                length += GraphemeLengthInBufferCells(grapheme);
             }
-
             return length;
         }
+                /// <summary>
+                /// Calculate the buffer cell length of a grapheme cluster (text element).
+                /// </summary>
+                /// <param name="grapheme">A string representing a single grapheme cluster.</param>
+                /// <returns>Number of buffer cells the grapheme needs to take.</returns>
+                protected virtual int GraphemeLengthInBufferCells(string grapheme)
+                {
+                    if (string.IsNullOrEmpty(grapheme))
+                        return 0;
+
+                    // Check if the grapheme is an emoji (basic Unicode ranges)
+                    int codePoint = char.ConvertToUtf32(grapheme, 0);
+                    // Emoji ranges: Emoticons, Misc Symbols, Dingbats, Transport, etc.
+                    if ((codePoint >= 0x1F600 && codePoint <= 0x1F64F) || // Emoticons
+                        (codePoint >= 0x1F300 && codePoint <= 0x1F5FF) || // Misc Symbols & Pictographs
+                        (codePoint >= 0x1F680 && codePoint <= 0x1F6FF) || // Transport & Map
+                        (codePoint >= 0x2600 && codePoint <= 0x26FF)   || // Misc symbols
+                        (codePoint >= 0x2700 && codePoint <= 0x27BF)   || // Dingbats
+                        (codePoint >= 0x1F900 && codePoint <= 0x1F9FF) || // Supplemental Symbols & Pictographs
+                        (codePoint >= 0x1FA70 && codePoint <= 0x1FAFF) || // Symbols & Pictographs Extended-A
+                        (codePoint >= 0x1F1E6 && codePoint <= 0x1F1FF))   // Regional Indicator Symbols
+                    {
+                        return 2;
+                    }
+                    // Default width for other graphemes
+                    return 1;
+            }
 
         /// <summary>
         /// Calculate the buffer cell length of the given character.
@@ -120,8 +156,50 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         #region Helpers
 
+        protected static int CodePointLengthInBufferCells(int codePoint)
+        {
+            // Emoji and symbol ranges (most emojis are wide/2-cell)
+            // Based on Unicode standard emoji ranges
+            if ((codePoint >= 0x1F300 && codePoint <= 0x1F9FF) || // Miscellaneous Symbols and Pictographs, Emoticons, etc.
+                (codePoint >= 0x1F000 && codePoint <= 0x1F02F) || // Mahjong Tiles, Domino Tiles
+                (codePoint >= 0x1F0A0 && codePoint <= 0x1F0FF) || // Playing Cards
+                (codePoint >= 0x1F100 && codePoint <= 0x1F64F) || // Enclosed Alphanumeric Supplement, Emoticons
+                (codePoint >= 0x1F680 && codePoint <= 0x1F6FF) || // Transport and Map Symbols
+                (codePoint >= 0x1F900 && codePoint <= 0x1F9FF) || // Supplemental Symbols and Pictographs
+                (codePoint >= 0x1FA00 && codePoint <= 0x1FA6F) || // Chess Symbols, Symbols and Pictographs Extended-A
+                (codePoint >= 0x1FA70 && codePoint <= 0x1FAFF) || // Symbols and Pictographs Extended-A
+                (codePoint >= 0x2600 && codePoint <= 0x26FF) ||   // Miscellaneous Symbols (includes some emojis)
+                (codePoint >= 0x2700 && codePoint <= 0x27BF) ||   // Dingbats
+                (codePoint >= 0x1F170 && codePoint <= 0x1F251) || // Enclosed Alphanumeric Supplement
+                (codePoint >= 0x1F3FB && codePoint <= 0x1F3FF) || // Emoji skin tone modifiers
+                (codePoint >= 0x20000 && codePoint <= 0x2FFFD) || // CJK Extension B-F
+                (codePoint >= 0x30000 && codePoint <= 0x3FFFD))   // CJK Extension G and beyond
+            {
+                return 2;
+            }
+
+            // For BMP characters, use the existing logic
+            if (codePoint <= 0xFFFF)
+            {
+                return CharLengthInBufferCells((char)codePoint);
+            }
+
+            // Default for other supplementary characters
+            return 2;
+        }
+
         protected static int CharLengthInBufferCells(char c)
         {
+            // Check for BMP emojis that are 2 cells wide
+            // These are common emoji characters that don't require surrogate pairs
+            if ((c >= 0x2600 && c <= 0x26FF) ||  // Miscellaneous Symbols (many emojis)
+                (c >= 0x2700 && c <= 0x27BF) ||  // Dingbats
+                (c >= 0x2300 && c <= 0x23FF) ||  // Miscellaneous Technical
+                (c >= 0x2B50 && c <= 0x2B55))    // Stars and other symbols
+            {
+                return 2;
+            }
+
             // The following is based on http://www.cl.cam.ac.uk/~mgk25/c/wcwidth.c
             // which is derived from https://www.unicode.org/Public/UCD/latest/ucd/EastAsianWidth.txt
             bool isWide = c >= 0x1100 &&
@@ -136,10 +214,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                  ((uint)(c - 0xff00) <= (0xff60 - 0xff00)) || /* Fullwidth Forms */
                  ((uint)(c - 0xffe0) <= (0xffe6 - 0xffe0)));
 
-            // We can ignore these ranges because .Net strings use surrogate pairs
-            // for this range and we do not handle surrogate pairs.
-            // (c >= 0x20000 && c <= 0x2fffd) ||
-            // (c >= 0x30000 && c <= 0x3fffd)
             return 1 + (isWide ? 1 : 0);
         }
 
@@ -167,8 +241,29 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     break;
                 }
 
-                // compute the cell number for the current character
-                currCharDisplayLen = this.Length(str[k]);
+                // compute the cell number for the current character or surrogate pair
+                if (startFromHead && char.IsHighSurrogate(str[k]) && k + 1 <= kFinal && char.IsLowSurrogate(str[k + 1]))
+                {
+                    // This is a surrogate pair when going forward
+                    int codePoint = char.ConvertToUtf32(str[k], str[k + 1]);
+                    currCharDisplayLen = CodePointLengthInBufferCells(codePoint);
+                }
+                else if (!startFromHead && char.IsLowSurrogate(str[k]) && k - 1 >= kFinal && char.IsHighSurrogate(str[k - 1]))
+                {
+                    // This is a surrogate pair when going backward - skip it since we'll process with the high surrogate
+                    k = startFromHead ? (k + 1) : (k - 1);
+                    continue;
+                }
+                else if (!startFromHead && char.IsHighSurrogate(str[k]) && k + 1 < str.Length && char.IsLowSurrogate(str[k + 1]))
+                {
+                    // We're at the high surrogate going backward - process the pair
+                    int codePoint = char.ConvertToUtf32(str[k], str[k + 1]);
+                    currCharDisplayLen = CodePointLengthInBufferCells(codePoint);
+                }
+                else
+                {
+                    currCharDisplayLen = CharLengthInBufferCells(str[k]);
+                }
 
                 if (filledDisplayCellsCount + currCharDisplayLen > displayCells)
                 {
@@ -178,7 +273,21 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 // keep adding, we fit
                 filledDisplayCellsCount += currCharDisplayLen;
-                charactersAdded++;
+                
+                // Count the number of char units (1 for BMP, 2 for surrogate pairs)
+                if (startFromHead && char.IsHighSurrogate(str[k]) && k + 1 <= kFinal && char.IsLowSurrogate(str[k + 1]))
+                {
+                    charactersAdded += 2; // surrogate pair
+                    k++; // skip the low surrogate
+                }
+                else if (!startFromHead && char.IsHighSurrogate(str[k]) && k + 1 < str.Length && char.IsLowSurrogate(str[k + 1]))
+                {
+                    charactersAdded += 2; // surrogate pair
+                }
+                else
+                {
+                    charactersAdded++;
+                }
 
                 // check if we fit exactly
                 if (filledDisplayCellsCount == displayCells)
