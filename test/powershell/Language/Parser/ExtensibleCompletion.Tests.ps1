@@ -522,3 +522,123 @@ Describe "ArgumentCompletionsAttribute tests" -Tags "CI" {
         { TestArgumentCompletionsAttribute -Param1 unExpectedValue } | Should -Not -Throw
     }
 }
+
+
+Describe "Get-ArgumentCompleter cmdlet" -Tags "CI" {
+    BeforeAll {
+        # Register test completers
+        Register-ArgumentCompleter -CommandName TestGetCmd -ParameterName TestParam -ScriptBlock { "test1" }
+        Register-ArgumentCompleter -ParameterName GlobalTestParam -ScriptBlock { "global" }
+        Register-ArgumentCompleter -Native -CommandName testnative -ScriptBlock { "native1" }
+    }
+
+    AfterAll {
+        # Clean up
+        Unregister-ArgumentCompleter -CommandName TestGetCmd -ParameterName TestParam
+        Unregister-ArgumentCompleter -ParameterName GlobalTestParam
+        Unregister-ArgumentCompleter -Native -CommandName testnative
+    }
+
+    It "Returns PowerShell completers by default" {
+        $results = Get-ArgumentCompleter
+        $results | Should -Not -BeNullOrEmpty
+        $results | ForEach-Object { $_.Type | Should -Be 'PowerShell' }
+    }
+
+    It "Returns native completers with -Native switch" {
+        $results = Get-ArgumentCompleter -Native
+        $results | Should -Not -BeNullOrEmpty
+        $results | ForEach-Object { $_.Type | Should -BeIn @('Native', 'NativeFallback') }
+    }
+
+    It "Filters by CommandName" {
+        $results = Get-ArgumentCompleter -CommandName TestGetCmd
+        $results | Should -Not -BeNullOrEmpty
+        $results.CommandName | Should -Contain 'TestGetCmd'
+    }
+
+    It "Filters by ParameterName" {
+        $results = Get-ArgumentCompleter -ParameterName TestParam
+        $results | Should -Not -BeNullOrEmpty
+        $results.ParameterName | Should -Contain 'TestParam'
+    }
+
+    It "Supports wildcards in CommandName" {
+        $results = Get-ArgumentCompleter -CommandName "TestGet*"
+        $results | Should -Not -BeNullOrEmpty
+        $results.CommandName | Should -Contain 'TestGetCmd'
+    }
+
+    It "Supports wildcards in ParameterName" {
+        $results = Get-ArgumentCompleter -ParameterName "*TestParam"
+        $results | Should -Not -BeNullOrEmpty
+    }
+
+    It "Returns ArgumentCompleterInfo objects with correct properties" {
+        $results = Get-ArgumentCompleter -CommandName TestGetCmd
+        $result = $results | Where-Object { $_.CommandName -eq 'TestGetCmd' }
+        $result | Should -Not -BeNullOrEmpty
+        $result.CommandName | Should -Be 'TestGetCmd'
+        $result.ParameterName | Should -Be 'TestParam'
+        $result.ScriptBlock | Should -Not -BeNullOrEmpty
+        $result.Type | Should -Be 'PowerShell'
+    }
+
+    It "Returns native completer with correct Type" {
+        $results = Get-ArgumentCompleter -Native -CommandName testnative
+        $result = $results | Where-Object { $_.CommandName -eq 'testnative' }
+        $result | Should -Not -BeNullOrEmpty
+        $result.Type | Should -Be 'Native'
+        $result.ParameterName | Should -BeNullOrEmpty
+    }
+}
+
+Describe "Unregister-ArgumentCompleter cmdlet" -Tags "CI" {
+    It "Removes PowerShell completer by command and parameter" {
+        Register-ArgumentCompleter -CommandName UnregisterTest -ParameterName TestParam -ScriptBlock { "test" }
+        $before = Get-ArgumentCompleter -CommandName UnregisterTest
+        $before | Should -Not -BeNullOrEmpty
+
+        Unregister-ArgumentCompleter -CommandName UnregisterTest -ParameterName TestParam
+
+        $after = Get-ArgumentCompleter -CommandName UnregisterTest -ParameterName TestParam
+        $after | Should -BeNullOrEmpty
+    }
+
+    It "Removes global parameter completer" {
+        Register-ArgumentCompleter -ParameterName UnregisterGlobalParam -ScriptBlock { "global" }
+        $before = Get-ArgumentCompleter -ParameterName UnregisterGlobalParam
+        $before | Should -Not -BeNullOrEmpty
+
+        Unregister-ArgumentCompleter -ParameterName UnregisterGlobalParam
+
+        $after = Get-ArgumentCompleter -ParameterName UnregisterGlobalParam
+        $after | Should -BeNullOrEmpty
+    }
+
+    It "Removes native command completer" {
+        Register-ArgumentCompleter -Native -CommandName unregisternative -ScriptBlock { "native" }
+        $before = Get-ArgumentCompleter -Native -CommandName unregisternative
+        $before | Should -Not -BeNullOrEmpty
+
+        Unregister-ArgumentCompleter -Native -CommandName unregisternative
+
+        $after = Get-ArgumentCompleter -Native -CommandName unregisternative
+        $after | Should -BeNullOrEmpty
+    }
+
+    It "Removes native fallback completer" {
+        Register-ArgumentCompleter -NativeFallback -ScriptBlock { "fallback" }
+        $before = Get-ArgumentCompleter -Native | Where-Object { $_.Type -eq 'NativeFallback' }
+        $before | Should -Not -BeNullOrEmpty
+
+        Unregister-ArgumentCompleter -NativeFallback
+
+        $after = Get-ArgumentCompleter -Native | Where-Object { $_.Type -eq 'NativeFallback' }
+        $after | Should -BeNullOrEmpty
+    }
+
+    It "Does not error when removing non-existent completer" {
+        { Unregister-ArgumentCompleter -CommandName NonExistent -ParameterName NonExistent } | Should -Not -Throw
+    }
+}
