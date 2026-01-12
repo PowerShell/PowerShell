@@ -192,9 +192,7 @@ Describe "Default enablement of Experimental Features" -Tags CI {
             # is launched from another pwsh (with $PSHOME like C:\program files\powershell\7)
             # resulting in combined PSModulePath which is used by Get-ExperimentalFeature to enum module-scoped exp.features from both pwsh locations.
             # So we need to exclude parent's modules' exp.features from verification using filtering on $PSHOME.
-            # Also exclude PSContentPath as it's intentionally not auto-enabled in preview builds (see build.psm1 line 714)
-            if ((($expFeature.Source -eq 'PSEngine') -or ($expFeature.Source.StartsWith($PSHOME, "InvariantCultureIgnoreCase"))) -and
-                ($expFeature.Name -ne 'PSContentPath'))
+            if (($expFeature.Source -eq 'PSEngine') -or ($expFeature.Source.StartsWith($PSHOME, "InvariantCultureIgnoreCase")))
             {
                 "Checking $($expFeature.Name) experimental feature" | Write-Verbose -Verbose
                 $expFeature.Enabled | Should -BeEnabled -Name $expFeature.Name

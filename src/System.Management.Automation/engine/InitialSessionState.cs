@@ -1599,7 +1599,6 @@ namespace System.Management.Automation.Runspaces
             ss.Commands.Add(BuiltInAliases);
 
             ss.ImportCorePSSnapIn();
-            
             ss.LanguageMode = PSLanguageMode.FullLanguage;
             ss.AuthorizationManager = new Microsoft.PowerShell.PSAuthorizationManager(Utils.DefaultPowerShellShellID);
 
@@ -5250,23 +5249,10 @@ end {
                     }
                 }
 
-                // Exclude dynamically registered cmdlets (registered based on experimental features)
-                var dynamicCmdlets = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
-                {
-                    // No dynamic cmdlets currently
-                };
+                Diagnostics.Assert(cmdletsCheck.Count == cmdlets.Count, "new Cmdlet added to System.Management.Automation.dll - update InitializeCoreCmdletsAndProviders");
                 
-                var expectedCmdletCount = cmdletsCheck.Count - cmdletsCheck.Keys.Count(key => dynamicCmdlets.Contains(key));
-                Diagnostics.Assert(expectedCmdletCount == cmdlets.Count, "new Cmdlet added to System.Management.Automation.dll - update InitializeCoreCmdletsAndProviders");
-
                 foreach (var pair in cmdletsCheck)
                 {
-                    // Skip dynamic cmdlets - they are registered conditionally based on experimental features
-                    if (dynamicCmdlets.Contains(pair.Key))
-                    {
-                        continue;
-                    }
-
                     SessionStateCmdletEntry other;
                     if (cmdlets.TryGetValue(pair.Key, out other))
                     {

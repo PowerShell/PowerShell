@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Management.Automation.Internal;
 using System.Text;
 using System.Threading;
@@ -63,8 +62,8 @@ namespace System.Management.Automation.Configuration
         private string systemWideConfigDirectory;
 
         // The json file containing the per-user configuration settings.
-        private string perUserConfigFile;
-        private string perUserConfigDirectory;
+        private readonly string perUserConfigFile;
+        private readonly string perUserConfigDirectory;
 
         // Note: JObject and JsonSerializer are thread safe.
         // Root Json objects corresponding to the configuration file for 'AllUsers' and 'CurrentUser' respectively.
@@ -224,35 +223,17 @@ namespace System.Management.Automation.Configuration
 
         /// <summary>
         /// Get the names of experimental features enabled in the config file.
-        /// 
-        /// BOOTSTRAP SOLUTION:
-        /// Always read from the Documents location first (Platform.ConfigDirectory).
-        /// This is the canonical source of truth for experimental features on startup.
-        /// We NEVER read from LocalAppData to determine enabled features because:
-        /// - LocalAppData configs are created BY the PSContentPath feature
-        /// - Reading from LocalAppData creates circular dependency
-        /// - Stale LocalAppData configs would contaminate fresh sessions
-        /// 
-        /// The flow:
-        /// 1. Read experimental features from Documents config (this method)
-        /// 2. If PSContentPath is enabled, migration happens later in GetPSContentPath()
-        /// 3. Migration switches perUserConfigFile to LocalAppData
-        /// 4. Future writes update both Documents and LocalAppData (bidirectional sync)
-        /// 
-        /// This ensures clean separation: Documents = source of truth, LocalAppData = migrated location.
         /// </summary>
         internal string[] GetExperimentalFeatures()
         {
-            // Always read from the current location (Documents on startup, LocalAppData after migration)
-            string[] currentFeatures = ReadValueFromFile(ConfigScope.CurrentUser, "ExperimentalFeatures", Array.Empty<string>());
+            string[] features = ReadValueFromFile(ConfigScope.CurrentUser, "ExperimentalFeatures", Array.Empty<string>());
 
-            // If no features in current user config, check system-wide config
-            if (currentFeatures.Length == 0)
+            if (features.Length == 0)
             {
-                return ReadValueFromFile(ConfigScope.AllUsers, "ExperimentalFeatures", Array.Empty<string>());
+                features = ReadValueFromFile(ConfigScope.AllUsers, "ExperimentalFeatures", Array.Empty<string>());
             }
 
-            return currentFeatures;
+            return features;
         }
 
         /// <summary>
