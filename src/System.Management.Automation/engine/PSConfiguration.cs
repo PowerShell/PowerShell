@@ -160,13 +160,10 @@ namespace System.Management.Automation.Configuration
                 return contentPath;
             }
 
-            // Return default OneDrive location (Documents\PowerShell on Windows, XDG on Unix)
-#if UNIX
-            return Platform.SelectProductNameForDirectory(Platform.XDG_Type.DATA);
-#else
-            // Future Experimental Feature will make the default LocalAppData\PowerShell instead
-            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "PowerShell");
-#endif
+            // Return default location using Platform.DefaultPSContentDirectory
+            // - Windows: Documents\PowerShell (OneDrive location)
+            // - Unix: XDG_DATA_HOME/powershell (~/.local/share/powershell)
+            return Platform.DefaultPSContentDirectory;
         }
 
         /// <summary>
