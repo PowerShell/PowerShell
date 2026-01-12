@@ -46,7 +46,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "JsonPointer.Net",
-          "Version": "6.0.1"
+          "Version": "6.0.0"
         }
       },
       "DevelopmentDependency": false
