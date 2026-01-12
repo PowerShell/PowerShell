@@ -16,8 +16,8 @@
 
   <ItemGroup>
     <!-- This section is to force the version of non-direct dependencies -->
-    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="8.0.21" />
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="9.0.10" />
+    <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="9.0.10" />
     <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="9.0.10" />
     <PackageReference Include="Microsoft.Win32.SystemEvents" Version="9.0.10" />
     <PackageReference Include="runtime.android-arm.runtime.native.System.IO.Ports" Version="9.0.10" />

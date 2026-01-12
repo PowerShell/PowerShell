@@ -14,7 +14,7 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Win32.SystemEvents" Version="9.0.10" />
-    <PackageReference Include="System.Reflection.Metadata" Version="8.0.1" />
+    <PackageReference Include="System.Reflection.Metadata" Version="9.0.10" />
     <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />
     <PackageReference Include="Markdig.Signed" Version="0.38.0" />
     <PackageReference Include="Microsoft.PowerShell.MarkdownRender" Version="7.2.1" />
