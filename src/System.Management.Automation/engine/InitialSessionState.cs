@@ -1600,9 +1600,6 @@ namespace System.Management.Automation.Runspaces
 
             ss.ImportCorePSSnapIn();
             
-            // Register experimental feature cmdlets conditionally
-            ss.RegisterExperimentalFeatureCmdlets();
-            
             ss.LanguageMode = PSLanguageMode.FullLanguage;
             ss.AuthorizationManager = new Microsoft.PowerShell.PSAuthorizationManager(Utils.DefaultPowerShellShellID);
 
@@ -3803,26 +3800,6 @@ namespace System.Management.Automation.Runspaces
             return coreSnapin;
         }
 
-        /// <summary>
-        /// Register cmdlets that are only available when their associated experimental features are enabled.
-        /// </summary>
-        private void RegisterExperimentalFeatureCmdlets()
-        {
-            string helpFile = typeof(GetPSContentPathCommand).Assembly.Location + "-help.xml";
-
-            // Register PSContentPath cmdlets if the experimental feature is enabled
-            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSContentPath))
-            {
-                var getPSContentPathEntry = new SessionStateCmdletEntry("Get-PSContentPath", typeof(GetPSContentPathCommand), helpFile);
-                getPSContentPathEntry.Visibility = this.DefaultCommandVisibility;
-                this.Commands.Add(getPSContentPathEntry);
-
-                var setPSContentPathEntry = new SessionStateCmdletEntry("Set-PSContentPath", typeof(SetPSContentPathCommand), helpFile);
-                setPSContentPathEntry.Visibility = this.DefaultCommandVisibility;
-                this.Commands.Add(setPSContentPathEntry);
-            }
-        }
-
         internal PSSnapInInfo ImportPSSnapIn(PSSnapInInfo psSnapInInfo, out PSSnapInException warning)
         {
             ArgumentNullException.ThrowIfNull(psSnapInInfo);
@@ -5276,8 +5253,7 @@ end {
                 // Exclude dynamically registered cmdlets (registered based on experimental features)
                 var dynamicCmdlets = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
                 {
-                    "Get-PSContentPath",
-                    "Set-PSContentPath"
+                    // No dynamic cmdlets currently
                 };
                 
                 var expectedCmdletCount = cmdletsCheck.Count - cmdletsCheck.Keys.Count(key => dynamicCmdlets.Contains(key));
@@ -5514,6 +5490,7 @@ end {
                 { "Get-History",                       new SessionStateCmdletEntry("Get-History", typeof(GetHistoryCommand), helpFile) },
                 { "Get-Job",                           new SessionStateCmdletEntry("Get-Job", typeof(GetJobCommand), helpFile) },
                 { "Get-Module",                        new SessionStateCmdletEntry("Get-Module", typeof(GetModuleCommand), helpFile) },
+                { "Get-PSContentPath",                 new SessionStateCmdletEntry("Get-PSContentPath", typeof(GetPSContentPathCommand), helpFile) },
                 { "Get-PSHostProcessInfo",             new SessionStateCmdletEntry("Get-PSHostProcessInfo", typeof(GetPSHostProcessInfoCommand), helpFile) },
                 { "Get-PSSession",                     new SessionStateCmdletEntry("Get-PSSession", typeof(GetPSSessionCommand), helpFile) },
                 { "Get-PSSubsystem",                   new SessionStateCmdletEntry("Get-PSSubsystem", typeof(Subsystem.GetPSSubsystemCommand), helpFile) },
@@ -5536,6 +5513,7 @@ end {
                 { "Remove-Module",                     new SessionStateCmdletEntry("Remove-Module", typeof(RemoveModuleCommand), helpFile) },
                 { "Remove-PSSession",                  new SessionStateCmdletEntry("Remove-PSSession", typeof(RemovePSSessionCommand), helpFile) },
                 { "Save-Help",                         new SessionStateCmdletEntry("Save-Help", typeof(SaveHelpCommand), helpFile) },
+                { "Set-PSContentPath",                 new SessionStateCmdletEntry("Set-PSContentPath", typeof(SetPSContentPathCommand), helpFile) },
                 { "Set-PSDebug",                       new SessionStateCmdletEntry("Set-PSDebug", typeof(SetPSDebugCommand), helpFile) },
                 { "Set-StrictMode",                    new SessionStateCmdletEntry("Set-StrictMode", typeof(SetStrictModeCommand), helpFile) },
                 { "Start-Job",                         new SessionStateCmdletEntry("Start-Job", typeof(StartJobCommand), helpFile) },

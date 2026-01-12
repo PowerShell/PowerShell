@@ -708,21 +708,12 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Gets the PSContent path from PowerShell.config.json or falls back to platform defaults.
-        /// When PSContentPath experimental feature is enabled, returns the configured path or default location.
+        /// Returns the configured custom path if set, otherwise returns the default OneDrive location (Documents\PowerShell).
         /// </summary>
         /// <returns>The PSContent directory path (never null).</returns>
         internal static string GetPSContentPath()
         {
-            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSContentPath))
-            {
-                return PowerShellConfig.Instance.GetPSContentPath();
-            }
-
-#if UNIX
-            return Platform.SelectProductNameForDirectory(Platform.XDG_Type.DATA);
-#else
-            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "PowerShell");
-#endif
+            return PowerShellConfig.Instance.GetPSContentPath();
         }
 
         internal static readonly ConfigScope[] SystemWideOnlyConfig = new[] { ConfigScope.AllUsers };

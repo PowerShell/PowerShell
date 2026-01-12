@@ -66,12 +66,6 @@ namespace System.Management.Automation.Configuration
         private string perUserConfigFile;
         private string perUserConfigDirectory;
 
-        // Flag to track if migration has been checked (lazy initialization to avoid circular dependency)
-        private int migrationChecked = 0;
-
-        // Track the legacy config file path after migration, so we can keep it in sync
-        private string legacyConfigFile = null;
-
         // Note: JObject and JsonSerializer are thread safe.
         // Root Json objects corresponding to the configuration file for 'AllUsers' and 'CurrentUser' respectively.
         // They are used as a cache to avoid hitting the disk for every read operation.
@@ -99,8 +93,6 @@ namespace System.Management.Automation.Configuration
             if (!string.IsNullOrEmpty(perUserConfigDirectory))
             {
                 perUserConfigFile = Path.Combine(perUserConfigDirectory, ConfigFileName);
-                // Save the legacy config file path (Documents location) for bidirectional sync
-                legacyConfigFile = perUserConfigFile;
             }
 
             emptyConfig = new JObject();
@@ -108,9 +100,6 @@ namespace System.Management.Automation.Configuration
             serializer = JsonSerializer.Create(new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None, MaxDepth = 10 });
 
             fileLock = new ReaderWriterLockSlim();
-
-            // Note: PSContentPath user config migration is NOT performed here to avoid circular dependency with ExperimentalFeature.
-            // It will be performed lazily on first access to GetPSContentPath().
         }
 
         private string GetConfigFilePath(ConfigScope scope)
@@ -158,29 +147,26 @@ namespace System.Management.Automation.Configuration
 
         /// <summary>
         /// Gets the PSContentPath from the configuration file.
-        /// If not configured, returns the default location without creating the config file.
+        /// If not configured, returns the default OneDrive location (Documents\PowerShell) without creating the config file.
         /// This ensures PowerShell works on read-only file systems and avoids creating unnecessary files.
         /// </summary>
-        /// <returns>The configured PSContentPath if found, otherwise the default location (never null).</returns>
+        /// <returns>The configured PSContentPath if found, otherwise the default OneDrive location (never null).</returns>
         internal string GetPSContentPath()
         {
-            // Perform migration check on first call to avoid circular dependency with ExperimentalFeature
-            CheckAndPerformPSContentPathMigrationOnce();
-
             string contentPath = ReadValueFromFile<string>(ConfigScope.CurrentUser, Constants.PSUserContentPathEnvVar);
             if (!string.IsNullOrEmpty(contentPath))
             {
                 contentPath = Environment.ExpandEnvironmentVariables(contentPath);
+                return contentPath;
             }
-            
-            // When PSContentPath feature is enabled:
-            // - If user has configured a custom path, use that
-            // - Otherwise, use DefaultPSContentDirectory (LocalAppData\PowerShell on Windows)
-            //
-            // When PSContentPath feature is disabled:
-            // - This method is only called when feature is enabled (checked in Utils.GetPSContentPath)
-            // - So we can safely return the new default location
-            return contentPath ?? Platform.DefaultPSContentDirectory;
+
+            // Return default OneDrive location (Documents\PowerShell on Windows, XDG on Unix)
+#if UNIX
+            return Platform.SelectProductNameForDirectory(Platform.XDG_Type.DATA);
+#else
+            // Future Experimental Feature will make the default LocalAppData\PowerShell instead
+            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "PowerShell");
+#endif
         }
 
         /// <summary>
@@ -655,15 +641,6 @@ namespace System.Management.Automation.Configuration
             }
 
             UpdateValueInFile<T>(scope, key, value, true);
-
-            // If we migrated from a legacy location, also update the legacy config to keep them in sync.
-            // This ensures that disabling features (like PSContentPath) updates both locations.
-            if (scope == ConfigScope.CurrentUser && 
-                !string.IsNullOrEmpty(legacyConfigFile) && 
-                File.Exists(legacyConfigFile))
-            {
-                UpdateLegacyConfigFile<T>(key, value, true);
-            }
         }
 
         /// <summary>
@@ -679,188 +656,6 @@ namespace System.Management.Automation.Configuration
             if (File.Exists(fileName))
             {
                 UpdateValueInFile<T>(scope, key, default(T), false);
-            }
-        }
-
-        internal void MigrateUserConfig(string oldPath, string newPath)
-        {
-            // Ensure new directory exists
-            Directory.CreateDirectory(Path.GetDirectoryName(newPath));
-
-            // Copy the config file (may throw)
-            File.Copy(oldPath, newPath);
-            
-            // Note: Path updates and cache invalidation are handled by the caller
-            // after this method successfully completes to avoid race conditions.
-        }
-
-        /// <summary>
-        /// Syncs the ExperimentalFeatures array from the old config location to the new location.
-        /// This ensures that when PSContentPath is re-enabled after being disabled, the new location
-        /// gets updated with the current experimental features state.
-        /// </summary>
-        /// <param name="oldPath">Path to the old config file (Documents location)</param>
-        /// <param name="newPath">Path to the new config file (LocalAppData location)</param>
-        private void SyncExperimentalFeaturesToNewLocation(string oldPath, string newPath)
-        {
-            try
-            {
-                // Read experimental features from old location
-                string originalFile = perUserConfigFile;
-                JObject originalCache = configRoots[(int)ConfigScope.CurrentUser];
-                
-                try
-                {
-                    // Temporarily point to old location to read features
-                    perUserConfigFile = oldPath;
-                    configRoots[(int)ConfigScope.CurrentUser] = null;
-                    string[] oldFeatures = ReadValueFromFile(ConfigScope.CurrentUser, "ExperimentalFeatures", Array.Empty<string>());
-                    
-                    // Now point to new location to write features
-                    perUserConfigFile = newPath;
-                    configRoots[(int)ConfigScope.CurrentUser] = null;
-                    
-                    // Write the features to new location (this will also invalidate the cache)
-                    if (oldFeatures.Length > 0)
-                    {
-                        UpdateValueInFile<string[]>(ConfigScope.CurrentUser, "ExperimentalFeatures", oldFeatures, true);
-                    }
-                }
-                finally
-                {
-                    // Restore original state
-                    perUserConfigFile = originalFile;
-                    configRoots[(int)ConfigScope.CurrentUser] = originalCache;
-                }
-            }
-            catch
-            {
-                // Best-effort operation; don't fail PowerShell startup if sync fails
-            }
-        }
-
-        /// <summary>
-        /// Updates the legacy config file to keep it in sync with the new location.
-        /// This is a best-effort operation that silently fails if there are any issues.
-        /// Reuses UpdateValueInFile by temporarily treating the legacy file as the current user config.
-        /// </summary>
-        /// <typeparam name="T">The type of value</typeparam>
-        /// <param name="key">The string key of the value.</param>
-        /// <param name="value">The value to set.</param>
-        /// <param name="addValue">Whether the key-value pair should be added to or removed from the file.</param>
-        private void UpdateLegacyConfigFile<T>(string key, T value, bool addValue)
-        {
-            try
-            {
-                // Save the current cache for the CurrentUser scope
-                JObject savedCache = configRoots[(int)ConfigScope.CurrentUser];
-                
-                // Temporarily swap to the legacy config file path and clear cache
-                string originalPerUserConfigFile = perUserConfigFile;
-                perUserConfigFile = legacyConfigFile;
-                configRoots[(int)ConfigScope.CurrentUser] = null;
-
-                try
-                {
-                    // Reuse the existing UpdateValueInFile logic
-                    UpdateValueInFile<T>(ConfigScope.CurrentUser, key, value, addValue);
-                }
-                finally
-                {
-                    // Restore the original path and cache
-                    perUserConfigFile = originalPerUserConfigFile;
-                    configRoots[(int)ConfigScope.CurrentUser] = savedCache;
-                }
-            }
-            catch
-            {
-                // Best-effort operation; don't fail if we can't update the legacy config
-            }
-        }
-
-        /// <summary>
-        /// Ensures migration is checked exactly once, using thread-safe lazy initialization.
-        /// This is called from GetPSContentPath() to avoid circular dependency with ExperimentalFeature.
-        /// 
-        /// IMPORTANT: This only runs when PSContentPath feature is ENABLED.
-        /// When disabled, we use Platform.ConfigDirectory (Documents) without any migration checks.
-        /// This prevents test contamination in CI environments where the feature code exists but is disabled.
-        /// </summary>
-        private void CheckAndPerformPSContentPathMigrationOnce()
-        {
-            // Only perform migration if the feature is actually enabled
-            // This prevents CI test contamination where feature code exists but is disabled
-            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSContentPath))
-            {
-                if (Interlocked.CompareExchange(ref migrationChecked, 1, 0) == 0)
-                {
-                    CheckAndPerformPSContentPathMigration();
-                }
-            }
-        }
-
-        /// <summary>
-        /// Checks if PSContentPath migration is needed and performs it when the experimental feature is enabled.
-        /// 
-        /// IMPORTANT: This method is ONLY called when the feature is enabled (checked in caller).
-        /// This prevents test contamination in CI where the feature code exists but is disabled.
-        /// 
-        /// MIGRATION SCENARIOS:
-        /// 1. First enable: Copies Documents config to LocalAppData, switches to LocalAppData
-        /// 2. Already migrated: Just switches to LocalAppData (both configs exist and should be in sync)
-        /// 3. Re-enable after disable: Syncs experimental features from Documents to LocalAppData, then switches
-        /// 
-        /// BIDIRECTIONAL SYNC:
-        /// After migration, legacyConfigFile points to Documents and perUserConfigFile points to LocalAppData.
-        /// All subsequent writes via WriteValueToFile() will update both locations via UpdateLegacyConfigFile().
-        /// This ensures that:
-        /// - Enabling/disabling features updates both configs
-        /// - Disabling PSContentPath and restarting uses Documents with current state
-        /// - Re-enabling PSContentPath and restarting switches back to LocalAppData with current state
-        /// </summary>
-        private void CheckAndPerformPSContentPathMigration()
-        {
-            try
-            {
-                string oldConfigFile = Path.Combine(Platform.ConfigDirectory, ConfigFileName);
-                string newConfigFile = Path.Combine(Platform.DefaultPSContentDirectory, ConfigFileName);
-                
-                // If paths are the same, no migration needed
-                if (string.Equals(oldConfigFile, newConfigFile, StringComparison.OrdinalIgnoreCase))
-                {
-                    return;
-                }
-
-                // Feature is enabled (checked by caller) - perform migration to new location
-                // (Paths are different, already checked above)
-                
-                // Perform file operations BEFORE updating paths to avoid race conditions
-                // If both configs exist, keep them in sync (legacyConfigFile already points to old location from constructor)
-                // If old config exists but new doesn't, perform migration
-                if (!File.Exists(newConfigFile) && File.Exists(oldConfigFile))
-                {
-                    MigrateUserConfig(oldConfigFile, newConfigFile);
-                }
-                else if (File.Exists(oldConfigFile) && File.Exists(newConfigFile))
-                {
-                    // Both configs exist. Ensure they're in sync by copying the experimental features from old to new.
-                    // This handles the case where PSContentPath was disabled, then re-enabled while running from Documents location.
-                    // The Documents config now has PSContentPath enabled, but LocalAppData config still has it disabled (stale).
-                    // We need to update LocalAppData to match so future operations see the correct state.
-                    SyncExperimentalFeaturesToNewLocation(oldConfigFile, newConfigFile);
-                }
-                
-                // Now that file operations completed successfully, update paths and invalidate cache
-                string newConfigDir = Path.GetDirectoryName(newConfigFile);
-                perUserConfigDirectory = newConfigDir;
-                perUserConfigFile = newConfigFile;
-                configRoots[(int)ConfigScope.CurrentUser] = null;
-                // legacyConfigFile was set to oldConfigFile in constructor and will be used for sync
-            }
-            catch
-            {
-                // Migration is best-effort; don't fail PowerShell startup if it fails
-                // The user can manually copy the file if needed
             }
         }
     }
