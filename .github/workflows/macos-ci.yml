@@ -25,7 +25,7 @@ on:
 # Path filters for PRs need to go into the changes job
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: ${{ contains(github.ref, 'merge')}}
 
 env:
@@ -53,9 +53,10 @@ jobs:
     # Set job outputs to values from filter step
     outputs:
       source: ${{ steps.filter.outputs.source }}
+      buildModuleChanged: ${{ steps.filter.outputs.buildModuleChanged }}
     steps:
       - name: checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Change Detection
         id: filter
@@ -67,10 +68,10 @@ jobs:
     name: Build PowerShell
     runs-on: macos-15-large
     needs: changes
-    if: ${{ needs.changes.outputs.source == 'true' }}
+    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
     steps:
       - name: checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 1000
       - name: Build
@@ -80,11 +81,11 @@ jobs:
     needs:
       - ci_build
       - changes
-    if: ${{ needs.changes.outputs.source == 'true' }}
+    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
     runs-on: macos-15-large
     steps:
       - name: checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 1000
       - name: macOS Unelevated CI
@@ -92,16 +93,17 @@ jobs:
         with:
           purpose: UnelevatedPesterTests
           tagSet: CI
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   macos_test_elevated_ci:
     name: macOS Elevated CI
     needs:
       - ci_build
       - changes
-    if: ${{ needs.changes.outputs.source == 'true' }}
+    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
     runs-on: macos-15-large
     steps:
       - name: checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 1000
       - name: macOS Elevated CI
@@ -109,16 +111,17 @@ jobs:
         with:
           purpose: ElevatedPesterTests
           tagSet: CI
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   macos_test_unelevated_others:
     name: macOS Unelevated Others
     needs:
       - ci_build
       - changes
-    if: ${{ needs.changes.outputs.source == 'true' }}
+    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
     runs-on: macos-15-large
     steps:
       - name: checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 1000
       - name: macOS Unelevated Others
@@ -126,16 +129,17 @@ jobs:
         with:
           purpose: UnelevatedPesterTests
           tagSet: Others
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   macos_test_elevated_others:
     name: macOS Elevated Others
     needs:
       - ci_build
       - changes
-    if: ${{ needs.changes.outputs.source == 'true' }}
+    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
     runs-on: macos-15-large
     steps:
       - name: checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 1000
       - name: macOS Elevated Others
@@ -143,40 +147,95 @@ jobs:
         with:
           purpose: ElevatedPesterTests
           tagSet: Others
-  verify_xunit:
-    name: Verify xUnit test results
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  xunit_tests:
+    name: xUnit Tests
     needs:
-      - ci_build
       - changes
-    if: ${{ needs.changes.outputs.source == 'true' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: checkout
-        uses: actions/checkout@v5
-        with:
-          fetch-depth: 1000
-      - name: Verify xUnit test results
-        uses: "./.github/actions/test/verify_xunit"
+    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
+    uses: ./.github/workflows/xunit-tests.yml
+    with:
+      runner_os: macos-15-large
+      test_results_artifact_name: testResults-xunit
   PackageMac-macos_packaging:
-    name: macOS packaging (bootstrap only)
+    name: macOS packaging and testing
     needs:
       - changes
-    if: ${{ needs.changes.outputs.source == 'true' }}
+    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
     runs-on:
       - macos-15-large
     steps:
     - name: checkout
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
+      with:
+        fetch-depth: 1000
+    - uses: actions/setup-dotnet@v5
+      with:
+        global-json-file: ./global.json
     - name: Bootstrap packaging
-      if: success() || failure()
+      if: success()
       run: |-
         import-module ./build.psm1
         start-psbootstrap -Scenario package
       shell: pwsh
+    - name: Build PowerShell and Create macOS package
+      if: success()
+      run: |-
+        import-module ./build.psm1
+        import-module ./tools/ci.psm1
+        import-module ./tools/packaging/packaging.psm1
+        Switch-PSNugetConfig -Source Public
+        Sync-PSTags -AddRemoteIfMissing
+        $releaseTag = Get-ReleaseTag
+        Start-PSBuild -Configuration Release -PSModuleRestore -ReleaseTag $releaseTag
+        $macOSRuntime = if ([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture -eq 'Arm64') { 'osx-arm64' } else { 'osx-x64' }
+        Start-PSPackage -Type osxpkg -ReleaseTag $releaseTag -MacOSRuntime $macOSRuntime -SkipReleaseChecks
+      shell: pwsh
+
+    - name: Install Pester
+      if: success()
+      run: |-
+        Import-Module ./tools/ci.psm1
+        Install-CIPester
+      shell: pwsh
+
+    - name: Test package contents
+      if: success()
+      run: |-
+        $env:PACKAGE_FOLDER = Get-Location
+        $testResultsPath = Join-Path $env:RUNNER_WORKSPACE "testResults"
+        if (-not (Test-Path $testResultsPath)) {
+          New-Item -ItemType Directory -Path $testResultsPath -Force | Out-Null
+        }
+        Import-Module Pester
+        $pesterConfig = New-PesterConfiguration
+        $pesterConfig.Run.Path = './test/packaging/macos/package-validation.tests.ps1'
+        $pesterConfig.Run.PassThru = $true
+        $pesterConfig.Output.Verbosity = 'Detailed'
+        $pesterConfig.TestResult.Enabled = $true
+        $pesterConfig.TestResult.OutputFormat = 'NUnitXml'
+        $pesterConfig.TestResult.OutputPath = Join-Path $testResultsPath "macOSPackage.xml"
+        $result = Invoke-Pester -Configuration $pesterConfig
+        if ($result.FailedCount -gt 0) {
+          throw "Package validation failed with $($result.FailedCount) failed test(s)"
+        }
+      shell: pwsh
+    - name: Publish and Upload Pester Test Results
+      if: always()
+      uses: "./.github/actions/test/process-pester-results"
+      with:
+        name: "macOSPackage"
+        testResultsFolder: "${{ runner.workspace }}/testResults"
+    - name: Upload package artifact
+      if: always()
+      uses: actions/upload-artifact@v6
+      with:
+        name: macos-package
+        path: "*.pkg"
   ready_to_merge:
     name: macos ready to merge
     needs:
-      - verify_xunit
+      - xunit_tests
       - PackageMac-macos_packaging
       - macos_test_elevated_ci
       - macos_test_elevated_others

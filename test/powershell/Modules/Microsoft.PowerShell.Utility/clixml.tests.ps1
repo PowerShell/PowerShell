@@ -286,7 +286,7 @@ Describe "Deserializing corrupted Cim classes should not instantiate non-Cim typ
     BeforeAll {
 
         # Only run on Windows platform.
-        # Ensure calc.exe is avaiable for test.
+        # Ensure calc.exe is available for test.
         $shouldRunTest = $IsWindows -and ((Get-Command calc.exe -ErrorAction SilentlyContinue) -ne $null)
         $skipNotWindows = ! $shouldRunTest
         if ( $shouldRunTest )

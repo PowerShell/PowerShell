@@ -22,7 +22,7 @@ using Microsoft.Win32;
 namespace Microsoft.WSMan.Management
 {
     [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "0#")]
-    internal class WSManHelper
+    internal sealed class WSManHelper
     {
         // regular expressions
         private const string PTRN_URI_LAST = @"([a-z_][-a-z0-9._]*)$";
@@ -89,7 +89,7 @@ namespace Microsoft.WSMan.Management
         //
         //
         // Below class is just a static container which would release sessions in case this DLL is unloaded.
-        internal class Sessions
+        internal sealed class Sessions
         {
             /// <summary>
             /// Dictionary object to store the connection.

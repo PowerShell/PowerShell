@@ -350,7 +350,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(providerId));
             }
 
-            if (!(GetProviderInstance(providerId) is DriveCmdletProvider driveCmdletProvider))
+            if (GetProviderInstance(providerId) is not DriveCmdletProvider driveCmdletProvider)
             {
                 throw
                     PSTraceSource.NewNotSupportedException(SessionStateStrings.DriveCmdletProvider_NotSupported);
@@ -382,7 +382,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(provider));
             }
 
-            if (!(GetProviderInstance(provider) is DriveCmdletProvider driveCmdletProvider))
+            if (GetProviderInstance(provider) is not DriveCmdletProvider driveCmdletProvider)
             {
                 throw
                     PSTraceSource.NewNotSupportedException(SessionStateStrings.DriveCmdletProvider_NotSupported);
@@ -414,7 +414,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(providerInstance));
             }
 
-            if (!(providerInstance is DriveCmdletProvider driveCmdletProvider))
+            if (providerInstance is not DriveCmdletProvider driveCmdletProvider)
             {
                 throw
                     PSTraceSource.NewNotSupportedException(SessionStateStrings.DriveCmdletProvider_NotSupported);
@@ -449,7 +449,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(providerId));
             }
 
-            if (!(GetProviderInstance(providerId) is ItemCmdletProvider itemCmdletProvider))
+            if (GetProviderInstance(providerId) is not ItemCmdletProvider itemCmdletProvider)
             {
                 throw
                     PSTraceSource.NewNotSupportedException(SessionStateStrings.ItemCmdletProvider_NotSupported);
@@ -481,7 +481,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(provider));
             }
 
-            if (!(GetProviderInstance(provider) is ItemCmdletProvider itemCmdletProvider))
+            if (GetProviderInstance(provider) is not ItemCmdletProvider itemCmdletProvider)
             {
                 throw
                     PSTraceSource.NewNotSupportedException(SessionStateStrings.ItemCmdletProvider_NotSupported);
@@ -513,7 +513,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(providerInstance));
             }
 
-            if (!(providerInstance is ItemCmdletProvider itemCmdletProvider))
+            if (providerInstance is not ItemCmdletProvider itemCmdletProvider)
             {
                 throw
                     PSTraceSource.NewNotSupportedException(SessionStateStrings.ItemCmdletProvider_NotSupported);
@@ -548,7 +548,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(providerId));
             }
 
-            if (!(GetProviderInstance(providerId) is ContainerCmdletProvider containerCmdletProvider))
+            if (GetProviderInstance(providerId) is not ContainerCmdletProvider containerCmdletProvider)
             {
                 throw
                     PSTraceSource.NewNotSupportedException(SessionStateStrings.ContainerCmdletProvider_NotSupported);
@@ -580,7 +580,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(provider));
             }
 
-            if (!(GetProviderInstance(provider) is ContainerCmdletProvider containerCmdletProvider))
+            if (GetProviderInstance(provider) is not ContainerCmdletProvider containerCmdletProvider)
             {
                 throw
                     PSTraceSource.NewNotSupportedException(SessionStateStrings.ContainerCmdletProvider_NotSupported);
@@ -612,7 +612,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(providerInstance));
             }
 
-            if (!(providerInstance is ContainerCmdletProvider containerCmdletProvider))
+            if (providerInstance is not ContainerCmdletProvider containerCmdletProvider)
             {
                 throw
                     PSTraceSource.NewNotSupportedException(SessionStateStrings.ContainerCmdletProvider_NotSupported);
@@ -644,7 +644,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(provider));
             }
 
-            if (!(GetProviderInstance(provider) is NavigationCmdletProvider navigationCmdletProvider))
+            if (GetProviderInstance(provider) is not NavigationCmdletProvider navigationCmdletProvider)
             {
                 throw
                     PSTraceSource.NewNotSupportedException(SessionStateStrings.NavigationCmdletProvider_NotSupported);

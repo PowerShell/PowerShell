@@ -1,95 +1,69 @@
 name: linux_packaging
-description: 'Test very basic Linux packaging'
-
-# This isn't working yet
-# It fails with
-
-# ERROR:  While executing gem ... (Gem::FilePermissionError)
-# You don't have write permissions for the /var/lib/gems/2.7.0 directory.
-#   WARNING: Installation of gem dotenv 2.8.1 failed! Must resolve manually.
+description: 'Linux packaging for PowerShell'
 
 runs:
   using: composite
   steps:
   - name: Capture Environment
     if: success() || failure()
-    run: 'Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose'
+    run: |-
+      Import-Module ./tools/ci.psm1
+      Show-Environment
     shell: pwsh
-  - name: Download Build Artifacts
-    uses: actions/download-artifact@v4
+
+  - uses: actions/setup-dotnet@v5
     with:
-      path: "${{ github.workspace }}"
-  - name: Capture Artifacts Directory
-    continue-on-error: true
-    run: Get-ChildItem "${{ github.workspace }}/build/*" -Recurse
-    shell: pwsh
+      global-json-file: ./global.json
 
   - name: Bootstrap
     run: |-
       Import-Module ./build.psm1
       Start-PSBootstrap -Scenario Package
+      Import-Module ./tools/ci.psm1
+      Invoke-CIInstall -SkipUser
     shell: pwsh
-  - name: Capture Artifacts Directory
-    continue-on-error: true
-    run: Import-Module ./build.psm1
-    shell: pwsh
-  - name: Extract Files
-    uses: actions/github-script@v7.0.0
-    env:
-      DESTINATION_FOLDER: "${{ github.workspace }}/bins"
-      ARCHIVE_FILE_PATTERNS: "${{ github.workspace }}/build/build.zip"
-    with:
-      script: |-
-        const fs = require('fs').promises
-        const path = require('path')
-        const target = path.resolve(process.env.DESTINATION_FOLDER)
-        const patterns = process.env.ARCHIVE_FILE_PATTERNS
-        const globber = await glob.create(patterns)
-        await io.mkdirP(path.dirname(target))
-        for await (const file of globber.globGenerator()) {
-          if ((await fs.lstat(file)).isDirectory()) continue
-          await exec.exec(`7z x ${file} -o${target} -aoa`)
-        }
-  - name: Fix permissions
-    continue-on-error: true
-    run: |-
-      find "${{ github.workspace }}/bins" -type d -exec chmod +rwx {} \;
-      find "${{ github.workspace }}/bins" -type f -exec chmod +rw {} \;
-    shell: bash
-  - name: Capture Extracted Build ZIP
-    continue-on-error: true
-    run: Get-ChildItem "${{ github.workspace }}/bins/*" -Recurse -ErrorAction SilentlyContinue
-    shell: pwsh
-  - name: Packaging Tests
-    if: success()
+
+  - name: Build and Package
     run: |-
       Import-Module ./tools/ci.psm1
-      Restore-PSOptions -PSOptionsPath '${{ github.workspace }}/build/psoptions.json'
-      $options = (Get-PSOptions)
-      $rootPath = '${{ github.workspace }}/bins'
-      $originalRootPath = Split-Path -path $options.Output
-      $path = Join-Path -path $rootPath -ChildPath (split-path -leaf -path $originalRootPath)
-      $pwshPath = Join-Path -path $path -ChildPath 'pwsh'
-      chmod a+x $pwshPath
-      $options.Output = $pwshPath
-      Set-PSOptions $options
+      $releaseTag = Get-ReleaseTag
+      Start-PSBuild -Configuration 'Release' -ReleaseTag $releaseTag
       Invoke-CIFinish
     shell: pwsh
-  - name: Upload packages
+
+  - name: Install Pester
     run: |-
-      Get-ChildItem "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}/*.deb" -Recurse | ForEach-Object {
-        $packagePath = $_.FullName
-        Write-Host "Uploading $packagePath"
-        Write-Host "##vso[artifact.upload containerfolder=deb;artifactname=deb]$packagePath"
-      }
-      Get-ChildItem "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}/*.rpm" -Recurse | ForEach-Object {
-        $packagePath = $_.FullName
-        Write-Host "Uploading $packagePath"
-        Write-Host "##vso[artifact.upload containerfolder=rpm;artifactname=rpm]$packagePath"
-      }
-      Get-ChildItem "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}/*.tar.gz" -Recurse | ForEach-Object {
-        $packagePath = $_.FullName
-        Write-Host "Uploading $packagePath"
-        Write-Host "##vso[artifact.upload containerfolder=rpm;artifactname=rpm]$packagePath"
+      Import-Module ./tools/ci.psm1
+      Install-CIPester
+    shell: pwsh
+
+  - name: Validate Package Names
+    run: |-
+      # Run Pester tests to validate package names
+      Import-Module Pester -Force
+      $testResults = Invoke-Pester -Path ./test/packaging/linux/package-validation.tests.ps1 -PassThru
+      if ($testResults.FailedCount -gt 0) {
+          throw "Package validation tests failed"
       }
     shell: pwsh
+
+  - name: Upload deb packages
+    uses: actions/upload-artifact@v4
+    with:
+      name: packages-deb
+      path: ${{ runner.workspace }}/packages/*.deb
+      if-no-files-found: ignore
+
+  - name: Upload rpm packages
+    uses: actions/upload-artifact@v4
+    with:
+      name: packages-rpm
+      path: ${{ runner.workspace }}/packages/*.rpm
+      if-no-files-found: ignore
+
+  - name: Upload tar.gz packages
+    uses: actions/upload-artifact@v4
+    with:
+      name: packages-tar
+      path: ${{ runner.workspace }}/packages/*.tar.gz
+      if-no-files-found: ignore

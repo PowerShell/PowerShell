@@ -215,7 +215,7 @@ dotnet_diagnostic.CA1070.severity = warning
 
 # CA1200: Avoid using cref tags with a prefix
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1200
-dotnet_diagnostic.CA1200.severity = silent
+dotnet_diagnostic.CA1200.severity = warning
 
 # CA1303: Do not pass literals as localized parameters
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1303
@@ -510,6 +510,30 @@ dotnet_diagnostic.CA1846.severity = warning
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1847
 dotnet_diagnostic.CA1847.severity = warning
 
+# CA1853: Unnecessary call to 'Dictionary.ContainsKey(key)'
+# https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1853
+dotnet_diagnostic.CA1853.severity = warning
+
+# CA1858: Use 'StartsWith' instead of 'IndexOf'
+# https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1858
+dotnet_diagnostic.CA1858.severity = warning
+
+# CA1860: Avoid using 'Enumerable.Any()' extension method
+# https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1860
+dotnet_diagnostic.CA1860.severity = warning
+
+# CA1865: Use char overload
+# https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1865
+dotnet_diagnostic.CA1865.severity = warning
+
+# CA1866: Use char overload
+# https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1866
+dotnet_diagnostic.CA1866.severity = warning
+
+# CA1867: Use char overload
+# https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1867
+dotnet_diagnostic.CA1867.severity = warning
+
 # CA1868: Unnecessary call to 'Contains' for sets
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1868
 dotnet_diagnostic.CA1868.severity = warning
@@ -561,6 +585,10 @@ dotnet_diagnostic.CA2016.severity = suggestion
 # CA2021: Do not call Enumerable.Cast<T> or Enumerable.OfType<T> with incompatible types
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2021
 dotnet_diagnostic.CA2021.severity = warning
+
+# CA2022: Avoid inexact read with 'Stream.Read'
+# https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2022
+dotnet_diagnostic.CA2022.severity = warning
 
 # CA2100: Review SQL queries for security vulnerabilities
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2100
@@ -1210,7 +1238,7 @@ dotnet_diagnostic.IDE0018.severity = silent
 
 # IDE0019: InlineAsTypeCheck
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0019
-dotnet_diagnostic.IDE0019.severity = silent
+dotnet_diagnostic.IDE0019.severity = warning
 
 # IDE0020: InlineIsTypeCheck
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0020
@@ -1330,7 +1358,7 @@ dotnet_diagnostic.IDE0048.severity = suggestion
 
 # IDE0049: PreferBuiltInOrFrameworkType
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0049
-dotnet_diagnostic.IDE0049.severity = warning
+dotnet_diagnostic.IDE0049.severity = suggestion
 
 # IDE0050: ConvertAnonymousTypeToTuple
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0050
@@ -1442,7 +1470,7 @@ dotnet_diagnostic.IDE0079.severity = silent
 
 # IDE0080: RemoveConfusingSuppressionForIsExpression
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0080
-dotnet_diagnostic.IDE0080.severity = silent
+dotnet_diagnostic.IDE0080.severity = warning
 
 # IDE0081: RemoveUnnecessaryByVal
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0081
@@ -1838,7 +1866,7 @@ dotnet_diagnostic.SA1205.severity = warning
 
 # SA1206: Declaration keywords should follow order
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1206.md
-dotnet_diagnostic.SA1206.severity = none
+dotnet_diagnostic.SA1206.severity = warning
 
 # SA1207: Protected should come before internal
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1207.md

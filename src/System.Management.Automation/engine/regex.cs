@@ -74,18 +74,6 @@ namespace System.Management.Automation
         internal WildcardOptions Options { get; }
 
         /// <summary>
-        /// Wildcard pattern converted to regex pattern.
-        /// </summary>
-        internal string PatternConvertedToRegex
-        {
-            get
-            {
-                var patternRegex = WildcardPatternToRegexParser.Parse(this);
-                return patternRegex.ToString();
-            }
-        }
-
-        /// <summary>
         /// Initializes and instance of the WildcardPattern class
         /// for the specified wildcard pattern.
         /// </summary>
@@ -203,6 +191,35 @@ namespace System.Management.Automation
         {
             Init();
             return input != null && _isMatch(input);
+        }
+
+        /// <summary>
+        /// Converts the wildcard pattern to its regular expression equivalent.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="Regex"/> object that represents the regular expression equivalent of the wildcard pattern.
+        /// The regex is configured with options matching the wildcard pattern's options.
+        /// </returns>
+        /// <remarks>
+        /// This method converts a wildcard pattern to a regular expression.
+        /// The conversion follows these rules:
+        /// <list type="bullet">
+        /// <item><description>* (asterisk) converts to .* (matches any string)</description></item>
+        /// <item><description>? (question mark) converts to . (matches any single character)</description></item>
+        /// <item><description>[abc] (bracket expression) converts to [abc] (matches any character in the set)</description></item>
+        /// <item><description>Literal characters are escaped as needed for regex</description></item>
+        /// </list>
+        /// </remarks>
+        /// <example>
+        /// <code>
+        /// var pattern = new WildcardPattern("*.txt");
+        /// Regex regex = pattern.ToRegex();
+        /// // regex.ToString() returns: "\.txt$"
+        /// </code>
+        /// </example>
+        public Regex ToRegex()
+        {
+            return WildcardPatternToRegexParser.Parse(this);
         }
 
         /// <summary>
@@ -335,7 +352,7 @@ namespace System.Management.Automation
                     foundStart = true;
                     continue;
                 }
-                
+
                 if (foundStart && pattern[index] is ']')
                 {
                     result = true;
@@ -524,7 +541,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
-        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected WildcardPatternException(SerializationInfo info,
                                         StreamingContext context)
         {
