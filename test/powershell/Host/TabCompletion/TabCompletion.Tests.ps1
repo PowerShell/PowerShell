@@ -3570,6 +3570,7 @@ dir -Recurse `
                 $contentPath = Get-PSContentPath -ErrorAction SilentlyContinue
             } catch {
                 # Get-PSContentPath might not exist in older builds
+                Write-Warning "PSContentPath is not available: $_"
             }
 
             # Fall back to default if not configured
