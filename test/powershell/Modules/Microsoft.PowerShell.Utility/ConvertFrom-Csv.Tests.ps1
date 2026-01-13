@@ -355,7 +355,7 @@ C1
             $result[2].P3 | Should -BeNullOrEmpty
         }
 
-        It 'Should handle pipe delimiter with empty fields' {
+        It 'Should handle comma delimiter with empty fields' {
             $result = @'
 P1,P2,P3
 A1,,
