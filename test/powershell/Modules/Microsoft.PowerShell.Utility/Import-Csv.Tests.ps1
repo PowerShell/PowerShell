@@ -423,11 +423,12 @@ Line2"
 '@ | Set-Content -Path $csvFile -NoNewline
             $result = Import-Csv -Path $csvFile
 
+            $expectedValue = "Line1$([Environment]::NewLine)Line2"
             $result.Count | Should -Be 2
-            $result[0].P1 | Should -Be "Line1`r`nLine2"
+            $result[0].P1 | Should -Be $expectedValue
             $result[0].P2 | Should -Be 'Value2'
             $result[1].P1 | Should -Be 'Value3'
-            $result[1].P2 | Should -Be "Line1`r`nLine2"
+            $result[1].P2 | Should -Be $expectedValue
         }
 
         It 'Should handle escaped quotes within fields' {
