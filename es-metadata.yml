@@ -1,0 +1,12 @@
+schemaVersion: 1.0.0
+providers:
+- provider: InventoryAsCode
+  version: 1.0.0
+  metadata:
+    isProduction: true
+    accountableOwners:
+      service: cef1de07-99d6-45df-b907-77d0066032ec
+    routing:
+      defaultAreaPath:
+        org: msazure
+        path: One\MGMT\Compute\Powershell\Powershell
