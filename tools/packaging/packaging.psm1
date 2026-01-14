@@ -1371,6 +1371,7 @@ function New-UnixPackage {
                         AppsFolder = $AppsFolder
                         HostArchitecture = $HostArchitecture
                         CurrentLocation = $CurrentLocation
+                        LTS = $LTS
                     }
 
                     try {
@@ -1984,7 +1985,9 @@ function New-MacOSPackage
         [Parameter(Mandatory)]
         [string]$HostArchitecture,
 
-        [string]$CurrentLocation = (Get-Location)
+        [string]$CurrentLocation = (Get-Location),
+
+        [switch]$LTS
     )
 
     Write-Log "Creating macOS package using pkgbuild and productbuild..."
@@ -2060,7 +2063,8 @@ function New-MacOSPackage
         }
 
         # Build the component package using pkgbuild
-        $pkgIdentifier = Get-MacOSPackageId -IsPreview:($Name -like '*-preview')
+        $IsPreview = Test-IsPreview -Version $Version -IsLTS:$LTS
+        $pkgIdentifier = Get-MacOSPackageId -IsPreview:$IsPreview
 
         if ($PSCmdlet.ShouldProcess("Build component package with pkgbuild")) {
             Write-Log "Running pkgbuild to create component package..."
@@ -2085,7 +2089,7 @@ function New-MacOSPackage
             -OutputDirectory $CurrentLocation `
             -HostArchitecture $HostArchitecture `
             -PackageIdentifier $pkgIdentifier `
-            -IsPreview:($Name -like '*-preview')
+            -IsPreview:$IsPreview
 
         return $distributionPackage
     }
