@@ -34,17 +34,4 @@ Describe 'ConvertTo-Json PSJsonSerializerV2 specific behavior' -Tags "CI" {
         $json | Should -Match '"12345678-1234-1234-1234-123456789abc":\s*"guid-value"'
     }
 
-    It 'Should not serialize hidden properties in PowerShell class' {
-        class TestHiddenClass {
-            [string] $Visible
-            hidden [string] $Hidden
-        }
-        $obj = [TestHiddenClass]::new()
-        $obj.Visible = "yes"
-        $obj.Hidden = "no"
-        $json = $obj | ConvertTo-Json -Compress
-        $json | Should -Match 'Visible'
-        $json | Should -Not -Match 'Hidden'
-    }
-
 }

@@ -98,6 +98,13 @@ Describe 'ConvertTo-Json' -tags "CI" {
         1, $null, 2 | ConvertTo-Json -Compress | Should -Be '[1,null,2]'
     }
 
+    It "Should write null for properties that throw on access" {
+        $obj = [PSCustomObject]@{ Normal = "value" }
+        $obj | Add-Member -MemberType ScriptProperty -Name Throws -Value { throw "Error" }
+        $json = $obj | ConvertTo-Json -Compress
+        $json | Should -BeExactly '{"Normal":"value","Throws":null}'
+    }
+
     It "Should handle 'AutomationNull.Value' and 'NullString.Value' correctly" {
         [ordered]@{
             a = $null;

@@ -6,6 +6,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Diagnostics;
 using System.Globalization;
 using System.Management.Automation;
@@ -324,7 +325,7 @@ namespace Microsoft.PowerShell.Commands
                 pso,
                 PSObject.GetPropertyCollection(PSMemberViewTypes.Extended));
 
-            if (etsProperties.Count <= 0)
+            if (!etsProperties.Any())
             {
                 // No ETS properties - serialize as null
                 writer.WriteNullValue();
@@ -374,7 +375,7 @@ namespace Microsoft.PowerShell.Commands
                     pso,
                     PSObject.GetPropertyCollection(PSMemberViewTypes.Extended));
 
-                if (extendedProps.Count > 0)
+                if (extendedProps.Any())
                 {
                     // V1 AddPsProperties behavior: {"value":scalar,"etsprop":"..."}
                     writer.WriteStartObject();
@@ -458,7 +459,7 @@ namespace Microsoft.PowerShell.Commands
             // LanguagePrimitives.ConvertTo() adds ETS properties automatically
             string baseStringValue = LanguagePrimitives.ConvertTo<string>(obj);
 
-            if (etsProperties.Count <= 0)
+            if (!etsProperties.Any())
             {
                 // No ETS properties - serialize as string
                 writer.WriteStringValue(baseStringValue);
@@ -502,7 +503,7 @@ namespace Microsoft.PowerShell.Commands
                 pso,
                 PSObject.GetPropertyCollection(PSMemberViewTypes.Extended));
 
-            if (etsProperties.Count <= 0)
+            if (!etsProperties.Any())
             {
                 // No ETS properties, serialize as plain array
                 SerializeEnumerable(writer, enumerable, options);
@@ -554,7 +555,56 @@ namespace Microsoft.PowerShell.Commands
         private void SerializeAsObject(Utf8JsonWriter writer, PSObject pso, JsonSerializerOptions options)
         {
             writer.WriteStartObject();
-            AppendPSProperties(writer, pso, options, PSMemberViewTypes.Extended | PSMemberViewTypes.Adapted);
+
+            // V1 behavior: First enumerate properties using reflection (via JsonTypeInfo),
+            // then add Extended/Adapted properties that don't conflict with reflection properties.
+            // This ensures reflection properties win over ETS properties with the same name.
+            var writtenProperties = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            object baseObject = pso.BaseObject;
+
+            // Step 1: Write properties from reflection (using JsonTypeInfo for STJ caching)
+            var typeInfo = JsonSerializerOptions.Default.GetTypeInfo(baseObject.GetType());
+            foreach (var propInfo in typeInfo.Properties)
+            {
+                // Skip write-only properties
+                if (propInfo.Get is null)
+                {
+                    continue;
+                }
+
+                object? value = null;
+                try
+                {
+                    value = propInfo.Get(baseObject);
+                }
+                catch
+                {
+                    // Property access threw - value remains null (V1 behavior)
+                }
+
+                writer.WritePropertyName(propInfo.Name);
+                writtenProperties.Add(propInfo.Name);
+
+                // Handle depth exceeded
+                if (MaxDepth == 0 && value is not null && !JsonSerializerHelper.IsStjNativeScalarType(value))
+                {
+                    if (value is PSObject valuePso)
+                    {
+                        WriteDepthExceeded(writer, valuePso, valuePso.BaseObject, options);
+                    }
+                    else
+                    {
+                        writer.WriteStringValue(value.ToString());
+                    }
+                }
+                else
+                {
+                    WriteValue(writer, value, options);
+                }
+            }
+
+            // Step 2: Add Extended | Adapted properties (excluding duplicates from step 1)
+            AppendPSProperties(writer, pso, options, PSMemberViewTypes.Extended | PSMemberViewTypes.Adapted, writtenProperties);
 
             writer.WriteEndObject();
         }
@@ -565,17 +615,33 @@ namespace Microsoft.PowerShell.Commands
             JsonSerializerOptions options,
             PSMemberViewTypes memberTypes)
         {
+            AppendPSProperties(writer, pso, options, memberTypes, excludeProperties: null);
+        }
+
+        private void AppendPSProperties(
+            Utf8JsonWriter writer,
+            PSObject pso,
+            JsonSerializerOptions options,
+            PSMemberViewTypes memberTypes,
+            HashSet<string>? excludeProperties)
+        {
             var properties = new PSMemberInfoIntegratingCollection<PSPropertyInfo>(
                 pso,
                 PSObject.GetPropertyCollection(memberTypes));
 
-            if (properties.Count <= 0)
+            if (!properties.Any())
             {
                 return;
             }
 
             foreach (var prop in properties)
             {
+                // Skip properties already written (V1 behavior: reflection properties win)
+                if (excludeProperties is not null && excludeProperties.Contains(prop.Name))
+                {
+                    continue;
+                }
+
                 if (JsonSerializerHelper.ShouldSkipProperty(prop))
                 {
                     continue;
