@@ -2062,9 +2062,10 @@ function New-MacOSPackage
             Copy-Item -Path "$AppsFolder/*" -Destination $appsInPkg -Recurse -Force
         }
 
-        # Build the component package using pkgbuild
-        $IsPreview = Test-IsPreview -Version $Version -IsLTS:$LTS
-        $pkgIdentifier = Get-MacOSPackageId -IsPreview:$IsPreview
+        # Get package identifier info based on version and LTS flag
+        $packageInfo = Get-MacOSPackageIdentifierInfo -Version $Version -LTS:$LTS
+        $IsPreview = $packageInfo.IsPreview
+        $pkgIdentifier = $packageInfo.PackageIdentifier
 
         if ($PSCmdlet.ShouldProcess("Build component package with pkgbuild")) {
             Write-Log "Running pkgbuild to create component package..."
@@ -2310,6 +2311,40 @@ function Get-MacOSPackageId
     else
     {
         return 'com.microsoft.powershell'
+    }
+}
+
+<#
+    .SYNOPSIS
+        Determines the package identifier and preview status for macOS packages.
+    .DESCRIPTION
+        This function determines if a package is a preview build based on the version string
+        and LTS flag, then returns the appropriate package identifier.
+    .PARAMETER Version
+        The version string (e.g., "7.6.0-preview.6" or "7.6.0")
+    .PARAMETER LTS
+        Whether this is an LTS build
+    .OUTPUTS
+        Hashtable with IsPreview (boolean) and PackageIdentifier (string) properties
+    .EXAMPLE
+        Get-MacOSPackageIdentifierInfo -Version "7.6.0-preview.6" -LTS:$false
+        Returns @{ IsPreview = $true; PackageIdentifier = "com.microsoft.powershell-preview" }
+#>
+function Get-MacOSPackageIdentifierInfo
+{
+    param(
+        [Parameter(Mandatory)]
+        [string]$Version,
+        
+        [switch]$LTS
+    )
+    
+    $IsPreview = Test-IsPreview -Version $Version -IsLTS:$LTS
+    $PackageIdentifier = Get-MacOSPackageId -IsPreview:$IsPreview
+    
+    return @{
+        IsPreview = $IsPreview
+        PackageIdentifier = $PackageIdentifier
     }
 }
 
