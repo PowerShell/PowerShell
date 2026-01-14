@@ -14,8 +14,6 @@ jobs:
     demands:
     - ImageOverride -equals PSMMS2019-Secure
   variables:
-  - name: runCodesignValidationInjection
-    value: false
   - name: NugetSecurityAnalysisWarningLevel
     value: none
   - name: DOTNET_NOLOGO

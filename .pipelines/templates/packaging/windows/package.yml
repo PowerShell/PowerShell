@@ -9,8 +9,6 @@ jobs:
     type: windows
 
   variables:
-    - name: runCodesignValidationInjection
-      value: false
     - name: ob_sdl_codeSignValidation_enabled
       value: false  # Skip signing validation in build-only stage
     - name: ob_signing_setup_enabled
