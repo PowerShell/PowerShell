@@ -33,7 +33,7 @@ stages:
     - template: release-SetReleaseTagandContainerName.yml
       parameters:
         restorePhase: true
-    
+
     - pwsh: |
         $packageVersion = '$(OutputReleaseTag.ReleaseTag)'.ToLowerInvariant() -replace '^v',''
         $vstsCommandString = "vso[task.setvariable variable=packageVersion]$packageVersion"
@@ -42,7 +42,7 @@ stages:
       displayName: Set Package version
       env:
         ob_restore_phase: true
-    
+
     - pwsh: |
         $branch = 'mirror-target'
         $gitArgs = "clone",
@@ -151,7 +151,7 @@ stages:
         $metadataHash = @{}
         $skipPublishValue = '${{ parameters.skipPublish }}'
         $metadataHash["ReleaseTag"] = '$(OutputReleaseTag.ReleaseTag)'
-        $metadataHash["LTS"] = $metadata.LTSRelease.Latest
+        $metadataHash["LTS"] = $metadata.LTSRelease.PublishToChannels
         $metadataHash["ForProduction"] = $true
         $metadataHash["SkipPublish"] = [System.Convert]::ToBoolean($skipPublishValue)
 
@@ -222,7 +222,7 @@ stages:
         files_to_sign: '*.ps1'
         search_root: '$(repoRoot)/.pipelines/EV2Specs/ServiceGroupRoot/Shell/Run'
       displayName: Sign Run.ps1
-  
+
     - pwsh: |
         # folder to tar must have: Run.ps1, settings.toml, python_dl
         $srcPath = Join-Path '$(ev2ServiceGroupRootFolder)' -ChildPath 'Shell'
