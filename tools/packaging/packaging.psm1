@@ -1516,7 +1516,12 @@ function New-MacOsDistributionPackage
 
     # Get package ID if not provided
     if (-not $PackageIdentifier) {
-        $PackageIdentifier = Get-MacOSPackageId -IsPreview:$IsPreview.IsPresent
+        if ($IsPreview.IsPresent) {
+            $PackageIdentifier = 'com.microsoft.powershell-preview'
+        }
+        else {
+            $PackageIdentifier = 'com.microsoft.powershell'
+        }
     }
 
     # Minimum OS version
@@ -2297,23 +2302,6 @@ function New-ManGzip
     }
 }
 
-# Returns the macOS Package Identifier
-function Get-MacOSPackageId
-{
-    param(
-        [switch]
-        $IsPreview
-    )
-    if ($IsPreview.IsPresent)
-    {
-        return 'com.microsoft.powershell-preview'
-    }
-    else
-    {
-        return 'com.microsoft.powershell'
-    }
-}
-
 <#
     .SYNOPSIS
         Determines the package identifier and preview status for macOS packages.
@@ -2340,7 +2328,14 @@ function Get-MacOSPackageIdentifierInfo
     )
     
     $IsPreview = Test-IsPreview -Version $Version -IsLTS:$LTS
-    $PackageIdentifier = Get-MacOSPackageId -IsPreview:$IsPreview
+    
+    # Determine package identifier based on preview status
+    if ($IsPreview) {
+        $PackageIdentifier = 'com.microsoft.powershell-preview'
+    }
+    else {
+        $PackageIdentifier = 'com.microsoft.powershell'
+    }
     
     return @{
         IsPreview = $IsPreview
@@ -2358,8 +2353,9 @@ function New-MacOSLauncher
         [switch]$LTS
     )
 
-    $IsPreview = Test-IsPreview -Version $Version -IsLTS:$LTS
-    $packageId = Get-MacOSPackageId -IsPreview:$IsPreview
+    $packageInfo = Get-MacOSPackageIdentifierInfo -Version $Version -LTS:$LTS
+    $IsPreview = $packageInfo.IsPreview
+    $packageId = $packageInfo.PackageIdentifier
 
     # Define folder for launcher application.
     $suffix = if ($IsPreview) { "-preview" } elseif ($LTS) { "-lts" }

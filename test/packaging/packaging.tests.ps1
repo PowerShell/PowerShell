@@ -24,16 +24,6 @@ Describe "Packaging Module Functions" {
         }
     }
 
-    Context "Get-MacOSPackageId function" {
-        It "Should return preview identifier when -IsPreview is specified" {
-            Get-MacOSPackageId -IsPreview | Should -Be "com.microsoft.powershell-preview"
-        }
-
-        It "Should return stable identifier when -IsPreview is not specified" {
-            Get-MacOSPackageId | Should -Be "com.microsoft.powershell"
-        }
-    }
-
     Context "Get-MacOSPackageIdentifierInfo function (New-MacOSPackage logic)" {
         It "Should detect preview builds and return preview identifier" {
             $result = Get-MacOSPackageIdentifierInfo -Version "7.6.0-preview.6" -LTS:$false
