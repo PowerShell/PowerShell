@@ -4168,7 +4168,7 @@ namespace System.Management.Automation
                 ActionPreference.Inquire : ActionPreference.Continue;
 
             // Write each line separately so each gets the DEBUG: prefix
-            string[] lines = msg.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
+            string[] lines = msg.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
             foreach (string line in lines)
             {
                 ui.WriteDebugLine(line, ref pref);
