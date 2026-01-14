@@ -1,8 +1,6 @@
 jobs:
 - job: build_testartifacts_win
   variables:
-  - name: runCodesignValidationInjection
-    value: false
   - name: NugetSecurityAnalysisWarningLevel
     value: none
   - group: DotNetPrivateBuildAccess
@@ -73,8 +71,6 @@ jobs:
 
 - job: build_testartifacts_nonwin
   variables:
-  - name: runCodesignValidationInjection
-    value: false
   - name: NugetSecurityAnalysisWarningLevel
     value: none
   - group: DotNetPrivateBuildAccess
