@@ -258,6 +258,15 @@ Describe "Test-Connection" -tags "CI", "RequireSudoOnUnix" {
                 $pingResults.Where( { $_.Status -eq 'Success' }, 'Default', 1 ).BufferSize | Should -Be 32
             }
         }
+
+        It "Repeat with explicit false should behave like default ping" {
+            # -Repeat:$false should behave the same as not specifying -Repeat
+            $pingResults = Test-Connection $targetAddress -Repeat:$false
+            
+            # Should get exactly 4 pings (the default Count value)
+            $pingResults.Count | Should -Be 4
+            $pingResults[0].Address | Should -BeExactly $targetAddress
+        }
     }
 
     Context "MTUSizeDetect" {
@@ -290,6 +299,16 @@ Describe "Test-Connection" -tags "CI", "RequireSudoOnUnix" {
 
             $result | Should -BeOfType Int32
             $result | Should -BeGreaterThan 0
+        }
+
+        It "MtuSize with explicit false should behave like default ping" {
+            # -MtuSize:$false should behave the same as not specifying -MtuSize (default ping)
+            $pingResults = Test-Connection $targetAddress -MtuSize:$false
+            
+            # Should return PingStatus, not PingMtuStatus
+            $pingResults[0] | Should -BeOfType Microsoft.PowerShell.Commands.TestConnectionCommand+PingStatus
+            # Should get 4 pings (the default Count value)
+            $pingResults.Count | Should -Be 4
         }
     }
 
@@ -331,6 +350,16 @@ Describe "Test-Connection" -tags "CI", "RequireSudoOnUnix" {
             $results = Test-Connection 127.0.0.1 -Traceroute
 
             $results.Hostname | Should -Not -BeNullOrEmpty
+        }
+
+        It "Traceroute with explicit false should behave like default ping" {
+            # -Traceroute:$false should behave the same as not specifying -Traceroute (default ping)
+            $pingResults = Test-Connection $targetAddress -Traceroute:$false
+            
+            # Should return PingStatus, not TraceStatus
+            $pingResults[0] | Should -BeOfType Microsoft.PowerShell.Commands.TestConnectionCommand+PingStatus
+            # Should get 4 pings (the default Count value)
+            $pingResults.Count | Should -Be 4
         }
     }
 }

@@ -21,6 +21,7 @@ namespace System.Management.Automation
 
         internal const string EngineSource = "PSEngine";
         internal const string PSSerializeJSONLongEnumAsNumber = nameof(PSSerializeJSONLongEnumAsNumber);
+        internal const string PSProfileDSCResource = "PSProfileDSCResource";
 
         #endregion
 
@@ -109,6 +110,10 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: PSSerializeJSONLongEnumAsNumber,
                     description: "Serialize enums based on long or ulong as an numeric value rather than the string representation when using ConvertTo-Json."
+                ),
+                new ExperimentalFeature(
+                    name: PSProfileDSCResource,
+                    description: "DSC v3 resources for managing PowerShell profile."
                 )
             };
 
