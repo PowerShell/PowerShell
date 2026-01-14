@@ -43,7 +43,11 @@ Describe "Set-PSDebug" -Tags "CI" {
             $process.StartInfo = $pinfo
             $process.Start() | Should -BeTrue
             $output = $process.StandardOutput.ReadToEnd()
-            $process.WaitForExit()
+            $exited = $process.WaitForExit(5000)
+            if (-not $exited) {
+                $process.Kill()
+            }
+            $exited | Should -BeTrue -Because "process should exit within timeout"
 
             # The debug trace for multiline commands should include all lines with DEBUG: prefix
             $output | Should -Match 'DEBUG:.*Write-Output' -Because "debug output should contain the command with DEBUG: prefix"
@@ -66,7 +70,11 @@ Describe "Set-PSDebug" -Tags "CI" {
             $process.StartInfo = $pinfo
             $process.Start() | Should -BeTrue
             $output = $process.StandardOutput.ReadToEnd()
-            $process.WaitForExit()
+            $exited = $process.WaitForExit(5000)
+            if (-not $exited) {
+                $process.Kill()
+            }
+            $exited | Should -BeTrue -Because "process should exit within timeout"
 
             # The debug trace for multiline commands should include all lines with DEBUG: prefix
             $output | Should -Match 'DEBUG:.*Write-Output' -Because "debug output should contain the command with DEBUG: prefix"
