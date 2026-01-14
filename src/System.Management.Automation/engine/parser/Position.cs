@@ -282,24 +282,24 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Return a message for an extent that may span multiple lines.
-        /// For single-line extents, the format is:
+        /// Return messages for an extent that may span multiple lines.
+        /// For single-line extents, returns an array with one element:
         ///     12+  >>>> $x + $b.
-        /// For multi-line extents (e.g., line continuation with backtick), the format is:
+        /// For multi-line extents (e.g., line continuation with backtick), returns an array with one element per line:
         ///     12+  >>>> Write-Output "foo `
         ///     13+  >>>> bar"
         /// </summary>
-        internal static string BriefMessage(IScriptExtent extent)
+        internal static string[] BriefMessage(IScriptExtent extent)
         {
             // For single-line extents, delegate to the existing single-position method
             if (extent.StartLineNumber == extent.EndLineNumber)
             {
-                return BriefMessage(extent.StartScriptPosition);
+                return new[] { BriefMessage(extent.StartScriptPosition) };
             }
 
             // For multi-line extents, include all lines
-            string[] lines = extent.Text.Split(new[] { "\r\n", "\n", "\r" }, StringSplitOptions.None);
-            StringBuilder result = new StringBuilder();
+            string[] lines = extent.Text.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+            string[] result = new string[lines.Length];
             int lineNumber = extent.StartLineNumber;
 
             for (int i = 0; i < lines.Length; i++)
@@ -326,18 +326,11 @@ namespace System.Management.Automation.Language
                     message.Insert(0, " >>>> ");
                 }
 
-                string formattedLine = StringUtil.Format(ParserStrings.TraceScriptLineMessage, lineNumber, message.ToString());
-
-                if (i > 0)
-                {
-                    result.AppendLine();
-                }
-
-                result.Append(formattedLine);
+                result[i] = StringUtil.Format(ParserStrings.TraceScriptLineMessage, lineNumber, message.ToString());
                 lineNumber++;
             }
 
-            return result.ToString();
+            return result;
         }
 
         internal static IScriptExtent NewScriptExtent(IScriptExtent start, IScriptExtent end)
