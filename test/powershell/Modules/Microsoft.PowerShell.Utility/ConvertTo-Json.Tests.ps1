@@ -232,6 +232,17 @@ Describe 'ConvertTo-Json' -tags "CI" {
         { ConvertTo-Json -InputObject @{a=1} -Depth 101 } | Should -Throw
     }
 
+    It 'Should serialize hidden properties in PowerShell class' {
+        class TestClassWithHidden {
+            [string]$Visible = 'visible'
+            hidden [string]$Hidden = 'hidden'
+        }
+        $obj = [TestClassWithHidden]::new()
+        $json = $obj | ConvertTo-Json -Compress
+        $json | Should -Match '"Visible":\s*"visible"'
+        $json | Should -Match '"Hidden":\s*"hidden"'
+    }
+
     Context 'Nested raw object serialization' {
         BeforeAll {
             class TestClassWithFileInfo {
