@@ -734,18 +734,19 @@ namespace Microsoft.WSMan.Management
         [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings")]
         string ResourceUri
         {
+            // IDL: HRESULT resourceUri (BSTR value);
+            [SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1212:PropertyAccessorsMustFollowOrder", Justification = "COM interface defines put_ before get_.")]
+            [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "resource")]
+            [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings")]
+            [DispId(1)]
+            set;
+
             // IDL: HRESULT resourceUri ([out, retval] BSTR* ReturnValue);
             [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "resource")]
             [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings")]
             [DispId(1)]
             [return: MarshalAs(UnmanagedType.BStr)]
             get;
-
-            // IDL: HRESULT resourceUri (BSTR value);
-            [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "resource")]
-            [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings")]
-            [DispId(1)]
-            set;
         }
 
         /// <summary><para><c>AddSelector</c> method of <c>IWSManResourceLocator</c> interface.  </para><para>Add selector to resource locator</para></summary>
@@ -818,14 +819,16 @@ namespace Microsoft.WSMan.Management
 
         int MustUnderstandOptions
         {
+            // IDL: HRESULT MustUnderstandOptions (long value);
+
+            [SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1212:PropertyAccessorsMustFollowOrder", Justification = "COM interface defines put_ before get_.")]
+            [DispId(7)]
+            set;
+
             // IDL: HRESULT MustUnderstandOptions ([out, retval] long* ReturnValue);
 
             [DispId(7)]
             get;
-            // IDL: HRESULT MustUnderstandOptions (long value);
-
-            [DispId(7)]
-            set;
         }
 
         /// <summary><para><c>ClearOptions</c> method of <c>IWSManResourceLocator</c> interface.  </para><para>Clear all options</para></summary>
