@@ -1360,6 +1360,7 @@ function New-UnixPackage {
                         AppsFolder = $AppsFolder
                         HostArchitecture = $HostArchitecture
                         CurrentLocation = $CurrentLocation
+                        LTS = $LTS
                     }
 
                     try {
@@ -1504,7 +1505,12 @@ function New-MacOsDistributionPackage
 
     # Get package ID if not provided
     if (-not $PackageIdentifier) {
-        $PackageIdentifier = Get-MacOSPackageId -IsPreview:$IsPreview.IsPresent
+        if ($IsPreview.IsPresent) {
+            $PackageIdentifier = 'com.microsoft.powershell-preview'
+        }
+        else {
+            $PackageIdentifier = 'com.microsoft.powershell'
+        }
     }
 
     # Minimum OS version
@@ -1973,7 +1979,9 @@ function New-MacOSPackage
         [Parameter(Mandatory)]
         [string]$HostArchitecture,
 
-        [string]$CurrentLocation = (Get-Location)
+        [string]$CurrentLocation = (Get-Location),
+
+        [switch]$LTS
     )
 
     Write-Log "Creating macOS package using pkgbuild and productbuild..."
@@ -2048,8 +2056,10 @@ function New-MacOSPackage
             Copy-Item -Path "$AppsFolder/*" -Destination $appsInPkg -Recurse -Force
         }
 
-        # Build the component package using pkgbuild
-        $pkgIdentifier = Get-MacOSPackageId -IsPreview:($Name -like '*-preview')
+        # Get package identifier info based on version and LTS flag
+        $packageInfo = Get-MacOSPackageIdentifierInfo -Version $Version -LTS:$LTS
+        $IsPreview = $packageInfo.IsPreview
+        $pkgIdentifier = $packageInfo.PackageIdentifier
 
         if ($PSCmdlet.ShouldProcess("Build component package with pkgbuild")) {
             Write-Log "Running pkgbuild to create component package..."
@@ -2074,7 +2084,7 @@ function New-MacOSPackage
             -OutputDirectory $CurrentLocation `
             -HostArchitecture $HostArchitecture `
             -PackageIdentifier $pkgIdentifier `
-            -IsPreview:($Name -like '*-preview')
+            -IsPreview:$IsPreview
 
         return $distributionPackage
     }
@@ -2261,20 +2271,44 @@ function New-ManGzip
     }
 }
 
-# Returns the macOS Package Identifier
-function Get-MacOSPackageId
+<#
+    .SYNOPSIS
+        Determines the package identifier and preview status for macOS packages.
+    .DESCRIPTION
+        This function determines if a package is a preview build based on the version string
+        and LTS flag, then returns the appropriate package identifier.
+    .PARAMETER Version
+        The version string (e.g., "7.6.0-preview.6" or "7.6.0")
+    .PARAMETER LTS
+        Whether this is an LTS build
+    .OUTPUTS
+        Hashtable with IsPreview (boolean) and PackageIdentifier (string) properties
+    .EXAMPLE
+        Get-MacOSPackageIdentifierInfo -Version "7.6.0-preview.6" -LTS:$false
+        Returns @{ IsPreview = $true; PackageIdentifier = "com.microsoft.powershell-preview" }
+#>
+function Get-MacOSPackageIdentifierInfo
 {
     param(
-        [switch]
-        $IsPreview
+        [Parameter(Mandatory)]
+        [string]$Version,
+        
+        [switch]$LTS
     )
-    if ($IsPreview.IsPresent)
-    {
-        return 'com.microsoft.powershell-preview'
+    
+    $IsPreview = Test-IsPreview -Version $Version -IsLTS:$LTS
+    
+    # Determine package identifier based on preview status
+    if ($IsPreview) {
+        $PackageIdentifier = 'com.microsoft.powershell-preview'
     }
-    else
-    {
-        return 'com.microsoft.powershell'
+    else {
+        $PackageIdentifier = 'com.microsoft.powershell'
+    }
+    
+    return @{
+        IsPreview = $IsPreview
+        PackageIdentifier = $PackageIdentifier
     }
 }
 
@@ -2288,8 +2322,9 @@ function New-MacOSLauncher
         [switch]$LTS
     )
 
-    $IsPreview = Test-IsPreview -Version $Version -IsLTS:$LTS
-    $packageId = Get-MacOSPackageId -IsPreview:$IsPreview
+    $packageInfo = Get-MacOSPackageIdentifierInfo -Version $Version -LTS:$LTS
+    $IsPreview = $packageInfo.IsPreview
+    $packageId = $packageInfo.PackageIdentifier
 
     # Define folder for launcher application.
     $suffix = if ($IsPreview) { "-preview" } elseif ($LTS) { "-lts" }
