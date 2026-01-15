@@ -145,6 +145,43 @@ namespace System.Management.Automation.Configuration
         }
 
         /// <summary>
+        /// Gets the PSContentPath from the configuration file.
+        /// If not configured, returns the default OneDrive location (Documents\PowerShell) without creating the config file.
+        /// This ensures PowerShell works on read-only file systems and avoids creating unnecessary files.
+        /// </summary>
+        /// <returns>The configured PSContentPath if found, otherwise the default OneDrive location (never null).</returns>
+        internal string GetPSContentPath()
+        {
+            string contentPath = ReadValueFromFile<string>(ConfigScope.CurrentUser, Constants.PSUserContentPathEnvVar);
+            if (!string.IsNullOrEmpty(contentPath))
+            {
+                contentPath = Environment.ExpandEnvironmentVariables(contentPath);
+                return contentPath;
+            }
+
+            // Return default location using Platform.DefaultPSContentDirectory
+            // - Windows: Documents\PowerShell (OneDrive location)
+            // - Unix: XDG_DATA_HOME/powershell (~/.local/share/powershell)
+            return Platform.DefaultPSContentDirectory;
+        }
+
+        /// <summary>
+        /// Sets the PSContentPath in the configuration file.
+        /// </summary>
+        /// <param name="path">The path to set as PSContentPath.</param>
+        internal void SetPSContentPath(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+            {
+                RemoveValueFromFile<string>(ConfigScope.CurrentUser, Constants.PSUserContentPathEnvVar);
+            }
+            else
+            {
+                WriteValueToFile<string>(ConfigScope.CurrentUser, Constants.PSUserContentPathEnvVar, path);
+            }
+        }
+
+        /// <summary>
         /// Existing Key = HKCU and HKLM\SOFTWARE\Microsoft\PowerShell\1\ShellIds\Microsoft.PowerShell
         /// Proposed value = Existing default execution policy if not already specified
         ///
@@ -218,6 +255,7 @@ namespace System.Management.Automation.Configuration
             {
                 features.Remove(featureName);
                 WriteValueToFile<string[]>(scope, "ExperimentalFeatures", features.ToArray());
+                // Note: WriteValueToFile already handles syncing to legacy config if it exists
             }
         }
 

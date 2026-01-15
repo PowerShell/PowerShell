@@ -705,6 +705,16 @@ namespace System.Management.Automation
         /// </summary>
         internal static readonly string ModuleDirectory = Path.Combine(ProductNameForDirectory, "Modules");
 
+        /// <summary>
+        /// Gets the PSContent path from PowerShell.config.json or falls back to platform defaults.
+        /// Returns the configured custom path if set, otherwise returns the default OneDrive location (Documents\PowerShell).
+        /// </summary>
+        /// <returns>The PSContent directory path (never null).</returns>
+        internal static string GetPSContentPath()
+        {
+            return PowerShellConfig.Instance.GetPSContentPath();
+        }
+
         internal static readonly ConfigScope[] SystemWideOnlyConfig = new[] { ConfigScope.AllUsers };
         internal static readonly ConfigScope[] CurrentUserOnlyConfig = new[] { ConfigScope.CurrentUser };
         internal static readonly ConfigScope[] SystemWideThenCurrentUserConfig = new[] { ConfigScope.AllUsers, ConfigScope.CurrentUser };

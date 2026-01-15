@@ -51,7 +51,7 @@ Describe "TabCompletion" -Tags CI {
                 New-ModuleManifest -Path "$($NewDir.FullName)\$ModuleName.psd1" -RootModule "$ModuleName.psm1" -FunctionsToExport "MyTestFunction" -ModuleVersion $NewDir.Name
             }
 
-            $env:PSModulePath += [System.IO.Path]::PathSeparator + $tempDir            
+            $env:PSModulePath += [System.IO.Path]::PathSeparator + $tempDir
             $Res = TabExpansion2 -inputScript MyTestFunction
             $Res.CompletionMatches.Count | Should -Be 2
             $SortedMatches = $Res.CompletionMatches.CompletionText | Sort-Object
@@ -82,7 +82,7 @@ Describe "TabCompletion" -Tags CI {
                 New-ModuleManifest -Path "$($NewDir.FullName)\$ModuleName.psd1" -RootModule "$ModuleName.psm1" -FunctionsToExport "MyTestFunction" -ModuleVersion $NewDir.Name
             }
 
-            $env:PSModulePath += [System.IO.Path]::PathSeparator + $tempDir            
+            $env:PSModulePath += [System.IO.Path]::PathSeparator + $tempDir
             $Res = TabExpansion2 -inputScript 'Import-Module -Name TestModule'
             $Res.CompletionMatches.Count | Should -Be 1
             $Res.CompletionMatches[0].CompletionText | Should -Be TestModule1
@@ -165,21 +165,21 @@ Describe "TabCompletion" -Tags CI {
         $res = TabExpansion2 -inputScript 'param($PS = $P'
         $res.CompletionMatches.Count | Should -BeGreaterThan 0
     }
-    
+
     It 'Should complete variable with description and value <Value>' -TestCases @(
         @{ Value = 1; Expected = '[int]$VariableWithDescription - Variable description' }
         @{ Value = 'string'; Expected = '[string]$VariableWithDescription - Variable description' }
         @{ Value = $null; Expected = 'VariableWithDescription - Variable description' }
     ) {
         param ($Value, $Expected)
-        
+
         New-Variable -Name VariableWithDescription -Value $Value -Description 'Variable description' -Force
         $res = TabExpansion2 -inputScript '$VariableWithDescription'
         $res.CompletionMatches.Count | Should -Be 1
         $res.CompletionMatches[0].CompletionText | Should -BeExactly '$VariableWithDescription'
         $res.CompletionMatches[0].ToolTip | Should -BeExactly $Expected
     }
-    
+
     It 'Should complete environment variable' {
         try {
             $env:PWSH_TEST_1 = 'value 1'
@@ -226,7 +226,7 @@ Describe "TabCompletion" -Tags CI {
         @{ Value = $null; Expected = 'VariableWithDescription - Variable description' }
     ) {
         param ($Value, $Expected)
-        
+
         New-Variable -Name VariableWithDescription -Value $Value -Description 'Variable description' -Force
         $res = TabExpansion2 -inputScript '$local:VariableWithDescription'
         $res.CompletionMatches.Count | Should -Be 1
@@ -1191,7 +1191,7 @@ param([ValidatePattern(
                 [Parameter(ParameterSetName = 'SetWithoutHelp')]
                 [string]
                 $ParamWithHelp,
-                
+
                 [Parameter(ParameterSetName = 'SetWithHelp')]
                 [switch]
                 $ParamWithoutHelp
@@ -1733,7 +1733,7 @@ param([ValidatePattern(
 
             $commaSeparators = "',' ', '"
             $semiColonSeparators = "';' '; '"
-            
+
             $squareBracketFormatString = "'[{0}]'"
             $curlyBraceFormatString = "'{0:N2}'"
         }
@@ -2408,7 +2408,7 @@ param ($Param1)
             $null = New-Item -Path $TestFile
             $res = TabExpansion2 -ast $scriptAst -tokens $tokens -positionOfCursor $cursorPosition
             Pop-Location
-                        
+
             $ExpectedPath = Join-Path -Path '.\' -ChildPath $ExpectedFileName
             $res.CompletionMatches.CompletionText | Where-Object {$_ -Like "*$ExpectedFileName"} | Should -Be $ExpectedPath
         }
@@ -3563,12 +3563,27 @@ dir -Recurse `
     Context "Tab completion help test" {
         BeforeAll {
             New-Item -ItemType File (Join-Path ${TESTDRIVE} "pwsh.xml")
-            if ($IsWindows) {
-                $userHelpRoot = Join-Path $HOME "Documents/PowerShell/Help/"
-            } else {
-                $userModulesRoot = [System.Management.Automation.Platform]::SelectProductNameForDirectory([System.Management.Automation.Platform+XDG_Type]::USER_MODULES)
-                $userHelpRoot = Join-Path $userModulesRoot -ChildPath ".." -AdditionalChildPath "Help"
+
+            # Try to get the actual configured PSContentPath
+            $contentPath = $null
+            try {
+                $contentPath = Get-PSContentPath -ErrorAction SilentlyContinue
+            } catch {
+                # Get-PSContentPath might not exist in older builds
+                Write-Warning "PSContentPath is not available: $_"
             }
+
+            # Fall back to default if not configured
+            if ([string]::IsNullOrEmpty($contentPath)) {
+                if ($IsWindows) {
+                    $contentPath = Join-Path $HOME "Documents/PowerShell"
+                } else {
+                    $userModulesRoot = [System.Management.Automation.Platform]::SelectProductNameForDirectory([System.Management.Automation.Platform+XDG_Type]::USER_MODULES)
+                    $contentPath = Join-Path $userModulesRoot -ChildPath ".."
+                }
+            }
+
+            $userHelpRoot = Join-Path $contentPath "Help"
         }
 
         It 'Should complete about help topic' {
