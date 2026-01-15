@@ -148,7 +148,7 @@ namespace System.Management.Automation.Language
 
         public object VisitStatementBlock(StatementBlockAst statementBlockAst)
         {
-            if (statementBlockAst.Traps != null) 
+            if (statementBlockAst.Traps != null)
             {
                 return false;
             }
