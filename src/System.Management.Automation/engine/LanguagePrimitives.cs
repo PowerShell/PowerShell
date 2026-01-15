@@ -1056,10 +1056,12 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="obj">The object to test.</param>
         /// <returns>True if the object is null.</returns>
-        internal static bool IsNull(object obj)
+#nullable enable
+        internal static bool IsNull([NotNullWhen(false)] object? obj)
         {
-            return (obj == null || obj == AutomationNull.Value);
+            return obj is null || obj == AutomationNull.Value;
         }
+#nullable restore
 
         /// <summary>
         /// Auxiliary for the cases where we want a new PSObject or null.

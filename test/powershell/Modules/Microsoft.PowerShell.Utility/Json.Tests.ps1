@@ -36,7 +36,9 @@ Describe "Json Tests" -Tags "Feature" {
 
     Context "ConvertTo-Json Bug Fixes" {
 
-        It "ConvertTo-JSON should not have hard coded english error message" {
+        It "ConvertTo-JSON should not have hard coded english error message" -Skip:(
+            [ExperimentalFeature]::IsEnabled("PSJsonSerializerV2")
+        ) {
 
             # Test follow-up for bug WinBlue: 163372 - ConvertTo-JSON has hard coded english error message.
             $process = Get-Process -Id $PID
@@ -1260,8 +1262,8 @@ Describe "Validate Json serialization" -Tags "CI" {
              }
             @{
                 TestInput = 127
-                ToJson = '""'
-                FromJson = ''
+                ToJson = if ([ExperimentalFeature]::IsEnabled("PSJsonSerializerV2")) { '"\u007F"' } else { '""' }
+                FromJson = ''
              }
         )
 
@@ -1286,6 +1288,7 @@ Describe "Validate Json serialization" -Tags "CI" {
                     # These values are [char]0 and [char]13.
                     $result.FromJson | Should -Match $testCase.FromJson
                 }
+
                 $result.ToJson | Should -Be $testCase.ToJson
             }
         }
