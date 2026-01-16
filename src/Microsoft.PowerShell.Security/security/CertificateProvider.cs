@@ -3424,7 +3424,6 @@ namespace Microsoft.PowerShell.Commands
             return IntPtr.Zero;
         }
 #else
-        [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
         private static IntPtr hWnd = IntPtr.Zero;
         private static bool firstRun = true;
 
