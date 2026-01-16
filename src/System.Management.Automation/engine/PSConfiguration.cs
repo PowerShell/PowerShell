@@ -243,15 +243,6 @@ namespace System.Management.Automation.Configuration
         }
 
         /// <summary>
-        /// Get the trusted host patterns for security zone evaluation.
-        /// </summary>
-        internal string[] GetTrustedHosts()
-        {
-            return ReadValueFromFile<string[]>(ConfigScope.CurrentUser, "TrustedHosts")
-                ?? ReadValueFromFile<string[]>(ConfigScope.AllUsers, "TrustedHosts");
-        }
-
-        /// <summary>
         /// Corresponding settings of the original Group Policies.
         /// </summary>
         internal PowerShellPolicies GetPowerShellPolicies(ConfigScope scope)
