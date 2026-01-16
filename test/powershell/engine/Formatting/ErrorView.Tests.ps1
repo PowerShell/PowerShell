@@ -165,6 +165,387 @@ Describe 'Tests for $ErrorView' -Tag CI {
             $e | Out-String | Should -BeLike '*ParserError*'
         }
 
+        It 'Parser TargetObject shows Line information' {
+            $expected = (@(
+                ": "
+                "Line |"
+                "   1 | This is the line with the error"
+                "     | Test Parser Error"
+            ) -join ([Environment]::NewLine)).TrimEnd()
+            $e = {
+                [CmdletBinding()]
+                param ()
+
+                $PSCmdlet.ThrowTerminatingError(
+                    [System.Management.Automation.ErrorRecord]::new(
+                        [System.Exception]::new('Test Parser Error'),
+                        'ParserErrorText',
+                        [System.Management.Automation.ErrorCategory]::ParserError,
+                        @{
+                            Line = 1
+                            LineText = 'This is the line with the error'
+                        }
+                    )
+                )
+            } | Should -Throw -PassThru
+
+            $actual = ($e | Out-String).TrimEnd()
+            $actual | Should -BeExactly $expected
+        }
+
+        It 'Parser TargetObject shows File information' {
+            $expected = (@(
+                ": MyFile.ps1"
+                "Line |"
+                "   1 | This is the line with the error"
+                "     | Test Parser Error"
+            ) -join ([Environment]::NewLine)).TrimEnd()
+            $e = {
+                [CmdletBinding()]
+                param ()
+
+                $PSCmdlet.ThrowTerminatingError(
+                    [System.Management.Automation.ErrorRecord]::new(
+                        [System.Exception]::new('Test Parser Error'),
+                        'ParserErrorText',
+                        [System.Management.Automation.ErrorCategory]::ParserError,
+                        @{
+                            File = 'MyFile.ps1'
+                            Line = 1
+                            LineText = 'This is the line with the error'
+                        }
+                    )
+                )
+            } | Should -Throw -PassThru
+
+            $actual = ($e | Out-String).TrimEnd()
+            $actual | Should -BeExactly $expected
+        }
+
+        It 'Parser TargetObject has StartColumn' {
+            $expected = (@(
+                ": "
+                "Line |"
+                "   5 | This is the line with the error"
+                "     |                  ~~~~~~~~~~~~~~"
+                "     | Test Parser Error"
+            ) -join ([Environment]::NewLine)).TrimEnd()
+            $e = {
+                [CmdletBinding()]
+                param ()
+
+                $PSCmdlet.ThrowTerminatingError(
+                    [System.Management.Automation.ErrorRecord]::new(
+                        [System.Exception]::new('Test Parser Error'),
+                        'ParserErrorText',
+                        [System.Management.Automation.ErrorCategory]::ParserError,
+                        @{
+
+                            Line = 5
+                            LineText = 'This is the line with the error'
+                            StartColumn = 18
+                        }
+                    )
+                )
+            } | Should -Throw -PassThru
+
+            $actual = ($e | Out-String).TrimEnd()
+            $actual | Should -BeExactly $expected
+        }
+
+        It 'Parser TargetObject has StartColumn and EndColumn' {
+            $expected = (@(
+                ": "
+                "Line |"
+                "   5 | This is the line with the error"
+                "     |                  ~~~~"
+                "     | Test Parser Error"
+            ) -join ([Environment]::NewLine)).TrimEnd()
+            $e = {
+                [CmdletBinding()]
+                param ()
+
+                $PSCmdlet.ThrowTerminatingError(
+                    [System.Management.Automation.ErrorRecord]::new(
+                        [System.Exception]::new('Test Parser Error'),
+                        'ParserErrorText',
+                        [System.Management.Automation.ErrorCategory]::ParserError,
+                        @{
+
+                            Line = 5
+                            LineText = 'This is the line with the error'
+                            StartColumn = 18
+                            EndColumn = 22
+                        }
+                    )
+                )
+            } | Should -Throw -PassThru
+
+            $actual = ($e | Out-String).TrimEnd()
+            $actual | Should -BeExactly $expected
+        }
+
+        It 'Parser TargetObject has StartColumn at end of the line' {
+            $expected = (@(
+                ": "
+                "Line |"
+                "   5 | This is the line with the error"
+                "     |                               ~"
+                "     | Test Parser Error"
+            ) -join ([Environment]::NewLine)).TrimEnd()
+            $e = {
+                [CmdletBinding()]
+                param ()
+
+                $PSCmdlet.ThrowTerminatingError(
+                    [System.Management.Automation.ErrorRecord]::new(
+                        [System.Exception]::new('Test Parser Error'),
+                        'ParserErrorText',
+                        [System.Management.Automation.ErrorCategory]::ParserError,
+                        @{
+
+                            Line = 5
+                            LineText = 'This is the line with the error'
+                            StartColumn = 31
+                        }
+                    )
+                )
+            } | Should -Throw -PassThru
+
+            $actual = ($e | Out-String).TrimEnd()
+            $actual | Should -BeExactly $expected
+        }
+
+
+        It 'Parser TargetObject has StartColumn at end of the line with EndColumn' {
+            $expected = (@(
+                ": "
+                "Line |"
+                "   5 | This is the line with the error"
+                "     |                               ~"
+                "     | Test Parser Error"
+            ) -join ([Environment]::NewLine)).TrimEnd()
+            $e = {
+                [CmdletBinding()]
+                param ()
+
+                $PSCmdlet.ThrowTerminatingError(
+                    [System.Management.Automation.ErrorRecord]::new(
+                        [System.Exception]::new('Test Parser Error'),
+                        'ParserErrorText',
+                        [System.Management.Automation.ErrorCategory]::ParserError,
+                        @{
+
+                            Line = 5
+                            LineText = 'This is the line with the error'
+                            StartColumn = 31
+                            EndColumn = 32
+                        }
+                    )
+                )
+            } | Should -Throw -PassThru
+
+            $actual = ($e | Out-String).TrimEnd()
+            $actual | Should -BeExactly $expected
+        }
+
+        It 'Parser TargetObject ignores EndColumn if no StartColumn' {
+            $expected = (@(
+                ": "
+                "Line |"
+                "   1 | This is the line with the error"
+                "     | Test Parser Error"
+            ) -join ([Environment]::NewLine)).TrimEnd()
+            $e = {
+                [CmdletBinding()]
+                param ()
+
+                $PSCmdlet.ThrowTerminatingError(
+                    [System.Management.Automation.ErrorRecord]::new(
+                        [System.Exception]::new('Test Parser Error'),
+                        'ParserErrorText',
+                        [System.Management.Automation.ErrorCategory]::ParserError,
+                        @{
+                            Line = 1
+                            LineText = 'This is the line with the error'
+                            EndColumn = 22
+                        }
+                    )
+                )
+            } | Should -Throw -PassThru
+
+            $actual = ($e | Out-String).TrimEnd()
+            $actual | Should -BeExactly $expected
+        }
+
+        It 'Parser TargetObject converts StartColumn and EndColumn from string' {
+            $expected = (@(
+                ": "
+                "Line |"
+                "   5 | This is the line with the error"
+                "     |                  ~~~~"
+                "     | Test Parser Error"
+            ) -join ([Environment]::NewLine)).TrimEnd()
+            $e = {
+                [CmdletBinding()]
+                param ()
+
+                $PSCmdlet.ThrowTerminatingError(
+                    [System.Management.Automation.ErrorRecord]::new(
+                        [System.Exception]::new('Test Parser Error'),
+                        'ParserErrorText',
+                        [System.Management.Automation.ErrorCategory]::ParserError,
+                        @{
+
+                            Line = 5
+                            LineText = 'This is the line with the error'
+                            StartColumn = "18"
+                            EndColumn = "22"
+                        }
+                    )
+                )
+            } | Should -Throw -PassThru
+
+            $actual = ($e | Out-String).TrimEnd()
+            $actual | Should -BeExactly $expected
+        }
+
+        It 'Parser TargetObject ignores StartColumn if it cannot be converted' {
+            $expected = (@(
+                ": "
+                "Line |"
+                "   1 | This is the line with the error"
+                "     | Test Parser Error"
+            ) -join ([Environment]::NewLine)).TrimEnd()
+            $e = {
+                [CmdletBinding()]
+                param ()
+
+                $PSCmdlet.ThrowTerminatingError(
+                    [System.Management.Automation.ErrorRecord]::new(
+                        [System.Exception]::new('Test Parser Error'),
+                        'ParserErrorText',
+                        [System.Management.Automation.ErrorCategory]::ParserError,
+                        @{
+                            Line = 1
+                            LineText = 'This is the line with the error'
+                            StartColumn = 'abc'
+                            EndColumn = 22
+                        }
+                    )
+                )
+            } | Should -Throw -PassThru
+
+            $actual = ($e | Out-String).TrimEnd()
+            $actual | Should -BeExactly $expected
+        }
+
+        It 'Parser TargetObject ignores EndColumn if it cannot be converted' {
+            $expected = (@(
+                ": "
+                "Line |"
+                "   5 | This is the line with the error"
+                "     |                  ~~~~~~~~~~~~~~"
+                "     | Test Parser Error"
+            ) -join ([Environment]::NewLine)).TrimEnd()
+            $e = {
+                [CmdletBinding()]
+                param ()
+
+                $PSCmdlet.ThrowTerminatingError(
+                    [System.Management.Automation.ErrorRecord]::new(
+                        [System.Exception]::new('Test Parser Error'),
+                        'ParserErrorText',
+                        [System.Management.Automation.ErrorCategory]::ParserError,
+                        @{
+
+                            Line = 5
+                            LineText = 'This is the line with the error'
+                            StartColumn = 18
+                            EndColumn = 'abc'
+                        }
+                    )
+                )
+            } | Should -Throw -PassThru
+
+            $actual = ($e | Out-String).TrimEnd()
+            $actual | Should -BeExactly $expected
+        }
+
+        It 'Parser TargetObject ignores StartColumn with invalid value <Value>' -TestCases @(
+            @{ Value = -1 }
+            @{ Value = 0 }
+            @{ Value = 32 }  # Beyond end of line
+        ) {
+            param ($Value)
+
+            $expected = (@(
+                ": "
+                "Line |"
+                "   1 | This is the line with the error"
+                "     | Test Parser Error"
+            ) -join ([Environment]::NewLine)).TrimEnd()
+            $e = {
+                [CmdletBinding()]
+                param ()
+
+                $PSCmdlet.ThrowTerminatingError(
+                    [System.Management.Automation.ErrorRecord]::new(
+                        [System.Exception]::new('Test Parser Error'),
+                        'ParserErrorText',
+                        [System.Management.Automation.ErrorCategory]::ParserError,
+                        @{
+                            Line = 1
+                            LineText = 'This is the line with the error'
+                            StartColumn = $Value
+                        }
+                    )
+                )
+            } | Should -Throw -PassThru
+
+            $actual = ($e | Out-String).TrimEnd()
+            $actual | Should -BeExactly $expected
+        }
+
+        It 'Parser TargetObject ignores EndColumn with invalid value <Value>' -TestCases @(
+            @{ Value = -1 }
+            @{ Value = 0 }
+            @{ Value = 17 }  # Before StartColumn
+            @{ Value = 18 }  # Equal to StartColumn
+            @{ Value = 33 }  # Beyond end of line + 1
+        ) {
+            param ($Value)
+
+            $expected = (@(
+                ": "
+                "Line |"
+                "   1 | This is the line with the error"
+                "     |                  ~~~~~~~~~~~~~~"
+                "     | Test Parser Error"
+            ) -join ([Environment]::NewLine)).TrimEnd()
+            $e = {
+                [CmdletBinding()]
+                param ()
+
+                $PSCmdlet.ThrowTerminatingError(
+                    [System.Management.Automation.ErrorRecord]::new(
+                        [System.Exception]::new('Test Parser Error'),
+                        'ParserErrorText',
+                        [System.Management.Automation.ErrorCategory]::ParserError,
+                        @{
+                            Line = 1
+                            LineText = 'This is the line with the error'
+                            StartColumn = 18
+                            EndColumn = $Value
+                        }
+                    )
+                )
+            } | Should -Throw -PassThru
+
+            $actual = ($e | Out-String).TrimEnd()
+            $actual | Should -BeExactly $expected
+        }
+
         It 'Exception thrown from Enumerator.MoveNext in a pipeline shows information' {
             $e = {
                 $l = [System.Collections.Generic.List[string]] @('one', 'two')
