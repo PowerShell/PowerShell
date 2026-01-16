@@ -50,7 +50,7 @@ namespace Microsoft.PowerShell.Commands
         /// Target to search for help.
         /// </summary>
         [Parameter(Position = 0, ValueFromPipelineByPropertyName = true)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         public string Name { get; set; } = string.Empty;
 
         /// <summary>
