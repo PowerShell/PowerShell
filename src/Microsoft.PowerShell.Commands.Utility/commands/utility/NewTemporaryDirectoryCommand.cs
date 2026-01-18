@@ -21,11 +21,9 @@ namespace Microsoft.PowerShell.Commands
             string tempPath = Path.GetTempPath();
             if (ShouldProcess(tempPath))
             {
-                string directoryPath = Path.Combine(tempPath, Path.GetRandomFileName());
-
                 try
                 {
-                    DirectoryInfo directory = Directory.CreateDirectory(directoryPath);
+                    DirectoryInfo directory = Directory.CreateTempSubdirectory();
                     WriteObject(directory);
                 }
                 catch (IOException ioException)
