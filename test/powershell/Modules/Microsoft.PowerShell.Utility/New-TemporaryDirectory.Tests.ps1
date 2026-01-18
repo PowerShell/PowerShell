@@ -35,4 +35,17 @@ Describe "New-TemporaryDirectory" -Tags "CI" {
     It "has an OutputType of System.IO.DirectoryInfo" {
         (Get-Command New-TemporaryDirectory).OutputType | Should -BeExactly "System.IO.DirectoryInfo"
     }
+
+    It "creates a directory with custom prefix" {
+        $prefix = "MyApp"
+        $tempDir = New-TemporaryDirectory -Prefix $prefix
+
+        $tempDir | Should -Exist
+        $tempDir | Should -BeOfType System.IO.DirectoryInfo
+        $tempDir.Name | Should -BeLike "$prefix*"
+
+        if (Test-Path $tempDir) {
+            Remove-Item $tempDir -ErrorAction SilentlyContinue -Force
+        }
+    }
 }

@@ -14,16 +14,22 @@ namespace Microsoft.PowerShell.Commands
     public class NewTemporaryDirectoryCommand : Cmdlet
     {
         /// <summary>
+        /// Gets or sets an optional prefix for the temporary directory name.
+        /// </summary>
+        [Parameter]
+        [ValidateNotNullOrEmpty]
+        public string Prefix { get; set; }
+
+        /// <summary>
         /// Returns a TemporaryDirectory.
         /// </summary>
         protected override void EndProcessing()
         {
-            string tempPath = Path.GetTempPath();
-            if (ShouldProcess(tempPath))
+            if (ShouldProcess(Path.GetTempPath()))
             {
                 try
                 {
-                    DirectoryInfo directory = Directory.CreateTempSubdirectory();
+                    DirectoryInfo directory = Directory.CreateTempSubdirectory(Prefix);
                     WriteObject(directory);
                 }
                 catch (IOException ioException)
@@ -33,7 +39,7 @@ namespace Microsoft.PowerShell.Commands
                             ioException,
                             "NewTemporaryDirectoryWriteError",
                             ErrorCategory.WriteError,
-                            tempPath));
+                            targetObject: null));
                 }
             }
         }
