@@ -85,9 +85,14 @@ namespace System.Management.Automation.Configuration
             systemWideConfigDirectory = Utils.DefaultPowerShellAppBase;
             systemWideConfigFile = Path.Combine(systemWideConfigDirectory, ConfigFileName);
 
-            // Sets the per-user configuration directory with fallback logic:
-            // 1. Check LocalAppData first (in case user migrated with Move-PSContent)
-            // 2. Fall back to Documents/OneDrive location (default)
+#if UNIX
+            // On Unix: Config files follow XDG standards and should always be in ~/.config/powershell
+            perUserConfigDirectory = Platform.ConfigDirectory;
+            perUserConfigFile = Path.Combine(Platform.ConfigDirectory, ConfigFileName);
+#else
+            // On Windows: Check for config file with fallback logic:
+            // 1. Check LocalAppData first (future-proofing for when we change the default)
+            // 2. Fall back to Documents/OneDrive location (current default)
             // Note: This directory may or may not exist depending upon the execution scenario.
             // Writes will attempt to create the directory if it does not already exist.
             string localAppDataConfig = Platform.LocalAppDataPSContentDirectory;
@@ -99,14 +104,15 @@ namespace System.Management.Automation.Configuration
                 perUserConfigDirectory = localAppDataConfig;
                 perUserConfigFile = localAppDataConfigFile;
                 
-                SendPSContentPathTelemetry("UserConfigFoundAtLocalAppData");
+                SendPSContentPathTelemetry("UserConfigLocation:LocalAppData");
             }
             else
             {
                 // Config doesn't exist in LocalAppData, use Documents location (default)
-                perUserConfigDirectory = Platform.DefaultPSContentDirectory;
-                perUserConfigFile = Path.Combine(Platform.DefaultPSContentDirectory, ConfigFileName);
+                perUserConfigDirectory = Platform.ConfigDirectory;
+                perUserConfigFile = Path.Combine(Platform.ConfigDirectory, ConfigFileName);
             }
+#endif
 
             emptyConfig = new JObject();
             configRoots = new JObject[2];
