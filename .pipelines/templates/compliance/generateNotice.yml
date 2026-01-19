@@ -10,8 +10,6 @@ parameters:
 jobs:
 - job: generateNotice
   variables:
-  - name: runCodesignValidationInjection
-    value : false
   - name: NugetSecurityAnalysisWarningLevel
     value: none
   - name: ob_outputDirectory

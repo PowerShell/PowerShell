@@ -228,7 +228,7 @@ jobs:
         testResultsFolder: "${{ runner.workspace }}/testResults"
     - name: Upload package artifact
       if: always()
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         name: macos-package
         path: "*.pkg"
