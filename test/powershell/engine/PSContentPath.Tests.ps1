@@ -10,16 +10,17 @@ Describe "Get-PSContentPath and Set-PSContentPath cmdlet tests" -tags "CI" {
             Join-Path $HOME '.config' 'powershell' 'powershell.config.json'
         }
 
-        $configBackup = $null
         if (Test-Path $documentsConfigPath) {
-            $configBackup = Get-Content $documentsConfigPath -Raw
+            $script:configBackup = Get-Content $documentsConfigPath -Raw
+        } else {
+            $script:configBackup = $null
         }
     }
 
     AfterAll {
         # Restore original config if it existed
-        if ($configBackup) {
-            Set-Content -Path $documentsConfigPath -Value $configBackup -Force
+        if ($script:configBackup) {
+            Set-Content -Path $documentsConfigPath -Value $script:configBackup -Force
         } elseif (Test-Path $documentsConfigPath) {
             Remove-Item $documentsConfigPath -Force -ErrorAction SilentlyContinue
         }
@@ -28,8 +29,8 @@ Describe "Get-PSContentPath and Set-PSContentPath cmdlet tests" -tags "CI" {
     AfterEach {
         # Clean up any test config files created during tests
         if (Test-Path $documentsConfigPath) {
-            if ($configBackup) {
-                Set-Content -Path $documentsConfigPath -Value $configBackup -Force
+            if ($script:configBackup) {
+                Set-Content -Path $documentsConfigPath -Value $script:configBackup -Force
             } else {
                 Remove-Item $documentsConfigPath -Force -ErrorAction SilentlyContinue
             }

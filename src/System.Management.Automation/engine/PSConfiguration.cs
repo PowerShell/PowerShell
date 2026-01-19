@@ -85,13 +85,27 @@ namespace System.Management.Automation.Configuration
             systemWideConfigDirectory = Utils.DefaultPowerShellAppBase;
             systemWideConfigFile = Path.Combine(systemWideConfigDirectory, ConfigFileName);
 
-            // Sets the per-user configuration directory
+            // Sets the per-user configuration directory with fallback logic:
+            // 1. Check LocalAppData first (in case user migrated with Move-PSContent)
+            // 2. Fall back to Documents/OneDrive location (default)
             // Note: This directory may or may not exist depending upon the execution scenario.
             // Writes will attempt to create the directory if it does not already exist.
-            perUserConfigDirectory = Platform.ConfigDirectory;
-            if (!string.IsNullOrEmpty(perUserConfigDirectory))
+            string localAppDataConfig = Platform.LocalAppDataPSContentDirectory;
+            string localAppDataConfigFile = Path.Combine(localAppDataConfig, ConfigFileName);
+
+            if (File.Exists(localAppDataConfigFile))
             {
-                perUserConfigFile = Path.Combine(perUserConfigDirectory, ConfigFileName);
+                // Config exists in LocalAppData - use that location
+                perUserConfigDirectory = localAppDataConfig;
+                perUserConfigFile = localAppDataConfigFile;
+                
+                SendPSContentPathTelemetry("UserConfigFoundAtLocalAppData");
+            }
+            else
+            {
+                // Config doesn't exist in LocalAppData, use Documents location (default)
+                perUserConfigDirectory = Platform.DefaultPSContentDirectory;
+                perUserConfigFile = Path.Combine(Platform.DefaultPSContentDirectory, ConfigFileName);
             }
 
             emptyConfig = new JObject();
@@ -156,6 +170,10 @@ namespace System.Management.Automation.Configuration
             if (!string.IsNullOrEmpty(contentPath))
             {
                 contentPath = Environment.ExpandEnvironmentVariables(contentPath);
+                
+                // Send telemetry: custom path is configured
+                SendPSContentPathTelemetry("CustomPSContentPath");
+                
                 return contentPath;
             }
 
@@ -163,6 +181,25 @@ namespace System.Management.Automation.Configuration
             // - Windows: Documents\PowerShell (OneDrive location)
             // - Unix: XDG_DATA_HOME/powershell (~/.local/share/powershell)
             return Platform.DefaultPSContentDirectory;
+        }
+
+        /// <summary>
+        /// Sends telemetry indicating PSContentPath customization is in use.
+        /// Only sends a flag - never actual paths.
+        /// </summary>
+        private static void SendPSContentPathTelemetry(string name)
+        {
+            try
+            {
+                Microsoft.PowerShell.Telemetry.ApplicationInsightsTelemetry.SendTelemetryMetric(
+                    Microsoft.PowerShell.Telemetry.TelemetryType.FeatureUse,
+                    name,
+                    value: 1.0);
+            }
+            catch
+            {
+                // Silently ignore telemetry failures
+            }
         }
 
         /// <summary>
