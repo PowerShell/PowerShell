@@ -298,7 +298,6 @@ namespace System.Management.Automation.Configuration
             {
                 features.Remove(featureName);
                 WriteValueToFile<string[]>(scope, "ExperimentalFeatures", features.ToArray());
-                // Note: WriteValueToFile already handles syncing to legacy config if it exists
             }
         }
 

@@ -382,6 +382,7 @@ Describe "Verify aliases and cmdlets" -Tags "CI" {
 "Cmdlet",       "Measure-Object",                   "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Move-Item",                        "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "Medium"
 "Cmdlet",       "Move-ItemProperty",                "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "Medium"
+"Cmdlet",       "Move-PSContent",                   "",                                 $(             $CoreWindows -or $CoreUnix),     "",                     "",                     "High"
 "Cmdlet",       "New-Alias",                        "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "Low"
 "Cmdlet",       "New-CimInstance",                  "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "Medium"
 "Cmdlet",       "New-CimSession",                   "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "None"
