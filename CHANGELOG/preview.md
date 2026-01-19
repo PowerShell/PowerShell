@@ -1,5 +1,76 @@
 # Preview Changelog
 
+## [7.6.0-preview.6] - 2025-12-11
+
+### Engine Updates and Fixes
+
+- Properly Expand Aliases to their actual ResolvedCommand (#26571) (Thanks @kilasuit!)
+
+### General Cmdlet Updates and Fixes
+
+- Update `Microsoft.PowerShell.PSResourceGet` to `v1.2.0-preview5` (#26590)
+- Make the experimental feature `PSFeedbackProvider` stable (#26502)
+- Fix a regression in the API `CompletionCompleters.CompleteFilename()` that causes null reference exception (#26487)
+- Add Delimiter parameter to `Get-Clipboard` (#26572) (Thanks @MartinGC94!)
+- Close pipe client handles after creating the child ssh process (#26564)
+- Make some experimental features stable (#26490)
+- DSC v3 resource for PowerShell Profile (#26447)
+
+### Tools
+
+- Add merge conflict marker detection to linux-ci workflow and refactor existing actions to use reusable get-changed-files action (#26530)
+- Add reusable get-changed-files action and refactor existing actions (#26529)
+- Refactor analyze job to reusable workflow and enable on Windows CI (#26494)
+
+### Tests
+
+- Fix merge conflict checker for empty file lists and filter *.cs files (#26556)
+- Add markdown link verification for PRs (#26445)
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+
+<p>Expand to see details.</p>
+
+</summary>
+
+<ul>
+<li>Fix template path for rebuild branch check in package.yml (#26560)</li>
+<li>Update the macos package name for preview releases to match the previous pattern (#26576)</li>
+<li>Add rebuild branch support with conditional MSIX signing (#26573)</li>
+<li>Update the WCF packages to the latest version that is compatible with v4.10.3 (#26503)</li>
+<li>Improve ADO package build and validation across platforms (#26532)</li>
+<li>Mirror .NET/runtime ICU version range in PowerShell (#26563) (Thanks @kasperk81!)</li>
+<li>Update the macos package name for preview releases to match the previous pattern (#26562)</li>
+<li>Fix condition syntax for StoreBroker package tasks in MSIX pipeline (#26561)</li>
+<li>Move package validation to package pipeline (#26558)</li>
+<li>Optimize/split windows package signing (#26557)</li>
+<li>Remove usage of fpm for DEB package generation (#26504)</li>
+<li>Add log grouping to build.psm1 for collapsible GitHub Actions logs (#26524)</li>
+<li>Replace fpm with native macOS packaging tools (pkgbuild/productbuild) (#26501)</li>
+<li>Replace fpm with native rpmbuild for RPM package generation (#26441)</li>
+<li>Fix GitHub API rate limit errors in test actions (#26492)</li>
+<li>Convert Azure DevOps Linux Packaging pipeline to GitHub Actions workflow (#26493)</li>
+<li>Refactor: Centralize xUnit tests into reusable workflow and remove legacy verification (#26488)</li>
+<li>Fix build to only enable ready-to-run for the Release configuration (#26481)</li>
+<li>Integrate Windows packaging into windows-ci workflow using reusable workflow (#26468)</li>
+<li>Update outdated package references (#26471)</li>
+<li>GitHub Workflow cleanup (#26439)</li>
+<li>Update PSResourceGet package version to preview4 (#26438)</li>
+<li>Update PSReadLine to v2.4.5 (#26446)</li>
+<li>Add network isolation policy parameter to vPack pipeline (#26444)</li>
+<li>Fix a couple more lint errors</li>
+<li>Fix lint errors in preview.md</li>
+<li>Make MSIX publish stage dependent on SetReleaseTagandContainerName stage</li>
+</ul>
+
+</details>
+
+[7.6.0-preview.6]: https://github.com/PowerShell/PowerShell/compare/v7.6.0-preview.5...v7.6.0-preview.6
+
 ## [7.6.0-preview.5] - 2025-09-30
 
 ### Engine Updates and Fixes
