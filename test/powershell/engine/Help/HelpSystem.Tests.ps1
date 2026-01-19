@@ -17,6 +17,7 @@ $script:cmdletsToSkip = @(
     "Enable-ExperimentalFeature",
     "Disable-ExperimentalFeature",
     "Get-PSSubsystem",
+    "Switch-Process",
     "Get-PSContentPath", # New cmdlet - help content not yet generated
     "Set-PSContentPath", # New cmdlet - help content not yet generated
     "Move-PSContent"     # New cmdlet - help content not yet generated
