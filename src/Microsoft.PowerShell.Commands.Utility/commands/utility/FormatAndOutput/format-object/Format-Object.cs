@@ -32,6 +32,7 @@ namespace Microsoft.PowerShell.Commands
         /// will be determined using property sets, etc.
         /// </summary>
         [Parameter(Position = 0)]
+        [ValidateNotNullOrEmpty]
         public object[] Property
         {
             get { return _props; }
@@ -40,6 +41,12 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private object[] _props;
+
+        /// <summary>
+        /// Gets or sets the properties to exclude from formatting.
+        /// </summary>
+        [Parameter]
+        public string[] ExcludeProperty { get; set; }
 
         /// <summary>
         /// </summary>
@@ -61,6 +68,18 @@ namespace Microsoft.PowerShell.Commands
         {
             FormattingCommandLineParameters parameters = new();
 
+            // Check View conflicts first (before any auto-expansion)
+            if (!string.IsNullOrEmpty(this.View))
+            {
+                // View cannot be used with Property or ExcludeProperty
+                if ((_props is not null && _props.Length != 0) || (ExcludeProperty is not null && ExcludeProperty.Length != 0))
+                {
+                    ReportCannotSpecifyViewAndProperty();
+                }
+
+                parameters.viewName = this.View;
+            }
+
             if (_props != null)
             {
                 ParameterProcessor processor = new(new FormatObjectParameterDefinition());
@@ -68,15 +87,17 @@ namespace Microsoft.PowerShell.Commands
                 parameters.mshParameterList = processor.ProcessParameters(_props, invocationContext);
             }
 
-            if (!string.IsNullOrEmpty(this.View))
+            if (ExcludeProperty is not null)
             {
-                // we have a view command line switch
-                if (parameters.mshParameterList.Count != 0)
-                {
-                    ReportCannotSpecifyViewAndProperty();
-                }
+                parameters.excludePropertyFilter = new PSPropertyExpressionFilter(ExcludeProperty);
 
-                parameters.viewName = this.View;
+                // ExcludeProperty implies -Property * for better UX
+                if (_props is null || _props.Length == 0)
+                {
+                    ParameterProcessor processor = new(new FormatObjectParameterDefinition());
+                    TerminatingErrorContext invocationContext = new(this);
+                    parameters.mshParameterList = processor.ProcessParameters(new object[] { "*" }, invocationContext);
+                }
             }
 
             parameters.groupByParameter = this.ProcessGroupByParameter();

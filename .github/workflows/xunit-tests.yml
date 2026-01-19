@@ -20,7 +20,7 @@ jobs:
     runs-on: ${{ inputs.runner_os }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 1000
 
@@ -46,7 +46,7 @@ jobs:
           Write-Host "Completed xUnit test run."
 
       - name: Upload xUnit results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: always()
         with:
           name: ${{ inputs.test_results_artifact_name }}

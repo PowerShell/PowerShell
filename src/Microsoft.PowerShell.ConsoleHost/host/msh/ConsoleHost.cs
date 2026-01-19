@@ -2201,7 +2201,6 @@ namespace Microsoft.PowerShell
             if (e1 != null)
             {
                 // that didn't work.  Write out the error ourselves as a last resort.
-
                 ReportExceptionFallback(e, null);
             }
         }
@@ -2222,7 +2221,7 @@ namespace Microsoft.PowerShell
                 Console.Error.WriteLine(header);
             }
 
-            if (e == null)
+            if (e is null)
             {
                 return;
             }
@@ -2230,7 +2229,9 @@ namespace Microsoft.PowerShell
             // See if the exception has an error record attached to it...
             ErrorRecord er = null;
             if (e is IContainsErrorRecord icer)
+            {
                 er = icer.ErrorRecord;
+            }
 
             if (e is PSRemotingTransportException)
             {
@@ -2247,8 +2248,22 @@ namespace Microsoft.PowerShell
             }
 
             // Add the position message for the error if it's available.
-            if (er != null && er.InvocationInfo != null)
+            if (er?.InvocationInfo is { })
+            {
                 Console.Error.WriteLine(er.InvocationInfo.PositionMessage);
+            }
+
+            // Print the stack trace.
+            Console.Error.WriteLine($"\n--- {e.GetType().FullName} ---");
+            Console.Error.WriteLine(e.StackTrace);
+
+            Exception inner = e.InnerException;
+            while (inner is { })
+            {
+                Console.Error.WriteLine($"--- inner {inner.GetType().FullName} ---");
+                Console.Error.WriteLine(inner.StackTrace);
+                inner = inner.InnerException;
+            }
         }
 
         /// <summary>
@@ -2568,14 +2583,7 @@ namespace Microsoft.PowerShell
                                 // Evaluate any suggestions
                                 if (previousResponseWasEmpty == false)
                                 {
-                                    if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSFeedbackProvider))
-                                    {
-                                        EvaluateFeedbacks(ui);
-                                    }
-                                    else
-                                    {
-                                        EvaluateSuggestions(ui);
-                                    }
+                                    EvaluateFeedbacks(ui);
                                 }
 
                                 // Then output the prompt
@@ -2888,44 +2896,6 @@ namespace Microsoft.PowerShell
                     }
 
                     HostUtilities.RenderFeedback(feedbacks, ui);
-                }
-                catch (Exception e)
-                {
-                    // Catch-all OK. This is a third-party call-out.
-                    ui.WriteErrorLine(e.Message);
-
-                    LocalRunspace localRunspace = (LocalRunspace)_parent.Runspace;
-                    localRunspace.GetExecutionContext.AppendDollarError(e);
-                }
-            }
-
-            private void EvaluateSuggestions(ConsoleHostUserInterface ui)
-            {
-                // Output any training suggestions
-                try
-                {
-                    List<string> suggestions = HostUtilities.GetSuggestion(_parent.Runspace);
-
-                    if (suggestions.Count > 0)
-                    {
-                        ui.WriteLine();
-                    }
-
-                    bool first = true;
-                    foreach (string suggestion in suggestions)
-                    {
-                        if (!first)
-                            ui.WriteLine();
-
-                        ui.WriteLine(suggestion);
-
-                        first = false;
-                    }
-                }
-                catch (TerminateException)
-                {
-                    // A variable breakpoint may be hit by HostUtilities.GetSuggestion. The debugger throws TerminateExceptions to stop the execution
-                    // of the current statement; we do not want to treat these exceptions as errors.
                 }
                 catch (Exception e)
                 {

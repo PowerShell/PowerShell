@@ -354,6 +354,9 @@ try {
     $skipPublish = $metadataContent.SkipPublish
     $lts = $metadataContent.LTS
 
+    # Check if this is a rebuild version (e.g., 7.4.13-rebuild.5)
+    $isRebuild = $releaseVersion -match '-rebuild\.'
+
     if ($releaseVersion.Contains('-')) {
         $channel = 'preview'
         $packageNames = @('powershell-preview')
@@ -363,7 +366,8 @@ try {
         $packageNames = @('powershell')
     }
 
-    if ($lts) {
+    # Only add LTS package if not a rebuild branch
+    if ($lts -and -not $isRebuild) {
         $packageNames += @('powershell-lts')
     }
 

@@ -7,8 +7,6 @@ jobs:
   variables:
   - name: ob_sdl_sbom_enabled
     value: true
-  - name: runCodesignValidationInjection
-    value: false
   - name: NugetSecurityAnalysisWarningLevel
     value: none
   - name: DOTNET_NOLOGO
@@ -36,8 +34,7 @@ jobs:
   - template: /.pipelines/templates/SetVersionVariables.yml@self
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
-      CreateJson: yes
-      UseJson: no
+      CreateJson: no
 
   - template: /.pipelines/templates/release-SetReleaseTagandContainerName.yml@self
 

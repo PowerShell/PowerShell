@@ -165,7 +165,7 @@ namespace System.Management.Automation
         /// <param name="argument">The value used with parameter.</param>
         internal void AddToArgumentList(CommandParameterInternal parameter, string argument)
         {
-            if (parameter.ParameterNameSpecified && parameter.ParameterText.EndsWith(":"))
+            if (parameter.ParameterNameSpecified && parameter.ParameterText.EndsWith(':'))
             {
                 if (argument != parameter.ParameterText)
                 {
@@ -410,12 +410,9 @@ namespace System.Management.Automation
                 }
             }
 #else
-            if (!usedQuotes && ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeWindowsTildeExpansion))
+            if (!usedQuotes && ExpandTilde(arg, parameter))
             {
-                if (ExpandTilde(arg, parameter))
-                {
-                    argExpanded = true;
-                }
+                argExpanded = true;
             }
 #endif
 

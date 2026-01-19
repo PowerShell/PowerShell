@@ -14,6 +14,9 @@ inputs:
     required: false
     default: ctrf
     type: string
+  GITHUB_TOKEN:
+    description: 'GitHub token for API authentication'
+    required: true
 
 runs:
   using: composite
@@ -21,10 +24,8 @@ runs:
   - name: Capture Environment
     if: success() || failure()
     run: |-
-      Import-Module ./build.psm1
-      Write-LogGroupStart -Title 'Environment'
-      Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
-      Write-LogGroupEnd -Title 'Environment'
+      Import-Module ./tools/ci.psm1
+      Show-Environment
     shell: pwsh
 
   - name: Download Build Artifacts
@@ -44,6 +45,29 @@ runs:
   - uses: actions/setup-dotnet@v4
     with:
       global-json-file: .\global.json
+
+  - name: Get Latest DSC Package Version
+    shell: pwsh
+    run: |-
+      Import-Module .\.github\workflows\GHWorkflowHelper\GHWorkflowHelper.psm1
+      $headers = @{
+        Authorization = "Bearer ${{ inputs.GITHUB_TOKEN }}"
+      }
+      $releases = Invoke-RestMethod -Uri "https://api.github.com/repos/PowerShell/Dsc/releases" -Headers $headers
+      $latestRelease = $releases | Where-Object { $v = $_.name.trim("v"); $semVer = [System.Management.Automation.SemanticVersion]::new($v); if ($semVer.Major -eq 3 -and $semVer.Minor -ge 2) { $_ } } | Select-Object -First 1
+      $latestVersion = $latestRelease.tag_name.TrimStart("v")
+      Write-Host "Latest DSC Version: $latestVersion"
+
+      $downloadUrl = $latestRelease.assets | Where-Object { $_.name -like "DSC-*-x86_64-pc-windows-msvc.zip" } | Select-Object -First 1 | Select-Object -ExpandProperty browser_download_url
+      Write-Host "Download URL: $downloadUrl"
+      $tempPath = Get-GWTempPath
+      Invoke-RestMethod -Uri $downloadUrl -OutFile "$tempPath\DSC.zip" -Headers $headers
+
+      $null = New-Item -ItemType Directory -Path "$tempPath\DSC" -Force
+      Expand-Archive -Path "$tempPath\DSC.zip" -DestinationPath "$tempPath\DSC" -Force
+      $dscRoot = "$tempPath\DSC"
+      Write-Host "DSC Root: $dscRoot"
+      Set-GWVariable -Name "DSC_ROOT" -Value $dscRoot
 
   - name: Bootstrap
     shell: powershell

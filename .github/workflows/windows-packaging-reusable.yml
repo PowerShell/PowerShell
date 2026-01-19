@@ -36,14 +36,15 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 1000
 
       - name: Capture Environment
         if: success() || failure()
         run: |
-          Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
+          Import-Module .\tools\ci.psm1
+          Show-Environment
         shell: pwsh
 
       - name: Capture PowerShell Version Table
@@ -80,7 +81,7 @@ jobs:
 
       - name: Upload Build Artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: windows-packaging-${{ matrix.architecture }}-${{ matrix.channel }}
           path: |

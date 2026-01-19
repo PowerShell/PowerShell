@@ -385,7 +385,7 @@ function Start-PSBuild {
     }
 
     if ($Clean) {
-        Write-Log -message "Cleaning your working directory. You can also do it with 'git clean -fdX --exclude .vs/PowerShell/v16/Server/sqlite3'"
+        Write-LogGroupStart -Title "Cleaning your working directory"
         Push-Location $PSScriptRoot
         try {
             # Excluded sqlite3 folder is due to this Roslyn issue: https://github.com/dotnet/roslyn/issues/23060
@@ -393,6 +393,7 @@ function Start-PSBuild {
             # Excluded nuget.config as this is required for release build.
             git clean -fdX --exclude .vs/PowerShell/v16/Server/sqlite3 --exclude src/Modules/nuget.config  --exclude nuget.config
         } finally {
+            Write-LogGroupEnd -Title "Cleaning your working directory"
             Pop-Location
         }
     }
@@ -536,7 +537,9 @@ Fix steps:
     }
 
     # handle Restore
+    Write-LogGroupStart -Title "Restore NuGet Packages"
     Restore-PSPackage -Options $Options -Force:$Restore -InteractiveAuth:$InteractiveAuth
+    Write-LogGroupEnd -Title "Restore NuGet Packages"
 
     # handle ResGen
     # Heuristic to run ResGen on the fresh machine
@@ -566,6 +569,7 @@ Fix steps:
         $publishPath = $Options.Output
     }
 
+    Write-LogGroupStart -Title "Build PowerShell"
     try {
         # Relative paths do not work well if cwd is not changed to project
         Push-Location $Options.Top
@@ -620,6 +624,7 @@ Fix steps:
     } finally {
         Pop-Location
     }
+    Write-LogGroupEnd -Title "Build PowerShell"
 
     # No extra post-building task will run if '-SMAOnly' is specified, because its purpose is for a quick update of S.M.A.dll after full build.
     if ($SMAOnly) {
@@ -627,6 +632,7 @@ Fix steps:
     }
 
     # publish reference assemblies
+    Write-LogGroupStart -Title "Publish Reference Assemblies"
     try {
         Push-Location "$PSScriptRoot/src/TypeCatalogGen"
         $refAssemblies = Get-Content -Path $incFileName | Where-Object { $_ -like "*microsoft.netcore.app*" } | ForEach-Object { $_.TrimEnd(';') }
@@ -640,6 +646,7 @@ Fix steps:
     } finally {
         Pop-Location
     }
+    Write-LogGroupEnd -Title "Publish Reference Assemblies"
 
     if ($ReleaseTag) {
         $psVersion = $ReleaseTag
@@ -682,10 +689,13 @@ Fix steps:
     # download modules from powershell gallery.
     #   - PowerShellGet, PackageManagement, Microsoft.PowerShell.Archive
     if ($PSModuleRestore) {
+        Write-LogGroupStart -Title "Restore PowerShell Modules"
         Restore-PSModuleToBuild -PublishPath $publishPath
+        Write-LogGroupEnd -Title "Restore PowerShell Modules"
     }
 
     # publish powershell.config.json
+    Write-LogGroupStart -Title "Generate PowerShell Configuration"
     $config = [ordered]@{}
 
     if ($Options.Runtime -like "*win*") {
@@ -731,10 +741,13 @@ Fix steps:
     } else {
         Write-Warning "No powershell.config.json generated for $publishPath"
     }
+    Write-LogGroupEnd -Title "Generate PowerShell Configuration"
 
     # Restore the Pester module
     if ($CI) {
+        Write-LogGroupStart -Title "Restore Pester Module"
         Restore-PSPester -Destination (Join-Path $publishPath "Modules")
+        Write-LogGroupEnd -Title "Restore Pester Module"
     }
 
     Clear-NativeDependencies -PublishFolder $publishPath
@@ -2086,6 +2099,7 @@ function Install-Dotnet {
         [string]$FeedCredential
     )
 
+    Write-LogGroupStart -Title "Install .NET SDK $Version"
     Write-Verbose -Verbose "In install-dotnet"
 
     # This allows sudo install to be optional; needed when running in containers / as root
@@ -2220,6 +2234,7 @@ function Install-Dotnet {
             }
         }
     }
+    Write-LogGroupEnd -Title "Install .NET SDK $Version"
 }
 
 function Get-RedHatPackageManager {
@@ -2234,43 +2249,6 @@ function Get-RedHatPackageManager {
     }
 }
 
-function Install-GlobalGem {
-    param(
-        [Parameter()]
-        [string]
-        $Sudo = "",
-
-        [Parameter(Mandatory)]
-        [string]
-        $GemName,
-
-        [Parameter(Mandatory)]
-        [string]
-        $GemVersion
-    )
-    try {
-        # We cannot guess if the user wants to run gem install as root on linux and windows,
-        # but macOs usually requires sudo
-        $gemsudo = ''
-        if($environment.IsMacOS -or $env:TF_BUILD -or $env:GITHUB_ACTIONS) {
-            $gemsudo = $sudo
-        }
-
-        Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install $GemName -v $GemVersion --no-document"))
-
-    } catch {
-        Write-Warning "Installation of gem $GemName $GemVersion failed! Must resolve manually."
-        $logs = Get-ChildItem "/var/lib/gems/*/extensions/x86_64-linux/*/$GemName-*/gem_make.out" | Select-Object -ExpandProperty FullName
-        foreach ($log in $logs) {
-            Write-Verbose "Contents of: $log" -Verbose
-            Get-Content -Raw -Path $log -ErrorAction Ignore | ForEach-Object { Write-Verbose $_ -Verbose }
-            Write-Verbose "END Contents of: $log" -Verbose
-        }
-
-        throw
-    }
-}
-
 function Start-PSBootstrap {
     [CmdletBinding()]
     param(
@@ -2282,7 +2260,7 @@ function Start-PSBootstrap {
         [switch]$BuildLinuxArm,
         [switch]$Force,
         [Parameter(Mandatory = $true)]
-        # Package: Install dependencies for packaging tools (fpm, rpmbuild, WiX)
+        # Package: Install dependencies for packaging tools (rpmbuild, dpkg-deb, pkgbuild, WiX)
         # DotNet: Install the .NET SDK
         # Both: Package and DotNet scenarios
         # Tools: Install .NET global tools (e.g., dotnet-format)
@@ -2301,12 +2279,14 @@ function Start-PSBootstrap {
 
     try {
         if ($environment.IsLinux -or $environment.IsMacOS) {
+            Write-LogGroupStart -Title "Install Native Dependencies"
             # This allows sudo install to be optional; needed when running in containers / as root
             # Note that when it is null, Invoke-Expression (but not &) must be used to interpolate properly
             $sudo = if (!$NoSudo) { "sudo" }
 
             if ($BuildLinuxArm -and $environment.IsLinux -and -not $environment.IsUbuntu -and -not $environment.IsMariner) {
                 Write-Error "Cross compiling for linux-arm is only supported on AzureLinux/Ubuntu environment"
+                Write-LogGroupEnd -Title "Install Native Dependencies"
                 return
             }
 
@@ -2321,7 +2301,9 @@ function Start-PSBootstrap {
                 elseif ($environment.IsUbuntu18) { $Deps += "libicu60"}
 
                 # Packaging tools
-                if ($Scenario -eq 'Both' -or $Scenario -eq 'Package') { $Deps += "ruby-dev", "groff", "libffi-dev", "rpm", "g++", "make" }
+                # Note: ruby-dev, libffi-dev, g++, and make are no longer needed for DEB packaging
+                # DEB packages now use native dpkg-deb (pre-installed)
+                if ($Scenario -eq 'Both' -or $Scenario -eq 'Package') { $Deps += "groff", "rpm" }
 
                 # Install dependencies
                 # change the fontend from apt-get to noninteractive
@@ -2345,7 +2327,9 @@ function Start-PSBootstrap {
                 $Deps += "libicu", "openssl-libs"
 
                 # Packaging tools
-                if ($Scenario -eq 'Both' -or $Scenario -eq 'Package') { $Deps += "ruby-devel", "rpm-build", "groff", 'libffi-devel', "gcc-c++" }
+                # Note: ruby-devel and libffi-devel are no longer needed
+                # RPM packages use rpmbuild, DEB packages use dpkg-deb
+                if ($Scenario -eq 'Both' -or $Scenario -eq 'Package') { $Deps += "rpm-build", "groff" }
 
                 $PackageManager = Get-RedHatPackageManager
 
@@ -2366,7 +2350,8 @@ function Start-PSBootstrap {
                 $Deps += "wget"
 
                 # Packaging tools
-                if ($Scenario -eq 'Both' -or $Scenario -eq 'Package') { $Deps += "ruby-devel", "rpmbuild", "groff", 'libffi-devel', "gcc" }
+                # Note: ruby-devel and libffi-devel are no longer needed for packaging
+                if ($Scenario -eq 'Both' -or $Scenario -eq 'Package') { $Deps += "rpmbuild", "groff" }
 
                 $PackageManager = "zypper --non-interactive install"
                 $baseCommand = "$sudo $PackageManager"
@@ -2405,17 +2390,7 @@ function Start-PSBootstrap {
                 }
             }
 
-            # Install [fpm](https://github.com/jordansissel/fpm)
-            # Note: fpm is now only needed for DEB and macOS packages; RPM packages use rpmbuild directly
             if ($Scenario -in 'All', 'Both', 'Package') {
-                # Install fpm on Debian-based systems, macOS, and Mariner (where DEB packages are built)
-                if (($environment.IsLinux -and ($environment.IsDebianFamily -or $environment.IsMariner)) -or $environment.IsMacOS) {
-                    Install-GlobalGem -Sudo $sudo -GemName "dotenv" -GemVersion "2.8.1"
-                    Install-GlobalGem -Sudo $sudo -GemName "ffi" -GemVersion "1.16.3"
-                    Install-GlobalGem -Sudo $sudo -GemName "fpm" -GemVersion "1.15.1"
-                    Install-GlobalGem -Sudo $sudo -GemName "rexml" -GemVersion "3.2.5"
-                }
-
                 # For RPM-based systems, ensure rpmbuild is available
                 if ($environment.IsLinux -and ($environment.IsRedHatFamily -or $environment.IsSUSEFamily -or $environment.IsMariner)) {
                     Write-Verbose -Verbose "Checking for rpmbuild..."
@@ -2424,10 +2399,33 @@ function Start-PSBootstrap {
                         Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo $PackageManager install -y rpm-build")) -IgnoreExitcode
                     }
                 }
+
+                # For Debian-based systems and Mariner, ensure dpkg-deb is available
+                if ($environment.IsLinux -and ($environment.IsDebianFamily -or $environment.IsMariner)) {
+                    Write-Verbose -Verbose "Checking for dpkg-deb..."
+                    if (!(Get-Command dpkg-deb -ErrorAction SilentlyContinue)) {
+                        Write-Warning "dpkg-deb not found. Installing dpkg package..."
+                        if ($environment.IsMariner) {
+                            # For Mariner (Azure Linux), install the extended repo first to access dpkg.
+                            Write-Verbose -verbose "BEGIN: /etc/os-release content:"
+                            Get-Content /etc/os-release | Write-Verbose -verbose
+                            Write-Verbose -verbose "END: /etc/os-release content"
+
+                            Write-Verbose -Verbose "Installing azurelinux-repos-extended for Mariner..."
+
+                            Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo $PackageManager azurelinux-repos-extended")) -IgnoreExitcode -Verbose
+                            Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo $PackageManager dpkg")) -IgnoreExitcode -Verbose
+                        } else {
+                            Start-NativeExecution -sb ([ScriptBlock]::Create("$sudo apt-get install -y dpkg")) -IgnoreExitcode
+                        }
+                    }
+                }
             }
+            Write-LogGroupEnd -Title "Install Native Dependencies"
         }
 
         if ($Scenario -in 'All', 'Both', 'DotNet') {
+            Write-LogGroupStart -Title "Install .NET SDK"
 
             Write-Verbose -Verbose "Calling Find-Dotnet from Start-PSBootstrap"
 
@@ -2466,10 +2464,12 @@ function Start-PSBootstrap {
             else {
                 Write-Log -message "dotnet is already installed.  Skipping installation."
             }
+            Write-LogGroupEnd -Title "Install .NET SDK"
         }
 
         # Install Windows dependencies if `-Package` or `-BuildWindowsNative` is specified
         if ($environment.IsWindows) {
+            Write-LogGroupStart -Title "Install Windows Dependencies"
             ## The VSCode build task requires 'pwsh.exe' to be found in Path
             if (-not (Get-Command -Name pwsh.exe -CommandType Application -ErrorAction Ignore))
             {
@@ -2482,25 +2482,32 @@ function Start-PSBootstrap {
                 $isArm64 = "$env:RUNTIME" -eq 'arm64'
                 Install-Wix -arm64:$isArm64
             }
+            Write-LogGroupEnd -Title "Install Windows Dependencies"
         }
 
-        if ($Scenario -in 'All', 'Tools') {
-            Write-Log -message "Installing .NET global tools"
+        # Ensure dotnet is available
+        Find-Dotnet
 
-            # Ensure dotnet is available
-            Find-Dotnet
+        if (-not $env:TF_BUILD) {
+            if ($Scenario -in 'All', 'Tools') {
+                Write-LogGroupStart -Title "Install .NET Global Tools"
+                Write-Log -message "Installing .NET global tools"
 
-            # Install dotnet-format
-            Write-Verbose -Verbose "Installing dotnet-format global tool"
-            Start-NativeExecution {
-                dotnet tool install --global dotnet-format
+                # Install dotnet-format
+                Write-Verbose -Verbose "Installing dotnet-format global tool"
+                Start-NativeExecution {
+                    dotnet tool install --global dotnet-format
+                }
+                Write-LogGroupEnd -Title "Install .NET Global Tools"
             }
         }
 
         if ($env:TF_BUILD) {
+            Write-LogGroupStart -Title "Capture NuGet Sources"
             Write-Verbose -Verbose "--- Start - Capturing nuget sources"
             dotnet nuget list source --format detailed
             Write-Verbose -Verbose "--- End   - Capturing nuget sources"
+            Write-LogGroupEnd -Title "Capture NuGet Sources"
         }
     } finally {
         Pop-Location

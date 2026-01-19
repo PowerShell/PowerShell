@@ -5,9 +5,6 @@ Describe 'Native Windows tilde expansion tests' -tags "CI" {
     BeforeAll {
         $originalDefaultParams = $PSDefaultParameterValues.Clone()
         $PSDefaultParameterValues["it:skip"] = -Not $IsWindows
-        $EnabledExperimentalFeatures.Contains('PSNativeWindowsTildeExpansion') | Should -BeTrue
-        $HomeDir = $ExecutionContext.SessionState.Provider.Get("FileSystem").Home
-        $Tilde = "~"
     }
 
     AfterAll {
