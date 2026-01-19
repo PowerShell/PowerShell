@@ -636,7 +636,7 @@ namespace System.Management.Automation
 
             formatProvider ??= CultureInfo.InvariantCulture;
 
-            if (!(formatProvider is CultureInfo culture))
+            if (formatProvider is not CultureInfo culture)
             {
                 throw PSTraceSource.NewArgumentException(nameof(formatProvider));
             }
@@ -780,7 +780,7 @@ namespace System.Management.Automation
         {
             formatProvider ??= CultureInfo.InvariantCulture;
 
-            if (!(formatProvider is CultureInfo culture))
+            if (formatProvider is not CultureInfo culture)
             {
                 throw PSTraceSource.NewArgumentException(nameof(formatProvider));
             }
@@ -1036,7 +1036,7 @@ namespace System.Management.Automation
                     // but since we don't want this to recurse indefinitely
                     // we explicitly check the case where it would recurse
                     // and deal with it.
-                    if (!(PSObject.Base(objectArray[0]) is IList firstElement))
+                    if (PSObject.Base(objectArray[0]) is not IList firstElement)
                     {
                         return IsTrue(objectArray[0]);
                     }
@@ -2100,7 +2100,7 @@ namespace System.Management.Automation
             protected static object BaseConvertFrom(object sourceValue, Type destinationType, IFormatProvider formatProvider, bool ignoreCase, bool multipleValues)
             {
                 Diagnostics.Assert(sourceValue != null, "the type converter has a special case for null source values");
-                if (!(sourceValue is string sourceValueString))
+                if (sourceValue is not string sourceValueString)
                 {
                     throw new PSInvalidCastException("InvalidCastEnumFromTypeNotAString", null,
                         ExtendedTypeSystem.InvalidCastException,
@@ -2943,9 +2943,9 @@ namespace System.Management.Automation
                 }
 
                if (resultType == typeof(BigInteger))
-               { 
+               {
                     NumberStyles style = NumberStyles.Integer | NumberStyles.AllowThousands;
-                    
+
                     return BigInteger.Parse(strToConvert, style, NumberFormatInfo.InvariantInfo);
                 }
                 // Fallback conversion for regular numeric types.

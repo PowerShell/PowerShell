@@ -13,8 +13,6 @@ jobs:
     type: linux
 
   variables:
-    - name: runCodesignValidationInjection
-      value: false
     - name: nugetMultiFeedWarnLevel
       value: none
     - name: NugetSecurityAnalysisWarningLevel
@@ -54,14 +52,15 @@ jobs:
   - template: SetVersionVariables.yml@self
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
-      CreateJson: yes
-      UseJson: no
+      CreateJson: no
 
   - template: shouldSign.yml
 
   - template: cloneToOfficialPath.yml
     parameters:
       nativePathRoot: '$(Agent.TempDirectory)'
+
+  - template: rebuild-branch-check.yml@self
 
   - download: CoOrdinatedBuildPipeline
     artifact: ${{ parameters.unsignedDrop }}
@@ -87,6 +86,8 @@ jobs:
     env:
       ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
 
+  - template: /.pipelines/templates/install-dotnet.yml@self
+
   - pwsh: |
       $packageType = '$(PackageType)'
       Write-Verbose -Verbose "packageType = $packageType"
@@ -103,7 +104,7 @@ jobs:
       Import-Module "$repoRoot/build.psm1"
       Import-Module "$repoRoot/tools/packaging"
 
-      Start-PSBootstrap -Scenario Package
+      Start-PSBootstrap -Scenario Both
 
       $psOptionsPath = "$(Pipeline.Workspace)/CoOrdinatedBuildPipeline/${unsignedDrop}/psoptions/psoptions.json"
 
@@ -138,7 +139,21 @@ jobs:
       }
 
       $metadata = Get-Content "$repoRoot/tools/metadata.json" -Raw | ConvertFrom-Json
-      $LTS = $metadata.LTSRelease.Package
+
+      Write-Verbose -Verbose "metadata:"
+      $metadata | Out-String | Write-Verbose -Verbose
+
+      # Use the rebuild branch check from the template
+      $isRebuildBranch = '$(RebuildBranchCheck.IsRebuildBranch)' -eq 'true'
+
+      # Don't build LTS packages for rebuild branches
+      $LTS = $metadata.LTSRelease.Package -and -not $isRebuildBranch
+
+      if ($isRebuildBranch) {
+        Write-Verbose -Message "Rebuild branch detected, skipping LTS package build" -Verbose
+      }
+
+      Write-Verbose -Verbose "LTS: $LTS"
 
       if ($LTS) {
         Write-Verbose -Message "LTS Release: $LTS"

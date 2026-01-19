@@ -90,7 +90,7 @@ namespace System.Management.Automation.Runspaces
         /// The <see cref="StreamingContext"/> that contains
         /// contextual information about the source or destination.
         /// </param>
-        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected
         InvalidRunspacePoolStateException(SerializationInfo info, StreamingContext context)
         {

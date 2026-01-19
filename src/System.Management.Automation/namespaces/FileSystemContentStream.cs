@@ -1475,26 +1475,6 @@ namespace Microsoft.PowerShell.Commands
 
             return _byteCount;
         }
-
-        private static class NativeMethods
-        {
-            // Default values
-            private const int MAX_DEFAULTCHAR = 2;
-            private const int MAX_LEADBYTES = 12;
-
-            [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-            internal struct CPINFO
-            {
-                [MarshalAs(UnmanagedType.U4)]
-                internal int MaxCharSize;
-
-                [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_DEFAULTCHAR)]
-                public byte[] DefaultChar;
-
-                [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_LEADBYTES)]
-                public byte[] LeadBytes;
-            }
-        }
     }
 
     /// <summary>

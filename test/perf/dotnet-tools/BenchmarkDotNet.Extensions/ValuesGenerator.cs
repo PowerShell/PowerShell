@@ -33,7 +33,7 @@ namespace BenchmarkDotNet.Extensions
             // of random-sized memory by BDN engine
             T[] result = new T[count];
 
-            var random = new Random(Seed); 
+            var random = new Random(Seed);
 
             var uniqueValues = new HashSet<T>();
 
@@ -49,12 +49,12 @@ namespace BenchmarkDotNet.Extensions
 
             return result;
         }
-        
+
         public static T[] Array<T>(int count)
         {
             var result = new T[count];
 
-            var random = new Random(Seed); 
+            var random = new Random(Seed);
 
             if (typeof(T) == typeof(byte) || typeof(T) == typeof(sbyte))
             {

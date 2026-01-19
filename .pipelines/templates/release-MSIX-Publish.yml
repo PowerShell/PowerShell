@@ -1,0 +1,125 @@
+parameters:
+  - name: skipMSIXPublish
+    type: boolean
+
+jobs:
+- job: Store_Publish_MSIX
+  displayName: Publish MSIX to the Microsoft Store
+  pool:
+    type: release
+    os: windows
+  templateContext:
+    inputs:
+      - input: pipelineArtifact
+        pipeline: PSPackagesOfficial
+        artifactName: drop_msixbundle_CreateMSIXBundle
+  variables:
+    - group: 'Store Publish Variables'
+    - name: LTS
+      value: $[ stageDependencies.setReleaseTagAndChangelog.setTagAndChangelog.outputs['ChannelSelection.IsLTS'] ]
+    - name: STABLE
+      value: $[ stageDependencies.setReleaseTagAndChangelog.setTagAndChangelog.outputs['ChannelSelection.IsStable'] ]
+    - name: PREVIEW
+      value: $[ stageDependencies.setReleaseTagAndChangelog.setTagAndChangelog.outputs['ChannelSelection.IsPreview'] ]
+    - template: ./variable/release-shared.yml@self
+      parameters:
+        RELEASETAG: $[ stageDependencies.setReleaseTagAndChangelog.setTagAndChangelog.outputs['OutputReleaseTag.releaseTag'] ]
+  steps:
+  - task: PowerShell@2
+    inputs:
+      targetType: inline
+      script: |
+        Write-Verbose -Verbose "Release Tag: $(ReleaseTag)"
+        Get-ChildItem $(Pipeline.Workspace) -Recurse | Select-Object -ExpandProperty FullName
+    displayName: 'Capture ReleaseTag and Downloaded Packages'
+
+  - task: PowerShell@2
+    inputs:
+      targetType: inline
+      script: |
+        if ("$(ReleaseTag)" -eq '') {
+          Write-Error "ReleaseTag is not set. Cannot proceed with publishing to the Store."
+          exit 1
+        }
+        $middleURL = ''
+        $tagString = "$(ReleaseTag)"
+        if ($tagString -match '-preview') {
+          $middleURL = "preview"
+        }
+        elseif ($tagString -match '(\d+\.\d+)') {
+          $middleURL = $matches[1]
+        }
+
+        $endURL = $tagString -replace '^v','' -replace '\.',''
+        $message = "Changelog: https://github.com/PowerShell/PowerShell/blob/master/CHANGELOG/$middleURL.md#$endURL"
+        Write-Verbose -Verbose "Release Notes for the Store:"
+        Write-Verbose -Verbose "$message"
+        $jsonPath = "$(Pipeline.Workspace)\SBOutDir\PowerShellStorePackage.json"
+        $json = Get-Content $jsonPath -Raw | ConvertFrom-Json
+
+        $json.listings.'en-us'.baseListing.releaseNotes = $message
+
+        $json | ConvertTo-Json -Depth 100 | Set-Content $jsonPath -Encoding UTF8
+    displayName: 'Update Release Notes in JSON'
+
+  - task: PowerShell@2
+    inputs:
+      targetType: inline
+      script: |
+        # Convert ADO variables to PowerShell boolean variables
+        $IsLTS = '$(LTS)' -eq 'true'
+        $IsStable = '$(STABLE)' -eq 'true' 
+        $IsPreview = '$(PREVIEW)' -eq 'true'
+
+        Write-Verbose -Verbose "Channel Selection - LTS: $(LTS), Stable: $(STABLE), Preview: $(PREVIEW)"
+
+        $currentChannel = if ($IsLTS) { 'LTS' }
+          elseif ($IsStable) { 'Stable' }
+          elseif ($IsPreview) { 'Preview' }
+          else { 
+            Write-Error "No valid channel detected"
+            exit 1
+          }
+
+        # Assign AppID for Store-Publish Task
+        $appID = $null
+        if ($IsLTS) {
+          $appID = '$(AppID-LTS)'
+        }
+        elseif ($IsStable) {
+          $appID = '$(AppID-Stable)'
+        }
+        else {
+          $appID = '$(AppID-Preview)'
+        }
+
+        Write-Host "##vso[task.setvariable variable=AppID]$appID"
+        Write-Verbose -Verbose "Selected channel: $currentChannel"
+        Write-Verbose -Verbose "Conditional tasks will handle the publishing based on channel variables"
+    displayName: 'Validate Channel Selection'
+
+  - task: MS-RDX-MRO.windows-store-publish.publish-task.store-publish@3
+    displayName: 'Publish StoreBroker Package (Stable/LTS)'
+    condition: and(ne('${{ parameters.skipMSIXPublish }}', 'true'), or(eq(variables['STABLE'], 'true'), eq(variables['LTS'], 'true')))
+    inputs:
+      serviceEndpoint: 'StoreAppPublish-Stable'
+      appId: '$(AppID)'
+      inputMethod: JsonAndZip
+      jsonPath: '$(Pipeline.Workspace)\SBOutDir\PowerShellStorePackage.json'
+      zipPath: '$(Pipeline.Workspace)\SBOutDir\PowerShellStorePackage.zip'
+      numberOfPackagesToKeep: 2
+      jsonZipUpdateMetadata: true
+      targetPublishMode: 'Immediate'
+
+  - task: MS-RDX-MRO.windows-store-publish.publish-task.store-publish@3
+    displayName: 'Publish StoreBroker Package (Preview)'
+    condition: and(ne('${{ parameters.skipMSIXPublish }}', 'true'), eq(variables['PREVIEW'], 'true'))
+    inputs:
+      serviceEndpoint: 'StoreAppPublish-Preview'
+      appId: '$(AppID)'
+      inputMethod: JsonAndZip
+      jsonPath: '$(Pipeline.Workspace)\SBOutDir\PowerShellStorePackage.json'
+      zipPath: '$(Pipeline.Workspace)\SBOutDir\PowerShellStorePackage.zip'
+      numberOfPackagesToKeep: 2
+      jsonZipUpdateMetadata: true
+      targetPublishMode: 'Immediate'

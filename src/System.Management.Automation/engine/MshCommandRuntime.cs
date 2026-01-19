@@ -2360,7 +2360,7 @@ namespace System.Management.Automation
             {
                 if (permittedToWrite == null)
                     throw PSTraceSource.NewArgumentNullException(nameof(permittedToWrite));
-                if (!(permittedToWrite.commandRuntime is MshCommandRuntime mcr))
+                if (permittedToWrite.commandRuntime is not MshCommandRuntime mcr)
                     throw PSTraceSource.NewArgumentNullException("permittedToWrite.CommandRuntime");
                 _pp = mcr.PipelineProcessor;
                 if (_pp == null)
@@ -2991,21 +2991,19 @@ namespace System.Management.Automation
             {
                 // WhatIf not relevant, it never gets this far in that case
                 if (Confirm)
-                    return ConfirmImpact.Low;
-                if (Debug)
                 {
-                    if (IsConfirmFlagSet) // -Debug -Confirm:$false
-                        return ConfirmImpact.None;
                     return ConfirmImpact.Low;
                 }
 
-                if (IsConfirmFlagSet) // -Confirm:$false
+                if (IsConfirmFlagSet)
+                {
+                    // -Confirm:$false
                     return ConfirmImpact.None;
+                }
 
                 if (!_isConfirmPreferenceCached)
                 {
-                    bool defaultUsed = false;
-                    _confirmPreference = Context.GetEnumPreference(SpecialVariables.ConfirmPreferenceVarPath, _confirmPreference, out defaultUsed);
+                    _confirmPreference = Context.GetEnumPreference(SpecialVariables.ConfirmPreferenceVarPath, _confirmPreference, out _);
                     _isConfirmPreferenceCached = true;
                 }
 

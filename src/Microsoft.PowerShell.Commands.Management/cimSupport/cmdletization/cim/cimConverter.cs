@@ -24,7 +24,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Cim
 {
-    internal class CimSensitiveValueConverter : IDisposable
+    internal sealed class CimSensitiveValueConverter : IDisposable
     {
         private sealed class SensitiveString : IDisposable
         {

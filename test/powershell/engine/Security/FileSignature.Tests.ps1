@@ -89,6 +89,7 @@ Describe "Windows file content signatures" -Tags @('Feature', 'RequireAdminOnWin
 
     AfterAll {
         if ($shouldSkip) {
+            Pop-DefaultParameterValueStack
             return
         }
 

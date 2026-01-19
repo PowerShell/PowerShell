@@ -14,11 +14,9 @@ jobs:
     demands:
     - ImageOverride -equals PSMMS2019-Secure
   variables:
-  - name: runCodesignValidationInjection
-    value: false
   - name: NugetSecurityAnalysisWarningLevel
     value: none
-  - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
+  - name: DOTNET_NOLOGO
     value: 1
   - name: ob_outputDirectory
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
@@ -58,8 +56,8 @@ jobs:
       $dateTime = [datetime]::new($dateTime.Ticks - ($dateTime.Ticks % [timespan]::TicksPerSecond), $dateTime.Kind)
 
       $metadata = Get-Content -LiteralPath "$toolsDirectory/metadata.json" -ErrorAction Stop | ConvertFrom-Json
-      $stableRelease = $metadata.StableRelease.Latest
-      $ltsRelease = $metadata.LTSRelease.Latest
+      $stableRelease = $metadata.StableRelease.PublishToChannels
+      $ltsRelease = $metadata.LTSRelease.PublishToChannels
 
       Write-Verbose -Verbose "Writing $jsonFile contents:"
       $buildInfoJsonContent = Get-Content $jsonFile -Encoding UTF8NoBom -Raw
