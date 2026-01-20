@@ -56,6 +56,7 @@ jobs:
       $dateTime = [datetime]::new($dateTime.Ticks - ($dateTime.Ticks % [timespan]::TicksPerSecond), $dateTime.Kind)
 
       $metadata = Get-Content -LiteralPath "$toolsDirectory/metadata.json" -ErrorAction Stop | ConvertFrom-Json
+      $stableReleaseTag = $metadata.StableReleaseTag -Replace 'v',''
 
       $currentReleaseTag = $buildInfo.ReleaseTag -Replace 'v',''
       $stableRelease = $metadata.StableRelease.PublishToChannels
@@ -67,6 +68,7 @@ jobs:
 
       $buildInfo =  $buildInfoJsonContent | ConvertFrom-Json
       $buildInfo.ReleaseDate = $dateTime
+      $currentReleaseTag = $buildInfo.ReleaseTag -Replace 'v',''
 
       $targetFile = "$ENV:PIPELINE_WORKSPACE/$fileName"
       ConvertTo-Json -InputObject $buildInfo | Out-File $targetFile -Encoding ascii
@@ -83,6 +85,7 @@ jobs:
       if ($fileName -eq "stable.json") {
         [System.Management.Automation.SemanticVersion] $stableVersion = $stableReleaseTag
         [System.Management.Automation.SemanticVersion] $currentVersion = $currentReleaseTag
+        $isLTSRelease = ($currentVersion.Minor % 2) -eq 0
         if ($isLTSRelease) {
           $ltsFile = "$ENV:PIPELINE_WORKSPACE/lts.json"
           Copy-Item -Path $targetFile -Destination $ltsFile -Force
@@ -94,11 +97,7 @@ jobs:
 
         ## Only update the stable.json if the current version is greater than the stable version.
         if ($currentVersion -gt $stableVersion) {
-          $releaseTag = $buildInfo.ReleaseTag
-          $version = $releaseTag -replace '^v'
-          $semVersion = [System.Management.Automation.SemanticVersion] $version
-
-          $versionFile = "$ENV:PIPELINE_WORKSPACE/$($semVersion.Major)-$($semVersion.Minor).json"
+          $versionFile = "$ENV:PIPELINE_WORKSPACE/$($currentVersion.Major)-$($currentVersion.Minor).json"
           Copy-Item -Path $targetFile -Destination $versionFile -Force
           Set-BuildVariable -Name VersionBuildInfoJsonFile -Value $versionFile
           Set-BuildVariable -Name CopyVersionBuildInfo -Value YES
