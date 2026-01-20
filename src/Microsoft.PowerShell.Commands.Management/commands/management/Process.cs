@@ -1932,7 +1932,7 @@ namespace Microsoft.PowerShell.Commands
                     return;
                 }
 
-                // codeql[cs/microsoft/command-line-injection] - This is expected PowerShell behavior where user inputted path to working directory is supported for the context of this method. The user assumes trust for the working directory path they are specifying and the process is on the user's system except for remoting in which case restricted remoting security guidelines should be used.
+                // codeql[cs/microsoft/command-line-injection] - This is expected PowerShell behavior where user inputted path to working directory is supported for the context of this method. The user assumes trust for the working directory path they are specifying, and the process is on the user's system except for remoting in which case restricted remoting security guidelines should be used.  Additionally, we have already Resolved the path to a full file path verifying that the path exists.
                 startInfo.WorkingDirectory = WorkingDirectory;
             }
             else
