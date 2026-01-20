@@ -327,7 +327,9 @@ Describe 'ConvertTo-Json' -tags "CI" {
             $json = $arr | ConvertTo-Json -Depth 2
             $parsed = $json | ConvertFrom-Json
 
-            $parsed[0].PSObject.Properties.Name.Count | Should -Be 24
+            # Windows has 24 Adapted properties, Unix has 28 (includes Unix-specific file properties)
+            $expectedCount = if ($IsWindows) { 24 } else { 28 }
+            $parsed[0].PSObject.Properties.Name.Count | Should -Be $expectedCount
         }
 
         It 'Array of Get-Item FileInfo preserves Extended properties' {
@@ -429,7 +431,7 @@ Describe 'ConvertTo-Json' -tags "CI" {
         }
 
         It 'Non-pure PSObject (FileInfo) with ETS properties includes ETS when depth exceeded' {
-            $file = Get-Item $PSHOME/pwsh.exe
+            $file = Get-Item (Join-Path $PSHOME 'System.Management.Automation.dll')
             $pso = [PSObject]::new($file)
             $pso | Add-Member -NotePropertyName CustomExt -NotePropertyValue 'extended_value'
             $outer = [PSCustomObject]@{ File = $pso }
@@ -438,7 +440,7 @@ Describe 'ConvertTo-Json' -tags "CI" {
             $parsed = $result | ConvertFrom-Json
 
             $parsed.File.CustomExt | Should -BeExactly 'extended_value'
-            $parsed.File.value | Should -BeLike '*pwsh.exe'
+            $parsed.File.value | Should -BeLike '*System.Management.Automation.dll'
         }
 
     }

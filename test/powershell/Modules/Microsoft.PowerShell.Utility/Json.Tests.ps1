@@ -355,6 +355,10 @@ Describe "Json Tests" -Tags "Feature" {
 			# For the ones that are datetimes, make sure they retain all of the various formats correctly
 			# for the ones that are strings just verify that they are actually strings.
 
+			# Use en-US culture to ensure consistent date format output across all environments
+			$originalCulture = [Threading.Thread]::CurrentThread.CurrentCulture
+			[Threading.Thread]::CurrentThread.CurrentCulture = [CultureInfo]::new('en-US')
+			try {
 			$json = @"
 {
 	"date-s-should-parse-as-datetime": "2008-09-22T14:01:54",
@@ -455,6 +459,9 @@ Describe "Json Tests" -Tags "Feature" {
 				$result."date-upperY-should-parse-as-string" | Should -BeOfType [String]
 				$result."date-y-should-parse-as-string" | Should -Be "September 2008"
 				$result."date-y-should-parse-as-string" | Should -BeOfType [String]
+			}
+			} finally {
+				[Threading.Thread]::CurrentThread.CurrentCulture = $originalCulture
 			}
 		}
 

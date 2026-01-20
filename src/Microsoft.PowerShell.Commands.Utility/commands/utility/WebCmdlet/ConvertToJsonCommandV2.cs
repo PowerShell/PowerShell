@@ -915,6 +915,13 @@ namespace Microsoft.PowerShell.Commands
                 typeToConvert != typeof(Newtonsoft.Json.Linq.JObject),
                 $"Type {typeToConvert} should be handled by its dedicated converter");
 
+            // Version: STJ treats as scalar (Kind=None) and serializes as string.
+            // Serialize as object with properties instead.
+            if (typeToConvert == typeof(Version))
+            {
+                return true;
+            }
+
             // Check if STJ handles this type as a scalar
             var typeInfo = JsonSerializerOptions.Default.GetTypeInfo(typeToConvert);
             return typeInfo.Kind != JsonTypeInfoKind.None;
@@ -1066,9 +1073,25 @@ namespace Microsoft.PowerShell.Commands
 
             // Use JsonTypeInfo to enumerate properties - leverages STJ caching and handles JsonIgnore automatically
             var typeInfo = JsonSerializerOptions.Default.GetTypeInfo(value.GetType());
-            foreach (var propInfo in typeInfo.Properties)
+            if (typeInfo.Properties.Count > 0)
             {
-                WriteProperty(writer, value, propInfo, options);
+                foreach (var propInfo in typeInfo.Properties)
+                {
+                    WriteProperty(writer, value, propInfo, options);
+                }
+            }
+            else
+            {
+                // Fallback for types like Version where STJ treats as scalar (Kind=None)
+                // Use PSObject Adapted properties to enumerate via reflection
+                var pso = PSObject.AsPSObject(value);
+                foreach (var prop in pso.Properties)
+                {
+                    if (prop.MemberType == PSMemberTypes.Property)
+                    {
+                        WriteAdaptedProperty(writer, value, prop, options);
+                    }
+                }
             }
 
             writer.WriteEndObject();
@@ -1094,6 +1117,31 @@ namespace Microsoft.PowerShell.Commands
             }
 
             writer.WritePropertyName(propInfo.Name);
+
+            // If maxDepth is 0 and value is non-null non-scalar, convert to string
+            if (_cmdlet.Depth == 0 && value is not null && !JsonSerializerHelper.IsStjNativeScalarType(value))
+            {
+                writer.WriteStringValue(value.ToString());
+            }
+            else
+            {
+                JsonSerializerHelper.WriteValue(writer, value, options);
+            }
+        }
+
+        private void WriteAdaptedProperty(Utf8JsonWriter writer, object obj, PSPropertyInfo prop, JsonSerializerOptions options)
+        {
+            object? value = null;
+            try
+            {
+                value = prop.Value;
+            }
+            catch
+            {
+                // Property access threw - value remains null
+            }
+
+            writer.WritePropertyName(prop.Name);
 
             // If maxDepth is 0 and value is non-null non-scalar, convert to string
             if (_cmdlet.Depth == 0 && value is not null && !JsonSerializerHelper.IsStjNativeScalarType(value))
@@ -1132,6 +1180,12 @@ namespace Microsoft.PowerShell.Commands
             // System.Object has Kind=None but serializes as {} (not a scalar)
             // See: https://source.dot.net/#System.Text.Json/System/Text/Json/Serialization/Metadata/JsonTypeInfo.cs,1337
             if (type == typeof(object))
+            {
+                return false;
+            }
+
+            // Version: STJ treats as scalar (Kind=None) but V1 serializes as object with properties.
+            if (type == typeof(Version))
             {
                 return false;
             }
