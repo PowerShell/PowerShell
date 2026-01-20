@@ -81,7 +81,7 @@ jobs:
 
       Set-BuildVariable -Name PreviewBuildInfoFile -Value $targetFile
 
-      ## Create 'lts.json' if it's the latest stable and also a LTS release.
+      ## Create 'lts.json' if marked as a LTS release.
       if ($fileName -eq "stable.json") {
         [System.Management.Automation.SemanticVersion] $stableVersion = $stableReleaseTag
         [System.Management.Automation.SemanticVersion] $currentVersion = $currentReleaseTag
