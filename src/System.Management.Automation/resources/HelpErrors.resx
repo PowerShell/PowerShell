@@ -179,7 +179,7 @@
 To update these Help topics, start PowerShell by using the "Run as Administrator" command, and try running Update-Help again.</value>
   </data>
   <data name="GraphicalHostAssemblyIsNotFound" xml:space="preserve">
-    <value>To use the {0}, install Windows PowerShell ISE by using Server Manager, and then restart this application. ({1})</value>
+    <value>To use the {0}, make sure your application uses 'Microsoft.NET.Sdk.WindowsDesktop' as the project SDK and the corresponding assembly 'Microsoft.PowerShell.GraphicalHost' is available. ({1})</value>
   </data>
   <data name="RemotingNotSupportedForFeature" xml:space="preserve">
     <value>{0} does not work in a remote session.</value>

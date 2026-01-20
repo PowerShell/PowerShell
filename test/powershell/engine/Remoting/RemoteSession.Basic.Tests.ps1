@@ -1,6 +1,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingConvertToSecureStringWithPlainText', '')]
+param()
+
 Import-Module HelpersCommon
 
 function GetRandomString()
@@ -80,9 +83,7 @@ Describe "JEA session Transcript script test" -Tag @("Feature", 'RequireAdminOnW
     AfterAll {
         if ($skipTest) {
             Pop-DefaultParameterValueStack
-            return
         }
-        Pop-DefaultParameterValueStack
     }
 
     It "Configuration name should be in the transcript header" {

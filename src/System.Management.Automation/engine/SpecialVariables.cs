@@ -41,6 +41,10 @@ namespace System.Management.Automation
 
         internal static readonly VariablePath OutputEncodingVarPath = new VariablePath(OutputEncoding);
 
+        internal const string PSApplicationOutputEncoding = nameof(PSApplicationOutputEncoding);
+
+        internal static readonly VariablePath PSApplicationOutputEncodingVarPath = new VariablePath(PSApplicationOutputEncoding);
+
         internal const string VerboseHelpErrors = "VerboseHelpErrors";
 
         internal static readonly VariablePath VerboseHelpErrorsVarPath = new VariablePath(VerboseHelpErrors);
@@ -341,6 +345,7 @@ namespace System.Management.Automation
             SpecialVariables.WarningPreference,
             SpecialVariables.InformationPreference,
             SpecialVariables.ConfirmPreference,
+            SpecialVariables.ProgressPreference,
         };
 
         internal static readonly Type[] PreferenceVariableTypes =
@@ -352,6 +357,7 @@ namespace System.Management.Automation
             /* WarningPreference */                       typeof(ActionPreference),
             /* InformationPreference */                   typeof(ActionPreference),
             /* ConfirmPreference */                       typeof(ConfirmImpact),
+            /* ProgressPreference */                      typeof(ActionPreference),
         };
 
         // The following variables are created in every session w/ AllScope.  We avoid creating local slots when we
@@ -386,6 +392,7 @@ namespace System.Management.Automation
                     SpecialVariables.NestedPromptLevel,
                     SpecialVariables.pwd,
                     SpecialVariables.Matches,
+                    SpecialVariables.PSApplicationOutputEncoding,
                 },
                 StringComparer.OrdinalIgnoreCase
             );

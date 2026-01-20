@@ -13,7 +13,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
     /// <summary>
     /// Job wrapping invocation of an extrinsic CIM method.
     /// </summary>
-    internal class InstanceMethodInvocationJob : ExtrinsicMethodInvocationJob
+    internal sealed class InstanceMethodInvocationJob : ExtrinsicMethodInvocationJob
     {
         private readonly CimInstance _targetInstance;
 

@@ -94,6 +94,11 @@ namespace Microsoft.PowerShell.Commands
         #region Fields
 
         /// <summary>
+        /// Used to prefix the headers in debug and verbose messaging.
+        /// </summary>
+        internal const string DebugHeaderPrefix = "--- ";
+
+        /// <summary>
         /// Cancellation token source.
         /// </summary>
         internal CancellationTokenSource _cancelToken = null;
@@ -1280,40 +1285,28 @@ namespace Microsoft.PowerShell.Commands
                 _cancelToken = new CancellationTokenSource();
                 try
                 {
-                    long requestContentLength = request.Content is null ? 0 : request.Content.Headers.ContentLength.Value;
+                    if (IsWriteVerboseEnabled())
+                    {
+                        WriteWebRequestVerboseInfo(currentRequest);
+                    }
 
-                    string reqVerboseMsg = string.Format(
-                        CultureInfo.CurrentCulture,
-                        WebCmdletStrings.WebMethodInvocationVerboseMsg,
-                        request.Version,
-                        request.Method,
-                        requestContentLength);
+                    if (IsWriteDebugEnabled())
+                    {
+                        WriteWebRequestDebugInfo(currentRequest);
+                    }
 
-                    WriteVerbose(reqVerboseMsg);
-
-                    string reqDebugMsg = string.Format(
-                        CultureInfo.CurrentCulture,
-                        WebCmdletStrings.WebRequestDebugMsg,
-                        request.ToString());
-
-                    WriteDebug(reqDebugMsg);
-
+                    // codeql[cs/ssrf] - This is expected Poweshell behavior where user inputted Uri is supported for the context of this method. The user assumes trust for the Uri and invocation is done on the user's machine, not a web application. If there is concern for remoting, they should use restricted remoting.
                     response = client.SendAsync(currentRequest, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
 
-                    string contentType = ContentHelper.GetContentType(response);
-                    long? contentLength = response.Content.Headers.ContentLength;
-                    string respVerboseMsg = contentLength is null
-                        ? string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.WebResponseNoSizeVerboseMsg, response.Version, contentType)
-                        : string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.WebResponseVerboseMsg, response.Version, contentLength, contentType);
+                    if (IsWriteVerboseEnabled())
+                    {
+                        WriteWebResponseVerboseInfo(response);
+                    }
 
-                    WriteVerbose(respVerboseMsg);
-
-                    string resDebugMsg = string.Format(
-                        CultureInfo.CurrentCulture,
-                        WebCmdletStrings.WebResponseDebugMsg,
-                        response.ToString());
-
-                    WriteDebug(resDebugMsg);
+                    if (IsWriteDebugEnabled())
+                    {
+                        WriteWebResponseDebugInfo(response);
+                    }
                 }
                 catch (TaskCanceledException ex)
                 {
@@ -1437,12 +1430,205 @@ namespace Microsoft.PowerShell.Commands
         {
             ArgumentNullException.ThrowIfNull(response);
         }
-
         #endregion Virtual Methods
 
         #region Helper Methods
-
+#nullable enable
         internal static TimeSpan ConvertTimeoutSecondsToTimeSpan(int timeout) => timeout > 0 ? TimeSpan.FromSeconds(timeout) : Timeout.InfiniteTimeSpan;
+
+        private void WriteWebRequestVerboseInfo(HttpRequestMessage request)
+        {
+            try
+            {
+                // Typical Basic Example: 'WebRequest: v1.1 POST https://httpstat.us/200 with query length 6'
+                StringBuilder verboseBuilder = new(128);
+
+                // "Redact" the query string from verbose output, the details will be visible in Debug output
+                string uriWithoutQuery = request.RequestUri?.GetLeftPart(UriPartial.Path) ?? string.Empty;
+                verboseBuilder.Append($"WebRequest: v{request.Version} {request.Method} {uriWithoutQuery}");
+                if (request.RequestUri?.Query is not null && request.RequestUri.Query.Length > 1)
+                {
+                    verboseBuilder.Append($" with query length {request.RequestUri.Query.Length - 1}");
+                }
+
+                string? requestContentType = ContentHelper.GetContentType(request);
+                if (requestContentType is not null)
+                {
+                    verboseBuilder.Append($" with {requestContentType} payload");
+                }
+
+                long? requestContentLength = request.Content?.Headers?.ContentLength;
+                if (requestContentLength is not null)
+                {
+                    verboseBuilder.Append($" with body size {ContentHelper.GetFriendlyContentLength(requestContentLength)}");
+                }
+                if (OutFile is not null)
+                {
+                    verboseBuilder.Append($" output to {QualifyFilePath(OutFile)}");
+                }
+
+                WriteVerbose(verboseBuilder.ToString().Trim());
+            }
+            catch (Exception ex)
+            {
+                // Just in case there are any edge cases we missed, we don't break workflows with an exception
+                WriteVerbose($"Failed to Write WebRequest Verbose Info: {ex} {ex.StackTrace}");
+            }
+        }
+
+        private void WriteWebRequestDebugInfo(HttpRequestMessage request)
+        {
+            try
+            {
+                // Typical basic example:
+                // WebRequest Detail
+                // ---QUERY
+                // test = 5
+                // --- HEADERS
+                // User - Agent: Mozilla / 5.0, (Linux;Ubuntu 24.04.2 LTS;en - US), PowerShell / 7.6.0
+                StringBuilder debugBuilder = new("WebRequest Detail" + Environment.NewLine, 512);
+
+                if (!string.IsNullOrEmpty(request.RequestUri?.Query))
+                {
+                    debugBuilder.Append(DebugHeaderPrefix).AppendLine("QUERY");
+                    string[] queryParams = request.RequestUri.Query.TrimStart('?').Split('&');
+                    debugBuilder
+                        .AppendJoin(Environment.NewLine, queryParams)
+                        .AppendLine()
+                        .AppendLine();
+                }
+
+                debugBuilder.Append(DebugHeaderPrefix).AppendLine("HEADERS");
+
+                foreach (var headerSet in new HttpHeaders?[] { request.Headers, request.Content?.Headers })
+                {
+                    if (headerSet is null)
+                    {
+                        continue;
+                    }
+
+                    debugBuilder.AppendLine(headerSet.ToString());
+                }
+
+                if (request.Content is not null)
+                {
+                    debugBuilder
+                    .Append(DebugHeaderPrefix).AppendLine("BODY")
+                    .AppendLine(request.Content switch
+                    {
+                        StringContent stringContent => stringContent
+                            .ReadAsStringAsync(_cancelToken.Token)
+                            .GetAwaiter().GetResult(),
+                        MultipartFormDataContent multipartContent => "=> Multipart Form Content"
+                            + Environment.NewLine
+                            + multipartContent.ReadAsStringAsync(_cancelToken.Token)
+                            .GetAwaiter().GetResult(),
+                        ByteArrayContent byteContent => InFile is not null
+                            ? "[Binary content: "
+                                + ContentHelper.GetFriendlyContentLength(byteContent.Headers.ContentLength)
+                                + "]"
+                            : byteContent.ReadAsStringAsync(_cancelToken.Token).GetAwaiter().GetResult(),
+                        StreamContent streamContent =>
+                            "[Stream content: " + ContentHelper.GetFriendlyContentLength(streamContent.Headers.ContentLength) + "]",
+                        _ => "[Unknown content type]",
+                    })
+                    .AppendLine();
+                }
+
+                WriteDebug(debugBuilder.ToString().Trim());
+            }
+            catch (Exception ex)
+            {
+                // Just in case there are any edge cases we missed, we don't break workflows with an exception
+                WriteVerbose($"Failed to Write WebRequest Debug Info: {ex} {ex.StackTrace}");
+            }
+        }
+
+        private void WriteWebResponseVerboseInfo(HttpResponseMessage response)
+        {
+            try
+            {
+                // Typical basic example: WebResponse: 200 OK with text/plain payload body size 6 B (6 bytes)
+                StringBuilder verboseBuilder = new(128);
+                verboseBuilder.Append($"WebResponse: {(int)response.StatusCode} {response.ReasonPhrase ?? response.StatusCode.ToString()}");
+
+                string? responseContentType = ContentHelper.GetContentType(response);
+                if (responseContentType is not null)
+                {
+                    verboseBuilder.Append($" with {responseContentType} payload");
+                }
+
+                long? responseContentLength = response.Content?.Headers?.ContentLength;
+                if (responseContentLength is not null)
+                {
+                    verboseBuilder.Append($" with body size {ContentHelper.GetFriendlyContentLength(responseContentLength)}");
+                }
+
+                WriteVerbose(verboseBuilder.ToString().Trim());
+            }
+            catch (Exception ex)
+            {
+                // Just in case there are any edge cases we missed, we don't break workflows with an exception
+                WriteVerbose($"Failed to Write WebResponse Verbose Info: {ex} {ex.StackTrace}");
+            }
+        }
+
+        private void WriteWebResponseDebugInfo(HttpResponseMessage response)
+        {
+            try
+            {
+                // Typical basic example
+                // WebResponse Detail
+                // --- HEADERS
+                // Date: Fri, 09 May 2025 18:06:44 GMT
+                // Server: Kestrel
+                // Set-Cookie: ARRAffinity=ee0b467f95b53d8dcfe48aeeb4173f93cf819be6e4721f434341647f4695039d;Path=/;HttpOnly;Secure;Domain=httpstat.us, ARRAffinitySameSite=ee0b467f95b53d8dcfe48aeeb4173f93cf819be6e4721f434341647f4695039d;Path=/;HttpOnly;SameSite=None;Secure;Domain=httpstat.us
+                // Strict-Transport-Security: max-age=2592000
+                // Request-Context: appId=cid-v1:3548b0f5-7f75-492f-82bb-b6eb0e864e53
+                // Content-Length: 6
+                // Content-Type: text/plain
+                // --- BODY
+                // 200 OK
+                StringBuilder debugBuilder = new("WebResponse Detail" + Environment.NewLine, 512);
+
+                debugBuilder.Append(DebugHeaderPrefix).AppendLine("HEADERS");
+
+                foreach (var headerSet in new HttpHeaders?[] { response.Headers, response.Content?.Headers })
+                {
+                    if (headerSet is null)
+                    {
+                        continue;
+                    }
+
+                    debugBuilder.AppendLine(headerSet.ToString());
+                }
+
+                if (response.Content is not null)
+                {
+                    debugBuilder.Append(DebugHeaderPrefix).AppendLine("BODY");
+
+                    if (ContentHelper.IsTextBasedContentType(ContentHelper.GetContentType(response)))
+                    {
+                        debugBuilder.AppendLine(
+                            response.Content.ReadAsStringAsync(_cancelToken.Token)
+                            .GetAwaiter().GetResult());
+                    }
+                    else
+                    {
+                        string friendlyContentLength = ContentHelper.GetFriendlyContentLength(
+                            response.Content?.Headers?.ContentLength);
+                        debugBuilder.AppendLine($"[Binary content: {friendlyContentLength}]");
+                    }
+                }
+
+                WriteDebug(debugBuilder.ToString().Trim());
+            }
+            catch (Exception ex)
+            {
+                // Just in case there are any edge cases we missed, we don't break workflows with an exception
+                WriteVerbose($"Failed to Write WebResponse Debug Info: {ex} {ex.StackTrace}");
+            }
+        }
 
         private Uri PrepareUri(Uri uri)
         {
@@ -1478,6 +1664,7 @@ namespace Microsoft.PowerShell.Commands
 
             return uri.IsAbsoluteUri ? uri : new Uri("http://" + uri.OriginalString);
         }
+#nullable restore
 
         private string QualifyFilePath(string path) => PathUtils.ResolveFilePath(filePath: path, command: this, isLiteralPath: true);
 
@@ -1808,7 +1995,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="file">The file to use for the <see cref="StreamContent"/></param>
         private static StreamContent GetMultipartFileContent(object fieldName, FileInfo file)
         {
-            StreamContent result = GetMultipartStreamContent(fieldName: fieldName, stream: new FileStream(file.FullName, FileMode.Open));
+            StreamContent result = GetMultipartStreamContent(fieldName: fieldName, stream: new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.Read));
 
             result.Headers.ContentDisposition.FileName = file.Name;
             result.Headers.ContentDisposition.FileNameStar = file.Name;

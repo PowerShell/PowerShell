@@ -10,11 +10,9 @@ jobs:
   pool:
     type: windows
   variables:
-  - name: runCodesignValidationInjection
-    value: false
   - name: NugetSecurityAnalysisWarningLevel
     value: none
-  - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
+  - name: DOTNET_NOLOGO
     value: 1
   - name: ob_outputDirectory
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
@@ -33,7 +31,7 @@ jobs:
     env:
       ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
-  - template: release-SetReleaseTagAndContainerName.yml
+  - template: release-SetReleaseTagandContainerName.yml
 
   - pwsh: |
       Get-ChildItem Env: | Out-String -width 9999 -Stream | write-Verbose -Verbose

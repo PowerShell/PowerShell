@@ -16,28 +16,19 @@
 
   <ItemGroup>
     <!-- This section is to force the version of non-direct dependencies -->
-    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.0-preview.3.25171.5" />
-    <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="10.0.0-preview.3.25172.1" />
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.1" />
+    <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="10.0.1" />
     <!-- the following package(s) are from https://github.com/dotnet/fxdac -->
     <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
-    <PackageReference Include="System.IO.Packaging" Version="10.0.0-preview.3.25171.5" />
-    <PackageReference Include="System.Net.Http.WinHttpHandler" Version="10.0.0-preview.3.25171.5" />
-    <!-- Removing due to NU1510 -->
-    <!-- PackageReference Include="System.Text.Encodings.Web" Version="9.0.2" /-->
-    <!--
-        the following package(s) are from https://github.com/dotnet/wcf
-        they are pinned to the version 4.10.x due to a breaking change in newer versions.
-        see https://github.com/PowerShell/PowerShell/issues/19238 for details.
-     -->
-    <PackageReference Include="System.ServiceModel.Duplex" Version="4.10.3" NoWarn="NU1605" />
-    <PackageReference Include="System.ServiceModel.Http" Version="4.10.3" NoWarn="NU1605" />
-    <PackageReference Include="System.ServiceModel.NetTcp" Version="4.10.3" NoWarn="NU1605" />
-    <PackageReference Include="System.ServiceModel.Primitives" Version="4.10.3" NoWarn="NU1605" />
-    <PackageReference Include="System.ServiceModel.Security" Version="4.10.3" NoWarn="NU1605" />
-    <PackageReference Include="System.Private.ServiceModel" Version="4.10.3" NoWarn="NU1605" />
+    <PackageReference Include="System.IO.Packaging" Version="10.0.1" />
+    <PackageReference Include="System.Net.Http.WinHttpHandler" Version="10.0.1" />
+    <!-- the following package(s) are from https://github.com/dotnet/wcf -->
+    <PackageReference Include="System.ServiceModel.Http" Version="10.0.0-rc.2.final" />
+    <PackageReference Include="System.ServiceModel.NetTcp" Version="10.0.0-rc.2.final" />
+    <PackageReference Include="System.ServiceModel.Primitives" Version="10.0.0-rc.2.final" />
     <!-- the source could not be found for the following package(s) -->
-    <PackageReference Include="Microsoft.Windows.Compatibility" Version="10.0.0-preview.3.25174.1" />
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="10.0.1" />
   </ItemGroup>
 
 </Project>

@@ -30,7 +30,7 @@ The PowerShell developer experience includes the **development of modules** (in 
 as well as the experience of **hosting PowerShell and its APIs** in other applications and language runtimes.
 Special consideration should be given to topics like **backwards compatibility** with Windows PowerShell
 (e.g. with **PowerShell Standard**) and **integration with related developer tools**
-(e.g. .NET CLI or the PowerShell extension for VS Code).
+(e.g. .NET CLI or the PowerShell extension for Visual Studio Code).
 
 ### Members
 
