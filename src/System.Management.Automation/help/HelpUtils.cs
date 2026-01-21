@@ -14,7 +14,7 @@ namespace System.Management.Automation
         private static string userHomeHelpPath = null;
 
         /// <summary>
-        /// Get the path to $HOME.
+        /// Get the path to the user's PowerShell Help directory (a 'Help' subdirectory of the PSContentPath).
         /// </summary>
         /// <remarks>
         /// This path is cached for performance, but updated if the PSContentPath changes.

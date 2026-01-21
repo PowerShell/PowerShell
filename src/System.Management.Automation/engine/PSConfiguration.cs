@@ -166,26 +166,20 @@ namespace System.Management.Automation.Configuration
 
         /// <summary>
         /// Gets the PSContentPath from the configuration file.
-        /// If not configured, returns the default OneDrive location (Documents\PowerShell) without creating the config file.
-        /// This ensures PowerShell works on read-only file systems and avoids creating unnecessary files.
+        /// If not configured, returns the default platform content directory.
         /// </summary>
-        /// <returns>The configured PSContentPath if found, otherwise the default OneDrive location (never null).</returns>
+        /// <returns>The configured PSContentPath if found, otherwise the default platform content directory (never null).</returns>
         internal string GetPSContentPath()
         {
             string contentPath = ReadValueFromFile<string>(ConfigScope.CurrentUser, Constants.PSUserContentPathEnvVar);
             if (!string.IsNullOrEmpty(contentPath))
             {
                 contentPath = Environment.ExpandEnvironmentVariables(contentPath);
-                
-                // Send telemetry: custom path is configured
                 SendPSContentPathTelemetry("CustomPSContentPath");
-                
+
                 return contentPath;
             }
 
-            // Return default location using Platform.DefaultPSContentDirectory
-            // - Windows: Documents\PowerShell (OneDrive location)
-            // - Unix: XDG_DATA_HOME/powershell (~/.local/share/powershell)
             return Platform.DefaultPSContentDirectory;
         }
 

@@ -21,15 +21,11 @@ namespace Microsoft.PowerShell.Commands
     public class GetPSContentPathCommand : PSCmdlet
     {
         /// <summary>
-        /// Gets or sets whether to include the size of the content directory.
+        /// Gets the size of the content directory.
         /// </summary>
         [Parameter]
         public SwitchParameter Size { get; set; }
 
-        /// <summary>
-        /// EndProcessing method of this cmdlet.
-        /// Main logic is in EndProcessing to ensure all pipeline input is processed first.
-        /// </summary>
         protected override void EndProcessing()
         {
             try
@@ -377,7 +373,6 @@ namespace Microsoft.PowerShell.Commands
             }
 
             string action = Copy ? "Copy" : "Move";
-            string sourcePattern = System.IO.Path.Combine(sourcePath, "*");
             
             if (ShouldProcess($"content from '{sourcePath}' to '{destinationPath}'",
                              $"{action} PowerShell content"))

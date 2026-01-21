@@ -707,7 +707,8 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Gets the PSContent path from PowerShell.config.json or falls back to platform defaults.
-        /// Returns the configured custom path if set, otherwise returns the default OneDrive location (Documents\PowerShell).
+        /// Returns the configured custom path if set; otherwise returns a platform-specific default location.
+        /// (for example, OneDrive Documents\PowerShell on Windows or XDG_DATA_HOME ~/.local/share/powershell on Unix).
         /// </summary>
         /// <returns>The PSContent directory path (never null).</returns>
         internal static string GetPSContentPath()
