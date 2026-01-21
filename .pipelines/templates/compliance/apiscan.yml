@@ -45,12 +45,12 @@ jobs:
       env:
         ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
-    - template: ../SetVersionVariables.yml
+    - template: /.pipelines/templates/SetVersionVariables.yml@self
       parameters:
         ReleaseTagVar: $(ReleaseTagVar)
         CreateJson: no
 
-    - template: ../insert-nuget-config-azfeed.yml
+    - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
       parameters:
         repoRoot: '$(repoRoot)'
 
