@@ -26,6 +26,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public SwitchParameter Size { get; set; }
 
+        /// <summary>
+        /// EndProcessing method of this cmdlet.
+        /// Outputs the PSContentPath or its size information.
+        /// </summary>
         protected override void EndProcessing()
         {
             try
@@ -108,44 +112,28 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the PSContentPath to configure.
         /// </summary>
-        [Parameter(Mandatory = true, Position = 0, ValueFromPipelineByPropertyName = true)]
+        [Parameter(Mandatory = true, Position = 0)]
         [ValidateNotNullOrEmpty]
         public string Path { get; set; }
 
-        private string validatedPath = null;
-
-        /// <summary>
-        /// ProcessRecord method of this cmdlet.
-        /// Validates each path from the pipeline and stores the last valid one.
-        /// </summary>
-        protected override void ProcessRecord()
-        {
-            // Validate the path from pipeline input
-            if (ValidatePath(Path))
-            {
-                // Store the last valid path from pipeline
-                validatedPath = Path;
-            }
-        }
-
         /// <summary>
         /// EndProcessing method of this cmdlet.
-        /// Main logic is in EndProcessing to use the last valid path from the pipeline.
+        /// Validates the path and sets the PSContentPath in the configuration.
         /// </summary>
         protected override void EndProcessing()
         {
-            // If no valid path was found, exit early
-            if (validatedPath == null)
+            // Validate the path
+            if (!ValidatePath(Path))
             {
                 return;
             }
 
-            if (ShouldProcess($"PSContentPath = {validatedPath}", "Set PSContentPath"))
+            if (ShouldProcess($"PSContentPath = {Path}", "Set PSContentPath"))
             {
                 try
                 {
-                    PowerShellConfig.Instance.SetPSContentPath(validatedPath);
-                    WriteVerbose($"Successfully set PSContentPath to '{validatedPath}'");
+                    PowerShellConfig.Instance.SetPSContentPath(Path);
+                    WriteVerbose($"Successfully set PSContentPath to '{Path}'");
                     WriteWarning("PSContentPath changes will take effect after restarting PowerShell.");
                 }
                 catch (Exception ex)
@@ -154,7 +142,7 @@ namespace Microsoft.PowerShell.Commands
                         ex,
                         "SetPSContentPathFailed",
                         ErrorCategory.WriteError,
-                        validatedPath));
+                        Path));
                 }
             }
         }
