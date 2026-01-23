@@ -98,6 +98,13 @@ Describe 'ConvertTo-Json' -tags "CI" {
         1, $null, 2 | ConvertTo-Json -Compress | Should -Be '[1,null,2]'
     }
 
+    It "Should write null for properties that throw on access" {
+        $obj = [PSCustomObject]@{ Normal = "value" }
+        $obj | Add-Member -MemberType ScriptProperty -Name Throws -Value { throw "Error" }
+        $json = $obj | ConvertTo-Json -Compress
+        $json | Should -BeExactly '{"Normal":"value","Throws":null}'
+    }
+
     It "Should handle 'AutomationNull.Value' and 'NullString.Value' correctly" {
         [ordered]@{
             a = $null;
@@ -225,6 +232,17 @@ Describe 'ConvertTo-Json' -tags "CI" {
         { ConvertTo-Json -InputObject @{a=1} -Depth 101 } | Should -Throw
     }
 
+    It 'Should serialize hidden properties in PowerShell class' {
+        class TestClassWithHidden {
+            [string]$Visible = 'visible'
+            hidden [string]$Hidden = 'hidden'
+        }
+        $obj = [TestClassWithHidden]::new()
+        $json = $obj | ConvertTo-Json -Compress
+        $json | Should -Match '"Visible":\s*"visible"'
+        $json | Should -Match '"Hidden":\s*"hidden"'
+    }
+
     Context 'Nested raw object serialization' {
         BeforeAll {
             class TestClassWithFileInfo {
@@ -309,7 +327,9 @@ Describe 'ConvertTo-Json' -tags "CI" {
             $json = $arr | ConvertTo-Json -Depth 2
             $parsed = $json | ConvertFrom-Json
 
-            $parsed[0].PSObject.Properties.Name.Count | Should -Be 24
+            # Windows has 24 Adapted properties, Unix has 28 (includes Unix-specific file properties)
+            $expectedCount = if ($IsWindows) { 24 } else { 28 }
+            $parsed[0].PSObject.Properties.Name.Count | Should -Be $expectedCount
         }
 
         It 'Array of Get-Item FileInfo preserves Extended properties' {
@@ -411,7 +431,7 @@ Describe 'ConvertTo-Json' -tags "CI" {
         }
 
         It 'Non-pure PSObject (FileInfo) with ETS properties includes ETS when depth exceeded' {
-            $file = Get-Item $PSHOME/pwsh.exe
+            $file = Get-Item (Join-Path $PSHOME 'System.Management.Automation.dll')
             $pso = [PSObject]::new($file)
             $pso | Add-Member -NotePropertyName CustomExt -NotePropertyValue 'extended_value'
             $outer = [PSCustomObject]@{ File = $pso }
@@ -420,7 +440,7 @@ Describe 'ConvertTo-Json' -tags "CI" {
             $parsed = $result | ConvertFrom-Json
 
             $parsed.File.CustomExt | Should -BeExactly 'extended_value'
-            $parsed.File.value | Should -BeLike '*pwsh.exe'
+            $parsed.File.value | Should -BeLike '*System.Management.Automation.dll'
         }
 
     }
