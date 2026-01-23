@@ -13,8 +13,6 @@ jobs:
   variables:
   - name: HOMEBREW_NO_ANALYTICS
     value: 1
-  - name: runCodesignValidationInjection
-    value: false
   - name: NugetSecurityAnalysisWarningLevel
     value: none
   - group: DotNetPrivateBuildAccess
