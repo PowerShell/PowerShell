@@ -66,7 +66,9 @@ if ($IsWindows)
         try
         {
             Add-Type -TypeDefinition $code -OutputAssembly $moduleDirectory\TestCmdletForConstrainedLanguage.dll -ErrorAction Ignore
-        } catch {}
+        } catch {
+            Write-Verbose -Verbose 'Adding testcmdlet for CLM failed'
+        }
 
         Import-Module -Name $moduleDirectory\TestCmdletForConstrainedLanguage.dll
     }
