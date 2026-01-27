@@ -2064,7 +2064,7 @@ function Start-PSxUnit {
             )
         }
 
-        dotnet test @extraParams --report-xunit --report-xunit-filename $xUnitTestResultsFile --results-directory . --configuration $Options.configuration --no-progress
+        dotnet test @extraParams --report-xunit --report-xunit-filename $xUnitTestResultsFile --results-directory $PSScriptRoot --configuration $Options.configuration --no-progress
 
         Publish-TestResults -Path $xUnitTestResultsFile -Type 'XUnit' -Title 'Xunit Sequential'
     }
