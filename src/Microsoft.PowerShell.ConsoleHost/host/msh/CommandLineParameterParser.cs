@@ -934,7 +934,7 @@ namespace Microsoft.PowerShell
                     noexitSeen = true;
                     ParametersUsed |= ParameterBitmap.NoExit;
 
-                    if (SystemPolicy.IsFileOnlyEntryEnabled() && !SystemPolicy.IsNoExitAllowed())
+                    if (SystemPolicy.IsFileOnlyEntryEnabled())
                     {
                         SetCommandLineError(CommandLineParameterParserStrings.FileOnlyEntryRequired);
                         break;

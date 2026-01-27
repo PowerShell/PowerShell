@@ -87,23 +87,9 @@ namespace System.Management.Automation.Security
                 return s_isFileOnlyEntryEnabled.Value;
             }
 
-            const string SettingName = "EnableFileOnlyEntry";
+            const string SettingName = "FileOnlyEntry";
             s_isFileOnlyEntryEnabled = TestBooleanWldpSetting(SettingName);
             return s_isFileOnlyEntryEnabled.Value;
-        }
-
-        private static bool? s_allowNoExit;
-
-        internal static bool IsNoExitAllowed()
-        {
-            if (s_allowNoExit.HasValue)
-            {
-                return s_allowNoExit.Value;
-            }
-
-            const string SettingName = "AllowNoExit";
-            s_allowNoExit = TestBooleanWldpSetting(SettingName);
-            return s_allowNoExit.Value;
         }
 
         private static bool TestBooleanWldpSetting(string settingName)
@@ -136,7 +122,6 @@ namespace System.Management.Automation.Security
                 }
             }
 
-            s_isFileOnlyEntryEnabled = result;
             return result;
         }
 
