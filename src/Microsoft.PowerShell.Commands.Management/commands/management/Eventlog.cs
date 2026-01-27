@@ -1128,8 +1128,7 @@ namespace Microsoft.PowerShell.Commands
         {
             try
             {
-                string eventVwrExe = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System),
-                    "eventvwr.exe");
+                string eventVwrExe = Platform.SafeDeriveFromSpecialFolder(Environment.SpecialFolder.System, @"eventvwr.exe");
                 // codeql[cs/microsoft/command-line-injection] - This is expected PowerShell behavior where user inputted ComputerName is supported for the context of this method. The user assumes trust for the computer name they specify for event logging, and the process is on the user's system except for remoting in which case restricted remoting security guidelines should be used.
                 Process.Start(eventVwrExe, ComputerName);
             }
