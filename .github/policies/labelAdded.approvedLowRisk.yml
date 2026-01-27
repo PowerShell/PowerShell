@@ -14,13 +14,11 @@ configuration:
           - isOpen
           - labelAdded:
               label: Approved-LowRisk
-          # Unauthorized = NOT admin/write AND NOT in explicit allowlist
+          # Unauthorized = NOT admin AND NOT in explicit allowlist
           - not:
               or:
                 - activitySenderHasPermission:
                     permission: Admin
-                - activitySenderHasPermission:
-                    permission: Write
 
                 # Allowlist (enabled)
                 - isActivitySender:
