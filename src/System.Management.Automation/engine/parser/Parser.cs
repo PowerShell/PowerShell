@@ -6629,9 +6629,12 @@ namespace System.Management.Automation.Language
                                     {
                                         foundVerbatimArgument = true;
                                         scanning = false;
-                                        ast = new StringConstantExpressionAst(verbatimToken.Extent, verbatimToken.Value, StringConstantType.BareWord);
-                                        elements.Add(ast);
-                                        endExtent = ast.Extent;
+                                        if (verbatimToken.Value != string.Empty)
+                                        {
+                                            ast = new StringConstantExpressionAst(verbatimToken.Extent, verbatimToken.Value, StringConstantType.BareWord);
+                                            elements.Add(ast);
+                                            endExtent = ast.Extent;
+                                        }
                                     }
 
                                     break;
