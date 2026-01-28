@@ -34,6 +34,7 @@ if ($IsWindows)
                 SessionState.LanguageMode = PSLanguageMode.FullLanguage;
             }
 
+#if DEBUG
             if (SetLockdownMode)
             {
                 Environment.SetEnvironmentVariable("__PSLockdownPolicy", "0x80000007", EnvironmentVariableTarget.Machine);
@@ -43,6 +44,12 @@ if ($IsWindows)
             {
                 Environment.SetEnvironmentVariable("__PSLockdownPolicy", null, EnvironmentVariableTarget.Machine);
             }
+#else
+            if (SetLockdownMode || RevertLockdownMode)
+            {
+                throw new InvalidOperationException("__PSLockdownPolicy is only available in DEBUG builds. This is a test hook and should not be used in production.");
+            }
+#endif
         }
     }
 '@
@@ -59,7 +66,9 @@ if ($IsWindows)
         try
         {
             Add-Type -TypeDefinition $code -OutputAssembly $moduleDirectory\TestCmdletForConstrainedLanguage.dll -ErrorAction Ignore
-        } catch {}
+        } catch {
+            Write-Verbose -Verbose 'Adding testcmdlet for CLM failed'
+        }
 
         Import-Module -Name $moduleDirectory\TestCmdletForConstrainedLanguage.dll
     }
