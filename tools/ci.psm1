@@ -216,7 +216,7 @@ function Invoke-CIxUnit
         throw "CoreCLR pwsh.exe was not built"
     }
 
-    $xUnitTestResultsFile = Join-Path -Path $PWD -ChildPath "xUnitTestResults.xml"
+    $xUnitTestResultsFile = "xUnitTestResults.xml"
 
     Start-PSxUnit -xUnitTestResultsFile $xUnitTestResultsFile
     Push-Artifact -Path $xUnitTestResultsFile -name xunit
