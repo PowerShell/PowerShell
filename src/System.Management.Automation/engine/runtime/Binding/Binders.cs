@@ -6932,19 +6932,27 @@ namespace System.Management.Automation.Language
                 numArgs -= 1;
             }
 
-            (string, object)[] argValues = new (string, object)[numArgs];
             int startNameIndex = callInfo.ArgumentCount - callInfo.ArgumentNames.Count;
+            object[] argValues = new object[numArgs];
+            // Keep as empty by default and only allocate if there are any
+            // labels present. This allows FindBestMethod to shortcut some code
+            // for efficiency.
+            string[] argLabels = [];
             for (int i = 0; i < numArgs; ++i)
             {
                 object arg = args[i].Value;
-                string argName = string.Empty;
+                argValues[i] = arg == AutomationNull.Value ? null : arg;
 
                 int argNameIndex = i - startNameIndex;
                 if (argNameIndex >= 0 && callInfo.ArgumentNames.Count > argNameIndex)
                 {
-                    argName = callInfo.ArgumentNames[argNameIndex];
+                    string label = callInfo.ArgumentNames[argNameIndex];
+                    if (argValues.Length == 0)
+                    {
+                        argValues = new string[numArgs];
+                    }
+                    argValues[i] = label;
                 }
-                argValues[i] = (argName, arg == AutomationNull.Value ? null : arg);
             }
 
             var result = Adapter.FindBestMethod(
@@ -6952,6 +6960,7 @@ namespace System.Management.Automation.Language
                 psMethodInvocationConstraints,
                 allowCastingToByRefLikeType: true,
                 argValues,
+                argLabels,
                 ref errorId,
                 ref errorMsg,
                 out expandParamsOnBest,

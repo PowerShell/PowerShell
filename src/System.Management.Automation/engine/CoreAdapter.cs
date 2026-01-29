@@ -1395,7 +1395,8 @@ namespace System.Management.Automation
                 methods,
                 invocationConstraints,
                 allowCastingToByRefLikeType,
-                arguments.Select(a => (string.Empty, a)).ToArray(),
+                arguments,
+                argumentLabels: [],
                 ref errorId,
                 ref errorMsg,
                 out expandParamsOnBest,
@@ -1410,7 +1411,8 @@ namespace System.Management.Automation
         /// <param name="methods">Different overloads for a method.</param>
         /// <param name="invocationConstraints">Invocation constraints.</param>
         /// <param name="allowCastingToByRefLikeType">True if we accept implicit/explicit casting conversion to a ByRef-like parameter type for method resolution.</param>
-        /// <param name="arguments">Arguments to check against the overloads. Each entry is a tuple of the argument name and value.</param>
+        /// <param name="arguments">Arguments to check against the overloads.</param>
+        /// <param name="argumentLabels">The labels of the arguments.</param>
         /// <param name="errorId">If no best method, the error id to use in the error message.</param>
         /// <param name="errorMsg">If no best method, the error message (format string) to use in the error message.</param>
         /// <param name="expandParamsOnBest">True if the best method's last parameter is a params method.</param>
@@ -1422,7 +1424,8 @@ namespace System.Management.Automation
             MethodInformation[] methods,
             PSMethodInvocationConstraints invocationConstraints,
             bool allowCastingToByRefLikeType,
-            (string, object)[] arguments,
+            object[] arguments,
+            string[] argumentLabels,
             ref string errorId,
             ref string errorMsg,
             out bool expandParamsOnBest,
@@ -1435,6 +1438,7 @@ namespace System.Management.Automation
                 invocationConstraints,
                 allowCastingToByRefLikeType,
                 arguments,
+                argumentLabels,
                 ref errorId,
                 ref errorMsg,
                 out expandParamsOnBest,
@@ -1503,7 +1507,8 @@ namespace System.Management.Automation
             MethodInformation[] methods,
             PSMethodInvocationConstraints invocationConstraints,
             bool allowCastingToByRefLikeType,
-            (string, object)[] arguments,
+            object[] arguments,
+            string[] argumentLabels,
             ref string errorId,
             ref string errorMsg,
             out bool expandParamsOnBest,
@@ -1523,7 +1528,7 @@ namespace System.Management.Automation
                 && !methods[0].isGeneric
                 && (methods[0].method is null || !methods[0].method.DeclaringType.IsGenericTypeDefinition)
                 && methods[0].parameters.Length == arguments.Length
-                && !HasNamedArgument(arguments))
+                && argumentLabels.Length == 0)
             {
                 argumentMap = new int?[arguments.Length];
                 for (int i = 0; i < arguments.Length; i++)
@@ -1572,7 +1577,11 @@ namespace System.Management.Automation
                     else
                     {
                         // Infer the generic method when generic parameter types are not specified.
-                        Type[] argumentTypes = arguments.Select(a => EffectiveArgumentType(a.Item2)).ToArray();
+                        Type[] argumentTypes = new Type[arguments.Length];
+                        for (int j = 0; j < arguments.Length; j++)
+                        {
+                            argumentTypes[j] = EffectiveArgumentType(arguments[j]);
+                        }
                         Type[] paramConstraintTypes = invocationConstraints?.ParameterTypes;
 
                         if (paramConstraintTypes is not null)
@@ -1600,7 +1609,7 @@ namespace System.Management.Automation
                     continue;
                 }
 
-                if (TryProcessOverload(methodInfo, arguments, allowCastingToByRefLikeType, out OverloadCandidate candidate))
+                if (TryProcessOverload(methodInfo, arguments, argumentLabels, allowCastingToByRefLikeType, out OverloadCandidate candidate))
                 {
                     candidates.Add(candidate);
                 }
@@ -1640,7 +1649,7 @@ namespace System.Management.Automation
 
             OverloadCandidate bestCandidate = candidates.Count == 1
                 ? candidates[0]
-                : FindBestCandidate(candidates, arguments.Select(a => a.Item2).ToArray(), invocationConstraints);
+                : FindBestCandidate(candidates, arguments, invocationConstraints);
             if (bestCandidate != null)
             {
                 expandParamsOnBest = bestCandidate.ExpandedParameterTypes != null;
@@ -1655,22 +1664,11 @@ namespace System.Management.Automation
         }
 
 #nullable enable
-        private static bool HasNamedArgument((string?, object?)[] arguments)
-        {
-            for (int i = 0; i < arguments.Length; i++)
-            {
-                if (!string.IsNullOrEmpty(arguments[i].Item1))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
 
         private static bool TryProcessOverload(
             MethodInformation methodInfo,
-            (string?, object?)[] arguments,
+            object?[] arguments,
+            string?[] argumentLabels,
             bool allowCastingToByRefLikeType,
             [NotNullWhen(true)] out OverloadCandidate? selectedCandidate)
         {
@@ -1713,7 +1711,12 @@ namespace System.Management.Automation
             OverloadCandidate candidate = new OverloadCandidate(methodInfo, arguments.Length);
             for (int i = 0; i < arguments.Length; i++)
             {
-                (string? argName, object? argValue) = arguments[i];
+                object? argValue = arguments[i];
+                string? argName = null;
+                if (argumentLabels.Length > i)
+                {
+                    argName = argumentLabels[i];
+                }
 
                 int paramIndex;
                 if (string.IsNullOrEmpty(argName))
@@ -1752,7 +1755,12 @@ namespace System.Management.Automation
                     int extraParamsCount = 1;
                     for (int j = i + 1; j < arguments.Length; j++)
                     {
-                        string? nextArgName = arguments[j].Item1;
+                        string? nextArgName = null;
+                        if (argumentLabels.Length > j)
+                        {
+                            nextArgName = argumentLabels[j];
+                        }
+
                         if (!string.IsNullOrEmpty(nextArgName))
                         {
                             // Next arg was named so not part of the params.
@@ -1805,7 +1813,7 @@ namespace System.Management.Automation
                         // the argument element type.
                         for (int j = i; j < i + extraParamsCount; j++)
                         {
-                            object? nextArgValue = arguments[j].Item2;
+                            object? nextArgValue = arguments[j];
 
                             candidate.ConversionRanks[j] = GetArgumentConversionRank(
                                 nextArgValue,
