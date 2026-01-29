@@ -124,7 +124,7 @@ namespace Microsoft.Management.UI.Internal
         /// </summary>
         /// <param name="key">The key pressed.</param>
         /// <returns>True if the key is a navigation key.</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0051:Remove unused private members")]
         private static bool IsFlowDirectionKey(Key key)
         {
             switch (key)
