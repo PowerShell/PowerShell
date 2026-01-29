@@ -263,7 +263,7 @@ namespace System.Diagnostics.Eventing
             public short Milliseconds;
         }
 
-        [StructLayout(LayoutKind.Explicit, CharSet = CharSet.Unicode)]
+        [StructLayout(LayoutKind.Explicit)]
         [SecurityCritical]
         internal struct EvtVariant
         {
