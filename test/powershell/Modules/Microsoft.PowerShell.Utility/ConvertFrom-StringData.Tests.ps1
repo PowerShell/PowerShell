@@ -64,6 +64,21 @@ bazz = 2
 
 	$(ConvertFrom-StringData -StringData $sampleData).Values | Should -BeIn @("0","1","2")
     }
+
+    It "Should throw if input is unescaped and -AsLiteral switch is not set" {
+        { ConvertFrom-StringData -StringData 'a=b\C' } | Should -Throw -ErrorId "System.Text.RegularExpressions.RegexParseException,Microsoft.PowerShell.Commands.ConvertFromStringDataCommand"
+    }
+
+    It "Should return a hashtable if input is unescaped and -AsLiteral switch is set with input <string>" -TestCases @(
+      @{ String = 'a=b\C'; Keys = 'a'; Values = 'b\C' }
+      @{ String = 'a\b=c\D'; Keys = 'a\\b'; Values = 'c\D' }
+    ) {
+        param($String, $Keys, $Values)
+        $result = ConvertFrom-StringData -StringData $String -AsLiteral
+        $result | Should -BeOfType [hashtable]
+        $result.Keys | Should -BeExactly $Keys
+        $result.Values | Should -BeExactly $Values
+    }
 }
 
 Describe "Delimiter parameter tests" -Tags "CI" {
