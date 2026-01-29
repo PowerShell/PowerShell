@@ -49,4 +49,3 @@ Describe "New-Guid" -Tags "CI" {
         $guid1.ToString() | Should -Not -Be $guid2.ToString()
     }
 }
-
