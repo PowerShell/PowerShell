@@ -14,19 +14,20 @@ namespace System.Management.Automation
         private static string userHomeHelpPath = null;
 
         /// <summary>
-        /// Get the path to $HOME.
+        /// Get the path to the user's PowerShell Help directory (a 'Help' subdirectory of the PSContentPath).
         /// </summary>
+        /// <remarks>
+        /// This path is cached for performance, but updated if the PSContentPath changes.
+        /// This ensures it reflects changes to the PSContentPath experimental feature or config.
+        /// </remarks>
         internal static string GetUserHomeHelpSearchPath()
         {
-            if (userHomeHelpPath == null)
+            string expectedPath = Path.Combine(Utils.GetPSContentPath(), "Help");
+            
+            // Update cache if path changed or not yet initialized
+            if (userHomeHelpPath != expectedPath)
             {
-#if UNIX
-                var userModuleFolder = Platform.SelectProductNameForDirectory(Platform.XDG_Type.USER_MODULES);
-                string userScopeRootPath = System.IO.Path.GetDirectoryName(userModuleFolder);
-#else
-                string userScopeRootPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "PowerShell");
-#endif
-                userHomeHelpPath = Path.Combine(userScopeRootPath, "Help");
+                userHomeHelpPath = expectedPath;
             }
 
             return userHomeHelpPath;

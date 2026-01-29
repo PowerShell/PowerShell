@@ -85,14 +85,34 @@ namespace System.Management.Automation.Configuration
             systemWideConfigDirectory = Utils.DefaultPowerShellAppBase;
             systemWideConfigFile = Path.Combine(systemWideConfigDirectory, ConfigFileName);
 
-            // Sets the per-user configuration directory
+#if UNIX
+            // On Unix: Config files follow XDG standards and should always be in ~/.config/powershell
+            perUserConfigDirectory = Platform.ConfigDirectory;
+            perUserConfigFile = Path.Combine(Platform.ConfigDirectory, ConfigFileName);
+#else
+            // On Windows: Check for config file with fallback logic:
+            // 1. Check LocalAppData first (future-proofing for when we change the default)
+            // 2. Fall back to Documents/OneDrive location (current default)
             // Note: This directory may or may not exist depending upon the execution scenario.
             // Writes will attempt to create the directory if it does not already exist.
-            perUserConfigDirectory = Platform.ConfigDirectory;
-            if (!string.IsNullOrEmpty(perUserConfigDirectory))
+            string localAppDataConfig = Platform.LocalAppDataPSContentDirectory;
+            string localAppDataConfigFile = Path.Combine(localAppDataConfig, ConfigFileName);
+
+            if (File.Exists(localAppDataConfigFile))
             {
-                perUserConfigFile = Path.Combine(perUserConfigDirectory, ConfigFileName);
+                // Config exists in LocalAppData - use that location
+                perUserConfigDirectory = localAppDataConfig;
+                perUserConfigFile = localAppDataConfigFile;
+                
+                SendPSContentPathTelemetry("UserConfigLocation:LocalAppData");
             }
+            else
+            {
+                // Config doesn't exist in LocalAppData, use Documents location (default)
+                perUserConfigDirectory = Platform.ConfigDirectory;
+                perUserConfigFile = Path.Combine(Platform.ConfigDirectory, ConfigFileName);
+            }
+#endif
 
             emptyConfig = new JObject();
             configRoots = new JObject[2];
@@ -142,6 +162,60 @@ namespace System.Management.Automation.Configuration
             }
 
             return modulePath;
+        }
+
+        /// <summary>
+        /// Gets the PSContentPath from the configuration file.
+        /// If not configured, returns the default platform content directory.
+        /// </summary>
+        /// <returns>The configured PSContentPath if found, otherwise the default platform content directory (never null).</returns>
+        internal string GetPSContentPath()
+        {
+            string contentPath = ReadValueFromFile<string>(ConfigScope.CurrentUser, Constants.PSUserContentPathEnvVar);
+            if (!string.IsNullOrEmpty(contentPath))
+            {
+                contentPath = Environment.ExpandEnvironmentVariables(contentPath);
+                SendPSContentPathTelemetry("CustomPSContentPath");
+
+                return contentPath;
+            }
+
+            return Platform.DefaultPSContentDirectory;
+        }
+
+        /// <summary>
+        /// Sends telemetry indicating PSContentPath customization is in use.
+        /// Only sends a flag - never actual paths.
+        /// </summary>
+        private static void SendPSContentPathTelemetry(string name)
+        {
+            try
+            {
+                Microsoft.PowerShell.Telemetry.ApplicationInsightsTelemetry.SendTelemetryMetric(
+                    Microsoft.PowerShell.Telemetry.TelemetryType.FeatureUse,
+                    name,
+                    value: 1.0);
+            }
+            catch
+            {
+                // Silently ignore telemetry failures
+            }
+        }
+
+        /// <summary>
+        /// Sets the PSContentPath in the configuration file.
+        /// </summary>
+        /// <param name="path">The path to set as PSContentPath.</param>
+        internal void SetPSContentPath(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+            {
+                RemoveValueFromFile<string>(ConfigScope.CurrentUser, Constants.PSUserContentPathEnvVar);
+            }
+            else
+            {
+                WriteValueToFile<string>(ConfigScope.CurrentUser, Constants.PSUserContentPathEnvVar, path);
+            }
         }
 
         /// <summary>
