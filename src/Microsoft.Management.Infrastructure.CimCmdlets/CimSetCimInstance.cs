@@ -186,94 +186,102 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 return true;
             }
 
+            // Manual use of IDictionaryEnumerator instead of foreach to avoid DictionaryEntry box allocations.
             IDictionaryEnumerator enumerator = properties.GetEnumerator();
-            while (enumerator.MoveNext())
+            try
             {
-                object value = GetBaseObject(enumerator.Value);
-                string key = enumerator.Key.ToString();
-                DebugHelper.WriteLog("Input property name '{0}' with value '{1}'", 1, key, value);
-
-                try
+                while (enumerator.MoveNext())
                 {
-                    CimProperty property = cimInstance.CimInstanceProperties[key];
-                    // modify existing property value if found
-                    if (property != null)
+                    object value = GetBaseObject(enumerator.Value);
+                    string key = enumerator.Key.ToString();
+                    DebugHelper.WriteLog("Input property name '{0}' with value '{1}'", 1, key, value);
+
+                    try
                     {
-                        if ((property.Flags & CimFlags.ReadOnly) == CimFlags.ReadOnly)
+                        CimProperty property = cimInstance.CimInstanceProperties[key];
+                        // modify existing property value if found
+                        if (property != null)
                         {
-                            // can not modify ReadOnly property
-                            exception = new CimException(string.Format(CultureInfo.CurrentUICulture,
-                                CimCmdletStrings.CouldNotModifyReadonlyProperty, key, cimInstance));
-                            return false;
-                        }
-                        // allow modify the key property value as long as it is not readonly,
-                        // then the modified ciminstance is stand for a different CimInstance
-                        DebugHelper.WriteLog("Set property name '{0}' has old value '{1}'", 4, key, property.Value);
-                        property.Value = value;
-                    }
-                    else // For dynamic instance, it is valid to add a new property
-                    {
-                        CimProperty newProperty;
-                        if (value == null)
-                        {
-                            newProperty = CimProperty.Create(
-                                key,
-                                value,
-                                CimType.String,
-                                CimFlags.Property);
-                        }
-                        else
-                        {
-                            CimType referenceType = CimType.Unknown;
-                            object referenceObject = GetReferenceOrReferenceArrayObject(value, ref referenceType);
-                            if (referenceObject != null)
+                            if ((property.Flags & CimFlags.ReadOnly) == CimFlags.ReadOnly)
                             {
-                                newProperty = CimProperty.Create(
-                                    key,
-                                    referenceObject,
-                                    referenceType,
-                                    CimFlags.Property);
+                                // can not modify ReadOnly property
+                                exception = new CimException(string.Format(CultureInfo.CurrentUICulture,
+                                    CimCmdletStrings.CouldNotModifyReadonlyProperty, key, cimInstance));
+                                return false;
                             }
-                            else
+                            // allow modify the key property value as long as it is not readonly,
+                            // then the modified ciminstance is stand for a different CimInstance
+                            DebugHelper.WriteLog("Set property name '{0}' has old value '{1}'", 4, key, property.Value);
+                            property.Value = value;
+                        }
+                        else // For dynamic instance, it is valid to add a new property
+                        {
+                            CimProperty newProperty;
+                            if (value == null)
                             {
                                 newProperty = CimProperty.Create(
                                     key,
                                     value,
+                                    CimType.String,
                                     CimFlags.Property);
-                            }
-                        }
-
-                        try
-                        {
-                            cimInstance.CimInstanceProperties.Add(newProperty);
-                        }
-                        catch (CimException e)
-                        {
-                            if (e.NativeErrorCode == NativeErrorCode.Failed)
-                            {
-                                string errorMessage = string.Format(CultureInfo.CurrentUICulture,
-                                    CimCmdletStrings.UnableToAddPropertyToInstance,
-                                    newProperty.Name,
-                                    cimInstance);
-                                exception = new CimException(errorMessage, e);
                             }
                             else
                             {
-                                exception = e;
+                                CimType referenceType = CimType.Unknown;
+                                object referenceObject = GetReferenceOrReferenceArrayObject(value, ref referenceType);
+                                if (referenceObject != null)
+                                {
+                                    newProperty = CimProperty.Create(
+                                        key,
+                                        referenceObject,
+                                        referenceType,
+                                        CimFlags.Property);
+                                }
+                                else
+                                {
+                                    newProperty = CimProperty.Create(
+                                        key,
+                                        value,
+                                        CimFlags.Property);
+                                }
                             }
 
-                            return false;
-                        }
+                            try
+                            {
+                                cimInstance.CimInstanceProperties.Add(newProperty);
+                            }
+                            catch (CimException e)
+                            {
+                                if (e.NativeErrorCode == NativeErrorCode.Failed)
+                                {
+                                    string errorMessage = string.Format(CultureInfo.CurrentUICulture,
+                                        CimCmdletStrings.UnableToAddPropertyToInstance,
+                                        newProperty.Name,
+                                        cimInstance);
+                                    exception = new CimException(errorMessage, e);
+                                }
+                                else
+                                {
+                                    exception = e;
+                                }
 
-                        DebugHelper.WriteLog("Add non-key property name '{0}' with value '{1}'.", 3, key, value);
+                                return false;
+                            }
+
+                            DebugHelper.WriteLog("Add non-key property name '{0}' with value '{1}'.", 3, key, value);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        DebugHelper.WriteLog("Exception {0}", 4, e);
+                        exception = e;
+                        return false;
                     }
                 }
-                catch (Exception e)
-                {
-                    DebugHelper.WriteLog("Exception {0}", 4, e);
-                    exception = e;
-                    return false;
-                }
+            }
+            finally
+            {
+                (enumerator as IDisposable)?.Dispose();
             }
 
             return true;
