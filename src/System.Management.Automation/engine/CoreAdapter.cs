@@ -1162,91 +1162,6 @@ namespace System.Management.Automation
             return method;
         }
 
-#nullable enable
-        [DebuggerDisplay("OverloadCandidate: {Method.methodDefinition}")]
-        private sealed class OverloadCandidate
-        {
-            /// <summary>
-            /// Gets the underlying method information for this overload.
-            /// </summary>
-            public MethodInformation Method { get; }
-
-            /// <summary>
-            /// Gets the types for each parameters for the provided method.
-            /// </summary>
-            public Type[] ParameterTypes { get; }
-
-            /// <summary>
-            /// If set this contains the expanded param arg types based on
-            /// the caller supplied count.
-            /// </summary>
-            public Type[]? ExpandedParameterTypes { get; internal set; }
-
-            /// <summary>
-            /// The conversion ranks for the caller supplied arguments.
-            /// </summary>
-            public ConversionRank[] ConversionRanks { get; }
-
-            /// <summary>
-            /// Gets the index map that maps the parameter index to the caller
-            /// supplied argument index. A value of null means no caller
-            /// supplied value was present for the parameter of that index.
-            /// </summary>
-            public int?[] ArgumentMap { get; internal set; }
-
-            public OverloadCandidate(MethodInformation method, int argumentCount)
-            {
-                Method = method;
-                ParameterTypes = new Type[method.parameters.Length];
-                for (int i = 0; i < method.parameters.Length; i++)
-                {
-                    ParameterTypes[i] = method.parameters[i].parameterType;
-                }
-                ConversionRanks = new ConversionRank[argumentCount];
-                ArgumentMap = new int?[ParameterTypes.Length];
-            }
-
-            /// <summary>
-            /// Update the internal state that tracks how many caller supplied
-            /// extra params have been supplied as individual objects rather
-            /// than as an array.
-            /// </summary>
-            /// <param name="count">
-            /// The number of individual arguments supplied for the extra params arg.
-            /// </param>
-            /// <param name="elementType">
-            /// The element type of the params argument.
-            /// </param>
-            public void SetExtraParamsCount(int count, Type elementType)
-            {
-                if (count == 0)
-                {
-                    // A count of zero is treated as the literal array type.
-                    ExpandedParameterTypes = ParameterTypes;
-                    return;
-                }
-
-                ExpandedParameterTypes = new Type[ParameterTypes.Length + count - 1];
-                Array.Copy(ParameterTypes, ExpandedParameterTypes, ParameterTypes.Length - 1);
-                ExpandedParameterTypes[ParameterTypes.Length - 1] = elementType;
-
-                if (count > 1)
-                {
-                    // A count greater than one needs to extend the type array
-                    // as well as the argument map.
-                    int?[] originalMap = ArgumentMap;
-                    ArgumentMap = new int?[ExpandedParameterTypes.Length];
-                    Array.Copy(originalMap, ArgumentMap, originalMap.Length);
-                    for (int i = originalMap.Length; i < ArgumentMap.Length; i++)
-                    {
-                        ExpandedParameterTypes[i] = elementType;
-                        ArgumentMap[i] = i;
-                    }
-                }
-            }
-        }
-#nullable disable
-
         private static bool IsInvocationTargetConstraintSatisfied(MethodInformation method, PSMethodInvocationConstraints invocationConstraints)
         {
             Dbg.Assert(method != null, "Caller should verify method != null");
@@ -1381,7 +1296,7 @@ namespace System.Management.Automation
         /// <param name="errorMsg">If no best method, the error message (format string) to use in the error message.</param>
         /// <param name="expandParamsOnBest">True if the best method's last parameter is a params method.</param>
         /// <param name="callNonVirtually">True if best method should be called as non-virtual.</param>
-        internal static MethodInformation FindBestMethod(
+        internal static OverloadCandidate FindBestMethod(
             MethodInformation[] methods,
             PSMethodInvocationConstraints invocationConstraints,
             bool allowCastingToByRefLikeType,
@@ -1400,8 +1315,7 @@ namespace System.Management.Automation
                 ref errorId,
                 ref errorMsg,
                 out expandParamsOnBest,
-                out callNonVirtually,
-                out int?[] _);
+                out callNonVirtually);
         }
 
         /// <summary>
@@ -1412,15 +1326,14 @@ namespace System.Management.Automation
         /// <param name="invocationConstraints">Invocation constraints.</param>
         /// <param name="allowCastingToByRefLikeType">True if we accept implicit/explicit casting conversion to a ByRef-like parameter type for method resolution.</param>
         /// <param name="arguments">Arguments to check against the overloads.</param>
-        /// <param name="argumentLabels">The labels of the arguments.</param>
+        /// <param name="argumentLabels">The labels of the arguments, or empty array if no labels are present.</param>
         /// <param name="errorId">If no best method, the error id to use in the error message.</param>
         /// <param name="errorMsg">If no best method, the error message (format string) to use in the error message.</param>
         /// <param name="expandParamsOnBest">True if the best method's last parameter is a params method.</param>
         /// <param name="callNonVirtually">True if best method should be called as non-virtual.</param>
-        /// <param name="argumentMap">
         /// Maps the index of the MethodInformation parameter to the index of the argument to use, value is null if the caller did not provide a value for that argument.
         /// </param>
-        internal static MethodInformation FindBestMethod(
+        internal static OverloadCandidate FindBestMethod(
             MethodInformation[] methods,
             PSMethodInvocationConstraints invocationConstraints,
             bool allowCastingToByRefLikeType,
@@ -1429,11 +1342,10 @@ namespace System.Management.Automation
             ref string errorId,
             ref string errorMsg,
             out bool expandParamsOnBest,
-            out bool callNonVirtually,
-            out int?[] argumentMap)
+            out bool callNonVirtually)
         {
             callNonVirtually = false;
-            var methodInfo = FindBestMethodImpl(
+            var selectedCandidate = FindBestMethodImpl(
                 methods,
                 invocationConstraints,
                 allowCastingToByRefLikeType,
@@ -1441,9 +1353,8 @@ namespace System.Management.Automation
                 argumentLabels,
                 ref errorId,
                 ref errorMsg,
-                out expandParamsOnBest,
-                out argumentMap);
-            if (methodInfo == null)
+                out expandParamsOnBest);
+            if (selectedCandidate == null)
             {
                 return null;
             }
@@ -1460,6 +1371,7 @@ namespace System.Management.Automation
             // }
             //
             // If we have such information in invocationConstraints then we should call method on the baseClass.
+            MethodInformation methodInfo = selectedCandidate.Method;
             if (invocationConstraints != null &&
                 invocationConstraints.MethodTargetType != null &&
                 methodInfo.method != null &&
@@ -1473,13 +1385,13 @@ namespace System.Management.Automation
 
                     if (targetTypeMethod != null && (targetTypeMethod.IsPublic || targetTypeMethod.IsFamily || targetTypeMethod.IsFamilyOrAssembly))
                     {
-                        methodInfo = new MethodInformation(targetTypeMethod, 0);
+                        selectedCandidate.Method = new MethodInformation(targetTypeMethod, 0);
                         callNonVirtually = true;
                     }
                 }
             }
 
-            return methodInfo;
+            return selectedCandidate;
         }
 
         private static Type[] ResolveGenericTypeParameters(object[] genericTypeParameters)
@@ -1503,7 +1415,7 @@ namespace System.Management.Automation
             return genericParamTypes;
         }
 
-        private static MethodInformation FindBestMethodImpl(
+        private static OverloadCandidate FindBestMethodImpl(
             MethodInformation[] methods,
             PSMethodInvocationConstraints invocationConstraints,
             bool allowCastingToByRefLikeType,
@@ -1511,8 +1423,7 @@ namespace System.Management.Automation
             string[] argumentLabels,
             ref string errorId,
             ref string errorMsg,
-            out bool expandParamsOnBest,
-            out int?[] argumentMap)
+            out bool expandParamsOnBest)
         {
             expandParamsOnBest = false;
 
@@ -1520,8 +1431,9 @@ namespace System.Management.Automation
             // We skip the optimization, if the method hasVarArgs, since in the case where arguments
             // and parameters are of the same size, we want to know if the last argument should
             // be turned into an array.
-            // We also skip the optimization if the number of arguments and parameters is different
-            // so we let the loop deal with possible optional parameters.
+            // We also skip the optimization if:
+            //   the number of arguments and parameters is different to let the loop deal with possible optional parameters.
+            //   there are argument labels provided by the caller which can change the argument ordering
             if (methods.Length == 1
                 && !methods[0].hasVarArgs
                 // generic methods need to be double checked in a loop below - generic methods can be rejected if type inference fails
@@ -1530,12 +1442,7 @@ namespace System.Management.Automation
                 && methods[0].parameters.Length == arguments.Length
                 && argumentLabels.Length == 0)
             {
-                argumentMap = new int?[arguments.Length];
-                for (int i = 0; i < arguments.Length; i++)
-                {
-                    argumentMap[i] = i;
-                }
-                return methods[0];
+                return new OverloadCandidate(methods[0], arguments.Length, skipArgumentMapping: true);
             }
 
             Type[] genericParamTypes = ResolveGenericTypeParameters(invocationConstraints?.GenericTypeParameters);
@@ -1624,7 +1531,6 @@ namespace System.Management.Automation
                         CultureInfo.InvariantCulture,
                         ExtendedTypeSystem.CannotInvokeStaticMethodOnUninstantiatedGenericType,
                         methods[0].method.DeclaringType.FullName);
-                    argumentMap = null;
                     return null;
                 }
                 else if (genericParamTypes is not null)
@@ -1635,14 +1541,12 @@ namespace System.Management.Automation
                         methods[0].method.Name,
                         genericParamTypes.Length,
                         arguments.Length);
-                    argumentMap = null;
                     return null;
                 }
                 else
                 {
                     errorId = "MethodCountCouldNotFindBest";
                     errorMsg = ExtendedTypeSystem.MethodArgumentCountException;
-                    argumentMap = null;
                     return null;
                 }
             }
@@ -1653,13 +1557,11 @@ namespace System.Management.Automation
             if (bestCandidate != null)
             {
                 expandParamsOnBest = bestCandidate.ExpandedParameterTypes != null;
-                argumentMap = bestCandidate.ArgumentMap;
-                return bestCandidate.Method;
+                return bestCandidate;
             }
 
             errorId = "MethodCountCouldNotFindBest";
             errorMsg = ExtendedTypeSystem.MethodAmbiguousException;
-            argumentMap = null;
             return null;
         }
 
@@ -1708,7 +1610,8 @@ namespace System.Management.Automation
                 parameterNames.Add((parameters[i].name, i));
             }
 
-            OverloadCandidate candidate = new OverloadCandidate(methodInfo, arguments.Length);
+            bool skipArgumentMapping = argumentLabels.Length == 0;
+            OverloadCandidate candidate = new OverloadCandidate(methodInfo, arguments.Length, skipArgumentMapping);
             for (int i = 0; i < arguments.Length; i++)
             {
                 object? argValue = arguments[i];
@@ -1745,7 +1648,10 @@ namespace System.Management.Automation
                 }
 
                 ParameterInformation paramInfo = parameters[paramIndex];
-                candidate.ArgumentMap[paramIndex] = i;
+                if (!skipArgumentMapping)
+                {
+                    candidate.ArgumentMap[paramIndex] = i;
+                }
 
                 if (paramInfo.isParamArray)
                 {
@@ -1968,7 +1874,7 @@ namespace System.Management.Automation
             string errorId = null;
             string errorMsg = null;
 
-            MethodInformation bestMethod = FindBestMethod(
+            OverloadCandidate bestMethod = FindBestMethod(
                 methods,
                 invocationConstraints,
                 allowCastingToByRefLikeType: false,
@@ -1983,8 +1889,8 @@ namespace System.Management.Automation
                 throw new MethodException(errorId, null, errorMsg, methodName, arguments.Length);
             }
 
-            newArguments = GetMethodArgumentsBase(methodName, bestMethod.parameters, arguments, expandParamsOnBest);
-            return bestMethod;
+            newArguments = GetMethodArgumentsBase(methodName, bestMethod.Method.parameters, arguments, expandParamsOnBest);
+            return bestMethod.Method;
         }
 
         /// <summary>
@@ -2766,6 +2672,110 @@ namespace System.Management.Automation
             return (MethodInvoker)dynamicMethod.CreateDelegate(typeof(MethodInvoker));
         }
     }
+
+#nullable enable
+    [DebuggerDisplay("OverloadCandidate: {Method.methodDefinition}")]
+    internal sealed class OverloadCandidate
+    {
+        private int[] _argumentMap;
+
+        /// <summary>
+        /// Gets and sets the underlying method information for this overload.
+        /// The method may be changed in FindBestMethod if a non-virtual method
+        /// of the base class was requested.
+        /// </summary>
+        public MethodInformation Method { get; set; }
+
+        /// <summary>
+        /// Gets the types for each parameters for the provided method.
+        /// </summary>
+        public Type[] ParameterTypes { get; }
+
+        /// <summary>
+        /// If set this contains the expanded param arg types based on
+        /// the caller supplied count.
+        /// </summary>
+        public Type[]? ExpandedParameterTypes { get; internal set; }
+
+        /// <summary>
+        /// The conversion ranks for the caller supplied arguments.
+        /// </summary>
+        public ConversionRank[] ConversionRanks { get; }
+
+        /// <summary>
+        /// Gets the index map that maps the parameter index to the caller
+        /// supplied argument index. A value of -1 means no caller
+        /// supplied value was present for the parameter of that index.
+        /// </summary>
+        public int[] ArgumentMap => _argumentMap;
+
+        public OverloadCandidate(MethodInformation method, int argumentCount, bool skipArgumentMapping)
+        {
+            Method = method;
+            ParameterTypes = new Type[method.parameters.Length];
+            for (int i = 0; i < method.parameters.Length; i++)
+            {
+                ParameterTypes[i] = method.parameters[i].parameterType;
+            }
+            ConversionRanks = new ConversionRank[argumentCount];
+
+            if (skipArgumentMapping)
+            {
+                _argumentMap = [];
+            }
+            else
+            {
+                _argumentMap = new int[ParameterTypes.Length];
+                Array.Fill(_argumentMap, -1);
+            }
+        }
+
+        /// <summary>
+        /// Update the internal state that tracks how many caller supplied
+        /// extra params have been supplied as individual objects rather
+        /// than as an array.
+        /// </summary>
+        /// <param name="count">
+        /// The number of individual arguments supplied for the extra params arg.
+        /// </param>
+        /// <param name="elementType">
+        /// The element type of the params argument.
+        /// </param>
+        public void SetExtraParamsCount(int count, Type elementType)
+        {
+            if (count == 0)
+            {
+                // A count of zero is treated as the literal array type.
+                ExpandedParameterTypes = ParameterTypes;
+                return;
+            }
+
+            ExpandedParameterTypes = new Type[ParameterTypes.Length + count - 1];
+            Array.Copy(ParameterTypes, ExpandedParameterTypes, ParameterTypes.Length - 1);
+            ExpandedParameterTypes[ParameterTypes.Length - 1] = elementType;
+
+            if (count > 1)
+            {
+                // A count greater than one needs to extend the type array
+                // as well as the argument map.
+                if (_argumentMap.Length > 0)
+                {
+                    Array.Resize(ref _argumentMap, ExpandedParameterTypes.Length);
+                }
+
+                for (int i = ParameterTypes.Length; i < ExpandedParameterTypes.Length; i++)
+                {
+                    ExpandedParameterTypes[i] = elementType;
+
+                    if (_argumentMap.Length > 0)
+                    {
+                        _argumentMap[i] = i;
+                    }
+                }
+            }
+        }
+    }
+#nullable disable
 
     /// <summary>
     /// Stores parameter related information.

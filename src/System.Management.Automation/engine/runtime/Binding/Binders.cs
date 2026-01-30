@@ -1674,7 +1674,7 @@ namespace System.Management.Automation.Language
                     target.CombineRestrictions(args));
             }
 
-            var constructorInfo = (ConstructorInfo)bestMethod.method;
+            var constructorInfo = (ConstructorInfo)bestMethod.Method.method;
             var parameterInfo = constructorInfo.GetParameters();
             var ctorArgs = new Expression[parameterInfo.Length];
             var argIndex = 0;
@@ -6946,12 +6946,13 @@ namespace System.Management.Automation.Language
                 int argNameIndex = i - startNameIndex;
                 if (argNameIndex >= 0 && callInfo.ArgumentNames.Count > argNameIndex)
                 {
-                    string label = callInfo.ArgumentNames[argNameIndex];
-                    if (argValues.Length == 0)
+                    if (argLabels.Length == 0)
                     {
-                        argValues = new string[numArgs];
+                        argLabels = new string[numArgs];
                     }
-                    argValues[i] = label;
+
+                    string label = callInfo.ArgumentNames[argNameIndex];
+                    argLabels[i] = label;
                 }
             }
 
@@ -6964,8 +6965,7 @@ namespace System.Management.Automation.Language
                 ref errorId,
                 ref errorMsg,
                 out expandParamsOnBest,
-                out callNonVirtually,
-                out int?[] argumentMap);
+                out callNonVirtually);
 
             if (callNonVirtually && methodInvocationType != MethodInvocationType.BaseCtor)
             {
@@ -6974,17 +6974,30 @@ namespace System.Management.Automation.Language
 
             if (result != null)
             {
-                var methodInfo = result.method;
+                var methodInfo = result.Method.method;
 
-                // FindBestMethod will map the incoming args into the correct
-                // positional order for the method chosen. If not specified the
-                // map index will be null.
-                DynamicMetaObject[] mappedArgs = new DynamicMetaObject[argumentMap.Length];
-                for (int i = 0; i < mappedArgs.Length; ++i)
+                DynamicMetaObject[] mappedArgs;
+                if (result.ArgumentMap.Length == 0)
                 {
-                    int? mappedIndex = argumentMap[i];
-                    mappedArgs[i] = mappedIndex is null ? null : args[(int)mappedIndex];
+                    // If no mapping is present use the caller args as provided.
+                    mappedArgs = args;
                 }
+                else
+                {
+                    // If there is an argument map, we need to rearrange the caller
+                    // args to match the callee parameters based on the selected
+                    // candidate's argument map.
+                    mappedArgs = new DynamicMetaObject[result.ArgumentMap.Length];
+                    for (int i = 0; i < mappedArgs.Length; ++i)
+                    {
+                        int mappedIndex = result.ArgumentMap[i];
+
+                        // -1 means that there was no corresponding argument
+                        // provided by the caller for this parameter (default is used).
+                        mappedArgs[i] = mappedIndex == -1 ? null : args[mappedIndex];
+                    }
+                }
+
                 var expr = InvokeMethod(methodInfo, target, mappedArgs, expandParamsOnBest, methodInvocationType);
                 if (expr.Type == typeof(void))
                 {
@@ -6998,7 +7011,7 @@ namespace System.Management.Automation.Language
                             Expression.Constant(MethodInvocationTracer),
                             CachedReflectionInfo.PSTraceSource_WriteLine,
                             Expression.Constant("Invoking method: {0}"),
-                            Expression.Constant(result.methodDefinition)),
+                            Expression.Constant(result.Method.methodDefinition)),
                         expr);
                 }
 
@@ -7090,7 +7103,7 @@ namespace System.Management.Automation.Language
 
                 if (mi != null)
                 {
-                    result = (MethodInfo)mi.method;
+                    result = (MethodInfo)mi.Method.method;
                 }
             }
 

@@ -29,7 +29,7 @@ public class TestClass
     public static string OverloadWithDefaults(string value1, int value2, string default1 = "foo", string default2 = null) => $"{value1}-{value2}-{default1}-{default2}";
 
     public static string Params(string value, params string[] remainder) => $"{value}-" + string.Join("-", remainder);
-    
+
     public static string ParamsWithCastableParams(string value, params char[] remainder) => $"{value}-" + string.Join("-", remainder);
 
     public static string ParamsWithDefault(string value, string defaultArg = "foo", params string[] remainder) => $"{value}-{defaultArg}-" + string.Join("-", remainder);
@@ -70,6 +70,22 @@ public class DynamicClass : DynamicObject
 
         result = sb.ToString();
         return true;
+    }
+}
+
+public class BaseClass
+{
+    public string Method(string a, string b = "b1", string c = "c1")
+    {
+        return $"{a}-{b}-{c}";
+    }
+}
+
+public class SuperClass : BaseClass
+{
+    public new string Method(string a, string b = "b2", string c = "c2")
+    {
+        return base.Method(a: $"Override-{a}", b: b, c: c);
     }
 }
 '@
@@ -311,6 +327,37 @@ public class DynamicClass : DynamicObject
         It "Calls with unicode argument identifier 2" {
             [BinderTests.TestClass]::MethodWithSpecialArgName2(Δ: 'abc') | Should -Be abc
         }
+
+        It "Calls method with new override on sub class" {
+            $c = [BinderTests.SuperClass]::new()
+            $actual = $c.Method("test")
+            $actual | Should -Be "Override-test-b2-c2"
+        }
+
+        It "Calls method with new override and named argument" {
+            $c = [BinderTests.SuperClass]::new()
+
+            $actual = $c.Method(b: "override", a: "test")
+            $actual | Should -Be "Override-test-override-c2"
+        }
+
+        # Subsequent tests rely on base type constraints. As they are processed
+        # in the compiler we need to create the ScriptBlock at runtime to ensure
+        # the type constraints are present.
+
+        It "Calls base method on overridden sub class" {
+            $c = [BinderTests.SuperClass]::new()
+
+            $actual = & ([ScriptBlock]::Create('([BinderTests.BaseClass]$c).Method("test")'))
+            $actual | Should -Be "test-b1-c1"
+        }
+
+        It "Calls base method on overridden sub class with named argument" {
+            $c = [BinderTests.SuperClass]::new()
+
+            $actual = & ([ScriptBlock]::Create('([BinderTests.BaseClass]$c).Method(b: "override", a: "test")'))
+            $actual | Should -Be "test-override-c1"
+        }
     }
 
     Context "Named Arguments - MethodBuilder" {
@@ -476,7 +523,7 @@ public class DynamicClass : DynamicObject
             }
         }
 
-        It "Calls method directory with named argument" {
+        It "Calls method with named argument" {
             $c = [MyClass]::new()
             $c.Method('first', c: 'third', b: 'second') | Should -Be first-second-third
         }
