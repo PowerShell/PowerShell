@@ -1446,7 +1446,7 @@ namespace System.Management.Automation
             }
 
             Type[] genericParamTypes = ResolveGenericTypeParameters(invocationConstraints?.GenericTypeParameters);
-            var candidates = new List<OverloadCandidate>();
+            var candidates = new List<OverloadCandidate>(methods.Length);
 
             for (int i = 0; i < methods.Length; i++)
             {
@@ -1604,51 +1604,63 @@ namespace System.Management.Automation
 
             ParameterInformation[] parameters = methodInfo.parameters;
 
-            List<(string?, int)> parameterNames = new List<(string?, int)>(parameters.Length);
-            for (int i = 0; i < parameters.Length; i++)
-            {
-                parameterNames.Add((parameters[i].name, i));
-            }
+            // Use stackalloc for small parameter counts to avoid heap allocation
+            Span<bool> parameterUsed = parameters.Length <= 32
+                ? stackalloc bool[parameters.Length]
+                : new bool[parameters.Length];
 
-            bool skipArgumentMapping = argumentLabels.Length == 0;
-            OverloadCandidate candidate = new OverloadCandidate(methodInfo, arguments.Length, skipArgumentMapping);
+            int nextUnusedParam = 0;
+            bool hasNamedArgs = argumentLabels.Length > 0;
+
+            OverloadCandidate candidate = new OverloadCandidate(methodInfo, arguments.Length, !hasNamedArgs);
             for (int i = 0; i < arguments.Length; i++)
             {
                 object? argValue = arguments[i];
-                string? argName = null;
-                if (argumentLabels.Length > i)
-                {
-                    argName = argumentLabels[i];
-                }
+                string? argName = hasNamedArgs && i < argumentLabels.Length ? argumentLabels[i] : null;
 
                 int paramIndex;
                 if (string.IsNullOrEmpty(argName))
                 {
-                    // Argument had no name, get the first parameter if avail.
-                    if (parameterNames.Count == 0)
+                    // Find next unused parameter
+                    while (nextUnusedParam < parameters.Length && parameterUsed[nextUnusedParam])
+                    {
+                        nextUnusedParam++;
+                    }
+
+                    if (nextUnusedParam >= parameters.Length)
                     {
                         // No params left.
                         return false;
                     }
 
-                    (argName, paramIndex) = parameterNames[0];
-                    parameterNames.RemoveAt(0);
+                    paramIndex = nextUnusedParam;
+                    parameterUsed[nextUnusedParam] = true;
                 }
                 else
                 {
-                    int selectedIndex = parameterNames.FindIndex(n => string.Equals(argName, n.Item1, StringComparison.OrdinalIgnoreCase));
-                    if (selectedIndex == -1)
+                    // Find parameter by name
+                    paramIndex = -1;
+                    for (int k = 0; k < parameters.Length; k++)
+                    {
+                        if (!parameterUsed[k] &&
+                            string.Equals(argName, parameters[k].name, StringComparison.OrdinalIgnoreCase))
+                        {
+                            paramIndex = k;
+                            break;
+                        }
+                    }
+
+                    if (paramIndex == -1)
                     {
                         // Had a name but it didn't match any remaining parameters.
                         return false;
                     }
 
-                    (argName, paramIndex) = parameterNames[selectedIndex];
-                    parameterNames.RemoveAt(selectedIndex);
+                    parameterUsed[paramIndex] = true;
                 }
 
                 ParameterInformation paramInfo = parameters[paramIndex];
-                if (!skipArgumentMapping)
+                if (hasNamedArgs)
                 {
                     candidate.ArgumentMap[paramIndex] = i;
                 }
@@ -1661,11 +1673,7 @@ namespace System.Management.Automation
                     int extraParamsCount = 1;
                     for (int j = i + 1; j < arguments.Length; j++)
                     {
-                        string? nextArgName = null;
-                        if (argumentLabels.Length > j)
-                        {
-                            nextArgName = argumentLabels[j];
-                        }
+                        string? nextArgName = hasNamedArgs && j < argumentLabels.Length ? argumentLabels[j] : null;
 
                         if (!string.IsNullOrEmpty(nextArgName))
                         {
@@ -1755,16 +1763,19 @@ namespace System.Management.Automation
             }
 
             // Unmapped args only work if they are optional or param.
-            foreach ((string? _, int paramIndex) in parameterNames)
+            for (int i = 0; i < parameters.Length; i++)
             {
-                ParameterInformation paramInfo = parameters[paramIndex];
-                if (paramInfo.isParamArray)
+                if (!parameterUsed[i])
                 {
-                    candidate.SetExtraParamsCount(0, paramInfo.parameterType.GetElementType()!);
-                }
-                else if (!paramInfo.isOptional)
-                {
-                    return false;
+                    ParameterInformation paramInfo = parameters[i];
+                    if (paramInfo.isParamArray)
+                    {
+                        candidate.SetExtraParamsCount(0, paramInfo.parameterType.GetElementType()!);
+                    }
+                    else if (!paramInfo.isOptional)
+                    {
+                        return false;
+                    }
                 }
             }
 
@@ -2678,6 +2689,7 @@ namespace System.Management.Automation
     internal sealed class OverloadCandidate
     {
         private int[] _argumentMap;
+        private Type[]? _parameterTypes;
 
         /// <summary>
         /// Gets and sets the underlying method information for this overload.
@@ -2688,8 +2700,23 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Gets the types for each parameters for the provided method.
+        /// Lazily created only when needed (comparison or params expansion).
         /// </summary>
-        public Type[] ParameterTypes { get; }
+        public Type[] ParameterTypes
+        {
+            get
+            {
+                if (_parameterTypes == null)
+                {
+                    _parameterTypes = new Type[Method.parameters.Length];
+                    for (int i = 0; i < Method.parameters.Length; i++)
+                    {
+                        _parameterTypes[i] = Method.parameters[i].parameterType;
+                    }
+                }
+                return _parameterTypes;
+            }
+        }
 
         /// <summary>
         /// If set this contains the expanded param arg types based on
@@ -2712,11 +2739,6 @@ namespace System.Management.Automation
         public OverloadCandidate(MethodInformation method, int argumentCount, bool skipArgumentMapping)
         {
             Method = method;
-            ParameterTypes = new Type[method.parameters.Length];
-            for (int i = 0; i < method.parameters.Length; i++)
-            {
-                ParameterTypes[i] = method.parameters[i].parameterType;
-            }
             ConversionRanks = new ConversionRank[argumentCount];
 
             if (skipArgumentMapping)
@@ -2725,7 +2747,7 @@ namespace System.Management.Automation
             }
             else
             {
-                _argumentMap = new int[ParameterTypes.Length];
+                _argumentMap = new int[method.parameters.Length];
                 Array.Fill(_argumentMap, -1);
             }
         }
