@@ -197,6 +197,8 @@ Describe 'ConvertTo-Json' -tags "CI" {
             @{ TypeName = 'double'; Value = [double]::PositiveInfinity; Expected = '"Infinity"' }
             @{ TypeName = 'double'; Value = [double]::NegativeInfinity; Expected = '"-Infinity"' }
             @{ TypeName = 'decimal'; Value = 123.456d; Expected = '123.456' }
+            # BigInteger
+            @{ TypeName = 'BigInteger'; Value = 18446744073709551615n; Expected = '18446744073709551615' }
             # Boolean
             @{ TypeName = 'bool'; Value = $true; Expected = 'true' }
             @{ TypeName = 'bool'; Value = $false; Expected = 'false' }
@@ -281,27 +283,19 @@ Describe 'ConvertTo-Json' -tags "CI" {
         It 'Should serialize DateOnly as object with properties' {
             $d = [DateOnly]::new(2024, 6, 15)
             $json = $d | ConvertTo-Json -Compress
-            $json | Should -Match '"Year":2024'
-            $json | Should -Match '"Month":6'
-            $json | Should -Match '"Day":15'
+            $json | Should -BeExactly '{"Year":2024,"Month":6,"Day":15,"DayOfWeek":6,"DayOfYear":167,"DayNumber":739051}'
         }
 
         It 'Should serialize TimeOnly as object with properties' {
             $t = [TimeOnly]::new(10, 30, 45)
             $json = $t | ConvertTo-Json -Compress
-            $json | Should -Match '"Hour":10'
-            $json | Should -Match '"Minute":30'
-            $json | Should -Match '"Second":45'
+            $json | Should -BeExactly '{"Hour":10,"Minute":30,"Second":45,"Millisecond":0,"Microsecond":0,"Nanosecond":0,"Ticks":378450000000}'
         }
 
         It 'Should serialize TimeSpan as object with properties' {
             $ts = [TimeSpan]::new(1, 2, 3, 4, 5)
             $json = $ts | ConvertTo-Json -Compress
-            $json | Should -Match '"Ticks":'
-            $json | Should -Match '"Days":1'
-            $json | Should -Match '"Hours":2'
-            $json | Should -Match '"Minutes":3'
-            $json | Should -Match '"Seconds":4'
+            $json | Should -BeExactly '{"Ticks":937840050000,"Days":1,"Hours":2,"Milliseconds":5,"Microseconds":0,"Nanoseconds":0,"Minutes":3,"Seconds":4,"TotalDays":1.0854630208333333,"TotalHours":26.0511125,"TotalMilliseconds":93784005.0,"TotalMicroseconds":93784005000.0,"TotalNanoseconds":93784005000000.0,"TotalMinutes":1563.06675,"TotalSeconds":93784.005}'
         }
 
         It 'Should ignore ETS properties on DateTime' {
@@ -309,7 +303,27 @@ Describe 'ConvertTo-Json' -tags "CI" {
             $dt = Add-Member -InputObject $dt -MemberType NoteProperty -Name MyProp -Value 'test' -PassThru
             $json = $dt | ConvertTo-Json -Compress
             $json | Should -BeExactly '"2024-06-15T00:00:00Z"'
-            $json | Should -Not -Match 'MyProp'
+        }
+
+        It 'Should include ETS properties on DateTimeOffset' {
+            $dto = [DateTimeOffset]::new(2024, 6, 15, 10, 30, 0, [TimeSpan]::Zero)
+            $dto = Add-Member -InputObject $dto -MemberType NoteProperty -Name MyProp -Value 'test' -PassThru
+            $json = $dto | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"value":"2024-06-15T10:30:00+00:00","MyProp":"test"}'
+        }
+
+        It 'Should include ETS properties on DateOnly' {
+            $d = [DateOnly]::new(2024, 6, 15)
+            $d = Add-Member -InputObject $d -MemberType NoteProperty -Name MyProp -Value 'test' -PassThru
+            $json = $d | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"Year":2024,"Month":6,"Day":15,"DayOfWeek":6,"DayOfYear":167,"DayNumber":739051,"MyProp":"test"}'
+        }
+
+        It 'Should include ETS properties on TimeOnly' {
+            $t = [TimeOnly]::new(10, 30, 45)
+            $t = Add-Member -InputObject $t -MemberType NoteProperty -Name MyProp -Value 'test' -PassThru
+            $json = $t | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"Hour":10,"Minute":30,"Second":45,"Millisecond":0,"Microsecond":0,"Nanosecond":0,"Ticks":378450000000,"MyProp":"test"}'
         }
     }
 
@@ -335,8 +349,7 @@ Describe 'ConvertTo-Json' -tags "CI" {
             $guid = [Guid]::new('12345678-1234-1234-1234-123456789abc')
             $guid = Add-Member -InputObject $guid -MemberType NoteProperty -Name MyProp -Value 'test' -PassThru
             $json = $guid | ConvertTo-Json -Compress
-            $json | Should -Match 'MyProp'
-            $json | Should -Match '"value":"12345678-1234-1234-1234-123456789abc"'
+            $json | Should -BeExactly '{"value":"12345678-1234-1234-1234-123456789abc","MyProp":"test","Guid":"12345678-1234-1234-1234-123456789abc"}'
         }
     }
 
@@ -359,8 +372,7 @@ Describe 'ConvertTo-Json' -tags "CI" {
             $uri = [Uri]'https://example.com'
             $uri = Add-Member -InputObject $uri -MemberType NoteProperty -Name MyProp -Value 'test' -PassThru
             $json = $uri | ConvertTo-Json -Compress
-            $json | Should -Match 'MyProp'
-            $json | Should -Match '"value":"https://example.com"'
+            $json | Should -BeExactly '{"value":"https://example.com","MyProp":"test"}'
         }
     }
 
@@ -405,37 +417,44 @@ Describe 'ConvertTo-Json' -tags "CI" {
             $json = $flags | ConvertTo-Json -Compress -EnumsAsStrings
             $json | Should -BeExactly '"ReadOnly, Hidden"'
         }
+
+        It 'Should include ETS properties on Enum' {
+            $enum = Add-Member -InputObject ([DayOfWeek]::Monday) -MemberType NoteProperty -Name MyProp -Value 'test' -PassThru
+            $json = $enum | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"value":1,"MyProp":"test"}'
+        }
     }
 
     Context 'IPAddress type' {
-        It 'Should serialize IPAddress v4 without IPAddressToString via InputObject' {
+        It 'Should serialize IPAddress v4 correctly via InputObject' {
             $ip = [System.Net.IPAddress]::Parse('192.168.1.1')
             $json = ConvertTo-Json -InputObject $ip -Compress
-            $json | Should -Match '"Address":16885952'
-            $json | Should -Not -Match 'IPAddressToString'
+            $json | Should -BeExactly '{"AddressFamily":2,"ScopeId":null,"IsIPv6Multicast":false,"IsIPv6LinkLocal":false,"IsIPv6SiteLocal":false,"IsIPv6Teredo":false,"IsIPv6UniqueLocal":false,"IsIPv4MappedToIPv6":false,"Address":16885952}'
         }
 
-        It 'Should serialize IPAddress v4 with IPAddressToString via Pipeline' {
+        It 'Should serialize IPAddress v4 correctly via Pipeline' {
             $ip = [System.Net.IPAddress]::Parse('192.168.1.1')
             $json = $ip | ConvertTo-Json -Compress
-            $json | Should -Match '"Address":16885952'
-            $json | Should -Match '"IPAddressToString":"192.168.1.1"'
+            $json | Should -BeExactly '{"AddressFamily":2,"ScopeId":null,"IsIPv6Multicast":false,"IsIPv6LinkLocal":false,"IsIPv6SiteLocal":false,"IsIPv6Teredo":false,"IsIPv6UniqueLocal":false,"IsIPv4MappedToIPv6":false,"Address":16885952,"IPAddressToString":"192.168.1.1"}'
         }
 
-        It 'Should serialize IPAddress v6 correctly' {
+        It 'Should serialize IPAddress v6 correctly via InputObject' {
             $ip = [System.Net.IPAddress]::Parse('::1')
-            $jsonInputObject = ConvertTo-Json -InputObject $ip -Compress
-            $jsonPipeline = $ip | ConvertTo-Json -Compress
-            $jsonInputObject | Should -Not -Match 'IPAddressToString'
-            $jsonPipeline | Should -Match '"IPAddressToString":"::1"'
+            $json = ConvertTo-Json -InputObject $ip -Compress
+            $json | Should -BeExactly '{"AddressFamily":23,"ScopeId":0,"IsIPv6Multicast":false,"IsIPv6LinkLocal":false,"IsIPv6SiteLocal":false,"IsIPv6Teredo":false,"IsIPv6UniqueLocal":false,"IsIPv4MappedToIPv6":false,"Address":null}'
+        }
+
+        It 'Should serialize IPAddress v6 correctly via Pipeline' {
+            $ip = [System.Net.IPAddress]::Parse('::1')
+            $json = $ip | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"AddressFamily":23,"ScopeId":0,"IsIPv6Multicast":false,"IsIPv6LinkLocal":false,"IsIPv6SiteLocal":false,"IsIPv6Teredo":false,"IsIPv6UniqueLocal":false,"IsIPv4MappedToIPv6":false,"Address":null,"IPAddressToString":"::1"}'
         }
 
         It 'Should include ETS properties on IPAddress' {
             $ip = [System.Net.IPAddress]::Parse('192.168.1.1')
             $ip = Add-Member -InputObject $ip -MemberType NoteProperty -Name MyProp -Value 'test' -PassThru
             $json = $ip | ConvertTo-Json -Compress
-            $json | Should -Match 'MyProp'
-            $json | Should -Match 'IPAddressToString'
+            $json | Should -BeExactly '{"AddressFamily":2,"ScopeId":null,"IsIPv6Multicast":false,"IsIPv6LinkLocal":false,"IsIPv6SiteLocal":false,"IsIPv6Teredo":false,"IsIPv6UniqueLocal":false,"IsIPv4MappedToIPv6":false,"Address":16885952,"MyProp":"test","IPAddressToString":"192.168.1.1"}'
         }
     }
 
