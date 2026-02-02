@@ -112,9 +112,15 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the PSContentPath to configure.
         /// </summary>
-        [Parameter(Mandatory = true, Position = 0)]
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Path")]
         [ValidateNotNullOrEmpty]
         public string Path { get; set; }
+
+        /// <summary>
+        /// Resets the PSContentPath to the platform default.
+        /// </summary>
+        [Parameter(Mandatory = true, ParameterSetName = "Reset")]
+        public SwitchParameter Reset { get; set; }
 
         /// <summary>
         /// EndProcessing method of this cmdlet.
@@ -122,6 +128,12 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
+            if (Reset)
+            {
+                ResetToDefault();
+                return;
+            }
+
             // Validate the path
             if (!ValidatePath(Path))
             {
@@ -133,8 +145,12 @@ namespace Microsoft.PowerShell.Commands
                 try
                 {
                     PowerShellConfig.Instance.SetPSContentPath(Path);
+
+                    // Update the $PSUserContentPath readonly variable in the current session
+                    string expandedPath = Environment.ExpandEnvironmentVariables(Path);
+                    UpdatePSUserContentPathVariable(expandedPath);
+
                     WriteVerbose($"Successfully set PSContentPath to '{Path}'");
-                    WriteWarning("PSContentPath changes will take effect after restarting PowerShell.");
                 }
                 catch (Exception ex)
                 {
@@ -145,6 +161,50 @@ namespace Microsoft.PowerShell.Commands
                         Path));
                 }
             }
+        }
+
+        /// <summary>
+        /// Resets the PSContentPath to the platform default by clearing the custom config.
+        /// </summary>
+        private void ResetToDefault()
+        {
+            string defaultPath = Platform.DefaultPSContentDirectory;
+
+            if (ShouldProcess($"PSContentPath = {defaultPath}", "Reset PSContentPath to default"))
+            {
+                try
+                {
+                    // Clear the custom path from config (passing null/empty removes the key)
+                    PowerShellConfig.Instance.SetPSContentPath(null);
+
+                    // Update the variable to the platform default
+                    UpdatePSUserContentPathVariable(defaultPath);
+
+                    WriteVerbose($"Successfully reset PSContentPath to default: '{defaultPath}'");
+                }
+                catch (Exception ex)
+                {
+                    WriteError(new ErrorRecord(
+                        ex,
+                        "ResetPSContentPathFailed",
+                        ErrorCategory.WriteError,
+                        null));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Updates the $PSUserContentPath readonly variable in the current session.
+        /// </summary>
+        /// <param name="newPath">The new path value to set.</param>
+        private void UpdatePSUserContentPathVariable(string newPath)
+        {
+            var variable = new PSVariable(
+                SpecialVariables.PSUserContentPath,
+                newPath,
+                ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope);
+
+            SessionState.Internal.SetVariableAtScope(variable, "global", force: true, CommandOrigin.Internal);
         }
 
         /// <summary>
@@ -227,209 +287,6 @@ namespace Microsoft.PowerShell.Commands
                     ErrorCategory.InvalidArgument,
                     path));
                 return false;
-            }
-        }
-    }
-
-    /// <summary>
-    /// Implements Move-PSContent cmdlet.
-    /// </summary>
-    [Cmdlet(VerbsCommon.Move, "PSContent", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, HelpUri = "https://go.microsoft.com/fwlink/?linkid=2344811")]
-    public class MovePSContentCommand : PSCmdlet
-    {
-        /// <summary>
-        /// Gets or sets the source location.
-        /// Must be 'OneDrive' or 'LocalAppData'.
-        /// </summary>
-        [Parameter(Mandatory = true, Position = 0)]
-        [ValidateSet("OneDrive", "LocalAppData")]
-        public string Path { get; set; }
-
-        /// <summary>
-        /// Gets or sets the destination location.
-        /// Must be 'OneDrive' or 'LocalAppData'.
-        /// </summary>
-        [Parameter(Mandatory = true, Position = 1)]
-        [ValidateSet("OneDrive", "LocalAppData")]
-        public string Destination { get; set; }
-
-        /// <summary>
-        /// Gets or sets whether to copy instead of move (preserves original).
-        /// </summary>
-        [Parameter]
-        public SwitchParameter Copy { get; set; }
-
-        /// <summary>
-        /// Gets or sets whether to force overwrite of existing files.
-        /// </summary>
-        [Parameter]
-        public SwitchParameter Force { get; set; }
-
-        private string sourcePath;
-        private string destinationPath;
-
-        /// <summary>
-        /// BeginProcessing method - validates paths and prepares for migration.
-        /// </summary>
-        protected override void BeginProcessing()
-        {
-            // Resolve source path
-            string sourceLocationString = ResolveLocation(Path);
-            if (string.IsNullOrEmpty(sourceLocationString))
-            {
-                ThrowTerminatingError(new ErrorRecord(
-                    new ArgumentException($"Could not resolve source location '{Path}'."),
-                    "InvalidSourceLocation",
-                    ErrorCategory.InvalidArgument,
-                    Path));
-                return;
-            }
-
-            // Use GetUnresolvedProviderPathFromPSPath to convert PS paths to file system paths
-            sourcePath = GetUnresolvedProviderPathFromPSPath(sourceLocationString);
-
-            // Resolve destination path
-            string destinationLocationString = ResolveLocation(Destination);
-            destinationPath = GetUnresolvedProviderPathFromPSPath(destinationLocationString);
-
-            // Validate paths
-            if (!Directory.Exists(sourcePath))
-            {
-                ThrowTerminatingError(new ErrorRecord(
-                    new DirectoryNotFoundException($"Source directory '{sourcePath}' does not exist."),
-                    "SourceDirectoryNotFound",
-                    ErrorCategory.ObjectNotFound,
-                    sourcePath));
-                return;
-            }
-
-            // Check if source and destination are the same
-            string normalizedSource = System.IO.Path.GetFullPath(sourcePath).TrimEnd(System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar);
-            string normalizedDest = System.IO.Path.GetFullPath(destinationPath).TrimEnd(System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar);
-
-            if (string.Equals(normalizedSource, normalizedDest, StringComparison.OrdinalIgnoreCase))
-            {
-                ThrowTerminatingError(new ErrorRecord(
-                    new ArgumentException("Source and destination paths are the same."),
-                    "SameSourceAndDestination",
-                    ErrorCategory.InvalidArgument,
-                    destinationPath));
-                return;
-            }
-
-            WriteVerbose($"Source path: {sourcePath}");
-            WriteVerbose($"Destination path: {destinationPath}");
-
-            // Check if destination exists and has content
-            if (Directory.Exists(destinationPath))
-            {
-                var existingItems = Directory.GetFileSystemEntries(destinationPath);
-                if (existingItems.Length > 0 && !Force)
-                {
-                    ThrowTerminatingError(new ErrorRecord(
-                        new InvalidOperationException($"Destination directory '{destinationPath}' already contains {existingItems.Length} items. Use -Force to merge/overwrite."),
-                        "DestinationNotEmpty",
-                        ErrorCategory.ResourceExists,
-                        destinationPath));
-                    return;
-                }
-                
-                if (existingItems.Length > 0)
-                {
-                    WriteWarning($"Destination directory contains {existingItems.Length} items. Existing files may be overwritten.");
-                }
-            }
-        }
-
-        /// <summary>
-        /// ProcessRecord method - performs the migration.
-        /// </summary>
-        protected override void ProcessRecord()
-        {
-            // Check if source directory exists
-            if (!Directory.Exists(sourcePath))
-            {
-                WriteWarning($"Source directory does not exist: '{sourcePath}'");
-                return;
-            }
-
-            // Check if source has any content
-            if (Directory.GetFileSystemEntries(sourcePath).Length == 0)
-            {
-                WriteWarning($"Source directory is empty: '{sourcePath}'");
-                return;
-            }
-
-            string action = Copy ? "Copy" : "Move";
-            
-            if (ShouldProcess($"content from '{sourcePath}' to '{destinationPath}'",
-                             $"{action} PowerShell content"))
-            {
-                try
-                {
-                    var copyCmd = InvokeCommand.NewScriptBlock(@"
-                        param($source, $dest, $force)
-                        Get-ChildItem -LiteralPath $source | Copy-Item -Destination $dest -Recurse -Force:$force
-                    ");
-                    
-                    copyCmd.InvokeWithContext(null, new List<PSVariable>(), sourcePath, destinationPath, Force.ToBool());
-
-                    if (!Copy)
-                    {
-                        // Remove contents of source directory for move operation
-                        WriteVerbose($"Removing contents of source directory: {sourcePath}");
-                        foreach (var file in Directory.GetFiles(sourcePath))
-                        {
-                            File.Delete(file);
-                        }
-                        foreach (var dir in Directory.GetDirectories(sourcePath))
-                        {
-                            Directory.Delete(dir, recursive: true);
-                        }
-                    }
-
-                    int itemCount = Directory.GetFileSystemEntries(destinationPath, "*", SearchOption.AllDirectories).Length;
-                    WriteObject($"Successfully {(Copy ? "copied" : "moved")} PowerShell content. Destination contains {itemCount} items.");
-                                                                
-                    // Update PSContentPath to point to new location
-                    PowerShellConfig.Instance.SetPSContentPath(destinationPath);
-                    WriteWarning($"PSContentPath has been updated to '{destinationPath}'.");
-                    WriteWarning("Please restart PowerShell for the changes to take full effect.");
-
-                    if (!Copy)
-                    {
-                        WriteVerbose("All items migrated successfully. Source directory has been emptied.");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    ThrowTerminatingError(new ErrorRecord(
-                        ex,
-                        "MigrationFailed",
-                        ErrorCategory.WriteError,
-                        destinationPath));
-                }
-            }
-        }
-
-        /// <summary>
-        /// Resolves a location name to an actual path.
-        /// </summary>
-        private static string ResolveLocation(string location)
-        {
-            switch (location.ToLowerInvariant())
-            {
-                case "onedrive":
-                    // OneDrive is the platform default location (Documents\PowerShell)
-                    return Platform.DefaultPSContentDirectory;
-
-                case "localappdata":
-                    // LocalAppData location
-                    return Platform.LocalAppDataPSContentDirectory;
-
-                default:
-                    // Should never reach here due to ValidateSet
-                    throw new ArgumentException($"Invalid location: {location}");
             }
         }
     }

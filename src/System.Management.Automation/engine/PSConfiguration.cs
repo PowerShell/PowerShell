@@ -171,7 +171,7 @@ namespace System.Management.Automation.Configuration
         /// <returns>The configured PSContentPath if found, otherwise the default platform content directory (never null).</returns>
         internal string GetPSContentPath()
         {
-            string contentPath = ReadValueFromFile<string>(ConfigScope.CurrentUser, Constants.PSUserContentPathEnvVar);
+            string contentPath = ReadValueFromFile<string>(ConfigScope.CurrentUser, Constants.PSUserContentPathConfigKey);
             if (!string.IsNullOrEmpty(contentPath))
             {
                 contentPath = Environment.ExpandEnvironmentVariables(contentPath);
@@ -210,11 +210,11 @@ namespace System.Management.Automation.Configuration
         {
             if (string.IsNullOrEmpty(path))
             {
-                RemoveValueFromFile<string>(ConfigScope.CurrentUser, Constants.PSUserContentPathEnvVar);
+                RemoveValueFromFile<string>(ConfigScope.CurrentUser, Constants.PSUserContentPathConfigKey);
             }
             else
             {
-                WriteValueToFile<string>(ConfigScope.CurrentUser, Constants.PSUserContentPathEnvVar, path);
+                WriteValueToFile<string>(ConfigScope.CurrentUser, Constants.PSUserContentPathConfigKey, path);
             }
         }
 

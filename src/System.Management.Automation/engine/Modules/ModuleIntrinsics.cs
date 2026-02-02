@@ -19,7 +19,7 @@ namespace System.Management.Automation
     internal static class Constants
     {
         public const string PSModulePathEnvVar = "PSModulePath";
-        public const string PSUserContentPathEnvVar = "PSUserContentPath";
+        public const string PSUserContentPathConfigKey = "PSUserContentPath";
     }
 
     /// <summary>

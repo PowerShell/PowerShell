@@ -370,6 +370,13 @@ namespace System.Management.Automation
                     RunspaceInit.PSHOMEDescription);
             this.GlobalScope.SetVariable(v.Name, v, asValue: false, force: true, this, CommandOrigin.Internal, fastPath: true);
 
+            // $PSUserContentPath - the user content path for modules, scripts, and help
+            string psContentPath = Utils.GetPSContentPath();
+            v = new PSVariable(SpecialVariables.PSUserContentPath, psContentPath,
+                    ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope,
+                    RunspaceInit.PSUserContentPathDescription);
+            this.GlobalScope.SetVariable(v.Name, v, asValue: false, force: true, this, CommandOrigin.Internal, fastPath: true);
+
             // $EnabledExperimentalFeatures
             v = new PSVariable(SpecialVariables.EnabledExperimentalFeatures,
                                ExperimentalFeature.EnabledExperimentalFeatureNames,
