@@ -202,6 +202,8 @@ Describe 'ConvertTo-Json' -tags "CI" {
             # Boolean
             @{ TypeName = 'bool'; Value = $true; Expected = 'true' }
             @{ TypeName = 'bool'; Value = $false; Expected = 'false' }
+            # Null
+            @{ TypeName = 'null'; Value = $null; Expected = 'null' }
         ) {
             param($TypeName, $Value, $Expected)
             $jsonPipeline = $Value | ConvertTo-Json -Compress
@@ -211,14 +213,13 @@ Describe 'ConvertTo-Json' -tags "CI" {
         }
 
         It 'Should include ETS properties on <TypeName>' -TestCases @(
-            @{ TypeName = 'int'; Value = 42 }
-            @{ TypeName = 'double'; Value = 3.14 }
+            @{ TypeName = 'int'; Value = 42; Expected = '{"value":42,"MyProp":"test"}' }
+            @{ TypeName = 'double'; Value = 3.14; Expected = '{"value":3.14,"MyProp":"test"}' }
         ) {
-            param($TypeName, $Value)
+            param($TypeName, $Value, $Expected)
             $valueWithEts = Add-Member -InputObject $Value -MemberType NoteProperty -Name MyProp -Value 'test' -PassThru
             $json = $valueWithEts | ConvertTo-Json -Compress
-            $json | Should -Match 'MyProp'
-            $json | Should -Match '"value":'
+            $json | Should -BeExactly $Expected
         }
     }
 
@@ -245,7 +246,6 @@ Describe 'ConvertTo-Json' -tags "CI" {
             $str = Add-Member -InputObject 'hello' -MemberType NoteProperty -Name MyProp -Value 'test' -PassThru
             $json = $str | ConvertTo-Json -Compress
             $json | Should -BeExactly '"hello"'
-            $json | Should -Not -Match 'MyProp'
         }
     }
 
@@ -261,7 +261,9 @@ Describe 'ConvertTo-Json' -tags "CI" {
         It 'Should serialize DateTime with Local kind' {
             $dt = [DateTime]::new(2024, 6, 15, 10, 30, 0, [DateTimeKind]::Local)
             $json = $dt | ConvertTo-Json -Compress
-            $json | Should -Match '^"2024-06-15T10:30:00'
+            $offset = $dt.ToString('zzz')
+            $expected = '"2024-06-15T10:30:00' + $offset + '"'
+            $json | Should -BeExactly $expected
         }
 
         It 'Should serialize DateTime with Unspecified kind via Pipeline and InputObject' {
@@ -486,8 +488,7 @@ Describe 'ConvertTo-Json' -tags "CI" {
                 [Guid]'22222222-2222-2222-2222-222222222222'
             )
             $json = $guids | ConvertTo-Json -Compress
-            $json | Should -Match '"value":"11111111-1111-1111-1111-111111111111"'
-            $json | Should -Match '"value":"22222222-2222-2222-2222-222222222222"'
+            $json | Should -BeExactly '[{"value":"11111111-1111-1111-1111-111111111111","Guid":"11111111-1111-1111-1111-111111111111"},{"value":"22222222-2222-2222-2222-222222222222","Guid":"22222222-2222-2222-2222-222222222222"}]'
         }
 
         It 'Should serialize array of enum correctly via Pipeline and InputObject' {
@@ -521,8 +522,7 @@ Describe 'ConvertTo-Json' -tags "CI" {
             $arr = @(1, 2, 3)
             $arr = Add-Member -InputObject $arr -MemberType NoteProperty -Name MyProp -Value 'test' -PassThru
             $json = ConvertTo-Json -InputObject $arr -Compress
-            $json | Should -Match 'MyProp'
-            $json | Should -Match '"value":\[1,2,3\]'
+            $json | Should -BeExactly '{"value":[1,2,3],"MyProp":"test"}'
         }
     }
 
@@ -581,7 +581,7 @@ Describe 'ConvertTo-Json' -tags "CI" {
             $hash = @{ a = 1 }
             $hash = Add-Member -InputObject $hash -MemberType NoteProperty -Name MyProp -Value 'test' -PassThru
             $json = ConvertTo-Json -InputObject $hash -Compress
-            $json | Should -Match 'MyProp'
+            $json | Should -BeExactly '{"a":1,"MyProp":"test"}'
         }
     }
 
