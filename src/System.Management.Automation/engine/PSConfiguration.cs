@@ -90,27 +90,32 @@ namespace System.Management.Automation.Configuration
             perUserConfigDirectory = Platform.ConfigDirectory;
             perUserConfigFile = Path.Combine(Platform.ConfigDirectory, ConfigFileName);
 #else
-            // On Windows: Check for config file with fallback logic:
-            // 1. Check LocalAppData first (future-proofing for when we change the default)
-            // 2. Fall back to Documents/OneDrive location (current default)
-            // Note: This directory may or may not exist depending upon the execution scenario.
-            // Writes will attempt to create the directory if it does not already exist.
+            // On Windows: Use LocalAppData as the default location for user config.
+            // Check for existing config in Documents/OneDrive for backwards compatibility.
             string localAppDataConfig = Platform.LocalAppDataPSContentDirectory;
             string localAppDataConfigFile = Path.Combine(localAppDataConfig, ConfigFileName);
+            string documentsConfig = Platform.ConfigDirectory;
+            string documentsConfigFile = Path.Combine(documentsConfig, ConfigFileName);
 
             if (File.Exists(localAppDataConfigFile))
             {
                 // Config exists in LocalAppData - use that location
                 perUserConfigDirectory = localAppDataConfig;
                 perUserConfigFile = localAppDataConfigFile;
+            }
+            else if (File.Exists(documentsConfigFile))
+            {
+                // Config exists in Documents (legacy location) - use that for backwards compatibility
+                perUserConfigDirectory = documentsConfig;
+                perUserConfigFile = documentsConfigFile;
                 
-                SendPSContentPathTelemetry("UserConfigLocation:LocalAppData");
+                SendPSContentPathTelemetry("UserConfigLocation:Documents");
             }
             else
             {
-                // Config doesn't exist in LocalAppData, use Documents location (default)
-                perUserConfigDirectory = Platform.ConfigDirectory;
-                perUserConfigFile = Path.Combine(Platform.ConfigDirectory, ConfigFileName);
+                // No existing config - use LocalAppData as the default for new configs
+                perUserConfigDirectory = localAppDataConfig;
+                perUserConfigFile = localAppDataConfigFile;
             }
 #endif
 
