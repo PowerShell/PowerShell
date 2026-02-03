@@ -585,4 +585,395 @@ Describe 'ConvertTo-Json' -tags "CI" {
     }
 
     #endregion Comprehensive Scalar Type Tests (Phase 1)
+
+    #region Comprehensive Array and Dictionary Tests (Phase 2)
+    # Test coverage for ConvertTo-Json array and dictionary serialization
+    # Covers: Pipeline vs InputObject, ETS vs no ETS, nested structures
+
+    Context 'Array basic serialization' {
+        It 'Should serialize empty array correctly via Pipeline and InputObject' {
+            $arr = @()
+            $jsonPipeline = ,$arr | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $arr -Compress
+            $jsonPipeline | Should -BeExactly '[]'
+            $jsonInputObject | Should -BeExactly '[]'
+        }
+
+        It 'Should serialize single element array correctly via Pipeline and InputObject' {
+            $arr = @(42)
+            $jsonPipeline = ,$arr | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $arr -Compress
+            $jsonPipeline | Should -BeExactly '[42]'
+            $jsonInputObject | Should -BeExactly '[42]'
+        }
+
+        It 'Should serialize multi-element array correctly via Pipeline and InputObject' {
+            $arr = @(1, 2, 3, 4, 5)
+            $jsonPipeline = ,$arr | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $arr -Compress
+            $jsonPipeline | Should -BeExactly '[1,2,3,4,5]'
+            $jsonInputObject | Should -BeExactly '[1,2,3,4,5]'
+        }
+
+        It 'Should serialize string array correctly via Pipeline and InputObject' {
+            $arr = @('apple', 'banana', 'cherry')
+            $jsonPipeline = ,$arr | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $arr -Compress
+            $jsonPipeline | Should -BeExactly '["apple","banana","cherry"]'
+            $jsonInputObject | Should -BeExactly '["apple","banana","cherry"]'
+        }
+
+        It 'Should serialize typed array correctly via Pipeline and InputObject' {
+            [int[]]$arr = @(10, 20, 30)
+            $jsonPipeline = ,$arr | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $arr -Compress
+            $jsonPipeline | Should -BeExactly '[10,20,30]'
+            $jsonInputObject | Should -BeExactly '[10,20,30]'
+        }
+
+        It 'Should serialize array with single null element correctly' {
+            $arr = @($null)
+            $json = ConvertTo-Json -InputObject $arr -Compress
+            $json | Should -BeExactly '[null]'
+        }
+
+        It 'Should serialize array with multiple null elements correctly' {
+            $arr = @($null, $null, $null)
+            $json = ConvertTo-Json -InputObject $arr -Compress
+            $json | Should -BeExactly '[null,null,null]'
+        }
+    }
+
+    Context 'Nested arrays' {
+        It 'Should serialize 2D array correctly via InputObject' {
+            $arr = @(@(1, 2), @(3, 4))
+            $json = ConvertTo-Json -InputObject $arr -Compress
+            $json | Should -BeExactly '[[1,2],[3,4]]'
+        }
+
+        It 'Should serialize 3D array correctly via InputObject' {
+            $arr = @(@(@(1, 2), @(3, 4)), @(@(5, 6), @(7, 8)))
+            $json = ConvertTo-Json -InputObject $arr -Compress
+            $json | Should -BeExactly '[[[1,2],[3,4]],[[5,6],[7,8]]]'
+        }
+
+        It 'Should serialize jagged array correctly via InputObject' {
+            $arr = @(@(1), @(2, 3), @(4, 5, 6))
+            $json = ConvertTo-Json -InputObject $arr -Compress
+            $json | Should -BeExactly '[[1],[2,3],[4,5,6]]'
+        }
+
+        It 'Should serialize array containing empty arrays correctly' {
+            $arr = @(@(), @(1), @())
+            $json = ConvertTo-Json -InputObject $arr -Compress
+            $json | Should -BeExactly '[[],[1],[]]'
+        }
+
+        It 'Should serialize deeply nested array with Depth limit' {
+            $arr = ,(,(,(,(1))))
+            $json = ConvertTo-Json -InputObject $arr -Compress -Depth 2
+            $json | Should -BeExactly '[[["1"]]]'
+        }
+
+        It 'Should serialize deeply nested array with sufficient Depth' {
+            $arr = ,(,(,(,(1))))
+            $json = ConvertTo-Json -InputObject $arr -Compress -Depth 10
+            $json | Should -BeExactly '[[[[1]]]]'
+        }
+    }
+
+    Context 'Array with mixed content types' {
+        It 'Should serialize array with mixed scalars correctly' {
+            $arr = @(1, 'two', 3.14, $true, $null)
+            $json = ConvertTo-Json -InputObject $arr -Compress
+            $json | Should -BeExactly '[1,"two",3.14,true,null]'
+        }
+
+        It 'Should serialize array with nested array and scalars correctly' {
+            $arr = @(1, @(2, 3), 4)
+            $json = ConvertTo-Json -InputObject $arr -Compress
+            $json | Should -BeExactly '[1,[2,3],4]'
+        }
+
+        It 'Should serialize array with hashtable elements correctly' {
+            $arr = @(@{a = 1}, @{b = 2})
+            $json = ConvertTo-Json -InputObject $arr -Compress
+            $json | Should -BeExactly '[{"a":1},{"b":2}]'
+        }
+
+        It 'Should serialize array with PSCustomObject elements correctly' {
+            $arr = @([PSCustomObject]@{x = 1}, [PSCustomObject]@{y = 2})
+            $json = ConvertTo-Json -InputObject $arr -Compress
+            $json | Should -BeExactly '[{"x":1},{"y":2}]'
+        }
+    }
+
+    Context 'Array ETS properties' {
+        It 'Should include ETS properties on array via InputObject' {
+            $arr = @(1, 2, 3)
+            $arr = Add-Member -InputObject $arr -MemberType NoteProperty -Name ArrayName -Value 'MyArray' -PassThru
+            $json = ConvertTo-Json -InputObject $arr -Compress
+            $json | Should -BeExactly '{"value":[1,2,3],"ArrayName":"MyArray"}'
+        }
+
+        It 'Should include multiple ETS properties on array via InputObject' {
+            $arr = @('a', 'b')
+            $arr = Add-Member -InputObject $arr -MemberType NoteProperty -Name Prop1 -Value 'val1' -PassThru
+            $arr = Add-Member -InputObject $arr -MemberType NoteProperty -Name Prop2 -Value 'val2' -PassThru
+            $json = ConvertTo-Json -InputObject $arr -Compress
+            $json | Should -BeExactly '{"value":["a","b"],"Prop1":"val1","Prop2":"val2"}'
+        }
+    }
+
+    Context 'Hashtable basic serialization' {
+        It 'Should serialize empty hashtable correctly via Pipeline and InputObject' {
+            $hash = @{}
+            $jsonPipeline = $hash | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $hash -Compress
+            $jsonPipeline | Should -BeExactly '{}'
+            $jsonInputObject | Should -BeExactly '{}'
+        }
+
+        It 'Should serialize single key hashtable correctly via Pipeline and InputObject' {
+            $hash = @{ key = 'value' }
+            $jsonPipeline = $hash | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $hash -Compress
+            $jsonPipeline | Should -BeExactly '{"key":"value"}'
+            $jsonInputObject | Should -BeExactly '{"key":"value"}'
+        }
+
+        It 'Should serialize hashtable with null value correctly' {
+            $hash = @{ nullKey = $null }
+            $json = $hash | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"nullKey":null}'
+        }
+
+        It 'Should serialize hashtable with various scalar types correctly' {
+            $hash = [ordered]@{
+                intKey = 42
+                strKey = 'hello'
+                boolKey = $true
+                doubleKey = 3.14
+            }
+            $json = $hash | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"intKey":42,"strKey":"hello","boolKey":true,"doubleKey":3.14}'
+        }
+    }
+
+    Context 'OrderedDictionary serialization' {
+        It 'Should preserve order in OrderedDictionary via Pipeline and InputObject' {
+            $ordered = [ordered]@{
+                z = 1
+                a = 2
+                m = 3
+            }
+            $expected = '{"z":1,"a":2,"m":3}'
+            $jsonPipeline = $ordered | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $ordered -Compress
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+
+        It 'Should serialize large OrderedDictionary preserving order' {
+            $ordered = [ordered]@{}
+            1..5 | ForEach-Object { $ordered["key$_"] = $_ }
+            $json = $ordered | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"key1":1,"key2":2,"key3":3,"key4":4,"key5":5}'
+        }
+    }
+
+    Context 'Nested dictionaries' {
+        It 'Should serialize nested hashtable correctly' {
+            $hash = @{
+                outer = @{
+                    inner = 'value'
+                }
+            }
+            $json = $hash | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"outer":{"inner":"value"}}'
+        }
+
+        It 'Should serialize deeply nested hashtable correctly' {
+            $hash = @{
+                level1 = @{
+                    level2 = @{
+                        level3 = 'deep'
+                    }
+                }
+            }
+            $json = $hash | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"level1":{"level2":{"level3":"deep"}}}'
+        }
+
+        It 'Should serialize nested hashtable with Depth limit' {
+            $hash = @{
+                level1 = @{
+                    level2 = @{
+                        level3 = 'deep'
+                    }
+                }
+            }
+            $json = $hash | ConvertTo-Json -Compress -Depth 1
+            $json | Should -BeExactly '{"level1":{"level2":"System.Collections.Hashtable"}}'
+        }
+
+        It 'Should serialize hashtable with array value correctly' {
+            $hash = @{ arr = @(1, 2, 3) }
+            $json = $hash | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"arr":[1,2,3]}'
+        }
+
+        It 'Should serialize hashtable with nested array of hashtables correctly' {
+            $hash = @{
+                items = @(
+                    @{ id = 1 },
+                    @{ id = 2 }
+                )
+            }
+            $json = $hash | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"items":[{"id":1},{"id":2}]}'
+        }
+    }
+
+    Context 'Dictionary key types' {
+        It 'Should serialize hashtable with string keys correctly' {
+            $hash = @{ 'string-key' = 'value' }
+            $json = $hash | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"string-key":"value"}'
+        }
+
+        It 'Should serialize hashtable with special character keys correctly' {
+            $hash = [ordered]@{
+                'key with space' = 1
+                'key-with-dash' = 2
+                'key_with_underscore' = 3
+            }
+            $json = $hash | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"key with space":1,"key-with-dash":2,"key_with_underscore":3}'
+        }
+
+        It 'Should serialize hashtable with unicode keys correctly' {
+            $hash = @{ '日本語' = 'Japanese' }
+            $json = $hash | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"日本語":"Japanese"}'
+        }
+
+        It 'Should serialize hashtable with empty string key correctly' {
+            $hash = @{ '' = 'empty key' }
+            $json = $hash | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"":"empty key"}'
+        }
+    }
+
+    Context 'Dictionary with complex values' {
+        It 'Should serialize hashtable with DateTime value correctly' {
+            $hash = @{ date = [DateTime]::new(2024, 6, 15, 10, 30, 0, [DateTimeKind]::Utc) }
+            $json = $hash | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"date":"2024-06-15T10:30:00Z"}'
+        }
+
+        It 'Should serialize hashtable with Guid value correctly' {
+            $hash = @{ guid = [Guid]'12345678-1234-1234-1234-123456789abc' }
+            $json = $hash | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"guid":"12345678-1234-1234-1234-123456789abc"}'
+        }
+
+        It 'Should serialize hashtable with enum value correctly' {
+            $hash = @{ day = [DayOfWeek]::Monday }
+            $json = $hash | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"day":1}'
+        }
+
+        It 'Should serialize hashtable with enum as string correctly' {
+            $hash = @{ day = [DayOfWeek]::Monday }
+            $json = $hash | ConvertTo-Json -Compress -EnumsAsStrings
+            $json | Should -BeExactly '{"day":"Monday"}'
+        }
+
+        It 'Should serialize hashtable with PSCustomObject value correctly' {
+            $hash = @{ obj = [PSCustomObject]@{ prop = 'value' } }
+            $json = $hash | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"obj":{"prop":"value"}}'
+        }
+    }
+
+    Context 'Dictionary ETS properties' {
+        It 'Should include ETS properties on hashtable via InputObject' {
+            $hash = @{ a = 1 }
+            $hash = Add-Member -InputObject $hash -MemberType NoteProperty -Name ETSProp -Value 'ets' -PassThru
+            $json = ConvertTo-Json -InputObject $hash -Compress
+            $json | Should -BeExactly '{"a":1,"ETSProp":"ets"}'
+        }
+
+        It 'Should include ETS properties on OrderedDictionary via InputObject' {
+            $ordered = [ordered]@{ a = 1 }
+            $ordered = Add-Member -InputObject $ordered -MemberType NoteProperty -Name ETSProp -Value 'ets' -PassThru
+            $json = ConvertTo-Json -InputObject $ordered -Compress
+            $json | Should -BeExactly '{"a":1,"ETSProp":"ets"}'
+        }
+    }
+
+    Context 'Generic Dictionary types' {
+        It 'Should serialize Generic Dictionary correctly' {
+            $dict = [System.Collections.Generic.Dictionary[string,int]]::new()
+            $dict['one'] = 1
+            $dict['two'] = 2
+            $json = $dict | ConvertTo-Json -Compress
+            $json | Should -Match '"one":1'
+            $json | Should -Match '"two":2'
+        }
+
+        It 'Should serialize SortedDictionary correctly' {
+            $dict = [System.Collections.Generic.SortedDictionary[string,int]]::new()
+            $dict['b'] = 2
+            $dict['a'] = 1
+            $dict['c'] = 3
+            $json = $dict | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"a":1,"b":2,"c":3}'
+        }
+    }
+
+    Context 'Array of dictionaries' {
+        It 'Should serialize array of hashtables correctly via Pipeline' {
+            $arr = @{ a = 1 }, @{ b = 2 }, @{ c = 3 }
+            $json = $arr | ConvertTo-Json -Compress
+            $json | Should -BeExactly '[{"a":1},{"b":2},{"c":3}]'
+        }
+
+        It 'Should serialize array of ordered dictionaries correctly via InputObject' {
+            $arr = @(
+                [ordered]@{ x = 1; y = 2 },
+                [ordered]@{ x = 3; y = 4 }
+            )
+            $json = ConvertTo-Json -InputObject $arr -Compress
+            $json | Should -BeExactly '[{"x":1,"y":2},{"x":3,"y":4}]'
+        }
+    }
+
+    Context 'Dictionary with array values' {
+        It 'Should serialize dictionary with array values correctly' {
+            $hash = [ordered]@{
+                numbers = @(1, 2, 3)
+                strings = @('a', 'b', 'c')
+            }
+            $json = $hash | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"numbers":[1,2,3],"strings":["a","b","c"]}'
+        }
+
+        It 'Should serialize dictionary with nested array values correctly' {
+            $hash = @{
+                matrix = @(@(1, 2), @(3, 4))
+            }
+            $json = $hash | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"matrix":[[1,2],[3,4]]}'
+        }
+
+        It 'Should serialize dictionary with empty array value correctly' {
+            $hash = @{ empty = @() }
+            $json = $hash | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"empty":[]}'
+        }
+    }
+
+    #endregion Comprehensive Array and Dictionary Tests (Phase 2)
 }
