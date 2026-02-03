@@ -585,4 +585,433 @@ Describe 'ConvertTo-Json' -tags "CI" {
     }
 
     #endregion Comprehensive Scalar Type Tests (Phase 1)
+
+    #region Comprehensive PSCustomObject and Composite Object Tests (Phase 3)
+    # Test coverage for ConvertTo-Json PSCustomObject and PowerShell class serialization
+    # Covers: Pipeline vs InputObject, ETS vs no ETS, nested structures
+
+    Context 'PSCustomObject basic serialization' {
+        It 'Should serialize PSCustomObject with single property correctly via Pipeline and InputObject' {
+            $obj = [PSCustomObject]@{ Name = 'Test' }
+            $jsonPipeline = $obj | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress
+            $jsonPipeline | Should -BeExactly '{"Name":"Test"}'
+            $jsonInputObject | Should -BeExactly '{"Name":"Test"}'
+        }
+
+        It 'Should serialize PSCustomObject with multiple properties correctly' {
+            $obj = [PSCustomObject]@{
+                Name = 'Test'
+                Value = 42
+                Active = $true
+            }
+            $json = $obj | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"Name":"Test","Value":42,"Active":true}'
+        }
+
+        It 'Should preserve property order in PSCustomObject' {
+            $obj = [PSCustomObject]@{
+                Zebra = 1
+                Alpha = 2
+                Middle = 3
+            }
+            $json = $obj | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"Zebra":1,"Alpha":2,"Middle":3}'
+        }
+
+        It 'Should serialize PSCustomObject with null property correctly' {
+            $obj = [PSCustomObject]@{ NullProp = $null }
+            $json = $obj | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"NullProp":null}'
+        }
+    }
+
+    Context 'PSCustomObject with various property types' {
+        It 'Should serialize PSCustomObject with scalar properties correctly' {
+            $obj = [PSCustomObject]@{
+                IntVal = 42
+                DoubleVal = 3.14
+                StringVal = 'hello'
+                BoolVal = $true
+            }
+            $json = $obj | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"IntVal":42,"DoubleVal":3.14,"StringVal":"hello","BoolVal":true}'
+        }
+
+        It 'Should serialize PSCustomObject with DateTime property correctly' {
+            $obj = [PSCustomObject]@{
+                Date = [DateTime]::new(2024, 6, 15, 10, 30, 0, [DateTimeKind]::Utc)
+            }
+            $json = $obj | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"Date":"2024-06-15T10:30:00Z"}'
+        }
+
+        It 'Should serialize PSCustomObject with Guid property correctly' {
+            $obj = [PSCustomObject]@{
+                Id = [Guid]'12345678-1234-1234-1234-123456789abc'
+            }
+            $json = $obj | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"Id":"12345678-1234-1234-1234-123456789abc"}'
+        }
+
+        It 'Should serialize PSCustomObject with enum property correctly' {
+            $obj = [PSCustomObject]@{
+                Day = [DayOfWeek]::Monday
+            }
+            $json = $obj | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"Day":1}'
+        }
+
+        It 'Should serialize PSCustomObject with enum property as string correctly' {
+            $obj = [PSCustomObject]@{
+                Day = [DayOfWeek]::Monday
+            }
+            $json = $obj | ConvertTo-Json -Compress -EnumsAsStrings
+            $json | Should -BeExactly '{"Day":"Monday"}'
+        }
+
+        It 'Should serialize PSCustomObject with array property correctly' {
+            $obj = [PSCustomObject]@{
+                Numbers = @(1, 2, 3)
+            }
+            $json = $obj | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"Numbers":[1,2,3]}'
+        }
+
+        It 'Should serialize PSCustomObject with hashtable property correctly' {
+            $obj = [PSCustomObject]@{
+                Config = @{ Key = 'Value' }
+            }
+            $json = $obj | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"Config":{"Key":"Value"}}'
+        }
+    }
+
+    Context 'Nested PSCustomObject' {
+        It 'Should serialize nested PSCustomObject correctly' {
+            $obj = [PSCustomObject]@{
+                Outer = [PSCustomObject]@{
+                    Inner = 'value'
+                }
+            }
+            $json = $obj | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"Outer":{"Inner":"value"}}'
+        }
+
+        It 'Should serialize deeply nested PSCustomObject correctly' {
+            $obj = [PSCustomObject]@{
+                Level1 = [PSCustomObject]@{
+                    Level2 = [PSCustomObject]@{
+                        Level3 = 'deep'
+                    }
+                }
+            }
+            $json = $obj | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"Level1":{"Level2":{"Level3":"deep"}}}'
+        }
+
+        It 'Should serialize nested PSCustomObject with Depth limit' {
+            $obj = [PSCustomObject]@{
+                Level1 = [PSCustomObject]@{
+                    Level2 = [PSCustomObject]@{
+                        Level3 = 'deep'
+                    }
+                }
+            }
+            $json = $obj | ConvertTo-Json -Compress -Depth 1
+            $json | Should -BeExactly '{"Level1":{"Level2":"@{Level3=deep}"}}'
+        }
+
+        It 'Should serialize PSCustomObject with mixed nested types correctly' {
+            $obj = [PSCustomObject]@{
+                Child = [PSCustomObject]@{ Name = 'child' }
+                Items = @(1, 2, 3)
+                Config = @{ Key = 'Value' }
+            }
+            $json = $obj | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"Child":{"Name":"child"},"Items":[1,2,3],"Config":{"Key":"Value"}}'
+        }
+    }
+
+    Context 'PSCustomObject ETS properties' {
+        It 'Should include NoteProperty on PSCustomObject' {
+            $obj = [PSCustomObject]@{ Original = 'value' }
+            $obj | Add-Member -MemberType NoteProperty -Name Added -Value 'added'
+            $json = $obj | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"Original":"value","Added":"added"}'
+        }
+
+        It 'Should include ScriptProperty on PSCustomObject' {
+            $obj = [PSCustomObject]@{ Value = 10 }
+            $obj | Add-Member -MemberType ScriptProperty -Name Doubled -Value { $this.Value * 2 }
+            $json = $obj | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"Value":10,"Doubled":20}'
+        }
+
+        It 'Should include multiple ETS properties on PSCustomObject' {
+            $obj = [PSCustomObject]@{ Base = 'base' }
+            $obj | Add-Member -MemberType NoteProperty -Name Note1 -Value 'note1'
+            $obj | Add-Member -MemberType NoteProperty -Name Note2 -Value 'note2'
+            $json = $obj | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"Base":"base","Note1":"note1","Note2":"note2"}'
+        }
+    }
+
+    Context 'Array of PSCustomObject' {
+        It 'Should serialize array of PSCustomObject correctly via Pipeline' {
+            $arr = @(
+                [PSCustomObject]@{ Id = 1; Name = 'First' }
+                [PSCustomObject]@{ Id = 2; Name = 'Second' }
+            )
+            $json = $arr | ConvertTo-Json -Compress
+            $json | Should -BeExactly '[{"Id":1,"Name":"First"},{"Id":2,"Name":"Second"}]'
+        }
+
+        It 'Should serialize array of PSCustomObject correctly via InputObject' {
+            $arr = @(
+                [PSCustomObject]@{ Id = 1; Name = 'First' }
+                [PSCustomObject]@{ Id = 2; Name = 'Second' }
+            )
+            $json = ConvertTo-Json -InputObject $arr -Compress
+            $json | Should -BeExactly '[{"Id":1,"Name":"First"},{"Id":2,"Name":"Second"}]'
+        }
+
+        It 'Should serialize single PSCustomObject via Pipeline without array wrapper' {
+            $obj = [PSCustomObject]@{ Id = 1 }
+            $json = $obj | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"Id":1}'
+        }
+
+        It 'Should serialize single PSCustomObject via Pipeline with -AsArray' {
+            $obj = [PSCustomObject]@{ Id = 1 }
+            $json = $obj | ConvertTo-Json -Compress -AsArray
+            $json | Should -BeExactly '[{"Id":1}]'
+        }
+    }
+
+    Context 'PowerShell class basic serialization' {
+        BeforeAll {
+            class SimpleClass {
+                [string]$Name
+                [int]$Value
+            }
+
+            class ClassWithConstructor {
+                [string]$Name
+                [int]$Value
+                ClassWithConstructor([string]$name, [int]$value) {
+                    $this.Name = $name
+                    $this.Value = $value
+                }
+            }
+
+            class ClassWithMethod {
+                [string]$Name
+                [int]$Value
+                [int] GetDoubled() { return $this.Value * 2 }
+            }
+
+            class ClassWithHiddenProperty {
+                [string]$Name
+                hidden [string]$Secret
+            }
+
+            class NestedClass {
+                [string]$Name
+                [SimpleClass]$Child
+            }
+
+            class DerivedClass : SimpleClass {
+                [string]$Extra
+            }
+        }
+
+        It 'Should serialize simple PowerShell class correctly via Pipeline and InputObject' {
+            $obj = [SimpleClass]@{ Name = 'Test'; Value = 42 }
+            $jsonPipeline = $obj | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress
+            $jsonPipeline | Should -BeExactly '{"Name":"Test","Value":42}'
+            $jsonInputObject | Should -BeExactly '{"Name":"Test","Value":42}'
+        }
+
+        It 'Should serialize PowerShell class with constructor correctly' {
+            $obj = [ClassWithConstructor]::new('Test', 42)
+            $json = $obj | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"Name":"Test","Value":42}'
+        }
+
+        It 'Should not serialize methods of PowerShell class' {
+            $obj = [ClassWithMethod]@{ Name = 'Test'; Value = 10 }
+            $json = $obj | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"Name":"Test","Value":10}'
+            $json | Should -Not -Match 'GetDoubled'
+        }
+
+        It 'Should serialize hidden properties of PowerShell class' {
+            $obj = [ClassWithHiddenProperty]::new()
+            $obj.Name = 'Visible'
+            $obj.Secret = 'Hidden'
+            $json = $obj | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"Name":"Visible","Secret":"Hidden"}'
+        }
+
+        It 'Should serialize PowerShell class with default values correctly' {
+            $obj = [SimpleClass]::new()
+            $json = $obj | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"Name":null,"Value":0}'
+        }
+    }
+
+    Context 'Nested PowerShell class' {
+        BeforeAll {
+            class InnerClass {
+                [string]$Inner
+            }
+
+            class OuterClass {
+                [string]$Outer
+                [InnerClass]$Child
+            }
+
+            class DeepClass {
+                [string]$Name
+                [OuterClass]$Nested
+            }
+        }
+
+        It 'Should serialize nested PowerShell class correctly' {
+            $inner = [InnerClass]@{ Inner = 'inner value' }
+            $outer = [OuterClass]@{ Outer = 'outer value'; Child = $inner }
+            $json = $outer | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"Outer":"outer value","Child":{"Inner":"inner value"}}'
+        }
+
+        It 'Should serialize deeply nested PowerShell class correctly' {
+            $inner = [InnerClass]@{ Inner = 'deep' }
+            $outer = [OuterClass]@{ Outer = 'middle'; Child = $inner }
+            $deep = [DeepClass]@{ Name = 'top'; Nested = $outer }
+            $json = $deep | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"Name":"top","Nested":{"Outer":"middle","Child":{"Inner":"deep"}}}'
+        }
+
+        It 'Should serialize nested PowerShell class with null child correctly' {
+            $outer = [OuterClass]@{ Outer = 'outer value'; Child = $null }
+            $json = $outer | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"Outer":"outer value","Child":null}'
+        }
+    }
+
+    Context 'PowerShell class inheritance' {
+        BeforeAll {
+            class BaseClass {
+                [string]$BaseProp
+            }
+
+            class ChildClass : BaseClass {
+                [string]$ChildProp
+            }
+
+            class GrandChildClass : ChildClass {
+                [string]$GrandChildProp
+            }
+        }
+
+        It 'Should serialize derived class with base properties correctly' {
+            $obj = [ChildClass]@{ BaseProp = 'base'; ChildProp = 'child' }
+            $json = $obj | ConvertTo-Json -Compress
+            $json | Should -Match '"BaseProp":"base"'
+            $json | Should -Match '"ChildProp":"child"'
+        }
+
+        It 'Should serialize multi-level inherited class correctly' {
+            $obj = [GrandChildClass]@{
+                BaseProp = 'base'
+                ChildProp = 'child'
+                GrandChildProp = 'grandchild'
+            }
+            $json = $obj | ConvertTo-Json -Compress
+            $json | Should -Match '"BaseProp":"base"'
+            $json | Should -Match '"ChildProp":"child"'
+            $json | Should -Match '"GrandChildProp":"grandchild"'
+        }
+    }
+
+    Context 'PowerShell class ETS properties' {
+        BeforeAll {
+            class ETSTestClass {
+                [string]$Original
+            }
+        }
+
+        It 'Should include NoteProperty on PowerShell class' {
+            $obj = [ETSTestClass]@{ Original = 'value' }
+            $obj | Add-Member -MemberType NoteProperty -Name Added -Value 'added'
+            $json = $obj | ConvertTo-Json -Compress
+            $json | Should -Match '"Original":"value"'
+            $json | Should -Match '"Added":"added"'
+        }
+
+        It 'Should include ScriptProperty on PowerShell class' {
+            $obj = [ETSTestClass]@{ Original = 'test' }
+            $obj | Add-Member -MemberType ScriptProperty -Name Length -Value { $this.Original.Length }
+            $json = $obj | ConvertTo-Json -Compress
+            $json | Should -Match '"Original":"test"'
+            $json | Should -Match '"Length":4'
+        }
+    }
+
+    Context 'Array of PowerShell class' {
+        BeforeAll {
+            class ArrayItemClass {
+                [int]$Id
+                [string]$Name
+            }
+        }
+
+        It 'Should serialize array of PowerShell class correctly via Pipeline' {
+            $arr = @(
+                [ArrayItemClass]@{ Id = 1; Name = 'First' }
+                [ArrayItemClass]@{ Id = 2; Name = 'Second' }
+            )
+            $json = $arr | ConvertTo-Json -Compress
+            $json | Should -BeExactly '[{"Id":1,"Name":"First"},{"Id":2,"Name":"Second"}]'
+        }
+
+        It 'Should serialize array of PowerShell class correctly via InputObject' {
+            $arr = @(
+                [ArrayItemClass]@{ Id = 1; Name = 'First' }
+                [ArrayItemClass]@{ Id = 2; Name = 'Second' }
+            )
+            $json = ConvertTo-Json -InputObject $arr -Compress
+            $json | Should -BeExactly '[{"Id":1,"Name":"First"},{"Id":2,"Name":"Second"}]'
+        }
+    }
+
+    Context 'Mixed PSCustomObject and PowerShell class' {
+        BeforeAll {
+            class MixedClass {
+                [string]$ClassName
+            }
+        }
+
+        It 'Should serialize PSCustomObject containing PowerShell class correctly' {
+            $classObj = [MixedClass]@{ ClassName = 'inner' }
+            $obj = [PSCustomObject]@{
+                Type = 'container'
+                Child = $classObj
+            }
+            $json = $obj | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"Type":"container","Child":{"ClassName":"inner"}}'
+        }
+
+        It 'Should serialize array with mixed types correctly' {
+            $classObj = [MixedClass]@{ ClassName = 'class' }
+            $customObj = [PSCustomObject]@{ CustomName = 'custom' }
+            $arr = @($classObj, $customObj)
+            $json = $arr | ConvertTo-Json -Compress
+            $json | Should -BeExactly '[{"ClassName":"class"},{"CustomName":"custom"}]'
+        }
+    }
+
+    #endregion Comprehensive PSCustomObject and Composite Object Tests (Phase 3)
 }
