@@ -38,7 +38,9 @@ function Release-ComObject {
             [void][System.Runtime.InteropServices.Marshal]::ReleaseComObject($ComObject)
         }
         catch {
-            # Ignore errors during COM release
+            # Intentionally suppressing errors - COM release can fail if object is already released
+            # or inaccessible. This is expected and should not affect script success.
+            Write-Verbose "COM object cleanup failed (expected/safe to ignore): $_" -Verbose:$false
         }
     }
 }
@@ -56,9 +58,10 @@ function Test-MicrosoftUpdateRegistered {
         return $service.IsRegisteredWithAu
     }
     catch {
-        # COM operation failed (possibly constrained language mode)
-        # Return $null to indicate we couldn't determine status
-        return $null
+        # QueryServiceRegistration throws if the service isn't registered
+        # or if COM operations fail. In either case, we should attempt registration.
+        # Return $false to indicate not registered.
+        return $false
     }
     finally {
         Release-ComObject $service
@@ -67,25 +70,7 @@ function Test-MicrosoftUpdateRegistered {
     }
 }
 
-# Check if already registered before doing any expensive work
-Write-Verbose "RegisterMicrosoftUpdate: checking if already registered..." -Verbose
-$alreadyRegistered = Test-MicrosoftUpdateRegistered
-
-if ($alreadyRegistered -eq $true) {
-    Write-Verbose "RegisterMicrosoftUpdate: Microsoft Update is already registered, skipping" -Verbose
-    exit 0
-}
-
-if ($null -eq $alreadyRegistered) {
-    Write-Verbose "RegisterMicrosoftUpdate: unable to check registration status (possibly constrained language mode), continuing installation" -Verbose
-    exit 0
-}
-
-# Not registered, attempt to register using an external process with timeout
-# Using external process avoids issues with constrained language mode affecting jobs/runspaces
-Write-Verbose "RegisterMicrosoftUpdate: Microsoft Update not registered, attempting registration..." -Verbose
-
-# Build the job script
+# Build the job script (check test hooks first before idempotency check)
 switch ($TestHook) {
     'Hang' {
         $waitTimeoutSeconds = 10
@@ -95,6 +80,19 @@ switch ($TestHook) {
         $jobScript = { throw "This job script should fail" }
     }
     default {
+        # Check if already registered before doing any expensive work
+        Write-Verbose "RegisterMicrosoftUpdate: checking if already registered..." -Verbose
+        $alreadyRegistered = Test-MicrosoftUpdateRegistered
+
+        if ($alreadyRegistered -eq $true) {
+            Write-Verbose "RegisterMicrosoftUpdate: Microsoft Update is already registered, skipping" -Verbose
+            exit 0
+        }
+
+        # Not registered, attempt to register using an external process with timeout
+        # Using external process avoids issues with constrained language mode affecting jobs/runspaces
+        Write-Verbose "RegisterMicrosoftUpdate: Microsoft Update not registered, attempting registration..." -Verbose
+
         # Normal path: register via COM in a job with timeout
         $jobScript = {
             param($ServiceId, $RegistrationFlags)
@@ -110,7 +108,13 @@ switch ($TestHook) {
             }
             finally {
                 if ($null -ne $serviceManager) {
-                    try { [void][System.Runtime.InteropServices.Marshal]::ReleaseComObject($serviceManager) } catch {}
+                    try {
+                        [void][System.Runtime.InteropServices.Marshal]::ReleaseComObject($serviceManager)
+                    }
+                    catch {
+                        # Intentionally suppressing errors - COM cleanup failures are expected and safe
+                        Write-Verbose "COM cleanup failed (expected/safe to ignore): $_" -Verbose:$false
+                    }
                 }
             }
         }

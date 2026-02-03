@@ -54,6 +54,37 @@ function Start-NativeExecution([scriptblock]$sb, [switch]$IgnoreExitcode)
     }
 }
 
+function Invoke-NativeProcess {
+    <#
+    .SYNOPSIS
+        Runs a native process and returns the exit code.
+    .PARAMETER FilePath
+        The path to the executable to run.
+    .PARAMETER Arguments
+        The arguments to pass to the executable.
+    .OUTPUTS
+        Returns the process exit code.
+    #>
+    param(
+        [string]$FilePath,
+        [string]$Arguments
+    )
+
+    $tempDir = [System.IO.Path]::GetTempPath()
+    $outFile = Join-Path $tempDir "wevtutil-stdout-$([System.IO.Path]::GetRandomFileName())"
+    $errFile = Join-Path $tempDir "wevtutil-stderr-$([System.IO.Path]::GetRandomFileName())"
+    $process = Start-Process -FilePath $FilePath -ArgumentList $Arguments -NoNewWindow -PassThru -RedirectStandardOutput $outFile -RedirectStandardError $errFile
+    $process.WaitForExit()
+    $exitCode = $process.ExitCode
+
+    # Only clean up temp files on success; keep them for debugging on failure
+    if ($exitCode -eq 0) {
+        Remove-Item $outFile, $errFile -Force -ErrorAction SilentlyContinue
+    }
+
+    return $exitCode
+}
+
 function Invoke-WevtutilWithTimeout {
     <#
     .SYNOPSIS
@@ -83,14 +114,7 @@ function Invoke-WevtutilWithTimeout {
         Write-Verbose "EventManifest: running wevtutil.exe $Arguments (timeout: ${TimeoutSeconds}s)" -Verbose
 
         # Use Start-ThreadJob with timeout for idiomatic PowerShell with timeout support
-        # Pass arguments as string to preserve quoting for paths with spaces
-        $job = Start-ThreadJob -ScriptBlock {
-            param($WevtutilPath, $ArgumentString)
-            # Use Invoke-Expression to properly handle quoted arguments
-            $command = "& `"$WevtutilPath`" $ArgumentString"
-            Invoke-Expression $command
-            return $LASTEXITCODE
-        } -ArgumentList $wevtutilPath, $Arguments
+        $job = Start-ThreadJob -ScriptBlock ${function:Invoke-NativeProcess} -ArgumentList $wevtutilPath, $Arguments
 
         $completed = Wait-Job -Job $job -Timeout $TimeoutSeconds
 
