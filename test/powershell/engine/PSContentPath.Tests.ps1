@@ -4,35 +4,41 @@
 Describe "Get-PSContentPath and Set-PSContentPath cmdlet tests" -tags "CI" {
     BeforeAll {
         # Backup any existing config files
-        $documentsConfigPath = if ($IsWindows) {
-            Join-Path ([Environment]::GetFolderPath('MyDocuments')) 'PowerShell' 'powershell.config.json'
+        # Config now defaults to LocalAppData instead of Documents on Windows
+        $configPath = if ($IsWindows) {
+            Join-Path $env:LOCALAPPDATA 'PowerShell' 'powershell.config.json'
         } else {
             Join-Path $HOME '.config' 'powershell' 'powershell.config.json'
         }
 
-        if (Test-Path $documentsConfigPath) {
-            $script:configBackup = Get-Content $documentsConfigPath -Raw
+        if (Test-Path $configPath) {
+            $script:configBackup = Get-Content $configPath -Raw
         } else {
             $script:configBackup = $null
+            # Ensure the parent directory exists for tests
+            $configDir = Split-Path $configPath -Parent
+            if (-not (Test-Path $configDir)) {
+                $null = New-Item -Path $configDir -ItemType Directory -Force
+            }
         }
     }
 
     AfterAll {
         # Restore original config if it existed
         if ($script:configBackup) {
-            Set-Content -Path $documentsConfigPath -Value $script:configBackup -Force
-        } elseif (Test-Path $documentsConfigPath) {
-            Remove-Item $documentsConfigPath -Force -ErrorAction SilentlyContinue
+            Set-Content -Path $configPath -Value $script:configBackup -Force
+        } elseif (Test-Path $configPath) {
+            Remove-Item $configPath -Force -ErrorAction SilentlyContinue
         }
     }
 
     AfterEach {
         # Clean up any test config files created during tests
-        if (Test-Path $documentsConfigPath) {
+        if (Test-Path $configPath) {
             if ($script:configBackup) {
-                Set-Content -Path $documentsConfigPath -Value $script:configBackup -Force
+                Set-Content -Path $configPath -Value $script:configBackup -Force
             } else {
-                Remove-Item $documentsConfigPath -Force -ErrorAction SilentlyContinue
+                Remove-Item $configPath -Force -ErrorAction SilentlyContinue
             }
         }
     }
@@ -41,12 +47,13 @@ Describe "Get-PSContentPath and Set-PSContentPath cmdlet tests" -tags "CI" {
         It "Get-PSContentPath returns default Documents path when not configured" {
             # This test only works if no config was present at session start
             # Skip if a config already exists (indicates a custom path was set)
-            $skipTest = Test-Path $documentsConfigPath
+            $skipTest = Test-Path $configPath
 
             if (-not $skipTest) {
                 $result = Get-PSContentPath
 
-                # Default should be Documents\PowerShell on Windows, XDG on Unix
+                # Default PSContentPath is Documents\PowerShell on Windows, XDG on Unix
+                # Note: The config FILE is stored in LocalAppData, but the content PATH defaults to Documents
                 if ($IsWindows) {
                     $expectedPath = Join-Path ([Environment]::GetFolderPath('MyDocuments')) 'PowerShell'
                     $result | Should -Be $expectedPath
@@ -62,23 +69,23 @@ Describe "Get-PSContentPath and Set-PSContentPath cmdlet tests" -tags "CI" {
 
         It "Get-PSContentPath returns path without creating config file" {
             # Ensure no config exists
-            if (Test-Path $documentsConfigPath) {
-                Remove-Item $documentsConfigPath -Force
+            if (Test-Path $configPath) {
+                Remove-Item $configPath -Force
             }
 
             $result = Get-PSContentPath
             $result | Should -Not -BeNullOrEmpty
 
             # Config file should NOT be created just by calling Get-PSContentPath
-            Test-Path $documentsConfigPath | Should -Be $false
+            Test-Path $configPath | Should -Be $false
         }
     }
 
     Context "Set-PSContentPath custom path" {
         It "Set-PSContentPath creates config with custom path" {
             # Ensure no config exists
-            if (Test-Path $documentsConfigPath) {
-                Remove-Item $documentsConfigPath -Force
+            if (Test-Path $configPath) {
+                Remove-Item $configPath -Force
             }
 
             $customPath = if ($IsWindows) { "$env:TEMP\CustomPowerShell" } else { "/tmp/CustomPowerShell" }
@@ -86,10 +93,10 @@ Describe "Get-PSContentPath and Set-PSContentPath cmdlet tests" -tags "CI" {
             Set-PSContentPath -Path $customPath -WarningAction SilentlyContinue
 
             # Config file should now exist
-            Test-Path $documentsConfigPath | Should -Be $true
+            Test-Path $configPath | Should -Be $true
 
             # Verify custom path is stored
-            $config = Get-Content $documentsConfigPath -Raw | ConvertFrom-Json
+            $config = Get-Content $configPath -Raw | ConvertFrom-Json
             $config.PSUserContentPath | Should -Be $customPath
         }
 
@@ -106,8 +113,8 @@ Describe "Get-PSContentPath and Set-PSContentPath cmdlet tests" -tags "CI" {
         }
 
         It "Set-PSContentPath supports WhatIf" {
-            if (Test-Path $documentsConfigPath) {
-                Remove-Item $documentsConfigPath -Force
+            if (Test-Path $configPath) {
+                Remove-Item $configPath -Force
             }
 
             $customPath = if ($IsWindows) { "$env:TEMP\TestPath" } else { "/tmp/TestPath" }
@@ -115,7 +122,7 @@ Describe "Get-PSContentPath and Set-PSContentPath cmdlet tests" -tags "CI" {
             Set-PSContentPath -Path $customPath -WhatIf
 
             # Config file should NOT be created with -WhatIf
-            Test-Path $documentsConfigPath | Should -Be $false
+            Test-Path $configPath | Should -Be $false
         }
     }
 }

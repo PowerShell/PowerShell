@@ -199,12 +199,18 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="newPath">The new path value to set.</param>
         private void UpdatePSUserContentPathVariable(string newPath)
         {
-            var variable = new PSVariable(
-                SpecialVariables.PSUserContentPath,
-                newPath,
-                ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope);
-
-            SessionState.Internal.SetVariableAtScope(variable, "global", force: true, CommandOrigin.Internal);
+            // Get the existing PSUserContentPathVariable and update its internal value
+            var existingVariable = SessionState.PSVariable.Get(SpecialVariables.PSUserContentPath);
+            if (existingVariable is PSUserContentPathVariable contentPathVariable)
+            {
+                contentPathVariable.UpdateValue(newPath);
+            }
+            else
+            {
+                // Fallback: create a new PSUserContentPathVariable (shouldn't normally happen)
+                var variable = new PSUserContentPathVariable(newPath);
+                SessionState.Internal.SetVariableAtScope(variable, "global", force: true, CommandOrigin.Internal);
+            }
         }
 
         /// <summary>
