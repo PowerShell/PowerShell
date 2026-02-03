@@ -25,9 +25,9 @@ param(
 )
 
 # Microsoft Update service GUID
-$MuServiceId = '7971f918-a847-4430-9279-4a52d1efe18d'
+$MicrosoftUpdateServiceId = '7971f918-a847-4430-9279-4a52d1efe18d'
 # Service registration flags: asfAllowPendingRegistration + asfAllowOnlineRegistration + asfRegisterServiceWithAU
-$MuServiceRegistrationFlags = 7
+$MicrosoftUpdateServiceRegistrationFlags = 7
 $waitTimeoutSeconds = 120
 
 # Helper function to release COM objects deterministically
@@ -51,7 +51,7 @@ function Test-MicrosoftUpdateRegistered {
     $service = $null
     try {
         $serviceManager = New-Object -ComObject Microsoft.Update.ServiceManager
-        $registration = $serviceManager.QueryServiceRegistration($MuServiceId)
+        $registration = $serviceManager.QueryServiceRegistration($MicrosoftUpdateServiceId)
         $service = $registration.Service
         return $service.IsRegisteredWithAu
     }
@@ -125,7 +125,7 @@ try {
         $job = Start-ThreadJob -ScriptBlock $jobScript
     }
     else {
-        $job = Start-ThreadJob -ScriptBlock $jobScript -ArgumentList $MuServiceId, $MuServiceRegistrationFlags
+        $job = Start-ThreadJob -ScriptBlock $jobScript -ArgumentList $MicrosoftUpdateServiceId, $MicrosoftUpdateServiceRegistrationFlags
     }
 
     # Wait with timeout
@@ -135,7 +135,7 @@ try {
         $result = Receive-Job -Job $job
         Remove-Job -Job $job -Force
 
-        if ($result -eq $true -or $result -eq 0) {
+        if ($result -eq $true) {
             Write-Verbose "RegisterMicrosoftUpdate: completed successfully" -Verbose
         }
         else {

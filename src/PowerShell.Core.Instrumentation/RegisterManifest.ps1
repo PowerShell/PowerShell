@@ -83,11 +83,14 @@ function Invoke-WevtutilWithTimeout {
         Write-Verbose "EventManifest: running wevtutil.exe $Arguments (timeout: ${TimeoutSeconds}s)" -Verbose
 
         # Use Start-ThreadJob with timeout for idiomatic PowerShell with timeout support
+        # Pass arguments as string to preserve quoting for paths with spaces
         $job = Start-ThreadJob -ScriptBlock {
-            param($WevtutilPath, $Args)
-            & $WevtutilPath @Args
+            param($WevtutilPath, $ArgumentString)
+            # Use Invoke-Expression to properly handle quoted arguments
+            $command = "& `"$WevtutilPath`" $ArgumentString"
+            Invoke-Expression $command
             return $LASTEXITCODE
-        } -ArgumentList $wevtutilPath, $Arguments.Split(' ')
+        } -ArgumentList $wevtutilPath, $Arguments
 
         $completed = Wait-Job -Job $job -Timeout $TimeoutSeconds
 
