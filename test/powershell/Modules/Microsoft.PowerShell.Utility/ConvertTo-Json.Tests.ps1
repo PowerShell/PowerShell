@@ -1042,4 +1042,382 @@ Describe 'ConvertTo-Json' -tags "CI" {
     }
 
     #endregion Comprehensive Array and Dictionary Tests (Phase 2)
+
+    #region Comprehensive Depth Truncation and Multilevel Composition Tests (Phase 4)
+    # Test coverage for ConvertTo-Json depth truncation and complex nested structures
+    # Covers: -Depth parameter behavior, multilevel type compositions
+
+    Context 'Depth parameter basic behavior' {
+        It 'Should use default depth of 2' {
+            $obj = [PSCustomObject]@{
+                L1 = [PSCustomObject]@{
+                    L2 = [PSCustomObject]@{
+                        L3 = 'deep'
+                    }
+                }
+            }
+            $json = $obj | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"L1":{"L2":{"L3":"deep"}}}'
+        }
+
+        It 'Should truncate at Depth 0' {
+            $obj = [PSCustomObject]@{
+                Child = [PSCustomObject]@{ Value = 1 }
+            }
+            $json = $obj | ConvertTo-Json -Compress -Depth 0
+            $json | Should -BeExactly '{"Child":"@{Value=1}"}'
+        }
+
+        It 'Should truncate at Depth 1' {
+            $obj = [PSCustomObject]@{
+                L1 = [PSCustomObject]@{
+                    L2 = [PSCustomObject]@{
+                        L3 = 'deep'
+                    }
+                }
+            }
+            $json = $obj | ConvertTo-Json -Compress -Depth 1
+            $json | Should -BeExactly '{"L1":{"L2":"@{L3=deep}"}}'
+        }
+
+        It 'Should serialize fully with sufficient Depth' {
+            $obj = [PSCustomObject]@{
+                L1 = [PSCustomObject]@{
+                    L2 = [PSCustomObject]@{
+                        L3 = [PSCustomObject]@{
+                            L4 = 'very deep'
+                        }
+                    }
+                }
+            }
+            $json = $obj | ConvertTo-Json -Compress -Depth 10
+            $json | Should -BeExactly '{"L1":{"L2":{"L3":{"L4":"very deep"}}}}'
+        }
+
+        It 'Should handle Depth 100 for deeply nested structures' {
+            $obj = [PSCustomObject]@{ L1 = [PSCustomObject]@{ L2 = [PSCustomObject]@{ L3 = [PSCustomObject]@{ L4 = [PSCustomObject]@{ L5 = 'deep' } } } } }
+            $json = $obj | ConvertTo-Json -Compress -Depth 100
+            $json | Should -BeExactly '{"L1":{"L2":{"L3":{"L4":{"L5":"deep"}}}}}'
+        }
+    }
+
+    Context 'Depth truncation with arrays' {
+        It 'Should truncate nested array at Depth limit' {
+            $obj = [PSCustomObject]@{
+                Arr = ,(,(1, 2, 3))
+            }
+            $json = $obj | ConvertTo-Json -Compress -Depth 1
+            $json | Should -BeExactly '{"Arr":["System.Object[]"]}'
+        }
+
+        It 'Should serialize nested array fully with sufficient Depth' {
+            $obj = [PSCustomObject]@{
+                Arr = ,(,(1, 2, 3))
+            }
+            $json = $obj | ConvertTo-Json -Compress -Depth 10
+            $json | Should -BeExactly '{"Arr":[[[1,2,3]]]}'
+        }
+
+        It 'Should truncate array of objects at Depth limit' {
+            $arr = @(
+                [PSCustomObject]@{ Inner = [PSCustomObject]@{ Value = 1 } }
+            )
+            $json = ConvertTo-Json -InputObject $arr -Compress -Depth 1
+            $json | Should -BeExactly '[{"Inner":"@{Value=1}"}]'
+        }
+    }
+
+    Context 'Depth truncation with hashtables' {
+        It 'Should truncate nested hashtable at Depth limit' {
+            $hash = @{
+                L1 = @{
+                    L2 = @{
+                        L3 = 'deep'
+                    }
+                }
+            }
+            $json = $hash | ConvertTo-Json -Compress -Depth 1
+            $json | Should -BeExactly '{"L1":{"L2":"System.Collections.Hashtable"}}'
+        }
+
+        It 'Should serialize nested hashtable fully with sufficient Depth' {
+            $hash = @{
+                L1 = @{
+                    L2 = @{
+                        L3 = 'deep'
+                    }
+                }
+            }
+            $json = $hash | ConvertTo-Json -Compress -Depth 10
+            $json | Should -BeExactly '{"L1":{"L2":{"L3":"deep"}}}'
+        }
+    }
+
+    Context 'Depth truncation string representation' {
+        It 'Should convert PSCustomObject to @{...} string when truncated' {
+            $obj = [PSCustomObject]@{
+                Child = [PSCustomObject]@{ A = 1; B = 2 }
+            }
+            $json = $obj | ConvertTo-Json -Compress -Depth 0
+            $json | Should -Match '@\{.*=.*\}'
+        }
+
+        It 'Should convert Hashtable to type name when truncated' {
+            $obj = [PSCustomObject]@{
+                Child = @{ Key = 'Value' }
+            }
+            $json = $obj | ConvertTo-Json -Compress -Depth 0
+            $json | Should -BeExactly '{"Child":"System.Collections.Hashtable"}'
+        }
+
+        It 'Should convert Array to space-separated string when truncated' {
+            $obj = [PSCustomObject]@{
+                Child = @(1, 2, 3)
+            }
+            $json = $obj | ConvertTo-Json -Compress -Depth 0
+            $json | Should -BeExactly '{"Child":"1 2 3"}'
+        }
+    }
+
+    Context 'Multilevel composition: Array containing Dictionary' {
+        It 'Should serialize array of hashtables correctly' {
+            $arr = @(
+                ([ordered]@{ Id = 1; Name = 'First' }),
+                ([ordered]@{ Id = 2; Name = 'Second' })
+            )
+            $json = ConvertTo-Json -InputObject $arr -Compress
+            $json | Should -BeExactly '[{"Id":1,"Name":"First"},{"Id":2,"Name":"Second"}]'
+        }
+
+        It 'Should serialize array of ordered dictionaries correctly' {
+            $arr = @(
+                [ordered]@{ A = 1; B = 2 },
+                [ordered]@{ A = 3; B = 4 }
+            )
+            $json = ConvertTo-Json -InputObject $arr -Compress
+            $json | Should -BeExactly '[{"A":1,"B":2},{"A":3,"B":4}]'
+        }
+
+        It 'Should serialize nested array of hashtables correctly' {
+            $arr = @(
+                @{
+                    Items = @(
+                        @{ Value = 1 },
+                        @{ Value = 2 }
+                    )
+                }
+            )
+            $json = ConvertTo-Json -InputObject $arr -Compress -Depth 3
+            $json | Should -BeExactly '[{"Items":[{"Value":1},{"Value":2}]}]'
+        }
+    }
+
+    Context 'Multilevel composition: Dictionary containing Array' {
+        It 'Should serialize hashtable with array values correctly' {
+            $hash = @{
+                Numbers = @(1, 2, 3)
+                Strings = @('a', 'b', 'c')
+            }
+            $json = $hash | ConvertTo-Json -Compress
+            $json | Should -Match '"Numbers":\[1,2,3\]'
+            $json | Should -Match '"Strings":\["a","b","c"\]'
+        }
+
+        It 'Should serialize ordered dictionary with nested arrays correctly' {
+            $hash = [ordered]@{
+                Matrix = @(
+                    @(1, 2),
+                    @(3, 4)
+                )
+            }
+            $json = $hash | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"Matrix":[[1,2],[3,4]]}'
+        }
+
+        It 'Should serialize dictionary with array of dictionaries correctly' {
+            $hash = @{
+                Items = @(
+                    @{ X = 1 },
+                    @{ X = 2 }
+                )
+            }
+            $json = $hash | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"Items":[{"X":1},{"X":2}]}'
+        }
+    }
+
+    Context 'Multilevel composition: PSCustomObject with mixed types' {
+        It 'Should serialize PSCustomObject with array and hashtable properties' {
+            $obj = [PSCustomObject]@{
+                List = @(1, 2, 3)
+                Config = @{ Key = 'Value' }
+                Name = 'Test'
+            }
+            $json = $obj | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"List":[1,2,3],"Config":{"Key":"Value"},"Name":"Test"}'
+        }
+
+        It 'Should serialize PSCustomObject with nested PSCustomObject and array' {
+            $obj = [PSCustomObject]@{
+                Child = [PSCustomObject]@{
+                    Items = @(1, 2, 3)
+                }
+            }
+            $json = $obj | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"Child":{"Items":[1,2,3]}}'
+        }
+
+        It 'Should serialize array of PSCustomObject with mixed properties' {
+            $arr = @(
+                [PSCustomObject]@{ Type = 'A'; Data = @(1, 2) },
+                [PSCustomObject]@{ Type = 'B'; Data = @{ Key = 'Val' } }
+            )
+            $json = ConvertTo-Json -InputObject $arr -Compress
+            $json | Should -BeExactly '[{"Type":"A","Data":[1,2]},{"Type":"B","Data":{"Key":"Val"}}]'
+        }
+    }
+
+    Context 'Multilevel composition: PowerShell class in complex structures' {
+        BeforeAll {
+            class ItemClass {
+                [int]$Id
+                [string]$Name
+            }
+
+            class ContainerClass {
+                [string]$Type
+                [ItemClass]$Item
+            }
+        }
+
+        It 'Should serialize array of PowerShell class correctly' {
+            $arr = @(
+                [ItemClass]@{ Id = 1; Name = 'First' },
+                [ItemClass]@{ Id = 2; Name = 'Second' }
+            )
+            $json = ConvertTo-Json -InputObject $arr -Compress
+            $json | Should -BeExactly '[{"Id":1,"Name":"First"},{"Id":2,"Name":"Second"}]'
+        }
+
+        It 'Should serialize hashtable containing PowerShell class correctly' {
+            $item = [ItemClass]@{ Id = 1; Name = 'Test' }
+            $hash = @{ Item = $item }
+            $json = $hash | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"Item":{"Id":1,"Name":"Test"}}'
+        }
+
+        It 'Should serialize nested PowerShell classes correctly' {
+            $item = [ItemClass]@{ Id = 1; Name = 'Inner' }
+            $container = [ContainerClass]@{ Type = 'Outer'; Item = $item }
+            $json = $container | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"Type":"Outer","Item":{"Id":1,"Name":"Inner"}}'
+        }
+
+        It 'Should serialize PSCustomObject containing PowerShell class correctly' {
+            $item = [ItemClass]@{ Id = 1; Name = 'Test' }
+            $obj = [PSCustomObject]@{
+                Label = 'Container'
+                Content = $item
+            }
+            $json = $obj | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"Label":"Container","Content":{"Id":1,"Name":"Test"}}'
+        }
+    }
+
+    Context 'Complex multilevel compositions' {
+        It 'Should serialize 3-level mixed composition correctly' {
+            $obj = [PSCustomObject]@{
+                Users = @(
+                    [PSCustomObject]@{
+                        Name = 'Alice'
+                        Roles = @('Admin', 'User')
+                    },
+                    [PSCustomObject]@{
+                        Name = 'Bob'
+                        Roles = @('User')
+                    }
+                )
+            }
+            $json = $obj | ConvertTo-Json -Compress -Depth 3
+            $json | Should -BeExactly '{"Users":[{"Name":"Alice","Roles":["Admin","User"]},{"Name":"Bob","Roles":["User"]}]}'
+        }
+
+        It 'Should serialize dictionary with nested mixed types correctly' {
+            $hash = [ordered]@{
+                Meta = [PSCustomObject]@{ Version = '1.0' }
+                Data = @(
+                    ([ordered]@{ Key = 'A'; Values = @(1, 2) }),
+                    ([ordered]@{ Key = 'B'; Values = @(3, 4) })
+                )
+            }
+            $json = $hash | ConvertTo-Json -Compress -Depth 3
+            $json | Should -BeExactly '{"Meta":{"Version":"1.0"},"Data":[{"Key":"A","Values":[1,2]},{"Key":"B","Values":[3,4]}]}'
+        }
+
+        It 'Should handle deeply nested mixed types with sufficient Depth' {
+            $obj = [PSCustomObject]@{
+                L1 = @{
+                    L2 = [PSCustomObject]@{
+                        L3 = @(
+                            [PSCustomObject]@{ L4 = 'deep' }
+                        )
+                    }
+                }
+            }
+            $json = $obj | ConvertTo-Json -Compress -Depth 10
+            $json | Should -BeExactly '{"L1":{"L2":{"L3":[{"L4":"deep"}]}}}'
+        }
+
+        It 'Should truncate deeply nested mixed types at Depth limit' {
+            $obj = [PSCustomObject]@{
+                L1 = @{
+                    L2 = [PSCustomObject]@{
+                        L3 = @(
+                            [PSCustomObject]@{ L4 = 'deep' }
+                        )
+                    }
+                }
+            }
+            $json = $obj | ConvertTo-Json -Compress -Depth 2
+            $json | Should -BeExactly '{"L1":{"L2":{"L3":""}}}'
+        }
+    }
+
+    Context 'Multilevel composition with Pipeline vs InputObject' {
+        It 'Should serialize array via Pipeline correctly' {
+            $arr = @(
+                [PSCustomObject]@{ Id = 1 },
+                [PSCustomObject]@{ Id = 2 }
+            )
+            $json = $arr | ConvertTo-Json -Compress
+            $json | Should -BeExactly '[{"Id":1},{"Id":2}]'
+        }
+
+        It 'Should serialize array via InputObject correctly' {
+            $arr = @(
+                [PSCustomObject]@{ Id = 1 },
+                [PSCustomObject]@{ Id = 2 }
+            )
+            $json = ConvertTo-Json -InputObject $arr -Compress
+            $json | Should -BeExactly '[{"Id":1},{"Id":2}]'
+        }
+
+        It 'Should serialize nested structure via Pipeline correctly' {
+            $obj = [PSCustomObject]@{
+                Items = @(@{ A = 1 }, @{ B = 2 })
+            }
+            $json = $obj | ConvertTo-Json -Compress
+            $json | Should -BeExactly '{"Items":[{"A":1},{"B":2}]}'
+        }
+
+        It 'Should serialize nested structure via InputObject correctly' {
+            $obj = [PSCustomObject]@{
+                Items = @(@{ A = 1 }, @{ B = 2 })
+            }
+            $json = ConvertTo-Json -InputObject $obj -Compress
+            $json | Should -BeExactly '{"Items":[{"A":1},{"B":2}]}'
+        }
+    }
+
+    #endregion Comprehensive Depth Truncation and Multilevel Composition Tests (Phase 4)
 }
