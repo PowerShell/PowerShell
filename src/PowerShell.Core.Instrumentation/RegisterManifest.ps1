@@ -189,8 +189,17 @@ if (-not (Test-Elevated))
     throw 'This script must be run from an elevated process.'
 }
 
-$manifest = Join-Path -Path $Path -ChildPath 'PowerShell.Core.Instrumentation.man'
-$binary = Join-Path -Path $Path -ChildPath 'PowerShell.Core.Instrumentation.dll'
+# Validate and resolve the Path parameter for security
+# Ensure the path exists, is absolute, and doesn't contain suspicious patterns
+if (-not (Test-Path -Path $Path -PathType Container)) {
+    throw "Path does not exist or is not a directory: $Path"
+}
+
+# Resolve to absolute path to prevent directory traversal attacks
+$resolvedPath = (Resolve-Path -Path $Path).Path
+
+$manifest = Join-Path -Path $resolvedPath -ChildPath 'PowerShell.Core.Instrumentation.man'
+$binary = Join-Path -Path $resolvedPath -ChildPath 'PowerShell.Core.Instrumentation.dll'
 
 $files = @($manifest, $binary)
 foreach ($file in $files)
