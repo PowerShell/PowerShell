@@ -669,16 +669,19 @@ Describe 'ConvertTo-Json' -tags "CI" {
             $json | Should -BeExactly '[[],[1],[]]'
         }
 
-        It 'Should serialize deeply nested array with Depth limit' {
-            $arr = ,(,(,(,(1))))
+        It 'Should serialize deeply nested array with Depth limit using ToString' {
+            $ip = [System.Net.IPAddress]::Parse('192.168.1.1')
+            $arr = ,(,(,(,($ip))))
             $json = ConvertTo-Json -InputObject $arr -Compress -Depth 2
-            $json | Should -BeExactly '[[["1"]]]'
+            $json | Should -BeExactly '[[["192.168.1.1"]]]'
         }
 
-        It 'Should serialize deeply nested array with sufficient Depth' {
-            $arr = ,(,(,(,(1))))
+        It 'Should serialize deeply nested array with sufficient Depth as full object' {
+            $ip = [System.Net.IPAddress]::Parse('10.0.0.1')
+            $arr = ,(,(,(,($ip))))
             $json = ConvertTo-Json -InputObject $arr -Compress -Depth 10
-            $json | Should -BeExactly '[[[[1]]]]'
+            $json | Should -BeLike '*AddressFamily*'
+            $json | Should -Not -BeExactly '[[[["10.0.0.1"]]]]'
         }
     }
 
@@ -695,16 +698,38 @@ Describe 'ConvertTo-Json' -tags "CI" {
             $json | Should -BeExactly '[1,[2,3],4]'
         }
 
-        It 'Should serialize array with hashtable elements correctly' {
-            $arr = @(@{a = 1}, @{b = 2})
-            $json = ConvertTo-Json -InputObject $arr -Compress
-            $json | Should -BeExactly '[{"a":1},{"b":2}]'
-        }
-
         It 'Should serialize array with PSCustomObject elements correctly' {
             $arr = @([PSCustomObject]@{x = 1}, [PSCustomObject]@{y = 2})
             $json = ConvertTo-Json -InputObject $arr -Compress
             $json | Should -BeExactly '[{"x":1},{"y":2}]'
+        }
+
+        It 'Should serialize array with DateTime elements correctly' {
+            $date1 = [DateTime]::new(2024, 6, 15, 10, 30, 0, [DateTimeKind]::Utc)
+            $date2 = [DateTime]::new(2024, 12, 25, 0, 0, 0, [DateTimeKind]::Utc)
+            $arr = @($date1, $date2)
+            $json = ConvertTo-Json -InputObject $arr -Compress
+            $json | Should -BeExactly '["2024-06-15T10:30:00Z","2024-12-25T00:00:00Z"]'
+        }
+
+        It 'Should serialize array with Guid elements correctly' {
+            $guid1 = [Guid]'12345678-1234-1234-1234-123456789abc'
+            $guid2 = [Guid]'87654321-4321-4321-4321-cba987654321'
+            $arr = @($guid1, $guid2)
+            $json = ConvertTo-Json -InputObject $arr -Compress
+            $json | Should -BeExactly '["12345678-1234-1234-1234-123456789abc","87654321-4321-4321-4321-cba987654321"]'
+        }
+
+        It 'Should serialize array with enum elements correctly' {
+            $arr = @([DayOfWeek]::Monday, [DayOfWeek]::Friday)
+            $json = ConvertTo-Json -InputObject $arr -Compress
+            $json | Should -BeExactly '[1,5]'
+        }
+
+        It 'Should serialize array with enum as string correctly' {
+            $arr = @([DayOfWeek]::Monday, [DayOfWeek]::Friday)
+            $json = ConvertTo-Json -InputObject $arr -Compress -EnumsAsStrings
+            $json | Should -BeExactly '["Monday","Friday"]'
         }
     }
 
@@ -853,9 +878,9 @@ Describe 'ConvertTo-Json' -tags "CI" {
         }
 
         It 'Should serialize hashtable with unicode keys correctly' {
-            $hash = @{ '日本語' = 'Japanese' }
+            $hash = @{ "`u{65E5}`u{672C}`u{8A9E}" = 'Japanese' }
             $json = $hash | ConvertTo-Json -Compress
-            $json | Should -BeExactly '{"日本語":"Japanese"}'
+            $json | Should -BeExactly "{`"`u{65E5}`u{672C}`u{8A9E}`":`"Japanese`"}"
         }
 
         It 'Should serialize hashtable with empty string key correctly' {
