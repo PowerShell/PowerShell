@@ -460,7 +460,6 @@ Describe 'ConvertTo-Json' -tags "CI" {
         }
     }
 
-
     Context 'Scalars as elements of arrays' {
         It 'Should serialize array of <TypeName> correctly via Pipeline and InputObject' -TestCases @(
             @{ TypeName = 'int'; Values = @(1, 2, 3); Expected = '[1,2,3]' }
