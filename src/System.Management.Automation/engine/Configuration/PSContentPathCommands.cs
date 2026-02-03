@@ -23,8 +23,14 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the size of the content directory.
         /// </summary>
-        [Parameter]
+        [Parameter(ParameterSetName = "Path")]
         public SwitchParameter Size { get; set; }
+
+        /// <summary>
+        /// Gets the path to the user configuration file instead of the content path.
+        /// </summary>
+        [Parameter(Mandatory = true, ParameterSetName = "ConfigFile")]
+        public SwitchParameter ConfigFile { get; set; }
 
         /// <summary>
         /// EndProcessing method of this cmdlet.
@@ -34,6 +40,14 @@ namespace Microsoft.PowerShell.Commands
         {
             try
             {
+                // If -ConfigFile is specified, return the config file path
+                if (ConfigFile)
+                {
+                    string configFilePath = PowerShellConfig.Instance.GetConfigFilePath(ConfigScope.CurrentUser);
+                    WriteObject(configFilePath);
+                    return;
+                }
+
                 var psContentPath = Utils.GetPSContentPath();
 
                 if (Size)
@@ -140,14 +154,20 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            if (ShouldProcess($"PSContentPath = {Path}", "Set PSContentPath"))
+            string expandedPath = Environment.ExpandEnvironmentVariables(Path);
+            string currentPath = Utils.GetPSContentPath();
+            string configFile = PowerShellConfig.Instance.GetConfigFilePath(ConfigScope.CurrentUser);
+
+            string target = $"Config file: '{configFile}'";
+            string action = $"Set PSUserContentPath from '{currentPath}' to '{expandedPath}'";
+
+            if (ShouldProcess(target, action))
             {
                 try
                 {
                     PowerShellConfig.Instance.SetPSContentPath(Path);
 
                     // Update the $PSUserContentPath readonly variable in the current session
-                    string expandedPath = Environment.ExpandEnvironmentVariables(Path);
                     UpdatePSUserContentPathVariable(expandedPath);
 
                     WriteVerbose($"Successfully set PSContentPath to '{Path}'");
@@ -169,8 +189,13 @@ namespace Microsoft.PowerShell.Commands
         private void ResetToDefault()
         {
             string defaultPath = Platform.DefaultPSContentDirectory;
+            string currentPath = Utils.GetPSContentPath();
+            string configFile = PowerShellConfig.Instance.GetConfigFilePath(ConfigScope.CurrentUser);
 
-            if (ShouldProcess($"PSContentPath = {defaultPath}", "Reset PSContentPath to default"))
+            string target = $"Config file: '{configFile}'";
+            string action = $"Reset PSUserContentPath from '{currentPath}' to platform default '{defaultPath}'";
+
+            if (ShouldProcess(target, action))
             {
                 try
                 {

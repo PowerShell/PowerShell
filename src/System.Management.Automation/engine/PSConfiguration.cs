@@ -126,7 +126,12 @@ namespace System.Management.Automation.Configuration
             fileLock = new ReaderWriterLockSlim();
         }
 
-        private string GetConfigFilePath(ConfigScope scope)
+        /// <summary>
+        /// Gets the configuration file path for the specified scope.
+        /// </summary>
+        /// <param name="scope">The configuration scope.</param>
+        /// <returns>The full path to the configuration file.</returns>
+        internal string GetConfigFilePath(ConfigScope scope)
         {
             return (scope == ConfigScope.CurrentUser) ? perUserConfigFile : systemWideConfigFile;
         }

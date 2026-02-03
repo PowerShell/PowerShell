@@ -109,10 +109,12 @@ namespace System.Management.Automation
                     description: "Expose an API to allow assembly loading from native code"),
                 new ExperimentalFeature(
                     name: PSSerializeJSONLongEnumAsNumber,
-                    description: "Serialize enums based on long or ulong as an numeric value rather than the string representation when using ConvertTo-Json."),
+                    description: "Serialize enums based on long or ulong as an numeric value rather than the string representation when using ConvertTo-Json."
+                ),
                 new ExperimentalFeature(
                     name: PSProfileDSCResource,
-                    description: "DSC v3 resources for managing PowerShell profile.")
+                    description: "DSC v3 resources for managing PowerShell profile."
+                )
             };
 
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
