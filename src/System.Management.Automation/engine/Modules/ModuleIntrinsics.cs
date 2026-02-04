@@ -969,6 +969,25 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Gets the legacy personal module path (Documents\PowerShell\Modules).
+        /// This is used for backwards compatibility with PowerShellGet.
+        /// </summary>
+        /// <returns>Legacy personal module path, or null if same as current personal path.</returns>
+        internal static string GetLegacyPersonalModulePath()
+        {
+            string legacyPath = Path.Combine(Platform.DefaultPSContentDirectory, "Modules");
+            string currentPath = GetPersonalModulePath();
+
+            // Only return the legacy path if it's different from the current personal module path
+            if (!string.Equals(legacyPath, currentPath, StringComparison.OrdinalIgnoreCase))
+            {
+                return legacyPath;
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Gets the PSHome module path, as known as the "system wide module path" in windows powershell.
         /// </summary>
         /// <returns>The PSHome module path.</returns>
@@ -1342,6 +1361,16 @@ namespace System.Management.Automation
 #endif
             string allUsersModulePath = PowerShellConfig.Instance.GetModulePath(ConfigScope.AllUsers);
             string personalModulePath = PowerShellConfig.Instance.GetModulePath(ConfigScope.CurrentUser) ?? GetPersonalModulePath();
+            
+            // Include the legacy Documents module path for backwards compatibility with PowerShellGet
+            // This ensures both old (Documents) and new (PSContentPath) module locations are searched
+            string legacyModulePath = GetLegacyPersonalModulePath();
+            if (!string.IsNullOrEmpty(legacyModulePath))
+            {
+                // Combine personal path with legacy path (personal takes precedence)
+                personalModulePath = string.Concat(personalModulePath, Path.PathSeparator, legacyModulePath);
+            }
+
             string newModulePathString = GetModulePath(currentModulePath, allUsersModulePath, personalModulePath);
 
             if (!string.IsNullOrEmpty(newModulePathString))
