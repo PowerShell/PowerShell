@@ -882,10 +882,10 @@ foo``u{2195}abc
             @{ Script = "0b0"; ExpectedValue = "0"; ExpectedType = [int] }
             @{ Script = "0b10"; ExpectedValue = "2"; ExpectedType = [int] }
             @{ Script = "-0b10"; ExpectedValue = "-2"; ExpectedType = [int] }
-            @{ Script = "0b11111111"; ExpectedValue = "-1"; ExpectedType = [int] }
-            @{ Script = "0b1111111111111111"; ExpectedValue = "-1"; ExpectedType = [int] }
-            @{ Script = "0b11111111111111111111111111111111"; ExpectedValue = "-1"; ExpectedType = [int] }
-            @{ Script = "0b1111111111111111111111111111111111111111111111111111111111111111"; ExpectedValue = "-1"; ExpectedType = [long] }
+            @{ Script = "0b11111111"; ExpectedValue = "255"; ExpectedType = [int] }
+            @{ Script = "0b1111111111111111"; ExpectedValue = "65535"; ExpectedType = [int] }
+            @{ Script = "0b11111111111111111111111111111111"; ExpectedValue = "4294967295"; ExpectedType = [int] }
+            @{ Script = "0b1111111111111111111111111111111111111111111111111111111111111111"; ExpectedValue = "18446744073709551615"; ExpectedType = [long] }
             #Multipliers
             @{ Script = "1kb"; ExpectedValue = "1024"; ExpectedType = [int] }
             @{ Script = "1mb"; ExpectedValue = "1048576"; ExpectedType = [int] }
@@ -966,7 +966,7 @@ foo``u{2195}abc
             @{ Script = "0b0s"; ExpectedValue = "0"; ExpectedType = [short] }
             @{ Script = "0b10s"; ExpectedValue = "2"; ExpectedType = [short] }
             @{ Script = "-0b10s"; ExpectedValue = "-2"; ExpectedType = [short] }
-            @{ Script = "0b11111111s"; ExpectedValue = "-1"; ExpectedType = [short] }
+            @{ Script = "0b11111111s"; ExpectedValue = "255"; ExpectedType = [short] }
             #Multipliers
             @{ Script = "1skb"; ExpectedValue = "1024"; ExpectedType = [short] }
 
@@ -995,7 +995,7 @@ foo``u{2195}abc
             @{ Script = "0b0l"; ExpectedValue = "0"; ExpectedType = [long] }
             @{ Script = "0b10l"; ExpectedValue = "2"; ExpectedType = [long] }
             @{ Script = "-0b10l"; ExpectedValue = "-2"; ExpectedType = [long] }
-            @{ Script = "0b11111111l"; ExpectedValue = "-1"; ExpectedType = [long] }
+            @{ Script = "0b11111111l"; ExpectedValue = "255"; ExpectedType = [long] }
             #Multipliers
             @{ Script = "1lkb"; ExpectedValue = "1024"; ExpectedType = [long] }
             @{ Script = "1lmb"; ExpectedValue = "1048576"; ExpectedType = [long] }
@@ -1025,7 +1025,7 @@ foo``u{2195}abc
             @{ Script = "0b0n"; ExpectedValue = "0"; ExpectedType = [bigint] }
             @{ Script = "0b10n"; ExpectedValue = "2"; ExpectedType = [bigint] }
             @{ Script = "-0b10n"; ExpectedValue = "-2"; ExpectedType = [bigint] }
-            @{ Script = "0b11111111n"; ExpectedValue = "-1"; ExpectedType = [bigint] }
+            @{ Script = "0b11111111n"; ExpectedValue = "255"; ExpectedType = [bigint] }
             #Multipliers
             @{ Script = "1Nkb"; ExpectedValue = "1024"; ExpectedType = [bigint] }
             @{ Script = "1Nmb"; ExpectedValue = "1048576"; ExpectedType = [bigint] }
