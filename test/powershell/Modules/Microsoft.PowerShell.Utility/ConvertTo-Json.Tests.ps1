@@ -156,4 +156,50 @@ Describe 'ConvertTo-Json' -tags "CI" {
         $actual = ConvertTo-Json -Compress -InputObject $obj
         $actual | Should -Be '{"Positive":18446744073709551615,"Negative":-18446744073709551615}'
     }
+
+    It "Should convert objects to JSON as Stream" {
+        $objects = @(
+            [pscustomobject]@{ Name = "Object1"; Value = 10 },
+            [pscustomobject]@{ Name = "Object2"; Value = 20 },
+            [pscustomobject]@{ Name = "Object3"; Value = 30 }
+        )
+        $returnObject = $objects | ConvertTo-Json -Compress -AsStream
+        $returnObject -is [System.Array] | Should -BeTrue
+        $returnObject | Should -HaveCount 3
+        $returnObject[0] | Should -Be '{"Name":"Object1","Value":10}'
+        $returnObject[1] | Should -Be '{"Name":"Object2","Value":20}'
+        $returnObject[2] | Should -Be '{"Name":"Object3","Value":30}'
+    }
+
+    It "Should convert nested array to JSON as Stream" {
+        $objects = ((1,2),3,(4,5))
+        $returnObject = $objects | ConvertTo-Json -Compress -AsStream
+        $returnObject -is [System.Array] | Should -BeTrue
+        $returnObject | Should -HaveCount 3
+        $returnObject[0] | Should -Be '[1,2]'
+        $returnObject[1] | Should -Be '3'
+        $returnObject[2] | Should -Be '[4,5]'
+    }   
+
+    It "StopProcessing as stream should succeed" {
+        $ps = [PowerShell]::Create()
+        $dataCollection = [System.Management.Automation.PSDataCollection[PSObject]]::new()
+        $null = $ps.AddScript({
+            $obj1 = [PSCustomObject]@{Prop = 'value1'}
+            $obj2 = [PSCustomObject]@{} | Add-Member -MemberType ScriptProperty -Name Prop -Value {
+                Start-Sleep -Seconds 5
+                'value2'
+            } -PassThru
+            $obj1,$obj2 | ConvertTo-Json -AsStream
+            throw "Should not have thrown exception"
+        })
+        $null = $ps.BeginInvoke($dataCollection,$dataCollection)
+        Start-Sleep -Milliseconds 1000
+        $null = $ps.BeginStop($null, $null)
+        Start-Sleep -Milliseconds 1000
+        $dataCollection.Count | Should -BeExactly 1
+        $ps.InvocationStateInfo.State | Should -BeExactly "Stopped"
+        $ps.Dispose()
+    }
+
 }
