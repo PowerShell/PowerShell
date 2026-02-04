@@ -677,11 +677,10 @@ Describe 'ConvertTo-Json' -tags "CI" {
         }
 
         It 'Should serialize deeply nested array with sufficient Depth as full object' {
-            $ip = [System.Net.IPAddress]::Parse('10.0.0.1')
+            $ip = [System.Net.IPAddress]::Parse('192.168.1.1')
             $arr = ,(,(,(,($ip))))
             $json = ConvertTo-Json -InputObject $arr -Compress -Depth 10
-            $json | Should -BeLike '*AddressFamily*'
-            $json | Should -Not -BeExactly '[[[["10.0.0.1"]]]]'
+            $json | Should -BeExactly '[[[[{"AddressFamily":2,"ScopeId":null,"IsIPv6Multicast":false,"IsIPv6LinkLocal":false,"IsIPv6SiteLocal":false,"IsIPv6Teredo":false,"IsIPv6UniqueLocal":false,"IsIPv4MappedToIPv6":false,"Address":16885952}]]]]'
         }
     }
 
