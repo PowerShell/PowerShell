@@ -80,6 +80,9 @@ namespace System.Management.Automation.Security
 
         private static bool? s_isFileOnlyEntryEnabled;
 
+        /// <summary>
+        /// Determines if the WLDP setting "FileOnlyEntry" is enabled.
+        /// </summary>
         internal static bool IsFileOnlyEntryEnabled()
         {
             if (s_isFileOnlyEntryEnabled.HasValue)
