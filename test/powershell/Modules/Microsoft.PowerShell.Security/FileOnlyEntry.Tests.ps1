@@ -7,10 +7,9 @@ using namespace System.Diagnostics.CodeAnalysis
 ## ----------
 ## Test Note:
 ## ----------
-## Since these tests change session and system state (constrained language and system lockdown)
-## they will all use try/finally blocks instead of Pester AfterEach/AfterAll to ensure session
-## and system state is restored.
-## Pester AfterEach, AfterAll is not reliable when the session is constrained language or locked down.
+## Since these tests change system state (the "FileOnlyEntry" setting)
+## they will all use try/finally blocks instead of Pester AfterEach/AfterAll to
+## ensure system state is restored.
 ##
 
 Import-Module HelpersSecurity
@@ -42,6 +41,9 @@ try
                 # we expect.
                 MakeTestCase -NoExit -File this_file_does_not_exist.ps1
                 MakeTestCase -File -
+                MakeTestCase -EncodedCommand RwBlAHQALQBDAGgAaQBsAGQASQB0AGUAbQA= <# < Get-ChildItem #>
+                MakeTestCase -CommandWithArgs Get-ChildItem
+                MakeTestCase
             )
         }
 
