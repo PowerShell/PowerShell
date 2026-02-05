@@ -98,6 +98,13 @@ Describe 'ConvertTo-Json' -tags "CI" {
         1, $null, 2 | ConvertTo-Json -Compress | Should -Be '[1,null,2]'
     }
 
+    It "Should write null for properties that throw on access" {
+        $obj = [PSCustomObject]@{ Normal = "value" }
+        $obj | Add-Member -MemberType ScriptProperty -Name Throws -Value { throw "Error" }
+        $json = $obj | ConvertTo-Json -Compress
+        $json | Should -BeExactly '{"Normal":"value","Throws":null}'
+    }
+
     It "Should handle 'AutomationNull.Value' and 'NullString.Value' correctly" {
         [ordered]@{
             a = $null;
@@ -133,11 +140,14 @@ Describe 'ConvertTo-Json' -tags "CI" {
     }
 
     It 'Should not serialize ETS properties added to DateTime' {
-        $date = "2021-06-24T15:54:06.796999-07:00"
-        $d = [DateTime]::Parse($date)
+        # Use UTC to avoid timezone conversion issues across different systems
+        $d = [DateTime]::new(2021, 6, 24, 12, 0, 0, [DateTimeKind]::Utc)
+        $d = Add-Member -InputObject $d -MemberType NoteProperty -Name ETSProp -Value 'test' -PassThru
 
-        # need to use wildcard here due to some systems may be configured with different culture setting showing time in different format
-        $d | ConvertTo-Json -Compress | Should -BeLike '"2021-06-24T*'
+        # DateTime should serialize as ISO string, not object with ETS properties
+        $json = $d | ConvertTo-Json -Compress
+        $json | Should -BeLike '"2021-06-24T12:00:00*'
+        $json | Should -Not -Match 'ETSProp'
         $d | ConvertTo-Json | ConvertFrom-Json | Should -Be $d
     }
 
@@ -145,6 +155,13 @@ Describe 'ConvertTo-Json' -tags "CI" {
         $text = "Hello there"
         $t = Add-Member -InputObject $text -MemberType NoteProperty -Name text -Value $text -PassThru
         $t | ConvertTo-Json -Compress | Should -BeExactly "`"$text`""
+    }
+
+    It 'Should serialize ETS properties added to Uri as object with value' {
+        # Uri is not string/DateTime, so ETS properties should be included
+        $uri = [Uri]"http://example.com"
+        $u = Add-Member -InputObject $uri -MemberType NoteProperty -Name MyProp -Value 'test' -PassThru
+        $u | ConvertTo-Json -Compress | Should -BeExactly '{"value":"http://example.com","MyProp":"test"}'
     }
 
     It 'Should serialize BigInteger values' {
@@ -155,5 +172,276 @@ Describe 'ConvertTo-Json' -tags "CI" {
 
         $actual = ConvertTo-Json -Compress -InputObject $obj
         $actual | Should -Be '{"Positive":18446744073709551615,"Negative":-18446744073709551615}'
+    }
+
+    It 'Should serialize special floating-point values as strings' {
+        [double]::PositiveInfinity | ConvertTo-Json | Should -BeExactly '"Infinity"'
+        [double]::NegativeInfinity | ConvertTo-Json | Should -BeExactly '"-Infinity"'
+        [double]::NaN | ConvertTo-Json | Should -BeExactly '"NaN"'
+    }
+
+    It 'Should return null for empty array' {
+        @() | ConvertTo-Json | Should -BeNull
+    }
+
+    It 'Should serialize SwitchParameter as object with IsPresent property' {
+        @{ flag = [switch]$true } | ConvertTo-Json -Compress | Should -BeExactly '{"flag":{"IsPresent":true}}'
+        @{ flag = [switch]$false } | ConvertTo-Json -Compress | Should -BeExactly '{"flag":{"IsPresent":false}}'
+    }
+
+    It 'Should serialize Uri correctly' {
+        $uri = [uri]"https://example.com/path"
+        $json = $uri | ConvertTo-Json -Compress
+        $json | Should -BeExactly '"https://example.com/path"'
+    }
+
+    It 'Should serialize enums <description>' -TestCases @(
+        @{ description = 'as numbers by default'; params = @{}; expected = '1' }
+        @{ description = 'as strings with -EnumsAsStrings'; params = @{ EnumsAsStrings = $true }; expected = '"Monday"' }
+    ) {
+        param($description, $params, $expected)
+        [System.DayOfWeek]::Monday | ConvertTo-Json @params | Should -BeExactly $expected
+    }
+
+    It 'Should serialize nested PSCustomObject correctly' {
+        $obj = [pscustomobject]@{
+            name = "test"
+            child = [pscustomobject]@{
+                value = 42
+            }
+        }
+        $json = $obj | ConvertTo-Json -Compress
+        $json | Should -BeExactly '{"name":"test","child":{"value":42}}'
+    }
+
+    It 'Should not escape HTML tag characters by default' {
+        $json = @{ text = '<>&' } | ConvertTo-Json -Compress
+        $json | Should -BeExactly '{"text":"<>&"}'
+    }
+
+    It 'Should escape <description> with -EscapeHandling <EscapeHandling>' -TestCases @(
+        @{ description = 'HTML tag characters'; inputText = '<>&'; EscapeHandling = 'EscapeHtml'; pattern = '\\u003C.*\\u003E.*\\u0026' }
+        @{ description = 'non-ASCII characters'; inputText = '日本語'; EscapeHandling = 'EscapeNonAscii'; pattern = '\\u' }
+    ) {
+        param($description, $inputText, $EscapeHandling, $pattern)
+        $json = @{ text = $inputText } | ConvertTo-Json -Compress -EscapeHandling $EscapeHandling
+        $json | Should -Match $pattern
+    }
+
+    It 'Depth over 100 should throw' {
+        { ConvertTo-Json -InputObject @{a=1} -Depth 101 } | Should -Throw
+    }
+
+    It 'Should serialize hidden properties in PowerShell class' {
+        class TestClassWithHidden {
+            [string]$Visible = 'visible'
+            hidden [string]$Hidden = 'hidden'
+        }
+        $obj = [TestClassWithHidden]::new()
+        $json = $obj | ConvertTo-Json -Compress
+        $json | Should -Match '"Visible":\s*"visible"'
+        $json | Should -Match '"Hidden":\s*"hidden"'
+    }
+
+    Context 'Nested raw object serialization' {
+        BeforeAll {
+            class TestClassWithFileInfo {
+                [System.IO.FileInfo]$File
+            }
+
+            $script:testFilePath = Join-Path $PSHOME 'pwsh.dll'
+            if (-not (Test-Path $script:testFilePath)) {
+                $script:testFilePath = Join-Path $PSHOME 'System.Management.Automation.dll'
+            }
+        }
+
+        It 'Typed property with raw FileInfo should serialize Base properties only' {
+            $obj = [TestClassWithFileInfo]::new()
+            $obj.File = [System.IO.FileInfo]::new($script:testFilePath)
+
+            $json = $obj | ConvertTo-Json -Depth 2
+            $parsed = $json | ConvertFrom-Json
+
+            $parsed.File.PSObject.Properties.Name.Count | Should -Be 17
+        }
+
+        It 'Typed property loses PSObject wrapper from Get-Item' {
+            $obj = [TestClassWithFileInfo]::new()
+            $obj.File = Get-Item $script:testFilePath
+
+            $json = $obj | ConvertTo-Json -Depth 2
+            $parsed = $json | ConvertFrom-Json
+
+            $parsed.File.PSObject.Properties.Name.Count | Should -Be 17
+        }
+
+        It 'PSCustomObject with Get-Item preserves Extended properties' {
+            $obj = [PSCustomObject]@{
+                File = Get-Item $script:testFilePath
+            }
+
+            $json = $obj | ConvertTo-Json -Depth 2
+            $parsed = $json | ConvertFrom-Json
+
+            $parsed.File.PSObject.Properties.Name.Count | Should -BeGreaterThan 17
+            $parsed.File.PSObject.Properties.Name | Should -Contain 'PSPath'
+        }
+
+        It 'PSCustomObject with raw FileInfo should serialize Base properties only' {
+            $obj = [PSCustomObject]@{
+                File = [System.IO.FileInfo]::new($script:testFilePath)
+            }
+
+            $json = $obj | ConvertTo-Json -Depth 2
+            $parsed = $json | ConvertFrom-Json
+
+            $parsed.File.PSObject.Properties.Name.Count | Should -Be 17
+            $parsed.File.PSObject.Properties.Name | Should -Not -Contain 'PSPath'
+        }
+
+        It 'Hashtable with raw FileInfo should serialize Base properties only' {
+            $hash = @{
+                File = [System.IO.FileInfo]::new($script:testFilePath)
+            }
+
+            $json = $hash | ConvertTo-Json -Depth 2
+            $parsed = $json | ConvertFrom-Json
+
+            $parsed.File.PSObject.Properties.Name.Count | Should -Be 17
+        }
+
+        It 'Hashtable with Get-Item preserves Extended properties' {
+            $hash = @{
+                File = Get-Item $script:testFilePath
+            }
+
+            $json = $hash | ConvertTo-Json -Depth 2
+            $parsed = $json | ConvertFrom-Json
+
+            $parsed.File.PSObject.Properties.Name.Count | Should -BeGreaterThan 17
+        }
+
+        It 'Array of raw FileInfo should serialize with Adapted properties' {
+            $arr = @([System.IO.FileInfo]::new($script:testFilePath))
+
+            $json = $arr | ConvertTo-Json -Depth 2
+            $parsed = $json | ConvertFrom-Json
+
+            # Windows has 24 Adapted properties, Unix has 28 (includes Unix-specific file properties)
+            $expectedCount = if ($IsWindows) { 24 } else { 28 }
+            $parsed[0].PSObject.Properties.Name.Count | Should -Be $expectedCount
+        }
+
+        It 'Array of Get-Item FileInfo preserves Extended properties' {
+            $arr = @(Get-Item $script:testFilePath)
+
+            $json = $arr | ConvertTo-Json -Depth 2
+            $parsed = $json | ConvertFrom-Json
+
+            $parsed[0].PSObject.Properties.Name.Count | Should -BeGreaterThan 24
+        }
+    }
+
+    Context 'STJ-native scalar types serialization consistency' {
+        # These types are serialized identically via Pipeline and InputObject
+        It 'Should serialize DateTime consistently via Pipeline and InputObject' {
+            $dt = [datetime]"2024-01-15T10:30:00"
+            $jsonPipeline = $dt | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $dt -Compress
+            $jsonPipeline | Should -BeExactly $jsonInputObject
+        }
+
+        It 'Should serialize TimeSpan consistently via Pipeline and InputObject' {
+            $ts = [timespan]::FromHours(2.5)
+            $jsonPipeline = $ts | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $ts -Compress
+            $jsonPipeline | Should -BeExactly $jsonInputObject
+        }
+
+        It 'Should serialize Version consistently via Pipeline and InputObject' {
+            $ver = [version]"1.2.3.4"
+            $jsonPipeline = $ver | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $ver -Compress
+            $jsonPipeline | Should -BeExactly $jsonInputObject
+        }
+    }
+
+    Context 'PSObject vs raw object distinction' {
+        # Non-scalar types may differ between Pipeline (PSObject) and InputObject (raw)
+        # Pipeline wraps objects in PSObject, adding Extended/Adapted properties
+        It 'Should serialize IPAddress with Extended properties via Pipeline' {
+            $ip = [System.Net.IPAddress]::Parse("192.168.1.1")
+            $jsonPipeline = $ip | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $ip -Compress
+            # Pipeline includes IPAddressToString (Extended property)
+            $jsonPipeline | Should -Match 'IPAddressToString'
+            # InputObject does not include Extended properties
+            $jsonInputObject | Should -Not -Match 'IPAddressToString'
+        }
+
+        It 'Should serialize array with ETS properties via InputObject and comma pipeline' {
+            $arr = @(1, 2, 3)
+            $arrWithEts = Add-Member -InputObject $arr -MemberType NoteProperty -Name MyProp -Value "test" -PassThru
+
+            # -InputObject preserves PSObject wrapper with ETS
+            $jsonInputObject = ConvertTo-Json -InputObject $arrWithEts -Compress
+            $jsonInputObject | Should -BeExactly '{"value":[1,2,3],"MyProp":"test"}'
+
+            # Comma operator prevents array unwrapping, preserving PSObject wrapper
+            $jsonCommaPipeline = ,$arrWithEts | ConvertTo-Json -Compress
+            $jsonCommaPipeline | Should -BeExactly '{"value":[1,2,3],"MyProp":"test"}'
+        }
+    }
+
+    It 'Should output warning when depth is exceeded' {
+        $a = @{ a = @{ b = @{ c = @{ d = 1 } } } }
+        $json = $a | ConvertTo-Json -Depth 2 -WarningVariable warn -WarningAction SilentlyContinue
+        $json | Should -Not -BeNullOrEmpty
+        $warn | Should -Not -BeNullOrEmpty
+    }
+
+    Context 'Depth exceeded behavior for PSObject with ETS properties' {
+        It 'Pure PSObject with ETS properties converts to string when depth exceeded' {
+            $pso = [PSCustomObject]@{ Name = 'test' }
+            $pso | Add-Member -NotePropertyName ETSProp -NotePropertyValue 'ets'
+            $nested = @{ inner = $pso }
+
+            $json = $nested | ConvertTo-Json -Depth 0 -Compress -WarningAction SilentlyContinue
+            # Pure PSObject uses ToString() which includes all properties
+            $json | Should -BeExactly '{"inner":"@{Name=test; ETSProp=ets}"}'
+        }
+
+        It 'Non-pure PSObject with ETS properties converts to string when depth exceeded' {
+            $version = [version]'1.2.3'
+            $version | Add-Member -NotePropertyName ETSProp -NotePropertyValue 'ets'
+            $nested = @{ inner = $version }
+
+            $json = $nested | ConvertTo-Json -Depth 0 -Compress -WarningAction SilentlyContinue
+            # Non-pure PSObject (Version) uses ToString() of base object
+            $json | Should -BeExactly '{"inner":"1.2.3"}'
+        }
+
+        It 'Pure PSObject with ETS properties serializes normally within depth limit' {
+            $pso = [PSCustomObject]@{ Name = 'test' }
+            $pso | Add-Member -NotePropertyName ETSProp -NotePropertyValue 'ets'
+            $nested = @{ inner = $pso }
+
+            $json = $nested | ConvertTo-Json -Depth 2 -Compress -WarningAction SilentlyContinue
+            $json | Should -BeExactly '{"inner":{"Name":"test","ETSProp":"ets"}}'
+        }
+
+        It 'Non-pure PSObject (FileInfo) with ETS properties includes ETS when depth exceeded' {
+            $file = Get-Item (Join-Path $PSHOME 'System.Management.Automation.dll')
+            $pso = [PSObject]::new($file)
+            $pso | Add-Member -NotePropertyName CustomExt -NotePropertyValue 'extended_value'
+            $outer = [PSCustomObject]@{ File = $pso }
+
+            $result = $outer | ConvertTo-Json -Depth 0 -WarningAction SilentlyContinue
+            $parsed = $result | ConvertFrom-Json
+
+            $parsed.File.CustomExt | Should -BeExactly 'extended_value'
+            $parsed.File.value | Should -BeLike '*System.Management.Automation.dll'
+        }
+
     }
 }
