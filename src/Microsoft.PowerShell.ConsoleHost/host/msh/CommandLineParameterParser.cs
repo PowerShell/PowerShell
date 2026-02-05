@@ -1287,7 +1287,11 @@ namespace Microsoft.PowerShell
                 }
             }
 
-            if (_error is null && (ParametersUsed & ParameterBitmap.File) is 0 && IsFileOnlyEntryEnabled)
+            if (_error is null
+                && !_showVersion
+                && !_showHelp
+                && (ParametersUsed & ParameterBitmap.File) is 0
+                && IsFileOnlyEntryEnabled)
             {
                 SetCommandLineError(CommandLineParameterParserStrings.FileOnlyEntryRequired);
             }
