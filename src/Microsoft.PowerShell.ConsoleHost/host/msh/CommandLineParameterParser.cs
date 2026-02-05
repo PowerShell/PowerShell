@@ -879,11 +879,23 @@ namespace Microsoft.PowerShell
             ParseHelper(args);
         }
 
+        private static bool IsFileOnlyEntryEnabled
+        {
+            get
+            {
+#if UNIX
+                return false;
+#else
+                return SystemPolicy.IsFileOnlyEntryEnabled();
+#endif
+            }
+        }
+
         private void ParseHelper(string[] args)
         {
             if (args.Length == 0)
             {
-                if (SystemPolicy.IsFileOnlyEntryEnabled())
+                if (IsFileOnlyEntryEnabled)
                 {
                     SetCommandLineError(CommandLineParameterParserStrings.FileOnlyEntryRequired);
                 }
@@ -934,7 +946,7 @@ namespace Microsoft.PowerShell
                     noexitSeen = true;
                     ParametersUsed |= ParameterBitmap.NoExit;
 
-                    if (SystemPolicy.IsFileOnlyEntryEnabled())
+                    if (IsFileOnlyEntryEnabled)
                     {
                         SetCommandLineError(CommandLineParameterParserStrings.FileOnlyEntryRequired);
                         break;
@@ -1275,7 +1287,7 @@ namespace Microsoft.PowerShell
                 }
             }
 
-            if (_error is null && (ParametersUsed & ParameterBitmap.File) is 0 && SystemPolicy.IsFileOnlyEntryEnabled())
+            if (_error is null && (ParametersUsed & ParameterBitmap.File) is 0 && IsFileOnlyEntryEnabled)
             {
                 SetCommandLineError(CommandLineParameterParserStrings.FileOnlyEntryRequired);
             }
@@ -1377,7 +1389,7 @@ namespace Microsoft.PowerShell
             // Process interactive input...
             if (args[i] == "-")
             {
-                if (SystemPolicy.IsFileOnlyEntryEnabled())
+                if (IsFileOnlyEntryEnabled)
                 {
                     SetCommandLineError(CommandLineParameterParserStrings.FileOnlyEntryRequired);
                     return false;
@@ -1515,7 +1527,7 @@ namespace Microsoft.PowerShell
 
         private bool ParseCommand(string[] args, ref int i, bool noexitSeen, bool isEncoded)
         {
-            if (SystemPolicy.IsFileOnlyEntryEnabled())
+            if (IsFileOnlyEntryEnabled)
             {
                 SetCommandLineError(CommandLineParameterParserStrings.FileOnlyEntryRequired);
                 return false;
