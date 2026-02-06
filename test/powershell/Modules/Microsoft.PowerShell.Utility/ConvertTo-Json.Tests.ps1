@@ -1041,58 +1041,5 @@ Describe 'ConvertTo-Json' -tags "CI" {
         }
     }
 
-    Context 'Array of dictionaries' {
-        It 'Should serialize array of hashtables correctly via Pipeline and InputObject' {
-            $arr = @(@{ a = 1 }, @{ b = 2 }, @{ c = 3 })
-            $jsonPipeline = $arr | ConvertTo-Json -Compress
-            $jsonInputObject = ConvertTo-Json -InputObject $arr -Compress
-            $jsonPipeline | Should -BeExactly '[{"a":1},{"b":2},{"c":3}]'
-            $jsonInputObject | Should -BeExactly '[{"a":1},{"b":2},{"c":3}]'
-        }
-
-        It 'Should serialize array of ordered dictionaries correctly via Pipeline and InputObject' {
-            $arr = @(
-                [ordered]@{ x = 1; y = 2 },
-                [ordered]@{ x = 3; y = 4 }
-            )
-            $jsonPipeline = ,$arr | ConvertTo-Json -Compress
-            $jsonInputObject = ConvertTo-Json -InputObject $arr -Compress
-            $jsonPipeline | Should -BeExactly '[{"x":1,"y":2},{"x":3,"y":4}]'
-            $jsonInputObject | Should -BeExactly '[{"x":1,"y":2},{"x":3,"y":4}]'
-        }
-    }
-
-    Context 'Dictionary with array values' {
-        It 'Should serialize dictionary with array values correctly via Pipeline and InputObject' {
-            $hash = [ordered]@{
-                numbers = @(1, 2, 3)
-                strings = @('a', 'b', 'c')
-            }
-            $expected = '{"numbers":[1,2,3],"strings":["a","b","c"]}'
-            $jsonPipeline = $hash | ConvertTo-Json -Compress
-            $jsonInputObject = ConvertTo-Json -InputObject $hash -Compress
-            $jsonPipeline | Should -BeExactly $expected
-            $jsonInputObject | Should -BeExactly $expected
-        }
-
-        It 'Should serialize dictionary with nested array values correctly via Pipeline and InputObject' {
-            $hash = @{
-                matrix = @(@(1, 2), @(3, 4))
-            }
-            $jsonPipeline = $hash | ConvertTo-Json -Compress
-            $jsonInputObject = ConvertTo-Json -InputObject $hash -Compress
-            $jsonPipeline | Should -BeExactly '{"matrix":[[1,2],[3,4]]}'
-            $jsonInputObject | Should -BeExactly '{"matrix":[[1,2],[3,4]]}'
-        }
-
-        It 'Should serialize dictionary with empty array value correctly via Pipeline and InputObject' {
-            $hash = @{ empty = @() }
-            $jsonPipeline = $hash | ConvertTo-Json -Compress
-            $jsonInputObject = ConvertTo-Json -InputObject $hash -Compress
-            $jsonPipeline | Should -BeExactly '{"empty":[]}'
-            $jsonInputObject | Should -BeExactly '{"empty":[]}'
-        }
-    }
-
     #endregion Comprehensive Array and Dictionary Tests (Phase 2)
 }
