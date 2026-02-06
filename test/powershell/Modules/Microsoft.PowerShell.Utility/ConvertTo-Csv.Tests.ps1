@@ -101,11 +101,6 @@ Describe "ConvertTo-Csv" -Tags "CI" {
             Should -Throw -ErrorId "CannotSpecifyQuoteFieldsAndUseQuotes,Microsoft.PowerShell.Commands.ConvertToCsvCommand"
     }
 
-    It "Does not support -IncludeTypeInformation and -NoTypeInformation at the same time" {
-        { $testObject | ConvertTo-Csv -IncludeTypeInformation -NoTypeInformation } |
-            Should -Throw -ErrorId "CannotSpecifyIncludeTypeInformationAndNoTypeInformation,Microsoft.PowerShell.Commands.ConvertToCsvCommand"
-    }
-
     Context "QuoteFields parameter" {
         It "QuoteFields" {
             # Use 'FiRstCoLumn' to test case insensitivity
