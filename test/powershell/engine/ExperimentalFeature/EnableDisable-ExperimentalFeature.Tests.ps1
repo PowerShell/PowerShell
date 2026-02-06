@@ -9,7 +9,8 @@ Describe "Enable-ExperimentalFeature and Disable-ExperimentalFeature tests" -tag
         $pwsh = "$PSHOME/pwsh"
         $systemConfigPath = "$PSHOME/powershell.config.json"
         if ($IsWindows) {
-            $userConfigPath = "~/Documents/powershell/powershell.config.json"
+            # Config now defaults to LocalAppData instead of Documents
+            $userConfigPath = Join-Path $env:LOCALAPPDATA 'PowerShell' 'powershell.config.json'
         }
         else {
             $userConfigPath = "~/.config/powershell/powershell.config.json"
@@ -25,6 +26,12 @@ Describe "Enable-ExperimentalFeature and Disable-ExperimentalFeature tests" -tag
         if (Test-Path $userConfigPath) {
             $userConfigExists = $true
             Move-Item $userConfigPath "$userConfigPath.backup" -Force -ErrorAction SilentlyContinue
+        } else {
+            # Ensure the parent directory exists
+            $userConfigDir = Split-Path $userConfigPath -Parent
+            if (-not (Test-Path $userConfigDir)) {
+                $null = New-Item -Path $userConfigDir -ItemType Directory -Force
+            }
         }
 
         $testModulePath = Join-Path -Path $PSScriptRoot -ChildPath "assets"
