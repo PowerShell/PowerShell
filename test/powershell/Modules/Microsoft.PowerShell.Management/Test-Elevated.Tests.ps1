@@ -23,9 +23,9 @@ Describe 'Test-Elevated cmdlet and $IsElevated variable' -Tags "CI" {
             $IsElevated | Should -BeOfType [bool]
         }
 
-        It 'Should be readonly' {
+        It 'Should be constant' {
             $var = Get-Variable IsElevated
-            $var.Options | Should -Match 'ReadOnly'
+            $var.Options | Should -Match 'Constant'
         }
 
         It 'Should be AllScope' {
