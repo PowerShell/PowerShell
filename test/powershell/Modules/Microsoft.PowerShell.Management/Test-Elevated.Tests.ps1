@@ -4,14 +4,7 @@
 Describe 'Test-Elevated cmdlet and $IsElevated variable' -Tags "CI" {
     BeforeAll {
         # Save the expected value
-        $expectedElevated = if ($IsWindows) {
-            $identity = [Security.Principal.WindowsIdentity]::GetCurrent()
-            $principal = New-Object Security.Principal.WindowsPrincipal($identity)
-            $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
-        } else {
-            # On Unix, check if running as root (uid 0)
-            (id -u) -eq 0
-        }
+        $expectedElevated = [System.Environment]::IsPrivilegedProcess
     }
 
     Context '$IsElevated automatic variable' {
