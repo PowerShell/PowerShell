@@ -345,6 +345,41 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
             Copy-Item -Path $zeroLengthFile -Destination "$TestDrive\zeroLengthFile2.txt" -Force
             "$TestDrive\zeroLengthFile2.txt" | Should -Exist
          }
+
+         It "Move-Item preserves directory structure when moving wildcard contents to a new destination directory" {
+            $installRoot = Join-Path $TestDrive 'install'
+            $copyRoot    = Join-Path $TestDrive 'copy'
+
+            $binDir      = Join-Path $installRoot 'bin'
+            $libDir      = Join-Path $installRoot 'lib'
+            $dllPath     = Join-Path $binDir      'test.dll'
+            $readmePath  = Join-Path $installRoot 'ReadMe.md'
+            $appRoot     = Join-Path $copyRoot    'app'
+
+            New-Item -ItemType Directory -Path $binDir  -Force > $null
+            New-Item -ItemType File      -Path $dllPath -Force > $null
+            New-Item -ItemType Directory -Path $libDir  -Force > $null
+            New-Item -ItemType File      -Path $readmePath -Force > $null
+
+            New-Item -ItemType Directory -Path $copyRoot -Force > $null
+
+            Move-Item -Path (Join-Path $installRoot '*') -Destination $appRoot -ErrorAction Stop
+
+            # Expected structure:
+            #   app\bin\test.dll
+            #   app\lib\
+            #   app\ReadMe.md
+            $expectedBinDll    = Join-Path (Join-Path $appRoot 'bin') 'test.dll'
+            $expectedLibDir    = Join-Path $appRoot 'lib'
+            $expectedReadme    = Join-Path $appRoot 'ReadMe.md'
+            $flattenedDllPath  = Join-Path $appRoot 'test.dll'
+
+            $expectedBinDll   | Should -Exist
+            $expectedLibDir   | Should -Exist
+            $expectedReadme   | Should -Exist
+
+            $flattenedDllPath | Should -Not -Exist
+        }
     }
 
     Context "Validate behavior when access is denied" {
