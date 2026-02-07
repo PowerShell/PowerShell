@@ -67,12 +67,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_isElevated.HasValue)
-                {
-                    return _isElevated.Value;
-                }
-                _isElevated = Environment.IsPrivilegedProcess;
-                return _isElevated.Value;
+                return Environment.IsPrivilegedProcess;
             }
         }
 
