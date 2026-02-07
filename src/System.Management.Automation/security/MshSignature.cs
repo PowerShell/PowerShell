@@ -186,6 +186,11 @@ namespace System.Management.Automation
         public bool IsOSBinary { get; internal set; }
 
         /// <summary>
+        /// Gets the Subject Alternative Name entries from the signer certificate.
+        /// </summary>
+        public string[] SubjectAlternativeName { get; private set; }
+
+        /// <summary>
         /// Constructor for class Signature
         ///
         /// Call this to create a validated time-stamped signature object.
@@ -277,6 +282,11 @@ namespace System.Management.Automation
             _statusMessage = GetSignatureStatusMessage(isc,
                                                       error,
                                                       filePath);
+
+            if (signer != null)
+            {
+                SubjectAlternativeName = GetSubjectAlternativeName(signer);
+            }
         }
 
         private static SignatureStatus GetSignatureStatusFromWin32Error(DWORD error)
@@ -388,6 +398,25 @@ namespace System.Management.Automation
             }
 
             return message;
+        }
+
+        private static string[] GetSubjectAlternativeName(X509Certificate2 certificate)
+        {
+            foreach (X509Extension extension in certificate.Extensions)
+            {
+                if (extension.Oid != null && extension.Oid.Value == CertificateFilterInfo.SubjectAlternativeNameOid)
+                {
+                    string formatted = extension.Format(multiLine: true);
+                    if (string.IsNullOrEmpty(formatted))
+                    {
+                        return null;
+                    }
+
+                    return formatted.Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+                }
+            }
+
+            return null;
         }
     }
 }
