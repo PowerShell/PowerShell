@@ -1,0 +1,199 @@
+Steps to reproduce
+Windows 11 Home 24H2 Windows Terminal Version: 1.23.20211.0
+Using PowerShell to monitor an active log file in fldigi. After opening PowerShell
+lines of text are displayed properly, but as new text comes in, I get between 2 and 8 characters, then get cr new line started, it just keeps doing this as new text comes.
+This makes it almost impossible to read.
+If I open new PowerShell windows, all text is displayed properly.?
+How can I fix this?
+PowerShell Win 10 ver10.0.19041.3996 works fine, no issues. ?
+This is the command line I am using. Get-Content -Path "C:\Users\username\fldigi.files\fldigi20260128.log"-wait
+
+Expected behavior
+Windows PowerShell
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Install the latest PowerShell for new features and improvements! https://aka.ms/PSWindows
+
+PS C:\Users\rickk> Get-Content -Path "C:\\Users\\rickk\\fldigi.files\\fldigi20260128.log"-wait
+
+--- Logging started at Wed Jan 28 09:54:59 2026 UTC ---
+
+TX 7206000 : MFSK32 (2026-01-28 09:55Z): <CR><STX><CR>
+TX 7206000 : MFSK32 (2026-01-28 09:55Z): <CR>
+TX 7206000 : MFSK32 (2026-01-28 09:55Z): KE8TEY KE8TEY DE KE8YTX KE8YTX ZKE ZEV<CR>
+TX 7206000 : MFSK32 (2026-01-28 09:55Z): <CR>
+TX 7206000 : MFSK32 (2026-01-28 09:55Z): KE8TEY KE8TEY DE KE8YTX KE8YTX ZKE ZEV<CR>
+TX 7206000 : MFSK32 (2026-01-28 09:55Z): <CR>
+TX 7206000 : MFSK32 (2026-01-28 09:55Z): KE8TEY KE8TEY DE KE8YTX KE8YTX ZKE ZEV<CR>
+TX 7206000 : MFSK32 (2026-01-28 09:55Z): <CR>
+TX 7206000 : MFSK32 (2026-01-28 09:55Z): KE8TEY KE8TEY DE KE8YTX KE8YTX ZKE ZEV <CR>
+TX 7206000 : MFSK32 (2026-01-28 09:55Z): <CR><EOT><CR><STX><CR>
+TX 7206000 : MFSK32 (2026-01-28 09:57Z): <CR>
+TX 7206000 : MFSK32 (2026-01-28 09:57Z): KE8TEY KE8TEY DE KE8YTX KE8YTX ZKE ZEV <CR>
+TX 7206000 : MFSK32 (2026-01-28 09:57Z): <CR><EOT><CR><STX><CR>
+TX 7206000 : MFSK32 (2026-01-28 09:57Z): <CR>
+TX 7206000 : MFSK32 (2026-01-28 09:57Z): DE KE8YTX<CR>
+TX 7206000 : MFSK32 (2026-01-28 09:57Z): OP:  <RICK>QTH: <SW OHIO  HAMILTON COUNTY> LOC: <EM79pe><CR>
+TX 7206000 : MFSK32 (2026-01-28 09:57Z): <CR><EOT><CR><STX><CR>
+TX 7206000 : MFSK32 (2026-01-28 10:00Z): <CR>
+TX 7206000 : MFSK32 (2026-01-28 10:00Z): KE8TEY KE8TEY DE KE8YTX KE8YTX ZKE ZEV<CR>
+TX 7206000 : MFSK32 (2026-01-28 10:00Z): <CR>
+TX 7206000 : MFSK32 (2026-01-28 10:00Z): DE KE8YTX<CR>
+TX 7206000 : MFSK32 (2026-01-28 10:00Z): MY QTH CLEVES OIHIO  SW CORNER OF OHIO 6 MILES FROM INDIANA<CR>
+TX 7206000 : MFSK32 (2026-01-28 10:00Z): 1.5 MILES FROM KENTUCKY , OHIO RIVER SEPERATES OH AND KY  <CR>
+TX 7206000 : MFSK32 (2026-01-28 10:00Z): <CR><EOT><CR><STX><CR> <CR>
+TX 7206000 : MFSK32 (2026-01-28 10:01Z): <CR><EOT><CR>
+--- Logging stopped at Wed Jan 28 10:24:10 2026 UTC ---
+
+--- Logging started at Wed Jan 28 10:32:57 2026 UTC ---
+
+TX 7206000 : MFSK32 (2026-01-28 10:33Z): <CR><STX><CR>
+TX 7206000 : MFSK32 (2026-01-28 10:33Z): <CR>
+TX 7206000 : MFSK32 (2026-01-28 10:33Z): KE8TEY KE8TEY DE KE8YTX KE8YTX ZKE ZEV <CR>
+TX 7206000 : MFSK32 (2026-01-28 10:33Z): <CR><EOT><CR><STX><CR>
+TX 7206000 : MFSK32 (2026-01-28 10:33Z): <CR>
+TX 7206000 : MFSK32 (2026-01-28 10:33Z): DE KE8YTX<CR>
+TX 7206000 : MFSK32 (2026-01-28 10:33Z): MY QTH CLEVES OIHIO  SW CORNER OF OHIO 6 MILES FROM INDIANA<CR>
+TX 7206000 : MFSK32 (2026-01-28 10:33Z): 1.5 MILES FROM KENTUCKY , OHIO RIVER SEPERATES OH AND KY  <CR>
+TX 7206000 : MFSK32 (2026-01-28 10:33Z): <CR><EOT><CR><STX>
+--- Logging stopped at Wed Jan 28 18:11:39 2026 UTC ---
+
+TX 7206000 : MFSK32 (2026-01-28 18:11Z): <CR>
+--- Logging started at Wed Jan 28 18:12:00 2026 UTC ---
+
+TX 7206000 : MFSK128 (2026-01-28 18:12Z): <CR><STX><CR>
+TX 7206000 : MFSK128 (2026-01-28 18:12Z): <CR>
+TX 7206000 : MFSK128 (2026-01-28 18:12Z): DE KE8YTX<CR>
+TX 7206000 : MFSK128 (2026-01-28 18:12Z): MY QTH CLEVES OIHIO  SW CORNER OF OHIO 6 MILES FROM INDIANA<CR>
+TX 7206000 : MFSK128 (2026-01-28 18:12Z): 1.5 MILES FROM KENTUCKY , OHIO RIVER SEPERATES OH AND KY  <CR>
+TX 7206000 : MFSK128 (2026-01-28 18:12Z): <CR><EOT><CR><STX><CR>
+TX 7206000 : MFSK128 (2026-01-28 18:12Z): <CR>
+TX 7206000 : MFSK128 (2026-01-28 18:12Z): DE KE8YTX<CR>
+TX 7206000 : MFSK128 (2026-01-28 18:12Z): OP:  <RICK>QTH: <SW OHIO  HAMILTON COUNTY> LOC: <EM79pe><CR>
+TX 7206000 : MFSK128 (2026-01-28 18:12Z): <CR><EOT><CR><STX><CR>
+TX 7206000 : MFSK128 (2026-01-28 18:12Z): <CR>
+TX 7206000 : MFSK128 (2026-01-28 18:12Z):   DE KE8YTX ZEV QRU AR <CR><EOT><CR>
+Actual behavior
+indows PowerShell
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Install the latest PowerShell for new features and improvements! https://aka.ms/PSWindows
+
+PS C:\Users\rickk> Get-Content -Path "C:\\Users\\rickk\\fldigi.files\\fldigi20260128.log"-wait
+
+--- Logging started at Wed Jan 28 09:54:59 2026 UTC ---
+
+TX 7206000 : MFSK32 (2026-01-28 09:55Z): <CR><STX><CR>
+TX 7206000 : MFSK32 (2026-01-28 09:55Z): <CR>
+TX 7206000 : MFSK32 (2026-01-28 09:55Z): KE8TEY KE8TEY DE KE8YTX KE8YTX ZKE ZEV<CR>
+TX 7206000 : MFSK32 (2026-01-28 09:55Z): <CR>
+TX 7206000 : MFSK32 (2026-01-28 09:55Z): KE8TEY KE8TEY DE KE8YTX KE8YTX ZKE ZEV<CR>
+TX 7206000 : MFSK32 (2026-01-28 09:55Z): <CR>
+TX 7206000 : MFSK32 (2026-01-28 09:55Z): KE8TEY KE8TEY DE KE8YTX KE8YTX ZKE ZEV<CR>
+TX 7206000 : MFSK32 (2026-01-28 09:55Z): <CR>
+TX 7206000 : MFSK32 (2026-01-28 09:55Z): KE8TEY KE8TEY DE KE8YTX KE8YTX ZKE ZEV <CR>
+TX 7206000 : MFSK32 (2026-01-28 09:55Z): <CR><EOT><CR><STX><CR>
+TX 7206000 : MFSK32 (2026-01-28 09:57Z): <CR>
+TX 7206000 : MFSK32 (2026-01-28 09:57Z): KE8TEY KE8TEY DE KE8YTX KE8YTX ZKE ZEV <CR>
+TX 7206000 : MFSK32 (2026-01-28 09:57Z): <CR><EOT><CR><STX><CR>
+TX 7206000 : MFSK32 (2026-01-28 09:57Z): <CR>
+TX 7206000 : MFSK32 (2026-01-28 09:57Z): DE KE8YTX<CR>
+TX 7206000 : MFSK32 (2026-01-28 09:57Z): OP:  <RICK>QTH: <SW OHIO  HAMILTON COUNTY> LOC: <EM79pe><CR>
+TX 7206000 : MFSK32 (2026-01-28 09:57Z): <CR><EOT><CR><STX><CR>
+TX 7206000 : MFSK32 (2026-01-28 10:00Z): <CR>
+TX 7206000 : MFSK32 (2026-01-28 10:00Z): KE8TEY KE8TEY DE KE8YTX KE8YTX ZKE ZEV<CR>
+TX 7206000 : MFSK32 (2026-01-28 10:00Z): <CR>
+TX 7206000 : MFSK32 (2026-01-28 10:00Z): DE KE8YTX<CR>
+TX 7206000 : MFSK32 (2026-01-28 10:00Z): MY QTH CLEVES OIHIO  SW CORNER OF OHIO 6 MILES FROM INDIANA<CR>
+TX 7206000 : MFSK32 (2026-01-28 10:00Z): 1.5 MILES FROM KENTUCKY , OHIO RIVER SEPERATES OH AND KY  <CR>
+TX 7206000 : MFSK32 (2026-01-28 10:00Z): <CR><EOT><CR><STX><CR> <CR>
+TX 7206000 : MFSK32 (2026-01-28 10:01Z): <CR><EOT><CR>
+--- Logging stopped at Wed Jan 28 10:24:10 2026 UTC ---
+
+--- Logging started at Wed Jan 28 10:32:57 2026 UTC ---
+
+TX 7206000 : MFSK32 (2026-01-28 10:33Z): <CR><STX><CR>
+TX 7206000 : MFSK32 (2026-01-28 10:33Z): <CR>
+TX 7206000 : MFSK32 (2026-01-28 10:33Z): KE8TEY KE8TEY DE KE8YTX KE8YTX ZKE ZEV <CR>
+TX 7206000 : MFSK32 (2026-01-28 10:33Z): <CR><EOT><CR><STX><CR>
+TX 7206000 : MFSK32 (2026-01-28 10:33Z): <CR>
+TX 7206000 : MFSK32 (2026-01-28 10:33Z): DE KE8YTX<CR>
+TX 7206000 : MFSK32 (2026-01-28 10:33Z): MY QTH CLEVES OIHIO  SW CORNER OF OHIO 6 MILES FROM INDIANA<CR>
+TX 7206000 : MFSK32 (2026-01-28 10:33Z): 1.5 MILES FROM KENTUCKY , OHIO RIVER SEPERATES OH AND KY  <CR>
+TX 7206000 : MFSK32 (2026-01-28 10:33Z): <CR><EOT><CR>
+<STX>
+
+--- Logging stopped at Wed Jan 28 18:11:39 2026 UTC ---
+
+TX 7206000 : MFSK32 (2026-01-28 18:11Z): <CR>
+
+--- Logging started at Wed Jan 28 18:12:00 2026 UTC ---
+
+TX 7206000 : MFSK128 (2026-01-28 18:12Z): <CR><STX><CR>
+TX 7206000 : MFSK128 (2026-01-28 18:12Z): <CR>
+TX 7206000 : MFSK128 (2026-01-28 18:12Z): DE KE8
+YTX<CR>
+TX 7206000 : MFSK128 (2026-01-28 18:12Z): MY QTH CLEVES OI
+HIO  SW CORNER OF OHIO
+ 6 MILES FROM INDIANA
+<CR>
+TX 7206000 : MFSK128 (2026-01-28 18:12Z): 1.5 MILES FROM KENT
+UCKY , OHIO RIVER SEP
+ERATES OH AND KY  <CR>
+TX 7206000 : MFSK128 (2026-01-28 18:12Z): <CR>
+<EOT>
+<CR>
+<STX><CR>
+TX 7206000 : MFSK128 (2026-01-28 18:12Z): <CR>
+TX 7206000 : MFSK128 (2026-01-28 18:12Z): DE KE8YTX
+<CR>
+TX 7206000 : MFSK128 (2026-01-28 18:12Z): OP:  <RICK>QTH: <
+SW OHIO  HAMILTON COUN
+TY> LOC: <EM79pe><CR>
+
+TX 7206000 : MFSK128 (2026-01-28 18:12Z): <CR><EOT><CR>
+<STX><CR>
+
+TX 7206000 : MFSK128 (2026-01-28 18:12Z): <CR>
+TX 7206000 : MFSK128 (2026-01-28 18:12Z):   DE KE8YTX ZEV QRU
+AR <CR><EOT><CR>
+Error details
+Windows PowerShell
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Install the latest PowerShell for new features and improvements! https://aka.ms/PSWindows
+
+PS C:\Users\rickk> Get-Error
+Get-Error : The term 'Get-Error' is not recognized as the name of a cmdlet, function, script file, or operable
+program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:1
++ Get-Error
++ ~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (Get-Error:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+
+PS C:\Users\rickk>
+Environment data
+Windows PowerShell
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Install the latest PowerShell for new features and improvements! https://aka.ms/PSWindows
+
+PS C:\Users\rickk> Get-Module Microsoft.PowerShell.PSResourceGet; $PSVersionTable
+
+Name                           Value
+----                           -----
+PSVersion                      5.1.26100.7462
+PSEdition                      Desktop
+PSCompatibleVersions           {1.0, 2.0, 3.0, 4.0...}
+BuildVersion                   10.0.26100.7462
+CLRVersion                     4.0.30319.42000
+WSManStackVersion              3.0
+PSRemotingProtocolVersion      2.3
+SerializationVersion           1.1.0.1
+
+
+PS C:\Users\rickk>
+Visuals
+Get-Content -Path "C:\Users\rickk\fldigi.files\fldigi20260128.log"-wait
+
