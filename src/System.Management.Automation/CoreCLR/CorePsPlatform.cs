@@ -205,7 +205,6 @@ namespace System.Management.Automation
         private static bool? _isIoT = null;
         private static bool? _isWindowsDesktop = null;
 #endif
-        private static bool? _isElevated = null;
 
         internal static bool TryDeriveFromCache(string path1, out string result)
         {
