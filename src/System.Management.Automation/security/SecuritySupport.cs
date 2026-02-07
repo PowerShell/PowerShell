@@ -815,6 +815,7 @@ namespace System.Management.Automation.Internal
         // The OID arc 1.3.6.1.4.1.311.80 is assigned to PowerShell. If we need
         // new OIDs, we can assign them under this branch.
         internal const string DocumentEncryptionOid = "1.3.6.1.4.1.311.80.1";
+        internal const string SubjectAlternativeNameOid = "2.5.29.17";
     }
 }
 
