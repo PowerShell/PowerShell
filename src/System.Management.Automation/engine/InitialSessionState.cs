@@ -4658,7 +4658,7 @@ end {
                     SpecialVariables.IsElevated,
                     Platform.IsElevated,
                     string.Empty,
-                    ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
+                    ScopedItemOptions.Constant | ScopedItemOptions.AllScope),
                 #endregion
             };
 
