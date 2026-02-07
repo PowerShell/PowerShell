@@ -7,6 +7,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Management.Automation.Internal;
 using Microsoft.Win32;
+using System.Reflection.Metadata;
 
 namespace System.Management.Automation
 {
@@ -70,18 +71,7 @@ namespace System.Management.Automation
                 {
                     return _isElevated.Value;
                 }
-
-#if UNIX
-                // On Unix, check if the effective user ID is 0 (root)
-                _isElevated = Interop.Unix.GetEuid() == 0;
-#else
-                // On Windows, check if running as administrator
-                using (var identity = System.Security.Principal.WindowsIdentity.GetCurrent())
-                {
-                    var principal = new System.Security.Principal.WindowsPrincipal(identity);
-                    _isElevated = principal.IsInRole(System.Security.Principal.WindowsBuiltInRole.Administrator);
-                }
-#endif
+                _isElevated = Environment.IsPrivilegedProcess;
                 return _isElevated.Value;
             }
         }
