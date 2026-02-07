@@ -508,6 +508,7 @@ Describe "Verify aliases and cmdlets" -Tags "CI" {
 "Cmdlet",       "Tee-Object",                       "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Test-Connection",                  "",                                 $(             $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Test-ComputerSecureChannel",       "",                                 $($FullCLR                               ),     "",                     "",                     ""
+"Cmdlet",       "Test-Elevated",                    "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     ""
 "Cmdlet",       "Test-FileCatalog",                 "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "Medium"
 "Cmdlet",       "Test-Json",                        "",                                 $(             $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Test-ModuleManifest",              "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
