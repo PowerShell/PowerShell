@@ -1,5 +1,26 @@
 {
+  "$schema": "https://json.schemastore.org/component-detection-manifest.json",
   "Registrations": [
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "Azure.Core",
+          "Version": "1.50.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "Azure.Monitor.OpenTelemetry.Exporter",
+          "Version": "1.6.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
     {
       "Component": {
         "Type": "nuget",
@@ -25,7 +46,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Humanizer.Core",
-          "Version": "3.0.1"
+          "Version": "2.14.1"
         }
       },
       "DevelopmentDependency": false
@@ -35,7 +56,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Json.More.Net",
-          "Version": "2.2.0"
+          "Version": "2.1.1"
         }
       },
       "DevelopmentDependency": false
@@ -45,7 +66,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "JsonPointer.Net",
-          "Version": "6.0.1"
+          "Version": "5.3.1"
         }
       },
       "DevelopmentDependency": false
@@ -75,7 +96,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.ApplicationInsights",
-          "Version": "2.23.0"
+          "Version": "3.0.0"
         }
       },
       "DevelopmentDependency": false
@@ -124,8 +145,148 @@
       "Component": {
         "Type": "nuget",
         "Nuget": {
+          "Name": "Microsoft.Extensions.Configuration.Abstractions",
+          "Version": "10.0.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "Microsoft.Extensions.Configuration.Binder",
+          "Version": "10.0.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "Microsoft.Extensions.Configuration",
+          "Version": "10.0.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "Microsoft.Extensions.DependencyInjection.Abstractions",
+          "Version": "10.0.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "Microsoft.Extensions.DependencyInjection",
+          "Version": "10.0.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "Microsoft.Extensions.Diagnostics.Abstractions",
+          "Version": "10.0.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "Microsoft.Extensions.FileProviders.Abstractions",
+          "Version": "10.0.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "Microsoft.Extensions.Hosting.Abstractions",
+          "Version": "10.0.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "Microsoft.Extensions.Logging.Abstractions",
+          "Version": "10.0.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "Microsoft.Extensions.Logging.Configuration",
+          "Version": "10.0.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "Microsoft.Extensions.Logging",
+          "Version": "10.0.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
           "Name": "Microsoft.Extensions.ObjectPool",
           "Version": "10.0.2"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "Microsoft.Extensions.Options.ConfigurationExtensions",
+          "Version": "10.0.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "Microsoft.Extensions.Options",
+          "Version": "10.0.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "Microsoft.Extensions.Primitives",
+          "Version": "10.0.0"
         }
       },
       "DevelopmentDependency": false
@@ -196,6 +357,66 @@
         "Nuget": {
           "Name": "Newtonsoft.Json",
           "Version": "13.0.4"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "OpenTelemetry.Api.ProviderBuilderExtensions",
+          "Version": "1.14.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "OpenTelemetry.Api",
+          "Version": "1.14.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "OpenTelemetry.Extensions.Hosting",
+          "Version": "1.14.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "OpenTelemetry.PersistentStorage.Abstractions",
+          "Version": "1.0.2"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "OpenTelemetry.PersistentStorage.FileSystem",
+          "Version": "1.0.2"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "OpenTelemetry",
+          "Version": "1.14.0"
         }
       },
       "DevelopmentDependency": false
@@ -434,6 +655,16 @@
       "Component": {
         "Type": "nuget",
         "Nuget": {
+          "Name": "System.ClientModel",
+          "Version": "1.8.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
           "Name": "System.CodeDom",
           "Version": "10.0.2"
         }
@@ -594,6 +825,16 @@
       "Component": {
         "Type": "nuget",
         "Nuget": {
+          "Name": "System.Memory.Data",
+          "Version": "8.0.1"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
           "Name": "System.Net.Http.WinHttpHandler",
           "Version": "10.0.2"
         }
@@ -665,7 +906,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.ServiceModel.Http",
-          "Version": "8.1.2"
+          "Version": "10.0.652802"
         }
       },
       "DevelopmentDependency": false
@@ -675,7 +916,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.ServiceModel.NetFramingBase",
-          "Version": "8.1.2"
+          "Version": "10.0.652802"
         }
       },
       "DevelopmentDependency": false
@@ -685,7 +926,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.ServiceModel.NetTcp",
-          "Version": "8.1.2"
+          "Version": "10.0.652802"
         }
       },
       "DevelopmentDependency": false
@@ -695,7 +936,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.ServiceModel.Primitives",
-          "Version": "8.1.2"
+          "Version": "10.0.652802"
         }
       },
       "DevelopmentDependency": false
@@ -750,6 +991,5 @@
       },
       "DevelopmentDependency": false
     }
-  ],
-  "$schema": "https://json.schemastore.org/component-detection-manifest.json"
+  ]
 }
