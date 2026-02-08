@@ -1,56 +1,37 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using PSTests.Internal;
-using Xunit.Abstractions;
 using Xunit.Sdk;
+using Xunit.v3;
 
 namespace TestOrder.TestCaseOrdering
 {
-    public class PriorityOrderer : ITestCaseOrderer
+    public class SourceDeclarationOrderer : ITestCaseOrderer
     {
-        public IEnumerable<TTestCase> OrderTestCases<TTestCase>(IEnumerable<TTestCase> testCases) where TTestCase : ITestCase
+        public IReadOnlyCollection<TTestCase> OrderTestCases<TTestCase>(IReadOnlyCollection<TTestCase> testCases) where TTestCase : notnull, ITestCase
+            => new SortedSet<TTestCase>(testCases, SourceDeclarationComparer<TTestCase>.Instance);
+
+        private sealed class SourceDeclarationComparer<TTestCase> : IComparer<TTestCase>
+            where TTestCase : notnull, ITestCase
         {
-            var sortedMethods = new SortedDictionary<int, List<TTestCase>>();
-
-            foreach (TTestCase testCase in testCases)
+            private SourceDeclarationComparer()
             {
-                int priority = 0;
+            }
 
-                foreach (IAttributeInfo attr in testCase.TestMethod.Method.GetCustomAttributes(typeof(PriorityAttribute).AssemblyQualifiedName))
+#pragma warning disable CA1000 // Do not declare static members on generic types - fine in this case.
+            public static IComparer<TTestCase> Instance { get; } = new SourceDeclarationComparer<TTestCase>();
+#pragma warning restore CA1000 // Do not declare static members on generic types
+
+            public int Compare(TTestCase x, TTestCase y)
+            {
+                if (x.SourceFilePath != y.SourceFilePath)
                 {
-                    priority = attr.GetNamedArgument<int>("Priority");
+                    return x.SourceFilePath.CompareTo(y.SourceFilePath);
                 }
 
-                GetOrCreate(sortedMethods, priority).Add(testCase);
+                return x.SourceLineNumber.Value.CompareTo(y.SourceLineNumber.Value);
             }
-
-            foreach (var list in sortedMethods.Keys.Select(priority => sortedMethods[priority]))
-            {
-                list.Sort((x, y) => StringComparer.OrdinalIgnoreCase.Compare(x.TestMethod.Method.Name, y.TestMethod.Method.Name));
-                foreach (TTestCase testCase in list)
-                {
-                    yield return testCase;
-                }
-            }
-        }
-
-        private static TValue GetOrCreate<TKey, TValue>(IDictionary<TKey, TValue> dictionary, TKey key) where TValue : new()
-        {
-            TValue result;
-
-            if (dictionary.TryGetValue(key, out result))
-            {
-                return result;
-            }
-
-            result = new TValue();
-            dictionary[key] = result;
-
-            return result;
         }
     }
 }
