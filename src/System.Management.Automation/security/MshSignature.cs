@@ -284,10 +284,7 @@ namespace System.Management.Automation
                                                       filePath);
 
             // Extract Subject Alternative Name from the signer certificate
-            if (signer != null)
-            {
-                SubjectAlternativeName = GetSubjectAlternativeName(signer);
-            }
+            SubjectAlternativeName = GetSubjectAlternativeName(signer);
         }
 
         private static SignatureStatus GetSignatureStatusFromWin32Error(DWORD error)
