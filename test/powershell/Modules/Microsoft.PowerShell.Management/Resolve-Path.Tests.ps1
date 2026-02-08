@@ -194,7 +194,7 @@ Describe "The parameter '-RelativeBasePath' should treat path as literal" -Tags 
 
     It "Should fill path with literal in tab completion of parameter '-RelativeBasePath'" {
         $wildcardNameFile = '[WildcardName].txt'
-        123 | Out-File $wildcardNameFile
+        123 | Out-File -LiteralPath $wildcardNameFile
         $completionInfo = TabExpansion2 'Resolve-Path -RelativeBasePath .\'
         $completionInfo.CompletionMatches[0].ListItemText | Should -Be $wildcardNameFile
     }

@@ -254,6 +254,7 @@ namespace System.Management.Automation
                     }
 
                     // Should process history path as literal
+                    context ??= new CmdletProviderContext(this.ExecutionContext);
                     context.SuppressWildcardExpansion = true;
                     path = _setLocationHistory.Undo(this.CurrentLocation).Path;
                     break;
@@ -264,6 +265,7 @@ namespace System.Management.Automation
                     }
 
                     // Should process history path as literal
+                    context ??= new CmdletProviderContext(this.ExecutionContext);
                     context.SuppressWildcardExpansion = true;
                     path = _setLocationHistory.Redo(this.CurrentLocation).Path;
                     break;
