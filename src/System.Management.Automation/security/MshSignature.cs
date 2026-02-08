@@ -423,7 +423,7 @@ namespace System.Management.Automation
                         return null;
                     }
 
-                    return formatted.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+                    return formatted.Split(new[] { "\r\n", "\n", "\r" }, StringSplitOptions.RemoveEmptyEntries);
                 }
             }
 
