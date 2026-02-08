@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/component-detection-manifest.json",
   "Registrations": [
     {
       "Component": {
@@ -25,7 +26,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Humanizer.Core",
-          "Version": "3.0.1"
+          "Version": "2.14.1"
         }
       },
       "DevelopmentDependency": false
@@ -35,7 +36,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Json.More.Net",
-          "Version": "2.2.0"
+          "Version": "2.1.1"
         }
       },
       "DevelopmentDependency": false
@@ -45,7 +46,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "JsonPointer.Net",
-          "Version": "6.0.1"
+          "Version": "5.3.1"
         }
       },
       "DevelopmentDependency": false
@@ -665,7 +666,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.ServiceModel.Http",
-          "Version": "8.1.2"
+          "Version": "10.0.652802"
         }
       },
       "DevelopmentDependency": false
@@ -675,7 +676,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.ServiceModel.NetFramingBase",
-          "Version": "8.1.2"
+          "Version": "10.0.652802"
         }
       },
       "DevelopmentDependency": false
@@ -685,7 +686,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.ServiceModel.NetTcp",
-          "Version": "8.1.2"
+          "Version": "10.0.652802"
         }
       },
       "DevelopmentDependency": false
@@ -695,7 +696,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.ServiceModel.Primitives",
-          "Version": "8.1.2"
+          "Version": "10.0.652802"
         }
       },
       "DevelopmentDependency": false
@@ -750,6 +751,5 @@
       },
       "DevelopmentDependency": false
     }
-  ],
-  "$schema": "https://json.schemastore.org/component-detection-manifest.json"
+  ]
 }
