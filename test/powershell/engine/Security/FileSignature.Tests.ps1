@@ -258,6 +258,7 @@ Describe "Windows file content signatures" -Tags @('Feature', 'RequireAdminOnWin
 
             $actual = Get-AuthenticodeSignature -FilePath $scriptPath
             $actual.SubjectAlternativeName | Should -Not -BeNullOrEmpty
+            $actual.SubjectAlternativeName | Should -BeOfType [string[]]
             $actual.SubjectAlternativeName | Should -BeOfType [string]
             $actual.SubjectAlternativeName.Count | Should -Be 2
             $actual.SubjectAlternativeName | Should -Contain 'DNS Name=test.example.com'
