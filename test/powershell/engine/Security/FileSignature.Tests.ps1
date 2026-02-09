@@ -260,8 +260,8 @@ Describe "Windows file content signatures" -Tags @('Feature', 'RequireAdminOnWin
             $actual.SubjectAlternativeName | Should -Not -BeNullOrEmpty
             ,$actual.SubjectAlternativeName | Should -BeOfType [string[]]
             $actual.SubjectAlternativeName.Count | Should -Be 2
-            $actual.SubjectAlternativeName | Should -Contain 'DNS Name=test.example.com'
-            $actual.SubjectAlternativeName | Should -Contain 'DNS Name=*.example.com'
+            $actual.SubjectAlternativeName[0] | Should -BeExactly 'DNS Name=test.example.com'
+            $actual.SubjectAlternativeName[1] | Should -BeExactly 'DNS Name=*.example.com'
         } finally {
             Remove-Item -Path "Cert:\LocalMachine\Root\$sanCARootThumbprint" -Force -ErrorAction Ignore
             Remove-Item -Path "Cert:\LocalMachine\TrustedPublisher\$sanCertThumbprint" -Force -ErrorAction Ignore
