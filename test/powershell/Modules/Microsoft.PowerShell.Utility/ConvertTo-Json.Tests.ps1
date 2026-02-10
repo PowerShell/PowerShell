@@ -1058,7 +1058,7 @@ Describe 'ConvertTo-Json' -tags "CI" {
         }
 
         It 'Should serialize PSCustomObject with multiple properties via Pipeline and InputObject' {
-            $obj = [PSCustomObject]@{
+            $obj = [PSCustomObject][ordered]@{
                 Name = 'Test'
                 Value = 42
                 Active = $true
@@ -1071,7 +1071,7 @@ Describe 'ConvertTo-Json' -tags "CI" {
         }
 
         It 'Should preserve property order in PSCustomObject via Pipeline and InputObject' {
-            $obj = [PSCustomObject]@{
+            $obj = [PSCustomObject][ordered]@{
                 Zebra = 1
                 Alpha = 2
                 Middle = 3
@@ -1094,7 +1094,7 @@ Describe 'ConvertTo-Json' -tags "CI" {
 
     Context 'PSCustomObject with various property types' {
         It 'Should serialize PSCustomObject with scalar properties via Pipeline and InputObject' {
-            $obj = [PSCustomObject]@{
+            $obj = [PSCustomObject][ordered]@{
                 IntVal = 42
                 DoubleVal = 3.14
                 StringVal = 'hello'
@@ -1209,7 +1209,7 @@ Describe 'ConvertTo-Json' -tags "CI" {
         }
 
         It 'Should serialize PSCustomObject with mixed nested types via Pipeline and InputObject' {
-            $obj = [PSCustomObject]@{
+            $obj = [PSCustomObject][ordered]@{
                 Child = [PSCustomObject]@{ Name = 'child' }
                 Items = @(1, 2, 3)
                 Config = @{ Key = 'Value' }
@@ -1258,8 +1258,8 @@ Describe 'ConvertTo-Json' -tags "CI" {
     Context 'Array of PSCustomObject' {
         It 'Should serialize array of PSCustomObject via Pipeline and InputObject' {
             $arr = @(
-                [PSCustomObject]@{ Id = 1; Name = 'First' }
-                [PSCustomObject]@{ Id = 2; Name = 'Second' }
+                [PSCustomObject][ordered]@{ Id = 1; Name = 'First' }
+                [PSCustomObject][ordered]@{ Id = 2; Name = 'Second' }
             )
             $expected = '[{"Id":1,"Name":"First"},{"Id":2,"Name":"Second"}]'
             $jsonPipeline = $arr | ConvertTo-Json -Compress
