@@ -3,8 +3,8 @@
 
 Describe "Packaging Module Functions" {
     BeforeAll {
-        Import-Module $PSScriptRoot/../../build.psm1 -Force
-        Import-Module $PSScriptRoot/../../tools/packaging/packaging.psm1 -Force
+        Import-Module $PSScriptRoot/../../../../build.psm1 -Force
+        Import-Module $PSScriptRoot/../../../../tools/packaging/packaging.psm1 -Force
     }
 
     Context "Test-IsPreview function" {
