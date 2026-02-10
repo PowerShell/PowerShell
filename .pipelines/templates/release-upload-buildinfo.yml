@@ -60,6 +60,8 @@ jobs:
       $metadata = Get-Content -LiteralPath "$toolsDirectory/metadata.json" -ErrorAction Stop | ConvertFrom-Json
       $stableReleaseTag = $metadata.StableReleaseTag -Replace 'v',''
 
+      Write-Verbose -Verbose "Writing $jsonFile contents:"
+      $buildInfoJsonContent = Get-Content $jsonFile -Encoding UTF8NoBom -Raw
       Write-Verbose -Verbose $buildInfoJsonContent
 
       $buildInfo =  $buildInfoJsonContent | ConvertFrom-Json
