@@ -1,3 +1,5 @@
+#Requires -Version 7.0
+
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
@@ -155,6 +157,11 @@ try {
 }
 catch {
     Write-Verbose "RegisterMicrosoftUpdate: unexpected error - $_, continuing installation" -Verbose
+    # Ensure job cleanup to prevent resource leaks
+    if ($job) {
+        Stop-Job -Job $job -ErrorAction SilentlyContinue
+        Remove-Job -Job $job -Force -ErrorAction SilentlyContinue
+    }
 }
 
 # Always exit 0 so the MSI can complete
