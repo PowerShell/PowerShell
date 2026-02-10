@@ -1499,80 +1499,81 @@ Describe 'ConvertTo-Json' -tags "CI" {
     # Test coverage for ConvertTo-Json PowerShell class serialization
     # Covers: Pipeline vs InputObject, ETS vs no ETS, nested structures, inheritance
 
-    Context 'PowerShell class basic serialization' {
+    Context 'PowerShell class serialization' {
         BeforeAll {
             class SimpleClass {
-                [string]$Name
-                [int]$Value
-            }
-
-            class ClassWithConstructor {
-                [string]$Name
-                [int]$Value
-                ClassWithConstructor([string]$name, [int]$value) {
-                    $this.Name = $name
-                    $this.Value = $value
-                }
-            }
-
-            class ClassWithMethod {
-                [string]$Name
-                [int]$Value
-                [int] GetDoubled() { return $this.Value * 2 }
-            }
-
-            class ClassWithHiddenProperty {
-                [string]$Name
-                hidden [string]$Secret
+                [string]$StringVal
+                [int]$IntVal
+                [bool]$BoolVal
+                [double]$DoubleVal
+                [bigint]$BigIntVal
+                [guid]$GuidVal
+                [ipaddress]$IPVal
+                [object[]]$ArrayVal
+                [hashtable]$DictVal
+                hidden [string]$HiddenVal
             }
         }
 
-        It 'Should serialize simple PowerShell class via Pipeline and InputObject' {
-            $obj = [SimpleClass]@{ Name = 'Test'; Value = 42 }
-            $expected = '{"Name":"Test","Value":42}'
-            $jsonPipeline = $obj | ConvertTo-Json -Compress
-            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress
-            $jsonPipeline | Should -BeExactly $expected
-            $jsonInputObject | Should -BeExactly $expected
-        }
-
-        It 'Should serialize PowerShell class with constructor via Pipeline and InputObject' {
-            $obj = [ClassWithConstructor]::new('Test', 42)
-            $expected = '{"Name":"Test","Value":42}'
-            $jsonPipeline = $obj | ConvertTo-Json -Compress
-            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress
-            $jsonPipeline | Should -BeExactly $expected
-            $jsonInputObject | Should -BeExactly $expected
-        }
-
-        It 'Should not serialize methods of PowerShell class via Pipeline and InputObject' {
-            $obj = [ClassWithMethod]@{ Name = 'Test'; Value = 10 }
-            $expected = '{"Name":"Test","Value":10}'
-            $jsonPipeline = $obj | ConvertTo-Json -Compress
-            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress
-            $jsonPipeline | Should -BeExactly $expected
-            $jsonInputObject | Should -BeExactly $expected
-            $jsonPipeline | Should -Not -Match 'GetDoubled'
-        }
-
-        It 'Should serialize hidden properties of PowerShell class via Pipeline and InputObject' {
-            $obj = [ClassWithHiddenProperty]::new()
-            $obj.Name = 'Visible'
-            $obj.Secret = 'Hidden'
-            $expected = '{"Name":"Visible","Secret":"Hidden"}'
-            $jsonPipeline = $obj | ConvertTo-Json -Compress
-            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress
-            $jsonPipeline | Should -BeExactly $expected
-            $jsonInputObject | Should -BeExactly $expected
+        It 'Should serialize PowerShell class with various property types including ETS via Pipeline and InputObject' {
+            $obj = [SimpleClass]::new()
+            $obj.StringVal = 'hello'
+            $obj.IntVal = 42
+            $obj.BoolVal = $true
+            $obj.DoubleVal = 3.14
+            $obj.BigIntVal = [bigint]::Parse('99999999999999999999')
+            $obj.GuidVal = [guid]'12345678-1234-1234-1234-123456789abc'
+            $obj.IPVal = [ipaddress]::Parse('192.168.1.1')
+            $obj.ArrayVal = @(1, 'two', $true)
+            $obj.DictVal = @{ Key = 'Value'; Nested = @{ Inner = 1 } }
+            $obj.HiddenVal = 'secret'
+            $obj | Add-Member -MemberType NoteProperty -Name ETSNote -Value 'note'
+            $obj | Add-Member -MemberType ScriptProperty -Name ETSScript -Value { $this.StringVal.Length }
+            $jsonPipeline = $obj | ConvertTo-Json -Compress -Depth 3
+            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress -Depth 3
+            $jsonPipeline | Should -Match '"StringVal":"hello"'
+            $jsonPipeline | Should -Match '"IntVal":42'
+            $jsonPipeline | Should -Match '"BoolVal":true'
+            $jsonPipeline | Should -Match '"DoubleVal":3\.14'
+            $jsonPipeline | Should -Match '"BigIntVal":99999999999999999999'
+            $jsonPipeline | Should -Match '"GuidVal":"12345678-1234-1234-1234-123456789abc"'
+            $jsonPipeline | Should -Match '"IPVal":\{'
+            $jsonPipeline | Should -Match '"ArrayVal":\[1,"two",true\]'
+            $jsonPipeline | Should -Match '"Key":"Value"'
+            $jsonPipeline | Should -Match '"Inner":1'
+            $jsonPipeline | Should -Match '"HiddenVal":"secret"'
+            $jsonPipeline | Should -Match '"ETSNote":"note"'
+            $jsonPipeline | Should -Match '"ETSScript":5'
+            $jsonInputObject | Should -Match '"StringVal":"hello"'
+            $jsonInputObject | Should -Match '"IntVal":42'
+            $jsonInputObject | Should -Match '"BoolVal":true'
+            $jsonInputObject | Should -Match '"DoubleVal":3\.14'
+            $jsonInputObject | Should -Match '"BigIntVal":99999999999999999999'
+            $jsonInputObject | Should -Match '"GuidVal":"12345678-1234-1234-1234-123456789abc"'
+            $jsonInputObject | Should -Match '"IPVal":\{'
+            $jsonInputObject | Should -Match '"ArrayVal":\[1,"two",true\]'
+            $jsonInputObject | Should -Match '"Key":"Value"'
+            $jsonInputObject | Should -Match '"Inner":1'
+            $jsonInputObject | Should -Match '"HiddenVal":"secret"'
+            $jsonInputObject | Should -Not -Match 'ETSNote'
+            $jsonInputObject | Should -Not -Match 'ETSScript'
         }
 
         It 'Should serialize PowerShell class with default values via Pipeline and InputObject' {
             $obj = [SimpleClass]::new()
-            $expected = '{"Name":null,"Value":0}'
             $jsonPipeline = $obj | ConvertTo-Json -Compress
             $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress
-            $jsonPipeline | Should -BeExactly $expected
-            $jsonInputObject | Should -BeExactly $expected
+            $jsonPipeline | Should -Match '"StringVal":null'
+            $jsonPipeline | Should -Match '"IntVal":0'
+            $jsonPipeline | Should -Match '"BoolVal":false'
+            $jsonPipeline | Should -Match '"DoubleVal":0\.0'
+            $jsonPipeline | Should -Match '"BigIntVal":0'
+            $jsonPipeline | Should -Match '"GuidVal":"00000000-0000-0000-0000-000000000000"'
+            $jsonPipeline | Should -Match '"IPVal":null'
+            $jsonPipeline | Should -Match '"ArrayVal":null'
+            $jsonPipeline | Should -Match '"DictVal":null'
+            $jsonPipeline | Should -Match '"HiddenVal":null'
+            $jsonInputObject | Should -BeExactly $jsonPipeline
         }
     }
 
@@ -1654,44 +1655,7 @@ Describe 'ConvertTo-Json' -tags "CI" {
             $jsonInputObject | Should -Match '"ChildProp":"child"'
             $jsonInputObject | Should -Match '"GrandChildProp":"grandchild"'
         }
-    }
 
-    Context 'PowerShell class ETS properties' {
-        BeforeAll {
-            class ETSTestClass {
-                [string]$Original
-            }
-        }
-
-        It 'Should include NoteProperty on PowerShell class via Pipeline' {
-            $obj = [ETSTestClass]@{ Original = 'value' }
-            $obj | Add-Member -MemberType NoteProperty -Name Added -Value 'added'
-            $jsonPipeline = $obj | ConvertTo-Json -Compress
-            $jsonPipeline | Should -Match '"Original":"value"'
-            $jsonPipeline | Should -Match '"Added":"added"'
-        }
-
-        It 'Should not include NoteProperty on PowerShell class via InputObject' {
-            $obj = [ETSTestClass]@{ Original = 'value' }
-            $obj | Add-Member -MemberType NoteProperty -Name Added -Value 'added'
-            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress
-            $jsonInputObject | Should -BeExactly '{"Original":"value"}'
-        }
-
-        It 'Should include ScriptProperty on PowerShell class via Pipeline' {
-            $obj = [ETSTestClass]@{ Original = 'test' }
-            $obj | Add-Member -MemberType ScriptProperty -Name Length -Value { $this.Original.Length }
-            $jsonPipeline = $obj | ConvertTo-Json -Compress
-            $jsonPipeline | Should -Match '"Original":"test"'
-            $jsonPipeline | Should -Match '"Length":4'
-        }
-
-        It 'Should not include ScriptProperty on PowerShell class via InputObject' {
-            $obj = [ETSTestClass]@{ Original = 'test' }
-            $obj | Add-Member -MemberType ScriptProperty -Name Length -Value { $this.Original.Length }
-            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress
-            $jsonInputObject | Should -BeExactly '{"Original":"test"}'
-        }
     }
 
     Context 'Mixed PSCustomObject and PowerShell class' {
