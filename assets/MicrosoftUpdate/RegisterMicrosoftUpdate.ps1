@@ -83,17 +83,17 @@ switch ($TestHook) {
     }
     default {
         # Check if already registered before doing any expensive work
-        Write-Verbose "RegisterMicrosoftUpdate: checking if already registered..." -Verbose
+        Write-Verbose "MicrosoftUpdate: checking if already registered..." -Verbose
         $alreadyRegistered = Test-MicrosoftUpdateRegistered
 
         if ($alreadyRegistered -eq $true) {
-            Write-Verbose "RegisterMicrosoftUpdate: Microsoft Update is already registered, skipping" -Verbose
+            Write-Verbose "MicrosoftUpdate: Microsoft Update is already registered, skipping" -Verbose
             exit 0
         }
 
         # Not registered, attempt to register using an external process with timeout
         # Using external process avoids issues with constrained language mode affecting jobs/runspaces
-        Write-Verbose "RegisterMicrosoftUpdate: Microsoft Update not registered, attempting registration..." -Verbose
+        Write-Verbose "MicrosoftUpdate: Microsoft Update not registered, attempting registration..." -Verbose
 
         # Normal path: register via COM in a job with timeout
         $jobScript = {
@@ -101,11 +101,11 @@ switch ($TestHook) {
             $serviceManager = New-Object -ComObject Microsoft.Update.ServiceManager
             try {
                 $null = $serviceManager.AddService2($ServiceId, $RegistrationFlags, '')
-                Write-Host 'RegisterMicrosoftUpdate: registration succeeded'
+                Write-Host 'MicrosoftUpdate: registration succeeded'
                 return $true
             }
             catch {
-                Write-Host "RegisterMicrosoftUpdate: registration failed - $_"
+                Write-Host "MicrosoftUpdate: registration failed - $_"
                 return $false
             }
             finally {
@@ -124,7 +124,7 @@ switch ($TestHook) {
 }
 
 try {
-    Write-Verbose "RegisterMicrosoftUpdate: starting registration with $waitTimeoutSeconds second timeout" -Verbose
+    Write-Verbose "MicrosoftUpdate: starting registration with $waitTimeoutSeconds second timeout" -Verbose
 
     # Start the job
     if ($TestHook) {
@@ -142,21 +142,21 @@ try {
         Remove-Job -Job $job -Force
 
         if ($result -eq $true) {
-            Write-Verbose "RegisterMicrosoftUpdate: completed successfully" -Verbose
+            Write-Verbose "MicrosoftUpdate: completed successfully" -Verbose
         }
         else {
-            Write-Verbose "RegisterMicrosoftUpdate: registration failed, continuing installation" -Verbose
+            Write-Verbose "MicrosoftUpdate: registration failed, continuing installation" -Verbose
         }
     }
     else {
         # Process timed out - stop the job and continue
-        Write-Verbose "RegisterMicrosoftUpdate: timed out after $waitTimeoutSeconds seconds, continuing installation" -Verbose
+        Write-Verbose "MicrosoftUpdate: timed out after $waitTimeoutSeconds seconds, continuing installation" -Verbose
         Stop-Job -Job $job
         Remove-Job -Job $job -Force
     }
 }
 catch {
-    Write-Verbose "RegisterMicrosoftUpdate: unexpected error - $_, continuing installation" -Verbose
+    Write-Verbose "MicrosoftUpdate: unexpected error - $_, continuing installation" -Verbose
     # Ensure job cleanup to prevent resource leaks
     if ($job) {
         Stop-Job -Job $job -ErrorAction SilentlyContinue
