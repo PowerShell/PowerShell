@@ -203,7 +203,11 @@ if (-not (Test-Elevated))
 # Resolve path for security validation - prevents directory traversal attacks
 # If path doesn't exist, we'll handle it gracefully when checking for files
 $resolvedPath = $Path
-if (Test-Path -Path $Path -PathType Container) {
+if (Test-Path -Path $Path -PathType Leaf) {
+    throw "Path parameter must be a directory, not a file: $Path"
+}
+elseif (Test-Path -Path $Path -PathType Container) {
+    # Path is a directory; resolve to its canonical form
     $resolvedPath = (Resolve-Path -Path $Path).Path
 }
 
