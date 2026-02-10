@@ -1510,7 +1510,7 @@ Describe 'ConvertTo-Json' -tags "CI" {
                 [guid]$GuidVal
                 [ipaddress]$IPVal
                 [object[]]$ArrayVal
-                [hashtable]$DictVal
+                [System.Collections.Specialized.OrderedDictionary]$DictVal
                 hidden [string]$HiddenVal
             }
         }
@@ -1525,55 +1525,26 @@ Describe 'ConvertTo-Json' -tags "CI" {
             $obj.GuidVal = [guid]'12345678-1234-1234-1234-123456789abc'
             $obj.IPVal = [ipaddress]::Parse('192.168.1.1')
             $obj.ArrayVal = @(1, 'two', $true)
-            $obj.DictVal = @{ Key = 'Value'; Nested = @{ Inner = 1 } }
+            $obj.DictVal = [ordered]@{ Key = 'Value'; Nested = [ordered]@{ Inner = 1 } }
             $obj.HiddenVal = 'secret'
             $obj | Add-Member -MemberType NoteProperty -Name ETSNote -Value 'note'
             $obj | Add-Member -MemberType ScriptProperty -Name ETSScript -Value { $this.StringVal.Length }
+            $obj.IPVal | Add-Member -MemberType NoteProperty -Name Label -Value 'primary'
+            $expectedPipeline = '{"StringVal":"hello","IntVal":42,"BoolVal":true,"DoubleVal":3.14,"BigIntVal":99999999999999999999,"GuidVal":"12345678-1234-1234-1234-123456789abc","IPVal":{"AddressFamily":2,"ScopeId":null,"IsIPv6Multicast":false,"IsIPv6LinkLocal":false,"IsIPv6SiteLocal":false,"IsIPv6Teredo":false,"IsIPv6UniqueLocal":false,"IsIPv4MappedToIPv6":false,"Address":16885952},"ArrayVal":[1,"two",true],"DictVal":{"Key":"Value","Nested":{"Inner":1}},"HiddenVal":"secret","ETSNote":"note","ETSScript":5}'
+            $expectedInputObject = '{"StringVal":"hello","IntVal":42,"BoolVal":true,"DoubleVal":3.14,"BigIntVal":99999999999999999999,"GuidVal":"12345678-1234-1234-1234-123456789abc","IPVal":{"AddressFamily":2,"ScopeId":null,"IsIPv6Multicast":false,"IsIPv6LinkLocal":false,"IsIPv6SiteLocal":false,"IsIPv6Teredo":false,"IsIPv6UniqueLocal":false,"IsIPv4MappedToIPv6":false,"Address":16885952},"ArrayVal":[1,"two",true],"DictVal":{"Key":"Value","Nested":{"Inner":1}},"HiddenVal":"secret"}'
             $jsonPipeline = $obj | ConvertTo-Json -Compress -Depth 3
             $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress -Depth 3
-            $jsonPipeline | Should -Match '"StringVal":"hello"'
-            $jsonPipeline | Should -Match '"IntVal":42'
-            $jsonPipeline | Should -Match '"BoolVal":true'
-            $jsonPipeline | Should -Match '"DoubleVal":3\.14'
-            $jsonPipeline | Should -Match '"BigIntVal":99999999999999999999'
-            $jsonPipeline | Should -Match '"GuidVal":"12345678-1234-1234-1234-123456789abc"'
-            $jsonPipeline | Should -Match '"IPVal":\{'
-            $jsonPipeline | Should -Match '"ArrayVal":\[1,"two",true\]'
-            $jsonPipeline | Should -Match '"Key":"Value"'
-            $jsonPipeline | Should -Match '"Inner":1'
-            $jsonPipeline | Should -Match '"HiddenVal":"secret"'
-            $jsonPipeline | Should -Match '"ETSNote":"note"'
-            $jsonPipeline | Should -Match '"ETSScript":5'
-            $jsonInputObject | Should -Match '"StringVal":"hello"'
-            $jsonInputObject | Should -Match '"IntVal":42'
-            $jsonInputObject | Should -Match '"BoolVal":true'
-            $jsonInputObject | Should -Match '"DoubleVal":3\.14'
-            $jsonInputObject | Should -Match '"BigIntVal":99999999999999999999'
-            $jsonInputObject | Should -Match '"GuidVal":"12345678-1234-1234-1234-123456789abc"'
-            $jsonInputObject | Should -Match '"IPVal":\{'
-            $jsonInputObject | Should -Match '"ArrayVal":\[1,"two",true\]'
-            $jsonInputObject | Should -Match '"Key":"Value"'
-            $jsonInputObject | Should -Match '"Inner":1'
-            $jsonInputObject | Should -Match '"HiddenVal":"secret"'
-            $jsonInputObject | Should -Not -Match 'ETSNote'
-            $jsonInputObject | Should -Not -Match 'ETSScript'
+            $jsonPipeline | Should -BeExactly $expectedPipeline
+            $jsonInputObject | Should -BeExactly $expectedInputObject
         }
 
         It 'Should serialize PowerShell class with default values via Pipeline and InputObject' {
             $obj = [SimpleClass]::new()
+            $expected = '{"StringVal":null,"IntVal":0,"BoolVal":false,"DoubleVal":0.0,"BigIntVal":0,"GuidVal":"00000000-0000-0000-0000-000000000000","IPVal":null,"ArrayVal":null,"DictVal":null,"HiddenVal":null}'
             $jsonPipeline = $obj | ConvertTo-Json -Compress
             $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress
-            $jsonPipeline | Should -Match '"StringVal":null'
-            $jsonPipeline | Should -Match '"IntVal":0'
-            $jsonPipeline | Should -Match '"BoolVal":false'
-            $jsonPipeline | Should -Match '"DoubleVal":0\.0'
-            $jsonPipeline | Should -Match '"BigIntVal":0'
-            $jsonPipeline | Should -Match '"GuidVal":"00000000-0000-0000-0000-000000000000"'
-            $jsonPipeline | Should -Match '"IPVal":null'
-            $jsonPipeline | Should -Match '"ArrayVal":null'
-            $jsonPipeline | Should -Match '"DictVal":null'
-            $jsonPipeline | Should -Match '"HiddenVal":null'
-            $jsonInputObject | Should -BeExactly $jsonPipeline
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
         }
     }
 
@@ -1632,12 +1603,11 @@ Describe 'ConvertTo-Json' -tags "CI" {
 
         It 'Should serialize derived class with base properties via Pipeline and InputObject' {
             $obj = [ChildClass]@{ BaseProp = 'base'; ChildProp = 'child' }
+            $expected = '{"ChildProp":"child","BaseProp":"base"}'
             $jsonPipeline = $obj | ConvertTo-Json -Compress
             $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress
-            $jsonPipeline | Should -Match '"BaseProp":"base"'
-            $jsonPipeline | Should -Match '"ChildProp":"child"'
-            $jsonInputObject | Should -Match '"BaseProp":"base"'
-            $jsonInputObject | Should -Match '"ChildProp":"child"'
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
         }
 
         It 'Should serialize multi-level inherited class via Pipeline and InputObject' {
@@ -1646,14 +1616,11 @@ Describe 'ConvertTo-Json' -tags "CI" {
                 ChildProp = 'child'
                 GrandChildProp = 'grandchild'
             }
+            $expected = '{"GrandChildProp":"grandchild","ChildProp":"child","BaseProp":"base"}'
             $jsonPipeline = $obj | ConvertTo-Json -Compress
             $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress
-            $jsonPipeline | Should -Match '"BaseProp":"base"'
-            $jsonPipeline | Should -Match '"ChildProp":"child"'
-            $jsonPipeline | Should -Match '"GrandChildProp":"grandchild"'
-            $jsonInputObject | Should -Match '"BaseProp":"base"'
-            $jsonInputObject | Should -Match '"ChildProp":"child"'
-            $jsonInputObject | Should -Match '"GrandChildProp":"grandchild"'
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
         }
 
     }
