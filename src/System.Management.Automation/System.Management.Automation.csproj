@@ -32,17 +32,21 @@
     <!-- the Application Insights package -->
     <PackageReference Include="Microsoft.ApplicationInsights" Version="2.23.0" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
-    <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="10.0.2" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.2" />
-    <PackageReference Include="System.DirectoryServices" Version="10.0.2" />
-    <PackageReference Include="System.Management" Version="10.0.2" />
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.2" />
-    <PackageReference Include="System.Security.Permissions" Version="10.0.2" />
+    <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="10.0.3" />
+    <PackageReference Include="System.CodeDom" Version="10.0.3" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.3" />
+    <PackageReference Include="System.Diagnostics.EventLog" Version="10.0.3" />
+    <PackageReference Include="System.DirectoryServices" Version="10.0.3" />
+    <PackageReference Include="System.Management" Version="10.0.3" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.3" />
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="10.0.3" />
+    <PackageReference Include="System.Security.Permissions" Version="10.0.3" />
     <!-- the following package(s) are from the powershell org -->
     <PackageReference Include="Microsoft.Management.Infrastructure" Version="3.0.0" />
     <PackageReference Include="Microsoft.PowerShell.Native" Version="700.0.0-rc.1" />
     <!-- Signing APIs -->
   <PackageReference Include="Microsoft.Security.Extensions" Version="1.4.0" />
+  <PackageReference Include="System.Windows.Extensions" Version="10.0.3" />
   </ItemGroup>
 
   <PropertyGroup>
