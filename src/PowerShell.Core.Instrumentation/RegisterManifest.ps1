@@ -1,10 +1,12 @@
+#Requires -Version 7.0
+
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 <#
-.Synopsis
+.SYNOPSIS
     Registers or unregisters the PowerShell ETW manifest
-.Parameter Path
+.PARAMETER Path
     The fully qualified path to the PowerShell.Core.Instrumentation.man manifest file.
     The default value is the location of this script.
 
@@ -73,13 +75,22 @@ function Invoke-NativeProcess {
     $tempDir = [System.IO.Path]::GetTempPath()
     $outFile = Join-Path $tempDir "wevtutil-stdout-$([System.IO.Path]::GetRandomFileName())"
     $errFile = Join-Path $tempDir "wevtutil-stderr-$([System.IO.Path]::GetRandomFileName())"
-    $process = Start-Process -FilePath $FilePath -ArgumentList $Arguments -NoNewWindow -PassThru -RedirectStandardOutput $outFile -RedirectStandardError $errFile
-    $process.WaitForExit()
-    $exitCode = $process.ExitCode
+    $exitCode = $null
+    try {
+        $process = Start-Process -FilePath $FilePath -ArgumentList $Arguments -NoNewWindow -PassThru -RedirectStandardOutput $outFile -RedirectStandardError $errFile
+        $process.WaitForExit()
+        $exitCode = $process.ExitCode
 
-    # Only clean up temp files on success; keep them for debugging on failure
-    if ($exitCode -eq 0) {
-        Remove-Item $outFile, $errFile -Force -ErrorAction SilentlyContinue
+        # Only clean up temp files on success; keep them for debugging on failure
+        if ($exitCode -eq 0) {
+            Remove-Item $outFile, $errFile -Force -ErrorAction SilentlyContinue
+        }
+    }
+    finally {
+        # Ensure temp files are not leaked when the process is interrupted (e.g. job timeout)
+        if ($null -eq $exitCode) {
+            Remove-Item $outFile, $errFile -Force -ErrorAction SilentlyContinue
+        }
     }
 
     return $exitCode
@@ -230,6 +241,9 @@ $isRegistered = Test-ManifestRegistered
 if ($isRegistered -eq $true) {
     Write-Verbose "EventManifest: already registered, skipping" -Verbose
     exit 0
+}
+elseif ($null -eq $isRegistered) {
+    Write-Verbose "EventManifest: unable to determine registration status, proceeding with registration" -Verbose
 }
 
 # Attempt to unregister first to avoid warnings during registration
