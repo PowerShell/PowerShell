@@ -1494,4 +1494,225 @@ Describe 'ConvertTo-Json' -tags "CI" {
     }
 
     #endregion Comprehensive Depth Truncation and Multilevel Composition Tests (Phase 4)
+
+    #region Comprehensive PowerShell Class Tests (Phase 5)
+    # Test coverage for ConvertTo-Json PowerShell class serialization
+    # Covers: Pipeline vs InputObject, ETS vs no ETS, nested structures, inheritance
+
+    Context 'PowerShell class basic serialization' {
+        BeforeAll {
+            class SimpleClass {
+                [string]$Name
+                [int]$Value
+            }
+
+            class ClassWithConstructor {
+                [string]$Name
+                [int]$Value
+                ClassWithConstructor([string]$name, [int]$value) {
+                    $this.Name = $name
+                    $this.Value = $value
+                }
+            }
+
+            class ClassWithMethod {
+                [string]$Name
+                [int]$Value
+                [int] GetDoubled() { return $this.Value * 2 }
+            }
+
+            class ClassWithHiddenProperty {
+                [string]$Name
+                hidden [string]$Secret
+            }
+        }
+
+        It 'Should serialize simple PowerShell class via Pipeline and InputObject' {
+            $obj = [SimpleClass]@{ Name = 'Test'; Value = 42 }
+            $expected = '{"Name":"Test","Value":42}'
+            $jsonPipeline = $obj | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+
+        It 'Should serialize PowerShell class with constructor via Pipeline and InputObject' {
+            $obj = [ClassWithConstructor]::new('Test', 42)
+            $expected = '{"Name":"Test","Value":42}'
+            $jsonPipeline = $obj | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+
+        It 'Should not serialize methods of PowerShell class via Pipeline and InputObject' {
+            $obj = [ClassWithMethod]@{ Name = 'Test'; Value = 10 }
+            $expected = '{"Name":"Test","Value":10}'
+            $jsonPipeline = $obj | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+            $jsonPipeline | Should -Not -Match 'GetDoubled'
+        }
+
+        It 'Should serialize hidden properties of PowerShell class via Pipeline and InputObject' {
+            $obj = [ClassWithHiddenProperty]::new()
+            $obj.Name = 'Visible'
+            $obj.Secret = 'Hidden'
+            $expected = '{"Name":"Visible","Secret":"Hidden"}'
+            $jsonPipeline = $obj | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+
+        It 'Should serialize PowerShell class with default values via Pipeline and InputObject' {
+            $obj = [SimpleClass]::new()
+            $expected = '{"Name":null,"Value":0}'
+            $jsonPipeline = $obj | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+    }
+
+    Context 'Nested PowerShell class' {
+        BeforeAll {
+            class InnerClass {
+                [string]$Inner
+            }
+
+            class OuterClass {
+                [string]$Outer
+                [InnerClass]$Child
+            }
+
+            class DeepClass {
+                [string]$Name
+                [OuterClass]$Nested
+            }
+        }
+
+        It 'Should serialize deeply nested PowerShell class via Pipeline and InputObject' {
+            $inner = [InnerClass]@{ Inner = 'deep' }
+            $outer = [OuterClass]@{ Outer = 'middle'; Child = $inner }
+            $deep = [DeepClass]@{ Name = 'top'; Nested = $outer }
+            $expected = '{"Name":"top","Nested":{"Outer":"middle","Child":{"Inner":"deep"}}}'
+            $jsonPipeline = $deep | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $deep -Compress
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+
+        It 'Should serialize nested PowerShell class with null child via Pipeline and InputObject' {
+            $outer = [OuterClass]@{ Outer = 'outer value'; Child = $null }
+            $expected = '{"Outer":"outer value","Child":null}'
+            $jsonPipeline = $outer | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $outer -Compress
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+    }
+
+    Context 'PowerShell class inheritance' {
+        BeforeAll {
+            class BaseClass {
+                [string]$BaseProp
+            }
+
+            class ChildClass : BaseClass {
+                [string]$ChildProp
+            }
+
+            class GrandChildClass : ChildClass {
+                [string]$GrandChildProp
+            }
+        }
+
+        It 'Should serialize derived class with base properties via Pipeline and InputObject' {
+            $obj = [ChildClass]@{ BaseProp = 'base'; ChildProp = 'child' }
+            $jsonPipeline = $obj | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress
+            $jsonPipeline | Should -Match '"BaseProp":"base"'
+            $jsonPipeline | Should -Match '"ChildProp":"child"'
+            $jsonInputObject | Should -Match '"BaseProp":"base"'
+            $jsonInputObject | Should -Match '"ChildProp":"child"'
+        }
+
+        It 'Should serialize multi-level inherited class via Pipeline and InputObject' {
+            $obj = [GrandChildClass]@{
+                BaseProp = 'base'
+                ChildProp = 'child'
+                GrandChildProp = 'grandchild'
+            }
+            $jsonPipeline = $obj | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress
+            $jsonPipeline | Should -Match '"BaseProp":"base"'
+            $jsonPipeline | Should -Match '"ChildProp":"child"'
+            $jsonPipeline | Should -Match '"GrandChildProp":"grandchild"'
+            $jsonInputObject | Should -Match '"BaseProp":"base"'
+            $jsonInputObject | Should -Match '"ChildProp":"child"'
+            $jsonInputObject | Should -Match '"GrandChildProp":"grandchild"'
+        }
+    }
+
+    Context 'PowerShell class ETS properties' {
+        BeforeAll {
+            class ETSTestClass {
+                [string]$Original
+            }
+        }
+
+        It 'Should include NoteProperty on PowerShell class via Pipeline' {
+            $obj = [ETSTestClass]@{ Original = 'value' }
+            $obj | Add-Member -MemberType NoteProperty -Name Added -Value 'added'
+            $jsonPipeline = $obj | ConvertTo-Json -Compress
+            $jsonPipeline | Should -Match '"Original":"value"'
+            $jsonPipeline | Should -Match '"Added":"added"'
+        }
+
+        It 'Should not include NoteProperty on PowerShell class via InputObject' {
+            $obj = [ETSTestClass]@{ Original = 'value' }
+            $obj | Add-Member -MemberType NoteProperty -Name Added -Value 'added'
+            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress
+            $jsonInputObject | Should -BeExactly '{"Original":"value"}'
+        }
+
+        It 'Should include ScriptProperty on PowerShell class via Pipeline' {
+            $obj = [ETSTestClass]@{ Original = 'test' }
+            $obj | Add-Member -MemberType ScriptProperty -Name Length -Value { $this.Original.Length }
+            $jsonPipeline = $obj | ConvertTo-Json -Compress
+            $jsonPipeline | Should -Match '"Original":"test"'
+            $jsonPipeline | Should -Match '"Length":4'
+        }
+
+        It 'Should not include ScriptProperty on PowerShell class via InputObject' {
+            $obj = [ETSTestClass]@{ Original = 'test' }
+            $obj | Add-Member -MemberType ScriptProperty -Name Length -Value { $this.Original.Length }
+            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress
+            $jsonInputObject | Should -BeExactly '{"Original":"test"}'
+        }
+    }
+
+    Context 'Mixed PSCustomObject and PowerShell class' {
+        BeforeAll {
+            class MixedClass {
+                [string]$ClassName
+            }
+        }
+
+        It 'Should serialize array with mixed types via Pipeline and InputObject' {
+            $classObj = [MixedClass]@{ ClassName = 'class' }
+            $customObj = [PSCustomObject]@{ CustomName = 'custom' }
+            $arr = @($classObj, $customObj)
+            $expected = '[{"ClassName":"class"},{"CustomName":"custom"}]'
+            $jsonPipeline = $arr | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $arr -Compress
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+    }
+
+    #endregion Comprehensive PowerShell Class Tests (Phase 5)
+
 }
