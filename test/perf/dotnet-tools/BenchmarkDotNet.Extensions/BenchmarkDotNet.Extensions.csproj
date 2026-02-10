@@ -8,6 +8,9 @@
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.15.8" />
     <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows" Version="0.15.8" />
+    <PackageReference Include="Microsoft.Diagnostics.Tracing.TraceEvent" Version="3.1.29" />
+    <PackageReference Include="Microsoft.NETCore.Platforms" Version="1.1.2" />
+    <PackageReference Include="System.Management" Version="9.0.13" />
   </ItemGroup>
 
   <ItemGroup>

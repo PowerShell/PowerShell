@@ -16,5 +16,13 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.0.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="4.14.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.NETCore.Platforms" Version="1.1.2" />
+    <PackageReference Include="System.Buffers" Version="4.6.1" />
+    <PackageReference Include="System.Collections.Immutable" Version="9.0.13" />
+    <PackageReference Include="System.Memory" Version="4.6.3" />
+    <PackageReference Include="System.Numerics.Vectors" Version="4.6.1" />
+    <PackageReference Include="System.Reflection.Metadata" Version="9.0.13" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.2" />
+    <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.6.3" />
   </ItemGroup>
 </Project>
