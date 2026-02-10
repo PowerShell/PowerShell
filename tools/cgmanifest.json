@@ -5,26 +5,6 @@
       "Component": {
         "Type": "nuget",
         "Nuget": {
-          "Name": "Azure.Core",
-          "Version": "1.50.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "Azure.Monitor.OpenTelemetry.Exporter",
-          "Version": "1.6.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
           "Name": "DotNetAnalyzers.DocumentationAnalyzers.Unstable",
           "Version": "1.0.0.59"
         }
