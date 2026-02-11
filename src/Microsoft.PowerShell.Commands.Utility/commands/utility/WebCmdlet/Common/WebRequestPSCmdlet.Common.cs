@@ -370,7 +370,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         public virtual WebRequestRetryMode RetryMode { get; set; } = WebRequestRetryMode.Fixed;
-        
+
         /// <summary>
         /// Gets or sets the MaximumRetryCount property, which determines the number of retries of a failed web request.
         /// </summary>
