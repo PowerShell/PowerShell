@@ -2288,6 +2288,46 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
             $verboseFile | Should -FileContentMatch 'Retrying after interval of 3 seconds. Status code for previous attempt: Conflict'
         }
+
+        It "Invoke-WebRequest -RetryMode Fixed should use the fixed interval for retrying." {
+
+            $Query = @{
+                statusCode     = 404
+                reposnsephrase = 'NotFound'
+                contenttype    = 'application/json'
+                body           = '{"message":"oops"}'
+            }
+            $uri = Get-WebListenerUrl -Test 'Response' -Query $Query
+            $verboseFile = Join-Path $TestDrive -ChildPath verbose.txt
+            $result = Invoke-WebRequest -Uri $uri -RetryMode Fixed -MaximumRetryCount 3 -RetryIntervalSec 1 -SkipHttpErrorCheck -Verbose 4>$verbosefile
+
+            $exepectMessage = @(
+                'Retrying after interval of 1 seconds. Status code for previous attempt: NotFound'
+                'Retrying after interval of 1 seconds. Status code for previous attempt: NotFound'
+                'Retrying after interval of 1 seconds. Status code for previous attempt: NotFound'
+            ) -join [System.Environment]::NewLine
+            $verboseFile | Should -FileContentMatchMultiline $exepectMessage
+        }
+
+        It "Invoke-WebRequest -RetryMode Exponential should use the exponential backoff stratefy for retrying." {
+
+            $Query = @{
+                statusCode     = 404
+                reposnsephrase = 'NotFound'
+                contenttype    = 'application/json'
+                body           = '{"message":"oops"}'
+            }
+            $uri = Get-WebListenerUrl -Test 'Response' -Query $Query
+            $verboseFile = Join-Path $TestDrive -ChildPath verbose.txt
+            $result = Invoke-WebRequest -Uri $uri -RetryMode Exponential -MaximumRetryCount 3 -RetryIntervalSec 1 -SkipHttpErrorCheck -Verbose 4>$verbosefile
+
+            $exepectMessage = @(
+                'Retrying after interval of 1 seconds. Status code for previous attempt: NotFound'
+                'Retrying after interval of 2 seconds. Status code for previous attempt: NotFound'
+                'Retrying after interval of 4 seconds. Status code for previous attempt: NotFound'
+            ) -join [System.Environment]::NewLine
+            $verboseFile | Should -FileContentMatchMultiline $exepectMessage
+        }
     }
 
     Context "Regex Parsing" {
@@ -4302,6 +4342,46 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
             $result = Invoke-RestMethod -Uri $uri -MaximumRetryCount 1 -RetryIntervalSec 3 -SkipHttpErrorCheck -Verbose 4>$verbosefile
 
             $verboseFile | Should -FileContentMatch 'Retrying after interval of 3 seconds. Status code for previous attempt: Conflict'
+        }
+
+        It "Invoke-RestMethod -RetryMode Fixed should use the fixed interval for retrying." {
+
+            $Query = @{
+                statusCode     = 404
+                reposnsephrase = 'NotFound'
+                contenttype    = 'application/json'
+                body           = '{"message":"oops"}'
+            }
+            $uri = Get-WebListenerUrl -Test 'Response' -Query $Query
+            $verboseFile = Join-Path $TestDrive -ChildPath verbose.txt
+            $result = Invoke-RestMethod -Uri $uri -RetryMode Fixed -MaximumRetryCount 3 -RetryIntervalSec 1 -SkipHttpErrorCheck -Verbose 4>$verbosefile
+
+            $exepectMessage = @(
+                'Retrying after interval of 1 seconds. Status code for previous attempt: NotFound'
+                'Retrying after interval of 1 seconds. Status code for previous attempt: NotFound'
+                'Retrying after interval of 1 seconds. Status code for previous attempt: NotFound'
+            ) -join [System.Environment]::NewLine
+            $verboseFile | Should -FileContentMatchMultiline $exepectMessage
+        }
+
+        It "Invoke-RestMethod -RetryMode Exponential should use the exponential backoff stratefy for retrying." {
+
+            $Query = @{
+                statusCode     = 404
+                reposnsephrase = 'NotFound'
+                contenttype    = 'application/json'
+                body           = '{"message":"oops"}'
+            }
+            $uri = Get-WebListenerUrl -Test 'Response' -Query $Query
+            $verboseFile = Join-Path $TestDrive -ChildPath verbose.txt
+            $result = Invoke-RestMethod -Uri $uri -RetryMode Exponential -MaximumRetryCount 3 -RetryIntervalSec 1 -SkipHttpErrorCheck -Verbose 4>$verbosefile
+
+            $exepectMessage = @(
+                'Retrying after interval of 1 seconds. Status code for previous attempt: NotFound'
+                'Retrying after interval of 2 seconds. Status code for previous attempt: NotFound'
+                'Retrying after interval of 4 seconds. Status code for previous attempt: NotFound'
+            ) -join [System.Environment]::NewLine
+            $verboseFile | Should -FileContentMatchMultiline $exepectMessage
         }
     }
 }
