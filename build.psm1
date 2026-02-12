@@ -1905,6 +1905,8 @@ function Get-PesterFailureFileInfo
     # "at line: 123 in C:\path\to\file.ps1"
     # "at C:\path\to\file.ps1:123"
     # "at <ScriptBlock>, C:\path\to\file.ps1: line 123"
+    # "at 1 | Should -Be 2, /path/to/file.ps1:123" (Pester 5)
+    # "at 1 | Should -Be 2, C:\path\to\file.ps1:123" (Pester 5 Windows)
     
     $result = @{
         File = $null
@@ -1922,22 +1924,31 @@ function Get-PesterFailureFileInfo
         return $result
     }
     
-    # Try pattern: "at <path>:123"
-    if ($StackTrace -match 'at\s+(.+?):(\d+)(?:\r|\n|$)') {
+    # Try pattern: ", <path>:123" (Pester 5 format)
+    # This handles both Unix paths (/path/file.ps1:123) and Windows paths (C:\path\file.ps1:123)
+    if ($StackTrace -match ',\s*((?:[A-Za-z]:)?[\/\\].+?\.ps[m]?1):(\d+)') {
+        $result.File = $matches[1].Trim()
+        $result.Line = $matches[2]
+        return $result
+    }
+    
+    # Try pattern: "at <path>:123" (without comma)
+    # Handle both absolute Unix and Windows paths
+    if ($StackTrace -match 'at\s+((?:[A-Za-z]:)?[\/\\][^,]+?\.ps[m]?1):(\d+)(?:\r|\n|$)') {
         $result.File = $matches[1].Trim()
         $result.Line = $matches[2]
         return $result
     }
     
     # Try pattern: "<path>: line 123"
-    if ($StackTrace -match '(.+?):\s*line\s+(\d+)(?:\r|\n|$)') {
+    if ($StackTrace -match '((?:[A-Za-z]:)?[\/\\][^,]+?\.ps[m]?1):\s*line\s+(\d+)(?:\r|\n|$)') {
         $result.File = $matches[1].Trim()
         $result.Line = $matches[2]
         return $result
     }
     
     # Try to extract just the file path if no line number found
-    if ($StackTrace -match '(?:at\s+|in\s+)?([A-Za-z]:[\\\/].+?\.ps[m]?1)') {
+    if ($StackTrace -match '(?:at\s+|in\s+)?((?:[A-Za-z]:)?[\/\\].+?\.ps[m]?1)') {
         $result.File = $matches[1].Trim()
     }
     
