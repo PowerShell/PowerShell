@@ -1862,6 +1862,86 @@ $stack_trace
 
 "@
 
+    # If we're in a GitHub workflow, add an annotation with file location
+    if ($env:GITHUB_WORKFLOW) {
+        $fileInfo = Get-PesterFailureFileInfo -StackTrace $stack_trace
+        
+        if ($fileInfo.File) {
+            # Create annotation title
+            $annotationTitle = "Test Failure: $description / $name"
+            
+            # Build the annotation message
+            $annotationMessage = $message -replace "`n", "%0A" -replace "`r"
+            
+            # Build the workflow command
+            $workflowCommand = "::error file=$($fileInfo.File)"
+            if ($fileInfo.Line) {
+                $workflowCommand += ",line=$($fileInfo.Line)"
+            }
+            $workflowCommand += ",title=$annotationTitle::$annotationMessage"
+            
+            Write-Host $workflowCommand
+            
+            # If available, also log a link to the test run
+            if ($env:GITHUB_SERVER_URL -and $env:GITHUB_REPOSITORY -and $env:GITHUB_RUN_ID) {
+                $logUrl = "$($env:GITHUB_SERVER_URL)/$($env:GITHUB_REPOSITORY)/actions/runs/$($env:GITHUB_RUN_ID)"
+                Write-Host "Test logs: $logUrl"
+            }
+        }
+    }
+
+}
+
+function Get-PesterFailureFileInfo
+{
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory)]
+        [string]$StackTrace
+    )
+
+    # Parse stack trace to extract file path and line number
+    # Common patterns:
+    # "at line: 123 in C:\path\to\file.ps1"
+    # "at C:\path\to\file.ps1:123"
+    # "at <ScriptBlock>, C:\path\to\file.ps1: line 123"
+    
+    $result = @{
+        File = $null
+        Line = $null
+    }
+    
+    if ([string]::IsNullOrWhiteSpace($StackTrace)) {
+        return $result
+    }
+    
+    # Try pattern: "at line: 123 in <path>"
+    if ($StackTrace -match 'at line:\s*(\d+)\s+in\s+(.+?)(?:\r|\n|$)') {
+        $result.Line = $matches[1]
+        $result.File = $matches[2].Trim()
+        return $result
+    }
+    
+    # Try pattern: "at <path>:123"
+    if ($StackTrace -match 'at\s+(.+?):(\d+)(?:\r|\n|$)') {
+        $result.File = $matches[1].Trim()
+        $result.Line = $matches[2]
+        return $result
+    }
+    
+    # Try pattern: "<path>: line 123"
+    if ($StackTrace -match '(.+?):\s*line\s+(\d+)(?:\r|\n|$)') {
+        $result.File = $matches[1].Trim()
+        $result.Line = $matches[2]
+        return $result
+    }
+    
+    # Try to extract just the file path if no line number found
+    if ($StackTrace -match '(?:at\s+|in\s+)?([A-Za-z]:[\\\/].+?\.ps[m]?1)') {
+        $result.File = $matches[1].Trim()
+    }
+    
+    return $result
 }
 
 function Test-XUnitTestResults
