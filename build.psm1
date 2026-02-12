@@ -1862,47 +1862,6 @@ $stack_trace
 
 "@
 
-    # If we're in a GitHub workflow, add an annotation with file location
-    if ($env:GITHUB_WORKFLOW) {
-        $fileInfo = Get-PesterFailureFileInfo -StackTraceString $stack_trace
-        
-        if ($fileInfo.File) {
-            # Convert absolute path to relative path for GitHub Actions
-            $filePath = $fileInfo.File
-            
-            # GitHub Actions expects paths relative to the workspace root
-            if ($env:GITHUB_WORKSPACE) {
-                $workspacePath = $env:GITHUB_WORKSPACE
-                if ($filePath.StartsWith($workspacePath)) {
-                    $filePath = $filePath.Substring($workspacePath.Length).TrimStart('/', '\')
-                    # Normalize to forward slashes for consistency
-                    $filePath = $filePath -replace '\\', '/'
-                }
-            }
-            
-            # Create annotation title
-            $annotationTitle = "Test Failure: $description / $name"
-            
-            # Build the annotation message
-            $annotationMessage = $message -replace "`n", "%0A" -replace "`r"
-            
-            # Build the workflow command
-            $workflowCommand = "::error file=$filePath"
-            if ($fileInfo.Line) {
-                $workflowCommand += ",line=$($fileInfo.Line)"
-            }
-            $workflowCommand += ",title=$annotationTitle::$annotationMessage"
-            
-            Write-Host $workflowCommand
-            
-            # If available, also log a link to the test run
-            if ($env:GITHUB_SERVER_URL -and $env:GITHUB_REPOSITORY -and $env:GITHUB_RUN_ID) {
-                $logUrl = "$($env:GITHUB_SERVER_URL)/$($env:GITHUB_REPOSITORY)/actions/runs/$($env:GITHUB_RUN_ID)"
-                Write-Host "Test logs: $logUrl"
-            }
-        }
-    }
-
 }
 
 function Get-PesterFailureFileInfo
