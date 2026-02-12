@@ -53,7 +53,7 @@ try
             $results = $null
             try {
                 Invoke-LanguageModeTestingSupportCmdlet -SetFileOnlyEntry
-                if ($Arguments[-1] -eq '-') {
+                if ($Arguments -and $Arguments[-1] -eq '-') {
                     $results = 'Get-ChildItem' | & "$PSHOME\pwsh.exe" @Arguments 2>&1
                 } else {
                     $results = & "$PSHOME\pwsh.exe" @Arguments 2>&1
