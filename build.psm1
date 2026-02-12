@@ -1864,7 +1864,7 @@ $stack_trace
 
     # If we're in a GitHub workflow, add an annotation with file location
     if ($env:GITHUB_WORKFLOW) {
-        $fileInfo = Get-PesterFailureFileInfo -StackTrace $stack_trace
+        $fileInfo = Get-PesterFailureFileInfo -StackTraceString $stack_trace
         
         if ($fileInfo.File) {
             # Create annotation title
@@ -1897,12 +1897,12 @@ function Get-PesterFailureFileInfo
     [CmdletBinding()]
     param (
         [Parameter(Mandatory)]
-        [string]$StackTrace
+        [string]$StackTraceString
     )
 
     # Parse stack trace to extract file path and line number
     # Common patterns:
-    # "at line: 123 in C:\path\to\file.ps1"
+    # "at line: 123 in C:\path\to\file.ps1" (Pester 4)
     # "at C:\path\to\file.ps1:123"
     # "at <ScriptBlock>, C:\path\to\file.ps1: line 123"
     # "at 1 | Should -Be 2, /path/to/file.ps1:123" (Pester 5)
@@ -1913,12 +1913,12 @@ function Get-PesterFailureFileInfo
         Line = $null
     }
     
-    if ([string]::IsNullOrWhiteSpace($StackTrace)) {
+    if ([string]::IsNullOrWhiteSpace($StackTraceString)) {
         return $result
     }
     
-    # Try pattern: "at line: 123 in <path>"
-    if ($StackTrace -match 'at line:\s*(\d+)\s+in\s+(.+?)(?:\r|\n|$)') {
+    # Try pattern: "at line: 123 in <path>" (Pester 4)
+    if ($StackTraceString -match 'at line:\s*(\d+)\s+in\s+(.+?)(?:\r|\n|$)') {
         $result.Line = $matches[1]
         $result.File = $matches[2].Trim()
         return $result
@@ -1926,7 +1926,7 @@ function Get-PesterFailureFileInfo
     
     # Try pattern: ", <path>:123" (Pester 5 format)
     # This handles both Unix paths (/path/file.ps1:123) and Windows paths (C:\path\file.ps1:123)
-    if ($StackTrace -match ',\s*((?:[A-Za-z]:)?[\/\\].+?\.ps[m]?1):(\d+)') {
+    if ($StackTraceString -match ',\s*((?:[A-Za-z]:)?[\/\\].+?\.ps[m]?1):(\d+)') {
         $result.File = $matches[1].Trim()
         $result.Line = $matches[2]
         return $result
@@ -1934,21 +1934,21 @@ function Get-PesterFailureFileInfo
     
     # Try pattern: "at <path>:123" (without comma)
     # Handle both absolute Unix and Windows paths
-    if ($StackTrace -match 'at\s+((?:[A-Za-z]:)?[\/\\][^,]+?\.ps[m]?1):(\d+)(?:\r|\n|$)') {
+    if ($StackTraceString -match 'at\s+((?:[A-Za-z]:)?[\/\\][^,]+?\.ps[m]?1):(\d+)(?:\r|\n|$)') {
         $result.File = $matches[1].Trim()
         $result.Line = $matches[2]
         return $result
     }
     
     # Try pattern: "<path>: line 123"
-    if ($StackTrace -match '((?:[A-Za-z]:)?[\/\\][^,]+?\.ps[m]?1):\s*line\s+(\d+)(?:\r|\n|$)') {
+    if ($StackTraceString -match '((?:[A-Za-z]:)?[\/\\][^,]+?\.ps[m]?1):\s*line\s+(\d+)(?:\r|\n|$)') {
         $result.File = $matches[1].Trim()
         $result.Line = $matches[2]
         return $result
     }
     
     # Try to extract just the file path if no line number found
-    if ($StackTrace -match '(?:at\s+|in\s+)?((?:[A-Za-z]:)?[\/\\].+?\.ps[m]?1)') {
+    if ($StackTraceString -match '(?:at\s+|in\s+)?((?:[A-Za-z]:)?[\/\\].+?\.ps[m]?1)') {
         $result.File = $matches[1].Trim()
     }
     
