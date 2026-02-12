@@ -7201,6 +7201,12 @@ namespace System.Management.Automation.Language
                     var argValue = parameters[i].DefaultValue;
                     if (argValue == null)
                     {
+                        if (parameterType.IsByRef)
+                        {
+                            // parameters with the in modifier are ByRef, if they don't have a default value
+                            // we need to get the Default on the element type.
+                            parameterType = parameterType.GetElementType();
+                        }
                         argExprs[i] = Expression.Default(parameterType);
                     }
                     else if (!parameters[i].HasDefaultValue && parameterType != typeof(object) && argValue == Type.Missing)
