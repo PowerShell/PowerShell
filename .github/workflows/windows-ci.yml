@@ -165,10 +165,6 @@ jobs:
       security-events: write
     with:
       runner_os: windows-latest
-
-      security-events: write
-    with:
-      runner_os: windows-latest
   windows_packaging:
     name: Windows Packaging
     needs:
