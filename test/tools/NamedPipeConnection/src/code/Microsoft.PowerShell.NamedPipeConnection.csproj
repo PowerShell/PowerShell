@@ -10,7 +10,7 @@
     <InformationalVersion>1.0.0</InformationalVersion>
     <TargetFrameworks>net9.0</TargetFrameworks>
     <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
-    <LangVersion>11.0</LangVersion>
+    <LangVersion>13.0</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
