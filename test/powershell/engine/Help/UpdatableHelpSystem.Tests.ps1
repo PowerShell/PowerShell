@@ -215,16 +215,18 @@ function RunUpdateHelpTests
             It ('Validate Update-Help for module ''{0}'' in {1}' -F $moduleName, [PSCustomObject] $updateScope) -Skip:(!(Test-CanWriteToPsHome) -and $userscope -eq $false) {
 
                 # Delete the whole help directory
-                Remove-Item ($moduleHelpPath) -Recurse
- 
+                Remove-Item ($moduleHelpPath) -Recurse -Force -ErrorAction SilentlyContinue
+
                 [hashtable] $UICultureParam = $(if ((Get-UICulture).Name -ne $myUICulture) { @{ UICulture = $myUICulture } } else { @{} })
                 [hashtable] $sourcePathParam = $(if ($useSourcePath) { @{ SourcePath = Join-Path $PSScriptRoot assets } } else { @{} })
-                Update-Help -Module:$moduleName -Force @UICultureParam @sourcePathParam -Scope:$updateScope
+                Update-Help -Module:$moduleName -Force @UICultureParam @sourcePathParam -Scope:$updateScope -ErrorAction Stop
 
                 [hashtable] $userScopeParam = $(if ($userscope) { @{ UserScope = $true } } else { @{} })
                 ValidateInstalledHelpContent -moduleName:$moduleName @userScopeParam
 
+
             }
+
 
             if ($tag -eq "CI")
             {
