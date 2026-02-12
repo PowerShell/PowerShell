@@ -1867,6 +1867,19 @@ $stack_trace
         $fileInfo = Get-PesterFailureFileInfo -StackTraceString $stack_trace
         
         if ($fileInfo.File) {
+            # Convert absolute path to relative path for GitHub Actions
+            $filePath = $fileInfo.File
+            
+            # GitHub Actions expects paths relative to the workspace root
+            if ($env:GITHUB_WORKSPACE) {
+                $workspacePath = $env:GITHUB_WORKSPACE
+                if ($filePath.StartsWith($workspacePath)) {
+                    $filePath = $filePath.Substring($workspacePath.Length).TrimStart('/', '\')
+                    # Normalize to forward slashes for consistency
+                    $filePath = $filePath -replace '\\', '/'
+                }
+            }
+            
             # Create annotation title
             $annotationTitle = "Test Failure: $description / $name"
             
@@ -1874,7 +1887,7 @@ $stack_trace
             $annotationMessage = $message -replace "`n", "%0A" -replace "`r"
             
             # Build the workflow command
-            $workflowCommand = "::error file=$($fileInfo.File)"
+            $workflowCommand = "::error file=$filePath"
             if ($fileInfo.Line) {
                 $workflowCommand += ",line=$($fileInfo.Line)"
             }
