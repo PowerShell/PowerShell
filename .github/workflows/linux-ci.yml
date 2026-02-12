@@ -155,7 +155,6 @@ jobs:
       runner_os: ubuntu-latest
       test_results_artifact_name: testResults-xunit
 
-
   analyze:
     name: CodeQL Analysis
     needs: changes
@@ -167,8 +166,6 @@ jobs:
       security-events: write
     with:
       runner_os: ubuntu-latest
-
->>>>>>> 5e5e17766 (Refactor analyze job to reusable workflow and enable on Windows CI (#26322))
 
   ready_to_merge:
     name: Linux ready to merge
