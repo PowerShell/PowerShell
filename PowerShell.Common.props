@@ -186,21 +186,25 @@
   <PropertyGroup Condition=" '$(AppDeployment)' == 'FxDependent' ">
     <!-- Specify both to keep existing behavior because we have not had complaints about this scenario -->
     <AppHostDotNetSearch>EnvironmentVariable;Global</AppHostDotNetSearch>
+    <PublishReadyToRun>false</PublishReadyToRun>
+    <PublishReadyToRunEmitSymbols>false</PublishReadyToRunEmitSymbols>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(AppDeployment)' == 'FxDependentDeployment' ">
     <!-- If we specify Environment too, it searches that first, no matter what order we specify-->
     <AppHostDotNetSearch>Global</AppHostDotNetSearch>
+    <PublishReadyToRun>true</PublishReadyToRun>
+    <PublishReadyToRunEmitSymbols>true</PublishReadyToRunEmitSymbols>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(AppDeployment)' == 'SelfContained' ">
     <AppHostDotNetSearch>AppLocal</AppHostDotNetSearch>
+    <PublishReadyToRun>true</PublishReadyToRun>
+    <PublishReadyToRunEmitSymbols>true</PublishReadyToRunEmitSymbols>
   </PropertyGroup>
 
   <!-- Define all OS, release configuration properties -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <PublishReadyToRun>true</PublishReadyToRun>
-    <PublishReadyToRunEmitSymbols>true</PublishReadyToRunEmitSymbols>
     <Optimize>true</Optimize>
     <DebugType>portable</DebugType>
   </PropertyGroup>
