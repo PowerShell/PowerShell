@@ -7203,8 +7203,9 @@ namespace System.Management.Automation.Language
                     {
                         if (parameterType.IsByRef)
                         {
-                            // parameters with the in modifier are ByRef, if they don't have a default value
-                            // we need to get the Default on the element type.
+                            // When the default value is null for a ByRef parameter (e.g. an optional `in` parameter
+                            // using `default`), expression trees cannot create Expression.Default for the T& type.
+                            // In that case we switch to the element type and use Default(TElement) instead.
                             parameterType = parameterType.GetElementType();
                         }
                         argExprs[i] = Expression.Default(parameterType);
