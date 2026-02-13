@@ -1,4 +1,6 @@
-#!/usr/bin/env pwsh
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 <#
 .SYNOPSIS
     Automated Pester test failure analysis workflow for GitHub PRs.
