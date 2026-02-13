@@ -1352,4 +1352,169 @@ foo``u{2195}abc
             $tokens[1] | Should -BeExactly $lastToken
         }
     }
+
+    Context "Hyphen-prefixed arguments should not be split at dot" {
+        BeforeAll {
+            function Out-Argument { ,$Args }
+        }
+
+        # Basic cases
+        It "Argument '-foo.bar' should be passed as a single argument" {
+            $result = Out-Argument -foo.bar
+            $result.Count | Should -Be 1
+            $result[0] | Should -BeExactly '-foo.bar'
+        }
+
+        It "Argument '-foo=bar.baz' should be passed as a single argument" {
+            $result = Out-Argument -foo=bar.baz
+            $result.Count | Should -Be 1
+            $result[0] | Should -BeExactly '-foo=bar.baz'
+        }
+
+        # Consecutive and multiple dots
+        It "Argument '-foo..bar' with consecutive dots should be passed as a single argument" {
+            $result = Out-Argument -foo..bar
+            $result.Count | Should -Be 1
+            $result[0] | Should -BeExactly '-foo..bar'
+        }
+
+        It "Argument '-foo...bar' with three consecutive dots should be passed as a single argument" {
+            $result = Out-Argument -foo...bar
+            $result.Count | Should -Be 1
+            $result[0] | Should -BeExactly '-foo...bar'
+        }
+
+        It "Argument '-foo.bar.baz' with multiple dots should be passed as a single argument" {
+            $result = Out-Argument -foo.bar.baz
+            $result.Count | Should -Be 1
+            $result[0] | Should -BeExactly '-foo.bar.baz'
+        }
+
+        It "Argument '-foo=1.2.3.4' with multiple dots in value should be passed as a single argument" {
+            $result = Out-Argument -foo=1.2.3.4
+            $result.Count | Should -Be 1
+            $result[0] | Should -BeExactly '-foo=1.2.3.4'
+        }
+
+        # Leading and trailing dots
+        It "Argument '-.foo' with leading dot should be passed as a single argument" {
+            $result = Out-Argument -.foo
+            $result.Count | Should -Be 1
+            $result[0] | Should -BeExactly '-.foo'
+        }
+
+        It "Argument '-foo.' with trailing dot should be passed as a single argument" {
+            $result = Out-Argument -foo.
+            $result.Count | Should -Be 1
+            $result[0] | Should -BeExactly '-foo.'
+        }
+
+        # Double hyphen (already worked in production)
+        It "Argument '--foo.bar' with double hyphen should be passed as a single argument" {
+            $result = Out-Argument --foo.bar
+            $result.Count | Should -Be 1
+            $result[0] | Should -BeExactly '--foo.bar'
+        }
+
+        # Multiple arguments
+        It "Multiple hyphen-prefixed arguments with dots should each be single arguments" {
+            $result = Out-Argument -a.b -c=d.e
+            $result.Count | Should -Be 2
+            $result[0] | Should -BeExactly '-a.b'
+            $result[1] | Should -BeExactly '-c=d.e'
+        }
+
+        # Real-world use cases (compiler flags, etc.)
+        It "Compiler-style argument '-DVERSION=1.2.3' should be passed as a single argument" {
+            $result = Out-Argument -DVERSION=1.2.3
+            $result.Count | Should -Be 1
+            $result[0] | Should -BeExactly '-DVERSION=1.2.3'
+        }
+
+        It "Compiler-style argument '-std=c++20' should be passed as a single argument" {
+            $result = Out-Argument -std=c++20
+            $result.Count | Should -Be 1
+            $result[0] | Should -BeExactly '-std=c++20'
+        }
+
+        # Splatting
+        It "Splatting should preserve hyphen-prefixed arguments with dots" {
+            function Outer { ,$Args }
+            $result = Outer -foo.bar
+            $result.Count | Should -Be 1
+            $result[0] | Should -BeExactly '-foo.bar'
+        }
+
+        It "Splatting should preserve arguments with equals and dots" {
+            function Outer { ,$Args }
+            $result = Outer -foo=bar.baz
+            $result.Count | Should -Be 1
+            $result[0] | Should -BeExactly '-foo=bar.baz'
+        }
+
+        # Native commands (using testexe for cross-platform support)
+        It "Native command should receive hyphen-prefixed argument with dot as single argument" {
+            $result = testexe -echoargs -foo.bar
+            $result | Should -HaveCount 1
+            $result | Should -BeExactly 'Arg 0 is <-foo.bar>'
+        }
+
+        It "Native command should receive argument with equals and dot as single argument" {
+            $result = testexe -echoargs -foo=bar.baz
+            $result | Should -HaveCount 1
+            $result | Should -BeExactly 'Arg 0 is <-foo=bar.baz>'
+        }
+
+        It "Native command via splatting should receive hyphen-prefixed argument with dot as single argument" {
+            function Wrapper { testexe -echoargs @Args }
+            $result = Wrapper -foo.bar
+            $result | Should -HaveCount 1
+            $result | Should -BeExactly 'Arg 0 is <-foo.bar>'
+        }
+
+        # Backward compatibility - parameter binding
+        It "Normal parameter binding with space should still work" {
+            function Test-Param { param($foo) $foo }
+            $result = Test-Param -foo bar
+            $result | Should -BeExactly 'bar'
+        }
+
+        It "Parameter binding with colon syntax should still work" {
+            function Test-Param { param($foo) $foo }
+            $result = Test-Param -foo:bar
+            $result | Should -BeExactly 'bar'
+        }
+
+        It "Switch parameter should not be affected" {
+            function Test-Switch { param([switch]$Verbose) $Verbose.IsPresent }
+            $result = Test-Switch -Verbose
+            $result | Should -BeTrue
+        }
+
+        It "Parameter with dot value using space should still work" {
+            function Test-Param { param($Path) $Path }
+            $result = Test-Param -Path .txt
+            $result | Should -BeExactly '.txt'
+        }
+
+        # Backward compatibility - expression mode
+        It "Member access in expression mode should still work" {
+            $obj = [PSCustomObject]@{ foo = 'hello' }
+            $obj.foo | Should -BeExactly 'hello'
+        }
+
+        It "Method call in expression mode should still work" {
+            'hello'.ToUpper() | Should -BeExactly 'HELLO'
+        }
+
+        It "Negative decimal number should still work" {
+            $result = -3.14
+            $result | Should -Be -3.14
+        }
+
+        It "Range operator with negative numbers should still work" {
+            $result = -3..-1
+            $result | Should -Be @(-3, -2, -1)
+        }
+    }
 }
