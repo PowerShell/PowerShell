@@ -341,7 +341,9 @@ function Start-PSBuild {
         [switch]$Detailed,
         [switch]$InteractiveAuth,
         [switch]$SkipRoslynAnalyzers,
-        [string]$PSOptionsPath
+        [string]$PSOptionsPath,
+        # When specified, a symbolic link to the pwsh publish directory will be created to the resultant publish directory. This is helpful for tools that require a stable path to the pwsh executable.
+        [string]$PublishLinkPath
     )
 
     if ($ReleaseTag -and $ReleaseTag -notmatch "^v\d+\.\d+\.\d+(-(preview|rc)(\.\d{1,2})?)?$") {
@@ -625,6 +627,33 @@ Fix steps:
         Pop-Location
     }
     Write-LogGroupEnd -Title "Build PowerShell"
+
+    if ($PublishLinkPath -and (Test-Path $publishPath)) {
+        $linkPath = Join-Path $PSScriptRoot $PublishLinkPath
+        try {
+            if (Test-Path $linkPath) {
+                if (-not ((Get-Item $linkPath).LinkType -eq 'SymbolicLink')) {
+                    throw "PublishLinkPath specified but $linkPath exists and is not a symbolic link. Please remove it manually."
+                }
+
+                $linkTarget = (Get-Item $linkPath).Target
+                if ($linkTarget -ne $publishPath) {
+                    Write-Log -message "Removing existing symbolic link at $linkPath, which points to $linkTarget instead of $publishPath"
+                    Remove-Item -Force $linkPath -ErrorAction Stop
+                } else {
+                    Write-Log -message "PublishLinkPath $linkPath already points to $publishPath. Nothing to do."
+                }
+            }
+
+            if (-not (Test-Path $linkPath)) {
+                Write-Log -message "Creating symbolic link at $linkPath to $publishPath"
+                New-Item -Force -ItemType SymbolicLink -Target $publishPath -Path $linkPath -ErrorAction Stop
+            }
+        } catch {
+            Write-Warning "Failed to create PublishLinkPath at $linkPath`: $_. If on Windows, ensure you are in Developer Mode"
+            return
+        }
+    }
 
     # No extra post-building task will run if '-SMAOnly' is specified, because its purpose is for a quick update of S.M.A.dll after full build.
     if ($SMAOnly) {
