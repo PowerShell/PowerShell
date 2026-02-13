@@ -35,6 +35,56 @@ function Wait-FileToBePresent
     return Wait-UntilTrue -sb { Test-Path $File } -TimeoutInMilliseconds ($TimeoutInSeconds*1000) -IntervalInMilliseconds $IntervalInMilliseconds
 }
 
+function Invoke-WithRetry
+{
+    <#
+    .SYNOPSIS
+        Retries a script block if it fails.
+    .DESCRIPTION
+        Executes a script block and retries it if it throws an exception.
+        Useful for handling intermittent failures such as network connectivity issues.
+    .PARAMETER ScriptBlock
+        The script block to execute.
+    .PARAMETER MaximumRetryCount
+        The maximum number of times to retry. Default is 3.
+    .PARAMETER RetryIntervalSec
+        The number of seconds to wait between retries. Default is 2.
+    .EXAMPLE
+        Invoke-WithRetry -ScriptBlock { Update-Help -Module MyModule -Force } -MaximumRetryCount 3 -RetryIntervalSec 2
+    #>
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true)]
+        [ScriptBlock]$ScriptBlock,
+        [int]$MaximumRetryCount = 3,
+        [int]$RetryIntervalSec = 2
+    )
+    
+    $attempt = 0
+    $lastError = $null
+    
+    while ($attempt -lt $MaximumRetryCount) {
+        try {
+            $attempt++
+            Write-Verbose "Attempt $attempt of $MaximumRetryCount"
+            & $ScriptBlock
+            return # Success, exit the function
+        }
+        catch {
+            $lastError = $_
+            Write-Verbose "Attempt $attempt failed: $($_.Exception.Message)"
+            
+            if ($attempt -lt $MaximumRetryCount) {
+                Write-Verbose "Waiting $RetryIntervalSec seconds before retry..."
+                Start-Sleep -Seconds $RetryIntervalSec
+            }
+        }
+    }
+    
+    # All retries failed, throw the last error
+    throw $lastError
+}
+
 function Test-IsElevated
 {
     $IsElevated = $false
