@@ -3,39 +3,6 @@
 
 Import-Module HelpersCommon
 
-# Helper function to retry operations that may have intermittent failures
-function Invoke-WithRetry {
-    param(
-        [ScriptBlock]$ScriptBlock,
-        [int]$MaximumRetryCount = 3,
-        [int]$RetryIntervalSec = 2
-    )
-    
-    $attempt = 0
-    $lastError = $null
-    
-    while ($attempt -lt $MaximumRetryCount) {
-        try {
-            $attempt++
-            Write-Verbose "Attempt $attempt of $MaximumRetryCount"
-            & $ScriptBlock
-            return # Success, exit the function
-        }
-        catch {
-            $lastError = $_
-            Write-Verbose "Attempt $attempt failed: $($_.Exception.Message)"
-            
-            if ($attempt -lt $MaximumRetryCount) {
-                Write-Verbose "Waiting $RetryIntervalSec seconds before retry..."
-                Start-Sleep -Seconds $RetryIntervalSec
-            }
-        }
-    }
-    
-    # All retries failed, throw the last error
-    throw $lastError
-}
-
 # Test Settings:
 # This is the list of PowerShell modules for which we test update-help
 [string[]] $powershellCoreModules = @(
