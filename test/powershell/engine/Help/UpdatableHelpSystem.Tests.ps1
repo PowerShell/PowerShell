@@ -3,6 +3,39 @@
 
 Import-Module HelpersCommon
 
+# Helper function to retry operations that may have intermittent failures
+function Invoke-WithRetry {
+    param(
+        [ScriptBlock]$ScriptBlock,
+        [int]$MaximumRetryCount = 3,
+        [int]$RetryIntervalSec = 2
+    )
+    
+    $attempt = 0
+    $lastError = $null
+    
+    while ($attempt -lt $MaximumRetryCount) {
+        try {
+            $attempt++
+            Write-Verbose "Attempt $attempt of $MaximumRetryCount"
+            & $ScriptBlock
+            return # Success, exit the function
+        }
+        catch {
+            $lastError = $_
+            Write-Verbose "Attempt $attempt failed: $($_.Exception.Message)"
+            
+            if ($attempt -lt $MaximumRetryCount) {
+                Write-Verbose "Waiting $RetryIntervalSec seconds before retry..."
+                Start-Sleep -Seconds $RetryIntervalSec
+            }
+        }
+    }
+    
+    # All retries failed, throw the last error
+    throw $lastError
+}
+
 # Test Settings:
 # This is the list of PowerShell modules for which we test update-help
 [string[]] $powershellCoreModules = @(
@@ -191,8 +224,7 @@ function RunUpdateHelpTests
     param (
         [string]$tag = "CI",
         [switch]$useSourcePath,
-        [switch]$userscope,
-        [switch]$markAsPending
+        [switch]$userscope
     )
 
     foreach ($moduleName in $modulesInBox)
@@ -215,17 +247,18 @@ function RunUpdateHelpTests
 
             It ('Validate Update-Help for module ''{0}'' in {1}' -F $moduleName, [PSCustomObject] $updateScope) -Skip:(!(Test-CanWriteToPsHome) -and $userscope -eq $false) {
 
-                if ($markAsPending) {
-                    Set-ItResult -Pending -Because "Update-Help from the web has intermittent connectivity issues. See issues #2807 and #6541."
-                    return
-                }
-
                 # Delete the whole help directory
-                Remove-Item ($moduleHelpPath) -Recurse -Force -ErrorAction SilentlyContinue
+                if ($moduleHelpPath) {
+                    Remove-Item ($moduleHelpPath) -Recurse -Force -ErrorAction SilentlyContinue
+                }
 
                 [hashtable] $UICultureParam = $(if ((Get-UICulture).Name -ne $myUICulture) { @{ UICulture = $myUICulture } } else { @{} })
                 [hashtable] $sourcePathParam = $(if ($useSourcePath) { @{ SourcePath = Join-Path $PSScriptRoot assets } } else { @{} })
-                Update-Help -Module:$moduleName -Force @UICultureParam @sourcePathParam -Scope:$updateScope
+                
+                # Use retry logic to handle intermittent network connectivity issues
+                Invoke-WithRetry -MaximumRetryCount 3 -RetryIntervalSec 2 -ScriptBlock {
+                    Update-Help -Module:$moduleName -Force @UICultureParam @sourcePathParam -Scope:$updateScope -ErrorAction Stop
+                }
 
                 [hashtable] $userScopeParam = $(if ($userscope) { @{ UserScope = $true } } else { @{} })
                 ValidateInstalledHelpContent -moduleName:$moduleName @userScopeParam
@@ -273,13 +306,16 @@ function RunSaveHelpTests
 
                 It "Validate Save-Help for the '$moduleName' module" -Pending:$pending {
 
-                    if ((Get-UICulture).Name -ne $myUICulture)
-                    {
-                        Save-Help -Module $moduleName -Force -UICulture $myUICulture -DestinationPath $saveHelpFolder
-                    }
-                    else
-                    {
-                        Save-Help -Module $moduleName -Force -DestinationPath $saveHelpFolder
+                    # Use retry logic to handle intermittent network connectivity issues
+                    Invoke-WithRetry -MaximumRetryCount 3 -RetryIntervalSec 2 -ScriptBlock {
+                        if ((Get-UICulture).Name -ne $myUICulture)
+                        {
+                            Save-Help -Module $moduleName -Force -UICulture $myUICulture -DestinationPath $saveHelpFolder -ErrorAction Stop
+                        }
+                        else
+                        {
+                            Save-Help -Module $moduleName -Force -DestinationPath $saveHelpFolder -ErrorAction Stop
+                        }
                     }
 
                     ValidateSaveHelp -moduleName $moduleName -path $saveHelpFolder
@@ -333,9 +369,7 @@ Describe "Validate Update-Help from the Web for one PowerShell module." -Tags @(
         $ProgressPreference = $SavedProgressPreference
     }
 
-    ## Update-Help from the web has intermittent connectivity issues that cause CI failures.
-    ## Tests are marked as Pending to unblock work. See issues #2807 and #6541.
-    RunUpdateHelpTests -Tag "CI" -MarkAsPending
+    RunUpdateHelpTests -Tag "CI"
 }
 
 Describe "Validate Update-Help from the Web for one PowerShell module for user scope." -Tags @('CI', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
@@ -347,9 +381,7 @@ Describe "Validate Update-Help from the Web for one PowerShell module for user s
         $ProgressPreference = $SavedProgressPreference
     }
 
-    ## Update-Help from the web has intermittent connectivity issues that cause CI failures.
-    ## Tests are marked as Pending to unblock work. See issues #2807 and #6541.
-    RunUpdateHelpTests -Tag "CI" -UserScope -MarkAsPending
+    RunUpdateHelpTests -Tag "CI" -UserScope
 }
 
 Describe "Validate Update-Help from the Web for all PowerShell modules." -Tags @('Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
@@ -361,7 +393,7 @@ Describe "Validate Update-Help from the Web for all PowerShell modules." -Tags @
         $ProgressPreference = $SavedProgressPreference
     }
 
-    RunUpdateHelpTests -Tag "Feature" -MarkAsPending
+    RunUpdateHelpTests -Tag "Feature"
 }
 
 Describe "Validate Update-Help from the Web for all PowerShell modules for user scope." -Tags @('Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
@@ -373,7 +405,7 @@ Describe "Validate Update-Help from the Web for all PowerShell modules for user 
         $ProgressPreference = $SavedProgressPreference
     }
 
-    RunUpdateHelpTests -Tag "Feature" -UserScope -MarkAsPending
+    RunUpdateHelpTests -Tag "Feature" -UserScope
 }
 
 Describe "Validate Update-Help -SourcePath for one PowerShell module." -Tags @('CI', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
@@ -385,7 +417,7 @@ Describe "Validate Update-Help -SourcePath for one PowerShell module." -Tags @('
         $ProgressPreference = $SavedProgressPreference
     }
 
-    RunUpdateHelpTests -Tag "CI" -useSourcePath -MarkAsPending
+    RunUpdateHelpTests -Tag "CI" -useSourcePath
 }
 
 Describe "Validate Update-Help -SourcePath for one PowerShell module for user scope." -Tags @('CI', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
@@ -397,7 +429,7 @@ Describe "Validate Update-Help -SourcePath for one PowerShell module for user sc
         $ProgressPreference = $SavedProgressPreference
     }
 
-    RunUpdateHelpTests -Tag "CI" -useSourcePath -UserScope -MarkAsPending
+    RunUpdateHelpTests -Tag "CI" -useSourcePath -UserScope
 }
 
 Describe "Validate Update-Help -SourcePath for all PowerShell modules." -Tags @('Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
@@ -409,7 +441,7 @@ Describe "Validate Update-Help -SourcePath for all PowerShell modules." -Tags @(
         $ProgressPreference = $SavedProgressPreference
     }
 
-    RunUpdateHelpTests -Tag "Feature" -useSourcePath -MarkAsPending
+    RunUpdateHelpTests -Tag "Feature" -useSourcePath
 }
 
 Describe "Validate Update-Help -SourcePath for all PowerShell modules for user scope." -Tags @('Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
@@ -421,7 +453,7 @@ Describe "Validate Update-Help -SourcePath for all PowerShell modules for user s
         $ProgressPreference = $SavedProgressPreference
     }
 
-    RunUpdateHelpTests -Tag "Feature" -useSourcePath -UserScope -MarkAsPending
+    RunUpdateHelpTests -Tag "Feature" -useSourcePath -UserScope
 }
 
 Describe "Validate 'Update-Help' shows 'HelpCultureNotSupported' when thrown" -Tags @('Feature') {
