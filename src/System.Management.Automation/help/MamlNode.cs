@@ -260,11 +260,18 @@ namespace System.Management.Automation
 
             PSObject mshObject = new PSObject();
 
+            // Manual use of IDictionaryEnumerator instead of foreach to avoid DictionaryEntry box allocations.
             IDictionaryEnumerator enumerator = properties.GetEnumerator();
-
-            while (enumerator.MoveNext())
+            try
             {
-                mshObject.Properties.Add(new PSNoteProperty((string)enumerator.Key, enumerator.Value));
+                while (enumerator.MoveNext())
+                {
+                    mshObject.Properties.Add(new PSNoteProperty((string)enumerator.Key, enumerator.Value));
+                }
+            }
+            finally
+            {
+                (enumerator as IDisposable)?.Dispose();
             }
 
             return mshObject;
@@ -421,31 +428,39 @@ namespace System.Management.Automation
                 return null;
 
             Hashtable result = new Hashtable(StringComparer.OrdinalIgnoreCase);
+
+            // Manual use of IDictionaryEnumerator instead of foreach to avoid DictionaryEntry box allocations.
             IDictionaryEnumerator enumerator = properties.GetEnumerator();
-
-            while (enumerator.MoveNext())
+            try
             {
-                ArrayList propertyValues = (ArrayList)enumerator.Value;
-
-                if (propertyValues == null || propertyValues.Count == 0)
-                    continue;
-
-                if (propertyValues.Count == 1)
+                while (enumerator.MoveNext())
                 {
-                    if (!IsMamlFormattingPSObject((PSObject)propertyValues[0]))
+                    ArrayList propertyValues = (ArrayList)enumerator.Value;
+
+                    if (propertyValues == null || propertyValues.Count == 0)
+                        continue;
+
+                    if (propertyValues.Count == 1)
                     {
-                        PSObject mshObject = (PSObject)propertyValues[0];
+                        if (!IsMamlFormattingPSObject((PSObject)propertyValues[0]))
+                        {
+                            PSObject mshObject = (PSObject)propertyValues[0];
 
                         // Even for strings or other basic types, they need to be contained in PSObject in case
                         // there is attributes for this object.
 
-                        result[enumerator.Key] = mshObject;
+                            result[enumerator.Key] = mshObject;
 
-                        continue;
+                            continue;
+                        }
                     }
-                }
 
-                result[enumerator.Key] = propertyValues.ToArray(typeof(PSObject));
+                    result[enumerator.Key] = propertyValues.ToArray(typeof(PSObject));
+                }
+            }
+            finally
+            {
+                (enumerator as IDisposable)?.Dispose();
             }
 
             return result;
