@@ -284,6 +284,18 @@ function Start-PSPackage {
                 $createdSpdxPathSha = New-Item -Path $manifestSpdxPathSha -Force
                 Write-Verbose -Verbose "Created manifest.spdx.json.sha256 file: $createdSpdxPathSha"
             }
+
+            $bsiJsonPath = (Join-Path -Path $Source "_manifest\spdx_2.2\bsi.json")
+            if (-not (Test-Path -Path $bsiJsonPath)) {
+                $createdBsiJsonPath = New-Item -Path $bsiJsonPath -Force
+                Write-Verbose -Verbose "Created bsi.json file: $createdBsiJsonPath"
+            }
+
+            $manifestCatPath = (Join-Path -Path $Source "_manifest\spdx_2.2\manifest.cat")
+            if (-not (Test-Path -Path $manifestCatPath)) {
+                $createdCatPath = New-Item -Path $manifestCatPath -Force
+                Write-Verbose -Verbose "Created manifest.cat file: $createdCatPath"
+            }
         }
 
         # If building a symbols package, we add a zip of the parent to publish
@@ -1147,14 +1159,11 @@ function New-UnixPackage {
         }
 
         # Determine if the version is a preview version
-        $IsPreview = Test-IsPreview -Version $Version -IsLTS:$LTS
-
-        # Preview versions have preview in the name
+        # Only LTS packages get a prefix in the name
+        # Preview versions are identified by the version string itself (e.g., 7.6.0-preview.6)
+        # Rebuild versions are also identified by the version string (e.g., 7.4.13-rebuild.5)
         $Name = if($LTS) {
             "powershell-lts"
-        }
-        elseif ($IsPreview) {
-            "powershell-preview"
         }
         else {
             "powershell"
@@ -1362,6 +1371,7 @@ function New-UnixPackage {
                         AppsFolder = $AppsFolder
                         HostArchitecture = $HostArchitecture
                         CurrentLocation = $CurrentLocation
+                        LTS = $LTS
                     }
 
                     try {
@@ -1506,7 +1516,12 @@ function New-MacOsDistributionPackage
 
     # Get package ID if not provided
     if (-not $PackageIdentifier) {
-        $PackageIdentifier = Get-MacOSPackageId -IsPreview:$IsPreview.IsPresent
+        if ($IsPreview.IsPresent) {
+            $PackageIdentifier = 'com.microsoft.powershell-preview'
+        }
+        else {
+            $PackageIdentifier = 'com.microsoft.powershell'
+        }
     }
 
     # Minimum OS version
@@ -1975,7 +1990,9 @@ function New-MacOSPackage
         [Parameter(Mandatory)]
         [string]$HostArchitecture,
 
-        [string]$CurrentLocation = (Get-Location)
+        [string]$CurrentLocation = (Get-Location),
+
+        [switch]$LTS
     )
 
     Write-Log "Creating macOS package using pkgbuild and productbuild..."
@@ -2050,8 +2067,10 @@ function New-MacOSPackage
             Copy-Item -Path "$AppsFolder/*" -Destination $appsInPkg -Recurse -Force
         }
 
-        # Build the component package using pkgbuild
-        $pkgIdentifier = Get-MacOSPackageId -IsPreview:($Name -like '*-preview')
+        # Get package identifier info based on version and LTS flag
+        $packageInfo = Get-MacOSPackageIdentifierInfo -Version $Version -LTS:$LTS
+        $IsPreview = $packageInfo.IsPreview
+        $pkgIdentifier = $packageInfo.PackageIdentifier
 
         if ($PSCmdlet.ShouldProcess("Build component package with pkgbuild")) {
             Write-Log "Running pkgbuild to create component package..."
@@ -2076,7 +2095,7 @@ function New-MacOSPackage
             -OutputDirectory $CurrentLocation `
             -HostArchitecture $HostArchitecture `
             -PackageIdentifier $pkgIdentifier `
-            -IsPreview:($Name -like '*-preview')
+            -IsPreview:$IsPreview
 
         return $distributionPackage
     }
@@ -2116,6 +2135,22 @@ function Get-PackageDependencies
 
         # These should match those in the Dockerfiles, but exclude tools like Git, which, and curl
         $Dependencies = @()
+
+        # ICU version range follows .NET runtime policy.
+        # See: https://github.com/dotnet/runtime/blob/3fe8518d51bbcaa179bbe275b2597fbe1b88bc5a/src/native/libs/System.Globalization.Native/pal_icushim.c#L235-L243
+        #
+        # Version range rationale:
+        # - The runtime supports ICU versions >= the version it was built against
+        #   and <= that version + 30, to allow sufficient headroom for future releases.
+        # - ICU typically releases about twice per year, so +30 provides roughly
+        #   15 years of forward compatibility.
+        # - On some platforms, the minimum supported version may be lower
+        #   than the build version and we know that older versions just works.
+        #
+        $MinICUVersion = 60                    # runtime minimum supported
+        $BuildICUVersion = 76                  # current build version
+        $MaxICUVersion = $BuildICUVersion + 30 # headroom
+
         if ($Distribution -eq 'deb') {
             $Dependencies = @(
                 "libc6",
@@ -2123,10 +2158,9 @@ function Get-PackageDependencies
                 "libgssapi-krb5-2",
                 "libstdc++6",
                 "zlib1g",
-                "libicu76|libicu74|libicu72|libicu71|libicu70|libicu69|libicu68|libicu67|libicu66|libicu65|libicu63|libicu60|libicu57|libicu55|libicu52",
+                (($MaxICUVersion..$MinICUVersion).ForEach{ "libicu$_" } -join '|'),
                 "libssl3|libssl1.1|libssl1.0.2|libssl1.0.0"
             )
-
         } elseif ($Distribution -eq 'rh') {
             $Dependencies = @(
                 "openssl-libs",
@@ -2268,20 +2302,44 @@ function New-ManGzip
     }
 }
 
-# Returns the macOS Package Identifier
-function Get-MacOSPackageId
+<#
+    .SYNOPSIS
+        Determines the package identifier and preview status for macOS packages.
+    .DESCRIPTION
+        This function determines if a package is a preview build based on the version string
+        and LTS flag, then returns the appropriate package identifier.
+    .PARAMETER Version
+        The version string (e.g., "7.6.0-preview.6" or "7.6.0")
+    .PARAMETER LTS
+        Whether this is an LTS build
+    .OUTPUTS
+        Hashtable with IsPreview (boolean) and PackageIdentifier (string) properties
+    .EXAMPLE
+        Get-MacOSPackageIdentifierInfo -Version "7.6.0-preview.6" -LTS:$false
+        Returns @{ IsPreview = $true; PackageIdentifier = "com.microsoft.powershell-preview" }
+#>
+function Get-MacOSPackageIdentifierInfo
 {
     param(
-        [switch]
-        $IsPreview
+        [Parameter(Mandatory)]
+        [string]$Version,
+        
+        [switch]$LTS
     )
-    if ($IsPreview.IsPresent)
-    {
-        return 'com.microsoft.powershell-preview'
+    
+    $IsPreview = Test-IsPreview -Version $Version -IsLTS:$LTS
+    
+    # Determine package identifier based on preview status
+    if ($IsPreview) {
+        $PackageIdentifier = 'com.microsoft.powershell-preview'
     }
-    else
-    {
-        return 'com.microsoft.powershell'
+    else {
+        $PackageIdentifier = 'com.microsoft.powershell'
+    }
+    
+    return @{
+        IsPreview = $IsPreview
+        PackageIdentifier = $PackageIdentifier
     }
 }
 
@@ -2295,8 +2353,9 @@ function New-MacOSLauncher
         [switch]$LTS
     )
 
-    $IsPreview = Test-IsPreview -Version $Version -IsLTS:$LTS
-    $packageId = Get-MacOSPackageId -IsPreview:$IsPreview
+    $packageInfo = Get-MacOSPackageIdentifierInfo -Version $Version -LTS:$LTS
+    $IsPreview = $packageInfo.IsPreview
+    $packageId = $packageInfo.PackageIdentifier
 
     # Define folder for launcher application.
     $suffix = if ($IsPreview) { "-preview" } elseif ($LTS) { "-lts" }
@@ -5521,8 +5580,24 @@ function Send-AzdoFile {
         Copy-Item -Path $Path -Destination $logFile
     }
 
-    Write-Host "##vso[artifact.upload containerfolder=$newName;artifactname=$newName]$logFile"
-    Write-Verbose "Log file captured as $newName" -Verbose
+    Write-Verbose "Capture the log file as '$newName'" -Verbose
+    if($env:TF_BUILD) {
+        ## In Azure DevOps
+        Write-Host "##vso[artifact.upload containerfolder=$newName;artifactname=$newName]$logFile"
+    } elseif ($env:GITHUB_WORKFLOW -and $env:SYSTEM_ARTIFACTSDIRECTORY) {
+        ## In GitHub Actions
+        $destinationPath = $env:SYSTEM_ARTIFACTSDIRECTORY
+        Write-Verbose "Upload '$logFile' to '$destinationPath' in GitHub Action" -Verbose
+
+        # Create the folder if it does not exist
+        if (!(Test-Path -Path $destinationPath)) {
+            $null = New-Item -ItemType Directory -Path $destinationPath -Force
+        }
+
+        Copy-Item -Path $logFile -Destination $destinationPath -Force -Verbose
+    } else {
+        Write-Warning "This environment is neither Azure Devops nor GitHub Actions. Cannot capture the log file in this environment."
+    }
 }
 
 # Class used for serializing and deserialing a BOM into Json

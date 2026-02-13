@@ -293,9 +293,17 @@ extends:
       dependsOn: [windows_package_build]  # Only depends on unsigned packages
       jobs:
       - template: /.pipelines/templates/package-create-msix.yml@self
+        parameters:
+          OfficialBuild: ${{ parameters.OfficialBuild }}
 
     - stage: upload
       displayName: 'Upload'
       dependsOn: [prep, mac_package, windows_package_sign, linux_package, nupkg, msixbundle]  # prep needed for BuildInfo JSON
       jobs:
       - template: /.pipelines/templates/uploadToAzure.yml@self
+
+    - stage: validatePackages
+      displayName: 'Validate Packages'
+      dependsOn: [upload]
+      jobs:
+      - template: /.pipelines/templates/release-validate-packagenames.yml@self

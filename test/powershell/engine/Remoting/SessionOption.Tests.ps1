@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 try {
+    $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
     if ( ! $IsWindows ) {
         $PSDefaultParameterValues['it:skip'] = $true
     }
@@ -52,5 +53,5 @@ try {
     }
 }
 finally {
-    $PSDefaultParameterValues.remove("it:skip")
+    $global:PSDefaultParameterValues = $originalDefaultParameterValues
 }

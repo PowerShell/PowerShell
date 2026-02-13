@@ -86,6 +86,141 @@ Describe "Test-Json" -Tags "CI" {
             }
 '@
 
+        # Schema using oneOf to allow either integer or string pattern for port items
+        $oneOfSchema = @'
+            {
+                "type": "object",
+                "properties": {
+                    "ports": {
+                        "type": "array",
+                        "items": {
+                            "oneOf": [
+                                { "type": "integer", "minimum": 0, "maximum": 65535 },
+                                { "type": "string", "pattern": "^\\d+-\\d+$" }
+                            ]
+                        }
+                    }
+                }
+            }
+'@
+
+        # Valid JSON where ports are integers (first oneOf choice matches)
+        $validOneOfJson = '{ "ports": [80, 443, 8080] }'
+
+        # Invalid JSON where a port value matches neither oneOf choice
+        $invalidOneOfJson = '{ "ports": [80, "invalid-port", 8080] }'
+
+        # Schema using oneOf to allow either smartphone or laptop device types
+        $oneOfDeviceSchema = @'
+            {
+                "type": "object",
+                "properties": {
+                    "Devices": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "oneOf": [
+                                {
+                                    "properties": {
+                                        "id": { "type": "string" },
+                                        "deviceType": { "const": "smartphone" },
+                                        "os": { "type": "string", "enum": ["iOS", "Android"] }
+                                    },
+                                    "required": ["deviceType", "os"]
+                                },
+                                {
+                                    "properties": {
+                                        "id": { "type": "string" },
+                                        "deviceType": { "const": "laptop" },
+                                        "arch": { "type": "string", "enum": ["x86", "x64", "arm64"] }
+                                    },
+                                    "required": ["deviceType", "arch"]
+                                }
+                            ]
+                        }
+                    }
+                },
+                "required": ["Devices"]
+            }
+'@
+
+        # Valid JSON with mixed device types (all matching their respective oneOf choice)
+        $validOneOfDeviceJson = @'
+            {
+                "Devices": [
+                    { "id": "0", "deviceType": "laptop", "arch": "x64" },
+                    { "id": "1", "deviceType": "smartphone", "os": "iOS" },
+                    { "id": "2", "deviceType": "laptop", "arch": "arm64" },
+                    { "id": "3", "deviceType": "smartphone", "os": "Android" }
+                ]
+            }
+'@
+
+        # Invalid JSON where only Devices/3 has an invalid os value
+        $invalidOneOfDeviceJson = @'
+            {
+                "Devices": [
+                    { "id": "0", "deviceType": "laptop", "arch": "x64" },
+                    { "id": "1", "deviceType": "smartphone", "os": "iOS" },
+                    { "id": "2", "deviceType": "laptop", "arch": "arm64" },
+                    { "id": "3", "deviceType": "smartphone", "os": "WindowsPhone" }
+                ]
+            }
+'@
+
+        # Schema using anyOf to allow either smartphone or laptop device types
+        $anyOfDeviceSchema = @'
+            {
+                "type": "object",
+                "properties": {
+                    "Devices": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "anyOf": [
+                                {
+                                    "properties": {
+                                        "deviceType": { "const": "smartphone" },
+                                        "os": { "type": "string", "enum": ["iOS", "Android"] }
+                                    },
+                                    "required": ["deviceType", "os"]
+                                },
+                                {
+                                    "properties": {
+                                        "deviceType": { "const": "laptop" },
+                                        "arch": { "type": "string", "enum": ["x86", "x64", "arm64"] }
+                                    },
+                                    "required": ["deviceType", "arch"]
+                                }
+                            ]
+                        }
+                    }
+                },
+                "required": ["Devices"]
+            }
+'@
+
+        # Valid JSON with mixed device types (all matching their respective anyOf choice)
+        $validAnyOfDeviceJson = @'
+            {
+                "Devices": [
+                    { "deviceType": "laptop", "arch": "x64" },
+                    { "deviceType": "smartphone", "os": "iOS" }
+                ]
+            }
+'@
+
+        # Invalid JSON where only Devices/2 has an invalid os value
+        $invalidAnyOfDeviceJson = @'
+            {
+                "Devices": [
+                    { "deviceType": "laptop", "arch": "x64" },
+                    { "deviceType": "smartphone", "os": "iOS" },
+                    { "deviceType": "smartphone", "os": "WindowsPhone" }
+                ]
+            }
+'@
+
         $validJsonPath = Join-Path -Path $TestDrive -ChildPath 'validJson.json'
         $validLiteralJsonPath = Join-Path -Path $TestDrive -ChildPath "[valid]Json.json"
         $invalidNodeInJsonPath = Join-Path -Path $TestDrive -ChildPath 'invalidNodeInJson.json'
@@ -342,5 +477,65 @@ Describe "Test-Json" -Tags "CI" {
 
         # With options should pass
         ($Json | Test-Json -Option $Options -ErrorAction SilentlyContinue) | Should -BeTrue
+    }
+
+    It "Test-Json does not report false positives for valid oneOf matches" {
+        $errorVar = $null
+        $result = Test-Json -Json $validOneOfJson -Schema $oneOfSchema -ErrorVariable errorVar -ErrorAction SilentlyContinue
+
+        $result | Should -BeTrue
+        $errorVar.Count | Should -Be 0
+    }
+
+    It "Test-Json reports only relevant errors for invalid oneOf values" {
+        $errorVar = $null
+        $result = Test-Json -Json $invalidOneOfJson -Schema $oneOfSchema -ErrorVariable errorVar -ErrorAction SilentlyContinue
+
+        $result | Should -BeFalse
+        # Should report error only for the invalid item, not for valid items
+        $errorVar.Count | Should -BeGreaterThan 0
+        $errorVar[0].Exception.Message | Should -Match "/ports/1"
+    }
+
+    It "Test-Json does not report false positives for valid oneOf device matches" {
+        $errorVar = $null
+        $result = Test-Json -Json $validOneOfDeviceJson -Schema $oneOfDeviceSchema -ErrorVariable errorVar -ErrorAction SilentlyContinue
+
+        $result | Should -BeTrue
+        $errorVar.Count | Should -Be 0
+    }
+
+    It "Test-Json reports errors only for the invalid device in oneOf schema" {
+        $errorVar = $null
+        $result = Test-Json -Json $invalidOneOfDeviceJson -Schema $oneOfDeviceSchema -ErrorVariable errorVar -ErrorAction SilentlyContinue
+
+        $result | Should -BeFalse
+        # Should not report errors for valid devices (Devices/0, /1, /2)
+        $falsePositives = $errorVar | Where-Object { $_.Exception.Message -match '/Devices/(0|1|2)' }
+        $falsePositives.Count | Should -Be 0
+        # Should report errors only for the invalid device (Devices/3)
+        $relevantErrors = $errorVar | Where-Object { $_.Exception.Message -match '/Devices/3' }
+        $relevantErrors.Count | Should -BeGreaterThan 0
+    }
+
+    It "Test-Json does not report false positives for valid anyOf device matches" {
+        $errorVar = $null
+        $result = Test-Json -Json $validAnyOfDeviceJson -Schema $anyOfDeviceSchema -ErrorVariable errorVar -ErrorAction SilentlyContinue
+
+        $result | Should -BeTrue
+        $errorVar.Count | Should -Be 0
+    }
+
+    It "Test-Json reports errors only for the invalid device in anyOf schema" {
+        $errorVar = $null
+        $result = Test-Json -Json $invalidAnyOfDeviceJson -Schema $anyOfDeviceSchema -ErrorVariable errorVar -ErrorAction SilentlyContinue
+
+        $result | Should -BeFalse
+        # Should not report errors for valid devices (Devices/0, /1)
+        $falsePositives = $errorVar | Where-Object { $_.Exception.Message -match '/Devices/(0|1)' }
+        $falsePositives.Count | Should -Be 0
+        # Should report errors only for the invalid device (Devices/2)
+        $relevantErrors = $errorVar | Where-Object { $_.Exception.Message -match '/Devices/2' }
+        $relevantErrors.Count | Should -BeGreaterThan 0
     }
 }

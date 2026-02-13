@@ -91,11 +91,6 @@ Describe "Export-Csv" -Tags "CI" {
         $results[0] | Should -BeExactly "#TYPE System.String"
     }
 
-    It "Does not support -IncludeTypeInformation and -NoTypeInformation at the same time" {
-        { $testObject | Export-Csv -Path $testCsv -IncludeTypeInformation -NoTypeInformation } |
-            Should -Throw -ErrorId "CannotSpecifyIncludeTypeInformationAndNoTypeInformation,Microsoft.PowerShell.Commands.ExportCsvCommand"
-    }
-
     It "Should support -LiteralPath parameter" {
         $testObject | Export-Csv -LiteralPath $testCsv
         $results = Import-Csv -Path  $testCsv
@@ -185,6 +180,10 @@ Describe "Export-Csv" -Tags "CI" {
         $results[1].first | Should -BeExactly "11"
         $results[1].second | Should -BeNullOrEmpty
         $results[1].PSObject.properties.Name | Should -Not -Contain 'third'
+    }
+
+    It "Should throw when -Append and -NoHeader are specified together" {
+        { $P1 | Export-Csv -Path $testCsv -Append -NoHeader -ErrorAction Stop } | Should -Throw -ErrorId "CannotSpecifyBothAppendAndNoHeader,Microsoft.PowerShell.Commands.ExportCsvCommand"
     }
 
     It "First line should be #TYPE if -IncludeTypeInformation used and pstypenames object property is empty" {

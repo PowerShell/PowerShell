@@ -9,8 +9,6 @@ jobs:
     type: windows
 
   variables:
-    - name: runCodesignValidationInjection
-      value: false
     - name: ob_sdl_codeSignValidation_enabled
       value: false  # Skip signing validation in build-only stage
     - name: ob_signing_setup_enabled
@@ -59,6 +57,8 @@ jobs:
     parameters:
       nativePathRoot: '$(Agent.TempDirectory)'
       ob_restore_phase: false
+
+  - template: /.pipelines/templates/rebuild-branch-check.yml@self
 
   - download: CoOrdinatedBuildPipeline
     artifact: drop_windows_build_windows_${{ parameters.runtime }}_release
@@ -127,7 +127,21 @@ jobs:
       Get-PSOptions | Write-Verbose -Verbose
 
       $metadata = Get-Content "$repoRoot/tools/metadata.json" -Raw | ConvertFrom-Json
-      $LTS = $metadata.LTSRelease.Package
+
+      Write-Verbose -Verbose "metadata:"
+      $metadata | Out-String | Write-Verbose -Verbose
+
+      # Use the rebuild branch check from the template
+      $isRebuildBranch = '$(RebuildBranchCheck.IsRebuildBranch)' -eq 'true'
+
+      # Don't build LTS packages for rebuild branches
+      $LTS = $metadata.LTSRelease.Package -and -not $isRebuildBranch
+
+      if ($isRebuildBranch) {
+        Write-Verbose -Message "Rebuild branch detected, skipping LTS package build" -Verbose
+      }
+
+      Write-Verbose -Verbose "LTS: $LTS"
 
       if ($LTS) {
         Write-Verbose -Message "LTS Release: $LTS"
