@@ -1,5 +1,11 @@
 # PowerShell Core Releasing Process
 
+## LTS Servicing
+
+For information about bringing fixes into Long-Term Servicing (LTS) release branches, see:
+
+- [LTS Servicing Criteria](../release/LTS-servicing-criteria.md) - Criteria and process for LTS backports
+
 ## Release Steps
 
 When creating a release milestone, you should send meeting invites to maintainers to book the release day and the previous day.
