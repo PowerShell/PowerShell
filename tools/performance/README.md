@@ -46,4 +46,3 @@ wprui.exe and perfview.exe will both generate the PDB files needed.
 | PowerShell.wpaProfile | WPA profile to load regions of interest and stack tags |
 | PowerShell.wprp | WPR profile to enable CLR and PowerShell ETW events |
 | Invoke-PerfviewPS.ps1 | Script to run perfview and with PowerShell ETW events enabled |
-
