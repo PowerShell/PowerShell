@@ -7201,6 +7201,13 @@ namespace System.Management.Automation.Language
                     var argValue = parameters[i].DefaultValue;
                     if (argValue == null)
                     {
+                        if (parameterType.IsByRef)
+                        {
+                            // When the default value is null for a ByRef parameter (e.g. an optional `in` parameter
+                            // using `default`), expression trees cannot create Expression.Default for the T& type.
+                            // In that case we switch to the element type and use Default(TElement) instead.
+                            parameterType = parameterType.GetElementType();
+                        }
                         argExprs[i] = Expression.Default(parameterType);
                     }
                     else if (!parameters[i].HasDefaultValue && parameterType != typeof(object) && argValue == Type.Missing)
