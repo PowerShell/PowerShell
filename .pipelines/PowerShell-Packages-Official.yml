@@ -24,8 +24,14 @@ parameters: # parameters are shown up in ADO UI in a build queue time
     displayName: Skip Signing
     type: string
     default: 'NO'
-    
-name: pkgs-$(BUILD.SOURCEBRANCHNAME)-$(Build.BuildId)
+  - name: OfficialBuild
+    type: boolean
+    default: false
+  - name: disableNetworkIsolation
+    type: boolean
+    default: false
+
+name: pkgs-$(BUILD.SOURCEBRANCHNAME)-prod.${{ parameters.OfficialBuild }}-$(Build.BuildId)
 
 variables:
   - name: CDP_DEFINITION_BUILD_COUNT
@@ -53,7 +59,7 @@ variables:
   - name: WindowsContainerImage
     value: 'onebranch.azurecr.io/windows/ltsc2022/vse2022:latest' # Docker image which is used to build the project
   - name: LinuxContainerImage
-    value: mcr.microsoft.com/onebranch/cbl-mariner/build:2.0
+    value: mcr.microsoft.com/onebranch/azurelinux/build:3.0
   - group: mscodehub-feed-read-general
   - group: mscodehub-feed-read-akv
   - name: branchCounterKey
@@ -61,6 +67,10 @@ variables:
   - name: branchCounter
     value: $[counter(variables['branchCounterKey'], 1)]
   - group: MSIXSigningProfile
+  - name: templateFile
+    value: ${{ iif ( parameters.OfficialBuild, 'v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates', 'v2/OneBranch.NonOfficial.CrossPlat.yml@onebranchTemplates' ) }}
+  - name: disableNetworkIsolation
+    value: ${{ parameters.disableNetworkIsolation }}
 
 resources:
   pipelines:
@@ -73,13 +83,13 @@ resources:
             - releases/*
 
   repositories:
-    - repository: templates
+    - repository: onebranchTemplates
       type: git
       name: OneBranch.Pipelines/GovernedTemplates
       ref: refs/heads/main
 
 extends:
-  template: v2/OneBranch.Official.CrossPlat.yml@templates
+  template: ${{ variables.templateFile }}
   parameters:
     cloudvault:
       enabled: false
@@ -87,7 +97,11 @@ extends:
       WindowsHostVersion:
         Version: 2022
         Network: KS3
+      LinuxHostVersion:
+        Network: KS3
       linuxEsrpSigning: true
+      incrementalSDLBinaryAnalysis: true
+      disableNetworkIsolation: ${{ variables.disableNetworkIsolation }}
     globalSdl:
       disableLegacyManifest: true
       # disabled Armorty as we dont have any ARM templates to scan. It fails on some sample ARM templates.
@@ -104,26 +118,22 @@ extends:
       cg:
         enabled: true
         ignoreDirectories: '.devcontainer,demos,docker,docs,src,test,tools/packaging'
-      asyncSdl:
-        enabled: true
-        forStages: ['build']
-        credscan:
-          enabled: true
-          scanFolder:  $(Build.SourcesDirectory)
-          suppressionsFile: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
-        binskim:
-          enabled: false
-        # APIScan requires a non-Ready-To-Run build
-        apiscan:
-          enabled: false
-        tsaOptionsFile: .config\tsaoptions.json
+      binskim:
+        enabled: false
+        exactToolVersion: 4.4.2
+      # APIScan requires a non-Ready-To-Run build
+      apiscan:
+        enabled: false
+      tsaOptionsFile: .config\tsaoptions.json
     stages:
     - stage: prep
+      displayName: 'Prep BuildInfo+Az'
       jobs:
       - template: /.pipelines/templates/checkAzureContainer.yml@self
 
     - stage: mac_package
-      dependsOn: [prep]
+      displayName: 'macOS Pkg+Sign'
+      dependsOn: []
       jobs:
       - template: /.pipelines/templates/mac-package-build.yml@self
         parameters:
@@ -133,35 +143,65 @@ extends:
         parameters:
           buildArchitecture: arm64
 
-    - stage: windows_package
-      dependsOn: [prep]
+    - stage: windows_package_build
+      displayName: 'Win Pkg (unsigned)'
+      dependsOn: []
       jobs:
-      - template: /.pipelines/templates/windows-package-build.yml@self
+      - template: /.pipelines/templates/packaging/windows/package.yml@self
         parameters:
           runtime: x64
 
-      - template: /.pipelines/templates/windows-package-build.yml@self
+      - template: /.pipelines/templates/packaging/windows/package.yml@self
         parameters:
           runtime: arm64
 
-      - template: /.pipelines/templates/windows-package-build.yml@self
+      - template: /.pipelines/templates/packaging/windows/package.yml@self
         parameters:
           runtime: x86
 
-      - template: /.pipelines/templates/windows-package-build.yml@self
+      - template: /.pipelines/templates/packaging/windows/package.yml@self
         parameters:
           runtime: fxdependent
 
-      - template: /.pipelines/templates/windows-package-build.yml@self
+      - template: /.pipelines/templates/packaging/windows/package.yml@self
         parameters:
           runtime: fxdependentWinDesktop
 
-      - template: /.pipelines/templates/windows-package-build.yml@self
+      - template: /.pipelines/templates/packaging/windows/package.yml@self
+        parameters:
+          runtime: minsize
+
+    - stage: windows_package_sign
+      displayName: 'Win Pkg Sign'
+      dependsOn: [windows_package_build]
+      jobs:
+      - template: /.pipelines/templates/packaging/windows/sign.yml@self
+        parameters:
+          runtime: x64
+
+      - template: /.pipelines/templates/packaging/windows/sign.yml@self
+        parameters:
+          runtime: arm64
+
+      - template: /.pipelines/templates/packaging/windows/sign.yml@self
+        parameters:
+          runtime: x86
+
+      - template: /.pipelines/templates/packaging/windows/sign.yml@self
+        parameters:
+          runtime: fxdependent
+
+      - template: /.pipelines/templates/packaging/windows/sign.yml@self
+        parameters:
+          runtime: fxdependentWinDesktop
+
+      - template: /.pipelines/templates/packaging/windows/sign.yml@self
         parameters:
           runtime: minsize
 
     - stage: linux_package
-      dependsOn: [prep]
+      displayName: 'Linux Pkg+Sign'
+      dependsOn: []
       jobs:
       - template: /.pipelines/templates/linux-package-build.yml@self
         parameters:
@@ -243,17 +283,27 @@ extends:
           jobName: minSize
 
     - stage: nupkg
-      dependsOn: [prep]
+      displayName: 'NuGet Pkg+Sign'
+      dependsOn: []
       jobs:
       - template: /.pipelines/templates/nupkg.yml@self
 
     - stage: msixbundle
-      displayName: 'Create MSIX Bundle'
-      dependsOn: [windows_package]
+      displayName: 'MSIX Bundle+Sign'
+      dependsOn: [windows_package_build]  # Only depends on unsigned packages
       jobs:
       - template: /.pipelines/templates/package-create-msix.yml@self
+        parameters:
+          OfficialBuild: ${{ parameters.OfficialBuild }}
 
     - stage: upload
-      dependsOn: [mac_package, windows_package, linux_package, nupkg, msixbundle]
+      displayName: 'Upload'
+      dependsOn: [prep, mac_package, windows_package_sign, linux_package, nupkg, msixbundle]  # prep needed for BuildInfo JSON
       jobs:
       - template: /.pipelines/templates/uploadToAzure.yml@self
+
+    - stage: validatePackages
+      displayName: 'Validate Packages'
+      dependsOn: [upload]
+      jobs:
+      - template: /.pipelines/templates/release-validate-packagenames.yml@self

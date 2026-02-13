@@ -1,0 +1,32 @@
+name: Verify Markdown Links
+
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - '**/*.md'
+      - '.github/workflows/verify-markdown-links.yml'
+      - '.github/actions/infrastructure/markdownlinks/**'
+  pull_request:
+    branches: [ main, master ]
+    paths:
+      - '**/*.md'
+  schedule:
+    # Run weekly on Sundays at midnight UTC to catch external link rot
+    - cron: '0 0 * * 0'
+  workflow_dispatch:
+
+jobs:
+  verify-markdown-links:
+    name: Verify Markdown Links
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Verify markdown links
+        id: verify
+        uses: ./.github/actions/infrastructure/markdownlinks
+        with:
+          timeout-sec: 30
+          maximum-retry-count: 2

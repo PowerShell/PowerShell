@@ -69,7 +69,7 @@ function Get-RandomFileName
 $SCRIPT:TesthookType = [system.management.automation.internal.internaltesthooks]
 function Test-TesthookIsSet
 {
-	[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingEmptyCatchBlock", '')] # , Justification = "an error message is not appropriate for this function")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingEmptyCatchBlock", '')] # , Justification = "an error message is not appropriate for this function")]
     param (
         [ValidateNotNullOrEmpty()]
         [Parameter(Mandatory=$true)]
@@ -197,7 +197,7 @@ public class TestDynamic : DynamicObject
 # Upload an artifact in VSTS
 # On other systems will just log where the file was placed
 function Send-VstsLogFile {
-	[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingWriteHost', '', Justification = "needed for VSO")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingWriteHost', '', Justification = "needed for VSO")]
     param (
         [parameter(Mandatory,ParameterSetName='contents')]
         [string[]]
@@ -324,8 +324,8 @@ function New-RandomHexString
 $script:CanWriteToPsHome = $null
 function Test-CanWriteToPsHome
 {
-	[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingEmptyCatchBlock', '', Justification = "an error message is not appropriate for this function")]
-	param ()
+    [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingEmptyCatchBlock', '', Justification = "an error message is not appropriate for this function")]
+    param ()
     if ($null -ne $script:CanWriteToPsHome) {
         return $script:CanWriteToPsHome
     }
@@ -476,20 +476,20 @@ function Test-IsWindows2016 {
 
 # Ensure that the global:PSDefaultParameterValues variable is a hashtable
 function Initialize-PSDefaultParameterValue {
-	if ( $global:PSDefaultParameterValues -isnot [hashtable] ) {
-		$global:PSDefaultParameterValues = @{}
-	}
+    if ( $global:PSDefaultParameterValues -isnot [hashtable] ) {
+        $global:PSDefaultParameterValues = @{}
+    }
 }
 
 # reset the stack
 function Reset-DefaultParameterValueStack {
-	$script:DefaultParameterValueStack = [system.collections.generic.Stack[hashtable]]::new()
+    $script:DefaultParameterValueStack = [system.collections.generic.Stack[hashtable]]::new()
     Initialize-PSDefaultParameterValue
 }
 
 # return the current stack
 function Get-DefaultParameterValueStack {
-	$script:DefaultParameterValueStack
+    $script:DefaultParameterValueStack
 }
 
 # PSDefaultParameterValue may not have both skip and pending keys
@@ -507,35 +507,35 @@ function Test-PSDefaultParameterValue {
 # if $ht is null, then the current value of $global:PSDefaultParameterValues is pushed
 # if $NewValue is used, then $ht is used as the new value of $global:PSDefaultParameterValues
 function Push-DefaultParameterValueStack {
-	param ([hashtable]$ht, [switch]$NewValue)
+    param ([hashtable]$ht, [switch]$NewValue)
     Initialize-PSDefaultParameterValue
 
-	$script:DefaultParameterValueStack.Push($global:PSDefaultParameterValues.Clone())
-	if ( $ht ) {
-		if ( $NewValue ) {
-			$global:PSDefaultParameterValues = $ht
-		}
-		else {
-			foreach ($k in $ht.Keys) {
-				$global:PSDefaultParameterValues[$k] = $ht[$k]
-			}
-		}
+    $script:DefaultParameterValueStack.Push($global:PSDefaultParameterValues.Clone())
+    if ( $ht ) {
+        if ( $NewValue ) {
+            $global:PSDefaultParameterValues = $ht
+        }
+        else {
+            foreach ($k in $ht.Keys) {
+                $global:PSDefaultParameterValues[$k] = $ht[$k]
+            }
+        }
         if ( ! (Test-PSDefaultParameterValue)) {
             Write-Warning -Message "PSDefaultParameterValues may not have both skip and pending keys, resetting."
             Pop-DefaultParameterValueStack
         }
-	}
+    }
 }
 
 function Pop-DefaultParameterValueStack {
-	try {
-		$global:PSDefaultParameterValues = $script:DefaultParameterValueStack.Pop()
-		return $true
-	}
-	catch {
+    try {
+        $global:PSDefaultParameterValues = $script:DefaultParameterValueStack.Pop()
+        return $true
+    }
+    catch {
         Initialize-PSDefaultParameterValue
-		return $false
-	}
+        return $false
+    }
 }
 
 function Get-HelpNetworkTestCases

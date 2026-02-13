@@ -15,6 +15,16 @@
     "Architecture": null
   },
   {
+    "Pattern": "build.manifest",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "build.manifest.sig",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
     "Pattern": "clretwrc.dll",
     "FileType": "NonProduct",
     "Architecture": null
@@ -76,11 +86,6 @@
   },
   {
     "Pattern": "cs/ReachFramework.resources.dll",
-    "FileType": "NonProduct",
-    "Architecture": null
-  },
-  {
-    "Pattern": "cs/System.Private.ServiceModel.resources.dll",
     "FileType": "NonProduct",
     "Architecture": null
   },
@@ -150,6 +155,26 @@
     "Architecture": null
   },
   {
+    "Pattern": "cs\\System.ServiceModel.Http.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "cs\\System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "cs\\System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "cs\\System.ServiceModel.Primitives.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
     "Pattern": "D3DCompiler_47_cor3.dll",
     "FileType": "NonProduct",
     "Architecture": [
@@ -188,11 +213,6 @@
   },
   {
     "Pattern": "de/ReachFramework.resources.dll",
-    "FileType": "NonProduct",
-    "Architecture": null
-  },
-  {
-    "Pattern": "de/System.Private.ServiceModel.resources.dll",
     "FileType": "NonProduct",
     "Architecture": null
   },
@@ -262,6 +282,26 @@
     "Architecture": null
   },
   {
+    "Pattern": "de\\System.ServiceModel.Http.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "de\\System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "de\\System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "de\\System.ServiceModel.Primitives.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
     "Pattern": "DirectWriteForwarder.dll",
     "FileType": "NonProduct",
     "Architecture": null
@@ -303,11 +343,6 @@
   },
   {
     "Pattern": "es/ReachFramework.resources.dll",
-    "FileType": "NonProduct",
-    "Architecture": null
-  },
-  {
-    "Pattern": "es/System.Private.ServiceModel.resources.dll",
     "FileType": "NonProduct",
     "Architecture": null
   },
@@ -377,6 +412,26 @@
     "Architecture": null
   },
   {
+    "Pattern": "es\\System.ServiceModel.Http.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "es\\System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "es\\System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "es\\System.ServiceModel.Primitives.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
     "Pattern": "fr/Microsoft.CodeAnalysis.CSharp.resources.dll",
     "FileType": "NonProduct",
     "Architecture": null
@@ -408,11 +463,6 @@
   },
   {
     "Pattern": "fr/ReachFramework.resources.dll",
-    "FileType": "NonProduct",
-    "Architecture": null
-  },
-  {
-    "Pattern": "fr/System.Private.ServiceModel.resources.dll",
     "FileType": "NonProduct",
     "Architecture": null
   },
@@ -482,6 +532,26 @@
     "Architecture": null
   },
   {
+    "Pattern": "fr\\System.ServiceModel.Http.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "fr\\System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "fr\\System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "fr\\System.ServiceModel.Primitives.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
     "Pattern": "getfilesiginforedist.dll",
     "FileType": "NonProduct",
     "Architecture": null
@@ -538,11 +608,6 @@
   },
   {
     "Pattern": "it/ReachFramework.resources.dll",
-    "FileType": "NonProduct",
-    "Architecture": null
-  },
-  {
-    "Pattern": "it/System.Private.ServiceModel.resources.dll",
     "FileType": "NonProduct",
     "Architecture": null
   },
@@ -612,6 +677,26 @@
     "Architecture": null
   },
   {
+    "Pattern": "it\\System.ServiceModel.Http.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "it\\System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "it\\System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "it\\System.ServiceModel.Primitives.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
     "Pattern": "ja/Microsoft.CodeAnalysis.CSharp.resources.dll",
     "FileType": "NonProduct",
     "Architecture": null
@@ -643,11 +728,6 @@
   },
   {
     "Pattern": "ja/ReachFramework.resources.dll",
-    "FileType": "NonProduct",
-    "Architecture": null
-  },
-  {
-    "Pattern": "ja/System.Private.ServiceModel.resources.dll",
     "FileType": "NonProduct",
     "Architecture": null
   },
@@ -717,6 +797,26 @@
     "Architecture": null
   },
   {
+    "Pattern": "ja\\System.ServiceModel.Http.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ja\\System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ja\\System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ja\\System.ServiceModel.Primitives.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
     "Pattern": "Json.More.dll",
     "FileType": "NonProduct",
     "Architecture": null
@@ -763,11 +863,6 @@
   },
   {
     "Pattern": "ko/ReachFramework.resources.dll",
-    "FileType": "NonProduct",
-    "Architecture": null
-  },
-  {
-    "Pattern": "ko/System.Private.ServiceModel.resources.dll",
     "FileType": "NonProduct",
     "Architecture": null
   },
@@ -833,6 +928,26 @@
   },
   {
     "Pattern": "ko/WindowsFormsIntegration.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ko\\System.ServiceModel.Http.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ko\\System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ko\\System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ko\\System.ServiceModel.Primitives.resources.dll",
     "FileType": "NonProduct",
     "Architecture": null
   },
@@ -1102,11 +1217,6 @@
     "Architecture": null
   },
   {
-    "Pattern": "Modules/ThreadJob/*.psd1",
-    "FileType": "NonProduct",
-    "Architecture": null
-  },
-  {
     "Pattern": "Modules\\Microsoft.PowerShell.PSResourceGet\\Microsoft.PowerShell.PSResourceGet.pdb",
     "FileType": "NonProduct",
     "Architecture": null
@@ -1143,16 +1253,6 @@
   },
   {
     "Pattern": "Modules\\PSReadLine\\.signature.p7s",
-    "FileType": "NonProduct",
-    "Architecture": null
-  },
-  {
-    "Pattern": "Modules\\ThreadJob\\.signature.p7s",
-    "FileType": "NonProduct",
-    "Architecture": null
-  },
-  {
-    "Pattern": "Modules\\ThreadJob\\ThreadJob.psm1",
     "FileType": "NonProduct",
     "Architecture": null
   },
@@ -1237,11 +1337,6 @@
     "Architecture": null
   },
   {
-    "Pattern": "pl/System.Private.ServiceModel.resources.dll",
-    "FileType": "NonProduct",
-    "Architecture": null
-  },
-  {
     "Pattern": "pl/System.Web.Services.Description.resources.dll",
     "FileType": "NonProduct",
     "Architecture": null
@@ -1303,6 +1398,26 @@
   },
   {
     "Pattern": "pl/WindowsFormsIntegration.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "pl\\System.ServiceModel.Http.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "pl\\System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "pl\\System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "pl\\System.ServiceModel.Primitives.resources.dll",
     "FileType": "NonProduct",
     "Architecture": null
   },
@@ -1457,11 +1572,6 @@
     "Architecture": null
   },
   {
-    "Pattern": "pt-BR/System.Private.ServiceModel.resources.dll",
-    "FileType": "NonProduct",
-    "Architecture": null
-  },
-  {
     "Pattern": "pt-BR/System.Web.Services.Description.resources.dll",
     "FileType": "NonProduct",
     "Architecture": null
@@ -1523,6 +1633,26 @@
   },
   {
     "Pattern": "pt-BR/WindowsFormsIntegration.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "pt-BR\\System.ServiceModel.Http.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "pt-BR\\System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "pt-BR\\System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "pt-BR\\System.ServiceModel.Primitives.resources.dll",
     "FileType": "NonProduct",
     "Architecture": null
   },
@@ -2422,11 +2552,6 @@
     "Architecture": null
   },
   {
-    "Pattern": "ru/System.Private.ServiceModel.resources.dll",
-    "FileType": "NonProduct",
-    "Architecture": null
-  },
-  {
     "Pattern": "ru/System.Web.Services.Description.resources.dll",
     "FileType": "NonProduct",
     "Architecture": null
@@ -2488,6 +2613,26 @@
   },
   {
     "Pattern": "ru/WindowsFormsIntegration.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ru\\System.ServiceModel.Http.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ru\\System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ru\\System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "ru\\System.ServiceModel.Primitives.resources.dll",
     "FileType": "NonProduct",
     "Architecture": null
   },
@@ -3307,11 +3452,6 @@
     "Architecture": null
   },
   {
-    "Pattern": "System.Private.ServiceModel.dll",
-    "FileType": "NonProduct",
-    "Architecture": null
-  },
-  {
     "Pattern": "System.Private.Uri.dll",
     "FileType": "NonProduct",
     "Architecture": null
@@ -3593,6 +3733,11 @@
   },
   {
     "Pattern": "System.ServiceModel.Http.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "System.ServiceModel.NetFramingBase.dll",
     "FileType": "NonProduct",
     "Architecture": null
   },
@@ -3892,11 +4037,6 @@
     "Architecture": null
   },
   {
-    "Pattern": "tr/System.Private.ServiceModel.resources.dll",
-    "FileType": "NonProduct",
-    "Architecture": null
-  },
-  {
     "Pattern": "tr/System.Web.Services.Description.resources.dll",
     "FileType": "NonProduct",
     "Architecture": null
@@ -3958,6 +4098,26 @@
   },
   {
     "Pattern": "tr/WindowsFormsIntegration.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "tr\\System.ServiceModel.Http.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "tr\\System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "tr\\System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "tr\\System.ServiceModel.Primitives.resources.dll",
     "FileType": "NonProduct",
     "Architecture": null
   },
@@ -4037,11 +4197,6 @@
     "Architecture": null
   },
   {
-    "Pattern": "zh-Hans/System.Private.ServiceModel.resources.dll",
-    "FileType": "NonProduct",
-    "Architecture": null
-  },
-  {
     "Pattern": "zh-Hans/System.Web.Services.Description.resources.dll",
     "FileType": "NonProduct",
     "Architecture": null
@@ -4107,6 +4262,26 @@
     "Architecture": null
   },
   {
+    "Pattern": "zh-Hans\\System.ServiceModel.Http.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "zh-Hans\\System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "zh-Hans\\System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "zh-Hans\\System.ServiceModel.Primitives.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
     "Pattern": "zh-Hant/Microsoft.CodeAnalysis.CSharp.resources.dll",
     "FileType": "NonProduct",
     "Architecture": null
@@ -4138,11 +4313,6 @@
   },
   {
     "Pattern": "zh-Hant/ReachFramework.resources.dll",
-    "FileType": "NonProduct",
-    "Architecture": null
-  },
-  {
-    "Pattern": "zh-Hant/System.Private.ServiceModel.resources.dll",
     "FileType": "NonProduct",
     "Architecture": null
   },
@@ -4208,6 +4378,26 @@
   },
   {
     "Pattern": "zh-Hant/WindowsFormsIntegration.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "zh-Hant\\System.ServiceModel.Http.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "zh-Hant\\System.ServiceModel.NetFramingBase.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "zh-Hant\\System.ServiceModel.NetTcp.resources.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "zh-Hant\\System.ServiceModel.Primitives.resources.dll",
     "FileType": "NonProduct",
     "Architecture": null
   },
@@ -4413,6 +4603,16 @@
   },
   {
     "Pattern": "System.Management.Automation.dll",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "pwsh.profile.dsc.resource.json",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "pwsh.profile.resource.ps1",
     "FileType": "Product",
     "Architecture": null
   }

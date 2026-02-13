@@ -12,7 +12,7 @@ using Microsoft.PowerShell.Commands.Internal.Format;
 
 namespace Microsoft.PowerShell.Commands
 {
-    internal class TableView
+    internal sealed class TableView
     {
         private PSPropertyExpressionFactory _expressionFactory;
         private TypeInfoDataBase _typeInfoDatabase;

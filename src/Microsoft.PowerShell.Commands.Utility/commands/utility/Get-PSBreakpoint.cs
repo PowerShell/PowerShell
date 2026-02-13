@@ -115,7 +115,7 @@ namespace Microsoft.PowerShell.Commands
                     Command,
                     (Breakpoint breakpoint, string command) =>
                     {
-                        if (!(breakpoint is CommandBreakpoint commandBreakpoint))
+                        if (breakpoint is not CommandBreakpoint commandBreakpoint)
                         {
                             return false;
                         }
@@ -130,7 +130,7 @@ namespace Microsoft.PowerShell.Commands
                     Variable,
                     (Breakpoint breakpoint, string variable) =>
                     {
-                        if (!(breakpoint is VariableBreakpoint variableBreakpoint))
+                        if (breakpoint is not VariableBreakpoint variableBreakpoint)
                         {
                             return false;
                         }

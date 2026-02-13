@@ -13,7 +13,40 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                 PSObject so, TypeInfoDataBase db, FormattingCommandLineParameters parameters)
         {
             base.Initialize(errorContext, expressionFactory, so, db, parameters);
-            this.inputParameters = parameters;
+        }
+
+        /// <summary>
+        /// Builds the raw association list for wide formatting.
+        /// </summary>
+        protected override List<MshResolvedExpressionParameterAssociation> BuildRawAssociationList(PSObject so, List<MshParameter> propertyList)
+        {
+            // check if we received properties from the command line
+            if (propertyList is not null && propertyList.Count > 0)
+            {
+                return AssociationManager.ExpandParameters(propertyList, so);
+            }
+
+            // we did not get any properties:
+            // try to get the display property of the object
+            PSPropertyExpression displayNameExpression = PSObjectHelper.GetDisplayNameExpression(so, this.expressionFactory);
+            if (displayNameExpression is not null)
+            {
+                return new List<MshResolvedExpressionParameterAssociation>
+                {
+                    new MshResolvedExpressionParameterAssociation(null, displayNameExpression)
+                };
+            }
+
+            // try to get the default property set (we will use the first property)
+            var list = AssociationManager.ExpandDefaultPropertySet(so, this.expressionFactory);
+            if (list.Count == 0)
+            {
+                // we failed to get anything from the default property set
+                // just get all the properties
+                list = AssociationManager.ExpandAll(so);
+            }
+
+            return list;
         }
 
         internal override FormatStartData GenerateStartData(PSObject so)
@@ -130,20 +163,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private WideViewEntry GenerateWideViewEntryFromProperties(PSObject so, int enumerationLimit)
         {
-            // compute active properties every time
-            if (this.activeAssociationList == null)
-            {
-                SetUpActiveProperty(so);
-            }
+            // Build active association list (with ExcludeProperty filter applied)
+            var associationList = BuildActiveAssociationList(so);
 
             WideViewEntry wve = new WideViewEntry();
             FormatPropertyField fpf = new FormatPropertyField();
 
             wve.formatPropertyField = fpf;
-            if (this.activeAssociationList.Count > 0)
+            if (associationList.Count > 0)
             {
                 // get the first one
-                MshResolvedExpressionParameterAssociation a = this.activeAssociationList[0];
+                MshResolvedExpressionParameterAssociation a = associationList[0];
                 FieldFormattingDirective directive = null;
                 if (a.OriginatingParameter != null)
                 {
@@ -152,46 +182,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 fpf.propertyValue = this.GetExpressionDisplayValue(so, enumerationLimit, a.ResolvedExpression, directive);
             }
-
-            this.activeAssociationList = null;
             return wve;
-        }
-
-        private void SetUpActiveProperty(PSObject so)
-        {
-            List<MshParameter> rawMshParameterList = null;
-
-            if (this.inputParameters != null)
-                rawMshParameterList = this.inputParameters.mshParameterList;
-
-            // check if we received properties from the command line
-            if (rawMshParameterList != null && rawMshParameterList.Count > 0)
-            {
-                this.activeAssociationList = AssociationManager.ExpandParameters(rawMshParameterList, so);
-                return;
-            }
-
-            // we did not get any properties:
-            // try to get the display property of the object
-            PSPropertyExpression displayNameExpression = PSObjectHelper.GetDisplayNameExpression(so, this.expressionFactory);
-            if (displayNameExpression != null)
-            {
-                this.activeAssociationList = new List<MshResolvedExpressionParameterAssociation>();
-                this.activeAssociationList.Add(new MshResolvedExpressionParameterAssociation(null, displayNameExpression));
-                return;
-            }
-
-            // try to get the default property set (we will use the first property)
-            this.activeAssociationList = AssociationManager.ExpandDefaultPropertySet(so, this.expressionFactory);
-            if (this.activeAssociationList.Count > 0)
-            {
-                // we got a valid set of properties from the default property set
-                return;
-            }
-
-            // we failed to get anything from the default property set
-            // just get all the properties
-            this.activeAssociationList = AssociationManager.ExpandAll(so);
         }
     }
 }

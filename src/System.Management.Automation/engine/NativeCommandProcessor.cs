@@ -831,6 +831,7 @@ namespace System.Management.Automation
                             bool useSpecialArgumentPassing = UseSpecialArgumentPassing(oldFileName);
                             if (useSpecialArgumentPassing)
                             {
+                                // codeql[cs/microsoft/command-line-injection] - This is expected PowerShell behavior where user inputted paths are supported for the context of this method and the path portion of the argument is escaped. The user assumes trust for the file path specified on the user's system to start process for, and in the case of remoting, restricted remoting security guidelines should be used.
                                 startInfo.Arguments = "\"" + oldFileName + "\" " + startInfo.Arguments;
                             }
                             else
@@ -854,6 +855,8 @@ namespace System.Management.Automation
                                 {
                                     startInfo.ArgumentList.RemoveAt(0);
                                 }
+
+                                // codeql[cs/microsoft/command-line-injection-shell-execution] - This is expected PowerShell behavior where user inputted paths are supported for the context of this method. The user assumes trust for the file path specified on the user's system to retrieve process info for, and in the case of remoting, restricted remoting security guidelines should be used.
                                 startInfo.FileName = oldFileName;
                             }
                         }
@@ -1605,6 +1608,7 @@ namespace System.Management.Automation
         {
             var startInfo = new ProcessStartInfo
             {
+                // codeql[cs/microsoft/command-line-injection-shell-execution] - This is expected PowerShell behavior where user inputted paths are supported for the context of this method. The user assumes trust for the file path specified on the user's system to retrieve process info for, and in the case of remoting, restricted remoting security guidelines should be used.
                 FileName = this.Path
             };
 
@@ -1642,16 +1646,17 @@ namespace System.Management.Automation
                 startInfo.UseShellExecute = false;
                 startInfo.RedirectStandardInput = redirectInput;
 
+                Encoding outputEncoding = GetOutputEncoding();
                 if (redirectOutput)
                 {
                     startInfo.RedirectStandardOutput = true;
-                    startInfo.StandardOutputEncoding = Console.OutputEncoding;
+                    startInfo.StandardOutputEncoding = outputEncoding;
                 }
 
                 if (redirectError)
                 {
                     startInfo.RedirectStandardError = true;
-                    startInfo.StandardErrorEncoding = Console.OutputEncoding;
+                    startInfo.StandardErrorEncoding = outputEncoding;
                 }
             }
 
@@ -1674,6 +1679,7 @@ namespace System.Management.Automation
                 {
                     using (ParameterBinderBase.bindingTracer.TraceScope("BIND argument [{0}]", NativeParameterBinderController.Arguments))
                     {
+                        // codeql[cs/microsoft/command-line-injection ] - This is intended PowerShell behavior as NativeParameterBinderController.Arguments is what the native parameter binder generates based on the user input when invoking the command and cannot be injected externally.
                         startInfo.Arguments = NativeParameterBinderController.Arguments;
                     }
                 }
@@ -1707,6 +1713,20 @@ namespace System.Management.Automation
 
             return startInfo;
         }
+
+#nullable enable
+        /// <summary>
+        /// Gets the encoding to use for a process' output/error pipes.
+        /// </summary>
+        /// <returns>The encoding to use for the process output.</returns>
+        private Encoding GetOutputEncoding()
+        {
+            Encoding? applicationOutputEncoding = Context.GetVariableValue(
+                    SpecialVariables.PSApplicationOutputEncodingVarPath) as Encoding;
+
+            return applicationOutputEncoding ?? Console.OutputEncoding;
+        }
+#nullable disable
 
         /// <summary>
         /// Determine if we have a special file which will change the way native argument passing
@@ -2505,7 +2525,6 @@ namespace System.Management.Automation
     /// This remote instance of PowerShell can be in a separate process,
     /// appdomain or machine.
     /// </remarks>
-    [SuppressMessage("Microsoft.Usage", "CA2240:ImplementISerializableCorrectly")]
     public class RemoteException : RuntimeException
     {
         /// <summary>

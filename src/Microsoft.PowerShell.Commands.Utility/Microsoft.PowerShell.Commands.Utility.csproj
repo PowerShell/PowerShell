@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />
-    <PackageReference Include="Markdig.Signed" Version="0.41.3" />
+    <PackageReference Include="Markdig.Signed" Version="0.45.0" />
     <PackageReference Include="Microsoft.PowerShell.MarkdownRender" Version="7.2.1" />
   </ItemGroup>
 
@@ -32,9 +32,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.14.0" />
-    <PackageReference Include="System.Threading.AccessControl" Version="10.0.0-preview.7.25380.108" />
-    <PackageReference Include="System.Drawing.Common" Version="10.0.0-preview.7.25380.108" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.0.0" />
+    <PackageReference Include="System.Drawing.Common" Version="10.0.2" />
     <PackageReference Include="JsonSchema.Net" Version="7.4.0" />
   </ItemGroup>
 

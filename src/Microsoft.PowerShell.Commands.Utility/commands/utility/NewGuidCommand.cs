@@ -45,11 +45,11 @@ namespace Microsoft.PowerShell.Commands
                 {
                     ErrorRecord error = new(ex, "StringNotRecognizedAsGuid", ErrorCategory.InvalidArgument, null);
                     WriteError(error);
-                }  
+                }
             }
             else
             {
-                guid = ParameterSetName is "Empty" ? Guid.Empty : Guid.NewGuid();
+                guid = Empty.ToBool() ? Guid.Empty : Guid.NewGuid();
             }
 
             WriteObject(guid);

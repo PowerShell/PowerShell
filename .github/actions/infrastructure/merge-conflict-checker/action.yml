@@ -1,0 +1,37 @@
+name: 'Check for Merge Conflict Markers'
+description: 'Checks for Git merge conflict markers in changed files for pull requests'
+author: 'PowerShell Team'
+
+outputs:
+  files-checked:
+    description: 'Number of files checked for merge conflict markers'
+    value: ${{ steps.check.outputs.files-checked }}
+  conflicts-found:
+    description: 'Number of files with merge conflict markers'
+    value: ${{ steps.check.outputs.conflicts-found }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Get changed files
+      id: changed-files
+      uses: "./.github/actions/infrastructure/get-changed-files"
+
+    - name: Check for merge conflict markers
+      id: check
+      shell: pwsh
+      env:
+        CHANGED_FILES_JSON: ${{ steps.changed-files.outputs.files }}
+      run: |
+        # Get changed files from environment variable (secure against injection)
+        $changedFilesJson = $env:CHANGED_FILES_JSON
+        # Ensure we always have an array (ConvertFrom-Json returns null for empty JSON arrays)
+        $changedFiles = @($changedFilesJson | ConvertFrom-Json)
+
+        # Import ci.psm1 and run the check
+        Import-Module "$env:GITHUB_WORKSPACE/tools/ci.psm1" -Force
+        Test-MergeConflictMarker -File $changedFiles -WorkspacePath $env:GITHUB_WORKSPACE
+
+branding:
+  icon: 'alert-triangle'
+  color: 'red'

@@ -1,3 +1,8 @@
+parameters:
+- name: ob_restore_phase
+  type: boolean
+  default: true
+
 steps:
 - powershell: |
     $shouldSign = $true
@@ -22,4 +27,4 @@ steps:
     Write-Host "##$vstsCommandString"
   displayName: 'Set SHOULD_SIGN Variable'
   env:
-      ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
+    ob_restore_phase: ${{ parameters.ob_restore_phase }}

@@ -8,8 +8,24 @@ updates:
     labels:
       - "CL-BuildPackaging"
 
-  - package-ecosystem: docker
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    target-branch: "release/*"
+    schedule:
+      interval: "daily"
+    labels:
+      - "CL-BuildPackaging"
+
+  - package-ecosystem: "docker"
     directory: /
+    schedule:
+      interval: daily
+    labels:
+      - "CL-BuildPackaging"
+
+  - package-ecosystem: "docker"
+    directory: "/"
+    target-branch: "release/*"
     schedule:
       interval: daily
     labels:

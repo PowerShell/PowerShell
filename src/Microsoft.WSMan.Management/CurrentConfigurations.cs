@@ -11,7 +11,7 @@ namespace Microsoft.WSMan.Management
     /// Class that queries the server and gets current configurations.
     /// Also provides a generic way to update the configurations.
     /// </summary>
-    internal class CurrentConfigurations
+    internal sealed class CurrentConfigurations
     {
         /// <summary>
         /// Prefix used to add NameSpace of root element to namespace manager.

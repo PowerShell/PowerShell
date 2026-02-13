@@ -1237,7 +1237,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
         internal static RunspacePool[] GetRemoteRunspacePools(RunspaceConnectionInfo connectionInfo, PSHost host, TypeTable typeTable)
         {
-            if (!(connectionInfo is WSManConnectionInfo wsmanConnectionInfoParam))
+            if (connectionInfo is not WSManConnectionInfo wsmanConnectionInfoParam)
             {
                 // Disconnect-Connect currently only supported by WSMan.
                 throw new NotSupportedException();

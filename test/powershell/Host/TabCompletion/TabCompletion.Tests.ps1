@@ -1929,8 +1929,12 @@ param([ValidatePattern(
 
     Context NativeCommand {
         BeforeAll {
-            $nativeCommand = (Get-Command -CommandType Application -TotalCount 1).Name
+            ## Find a native command that is not 'pwsh'. We will use 'pwsh' for fallback completer tests later.
+            $nativeCommand = Get-Command -CommandType Application -TotalCount 2 |
+                Where-Object Name -NotLike pwsh* |
+                Select-Object -First 1
         }
+
         It 'Completes native commands with -' {
             Register-ArgumentCompleter -Native -CommandName $nativeCommand -ScriptBlock {
                 param($wordToComplete, $ast, $cursorColumn)
@@ -1993,6 +1997,52 @@ param([ValidatePattern(
             $res = TabExpansion2 -inputScript $line -cursorColumn $line.Length
             $res.CompletionMatches | Should -HaveCount 1
             $res.CompletionMatches.CompletionText | Should -BeExactly "-option"
+        }
+
+        It 'Covers an arbitrary unbound native command with -t' {
+            ## Register a completer for $nativeCommand.
+            Register-ArgumentCompleter -Native -CommandName $nativeCommand -ScriptBlock {
+                param($wordToComplete, $ast, $cursorColumn)
+                if ($wordToComplete -eq '-t') {
+                    return "-terminal"
+                }
+            }
+
+            ## Register a fallback native command completer.
+            Register-ArgumentCompleter -NativeFallback -ScriptBlock {
+                param($wordToComplete, $ast, $cursorColumn)
+                if ($wordToComplete -eq '-t') {
+                    return "-testing"
+                }
+            }
+
+            ## The specific completer will be used if it exists.
+            $line = "$nativeCommand -t"
+            $res = TabExpansion2 -inputScript $line -cursorColumn $line.Length
+            $res.CompletionMatches | Should -HaveCount 1
+            $res.CompletionMatches.CompletionText | Should -BeExactly "-terminal"
+
+            ## Otherwise, the fallback completer will kick in.
+            $line = "pwsh -t"
+            $res = TabExpansion2 -inputScript $line -cursorColumn $line.Length
+            $res.CompletionMatches | Should -HaveCount 1
+            $res.CompletionMatches.CompletionText | Should -BeExactly "-testing"
+
+            ## Remove the completer for $nativeCommand.
+            Register-ArgumentCompleter -Native -CommandName $nativeCommand -ScriptBlock $null
+
+            ## The fallback completer will be used for $nativeCommand.
+            $line = "$nativeCommand -t"
+            $res = TabExpansion2 -inputScript $line -cursorColumn $line.Length
+            $res.CompletionMatches | Should -HaveCount 1
+            $res.CompletionMatches.CompletionText | Should -BeExactly "-testing"
+
+            ## Remove the fallback completer for $nativeCommand.
+            Register-ArgumentCompleter -NativeFallback -ScriptBlock $null
+
+            ## The fallback completer will be used for $nativeCommand.
+            $res = TabExpansion2 -inputScript $line -cursorColumn $line.Length
+            $res.CompletionMatches | Should -HaveCount 0
         }
     }
 
@@ -3961,5 +4011,186 @@ Describe "WSMan Config Provider tab complete tests" -Tags Feature,RequireAdminOn
     ) {
         # https://github.com/PowerShell/PowerShell/issues/4744
         # TODO: move to test cases above once working
+    }
+
+    Context "Tab completion for switch cases on `$PSBoundParameters.Keys" {
+        It "Should complete parameter names in switch case for `$PSBoundParameters.Keys" {
+            $inputScript = @"
+function Test-Func {
+    param(
+        [string]`$Param1,
+        [string]`$Param2,
+        [int]`$Count
+    )
+    switch (`$PSBoundParameters.Keys) {
+        P
+    }
+}
+"@
+            $cursorPosition = $inputScript.IndexOf("P", $inputScript.IndexOf("Keys)")) + 1
+            $res = TabExpansion2 -inputScript $inputScript -cursorColumn $cursorPosition
+            $res.CompletionMatches | Should -HaveCount 2
+            $completionTexts = $res.CompletionMatches.CompletionText | Sort-Object
+            $completionTexts[0] | Should -BeExactly "Param1"
+            $completionTexts[1] | Should -BeExactly "Param2"
+        }
+
+        It "Should complete all parameter names when prefix matches single param" {
+            $inputScript = @"
+function Test-Func {
+    param(
+        [string]`$Name,
+        [int]`$Value
+    )
+    switch (`$PSBoundParameters.Keys) {
+        N
+    }
+}
+"@
+            $cursorPosition = $inputScript.IndexOf("N", $inputScript.IndexOf("Keys)")) + 1
+            $res = TabExpansion2 -inputScript $inputScript -cursorColumn $cursorPosition
+            $res.CompletionMatches | Should -HaveCount 1
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly "Name"
+        }
+
+        It "Should complete parameter names in scriptblock param" {
+            $inputScript = @"
+`$sb = {
+    param(
+        [string]`$ScriptParam1,
+        [string]`$ScriptParam2
+    )
+    switch (`$PSBoundParameters.Keys) {
+        S
+    }
+}
+"@
+            $cursorPosition = $inputScript.IndexOf("S", $inputScript.IndexOf("Keys)")) + 1
+            $res = TabExpansion2 -inputScript $inputScript -cursorColumn $cursorPosition
+            $res.CompletionMatches | Should -HaveCount 2
+            $completionTexts = $res.CompletionMatches.CompletionText | Sort-Object
+            $completionTexts[0] | Should -BeExactly "ScriptParam1"
+            $completionTexts[1] | Should -BeExactly "ScriptParam2"
+        }
+    }
+
+    Context "Tab completion for `$PSBoundParameters access patterns" {
+        It "Should complete parameter names for ContainsKey method" {
+            $inputScript = @"
+function Test-Func {
+    param([string]`$Param1, [string]`$Param2, [int]`$Count)
+    if (`$PSBoundParameters.ContainsKey('P')) { }
+}
+"@
+            $cursorPosition = $inputScript.IndexOf("'P'") + 2
+            $res = TabExpansion2 -inputScript $inputScript -cursorColumn $cursorPosition
+            $res.CompletionMatches | Should -HaveCount 2
+            $completionTexts = $res.CompletionMatches.CompletionText | Sort-Object
+            $completionTexts[0] | Should -BeExactly "'Param1'"
+            $completionTexts[1] | Should -BeExactly "'Param2'"
+        }
+
+        It "Should complete parameter names for indexer access" {
+            $inputScript = @"
+function Test-Func {
+    param([string]`$Param1, [string]`$Param2, [int]`$Count)
+    `$value = `$PSBoundParameters['P']
+}
+"@
+            $cursorPosition = $inputScript.IndexOf("'P'") + 2
+            $res = TabExpansion2 -inputScript $inputScript -cursorColumn $cursorPosition
+            $res.CompletionMatches | Should -HaveCount 2
+            $completionTexts = $res.CompletionMatches.CompletionText | Sort-Object
+            $completionTexts[0] | Should -BeExactly "'Param1'"
+            $completionTexts[1] | Should -BeExactly "'Param2'"
+        }
+
+        It "Should complete parameter names for Remove method" {
+            $inputScript = @"
+function Test-Func {
+    param([string]`$Param1, [string]`$Param2, [int]`$Count)
+    `$PSBoundParameters.Remove('C')
+}
+"@
+            $cursorPosition = $inputScript.IndexOf("'C'") + 2
+            $res = TabExpansion2 -inputScript $inputScript -cursorColumn $cursorPosition
+            $res.CompletionMatches | Should -HaveCount 1
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly "'Count'"
+        }
+
+        It "Should complete with double quotes when using double-quoted string" {
+            $inputScript = @"
+function Test-Func {
+    param([string]`$Param1, [string]`$Param2)
+    if (`$PSBoundParameters.ContainsKey("P")) { }
+}
+"@
+            $cursorPosition = $inputScript.IndexOf('"P"') + 2
+            $res = TabExpansion2 -inputScript $inputScript -cursorColumn $cursorPosition
+            $res.CompletionMatches | Should -HaveCount 2
+            $completionTexts = $res.CompletionMatches.CompletionText | Sort-Object
+            $completionTexts[0] | Should -BeExactly '"Param1"'
+            $completionTexts[1] | Should -BeExactly '"Param2"'
+        }
+
+        It "Should not complete for non-PSBoundParameters variable with indexer" {
+            $inputScript = @"
+function Test-Func {
+    param([string]`$Param1)
+    `$hash = @{}
+    `$value = `$hash['P']
+}
+"@
+            $cursorPosition = $inputScript.IndexOf("'P'") + 2
+            $res = TabExpansion2 -inputScript $inputScript -cursorColumn $cursorPosition
+            # Should not return Param1 as completion
+            $paramCompletion = $res.CompletionMatches | Where-Object { $_.CompletionText -eq "'Param1'" }
+            $paramCompletion | Should -BeNullOrEmpty
+        }
+
+        It "Should not complete for non-PSBoundParameters variable with ContainsKey" {
+            $inputScript = @"
+function Test-Func {
+    param([string]`$Param1)
+    `$hash = @{}
+    if (`$hash.ContainsKey('P')) { }
+}
+"@
+            $cursorPosition = $inputScript.IndexOf("'P'") + 2
+            $res = TabExpansion2 -inputScript $inputScript -cursorColumn $cursorPosition
+            # Should not return Param1 as completion
+            $paramCompletion = $res.CompletionMatches | Where-Object { $_.CompletionText -eq "'Param1'" }
+            $paramCompletion | Should -BeNullOrEmpty
+        }
+
+        It "Should not complete for non-PSBoundParameters variable with Remove" {
+            $inputScript = @"
+function Test-Func {
+    param([string]`$Param1)
+    `$hash = @{}
+    `$hash.Remove('P')
+}
+"@
+            $cursorPosition = $inputScript.IndexOf("'P'") + 2
+            $res = TabExpansion2 -inputScript $inputScript -cursorColumn $cursorPosition
+            # Should not return Param1 as completion
+            $paramCompletion = $res.CompletionMatches | Where-Object { $_.CompletionText -eq "'Param1'" }
+            $paramCompletion | Should -BeNullOrEmpty
+        }
+
+        It "Should not complete for non-PSBoundParameters variable with double quotes" {
+            $inputScript = @"
+function Test-Func {
+    param([string]`$Param1)
+    `$hash = @{}
+    if (`$hash.ContainsKey("P")) { }
+}
+"@
+            $cursorPosition = $inputScript.IndexOf('"P"') + 2
+            $res = TabExpansion2 -inputScript $inputScript -cursorColumn $cursorPosition
+            # Should not return Param1 as completion
+            $paramCompletion = $res.CompletionMatches | Where-Object { $_.CompletionText -eq '"Param1"' }
+            $paramCompletion | Should -BeNullOrEmpty
+        }
     }
 }
