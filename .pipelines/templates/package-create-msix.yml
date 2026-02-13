@@ -22,7 +22,7 @@ jobs:
     - task: DownloadPipelineArtifact@2
       inputs:
         buildType: 'current'
-        artifact: drop_windows_package_package_win_arm64
+        artifact: drop_windows_package_arm64
         itemPattern: |
           **/*.msix
         targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
@@ -31,7 +31,7 @@ jobs:
     - task: DownloadPipelineArtifact@2
       inputs:
         buildType: 'current'
-        artifact: drop_windows_package_package_win_x64
+        artifact: drop_windows_package_x64
         itemPattern: |
           **/*.msix
         targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
@@ -40,7 +40,7 @@ jobs:
     - task: DownloadPipelineArtifact@2
       inputs:
         buildType: 'current'
-        artifact: drop_windows_package_package_win_x86
+        artifact: drop_windows_package_x86
         itemPattern: |
           **/*.msix
         targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
