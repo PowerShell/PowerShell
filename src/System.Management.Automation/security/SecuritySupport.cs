@@ -1607,10 +1607,8 @@ namespace System.Management.Automation
             }
         }
 
-        [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
         private static IntPtr s_amsiContext = IntPtr.Zero;
 
-        [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
         private static IntPtr s_amsiSession = IntPtr.Zero;
 
         private static readonly bool s_amsiInitFailed = false;
