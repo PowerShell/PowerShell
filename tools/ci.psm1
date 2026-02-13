@@ -932,12 +932,12 @@ function New-LinuxPackage
         } else {
             "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}"
         }
-        
+
         # Ensure artifacts directory exists
         if (-not (Test-Path $artifactsDir)) {
             New-Item -ItemType Directory -Path $artifactsDir -Force | Out-Null
         }
-        
+
         Write-Log -message "Artifacts directory: $artifactsDir"
         Copy-Item $packageObj.FullName -Destination $artifactsDir -Force
     }
@@ -950,7 +950,7 @@ function New-LinuxPackage
         } else {
             "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}"
         }
-        
+
         # Create and package Raspbian .tgz
         # Build must be clean for Raspbian
         Start-PSBuild -PSModuleRestore -Clean -Runtime linux-arm -Configuration 'Release'
@@ -1039,8 +1039,9 @@ Function Test-MergeConflictMarker
     #>
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory)]
-        [string[]] $File,
+        [Parameter()]
+        [AllowEmptyCollection()]
+        [string[]] $File = @(),
 
         [Parameter()]
         [string] $WorkspacePath = $PWD,
@@ -1054,10 +1055,63 @@ Function Test-MergeConflictMarker
 
     Write-Host "Starting merge conflict marker check..." -ForegroundColor Cyan
 
-    Write-Host "Checking $($File.Count) changed files for merge conflict markers" -ForegroundColor Cyan
+    # Helper function to write outputs when no files to check
+    function Write-NoFilesOutput {
+        param(
+            [string]$Message,
+            [string]$OutputPath,
+            [string]$SummaryPath
+        )
+
+        # Output results to GitHub Actions
+        if ($OutputPath) {
+            "files-checked=0" | Out-File -FilePath $OutputPath -Append -Encoding utf8
+            "conflicts-found=0" | Out-File -FilePath $OutputPath -Append -Encoding utf8
+        }
+
+        # Create GitHub Actions job summary
+        if ($SummaryPath) {
+            $summaryContent = @"
+# Merge Conflict Marker Check Results
+
+## Summary
+- **Files Checked:** 0
+- **Files with Conflicts:** 0
+
+## ℹ️ No Files to Check
+
+$Message
+
+"@
+            $summaryContent | Out-File -FilePath $SummaryPath -Encoding utf8
+        }
+    }
+
+    # Handle empty file list (e.g., when PR only deletes files)
+    if ($File.Count -eq 0) {
+        Write-Host "No files to check (empty file list)" -ForegroundColor Yellow
+        Write-NoFilesOutput -Message "No files were provided for checking (this can happen when a PR only deletes files)." -OutputPath $OutputPath -SummaryPath $SummaryPath
+        return
+    }
+
+    # Filter out *.cs files from merge conflict checking
+    $filesToCheck = @($File | Where-Object { $_ -notlike "*.cs" })
+    $filteredCount = $File.Count - $filesToCheck.Count
+
+    if ($filteredCount -gt 0) {
+        Write-Host "Filtered out $filteredCount *.cs file(s) from merge conflict checking" -ForegroundColor Yellow
+    }
+
+    if ($filesToCheck.Count -eq 0) {
+        Write-Host "No files to check after filtering (all files were *.cs)" -ForegroundColor Yellow
+        Write-NoFilesOutput -Message "All $filteredCount file(s) were filtered out (*.cs files are excluded from merge conflict checking)." -OutputPath $OutputPath -SummaryPath $SummaryPath
+        return
+    }
+
+    Write-Host "Checking $($filesToCheck.Count) changed files for merge conflict markers" -ForegroundColor Cyan
 
     # Convert relative paths to absolute paths for processing
-    $absolutePaths = $File | ForEach-Object {
+    $absolutePaths = $filesToCheck | ForEach-Object {
         if ([System.IO.Path]::IsPathRooted($_)) {
             $_
         } else {
@@ -1081,14 +1135,14 @@ Function Test-MergeConflictMarker
         }
 
         $filesChecked++
-        
+
         # Get relative path for display
         $relativePath = if ($WorkspacePath -and $filePath.StartsWith($WorkspacePath)) {
             $filePath.Substring($WorkspacePath.Length).TrimStart([System.IO.Path]::DirectorySeparatorChar, [System.IO.Path]::AltDirectorySeparatorChar)
         } else {
             $filePath
         }
-        
+
         Write-Host "  Checking: $relativePath" -ForegroundColor Gray
 
         # Search for conflict markers using Select-String

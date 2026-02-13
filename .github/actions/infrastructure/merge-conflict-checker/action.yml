@@ -25,7 +25,8 @@ runs:
       run: |
         # Get changed files from environment variable (secure against injection)
         $changedFilesJson = $env:CHANGED_FILES_JSON
-        $changedFiles = $changedFilesJson | ConvertFrom-Json
+        # Ensure we always have an array (ConvertFrom-Json returns null for empty JSON arrays)
+        $changedFiles = @($changedFilesJson | ConvertFrom-Json)
 
         # Import ci.psm1 and run the check
         Import-Module "$env:GITHUB_WORKSPACE/tools/ci.psm1" -Force
