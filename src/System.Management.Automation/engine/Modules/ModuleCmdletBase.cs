@@ -446,10 +446,15 @@ namespace Microsoft.PowerShell.Commands
                 var qualifiedPathWithVersion = Path.Combine(moduleBase,
                                                             Path.Combine(version.ToString(), Path.GetFileName(moduleBase)));
                 string manifestPath = qualifiedPathWithVersion + StringLiterals.PowerShellDataFileExtension;
+                var (modulePowerShellVersion, moduleVersion) = ModuleIntrinsics.GetManifestPowerShellAndModuleVersion(manifestPath);
+                if (PSVersionInfo.PSVersion < modulePowerShellVersion)
+                {
+                    continue;
+                }
                 var isValidModuleVersion = false;
                 if (File.Exists(manifestPath))
                 {
-                    isValidModuleVersion = version.Equals(ModuleIntrinsics.GetManifestModuleVersion(manifestPath));
+                    isValidModuleVersion = version.Equals(moduleVersion);
 
                     if (isValidModuleVersion)
                     {
