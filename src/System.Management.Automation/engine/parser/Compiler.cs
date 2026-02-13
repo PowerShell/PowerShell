@@ -126,6 +126,18 @@ namespace System.Management.Automation.Language
         internal static readonly MethodInfo EnumerableOps_GetSlice =
             typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.GetSlice), StaticFlags);
 
+        internal static readonly MethodInfo EnumerableOps_GetTupleSlice =
+            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.GetTupleSlice), StaticFlags);
+
+        internal static readonly MethodInfo EnumerableOps_GetDeconstructMethod =
+            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.GetDeconstructMethod), StaticFlags);
+
+        internal static readonly MethodInfo EnumerableOps_InvokeDeconstruct =
+            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.InvokeDeconstruct), StaticFlags);
+
+        internal static readonly MethodInfo EnumerableOps_GetDeconstructSlice =
+            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.GetDeconstructSlice), StaticFlags);
+
         internal static readonly MethodInfo EnumerableOps_MethodInvoker =
             typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.MethodInvoker), StaticFlags);
 
@@ -284,6 +296,12 @@ namespace System.Management.Automation.Language
 
         internal static readonly MethodInfo IList_get_Item =
             typeof(IList).GetMethod("get_Item");
+
+        internal static readonly PropertyInfo ITuple_Length =
+            typeof(ITuple).GetProperty(nameof(ITuple.Length));
+
+        internal static readonly MethodInfo ITuple_get_Item =
+            typeof(ITuple).GetMethod("get_Item");
 
         internal static readonly MethodInfo InterpreterError_NewInterpreterException =
             typeof(InterpreterError).GetMethod(nameof(InterpreterError.NewInterpreterException), StaticFlags);
