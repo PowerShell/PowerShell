@@ -41,10 +41,10 @@ This skill describes a **sequential 6-step analysis workflow**. Skipping steps o
 
 ```powershell
 # Automatically runs Steps 1-6 in order, preventing skipping
-./tools/analyze-pr-test-failures.ps1 -PR <PR_NUMBER>
+./.github/skills/analyze-pester-failures/scripts/analyze-pr-test-failures.ps1 -PR <PR_NUMBER>
 
 # Example:
-./tools/analyze-pr-test-failures.ps1 -PR 26800
+./.github/skills/analyze-pester-failures/scripts/analyze-pr-test-failures.ps1 -PR 26800
 ```
 
 This script:
@@ -179,7 +179,7 @@ Each step depends on the previous one. Skipping or re-ordering steps causes inco
 ### Recommended: Use the Automated Script
 
 ```powershell
-./tools/analyze-pr-test-failures.ps1 -PR <PR_NUMBER>
+./.github/skills/analyze-pester-failures/scripts/analyze-pr-test-failures.ps1 -PR <PR_NUMBER>
 ```
 
 This enforces the workflow and prevents skipping.

@@ -36,15 +36,15 @@
     Force re-download of artifacts and logs, even if they already exist
 
 .EXAMPLE
-    .\tools\analyze-pr-test-failures.ps1 -PR 26800
+    .\.github\skills\analyze-pester-failures\scripts\analyze-pr-test-failures.ps1 -PR 26800
     Analyzes PR #26800 and saves results to ./pester-analysis-PR26800
 
 .EXAMPLE
-    .\tools\analyze-pr-test-failures.ps1 -PR 26800 -Interactive
+    .\.github\skills\analyze-pester-failures\scripts\analyze-pr-test-failures.ps1 -PR 26800 -Interactive
     Interactive mode: shows failures and prompts for next steps
 
 .EXAMPLE
-    .\tools\analyze-pr-test-failures.ps1 -PR 26800 -ForceDownload
+    .\.github\skills\analyze-pester-failures\scripts\analyze-pr-test-failures.ps1 -PR 26800 -ForceDownload
     Re-download all logs and artifacts, skipping the cache
 
 .NOTES
@@ -80,7 +80,7 @@ $colors = @{
 
 function Write-Step {
     param([string]$text, [int]$number)
-    Write-Host "`n[$number/5] $text" -ForegroundColor $colors.Step -BackgroundColor Black
+    Write-Host "`n[$number/6] $text" -ForegroundColor $colors.Step -BackgroundColor Black
 }
 
 function Write-Result {
@@ -395,12 +395,12 @@ if (-not (Test-Path $logsDir)) {
 }
 
 if ($Interactive) {
-    Write-Host "`nPress Enter to continue to Step 5..."
+    Write-Host "`nPress Enter to continue to Step 6..."
     Read-Host | Out-Null
 }
 
-# STEP 5: Generate Recommendations
-Write-Step "Generate recommendations" 5
+# STEP 6: Generate Recommendations
+Write-Step "Generate recommendations" 6
 
 $recommendations = @()
 
