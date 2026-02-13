@@ -4,6 +4,7 @@
 #nullable enable
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Management.Automation;
 using System.Reflection;
@@ -90,16 +91,14 @@ namespace Microsoft.PowerShell
                 return;
             }
 
-            bool isLinux = Platform.IsLinux;
-
             // The first byte (ASCII char) of the name of this process, used to detect '-' for login
             byte procNameFirstByte;
 
             // The path to the executable this process was started from
-            string? pwshPath;
+            string pwshPath;
 
             // On Linux, we can simply use the /proc filesystem
-            if (isLinux)
+            if (Platform.IsLinux)
             {
                 // Read the process name byte
                 using (FileStream fs = File.OpenRead("/proc/self/cmdline"))
@@ -113,53 +112,42 @@ namespace Microsoft.PowerShell
                     return;
                 }
 
-                // Read the symlink to the startup executable
-                IntPtr linkPathPtr = Marshal.AllocHGlobal(LINUX_PATH_MAX);
-                IntPtr bufSize = ReadLink("/proc/self/exe", linkPathPtr, (UIntPtr)LINUX_PATH_MAX);
-                pwshPath = Marshal.PtrToStringAnsi(linkPathPtr, (int)bufSize);
-                Marshal.FreeHGlobal(linkPathPtr);
-
-                ArgumentNullException.ThrowIfNull(pwshPath);
+                unsafe
+                {
+                    // Read the symlink to the startup executable
+                    byte* linkPathPtr = (byte*)NativeMemory.Alloc(LINUX_PATH_MAX);
+                    nint len = ReadLink("/proc/self/exe", linkPathPtr, LINUX_PATH_MAX);
+                    pwshPath = new string((sbyte*)linkPathPtr, 0, checked((int)len));
+                    NativeMemory.Free(linkPathPtr);
+                }
 
                 // exec pwsh
                 ThrowOnFailure("exec", ExecPwshLogin(args, pwshPath, isMacOS: false));
                 return;
             }
 
-            // At this point, we are on macOS
+            Debug.Assert(Platform.IsMacOS);
 
-            // Set up the mib array and the query for process maximum args size
-            Span<int> mib = [MACOS_CTL_KERN, MACOS_KERN_ARGMAX];
-            int size = IntPtr.Size / 2;
-            int argmax = 0;
-
-            // Get the process args size
             unsafe
             {
-                fixed (int *mibptr = mib)
+                // Set up the mib array and the query for process maximum args size
+                nuint argmax = 0;
+                nuint size = (uint)sizeof(nuint);
+
+                // Get the process args size
+                ThrowOnFailure(nameof(argmax), SysCtl([MACOS_CTL_KERN, MACOS_KERN_ARGMAX], &argmax, &size, null, 0));
+
+                // Get the PID so we can query this process' args
+                int pid = GetPid();
+
+                // The following logic is based on https://gist.github.com/nonowarn/770696
+
+                // Now read the process args into the allocated space
+                byte* procargs = (byte*)NativeMemory.Alloc(argmax);
+                byte* executablePathPtr = null;
+                try
                 {
-                    ThrowOnFailure(nameof(argmax), SysCtl(mibptr, mib.Length, &argmax, &size, IntPtr.Zero, 0));
-                }
-            }
-
-            // Get the PID so we can query this process' args
-            int pid = GetPid();
-
-            // The following logic is based on https://gist.github.com/nonowarn/770696
-
-            // Now read the process args into the allocated space
-            IntPtr procargs = Marshal.AllocHGlobal(argmax);
-            IntPtr executablePathPtr = IntPtr.Zero;
-            try
-            {
-                mib = [MACOS_CTL_KERN, MACOS_KERN_PROCARGS2, pid];
-
-                unsafe
-                {
-                    fixed (int *mibptr = mib)
-                    {
-                        ThrowOnFailure(nameof(procargs), SysCtl(mibptr, mib.Length, procargs.ToPointer(), &argmax, IntPtr.Zero, 0));
-                    }
+                    ThrowOnFailure(nameof(procargs), SysCtl([MACOS_CTL_KERN, MACOS_KERN_PROCARGS2, pid], procargs, &argmax, null, 0));
 
                     // The memory block we're reading is a series of null-terminated strings
                     // that looks something like this:
@@ -179,33 +167,33 @@ namespace Microsoft.PowerShell
 
                     // We don't care about argc's value, since argv[0] must always exist.
                     // Skip over argc, but remember where exec_path is for later
-                    executablePathPtr = IntPtr.Add(procargs, sizeof(int));
+                    executablePathPtr = procargs + sizeof(int);
 
                     // Skip over exec_path
-                    byte *argvPtr = (byte *)executablePathPtr;
-                    while (*argvPtr != 0) { argvPtr++; }
-                    while (*argvPtr == 0) { argvPtr++; }
+                    byte* argvPtr = executablePathPtr;
+                    while (*argvPtr != 0)
+                    { argvPtr++; }
+                    while (*argvPtr == 0)
+                    { argvPtr++; }
 
                     // First char in argv[0]
                     procNameFirstByte = *argvPtr;
-                }
 
-                if (!IsLogin(procNameFirstByte, args))
+                    if (!IsLogin(procNameFirstByte, args))
+                    {
+                        return;
+                    }
+
+                    // Get the pwshPath from exec_path
+                    pwshPath = new string((sbyte*)executablePathPtr);
+
+                    // exec pwsh
+                    ThrowOnFailure("exec", ExecPwshLogin(args, pwshPath, isMacOS: true));
+                }
+                finally
                 {
-                    return;
+                    NativeMemory.Free(procargs);
                 }
-
-                // Get the pwshPath from exec_path
-                pwshPath = Marshal.PtrToStringAnsi(executablePathPtr);
-
-                ArgumentNullException.ThrowIfNull(pwshPath);
-
-                // exec pwsh
-                ThrowOnFailure("exec", ExecPwshLogin(args, pwshPath, isMacOS: true));
-            }
-            finally
-            {
-                Marshal.FreeHGlobal(procargs);
             }
         }
 
@@ -445,14 +433,14 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="pathname">The path to the symlink to read.</param>
         /// <param name="buf">Pointer to a buffer to fill with the result.</param>
-        /// <param name="size">The size of the buffer we have supplied.</param>
+        /// <param name="bufsiz">The size of the buffer we have supplied.</param>
         /// <returns>The number of bytes placed in the buffer.</returns>
         [DllImport("libc",
             EntryPoint = "readlink",
             CallingConvention = CallingConvention.Cdecl,
             CharSet = CharSet.Ansi,
             SetLastError = true)]
-        private static extern IntPtr ReadLink(string pathname, IntPtr buf, UIntPtr size);
+        private static extern unsafe nint ReadLink(string pathname, byte* buf, nuint bufsiz);
 
         /// <summary>
         /// The `getpid` POSIX syscall we use to quickly get the current process PID on macOS.
@@ -482,19 +470,27 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// The `sysctl` BSD sycall used to get system information on macOS.
         /// </summary>
-        /// <param name="mib">The Management Information Base name, used to query information.</param>
-        /// <param name="mibLength">The length of the MIB name.</param>
+        /// <param name="name">The Management Information Base name, used to query information.</param>
+        /// <param name="namelen">The length of the MIB name.</param>
         /// <param name="oldp">The object passed out of sysctl (may be null)</param>
         /// <param name="oldlenp">The size of the object passed out of sysctl.</param>
         /// <param name="newp">The object passed in to sysctl.</param>
-        /// <param name="newlenp">The length of the object passed in to sysctl.</param>
+        /// <param name="newlen">The length of the object passed in to sysctl.</param>
         /// <returns></returns>
         [DllImport("libc",
             EntryPoint = "sysctl",
             CallingConvention = CallingConvention.Cdecl,
             CharSet = CharSet.Ansi,
             SetLastError = true)]
-        private static extern unsafe int SysCtl(int *mib, int mibLength, void *oldp, int *oldlenp, IntPtr newp, int newlenp);
+        private static extern unsafe int SysCtl(int* name, uint namelen, void* oldp, nuint* oldlenp, void* newp, nuint newlen);
+
+        private static unsafe int SysCtl(Span<int> mib, void* oldp, nuint* oldlenp, void* newp, nuint newlen)
+        {
+            fixed (int* name = &MemoryMarshal.GetReference(mib))
+            {
+                return SysCtl(name, (uint)mib.Length, oldp, oldlenp, newp, newlen);
+            }
+        }
 #endif
     }
 }
