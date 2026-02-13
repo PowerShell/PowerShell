@@ -381,7 +381,7 @@ Based on your analysis:
 | Finding | Recommendation |
 |---------|-----------------|
 | Test logic is wrong | "Test assertion on line X is incorrect. Test expects Y but function correctly returns Z. Update test expectation." |
-| Tested code has bug | "Function at [file.ps1#L42](file.ps1#L42) has logic error. When X happens, returns Y instead of Z. Fix the condition." |
+| Tested code has bug | "Function at file.ps1#L42 has logic error. When X happens, returns Y instead of Z. Fix the condition." |
 | Missing test setup | "Test setup incomplete. Mock for dependency Y is not configured. Add `Mock Get-Y -MockWith { ... }`" |
 | Environment issue | "Test is Windows-specific but running on Linux. Either add platform check or skip on non-Windows." |
 | Flaky test | "Test is timing-sensitive (sleep 1 second). Increase timeout or use better synchronization." |
