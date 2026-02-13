@@ -297,5 +297,3 @@ If any of these is false, your test may be passing but not "working" properly.
 
 - [Pester Documentation](https://pester.dev/)
 - [Set-ItResult Documentation](https://pester.dev/docs/commands/Set-ItResult)
-- [Test Isolation and Dependencies](../test-isolation-guide.md)
-- [Flaky Test Patterns](../flaky-tests-guide.md)
