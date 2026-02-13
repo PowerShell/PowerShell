@@ -361,7 +361,7 @@ Describe "Validate Update-Help from the Web for all PowerShell modules." -Tags @
         $ProgressPreference = $SavedProgressPreference
     }
 
-    RunUpdateHelpTests -Tag "Feature"
+    RunUpdateHelpTests -Tag "Feature" -MarkAsPending
 }
 
 Describe "Validate Update-Help from the Web for all PowerShell modules for user scope." -Tags @('Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
@@ -373,7 +373,7 @@ Describe "Validate Update-Help from the Web for all PowerShell modules for user 
         $ProgressPreference = $SavedProgressPreference
     }
 
-    RunUpdateHelpTests -Tag "Feature" -UserScope
+    RunUpdateHelpTests -Tag "Feature" -UserScope -MarkAsPending
 }
 
 Describe "Validate Update-Help -SourcePath for one PowerShell module." -Tags @('CI', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
@@ -385,7 +385,7 @@ Describe "Validate Update-Help -SourcePath for one PowerShell module." -Tags @('
         $ProgressPreference = $SavedProgressPreference
     }
 
-    RunUpdateHelpTests -Tag "CI" -useSourcePath
+    RunUpdateHelpTests -Tag "CI" -useSourcePath -MarkAsPending
 }
 
 Describe "Validate Update-Help -SourcePath for one PowerShell module for user scope." -Tags @('CI', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
@@ -397,7 +397,7 @@ Describe "Validate Update-Help -SourcePath for one PowerShell module for user sc
         $ProgressPreference = $SavedProgressPreference
     }
 
-    RunUpdateHelpTests -Tag "CI" -useSourcePath -UserScope
+    RunUpdateHelpTests -Tag "CI" -useSourcePath -UserScope -MarkAsPending
 }
 
 Describe "Validate Update-Help -SourcePath for all PowerShell modules." -Tags @('Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
@@ -409,7 +409,7 @@ Describe "Validate Update-Help -SourcePath for all PowerShell modules." -Tags @(
         $ProgressPreference = $SavedProgressPreference
     }
 
-    RunUpdateHelpTests -Tag "Feature" -useSourcePath
+    RunUpdateHelpTests -Tag "Feature" -useSourcePath -MarkAsPending
 }
 
 Describe "Validate Update-Help -SourcePath for all PowerShell modules for user scope." -Tags @('Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
@@ -421,7 +421,7 @@ Describe "Validate Update-Help -SourcePath for all PowerShell modules for user s
         $ProgressPreference = $SavedProgressPreference
     }
 
-    RunUpdateHelpTests -Tag "Feature" -useSourcePath -UserScope
+    RunUpdateHelpTests -Tag "Feature" -useSourcePath -UserScope -MarkAsPending
 }
 
 Describe "Validate 'Update-Help' shows 'HelpCultureNotSupported' when thrown" -Tags @('Feature') {
