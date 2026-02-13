@@ -31,25 +31,44 @@ Use this skill when you need to:
 
 ## Quick Start
 
+### ⚠️ CRITICAL: The Workflow Must Be Followed IN ORDER
+
+This skill describes a **sequential 6-step analysis workflow**. Skipping steps or jumping around leads to **incomplete analysis and incorrect conclusions**.
+
+**The Problem**: It's easy to skip to Step 4 or 5 without doing Steps 1-2, resulting in missing data and bad conclusions.
+
+**The Solution**: Use the automated analysis script to enforce the workflow:
+
 ```powershell
-# List the PR's test jobs and their status
-gh pr view <PR_NUMBER> --json 'statusCheckRollup' | jq '.[] | select(.name | contains("Test") or contains("test"))'
+# Automatically runs Steps 1-6 in order, preventing skipping
+./tools/analyze-pr-test-failures.ps1 -PR <PR_NUMBER>
 
-# Get details for a failing test job
-gh pr view <PR_NUMBER> --json 'statusCheckRollup' | jq '.[] | select(.conclusion == "FAILURE")'
+# Example:
+./tools/analyze-pr-test-failures.ps1 -PR 26800
+```
 
-# Fetch logs from the failing test job  
-gh run view <RUN_ID> --log | Tee-Object -FilePath test-logs.txt
+This script:
+1. ✓ Fetches PR status automatically
+2. ✓ Downloads artifacts (can't skip, depends on Step 1)
+3. ✓ Extracts failures (can't skip, depends on Step 2)
+4. ✓ Analyzes error messages
+5. ✓ Documents context
+6. ✓ Generates recommendations
 
-# Extract test failure information
-Select-String "FAILED|Error|Exception|Should -" test-logs.txt | head -20
+**Only use the manual commands below if you fully understand the workflow.**
 
-# Download test result artifacts (XML, logs)
+### Manual Workflow (for reference)
+
+```powershell
+# Step 1: Identify the failing job
+gh pr view <PR_NUMBER> --json 'statusCheckRollup' | ConvertFrom-Json | Where-Object { $_.conclusion -eq 'FAILURE' }
+
+# Step 2: Download artifacts (extract RUN_ID from Step 1)
 gh run download <RUN_ID> --dir ./artifacts
-Get-ChildItem ./artifacts -Filter "*.xml" | ForEach-Object {
-    [xml]$xml = Get-Content $_.FullName
-    Write-Host "$($_.Name): total=$($xml.'test-results'.total) failures=$($xml.'test-results'.failures)"
-}
+gh run view <RUN_ID> --log > test-logs.txt
+
+# Step 3-6: Extract, analyze, and interpret
+# (See Analysis Workflow section below)
 ```
 
 ## Common Test Failure Analysis Approaches
@@ -138,16 +157,32 @@ Tests that sometimes pass, sometimes fail indicate race conditions or environmen
 
 ## Analysis Workflow
 
-### Step 1: Identify the Failing Test Job
+### ⚠️ Important: These Steps MUST Be Followed In Order
 
-From the PR, find which test job failed:
+Each step depends on the previous one. Skipping or re-ordering steps causes incomplete analysis:
+
+- **Step 1** (identify jobs) → You get the RUN_ID needed for Step 2
+- **Step 2** (download) → You get the artifacts needed for Step 3  
+- **Step 3** (extract) → You discover what failures exist for Step 4
+- **Step 4** (read messages) → You understand the errors to analyze in Step 5
+- **Step 5** (context) → You gather information to make recommendations in Step 6
+- **Step 6** (interpret) → You use all above to recommend fixes
+
+**Real Problem We Had**:
+- ❌ Jumped to Step 3 without Step 1-2
+- ❌ Used random test data from context instead of downloading PR artifacts
+- ❌ Skipped Steps 5-6 entirely
+- ❌ Made recommendations without full context
+
+**Result**: Wrong analysis and recommendations that didn't actually fix the problem.
+
+### Recommended: Use the Automated Script
 
 ```powershell
-gh pr view <PR_NUMBER> --json 'statusCheckRollup' | 
-  ConvertFrom-Json | 
-  Where-Object { $_.conclusion -eq 'FAILURE' } | 
-  Select-Object name, detailsUrl
+./tools/analyze-pr-test-failures.ps1 -PR <PR_NUMBER>
 ```
+
+This enforces the workflow and prevents skipping.
 
 ### Step 2: Get Test Results
 
