@@ -1,19 +1,25 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+
 using namespace System.Diagnostics
+
+using module ..\..\tools\Modules\HelpersCommon
+using module ..\..\tools\Modules\HelpersRemoting
+
+Set-StrictMode -Version 3
+$ErrorActionPreference = "Stop"
+# disable automatic exceptions for native commands, errors are handled manually for each test
+$PSNativeCommandUseErrorActionPreference = $false
+
+$powershell = Join-Path -Path $PSHOME -ChildPath "pwsh"
+
 
 # Minishell (Singleshell) is a powershell concept.
 # Its primary use-case is when somebody executes a scriptblock in the new powershell process.
 # The objects are automatically marshelled to the child process and
 # back to the parent session, so users can avoid custom
 # serialization to pass objects between two processes.
-
 Describe 'minishell for native executables' -Tag 'CI' {
-
-    BeforeAll {
-        $powershell = Join-Path -Path $PSHOME -ChildPath "pwsh"
-    }
-
     Context 'Streams from minishell' {
 
         It 'gets a hashtable object from minishell' {
@@ -24,7 +30,6 @@ Describe 'minishell for native executables' -Tag 'CI' {
         }
 
         It 'gets the error stream from minishell' {
-            $PSNativeCommandUseErrorActionPreference = $false
             $output = & $powershell -noprofile { Write-Error 'foo' } 2>&1
             ($output | Measure-Object).Count | Should -Be 1
             $output | Should -BeOfType System.Management.Automation.ErrorRecord
@@ -54,14 +59,13 @@ Describe 'minishell for native executables' -Tag 'CI' {
 Describe "ConsoleHost unit tests" -tags "Feature" {
 
     BeforeAll {
-        $powershell = Join-Path -Path $PSHOME -ChildPath "pwsh"
         $ExitCodeBadCommandLineParameter = 64
 
         function NewProcessStartInfo([string]$CommandLine, [switch]$RedirectStdIn)
         {
             return [ProcessStartInfo]@{
                 FileName               = $powershell
-                Arguments              = $CommandLine
+                Arguments              = "-noprofile $CommandLine"
                 RedirectStandardInput  = $RedirectStdIn
                 RedirectStandardOutput = $true
                 RedirectStandardError  = $true
@@ -102,7 +106,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
 
     Context "ShellInterop" {
         It "Verify Parsing Error Output Format Single Shell should throw exception" {
-            { & $powershell -outp blah -comm { $input } } | Should -Throw -ErrorId "IncorrectValueForFormatParameter"
+            { & $powershell -noprofile -outputformat blah -command { $input } } | Should -Throw -ErrorId "IncorrectValueForFormatParameter"
         }
 
         It "Verify Validate Output Format As Text Explicitly Child Single Shell does not throw" {
@@ -112,7 +116,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
         }
 
         It "Verify Parsing Error Input Format Single Shell should throw exception" {
-            { & $powershell -input blah -comm { $input } } | Should -Throw -ErrorId "IncorrectValueForFormatParameter"
+            { & $powershell -noprofile -inputformat blah -command { $input } } | Should -Throw -ErrorId "IncorrectValueForFormatParameter"
         }
     }
 
@@ -145,6 +149,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             @{value = "2"},
             @{value = "-command 1-1"}
         ) {
+            param($value)
             $currentVersion = "PowerShell " + $PSVersionTable.GitCommitId.ToString()
             $observed = & $powershell -version $value 2>&1
             $observed | Should -Be $currentVersion
@@ -227,7 +232,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
         It "-File should return exit code from script" {
             $Filename = 'test.ps1'
             Set-Content -Path $testdrive/$Filename -Value 'exit 123'
-            & $powershell $testdrive/$Filename
+            & $powershell -NoProfile $testdrive/$Filename
             $LASTEXITCODE | Should -Be 123
         }
 
@@ -294,13 +299,13 @@ export $envVarName='$guid'
         }
 
         It "Doesn't falsely recognise -Login when elsewhere in the invocation" {
-            $result = & $powershell -nop -c 'Write-Output "-login"'
+            $result = & $powershell -noprofile -command 'Write-Output "-login"'
             $result | Should -BeExactly '-login'
             $LASTEXITCODE | Should -Be 0
         }
 
         It "Doesn't falsely recognise -Login when used after -Command" {
-            $result = & $powershell -nop -c 'Write-Output' -Login
+            $result = & $powershell -noprofile -command 'Write-Output' -Login
             $result | Should -BeExactly '-Login'
             $LASTEXITCODE | Should -Be 0
         }
@@ -381,8 +386,8 @@ export $envVarName='$guid'
             & $powershell -NoProfile -SettingsFile $CustomSettingsFile -Command {Set-ExecutionPolicy -ExecutionPolicy Undefined -Scope LocalMachine }
 
             # ensure the setting was removed from the settings file.
-            $content = (Get-Content -Path $CustomSettingsFile | ConvertFrom-Json)
-            $content.'Microsoft.PowerShell:ExecutionPolicy' | Should -Be $null
+            $content = (Get-Content -Path $CustomSettingsFile | ConvertFrom-Json -AsHashtable)
+            $content['Microsoft.PowerShell:ExecutionPolicy'] | Should -Be $null
         }
     }
 
@@ -487,7 +492,7 @@ export $envVarName='$guid'
 
     Context "Redirected standard output" {
         It "Simple redirected output" {
-            $si = NewProcessStartInfo "-noprofile -c 1+1"
+            $si = NewProcessStartInfo "-command 1+1"
             $process = RunPowerShell $si
             $process.StandardOutput.ReadToEnd() | Should -Be 2
             EnsureChildHasExited $process
@@ -500,28 +505,28 @@ export $envVarName='$guid'
         # So none of these tests should close StandardInput
 
         It "Redirected input w/ implicit -Command w/ -NonInteractive" {
-            $si = NewProcessStartInfo "-NonInteractive -noprofile -c 1+1" -RedirectStdIn
+            $si = NewProcessStartInfo "-NonInteractive -command 1+1" -RedirectStdIn
             $process = RunPowerShell $si
             $process.StandardOutput.ReadToEnd() | Should -Be 2
             EnsureChildHasExited $process
         }
 
         It "Redirected input w/ implicit -Command w/o -NonInteractive" {
-            $si = NewProcessStartInfo "-noprofile -c 1+1" -RedirectStdIn
+            $si = NewProcessStartInfo "-command 1+1" -RedirectStdIn
             $process = RunPowerShell $si
             $process.StandardOutput.ReadToEnd() | Should -Be 2
             EnsureChildHasExited $process
         }
 
         It "Redirected input w/ explicit -Command w/ -NonInteractive" {
-            $si = NewProcessStartInfo "-NonInteractive -noprofile -Command 1+1" -RedirectStdIn
+            $si = NewProcessStartInfo "-NonInteractive -Command 1+1" -RedirectStdIn
             $process = RunPowerShell $si
             $process.StandardOutput.ReadToEnd() | Should -Be 2
             EnsureChildHasExited $process
         }
 
         It "Redirected input w/ explicit -Command w/o -NonInteractive" {
-            $si = NewProcessStartInfo "-noprofile -Command 1+1" -RedirectStdIn
+            $si = NewProcessStartInfo "-Command 1+1" -RedirectStdIn
             $process = RunPowerShell $si
             $process.StandardOutput.ReadToEnd() | Should -Be 2
             EnsureChildHasExited $process
@@ -529,7 +534,7 @@ export $envVarName='$guid'
 
         It "Redirected input w/ -File w/ -NonInteractive" {
             '1+1' | Out-File -Encoding Ascii -FilePath TestDrive:test.ps1 -Force
-            $si = NewProcessStartInfo "-noprofile -NonInteractive -File $testDrive\test.ps1" -RedirectStdIn
+            $si = NewProcessStartInfo "-NonInteractive -File $testDrive\test.ps1" -RedirectStdIn
             $process = RunPowerShell $si
             $process.StandardOutput.ReadToEnd() | Should -Be 2
             EnsureChildHasExited $process
@@ -537,7 +542,7 @@ export $envVarName='$guid'
 
         It "Redirected input w/ -File w/o -NonInteractive" {
             '1+1' | Out-File -Encoding Ascii -FilePath TestDrive:test.ps1 -Force
-            $si = NewProcessStartInfo "-noprofile -File $testDrive\test.ps1" -RedirectStdIn
+            $si = NewProcessStartInfo "-File $testDrive\test.ps1" -RedirectStdIn
             $process = RunPowerShell $si
             $process.StandardOutput.ReadToEnd() | Should -Be 2
             EnsureChildHasExited $process
@@ -564,7 +569,7 @@ export $envVarName='$guid'
             @{InteractiveSwitch = " -i"}
         ) {
             param($interactiveSwitch)
-            $si = NewProcessStartInfo "-noprofile -nologo$interactiveSwitch" -RedirectStdIn
+            $si = NewProcessStartInfo "-nologo$interactiveSwitch" -RedirectStdIn
             $process = RunPowerShell $si
             $process.StandardInput.Write("`$function:prompt = { 'PS> ' }`n")
             $null = $process.StandardOutput.ReadLine()
@@ -586,7 +591,7 @@ export $envVarName='$guid'
         }
 
         It "Interactive redirected input w/ initial command" -Pending:($IsWindows) {
-            $si = NewProcessStartInfo "-noprofile -noexit -c ""`$function:prompt = { 'PS> ' }""" -RedirectStdIn
+            $si = NewProcessStartInfo "-noexit -c ""`$function:prompt = { 'PS> ' }""" -RedirectStdIn
             $process = RunPowerShell $si
             $process.StandardInput.Write("1+1`n")
             $process.StandardOutput.ReadLine() | Should -Be "PS> 1+1"
@@ -600,7 +605,7 @@ export $envVarName='$guid'
         }
 
         It "Redirected input explicit prompting (-File -)" -Pending:($IsWindows) {
-            $si = NewProcessStartInfo "-noprofile -" -RedirectStdIn
+            $si = NewProcessStartInfo "-" -RedirectStdIn
             $process = RunPowerShell $si
             $process.StandardInput.Write("`$function:prompt = { 'PS> ' }`n")
             $null = $process.StandardOutput.ReadLine()
@@ -613,7 +618,7 @@ export $envVarName='$guid'
         }
 
         It "Redirected input no prompting (-Command -)" -Pending:($IsWindows) {
-            $si = NewProcessStartInfo "-noprofile -Command -" -RedirectStdIn
+            $si = NewProcessStartInfo "-Command -" -RedirectStdIn
             $process = RunPowerShell $si
             $process.StandardInput.Write("1+1`n")
             $process.StandardOutput.ReadLine() | Should -Be "2"
@@ -646,7 +651,7 @@ foo
         }
 
         It "Redirected input w/ nested prompt" -Pending:($IsWindows) {
-            $si = NewProcessStartInfo "-noprofile -noexit -c ""`$function:prompt = { 'PS' + ('>'*(`$NestedPromptLevel+1)) + ' ' }""" -RedirectStdIn
+            $si = NewProcessStartInfo "-noexit -c ""`$function:prompt = { 'PS' + ('>'*(`$NestedPromptLevel+1)) + ' ' }""" -RedirectStdIn
             $process = RunPowerShell $si
             $process.StandardInput.Write("`$PSStyle.OutputRendering='plaintext'`n")
             $null = $process.StandardOutput.ReadLine()
@@ -726,14 +731,14 @@ namespace StackTest {
 
     Context "HOME environment variable" {
         It "Should start if HOME is not defined" -Skip:($IsWindows) {
-            bash -c "unset HOME;$powershell -c '1+1'" | Should -BeExactly 2
+            bash -c "unset HOME;$powershell -noprofile -command '1+1'" | Should -BeExactly 2
         }
 
         It "Same user should use the same temporary HOME directory for different sessions" -Skip:($IsWindows) {
             $results = bash -c @"
 unset HOME;
-$powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDirectory([System.Management.Automation.Platform+XDG_Type]::DEFAULT)';
-$powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDirectory([System.Management.Automation.Platform+XDG_Type]::DEFAULT)';
+$powershell -noprofile -command '[System.Management.Automation.Platform]::SelectProductNameForDirectory([System.Management.Automation.Platform+XDG_Type]::DEFAULT)';
+$powershell -noprofile -command '[System.Management.Automation.Platform]::SelectProductNameForDirectory([System.Management.Automation.Platform+XDG_Type]::DEFAULT)';
 "@
             $results | Should -HaveCount 2
             $results[0] | Should -BeExactly $results[1]
@@ -750,7 +755,7 @@ $powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDir
         }
 
         It "powershell starts if PATH is not set" -Skip:($IsWindows) {
-            bash -c "unset PATH;$powershell -nop -c '1+1'" | Should -BeExactly 2
+            bash -c "unset PATH;$powershell -noprofile -command '1+1'" | Should -BeExactly 2
         }
     }
 
@@ -802,7 +807,7 @@ $powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDir
         }
 
         It "Error case if -WorkingDirectory isn't given argument as last on command line" {
-            $output = & $powershell -WorkingDirectory 2>&1
+            $output = & $powershell -NoProfile -WorkingDirectory 2>&1
             $LASTEXITCODE | Should -Be $ExitCodeBadCommandLineParameter
             $output | Should -Not -BeNullOrEmpty
         }
@@ -822,7 +827,8 @@ $powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDir
 "@ > $PROFILE
 
             try {
-                $out = & $powershell -workingdirectory ~ -c '(Get-Location).Path'
+                # -noprofile intentionally missing
+                $out = & $powershell -workingdirectory ~ -command '(Get-Location).Path'
                 $out | Should -HaveCount 2
                 $out[0] | Should -BeExactly (Get-Item ~).FullName
                 $out[1] | Should -BeExactly "$testdrive"
@@ -845,14 +851,14 @@ $powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDir
             $pipePath = Get-PipePath $pipeName
 
             # The pipePath should be created by the time the -Command is executed.
-            & $powershell -CustomPipeName $pipeName -Command "Test-Path '$pipePath'" | Should -BeTrue
+            & $powershell -noprofile -CustomPipeName $pipeName -Command "Test-Path '$pipePath'" | Should -BeTrue
         }
 
         It "Should throw if CustomPipeName is too long on Linux or macOS" -Skip:($IsWindows) {
             # Generate a string that is larger than the max pipe name length.
             $longPipeName = [string]::new("A", 200)
 
-            "`$PID" | & $powershell -CustomPipeName $longPipeName -c -
+            "`$PID" | & $powershell -noprofile -CustomPipeName $longPipeName -c -
             $LASTEXITCODE | Should -Be $ExitCodeBadCommandLineParameter
         }
     }
@@ -898,7 +904,7 @@ $powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDir
         ) {
             param ($apartment, $switch)
 
-            & $powershell $switch -noprofile -command "[System.Threading.Thread]::CurrentThread.GetApartmentState()" | Should -BeExactly $apartment
+            & $powershell -noprofile $switch -command "[System.Threading.Thread]::CurrentThread.GetApartmentState()" | Should -BeExactly $apartment
         }
 
         It "Should fail to set apartment state to: <switch>" -Skip:($IsWindows -and ![System.Management.Automation.Platform]::IsNanoServer) -TestCases @(
@@ -907,7 +913,7 @@ $powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDir
         ) {
             param ($switch)
 
-            & $powershell $switch -noprofile -command exit
+            & $powershell -noprofile $switch -command exit
             $LASTEXITCODE | Should -Be $ExitCodeBadCommandLineParameter
         }
     }
@@ -1065,7 +1071,7 @@ public enum ShowWindowCommands : int
         }
 
         try {
-            $ps = Start-Process $powershell -ArgumentList "-WindowStyle $WindowStyle -noexit -interactive" -PassThru
+            $ps = Start-Process $powershell -ArgumentList "-noprofile -WindowStyle $WindowStyle -noexit -interactive" -PassThru
             $startTime = Get-Date
             $showCmd = "Unknown"
             while (((Get-Date) - $startTime).TotalSeconds -lt 10 -and $showCmd -ne $WindowStyle) {
@@ -1080,7 +1086,7 @@ public enum ShowWindowCommands : int
     }
 
     It "Invalid -WindowStyle returns error" {
-        & $powershell -WindowStyle invalid
+        & $powershell -noprofile -WindowStyle invalid
         $LASTEXITCODE | Should -Be $ExitCodeBadCommandLineParameter
     }
 }
@@ -1152,7 +1158,6 @@ Describe "Pwsh exe resources tests" -Tag CI {
 
 Describe 'Pwsh startup in directories that contain wild cards' -Tag CI {
     BeforeAll {
-        $powershell = Join-Path -Path $PSHOME -ChildPath "pwsh"
         $dirnames = "[T]est","[Test","T][est","Test"
         $testcases = @()
         foreach ( $d in $dirnames ) {
@@ -1162,7 +1167,7 @@ Describe 'Pwsh startup in directories that contain wild cards' -Tag CI {
     }
 
     It "pwsh can startup in a directory named <dirname>" -TestCases $testcases {
-        param ( $dirname )
+        param ($dirname)
         try {
             Push-Location -LiteralPath "${TESTDRIVE}/${dirname}"
             $result = & $powershell -noprofile -c '(Get-Item .).Name'
