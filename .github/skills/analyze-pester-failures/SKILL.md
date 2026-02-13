@@ -500,7 +500,7 @@ This allows the test to be skipped on Linux/Mac while still running on Windows C
 ## References
 
 - [Pester Testing Framework](https://pester.dev/) — Official documentation, best practices for test writing
-- [Test Files](test/) — PowerShell test suite in repository
+- [Test Files](../../../test/) — PowerShell test suite in repository
 - [GitHub Actions Documentation](https://docs.github.com/en/actions) — Understanding workflow runs and logs
 - [PowerShell Documentation](https://learn.microsoft.com/en-us/powershell/) — Language reference for understanding test code
 
