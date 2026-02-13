@@ -246,17 +246,17 @@ jobs:
 
   - pwsh: |
       Write-Verbose -Verbose "Copying Github Release files in $(Build.ArtifactStagingDirectory)/downloads to use in Release Pipeline"
-      
+
       Write-Verbose -Verbose "Creating output directory for GitHub Release files: $(ob_outputDirectory)/GitHubPackages"
       New-Item -Path $(ob_outputDirectory)/GitHubPackages -ItemType Directory -Force
-      Get-ChildItem -Path "$(Build.ArtifactStagingDirectory)/downloads/*" -Recurse | 
-        Where-Object { $_.Extension -notin '.msix', '.nupkg' -and $_.Name -notmatch '-gc'} | 
+      Get-ChildItem -Path "$(Build.ArtifactStagingDirectory)/downloads/*" -Recurse |
+        Where-Object { $_.Extension -notin '.msix', '.nupkg' -and $_.Name -notmatch '-gc'} |
         Copy-Item -Destination $(ob_outputDirectory)/GitHubPackages -Recurse -Verbose
-      
+
       Write-Verbose -Verbose "Creating output directory for NuGet packages: $(ob_outputDirectory)/NuGetPackages"
       New-Item -Path $(ob_outputDirectory)/NuGetPackages -ItemType Directory -Force
-      Get-ChildItem -Path "$(Build.ArtifactStagingDirectory)/downloads/*" -Recurse | 
-        Where-Object { $_.Extension -eq '.nupkg' } | 
+      Get-ChildItem -Path "$(Build.ArtifactStagingDirectory)/downloads/*" -Recurse |
+        Where-Object { $_.Extension -eq '.nupkg' } |
         Copy-Item -Destination $(ob_outputDirectory)/NuGetPackages -Recurse -Verbose
     displayName: Copy downloads to Artifacts
 
