@@ -121,13 +121,13 @@ jobs:
         $middleURL = ''
         $tagString = "$(ReleaseTag)"
         Write-Verbose -Verbose "Use the following command to push the tag:"
-        if ($tagString -match '-') {
+        if ($tagString -match '-preview') {
           $middleURL = "preview"
         }
         elseif ($tagString -match '(\d+\.\d+)') {
           $middleURL = $matches[1]
         }
-        $endURL = $tagString -replace '[v\.]',''
+        $endURL = $tagString -replace '^v|\.', ''
         $message = "https://github.com/PowerShell/PowerShell/blob/master/CHANGELOG/$middleURL.md#$endURL"
         Write-Verbose -Verbose "git tag -a $(ReleaseTag) $env:BUILD_SOURCEVERSION -m $message"
     displayName: Git Push Tag Command

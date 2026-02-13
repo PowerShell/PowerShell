@@ -18,6 +18,9 @@ Describe "Windows platform file signatures" -Tags 'Feature' {
         $signature | Should -Not -BeNullOrEmpty
         $signature.Status | Should -BeExactly 'Valid'
         $signature.SignatureType | Should -BeExactly 'Catalog'
+        
+        # Verify that SubjectAlternativeName property exists
+        $signature.PSObject.Properties.Name | Should -Contain 'SubjectAlternativeName'
     }
 }
 
@@ -89,6 +92,7 @@ Describe "Windows file content signatures" -Tags @('Feature', 'RequireAdminOnWin
 
     AfterAll {
         if ($shouldSkip) {
+            Pop-DefaultParameterValueStack
             return
         }
 
@@ -184,5 +188,103 @@ Describe "Windows file content signatures" -Tags @('Feature', 'RequireAdminOnWin
         $actual = Get-AuthenticodeSignature -Content $fileBytes -SourcePathOrExtension .ps1
         $actual.SignerCertificate.Thumbprint | Should -Be $certificate.Thumbprint
         $actual.Status | Should -Be 'Valid'
+    }
+
+    It "Verifies SubjectAlternativeName is populated for certificate with SAN" {
+        $session = New-PSSession -UseWindowsPowerShell
+        try {
+            $sanThumbprint = Invoke-Command -Session $session -ScriptBlock {
+                $testPrefix = 'SelfSignedTestSAN'
+
+                $enhancedKeyUsage = [Security.Cryptography.OidCollection]::new()
+                $null = $enhancedKeyUsage.Add('1.3.6.1.5.5.7.3.3')
+
+                $caParams = @{
+                    Extension         = @(
+                        [Security.Cryptography.X509Certificates.X509BasicConstraintsExtension]::new($true, $false, 0, $true),
+                        [Security.Cryptography.X509Certificates.X509KeyUsageExtension]::new('KeyCertSign', $false),
+                        [Security.Cryptography.X509Certificates.X509EnhancedKeyUsageExtension]::new($enhancedKeyUsage, $false)
+                    )
+                    CertStoreLocation = 'Cert:\CurrentUser\My'
+                    NotAfter          = (Get-Date).AddDays(1)
+                    Type              = 'Custom'
+                }
+                $sanCA = PKI\New-SelfSignedCertificate @caParams -Subject "CN=$testPrefix-CA"
+
+                $rootStore = Get-Item -Path Cert:\LocalMachine\Root
+                $rootStore.Open([System.Security.Cryptography.X509Certificates.OpenFlags]::ReadWrite)
+                try {
+                    $rootStore.Add([System.Security.Cryptography.X509Certificates.X509Certificate2]::new($sanCA.RawData))
+                } finally {
+                    $rootStore.Close()
+                }
+
+                $certParams = @{
+                    CertStoreLocation = 'Cert:\CurrentUser\My'
+                    KeyUsage          = 'DigitalSignature'
+                    TextExtension     = @(
+                        "2.5.29.37={text}1.3.6.1.5.5.7.3.3",
+                        "2.5.29.19={text}",
+                        "2.5.29.17={text}DNS=test.example.com&DNS=*.example.com"
+                    )
+                    Type              = 'Custom'
+                }
+                $sanCert = PKI\New-SelfSignedCertificate @certParams -Subject "CN=$testPrefix-Signed" -Signer $sanCA
+
+                $publisherStore = Get-Item -Path Cert:\LocalMachine\TrustedPublisher
+                $publisherStore.Open([System.Security.Cryptography.X509Certificates.OpenFlags]::ReadWrite)
+                try {
+                    $publisherStore.Add([System.Security.Cryptography.X509Certificates.X509Certificate2]::new($sanCert.RawData))
+                } finally {
+                    $publisherStore.Close()
+                }
+
+                $sanCA | Remove-Item
+                $sanCA.Thumbprint, $sanCert.Thumbprint
+            }
+        } finally {
+            $session | Remove-PSSession
+        }
+
+        $sanCARootThumbprint = $sanThumbprint[0]
+        $sanCertThumbprint = $sanThumbprint[1]
+        $sanCertificate = Get-Item -Path Cert:\CurrentUser\My\$sanCertThumbprint
+
+        try {
+            Set-Content -Path testdrive:\test.ps1 -Value 'Write-Output "Test SAN"' -Encoding UTF8NoBOM
+
+            $scriptPath = Join-Path $TestDrive test.ps1
+            $status = Set-AuthenticodeSignature -FilePath $scriptPath -Certificate $sanCertificate
+            $status.Status | Should -Be 'Valid'
+
+            $actual = Get-AuthenticodeSignature -FilePath $scriptPath
+            $actual.SubjectAlternativeName | Should -Not -BeNullOrEmpty
+            ,$actual.SubjectAlternativeName | Should -BeOfType [string[]]
+            $actual.SubjectAlternativeName.Count | Should -Be 2
+            $actual.SubjectAlternativeName[0] | Should -BeExactly 'DNS Name=test.example.com'
+            $actual.SubjectAlternativeName[1] | Should -BeExactly 'DNS Name=*.example.com'
+        } finally {
+            Remove-Item -Path "Cert:\LocalMachine\Root\$sanCARootThumbprint" -Force -ErrorAction Ignore
+            Remove-Item -Path "Cert:\LocalMachine\TrustedPublisher\$sanCertThumbprint" -Force -ErrorAction Ignore
+            Remove-Item -Path "Cert:\CurrentUser\My\$sanCertThumbprint" -Force -ErrorAction Ignore
+        }
+    }
+
+    It "Verifies SubjectAlternativeName is null when certificate has no SAN" {
+        Set-Content -Path testdrive:\test.ps1 -Value 'Write-Output "Test No SAN"' -Encoding UTF8NoBOM
+
+        $scriptPath = Join-Path $TestDrive test.ps1
+        $status = Set-AuthenticodeSignature -FilePath $scriptPath -Certificate $certificate
+        $status.Status | Should -Be 'Valid'
+
+        $actual = Get-AuthenticodeSignature -FilePath $scriptPath
+        $actual.SignerCertificate.Thumbprint | Should -Be $certificate.Thumbprint
+        $actual.Status | Should -Be 'Valid'
+        
+        # Verify that SubjectAlternativeName property exists
+        $actual.PSObject.Properties.Name | Should -Contain 'SubjectAlternativeName'
+        
+        # Verify the content is null when certificate has no SAN extension
+        $actual.SubjectAlternativeName | Should -BeNullOrEmpty
     }
 }

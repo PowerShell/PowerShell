@@ -12,6 +12,8 @@ on:
       - github-mirror
     paths:
       - "**"
+      - "*"
+      - ".globalconfig"
       - "!.github/ISSUE_TEMPLATE/**"
       - "!.dependabot/config.yml"
       - "!.pipelines/**"
@@ -21,15 +23,16 @@ on:
       - master
       - release/**
       - github-mirror
+      - "*-feature"
 # Path filters for PRs need to go into the changes job
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: ${{ contains(github.ref, 'merge')}}
 
 env:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
-  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  DOTNET_NOLOGO: 1
   FORCE_FEATURE: 'False'
   FORCE_PACKAGE: 'False'
   NUGET_KEY: none
@@ -50,9 +53,11 @@ jobs:
     # Set job outputs to values from filter step
     outputs:
       source: ${{ steps.filter.outputs.source }}
+      buildModuleChanged: ${{ steps.filter.outputs.buildModuleChanged }}
+      packagingChanged: ${{ steps.filter.outputs.packagingChanged }}
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           persist-credentials: false
 
@@ -62,14 +67,28 @@ jobs:
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  merge_conflict_check:
+    name: Check for Merge Conflict Markers
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' && (startsWith(github.repository_owner, 'azure') || github.repository_owner == 'PowerShell')
+    permissions:
+      pull-requests: read
+      contents: read
+    steps:
+      - name: checkout
+        uses: actions/checkout@v6
+
+      - name: Check for merge conflict markers
+        uses: "./.github/actions/infrastructure/merge-conflict-checker"
+
   ci_build:
     name: Build PowerShell
     runs-on: ubuntu-latest
     needs: changes
-    if: ${{ needs.changes.outputs.source == 'true' }}
+    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 1000
 
@@ -80,11 +99,11 @@ jobs:
     needs:
       - ci_build
       - changes
-    if: ${{ needs.changes.outputs.source == 'true' }}
+    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 1000
       - name: Linux Unelevated CI
@@ -92,16 +111,17 @@ jobs:
         with:
           purpose: UnelevatedPesterTests
           tagSet: CI
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   linux_test_elevated_ci:
     name: Linux Elevated CI
     needs:
       - ci_build
       - changes
-    if: ${{ needs.changes.outputs.source == 'true' }}
+    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 1000
       - name: Linux Elevated CI
@@ -109,16 +129,17 @@ jobs:
         with:
           purpose: ElevatedPesterTests
           tagSet: CI
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   linux_test_unelevated_others:
     name: Linux Unelevated Others
     needs:
       - ci_build
       - changes
-    if: ${{ needs.changes.outputs.source == 'true' }}
+    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 1000
       - name: Linux Unelevated Others
@@ -126,16 +147,17 @@ jobs:
         with:
           purpose: UnelevatedPesterTests
           tagSet: Others
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   linux_test_elevated_others:
     name: Linux Elevated Others
     needs:
       - ci_build
       - changes
-    if: ${{ needs.changes.outputs.source == 'true' }}
+    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 1000
       - name: Linux Elevated Others
@@ -143,107 +165,98 @@ jobs:
         with:
           purpose: ElevatedPesterTests
           tagSet: Others
-  verify_xunit:
-    name: Verify xUnit test results
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  xunit_tests:
+    name: xUnit Tests
     needs:
-      - ci_build
       - changes
-    if: ${{ needs.changes.outputs.source == 'true' }}
+    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
+    uses: ./.github/workflows/xunit-tests.yml
+    with:
+      runner_os: ubuntu-latest
+      test_results_artifact_name: testResults-xunit
+
+  infrastructure_tests:
+    name: Infrastructure Tests
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
-          fetch-depth: 1000
-      - name: Verify xUnit test results
-        uses: "./.github/actions/test/verify_xunit"
+          fetch-depth: 1
 
-  analyze:
-    permissions:
-      actions: read  # for github/codeql-action/init to get workflow details
-      contents: read  # for actions/checkout to fetch code
-      security-events: write  # for github/codeql-action/analyze to upload SARIF results
-    name: Analyze
-    runs-on: ubuntu-latest
-    needs: changes
-    if: ${{ needs.changes.outputs.source == 'true' }}
+      - name: Install Pester
+        shell: pwsh
+        run: |
+          Import-Module ./tools/ci.psm1
+          Install-CIPester
 
-    strategy:
-      fail-fast: false
-      matrix:
-        # Override automatic language detection by changing the below list
-        # Supported options are ['csharp', 'cpp', 'go', 'java', 'javascript', 'python']
-        language: ['csharp']
-        # Learn more...
-        # https://docs.github.com/en/github/finding-security-vulnerabilities-and-errors-in-your-code/configuring-code-scanning#overriding-automatic-language-detection
+      - name: Run Infrastructure Tests
+        shell: pwsh
+        run: |
+          $testResultsFolder = Join-Path $PWD "testResults"
+          New-Item -ItemType Directory -Path $testResultsFolder -Force | Out-Null
 
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      with:
-        fetch-depth: '0'
+          $config = New-PesterConfiguration
+          $config.Run.Path = './test/infrastructure/'
+          $config.Run.PassThru = $true
+          $config.TestResult.Enabled = $true
+          $config.TestResult.OutputFormat = 'NUnitXml'
+          $config.TestResult.OutputPath = "$testResultsFolder/InfrastructureTests.xml"
+          $config.Output.Verbosity = 'Detailed'
 
-    - uses: actions/setup-dotnet@v4
-      with:
-        global-json-file: ./global.json
+          $result = Invoke-Pester -Configuration $config
 
-    # Initializes the CodeQL tools for scanning.
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@fca7ace96b7d713c7035871441bd52efbe39e27e # v3.28.19
-      with:
-        languages: ${{ matrix.language }}
-        # If you wish to specify custom queries, you can do so here or in a config file.
-        # By default, queries listed here will override any specified in a config file.
-        # Prefix the list here with "+" to use these queries and those in the config file.
-        # queries: ./path/to/local/query, your-org/your-repo/queries@main
+          if ($result.FailedCount -gt 0 -or $result.Result -eq 'Failed') {
+            throw "Infrastructure tests failed"
+          }
 
-    - run: |
-        Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
-      name: Capture Environment
-      shell: pwsh
+      - name: Publish Test Results
+        uses: "./.github/actions/test/process-pester-results"
+        if: always()
+        with:
+          name: "InfrastructureTests"
+          testResultsFolder: "${{ github.workspace }}/testResults"
 
-    - run: |
-        Import-Module .\tools\ci.psm1
-        Invoke-CIInstall -SkipUser
-      name: Bootstrap
-      shell: pwsh
-
-    - run: |
-        Import-Module .\tools\ci.psm1
-        Invoke-CIBuild
-      name: Build
-      shell: pwsh
-
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@fca7ace96b7d713c7035871441bd52efbe39e27e # v3.28.19
+  ## Temporarily disable the CodeQL analysis on Linux as it doesn't work for .NET SDK 10-rc.2.
+  # analyze:
+  #   name: CodeQL Analysis
+  #   needs: changes
+  #   if: ${{ needs.changes.outputs.source == 'true' }}
+  #   uses: ./.github/workflows/analyze-reusable.yml
+  #   permissions:
+  #     actions: read
+  #     contents: read
+  #     security-events: write
+  #   with:
+  #     runner_os: ubuntu-latest
 
   ready_to_merge:
     name: Linux ready to merge
     needs:
-      - verify_xunit
+      - xunit_tests
       - linux_test_elevated_ci
       - linux_test_elevated_others
       - linux_test_unelevated_ci
       - linux_test_unelevated_others
-      - analyze
+      - linux_packaging
+      - merge_conflict_check
+      - infrastructure_tests
+      # - analyze
     if: always()
     uses: PowerShell/compliance/.github/workflows/ready-to-merge.yml@v1.0.0
     with:
       needs_context: ${{ toJson(needs) }}
-  # TODO: Enable this when we have a Linux packaging workflow
-
-  # ERROR:  While executing gem ... (Gem::FilePermissionError)
-  # You don't have write permissions for the /var/lib/gems/2.7.0 directory.
-  #   WARNING: Installation of gem dotenv 2.8.1 failed! Must resolve manually.
-
-  # linux_packaging:
-  #   name: Attempt Linux Packaging
-  #   needs: ci_build
-  #   runs-on: ubuntu-20.04
-  #   steps:
-  #     - name: checkout
-  #       uses: actions/checkout@v4
-  #       with:
-  #         fetch-depth: 1000
-  #     - name: Verify xUnit test results
-  #       uses: "./.github/actions/test/linux-packaging"
+  linux_packaging:
+    name: Linux Packaging
+    needs:
+      - changes
+    if: ${{ needs.changes.outputs.packagingChanged == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Linux Packaging
+        uses: "./.github/actions/test/linux-packaging"

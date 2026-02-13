@@ -15,8 +15,6 @@ jobs:
   variables:
     - name: HOMEBREW_NO_ANALYTICS
       value: 1
-    - name: runCodesignValidationInjection
-      value: false
     - name: nugetMultiFeedWarnLevel
       value: none
     - name: NugetSecurityAnalysisWarningLevel
@@ -52,14 +50,15 @@ jobs:
   - template: SetVersionVariables.yml@self
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
-      CreateJson: yes
-      UseJson: no
+      CreateJson: no
 
   - template: shouldSign.yml
 
   - template: cloneToOfficialPath.yml
     parameters:
       nativePathRoot: '$(Agent.TempDirectory)'
+
+  - template: rebuild-branch-check.yml@self
 
   - download: CoOrdinatedBuildPipeline
     artifact: macosBinResults-${{ parameters.buildArchitecture }}
@@ -104,7 +103,21 @@ jobs:
       Get-PSOptions | Write-Verbose -Verbose
 
       $metadata = Get-Content "$repoRoot/tools/metadata.json" -Raw | ConvertFrom-Json
-      $LTS = $metadata.LTSRelease.Package
+
+      Write-Verbose -Verbose "metadata:"
+      $metadata | Out-String | Write-Verbose -Verbose
+
+      # Use the rebuild branch check from the template
+      $isRebuildBranch = '$(RebuildBranchCheck.IsRebuildBranch)' -eq 'true'
+
+      # Don't build LTS packages for rebuild branches
+      $LTS = $metadata.LTSRelease.Package -and -not $isRebuildBranch
+
+      if ($isRebuildBranch) {
+        Write-Verbose -Message "Rebuild branch detected, skipping LTS package build" -Verbose
+      }
+
+      Write-Verbose -Verbose "LTS: $LTS"
 
       if ($LTS) {
         Write-Verbose -Message "LTS Release: $LTS"
@@ -116,13 +129,25 @@ jobs:
 
       Start-PSPackage -Type osxpkg -SkipReleaseChecks -MacOSRuntime $macosRuntime -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath -LTS:$LTS
       $pkgNameFilter = "powershell-*$macosRuntime.pkg"
-      $pkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $pkgNameFilter -Recurse -File | Select-Object -ExpandProperty FullName
-      Write-Host "##vso[artifact.upload containerfolder=macos-pkgs;artifactname=macos-pkgs]$pkgPath"
+      Write-Verbose -Verbose "Looking for pkg packages with filter: $pkgNameFilter in '$(Pipeline.Workspace)' to upload..."
+      $pkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $pkgNameFilter -Recurse -File
+
+      foreach($p in $pkgPath) {
+        $file = $p.FullName
+        Write-Verbose -verbose "Uploading $file to macos-pkgs"
+        Write-Host "##vso[artifact.upload containerfolder=macos-pkgs;artifactname=macos-pkgs]$file"
+      }
 
       Start-PSPackage -Type tar -SkipReleaseChecks -MacOSRuntime $macosRuntime -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath -LTS:$LTS
       $tarPkgNameFilter = "powershell-*$macosRuntime.tar.gz"
-      $tarPkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $tarPkgNameFilter -Recurse -File | Select-Object -ExpandProperty FullName
-      Write-Host "##vso[artifact.upload containerfolder=macos-pkgs;artifactname=macos-pkgs]$tarPkgPath"
+      Write-Verbose -Verbose "Looking for tar packages with filter: $tarPkgNameFilter in '$(Pipeline.Workspace)' to upload..."
+      $tarPkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $tarPkgNameFilter -Recurse -File
+
+      foreach($t in $tarPkgPath) {
+        $file = $t.FullName
+        Write-Verbose -verbose "Uploading $file to macos-pkgs"
+        Write-Host "##vso[artifact.upload containerfolder=macos-pkgs;artifactname=macos-pkgs]$file"
+      }
 
     displayName: 'Package ${{ parameters.buildArchitecture}}'
     env:
@@ -195,14 +220,14 @@ jobs:
 
   - pwsh: |
       $signedPkg = Get-ChildItem -Path $(Pipeline.Workspace) -Filter "*osx*.zip" -File
-  
+
       $signedPkg | ForEach-Object {
         Write-Verbose -Verbose "Signed package zip: $_"
-  
+
         if (-not (Test-Path $_)) {
           throw "Package not found: $_"
         }
-  
+
         if (-not (Test-Path $(ob_outputDirectory))) {
           $null = New-Item -Path $(ob_outputDirectory) -ItemType Directory
         }

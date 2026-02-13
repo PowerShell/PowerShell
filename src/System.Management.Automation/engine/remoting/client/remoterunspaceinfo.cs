@@ -374,7 +374,7 @@ namespace System.Management.Automation.Runspaces
             string transportName,
             PSCmdlet psCmdlet)
         {
-            if (!(runspace is RemoteRunspace remoteRunspace))
+            if (runspace is not RemoteRunspace remoteRunspace)
             {
                 throw new PSArgumentException(RemotingErrorIdStrings.InvalidPSSessionArgument);
             }

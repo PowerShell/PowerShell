@@ -10,11 +10,9 @@ jobs:
   pool:
     type: windows
   variables:
-  - name: runCodesignValidationInjection
-    value: false
   - name: NugetSecurityAnalysisWarningLevel
     value: none
-  - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
+  - name: DOTNET_NOLOGO
     value: 1
   - name: ob_outputDirectory
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'

@@ -216,7 +216,7 @@ namespace System.Management.Automation
 
             collectionToUpdate = PSObject.Base(collectionToUpdate);
 
-            if (!(collectionToUpdate is IList list))
+            if (collectionToUpdate is not IList list)
             {
                 throw PSTraceSource.NewInvalidOperationException(PSListModifierStrings.UpdateFailed);
             }

@@ -291,7 +291,7 @@ namespace System.Management.Automation.Runspaces.Internal
             // version 2.3 or greater.
             Version remoteProtocolVersionDeclaredByServer = PSRemotingProtocolVersion;
             if ((remoteProtocolVersionDeclaredByServer == null) ||
-                (remoteProtocolVersionDeclaredByServer < RemotingConstants.ProtocolVersionWin10RTM))
+                (remoteProtocolVersionDeclaredByServer < RemotingConstants.ProtocolVersion_2_3))
             {
                 throw PSTraceSource.NewInvalidOperationException(RunspacePoolStrings.ResetRunspaceStateNotSupportedOnServer);
             }
@@ -733,7 +733,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 {
                     // Disconnect/Connect support is currently only provided by the WSMan transport
                     // that is running PSRP protocol version 2.2 and greater.
-                    return (remoteProtocolVersionDeclaredByServer >= RemotingConstants.ProtocolVersionWin8RTM &&
+                    return (remoteProtocolVersionDeclaredByServer >= RemotingConstants.ProtocolVersion_2_2 &&
                             DataStructureHandler.EndpointSupportsDisconnect);
                 }
 
@@ -1237,7 +1237,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
         internal static RunspacePool[] GetRemoteRunspacePools(RunspaceConnectionInfo connectionInfo, PSHost host, TypeTable typeTable)
         {
-            if (!(connectionInfo is WSManConnectionInfo wsmanConnectionInfoParam))
+            if (connectionInfo is not WSManConnectionInfo wsmanConnectionInfoParam)
             {
                 // Disconnect-Connect currently only supported by WSMan.
                 throw new NotSupportedException();
