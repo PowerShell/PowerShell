@@ -5818,5 +5818,5 @@ function Get-IcuLatestRelease {
        return [int]$Matches[1]
     }
 
-    throw "Unable to get latest ICU latest release"
+    throw "Unable to determine the latest ICU release version."
 }
