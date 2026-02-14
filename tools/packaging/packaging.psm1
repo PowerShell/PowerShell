@@ -2148,7 +2148,7 @@ function Get-PackageDependencies
         #   than the build version and we know that older versions just works.
         #
         $MinICUVersion = 60                    # runtime minimum supported
-        $BuildICUVersion = 76                  # current build version
+        $BuildICUVersion = Get-IcuLatestRelease
         $MaxICUVersion = $BuildICUVersion + 30 # headroom
 
         if ($Distribution -eq 'deb') {
@@ -5807,4 +5807,16 @@ function Test-IsProductFile {
     }
 
     return $false
+}
+
+# Get major version from latest ICU release (latest: stable version)
+function Get-IcuLatestRelease {
+    $response = Invoke-WebRequest -Uri "https://github.com/unicode-org/icu/releases/latest"
+    $tagUrl = ($response.Links | Where-Object href -like "*releases/tag/release-*")[0].href
+
+    if ($tagUrl -match 'release-(\d+)\.') {
+       return [int]$Matches[1]
+    }
+
+    throw "Unable to get latest ICU latest release"
 }
