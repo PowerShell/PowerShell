@@ -144,7 +144,7 @@
     <Copyright>(c) Microsoft Corporation.</Copyright>
     <AssemblyTitle>PowerShell 7</AssemblyTitle>
 
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFramework>net11.0</TargetFramework>
     <LangVersion>13.0</LangVersion>
 
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
