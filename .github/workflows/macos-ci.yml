@@ -10,6 +10,8 @@ on:
       - github-mirror
     paths:
       - "**"
+      - "*"
+      - ".globalconfig"
       - "!.github/ISSUE_TEMPLATE/**"
       - "!.dependabot/config.yml"
       - "!.pipelines/**"
@@ -23,12 +25,12 @@ on:
 # Path filters for PRs need to go into the changes job
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: ${{ contains(github.ref, 'merge')}}
 
 env:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
-  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  DOTNET_NOLOGO: 1
   FORCE_FEATURE: 'False'
   FORCE_PACKAGE: 'False'
   HOMEBREW_NO_ANALYTICS: 1
@@ -54,7 +56,7 @@ jobs:
       buildModuleChanged: ${{ steps.filter.outputs.buildModuleChanged }}
     steps:
       - name: checkout
-        uses: actions/checkout@v4.1.0
+        uses: actions/checkout@v5
 
       - name: Change Detection
         id: filter
@@ -69,7 +71,7 @@ jobs:
     if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
     steps:
       - name: checkout
-        uses: actions/checkout@v4.1.0
+        uses: actions/checkout@v5
         with:
           fetch-depth: 1000
       - name: Build
@@ -83,7 +85,7 @@ jobs:
     runs-on: macos-15-large
     steps:
       - name: checkout
-        uses: actions/checkout@v4.1.0
+        uses: actions/checkout@v5
         with:
           fetch-depth: 1000
       - name: macOS Unelevated CI
@@ -100,7 +102,7 @@ jobs:
     runs-on: macos-15-large
     steps:
       - name: checkout
-        uses: actions/checkout@v4.1.0
+        uses: actions/checkout@v5
         with:
           fetch-depth: 1000
       - name: macOS Elevated CI
@@ -117,7 +119,7 @@ jobs:
     runs-on: macos-15-large
     steps:
       - name: checkout
-        uses: actions/checkout@v4.1.0
+        uses: actions/checkout@v5
         with:
           fetch-depth: 1000
       - name: macOS Unelevated Others
@@ -134,7 +136,7 @@ jobs:
     runs-on: macos-15-large
     steps:
       - name: checkout
-        uses: actions/checkout@v4.1.0
+        uses: actions/checkout@v5
         with:
           fetch-depth: 1000
       - name: macOS Elevated Others
@@ -167,7 +169,7 @@ jobs:
     - uses: actions/setup-dotnet@v4
       with:
         global-json-file: ./global.json
-
+    - name: Bootstrap packaging
       if: success()
       run: |-
         import-module ./build.psm1
