@@ -89,7 +89,7 @@ namespace System.Management.Automation.Remoting
     /// Explicit destruction and release of the IntPtrs is not required because
     /// their lifetime is managed by WinRM.
     /// </summary>
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+    [StructLayout(LayoutKind.Sequential)]
     internal class WSManPluginOperationShutdownContext // TODO: Rename to OperationShutdownContext when removing the MC++ module.
     {
         #region Internal Members
