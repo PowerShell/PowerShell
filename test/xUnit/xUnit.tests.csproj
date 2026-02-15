@@ -1,11 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="../Test.Common.props" />
 
   <PropertyGroup>
+    <OutputType>Exe</OutputType>
     <Description>PowerShell xUnit Tests</Description>
     <AssemblyName>powershell-tests</AssemblyName>
-    <GenerateProgramFile>true</GenerateProgramFile>
     <RuntimeIdentifiers>win-x86;win-x64;osx-x64;linux-x64</RuntimeIdentifiers>
   </PropertyGroup>
 
@@ -23,14 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="xunit" Version="2.9.3" />
-    <PackageReference Include="Xunit.SkippableFact" Version="1.5.61" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="XunitXml.TestLogger" Version="8.0.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
+    <PackageReference Include="xunit.v3.mtp-v2" Version="3.2.2" />
   </ItemGroup>
 
   <ItemGroup>

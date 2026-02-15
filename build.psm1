@@ -2061,7 +2061,6 @@ function Test-PSPesterResults
 function Start-PSxUnit {
     [CmdletBinding()]param(
         [string] $xUnitTestResultsFile = "xUnitResults.xml",
-        [switch] $DebugLogging,
         [string] $Filter
     )
 
@@ -2128,20 +2127,9 @@ function Start-PSxUnit {
             )
         }
 
-        if($DebugLogging) {
-            $extraParams += @(
-                "--logger:console;verbosity=detailed"
-            )
-        } else {
-            $extraParams += @(
-                "--logger:xunit;LogFilePath=$xUnitTestResultsFile"
-            )
-        }
-        dotnet test @extraParams --configuration $Options.configuration --test-adapter-path:.
+        dotnet test @extraParams --report-xunit --report-xunit-filename $xUnitTestResultsFile --results-directory $PSScriptRoot --configuration $Options.configuration --no-progress
 
-        if(!$DebugLogging){
-            Publish-TestResults -Path $xUnitTestResultsFile -Type 'XUnit' -Title 'Xunit Sequential'
-        }
+        Publish-TestResults -Path $xUnitTestResultsFile -Type 'XUnit' -Title 'Xunit Sequential'
     }
     finally {
         $env:DOTNET_ROOT = $originalDOTNET_ROOT
