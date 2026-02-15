@@ -16,7 +16,7 @@ jobs:
   variables:
   - name: NugetSecurityAnalysisWarningLevel
     value: none
-  - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
+  - name: DOTNET_NOLOGO
     value: 1
   - name: ob_outputDirectory
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
@@ -39,7 +39,7 @@ jobs:
   - template: release-SetReleaseTagandContainerName.yml
 
   - pwsh: |
-      Get-ChildItem Env:
+      Get-ChildItem Env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
     displayName: 'Capture Environment Variables'
 
   - download: PSPackagesOfficial
@@ -57,6 +57,10 @@ jobs:
 
       $metadata = Get-Content -LiteralPath "$toolsDirectory/metadata.json" -ErrorAction Stop | ConvertFrom-Json
       $stableReleaseTag = $metadata.StableReleaseTag -Replace 'v',''
+
+      $currentReleaseTag = $buildInfo.ReleaseTag -Replace 'v',''
+      $stableRelease = $metadata.StableRelease.PublishToChannels
+      $ltsRelease = $metadata.LTSRelease.PublishToChannels
 
       Write-Verbose -Verbose "Writing $jsonFile contents:"
       $buildInfoJsonContent = Get-Content $jsonFile -Encoding UTF8NoBom -Raw
