@@ -215,7 +215,7 @@ function RunUpdateHelpTests
 
             It ('Validate Update-Help for module ''{0}'' in {1}' -F $moduleName, [PSCustomObject] $updateScope) -Skip:(!(Test-CanWriteToPsHome) -and $userscope -eq $false) {
 
-                if ($markAsPending) {
+                if ($markAsPending -or ($IsLinux -and $moduleName -eq "PackageManagement")) {
                     Set-ItResult -Pending -Because "Update-Help from the web has intermittent connectivity issues. See issues #2807 and #6541."
                     return
                 }
@@ -333,9 +333,7 @@ Describe "Validate Update-Help from the Web for one PowerShell module." -Tags @(
         $ProgressPreference = $SavedProgressPreference
     }
 
-    ## Update-Help from the web has intermittent connectivity issues that cause CI failures.
-    ## Tests are marked as Pending to unblock work. See issues #2807 and #6541.
-    RunUpdateHelpTests -Tag "CI" -MarkAsPending
+    RunUpdateHelpTests -Tag "CI"
 }
 
 Describe "Validate Update-Help from the Web for one PowerShell module for user scope." -Tags @('CI', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
@@ -347,9 +345,7 @@ Describe "Validate Update-Help from the Web for one PowerShell module for user s
         $ProgressPreference = $SavedProgressPreference
     }
 
-    ## Update-Help from the web has intermittent connectivity issues that cause CI failures.
-    ## Tests are marked as Pending to unblock work. See issues #2807 and #6541.
-    RunUpdateHelpTests -Tag "CI" -UserScope -MarkAsPending
+    RunUpdateHelpTests -Tag "CI" -UserScope
 }
 
 Describe "Validate Update-Help from the Web for all PowerShell modules." -Tags @('Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
