@@ -1,6 +1,5 @@
 {
   "sdk": {
-    "version": "11.0.100-preview.1.26104.118",
-    "allowPrerelease": true
+    "version": "11.0.100-preview.1.26104.118"
   }
 }
