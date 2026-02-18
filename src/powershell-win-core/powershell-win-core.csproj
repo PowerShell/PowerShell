@@ -12,7 +12,7 @@
     <RootNamespace>Microsoft.PowerShell</RootNamespace>
     <ApplicationManifest>..\..\assets\pwsh.manifest</ApplicationManifest>
     <TargetPlatformIdentifier>Windows</TargetPlatformIdentifier>
-    <TargetPlatformVersion>8.0</TargetPlatformVersion>
+    <TargetPlatformVersion>10.0.17763.0</TargetPlatformVersion>
     <EnableUnsafeBinaryFormatterSerialization>true</EnableUnsafeBinaryFormatterSerialization>
   </PropertyGroup>
 
@@ -51,6 +51,9 @@
     <ProjectReference Include="..\Microsoft.Management.Infrastructure.CimCmdlets\Microsoft.Management.Infrastructure.CimCmdlets.csproj" />
     <ProjectReference Include="..\Microsoft.WSMan.Management\Microsoft.WSMan.Management.csproj" />
     <ProjectReference Include="..\Microsoft.Management.UI.Internal\Microsoft.PowerShell.GraphicalHost.csproj" Condition="'$(SDKToUse)' == 'Microsoft.NET.Sdk.WindowsDesktop' "/>
+    <ProjectReference Include="..\Microsoft.PowerShell.BackgroundTasks\Microsoft.PowerShell.BackgroundTasks.csproj">
+      <CopyToProject>true</CopyToProject>
+    </ProjectReference>
   </ItemGroup>
 
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />

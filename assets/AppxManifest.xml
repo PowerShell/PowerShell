@@ -27,6 +27,15 @@
     <Resource Language="en-us"/>
   </Resources>
 
+  <Extensions>
+    <Extension Category="windows.activatableClass.inProcessServer">
+      <InProcessServer>
+        <Path>Microsoft.PowerShell.BackgroundTasks.dll</Path>
+        <ActivatableClass ActivatableClassId="Microsoft.PowerShell.BackgroundTasks.PreInstallConfigTask" ThreadingModel="both" />
+      </InProcessServer>
+    </Extension>
+  </Extensions>
+
   <Applications>
     <Application Id="App" Executable="pwsh.exe" EntryPoint="Windows.FullTrustApplication">
       <Extensions>
@@ -35,6 +44,8 @@
             <desktop:ExecutionAlias Alias="pwsh.exe" />
           </uap3:AppExecutionAlias>
         </uap3:Extension>
+        <Extension Category="windows.preInstalledConfigTask" EntryPoint="Microsoft.PowerShell.BackgroundTasks.PreInstallConfigTask">
+        </Extension>
       </Extensions>
       <uap:VisualElements DisplayName="$DISPLAYNAME$" Description="PowerShell is an automation and configuration management platform. It consists of a cross-platform (Windows, Linux, and macOS) command-line shell and associated scripting language." BackgroundColor="transparent" Square150x150Logo="assets\Square150x150Logo.png" Square44x44Logo="assets\Square44x44Logo.png">
       </uap:VisualElements>
@@ -48,4 +59,5 @@
     <rescap:Capability Name="packageManagement" />
     <rescap:Capability Name="packageQuery" />
   </Capabilities>
+  <mp:PhoneIdentity PhoneProductId="$PHONEPRODUCTID$" PhonePublisherId="95d94207-0c7c-47ed-82db-d75c81153c35" />
 </Package>
