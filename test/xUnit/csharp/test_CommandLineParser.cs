@@ -532,11 +532,11 @@ namespace PSTests.Parallel
                 new string[] { "-custompipename", new string('q', CommandLineParameterParser.MaxNameLength() + 1) }
             };
 
-        [SkippableTheory]
+        [Theory]
         [MemberData(nameof(Data))]
         public static void TestParameter_CustomPipeName_With_Too_Long_Name(params string[] commandLine)
         {
-            Skip.If(Platform.IsWindows);
+            Assert.SkipWhen(Platform.IsWindows, "Not supported on Windows");
 
             var cpp = new CommandLineParameterParser();
 
@@ -647,12 +647,12 @@ namespace PSTests.Parallel
             Assert.Null(cpp.ErrorMessage);
         }
 
-        [SkippableTheory]
+        [Theory]
         [InlineData("-windowstyle")]
         [InlineData("-w")]
         public static void TestParameter_WindowsStyle_On_Unix(params string[] commandLine)
         {
-            Skip.If(Platform.IsWindows);
+            Assert.SkipWhen(Platform.IsWindows, "Not supported on Windows");
 
             var cpp = new CommandLineParameterParser();
 
@@ -666,12 +666,12 @@ namespace PSTests.Parallel
             Assert.Equal(CommandLineParameterParserStrings.WindowStyleArgumentNotImplemented, cpp.ErrorMessage);
         }
 
-        [SkippableTheory]
+        [Theory]
         [InlineData("-windowstyle")]
         [InlineData("-w")]
         public static void TestParameter_WindowsStyle_No_Value(params string[] commandLine)
         {
-            Skip.IfNot(Platform.IsWindows);
+            Assert.SkipUnless(Platform.IsWindows, "Only supported on Windows");
 
             var cpp = new CommandLineParameterParser();
 
@@ -685,12 +685,12 @@ namespace PSTests.Parallel
             Assert.Equal(CommandLineParameterParserStrings.MissingWindowStyleArgument, cpp.ErrorMessage);
         }
 
-        [SkippableTheory]
+        [Theory]
         [InlineData("-windowstyle", "abbra")]
         [InlineData("-w", "abbra")]
         public static void TestParameter_WindowsStyle_With_Wrong_Value(params string[] commandLine)
         {
-            Skip.IfNot(Platform.IsWindows);
+            Assert.SkipUnless(Platform.IsWindows, "Only supported on Windows");
 
             string errorMessage = null;
             try
@@ -717,12 +717,12 @@ namespace PSTests.Parallel
                 cpp.ErrorMessage);
         }
 
-        [SkippableTheory]
+        [Theory]
         [InlineData("-windowstyle", "Maximized")]
         [InlineData("-w", "Maximized")]
         public static void TestParameter_WindowsStyle_With_Right_Value(params string[] commandLine)
         {
-            Skip.IfNot(Platform.IsWindows);
+            Assert.SkipUnless(Platform.IsWindows, "Only supported on Windows");
 
             var cpp = new CommandLineParameterParser();
 
@@ -1112,11 +1112,11 @@ namespace PSTests.Parallel
             Assert.Equal(commandLine[1], cpp.SettingsFile);
         }
 
-        [SkippableTheory]
+        [Theory]
         [InlineData("-sta")]
         public static void TestParameter_STA_Not_IsWindowsDesktop(params string[] commandLine)
         {
-            Skip.If(Platform.IsWindowsDesktop);
+            Assert.SkipWhen(Platform.IsWindowsDesktop, "Not supported on Windows Desktop");
 
             var cpp = new CommandLineParameterParser();
 
@@ -1130,11 +1130,11 @@ namespace PSTests.Parallel
             Assert.Equal(CommandLineParameterParserStrings.STANotImplemented, cpp.ErrorMessage);
         }
 
-        [SkippableTheory]
+        [Theory]
         [InlineData("-mta", "-sta")]
         public static void TestParameter_STA_And_MTA_Mutually_Exclusive(params string[] commandLine)
         {
-            Skip.IfNot(Platform.IsWindows);
+            Assert.SkipUnless(Platform.IsWindows, "Only supported on Windows");
 
             var cpp = new CommandLineParameterParser();
 
@@ -1148,11 +1148,11 @@ namespace PSTests.Parallel
             Assert.Equal(CommandLineParameterParserStrings.MtaStaMutuallyExclusive, cpp.ErrorMessage);
         }
 
-        [SkippableTheory]
+        [Theory]
         [InlineData("-sta")]
         public static void TestParameter_STA(params string[] commandLine)
         {
-            Skip.IfNot(Platform.IsWindows);
+            Assert.SkipUnless(Platform.IsWindows, "Only supported on Windows");
 
             var cpp = new CommandLineParameterParser();
 
@@ -1166,11 +1166,11 @@ namespace PSTests.Parallel
             Assert.Null(cpp.ErrorMessage);
         }
 
-        [SkippableTheory]
+        [Theory]
         [InlineData("-mta")]
         public static void TestParameter_MTA_Not_IsWindowsDesktop(params string[] commandLine)
         {
-            Skip.If(Platform.IsWindowsDesktop);
+            Assert.SkipWhen(Platform.IsWindowsDesktop, "Not supported on Windows Desktop");
 
             var cpp = new CommandLineParameterParser();
 
@@ -1184,11 +1184,11 @@ namespace PSTests.Parallel
             Assert.Equal(CommandLineParameterParserStrings.MTANotImplemented, cpp.ErrorMessage);
         }
 
-        [SkippableTheory]
+        [Theory]
         [InlineData("-sta", "-mta")]
         public static void TestParameter_MTA_And_STA_Mutually_Exclusive(params string[] commandLine)
         {
-            Skip.IfNot(Platform.IsWindows);
+            Assert.SkipUnless(Platform.IsWindows, "Only supported on Windows");
 
             var cpp = new CommandLineParameterParser();
 
@@ -1202,11 +1202,11 @@ namespace PSTests.Parallel
             Assert.Equal(CommandLineParameterParserStrings.MtaStaMutuallyExclusive, cpp.ErrorMessage);
         }
 
-        [SkippableTheory]
+        [Theory]
         [InlineData("-mta")]
         public static void TestParameter_MTA(params string[] commandLine)
         {
-            Skip.IfNot(Platform.IsWindows);
+            Assert.SkipUnless(Platform.IsWindows, "Only supported on Windows");
 
             var cpp = new CommandLineParameterParser();
 
@@ -1256,13 +1256,13 @@ namespace PSTests.Parallel
             Assert.Null(cpp.ErrorMessage);
         }
 
-        [SkippableTheory]
+        [Theory]
         [InlineData("-workingdirectory", "dirname", "-removeworkingdirectorytrailingcharacter")]
         [InlineData("-wo", "dirname", "-removeworkingdirectorytrailingcharacter")]
         [InlineData("-wd", "dirname", "-removeworkingdirectorytrailingcharacter")]
         public static void TestParameter_WorkingDirectory_RemoveTrailingCharacter(params string[] commandLine)
         {
-            Skip.IfNot(Platform.IsWindows);
+            Assert.SkipUnless(Platform.IsWindows, "Only supported on Windows");
 
             var cpp = new CommandLineParameterParser();
 

@@ -13,7 +13,6 @@ using System.Text;
 using System.Reflection;
 using System.Threading.Tasks;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace PSTests.Sequential
 {
@@ -25,7 +24,7 @@ namespace PSTests.Sequential
         {
             if (!System.Management.Automation.Platform.IsWindows)
             {
-                throw new SkipException("RemoteHyperVTests are only supported on Windows.");
+                Assert.Skip("RemoteHyperVTests are only supported on Windows.");
             }
 
             _output = output;
@@ -396,7 +395,7 @@ namespace PSTests.Sequential
             return new NetworkCredential(CreateRandomUnicodePassword("username"), CreateRandomUnicodePassword("password"), CreateRandomUnicodePassword("domain"));
         }
 
-        [SkippableFact]
+        [Fact]
         public async Task PerformCredentialAndConfigurationHandshake_V1_Pass()
         {
             // Arrange
@@ -424,7 +423,7 @@ namespace PSTests.Sequential
             await serverTask;
         }
 
-        [SkippableTheory]
+        [Theory]
         [InlineData("VERSION_2", "configurationname1", "FakeTokenaaaaaaaaaAAAAAAAAAAAAAAAAAAAAAA0FakeTokenaaaaaaaaaAAAAAAAAAAAAAAAAAAAAAA0+/==")] // a fake base64 token about 512 bits long (double the size when this was spec'ed)
         [InlineData("VERSION_10", null, "FakeTokenaaaaaaaaaAAAAAAAAAAAAAAAAAAAAAA0+/=")] // a fake base64 token about 256 bits Long (the size when this was spec'ed)
         public async Task PerformCredentialAndConfigurationHandshake_V2_Pass(string versionResponse, string configurationName, string token)
@@ -451,7 +450,7 @@ namespace PSTests.Sequential
             await serverTask;
         }
 
-        [SkippableFact]
+        [Fact]
         public async Task PerformCredentialAndConfigurationHandshake_V1_Fallback()
         {
             // Arrange
@@ -481,7 +480,7 @@ namespace PSTests.Sequential
             await serverTask;
         }
 
-        [SkippableFact]
+        [Fact]
         public async Task PerformCredentialAndConfigurationHandshake_V2_InvalidResponse()
         {
             // Arrange
@@ -521,7 +520,7 @@ namespace PSTests.Sequential
             }
         }
 
-        [SkippableFact]
+        [Fact]
         public async Task PerformCredentialAndConfigurationHandshake_V1_Fail()
         {
             // Arrange
@@ -560,7 +559,7 @@ namespace PSTests.Sequential
             }
         }
 
-        [SkippableTheory]
+        [Theory]
         [InlineData("VERSION_2", "FakeTokenaaaaaaaaaAAAAAAAAAAAAAAAAAAAAAA0FakeTokenaaaaaaaaaAAAAAAAAAAAAAAAAAAAAAA0+/==")] // a fake base64 token about 512 bits long (double the size when this was spec'ed)
         [InlineData("VERSION_10", "FakeTokenaaaaaaaaaAAAAAAAAAAAAAAAAAAAAAA0+/=")] // a fake base64 token about 256 bits Long (the size when this was spec'ed)
         public async Task PerformTransportVersionAndTokenExchange_Pass(string version, string token)
@@ -591,7 +590,7 @@ namespace PSTests.Sequential
             await serverTask;
         }
 
-        [SkippableTheory]
+        [Theory]
         [InlineData(1, true)]
         [InlineData(2, true)]
         [InlineData(0, false)]
@@ -603,7 +602,7 @@ namespace PSTests.Sequential
             const string valueName = "RequirePsDirectAuthentication";
             if (!System.Management.Automation.Platform.IsWindows)
             {
-                throw new SkipException("RemoteHyperVTests are only supported on Windows.");
+                Assert.Skip("RemoteHyperVTests are only supported on Windows.");
             }
 
             // Clean up any previous test key
@@ -636,7 +635,7 @@ namespace PSTests.Sequential
             return;
         }
 
-        [SkippableTheory]
+        [Theory]
         [InlineData("testToken", "testToken")]
         [InlineData("testToken\0", "testToken")]
         public async Task ValidatePassesWhenTokensMatch(string token, string expectedToken)
@@ -668,7 +667,7 @@ namespace PSTests.Sequential
             await serverTask;
         }
 
-        [SkippableTheory]
+        [Theory]
         [InlineData(5500, "A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond.", "SocketException")] // test the socket timeout
         [InlineData(3200, "canceled", "System.OperationCanceledException")] // test the cancellation token
         [InlineData(10, "", "")]
@@ -719,7 +718,7 @@ namespace PSTests.Sequential
             }
         }
 
-        [SkippableFact]
+        [Fact]
         public async Task ValidateTokenTimeoutDoesAffectSession()
         {
             string token = "testToken";
@@ -766,7 +765,7 @@ namespace PSTests.Sequential
             await serverTask;
         }
 
-        [SkippableTheory]
+        [Theory]
         [InlineData("abc", "xyz")]
         [InlineData("abc", "abcdef")]
         [InlineData("abcdef", "abc")]
