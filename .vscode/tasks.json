@@ -41,7 +41,7 @@
         {
             "label": "Bootstrap",
             "type": "shell",
-            "command": "Import-Module '${workspaceFolder}/build.psm1'; Start-PSBootstrap",
+            "command": "Import-Module '${workspaceFolder}/build.psm1'; Start-PSBootstrap -Scenario Both",
             "problemMatcher": []
         },
         {
@@ -59,6 +59,50 @@
                 "isDefault": true
             },
             "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "Run QueenCalifia Local",
+            "type": "shell",
+            "command": "bash /PowerShell/tools/run-queencalifia-local.sh smoke",
+            "problemMatcher": []
+        },
+        {
+            "label": "Launch QueenCalifia Local",
+            "type": "shell",
+            "command": "bash /PowerShell/tools/run-queencalifia-local.sh",
+            "isBackground": true,
+            "problemMatcher": []
+        },
+        {
+            "label": "Stop QueenCalifia Local",
+            "type": "shell",
+            "command": "bash /PowerShell/tools/stop-queencalifia-local.sh",
+            "problemMatcher": []
+        },
+        {
+            "label": "Launch QueenCalifia Dashboard",
+            "type": "shell",
+            "command": "bash -lc 'set -euo pipefail; cd /tmp/QueenCalifia-CyberAI/frontend; npm install; npm run dev -- --host 0.0.0.0 --port 5173'",
+            "isBackground": true,
+            "problemMatcher": []
+        },
+        {
+            "label": "Stop QueenCalifia Dashboard",
+            "type": "shell",
+            "command": "bash /PowerShell/tools/stop-queencalifia-dashboard.sh",
+            "problemMatcher": []
+        },
+        {
+            "label": "Install NodeJS",
+            "type": "shell",
+            "command": "bash -lc 'set -euo pipefail; apt-get update; DEBIAN_FRONTEND=noninteractive apt-get install -y ca-certificates curl gnupg; mkdir -p /etc/apt/keyrings; curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg; echo \"deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main\" > /etc/apt/sources.list.d/nodesource.list; apt-get update; DEBIAN_FRONTEND=noninteractive apt-get install -y nodejs'",
+            "problemMatcher": []
+        },
+        {
+            "label": "Git Force Push QueenCalifia Fixes",
+            "type": "shell",
+            "command": "bash -lc 'set -euo pipefail; cd /PowerShell; git add -f .vscode/tasks.json; git add tools/run-queencalifia-local.sh tools/stop-queencalifia-local.sh tools/stop-queencalifia-dashboard.sh; git commit -m \"Add robust QueenCalifia launch/stop scripts and task wiring\"; git push --force origin master'",
+            "problemMatcher": []
         }
     ]
 }
