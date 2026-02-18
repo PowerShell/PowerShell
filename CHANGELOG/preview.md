@@ -34,7 +34,6 @@
 
 [7.6.0-rc.1]: https://github.com/PowerShell/PowerShell/compare/v7.6.0-preview.6...v7.6.0-rc.1
 
-
 ## [7.6.0-preview.6] - 2025-12-11
 
 ### Engine Updates and Fixes
