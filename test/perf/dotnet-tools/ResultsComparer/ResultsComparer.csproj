@@ -3,7 +3,7 @@
     <OutputType>Exe</OutputType>
     <TargetFrameworks>$(PERFLAB_TARGET_FRAMEWORKS)</TargetFrameworks>
     <TargetFramework Condition="'$(TargetFrameworks)' == ''">net5.0</TargetFramework>
-    <LangVersion>14.0</LangVersion>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.9.1" />
