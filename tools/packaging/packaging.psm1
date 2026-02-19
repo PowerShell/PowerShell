@@ -18,7 +18,7 @@ $AllDistributions = @()
 $AllDistributions += $DebianDistributions
 $AllDistributions += $RedhatDistributions
 $AllDistributions += 'macOs'
-$script:netCoreRuntime = 'net10.0'
+$script:netCoreRuntime = 'net11.0'
 $script:iconFileName = "Powershell_black_64.png"
 $script:iconPath = Join-Path -path $PSScriptRoot -ChildPath "../../assets/$iconFileName" -Resolve
 
@@ -2323,12 +2323,12 @@ function Get-MacOSPackageIdentifierInfo
     param(
         [Parameter(Mandatory)]
         [string]$Version,
-        
+
         [switch]$LTS
     )
-    
+
     $IsPreview = Test-IsPreview -Version $Version -IsLTS:$LTS
-    
+
     # Determine package identifier based on preview status
     if ($IsPreview) {
         $PackageIdentifier = 'com.microsoft.powershell-preview'
@@ -2336,7 +2336,7 @@ function Get-MacOSPackageIdentifierInfo
     else {
         $PackageIdentifier = 'com.microsoft.powershell'
     }
-    
+
     return @{
         IsPreview = $IsPreview
         PackageIdentifier = $PackageIdentifier

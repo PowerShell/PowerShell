@@ -152,7 +152,7 @@ namespace Microsoft.PowerShell
             IntPtr executablePathPtr = IntPtr.Zero;
             try
             {
-                mib = [MACOS_CTL_KERN, MACOS_KERN_PROCARGS2, pid];
+                mib = new int[] { MACOS_CTL_KERN, MACOS_KERN_PROCARGS2, pid };
 
                 unsafe
                 {

@@ -1042,4 +1042,700 @@ Describe 'ConvertTo-Json' -tags "CI" {
     }
 
     #endregion Comprehensive Array and Dictionary Tests (Phase 2)
+
+
+    #region Comprehensive PSCustomObject Tests (Phase 3)
+    # Test coverage for ConvertTo-Json PSCustomObject serialization
+    # Covers: Pipeline vs InputObject, ETS vs no ETS, nested structures
+
+    Context 'PSCustomObject basic serialization' {
+        It 'Should serialize PSCustomObject with single property via Pipeline and InputObject' {
+            $obj = [PSCustomObject]@{ Name = 'Test' }
+            $jsonPipeline = $obj | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress
+            $jsonPipeline | Should -BeExactly '{"Name":"Test"}'
+            $jsonInputObject | Should -BeExactly '{"Name":"Test"}'
+        }
+
+        It 'Should serialize PSCustomObject with multiple properties via Pipeline and InputObject' {
+            $obj = [PSCustomObject][ordered]@{
+                Name = 'Test'
+                Value = 42
+                Active = $true
+            }
+            $expected = '{"Name":"Test","Value":42,"Active":true}'
+            $jsonPipeline = $obj | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+
+        It 'Should preserve property order in PSCustomObject via Pipeline and InputObject' {
+            $obj = [PSCustomObject][ordered]@{
+                Zebra = 1
+                Alpha = 2
+                Middle = 3
+            }
+            $expected = '{"Zebra":1,"Alpha":2,"Middle":3}'
+            $jsonPipeline = $obj | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+
+        It 'Should serialize PSCustomObject with null property via Pipeline and InputObject' {
+            $obj = [PSCustomObject]@{ NullProp = $null }
+            $jsonPipeline = $obj | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress
+            $jsonPipeline | Should -BeExactly '{"NullProp":null}'
+            $jsonInputObject | Should -BeExactly '{"NullProp":null}'
+        }
+    }
+
+    Context 'PSCustomObject with various property types' {
+        It 'Should serialize PSCustomObject with scalar properties via Pipeline and InputObject' {
+            $obj = [PSCustomObject][ordered]@{
+                IntVal = 42
+                DoubleVal = 3.14
+                StringVal = 'hello'
+                BoolVal = $true
+            }
+            $expected = '{"IntVal":42,"DoubleVal":3.14,"StringVal":"hello","BoolVal":true}'
+            $jsonPipeline = $obj | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+
+        It 'Should serialize PSCustomObject with DateTime property via Pipeline and InputObject' {
+            $obj = [PSCustomObject]@{
+                Date = [DateTime]::new(2024, 6, 15, 10, 30, 0, [DateTimeKind]::Utc)
+            }
+            $expected = '{"Date":"2024-06-15T10:30:00Z"}'
+            $jsonPipeline = $obj | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+
+        It 'Should serialize PSCustomObject with Guid property via Pipeline and InputObject' {
+            $obj = [PSCustomObject]@{
+                Id = [Guid]'12345678-1234-1234-1234-123456789abc'
+            }
+            $expected = '{"Id":"12345678-1234-1234-1234-123456789abc"}'
+            $jsonPipeline = $obj | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+
+        It 'Should serialize PSCustomObject with enum property via Pipeline and InputObject' {
+            $obj = [PSCustomObject]@{ Day = [DayOfWeek]::Monday }
+            $jsonPipeline = $obj | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress
+            $jsonPipeline | Should -BeExactly '{"Day":1}'
+            $jsonInputObject | Should -BeExactly '{"Day":1}'
+        }
+
+        It 'Should serialize PSCustomObject with enum as string via Pipeline and InputObject' {
+            $obj = [PSCustomObject]@{ Day = [DayOfWeek]::Monday }
+            $jsonPipeline = $obj | ConvertTo-Json -Compress -EnumsAsStrings
+            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress -EnumsAsStrings
+            $jsonPipeline | Should -BeExactly '{"Day":"Monday"}'
+            $jsonInputObject | Should -BeExactly '{"Day":"Monday"}'
+        }
+
+        It 'Should serialize PSCustomObject with array property via Pipeline and InputObject' {
+            $obj = [PSCustomObject]@{ Numbers = @(1, 2, 3) }
+            $expected = '{"Numbers":[1,2,3]}'
+            $jsonPipeline = $obj | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+
+        It 'Should serialize PSCustomObject with hashtable property via Pipeline and InputObject' {
+            $obj = [PSCustomObject]@{ Config = @{ Key = 'Value' } }
+            $expected = '{"Config":{"Key":"Value"}}'
+            $jsonPipeline = $obj | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+    }
+
+    Context 'Nested PSCustomObject' {
+        It 'Should serialize nested PSCustomObject via Pipeline and InputObject' {
+            $obj = [PSCustomObject]@{
+                Outer = [PSCustomObject]@{
+                    Inner = 'value'
+                }
+            }
+            $expected = '{"Outer":{"Inner":"value"}}'
+            $jsonPipeline = $obj | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+
+        It 'Should serialize deeply nested PSCustomObject via Pipeline and InputObject' {
+            $obj = [PSCustomObject]@{
+                Level1 = [PSCustomObject]@{
+                    Level2 = [PSCustomObject]@{
+                        Level3 = 'deep'
+                    }
+                }
+            }
+            $expected = '{"Level1":{"Level2":{"Level3":"deep"}}}'
+            $jsonPipeline = $obj | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+
+        It 'Should serialize nested PSCustomObject with Depth limit via Pipeline and InputObject' {
+            $obj = [PSCustomObject]@{
+                Level1 = [PSCustomObject]@{
+                    Level2 = [PSCustomObject]@{
+                        Level3 = 'deep'
+                    }
+                }
+            }
+            $expected = '{"Level1":{"Level2":"@{Level3=deep}"}}'
+            $jsonPipeline = $obj | ConvertTo-Json -Compress -Depth 1
+            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress -Depth 1
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+
+        It 'Should serialize PSCustomObject with mixed nested types via Pipeline and InputObject' {
+            $obj = [PSCustomObject][ordered]@{
+                Child = [PSCustomObject]@{ Name = 'child' }
+                Items = @(1, 2, 3)
+                Config = @{ Key = 'Value' }
+            }
+            $expected = '{"Child":{"Name":"child"},"Items":[1,2,3],"Config":{"Key":"Value"}}'
+            $jsonPipeline = $obj | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+    }
+
+    Context 'PSCustomObject ETS properties' {
+        It 'Should include NoteProperty on PSCustomObject via Pipeline and InputObject' {
+            $obj = [PSCustomObject]@{ Original = 'value' }
+            $obj | Add-Member -MemberType NoteProperty -Name Added -Value 'added'
+            $expected = '{"Original":"value","Added":"added"}'
+            $jsonPipeline = $obj | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+
+        It 'Should include ScriptProperty on PSCustomObject via Pipeline and InputObject' {
+            $obj = [PSCustomObject]@{ Value = 10 }
+            $obj | Add-Member -MemberType ScriptProperty -Name Doubled -Value { $this.Value * 2 }
+            $expected = '{"Value":10,"Doubled":20}'
+            $jsonPipeline = $obj | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+
+        It 'Should include multiple ETS properties on PSCustomObject via Pipeline and InputObject' {
+            $obj = [PSCustomObject]@{ Base = 'base' }
+            $obj | Add-Member -MemberType NoteProperty -Name Note1 -Value 'note1'
+            $obj | Add-Member -MemberType NoteProperty -Name Note2 -Value 'note2'
+            $expected = '{"Base":"base","Note1":"note1","Note2":"note2"}'
+            $jsonPipeline = $obj | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+    }
+
+    Context 'Array of PSCustomObject' {
+        It 'Should serialize array of PSCustomObject via Pipeline and InputObject' {
+            $arr = @(
+                [PSCustomObject][ordered]@{ Id = 1; Name = 'First' }
+                [PSCustomObject][ordered]@{ Id = 2; Name = 'Second' }
+            )
+            $expected = '[{"Id":1,"Name":"First"},{"Id":2,"Name":"Second"}]'
+            $jsonPipeline = $arr | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $arr -Compress
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+
+        It 'Should serialize single PSCustomObject without array wrapper via Pipeline and InputObject' {
+            $obj = [PSCustomObject]@{ Id = 1 }
+            $jsonPipeline = $obj | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress
+            $jsonPipeline | Should -BeExactly '{"Id":1}'
+            $jsonInputObject | Should -BeExactly '{"Id":1}'
+        }
+
+        It 'Should serialize single PSCustomObject with -AsArray via Pipeline and InputObject' {
+            $obj = [PSCustomObject]@{ Id = 1 }
+            $jsonPipeline = $obj | ConvertTo-Json -Compress -AsArray
+            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress -AsArray
+            $jsonPipeline | Should -BeExactly '[{"Id":1}]'
+            $jsonInputObject | Should -BeExactly '[{"Id":1}]'
+        }
+    }
+
+    #endregion Comprehensive PSCustomObject Tests (Phase 3)
+
+    #region Comprehensive Depth Truncation and Multilevel Composition Tests (Phase 4)
+    # Test coverage for ConvertTo-Json depth truncation and complex nested structures
+    # Covers: -Depth parameter behavior, multilevel type compositions
+
+    Context 'Depth parameter basic behavior' {
+        It 'Should use default depth of 2 via Pipeline and InputObject' {
+            $obj = [PSCustomObject]@{
+                L0 = [PSCustomObject]@{
+                    L1 = [PSCustomObject]@{
+                        L2 = [PSCustomObject]@{
+                            L3 = 'deep'
+                        }
+                    }
+                }
+            }
+            $expected = '{"L0":{"L1":{"L2":"@{L3=deep}"}}}'
+            $jsonPipeline = $obj | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+
+        It 'Should truncate at Depth 0 via Pipeline and InputObject' {
+            $obj = [PSCustomObject]@{
+                L0 = [PSCustomObject]@{ L1 = 1 }
+            }
+            $expected = '{"L0":"@{L1=1}"}'
+            $jsonPipeline = $obj | ConvertTo-Json -Compress -Depth 0
+            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress -Depth 0
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+
+        It 'Should truncate at Depth 1 via Pipeline and InputObject' {
+            $obj = [PSCustomObject]@{
+                L0 = [PSCustomObject]@{
+                    L1 = [PSCustomObject]@{
+                        L2 = 'deep'
+                    }
+                }
+            }
+            $expected = '{"L0":{"L1":"@{L2=deep}"}}'
+            $jsonPipeline = $obj | ConvertTo-Json -Compress -Depth 1
+            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress -Depth 1
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+
+        It 'Should serialize fully with sufficient Depth via Pipeline and InputObject' {
+            $obj = [PSCustomObject]@{
+                L0 = [PSCustomObject]@{
+                    L1 = [PSCustomObject]@{
+                        L2 = [PSCustomObject]@{
+                            L3 = 'very deep'
+                        }
+                    }
+                }
+            }
+            $expected = '{"L0":{"L1":{"L2":{"L3":"very deep"}}}}'
+            $jsonPipeline = $obj | ConvertTo-Json -Compress -Depth 10
+            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress -Depth 10
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+
+        It 'Should handle Depth 100 for deeply nested structures via Pipeline and InputObject' {
+            $obj = [PSCustomObject]@{ L0 = [PSCustomObject]@{ L1 = [PSCustomObject]@{ L2 = [PSCustomObject]@{ L3 = [PSCustomObject]@{ L4 = 'deep' } } } } }
+            $expected = '{"L0":{"L1":{"L2":{"L3":{"L4":"deep"}}}}}'
+            $jsonPipeline = $obj | ConvertTo-Json -Compress -Depth 100
+            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress -Depth 100
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+
+        It 'Should throw on Depth 101 exceeding maximum via Pipeline and InputObject' {
+            { [PSCustomObject]@{ L0 = 1 } | ConvertTo-Json -Depth 101 } | Should -Throw -ErrorId 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.ConvertToJsonCommand'
+            { ConvertTo-Json -InputObject ([PSCustomObject]@{ L0 = 1 }) -Depth 101 } | Should -Throw -ErrorId 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.ConvertToJsonCommand'
+        }
+    }
+
+    Context 'Depth truncation with arrays' {
+        It 'Should truncate nested array at Depth limit via Pipeline and InputObject' {
+            $obj = [PSCustomObject]@{
+                Arr = ,(,(1, 2, 3))
+            }
+            $expected = '{"Arr":["System.Object[]"]}'
+            $jsonPipeline = $obj | ConvertTo-Json -Compress -Depth 1
+            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress -Depth 1
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+
+        It 'Should serialize nested array fully with sufficient Depth via Pipeline and InputObject' {
+            $obj = [PSCustomObject]@{
+                Arr = ,(,(1, 2, 3))
+            }
+            $expected = '{"Arr":[[[1,2,3]]]}'
+            $jsonPipeline = $obj | ConvertTo-Json -Compress -Depth 10
+            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress -Depth 10
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+
+        It 'Should truncate array of objects at Depth limit via Pipeline and InputObject' {
+            $arr = @(
+                [PSCustomObject]@{ Inner = [PSCustomObject]@{ Value = 1 } }
+            )
+            $expected = '[{"Inner":"@{Value=1}"}]'
+            $jsonPipeline = ,$arr | ConvertTo-Json -Compress -Depth 1
+            $jsonInputObject = ConvertTo-Json -InputObject $arr -Compress -Depth 1
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+    }
+
+    Context 'Depth truncation with hashtables' {
+        It 'Should truncate nested hashtable at Depth limit via Pipeline and InputObject' {
+            $hash = @{
+                L0 = @{
+                    L1 = @{
+                        L2 = 'deep'
+                    }
+                }
+            }
+            $expected = '{"L0":{"L1":"System.Collections.Hashtable"}}'
+            $jsonPipeline = $hash | ConvertTo-Json -Compress -Depth 1
+            $jsonInputObject = ConvertTo-Json -InputObject $hash -Compress -Depth 1
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+
+        It 'Should serialize nested hashtable fully with sufficient Depth via Pipeline and InputObject' {
+            $hash = @{
+                L0 = @{
+                    L1 = @{
+                        L2 = 'deep'
+                    }
+                }
+            }
+            $expected = '{"L0":{"L1":{"L2":"deep"}}}'
+            $jsonPipeline = $hash | ConvertTo-Json -Compress -Depth 10
+            $jsonInputObject = ConvertTo-Json -InputObject $hash -Compress -Depth 10
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+    }
+
+    Context 'Depth truncation string representation' {
+        It 'Should convert PSCustomObject to @{...} string when truncated via Pipeline and InputObject' {
+            $obj = [PSCustomObject]@{
+                Child = [PSCustomObject]@{ A = 1; B = 2 }
+            }
+            $expected = '{"Child":"@{A=1; B=2}"}'
+            $jsonPipeline = $obj | ConvertTo-Json -Compress -Depth 0
+            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress -Depth 0
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+
+        It 'Should convert Hashtable to type name when truncated via Pipeline and InputObject' {
+            $obj = [PSCustomObject]@{
+                Child = @{ Key = 'Value' }
+            }
+            $expected = '{"Child":"System.Collections.Hashtable"}'
+            $jsonPipeline = $obj | ConvertTo-Json -Compress -Depth 0
+            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress -Depth 0
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+
+        It 'Should convert Array to space-separated string when truncated via Pipeline and InputObject' {
+            $obj = [PSCustomObject]@{
+                Child = @(1, 2, 3)
+            }
+            $expected = '{"Child":"1 2 3"}'
+            $jsonPipeline = $obj | ConvertTo-Json -Compress -Depth 0
+            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress -Depth 0
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+    }
+
+    Context 'Multilevel composition: Array containing Dictionary' {
+        It 'Should serialize array of hashtables correctly via Pipeline and InputObject' {
+            $arr = @(@{ a = 1 }, @{ b = 2 }, @{ c = 3 })
+            $expected = '[{"a":1},{"b":2},{"c":3}]'
+            $jsonPipeline = $arr | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $arr -Compress
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+
+        It 'Should serialize array of ordered dictionaries correctly via Pipeline and InputObject' {
+            $arr = @(
+                [ordered]@{ x = 1; y = 2 },
+                [ordered]@{ x = 3; y = 4 }
+            )
+            $expected = '[{"x":1,"y":2},{"x":3,"y":4}]'
+            $jsonPipeline = ,$arr | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $arr -Compress
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+
+        It 'Should serialize nested array of hashtables correctly via Pipeline and InputObject' {
+            $arr = @(
+                @{
+                    Items = @(
+                        @{ Value = 1 },
+                        @{ Value = 2 }
+                    )
+                }
+            )
+            $expected = '[{"Items":[{"Value":1},{"Value":2}]}]'
+            $jsonPipeline = ,$arr | ConvertTo-Json -Compress -Depth 3
+            $jsonInputObject = ConvertTo-Json -InputObject $arr -Compress -Depth 3
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+    }
+
+    Context 'Multilevel composition: Dictionary containing Array' {
+        It 'Should serialize dictionary with array values correctly via Pipeline and InputObject' {
+            $hash = [ordered]@{
+                numbers = @(1, 2, 3)
+                strings = @('a', 'b', 'c')
+            }
+            $expected = '{"numbers":[1,2,3],"strings":["a","b","c"]}'
+            $jsonPipeline = $hash | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $hash -Compress
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+
+        It 'Should serialize dictionary with nested array values correctly via Pipeline and InputObject' {
+            $hash = @{
+                matrix = @(@(1, 2), @(3, 4))
+            }
+            $expected = '{"matrix":[[1,2],[3,4]]}'
+            $jsonPipeline = $hash | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $hash -Compress
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+
+        It 'Should serialize dictionary with empty array value correctly via Pipeline and InputObject' {
+            $hash = @{ empty = @() }
+            $expected = '{"empty":[]}'
+            $jsonPipeline = $hash | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $hash -Compress
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+
+        It 'Should serialize dictionary with array of dictionaries correctly via Pipeline and InputObject' {
+            $hash = @{
+                Items = @(
+                    @{ X = 1 },
+                    @{ X = 2 }
+                )
+            }
+            $expected = '{"Items":[{"X":1},{"X":2}]}'
+            $jsonPipeline = $hash | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $hash -Compress
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+    }
+
+    Context 'Multilevel composition: PSCustomObject with mixed types' {
+        It 'Should serialize PSCustomObject with array and hashtable properties via Pipeline and InputObject' {
+            $obj = [PSCustomObject]@{
+                List = @(1, 2, 3)
+                Config = @{ Key = 'Value' }
+                Name = 'Test'
+            }
+            $expected = '{"List":[1,2,3],"Config":{"Key":"Value"},"Name":"Test"}'
+            $jsonPipeline = $obj | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+
+        It 'Should serialize PSCustomObject with nested PSCustomObject and array via Pipeline and InputObject' {
+            $obj = [PSCustomObject]@{
+                Child = [PSCustomObject]@{
+                    Items = @(1, 2, 3)
+                }
+            }
+            $expected = '{"Child":{"Items":[1,2,3]}}'
+            $jsonPipeline = $obj | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+
+        It 'Should serialize array of PSCustomObject with mixed properties via Pipeline and InputObject' {
+            $arr = @(
+                [PSCustomObject]@{ Type = 'A'; Data = @(1, 2) },
+                [PSCustomObject]@{ Type = 'B'; Data = @{ Key = 'Val' } }
+            )
+            $expected = '[{"Type":"A","Data":[1,2]},{"Type":"B","Data":{"Key":"Val"}}]'
+            $jsonPipeline = $arr | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $arr -Compress
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+    }
+
+    Context 'Multilevel composition: PowerShell class in complex structures' {
+        BeforeAll {
+            class ItemClass {
+                [int]$Id
+                [string]$Name
+            }
+
+            class ContainerClass {
+                [string]$Type
+                [ItemClass]$Item
+            }
+        }
+
+        It 'Should serialize array of PowerShell class correctly via Pipeline and InputObject' {
+            $arr = @(
+                [ItemClass]@{ Id = 1; Name = 'First' },
+                [ItemClass]@{ Id = 2; Name = 'Second' }
+            )
+            $expected = '[{"Id":1,"Name":"First"},{"Id":2,"Name":"Second"}]'
+            $jsonPipeline = $arr | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $arr -Compress
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+
+        It 'Should serialize hashtable containing PowerShell class correctly via Pipeline and InputObject' {
+            $item = [ItemClass]@{ Id = 1; Name = 'Test' }
+            $hash = @{ Item = $item }
+            $expected = '{"Item":{"Id":1,"Name":"Test"}}'
+            $jsonPipeline = $hash | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $hash -Compress
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+
+        It 'Should serialize nested PowerShell classes correctly via Pipeline and InputObject' {
+            $item = [ItemClass]@{ Id = 1; Name = 'Inner' }
+            $container = [ContainerClass]@{ Type = 'Outer'; Item = $item }
+            $expected = '{"Type":"Outer","Item":{"Id":1,"Name":"Inner"}}'
+            $jsonPipeline = $container | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $container -Compress
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+
+        It 'Should serialize PSCustomObject containing PowerShell class correctly via Pipeline and InputObject' {
+            $item = [ItemClass]@{ Id = 1; Name = 'Test' }
+            $obj = [PSCustomObject]@{
+                Label = 'Container'
+                Content = $item
+            }
+            $expected = '{"Label":"Container","Content":{"Id":1,"Name":"Test"}}'
+            $jsonPipeline = $obj | ConvertTo-Json -Compress
+            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+
+        It 'Should truncate nested PowerShell class at Depth limit via Pipeline and InputObject' {
+            $item = [ItemClass]@{ Id = 1; Name = 'Test' }
+            $container = [ContainerClass]@{ Type = 'Outer'; Item = $item }
+            $itemString = $item.ToString()
+            $expected = "{`"Type`":`"Outer`",`"Item`":`"$itemString`"}"
+            $jsonPipeline = $container | ConvertTo-Json -Compress -Depth 0
+            $jsonInputObject = ConvertTo-Json -InputObject $container -Compress -Depth 0
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+    }
+
+    Context 'Complex multilevel compositions' {
+        It 'Should serialize 3-level mixed composition correctly via Pipeline and InputObject' {
+            $obj = [PSCustomObject]@{
+                Users = @(
+                    [PSCustomObject]@{
+                        Name = 'Alice'
+                        Roles = @('Admin', 'User')
+                    },
+                    [PSCustomObject]@{
+                        Name = 'Bob'
+                        Roles = @('User')
+                    }
+                )
+            }
+            $expected = '{"Users":[{"Name":"Alice","Roles":["Admin","User"]},{"Name":"Bob","Roles":["User"]}]}'
+            $jsonPipeline = $obj | ConvertTo-Json -Compress -Depth 3
+            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress -Depth 3
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+
+        It 'Should serialize dictionary with nested mixed types correctly via Pipeline and InputObject' {
+            $hash = [ordered]@{
+                Meta = [PSCustomObject]@{ Version = '1.0' }
+                Data = @(
+                    ([ordered]@{ Key = 'A'; Values = @(1, 2) }),
+                    ([ordered]@{ Key = 'B'; Values = @(3, 4) })
+                )
+            }
+            $expected = '{"Meta":{"Version":"1.0"},"Data":[{"Key":"A","Values":[1,2]},{"Key":"B","Values":[3,4]}]}'
+            $jsonPipeline = $hash | ConvertTo-Json -Compress -Depth 3
+            $jsonInputObject = ConvertTo-Json -InputObject $hash -Compress -Depth 3
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+
+        It 'Should handle deeply nested mixed types with sufficient Depth via Pipeline and InputObject' {
+            $obj = [PSCustomObject]@{
+                L0 = @{
+                    L1 = [PSCustomObject]@{
+                        L2 = @(
+                            [PSCustomObject]@{ L3 = 'deep' }
+                        )
+                    }
+                }
+            }
+            $expected = '{"L0":{"L1":{"L2":[{"L3":"deep"}]}}}'
+            $jsonPipeline = $obj | ConvertTo-Json -Compress -Depth 10
+            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress -Depth 10
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+
+        It 'Should truncate deeply nested mixed types at Depth limit via Pipeline and InputObject' {
+            $obj = [PSCustomObject]@{
+                L0 = @{
+                    L1 = [PSCustomObject]@{
+                        L2 = @(
+                            [PSCustomObject]@{ L3 = 'deep' }
+                        )
+                    }
+                }
+            }
+            $expected = '{"L0":{"L1":{"L2":""}}}'
+            $jsonPipeline = $obj | ConvertTo-Json -Compress -Depth 2
+            $jsonInputObject = ConvertTo-Json -InputObject $obj -Compress -Depth 2
+            $jsonPipeline | Should -BeExactly $expected
+            $jsonInputObject | Should -BeExactly $expected
+        }
+    }
+
+    #endregion Comprehensive Depth Truncation and Multilevel Composition Tests (Phase 4)
 }

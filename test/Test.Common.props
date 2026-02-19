@@ -6,8 +6,8 @@
     <Company>Microsoft Corporation</Company>
     <Copyright>(c) Microsoft Corporation.</Copyright>
 
-    <TargetFramework>net10.0</TargetFramework>
-    <LangVersion>13.0</LangVersion>
+    <TargetFramework>net11.0</TargetFramework>
+    <LangVersion>preview</LangVersion>
 
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>

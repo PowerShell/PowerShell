@@ -1010,8 +1010,8 @@ function New-PSOptions {
         [ValidateSet('Debug', 'Release', 'CodeCoverage', 'StaticAnalysis', '')]
         [string]$Configuration,
 
-        [ValidateSet("net10.0")]
-        [string]$Framework = "net10.0",
+        [ValidateSet("net11.0")]
+        [string]$Framework = "net11.0",
 
         # These are duplicated from Start-PSBuild
         # We do not use ValidateScript since we want tab completion
@@ -1862,6 +1862,69 @@ $stack_trace
 
 "@
 
+}
+
+function Get-PesterFailureFileInfo
+{
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory)]
+        [string]$StackTraceString
+    )
+
+    # Parse stack trace to extract file path and line number
+    # Common patterns:
+    # "at line: 123 in C:\path\to\file.ps1" (Pester 4)
+    # "at C:\path\to\file.ps1:123"
+    # "at <ScriptBlock>, C:\path\to\file.ps1: line 123"
+    # "at 1 | Should -Be 2, /path/to/file.ps1:123" (Pester 5)
+    # "at 1 | Should -Be 2, C:\path\to\file.ps1:123" (Pester 5 Windows)
+    
+    $result = @{
+        File = $null
+        Line = $null
+    }
+    
+    if ([string]::IsNullOrWhiteSpace($StackTraceString)) {
+        return $result
+    }
+    
+    # Try pattern: "at line: 123 in <path>" (Pester 4)
+    if ($StackTraceString -match 'at line:\s*(\d+)\s+in\s+(.+?)(?:\r|\n|$)') {
+        $result.Line = $matches[1]
+        $result.File = $matches[2].Trim()
+        return $result
+    }
+    
+    # Try pattern: ", <path>:123" (Pester 5 format)
+    # This handles both Unix paths (/path/file.ps1:123) and Windows paths (C:\path\file.ps1:123)
+    if ($StackTraceString -match ',\s*((?:[A-Za-z]:)?[\/\\].+?\.ps[m]?1):(\d+)') {
+        $result.File = $matches[1].Trim()
+        $result.Line = $matches[2]
+        return $result
+    }
+    
+    # Try pattern: "at <path>:123" (without comma)
+    # Handle both absolute Unix and Windows paths
+    if ($StackTraceString -match 'at\s+((?:[A-Za-z]:)?[\/\\][^,]+?\.ps[m]?1):(\d+)(?:\r|\n|$)') {
+        $result.File = $matches[1].Trim()
+        $result.Line = $matches[2]
+        return $result
+    }
+    
+    # Try pattern: "<path>: line 123"
+    if ($StackTraceString -match '((?:[A-Za-z]:)?[\/\\][^,]+?\.ps[m]?1):\s*line\s+(\d+)(?:\r|\n|$)') {
+        $result.File = $matches[1].Trim()
+        $result.Line = $matches[2]
+        return $result
+    }
+    
+    # Try to extract just the file path if no line number found
+    if ($StackTraceString -match '(?:at\s+|in\s+)?((?:[A-Za-z]:)?[\/\\].+?\.ps[m]?1)') {
+        $result.File = $matches[1].Trim()
+    }
+    
+    return $result
 }
 
 function Test-XUnitTestResults
@@ -3958,7 +4021,7 @@ function Clear-NativeDependencies
     $filesToDeleteWinDesktop = @()
 
     $deps = Get-Content "$PublishFolder/pwsh.deps.json" -Raw | ConvertFrom-Json -Depth 20
-    $targetRuntime = ".NETCoreApp,Version=v10.0/$($script:Options.Runtime)"
+    $targetRuntime = ".NETCoreApp,Version=v11.0/$($script:Options.Runtime)"
 
     $runtimePackNetCore = $deps.targets.${targetRuntime}.PSObject.Properties.Name -like 'runtimepack.Microsoft.NETCore.App.Runtime*'
     $runtimePackWinDesktop = $deps.targets.${targetRuntime}.PSObject.Properties.Name -like 'runtimepack.Microsoft.WindowsDesktop.App.Runtime*'

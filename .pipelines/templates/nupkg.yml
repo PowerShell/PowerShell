@@ -117,13 +117,13 @@ jobs:
       Start-PSBuild -Clean -Runtime linux-x64 -Configuration Release -ReleaseTag $(ReleaseTagVar)
 
       $sharedModules | Foreach-Object {
-        $refFile = Get-ChildItem -Path "$(PowerShellRoot)\src\$_\obj\Release\net10.0\refint\$_.dll"
+        $refFile = Get-ChildItem -Path "$(PowerShellRoot)\src\$_\obj\Release\net11.0\refint\$_.dll"
         Write-Verbose -Verbose "RefAssembly: $refFile"
         Copy-Item -Path $refFile -Destination "$refAssemblyFolder\$_.dll" -Verbose
-        $refDoc = "$(PowerShellRoot)\src\$_\bin\Release\net10.0\$_.xml"
+        $refDoc = "$(PowerShellRoot)\src\$_\bin\Release\net11.0\$_.xml"
         if (-not (Test-Path $refDoc)) {
           Write-Warning "$refDoc not found"
-          Get-ChildItem -Path "$(PowerShellRoot)\src\$_\bin\Release\net10.0\" | Out-String | Write-Verbose -Verbose
+          Get-ChildItem -Path "$(PowerShellRoot)\src\$_\bin\Release\net11.0\" | Out-String | Write-Verbose -Verbose
         }
         else {
           Copy-Item -Path $refDoc -Destination "$refAssemblyFolder\$_.xml" -Verbose
@@ -133,13 +133,13 @@ jobs:
       Start-PSBuild -Clean -Runtime win7-x64 -Configuration Release -ReleaseTag $(ReleaseTagVar)
 
       $winOnlyModules | Foreach-Object {
-        $refFile = Get-ChildItem -Path "$(PowerShellRoot)\src\$_\obj\Release\net10.0\refint\*.dll"
+        $refFile = Get-ChildItem -Path "$(PowerShellRoot)\src\$_\obj\Release\net11.0\refint\*.dll"
         Write-Verbose -Verbose 'RefAssembly: $refFile'
         Copy-Item -Path $refFile -Destination "$refAssemblyFolder\$_.dll" -Verbose
-        $refDoc = "$(PowerShellRoot)\src\$_\bin\Release\net10.0\$_.xml"
+        $refDoc = "$(PowerShellRoot)\src\$_\bin\Release\net11.0\$_.xml"
         if (-not (Test-Path $refDoc)) {
           Write-Warning "$refDoc not found"
-          Get-ChildItem -Path "$(PowerShellRoot)\src\$_\bin\Release\net10.0" | Out-String | Write-Verbose -Verbose
+          Get-ChildItem -Path "$(PowerShellRoot)\src\$_\bin\Release\net11.0" | Out-String | Write-Verbose -Verbose
         }
         else {
           Copy-Item -Path $refDoc -Destination "$refAssemblyFolder\$_.xml" -Verbose
