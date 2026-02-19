@@ -7,7 +7,7 @@
     <Copyright>(c) Microsoft Corporation.</Copyright>
 
     <TargetFramework>net11.0</TargetFramework>
-    <LangVersion>13.0</LangVersion>
+    <LangVersion>preview</LangVersion>
 
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
