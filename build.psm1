@@ -985,9 +985,26 @@ function Restore-PSPester
 {
     param(
         [ValidateNotNullOrEmpty()]
-        [string] $Destination = ([IO.Path]::Combine((Split-Path (Get-PSOptions -DefaultToNew).Output), "Modules"))
+        [string]$Destination = ([IO.Path]::Combine((Split-Path (Get-PSOptions -DefaultToNew).Output), 'Modules'))
     )
-    Save-Module -Name Pester -Path $Destination -Repository PSGallery -MaximumVersion 4.99
+
+    #The PowerShell Pester tests have not yet been fully updated to Pester 5.
+    #Update when https://github.com/PowerShell/PowerShell/issues/12816 is resolved.
+    [Microsoft.PowerShell.Commands.ModuleSpecification]$requiredPester = @{
+        ModuleName     = 'Pester';
+        ModuleVersion  = '4.2';
+        MaximumVersion = '4.99'
+    }
+
+    #Ensure an existing unsupported Pester isn't already loaded into the current session
+    Get-Module -Name Pester | Where-Object version -GE $requiredPester.MaximumVersion | Remove-Module
+
+    #Save-Module Requires the folder to already be present
+    if (-not (Test-Path $Destination)) {
+        throw "PowerShell Module Folder $Destination does not exist in which to restore Pester. Did you run a build first?"
+    }
+
+    Save-Module -InputObject $requiredPester -Repository PSGallery -Path $Destination
 }
 
 function Compress-TestContent {
@@ -1416,71 +1433,52 @@ function Start-PSPester {
         Switch-PSNugetConfig -Source Public
     }
 
-    if (-not (Get-Module -ListAvailable -Name $Pester -ErrorAction SilentlyContinue | Where-Object { $_.Version -ge "4.2" } ))
-    {
-        Restore-PSPester
-    }
+    Restore-PSPester -Destination $publishModulePath
 
-    if ($IncludeFailingTest.IsPresent)
-    {
+    if ($IncludeFailingTest.IsPresent) {
         $Path += "$PSScriptRoot/tools/failingTests"
     }
 
-    if($IncludeCommonTests.IsPresent)
-    {
+    if ($IncludeCommonTests.IsPresent) {
         $path = += "$PSScriptRoot/test/common"
     }
 
     # we need to do few checks and if user didn't provide $ExcludeTag explicitly, we should alternate the default
-    if ($Unelevate)
-    {
-        if (-not $environment.IsWindows)
-        {
+    if ($Unelevate) {
+        if (-not $environment.IsWindows) {
             throw '-Unelevate is currently not supported on non-Windows platforms'
         }
 
-        if (-not $environment.IsAdmin)
-        {
+        if (-not $environment.IsAdmin) {
             throw '-Unelevate cannot be applied because the current user is not Administrator'
         }
 
-        if (-not $PSBoundParameters.ContainsKey('ExcludeTag'))
-        {
+        if (-not $PSBoundParameters.ContainsKey('ExcludeTag')) {
             $ExcludeTag += 'RequireAdminOnWindows'
         }
-    }
-    elseif ($environment.IsWindows -and (-not $environment.IsAdmin))
-    {
-        if (-not $PSBoundParameters.ContainsKey('ExcludeTag'))
-        {
+    } elseif ($environment.IsWindows -and (-not $environment.IsAdmin)) {
+        if (-not $PSBoundParameters.ContainsKey('ExcludeTag')) {
             $ExcludeTag += 'RequireAdminOnWindows'
         }
-    }
-    elseif (-not $environment.IsWindows -and (-not $Sudo.IsPresent))
-    {
-        if (-not $PSBoundParameters.ContainsKey('ExcludeTag'))
-        {
+    } elseif (-not $environment.IsWindows -and (-not $Sudo.IsPresent)) {
+        if (-not $PSBoundParameters.ContainsKey('ExcludeTag')) {
             $ExcludeTag += 'RequireSudoOnUnix'
         }
-    }
-    elseif (-not $environment.IsWindows -and $Sudo.IsPresent)
-    {
-        if (-not $PSBoundParameters.ContainsKey('Tag'))
-        {
+    } elseif (-not $environment.IsWindows -and $Sudo.IsPresent) {
+        if (-not $PSBoundParameters.ContainsKey('Tag')) {
             $Tag = 'RequireSudoOnUnix'
         }
     }
 
     Write-Verbose "Running pester tests at '$path' with tag '$($Tag -join ''', ''')' and ExcludeTag '$($ExcludeTag -join ''', ''')'" -Verbose
-    if(!$SkipTestToolBuild.IsPresent)
-    {
+    if (!$SkipTestToolBuild.IsPresent) {
         $publishArgs = @{ }
         # if we are building for Alpine, we must include the runtime as linux-x64
         # will not build runnable test tools
         if ( $environment.IsLinux -and $environment.IsAlpine ) {
             $publishArgs['runtime'] = 'linux-musl-x64'
         }
-        Publish-PSTestTools @publishArgs | ForEach-Object {Write-Host $_}
+        Publish-PSTestTools @publishArgs | ForEach-Object { Write-Host $_ }
 
         # Publish the Microsoft.PowerShell.NamedPipeConnection module for testing custom remote connections.
         Publish-CustomConnectionTestModule | ForEach-Object { Write-Host $_ }
@@ -1490,21 +1488,20 @@ function Start-PSPester {
 
     # Disable telemetry for all startups of pwsh in tests
     $command = "`$env:POWERSHELL_TELEMETRY_OPTOUT = 'yes';"
-    if ($Terse)
-    {
+    if ($Terse) {
         $command += "`$ProgressPreference = 'silentlyContinue'; "
     }
 
     # Autoload (in subprocess) temporary modules used in our tests
     $newPathFragment = $TestModulePath + $TestModulePathSeparator
-    $command += '$env:PSModulePath = '+"'$newPathFragment'" + '+$env:PSModulePath;'
+    $command += '$env:PSModulePath = ' + "'$newPathFragment'" + '+$env:PSModulePath;'
 
     # Windows needs the execution policy adjusted
     if ($environment.IsWindows) {
-        $command += "Set-ExecutionPolicy -Scope Process Unrestricted; "
+        $command += 'Set-ExecutionPolicy -Scope Process Unrestricted; '
     }
 
-    $command += "Import-Module '$Pester'; "
+    $command += "Import-Module '$Pester' -MaximumVersion $($requiredPester.MaximumVersion) -MinimumVersion $($requiredPester.MinimumVersion) -ErrorAction Stop; "
 
     if ($Unelevate)
     {
