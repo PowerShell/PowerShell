@@ -12,7 +12,6 @@ namespace System.Diagnostics.Eventing
 {
     public class EventProvider : IDisposable
     {
-        [SecurityCritical]
         private UnsafeNativeMethods.EtwEnableCallback _etwCallback;  // Trace Callback function
 
         private long _regHandle;                       // Trace Registration Handle
@@ -73,7 +72,6 @@ namespace System.Diagnostics.Eventing
         /// <param name="providerGuid">
         /// Unique GUID among all trace sources running on a system
         /// </param>
-        [SecuritySafeCritical]
         [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "guid")]
         public EventProvider(Guid providerGuid)
         {
@@ -92,7 +90,6 @@ namespace System.Diagnostics.Eventing
         /// If for some reason the ETW EtwRegister call failed
         /// a NotSupported exception will be thrown.
         /// </summary>
-        [System.Security.SecurityCritical]
         private unsafe void EtwRegister()
         {
             uint status;
@@ -118,7 +115,6 @@ namespace System.Diagnostics.Eventing
             GC.SuppressFinalize(this);
         }
 
-        [System.Security.SecuritySafeCritical]
         protected virtual void Dispose(bool disposing)
         {
             //
@@ -167,7 +163,6 @@ namespace System.Diagnostics.Eventing
         /// <summary>
         /// This method un-registers from ETW.
         /// </summary>
-        [System.Security.SecurityCritical]
         private unsafe void Deregister()
         {
             //
@@ -182,7 +177,6 @@ namespace System.Diagnostics.Eventing
             }
         }
 
-        [System.Security.SecurityCritical]
         private unsafe void EtwEnableCallBack(
                         [In] ref System.Guid sourceId,
                         [In] int isEnabled,
@@ -269,7 +263,6 @@ namespace System.Diagnostics.Eventing
             }
         }
 
-        [System.Security.SecurityCritical]
         private static unsafe string EncodeObject(ref object data, EventData* dataDescriptor, byte* dataBuffer)
         /*++
 
@@ -434,7 +427,6 @@ namespace System.Diagnostics.Eventing
         /// <param name="eventKeywords">
         /// Keyword to test
         /// </param>
-        [System.Security.SecurityCritical]
         public bool WriteMessageEvent(string eventMessage, byte eventLevel, long eventKeywords)
         {
             int status = 0;
@@ -501,7 +493,6 @@ namespace System.Diagnostics.Eventing
         /// <param name="data">
         /// string to log.
         /// </param>
-        [System.Security.SecurityCritical]
         [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly")]
         public bool WriteEvent(in EventDescriptor eventDescriptor, string data)
         {
@@ -560,7 +551,6 @@ namespace System.Diagnostics.Eventing
         /// <param name="data">
         /// pointer do the event data
         /// </param>
-        [System.Security.SecurityCritical]
         protected bool WriteEvent(in EventDescriptor eventDescriptor, int dataCount, IntPtr data)
         {
             uint status = 0;
@@ -597,7 +587,6 @@ namespace System.Diagnostics.Eventing
         /// </param>
         /// <param name="eventPayload">
         /// </param>
-        [System.Security.SecurityCritical]
         public bool WriteTransferEvent(in EventDescriptor eventDescriptor, Guid relatedActivityId, params object[] eventPayload)
         {
             uint status = 0;
@@ -732,7 +721,6 @@ namespace System.Diagnostics.Eventing
             return true;
         }
 
-        [System.Security.SecurityCritical]
         protected bool WriteTransferEvent(in EventDescriptor eventDescriptor, Guid relatedActivityId, int dataCount, IntPtr data)
         {
             uint status = 0;
@@ -759,20 +747,17 @@ namespace System.Diagnostics.Eventing
             return true;
         }
 
-        [System.Security.SecurityCritical]
         private static Guid GetActivityId()
         {
             return t_activityId;
         }
 
-        [System.Security.SecurityCritical]
         public static void SetActivityId(ref Guid id)
         {
             t_activityId = id;
             UnsafeNativeMethods.EventActivityIdControl((int)ActivityControl.EVENT_ACTIVITY_CTRL_SET_ID, ref id);
         }
 
-        [System.Security.SecurityCritical]
         public static Guid CreateActivityId()
         {
             Guid newId = new();
