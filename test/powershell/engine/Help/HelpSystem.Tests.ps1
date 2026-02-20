@@ -37,7 +37,8 @@ function UpdateHelpFromLocalContentPath {
 function GetCurrentUserHelpRoot {
     if ([System.Management.Automation.Platform]::IsWindows) {
         $userHelpRoot = Join-Path $HOME "Documents/PowerShell/Help/"
-    } else {
+    }
+    else {
         $userModulesRoot = [System.Management.Automation.Platform]::SelectProductNameForDirectory([System.Management.Automation.Platform+XDG_Type]::USER_MODULES)
         $userHelpRoot = Join-Path $userModulesRoot -ChildPath ".." -AdditionalChildPath "Help"
     }
@@ -104,7 +105,7 @@ Describe "Validate that get-help works for CurrentUserScope" -Tags @('CI') {
         $testCases = @()
 
         ## Just testing first 3 in CI, Feature tests validate full list.
-        $cmdlets | Where-Object { $script:cmdletsToSkip -notcontains $_ } | Select-Object -First 3 | ForEach-Object { $testCases += @{ cmdletName = $_.Name }}
+        $cmdlets | Where-Object { $script:cmdletsToSkip -notcontains $_ } | Select-Object -First 3 | ForEach-Object { $testCases += @{ cmdletName = $_.Name } }
 
         It "Validate -Description and -Examples sections in help content. Run 'Get-help -name <cmdletName>" -TestCases $testCases {
             param($cmdletName)
@@ -157,7 +158,7 @@ Describe "Validate that get-help works for AllUsers Scope" -Tags @('Feature', 'R
         }
 
         $testCases = @()
-        $cmdlets | Where-Object { $cmdletsToSkip -notcontains $_ } | ForEach-Object { $testCases += @{ cmdletName = $_.Name }}
+        $cmdlets | Where-Object { $cmdletsToSkip -notcontains $_ } | ForEach-Object { $testCases += @{ cmdletName = $_.Name } }
 
         It "Validate -Description and -Examples sections in help content. Run 'Get-help -name <cmdletName>" -TestCases $testCases -Skip:(!(Test-CanWriteToPsHome)) {
             param($cmdletName)
@@ -317,7 +318,8 @@ Describe "Get-Help should find help info within help files" -Tags @('CI') {
             $null = New-Item -ItemType File -Path $helpFilePath -Value "about_test" -ErrorAction SilentlyContinue
             $helpContent = Get-Help about_testCase
             $helpContent | Should -Match "about_test"
-        } finally {
+        }
+        finally {
             Remove-Item $helpFilePath -Force -ErrorAction SilentlyContinue
         }
     }
@@ -352,10 +354,10 @@ Describe "Get-Help should find pattern help files" -Tags "CI" {
     }
 
     $testcases = @(
-        @{command = {Get-Help about_testCas?1}; testname = "test ? pattern"; result = "about_test1"}
-        @{command = {Get-Help about_testCase.?}; testname = "test ? pattern with dot"; result = "about_test2"}
-        @{command = {(Get-Help about_testCase*).Count}; testname = "test * pattern"; result = "2"}
-        @{command = {Get-Help about_testCas?.2*}; testname = "test ?, * pattern with dot"; result = "about_test2"}
+        @{command = { Get-Help about_testCas?1 }; testname = "test ? pattern"; result = "about_test1" }
+        @{command = { Get-Help about_testCase.? }; testname = "test ? pattern with dot"; result = "about_test2" }
+        @{command = { (Get-Help about_testCase*).Count }; testname = "test * pattern"; result = "2" }
+        @{command = { Get-Help about_testCas?.2* }; testname = "test ?, * pattern with dot"; result = "about_test2" }
     )
 
     It "Get-Help should find pattern help files - <testname>" -TestCases $testcases {
@@ -422,7 +424,7 @@ Describe "help function uses full view by default" -Tags "CI" {
         }
 
         $gpsHelp = (help Microsoft.PowerShell.Management\Get-Process)
-        $gpsHelp | Where-Object {$_ -cmatch '^PARAMETERS'} | Should -Not -BeNullOrEmpty
+        $gpsHelp | Where-Object { $_ -cmatch '^PARAMETERS' } | Should -Not -BeNullOrEmpty
     }
 
     It "help should return full view even with -Full switch" {
@@ -431,7 +433,7 @@ Describe "help function uses full view by default" -Tags "CI" {
         }
 
         $gpsHelp = (help Microsoft.PowerShell.Management\Get-Process -Full)
-        $gpsHelp | Where-Object {$_ -cmatch '^PARAMETERS'} | Should -Not -BeNullOrEmpty
+        $gpsHelp | Where-Object { $_ -cmatch '^PARAMETERS' } | Should -Not -BeNullOrEmpty
     }
 
     It "help should not append -Full when not using AllUsersView parameter set" {
@@ -440,7 +442,7 @@ Describe "help function uses full view by default" -Tags "CI" {
         }
 
         $gpsHelp = (help Microsoft.PowerShell.Management\Get-Process -Parameter Name)
-        $gpsHelp | Where-Object {$_ -cmatch '^PARAMETERS'} | Should -BeNullOrEmpty
+        $gpsHelp | Where-Object { $_ -cmatch '^PARAMETERS' } | Should -BeNullOrEmpty
     }
 }
 
@@ -474,7 +476,7 @@ Describe 'help can be found for CurrentUser Scope' -Tags 'CI' {
         }
 
         $TestCases = @(
-            @{TestName = 'module under $PSHOME'; CmdletName = 'Add-Content'}
+            @{TestName = 'module under $PSHOME'; CmdletName = 'Add-Content' }
             @{TestName = 'module is a PSSnapin'; CmdletName = 'Get-Command' }
             @{TestName = 'module is under $PSHOME\Modules'; CmdletName = 'Compress-Archive' }
             @{TestName = 'module has a version folder'; CmdletName = 'Find-Package' }
@@ -522,7 +524,7 @@ Describe 'help can be found for AllUsers Scope' -Tags @('Feature', 'RequireAdmin
         }
 
         $TestCases = @(
-            @{TestName = 'module under $PSHOME'; CmdletName = 'Add-Content'}
+            @{TestName = 'module under $PSHOME'; CmdletName = 'Add-Content' }
             @{TestName = 'module is a PSSnapin'; CmdletName = 'Get-Command' }
             @{TestName = 'module is under $PSHOME\Modules'; CmdletName = 'Compress-Archive' }
             @{TestName = 'module has a version folder'; CmdletName = 'Find-Package' }
@@ -647,14 +649,13 @@ Describe 'help renders when using a PAGER with a space in the path' -Tags 'CI' {
 
 Describe 'Update-Help allows partial culture matches' -Tags 'CI' {
     BeforeAll {
-        function Test-UpdateHelpAux($UICulture, $Pass)
-        {
+        function Test-UpdateHelpAux($UICulture, $Pass) {
             # If null (in system culture tests), omit entirely
             $CultureArg = $UICulture ? @{ UICulture = $UICulture } : @{}
             $Args = @{
-                Module = 'Microsoft.PowerShell.Core'
-                SourcePath = Join-Path $PSScriptRoot 'assets'
-                Force = $true
+                Module      = 'Microsoft.PowerShell.Core'
+                SourcePath  = Join-Path $PSScriptRoot 'assets'
+                Force       = $true
                 ErrorAction = $Pass ? 'Stop' : 'SilentlyContinue'
                 ErrorVariable = 'ErrorVariable'
             }
@@ -701,8 +702,8 @@ Describe 'InputTypes accurately describe pipelinable input' {
         function invoke-inputtypetest {
             [CmdletBinding()]
             param (
-            [Parameter(Position=0,Mandatory=$true,ValueFromPipeline=$true)][string]$a,
-            [Parameter(Position=1,ValueFromRemainingArguments=$true)][object[]]$c)
+                [Parameter(Position = 0, Mandatory = $true, ValueFromPipeline = $true)][string]$a,
+                [Parameter(Position = 1, ValueFromRemainingArguments = $true)][object[]]$c)
             Process { "$a $c" }
         }
     }
@@ -716,31 +717,49 @@ Describe 'InputTypes accurately describe pipelinable input' {
 
 # Regression test for https://github.com/PowerShell/PowerShell/issues/26676
 # ShowWindow must render all elements of example.Introduction, not only Introduction[0].
-Describe 'Get-Help example introduction array' -Tags @('CI') {
+# This test loads a MAML XML help file whose example has two <maml:para> introduction
+# elements, verifying that the PSObject[] array the fixed AddExamples() foreach reads
+# contains all items and that their text values are non-null and correct.
+Describe 'Get-Help example introduction array - issue 26676' -Tags @('CI') {
     BeforeAll {
-        function Get-HelpExampleIntroTest {
-            <#
-            .SYNOPSIS
-                Test function for example introduction rendering.
-            .EXAMPLE
-                PS C:\> Get-HelpExampleIntroTest
-                Runs the test function.
-            #>
-        }
+        # Register a temporary module whose help comes from our multi-introduction MAML file.
+        $testModulePath = Join-Path $TestDrive 'MultiIntroModule'
+        $null = New-Item -ItemType Directory -Path $testModulePath -Force
+
+        # Minimal module manifest + function
+        Set-Content -Path (Join-Path $testModulePath 'MultiIntroModule.psm1') -Value @'
+function Get-MultiIntroExample {
+    <#
+    .EXTERNALHELP MultiIntroModule-help.xml
+    #>
+}
+'@
+        # Copy our MAML asset next to the module
+        $mamlAsset = Join-Path $PSScriptRoot 'assets\MultiIntroExample-help.xml'
+        Copy-Item -Path $mamlAsset -Destination (Join-Path $testModulePath 'MultiIntroModule-help.xml')
+
+        Import-Module $testModulePath -Force
     }
 
-    It 'example introduction elements are all accessible as an array' {
-        $help = Get-Help -Name Get-HelpExampleIntroTest -Full
+    AfterAll {
+        Remove-Module -Name 'MultiIntroModule' -Force -ErrorAction SilentlyContinue
+    }
+
+    It 'example.introduction contains more than one element (multi-para MAML)' {
+        $help = Get-Help -Name Get-MultiIntroExample -Full
         $help.examples | Should -Not -BeNullOrEmpty
+
         $example = $help.examples.example[0]
         $example | Should -Not -BeNullOrEmpty
 
-        # introduction is a PSObject[] - every element must have a non-null text value
-        # so that AddExamples' foreach loop can render all of them without data loss
-        if ($null -ne $example.introduction) {
-            foreach ($intro in $example.introduction) {
-                $intro | Should -Not -BeNullOrEmpty
-            }
-        }
+        # Core assertion: introduction must be an array with 2 elements.
+        # This proves AddExamples() foreach will render both, not just [0].
+        $example.introduction | Should -Not -BeNullOrEmpty
+        $example.introduction.Count | Should -BeGreaterThan 1
+
+        # Verify the actual text of each element is preserved correctly.
+        $introTexts = $example.introduction | ForEach-Object { $_.text }
+        $introTexts[0] | Should -Not -BeNullOrEmpty
+        $introTexts[1] | Should -Not -BeNullOrEmpty
     }
 }

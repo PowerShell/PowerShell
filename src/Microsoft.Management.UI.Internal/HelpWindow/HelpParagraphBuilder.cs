@@ -532,6 +532,7 @@ namespace Microsoft.Management.UI.Internal
                         if (introText != null)
                         {
                             this.AddText(HelpParagraphBuilder.AddIndent(introText), false);
+                            this.AddText("\r\n", false);
                         }
                     }
                 }
