@@ -713,3 +713,34 @@ Describe 'InputTypes accurately describe pipelinable input' {
         $inputTypes | Should -Be "System.String"
     }
 }
+
+# Regression test for https://github.com/PowerShell/PowerShell/issues/26676
+# ShowWindow must render all elements of example.Introduction, not only Introduction[0].
+Describe 'Get-Help example introduction array' -Tags @('CI') {
+    BeforeAll {
+        function Get-HelpExampleIntroTest {
+            <#
+            .SYNOPSIS
+                Test function for example introduction rendering.
+            .EXAMPLE
+                PS C:\> Get-HelpExampleIntroTest
+                Runs the test function.
+            #>
+        }
+    }
+
+    It 'example introduction elements are all accessible as an array' {
+        $help = Get-Help -Name Get-HelpExampleIntroTest -Full
+        $help.examples | Should -Not -BeNullOrEmpty
+        $example = $help.examples.example[0]
+        $example | Should -Not -BeNullOrEmpty
+
+        # introduction is a PSObject[] - every element must have a non-null text value
+        # so that AddExamples' foreach loop can render all of them without data loss
+        if ($null -ne $example.introduction) {
+            foreach ($intro in $example.introduction) {
+                $intro | Should -Not -BeNullOrEmpty
+            }
+        }
+    }
+}

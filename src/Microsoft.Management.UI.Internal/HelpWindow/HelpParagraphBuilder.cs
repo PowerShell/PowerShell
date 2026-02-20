@@ -509,9 +509,6 @@ namespace Microsoft.Management.UI.Internal
                     continue;
                 }
 
-                string introductionText = null;
-                introductionText = GetTextFromArray(example, "introduction");
-
                 string codeText = GetPropertyString(example, "code");
                 string title = GetPropertyString(example, "title");
 
@@ -526,10 +523,22 @@ namespace Microsoft.Management.UI.Internal
                     this.AddText("\r\n", false);
                 }
 
+                PSObject[] introductionObjects = HelpParagraphBuilder.GetPropertyObject(example, "introduction") as PSObject[];
+                if (introductionObjects != null)
+                {
+                    foreach (PSObject intro in introductionObjects)
+                    {
+                        string introText = GetPropertyString(intro, "text");
+                        if (introText != null)
+                        {
+                            this.AddText(HelpParagraphBuilder.AddIndent(introText), false);
+                        }
+                    }
+                }
+
                 string codeLine = string.Format(
                     CultureInfo.CurrentCulture,
-                    "{0}{1}\r\n\r\n",
-                    introductionText,
+                    "{0}\r\n\r\n",
                     codeText);
 
                 this.AddText(HelpParagraphBuilder.AddIndent(codeLine), false);
