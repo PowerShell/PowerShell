@@ -68,7 +68,7 @@ jobs:
       script: |
         # Convert ADO variables to PowerShell boolean variables
         $IsLTS = '$(LTS)' -eq 'true'
-        $IsStable = '$(STABLE)' -eq 'true' 
+        $IsStable = '$(STABLE)' -eq 'true'
         $IsPreview = '$(PREVIEW)' -eq 'true'
 
         Write-Verbose -Verbose "Channel Selection - LTS: $(LTS), Stable: $(STABLE), Preview: $(PREVIEW)"
@@ -76,7 +76,7 @@ jobs:
         $currentChannel = if ($IsLTS) { 'LTS' }
           elseif ($IsStable) { 'Stable' }
           elseif ($IsPreview) { 'Preview' }
-          else { 
+          else {
             Write-Error "No valid channel detected"
             exit 1
           }

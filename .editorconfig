@@ -31,6 +31,7 @@ indent_size = 2
 # Data serialization
 [*.{json,yaml,yml}]
 indent_size = 2
+trim_trailing_whitespace = true
 
 # Markdown
 [*.md]
