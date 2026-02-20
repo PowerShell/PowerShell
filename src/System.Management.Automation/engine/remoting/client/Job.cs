@@ -4135,8 +4135,9 @@ namespace System.Management.Automation
         {
             // Nested debugged runspace prompt should look like:
             // [DBG]: [JobName]: PS C:\>>
-            string promptScript = "'[DBG]: '" + " + " + "'[" + CodeGeneration.EscapeSingleQuotedStringContent(_jobName) + "]: '" + " + " + @"""PS $($executionContext.SessionState.Path.CurrentLocation)>> """;
-            PSCommand promptCommand = new PSCommand();
+            string promptScript = $"'[DBG]: [{CodeGeneration.EscapeSingleQuotedStringContent(_jobName)}]: ' + "
+                                  + @"""PS $($ExecutionContext.SessionState.Path.CurrentLocation.DisplayPath)>> """;
+            var promptCommand = new PSCommand();
             promptCommand.AddScript(promptScript);
             _wrappedDebugger.ProcessCommand(promptCommand, output);
 
