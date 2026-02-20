@@ -12,9 +12,11 @@ Describe "Behavior is specific for each platform" -tags "CI" {
             $PSNativeCommandArgumentPassing | Should -BeExactly "Windows"
         }
     }
+
     It "PSNativeCommandArgumentPassing is set to 'Standard' on non-Windows systems" -skip:($IsWindows) {
         $PSNativeCommandArgumentPassing | Should -Be "Standard"
     }
+
     It "Has proper behavior on Windows" -skip:(-not $IsWindows) {
         "@echo off`nSET V1=1" > "$TESTDRIVE\script 1.cmd"
         "@echo off`nSET V2=a`necho %V1%" > "$TESTDRIVE\script 2.cmd"
@@ -25,7 +27,6 @@ Describe "Behavior is specific for each platform" -tags "CI" {
         $result[1] | Should -Be 1
         $result[2] | Should Be "a"
     }
-
 }
 
 Describe "tests for multiple languages and extensions" -tags "CI" {
@@ -175,9 +176,11 @@ Describe "find.exe uses legacy behavior on Windows" -Tag 'CI' {
             @{ pattern = "blat" },
             @{ pattern = "bl at" }
     }
+
     AfterAll {
         $PSNativeCommandArgumentPassing = $currentSetting
     }
+
     It "The pattern '<pattern>' is used properly by find.exe" -skip:(! $IsWindows) -testCases $testCases {
         param ($pattern)
         $expr = "'foo' | find.exe --% /v ""$pattern"""
@@ -313,6 +316,26 @@ foreach ( $argumentListValue in "Standard","Legacy","Windows" ) {
             $lines = testexe -echoargs temp:/foo
             $lines.Count | Should -Be 1
             $lines | Should -BeExactly 'Arg 0 is <temp:/foo>'
+        }
+    }
+
+    Describe "Should handle native parameters which use '=' in combination with dots in the argument" -tags "CI" {
+        BeforeAll {
+            $testCases = @(
+                @{arguments = "-foo=bar.baz"; expected = @("Arg 0 is <-foo=bar.baz>")},
+                @{arguments = "-foo=bar.baz -baz=qux.quux"; expected = @("Arg 0 is <-foo=bar.baz>", "Arg 1 is <-baz=qux.quux>")}
+                @{arguments = "--foo=bar.baz -baz=qux.quux"; expected = @("Arg 0 is <--foo=bar.baz>", "Arg 1 is <-baz=qux.quux>")}
+                @{arguments = '-foo=bar.baz -baz=qux.$PID'; expected = @("Arg 0 is <-foo=bar.baz>", 'Arg 1 is <-baz=qux.$PID>')}
+                @{arguments = '-foo=bar.baz -baz=qux.$PWD.length'; expected = @("Arg 0 is <-foo=bar.baz>", 'Arg 1 is <-baz=qux.$PWD.length>')}
+            )
+        }
+
+        It "Should handle '<arguments>' in argument values" -TestCases $testCases {
+            param ($arguments, $expected)
+            $sb = [scriptblock]::Create("testexe -echoargs $arguments")
+            $lines = & $sb
+            $lines.Count | Should -Be $expected.count
+            $lines | Should -BeExactly $expected
         }
     }
 }
