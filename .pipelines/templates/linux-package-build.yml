@@ -13,8 +13,6 @@ jobs:
     type: linux
 
   variables:
-    - name: runCodesignValidationInjection
-      value: false
     - name: nugetMultiFeedWarnLevel
       value: none
     - name: NugetSecurityAnalysisWarningLevel
