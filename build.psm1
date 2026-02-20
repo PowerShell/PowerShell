@@ -1388,6 +1388,7 @@ function Start-PSPester {
         [string]$OutputFile = "pester-tests.xml",
         [string[]]$ExcludeTag = 'Slow',
         [string[]]$Tag = @("CI","Feature"),
+        [string[]]$TestName,
         [switch]$ThrowOnFailure,
         [string]$BinDir = (Split-Path (Get-PSOptions -DefaultToNew).Output),
         [string]$powershell = (Join-Path $BinDir 'pwsh'),
@@ -1471,7 +1472,7 @@ function Start-PSPester {
         }
     }
 
-    Write-Verbose "Running pester tests at '$path' with tag '$($Tag -join ''', ''')' and ExcludeTag '$($ExcludeTag -join ''', ''')'" -Verbose
+    Write-Verbose "Running pester tests at '$path' with tag '$($Tag -join ''', ''')' and ExcludeTag '$($ExcludeTag -join ''', ''')' and TestName '$($TestName -join ''', ''')'" -Verbose
     if(!$SkipTestToolBuild.IsPresent)
     {
         $publishArgs = @{ }
@@ -1520,6 +1521,9 @@ function Start-PSPester {
     $command += "Invoke-Pester "
 
     $command += "-OutputFormat ${OutputFormat} -OutputFile ${OutputFile} "
+    if ($TestName) {
+        $command += "-TestName @('" + (${TestName} -join "','") + "') "
+    }
     if ($ExcludeTag -and ($ExcludeTag -ne "")) {
         $command += "-ExcludeTag @('" + (${ExcludeTag} -join "','") + "') "
     }
