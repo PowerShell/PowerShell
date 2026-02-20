@@ -10,7 +10,7 @@ using System.Runtime.Loader;
 
 namespace Test.Isolated.Init
 {
-    internal class CustomLoadContext : AssemblyLoadContext
+    internal sealed class CustomLoadContext : AssemblyLoadContext
     {
         private readonly string _dependencyDirPath;
 
