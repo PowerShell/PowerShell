@@ -57,7 +57,6 @@ jobs:
 
       $metadata = Get-Content -LiteralPath "$toolsDirectory/metadata.json" -ErrorAction Stop | ConvertFrom-Json
       $stableReleaseTag = $metadata.StableReleaseTag -Replace 'v',''
-      
       $stableRelease = $metadata.StableRelease.PublishToChannels
       $ltsRelease = $metadata.LTSRelease.PublishToChannels
 
