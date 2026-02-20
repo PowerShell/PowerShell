@@ -138,14 +138,15 @@ namespace TestExe
         // </Summary>
         private static void EchoCmdLine()
         {
-            string rawCmdLine = "N/A";
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                nint cmdLinePtr = Interop.GetCommandLineW();
-                rawCmdLine = Marshal.PtrToStringUni(cmdLinePtr)!;
+                ReadOnlySpan<char> rawCmdLine = Interop.GetCommandLine();
+                Console.WriteLine(rawCmdLine);
             }
-
-            Console.WriteLine(rawCmdLine);
+            else
+            {
+                Console.WriteLine("N/A");
+            }
         }
 
         // <Summary>
@@ -245,10 +246,19 @@ Other options are for specific tests only. Read source code for details.
             }
         }
     }
+}
 
-    internal static partial class Interop
+internal static partial class Interop
+{
+    [LibraryImport("Kernel32.dll")]
+    private static unsafe partial char* GetCommandLineW();
+
+    internal static ReadOnlySpan<char> GetCommandLine()
     {
-        [LibraryImport("Kernel32.dll")]
-        internal static partial nint GetCommandLineW();
+        unsafe
+        {
+            char* cmdLinePtr = GetCommandLineW();
+            return MemoryMarshal.CreateReadOnlySpanFromNullTerminated(cmdLinePtr);
+        }
     }
 }
