@@ -295,8 +295,8 @@ namespace System.Management.Automation
 
         // Variables needed to generate a unique SourceId for
         // WriteProgress(ProgressRecord).
-        private static Int64 s_lastUsedSourceId /* = 0 */;
-        private Int64 _sourceId /* = 0 */;
+        private static long s_lastUsedSourceId /* = 0 */;
+        private long _sourceId /* = 0 */;
 
         /// <summary>
         /// Display progress information.
@@ -384,7 +384,7 @@ namespace System.Management.Automation
         /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>,
         /// </remarks>
         public void WriteProgress(
-            Int64 sourceId,
+            long sourceId,
             ProgressRecord progressRecord)
         {
             WriteProgress(sourceId, progressRecord, false);
@@ -394,7 +394,7 @@ namespace System.Management.Automation
             => WriteHelper_ShouldWrite(ProgressPreference, lastProgressContinueStatus);
 
         internal void WriteProgress(
-                Int64 sourceId,
+                long sourceId,
                 ProgressRecord progressRecord,
                 bool overrideInquire)
         {
@@ -3608,12 +3608,12 @@ namespace System.Management.Automation
                 new Collection<ChoiceDescription>();
             int currentOption = 0;
 
-            int continueOneOption = Int32.MaxValue,
-                continueAllOption = Int32.MaxValue,
-                haltOption = Int32.MaxValue,
-                skipOneOption = Int32.MaxValue,
-                skipAllOption = Int32.MaxValue,
-                pauseOption = Int32.MaxValue;
+            int continueOneOption = int.MaxValue,
+                continueAllOption = int.MaxValue,
+                haltOption = int.MaxValue,
+                skipOneOption = int.MaxValue,
+                skipAllOption = int.MaxValue,
+                pauseOption = int.MaxValue;
 
             string continueOneLabel = CommandBaseStrings.ContinueOneLabel;
             string continueOneHelpMsg = CommandBaseStrings.ContinueOneHelpMessage;
