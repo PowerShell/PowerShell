@@ -1,5 +1,39 @@
 # Preview Changelog
 
+## [7.6.0-rc.1] - 2026-02-19
+
+### Tests
+
+- Fix `$PSDefaultParameterValues` leak causing tests to skip unexpectedly (#26705)
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+
+<p>Expand to see details.</p>
+
+</summary>
+
+<ul>
+<li>Update branch for release (#26779)</li>
+<li>Update <code>Microsoft.PowerShell.PSResourceGet</code> version to 1.2.0-rc3 (#26767)</li>
+<li>Update <code>Microsoft.PowerShell.Native</code> package version (#26748)</li>
+<li>Move PowerShell build to depend on .NET SDK 10.0.102 (#26717)</li>
+<li>Fix <code>buildinfo.json</code> uploading for preview, LTS, and stable releases (#26715)</li>
+<li>Fix macOS preview package identifier detection to use version string (#26709)</li>
+<li>Update <code>metadata.json</code> to update the Latest attribute with a better name (#26708)</li>
+<li>Remove unused <code>runCodesignValidationInjection</code> variable from pipeline templates (#26707)</li>
+<li>Update <code>Get-ChangeLog</code> to handle backport PRs correctly (#26706)</li>
+<li>Bring release changes from the <code>v7.6.0-preview.6</code> release (#26626)</li>
+<li>Fix the DSC test by skipping <code>AfterAll</code> cleanup if the initial setup in <code>BeforeAll</code> failed (#26622)</li>
+</ul>
+
+</details>
+
+[7.6.0-rc.1]: https://github.com/PowerShell/PowerShell/compare/v7.6.0-preview.6...v7.6.0-rc.1
+
 ## [7.6.0-preview.6] - 2025-12-11
 
 ### Engine Updates and Fixes
