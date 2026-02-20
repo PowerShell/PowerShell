@@ -23,6 +23,7 @@ FunctionsToExport = @(
         'Get-PlatformInfo'
         'Get-RandomFileName'
         'Get-WSManSupport'
+        'Invoke-WithRetry'
         'New-ComplexPassword'
         'New-RandomHexString'
         'Send-VstsLogFile'
