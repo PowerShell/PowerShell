@@ -213,7 +213,7 @@ Describe "Get-Alias null tests" -Tags "CI" {
 
   $testCases =
     @{ data = $null; value = 'null' },
-    @{ data = [String]::Empty; value = 'empty string' }
+    @{ data = [string]::Empty; value = 'empty string' }
 
   Context 'Check null or empty value to the -Name parameter' {
     It 'Should throw if <value> is passed to -Name parameter' -TestCases $testCases {
