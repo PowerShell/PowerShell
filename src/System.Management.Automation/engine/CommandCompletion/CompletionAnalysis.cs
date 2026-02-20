@@ -1379,7 +1379,15 @@ namespace System.Management.Automation
 
                 if (typeNameToComplete is null && tokenAtCursor?.TokenFlags.HasFlag(TokenFlags.TypeName) == true)
                 {
-                    typeNameToComplete = new TypeName(tokenAtCursor.Extent, tokenAtCursor.Text);
+                    // Handles Type name completion when we don't have a TypeExpressionAst but know it's a type anyway
+                    // Like: [System.Linq.Enumerable]::Select[int, f<Tab>]()
+                    int previousTokenIndex = Array.IndexOf(_tokens, tokenAtCursor) - 1;
+
+                    // Ensures we don't complete type names for type aliases, like: using type s<Tab>
+                    if (_tokens[previousTokenIndex].Kind != TokenKind.Type)
+                    {
+                        typeNameToComplete = new TypeName(tokenAtCursor.Extent, tokenAtCursor.Text);
+                    }
                 }
 
                 if (typeNameToComplete != null)
@@ -2380,7 +2388,11 @@ namespace System.Management.Automation
                                     result.AddRange(moduleResults);
                                 return result;
                             case UsingStatementKind.Namespace:
-                                result = CompletionCompleters.CompleteNamespace(completionContext);
+                                if (usingState.Alias is null || usingState.Name != lastAst)
+                                {
+                                    result = CompletionCompleters.CompleteNamespace(completionContext);
+                                }
+
                                 return result;
                             case UsingStatementKind.Type:
                                 break;

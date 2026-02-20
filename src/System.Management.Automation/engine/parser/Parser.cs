@@ -811,6 +811,8 @@ namespace System.Management.Automation.Language
         private List<UsingStatementAst> UsingStatementsRule()
         {
             List<UsingStatementAst> result = null;
+            var usedNamespaces = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var usedTypeAliases = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             while (true)
             {
@@ -822,12 +824,28 @@ namespace System.Management.Automation.Language
                     SkipNewlinesAndSemicolons();
                     result ??= new List<UsingStatementAst>();
 
-                    var usingStatement = statement as UsingStatementAst;
-                    // otherwise returned statement is ErrorStatementAst.
-                    // We ignore it here, because error already reported to the parser.
-                    if (usingStatement != null)
+                    if (statement is UsingStatementAst usingStatement)
                     {
-                        result.Add(usingStatement);
+                        if (usingStatement.UsingStatementKind == UsingStatementKind.Namespace && usedNamespaces.Contains(usingStatement.Name.Value))
+                        {
+                            ReportError(usingStatement.Extent, nameof(ParserStrings.DuplicateNamespaceClause), ParserStrings.DuplicateNamespaceClause, usingStatement.Name.Value);
+                        }
+                        else if (usingStatement.UsingStatementKind == UsingStatementKind.Type && usedTypeAliases.Contains(usingStatement.Name.Value))
+                        {
+                            ReportError(usingStatement.Extent, nameof(ParserStrings.DuplicateTypeAliasClause), ParserStrings.DuplicateTypeAliasClause, usingStatement.Name.Value);
+                        }
+                        else
+                        {
+                            result.Add(usingStatement);
+                            if (usingStatement.UsingStatementKind == UsingStatementKind.Namespace)
+                            {
+                                _ = usedNamespaces.Add(usingStatement.Name.Value);
+                            }
+                            else if (usingStatement.UsingStatementKind == UsingStatementKind.Type)
+                            {
+                                _ = usedTypeAliases.Add(usingStatement.Name.Value);
+                            }
+                        }
                     }
 
                     continue;
@@ -4988,6 +5006,21 @@ namespace System.Management.Automation.Language
                 return new ErrorStatementAst(ExtentOf(usingToken, ExtentFromFirstOf(itemAst, itemToken)));
             }
 
+            if (kind == UsingStatementKind.Type)
+            {
+                if (itemToken.Kind == TokenKind.Identifier && itemToken.TokenFlags == TokenFlags.None)
+                {
+                    itemToken.TokenFlags = TokenFlags.TypeName;
+                }
+
+                // We don't allow namespaces in type aliases
+                if (itemAst.Extent.Text.Contains('.'))
+                {
+                    ReportError(itemAst.Extent, nameof(ParserStrings.TypeAliasContainsNamespace), ParserStrings.TypeAliasContainsNamespace);
+                    return new ErrorStatementAst(ExtentOf(usingToken, itemAst));
+                }
+            }
+
             HashtableAst htAst = null;
             switch (kind)
             {
@@ -5006,40 +5039,76 @@ namespace System.Management.Automation.Language
                 if (equalsToken.Kind == TokenKind.Equals)
                 {
                     SkipToken();
-
-                    var aliasToken = NextToken();
-                    if (aliasToken.Kind is TokenKind.EndOfInput or TokenKind.NewLine or TokenKind.Semi)
+                    // We don't allow subnamespaces in namespace aliases
+                    if (kind == UsingStatementKind.Namespace && itemAst.Extent.Text.Contains('.'))
                     {
-                        UngetToken(aliasToken);
-                        ReportIncompleteInput(After(equalsToken),
-                            nameof(ParserStrings.MissingNamespaceAlias),
-                            ParserStrings.MissingNamespaceAlias);
-                        return new ErrorStatementAst(ExtentOf(usingToken, equalsToken));
+                        ReportError(itemAst.Extent, nameof(ParserStrings.NamespaceAliasContainsNamespace), ParserStrings.NamespaceAliasContainsNamespace);
+                        return new ErrorStatementAst(ExtentOf(usingToken, itemAst.Extent));
                     }
 
-                    if (aliasToken.Kind == TokenKind.Comma)
+                    ExpressionAst aliasAst;
+                    Token aliasToken;
+                    if (kind is UsingStatementKind.Type)
                     {
-                        ReportError(aliasToken.Extent, nameof(ParserStrings.UnexpectedUnaryOperator), ParserStrings.UnexpectedUnaryOperator, aliasToken.Text);
-                        return new ErrorStatementAst(ExtentOf(usingToken, aliasToken));
+                        var oldMode = _tokenizer.Mode;
+                        SetTokenizerMode(TokenizerMode.TypeName);
+                        aliasToken = PeekToken();
+                        SetTokenizerMode(oldMode);
+
+                        if (aliasToken.Kind is TokenKind.EndOfInput or TokenKind.NewLine or TokenKind.Semi)
+                        {
+                            ReportIncompleteInput(After(equalsToken), nameof(ParserStrings.MissingTypeAlias), ParserStrings.MissingTypeAlias);
+                            return new ErrorStatementAst(ExtentOf(usingToken, equalsToken));
+                        }
+
+                        if (aliasToken.Kind != TokenKind.Identifier && aliasToken.TokenFlags != TokenFlags.TypeName)
+                        {
+                            ReportError(aliasToken.Extent, nameof(ParserStrings.TypeNameExpected), ParserStrings.TypeNameExpected);
+                            return new ErrorStatementAst(ExtentOf(usingToken, aliasToken));
+                        }
+
+                        var aliasTypeName = TypeNameRule(allowAssemblyQualifiedNames: true, out aliasToken);
+
+                        // TypeNameRule inserts ":ErrorTypeName:" when generics are missing a type
+                        if (aliasTypeName.Name.Contains(":ErrorTypeName:"))
+                        {
+                            return new ErrorStatementAst(ExtentOf(usingToken, aliasTypeName.Extent));
+                        }
+
+                        aliasAst = new TypeExpressionAst(aliasTypeName.Extent, aliasTypeName);
+                    }
+                    else
+                    {
+                        aliasToken = NextToken();
+                        if (aliasToken.Kind is TokenKind.EndOfInput or TokenKind.NewLine or TokenKind.Semi)
+                        {
+                            UngetToken(aliasToken);
+                            ReportIncompleteInput(After(equalsToken),
+                                nameof(ParserStrings.MissingNamespaceAlias),
+                                ParserStrings.MissingNamespaceAlias);
+                            return new ErrorStatementAst(ExtentOf(usingToken, equalsToken));
+                        }
+
+                        if (aliasToken.Kind == TokenKind.Comma)
+                        {
+                            UngetToken(aliasToken);
+                            ReportError(aliasToken.Extent, nameof(ParserStrings.UnexpectedUnaryOperator), ParserStrings.UnexpectedUnaryOperator, aliasToken.Text);
+                            return new ErrorStatementAst(ExtentOf(usingToken, aliasToken));
+                        }
+
+                        aliasAst = GetCommandArgument(CommandArgumentContext.CommandArgument, aliasToken);
                     }
 
-                    var aliasAst = GetCommandArgument(CommandArgumentContext.CommandArgument, aliasToken);
                     if (kind == UsingStatementKind.Module && aliasAst is HashtableAst)
                     {
                         htAst = (HashtableAst)aliasAst;
                     }
-                    else if (aliasAst is not StringConstantExpressionAst)
+                    else if (aliasAst is not StringConstantExpressionAst and not TypeExpressionAst)
                     {
                         var errorExtent = ExtentFromFirstOf(aliasAst, aliasToken);
-                        Ast[] nestedAsts;
-                        if (aliasAst is null)
-                        {
-                            nestedAsts = new Ast[] { itemAst };
-                        }
-                        else
-                        {
-                            nestedAsts = new Ast[] { itemAst, aliasAst };
-                        }
+                        Ast[] nestedAsts = aliasAst is null
+                            ? new Ast[] { itemAst }
+                            : new Ast[] { itemAst, aliasAst };
 
                         ReportError(errorExtent, nameof(ParserStrings.InvalidValueForUsingItemName), ParserStrings.InvalidValueForUsingItemName, errorExtent.Text);
                         return new ErrorStatementAst(ExtentOf(usingToken, errorExtent), nestedAsts);
@@ -5047,10 +5116,18 @@ namespace System.Management.Automation.Language
 
                     RequireStatementTerminator();
 
-                    if (htAst == null)
+                    if (htAst is null)
                     {
+                        if (kind == UsingStatementKind.Type)
+                        {
+                            return new UsingStatementAst(
+                            ExtentOf(usingToken, aliasAst),
+                            (StringConstantExpressionAst)itemAst,
+                            (TypeExpressionAst)aliasAst);
+                        }
+
                         return new UsingStatementAst(
-                            ExtentOf(usingToken, aliasToken),
+                            ExtentOf(usingToken, aliasAst),
                             kind,
                             (StringConstantExpressionAst)itemAst,
                             (StringConstantExpressionAst)aliasAst);
