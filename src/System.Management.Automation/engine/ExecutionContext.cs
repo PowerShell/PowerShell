@@ -462,16 +462,9 @@ namespace System.Management.Automation
         /// Gets the location globber for the session state for
         /// this instance of the runspace.
         /// </summary>
-        internal LocationGlobber LocationGlobber
-        {
-            get
-            {
-                _locationGlobber = new LocationGlobber(this.SessionState);
-                return _locationGlobber;
-            }
-        }
+        internal LocationGlobber LocationGlobber => _locationGlobber ??= new LocationGlobber(SessionState);
 
-        private LocationGlobber _locationGlobber;
+        private LocationGlobber _locationGlobber = null;
 
         /// <summary>
         /// The assemblies that have been loaded for this runspace.
