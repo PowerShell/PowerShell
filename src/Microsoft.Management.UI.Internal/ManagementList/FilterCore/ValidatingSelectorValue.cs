@@ -20,6 +20,37 @@ namespace Microsoft.Management.UI.Internal
     [Serializable]
     public class ValidatingSelectorValue<T> : ValidatingValueBase
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ValidatingSelectorValue{T}"/> class.
+        /// </summary>
+        public ValidatingSelectorValue()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ValidatingSelectorValue{T}"/> class.
+        /// </summary>
+        /// <param name="source">The source to initialize from.</param>
+        public ValidatingSelectorValue(ValidatingSelectorValue<T> source)
+            : base(source)
+        {
+            availableValues.EnsureCapacity(source.availableValues.Count);
+            if (typeof(IDeepCloneable).IsAssignableFrom(typeof(T)))
+            {
+                foreach (var value in source.availableValues)
+                {
+                    availableValues.Add((T)((IDeepCloneable)value).DeepClone());
+                }
+            }
+            else
+            {
+                availableValues.AddRange(source.availableValues);
+            }
+
+            selectedIndex = source.selectedIndex;
+            displayNameConverter = source.displayNameConverter;
+        }
+
         #region Properties
 
         #region Consts
@@ -150,6 +181,12 @@ namespace Microsoft.Management.UI.Internal
         #endregion Events
 
         #region Public Methods
+
+        /// <inheritdoc cref="IDeepCloneable.DeepClone()" />
+        public override object DeepClone()
+        {
+            return new ValidatingSelectorValue<T>(this);
+        }
 
         #region Validate
 
