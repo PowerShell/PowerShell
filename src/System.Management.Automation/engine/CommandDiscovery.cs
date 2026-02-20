@@ -728,6 +728,20 @@ namespace System.Management.Automation
                                                         searchResolutionOptions, commandTypes, ref lastError);
                     }
 
+                    if (result == null && !commandName.Contains('-') && !commandName.Contains('\\'))
+                    {
+                        discoveryTracer.WriteLine(
+                            "The command [{0}] was not found, trying again with get- prepended",
+                            commandName);
+
+                        try
+                        {
+                            result = LookupCommandInfo(StringLiterals.DefaultCommandVerb + '-' + commandName,
+                                                       commandTypes, searchResolutionOptions, commandOrigin, context);
+                        }
+                        catch (CommandNotFoundException) { }
+                    }
+
                     // Otherwise, invoke the CommandNotFound handler
                     result ??= InvokeCommandNotFoundHandler(commandName, context, originalCommandName, commandOrigin);
                 } while (false);
@@ -902,24 +916,7 @@ namespace System.Management.Automation
 
             try
             {
-                if (!searcher.MoveNext())
-                {
-                    if (!commandName.Contains('-') && !commandName.Contains('\\'))
-                    {
-                        discoveryTracer.WriteLine(
-                            "The command [{0}] was not found, trying again with get- prepended",
-                            commandName);
-
-                        commandName = StringLiterals.DefaultCommandVerb + StringLiterals.CommandVerbNounSeparator + commandName;
-
-                        try
-                        {
-                            result = LookupCommandInfo(commandName, commandTypes, searchResolutionOptions, commandOrigin, context);
-                        }
-                        catch (CommandNotFoundException) { }
-                    }
-                }
-                else
+                if (searcher.MoveNext())
                 {
                     result = ((IEnumerator<CommandInfo>)searcher).Current;
                 }
