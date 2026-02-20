@@ -605,15 +605,25 @@ namespace System.Management.Automation.Security
             }
 
             // Support fall-back debug hook for system-wide policy on non-WOA platforms
+#if DEBUG
             uint pdwLockdownState = 0;
             object result = Environment.GetEnvironmentVariable("__PSLockdownPolicy", EnvironmentVariableTarget.Machine);
             if (result != null)
             {
+                // Emit warning that this is a test hook
+                PSEtwLog.LogOperationalWarning(
+                    PSEventId.WDAC_Query,
+                    PSOpcode.Method,
+                    PSTask.WDAC,
+                    PSKeyword.UseAlwaysOperational,
+                    "__PSLockdownPolicy environment variable detected. This is a test hook and should not be used in production.");
+
                 pdwLockdownState = LanguagePrimitives.ConvertTo<uint>(result);
                 SystemEnforcementMode policy = GetLockdownPolicyForResult(pdwLockdownState);
                 modernEnforcement = ConvertToModernFileEnforcement(policy);
                 return policy;
             }
+#endif
 
             // If the system-wide debug policy had no preference, then there is no enforcement.
             modernEnforcement = SystemScriptFileEnforcement.None;
