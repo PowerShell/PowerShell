@@ -3,6 +3,7 @@
 Describe "Acl cmdlets are available and operate properly" -Tag CI {
     Context "Windows ACL test" {
         BeforeAll {
+            $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
             $PSDefaultParameterValues["It:Skip"] = -not $IsWindows
         }
 
@@ -78,7 +79,7 @@ Describe "Acl cmdlets are available and operate properly" -Tag CI {
         }
 
         AfterAll {
-            $PSDefaultParameterValues.Remove("It:Skip")
+            $global:PSDefaultParameterValues = $originalDefaultParameterValues
         }
     }
 }
