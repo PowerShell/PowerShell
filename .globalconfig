@@ -582,6 +582,10 @@ dotnet_diagnostic.CA2015.severity = warning
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2016
 dotnet_diagnostic.CA2016.severity = suggestion
 
+# CA2020: Prevent behavioral change
+# https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2020
+dotnet_diagnostic.CA2020.severity = warning
+
 # CA2021: Do not call Enumerable.Cast<T> or Enumerable.OfType<T> with incompatible types
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2021
 dotnet_diagnostic.CA2021.severity = warning
