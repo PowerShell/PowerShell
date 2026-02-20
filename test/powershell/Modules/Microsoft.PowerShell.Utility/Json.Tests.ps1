@@ -528,7 +528,7 @@ Describe "Json Tests" -Tags "Feature" {
 			$result."guid" | Should -BeOfType [String]
 			$result."index" | Should -BeOfType [Int64]
 			$result."isActive"| Should -Be False
-			$result."isActive" | Should -BeOfType [Boolean]
+			$result."isActive" | Should -BeOfType [bool]
 			$result."latitude"| Should -Be 51.890798
 			$result."latitude" | Should -BeOfType [Double]
 			$result."longitude"| Should -Be -47.522764
