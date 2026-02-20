@@ -36,14 +36,14 @@ jobs:
     env:
       ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
 
-  - template: SetVersionVariables.yml@self
+  - template: /.pipelines/templates/SetVersionVariables.yml@self
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
       CreateJson: no
 
-  - template: shouldSign.yml
+  - template: /.pipelines/templates/shouldSign.yml@self
 
-  - template: cloneToOfficialPath.yml
+  - template: /.pipelines/templates/cloneToOfficialPath.yml@self
     parameters:
       nativePathRoot: '$(Agent.TempDirectory)'
 
