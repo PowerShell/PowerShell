@@ -4,12 +4,14 @@
 Describe 'Clipboard cmdlet tests' -Tag CI {
     BeforeAll {
         $xclip = Get-Command xclip -CommandType Application -ErrorAction Ignore
+        $wlcopy = Get-Command wl-copy -CommandType Application -ErrorAction Ignore
+        $wlpaste = Get-Command wl-paste -CommandType Application -ErrorAction Ignore
     }
 
     Context 'Text' {
         BeforeAll {
             $defaultParamValues = $PSDefaultParameterValues.Clone()
-            $PSDefaultParameterValues["it:skip"] = ($IsWindows -and $env:PROCESSOR_ARCHITECTURE.Contains("arm")) -or ($IsLinux -and $xclip -eq $null)
+            $PSDefaultParameterValues["it:skip"] = ($IsWindows -and $env:PROCESSOR_ARCHITECTURE.Contains("arm")) -or ($IsLinux -and ($xclip -eq $null) -and ($wlcopy -eq $null) -and ($wlpaste -eq $null) )
         }
 
         AfterAll {
