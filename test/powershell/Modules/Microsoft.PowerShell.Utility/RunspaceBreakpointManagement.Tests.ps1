@@ -143,9 +143,9 @@ Describe 'Runspace Breakpoint Unit Tests - Feature-Enabled' -Tags 'CI' {
         }
 
         It 'Breakpoints are triggered by the remote debugger' {
-            $startTime = [DateTime]::UtcNow
+            $startTime = [datetime]::UtcNow
             $maxTimeToWait = [TimeSpan]'00:00:20'
-            while ($job.State -ne 'AtBreakpoint' -and ([DateTime]::UtcNow - $startTime) -lt $maxTimeToWait) {
+            while ($job.State -ne 'AtBreakpoint' -and ([datetime]::UtcNow - $startTime) -lt $maxTimeToWait) {
                 Start-Sleep -Milliseconds 100 # Give the job a bit of time to hit a breakpoint
             }
             $job.State | Should -Be 'AtBreakpoint'
