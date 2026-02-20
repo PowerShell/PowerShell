@@ -435,9 +435,14 @@ Fix steps:
         return
     }
 
+    # resolve the output path to an absolute path. We cannot use Resolve-Path here because it will error if the path does not exist.
+    if ($Output) {
+        $OutputPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Output)
+    }
+
     # set output options
     $OptionsArguments = @{
-        Output=$Output
+        Output=$OutputPath
         Runtime=$Runtime
         Configuration=$Configuration
         Verbose=$true
@@ -457,7 +462,7 @@ Fix steps:
     # removing --no-restore due to .NET SDK issue: https://github.com/dotnet/sdk/issues/18999
     # $Arguments = @("publish","--no-restore","/property:GenerateFullPaths=true", "/property:ErrorOnDuplicatePublishOutputFiles=false")
     $Arguments = @("publish","/property:GenerateFullPaths=true", "/property:ErrorOnDuplicatePublishOutputFiles=false")
-    if ($Output -or $SMAOnly) {
+    if ($Options.Output -or $SMAOnly) {
         $Arguments += "--output", (Split-Path $Options.Output)
     }
 
