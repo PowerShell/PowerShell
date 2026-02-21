@@ -373,7 +373,7 @@ namespace System.Management.Automation
             {
                 throw new ArgumentException(RemotingErrorIdStrings.ThrottlingJobChildAlreadyRunning, nameof(childJob));
             }
-                
+
             this.AssertNotDisposed();
 
             JobStateInfo newJobStateInfo = null;

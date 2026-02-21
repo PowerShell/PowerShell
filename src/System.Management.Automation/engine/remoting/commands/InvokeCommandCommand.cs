@@ -757,7 +757,7 @@ namespace Microsoft.PowerShell.Commands
         public override int ConnectingTimeout
         {
             get { return base.ConnectingTimeout; }
-            
+
             set { base.ConnectingTimeout = value; }
         }
 
@@ -800,12 +800,12 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public override Hashtable Options
         {
-            get 
+            get
             {
                 return base.Options;
             }
 
-            set 
+            set
             {
                 base.Options = value;
             }
@@ -1249,7 +1249,7 @@ namespace Microsoft.PowerShell.Commands
                         WriteJobResults(false);
 
                         // Dispose job object if it is not returned to the user.
-                        // The _asjob field can change dynamically and needs to be checked before the job 
+                        // The _asjob field can change dynamically and needs to be checked before the job
                         // object is disposed. For example, if remote sessions are disconnected abruptly
                         // via WinRM, a disconnected job object is created to facilitate a reconnect.
                         // If the job object is disposed here, then a session reconnect cannot happen.
@@ -1303,7 +1303,7 @@ namespace Microsoft.PowerShell.Commands
                             WriteJobResults(false);
 
                             // Dispose job object if it is not returned to the user.
-                            // The _asjob field can change dynamically and needs to be checked before the job 
+                            // The _asjob field can change dynamically and needs to be checked before the job
                             // object is disposed. For example, if remote sessions are disconnected abruptly
                             // via WinRM, a disconnected job object is created to facilitate a reconnect.
                             // If the job object is disposed here, then a session reconnect cannot happen.
