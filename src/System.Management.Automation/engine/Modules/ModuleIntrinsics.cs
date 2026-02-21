@@ -19,6 +19,7 @@ namespace System.Management.Automation
     internal static class Constants
     {
         public const string PSModulePathEnvVar = "PSModulePath";
+        public const string PSUserContentPathConfigKey = "PSUserContentPath";
     }
 
     /// <summary>
@@ -490,7 +491,7 @@ namespace System.Management.Automation
         /// <param name="requiredVersion">The required version of the expected module.</param>
         /// <param name="minimumVersion">The minimum required version of the expected module.</param>
         /// <param name="maximumVersion">The maximum required version of the expected module.</param>
-        /// <returns>True if the module info object matches all given constraints, false otherwise.</returns>
+        /// <returns>True if the module info object matches all the constraints on the module specification, false otherwise.</returns>
         internal static bool IsModuleMatchingConstraints(
             out ModuleMatchFailure matchFailureReason,
             PSModuleInfo moduleInfo,
@@ -964,12 +965,26 @@ namespace System.Management.Automation
         /// <returns>Personal module path.</returns>
         internal static string GetPersonalModulePath()
         {
-#if UNIX
-            return Platform.SelectProductNameForDirectory(Platform.XDG_Type.USER_MODULES);
-#else
-            string myDocumentsPath = InternalTestHooks.SetMyDocumentsSpecialFolderToBlank ? string.Empty : Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            return string.IsNullOrEmpty(myDocumentsPath) ? null : Path.Combine(myDocumentsPath, Utils.ModuleDirectory);
-#endif
+            return Path.Combine(Utils.GetPSContentPath(), "Modules");
+        }
+
+        /// <summary>
+        /// Gets the legacy personal module path (Documents\PowerShell\Modules).
+        /// This is used for backwards compatibility with PowerShellGet.
+        /// </summary>
+        /// <returns>Legacy personal module path, or null if same as current personal path.</returns>
+        internal static string GetLegacyPersonalModulePath()
+        {
+            string legacyPath = Path.Combine(Platform.DefaultPSContentDirectory, "Modules");
+            string currentPath = GetPersonalModulePath();
+
+            // Only return the legacy path if it's different from the current personal module path
+            if (!string.Equals(legacyPath, currentPath, StringComparison.OrdinalIgnoreCase))
+            {
+                return legacyPath;
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -1345,7 +1360,17 @@ namespace System.Management.Automation
             }
 #endif
             string allUsersModulePath = PowerShellConfig.Instance.GetModulePath(ConfigScope.AllUsers);
-            string personalModulePath = PowerShellConfig.Instance.GetModulePath(ConfigScope.CurrentUser);
+            string personalModulePath = PowerShellConfig.Instance.GetModulePath(ConfigScope.CurrentUser) ?? GetPersonalModulePath();
+            
+            // Include the legacy Documents module path for backwards compatibility with PowerShellGet
+            // This ensures both old (Documents) and new (PSContentPath) module locations are searched
+            string legacyModulePath = GetLegacyPersonalModulePath();
+            if (!string.IsNullOrEmpty(legacyModulePath))
+            {
+                // Combine personal path with legacy path (personal takes precedence)
+                personalModulePath = string.Concat(personalModulePath, Path.PathSeparator, legacyModulePath);
+            }
+
             string newModulePathString = GetModulePath(currentModulePath, allUsersModulePath, personalModulePath);
 
             if (!string.IsNullOrEmpty(newModulePathString))

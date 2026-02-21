@@ -17,7 +17,9 @@ $script:cmdletsToSkip = @(
     "Enable-ExperimentalFeature",
     "Disable-ExperimentalFeature",
     "Get-PSSubsystem",
-    "Switch-Process"
+    "Switch-Process",
+    "Get-PSContentPath", # New cmdlet - help content not yet generated
+    "Set-PSContentPath"  # New cmdlet - help content not yet generated
 )
 
 function UpdateHelpFromLocalContentPath {
@@ -35,13 +37,25 @@ function UpdateHelpFromLocalContentPath {
 }
 
 function GetCurrentUserHelpRoot {
-    if ([System.Management.Automation.Platform]::IsWindows) {
-        $userHelpRoot = Join-Path $HOME "Documents/PowerShell/Help/"
-    } else {
-        $userModulesRoot = [System.Management.Automation.Platform]::SelectProductNameForDirectory([System.Management.Automation.Platform+XDG_Type]::USER_MODULES)
-        $userHelpRoot = Join-Path $userModulesRoot -ChildPath ".." -AdditionalChildPath "Help"
+    # Try to get the actual configured PSContentPath
+    $contentPath = $null
+    try {
+        $contentPath = Get-PSContentPath -ErrorAction SilentlyContinue
+    } catch {
+        Write-Warning "PSContentPath is not available: $_"
     }
 
+    # Fall back to default if not configured
+    if ([string]::IsNullOrEmpty($contentPath)) {
+        if ([System.Management.Automation.Platform]::IsWindows) {
+            $contentPath = Join-Path $HOME "Documents/PowerShell"
+        } else {
+            $userModulesRoot = [System.Management.Automation.Platform]::SelectProductNameForDirectory([System.Management.Automation.Platform+XDG_Type]::USER_MODULES)
+            $contentPath = Join-Path $userModulesRoot -ChildPath ".."
+        }
+    }
+
+    $userHelpRoot = Join-Path $contentPath "Help"
     return $userHelpRoot
 }
 
