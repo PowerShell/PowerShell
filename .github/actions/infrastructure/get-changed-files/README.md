@@ -7,7 +7,7 @@ A reusable composite action that retrieves the list of files changed in a pull r
 - Supports both `pull_request` and `push` events
 - Optional filtering by file pattern
 - Returns files as JSON array for easy consumption
-- Filters out deleted files (only returns added, modified, or renamed files)
+- Configurable handling of deleted files (can include or exclude them)
 - Handles up to 100 changed files per request
 
 ## Usage
@@ -53,12 +53,32 @@ A reusable composite action that retrieves the list of files changed in a pull r
     event-types: 'pull_request,push'
 ```
 
+### Include Deleted Files
+
+By default, deleted files are excluded from the results. To include deleted files (useful for change detection that needs to trigger on deletions):
+
+```yaml
+- name: Get changed files including deletions
+  id: changed-files
+  uses: "./.github/actions/infrastructure/get-changed-files"
+  with:
+    include-deleted: 'true'
+```
+
+This is useful for:
+- Build systems that need to rebuild when dependencies are removed
+- Change detection for CI/CD pipelines (e.g., path-filters)
+- Tracking file deletions in documentation or configuration
+
+**Note**: When verifying files (e.g., link checking, linting), you should keep the default `include-deleted: 'false'` since deleted files cannot be processed.
+
 ## Inputs
 
 | Name | Description | Required | Default |
 |------|-------------|----------|---------|
 | `filter` | Optional filter pattern (e.g., `*.md` for markdown files, `.github/` for GitHub files) | No | `''` |
 | `event-types` | Comma-separated list of event types to support (`pull_request`, `push`) | No | `pull_request` |
+| `include-deleted` | Whether to include deleted files in the results | No | `false` |
 
 ## Outputs
 
