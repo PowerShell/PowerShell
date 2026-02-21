@@ -15,7 +15,6 @@ using BOOL = System.UInt32;
 namespace System.Management.Automation.Security
 {
     // Crypto API native constants
-
     internal static partial class NativeConstants
     {
         internal const int CRYPT_OID_INFO_OID_KEY = 1;
@@ -24,7 +23,6 @@ namespace System.Management.Automation.Security
     }
 
     // Safer native constants
-
     internal partial class NativeConstants
     {
         /// <Summary>
@@ -141,7 +139,6 @@ namespace System.Management.Automation.Security
     /// <summary>
     /// Pinvoke methods from crypt32.dll.
     /// </summary>
-
     internal static partial class NativeMethods
     {
         // -------------------------------------------------------------------
@@ -1054,7 +1051,6 @@ namespace System.Management.Automation.Security
     /// <summary>
     /// Pinvoke methods from certca.dll.
     /// </summary>
-
     internal static partial class NativeMethods
     {
         internal const int CRYPT_E_NOT_FOUND = unchecked((int)0x80092004);
@@ -1085,7 +1081,6 @@ namespace System.Management.Automation.Security
     #region SAFER_APIs
 
     // SAFER native methods
-
     internal static partial class NativeMethods
     {
         /// Return Type: BOOL->int
@@ -1227,7 +1222,6 @@ namespace System.Management.Automation.Security
     /// <summary>
     /// Pinvoke methods from advapi32.dll.
     /// </summary>
-
     internal static partial class NativeMethods
     {
         //
@@ -1478,7 +1472,6 @@ namespace System.Management.Automation.Security
     }
 
     // Constants needed for Catalog Error Handling
-
     internal partial class NativeConstants
     {
         // CRYPTCAT_E_AREA_HEADER = "0x00000000";
@@ -1517,7 +1510,6 @@ namespace System.Management.Automation.Security
         // CRYPTCAT_E_CDF_ATTR_TYPECOMBO = "0x00020004";
         public const int CRYPTCAT_E_CDF_ATTR_TYPECOMBO = 131076;
     }
-
 }
 
 #pragma warning restore 56523
