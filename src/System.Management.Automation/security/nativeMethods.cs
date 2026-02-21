@@ -10,11 +10,12 @@ using System.Management.Automation.Internal;
 using DWORD = System.UInt32;
 using BOOL = System.UInt32;
 
+#nullable enable
+
 namespace System.Management.Automation.Security
 {
     // Crypto API native constants
 
-#nullable enable
     internal static partial class NativeConstants
     {
         internal const int CRYPT_OID_INFO_OID_KEY = 1;
@@ -22,11 +23,8 @@ namespace System.Management.Automation.Security
         internal const int CRYPT_OID_INFO_CNG_ALGID_KEY = 5;
     }
 
-#nullable restore
-
     // Safer native constants
 
-#nullable enable
     internal partial class NativeConstants
     {
         /// <Summary>
@@ -140,13 +138,10 @@ namespace System.Management.Automation.Security
         internal const int FUNCTION_NOT_SUPPORTED = 120;
     }
 
-#nullable restore
-
     /// <summary>
     /// Pinvoke methods from crypt32.dll.
     /// </summary>
 
-#nullable enable
     internal static partial class NativeMethods
     {
         // -------------------------------------------------------------------
@@ -1056,13 +1051,10 @@ namespace System.Management.Automation.Security
         }
     }
 
-#nullable restore
-
     /// <summary>
     /// Pinvoke methods from certca.dll.
     /// </summary>
 
-#nullable enable
     internal static partial class NativeMethods
     {
         internal const int CRYPT_E_NOT_FOUND = unchecked((int)0x80092004);
@@ -1090,13 +1082,10 @@ namespace System.Management.Automation.Security
         }
     }
 
-#nullable restore
-
     #region SAFER_APIs
 
     // SAFER native methods
 
-#nullable enable
     internal static partial class NativeMethods
     {
         /// Return Type: BOOL->int
@@ -1145,9 +1134,6 @@ namespace System.Management.Automation.Security
         internal static extern bool CloseHandle([In] System.IntPtr hObject);
     }
 
-#nullable restore
-
-#nullable enable
     [StructLayout(LayoutKind.Sequential)]
     internal struct SAFER_CODE_PROPERTIES
     {
@@ -1193,9 +1179,6 @@ namespace System.Management.Automation.Security
         public uint dwWVTUIChoice;
     }
 
-#nullable restore
-
-#nullable enable
     [StructLayout(LayoutKind.Explicit)]
     internal struct LARGE_INTEGER
     {
@@ -1212,9 +1195,6 @@ namespace System.Management.Automation.Security
         public long QuadPart;
     }
 
-#nullable restore
-
-#nullable enable
     [StructLayout(LayoutKind.Sequential)]
     internal struct HWND__
     {
@@ -1222,9 +1202,6 @@ namespace System.Management.Automation.Security
         public int unused;
     }
 
-#nullable restore
-
-#nullable enable
     [StructLayout(LayoutKind.Sequential)]
     internal struct Anonymous_9320654f_2227_43bf_a385_74cc8c562686
     {
@@ -1235,9 +1212,6 @@ namespace System.Management.Automation.Security
         public int HighPart;
     }
 
-#nullable restore
-
-#nullable enable
     [StructLayout(LayoutKind.Sequential)]
     internal struct Anonymous_947eb392_1446_4e25_bbd4_10e98165f3a9
     {
@@ -1248,15 +1222,12 @@ namespace System.Management.Automation.Security
         public int HighPart;
     }
 
-#nullable restore
-
     #endregion SAFER_APIs
 
     /// <summary>
     /// Pinvoke methods from advapi32.dll.
     /// </summary>
 
-#nullable enable
     internal static partial class NativeMethods
     {
         //
@@ -1506,11 +1477,8 @@ namespace System.Management.Automation.Security
         internal const uint LOAD_LIBRARY_SEARCH_DEFAULT_DIRS = 0x00001000;
     }
 
-#nullable restore
-
     // Constants needed for Catalog Error Handling
 
-#nullable enable
     internal partial class NativeConstants
     {
         // CRYPTCAT_E_AREA_HEADER = "0x00000000";
@@ -1550,7 +1518,6 @@ namespace System.Management.Automation.Security
         public const int CRYPTCAT_E_CDF_ATTR_TYPECOMBO = 131076;
     }
 
-#nullable restore
 }
 
 #pragma warning restore 56523
