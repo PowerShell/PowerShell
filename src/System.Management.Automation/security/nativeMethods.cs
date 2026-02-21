@@ -1057,6 +1057,8 @@ namespace System.Management.Automation.Security
     /// <summary>
     /// Pinvoke methods from certca.dll.
     /// </summary>
+
+#nullable enable
     internal static partial class NativeMethods
     {
         internal const int CRYPT_E_NOT_FOUND = unchecked((int)0x80092004);
@@ -1084,9 +1086,13 @@ namespace System.Management.Automation.Security
         }
     }
 
+#nullable restore
+
     #region SAFER_APIs
 
     // SAFER native methods
+
+#nullable enable
     internal static partial class NativeMethods
     {
         /// Return Type: BOOL->int
@@ -1134,6 +1140,8 @@ namespace System.Management.Automation.Security
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool CloseHandle([In] System.IntPtr hObject);
     }
+
+#nullable restore
 
 #nullable enable
     [StructLayout(LayoutKind.Sequential)]
@@ -1243,6 +1251,8 @@ namespace System.Management.Automation.Security
     /// <summary>
     /// Pinvoke methods from advapi32.dll.
     /// </summary>
+
+#nullable enable
     internal static partial class NativeMethods
     {
         //
@@ -1461,7 +1471,7 @@ namespace System.Management.Automation.Security
         [DllImport(PinvokeDllNames.LookupPrivilegeValueDllName, CharSet = CharSet.Unicode, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool LookupPrivilegeValue(
-            string lpSystemName,
+            string? lpSystemName,
             string lpName,
             ref LUID lpLuid);
 
@@ -1491,6 +1501,8 @@ namespace System.Management.Automation.Security
         internal const uint LOAD_LIBRARY_SEARCH_SYSTEM32 = 0x00000800;
         internal const uint LOAD_LIBRARY_SEARCH_DEFAULT_DIRS = 0x00001000;
     }
+
+#nullable restore
 
     // Constants needed for Catalog Error Handling
 
