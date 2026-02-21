@@ -23,6 +23,8 @@ namespace System.Management.Automation
     /// Defines the options that control what data is embedded in the
     /// signature blob.
     /// </summary>
+
+#nullable enable
     public enum SigningOption
     {
         /// <summary>
@@ -47,6 +49,8 @@ namespace System.Management.Automation
         /// </summary>
         Default = AddFullCertificateChainExceptRoot
     }
+
+#nullable restore
 
     /// <summary>
     /// Helper functions for signature functionality.
