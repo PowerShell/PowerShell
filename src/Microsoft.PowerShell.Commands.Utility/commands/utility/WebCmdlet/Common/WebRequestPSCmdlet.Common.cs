@@ -1412,14 +1412,14 @@ namespace Microsoft.PowerShell.Commands
                 // When MaximumRetryCount is not specified, the totalRequests is 1.
                 if (totalRequests > 1 && ShouldRetry(response.StatusCode))
                 {
-                    int retryIntervalInSeconds = WebSession.RetryIntervalInSeconds;
-                    int exponent = WebSession.MaximumRetryCount - totalRequests + 1;
-
-                    retryIntervalInSeconds = RetryMode switch
+                    WebSession.RetryIntervalInSeconds = RetryMode switch
                     {
-                        WebRequestRetryMode.Exponential => (int)MathF.Min(MathF.ScaleB((float)retryIntervalInSeconds, exponent), _maximumRetryIntervalInSeconds),
+                        // (WebSession.MaximumRetryCount - totalRequests + 1) calculates the number of retries that have already been attempted.
+                        WebRequestRetryMode.Exponential => Math.Min(WebSession.RetryIntervalInSeconds * (WebSession.MaximumRetryCount - totalRequests + 1 == 0 ? 1 : 2), _maximumRetryIntervalInSeconds),
                         WebRequestRetryMode.Fixed or _ => WebSession.RetryIntervalInSeconds
                     };
+
+                    int retryIntervalInSeconds = WebSession.RetryIntervalInSeconds;
 
                     // If the status code is 429 get the retry interval from the Headers.
                     // Ignore broken header and its value.
