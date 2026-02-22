@@ -87,6 +87,22 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
+    /// The valid values for the -RetryMode parameter for Invoke-RestMethod and Invoke-WebRequest commands.
+    /// </summary>
+    public enum WebRequestRetryMode
+    {
+        /// <summary>
+        /// Specifies fixed time interval between retries.
+        /// </summary>
+        Fixed,
+
+        /// <summary>
+        /// Specifies exponential backoff strategy to determine the interval between retries.
+        /// </summary>
+        Exponential
+    }
+
+    /// <summary>
     /// Base class for Invoke-RestMethod and Invoke-WebRequest commands.
     /// </summary>
     public abstract class WebRequestPSCmdlet : PSCmdlet, IDisposable
@@ -127,6 +143,11 @@ namespace Microsoft.PowerShell.Commands
         /// Automatically follow Rel Links.
         /// </summary>
         internal Dictionary<string, string> _relationLink = null;
+
+        /// <summary>
+        /// Maximum retry interval for exponential backoff strategy.
+        /// </summary>
+        private const int _maximumRetryIntervalInSeconds = 600;
 
         /// <summary>
         /// The current size of the local file being resumed.
@@ -326,13 +347,6 @@ namespace Microsoft.PowerShell.Commands
         public virtual int MaximumRedirection { get; set; } = -1;
 
         /// <summary>
-        /// Gets or sets the MaximumRetryCount property, which determines the number of retries of a failed web request.
-        /// </summary>
-        [Parameter]
-        [ValidateRange(0, int.MaxValue)]
-        public virtual int MaximumRetryCount { get; set; }
-
-        /// <summary>
         /// Gets or sets the PreserveAuthorizationOnRedirect property.
         /// </summary>
         /// <remarks>
@@ -347,6 +361,23 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public virtual SwitchParameter PreserveAuthorizationOnRedirect { get; set; }
 
+        #endregion Redirect
+
+        #region Retry
+
+        /// <summary>
+        /// Gets or sets the RetryMode property.
+        /// </summary>
+        [Parameter]
+        public virtual WebRequestRetryMode RetryMode { get; set; } = WebRequestRetryMode.Fixed;
+
+        /// <summary>
+        /// Gets or sets the MaximumRetryCount property, which determines the number of retries of a failed web request.
+        /// </summary>
+        [Parameter]
+        [ValidateRange(0, int.MaxValue)]
+        public virtual int MaximumRetryCount { get; set; }
+
         /// <summary>
         /// Gets or sets the RetryIntervalSec property, which determines the number seconds between retries.
         /// </summary>
@@ -354,7 +385,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateRange(1, int.MaxValue)]
         public virtual int RetryIntervalSec { get; set; } = 5;
 
-        #endregion Redirect
+        #endregion Retry
 
         #region Method
 
@@ -1274,6 +1305,8 @@ namespace Microsoft.PowerShell.Commands
 
             // Add 1 to account for the first request.
             int totalRequests = WebSession.MaximumRetryCount + 1;
+            // For exponential backoff, we start with half of the retry interval so that the first retry happens at the user specified retry interval.
+            float retryIntervalInSeconds = (float)WebSession.RetryIntervalInSeconds / 2;
             HttpRequestMessage currentRequest = request;
             HttpResponseMessage response = null;
 
@@ -1381,7 +1414,12 @@ namespace Microsoft.PowerShell.Commands
                 // When MaximumRetryCount is not specified, the totalRequests is 1.
                 if (totalRequests > 1 && ShouldRetry(response.StatusCode))
                 {
-                    int retryIntervalInSeconds = WebSession.RetryIntervalInSeconds;
+                    retryIntervalInSeconds = RetryMode switch
+                    {
+                        // For exponential backoff, we double the retry interval for each retry attempt up to the maximum retry interval.
+                        WebRequestRetryMode.Exponential => Math.Min(retryIntervalInSeconds * 2, _maximumRetryIntervalInSeconds),
+                        WebRequestRetryMode.Fixed or _ => WebSession.RetryIntervalInSeconds
+                    };
 
                     // If the status code is 429 get the retry interval from the Headers.
                     // Ignore broken header and its value.
@@ -1392,7 +1430,7 @@ namespace Microsoft.PowerShell.Commands
                             IEnumerator<string> enumerator = retryAfter.GetEnumerator();
                             if (enumerator.MoveNext())
                             {
-                                retryIntervalInSeconds = Convert.ToInt32(enumerator.Current);
+                                retryIntervalInSeconds = Convert.ToSingle(enumerator.Current);
                             }
                         }
                         catch
@@ -1410,7 +1448,7 @@ namespace Microsoft.PowerShell.Commands
                     WriteVerbose(retryMessage);
 
                     _cancelToken = new CancellationTokenSource();
-                    Task.Delay(retryIntervalInSeconds * 1000, _cancelToken.Token).GetAwaiter().GetResult();
+                    Task.Delay((int)(retryIntervalInSeconds * 1000), _cancelToken.Token).GetAwaiter().GetResult();
                     _cancelToken.Cancel();
                     _cancelToken = null;
 
