@@ -19,12 +19,11 @@ using Dbg = System.Management.Automation;
 
 namespace System.Management.Automation
 {
+#nullable enable
     /// <summary>
     /// Defines the options that control what data is embedded in the
     /// signature blob.
     /// </summary>
-
-#nullable enable
     public enum SigningOption
     {
         /// <summary>
