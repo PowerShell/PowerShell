@@ -416,7 +416,7 @@ namespace Microsoft.PowerShell
             return results;
         }
 
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Needed by ProfileTests as mentioned in bug 140572")]
+        [SuppressMessage("Style", "IDE0051:Remove unused private members", Justification = "Needed by ProfileTests as mentioned in bug 140572")]
         internal Collection<PSObject> ExecuteCommand(string command)
         {
             Collection<PSObject> result = null;
