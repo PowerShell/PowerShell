@@ -60,4 +60,3 @@ Describe "Debug-Runspace" -Tag "CI" {
         $debugTarget.Runspace.IsRemoteDebuggerAttached | Should -BeFalse
     }
 }
-
