@@ -3880,15 +3880,50 @@ namespace System.Management.Automation
         #region IDisposable Overrides
 
         /// <summary>
-        /// Dispose all managed resources. This will suppress finalizer on the object from getting called by
-        /// calling System.GC.SuppressFinalize(this).
+        /// Release all resources.
         /// </summary>
         public void Dispose()
         {
-            Dispose(true);
-            // To prevent derived types with finalizers from having to re-implement System.IDisposable to call it,
-            // unsealed types without finalizers should still call SuppressFinalize.
-            System.GC.SuppressFinalize(this);
+            lock (_syncObject)
+            {
+                // if already disposed return
+                if (_isDisposed)
+                {
+                    return;
+                }
+            }
+
+            // Stop the currently running command outside of the lock
+            if (InvocationStateInfo.State == PSInvocationState.Running ||
+                InvocationStateInfo.State == PSInvocationState.Stopping)
+            {
+                Stop();
+            }
+
+            lock (_syncObject)
+            {
+                _isDisposed = true;
+            }
+
+            if (OutputBuffer != null && OutputBufferOwner)
+            {
+                OutputBuffer.Dispose();
+            }
+
+            if (_errorBuffer != null && ErrorBufferOwner)
+            {
+                _errorBuffer.Dispose();
+            }
+
+            if (IsRunspaceOwner)
+            {
+                _runspace.Dispose();
+            }
+
+            RemotePowerShell?.Dispose();
+
+            _invokeAsyncResult = null;
+            _stopAsyncResult = null;
         }
 
         #endregion
@@ -4118,59 +4153,6 @@ namespace System.Management.Automation
             if (_isDisposed)
             {
                 throw PSTraceSource.NewObjectDisposedException("PowerShell");
-            }
-        }
-
-        /// <summary>
-        /// Release all the resources.
-        /// </summary>
-        /// <param name="disposing">
-        /// if true, release all the managed objects.
-        /// </param>
-        private void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                lock (_syncObject)
-                {
-                    // if already disposed return
-                    if (_isDisposed)
-                    {
-                        return;
-                    }
-                }
-
-                // Stop the currently running command outside of the lock
-                if (InvocationStateInfo.State == PSInvocationState.Running ||
-                    InvocationStateInfo.State == PSInvocationState.Stopping)
-                {
-                    Stop();
-                }
-
-                lock (_syncObject)
-                {
-                    _isDisposed = true;
-                }
-
-                if (OutputBuffer != null && OutputBufferOwner)
-                {
-                    OutputBuffer.Dispose();
-                }
-
-                if (_errorBuffer != null && ErrorBufferOwner)
-                {
-                    _errorBuffer.Dispose();
-                }
-
-                if (IsRunspaceOwner)
-                {
-                    _runspace.Dispose();
-                }
-
-                RemotePowerShell?.Dispose();
-
-                _invokeAsyncResult = null;
-                _stopAsyncResult = null;
             }
         }
 
