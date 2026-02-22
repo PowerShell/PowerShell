@@ -269,6 +269,14 @@ namespace Microsoft.PowerShell.Commands
         public GetAuthenticodeSignatureCommand() : base("Get-AuthenticodeSignature") { }
 
         /// <summary>
+        /// Gets or sets the switch parameter that decides whether to retrieve embedded signatures
+        /// only or also signatures inside a catalogue file.
+        /// </summary>
+        [Parameter(ParameterSetName = "ByPath")]
+        [Parameter(ParameterSetName = "ByLiteralPath")]
+        public SwitchParameter EmbeddedSignature { get; set; }
+
+        /// <summary>
         /// Gets the signature from the specified file.
         /// </summary>
         /// <param name="filePath">
@@ -279,7 +287,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         protected override Signature PerformAction(string filePath)
         {
-            return SignatureHelper.GetSignature(filePath, null);
+            return SignatureHelper.GetSignature(filePath, null, embeddedSignatureOnly: this.EmbeddedSignature);
         }
 
         /// <summary>
