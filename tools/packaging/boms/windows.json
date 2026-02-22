@@ -1152,6 +1152,110 @@
     "Architecture": null
   },
   {
+    "Pattern": "Modules/Microsoft.WinGet.Client/Format.ps1xml",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.WinGet.Client/Microsoft.WinGet.Client.psd1",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.WinGet.Client/net48/Microsoft.WinGet.Client.Cmdlets.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.WinGet.Client/net48/Microsoft.WinGet.Client.Cmdlets.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.WinGet.Client/net48/DirectDependencies/Microsoft.WinGet.Client.Engine.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.WinGet.Client/net48/SharedDependencies/*dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.WinGet.Client/net48/SharedDependencies/arm64/*dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.WinGet.Client/net48/SharedDependencies/arm64/Microsoft.Management.Deployment.winmd",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.WinGet.Client/net48/SharedDependencies/x64/*dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.WinGet.Client/net48/SharedDependencies/x64/Microsoft.Management.Deployment.winmd",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.WinGet.Client/net48/SharedDependencies/x86/*dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.WinGet.Client/net48/SharedDependencies/x86/Microsoft.Management.Deployment.winmd",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.WinGet.Client/net6.0-windows10.0.22000.0/Microsoft.WinGet.Client.Cmdlets.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.WinGet.Client/net6.0-windows10.0.22000.0/DirectDependencies/Microsoft.WinGet.Client.Engine.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.WinGet.Client/net6.0-windows10.0.22000.0/SharedDependencies/*dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.WinGet.Client/net6.0-windows10.0.22000.0/SharedDependencies/arm64/*dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.WinGet.Client/net6.0-windows10.0.22000.0/SharedDependencies/arm64/Microsoft.Management.Deployment.winmd",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.WinGet.Client/net6.0-windows10.0.22000.0/SharedDependencies/x64/*dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.WinGet.Client/net6.0-windows10.0.22000.0/SharedDependencies/x64/Microsoft.Management.Deployment.winmd",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.WinGet.Client/net6.0-windows10.0.22000.0/SharedDependencies/x86/*dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.WinGet.Client/net6.0-windows10.0.22000.0/SharedDependencies/x86/Microsoft.Management.Deployment.winmd",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.WinGet.CommandNotFound/.signature.p7s",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.WinGet.CommandNotFound/LICENSE",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.WinGet.CommandNotFound/Microsoft.WinGet.CommandNotFound.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.WinGet.CommandNotFound/Microsoft.WinGet.CommandNotFound.psd1",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.WinGet.CommandNotFound/ValidateOS.psm1",
+    "FileType": "NonProduct"
+  },
+  {
     "Pattern": "Modules/PackageManagement/*.dll",
     "FileType": "NonProduct",
     "Architecture": null

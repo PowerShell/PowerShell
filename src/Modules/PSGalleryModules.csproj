@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
-
   <PropertyGroup>
     <Product>PowerShell</Product>
     <Company>Microsoft Corporation</Company>
@@ -17,6 +16,11 @@
     <PackageReference Include="Microsoft.PowerShell.Archive" Version="1.2.5" />
     <PackageReference Include="PSReadLine" Version="2.4.5" />
     <PackageReference Include="Microsoft.PowerShell.ThreadJob" Version="2.2.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(IsWindows)' == 'true' ">
+    <PackageReference Include="Microsoft.WinGet.CommandNotFound" Version="1.0.4"/>
+    <PackageReference Include="Microsoft.WinGet.Client" Version="1.8.1911"/>
   </ItemGroup>
 
 </Project>
