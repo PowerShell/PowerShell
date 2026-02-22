@@ -246,10 +246,18 @@ namespace Microsoft.PowerShell.Commands
 
                     if (setObject.Arguments != null)
                     {
-                        IDictionaryEnumerator en = setObject.Arguments.GetEnumerator();
-                        while (en.MoveNext())
+                        // Manual use of IDictionaryEnumerator instead of foreach to avoid DictionaryEntry box allocations.
+                        IDictionaryEnumerator enumerator = setObject.Arguments.GetEnumerator();
+                        try
                         {
-                            mObj[en.Key as string] = en.Value;
+                            while (enumerator.MoveNext())
+                            {
+                                mObj[enumerator.Key as string] = enumerator.Value;
+                            }
+                        }
+                        finally
+                        {
+                            (enumerator as IDisposable)?.Dispose();
                         }
                     }
 
@@ -439,10 +447,18 @@ namespace Microsoft.PowerShell.Commands
 
                     if (setObject.Arguments != null)
                     {
-                        IDictionaryEnumerator en = setObject.Arguments.GetEnumerator();
-                        while (en.MoveNext())
+                        // Manual use of IDictionaryEnumerator instead of foreach to avoid DictionaryEntry box allocations.
+                        IDictionaryEnumerator enumerator = setObject.Arguments.GetEnumerator();
+                        try
                         {
-                            mObject[en.Key as string] = en.Value;
+                            while (enumerator.MoveNext())
+                            {
+                                mObject[enumerator.Key as string] = enumerator.Value;
+                            }
+                        }
+                        finally
+                        {
+                            (enumerator as IDisposable)?.Dispose();
                         }
                     }
 
@@ -1277,10 +1293,18 @@ namespace Microsoft.PowerShell.Commands
 
                 if (setObject.Arguments != null)
                 {
-                    IDictionaryEnumerator en = setObject.Arguments.GetEnumerator();
-                    while (en.MoveNext())
+                    // Manual use of IDictionaryEnumerator instead of foreach to avoid DictionaryEntry box allocations.
+                    IDictionaryEnumerator enumerator = setObject.Arguments.GetEnumerator();
+                    try
                     {
-                        mObject[en.Key as string] = en.Value;
+                        while (enumerator.MoveNext())
+                        {
+                            mObject[enumerator.Key as string] = enumerator.Value;
+                        }
+                    }
+                    finally
+                    {
+                        (enumerator as IDisposable)?.Dispose();
                     }
                 }
             }
@@ -1431,10 +1455,18 @@ namespace Microsoft.PowerShell.Commands
 
                     if (wmiInstance.Arguments != null)
                     {
-                        IDictionaryEnumerator en = wmiInstance.Arguments.GetEnumerator();
-                        while (en.MoveNext())
+                        // Manual use of IDictionaryEnumerator instead of foreach to avoid DictionaryEntry box allocations.
+                        IDictionaryEnumerator enumerator = wmiInstance.Arguments.GetEnumerator();
+                        try
                         {
-                            mObj[en.Key as string] = en.Value;
+                            while (enumerator.MoveNext())
+                            {
+                                mObj[enumerator.Key as string] = enumerator.Value;
+                            }
+                        }
+                        finally
+                        {
+                            (enumerator as IDisposable)?.Dispose();
                         }
                     }
                 }

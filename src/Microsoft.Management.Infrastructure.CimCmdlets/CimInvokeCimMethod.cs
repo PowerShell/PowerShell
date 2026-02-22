@@ -348,100 +348,109 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             collection = new CimMethodParametersCollection();
+
+            // Manual use of IDictionaryEnumerator instead of foreach to avoid DictionaryEntry box allocations.
             IDictionaryEnumerator enumerator = parameters.GetEnumerator();
-            while (enumerator.MoveNext())
+            try
             {
-                string parameterName = enumerator.Key.ToString();
-
-                const CimFlags parameterFlags = CimFlags.In;
-                object parameterValue = GetBaseObject(enumerator.Value);
-
-                DebugHelper.WriteLog(@"Create parameter name= {0}, value= {1}, flags= {2}.", 4,
-                    parameterName,
-                    parameterValue,
-                    parameterFlags);
-
-                CimMethodParameter parameter = null;
-                CimMethodDeclaration declaration = null;
-                string className = null;
-                if (cimClass != null)
+                while (enumerator.MoveNext())
                 {
-                    className = cimClass.CimSystemProperties.ClassName;
-                    declaration = cimClass.CimClassMethods[methodName];
-                    if (declaration == null)
-                    {
-                        throw new ArgumentException(string.Format(
-                                CultureInfo.CurrentUICulture, CimCmdletStrings.InvalidMethod, methodName, className));
-                    }
-                }
-                else if (cimInstance != null)
-                {
-                    className = cimInstance.CimClass.CimSystemProperties.ClassName;
-                    declaration = cimInstance.CimClass.CimClassMethods[methodName];
-                }
+                    string parameterName = enumerator.Key.ToString();
 
-                if (declaration != null)
-                {
-                    CimMethodParameterDeclaration paramDeclaration = declaration.Parameters[parameterName];
-                    if (paramDeclaration == null)
-                    {
-                        throw new ArgumentException(string.Format(
-                            CultureInfo.CurrentUICulture, CimCmdletStrings.InvalidMethodParameter, parameterName, methodName, className));
-                    }
+                    const CimFlags parameterFlags = CimFlags.In;
+                    object parameterValue = GetBaseObject(enumerator.Value);
 
-                    parameter = CimMethodParameter.Create(
+                    DebugHelper.WriteLog(@"Create parameter name= {0}, value= {1}, flags= {2}.", 4,
                         parameterName,
                         parameterValue,
-                        paramDeclaration.CimType,
                         parameterFlags);
-                    // FIXME: check in/out qualifier
-                    // parameterFlags = paramDeclaration.Qualifiers;
-                }
-                else
-                {
-                    if (parameterValue == null)
+
+                    CimMethodParameter parameter = null;
+                    CimMethodDeclaration declaration = null;
+                    string className = null;
+                    if (cimClass != null)
                     {
-                        // try the best to get the type while value is null
+                        className = cimClass.CimSystemProperties.ClassName;
+                        declaration = cimClass.CimClassMethods[methodName];
+                        if (declaration == null)
+                        {
+                            throw new ArgumentException(string.Format(
+                                    CultureInfo.CurrentUICulture, CimCmdletStrings.InvalidMethod, methodName, className));
+                        }
+                    }
+                    else if (cimInstance != null)
+                    {
+                        className = cimInstance.CimClass.CimSystemProperties.ClassName;
+                        declaration = cimInstance.CimClass.CimClassMethods[methodName];
+                    }
+
+                    if (declaration != null)
+                    {
+                        CimMethodParameterDeclaration paramDeclaration = declaration.Parameters[parameterName];
+                        if (paramDeclaration == null)
+                        {
+                            throw new ArgumentException(string.Format(
+                                CultureInfo.CurrentUICulture, CimCmdletStrings.InvalidMethodParameter, parameterName, methodName, className));
+                        }
+
                         parameter = CimMethodParameter.Create(
                             parameterName,
                             parameterValue,
-                            CimType.String,
+                            paramDeclaration.CimType,
                             parameterFlags);
+                        // FIXME: check in/out qualifier
+                        // parameterFlags = paramDeclaration.Qualifiers;
                     }
                     else
                     {
-                        CimType referenceType = CimType.Unknown;
-                        object referenceObject = GetReferenceOrReferenceArrayObject(parameterValue, ref referenceType);
-                        if (referenceObject != null)
+                        if (parameterValue == null)
                         {
+                            // try the best to get the type while value is null
                             parameter = CimMethodParameter.Create(
                                 parameterName,
-                                referenceObject,
-                                referenceType,
+                                parameterValue,
+                                CimType.String,
                                 parameterFlags);
                         }
                         else
                         {
-                            parameter = CimMethodParameter.Create(
-                                parameterName,
-                                parameterValue,
-                                parameterFlags);
+                            CimType referenceType = CimType.Unknown;
+                            object referenceObject = GetReferenceOrReferenceArrayObject(parameterValue, ref referenceType);
+                            if (referenceObject != null)
+                            {
+                                parameter = CimMethodParameter.Create(
+                                    parameterName,
+                                    referenceObject,
+                                    referenceType,
+                                    parameterFlags);
+                            }
+                            else
+                            {
+                                parameter = CimMethodParameter.Create(
+                                    parameterName,
+                                    parameterValue,
+                                    parameterFlags);
+                            }
                         }
                     }
-                }
 
-                if (parameter != null)
-                    collection.Add(parameter);
+                    if (parameter != null)
+                        collection.Add(parameter);
+                }
+            }
+            finally
+            {
+                (enumerator as IDisposable)?.Dispose();
             }
 
             return collection;
         }
         #endregion
 
-        #region const strings
-        /// <summary>
-        /// Operation target.
-        /// </summary>
+            #region const strings
+            /// <summary>
+            /// Operation target.
+            /// </summary>
         private const string targetClass = @"{0}";
 
         /// <summary>
