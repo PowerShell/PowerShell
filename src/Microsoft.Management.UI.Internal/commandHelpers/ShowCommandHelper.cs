@@ -280,22 +280,14 @@ Function PSGetSerializedShowCommandInfo
 
         #endregion
 
-        #region constructor and destructor
+        #region constructor
         /// <summary>
         /// Prevents a default instance of the ShowCommandHelper class from being created.
         /// </summary>
         private ShowCommandHelper()
         {
         }
-
-        /// <summary>
-        /// Finalizes an instance of the <see cref="ShowCommandHelper"/> class.
-        /// </summary>
-        ~ShowCommandHelper()
-        {
-            this.Dispose(false);
-        }
-        #endregion constructor and destructor
+        #endregion constructor
 
         #region properties called using reflection
         /// <summary>
@@ -409,12 +401,14 @@ Function PSGetSerializedShowCommandInfo
 
         #region public Dispose
         /// <summary>
-        /// Dispose method in IDisposeable.
+        /// Release all resources.
         /// </summary>
         public void Dispose()
         {
-            this.Dispose(true);
-            GC.SuppressFinalize(this);
+            this.windowClosed.Dispose();
+            this.helpNeeded.Dispose();
+            this.windowLoaded.Dispose();
+            this.importModuleNeeded.Dispose();
         }
         #endregion public Dispose
 
@@ -1246,21 +1240,6 @@ Function PSGetSerializedShowCommandInfo
             }
 
             return this.commandViewModel.GetScript();
-        }
-
-        /// <summary>
-        /// Implements IDisposable logic.
-        /// </summary>
-        /// <param name="isDisposing">True if being called from Dispose.</param>
-        private void Dispose(bool isDisposing)
-        {
-            if (isDisposing)
-            {
-                this.windowClosed.Dispose();
-                this.helpNeeded.Dispose();
-                this.windowLoaded.Dispose();
-                this.importModuleNeeded.Dispose();
-            }
         }
         #endregion instance private methods used only on this file
     }
