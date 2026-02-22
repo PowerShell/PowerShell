@@ -18,6 +18,14 @@ Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
         $tempDirectory = Join-Path -Path $TestDrive -ChildPath 'PSPath[]'
         New-Item $tempDirectory -ItemType Directory  -Force
         $assetsFile = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath assets) -ChildPath SortTest.txt
+        $PWSH = (Get-Process -Id $PID).MainModule.FileName
+        $pwshParam = "-NoProfile -Command &{
+            [Console]::Out.WriteLine('stdout1');
+            [Console]::Error.WriteLine('stderr1');
+            [Console]::Out.WriteLine('stdout2');
+            [Console]::Error.WriteLine('stderr2')
+        }"
+        $nl = [System.Environment]::NewLine
         if ($IsWindows) {
             $pingParam = "-n 2 localhost"
         }
@@ -82,17 +90,26 @@ Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
     }
 
     It "Should handle stderr redirection without error" {
-        $process = Start-Process ping -ArgumentList $pingParam -PassThru -RedirectStandardError $tempFile -RedirectStandardOutput "$TESTDRIVE/output"  @extraArgs
-
-        $process.Length      | Should -Be 1
-        $process.Id          | Should -BeGreaterThan 1
-        # $process.ProcessName | Should -Be "ping"
+        $output = & $PWSH -NoProfile -Command "&{ Start-Process $PWSH -ArgumentList `"$pwshParam`" -Wait -NoNewWindow -RedirectStandardError $tempFile }"
+        $output | Should -BeExactly @("stdout1", "stdout2")
+        Get-Content -Raw -Path $tempFile | Should -BeExactly "stderr1${nl}stderr2${nl}"
     }
 
     It "Should handle stdout redirection without error" {
-        $process = Start-Process ping -ArgumentList $pingParam -Wait -RedirectStandardOutput $tempFile  @extraArgs
-        $dirEntry = Get-ChildItem $tempFile
-        $dirEntry.Length | Should -BeGreaterThan 0
+        $output = & $PWSH -NoProfile -Command "&{ Start-Process $PWSH -ArgumentList `"$pwshParam`" -Wait -NoNewWindow -RedirectStandardOutput $tempFile }" 2>&1
+        $output | Should -BeExactly @("stderr1", "stderr2")
+        Get-Content -Raw -Path $tempFile | Should -BeExactly "stdout1${nl}stdout2${nl}"
+    }
+
+    It "Should handle stdout,stderr redirections without error" {
+        Start-Process $PWSH -ArgumentList $pwshParam -Wait -RedirectStandardError $tempFile -RedirectStandardOutput "$TESTDRIVE/output"
+        Get-Content -Raw -Path "$TESTDRIVE/output" | Should -BeExactly "stdout1${nl}stdout2${nl}"
+        Get-Content -Raw -Path $tempFile | Should -BeExactly "stderr1${nl}stderr2${nl}"
+    }
+
+    It "Should handle stdout,stderr redirections to the same file without error" {
+        Start-Process $PWSH -ArgumentList $pwshParam -Wait -RedirectStandardError $tempFile -RedirectStandardOutput $tempFile
+        Get-Content -Raw -Path $tempFile | Should -BeExactly "stdout1${nl}stderr1${nl}stdout2${nl}stderr2${nl}"
     }
 
     It "Should handle stdin redirection without error" {
