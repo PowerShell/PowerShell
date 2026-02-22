@@ -15,6 +15,7 @@ They have [write access](https://docs.github.com/en/free-pro-team@latest/github/
 - [Repository Maintainer Responsibilities](#repository-maintainer-responsibilities)
 - [Issue Management Process](#issue-management-process)
 - [Pull Request Workflow](#pull-request-workflow)
+- [LTS Servicing](#lts-servicing)
 - [Becoming a Repository Maintainer](#becoming-a-repository-maintainer)
 
 ## Current Repository Maintainers
@@ -85,6 +86,14 @@ Please see [Contributing][CONTRIBUTING]
 ## Maintainer Best Practices
 
 Please see [Best Practices][best-practice]
+
+## LTS Servicing
+
+For information about servicing Long-Term Servicing (LTS) releases and backporting fixes to LTS branches:
+
+- [LTS Servicing Criteria](../release/LTS-servicing-criteria.md)
+
+This document provides criteria for evaluating which fixes are appropriate for LTS releases, the backport request process, and decision-making guidelines.
 
 ## Becoming a Repository Maintainer
 
