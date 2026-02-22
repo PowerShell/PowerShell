@@ -556,7 +556,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = PSRemotingBaseCmdlet.VMIdParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = PSRemotingBaseCmdlet.VMNameParameterSet)]
-        [Credential()]
+        [Credential]
         public virtual PSCredential Credential
         {
             get
@@ -765,7 +765,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, Mandatory = true,
             ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         public virtual string[] HostName
         {
             get;
@@ -776,7 +776,7 @@ namespace Microsoft.PowerShell.Commands
         /// SSH User Name.
         /// </summary>
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         public virtual string UserName
         {
             get;
@@ -787,7 +787,7 @@ namespace Microsoft.PowerShell.Commands
         /// SSH Key File Path.
         /// </summary>
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         [Alias("IdentityFilePath")]
         public virtual string KeyFilePath
         {
@@ -830,7 +830,7 @@ namespace Microsoft.PowerShell.Commands
         ///   KeyFilePath   (Alias: IdentityFilePath)   (optional)
         /// </summary>
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostHashParameterSet, Mandatory = true)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         public virtual Hashtable[] SSHConnection
         {
             get;
@@ -1313,7 +1313,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Arguments that are passed to this scriptblock.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [Alias("Args")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public virtual object[] ArgumentList
@@ -2547,7 +2547,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true,
                    ParameterSetName = PSRunspaceCmdlet.NameParameterSet)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         public virtual string[] Name
         {
             get

@@ -7631,7 +7631,7 @@ namespace Microsoft.PowerShell.Commands
         /// A parameter to return the streams of an item.
         /// </summary>
         [Parameter]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] Stream { get; set; }
 #endif
@@ -7647,7 +7647,7 @@ namespace Microsoft.PowerShell.Commands
         /// A parameter to return the streams of an item.
         /// </summary>
         [Parameter]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] Stream { get; set; }
 #endif

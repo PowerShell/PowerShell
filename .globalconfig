@@ -2010,7 +2010,7 @@ dotnet_diagnostic.SA1410.severity = none
 
 # SA1411: Attribute constructor should not use unnecessary parenthesis
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1411.md
-dotnet_diagnostic.SA1411.severity = none
+dotnet_diagnostic.SA1411.severity = warning
 
 # SA1412: Store files as UTF-8 with byte order mark
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1412.md
