@@ -1158,15 +1158,16 @@ function New-UnixPackage {
             }
         }
 
-        # Determine if the version is a preview version
-        # Only LTS packages get a prefix in the name
-        # Preview versions are identified by the version string itself (e.g., 7.6.0-preview.6)
-        # Rebuild versions are also identified by the version string (e.g., 7.4.13-rebuild.5)
-        $Name = if($LTS) {
-            "powershell-lts"
-        }
-        else {
-            "powershell"
+        # We need a prefix of 'lts' and 'preview' in the name for .rpm and .deb packages
+        # to be consistent with the existing packages names in packages.microsoft.com.
+        $Name = "powershell"
+        if ($Type -ne "osxpkg") {
+            if($LTS) {
+                $Name = "powershell-lts"
+            }
+            elseif ($IsPreview) {
+                $Name = "powershell-preview"
+            }
         }
 
         # Verify dependencies are installed and in the path
