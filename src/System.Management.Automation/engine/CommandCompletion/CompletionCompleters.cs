@@ -4122,7 +4122,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns all string values bound to a parameter except the one the cursor is currently at.
         /// </summary>
-        private static HashSet<string>GetParameterValues(AstPair parameter, int cursorOffset)
+        private static HashSet<string> GetParameterValues(AstPair parameter, int cursorOffset)
         {
             var result = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             var parameterValues = parameter.Argument.FindAll(ast => !(cursorOffset >= ast.Extent.StartOffset && cursorOffset <= ast.Extent.EndOffset) && ast is StringConstantExpressionAst, searchNestedScriptBlocks: false);
@@ -4738,7 +4738,7 @@ namespace System.Management.Automation
                 {
                     basePath = null;
                 }
-                IEnumerable <FileSystemInfo> fileSystemObjects = containersOnly
+                IEnumerable<FileSystemInfo> fileSystemObjects = containersOnly
                     ? dirInfo.EnumerateDirectories(filterText, enumerationOptions)
                     : dirInfo.EnumerateFileSystemInfos(filterText, enumerationOptions);
 
