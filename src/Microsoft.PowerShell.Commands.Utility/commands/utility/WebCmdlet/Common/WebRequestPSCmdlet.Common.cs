@@ -1305,6 +1305,8 @@ namespace Microsoft.PowerShell.Commands
 
             // Add 1 to account for the first request.
             int totalRequests = WebSession.MaximumRetryCount + 1;
+            // For exponential backoff, we start with half of the retry interval so that the first retry happens at the user specified retry interval.
+            float retryIntervalInSeconds = (float)WebSession.RetryIntervalInSeconds / 2;
             HttpRequestMessage currentRequest = request;
             HttpResponseMessage response = null;
 
@@ -1412,14 +1414,12 @@ namespace Microsoft.PowerShell.Commands
                 // When MaximumRetryCount is not specified, the totalRequests is 1.
                 if (totalRequests > 1 && ShouldRetry(response.StatusCode))
                 {
-                    WebSession.RetryIntervalInSeconds = RetryMode switch
+                    retryIntervalInSeconds = RetryMode switch
                     {
-                        // (WebSession.MaximumRetryCount - totalRequests + 1) calculates the number of retries that have already been attempted.
-                        WebRequestRetryMode.Exponential => Math.Min(WebSession.RetryIntervalInSeconds * (WebSession.MaximumRetryCount - totalRequests + 1 == 0 ? 1 : 2), _maximumRetryIntervalInSeconds),
+                        // For exponential backoff, we double the retry interval for each retry attempt up to the maximum retry interval.
+                        WebRequestRetryMode.Exponential => Math.Min(retryIntervalInSeconds * 2, _maximumRetryIntervalInSeconds),
                         WebRequestRetryMode.Fixed or _ => WebSession.RetryIntervalInSeconds
                     };
-
-                    int retryIntervalInSeconds = WebSession.RetryIntervalInSeconds;
 
                     // If the status code is 429 get the retry interval from the Headers.
                     // Ignore broken header and its value.
@@ -1430,7 +1430,7 @@ namespace Microsoft.PowerShell.Commands
                             IEnumerator<string> enumerator = retryAfter.GetEnumerator();
                             if (enumerator.MoveNext())
                             {
-                                retryIntervalInSeconds = Convert.ToInt32(enumerator.Current);
+                                retryIntervalInSeconds = Convert.ToSingle(enumerator.Current);
                             }
                         }
                         catch
@@ -1448,7 +1448,7 @@ namespace Microsoft.PowerShell.Commands
                     WriteVerbose(retryMessage);
 
                     _cancelToken = new CancellationTokenSource();
-                    Task.Delay(retryIntervalInSeconds * 1000, _cancelToken.Token).GetAwaiter().GetResult();
+                    Task.Delay((int)(retryIntervalInSeconds * 1000), _cancelToken.Token).GetAwaiter().GetResult();
                     _cancelToken.Cancel();
                     _cancelToken = null;
 
