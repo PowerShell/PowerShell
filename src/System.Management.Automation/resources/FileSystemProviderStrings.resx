@@ -354,4 +354,10 @@
   <data name="JunctionAbsolutePath" xml:space="preserve">
     <value>Creating a junction requires an absolute path for the target.</value>
   </data>
+  <data name="CannotUseDelimiterAndNoNewLineParametersTogether" xml:space="preserve">
+    <value>The Delimiter and NoNewLine parameters cannot be used together.</value>
+  </data>
+  <data name="CannotUseNoTrailingDelimiterWithoutDelimiterParameter" xml:space="preserve">
+    <value>The NoTrailingDelimiter parameter requires the Delimiter parameter to be specified.</value>
+  </data>
 </root>

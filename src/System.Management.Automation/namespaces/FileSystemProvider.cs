@@ -6780,6 +6780,16 @@ namespace Microsoft.PowerShell.Commands
             return new FileSystemContentReaderDynamicParameters(this);
         }
 
+        private void WriteGetContentWriterArgumentError(string message, string path)
+        {
+            Exception e = new ArgumentException(message);
+            WriteError(new ErrorRecord(
+                e,
+                "GetContentWriterArgumentError",
+                ErrorCategory.InvalidArgument,
+                path));
+        }
+
         /// <summary>
         /// Creates an instance of the FileSystemContentStream class, opens
         /// the specified file for writing, and returns the IContentReader interface
@@ -6811,6 +6821,10 @@ namespace Microsoft.PowerShell.Commands
             string streamName = null;
             bool suppressNewline = false;
 
+            string delimiter = "\n";
+            bool delimiterSpecified = false;
+            bool suppressLastDelimiter = false;
+
             // Get the dynamic parameters
             if (DynamicParameters != null)
             {
@@ -6836,6 +6850,14 @@ namespace Microsoft.PowerShell.Commands
                     streamName = dynParams.Stream;
 #endif
                     suppressNewline = dynParams.NoNewline.IsPresent;
+
+                    delimiterSpecified = dynParams.DelimiterSpecified;
+                    if (delimiterSpecified)
+                    {
+                        delimiter = dynParams.Delimiter;
+                    }
+
+                    suppressLastDelimiter = dynParams.NoTrailingDelimiter.IsPresent;
                 }
             }
 
@@ -6869,7 +6891,58 @@ namespace Microsoft.PowerShell.Commands
                     return stream;
                 }
 
-                stream = new FileSystemContentReaderWriter(path, streamName, filemode, FileAccess.Write, FileShare.ReadWrite, encoding, usingByteEncoding, false, this, false, suppressNewline);
+                // Users can't both read as bytes or suppress newline, and specify a delimiter
+                if (delimiterSpecified)
+                {
+                    if (usingByteEncoding)
+                    {
+                        WriteGetContentWriterArgumentError(FileSystemProviderStrings.DelimiterError, path);
+                    }
+                    else if (suppressNewline)
+                    {
+                        WriteGetContentWriterArgumentError(FileSystemProviderStrings.CannotUseDelimiterAndNoNewLineParametersTogether, path);
+                    }
+                    else
+                    {
+                        stream = new FileSystemContentReaderWriter(
+                            path,
+                            streamName,
+                            mode: filemode,
+                            access: FileAccess.Write,
+                            share: FileShare.ReadWrite,
+                            encoding,
+                            delimiter,
+                            waitForChanges: false,
+                            provider: this,
+                            isRawStream: false,
+                            suppressLastDelimiter: suppressLastDelimiter
+                        );
+                    }
+                }
+                else
+                {
+                    // Users can't suppress trailing delimiter and not specify delimiter
+                    if (suppressLastDelimiter)
+                    {
+                        WriteGetContentWriterArgumentError(FileSystemProviderStrings.CannotUseNoTrailingDelimiterWithoutDelimiterParameter, path);
+                    }
+                    else
+                    {
+                        stream = new FileSystemContentReaderWriter(
+                            path,
+                            streamName,
+                            mode: filemode,
+                            access: FileAccess.Write,
+                            share: FileShare.ReadWrite,
+                            encoding,
+                            usingByteEncoding,
+                            waitForChanges: false,
+                            provider: this,
+                            isRawStream: false,
+                            suppressNewline
+                        );
+                    }
+                }
             }
             catch (PathTooLongException pathTooLong)
             {
@@ -7521,6 +7594,55 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private bool _suppressNewline = false;
+
+        /// <summary>
+        /// Gets or sets the delimiter to use when writing the file.
+        /// </summary>
+        [Parameter]
+        public string Delimiter
+        {
+            get
+            {
+                return _delimiter;
+            }
+
+            set
+            {
+                DelimiterSpecified = true;
+                _delimiter = value;
+            }
+        }
+
+        private string _delimiter = "\n";
+
+        /// <summary>
+        /// Gets the status of the delimiter parameter. Returns true
+        /// if the delimiter was explicitly specified by the user, false otherwise.
+        /// </summary>
+        public bool DelimiterSpecified
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// True to remove trailing delimiter from end of string, false to leave as is.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter NoTrailingDelimiter
+        {
+            get
+            {
+                return _noTrailingDelimiter;
+            }
+
+            set
+            {
+                _noTrailingDelimiter = value;
+            }
+        }
+
+        private bool _noTrailingDelimiter = false;
     }
 
     /// <summary>
