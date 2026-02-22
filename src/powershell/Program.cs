@@ -122,7 +122,7 @@ namespace Microsoft.PowerShell
                 ArgumentNullException.ThrowIfNull(pwshPath);
 
                 // exec pwsh
-                ThrowOnFailure("exec", ExecPwshLogin(args, pwshPath, isMacOS: false));
+                ThrowOnFailure("exec", ExecPwshLogin(args, pwshPath, shellPath: "/bin/sh"));
                 return;
             }
 
@@ -201,7 +201,7 @@ namespace Microsoft.PowerShell
                 ArgumentNullException.ThrowIfNull(pwshPath);
 
                 // exec pwsh
-                ThrowOnFailure("exec", ExecPwshLogin(args, pwshPath, isMacOS: true));
+                ThrowOnFailure("exec", ExecPwshLogin(args, pwshPath, shellPath: "/bin/zsh"));
             }
             finally
             {
@@ -266,16 +266,17 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Create the exec call to /bin/{z}sh -l -c 'exec pwsh "$@"' and run it.
+        /// Constructs and executes a Unix shell command to start PowerShell as a login shell,
+        /// using the arguments -l -c 'exec pwsh "$@"'.
         /// </summary>
         /// <param name="args">The argument vector passed to pwsh.</param>
-        /// <param name="isMacOS">True if we are running on macOS.</param>
         /// <param name="pwshPath">Absolute path to the pwsh executable.</param>
+        /// <param name="shellPath">Absolute path to the Unix shell.</param>
         /// <returns>
         /// The exit code of exec if it fails.
         /// If exec succeeds, this process is overwritten so we never actually return.
         /// </returns>
-        private static int ExecPwshLogin(string[] args, string pwshPath, bool isMacOS)
+        private static int ExecPwshLogin(string[] args, string pwshPath, string shellPath)
         {
             // Create input for /bin/sh that execs pwsh
             int quotedPwshPathLength = GetQuotedPathLength(pwshPath);
@@ -291,11 +292,7 @@ namespace Microsoft.PowerShell
 
             // The command arguments
 
-            // First argument is the command name.
-            // Even when executing 'zsh', we want to set this to '/bin/sh'
-            // because this tells 'zsh' to run in sh emulation mode (it examines $0)
-            execArgs[0] = "/bin/sh";
-
+            execArgs[0] = shellPath; // Command name
             execArgs[1] = "-l"; // Login flag
             execArgs[2] = "-c"; // Command parameter
             execArgs[3] = pwshInvocation; // Command to execute
@@ -321,13 +318,7 @@ namespace Microsoft.PowerShell
             // See https://github.com/dotnet/corefx/issues/40130#issuecomment-519420648.
             ThrowOnFailure("setenv", SetEnv(LOGIN_ENV_VAR_NAME, LOGIN_ENV_VAR_VALUE, overwrite: true));
 
-            // On macOS, sh doesn't support login, so we run /bin/zsh in sh emulation mode.
-            if (isMacOS)
-            {
-                return Exec("/bin/zsh", execArgs);
-            }
-
-            return Exec("/bin/sh", execArgs);
+            return Exec(shellPath, execArgs);
         }
 
         /// <summary>
