@@ -19,6 +19,7 @@ using Dbg = System.Management.Automation;
 
 namespace System.Management.Automation
 {
+#nullable enable
     /// <summary>
     /// Defines the options that control what data is embedded in the
     /// signature blob.
@@ -47,6 +48,8 @@ namespace System.Management.Automation
         /// </summary>
         Default = AddFullCertificateChainExceptRoot
     }
+
+#nullable restore
 
     /// <summary>
     /// Helper functions for signature functionality.
