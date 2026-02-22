@@ -138,14 +138,15 @@ namespace TestExe
         // </Summary>
         private static void EchoCmdLine()
         {
-            string rawCmdLine = "N/A";
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                nint cmdLinePtr = Interop.GetCommandLineW();
-                rawCmdLine = Marshal.PtrToStringUni(cmdLinePtr);
+                ReadOnlySpan<char> rawCmdLine = Interop.GetCommandLine();
+                Console.WriteLine(rawCmdLine);
             }
-
-            Console.WriteLine(rawCmdLine);
+            else
+            {
+                Console.WriteLine("N/A");
+            }
         }
 
         // <Summary>
@@ -198,15 +199,21 @@ Other options are for specific tests only. Read source code for details.
             if (target.HasFlag(EnvTarget.User))
             {
                 // Append to the User Path.
-                using RegistryKey reg = Registry.CurrentUser.OpenSubKey(UserEnvRegPath, writable: true);
-                UpdateEnvPathImpl(reg, append: true, @"X:\not-exist-user-path");
+                using RegistryKey? reg = Registry.CurrentUser.OpenSubKey(UserEnvRegPath, writable: true);
+                if (reg is not null)
+                {
+                    UpdateEnvPathImpl(reg, append: true, @"X:\not-exist-user-path");
+                }
             }
 
             if (target.HasFlag(EnvTarget.System))
             {
                 // Prepend to the System Path.
-                using RegistryKey reg = Registry.LocalMachine.OpenSubKey(SysEnvRegPath, writable: true);
-                UpdateEnvPathImpl(reg, append: false, @"X:\not-exist-sys-path");
+                using RegistryKey? reg = Registry.LocalMachine.OpenSubKey(SysEnvRegPath, writable: true);
+                if (reg is not null)
+                {
+                    UpdateEnvPathImpl(reg, append: false, @"X:\not-exist-sys-path");
+                }
             }
 
             static void UpdateEnvPathImpl(RegistryKey regKey, bool append, string newPathItem)
@@ -239,10 +246,19 @@ Other options are for specific tests only. Read source code for details.
             }
         }
     }
+}
 
-    internal static partial class Interop
+internal static partial class Interop
+{
+    [LibraryImport("Kernel32.dll")]
+    private static unsafe partial char* GetCommandLineW();
+
+    internal static ReadOnlySpan<char> GetCommandLine()
     {
-        [LibraryImport("Kernel32.dll")]
-        internal static partial nint GetCommandLineW();
+        unsafe
+        {
+            char* cmdLinePtr = GetCommandLineW();
+            return MemoryMarshal.CreateReadOnlySpanFromNullTerminated(cmdLinePtr);
+        }
     }
 }
