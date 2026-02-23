@@ -64,7 +64,7 @@ jobs:
         $version = "$(ReleaseTag)"
         $updatedDescription = "Version: $version`n`n$description"
         $json.listings.'en-us'.baseListing.description = $updatedDescription
-        Write-Verbose -Verbose "Updated description with version: $version"
+        Write-Verbose -Verbose "Updated description: $updatedDescription"
 
         $json | ConvertTo-Json -Depth 100 | Set-Content $jsonPath -Encoding UTF8
     displayName: 'Add Changelog Link and Version Number to SBJSON'
