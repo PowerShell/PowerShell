@@ -1158,8 +1158,8 @@ function New-UnixPackage {
             }
         }
 
-        # We need a prefix of 'lts' and 'preview' in the name for .rpm and .deb packages
-        # to be consistent with the existing packages names in packages.microsoft.com.
+        # For deb/rpm packages, use the -lts and -preview channel suffix variants
+        # (powershell-lts / powershell-preview) to match existing names on packages.microsoft.com.
         $Name = "powershell"
         if ($Type -ne "osxpkg") {
             if($LTS) {
