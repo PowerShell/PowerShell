@@ -1158,8 +1158,11 @@ function New-UnixPackage {
             }
         }
 
-        # For deb/rpm packages, use the -lts and -preview channel suffix variants
-        # (powershell-lts / powershell-preview) to match existing names on packages.microsoft.com.
+        # Determine if the version is a preview version
+        $IsPreview = Test-IsPreview -Version $Version -IsLTS:$LTS
+
+        # For deb/rpm packages, use the '-lts' and '-preview' channel suffix variants
+        # to match existing names on packages.microsoft.com.
         $Name = "powershell"
         if ($Type -ne "osxpkg") {
             if($LTS) {
