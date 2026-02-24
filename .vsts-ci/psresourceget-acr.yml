@@ -34,7 +34,7 @@ pr:
     - .github/ISSUE_TEMPLATE/*
     - .github/workflows/*
     - .vsts-ci/misc-analysis.yml
-    - tools/cgmanifest.json
+    - tools/cgmanifest/*
     - LICENSE.txt
     - test/common/markdown/*
     - test/perf/*

@@ -21,7 +21,7 @@ if ($ForceModuleReload) {
 
 Import-Module -Name "$PSScriptRoot/src/ClearlyDefined" @extraParams
 
-$cgManfest = Get-Content "$PSScriptRoot/../cgmanifest.json" | ConvertFrom-Json
+$cgManfest = Get-Content "$PSScriptRoot/../cgmanifest/main/cgmanifest.json" | ConvertFrom-Json
 $fullCgList = $cgManfest.Registrations.Component |
     ForEach-Object {
         [Pscustomobject]@{
