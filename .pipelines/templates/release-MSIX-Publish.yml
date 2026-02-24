@@ -59,8 +59,15 @@ jobs:
 
         $json.listings.'en-us'.baseListing.releaseNotes = $message
 
+        # Add PowerShell version to the top of the description
+        $description = $json.listings.'en-us'.baseListing.description
+        $version = "$(ReleaseTag)"
+        $updatedDescription = "Version: $version`n`n$description"
+        $json.listings.'en-us'.baseListing.description = $updatedDescription
+        Write-Verbose -Verbose "Updated description: $updatedDescription"
+
         $json | ConvertTo-Json -Depth 100 | Set-Content $jsonPath -Encoding UTF8
-    displayName: 'Update Release Notes in JSON'
+    displayName: 'Add Changelog Link and Version Number to SBJSON'
 
   - task: PowerShell@2
     inputs:
@@ -101,6 +108,7 @@ jobs:
   - task: MS-RDX-MRO.windows-store-publish.publish-task.store-publish@3
     displayName: 'Publish StoreBroker Package (Stable/LTS)'
     condition: and(ne('${{ parameters.skipMSIXPublish }}', 'true'), or(eq(variables['STABLE'], 'true'), eq(variables['LTS'], 'true')))
+    continueOnError: true
     inputs:
       serviceEndpoint: 'StoreAppPublish-Stable'
       appId: '$(AppID)'
@@ -114,6 +122,7 @@ jobs:
   - task: MS-RDX-MRO.windows-store-publish.publish-task.store-publish@3
     displayName: 'Publish StoreBroker Package (Preview)'
     condition: and(ne('${{ parameters.skipMSIXPublish }}', 'true'), eq(variables['PREVIEW'], 'true'))
+    continueOnError: true
     inputs:
       serviceEndpoint: 'StoreAppPublish-Preview'
       appId: '$(AppID)'
