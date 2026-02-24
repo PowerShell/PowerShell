@@ -186,6 +186,11 @@ namespace System.Management.Automation
         public bool IsOSBinary { get; internal set; }
 
         /// <summary>
+        /// Gets the Subject Alternative Name from the signer certificate.
+        /// </summary>
+        public string[] SubjectAlternativeName { get; private set; }
+
+        /// <summary>
         /// Constructor for class Signature
         ///
         /// Call this to create a validated time-stamped signature object.
@@ -277,6 +282,9 @@ namespace System.Management.Automation
             _statusMessage = GetSignatureStatusMessage(isc,
                                                       error,
                                                       filePath);
+
+            // Extract Subject Alternative Name from the signer certificate
+            SubjectAlternativeName = GetSubjectAlternativeName(signer);
         }
 
         private static SignatureStatus GetSignatureStatusFromWin32Error(DWORD error)
@@ -388,6 +396,35 @@ namespace System.Management.Automation
             }
 
             return message;
+        }
+
+        /// <summary>
+        /// Extracts the Subject Alternative Name from the certificate.
+        /// </summary>
+        /// <param name="certificate">The certificate to extract SAN from.</param>
+        /// <returns>Array of SAN entries or null if not found.</returns>
+        private static string[] GetSubjectAlternativeName(X509Certificate2 certificate)
+        {
+            if (certificate == null)
+            {
+                return null;
+            }
+
+            foreach (X509Extension extension in certificate.Extensions)
+            {
+                if (extension.Oid != null && extension.Oid.Value == CertificateFilterInfo.SubjectAlternativeNameOid)
+                {
+                    string formatted = extension.Format(multiLine: true);
+                    if (string.IsNullOrEmpty(formatted))
+                    {
+                        return null;
+                    }
+
+                    return formatted.Split(new[] { "\r\n", "\n", "\r" }, StringSplitOptions.RemoveEmptyEntries);
+                }
+            }
+
+            return null;
         }
     }
 }

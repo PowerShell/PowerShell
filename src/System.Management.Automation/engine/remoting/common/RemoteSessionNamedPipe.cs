@@ -1302,7 +1302,6 @@ namespace System.Management.Automation.Remoting
                 return new NamedPipeClientStream(
                     PipeDirection.InOut,
                     isAsync: true,
-                    isConnected: true,
                     pipeHandle);
             }
             catch (Exception)

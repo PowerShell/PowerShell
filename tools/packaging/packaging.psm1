@@ -18,7 +18,7 @@ $AllDistributions = @()
 $AllDistributions += $DebianDistributions
 $AllDistributions += $RedhatDistributions
 $AllDistributions += 'macOs'
-$script:netCoreRuntime = 'net10.0'
+$script:netCoreRuntime = 'net11.0'
 $script:iconFileName = "Powershell_black_64.png"
 $script:iconPath = Join-Path -path $PSScriptRoot -ChildPath "../../assets/$iconFileName" -Resolve
 
@@ -1159,11 +1159,15 @@ function New-UnixPackage {
         }
 
         # Determine if the version is a preview version
-        # Only LTS packages get a prefix in the name
-        # Preview versions are identified by the version string itself (e.g., 7.6.0-preview.6)
-        # Rebuild versions are also identified by the version string (e.g., 7.4.13-rebuild.5)
+        $IsPreview = Test-IsPreview -Version $Version -IsLTS:$LTS
+
+        # For deb/rpm packages, use the '-lts' and '-preview' channel suffix variants to match existing names on packages.microsoft.com.
+        # For osxpkg package, only LTS packages get a channel suffix in the name.
         $Name = if($LTS) {
             "powershell-lts"
+        }
+        elseif ($IsPreview -and $Type -ne "osxpkg") {
+            "powershell-preview"
         }
         else {
             "powershell"
@@ -2148,7 +2152,7 @@ function Get-PackageDependencies
         #   than the build version and we know that older versions just works.
         #
         $MinICUVersion = 60                    # runtime minimum supported
-        $BuildICUVersion = 76                  # current build version
+        $BuildICUVersion = Get-IcuLatestRelease
         $MaxICUVersion = $BuildICUVersion + 30 # headroom
 
         if ($Distribution -eq 'deb') {
@@ -2323,12 +2327,12 @@ function Get-MacOSPackageIdentifierInfo
     param(
         [Parameter(Mandatory)]
         [string]$Version,
-        
+
         [switch]$LTS
     )
-    
+
     $IsPreview = Test-IsPreview -Version $Version -IsLTS:$LTS
-    
+
     # Determine package identifier based on preview status
     if ($IsPreview) {
         $PackageIdentifier = 'com.microsoft.powershell-preview'
@@ -2336,7 +2340,7 @@ function Get-MacOSPackageIdentifierInfo
     else {
         $PackageIdentifier = 'com.microsoft.powershell'
     }
-    
+
     return @{
         IsPreview = $IsPreview
         PackageIdentifier = $PackageIdentifier
@@ -5807,4 +5811,16 @@ function Test-IsProductFile {
     }
 
     return $false
+}
+
+# Get major version from latest ICU release (latest: stable version)
+function Get-IcuLatestRelease {
+    $response = Invoke-WebRequest -Uri "https://github.com/unicode-org/icu/releases/latest"
+    $tagUrl = ($response.Links | Where-Object href -like "*releases/tag/release-*")[0].href
+
+    if ($tagUrl -match 'release-(\d+)\.') {
+       return [int]$Matches[1]
+    }
+
+    throw "Unable to determine the latest ICU release version."
 }
