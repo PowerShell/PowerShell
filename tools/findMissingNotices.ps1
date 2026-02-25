@@ -467,7 +467,7 @@ if ($Fix -and $registrationChanged -and -not $ForceHarvestedOnly) {
 
     if ($needHarvest.Count -gt 0) {
         Write-Verbose "Found $($needHarvest.Count) packages that need harvesting. Starting harvest..." -Verbose
-        $needHarvest | Select-Object -ExpandProperty coordinates | Start-ClearlyDefinedHarvest
+        $needHarvest | Select-Object -ExpandProperty coordinates | ConvertFrom-ClearlyDefinedCoordinates | Start-ClearlyDefinedHarvest
     } else {
         Write-Verbose "All packages are already harvested." -Verbose
     }
