@@ -2,6 +2,9 @@
 # Licensed under the MIT License.
 
 # Start the collection (known as harvest) of ClearlyDefined data for a package
+
+$retryIntervalSec = 90
+$maxRetryCount = 5
 function Start-ClearlyDefinedHarvest {
     [CmdletBinding()]
     param(
@@ -27,7 +30,9 @@ function Start-ClearlyDefinedHarvest {
         $coordinates = Get-ClearlyDefinedCoordinates @PSBoundParameters
         $body = @{tool='package';coordinates=$coordinates} | convertto-json
         Write-Verbose $body -Verbose
-        (Invoke-WebRequest -Method Post  -Uri 'https://api.clearlydefined.io/harvest' -Body $body -ContentType 'application/json' -MaximumRetryCount 5 -RetryIntervalSec 60 -Verbose).Content
+        Start-job -ScriptBlock {
+            Invoke-WebRequest -Method Post  -Uri 'https://api.clearlydefined.io/harvest' -Body $using:body -ContentType 'application/json' -MaximumRetryCount $using:maxRetryCount -RetryIntervalSec $using:retryIntervalSec
+        }
     }
 }
 
@@ -203,9 +208,13 @@ Function Search-ClearlyDefined {
     Write-Verbose "Searching ClearlyDefined: $searchUri"
 
     try {
-        $results = Invoke-RestMethod -Uri $searchUri -TimeoutSec 30
+        $results = Invoke-RestMethod -Uri $searchUri -MaximumRetryCount $maxRetryCount -RetryIntervalSec $retryIntervalSec
         return $results
     } catch {
+        if ($retryIntervalSec -lt 300) {
+            $retryIntervalSec++
+        }
+
         Write-Warning "Failed to search ClearlyDefined: $_"
         return $null
     }
@@ -320,6 +329,7 @@ Function Get-ClearlyDefinedData {
                 }
 
                 if ($cached.cachedTime -gt $cacheCutoff) {
+                    Write-Progress -Activity "Getting ClearlyDefined data" -Status "Getting data for $coordinates - cache hit" -PercentComplete (($completed / $total) * 100)
                     Write-Verbose "Returning cached data for $coordinates (harvested: $($cached.harvestedResult))"
                     Write-Output $cached
                     $completed++
@@ -327,8 +337,10 @@ Function Get-ClearlyDefinedData {
                 }
             }
 
+            Write-Progress -Activity "Getting ClearlyDefined data" -Status "Getting data for $coordinates - cache miss" -PercentComplete (($completed / $total) * 100)
+
             try {
-                Invoke-RestMethod -Uri "https://api.clearlydefined.io/definitions/$coordinates" -TimeoutSec 60 -MaximumRetryCount 5 -RetryIntervalSec 60 | ForEach-Object {
+                Invoke-RestMethod -Uri "https://api.clearlydefined.io/definitions/$coordinates" -MaximumRetryCount $maxRetryCount -RetryIntervalSec $retryIntervalSec | ForEach-Object {
                     [bool] $harvested = if ($_.licensed.declared) { $true } else { $false }
                     # Always cache, with harvestedResult property to distinguish for TTL purposes
                     Add-Member -NotePropertyName cachedTime -NotePropertyValue (get-date) -InputObject $_ -PassThru |
@@ -341,6 +353,10 @@ Function Get-ClearlyDefinedData {
                         }
                 }
             } catch {
+                if ($retryIntervalSec -lt 300) {
+                    $retryIntervalSec++
+                }
+
                 Write-Warning "Failed to get ClearlyDefined data for $coordinates : $_"
                 # Return a minimal object indicating failure/not harvested so the pipeline continues
                 $failedResult = [PSCustomObject]@{
