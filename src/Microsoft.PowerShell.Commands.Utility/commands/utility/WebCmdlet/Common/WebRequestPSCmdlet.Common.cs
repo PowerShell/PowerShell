@@ -147,7 +147,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Maximum retry interval for exponential backoff strategy.
         /// </summary>
-        private const int _maximumRetryIntervalInSeconds = 600;
+        private const int _maximumretryIntervalInMilliseconds = 600000;
 
         /// <summary>
         /// The current size of the local file being resumed.
@@ -1306,7 +1306,7 @@ namespace Microsoft.PowerShell.Commands
             // Add 1 to account for the first request.
             int totalRequests = WebSession.MaximumRetryCount + 1;
             // For exponential backoff, we start with half of the retry interval so that the first retry happens at the user specified retry interval.
-            float retryIntervalInSeconds = (float)WebSession.RetryIntervalInSeconds / 2;
+            int retryIntervalInMilliSeconds = WebSession.RetryIntervalInSeconds * 1000 / 2;
             HttpRequestMessage currentRequest = request;
             HttpResponseMessage response = null;
 
@@ -1414,12 +1414,14 @@ namespace Microsoft.PowerShell.Commands
                 // When MaximumRetryCount is not specified, the totalRequests is 1.
                 if (totalRequests > 1 && ShouldRetry(response.StatusCode))
                 {
-                    retryIntervalInSeconds = RetryMode switch
+                    retryIntervalInMilliSeconds = RetryMode switch
                     {
                         // For exponential backoff, we double the retry interval for each retry attempt up to the maximum retry interval.
-                        WebRequestRetryMode.Exponential => Math.Min(retryIntervalInSeconds * 2, _maximumRetryIntervalInSeconds),
-                        WebRequestRetryMode.Fixed or _ => WebSession.RetryIntervalInSeconds
+                        WebRequestRetryMode.Exponential => Math.Min(retryIntervalInMilliSeconds * 2, _maximumretryIntervalInMilliseconds),
+                        WebRequestRetryMode.Fixed or _ => WebSession.RetryIntervalInSeconds * 1000
                     };
+
+                    int currentRetryIntervalInMilliSeconds = retryIntervalInMilliSeconds;
 
                     // If the status code is 429 get the retry interval from the Headers.
                     // Ignore broken header and its value.
@@ -1430,7 +1432,7 @@ namespace Microsoft.PowerShell.Commands
                             IEnumerator<string> enumerator = retryAfter.GetEnumerator();
                             if (enumerator.MoveNext())
                             {
-                                retryIntervalInSeconds = Convert.ToSingle(enumerator.Current);
+                                currentRetryIntervalInMilliSeconds = Convert.ToInt32(enumerator.Current) * 1000;
                             }
                         }
                         catch
@@ -1442,13 +1444,13 @@ namespace Microsoft.PowerShell.Commands
                     string retryMessage = string.Format(
                         CultureInfo.CurrentCulture,
                         WebCmdletStrings.RetryVerboseMsg,
-                        retryIntervalInSeconds,
+                        currentRetryIntervalInMilliSeconds / 1000,
                         response.StatusCode);
 
                     WriteVerbose(retryMessage);
 
                     _cancelToken = new CancellationTokenSource();
-                    Task.Delay((int)(retryIntervalInSeconds * 1000), _cancelToken.Token).GetAwaiter().GetResult();
+                    Task.Delay(currentRetryIntervalInMilliSeconds, _cancelToken.Token).GetAwaiter().GetResult();
                     _cancelToken.Cancel();
                     _cancelToken = null;
 
