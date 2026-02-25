@@ -40,6 +40,7 @@ function ConvertFrom-ClearlyDefinedCoordinates {
     [CmdletBinding()]
     param(
         [parameter(mandatory = $true, ValueFromPipeline = $true)]
+        [object]
         $Coordinates
     )
 
