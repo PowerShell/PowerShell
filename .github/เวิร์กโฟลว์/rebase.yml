@@ -1,0 +1,21 @@
+# This cannot rebase workflow changes into a PR
+# It also only works if the GITHUB_TOKEN has permission to push to the branch
+# see: https://github.com/cirrus-actions/rebase/issues/12#issuecomment-632594995
+on: 
+  issue_comment:
+    types: [created]
+name: Automatic Rebase
+jobs:
+  rebase:
+    name: Rebase
+    if: github.event.issue.pull_request != '' && contains(github.event.comment.body, '/rebase')
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout the latest code
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - name: Automatic Rebase
+      uses: cirrus-actions/rebase@1.4
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
