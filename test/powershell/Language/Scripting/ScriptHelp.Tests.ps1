@@ -1,36 +1,36 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-$ProgressPreference = 'SilentlyContinue'
+$ProgressPreference = "SilentlyContinue"
 
-Describe 'get-help HelpFunc1' -Tags 'Feature' {
+Describe 'get-help HelpFunc1' -Tags "Feature" {
     BeforeAll {
-        function TestHelpError {
-            [CmdletBinding()]
-            param(
-                $x,
-                [System.Management.Automation.ErrorRecord[]]$e,
-                [string] $expectedError
-            )
-            It 'Help result should be $null' { $x | Should -BeNullOrEmpty }
-            It '$e.Count' { $e.Count | Should -BeGreaterThan 0 }
-            It 'FullyQualifiedErrorId' { $e[0].FullyQualifiedErrorId | Should -BeExactly $expectedError }
-        }
+    function TestHelpError {
+        [CmdletBinding()]
+        param(
+        $x,
+        [System.Management.Automation.ErrorRecord[]]$e,
+        [string] $expectedError
+        )
+        It 'Help result should be $null' { $x | Should -BeNullOrEmpty }
+        It '$e.Count' { $e.Count | Should -BeGreaterThan 0 }
+        It 'FullyQualifiedErrorId' { $e[0].FullyQualifiedErrorId | Should -BeExactly $expectedError }
+    }
 
-        function TestHelpFunc1 {
-            [CmdletBinding()]
-            param( $x )
-            It '$x should not be $null' { $x | Should -Not -BeNullOrEmpty }
-            It '$x.Synopsis' { $x.Synopsis | Should -BeExactly 'A relatively useless function.' }
-            It '$x.Description' { $x.Description[0].Text | Should -BeExactly "A description`n`n    with indented text and a blank line." }
-            It '$x.alertSet.alert' { $x.alertSet.alert[0].Text | Should -BeExactly 'This function is mostly harmless.' }
-            It '$x.relatedLinks.navigationLink[0].uri' { $x.relatedLinks.navigationLink[0].uri | Should -BeExactly 'https://blogs.msdn.com/powershell' }
-            It '$x.relatedLinks.navigationLink[1].linkText' { $x.relatedLinks.navigationLink[1].linkText | Should -BeExactly 'other commands' }
-            It '$x.examples.example.code' { $x.examples.example.code | Should -BeExactly "If you need an example, you're hopeless." }
-            It '$x.inputTypes.inputType.type.name' { $x.inputTypes.inputType.type.name | Should -BeExactly 'Anything you like.' }
-            It '$x.returnValues.returnValue.type.name' { $x.returnValues.returnValue.type.name | Should -BeExactly 'Nothing.' }
-            It '$x.Component' { $x.Component | Should -BeExactly 'Something' }
-            It '$x.Role' { $x.Role | Should -BeExactly 'CrazyUser' }
-            It '$x.Functionality' { $x.Functionality | Should -BeExactly 'Useless' }
+    function TestHelpFunc1 {
+        [CmdletBinding()]
+        param( $x )
+        It '$x should not be $null' { $x | Should -Not -BeNullOrEmpty }
+        It '$x.Synopsis' { $x.Synopsis | Should -BeExactly "A relatively useless function." }
+        It '$x.Description' { $x.Description[0].Text | Should -BeExactly "A description`n`n    with indented text and a blank line." }
+        It '$x.alertSet.alert' { $x.alertSet.alert[0].Text | Should -BeExactly "This function is mostly harmless." }
+        It '$x.relatedLinks.navigationLink[0].uri' {  $x.relatedLinks.navigationLink[0].uri | Should -BeExactly "https://blogs.msdn.com/powershell" }
+        It '$x.relatedLinks.navigationLink[1].linkText' { $x.relatedLinks.navigationLink[1].linkText | Should -BeExactly "other commands" }
+        It '$x.examples.example.code' { $x.examples.example.code | Should -BeExactly "If you need an example, you're hopeless." }
+        It '$x.inputTypes.inputType.type.name' { $x.inputTypes.inputType.type.name | Should -BeExactly "Anything you like." }
+        It '$x.returnValues.returnValue.type.name' { $x.returnValues.returnValue.type.name | Should -BeExactly "Nothing." }
+        It '$x.Component' { $x.Component | Should -BeExactly "Something" }
+        It '$x.Role' { $x.Role | Should -BeExactly "CrazyUser" }
+        It '$x.Functionality' { $x.Functionality | Should -BeExactly "Useless" }
         }
 
         # .SYNOPSIS
@@ -177,13 +177,14 @@ Describe 'get-help HelpFunc1' -Tags 'Feature' {
     }
 }
 
-Describe 'get-help file' -Tags 'CI' {
+Describe 'get-help file' -Tags "CI" {
     BeforeAll {
         try {
             if ($IsWindows) {
-                $tmpfile = [IO.Path]::ChangeExtension([IO.Path]::GetTempFileName(), 'ps1')
-            } else {
-                $tmpfile = Join-Path $env:HOME $([IO.Path]::ChangeExtension([IO.Path]::GetRandomFileName(), 'ps1'))
+                $tmpfile = [IO.Path]::ChangeExtension([IO.Path]::GetTempFileName(), "ps1")
+            }
+            else {
+                $tmpfile = Join-Path $env:HOME $([IO.Path]::ChangeExtension([IO.Path]::GetRandomFileName(), "ps1"))
             }
         } catch {
             return
@@ -214,7 +215,7 @@ Describe 'get-help file' -Tags 'CI' {
 
     Context 'get-help file2' {
 
-        # Note - 2 blank lines below are intentional, do not delete
+	    # Note - 2 blank lines below are intentional, do not delete
         @'
         # .SYNOPSIS
         #    Script help, not function help
@@ -234,13 +235,14 @@ Describe 'get-help file' -Tags 'CI' {
     }
 }
 
-Describe 'get-help other tests' -Tags 'CI' {
+Describe 'get-help other tests' -Tags "CI" {
     BeforeAll {
         try {
             if ($IsWindows) {
-                $tempFile = [IO.Path]::ChangeExtension([IO.Path]::GetTempFileName(), 'ps1')
-            } else {
-                $tempFile = Join-Path $env:HOME $([IO.Path]::ChangeExtension([IO.Path]::GetRandomFileName(), 'ps1'))
+                $tempFile = [IO.Path]::ChangeExtension([IO.Path]::GetTempFileName(), "ps1")
+            }
+            else {
+                $tempFile = Join-Path $env:HOME $([IO.Path]::ChangeExtension([IO.Path]::GetRandomFileName(), "ps1"))
             }
         } catch {
             return
@@ -261,19 +263,19 @@ Describe 'get-help other tests' -Tags 'CI' {
 
 
         function missingHelp { param($abc) }
-        $x = Get-Help missingHelp
-        It '$x should not be $null' { $x | Should -Not -BeNullOrEmpty }
-        It '$x.Synopsis' { $x.Synopsis.Trim() | Should -BeExactly 'missingHelp [[-abc] <Object>]' }
-    }
+            $x = Get-Help missingHelp
+            It '$x should not be $null' { $x | Should -Not -BeNullOrEmpty }
+            It '$x.Synopsis' { $x.Synopsis.Trim() | Should -BeExactly 'missingHelp [[-abc] <Object>]' }
+        }
 
     Context 'get-help helpFunc2' {
 
-        <#
+    <#
     .SYNOPSIS
         This help block goes on helpFunc2
     #>
 
-        function helpFunc2 { param($abc) }
+    function helpFunc2 { param($abc) }
 
         $x = Get-Help helpFunc2
         It '$x should not be $null' { $x | Should -Not -BeNullOrEmpty }
@@ -281,7 +283,7 @@ Describe 'get-help other tests' -Tags 'CI' {
     }
 
     Context 'get-help file and get-help helpFunc2' {
-        $script = @'
+        $script = @"
             <#
             .SYNOPSIS
                 This is script help
@@ -294,18 +296,18 @@ Describe 'get-help other tests' -Tags 'CI' {
             function helpFunc2 {}
 
             get-help helpFunc2
-'@
+"@
 
         Set-Content $tempFile $script
         $x = Get-Help $tempFile
-        It '$x.Synopsis' { $x.Synopsis | Should -BeExactly 'This is script help' }
+        It '$x.Synopsis' { $x.Synopsis | Should -BeExactly "This is script help" }
 
         $x = & $tempFile
-        It '$x.Synopsis' { $x.Synopsis | Should -BeExactly 'This is function help for helpFunc2' }
+        It '$x.Synopsis' { $x.Synopsis | Should -BeExactly "This is function help for helpFunc2" }
     }
 
     Context 'get-help file and get-help helpFunc2' {
-        $script = @'
+    $script = @"
         #
         # .SYNOPSIS
         #    This is script help
@@ -318,19 +320,19 @@ Describe 'get-help other tests' -Tags 'CI' {
         function helpFunc2 {}
 
         get-help helpFunc2
-'@
+"@
 
         Set-Content $tempFile $script
         $x = Get-Help $tempFile
-        It $x.Synopsis { $x.Synopsis | Should -BeExactly 'This is script help' }
+        It $x.Synopsis { $x.Synopsis | Should -BeExactly "This is script help" }
 
         $x = & $tempFile
-        It $x.Synopsis { $x.Synopsis | Should -BeExactly 'This is function help for helpFunc2' }
+        It $x.Synopsis { $x.Synopsis | Should -BeExactly "This is function help for helpFunc2" }
     }
 
     Context 'get-help psuedo file' {
 
-        $script = @'
+    $script = @'
         ###########################################
         #
         # Psuedo-Copyright header comment
@@ -358,31 +360,32 @@ Describe 'get-help other tests' -Tags 'CI' {
         Set-Content $tempFile $script
         $x = Get-Help $tempFile
 
-        It '$x.Synopsis' { $x.Synopsis | Should -BeExactly 'Changes Admin passwords across all KDE servers.' }
-        It '$x.parameters.parameter[0].required' { $x.parameters.parameter[0].required | Should -BeTrue }
-        It '$x.syntax.syntaxItem[0].parameter.required' { $x.syntax.syntaxItem[0].parameter.required | Should -BeTrue }
-        It '$x.syntax.syntaxItem[0].parameter.parameterValue.required' { $x.syntax.syntaxItem[0].parameter.parameterValue.required | Should -BeTrue }
-        It 'Common parameters should not be appear in the syntax' { $x.Syntax -like '*verbose*' | Should -BeFalse }
-        It 'Common parameters should not be in syntax maml' { @($x.syntax.syntaxItem[0].parameter).Count | Should -Be 1 }
-        It 'Common parameters should also not appear in parameters maml' { $x.parameters.parameter.Count | Should -Be 2 }
+        It '$x.Synopsis' { $x.Synopsis | Should -BeExactly "Changes Admin passwords across all KDE servers." }
+        It '$x.parameters.parameter[0].required' { $x.parameters.parameter[0].required | Should -BeTrue}
+        It '$x.syntax.syntaxItem[0].parameter.required' { $x.syntax.syntaxItem[0].parameter.required | Should -BeTrue}
+        It '$x.syntax.syntaxItem[0].parameter.parameterValue.required' { $x.syntax.syntaxItem[0].parameter.parameterValue.required | Should -BeTrue}
+        It 'Common parameters should not be appear in the syntax' { $x.Syntax -like "*verbose*" | Should -BeFalse }
+        It 'Common parameters should not be in syntax maml' {@($x.syntax.syntaxItem[0].parameter).Count | Should -Be 1}
+        It 'Common parameters should also not appear in parameters maml' { $x.parameters.parameter.Count | Should -Be 2}
     }
 
     It 'helpFunc3 -?' {
 
         ##############################################
 
-        function helpFunc3() {
-            #
-            #
-            #.Synopsis
-            #
-            #   A synopsis of helpFunc3.
-            #
-            #
+        function helpFunc3()
+        {
+        #
+        #
+        #.Synopsis
+        #
+        #   A synopsis of helpFunc3.
+        #
+        #
         }
 
         $x = helpFunc3 -?
-        $x.Synopsis | Should -BeExactly 'A synopsis of helpFunc3.'
+        $x.Synopsis | Should -BeExactly "A synopsis of helpFunc3."
     }
 
     It 'get-help helpFunc4' {
@@ -396,48 +399,55 @@ Describe 'get-help other tests' -Tags 'CI' {
         .Component
           component
         #>
-        function helpFunc4() {
+        function helpFunc4()
+        {
         }
 
         $x = Get-Help helpFunc4
-        $x.Synopsis | Should -BeExactly ''
+        $x.Synopsis | Should -BeExactly ""
     }
 
     Context 'get-help helpFunc5' {
 
-        function helpFunc5 {
+        function helpFunc5
+        {
             # .EXTERNALHELP scriptHelp.Tests.xml
         }
         $x = Get-Help helpFunc5
         It '$x should not be $null' { $x | Should -Not -BeNullOrEmpty }
-        It '$x.Synopsis' { $x.Synopsis | Should -BeExactly 'A useless function, really.' }
+        It '$x.Synopsis' { $x.Synopsis | Should -BeExactly "A useless function, really." }
     }
 
     Context 'get-help helpFunc6 script help xml' {
-        function helpFunc6 {
+        function helpFunc6
+        {
             # .EXTERNALHELP scriptHelp1.xml
         }
-        if ($PSUICulture -ieq 'en-us') {
+        if ($PSUICulture -ieq "en-us")
+        {
             $x = Get-Help helpFunc6
             It '$x should not be $null' { $x | Should -Not -BeNullOrEmpty }
-            It '$x.Synopsis' { $x.Synopsis | Should -BeExactly 'Useless.  Really, trust me on this one.' }
+            It '$x.Synopsis' { $x.Synopsis | Should -BeExactly "Useless.  Really, trust me on this one." }
         }
     }
 
     Context 'get-help helpFunc6 script help xml' {
-        function helpFunc6 {
+        function helpFunc6
+        {
             # .EXTERNALHELP newbase/scriptHelp1.xml
         }
-        if ($PSUICulture -ieq 'en-us') {
+        if ($PSUICulture -ieq "en-us")
+        {
             $x = Get-Help helpFunc6
             It '$x should not be $null' { $x | Should -Not -BeNullOrEmpty }
-            It '$x.Synopsis' { $x.Synopsis | Should -BeExactly 'Useless in newbase.  Really, trust me on this one.' }
+            It '$x.Synopsis' { $x.Synopsis | Should -BeExactly "Useless in newbase.  Really, trust me on this one." }
         }
     }
 
     Context 'get-help helpFunc7' {
 
-        function helpFunc7 {
+        function helpFunc7
+        {
             # .FORWARDHELPTARGETNAME Get-Help
             # .FORWARDHELPCATEGORY Cmdlet
         }
@@ -446,8 +456,10 @@ Describe 'get-help other tests' -Tags 'CI' {
         It '$x.Category' { $x.Category | Should -BeExactly 'Cmdlet' }
 
         # Make sure help is a function, or the test would fail
-        if ($null -ne (Get-Command -type Function help)) {
-            if ((Get-Content function:help) -match 'FORWARDHELP') {
+        if ($null -ne (Get-Command -type Function help))
+        {
+            if ((Get-Content function:help) -Match "FORWARDHELP")
+            {
                 $x = Get-Help help
                 It '$x.Name' { $x.Name | Should -BeExactly 'Get-Help' }
                 It '$x.Category' { $x.Category | Should -BeExactly 'Cmdlet' }
@@ -457,10 +469,12 @@ Describe 'get-help other tests' -Tags 'CI' {
 
     Context 'get-help helpFunc8' {
 
-        function func8 {
+        function func8
+        {
             # .SYNOPSIS
             #    Help on helpFunc8, not func8
-            function helpFunc8 {
+            function helpFunc8
+            {
             }
             Get-Help helpFunc8
         }
@@ -473,12 +487,14 @@ Describe 'get-help other tests' -Tags 'CI' {
     }
 
     Context 'get-help helpFunc9' {
-        function helpFunc9 {
+        function helpFunc9
+        {
             # .SYNOPSIS
             #    Help on helpFunc9, not func9
             param($x)
 
-            function func9 {
+            function func9
+            {
             }
             Get-Help func9
         }
@@ -493,7 +509,8 @@ Describe 'get-help other tests' -Tags 'CI' {
         # .SYNOPSIS
         #    Help on helpFunc10
         #######################################################
-        function helpFunc10 {
+        function helpFunc10
+        {
         }
 
         $x = Get-Help helpFunc10
@@ -501,10 +518,11 @@ Describe 'get-help other tests' -Tags 'CI' {
     }
 
     Context 'get-help helpFunc11' {
-        function helpFunc11 {
-            # .Synopsis
-            #
-            #   useless, sorry
+        function helpFunc11
+        {
+        # .Synopsis
+        #
+        #   useless, sorry
 
             param(
 
@@ -528,7 +546,7 @@ Describe 'get-help other tests' -Tags 'CI' {
                 <#mno help#>$mno,
                 <#pqr help#>[int]$pqr
 
-            )
+                )
         }
 
         $x = Get-Help helpFunc11 -det
@@ -541,15 +559,15 @@ Describe 'get-help other tests' -Tags 'CI' {
     Context 'get-help helpFunc12' {
         # Test case w/ cmdlet binding, but no parameter sets.
         function helpFunc12 {
-            param ([Parameter(Mandatory = $true)][String]$Name,
-                [string]$Extension = 'txt',
-                $NoType,
-                [switch]$ASwitch,
-                [System.Management.Automation.CommandTypes]$AnEnum)
-            $name = $name + '.' + $extension
+            Param ([Parameter(Mandatory=$true)][String]$Name,
+                   [string]$Extension = "txt",
+                   $NoType,
+                   [switch]$ASwitch,
+                   [System.Management.Automation.CommandTypes]$AnEnum)
+            $name = $name + "." + $extension
             $name
 
-            <#
+        <#
         .SYNOPSIS
         Adds a file name extension to a supplied name.
 
@@ -567,7 +585,7 @@ Describe 'get-help other tests' -Tags 'CI' {
          #>
         }
         $x = Get-Help helpFunc12
-        It '$x.syntax' { ($x.syntax | Out-String -Width 250) | Should -Match 'helpFunc12 \[-Name] <String> \[\[-Extension] <String>] \[\[-NoType] <Object>] \[-ASwitch] \[\[-AnEnum] \{Alias.*All}] \[<CommonParameters>]' }
+        It '$x.syntax' { ($x.syntax | Out-String -Width 250) | Should -Match "helpFunc12 \[-Name] <String> \[\[-Extension] <String>] \[\[-NoType] <Object>] \[-ASwitch] \[\[-AnEnum] \{Alias.*All}] \[<CommonParameters>]" }
         It '$x.syntax.syntaxItem.parameter[3].position' { $x.syntax.syntaxItem.parameter[3].position | Should -BeExactly 'named' }
         It '$x.syntax.syntaxItem.parameter[3].parameterValue' { $x.syntax.syntaxItem.parameter[3].parameterValue | Should -BeNullOrEmpty }
         It '$x.parameters.parameter[3].parameterValue' { $x.parameters.parameter[3].parameterValue | Should -Not -BeNullOrEmpty }
@@ -584,8 +602,9 @@ Describe 'get-help other tests' -Tags 'CI' {
     }
 
     Context 'get-help helpFunc12' {
-        function helpFunc13 {
-            <#
+        function helpFunc13
+        {
+        <#
             .Synopsis
 
             empty synopsis
@@ -594,8 +613,8 @@ Describe 'get-help other tests' -Tags 'CI' {
                 [SupportsWildcards()]
                 $p1,
                 $p2 = 42,
-                [PSDefaultValue(Help = 'parameter is mandatory')]
-                $p3 = $(throw 'parameter p3 is not specified')
+                [PSDefaultValue(Help="parameter is mandatory")]
+                $p3 = $(throw "parameter p3 is not specified")
             )
         }
 
@@ -607,7 +626,8 @@ Describe 'get-help other tests' -Tags 'CI' {
     }
 
     Context 'get-help helpFunc14' {
-        function helpFunc14 {
+        function helpFunc14
+        {
             param(
                 [SupportsWildcards()]
                 $p1
@@ -620,7 +640,8 @@ Describe 'get-help other tests' -Tags 'CI' {
     }
 
     Context 'get-help helpFunc15' {
-        function helpFunc15 {
+        function helpFunc15
+        {
             param(
                 $p1
             )
@@ -637,11 +658,11 @@ Describe 'get-help other tests' -Tags 'CI' {
               .EXAMPLE
               foo bar
             #>
-            param()
+              param()
         }
 
         It 'prompt should be exactly "PS > " with trailing space' {
-            (Get-Help foo -Examples).examples.example.introduction.Text | Should -BeExactly 'PS > '
+            (Get-Help foo -Examples).examples.example.introduction.Text | Should -BeExactly "PS > "
         }
     }
 
@@ -678,27 +699,27 @@ Describe 'get-help other tests' -Tags 'CI' {
 
               Next section.
             #>
-            param()
+              param()
         }
 
         $x = Get-Help foo
-        It '$x.examples.example[0].introduction[0].text' { $x.examples.example[0].introduction[0].text | Should -BeExactly 'PS > ' }
+        It '$x.examples.example[0].introduction[0].text' { $x.examples.example[0].introduction[0].text | Should -BeExactly "PS > " }
         It '$x.examples.example[0].code' { $x.examples.example[0].code | Should -BeExactly "`$a = Get-Service`n`$a | group Status" }
         It '$x.examples.example[0].remarks[0].text' { $x.examples.example[0].remarks[0].text | Should -BeNullOrEmpty }
         It '$x.examples.example[0].remarks.length' { $x.examples.example[0].remarks.length | Should -Be 5 }
-        It '$x.examples.example[1].introduction[0].text' { $x.examples.example[1].introduction[0].text | Should -BeExactly 'PS>' }
+        It '$x.examples.example[1].introduction[0].text' { $x.examples.example[1].introduction[0].text | Should -BeExactly "PS>" }
         It '$x.examples.example[1].code' { $x.examples.example[1].code | Should -BeExactly "`$a = Get-Service`nPS> `$a | group Status" }
-        It '$x.examples.example[1].remarks[0].text' { $x.examples.example[1].remarks[0].text | Should -BeExactly 'Explanation.' }
+        It '$x.examples.example[1].remarks[0].text' { $x.examples.example[1].remarks[0].text | Should -BeExactly "Explanation." }
         It '$x.examples.example[1].remarks.length' { $x.examples.example[1].remarks.length | Should -Be 5 }
-        It '$x.examples.example[2].introduction[0].text' { $x.examples.example[2].introduction[0].text | Should -BeExactly 'PS>' }
+        It '$x.examples.example[2].introduction[0].text' { $x.examples.example[2].introduction[0].text | Should -BeExactly "PS>" }
         It '$x.examples.example[2].code' { $x.examples.example[2].code | Should -BeExactly "Get-Service`nOutput" }
         It '$x.examples.example[2].remarks[0].text' { $x.examples.example[2].remarks[0].text | Should -BeNullOrEmpty }
         It '$x.examples.example[2].remarks.length' { $x.examples.example[2].remarks.length | Should -Be 5 }
-        It '$x.examples.example[3].introduction[0].text' { $x.examples.example[3].introduction[0].text | Should -BeExactly 'PS>' }
+        It '$x.examples.example[3].introduction[0].text' { $x.examples.example[3].introduction[0].text | Should -BeExactly "PS>" }
         It '$x.examples.example[3].code' { $x.examples.example[3].code | Should -BeExactly "Get-Service`nOutput" }
         It '$x.examples.example[3].remarks[0].text' { $x.examples.example[3].remarks[0].text | Should -BeExactly "Explanation.`nSecond line." }
         It '$x.examples.example[3].remarks.length' { $x.examples.example[3].remarks.length | Should -Be 5 }
-        It '$x.examples.example[4].introduction[0].text' { $x.examples.example[4].introduction[0].text | Should -BeExactly 'PS>' }
+        It '$x.examples.example[4].introduction[0].text' { $x.examples.example[4].introduction[0].text | Should -BeExactly "PS>" }
         It '$x.examples.example[4].code' { $x.examples.example[4].code | Should -BeExactly "Get-Service`nOutput" }
         It '$x.examples.example[4].remarks[0].text' { $x.examples.example[4].remarks[0].text | Should -BeExactly "Explanation.`n`nNext section." }
         It '$x.examples.example[4].remarks.length' { $x.examples.example[4].remarks.length | Should -Be 5 }
