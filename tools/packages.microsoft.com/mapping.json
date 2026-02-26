@@ -115,15 +115,15 @@
       },
       {
           "url": "microsoft-debian-bookworm-prod",
-           "distribution": [
+          "distribution": [
               "bookworm"
           ],
           "PackageFormat": "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
       },
       {
           "url": "microsoft-debian-trixie-prod",
-           "distribution": [
-             "trixie"
+          "distribution": [
+              "trixie"
           ],
           "PackageFormat": "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
       },
