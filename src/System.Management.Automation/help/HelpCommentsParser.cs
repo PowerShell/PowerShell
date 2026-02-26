@@ -55,7 +55,7 @@ namespace System.Management.Automation
 
         private readonly Language.CommentHelpInfo _sections = new Language.CommentHelpInfo();
         private readonly Dictionary<string, string> _parameters = new Dictionary<string, string>();
-        private readonly List<string> _examples = new List<string>();
+        private readonly List<KeyValuePair<string, string>> _examples = new List<KeyValuePair<string, string>>();
         private readonly List<string> _inputs = new List<string>();
         private readonly List<string> _outputs = new List<string>();
         private readonly List<string> _links = new List<string>();
@@ -355,22 +355,28 @@ namespace System.Management.Automation
             {
                 XmlElement examples = _doc.CreateElement("command:examples", commandURI);
                 int count = 1;
-                foreach (string example in _examples)
+                foreach (KeyValuePair<string, string> exampleEntry in _examples)
                 {
+                    string exampleTitle = exampleEntry.Key;
+                    string exampleBody = exampleEntry.Value;
                     XmlElement example_node = _doc.CreateElement("command:example", commandURI);
 
-                    // The title is automatically generated
+                    // The title is automatically generated, with an optional custom title appended
                     XmlElement title = _doc.CreateElement("maml:title", mamlURI);
-                    string titleStr = string.Format(CultureInfo.InvariantCulture,
-                        "\t\t\t\t-------------------------- {0} {1} --------------------------",
-                        HelpDisplayStrings.ExampleUpperCase, count++);
+                    string titleStr = string.IsNullOrEmpty(exampleTitle)
+                        ? string.Format(CultureInfo.InvariantCulture,
+                            "\t\t\t\t-------------------------- {0} {1} --------------------------",
+                            HelpDisplayStrings.ExampleUpperCase, count++)
+                        : string.Format(CultureInfo.InvariantCulture,
+                            "\t\t\t\t-------------------------- {0} {1}: {2} --------------------------",
+                            HelpDisplayStrings.ExampleUpperCase, count++, exampleTitle);
                     XmlText title_text = _doc.CreateTextNode(titleStr);
                     example_node.AppendChild(title).AppendChild(title_text);
 
                     string prompt_str;
                     string code_str;
                     string remarks_str;
-                    GetExampleSections(example, out prompt_str, out code_str, out remarks_str);
+                    GetExampleSections(exampleBody, out prompt_str, out code_str, out remarks_str);
 
                     // Introduction (usually the prompt)
                     XmlElement introduction = _doc.CreateElement("maml:introduction", mamlURI);
@@ -734,6 +740,11 @@ namespace System.Management.Automation
 
                                     break;
                                 }
+                            case "EXAMPLE":
+                                _examples.Add(new KeyValuePair<string, string>(
+                                    match.Groups[3].Value.Trim(),
+                                    GetSection(commentLines, ref i)));
+                                break;
                             case "FORWARDHELPTARGETNAME":
                                 _sections.ForwardHelpTargetName = match.Groups[3].Value.Trim();
                                 break;
@@ -768,7 +779,9 @@ namespace System.Management.Automation
                                 _links.Add(GetSection(commentLines, ref i).Trim());
                                 break;
                             case "EXAMPLE":
-                                _examples.Add(GetSection(commentLines, ref i));
+                                _examples.Add(new KeyValuePair<string, string>(
+                                    string.Empty,
+                                    GetSection(commentLines, ref i)));
                                 break;
                             case "INPUTS":
                                 _inputs.Add(GetSection(commentLines, ref i));
@@ -796,7 +809,7 @@ namespace System.Management.Automation
                 }
             }
 
-            _sections.Examples = new ReadOnlyCollection<string>(_examples);
+            _sections.Examples = new ReadOnlyCollection<KeyValuePair<string, string>>(_examples);
             _sections.Inputs = new ReadOnlyCollection<string>(_inputs);
             _sections.Outputs = new ReadOnlyCollection<string>(_outputs);
             _sections.Links = new ReadOnlyCollection<string>(_links);

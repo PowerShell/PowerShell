@@ -10684,8 +10684,10 @@ namespace System.Management.Automation.Language
 
         /// <summary>
         /// The help content from all of the specified .EXAMPLE sections.
+        /// The key is the optional example title (empty string if untitled),
+        /// and the value is the example body.
         /// </summary>
-        public ReadOnlyCollection<string> Examples { get; internal set; }
+        public ReadOnlyCollection<KeyValuePair<string, string>> Examples { get; internal set; }
 
         /// <summary>
         /// The help content from all of the specified .INPUT sections.
@@ -10780,11 +10782,19 @@ namespace System.Management.Automation.Language
                 sb.AppendLine(Notes);
             }
 
-            for (int index = 0; index < Examples.Count; index++)
+            foreach (var example in Examples)
             {
-                var example = Examples[index];
-                sb.AppendLine(".EXAMPLE");
-                sb.AppendLine(example);
+                if (!string.IsNullOrEmpty(example.Key))
+                {
+                    sb.Append(".EXAMPLE ");
+                    sb.AppendLine(example.Key);
+                }
+                else
+                {
+                    sb.AppendLine(".EXAMPLE");
+                }
+
+                sb.AppendLine(example.Value);
             }
 
             for (int index = 0; index < Links.Count; index++)

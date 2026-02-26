@@ -3,6 +3,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace System.Management.Automation
 {
@@ -461,7 +462,18 @@ namespace System.Management.Automation
 
                     if (exsb.Length > 0)
                     {
-                        sb.Append("\n\n.EXAMPLE\n\n");
+                        string exampleTitle = ExtractExampleTitle(GetProperty<string>(ex, "title"));
+                        if (!string.IsNullOrEmpty(exampleTitle))
+                        {
+                            sb.Append("\n\n.EXAMPLE ");
+                            sb.Append(exampleTitle);
+                            sb.Append("\n\n");
+                        }
+                        else
+                        {
+                            sb.Append("\n\n.EXAMPLE\n\n");
+                        }
+
                         sb.Append(exsb);
                     }
                 }
@@ -496,6 +508,34 @@ namespace System.Management.Automation
             AppendContent(sb, ".FUNCTIONALITY", GetProperty<PSObject>(help, "Functionality"));
 
             return sb.ToString();
+        }
+
+        /// <summary>
+        /// Extracts the user-provided example title from the decorated MAML title string.
+        /// MAML titles have the format:
+        ///   "-------------------------- EXAMPLE N --------------------------" (untitled)
+        ///   "-------------------------- EXAMPLE N: Title --------------------------" (titled)
+        /// This method returns just the user title portion, or null if untitled.
+        /// </summary>
+        private static string ExtractExampleTitle(string decoratedTitle)
+        {
+            if (string.IsNullOrEmpty(decoratedTitle))
+            {
+                return null;
+            }
+
+            // Match patterns like "EXAMPLE <number>: <title>" within the dashes
+            Match match = Regex.Match(decoratedTitle, @"EXAMPLE\s+\d+\s*:\s*(.+?)(?:\s*-+\s*$|\s*$)");
+            if (match.Success)
+            {
+                string title = match.Groups[1].Value.Trim();
+                if (!string.IsNullOrEmpty(title))
+                {
+                    return title;
+                }
+            }
+
+            return null;
         }
 
         #endregion

@@ -115,6 +115,13 @@ Describe 'ProxyCommand Tests' -Tags "CI" {
         $oldExamples = @($helpObj.examples.example)
         $newExamples = @($newHelpObj.examples.example)
         $oldExamples.Length | Should -Be $newExamples.Length
+
+        # Verify example titles are preserved through the round-trip
+        for ($i = 0; $i -lt $oldExamples.Length; $i++) {
+            if ($oldExamples[$i].title) {
+                $newExamples[$i].title | Should -Not -BeNullOrEmpty -Because "example $($i+1) title should be preserved"
+            }
+        }
     }
 
     It "Test generate proxy command" {
@@ -178,5 +185,118 @@ End {{
 
         $result = "Msg1", "Msg2" | MyProxyTest -Id 3 -LastName Last
         $result | Should -Be "3,Last - Msg1;Msg2"
+    }
+
+    Context 'GetHelpComments preserves example titles' {
+        BeforeAll {
+            function HelpFuncForProxyTitles {
+                <#
+                  .SYNOPSIS
+                  A function with titled examples for proxy testing.
+
+                  .EXAMPLE Retrieving processes
+                  Get-Process
+
+                  Gets all processes
+
+                  .EXAMPLE
+                  Get-Service
+
+                  Gets all services
+
+                  .EXAMPLE Listing items in a directory
+                  Get-ChildItem -Path C:\
+
+                  Lists items in C:\
+                #>
+                param()
+            }
+
+            $script:helpComments = [System.Management.Automation.ProxyCommand]::GetHelpComments((Get-Help HelpFuncForProxyTitles))
+        }
+
+        It 'should emit titled .EXAMPLE for example with title' {
+            $script:helpComments | Should -BeLike '*.EXAMPLE Retrieving processes*'
+        }
+
+        It 'should emit plain .EXAMPLE for untitled example' {
+            $script:helpComments | Should -Match '\.EXAMPLE\s*\n\s*\n\s*Get-Service'
+        }
+
+        It 'should emit titled .EXAMPLE for third titled example' {
+            $script:helpComments | Should -BeLike '*.EXAMPLE Listing items in a directory*'
+        }
+
+        It 'round-trips titled examples through proxy comment generation' {
+            $funcDef = "function ProxyRoundTripFunc {\nparam()\n<#\n$($script:helpComments)\n#>\n}"
+            $sb = [scriptblock]::Create($funcDef)
+            & $sb
+            $roundTrippedHelp = Get-Help ProxyRoundTripFunc
+            $roundTrippedHelp.examples.example.Count | Should -Be 3
+            $roundTrippedHelp.examples.example[0].title | Should -BeLike '*EXAMPLE 1: Retrieving processes*'
+            $roundTrippedHelp.examples.example[1].title | Should -Not -BeLike '*:*' -Because 'untitled example should not have a colon'
+            $roundTrippedHelp.examples.example[2].title | Should -BeLike '*EXAMPLE 3: Listing items in a directory*'
+        }
+    }
+
+    Context 'GetHelpComments handles edge cases in example titles' {
+        It 'should handle title containing a colon' {
+            function HelpFuncColonTitle {
+                <#
+                  .SYNOPSIS
+                  Test colon in title.
+
+                  .EXAMPLE Step 1: Initialize the module
+                  Import-Module MyModule
+
+                  Imports the module
+                #>
+                param()
+            }
+
+            $helpComments = [System.Management.Automation.ProxyCommand]::GetHelpComments((Get-Help HelpFuncColonTitle))
+            $helpComments | Should -BeLike '*.EXAMPLE Step 1: Initialize the module*'
+        }
+
+        It 'should handle title containing dashes' {
+            function HelpFuncDashTitle {
+                <#
+                  .SYNOPSIS
+                  Test dashes in title.
+
+                  .EXAMPLE Using a non-standard path
+                  Get-Item -Path C:\my-folder
+
+                  Gets the item
+                #>
+                param()
+            }
+
+            $helpComments = [System.Management.Automation.ProxyCommand]::GetHelpComments((Get-Help HelpFuncDashTitle))
+            $helpComments | Should -BeLike '*.EXAMPLE Using a non-standard path*'
+        }
+
+        It 'should handle single example with title' {
+            function HelpFuncSingleTitle {
+                <#
+                  .SYNOPSIS
+                  Single titled example.
+
+                  .EXAMPLE The only example
+                  Get-Date
+
+                  Gets the current date
+                #>
+                param()
+            }
+
+            $helpComments = [System.Management.Automation.ProxyCommand]::GetHelpComments((Get-Help HelpFuncSingleTitle))
+            $helpComments | Should -BeLike '*.EXAMPLE The only example*'
+            # Verify it round-trips
+            $funcDef = "function SingleTitleRoundTrip {\nparam()\n<#\n$helpComments\n#>\n}"
+            & ([scriptblock]::Create($funcDef))
+            $rt = Get-Help SingleTitleRoundTrip
+            $rt.examples.example[0].title | Should -BeLike '*EXAMPLE 1: The only example*'
+        }
     }
 }
