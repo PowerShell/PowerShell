@@ -2547,7 +2547,6 @@ function Start-PSBootstrap {
             }
         }
 
->>>>>>> 9ef5ec473 (Bring release changes from the v7.6.0-preview.6 release branch (#26627))
         if ($env:TF_BUILD) {
             Write-LogGroupStart -Title "Capture NuGet Sources"
             Write-Verbose -Verbose "--- Start - Capturing nuget sources"
