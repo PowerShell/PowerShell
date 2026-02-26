@@ -1,6 +1,15 @@
 {
     "version": "0.2.0",
     "configurations": [
+      {
+        "name": "Attach",
+        "port": 9229,
+        "request": "attach",
+        "skipFiles": [
+          "<node_internals>/**"
+        ],
+        "type": "node"
+      },
         {
             "name": ".NET Core Launch",
             "type": "coreclr",
