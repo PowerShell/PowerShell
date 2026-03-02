@@ -224,49 +224,13 @@ jobs:
 
         Write-Host "##vso[task.setvariable variable=ServiceConnection]$($config.ServiceEndpoint)"
         Write-Host "##vso[task.setvariable variable=SBConfigPath]$($sbConfigPath)"
-
-        # These variables are used in the next tasks to determine which ServiceEndpoint to use
-        $ltsValue = $IsLTS.ToString().ToLower()
-        $stableValue = $IsStable.ToString().ToLower()
-        $previewValue = $IsPreview.ToString().ToLower()
-
-        Write-Verbose -Verbose "About to set variables:"
-        Write-Verbose -Verbose "  LTS=$ltsValue"
-        Write-Verbose -Verbose "  STABLE=$stableValue"
-        Write-Verbose -Verbose "  PREVIEW=$previewValue"
-
-        Write-Host "##vso[task.setvariable variable=LTS]$ltsValue"
-        Write-Host "##vso[task.setvariable variable=STABLE]$stableValue"
-        Write-Host "##vso[task.setvariable variable=PREVIEW]$previewValue"
-
-        Write-Verbose -Verbose "Variables set successfully"
       name: UpdateConfigs
       displayName: Update PDPs and SBConfig.json
 
-    - pwsh: |
-        Write-Verbose -Verbose "Checking variables after UpdateConfigs:"
-        Write-Verbose -Verbose "LTS=$(LTS)"
-        Write-Verbose -Verbose "STABLE=$(STABLE)"
-        Write-Verbose -Verbose "PREVIEW=$(PREVIEW)"
-      displayName: Debug - Check Variables
-
     - task: MS-RDX-MRO.windows-store-publish.package-task.store-package@3
-      displayName: 'Create StoreBroker Package (Preview)'
-      condition: eq(variables['PREVIEW'], 'true')
+      displayName: 'Create StoreBroker Package'
       inputs:
-        serviceEndpoint: 'StoreAppPublish-Preview'
-        sbConfigPath: '$(SBConfigPath)'
-        sourceFolder: '$(BundleDir)'
-        contents: '*.msixBundle'
-        outSBName: 'PowerShellStorePackage'
-        pdpPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDP/PDP'
-        pdpMediaPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDP/PDP-Media'
-
-    - task: MS-RDX-MRO.windows-store-publish.package-task.store-package@3
-      displayName: 'Create StoreBroker Package (Stable/LTS)'
-      condition: or(eq(variables['STABLE'], 'true'), eq(variables['LTS'], 'true'))
-      inputs:
-        serviceEndpoint: 'StoreAppPublish-Stable'
+        serviceEndpoint: 'StoreAppPublish-Private'
         sbConfigPath: '$(SBConfigPath)'
         sourceFolder: '$(BundleDir)'
         contents: '*.msixBundle'
