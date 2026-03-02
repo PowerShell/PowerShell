@@ -289,7 +289,7 @@ extends:
       jobs:
       - template: /.pipelines/templates/package-create-msix.yml@self
         parameters:
-          OfficialBuild: ${{ parameters.OfficialBuild }}
+          OfficialBuild: true
 
     - stage: upload
       displayName: 'Upload'
