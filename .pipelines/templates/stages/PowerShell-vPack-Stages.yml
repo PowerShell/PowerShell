@@ -1,0 +1,236 @@
+parameters:
+  - name: createVPack
+    type: boolean
+  - name: vPackName
+    type: string
+
+stages:
+- stage: BuildStage
+  jobs:
+  - job: BuildJob
+    pool:
+      type: windows
+
+    strategy:
+      matrix:
+        x86:
+          architecture: x86
+
+        x64:
+          architecture: x64
+
+        arm64:
+          architecture: arm64
+
+    variables:
+      ArtifactPlatform: 'windows'
+      ob_artifactBaseName: drop_build_$(architecture)
+      ob_outputDirectory: '$(BUILD.SOURCESDIRECTORY)\out'
+      ob_createvpack_enabled: ${{ parameters.createVPack }}
+      ob_createvpack_owneralias: tplunk
+      ob_createvpack_versionAs: parts
+      ob_createvpack_propsFile: true
+      ob_createvpack_verbose: true
+      ob_createvpack_packagename: '${{ parameters.vPackName }}.$(architecture)'
+      ob_createvpack_description: PowerShell $(architecture) $(version)
+      # I think the variables reload after we transition back to the host so this works. 🤷‍♂️
+      ob_createvpack_majorVer: $(pwshMajorVersion)
+      ob_createvpack_minorVer: $(pwshMinorVersion)
+      ob_createvpack_patchVer: $(pwshPatchVersion)
+      ${{ if ne(variables['pwshPrereleaseVersion'], '') }}:
+        ob_createvpack_prereleaseVer: $(pwshPrereleaseVersion)
+      ${{ else }}:
+        ob_createvpack_prereleaseVer: $(Build.SourceVersion)
+
+    steps:
+      - checkout: self
+        displayName: Checkout source code - during restore
+        clean: true
+        path: s
+        env:
+          ob_restore_phase: true
+
+      - template: .pipelines/templates/SetVersionVariables.yml@self
+        parameters:
+          ReleaseTagVar: $(ReleaseTagVar)
+          CreateJson: yes
+
+      - pwsh: |
+          $version = '$(Version)'
+          Write-Verbose -Verbose "Version: $version"
+          if(!$version) {
+              throw "Version is not set."
+          }
+
+          $mainVersionParts = $version -split '-'
+
+          Write-Verbose -Verbose "mainVersionParts: $($mainVersionParts[0]) ; $($mainVersionParts[1])"
+          $versionParts =  $mainVersionParts[0] -split '[.]';
+          $major = $versionParts[0]
+          $minor = $versionParts[1]
+          $patch = $versionParts[2]
+
+          $previewPart = $mainVersionParts[1]
+          Write-Verbose -Verbose "previewPart: $previewPart"
+
+          Write-Host "major: $major; minor: $minor; patch: $patch;"
+
+          $vstsCommandString = "vso[task.setvariable variable=pwshMajorVersion]$major"
+          Write-Host ("sending " + $vstsCommandString)
+          Write-Host "##$vstsCommandString"
+
+          $vstsCommandString = "vso[task.setvariable variable=pwshMinorVersion]$minor"
+          Write-Host ("sending " + $vstsCommandString)
+          Write-Host "##$vstsCommandString"
+
+          $vstsCommandString = "vso[task.setvariable variable=pwshPatchVersion]$patch"
+          Write-Host ("sending " + $vstsCommandString)
+          Write-Host "##$vstsCommandString"
+          if($previewPart) {
+            $vstsCommandString = "vso[task.setvariable variable=pwshPrereleaseVersion]$previewPart"
+          } else {
+            Write-Verbose -Verbose "No prerelease part found in version string."
+          }
+        displayName: Set ob_createvpack_*Ver
+        env:
+          ob_restore_phase: true
+
+      # Validate pwsh*Version variables
+      - pwsh: |
+            $variables = @("pwshMajorVersion", "pwshMinorVersion", "pwshPatchVersion")
+            foreach ($var in $variables) {
+                 if (-not (get-item "Env:\$var" -ErrorAction SilentlyContinue).value) {
+                     throw "Required variable '`$env:$var' is not set."
+                 }
+            }
+        displayName: Validate pwsh*Version variables
+        env:
+          ob_restore_phase: true
+
+      - pwsh: |
+          if($env:RELEASETAGVAR -match '-') {
+              throw "Don't release a preview build without coordinating with Windows Engineering Build Tools Team"
+          }
+        displayName: Stop any preview release
+        env:
+          ob_restore_phase: true
+
+      - task: UseDotNet@2
+        displayName: 'Use .NET Core sdk'
+        inputs:
+          packageType: sdk
+          version: 3.1.x
+          installationPath: $(Agent.ToolsDirectory)/dotnet
+
+      ### BUILD ###
+
+      - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
+        parameters:
+          repoRoot: $(repoRoot)
+
+      - task: CodeQL3000Init@0 # Add CodeQL Init task right before your 'Build' step.
+        env:
+          ob_restore_phase: true # Set ob_restore_phase to run this step before '🔒 Setup Signing' step.
+        inputs:
+          Enabled: true
+          AnalyzeInPipeline: false # Do not upload results
+          Language: csharp
+
+      - task: UseDotNet@2
+        displayName: 'Install .NET based on global.json'
+        inputs:
+          useGlobalJson: true
+          workingDirectory: $(repoRoot)
+        env:
+          ob_restore_phase: true
+
+      - pwsh: |
+          # Need to set PowerShellRoot variable for obp-file-signing template
+          $vstsCommandString = "vso[task.setvariable variable=PowerShellRoot]$(repoRoot)"
+          Write-Host ("sending " + $vstsCommandString)
+          Write-Host "##$vstsCommandString"
+
+          $Architecture = '$(Architecture)'
+          $runtime = switch ($Architecture)
+            {
+              "x64" { "win7-x64" }
+              "x86" { "win7-x86" }
+              "arm64" { "win-arm64" }
+            }
+
+          $params = @{}
+          if ($env:BuildConfiguration -eq 'minSize') {
+            $params['ForMinimalSize'] = $true
+          }
+
+          $vstsCommandString = "vso[task.setvariable variable=Runtime]$runtime"
+          Write-Host ("sending " + $vstsCommandString)
+          Write-Host "##$vstsCommandString"
+
+          Write-Verbose -Message "Building PowerShell with Runtime: $runtime for '$env:BuildConfiguration' configuration"
+          Import-Module -Name $(repoRoot)/build.psm1 -Force
+          $buildWithSymbolsPath = New-Item -ItemType Directory -Path "$(Pipeline.Workspace)/Symbols_$Architecture" -Force
+
+          Start-PSBootstrap -Scenario Package
+          $null = New-Item -ItemType Directory -Path $buildWithSymbolsPath -Force -Verbose
+
+          $ReleaseTagParam = @{}
+
+          if ($env:RELEASETAGVAR) {
+            $ReleaseTagParam['ReleaseTag'] = $env:RELEASETAGVAR
+          }
+
+          Start-PSBuild -Runtime $runtime -Configuration Release -Output $buildWithSymbolsPath -Clean -PSModuleRestore @params @ReleaseTagParam
+
+          $refFolderPath = Join-Path $buildWithSymbolsPath 'ref'
+          Write-Verbose -Verbose "refFolderPath: $refFolderPath"
+          $outputPath = Join-Path '$(ob_outputDirectory)' 'psoptions'
+          $null = New-Item -ItemType Directory -Path $outputPath -Force
+          $psOptPath = "$outputPath/psoptions.json"
+          Save-PSOptions -PSOptionsPath $psOptPath
+
+          Write-Verbose -Verbose "Completed building PowerShell for '$env:BuildConfiguration' configuration"
+        displayName: Build Windows Universal - $(Architecture) -$(BuildConfiguration) Symbols folder
+        env:
+          __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+          ob_restore_phase: true # Set ob_restore_phase to run this step before '🔒 Setup Signing' step.
+
+      - task: CodeQL3000Finalize@0 # Add CodeQL Finalize task right after your 'Build' step.
+        env:
+          ob_restore_phase: true # Set ob_restore_phase to run this step before '🔒 Setup Signing' step.
+
+      - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
+        displayName: 'Component Detection'
+        inputs:
+          sourceScanPath: '$(repoRoot)\src'
+          ob_restore_phase: true
+
+      - template: /.pipelines/templates/obp-file-signing.yml@self
+        parameters:
+          binPath: '$(Pipeline.Workspace)/Symbols_$(Architecture)'
+          SigningProfile: $(windows_build_tools_cert_id)
+          OfficialBuild: false
+          vPackScenario: true
+
+      ### END OF BUILD ###
+
+      - pwsh: |
+          Get-ChildItem env:/ob_createvpack_*Ver
+          Get-ChildItem -Path "$(Pipeline.Workspace)\Symbols_$(Architecture)\*" -Recurse
+          Get-Content "$(Pipeline.Workspace)\PowerShell\preview.json" -ErrorAction SilentlyContinue | Write-Host
+        displayName: Debug Output Directory and Version
+        condition: succeededOrFailed()
+
+      - pwsh: |
+          Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
+        displayName: Capture Environment
+        condition: succeededOrFailed()
+
+      - pwsh: |
+          $vpackFiles = Get-ChildItem -Path "$(Pipeline.Workspace)\Symbols_$(Architecture)\*" -Recurse
+          if($vpackFiles.Count -eq 0) {
+              throw "No files found in $(Pipeline.Workspace)\Symbols_$(Architecture)"
+          }
+          $vpackFiles
+        displayName: Debug Output Directory and Version
+        condition: succeededOrFailed()

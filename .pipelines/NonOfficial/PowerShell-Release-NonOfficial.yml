@@ -30,10 +30,10 @@ parameters: # parameters are shown up in ADO UI in a build queue time
     type: boolean
     default: false
 
-name: release-$(BUILD.SOURCEBRANCHNAME)-prod-$(Build.BuildId)
+name: release-$(BUILD.SOURCEBRANCHNAME)-nonofficial-$(Build.BuildId)
 
 variables:
-  - template: templates/variables/PowerShell-Release-Variables.yml
+  - template: ../templates/variables/PowerShell-Release-Variables.yml
     parameters:
       debug: ${{ parameters.debug }}
       ReleaseTagVar: ${{ parameters.ReleaseTagVar }}
@@ -51,10 +51,14 @@ resources:
 
   pipelines:
     - pipeline: CoOrdinatedBuildPipeline
-      source: 'PowerShell-Coordinated Binaries-Official'
+      source: 'PowerShell-Coordinated_Packages-NonOfficial'
 
+    # NOTE: The alias name "PSPackagesOfficial" is intentionally reused here even
+    # for the NonOfficial pipeline source. Downstream shared templates (for example,
+    # release-validate-sdk.yml and release-upload-buildinfo.yml) reference artifacts
+    # using `download: PSPackagesOfficial`, so changing this alias would break them.
     - pipeline: PSPackagesOfficial
-      source: 'PowerShell-Packages-Official'
+      source: 'PowerShell-Packages-NonOfficial'
       trigger:
         branches:
           include:
@@ -62,7 +66,7 @@ resources:
             - releases/*
 
 extends:
-  template: v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates
+  template: v2/OneBranch.NonOfficial.CrossPlat.yml@onebranchTemplates
   parameters:
     release:
       category: NonAzure
@@ -94,9 +98,9 @@ extends:
       tsaOptionsFile: .config\tsaoptions.json
 
     stages:
-    - template: templates/stages/PowerShell-Release-Stages.yml
+    - template: ../templates/stages/PowerShell-Release-Stages.yml
       parameters:
-        releaseEnvironment: Production
+        releaseEnvironment: Test
         SkipPublish: ${{ parameters.SkipPublish }}
         SkipPSInfraInstallers: ${{ parameters.SkipPSInfraInstallers }}
         skipMSIXPublish: ${{ parameters.skipMSIXPublish }}

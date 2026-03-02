@@ -14,10 +14,10 @@ parameters: # parameters are shown up in ADO UI in a build queue time
     type: string
     default: 'NO'
 
-name: ev2-$(BUILD.SOURCEBRANCHNAME)-prod-$(Build.BuildId)
+name: ev2-$(BUILD.SOURCEBRANCHNAME)-nonofficial-$(Build.BuildId)
 
 variables:
-  - template: templates/variables/PowerShell-Release-Azure-Variables.yml
+  - template: ../templates/variables/PowerShell-Release-Azure-Variables.yml
     parameters:
       debug: ${{ parameters.debug }}
 
@@ -30,10 +30,10 @@ resources:
 
   pipelines:
     - pipeline: CoOrdinatedBuildPipeline
-      source: 'PowerShell-Coordinated Binaries-Official'
+      source: 'PowerShell-Coordinated_Packages-NonOfficial'
 
     - pipeline: PSPackagesOfficial
-      source: 'PowerShell-Packages-Official'
+      source: 'PowerShell-Packages-NonOfficial'
       trigger:
         branches:
           include:
@@ -41,7 +41,7 @@ resources:
             - releases/*
 
 extends:
-  template: v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates
+  template: v2/OneBranch.NonOfficial.CrossPlat.yml@onebranchTemplates
   parameters:
     featureFlags:
       WindowsHostVersion:

@@ -21,7 +21,7 @@ jobs:
       value: $[ stageDependencies.setReleaseTagAndChangelog.setTagAndChangelog.outputs['ChannelSelection.IsStable'] ]
     - name: PREVIEW
       value: $[ stageDependencies.setReleaseTagAndChangelog.setTagAndChangelog.outputs['ChannelSelection.IsPreview'] ]
-    - template: ./variable/release-shared.yml@self
+    - template: ./variables/release-shared.yml@self
       parameters:
         RELEASETAG: $[ stageDependencies.setReleaseTagAndChangelog.setTagAndChangelog.outputs['OutputReleaseTag.releaseTag'] ]
   steps:

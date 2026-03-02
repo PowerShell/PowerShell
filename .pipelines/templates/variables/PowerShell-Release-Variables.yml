@@ -1,0 +1,41 @@
+parameters:
+  - name: debug
+    type: boolean
+    default: false
+  - name: ReleaseTagVar
+    type: string
+    default: 'fromBranch'
+
+variables:
+  - name: CDP_DEFINITION_BUILD_COUNT
+    value: $[counter('', 0)]
+  - name: system.debug
+    value: ${{ parameters.debug }}
+  - name: ENABLE_PRS_DELAYSIGN
+    value: 1
+  - name: ROOT
+    value: $(Build.SourcesDirectory)
+  - name: REPOROOT
+    value: $(Build.SourcesDirectory)
+  - name: OUTPUTROOT
+    value: $(REPOROOT)\out
+  - name: NUGET_XMLDOC_MODE
+    value: none
+  - name: nugetMultiFeedWarnLevel
+    value: none
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+  - name: skipNugetSecurityAnalysis
+    value: true
+  - name: ob_outputDirectory
+    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  - name: WindowsContainerImage
+    value: 'onebranch.azurecr.io/windows/ltsc2022/vse2022:latest'
+  - name: LinuxContainerImage
+    value: mcr.microsoft.com/onebranch/azurelinux/build:3.0
+  - name: ReleaseTagVar
+    value: ${{ parameters.ReleaseTagVar }}
+  - group: PoolNames
+  # Fix for BinSkim ICU package error in Linux containers
+  - name: DOTNET_SYSTEM_GLOBALIZATION_INVARIANT
+    value: true
