@@ -95,7 +95,7 @@ Describe "Linux Package Name Validation" {
             foreach ($package in $tarPackages) {
                 # Pattern matches: powershell-7.6.0-preview.6-linux-x64.tar.gz or powershell-7.6.0-linux-x64.tar.gz
                 # Also matches various runtime configurations
-                if ($package.Name -notmatch 'powershell-(lts-)?\d+\.\d+\.\d+\-([a-z]*.\d+\-)?(linux|osx|linux-musl)+\-(x64\-fxdependent|x64|arm32|arm64|x64\-musl-noopt\-fxdependent)\.(tar\.gz)') {
+                if ($package.Name -notmatch 'powershell-(lts-)?\d+\.\d+\.\d+\-([a-z]*\.\d+\-)?(linux|osx|linux-musl)+\-(x64\-fxdependent|x64|arm32|arm64|x64\-musl-noopt\-fxdependent)\.(tar\.gz)') {
                     $invalidPackages += "$($package.Name) is not a valid tar.gz package name"
                     Write-Warning "$($package.Name) is not a valid tar.gz package name"
                 }

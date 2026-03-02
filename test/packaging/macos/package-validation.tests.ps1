@@ -88,7 +88,7 @@ Describe "Verify macOS Package" {
             # - powershell-7.6.0-preview.6-osx-x64.pkg (Preview version string)
             # - powershell-7.4.13-rebuild.5-osx-arm64.pkg (Rebuild version)
             # - powershell-lts-7.4.13-osx-arm64.pkg (LTS package)
-            $pkgPackageNamePattern = '^powershell-(lts-)?\d+\.\d+\.\d+\-([a-z]*.\d+\-)?osx\-(x64|arm64)\.pkg$'
+            $pkgPackageNamePattern = '^powershell-(lts-)?\d+\.\d+\.\d+\-([a-z]*\.\d+\-)?osx\-(x64|arm64)\.pkg$'
 
             $script:package.Name | Should -Match $pkgPackageNamePattern -Because "Package name should follow the standard naming convention"
         }
