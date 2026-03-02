@@ -261,7 +261,7 @@ stages:
         1. Kick off PowerShell-vPack-Official pipeline
         2. Kick off PowerShell-MSIXBundle-VPack pipeline
 
-# Need to verify if the Az PS / CLI team still uses this. Skippinng for this release.
+# Need to verify if the Az PS / CLI team still uses this. Skipping for this release.
 # - stage: ReleaseDeps
 #   dependsOn: GitHubTasks
 #   displayName: Update pwsh.deps.json links

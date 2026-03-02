@@ -33,7 +33,6 @@ variables:
   - group: Azure Blob variable group
   - group: certificate_logical_to_actual # used within signing task
   - group: DotNetPrivateBuildAccess
-  - group: certificate_logical_to_actual
   - name: netiso
     value: ${{ parameters.netiso }}
 # We shouldn't be using PATs anymore
