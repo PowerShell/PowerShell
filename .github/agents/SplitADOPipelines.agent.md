@@ -105,3 +105,60 @@ resources:
 ```
 
 **IMPORTANT**: The `source:` field must match the **exact ADO pipeline definition name** as it appears in Azure DevOps, not necessarily the file name.
+
+### Step 5: Configure Release Environment Parameters (NonAzure Only)
+
+**This step only applies if the pipeline uses `category: NonAzure` in the release configuration.**
+
+If you detect this pattern in the original pipeline:
+
+```yaml
+extends:
+  template: v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates  # or NonOfficial
+  parameters:
+    release:
+      category: NonAzure
+```
+
+Then you must configure the `ob_release_environment` parameter when referencing the stages template.
+
+#### Official Pipeline Configuration
+
+In the Official pipeline (e.g., `./pipelines/PowerShell-Packages.yml`):
+
+```yaml
+stages:
+  - template: templates/PowerShell-Packages-Stages.yml
+    parameters:
+      ob_release_environment: Production
+```
+
+#### NonOfficial Pipeline Configuration
+
+In the NonOfficial pipeline (e.g., `./pipelines/NonOfficial/PowerShell-Packages-NonOfficial.yml`):
+
+```yaml
+stages:
+  - template: ../templates/PowerShell-Packages-Stages.yml
+    parameters:
+      ob_release_environment: Test
+```
+
+#### Update Stages Template to Accept Parameter
+
+The extracted stages template (e.g., `./pipelines/templates/PowerShell-Packages-Stages.yml`) must declare the parameter at the top:
+
+```yaml
+parameters:
+  - name: ob_release_environment
+    type: string
+
+stages:
+  # ... rest of stages configuration using ${{ parameters.ob_release_environment }}
+```
+
+**IMPORTANT**: 
+- Only configure this for pipelines with `category: NonAzure`
+- Official pipelines always use `ob_release_environment: Production`
+- NonOfficial pipelines always use `ob_release_environment: Test`
+- The stages template must accept this parameter and use it in the appropriate stage configurations
