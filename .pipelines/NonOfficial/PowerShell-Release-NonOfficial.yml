@@ -53,6 +53,10 @@ resources:
     - pipeline: CoOrdinatedBuildPipeline
       source: 'PowerShell-Coordinated_Packages-NonOfficial'
 
+    # NOTE: The alias name "PSPackagesOfficial" is intentionally reused here even
+    # for the NonOfficial pipeline source. Downstream shared templates (for example,
+    # release-validate-sdk.yml and release-upload-buildinfo.yml) reference artifacts
+    # using `download: PSPackagesOfficial`, so changing this alias would break them.
     - pipeline: PSPackagesOfficial
       source: 'PowerShell-Packages-NonOfficial'
       trigger:
