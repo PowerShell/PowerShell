@@ -73,11 +73,12 @@ jobs:
     inputs:
       targetType: inline
       script: |
+        # Convert ADO variables to PowerShell boolean variables
         $IsLTS = '$(LTS)' -eq 'true'
-        $IsStable = '$(STABLE)' -eq 'true'
+        $IsStable = '$(STABLE)' -eq 'true' 
         $IsPreview = '$(PREVIEW)' -eq 'true'
 
-        Write-Verbose -Verbose "Channel Selection - LTS: $(LTS), Stable: $(Stable), Preview: $(Preview)"
+        Write-Verbose -Verbose "Channel Selection - LTS: $(LTS), Stable: $(STABLE), Preview: $(PREVIEW)"
 
         $currentChannel = if ($IsLTS) { 'LTS' }
           elseif ($IsStable) { 'Stable' }

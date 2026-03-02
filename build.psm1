@@ -2530,6 +2530,23 @@ function Start-PSBootstrap {
             Write-LogGroupEnd -Title "Install Windows Dependencies"
         }
 
+        # Ensure dotnet is available
+        Find-Dotnet
+
+        if (-not $env:TF_BUILD) {
+            if ($Scenario -in 'All', 'Tools') {
+                Write-LogGroupStart -Title "Install .NET Global Tools"
+                Write-Log -message "Installing .NET global tools"
+
+                # Install dotnet-format
+                Write-Verbose -Verbose "Installing dotnet-format global tool"
+                Start-NativeExecution {
+                    dotnet tool install --global dotnet-format
+                }
+                Write-LogGroupEnd -Title "Install .NET Global Tools"
+            }
+        }
+
         if ($env:TF_BUILD) {
             Write-LogGroupStart -Title "Capture NuGet Sources"
             Write-Verbose -Verbose "--- Start - Capturing nuget sources"
