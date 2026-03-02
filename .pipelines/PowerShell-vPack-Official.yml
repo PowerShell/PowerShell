@@ -1,9 +1,6 @@
 trigger: none
 
 parameters: # parameters are shown up in ADO UI in a build queue time
-- name: OfficialBuild
-  type: boolean
-  default: true
 - name: 'createVPack'
   displayName: 'Create and Submit VPack'
   type: boolean
@@ -33,7 +30,7 @@ parameters: # parameters are shown up in ADO UI in a build queue time
     - Netlock
   default: "R1"
 
-name: vPack_$(Build.SourceBranchName)_Prod.${{ parameters.OfficialBuild }}_Create.${{ parameters.createVPack }}_Name.${{ parameters.vPackName}}_$(date:yyyyMMdd).$(rev:rr)
+name: vPack_$(Build.SourceBranchName)_Prod.true_Create.${{ parameters.createVPack }}_Name.${{ parameters.vPackName}}_$(date:yyyyMMdd).$(rev:rr)
 
 variables:
   - name: CDP_DEFINITION_BUILD_COUNT
@@ -58,8 +55,6 @@ variables:
     value: ${{ parameters.ReleaseTagVar }}
   - group: Azure Blob variable group
   - group: certificate_logical_to_actual # used within signing task
-  - name: templateFile
-    value: ${{ iif ( parameters.OfficialBuild, 'v2/Microsoft.Official.yml@onebranchTemplates', 'v2/Microsoft.NonOfficial.yml@onebranchTemplates' ) }}
   - group: DotNetPrivateBuildAccess
   - group: certificate_logical_to_actual
   - name: netiso
@@ -75,7 +70,7 @@ resources:
       ref: refs/heads/main
 
 extends:
-  template: ${{ variables.templateFile }}
+  template: v2/Microsoft.Official.yml@onebranchTemplates
   parameters:
     platform:
       name: 'windows_undocked' # windows undocked

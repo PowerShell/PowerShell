@@ -29,11 +29,8 @@ parameters: # parameters are shown up in ADO UI in a build queue time
     displayName: Skip MSIX Publish
     type: boolean
     default: false
-  - name: OfficialBuild
-    type: boolean
-    default: false
 
-name: release-$(BUILD.SOURCEBRANCHNAME)-prod.${{ parameters.OfficialBuild }}-$(Build.BuildId)
+name: release-$(BUILD.SOURCEBRANCHNAME)-prod.true-$(Build.BuildId)
 
 variables:
   - name: CDP_DEFINITION_BUILD_COUNT
@@ -65,10 +62,8 @@ variables:
   - name: ReleaseTagVar
     value: ${{ parameters.ReleaseTagVar }}
   - group: PoolNames
-  - name: templateFile
-    value: ${{ iif ( parameters.OfficialBuild, 'v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates', 'v2/OneBranch.NonOfficial.CrossPlat.yml@onebranchTemplates' ) }}
   - name: releaseEnvironment
-    value: ${{ iif ( parameters.OfficialBuild, 'Production', 'Test' ) }}
+    value: 'Production'
   # Fix for BinSkim ICU package error in Linux containers
   - name: DOTNET_SYSTEM_GLOBALIZATION_INVARIANT
     value: true
@@ -97,7 +92,7 @@ resources:
             - releases/*
 
 extends:
-  template: ${{ variables.templateFile }}
+  template: v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates
   parameters:
     release:
       category: NonAzure

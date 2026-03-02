@@ -24,14 +24,11 @@ parameters: # parameters are shown up in ADO UI in a build queue time
     displayName: Skip Signing
     type: string
     default: 'NO'
-  - name: OfficialBuild
-    type: boolean
-    default: false
   - name: disableNetworkIsolation
     type: boolean
     default: false
 
-name: pkgs-$(BUILD.SOURCEBRANCHNAME)-prod.${{ parameters.OfficialBuild }}-$(Build.BuildId)
+name: pkgs-$(BUILD.SOURCEBRANCHNAME)-prod.true-$(Build.BuildId)
 
 variables:
   - name: CDP_DEFINITION_BUILD_COUNT
@@ -67,8 +64,6 @@ variables:
   - name: branchCounter
     value: $[counter(variables['branchCounterKey'], 1)]
   - group: MSIXSigningProfile
-  - name: templateFile
-    value: ${{ iif ( parameters.OfficialBuild, 'v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates', 'v2/OneBranch.NonOfficial.CrossPlat.yml@onebranchTemplates' ) }}
   - name: disableNetworkIsolation
     value: ${{ parameters.disableNetworkIsolation }}
 
@@ -89,7 +84,7 @@ resources:
       ref: refs/heads/main
 
 extends:
-  template: ${{ variables.templateFile }}
+  template: v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates
   parameters:
     cloudvault:
       enabled: false
@@ -294,7 +289,7 @@ extends:
       jobs:
       - template: /.pipelines/templates/package-create-msix.yml@self
         parameters:
-          OfficialBuild: ${{ parameters.OfficialBuild }}
+          OfficialBuild: true
 
     - stage: upload
       displayName: 'Upload'
