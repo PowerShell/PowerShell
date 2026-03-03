@@ -85,14 +85,39 @@ namespace System.Management.Automation.Configuration
             systemWideConfigDirectory = Utils.DefaultPowerShellAppBase;
             systemWideConfigFile = Path.Combine(systemWideConfigDirectory, ConfigFileName);
 
-            // Sets the per-user configuration directory
-            // Note: This directory may or may not exist depending upon the execution scenario.
-            // Writes will attempt to create the directory if it does not already exist.
+#if UNIX
+            // On Unix: Config files follow XDG standards and should always be in ~/.config/powershell
             perUserConfigDirectory = Platform.ConfigDirectory;
-            if (!string.IsNullOrEmpty(perUserConfigDirectory))
+            perUserConfigFile = Path.Combine(Platform.ConfigDirectory, ConfigFileName);
+#else
+            // On Windows: Use LocalAppData as the default location for user config.
+            // Check for existing config in Documents/OneDrive for backwards compatibility.
+            string localAppDataConfig = Platform.LocalAppDataPSContentDirectory;
+            string localAppDataConfigFile = Path.Combine(localAppDataConfig, ConfigFileName);
+            string documentsConfig = Platform.ConfigDirectory;
+            string documentsConfigFile = Path.Combine(documentsConfig, ConfigFileName);
+
+            if (File.Exists(localAppDataConfigFile))
             {
-                perUserConfigFile = Path.Combine(perUserConfigDirectory, ConfigFileName);
+                // Config exists in LocalAppData - use that location
+                perUserConfigDirectory = localAppDataConfig;
+                perUserConfigFile = localAppDataConfigFile;
             }
+            else if (File.Exists(documentsConfigFile))
+            {
+                // Config exists in Documents (legacy location) - use that for backwards compatibility
+                perUserConfigDirectory = documentsConfig;
+                perUserConfigFile = documentsConfigFile;
+                
+                SendPSContentPathTelemetry("UserConfigLocation:Documents");
+            }
+            else
+            {
+                // No existing config - use LocalAppData as the default for new configs
+                perUserConfigDirectory = localAppDataConfig;
+                perUserConfigFile = localAppDataConfigFile;
+            }
+#endif
 
             emptyConfig = new JObject();
             configRoots = new JObject[2];
@@ -101,7 +126,12 @@ namespace System.Management.Automation.Configuration
             fileLock = new ReaderWriterLockSlim();
         }
 
-        private string GetConfigFilePath(ConfigScope scope)
+        /// <summary>
+        /// Gets the configuration file path for the specified scope.
+        /// </summary>
+        /// <param name="scope">The configuration scope.</param>
+        /// <returns>The full path to the configuration file.</returns>
+        internal string GetConfigFilePath(ConfigScope scope)
         {
             return (scope == ConfigScope.CurrentUser) ? perUserConfigFile : systemWideConfigFile;
         }
@@ -142,6 +172,60 @@ namespace System.Management.Automation.Configuration
             }
 
             return modulePath;
+        }
+
+        /// <summary>
+        /// Gets the PSContentPath from the configuration file.
+        /// If not configured, returns the default platform content directory.
+        /// </summary>
+        /// <returns>The configured PSContentPath if found, otherwise the default platform content directory (never null).</returns>
+        internal string GetPSContentPath()
+        {
+            string contentPath = ReadValueFromFile<string>(ConfigScope.CurrentUser, Constants.PSUserContentPathConfigKey);
+            if (!string.IsNullOrEmpty(contentPath))
+            {
+                contentPath = Environment.ExpandEnvironmentVariables(contentPath);
+                SendPSContentPathTelemetry("CustomPSContentPath");
+
+                return contentPath;
+            }
+
+            return Platform.DefaultPSContentDirectory;
+        }
+
+        /// <summary>
+        /// Sends telemetry indicating PSContentPath customization is in use.
+        /// Only sends a flag - never actual paths.
+        /// </summary>
+        private static void SendPSContentPathTelemetry(string name)
+        {
+            try
+            {
+                Microsoft.PowerShell.Telemetry.ApplicationInsightsTelemetry.SendTelemetryMetric(
+                    Microsoft.PowerShell.Telemetry.TelemetryType.FeatureUse,
+                    name,
+                    value: 1.0);
+            }
+            catch
+            {
+                // Silently ignore telemetry failures
+            }
+        }
+
+        /// <summary>
+        /// Sets the PSContentPath in the configuration file.
+        /// </summary>
+        /// <param name="path">The path to set as PSContentPath.</param>
+        internal void SetPSContentPath(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+            {
+                RemoveValueFromFile<string>(ConfigScope.CurrentUser, Constants.PSUserContentPathConfigKey);
+            }
+            else
+            {
+                WriteValueToFile<string>(ConfigScope.CurrentUser, Constants.PSUserContentPathConfigKey, path);
+            }
         }
 
         /// <summary>

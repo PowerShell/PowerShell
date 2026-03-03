@@ -20,7 +20,8 @@ Describe "User-Specific powershell.config.json Modifications" -Tags "CI" {
 
         if ($IsNotSkipped) {
             # Discover the user-specific powershell.config.json file
-            $userSettingsDir = [System.IO.Path]::Combine($env:USERPROFILE, "Documents", $productName)
+            # Config now defaults to LocalAppData instead of Documents
+            $userSettingsDir = [System.IO.Path]::Combine($env:LOCALAPPDATA, $productName)
             $userPropertiesFile = Join-Path $userSettingsDir "powershell.config.json"
 
             # Save the file for restoration after the tests are complete

@@ -370,6 +370,12 @@ namespace System.Management.Automation
                     RunspaceInit.PSHOMEDescription);
             this.GlobalScope.SetVariable(v.Name, v, asValue: false, force: true, this, CommandOrigin.Internal, fastPath: true);
 
+            // $PSUserContentPath - the user content path for modules, scripts, and help
+            // Uses custom variable class that provides a helpful error message when users try to set it directly
+            string psContentPath = Utils.GetPSContentPath();
+            v = new PSUserContentPathVariable(psContentPath);
+            this.GlobalScope.SetVariable(v.Name, v, asValue: false, force: true, this, CommandOrigin.Internal, fastPath: true);
+
             // $EnabledExperimentalFeatures
             v = new PSVariable(SpecialVariables.EnabledExperimentalFeatures,
                                ExperimentalFeature.EnabledExperimentalFeatureNames,

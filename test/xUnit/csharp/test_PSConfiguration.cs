@@ -39,7 +39,12 @@ namespace PSTests.Sequential
         public PowerShellPolicyFixture()
         {
             systemWideConfigDirectory = Utils.DefaultPowerShellAppBase;
+#if UNIX
             currentUserConfigDirectory = Platform.ConfigDirectory;
+#else
+            // On Windows, config now defaults to LocalAppData instead of Documents
+            currentUserConfigDirectory = Platform.LocalAppDataPSContentDirectory;
+#endif
 
             if (!Directory.Exists(currentUserConfigDirectory))
             {
