@@ -10,6 +10,8 @@ using System.Management.Automation.Internal;
 using DWORD = System.UInt32;
 using BOOL = System.UInt32;
 
+#nullable enable
+
 namespace System.Management.Automation.Security
 {
     // Crypto API native constants
@@ -418,12 +420,12 @@ namespace System.Management.Automation.Security
             /// <summary>
             /// String naming a key container within a particular CSP.
             /// </summary>
-            public string pwszContainerName;
+            public string? pwszContainerName;
 
             /// <summary>
             /// String that names a CSP.
             /// </summary>
-            public string pwszProvName;
+            public string? pwszProvName;
 
             /// <summary>
             /// CSP type.
@@ -495,8 +497,8 @@ namespace System.Management.Automation.Security
         [DllImport(PinvokeDllNames.CryptAcquireContextDllName, SetLastError = true, CharSet = CharSet.Unicode)]
         internal static extern
         bool CryptAcquireContext(ref IntPtr hProv,
-                                 string strContainerName,
-                                 string strProviderName,
+                                 string? strContainerName,
+                                 string? strProviderName,
                                  int nProviderType,
                                  uint uiProviderFlags);
 
@@ -511,14 +513,14 @@ namespace System.Management.Automation.Security
         [DllImport("ncrypt.dll", CharSet = CharSet.Unicode)]
         internal static extern
         int NCryptOpenStorageProvider(ref IntPtr hProv,
-                                      string strProviderName,
+                                      string? strProviderName,
                                       uint dwFlags);
 
         [DllImport("ncrypt.dll", CharSet = CharSet.Unicode)]
         internal static extern
         int NCryptOpenKey(IntPtr hProv,
                           ref IntPtr hKey,
-                          string strKeyName,
+                          string? strKeyName,
                           uint dwLegacySpec,
                           uint dwFlags);
 
@@ -571,7 +573,7 @@ namespace System.Management.Automation.Security
             internal IntPtr pSigningCertContext; // PCCERT_CONTEXT
 
             [MarshalAs(UnmanagedType.LPWStr)]
-            internal string pwszTimestampURL;
+            internal string? pwszTimestampURL;
 
             internal DWORD dwAdditionalCertChoice;
             internal IntPtr pSignExtInfo; // PCCRYPTUI_WIZ_DIGITAL_SIGN_EXTENDED_INFO
@@ -612,7 +614,7 @@ namespace System.Management.Automation.Security
             internal string pwszMoreInfoLocation;
 
             [MarshalAs(UnmanagedType.LPStr)]
-            internal string pszHashAlg;
+            internal string? pszHashAlg;
 
             internal IntPtr pwszSigningCertDisplayStringNotUsed; // LPCWSTR
             internal IntPtr hAdditionalCertStoreNotUsed; // HCERTSTORE
@@ -623,7 +625,7 @@ namespace System.Management.Automation.Security
         internal static CRYPTUI_WIZ_DIGITAL_SIGN_EXTENDED_INFO
             InitSignInfoExtendedStruct(string description,
                                        string moreInfoUrl,
-                                       string hashAlgorithm)
+                                       string? hashAlgorithm)
         {
             CRYPTUI_WIZ_DIGITAL_SIGN_EXTENDED_INFO siex =
                 new CRYPTUI_WIZ_DIGITAL_SIGN_EXTENDED_INFO();
@@ -654,11 +656,11 @@ namespace System.Management.Automation.Security
 
             /// LPCSTR->CHAR*
             [MarshalAs(UnmanagedType.LPStr)]
-            public string pszOID;
+            public string? pszOID;
 
             /// LPCWSTR->WCHAR*
             [MarshalAs(UnmanagedType.LPWStr)]
-            public string pwszName;
+            public string? pwszName;
 
             /// DWORD->unsigned int
             public uint dwGroupId;
@@ -753,8 +755,8 @@ namespace System.Management.Automation.Security
         internal static CRYPTUI_WIZ_DIGITAL_SIGN_INFO
             InitSignInfoStruct(string fileName,
                                X509Certificate2 signingCert,
-                               string timeStampServerUrl,
-                               string hashAlgorithm,
+                               string? timeStampServerUrl,
+                               string? hashAlgorithm,
                                SigningOption option)
         {
             CRYPTUI_WIZ_DIGITAL_SIGN_INFO si = new CRYPTUI_WIZ_DIGITAL_SIGN_INFO();
@@ -918,21 +920,21 @@ namespace System.Management.Automation.Security
 
             /// PWSTR->WCHAR*
             [MarshalAs(UnmanagedType.LPWStr)]
-            internal string pszDisplayName;
+            internal string? pszDisplayName;
 
             /// DWORD->unsigned int
             internal uint cchDisplayName;
 
             /// PWSTR->WCHAR*
             [MarshalAs(UnmanagedType.LPWStr)]
-            internal string pszPublisherName;
+            internal string? pszPublisherName;
 
             /// DWORD->unsigned int
             internal uint cchPublisherName;
 
             /// PWSTR->WCHAR*
             [MarshalAs(UnmanagedType.LPWStr)]
-            internal string pszMoreInfoURL;
+            internal string? pszMoreInfoURL;
 
             /// DWORD->unsigned int
             internal uint cchMoreInfoURL;
@@ -992,7 +994,7 @@ namespace System.Management.Automation.Security
         {
             /// LPSTR->CHAR*
             [MarshalAs(UnmanagedType.LPStr)]
-            internal string pszObjId;
+            internal string? pszObjId;
 
             /// CRYPT_OBJID_BLOB->_CRYPTOAPI_BLOB
             internal CRYPT_ATTR_BLOB Parameters;
@@ -1036,7 +1038,7 @@ namespace System.Management.Automation.Security
         {
             /// LPSTR->CHAR*
             [MarshalAs(UnmanagedType.LPStr)]
-            internal string pszObjId;
+            internal string? pszObjId;
 
             /// BOOL->int
             internal int fCritical;
@@ -1138,7 +1140,7 @@ namespace System.Management.Automation.Security
 
         /// LPCWSTR->WCHAR*
         [MarshalAs(UnmanagedType.LPWStr)]
-        public string ImagePath;
+        public string? ImagePath;
 
         /// HANDLE->void*
         public System.IntPtr hImageFileHandle;
@@ -1151,7 +1153,7 @@ namespace System.Management.Automation.Security
             UnmanagedType.ByValArray,
             SizeConst = NativeConstants.SAFER_MAX_HASH_SIZE,
             ArraySubType = UnmanagedType.I1)]
-        public byte[] ImageHash;
+        public byte[]? ImageHash;
 
         /// DWORD->unsigned int
         public uint dwImageHashSize;
@@ -1438,7 +1440,7 @@ namespace System.Management.Automation.Security
         [DllImport(PinvokeDllNames.LookupPrivilegeValueDllName, CharSet = CharSet.Unicode, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool LookupPrivilegeValue(
-            string lpSystemName,
+            string? lpSystemName,
             string lpName,
             ref LUID lpLuid);
 
