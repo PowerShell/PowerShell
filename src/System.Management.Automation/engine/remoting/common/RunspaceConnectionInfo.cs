@@ -2272,7 +2272,7 @@ namespace System.Management.Automation.Runspaces
             //   linux|macos:
             //     Subsystem powershell /usr/local/bin/pwsh -SSHServerMode -NoLogo -NoProfile
 
-            // codeql[cs/microsoft/command-line-injection-shell-execution] - This is expected Poweshell behavior where user inputted paths are supported for the context of this method. The user assumes trust for the file path specified, so any file executed in the runspace would be in the user's local system/process or a system they have access to in which case restricted remoting security guidelines should be used.
+            // codeql[cs/microsoft/command-line-injection-shell-execution] - This is expected PowerShell behavior where user inputted paths are supported for the context of this method. The user assumes trust for the file path specified, so any file executed in the runspace would be in the user's local system/process or a system they have access to in which case restricted remoting security guidelines should be used.
             ProcessStartInfo startInfo = new(filePath);
 
             // pass "-i identity_file" command line argument to ssh if KeyFilePath is set
