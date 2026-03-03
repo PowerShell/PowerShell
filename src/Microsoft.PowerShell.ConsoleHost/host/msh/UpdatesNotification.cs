@@ -89,9 +89,18 @@ namespace Microsoft.PowerShell
             if (TryParseUpdateFile(
                     updateFilePath: out _,
                     out SemanticVersion lastUpdateVersion,
-                    lastUpdateDate: out _)
+                    out DateTime lastUpdateDate)
                && lastUpdateVersion != null)
             {
+                DateTime today = DateTime.UtcNow;
+                if ((today - lastUpdateDate).TotalDays < 7)
+                {
+                    // The update was out less than 1 weeks ago and it's possible the packages are still rolling out.
+                    // We only show the notification when the update is at least 1 weeks old, to reduce the chance that
+                    // users see the notification but cannot get the new update when they try to install it.
+                    return;
+                }
+
                 string releaseTag = lastUpdateVersion.ToString();
                 string notificationMsgTemplate = s_notificationType == NotificationType.LTS
                     ? ManagedEntranceStrings.LTSUpdateNotificationMessage
@@ -169,10 +178,10 @@ namespace Microsoft.PowerShell
                 out DateTime lastUpdateDate);
 
             DateTime today = DateTime.UtcNow;
-            if (parseSuccess && updateFilePath != null && (today - lastUpdateDate).TotalDays < 7)
+            if (parseSuccess && updateFilePath != null && (today - lastUpdateDate).TotalDays < 14)
             {
-                // There is an existing update file, and the last update was less than 1 week ago.
-                // It's unlikely a new version is released within 1 week, so we can skip this check.
+                // There is an existing update file, and the last update was less than 2 weeks ago.
+                // It's unlikely a new version is released within 2 weeks, so we can skip this check.
                 return;
             }
 
