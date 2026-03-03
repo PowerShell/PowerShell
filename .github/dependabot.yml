@@ -10,23 +10,55 @@ updates:
 
   - package-ecosystem: "github-actions"
     directory: "/"
-    target-branch: "release/*"
+    target-branch: "release/v7.4"
+    schedule:
+      interval: "daily"
+    labels:
+      - "CL-BuildPackaging"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    target-branch: "release/v7.5"
+    schedule:
+      interval: "daily"
+    labels:
+      - "CL-BuildPackaging"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    target-branch: "release/v7.6"
     schedule:
       interval: "daily"
     labels:
       - "CL-BuildPackaging"
 
   - package-ecosystem: "docker"
-    directory: /
+    directory: "/"
     schedule:
-      interval: daily
+      interval: "daily"
     labels:
       - "CL-BuildPackaging"
 
   - package-ecosystem: "docker"
     directory: "/"
-    target-branch: "release/*"
+    target-branch: "release/v7.4"
     schedule:
-      interval: daily
+      interval: "daily"
+    labels:
+      - "CL-BuildPackaging"
+
+  - package-ecosystem: "docker"
+    directory: "/"
+    target-branch: "release/v7.5"
+    schedule:
+      interval: "daily"
+    labels:
+      - "CL-BuildPackaging"
+
+  - package-ecosystem: "docker"
+    directory: "/"
+    target-branch: "release/v7.6"
+    schedule:
+      interval: "daily"
     labels:
       - "CL-BuildPackaging"
