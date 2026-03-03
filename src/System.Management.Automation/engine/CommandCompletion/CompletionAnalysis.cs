@@ -1404,18 +1404,18 @@ namespace System.Management.Automation
                 }
             }
 
-            if (result == null || result.Count == 0)
+            if (result is null || result.Count == 0)
             {
-                // Handle special file completion scenarios: .\+file.txt -> +<tab>
-                string input = completionContext.RelatedAsts[0].Extent.Text;
-                if (Regex.IsMatch(input, @"^[\S]+$") && completionContext.RelatedAsts.Count > 0 && completionContext.RelatedAsts[0] is ScriptBlockAst)
+                result = CompletionCompleters.CompleteKeywords(completionContext, _tokens);
+                if (result.Count > 0 && (tokenAtCursor is null || (tokenAtCursor.Kind != TokenKind.Identifier && !tokenAtCursor.TokenFlags.HasFlag(TokenFlags.Keyword))))
                 {
-                    replacementIndex = completionContext.RelatedAsts[0].Extent.StartScriptPosition.Offset;
-                    replacementLength = completionContext.RelatedAsts[0].Extent.EndScriptPosition.Offset - replacementIndex;
-
-                    completionContext.WordToComplete = input;
-                    result = CompleteFileNameAsCommand(completionContext);
+                    replacementIndex = completionContext.CursorPosition.Offset;
+                    replacementLength = 0;
                 }
+            }
+            else
+            {
+                result.AddRange(CompletionCompleters.CompleteKeywords(completionContext, _tokens));
             }
 
             return result;
