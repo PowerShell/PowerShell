@@ -88,7 +88,7 @@ namespace System.Management.Automation
 
                     try
                     {
-                        int scopeNumericID = Int32.Parse(scopeID, System.Globalization.CultureInfo.CurrentCulture);
+                        int scopeNumericID = int.Parse(scopeID, System.Globalization.CultureInfo.CurrentCulture);
 
                         if (scopeNumericID < 0)
                         {
