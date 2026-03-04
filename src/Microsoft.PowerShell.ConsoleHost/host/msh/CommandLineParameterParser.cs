@@ -14,6 +14,7 @@ using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
+using System.Management.Automation.Security;
 using System.Security;
 using System.Text;
 
@@ -878,10 +879,27 @@ namespace Microsoft.PowerShell
             ParseHelper(args);
         }
 
+        private static bool IsFileOnlyEntryEnabled
+        {
+            get
+            {
+#if UNIX
+                return false;
+#else
+                return SystemPolicy.IsFileOnlyEntryEnabled();
+#endif
+            }
+        }
+
         private void ParseHelper(string[] args)
         {
             if (args.Length == 0)
             {
+                if (IsFileOnlyEntryEnabled)
+                {
+                    SetCommandLineError(CommandLineParameterParserStrings.FileOnlyEntryRequired);
+                }
+
                 return;
             }
 
@@ -927,6 +945,12 @@ namespace Microsoft.PowerShell
                     _noExit = true;
                     noexitSeen = true;
                     ParametersUsed |= ParameterBitmap.NoExit;
+
+                    if (IsFileOnlyEntryEnabled)
+                    {
+                        SetCommandLineError(CommandLineParameterParserStrings.FileOnlyEntryRequired);
+                        break;
+                    }
                 }
                 else if (MatchSwitch(switchKey, "noprofile", "nop"))
                 {
@@ -1263,6 +1287,15 @@ namespace Microsoft.PowerShell
                 }
             }
 
+            if (_error is null
+                && !_showVersion
+                && !_showHelp
+                && (ParametersUsed & ParameterBitmap.File) is 0
+                && IsFileOnlyEntryEnabled)
+            {
+                SetCommandLineError(CommandLineParameterParserStrings.FileOnlyEntryRequired);
+            }
+
             Dbg.Assert(
                     ((_exitCode == ConsoleHost.ExitCodeBadCommandLineParameter) && _abortStartup)
                 || (_exitCode == ConsoleHost.ExitCodeSuccess),
@@ -1360,6 +1393,12 @@ namespace Microsoft.PowerShell
             // Process interactive input...
             if (args[i] == "-")
             {
+                if (IsFileOnlyEntryEnabled)
+                {
+                    SetCommandLineError(CommandLineParameterParserStrings.FileOnlyEntryRequired);
+                    return false;
+                }
+
                 // the arg to -file is -, which is secret code for "read the commands from stdin with prompts"
 
                 _explicitReadCommandsFromStdin = true;
@@ -1492,6 +1531,12 @@ namespace Microsoft.PowerShell
 
         private bool ParseCommand(string[] args, ref int i, bool noexitSeen, bool isEncoded)
         {
+            if (IsFileOnlyEntryEnabled)
+            {
+                SetCommandLineError(CommandLineParameterParserStrings.FileOnlyEntryRequired);
+                return false;
+            }
+
             if (_commandLineCommand != null)
             {
                 // we've already set the command, so squawk

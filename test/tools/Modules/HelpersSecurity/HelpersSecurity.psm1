@@ -27,6 +27,12 @@ if ($IsWindows)
         [Parameter()]
         public SwitchParameter RevertLockdownMode { get; set; }
 
+        [Parameter()]
+        public SwitchParameter SetFileOnlyEntry { get; set; }
+
+        [Parameter()]
+        public SwitchParameter RevertFileOnlyEntry { get; set; }
+
         protected override void BeginProcessing()
         {
             if (EnableFullLanguageMode)
@@ -42,6 +48,16 @@ if ($IsWindows)
             if (RevertLockdownMode)
             {
                 Environment.SetEnvironmentVariable("__PSLockdownPolicy", null, EnvironmentVariableTarget.Machine);
+            }
+
+            if (SetFileOnlyEntry)
+            {
+                Environment.SetEnvironmentVariable("__PSLockdownPolicy_FileOnlyEntry", "1", EnvironmentVariableTarget.Machine);
+            }
+
+            if (RevertFileOnlyEntry)
+            {
+                Environment.SetEnvironmentVariable("__PSLockdownPolicy_FileOnlyEntry", null, EnvironmentVariableTarget.Machine);
             }
         }
     }
