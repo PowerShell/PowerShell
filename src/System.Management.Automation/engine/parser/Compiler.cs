@@ -57,6 +57,9 @@ namespace System.Management.Automation.Language
         internal static readonly MethodInfo ArrayOps_Multiply =
             typeof(ArrayOps).GetMethod(nameof(ArrayOps.Multiply), StaticFlags);
 
+        internal static readonly MethodInfo ArrayOps_Divide =
+            typeof(ArrayOps).GetMethod(nameof(ArrayOps.Divide), StaticFlags);
+
         internal static readonly MethodInfo ArrayOps_SetMDArrayValue =
             typeof(ArrayOps).GetMethod(nameof(ArrayOps.SetMDArrayValue), StaticFlags);
 
@@ -585,6 +588,9 @@ namespace System.Management.Automation.Language
 
         internal static readonly MethodInfo StringOps_Multiply =
             typeof(StringOps).GetMethod(nameof(StringOps.Multiply), StaticFlags);
+
+        internal static readonly MethodInfo StringOps_Divide =
+            typeof(StringOps).GetMethod(nameof(StringOps.Divide), StaticFlags);
 
         internal static readonly MethodInfo SwitchOps_ConditionSatisfiedRegex =
             typeof(SwitchOps).GetMethod(nameof(SwitchOps.ConditionSatisfiedRegex), StaticFlags);
