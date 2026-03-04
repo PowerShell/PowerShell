@@ -6130,7 +6130,6 @@ namespace Microsoft.WSMan.Management
         /// Parameter CertificateThumbPrint.
         /// </summary>
         [Parameter]
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "ThumbPrint")]
         [ValidateNotNullOrEmpty]
         public string CertificateThumbPrint
         {
