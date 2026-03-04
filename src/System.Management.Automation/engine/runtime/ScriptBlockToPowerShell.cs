@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Management.Automation.Language;
@@ -811,6 +812,10 @@ namespace System.Management.Automation
                                 argument = ParserOps.WrappedNumber(argument, commandArgumentText);
                             }
                         }
+                        else if (constantExprAst is StringConstantExpressionAst stringConstant)
+                        {
+                            argument = ParserOps.WrappedString(stringConstant.Value, stringConstant.StringConstantType);
+                        }
                         else
                         {
                             if (!isTrustedInput)
@@ -831,6 +836,12 @@ namespace System.Management.Automation
                             else
                             {
                                 argument = GetExpressionValue(exprAst, isTrustedInput);
+                            }
+
+                            if (ast is ExpandableStringExpressionAst expandableStringExpressionAst)
+                            {
+                                Debug.Assert(argument is string);
+                                argument = ParserOps.WrappedString(argument as string, expandableStringExpressionAst.StringConstantType);
                             }
                         }
 

@@ -11,7 +11,6 @@ using System.Management.Automation.Internal.Host;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
 using System.Runtime.CompilerServices;
-using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
 
 using Dbg = System.Management.Automation.Diagnostics;
@@ -232,6 +231,7 @@ namespace System.Management.Automation
     internal static class ParserOps
     {
         internal const string MethodNotFoundErrorId = "MethodNotFound";
+        internal const string StringConstantType = "StringConstantType";
 
         /// <summary>
         /// Construct the various caching structures used by the runtime routines...
@@ -288,6 +288,13 @@ namespace System.Management.Automation
         {
             PSObject wrapped = new PSObject(data);
             wrapped.TokenText = text;
+            return wrapped;
+        }
+
+        internal static PSObject WrappedString(string text, StringConstantType stringConstantType)
+        {
+            var wrapped = new PSObject(text);
+            wrapped.Properties.Add(new PSNoteProperty(StringConstantType, stringConstantType), true);
             return wrapped;
         }
 
