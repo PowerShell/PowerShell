@@ -596,7 +596,15 @@ namespace System.Management.Automation.Language
 
             private void DefineProperty(PropertyMemberAst propertyMemberAst)
             {
-                if (_definedProperties.ContainsKey(propertyMemberAst.Name))
+                // Report an error if the property name collides with an existing property or a non-constructor method definition
+                // Property naming collisions with constructors are fine though, "$this.C" unambiguously refers to the property in this example:
+                //
+                //     class C {
+                //       C() {}
+                //       $C
+                //     }
+                //
+                if (_definedProperties.ContainsKey(propertyMemberAst.Name) || (_definedMethods.ContainsKey(propertyMemberAst.Name) && !_definedMethods[propertyMemberAst.Name][0].Item1.IsConstructor))
                 {
                     _parser.ReportError(propertyMemberAst.Extent,
                         nameof(ParserStrings.MemberAlreadyDefined),
@@ -746,6 +754,15 @@ namespace System.Management.Automation.Language
 
             private bool CheckForDuplicateOverload(FunctionMemberAst functionMemberAst, Type[] newParameters)
             {
+                if (!functionMemberAst.IsConstructor && _definedProperties.ContainsKey(functionMemberAst.Name))
+                {
+                    _parser.ReportError(functionMemberAst.NameExtent ?? functionMemberAst.Extent,
+                        nameof(ParserStrings.MemberAlreadyDefined),
+                        ParserStrings.MemberAlreadyDefined,
+                        functionMemberAst.Name);
+                    return true;
+                }
+
                 List<Tuple<FunctionMemberAst, Type[]>> overloads;
                 if (!_definedMethods.TryGetValue(functionMemberAst.Name, out overloads))
                 {
@@ -781,7 +798,8 @@ namespace System.Management.Automation.Language
                             if (overload.Item1.IsStatic == functionMemberAst.IsStatic ||
                                 !functionMemberAst.IsConstructor)
                             {
-                                _parser.ReportError(functionMemberAst.NameExtent ?? functionMemberAst.Extent,
+                                _parser.ReportError(
+                                    functionMemberAst.NameExtent ?? functionMemberAst.Extent,
                                     nameof(ParserStrings.MemberAlreadyDefined),
                                     ParserStrings.MemberAlreadyDefined,
                                     functionMemberAst.Name);
