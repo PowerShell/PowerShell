@@ -45,10 +45,28 @@ param(
     [switch] $Quiet,
 
     [Parameter(ParameterSetName = "MSI")]
+    [switch] $UseMU,
+
+    [Parameter(ParameterSetName = "MSI")]
+    [switch] $EnableMU,
+
+    [Parameter(ParameterSetName = "MSI")]
     [switch] $AddExplorerContextMenu,
 
     [Parameter(ParameterSetName = "MSI")]
+    [switch] $AddFileContextMenu,
+
+    [Parameter(ParameterSetName = "MSI")]
     [switch] $EnablePSRemoting,
+
+    [Parameter(ParameterSetName = "MSI")]
+    [switch] $RegisterManifest,
+
+    [Parameter(ParameterSetName = "MSI")]
+    [switch] $AddPath,
+
+    [Parameter(ParameterSetName = "MSI")]
+    [switch] $DisableTelemetry,
 
     [Parameter()]
     [switch] $Preview
@@ -82,11 +100,29 @@ if (-not $UseMSI) {
         throw "-UseMSI is only supported on Windows"
     } else {
         $MSIArguments = @()
+        if($UseMU) {
+            $MSIArguments += "USE_MU=1"
+        }
+        if($EnableMU) {
+            $MSIArguments += "ENABLE_MU=1"
+        }
         if($AddExplorerContextMenu) {
             $MSIArguments += "ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL=1"
         }
+        if($AddFileContextMenu) {
+            $MSIArguments += "ADD_FILE_CONTEXT_MENU_RUNPOWERSHELL=1"
+        }
         if($EnablePSRemoting) {
             $MSIArguments += "ENABLE_PSREMOTING=1"
+        }
+        if($RegisterManifest) {
+            $MSIArguments += "REGISTER_MANIFEST=1"
+        }
+        if($AddPath) {
+            $MSIArguments += "ADD_PATH=1"
+        }
+        if($DisableTelemetry) {
+            $MSIArguments += "DISABLE_TELEMETRY=1"
         }
     }
 }
