@@ -90,7 +90,7 @@
                 "content": {
                     "title": "Content",
                     "description": "Defines the content of the profile. If you don't specify this property, the resource doesn't manage the file contents. If you specify this property as an empty string, the resource removes all content from the file. If you specify this property as a non-empty string, the resource sets the file contents to the specified string. The resources retains newlines from this property without any modification.",
-                    "type": "string"
+                    "type": [ "string", "null" ]
                 },
                 "_exist": {
                     "$ref": "https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/v3/resource/properties/exist.json"
