@@ -797,8 +797,10 @@ namespace Microsoft.PowerShell
         private static bool MatchSwitch(string switchKey, string match, string smallestUnambiguousMatch)
         {
             Dbg.Assert(!string.IsNullOrEmpty(match), "need a value");
+#pragma warning disable CA1862 // Use the 'StringComparison' method overloads to perform case-insensitive string comparisons
             Dbg.Assert(match.Trim().ToLowerInvariant() == match, "match should be normalized to lowercase w/ no outside whitespace");
             Dbg.Assert(smallestUnambiguousMatch.Trim().ToLowerInvariant() == smallestUnambiguousMatch, "match should be normalized to lowercase w/ no outside whitespace");
+#pragma warning restore CA1862 // Use the 'StringComparison' method overloads to perform case-insensitive string comparisons
             Dbg.Assert(match.Contains(smallestUnambiguousMatch), "sUM should be a substring of match");
 
             return (switchKey.Length >= smallestUnambiguousMatch.Length
