@@ -775,7 +775,7 @@ namespace System.Management.Automation.Remoting
                 // This parameter is only used by Out-Of-Proc transports (not WinRM transports).
                 var discConfiguration = new Remoting.DISCPowerShellConfiguration(
                     configFile: _configurationFile,
-                    roleVerifier: null, 
+                    roleVerifier: null,
                     validateFile: true);
                 rsSessionStateToUse = discConfiguration.GetInitialSessionState(_senderInfo);
             }
