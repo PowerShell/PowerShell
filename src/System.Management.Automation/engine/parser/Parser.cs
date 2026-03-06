@@ -5363,7 +5363,14 @@ namespace System.Management.Automation.Language
             }
 
             // A function name that matches a keyword isn't really a keyword, so don't color it that way
-            functionNameToken.TokenFlags &= ~TokenFlags.Keyword;
+            functionNameToken.SetIsCommandArgument();
+            //functionNameToken.TokenFlags &= ~TokenFlags.Keyword;
+
+            // A function name is not an expandable token, so remove any nested tokens
+            if (functionNameToken is StringExpandableToken expandableToken)
+            {
+                expandableToken.NestedTokens = null;
+            }
 
             IScriptExtent endErrorStatement;
             Token rParen;
@@ -5398,8 +5405,8 @@ namespace System.Management.Automation.Language
                 _tokenizer.InWorkflowContext = isWorkflow;
 
                 ScriptBlockAst scriptBlock = ScriptBlockRule(lCurly, isFilter);
-                var functionName = (functionNameToken.Kind == TokenKind.Generic)
-                                       ? ((StringToken)functionNameToken).Value
+                var functionName = (functionNameToken is StringToken stringFunctionNameToken)
+                                       ? stringFunctionNameToken.Value
                                        : functionNameToken.Text;
 
                 FunctionDefinitionAst result = new FunctionDefinitionAst(ExtentOf(functionToken, scriptBlock),
@@ -6316,7 +6323,7 @@ namespace System.Management.Automation.Language
                     case TokenKind.AndAnd:
                     case TokenKind.OrOr:
                     case TokenKind.Ampersand:
-                    case TokenKind.MinusMinus:
+               //     case TokenKind.MinusMinus when (context == CommandArgumentContext.CommandName):
                     case TokenKind.Comma:
                         UngetToken(token);
 
@@ -6370,10 +6377,16 @@ namespace System.Management.Automation.Language
                         }
                         else
                         {
+                            // Remove any nested tokens already collected in this context
+                            if (expandableToken != null && context == CommandArgumentContext.CommandName)
+                            {
+                                expandableToken.NestedTokens = null;
+                            }
+
                             exprAst = new StringConstantExpressionAst(genericToken.Extent, genericToken.Value, StringConstantType.BareWord);
 
                             // If this is a verbatim argument, then don't continue peeking
-                            if (string.Equals(genericToken.Value, VERBATIM_ARGUMENT, StringComparison.OrdinalIgnoreCase))
+                            if (context == CommandArgumentContext.CommandArgument && string.Equals(genericToken.Value, VERBATIM_ARGUMENT, StringComparison.OrdinalIgnoreCase))
                             {
                                 foundVerbatimArgument = true;
                             }
@@ -6385,7 +6398,8 @@ namespace System.Management.Automation.Language
                         exprAst = new StringConstantExpressionAst(token.Extent, token.Text, StringConstantType.BareWord);
 
                         // A command/argument that matches a keyword isn't really a keyword, so don't color it that way
-                        token.TokenFlags &= ~TokenFlags.Keyword;
+                        // token.TokenFlags &= ~TokenFlags.Keyword;
+                        token.SetIsCommandArgument();
 
                         switch (context)
                         {
@@ -6396,7 +6410,6 @@ namespace System.Management.Automation.Language
                             case CommandArgumentContext.FileName:
                             case CommandArgumentContext.CommandArgument:
                             case CommandArgumentContext.SwitchCondition:
-                                token.SetIsCommandArgument();
                                 break;
                         }
 
@@ -6524,13 +6537,11 @@ namespace System.Management.Automation.Language
                             scanning = false;
                             continue;
 
-                        case TokenKind.MinusMinus:
+                        case TokenKind.MinusMinus when !sawDashDash && context != CommandArgumentContext.CommandNameAfterInvocationOperator:
                             endExtent = token.Extent;
                             // Add the first -- as a parameter, which is then ignored when constructing the command processor unless it's a native
                             // command.  All subsequent -- are added as arguments.
-                            elements.Add(sawDashDash
-                                ? (CommandElementAst)new StringConstantExpressionAst(token.Extent, token.Text, StringConstantType.BareWord)
-                                : new CommandParameterAst(token.Extent, "-", null, token.Extent));
+                            elements.Add(new CommandParameterAst(token.Extent, "-", null, token.Extent));
                             sawDashDash = true;
                             break;
 
@@ -6542,8 +6553,8 @@ namespace System.Management.Automation.Language
                             SkipNewlines();
                             break;
 
-                        case TokenKind.Parameter:
-                            if ((context & CommandArgumentContext.CommandName) != 0 || sawDashDash)
+                        case TokenKind.Parameter when !sawDashDash && (context & CommandArgumentContext.CommandName) == 0:
+                            if ((context & CommandArgumentContext.CommandName) != 0)
                             {
                                 endExtent = token.Extent;
                                 token.TokenFlags |= TokenFlags.CommandName;
@@ -6600,6 +6611,7 @@ namespace System.Management.Automation.Language
                                 // but V3 and on will because it falls out rather naturally here.
                                 endExtent = token.Extent;
                                 elements.Add(new StringConstantExpressionAst(token.Extent, token.Text, StringConstantType.BareWord));
+                                token.TokenFlags |= TokenFlags.CommandName;
                             }
 
                             break;
@@ -6617,24 +6629,27 @@ namespace System.Management.Automation.Language
                             {
                                 var ast = GetCommandArgument(context, token);
 
-                                // If this is the special verbatim argument syntax, look for the next element
-                                StringToken argumentToken = token as StringToken;
-                                if ((argumentToken != null) && string.Equals(argumentToken.Value, VERBATIM_ARGUMENT, StringComparison.OrdinalIgnoreCase))
+                                if (context == CommandArgumentContext.CommandArgument)
                                 {
-                                    elements.Add(ast);
-                                    endExtent = ast.Extent;
-
-                                    var verbatimToken = GetVerbatimCommandArgumentToken();
-                                    if (verbatimToken != null)
+                                    // If this is the special verbatim argument syntax, look for the next element
+                                    StringToken argumentToken = token as StringToken;
+                                    if ((argumentToken != null) && string.Equals(argumentToken.Value, VERBATIM_ARGUMENT, StringComparison.OrdinalIgnoreCase))
                                     {
-                                        foundVerbatimArgument = true;
-                                        scanning = false;
-                                        ast = new StringConstantExpressionAst(verbatimToken.Extent, verbatimToken.Value, StringConstantType.BareWord);
                                         elements.Add(ast);
                                         endExtent = ast.Extent;
-                                    }
 
-                                    break;
+                                        var verbatimToken = GetVerbatimCommandArgumentToken();
+                                        if (verbatimToken != null)
+                                        {
+                                            foundVerbatimArgument = true;
+                                            scanning = false;
+                                            ast = new StringConstantExpressionAst(verbatimToken.Extent, verbatimToken.Value, StringConstantType.BareWord);
+                                            elements.Add(ast);
+                                            endExtent = ast.Extent;
+                                        }
+
+                                        break;
+                                    }
                                 }
 
                                 endExtent = ast.Extent;
