@@ -7,6 +7,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Management.Automation.Internal;
 using Microsoft.Win32;
+using System.Reflection.Metadata;
 
 namespace System.Management.Automation
 {
@@ -56,6 +57,17 @@ namespace System.Management.Automation
             get
             {
                 return true;
+            }
+        }
+
+        /// <summary>
+        /// True if the current session is running with elevated (administrator) privileges.
+        /// </summary>
+        public static bool IsElevated
+        {
+            get
+            {
+                return Environment.IsPrivilegedProcess;
             }
         }
 
