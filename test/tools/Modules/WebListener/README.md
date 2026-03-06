@@ -15,7 +15,7 @@ and is not issued for any specific key usage.
 This Certificate is used for Client Certificate Authentication with the WebListener App.
 The port used for `-HttpsPort` will use TLS 1.2.
 
-# Running WebListener
+## Running WebListener
 
 ```powershell
 Import-Module .\build.psm1
@@ -23,7 +23,7 @@ Publish-PSTestTools
 $Listener = Start-WebListener -HttpPort 8083 -HttpsPort 8084 -Tls11Port 8085 -TlsPort 8086
 ```
 
-# Stopping WebListener
+## Stopping WebListener
 
 ```powershell
 Stop-WebListener
