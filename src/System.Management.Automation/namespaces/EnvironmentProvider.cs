@@ -25,6 +25,11 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public const string ProviderName = "Environment";
 
+        /// <summary>
+        /// Save off the environment block found when we initialize the provider.
+        /// </summary>
+        public static Hashtable InitialEnvironment { get; set; } = null;
+
         #region Constructor
 
         /// <summary>
@@ -35,15 +40,33 @@ namespace Microsoft.PowerShell.Commands
         {
         }
 
+        static EnvironmentProvider()
+        {
+            try
+            {
+                // GetEnvironmentVariables can throw if you don't have privilege
+                var envvarHashtable = Environment.GetEnvironmentVariables() as Hashtable;
+                if (envvarHashtable is not null)
+                {
+                    InitialEnvironment = (Hashtable)envvarHashtable.Clone();
+                }
+            }
+            catch
+            {
+                // no-op, but empty catch blocks are not desired.
+                InitialEnvironment = null;
+            }
+        }
+
         #endregion Constructor
 
         #region DriveCmdletProvider overrides
 
         /// <summary>
-        /// Initializes the alias drive.
+        /// Initializes the environment drive.
         /// </summary>
         /// <returns>
-        /// An array of a single PSDriveInfo object representing the alias drive.
+        /// An array of a single PSDriveInfo object representing the environment drive.
         /// </returns>
         protected override Collection<PSDriveInfo> InitializeDefaultDrives()
         {
