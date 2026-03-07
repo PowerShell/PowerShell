@@ -114,7 +114,7 @@ jobs:
 
         $dateYear = & $toolPath -c '(Get-Date).Year'
 
-        if ( $dateYear -ne [DateTime]::Now.Year)
+        if ( $dateYear -ne [datetime]::Now.Year)
         {
             throw "Get-Date returned incorrect year: $dateYear"
         }
