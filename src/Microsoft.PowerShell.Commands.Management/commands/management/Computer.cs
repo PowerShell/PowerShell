@@ -85,6 +85,177 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
+    /// Supported reasons for restarting or shutting down.
+    /// </summary>
+    public enum ShutdownReasons: uint
+    {
+        /// <summary>
+        /// Planned activity.
+        /// </summary>
+        Planned = 0x80000000,
+
+        /// <summary>
+        /// Any other activity.
+        /// </summary>
+        Other = 0x00000000,
+
+        /// <summary>
+        /// Application related shutdown/restart.
+        /// </summary>
+        Application = 0x00040000,
+
+        /// <summary>
+        /// Hardware related shutdown/restart.
+        /// </summary>
+        Hardware = 0x80010000,
+
+        /// <summary>
+        /// OperatingSystem related shutdown/restart.
+        /// </summary>        
+        OperatingSystem = 0x80020000,
+
+        /// <summary>
+        /// Power related shutdown/restart.
+        /// </summary>        
+        Power = 0x80060000,
+
+        /// <summary>
+        /// Software related shutdown/restart.
+        /// </summary>        
+        Software = 0x80030000,
+
+        /// <summary>
+        /// System related shutdown/restart.
+        /// </summary>        
+        System = 0x80050000,
+
+        /// <summary>
+        /// Shutdown/Restart related to BlueScreen.
+        /// </summary>        
+        BlueScreen = 0x0000000F,
+
+        /// <summary>
+        /// Disk related shutdown/restart.
+        /// </summary>        
+        Disk = 0x00000007,
+
+        /// <summary>
+        /// Environment related shutdown/restart.
+        /// </summary>        
+        Environment = 0x0000000c,
+
+        /// <summary>
+        /// Driver related shutdown/restart.
+        /// </summary>        
+        Driver = 0x0000000d,
+
+        /// <summary>
+        /// Shutdown/Restart related to HotFix installation.
+        /// </summary>        
+        HotFix = 0x00000011,
+
+        /// <summary>
+        /// Shutdown/Restart related to HotFix Uninstallation.
+        /// </summary>        
+        HotFixUninstall = 0x00000017,
+
+        /// <summary>
+        /// Shutdown/Restart related to Unresponsiveness.
+        /// </summary>        
+        Unresponsive = 0x00000005,
+
+        /// <summary>
+        /// Installation related shutdown/restart.
+        /// </summary>        
+        Installation = 0x00000002,
+
+        /// <summary>
+        /// Shutdown/Restart related to Maintenance.
+        /// </summary>        
+        Maintenance = 0x00000001,
+
+        /// <summary>
+        /// MMC related shutdown/restart.
+        /// </summary>        
+        MMC = 0x00000019,
+
+        /// <summary>
+        /// NetworkConnectivity related shutdown/restart.
+        /// </summary>        
+        NetworkConnectivity = 0x00000014,
+
+        /// <summary>
+        /// NetworkCard related shutdown/restart.
+        /// </summary>        
+        NetworkCard = 0x00000009,
+
+        /// <summary>
+        /// OtherDriver related shutdown/restart.
+        /// </summary>        
+        OtherDriver = 0x0000000e,
+
+        /// <summary>
+        /// PowerSupply related shutdown/restart.
+        /// </summary>        
+        PowerSupply = 0x0000000a,
+
+        /// <summary>
+        /// Processor related shutdown/restart.
+        /// </summary>        
+        Processor = 0x00000008,
+
+        /// <summary>
+        /// Reconfigure related shutdown/restart.
+        /// </summary>        
+        Reconfigure = 0x00000004,
+
+        /// <summary>
+        /// Shutdown/Restart related to SecurityIssue.
+        /// </summary>        
+        SecurityIssue = 0x00000013,
+
+        /// <summary>
+        /// Shutdown/Restart related to SecurityPatch installation.
+        /// </summary>        
+        SecurityPatch = 0x00000012,
+
+        /// <summary>
+        /// Shutdown/Restart related to SecurityPatch uninstallation.
+        /// </summary>        
+        SecurityPatchUninstallation = 0x00000018,
+
+        /// <summary>
+        /// Shutdown/Restart related to ServicePack installation.
+        /// </summary>        
+        ServicePack = 0x00000010,
+
+        /// <summary>
+        /// Shutdown/Restart related to ServicePack uninstallation.
+        /// </summary>        
+        ServicePackUninstallation = 0x00000016,
+
+        /// <summary>
+        /// TerminalServices related shutdown/restart.
+        /// </summary>        
+        TerminalServices = 0x00000020,
+
+        /// <summary>
+        /// Shutdown/Restart when system is Unstable.
+        /// </summary>        
+        Unstable = 0x00000006,
+
+        /// <summary>
+        /// Shutdown/Restart related to Upgrade.
+        /// </summary>        
+        Upgrade = 0x00000003,
+
+        /// <summary>
+        /// WMI related shutdown/restart.
+        /// </summary>        
+        WMI = 0x00000015,        
+    }
+
+    /// <summary>
     /// Defines the services that Restart-Computer can wait on.
     /// </summary>
     [SuppressMessage("Microsoft.Design", "CA1027:MarkEnumsWithFlags")]
@@ -167,6 +338,25 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [Alias("f")]
         public SwitchParameter Force { get; set; }
+
+        /// <summary>
+        /// Specify a delay before the reboot occurs.
+        /// </summary>
+        [Parameter(ParameterSetName = DefaultParameterSet)]
+        [ValidateRange(0, UInt32.MaxValue)]
+        public UInt32 RestartDelay { get; set; }
+    
+        /// <summary>
+        /// Provide a comment for rebooting the computer.
+        /// </summary>
+        [Parameter(ParameterSetName = DefaultParameterSet)]
+        public string Comment { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The reason for rebooting the computer.
+        /// </summary>
+        [Parameter(ParameterSetName = DefaultParameterSet)]         
+        public ShutdownReasons Reason { get; set; }
 
         /// <summary>
         /// Specify the Wait parameter. Prompt will be blocked is the Timeout is not 0.
@@ -786,12 +976,120 @@ $result
             // Validate parameters
             ValidateComputerNames();
 
-            object[] flags = new object[] { 2, 0 };
-            if (Force)
+            object[] flags = new object[] { 0, 0, 0, 2 };
+
+            flags[0] = RestartDelay;
+            flags[1] = Comment;
+            flags[2] = ShutdownReasons.Planned;
+
+            switch (Reason.ToString())
             {
-                flags[0] = forcedReboot;
+                case "Application":
+                    flags[2] = ShutdownReasons.Application;
+                    break;
+                case "Planned":
+                    flags[2] = ShutdownReasons.Planned;
+                    break;                    
+                case "Hardware":
+                    flags[2] = ShutdownReasons.Hardware;
+                    break;
+                case "OperatingSystem":
+                    flags[2] = ShutdownReasons.OperatingSystem;
+                    break;
+                case "Power":
+                    flags[2] = ShutdownReasons.Power;
+                    break;
+                case "Software":
+                    flags[2] = ShutdownReasons.Software;
+                    break;
+                case "System":
+                    flags[2] = ShutdownReasons.System;
+                    break;
+                case "BlueScreen":
+                    flags[2] = ShutdownReasons.BlueScreen;
+                    break;
+                case "Disk":
+                    flags[2] = ShutdownReasons.Disk;
+                    break;
+                case "Environment":
+                    flags[2] = ShutdownReasons.Environment;
+                    break;
+                case "Driver":
+                    flags[2] = ShutdownReasons.Driver;
+                    break;
+                case "HotFix":
+                    flags[2] = ShutdownReasons.HotFix;
+                    break;
+                case "HotFixUninstall":
+                    flags[2] = ShutdownReasons.HotFixUninstall;
+                    break;
+                case "Unresponsive":
+                    flags[2] = ShutdownReasons.Unresponsive;
+                    break;
+                case "Installation":
+                    flags[2] = ShutdownReasons.Installation;
+                    break;
+                case "Maintenance":
+                    flags[2] = ShutdownReasons.Maintenance;
+                    break;
+                case "MMC":
+                    flags[2] = ShutdownReasons.MMC;
+                    break;
+                case "NetworkConnectivity":
+                    flags[2] = ShutdownReasons.NetworkConnectivity;
+                    break;
+                case "NetworkCard":
+                    flags[2] = ShutdownReasons.NetworkCard;
+                    break;
+                case "Other":
+                    flags[2] = ShutdownReasons.Other;
+                    break;
+                case "OtherDriver":
+                    flags[2] = ShutdownReasons.OtherDriver;
+                    break;
+                case "PowerSupply":
+                    flags[2] = ShutdownReasons.PowerSupply;
+                    break;
+                case "Processor":
+                    flags[2] = ShutdownReasons.Processor;
+                    break;
+                case "Reconfigure":
+                    flags[2] = ShutdownReasons.Reconfigure;
+                    break;
+                case "SecurityIssue":
+                    flags[2] = ShutdownReasons.SecurityIssue;
+                    break;
+                case "SecurityPatch":
+                    flags[2] = ShutdownReasons.SecurityPatch;
+                    break;
+                case "SecurityPatchUninstallation":
+                    flags[2] = ShutdownReasons.SecurityPatchUninstallation;
+                    break;
+                case "ServicePack":
+                    flags[2] = ShutdownReasons.ServicePack;
+                    break;
+                case "ServicePackUninstallation":
+                    flags[2] = ShutdownReasons.ServicePackUninstallation;
+                    break;
+                case "TerminalServices":
+                    flags[2] = ShutdownReasons.TerminalServices;
+                    break;
+                case "Unstable":
+                    flags[2] = ShutdownReasons.Unstable;
+                    break;
+                case "Upgrade":
+                    flags[2] = ShutdownReasons.Upgrade;
+                    break;
+                case "WMI":
+                    flags[2] = ShutdownReasons.WMI;
+                    break;
+                default:
+                    flags[2] = ShutdownReasons.Other;
+                    break;                 
             }
 
+            if (Force) flags[3] = forcedReboot;
+            
             if (ParameterSetName.Equals(DefaultParameterSet, StringComparison.OrdinalIgnoreCase))
             {
                 if (Wait && _timeout != 0)
@@ -829,7 +1127,7 @@ $result
                     }
 
                     bool isSuccess =
-                        ComputerWMIHelper.InvokeWin32ShutdownUsingWsman(this, isLocal, compname, flags, Credential, WsmanAuthentication, ComputerResources.RestartcomputerFailed, "RestartcomputerFailed", _cancel.Token);
+                        ComputerWMIHelper.InvokeWin32ShutdownTrackerUsingWsman(this, isLocal, compname, flags, Credential, WsmanAuthentication, ComputerResources.RestartcomputerFailed, "RestartcomputerFailed", _cancel.Token);
 
                     if (isSuccess && Wait && _timeout != 0)
                     {
@@ -1170,6 +1468,25 @@ $result
         public PSCredential Credential { get; set; }
 
         /// <summary>
+        /// Specify a delay before the reboot occurs.
+        /// </summary>
+        [Parameter]
+        [ValidateRange(0, UInt32.MaxValue)]
+        public UInt32 ShutdownDelay { get; set; }
+    
+        /// <summary>
+        /// Provide a comment for rebooting the computer.
+        /// </summary>
+        [Parameter]
+        public string Comment { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The reason for rebooting the computer.
+        /// </summary>
+        [Parameter]         
+        public ShutdownReasons Reason { get; set; }
+
+        /// <summary>
         /// Force the operation to take place if possible.
         /// </summary>
         [Parameter]
@@ -1197,9 +1514,116 @@ $result
         [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling")]
         protected override void ProcessRecord()
         {
-            object[] flags = new object[] { 1, 0 };
+            object[] flags = new object[] { 0, 0, 0, 1 };
+            flags[0] = ShutdownDelay;
+            flags[1] = Comment;
+            flags[2] = ShutdownReasons.Planned;
+
+            switch (Reason.ToString())
+            {
+                case "Application":
+                    flags[2] = ShutdownReasons.Application;
+                    break;
+                case "Hardware":
+                    flags[2] = ShutdownReasons.Hardware;
+                    break;
+                case "OperatingSystem":
+                    flags[2] = ShutdownReasons.OperatingSystem;
+                    break;
+                case "Power":
+                    flags[2] = ShutdownReasons.Power;
+                    break;
+                case "Software":
+                    flags[2] = ShutdownReasons.Software;
+                    break;
+                case "System":
+                    flags[2] = ShutdownReasons.System;
+                    break;
+                case "BlueScreen":
+                    flags[2] = ShutdownReasons.BlueScreen;
+                    break;
+                case "Disk":
+                    flags[2] = ShutdownReasons.Disk;
+                    break;
+                case "Environment":
+                    flags[2] = ShutdownReasons.Environment;
+                    break;
+                case "Driver":
+                    flags[2] = ShutdownReasons.Driver;
+                    break;
+                case "HotFix":
+                    flags[2] = ShutdownReasons.HotFix;
+                    break;
+                case "HotFixUninstall":
+                    flags[2] = ShutdownReasons.HotFixUninstall;
+                    break;
+                case "Unresponsive":
+                    flags[2] = ShutdownReasons.Unresponsive;
+                    break;
+                case "Installation":
+                    flags[2] = ShutdownReasons.Installation;
+                    break;
+                case "Maintenance":
+                    flags[2] = ShutdownReasons.Maintenance;
+                    break;
+                case "MMC":
+                    flags[2] = ShutdownReasons.MMC;
+                    break;
+                case "NetworkConnectivity":
+                    flags[2] = ShutdownReasons.NetworkConnectivity;
+                    break;
+                case "NetworkCard":
+                    flags[2] = ShutdownReasons.NetworkCard;
+                    break;
+                case "Other":
+                    flags[2] = ShutdownReasons.Other;
+                    break;
+                case "OtherDriver":
+                    flags[2] = ShutdownReasons.OtherDriver;
+                    break;
+                case "PowerSupply":
+                    flags[2] = ShutdownReasons.PowerSupply;
+                    break;
+                case "Processor":
+                    flags[2] = ShutdownReasons.Processor;
+                    break;
+                case "Reconfigure":
+                    flags[2] = ShutdownReasons.Reconfigure;
+                    break;
+                case "SecurityIssue":
+                    flags[2] = ShutdownReasons.SecurityIssue;
+                    break;
+                case "SecurityPatch":
+                    flags[2] = ShutdownReasons.SecurityPatch;
+                    break;
+                case "SecurityPatchUninstallation":
+                    flags[2] = ShutdownReasons.SecurityPatchUninstallation;
+                    break;
+                case "ServicePack":
+                    flags[2] = ShutdownReasons.ServicePack;
+                    break;
+                case "ServicePackUninstallation":
+                    flags[2] = ShutdownReasons.ServicePackUninstallation;
+                    break;
+                case "TerminalServices":
+                    flags[2] = ShutdownReasons.TerminalServices;
+                    break;
+                case "Unstable":
+                    flags[2] = ShutdownReasons.Unstable;
+                    break;
+                case "Upgrade":
+                    flags[2] = ShutdownReasons.Upgrade;
+                    break;
+                case "WMI":
+                    flags[2] = ShutdownReasons.WMI;
+                    break;
+                default:
+                    flags[2] = ShutdownReasons.Other;
+                    break;                    
+            }
+            
             if (Force.IsPresent)
-                flags[0] = forcedShutdown;
+                flags[3] = forcedShutdown;
 
             ProcessWSManProtocol(flags);
         }
@@ -1251,7 +1675,7 @@ $result
                 }
                 else
                 {
-                    ComputerWMIHelper.InvokeWin32ShutdownUsingWsman(
+                    ComputerWMIHelper.InvokeWin32ShutdownTrackerUsingWsman(
                         this,
                         isLocalHost,
                         compname,
@@ -1541,8 +1965,8 @@ $result
                             if (_restart)
                             {
                                 // If successful and the Restart parameter is specified, restart the computer
-                                object[] flags = new object[] { 6, 0 };
-                                ComputerWMIHelper.InvokeWin32ShutdownUsingWsman(
+                                object[] flags = new object[] { 0, 0, 0, 6 };
+                                ComputerWMIHelper.InvokeWin32ShutdownTrackerUsingWsman(
                                     this,
                                     isLocalhost,
                                     computerName,
@@ -1787,7 +2211,7 @@ $result
         /// <summary>
         /// CimOperatingSystemShutdownMethod.
         /// </summary>
-        internal const string CimOperatingSystemShutdownMethod = "Win32shutdown";
+        internal const string CimOperatingSystemShutdownMethod = "Win32ShutdownTracker";
 
         /// <summary>
         /// CimQueryDialect.
@@ -2040,21 +2464,21 @@ $result
         }
 
         /// <summary>
-        /// Invokes the Win32Shutdown command on provided target computer using WSMan
+        /// Invokes the Win32ShutdownTracker command on provided target computer using WSMan
         /// over a CIMSession.  The flags parameter determines the type of shutdown operation
         /// such as shutdown, reboot, force etc.
         /// </summary>
         /// <param name="cmdlet">Cmdlet host for reporting errors.</param>
         /// <param name="isLocalhost">True if local host computer.</param>
         /// <param name="computerName">Target computer.</param>
-        /// <param name="flags">Win32Shutdown flags.</param>
+        /// <param name="flags">Win32ShutdownTracker flags.</param>
         /// <param name="credential">Optional credential.</param>
         /// <param name="authentication">Optional authentication.</param>
         /// <param name="formatErrorMessage">Error message format string that takes two parameters.</param>
         /// <param name="ErrorFQEID">Fully qualified error Id.</param>
         /// <param name="cancelToken">Cancel token.</param>
         /// <returns>True on success.</returns>
-        internal static bool InvokeWin32ShutdownUsingWsman(
+        internal static bool InvokeWin32ShutdownTrackerUsingWsman(
             PSCmdlet cmdlet,
             bool isLocalhost,
             string computerName,
@@ -2065,7 +2489,7 @@ $result
             string ErrorFQEID,
             CancellationToken cancelToken)
         {
-            Dbg.Diagnostics.Assert(flags.Length == 2, "Caller need to verify the flags passed in");
+            Dbg.Diagnostics.Assert(flags.Length == 4, "Caller need to verify the flags passed in");
 
             bool isSuccess = false;
             string targetMachine = isLocalhost ? "localhost" : computerName;
@@ -2098,14 +2522,26 @@ $result
                     var methodParameters = new CimMethodParametersCollection();
                     int retVal;
                     methodParameters.Add(CimMethodParameter.Create(
-                        "Flags",
+                        "Timeout",
                         flags[0],
-                        Microsoft.Management.Infrastructure.CimType.SInt32,
+                        Microsoft.Management.Infrastructure.CimType.UInt32,
                         CimFlags.None));
 
                     methodParameters.Add(CimMethodParameter.Create(
-                        "Reserved",
+                        "Comment",
                         flags[1],
+                        Microsoft.Management.Infrastructure.CimType.String,
+                        CimFlags.None));
+
+                    methodParameters.Add(CimMethodParameter.Create(
+                        "ReasonCode",
+                        flags[2],
+                        Microsoft.Management.Infrastructure.CimType.UInt32,
+                        CimFlags.None));
+
+                    methodParameters.Add(CimMethodParameter.Create(
+                        "Flags",
+                        flags[3],
                         Microsoft.Management.Infrastructure.CimType.SInt32,
                         CimFlags.None));
 
