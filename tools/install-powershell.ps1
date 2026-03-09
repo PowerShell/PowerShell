@@ -253,6 +253,7 @@ if (-not $IsWinEnv) {
 } else {
     switch ($env:PROCESSOR_ARCHITECTURE) {
         "AMD64" { $architecture = "x64" }
+        "ARM64" { $architecture = "arm64" }
         "x86" { $architecture = "x86" }
         default { throw "PowerShell package for OS architecture '$_' is not supported." }
     }
