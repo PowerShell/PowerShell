@@ -25,11 +25,8 @@ parameters:
     displayName: Enable MSBuild Binary Logs
     type: boolean
     default: false
-  - name: OfficialBuild
-    type: boolean
-    default: false
 
-name: bins-$(BUILD.SOURCEBRANCHNAME)-prod.${{ parameters.OfficialBuild }}-$(Build.BuildId)
+name: bins-$(BUILD.SOURCEBRANCHNAME)-prod.true-$(Build.BuildId)
 
 resources:
   repositories:
@@ -77,9 +74,8 @@ variables:
   - group: mscodehub-feed-read-general
   - group: mscodehub-feed-read-akv
   - name: ENABLE_MSBUILD_BINLOGS
+  - name: ENABLE_MSBUILD_BINLOGS
     value: ${{ parameters.ENABLE_MSBUILD_BINLOGS }}
-  - name: templateFile
-    value: ${{ iif ( parameters.OfficialBuild, 'v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates', 'v2/OneBranch.NonOfficial.CrossPlat.yml@onebranchTemplates' ) }}
   # Fix for BinSkim ICU package error in Linux containers
   - name: DOTNET_SYSTEM_GLOBALIZATION_INVARIANT
     value: true
@@ -87,10 +83,10 @@ variables:
   - name: ob_sdl_binskim_enabled
     value: false
   - name: ps_official_build
-    value: ${{ parameters.OfficialBuild }}
+    value: true
 
 extends:
-  template: ${{ variables.templateFile }}
+  template: v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates
   parameters:
     customTags: 'ES365AIMigrationTooling'
     featureFlags:
