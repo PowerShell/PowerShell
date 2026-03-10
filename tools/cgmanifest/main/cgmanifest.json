@@ -125,7 +125,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Extensions.ObjectPool",
-          "Version": "8.0.24"
+          "Version": "8.0.25"
         }
       },
       "DevelopmentDependency": false
@@ -185,7 +185,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Windows.Compatibility",
-          "Version": "8.0.24"
+          "Version": "8.0.25"
         }
       },
       "DevelopmentDependency": false
@@ -465,7 +465,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Drawing.Common",
-          "Version": "8.0.24"
+          "Version": "8.0.25"
         }
       },
       "DevelopmentDependency": false
