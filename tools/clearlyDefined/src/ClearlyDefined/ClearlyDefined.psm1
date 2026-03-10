@@ -40,19 +40,30 @@ function ConvertFrom-ClearlyDefinedCoordinates {
     [CmdletBinding()]
     param(
         [parameter(mandatory = $true, ValueFromPipeline = $true)]
-        [string]
+        [object]
         $Coordinates
     )
 
     Begin {}
     Process {
-        $parts = $Coordinates.Split('/')
-        [PSCustomObject]@{
-            type = $parts[0]
-            provider = $parts[1]
-            namespace = $parts[2]
-            name = $parts[3]
-            revision = $parts[4]
+        if ($Coordinates -is [string]) {
+            $parts = $Coordinates.Split('/')
+            [PSCustomObject]@{
+                type = $parts[0]
+                provider = $parts[1]
+                namespace = $parts[2]
+                name = $parts[3]
+                revision = $parts[4]
+            }
+        } else {
+            # Coordinates is already an object (e.g., from ClearlyDefined API response)
+            [PSCustomObject]@{
+                type = $Coordinates.type
+                provider = $Coordinates.provider
+                namespace = $Coordinates.namespace
+                name = $Coordinates.name
+                revision = $Coordinates.revision
+            }
         }
     }
     End {}
