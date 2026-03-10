@@ -1,5 +1,4 @@
 {
-  "$schema": "https://json.schemastore.org/component-detection-manifest.json",
   "Registrations": [
     {
       "Component": {
@@ -86,7 +85,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Bcl.AsyncInterfaces",
-          "Version": "8.0.0"
+          "Version": "9.0.10"
         }
       },
       "DevelopmentDependency": false
@@ -116,7 +115,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Extensions.ObjectPool",
-          "Version": "8.0.21"
+          "Version": "9.0.10"
         }
       },
       "DevelopmentDependency": false
@@ -656,7 +655,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Reflection.Metadata",
-          "Version": "8.0.1"
+          "Version": "9.0.10"
         }
       },
       "DevelopmentDependency": false
@@ -861,5 +860,6 @@
       },
       "DevelopmentDependency": false
     }
-  ]
+  ],
+  "$schema": "https://json.schemastore.org/component-detection-manifest.json"
 }
