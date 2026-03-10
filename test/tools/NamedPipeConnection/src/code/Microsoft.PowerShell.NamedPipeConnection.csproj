@@ -15,6 +15,14 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="Microsoft.PowerShell.CoreCLR.Eventing" Version="7.6.0-preview.6" />
+    <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="9.0.14" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="9.0.14" />
+    <PackageReference Include="System.DirectoryServices" Version="9.0.14" />
+    <PackageReference Include="System.Management" Version="9.0.14" />
     <PackageReference Include="System.Management.Automation" Version="7.6.0-preview.2" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="9.0.14" />
+    <PackageReference Include="System.Security.Permissions" Version="9.0.14" />
   </ItemGroup>
 </Project>
