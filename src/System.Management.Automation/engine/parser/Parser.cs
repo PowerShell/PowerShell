@@ -5346,6 +5346,7 @@ namespace System.Management.Automation.Language
                 case TokenKind.AndAnd:
                 case TokenKind.OrOr:
                 case TokenKind.Ampersand:
+                case TokenKind.AmpersandExclaim:
                 case TokenKind.Variable:
                 case TokenKind.SplattedVariable:
                 case TokenKind.HereStringExpandable:
@@ -6358,6 +6359,7 @@ namespace System.Management.Automation.Language
                     case TokenKind.AndAnd:
                     case TokenKind.OrOr:
                     case TokenKind.Ampersand:
+                    case TokenKind.AmpersandExclaim:
                     case TokenKind.MinusMinus:
                     case TokenKind.Comma:
                         UngetToken(token);
@@ -6562,6 +6564,7 @@ namespace System.Management.Automation.Language
                         case TokenKind.AndAnd:
                         case TokenKind.OrOr:
                         case TokenKind.Ampersand:
+                        case TokenKind.AmpersandExclaim:
                             UngetToken(token);
                             scanning = false;
                             continue;
