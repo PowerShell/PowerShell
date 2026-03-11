@@ -554,8 +554,10 @@ namespace System.Management.Automation
                 
                 // Check if the pipeline is already a script block expression (e.g., {1+1} &!)
                 // In this case, we should use the script block directly instead of wrapping it
-                var scriptBlockExpr = pipelineAst.PipelineElements.Count == 1 &&
-                                       pipelineAst.PipelineElements[0] is CommandExpressionAst cmdExpr &&
+                // Note: PipelineElements is only available on PipelineAst, not PipelineBaseAst
+                var scriptBlockExpr = pipelineAst is PipelineAst pipeline &&
+                                       pipeline.PipelineElements.Count == 1 &&
+                                       pipeline.PipelineElements[0] is CommandExpressionAst cmdExpr &&
                                        cmdExpr.Expression is ScriptBlockExpressionAst sbExpr
                                        ? sbExpr
                                        : null;
