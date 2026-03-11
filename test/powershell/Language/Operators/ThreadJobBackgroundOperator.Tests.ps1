@@ -14,109 +14,248 @@ Describe "ThreadJob Background Operator &! Tests" -Tag CI {
     Context "Runtime ThreadJob Tests" {
         It "Creates a background job with &! operator" {
             $job = Write-Output "Hello from ThreadJob" &!
-            $job | Should -Not -BeNullOrEmpty
-            $job | Should -BeOfType [System.Management.Automation.Job]
-            $job | Wait-Job | Remove-Job
+            try {
+                $job | Should -Not -BeNullOrEmpty
+                $job | Should -BeOfType [System.Management.Automation.Job]
+
+                $completedJob = $job | Wait-Job -Timeout 30
+                if (-not $completedJob) {
+                    throw "Job did not complete within the allotted timeout (30 seconds)."
+                }
+            }
+            finally {
+                if ($null -ne $job) {
+                    $job | Remove-Job -Force -ErrorAction Ignore
+                }
+            }
         }
 
         It "Receives output from ThreadJob background job" {
             $job = Write-Output "Test Output" &!
-            $result = $job | Wait-Job | Receive-Job
-            $result | Should -Be "Test Output"
-            $job | Remove-Job
+            try {
+                $completedJob = $job | Wait-Job -Timeout 30
+                if (-not $completedJob) {
+                    throw "Job did not complete within the allotted timeout (30 seconds)."
+                }
+
+                $result = $completedJob | Receive-Job
+                $result | Should -Be "Test Output"
+            }
+            finally {
+                if ($null -ne $job) {
+                    $job | Remove-Job -Force -ErrorAction Ignore
+                }
+            }
         }
 
         It "Runs simple expression as ThreadJob" {
             $job = 1 + 1 &!
-            $result = $job | Wait-Job | Receive-Job
-            $result | Should -Be 2
-            $job | Remove-Job
+            try {
+                $completedJob = $job | Wait-Job -Timeout 30
+                if (-not $completedJob) {
+                    throw "Job did not complete within the allotted timeout (30 seconds)."
+                }
+
+                $result = $completedJob | Receive-Job
+                $result | Should -Be 2
+            }
+            finally {
+                if ($null -ne $job) {
+                    $job | Remove-Job -Force -ErrorAction Ignore
+                }
+            }
         }
 
         It "Validates ThreadJob is created when Start-ThreadJob is available" -Skip:(-not $threadJobAvailable) {
             $job = Write-Output "ThreadJob Test" &!
-            $job | Should -Not -BeNullOrEmpty
-            # ThreadJobs have a PSTypeName that includes 'ThreadJob'
-            $job.PSObject.TypeNames | Should -Contain 'ThreadJob'
-            $job | Wait-Job | Remove-Job
+            try {
+                $job | Should -Not -BeNullOrEmpty
+                $job.PSJobTypeName | Should -Be 'ThreadJob'
+
+                $completedJob = $job | Wait-Job -Timeout 30
+                if (-not $completedJob) {
+                    throw "Job did not complete within the allotted timeout (30 seconds)."
+                }
+            }
+            finally {
+                if ($null -ne $job) {
+                    $job | Remove-Job -Force -ErrorAction Ignore
+                }
+            }
         }
 
         It "Falls back to regular job when Start-ThreadJob is unavailable" -Skip:$threadJobAvailable {
             # This test runs only when ThreadJob is not available
             $job = Write-Output "Fallback Test" &!
-            $job | Should -Not -BeNullOrEmpty
-            $job | Should -BeOfType [System.Management.Automation.Job]
-            # Should not be a ThreadJob
-            $job.PSObject.TypeNames | Should -Not -Contain 'ThreadJob'
-            $job | Wait-Job | Remove-Job
+            try {
+                $job | Should -Not -BeNullOrEmpty
+                $job | Should -BeOfType [System.Management.Automation.Job]
+                # Should not be a ThreadJob
+                $job.PSJobTypeName | Should -Not -Be 'ThreadJob'
+
+                $completedJob = $job | Wait-Job -Timeout 30
+                if (-not $completedJob) {
+                    throw "Job did not complete within the allotted timeout (30 seconds)."
+                }
+            }
+            finally {
+                if ($null -ne $job) {
+                    $job | Remove-Job -Force -ErrorAction Ignore
+                }
+            }
         }
 
         It "Captures variables automatically without explicit $using:" {
             $testVar = "CapturedValue"
             $job = Write-Output $testVar &!
-            $result = $job | Wait-Job | Receive-Job
-            $result | Should -Be "CapturedValue"
-            $job | Remove-Job
+            try {
+                $completedJob = $job | Wait-Job -Timeout 30
+                if (-not $completedJob) {
+                    throw "Job did not complete within the allotted timeout (30 seconds)."
+                }
+
+                $result = $completedJob | Receive-Job
+                $result | Should -Be "CapturedValue"
+            }
+            finally {
+                if ($null -ne $job) {
+                    $job | Remove-Job -Force -ErrorAction Ignore
+                }
+            }
         }
 
         It "Captures variables with explicit $using: in scriptblock" {
             $testVar = "CapturedValueWithUsing"
             $job = { $using:testVar } &!
-            $result = $job | Wait-Job | Receive-Job
-            $result | Should -Be "CapturedValueWithUsing"
-            $job | Remove-Job
+            try {
+                $completedJob = $job | Wait-Job -Timeout 30
+                if (-not $completedJob) {
+                    throw "Job did not complete within the allotted timeout (30 seconds)."
+                }
+
+                $result = $completedJob | Receive-Job
+                $result | Should -Be "CapturedValueWithUsing"
+            }
+            finally {
+                if ($null -ne $job) {
+                    $job | Remove-Job -Force -ErrorAction Ignore
+                }
+            }
         }
 
         It "Runs pipeline as ThreadJob" {
             $job = 1,2,3 | ForEach-Object { $_ * 2 } &!
-            $result = $job | Wait-Job | Receive-Job
-            $result | Should -Be @(2, 4, 6)
-            $job | Remove-Job
+            try {
+                $completedJob = $job | Wait-Job -Timeout 30
+                if (-not $completedJob) {
+                    throw "Job did not complete within the allotted timeout (30 seconds)."
+                }
+
+                $result = $completedJob | Receive-Job
+                $result | Should -Be @(2, 4, 6)
+            }
+            finally {
+                if ($null -ne $job) {
+                    $job | Remove-Job -Force -ErrorAction Ignore
+                }
+            }
         }
 
         It "Works with variable assignment" {
             $job = 1 + 2 &!
-            $job | Should -Not -BeNullOrEmpty
-            $result = $job | Wait-Job | Receive-Job
-            $result | Should -Be 3
-            $job | Remove-Job
+            try {
+                $job | Should -Not -BeNullOrEmpty
+
+                $completedJob = $job | Wait-Job -Timeout 30
+                if (-not $completedJob) {
+                    throw "Job did not complete within the allotted timeout (30 seconds)."
+                }
+
+                $result = $completedJob | Receive-Job
+                $result | Should -Be 3
+            }
+            finally {
+                if ($null -ne $job) {
+                    $job | Remove-Job -Force -ErrorAction Ignore
+                }
+            }
         }
 
         It "Can be combined with && operator" {
             $job = testexe -returncode 0 && Write-Output "success" &!
-            $job | Should -Not -BeNullOrEmpty
-            $job | Should -BeOfType [System.Management.Automation.Job]
-            $result = $job | Wait-Job | Receive-Job
-            $result | Should -Contain "0"
-            $result | Should -Contain "success"
-            $job | Remove-Job
+            try {
+                $job | Should -Not -BeNullOrEmpty
+                $job | Should -BeOfType [System.Management.Automation.Job]
+
+                $completedJob = $job | Wait-Job -Timeout 30
+                if (-not $completedJob) {
+                    throw "Job did not complete within the allotted timeout (30 seconds)."
+                }
+
+                $result = $completedJob | Receive-Job
+                $result | Should -Contain "0"
+                $result | Should -Contain "success"
+            }
+            finally {
+                if ($null -ne $job) {
+                    $job | Remove-Job -Force -ErrorAction Ignore
+                }
+            }
         }
 
         It "Works with command execution" {
             $job = Get-Process -Id $PID | Select-Object -ExpandProperty Name &!
-            $result = $job | Wait-Job | Receive-Job
-            $result | Should -Not -BeNullOrEmpty
-            $job | Remove-Job
+            try {
+                $completedJob = $job | Wait-Job -Timeout 30
+                if (-not $completedJob) {
+                    throw "Job did not complete within the allotted timeout (30 seconds)."
+                }
+
+                $result = $completedJob | Receive-Job
+                $result | Should -Not -BeNullOrEmpty
+            }
+            finally {
+                if ($null -ne $job) {
+                    $job | Remove-Job -Force -ErrorAction Ignore
+                }
+            }
         }
 
         It "Handles errors in ThreadJob" {
             $job = { throw "Test Error" } &!
-            $job | Wait-Job
-            $job.State | Should -Be 'Failed'
-            $job | Remove-Job
+            try {
+                $completedJob = $job | Wait-Job -Timeout 30
+                if (-not $completedJob) {
+                    throw "Job did not complete within the allotted timeout (30 seconds)."
+                }
+
+                $completedJob.State | Should -Be 'Failed'
+            }
+            finally {
+                if ($null -ne $job) {
+                    $job | Remove-Job -Force -ErrorAction Ignore
+                }
+            }
         }
 
         It "Creates multiple ThreadJobs" {
             $job1 = Write-Output "Job1" &!
             $job2 = Write-Output "Job2" &!
             $job3 = Write-Output "Job3" &!
-            
-            $results = $job1, $job2, $job3 | Wait-Job | Receive-Job
-            $results | Should -Contain "Job1"
-            $results | Should -Contain "Job2"
-            $results | Should -Contain "Job3"
-            
-            $job1, $job2, $job3 | Remove-Job
+            try {
+                $completedJobs = $job1, $job2, $job3 | Wait-Job -Timeout 30
+                if ($completedJobs.Count -ne 3) {
+                    throw "Not all jobs completed within the allotted timeout (30 seconds)."
+                }
+
+                $results = $completedJobs | Receive-Job
+                $results | Should -Contain "Job1"
+                $results | Should -Contain "Job2"
+                $results | Should -Contain "Job3"
+            }
+            finally {
+                $job1, $job2, $job3 | Where-Object { $null -ne $_ } | Remove-Job -Force -ErrorAction Ignore
+            }
         }
     }
 
