@@ -6028,6 +6028,7 @@ namespace System.Management.Automation.Language
             Token nextToken = null;
             bool scanning = true;
             bool background = false;
+            bool backgroundThreadJob = false;
             ExpressionAst expr = startExpression;
             while (scanning)
             {
@@ -6190,7 +6191,12 @@ namespace System.Management.Automation.Language
                 return null;
             }
 
-            return new PipelineAst(ExtentOf(startExtent, pipelineElements[pipelineElements.Count - 1]), pipelineElements, background);
+            var pipeline = new PipelineAst(ExtentOf(startExtent, pipelineElements[pipelineElements.Count - 1]), pipelineElements, background);
+            if (backgroundThreadJob)
+            {
+                pipeline.BackgroundThreadJob = true;
+            }
+            return pipeline;
         }
 
         private RedirectionAst RedirectionRule(RedirectionToken redirectionToken, RedirectionAst[] redirections, ref IScriptExtent extent)
