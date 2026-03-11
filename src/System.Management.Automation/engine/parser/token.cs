@@ -164,435 +164,435 @@ namespace System.Management.Automation.Language
         /// <summary>The invocation operator '&amp;'.</summary>
         Ampersand = 28,
 
-        /// <summary>The ThreadJob background operator '&amp;!'.</summary>
-        AmpersandExclaim = 29,
-
         /// <summary>The pipe operator '|'.</summary>
-        Pipe = 30,
+        Pipe = 29,
 
         /// <summary>The unary or binary array operator ','.</summary>
-        Comma = 31,
+        Comma = 30,
 
         /// <summary>The pre-decrement operator '--'.</summary>
-        MinusMinus = 32,
+        MinusMinus = 31,
 
         /// <summary>The pre-increment operator '++'.</summary>
-        PlusPlus = 33,
+        PlusPlus = 32,
 
         /// <summary>The range operator '..'.</summary>
-        DotDot = 34,
+        DotDot = 33,
 
         /// <summary>The static member access operator '::'.</summary>
-        ColonColon = 35,
+        ColonColon = 34,
 
         /// <summary>The instance member access or dot source invocation operator '.'.</summary>
-        Dot = 36,
+        Dot = 35,
 
         /// <summary>The logical not operator '!'.</summary>
-        Exclaim = 37,
+        Exclaim = 36,
 
         /// <summary>The multiplication operator '*'.</summary>
-        Multiply = 38,
+        Multiply = 37,
 
         /// <summary>The division operator '/'.</summary>
-        Divide = 39,
+        Divide = 38,
 
         /// <summary>The modulo division (remainder) operator '%'.</summary>
-        Rem = 40,
+        Rem = 39,
 
         /// <summary>The addition operator '+'.</summary>
-        Plus = 41,
+        Plus = 40,
 
         /// <summary>The subtraction operator '-'.</summary>
-        Minus = 42,
+        Minus = 41,
 
         /// <summary>The assignment operator '='.</summary>
-        Equals = 43,
+        Equals = 42,
 
         /// <summary>The addition assignment operator '+='.</summary>
-        PlusEquals = 44,
+        PlusEquals = 43,
 
         /// <summary>The subtraction assignment operator '-='.</summary>
-        MinusEquals = 45,
+        MinusEquals = 44,
 
         /// <summary>The multiplication assignment operator '*='.</summary>
-        MultiplyEquals = 46,
+        MultiplyEquals = 45,
 
         /// <summary>The division assignment operator '/='.</summary>
-        DivideEquals = 47,
+        DivideEquals = 46,
 
         /// <summary>The modulo division (remainder) assignment operator '%='.</summary>
-        RemainderEquals = 48,
+        RemainderEquals = 47,
 
         /// <summary>A redirection operator such as '2>&amp;1' or '>>'.</summary>
-        Redirection = 49,
+        Redirection = 48,
 
         /// <summary>The (unimplemented) stdin redirection operator '&lt;'.</summary>
-        RedirectInStd = 50,
+        RedirectInStd = 49,
 
         /// <summary>The string format operator '-f'.</summary>
-        Format = 51,
+        Format = 50,
 
         /// <summary>The logical not operator '-not'.</summary>
-        Not = 52,
+        Not = 51,
 
         /// <summary>The bitwise not operator '-bnot'.</summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        Bnot = 53,
+        Bnot = 52,
 
         /// <summary>The logical and operator '-and'.</summary>
-        And = 54,
+        And = 53,
 
         /// <summary>The logical or operator '-or'.</summary>
-        Or = 55,
+        Or = 54,
 
         /// <summary>The logical exclusive or operator '-xor'.</summary>
-        Xor = 56,
+        Xor = 55,
 
         /// <summary>The bitwise and operator '-band'.</summary>
-        Band = 57,
+        Band = 56,
 
         /// <summary>The bitwise or operator '-bor'.</summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        Bor = 58,
+        Bor = 57,
 
         /// <summary>The bitwise exclusive or operator '-xor'.</summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        Bxor = 59,
+        Bxor = 58,
 
         /// <summary>The join operator '-join'.</summary>
-        Join = 60,
+        Join = 59,
 
         /// <summary>The case insensitive equal operator '-ieq' or '-eq'.</summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        Ieq = 61,
+        Ieq = 60,
 
         /// <summary>The case insensitive not equal operator '-ine' or '-ne'.</summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        Ine = 62,
+        Ine = 61,
 
         /// <summary>The case insensitive greater than or equal operator '-ige' or '-ge'.</summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        Ige = 63,
+        Ige = 62,
 
         /// <summary>The case insensitive greater than operator '-igt' or '-gt'.</summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        Igt = 64,
+        Igt = 63,
 
         /// <summary>The case insensitive less than operator '-ilt' or '-lt'.</summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        Ilt = 65,
+        Ilt = 64,
 
         /// <summary>The case insensitive less than or equal operator '-ile' or '-le'.</summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        Ile = 66,
+        Ile = 65,
 
         /// <summary>The case insensitive like operator '-ilike' or '-like'.</summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        Ilike = 67,
+        Ilike = 66,
 
         /// <summary>The case insensitive not like operator '-inotlike' or '-notlike'.</summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        Inotlike = 68,
+        Inotlike = 67,
 
         /// <summary>The case insensitive match operator '-imatch' or '-match'.</summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        Imatch = 69,
+        Imatch = 68,
 
         /// <summary>The case insensitive not match operator '-inotmatch' or '-notmatch'.</summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        Inotmatch = 70,
+        Inotmatch = 69,
 
         /// <summary>The case insensitive replace operator '-ireplace' or '-replace'.</summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        Ireplace = 71,
+        Ireplace = 70,
 
         /// <summary>The case insensitive contains operator '-icontains' or '-contains'.</summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        Icontains = 72,
+        Icontains = 71,
 
         /// <summary>The case insensitive notcontains operator '-inotcontains' or '-notcontains'.</summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        Inotcontains = 73,
+        Inotcontains = 72,
 
         /// <summary>The case insensitive in operator '-iin' or '-in'.</summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        Iin = 74,
+        Iin = 73,
 
         /// <summary>The case insensitive notin operator '-inotin' or '-notin'</summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        Inotin = 75,
+        Inotin = 74,
 
         /// <summary>The case insensitive split operator '-isplit' or '-split'.</summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        Isplit = 76,
+        Isplit = 75,
 
         /// <summary>The case sensitive equal operator '-ceq'.</summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        Ceq = 77,
+        Ceq = 76,
 
         /// <summary>The case sensitive not equal operator '-cne'.</summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        Cne = 78,
+        Cne = 77,
 
         /// <summary>The case sensitive greater than or equal operator '-cge'.</summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        Cge = 79,
+        Cge = 78,
 
         /// <summary>The case sensitive greater than operator '-cgt'.</summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        Cgt = 80,
+        Cgt = 79,
 
         /// <summary>The case sensitive less than operator '-clt'.</summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        Clt = 81,
+        Clt = 80,
 
         /// <summary>The case sensitive less than or equal operator '-cle'.</summary>
-        Cle = 82,
+        Cle = 81,
 
         /// <summary>The case sensitive like operator '-clike'.</summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        Clike = 83,
+        Clike = 82,
 
         /// <summary>The case sensitive notlike operator '-cnotlike'.</summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        Cnotlike = 84,
+        Cnotlike = 83,
 
         /// <summary>The case sensitive match operator '-cmatch'.</summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        Cmatch = 85,
+        Cmatch = 84,
 
         /// <summary>The case sensitive not match operator '-cnotmatch'.</summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        Cnotmatch = 86,
+        Cnotmatch = 85,
 
         /// <summary>The case sensitive replace operator '-creplace'.</summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        Creplace = 87,
+        Creplace = 86,
 
         /// <summary>The case sensitive contains operator '-ccontains'.</summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        Ccontains = 88,
+        Ccontains = 87,
 
         /// <summary>The case sensitive not contains operator '-cnotcontains'.</summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        Cnotcontains = 89,
+        Cnotcontains = 88,
 
         /// <summary>The case sensitive in operator '-cin'.</summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        Cin = 90,
+        Cin = 89,
 
         /// <summary>The case sensitive not in operator '-notin'.</summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        Cnotin = 91,
+        Cnotin = 90,
 
         /// <summary>The case sensitive split operator '-csplit'.</summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        Csplit = 92,
+        Csplit = 91,
 
         /// <summary>The type test operator '-is'.</summary>
-        Is = 93,
+        Is = 92,
 
         /// <summary>The type test operator '-isnot'.</summary>
-        IsNot = 94,
+        IsNot = 93,
 
         /// <summary>The type conversion operator '-as'.</summary>
-        As = 95,
+        As = 94,
 
         /// <summary>The post-increment operator '++'.</summary>
-        PostfixPlusPlus = 96,
+        PostfixPlusPlus = 95,
 
         /// <summary>The post-decrement operator '--'.</summary>
-        PostfixMinusMinus = 97,
+        PostfixMinusMinus = 96,
 
         /// <summary>The shift left operator.</summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        Shl = 98,
+        Shl = 97,
 
         /// <summary>The shift right operator.</summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        Shr = 99,
+        Shr = 98,
 
         /// <summary>The PS class base class and implemented interfaces operator ':'. Also used in base class ctor calls.</summary>
-        Colon = 100,
+        Colon = 99,
 
         /// <summary>The ternary operator '?'.</summary>
-        QuestionMark = 101,
+        QuestionMark = 100,
 
         /// <summary>The null conditional assignment operator '??='.</summary>
-        QuestionQuestionEquals = 102,
+        QuestionQuestionEquals = 101,
 
         /// <summary>The null coalesce operator '??'.</summary>
-        QuestionQuestion = 103,
+        QuestionQuestion = 102,
 
         /// <summary>The null conditional member access operator '?.'.</summary>
-        QuestionDot = 104,
+        QuestionDot = 103,
 
         /// <summary>The null conditional index access operator '?[]'.</summary>
-        QuestionLBracket = 105,
+        QuestionLBracket = 104,
 
         #endregion Operators
 
         #region Keywords
 
         /// <summary>The 'begin' keyword.</summary>
-        Begin = 120,
+        Begin = 119,
 
         /// <summary>The 'break' keyword.</summary>
-        Break = 121,
+        Break = 120,
 
         /// <summary>The 'catch' keyword.</summary>
-        Catch = 122,
+        Catch = 121,
 
         /// <summary>The 'class' keyword.</summary>
-        Class = 123,
+        Class = 122,
 
         /// <summary>The 'continue' keyword.</summary>
-        Continue = 124,
+        Continue = 123,
 
         /// <summary>The 'data' keyword.</summary>
-        Data = 125,
+        Data = 124,
 
         /// <summary>The (unimplemented) 'define' keyword.</summary>
-        Define = 126,
+        Define = 125,
 
         /// <summary>The 'do' keyword.</summary>
-        Do = 127,
+        Do = 126,
 
         /// <summary>The 'dynamicparam' keyword.</summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        Dynamicparam = 128,
+        Dynamicparam = 127,
 
         /// <summary>The 'else' keyword.</summary>
-        Else = 129,
+        Else = 128,
 
         /// <summary>The 'elseif' keyword.</summary>
-        ElseIf = 130,
+        ElseIf = 129,
 
         /// <summary>The 'end' keyword.</summary>
-        End = 131,
+        End = 130,
 
         /// <summary>The 'exit' keyword.</summary>
-        Exit = 132,
+        Exit = 131,
 
         /// <summary>The 'filter' keyword.</summary>
-        Filter = 133,
+        Filter = 132,
 
         /// <summary>The 'finally' keyword.</summary>
-        Finally = 134,
+        Finally = 133,
 
         /// <summary>The 'for' keyword.</summary>
-        For = 135,
+        For = 134,
 
         /// <summary>The 'foreach' keyword.</summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        Foreach = 136,
+        Foreach = 135,
 
         /// <summary>The (unimplemented) 'from' keyword.</summary>
-        From = 137,
+        From = 136,
 
         /// <summary>The 'function' keyword.</summary>
-        Function = 138,
+        Function = 137,
 
         /// <summary>The 'if' keyword.</summary>
-        If = 139,
+        If = 138,
 
         /// <summary>The 'in' keyword.</summary>
-        In = 140,
+        In = 139,
 
         /// <summary>The 'param' keyword.</summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        Param = 141,
+        Param = 140,
 
         /// <summary>The 'process' keyword.</summary>
-        Process = 142,
+        Process = 141,
 
         /// <summary>The 'return' keyword.</summary>
-        Return = 143,
+        Return = 142,
 
         /// <summary>The 'switch' keyword.</summary>
-        Switch = 144,
+        Switch = 143,
 
         /// <summary>The 'throw' keyword.</summary>
-        Throw = 145,
+        Throw = 144,
 
         /// <summary>The 'trap' keyword.</summary>
-        Trap = 146,
+        Trap = 145,
 
         /// <summary>The 'try' keyword.</summary>
-        Try = 147,
+        Try = 146,
 
         /// <summary>The 'until' keyword.</summary>
-        Until = 148,
+        Until = 147,
 
         /// <summary>The (unimplemented) 'using' keyword.</summary>
-        Using = 149,
+        Using = 148,
 
         /// <summary>The (unimplemented) 'var' keyword.</summary>
-        Var = 150,
+        Var = 149,
 
         /// <summary>The 'while' keyword.</summary>
-        While = 151,
+        While = 150,
 
         /// <summary>The 'workflow' keyword.</summary>
-        Workflow = 152,
+        Workflow = 151,
 
         /// <summary>The 'parallel' keyword.</summary>
-        Parallel = 153,
+        Parallel = 152,
 
         /// <summary>The 'sequence' keyword.</summary>
-        Sequence = 154,
+        Sequence = 153,
 
         /// <summary>The 'InlineScript' keyword</summary>
-        InlineScript = 155,
+        InlineScript = 154,
 
         /// <summary>The "configuration" keyword</summary>
-        Configuration = 156,
+        Configuration = 155,
 
         /// <summary>The token kind for dynamic keywords</summary>
-        DynamicKeyword = 157,
+        DynamicKeyword = 156,
 
         /// <summary>The 'public' keyword</summary>
-        Public = 158,
+        Public = 157,
 
         /// <summary>The 'private' keyword</summary>
-        Private = 159,
+        Private = 158,
 
         /// <summary>The 'static' keyword</summary>
-        Static = 160,
+        Static = 159,
 
         /// <summary>The 'interface' keyword</summary>
-        Interface = 161,
+        Interface = 160,
 
         /// <summary>The 'enum' keyword</summary>
-        Enum = 162,
+        Enum = 161,
 
         /// <summary>The 'namespace' keyword</summary>
-        Namespace = 163,
+        Namespace = 162,
 
         /// <summary>The 'module' keyword</summary>
-        Module = 164,
+        Module = 163,
 
         /// <summary>The 'type' keyword</summary>
-        Type = 165,
+        Type = 164,
 
         /// <summary>The 'assembly' keyword</summary>
-        Assembly = 166,
+        Assembly = 165,
 
         /// <summary>The 'command' keyword</summary>
-        Command = 167,
+        Command = 166,
 
         /// <summary>The 'hidden' keyword</summary>
-        Hidden = 168,
+        Hidden = 167,
 
         /// <summary>The 'base' keyword</summary>
-        Base = 169,
+        Base = 168,
 
         /// <summary>The 'default' keyword</summary>
-        Default = 170,
+        Default = 169,
 
         /// <summary>The 'clean' keyword.</summary>
-        Clean = 171,
+        Clean = 170,
+
+        /// <summary>The ThreadJob background operator '&!'.</summary>
+        AmpersandExclaim = 171,
 
         #endregion Keywords
     }
@@ -808,7 +808,6 @@ namespace System.Management.Automation.Language
             /*               AndAnd */ TokenFlags.ParseModeInvariant,
             /*                 OrOr */ TokenFlags.ParseModeInvariant,
             /*            Ampersand */ TokenFlags.SpecialOperator | TokenFlags.ParseModeInvariant,
-            /*     AmpersandExclaim */ TokenFlags.SpecialOperator | TokenFlags.ParseModeInvariant,
             /*                 Pipe */ TokenFlags.SpecialOperator | TokenFlags.ParseModeInvariant,
             /*                Comma */ TokenFlags.UnaryOperator | TokenFlags.ParseModeInvariant,
             /*           MinusMinus */ TokenFlags.UnaryOperator | TokenFlags.PrefixOrPostfixOperator | TokenFlags.DisallowedInRestrictedMode,
@@ -956,6 +955,7 @@ namespace System.Management.Automation.Language
             /*                 Base */ TokenFlags.Keyword,
             /*              Default */ TokenFlags.Keyword,
             /*                Clean */ TokenFlags.Keyword | TokenFlags.ScriptBlockBlockName,
+            /*     AmpersandExclaim */ TokenFlags.SpecialOperator | TokenFlags.ParseModeInvariant,
 
             #endregion Flags for keywords
         };
@@ -1009,7 +1009,6 @@ namespace System.Management.Automation.Language
             /*               AndAnd */ "&&",
             /*                 OrOr */ "||",
             /*            Ampersand */ "&",
-            /*     AmpersandExclaim */ "&!",
             /*                 Pipe */ "|",
             /*                Comma */ ",",
             /*           MinusMinus */ "--",
@@ -1157,6 +1156,7 @@ namespace System.Management.Automation.Language
             /*                 Base */ "base",
             /*              Default */ "default",
             /*                Clean */ "clean",
+            /*     AmpersandExclaim */ "&!",
 
             #endregion Text for keywords
         };
