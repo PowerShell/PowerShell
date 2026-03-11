@@ -5849,6 +5849,7 @@ namespace System.Management.Automation.Language
             Token currentChainOperatorToken = null;
             Token nextToken = null;
             bool background = false;
+            bool backgroundThreadJob = false;
             while (true)
             {
                 // Look for the next pipeline in the chain,
@@ -5953,7 +5954,7 @@ namespace System.Management.Automation.Language
                         }
 
                         background = true;
-                        nextPipeline.BackgroundThreadJob = true;
+                        backgroundThreadJob = true;
                         goto default;
 
                     // No more chain operators -- return
@@ -5969,6 +5970,7 @@ namespace System.Management.Automation.Language
 
                             // Set background on the pipeline AST
                             nextPipeline.Background = true;
+                            nextPipeline.BackgroundThreadJob = backgroundThreadJob;
                             return nextPipeline;
                         }
 
