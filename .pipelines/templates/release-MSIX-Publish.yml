@@ -50,7 +50,7 @@ jobs:
           $middleURL = $matches[1]
         }
 
-        $endURL = $tagString -replace '^v|\.', ''
+        $endURL = $tagString -replace '^v','' -replace '\.',''
         $message = "Changelog: https://github.com/PowerShell/PowerShell/blob/master/CHANGELOG/$middleURL.md#$endURL"
         Write-Verbose -Verbose "Release Notes for the Store:"
         Write-Verbose -Verbose "$message"
@@ -59,8 +59,15 @@ jobs:
 
         $json.listings.'en-us'.baseListing.releaseNotes = $message
 
+        # Add PowerShell version to the top of the description
+        $description = $json.listings.'en-us'.baseListing.description
+        $version = "$(ReleaseTag)"
+        $updatedDescription = "Version: $version`n`n$description"
+        $json.listings.'en-us'.baseListing.description = $updatedDescription
+        Write-Verbose -Verbose "Updated description: $updatedDescription"
+
         $json | ConvertTo-Json -Depth 100 | Set-Content $jsonPath -Encoding UTF8
-    displayName: 'Update Release Notes in JSON'
+    displayName: 'Add Changelog Link and Version Number to SBJSON'
 
   - task: PowerShell@2
     inputs:
@@ -73,7 +80,6 @@ jobs:
 
         Write-Verbose -Verbose "Channel Selection - LTS: $(LTS), Stable: $(STABLE), Preview: $(PREVIEW)"
 
-        # Determine the current channel for logging purposes
         $currentChannel = if ($IsLTS) { 'LTS' }
           elseif ($IsStable) { 'Stable' }
           elseif ($IsPreview) { 'Preview' }
@@ -81,17 +87,31 @@ jobs:
             Write-Error "No valid channel detected"
             exit 1
           }
-                       
+
+        # Assign AppID for Store-Publish Task
+        $appID = $null
+        if ($IsLTS) {
+          $appID = '$(AppID-LTS)'
+        }
+        elseif ($IsStable) {
+          $appID = '$(AppID-Stable)'
+        }
+        else {
+          $appID = '$(AppID-Preview)'
+        }
+
+        Write-Host "##vso[task.setvariable variable=AppID]$appID"
         Write-Verbose -Verbose "Selected channel: $currentChannel"
         Write-Verbose -Verbose "Conditional tasks will handle the publishing based on channel variables"
     displayName: 'Validate Channel Selection'
 
   - task: MS-RDX-MRO.windows-store-publish.publish-task.store-publish@3
-    displayName: 'Publish LTS StoreBroker Package'
-    condition: and(ne('${{ parameters.skipMSIXPublish }}', 'true'), eq(variables['LTS'], 'true'))
+    displayName: 'Publish StoreBroker Package (Stable/LTS)'
+    condition: and(ne('${{ parameters.skipMSIXPublish }}', 'true'), or(eq(variables['STABLE'], 'true'), eq(variables['LTS'], 'true')))
+    continueOnError: true
     inputs:
-      serviceEndpoint: 'StoreAppPublish-Private'
-      appId: '$(AppID-LTS)'
+      serviceEndpoint: 'StoreAppPublish-Stable'
+      appId: '$(AppID)'
       inputMethod: JsonAndZip
       jsonPath: '$(Pipeline.Workspace)\SBOutDir\PowerShellStorePackage.json'
       zipPath: '$(Pipeline.Workspace)\SBOutDir\PowerShellStorePackage.zip'
@@ -100,32 +120,15 @@ jobs:
       targetPublishMode: 'Immediate'
 
   - task: MS-RDX-MRO.windows-store-publish.publish-task.store-publish@3
-    displayName: 'Publish Stable StoreBroker Package'
-    condition: and(ne('${{ parameters.skipMSIXPublish }}', 'true'), eq(variables['STABLE'], 'true'))
-    inputs:
-      serviceEndpoint: 'StoreAppPublish-Private'
-      appId: '$(AppID-Stable)'
-      inputMethod: JsonAndZip
-      jsonPath: '$(Pipeline.Workspace)\SBOutDir\PowerShellStorePackage.json'
-      zipPath: '$(Pipeline.Workspace)\SBOutDir\PowerShellStorePackage.zip'
-      numberOfPackagesToKeep: 2
-      jsonZipUpdateMetadata: true
-      targetPublishMode: 'Immediate'
-
-  - task: MS-RDX-MRO.windows-store-publish.publish-task.store-publish@3
-    displayName: 'Publish Preview StoreBroker Package'
+    displayName: 'Publish StoreBroker Package (Preview)'
     condition: and(ne('${{ parameters.skipMSIXPublish }}', 'true'), eq(variables['PREVIEW'], 'true'))
+    continueOnError: true
     inputs:
-      serviceEndpoint: 'StoreAppPublish-Private'
-      appId: '$(AppID-Preview)'
+      serviceEndpoint: 'StoreAppPublish-Preview'
+      appId: '$(AppID)'
       inputMethod: JsonAndZip
       jsonPath: '$(Pipeline.Workspace)\SBOutDir\PowerShellStorePackage.json'
       zipPath: '$(Pipeline.Workspace)\SBOutDir\PowerShellStorePackage.zip'
       numberOfPackagesToKeep: 2
       jsonZipUpdateMetadata: true
       targetPublishMode: 'Immediate'
-
-  - pwsh: |
-      Get-Content -Path "$(System.DefaultWorkingDirectory)/SBLog.txt" -ErrorAction SilentlyContinue
-    displayName: Upload Store Failure Log
-    condition: failed()

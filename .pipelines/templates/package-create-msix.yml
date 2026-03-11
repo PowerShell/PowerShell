@@ -115,13 +115,11 @@ jobs:
         $signedBundle = Get-ChildItem -Path $(BundleDir) -Filter "*.msixbundle" -File
         Write-Verbose -Verbose "Signed bundle: $signedBundle"
 
-        # Ensure the destination directory exists
-        if (-not (Test-Path -Path "$(ob_outputDirectory)")) {
-            Write-Verbose -Verbose "Creating destination directory: $(ob_outputDirectory)"
-            New-Item -Path "$(ob_outputDirectory)" -ItemType Directory -Force | Out-Null
+        if (-not (Test-Path $(ob_outputDirectory))) {
+          New-Item -ItemType Directory -Path $(ob_outputDirectory) -Force
         }
 
-        Copy-Item -Path $signedBundle.FullName -Destination "$(ob_outputDirectory)\$($signedBundle.Name)" -Verbose
+        Copy-Item -Path $signedBundle.FullName -Destination "$(ob_outputDirectory)" -Verbose
 
         Write-Verbose -Verbose "Uploaded Bundle:"
         Get-ChildItem -Path $(ob_outputDirectory) | Write-Verbose -Verbose
@@ -189,7 +187,7 @@ jobs:
           # Create namespace manager for XML with default namespace
           $nsManager = New-Object System.Xml.XmlNamespaceManager($pdpXml.NameTable)
           $nsManager.AddNamespace("pd", "http://schemas.microsoft.com/appx/2012/ProductDescription")
-          
+
           $appStoreNameElement = $pdpXml.SelectSingleNode("//pd:AppStoreName", $nsManager)
           if ($appStoreNameElement) {
             $appStoreNameElement.SetAttribute("_locID", $config.AppStoreName)
@@ -226,17 +224,54 @@ jobs:
 
         Write-Host "##vso[task.setvariable variable=ServiceConnection]$($config.ServiceEndpoint)"
         Write-Host "##vso[task.setvariable variable=SBConfigPath]$($sbConfigPath)"
+
+        # These variables are used in the next tasks to determine which ServiceEndpoint to use
+        $ltsValue = $IsLTS.ToString().ToLower()
+        $stableValue = $IsStable.ToString().ToLower()
+        $previewValue = $IsPreview.ToString().ToLower()
+        
+        Write-Verbose -Verbose "About to set variables:"
+        Write-Verbose -Verbose "  LTS=$ltsValue"
+        Write-Verbose -Verbose "  STABLE=$stableValue"
+        Write-Verbose -Verbose "  PREVIEW=$previewValue"
+        
+        Write-Host "##vso[task.setvariable variable=LTS]$ltsValue"
+        Write-Host "##vso[task.setvariable variable=STABLE]$stableValue"
+        Write-Host "##vso[task.setvariable variable=PREVIEW]$previewValue"
+        
+        Write-Verbose -Verbose "Variables set successfully"
       name: UpdateConfigs
       displayName: Update PDPs and SBConfig.json
 
+    - pwsh: |
+        Write-Verbose -Verbose "Checking variables after UpdateConfigs:"
+        Write-Verbose -Verbose "LTS=$(LTS)"
+        Write-Verbose -Verbose "STABLE=$(STABLE)"
+        Write-Verbose -Verbose "PREVIEW=$(PREVIEW)"
+      displayName: Debug - Check Variables
+
     - task: MS-RDX-MRO.windows-store-publish.package-task.store-package@3
-      displayName: 'Create StoreBroker Package'
+      displayName: 'Create StoreBroker Package (Preview)'
+      condition: eq(variables['PREVIEW'], 'true')
       inputs:
-        serviceEndpoint: 'StoreAppPublish-Private'
+        serviceEndpoint: 'StoreAppPublish-Preview'
         sbConfigPath: '$(SBConfigPath)'
         sourceFolder: '$(BundleDir)'
         contents: '*.msixBundle'
         outSBName: 'PowerShellStorePackage'
+        pdpPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDP/PDP'
+        pdpMediaPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDP/PDP-Media'
+
+    - task: MS-RDX-MRO.windows-store-publish.package-task.store-package@3
+      displayName: 'Create StoreBroker Package (Stable/LTS)'
+      condition: or(eq(variables['STABLE'], 'true'), eq(variables['LTS'], 'true'))
+      inputs:
+        serviceEndpoint: 'StoreAppPublish-Stable'
+        sbConfigPath: '$(SBConfigPath)'
+        sourceFolder: '$(BundleDir)'
+        contents: '*.msixBundle'
+        outSBName: 'PowerShellStorePackage'
+        pdpPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDP/PDP'
         pdpMediaPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDP/PDP-Media'
 
     - pwsh: |
