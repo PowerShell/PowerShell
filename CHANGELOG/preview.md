@@ -1,4 +1,47 @@
-# Preview Changelog
+# 7.6 Changelog
+
+## [7.6.0] - 2026-03-12
+
+### General Cmdlet Updates and Fixes
+
+- Update PowerShell Profile DSC resource manifests to allow `null` for content (#26973)
+
+### Tests
+
+- Add GitHub Actions annotations for Pester test failures (#26969)
+- Fix `Import-Module.Tests.ps1` to handle Arm32 platform (#26888)
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@kasperk81</p>
+
+</summary>
+
+<ul>
+<li>Update branch for release (#26989)</li>
+<li>Fix <code>ConvertFrom-ClearlyDefinedCoordinates</code> to handle API object coordinates (#26986)</li>
+<li>Update NuGet package versions in <code>cgmanifest.json</code> to actually match the branch (#26982)</li>
+<li>Bump actions/upload-artifact from 6 to 7 (#26979)</li>
+<li>Split TPN manifest and Component Governance manifest (#26978)</li>
+<li>Bump github/codeql-action from 4.32.4 to 4.32.6 (#26975)</li>
+<li>Bump actions/dependency-review-action from 4.8.3 to 4.9.0 (#26974)</li>
+<li>Hardcode Official templates (#26972)</li>
+<li>Fix a preview detection test for the packaging script (#26971)</li>
+<li>Fetch latest ICU release version dynamically (#26970) (Thanks @kasperk81!)</li>
+<li>Add PMC packages for debian13 and rhel10 (#26917)</li>
+<li>Add version in description and pass store task on failure (#26889)</li>
+<li>Exclude .exe packages from publishing to GitHub (#26887)</li>
+<li>Correct the package name for .deb and .rpm packages (#26884)</li>
+</ul>
+
+</details>
+
+[7.6.0]: https://github.com/PowerShell/PowerShell/compare/v7.6.0-rc.1...v7.6.0
 
 ## [7.6.0-rc.1] - 2026-02-19
 
