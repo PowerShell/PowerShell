@@ -1217,6 +1217,11 @@
     "Architecture": null
   },
   {
+    "Pattern": "Modules\\Microsoft.PowerShell.PSResourceGet\\.signature.p7s",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
     "Pattern": "Modules\\Microsoft.PowerShell.PSResourceGet\\Microsoft.PowerShell.PSResourceGet.pdb",
     "FileType": "NonProduct",
     "Architecture": null
