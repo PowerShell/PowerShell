@@ -6145,6 +6145,20 @@ namespace System.Management.Automation.Language
                         background = true;
                         break;
 
+                    case TokenKind.AmpersandExclaim:
+                        if (!allowBackground)
+                        {
+                            // Handled by invoking rule
+                            scanning = false;
+                            continue;
+                        }
+
+                        SkipToken();
+                        scanning = false;
+                        background = true;
+                        backgroundThreadJob = true;
+                        break;
+
                     case TokenKind.Pipe:
                         SkipToken();
                         SkipNewlines();
