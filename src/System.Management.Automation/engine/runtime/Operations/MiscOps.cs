@@ -564,10 +564,16 @@ namespace System.Management.Automation
 
                 if (scriptBlockExpr != null)
                 {
-                    // The pipeline is already a script block - use it directly
-                    // Get the script block text (without the outer braces)
-                    var scriptblockBodyString = scriptBlockExpr.ScriptBlock.Extent.Text;
-                    var pipelineOffset = scriptBlockExpr.ScriptBlock.Extent.StartOffset;
+                    // The pipeline is already a script block - extract the body without outer braces.
+                    // ScriptBlockExpressionAst.Extent.Text includes the outer '{ }', so we strip them
+                    // to get just the body. Using ScriptBlock.Create("{ content }") would create a
+                    // script that returns a ScriptBlock object rather than executing the body.
+                    var sbExprText = scriptBlockExpr.Extent.Text;
+                    Diagnostics.Assert(
+                        sbExprText.Length >= 2 && sbExprText[0] == '{' && sbExprText[sbExprText.Length - 1] == '}',
+                        "ScriptBlockExpressionAst extent should always start with '{' and end with '}'");
+                    var scriptblockBodyString = sbExprText.Substring(1, sbExprText.Length - 2);
+                    var pipelineOffset = scriptBlockExpr.Extent.StartOffset + 1;
                     var variables = scriptBlockExpr.FindAll(static x => x is VariableExpressionAst, true);
 
                     // Minimize allocations by initializing the stringbuilder to the size of the source string + space for ${using:} * 2
@@ -647,31 +653,18 @@ namespace System.Management.Automation
                 bool usingThreadJob = false;
                 if (pipelineAst.BackgroundThreadJob)
                 {
-                    // Try to get Start-ThreadJob - GetCommand will auto-import the ThreadJob module if available
-                    var threadJobCommand = context.SessionState.InvokeCommand.GetCommand("Start-ThreadJob", CommandTypes.Cmdlet | CommandTypes.Function);
-                    if (threadJobCommand != null)
+                    // Use CommandTypes.Cmdlet only to avoid resolving a user-defined function that
+                    // shadows the real Start-ThreadJob cmdlet, which would cause &! to silently fall
+                    // back to Start-Job even when the ThreadJob module is installed.
+                    var threadJobCmdlet = context.SessionState.InvokeCommand.GetCommand("Start-ThreadJob", CommandTypes.Cmdlet) as CmdletInfo;
+                    if (threadJobCmdlet != null)
                     {
-                        // Check if it's a CmdletInfo (cmdlet) or FunctionInfo (function)
-                        if (threadJobCommand is CmdletInfo cmdletInfo)
-                        {
-                            commandInfo = cmdletInfo;
-                            usingThreadJob = true;
-                        }
-                        else if (threadJobCommand is FunctionInfo functionInfo)
-                        {
-                            // For functions, we need to use the function's script block
-                            // Fall back to Start-Job since we can't easily invoke a function here
-                            commandInfo = new CmdletInfo("Start-Job", typeof(StartJobCommand));
-                        }
-                        else
-                        {
-                            // Unknown command type, fall back to Start-Job
-                            commandInfo = new CmdletInfo("Start-Job", typeof(StartJobCommand));
-                        }
+                        commandInfo = threadJobCmdlet;
+                        usingThreadJob = true;
                     }
                     else
                     {
-                        // Fall back to Start-Job if Start-ThreadJob is not available
+                        // Fall back to Start-Job if Start-ThreadJob cmdlet is not available
                         commandInfo = new CmdletInfo("Start-Job", typeof(StartJobCommand));
                     }
                 }

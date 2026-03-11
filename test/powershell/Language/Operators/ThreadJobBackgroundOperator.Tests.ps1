@@ -105,7 +105,7 @@ Describe "ThreadJob Background Operator &! Tests" -Tag CI {
             }
         }
 
-        It "Captures variables automatically without explicit $using:" {
+        It 'Captures variables automatically without explicit $using:' {
             $testVar = "CapturedValue"
             $job = Write-Output $testVar &!
             try {
@@ -124,7 +124,7 @@ Describe "ThreadJob Background Operator &! Tests" -Tag CI {
             }
         }
 
-        It "Captures variables with explicit $using: in scriptblock" {
+        It 'Captures variables with explicit $using: in scriptblock' {
             $testVar = "CapturedValueWithUsing"
             $job = { $using:testVar } &!
             try {
