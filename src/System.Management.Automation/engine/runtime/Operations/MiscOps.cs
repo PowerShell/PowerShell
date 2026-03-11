@@ -590,10 +590,17 @@ namespace System.Management.Automation
                 CmdletInfo commandInfo;
                 if (pipelineAst.BackgroundThreadJob)
                 {
-                    // GetCmdlet returns null when the cmdlet isn't found (it doesn't throw in common case)
-                    commandInfo = context.SessionState.InvokeCommand.GetCmdlet("Start-ThreadJob");
-                    // Fall back to Start-Job if Start-ThreadJob is not available
-                    commandInfo ??= new CmdletInfo("Start-Job", typeof(StartJobCommand));
+                    // Try to get Start-ThreadJob - GetCommand will auto-import the ThreadJob module if available
+                    var threadJobCommand = context.SessionState.InvokeCommand.GetCommand("Start-ThreadJob", CommandTypes.Cmdlet | CommandTypes.Function);
+                    if (threadJobCommand != null)
+                    {
+                        commandInfo = threadJobCommand as CmdletInfo ?? new CmdletInfo(threadJobCommand.Name, threadJobCommand.ImplementingType);
+                    }
+                    else
+                    {
+                        // Fall back to Start-Job if Start-ThreadJob is not available
+                        commandInfo = new CmdletInfo("Start-Job", typeof(StartJobCommand));
+                    }
                 }
                 else
                 {
