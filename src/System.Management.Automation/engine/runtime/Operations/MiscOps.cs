@@ -594,7 +594,22 @@ namespace System.Management.Automation
                     var threadJobCommand = context.SessionState.InvokeCommand.GetCommand("Start-ThreadJob", CommandTypes.Cmdlet | CommandTypes.Function);
                     if (threadJobCommand != null)
                     {
-                        commandInfo = threadJobCommand as CmdletInfo ?? new CmdletInfo(threadJobCommand.Name, threadJobCommand.ImplementingType);
+                        // Check if it's a CmdletInfo (cmdlet) or FunctionInfo (function)
+                        if (threadJobCommand is CmdletInfo cmdletInfo)
+                        {
+                            commandInfo = cmdletInfo;
+                        }
+                        else if (threadJobCommand is FunctionInfo functionInfo)
+                        {
+                            // For functions, we need to use the function's script block
+                            // Fall back to Start-Job since we can't easily invoke a function here
+                            commandInfo = new CmdletInfo("Start-Job", typeof(StartJobCommand));
+                        }
+                        else
+                        {
+                            // Unknown command type, fall back to Start-Job
+                            commandInfo = new CmdletInfo("Start-Job", typeof(StartJobCommand));
+                        }
                     }
                     else
                     {
