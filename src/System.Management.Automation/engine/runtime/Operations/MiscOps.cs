@@ -588,6 +588,7 @@ namespace System.Management.Automation
                 
                 // Use Start-ThreadJob if BackgroundThreadJob is set, otherwise use Start-Job
                 CmdletInfo commandInfo;
+                bool usingThreadJob = false;
                 if (pipelineAst.BackgroundThreadJob)
                 {
                     // Try to get Start-ThreadJob - GetCommand will auto-import the ThreadJob module if available
@@ -598,6 +599,7 @@ namespace System.Management.Automation
                         if (threadJobCommand is CmdletInfo cmdletInfo)
                         {
                             commandInfo = cmdletInfo;
+                            usingThreadJob = true;
                         }
                         else if (threadJobCommand is FunctionInfo functionInfo)
                         {
@@ -624,13 +626,19 @@ namespace System.Management.Automation
                 
                 commandProcessor = context.CommandDiscovery.LookupCommandProcessor(commandInfo, CommandOrigin.Internal, false, context.EngineSessionState);
 
-                var workingDirectoryParameter = CommandParameterInternal.CreateParameterWithArgument(
-                    parameterAst: pipelineAst,
-                    parameterName: "WorkingDirectory",
-                    parameterText: null,
-                    argumentAst: pipelineAst,
-                    value: context.SessionState.Path.CurrentLocation.Path,
-                    spaceAfterParameter: false);
+                // Only add WorkingDirectory parameter for Start-Job, not for Start-ThreadJob
+                // Start-ThreadJob doesn't support the WorkingDirectory parameter
+                if (!usingThreadJob)
+                {
+                    var workingDirectoryParameter = CommandParameterInternal.CreateParameterWithArgument(
+                        parameterAst: pipelineAst,
+                        parameterName: "WorkingDirectory",
+                        parameterText: null,
+                        argumentAst: pipelineAst,
+                        value: context.SessionState.Path.CurrentLocation.Path,
+                        spaceAfterParameter: false);
+                    commandProcessor.AddParameter(workingDirectoryParameter);
+                }
 
                 var scriptBlockParameter = CommandParameterInternal.CreateParameterWithArgument(
                     parameterAst: pipelineAst,
@@ -640,7 +648,6 @@ namespace System.Management.Automation
                     value: sb,
                     spaceAfterParameter: false);
 
-                commandProcessor.AddParameter(workingDirectoryParameter);
                 commandProcessor.AddParameter(scriptBlockParameter);
                 pipelineProcessor.Add(commandProcessor);
                 pipelineProcessor.LinkPipelineSuccessOutput(outputPipe ?? new Pipe(new List<object>()));
