@@ -11,98 +11,131 @@ Describe "ThreadJob Background Operator &! Tests" -Tag CI {
         }
     }
 
-    It "Creates a background job with &! operator" {
-        $job = Write-Output "Hello from ThreadJob" &!
-        $job | Should -Not -BeNullOrEmpty
-        $job | Should -BeOfType [System.Management.Automation.Job]
-        $job | Wait-Job | Remove-Job
+    Context "Runtime ThreadJob Tests" {
+        It "Creates a background job with &! operator" {
+            $job = Write-Output "Hello from ThreadJob" &!
+            $job | Should -Not -BeNullOrEmpty
+            $job | Should -BeOfType [System.Management.Automation.Job]
+            $job | Wait-Job | Remove-Job
+        }
+
+        It "Receives output from ThreadJob background job" {
+            $job = Write-Output "Test Output" &!
+            $result = $job | Wait-Job | Receive-Job
+            $result | Should -Be "Test Output"
+            $job | Remove-Job
+        }
+
+        It "Runs simple expression as ThreadJob" {
+            $job = 1 + 1 &!
+            $result = $job | Wait-Job | Receive-Job
+            $result | Should -Be 2
+            $job | Remove-Job
+        }
+
+        It "Validates ThreadJob is created when Start-ThreadJob is available" -Skip:(-not $threadJobAvailable) {
+            $job = Write-Output "ThreadJob Test" &!
+            $job | Should -Not -BeNullOrEmpty
+            # ThreadJobs have a PSTypeName that includes 'ThreadJob'
+            $job.PSObject.TypeNames | Should -Contain 'ThreadJob'
+            $job | Wait-Job | Remove-Job
+        }
+
+        It "Falls back to regular job when Start-ThreadJob is unavailable" -Skip:$threadJobAvailable {
+            # This test runs only when ThreadJob is not available
+            $job = Write-Output "Fallback Test" &!
+            $job | Should -Not -BeNullOrEmpty
+            $job | Should -BeOfType [System.Management.Automation.Job]
+            # Should not be a ThreadJob
+            $job.PSObject.TypeNames | Should -Not -Contain 'ThreadJob'
+            $job | Wait-Job | Remove-Job
+        }
+
+        It "Captures variables automatically without explicit $using:" {
+            $testVar = "CapturedValue"
+            $job = Write-Output $testVar &!
+            $result = $job | Wait-Job | Receive-Job
+            $result | Should -Be "CapturedValue"
+            $job | Remove-Job
+        }
+
+        It "Captures variables with explicit $using: in scriptblock" {
+            $testVar = "CapturedValueWithUsing"
+            $job = { $using:testVar } &!
+            $result = $job | Wait-Job | Receive-Job
+            $result | Should -Be "CapturedValueWithUsing"
+            $job | Remove-Job
+        }
+
+        It "Runs pipeline as ThreadJob" {
+            $job = 1,2,3 | ForEach-Object { $_ * 2 } &!
+            $result = $job | Wait-Job | Receive-Job
+            $result | Should -Be @(2, 4, 6)
+            $job | Remove-Job
+        }
+
+        It "Works with variable assignment" {
+            $job = 1 + 2 &!
+            $job | Should -Not -BeNullOrEmpty
+            $result = $job | Wait-Job | Receive-Job
+            $result | Should -Be 3
+            $job | Remove-Job
+        }
+
+        It "Can be combined with && operator" {
+            $job = testexe -returncode 0 && Write-Output "success" &!
+            $job | Should -Not -BeNullOrEmpty
+            $job | Should -BeOfType [System.Management.Automation.Job]
+            $result = $job | Wait-Job | Receive-Job
+            $result | Should -Contain "0"
+            $result | Should -Contain "success"
+            $job | Remove-Job
+        }
+
+        It "Works with command execution" {
+            $job = Get-Process -Id $PID | Select-Object -ExpandProperty Name &!
+            $result = $job | Wait-Job | Receive-Job
+            $result | Should -Not -BeNullOrEmpty
+            $job | Remove-Job
+        }
+
+        It "Handles errors in ThreadJob" {
+            $job = { throw "Test Error" } &!
+            $job | Wait-Job
+            $job.State | Should -Be 'Failed'
+            $job | Remove-Job
+        }
+
+        It "Creates multiple ThreadJobs" {
+            $job1 = Write-Output "Job1" &!
+            $job2 = Write-Output "Job2" &!
+            $job3 = Write-Output "Job3" &!
+            
+            $results = $job1, $job2, $job3 | Wait-Job | Receive-Job
+            $results | Should -Contain "Job1"
+            $results | Should -Contain "Job2"
+            $results | Should -Contain "Job3"
+            
+            $job1, $job2, $job3 | Remove-Job
+        }
     }
 
-    It "Receives output from ThreadJob background job" {
-        $job = Write-Output "Test Output" &!
-        $result = $job | Wait-Job | Receive-Job
-        $result | Should -Be "Test Output"
-        $job | Remove-Job
-    }
+    Context "Syntax Validation Tests" {
+        It "Rejects &! with && in invalid syntax" {
+            $tokens = $errors = $null
+            $null = [System.Management.Automation.Language.Parser]::ParseInput('testexe -returncode 0 &! && testexe -returncode 1', [ref]$tokens, [ref]$errors)
+            
+            $errors.Count | Should -BeGreaterThan 0
+            $errors[0].ErrorId | Should -Be 'BackgroundOperatorInPipelineChain'
+        }
 
-    It "Runs simple expression as ThreadJob" {
-        $job = 1 + 1 &!
-        $result = $job | Wait-Job | Receive-Job
-        $result | Should -Be 2
-        $job | Remove-Job
-    }
-
-    It "Captures variables with $using: in ThreadJob" {
-        $testVar = "CapturedValue"
-        $job = { $using:testVar } &!
-        # Note: The implementation should automatically convert variables to $using:
-        # For now, this test documents expected behavior
-        $job | Wait-Job | Remove-Job
-    }
-
-    It "Runs pipeline as ThreadJob" {
-        $job = 1,2,3 | ForEach-Object { $_ * 2 } &!
-        $result = $job | Wait-Job | Receive-Job
-        $result | Should -Be @(2, 4, 6)
-        $job | Remove-Job
-    }
-
-    It "Works with variable assignment" {
-        $job = 1 + 2 &!
-        $job | Should -Not -BeNullOrEmpty
-        $result = $job | Wait-Job | Receive-Job
-        $result | Should -Be 3
-        $job | Remove-Job
-    }
-
-    It "Can be combined with && operator" -Skip {
-        # This test is skipped as the interaction between &! and && needs to be verified
-        $job = testexe -returncode 0 && Write-Output "success" &!
-        $result = $job | Wait-Job | Receive-Job
-        $job | Remove-Job
-    }
-
-    It "Rejects &! with && in invalid syntax" {
-        $tokens = $errors = $null
-        $null = [System.Management.Automation.Language.Parser]::ParseInput('testexe -returncode 0 &! && testexe -returncode 1', [ref]$tokens, [ref]$errors)
-        
-        $errors.Count | Should -BeGreaterThan 0
-        $errors[0].ErrorId | Should -Be 'BackgroundOperatorInPipelineChain'
-    }
-
-    It "Rejects &! with || in invalid syntax" {
-        $tokens = $errors = $null
-        $null = [System.Management.Automation.Language.Parser]::ParseInput('testexe -returncode 0 &! || testexe -returncode 1', [ref]$tokens, [ref]$errors)
-        
-        $errors.Count | Should -BeGreaterThan 0
-        $errors[0].ErrorId | Should -Be 'BackgroundOperatorInPipelineChain'
-    }
-
-    It "Works with command execution" {
-        $job = Get-Process -Id $PID | Select-Object -ExpandProperty Name &!
-        $result = $job | Wait-Job | Receive-Job
-        $result | Should -Not -BeNullOrEmpty
-        $job | Remove-Job
-    }
-
-    It "Handles errors in ThreadJob" {
-        $job = { throw "Test Error" } &!
-        $job | Wait-Job
-        $job.State | Should -Be 'Failed'
-        $job | Remove-Job
-    }
-
-    It "Creates multiple ThreadJobs" {
-        $job1 = Write-Output "Job1" &!
-        $job2 = Write-Output "Job2" &!
-        $job3 = Write-Output "Job3" &!
-        
-        $results = $job1, $job2, $job3 | Wait-Job | Receive-Job
-        $results | Should -Contain "Job1"
-        $results | Should -Contain "Job2"
-        $results | Should -Contain "Job3"
-        
-        $job1, $job2, $job3 | Remove-Job
+        It "Rejects &! with || in invalid syntax" {
+            $tokens = $errors = $null
+            $null = [System.Management.Automation.Language.Parser]::ParseInput('testexe -returncode 0 &! || testexe -returncode 1', [ref]$tokens, [ref]$errors)
+            
+            $errors.Count | Should -BeGreaterThan 0
+            $errors[0].ErrorId | Should -Be 'BackgroundOperatorInPipelineChain'
+        }
     }
 
     Context "Parser AST Tests" {
