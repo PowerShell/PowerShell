@@ -1165,10 +1165,10 @@ namespace System.Management.Automation.Language
         static TokenTraits()
         {
             Diagnostics.Assert(
-                s_staticTokenFlags.Length == ((int)TokenKind.Clean + 1),
+                s_staticTokenFlags.Length == ((int)TokenKind.AmpersandExclaim + 1),
                 "Table size out of sync with enum - _staticTokenFlags");
             Diagnostics.Assert(
-                s_tokenText.Length == ((int)TokenKind.Clean + 1),
+                s_tokenText.Length == ((int)TokenKind.AmpersandExclaim + 1),
                 "Table size out of sync with enum - _tokenText");
             // Some random assertions to make sure the enum and the traits are in sync
             Diagnostics.Assert(GetTraits(TokenKind.Begin) == (TokenFlags.Keyword | TokenFlags.ScriptBlockBlockName),
