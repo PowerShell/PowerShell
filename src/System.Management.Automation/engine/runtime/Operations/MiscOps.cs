@@ -550,41 +550,95 @@ namespace System.Management.Automation
                 CommandProcessorBase commandProcessor = null;
 
                 // For background jobs rewrite the pipeline as a Start-Job command
-                var scriptblockBodyString = pipelineAst.Extent.Text;
-                var pipelineOffset = pipelineAst.Extent.StartOffset;
-                var variables = pipelineAst.FindAll(static x => x is VariableExpressionAst, true);
+                ScriptBlock sb;
+                
+                // Check if the pipeline is already a script block expression (e.g., {1+1} &!)
+                // In this case, we should use the script block directly instead of wrapping it
+                var scriptBlockExpr = pipelineAst.PipelineElements.Count == 1 &&
+                                       pipelineAst.PipelineElements[0] is CommandExpressionAst cmdExpr &&
+                                       cmdExpr.Expression is ScriptBlockExpressionAst sbExpr
+                                       ? sbExpr
+                                       : null;
 
-                // Minimize allocations by initializing the stringbuilder to the size of the source string + space for ${using:} * 2
-                System.Text.StringBuilder updatedScriptblock = new System.Text.StringBuilder(scriptblockBodyString.Length + 18);
-                int position = 0;
-
-                // Prefix variables in the scriptblock with $using:
-                foreach (var v in variables)
+                if (scriptBlockExpr != null)
                 {
-                    var variableName = ((VariableExpressionAst)v).VariablePath.UserPath;
+                    // The pipeline is already a script block - use it directly
+                    // Get the script block text (without the outer braces)
+                    var scriptblockBodyString = scriptBlockExpr.ScriptBlock.Extent.Text;
+                    var pipelineOffset = scriptBlockExpr.ScriptBlock.Extent.StartOffset;
+                    var variables = scriptBlockExpr.FindAll(static x => x is VariableExpressionAst, true);
 
-                    // Skip variables that don't exist
-                    if (funcContext._executionContext.EngineSessionState.GetVariable(variableName) == null)
+                    // Minimize allocations by initializing the stringbuilder to the size of the source string + space for ${using:} * 2
+                    System.Text.StringBuilder updatedScriptblock = new System.Text.StringBuilder(scriptblockBodyString.Length + 18);
+                    int position = 0;
+
+                    // Prefix variables in the scriptblock with $using:
+                    foreach (var v in variables)
                     {
-                        continue;
+                        var variableName = ((VariableExpressionAst)v).VariablePath.UserPath;
+
+                        // Skip variables that don't exist
+                        if (funcContext._executionContext.EngineSessionState.GetVariable(variableName) == null)
+                        {
+                            continue;
+                        }
+
+                        // Skip PowerShell magic variables
+                        if (!Regex.Match(
+                                variableName,
+                                "^(global:){0,1}(PID|PSVersionTable|PSEdition|PSHOME|HOST|TRUE|FALSE|NULL)$",
+                                RegexOptions.IgnoreCase | RegexOptions.CultureInvariant).Success)
+                        {
+                            updatedScriptblock.Append(scriptblockBodyString.AsSpan(position, v.Extent.StartOffset - pipelineOffset - position));
+                            updatedScriptblock.Append("${using:");
+                            updatedScriptblock.Append(CodeGeneration.EscapeVariableName(variableName));
+                            updatedScriptblock.Append('}');
+                            position = v.Extent.EndOffset - pipelineOffset;
+                        }
                     }
 
-                    // Skip PowerShell magic variables
-                    if (!Regex.Match(
-                            variableName,
-                            "^(global:){0,1}(PID|PSVersionTable|PSEdition|PSHOME|HOST|TRUE|FALSE|NULL)$",
-                            RegexOptions.IgnoreCase | RegexOptions.CultureInvariant).Success)
-                    {
-                        updatedScriptblock.Append(scriptblockBodyString.AsSpan(position, v.Extent.StartOffset - pipelineOffset - position));
-                        updatedScriptblock.Append("${using:");
-                        updatedScriptblock.Append(CodeGeneration.EscapeVariableName(variableName));
-                        updatedScriptblock.Append('}');
-                        position = v.Extent.EndOffset - pipelineOffset;
-                    }
+                    updatedScriptblock.Append(scriptblockBodyString.AsSpan(position));
+                    sb = ScriptBlock.Create(updatedScriptblock.ToString());
                 }
+                else
+                {
+                    // The pipeline is a regular command - wrap it in a script block
+                    var scriptblockBodyString = pipelineAst.Extent.Text;
+                    var pipelineOffset = pipelineAst.Extent.StartOffset;
+                    var variables = pipelineAst.FindAll(static x => x is VariableExpressionAst, true);
 
-                updatedScriptblock.Append(scriptblockBodyString.AsSpan(position));
-                var sb = ScriptBlock.Create(updatedScriptblock.ToString());
+                    // Minimize allocations by initializing the stringbuilder to the size of the source string + space for ${using:} * 2
+                    System.Text.StringBuilder updatedScriptblock = new System.Text.StringBuilder(scriptblockBodyString.Length + 18);
+                    int position = 0;
+
+                    // Prefix variables in the scriptblock with $using:
+                    foreach (var v in variables)
+                    {
+                        var variableName = ((VariableExpressionAst)v).VariablePath.UserPath;
+
+                        // Skip variables that don't exist
+                        if (funcContext._executionContext.EngineSessionState.GetVariable(variableName) == null)
+                        {
+                            continue;
+                        }
+
+                        // Skip PowerShell magic variables
+                        if (!Regex.Match(
+                                variableName,
+                                "^(global:){0,1}(PID|PSVersionTable|PSEdition|PSHOME|HOST|TRUE|FALSE|NULL)$",
+                                RegexOptions.IgnoreCase | RegexOptions.CultureInvariant).Success)
+                        {
+                            updatedScriptblock.Append(scriptblockBodyString.AsSpan(position, v.Extent.StartOffset - pipelineOffset - position));
+                            updatedScriptblock.Append("${using:");
+                            updatedScriptblock.Append(CodeGeneration.EscapeVariableName(variableName));
+                            updatedScriptblock.Append('}');
+                            position = v.Extent.EndOffset - pipelineOffset;
+                        }
+                    }
+
+                    updatedScriptblock.Append(scriptblockBodyString.AsSpan(position));
+                    sb = ScriptBlock.Create(updatedScriptblock.ToString());
+                }
                 
                 // Use Start-ThreadJob if BackgroundThreadJob is set, otherwise use Start-Job
                 CmdletInfo commandInfo;
