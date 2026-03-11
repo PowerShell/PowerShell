@@ -5974,12 +5974,14 @@ namespace System.Management.Automation.Language
                             return nextPipeline;
                         }
 
-                        return new PipelineChainAst(
+                        var chainAst = new PipelineChainAst(
                             ExtentOf(currentPipelineChain.Extent, nextPipeline.Extent),
                             currentPipelineChain,
                             nextPipeline,
                             currentChainOperatorToken.Kind,
                             background);
+                        chainAst.BackgroundThreadJob = backgroundThreadJob;
+                        return chainAst;
                 }
 
                 // Assemble the new chain statement AST
