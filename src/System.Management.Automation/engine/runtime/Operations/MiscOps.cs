@@ -28,6 +28,13 @@ namespace System.Management.Automation
 {
     internal static class PipelineOps
     {
+        // PowerShell magic/automatic variable names that should not be auto-prefixed with $using:
+        // when constructing a background job script block for the &! operator.
+        private static readonly HashSet<string> s_backgroundJobMagicVariables = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "PID", "PSVersionTable", "PSEdition", "PSHOME", "HOST", "TRUE", "FALSE", "NULL"
+        };
+
         private static CommandProcessorBase AddCommand(PipelineProcessor pipe,
                                                        CommandParameterInternal[] commandElements,
                                                        CommandBaseAst commandBaseAst,
@@ -564,53 +571,18 @@ namespace System.Management.Automation
 
                 if (scriptBlockExpr != null)
                 {
-                    // The pipeline is already a script block - extract the body without outer braces.
-                    // ScriptBlockExpressionAst.Extent.Text includes the outer '{ }', so we strip them
-                    // to get just the body. Using ScriptBlock.Create("{ content }") would create a
-                    // script that returns a ScriptBlock object rather than executing the body.
-                    var sbExprText = scriptBlockExpr.Extent.Text;
-                    Diagnostics.Assert(
-                        sbExprText.Length >= 2 && sbExprText[0] == '{' && sbExprText[sbExprText.Length - 1] == '}',
-                        "ScriptBlockExpressionAst extent should always start with '{' and end with '}'");
-                    var scriptblockBodyString = sbExprText.Substring(1, sbExprText.Length - 2);
-                    var pipelineOffset = scriptBlockExpr.Extent.StartOffset + 1;
-                    var variables = scriptBlockExpr.FindAll(static x => x is VariableExpressionAst, true);
-
-                    // Minimize allocations by initializing the stringbuilder to the size of the source string + space for ${using:} * 2
-                    System.Text.StringBuilder updatedScriptblock = new System.Text.StringBuilder(scriptblockBodyString.Length + 18);
-                    int position = 0;
-
-                    // Prefix variables in the scriptblock with $using:
-                    foreach (var v in variables)
-                    {
-                        var variableName = ((VariableExpressionAst)v).VariablePath.UserPath;
-
-                        // Skip variables that don't exist
-                        if (funcContext._executionContext.EngineSessionState.GetVariable(variableName) == null)
-                        {
-                            continue;
-                        }
-
-                        // Skip PowerShell magic variables
-                        if (!Regex.Match(
-                                variableName,
-                                "^(global:){0,1}(PID|PSVersionTable|PSEdition|PSHOME|HOST|TRUE|FALSE|NULL)$",
-                                RegexOptions.IgnoreCase | RegexOptions.CultureInvariant).Success)
-                        {
-                            updatedScriptblock.Append(scriptblockBodyString.AsSpan(position, v.Extent.StartOffset - pipelineOffset - position));
-                            updatedScriptblock.Append("${using:");
-                            updatedScriptblock.Append(CodeGeneration.EscapeVariableName(variableName));
-                            updatedScriptblock.Append('}');
-                            position = v.Extent.EndOffset - pipelineOffset;
-                        }
-                    }
-
-                    updatedScriptblock.Append(scriptblockBodyString.AsSpan(position));
-                    sb = ScriptBlock.Create(updatedScriptblock.ToString());
+                    // The pipeline is already a script block - use the ScriptBlock from the AST directly.
+                    // Using ScriptBlock.Create("{ content }") would create a script that returns a ScriptBlock
+                    // object rather than executing the body. Getting the ScriptBlock from the ScriptBlockAst
+                    // avoids all text manipulation and correctly executes the body.
+                    // Users are expected to use explicit $using: scoping in their scriptblock to capture
+                    // outer variables (e.g., { $using:testVar } &!).
+                    sb = scriptBlockExpr.ScriptBlock.GetScriptBlock();
                 }
                 else
                 {
-                    // The pipeline is a regular command - wrap it in a script block
+                    // The pipeline is a regular command - wrap it in a script block.
+                    // Auto-inject $using: for variables that exist in the current scope.
                     var scriptblockBodyString = pipelineAst.Extent.Text;
                     var pipelineOffset = pipelineAst.Extent.StartOffset;
                     var variables = pipelineAst.FindAll(static x => x is VariableExpressionAst, true);
@@ -630,11 +602,12 @@ namespace System.Management.Automation
                             continue;
                         }
 
-                        // Skip PowerShell magic variables
-                        if (!Regex.Match(
-                                variableName,
-                                "^(global:){0,1}(PID|PSVersionTable|PSEdition|PSHOME|HOST|TRUE|FALSE|NULL)$",
-                                RegexOptions.IgnoreCase | RegexOptions.CultureInvariant).Success)
+                        // Strip global: prefix if present, then check against magic variable names
+                        var cleanVariableName = variableName.StartsWith("global:", StringComparison.OrdinalIgnoreCase)
+                            ? variableName.Substring(7)
+                            : variableName;
+
+                        if (!s_backgroundJobMagicVariables.Contains(cleanVariableName))
                         {
                             updatedScriptblock.Append(scriptblockBodyString.AsSpan(position, v.Extent.StartOffset - pipelineOffset - position));
                             updatedScriptblock.Append("${using:");
