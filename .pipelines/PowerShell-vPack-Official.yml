@@ -41,7 +41,7 @@ variables:
   - name: BuildConfiguration
     value: Release
   - name: WindowsContainerImage
-    value: 'onebranch.azurecr.io/windows/ltsc2019/vse2022:latest'
+    value: 'onebranch.azurecr.io/windows/ltsc2022/vse2022:latest'
   - name: Codeql.Enabled
     value: false  #  pipeline is not building artifacts; it repackages existing artifacts into a vpack
   - name: DOTNET_CLI_TELEMETRY_OPTOUT
