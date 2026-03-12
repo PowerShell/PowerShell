@@ -429,7 +429,7 @@ namespace System.Management.Automation.Language
         QuestionLBracket = 104,
 
         /// <summary>The ThreadJob background operator '&amp;!'.</summary>
-        AmpersandExclaim = 105,
+        AmpersandExclaim = 106,
 
         #endregion Operators
 
@@ -808,7 +808,6 @@ namespace System.Management.Automation.Language
             /*               AndAnd */ TokenFlags.ParseModeInvariant,
             /*                 OrOr */ TokenFlags.ParseModeInvariant,
             /*            Ampersand */ TokenFlags.SpecialOperator | TokenFlags.ParseModeInvariant,
-            /*     AmpersandExclaim */ TokenFlags.SpecialOperator | TokenFlags.ParseModeInvariant,
             /*                 Pipe */ TokenFlags.SpecialOperator | TokenFlags.ParseModeInvariant,
             /*                Comma */ TokenFlags.UnaryOperator | TokenFlags.ParseModeInvariant,
             /*           MinusMinus */ TokenFlags.UnaryOperator | TokenFlags.PrefixOrPostfixOperator | TokenFlags.DisallowedInRestrictedMode,
@@ -885,7 +884,7 @@ namespace System.Management.Automation.Language
             /*     QuestionQuestion */ TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceCoalesce,
             /*          QuestionDot */ TokenFlags.SpecialOperator | TokenFlags.DisallowedInRestrictedMode,
             /*     QuestionLBracket */ TokenFlags.None,
-            /*     Reserved slot 7  */ TokenFlags.None,
+            /*     AmpersandExclaim */ TokenFlags.SpecialOperator | TokenFlags.ParseModeInvariant,
             /*     Reserved slot 8  */ TokenFlags.None,
             /*     Reserved slot 9  */ TokenFlags.None,
             /*     Reserved slot 10 */ TokenFlags.None,
@@ -1009,7 +1008,6 @@ namespace System.Management.Automation.Language
             /*               AndAnd */ "&&",
             /*                 OrOr */ "||",
             /*            Ampersand */ "&",
-            /*     AmpersandExclaim */ "&!",
             /*                 Pipe */ "|",
             /*                Comma */ ",",
             /*           MinusMinus */ "--",
@@ -1086,7 +1084,7 @@ namespace System.Management.Automation.Language
             /*     QuestionQuestion */ "??",
             /*          QuestionDot */ "?.",
             /*     QuestionLBracket */ "?[",
-            /*    Reserved slot 7   */ string.Empty,
+            /*     AmpersandExclaim */ "&!",
             /*    Reserved slot 8   */ string.Empty,
             /*    Reserved slot 9   */ string.Empty,
             /*    Reserved slot 10  */ string.Empty,
