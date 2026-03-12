@@ -428,6 +428,9 @@ namespace System.Management.Automation.Language
         /// <summary>The null conditional index access operator '?[]'.</summary>
         QuestionLBracket = 104,
 
+        /// <summary>The ThreadJob background operator '&amp;!'.</summary>
+        AmpersandExclaim = 105,
+
         #endregion Operators
 
         #region Keywords
@@ -590,9 +593,6 @@ namespace System.Management.Automation.Language
 
         /// <summary>The 'clean' keyword.</summary>
         Clean = 170,
-
-        /// <summary>The ThreadJob background operator '&!'.</summary>
-        AmpersandExclaim = 171,
 
         #endregion Keywords
     }
@@ -808,6 +808,7 @@ namespace System.Management.Automation.Language
             /*               AndAnd */ TokenFlags.ParseModeInvariant,
             /*                 OrOr */ TokenFlags.ParseModeInvariant,
             /*            Ampersand */ TokenFlags.SpecialOperator | TokenFlags.ParseModeInvariant,
+            /*     AmpersandExclaim */ TokenFlags.SpecialOperator | TokenFlags.ParseModeInvariant,
             /*                 Pipe */ TokenFlags.SpecialOperator | TokenFlags.ParseModeInvariant,
             /*                Comma */ TokenFlags.UnaryOperator | TokenFlags.ParseModeInvariant,
             /*           MinusMinus */ TokenFlags.UnaryOperator | TokenFlags.PrefixOrPostfixOperator | TokenFlags.DisallowedInRestrictedMode,
@@ -955,7 +956,6 @@ namespace System.Management.Automation.Language
             /*                 Base */ TokenFlags.Keyword,
             /*              Default */ TokenFlags.Keyword,
             /*                Clean */ TokenFlags.Keyword | TokenFlags.ScriptBlockBlockName,
-            /*     AmpersandExclaim */ TokenFlags.SpecialOperator | TokenFlags.ParseModeInvariant,
 
             #endregion Flags for keywords
         };
@@ -1009,6 +1009,7 @@ namespace System.Management.Automation.Language
             /*               AndAnd */ "&&",
             /*                 OrOr */ "||",
             /*            Ampersand */ "&",
+            /*     AmpersandExclaim */ "&!",
             /*                 Pipe */ "|",
             /*                Comma */ ",",
             /*           MinusMinus */ "--",
@@ -1156,7 +1157,6 @@ namespace System.Management.Automation.Language
             /*                 Base */ "base",
             /*              Default */ "default",
             /*                Clean */ "clean",
-            /*     AmpersandExclaim */ "&!",
 
             #endregion Text for keywords
         };
