@@ -378,14 +378,25 @@ namespace System.Management.Automation.Runspaces
                     // Wait till the runspace is opened - This is set in DoOpenHelper()
                     // Release the lock before we wait
                     Monitor.Exit(SyncRoot);
+                    bool opened = false;
                     try
                     {
-                        RunspaceOpening.Wait();
+                        opened = RunspaceOpening.Wait(TimeSpan.FromSeconds(30));
                     }
                     finally
                     {
                         // Acquire the lock before we carry on with the rest operations
                         Monitor.Enter(SyncRoot);
+                    }
+
+                    if (!opened)
+                    {
+                        SetRunspaceState(RunspaceState.Broken,
+                            new TimeoutException(
+                                StringUtil.Format(RunspaceStrings.StopPipelinesTimedOut,
+                                    TimeSpan.FromSeconds(30))));
+                        RaiseRunspaceStateEvents();
+                        return;
                     }
                 }
 
@@ -960,7 +971,14 @@ namespace System.Management.Automation.Runspaces
                                 tuple.Item2.Set();
                             }),
                             stateInfo);
-                        return waitAllIsDone.WaitOne();
+                        if (!waitAllIsDone.WaitOne(TimeSpan.FromSeconds(30)))
+                        {
+                            throw new TimeoutException(
+                                StringUtil.Format(RunspaceStrings.StopPipelinesTimedOut,
+                                    TimeSpan.FromSeconds(30)));
+                        }
+
+                        return true;
                     }
                 }
 
@@ -977,6 +995,14 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         protected void StopPipelines()
         {
+            StopPipelines(System.Threading.Timeout.InfiniteTimeSpan);
+        }
+
+        /// <summary>
+        /// Stops all the running pipelines with a bounded timeout using parallel stop.
+        /// </summary>
+        protected void StopPipelines(TimeSpan timeout)
+        {
             PipelineBase[] runningPipelines;
 
             lock (_pipelineListLock)
@@ -986,10 +1012,19 @@ namespace System.Management.Automation.Runspaces
 
             if (runningPipelines.Length > 0)
             {
-                // Start from the most recent pipeline.
-                for (int i = runningPipelines.Length - 1; i >= 0; i--)
+                System.Threading.Tasks.Task[] stopTasks =
+                    new System.Threading.Tasks.Task[runningPipelines.Length];
+                for (int i = 0; i < runningPipelines.Length; i++)
                 {
-                    runningPipelines[i].Stop();
+                    int index = i;
+                    stopTasks[i] = System.Threading.Tasks.Task.Run(
+                        () => runningPipelines[index].Stop());
+                }
+
+                if (!System.Threading.Tasks.Task.WaitAll(stopTasks, timeout))
+                {
+                    throw new TimeoutException(
+                        StringUtil.Format(RunspaceStrings.StopPipelinesTimedOut, timeout));
                 }
             }
         }
