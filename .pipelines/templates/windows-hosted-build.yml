@@ -274,7 +274,7 @@ jobs:
       )
 
       $sourceModulePath = Join-Path '$(GlobalToolArtifactPath)' 'publish' 'PowerShell.Windows.x64' 'release' 'Modules'
-      $destModulesPath = Join-Path "$outputPath" 'temp' 'tools' 'net10.0' 'any' 'modules'
+      $destModulesPath = Join-Path "$outputPath" 'temp' 'tools' 'net11.0' 'any' 'modules'
 
       $modulesToCopy | ForEach-Object {
         $modulePath = Join-Path $sourceModulePath $_
@@ -282,7 +282,7 @@ jobs:
       }
 
       # Copy ref assemblies
-      Copy-Item '$(Pipeline.Workspace)/Symbols_$(Architecture)/ref' "$outputPath\temp\tools\net10.0\any\ref" -Recurse -Force
+      Copy-Item '$(Pipeline.Workspace)/Symbols_$(Architecture)/ref' "$outputPath\temp\tools\net11.0\any\ref" -Recurse -Force
 
       $contentPath = Join-Path "$outputPath\temp" 'content'
       $contentFilesPath = Join-Path "$outputPath\temp" 'contentFiles'
@@ -290,14 +290,14 @@ jobs:
       Remove-Item -Path $contentPath,$contentFilesPath -Recurse -Force
 
       # remove PDBs to reduce the size of the nupkg
-      Remove-Item -Path "$outputPath\temp\tools\net10.0\any\*.pdb" -Recurse -Force
+      Remove-Item -Path "$outputPath\temp\tools\net11.0\any\*.pdb" -Recurse -Force
 
       # create powershell.config.json
       $config = [ordered]@{}
       $config.Add("Microsoft.PowerShell:ExecutionPolicy", "RemoteSigned")
       $config.Add("WindowsPowerShellCompatibilityModuleDenyList", @("PSScheduledJob", "BestPractices", "UpdateServices"))
 
-      $configPublishPath = Join-Path "$outputPath" 'temp' 'tools' 'net10.0' 'any' "powershell.config.json"
+      $configPublishPath = Join-Path "$outputPath" 'temp' 'tools' 'net11.0' 'any' "powershell.config.json"
       Set-Content -Path $configPublishPath -Value ($config | ConvertTo-Json) -Force -ErrorAction Stop
 
       Compress-Archive -Path "$outputPath\temp\*" -DestinationPath "$outputPath\$nupkgName" -Force

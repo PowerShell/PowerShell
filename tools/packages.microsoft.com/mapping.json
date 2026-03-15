@@ -22,6 +22,13 @@
           "PackageFormat": "PACKAGE_NAME-POWERSHELL_RELEASE-1.rh.x86_64.rpm"
       },
       {
+          "url": "microsoft-rhel10.0-prod",
+          "distribution": [
+              "stable"
+          ],
+          "PackageFormat": "PACKAGE_NAME-POWERSHELL_RELEASE-1.rh.x86_64.rpm"
+      },
+      {
         "url": "cbl-mariner-2.0-prod-Microsoft-aarch64",
         "distribution": [
             "bionic"
@@ -100,6 +107,27 @@
           "PackageFormat": "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
       },
       {
+          "url": "microsoft-debian-bullseye-prod",
+          "distribution": [
+              "bullseye"
+          ],
+          "PackageFormat": "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
+      },
+      {
+          "url": "microsoft-debian-bookworm-prod",
+          "distribution": [
+              "bookworm"
+          ],
+          "PackageFormat": "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
+      },
+      {
+          "url": "microsoft-debian-trixie-prod",
+          "distribution": [
+              "trixie"
+          ],
+          "PackageFormat": "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
+      },
+      {
           "url": "microsoft-ubuntu-bionic-prod",
           "distribution": [
               "bionic"
@@ -133,20 +161,6 @@
             "xenial"
         ],
         "PackageFormat": "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
-    },
-    {
-        "url": "microsoft-debian-bullseye-prod",
-        "distribution": [
-            "bullseye"
-        ],
-        "PackageFormat": "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
-    },
-    {
-      "url": "microsoft-debian-bookworm-prod",
-      "distribution": [
-          "bookworm"
-      ],
-      "PackageFormat": "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
     }
   ]
 }

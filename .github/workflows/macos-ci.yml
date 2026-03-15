@@ -54,6 +54,7 @@ jobs:
     outputs:
       source: ${{ steps.filter.outputs.source }}
       buildModuleChanged: ${{ steps.filter.outputs.buildModuleChanged }}
+      packagingChanged: ${{ steps.filter.outputs.packagingChanged }}
     steps:
       - name: checkout
         uses: actions/checkout@v6
@@ -161,7 +162,7 @@ jobs:
     name: macOS packaging and testing
     needs:
       - changes
-    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
+    if: ${{ needs.changes.outputs.packagingChanged == 'true' }}
     runs-on:
       - macos-15-large
     steps:
@@ -228,7 +229,7 @@ jobs:
         testResultsFolder: "${{ runner.workspace }}/testResults"
     - name: Upload package artifact
       if: always()
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: macos-package
         path: "*.pkg"

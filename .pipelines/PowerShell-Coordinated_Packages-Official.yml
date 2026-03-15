@@ -29,11 +29,8 @@ parameters:
     displayName: Debugging - Enable CodeQL and set cadence to 1 hour
     type: boolean
     default: false
-  - name: OfficialBuild
-    type: boolean
-    default: false
 
-name: bins-$(BUILD.SOURCEBRANCHNAME)-prod.${{ parameters.OfficialBuild }}-$(Build.BuildId)
+name: bins-$(BUILD.SOURCEBRANCHNAME)-prod.true-$(Build.BuildId)
 
 resources:
   repositories:
@@ -71,7 +68,7 @@ variables:
   - name: LinuxContainerImage
     value: mcr.microsoft.com/onebranch/azurelinux/build:3.0
   - name: WindowsContainerImage
-    value: onebranch.azurecr.io/windows/ltsc2019/vse2022:latest
+    value: onebranch.azurecr.io/windows/ltsc2022/vse2022:latest
   - name: CDP_DEFINITION_BUILD_COUNT
     value: $[counter('', 0)]
   - name: ReleaseTagVar
@@ -91,8 +88,6 @@ variables:
       value: true
     ${{ else }}:
       value: false
-  - name: templateFile
-    value: ${{ iif ( parameters.OfficialBuild, 'v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates', 'v2/OneBranch.NonOfficial.CrossPlat.yml@onebranchTemplates' ) }}
   # Fix for BinSkim ICU package error in Linux containers
   - name: DOTNET_SYSTEM_GLOBALIZATION_INVARIANT
     value: true
@@ -100,16 +95,17 @@ variables:
   - name: ob_sdl_binskim_enabled
     value: false
   - name: ps_official_build
-    value: ${{ parameters.OfficialBuild }}
+    value: true
 
 extends:
-  template: ${{ variables.templateFile }}
+  template: v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates
   parameters:
     customTags: 'ES365AIMigrationTooling'
     featureFlags:
       LinuxHostVersion:
           Network: KS3
       WindowsHostVersion:
+          Version: 2022
           Network: KS3
       incrementalSDLBinaryAnalysis: true
     globalSdl:

@@ -1217,6 +1217,11 @@
     "Architecture": null
   },
   {
+    "Pattern": "Modules\\Microsoft.PowerShell.PSResourceGet\\.signature.p7s",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
     "Pattern": "Modules\\Microsoft.PowerShell.PSResourceGet\\Microsoft.PowerShell.PSResourceGet.pdb",
     "FileType": "NonProduct",
     "Architecture": null
@@ -1273,11 +1278,6 @@
   },
   {
     "Pattern": "mscorlib.dll",
-    "FileType": "NonProduct",
-    "Architecture": null
-  },
-  {
-    "Pattern": "mscorrc.dll",
     "FileType": "NonProduct",
     "Architecture": null
   },
@@ -2497,6 +2497,11 @@
     "Architecture": null
   },
   {
+    "Pattern": "ref\\System.IO.Compression.Zstandard.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
     "Pattern": "ref\\System.IO.Pipelines.dll",
     "FileType": "NonProduct",
     "Architecture": null
@@ -3203,6 +3208,11 @@
   },
   {
     "Pattern": "System.IO.Compression.ZipFile.dll",
+    "FileType": "NonProduct",
+    "Architecture": null
+  },
+  {
+    "Pattern": "System.IO.Compression.Zstandard.dll",
     "FileType": "NonProduct",
     "Architecture": null
   },
@@ -4592,6 +4602,16 @@
     "Architecture": null
   },
   {
+    "Pattern": "pwsh.profile.dsc.resource.json",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
+    "Pattern": "pwsh.profile.resource.ps1",
+    "FileType": "Product",
+    "Architecture": null
+  },
+  {
     "Pattern": "RegisterManifest.ps1",
     "FileType": "Product",
     "Architecture": null
@@ -4603,16 +4623,6 @@
   },
   {
     "Pattern": "System.Management.Automation.dll",
-    "FileType": "Product",
-    "Architecture": null
-  },
-  {
-    "Pattern": "pwsh.profile.dsc.resource.json",
-    "FileType": "Product",
-    "Architecture": null
-  },
-  {
-    "Pattern": "pwsh.profile.resource.ps1",
     "FileType": "Product",
     "Architecture": null
   }
