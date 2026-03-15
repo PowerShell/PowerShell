@@ -52,7 +52,11 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// Select the processes specified as input.
             /// </summary>
-            ByInput
+            ByInput,
+            /// <summary>
+            /// Selects the current process.
+            /// </summary>
+            ByCurrent
         }
         /// <summary>
         /// The current process selection mode.
@@ -106,8 +110,9 @@ namespace Microsoft.PowerShell.Commands
         private readonly Dictionary<int, Process> _keys = new();
 
         /// <summary>
-        /// Retrieve the list of all processes matching the Name, Id
-        /// and InputObject parameters, sorted by Id.
+        /// Retrieve a list of all processes matching the Name, Id
+        /// and InputObject parameters, sorted by Id. 
+        /// Retrives the Current Process if
         /// </summary>
         /// <returns></returns>
         internal List<Process> MatchingProcesses()
@@ -115,6 +120,10 @@ namespace Microsoft.PowerShell.Commands
             _matchingProcesses.Clear();
             switch (myMode)
             {
+                case MatchMode.ByCurrent:
+                    AddIdempotent(Process.GetCurrentProcess());
+                    break;
+
                 case MatchMode.ById:
                     RetrieveMatchingProcessesById();
                     break;
@@ -205,6 +214,15 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
+
+        //// <summary>
+        //// Retrieves the current process
+        //// </summary>
+        //// <returns></returns>
+        //private static Process RetrieveCurrentProcess()
+        //{
+        //;
+        //}
 
         /// <summary>
         /// Retrieves the list of all processes matching the Id
@@ -448,6 +466,8 @@ namespace Microsoft.PowerShell.Commands
         private const string NameWithUserNameParameterSet = "NameWithUserName";
         private const string IdWithUserNameParameterSet = "IdWithUserName";
         private const string InputObjectWithUserNameParameterSet = "InputObjectWithUserName";
+        private const string CurrentWithUserNameParameterSet = "CurrentWithUserName";
+        private const string CurrentParameterSet = "Current";
 
         #endregion ParameterSetStrings
 
@@ -513,11 +533,36 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
+        /// Get the Current Process
+        /// </summary>
+        [Parameter(ParameterSetName = CurrentParameterSet, Mandatory = true)]
+        [Parameter(ParameterSetName = CurrentWithUserNameParameterSet, Mandatory = true)]
+        public SwitchParameter Current
+        {
+            get
+            {
+                return _current;
+            }
+
+            set
+            {
+                _current = value;
+                if (value.IsPresent)
+                {
+                    myMode = MatchMode.ByCurrent;
+                }
+            }
+        }
+
+        private SwitchParameter _current;
+
+        /// <summary>
         /// Include the UserName.
         /// </summary>
         [Parameter(ParameterSetName = NameWithUserNameParameterSet, Mandatory = true)]
         [Parameter(ParameterSetName = IdWithUserNameParameterSet, Mandatory = true)]
         [Parameter(ParameterSetName = InputObjectWithUserNameParameterSet, Mandatory = true)]
+        [Parameter(ParameterSetName = CurrentWithUserNameParameterSet, Mandatory = true)]
         public SwitchParameter IncludeUserName { get; set; }
 
         /// <summary>
