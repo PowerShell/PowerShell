@@ -215,15 +215,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        //// <summary>
-        //// Retrieves the current process
-        //// </summary>
-        //// <returns></returns>
-        //private static Process RetrieveCurrentProcess()
-        //{
-        //;
-        //}
-
         /// <summary>
         /// Retrieves the list of all processes matching the Id
         /// parameter.
