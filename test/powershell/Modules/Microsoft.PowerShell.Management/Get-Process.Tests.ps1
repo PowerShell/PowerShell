@@ -112,6 +112,12 @@ Describe "Get-Process" -Tags "CI" {
 
         $actual | Should -Be $expected
     }
+
+    It "Should return Current Process with -Current" {
+        $currentProcess = Get-Process -Current
+        $currentProcess | Should -HaveCount 1
+        $currentProcess[0].Id | Should -BeExactly $PID
+    }
 }
 
 Describe "Get-Process Formatting" -Tags "Feature" {
