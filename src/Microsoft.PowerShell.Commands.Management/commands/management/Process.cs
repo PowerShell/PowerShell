@@ -539,10 +539,7 @@ namespace Microsoft.PowerShell.Commands
             set
             {
                 _current = value;
-                if (value.IsPresent)
-                {
-                    myMode = MatchMode.ByCurrent;
-                }
+                myMode = MatchMode.ByCurrent;
             }
         }
 
