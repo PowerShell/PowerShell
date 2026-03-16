@@ -19,6 +19,7 @@
     <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="9.0.14" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="9.0.14" />
+    <PackageReference Include="System.Diagnostics.EventLog" Version="10.0.5" />
     <PackageReference Include="System.DirectoryServices" Version="9.0.14" />
     <PackageReference Include="System.Management" Version="9.0.14" />
     <PackageReference Include="System.Management.Automation" Version="7.6.0-preview.2" />
