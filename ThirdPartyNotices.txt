@@ -17,7 +17,7 @@ required to debug changes to any libraries licensed under the GNU Lesser General
 
 ---------------------------------------------------------
 
-Markdig.Signed 0.43.0 - BSD-2-Clause
+Markdig.Signed 0.44.0 - BSD-2-Clause
 
 
 
@@ -170,7 +170,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-Microsoft.Bcl.AsyncInterfaces 10.0.0 - MIT
+Microsoft.Bcl.AsyncInterfaces 10.0.3 - MIT
 
 
 Copyright (c) 2021
@@ -244,7 +244,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-Microsoft.CodeAnalysis.Common 4.14.0 - MIT
+Microsoft.CodeAnalysis.Common 5.0.0 - MIT
 
 
 (c) Microsoft Corporation
@@ -264,7 +264,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-Microsoft.CodeAnalysis.CSharp 4.14.0 - MIT
+Microsoft.CodeAnalysis.CSharp 5.0.0 - MIT
 
 
 (c) Microsoft Corporation
@@ -289,7 +289,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-Microsoft.Extensions.ObjectPool 10.0.0 - MIT
+Microsoft.Extensions.ObjectPool 10.0.3 - MIT
 
 
 Copyright Jorn Zaefferer
@@ -379,7 +379,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-Microsoft.Win32.Registry.AccessControl 10.0.0 - MIT
+Microsoft.Win32.Registry.AccessControl 10.0.3 - MIT
 
 
 Copyright (c) 2021
@@ -453,7 +453,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-Microsoft.Win32.SystemEvents 10.0.0 - MIT
+Microsoft.Win32.SystemEvents 10.0.3 - MIT
 
 
 Copyright (c) 2021
@@ -527,7 +527,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-Microsoft.Windows.Compatibility 10.0.0 - MIT
+Microsoft.Windows.Compatibility 10.0.3 - MIT
 
 
 (c) Microsoft Corporation
@@ -580,7 +580,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ---------------------------------------------------------
 
-runtime.android-arm.runtime.native.System.IO.Ports 10.0.0 - MIT
+runtime.android-arm.runtime.native.System.IO.Ports 10.0.3 - MIT
 
 
 Copyright (c) 2021
@@ -654,7 +654,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-runtime.android-arm64.runtime.native.System.IO.Ports 10.0.0 - MIT
+runtime.android-arm64.runtime.native.System.IO.Ports 10.0.3 - MIT
 
 
 Copyright (c) 2021
@@ -728,7 +728,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-runtime.android-x64.runtime.native.System.IO.Ports 10.0.0 - MIT
+runtime.android-x64.runtime.native.System.IO.Ports 10.0.3 - MIT
 
 
 Copyright (c) 2021
@@ -802,7 +802,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-runtime.android-x86.runtime.native.System.IO.Ports 10.0.0 - MIT
+runtime.android-x86.runtime.native.System.IO.Ports 10.0.3 - MIT
 
 
 Copyright (c) 2021
@@ -876,7 +876,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-runtime.linux-arm.runtime.native.System.IO.Ports 10.0.0 - MIT
+runtime.linux-arm.runtime.native.System.IO.Ports 10.0.3 - MIT
 
 
 Copyright (c) 2021
@@ -950,7 +950,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-runtime.linux-arm64.runtime.native.System.IO.Ports 10.0.0 - MIT
+runtime.linux-arm64.runtime.native.System.IO.Ports 10.0.3 - MIT
 
 
 Copyright (c) 2021
@@ -1024,7 +1024,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-runtime.linux-bionic-arm64.runtime.native.System.IO.Ports 10.0.0 - MIT
+runtime.linux-bionic-arm64.runtime.native.System.IO.Ports 10.0.3 - MIT
 
 
 Copyright (c) 2021
@@ -1098,7 +1098,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-runtime.linux-bionic-x64.runtime.native.System.IO.Ports 10.0.0 - MIT
+runtime.linux-bionic-x64.runtime.native.System.IO.Ports 10.0.3 - MIT
 
 
 Copyright (c) 2021
@@ -1172,7 +1172,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-runtime.linux-musl-arm.runtime.native.System.IO.Ports 10.0.0 - MIT
+runtime.linux-musl-arm.runtime.native.System.IO.Ports 10.0.3 - MIT
 
 
 Copyright (c) 2021
@@ -1246,7 +1246,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-runtime.linux-musl-arm64.runtime.native.System.IO.Ports 10.0.0 - MIT
+runtime.linux-musl-arm64.runtime.native.System.IO.Ports 10.0.3 - MIT
 
 
 Copyright (c) 2021
@@ -1320,7 +1320,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-runtime.linux-musl-x64.runtime.native.System.IO.Ports 10.0.0 - MIT
+runtime.linux-musl-x64.runtime.native.System.IO.Ports 10.0.3 - MIT
 
 
 Copyright (c) 2021
@@ -1394,7 +1394,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-runtime.linux-x64.runtime.native.System.IO.Ports 10.0.0 - MIT
+runtime.linux-x64.runtime.native.System.IO.Ports 10.0.3 - MIT
 
 
 Copyright (c) 2021
@@ -1468,7 +1468,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-runtime.maccatalyst-arm64.runtime.native.System.IO.Ports 10.0.0 - MIT
+runtime.maccatalyst-arm64.runtime.native.System.IO.Ports 10.0.3 - MIT
 
 
 Copyright (c) 2021
@@ -1542,7 +1542,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-runtime.maccatalyst-x64.runtime.native.System.IO.Ports 10.0.0 - MIT
+runtime.maccatalyst-x64.runtime.native.System.IO.Ports 10.0.3 - MIT
 
 
 Copyright (c) 2021
@@ -1661,7 +1661,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-runtime.native.System.IO.Ports 10.0.0 - MIT
+runtime.native.System.IO.Ports 10.0.3 - MIT
 
 
 Copyright (c) 2021
@@ -1735,7 +1735,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-runtime.osx-arm64.runtime.native.System.IO.Ports 10.0.0 - MIT
+runtime.osx-arm64.runtime.native.System.IO.Ports 10.0.3 - MIT
 
 
 Copyright (c) 2021
@@ -1809,7 +1809,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-runtime.osx-x64.runtime.native.System.IO.Ports 10.0.0 - MIT
+runtime.osx-x64.runtime.native.System.IO.Ports 10.0.3 - MIT
 
 
 Copyright (c) 2021
@@ -1883,7 +1883,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-System.CodeDom 10.0.0 - MIT
+System.CodeDom 10.0.3 - MIT
 
 
 Copyright (c) 2021
@@ -1957,7 +1957,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-System.ComponentModel.Composition 10.0.0 - MIT
+System.ComponentModel.Composition 10.0.3 - MIT
 
 
 Copyright (c) 2021
@@ -2031,7 +2031,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-System.ComponentModel.Composition.Registration 10.0.0 - MIT
+System.ComponentModel.Composition.Registration 10.0.3 - MIT
 
 
 Copyright (c) 2021
@@ -2105,7 +2105,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-System.Configuration.ConfigurationManager 10.0.0 - MIT
+System.Configuration.ConfigurationManager 10.0.3 - MIT
 
 
 Copyright (c) 2021
@@ -2179,7 +2179,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-System.Data.Odbc 10.0.0 - MIT
+System.Data.Odbc 10.0.3 - MIT
 
 
 Copyright (c) 2021
@@ -2253,7 +2253,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-System.Data.OleDb 10.0.0 - MIT
+System.Data.OleDb 10.0.3 - MIT
 
 
 Copyright (c) 2021
@@ -2346,7 +2346,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-System.Diagnostics.EventLog 10.0.0 - MIT
+System.Diagnostics.EventLog 10.0.3 - MIT
 
 
 Copyright (c) 2021
@@ -2420,7 +2420,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-System.Diagnostics.PerformanceCounter 10.0.0 - MIT
+System.Diagnostics.PerformanceCounter 10.0.3 - MIT
 
 
 Copyright (c) 2021
@@ -2494,7 +2494,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-System.DirectoryServices 10.0.0 - MIT
+System.DirectoryServices 10.0.3 - MIT
 
 
 Copyright (c) 2021
@@ -2568,7 +2568,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-System.DirectoryServices.AccountManagement 10.0.0 - MIT
+System.DirectoryServices.AccountManagement 10.0.3 - MIT
 
 
 Copyright (c) 2021
@@ -2642,7 +2642,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-System.DirectoryServices.Protocols 10.0.0 - MIT
+System.DirectoryServices.Protocols 10.0.3 - MIT
 
 
 Copyright (c) 2021
@@ -2716,7 +2716,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-System.Drawing.Common 10.0.0 - MIT
+System.Drawing.Common 10.0.3 - MIT
 
 
 (c) Microsoft Corporation
@@ -2751,7 +2751,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.IO.Packaging 10.0.0 - MIT
+System.IO.Packaging 10.0.3 - MIT
 
 
 Copyright (c) 2021
@@ -2825,7 +2825,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-System.IO.Ports 10.0.0 - MIT
+System.IO.Ports 10.0.3 - MIT
 
 
 Copyright (c) 2021
@@ -2899,7 +2899,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-System.Management 10.0.0 - MIT
+System.Management 10.0.3 - MIT
 
 
 Copyright (c) 2021
@@ -2973,7 +2973,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-System.Net.Http.WinHttpHandler 10.0.0 - MIT
+System.Net.Http.WinHttpHandler 10.0.3 - MIT
 
 
 Copyright (c) 2021
@@ -3047,7 +3047,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-System.Reflection.Context 10.0.0 - MIT
+System.Reflection.Context 10.0.3 - MIT
 
 
 Copyright (c) 2021
@@ -3121,7 +3121,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-System.Runtime.Caching 10.0.0 - MIT
+System.Runtime.Caching 10.0.3 - MIT
 
 
 Copyright (c) 2021
@@ -3195,7 +3195,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-System.Security.Cryptography.Pkcs 10.0.0 - MIT
+System.Security.Cryptography.Pkcs 10.0.3 - MIT
 
 
 Copyright (c) 2021
@@ -3269,7 +3269,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-System.Security.Cryptography.ProtectedData 10.0.0 - MIT
+System.Security.Cryptography.ProtectedData 10.0.3 - MIT
 
 
 Copyright (c) 2021
@@ -3343,7 +3343,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-System.Security.Cryptography.Xml 10.0.0 - MIT
+System.Security.Cryptography.Xml 10.0.3 - MIT
 
 
 Copyright (c) 2021
@@ -3417,7 +3417,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-System.Security.Permissions 10.0.0 - MIT
+System.Security.Permissions 10.0.3 - MIT
 
 
 Copyright (c) 2021
@@ -3491,7 +3491,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-System.ServiceModel.Http 8.1.2 - MIT
+System.ServiceModel.Http 10.0.652802 - MIT
 
 
 (c) Microsoft Corporation
@@ -3527,7 +3527,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.ServiceModel.NetFramingBase 8.1.2 - MIT
+System.ServiceModel.NetFramingBase 10.0.652802 - MIT
 
 
 (c) Microsoft Corporation
@@ -3563,7 +3563,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.ServiceModel.NetTcp 8.1.2 - MIT
+System.ServiceModel.NetTcp 10.0.652802 - MIT
 
 
 (c) Microsoft Corporation
@@ -3599,7 +3599,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.ServiceModel.Primitives 8.1.2 - MIT
+System.ServiceModel.Primitives 10.0.652802 - MIT
 
 
 (c) Microsoft Corporation
@@ -3635,7 +3635,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.ServiceModel.Syndication 10.0.0 - MIT
+System.ServiceModel.Syndication 10.0.3 - MIT
 
 
 Copyright (c) 2021
@@ -3709,7 +3709,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-System.ServiceProcess.ServiceController 10.0.0 - MIT
+System.ServiceProcess.ServiceController 10.0.3 - MIT
 
 
 Copyright (c) 2021
@@ -3783,7 +3783,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-System.Speech 10.0.0 - MIT
+System.Speech 10.0.3 - MIT
 
 
 Copyright (c) 2021
@@ -3893,7 +3893,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Windows.Extensions 10.0.0 - MIT
+System.Windows.Extensions 10.0.3 - MIT
 
 
 Copyright (c) 2021
