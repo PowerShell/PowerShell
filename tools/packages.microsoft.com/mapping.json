@@ -22,7 +22,7 @@
           "PackageFormat": "PACKAGE_NAME-POWERSHELL_RELEASE-1.rh.x86_64.rpm"
       },
       {
-          "url": "microsoft-rhel10.0-prod",
+          "url": "microsoft-rhel10-prod",
           "distribution": [
               "stable"
           ],
