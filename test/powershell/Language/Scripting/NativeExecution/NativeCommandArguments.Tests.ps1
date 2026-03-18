@@ -5,12 +5,7 @@ param()
 
 Describe "Behavior is specific for each platform" -tags "CI" {
     It "PSNativeCommandArgumentPassing is set to 'Windows' on Windows systems" -skip:(-not $IsWindows) {
-        if ([Version]::TryParse($PSVersiontable.PSVersion.ToString(), [ref]$null)) {
-            $PSNativeCommandArgumentPassing | Should -BeExactly "Legacy"
-        }
-        else {
-            $PSNativeCommandArgumentPassing | Should -BeExactly "Windows"
-        }
+        $PSNativeCommandArgumentPassing | Should -BeExactly "Windows"
     }
     It "PSNativeCommandArgumentPassing is set to 'Standard' on non-Windows systems" -skip:($IsWindows) {
         $PSNativeCommandArgumentPassing | Should -Be "Standard"
