@@ -38,7 +38,7 @@
     To find the available properties of '_ReferencesFromRAR' when switching to a new dotnet sdk:
       1. Create a dummy project using the new dotnet sdk.
       2. Build the dummy project with:
-         dotnet msbuild .\dummy.csproj /t:ResolveAssemblyReferencesDesignTime /fileLogger /noconsolelogger /v:diag
+         dotnet msbuild ./dummy.csproj /t:ResolveAssemblyReferencesDesignTime /fileLogger /noconsolelogger /v:diag
       3. Search '_ReferencesFromRAR' in the produced 'msbuild.log' file.
   -->
   <Target Name="_GetDependencies"
