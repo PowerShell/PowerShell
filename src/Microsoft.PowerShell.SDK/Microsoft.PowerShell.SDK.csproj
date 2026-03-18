@@ -44,6 +44,10 @@
   <Target Name="_GetDependencies"
           DependsOnTargets="ResolveAssemblyReferencesDesignTime">
     <ItemGroup>
+      <!--
+        Excludes 'Microsoft.Management.Infrastructure' from the type catalog reference list,
+        as it is provided separately at runtime and must not be included in the generated catalog.
+      -->
       <_RefAssemblyPath Include="%(_ReferencesFromRAR.OriginalItemSpec)%3B" Condition=" '%(_ReferencesFromRAR.NuGetPackageId)' != 'Microsoft.Management.Infrastructure' "/>
     </ItemGroup>
     <WriteLinesToFile File="$(_DependencyFile)" Lines="@(_RefAssemblyPath)" Overwrite="true" />
