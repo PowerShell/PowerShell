@@ -268,6 +268,55 @@ function Publish-PackageToPMC() {
     }
 }
 
+<#
+This function stages, uploads and rolls back the powershell packages published to the associated repositories in PMC.
+#>
+function Remove-PackageFromPMC() {
+    param(
+        [Parameter(Mandatory)]
+        [pscustomobject[]]
+        $PackageObject,
+
+        [Parameter(Mandatory)]
+        [string]
+        $ConfigPath,
+
+        [Parameter(Mandatory)]
+        [bool]
+        $SkipPublish
+    )
+
+    # Don't fail outright when an error occurs, but instead pool them until
+    # after attempting to rollback all desired packages. That way we can choose to
+    # proceed for a partial failure.
+    $errorMessage = [System.Collections.Generic.List[string]]::new()
+    foreach ($finalPackage in $PackageObject)
+    {
+        Write-Verbose "---Staging package: $($finalPackage.PackageName)---" -Verbose
+        $packagePath = $finalPackage.PackagePath
+        $pkgRepo = $finalPackage.RepoId
+
+        $extension = [System.io.path]::GetExtension($packagePath)
+        $packageType = $extension -replace '^\.'
+        Write-Verbose "packageType: $packageType" -Verbose
+
+        $packageListJson = pmc --config $ConfigPath package $packageType list --file $packagePath
+        $list = $packageListJson | ConvertFrom-Json
+        $packageId = ""
+        if ($list.count -ne 0 -or $list.results.id.count -ne 0)
+        {
+            $packageId = $list.results.id | Select-Object -First 1
+            Write-Verbose -Verbose "running: pmc --config '$ConfigPath' repo package update --remove-packages '$packageId' '$pkgRepo'"
+            pmc --config $ConfigPath repo package update --remove-packages $packageId $pkgRepo
+        }
+        else {
+            Write-Verbose -Verbose "No package found for $($finalPackage.PackageName)"
+            $errorMessage.Add("No package found for $($finalPackage.PackageName)")
+            continue
+        }
+    }
+}
+
 if ($null -eq $env:MAPPING_FILE)
 {
     Write-Verbose -Verbose "MAPPING_FILE variable didn't get passed correctly"
@@ -286,11 +335,25 @@ if ($null -eq $env:PMC_METADATA)
     return 1
 }
 
+if ($null -eq $env:OPERATION_FILE)
+{
+    Write-Verbose -Verbose "OPERATION_FILE variable didn't get passed correctly"
+    return 1
+}
+
+if ($null -eq $env:ROLLBACK_MAPPING_FILE)
+{
+    Write-Verbose -Verbose "ROLLBACK_MAPPING_FILE variable didn't get passed correctly"
+    return 1
+}
+
 try {
     Write-Verbose -Verbose "Downloading files"
     Invoke-WebRequest -Uri $env:MAPPING_FILE -OutFile mapping.json
     Invoke-WebRequest -Uri $env:PWSH_PACKAGES_TARGZIP -OutFile packages.tar.gz
     Invoke-WebRequest -Uri $env:PMC_METADATA -OutFile pmcMetadata.json
+    Invoke-WebRequest -Uri $env:OPERATION_FILE -OutFile pmcOperation.json
+    Invoke-WebRequest -Uri $env:ROLLBACK_MAPPING_FILE -OutFile rollbackMapping.json
 
     # create variables to those paths and test them
     $mappingFilePath = Join-Path "/package/unarchive/" -ChildPath "mapping.json"
@@ -324,6 +387,22 @@ try {
         return 1
     }
 
+    $operationFilePath = Join-Path -Path "/package/unarchive/" -ChildPath "pmcOperation.json"
+    $operationFilePathExists = Test-Path $operationFilePath
+    if (!$operationFilePathExists)
+    {
+        Write-Verbose -Verbose "pmcOperation.json expected at $operationFilePath does not exist"
+        return 1
+    }
+
+    $rollbackMappingFilePath = Join-Path "/package/unarchive/" -ChildPath "rollbackMapping.json"
+    $rollbackMappingFilePathExists = Test-Path $rollbackMappingFilePath
+    if (!$rollbackMappingFilePathExists)
+    {
+        Write-Verbose -Verbose "rollbackMapping.json expected at $rollbackMappingFilePath does not exist"
+        return 1
+    }
+
     # files in the extracted Run dir
     $configPath = Join-Path '/package/unarchive/Run' -ChildPath 'settings.toml'
     $configPathExists = Test-Path -Path $configPath
@@ -345,6 +424,10 @@ try {
     pip install --upgrade pip
     pip --version --verbose
     pip install /package/unarchive/Run/python_dl/*.whl
+
+    # Get operation
+    $operationContent = Get-Content -Path $operationFilePath | ConvertFrom-Json
+    $operation = $operationContent.Operation
 
     # Get metadata
     $channel = ""
@@ -381,13 +464,23 @@ try {
 
     Write-Verbose -Verbose "---Getting package info---"
 
+    $mapping = $null
+    if ($operation -eq "Publish")
+    {
+        Write-Verbose "Reading mapping file from '$mappingFilePath'" -Verbose
+        $mapping = Get-Content -Raw -LiteralPath $mappingFilePath | ConvertFrom-Json -AsHashtable
+    }
+    elseif ($operation -eq "Rollback")
+    {
+        Write-Verbose "Reading mapping file from '$rollbackMappingFilePath'" -Verbose
+        $mapping = Get-Content -Raw -LiteralPath $rollbackMappingFilePath | ConvertFrom-Json -AsHashtable
+    }
 
-    Write-Verbose "Reading mapping file from '$mappingFilePath'" -Verbose
-    $mapping = Get-Content -Raw -LiteralPath $mappingFilePath | ConvertFrom-Json -AsHashtable
     $mappedReposUsedByPwsh = Get-MappedRepositoryIds -Mapping $mapping -RepoList $repoList -Channel $channel
     $packageObjects = Get-PackageObjects -RepoObjects $mappedReposUsedByPwsh -PackageName $packageNames -ReleaseVersion $releaseVersion
-    Write-Verbose -Verbose "skip publish $skipPublish"
+    Write-Verbose -Verbose "skip $operation $skipPublish"
     Publish-PackageToPMC -PackageObject $packageObjects -ConfigPath $configPath -SkipPublish $skipPublish
+    Remove-PackageFromPMC -PackageObject $packageObjects -ConfigPath $configPath -SkipPublish $skipPublish
 }
 catch {
     Write-Error -ErrorAction Stop $_.Exception.Message

@@ -9,6 +9,12 @@ parameters: # parameters are shown up in ADO UI in a build queue time
     displayName: Skip PMC Publish
     type: boolean
     default: false
+  - name: operation
+    displayName: 'Choose the PMC Operation: Publish (default) or Rollback'
+    type: string
+    values:
+      - 'Publish'
+      - 'Rollback'
   - name: SKIP_SIGNING
     displayName: Skip Signing
     type: string
@@ -98,5 +104,6 @@ extends:
       - template: /.pipelines/templates/release-prep-for-ev2.yml@self
         parameters:
           skipPublish: ${{ parameters.skipPublish }}
+          pmcOperation: ${{ parameters.operation }}
 
       - template: /.pipelines/templates/release-publish-pmc.yml@self

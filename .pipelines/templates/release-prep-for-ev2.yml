@@ -2,6 +2,9 @@ parameters:
 - name: skipPublish
   type: boolean
   default: false
+- name: operation
+  type: string
+  default: 'Publish'
 
 stages:
 - stage: PrepForEV2
@@ -72,12 +75,6 @@ stages:
     - pwsh: |
         Get-ChildItem '$(Pipeline.Workspace)' -Recurse | Out-String -Stream | write-Verbose -Verbose
       displayName: 'Capture Workspace'
-      env:
-        ob_restore_phase: true
-
-    - pwsh: |
-        New-Item -Path '$(ev2ParametersFolder)' -ItemType Directory
-      displayName: 'Create Parameters folder under EV2Specs folder'
       env:
         ob_restore_phase: true
 
@@ -163,6 +160,15 @@ stages:
         Write-Verbose -Verbose "Copy mapping.json file at: $mappingFilePath which exists: $mappingFilePathExists to: $mappingFileEV2Path"
         Copy-Item -Path $mappingFilePath -Destination $mappingFileEV2Path
       displayName: 'Create pmcScriptMetadata.json and mapping.json file'
+      env:
+        ob_restore_phase: true
+
+    - pwsh: |
+        $pathToPMCOperationFile = Join-Path -Path '$(ev2ParametersFolder)' -ChildPath 'pmcOperation.json'
+        $metadataHash = @{}
+        $metadataHash["Operation"] = '${{ parameters.operation }}'
+        $metadataHash | ConvertTo-Json | Out-File $pathToPMCOperationFile
+      displayName: 'Create pmcOperation.json file'
       env:
         ob_restore_phase: true
 

@@ -40,6 +40,20 @@
             {
                 "path": "Parameters\\pmcMetadata.json"
             }
+          },
+          {
+            "name": "OPERATION_FILE",
+            "reference":
+            {
+                "path": "Parameters\\pmcOperation.json"
+            }
+          },
+          {
+            "name": "ROLLBACK_MAPPING_FILE",
+            "reference":
+            {
+                "path": "Parameters\\RollbackMapping.json"
+            }
           }
         ],
         "identity": {
