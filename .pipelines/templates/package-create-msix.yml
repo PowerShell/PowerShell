@@ -85,17 +85,44 @@ jobs:
             $null = Copy-Item -Path $msixFile.FullName -Destination $sourceDir -Force -Verbose
         }
 
-        $file = Get-ChildItem $sourceDir | Select-Object -First 1
-        $prefix = ($file.BaseName -split "-win")[0]
-        $pkgName = "$prefix.msixbundle"
-        Write-Verbose -Verbose "Creating $pkgName"
-
         $makeappx = '$(MakeAppxPath)'
         $outputDir = "$sourceDir\output"
         New-Item $outputDir -Type Directory -Force > $null
-        & $makeappx bundle /d $sourceDir /p "$outputDir\$pkgName"
 
-        Get-ChildItem -Path $sourceDir -Recurse
+        # Separate LTS and Stable/Preview MSIX files by filename convention
+        $ltsMsix = @(Get-ChildItem $sourceDir -Filter '*.msix' | Where-Object { $_.BaseName -match '-LTS-' })
+        $stableMsix = @(Get-ChildItem $sourceDir -Filter '*.msix' | Where-Object { $_.BaseName -notmatch '-LTS-' })
+
+        Write-Verbose -Verbose "Stable/Preview MSIX files: $($stableMsix.Name -join ', ')"
+        Write-Verbose -Verbose "LTS MSIX files: $($ltsMsix.Name -join ', ')"
+
+        # Create Stable/Preview bundle
+        if ($stableMsix.Count -gt 0) {
+            $stableDir = "$sourceDir\stable"
+            New-Item $stableDir -Type Directory -Force > $null
+            $stableMsix | Copy-Item -Destination $stableDir -Force
+            $file = $stableMsix | Select-Object -First 1
+            $prefix = ($file.BaseName -split "-win")[0]
+            $stableBundleName = "$prefix.msixbundle"
+            Write-Verbose -Verbose "Creating Stable/Preview bundle: $stableBundleName"
+            & $makeappx bundle /d $stableDir /p "$outputDir\$stableBundleName"
+        }
+
+        # Create LTS bundle
+        if ($ltsMsix.Count -gt 0) {
+            $ltsDir = "$sourceDir\lts"
+            New-Item $ltsDir -Type Directory -Force > $null
+            $ltsMsix | Copy-Item -Destination $ltsDir -Force
+            $file = $ltsMsix | Select-Object -First 1
+            $prefix = ($file.BaseName -split "-win")[0]
+            $ltsBundleName = "$prefix.msixbundle"
+            Write-Verbose -Verbose "Creating LTS bundle: $ltsBundleName"
+            & $makeappx bundle /d $ltsDir /p "$outputDir\$ltsBundleName"
+        }
+
+        Write-Verbose -Verbose "Created bundles:"
+        Get-ChildItem -Path $outputDir -Recurse
+
         $vstsCommandString = "vso[task.setvariable variable=BundleDir]$outputDir"
         Write-Host "sending " + $vstsCommandString
         Write-Host "##$vstsCommandString"
@@ -112,16 +139,18 @@ jobs:
         search_root: '$(BundleDir)'
 
     - pwsh: |
-        $signedBundle = Get-ChildItem -Path $(BundleDir) -Filter "*.msixbundle" -File
-        Write-Verbose -Verbose "Signed bundle: $signedBundle"
+        $signedBundles = @(Get-ChildItem -Path $(BundleDir) -Filter "*.msixbundle" -File)
+        Write-Verbose -Verbose "Signed bundles: $($signedBundles.Name -join ', ')"
 
         if (-not (Test-Path $(ob_outputDirectory))) {
           New-Item -ItemType Directory -Path $(ob_outputDirectory) -Force
         }
 
-        Copy-Item -Path $signedBundle.FullName -Destination "$(ob_outputDirectory)" -Verbose
+        foreach ($bundle in $signedBundles) {
+          Copy-Item -Path $bundle.FullName -Destination "$(ob_outputDirectory)" -Verbose
+        }
 
-        Write-Verbose -Verbose "Uploaded Bundle:"
+        Write-Verbose -Verbose "Uploaded Bundles:"
         Get-ChildItem -Path $(ob_outputDirectory) | Write-Verbose -Verbose
       displayName: Upload msixbundle to Artifacts
 
@@ -224,6 +253,29 @@ jobs:
         Write-Host "##vso[task.setvariable variable=ServiceConnection]$($config.ServiceEndpoint)"
         Write-Host "##vso[task.setvariable variable=SBConfigPath]$($sbConfigPath)"
 
+        # Select the correct bundle based on channel
+        $bundleFiles = @(Get-ChildItem -Path '$(BundleDir)' -Filter '*.msixbundle')
+        Write-Verbose -Verbose "Available bundles: $($bundleFiles.Name -join ', ')"
+
+        if ($IsLTS) {
+          $bundleFile = $bundleFiles | Where-Object { $_.Name -match '-LTS-' }
+        } else {
+          # Catches Stable or Preview
+          $bundleFile = $bundleFiles | Where-Object { $_.Name -notmatch '-LTS-' }
+        }
+
+        if (-not $bundleFile) {
+          Write-Error "No matching bundle found for channel '$currentChannel'. Available bundles: $($bundleFiles.Name -join ', ')"
+          exit 1
+        }
+
+        # Copy the selected bundle to a dedicated directory for store packaging
+        $storeBundleDir = '$(Pipeline.Workspace)\releasePipeline\msix\store-bundle'
+        New-Item $storeBundleDir -Type Directory -Force > $null
+        Copy-Item -Path $bundleFile.FullName -Destination $storeBundleDir -Force -Verbose
+        Write-Host "##vso[task.setvariable variable=StoreBundleDir]$storeBundleDir"
+        Write-Verbose -Verbose "Selected bundle for store packaging: $($bundleFile.Name)"
+
         # These variables are used in the next tasks to determine which ServiceEndpoint to use
         Write-Host "##vso[task.setvariable variable=LTS]$($IsLTS.ToString().ToLower())"
         Write-Host "##vso[task.setvariable variable=STABLE]$($IsStable.ToString().ToLower())"
@@ -244,7 +296,7 @@ jobs:
       inputs:
         serviceEndpoint: 'StoreAppPublish-Preview'
         sbConfigPath: '$(SBConfigPath)'
-        sourceFolder: '$(BundleDir)'
+        sourceFolder: '$(StoreBundleDir)'
         contents: '*.msixBundle'
         outSBName: 'PowerShellStorePackage'
         pdpPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDP/PDP'
@@ -256,7 +308,7 @@ jobs:
       inputs:
         serviceEndpoint: 'StoreAppPublish-Stable'
         sbConfigPath: '$(SBConfigPath)'
-        sourceFolder: '$(BundleDir)'
+        sourceFolder: '$(StoreBundleDir)'
         contents: '*.msixBundle'
         outSBName: 'PowerShellStorePackage'
         pdpPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDP/PDP'
