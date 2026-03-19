@@ -283,7 +283,7 @@ function Remove-PackageFromPMC() {
 
         [Parameter(Mandatory)]
         [bool]
-        $SkipPublish
+        $SkipRollback
     )
 
     # Don't fail outright when an error occurs, but instead pool them until
@@ -307,7 +307,10 @@ function Remove-PackageFromPMC() {
         {
             $packageId = $list.results.id | Select-Object -First 1
             Write-Verbose -Verbose "running: pmc --config '$ConfigPath' repo package update --remove-packages '$packageId' '$pkgRepo'"
-            pmc --config $ConfigPath repo package update --remove-packages $packageId $pkgRepo
+            if (!$SkipRollback)
+            {
+                pmc --config $ConfigPath repo package update --remove-packages $packageId $pkgRepo
+            }
         }
         else {
             Write-Verbose -Verbose "No package found for $($finalPackage.PackageName)"
@@ -480,7 +483,7 @@ try {
     $packageObjects = Get-PackageObjects -RepoObjects $mappedReposUsedByPwsh -PackageName $packageNames -ReleaseVersion $releaseVersion
     Write-Verbose -Verbose "skip $operation $skipPublish"
     Publish-PackageToPMC -PackageObject $packageObjects -ConfigPath $configPath -SkipPublish $skipPublish
-    Remove-PackageFromPMC -PackageObject $packageObjects -ConfigPath $configPath -SkipPublish $skipPublish
+    Remove-PackageFromPMC -PackageObject $packageObjects -ConfigPath $configPath -SkipRollback $skipPublish
 }
 catch {
     Write-Error -ErrorAction Stop $_.Exception.Message
