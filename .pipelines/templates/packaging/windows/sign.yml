@@ -73,7 +73,7 @@ jobs:
       Import-Module "$repoRoot\build.psm1"
       Import-Module "$repoRoot\tools\packaging"
       Write-Verbose -Verbose "Modules imported successfully"
-      
+
       # Install WiX Toolset for EXE package creation
       $isArm64 = '$(Runtime)' -eq 'arm64'
       $env:RUNTIME = '$(Runtime)'

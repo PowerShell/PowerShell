@@ -23,7 +23,7 @@ configuration:
       - addReply:
           reply: This issue has been marked as "Waiting on Author" and has not had any activity for **7 day**. It has been closed for housekeeping purposes.
       - closeIssue
-    
+
     - description: Label as Resolution-No Activity if not labeled with KeepOpen and no activity in 6 months
       frequencies:
       - hourly:
@@ -49,7 +49,7 @@ configuration:
           label: Review - Maintainer
       - isNotLabeledWith:
           label: WG-NeedsReview
-     # Up for grabs labeled issues will get closed after a 6 months of no activity unless KeepOpen label is included
+      # Up for grabs labeled issues will get closed after a 6 months of no activity unless KeepOpen label is included
       - noActivitySince:
           days: 180
       actions:
@@ -67,7 +67,7 @@ configuration:
       then:
       - removeLabel:
           label: Resolution-No Activity
-    
+
     - description: If new issue comment is author then remove waiting on author
       if:
       - payloadType: Issue_Comment
@@ -78,8 +78,8 @@ configuration:
       then:
       - removeLabel:
           label: Waiting on Author
-    
-    - description: Remove Stale label if issue comment 
+
+    - description: Remove Stale label if issue comment
       if:
       - payloadType: Issue_Comment
       - hasLabel:
@@ -87,7 +87,7 @@ configuration:
       then:
       - removeLabel:
           label: Stale
-    
+
     - description: Remove Needs-Triage label if issue is closed
       if:
       - payloadType: Issues
@@ -96,8 +96,8 @@ configuration:
       then:
       - removeLabel:
           label: Needs-Triage
-    
-    - description: Remove Keep Open label if closed by someone 
+
+    - description: Remove Keep Open label if closed by someone
       if:
       - payloadType: Issues
       - isAction:

@@ -57,7 +57,7 @@ jobs:
         $fileContent = Get-Content -Path $OutputPath -Raw | Out-String
         Write-Verbose -Verbose -Message $fileContent
     displayName: Add sha256 hashes
-  
+
   - task: PowerShell@2
     inputs:
       targetType: inline
@@ -74,18 +74,18 @@ jobs:
         Get-Module | Write-Verbose -Verbose
 
         $filePath = Get-ChildItem -Path "$(Pipeline.Workspace)/CHANGELOG" -Filter '*.md' | Select-Object -First 1 -ExpandProperty FullName
-  
+
         if (-not (Test-Path $filePath)) {
           throw "$filePath not found"
         }
-  
+
         $changelog = Get-Content -Path $filePath
-  
+
         $headingPattern = "^## \[\d+\.\d+\.\d+"
         $headingStartLines = $changelog | Select-String -Pattern $headingPattern | Select-Object -ExpandProperty LineNumber
         $startLine = $headingStartLines[0]
         $endLine = $headingStartLines[1] - 1
-  
+
         $clContent = $changelog | Select-Object -Skip ($startLine-1) -First ($endLine - $startLine) | Out-String
 
         $StringBuilder = [System.Text.StringBuilder]::new($clContent, $clContent.Length + 2kb)
@@ -98,14 +98,14 @@ jobs:
         }
 
         $clContent = $StringBuilder.ToString()
-  
+
         Write-Verbose -Verbose "Selected content: `n$clContent"
 
         $releaseNotesFilePath = "$(Pipeline.Workspace)/release-notes.md"
         $clContent | Out-File -FilePath $releaseNotesFilePath -Encoding utf8
-  
+
         Write-Host "##vso[task.setvariable variable=ReleaseNotesFilePath;]$releaseNotesFilePath"
-  
+
         #if name has prelease then make prerelease true as a variable
         if ($releaseVersion -like '*-*') {
             Write-Host "##vso[task.setvariable variable=IsPreRelease;]true"

@@ -229,16 +229,16 @@ jobs:
         $ltsValue = $IsLTS.ToString().ToLower()
         $stableValue = $IsStable.ToString().ToLower()
         $previewValue = $IsPreview.ToString().ToLower()
-        
+
         Write-Verbose -Verbose "About to set variables:"
         Write-Verbose -Verbose "  LTS=$ltsValue"
         Write-Verbose -Verbose "  STABLE=$stableValue"
         Write-Verbose -Verbose "  PREVIEW=$previewValue"
-        
+
         Write-Host "##vso[task.setvariable variable=LTS]$ltsValue"
         Write-Host "##vso[task.setvariable variable=STABLE]$stableValue"
         Write-Host "##vso[task.setvariable variable=PREVIEW]$previewValue"
-        
+
         Write-Verbose -Verbose "Variables set successfully"
       name: UpdateConfigs
       displayName: Update PDPs and SBConfig.json
