@@ -179,15 +179,9 @@ namespace System.Management.Automation.Runspaces
         #region Dispose
 
         /// <summary>
-        /// Implementing the <see cref="IDisposable"/> interface.
+        /// Release all resources.
         /// </summary>
         public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        private void Dispose(bool disposing)
         {
             if (_isDisposed)
             {
@@ -203,23 +197,20 @@ namespace System.Management.Automation.Runspaces
 
                 _isDisposed = true;
             }
-
-            if (disposing)
+            
+            try
             {
-                try
-                {
-                    if (Process != null && !Process.HasExited)
-                        Process.Kill();
-                }
-                catch (InvalidOperationException)
-                {
-                }
-                catch (Win32Exception)
-                {
-                }
-                catch (NotSupportedException)
-                {
-                }
+                if (Process != null && !Process.HasExited)
+                    Process.Kill();
+            }
+            catch (InvalidOperationException)
+            {
+            }
+            catch (Win32Exception)
+            {
+            }
+            catch (NotSupportedException)
+            {
             }
         }
 

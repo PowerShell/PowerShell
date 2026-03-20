@@ -576,21 +576,12 @@ namespace System.Management.Automation.Internal
         #region IDisposable
 
         /// <summary>
-        /// Dispose resources.
+        /// Release all resources.
         /// </summary>
         public void Dispose()
         {
-            Dispose(true);
-            System.GC.SuppressFinalize(this);
-        }
-
-        private void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                _rsa?.Dispose();
-                _aes?.Dispose();
-            }
+            _rsa?.Dispose();
+            _aes?.Dispose();
         }
 
         #endregion IDisposable

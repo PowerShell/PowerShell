@@ -102,6 +102,10 @@ jobs:
       Restore-PSOptions -PSOptionsPath "$psoptionsPath"
       Get-PSOptions | Write-Verbose -Verbose
 
+      if (-not (Test-Path "$repoRoot/tools/metadata.json")) {
+        throw "metadata.json not found in $repoRoot/tools"
+      }
+
       $metadata = Get-Content "$repoRoot/tools/metadata.json" -Raw | ConvertFrom-Json
 
       Write-Verbose -Verbose "metadata:"
@@ -120,14 +124,19 @@ jobs:
       Write-Verbose -Verbose "LTS: $LTS"
 
       if ($LTS) {
-        Write-Verbose -Message "LTS Release: $LTS"
+        Write-Verbose -Message "LTS Release: $LTS" -Verbose
       }
 
       Start-PSBootstrap -Scenario Package
 
       $macosRuntime = "osx-$buildArch"
 
-      Start-PSPackage -Type osxpkg -SkipReleaseChecks -MacOSRuntime $macosRuntime -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath -LTS:$LTS
+      Start-PSPackage -Type osxpkg -SkipReleaseChecks -MacOSRuntime $macosRuntime -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath
+
+      if ($LTS) {
+        Start-PSPackage -Type osxpkg -SkipReleaseChecks -MacOSRuntime $macosRuntime -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath -LTS
+      }
+
       $pkgNameFilter = "powershell-*$macosRuntime.pkg"
       Write-Verbose -Verbose "Looking for pkg packages with filter: $pkgNameFilter in '$(Pipeline.Workspace)' to upload..."
       $pkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $pkgNameFilter -Recurse -File
