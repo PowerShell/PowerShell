@@ -4300,7 +4300,7 @@ function New-MSIXPackage
         Write-Verbose "Using Preview assets" -Verbose
     } elseif ($LTS) {
         # This is the PhoneProductId for the "Microsoft.PowerShell-LTS" package.
-        $PhoneProductId = "a9af273a-c636-47ac-bc2a-775edf80b2b9"
+        $PhoneProductId = "b7a4b003-3704-47a9-b018-cfcc9801f4fc"
         Write-Verbose "Using LTS assets" -Verbose
     }
 
