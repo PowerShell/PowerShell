@@ -1,12 +1,12 @@
 name: 'Get Changed Files'
-description: 'Gets the list of files changed in a pull request or push event'
+description: 'Gets changed files for PR/push events, or all matching files for schedule/dispatch events'
 inputs:
   filter:
     description: 'Optional filter pattern (e.g., "*.md" for markdown files, ".github/" for GitHub files)'
     required: false
     default: ''
   event-types:
-    description: 'Comma-separated list of event types to support (pull_request, push)'
+    description: 'Comma-separated list of event types to support (pull_request, push, schedule, workflow_dispatch)'
     required: false
     default: 'pull_request'
 outputs:
@@ -71,6 +71,28 @@ runs:
             changedFiles = comparison.files
               .filter(file => file.status === 'added' || file.status === 'modified' || file.status === 'renamed')
               .map(file => file.filename);
+
+          } else if (
+            (eventTypes.includes('schedule') && context.eventName === 'schedule') ||
+            (eventTypes.includes('workflow_dispatch') && context.eventName === 'workflow_dispatch')
+          ) {
+            const label = context.eventName === 'schedule' ? 'Scheduled' : 'Manual';
+            console.log(`${label} run: scanning all matching files in repository`);
+
+            const { data: tree } = await github.rest.git.getTree({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tree_sha: context.sha,
+              recursive: 'true',
+            });
+
+            if (tree.truncated) {
+              core.warning('Repository tree was truncated by the GitHub API. Some files may be missing from the scan.');
+            }
+
+            changedFiles = tree.tree
+              .filter(item => item.type === 'blob')
+              .map(item => item.path);
 
           } else {
             core.setFailed(`Unsupported event type: ${context.eventName}. Supported types: ${eventTypes.join(', ')}`);
