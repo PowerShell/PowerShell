@@ -19,11 +19,11 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            string tempPath = null;
             string baseTempPath = Path.GetTempPath();
 
             if (ShouldProcess(baseTempPath))
             {
+                string tempPath;
                 try
                 {
                     // Create a unique temporary directory name
@@ -37,15 +37,12 @@ namespace Microsoft.PowerShell.Commands
                             ioException,
                             "NewTemporaryDirectoryError",
                             ErrorCategory.WriteError,
-                            tempPath));
+                            baseTempPath));
                     return;
                 }
 
-                if (!string.IsNullOrEmpty(tempPath) && Directory.Exists(tempPath))
-                {
-                    DirectoryInfo directory = new(tempPath);
-                    WriteObject(directory);
-                }
+                DirectoryInfo directory = new(tempPath);
+                WriteObject(directory);
             }
         }
     }
