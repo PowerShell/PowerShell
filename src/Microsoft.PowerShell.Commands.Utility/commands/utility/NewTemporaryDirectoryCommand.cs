@@ -9,9 +9,10 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// The implementation of the "New-TemporaryDirectory" cmdlet.
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "TemporaryDirectory", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Low,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=xxxxx"
-    )]
+    [Cmdlet(VerbsCommon.New, "TemporaryDirectory",
+        SupportsShouldProcess = true,
+        ConfirmImpact = ConfirmImpact.Low,
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=xxxxx")]
     [OutputType(typeof(System.IO.DirectoryInfo))]
     public class NewTemporaryDirectoryCommand : Cmdlet
     {
