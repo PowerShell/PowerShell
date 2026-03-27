@@ -770,7 +770,7 @@ namespace Microsoft.PowerShell.Commands
                         StringUtil.Format(
                             ServiceResources.CouldNotGetServiceProperty,
                             service.ServiceName,
-                            "ServiceConfig", 
+                            "ServiceConfig",
                             e.Message));
                 }
             }
