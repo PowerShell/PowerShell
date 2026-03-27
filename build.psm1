@@ -416,7 +416,7 @@ function Start-PSBuild {
         # These runtimes must match those in project.json
         # We do not use ValidateScript since we want tab completion
         # If this parameter is not provided it will get determined automatically.
-        [ValidateSet("linux-musl-x64",
+        [ArgumentCompletions("linux-musl-x64",
                      "fxdependent",
                      "fxdependent-noopt-linux-musl-x64",
                      "fxdependent-linux-x64",
@@ -1210,7 +1210,7 @@ function New-PSOptions {
 
         # These are duplicated from Start-PSBuild
         # We do not use ValidateScript since we want tab completion
-        [ValidateSet("",
+        [ArgumentCompletions("",
                      "linux-musl-x64",
                      "fxdependent",
                      "fxdependent-noopt-linux-musl-x64",
@@ -4763,7 +4763,10 @@ function Clear-NativeDependencies
             return
         }
         Default {
-            throw "Unknown runtime $($script:Options.Runtime)"
+            $parts = $($script:Options.Runtime) -split "-"
+            $arch = $parts[-1]
+            $diasymFileName = $diasymFileNamePattern -f $arch
+            Write-Warning "Unknown runtime $($script:Options.Runtime)"
         }
     }
 
