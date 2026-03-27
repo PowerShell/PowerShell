@@ -680,7 +680,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="scManagerHandle">Handle to the local SCManager instance.</param>
         /// <param name="service"></param>
         /// <returns>ServiceController as PSObject with UserName, Description and StartupType added.</returns>
-        private static PSObject AddProperties(nint scManagerHandle, ServiceController service)
+        private PSObject AddProperties(nint scManagerHandle, ServiceController service)
         {
             NakedWin32Handle hService = nint.Zero;
 
@@ -709,6 +709,12 @@ namespace Microsoft.PowerShell.Commands
                     {
                         description = descriptionInfo.lpDescription;
                     }
+                    else
+                    {
+                        Win32Exception e = new(Marshal.GetLastWin32Error());
+                        WriteVerbose(StringUtil.Format(ServiceResources.CouldNotGetServiceProperty,
+                            service.ServiceName, nameof(NativeMethods.SERVICE_DESCRIPTIONW), e.Message));
+                    }
 
                     if (NativeMethods.QueryServiceConfig2(
                         hService,
@@ -716,6 +722,12 @@ namespace Microsoft.PowerShell.Commands
                         out NativeMethods.SERVICE_DELAYED_AUTO_START_INFO autostartInfo))
                     {
                         isDelayedAutoStart = autostartInfo.fDelayedAutostart;
+                    }
+                    else
+                    {
+                        Win32Exception e = new(Marshal.GetLastWin32Error());
+                        WriteVerbose(StringUtil.Format(ServiceResources.CouldNotGetServiceProperty,
+                            service.ServiceName, nameof(NativeMethods.SERVICE_DELAYED_AUTO_START_INFO), e.Message));
                     }
 
                     if (NativeMethods.QueryServiceConfig(
@@ -731,6 +743,19 @@ namespace Microsoft.PowerShell.Commands
                                 isDelayedAutoStart.Value);
                         }
                     }
+                    else
+                    {
+                        Win32Exception e = new(Marshal.GetLastWin32Error());
+                        WriteVerbose(StringUtil.Format(ServiceResources.CouldNotGetServiceProperty,
+                            service.ServiceName, nameof(NativeMethods.QUERY_SERVICE_CONFIG), e.Message));
+                    }
+                }
+                else
+                {
+                    // handle when OpenServiceW itself fails:
+                    Win32Exception e = new(Marshal.GetLastWin32Error());
+                    WriteVerbose(StringUtil.Format(ServiceResources.CouldNotGetServiceProperty,
+                        service.ServiceName, "ServiceConfig", e.Message));
                 }
             }
             finally
