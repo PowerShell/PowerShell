@@ -715,8 +715,8 @@ namespace Microsoft.PowerShell.Commands
                         WriteVerbose(
                             StringUtil.Format(
                                 ServiceResources.CouldNotGetServiceProperty,
-                                service.ServiceName, 
-                                nameof(NativeMethods.SERVICE_DESCRIPTIONW), 
+                                service.ServiceName,
+                                nameof(NativeMethods.SERVICE_DESCRIPTIONW),
                                 e.Message));
                     }
 
@@ -733,8 +733,8 @@ namespace Microsoft.PowerShell.Commands
                         WriteVerbose(
                             StringUtil.Format(
                                 ServiceResources.CouldNotGetServiceProperty,
-                                service.ServiceName, 
-                                nameof(NativeMethods.SERVICE_DELAYED_AUTO_START_INFO), 
+                                service.ServiceName,
+                                nameof(NativeMethods.SERVICE_DELAYED_AUTO_START_INFO),
                                 e.Message));
                     }
 
@@ -757,8 +757,8 @@ namespace Microsoft.PowerShell.Commands
                         WriteVerbose(
                             StringUtil.Format(
                                 ServiceResources.CouldNotGetServiceProperty,
-                                service.ServiceName, 
-                                nameof(NativeMethods.QUERY_SERVICE_CONFIG), 
+                                service.ServiceName,
+                                nameof(NativeMethods.QUERY_SERVICE_CONFIG),
                                 e.Message));
                     }
                 }
@@ -769,7 +769,7 @@ namespace Microsoft.PowerShell.Commands
                     WriteVerbose(
                         StringUtil.Format(
                             ServiceResources.CouldNotGetServiceProperty,
-                            service.ServiceName, 
+                            service.ServiceName,
                             "ServiceConfig", 
                             e.Message));
                 }
