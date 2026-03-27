@@ -712,8 +712,12 @@ namespace Microsoft.PowerShell.Commands
                     else
                     {
                         Win32Exception e = new(Marshal.GetLastWin32Error());
-                        WriteVerbose(StringUtil.Format(ServiceResources.CouldNotGetServiceProperty,
-                            service.ServiceName, nameof(NativeMethods.SERVICE_DESCRIPTIONW), e.Message));
+                        WriteVerbose(
+                            StringUtil.Format(
+                                ServiceResources.CouldNotGetServiceProperty,
+                                service.ServiceName, 
+                                nameof(NativeMethods.SERVICE_DESCRIPTIONW), 
+                                e.Message));
                     }
 
                     if (NativeMethods.QueryServiceConfig2(
@@ -726,8 +730,12 @@ namespace Microsoft.PowerShell.Commands
                     else
                     {
                         Win32Exception e = new(Marshal.GetLastWin32Error());
-                        WriteVerbose(StringUtil.Format(ServiceResources.CouldNotGetServiceProperty,
-                            service.ServiceName, nameof(NativeMethods.SERVICE_DELAYED_AUTO_START_INFO), e.Message));
+                        WriteVerbose(
+                            StringUtil.Format(
+                                ServiceResources.CouldNotGetServiceProperty,
+                                service.ServiceName, 
+                                nameof(NativeMethods.SERVICE_DELAYED_AUTO_START_INFO), 
+                                e.Message));
                     }
 
                     if (NativeMethods.QueryServiceConfig(
@@ -746,16 +754,24 @@ namespace Microsoft.PowerShell.Commands
                     else
                     {
                         Win32Exception e = new(Marshal.GetLastWin32Error());
-                        WriteVerbose(StringUtil.Format(ServiceResources.CouldNotGetServiceProperty,
-                            service.ServiceName, nameof(NativeMethods.QUERY_SERVICE_CONFIG), e.Message));
+                        WriteVerbose(
+                            StringUtil.Format(
+                                ServiceResources.CouldNotGetServiceProperty,
+                                service.ServiceName, 
+                                nameof(NativeMethods.QUERY_SERVICE_CONFIG), 
+                                e.Message));
                     }
                 }
                 else
                 {
                     // handle when OpenServiceW itself fails:
                     Win32Exception e = new(Marshal.GetLastWin32Error());
-                    WriteVerbose(StringUtil.Format(ServiceResources.CouldNotGetServiceProperty,
-                        service.ServiceName, "ServiceConfig", e.Message));
+                    WriteVerbose(
+                        StringUtil.Format(
+                            ServiceResources.CouldNotGetServiceProperty,
+                            service.ServiceName, 
+                            "ServiceConfig", 
+                            e.Message));
                 }
             }
             finally
