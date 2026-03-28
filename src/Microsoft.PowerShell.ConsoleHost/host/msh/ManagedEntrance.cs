@@ -173,7 +173,13 @@ namespace Microsoft.PowerShell
             else
             {
                 // Normal interactive launch: allocate a visible console.
-                Interop.Windows.AllocConsole();
+                // Use AllocConsoleWithOptions(Default) when available — it respects
+                // DETACHED_PROCESS from the parent's CreateProcess call, whereas
+                // plain AllocConsole() would override it and force-create a console.
+                if (!Interop.Windows.TryAllocConsoleDefault())
+                {
+                    Interop.Windows.AllocConsole();
+                }
             }
         }
 

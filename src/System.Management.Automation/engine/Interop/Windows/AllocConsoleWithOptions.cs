@@ -61,11 +61,27 @@ internal static partial class Interop
         /// </summary>
         internal static bool TryAllocConsoleNoWindow()
         {
+            return TryAllocConsoleWithMode(AllocConsoleMode.NoWindow);
+        }
+
+        /// <summary>
+        /// Attempts to allocate a console using AllocConsoleWithOptions with Default mode.
+        /// Default mode respects DETACHED_PROCESS from the parent's CreateProcess call,
+        /// whereas plain AllocConsole() would override it and force-create a console.
+        /// Returns false if the API is not available (older Windows) or the call fails.
+        /// </summary>
+        internal static bool TryAllocConsoleDefault()
+        {
+            return TryAllocConsoleWithMode(AllocConsoleMode.Default);
+        }
+
+        private static bool TryAllocConsoleWithMode(AllocConsoleMode mode)
+        {
             try
             {
                 var options = new AllocConsoleOptions
                 {
-                    Mode = AllocConsoleMode.NoWindow,
+                    Mode = mode,
                     UseShowWindow = 0,
                     ShowWindow = 0,
                 };
