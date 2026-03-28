@@ -1,0 +1,39 @@
+parameters:
+  - name: debug
+    type: boolean
+    default: false
+  - name: ReleaseTagVar
+    type: string
+    default: 'fromBranch'
+  - name: netiso
+    type: string
+    default: 'R1'
+
+variables:
+  - name: CDP_DEFINITION_BUILD_COUNT
+    value: $[counter('', 0)]
+  - name: system.debug
+    value: ${{ parameters.debug }}
+  - name: BuildSolution
+    value: $(Build.SourcesDirectory)\dirs.proj
+  - name: BuildConfiguration
+    value: Release
+  - name: WindowsContainerImage
+    value: 'onebranch.azurecr.io/windows/ltsc2019/vse2022:latest'
+  - name: Codeql.Enabled
+    value: false  #  pipeline is not building artifacts; it repackages existing artifacts into a vpack
+  - name: DOTNET_CLI_TELEMETRY_OPTOUT
+    value: 1
+  - name: POWERSHELL_TELEMETRY_OPTOUT
+    value: 1
+  - name: nugetMultiFeedWarnLevel
+    value: none
+  - name: ReleaseTagVar
+    value: ${{ parameters.ReleaseTagVar }}
+  - group: Azure Blob variable group
+  - group: certificate_logical_to_actual # used within signing task
+  - group: DotNetPrivateBuildAccess
+  - name: netiso
+    value: ${{ parameters.netiso }}
+# We shouldn't be using PATs anymore
+#  - group: mscodehub-feed-read-general

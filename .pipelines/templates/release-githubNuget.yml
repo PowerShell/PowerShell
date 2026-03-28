@@ -17,7 +17,7 @@ jobs:
         pipeline: PSPackagesOfficial
         artifactName: drop_upload_upload_packages
   variables:
-    - template: ./variable/release-shared.yml@self
+    - template: ./variables/release-shared.yml@self
       parameters:
         RELEASETAG: $[ stageDependencies.setReleaseTagAndChangelog.setTagAndChangelog.outputs['OutputReleaseTag.releaseTag'] ]
 
@@ -167,7 +167,7 @@ jobs:
         pipeline: PSPackagesOfficial
         artifactName: drop_upload_upload_packages
   variables:
-  - template: ./variable/release-shared.yml@self
+  - template: ./variables/release-shared.yml@self
     parameters:
       VERSION: $[ stageDependencies.setReleaseTagAndChangelog.SetTagAndChangelog.outputs['OutputVersion.Version'] ]
 

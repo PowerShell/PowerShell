@@ -220,7 +220,7 @@ jobs:
       }
 
       if ($packageTypes -contains 'msix') {
-        $msixPkgNameFilter = "powershell-*.msix"
+        $msixPkgNameFilter = "PowerShell*.msix"
         $msixPkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $msixPkgNameFilter -Recurse -File | Select-Object -ExpandProperty FullName
         Write-Verbose -Verbose "unsigned msixPkgPath: $msixPkgPath"
         Copy-Item -Path $msixPkgPath -Destination '$(ob_outputDirectory)' -Force -Verbose
