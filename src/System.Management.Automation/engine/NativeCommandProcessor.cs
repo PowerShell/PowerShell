@@ -2491,23 +2491,7 @@ namespace System.Management.Automation
 
             // Try AllocConsoleWithOptions with NoWindow mode first to avoid the flash
             // that the AllocConsole() + ShowWindow(SW_HIDE) pattern causes.
-            bool allocated = false;
-            try
-            {
-                var options = new Interop.Windows.AllocConsoleOptions
-                {
-                    Mode = Interop.Windows.AllocConsoleMode.NoWindow,
-                    UseShowWindow = 0,
-                    ShowWindow = 0,
-                };
-
-                int hr = Interop.Windows.AllocConsoleWithOptions(ref options, out _);
-                allocated = hr >= 0;
-            }
-            catch (EntryPointNotFoundException)
-            {
-                // AllocConsoleWithOptions not available on this Windows version.
-            }
+            bool allocated = Interop.Windows.TryAllocConsoleNoWindow();
 
             if (!allocated)
             {

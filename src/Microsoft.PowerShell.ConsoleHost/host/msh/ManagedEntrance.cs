@@ -158,7 +158,7 @@ namespace Microsoft.PowerShell
             {
                 // Hidden: allocate an invisible console session so CONOUT$/CONIN$ work
                 // (Write-Host, native commands, etc.) but no window is ever shown.
-                if (!TryAllocConsoleNoWindow())
+                if (!Interop.Windows.TryAllocConsoleNoWindow())
                 {
                     // Fallback (should not happen since we only reach here on newer Windows,
                     // but be defensive): alloc + hide.
@@ -181,6 +181,11 @@ namespace Microsoft.PowerShell
         /// Minimal early scan for -WindowStyle Hidden in command line args.
         /// Matches any unambiguous prefix of "windowstyle" starting from "w"
         /// (e.g. -w, -wi, -win, ..., -windowstyle) followed by "hidden".
+        /// This is a best-effort check that runs before the full parser. False positives
+        /// (e.g. a hypothetical future -w parameter) are acceptable because the worst case
+        /// is allocating a hidden console that the full parser would later show. The colon
+        /// syntax (-windowstyle:hidden) is intentionally not handled here; the full parser
+        /// handles it later and the existing ShowWindow(SW_HIDE) path covers that case.
         /// </summary>
         private static bool EarlyCheckForHiddenWindowStyle(string[] args)
         {
@@ -189,10 +194,10 @@ namespace Microsoft.PowerShell
                 string arg = args[i];
                 if (arg.Length >= 2 && (arg[0] == '-' || arg[0] == '/'))
                 {
-                    string key = arg.Substring(1);
+                    ReadOnlySpan<char> key = arg.AsSpan(1);
                     if (key.Length >= 1
                         && key.Length <= "windowstyle".Length
-                        && "windowstyle".StartsWith(key, StringComparison.OrdinalIgnoreCase))
+                        && "windowstyle".AsSpan().StartsWith(key, StringComparison.OrdinalIgnoreCase))
                     {
                         if (args[i + 1].Equals("hidden", StringComparison.OrdinalIgnoreCase))
                         {
@@ -205,29 +210,6 @@ namespace Microsoft.PowerShell
             return false;
         }
 
-        /// <summary>
-        /// Attempts to allocate a console without a visible window using AllocConsoleWithOptions.
-        /// Returns false if the API is not available (older Windows).
-        /// </summary>
-        private static bool TryAllocConsoleNoWindow()
-        {
-            try
-            {
-                var options = new Interop.Windows.AllocConsoleOptions
-                {
-                    Mode = Interop.Windows.AllocConsoleMode.NoWindow,
-                    UseShowWindow = 0,
-                    ShowWindow = 0,
-                };
-
-                int hr = Interop.Windows.AllocConsoleWithOptions(ref options, out _);
-                return hr >= 0; // S_OK
-            }
-            catch (EntryPointNotFoundException)
-            {
-                return false;
-            }
-        }
 #endif
     }
 }
