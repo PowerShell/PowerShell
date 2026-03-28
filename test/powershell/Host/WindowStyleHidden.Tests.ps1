@@ -7,17 +7,41 @@ Describe "WindowStyle Hidden console flash fix (Issue #3028)" -Tag "Feature" {
         $powershell = Join-Path -Path $PSHOME -ChildPath "pwsh"
     }
 
-    Context "Manifest contains consoleAllocationPolicy" {
-        It "pwsh.manifest declares consoleAllocationPolicy as detached" -Skip:(!$IsWindows) {
-            # The manifest is embedded into the PE at build time. Check the source file
-            # if available; otherwise read the embedded manifest via System.Reflection.
-            $manifestPath = Join-Path -Path $PSHOME -ChildPath "pwsh.manifest"
-            if (Test-Path $manifestPath) {
-                $content = Get-Content $manifestPath -Raw
+    Context "Manifest contains consoleAllocationPolicy" -Skip:(!$IsWindows) {
+        It "pwsh.exe embedded manifest declares consoleAllocationPolicy as detached" {
+            # Extract the embedded manifest from the PE binary using .NET reflection.
+            $pwshExe = Join-Path -Path $PSHOME -ChildPath "pwsh.exe"
+            $manifest = [System.Reflection.Assembly]::LoadFile($pwshExe).GetManifestResourceStream("pwsh.exe.manifest")
+            if ($null -eq $manifest) {
+                # Fall back to reading the raw manifest via mt.exe-style extraction.
+                $tempFile = [System.IO.Path]::GetTempFileName()
+                try {
+                    $proc = Start-Process -FilePath "cmd.exe" -ArgumentList "/c","mt.exe -inputresource:`"$pwshExe`" -out:`"$tempFile`"" -Wait -PassThru -NoNewWindow 2>$null
+                    if ((Test-Path $tempFile) -and (Get-Item $tempFile).Length -gt 0) {
+                        $content = Get-Content $tempFile -Raw
+                        $content | Should -Match "consoleAllocationPolicy"
+                        $content | Should -Match "detached"
+                    } else {
+                        # If mt.exe is unavailable, check the source manifest as last resort.
+                        $srcManifest = Join-Path -Path (Split-Path $PSHOME) -ChildPath "assets/pwsh.manifest"
+                        if (Test-Path $srcManifest) {
+                            $content = Get-Content $srcManifest -Raw
+                            $content | Should -Match "consoleAllocationPolicy"
+                            $content | Should -Match "detached"
+                        } else {
+                            Set-ItResult -Skipped -Because "cannot extract embedded manifest (mt.exe unavailable)"
+                        }
+                    }
+                } finally {
+                    Remove-Item $tempFile -ErrorAction SilentlyContinue
+                }
+            } else {
+                $reader = [System.IO.StreamReader]::new($manifest)
+                $content = $reader.ReadToEnd()
+                $reader.Dispose()
+                $manifest.Dispose()
                 $content | Should -Match "consoleAllocationPolicy"
                 $content | Should -Match "detached"
-            } else {
-                Set-ItResult -Skipped -Because "manifest is embedded in binary and cannot be inspected"
             }
         }
     }
@@ -44,6 +68,33 @@ Describe "WindowStyle Hidden console flash fix (Issue #3028)" -Tag "Feature" {
         It "exits with correct exit code under -WindowStyle Hidden" {
             & $powershell -NoProfile -WindowStyle Hidden -Command "exit 42"
             $LASTEXITCODE | Should -Be 42
+        }
+    }
+
+    Context "Early arg scan handles all prefix variants" -Skip:(!$IsWindows) {
+        It "handles -w hidden (shortest prefix)" {
+            $output = & $powershell -NoProfile -w Hidden -Command "'short-prefix'"
+            $output | Should -Be "short-prefix"
+        }
+
+        It "handles -win hidden (partial prefix)" {
+            $output = & $powershell -NoProfile -win Hidden -Command "'partial-prefix'"
+            $output | Should -Be "partial-prefix"
+        }
+
+        It "handles --windowstyle hidden (double-dash)" {
+            $output = & $powershell -NoProfile --windowstyle Hidden -Command "'double-dash'"
+            $output | Should -Be "double-dash"
+        }
+
+        It "handles /windowstyle hidden (forward-slash)" {
+            $output = & $powershell -NoProfile /windowstyle Hidden -Command "'forward-slash'"
+            $output | Should -Be "forward-slash"
+        }
+
+        It "is case insensitive" {
+            $output = & $powershell -NoProfile -WINDOWSTYLE HIDDEN -Command "'case-test'"
+            $output | Should -Be "case-test"
         }
     }
 

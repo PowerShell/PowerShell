@@ -186,12 +186,10 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Minimal early scan for -WindowStyle Hidden in command line args.
         /// Matches any unambiguous prefix of "windowstyle" starting from "w"
-        /// (e.g. -w, -wi, -win, ..., -windowstyle) followed by "hidden".
+        /// (e.g. -w, -wi, -win, ..., -windowstyle, --windowstyle) followed by "hidden".
         /// This is a best-effort check that runs before the full parser. False positives
         /// (e.g. a hypothetical future -w parameter) are acceptable because the worst case
-        /// is allocating a hidden console that the full parser would later show. The colon
-        /// syntax (-windowstyle:hidden) is intentionally not handled here; the full parser
-        /// handles it later and the existing ShowWindow(SW_HIDE) path covers that case.
+        /// is allocating a hidden console that the full parser would later show.
         /// </summary>
         private static bool EarlyCheckForHiddenWindowStyle(string[] args)
         {
@@ -200,7 +198,15 @@ namespace Microsoft.PowerShell
                 string arg = args[i];
                 if (arg.Length >= 2 && (arg[0] == '-' || arg[0] == '/'))
                 {
-                    ReadOnlySpan<char> key = arg.AsSpan(1);
+                    int start = 1;
+
+                    // Strip second dash for --windowstyle (matches full parser behavior).
+                    if (arg.Length >= 3 && arg[0] == '-' && arg[1] == '-')
+                    {
+                        start = 2;
+                    }
+
+                    ReadOnlySpan<char> key = arg.AsSpan(start);
                     if (key.Length >= 1
                         && key.Length <= "windowstyle".Length
                         && "windowstyle".AsSpan().StartsWith(key, StringComparison.OrdinalIgnoreCase))
