@@ -17,10 +17,10 @@ namespace PSTests.Parallel
 {
     public class SessionStateTests
     {
-        [SkippableFact]
+        [Fact]
         public void TestDrives()
         {
-            Skip.IfNot(Platform.IsWindows);
+            Assert.SkipUnless(Platform.IsWindows, "Only supported on Windows");
             CultureInfo currentCulture = CultureInfo.CurrentCulture;
             PSHost hostInterface = new DefaultHost(currentCulture, currentCulture);
             InitialSessionState iss = InitialSessionState.CreateDefault2();

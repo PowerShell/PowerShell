@@ -15,10 +15,10 @@ namespace PSTests.Parallel
 {
     public static class UtilsTests
     {
-        [SkippableFact]
+        [Fact]
         public static void TestIsWinPEHost()
         {
-            Skip.IfNot(Platform.IsWindows);
+            Assert.SkipUnless(Platform.IsWindows, "Only supported on Windows");
             Assert.False(Utils.IsWinPEHost());
         }
 

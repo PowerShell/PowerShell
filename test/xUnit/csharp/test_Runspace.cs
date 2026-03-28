@@ -102,13 +102,12 @@ namespace PSTests.Sequential
             }
         }
 
-        [SkippableFact]
+        [Fact]
         public void TestAppDomainProcessExitEvenHandlerNotLeaking()
         {
-            // Skip this flaky test for now.
-            Skip.IfNot(false);
+            Assert.Skip("Skip this flaky test for now");
 
-            Skip.IfNot(Platform.IsWindows);
+            Assert.SkipUnless(Platform.IsWindows, "Only supported on Windows");
 
             EventHandler eventHandler;
             Delegate[] delegates;

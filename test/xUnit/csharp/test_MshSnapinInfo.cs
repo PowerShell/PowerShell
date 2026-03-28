@@ -11,20 +11,20 @@ namespace PSTests.Parallel
     public class MshSnapinInfoTests
     {
         // Test that it does not throw an exception
-        [SkippableFact]
+        [Fact]
         public void TestReadRegistryInfo()
         {
-            Skip.IfNot(Platform.IsWindows);
+            Assert.SkipUnless(Platform.IsWindows, "Only supported on Windows");
             Version someVersion = null;
             string someString = null;
             PSSnapInReader.ReadRegistryInfo(out someVersion, out someString, out someString, out someString, out someVersion);
         }
 
         // PublicKeyToken is null on Linux
-        [SkippableFact]
+        [Fact]
         public void TestReadCoreEngineSnapIn()
         {
-            Skip.IfNot(Platform.IsWindows);
+            Assert.SkipUnless(Platform.IsWindows, "Only supported on Windows");
             PSSnapInInfo pSSnapInInfo = PSSnapInReader.ReadCoreEngineSnapIn();
             Assert.Contains("PublicKeyToken=31bf3856ad364e35", pSSnapInInfo.AssemblyName);
         }
