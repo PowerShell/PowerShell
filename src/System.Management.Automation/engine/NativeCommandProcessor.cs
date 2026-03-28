@@ -2489,30 +2489,47 @@ namespace System.Management.Automation
             // save the foreground window since allocating a console window might remove focus from it
             IntPtr savedForeground = Interop.Windows.GetForegroundWindow();
 
-            // Since there is no console window, allocate and then hide it...
-            // Suppress the PreFAST warning about not using Marshal.GetLastWin32Error() to
-            // get the error code.
-            Interop.Windows.AllocConsole();
-            hwnd = Interop.Windows.GetConsoleWindow();
+            // Try AllocConsoleWithOptions with NoWindow mode first to avoid the flash
+            // that the AllocConsole() + ShowWindow(SW_HIDE) pattern causes.
+            bool allocated = false;
+            try
+            {
+                var options = new Interop.Windows.AllocConsoleOptions
+                {
+                    Mode = Interop.Windows.AllocConsoleMode.NoWindow,
+                    UseShowWindow = 0,
+                    ShowWindow = 0,
+                };
 
-            bool returnValue;
-            if (hwnd == nint.Zero)
-            {
-                returnValue = false;
+                int hr = Interop.Windows.AllocConsoleWithOptions(ref options, out _);
+                allocated = hr >= 0;
             }
-            else
+            catch (EntryPointNotFoundException)
             {
-                returnValue = true;
+                // AllocConsoleWithOptions not available on this Windows version.
+            }
+
+            if (!allocated)
+            {
+                // Fallback for older Windows: allocate and then hide.
+                Interop.Windows.AllocConsole();
+                hwnd = Interop.Windows.GetConsoleWindow();
+                if (hwnd == nint.Zero)
+                {
+                    return false;
+                }
+
                 Interop.Windows.ShowWindow(hwnd, Interop.Windows.SW_HIDE);
-                AlwaysCaptureApplicationIO = true;
             }
+
+            AlwaysCaptureApplicationIO = true;
 
             if (savedForeground != nint.Zero && Interop.Windows.GetForegroundWindow() != savedForeground)
             {
                 Interop.Windows.SetForegroundWindow(savedForeground);
             }
 
-            return returnValue;
+            return true;
 #endif
         }
     }

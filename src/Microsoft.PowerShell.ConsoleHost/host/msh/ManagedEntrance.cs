@@ -51,6 +51,15 @@ namespace Microsoft.PowerShell
         {
             ArgumentNullException.ThrowIfNull(args);
 
+#if !UNIX
+            // On Windows with consoleAllocationPolicy=detached in the manifest,
+            // no console is auto-allocated by the OS. We must allocate one ourselves
+            // before anything touches CONOUT$/CONIN$ handles.
+            // On older Windows the manifest element is ignored and this is a no-op
+            // (AllocConsole returns false when a console already exists).
+            EarlyConsoleInit(args);
+#endif
+
 #if DEBUG
             if (args.Length > 0 && !string.IsNullOrEmpty(args[0]) && args[0]!.Equals("-isswait", StringComparison.OrdinalIgnoreCase))
             {
@@ -120,5 +129,105 @@ namespace Microsoft.PowerShell
 
             return exitCode;
         }
+
+#if !UNIX
+        /// <summary>
+        /// Allocates a console early in startup to support consoleAllocationPolicy=detached.
+        /// On newer Windows (with the detached policy active), the OS does not auto-allocate
+        /// a console for CUI apps. On older Windows, AllocConsole() returns false (no-op).
+        /// </summary>
+        private static void EarlyConsoleInit(string[] args)
+        {
+            nint existingConsole = Interop.Windows.GetConsoleWindow();
+            if (existingConsole != nint.Zero)
+            {
+                // Console already exists (inherited from parent or auto-allocated on older Windows).
+                // If -WindowStyle Hidden was requested, hide the window at the earliest possible moment
+                // to minimize the flash on older Windows where the detached policy is not supported.
+                if (EarlyCheckForHiddenWindowStyle(args))
+                {
+                    Interop.Windows.ShowWindow(existingConsole, Interop.Windows.SW_HIDE);
+                }
+
+                return;
+            }
+
+            // No console exists. This means the detached policy is active (newer Windows)
+            // and we were launched without console inheritance (e.g. from Explorer, Task Scheduler).
+            if (EarlyCheckForHiddenWindowStyle(args))
+            {
+                // Hidden: allocate an invisible console session so CONOUT$/CONIN$ work
+                // (Write-Host, native commands, etc.) but no window is ever shown.
+                if (!TryAllocConsoleNoWindow())
+                {
+                    // Fallback (should not happen since we only reach here on newer Windows,
+                    // but be defensive): alloc + hide.
+                    Interop.Windows.AllocConsole();
+                    nint hwnd = Interop.Windows.GetConsoleWindow();
+                    if (hwnd != nint.Zero)
+                    {
+                        Interop.Windows.ShowWindow(hwnd, Interop.Windows.SW_HIDE);
+                    }
+                }
+            }
+            else
+            {
+                // Normal interactive launch: allocate a visible console.
+                Interop.Windows.AllocConsole();
+            }
+        }
+
+        /// <summary>
+        /// Minimal early scan for -WindowStyle Hidden in command line args.
+        /// Matches any unambiguous prefix of "windowstyle" starting from "w"
+        /// (e.g. -w, -wi, -win, ..., -windowstyle) followed by "hidden".
+        /// </summary>
+        private static bool EarlyCheckForHiddenWindowStyle(string[] args)
+        {
+            for (int i = 0; i < args.Length - 1; i++)
+            {
+                string arg = args[i];
+                if (arg.Length >= 2 && (arg[0] == '-' || arg[0] == '/'))
+                {
+                    string key = arg.Substring(1);
+                    if (key.Length >= 1
+                        && key.Length <= "windowstyle".Length
+                        && "windowstyle".StartsWith(key, StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (args[i + 1].Equals("hidden", StringComparison.OrdinalIgnoreCase))
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Attempts to allocate a console without a visible window using AllocConsoleWithOptions.
+        /// Returns false if the API is not available (older Windows).
+        /// </summary>
+        private static bool TryAllocConsoleNoWindow()
+        {
+            try
+            {
+                var options = new Interop.Windows.AllocConsoleOptions
+                {
+                    Mode = Interop.Windows.AllocConsoleMode.NoWindow,
+                    UseShowWindow = 0,
+                    ShowWindow = 0,
+                };
+
+                int hr = Interop.Windows.AllocConsoleWithOptions(ref options, out _);
+                return hr >= 0; // S_OK
+            }
+            catch (EntryPointNotFoundException)
+            {
+                return false;
+            }
+        }
+#endif
     }
 }
