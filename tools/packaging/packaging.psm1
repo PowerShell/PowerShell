@@ -4274,18 +4274,8 @@ function New-MSIXPackage
 
     $makepri = Get-Item (Join-Path $makeappx.Directory "makepri.exe") -ErrorAction Stop
 
+    $displayName = $ProductName
     $ProductSemanticVersion = Get-PackageSemanticVersion -Version $ProductVersion
-    $productSemanticVersionWithName = $ProductName + '-' + $ProductSemanticVersion
-    $packageName = $productSemanticVersionWithName
-    if ($Private) {
-        $ProductNameSuffix = 'Private'
-    }
-
-    if ($ProductNameSuffix) {
-        $packageName += "-$ProductNameSuffix"
-    }
-
-    $displayName = $productName
 
     if ($Private) {
         $ProductName = 'PowerShell-Private'
@@ -4300,6 +4290,13 @@ function New-MSIXPackage
 
     Write-Verbose -Verbose "ProductName: $productName"
     Write-Verbose -Verbose "DisplayName: $displayName"
+
+    $packageName = $ProductName + '-' + $ProductSemanticVersion
+
+    # Appends Architecture to the package name
+    if ($ProductNameSuffix) {
+        $packageName += "-$ProductNameSuffix"
+    }
 
     $ProductVersion = Get-WindowsVersion -PackageName $packageName
 
@@ -4317,7 +4314,7 @@ function New-MSIXPackage
         Write-Verbose "Using Preview assets" -Verbose
     } elseif ($LTS) {
         # This is the PhoneProductId for the "Microsoft.PowerShell-LTS" package.
-        $PhoneProductId = "a9af273a-c636-47ac-bc2a-775edf80b2b9"
+        $PhoneProductId = "b7a4b003-3704-47a9-b018-cfcc9801f4fc"
         Write-Verbose "Using LTS assets" -Verbose
     }
 
