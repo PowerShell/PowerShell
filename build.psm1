@@ -2160,7 +2160,7 @@ function script:Start-UnelevatedProcess
         throw "Start-UnelevatedProcess is currently not supported on non-Windows platforms"
     }
 
-    if (-not $environment.OSArchitecture -eq 'arm64')
+    if ($environment.OSArchitecture -eq 'arm64')
     {
         throw "Start-UnelevatedProcess is currently not supported on arm64 platforms"
     }
