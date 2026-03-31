@@ -674,6 +674,23 @@ namespace Microsoft.PowerShell.Commands
         #endregion Overrides
 
 #nullable enable
+
+        /// <summary>
+        /// Writes a verbose message when a service property query fails.
+        /// </summary>
+        /// <param name="serviceName">Name of the service.</param>
+        /// <param name="propertyName">Name of the property that failed to be queried.</param>
+        private void WriteServicePropertyError(string serviceName, string propertyName)
+        {
+            Win32Exception e = new(Marshal.GetLastWin32Error());
+            WriteVerbose(
+                StringUtil.Format(
+                    ServiceResources.CouldNotGetServiceProperty,
+                    serviceName,
+                    propertyName,
+                    e.Message));
+        }
+
         /// <summary>
         /// Adds UserName, Description, BinaryPathName, DelayedAutoStart and StartupType to a ServiceController object.
         /// </summary>
@@ -711,13 +728,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        Win32Exception e = new(Marshal.GetLastWin32Error());
-                        WriteVerbose(
-                            StringUtil.Format(
-                                ServiceResources.CouldNotGetServiceProperty,
-                                service.ServiceName,
-                                nameof(NativeMethods.SERVICE_DESCRIPTIONW),
-                                e.Message));
+                        WriteServicePropertyError(service.ServiceName, nameof(NativeMethods.SERVICE_DESCRIPTIONW));
                     }
 
                     if (NativeMethods.QueryServiceConfig2(
@@ -729,13 +740,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        Win32Exception e = new(Marshal.GetLastWin32Error());
-                        WriteVerbose(
-                            StringUtil.Format(
-                                ServiceResources.CouldNotGetServiceProperty,
-                                service.ServiceName,
-                                nameof(NativeMethods.SERVICE_DELAYED_AUTO_START_INFO),
-                                e.Message));
+                        WriteServicePropertyError(service.ServiceName, nameof(NativeMethods.SERVICE_DELAYED_AUTO_START_INFO));
                     }
 
                     if (NativeMethods.QueryServiceConfig(
@@ -753,25 +758,13 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        Win32Exception e = new(Marshal.GetLastWin32Error());
-                        WriteVerbose(
-                            StringUtil.Format(
-                                ServiceResources.CouldNotGetServiceProperty,
-                                service.ServiceName,
-                                nameof(NativeMethods.QUERY_SERVICE_CONFIG),
-                                e.Message));
+                        WriteServicePropertyError(service.ServiceName, nameof(NativeMethods.QUERY_SERVICE_CONFIG));
                     }
                 }
                 else
                 {
                     // handle when OpenServiceW itself fails:
-                    Win32Exception e = new(Marshal.GetLastWin32Error());
-                    WriteVerbose(
-                        StringUtil.Format(
-                            ServiceResources.CouldNotGetServiceProperty,
-                            service.ServiceName,
-                            "ServiceConfig",
-                            e.Message));
+                    WriteServicePropertyError(service.ServiceName, nameof(NativeMethods.SERVICE_QUERY_CONFIG));
                 }
             }
             finally
