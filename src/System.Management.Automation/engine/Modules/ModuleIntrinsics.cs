@@ -1272,6 +1272,21 @@ namespace System.Management.Automation
             return currentModulePath;
         }
 
+        internal static bool HasCustomPSModulePath(ExecutionContext context)
+        {
+            return context?.InitialSessionState?.PSModulePath != null;
+        }
+
+        private static string GetModulePath(ExecutionContext context)
+        {
+            if (HasCustomPSModulePath(context))
+            {
+                return context.InitialSessionState.PSModulePath;
+            }
+
+            return Environment.GetEnvironmentVariable(Constants.PSModulePathEnvVar) ?? SetModulePath();
+        }
+
 #if !UNIX
         /// <summary>
         /// Returns a PSModulePath suitable for Windows PowerShell by removing PowerShell's specific
@@ -1375,7 +1390,7 @@ namespace System.Management.Automation
         /// <returns>The module path as an array of strings.</returns>
         internal static IEnumerable<string> GetModulePath(bool includeSystemModulePath, ExecutionContext context)
         {
-            string modulePathString = Environment.GetEnvironmentVariable(Constants.PSModulePathEnvVar) ?? SetModulePath();
+            string modulePathString = GetModulePath(context);
 
             HashSet<string> processedPathSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 

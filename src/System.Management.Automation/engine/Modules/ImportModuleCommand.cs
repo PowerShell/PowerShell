@@ -643,7 +643,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // See if we can use the cached path for the file. If a version number has been specified, then
                 // we won't look in the cache
-                if (this.MinimumVersion == null && this.MaximumVersion == null && this.RequiredVersion == null && PSModuleInfo.UseAppDomainLevelModuleCache && !this.BaseForce)
+                if (this.MinimumVersion == null && this.MaximumVersion == null && this.RequiredVersion == null && PSModuleInfo.UseAppDomainLevelModuleCache && !this.BaseForce && !ModuleIntrinsics.HasCustomPSModulePath(this.Context))
                 {
                     // See if the name is in the appdomain-level module path name cache...
                     cachedPath = PSModuleInfo.ResolveUsingAppDomainLevelModuleCache(name);
