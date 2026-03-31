@@ -1404,7 +1404,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (includeSystemModulePath)
+            if (includeSystemModulePath && !HasCustomPSModulePath(context))
             {
                 var processedPath = ProcessOneModulePath(context, GetPSHomeModulePath(), processedPathSet);
                 if (processedPath != null)
