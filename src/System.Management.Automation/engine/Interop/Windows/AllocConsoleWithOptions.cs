@@ -57,7 +57,8 @@ internal static partial class Interop
 
         /// <summary>
         /// Attempts to allocate a console without a visible window using AllocConsoleWithOptions.
-        /// Returns false if the API is not available (older Windows) or the call fails.
+        /// Returns false if the API is not available (older Windows), the call fails,
+        /// or no console was allocated (e.g. process was started with DETACHED_PROCESS).
         /// </summary>
         internal static bool TryAllocConsoleNoWindow()
         {
@@ -66,9 +67,11 @@ internal static partial class Interop
 
         /// <summary>
         /// Attempts to allocate a console using AllocConsoleWithOptions with Default mode.
-        /// Default mode respects DETACHED_PROCESS from the parent's CreateProcess call,
-        /// whereas plain AllocConsole() would override it and force-create a console.
-        /// Returns false if the API is not available (older Windows) or the call fails.
+        /// Default mode respects DETACHED_PROCESS from the parent's CreateProcess call:
+        /// it returns NoConsole if the parent intended this process to run without a console,
+        /// whereas plain AllocConsole() would override that and force-create a console.
+        /// Returns false if the API is not available (older Windows), the call fails,
+        /// or no console was allocated.
         /// </summary>
         internal static bool TryAllocConsoleDefault()
         {
@@ -86,8 +89,8 @@ internal static partial class Interop
                     ShowWindow = 0,
                 };
 
-                int hr = AllocConsoleWithOptions(ref options, out _);
-                return hr >= 0; // S_OK
+                int hr = AllocConsoleWithOptions(ref options, out AllocConsoleResult result);
+                return hr >= 0 && result != AllocConsoleResult.NoConsole;
             }
             catch (EntryPointNotFoundException)
             {

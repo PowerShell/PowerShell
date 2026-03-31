@@ -55,8 +55,8 @@ namespace Microsoft.PowerShell
             // On Windows with consoleAllocationPolicy=detached in the manifest,
             // no console is auto-allocated by the OS. We must allocate one ourselves
             // before anything touches CONOUT$/CONIN$ handles.
-            // On older Windows the manifest element is ignored and this is a no-op
-            // (AllocConsole returns false when a console already exists).
+            // On older Windows the manifest element is ignored and the OS auto-allocates
+            // a console, so GetConsoleWindow() != 0 and EarlyConsoleInit is a no-op.
             EarlyConsoleInit(args);
 #endif
 
@@ -134,7 +134,8 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Allocates a console early in startup to support consoleAllocationPolicy=detached.
         /// On newer Windows (with the detached policy active), the OS does not auto-allocate
-        /// a console for CUI apps. On older Windows, AllocConsole() returns false (no-op).
+        /// a console for CUI apps. On older Windows the manifest is ignored, so the OS
+        /// auto-allocates a console and GetConsoleWindow() returns non-zero (early return).
         /// </summary>
         private static void EarlyConsoleInit(string[] args)
         {
@@ -142,44 +143,39 @@ namespace Microsoft.PowerShell
             if (existingConsole != nint.Zero)
             {
                 // Console already exists (inherited from parent or auto-allocated on older Windows).
-                // If -WindowStyle Hidden was requested, hide the window at the earliest possible moment
-                // to minimize the flash on older Windows where the detached policy is not supported.
-                if (EarlyCheckForHiddenWindowStyle(args))
-                {
-                    Interop.Windows.ShowWindow(existingConsole, Interop.Windows.SW_HIDE);
-                }
-
+                // Leave -WindowStyle handling to the existing SetConsoleMode code path.
                 return;
             }
 
-            // No console exists. This means the detached policy is active (newer Windows)
-            // and we were launched without console inheritance (e.g. from Explorer, Task Scheduler).
+            // No console exists (GetConsoleWindow() == 0). This means either:
+            //   (a) The detached manifest policy is active (newer Windows), or
+            //   (b) DETACHED_PROCESS — no console at all, or
+            //   (c) CREATE_NO_WINDOW — console session exists but no window.
+            //
+            // For (c), AllocConsoleWithOptions returns ExistingConsole (no-op).
+            // For (a) and (b), behavior depends on the mode:
+            //   Default mode: allocates if the parent would have given us a console
+            //     on prior Windows versions, returns NoConsole for DETACHED_PROCESS.
+            //   NoWindow mode: always creates a console session (overrides DETACHED).
+            //
+            // When -WindowStyle Hidden is specified, we intentionally use NoWindow
+            // even though it overrides DETACHED_PROCESS — the user explicitly asked
+            // for invisible PowerShell with working I/O, and the alternative (no
+            // console, crashing on stdin/stdout access) is strictly worse.
+            //
+            // If the API is not available (older Windows), TryAlloc* returns false.
+            // On older Windows the manifest is ignored and the OS auto-allocates
+            // a console, so GetConsoleWindow() would have returned non-zero above.
+            // The only older-Windows path here is DETACHED_PROCESS, where the
+            // existing behavior is no console I/O; we preserve that by not
+            // falling back to plain AllocConsole() (per DHowett's guidance).
             if (EarlyCheckForHiddenWindowStyle(args))
             {
-                // Hidden: allocate an invisible console session so CONOUT$/CONIN$ work
-                // (Write-Host, native commands, etc.) but no window is ever shown.
-                if (!Interop.Windows.TryAllocConsoleNoWindow())
-                {
-                    // Fallback (should not happen since we only reach here on newer Windows,
-                    // but be defensive): alloc + hide.
-                    Interop.Windows.AllocConsole();
-                    nint hwnd = Interop.Windows.GetConsoleWindow();
-                    if (hwnd != nint.Zero)
-                    {
-                        Interop.Windows.ShowWindow(hwnd, Interop.Windows.SW_HIDE);
-                    }
-                }
+                Interop.Windows.TryAllocConsoleNoWindow();
             }
             else
             {
-                // Normal interactive launch: allocate a visible console.
-                // Use AllocConsoleWithOptions(Default) when available — it respects
-                // DETACHED_PROCESS from the parent's CreateProcess call, whereas
-                // plain AllocConsole() would override it and force-create a console.
-                if (!Interop.Windows.TryAllocConsoleDefault())
-                {
-                    Interop.Windows.AllocConsole();
-                }
+                Interop.Windows.TryAllocConsoleDefault();
             }
         }
 

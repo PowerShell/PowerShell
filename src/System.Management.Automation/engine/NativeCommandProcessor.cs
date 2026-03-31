@@ -2508,6 +2508,7 @@ namespace System.Management.Automation
 
             AlwaysCaptureApplicationIO = true;
 
+            // Restore foreground window if focus changed during console allocation.
             if (savedForeground != nint.Zero && Interop.Windows.GetForegroundWindow() != savedForeground)
             {
                 Interop.Windows.SetForegroundWindow(savedForeground);
