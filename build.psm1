@@ -2071,7 +2071,7 @@ function Publish-TestResults
     .DESCRIPTION
         In an Azure DevOps build (TF_BUILD), uploads the result file via a ##vso command
         and attaches it as a build artifact. In GitHub Actions, copies the file to the
-        test-results folder. Does nothing outside of CI environments.
+        testResults directory under $env:RUNNER_WORKSPACE. Does nothing outside of CI environments.
     .PARAMETER Title
         The run title shown in the CI testing tab.
     .PARAMETER Path
