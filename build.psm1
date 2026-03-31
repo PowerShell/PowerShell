@@ -1749,7 +1749,7 @@ function Start-PSPester {
 
     if($IncludeCommonTests.IsPresent)
     {
-        $path = += "$PSScriptRoot/test/common"
+        $path += "$PSScriptRoot/test/common"
     }
 
     # we need to do few checks and if user didn't provide $ExcludeTag explicitly, we should alternate the default
