@@ -36,7 +36,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
         with:
           fetch-depth: 1000
 
@@ -61,7 +61,7 @@ jobs:
         shell: pwsh
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@d4c94342e560b34958eacfc5d055d21461ed1c5d # v5.0.0
         with:
           global-json-file: ./global.json
 
@@ -81,7 +81,7 @@ jobs:
 
       - name: Upload Build Artifacts
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: windows-packaging-${{ matrix.architecture }}-${{ matrix.channel }}
           path: |

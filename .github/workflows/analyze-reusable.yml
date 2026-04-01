@@ -41,7 +41,7 @@ jobs:
       with:
         fetch-depth: '0'
 
-    - uses: actions/setup-dotnet@v5
+    - uses: actions/setup-dotnet@d4c94342e560b34958eacfc5d055d21461ed1c5d # v5.0.0
       with:
         global-json-file: ./global.json
 
