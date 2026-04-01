@@ -108,7 +108,7 @@ namespace PSTests.Sequential
         {
             WithTestModule((moduleRoot, moduleName, functionName) =>
             {
-                InitialSessionState iss = InitialSessionState.CreateDefault();
+                InitialSessionState iss = CreateInitialSessionStateForModuleImport();
                 iss.PSModulePath = moduleRoot;
 
                 using (Runspace runspace = RunspaceFactory.CreateRunspace(iss))
@@ -131,7 +131,7 @@ namespace PSTests.Sequential
             {
                 WithTestModule((moduleRoot, moduleName, functionName) =>
                 {
-                    InitialSessionState customIss = InitialSessionState.CreateDefault();
+                    InitialSessionState customIss = CreateInitialSessionStateForModuleImport();
                     customIss.PSModulePath = moduleRoot;
 
                     using (Runspace runspace = RunspaceFactory.CreateRunspace(customIss))
@@ -167,11 +167,65 @@ namespace PSTests.Sequential
         }
 
         [Fact]
+        public void TestRunspaceDefaultPSModulePathOverrideDoesNotLeakThroughModuleCache()
+        {
+            bool originalUseAppDomainLevelModuleCache = PSModuleInfo.UseAppDomainLevelModuleCache;
+            string originalProcessModulePath = Environment.GetEnvironmentVariable("PSModulePath");
+            PSModuleInfo.UseAppDomainLevelModuleCache = true;
+            PSModuleInfo.ClearAppDomainLevelModulePathCache();
+
+            try
+            {
+                WithTestModule((moduleRoot, moduleName, functionName) =>
+                {
+                    string processModulePath = string.IsNullOrEmpty(originalProcessModulePath)
+                        ? moduleRoot
+                        : string.Concat(moduleRoot, Path.PathSeparator, originalProcessModulePath);
+
+                    Environment.SetEnvironmentVariable("PSModulePath", processModulePath);
+
+                    InitialSessionState customIss = CreateInitialSessionStateForModuleImport();
+                    customIss.PSModulePath = string.Empty;
+
+                    using (Runspace runspace = RunspaceFactory.CreateRunspace(CreateInitialSessionStateForModuleImport()))
+                    {
+                        runspace.Open();
+                        Assert.Equal(functionName, InvokeModuleFunction(runspace, moduleName, functionName));
+                        runspace.Close();
+                    }
+
+                    using (Runspace runspace = RunspaceFactory.CreateRunspace(customIss))
+                    {
+                        runspace.Open();
+
+                        using (PowerShell powerShell = PowerShell.Create())
+                        {
+                            powerShell.Runspace = runspace;
+                            powerShell.AddScript($"Import-Module '{moduleName}' -PassThru -ErrorAction Ignore | Select-Object -ExpandProperty Name");
+
+                            var results = powerShell.Invoke();
+
+                            Assert.Empty(results);
+                        }
+
+                        runspace.Close();
+                    }
+                });
+            }
+            finally
+            {
+                Environment.SetEnvironmentVariable("PSModulePath", originalProcessModulePath);
+                PSModuleInfo.ClearAppDomainLevelModulePathCache();
+                PSModuleInfo.UseAppDomainLevelModuleCache = originalUseAppDomainLevelModuleCache;
+            }
+        }
+
+        [Fact]
         public void TestRunspacePoolWithCustomPSModulePathOverride()
         {
             WithTestModule((moduleRoot, moduleName, functionName) =>
             {
-                InitialSessionState iss = InitialSessionState.CreateDefault();
+                InitialSessionState iss = CreateInitialSessionStateForModuleImport();
                 iss.PSModulePath = moduleRoot;
 
                 using (RunspacePool runspacePool = RunspaceFactory.CreateRunspacePool(iss))
@@ -233,6 +287,18 @@ namespace PSTests.Sequential
                 Assert.False(powerShell.HadErrors);
                 return Assert.IsType<string>(Assert.Single(results).BaseObject);
             }
+        }
+
+        private static InitialSessionState CreateInitialSessionStateForModuleImport()
+        {
+            InitialSessionState iss = InitialSessionState.CreateDefault();
+
+            if (Platform.IsWindows)
+            {
+                iss.ExecutionPolicy = Microsoft.PowerShell.ExecutionPolicy.Bypass;
+            }
+
+            return iss;
         }
 
         private static void WithTestModule(Action<string, string, string> testAction)

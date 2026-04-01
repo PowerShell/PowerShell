@@ -1277,7 +1277,7 @@ namespace System.Management.Automation
             return context?.InitialSessionState?.PSModulePath != null;
         }
 
-        private static string GetModulePath(ExecutionContext context)
+        private static string ResolveModulePath(ExecutionContext context)
         {
             if (HasCustomPSModulePath(context))
             {
@@ -1390,7 +1390,7 @@ namespace System.Management.Automation
         /// <returns>The module path as an array of strings.</returns>
         internal static IEnumerable<string> GetModulePath(bool includeSystemModulePath, ExecutionContext context)
         {
-            string modulePathString = GetModulePath(context);
+            string modulePathString = ResolveModulePath(context);
 
             HashSet<string> processedPathSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
