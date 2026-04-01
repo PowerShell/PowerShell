@@ -45,7 +45,7 @@ resources:
     ref: refs/heads/main
 
 variables:
-  - template: ../templates/variables/PowerShell-Coordinated_Packages-Variables.yml
+  - template: ./pipelines/templates/variables/PowerShell-Coordinated_Packages-Variables.yml@self
     parameters:
       InternalSDKBlobURL: ${{ parameters.InternalSDKBlobURL }}
       ReleaseTagVar: ${{ parameters.ReleaseTagVar }}
@@ -90,7 +90,7 @@ extends:
       tsaOptionsFile: .config\tsaoptions.json
 
     stages:
-    - template: ../templates/stages/PowerShell-Coordinated_Packages-Stages.yml
+    - template: ./pipelines/templates/stages/PowerShell-Coordinated_Packages-Stages.yml@self
       parameters:
         RUN_WINDOWS: ${{ parameters.RUN_WINDOWS }}
         RUN_TEST_AND_RELEASE: ${{ parameters.RUN_TEST_AND_RELEASE }}
