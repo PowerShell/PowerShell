@@ -28,13 +28,14 @@
 
   <ItemGroup>
     <!-- the following package(s) are from https://github.com/JamesNK/Newtonsoft.Json -->
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <!-- the Application Insights package -->
     <PackageReference Include="Microsoft.ApplicationInsights" Version="2.21.0" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
     <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="8.0.0" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.1" />
     <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="8.0.1" />
+    <PackageReference Include="System.Diagnostics.EventLog" Version="8.0.2" />
     <PackageReference Include="System.DirectoryServices" Version="8.0.0" />
     <!-- force update transative dependecies -->
     <PackageReference Include="System.Formats.Asn1" Version="8.0.2" />
