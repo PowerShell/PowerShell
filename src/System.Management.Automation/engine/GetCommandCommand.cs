@@ -141,6 +141,28 @@ namespace Microsoft.PowerShell.Commands
         private bool _isModuleSpecified = false;
 
         /// <summary>
+        /// Gets or sets the ExcludeModule parameter to the cmdlet.
+        /// </summary>
+        [Parameter()]
+        public string[] ExcludeModule
+        {
+            get
+            {
+                return _excludedModules;
+            }
+
+            set
+            {
+                value ??= Array.Empty<string>();
+
+                _excludedModules = value;
+                _excludedModulePatterns = null;
+            }
+        }
+
+        private string[] _excludedModules = Array.Empty<string>();
+
+        /// <summary>
         /// Gets or sets the FullyQualifiedModule parameter to the cmdlet.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
@@ -404,6 +426,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Initialize the module patterns
             _modulePatterns ??= SessionStateUtilities.CreateWildcardsFromStrings(Module, WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
+            _excludedModulePatterns ??= SessionStateUtilities.CreateWildcardsFromStrings(ExcludeModule, WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
 
             switch (ParameterSetName)
             {
@@ -702,6 +725,13 @@ namespace Microsoft.PowerShell.Commands
 
                 if (!string.IsNullOrEmpty(command.ModuleName))
                 {
+                    if (_excludedModulePatterns is not null
+                        && _excludedModulePatterns.Count > 0
+                        && SessionStateUtilities.MatchesAnyWildcardPattern(command.ModuleName, _excludedModulePatterns, true))
+                    {
+                        break;
+                    }
+
                     if (_isFullyQualifiedModuleSpecified)
                     {
                         if (!_moduleSpecifications.Any(
@@ -1271,6 +1301,13 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
+                    if (_excludedModulePatterns is not null
+                        && _excludedModulePatterns.Count > 0
+                        && SessionStateUtilities.MatchesAnyWildcardPattern(current.ModuleName, _excludedModulePatterns, true))
+                    {
+                        return false;
+                    }
+
                     if (_isFullyQualifiedModuleSpecified)
                     {
                         bool foundModuleMatch = false;
@@ -1530,6 +1567,7 @@ namespace Microsoft.PowerShell.Commands
         private Collection<WildcardPattern> _verbPatterns;
         private Collection<WildcardPattern> _nounPatterns;
         private Collection<WildcardPattern> _modulePatterns;
+        private Collection<WildcardPattern> _excludedModulePatterns;
 
 #if LEGACYTELEMETRY
         private Stopwatch _timer = new Stopwatch();
@@ -1656,40 +1694,50 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
+    /// Provides argument completion for Noun parameter.
     /// </summary>
     public class NounArgumentCompleter : IArgumentCompleter
     {
-        /// <summary>
         /// </summary>
-        public IEnumerable<CompletionResult> CompleteArgument(string commandName, string parameterName, string wordToComplete, CommandAst commandAst, IDictionary fakeBoundParameters)
+        /// Returns completion results for Noun parameter.
+        /// </summary>
+        /// <param name="commandName">The command name.</param>
+        /// <param name="parameterName">The parameter name.</param>
+        /// <param name="wordToComplete">The word to complete.</param>
+        /// <param name="commandAst">The command AST.</param>
+        /// <param name="fakeBoundParameters">The fake bound parameters.</param>
+        /// <returns>List of completion results.</returns>
+        public IEnumerable<CompletionResult> CompleteArgument(
+            string commandName,
+            string parameterName,
+            string wordToComplete,
+            CommandAst commandAst,
+            IDictionary fakeBoundParameters) => CompletionHelpers.GetMatchingResults(
+                wordToComplete,
+                possibleCompletionValues: GetCommandNouns(fakeBoundParameters));
+
+        /// <summary>
+        /// Get sorted set of command nouns using Get-Command.
+        /// </summary>
+        /// <param name="fakeBoundParameters">The fake bound parameters.</param>
+        /// <returns>Sorted set of command nouns.</returns>
+        private static SortedSet<string> GetCommandNouns(IDictionary fakeBoundParameters)
         {
-            if (fakeBoundParameters == null)
-            {
-                throw PSTraceSource.NewArgumentNullException(nameof(fakeBoundParameters));
-            }
+            Collection<CommandInfo> commands = CompletionCompleters.GetCommandInfo(fakeBoundParameters, "Module", "Verb");
+            SortedSet<string> nouns = new(StringComparer.OrdinalIgnoreCase);
 
-            var commandInfo = new CmdletInfo("Get-Command", typeof(GetCommandCommand));
-            var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace)
-                .AddCommand(commandInfo)
-                .AddParameter("Noun", wordToComplete + "*");
-
-            if (fakeBoundParameters.Contains("Module"))
+            foreach (CommandInfo command in commands)
             {
-                ps.AddParameter("Module", fakeBoundParameters["Module"]);
-            }
-
-            HashSet<string> nouns = new HashSet<string>();
-            var results = ps.Invoke<CommandInfo>();
-            foreach (var result in results)
-            {
-                var dash = result.Name.IndexOf('-');
-                if (dash != -1)
+                string commandName = command.Name;
+                int dashIndex = commandName.IndexOf('-');
+                if (dashIndex != -1)
                 {
-                    nouns.Add(result.Name.Substring(dash + 1));
+                    string noun = commandName.Substring(dashIndex + 1);
+                    nouns.Add(noun);
                 }
             }
 
-            return nouns.Order().Select(static noun => new CompletionResult(noun, noun, CompletionResultType.Text, noun));
+            return nouns;
         }
     }
 }

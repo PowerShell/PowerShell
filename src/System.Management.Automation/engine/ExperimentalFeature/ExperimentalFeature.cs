@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -21,10 +20,8 @@ namespace System.Management.Automation
         #region Const Members
 
         internal const string EngineSource = "PSEngine";
-        internal const string PSFeedbackProvider = "PSFeedbackProvider";
-        internal const string PSNativeWindowsTildeExpansion = nameof(PSNativeWindowsTildeExpansion);
-        internal const string PSRedirectToVariable = "PSRedirectToVariable";
         internal const string PSSerializeJSONLongEnumAsNumber = nameof(PSSerializeJSONLongEnumAsNumber);
+        internal const string PSProfileDSCResource = "PSProfileDSCResource";
 
         #endregion
 
@@ -108,23 +105,15 @@ namespace System.Management.Automation
                     description: "Replace the old FileSystemProvider with cleaner design and faster code"),
                 */
                 new ExperimentalFeature(
-                    name: "PSSubsystemPluginModel",
-                    description: "A plugin model for registering and un-registering PowerShell subsystems"),
-                new ExperimentalFeature(
                     name: "PSLoadAssemblyFromNativeCode",
                     description: "Expose an API to allow assembly loading from native code"),
                 new ExperimentalFeature(
-                    name: PSFeedbackProvider,
-                    description: "Replace the hard-coded suggestion framework with the extensible feedback provider"),
-                new ExperimentalFeature(
-                    name: PSNativeWindowsTildeExpansion,
-                    description: "On windows, expand unquoted tilde (`~`) with the user's current home folder."),
-                new ExperimentalFeature(
-                    name: PSRedirectToVariable,
-                    description: "Add support for redirecting to the variable drive"),
-                new ExperimentalFeature(
                     name: PSSerializeJSONLongEnumAsNumber,
                     description: "Serialize enums based on long or ulong as an numeric value rather than the string representation when using ConvertTo-Json."
+                ),
+                new ExperimentalFeature(
+                    name: PSProfileDSCResource,
+                    description: "DSC v3 resources for managing PowerShell profile."
                 )
             };
 

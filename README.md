@@ -5,7 +5,7 @@ Welcome to the PowerShell GitHub Community!
 for dealing with structured data (e.g. JSON, CSV, XML, etc.), REST APIs, and object models.
 It includes a command-line shell, an associated scripting language, and a framework for processing cmdlets.
 
-[logo]: https://raw.githubusercontent.com/PowerShell/PowerShell/master/assets/ps_black_64.svg?sanitize=true
+[logo]: assets/ps_black_64.svg?sanitize=true
 
 ## Windows PowerShell vs. PowerShell 7+
 
@@ -56,39 +56,33 @@ Want to chat with other members of the PowerShell community?
 
 There are dozens of topic-specific channels on our community-driven PowerShell Virtual User Group, which you can join on:
 
-* [Gitter](https://gitter.im/PowerShell/PowerShell)
 * [Discord](https://discord.gg/PowerShell)
 * [IRC](https://web.libera.chat/#powershell) on Libera.Chat
 * [Slack](https://aka.ms/psslack)
 
-## Building the Repository
+## Developing and Contributing
+
+Want to contribute to PowerShell? Please start with the [Contribution Guide][] to learn how to develop and contribute.
+
+If you are developing .NET Core C# applications targeting PowerShell Core, [check out our FAQ][] to learn more about the PowerShell SDK NuGet package.
+
+Also, make sure to check out our [PowerShell-RFC repository](https://github.com/powershell/powershell-rfc) for request-for-comments (RFC) documents to submit and give comments on proposed and future designs.
+
+[Contribution Guide]: .github/CONTRIBUTING.md
+[check out our FAQ]: docs/FAQ.md#where-do-i-get-the-powershell-core-sdk-package
+
+## Building PowerShell
 
 | Linux                    | Windows                    | macOS                   |
 |--------------------------|----------------------------|------------------------|
 | [Instructions][bd-linux] | [Instructions][bd-windows] | [Instructions][bd-macOS] |
 
-If you have any problems building, consult the developer [FAQ][].
+If you have any problems building PowerShell, please start by consulting the developer [FAQ].
 
-### Build status of nightly builds
-
-| Azure CI (Windows)                       | Azure CI (Linux)                               | Azure CI (macOS)                               | CodeFactor Grade         |
-|:-----------------------------------------|:-----------------------------------------------|:-----------------------------------------------|:-------------------------|
-| [![windows-nightly-image][]][windows-nightly-site] | [![linux-nightly-image][]][linux-nightly-site] | [![macOS-nightly-image][]][macos-nightly-site] | [![cf-image][]][cf-site] |
-
-[bd-linux]: https://github.com/PowerShell/PowerShell/tree/master/docs/building/linux.md
-[bd-windows]: https://github.com/PowerShell/PowerShell/tree/master/docs/building/windows-core.md
-[bd-macOS]: https://github.com/PowerShell/PowerShell/tree/master/docs/building/macos.md
-
-[FAQ]: https://github.com/PowerShell/PowerShell/tree/master/docs/FAQ.md
-
-[windows-nightly-site]: https://powershell.visualstudio.com/PowerShell/_build?definitionId=32
-[linux-nightly-site]: https://powershell.visualstudio.com/PowerShell/_build?definitionId=23
-[macos-nightly-site]: https://powershell.visualstudio.com/PowerShell/_build?definitionId=24
-[windows-nightly-image]: https://powershell.visualstudio.com/PowerShell/_apis/build/status/PowerShell-CI-Windows-daily
-[linux-nightly-image]: https://powershell.visualstudio.com/PowerShell/_apis/build/status/PowerShell-CI-linux-daily?branchName=master
-[macOS-nightly-image]: https://powershell.visualstudio.com/PowerShell/_apis/build/status/PowerShell-CI-macos-daily?branchName=master
-[cf-site]: https://www.codefactor.io/repository/github/powershell/powershell
-[cf-image]: https://www.codefactor.io/repository/github/powershell/powershell/badge
+[bd-linux]: docs/building/linux.md
+[bd-windows]: docs/building/windows-core.md
+[bd-macOS]: docs/building/macos.md
+[FAQ]: docs/FAQ.md
 
 ## Downloading the Source Code
 
@@ -99,16 +93,6 @@ git clone https://github.com/PowerShell/PowerShell.git
 ```
 
 For more information, see [working with the PowerShell repository](https://github.com/PowerShell/PowerShell/tree/master/docs/git).
-
-## Developing and Contributing
-
-Please look into the [Contribution Guide][]  to know how to develop and contribute.
-If you are developing .NET Core C# applications targeting PowerShell Core, [check out our FAQ][] to learn more about the PowerShell SDK NuGet package.
-
-Also, make sure to check out our [PowerShell-RFC repository](https://github.com/powershell/powershell-rfc) for request-for-comments (RFC) documents to submit and give comments on proposed and future designs.
-
-[Contribution Guide]: https://github.com/PowerShell/PowerShell/blob/master/.github/CONTRIBUTING.md
-[check out our FAQ]: https://github.com/PowerShell/PowerShell/tree/master/docs/FAQ.md#where-do-i-get-the-powershell-core-sdk-package
 
 ## Support
 
@@ -122,7 +106,10 @@ PowerShell is licensed under the [MIT license][].
 
 [MIT license]: https://github.com/PowerShell/PowerShell/tree/master/LICENSE.txt
 
-### Windows Docker Files and Images
+### Docker Containers
+
+> [!Important]
+> The PowerShell container images are now [maintained by the .NET team](https://github.com/PowerShell/Announcements/issues/75). The containers at `mcr.microsoft.com/powershell` are currently not maintained.
 
 License: By requesting and using the Container OS Image for Windows containers, you acknowledge, understand, and consent to the Supplemental License Terms available on [Microsoft Artifact Registry][mcr].
 

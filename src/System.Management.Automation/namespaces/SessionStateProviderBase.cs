@@ -26,7 +26,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// An instance of the PSTraceSource class used for trace output.
         /// </summary>
-        [Dbg.TraceSourceAttribute(
+        [Dbg.TraceSource(
              "SessionStateProvider",
              "Providers that produce a view of session state data.")]
         private static readonly Dbg.PSTraceSource s_tracer =

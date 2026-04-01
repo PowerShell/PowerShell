@@ -32,7 +32,8 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 1, Mandatory = true, ValueFromPipelineByPropertyName = true)]
         [AllowNull]
         [AllowEmptyString]
-        public string ChildPath { get; set; }
+        [AllowEmptyCollection]
+        public string[] ChildPath { get; set; }
 
         /// <summary>
         /// Gets or sets additional childPaths to the command.
@@ -50,6 +51,21 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public SwitchParameter Resolve { get; set; }
 
+        /// <summary>
+        /// Gets or sets the extension to use for the resulting path.
+        /// If not specified, the original extension (if any) is preserved.
+        /// <para>
+        /// Behavior:
+        /// - If the path has an existing extension, it will be replaced with the specified extension.
+        /// - If the path does not have an extension, the specified extension will be added.
+        /// - If an empty string is provided, any existing extension will be removed.
+        /// - A leading dot in the extension is optional; if omitted, one will be added automatically.
+        /// </para>
+        /// </summary>
+        [Parameter(ValueFromPipelineByPropertyName = true)]
+        [ValidateNotNull]
+        public string Extension { get; set; }
+
         #endregion Parameters
 
         #region Command code
@@ -64,7 +80,15 @@ namespace Microsoft.PowerShell.Commands
                 Path != null,
                 "Since Path is a mandatory parameter, paths should never be null");
 
-            string combinedChildPath = ChildPath;
+            string combinedChildPath = string.Empty;
+
+            if (this.ChildPath != null)
+            {
+                foreach (string childPath in this.ChildPath)
+                {
+                    combinedChildPath = SessionState.Path.Combine(combinedChildPath, childPath, CmdletProviderContext);
+                }
+            }
 
             // join the ChildPath elements
             if (AdditionalChildPath != null)
@@ -117,6 +141,12 @@ namespace Microsoft.PowerShell.Commands
                             pathNotFound.ErrorRecord,
                             pathNotFound));
                     continue;
+                }
+
+                // If Extension parameter is present it is not null due to [ValidateNotNull].
+                if (Extension is not null)
+                {
+                    joinedPath = System.IO.Path.ChangeExtension(joinedPath, Extension.Length == 0 ? null : Extension);
                 }
 
                 if (Resolve)

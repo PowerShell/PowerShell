@@ -202,7 +202,6 @@ namespace System.Management.Automation
             string sourceAsString = (string)LanguagePrimitives.ConvertTo(sourceValue, typeof(string), formatProvider);
             return LanguagePrimitives.ConvertTo(sourceAsString, destinationType, formatProvider);
         }
-
         /// <summary>
         /// Returns false, since this converter is not designed to be used to
         /// convert from the type associated with the converted to other types.
@@ -637,7 +636,7 @@ namespace System.Management.Automation
 
             formatProvider ??= CultureInfo.InvariantCulture;
 
-            if (!(formatProvider is CultureInfo culture))
+            if (formatProvider is not CultureInfo culture)
             {
                 throw PSTraceSource.NewArgumentException(nameof(formatProvider));
             }
@@ -781,7 +780,7 @@ namespace System.Management.Automation
         {
             formatProvider ??= CultureInfo.InvariantCulture;
 
-            if (!(formatProvider is CultureInfo culture))
+            if (formatProvider is not CultureInfo culture)
             {
                 throw PSTraceSource.NewArgumentException(nameof(formatProvider));
             }
@@ -1037,7 +1036,7 @@ namespace System.Management.Automation
                     // but since we don't want this to recurse indefinitely
                     // we explicitly check the case where it would recurse
                     // and deal with it.
-                    if (!(PSObject.Base(objectArray[0]) is IList firstElement))
+                    if (PSObject.Base(objectArray[0]) is not IList firstElement)
                     {
                         return IsTrue(objectArray[0]);
                     }
@@ -2078,6 +2077,14 @@ namespace System.Management.Automation
             }
 
             /// <summary>
+            /// Returns all names for the provided enum type.
+            /// </summary>
+            /// <param name="enumType">The enum type to retrieve names from.</param>
+            /// <returns>Array of enum names for the specified type.</returns>
+            internal static string[] GetEnumNames(Type enumType)
+                => EnumSingleTypeConverter.GetEnumHashEntry(enumType).names;
+
+            /// <summary>
             /// Returns all values for the provided enum type.
             /// </summary>
             /// <param name="enumType">The enum type to retrieve values from.</param>
@@ -2093,7 +2100,7 @@ namespace System.Management.Automation
             protected static object BaseConvertFrom(object sourceValue, Type destinationType, IFormatProvider formatProvider, bool ignoreCase, bool multipleValues)
             {
                 Diagnostics.Assert(sourceValue != null, "the type converter has a special case for null source values");
-                if (!(sourceValue is string sourceValueString))
+                if (sourceValue is not string sourceValueString)
                 {
                     throw new PSInvalidCastException("InvalidCastEnumFromTypeNotAString", null,
                         ExtendedTypeSystem.InvalidCastException,
@@ -2935,17 +2942,12 @@ namespace System.Management.Automation
                     return result;
                 }
 
-                if (resultType == typeof(BigInteger))
-                {
-                    // Fallback for BigInteger: manual parsing using any common format.
-                    NumberStyles style = NumberStyles.AllowLeadingSign
-                        | NumberStyles.AllowDecimalPoint
-                        | NumberStyles.AllowExponent
-                        | NumberStyles.AllowHexSpecifier;
+               if (resultType == typeof(BigInteger))
+               {
+                    NumberStyles style = NumberStyles.Integer | NumberStyles.AllowThousands;
 
                     return BigInteger.Parse(strToConvert, style, NumberFormatInfo.InvariantInfo);
                 }
-
                 // Fallback conversion for regular numeric types.
                 return GetIntegerSystemConverter(resultType).ConvertFrom(strToConvert);
             }

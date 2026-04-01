@@ -8,7 +8,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class is used to parse CSV text.
     /// </summary>
-    internal class CSVHelper
+    internal sealed class CSVHelper
     {
         internal CSVHelper(char delimiter)
         {

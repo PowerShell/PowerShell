@@ -45,23 +45,11 @@ jobs:
     - template: /.pipelines/templates/SetVersionVariables.yml@self
       parameters:
         ReleaseTagVar: $(ReleaseTagVar)
-        CreateJson: yes
-        UseJson: no
+        CreateJson: no
 
     - pwsh: |
         Get-ChildItem Env:
       displayName: 'Capture Environment Variables'
-
-    - pwsh: |
-        $azureRmModule = Get-InstalledModule AzureRM -ErrorAction SilentlyContinue -Verbose
-        if ($azureRmModule) {
-          Write-Host 'AzureRM module exists. Removing it'
-          Uninstall-AzureRm
-          Write-Host 'AzureRM module removed'
-        }
-
-        Install-Module -Name Az.Storage -Force -AllowClobber -Scope CurrentUser -Verbose
-      displayName: Remove AzRM modules
 
     - task: AzurePowerShell@5
       displayName: Copy blobs to PSInfra storage
@@ -143,23 +131,11 @@ jobs:
     - template: /.pipelines/templates/SetVersionVariables.yml@self
       parameters:
         ReleaseTagVar: $(ReleaseTagVar)
-        CreateJson: yes
-        UseJson: no
+        CreateJson: no
 
     - pwsh: |
         Get-ChildItem Env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
       displayName: 'Capture Environment Variables'
-
-    - pwsh: |
-        $azureRmModule = Get-InstalledModule AzureRM -ErrorAction SilentlyContinue -Verbose
-        if ($azureRmModule) {
-          Write-Host 'AzureRM module exists. Removing it'
-          Uninstall-AzureRm
-          Write-Host 'AzureRM module removed'
-        }
-
-        Install-Module -Name Az.Storage -Force -AllowClobber -Scope CurrentUser -Verbose
-      displayName: Remove AzRM modules
 
     - task: AzurePowerShell@5
       displayName: Copy blobs to PSInfra storage

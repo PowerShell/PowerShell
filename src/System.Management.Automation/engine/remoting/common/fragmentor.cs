@@ -432,7 +432,7 @@ namespace System.Management.Automation.Remoting
     /// </summary>
     internal class SerializedDataStream : Stream, IDisposable
     {
-        [TraceSourceAttribute("SerializedDataStream", "SerializedDataStream")]
+        [TraceSource("SerializedDataStream", "SerializedDataStream")]
         private static readonly PSTraceSource s_trace = PSTraceSource.GetTracer("SerializedDataStream", "SerializedDataStream");
         #region Global Constants
 

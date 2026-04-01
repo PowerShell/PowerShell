@@ -1333,35 +1333,6 @@ namespace System.Management.Automation
         private static string GetVerbGroupDisplayName(Type verbType) => verbType.Name.Substring(5);
 
         /// <summary>
-        /// Filters by verbs and commands.
-        /// </summary>
-        /// <param name="verbs">The array of verbs.</param>
-        /// <param name="commands">The collection of commands.</param>
-        /// <returns>List of Verbs.</returns>
-        private static IEnumerable<string> FilterByVerbsAndCommands(string[] verbs, Collection<CmdletInfo> commands)
-        {
-            if (commands is null || commands.Count == 0)
-            {
-                yield break;
-            }
-
-            Collection<WildcardPattern> verbPatterns = SessionStateUtilities.CreateWildcardsFromStrings(
-                verbs,
-                WildcardOptions.IgnoreCase);
-
-            foreach (CmdletInfo command in commands)
-            {
-                if (SessionStateUtilities.MatchesAnyWildcardPattern(
-                    command.Verb,
-                    verbPatterns,
-                    defaultValue: false))
-                {
-                    yield return command.Verb;
-                }
-            }
-        }
-
-        /// <summary>
         /// Filters by verbs and groups.
         /// </summary>
         /// <param name="verbs">The array of verbs.</param>
@@ -1384,16 +1355,69 @@ namespace System.Management.Automation
 
             foreach (Type verbType in VerbTypes)
             {
-                if (SessionStateUtilities.CollectionContainsValue(
-                    groups,
-                    GetVerbGroupDisplayName(verbType),
-                    StringComparer.OrdinalIgnoreCase))
+                if (GroupsContainVerbType(groups, verbType))
                 {
                     foreach (VerbInfo verb in FilterVerbsByType(verbs, verbType))
                     {
                         yield return verb;
                     }
                 }
+            }
+        }
+
+        /// <summary>
+        /// Checks if verb type exists in list of groups.
+        /// </summary>
+        /// <param name="groups">The list of groups</param>
+        /// <param name="verbType">The verb type to check.</param>
+        /// <returns>True if verb type was found, False if not found.</returns>
+        private static bool GroupsContainVerbType(string[] groups, Type verbType)
+            => SessionStateUtilities.CollectionContainsValue(
+                groups,
+                GetVerbGroupDisplayName(verbType),
+                StringComparer.OrdinalIgnoreCase);
+
+        /// <summary>
+        /// Enumerates field names from a Verb Type.
+        /// </summary>
+        /// <param name="verbType">The verb type.</param>
+        /// <returns>List of field names.</returns>
+        private static IEnumerable<string> EnumerateFieldNamesFromVerbType(Type verbType)
+        {
+            foreach (FieldInfo field in verbType.GetFields())
+            {
+                if (field.IsLiteral)
+                {
+                    yield return field.Name;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Enumerates field names from all Verb Types.
+        /// </summary>
+        /// <returns>List of field names.</returns>
+        private static IEnumerable<string> EnumerateFieldNamesFromAllVerbTypes()
+        {
+            foreach (Type verbType in VerbTypes)
+            {
+                foreach (string fieldName in EnumerateFieldNamesFromVerbType(verbType))
+                {
+                    yield return fieldName;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Enumerates command verb names.
+        /// </summary>
+        /// <param name="commands">The collection of commands.</param>
+        /// <returns>List of command verb names.</returns>
+        private static IEnumerable<string> EnumerateCommandVerbNames(Collection<CmdletInfo> commands)
+        {
+            foreach (CmdletInfo command in commands)
+            {
+                yield return command.Verb;
             }
         }
 
@@ -1407,12 +1431,9 @@ namespace System.Management.Automation
         {
             if (verbs is null || verbs.Length == 0)
             {
-                foreach (FieldInfo field in verbType.GetFields())
+                foreach (string fieldName in EnumerateFieldNamesFromVerbType(verbType))
                 {
-                    if (field.IsLiteral)
-                    {
-                        yield return CreateVerbFromField(field, verbType);
-                    }
+                    yield return CreateVerbFromField(fieldName, verbType);
                 }
 
                 yield break;
@@ -1422,17 +1443,14 @@ namespace System.Management.Automation
                 verbs,
                 WildcardOptions.IgnoreCase);
 
-            foreach (FieldInfo field in verbType.GetFields())
+            foreach (string fieldName in EnumerateFieldNamesFromVerbType(verbType))
             {
-                if (field.IsLiteral)
-                {
-                    if (SessionStateUtilities.MatchesAnyWildcardPattern(
-                        field.Name,
+                if (SessionStateUtilities.MatchesAnyWildcardPattern(
+                        fieldName,
                         verbPatterns,
                         defaultValue: false))
-                    {
-                        yield return CreateVerbFromField(field, verbType);
-                    }
+                {
+                    yield return CreateVerbFromField(fieldName, verbType);
                 }
             }
         }
@@ -1440,15 +1458,15 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates Verb info object from field info.
         /// </summary>
-        /// <param name="field">The field.</param>
+        /// <param name="fieldName">The field name.</param>
         /// <param name="verbType">The verb type.</param>
         /// <returns>VerbInfo object.</returns>
-        private static VerbInfo CreateVerbFromField(FieldInfo field, Type verbType) => new()
+        private static VerbInfo CreateVerbFromField(string fieldName, Type verbType) => new()
         {
-            Verb = field.Name,
-            AliasPrefix = VerbAliasPrefixes.GetVerbAliasPrefix(field.Name),
+            Verb = fieldName,
+            AliasPrefix = VerbAliasPrefixes.GetVerbAliasPrefix(fieldName),
             Group = GetVerbGroupDisplayName(verbType),
-            Description = VerbDescriptions.GetVerbDescription(field.Name)
+            Description = VerbDescriptions.GetVerbDescription(fieldName)
         };
 
         /// <summary>
@@ -1472,8 +1490,6 @@ namespace System.Management.Automation
                 CommandAst commandAst,
                 IDictionary fakeBoundParameters)
             {
-                var verbs = new string[] { wordToComplete + "*" };
-
                 // Completion: Get-Verb -Group <group> -Verb <wordToComplete>
                 if (commandName.Equals("Get-Verb", StringComparison.OrdinalIgnoreCase)
                     && fakeBoundParameters.Contains("Group"))
@@ -1494,12 +1510,7 @@ namespace System.Management.Automation
                         groups = Array.ConvertAll((object[])groupParameterValue, group => group.ToString());
                     }
 
-                    foreach (VerbInfo verb in FilterByVerbsAndGroups(verbs, groups))
-                    {
-                        yield return new CompletionResult(verb.Verb);
-                    }
-
-                    yield break;
+                    return CompleteVerbWithGroups(wordToComplete, groups);
                 }
 
                 // Completion: Get-Command -Noun <noun> -Verb <wordToComplete>
@@ -1520,23 +1531,55 @@ namespace System.Management.Automation
 
                     Collection<CmdletInfo> commands = ps.Invoke<CmdletInfo>();
 
-                    foreach (string verb in FilterByVerbsAndCommands(verbs, commands))
-                    {
-                        yield return new CompletionResult(verb);
-                    }
-
-                    yield break;
+                    return CompleteVerbWithCommands(wordToComplete, commands);
                 }
 
                 // Complete all verbs by default if above cases not completed
+                return CompleteVerbForAllTypes(wordToComplete);
+            }
+
+            /// <summary>
+            /// Completes verb with list of groups.
+            /// </summary>
+            /// <param name="wordToComplete">The word to complete.</param>
+            /// <param name="groups">The list of groups.</param>
+            /// <returns>List of completions for verb.</returns>
+            private static IEnumerable<CompletionResult> CompleteVerbWithGroups(string wordToComplete, string[] groups)
+            {
                 foreach (Type verbType in VerbTypes)
                 {
-                    foreach (VerbInfo verb in FilterVerbsByType(verbs, verbType))
+                    if (GroupsContainVerbType(groups, verbType))
                     {
-                        yield return new CompletionResult(verb.Verb);
+                        foreach (CompletionResult result in CompletionHelpers.GetMatchingResults(
+                            wordToComplete,
+                            possibleCompletionValues: EnumerateFieldNamesFromVerbType(verbType)))
+                        {
+                            yield return result;
+                        }
                     }
                 }
             }
+
+            /// <summary>
+            /// Completes verb with list of commands.
+            /// </summary>
+            /// <param name="wordToComplete">The word to complete.</param>
+            /// <param name="commands">The list of commands.</param>
+            /// <returns>List of completions for verb.</returns>
+            private static IEnumerable<CompletionResult> CompleteVerbWithCommands(string wordToComplete, Collection<CmdletInfo> commands)
+                => CompletionHelpers.GetMatchingResults(
+                    wordToComplete,
+                    possibleCompletionValues: EnumerateCommandVerbNames(commands));
+
+            /// <summary>
+            /// Completes verb for all types.
+            /// </summary>
+            /// <param name="wordToComplete">The word to complete.</param>
+            /// <returns>List of completions for verb.</returns>
+            private static IEnumerable<CompletionResult> CompleteVerbForAllTypes(string wordToComplete)
+                => CompletionHelpers.GetMatchingResults(
+                    wordToComplete,
+                    possibleCompletionValues: EnumerateFieldNamesFromAllVerbTypes());
         }
 
         private static readonly Dictionary<string, bool> s_validVerbs = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);

@@ -103,6 +103,8 @@ dotnet_naming_style.camel_case_underscore_style.capitalization = camel_case
 # Suggest more modern language features when available
 dotnet_style_object_initializer = true:suggestion
 dotnet_style_collection_initializer = true:suggestion
+# Background Info: https://github.com/dotnet/runtime/pull/100250
+dotnet_style_prefer_collection_expression = when_types_exactly_match
 dotnet_style_coalesce_expression = true:suggestion
 dotnet_style_null_propagation = true:suggestion
 dotnet_style_explicit_tuple_names = true:suggestion
@@ -116,6 +118,17 @@ dotnet_style_prefer_auto_properties = true:suggestion
 csharp_prefer_simple_default_expression = true:suggestion
 
 dotnet_code_quality_unused_parameters = non_public:suggestion
+
+# Dotnet diagnostic settings:
+[*.cs]
+
+# CA1859: Use concrete types when possible for improved performance
+# https://learn.microsoft.com/en-gb/dotnet/fundamentals/code-analysis/quality-rules/ca1859
+dotnet_diagnostic.CA1859.severity = suggestion
+
+# Disable SA1600 (ElementsMustBeDocumented) for test directory only
+[test/**/*.cs]
+dotnet_diagnostic.SA1600.severity = none
 
 # CSharp code style settings:
 [*.cs]

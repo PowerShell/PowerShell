@@ -653,11 +653,11 @@ namespace System.Management.Automation.Security
             public uint cbSize;
 
             /// LPCSTR->CHAR*
-            [MarshalAsAttribute(UnmanagedType.LPStr)]
+            [MarshalAs(UnmanagedType.LPStr)]
             public string pszOID;
 
             /// LPCWSTR->WCHAR*
-            [MarshalAsAttribute(UnmanagedType.LPWStr)]
+            [MarshalAs(UnmanagedType.LPWStr)]
             public string pwszName;
 
             /// DWORD->unsigned int
@@ -898,7 +898,7 @@ namespace System.Management.Automation.Security
             SIT_CATALOG,
         }
 
-        [StructLayoutAttribute(LayoutKind.Sequential)]
+        [StructLayout(LayoutKind.Sequential)]
         internal struct SIGNATURE_INFO
         {
             /// DWORD->unsigned int
@@ -917,21 +917,21 @@ namespace System.Management.Automation.Security
             internal uint dwInfoAvailability;
 
             /// PWSTR->WCHAR*
-            [MarshalAsAttribute(UnmanagedType.LPWStr)]
+            [MarshalAs(UnmanagedType.LPWStr)]
             internal string pszDisplayName;
 
             /// DWORD->unsigned int
             internal uint cchDisplayName;
 
             /// PWSTR->WCHAR*
-            [MarshalAsAttribute(UnmanagedType.LPWStr)]
+            [MarshalAs(UnmanagedType.LPWStr)]
             internal string pszPublisherName;
 
             /// DWORD->unsigned int
             internal uint cchPublisherName;
 
             /// PWSTR->WCHAR*
-            [MarshalAsAttribute(UnmanagedType.LPWStr)]
+            [MarshalAs(UnmanagedType.LPWStr)]
             internal string pszMoreInfoURL;
 
             /// DWORD->unsigned int
@@ -947,7 +947,7 @@ namespace System.Management.Automation.Security
             internal int fOSBinary;
         }
 
-        [StructLayoutAttribute(LayoutKind.Sequential)]
+        [StructLayout(LayoutKind.Sequential)]
         internal struct CERT_INFO
         {
             /// DWORD->unsigned int
@@ -987,18 +987,18 @@ namespace System.Management.Automation.Security
             internal System.IntPtr rgExtension;
         }
 
-        [StructLayoutAttribute(LayoutKind.Sequential)]
+        [StructLayout(LayoutKind.Sequential)]
         internal struct CRYPT_ALGORITHM_IDENTIFIER
         {
             /// LPSTR->CHAR*
-            [MarshalAsAttribute(UnmanagedType.LPStr)]
+            [MarshalAs(UnmanagedType.LPStr)]
             internal string pszObjId;
 
             /// CRYPT_OBJID_BLOB->_CRYPTOAPI_BLOB
             internal CRYPT_ATTR_BLOB Parameters;
         }
 
-        [StructLayoutAttribute(LayoutKind.Sequential)]
+        [StructLayout(LayoutKind.Sequential)]
         internal struct FILETIME
         {
             /// DWORD->unsigned int
@@ -1008,7 +1008,7 @@ namespace System.Management.Automation.Security
             internal uint dwHighDateTime;
         }
 
-        [StructLayoutAttribute(LayoutKind.Sequential)]
+        [StructLayout(LayoutKind.Sequential)]
         internal struct CERT_PUBLIC_KEY_INFO
         {
             /// CRYPT_ALGORITHM_IDENTIFIER->_CRYPT_ALGORITHM_IDENTIFIER
@@ -1018,7 +1018,7 @@ namespace System.Management.Automation.Security
             internal CRYPT_BIT_BLOB PublicKey;
         }
 
-        [StructLayoutAttribute(LayoutKind.Sequential)]
+        [StructLayout(LayoutKind.Sequential)]
         internal struct CRYPT_BIT_BLOB
         {
             /// DWORD->unsigned int
@@ -1031,11 +1031,11 @@ namespace System.Management.Automation.Security
             internal uint cUnusedBits;
         }
 
-        [StructLayoutAttribute(LayoutKind.Sequential)]
+        [StructLayout(LayoutKind.Sequential)]
         internal struct CERT_EXTENSION
         {
             /// LPSTR->CHAR*
-            [MarshalAsAttribute(UnmanagedType.LPStr)]
+            [MarshalAs(UnmanagedType.LPStr)]
             internal string pszObjId;
 
             /// BOOL->int
@@ -1086,15 +1086,15 @@ namespace System.Management.Automation.Security
         ///pCodeProperties: PSAFER_CODE_PROPERTIES->_SAFER_CODE_PROPERTIES*
         ///pLevelHandle: SAFER_LEVEL_HANDLE*
         ///lpReserved: LPVOID->void*
-        [DllImportAttribute("advapi32.dll", EntryPoint = "SaferIdentifyLevel", SetLastError = true)]
-        [return: MarshalAsAttribute(UnmanagedType.Bool)]
+        [DllImport("advapi32.dll", EntryPoint = "SaferIdentifyLevel", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool SaferIdentifyLevel(
             uint dwNumProperties,
-            [InAttribute()]
+            [In]
             ref SAFER_CODE_PROPERTIES pCodeProperties,
             out IntPtr pLevelHandle,
-            [InAttribute()]
-            [MarshalAsAttribute(UnmanagedType.LPWStr)]
+            [In]
+            [MarshalAs(UnmanagedType.LPWStr)]
             string bucket);
 
         /// Return Type: BOOL->int
@@ -1103,12 +1103,12 @@ namespace System.Management.Automation.Security
         ///OutAccessToken: PHANDLE->HANDLE*
         ///dwFlags: DWORD->unsigned int
         ///lpReserved: LPVOID->void*
-        [DllImportAttribute("advapi32.dll", EntryPoint = "SaferComputeTokenFromLevel", SetLastError = true)]
-        [return: MarshalAsAttribute(UnmanagedType.Bool)]
+        [DllImport("advapi32.dll", EntryPoint = "SaferComputeTokenFromLevel", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool SaferComputeTokenFromLevel(
-            [InAttribute()]
+            [In]
             IntPtr LevelHandle,
-            [InAttribute()]
+            [In]
             System.IntPtr InAccessToken,
             ref System.IntPtr OutAccessToken,
             uint dwFlags,
@@ -1116,18 +1116,18 @@ namespace System.Management.Automation.Security
 
         /// Return Type: BOOL->int
         ///hLevelHandle: SAFER_LEVEL_HANDLE->SAFER_LEVEL_HANDLE__*
-        [DllImportAttribute("advapi32.dll", EntryPoint = "SaferCloseLevel")]
-        [return: MarshalAsAttribute(UnmanagedType.Bool)]
-        internal static extern bool SaferCloseLevel([InAttribute()] IntPtr hLevelHandle);
+        [DllImport("advapi32.dll", EntryPoint = "SaferCloseLevel")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        internal static extern bool SaferCloseLevel([In] IntPtr hLevelHandle);
 
         /// Return Type: BOOL->int
         ///hObject: HANDLE->void*
-        [DllImportAttribute(PinvokeDllNames.CloseHandleDllName, EntryPoint = "CloseHandle")]
-        [return: MarshalAsAttribute(UnmanagedType.Bool)]
-        internal static extern bool CloseHandle([InAttribute()] System.IntPtr hObject);
+        [DllImport(PinvokeDllNames.CloseHandleDllName, EntryPoint = "CloseHandle")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        internal static extern bool CloseHandle([In] System.IntPtr hObject);
     }
 
-    [StructLayoutAttribute(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential)]
     internal struct SAFER_CODE_PROPERTIES
     {
         /// DWORD->unsigned int
@@ -1137,7 +1137,7 @@ namespace System.Management.Automation.Security
         public uint dwCheckFlags;
 
         /// LPCWSTR->WCHAR*
-        [MarshalAsAttribute(UnmanagedType.LPWStr)]
+        [MarshalAs(UnmanagedType.LPWStr)]
         public string ImagePath;
 
         /// HANDLE->void*
@@ -1147,7 +1147,7 @@ namespace System.Management.Automation.Security
         public uint UrlZoneId;
 
         /// BYTE[SAFER_MAX_HASH_SIZE]
-        [MarshalAsAttribute(
+        [MarshalAs(
             UnmanagedType.ByValArray,
             SizeConst = NativeConstants.SAFER_MAX_HASH_SIZE,
             ArraySubType = UnmanagedType.I1)]
@@ -1172,30 +1172,30 @@ namespace System.Management.Automation.Security
         public uint dwWVTUIChoice;
     }
 
-    [StructLayoutAttribute(LayoutKind.Explicit)]
+    [StructLayout(LayoutKind.Explicit)]
     internal struct LARGE_INTEGER
     {
         /// Anonymous_9320654f_2227_43bf_a385_74cc8c562686
-        [FieldOffsetAttribute(0)]
+        [FieldOffset(0)]
         public Anonymous_9320654f_2227_43bf_a385_74cc8c562686 Struct1;
 
         /// Anonymous_947eb392_1446_4e25_bbd4_10e98165f3a9
-        [FieldOffsetAttribute(0)]
+        [FieldOffset(0)]
         public Anonymous_947eb392_1446_4e25_bbd4_10e98165f3a9 u;
 
         /// LONGLONG->__int64
-        [FieldOffsetAttribute(0)]
+        [FieldOffset(0)]
         public long QuadPart;
     }
 
-    [StructLayoutAttribute(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential)]
     internal struct HWND__
     {
         /// int
         public int unused;
     }
 
-    [StructLayoutAttribute(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential)]
     internal struct Anonymous_9320654f_2227_43bf_a385_74cc8c562686
     {
         /// DWORD->unsigned int
@@ -1205,7 +1205,7 @@ namespace System.Management.Automation.Security
         public int HighPart;
     }
 
-    [StructLayoutAttribute(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential)]
     internal struct Anonymous_947eb392_1446_4e25_bbd4_10e98165f3a9
     {
         /// DWORD->unsigned int
@@ -1287,28 +1287,28 @@ namespace System.Management.Automation.Security
             UNPROTECTED_SACL_SECURITY_INFORMATION = 0x10000000
         }
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        [StructLayout(LayoutKind.Sequential)]
         internal struct LUID
         {
             internal uint LowPart;
             internal uint HighPart;
         }
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        [StructLayout(LayoutKind.Sequential)]
         internal struct LUID_AND_ATTRIBUTES
         {
             internal LUID Luid;
             internal uint Attributes;
         }
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        [StructLayout(LayoutKind.Sequential)]
         internal struct TOKEN_PRIVILEGE
         {
             internal uint PrivilegeCount;
             internal LUID_AND_ATTRIBUTES Privilege;
         }
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        [StructLayout(LayoutKind.Sequential)]
         internal struct ACL
         {
             internal byte AclRevision;
@@ -1318,7 +1318,7 @@ namespace System.Management.Automation.Security
             internal ushort Sbz2;
         }
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        [StructLayout(LayoutKind.Sequential)]
         internal struct ACE_HEADER
         {
             internal byte AceType;
@@ -1326,7 +1326,7 @@ namespace System.Management.Automation.Security
             internal ushort AceSize;
         }
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        [StructLayout(LayoutKind.Sequential)]
         internal struct SYSTEM_AUDIT_ACE
         {
             internal ACE_HEADER Header;
@@ -1334,7 +1334,7 @@ namespace System.Management.Automation.Security
             internal uint SidStart;
         }
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        [StructLayout(LayoutKind.Sequential)]
         internal struct LSA_UNICODE_STRING
         {
             internal ushort Length;
@@ -1342,7 +1342,7 @@ namespace System.Management.Automation.Security
             internal IntPtr Buffer;
         }
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        [StructLayout(LayoutKind.Sequential)]
         internal struct CENTRAL_ACCESS_POLICY
         {
             internal IntPtr CAPID;

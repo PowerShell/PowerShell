@@ -1633,7 +1633,7 @@ try
             try {
                 Invoke-Command $session { function attack(${foo="$(calc)"}){Write-Output "It is done."}}
                 $module = Import-PSSession -Session $session -CommandName attack -ErrorAction SilentlyContinue -ErrorVariable expectedError -AllowClobber
-                $expectedError | Should -Not -BeNullOrEmpty
+                $expectedError | Should -Not -Be $null
             } finally {
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
             }
@@ -1901,7 +1901,7 @@ try
                 Export-PSSession -Session $session -OutputModule $tempdir\Diag -CommandName New-Guid -AllowClobber > $null
 
                 # Only the snapin Microsoft.PowerShell.Core is loaded
-                $iss = [System.Management.Automation.Runspaces.InitialSessionState]::CreateDefault2()
+                $iss = [initialsessionstate]::CreateDefault2()
                 $ps = [PowerShell]::Create($iss)
                 $result = $ps.AddScript(" & $tempdir\TestBug450687.ps1").Invoke()
 

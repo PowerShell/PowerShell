@@ -1,0 +1,106 @@
+trigger: none
+
+parameters: # parameters are shown up in ADO UI in a build queue time
+  - name: 'debug'
+    displayName: 'Enable debug output'
+    type: boolean
+    default: false
+  - name: InternalSDKBlobURL
+    displayName: URL to the blob having internal .NET SDK
+    type: string
+    default: ' '
+  - name: ReleaseTagVar
+    displayName: Release Tag
+    type: string
+    default: 'fromBranch'
+  - name: SKIP_SIGNING
+    displayName: Skip Signing
+    type: string
+    default: 'NO'
+  - name: SkipPublish
+    displayName: Skip Publishing to Nuget
+    type: boolean
+    default: false
+  - name: SkipPSInfraInstallers
+    displayName: Skip Copying Archives and Installers to PSInfrastructure Public Location
+    type: boolean
+    default: false
+  - name: skipMSIXPublish
+    displayName: Skip MSIX Publish
+    type: boolean
+    default: false
+
+name: release-$(BUILD.SOURCEBRANCHNAME)-nonofficial-$(Build.BuildId)
+
+variables:
+  - template: ./pipelines/templates/variables/PowerShell-Release-Variables.yml@self
+    parameters:
+      debug: ${{ parameters.debug }}
+      ReleaseTagVar: ${{ parameters.ReleaseTagVar }}
+
+resources:
+  repositories:
+    - repository: onebranchTemplates
+      type: git
+      name: OneBranch.Pipelines/GovernedTemplates
+      ref: refs/heads/main
+    - repository: PSInternalTools
+      type: git
+      name: PowerShellCore/Internal-PowerShellTeam-Tools
+      ref: refs/heads/master
+
+  pipelines:
+    - pipeline: CoOrdinatedBuildPipeline
+      source: 'PowerShell-Coordinated_Packages-NonOfficial'
+
+    # NOTE: The alias name "PSPackagesOfficial" is intentionally reused here even
+    # for the NonOfficial pipeline source. Downstream shared templates (for example,
+    # release-validate-sdk.yml and release-upload-buildinfo.yml) reference artifacts
+    # using `download: PSPackagesOfficial`, so changing this alias would break them.
+    - pipeline: PSPackagesOfficial
+      source: 'PowerShell-Packages-NonOfficial'
+      trigger:
+        branches:
+          include:
+            - master
+            - releases/*
+
+extends:
+  template: v2/OneBranch.NonOfficial.CrossPlat.yml@onebranchTemplates
+  parameters:
+    release:
+      category: NonAzure
+    featureFlags:
+      WindowsHostVersion:
+        Version: 2022
+        Network: KS3
+      incrementalSDLBinaryAnalysis: true
+    cloudvault:
+      enabled: false
+    globalSdl:
+      disableLegacyManifest: true
+      # disabled Armory as we dont have any ARM templates to scan. It fails on some sample ARM templates.
+      armory:
+        enabled: false
+      tsa:
+        enabled: true
+      credscan:
+        enabled: true
+        scanFolder:  $(Build.SourcesDirectory)
+        suppressionsFile: $(Build.SourcesDirectory)\.config\suppress.json
+      binskim:
+        break: false # always break the build on binskim issues in addition to TSA upload
+        exactToolVersion: 4.4.2
+      policheck:
+        break: true # always break the build on policheck issues. You can disable it by setting to 'false'
+      # suppression:
+      #   suppressionFile: $(Build.SourcesDirectory)\.gdn\global.gdnsuppress
+      tsaOptionsFile: .config\tsaoptions.json
+
+    stages:
+    - template: ./pipelines/templates/stages/PowerShell-Release-Stages.yml@self
+      parameters:
+        releaseEnvironment: Test
+        SkipPublish: ${{ parameters.SkipPublish }}
+        SkipPSInfraInstallers: ${{ parameters.SkipPSInfraInstallers }}
+        skipMSIXPublish: ${{ parameters.skipMSIXPublish }}

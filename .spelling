@@ -622,6 +622,7 @@ NativeCommandProcessor.cs
 NativeCultureResolver
 nativeexecution
 net5.0
+net10.0
 netcoreapp5.0
 netip.ps1.
 netstandard.dll

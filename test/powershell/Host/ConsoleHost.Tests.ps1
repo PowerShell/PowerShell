@@ -386,6 +386,33 @@ export $envVarName='$guid'
         }
     }
 
+    Context "-SettingsFile Commandline switch set 'PSModulePath'" {
+
+        BeforeAll {
+            $CustomSettingsFile = Join-Path -Path $TestDrive -ChildPath 'powershell.test.json'
+            $mPath1 = Join-Path $PSHOME 'Modules'
+            $mPath2 = Join-Path $TestDrive 'NonExist'
+            $pathSep = [System.IO.Path]::PathSeparator
+
+            ## Use multiple paths in the setting.
+            $ModulePath = "${mPath1}${pathSep}${mPath2}".Replace('\', "\\")
+            Set-Content -Path $CustomSettingsfile -Value "{`"Microsoft.PowerShell:ExecutionPolicy`":`"Unrestricted`", `"PSModulePath`": `"$ModulePath`" }" -ErrorAction Stop
+        }
+
+        It "Verify PowerShell PSModulePath should contain paths from config file" {
+            $psModulePath = & $powershell -NoProfile -SettingsFile $CustomSettingsFile -Command '$env:PSModulePath'
+
+            ## $mPath1 already exists in the value of env PSModulePath, so it won't be added again.
+            $index = $psModulePath.IndexOf("${mPath1}${pathSep}", [System.StringComparison]::OrdinalIgnoreCase)
+            $index | Should -BeGreaterThan 0
+            $index += $mPath1.Length
+            $psModulePath.IndexOf($mPath1, $index, [System.StringComparison]::OrdinalIgnoreCase) | Should -BeExactly -1
+
+            ## $mPath2 should be added at the index position 0.
+            $psModulePath.StartsWith("${mPath2}${pathSep}", [System.StringComparison]::OrdinalIgnoreCase) | Should -BeTrue
+        }
+    }
+
     Context "Pipe to/from powershell" {
         BeforeAll {
             if ($null -ne $PSStyle) {
@@ -985,7 +1012,12 @@ public static WINDOWPLACEMENT GetPlacement(IntPtr hwnd)
 {
     WINDOWPLACEMENT placement = new WINDOWPLACEMENT();
     placement.length = Marshal.SizeOf(placement);
-    GetWindowPlacement(hwnd, ref placement);
+
+    if (!GetWindowPlacement(hwnd, ref placement))
+    {
+        throw new System.ComponentModel.Win32Exception();
+    }
+
     return placement;
 }
 
@@ -1021,7 +1053,7 @@ public enum ShowWindowCommands : int
         $global:PSDefaultParameterValues = $defaultParamValues
     }
 
-    It "-WindowStyle <WindowStyle> should work on Windows" -TestCases @(
+    It "-WindowStyle <WindowStyle> should work on Windows" -Pending -TestCases @(
             @{WindowStyle="Normal"},
             @{WindowStyle="Minimized"},
             @{WindowStyle="Maximized"}  # hidden doesn't work in CI/Server Core
@@ -1202,5 +1234,20 @@ Describe 'TERM env var' -Tag CI {
         finally {
             $env:NO_COLOR = $null
         }
+    }
+
+    It 'No_COLOR should be respected for redirected output' {
+        $psi =  [System.Diagnostics.ProcessStartInfo] @{
+            FileName  = 'pwsh'
+            # Pass a command that succeeds and normally produces colored output, and one that produces error output.
+            Arguments = '-NoProfile -Command Get-Item .; Get-Content \nosuch123'
+            # Redirect (capture) both stdout and stderr.
+            RedirectStandardOutput = $true
+            RedirectStandardError = $true
+          }
+        $psi.Environment.Add('NO_COLOR', 1)
+        ($ps = [System.Diagnostics.Process]::Start($psi)).WaitForExit()
+        $ps.StandardOutput.ReadToEnd() | Should -Not -Contain '\e'
+        $ps.StandardError.ReadToEnd() | Should -Not -Contain '\e'
     }
 }

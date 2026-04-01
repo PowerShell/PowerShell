@@ -340,7 +340,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Tracer for Server Remote session.
         /// </summary>
-        [TraceSourceAttribute("ServerRemoteSession", "ServerRemoteSession")]
+        [TraceSource("ServerRemoteSession", "ServerRemoteSession")]
         private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("ServerRemoteSession", "ServerRemoteSession");
         #endregion tracer
 
@@ -2836,7 +2836,7 @@ namespace System.Management.Automation.Remoting
 
                     for (int i = 0; i < hashArray.Length; i++)
                     {
-                        if (!(objArray[i] is Hashtable hash))
+                        if (objArray[i] is not Hashtable hash)
                         {
                             return null;
                         }

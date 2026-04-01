@@ -951,7 +951,7 @@ namespace System.Management.Automation
 
             if (result != null)
             {
-                var formatString = result switch 
+                var formatString = result switch
                 {
                     FilterInfo => "Filter found: {0}",
                     ConfigurationInfo => "Configuration found: {0}",
@@ -1448,7 +1448,7 @@ namespace System.Management.Automation
                 // If the command contains any invalid path characters, we can't
                 // do the path lookup
 
-                if (possiblePath.IndexOfAny(Path.GetInvalidPathChars()) != -1)
+                if (PathUtils.ContainsInvalidPathChars(possiblePath))
                 {
                     result = CanDoPathLookupResult.IllegalCharacters;
                     break;

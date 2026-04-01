@@ -74,8 +74,8 @@ namespace Microsoft.PowerShell.Commands
         /// Encoding optional flag.
         /// </summary>
         [Parameter(Position = 1)]
-        [ArgumentToEncodingTransformationAttribute]
-        [ArgumentEncodingCompletionsAttribute]
+        [ArgumentToEncodingTransformation]
+        [ArgumentEncodingCompletions]
         [ValidateNotNullOrEmpty]
         public Encoding Encoding
         {
@@ -136,7 +136,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Optional, number of columns to use when writing to device.
         /// </summary>
-        [ValidateRangeAttribute(2, int.MaxValue)]
+        [ValidateRange(2, int.MaxValue)]
         [Parameter]
         public int Width
         {

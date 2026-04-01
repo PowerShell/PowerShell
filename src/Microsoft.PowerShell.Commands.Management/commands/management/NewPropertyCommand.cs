@@ -1,7 +1,11 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Management.Automation;
+using System.Management.Automation.Language;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -63,6 +67,9 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         [Alias("Type")]
+#if !UNIX
+        [ArgumentCompleter(typeof(PropertyTypeArgumentCompleter))]
+#endif
         public string PropertyType { get; set; }
 
         /// <summary>
@@ -175,4 +182,114 @@ namespace Microsoft.PowerShell.Commands
         #endregion Command code
 
     }
+
+#if !UNIX
+    /// <summary>
+    /// Provides argument completion for PropertyType parameter.
+    /// </summary>
+    public class PropertyTypeArgumentCompleter : IArgumentCompleter
+    {
+        private static readonly CompletionHelpers.CompletionDisplayInfoMapper RegistryPropertyTypeDisplayInfoMapper = registryPropertyType => registryPropertyType switch
+        {
+            "String" => (
+                ToolTip: TabCompletionStrings.RegistryStringToolTip,
+                ListItemText: "String"),
+            "ExpandString" => (
+                ToolTip: TabCompletionStrings.RegistryExpandStringToolTip,
+                ListItemText: "ExpandString"),
+            "Binary" => (
+                ToolTip: TabCompletionStrings.RegistryBinaryToolTip,
+                ListItemText: "Binary"),
+            "DWord" => (
+                ToolTip: TabCompletionStrings.RegistryDWordToolTip,
+                ListItemText: "DWord"),
+            "MultiString" => (
+                ToolTip: TabCompletionStrings.RegistryMultiStringToolTip,
+                ListItemText: "MultiString"),
+            "QWord" => (
+                ToolTip: TabCompletionStrings.RegistryQWordToolTip,
+                ListItemText: "QWord"),
+            _ => (
+                ToolTip: TabCompletionStrings.RegistryUnknownToolTip,
+                ListItemText: "Unknown"),
+        };
+
+        private static readonly IReadOnlyList<string> s_RegistryPropertyTypes = new List<string>(capacity: 7)
+        {
+            "String",
+            "ExpandString",
+            "Binary",
+            "DWord",
+            "MultiString",
+            "QWord",
+            "Unknown"
+        };
+
+        /// <summary>
+        /// Returns completion results for PropertyType parameter.
+        /// </summary>
+        /// <param name="commandName">The command name.</param>
+        /// <param name="parameterName">The parameter name.</param>
+        /// <param name="wordToComplete">The word to complete.</param>
+        /// <param name="commandAst">The command AST.</param>
+        /// <param name="fakeBoundParameters">The fake bound parameters.</param>
+        /// <returns>List of Completion Results.</returns>
+        public IEnumerable<CompletionResult> CompleteArgument(
+            string commandName,
+            string parameterName,
+            string wordToComplete,
+            CommandAst commandAst,
+            IDictionary fakeBoundParameters)
+                => IsRegistryProvider(fakeBoundParameters)
+                    ? CompletionHelpers.GetMatchingResults(
+                        wordToComplete,
+                        possibleCompletionValues: s_RegistryPropertyTypes,
+                        displayInfoMapper: RegistryPropertyTypeDisplayInfoMapper,
+                        resultType: CompletionResultType.ParameterValue)
+                    : [];
+
+        /// <summary>
+        /// Checks if parameter paths are from Registry provider.
+        /// </summary>
+        /// <param name="fakeBoundParameters">The fake bound parameters.</param>
+        /// <returns>Boolean indicating if paths are from Registry Provider.</returns>
+        private static bool IsRegistryProvider(IDictionary fakeBoundParameters)
+        {
+            Collection<PathInfo> paths;
+
+            if (fakeBoundParameters.Contains("Path"))
+            {
+                paths = ResolvePath(fakeBoundParameters["Path"], isLiteralPath: false);
+            }
+            else if (fakeBoundParameters.Contains("LiteralPath"))
+            {
+                paths = ResolvePath(fakeBoundParameters["LiteralPath"], isLiteralPath: true);
+            }
+            else
+            {
+                paths = ResolvePath(@".\", isLiteralPath: false);
+            }
+
+            return paths.Count > 0 && paths[0].Provider.NameEquals("Registry");
+        }
+
+        /// <summary>
+        /// Resolve path or literal path using Resolve-Path.
+        /// </summary>
+        /// <param name="path">The path to resolve.</param>
+        /// <param name="isLiteralPath">Specifies if path is literal path.</param>
+        /// <returns>Collection of Pathinfo objects.</returns>
+        private static Collection<PathInfo> ResolvePath(object path, bool isLiteralPath)
+        {
+            using var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
+
+            ps.AddCommand("Microsoft.PowerShell.Management\\Resolve-Path");
+            ps.AddParameter(isLiteralPath ? "LiteralPath" : "Path", path);
+
+            Collection<PathInfo> output = ps.Invoke<PathInfo>();
+
+            return output;
+        }
+    }
+#endif
 }

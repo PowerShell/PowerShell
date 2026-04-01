@@ -111,7 +111,7 @@ Describe "Get-Item" -Tags "CI" {
             {
                 return
             }
-            $altStreamPath = "$TESTDRIVE/altStream.txt"
+            $altStreamPath = "$TESTDRIVE\altStream.txt"
             $altStreamDirectory = "$TESTDRIVE/altstreamdir"
             $noAltStreamDirectory = "$TESTDRIVE/noaltstreamdir"
             $stringData = "test data"
@@ -143,6 +143,10 @@ Describe "Get-Item" -Tags "CI" {
         It "Should find zero alt streams and not fail on a directory with a wildcard stream name if no alt streams are present" -Skip:$skipNotWindows {
             $result = Get-Item $noAltStreamDirectory -Stream * -ErrorAction Stop
             $result | Should -BeExactly $null
+        }
+        It "Should return filename property correctly" -Skip:$skipNotWindows {
+            $result = (Get-Item -Path $altStreamPath -Stream $streamName).FileName
+            $result | Should -BeExactly $altStreamPath
         }
     }
 

@@ -13,6 +13,12 @@ jobs:
   displayName: ${{ parameters.name }} packaging
 
   steps:
+  - task: UseDotNet@2
+    displayName: 'Use .NET Core sdk'
+    inputs:
+      useGlobalJson: true
+      packageType: 'sdk'
+
   - pwsh: |
       Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
     displayName: Capture Environment
@@ -33,7 +39,7 @@ jobs:
 
   - pwsh: |
       Import-Module .\build.psm1
-      Start-PSBootstrap -Package
+      Start-PSBootstrap -Scenario Package
     displayName: Bootstrap
 
   - pwsh: |

@@ -177,7 +177,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    _outFilename = (string)value;
+                    _outFilename = (string)PSObject.Base(value);
                 }
             }
 

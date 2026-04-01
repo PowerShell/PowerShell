@@ -71,7 +71,6 @@ namespace System.Management.Automation
     /// <summary>
     /// Defines the exception thrown for all Validate attributes.
     /// </summary>
-    [SuppressMessage("Microsoft.Usage", "CA2240:ImplementISerializableCorrectly")]
     public class ValidationMetadataException : MetadataException
     {
         internal const string ValidateRangeElementType = "ValidateRangeElementType";

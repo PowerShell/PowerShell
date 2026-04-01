@@ -34,7 +34,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Optional, number of columns to use when writing to device.
         /// </summary>
-        [ValidateRangeAttribute(2, int.MaxValue)]
+        [ValidateRange(2, int.MaxValue)]
         [Parameter]
         public int Width
         {

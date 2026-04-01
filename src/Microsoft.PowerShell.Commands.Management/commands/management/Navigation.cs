@@ -25,7 +25,7 @@ namespace Microsoft.PowerShell.Commands
         /// An instance of the PSTraceSource class used for trace output
         /// using "NavigationCommands" as the category.
         /// </summary>
-        [Dbg.TraceSourceAttribute("NavigationCommands", "The namespace navigation tracer")]
+        [Dbg.TraceSource("NavigationCommands", "The namespace navigation tracer")]
         internal static readonly Dbg.PSTraceSource tracer = Dbg.PSTraceSource.GetTracer("NavigationCommands", "The namespace navigation tracer");
 
         #endregion Tracer
@@ -2718,7 +2718,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         // Get the localized prompt string
 
-                        string prompt = StringUtil.Format(NavigationResources.RemoveItemWithChildren, resolvedPath.Path);
+                        string prompt = StringUtil.Format(NavigationResources.RemoveItemWithChildren, providerPath);
 
                         // Confirm the user wants to remove all children and the item even if
                         // they did not specify -recurse

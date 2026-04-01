@@ -225,10 +225,6 @@ namespace Microsoft.PowerShell.Commands
                 ValueFromPipelineByPropertyName = false,
                 ParameterSetName = "XmlQuerySet",
                 HelpMessageBaseName = "GetEventResources")]
-        [SuppressMessage("Microsoft.Design", "CA1059:MembersShouldNotExposeCertainConcreteTypes",
-                            Scope = "member",
-                            Target = "Microsoft.PowerShell.Commands.GetEvent.FilterXml",
-                            Justification = "An XmlDocument is required here because that is the type Powershell supports")]
         public XmlDocument FilterXml { get; set; }
 
         /// <summary>

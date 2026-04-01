@@ -87,7 +87,7 @@ namespace System.Management.Automation
     /// <see cref="ValidateArgumentsAttribute"/> validates the argument as a whole. If the argument value may
     /// be an enumerable, you can derive from <see cref="ValidateEnumeratedArgumentsAttribute"/>
     /// which will take care of unrolling the enumerable and validate each element individually.
-    /// It is also recommended to override <see cref="System.Object.ToString"/> to return a readable string
+    /// It is also recommended to override <see cref="object.ToString"/> to return a readable string
     /// similar to the attribute declaration, for example "[ValidateRangeAttribute(5,10)]".
     /// If this attribute is applied to a string parameter, the string command argument will be validated.
     /// If this attribute is applied to a string[] parameter, the string[] command argument will be validated.
@@ -154,7 +154,7 @@ namespace System.Management.Automation
     /// <seealso cref="ValidateEnumeratedArgumentsAttribute"/> and override the
     /// <seealso cref="ValidateEnumeratedArgumentsAttribute.ValidateElement"/>
     /// abstract method, after which they can apply the attribute to their parameters.
-    /// It is also recommended to override <see cref="System.Object.ToString"/> to return a readable string
+    /// It is also recommended to override <see cref="object.ToString"/> to return a readable string
     /// similar to the attribute declaration, for example "[ValidateRangeAttribute(5,10)]".
     /// If this attribute is applied to a string parameter, the string command argument will be validated.
     /// If this attribute is applied to a string[] parameter, each string command argument will be validated.
@@ -844,7 +844,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">For invalid arguments.</exception>
         protected override void ValidateElement(object element)
         {
-            if (!(element is string objectString))
+            if (element is not string objectString)
             {
                 throw new ValidationMetadataException(
                     "ValidateLengthNotString",
@@ -1877,7 +1877,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Allows a NULL as the argument to a mandatory parameter.
     /// </summary>
-    [AttributeUsageAttribute(AttributeTargets.Field | AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public sealed class AllowNullAttribute : CmdletMetadataAttribute
     {
         /// <summary>
@@ -1889,7 +1889,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Allows an empty string as the argument to a mandatory string parameter.
     /// </summary>
-    [AttributeUsageAttribute(AttributeTargets.Field | AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public sealed class AllowEmptyStringAttribute : CmdletMetadataAttribute
     {
         /// <summary>
@@ -1901,7 +1901,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Allows an empty collection as the argument to a mandatory collection parameter.
     /// </summary>
-    [AttributeUsageAttribute(AttributeTargets.Field | AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public sealed class AllowEmptyCollectionAttribute : CmdletMetadataAttribute
     {
         /// <summary>
@@ -1956,7 +1956,7 @@ namespace System.Management.Automation
                     Metadata.ValidateNotNullFailure);
             }
 
-            if (!(arguments is string path))
+            if (arguments is not string path)
             {
                 throw new ValidationMetadataException(
                     "PathArgumentIsNotValid",
@@ -2292,7 +2292,7 @@ namespace System.Management.Automation
     /// <see cref="ArgumentTransformationAttribute"/> and override the
     /// <see cref="ArgumentTransformationAttribute.Transform"/> abstract method, after which they
     /// can apply the attribute to their parameters.
-    /// It is also recommended to override <see cref="System.Object.ToString"/> to return a readable
+    /// It is also recommended to override <see cref="object.ToString"/> to return a readable
     /// string similar to the attribute declaration, for example "[ValidateRangeAttribute(5,10)]".
     /// If multiple transformations are defined on a parameter, they will be invoked in series,
     /// each getting the output of the previous transformation.

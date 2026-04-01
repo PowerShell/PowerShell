@@ -31,7 +31,7 @@ namespace System.Management.Automation.Remoting
     /// </summary>
     internal class ClientRemoteSessionDSHandlerStateMachine
     {
-        [TraceSourceAttribute("CRSessionFSM", "CRSessionFSM")]
+        [TraceSource("CRSessionFSM", "CRSessionFSM")]
         private static readonly PSTraceSource s_trace = PSTraceSource.GetTracer("CRSessionFSM", "CRSessionFSM");
 
         /// <summary>

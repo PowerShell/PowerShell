@@ -386,3 +386,13 @@ Describe "New-Item -Force allows to create an item even if the directories in th
         $FullyQualifiedFile | Should -Exist
     }
 }
+
+Describe "New-Item -Force should throw an error for invalid characters in directory path" -Tags "CI" {
+    BeforeAll {
+        $invalidPath = Join-Path -Path $TestDrive -ChildPath 'Invalid?'
+    }
+
+    It "Should throw an error when -Force is used with an invalid directory path" -Skip:(!$IsWindows) {
+        { New-Item -Path $invalidPath -ItemType Directory -Force -ErrorAction Stop } | Should -Throw -ErrorId 'CreateDirectoryIOError,Microsoft.PowerShell.Commands.NewItemCommand'
+    }
+}

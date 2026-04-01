@@ -1026,7 +1026,7 @@ namespace Microsoft.PowerShell.Commands
                                 {
                                     // In order to support foreach remoting properly ( icm | % { icm } ), the server must
                                     // be using protocol version 2.2. Otherwise, we skip this and assume the old behavior.
-                                    if (version >= RemotingConstants.ProtocolVersionWin8RTM)
+                                    if (version >= RemotingConstants.ProtocolVersion_2_2)
                                     {
                                         // Suppress collection behavior
                                         _needToCollect = false;
@@ -1050,7 +1050,7 @@ namespace Microsoft.PowerShell.Commands
                 // create collection of input writers here
                 foreach (IThrottleOperation operation in Operations)
                 {
-                    if (!(operation is ExecutionCmdletHelperRunspace ecHelper))
+                    if (operation is not ExecutionCmdletHelperRunspace ecHelper)
                     {
                         // either all the operations will be of type ExecutionCmdletHelperRunspace
                         // or not...there is no mix.

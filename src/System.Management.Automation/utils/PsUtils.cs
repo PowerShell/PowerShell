@@ -74,12 +74,12 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Return true/false to indicate whether the processor architecture is ARM.
+        /// Return true/false to indicate whether the process architecture is ARM.
         /// </summary>
         /// <returns></returns>
-        internal static bool IsRunningOnProcessorArchitectureARM()
+        internal static bool IsRunningOnProcessArchitectureARM()
         {
-            Architecture arch = RuntimeInformation.OSArchitecture;
+            Architecture arch = RuntimeInformation.ProcessArchitecture;
             return arch == Architecture.Arm || arch == Architecture.Arm64;
         }
 
@@ -308,7 +308,7 @@ namespace System.Management.Automation
                          ex.Message);
             }
 
-            if (!(evaluationResult is Hashtable retResult))
+            if (evaluationResult is not Hashtable retResult)
             {
                 throw PSTraceSource.NewInvalidOperationException(
                          ParserStrings.InvalidPowerShellDataFile,
@@ -340,7 +340,7 @@ namespace System.Management.Automation
 
         internal static Hashtable GetModuleManifestProperties(string psDataFilePath, string[] keys)
         {
-            string dataFileContents = ScriptAnalysis.ReadScript(psDataFilePath);
+            string dataFileContents = File.ReadAllText(psDataFilePath, Encoding.Default);
             ParseError[] parseErrors;
             var ast = (new Parser()).Parse(psDataFilePath, dataFileContents, null, out parseErrors, ParseMode.ModuleAnalysis);
             if (parseErrors.Length > 0)
@@ -453,14 +453,14 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException(MinishellParameterBinderController.ArgsParameter);
             }
 
-            if (!(dso is PSObject mo))
+            if (dso is not PSObject mo)
             {
                 // This helper function should move the host. Provide appropriate error message.
                 // Format of args parameter is not correct.
                 throw PSTraceSource.NewArgumentException(MinishellParameterBinderController.ArgsParameter);
             }
 
-            if (!(mo.BaseObject is ArrayList argsList))
+            if (mo.BaseObject is not ArrayList argsList)
             {
                 // This helper function should move the host. Provide appropriate error message.
                 // Format of args parameter is not correct.

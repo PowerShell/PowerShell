@@ -195,7 +195,7 @@ namespace System.Management.Automation.Remoting
     {
         #region tracer
 
-        [TraceSourceAttribute("Transport", "Traces BaseWSManTransportManager")]
+        [TraceSource("Transport", "Traces BaseWSManTransportManager")]
         private static readonly PSTraceSource s_baseTracer = PSTraceSource.GetTracer("Transport", "Traces BaseWSManTransportManager");
 
         #endregion
@@ -472,7 +472,7 @@ namespace System.Management.Automation.Remoting.Client
     public abstract class BaseClientTransportManager : BaseTransportManager, IDisposable
     {
         #region Tracer
-        [TraceSourceAttribute("ClientTransport", "Traces ClientTransportManager")]
+        [TraceSource("ClientTransport", "Traces ClientTransportManager")]
         internal static PSTraceSource tracer = PSTraceSource.GetTracer("ClientTransport", "Traces ClientTransportManager");
         #endregion
 

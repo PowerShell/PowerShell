@@ -126,10 +126,4 @@ If you trust this command, run the following command instead:</value>
   <data name="Suggestion_CommandNotFound" xml:space="preserve">
     <value>The most similar commands are:</value>
   </data>
-  <data name="RuleMustBeScriptBlock" xml:space="preserve">
-    <value>Rule must be a ScriptBlock for dynamic match types.</value>
-  </data>
-  <data name="InvalidMatchType" xml:space="preserve">
-    <value>MatchType must be 'Command', 'Error', or 'Dynamic'.</value>
-  </data>
 </root>

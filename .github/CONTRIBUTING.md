@@ -1,47 +1,24 @@
 # Contributing to PowerShell
 
-We welcome and appreciate contributions from the community.
-There are many ways to become involved with PowerShell:
-including filing issues,
-joining in design conversations,
-writing and improving documentation,
-and contributing to the code.
+We welcome and appreciate contributions from the community!
+
+There are many ways to become involved with PowerShell including:
+
+- [Contributing to Documentation](#contributing-to-documentation)
+- [Contributing to Issues](#contributing-to-issues)
+- [Contributing to Code](#contributing-to-code)
+
 Please read the rest of this document to ensure a smooth contribution process.
-
-## Intro to Git and GitHub
-
-* Make sure you have a [GitHub account](https://github.com/signup/free).
-* Learning Git:
-  * GitHub Help: [Good Resources for Learning Git and GitHub][good-git-resources]
-  * [Git Basics](../docs/git/basics.md): install and getting started
-* [GitHub Flow Guide](https://guides.github.com/introduction/flow/):
-  step-by-step instructions of GitHub Flow
-
-## Quick Start Checklist
-
-* Review the [Contributor License Agreement][CLA] requirement.
-* Get familiar with the [PowerShell repository](../docs/git).
-
-## Contributing to Issues
-
-* Review [Issue Management][issue-management].
-* Check if the issue you are going to file already exists in our [GitHub issues][open-issue].
-* If you can't find your issue already,
-  [open a new issue](https://github.com/PowerShell/PowerShell/issues/new/choose),
-  making sure to follow the directions as best you can.
-* If the issue is marked as [`Up-for-Grabs`][up-for-grabs],
-  the PowerShell Maintainers are looking for help with the issue.
-* Issues marked as [`First-Time-Issue`][first-time-issue],
-  are identified as being easy and a great way to learn about this project and making
-  contributions.
 
 ## Contributing to Documentation
 
-### Contributing to documentation related to PowerShell
+Contributing to the docs is an excellent way to get started with the process of making open source contributions with minimal technical skill required.
 
-Please see the [Contributor Guide in `MicrosoftDocs/PowerShell-Docs`](https://github.com/MicrosoftDocs/PowerShell-Docs/blob/staging/CONTRIBUTING.md).
+Please see the [Contributor Guide in `MicrosoftDocs/PowerShell-Docs`](https://aka.ms/PSDocsContributor).
 
-#### Quick steps if you're changing an existing cmdlet
+Learn how to [Contribute to Docs like a Microsoft Insider](https://www.youtube.com/watch?v=ZQODV8krq1Q) (by @sdwheeler)
+
+### Updating Documentation for an existing cmdlet
 
 If you made a change to an existing cmdlet and would like to update the documentation using PlatyPS,
 here are the quick steps:
@@ -67,13 +44,13 @@ which will update the documentation for you.
 made.
 1. Link your Docs PR to your original change PR.
 
-### Contributing to documentation related to maintaining or contributing to the PowerShell project
+### Style notes for documentation related to maintaining or contributing to the PowerShell project
 
 * When writing Markdown documentation, use [semantic linefeeds][].
   In most cases, it means "one clause/idea per line".
 * Otherwise, these issues should be treated like any other issue in this repository.
 
-#### Spell checking documentation
+### Spell checking documentation
 
 Documentation is spellchecked. We use the
 [textlint](https://github.com/textlint/textlint/wiki/Collection-of-textlint-rule) command-line tool,
@@ -89,7 +66,7 @@ To run the spell checker, follow these steps:
 
 If you need to add a term or disable checking part of a file see the [configuration sections of the rule](https://github.com/sapegin/textlint-rule-terminology).
 
-#### Checking links in documentation
+### Checking links in documentation
 
 Documentation is link-checked. We make use of the
 `markdown-link-check` command-line tool,
@@ -102,22 +79,19 @@ To run the link-checker, follow these steps:
   `npm install -g markdown-link-check@3.8.5`
 * run `find . \*.md -exec markdown-link-check {} \;`
 
-## Contributing to Code
+## Contributing to Issues
 
-### Code Editor
-
-You should use the multi-platform [Visual Studio Code (VS Code)][use-vscode-editor].
-
-### Building and testing
-
-#### Building PowerShell
-
-Please see [Building PowerShell](../README.md#building-the-repository).
-
-#### Testing PowerShell
-
-Please see PowerShell [Testing Guidelines - Running Tests Outside of CI][running-tests-outside-of-ci] on how to test your build locally.
-
+1. Review [Issue Management][issue-management].
+1. Check if the issue you are going to file already exists in our [GitHub issues][open-issue].
+1. If you can't find your issue already,
+  [open a new issue](https://github.com/PowerShell/PowerShell/issues/new/choose),
+  making sure to follow the directions as best you can.
+1. If the issue is marked as [`Up-for-Grabs`][up-for-grabs],
+  the PowerShell Maintainers are looking for help with the issue.
+1. Issues marked as [`First-Time-Issue`][first-time-issue],
+  are identified as being easy and a great way to learn about this project and making
+  contributions.
+  
 ### Finding or creating an issue
 
 1. Follow the instructions in [Contributing to Issues][contribute-issues] to find or open an issue.
@@ -136,6 +110,59 @@ Additional references:
 * GitHub's guide on [forking](https://guides.github.com/activities/forking/)
 * GitHub's guide on [Contributing to Open Source](https://guides.github.com/activities/contributing-to-open-source/#pull-request)
 * GitHub's guide on [Understanding the GitHub Flow](https://guides.github.com/introduction/flow/)
+
+## Contributing to Code
+
+### Quick Start Checklist
+
+* Review the [Contributor License Agreement][CLA] requirement.
+* Get familiar with the [PowerShell Repository Git Concepts](../docs/git/README.md).
+* Start a [GitHub Codespace](#Dev Container) and start exploring the repository.
+* Consider if what you want to do might be implementable as a [PowerShell Binary Module](https://learn.microsoft.com/powershell/scripting/developer/module/how-to-write-a-powershell-binary-module?view=powershell-7.5).
+  The PowerShell repository has a rigorous acceptance process due to its huge popularity and emphasis on stability and long term support, and with a binary module you can contribute to the community much more quickly.
+* Pick an existing issue to work on! For instance, clarifying a confusing or unclear error message is a great starting point.
+
+### Intro to Git and GitHub
+
+1. Sign up for a [GitHub account](https://github.com/signup/free).
+1. Learning Git and GitHub:
+    - [Git Basics](../docs/git/basics.md): install and getting started
+    - [Good Resources for Learning Git and GitHub][good-git-resources]
+1. The PowerShell repository uses GitHub Flow as the primary branching strategy. [Learn about GitHub Flow](https://guides.github.com/introduction/flow/)
+
+### Code Editing
+
+PowerShell is primarily written in [C#](https://learn.microsoft.com/dotnet/csharp/tour-of-csharp/overview). While you can use any C# development environment you prefer, [Visual Studio Code][use-vscode-editor] is recommended.
+
+### Dev Container
+
+There is a PowerShell [Dev Container](https://code.visualstudio.com/docs/devcontainers/containers) which enables you get up and running quickly with a prepared Visual Studio Code environment with all the required prerequisites already installed.
+
+[GitHub Codespaces](https://github.com/features/codespaces) is the fastest way to get started.
+Codespaces allows you to start a Github-hosted devcontainer from anywhere and contribute from your browser or via Visual Studio Code remoting.
+All GitHub users get 15 hours per month of a 4-core codespace for free.
+
+To start a codespace for the PowerShell repository:
+
+1. Go to https://github.com/PowerShell/PowerShell
+1. Click the green button on the right and choose to create a codespace
+
+   ![alt text](Images/Codespaces.png)
+1. Alternatively, just hit the comma `,` key on your keyboard which should instantly start a codespace as well.
+
+Once the codespace starts, you can press `ctrl+shift+b` (`cmd+shift+b` on Mac) to run the default build task. If you would like to interactivey test your changes, you can press `F5` to start debugging, add breakpoints, etc.
+
+[Learn more about how to get started with C# in Visual Studio Code](https://code.visualstudio.com/docs/csharp/get-started)
+
+### Building and Testing
+
+#### Building PowerShell
+
+[Building PowerShell](../README.md#Building-Powershell) has instructions for various platforms.
+
+#### Testing PowerShell
+
+Please see PowerShell [Testing Guidelines - Running Tests Outside of CI][running-tests-outside-of-ci] on how to test your build locally.
 
 ### Lifecycle of a pull request
 
@@ -161,7 +188,7 @@ Additional references:
   In such case, it's better to split the PR to multiple smaller ones.
   For large features, try to approach it in an incremental way, so that each PR won't be too big.
 * If you're contributing in a way that changes the user or developer experience, you are expected to document those changes.
-  See [Contributing to documentation related to PowerShell](#contributing-to-documentation-related-to-powershell).
+  See [Contributing to documentation related to PowerShell](#contributing-to-documentation).
 * Add a meaningful title of the PR describing what change you want to check in.
   Don't simply put: "Fix issue #5".
   Also don't directly use the issue title as the PR title.
@@ -191,10 +218,10 @@ Additional references:
   As an example, this requirement includes any changes to cmdlets (including cmdlet parameters) and features which have associated about_* topics.
   While not required, we appreciate any contributors who add this label and create the issue themselves.
   Even better, all contributors are free to contribute the documentation themselves.
-  (See [Contributing to documentation related to PowerShell](#contributing-to-documentation-related-to-powershell) for more info.)
+  (See [Contributing to documentation related to PowerShell](#contributing-to-documentation) for more info.)
 * If your change adds a new source file, ensure the appropriate copyright and license headers is on top.
   It is standard practice to have both a copyright and license notice for each source file.
-  * For `.h`, `.cpp`, and `.cs` files use the copyright header with empty line after it:
+  * For `.cs` files use the copyright header with empty line after it:
 
     ```c#
         // Copyright (c) Microsoft Corporation.
@@ -266,7 +293,7 @@ Additional references:
 
 #### Pull Request - Roles and Responsibilities
 
-1. The PR *author* is responsible for moving the PR forward to get it Approved.
+1. The PR *author* is responsible for moving the PR forward to get it approved.
    This includes addressing feedback within a timely period and indicating feedback has been addressed by adding a comment and mentioning the specific *reviewers*.
    When updating your pull request, please **create new commits** and **don't rewrite the commits history**.
    This way it's very easy for the reviewers to see diff between iterations.
@@ -300,7 +327,7 @@ In these cases:
    Mention the original pull request ID in the description of the new issue and close the abandoned pull request.
    - If the changes in an abandoned pull request are no longer needed (e.g. due to refactoring of the codebase or a design change), *assignee* will simply close the pull request.
 
-## Making Breaking Changes
+### Making Breaking Changes
 
 When you make code changes,
 please pay attention to these that can affect the [Public Contract][breaking-changes-contract].
@@ -309,12 +336,12 @@ Before making changes to the code,
 first review the [breaking changes contract][breaking-changes-contract]
 and follow the guidelines to keep PowerShell backward compatible.
 
-## Making Design Changes
+### Making Design Changes
 
 To add new features such as cmdlets or making design changes,
 please follow the [PowerShell Request for Comments (RFC)][rfc-process] process.
 
-## Common Engineering Practices
+### Common Engineering Practices
 
 Other than the guidelines for [coding][coding-guidelines],
 the [RFC process][rfc-process] for design,
@@ -366,7 +393,7 @@ is also appropriate, as is using Markdown syntax.
   Before you invest a large amount of time,
   file an issue and start a discussion with the community.
 
-## Contributor License Agreement (CLA)
+### Contributor License Agreement (CLA)
 
 To speed up the acceptance of any contribution to any PowerShell repositories,
 you should sign the Microsoft [Contributor License Agreement (CLA)](https://cla.microsoft.com/) ahead of time.
@@ -404,7 +431,7 @@ Repeat offenses may result in a permanent ban from the PowerShell org.
 [PowerShell-Docs]: https://github.com/powershell/powershell-docs/
 [use-vscode-editor]: https://learn.microsoft.com/dotnet/core/tutorials/with-visual-studio-code
 [repository-maintainer]: ../docs/community/governance.md#repository-maintainers
-[area-expert]: ../docs/community/governance.md#area-experts
+[area-expert]: ../.github/CODEOWNERS
 [first-time-issue]: https://github.com/powershell/powershell/issues?q=is%3Aopen+is%3Aissue+label%3AFirst-Time-Issue
 [coding-guidelines]: ../docs/dev-process/coding-guidelines.md
 [breaking-changes-contract]: ../docs/dev-process/breaking-change-contract.md

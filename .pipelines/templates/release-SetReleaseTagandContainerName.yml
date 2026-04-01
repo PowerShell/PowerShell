@@ -1,3 +1,7 @@
+parameters:
+- name: restorePhase
+  default: false
+
 steps:
 - pwsh: |
     $variable = 'releaseTag'
@@ -13,16 +17,20 @@ steps:
     Write-Host -Object "##$vstsCommandString"
   name: OutputReleaseTag
   displayName: Set Release Tag
+  env:
+    ob_restore_phase: ${{ parameters.restorePhase }}
 
 - pwsh: |
-    $azureVersion = '$(ReleaseTag)'.ToLowerInvariant() -replace '\.', '-'
-    $vstsCommandString = "vso[task.setvariable variable=AzureVersion]$azureVersion"
+    $azureVersion = '$(OutputReleaseTag.ReleaseTag)'.ToLowerInvariant() -replace '\.', '-'
+    $vstsCommandString = "vso[task.setvariable variable=AzureVersion;isOutput=true]$azureVersion"
     Write-Host "sending " + $vstsCommandString
     Write-Host "##$vstsCommandString"
 
-    $version = '$(ReleaseTag)'.ToLowerInvariant().Substring(1)
+    $version = '$(OutputReleaseTag.ReleaseTag)'.ToLowerInvariant().Substring(1)
     $vstsCommandString = "vso[task.setvariable variable=Version;isOutput=true]$version"
     Write-Host ("sending " + $vstsCommandString)
     Write-Host "##$vstsCommandString"
   name: OutputVersion
   displayName: Set container name
+  env:
+    ob_restore_phase: ${{ parameters.restorePhase }}

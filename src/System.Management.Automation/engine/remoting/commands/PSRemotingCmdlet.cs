@@ -1923,9 +1923,7 @@ namespace Microsoft.PowerShell.Commands
             // the array-form using values if all UsingExpressions are in the same scope, otherwise, we handle the UsingExpression as
             // if the remote end is PSv2.
             string serverPsVersion = GetRemoteServerPsVersion(remoteRunspace);
-            System.Management.Automation.PowerShell powershellToUse = (serverPsVersion == PSv2)
-                                                                          ? GetPowerShellForPSv2()
-                                                                          : GetPowerShellForPSv3OrLater(serverPsVersion);
+            System.Management.Automation.PowerShell powershellToUse = GetPowerShellForPSv3OrLater(serverPsVersion);
             Pipeline pipeline =
                 remoteRunspace.CreatePipeline(powershellToUse.Commands.Commands[0].CommandText, true);
 
@@ -1946,9 +1944,9 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private static string GetRemoteServerPsVersion(RemoteRunspace remoteRunspace)
         {
-            if (remoteRunspace.ConnectionInfo is NewProcessConnectionInfo)
+            if (remoteRunspace.ConnectionInfo is not WSManConnectionInfo)
             {
-                // This is for Start-Job. The remote end is actually a child local powershell process, so it must be PSv5 or later
+                // All transport types except for WSManConnectionInfo work with 5.1 or later.
                 return PSv5OrLater;
             }
 
@@ -1957,35 +1955,19 @@ namespace Microsoft.PowerShell.Commands
             {
                 // The remote runspace is not opened yet, or it's disconnected before the private data is retrieved.
                 // In this case we cannot validate if the remote server is running PSv5 or later, so for safety purpose,
-                // we will handle the $using expressions as if the remote server is PSv2.
-                return PSv2;
+                // we will handle the $using expressions as if the remote server is PSv3Orv4.
+                return PSv3Orv4;
             }
 
-            // Unfortunately, the PSVersion value in the private data from PSv3 and PSv4 server is always 2.0.
-            // This got fixed in PSv5, so a PSv5 server will return 5.0. That means we need other way to tell
-            // if the remote server is PSv2 or PSv3+. After PSv3, remote runspace supports connect/disconnect,
-            // so we can use it to differentiate PSv2 from PSv3+.
-            if (remoteRunspace.CanDisconnect)
-            {
-                Version serverPsVersion = null;
-                PSPrimitiveDictionary.TryPathGet(
-                    psApplicationPrivateData,
-                    out serverPsVersion,
-                    PSVersionInfo.PSVersionTableName,
-                    PSVersionInfo.PSVersionName);
+            PSPrimitiveDictionary.TryPathGet(
+                psApplicationPrivateData,
+                out Version serverPsVersion,
+                PSVersionInfo.PSVersionTableName,
+                PSVersionInfo.PSVersionName);
 
-                if (serverPsVersion != null)
-                {
-                    return serverPsVersion.Major >= 5 ? PSv5OrLater : PSv3Orv4;
-                }
-
-                // The private data is available but we failed to get the server powershell version.
-                // This should never happen, but in case it happens, handle the $using expressions
-                // as if the remote server is PSv2.
-                Dbg.Assert(false, "Application private data is available but we failed to get the server powershell version. This should never happen.");
-            }
-
-            return PSv2;
+            // PSv5 server will return 5.0 whereas older versions will always be 2.0. As we don't care about v2
+            // anymore we can use a simple ternary check here to differenciate v5 using behaviour vs v3/4.
+            return serverPsVersion != null && serverPsVersion.Major >= 5 ? PSv5OrLater : PSv3Orv4;
         }
 
         /// <summary>
@@ -2059,7 +2041,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private const string PSv5OrLater = "PSv5OrLater";
         private const string PSv3Orv4 = "PSv3Orv4";
-        private const string PSv2 = "PSv2";
 
         private System.Management.Automation.PowerShell _powershellV2;
         private System.Management.Automation.PowerShell _powershellV3;

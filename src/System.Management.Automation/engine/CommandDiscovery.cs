@@ -262,6 +262,9 @@ namespace System.Management.Automation
         /// False if not.  Null if command discovery should default to something reasonable
         /// for the command discovered.
         /// </param>
+        /// <param name="forCompletion">
+        /// True if this for parameter completion and script requirements should be ignored.
+        /// </param>
         /// <returns>
         /// </returns>
         /// <exception cref="CommandNotFoundException">
@@ -271,14 +274,15 @@ namespace System.Management.Automation
         /// If the security manager is preventing the command from running.
         /// </exception>
         internal CommandProcessorBase LookupCommandProcessor(string commandName,
-            CommandOrigin commandOrigin, bool? useLocalScope)
+            CommandOrigin commandOrigin, bool? useLocalScope, bool forCompletion = false)
         {
             CommandProcessorBase processor = null;
             CommandInfo commandInfo = LookupCommandInfo(commandName, commandOrigin);
 
             if (commandInfo != null)
             {
-                processor = LookupCommandProcessor(commandInfo, commandOrigin, useLocalScope, null);
+                processor = LookupCommandProcessor(commandInfo, commandOrigin, useLocalScope, null, forCompletion);
+
                 // commandInfo.Name might be different than commandName - restore the original invocation name
                 processor.Command.MyInvocation.InvocationName = commandName;
             }
@@ -286,7 +290,7 @@ namespace System.Management.Automation
             return processor;
         }
 
-        internal static void VerifyRequiredModules(ExternalScriptInfo scriptInfo, ExecutionContext context)
+        internal static void VerifyRequiredModules(ExternalScriptInfo scriptInfo, ExecutionContext context, bool forCompletion = false)
         {
             // Check Required Modules
             if (scriptInfo.RequiresModules != null)
@@ -301,7 +305,7 @@ namespace System.Management.Automation
                         moduleManifestPath: null,
                         manifestProcessingFlags: ModuleCmdletBase.ManifestProcessingFlags.LoadElements | ModuleCmdletBase.ManifestProcessingFlags.WriteErrors,
                         error: out error);
-                    if (error != null)
+                    if (!forCompletion && error is not null)
                     {
                         ScriptRequiresException scriptRequiresException =
                             new ScriptRequiresException(
@@ -316,9 +320,9 @@ namespace System.Management.Automation
             }
         }
 
-        private CommandProcessorBase CreateScriptProcessorForSingleShell(ExternalScriptInfo scriptInfo, ExecutionContext context, bool useLocalScope, SessionStateInternal sessionState)
+        private CommandProcessorBase CreateScriptProcessorForSingleShell(ExternalScriptInfo scriptInfo, ExecutionContext context, bool useLocalScope, SessionStateInternal sessionState, bool forCompletion = false)
         {
-            VerifyScriptRequirements(scriptInfo, Context);
+            VerifyScriptRequirements(scriptInfo, Context, forCompletion);
 
             if (!string.IsNullOrEmpty(scriptInfo.RequiresApplicationID))
             {
@@ -340,12 +344,18 @@ namespace System.Management.Automation
         // #Requires -PSVersion
         // #Requires -PSEdition
         // #Requires -Module
-        internal static void VerifyScriptRequirements(ExternalScriptInfo scriptInfo, ExecutionContext context)
+        internal static void VerifyScriptRequirements(ExternalScriptInfo scriptInfo, ExecutionContext context, bool forCompletion = false)
         {
-            VerifyElevatedPrivileges(scriptInfo);
-            VerifyPSVersion(scriptInfo);
-            VerifyPSEdition(scriptInfo);
-            VerifyRequiredModules(scriptInfo, context);
+            // When completing script parameters we don't care if these requirements are met.
+            // VerifyRequiredModules will attempt to load the required modules which is useful for completion (so the correct types are loaded).
+            if (!forCompletion)
+            {
+                VerifyElevatedPrivileges(scriptInfo);
+                VerifyPSVersion(scriptInfo);
+                VerifyPSEdition(scriptInfo);
+            }
+
+            VerifyRequiredModules(scriptInfo, context, forCompletion);
         }
 
         internal static void VerifyPSVersion(ExternalScriptInfo scriptInfo)
@@ -426,6 +436,9 @@ namespace System.Management.Automation
         /// False if not.  Null if command discovery should default to something reasonable
         /// for the command discovered.
         /// </param>
+        /// <param name="forCompletion">
+        /// True if this for parameter completion and script requirements should be ignored.
+        /// </param>
         /// <param name="sessionState">The session state the commandInfo should be run in.</param>
         /// <returns>
         /// </returns>
@@ -436,7 +449,7 @@ namespace System.Management.Automation
         /// If the security manager is preventing the command from running.
         /// </exception>
         internal CommandProcessorBase LookupCommandProcessor(CommandInfo commandInfo,
-            CommandOrigin commandOrigin, bool? useLocalScope, SessionStateInternal sessionState)
+            CommandOrigin commandOrigin, bool? useLocalScope, SessionStateInternal sessionState, bool forCompletion = false)
         {
             CommandProcessorBase processor = null;
 
@@ -482,7 +495,7 @@ namespace System.Management.Automation
                     scriptInfo.SignatureChecked = true;
                     try
                     {
-                        processor = CreateScriptProcessorForSingleShell(scriptInfo, Context, useLocalScope ?? true, sessionState);
+                        processor = CreateScriptProcessorForSingleShell(scriptInfo, Context, useLocalScope ?? true, sessionState, forCompletion);
                     }
                     catch (ScriptRequiresSyntaxException reqSyntaxException)
                     {
@@ -1218,11 +1231,17 @@ namespace System.Management.Automation
                         string tempDir = directory.TrimStart();
                         if (tempDir.EqualsOrdinalIgnoreCase("~"))
                         {
-                            tempDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                            tempDir = Environment.GetFolderPath(
+                                Environment.SpecialFolder.UserProfile,
+                                Environment.SpecialFolderOption.DoNotVerify);
                         }
                         else if (tempDir.StartsWith("~" + Path.DirectorySeparatorChar))
                         {
-                            tempDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + Path.DirectorySeparatorChar + tempDir.Substring(2);
+                            tempDir = Environment.GetFolderPath(
+                                Environment.SpecialFolder.UserProfile,
+                                Environment.SpecialFolderOption.DoNotVerify)
+                                + Path.DirectorySeparatorChar
+                                + tempDir.Substring(2);
                         }
 
                         _cachedPath.Add(tempDir);

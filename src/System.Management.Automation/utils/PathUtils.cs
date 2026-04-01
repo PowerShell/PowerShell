@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -868,6 +869,38 @@ namespace System.Management.Automation
         {
             return c == Path.DirectorySeparatorChar || c == Path.AltDirectorySeparatorChar;
         }
+
+        #endregion
+
+        #region Helpers for checking invalid paths using SearchValues
+
+        /// <summary>
+        /// Contains characters that are invalid in file names.
+        /// </summary>
+        private static readonly SearchValues<char> s_invalidFileNameChars
+            = SearchValues.Create(Path.GetInvalidFileNameChars());
+
+        /// <summary>
+        /// Contains characters that are invalid in path names.
+        /// </summary>
+        private static readonly SearchValues<char> s_invalidPathChars
+            = SearchValues.Create(Path.GetInvalidPathChars());
+
+        /// <summary>
+        /// Checks if the specified filename contains any characters that are invalid in file names.
+        /// </summary>
+        /// <param name="filename">The path to check.</param>
+        /// <returns>True if the filename contains invalid file name characters, otherwise false.</returns>
+        internal static bool ContainsInvalidFileNameChars(ReadOnlySpan<char> filename)
+            => filename.ContainsAny(s_invalidFileNameChars);
+
+        /// <summary>
+        /// Checks if the specified path contains any characters that are invalid in path names.
+        /// </summary>
+        /// <param name="path">The path to check.</param>
+        /// <returns>True if the path contains invalid path characters, otherwise false.</returns>
+        internal static bool ContainsInvalidPathChars(ReadOnlySpan<char> path)
+            => path.ContainsAny(s_invalidPathChars);
 
         #endregion
     }

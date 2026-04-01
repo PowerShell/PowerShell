@@ -1,8 +1,8 @@
 ﻿// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System.CommandLine;
 using System.Management.Automation;
-using Newtonsoft.Json;
 
 namespace Test.Isolated.Nested
 {
@@ -14,7 +14,7 @@ namespace Test.Isolated.Nested
 
         protected override void ProcessRecord()
         {
-            WriteObject($"{Param.Name}-{Param.Path}-{typeof(StringEscapeHandling).Assembly.FullName}");
+            WriteObject($"{Param.Name}-{Param.Path}-{typeof(RootCommand).Assembly.FullName}");
         }
     }
 

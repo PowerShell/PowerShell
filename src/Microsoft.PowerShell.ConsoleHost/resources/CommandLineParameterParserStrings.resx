@@ -225,4 +225,7 @@ Valid formats are:
   <data name="InvalidExecutionPolicyArgument" xml:space="preserve">
     <value>Invalid ExecutionPolicy value '{0}'.</value>
   </data>
+  <data name="MissingMandatoryArgument" xml:space="preserve">
+    <value>An argument is required to be supplied to the '{0}' parameter.</value>
+  </data>
 </root>

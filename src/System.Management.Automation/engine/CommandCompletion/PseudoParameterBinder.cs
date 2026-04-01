@@ -1198,7 +1198,7 @@ namespace System.Management.Automation.Language
             string commandName = null;
             try
             {
-                processor = PrepareFromAst(context, out commandName) ?? context.CreateCommand(commandName, dotSource);
+                processor = PrepareFromAst(context, out commandName) ?? context.CreateCommand(commandName, dotSource, forCompletion:true);
             }
             catch (RuntimeException)
             {
@@ -1406,7 +1406,6 @@ namespace System.Management.Automation.Language
             }
 
             ast.Visit(exportVisitor);
-
             CommandProcessorBase commandProcessor = null;
 
             resolvedCommandName = _commandAst.GetCommandName();

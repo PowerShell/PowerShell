@@ -1,5 +1,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+
+[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingConvertToSecureStringWithPlainText', '')]
+param()
+
 	Describe "ConvertTo--SecureString" -Tags "CI" {
 
     Context "Checking return types of ConvertTo--SecureString" {

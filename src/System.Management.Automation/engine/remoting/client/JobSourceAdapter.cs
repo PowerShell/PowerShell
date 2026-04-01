@@ -413,7 +413,7 @@ namespace System.Management.Automation
                 duplicateDetector.Add(job.InstanceId, job.InstanceId);
                 foreach (Job child in job.ChildJobs)
                 {
-                    if (!(child is Job2 childJob)) continue;
+                    if (child is not Job2 childJob) continue;
                     StoreJobIdForReuseHelper(duplicateDetector, childJob, true);
                 }
             }
@@ -429,7 +429,7 @@ namespace System.Management.Automation
             if (!recurse || job.ChildJobs == null) return;
             foreach (Job child in job.ChildJobs)
             {
-                if (!(child is Job2 childJob)) continue;
+                if (child is not Job2 childJob) continue;
                 StoreJobIdForReuseHelper(duplicateDetector, childJob, recurse);
             }
         }

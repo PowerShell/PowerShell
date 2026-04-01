@@ -350,6 +350,38 @@ c                              3
         $json | Should -BeOfType ([string])
         $json | Should -Be $Value.Substring(1, $Value.Length - 2)
     }
+
+    It 'Ignores comments in arrays' -TestCase $testCasesWithAndWithoutAsHashtableSwitch {
+        param($AsHashtable)
+
+        # https://github.com/powerShell/powerShell/issues/14553
+        '[
+            // comment
+            100,
+            /* comment */
+            200
+        ]' | ConvertFrom-Json -AsHashtable:$AsHashtable | Should -Be @(100, 200)
+    }
+
+    It 'Ignores comments in dictionaries' -TestCase $testCasesWithAndWithoutAsHashtableSwitch {
+        param($AsHashtable)
+
+        $json = '{
+            // comment
+            "a": 100,
+            /* comment */
+            "b": 200
+        }' | ConvertFrom-Json -AsHashtable:$AsHashtable
+
+        if ($AsHashtable) {
+            $json.Keys | Should -Be @("a", "b")
+        } else {
+            $json.psobject.Properties | Should -HaveCount 2
+        }
+
+        $json.a | Should -Be 100
+        $json.b | Should -Be 200
+    }
 }
 
 Describe 'ConvertFrom-Json -Depth Tests' -tags "Feature" {

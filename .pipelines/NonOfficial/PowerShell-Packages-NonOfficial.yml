@@ -1,0 +1,97 @@
+trigger: none
+
+parameters: # parameters are shown up in ADO UI in a build queue time
+  - name: ForceAzureBlobDelete
+    displayName: Delete Azure Blob
+    type: string
+    values:
+    - true
+    - false
+    default: false
+  - name: 'debug'
+    displayName: 'Enable debug output'
+    type: boolean
+    default: false
+  - name: InternalSDKBlobURL
+    displayName: URL to the blob having internal .NET SDK
+    type: string
+    default: ' '
+  - name: ReleaseTagVar
+    displayName: Release Tag
+    type: string
+    default: 'fromBranch'
+  - name: SKIP_SIGNING
+    displayName: Skip Signing
+    type: string
+    default: 'NO'
+  - name: disableNetworkIsolation
+    type: boolean
+    default: false
+
+name: pkgs-$(BUILD.SOURCEBRANCHNAME)-nonofficial-$(Build.BuildId)
+
+variables:
+  - template: ./pipelines/templates/variables/PowerShell-Packages-Variables.yml@self
+    parameters:
+      debug: ${{ parameters.debug }}
+      ForceAzureBlobDelete: ${{ parameters.ForceAzureBlobDelete }}
+      ReleaseTagVar: ${{ parameters.ReleaseTagVar }}
+      disableNetworkIsolation: ${{ parameters.disableNetworkIsolation }}
+
+resources:
+  pipelines:
+    - pipeline: CoOrdinatedBuildPipeline
+      source: 'PowerShell-Coordinated_Packages-NonOfficial'
+      trigger:
+        branches:
+          include:
+            - master
+            - releases/*
+
+  repositories:
+    - repository: onebranchTemplates
+      type: git
+      name: OneBranch.Pipelines/GovernedTemplates
+      ref: refs/heads/main
+
+extends:
+  template: v2/OneBranch.NonOfficial.CrossPlat.yml@onebranchTemplates
+  parameters:
+    cloudvault:
+      enabled: false
+    featureFlags:
+      WindowsHostVersion:
+        Version: 2022
+        Network: KS3
+      LinuxHostVersion:
+        Network: KS3
+      linuxEsrpSigning: true
+      incrementalSDLBinaryAnalysis: true
+      disableNetworkIsolation: ${{ variables.disableNetworkIsolation }}
+    globalSdl:
+      disableLegacyManifest: true
+      # disabled Armorty as we dont have any ARM templates to scan. It fails on some sample ARM templates.
+      armory:
+        enabled: false
+      sbom:
+        enabled: true
+      compiled:
+        enabled: false
+      credscan:
+        enabled: true
+        scanFolder:  $(Build.SourcesDirectory)
+        suppressionsFile: $(Build.SourcesDirectory)\.config\suppress.json
+      cg:
+        enabled: true
+        ignoreDirectories: '.devcontainer,demos,docker,docs,src,test,tools/packaging'
+      binskim:
+        enabled: false
+        exactToolVersion: 4.4.2
+      # APIScan requires a non-Ready-To-Run build
+      apiscan:
+        enabled: false
+      tsaOptionsFile: .config\tsaoptions.json
+    stages:
+    - template: ./pipelines/templates/stages/PowerShell-Packages-Stages.yml@self
+      parameters:
+        OfficialBuild: false

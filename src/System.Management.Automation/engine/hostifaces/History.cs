@@ -859,7 +859,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <value></value>
         [Parameter(Position = 0, ValueFromPipeline = true)]
-        [ValidateRangeAttribute((long)1, long.MaxValue)]
+        [ValidateRange((long)1, long.MaxValue)]
         public long[] Id
         {
             get
@@ -887,7 +887,7 @@ namespace Microsoft.PowerShell.Commands
         /// No of History Entries (starting from last) that are to be displayed.
         /// </summary>
         [Parameter(Position = 1)]
-        [ValidateRangeAttribute(0, (int)Int16.MaxValue)]
+        [ValidateRange(0, (int)Int16.MaxValue)]
         public int Count
         {
             get
@@ -1436,7 +1436,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Read CommandLine property
-                if (!(GetPropertyValue(mshObject, "CommandLine") is string commandLine))
+                if (GetPropertyValue(mshObject, "CommandLine") is not string commandLine)
                 {
                     break;
                 }
@@ -1518,7 +1518,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = "IDParameter", Position = 0,
            HelpMessage = "Specifies the ID of a command in the session history.Clear history clears only the specified command")]
-        [ValidateRangeAttribute((int)1, int.MaxValue)]
+        [ValidateRange((int)1, int.MaxValue)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public int[] Id
         {
@@ -1566,7 +1566,7 @@ namespace Microsoft.PowerShell.Commands
         /// Clears the specified number of history entries
         /// </summary>
         [Parameter(Mandatory = false, Position = 1, HelpMessage = "Clears the specified number of history entries")]
-        [ValidateRangeAttribute((int)1, int.MaxValue)]
+        [ValidateRange((int)1, int.MaxValue)]
         public int Count
         {
             get

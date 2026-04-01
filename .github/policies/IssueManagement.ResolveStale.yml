@@ -34,6 +34,8 @@ configuration:
       - isNotLabeledWith:
           label: KeepOpen
       - isNotLabeledWith:
+          label: In-PR
+      - isNotLabeledWith:
           label: Needs-Triage
       - isNotLabeledWith:
           label: Resolution-No Activity

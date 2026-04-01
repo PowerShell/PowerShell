@@ -1,0 +1,27 @@
+name: process-pester-test-results
+description: 'Process Pester test results'
+
+inputs:
+  name:
+    required: true
+    default: ''
+    type: string
+  testResultsFolder:
+    required: false
+    default: "${{ runner.workspace }}/testResults"
+    type: string
+
+runs:
+  using: composite
+  steps:
+  - name: Log Summary
+    run: |-
+      & "$env:GITHUB_ACTION_PATH/process-pester-results.ps1" -Name '${{ inputs.name }}' -TestResultsFolder '${{ inputs.testResultsFolder }}'
+    shell: pwsh
+
+  - name: Upload testResults artifact
+    if: always()
+    uses: actions/upload-artifact@v4
+    with:
+      name: junit-pester-${{ inputs.name }}
+      path: ${{ runner.workspace }}/testResults

@@ -1,0 +1,24 @@
+parameters:
+- name: ob_restore_phase
+  type: boolean
+  default: true
+
+steps:
+  - pwsh: |
+      if (-not (Test-Path '$(RepoRoot)')) {
+        $psRoot = '$(Build.SourcesDirectory)/PowerShell'
+        Set-Location $psRoot -Verbose
+      }
+
+      $version = Get-Content ./global.json | ConvertFrom-Json | Select-Object -ExpandProperty sdk | Select-Object -ExpandProperty version
+
+      Write-Verbose -Verbose "Installing .NET SDK with version $version"
+
+      Import-Module ./build.psm1 -Force
+      Install-Dotnet -Version $version -Verbose
+
+    displayName: 'Install dotnet SDK'
+    workingDirectory: $(RepoRoot)
+    env:
+      ob_restore_phase: ${{ parameters.ob_restore_phase }}
+

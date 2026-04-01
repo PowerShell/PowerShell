@@ -17,14 +17,14 @@ switch ($TestHook) {
     }
     default {
         $jobScript = {
-            # This registers Microsoft Update via a predifened GUID with the Windows Update Agent.
+            # This registers Microsoft Update via a predefined GUID with the Windows Update Agent.
             # https://learn.microsoft.com/windows/win32/wua_sdk/opt-in-to-microsoft-update
 
             $serviceManager = (New-Object -ComObject Microsoft.Update.ServiceManager)
             $isRegistered = $serviceManager.QueryServiceRegistration('7971f918-a847-4430-9279-4a52d1efe18d').Service.IsRegisteredWithAu
 
             if (!$isRegistered) {
-                Write-Verbose -Verbose "Opting into Microsoft Update as the Autmatic Update Service"
+                Write-Verbose -Verbose "Opting into Microsoft Update as the Automatic Update Service"
                 # 7 is the combination of asfAllowPendingRegistration, asfAllowOnlineRegistration, asfRegisterServiceWithAU
                 # AU means Automatic Updates
                 $null = $serviceManager.AddService2('7971f918-a847-4430-9279-4a52d1efe18d', 7, '')

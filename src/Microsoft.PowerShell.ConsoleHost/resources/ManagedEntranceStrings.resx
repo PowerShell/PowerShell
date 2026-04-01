@@ -132,9 +132,6 @@
   <data name="ShellBannerRLMode" xml:space="preserve">
     <value>[Restricted Language Mode]</value>
   </data>
-  <data name="PSReadLineDisabledWhenScreenReaderIsActive" xml:space="preserve">
-    <value>Warning: PowerShell detected that you might be using a screen reader and has disabled PSReadLine for compatibility purposes. If you want to re-enable it, run 'Import-Module PSReadLine'.</value>
-  </data>
   <data name="PreviewUpdateNotificationMessage" xml:space="preserve">
     <value>  {1} A new PowerShell preview release is available: v{0} {2}
   {1} Upgrade now, or check out the release page at:{3}{2}
@@ -162,9 +159,9 @@
                   [-CustomPipeName &lt;string&gt;] [-EncodedCommand &lt;Base64EncodedCommand&gt;]
                   [-ExecutionPolicy &lt;ExecutionPolicy&gt;] [-InputFormat {Text | XML}]
                   [-Interactive] [-MTA] [-NoExit] [-NoLogo] [-NonInteractive] [-NoProfile]
-                  [-NoProfileLoadTime] [-OutputFormat {Text | XML}] 
-                  [-SettingsFile &lt;filePath&gt;] [-SSHServerMode] [-STA] 
-                  [-Version] [-WindowStyle &lt;style&gt;] 
+                  [-NoProfileLoadTime] [-OutputFormat {Text | XML}]
+                  [-SettingsFile &lt;filePath&gt;] [-SSHServerMode] [-STA]
+                  [-Version] [-WindowStyle &lt;style&gt;]
                   [-WorkingDirectory &lt;directoryPath&gt;]
 
        pwsh[.exe] -h | -Help | -? | /?
@@ -478,7 +475,7 @@ All parameters are case-insensitive.</value>
 -WindowStyle | -w
 
     Sets the window style for the session. Valid values are Normal, Minimized,
-    Maximized and Hidden.
+    Maximized, and Hidden.
 
 -WorkingDirectory | -wd
 
