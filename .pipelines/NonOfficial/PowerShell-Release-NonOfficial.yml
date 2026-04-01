@@ -33,7 +33,7 @@ parameters: # parameters are shown up in ADO UI in a build queue time
 name: release-$(BUILD.SOURCEBRANCHNAME)-nonofficial-$(Build.BuildId)
 
 variables:
-  - template: ../templates/variables/PowerShell-Release-Variables.yml
+  - template: ./pipelines/templates/variables/PowerShell-Release-Variables.yml@self
     parameters:
       debug: ${{ parameters.debug }}
       ReleaseTagVar: ${{ parameters.ReleaseTagVar }}
@@ -98,7 +98,7 @@ extends:
       tsaOptionsFile: .config\tsaoptions.json
 
     stages:
-    - template: ../templates/stages/PowerShell-Release-Stages.yml
+    - template: ./pipelines/templates/stages/PowerShell-Release-Stages.yml@self
       parameters:
         releaseEnvironment: Test
         SkipPublish: ${{ parameters.SkipPublish }}
