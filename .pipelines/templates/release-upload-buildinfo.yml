@@ -51,12 +51,17 @@ jobs:
       Import-Module "$toolsDirectory/ci.psm1"
       $jsonFile = Get-Item "$ENV:PIPELINE_WORKSPACE/PSPackagesOfficial/BuildInfoJson/*.json"
       $fileName = Split-Path $jsonFile -Leaf
+      # The build itself has already determined if it is preview or stable/LTS,
+      # we just need to check via the file name
+      $isPreview = $fileName -eq "preview.json"
+      $isStable = $fileName -eq "stable.json"
 
       $dateTime = [datetime]::UtcNow
       $dateTime = [datetime]::new($dateTime.Ticks - ($dateTime.Ticks % [timespan]::TicksPerSecond), $dateTime.Kind)
 
       $metadata = Get-Content -LiteralPath "$toolsDirectory/metadata.json" -ErrorAction Stop | ConvertFrom-Json
-      $stableReleaseTag = $metadata.StableReleaseTag -Replace 'v',''
+      # Note: version tags in metadata.json (e.g. StableReleaseTag) may not reflect the current release being
+      # published, so they must not be used to gate channel decisions. Use the explicit publish flags instead.
       $stableRelease = $metadata.StableRelease.PublishToChannels
       $ltsRelease = $metadata.LTSRelease.PublishToChannels
 
@@ -71,7 +76,7 @@ jobs:
       $targetFile = "$ENV:PIPELINE_WORKSPACE/$fileName"
       ConvertTo-Json -InputObject $buildInfo | Out-File $targetFile -Encoding ascii
 
-      if ($fileName -eq "preview.json") {
+      if ($isPreview) {
         Set-BuildVariable -Name UploadPreview -Value YES
       } else {
         Set-BuildVariable -Name UploadPreview -Value NO
@@ -80,9 +85,7 @@ jobs:
       Set-BuildVariable -Name PreviewBuildInfoFile -Value $targetFile
 
       ## Create 'lts.json' if marked as a LTS release.
-      if ($fileName -eq "stable.json") {
-        [System.Management.Automation.SemanticVersion] $stableVersion = $stableReleaseTag
-        [System.Management.Automation.SemanticVersion] $currentVersion = $currentReleaseTag
+      if ($isStable) {
         if ($ltsRelease) {
           $ltsFile = "$ENV:PIPELINE_WORKSPACE/lts.json"
           Copy-Item -Path $targetFile -Destination $ltsFile -Force
@@ -92,18 +95,24 @@ jobs:
           Set-BuildVariable -Name UploadLTS -Value NO
         }
 
-        ## Only update the stable.json if the current version is greater than the stable version.
-        if ($currentVersion -gt $stableVersion) {
-          $versionFile = "$ENV:PIPELINE_WORKSPACE/$($currentVersion.Major)-$($currentVersion.Minor).json"
-          Copy-Item -Path $targetFile -Destination $versionFile -Force
-          Set-BuildVariable -Name StableBuildInfoFile -Value $versionFile
+        ## Gate stable.json upload on the metadata publish flag.
+        if ($stableRelease) {
+          Set-BuildVariable -Name StableBuildInfoFile -Value $targetFile
           Set-BuildVariable -Name UploadStable -Value YES
         } else {
           Set-BuildVariable -Name UploadStable -Value NO
         }
 
+        ## Always publish the version-specific {Major}-{Minor}.json for non-preview builds.
+        [System.Management.Automation.SemanticVersion] $currentVersion = $currentReleaseTag
+        $versionFile = "$ENV:PIPELINE_WORKSPACE/$($currentVersion.Major)-$($currentVersion.Minor).json"
+        Copy-Item -Path $targetFile -Destination $versionFile -Force
+        Set-BuildVariable -Name VersionSpecificBuildInfoFile -Value $versionFile
+        Set-BuildVariable -Name UploadVersionSpecific -Value YES
+
       } else {
         Set-BuildVariable -Name UploadStable -Value NO
+        Set-BuildVariable -Name UploadVersionSpecific -Value NO
       }
     displayName: Create json files
 
@@ -144,4 +153,12 @@ jobs:
           Write-Verbose -Verbose "Uploading $jsonFile to $containerName/$prefix/$blobName"
           Set-AzStorageBlobContent -File $jsonFile -Container $containerName -Blob "$prefix/$blobName" -Context $storageContext -Force
         }
-    condition: and(succeeded(), or(eq(variables['UploadPreview'], 'YES'), eq(variables['UploadLTS'], 'YES'), eq(variables['UploadStable'], 'YES')))
+
+        #version-specific
+        if ($env:UploadVersionSpecific -eq 'YES') {
+          $jsonFile = "$env:VersionSpecificBuildInfoFile"
+          $blobName = Get-Item $jsonFile | Split-Path -Leaf
+          Write-Verbose -Verbose "Uploading $jsonFile to $containerName/$prefix/$blobName"
+          Set-AzStorageBlobContent -File $jsonFile -Container $containerName -Blob "$prefix/$blobName" -Context $storageContext -Force
+        }
+    condition: and(succeeded(), or(eq(variables['UploadPreview'], 'YES'), eq(variables['UploadLTS'], 'YES'), eq(variables['UploadStable'], 'YES'), eq(variables['UploadVersionSpecific'], 'YES')))
