@@ -2663,38 +2663,17 @@ function Start-TypeGen
     # Add .NET CLI tools to PATH
     Find-Dotnet
 
-    # This custom target depends on 'ResolveAssemblyReferencesDesignTime', whose definition can be found in the sdk folder.
-    # To find the available properties of '_ReferencesFromRAR' when switching to a new dotnet sdk, follow the steps below:
-    #   1. create a dummy project using the new dotnet sdk.
-    #   2. build the dummy project with this command:
-    #      dotnet msbuild .\dummy.csproj /t:ResolveAssemblyReferencesDesignTime /fileLogger /noconsolelogger /v:diag
-    #   3. search '_ReferencesFromRAR' in the produced 'msbuild.log' file. You will find the properties there.
-    $GetDependenciesTargetPath = "$PSScriptRoot/src/Microsoft.PowerShell.SDK/obj/Microsoft.PowerShell.SDK.csproj.TypeCatalog.targets"
-    $GetDependenciesTargetValue = @'
-<Project>
-    <Target Name="_GetDependencies"
-            DependsOnTargets="ResolveAssemblyReferencesDesignTime">
-        <ItemGroup>
-            <_RefAssemblyPath Include="%(_ReferencesFromRAR.OriginalItemSpec)%3B" Condition=" '%(_ReferencesFromRAR.NuGetPackageId)' != 'Microsoft.Management.Infrastructure' "/>
-        </ItemGroup>
-        <WriteLinesToFile File="$(_DependencyFile)" Lines="@(_RefAssemblyPath)" Overwrite="true" />
-    </Target>
-</Project>
-'@
-    New-Item -ItemType Directory -Path (Split-Path -Path $GetDependenciesTargetPath -Parent) -Force > $null
-    Set-Content -Path $GetDependenciesTargetPath -Value $GetDependenciesTargetValue -Force -Encoding Ascii
-
     Push-Location "$PSScriptRoot/src/Microsoft.PowerShell.SDK"
     try {
         $ps_inc_file = "$PSScriptRoot/src/TypeCatalogGen/$IncFileName"
-        dotnet msbuild .\Microsoft.PowerShell.SDK.csproj /t:_GetDependencies "/property:DesignTimeBuild=true;_DependencyFile=$ps_inc_file" /nologo
+        Start-NativeExecution { dotnet msbuild .\Microsoft.PowerShell.SDK.csproj /t:_GetDependencies "/property:DesignTimeBuild=true;_DependencyFile=$ps_inc_file" /nologo }
     } finally {
         Pop-Location
     }
 
     Push-Location "$PSScriptRoot/src/TypeCatalogGen"
     try {
-        dotnet run ../System.Management.Automation/CoreCLR/CorePsTypeCatalog.cs $IncFileName
+        Start-NativeExecution { dotnet run ../System.Management.Automation/CoreCLR/CorePsTypeCatalog.cs $IncFileName }
     } finally {
         Pop-Location
     }

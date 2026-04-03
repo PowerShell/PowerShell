@@ -28,10 +28,10 @@ parameters: # parameters are shown up in ADO UI in a build queue time
     type: boolean
     default: false
 
-name: pkgs-$(BUILD.SOURCEBRANCHNAME)-prod-$(Build.BuildId)
+name: pkgs-$(BUILD.SOURCEBRANCHNAME)-nonofficial-$(Build.BuildId)
 
 variables:
-  - template: templates/variables/PowerShell-Packages-Variables.yml
+  - template: ../templates/variables/PowerShell-Packages-Variables.yml
     parameters:
       debug: ${{ parameters.debug }}
       ForceAzureBlobDelete: ${{ parameters.ForceAzureBlobDelete }}
@@ -41,7 +41,7 @@ variables:
 resources:
   pipelines:
     - pipeline: CoOrdinatedBuildPipeline
-      source: 'PowerShell-Coordinated Binaries-Official'
+      source: 'PowerShell-Coordinated_Packages-NonOfficial'
       trigger:
         branches:
           include:
@@ -55,7 +55,7 @@ resources:
       ref: refs/heads/main
 
 extends:
-  template: v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates
+  template: v2/OneBranch.NonOfficial.CrossPlat.yml@onebranchTemplates
   parameters:
     cloudvault:
       enabled: false
@@ -92,6 +92,6 @@ extends:
         enabled: false
       tsaOptionsFile: .config\tsaoptions.json
     stages:
-    - template: templates/stages/PowerShell-Packages-Stages.yml
+    - template: ../templates/stages/PowerShell-Packages-Stages.yml
       parameters:
-        OfficialBuild: true
+        OfficialBuild: false

@@ -140,12 +140,14 @@ jobs:
 
       # Don't build LTS packages for rebuild branches
       $LTS = $metadata.LTSRelease.Package -and -not $isRebuildBranch
+      $Stable = [bool]$metadata.StableRelease.Package
 
       if ($isRebuildBranch) {
         Write-Verbose -Message "Rebuild branch detected, skipping LTS package build" -Verbose
       }
 
       Write-Verbose -Verbose "LTS: $LTS"
+      Write-Verbose -Verbose "Stable: $Stable"
 
       if ($LTS) {
         Write-Verbose -Message "LTS Release: $LTS"
@@ -178,6 +180,12 @@ jobs:
       Set-Location $repoRoot
 
       Start-PSPackage -Type $packageTypes -SkipReleaseChecks -WindowsRuntime $WindowsRuntime -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath -LTS:$LTS
+
+      # When both LTS and Stable are requested, also build the Stable MSIX
+      if ($packageTypes -contains 'msix' -and $LTS -and $Stable) {
+        Write-Verbose -Verbose "Both LTS and Stable packages requested. Building additional Stable MSIX."
+        Start-PSPackage -Type msix -SkipReleaseChecks -WindowsRuntime $WindowsRuntime -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath
+      }
 
     displayName: 'Build Packages (Unsigned)'
     env:
