@@ -22,7 +22,7 @@ variables:
   BuildSolution: $(Build.SourcesDirectory)\dirs.proj
   ReleaseTagVar: ${{ parameters.ReleaseTagVar }}
   BuildConfiguration: Release
-  WindowsContainerImage: 'onebranch.azurecr.io/windows/ltsc2019/vse2022:latest'
+  WindowsContainerImage: 'onebranch.azurecr.io/windows/ltsc2022/vse2022:latest'
   Codeql.Enabled: false  #  pipeline is not building artifacts; it repackages existing artifacts into a vpack
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
   POWERSHELL_TELEMETRY_OPTOUT: 1
@@ -46,6 +46,9 @@ resources:
 extends:
   template: v2/Microsoft.Official.yml@onebranchTemplates
   parameters:
+    featureFlags:
+      WindowsHostVersion:
+        Version: 2022
     platform:
       name: 'windows_undocked' # windows undocked
 
