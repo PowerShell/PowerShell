@@ -30,7 +30,7 @@ parameters:
     type: boolean
     default: false
 
-name: bins-$(BUILD.SOURCEBRANCHNAME)-prod-$(Build.BuildId)
+name: bins-$(BUILD.SOURCEBRANCHNAME)-nonofficial-$(Build.BuildId)
 
 resources:
   repositories:
@@ -45,7 +45,7 @@ resources:
     ref: refs/heads/main
 
 variables:
-  - template: templates/variables/PowerShell-Coordinated_Packages-Variables.yml
+  - template: ../templates/variables/PowerShell-Coordinated_Packages-Variables.yml
     parameters:
       InternalSDKBlobURL: ${{ parameters.InternalSDKBlobURL }}
       ReleaseTagVar: ${{ parameters.ReleaseTagVar }}
@@ -54,14 +54,13 @@ variables:
       FORCE_CODEQL: ${{ parameters.FORCE_CODEQL }}
 
 extends:
-  template: v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates
+  template: v2/OneBranch.NonOfficial.CrossPlat.yml@onebranchTemplates
   parameters:
     customTags: 'ES365AIMigrationTooling'
     featureFlags:
       LinuxHostVersion:
           Network: KS3
       WindowsHostVersion:
-          Version: 2022
           Network: KS3
       incrementalSDLBinaryAnalysis: true
     globalSdl:
@@ -91,8 +90,8 @@ extends:
       tsaOptionsFile: .config\tsaoptions.json
 
     stages:
-    - template: templates/stages/PowerShell-Coordinated_Packages-Stages.yml
+    - template: ../templates/stages/PowerShell-Coordinated_Packages-Stages.yml
       parameters:
         RUN_WINDOWS: ${{ parameters.RUN_WINDOWS }}
         RUN_TEST_AND_RELEASE: ${{ parameters.RUN_TEST_AND_RELEASE }}
-        OfficialBuild: true
+        OfficialBuild: false
