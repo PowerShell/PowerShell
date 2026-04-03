@@ -85,4 +85,26 @@
     <PackageReference Include="System.Windows.Extensions" Version="9.0.14" />
   </ItemGroup>
 
+  <!--
+    This target is invoked explicitly by Start-TypeGen in build.psm1 to collect the list of
+    reference assembly paths needed by TypeCatalogGen. It is not run during a normal build.
+
+    To find the available properties of '_ReferencesFromRAR' when switching to a new dotnet sdk:
+      1. Create a dummy project using the new dotnet sdk.
+      2. Build the dummy project with:
+         dotnet msbuild ./dummy.csproj /t:ResolveAssemblyReferencesDesignTime /fileLogger /noconsolelogger /v:diag
+      3. Search '_ReferencesFromRAR' in the produced 'msbuild.log' file.
+  -->
+  <Target Name="_GetDependencies"
+          DependsOnTargets="ResolveAssemblyReferencesDesignTime">
+    <ItemGroup>
+      <!--
+        Excludes 'Microsoft.Management.Infrastructure' from the type catalog reference list,
+        as it is provided separately at runtime and must not be included in the generated catalog.
+      -->
+      <_RefAssemblyPath Include="%(_ReferencesFromRAR.OriginalItemSpec)%3B" Condition=" '%(_ReferencesFromRAR.NuGetPackageId)' != 'Microsoft.Management.Infrastructure' "/>
+    </ItemGroup>
+    <WriteLinesToFile File="$(_DependencyFile)" Lines="@(_RefAssemblyPath)" Overwrite="true" />
+  </Target>
+
 </Project>
