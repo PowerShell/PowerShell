@@ -1,0 +1,25 @@
+{
+  "ChangeType": "Security",
+  "Branch": "release/v7.4.8",
+  "PackageId": "System.IO.Packaging",
+  "FromVersion": "8.0.0",
+  "ToVersion": "8.0.1",
+  "VulnerabilityId": [
+    "GHSA-QJ66-M88J-HMGJ",
+    "CVE-2024-43483",
+    "GHSA-F32C-W444-8PPV",
+    "CVE-2024-43484"
+  ],
+  "Severity": [
+    "high"
+  ],
+  "VulnerableRanges": [
+    "[8.0.0-preview.1.23110.8, 8.0.0]"
+  ],
+  "AdvisoryUrls": [
+    "https://github.com/advisories/GHSA-qj66-m88j-hmgj",
+    "https://github.com/advisories/GHSA-f32c-w444-8ppv"
+  ],
+  "Justification": null,
+  "TimestampUtc": "2026-04-03T20:27:42.1471396Z"
+}
