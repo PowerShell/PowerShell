@@ -1,0 +1,16 @@
+{
+  "ChangeType": "Security",
+  "PackageId": "System.IO.Packaging",
+  "FromVersion": "8.0.0",
+  "ToVersion": "8.0.1",
+  "CveId": [],
+  "VulnerableRanges": [
+    "[8.0.0-preview.1.23110.8, 8.0.0]"
+  ],
+  "AdvisoryUrls": [
+    "https://github.com/advisories/GHSA-qj66-m88j-hmgj",
+    "https://github.com/advisories/GHSA-f32c-w444-8ppv"
+  ],
+  "Justification": null,
+  "TimestampUtc": "2026-04-03T17:26:28.9036289Z"
+}
