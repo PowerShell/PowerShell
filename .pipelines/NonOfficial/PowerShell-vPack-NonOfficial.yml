@@ -8,8 +8,9 @@ parameters: # parameters are shown up in ADO UI in a build queue time
 - name: vPackName
   type: string
   displayName: 'VPack Name:'
-  default: 'PowerShell'
+  default: 'PowerShell.BuildTool'
   values:
+    - PowerShell.BuildTool
     - PowerShell
     - PowerShellDoNotUse
 - name: 'ReleaseTagVar'
@@ -29,10 +30,10 @@ parameters: # parameters are shown up in ADO UI in a build queue time
     - Netlock
   default: "R1"
 
-name: vPack_$(Build.SourceBranchName)_Prod_Create.${{ parameters.createVPack }}_Name.${{ parameters.vPackName}}_$(date:yyyyMMdd).$(rev:rr)
+name: vPack_$(Build.SourceBranchName)_NonOfficial_Create.${{ parameters.createVPack }}_Name.${{ parameters.vPackName}}_$(date:yyyyMMdd).$(rev:rr)
 
 variables:
-  - template: templates/variables/PowerShell-vPack-Variables.yml
+  - template: ../templates/variables/PowerShell-vPack-Variables.yml
     parameters:
       debug: ${{ parameters.debug }}
       ReleaseTagVar: ${{ parameters.ReleaseTagVar }}
@@ -46,7 +47,7 @@ resources:
       ref: refs/heads/main
 
 extends:
-  template: v2/Microsoft.Official.yml@onebranchTemplates
+  template: v2/Microsoft.NonOfficial.yml@onebranchTemplates
   parameters:
     platform:
       name: 'windows_undocked' # windows undocked
@@ -81,7 +82,7 @@ extends:
         enabled: false
       tsaOptionsFile: .config/tsaoptions.json
     stages:
-    - template: templates/stages/PowerShell-vPack-Stages.yml
+    - template: ../templates/stages/PowerShell-vPack-Stages.yml
       parameters:
         createVPack: ${{ parameters.createVPack }}
         vPackName: ${{ parameters.vPackName }}
