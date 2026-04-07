@@ -13,6 +13,9 @@ env:
   SYSTEM_ARTIFACTSDIRECTORY: ${{ github.workspace }}/artifacts
   BUILD_ARTIFACTSTAGINGDIRECTORY: ${{ github.workspace }}/artifacts
 
+permissions:
+  contents: read
+
 jobs:
   package:
     name: ${{ matrix.architecture }} - ${{ matrix.channel }}
