@@ -4271,7 +4271,7 @@ function New-MSIXPackage
         $displayName += ' Preview'
     } elseif ($LTS) {
         $ProductName += '-LTS'
-        $displayName += '-LTS'
+        $displayName += ' LTS'
     }
 
     Write-Verbose -Verbose "ProductName: $productName"
