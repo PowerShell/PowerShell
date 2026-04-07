@@ -26,7 +26,7 @@ runs:
     shell: pwsh
 
   - name: Download Build Artifacts
-    uses: actions/download-artifact@v4
+    uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
     with:
       path: "${{ github.workspace }}"
 
@@ -39,7 +39,7 @@ runs:
       Write-LogGroupEnd -Title 'Artifacts Directory'
     shell: pwsh
 
-  - uses: actions/setup-dotnet@v4
+  - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4.3.1
     with:
       global-json-file: ./global.json
 
@@ -53,7 +53,7 @@ runs:
       Write-LogGroupEnd -Title 'Bootstrap'
 
   - name: Extract Files
-    uses: actions/github-script@v7.0.0
+    uses: actions/github-script@e69ef5462fd455e02edcaf4dd7708eda96b9eda0 # v7.0.0
     env:
       DESTINATION_FOLDER: "${{ github.workspace }}/bins"
       ARCHIVE_FILE_PATTERNS: "${{ github.workspace }}/build/build.zip"
