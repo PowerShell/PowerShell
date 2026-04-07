@@ -1380,7 +1380,8 @@ namespace System.Management.Automation
         /// Include The system wide module path ($PSHOME\Modules) even if it's not in PSModulePath.
         /// In V3-V5, we prepended this path during module auto-discovery which incorrectly preferred
         /// $PSHOME\Modules over user installed modules that might have a command that overrides
-        /// a product-supplied command.
+        /// a product-supplied command. Setting InitialSessionState.PSModulePath will override this behavior
+        /// and will not include the $PSHOME\Modules path at all.
         /// For 5.1, we append $PSHOME\Modules in this case to avoid the rare case where PSModulePath
         /// does not contain the path, but a script depends on previous behavior.
         /// Note that appending is still a potential breaking change, but necessary to update in-box
