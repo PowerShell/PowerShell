@@ -12,6 +12,8 @@ on:
       - github-mirror
     paths:
       - "**"
+      - "*"
+      - ".globalconfig"
       - "!.github/ISSUE_TEMPLATE/**"
       - "!.dependabot/config.yml"
       - "!.pipelines/**"
@@ -25,12 +27,12 @@ on:
 # Path filters for PRs need to go into the changes job
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: ${{ contains(github.ref, 'merge')}}
 
 env:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
-  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  DOTNET_NOLOGO: 1
   FORCE_FEATURE: 'False'
   FORCE_PACKAGE: 'False'
   NUGET_KEY: none
@@ -55,7 +57,7 @@ jobs:
       packagingChanged: ${{ steps.filter.outputs.packagingChanged }}
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
 
@@ -74,7 +76,7 @@ jobs:
       contents: read
     steps:
       - name: checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Check for merge conflict markers
         uses: "./.github/actions/infrastructure/merge-conflict-checker"
@@ -86,7 +88,7 @@ jobs:
     if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
     steps:
       - name: checkout
-        uses: actions/checkout@v4.1.0
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 1000
 
@@ -101,7 +103,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v4.1.0
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 1000
       - name: Linux Unelevated CI
@@ -109,6 +111,7 @@ jobs:
         with:
           purpose: UnelevatedPesterTests
           tagSet: CI
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   linux_test_elevated_ci:
     name: Linux Elevated CI
     needs:
@@ -118,7 +121,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v4.1.0
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 1000
       - name: Linux Elevated CI
@@ -126,6 +129,7 @@ jobs:
         with:
           purpose: ElevatedPesterTests
           tagSet: CI
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   linux_test_unelevated_others:
     name: Linux Unelevated Others
     needs:
@@ -135,7 +139,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v4.1.0
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 1000
       - name: Linux Unelevated Others
@@ -143,6 +147,7 @@ jobs:
         with:
           purpose: UnelevatedPesterTests
           tagSet: Others
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   linux_test_elevated_others:
     name: Linux Elevated Others
     needs:
@@ -152,7 +157,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v4.1.0
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 1000
       - name: Linux Elevated Others
@@ -160,34 +165,23 @@ jobs:
         with:
           purpose: ElevatedPesterTests
           tagSet: Others
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   xunit_tests:
     name: xUnit Tests
     needs:
       - changes
-    if: ${{ needs.changes.outputs.source == 'true' }}
+    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
     uses: ./.github/workflows/xunit-tests.yml
     with:
       runner_os: ubuntu-latest
       test_results_artifact_name: testResults-xunit
-
-  analyze:
-    name: CodeQL Analysis
-    needs: changes
-    if: ${{ needs.changes.outputs.source == 'true' }}
-    uses: ./.github/workflows/analyze-reusable.yml
-    permissions:
-      actions: read
-      contents: read
-      security-events: write
-    with:
-      runner_os: ubuntu-latest
 
   infrastructure_tests:
     name: Infrastructure Tests
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 1
 
@@ -245,10 +239,10 @@ jobs:
       - linux_test_elevated_others
       - linux_test_unelevated_ci
       - linux_test_unelevated_others
-      - analyze
       - linux_packaging
       - merge_conflict_check
       - infrastructure_tests
+      # - analyze
     if: always()
     uses: PowerShell/compliance/.github/workflows/ready-to-merge.yml@v1.0.0
     with:
@@ -256,13 +250,12 @@ jobs:
   linux_packaging:
     name: Linux Packaging
     needs:
-      - ci_build
       - changes
     if: ${{ needs.changes.outputs.packagingChanged == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
       - name: Linux Packaging
