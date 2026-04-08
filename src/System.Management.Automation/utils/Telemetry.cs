@@ -164,7 +164,7 @@ namespace Microsoft.PowerShell.Telemetry
         private static readonly HashSet<string> s_knownSubsystemNames;
 
         /// <summary>Gets a value indicating whether telemetry can be sent.</summary>
-        public static bool CanSendTelemetry { get; private set; } = false;
+        public static bool CanSendTelemetry { get; private set; }
 
         /// <summary>
         /// Initializes static members of the <see cref="ApplicationInsightsTelemetry"/> class.
@@ -768,11 +768,11 @@ namespace Microsoft.PowerShell.Telemetry
 
             if (string.Compare(featureName, s_subsystemRegistration, true) == 0)
             {
-                ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.FeatureUse, string.Join(":", featureName, GetSubsystemName(detail)), value);
+                SendTelemetryMetric(TelemetryType.FeatureUse, string.Join(":", featureName, GetSubsystemName(detail)), value);
             }
             else
             {
-                ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.FeatureUse, string.Join(":", featureName, detail), value);
+                SendTelemetryMetric(TelemetryType.FeatureUse, string.Join(":", featureName, detail), value);
             }
         }
 
@@ -788,7 +788,7 @@ namespace Microsoft.PowerShell.Telemetry
                 return;
             }
 
-            ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ExperimentalFeatureUse, string.Join(":", featureName, detail));
+            SendTelemetryMetric(TelemetryType.ExperimentalFeatureUse, string.Join(":", featureName, detail));
         }
 
         // Get the experimental feature name. If we can report it, we'll return the name of the feature, otherwise, we'll return "anonymous"

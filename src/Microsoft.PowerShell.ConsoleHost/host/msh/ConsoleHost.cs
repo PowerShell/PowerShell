@@ -318,7 +318,7 @@ namespace Microsoft.PowerShell
                     }
 
                     s_theConsoleHost.BindBreakHandler();
-                    PSHost.IsStdOutputRedirected = Console.IsOutputRedirected;
+                    IsStdOutputRedirected = Console.IsOutputRedirected;
 
                     // Send startup telemetry for ConsoleHost startup
                     ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("Normal", s_cpp.ParametersUsedAsDouble);
