@@ -4301,8 +4301,7 @@ function New-MSIXPackage
         Write-Verbose "Using LTS assets" -Verbose
     }
 
-    # Appx manifest needs to be in root of source path, but the embedded version needs to be updated
-    # cp-459155 is 'CN=Microsoft Windows Store Publisher (Store EKU), O=Microsoft Corporation, L=Redmond, S=Washington, C=US'
+    # Appx manifest needs to be in root of source path, but the embedded version needs to be updated.
     # authenticodeFormer is 'CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US'
     $releasePublisher = 'CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US'
 
@@ -4344,7 +4343,6 @@ function New-MSIXPackage
         else {
             Copy-Item -Path "$RepoRoot\assets\$_.png" -Destination "$ProductSourcePath\assets\"
         }
-
     }
 
     if ($PSCmdlet.ShouldProcess("Create .msix package?")) {
