@@ -313,7 +313,7 @@ extends:
           ob_createvpack_packagename: 'PowerShell7.Store.app'
           ob_createvpack_owneralias: 'dongbow'
           ob_createvpack_description: 'VPack for the PowerShell 7 Store Application'
-          ob_createvpack_targetDestinationDirectory: '$(Destination)'
+          ob_createvpack_targetDestinationDirectory: '$(Destination)'  ## The value is from the 'CreateVpack' task, used when pulling the generated VPack.
           ob_createvpack_propsFile: false
           ob_createvpack_provData: true
           ob_createvpack_metadata: '$(Build.SourceVersion)'
