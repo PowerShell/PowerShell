@@ -200,7 +200,7 @@ extends:
             Write-Verbose -Verbose "Verifying pdbs exist in build folder"
             $pdbs = Get-ChildItem -Path $buildWithSymbolsPath -Recurse -Filter *.pdb
             if ($pdbs.Count -eq 0) {
-              Write-Error -Message "No pdbs found in build folder"
+              throw "No pdbs found in build folder"
             }
             else {
               Write-Verbose -Verbose "Found $($pdbs.Count) pdbs in build folder"
