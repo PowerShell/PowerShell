@@ -1,9 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingConvertToSecureStringWithPlainText', '')]
-param()
-
 Import-Module (Join-Path -Path $PSScriptRoot '..\Microsoft.PowerShell.Security\certificateCommon.psm1')
 
 Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnWindows" {
@@ -167,8 +164,7 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         @{parameter = "SecurityDescriptorSddl" ; value = $SecurityDescriptorSddl},
         @{parameter = "Credential"             ; value = (
                 [System.Management.Automation.PSCredential]::new("username",
-                    #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Demo/doc/test secret.")]
-                    (ConvertTo-SecureString "PlainTextPassword" -AsPlainText -Force)))
+                    [Net.NetworkCredential]::new("", "PlainTextPassword").SecurePassword))
         }
         @{parameter = "DependsOn"      ; value = "foo", "bar"}
     ) {
@@ -377,8 +373,7 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
     It "Using bad parameters will fail for '<name>' where '<parameter>' = '<value>'" -TestCases @(
         @{cmdlet="New-Service"; name = 'credtest'    ; parameter = "Credential" ; value = (
             [System.Management.Automation.PSCredential]::new("username",
-            #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Demo/doc/test secret.")]
-            (ConvertTo-SecureString "PlainTextPassword" -AsPlainText -Force)));
+            [Net.NetworkCredential]::new("", "PlainTextPassword").SecurePassword));
             errorid = "CouldNotNewService,Microsoft.PowerShell.Commands.NewServiceCommand"},
         @{cmdlet="New-Service"; name = 'badstarttype'; parameter = "StartupType"; value = "System";
             errorid = "CannotConvertArgumentNoMessage,Microsoft.PowerShell.Commands.NewServiceCommand"},
