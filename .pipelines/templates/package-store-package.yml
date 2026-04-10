@@ -195,6 +195,7 @@ jobs:
         contents: '*.msixBundle'
         outSBName: 'PowerShellStorePackage'
         pdpPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDP/PDP'
+        pdpMediaPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDP/PDP-Media'
 
     - task: MS-RDX-MRO.windows-store-publish.package-task.store-package@3
       displayName: 'Create StoreBroker Package (Stable/LTS)'
@@ -206,6 +207,7 @@ jobs:
         contents: '*.msixBundle'
         outSBName: 'PowerShellStorePackage'
         pdpPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDP/PDP'
+        pdpMediaPath: '$(System.DefaultWorkingDirectory)/PowerShell/.pipelines/store/PDP/PDP-Media'
 
     - pwsh: |
         $outputDirectory = "$(ob_outputDirectory)"
