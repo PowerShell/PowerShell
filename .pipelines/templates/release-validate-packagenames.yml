@@ -54,9 +54,10 @@ jobs:
     displayName: Capture Artifact Listing
 
   - pwsh: |
+      Import-Module ./tools/packaging/packaging.psm1 -Force
       $message = @()
       Get-ChildItem $(System.ArtifactsDirectory)\* -recurse -filter *.rpm | ForEach-Object {
-          if($_.Name -notmatch 'powershell\-(preview-|lts-)?\d+\.\d+\.\d+(_[a-z]*\.\d+)?-1.(rh|cm).(x86_64|aarch64)\.rpm')
+          if(-not (Test-PackageNameRpm -PackageName $_.Name))
           {
               $messageInstance = "$($_.Name) is not a valid package name"
               $message += $messageInstance
@@ -67,9 +68,10 @@ jobs:
     displayName: Validate RPM package names
 
   - pwsh: |
+      Import-Module ./tools/packaging/packaging.psm1 -Force
       $message = @()
       Get-ChildItem $(System.ArtifactsDirectory)\* -recurse -filter *.tar.gz | ForEach-Object {
-          if($_.Name -notmatch 'powershell-(lts-)?\d+\.\d+\.\d+\-([a-z]*.\d+\-)?(linux|osx|linux-musl)+\-(x64\-fxdependent|x64|arm32|arm64|x64\-musl-noopt\-fxdependent)\.(tar\.gz)')
+          if(-not (Test-PackageNameTarGz -PackageName $_.Name))
           {
               $messageInstance = "$($_.Name) is not a valid package name"
               $message += $messageInstance
@@ -80,9 +82,10 @@ jobs:
     displayName: Validate Tar.Gz Package Names
 
   - pwsh: |
+      Import-Module ./tools/packaging/packaging.psm1 -Force
       $message = @()
       Get-ChildItem $(System.ArtifactsDirectory)\* -recurse -filter *.pkg | ForEach-Object {
-          if($_.Name -notmatch 'powershell-(lts-)?\d+\.\d+\.\d+\-([a-z]*.\d+\-)?osx\-(x64|arm64)\.pkg')
+          if(-not (Test-PackageNamePkg -PackageName $_.Name))
           {
               $messageInstance = "$($_.Name) is not a valid package name"
               $message += $messageInstance
@@ -93,9 +96,10 @@ jobs:
     displayName: Validate PKG Package Names
 
   - pwsh: |
+      Import-Module ./tools/packaging/packaging.psm1 -Force
       $message = @()
       Get-ChildItem $(System.ArtifactsDirectory)\* -recurse -include *.zip, *.msi | ForEach-Object {
-          if($_.Name -notmatch 'PowerShell-\d+\.\d+\.\d+\-([a-z]*.\d+\-)?win\-(fxdependent|x64|arm64|x86|fxdependentWinDesktop)\.(msi|zip){1}')
+          if(-not (Test-PackageNameWindowsMsiZip -PackageName $_.Name))
           {
               $messageInstance = "$($_.Name) is not a valid package name"
               $message += $messageInstance
@@ -107,9 +111,10 @@ jobs:
     displayName: Validate Zip and MSI Package Names
 
   - pwsh: |
+      Import-Module ./tools/packaging/packaging.psm1 -Force
       $message = @()
       Get-ChildItem $(System.ArtifactsDirectory)\* -recurse -filter *.deb | ForEach-Object {
-          if($_.Name -notmatch 'powershell(-preview|-lts)?_\d+\.\d+\.\d+([\-~][a-z]*.\d+)?-\d\.deb_amd64\.deb')
+          if(-not (Test-PackageNameDeb -PackageName $_.Name))
           {
               $messageInstance = "$($_.Name) is not a valid package name"
               $message += $messageInstance

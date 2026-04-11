@@ -5807,3 +5807,165 @@ function Test-IsProductFile {
 
     return $false
 }
+
+<#
+.SYNOPSIS
+Tests if a package name matches the expected pattern for RPM packages.
+
+.DESCRIPTION
+Validates that RPM package names follow the correct naming convention:
+- powershell-<version>-1.<dist>.<arch>.rpm
+- powershell-lts-<version>-1.<dist>.<arch>.rpm
+- powershell-preview-<version>-1.<dist>.<arch>.rpm
+Where suffix can be: _<label>.<number> (e.g., _alpha.1)
+
+.PARAMETER PackageName
+The name of the package file to validate.
+
+.EXAMPLE
+Test-PackageNameRpm -PackageName "powershell-7.6.0-1.rh.x86_64.rpm"
+Returns $true
+
+.EXAMPLE
+Test-PackageNameRpm -PackageName "powershell-lts-7.4.13-1.cm.aarch64.rpm"
+Returns $true
+#>
+function Test-PackageNameRpm {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$PackageName
+    )
+    
+    $pattern = '^powershell\-(preview-|lts-)?\d+\.\d+\.\d+(_[a-z]+\.\d+)?-1\.(rh|cm)\.(x86_64|aarch64)\.rpm$'
+    return $PackageName -match $pattern
+}
+
+<#
+.SYNOPSIS
+Tests if a package name matches the expected pattern for tar.gz packages.
+
+.DESCRIPTION
+Validates that tar.gz package names follow the correct naming convention:
+- powershell-<version>-<platform>-<runtime>.tar.gz
+- powershell-lts-<version>-<platform>-<runtime>.tar.gz
+Where suffix can be: <label>.<number>- (e.g., preview.6-)
+
+.PARAMETER PackageName
+The name of the package file to validate.
+
+.EXAMPLE
+Test-PackageNameTarGz -PackageName "powershell-7.6.0-linux-x64.tar.gz"
+Returns $true
+
+.EXAMPLE
+Test-PackageNameTarGz -PackageName "powershell-7.6.0-preview.6-linux-x64.tar.gz"
+Returns $true
+#>
+function Test-PackageNameTarGz {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$PackageName
+    )
+    
+    $pattern = '^powershell-(lts-)?\d+\.\d+\.\d+\-([a-z]+\.\d+\-)?(linux|osx|linux-musl)\-(x64\-fxdependent|x64|arm32|arm64|x64\-musl-noopt\-fxdependent)\.tar\.gz$'
+    return $PackageName -match $pattern
+}
+
+<#
+.SYNOPSIS
+Tests if a package name matches the expected pattern for macOS PKG packages.
+
+.DESCRIPTION
+Validates that macOS PKG package names follow the correct naming convention:
+- powershell-<version>-osx-<arch>.pkg
+- powershell-lts-<version>-osx-<arch>.pkg
+Where suffix can be: <label>.<number>- (e.g., preview.6-)
+
+.PARAMETER PackageName
+The name of the package file to validate.
+
+.EXAMPLE
+Test-PackageNamePkg -PackageName "powershell-7.6.0-osx-x64.pkg"
+Returns $true
+
+.EXAMPLE
+Test-PackageNamePkg -PackageName "powershell-7.6.0-preview.6-osx-x64.pkg"
+Returns $true
+#>
+function Test-PackageNamePkg {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$PackageName
+    )
+    
+    $pattern = '^powershell-(lts-)?\d+\.\d+\.\d+\-([a-z]+\.\d+\-)?osx\-(x64|arm64)\.pkg$'
+    return $PackageName -match $pattern
+}
+
+<#
+.SYNOPSIS
+Tests if a package name matches the expected pattern for Windows MSI/ZIP packages.
+
+.DESCRIPTION
+Validates that Windows MSI and ZIP package names follow the correct naming convention:
+- PowerShell-<version>-win-<runtime>.msi
+- PowerShell-<version>-win-<runtime>.zip
+Where suffix can be: <label>.<number>- (e.g., preview.6-)
+
+.PARAMETER PackageName
+The name of the package file to validate.
+
+.EXAMPLE
+Test-PackageNameWindowsMsiZip -PackageName "PowerShell-7.6.0-win-x64.msi"
+Returns $true
+
+.EXAMPLE
+Test-PackageNameWindowsMsiZip -PackageName "PowerShell-7.6.0-preview.6-win-x64.zip"
+Returns $true
+#>
+function Test-PackageNameWindowsMsiZip {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$PackageName
+    )
+    
+    $pattern = '^PowerShell-\d+\.\d+\.\d+\-([a-z]+\.\d+\-)?win\-(fxdependent|x64|arm64|x86|fxdependentWinDesktop)\.(msi|zip)$'
+    return $PackageName -cmatch $pattern
+}
+
+<#
+.SYNOPSIS
+Tests if a package name matches the expected pattern for Debian DEB packages.
+
+.DESCRIPTION
+Validates that Debian DEB package names follow the correct naming convention:
+- powershell_<version>-1.deb_<arch>.deb
+- powershell-preview_<version>-1.deb_<arch>.deb
+- powershell-lts_<version>-1.deb_<arch>.deb
+Where suffix can be: -<label>.<number> or ~<label>.<number> (e.g., -preview.6)
+
+.PARAMETER PackageName
+The name of the package file to validate.
+
+.EXAMPLE
+Test-PackageNameDeb -PackageName "powershell_7.6.0-1.deb_amd64.deb"
+Returns $true
+
+.EXAMPLE
+Test-PackageNameDeb -PackageName "powershell-preview_7.6.0-preview.6-1.deb_amd64.deb"
+Returns $true
+#>
+function Test-PackageNameDeb {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$PackageName
+    )
+    
+    $pattern = '^powershell(-preview|-lts)?_\d+\.\d+\.\d+([\-~][a-z]+\.\d+)?-\d\.deb_(amd64|arm64)\.deb$'
+    return $PackageName -match $pattern
+}
