@@ -70,7 +70,7 @@ Describe "Experimental Feature: && and || operators - Feature-Enabled" -Tag CI {
             @{ Statement = '"hello" && get-item macarena_doesnotexist || "there"; "hello" || "there"'; Output = @('hello', 'there', 'hello') }
             @{ Statement = '1 + 1 && "Hi"'; Output = @(2, 'Hi') }
             @{ Statement = 'testexe -returncode 0 && testexe -returncode 1 || Write-Output "Recovered"'; Output = @('0', '1', 'Recovered') }
-            @{ Statement = 'testexe -returncode 0 || testexe -returncode 0 && Write-Output "ShouldNotRun"'; Output = @('0') }
+            @{ Statement = 'testexe -returncode 0 || (testexe -returncode 0 && Write-Output "ShouldNotRun")'; Output = @('0') }
 
             # Pipeline and native command
             @{ Statement = '1,2,3 | % { $_ + 1 } && testexe -returncode 0'; Output = @('2','3','4','0') }

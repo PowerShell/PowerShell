@@ -155,7 +155,7 @@ namespace System.Management.Automation.Language
 
         #region Operators
 
-        /// <summary>The pipeline chain operator '&&'.</summary>
+        /// <summary>The pipeline chain operator '&amp;&amp;'.</summary>
         AndAnd = 26,
 
         /// <summary>The pipeline chain operator '||'.</summary>
