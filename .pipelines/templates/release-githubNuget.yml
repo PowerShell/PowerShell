@@ -17,7 +17,7 @@ jobs:
         pipeline: PSPackagesOfficial
         artifactName: drop_upload_upload_packages
   variables:
-    - template: ./variable/release-shared.yml@self
+    - template: ./variables/release-shared.yml@self
       parameters:
         RELEASETAG: $[ stageDependencies.setReleaseTagAndChangelog.setTagAndChangelog.outputs['OutputReleaseTag.releaseTag'] ]
 
@@ -35,6 +35,14 @@ jobs:
       targetType: inline
       script: |
         $Path = "$(Pipeline.Workspace)/GitHubPackages"
+
+        # The .exe packages are for Windows Update only and should not be uploaded to GitHub release.
+        $exefiles = Get-ChildItem -Path $Path -Filter *.exe
+        if ($exefiles) {
+            Write-Verbose -Verbose "Remove .exe packages:"
+            $exefiles | Remove-Item -Force -Verbose
+        }
+
         $OutputPath = Join-Path $Path 'hashes.sha256'
         $packages  = Get-ChildItem -Path $Path -Include * -Recurse -File
         $checksums = $packages |
@@ -159,7 +167,7 @@ jobs:
         pipeline: PSPackagesOfficial
         artifactName: drop_upload_upload_packages
   variables:
-  - template: ./variable/release-shared.yml@self
+  - template: ./variables/release-shared.yml@self
     parameters:
       VERSION: $[ stageDependencies.setReleaseTagAndChangelog.SetTagAndChangelog.outputs['OutputVersion.Version'] ]
 
