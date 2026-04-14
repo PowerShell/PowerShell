@@ -2152,7 +2152,7 @@ function Get-PackageDependencies
         #   than the build version and we know that older versions just works.
         #
         $MinICUVersion = 60                    # runtime minimum supported
-        $BuildICUVersion = Get-IcuLatestRelease
+        $BuildICUVersion = 76                  # current build version
         $MaxICUVersion = $BuildICUVersion + 30 # headroom
 
         if ($Distribution -eq 'deb') {
@@ -4274,18 +4274,8 @@ function New-MSIXPackage
 
     $makepri = Get-Item (Join-Path $makeappx.Directory "makepri.exe") -ErrorAction Stop
 
+    $displayName = $ProductName
     $ProductSemanticVersion = Get-PackageSemanticVersion -Version $ProductVersion
-    $productSemanticVersionWithName = $ProductName + '-' + $ProductSemanticVersion
-    $packageName = $productSemanticVersionWithName
-    if ($Private) {
-        $ProductNameSuffix = 'Private'
-    }
-
-    if ($ProductNameSuffix) {
-        $packageName += "-$ProductNameSuffix"
-    }
-
-    $displayName = $productName
 
     if ($Private) {
         $ProductName = 'PowerShell-Private'
@@ -4295,11 +4285,18 @@ function New-MSIXPackage
         $displayName += ' Preview'
     } elseif ($LTS) {
         $ProductName += '-LTS'
-        $displayName += '-LTS'
+        $displayName += ' LTS'
     }
 
     Write-Verbose -Verbose "ProductName: $productName"
     Write-Verbose -Verbose "DisplayName: $displayName"
+
+    $packageName = $ProductName + '-' + $ProductSemanticVersion
+
+    # Appends Architecture to the package name
+    if ($ProductNameSuffix) {
+        $packageName += "-$ProductNameSuffix"
+    }
 
     $ProductVersion = Get-WindowsVersion -PackageName $packageName
 
@@ -4317,12 +4314,11 @@ function New-MSIXPackage
         Write-Verbose "Using Preview assets" -Verbose
     } elseif ($LTS) {
         # This is the PhoneProductId for the "Microsoft.PowerShell-LTS" package.
-        $PhoneProductId = "a9af273a-c636-47ac-bc2a-775edf80b2b9"
+        $PhoneProductId = "b7a4b003-3704-47a9-b018-cfcc9801f4fc"
         Write-Verbose "Using LTS assets" -Verbose
     }
 
-    # Appx manifest needs to be in root of source path, but the embedded version needs to be updated
-    # cp-459155 is 'CN=Microsoft Windows Store Publisher (Store EKU), O=Microsoft Corporation, L=Redmond, S=Washington, C=US'
+    # Appx manifest needs to be in root of source path, but the embedded version needs to be updated.
     # authenticodeFormer is 'CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US'
     $releasePublisher = 'CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US'
 
@@ -4364,7 +4360,6 @@ function New-MSIXPackage
         else {
             Copy-Item -Path "$RepoRoot\assets\$_.png" -Destination "$ProductSourcePath\assets\"
         }
-
     }
 
     if ($PSCmdlet.ShouldProcess("Create .msix package?")) {
@@ -5811,16 +5806,4 @@ function Test-IsProductFile {
     }
 
     return $false
-}
-
-# Get major version from latest ICU release (latest: stable version)
-function Get-IcuLatestRelease {
-    $response = Invoke-WebRequest -Uri "https://github.com/unicode-org/icu/releases/latest"
-    $tagUrl = ($response.Links | Where-Object href -like "*releases/tag/release-*")[0].href
-
-    if ($tagUrl -match 'release-(\d+)\.') {
-       return [int]$Matches[1]
-    }
-
-    throw "Unable to determine the latest ICU release version."
 }

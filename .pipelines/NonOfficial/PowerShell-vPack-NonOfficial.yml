@@ -1,0 +1,88 @@
+trigger: none
+
+parameters: # parameters are shown up in ADO UI in a build queue time
+- name: 'createVPack'
+  displayName: 'Create and Submit VPack'
+  type: boolean
+  default: true
+- name: vPackName
+  type: string
+  displayName: 'VPack Name:'
+  default: 'PowerShell.BuildTool'
+  values:
+    - PowerShell.BuildTool
+    - PowerShell
+    - PowerShellDoNotUse
+- name: 'ReleaseTagVar'
+  type: string
+  displayName: 'Release Tag Var:'
+  default: 'fromBranch'
+- name: 'debug'
+  displayName: 'Enable debug output'
+  type: boolean
+  default: false
+- name: netiso
+  displayName: "Network Isolation Policy"
+  type: string
+  values:
+    - KS4
+    - R1
+    - Netlock
+  default: "R1"
+
+name: vPack_$(Build.SourceBranchName)_NonOfficial_Create.${{ parameters.createVPack }}_Name.${{ parameters.vPackName}}_$(date:yyyyMMdd).$(rev:rr)
+
+variables:
+  - template: ./pipelines/templates/variables/PowerShell-vPack-Variables.yml@self
+    parameters:
+      debug: ${{ parameters.debug }}
+      ReleaseTagVar: ${{ parameters.ReleaseTagVar }}
+      netiso: ${{ parameters.netiso }}
+
+resources:
+  repositories:
+    - repository: onebranchTemplates
+      type: git
+      name: OneBranch.Pipelines/GovernedTemplates
+      ref: refs/heads/main
+
+extends:
+  template: v2/Microsoft.NonOfficial.yml@onebranchTemplates
+  parameters:
+    platform:
+      name: 'windows_undocked' # windows undocked
+
+    featureFlags:
+      WindowsHostVersion:
+        Version: 2022
+        Network: ${{ variables.netiso }}
+
+    cloudvault:
+      enabled: false
+
+    globalSdl:
+      useCustomPolicy: true # for signing code
+      disableLegacyManifest: true
+      # disabled Armory as we dont have any ARM templates to scan. It fails on some sample ARM templates.
+      armory:
+        enabled: false
+      sbom:
+        enabled: true
+      compiled:
+        enabled: false
+      credscan:
+        enabled: true
+        scanFolder:  $(Build.SourcesDirectory)
+        suppressionsFile: $(Build.SourcesDirectory)\.config\suppress.json
+      binskim:
+        enabled: false
+        exactToolVersion: 4.4.2
+      # APIScan requires a non-Ready-To-Run build
+      apiscan:
+        enabled: false
+      tsaOptionsFile: .config/tsaoptions.json
+    stages:
+    - template: ./pipelines/templates/stages/PowerShell-vPack-Stages.yml@self
+      parameters:
+        createVPack: ${{ parameters.createVPack }}
+        vPackName: ${{ parameters.vPackName }}

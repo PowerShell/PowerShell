@@ -1,0 +1,97 @@
+trigger: none
+
+parameters:
+  - name: InternalSDKBlobURL
+    displayName: URL to the blob having internal .NET SDK
+    type: string
+    default: ' '
+  - name: ReleaseTagVar
+    displayName: Release Tag
+    type: string
+    default: 'fromBranch'
+  - name: SKIP_SIGNING
+    displayName: Debugging - Skip Signing
+    type: string
+    default: 'NO'
+  - name: RUN_TEST_AND_RELEASE
+    displayName: Debugging - Run Test and Release Artifacts Stage
+    type: boolean
+    default: true
+  - name: RUN_WINDOWS
+    displayName: Debugging - Enable Windows Stage
+    type: boolean
+    default: true
+  - name: ENABLE_MSBUILD_BINLOGS
+    displayName: Debugging - Enable MSBuild Binary Logs
+    type: boolean
+    default: false
+  - name: FORCE_CODEQL
+    displayName: Debugging - Enable CodeQL and set cadence to 1 hour
+    type: boolean
+    default: false
+
+name: bins-$(BUILD.SOURCEBRANCHNAME)-nonofficial-$(Build.BuildId)
+
+resources:
+  repositories:
+  - repository: ComplianceRepo
+    type: github
+    endpoint: ComplianceGHRepo
+    name: PowerShell/compliance
+    ref: master
+  - repository: onebranchTemplates
+    type: git
+    name: OneBranch.Pipelines/GovernedTemplates
+    ref: refs/heads/main
+
+variables:
+  - template: ./pipelines/templates/variables/PowerShell-Coordinated_Packages-Variables.yml@self
+    parameters:
+      InternalSDKBlobURL: ${{ parameters.InternalSDKBlobURL }}
+      ReleaseTagVar: ${{ parameters.ReleaseTagVar }}
+      SKIP_SIGNING: ${{ parameters.SKIP_SIGNING }}
+      ENABLE_MSBUILD_BINLOGS: ${{ parameters.ENABLE_MSBUILD_BINLOGS }}
+      FORCE_CODEQL: ${{ parameters.FORCE_CODEQL }}
+
+extends:
+  template: v2/OneBranch.NonOfficial.CrossPlat.yml@onebranchTemplates
+  parameters:
+    customTags: 'ES365AIMigrationTooling'
+    featureFlags:
+      LinuxHostVersion:
+          Network: KS3
+      WindowsHostVersion:
+          Network: KS3
+      incrementalSDLBinaryAnalysis: true
+    globalSdl:
+      disableLegacyManifest: true
+      # disabled Armorty as we dont have any ARM templates to scan. It fails on some sample ARM templates.
+      armory:
+        enabled: false
+      sbom:
+        enabled: true
+      codeql:
+        compiled:
+          enabled: $(CODEQL_ENABLED)
+        tsaEnabled: true # This enables TSA bug filing only for CodeQL 3000
+      credscan:
+        enabled: true
+        scanFolder:  $(Build.SourcesDirectory)
+        suppressionsFile: $(Build.SourcesDirectory)\.config\suppress.json
+      cg:
+        enabled: true
+        ignoreDirectories: '.devcontainer,demos,docker,docs,src,test,tools/packaging'
+      binskim:
+        enabled: false
+        exactToolVersion: 4.4.2
+      # APIScan requires a non-Ready-To-Run build
+      apiscan:
+        enabled: false
+      tsaOptionsFile: .config\tsaoptions.json
+
+    stages:
+    - template: ./pipelines/templates/stages/PowerShell-Coordinated_Packages-Stages.yml@self
+      parameters:
+        RUN_WINDOWS: ${{ parameters.RUN_WINDOWS }}
+        RUN_TEST_AND_RELEASE: ${{ parameters.RUN_TEST_AND_RELEASE }}
+        OfficialBuild: false
