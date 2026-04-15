@@ -1,0 +1,27 @@
+[
+  {
+    "ChangeType": "Security",
+    "Branch": "release/v7.6.1",
+    "PackageId": "System.Security.Cryptography.Xml",
+    "FromVersion": "10.0.5",
+    "ToVersion": "10.0.6",
+    "VulnerabilityId": [
+      "GHSA-37GX-XXP4-5RGX",
+      "CVE-2026-33116",
+      "GHSA-W3X6-4M5H-CXQF",
+      "CVE-2026-26171"
+    ],
+    "Severity": [
+      "high"
+    ],
+    "VulnerableRanges": [
+      "[10.0.0, 10.0.5]"
+    ],
+    "AdvisoryUrls": [
+      "https://github.com/advisories/GHSA-37gx-xxp4-5rgx",
+      "https://github.com/advisories/GHSA-w3x6-4m5h-cxqf"
+    ],
+    "Justification": null,
+    "TimestampUtc": "2026-04-15T22:17:31.3488963Z"
+  }
+]

@@ -60,7 +60,7 @@
     <PackageReference Include="System.Runtime.Caching" Version="10.0.5" />
     <PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.5" />
     <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="10.0.5" />
-    <PackageReference Include="System.Security.Cryptography.Xml" Version="10.0.5" />
+    <PackageReference Include="System.Security.Cryptography.Xml" Version="10.0.6" />
     <PackageReference Include="System.Security.Permissions" Version="10.0.5" />
     <!-- the following package(s) are from https://github.com/dotnet/wcf -->
     <PackageReference Include="System.ServiceModel.Http" Version="10.0.652802" />
@@ -85,14 +85,13 @@
          dotnet msbuild ./dummy.csproj /t:ResolveAssemblyReferencesDesignTime /fileLogger /noconsolelogger /v:diag
       3. Search '_ReferencesFromRAR' in the produced 'msbuild.log' file.
   -->
-  <Target Name="_GetDependencies"
-          DependsOnTargets="ResolveAssemblyReferencesDesignTime">
+  <Target Name="_GetDependencies" DependsOnTargets="ResolveAssemblyReferencesDesignTime">
     <ItemGroup>
       <!--
         Excludes 'Microsoft.Management.Infrastructure' from the type catalog reference list,
         as it is provided separately at runtime and must not be included in the generated catalog.
       -->
-      <_RefAssemblyPath Include="%(_ReferencesFromRAR.OriginalItemSpec)%3B" Condition=" '%(_ReferencesFromRAR.NuGetPackageId)' != 'Microsoft.Management.Infrastructure' "/>
+      <_RefAssemblyPath Include="%(_ReferencesFromRAR.OriginalItemSpec)%3B" Condition=" '%(_ReferencesFromRAR.NuGetPackageId)' != 'Microsoft.Management.Infrastructure' " />
     </ItemGroup>
     <WriteLinesToFile File="$(_DependencyFile)" Lines="@(_RefAssemblyPath)" Overwrite="true" />
   </Target>
