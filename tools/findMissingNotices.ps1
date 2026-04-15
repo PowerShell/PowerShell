@@ -18,7 +18,7 @@ Import-Module "$PSScriptRoot\..\.github\workflows\GHWorkflowHelper" -Force
 
 $targetsConfigPath = Join-Path -Path $PSScriptRoot -ChildPath 'findMissingNotices.targets.json'
 if (-not (Test-Path -LiteralPath $targetsConfigPath)) {
-    throw "Missing target framework config file '$targetsConfigPath'."
+    throw "Missing target framework config file '$targetsConfigPath'. Add '/tools/findMissingNotices.targets.json' with 'dotnetTargetName' and 'windowsTargetNames' entries."
 }
 
 try {
@@ -27,7 +27,11 @@ try {
     throw "Failed to load target framework config from '$targetsConfigPath'. Ensure the file contains valid JSON. Error: $($_.Exception.Message)"
 }
 
-if (-not $targetsConfig.ContainsKey('dotnetTargetName') -or [string]::IsNullOrWhiteSpace($targetsConfig.dotnetTargetName)) {
+if ($targetsConfig -isnot [hashtable]) {
+    throw "Invalid target framework config '$targetsConfigPath': expected a JSON object with 'dotnetTargetName' and 'windowsTargetNames'."
+}
+
+if (-not $targetsConfig.ContainsKey('dotnetTargetName') -or [string]::IsNullOrWhiteSpace($targetsConfig['dotnetTargetName'])) {
     throw "Invalid target framework config '$targetsConfigPath': 'dotnetTargetName' must be a non-empty string."
 }
 
@@ -35,8 +39,21 @@ if (-not $targetsConfig.ContainsKey('windowsTargetNames')) {
     throw "Invalid target framework config '$targetsConfigPath': 'windowsTargetNames' must be present and must be an array."
 }
 
-$script:dotnetTargetName = [string]$targetsConfig.dotnetTargetName
-$script:windowsTargetNames = @($targetsConfig.windowsTargetNames | ForEach-Object { [string]$_ } | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
+if ($null -eq $targetsConfig['windowsTargetNames'] -or $targetsConfig['windowsTargetNames'] -isnot [array]) {
+    throw "Invalid target framework config '$targetsConfigPath': 'windowsTargetNames' must be an array (empty array is allowed)."
+}
+
+$script:dotnetTargetName = [string]$targetsConfig['dotnetTargetName']
+$script:windowsTargetNames = @()
+foreach ($windowsTargetName in $targetsConfig['windowsTargetNames']) {
+    if ($windowsTargetName -isnot [string] -or [string]::IsNullOrWhiteSpace($windowsTargetName)) {
+        throw "Invalid target framework config '$targetsConfigPath': every entry in 'windowsTargetNames' must be a non-empty string."
+    }
+
+    $script:windowsTargetNames += $windowsTargetName
+}
+
+# Empty windowsTargetNames is valid and means "use base target fallback only".
 
 $packageSourceName = 'findMissingNoticesNugetOrg'
 if (!(Get-PackageSource -Name $packageSourceName -ErrorAction SilentlyContinue)) {
@@ -241,6 +258,8 @@ function Get-CGRegistrations {
         "win-.*" {
             $sdkToUse = $winDesktopSdk
             $folder = $windowsProjectName
+            $target = "$baseTargetName|$actualRuntime"
+            $neutralTarget = "$baseTargetName"
         }
         "modules" {
             $folder = "modules"
@@ -266,7 +285,12 @@ function Get-CGRegistrations {
             # Windows target selection is optional and ordered:
             # 1. Try full Windows TFMs from config in order.
             # 2. Fall back to the base non-Windows TFM if present.
-            $availableTargets = @(Get-ChildItem -Path "${folder}:/targets" -ErrorAction Stop | Select-Object -ExpandProperty Name)
+            try {
+                $availableTargets = @(Get-ChildItem -Path "${folder}:/targets" -ErrorAction Stop | Select-Object -ExpandProperty Name)
+            } catch {
+                throw "Unable to enumerate available targets for runtime '$Runtime' in '$folder'. Ensure dotnet restore succeeded and project.assets.json contains target data. Error: $($_.Exception.Message)"
+            }
+
             $selectedTargetName = $null
 
             foreach ($windowsTargetName in $script:windowsTargetNames) {
@@ -283,11 +307,21 @@ function Get-CGRegistrations {
 
             if (-not $selectedTargetName) {
                 Write-Verbose "Available targets for '$folder': $($availableTargets -join ', ')" -Verbose
-                throw "Unable to find a target for '$Runtime'. Tried configured windowsTargetNames '$($script:windowsTargetNames -join "', '")' and fallback base target '$baseTargetName'."
+                if ($script:windowsTargetNames.Count -eq 0) {
+                    throw "Unable to find a target for '$Runtime'. Tried fallback base target '$baseTargetName' (no windowsTargetNames configured). Ensure project.assets.json contains this target or update dotnetTargetName in '$targetsConfigPath'."
+                }
+
+                throw "Unable to find a target for '$Runtime'. Tried configured windowsTargetNames '$($script:windowsTargetNames -join "', '")' and fallback base target '$baseTargetName'. Update '$targetsConfigPath' with a valid windows target from the available list."
             }
 
             $target = "$selectedTargetName|$actualRuntime"
             $neutralTarget = $selectedTargetName
+        }
+
+        # Defensive check: non-Windows paths set targets in the switch block,
+        # Windows path may override them after inspecting available assets targets.
+        if (-not $target -or -not $neutralTarget) {
+            throw "Unable to determine restore targets for runtime '$Runtime'."
         }
 
         try {
