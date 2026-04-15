@@ -1,0 +1,6 @@
+{
+  "dotnetTargetName": "net11.0",
+  "windowsTargetNames": [
+    "net11.0-windows"
+  ]
+}
