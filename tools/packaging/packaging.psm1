@@ -2152,7 +2152,7 @@ function Get-PackageDependencies
         #   than the build version and we know that older versions just works.
         #
         $MinICUVersion = 60                    # runtime minimum supported
-        $BuildICUVersion = Get-IcuLatestRelease
+        $BuildICUVersion = 76                  # current build version
         $MaxICUVersion = $BuildICUVersion + 30 # headroom
 
         if ($Distribution -eq 'deb') {
@@ -4285,7 +4285,7 @@ function New-MSIXPackage
         $displayName += ' Preview'
     } elseif ($LTS) {
         $ProductName += '-LTS'
-        $displayName += '-LTS'
+        $displayName += ' LTS'
     }
 
     Write-Verbose -Verbose "ProductName: $productName"
@@ -4318,8 +4318,7 @@ function New-MSIXPackage
         Write-Verbose "Using LTS assets" -Verbose
     }
 
-    # Appx manifest needs to be in root of source path, but the embedded version needs to be updated
-    # cp-459155 is 'CN=Microsoft Windows Store Publisher (Store EKU), O=Microsoft Corporation, L=Redmond, S=Washington, C=US'
+    # Appx manifest needs to be in root of source path, but the embedded version needs to be updated.
     # authenticodeFormer is 'CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US'
     $releasePublisher = 'CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US'
 
@@ -4361,7 +4360,6 @@ function New-MSIXPackage
         else {
             Copy-Item -Path "$RepoRoot\assets\$_.png" -Destination "$ProductSourcePath\assets\"
         }
-
     }
 
     if ($PSCmdlet.ShouldProcess("Create .msix package?")) {
@@ -5808,16 +5806,4 @@ function Test-IsProductFile {
     }
 
     return $false
-}
-
-# Get major version from latest ICU release (latest: stable version)
-function Get-IcuLatestRelease {
-    $response = Invoke-WebRequest -Uri "https://github.com/unicode-org/icu/releases/latest"
-    $tagUrl = ($response.Links | Where-Object href -like "*releases/tag/release-*")[0].href
-
-    if ($tagUrl -match 'release-(\d+)\.') {
-       return [int]$Matches[1]
-    }
-
-    throw "Unable to determine the latest ICU release version."
 }

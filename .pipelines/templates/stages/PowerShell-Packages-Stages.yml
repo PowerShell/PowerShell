@@ -173,6 +173,12 @@ stages:
     parameters:
       OfficialBuild: ${{ parameters.OfficialBuild }}
 
+- stage: store_package
+  displayName: 'Store Package'
+  dependsOn: [msixbundle]
+  jobs:
+  - template: /.pipelines/templates/package-store-package.yml@self
+
 - stage: upload
   displayName: 'Upload'
   dependsOn: [prep, mac_package, windows_package_sign, linux_package, nupkg, msixbundle]  # prep needed for BuildInfo JSON

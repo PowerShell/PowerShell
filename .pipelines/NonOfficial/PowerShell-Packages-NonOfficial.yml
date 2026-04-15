@@ -31,7 +31,7 @@ parameters: # parameters are shown up in ADO UI in a build queue time
 name: pkgs-$(BUILD.SOURCEBRANCHNAME)-nonofficial-$(Build.BuildId)
 
 variables:
-  - template: ../templates/variables/PowerShell-Packages-Variables.yml
+  - template: ./pipelines/templates/variables/PowerShell-Packages-Variables.yml@self
     parameters:
       debug: ${{ parameters.debug }}
       ForceAzureBlobDelete: ${{ parameters.ForceAzureBlobDelete }}
@@ -92,6 +92,6 @@ extends:
         enabled: false
       tsaOptionsFile: .config\tsaoptions.json
     stages:
-    - template: ../templates/stages/PowerShell-Packages-Stages.yml
+    - template: ./pipelines/templates/stages/PowerShell-Packages-Stages.yml@self
       parameters:
         OfficialBuild: false

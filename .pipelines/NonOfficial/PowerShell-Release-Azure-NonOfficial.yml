@@ -17,7 +17,7 @@ parameters: # parameters are shown up in ADO UI in a build queue time
 name: ev2-$(BUILD.SOURCEBRANCHNAME)-nonofficial-$(Build.BuildId)
 
 variables:
-  - template: ../templates/variables/PowerShell-Release-Azure-Variables.yml
+  - template: ./pipelines/templates/variables/PowerShell-Release-Azure-Variables.yml@self
     parameters:
       debug: ${{ parameters.debug }}
 
