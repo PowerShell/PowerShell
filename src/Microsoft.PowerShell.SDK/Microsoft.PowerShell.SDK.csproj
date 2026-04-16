@@ -17,16 +17,17 @@
   <ItemGroup>
     <!-- This section is to force the version of non-direct dependencies -->
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="8.0.25" />
+    <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="8.0.26" />
     <!-- the following package(s) are from https://github.com/dotnet/fxdac -->
     <PackageReference Include="System.Data.SqlClient" Version="4.9.1" />
     <PackageReference Include="System.Diagnostics.EventLog" Version="8.0.2" />
     <PackageReference Include="System.DirectoryServices.Protocols" Version="8.0.2" />
-    <PackageReference Include="System.Drawing.Common" Version="8.0.25" />
+    <PackageReference Include="System.Drawing.Common" Version="8.0.26" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
     <PackageReference Include="System.IO.Packaging" Version="8.0.1" />
     <PackageReference Include="System.Runtime.Caching" Version="8.0.1" />
     <PackageReference Include="System.Net.Http.WinHttpHandler" Version="8.0.3" />
+    <PackageReference Include="System.Security.Cryptography.Xml" Version="8.0.3" />
     <PackageReference Include="System.Text.Encodings.Web" Version="8.0.0" />
     <!--
         the following package(s) are from https://github.com/dotnet/wcf
@@ -41,7 +42,7 @@
     <PackageReference Include="System.Private.ServiceModel" Version="4.10.3" />
     <PackageReference Include="System.Web.Services.Description" Version="4.10.3" />
     <!-- the source could not be found for the following package(s) -->
-    <PackageReference Include="Microsoft.Windows.Compatibility" Version="8.0.25" />
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="8.0.26" />
   </ItemGroup>
 
   <!--
@@ -54,14 +55,13 @@
          dotnet msbuild ./dummy.csproj /t:ResolveAssemblyReferencesDesignTime /fileLogger /noconsolelogger /v:diag
       3. Search '_ReferencesFromRAR' in the produced 'msbuild.log' file.
   -->
-  <Target Name="_GetDependencies"
-          DependsOnTargets="ResolveAssemblyReferencesDesignTime">
+  <Target Name="_GetDependencies" DependsOnTargets="ResolveAssemblyReferencesDesignTime">
     <ItemGroup>
       <!--
         Excludes 'Microsoft.Management.Infrastructure' from the type catalog reference list,
         as it is provided separately at runtime and must not be included in the generated catalog.
       -->
-      <_RefAssemblyPath Include="%(_ReferencesFromRAR.OriginalItemSpec)%3B" Condition=" '%(_ReferencesFromRAR.NuGetPackageId)' != 'Microsoft.Management.Infrastructure' "/>
+      <_RefAssemblyPath Include="%(_ReferencesFromRAR.OriginalItemSpec)%3B" Condition=" '%(_ReferencesFromRAR.NuGetPackageId)' != 'Microsoft.Management.Infrastructure' " />
     </ItemGroup>
     <WriteLinesToFile File="$(_DependencyFile)" Lines="@(_RefAssemblyPath)" Overwrite="true" />
   </Target>
