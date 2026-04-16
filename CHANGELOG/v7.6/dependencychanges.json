@@ -36,5 +36,18 @@
     "AdvisoryUrls": [],
     "Justification": "Updated .NET SDK. Building with the latest SDK is required.",
     "TimestampUtc": "2026-04-16T23:13:22.4500098Z"
+  },
+  {
+    "ChangeType": "NonSecurity",
+    "Branch": "release/v7.6.1",
+    "PackageId": "System.Security.Cryptography.Pkcs",
+    "FromVersion": "10.0.5",
+    "ToVersion": "10.0.6",
+    "VulnerabilityId": [],
+    "Severity": [],
+    "VulnerableRanges": [],
+    "AdvisoryUrls": [],
+    "Justification": "Required dependency of System.Security.Cryptography.Xml.",
+    "TimestampUtc": "2026-04-16T23:13:22.4500098Z"
   }
 ]
