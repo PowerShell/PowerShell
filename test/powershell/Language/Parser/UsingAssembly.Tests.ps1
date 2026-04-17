@@ -3,14 +3,19 @@
 
 Describe "Using assembly" -Tags "CI" {
 
-    try
-    {
+    BeforeAll {
         Push-Location $PSScriptRoot
         $guid = [Guid]::NewGuid()
 
         Add-Type -OutputAssembly $PSScriptRoot\UsingAssemblyTest$guid.dll -TypeDefinition @"
 public class ABC {}
 "@
+    }
+
+    AfterAll {
+        Remove-Item -ErrorAction Ignore .\UsingAssemblyTest$guid.dll
+        Pop-Location
+    }
 
         It 'parse reports error on non-existing assembly by relative path' {
             $err = $null
@@ -92,10 +97,4 @@ public class ABC {}
                 $assembly | Should -Be $assemblyPath
             }
         }
-    }
-    finally
-    {
-        Remove-Item -ErrorAction Ignore .\UsingAssemblyTest$guid.dll
-        Pop-Location
-    }
 }

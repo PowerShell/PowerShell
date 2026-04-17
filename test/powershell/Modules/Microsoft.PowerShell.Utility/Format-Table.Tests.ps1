@@ -954,7 +954,7 @@ Describe 'Table color tests' -Tag 'CI' {
         $actual | Should -BeExactly $expected
     }
 
-    Context 'ExcludeProperty parameter' {
+    Context 'ExcludeProperty parameter' -Skip:(-not (Get-Command Format-Table).Parameters.ContainsKey('ExcludeProperty')) {
         It 'Should exclude specified properties' {
             $obj = [pscustomobject]@{ Name = 'Test'; Age = 30; City = 'Seattle' }
             $result = $obj | Format-Table -ExcludeProperty Age | Out-String

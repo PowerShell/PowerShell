@@ -18,7 +18,7 @@ Describe "Behavior is specific for each platform" -tags "CI" {
         $result.Count | Should -Be 3
         $result[0] | Should -Be 1
         $result[1] | Should -Be 1
-        $result[2] | Should Be "a"
+        $result[2] | Should -Be "a"
     }
 
 }
@@ -30,7 +30,7 @@ Describe "tests for multiple languages and extensions" -tags "CI" {
         }
         $PSNativeCommandArgumentPassing = $passingStyle
     }
-    BeforeAll {
+    BeforeDiscovery {
         $testCases = @(
             @{
                 Command = "cscript.exe"
@@ -119,7 +119,9 @@ echo Argument 4 is: ^<%4^>
 '@
             }
         )
+    }
 
+    BeforeAll {
         # determine whether we should skip the tests we just defined
         # doing it in this order ensures that the test output will show each skipped test
         $skipTests = -not $IsWindows
@@ -163,12 +165,15 @@ Describe "Will error correctly if an attempt to set variable to improper value" 
 }
 
 Describe "find.exe uses legacy behavior on Windows" -Tag 'CI' {
-    BeforeAll {
-        $currentSetting = $PSNativeCommandArgumentPassing
-        $PSNativeCommandArgumentPassing = "Windows"
+    BeforeDiscovery {
         $testCases = @{ pattern = "" },
             @{ pattern = "blat" },
             @{ pattern = "bl at" }
+    }
+
+    BeforeAll {
+        $currentSetting = $PSNativeCommandArgumentPassing
+        $PSNativeCommandArgumentPassing = "Windows"
     }
     AfterAll {
         $PSNativeCommandArgumentPassing = $currentSetting

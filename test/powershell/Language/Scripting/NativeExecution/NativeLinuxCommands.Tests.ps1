@@ -53,7 +53,7 @@ echo 'command'
 Describe "Scripts with extensions" -tags "CI" {
     BeforeAll {
         $data = "Hello World"
-        Setup -File testScript.ps1 -Content "'$data'"
+        Set-Content -Path (Join-Path $TestDrive 'testScript.ps1') -Value "'$data'"
         $originalPath = $env:PATH
         $env:PATH += [IO.Path]::PathSeparator + $TestDrive
     }

@@ -1,18 +1,33 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Get-Content" -Tags "CI" {
-    $testString = "This is a test content for a file"
-    $nl         = [Environment]::NewLine
-    $firstline  = "Here's a first line "
-    $secondline = " here's a second line"
-    $thirdline  = "more text"
-    $fourthline = "just to make sure"
-    $fifthline  = "there's plenty to work with"
-    $testString2 = $firstline + $nl + $secondline + $nl + $thirdline + $nl + $fourthline + $nl + $fifthline
-    $testPath   = Join-Path -Path $TestDrive -ChildPath testfile1
-    $testPath2  = Join-Path -Path $TestDrive -ChildPath testfile2
-    $testContent = "AA","BB","CC","DD"
-    $testDelimiterContent = "Hello1,World1","Hello2,World2","Hello3,World3","Hello4,World4"
+    BeforeDiscovery {
+        $testString = "This is a test content for a file"
+        $nl         = [Environment]::NewLine
+        $firstline  = "Here's a first line "
+        $secondline = " here's a second line"
+        $thirdline  = "more text"
+        $fourthline = "just to make sure"
+        $fifthline  = "there's plenty to work with"
+        $testString2 = $firstline + $nl + $secondline + $nl + $thirdline + $nl + $fourthline + $nl + $fifthline
+        $testContent = "AA","BB","CC","DD"
+        $testDelimiterContent = "Hello1,World1","Hello2,World2","Hello3,World3","Hello4,World4"
+    }
+
+    BeforeAll {
+        $testString = "This is a test content for a file"
+        $nl         = [Environment]::NewLine
+        $firstline  = "Here's a first line "
+        $secondline = " here's a second line"
+        $thirdline  = "more text"
+        $fourthline = "just to make sure"
+        $fifthline  = "there's plenty to work with"
+        $testString2 = $firstline + $nl + $secondline + $nl + $thirdline + $nl + $fourthline + $nl + $fifthline
+        $testPath   = Join-Path -Path $TestDrive -ChildPath testfile1
+        $testPath2  = Join-Path -Path $TestDrive -ChildPath testfile2
+        $testContent = "AA","BB","CC","DD"
+        $testDelimiterContent = "Hello1,World1","Hello2,World2","Hello3,World3","Hello4,World4"
+    }
 
     BeforeEach {
         New-Item -Path $testPath -ItemType file -Force -Value $testString
@@ -145,37 +160,38 @@ Describe "Get-Content" -Tags "CI" {
 
     It "should Get-Content with a variety of -Tail and -ReadCount: <test>" -TestCases @(
         @{ test = "negative readcount"
-            GetContentParams = @{Path = $testPath; Readcount = -1; Tail = 5}
+            GetContentParams = @{Readcount = -1; Tail = 5}
             expectedLength = 4
             expectedContent = "AA","BB","CC","DD"
         }
         @{ test = "readcount=0"
-            GetContentParams = @{Path = $testPath; Readcount = 0; Tail = 3}
+            GetContentParams = @{Readcount = 0; Tail = 3}
             expectedLength = 3
             expectedContent = "BB","CC","DD"
         }
         @{ test = "readcount=1"
-            GetContentParams = @{Path = $testPath; Readcount = 1; Tail = 3}
+            GetContentParams = @{Readcount = 1; Tail = 3}
             expectedLength = 3
             expectedContent = "BB","CC","DD"
         }
         @{ test = "high readcount"
-            GetContentParams = @{Path = $testPath; Readcount = 99999; Tail = 3}
+            GetContentParams = @{Readcount = 99999; Tail = 3}
             expectedLength = 3
             expectedContent = "BB","CC","DD"
         }
         @{ test = "readcount=2 tail=3"
-            GetContentParams = @{Path = $testPath; Readcount = 2; Tail = 3}
+            GetContentParams = @{Readcount = 2; Tail = 3}
             expectedLength = 2
             expectedContent = ("BB","CC"), "DD"
         }
         @{ test = "readcount=2 tail=2"
-            GetContentParams = @{Path = $testPath; Readcount = 2; Tail = 2}
+            GetContentParams = @{Readcount = 2; Tail = 2}
             expectedLength = 2
             expectedContent = "CC","DD"
         }
     ) {
         param($GetContentParams, $expectedLength, $expectedContent)
+        $GetContentParams['Path'] = $testPath
         Set-Content -Path $testPath $testContent
         $result = Get-Content @GetContentParams
         $result.Length | Should -Be $expectedLength
@@ -184,17 +200,18 @@ Describe "Get-Content" -Tags "CI" {
 
     It "should Get-Content with a variety of -Delimiter and -Tail: <test>" -TestCases @(
         @{ test = ", as delimiter"
-            GetContentParams = @{Path = $testPath; Delimiter = ","; Tail = 2}
+            GetContentParams = @{Delimiter = ","; Tail = 2}
             expectedLength = 2
             expectedContent = "World3${nl}Hello4", "World4${nl}"
         }
         @{ test = "o as delimiter"
-            GetContentParams = @{Path = $testPath; Delimiter = "o"; Tail = 3}
+            GetContentParams = @{Delimiter = "o"; Tail = 3}
             expectedLength = 3
             expectedContent = "rld3${nl}Hell", '4,W', "rld4${nl}"
         }
     ) {
         param($GetContentParams, $expectedLength, $expectedContent)
+        $GetContentParams['Path'] = $testPath
         Set-Content -Path $testPath $testDelimiterContent
         $result = Get-Content @GetContentParams
         $result.Length | Should -Be $expectedLength
@@ -203,7 +220,7 @@ Describe "Get-Content" -Tags "CI" {
 
     It "should Get-Content with a variety of -Tail values and -AsByteStream parameter" -TestCases @(
         @{
-            GetContentParams = @{Path = $testPath; Tail = 10; AsByteStream = $true}
+            GetContentParams = @{Tail = 10; AsByteStream = $true}
             expectedLength = 10
             # Byte encoding of \r\nCC\r\nDD\r\n
             expectedWindowsContent = 13, 10, 67, 67, 13, 10, 68, 68, 13, 10
@@ -212,6 +229,7 @@ Describe "Get-Content" -Tags "CI" {
         }
     ) {
         param($GetContentParams, $expectedLength, $expectedWindowsContent, $expectedNotWindowsContent)
+        $GetContentParams['Path'] = $testPath
         Set-Content -Path $testPath $testContent
         $result = Get-Content @GetContentParams
         $result.Length | Should -Be $expectedLength

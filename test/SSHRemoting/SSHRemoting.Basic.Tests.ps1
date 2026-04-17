@@ -6,133 +6,135 @@ Describe "SSHRemoting Basic Tests" -tags CI {
     # SSH remoting is set up to automatically authenticate current user via SSH keys
     # All tests connect back to localhost machine
 
-    $script:TestConnectingTimeout = 5000    # Milliseconds
+    BeforeAll {
+        $script:TestConnectingTimeout = 5000    # Milliseconds
 
-    function RestartSSHDService
-    {
-        if ($IsWindows)
+        function RestartSSHDService
         {
-            Write-Verbose -Verbose "Restarting Windows SSHD service..."
-            Restart-Service sshd
-            Write-Verbose -Verbose "SSHD service status: $(Get-Service sshd | Out-String)"
-        }
-        else
-        {
-            Write-Verbose -Verbose "Restarting Unix SSHD service..."
-            sudo service ssh restart
-            $status = sudo service ssh status
-            Write-Verbose -Verbose "SSHD service status: $status"
-        }
-    }
-
-    function TryNewPSSession
-    {
-        param(
-            [string[]] $HostName,
-            [string[]] $Name,
-            [int] $Port,
-            [string] $UserName,
-            [string] $KeyFilePath,
-            [string] $Subsystem
-        )
-
-        Write-Verbose -Verbose "Starting TryNewPSSession ..."
-
-        # Try creating a new SSH connection
-        $timeout = $script:TestConnectingTimeout
-        $connectionError = $null
-        $session = $null
-        $count = 0
-        while (($null -eq $session) -and ($count++ -lt 2))
-        {
-            $session = New-PSSession @PSBoundParameters -ConnectingTimeout $timeout -ErrorVariable connectionError -ErrorAction SilentlyContinue
-            if ($null -eq $session)
+            if ($IsWindows)
             {
-                Write-Verbose -Verbose "SSH New-PSSession remoting connect failed."
-
-                if ($count -eq 1)
-                {
-                    # Try restarting sshd service
-                    RestartSSHDService
-                }
+                Write-Verbose -Verbose "Restarting Windows SSHD service..."
+                Restart-Service sshd
+                Write-Verbose -Verbose "SSHD service status: $(Get-Service sshd | Out-String)"
+            }
+            else
+            {
+                Write-Verbose -Verbose "Restarting Unix SSHD service..."
+                sudo service ssh restart
+                $status = sudo service ssh status
+                Write-Verbose -Verbose "SSHD service status: $status"
             }
         }
 
-        if ($null -eq $session)
+        function TryNewPSSession
         {
-            $message = "New-PSSession unable to connect to SSH remoting endpoint after two attempts. Error: $($connectionError.Exception.Message)"
-            throw [System.Management.Automation.PSInvalidOperationException]::new($message)
-        }
+            param(
+                [string[]] $HostName,
+                [string[]] $Name,
+                [int] $Port,
+                [string] $UserName,
+                [string] $KeyFilePath,
+                [string] $Subsystem
+            )
 
-        Write-Verbose -Verbose "SSH New-PSSession remoting connect succeeded."
-        Write-Output $session
-    }
+            Write-Verbose -Verbose "Starting TryNewPSSession ..."
 
-    function TryNewPSSessionHash
-    {
-        param (
-            [hashtable[]] $SSHConnection,
-            [string[]] $Name
-        )
-
-        Write-Verbose -Verbose "Starting TryNewPSSessionHash ..."
-
-        foreach ($connect in $SSHConnection)
-        {
-            $connect.Add('ConnectingTimeout', $script:TestConnectingTimeout)
-        }
-
-        # Try creating a new SSH connection
-        $connectionError = $null
-        $session = $null
-        $count = 0
-        while (($null -eq $session) -and ($count++ -lt 2))
-        {
-            $session = New-PSSession @PSBoundParameters -ErrorVariable connectionError -ErrorAction SilentlyContinue
-            if ($null -eq $session)
+            # Try creating a new SSH connection
+            $timeout = $script:TestConnectingTimeout
+            $connectionError = $null
+            $session = $null
+            $count = 0
+            while (($null -eq $session) -and ($count++ -lt 2))
             {
-                Write-Verbose -Verbose "SSH New-PSSession remoting connect failed."
-
-                if ($count -eq 1)
+                $session = New-PSSession @PSBoundParameters -ConnectingTimeout $timeout -ErrorVariable connectionError -ErrorAction SilentlyContinue
+                if ($null -eq $session)
                 {
-                    # Try restarting sshd service
-                    RestartSSHDService
+                    Write-Verbose -Verbose "SSH New-PSSession remoting connect failed."
+
+                    if ($count -eq 1)
+                    {
+                        # Try restarting sshd service
+                        RestartSSHDService
+                    }
                 }
             }
+
+            if ($null -eq $session)
+            {
+                $message = "New-PSSession unable to connect to SSH remoting endpoint after two attempts. Error: $($connectionError.Exception.Message)"
+                throw [System.Management.Automation.PSInvalidOperationException]::new($message)
+            }
+
+            Write-Verbose -Verbose "SSH New-PSSession remoting connect succeeded."
+            Write-Output $session
         }
 
-        if ($null -eq $session)
+        function TryNewPSSessionHash
         {
-            $message = "New-PSSession unable to connect to SSH remoting endpoint after two attempts. Error: $($connectionError.Exception.Message)"
-            throw [System.Management.Automation.PSInvalidOperationException]::new($message)
+            param (
+                [hashtable[]] $SSHConnection,
+                [string[]] $Name
+            )
+
+            Write-Verbose -Verbose "Starting TryNewPSSessionHash ..."
+
+            foreach ($connect in $SSHConnection)
+            {
+                $connect.Add('ConnectingTimeout', $script:TestConnectingTimeout)
+            }
+
+            # Try creating a new SSH connection
+            $connectionError = $null
+            $session = $null
+            $count = 0
+            while (($null -eq $session) -and ($count++ -lt 2))
+            {
+                $session = New-PSSession @PSBoundParameters -ErrorVariable connectionError -ErrorAction SilentlyContinue
+                if ($null -eq $session)
+                {
+                    Write-Verbose -Verbose "SSH New-PSSession remoting connect failed."
+
+                    if ($count -eq 1)
+                    {
+                        # Try restarting sshd service
+                        RestartSSHDService
+                    }
+                }
+            }
+
+            if ($null -eq $session)
+            {
+                $message = "New-PSSession unable to connect to SSH remoting endpoint after two attempts. Error: $($connectionError.Exception.Message)"
+                throw [System.Management.Automation.PSInvalidOperationException]::new($message)
+            }
+
+            Write-Verbose -Verbose "SSH New-PSSession remoting connect succeeded."
+            Write-Output $session
         }
 
-        Write-Verbose -Verbose "SSH New-PSSession remoting connect succeeded."
-        Write-Output $session
-    }
+        function VerifySession {
+            param (
+                [System.Management.Automation.Runspaces.PSSession] $session
+            )
 
-    function VerifySession {
-        param (
-            [System.Management.Automation.Runspaces.PSSession] $session
-        )
+            if ($null -eq $session)
+            {
+                return
+            }
 
-        if ($null -eq $session)
-        {
-            return
+            Write-Verbose -Verbose "VerifySession called for session: $($session.Id)"
+
+            $session.State | Should -BeExactly 'Opened'
+            $session.ComputerName | Should -BeExactly 'localhost'
+            $session.Transport | Should -BeExactly 'SSH'
+            Write-Verbose -Verbose "Invoking whoami"
+            Invoke-Command -Session $session -ScriptBlock { whoami } | Should -BeExactly $(whoami)
+            Write-Verbose -Verbose "Invoking PSSenderInfo"
+            $psRemoteVersion = Invoke-Command -Session $session -ScriptBlock { $PSSenderInfo.ApplicationArguments.PSVersionTable.PSVersion }
+            $psRemoteVersion.Major | Should -BeExactly $PSVersionTable.PSVersion.Major
+            $psRemoteVersion.Minor | Should -BeExactly $PSVersionTable.PSVersion.Minor
+            Write-Verbose -Verbose "VerifySession complete"
         }
-
-        Write-Verbose -Verbose "VerifySession called for session: $($session.Id)"
-
-        $session.State | Should -BeExactly 'Opened'
-        $session.ComputerName | Should -BeExactly 'localhost'
-        $session.Transport | Should -BeExactly 'SSH'
-        Write-Verbose -Verbose "Invoking whoami"
-        Invoke-Command -Session $session -ScriptBlock { whoami } | Should -BeExactly $(whoami)
-        Write-Verbose -Verbose "Invoking PSSenderInfo"
-        $psRemoteVersion = Invoke-Command -Session $session -ScriptBlock { $PSSenderInfo.ApplicationArguments.PSVersionTable.PSVersion }
-        $psRemoteVersion.Major | Should -BeExactly $PSVersionTable.PSVersion.Major
-        $psRemoteVersion.Minor | Should -BeExactly $PSVersionTable.PSVersion.Minor
-        Write-Verbose -Verbose "VerifySession complete"
     }
 
     Context "New-PSSession Tests" {
@@ -251,86 +253,88 @@ Describe "SSHRemoting Basic Tests" -tags CI {
         #>
     }
 
-    function TryCreateRunspace
-    {
-        param (
-            [string] $UserName,
-            [string] $ComputerName,
-            [string] $KeyFilePath,
-            [int] $Port,
-            [string] $Subsystem
-        )
-
-        Write-Verbose -Verbose "Starting TryCreateRunspace ..."
-
-        $timeout = $script:TestConnectingTimeout
-        $connectionError = $null
-        $count = 0
-        $rs = $null
-        $ci = [System.Management.Automation.Runspaces.SSHConnectionInfo]::new($UserName, $ComputerName, $KeyFilePath, $Port, $Subsystem, $timeout)
-        while (($null -eq $rs) -and ($count++ -lt 2))
+    BeforeAll {
+        function TryCreateRunspace
         {
-            try
-            {
-                $rs = [runspacefactory]::CreateRunspace($host, $ci)
-                $null = $rs.Open()
-            }
-            catch
-            {
-                $connectionError = $_
-                $rs = $null
-                Write-Verbose -Verbose "SSH Runspace Open remoting connect failed."
+            param (
+                [string] $UserName,
+                [string] $ComputerName,
+                [string] $KeyFilePath,
+                [int] $Port,
+                [string] $Subsystem
+            )
 
-                if ($count -eq 1)
+            Write-Verbose -Verbose "Starting TryCreateRunspace ..."
+
+            $timeout = $script:TestConnectingTimeout
+            $connectionError = $null
+            $count = 0
+            $rs = $null
+            $ci = [System.Management.Automation.Runspaces.SSHConnectionInfo]::new($UserName, $ComputerName, $KeyFilePath, $Port, $Subsystem, $timeout)
+            while (($null -eq $rs) -and ($count++ -lt 2))
+            {
+                try
                 {
-                    # Try restarting sshd service
-                    RestartSSHDService
+                    $rs = [runspacefactory]::CreateRunspace($host, $ci)
+                    $null = $rs.Open()
+                }
+                catch
+                {
+                    $connectionError = $_
+                    $rs = $null
+                    Write-Verbose -Verbose "SSH Runspace Open remoting connect failed."
+
+                    if ($count -eq 1)
+                    {
+                        # Try restarting sshd service
+                        RestartSSHDService
+                    }
                 }
             }
+
+            if (($null -eq $rs) -or !($rs -is [runspace]))
+            {
+                $message = "Runspace open unable to connect to SSH remoting endpoint after two attempts. Error: $($connectionError.Message)"
+                throw [System.Management.Automation.PSInvalidOperationException]::new($message)
+            }
+
+            Write-Verbose -Verbose "SSH Runspace Open remoting connect succeeded."
+            Write-Output $rs
         }
 
-        if (($null -eq $rs) -or !($rs -is [runspace]))
-        {
-            $message = "Runspace open unable to connect to SSH remoting endpoint after two attempts. Error: $($connectionError.Message)"
-            throw [System.Management.Automation.PSInvalidOperationException]::new($message)
-        }
+        function VerifyRunspace {
+            param (
+                [runspace] $rs
+            )
 
-        Write-Verbose -Verbose "SSH Runspace Open remoting connect succeeded."
-        Write-Output $rs
-    }
+            if ($null -eq $rs)
+            {
+                return
+            }
 
-    function VerifyRunspace {
-        param (
-            [runspace] $rs
-        )
+            Write-Verbose -Verbose "VerifyRunspace called for runspace: $($rs.Id)"
 
-        if ($null -eq $rs)
-        {
-            return
-        }
+            $rs.RunspaceStateInfo.State | Should -BeExactly 'Opened'
+            $rs.RunspaceAvailability | Should -BeExactly 'Available'
+            $rs.RunspaceIsRemote | Should -BeTrue
+            $ps = [powershell]::Create()
+            try
+            {
+                Write-Verbose -Verbose "VerifyRunspace: Invoking PSSenderInfo"
+                $ps.Runspace = $rs
+                $psRemoteVersion = $ps.AddScript('$PSSenderInfo.ApplicationArguments.PSVersionTable.PSVersion').Invoke()
+                $psRemoteVersion.Major | Should -BeExactly $PSVersionTable.PSVersion.Major
+                $psRemoteVersion.Minor | Should -BeExactly $PSVersionTable.PSVersion.Minor
 
-        Write-Verbose -Verbose "VerifyRunspace called for runspace: $($rs.Id)"
-
-        $rs.RunspaceStateInfo.State | Should -BeExactly 'Opened'
-        $rs.RunspaceAvailability | Should -BeExactly 'Available'
-        $rs.RunspaceIsRemote | Should -BeTrue
-        $ps = [powershell]::Create()
-        try
-        {
-            Write-Verbose -Verbose "VerifyRunspace: Invoking PSSenderInfo"
-            $ps.Runspace = $rs
-            $psRemoteVersion = $ps.AddScript('$PSSenderInfo.ApplicationArguments.PSVersionTable.PSVersion').Invoke()
-            $psRemoteVersion.Major | Should -BeExactly $PSVersionTable.PSVersion.Major
-            $psRemoteVersion.Minor | Should -BeExactly $PSVersionTable.PSVersion.Minor
-
-            $ps.Commands.Clear()
-            Write-Verbose -Verbose "VerifyRunspace: Invoking whoami"
-            $ps.AddScript('whoami').Invoke() | Should -BeExactly $(whoami)
-            Write-Verbose -Verbose "VerifyRunspace complete"
-        }
-        finally
-        {
-            $ps.Dispose()
+                $ps.Commands.Clear()
+                Write-Verbose -Verbose "VerifyRunspace: Invoking whoami"
+                $ps.AddScript('whoami').Invoke() | Should -BeExactly $(whoami)
+                Write-Verbose -Verbose "VerifyRunspace complete"
+            }
+            finally
+            {
+                $ps.Dispose()
+            }
         }
     }
 
@@ -342,48 +346,50 @@ Describe "SSHRemoting Basic Tests" -tags CI {
             Write-Verbose -Verbose "AfterEach complete"
         }
 
-        $testCases = @(
-            @{
-                testName = 'Verifies connection with implicit user'
-                UserName = $null
-                ComputerName = 'localhost'
-                KeyFilePath = $null
-                Port = 0
-                Subsystem = $null
-            },
-            @{
-                testName = 'Verifies connection with UserName'
-                UserName = whoami
-                ComputerName = 'localhost'
-                KeyFilePath = $null
-                Port = 0
-                Subsystem = $null
-            },
-            @{
-                testName = 'Verifies connection with KeyFilePath'
-                UserName = whoami
-                ComputerName = 'localhost'
-                KeyFilePath = "$HOME/.ssh/id_rsa"
-                Port = 0
-                Subsystem = $null
-            },
-            @{
-                testName = 'Verifies connection with Port specified'
-                UserName = whoami
-                ComputerName = 'localhost'
-                KeyFilePath = "$HOME/.ssh/id_rsa"
-                Port = 22
-                Subsystem = $null
-            },
-            @{
-                testName = 'Verifies connection with Subsystem specified'
-                UserName = whoami
-                ComputerName = 'localhost'
-                KeyFilePath = "$HOME/.ssh/id_rsa"
-                Port = 22
-                Subsystem = 'powershell'
-            }
-        )
+        BeforeDiscovery {
+            $testCases = @(
+                @{
+                    testName = 'Verifies connection with implicit user'
+                    UserName = $null
+                    ComputerName = 'localhost'
+                    KeyFilePath = $null
+                    Port = 0
+                    Subsystem = $null
+                },
+                @{
+                    testName = 'Verifies connection with UserName'
+                    UserName = whoami
+                    ComputerName = 'localhost'
+                    KeyFilePath = $null
+                    Port = 0
+                    Subsystem = $null
+                },
+                @{
+                    testName = 'Verifies connection with KeyFilePath'
+                    UserName = whoami
+                    ComputerName = 'localhost'
+                    KeyFilePath = "$HOME/.ssh/id_rsa"
+                    Port = 0
+                    Subsystem = $null
+                },
+                @{
+                    testName = 'Verifies connection with Port specified'
+                    UserName = whoami
+                    ComputerName = 'localhost'
+                    KeyFilePath = "$HOME/.ssh/id_rsa"
+                    Port = 22
+                    Subsystem = $null
+                },
+                @{
+                    testName = 'Verifies connection with Subsystem specified'
+                    UserName = whoami
+                    ComputerName = 'localhost'
+                    KeyFilePath = "$HOME/.ssh/id_rsa"
+                    Port = 22
+                    Subsystem = 'powershell'
+                }
+            )
+        }
 
         It "<testName>" -TestCases $testCases {
             param (

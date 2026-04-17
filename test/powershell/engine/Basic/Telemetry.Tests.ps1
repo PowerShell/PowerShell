@@ -163,14 +163,16 @@ Describe "Telemetry for shell startup" -Tag CI {
         $result | Should -Be "True"
     }
 
-    $telemetryIsSetData = @(
-        @{ name = "set to no"; Value = "no" ; expectedValue = "True" }
-        @{ name = "set to 0"; Value = "0"; expectedValue = "True" }
-        @{ name = "set to false"; Value = "false"; expectedValue = "True" }
-        @{ name = "set to yes"; Value = "yes"; expectedValue = "False" }
-        @{ name = "set to 1"; Value = "1"; expectedValue = "False" }
-        @{ name = "set to true"; Value = "true"; expectedValue = "False" }
-    )
+    BeforeDiscovery {
+        $telemetryIsSetData = @(
+            @{ name = "set to no"; Value = "no" ; expectedValue = "True" }
+            @{ name = "set to 0"; Value = "0"; expectedValue = "True" }
+            @{ name = "set to false"; Value = "false"; expectedValue = "True" }
+            @{ name = "set to yes"; Value = "yes"; expectedValue = "False" }
+            @{ name = "set to 1"; Value = "1"; expectedValue = "False" }
+            @{ name = "set to true"; Value = "true"; expectedValue = "False" }
+        )
+    }
 
     It "Should properly set whether telemetry is sent based on environment variable when <name>" -TestCases $telemetryIsSetData {
         param ( [string]$name, [string]$value, [string]$expectedValue )

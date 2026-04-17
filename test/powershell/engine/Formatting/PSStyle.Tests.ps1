@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 Describe 'Tests for $PSStyle automatic variable' -Tag 'CI' {
-    BeforeAll {
+    BeforeDiscovery {
         $styleDefaults = @{
             Reset = "`e[0m"
             BlinkOff = "`e[25m"
@@ -79,7 +79,6 @@ Describe 'Tests for $PSStyle automatic variable' -Tag 'CI' {
                     @{ Key = $key; Value = $hashtable[$key] }
                 )
             }
-
             return $testcases
         }
     }

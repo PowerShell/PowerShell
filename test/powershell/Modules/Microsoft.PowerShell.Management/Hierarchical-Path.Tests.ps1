@@ -3,7 +3,7 @@
 Describe "Hierarchical paths" -Tags "CI" {
     BeforeAll {
         $data = "Hello World"
-        Setup -File testFile.txt -Content $data
+        Set-Content -Path (Join-Path $TestDrive 'testFile.txt') -Value $data
     }
 
     It "should work with Join-Path " {

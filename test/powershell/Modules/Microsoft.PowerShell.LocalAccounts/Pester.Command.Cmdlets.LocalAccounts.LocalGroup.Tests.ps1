@@ -4,45 +4,61 @@
 # Module removed due to #4272
 # disabling tests
 
-return
-
-function RemoveTestGroups
-{
-    param([string] $basename)
-
-    $results = Get-LocalGroup $basename*
-    foreach ($element in $results) {
-        Remove-LocalGroup -SID $element.SID
+BeforeDiscovery {
+    #skip all tests on non-windows platform or when not running as admin
+    $isAdmin = $false
+    if ($IsWindows) {
+        $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
     }
+    $IsNotSkipped = ($IsWindows -eq $true) -and $isAdmin
+    $PSDefaultParameterValues["it:skip"] = !$IsNotSkipped
 }
 
-function VerifyFailingTest
-{
-    param(
-        [scriptblock] $sb,
-        [string] $expectedFqeid
-    )
+BeforeAll {
+    function RemoveTestGroups
+    {
+        param([string] $basename)
 
-    $backupEAP = $script:ErrorActionPreference
-    $script:ErrorActionPreference = "Stop"
+        $results = Get-LocalGroup $basename*
+        foreach ($element in $results) {
+            Remove-LocalGroup -SID $element.SID
+        }
+    }
 
-    try {
-        & $sb
-        throw "Expected FullyQualifiedErrorId: $expectedFqeid"
-    }
-    catch {
-        $_.FullyQualifiedErrorId | Should -Be $expectedFqeid
-    }
-    finally {
-        $script:ErrorActionPreference = $backupEAP
-    }
-}
+    function VerifyFailingTest
+    {
+        param(
+            [scriptblock] $sb,
+            [string] $expectedFqeid
+        )
 
-try {
+        $backupEAP = $ErrorActionPreference
+        $ErrorActionPreference = "Stop"
+
+        try {
+            & $sb
+            throw "Expected FullyQualifiedErrorId: $expectedFqeid"
+        }
+        catch {
+            $_.FullyQualifiedErrorId | Should -Be $expectedFqeid
+        }
+        finally {
+            $ErrorActionPreference = $backupEAP
+        }
+    }
+
     #skip all tests on non-windows platform
     $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-    $IsNotSkipped = ($IsWindows -eq $true);
-    $PSDefaultParameterValues["it:skip"] = !$IsNotSkipped
+    $isAdmin = $false
+    if ($IsWindows) {
+        $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+    }
+    $IsNotSkipped = ($IsWindows -eq $true) -and $isAdmin
+}
+
+AfterAll {
+    $global:PSDefaultParameterValues = $originalDefaultParameterValues
+}
 
     Describe "Verify Expected LocalGroup Cmdlets are present" -Tags "CI" {
 
@@ -918,8 +934,4 @@ try {
             VerifyFailingTest $sb "GroupNotFound,Microsoft.PowerShell.Commands.GetLocalGroupCommand"
         }
     }
-}
-finally {
-    $global:PSDefaultParameterValues = $originalDefaultParameterValues
-}
 

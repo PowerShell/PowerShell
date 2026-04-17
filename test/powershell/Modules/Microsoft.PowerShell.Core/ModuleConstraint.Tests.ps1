@@ -190,6 +190,126 @@ foreach ($case in $failCases)
     [void]$guidFailCases.Add($case + @{ Guid = [guid]::NewGuid() })
 }
 
+BeforeAll {
+    function New-ModuleSpecification
+    {
+        param(
+            $ModuleName,
+            $ModuleVersion,
+            $MaximumVersion,
+            $RequiredVersion,
+            $Guid)
+
+        $modSpec = @{}
+
+        if ($ModuleName)
+        {
+            $modSpec.ModuleName = $ModuleName
+        }
+
+        if ($ModuleVersion)
+        {
+            $modSpec.ModuleVersion = $ModuleVersion
+        }
+
+        if ($MaximumVersion)
+        {
+            $modSpec.MaximumVersion = $MaximumVersion
+        }
+
+        if ($RequiredVersion)
+        {
+            $modSpec.RequiredVersion = $RequiredVersion
+        }
+
+        if ($Guid)
+        {
+            $modSpec.Guid = $Guid
+        }
+
+        return $modSpec
+    }
+
+    function Invoke-ImportModule
+    {
+        param(
+            $Module,
+            $MinimumVersion,
+            $MaximumVersion,
+            $RequiredVersion,
+            [switch]$PassThru,
+            [switch]$AsCustomObject)
+
+        $cmdArgs =  @{
+            Name = $Module
+            ErrorAction = 'Stop'
+        }
+
+        if ($MinimumVersion)
+        {
+            $cmdArgs.MinimumVersion = $MinimumVersion
+        }
+
+        if ($MaximumVersion)
+        {
+            $cmdArgs.MaximumVersion = $MaximumVersion
+        }
+
+        if ($RequiredVersion)
+        {
+            $cmdArgs.RequiredVersion = $RequiredVersion
+        }
+
+        if ($PassThru)
+        {
+            $cmdArgs.PassThru = $true
+        }
+
+        if ($AsCustomObject)
+        {
+            $cmdArgs.AsCustomObject = $true
+        }
+
+        return Import-Module @cmdArgs
+    }
+
+    function Assert-ModuleIsCorrect
+    {
+        param(
+            $Module,
+            [string]$Name = $moduleName,
+            [guid]$Guid = $actualGuid,
+            [version]$Version = $actualVersion,
+            [version]$MinVersion,
+            [version]$MaxVersion,
+            [version]$RequiredVersion
+        )
+
+        $Module      | Should -Not -Be $null
+        $Module.Name | Should -Be $ModuleName
+        $Module.Guid | Should -Be $Guid
+        if ($Version)
+        {
+            $Module.Version | Should -Be $Version
+        }
+        if ($ModuleVersion)
+        {
+            $Module.Version | Should -BeGreaterOrEqual $ModuleVersion
+        }
+        if ($MaximumVersion)
+        {
+            $Module.Version | Should -BeLessOrEqual $MaximumVersion
+        }
+        if ($RequiredVersion)
+        {
+            $Module.Version | Should -Be $RequiredVersion
+        }
+    }
+
+    $actualVersion = '2.3'
+    $actualGuid = [guid]'9b945229-65fd-4629-ae99-88e2618377ff'
+}
+
 Describe "Module loading with version constraints" -Tags "Feature" {
     BeforeAll {
         $moduleName = 'TestModule'
@@ -729,8 +849,19 @@ Describe "Rooted module loading with module constraints" -Tags "Feature" {
 }
 
 Describe "Preloaded module specification checking" -Tags "Feature" {
-    BeforeAll {
+    BeforeDiscovery {
+        # $TestDrive unavailable during Discovery; use placeholder resolved at runtime
+        $tdPlaceholder = 'TESTDRIVE_PLACEHOLDER'
         $moduleName = 'TestModule'
+        $relativePathCases = @(
+            @{ Location = $tdPlaceholder; ModPath = (Join-Path "." $moduleName) }
+            @{ Location = $tdPlaceholder; ModPath = (Join-Path "." $moduleName "$moduleName.psd1") }
+            @{ Location = (Join-Path $tdPlaceholder $moduleName); ModPath = (Join-Path "." "$moduleName.psd1") }
+            @{ Location = (Join-Path $tdPlaceholder $moduleName); ModPath = (Join-Path ".." $moduleName) }
+        )
+    }
+
+    BeforeAll {
         $modulePath = Join-Path $TestDrive $moduleName
         New-Item -Path $modulePath -ItemType Directory
         $manifestPath = Join-Path $modulePath "$moduleName.psd1"
@@ -741,12 +872,6 @@ Describe "Preloaded module specification checking" -Tags "Feature" {
 
         Import-Module $modulePath
 
-        $relativePathCases = @(
-            @{ Location = $TestDrive; ModPath = (Join-Path "." $moduleName) }
-            @{ Location = $TestDrive; ModPath = (Join-Path "." $moduleName "$moduleName.psd1") }
-            @{ Location = (Join-Path $TestDrive $moduleName); ModPath = (Join-Path "." "$moduleName.psd1") }
-            @{ Location = (Join-Path $TestDrive $moduleName); ModPath = (Join-Path ".." $moduleName) }
-        )
     }
 
     AfterAll {
@@ -770,6 +895,9 @@ Describe "Preloaded module specification checking" -Tags "Feature" {
 
     It "Gets the module when a relative path is used in a module specification: <ModPath>" -TestCases $relativePathCases -Pending {
         param([string]$Location, [string]$ModPath)
+
+        # Resolve Discovery-time placeholder with actual $TestDrive
+        $Location = $Location.Replace('TESTDRIVE_PLACEHOLDER', $TestDrive)
 
         Push-Location $Location
         try

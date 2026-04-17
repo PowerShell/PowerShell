@@ -30,11 +30,11 @@ function New-CmsRecipient {
 Describe "CmsMessage cmdlets using X509 cert" -Tags "CI" {
 
     BeforeAll {
-        Setup -Dir "certDir"
-        Setup -File "vc1.pfx"
-        Setup -File "vc2.pfx"
-        Setup -File "certDir/vc3.pfx"
-        Setup -File "message.txt" -Content "test"
+        New-Item -Path (Join-Path $TestDrive 'certDir') -ItemType Directory -Force > $null
+        New-Item -Path (Join-Path $TestDrive 'vc1.pfx') -ItemType File -Force > $null
+        New-Item -Path (Join-Path $TestDrive 'vc2.pfx') -ItemType File -Force > $null
+        New-Item -Path (Join-Path $TestDrive 'certDir/vc3.pfx') -ItemType File -Force > $null
+        Set-Content -Path (Join-Path $TestDrive 'message.txt') -Value "test"
         $file1 = "TestDrive:\vc1.pfx"
         $file2 = "TestDrive:\vc2.pfx"
         $messageFile = "TestDrive:\message.txt"

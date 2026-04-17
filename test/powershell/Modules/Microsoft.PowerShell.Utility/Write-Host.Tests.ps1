@@ -2,14 +2,16 @@
 # Licensed under the MIT License.
 Describe "Write-Host with default Console Host" -Tags "Slow","Feature" {
 
-    BeforeAll {
-        $powershell = Join-Path -Path $PSHOME -ChildPath "pwsh"
-
+    BeforeDiscovery {
         $testData = @(
             @{ Name = '-Separator';       Command = "Write-Host a,b,c -Separator '+'";                 returnCount = 1; returnValue = @("a+b+c") }
             @{ Name = '-NoNewline=true';  Command = "Write-Host a,b -NoNewline:`$true;Write-Host a,b"; returnCount = 1; returnValue = @("a ba b") }
             @{ Name = '-NoNewline=false'; Command = "Write-Host a1,b1;Write-Host a2,b2";               returnCount = 2; returnValue = @("a1 b1","a2 b2") }
         )
+    }
+
+    BeforeAll {
+        $powershell = Join-Path -Path $PSHOME -ChildPath "pwsh"
     }
 
     It "write-Host works with '<Name>' switch" -TestCases:$testData -Pending:$IsMacOS {
@@ -27,7 +29,7 @@ Describe "Write-Host with default Console Host" -Tags "Slow","Feature" {
 
 Describe "Write-Host with wrong colors" -Tags "CI" {
 
-    BeforeAll {
+    BeforeDiscovery {
         $testWrongColor = @(
             @{ ForegroundColor = -1;    BackgroundColor = 'Red' }
             @{ ForegroundColor = 16;    BackgroundColor = 'Red' }
@@ -44,13 +46,7 @@ Describe "Write-Host with wrong colors" -Tags "CI" {
 
 Describe "Write-Host with TestHostCS" -Tags "CI" {
 
-    BeforeAll {
-        $th = New-TestHost
-        $rs = [runspacefactory]::Createrunspace($th)
-        $rs.open()
-        $ps = [powershell]::Create()
-        $ps.Runspace = $rs
-
+    BeforeDiscovery {
         $testHostCSData = @(
             @{ Name = 'defaults';                          Command = "Write-Host a,b,c";                                                                             returnCount = 1; returnValue = @("White:Black:a b c:NewLine"); returnInfo = @("a b c") }
             @{ Name = '-Object';                           Command = "Write-Host -Object a,b,c";                                                                     returnCount = 1; returnValue = @("White:Black:a b c:NewLine"); returnInfo = @("a b c") }
@@ -63,7 +59,14 @@ Describe "Write-Host with TestHostCS" -Tags "CI" {
             @{ Name = 'XMLElement';                        Command = "Write-Host ([xml] '<OhElement>Where art thou?</OhElement>').DocumentElement";                  returnCount = 1; returnValue = @("White:Black:OhElement:NewLine"); returnInfo = @("OhElement") }
             @{ Name = 'XMLDocument';                        Command = "Write-Host ([system.xml.xmldocument] '<OhElement>Where art thou?</OhElement>').DocumentElement";                  returnCount = 1; returnValue = @("White:Black:OhElement:NewLine"); returnInfo = @("OhElement") }
         )
+    }
 
+    BeforeAll {
+        $th = New-TestHost
+        $rs = [runspacefactory]::Createrunspace($th)
+        $rs.open()
+        $ps = [powershell]::Create()
+        $ps.Runspace = $rs
     }
 
     AfterAll {

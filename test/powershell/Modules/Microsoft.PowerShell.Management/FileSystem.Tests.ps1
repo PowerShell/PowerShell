@@ -20,6 +20,36 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
     }
 
     Context "Validate basic FileSystem Cmdlets" {
+        $reservedNamesTests = @(
+            @{ deviceName = 'CON' }
+            @{ deviceName = 'PRN' }
+            @{ deviceName = 'AUX' }
+            @{ deviceName = 'CLOCK$' }
+            @{ deviceName = 'NUL' }
+            @{ deviceName = 'CONIN$' }
+            @{ deviceName = 'CONOUT$' }
+            @{ deviceName = 'COM0' }
+            @{ deviceName = 'COM1' }
+            @{ deviceName = 'COM2' }
+            @{ deviceName = 'COM3' }
+            @{ deviceName = 'COM4' }
+            @{ deviceName = 'COM5' }
+            @{ deviceName = 'COM6' }
+            @{ deviceName = 'COM7' }
+            @{ deviceName = 'COM8' }
+            @{ deviceName = 'COM9' }
+            @{ deviceName = 'LPT0' }
+            @{ deviceName = 'LPT1' }
+            @{ deviceName = 'LPT2' }
+            @{ deviceName = 'LPT3' }
+            @{ deviceName = 'LPT4' }
+            @{ deviceName = 'LPT5' }
+            @{ deviceName = 'LPT6' }
+            @{ deviceName = 'LPT7' }
+            @{ deviceName = 'LPT8' }
+            @{ deviceName = 'LPT9' }
+        )
+
         BeforeAll {
             $newTestDir = "NewTestDir"
             $newTestFile = "NewTestFile.txt"
@@ -775,6 +805,12 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             New-Item -ItemType File -Path $omegaFile2
         }
         AfterAll {
+            # Remove circular symlinks first to prevent infinite recursion during Pester 5 TestDrive cleanup
+            foreach ($link in $uponeLink, $uptwoLink, $omegaLink) {
+                if ($link -and (Test-Path -LiteralPath $link)) {
+                    (Get-Item -LiteralPath $link).Delete()
+                }
+            }
             Remove-Item -Path $alphaLink -Force -ErrorAction SilentlyContinue
             Remove-Item -Path $betaLink -Force -ErrorAction SilentlyContinue
         }
@@ -829,48 +865,22 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
     }
 
     Context "Remove-Item and hard/symbolic links" {
+        $testCases = @(
+            @{ Name = "Remove-Item can remove a hard link to a file"; LinkVar = 'hardLinkToFile'; TargetVar = 'realFile' }
+            @{ Name = "Remove-Item can remove a symbolic link to a file"; LinkVar = 'symLinkToFile'; TargetVar = 'realFile' }
+        )
+
+        $unixTestCases = @(
+            @{ Name = "Remove-Item can remove a symbolic link to a directory on Unix"; LinkVar = 'symLinkToDir'; TargetVar = 'realDir' }
+        )
+
+        $windowsTestCases = @(
+            @{ Name = "Remove-Item can remove a symbolic link to a directory on Windows"; LinkVar = 'symLinkToDir'; TargetVar = 'realDir' }
+            @{ Name = "Remove-Item can remove a directory symbolic link to a directory on Windows"; LinkVar = 'dirSymLinkToDir'; TargetVar = 'realDir' }
+            @{ Name = "Remove-Item can remove a junction to a directory"; LinkVar = 'junctionToDir'; TargetVar = 'realDir' }
+        )
+
         BeforeAll {
-            $testCases = @(
-                @{
-                    Name = "Remove-Item can remove a hard link to a file"
-                    Link = $hardLinkToFile
-                    Target = $realFile
-                }
-                @{
-                    Name = "Remove-Item can remove a symbolic link to a file"
-                    Link = $symLinkToFile
-                    Target = $realFile
-                }
-            )
-
-            # New-Item on Windows will not create a "plain" symlink to a directory
-            $unixTestCases = @(
-                @{
-                    Name = "Remove-Item can remove a symbolic link to a directory on Unix"
-                    Link = $symLinkToDir
-                    Target = $realDir
-                }
-            )
-
-            # Junctions and directory symbolic links are Windows and NTFS only
-            $windowsTestCases = @(
-                @{
-                    Name = "Remove-Item can remove a symbolic link to a directory on Windows"
-                    Link = $symLinkToDir
-                    Target = $realDir
-                }
-                @{
-                    Name = "Remove-Item can remove a directory symbolic link to a directory on Windows"
-                    Link = $dirSymLinkToDir
-                    Target = $realDir
-                }
-                @{
-                    Name = "Remove-Item can remove a junction to a directory"
-                    Link = $junctionToDir
-                    Target = $realDir
-                }
-            )
-
             function TestRemoveItem
             {
                 Param (
@@ -887,31 +897,28 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
         It "<Name>" -TestCases $testCases {
             Param (
                 [string]$Name,
-                [string]$Link,
-                [string]$Target
+                [string]$LinkVar,
+                [string]$TargetVar
             )
-
-            TestRemoveItem $Link $Target
+            TestRemoveItem (Get-Variable $LinkVar -ValueOnly) (Get-Variable $TargetVar -ValueOnly)
         }
 
         It "<Name>" -TestCases $unixTestCases -Skip:($IsWindows) {
             Param (
                 [string]$Name,
-                [string]$Link,
-                [string]$Target
+                [string]$LinkVar,
+                [string]$TargetVar
             )
-
-            TestRemoveItem $Link $Target
+            TestRemoveItem (Get-Variable $LinkVar -ValueOnly) (Get-Variable $TargetVar -ValueOnly)
         }
 
         It "<Name>" -TestCases $windowsTestCases -Skip:(-not $IsWindows) {
             Param (
                 [string]$Name,
-                [string]$Link,
-                [string]$Target
+                [string]$LinkVar,
+                [string]$TargetVar
             )
-
-            TestRemoveItem $Link $Target
+            TestRemoveItem (Get-Variable $LinkVar -ValueOnly) (Get-Variable $TargetVar -ValueOnly)
         }
 
         It "Remove-Item ignores -Recurse switch when deleting symlink to directory" {
@@ -1033,54 +1040,22 @@ Describe "Copy-Item can avoid copying an item onto itself" -Tags "CI", "RequireA
     }
 
     Context "Copy-Item avoids copying an item onto itself" {
+        $testCases = @(
+            @{ Name = "Copy to same path"; SourceVar = 'otherFile'; DestVar = 'otherFile' }
+            @{ Name = "Copy hard link"; SourceVar = 'hardToOtherFile'; DestVar = 'otherFile' }
+            @{ Name = "Copy hard link, reversed"; SourceVar = 'otherFile'; DestVar = 'hardToOtherFile' }
+            @{ Name = "Copy symbolic link to target"; SourceVar = 'symToOtherFile'; DestVar = 'otherFile' }
+            @{ Name = "Copy symbolic link to symbolic link with same target"; SourceVar = 'secondSymToOther'; DestVar = 'symToOther' }
+            @{ Name = "Copy through chain of symbolic links"; SourceVar = 'symToSym'; DestVar = 'otherSubDir' }
+        )
+
+        # Junctions and directory symbolic links are Windows and NTFS only
+        $windowsTestCases = @(
+            @{ Name = "Copy junction to target"; SourceVar = 'junctionToOther'; DestVar = 'otherSubDir' }
+            @{ Name = "Copy directory symbolic link to target"; SourceVar = 'symdToOther'; DestVar = 'otherSubDir' }
+        )
+
         BeforeAll {
-            $testCases = @(
-                @{
-                    Name = "Copy to same path"
-                    Source = $otherFile
-                    Destination = $otherFile
-                }
-                @{
-                    Name = "Copy hard link"
-                    Source = $hardToOtherFile
-                    Destination = $otherFile
-                }
-                @{
-                    Name = "Copy hard link, reversed"
-                    Source = $otherFile
-                    Destination = $hardToOtherFile
-                }
-                @{
-                    Name = "Copy symbolic link to target"
-                    Source = $symToOtherFile
-                    Destination = $otherFile
-                }
-                @{
-                    Name = "Copy symbolic link to symbolic link with same target"
-                    Source = $secondSymToOther
-                    Destination = $symToOther
-                }
-                @{
-                    Name = "Copy through chain of symbolic links"
-                    Source = $symToSym
-                    Destination = $otherSubDir
-                }
-            )
-
-            # Junctions and directory symbolic links are Windows and NTFS only
-            $windowsTestCases = @(
-                @{
-                    Name = "Copy junction to target"
-                    Source = $junctionToOther
-                    Destination = $otherSubDir
-                }
-                @{
-                    Name = "Copy directory symbolic link to target"
-                    Source = $symdToOther
-                    Destination = $otherSubDir
-                }
-            )
-
             function TestSelfCopy
             {
                 Param (
@@ -1097,21 +1072,19 @@ Describe "Copy-Item can avoid copying an item onto itself" -Tags "CI", "RequireA
         It "<Name>" -TestCases $testCases {
             Param (
                 [string]$Name,
-                [string]$Source,
-                [string]$Destination
+                [string]$SourceVar,
+                [string]$DestVar
             )
-
-            TestSelfCopy $Source $Destination
+            TestSelfCopy (Get-Variable $SourceVar -ValueOnly) (Get-Variable $DestVar -ValueOnly)
         }
 
         It "<Name>" -TestCases $windowsTestCases -Skip:(-not $IsWindows) {
             Param (
                 [string]$Name,
-                [string]$Source,
-                [string]$Destination
+                [string]$SourceVar,
+                [string]$DestVar
             )
-
-            TestSelfCopy $Source $Destination
+            TestSelfCopy (Get-Variable $SourceVar -ValueOnly) (Get-Variable $DestVar -ValueOnly)
         }
     }
 }

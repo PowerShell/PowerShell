@@ -14,9 +14,11 @@ Describe "Get-Service cmdlet tests" -Tags "CI" {
       $global:PSDefaultParameterValues = $originalDefaultParameterValues
   }
 
-  $testCases =
-    @{ data = $null          ; value = 'null' },
-    @{ data = [String]::Empty; value = 'empty string' }
+  BeforeDiscovery {
+      $testCases =
+        @{ data = $null          ; value = 'null' },
+        @{ data = [String]::Empty; value = 'empty string' }
+  }
 
   Context 'Check null or empty value to the -Name parameter' {
     It 'Should throw if <value> is passed to -Name parameter' -TestCases $testCases {

@@ -2,14 +2,14 @@
 # Licensed under the MIT License.
 Describe "Rename-Item tests" -Tag "CI" {
     BeforeAll {
-        Setup -f originalFile.txt -Content "This is content"
+        Set-Content -Path (Join-Path $TestDrive 'originalFile.txt') -Value "This is content"
         $source = "$TESTDRIVE/originalFile.txt"
         $target = "$TESTDRIVE/ItemWhichHasBeenRenamed.txt"
-        Setup -f [orig-file].txt -Content "This is not content"
+        Set-Content -LiteralPath (Join-Path $TestDrive '[orig-file].txt') -Value "This is not content"
         $sourceSp = "$TestDrive/``[orig-file``].txt"
         $targetSpName = "ItemWhichHasBeen[Renamed].txt"
         $targetSp = "$TestDrive/ItemWhichHasBeen``[Renamed``].txt"
-        Setup -Dir [test-dir]
+        New-Item -Path (Join-Path $TestDrive '`[test-dir`]') -ItemType Directory -Force > $null
         $wdSp = "$TestDrive/``[test-dir``]"
     }
     It "Rename-Item will rename a file" {

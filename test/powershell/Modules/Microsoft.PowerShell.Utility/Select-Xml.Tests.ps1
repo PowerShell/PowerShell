@@ -31,6 +31,22 @@ Describe "Select-Xml DRT Unit Tests" -Tags "CI" {
 
 Describe "Select-Xml Feature Tests" -Tags "Feature" {
 
+	BeforeDiscovery {
+		$testCases = @(
+			@{testName = 'Literalpath with relative paths'}
+			@{testName = 'Literalpath with absolute paths'}
+			@{testName = 'Literalpath with path with dots'}
+			@{testName = 'Path with relative paths'}
+			@{testName = 'Path with absolute paths'}
+			@{testName = 'Path with path with dots'}
+		)
+
+		if ( ! $IsCoreCLR ) {
+			$testcases += @{testName = 'Literalpath with network paths'}
+			$testcases += @{testName = 'Path with network paths'}
+		}
+	}
+
 	BeforeAll {
 		$fileName = New-Item -Path "TestDrive:\testSelectXml.xml"
 		$xmlContent = @"
@@ -46,19 +62,14 @@ Describe "Select-Xml Feature Tests" -Tags "Feature" {
 		$driveLetter = [string]($fileName.FullName)[0]
 		$fileNameAsNetworkPath = "\\localhost\$driveLetter`$" + $fileName.FullName.SubString(2)
 
-		$testCases = @(
-			@{testName = 'Literalpath with relative paths'; testParameter = @{LiteralPath = $fileName.Name; XPath = 'Root'}},
-			@{testName = 'Literalpath with absolute paths'; testParameter = @{LiteralPath = $fileName.FullName; XPath = 'Root'}},
-			@{testName = 'Literalpath with path with dots'; testParameter = @{LiteralPath = $fileNameWithDots; XPath = 'Root'}},
-			@{testName = 'Path with relative paths'; testParameter = @{Path = $fileName.Name; XPath = 'Root'}},
-			@{testName = 'Path with absolute paths'; testParameter = @{Path = $fileName.FullName; XPath = 'Root'}},
-			@{testName = 'Path with path with dots'; testParameter = @{Path = $fileNameWithDots; XPath = 'Root'}}
-		)
-
 		if ( ! $IsCoreCLR ) {
 			$testcases += @{testName = 'Literalpath with network paths'; testParameter = @{LiteralPath = $fileNameAsNetworkPath; XPath = 'Root'}}
 			$testcases += @{testName = 'Path with network paths'; testParameter = @{LiteralPath = $fileNameAsNetworkPath; XPath = 'Root'}}
 		}
+
+		# Build lookup map so It block can access runtime-resolved test parameters by name
+		$testParameterMap = @{}
+		foreach ($tc in $testCases) { $testParameterMap[$tc.testName] = $tc.testParameter }
 
 		Push-Location -Path $fileName.Directory
 	}
@@ -68,8 +79,9 @@ Describe "Select-Xml Feature Tests" -Tags "Feature" {
 	}
 
 	It "Can work with input files using <testName>" -TestCases $testCases {
-		param($testParameter)
+		param($testName)
 
+		$testParameter = $testParameterMap[$testName]
 		$node = Select-Xml @testParameter
 		$node | Should -HaveCount 1
 		$node.Path | Should -Be $fileName.FullName

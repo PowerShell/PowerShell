@@ -2,46 +2,47 @@
 # Licensed under the MIT License.
 using namespace System.Text
 
-Set-StrictMode -Version 3.0
-$ErrorActionPreference = 'Stop'
+BeforeAll {
+    Set-StrictMode -Version 3.0
+    $ErrorActionPreference = 'Stop'
 
-Import-Module HelpersCommon
-Import-Module PSSysLog
+    Import-Module HelpersCommon
+    Import-Module PSSysLog
 
-<#
-    Define enums that mirror the internal enums used
-    in product code. These are used to configure
-    syslog logging.
-#>
-enum LogLevel
-{
-    LogAlways = 0x0
-    Critical = 0x1
-    Error = 0x2
-    Warning = 0x3
-    Informational = 0x4
-    Verbose = 0x5
-    Debug = 0x14
-}
+    <#
+        Define enums that mirror the internal enums used
+        in product code. These are used to configure
+        syslog logging.
+    #>
+    enum LogLevel
+    {
+        LogAlways = 0x0
+        Critical = 0x1
+        Error = 0x2
+        Warning = 0x3
+        Informational = 0x4
+        Verbose = 0x5
+        Debug = 0x14
+    }
 
-enum LogChannel
-{
-    Operational = 0x10
-    Analytic = 0x11
-}
+    enum LogChannel
+    {
+        Operational = 0x10
+        Analytic = 0x11
+    }
 
-enum LogKeyword
-{
-    Runspace = 0x1
-    Pipeline = 0x2
-    Protocol = 0x4
-    Transport = 0x8
-    Host = 0x10
-    Cmdlets = 0x20
-    Serializer = 0x40
-    Session = 0x80
-    ManagedPlugin = 0x100
-}
+    enum LogKeyword
+    {
+        Runspace = 0x1
+        Pipeline = 0x2
+        Protocol = 0x4
+        Transport = 0x8
+        Host = 0x10
+        Cmdlets = 0x20
+        Serializer = 0x40
+        Session = 0x80
+        ManagedPlugin = 0x100
+    }
 
 # mac log command can emit json, so just use that
 # we need to deconstruct the eventmessage to get the event id
@@ -154,6 +155,7 @@ function Get-RegEx
     $regex = $regex -replace '\$', '\$'
     $regex = $regex -replace '\^', '\^'
     return $regex
+}
 }
 
 Describe 'Basic SysLog tests on Linux' -Tag @('CI','RequireSudoOnUnix') {
@@ -441,13 +443,7 @@ $PID
 }
 
 Describe 'Basic EventLog tests on Windows' -Tag @('CI','RequireAdminOnWindows') {
-    BeforeAll {
-        [bool] $IsSupportedEnvironment = $IsWindows
-        [string] $powershell = Join-Path -Path $PSHOME -ChildPath 'pwsh'
-
-        $currentWarningPreference = $WarningPreference
-        $WarningPreference = "SilentlyContinue"
-
+    BeforeDiscovery {
         $scriptBlockLoggingCases = @(
             @{
                 name = 'normal script block'
@@ -460,6 +456,14 @@ Describe 'Basic EventLog tests on Windows' -Tag @('CI','RequireAdminOnWindows') 
                 expectedText="Write-Verbose 'testheader123␀' ;Write-verbose 'after'`r`n"
             }
         )
+    }
+
+    BeforeAll {
+        [bool] $IsSupportedEnvironment = $IsWindows
+        [string] $powershell = Join-Path -Path $PSHOME -ChildPath 'pwsh'
+
+        $currentWarningPreference = $WarningPreference
+        $WarningPreference = "SilentlyContinue"
 
         if ($IsSupportedEnvironment)
         {

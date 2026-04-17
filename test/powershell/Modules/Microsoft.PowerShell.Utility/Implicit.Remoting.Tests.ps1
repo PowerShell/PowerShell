@@ -2,14 +2,19 @@
 # Licensed under the MIT License.
 # Skip all tests on non-windows and non-PowerShellCore and non-elevated platforms.
 
-$originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-$originalWarningPreference = $WarningPreference
-$WarningPreference = "SilentlyContinue"
-$skipTest = ! ($IsWindows -and $IsCoreCLR -and (Test-IsElevated)) -or (Test-IsWinWow64)
-$PSDefaultParameterValues["it:skip"] = $skipTest
+BeforeAll {
+    $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+    $originalWarningPreference = $WarningPreference
+    $WarningPreference = "SilentlyContinue"
+    $skipTest = ! ($IsWindows -and $IsCoreCLR -and (Test-IsElevated)) -or (Test-IsWinWow64)
+    $PSDefaultParameterValues["it:skip"] = $skipTest
+}
 
-try
-{
+AfterAll {
+    $global:PSDefaultParameterValues = $originalDefaultParameterValues
+    $WarningPreference = $originalWarningPreference
+}
+
     Describe "Implicit remoting and CIM cmdlets with AllSigned and Restricted policy" -tags "Feature","RequireAdminOnWindows" {
 
         BeforeAll {
@@ -2077,9 +2082,3 @@ try
             $errorVariable | Should -BeNullOrEmpty
         }
     }
-}
-finally
-{
-    $global:PSDefaultParameterValues = $originalDefaultParameterValues
-    $WarningPreference = $originalWarningPreference
-}

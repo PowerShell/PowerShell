@@ -502,16 +502,18 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
     }
 
     Context 'base static method call' {
-        class A
-        {
-            static [string]ToStr([int]$a) {return "A" + $a}
-        }
-        class B : A
-        {
-            static [string]ToStr([int]$a) {return "B" + $a}
-        }
+        BeforeAll {
+            class A
+            {
+                static [string]ToStr([int]$a) {return "A" + $a}
+            }
+            class B : A
+            {
+                static [string]ToStr([int]$a) {return "B" + $a}
+            }
 
-        $b = [B]::new()
+            $b = [B]::new()
+        }
 
         # MSFT:1911652
         # MSFT:2973835
@@ -718,8 +720,7 @@ Describe 'Base type has abstract properties' -Tags "CI" {
 
 Describe 'Classes inheritance with protected and protected internal members in base class' -Tags 'CI' {
 
-    BeforeAll {
-        Set-StrictMode -Version 3
+    BeforeDiscovery {
         $c1DefinitionProtectedInternal = @'
             public class C1ProtectedInternal
             {
@@ -776,6 +777,10 @@ Describe 'Classes inheritance with protected and protected internal members in b
             @{ accessType = 'protected'; derivedType = Invoke-Expression ($c2DefinitionProtectedInternal -creplace 'ProtectedInternal', 'Protected') }
             @{ accessType = 'protected internal'; derivedType = Invoke-Expression $c2DefinitionProtectedInternal }
         )
+    }
+
+    BeforeAll {
+        Set-StrictMode -Version 3
     }
 
     AfterAll {
@@ -872,7 +877,7 @@ Describe 'Classes inheritance with protected and protected internal members in b
 
     Context 'Base class members are not accessible outside class scope' {
 
-        BeforeAll {
+        BeforeDiscovery {
             $instanceTest = {
                 $c2 = $derivedType::new()
                 { $null = $c2.InstanceField } | Should -Throw -ErrorId 'PropertyNotFoundStrict'
@@ -907,6 +912,27 @@ Describe 'Classes inheritance with protected and protected internal members in b
                     $item['classScope'] = $c3UnrelatedType
                     $item
                 })
+        }
+
+        BeforeAll {
+            $instanceTest = {
+                $c2 = $derivedType::new()
+                { $null = $c2.InstanceField } | Should -Throw -ErrorId 'PropertyNotFoundStrict'
+                { $null = $c2.InstanceProperty } | Should -Throw -ErrorId 'PropertyNotFoundStrict'
+                { $null = $c2.VirtualProperty1 } | Should -Throw -ErrorId 'PropertyNotFoundStrict'
+                { $c2.InstanceField = 'foo' } | Should -Throw -ErrorId 'PropertyAssignmentException'
+                { $c2.InstanceProperty = 'foo' } | Should -Throw -ErrorId 'PropertyAssignmentException'
+                { $c2.VirtualProperty1 = 'foo' } | Should -Throw -ErrorId 'PropertyAssignmentException'
+                { $derivedType::new().InstanceMethod() } | Should -Throw -ErrorId 'MethodNotFound'
+                { $derivedType::new().VirtualMethod1() } | Should -Throw -ErrorId 'MethodNotFound'
+                foreach ($name in @('InstanceField', 'InstanceProperty', 'VirtualProperty1')) {
+                    { $null = $c2.$name } | Should -Throw -ErrorId 'PropertyNotFoundStrict'
+                    { $c2.$name = 'foo' } | Should -Throw -ErrorId 'PropertyAssignmentException'
+                }
+                foreach ($name in @('InstanceMethod', 'VirtualMethod1')) {
+                    { $c2.$name() } | Should -Throw -ErrorId 'MethodNotFound'
+                }
+            }
         }
 
         It 'cannot access <accessType> instance base members in <scopeType>' -TestCases $negativeTestCases {

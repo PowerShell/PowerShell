@@ -300,19 +300,7 @@ Describe "Parameter Binding Tests" -Tags "CI" {
 
     Context "PipelineVariable Behaviour" {
 
-        BeforeAll {
-            function Write-PipelineVariable {
-                [CmdletBinding()]
-                [OutputType([int])]
-                param(
-                    [Parameter(ValueFromPipeline)]
-                    $a
-                )
-                begin { 1 }
-                process { 2 }
-                end { 3 }
-            }
-
+        BeforeDiscovery {
             $testScripts = @(
                 @{
                     CmdletType = 'Script Cmdlet'
@@ -338,6 +326,21 @@ Describe "Parameter Binding Tests" -Tags "CI" {
                     }
                 }
             )
+        }
+
+        BeforeAll {
+            function Write-PipelineVariable {
+                [CmdletBinding()]
+                [OutputType([int])]
+                param(
+                    [Parameter(ValueFromPipeline)]
+                    $a
+                )
+                begin { 1 }
+                process { 2 }
+                end { 3 }
+            }
+
         }
 
         AfterAll {

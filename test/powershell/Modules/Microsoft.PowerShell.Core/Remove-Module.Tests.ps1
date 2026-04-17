@@ -2,23 +2,7 @@
 # Licensed under the MIT License.
 
 Describe "Remove-Module -Name | -FullyQualifiedName | -ModuleInfo" -Tags "CI" {
-    BeforeAll {
-        Remove-Module -Name "Foo", "Bar", "Baz" -ErrorAction SilentlyContinue
-
-        New-Item -ItemType Directory -Path "$testdrive\Modules\Foo\1.0\" -Force > $null
-        New-Item -ItemType Directory -Path "$testdrive\Modules\Foo\2.0\" -Force > $null
-        New-Item -ItemType Directory -Path "$testdrive\Modules\Bar\" -Force > $null
-        New-Item -ItemType Directory -Path "$testdrive\Modules\Baz\" -Force > $null
-
-        New-ModuleManifest -Path "$testdrive\Modules\Foo\1.0\Foo.psd1" -ModuleVersion 1.0
-        New-ModuleManifest -Path "$testdrive\Modules\Foo\2.0\Foo.psd1" -ModuleVersion 2.0
-        New-ModuleManifest -Path "$testdrive\Modules\Bar\Bar.psd1" -ModuleVersion 1.0
-        New-ModuleManifest -Path "$testdrive\Modules\Baz\Baz.psd1" -ModuleVersion 1.0
-
-        New-Item -ItemType File -Path "$testdrive\Modules\Foo\1.0\Foo.psm1" > $null
-        New-Item -ItemType File -Path "$testdrive\Modules\Foo\2.0\Foo.psm1" > $null
-        New-Item -ItemType File -Path "$testdrive\Modules\Bar\Bar.psm1" > $null
-
+    BeforeDiscovery {
         $removeModuleByNameTestCases = @(
             # Simple patterns
             @{ PatternsToRemove = "Bar"; ShouldBeRemoved = "Bar"; ShouldBePresent = "Baz", "Foo", "Foo"}
@@ -100,6 +84,24 @@ Describe "Remove-Module -Name | -FullyQualifiedName | -ModuleInfo" -Tags "CI" {
                 ShouldBePresent = "Bar", "Baz", "Foo", "Foo";
             }
         )
+    }
+
+    BeforeAll {
+        Remove-Module -Name "Foo", "Bar", "Baz" -ErrorAction SilentlyContinue
+
+        New-Item -ItemType Directory -Path "$testdrive\Modules\Foo\1.0\" -Force > $null
+        New-Item -ItemType Directory -Path "$testdrive\Modules\Foo\2.0\" -Force > $null
+        New-Item -ItemType Directory -Path "$testdrive\Modules\Bar\" -Force > $null
+        New-Item -ItemType Directory -Path "$testdrive\Modules\Baz\" -Force > $null
+
+        New-ModuleManifest -Path "$testdrive\Modules\Foo\1.0\Foo.psd1" -ModuleVersion 1.0
+        New-ModuleManifest -Path "$testdrive\Modules\Foo\2.0\Foo.psd1" -ModuleVersion 2.0
+        New-ModuleManifest -Path "$testdrive\Modules\Bar\Bar.psd1" -ModuleVersion 1.0
+        New-ModuleManifest -Path "$testdrive\Modules\Baz\Baz.psd1" -ModuleVersion 1.0
+
+        New-Item -ItemType File -Path "$testdrive\Modules\Foo\1.0\Foo.psm1" > $null
+        New-Item -ItemType File -Path "$testdrive\Modules\Foo\2.0\Foo.psm1" > $null
+        New-Item -ItemType File -Path "$testdrive\Modules\Bar\Bar.psm1" > $null
     }
 
     BeforeEach {
@@ -206,23 +208,7 @@ Describe "Remove-Module -Name | -FullyQualifiedName | -ModuleInfo" -Tags "CI" {
 
 Describe "Remove-Module : module is readOnly | Constant" -Tags "CI" {
 
-    BeforeAll {
-        Remove-Module -Force -Name "Foo", "Bar", "Baz" -ErrorAction SilentlyContinue
-
-        New-Item -ItemType Directory -Path "$testdrive\Modules\Foo\" -Force > $null
-        New-Item -ItemType Directory -Path "$testdrive\Modules\Bar\" -Force > $null
-        New-Item -ItemType Directory -Path "$testdrive\Modules\Baz\" -Force > $null
-
-        New-ModuleManifest -Path "$testdrive\Modules\Foo\Foo_ro.psd1"
-        New-ModuleManifest -Path "$testdrive\Modules\Foo\Foo_rw.psd1"
-        New-ModuleManifest -Path "$testdrive\Modules\Bar\Bar_rw.psd1"
-        New-ModuleManifest -Path "$testdrive\Modules\Baz\Const_module.psd1"
-
-        New-Item -ItemType File -Path "$testdrive\Modules\Foo\Foo_ro.psm1" > $null
-        New-Item -ItemType File -Path "$testdrive\Modules\Foo\Foo_rw.psm1" > $null
-        New-Item -ItemType File -Path "$testdrive\Modules\Bar\Bar_rw.psm1" > $null
-        New-Item -ItemType File -Path "$testdrive\Modules\Baz\Const_module.psm1" > $null
-
+    BeforeDiscovery {
         $removeReadOnlyModulesTestCases = @(
             # Simple patterns
             @{ NamesToRemove = "Foo_ro"; ShouldBeRemoved = ""; ShouldBePresent = "Bar_rw", "Const_module", "Foo_ro", "Foo_rw"}
@@ -253,6 +239,24 @@ Describe "Remove-Module : module is readOnly | Constant" -Tags "CI" {
             # Regex patterns
             @{ NamesToRemove = "Foo_*", "Ba*", "Const*"; ShouldBeRemoved = "Bar_rw", "Foo_ro", "Foo_rw"; ShouldBePresent = "Const_module"}
         )
+    }
+
+    BeforeAll {
+        Remove-Module -Force -Name "Foo", "Bar", "Baz" -ErrorAction SilentlyContinue
+
+        New-Item -ItemType Directory -Path "$testdrive\Modules\Foo\" -Force > $null
+        New-Item -ItemType Directory -Path "$testdrive\Modules\Bar\" -Force > $null
+        New-Item -ItemType Directory -Path "$testdrive\Modules\Baz\" -Force > $null
+
+        New-ModuleManifest -Path "$testdrive\Modules\Foo\Foo_ro.psd1"
+        New-ModuleManifest -Path "$testdrive\Modules\Foo\Foo_rw.psd1"
+        New-ModuleManifest -Path "$testdrive\Modules\Bar\Bar_rw.psd1"
+        New-ModuleManifest -Path "$testdrive\Modules\Baz\Const_module.psd1"
+
+        New-Item -ItemType File -Path "$testdrive\Modules\Foo\Foo_ro.psm1" > $null
+        New-Item -ItemType File -Path "$testdrive\Modules\Foo\Foo_rw.psm1" > $null
+        New-Item -ItemType File -Path "$testdrive\Modules\Bar\Bar_rw.psm1" > $null
+        New-Item -ItemType File -Path "$testdrive\Modules\Baz\Const_module.psm1" > $null
     }
 
     AfterAll {
@@ -393,7 +397,9 @@ Describe "Remove-Module : module contains nested modules" -Tags "CI" {
 }
 
 Describe "Remove-Module core module on module path by name" -Tags "CI" {
-    $moduleName = "Microsoft.PowerShell.Security"
+    BeforeAll {
+        $moduleName = "Microsoft.PowerShell.Security"
+    }
 
     BeforeEach {
         Import-Module -Name $moduleName -Force
@@ -420,6 +426,14 @@ Describe "Remove-Module core module on module path by name" -Tags "CI" {
 }
 
 Describe "Remove-Module custom module with FullyQualifiedName" -Tags "Feature" {
+    BeforeDiscovery {
+        $moduleName = 'Banana'
+        $testCases = @(
+            @{ ModPath = "TestDrive\Modules/$moduleName" }
+            @{ ModPath = "TestDrive/Modules\$moduleName/$moduleName.psd1" }
+        )
+    }
+
     BeforeAll {
         $moduleName = 'Banana'
         $moduleVersion = '1.0'
@@ -429,30 +443,23 @@ Describe "Remove-Module custom module with FullyQualifiedName" -Tags "Feature" {
         New-Item -Path "$TestDrive/Monkey" -ItemType Directory
 
         $modulePath = "$TestDrive/Modules/$moduleName"
-        $moduleName = 'Banana'
-        $moduleVersion = '1.0'
         $manifestPath = Join-Path $modulePath "$moduleName.psd1"
         New-ModuleManifest -Path $manifestPath -ModuleVersion $moduleVersion
+    }
 
-        $testCases = @(
-            @{ ModPath = "$TestDrive\Modules/$moduleName" }
-            @{ ModPath = "$TestDrive/Modules\$moduleName/$moduleName.psd1" }
-        )
+    It "Removes a module with fully qualified name with path <ModPath>" -TestCases $testCases -Pending {
+        param([string]$ModPath)
 
-        It "Removes a module with fully qualified name with path <ModPath>" -TestCases $testCases -Pending {
-            param([string]$ModPath)
+        Get-Module $moduleName | Remove-Module
 
-            Get-Module $moduleName | Remove-Module
+        $m = Import-Module $modulePath -PassThru
 
-            $m = Import-Module $modulePath -PassThru
+        $m.Name | Should -Be $moduleName
+        $m.Version | Should -Be $moduleVersion
+        $m.Path | Should -Be $manifestPath
 
-            $m.Name | Should -Be $moduleName
-            $m.Version | Should -Be $moduleVersion
-            $m.Path | Should -Be $manifestPath
+        Remove-Module -FullyQualifiedName @{ ModuleName = $ModPath; RequiredVersion = $moduleVersion } -ErrorAction Stop
 
-            Remove-Module -FullyQualifiedName @{ ModuleName = $ModPath; RequiredVersion = $moduleVersion } -ErrorAction Stop
-
-            Get-Module $moduleName | Should -HaveCount 0 -Because "The module should have been removed by its path"
-        }
+        Get-Module $moduleName | Should -HaveCount 0 -Because "The module should have been removed by its path"
     }
 }

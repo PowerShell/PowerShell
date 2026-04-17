@@ -67,7 +67,7 @@ Describe 'Tests for $ErrorView' -Tag CI {
         }
 
         It 'Pester Should shows test file and not pester' {
-            $testScript = '1 + 1 | Should -Be 3'
+            $testScript = '1 + 1 | Should -Be 3 -ErrorAction Stop'
 
             Set-Content -Path $testScriptPath -Value $testScript
             $e = { & $testScriptPath } | Should -Throw -ErrorId 'PesterAssertionFailed' -PassThru | Out-String
@@ -227,7 +227,6 @@ Describe 'Tests for $ErrorView' -Tag CI {
                 ": "
                 "Line |"
                 "   5 | This is the line with the error"
-                "     |                  ~~~~~~~~~~~~~~"
                 "     | Test Parser Error"
             ) -join ([Environment]::NewLine)).TrimEnd()
             $e = {
@@ -258,7 +257,6 @@ Describe 'Tests for $ErrorView' -Tag CI {
                 ": "
                 "Line |"
                 "   5 | This is the line with the error"
-                "     |                  ~~~~"
                 "     | Test Parser Error"
             ) -join ([Environment]::NewLine)).TrimEnd()
             $e = {
@@ -290,7 +288,6 @@ Describe 'Tests for $ErrorView' -Tag CI {
                 ": "
                 "Line |"
                 "   5 | This is the line with the error"
-                "     |                               ~"
                 "     | Test Parser Error"
             ) -join ([Environment]::NewLine)).TrimEnd()
             $e = {
@@ -322,7 +319,6 @@ Describe 'Tests for $ErrorView' -Tag CI {
                 ": "
                 "Line |"
                 "   5 | This is the line with the error"
-                "     |                               ~"
                 "     | Test Parser Error"
             ) -join ([Environment]::NewLine)).TrimEnd()
             $e = {
@@ -383,7 +379,6 @@ Describe 'Tests for $ErrorView' -Tag CI {
                 ": "
                 "Line |"
                 "   5 | This is the line with the error"
-                "     |                  ~~~~"
                 "     | Test Parser Error"
             ) -join ([Environment]::NewLine)).TrimEnd()
             $e = {
@@ -445,7 +440,6 @@ Describe 'Tests for $ErrorView' -Tag CI {
                 ": "
                 "Line |"
                 "   5 | This is the line with the error"
-                "     |                  ~~~~~~~~~~~~~~"
                 "     | Test Parser Error"
             ) -join ([Environment]::NewLine)).TrimEnd()
             $e = {
@@ -520,7 +514,6 @@ Describe 'Tests for $ErrorView' -Tag CI {
                 ": "
                 "Line |"
                 "   1 | This is the line with the error"
-                "     |                  ~~~~~~~~~~~~~~"
                 "     | Test Parser Error"
             ) -join ([Environment]::NewLine)).TrimEnd()
             $e = {

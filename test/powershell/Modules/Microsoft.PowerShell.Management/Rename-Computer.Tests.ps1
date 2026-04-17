@@ -7,11 +7,13 @@ $DefaultResultValue = 0
 try
 {
     # set up for testing
-    $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+    $originalDefaultParameterValues = if ($PSDefaultParameterValues) { $PSDefaultParameterValues.Clone() } else { @{} }
     $PSDefaultParameterValues["it:skip"] = ! $IsWindows
-    Enable-Testhook -testhookName $RenameTesthook
-    # we also set TestStopComputer
-    Enable-Testhook -testhookName TestStopComputer
+    if (Get-Command Enable-Testhook -ErrorAction SilentlyContinue) {
+        Enable-Testhook -testhookName $RenameTesthook
+        # we also set TestStopComputer
+        Enable-Testhook -testhookName TestStopComputer
+    }
 
     # TEST START HERE
     Describe "Rename-Computer" -Tag Feature,RequireAdminOnWindows {
@@ -54,14 +56,16 @@ try
         }
 
         Context "Rename-Computer Error Conditions" {
-            $testcases =
-                @{ OldName = "." ; NewName = "localhost" ; ExpectedError = "FailToRenameComputer,Microsoft.PowerShell.Commands.RenameComputerCommand" },
-                @{ OldName = "." ; NewName = "." ; ExpectedError = "InvalidNewName,Microsoft.PowerShell.Commands.RenameComputerCommand" },
-                @{ OldName = "." ; NewName = "::1" ; ExpectedError = "InvalidNewName,Microsoft.PowerShell.Commands.RenameComputerCommand" },
-                @{ OldName = "." ; NewName = "127.0.0.1" ; ExpectedError = "InvalidNewName,Microsoft.PowerShell.Commands.RenameComputerCommand" },
-                @{ OldName = "." ; NewName = ${env:ComputerName} ; ExpectedError = "NewNameIsOldName,Microsoft.PowerShell.Commands.RenameComputerCommand" },
-                @{ OldName = "." ; NewName = ${env:ComputerName} + "." + ${env:USERDNSDOMAIN} ; ExpectedError = "InvalidNewName,Microsoft.PowerShell.Commands.RenameComputerCommand" },
-                @{ OldName = ".\$#" ; NewName  = "NewName"; ExpectedError = "AddressResolutionException,Microsoft.PowerShell.Commands.RenameComputerCommand" }
+            BeforeDiscovery {
+                $testcases =
+                    @{ OldName = "." ; NewName = "localhost" ; ExpectedError = "FailToRenameComputer,Microsoft.PowerShell.Commands.RenameComputerCommand" },
+                    @{ OldName = "." ; NewName = "." ; ExpectedError = "InvalidNewName,Microsoft.PowerShell.Commands.RenameComputerCommand" },
+                    @{ OldName = "." ; NewName = "::1" ; ExpectedError = "InvalidNewName,Microsoft.PowerShell.Commands.RenameComputerCommand" },
+                    @{ OldName = "." ; NewName = "127.0.0.1" ; ExpectedError = "InvalidNewName,Microsoft.PowerShell.Commands.RenameComputerCommand" },
+                    @{ OldName = "." ; NewName = ${env:ComputerName} ; ExpectedError = "NewNameIsOldName,Microsoft.PowerShell.Commands.RenameComputerCommand" },
+                    @{ OldName = "." ; NewName = ${env:ComputerName} + "." + ${env:USERDNSDOMAIN} ; ExpectedError = "InvalidNewName,Microsoft.PowerShell.Commands.RenameComputerCommand" },
+                    @{ OldName = ".\$#" ; NewName  = "NewName"; ExpectedError = "AddressResolutionException,Microsoft.PowerShell.Commands.RenameComputerCommand" }
+            }
 
             It "Renaming '<OldName>' to '<NewName>' creates the right error" -testcase $testcases {
                 param ( $OldName, $NewName, $ExpectedError )
@@ -75,7 +79,11 @@ try
 finally
 {
     $global:PSDefaultParameterValues = $originalDefaultParameterValues
-    Disable-Testhook -testhookName $RenameTestHook
-    Disable-Testhook -testhookName TestStopComputer
-    Set-TesthookResult -testhookName $RenameResultName -value 0
+    if (Get-Command Disable-Testhook -ErrorAction SilentlyContinue) {
+        Disable-Testhook -testhookName $RenameTestHook
+        Disable-Testhook -testhookName TestStopComputer
+    }
+    if (Get-Command Set-TesthookResult -ErrorAction SilentlyContinue) {
+        Set-TesthookResult -testhookName $RenameResultName -value 0
+    }
 }

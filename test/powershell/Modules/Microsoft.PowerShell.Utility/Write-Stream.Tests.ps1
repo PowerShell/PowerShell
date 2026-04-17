@@ -1,20 +1,22 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Stream writer tests" -Tags "CI" {
-    $targetfile = Join-Path -Path $TestDrive -ChildPath "writeoutput.txt"
+    BeforeAll {
+        $targetfile = Join-Path -Path $TestDrive -ChildPath "writeoutput.txt"
 
-    # A custom function is defined here do handle the debug stream dealing with the confirm prompt
-    # that would normally
-    function Write-Messages
-    {
-        [CmdletBinding()]
+        # A custom function is defined here do handle the debug stream dealing with the confirm prompt
+        # that would normally
+        function Write-Messages
+        {
+            [CmdletBinding()]
 
-        param()
+            param()
 
-        Write-Verbose "Verbose message"
+            Write-Verbose "Verbose message"
 
-        Write-Debug "Debug message"
+            Write-Debug "Debug message"
 
+        }
     }
 
     Context "Redirect Stream Tests" {
@@ -55,9 +57,7 @@ Describe "Stream writer tests" -Tags "CI" {
     }
 
     Context "Write-Information cmdlet" {
-        BeforeAll {
-            $ps = [powershell]::Create()
-
+        BeforeDiscovery {
             $testInfoData = @(
                 @{ Name = 'defaults'; Command = "Write-Information TestMessage";              returnCount = 1; returnValue = 'TestMessage' }
                 @{ Name = '-Object';  Command = "Write-Information -MessageData TestMessage"; returnCount = 1; returnValue = 'TestMessage' }
@@ -65,6 +65,10 @@ Describe "Stream writer tests" -Tags "CI" {
                 @{ Name = '-Msg';     Command = "Write-Information -Msg TestMessage";         returnCount = 1; returnValue = 'TestMessage' }
                 @{ Name = '-Tag';     Command = "Write-Information TestMessage -Tag Test";    returnCount = 1; returnValue = 'TestMessage' }
             )
+        }
+
+        BeforeAll {
+            $ps = [powershell]::Create()
         }
 
         BeforeEach {

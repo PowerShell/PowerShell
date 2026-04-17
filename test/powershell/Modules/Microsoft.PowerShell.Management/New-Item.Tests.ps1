@@ -3,45 +3,49 @@
 
 Import-Module HelpersCommon
 
-function Clean-State
-{
-    if (Test-Path $FullyQualifiedLink)
+BeforeAll {
+    function Clean-State
     {
-        Remove-Item $FullyQualifiedLink -Force
-    }
+        if (Test-Path $FullyQualifiedLink)
+        {
+            Remove-Item $FullyQualifiedLink -Force
+        }
 
-    if (Test-Path $FullyQualifiedFile)
-    {
-        Remove-Item $FullyQualifiedFile -Force
-    }
+        if (Test-Path $FullyQualifiedFile)
+        {
+            Remove-Item $FullyQualifiedFile -Force
+        }
 
-    if ($FullyQualifiedFileInFolder -and (Test-Path $FullyQualifiedFileInFolder))
-    {
-        Remove-Item $FullyQualifiedFileInFolder -Force
-    }
+        if ($FullyQualifiedFileInFolder -and (Test-Path $FullyQualifiedFileInFolder))
+        {
+            Remove-Item $FullyQualifiedFileInFolder -Force
+        }
 
-    if ($FullyQualifiedSubFolder -and (Test-Path $FullyQualifiedSubFolder))
-    {
-        Remove-Item $FullyQualifiedSubFolder -Force
-    }
+        if ($FullyQualifiedSubFolder -and (Test-Path $FullyQualifiedSubFolder))
+        {
+            Remove-Item $FullyQualifiedSubFolder -Force
+        }
 
-    if (Test-Path $FullyQualifiedFolder)
-    {
-        Remove-Item $FullyQualifiedFolder -Force
+        if (Test-Path $FullyQualifiedFolder)
+        {
+            Remove-Item $FullyQualifiedFolder -Force
+        }
     }
 }
 
 Describe "New-Item" -Tags "CI" {
-    $tmpDirectory               = $TestDrive
-    $testfile                   = "testfile.txt"
-    $testfolder                 = "newDirectory"
-    $testsubfolder              = "newSubDirectory"
-    $testlink                   = "testlink"
-    $FullyQualifiedFile         = Join-Path -Path $tmpDirectory -ChildPath $testfile
-    $FullyQualifiedFolder       = Join-Path -Path $tmpDirectory -ChildPath $testfolder
-    $FullyQualifiedLink         = Join-Path -Path $tmpDirectory -ChildPath $testlink
-    $FullyQualifiedSubFolder    = Join-Path -Path $FullyQualifiedFolder -ChildPath $testsubfolder
-    $FullyQualifiedFileInFolder = Join-Path -Path $FullyQualifiedFolder -ChildPath $testfile
+    BeforeAll {
+        $tmpDirectory               = $TestDrive
+        $testfile                   = "testfile.txt"
+        $testfolder                 = "newDirectory"
+        $testsubfolder              = "newSubDirectory"
+        $testlink                   = "testlink"
+        $FullyQualifiedFile         = Join-Path -Path $tmpDirectory -ChildPath $testfile
+        $FullyQualifiedFolder       = Join-Path -Path $tmpDirectory -ChildPath $testfolder
+        $FullyQualifiedLink         = Join-Path -Path $tmpDirectory -ChildPath $testlink
+        $FullyQualifiedSubFolder    = Join-Path -Path $FullyQualifiedFolder -ChildPath $testsubfolder
+        $FullyQualifiedFileInFolder = Join-Path -Path $FullyQualifiedFolder -ChildPath $testfile
+    }
 
 
     BeforeEach {
@@ -199,15 +203,17 @@ Describe "New-Item" -Tags "CI" {
 # In the default windows setup, Admin user has this priveledge, but regular users don't.
 
 Describe "New-Item with links" -Tags @('CI', 'RequireAdminOnWindows') {
-    $tmpDirectory         = $TestDrive
-    $testfile             = "testfile.txt"
-    $testfolder           = "newDirectory"
-    $testlink             = "testlink"
-    $FullyQualifiedFile   = Join-Path -Path $tmpDirectory -ChildPath $testfile
-    $FullyQualifiedFolder = Join-Path -Path $tmpDirectory -ChildPath $testfolder
-    $FullyQualifiedLink   = Join-Path -Path $tmpDirectory -ChildPath $testlink
-    $SymLinkMask          = [System.IO.FileAttributes]::ReparsePoint
-    $DirLinkMask          = $SymLinkMask -bor [System.IO.FileAttributes]::Directory
+    BeforeAll {
+        $tmpDirectory         = $TestDrive
+        $testfile             = "testfile.txt"
+        $testfolder           = "newDirectory"
+        $testlink             = "testlink"
+        $FullyQualifiedFile   = Join-Path -Path $tmpDirectory -ChildPath $testfile
+        $FullyQualifiedFolder = Join-Path -Path $tmpDirectory -ChildPath $testfolder
+        $FullyQualifiedLink   = Join-Path -Path $tmpDirectory -ChildPath $testlink
+        $SymLinkMask          = [System.IO.FileAttributes]::ReparsePoint
+        $DirLinkMask          = $SymLinkMask -bor [System.IO.FileAttributes]::Directory
+    }
 
     BeforeEach {
         Clean-State

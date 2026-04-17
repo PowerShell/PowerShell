@@ -9,15 +9,17 @@ Describe "Native streams behavior with PowerShell" -Tags 'CI' {
         # we are using powershell itself as an example of a native program.
         # we can create a behavior we want on the fly and test complex scenarios.
 
-        $error.Clear()
+        BeforeAll {
+            $error.Clear()
 
-        $command = [string]::Join('', @(
-            '[Console]::Error.Write("foo`n`nbar`n`nbaz"); ',
-            '[Console]::Error.Write("middle"); ',
-            '[Console]::Error.Write("foo`n`nbar`n`nbaz")'
-        ))
+            $command = [string]::Join('', @(
+                '[Console]::Error.Write("foo`n`nbar`n`nbaz"); ',
+                '[Console]::Error.Write("middle"); ',
+                '[Console]::Error.Write("foo`n`nbar`n`nbaz")'
+            ))
 
-        $out = & $powershell -noprofile -command $command 2>&1
+            $out = & $powershell -noprofile -command $command 2>&1
+        }
 
         # this check should be the first one, because $error is a global shared variable
         It 'should not add records to $error variable' {

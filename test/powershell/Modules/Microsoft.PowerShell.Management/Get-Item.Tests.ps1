@@ -216,12 +216,19 @@ Describe "Get-Item environment provider on Windows with accidental case-variant 
 }
 
 Describe 'Formatting for FileInfo objects' -Tags 'CI' {
-    BeforeAll {
-        $extensionTests = [System.Collections.Generic.List[HashTable]]::new()
-        foreach ($extension in @('.zip', '.tgz', '.tar', '.gz', '.nupkg', '.cab', '.7z', '.ps1', '.psd1', '.psm1', '.ps1xml')) {
-            $extensionTests.Add(@{extension = $extension})
-        }
-    }
+    $extensionTests = @(
+        @{extension = '.zip'}
+        @{extension = '.tgz'}
+        @{extension = '.tar'}
+        @{extension = '.gz'}
+        @{extension = '.nupkg'}
+        @{extension = '.cab'}
+        @{extension = '.7z'}
+        @{extension = '.ps1'}
+        @{extension = '.psd1'}
+        @{extension = '.psm1'}
+        @{extension = '.ps1xml'}
+    )
 
     It 'File type <extension> should have correct color' -TestCases $extensionTests {
         param($extension)
@@ -254,6 +261,14 @@ Describe 'Formatting for FileInfo objects' -Tags 'CI' {
 }
 
 Describe 'Formatting for FileInfo requiring admin' -Tags 'CI','RequireAdminOnWindows' {
+    AfterAll {
+        # Remove circular symlink before Pester 5 TestDrive cleanup to avoid infinite recursion
+        $linkPath = Join-Path -Path $TestDrive -ChildPath 'link'
+        if (Test-Path -LiteralPath $linkPath) {
+            (Get-Item -LiteralPath $linkPath).Delete()
+        }
+    }
+
     It 'Symlink should have correct color' {
         $linkPath = Join-Path -Path $TestDrive -ChildPath 'link'
         $link = New-Item -ItemType SymbolicLink -Name 'link' -Value $TestDrive -Path $TestDrive

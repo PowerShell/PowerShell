@@ -24,62 +24,60 @@ function ShouldRun
     return ($result -eq 1)
 }
 
-if (-not (ShouldRun))
-{
-    Write-Host "PS Remoting is not available, skipping tests..." -ForegroundColor Cyan
-    return
-}
+$skipRemoting = -not (ShouldRun)
 
-Describe "Validate Copy-Item Remotely" -Tags "CI" {
+Describe "Validate Copy-Item Remotely" -Tags "CI" -Skip:$skipRemoting {
 
     # Validate a copy item operation.
     # $filePath is the source file path
     #
-    function ValidateCopyItemOperation
-    {
-        param ([string]$filePath, [string]$destination)
-
-        if (-not $destination)
+    BeforeAll {
+        function ValidateCopyItemOperation
         {
+            param ([string]$filePath, [string]$destination)
+
+            if (-not $destination)
+            {
+                $copiedFilePath = ([string]$filePath).Replace("SourceDirectory", "DestinationDirectory")
+            }
+            else
+            {
+                $fileName = Split-Path $filePath -Leaf
+                $copiedFilePath = Join-Path $destination $fileName
+            }
+
+            $copiedFilePath | Should -Exist
+
+            # Validate file attributes
+            $originalFile = Get-Item $filePath -Force
+            $newFile = Get-Item $copiedFilePath -Force
+
+            # Validate file Length
+            $newFile.Length | Should -Be $originalFile.Length
+
+            # Validate LastWriteTime
+            $newFile.LastWriteTime | Should -Be $originalFile.LastWriteTime
+            $newFile.LastWriteTimeUtc | Should -Be $originalFile.LastWriteTimeUtc
+
+            # Validate Attributes
+            $newFile.Attributes.value__ | Should -Be $originalFile.Attributes.value__
+        }
+
+        # Validate a copy item operation.
+        # $filePath is the source file path
+        #
+        function ValidateCopyItemOperationForAlternateDataStream
+        {
+            param ([string]$filePath, $streamName, $expectedStreamContent)
+
             $copiedFilePath = ([string]$filePath).Replace("SourceDirectory", "DestinationDirectory")
+            $copiedFilePath | Should -Exist
+            (Get-Item $copiedFilePath).Length | Should -Be (Get-Item $filePath).Length
+
+            # Validate the stream
+            $actualStreamContent = Get-Content -Path $copiedFilePath -Stream $streamName -ErrorAction SilentlyContinue
+            $actualStreamContent | Should -Match $expectedStreamContent
         }
-        else
-        {
-            $fileName = Split-Path $filePath -Leaf
-            $copiedFilePath = Join-Path $destination $fileName
-        }
-
-        $copiedFilePath | Should -Exist
-
-        # Validate file attributes
-        $originalFile = Get-Item $filePath -Force
-        $newFile = Get-Item $copiedFilePath -Force
-
-        # Validate file Length
-        $newFile.Length | Should -Be $originalFile.Length
-
-        # Validate LastWriteTime
-        $newFile.LastWriteTime | Should -Be $originalFile.LastWriteTime
-        $newFile.LastWriteTimeUtc | Should -Be $originalFile.LastWriteTimeUtc
-
-        # Validate Attributes
-        $newFile.Attributes.value__ | Should -Be $originalFile.Attributes.value__
-    }
-
-    # Validate a copy item operation.
-    # $filePath is the source file path
-    #
-    function ValidateCopyItemOperationForAlternateDataStream
-    {
-        param ([string]$filePath, $streamName, $expectedStreamContent)
-
-        $copiedFilePath = ([string]$filePath).Replace("SourceDirectory", "DestinationDirectory")
-        $copiedFilePath | Should -Exist
-        (Get-Item $copiedFilePath).Length | Should -Be (Get-Item $filePath).Length
-
-        # Validate the stream
-        $actualStreamContent = Get-Content -Path $copiedFilePath -Stream $streamName -ErrorAction SilentlyContinue
-        $actualStreamContent | Should -Match $expectedStreamContent
     }
 
     BeforeAll {
@@ -577,76 +575,78 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
             }
         }
 
-        $invalidSourcePathtestCases = @(
-            @{
-                Path = "HKLM:\SOFTWARE"
-                Destination = $env:SystemDrive
-                ExpectedFullyQualifiedErrorId = "NamedParameterNotFound,Microsoft.PowerShell.Commands.CopyItemCommand"
-                FromSession = $true
-            }
-            @{
-                Path = ".\Source"
-                Destination = $env:SystemDrive
-                ExpectedFullyQualifiedErrorId = "RemotePathIsNotAbsolute,Microsoft.PowerShell.Commands.CopyItemCommand"
-                FromSession = $true
-            }
-            @{
-                Path = $env:SystemDrive + "\X\Y\Z"
-                Destination = $env:SystemDrive + "\A\B\C"
-                ExpectedFullyQualifiedErrorId = "RemotePathNotFound,Microsoft.PowerShell.Commands.CopyItemCommand"
-                FromSession = $true
-            }
-            @{
-                Path = $null
-                Destination = $env:SystemDrive
-                ExpectedFullyQualifiedErrorId = "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.CopyItemCommand"
-                FromSession = $true
-            }
-            @{
-                Path = ''
-                Destination = $env:SystemDrive
-                ExpectedFullyQualifiedErrorId = "ParameterArgumentValidationErrorEmptyStringNotAllowed,Microsoft.PowerShell.Commands.CopyItemCommand"
-                FromSession = $true
-            }
-            @{
-                Path = "$env:SystemDrive\nonexistdir\*"
-                Destination = "$env:SystemDrive\psTest"
-                ExpectedFullyQualifiedErrorId = "RemotePathNotFound,Microsoft.PowerShell.Commands.CopyItemCommand"
-                FromSession = $true
-            }
-        )
+        BeforeDiscovery {
+            $testFilePath = Join-Path "TestDrive:" "testfile.txt"
+            $invalidSourcePathtestCases = @(
+                @{
+                    Path = "HKLM:\SOFTWARE"
+                    Destination = $env:SystemDrive
+                    ExpectedFullyQualifiedErrorId = "NamedParameterNotFound,Microsoft.PowerShell.Commands.CopyItemCommand"
+                    FromSession = $true
+                }
+                @{
+                    Path = ".\Source"
+                    Destination = $env:SystemDrive
+                    ExpectedFullyQualifiedErrorId = "RemotePathIsNotAbsolute,Microsoft.PowerShell.Commands.CopyItemCommand"
+                    FromSession = $true
+                }
+                @{
+                    Path = $env:SystemDrive + "\X\Y\Z"
+                    Destination = $env:SystemDrive + "\A\B\C"
+                    ExpectedFullyQualifiedErrorId = "RemotePathNotFound,Microsoft.PowerShell.Commands.CopyItemCommand"
+                    FromSession = $true
+                }
+                @{
+                    Path = $null
+                    Destination = $env:SystemDrive
+                    ExpectedFullyQualifiedErrorId = "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.CopyItemCommand"
+                    FromSession = $true
+                }
+                @{
+                    Path = ''
+                    Destination = $env:SystemDrive
+                    ExpectedFullyQualifiedErrorId = "ParameterArgumentValidationErrorEmptyStringNotAllowed,Microsoft.PowerShell.Commands.CopyItemCommand"
+                    FromSession = $true
+                }
+                @{
+                    Path = "$env:SystemDrive\nonexistdir\*"
+                    Destination = "$env:SystemDrive\psTest"
+                    ExpectedFullyQualifiedErrorId = "RemotePathNotFound,Microsoft.PowerShell.Commands.CopyItemCommand"
+                    FromSession = $true
+                }
+            )
+            $invalidDestinationPathtestCases = @(
+                @{
+                    Path = $testFilePath
+                    Destination = ".\Source"
+                    ExpectedFullyQualifiedErrorId = "RemotePathIsNotAbsolute,Microsoft.PowerShell.Commands.CopyItemCommand"
+                }
+                @{
+                    Path = $testFilePath
+                    Destination = $env:SystemDrive + "\X\A\B\C"
+                    ExpectedFullyQualifiedErrorId = "RemotePathNotFound,Microsoft.PowerShell.Commands.CopyItemCommand"
+                }
+                @{
+                    Path = $testFilePath
+                    Destination = $null
+                    ExpectedFullyQualifiedErrorId = "CopyItemRemoteDestinationIsNullOrEmpty,Microsoft.PowerShell.Commands.CopyItemCommand"
+                }
+                @{
+                    Path = $testFilePath
+                    Destination = ""
+                    ExpectedFullyQualifiedErrorId = "CopyItemRemoteDestinationIsNullOrEmpty,Microsoft.PowerShell.Commands.CopyItemCommand"
+                }
+                @{
+                    Path = "$env:SystemDrive\nonexistdir\*"
+                    Destination = "$env:SystemDrive\psTest"
+                    ExpectedFullyQualifiedErrorId = "PathNotFound,Microsoft.PowerShell.Commands.CopyItemCommand"
+                }
+            )
+        }
 
         foreach ($testCase in $invalidSourcePathtestCases) {
            Test-CopyItemError @testCase
         }
-
-        $invalidDestinationPathtestCases = @(
-            @{
-                Path = $testFilePath
-                Destination = ".\Source"
-                ExpectedFullyQualifiedErrorId = "RemotePathIsNotAbsolute,Microsoft.PowerShell.Commands.CopyItemCommand"
-            }
-            @{
-                Path = $testFilePath
-                Destination = $env:SystemDrive + "\X\A\B\C"
-                ExpectedFullyQualifiedErrorId = "RemotePathNotFound,Microsoft.PowerShell.Commands.CopyItemCommand"
-            }
-            @{
-                Path = $testFilePath
-                Destination = $null
-                ExpectedFullyQualifiedErrorId = "CopyItemRemoteDestinationIsNullOrEmpty,Microsoft.PowerShell.Commands.CopyItemCommand"
-            }
-            @{
-                Path = $testFilePath
-                Destination = ""
-                ExpectedFullyQualifiedErrorId = "CopyItemRemoteDestinationIsNullOrEmpty,Microsoft.PowerShell.Commands.CopyItemCommand"
-            }
-            @{
-                Path = "$env:SystemDrive\nonexistdir\*"
-                Destination = "$env:SystemDrive\psTest"
-                ExpectedFullyQualifiedErrorId = "PathNotFound,Microsoft.PowerShell.Commands.CopyItemCommand"
-            }
-        )
 
         foreach ($testCase in $invalidDestinationPathtestCases) {
            Test-CopyItemError @testCase
@@ -654,7 +654,7 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
     }
 }
 
-Describe "Validate Copy-Item error for target sessions not in FullLanguageMode." -Tags "Feature" {
+Describe "Validate Copy-Item error for target sessions not in FullLanguageMode." -Tags "Feature" -Skip:$skipRemoting {
 
     BeforeAll {
 
@@ -676,7 +676,6 @@ Describe "Validate Copy-Item error for target sessions not in FullLanguageMode."
         # Keep track of the session names to be unregistered.
         $sessionToUnregister = @()
 
-        $languageModes = @("ConstrainedLanguage", "NoLanguage", "RestrictedLanguage")
         $id = (Get-Random).ToString()
 
         foreach ($languageMode in $languageModes)
@@ -711,11 +710,15 @@ Describe "Validate Copy-Item error for target sessions not in FullLanguageMode."
         }
     }
 
-    foreach ($languageMode in $testSessions.Keys)
-    {
-        $session = $testSessions[$languageMode]
+    BeforeDiscovery {
+        $languageModes = @("ConstrainedLanguage", "NoLanguage", "RestrictedLanguage")
+    }
 
+    foreach ($languageMode in $languageModes)
+    {
         It "Copy-Item throws 'SessionIsNotInFullLanguageMode' error for a session in '$languageMode'" {
+
+            $session = $testSessions[$languageMode]
 
             # FromSession
             { Copy-Item -Path $testFilePath -FromSession $session -Destination $destination -Force -Verbose -ErrorAction Stop } |
@@ -728,7 +731,7 @@ Describe "Validate Copy-Item error for target sessions not in FullLanguageMode."
     }
 }
 
-Describe "Copy-Item can use Recurse and Exclude together" -Tags "Feature" {
+Describe "Copy-Item can use Recurse and Exclude together" -Tags "Feature" -Skip:$skipRemoting {
 
     Context "Local and Remote Tests" {
 
@@ -773,7 +776,7 @@ Describe "Copy-Item can use Recurse and Exclude together" -Tags "Feature" {
     }
 }
 
-Describe "Copy-Item remotely bug fixes" -Tags "Feature" {
+Describe "Copy-Item remotely bug fixes" -Tags "Feature" -Skip:$skipRemoting {
 
     BeforeAll {
         $s = New-PSSession -ComputerName . -ErrorAction SilentlyContinue

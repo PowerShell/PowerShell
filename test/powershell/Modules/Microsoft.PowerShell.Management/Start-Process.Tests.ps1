@@ -12,85 +12,75 @@ Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
             $extraArgs.WindowStyle = "Hidden"
         }
 
-        $pingCommand = (Get-Command -CommandType Application ping)[0].Definition
-        $pingDirectory = Split-Path $pingCommand -Parent
+        $testCommand = (Get-Command -CommandType Application whoami)[0].Definition
+        $testCommandName = 'whoami'
+        $testDirectory = Split-Path $testCommand -Parent
+        $testParam = ''
         $tempFile = Join-Path -Path $TestDrive -ChildPath PSTest
         $tempDirectory = Join-Path -Path $TestDrive -ChildPath 'PSPath[]'
         New-Item $tempDirectory -ItemType Directory  -Force
         $assetsFile = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath assets) -ChildPath SortTest.txt
-        if ($IsWindows) {
-            $pingParam = "-n 2 localhost"
-        }
-        elseif ($IsLinux -Or $IsMacOS) {
-            $pingParam = "-c 2 localhost"
-        }
     }
 
     # Note that ProcessName may still be `powershell` due to dotnet/corefx#5378
     # This has been fixed on Linux, but not on macOS
 
     It "Should process arguments without error" {
-        $process = Start-Process ping -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output" @extraArgs
+        $process = Start-Process $testCommandName -ArgumentList $testParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output" @extraArgs
 
         $process.Length      | Should -Be 1
         $process.Id          | Should -BeGreaterThan 1
-        # $process.ProcessName | Should -Be "ping"
     }
 
     It "Should work correctly when used with full path name" {
-        $process = Start-Process $pingCommand -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output"  @extraArgs
+        $process = Start-Process $testCommand -ArgumentList $testParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output"  @extraArgs
 
         $process.Length      | Should -Be 1
         $process.Id          | Should -BeGreaterThan 1
-        # $process.ProcessName | Should -Be "ping"
     }
 
     It "Should invoke correct path when used with FilePath argument" {
-        $process = Start-Process -FilePath $pingCommand -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output" @extraArgs
+        $process = Start-Process -FilePath $testCommand -ArgumentList $testParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output" @extraArgs
 
         $process.Length      | Should -Be 1
         $process.Id          | Should -BeGreaterThan 1
-        # $process.ProcessName | Should -Be "ping"
     }
 
     It "Should invoke correct path when used with Path alias argument" {
-        $process = Start-Process -Path $pingCommand -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output" @extraArgs
+        $process = Start-Process -Path $testCommand -ArgumentList $testParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output" @extraArgs
 
         $process.Length | Should -Be 1
         $process.Id     | Should -BeGreaterThan 1
     }
 
     It "Should wait for command completion if used with Wait argument" {
-        $process = Start-Process ping -ArgumentList $pingParam -Wait -PassThru -RedirectStandardOutput "$TESTDRIVE/output" @extraArgs
+        $process = Start-Process $testCommandName -ArgumentList $testParam -Wait -PassThru -RedirectStandardOutput "$TESTDRIVE/output" @extraArgs
     }
 
     It "Should work correctly with WorkingDirectory argument" {
-        $process = Start-Process ping -WorkingDirectory $pingDirectory -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output" @extraArgs
+        $process = Start-Process $testCommandName -WorkingDirectory $testDirectory -ArgumentList $testParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output" @extraArgs
 
         $process.Length      | Should -Be 1
         $process.Id          | Should -BeGreaterThan 1
-        # $process.ProcessName | Should -Be "ping"
     }
 
     It "Should work correctly within an unspecified WorkingDirectory with wildcard-type characters" {
         Push-Location -LiteralPath $tempDirectory
-        $process = Start-Process ping -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output" @extraArgs
+        $process = Start-Process $testCommandName -ArgumentList $testParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output" @extraArgs
         $process.Length      | Should -Be 1
         $process.Id          | Should -BeGreaterThan 1
-        # $process.ProcessName | Should -Be "ping"
         Pop-Location
     }
 
     It "Should handle stderr redirection without error" {
-        $process = Start-Process ping -ArgumentList $pingParam -PassThru -RedirectStandardError $tempFile -RedirectStandardOutput "$TESTDRIVE/output"  @extraArgs
+        $process = Start-Process $testCommandName -ArgumentList $testParam -PassThru -RedirectStandardError $tempFile -RedirectStandardOutput "$TESTDRIVE/output"  @extraArgs
 
         $process.Length      | Should -Be 1
         $process.Id          | Should -BeGreaterThan 1
-        # $process.ProcessName | Should -Be "ping"
     }
 
     It "Should handle stdout redirection without error" {
-        $process = Start-Process ping -ArgumentList $pingParam -Wait -RedirectStandardOutput $tempFile  @extraArgs
+        $process = Start-Process $testCommandName -ArgumentList $testParam -Wait -RedirectStandardOutput $tempFile  @extraArgs
         $dirEntry = Get-ChildItem $tempFile
         $dirEntry.Length | Should -BeGreaterThan 0
     }
@@ -103,20 +93,20 @@ Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
 
     ## -Verb is supported in PowerShell on Windows full desktop.
     It "Should give an error when -Verb parameter is used" -Skip:$isFullWin {
-        { Start-Process -Verb runas -FilePath $pingCommand } | Should -Throw -ErrorId "NotSupportedException,Microsoft.PowerShell.Commands.StartProcessCommand"
+        { Start-Process -Verb runas -FilePath $testCommand } | Should -Throw -ErrorId "NotSupportedException,Microsoft.PowerShell.Commands.StartProcessCommand"
     }
 
     ## -WindowStyle is supported in PowerShell on Windows full desktop.
     It "Should give an error when -WindowStyle parameter is used" -Skip:$isFullWin {
-        { Start-Process -FilePath $pingCommand -WindowStyle Normal } | Should -Throw -ErrorId "NotSupportedException,Microsoft.PowerShell.Commands.StartProcessCommand"
+        { Start-Process -FilePath $testCommand -WindowStyle Normal } | Should -Throw -ErrorId "NotSupportedException,Microsoft.PowerShell.Commands.StartProcessCommand"
     }
 
     It "Should give an error when both -NoNewWindow and -WindowStyle are specified" -Skip:(!$isFullWin) {
-        { Start-Process -FilePath $pingCommand -NoNewWindow -WindowStyle Normal -ErrorAction Stop } | Should -Throw -ErrorId "InvalidOperationException,Microsoft.PowerShell.Commands.StartProcessCommand"
+        { Start-Process -FilePath $testCommand -NoNewWindow -WindowStyle Normal -ErrorAction Stop } | Should -Throw -ErrorId "InvalidOperationException,Microsoft.PowerShell.Commands.StartProcessCommand"
     }
 
     It "ExitCode returns with -NoNewWindow, -PassThru and -Wait" {
-        $process = Start-Process -FilePath $pingCommand -ArgumentList $pingParam -NoNewWindow -PassThru -Wait -ErrorAction Stop
+        $process = Start-Process -FilePath $testCommand -ArgumentList $testParam -NoNewWindow -PassThru -Wait -ErrorAction Stop
         $process.ExitCode | Should -Be 0
     }
 
@@ -135,29 +125,29 @@ Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
     }
 
     It "Should be able to use the -WhatIf switch without performing the actual action" {
-        $pingOutput = Join-Path $TestDrive "pingOutput.txt"
-        { Start-Process -Wait $pingCommand -ArgumentList $pingParam -RedirectStandardOutput $pingOutput -WhatIf -ErrorAction Stop  @extraArgs} | Should -Not -Throw
-        $pingOutput | Should -Not -Exist
+        $testOutput = Join-Path $TestDrive "testOutput.txt"
+        { Start-Process -Wait $testCommand -ArgumentList $testParam -RedirectStandardOutput $testOutput -WhatIf -ErrorAction Stop  @extraArgs} | Should -Not -Throw
+        $testOutput | Should -Not -Exist
     }
 
     It "Should return null when using -WhatIf switch with -PassThru" {
-        Start-Process $pingCommand -ArgumentList $pingParam -PassThru -WhatIf | Should -BeNullOrEmpty
+        Start-Process $testCommand -ArgumentList $testParam -PassThru -WhatIf | Should -BeNullOrEmpty
     }
 
     It 'Should run without errors when -ArgumentList is $null' {
-         $process = Start-Process $pingCommand -ArgumentList $null -PassThru @extraArgs
+         $process = Start-Process $testCommand -ArgumentList $null -PassThru @extraArgs
          $process.Length      | Should -Be 1
          $process.Id          | Should -BeGreaterThan 1
     }
 
     It "Should run without errors when -ArgumentList is @()" {
-        $process = Start-Process $pingCommand -ArgumentList @() -PassThru @extraArgs
+        $process = Start-Process $testCommand -ArgumentList @() -PassThru @extraArgs
         $process.Length      | Should -Be 1
         $process.Id          | Should -BeGreaterThan 1
     }
 
     It "Should run without errors when -ArgumentList is ''" {
-        $process = Start-Process $pingCommand -ArgumentList '' -PassThru @extraArgs
+        $process = Start-Process $testCommand -ArgumentList '' -PassThru @extraArgs
         $process.Length      | Should -Be 1
         $process.Id          | Should -BeGreaterThan 1
     }

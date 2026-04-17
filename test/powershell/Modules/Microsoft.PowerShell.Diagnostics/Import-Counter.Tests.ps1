@@ -6,8 +6,7 @@
  ############################################################################################>
 
  # Counter CmdLets are removed see issue #4272
- # Tests are disabled
- return
+ # Tests are disabled via -Skip on individual It blocks
 
 $cmdletName = "Import-Counter"
 
@@ -228,29 +227,31 @@ Describe "CI tests for Import-Counter cmdlet" -Tags "CI" {
         SetScriptVars $testDrive 0 $false
     }
 
-    $performatTestCases = @(
-        @{
-            Name = "Can import all samples from known sample sets"
-            UseKnownSamples = $true
-            Script = {
-                $result.Length | Should -Be 25
+    BeforeDiscovery {
+        $performatTestCases = @(
+            @{
+                Name = "Can import all samples from known sample sets"
+                UseKnownSamples = $true
+                Script = {
+                    $result.Length | Should -Be 25
+                }
             }
-        }
-        @{
-            Name = "Can acquire summary information"
-            UseKnownSamples = $true
-            Parameters = "-Summary"
-            Script = {
-                $result.SampleCount | Should -Be 25
-                $result.OldestRecord | Should -Be (Get-Date -Year 2016 -Month 11 -Day 26 -Hour 13 -Minute 46 -Second 30 -Millisecond 874)
-                $result.NewestRecord | Should -Be (Get-Date -Year 2016 -Month 11 -Day 26 -Hour 13 -Minute 47 -Second 42 -Millisecond 983)
+            @{
+                Name = "Can acquire summary information"
+                UseKnownSamples = $true
+                Parameters = "-Summary"
+                Script = {
+                    $result.SampleCount | Should -Be 25
+                    $result.OldestRecord | Should -Be (Get-Date -Year 2016 -Month 11 -Day 26 -Hour 13 -Minute 46 -Second 30 -Millisecond 874)
+                    $result.NewestRecord | Should -Be (Get-Date -Year 2016 -Month 11 -Day 26 -Hour 13 -Minute 47 -Second 42 -Millisecond 983)
+                }
             }
-        }
-    )
+        )
 
-    foreach ($testCase in $performatTestCases)
-    {
-        RunPerFileTypeTests $testCase
+        foreach ($testCase in $performatTestCases)
+        {
+            RunPerFileTypeTests $testCase
+        }
     }
 }
 
@@ -267,88 +268,90 @@ Describe "Feature tests for Import-Counter cmdlet" -Tags "Feature" {
     }
 
     Context "Validate incorrect usage" {
-        $testCases = @(
-            @{
-                Name = "Fails when given non-existent path"
-                Path = $notFoundPath
-                ExpectedErrorCategory = [System.Management.Automation.ErrorCategory]::ObjectNotFound
-                ExpectedErrorId = "Microsoft.PowerShell.Commands.ImportCounterCommand"
-            }
-            @{
-                Name = "Fails when given null path"
-                Path = "`$null"
-                ExpectedErrorId = "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.ImportCounterCommand"
-            }
-            @{
-                Name = "Fails when -Path specified but no path given"
-                Path = ""
-                ExpectedErrorId = "MissingArgument,Microsoft.PowerShell.Commands.ImportCounterCommand"
-            }
-            @{
-                Name = "Fails when given -ListSet without set names"
-                Parameters = "-ListSet"
-                ExpectedErrorId = "MissingArgument,Microsoft.PowerShell.Commands.ImportCounterCommand"
-            }
-            @{
-                Name = "Fails when given -StartTime without DateTime"
-                Parameters = "-StartTime"
-                ExpectedErrorId = "MissingArgument,Microsoft.PowerShell.Commands.ImportCounterCommand"
-            }
-            @{
-                Name = "Fails when given -EndTime without DateTime"
-                Parameters = "-EndTime"
-                ExpectedErrorId = "MissingArgument,Microsoft.PowerShell.Commands.ImportCounterCommand"
-            }
-            @{
-                Name = "Fails when given -ListSet and -Summary"
-                Parameters = "-ListSet memory -Summary"
-                ExpectedErrorId = "AmbiguousParameterSet,Microsoft.PowerShell.Commands.ImportCounterCommand"
-            }
-            @{
-                Name = "Fails when given -Summary and -Counter"
-                Parameters = "-Summary -Counter `"\processor(*)\% processor time`""
-                ExpectedErrorId = "AmbiguousParameterSet,Microsoft.PowerShell.Commands.ImportCounterCommand"
-            }
-            @{
-                Name = "Fails when given -ListSet and -Counter"
-                Parameters = "-ListSet memory -Counter `"\processor(*)\% processor time`""
-                ExpectedErrorId = "AmbiguousParameterSet,Microsoft.PowerShell.Commands.ImportCounterCommand"
-            }
-            @{
-                Name = "Fails when given -ListSet and -StartTime"
-                StartTime = Get-Date
-                Parameters = "-ListSet memory"
-                ExpectedErrorId = "AmbiguousParameterSet,Microsoft.PowerShell.Commands.ImportCounterCommand"
-            }
-            @{
-                Name = "Fails when given -ListSet and -StartTime"
-                StartTime = Get-Date
-                Parameters = "-ListSet memory"
-                ExpectedErrorId = "AmbiguousParameterSet,Microsoft.PowerShell.Commands.ImportCounterCommand"
-            }
-            @{
-                Name = "Fails when given -Summary and -EndTime"
-                EndTime = Get-Date
-                Parameters = "-Summary"
-                ExpectedErrorId = "AmbiguousParameterSet,Microsoft.PowerShell.Commands.ImportCounterCommand"
-            }
-            @{
-                Name = "Fails when given -Summary and -EndTime"
-                EndTime = Get-Date
-                Parameters = "-Summary"
-                ExpectedErrorId = "AmbiguousParameterSet,Microsoft.PowerShell.Commands.ImportCounterCommand"
-            }
-            @{
-                Name = "Fails when BLG file is corrupt"
-                Path = $corruptBlgPath
-                ExpectedErrorCategory = [System.Management.Automation.ErrorCategory]::InvalidResult
-                ExpectedErrorId = "CounterApiError,Microsoft.PowerShell.Commands.ImportCounterCommand"
-            }
-        )
+        BeforeDiscovery {
+            $testCases = @(
+                @{
+                    Name = "Fails when given non-existent path"
+                    Path = $notFoundPath
+                    ExpectedErrorCategory = [System.Management.Automation.ErrorCategory]::ObjectNotFound
+                    ExpectedErrorId = "Microsoft.PowerShell.Commands.ImportCounterCommand"
+                }
+                @{
+                    Name = "Fails when given null path"
+                    Path = "`$null"
+                    ExpectedErrorId = "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.ImportCounterCommand"
+                }
+                @{
+                    Name = "Fails when -Path specified but no path given"
+                    Path = ""
+                    ExpectedErrorId = "MissingArgument,Microsoft.PowerShell.Commands.ImportCounterCommand"
+                }
+                @{
+                    Name = "Fails when given -ListSet without set names"
+                    Parameters = "-ListSet"
+                    ExpectedErrorId = "MissingArgument,Microsoft.PowerShell.Commands.ImportCounterCommand"
+                }
+                @{
+                    Name = "Fails when given -StartTime without DateTime"
+                    Parameters = "-StartTime"
+                    ExpectedErrorId = "MissingArgument,Microsoft.PowerShell.Commands.ImportCounterCommand"
+                }
+                @{
+                    Name = "Fails when given -EndTime without DateTime"
+                    Parameters = "-EndTime"
+                    ExpectedErrorId = "MissingArgument,Microsoft.PowerShell.Commands.ImportCounterCommand"
+                }
+                @{
+                    Name = "Fails when given -ListSet and -Summary"
+                    Parameters = "-ListSet memory -Summary"
+                    ExpectedErrorId = "AmbiguousParameterSet,Microsoft.PowerShell.Commands.ImportCounterCommand"
+                }
+                @{
+                    Name = "Fails when given -Summary and -Counter"
+                    Parameters = "-Summary -Counter `"\processor(*)\% processor time`""
+                    ExpectedErrorId = "AmbiguousParameterSet,Microsoft.PowerShell.Commands.ImportCounterCommand"
+                }
+                @{
+                    Name = "Fails when given -ListSet and -Counter"
+                    Parameters = "-ListSet memory -Counter `"\processor(*)\% processor time`""
+                    ExpectedErrorId = "AmbiguousParameterSet,Microsoft.PowerShell.Commands.ImportCounterCommand"
+                }
+                @{
+                    Name = "Fails when given -ListSet and -StartTime"
+                    StartTime = Get-Date
+                    Parameters = "-ListSet memory"
+                    ExpectedErrorId = "AmbiguousParameterSet,Microsoft.PowerShell.Commands.ImportCounterCommand"
+                }
+                @{
+                    Name = "Fails when given -ListSet and -StartTime"
+                    StartTime = Get-Date
+                    Parameters = "-ListSet memory"
+                    ExpectedErrorId = "AmbiguousParameterSet,Microsoft.PowerShell.Commands.ImportCounterCommand"
+                }
+                @{
+                    Name = "Fails when given -Summary and -EndTime"
+                    EndTime = Get-Date
+                    Parameters = "-Summary"
+                    ExpectedErrorId = "AmbiguousParameterSet,Microsoft.PowerShell.Commands.ImportCounterCommand"
+                }
+                @{
+                    Name = "Fails when given -Summary and -EndTime"
+                    EndTime = Get-Date
+                    Parameters = "-Summary"
+                    ExpectedErrorId = "AmbiguousParameterSet,Microsoft.PowerShell.Commands.ImportCounterCommand"
+                }
+                @{
+                    Name = "Fails when BLG file is corrupt"
+                    Path = $corruptBlgPath
+                    ExpectedErrorCategory = [System.Management.Automation.ErrorCategory]::InvalidResult
+                    ExpectedErrorId = "CounterApiError,Microsoft.PowerShell.Commands.ImportCounterCommand"
+                }
+            )
 
-        foreach ($testCase in $testCases)
-        {
-            RunExpectedFailureTest $testCase
+            foreach ($testCase in $testCases)
+            {
+                RunExpectedFailureTest $testCase
+            }
         }
 
         It "Multiple errors when BLG file contains bad sample data" -Skip:$(SkipCounterTests) {
@@ -365,96 +368,98 @@ Describe "Feature tests for Import-Counter cmdlet" -Tags "Feature" {
     }
 
     Context "Import tests" {
-        $performatTestCases = @(
-            @{
-                Name = "Can import all samples"
-            }
-            @{
-                Name = "Can import samples beginning at a given start time"
-                TimestampIndexes = @{
-                    First = 6
+        BeforeDiscovery {
+            $performatTestCases = @(
+                @{
+                    Name = "Can import all samples"
                 }
-            }
-            @{
-                Name = "Can import samples ending at a given end time"
-                TimestampIndexes = @{
-                    Last = 10
-                }
-            }
-            @{
-                Name = "Can import samples of a given timestamp range"
-                TimestampIndexes = @{
-                    First = 4
-                    Last = 19
-                }
-            }
-            @{
-                Name = "Can acquire a named list set"
-                UseKnownSamples = $true
-                Parameters = "-ListSet $($setNames.Memory)"
-                Script = {
-                    $result.Length | Should -Be 1
-                    $result[0].CounterSetName | Should -BeExactly $setNames.Memory
-                }
-            }
-            @{
-                Name = "Can acquire list set from an array of names"
-                UseKnownSamples = $true
-                Parameters = "-ListSet $(TranslateCounterName 'memory'), $(TranslateCounterName 'processor')"
-                Script = {
-                    $result.Length | Should -Be 2
-                    $names = @()
-                    foreach ($set in $result)
-                    {
-                        $names = $names + $set.CounterSetName
+                @{
+                    Name = "Can import samples beginning at a given start time"
+                    TimestampIndexes = @{
+                        First = 6
                     }
-                    $names -Contains $setNames.Memory | Should -BeTrue
-                    $names -Contains $setNames.Processor | Should -BeTrue
                 }
-            }
-            @{
-                # This test will be skipped for non-English languages, since
-                # there is no reasonable way to construct a wild-card pattern
-                # that will, for every language, result in a known set of values
-                # or evan a set with a known minimum number of items.
-                Name = "Can acquire list set via wild-card name"
-                SkipTest = (-not (Get-Culture).Name.StartsWith("en-", [StringComparison]::InvariantCultureIgnoreCase))
-                UseKnownSamples = $true
-                Parameters = "-ListSet p*"
-                Script = {
-                    $result.Length | Should -BeGreaterThan 1
-                    $names = @()
-                    foreach ($set in $result)
-                    {
-                        $names = $names + $set.CounterSetName
+                @{
+                    Name = "Can import samples ending at a given end time"
+                    TimestampIndexes = @{
+                        Last = 10
                     }
-                    $names -Contains "physicaldisk" | Should -BeTrue
-                    $names -Contains "processor" | Should -BeTrue
                 }
-            }
-            @{
-                # This test will be skipped for non-English languages, since
-                # there is no reasonable way to construct a wild-card pattern
-                # that will, for every language, result in a known set of values
-                # or evan a set with a known minimum number of items.
-                Name = "Can acquire list set from an array of names including wild-card"
-                SkipTest = (-not (Get-Culture).Name.StartsWith("en-", [StringComparison]::InvariantCultureIgnoreCase))
-                UseKnownSamples = $true
-                Parameters = "-ListSet memory, p*"
-                Script = {
-                    $result.Length | Should -BeGreaterThan 2
-                    $names = @()
-                    foreach ($set in $result) { $names = $names + $set.CounterSetName }
-                    $names -Contains "memory" | Should -BeTrue
-                    $names -Contains "processor" | Should -BeTrue
-                    $names -Contains "physicaldisk" | Should -BeTrue
+                @{
+                    Name = "Can import samples of a given timestamp range"
+                    TimestampIndexes = @{
+                        First = 4
+                        Last = 19
+                    }
                 }
-            }
-        )
+                @{
+                    Name = "Can acquire a named list set"
+                    UseKnownSamples = $true
+                    Parameters = "-ListSet $($setNames.Memory)"
+                    Script = {
+                        $result.Length | Should -Be 1
+                        $result[0].CounterSetName | Should -BeExactly $setNames.Memory
+                    }
+                }
+                @{
+                    Name = "Can acquire list set from an array of names"
+                    UseKnownSamples = $true
+                    Parameters = "-ListSet $(TranslateCounterName 'memory'), $(TranslateCounterName 'processor')"
+                    Script = {
+                        $result.Length | Should -Be 2
+                        $names = @()
+                        foreach ($set in $result)
+                        {
+                            $names = $names + $set.CounterSetName
+                        }
+                        $names -Contains $setNames.Memory | Should -BeTrue
+                        $names -Contains $setNames.Processor | Should -BeTrue
+                    }
+                }
+                @{
+                    # This test will be skipped for non-English languages, since
+                    # there is no reasonable way to construct a wild-card pattern
+                    # that will, for every language, result in a known set of values
+                    # or evan a set with a known minimum number of items.
+                    Name = "Can acquire list set via wild-card name"
+                    SkipTest = (-not (Get-Culture).Name.StartsWith("en-", [StringComparison]::InvariantCultureIgnoreCase))
+                    UseKnownSamples = $true
+                    Parameters = "-ListSet p*"
+                    Script = {
+                        $result.Length | Should -BeGreaterThan 1
+                        $names = @()
+                        foreach ($set in $result)
+                        {
+                            $names = $names + $set.CounterSetName
+                        }
+                        $names -Contains "physicaldisk" | Should -BeTrue
+                        $names -Contains "processor" | Should -BeTrue
+                    }
+                }
+                @{
+                    # This test will be skipped for non-English languages, since
+                    # there is no reasonable way to construct a wild-card pattern
+                    # that will, for every language, result in a known set of values
+                    # or evan a set with a known minimum number of items.
+                    Name = "Can acquire list set from an array of names including wild-card"
+                    SkipTest = (-not (Get-Culture).Name.StartsWith("en-", [StringComparison]::InvariantCultureIgnoreCase))
+                    UseKnownSamples = $true
+                    Parameters = "-ListSet memory, p*"
+                    Script = {
+                        $result.Length | Should -BeGreaterThan 2
+                        $names = @()
+                        foreach ($set in $result) { $names = $names + $set.CounterSetName }
+                        $names -Contains "memory" | Should -BeTrue
+                        $names -Contains "processor" | Should -BeTrue
+                        $names -Contains "physicaldisk" | Should -BeTrue
+                    }
+                }
+            )
 
-        foreach ($testCase in $performatTestCases)
-        {
-            RunPerFileTypeTests $testCase
+            foreach ($testCase in $performatTestCases)
+            {
+                RunPerFileTypeTests $testCase
+            }
         }
     }
 }

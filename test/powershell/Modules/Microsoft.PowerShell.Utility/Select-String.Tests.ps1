@@ -143,8 +143,10 @@ Describe "Select-String" -Tags "CI" {
     }
 
     Context "Filesystem actions" {
-        $testDirectory = $TestDrive
-        $testInputFile = Join-Path -Path $testDirectory -ChildPath testfile1.txt
+        BeforeAll {
+            $testDirectory = $TestDrive
+            $testInputFile = Join-Path -Path $testDirectory -ChildPath testfile1.txt
+        }
 
         BeforeEach {
             New-Item $testInputFile -ItemType "file" -Force -Value "This is a text string, and another string${nl}This is the second line${nl}This is the third line${nl}This is the fourth line${nl}No matches"

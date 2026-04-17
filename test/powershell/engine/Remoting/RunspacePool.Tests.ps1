@@ -1,12 +1,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-Import-Module HelpersRemoting
-Import-Module HelpersCommon
-
 Describe "Remote runspace pool should expose commands in endpoint configuration" -Tags 'Feature','RequireAdminOnWindows' {
 
     BeforeAll {
+
+        Import-Module HelpersRemoting
+        Import-Module HelpersCommon
 
         $pendingTest = (Test-IsWinWow64)
         $skipTest = !$IsWindows -or !(Test-CanWriteToPsHome)
@@ -48,7 +48,7 @@ Describe "Remote runspace pool should expose commands in endpoint configuration"
         Unregister-PSSessionConfiguration -Name $configName -Force -ErrorAction SilentlyContinue
     }
 
-    It "Verifies that the configured endpoint cmdlet is available in all runspace pool instances" -Skip:(!$IsWindows -or !(Test-CanWriteToPsHome)) {
+    It "Verifies that the configured endpoint cmdlet is available in all runspace pool instances" {
 
         [powershell] $ps1 = [powershell]::Create()
         $ps1.RunspacePool = $remoteRunspacePool

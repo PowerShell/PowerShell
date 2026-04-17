@@ -3,46 +3,61 @@
 #
 # Validates Get-Help for cmdlets in Microsoft.PowerShell.Core.
 
-Import-Module HelpersCommon
+BeforeDiscovery {
+    Import-Module HelpersCommon
+    # Capture script root during discovery for use in BeforeAll functions
+    $script:helpTestScriptRoot = $PSScriptRoot
 
-$script:cmdletsToSkip = @(
-    "Get-PSHostProcessInfo",
-    "Out-Default",
-    "Register-ArgumentCompleter",
-    "New-PSRoleCapabilityFile",
-    "Get-PSSessionCapability",
-    "Disable-PSRemoting", # Content not available: Issue # https://github.com/PowerShell/PowerShell-Docs/issues/1790
-    "Enable-PSRemoting",
-    "Get-ExperimentalFeature",
-    "Enable-ExperimentalFeature",
-    "Disable-ExperimentalFeature",
-    "Get-PSSubsystem",
-    "Switch-Process"
-)
-
-function UpdateHelpFromLocalContentPath {
-    param ([string]$ModuleName, [string] $Scope = 'CurrentUser')
-
-    $helpContentPath = Join-Path $PSScriptRoot "assets"
-    $helpFiles = @(Get-ChildItem "$helpContentPath\*" -ErrorAction SilentlyContinue)
-
-    if ($helpFiles.Count -eq 0) {
-        throw "Unable to find help content at '$helpContentPath'"
-    }
-
-    # Test files are 'en-US', set explicit culture so test does not fail on non-US systems
-    Update-Help -Module $ModuleName -SourcePath $helpContentPath -UICulture 'en-US' -Force -ErrorAction Stop -Scope $Scope
+    $script:cmdletsToSkip = @(
+        "Get-PSHostProcessInfo",
+        "Out-Default",
+        "Register-ArgumentCompleter",
+        "New-PSRoleCapabilityFile",
+        "Get-PSSessionCapability",
+        "Disable-PSRemoting", # Content not available: Issue # https://github.com/PowerShell/PowerShell-Docs/issues/1790
+        "Enable-PSRemoting",
+        "Get-ExperimentalFeature",
+        "Enable-ExperimentalFeature",
+        "Disable-ExperimentalFeature",
+        "Get-PSSubsystem",
+        "Switch-Process"
+    )
 }
 
-function GetCurrentUserHelpRoot {
-    if ([System.Management.Automation.Platform]::IsWindows) {
-        $userHelpRoot = Join-Path $HOME "Documents/PowerShell/Help/"
-    } else {
-        $userModulesRoot = [System.Management.Automation.Platform]::SelectProductNameForDirectory([System.Management.Automation.Platform+XDG_Type]::USER_MODULES)
-        $userHelpRoot = Join-Path $userModulesRoot -ChildPath ".." -AdditionalChildPath "Help"
+BeforeAll {
+    Import-Module HelpersCommon
+
+    # $PSScriptRoot may not be available inside functions defined in BeforeAll;
+    # use the value captured during discovery.
+    $script:helpTestAssetsPath = Join-Path $PSScriptRoot "assets"
+    if (-not (Test-Path $script:helpTestAssetsPath)) {
+        $script:helpTestAssetsPath = Join-Path $script:helpTestScriptRoot "assets"
     }
 
-    return $userHelpRoot
+    function UpdateHelpFromLocalContentPath {
+        param ([string]$ModuleName, [string] $Scope = 'CurrentUser')
+
+        $helpContentPath = $script:helpTestAssetsPath
+        $helpFiles = @(Get-ChildItem "$helpContentPath\*" -ErrorAction SilentlyContinue)
+
+        if ($helpFiles.Count -eq 0) {
+            throw "Unable to find help content at '$helpContentPath'"
+        }
+
+        # Test files are 'en-US', set explicit culture so test does not fail on non-US systems
+        Update-Help -Module $ModuleName -SourcePath $helpContentPath -UICulture 'en-US' -Force -ErrorAction Stop -Scope $Scope
+    }
+
+    function GetCurrentUserHelpRoot {
+        if ([System.Management.Automation.Platform]::IsWindows) {
+            $userHelpRoot = Join-Path ([Environment]::GetFolderPath("Personal")) "PowerShell/Help/"
+        } else {
+            $userModulesRoot = [System.Management.Automation.Platform]::SelectProductNameForDirectory([System.Management.Automation.Platform+XDG_Type]::USER_MODULES)
+            $userHelpRoot = Join-Path $userModulesRoot -ChildPath ".." -AdditionalChildPath "Help"
+        }
+
+        return $userHelpRoot
+    }
 }
 
 Describe 'Validate HelpInfo type' -Tags @('CI') {
@@ -69,7 +84,7 @@ Describe "Validate that <pshome>/<culture>/default.help.txt is present" -Tags @(
 Describe "Validate that the Help function can Run in strict mode" -Tags @('CI') {
 
     It "Help doesn't fail when strict mode is on" {
-        if (Test-IsWindowsArm64) {
+        if ((Test-IsWindowsArm64) -or [Console]::IsOutputRedirected) {
             Set-ItResult -Pending -Because "IOException: The handle is invalid."
         }
 
@@ -101,10 +116,14 @@ Describe "Validate that get-help works for CurrentUserScope" -Tags @('CI') {
             $cmdlets = Get-Command -Module $moduleName
         }
 
-        $testCases = @()
+        BeforeDiscovery {
+            $moduleName = "Microsoft.PowerShell.Core"
+            $cmdlets = Get-Command -Module $moduleName
+            $testCases = @()
 
-        ## Just testing first 3 in CI, Feature tests validate full list.
-        $cmdlets | Where-Object { $script:cmdletsToSkip -notcontains $_ } | Select-Object -First 3 | ForEach-Object { $testCases += @{ cmdletName = $_.Name }}
+            ## Just testing first 3 in CI, Feature tests validate full list.
+            $cmdlets | Where-Object { $script:cmdletsToSkip -notcontains $_ } | Select-Object -First 3 | ForEach-Object { $testCases += @{ cmdletName = $_.Name }}
+        }
 
         It "Validate -Description and -Examples sections in help content. Run 'Get-help -name <cmdletName>" -TestCases $testCases {
             param($cmdletName)
@@ -156,8 +175,12 @@ Describe "Validate that get-help works for AllUsers Scope" -Tags @('Feature', 'R
             $cmdlets = Get-Command -Module $moduleName
         }
 
-        $testCases = @()
-        $cmdlets | Where-Object { $cmdletsToSkip -notcontains $_ } | ForEach-Object { $testCases += @{ cmdletName = $_.Name }}
+        BeforeDiscovery {
+            $moduleName = "Microsoft.PowerShell.Core"
+            $cmdlets = Get-Command -Module $moduleName
+            $testCases = @()
+            $cmdlets | Where-Object { $script:cmdletsToSkip -notcontains $_ } | ForEach-Object { $testCases += @{ cmdletName = $_.Name }}
+        }
 
         It "Validate -Description and -Examples sections in help content. Run 'Get-help -name <cmdletName>" -TestCases $testCases -Skip:(!(Test-CanWriteToPsHome)) {
             param($cmdletName)
@@ -169,18 +192,16 @@ Describe "Validate that get-help works for AllUsers Scope" -Tags @('Feature', 'R
 }
 
 Describe "Validate that get-help works for provider specific help" -Tags @('CI') {
-    BeforeAll {
-        $namespaces = @{
-            command = 'http://schemas.microsoft.com/maml/dev/command/2004/10'
-            dev     = 'http://schemas.microsoft.com/maml/dev/2004/10'
-            maml    = 'http://schemas.microsoft.com/maml/2004/10'
-            msh     = 'http://msh'
+    BeforeDiscovery {
+        # Compute help paths inline for discovery (GetCurrentUserHelpRoot is only available at runtime)
+        if ([System.Management.Automation.Platform]::IsWindows) {
+            $userHelpRoot = Join-Path ([Environment]::GetFolderPath("Personal")) "PowerShell/Help/"
+        } else {
+            $userModulesRoot = [System.Management.Automation.Platform]::SelectProductNameForDirectory([System.Management.Automation.Platform+XDG_Type]::USER_MODULES)
+            $userHelpRoot = Join-Path $userModulesRoot -ChildPath ".." -AdditionalChildPath "Help"
         }
+        $helpFileRoot = Join-Path $userHelpRoot ([Globalization.CultureInfo]::CurrentUICulture)
 
-        $helpFileRoot = Join-Path (GetCurrentUserHelpRoot) ([Globalization.CultureInfo]::CurrentUICulture)
-
-        # Currently these test cases are verified only on Windows, because
-        # - WSMan:\ and Cert:\ providers are not yet supported on non-Windows platforms.
         $testCases = @(
             @{
                 helpFile    = "$helpFileRoot\System.Management.Automation.dll-help.xml"
@@ -208,7 +229,18 @@ Describe "Validate that get-help works for provider specific help" -Tags @('CI')
                     noun        = 'Item'
                 }
             )
+        }
+    }
 
+    BeforeAll {
+        $namespaces = @{
+            command = 'http://schemas.microsoft.com/maml/dev/command/2004/10'
+            dev     = 'http://schemas.microsoft.com/maml/dev/2004/10'
+            maml    = 'http://schemas.microsoft.com/maml/2004/10'
+            msh     = 'http://msh'
+        }
+
+        if ($IsWindows) {
             UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.WSMan.Management' -Scope 'CurrentUser'
             UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.PowerShell.Security' -Scope 'CurrentUser'
         }
@@ -251,7 +283,7 @@ Describe "Validate about_help.txt under culture specific folder works" -Tags @('
             Set-Content -Path $modulePath\en-US\about_testhelp.help.txt -Value "Hello" -NoNewline
         }
 
-        $aboutHelpPath = Join-Path (GetCurrentUserHelpRoot) (Get-Culture).Name
+        $aboutHelpPath = Join-Path (GetCurrentUserHelpRoot) (Get-UICulture).Name
 
         ## If help content does not exist, update it first.
         if (-not (Test-Path (Join-Path $aboutHelpPath "about_Variables.help.txt"))) {
@@ -282,7 +314,7 @@ Describe "Validate about_help.txt under culture specific folder works" -Tags @('
 
 Describe "About help files can be found in AllUsers scope" -Tags @('Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
     BeforeAll {
-        $aboutHelpPath = Join-Path $PSHOME (Get-Culture).Name
+        $aboutHelpPath = Join-Path $PSHOME (Get-UICulture).Name
 
         ##clean up any CurrentUser if exists.
 
@@ -306,7 +338,7 @@ Describe "About help files can be found in AllUsers scope" -Tags @('Feature', 'R
 Describe "Get-Help should find help info within help files" -Tags @('CI') {
     It "Get-Help should find help files under pshome" {
         $helpFile = "about_testCase.help.txt"
-        $helpFolderPath = Join-Path (GetCurrentUserHelpRoot) (Get-Culture).Name
+        $helpFolderPath = Join-Path (GetCurrentUserHelpRoot) (Get-UICulture).Name
         $helpFilePath = Join-Path $helpFolderPath $helpFile
 
         if (!(Test-Path $helpFolderPath)) {
@@ -328,7 +360,7 @@ Describe "Get-Help should find pattern help files" -Tags "CI" {
     BeforeAll {
         $helpFile1 = "about_testCase1.help.txt"
         $helpFile2 = "about_testCase.2.help.txt"
-        $helpFolderPath = Join-Path (GetCurrentUserHelpRoot) (Get-Culture).Name
+        $helpFolderPath = Join-Path (GetCurrentUserHelpRoot) (Get-UICulture).Name
         $helpFilePath1 = Join-Path $helpFolderPath $helpFile1
         $helpFilePath2 = Join-Path $helpFolderPath $helpFile2
         $null = New-Item -ItemType Directory -Path $helpFolderPath -ErrorAction SilentlyContinue -Force
@@ -351,12 +383,14 @@ Describe "Get-Help should find pattern help files" -Tags "CI" {
         $env:PSModulePath = $currentPSModulePath
     }
 
-    $testcases = @(
-        @{command = {Get-Help about_testCas?1}; testname = "test ? pattern"; result = "about_test1"}
-        @{command = {Get-Help about_testCase.?}; testname = "test ? pattern with dot"; result = "about_test2"}
-        @{command = {(Get-Help about_testCase*).Count}; testname = "test * pattern"; result = "2"}
-        @{command = {Get-Help about_testCas?.2*}; testname = "test ?, * pattern with dot"; result = "about_test2"}
-    )
+    BeforeDiscovery {
+        $testcases = @(
+            @{command = {Get-Help about_testCas?1}; testname = "test ? pattern"; result = "about_test1"}
+            @{command = {Get-Help about_testCase.?}; testname = "test ? pattern with dot"; result = "about_test2"}
+            @{command = {(Get-Help about_testCase*).Count}; testname = "test * pattern"; result = "2"}
+            @{command = {Get-Help about_testCas?.2*}; testname = "test ?, * pattern with dot"; result = "about_test2"}
+        )
+    }
 
     It "Get-Help should find pattern help files - <testname>" -TestCases $testcases {
         param (
@@ -417,7 +451,7 @@ Describe "Get-Help should find pattern alias" -Tags "CI" {
 
 Describe "help function uses full view by default" -Tags "CI" {
     It "help should return full view without -Full switch" {
-        if (Test-IsWindowsArm64) {
+        if ((Test-IsWindowsArm64) -or [Console]::IsOutputRedirected) {
             Set-ItResult -Pending -Because "IOException: The handle is invalid."
         }
 
@@ -426,7 +460,7 @@ Describe "help function uses full view by default" -Tags "CI" {
     }
 
     It "help should return full view even with -Full switch" {
-        if (Test-IsWindowsArm64) {
+        if ((Test-IsWindowsArm64) -or [Console]::IsOutputRedirected) {
             Set-ItResult -Pending -Because "IOException: The handle is invalid."
         }
 
@@ -435,7 +469,7 @@ Describe "help function uses full view by default" -Tags "CI" {
     }
 
     It "help should not append -Full when not using AllUsersView parameter set" {
-        if (Test-IsWindowsArm64) {
+        if ((Test-IsWindowsArm64) -or [Console]::IsOutputRedirected) {
             Set-ItResult -Pending -Because "IOException: The handle is invalid."
         }
 
@@ -445,6 +479,15 @@ Describe "help function uses full view by default" -Tags "CI" {
 }
 
 Describe 'help can be found for CurrentUser Scope' -Tags 'CI' {
+    BeforeDiscovery {
+        $TestCases = @(
+            @{TestName = 'module under $PSHOME'; CmdletName = 'Add-Content'}
+            @{TestName = 'module is a PSSnapin'; CmdletName = 'Get-Command' }
+            @{TestName = 'module is under $PSHOME\Modules'; CmdletName = 'Compress-Archive' }
+            @{TestName = 'module has a version folder'; CmdletName = 'Find-Package' }
+        )
+    }
+
     BeforeAll {
         $userHelpRoot = GetCurrentUserHelpRoot
 
@@ -454,31 +497,6 @@ Describe 'help can be found for CurrentUser Scope' -Tags 'CI' {
         UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.PowerShell.Management' -Scope 'CurrentUser'
         UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.PowerShell.Archive' -Scope 'CurrentUser' -Force
         UpdateHelpFromLocalContentPath -ModuleName 'PackageManagement' -Scope CurrentUser -Force
-
-        ## Delete help from global scope if it exists.
-        $currentCulture = (Get-Culture).Name
-
-        $managementHelpFilePath = Join-Path $PSHOME -ChildPath $currentCulture -AdditionalChildPath 'Microsoft.PowerShell.Commands.Management.dll-Help.xml'
-        if (Test-Path $managementHelpFilePath) {
-            Remove-Item $managementHelpFilePath -Force -ErrorAction SilentlyContinue
-        }
-
-        $coreHelpFilePath = Join-Path $PSHOME -ChildPath $currentCulture -AdditionalChildPath 'System.Management.Automation.dll-Help.xml'
-        if (Test-Path $coreHelpFilePath) {
-            Remove-Item $coreHelpFilePath -Force -ErrorAction SilentlyContinue
-        }
-
-        $archiveHelpFilePath = Join-Path (Get-Module Microsoft.PowerShell.Archive -ListAvailable).ModuleBase -ChildPath $currentCulture -AdditionalChildPath 'Microsoft.PowerShell.Archive-help.xml'
-        if (Test-Path $archiveHelpFilePath) {
-            Remove-Item $archiveHelpFilePath -Force -ErrorAction SilentlyContinue
-        }
-
-        $TestCases = @(
-            @{TestName = 'module under $PSHOME'; CmdletName = 'Add-Content'}
-            @{TestName = 'module is a PSSnapin'; CmdletName = 'Get-Command' }
-            @{TestName = 'module is under $PSHOME\Modules'; CmdletName = 'Compress-Archive' }
-            @{TestName = 'module has a version folder'; CmdletName = 'Find-Package' }
-        )
     }
 
     It 'help in user scope be found for <TestName>' -TestCases $TestCases {
@@ -490,6 +508,15 @@ Describe 'help can be found for CurrentUser Scope' -Tags 'CI' {
 }
 
 Describe 'help can be found for AllUsers Scope' -Tags @('Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
+    BeforeDiscovery {
+        $TestCases = @(
+            @{TestName = 'module under $PSHOME'; CmdletName = 'Add-Content'}
+            @{TestName = 'module is a PSSnapin'; CmdletName = 'Get-Command' }
+            @{TestName = 'module is under $PSHOME\Modules'; CmdletName = 'Compress-Archive' }
+            @{TestName = 'module has a version folder'; CmdletName = 'Find-Package' }
+        )
+    }
+
     BeforeAll {
         $userHelpRoot = GetCurrentUserHelpRoot
 
@@ -497,7 +524,7 @@ Describe 'help can be found for AllUsers Scope' -Tags @('Feature', 'RequireAdmin
         Remove-Item $userHelpRoot -Force -ErrorAction SilentlyContinue -Recurse
 
         ## Delete help from global scope if it exists.
-        $currentCulture = (Get-Culture).Name
+        $currentCulture = (Get-UICulture).Name
 
         if (Test-CanWriteToPsHome) {
             $managementHelpFilePath = Join-Path $PSHOME -ChildPath $currentCulture -AdditionalChildPath 'Microsoft.PowerShell.Commands.Management.dll-Help.xml'
@@ -520,13 +547,6 @@ Describe 'help can be found for AllUsers Scope' -Tags @('Feature', 'RequireAdmin
             UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.PowerShell.Archive' -Scope 'AllUsers' -Force
             UpdateHelpFromLocalContentPath -ModuleName 'PackageManagement' -Scope 'AllUsers' -Force
         }
-
-        $TestCases = @(
-            @{TestName = 'module under $PSHOME'; CmdletName = 'Add-Content'}
-            @{TestName = 'module is a PSSnapin'; CmdletName = 'Get-Command' }
-            @{TestName = 'module is under $PSHOME\Modules'; CmdletName = 'Compress-Archive' }
-            @{TestName = 'module has a version folder'; CmdletName = 'Find-Package' }
-        )
     }
 
     It 'help in user scope be found for <TestName>' -TestCases $TestCases -Skip:(!(Test-CanWriteToPsHome)) {
@@ -547,7 +567,7 @@ Describe "Get-Help should accept arrays as the -Parameter parameter value" -Tags
         UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.PowerShell.Core' -Scope 'CurrentUser'
 
         ## Delete help from global scope if it exists.
-        $currentCulture = (Get-Culture).Name
+        $currentCulture = (Get-UICulture).Name
         $coreHelpFilePath = Join-Path $PSHOME -ChildPath $currentCulture -AdditionalChildPath 'System.Management.Automation.dll-Help.xml'
         if (Test-Path $coreHelpFilePath) {
             Remove-Item $coreHelpFilePath -Force -ErrorAction SilentlyContinue

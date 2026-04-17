@@ -7,49 +7,64 @@
 [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingConvertToSecureStringWithPlainText', '')]
 param()
 
-return
-
-Set-Variable dateInFuture -Option Constant -Value "12/12/2036 09:00"
-Set-Variable dateInPast -Option Constant -Value "12/12/2010 09:00"
-Set-Variable dateInvalid -Option Constant -Value "12/12/2016 25:00"
-
-function RemoveTestUsers
-{
-    param([string] $basename)
-
-    $results = Get-LocalUser $basename*
-    foreach ($element in $results) {
-        Remove-LocalUser -SID $element.SID
+BeforeDiscovery {
+    #skip all tests on non-windows platform or when not running as admin
+    $isAdmin = $false
+    if ($IsWindows) {
+        $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
     }
-}
-
-function VerifyFailingTest
-{
-    param(
-        [scriptblock] $sb,
-        [string] $expectedFqeid
-    )
-
-    $backupEAP = $script:ErrorActionPreference
-    $script:ErrorActionPreference = "Stop"
-
-    try {
-        & $sb
-        throw "Expected error: $expectedFqeid"
-    }
-    catch {
-        $_.FullyQualifiedErrorId | Should -Be $expectedFqeid
-    }
-    finally {
-        $script:ErrorActionPreference = $backupEAP
-    }
-}
-
-try {
-    #skip all tests on non-windows platform
-    $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-    $IsNotSkipped = ($IsWindows -eq $true);
+    $IsNotSkipped = ($IsWindows -eq $true) -and $isAdmin
     $PSDefaultParameterValues["it:skip"] = !$IsNotSkipped
+}
+
+BeforeAll {
+    $dateInFuture = "12/12/2036 09:00"
+    $dateInPast = "12/12/2010 09:00"
+    $dateInvalid = "12/12/2016 25:00"
+
+    function RemoveTestUsers
+    {
+        param([string] $basename)
+
+        $results = Get-LocalUser $basename*
+        foreach ($element in $results) {
+            Remove-LocalUser -SID $element.SID
+        }
+    }
+
+    function VerifyFailingTest
+    {
+        param(
+            [scriptblock] $sb,
+            [string] $expectedFqeid
+        )
+
+        $backupEAP = $ErrorActionPreference
+        $ErrorActionPreference = "Stop"
+
+        try {
+            & $sb
+            throw "Expected error: $expectedFqeid"
+        }
+        catch {
+            $_.FullyQualifiedErrorId | Should -Be $expectedFqeid
+        }
+        finally {
+            $ErrorActionPreference = $backupEAP
+        }
+    }
+
+    $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+    $isAdmin = $false
+    if ($IsWindows) {
+        $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+    }
+    $IsNotSkipped = ($IsWindows -eq $true) -and $isAdmin
+}
+
+AfterAll {
+    $global:PSDefaultParameterValues = $originalDefaultParameterValues
+}
 
     Describe "Verify Expected LocalUser Cmdlets are present" -Tags 'CI' {
 
@@ -1556,7 +1571,3 @@ try {
             $getResult.Enabled | Should -BeFalse
         }
     }
-}
-finally {
-    $global:PSDefaultParameterValues = $originalDefaultParameterValues
-}

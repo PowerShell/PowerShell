@@ -186,6 +186,31 @@ Describe "JEA session Get-Help test" -Tag @("CI", 'RequireAdminOnWindows') {
 }
 
 Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') {
+    BeforeDiscovery {
+        $ParameterError = @(
+            @{
+                expectedError = 'System.InvalidOperationException,Microsoft.PowerShell.Commands.InvokeCommandCommand'
+                title         = 'Cannot use InDisconnectedState and AsJob together'
+                testId        = 'InDisconnectedAndAsJob'
+            },
+            @{
+                expectedError = 'System.InvalidOperationException,Microsoft.PowerShell.Commands.InvokeCommandCommand'
+                title         = 'Cannot use SessionName without InDisconnectedSession'
+                testId        = 'SessionNameWithoutInDisconnected'
+            },
+            @{
+                expectedError = 'InvokeCommandCommandInvalidSessionState,Microsoft.PowerShell.Commands.InvokeCommandCommand'
+                title         = 'Cannot use Invoke-Command on a disconnected session'
+                testId        = 'DisconnectedSession'
+            }
+            @{
+                expectedError = 'InvokeCommandCommandInvalidSessionState,Microsoft.PowerShell.Commands.InvokeCommandCommand'
+                title         = 'Cannot use Invoke-Command on a closed session'
+                testId        = 'ClosedSession'
+            }
+        )
+    }
+
     BeforeAll {
 
         $skipTest = ! $IsWindows
@@ -217,46 +242,6 @@ Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') {
         $closedSession = New-RemoteSession -ConfigurationName $endPoint -ComputerName localhost
         $closedSession.Runspace.Close()
         $openSession = New-RemoteSession -ConfigurationName $endPoint
-
-        $ParameterError = @(
-            @{
-                parameters    = @{
-                    'InDisconnectedSession' = $true
-                    'AsJob'                 = $true
-                    'ScriptBlock'           = {1}
-                    'ComputerName'          = 'localhost'
-                    'ConfigurationName'     = $endpoint
-                }
-                expectedError = 'System.InvalidOperationException,Microsoft.PowerShell.Commands.InvokeCommandCommand'
-                title         = 'Cannot use InDisconnectedState and AsJob together'
-            },
-            @{
-                parameters    = @{
-                    'ScriptBlock' = {1}
-                    'SessionName' = 'SomeSessionName'
-                }
-                expectedError = 'System.InvalidOperationException,Microsoft.PowerShell.Commands.InvokeCommandCommand'
-                title         = 'Cannot use SessionName without InDisconnectedSession'
-            },
-            @{
-                parameters    = @{
-                    'ScriptBlock' = { 1 }
-                    'Session'     = $disconnectedSession
-                    'ErrorAction' = 'Stop'
-                }
-                expectedError = 'InvokeCommandCommandInvalidSessionState,Microsoft.PowerShell.Commands.InvokeCommandCommand'
-                title         = 'Cannot use Invoke-Command on a disconnected session'
-            }
-            @{
-                parameters    = @{
-                    'ScriptBlock' = { 1 }
-                    'Session'     = $closedSession
-                    'ErrorAction' = 'Stop'
-                }
-                expectedError = 'InvokeCommandCommandInvalidSessionState,Microsoft.PowerShell.Commands.InvokeCommandCommand'
-                title         = 'Cannot use Invoke-Command on a closed session'
-            }
-        )
 
         function script:ValidateSessionInfo($session, $state)
         {
@@ -322,7 +307,39 @@ Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') {
     }
 
     It "<title>" -TestCases $ParameterError {
-        param($parameters, $expectedError)
+        param($testId, $expectedError)
+
+        $parameters = switch ($testId) {
+            'InDisconnectedAndAsJob' {
+                @{
+                    'InDisconnectedSession' = $true
+                    'AsJob'                 = $true
+                    'ScriptBlock'           = {1}
+                    'ComputerName'          = 'localhost'
+                    'ConfigurationName'     = $endpoint
+                }
+            }
+            'SessionNameWithoutInDisconnected' {
+                @{
+                    'ScriptBlock' = {1}
+                    'SessionName' = 'SomeSessionName'
+                }
+            }
+            'DisconnectedSession' {
+                @{
+                    'ScriptBlock' = { 1 }
+                    'Session'     = $disconnectedSession
+                    'ErrorAction' = 'Stop'
+                }
+            }
+            'ClosedSession' {
+                @{
+                    'ScriptBlock' = { 1 }
+                    'Session'     = $closedSession
+                    'ErrorAction' = 'Stop'
+                }
+            }
+        }
 
         { Invoke-Command @parameters } | Should -Throw -ErrorId $expectedError
     }

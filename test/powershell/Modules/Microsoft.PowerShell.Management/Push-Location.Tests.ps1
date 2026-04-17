@@ -1,7 +1,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Test-Push-Location" -Tags "CI" {
-    New-Variable -Name startDirectory -Value $(Get-Location).Path -Scope Global -Force
+    BeforeAll {
+        New-Variable -Name startDirectory -Value $(Get-Location).Path -Scope Global -Force
+    }
 
     BeforeEach { Set-Location $startDirectory }
 
@@ -53,5 +55,7 @@ Describe "Test-Push-Location" -Tags "CI" {
     }
 
     # final cleanup
-    Set-Location $startDirectory
+    BeforeAll {
+        Set-Location $startDirectory
+    }
 }

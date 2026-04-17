@@ -4,62 +4,79 @@
 # Module removed due to #4272
 # disabling tests
 
-return
-
-function IsWin10OrHigher
-{
-    $version = [system.environment]::osversion.version
-
-    return ($version.Major -ge 10)
+BeforeDiscovery {
+    #skip all tests on non-windows platform or when not running as admin
+    $isAdmin = $false
+    if ($IsWindows) {
+        $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+    }
+    $IsNotSkipped = ($IsWindows -eq $true) -and $isAdmin
+    $PSDefaultParameterValues["it:skip"] = !$IsNotSkipped
 }
 
-function RemoveTestUsers
-{
-    param([string] $basename)
+BeforeAll {
+    function IsWin10OrHigher
+    {
+        $version = [system.environment]::osversion.version
 
-    $results = Get-LocalUser $basename*
-    foreach ($element in $results) {
-        Remove-LocalUser -SID $element.SID
+        return ($version.Major -ge 10)
     }
-}
 
-function RemoveTestGroups
-{
-    param([string] $basename)
+    function RemoveTestUsers
+    {
+        param([string] $basename)
 
-    $results = Get-LocalGroup $basename*
-    foreach ($element in $results) {
-        Remove-LocalGroup -SID $element.SID
+        $results = Get-LocalUser $basename*
+        foreach ($element in $results) {
+            Remove-LocalUser -SID $element.SID
+        }
     }
-}
 
-function VerifyFailingTest
-{
-    param(
-        [scriptblock] $sb,
-        [string] $expectedFqeid
-    )
+    function RemoveTestGroups
+    {
+        param([string] $basename)
 
-    $backupEAP = $script:ErrorActionPreference
-    $script:ErrorActionPreference = "Stop"
-
-    try {
-        & $sb
-        throw "Expected error: $expectedFqeid"
+        $results = Get-LocalGroup $basename*
+        foreach ($element in $results) {
+            Remove-LocalGroup -SID $element.SID
+        }
     }
-    catch {
-        $_.FullyQualifiedErrorId | Should -Be $expectedFqeid
-    }
-    finally {
-        $script:ErrorActionPreference = $backupEAP
-    }
-}
 
-try {
+    function VerifyFailingTest
+    {
+        param(
+            [scriptblock] $sb,
+            [string] $expectedFqeid
+        )
+
+        $backupEAP = $ErrorActionPreference
+        $ErrorActionPreference = "Stop"
+
+        try {
+            & $sb
+            throw "Expected error: $expectedFqeid"
+        }
+        catch {
+            $_.FullyQualifiedErrorId | Should -Be $expectedFqeid
+        }
+        finally {
+            $ErrorActionPreference = $backupEAP
+        }
+    }
+
     #skip all tests on non-windows platform
     $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-    $IsNotSkipped = ($IsWindows -eq $true);
-    $PSDefaultParameterValues["it:skip"] = !$IsNotSkipped
+    $isAdmin = $false
+    if ($IsWindows) {
+        $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+    }
+    $IsNotSkipped = ($IsWindows -eq $true) -and $isAdmin
+    $OptDomainPrefix="(.+\\)?"
+}
+
+AfterAll {
+    $global:PSDefaultParameterValues = $originalDefaultParameterValues
+}
 
     Describe "Verify Expected LocalGroupMember Cmdlets are present" -Tags "CI" {
 
@@ -593,7 +610,3 @@ try {
             $result.Name -match ($OptDomainPrefix + "TestUserRemove2") | Should -BeTrue
         }
     }
-}
-finally {
-    $global:PSDefaultParameterValues = $originalDefaultParameterValues
-}

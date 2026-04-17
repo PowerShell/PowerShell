@@ -9,32 +9,34 @@ Describe "PowerShell Command Debugging" -tags "CI" {
         $powershell = Join-Path -Path $PSHOME -ChildPath "pwsh"
     }
 
-    function NewProcessStartInfo([string]$CommandLine, [switch]$RedirectStdIn)
-    {
-        return [ProcessStartInfo]@{
-            FileName               = $powershell
-            Arguments              = $CommandLine
-            RedirectStandardInput  = $RedirectStdIn
-            RedirectStandardOutput = $true
-            RedirectStandardError  = $true
-            UseShellExecute        = $false
-        }
-    }
-
-    function RunPowerShell([ProcessStartInfo]$debugfn)
-    {
-        $process = [Process]::Start($debugfn)
-        return $process
-    }
-
-    function EnsureChildHasExited([Process]$process, [int]$WaitTimeInMS = 15000)
-    {
-        $process.WaitForExit($WaitTimeInMS)
-
-        if (!$process.HasExited)
+    BeforeAll {
+        function NewProcessStartInfo([string]$CommandLine, [switch]$RedirectStdIn)
         {
-            $process.HasExited | Should -BeTrue
-            $process.Kill()
+            return [ProcessStartInfo]@{
+                FileName               = $powershell
+                Arguments              = $CommandLine
+                RedirectStandardInput  = $RedirectStdIn
+                RedirectStandardOutput = $true
+                RedirectStandardError  = $true
+                UseShellExecute        = $false
+            }
+        }
+
+        function RunPowerShell([ProcessStartInfo]$debugfn)
+        {
+            $process = [Process]::Start($debugfn)
+            return $process
+        }
+
+        function EnsureChildHasExited([Process]$process, [int]$WaitTimeInMS = 15000)
+        {
+            $process.WaitForExit($WaitTimeInMS)
+
+            if (!$process.HasExited)
+            {
+                $process.HasExited | Should -BeTrue
+                $process.Kill()
+            }
         }
     }
 
@@ -248,4 +250,3 @@ Describe "Runspace Debugging API tests" -Tag CI {
 
     }
 }
-

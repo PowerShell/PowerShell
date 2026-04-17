@@ -4,6 +4,17 @@ Describe "Get-ChildItem" -Tags "CI" {
 
     Context 'FileSystem provider' {
 
+        BeforeDiscovery {
+            $searchRoot = Join-Path 'TESTDRIVE_PLACEHOLDER' -ChildPath "TestPS"
+            $PathWildCardTestCases = @(
+                @{Parameters = @{Path = $searchRoot; Recurse = $true; Directory = $true }; ExpectedCount = 1; Title = "directory without wildcard"},
+                @{Parameters = @{Path = (Join-Path $searchRoot '*'); Recurse = $true; Directory = $true }; ExpectedCount = 1; Title = "directory with wildcard"},
+                @{Parameters = @{Path = $searchRoot; Recurse = $true; File = $true }; ExpectedCount = 1; Title = "file without wildcard"},
+                @{Parameters = @{Path = (Join-Path $searchRoot '*'); Recurse = $true; File = $true }; ExpectedCount = 1; Title = "file with wildcard"},
+                @{Parameters = @{Path = (Join-Path $searchRoot 'F*.txt'); Recurse = $true; File = $true }; ExpectedCount = 1; Title = "file with wildcard filename"}
+            )
+        }
+
         BeforeAll {
             # Create Test data
             $max_Path = 260
@@ -26,17 +37,8 @@ Describe "Get-ChildItem" -Tags "CI" {
             $null = New-Item -Path (Join-Path -Path $TestDrive -ChildPath $item_E) -Name $item_G -ItemType "File" -Force
             $null = New-Item -Path $TestDrive\$item_I\$item_H -Name $item_J -ItemType "Directory" -Force
 
-            $searchRoot = Join-Path $TestDrive -ChildPath "TestPS"
             $file1 = Join-Path $searchRoot -ChildPath "D1" -AdditionalChildPath "File1.txt"
             $file2 = Join-Path $searchRoot -ChildPath "File1.txt"
-
-            $PathWildCardTestCases = @(
-                @{Parameters = @{Path = $searchRoot; Recurse = $true; Directory = $true }; ExpectedCount = 1; Title = "directory without wildcard"},
-                @{Parameters = @{Path = (Join-Path $searchRoot '*'); Recurse = $true; Directory = $true }; ExpectedCount = 1; Title = "directory with wildcard"},
-                @{Parameters = @{Path = $searchRoot; Recurse = $true; File = $true }; ExpectedCount = 1; Title = "file without wildcard"},
-                @{Parameters = @{Path = (Join-Path $searchRoot '*'); Recurse = $true; File = $true }; ExpectedCount = 1; Title = "file with wildcard"},
-                @{Parameters = @{Path = (Join-Path $searchRoot 'F*.txt'); Recurse = $true; File = $true }; ExpectedCount = 1; Title = "file with wildcard filename"}
-            )
 
         }
 
@@ -151,6 +153,10 @@ Describe "Get-ChildItem" -Tags "CI" {
 
         It "get-childitem path wildcard - <title>" -TestCases $PathWildCardTestCases {
             param($Parameters, $ExpectedCount)
+
+            # Resolve Discovery-time placeholder with actual $TestDrive path
+            $Parameters = $Parameters.Clone()
+            $Parameters.Path = $Parameters.Path.Replace('TESTDRIVE_PLACEHOLDER', $TestDrive)
 
             $null = New-Item $file1 -Force -ItemType File
 
@@ -295,33 +301,37 @@ Describe "Get-ChildItem with special path" -Tags "CI" {
 
 Describe 'FileSystem Provider Formatting' -Tag "CI","RequireAdminOnWindows" {
 
+    BeforeDiscovery {
+        $testcases = @(
+            @{ expectedMode = "d----"; expectedModeWithoutHardlink = "d----"; itemType = "Directory"; itemName = "Directory"; fileAttributes = [System.IO.FileAttributes] "Directory"; target = $null }
+            @{ expectedMode = "l----"; expectedModeWithoutHardlink = "l----"; itemType = "SymbolicLink"; itemName = "SymbolicLink-Directory"; fileAttributes = [System.IO.FileAttributes]::Directory -bor [System.IO.FileAttributes]::ReparsePoint; target = (Join-Path 'TESTDRIVE_PLACEHOLDER' 'targetDir2') }
+        )
+
+        if ($IsWindows)
+        {
+            $junctionMode = (Test-IsWindowsArm64) ? "la---" : "l----"
+            $armFileAttributes = (Test-IsWindowsArm64) ? [System.IO.FileAttributes]"Directory,Archive,ReparsePoint" : [System.IO.FileAttributes]"Directory,ReparsePoint"
+            $testcases += @{ expectedMode = $junctionMode; expectedModeWithoutHardlink = $junctionMode; itemType = "Junction"; itemName = "Junction-Directory"; fileAttributes = $armFileAttributes; target = (Join-Path 'TESTDRIVE_PLACEHOLDER' 'targetDir1') }
+            $testcases += @{ expectedMode = "-a---"; expectedModeWithoutHardlink = "-a---"; itemType = "File"; itemName = "ArchiveFile"; fileAttributes = [System.IO.FileAttributes] "Archive"; target = $null }
+            $testcases += @{ expectedMode = "la---"; expectedModeWithoutHardlink = "la---"; itemType = "SymbolicLink"; itemName = "SymbolicLink-File"; fileAttributes = [System.IO.FileAttributes]::Archive -bor [System.IO.FileAttributes]::ReparsePoint; target = (Join-Path 'TESTDRIVE_PLACEHOLDER' 'targetFile1') }
+            $testcases += @{ expectedMode = "la---"; expectedModeWithoutHardlink = "-a---"; itemType = "HardLink"; itemName = "HardLink"; fileAttributes = [System.IO.FileAttributes] "Archive"; target = (Join-Path 'TESTDRIVE_PLACEHOLDER' 'targetFile2') }
+        }
+    }
+
     BeforeAll {
         $modeTestDir = New-Item -Path "$TestDrive/testmodedirectory" -ItemType Directory -Force
         $targetFile1 = New-Item -Path "$TestDrive/targetFile1" -ItemType File -Force
         $targetFile2 = New-Item -Path "$TestDrive/targetFile2" -ItemType File -Force
         $targetDir1 = New-Item -Path "$TestDrive/targetDir1" -ItemType Directory -Force
         $targetDir2 = New-Item -Path "$TestDrive/targetDir2" -ItemType Directory -Force
-
-        $testcases = @(
-            @{ expectedMode = "d----"; expectedModeWithoutHardlink = "d----"; itemType = "Directory"; itemName = "Directory"; fileAttributes = [System.IO.FileAttributes] "Directory"; target = $null }
-            @{ expectedMode = "l----"; expectedModeWithoutHardlink = "l----"; itemType = "SymbolicLink"; itemName = "SymbolicLink-Directory"; fileAttributes = [System.IO.FileAttributes]::Directory -bor [System.IO.FileAttributes]::ReparsePoint; target = $targetDir2.FullName }
-        )
-
-        if ($IsWindows)
-        {
-            # arm64 adds the archive attribute
-            $junctionMode = (Test-IsWindowsArm64) ? "la---" : "l----"
-            $armFileAttributes = (Test-IsWindowsArm64) ? [System.IO.FileAttributes]"Directory,Archive,ReparsePoint" : [System.IO.FileAttributes]"Directory,ReparsePoint"
-            $testcases += @{ expectedMode = $junctionMode; expectedModeWithoutHardlink = $junctionMode; itemType = "Junction"; itemName = "Junction-Directory"; fileAttributes = $armFileAttributes; target = $targetDir1.FullName }
-            $testcases += @{ expectedMode = "-a---"; expectedModeWithoutHardlink = "-a---"; itemType = "File"; itemName = "ArchiveFile"; fileAttributes = [System.IO.FileAttributes] "Archive"; target = $null }
-            $testcases += @{ expectedMode = "la---"; expectedModeWithoutHardlink = "la---"; itemType = "SymbolicLink"; itemName = "SymbolicLink-File"; fileAttributes = [System.IO.FileAttributes]::Archive -bor [System.IO.FileAttributes]::ReparsePoint; target = $targetFile1.FullName }
-            $testcases += @{ expectedMode = "la---"; expectedModeWithoutHardlink = "-a---"; itemType = "HardLink"; itemName = "HardLink"; fileAttributes = [System.IO.FileAttributes] "Archive"; target = $targetFile2.FullName }
-        }
     }
 
     It 'Validate Mode property - <itemName>' -TestCases $testcases {
 
         param($expectedMode, $expectedModeWithoutHardlink, $itemType, $itemName, $fileAttributes, $target)
+
+        # Resolve Discovery-time placeholder with actual $TestDrive path
+        if ($target) { $target = $target.Replace('TESTDRIVE_PLACEHOLDER', $TestDrive) }
 
         $item = if ($target)
         {

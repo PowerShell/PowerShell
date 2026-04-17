@@ -3,21 +3,23 @@
 
 Describe "Assembly::LoadWithPartialName Validation Test" -Tags "CI" {
 
-    $defaultErrorId = 'FileLoadException'
-    $testcases = @(
-        # verify winforms is blocked
-        # winforms assembly is supported for .Net Core 3.0, if a new assembly needs to be blocked
-        # enable this test and add to list below
-        @{
-            Name = 'system.windows.forms'
-            ErrorId = $defaultErrorId
-        }
-        # Verify alternative casing is blocked
-        @{
-            Name = 'System.Windows.Forms'
-            ErrorId = $defaultErrorId
-        }
-    )
+    BeforeDiscovery {
+        $defaultErrorId = 'FileLoadException'
+        $testcases = @(
+            # verify winforms is blocked
+            # winforms assembly is supported for .Net Core 3.0, if a new assembly needs to be blocked
+            # enable this test and add to list below
+            @{
+                Name = 'system.windows.forms'
+                ErrorId = $defaultErrorId
+            }
+            # Verify alternative casing is blocked
+            @{
+                Name = 'System.Windows.Forms'
+                ErrorId = $defaultErrorId
+            }
+        )
+    }
 
     # All existing cases should fail on all platforms either because it doesn't exist or
     # because the assembly is blacklisted

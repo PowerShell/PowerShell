@@ -3,7 +3,7 @@
 Describe "File encoding tests" -Tag CI {
 
     Context "ParameterType for parameter 'Encoding' should be 'Encoding'" {
-        BeforeAll {
+        BeforeDiscovery {
             $testCases = Get-Command -Module Microsoft.PowerShell.* |
                 Where-Object { $_.Parameters -and $_.Parameters['Encoding'] } |
                 ForEach-Object { @{ Command = $_ } }
@@ -16,14 +16,13 @@ Describe "File encoding tests" -Tag CI {
     }
 
     Context "File contents are UTF8 without BOM" {
-        BeforeAll {
+        BeforeDiscovery {
             $testStr = "t" + ([char]233) + "st"
             $nl = [environment]::newline
             $utf8Bytes = 116,195,169,115,116
             $nlBytes = [byte[]][char[]]$nl
             $ExpectedWithNewline = $( $utf8Bytes ; $nlBytes )
-            $outputFile = "${TESTDRIVE}/file.txt"
-            $utf8Preamble = [text.encoding]::UTF8.GetPreamble()
+            $outputFile = "DISCOVERY_PLACEHOLDER"
             $simpleTestCases = @(
                 # New-Item does not add CR/NL
                 @{ Command = "New-Item"; Parameters = @{ type = "file";value = $testStr; Path = $outputFile }; Expected = $utf8Bytes ; Operator = "be" }
@@ -32,8 +31,18 @@ Describe "File encoding tests" -Tag CI {
                 @{ Command = "Add-Content"; Parameters = @{ value = $testStr; Path = $outputFile }; Expected = $ExpectedWithNewline ; Operator = "be" }
                 @{ Command = "Out-File"; Parameters = @{ InputObject = $testStr; Path = $outputFile }; Expected = $ExpectedWithNewline ; Operator = "be" }
                 # Redirection
-                @{ Command = { $testStr > $outputFile } ; Expected = $ExpectedWithNewline ; Operator = "be" }
+                @{ Command = "Redirect"; Expected = $ExpectedWithNewline ; Operator = "be" }
                 )
+        }
+
+        BeforeAll {
+            $testStr = "t" + ([char]233) + "st"
+            $nl = [environment]::newline
+            $utf8Bytes = 116,195,169,115,116
+            $nlBytes = [byte[]][char[]]$nl
+            $ExpectedWithNewline = $( $utf8Bytes ; $nlBytes )
+            $outputFile = "${TESTDRIVE}/file.txt"
+            $utf8Preamble = [text.encoding]::UTF8.GetPreamble()
             function Get-FileBytes ( $path ) {
                 [io.file]::ReadAllBytes($path)
             }
@@ -47,9 +56,17 @@ Describe "File encoding tests" -Tag CI {
 
         It "<command> produces correct content '<Expected>'" -TestCases $simpleTestCases {
             param ( $Command, $parameters, $Expected, $Operator)
-            & $command @parameters
+            if ($Command -eq "Redirect") {
+                $testStr > $outputFile
+            } elseif ($parameters -is [hashtable] -and $parameters.ContainsKey('Path')) {
+                $parameters = $parameters.Clone()
+                $parameters.Path = $outputFile
+                & $command @parameters
+            } else {
+                & $command @parameters
+            }
             $bytes = Get-FileBytes $outputFile
-            $bytes -join "-" | Should ${Operator} ($Expected -join "-")
+            $bytes -join "-" | Should -Be ($Expected -join "-")
         }
 
         It "Export-CSV creates file with UTF-8 encoding without BOM" {
@@ -103,8 +120,7 @@ Describe "File encoding tests" -Tag CI {
     }
 
     Context "Using encoding utf7 results in a warning" {
-        BeforeAll {
-            $expectedString = "Encoding 'UTF-7' is obsolete, please use UTF-8."
+        BeforeDiscovery {
             $testCases = @(
                 @{ Command = 'Add-Content';   Script = { "test" | Add-Content -Encoding utf7 -Path TESTDRIVE:/file 3>TESTDRIVE:/warning } }
                 @{ Command = 'Export-CliXml'; Script = { "test" | Export-Clixml -Path TESTDRIVE:/file.ps1xml -Encoding utf7 3>TESTDRIVE:/warning } }
@@ -116,6 +132,10 @@ Describe "File encoding tests" -Tag CI {
                 @{ Command = 'Select-String'; Script = { "aa" | Select-String -pattern bb -Encoding utf7 3>TESTDRIVE:/warning } }
                 @{ Command = 'Set-Content';   Script = { "aa" | Set-Content -Path TESTDRIVE:/output.txt -Encoding utf7 3>TESTDRIVE:/warning } }
             )
+        }
+
+        BeforeAll {
+            $expectedString = "Encoding 'UTF-7' is obsolete, please use UTF-8."
         }
         BeforeEach {
             Remove-Item TESTDRIVE:/* -force -ErrorAction Ignore

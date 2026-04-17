@@ -73,10 +73,12 @@ Describe 'Native UNIX globbing tests' -tags "CI" {
         param($arg)
         /bin/echo $arg | Should -BeExactly $arg
     }
-    $quoteTests = @(
-        @{arg = '"*"'},
-        @{arg = "'*'"}
-    )
+    BeforeDiscovery {
+        $quoteTests = @(
+            @{arg = '"*"'},
+            @{arg = "'*'"}
+        )
+    }
     It 'Should not expand quoted strings: <arg>' -TestCases $quoteTests {
         param($arg)
         Invoke-Expression "/bin/echo $arg" | Should -BeExactly '*'

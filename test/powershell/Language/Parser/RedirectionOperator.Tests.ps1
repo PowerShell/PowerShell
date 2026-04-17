@@ -45,32 +45,32 @@ Describe "Redirection operator now supports encoding changes" -Tags "CI" {
         }
     }
 
-    $availableEncodings =
-        @([System.Text.Encoding]::ASCII
-          [System.Text.Encoding]::BigEndianUnicode
-          [System.Text.UTF32Encoding]::new($true,$true)
-          [System.Text.Encoding]::Unicode
-          [System.Text.Encoding]::UTF7
-          [System.Text.Encoding]::UTF8
-          [System.Text.Encoding]::UTF32)
+    BeforeDiscovery {
+        $availableEncodings =
+            @([System.Text.Encoding]::ASCII
+              [System.Text.Encoding]::BigEndianUnicode
+              [System.Text.UTF32Encoding]::new($true,$true)
+              [System.Text.Encoding]::Unicode
+              [System.Text.Encoding]::UTF7
+              [System.Text.Encoding]::UTF8
+              [System.Text.Encoding]::UTF32)
+        $encodingTestCases = $availableEncodings | ForEach-Object { @{ EncodingName = $_.EncodingName; Encoding = $_ } }
+    }
 
-    foreach($encoding in $availableEncodings) {
+    It "Overriding encoding for Out-File is respected for <EncodingName>" -TestCases $encodingTestCases {
+        param($EncodingName, $Encoding)
 
-        $encodingName = $encoding.EncodingName
-        $msg = "Overriding encoding for Out-File is respected for $encodingName"
-        $BOM = $encoding.GetPreamble()
-        $TXT = $encoding.GetBytes($asciiString)
-        $CR  = $encoding.GetBytes($asciiCR)
+        $BOM = $Encoding.GetPreamble()
+        $TXT = $Encoding.GetBytes($asciiString)
+        $CR  = $Encoding.GetBytes($asciiCR)
         $expectedBytes = @( $BOM; $TXT; $CR )
-        $PSDefaultParameterValues["Out-File:Encoding"] = $encoding
+        $PSDefaultParameterValues["Out-File:Encoding"] = $Encoding
         $asciiString > TESTDRIVE:/file.txt
         $observedBytes = Get-Content -AsByteStream TESTDRIVE:/file.txt
         # THE TEST
-        It $msg {
-            $observedBytes.Count | Should -Be $expectedBytes.Count
-            for($i = 0;$i -lt $observedBytes.Count; $i++) {
-                $observedBytes[$i] | Should -Be $expectedBytes[$i]
-            }
+        $observedBytes.Count | Should -Be $expectedBytes.Count
+        for($i = 0;$i -lt $observedBytes.Count; $i++) {
+            $observedBytes[$i] | Should -Be $expectedBytes[$i]
         }
     }
 }
@@ -126,7 +126,7 @@ Describe "File redirection should have 'DoComplete' called on the underlying pip
 
 Describe "Redirection and Set-Variable -append tests" -tags CI {
     Context "variable redirection should work" {
-        BeforeAll {
+        BeforeDiscovery {
             $testCases = @{ Name = "Variable should be created"; scriptBlock = { 1..3>variable:a }; Validation = { ($a -join "") | Should -Be ((1..3) -join "") } },
                 @{ Name = "variable should be appended"; scriptBlock = {1..3>variable:a; 4..6>>variable:a}; Validation = { ($a -join "") | Should -Be ((1..6) -join "")}},
                 @{ Name = "variable should maintain type"; scriptBlock = {@{one=1}>variable:a};Validation = {$a | Should -BeOfType [hashtable]}},
@@ -211,8 +211,6 @@ Describe "Redirection and Set-Variable -append tests" -tags CI {
                         $i.MessageData | Should -BeExactly "info"
                      }
                  }
-
-
         }
         It "<name>" -TestCases $testCases {
             param ( $scriptBlock, $validation )

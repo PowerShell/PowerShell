@@ -715,17 +715,19 @@ foo``u{2195}abc
     }
 
     Context "Boolean Tests (starting at line 1723 to line 1772)" {
-        $testData = @(
-            @{ Script = '"False"'; Expected = $true }
-            @{ Script = 'if ("A") { $true } else { $false }'; Expected = $true }
-            @{ Script = 'if (" ") { $true } else { $false }'; Expected = $true }
-            @{ Script = 'if ("String with spaces") { $true } else { $false }'; Expected = $true }
-            @{ Script = 'if ("DoubleQuoted") { $true } else { $false }'; Expected = $true }
-            @{ Script = 'if ("StringWithNullVar$aEmbedded") { $true } else { $false }'; Expected = $true }
-            @{ Script = 'if (0) { $true } else { $false }'; Expected = $false }
-            @{ Script = '$a = $(0);if ($a) { $true } else { $false }'; Expected = $false }
-            @{ Script = '$obj = testcmd-parserBVT -ReturnType object;if ($obj) { $true } else { $false }'; Expected = $true }
-        )
+        BeforeDiscovery {
+            $testData = @(
+                @{ Script = '"False"'; Expected = $true }
+                @{ Script = 'if ("A") { $true } else { $false }'; Expected = $true }
+                @{ Script = 'if (" ") { $true } else { $false }'; Expected = $true }
+                @{ Script = 'if ("String with spaces") { $true } else { $false }'; Expected = $true }
+                @{ Script = 'if ("DoubleQuoted") { $true } else { $false }'; Expected = $true }
+                @{ Script = 'if ("StringWithNullVar$aEmbedded") { $true } else { $false }'; Expected = $true }
+                @{ Script = 'if (0) { $true } else { $false }'; Expected = $false }
+                @{ Script = '$a = $(0);if ($a) { $true } else { $false }'; Expected = $false }
+                @{ Script = '$obj = testcmd-parserBVT -ReturnType object;if ($obj) { $true } else { $false }'; Expected = $true }
+            )
+        }
         It "<Script> should return <Expected>" -TestCases $testData {
             param ( $Script, $Expected )
             ExecuteCommand $Script | Should -Be $Expected
@@ -733,39 +735,41 @@ foo``u{2195}abc
     }
 
     Context "Comparison operator Tests (starting at line 1785 to line 1842)" {
-        $testData = @(
-            @{ Script = 'if (1 -and 1) { $true } else { $false }'; Expected = $true }
-            @{ Script = 'if (1 -and 0) { $true } else { $false }'; Expected = $false }
-            @{ Script = 'if (0 -and 1) { $true } else { $false }'; Expected = $false }
-            @{ Script = 'if (0 -and 0) { $true } else { $false }'; Expected = $false }
-            @{ Script = 'if (1 -or 1) { $true } else { $false }'; Expected = $true }
-            @{ Script = 'if (1 -or 0) { $true } else { $false }'; Expected = $true }
-            @{ Script = 'if (0 -or 1) { $true } else { $false }'; Expected = $true }
-            @{ Script = 'if (0 -or 0) { $true } else { $false }'; Expected = $false }
-            #-eq
-            @{ Script = 'if ($false -eq $true -and $false) { $true } else { $false }'; Expected = $false }
-            @{ Script = 'if ($false -and $true -eq $false) { $true } else { $false }'; Expected = $false }
-            #-ieq
-            @{ Script = 'if ($false -ieq $true -and $false) { $true } else { $false }'; Expected = $false }
-            @{ Script = 'if ($false -and $true -ieq $false) { $true } else { $false }'; Expected = $false }
-            #-le
-            @{ Script = 'if ($false -le $true -and $false) { $true } else { $false }'; Expected = $false }
-            @{ Script = 'if ($false -and $true -le $false) { $true } else { $false }'; Expected = $false }
-            #-ile
-            @{ Script = 'if ($false -ile $true -and $false) { $true } else { $false }'; Expected = $false }
-            @{ Script = 'if ($false -and $true -ile $false) { $true } else { $false }'; Expected = $false }
-            #-ge
-            @{ Script = 'if ($false -ge $true -and $false) { $true } else { $false }'; Expected = $false }
-            @{ Script = 'if ($false -and $true -ge $false) { $true } else { $false }'; Expected = $false }
-            #-ige
-            @{ Script = 'if ($false -ige $true -and $false) { $true } else { $false }'; Expected = $false }
-            @{ Script = 'if ($false -and $true -ige $false) { $true } else { $false }'; Expected = $false }
-            #-like
-            @{ Script = 'if ($false -like $true -and $false) { $true } else { $false }'; Expected = $false }
-            @{ Script = 'if ($false -and $true -like $false) { $true } else { $false }'; Expected = $false }
-            #!
-            @{ Script = 'if (!$true -and $false) { $true } else { $false }'; Expected = $false }
-        )
+        BeforeDiscovery {
+            $testData = @(
+                @{ Script = 'if (1 -and 1) { $true } else { $false }'; Expected = $true }
+                @{ Script = 'if (1 -and 0) { $true } else { $false }'; Expected = $false }
+                @{ Script = 'if (0 -and 1) { $true } else { $false }'; Expected = $false }
+                @{ Script = 'if (0 -and 0) { $true } else { $false }'; Expected = $false }
+                @{ Script = 'if (1 -or 1) { $true } else { $false }'; Expected = $true }
+                @{ Script = 'if (1 -or 0) { $true } else { $false }'; Expected = $true }
+                @{ Script = 'if (0 -or 1) { $true } else { $false }'; Expected = $true }
+                @{ Script = 'if (0 -or 0) { $true } else { $false }'; Expected = $false }
+                #-eq
+                @{ Script = 'if ($false -eq $true -and $false) { $true } else { $false }'; Expected = $false }
+                @{ Script = 'if ($false -and $true -eq $false) { $true } else { $false }'; Expected = $false }
+                #-ieq
+                @{ Script = 'if ($false -ieq $true -and $false) { $true } else { $false }'; Expected = $false }
+                @{ Script = 'if ($false -and $true -ieq $false) { $true } else { $false }'; Expected = $false }
+                #-le
+                @{ Script = 'if ($false -le $true -and $false) { $true } else { $false }'; Expected = $false }
+                @{ Script = 'if ($false -and $true -le $false) { $true } else { $false }'; Expected = $false }
+                #-ile
+                @{ Script = 'if ($false -ile $true -and $false) { $true } else { $false }'; Expected = $false }
+                @{ Script = 'if ($false -and $true -ile $false) { $true } else { $false }'; Expected = $false }
+                #-ge
+                @{ Script = 'if ($false -ge $true -and $false) { $true } else { $false }'; Expected = $false }
+                @{ Script = 'if ($false -and $true -ge $false) { $true } else { $false }'; Expected = $false }
+                #-ige
+                @{ Script = 'if ($false -ige $true -and $false) { $true } else { $false }'; Expected = $false }
+                @{ Script = 'if ($false -and $true -ige $false) { $true } else { $false }'; Expected = $false }
+                #-like
+                @{ Script = 'if ($false -like $true -and $false) { $true } else { $false }'; Expected = $false }
+                @{ Script = 'if ($false -and $true -like $false) { $true } else { $false }'; Expected = $false }
+                #!
+                @{ Script = 'if (!$true -and $false) { $true } else { $false }'; Expected = $false }
+            )
+        }
         It "<Script> should return <Expected>" -TestCases $testData {
             param ( $Script, $Expected )
             ExecuteCommand $Script | Should -Be $Expected
@@ -773,30 +777,32 @@ foo``u{2195}abc
     }
 
     Context "Arithmetic and String Comparison Tests (starting at line 1848 to line 1943)" {
-        $testData = @(
-            @{ Script = '$a=10; if( !$a -eq 10) { $a=1 } else {$a=2};$a'; Expected = 2 }
-            @{ Script = "!3"; Expected = $false }
-            @{ Script = '$a=10; if($a -lt 15) { $a=1 } else {$a=2};$a'; Expected = 1 }
-            @{ Script = "'aaa' -ilt 'AAA'"; Expected = $false }
-            @{ Script = "'aaa' -lt 'AAA'"; Expected = $false }
-            @{ Script = "'aaa' -clt 'AAA'"; Expected = $true }
-            @{ Script = '$a=10; if($a -gt 15) { $a=1 } else {$a=2};$a'; Expected = 2 }
-            @{ Script = "'AAA' -igt 'aaa'"; Expected = $false }
-            @{ Script = "'AAA' -gt 'aaa'"; Expected = $false }
-            @{ Script = "'AAA' -cgt 'aaa'"; Expected = $true }
-            @{ Script = '$a=10; if($a -ge 10) { $a=1 } else {$a=2};$a'; Expected = 1 }
-            @{ Script = "'aaa' -ge 'aaa'"; Expected = $true }
-            @{ Script = '$a=10; if($a -ne 10) { $a=1 } else {$a=2};$a'; Expected = 2 }
-            @{ Script = "'aaa' -ine 'AAA'"; Expected = $false }
-            @{ Script = "'aaa' -ne 'AAA'"; Expected = $false }
-            @{ Script = "'aaa' -cne 'AAA'"; Expected = $true }
-            @{ Script = '$a="abc"; if($a -ieq "ABC") { $a=1 } else {$a=2};$a'; Expected = 1 }
-            @{ Script = "'aaa' -ieq 'AAA'"; Expected = $true }
-            @{ Script = '$a="abc"; if($a -igt "bbc") { $a=1 } else {$a=2};$a'; Expected = 2 }
-            @{ Script = "'aaa' -igt 'AAA'"; Expected = $false }
-            @{ Script = '$a="abc"; if($a -ile "bbc") { $a=1 } else {$a=2};$a'; Expected = 1 }
-            @{ Script = "'aaa' -ile 'AAA'"; Expected = $true }
-        )
+        BeforeDiscovery {
+            $testData = @(
+                @{ Script = '$a=10; if( !$a -eq 10) { $a=1 } else {$a=2};$a'; Expected = 2 }
+                @{ Script = "!3"; Expected = $false }
+                @{ Script = '$a=10; if($a -lt 15) { $a=1 } else {$a=2};$a'; Expected = 1 }
+                @{ Script = "'aaa' -ilt 'AAA'"; Expected = $false }
+                @{ Script = "'aaa' -lt 'AAA'"; Expected = $false }
+                @{ Script = "'aaa' -clt 'AAA'"; Expected = $true }
+                @{ Script = '$a=10; if($a -gt 15) { $a=1 } else {$a=2};$a'; Expected = 2 }
+                @{ Script = "'AAA' -igt 'aaa'"; Expected = $false }
+                @{ Script = "'AAA' -gt 'aaa'"; Expected = $false }
+                @{ Script = "'AAA' -cgt 'aaa'"; Expected = $true }
+                @{ Script = '$a=10; if($a -ge 10) { $a=1 } else {$a=2};$a'; Expected = 1 }
+                @{ Script = "'aaa' -ge 'aaa'"; Expected = $true }
+                @{ Script = '$a=10; if($a -ne 10) { $a=1 } else {$a=2};$a'; Expected = 2 }
+                @{ Script = "'aaa' -ine 'AAA'"; Expected = $false }
+                @{ Script = "'aaa' -ne 'AAA'"; Expected = $false }
+                @{ Script = "'aaa' -cne 'AAA'"; Expected = $true }
+                @{ Script = '$a="abc"; if($a -ieq "ABC") { $a=1 } else {$a=2};$a'; Expected = 1 }
+                @{ Script = "'aaa' -ieq 'AAA'"; Expected = $true }
+                @{ Script = '$a="abc"; if($a -igt "bbc") { $a=1 } else {$a=2};$a'; Expected = 2 }
+                @{ Script = "'aaa' -igt 'AAA'"; Expected = $false }
+                @{ Script = '$a="abc"; if($a -ile "bbc") { $a=1 } else {$a=2};$a'; Expected = 1 }
+                @{ Script = "'aaa' -ile 'AAA'"; Expected = $true }
+            )
+        }
         It "<Script> should return <Expected>" -TestCases $testData {
             param ( $Script, $Expected )
             ExecuteCommand $Script | Should -Be $Expected
@@ -804,14 +810,16 @@ foo``u{2195}abc
     }
 
     Context "Comparison Operators with Arrays Tests (starting at line 2015 to line 2178)" {
-        $testData = @(
-            @{ Script = "@(3) -eq 3"; Expected = "3" }
-            @{ Script = "@(4) -eq 3"; Expected = $null }
-            @{ Script = "@() -eq 3"; Expected = $null }
-            @{ Script = '$test = 1,2,@(3,4);$test -eq 3'; Expected = $null }
-            @{ Script = '$test = 1,2,@(3,4);$test -eq 2'; Expected = "2" }
-            @{ Script = '$test = 1,2,@(3,4);$test -eq 0'; Expected = $null }
-        )
+        BeforeDiscovery {
+            $testData = @(
+                @{ Script = "@(3) -eq 3"; Expected = "3" }
+                @{ Script = "@(4) -eq 3"; Expected = $null }
+                @{ Script = "@() -eq 3"; Expected = $null }
+                @{ Script = '$test = 1,2,@(3,4);$test -eq 3'; Expected = $null }
+                @{ Script = '$test = 1,2,@(3,4);$test -eq 2'; Expected = "2" }
+                @{ Script = '$test = 1,2,@(3,4);$test -eq 0'; Expected = $null }
+            )
+        }
         It "<Script> should return <Expected>" -TestCases $testData {
             param ( $Script, $Expected )
             ExecuteCommand $Script | Should -Be $Expected
@@ -836,311 +844,313 @@ foo``u{2195}abc
     }
 
     Context "Numerical Notations Tests (starting at line 2374 to line 2452)" {
-        $testData = @(
-            #Standard numeric notation
-            #Standard
-            @{ Script = "0"; ExpectedValue = "0"; ExpectedType = [int] }
-            @{ Script = "10"; ExpectedValue = "10"; ExpectedType = [int] }
-            @{ Script = "-10"; ExpectedValue = "-10"; ExpectedType = [int] }
-            @{ Script = "+10"; ExpectedValue = "10"; ExpectedType = [int] }
-            @{ Script = $([int32]::MaxValue); ExpectedValue = $([int32]::MaxValue); ExpectedType = [int] }
-            @{ Script = $([int32]::MinValue); ExpectedValue = $([int32]::MinValue); ExpectedType = [int] }
-            #<Real>
-            @{ Script = "0.0"; ExpectedValue = "0"; ExpectedType = [double] }
-            @{ Script = "6.5"; ExpectedValue = "6.5"; ExpectedType = [double] }
-            @{ Script = "-6.5"; ExpectedValue = "-6.5"; ExpectedType = [double] }
-            @{ Script = "9.12"; ExpectedValue = "9.12"; ExpectedType = [double] }
-            @{ Script = ".01"; ExpectedValue = "0.01"; ExpectedType = [double] }
-            @{ Script = $([single]::MinValue); ExpectedValue = $([float]::MinValue).ToString("G7"); ExpectedType = [double] }
-            @{ Script = $([float]::MaxValue); ExpectedValue = $([float]::MaxValue).ToString("G7"); ExpectedType = [double] }
-            #Exponential
-            @{ Script = "0e0"; ExpectedValue = "0"; ExpectedType = [double] }
-            @{ Script = "0e1"; ExpectedValue = "0"; ExpectedType = [double] }
-            @{ Script = "-0e2"; ExpectedValue = "-0"; ExpectedType = [double] }
-            @{ Script = "3e0"; ExpectedValue = "3"; ExpectedType = [double] }
-            @{ Script = "5e-2"; ExpectedValue = "0.05"; ExpectedType = [double] }
-            @{ Script = "5e2"; ExpectedValue = "500"; ExpectedType = [double] }
-            @{ Script = "-5e-2"; ExpectedValue = "-0.05"; ExpectedType = [double] }
-            @{ Script = "-5e2"; ExpectedValue = "-500"; ExpectedType = [double] }
-            #Hexadecimal
-            @{ Script = "0x0"; ExpectedValue = "0"; ExpectedType = [int] }
-            @{ Script = "0x12"; ExpectedValue = "18"; ExpectedType = [int] }
-            @{ Script = "-0x12"; ExpectedValue = "-18"; ExpectedType = [int] }
+        BeforeDiscovery {
+            $testData = @(
+                #Standard numeric notation
+                #Standard
+                @{ Script = "0"; ExpectedValue = "0"; ExpectedType = [int] }
+                @{ Script = "10"; ExpectedValue = "10"; ExpectedType = [int] }
+                @{ Script = "-10"; ExpectedValue = "-10"; ExpectedType = [int] }
+                @{ Script = "+10"; ExpectedValue = "10"; ExpectedType = [int] }
+                @{ Script = $([int32]::MaxValue); ExpectedValue = $([int32]::MaxValue); ExpectedType = [int] }
+                @{ Script = $([int32]::MinValue); ExpectedValue = $([int32]::MinValue); ExpectedType = [int] }
+                #<Real>
+                @{ Script = "0.0"; ExpectedValue = "0"; ExpectedType = [double] }
+                @{ Script = "6.5"; ExpectedValue = "6.5"; ExpectedType = [double] }
+                @{ Script = "-6.5"; ExpectedValue = "-6.5"; ExpectedType = [double] }
+                @{ Script = "9.12"; ExpectedValue = "9.12"; ExpectedType = [double] }
+                @{ Script = ".01"; ExpectedValue = "0.01"; ExpectedType = [double] }
+                @{ Script = $([single]::MinValue); ExpectedValue = $([float]::MinValue).ToString("G7"); ExpectedType = [double] }
+                @{ Script = $([float]::MaxValue); ExpectedValue = $([float]::MaxValue).ToString("G7"); ExpectedType = [double] }
+                #Exponential
+                @{ Script = "0e0"; ExpectedValue = "0"; ExpectedType = [double] }
+                @{ Script = "0e1"; ExpectedValue = "0"; ExpectedType = [double] }
+                @{ Script = "-0e2"; ExpectedValue = "-0"; ExpectedType = [double] }
+                @{ Script = "3e0"; ExpectedValue = "3"; ExpectedType = [double] }
+                @{ Script = "5e-2"; ExpectedValue = "0.05"; ExpectedType = [double] }
+                @{ Script = "5e2"; ExpectedValue = "500"; ExpectedType = [double] }
+                @{ Script = "-5e-2"; ExpectedValue = "-0.05"; ExpectedType = [double] }
+                @{ Script = "-5e2"; ExpectedValue = "-500"; ExpectedType = [double] }
+                #Hexadecimal
+                @{ Script = "0x0"; ExpectedValue = "0"; ExpectedType = [int] }
+                @{ Script = "0x12"; ExpectedValue = "18"; ExpectedType = [int] }
+                @{ Script = "-0x12"; ExpectedValue = "-18"; ExpectedType = [int] }
 
-            @{ Script = "0x80000000"; ExpectedValue = $([int32]::MinValue); ExpectedType = [int] }
-            @{ Script = "0x7fffffff"; ExpectedValue = $([int32]::MaxValue); ExpectedType = [int] }
-            @{ Script = "0x100000000"; ExpectedValue = [int64]0x100000000; ExpectedType = [long] }
-            @{ Script = "0xFF"; ExpectedValue = "255"; ExpectedType = [int] }
-            @{ Script = "0xFFFF"; ExpectedValue = "65535"; ExpectedType = [int] }
-            @{ Script = "0xFFFFFF"; ExpectedValue = "16777215"; ExpectedType = [int] }
-            @{ Script = "0xFFFFFFFF"; ExpectedValue = "-1"; ExpectedType = [int] }
-            @{ Script = "0xFFFFFFFFFF"; ExpectedValue = "1099511627775"; ExpectedType = [long] }
-            @{ Script = "0xFFFFFFFFFFFF"; ExpectedValue = "281474976710655"; ExpectedType = [long] }
-            @{ Script = "0xFFFFFFFFFFFFFF"; ExpectedValue = "72057594037927935"; ExpectedType = [long] }
-            @{ Script = "0xFFFFFFFFFFFFFFFF"; ExpectedValue = "-1"; ExpectedType = [long] }
-            #Binary
-            @{ Script = "0b0"; ExpectedValue = "0"; ExpectedType = [int] }
-            @{ Script = "0b10"; ExpectedValue = "2"; ExpectedType = [int] }
-            @{ Script = "-0b10"; ExpectedValue = "-2"; ExpectedType = [int] }
-            @{ Script = "0b11111111"; ExpectedValue = "-1"; ExpectedType = [int] }
-            @{ Script = "0b1111111111111111"; ExpectedValue = "-1"; ExpectedType = [int] }
-            @{ Script = "0b11111111111111111111111111111111"; ExpectedValue = "-1"; ExpectedType = [int] }
-            @{ Script = "0b1111111111111111111111111111111111111111111111111111111111111111"; ExpectedValue = "-1"; ExpectedType = [long] }
-            #Multipliers
-            @{ Script = "1kb"; ExpectedValue = "1024"; ExpectedType = [int] }
-            @{ Script = "1mb"; ExpectedValue = "1048576"; ExpectedType = [int] }
-            @{ Script = "1gb"; ExpectedValue = "1073741824"; ExpectedType = [int] }
-            @{ Script = "1tb"; ExpectedValue = "1099511627776"; ExpectedType = [long] }
-            @{ Script = "1pb"; ExpectedValue = "1125899906842624"; ExpectedType = [long] }
+                @{ Script = "0x80000000"; ExpectedValue = $([int32]::MinValue); ExpectedType = [int] }
+                @{ Script = "0x7fffffff"; ExpectedValue = $([int32]::MaxValue); ExpectedType = [int] }
+                @{ Script = "0x100000000"; ExpectedValue = [int64]0x100000000; ExpectedType = [long] }
+                @{ Script = "0xFF"; ExpectedValue = "255"; ExpectedType = [int] }
+                @{ Script = "0xFFFF"; ExpectedValue = "65535"; ExpectedType = [int] }
+                @{ Script = "0xFFFFFF"; ExpectedValue = "16777215"; ExpectedType = [int] }
+                @{ Script = "0xFFFFFFFF"; ExpectedValue = "-1"; ExpectedType = [int] }
+                @{ Script = "0xFFFFFFFFFF"; ExpectedValue = "1099511627775"; ExpectedType = [long] }
+                @{ Script = "0xFFFFFFFFFFFF"; ExpectedValue = "281474976710655"; ExpectedType = [long] }
+                @{ Script = "0xFFFFFFFFFFFFFF"; ExpectedValue = "72057594037927935"; ExpectedType = [long] }
+                @{ Script = "0xFFFFFFFFFFFFFFFF"; ExpectedValue = "-1"; ExpectedType = [long] }
+                #Binary
+                @{ Script = "0b0"; ExpectedValue = "0"; ExpectedType = [int] }
+                @{ Script = "0b10"; ExpectedValue = "2"; ExpectedType = [int] }
+                @{ Script = "-0b10"; ExpectedValue = "-2"; ExpectedType = [int] }
+                @{ Script = "0b11111111"; ExpectedValue = "-1"; ExpectedType = [int] }
+                @{ Script = "0b1111111111111111"; ExpectedValue = "-1"; ExpectedType = [int] }
+                @{ Script = "0b11111111111111111111111111111111"; ExpectedValue = "-1"; ExpectedType = [int] }
+                @{ Script = "0b1111111111111111111111111111111111111111111111111111111111111111"; ExpectedValue = "-1"; ExpectedType = [long] }
+                #Multipliers
+                @{ Script = "1kb"; ExpectedValue = "1024"; ExpectedType = [int] }
+                @{ Script = "1mb"; ExpectedValue = "1048576"; ExpectedType = [int] }
+                @{ Script = "1gb"; ExpectedValue = "1073741824"; ExpectedType = [int] }
+                @{ Script = "1tb"; ExpectedValue = "1099511627776"; ExpectedType = [long] }
+                @{ Script = "1pb"; ExpectedValue = "1125899906842624"; ExpectedType = [long] }
 
-            #Decimal notation
-            #Integer
-            @{ Script = "0d"; ExpectedValue = "0"; ExpectedType = [decimal] }
-            @{ Script = "100d"; ExpectedValue = "100"; ExpectedType = [decimal] }
-            @{ Script = "-100d"; ExpectedValue = "-100"; ExpectedType = [decimal] }
-            @{ Script = "+100d"; ExpectedValue = "100"; ExpectedType = [decimal] }
-            #<Real>
-            @{ Script = "0.0d"; ExpectedValue = "0.0"; ExpectedType = [decimal] }
-            @{ Script = "1.5d"; ExpectedValue = "1.5"; ExpectedType = [decimal] }
-            @{ Script = "-1.5d"; ExpectedValue = "-1.5"; ExpectedType = [decimal] }
-            #Exponential
-            @{ Script = "0e0d"; ExpectedValue = "0"; ExpectedType = [decimal] }
-            @{ Script = "15e3d"; ExpectedValue = "15000"; ExpectedType = [decimal] }
-            @{ Script = "-15e3d"; ExpectedValue = "-15000"; ExpectedType = [decimal] }
-            #Multipliers
-            @{ Script = "1dkb"; ExpectedValue = "1024"; ExpectedType = [decimal] }
-            @{ Script = "1dmb"; ExpectedValue = "1048576"; ExpectedType = [decimal] }
-            @{ Script = "1dgb"; ExpectedValue = "1073741824"; ExpectedType = [decimal] }
-            @{ Script = "1dtb"; ExpectedValue = "1099511627776"; ExpectedType = [decimal] }
-            @{ Script = "1dpb"; ExpectedValue = "1125899906842624"; ExpectedType = [decimal] }
+                #Decimal notation
+                #Integer
+                @{ Script = "0d"; ExpectedValue = "0"; ExpectedType = [decimal] }
+                @{ Script = "100d"; ExpectedValue = "100"; ExpectedType = [decimal] }
+                @{ Script = "-100d"; ExpectedValue = "-100"; ExpectedType = [decimal] }
+                @{ Script = "+100d"; ExpectedValue = "100"; ExpectedType = [decimal] }
+                #<Real>
+                @{ Script = "0.0d"; ExpectedValue = "0.0"; ExpectedType = [decimal] }
+                @{ Script = "1.5d"; ExpectedValue = "1.5"; ExpectedType = [decimal] }
+                @{ Script = "-1.5d"; ExpectedValue = "-1.5"; ExpectedType = [decimal] }
+                #Exponential
+                @{ Script = "0e0d"; ExpectedValue = "0"; ExpectedType = [decimal] }
+                @{ Script = "15e3d"; ExpectedValue = "15000"; ExpectedType = [decimal] }
+                @{ Script = "-15e3d"; ExpectedValue = "-15000"; ExpectedType = [decimal] }
+                #Multipliers
+                @{ Script = "1dkb"; ExpectedValue = "1024"; ExpectedType = [decimal] }
+                @{ Script = "1dmb"; ExpectedValue = "1048576"; ExpectedType = [decimal] }
+                @{ Script = "1dgb"; ExpectedValue = "1073741824"; ExpectedType = [decimal] }
+                @{ Script = "1dtb"; ExpectedValue = "1099511627776"; ExpectedType = [decimal] }
+                @{ Script = "1dpb"; ExpectedValue = "1125899906842624"; ExpectedType = [decimal] }
 
-            #SByte Integer notation
-            #Standard
-            @{ Script = "0y"; ExpectedValue = "0"; ExpectedType = [sbyte] }
-            @{ Script = "10y"; ExpectedValue = "10"; ExpectedType = [sbyte] }
-            @{ Script = "-10y"; ExpectedValue = "-10"; ExpectedType = [sbyte] }
-            @{ Script = "+10y"; ExpectedValue = "10"; ExpectedType = [sbyte] }
-            #Conversion from <Real>
-            @{ Script = "0.0y"; ExpectedValue = "0"; ExpectedType = [sbyte] }
-            @{ Script = "3.72y"; ExpectedValue = "4"; ExpectedType = [sbyte] }
-            @{ Script = "-3.72y"; ExpectedValue = "-4"; ExpectedType = [sbyte] }
-            #Exponential
-            @{ Script = "0e0y"; ExpectedValue = "0"; ExpectedType = [sbyte] }
-            @{ Script = "3e0y"; ExpectedValue = "3"; ExpectedType = [sbyte] }
-            @{ Script = "-3e0y"; ExpectedValue = "-3"; ExpectedType = [sbyte] }
-            @{ Script = "3e1y"; ExpectedValue = "30"; ExpectedType = [sbyte] }
-            @{ Script = "-3e1y"; ExpectedValue = "-30"; ExpectedType = [sbyte] }
-            #Hexadecimal
-            @{ Script = "0x0y"; ExpectedValue = "0"; ExpectedType = [sbyte] }
-            @{ Script = "0x41y"; ExpectedValue = "65"; ExpectedType = [sbyte] }
-            @{ Script = "-0x41y"; ExpectedValue = "-65"; ExpectedType = [sbyte] }
-            @{ Script = "0xFFy"; ExpectedValue = "-1"; ExpectedType = [sbyte] }
-            #Binary
-            @{ Script = "0b0y"; ExpectedValue = "0"; ExpectedType = [sbyte] }
-            @{ Script = "0b10y"; ExpectedValue = "2"; ExpectedType = [sbyte] }
-            @{ Script = "-0b10y"; ExpectedValue = "-2"; ExpectedType = [sbyte] }
-            @{ Script = "0b11111111y"; ExpectedValue = "-1"; ExpectedType = [sbyte] }
+                #SByte Integer notation
+                #Standard
+                @{ Script = "0y"; ExpectedValue = "0"; ExpectedType = [sbyte] }
+                @{ Script = "10y"; ExpectedValue = "10"; ExpectedType = [sbyte] }
+                @{ Script = "-10y"; ExpectedValue = "-10"; ExpectedType = [sbyte] }
+                @{ Script = "+10y"; ExpectedValue = "10"; ExpectedType = [sbyte] }
+                #Conversion from <Real>
+                @{ Script = "0.0y"; ExpectedValue = "0"; ExpectedType = [sbyte] }
+                @{ Script = "3.72y"; ExpectedValue = "4"; ExpectedType = [sbyte] }
+                @{ Script = "-3.72y"; ExpectedValue = "-4"; ExpectedType = [sbyte] }
+                #Exponential
+                @{ Script = "0e0y"; ExpectedValue = "0"; ExpectedType = [sbyte] }
+                @{ Script = "3e0y"; ExpectedValue = "3"; ExpectedType = [sbyte] }
+                @{ Script = "-3e0y"; ExpectedValue = "-3"; ExpectedType = [sbyte] }
+                @{ Script = "3e1y"; ExpectedValue = "30"; ExpectedType = [sbyte] }
+                @{ Script = "-3e1y"; ExpectedValue = "-30"; ExpectedType = [sbyte] }
+                #Hexadecimal
+                @{ Script = "0x0y"; ExpectedValue = "0"; ExpectedType = [sbyte] }
+                @{ Script = "0x41y"; ExpectedValue = "65"; ExpectedType = [sbyte] }
+                @{ Script = "-0x41y"; ExpectedValue = "-65"; ExpectedType = [sbyte] }
+                @{ Script = "0xFFy"; ExpectedValue = "-1"; ExpectedType = [sbyte] }
+                #Binary
+                @{ Script = "0b0y"; ExpectedValue = "0"; ExpectedType = [sbyte] }
+                @{ Script = "0b10y"; ExpectedValue = "2"; ExpectedType = [sbyte] }
+                @{ Script = "-0b10y"; ExpectedValue = "-2"; ExpectedType = [sbyte] }
+                @{ Script = "0b11111111y"; ExpectedValue = "-1"; ExpectedType = [sbyte] }
 
-            #Short Integer notation
-            #Standard
-            @{ Script = "0s"; ExpectedValue = "0"; ExpectedType = [short] }
-            @{ Script = "10s"; ExpectedValue = "10"; ExpectedType = [short] }
-            @{ Script = "-10s"; ExpectedValue = "-10"; ExpectedType = [short] }
-            @{ Script = "+10s"; ExpectedValue = "10"; ExpectedType = [short] }
-            #Conversion from <Real>
-            @{ Script = "0.0s"; ExpectedValue = "0"; ExpectedType = [short] }
-            @{ Script = "3.72s"; ExpectedValue = "4"; ExpectedType = [short] }
-            @{ Script = "-3.72s"; ExpectedValue = "-4"; ExpectedType = [short] }
-            #Exponential
-            @{ Script = "0e0s"; ExpectedValue = "0"; ExpectedType = [short] }
-            @{ Script = "3e0s"; ExpectedValue = "3"; ExpectedType = [short] }
-            @{ Script = "-3e0s"; ExpectedValue = "-3"; ExpectedType = [short] }
-            @{ Script = "3e2s"; ExpectedValue = "300"; ExpectedType = [short] }
-            @{ Script = "-3e2s"; ExpectedValue = "-300"; ExpectedType = [short] }
-            #Hexadecimal
-            @{ Script = "0x0s"; ExpectedValue = "0"; ExpectedType = [short] }
-            @{ Script = "0x41s"; ExpectedValue = "65"; ExpectedType = [short] }
-            @{ Script = "-0x41s"; ExpectedValue = "-65"; ExpectedType = [short] }
-            @{ Script = "0xFFFFs"; ExpectedValue = "-1"; ExpectedType = [short] }
-            #Binary
-            @{ Script = "0b0s"; ExpectedValue = "0"; ExpectedType = [short] }
-            @{ Script = "0b10s"; ExpectedValue = "2"; ExpectedType = [short] }
-            @{ Script = "-0b10s"; ExpectedValue = "-2"; ExpectedType = [short] }
-            @{ Script = "0b11111111s"; ExpectedValue = "-1"; ExpectedType = [short] }
-            #Multipliers
-            @{ Script = "1skb"; ExpectedValue = "1024"; ExpectedType = [short] }
+                #Short Integer notation
+                #Standard
+                @{ Script = "0s"; ExpectedValue = "0"; ExpectedType = [short] }
+                @{ Script = "10s"; ExpectedValue = "10"; ExpectedType = [short] }
+                @{ Script = "-10s"; ExpectedValue = "-10"; ExpectedType = [short] }
+                @{ Script = "+10s"; ExpectedValue = "10"; ExpectedType = [short] }
+                #Conversion from <Real>
+                @{ Script = "0.0s"; ExpectedValue = "0"; ExpectedType = [short] }
+                @{ Script = "3.72s"; ExpectedValue = "4"; ExpectedType = [short] }
+                @{ Script = "-3.72s"; ExpectedValue = "-4"; ExpectedType = [short] }
+                #Exponential
+                @{ Script = "0e0s"; ExpectedValue = "0"; ExpectedType = [short] }
+                @{ Script = "3e0s"; ExpectedValue = "3"; ExpectedType = [short] }
+                @{ Script = "-3e0s"; ExpectedValue = "-3"; ExpectedType = [short] }
+                @{ Script = "3e2s"; ExpectedValue = "300"; ExpectedType = [short] }
+                @{ Script = "-3e2s"; ExpectedValue = "-300"; ExpectedType = [short] }
+                #Hexadecimal
+                @{ Script = "0x0s"; ExpectedValue = "0"; ExpectedType = [short] }
+                @{ Script = "0x41s"; ExpectedValue = "65"; ExpectedType = [short] }
+                @{ Script = "-0x41s"; ExpectedValue = "-65"; ExpectedType = [short] }
+                @{ Script = "0xFFFFs"; ExpectedValue = "-1"; ExpectedType = [short] }
+                #Binary
+                @{ Script = "0b0s"; ExpectedValue = "0"; ExpectedType = [short] }
+                @{ Script = "0b10s"; ExpectedValue = "2"; ExpectedType = [short] }
+                @{ Script = "-0b10s"; ExpectedValue = "-2"; ExpectedType = [short] }
+                @{ Script = "0b11111111s"; ExpectedValue = "-1"; ExpectedType = [short] }
+                #Multipliers
+                @{ Script = "1skb"; ExpectedValue = "1024"; ExpectedType = [short] }
 
-            #Long Integer notation
-            #Standard
-            @{ Script = "0l"; ExpectedValue = "0"; ExpectedType = [long] }
-            @{ Script = "10l"; ExpectedValue = "10"; ExpectedType = [long] }
-            @{ Script = "-10l"; ExpectedValue = "-10"; ExpectedType = [long] }
-            @{ Script = "+10l"; ExpectedValue = "10"; ExpectedType = [long] }
-            #Conversion from <Real>
-            @{ Script = "0.0l"; ExpectedValue = "0"; ExpectedType = [long] }
-            @{ Script = "2.5l"; ExpectedValue = "2"; ExpectedType = [long] }
-            @{ Script = "-2.5l"; ExpectedValue = "-2"; ExpectedType = [long] }
-            #Exponential
-            @{ Script = "0e0l"; ExpectedValue = "0"; ExpectedType = [long] }
-            @{ Script = "3e0l"; ExpectedValue = "3"; ExpectedType = [long] }
-            @{ Script = "-3e0l"; ExpectedValue = "-3"; ExpectedType = [long] }
-            @{ Script = "3e2l"; ExpectedValue = "300"; ExpectedType = [long] }
-            @{ Script = "-3e2l"; ExpectedValue = "-300"; ExpectedType = [long] }
-            #Hexadecimal
-            @{ Script = "0x0l"; ExpectedValue = "0"; ExpectedType = [long] }
-            @{ Script = "0x41l"; ExpectedValue = "65"; ExpectedType = [long] }
-            @{ Script = "-0x41l"; ExpectedValue = "-65"; ExpectedType = [long] }
-            @{ Script = "0xFFFFFFFFFFFFFFFFl"; ExpectedValue = "-1"; ExpectedType = [long] }
-            #Binary
-            @{ Script = "0b0l"; ExpectedValue = "0"; ExpectedType = [long] }
-            @{ Script = "0b10l"; ExpectedValue = "2"; ExpectedType = [long] }
-            @{ Script = "-0b10l"; ExpectedValue = "-2"; ExpectedType = [long] }
-            @{ Script = "0b11111111l"; ExpectedValue = "-1"; ExpectedType = [long] }
-            #Multipliers
-            @{ Script = "1lkb"; ExpectedValue = "1024"; ExpectedType = [long] }
-            @{ Script = "1lmb"; ExpectedValue = "1048576"; ExpectedType = [long] }
-            @{ Script = "1lgb"; ExpectedValue = "1073741824"; ExpectedType = [long] }
-            @{ Script = "1ltb"; ExpectedValue = "1099511627776"; ExpectedType = [long] }
-            @{ Script = "1lpb"; ExpectedValue = "1125899906842624"; ExpectedType = [long] }
+                #Long Integer notation
+                #Standard
+                @{ Script = "0l"; ExpectedValue = "0"; ExpectedType = [long] }
+                @{ Script = "10l"; ExpectedValue = "10"; ExpectedType = [long] }
+                @{ Script = "-10l"; ExpectedValue = "-10"; ExpectedType = [long] }
+                @{ Script = "+10l"; ExpectedValue = "10"; ExpectedType = [long] }
+                #Conversion from <Real>
+                @{ Script = "0.0l"; ExpectedValue = "0"; ExpectedType = [long] }
+                @{ Script = "2.5l"; ExpectedValue = "2"; ExpectedType = [long] }
+                @{ Script = "-2.5l"; ExpectedValue = "-2"; ExpectedType = [long] }
+                #Exponential
+                @{ Script = "0e0l"; ExpectedValue = "0"; ExpectedType = [long] }
+                @{ Script = "3e0l"; ExpectedValue = "3"; ExpectedType = [long] }
+                @{ Script = "-3e0l"; ExpectedValue = "-3"; ExpectedType = [long] }
+                @{ Script = "3e2l"; ExpectedValue = "300"; ExpectedType = [long] }
+                @{ Script = "-3e2l"; ExpectedValue = "-300"; ExpectedType = [long] }
+                #Hexadecimal
+                @{ Script = "0x0l"; ExpectedValue = "0"; ExpectedType = [long] }
+                @{ Script = "0x41l"; ExpectedValue = "65"; ExpectedType = [long] }
+                @{ Script = "-0x41l"; ExpectedValue = "-65"; ExpectedType = [long] }
+                @{ Script = "0xFFFFFFFFFFFFFFFFl"; ExpectedValue = "-1"; ExpectedType = [long] }
+                #Binary
+                @{ Script = "0b0l"; ExpectedValue = "0"; ExpectedType = [long] }
+                @{ Script = "0b10l"; ExpectedValue = "2"; ExpectedType = [long] }
+                @{ Script = "-0b10l"; ExpectedValue = "-2"; ExpectedType = [long] }
+                @{ Script = "0b11111111l"; ExpectedValue = "-1"; ExpectedType = [long] }
+                #Multipliers
+                @{ Script = "1lkb"; ExpectedValue = "1024"; ExpectedType = [long] }
+                @{ Script = "1lmb"; ExpectedValue = "1048576"; ExpectedType = [long] }
+                @{ Script = "1lgb"; ExpectedValue = "1073741824"; ExpectedType = [long] }
+                @{ Script = "1ltb"; ExpectedValue = "1099511627776"; ExpectedType = [long] }
+                @{ Script = "1lpb"; ExpectedValue = "1125899906842624"; ExpectedType = [long] }
 
-            #BigInteger Integer notation
-            #Standard
-            @{ Script = "0n"; ExpectedValue = "0"; ExpectedType = [bigint] }
-            @{ Script = "10n"; ExpectedValue = "10"; ExpectedType = [bigint] }
-            @{ Script = "-10n"; ExpectedValue = "-10"; ExpectedType = [bigint] }
-            @{ Script = "+10n"; ExpectedValue = "10"; ExpectedType = [bigint] }
-            #Conversion from <Real>
-            @{ Script = "0.0n"; ExpectedValue = "0"; ExpectedType = [bigint] }
-            @{ Script = "2.5n"; ExpectedValue = "2"; ExpectedType = [bigint] }
-            @{ Script = "-2.5n"; ExpectedValue = "-2"; ExpectedType = [bigint] }
-            #Exponential
-            @{ Script = "0e0n"; ExpectedValue = "0"; ExpectedType = [bigint] }
-            @{ Script = "3e2n"; ExpectedValue = "300"; ExpectedType = [bigint] }
-            @{ Script = "-3e2n"; ExpectedValue = "-300"; ExpectedType = [bigint] }
-            #Hexadecimal
-            @{ Script = "0x0n"; ExpectedValue = "0"; ExpectedType = [bigint] }
-            @{ Script = "0x41n"; ExpectedValue = "65"; ExpectedType = [bigint] }
-            @{ Script = "-0x41n"; ExpectedValue = "-65"; ExpectedType = [bigint] }
-            #Binary
-            @{ Script = "0b0n"; ExpectedValue = "0"; ExpectedType = [bigint] }
-            @{ Script = "0b10n"; ExpectedValue = "2"; ExpectedType = [bigint] }
-            @{ Script = "-0b10n"; ExpectedValue = "-2"; ExpectedType = [bigint] }
-            @{ Script = "0b11111111n"; ExpectedValue = "-1"; ExpectedType = [bigint] }
-            #Multipliers
-            @{ Script = "1Nkb"; ExpectedValue = "1024"; ExpectedType = [bigint] }
-            @{ Script = "1Nmb"; ExpectedValue = "1048576"; ExpectedType = [bigint] }
-            @{ Script = "1Ngb"; ExpectedValue = "1073741824"; ExpectedType = [bigint] }
-            @{ Script = "1Ntb"; ExpectedValue = "1099511627776"; ExpectedType = [bigint] }
-            @{ Script = "1Npb"; ExpectedValue = "1125899906842624"; ExpectedType = [bigint] }
+                #BigInteger Integer notation
+                #Standard
+                @{ Script = "0n"; ExpectedValue = "0"; ExpectedType = [bigint] }
+                @{ Script = "10n"; ExpectedValue = "10"; ExpectedType = [bigint] }
+                @{ Script = "-10n"; ExpectedValue = "-10"; ExpectedType = [bigint] }
+                @{ Script = "+10n"; ExpectedValue = "10"; ExpectedType = [bigint] }
+                #Conversion from <Real>
+                @{ Script = "0.0n"; ExpectedValue = "0"; ExpectedType = [bigint] }
+                @{ Script = "2.5n"; ExpectedValue = "2"; ExpectedType = [bigint] }
+                @{ Script = "-2.5n"; ExpectedValue = "-2"; ExpectedType = [bigint] }
+                #Exponential
+                @{ Script = "0e0n"; ExpectedValue = "0"; ExpectedType = [bigint] }
+                @{ Script = "3e2n"; ExpectedValue = "300"; ExpectedType = [bigint] }
+                @{ Script = "-3e2n"; ExpectedValue = "-300"; ExpectedType = [bigint] }
+                #Hexadecimal
+                @{ Script = "0x0n"; ExpectedValue = "0"; ExpectedType = [bigint] }
+                @{ Script = "0x41n"; ExpectedValue = "65"; ExpectedType = [bigint] }
+                @{ Script = "-0x41n"; ExpectedValue = "-65"; ExpectedType = [bigint] }
+                #Binary
+                @{ Script = "0b0n"; ExpectedValue = "0"; ExpectedType = [bigint] }
+                @{ Script = "0b10n"; ExpectedValue = "2"; ExpectedType = [bigint] }
+                @{ Script = "-0b10n"; ExpectedValue = "-2"; ExpectedType = [bigint] }
+                @{ Script = "0b11111111n"; ExpectedValue = "-1"; ExpectedType = [bigint] }
+                #Multipliers
+                @{ Script = "1Nkb"; ExpectedValue = "1024"; ExpectedType = [bigint] }
+                @{ Script = "1Nmb"; ExpectedValue = "1048576"; ExpectedType = [bigint] }
+                @{ Script = "1Ngb"; ExpectedValue = "1073741824"; ExpectedType = [bigint] }
+                @{ Script = "1Ntb"; ExpectedValue = "1099511627776"; ExpectedType = [bigint] }
+                @{ Script = "1Npb"; ExpectedValue = "1125899906842624"; ExpectedType = [bigint] }
 
-            #Unsigned Integer notation
-            #Standard
-            @{ Script = "0u"; ExpectedValue = "0"; ExpectedType = [uint] }
-            @{ Script = "10u"; ExpectedValue = "10"; ExpectedType = [uint] }
-            @{ Script = "+10u"; ExpectedValue = "10"; ExpectedType = [uint] }
-            #Conversion from <Real>
-            @{ Script = "0.0u"; ExpectedValue = "0"; ExpectedType = [uint] }
-            @{ Script = "2.5u"; ExpectedValue = "2"; ExpectedType = [uint] }
-            #Exponential
-            @{ Script = "0e0u"; ExpectedValue = "0"; ExpectedType = [uint] }
-            @{ Script = "3e2u"; ExpectedValue = "300"; ExpectedType = [uint] }
-            #Hexadecimal
-            @{ Script = "0x0u"; ExpectedValue = "0"; ExpectedType = [uint] }
-            @{ Script = "0x41u"; ExpectedValue = "65"; ExpectedType = [uint] }
-            @{ Script = "0xFFu"; ExpectedValue = "255"; ExpectedType = [uint] }
-            @{ Script = "0xFFFFu"; ExpectedValue = "65535"; ExpectedType = [uint] }
-            @{ Script = "0xFFFFFFu"; ExpectedValue = "16777215"; ExpectedType = [uint] }
+                #Unsigned Integer notation
+                #Standard
+                @{ Script = "0u"; ExpectedValue = "0"; ExpectedType = [uint] }
+                @{ Script = "10u"; ExpectedValue = "10"; ExpectedType = [uint] }
+                @{ Script = "+10u"; ExpectedValue = "10"; ExpectedType = [uint] }
+                #Conversion from <Real>
+                @{ Script = "0.0u"; ExpectedValue = "0"; ExpectedType = [uint] }
+                @{ Script = "2.5u"; ExpectedValue = "2"; ExpectedType = [uint] }
+                #Exponential
+                @{ Script = "0e0u"; ExpectedValue = "0"; ExpectedType = [uint] }
+                @{ Script = "3e2u"; ExpectedValue = "300"; ExpectedType = [uint] }
+                #Hexadecimal
+                @{ Script = "0x0u"; ExpectedValue = "0"; ExpectedType = [uint] }
+                @{ Script = "0x41u"; ExpectedValue = "65"; ExpectedType = [uint] }
+                @{ Script = "0xFFu"; ExpectedValue = "255"; ExpectedType = [uint] }
+                @{ Script = "0xFFFFu"; ExpectedValue = "65535"; ExpectedType = [uint] }
+                @{ Script = "0xFFFFFFu"; ExpectedValue = "16777215"; ExpectedType = [uint] }
 
-            @{ Script = "0xFFFFFFFFu"; ExpectedValue = "$([uint]::MaxValue)"; ExpectedType = [uint] }
-            @{ Script = "0xFFFFFFFFFFu"; ExpectedValue = "1099511627775"; ExpectedType = [ulong] }
-            @{ Script = "0xFFFFFFFFFFFFu"; ExpectedValue = "281474976710655"; ExpectedType = [ulong] }
-            @{ Script = "0xFFFFFFFFFFFFFFu"; ExpectedValue = "72057594037927935"; ExpectedType = [ulong] }
-            @{ Script = "0xFFFFFFFFFFFFFFFFu"; ExpectedValue = "$([ulong]::MaxValue)"; ExpectedType = [ulong] }
-            #Binary
-            @{ Script = "0b0u"; ExpectedValue = "0"; ExpectedType = [uint] }
-            @{ Script = "0b10u"; ExpectedValue = "2"; ExpectedType = [uint] }
-            @{ Script = "0b11111111u"; ExpectedValue = "255"; ExpectedType = [uint] }
-            @{ Script = "0b1111111111111111u"; ExpectedValue = "65535"; ExpectedType = [uint] }
-            @{ Script = "0b11111111111111111111111111111111u"; ExpectedValue = "4294967295"; ExpectedType = [uint] }
-            @{ Script = "0b1111111111111111111111111111111111111111111111111111111111111111u"; ExpectedValue = "18446744073709551615"; ExpectedType = [ulong] }
-            #Multipliers
-            @{ Script = "1ukb"; ExpectedValue = "1024"; ExpectedType = [uint] }
-            @{ Script = "1umb"; ExpectedValue = "1048576"; ExpectedType = [uint] }
-            @{ Script = "1ugb"; ExpectedValue = "1073741824"; ExpectedType = [uint] }
-            @{ Script = "1utb"; ExpectedValue = "1099511627776"; ExpectedType = [ulong] }
-            @{ Script = "1upb"; ExpectedValue = "1125899906842624"; ExpectedType = [ulong] }
+                @{ Script = "0xFFFFFFFFu"; ExpectedValue = "$([uint]::MaxValue)"; ExpectedType = [uint] }
+                @{ Script = "0xFFFFFFFFFFu"; ExpectedValue = "1099511627775"; ExpectedType = [ulong] }
+                @{ Script = "0xFFFFFFFFFFFFu"; ExpectedValue = "281474976710655"; ExpectedType = [ulong] }
+                @{ Script = "0xFFFFFFFFFFFFFFu"; ExpectedValue = "72057594037927935"; ExpectedType = [ulong] }
+                @{ Script = "0xFFFFFFFFFFFFFFFFu"; ExpectedValue = "$([ulong]::MaxValue)"; ExpectedType = [ulong] }
+                #Binary
+                @{ Script = "0b0u"; ExpectedValue = "0"; ExpectedType = [uint] }
+                @{ Script = "0b10u"; ExpectedValue = "2"; ExpectedType = [uint] }
+                @{ Script = "0b11111111u"; ExpectedValue = "255"; ExpectedType = [uint] }
+                @{ Script = "0b1111111111111111u"; ExpectedValue = "65535"; ExpectedType = [uint] }
+                @{ Script = "0b11111111111111111111111111111111u"; ExpectedValue = "4294967295"; ExpectedType = [uint] }
+                @{ Script = "0b1111111111111111111111111111111111111111111111111111111111111111u"; ExpectedValue = "18446744073709551615"; ExpectedType = [ulong] }
+                #Multipliers
+                @{ Script = "1ukb"; ExpectedValue = "1024"; ExpectedType = [uint] }
+                @{ Script = "1umb"; ExpectedValue = "1048576"; ExpectedType = [uint] }
+                @{ Script = "1ugb"; ExpectedValue = "1073741824"; ExpectedType = [uint] }
+                @{ Script = "1utb"; ExpectedValue = "1099511627776"; ExpectedType = [ulong] }
+                @{ Script = "1upb"; ExpectedValue = "1125899906842624"; ExpectedType = [ulong] }
 
-            #Byte Integer notation
-            #Standard
-            @{ Script = "0uy"; ExpectedValue = "0"; ExpectedType = [byte] }
-            @{ Script = "10uy"; ExpectedValue = "10"; ExpectedType = [byte] }
-            @{ Script = "+10uy"; ExpectedValue = "10"; ExpectedType = [byte] }
-            #Conversion from <Real>
-            @{ Script = "0.0uy"; ExpectedValue = "0"; ExpectedType = [byte] }
-            @{ Script = "3.72uy"; ExpectedValue = "4"; ExpectedType = [byte] }
-            #Exponential
-            @{ Script = "0e0uy"; ExpectedValue = "0"; ExpectedType = [byte] }
-            @{ Script = "3e0uy"; ExpectedValue = "3"; ExpectedType = [byte] }
-            @{ Script = "3e1uy"; ExpectedValue = "30"; ExpectedType = [byte] }
-            #Hexadecimal
-            @{ Script = "0x0uy"; ExpectedValue = "0"; ExpectedType = [byte] }
-            @{ Script = "0x41uy"; ExpectedValue = "65"; ExpectedType = [byte] }
-            @{ Script = "0xFFuy"; ExpectedValue = [byte]::MaxValue; ExpectedType = [byte] }
-            #Binary
-            @{ Script = "0b0uy"; ExpectedValue = "0"; ExpectedType = [byte] }
-            @{ Script = "0b10uy"; ExpectedValue = "2"; ExpectedType = [byte] }
-            @{ Script = "0b11111111uy"; ExpectedValue = "255"; ExpectedType = [byte] }
+                #Byte Integer notation
+                #Standard
+                @{ Script = "0uy"; ExpectedValue = "0"; ExpectedType = [byte] }
+                @{ Script = "10uy"; ExpectedValue = "10"; ExpectedType = [byte] }
+                @{ Script = "+10uy"; ExpectedValue = "10"; ExpectedType = [byte] }
+                #Conversion from <Real>
+                @{ Script = "0.0uy"; ExpectedValue = "0"; ExpectedType = [byte] }
+                @{ Script = "3.72uy"; ExpectedValue = "4"; ExpectedType = [byte] }
+                #Exponential
+                @{ Script = "0e0uy"; ExpectedValue = "0"; ExpectedType = [byte] }
+                @{ Script = "3e0uy"; ExpectedValue = "3"; ExpectedType = [byte] }
+                @{ Script = "3e1uy"; ExpectedValue = "30"; ExpectedType = [byte] }
+                #Hexadecimal
+                @{ Script = "0x0uy"; ExpectedValue = "0"; ExpectedType = [byte] }
+                @{ Script = "0x41uy"; ExpectedValue = "65"; ExpectedType = [byte] }
+                @{ Script = "0xFFuy"; ExpectedValue = [byte]::MaxValue; ExpectedType = [byte] }
+                #Binary
+                @{ Script = "0b0uy"; ExpectedValue = "0"; ExpectedType = [byte] }
+                @{ Script = "0b10uy"; ExpectedValue = "2"; ExpectedType = [byte] }
+                @{ Script = "0b11111111uy"; ExpectedValue = "255"; ExpectedType = [byte] }
 
-            #Unsigned-Short Integer Notation
-            #Standard
-            @{ Script = "0us"; ExpectedValue = "0"; ExpectedType = [ushort] }
-            @{ Script = "10us"; ExpectedValue = "10"; ExpectedType = [ushort] }
-            @{ Script = "+10us"; ExpectedValue = "10"; ExpectedType = [ushort] }
-            #Conversion from <Real>
-            @{ Script = "0.0us"; ExpectedValue = "0"; ExpectedType = [ushort] }
-            @{ Script = "3.72us"; ExpectedValue = "4"; ExpectedType = [ushort] }
-            #Exponential
-            @{ Script = "0e0us"; ExpectedValue = "0"; ExpectedType = [ushort] }
-            @{ Script = "3e0us"; ExpectedValue = "3"; ExpectedType = [ushort] }
-            @{ Script = "3e2us"; ExpectedValue = "300"; ExpectedType = [ushort] }
-            #Hexadecimal
-            @{ Script = "0x0us"; ExpectedValue = "0"; ExpectedType = [ushort] }
-            @{ Script = "0x41us"; ExpectedValue = "65"; ExpectedType = [ushort] }
-            @{ Script = "0x41us"; ExpectedValue = "65"; ExpectedType = [ushort] }
-            @{ Script = "0xFFFFus"; ExpectedValue = [ushort]::MaxValue; ExpectedType = [ushort] }
-            #Binary
-            @{ Script = "0b0us"; ExpectedValue = "0"; ExpectedType = [ushort] }
-            @{ Script = "0b10us"; ExpectedValue = "2"; ExpectedType = [ushort] }
-            @{ Script = "0b11111111us"; ExpectedValue = "255"; ExpectedType = [ushort] }
-            #Multipliers
-            @{ Script = "1uskb"; ExpectedValue = "1024"; ExpectedType = [ushort] }
+                #Unsigned-Short Integer Notation
+                #Standard
+                @{ Script = "0us"; ExpectedValue = "0"; ExpectedType = [ushort] }
+                @{ Script = "10us"; ExpectedValue = "10"; ExpectedType = [ushort] }
+                @{ Script = "+10us"; ExpectedValue = "10"; ExpectedType = [ushort] }
+                #Conversion from <Real>
+                @{ Script = "0.0us"; ExpectedValue = "0"; ExpectedType = [ushort] }
+                @{ Script = "3.72us"; ExpectedValue = "4"; ExpectedType = [ushort] }
+                #Exponential
+                @{ Script = "0e0us"; ExpectedValue = "0"; ExpectedType = [ushort] }
+                @{ Script = "3e0us"; ExpectedValue = "3"; ExpectedType = [ushort] }
+                @{ Script = "3e2us"; ExpectedValue = "300"; ExpectedType = [ushort] }
+                #Hexadecimal
+                @{ Script = "0x0us"; ExpectedValue = "0"; ExpectedType = [ushort] }
+                @{ Script = "0x41us"; ExpectedValue = "65"; ExpectedType = [ushort] }
+                @{ Script = "0x41us"; ExpectedValue = "65"; ExpectedType = [ushort] }
+                @{ Script = "0xFFFFus"; ExpectedValue = [ushort]::MaxValue; ExpectedType = [ushort] }
+                #Binary
+                @{ Script = "0b0us"; ExpectedValue = "0"; ExpectedType = [ushort] }
+                @{ Script = "0b10us"; ExpectedValue = "2"; ExpectedType = [ushort] }
+                @{ Script = "0b11111111us"; ExpectedValue = "255"; ExpectedType = [ushort] }
+                #Multipliers
+                @{ Script = "1uskb"; ExpectedValue = "1024"; ExpectedType = [ushort] }
 
-            #Unsigned-Long Integer Notation
-            #Standard
-            @{ Script = "0ul"; ExpectedValue = "0"; ExpectedType = [ulong] }
-            @{ Script = "10ul"; ExpectedValue = "10"; ExpectedType = [ulong] }
-            @{ Script = "+10ul"; ExpectedValue = "10"; ExpectedType = [ulong] }
-            #Conversion from <Real>
-            @{ Script = "0.0ul"; ExpectedValue = "0"; ExpectedType = [ulong] }
-            @{ Script = "2.5ul"; ExpectedValue = "2"; ExpectedType = [ulong] }
-            #Exponential
-            @{ Script = "0e0ul"; ExpectedValue = "0"; ExpectedType = [ulong] }
-            @{ Script = "3e2ul"; ExpectedValue = "300"; ExpectedType = [ulong] }
-            #Hexadecimal
-            @{ Script = "0x0ul"; ExpectedValue = "0"; ExpectedType = [ulong] }
-            @{ Script = "0x41ul"; ExpectedValue = "65"; ExpectedType = [ulong] }
-            @{ Script = "0xFFFFFFFFFFFFFFFFul"; ExpectedValue = [ulong]::MaxValue; ExpectedType = [ulong] }
-            #Binary
-            @{ Script = "0b0ul"; ExpectedValue = "0"; ExpectedType = [ulong] }
-            @{ Script = "0b10ul"; ExpectedValue = "2"; ExpectedType = [ulong] }
-            @{ Script = "0b11111111ul"; ExpectedValue = "255"; ExpectedType = [ulong] }
-            #Multipliers
-            @{ Script = "1ulkb"; ExpectedValue = "1024"; ExpectedType = [ulong] }
-            @{ Script = "1ulmb"; ExpectedValue = "1048576"; ExpectedType = [ulong] }
-            @{ Script = "1ulgb"; ExpectedValue = "1073741824"; ExpectedType = [ulong] }
-            @{ Script = "1ultb"; ExpectedValue = "1099511627776"; ExpectedType = [ulong] }
-            @{ Script = "1ulpb"; ExpectedValue = "1125899906842624"; ExpectedType = [ulong] }
-        )
+                #Unsigned-Long Integer Notation
+                #Standard
+                @{ Script = "0ul"; ExpectedValue = "0"; ExpectedType = [ulong] }
+                @{ Script = "10ul"; ExpectedValue = "10"; ExpectedType = [ulong] }
+                @{ Script = "+10ul"; ExpectedValue = "10"; ExpectedType = [ulong] }
+                #Conversion from <Real>
+                @{ Script = "0.0ul"; ExpectedValue = "0"; ExpectedType = [ulong] }
+                @{ Script = "2.5ul"; ExpectedValue = "2"; ExpectedType = [ulong] }
+                #Exponential
+                @{ Script = "0e0ul"; ExpectedValue = "0"; ExpectedType = [ulong] }
+                @{ Script = "3e2ul"; ExpectedValue = "300"; ExpectedType = [ulong] }
+                #Hexadecimal
+                @{ Script = "0x0ul"; ExpectedValue = "0"; ExpectedType = [ulong] }
+                @{ Script = "0x41ul"; ExpectedValue = "65"; ExpectedType = [ulong] }
+                @{ Script = "0xFFFFFFFFFFFFFFFFul"; ExpectedValue = [ulong]::MaxValue; ExpectedType = [ulong] }
+                #Binary
+                @{ Script = "0b0ul"; ExpectedValue = "0"; ExpectedType = [ulong] }
+                @{ Script = "0b10ul"; ExpectedValue = "2"; ExpectedType = [ulong] }
+                @{ Script = "0b11111111ul"; ExpectedValue = "255"; ExpectedType = [ulong] }
+                #Multipliers
+                @{ Script = "1ulkb"; ExpectedValue = "1024"; ExpectedType = [ulong] }
+                @{ Script = "1ulmb"; ExpectedValue = "1048576"; ExpectedType = [ulong] }
+                @{ Script = "1ulgb"; ExpectedValue = "1073741824"; ExpectedType = [ulong] }
+                @{ Script = "1ultb"; ExpectedValue = "1099511627776"; ExpectedType = [ulong] }
+                @{ Script = "1ulpb"; ExpectedValue = "1125899906842624"; ExpectedType = [ulong] }
+            )
+        }
 
         It "<Script> should return <ExpectedValue>, with type <ExpectedType>" -TestCases $testData {
             param ( $Script, $ExpectedValue, $ExpectedType )
@@ -1148,38 +1158,40 @@ foo``u{2195}abc
             ExecuteCommand $Script | Should -BeOfType $ExpectedType
         }
 
-        $testInvalidNumerals = @(
-            @{ Script = "16p"; ErrorID = "CommandNotFoundException" }
-            @{ Script = "1_6"; ErrorID = "CommandNotFoundException" }
-            @{ Script = "80x"; ErrorID = "CommandNotFoundException" }
-            @{ Script = "20ux"; ErrorID = "CommandNotFoundException" }
-            @{ Script = "18uu"; ErrorID = "CommandNotFoundException" }
-            @{ Script = "21ss"; ErrorID = "CommandNotFoundException" }
-            @{ Script = "100ll"; ErrorID = "CommandNotFoundException" }
-            @{ Script = "100Il"; ErrorID = "CommandNotFoundException" }
-            @{ Script = "100Is"; ErrorID = "CommandNotFoundException" }
-            @{ Script = "100un"; ErrorID = "CommandNotFoundException" }
-            @{ Script = "100ln"; ErrorID = "CommandNotFoundException" }
-            @{ Script = "100sn"; ErrorID = "CommandNotFoundException" }
-            @{ Script = "100In"; ErrorID = "CommandNotFoundException" }
-            @{ Script = "100yu"; ErrorID = "CommandNotFoundException" }
-            @{ Script = "150su"; ErrorID = "CommandNotFoundException" }
-            @{ Script = "160ud"; ErrorID = "CommandNotFoundException" }
-            @{ Script = "160ld"; ErrorID = "CommandNotFoundException" }
-            @{ Script = "160yd"; ErrorID = "CommandNotFoundException" }
-            @{ Script = "160sd"; ErrorID = "CommandNotFoundException" }
-            @{ Script = "160dd"; ErrorID = "CommandNotFoundException" }
-            @{ Script = "10ds"; ErrorID = "CommandNotFoundException" }
-            @{ Script = "10ud"; ErrorID = "CommandNotFoundException" }
-            @{ Script = "16sl"; ErrorID = "CommandNotFoundException" }
-            @{ Script = "188lu"; ErrorID = "CommandNotFoundException" }
-            @{ Script = "0xFFFFy"; ErrorID = "ParseException" }
-            @{ Script = "500sgb"; ErrorID = "ParseException" }
-            @{ Script = "10000usgb"; ErrorID = "ParseException" }
-            @{ Script = "10000.0usgb"; ErrorID = "ParseException" }
-            @{ Script = "1uykb"; ErrorID = "ParseException" }
-            @{ Script = "10_000ul"; ErrorID = "CommandNotFoundException" }
-        )
+        BeforeDiscovery {
+            $testInvalidNumerals = @(
+                @{ Script = "16p"; ErrorID = "CommandNotFoundException" }
+                @{ Script = "1_6"; ErrorID = "CommandNotFoundException" }
+                @{ Script = "80x"; ErrorID = "CommandNotFoundException" }
+                @{ Script = "20ux"; ErrorID = "CommandNotFoundException" }
+                @{ Script = "18uu"; ErrorID = "CommandNotFoundException" }
+                @{ Script = "21ss"; ErrorID = "CommandNotFoundException" }
+                @{ Script = "100ll"; ErrorID = "CommandNotFoundException" }
+                @{ Script = "100Il"; ErrorID = "CommandNotFoundException" }
+                @{ Script = "100Is"; ErrorID = "CommandNotFoundException" }
+                @{ Script = "100un"; ErrorID = "CommandNotFoundException" }
+                @{ Script = "100ln"; ErrorID = "CommandNotFoundException" }
+                @{ Script = "100sn"; ErrorID = "CommandNotFoundException" }
+                @{ Script = "100In"; ErrorID = "CommandNotFoundException" }
+                @{ Script = "100yu"; ErrorID = "CommandNotFoundException" }
+                @{ Script = "150su"; ErrorID = "CommandNotFoundException" }
+                @{ Script = "160ud"; ErrorID = "CommandNotFoundException" }
+                @{ Script = "160ld"; ErrorID = "CommandNotFoundException" }
+                @{ Script = "160yd"; ErrorID = "CommandNotFoundException" }
+                @{ Script = "160sd"; ErrorID = "CommandNotFoundException" }
+                @{ Script = "160dd"; ErrorID = "CommandNotFoundException" }
+                @{ Script = "10ds"; ErrorID = "CommandNotFoundException" }
+                @{ Script = "10ud"; ErrorID = "CommandNotFoundException" }
+                @{ Script = "16sl"; ErrorID = "CommandNotFoundException" }
+                @{ Script = "188lu"; ErrorID = "CommandNotFoundException" }
+                @{ Script = "0xFFFFy"; ErrorID = "ParseException" }
+                @{ Script = "500sgb"; ErrorID = "ParseException" }
+                @{ Script = "10000usgb"; ErrorID = "ParseException" }
+                @{ Script = "10000.0usgb"; ErrorID = "ParseException" }
+                @{ Script = "1uykb"; ErrorID = "ParseException" }
+                @{ Script = "10_000ul"; ErrorID = "CommandNotFoundException" }
+            )
+        }
 
         It "<Script> should throw an error" -TestCases $testInvalidNumerals {
             param($Script, $ErrorID)
@@ -1260,26 +1272,28 @@ foo``u{2195}abc
     }
 
     Context "Mathematical Operations Tests (starting at line 2975 to line 3036)" {
-        $ArithmeticTests = @(
-            @{
-                Script   = '$a=6; $a -= 2;$a'
-                Expected = 4
-            }
-            @{
-                Script   = "20 %
-                    6"
-                Expected = "2"
-            }
-            @{
-                Script   = "(20 %
-                    6 *
-                    4  +
-                    2 ) /
-                    2 -
-                    3"
-                Expected = "2"
-            }
-        )
+        BeforeDiscovery {
+            $ArithmeticTests = @(
+                @{
+                    Script   = '$a=6; $a -= 2;$a'
+                    Expected = 4
+                }
+                @{
+                    Script   = "20 %
+                        6"
+                    Expected = "2"
+                }
+                @{
+                    Script   = "(20 %
+                        6 *
+                        4  +
+                        2 ) /
+                        2 -
+                        3"
+                    Expected = "2"
+                }
+            )
+        }
         It "<Script> should return <Expected>" -TestCases $ArithmeticTests {
             param ( $Script, $Expected )
 
@@ -1301,55 +1315,59 @@ foo``u{2195}abc
         { ExecuteCommand "`$herestr=@`"`n'`"'`n`"@" } | Should -Not -Throw
     }
 
-    $TestErrorMisplacedStatement = @(
-        @{ script = "Function foo { [CmdletBinding()] param() DynamicParam {} Hi"; name = "function" }
-        @{ script = "{ begin {} Hi"; name = "script-block" }
-        @{ script = "begin {} Hi"; name = "script-file" }
-    )
-    It "Throw better error when statement should be put in named blocks - <name>" -TestCases $TestErrorMisplacedStatement {
-        param($script)
-
-        $err = { ExecuteCommand $script } | Should -Throw -ErrorId "ParseException" -PassThru
-        $err.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -BeExactly "MissingNamedBlocks"
-    }
-
-    It "IncompleteParseException should be thrown when only ending curly is missing" {
-        $err = { ExecuteCommand "Function foo { [CmdletBinding()] param() DynamicParam {} " } | Should -Throw -ErrorId "IncompleteParseException" -PassThru
-        $err.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -BeExactly "MissingEndCurlyBrace"
-    }
-
-    Context "#requires nested scan tokenizer tests" {
-        BeforeAll {
-            $settings = [System.Management.Automation.PSInvocationSettings]::new()
-            $settings.AddToHistory = $true
-
-            $ps = [powershell]::Create()
-        }
-
-        AfterAll {
-            $ps.Dispose()
-        }
-
-        AfterEach {
-            $ps.Commands.Clear()
-        }
-
-        $TokenResetTests = @(
-            @{ script = "#requires"; firstToken = $null; lastToken = $null },
-            @{ script = "#requires -Version 5.0`n10"; firstToken = "10"; lastToken = "10" },
-            @{ script = "Write-Host 'Hello'`n#requires -Version 5.0`n7"; firstToken = "Write-Host"; lastToken = "7" },
-            @{ script = "Write-Host 'Hello'`n#requires -Version 5.0"; firstToken = "Write-Host"; lastToken = "Hello" }
+    BeforeDiscovery {
+        $TestErrorMisplacedStatement = @(
+            @{ script = "Function foo { [CmdletBinding()] param() DynamicParam {} Hi"; name = "function" }
+            @{ script = "{ begin {} Hi"; name = "script-block" }
+            @{ script = "begin {} Hi"; name = "script-file" }
         )
+        }
+        It "Throw better error when statement should be put in named blocks - <name>" -TestCases $TestErrorMisplacedStatement {
+            param($script)
 
-        It "Correctly resets the first and last tokens in the tokenizer after nested scan in script" -TestCases $TokenResetTests {
-            param($script, $firstToken, $lastToken)
+            $err = { ExecuteCommand $script } | Should -Throw -ErrorId "ParseException" -PassThru
+            $err.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -BeExactly "MissingNamedBlocks"
+        }
 
-            $ps.AddScript($script)
-            $ps.AddScript("(`$^,`$`$)")
-            $tokens = $ps.Invoke(@(), $settings)
+        It "IncompleteParseException should be thrown when only ending curly is missing" {
+            $err = { ExecuteCommand "Function foo { [CmdletBinding()] param() DynamicParam {} " } | Should -Throw -ErrorId "IncompleteParseException" -PassThru
+            $err.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -BeExactly "MissingEndCurlyBrace"
+        }
 
-            $tokens[0] | Should -BeExactly $firstToken
-            $tokens[1] | Should -BeExactly $lastToken
+        Context "#requires nested scan tokenizer tests" {
+            BeforeAll {
+                $settings = [System.Management.Automation.PSInvocationSettings]::new()
+                $settings.AddToHistory = $true
+
+                $ps = [powershell]::Create()
+            }
+
+            AfterAll {
+                $ps.Dispose()
+            }
+
+            AfterEach {
+                $ps.Commands.Clear()
+            }
+
+            BeforeDiscovery {
+                $TokenResetTests = @(
+                    @{ script = "#requires"; firstToken = $null; lastToken = $null },
+                    @{ script = "#requires -Version 5.0`n10"; firstToken = "10"; lastToken = "10" },
+                    @{ script = "Write-Host 'Hello'`n#requires -Version 5.0`n7"; firstToken = "Write-Host"; lastToken = "7" },
+                    @{ script = "Write-Host 'Hello'`n#requires -Version 5.0"; firstToken = "Write-Host"; lastToken = "Hello" }
+                )
+            }
+
+            It "Correctly resets the first and last tokens in the tokenizer after nested scan in script" -TestCases $TokenResetTests {
+                param($script, $firstToken, $lastToken)
+
+                $ps.AddScript($script)
+                $ps.AddScript("(`$^,`$`$)")
+                $tokens = $ps.Invoke(@(), $settings)
+
+                $tokens[0] | Should -BeExactly $firstToken
+                $tokens[1] | Should -BeExactly $lastToken
+            }
         }
     }
-}

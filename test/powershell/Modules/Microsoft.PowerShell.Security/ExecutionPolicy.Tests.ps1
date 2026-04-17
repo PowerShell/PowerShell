@@ -3,6 +3,35 @@
 
 Import-Module HelpersCommon
 
+# Fallback if HelpersCommon's Test-CanWriteToPsHome isn't available during Pester 5 discovery/run
+if (-not (Get-Command Test-CanWriteToPsHome -ErrorAction SilentlyContinue)) {
+    $script:CanWriteToPsHome = $null
+    function Test-CanWriteToPsHome {
+        if ($null -ne $script:CanWriteToPsHome) {
+            return $script:CanWriteToPsHome
+        }
+        $script:CanWriteToPsHome = $false
+        try {
+            $testFileName = Join-Path $PSHOME (New-Guid).Guid
+            $null = New-Item -ItemType File -Path $testFileName -ErrorAction Stop
+            $script:CanWriteToPsHome = $true
+            Remove-Item -Path $testFileName -ErrorAction SilentlyContinue
+        }
+        catch {
+            # Expected when user cannot write to PSHOME
+            $script:CanWriteToPsHome = $false
+        }
+        $script:CanWriteToPsHome
+    }
+}
+
+BeforeDiscovery {
+    $IsNotSkipped = ($IsWindows -eq $true)
+    $ShouldSkipTest = if ($IsNotSkipped) {
+        try { !(Test-CanWriteToPsHome) } catch { $true }
+    } else { $true }
+}
+
 #
 # These are general tests that verify non-Windows behavior
 #
@@ -41,14 +70,6 @@ Describe "ExecutionPolicy" -Tags "CI" {
 # tests only run if ($IsWindows -eq $true)
 #
 
-try {
-
-    #skip all tests on non-windows platform
-    $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-    $IsNotSkipped = ($IsWindows -eq $true);
-    $PSDefaultParameterValues["it:skip"] = !$IsNotSkipped
-    $ShouldSkipTest = !$IsNotSkipped -or !(Test-CanWriteToPsHome)
-
     Describe "Help work with ExecutionPolicy Restricted " -Tags "Feature" {
 
         # Validate that 'Get-Help Get-Disk' returns one result when the execution policy is 'Restricted' on Nano
@@ -77,7 +98,7 @@ try {
     Describe "Validate ExecutionPolicy cmdlets in PowerShell" -Tags "CI" {
 
         BeforeAll {
-            if ($IsNotSkipped) {
+            if ($IsWindows) {
                 #Generate test data
                 $drive = 'TestDrive:\'
                 $testDirectory =  Join-Path $drive ("MultiMachineTestData\Commands\Cmdlets\Security_TestData\ExecutionPolicyTestData")
@@ -495,16 +516,16 @@ ZoneId=$FileType
                     $archiveFolder = Split-Path -Path $archivePath
 
                     # get all the certs used to sign the module
-                    $script:archiveAllCert = Get-ChildItem -File -Path (Join-Path -Path $archiveFolder -ChildPath '*') -Recurse |
+                    $archiveAllCert = Get-ChildItem -File -Path (Join-Path -Path $archiveFolder -ChildPath '*') -Recurse |
                         Get-AuthenticodeSignature
 
                     # filter only to valid signatures
-                    $script:archiveCert = $script:archiveAllCert |
+                    $archiveCert = $archiveAllCert |
                         Where-Object { $_.status -eq 'Valid'} |
                             Select-Object -Unique -ExpandProperty SignerCertificate
 
                     # if we have valid signatures, add them to trusted publishers so powershell will trust them.
-                    if($script:archiveCert)
+                    if($archiveCert)
                     {
                         $store = [System.Security.Cryptography.X509Certificates.X509Store]::new([System.Security.Cryptography.X509Certificates.StoreName]::TrustedPublisher,[System.Security.Cryptography.X509Certificates.StoreLocation]::CurrentUser)
                         $store.Open([System.Security.Cryptography.X509Certificates.OpenFlags]::ReadWrite)
@@ -518,7 +539,7 @@ ZoneId=$FileType
             }
         }
         AfterAll {
-            if ($IsNotSkipped) {
+            if ($IsWindows) {
                 #Clean up
                 $testDirectory = $remoteTestDirectory
 
@@ -529,153 +550,121 @@ ZoneId=$FileType
 
         Context "Prereq: Validate that 'Microsoft.PowerShell.Archive' is signed" {
             It "'Microsoft.PowerShell.Archive' should have a signature" {
-                $script:archiveAllCert | Should -Not -Be $null
+                $archiveAllCert | Should -Not -Be $null
             }
             It "'Microsoft.PowerShell.Archive' should have a valid signature" {
-                $script:archiveCert | Should -Not -Be $null
+                $archiveCert | Should -Not -Be $null
             }
         }
 
         Context "Validate that 'Restricted' execution policy works on OneCore powershell" {
 
             BeforeAll {
-                if ($IsNotSkipped) {
+                if ($IsWindows) {
                     Set-ExecutionPolicy Restricted -Force -Scope Process | Out-Null
                 }
             }
 
             AfterAll {
-                if ($IsNotSkipped) {
+                if ($IsWindows) {
                     Set-ExecutionPolicy $originalExecutionPolicy -Force -Scope Process | Out-Null
                 }
             }
 
-            function Test-RestrictedExecutionPolicy
-            {
-                param ($testScript)
-
-                $TestTypePrefix = "Test 'Restricted' execution policy."
-
-                It "$TestTypePrefix Running $testScript script should raise PSSecurityException" {
-
-                    $scriptName = $testScript
-
-                    $exception = { & $scriptName } | Should -Throw -PassThru
-
-                    $exception.Exception | Should -BeOfType System.Management.Automation.PSSecurityException
-                }
+            BeforeDiscovery {
+                $testScripts = @(
+                    @{ testScript = 'InternetSignatureCorruptedScript.ps1' }
+                    @{ testScript = 'InternetSignedScript.ps1' }
+                    @{ testScript = 'InternetUnsignedScript.ps1' }
+                    @{ testScript = 'IntranetSignatureCorruptedScript.ps1' }
+                    @{ testScript = 'IntranetSignedScript.ps1' }
+                    @{ testScript = 'IntranetUnsignedScript.ps1' }
+                    @{ testScript = 'LocalSignatureCorruptedScript.ps1' }
+                    @{ testScript = 'LocalSignedScript.ps1' }
+                    @{ testScript = 'LocalUnsignedScript.ps1' }
+                    @{ testScript = 'TrustedSignatureCorruptedScript.ps1' }
+                    @{ testScript = 'TrustedSignedScript.ps1' }
+                    @{ testScript = 'UntrustedSignatureCorruptedScript.ps1' }
+                    @{ testScript = 'UntrustedSignedScript.ps1' }
+                    @{ testScript = 'UntrustedUnsignedScript.ps1' }
+                    @{ testScript = 'TrustedUnsignedScript.ps1' }
+                    @{ testScript = 'MyComputerSignatureCorruptedScript.ps1' }
+                    @{ testScript = 'MyComputerSignedScript.ps1' }
+                    @{ testScript = 'MyComputerUnsignedScript.ps1' }
+                )
             }
 
-            $testScripts = @(
-                $InternetSignatureCorruptedScript
-                $InternetSignedScript
-                $InternetUnsignedScript
-                $IntranetSignatureCorruptedScript
-                $IntranetSignedScript
-                $IntranetUnsignedScript
-                $LocalSignatureCorruptedScript
-                $localSignedScript
-                $LocalUnsignedScript
-                $TrustedSignatureCorruptedScript
-                $TrustedSignedScript
-                $UntrustedSignatureCorruptedScript
-                $UntrustedSignedScript
-                $UntrustedUnsignedScript
-                $TrustedUnsignedScript
-                $MyComputerSignatureCorruptedScript
-                $MyComputerSignedScript
-                $MyComputerUnsignedScript
-            )
-
-            foreach($testScript in $testScripts)
-            {
-                Test-RestrictedExecutionPolicy $testScript
+            It "Test 'Restricted' execution policy. Running <testScript> script should raise PSSecurityException" -ForEach $testScripts {
+                $scriptName = Join-Path $remoteTestDirectory $testScript
+                $exception = { & $scriptName } | Should -Throw -PassThru
+                $exception.Exception | Should -BeOfType System.Management.Automation.PSSecurityException
             }
         }
 
-        AfterAll {
-            if ($IsNotSkipped) {
-                # Clean up
-                $testDirectory = $remoteTestDirectory
-
-                Remove-Item $testDirectory -Recurse -Force -ErrorAction SilentlyContinue
-                Remove-Item function:createTestFile -ErrorAction SilentlyContinue
-            }
-        }
         Context "Validate that 'Unrestricted' execution policy works on OneCore powershell" {
 
             BeforeAll {
-                if ($IsNotSkipped) {
+                if ($IsWindows) {
                     Set-ExecutionPolicy Unrestricted -Force -Scope Process | Out-Null
                 }
             }
 
             AfterAll {
-                if ($IsNotSkipped) {
+                if ($IsWindows) {
                     Set-ExecutionPolicy $originalExecutionPolicy -Force -Scope Process | Out-Null
                 }
             }
 
-            function Test-UnrestrictedExecutionPolicy {
+            BeforeDiscovery {
+                $unrestrictedScripts = @(
+                    @{ testScript = 'IntranetSignatureCorruptedScript.ps1' }
+                    @{ testScript = 'IntranetSignedScript.ps1' }
+                    @{ testScript = 'IntranetUnsignedScript.ps1' }
+                    @{ testScript = 'LocalSignatureCorruptedScript.ps1' }
+                    @{ testScript = 'LocalSignedScript.ps1' }
+                    @{ testScript = 'LocalUnsignedScript.ps1' }
+                    @{ testScript = 'TrustedSignatureCorruptedScript.ps1' }
+                    @{ testScript = 'TrustedSignedScript.ps1' }
+                    @{ testScript = 'TrustedUnsignedScript.ps1' }
+                    @{ testScript = 'MyComputerSignatureCorruptedScript.ps1' }
+                    @{ testScript = 'MyComputerSignedScript.ps1' }
+                    @{ testScript = 'MyComputerUnsignedScript.ps1' }
+                )
 
-                param($testScript, $expected)
+                $expectedError = "UnauthorizedAccess,Microsoft.PowerShell.Commands.ImportModuleCommand"
+                $PSHomeUnsignedModule = Join-Path -Path $PSHOME -ChildPath 'Modules' -AdditionalChildPath 'LocalUnsignedModule', 'LocalUnsignedModule.psm1'
+                $PSHomeUntrustedModule = Join-Path -Path $PSHOME -ChildPath 'Modules' -AdditionalChildPath 'LocalUntrustedModule', 'LocalUntrustedModule.psm1'
 
-                $TestTypePrefix = "Test 'Unrestricted' execution policy."
-
-                It "$TestTypePrefix Running $testScript script should return $expected" {
-                    $scriptName = $testScript
-
-                    $result = & $scriptName
-
-                    $result | Should -Be $expected
-                }
-            }
-
-            $expected = "Hello"
-            $testScripts = @(
-                $IntranetSignatureCorruptedScript
-                $IntranetSignedScript
-                $IntranetUnsignedScript
-                $LocalSignatureCorruptedScript
-                $localSignedScript
-                $LocalUnsignedScript
-                $TrustedSignatureCorruptedScript
-                $TrustedSignedScript
-                $TrustedUnsignedScript
-                $MyComputerSignatureCorruptedScript
-                $MyComputerSignedScript
-                $MyComputerUnsignedScript
-            )
-
-            foreach($testScript in $testScripts) {
-                Test-UnrestrictedExecutionPolicy $testScript $expected
-            }
-
-            $expectedError = "UnauthorizedAccess,Microsoft.PowerShell.Commands.ImportModuleCommand"
-
-            $testData = @(
-                @{
-                    module = "Microsoft.PowerShell.Archive"
-                    error = $null
-                }
-            )
-
-            if (Test-CanWriteToPsHome) {
-                $testData += @(
+                $moduleTestData = @(
                     @{
-                        shouldMarkAsPending = $true
-                        module = $PSHomeUntrustedModule
-                        expectedError = $expectedError
-                    }
-                    @{
-                        module = $PSHomeUnsignedModule
+                        module = "Microsoft.PowerShell.Archive"
                         error = $null
                     }
                 )
+
+                $canWritePsHome = try { Test-CanWriteToPsHome } catch { $false }
+                if ($canWritePsHome) {
+                    $moduleTestData += @(
+                        @{
+                            shouldMarkAsPending = $true
+                            module = $PSHomeUntrustedModule
+                            expectedError = $expectedError
+                        }
+                        @{
+                            module = $PSHomeUnsignedModule
+                            error = $null
+                        }
+                    )
+                }
             }
 
-            $TestTypePrefix = "Test 'Unrestricted' execution policy."
-            It "$TestTypePrefix Importing <module> Module should throw '<error>'" -TestCases $testData  {
+            It "Test 'Unrestricted' execution policy. Running <testScript> script should return Hello" -ForEach $unrestrictedScripts{
+                $scriptName = Join-Path $remoteTestDirectory $testScript
+                $result = & $scriptName
+                $result | Should -Be "Hello"
+            }
+
+            It "Test 'Unrestricted' execution policy. Importing <module> Module should throw '<error>'" -TestCases $moduleTestData  {
                 param([string]$module, [string]$expectedError, [bool]$shouldMarkAsPending)
 
                 if ($shouldMarkAsPending)
@@ -700,240 +689,188 @@ ZoneId=$FileType
         Context "Validate that 'ByPass' execution policy works on OneCore powershell" {
 
             BeforeAll {
-                if ($IsNotSkipped) {
+                if ($IsWindows) {
                     Set-ExecutionPolicy Bypass -Force -Scope Process | Out-Null
                 }
             }
 
             AfterAll {
-                if ($IsNotSkipped) {
+                if ($IsWindows) {
                     Set-ExecutionPolicy $originalExecutionPolicy -Force -Scope Process | Out-Null
                 }
             }
 
-            function Test-ByPassExecutionPolicy {
-
-                param($testScript, $expected)
-
-                $TestTypePrefix = "Test 'ByPass' execution policy."
-
-                It "$TestTypePrefix Running $testScript script should return $expected" {
-                    $scriptName = $testScript
-
-                    $result = & $scriptName
-                    return $result
-
-                    $result | Should -Be $expected
-                }
+            BeforeDiscovery {
+                $testScripts = @(
+                    @{ testScript = 'InternetSignatureCorruptedScript.ps1' }
+                    @{ testScript = 'InternetSignedScript.ps1' }
+                    @{ testScript = 'InternetUnsignedScript.ps1' }
+                    @{ testScript = 'IntranetSignatureCorruptedScript.ps1' }
+                    @{ testScript = 'IntranetSignedScript.ps1' }
+                    @{ testScript = 'IntranetUnsignedScript.ps1' }
+                    @{ testScript = 'LocalSignatureCorruptedScript.ps1' }
+                    @{ testScript = 'LocalSignedScript.ps1' }
+                    @{ testScript = 'LocalUnsignedScript.ps1' }
+                    @{ testScript = 'TrustedSignatureCorruptedScript.ps1' }
+                    @{ testScript = 'TrustedSignedScript.ps1' }
+                    @{ testScript = 'TrustedUnsignedScript.ps1' }
+                    @{ testScript = 'UntrustedSignatureCorruptedScript.ps1' }
+                    @{ testScript = 'UntrustedSignedScript.ps1' }
+                    @{ testScript = 'UntrustedUnsignedScript.ps1' }
+                    @{ testScript = 'MyComputerSignatureCorruptedScript.ps1' }
+                    @{ testScript = 'MyComputerSignedScript.ps1' }
+                    @{ testScript = 'MyComputerUnsignedScript.ps1' }
+                )
             }
 
-            $expected = "Hello"
-            $testScripts = @(
-                $InternetSignatureCorruptedScript
-                $InternetSignedScript
-                $InternetUnsignedScript
-                $IntranetSignatureCorruptedScript
-                $IntranetSignedScript
-                $IntranetUnsignedScript
-                $LocalSignatureCorruptedScript
-                $LocalSignedScript
-                $LocalUnsignedScript
-                $TrustedSignatureCorruptedScript
-                $TrustedSignedScript
-                $TrustedUnsignedScript
-                $UntrustedSignatureCorruptedScript
-                $UntrustedSignedScript
-                $UntrustedUnSignedScript
-                $MyComputerSignatureCorruptedScript
-                $MyComputerSignedScript
-                $MyComputerUnsignedScript
-            )
-            foreach($testScript in $testScripts) {
-                Test-ByPassExecutionPolicy $testScript $expected
+            It "Test 'ByPass' execution policy. Running <testScript> script should return Hello" -ForEach $testScripts {
+                $scriptName = Join-Path $remoteTestDirectory $testScript
+                $result = & $scriptName
+                $result | Should -Be "Hello"
             }
         }
 
         Context "'RemoteSigned' execution policy works on OneCore powershell" {
 
             BeforeAll {
-                if ($IsNotSkipped) {
+                if ($IsWindows) {
                     Set-ExecutionPolicy RemoteSigned -Force -Scope Process | Out-Null
                 }
             }
 
             AfterAll {
-                if ($IsNotSkipped) {
+                if ($IsWindows) {
                     Set-ExecutionPolicy $originalExecutionPolicy -Force -Scope Process
                 }
             }
 
-            function Test-RemoteSignedExecutionPolicy {
-
-                param ($testScript, $expected, $errorId)
-
-                $TestTypePrefix = "Test 'RemoteSigned' execution policy."
-
-                It "$TestTypePrefix Running $testScript script should return $expected" {
-                    $scriptName=$testScript
-
-                    $scriptResult = $null
-                    $exception = $null
-
-                    try
-                    {
-                        $scriptResult = & $scriptName
-                    }
-                    catch
-                    {
-                        $exception = $_
-                    }
-
-                    $errorType = $null
-                    if($null -ne $exception)
-                    {
-                        $errorType = $exception.exception.getType()
-                        $scriptResult = $null
-                    }
-                    $result = @{
-                        "result" = $scriptResult
-                        "exception" = $errorType
-                    }
-
-                    $actualResult = $result."result"
-                    $actualError = $result."exception"
-
-                    $actualResult | Should -Be $expected
-                    $actualError | Should -Be $errorId
-                }
+            BeforeDiscovery {
+                $message = "Hello"
+                $errorIdVal = "System.Management.Automation.PSSecurityException"
+                $testData = @(
+                    @{ testScript = 'LocalUnsignedScript.ps1'; expected = $message; errorId = $null }
+                    @{ testScript = 'LocalSignatureCorruptedScript.ps1'; expected = $message; errorId = $null }
+                    @{ testScript = 'LocalSignedScript.ps1'; expected = "Hello"; errorId = $null }
+                    @{ testScript = 'MyComputerUnsignedScript.ps1'; expected = $message; errorId = $null }
+                    @{ testScript = 'MyComputerSignatureCorruptedScript.ps1'; expected = $message; errorId = $null }
+                    @{ testScript = 'MyComputerSignedScript.ps1'; expected = $message; errorId = $null }
+                    @{ testScript = 'TrustedUnsignedScript.ps1'; expected = $message; errorId = $null }
+                    @{ testScript = 'TrustedSignatureCorruptedScript.ps1'; expected = $message; errorId = $null }
+                    @{ testScript = 'TrustedSignedScript.ps1'; expected = $message; errorId = $null }
+                    @{ testScript = 'IntranetUnsignedScript.ps1'; expected = $message; errorId = $null }
+                    @{ testScript = 'IntranetSignatureCorruptedScript.ps1'; expected = $message; errorId = $null }
+                    @{ testScript = 'IntranetSignedScript.ps1'; expected = $message; errorId = $null }
+                    @{ testScript = 'InternetUnsignedScript.ps1'; expected = $null; errorId = $errorIdVal }
+                    @{ testScript = 'InternetSignatureCorruptedScript.ps1'; expected = $null; errorId = $errorIdVal }
+                    @{ testScript = 'UntrustedUnsignedScript.ps1'; expected = $null; errorId = $errorIdVal }
+                    @{ testScript = 'UntrustedSignatureCorruptedScript.ps1'; expected = $null; errorId = $errorIdVal }
+                )
             }
-            $message = "Hello"
-            $errorId = "System.Management.Automation.PSSecurityException"
-            $testData = @(
-                @{
-                    testScript = $LocalUnsignedScript
-                    expected = $message
-                    errorId = $null
-                }
-                @{
-                    testScript = $LocalSignatureCorruptedScript
-                    expected = $message
-                    errorId = $null
-                }
-                @{
-                    testScript = $LocalSignedScript
-                    expected = "Hello"
-                    errorId = $null
-                }
-                @{
-                    testScript = $MyComputerUnsignedScript
-                    expected = $message
-                    errorId = $null
-                }
-                @{
-                    testScript = $MyComputerSignatureCorruptedScript
-                    expected = $message
-                    errorId = $null
-                }
-                @{
-                    testScript = $myComputerSignedScript
-                    expected = $message
-                    errorId = $null
-                }
-                @{
-                    testScript = $TrustedUnsignedScript
-                    expected = $message
-                    errorId = $null
-                }
-                @{
-                    testScript = $TrustedSignatureCorruptedScript
-                    expected = $message
-                    errorId = $null
-                }
-                @{
-                    testScript = $TrustedSignedScript
-                    expected = $message
-                    errorId = $null
-                }
-                @{
-                    testScript = $IntranetUnsignedScript
-                    expected = $message
-                    errorId = $null
-                }
-                @{
-                    testScript = $IntranetSignatureCorruptedScript
-                    expected = $message
-                    errorId = $null
-                }
-                @{
-                    testScript = $IntranetSignedScript
-                    expected = $message
-                    errorId = $null
-                }
-                @{
-                    testScript = $InternetUnsignedScript
-                    expected = $null
-                    errorId = $errorId
-                }
-                @{
-                    testScript = $InternetSignatureCorruptedScript
-                    expected = $null
-                    errorId = $errorId
-                }
-                @{
-                    testScript = $UntrustedUnsignedScript
-                    expected = $null
-                    errorId = $errorId
-                }
-                @{
-                    testScript = $UntrustedSignatureCorruptedScript
-                    expected = $null
-                    errorId = $errorId
-                }
-            )
 
-            foreach($testCase in $testData) {
-                Test-RemoteSignedExecutionPolicy @testCase
+            It "Test 'RemoteSigned' execution policy. Running <testScript> script should return <expected>" -ForEach $testData {
+                $scriptName = Join-Path $remoteTestDirectory $testScript
+
+                $scriptResult = $null
+                $exception = $null
+
+                try
+                {
+                    $scriptResult = & $scriptName
+                }
+                catch
+                {
+                    $exception = $_
+                }
+
+                $errorType = $null
+                if($null -ne $exception)
+                {
+                    $errorType = $exception.exception.getType()
+                    $scriptResult = $null
+                }
+                $result = @{
+                    "result" = $scriptResult
+                    "exception" = $errorType
+                }
+
+                $actualResult = $result."result"
+                $actualError = $result."exception"
+
+                $actualResult | Should -Be $expected
+                $actualError | Should -Be $errorId
             }
         }
 
         Context "Validate that 'AllSigned' execution policy works on OneCore powershell" {
 
             BeforeAll {
-                if ($IsNotSkipped) {
+                if ($IsWindows) {
                     Set-ExecutionPolicy AllSigned -Force -Scope Process
                 }
             }
 
             AfterAll {
-                if ($IsNotSkipped) {
+                if ($IsWindows) {
                     Set-ExecutionPolicy $originalExecutionPolicy -Force -Scope Process
                 }
             }
 
-            $TestTypePrefix = "Test 'AllSigned' execution policy."
+            BeforeDiscovery {
+                $PSHomeUnsignedModule = Join-Path -Path $PSHOME -ChildPath 'Modules' -AdditionalChildPath 'LocalUnsignedModule', 'LocalUnsignedModule.psm1'
+                $PSHomeUntrustedModule = Join-Path -Path $PSHOME -ChildPath 'Modules' -AdditionalChildPath 'LocalUntrustedModule', 'LocalUntrustedModule.psm1'
 
-            $errorId = "UnauthorizedAccess,Microsoft.PowerShell.Commands.ImportModuleCommand"
-            $testData = @(
-                @{
-                    module = "Microsoft.PowerShell.Archive"
-                    errorId = $null
+                $moduleErrorId = "UnauthorizedAccess,Microsoft.PowerShell.Commands.ImportModuleCommand"
+                $moduleTestData = @(
+                    @{
+                        module = "Microsoft.PowerShell.Archive"
+                        errorId = $null
+                    }
+                )
+
+                $canWritePsHome = try { Test-CanWriteToPsHome } catch { $false }
+                if ($canWritePsHome) {
+                    $moduleTestData += @(
+                        @{
+                            module = $PSHomeUntrustedModule
+                            errorId = $moduleErrorId
+                        }
+                        @{
+                            module = $PSHomeUnsignedModule
+                            errorId = $moduleErrorId
+                        }
+                    )
                 }
-            )
 
-            if (Test-CanWriteToPsHome) {
-                $testData += @(
-                    @{
-                        module = $PSHomeUntrustedModule
-                        errorId = $errorId
-                    }
-                    @{
-                        module = $PSHomeUnsignedModule
-                        errorId = $errorId
-                    }
+                $scriptErrorId = "UnauthorizedAccess"
+                $pendingTestData = @(
+                    # The following files are not signed correctly when generated, so we will skip for now
+                    # filed https://github.com/PowerShell/PowerShell/issues/5559
+                    @{ testScript = 'MyComputerSignedScript.ps1'; errorId = $null }
+                    @{ testScript = 'UntrustedSignedScript.ps1'; errorId = $null }
+                    @{ testScript = 'TrustedSignedScript.ps1'; errorId = $null }
+                    @{ testScript = 'LocalSignedScript.ps1'; errorId = $null }
+                    @{ testScript = 'IntranetSignedScript.ps1'; errorId = $null }
+                    @{ testScript = 'InternetSignedScript.ps1'; errorId = $null }
+                )
+
+                $scriptTestData = @(
+                    @{ testScript = 'InternetSignatureCorruptedScript.ps1'; errorId = $scriptErrorId }
+                    @{ testScript = 'InternetUnsignedScript.ps1'; errorId = $scriptErrorId }
+                    @{ testScript = 'IntranetSignatureCorruptedScript.ps1'; errorId = $scriptErrorId }
+                    @{ testScript = 'IntranetSignatureCorruptedScript.ps1'; errorId = $scriptErrorId }
+                    @{ testScript = 'IntranetUnsignedScript.ps1'; errorId = $scriptErrorId }
+                    @{ testScript = 'LocalSignatureCorruptedScript.ps1'; errorId = $scriptErrorId }
+                    @{ testScript = 'LocalUnsignedScript.ps1'; errorId = $scriptErrorId }
+                    @{ testScript = 'TrustedSignatureCorruptedScript.ps1'; errorId = $scriptErrorId }
+                    @{ testScript = 'TrustedUnsignedScript.ps1'; errorId = $scriptErrorId }
+                    @{ testScript = 'UntrustedSignatureCorruptedScript.ps1'; errorId = $scriptErrorId }
+                    @{ testScript = 'UntrustedUnsignedScript.ps1'; errorId = $scriptErrorId }
+                    @{ testScript = 'MyComputerSignatureCorruptedScript.ps1'; errorId = $scriptErrorId }
+                    @{ testScript = 'MyComputerUnsignedScript.ps1'; errorId = $scriptErrorId }
                 )
             }
 
-            It "$TestTypePrefix Importing <module> Module should throw '<error>'" -TestCases $testData  {
+            It "Test 'AllSigned' execution policy. Importing <module> Module should throw '<errorId>'" -TestCases $moduleTestData  {
                 param ([string]$module, [string]$errorId)
                 $testScript = {Import-Module -Name $module -Force}
                 if ($errorId)
@@ -946,158 +883,77 @@ ZoneId=$FileType
                 }
             }
 
-            $errorId = "UnauthorizedAccess"
-            $pendingTestData = @(
-                # The following files are not signed correctly when generated, so we will skip for now
-                # filed https://github.com/PowerShell/PowerShell/issues/5559
-                @{
-                    testScript = $MyComputerSignedScript
-                    errorId = $null
-                }
-                @{
-                    testScript = $UntrustedSignedScript
-                    errorId = $null
-                }
-                @{
-                    testScript = $TrustedSignedScript
-                    errorId = $null
-                }
-                @{
-                    testScript = $LocalSignedScript
-                    errorId = $null
-                }
-                @{
-                    testScript = $IntranetSignedScript
-                    errorId = $null
-                }
-                @{
-                    testScript = $InternetSignedScript
-                    errorId = $null
-                }
-            )
-            It "$TestTypePrefix Running <testScript> Script should throw '<error>'" -TestCases $pendingTestData -Pending  {}
+            It "Test 'AllSigned' execution policy. Running <testScript> Script should throw '<errorId>'" -TestCases $pendingTestData -Pending  {}
 
-            $testData = @(
-                @{
-                    testScript = $InternetSignatureCorruptedScript
-                    errorId = $errorId
-                }
-                @{
-                    testScript = $InternetUnsignedScript
-                    errorId = $errorId
-                }
-                @{
-                    testScript = $IntranetSignatureCorruptedScript
-                    errorId = $errorId
-                }
-                @{
-                    testScript = $IntranetSignatureCorruptedScript
-                    errorId = $errorId
-                }
-                @{
-                    testScript = $IntranetUnsignedScript
-                    errorId = $errorId
-                }
-                @{
-                    testScript = $LocalSignatureCorruptedScript
-                    errorId = $errorId
-                }
-                @{
-                    testScript = $LocalUnsignedScript
-                    errorId = $errorId
-                }
-                @{
-                    testScript = $TrustedSignatureCorruptedScript
-                    errorId = $errorId
-                }
-                @{
-                    testScript = $TrustedUnsignedScript
-                    errorId = $errorId
-                }
-                @{
-                    testScript = $UntrustedSignatureCorruptedScript
-                    errorId = $errorId
-                }
-                @{
-                    testScript = $UntrustedUnsignedScript
-                    errorId = $errorId
-                }
-                @{
-                    testScript = $MyComputerSignatureCorruptedScript
-                    errorId = $errorId
-                }
-                @{
-                    testScript = $MyComputerUnsignedScript
-                    errorId = $errorId
-                }
-
-            )
-            It "$TestTypePrefix Running <testScript> Script should throw '<error>'" -TestCases $testData  {
+            It "Test 'AllSigned' execution policy. Running <testScript> Script should throw '<errorId>'" -TestCases $scriptTestData  {
                 param ([string]$testScript, [string]$errorId)
-                $testScript | Should -Exist
+                $scriptPath = Join-Path $remoteTestDirectory $testScript
+                $scriptPath | Should -Exist
                 if ($errorId)
                 {
-                    {& $testScript} | Should -Throw -ErrorId $errorId
+                    {& $scriptPath} | Should -Throw -ErrorId $errorId
                 }
                 else
                 {
-                    {& $testScript} | Should -Not -Throw
+                    {& $scriptPath} | Should -Not -Throw
                 }
             }
         }
     }
 
-    function VerfiyBlockedSetExecutionPolicy
-    {
-        param(
-            [string]
-            $policyScope
-        )
-        { Set-ExecutionPolicy -Scope $policyScope -ExecutionPolicy Restricted } |
-            Should -Throw -ErrorId "CantSetGroupPolicy,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand"
-    }
-
-    function RestoreExecutionPolicy
-    {
-        param($originalPolicies)
-
-        foreach ($scopedPolicy in $originalPolicies)
+    BeforeAll {
+        function VerfiyBlockedSetExecutionPolicy
         {
-            if (($scopedPolicy.Scope -eq "Process") -or
-                ($scopedPolicy.Scope -eq "CurrentUser"))
+            param(
+                [string]
+                $policyScope
+            )
+            { Set-ExecutionPolicy -Scope $policyScope -ExecutionPolicy Restricted } |
+                Should -Throw -ErrorId "CantSetGroupPolicy,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand"
+        }
+
+        function RestoreExecutionPolicy
+        {
+            param($originalPolicies)
+
+            foreach ($scopedPolicy in $originalPolicies)
             {
-                try {
-                    Set-ExecutionPolicy -Scope $scopedPolicy.Scope -ExecutionPolicy $scopedPolicy.ExecutionPolicy -Force
-                }
-                catch {
-                    if ($_.FullyQualifiedErrorId -ne "ExecutionPolicyOverride,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand")
-                    {
-                        # Re-throw unrecognized exceptions. Otherwise, swallow
-                        # the exception that warns about overridden policies
-                        throw $_
+                if (($scopedPolicy.Scope -eq "Process") -or
+                    ($scopedPolicy.Scope -eq "CurrentUser"))
+                {
+                    try {
+                        Set-ExecutionPolicy -Scope $scopedPolicy.Scope -ExecutionPolicy $scopedPolicy.ExecutionPolicy -Force
+                    }
+                    catch {
+                        if ($_.FullyQualifiedErrorId -ne "ExecutionPolicyOverride,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand")
+                        {
+                            # Re-throw unrecognized exceptions. Otherwise, swallow
+                            # the exception that warns about overridden policies
+                            throw $_
+                        }
                     }
                 }
-            }
-            elseif($scopedPolicy.Scope -eq "LocalMachine")
-            {
-                try {
-                    Set-ExecutionPolicy -Scope $scopedPolicy.Scope -ExecutionPolicy $scopedPolicy.ExecutionPolicy -Force
-                }
-                catch {
-                    if ($_.FullyQualifiedErrorId -eq "System.UnauthorizedAccessException,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand")
-                    {
-                        # Do nothing. Depending on the ownership of the file,
-                        # regular users may or may not be able to set its
-                        # value.
-                        #
-                        # When targetting the Registry, regular users cannot
-                        # modify this value.
+                elseif($scopedPolicy.Scope -eq "LocalMachine")
+                {
+                    try {
+                        Set-ExecutionPolicy -Scope $scopedPolicy.Scope -ExecutionPolicy $scopedPolicy.ExecutionPolicy -Force
                     }
-                    elseif ($_.FullyQualifiedErrorId -ne "ExecutionPolicyOverride,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand")
-                    {
-                        # Re-throw unrecognized exceptions. Otherwise, swallow
-                        # the exception that warns about overridden policies
-                        throw $_
+                    catch {
+                        if ($_.FullyQualifiedErrorId -eq "System.UnauthorizedAccessException,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand")
+                        {
+                            # Do nothing. Depending on the ownership of the file,
+                            # regular users may or may not be able to set its
+                            # value.
+                            #
+                            # When targetting the Registry, regular users cannot
+                            # modify this value.
+                        }
+                        elseif ($_.FullyQualifiedErrorId -ne "ExecutionPolicyOverride,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand")
+                        {
+                            # Re-throw unrecognized exceptions. Otherwise, swallow
+                            # the exception that warns about overridden policies
+                            throw $_
+                        }
                     }
                 }
             }
@@ -1107,13 +963,13 @@ ZoneId=$FileType
     Describe "Validate Set-ExecutionPolicy -Scope" -Tags "CI" {
 
         BeforeAll {
-            if ($IsNotSkipped) {
+            if ($IsWindows) {
                 $originalPolicies = Get-ExecutionPolicy -List
             }
         }
 
         AfterAll {
-            if ($IsNotSkipped) {
+            if ($IsWindows) {
                 RestoreExecutionPolicy $originalPolicies
             }
         }
@@ -1140,14 +996,14 @@ ZoneId=$FileType
     Describe "Validate Set-ExecutionPolicy -Scope (Admin)" -Tags @('CI', 'RequireAdminOnWindows') {
 
         BeforeAll {
-            if ($IsNotSkipped)
+            if ($IsWindows)
             {
                 $originalPolicies = Get-ExecutionPolicy -List
             }
         }
 
         AfterAll {
-            if ($IsNotSkipped)
+            if ($IsWindows)
             {
                 RestoreExecutionPolicy $originalPolicies
             }
@@ -1185,7 +1041,8 @@ ZoneId=$FileType
             Get-ExecutionPolicy -Scope LocalMachine | Should -Be "ByPass"
         }
     }
-}
-finally {
-    $global:PSDefaultParameterValues = $originalDefaultParameterValues
+
+AfterAll {
+    $PSDefaultParameterValues = $script:_EP_originalDefaultParameterValues
+    Remove-Variable -Name _EP_originalDefaultParameterValues -Scope Script -ErrorAction SilentlyContinue
 }

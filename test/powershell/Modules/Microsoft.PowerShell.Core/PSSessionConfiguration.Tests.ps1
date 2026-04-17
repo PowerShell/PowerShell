@@ -1,10 +1,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-Import-Module HelpersCommon
+Import-Module HelpersCommon -ErrorAction SilentlyContinue
 
-try
-{
+BeforeAll {
     # Skip all tests on non-windows and non-PowerShellCore and non-elevated platforms.
     $originalWarningPreference = $WarningPreference
     $WarningPreference = "SilentlyContinue"
@@ -13,13 +12,16 @@ try
     $IsNotSkipped = (
         $IsWindows -and
         $IsCoreCLR -and
+        (Get-Command Test-IsElevated -ErrorAction SilentlyContinue) -and
         (Test-IsElevated) -and
         (Test-CanWriteToPsHome) -and
         -not (Test-IsWindowsArm64) -and
         -not (Test-IsWinWow64)
     )
 
-    Push-DefaultParameterValueStack @{ "it:skip" = ! $IsNotSkipped }
+    if (Get-Command Push-DefaultParameterValueStack -ErrorAction SilentlyContinue) {
+        Push-DefaultParameterValueStack @{ "it:skip" = ! $IsNotSkipped }
+    }
     #
     # TODO: Enable-PSRemoting should be performed at a higher set up for all tests.
     # Tests whether PowerShell remoting is enabled for this instance of PowerShell.
@@ -42,9 +44,18 @@ try
             $endpointCreated = $true
         }
     }
+}
 
-    try
-    {
+AfterAll {
+    if ($endpointCreated) {
+        Get-PSSessionConfiguration $endpointName -ErrorAction SilentlyContinue | Unregister-PSSessionConfiguration
+    }
+    if (Get-Command Pop-DefaultParameterValueStack -ErrorAction SilentlyContinue) {
+        Pop-DefaultParameterValueStack
+    }
+    $WarningPreference = $originalWarningPreference
+}
+
         Describe "Validate Register-PSSessionConfiguration" -Tags @("CI", 'RequireAdminOnWindows') {
 
             AfterAll {
@@ -191,28 +202,30 @@ try
                     }
                 }
 
-                $TestData = @(
-                    @{
-                        SessionConfigName = "TestDisablePSSessionConfig"
-                        ConfigFilePath = $LocalConfigFilePath
-                        InitialSessionStateEnabled = $true
-                        FinalSessionStateEnabled = $false
-                        TestDescription = "Validate Disable-Configuration cmdlet"
-                        EnablePSSessionConfig = $false
-                    }
+                BeforeDiscovery {
+                    $TestData = @(
+                        @{
+                            SessionConfigName = "TestDisablePSSessionConfig"
+                            ConfigFilePath = $LocalConfigFilePath
+                            InitialSessionStateEnabled = $true
+                            FinalSessionStateEnabled = $false
+                            TestDescription = "Validate Disable-Configuration cmdlet"
+                            EnablePSSessionConfig = $false
+                        }
 
-                    @{
-                        SessionConfigName = "TestEnablePSSessionConfig"
-                        ConfigFilePath = $LocalConfigFilePath
-                        InitialSessionStateEnabled = $false
-                        FinalSessionStateEnabled = $true
-                        TestDescription = "Validate Enable-Configuration cmdlet"
-                        EnablePSSessionConfig = $true
-                    }
-                )
+                        @{
+                            SessionConfigName = "TestEnablePSSessionConfig"
+                            ConfigFilePath = $LocalConfigFilePath
+                            InitialSessionStateEnabled = $false
+                            FinalSessionStateEnabled = $true
+                            TestDescription = "Validate Enable-Configuration cmdlet"
+                            EnablePSSessionConfig = $true
+                        }
+                    )
 
-                foreach ($testcase in $testData) {
-                    VerifyEnableAndDisablePSSessionConfig @testcase
+                    foreach ($testcase in $testData) {
+                        VerifyEnableAndDisablePSSessionConfig @testcase
+                    }
                 }
             }
 
@@ -266,30 +279,32 @@ try
                     }
                 }
 
-                $TestData = @(
-                    @{
-                        Description = "Validate Unregister-PSSessionConfiguration with -name parameter"
-                        SessionConfigName = "TestUnregisterPSSessionConfig"
-                        ExpectedOutput = $true
-                        ExpectedError = $null
-                    }
-                    @{
-                        Description = "Validate Unregister-PSSessionConfiguration with name having wildcard character"
-                        SessionConfigName = "TestUnregister*"
-                        ExpectedOutput = $true
-                        ExpectedError = $null
-                    }
-                    @{
-                        Description = "Validate Unregister-PSSessionConfiguration for non-existant endpoint"
-                        SessionConfigName = 'TestInvalidEndPoint'
-                        ExpectedOutput = $false
-                        ExpectedError = "No session configuration matches criteria `"TestInvalidEndPoint`"."
-                    }
-                )
+                BeforeDiscovery {
+                    $TestData = @(
+                        @{
+                            Description = "Validate Unregister-PSSessionConfiguration with -name parameter"
+                            SessionConfigName = "TestUnregisterPSSessionConfig"
+                            ExpectedOutput = $true
+                            ExpectedError = $null
+                        }
+                        @{
+                            Description = "Validate Unregister-PSSessionConfiguration with name having wildcard character"
+                            SessionConfigName = "TestUnregister*"
+                            ExpectedOutput = $true
+                            ExpectedError = $null
+                        }
+                        @{
+                            Description = "Validate Unregister-PSSessionConfiguration for non-existant endpoint"
+                            SessionConfigName = 'TestInvalidEndPoint'
+                            ExpectedOutput = $false
+                            ExpectedError = "No session configuration matches criteria `"TestInvalidEndPoint`"."
+                        }
+                    )
 
-                foreach ($TestCase in $TestData)
-                {
-                    TestUnRegisterPSSsessionConfiguration @TestCase
+                    foreach ($TestCase in $TestData)
+                    {
+                        TestUnRegisterPSSsessionConfiguration @TestCase
+                    }
                 }
             }
         }
@@ -572,14 +587,6 @@ namespace PowershellTestConfigNamespace
                 }
             }
         }
-    }
-    finally
-    {
-        if ($endpointCreated)
-        {
-            Get-PSSessionConfiguration $endpointName -ErrorAction SilentlyContinue | Unregister-PSSessionConfiguration
-        }
-    }
 
     Describe "Basic tests for New-PSSessionConfigurationFile Cmdlet" -Tags @("CI", 'RequireAdminOnWindows') {
 
@@ -840,10 +847,3 @@ namespace PowershellTestConfigNamespace
             $matchedEndpoint | Should -Not -BeNullOrEmpty
         }
     }
-}
-finally
-{
-    Pop-DefaultParameterValueStack
-    $WarningPreference = $originalWarningPreference
-}
-

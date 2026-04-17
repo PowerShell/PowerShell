@@ -413,21 +413,23 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
     # Validate the output of Invoke-WebRequest
     #
-    function ValidateResponse {
-        param ($response)
+    BeforeAll {
+        function ValidateResponse {
+            param ($response)
 
-        $response.Error | Should -Be $null
+            $response.Error | Should -Be $null
 
-        # A successful call returns: Status = 200, and StatusDescription = "OK"
-        $response.Output.StatusDescription | Should -Match "OK"
-        $response.Output.StatusCode | Should -Be 200
+            # A successful call returns: Status = 200, and StatusDescription = "OK"
+            $response.Output.StatusDescription | Should -Match "OK"
+            $response.Output.StatusCode | Should -Be 200
 
-        # Make sure the response contains the following properties:
-        $response.Output.RawContent | Should -Not -Be $null
-        $response.Output.Headers | Should -Not -Be $null
-        $response.Output.RawContent | Should -Not -Be $null
-        $response.Output.RawContentLength | Should -Not -Be $null
-        $response.Output.Content | Should -Not -Be $null
+            # Make sure the response contains the following properties:
+            $response.Output.RawContent | Should -Not -Be $null
+            $response.Output.Headers | Should -Not -Be $null
+            $response.Output.RawContent | Should -Not -Be $null
+            $response.Output.RawContentLength | Should -Not -Be $null
+            $response.Output.Content | Should -Not -Be $null
+        }
     }
 
     #User-Agent changes on different platforms, so tests should only be run if on the correct platform
@@ -640,11 +642,12 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $result.Error.FullyQualifiedErrorId | Should -Be "AmbiguousParameterSet,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
     }
 
-    $testCase = @(
-        @{ proxy_address = (Get-WebListenerUrl).Authority; name = 'HTTP proxy'; protocol = 'http' }
-        @{ proxy_address = (Get-WebListenerUrl -https).Authority; name = 'HTTPS proxy'; protocol = 'https' }
-    )
-
+    BeforeDiscovery {
+        $testCase = @(
+            @{ proxy_address = (Get-WebListenerUrl).Authority; name = 'HTTP proxy'; protocol = 'http' }
+            @{ proxy_address = (Get-WebListenerUrl -https).Authority; name = 'HTTPS proxy'; protocol = 'https' }
+        )
+    }
     It "Validate Invoke-WebRequest with -Proxy option set - '<name>'" -TestCases $testCase {
         param($proxy_address, $name, $protocol)
 
@@ -685,18 +688,17 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
     # patch Returns PATCH data.
     # put Returns PUT data.
     # delete Returns DELETE data
-    $testMethods = @("POST", "PATCH", "PUT", "DELETE")
-    $contentTypes = @("text/plain", "application/xml", "application/json")
+    BeforeDiscovery {
+        $testMethods = @("POST", "PATCH", "PUT", "DELETE")
+        $contentTypes = @("text/plain", "application/xml", "application/json")
+    }
 
     foreach ($contentType in $contentTypes) {
         foreach ($method in $testMethods) {
-            # Operation options
-            $uri = Get-WebListenerUrl -Test $method
-            $body = GetTestData -contentType $contentType
-            $command = "Invoke-WebRequest -Uri $uri -Body '$body' -Method $method -ContentType $contentType"
-            $commandNoContentType = "Invoke-WebRequest -Uri $uri -Body '$body' -Method $method"
-
-            It "Invoke-WebRequest -Uri $uri -Method $method -ContentType $contentType -Body [body data]" {
+            It "Invoke-WebRequest -Method <method> -ContentType <contentType> -Body [body data]" -TestCases @{ method = $method; contentType = $contentType } {
+                $uri = Get-WebListenerUrl -Test $method
+                $body = GetTestData -contentType $contentType
+                $command = "Invoke-WebRequest -Uri $uri -Body '$body' -Method $method -ContentType $contentType"
 
                 $result = ExecuteWebCommand -command $command
                 ValidateResponse -response $result
@@ -709,7 +711,10 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
                 $jsonContent.data | Should -Be $body
             }
 
-            It "Invoke-WebRequest -Uri $uri -Method $method -Body [body data]" {
+            It "Invoke-WebRequest -Method <method> -Body [body data] without -ContentType for <contentType>" -TestCases @{ method = $method; contentType = $contentType } {
+                $uri = Get-WebListenerUrl -Test $method
+                $body = GetTestData -contentType $contentType
+                $commandNoContentType = "Invoke-WebRequest -Uri $uri -Body '$body' -Method $method"
 
                 $result = ExecuteWebCommand -command $commandNoContentType
                 ValidateResponse -response $result
@@ -729,7 +734,6 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
                     # Validate that the response Content.data field is the same as what we sent.
                     $jsonContent.data | Should -Be $body
                 }
-
             }
         }
     }
@@ -742,21 +746,21 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
     }
 
     # Validate all available user agents for Invoke-WebRequest
-    $agents = @{
-        InternetExplorer = "MSIE 9.0"
-        Chrome           = "Chrome"
-        Opera            = "Opera"
-        Safari           = "Safari"
-        FireFox          = "Firefox"
+    BeforeDiscovery {
+        $agents = @{
+            InternetExplorer = "MSIE 9.0"
+            Chrome           = "Chrome"
+            Opera            = "Opera"
+            Safari           = "Safari"
+            FireFox          = "Firefox"
+        }
     }
 
     foreach ($agentName in $agents.Keys) {
-        $expectedAgent = $agents[$agentName]
-        $uri = Get-WebListenerUrl -Test 'Get'
-        $userAgent = "[Microsoft.PowerShell.Commands.PSUserAgent]::$agentName"
-        $command = "Invoke-WebRequest -Uri $uri -UserAgent ($userAgent) "
-
-        It "Validate Invoke-WebRequest UserAgent. Execute--> $command" {
+        It "Validate Invoke-WebRequest UserAgent for <agentName>" -TestCases @{ agentName = $agentName; expectedAgent = $agents[$agentName] } {
+            $uri = Get-WebListenerUrl -Test 'Get'
+            $userAgent = "[Microsoft.PowerShell.Commands.PSUserAgent]::$agentName"
+            $command = "Invoke-WebRequest -Uri $uri -UserAgent ($userAgent) "
 
             $result = ExecuteWebCommand -command $command
             ValidateResponse -response $result
@@ -2032,7 +2036,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
     }
 
     Context "Invoke-WebRequest -SslProtocol Test" {
-        BeforeAll {
+        BeforeDiscovery {
             # We put Tls13 tests at pending due to modern OS limitations.
             # Tracking issue https://github.com/PowerShell/PowerShell/issues/13439
 
@@ -2301,9 +2305,11 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $response.Images | Should -Not -BeNullOrEmpty
         }
 
-        $singleInputExpected = @(
-            @{ Name = 'foo'; Value = 'bar' }
-        )
+        BeforeDiscovery {
+            $singleInputExpected = @(
+                @{ Name = 'foo'; Value = 'bar' }
+            )
+        }
 
         It 'correctly parses input tag(s) for `<markup>`' -TestCases @(
             @{
@@ -2412,36 +2418,38 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
     Context 'Invoke-WebSession: Connection persistence in a WebSession' {
         # Match verbose message from resource name WebSessionConnectionRecreated with message:
         # The WebSession properties were changed between requests forcing all HTTP connections in the session to be recreated.
-        $matchConnRecreatedMessage = [regex]::new('WebSession.+HTTP')
+        BeforeAll {
+            $matchConnRecreatedMessage = [regex]::new('WebSession.+HTTP')
 
-        function RunCheckingPersistence {
-            param(
-                [uri]$Uri,
-                [string]$Command,
-                [object]$Session,
-                [switch]$ExpectConnectionRecreated,
-                [switch]$CaptureSession
-            )
+            function RunCheckingPersistence {
+                param(
+                    [uri]$Uri,
+                    [string]$Command,
+                    [object]$Session,
+                    [switch]$ExpectConnectionRecreated,
+                    [switch]$CaptureSession
+                )
 
-            $pwsh = [PowerShell]::Create()
-            $pwsh.Runspace.SessionStateProxy.SetVariable('uri', $Uri)
-            if ($Session) {
-                $pwsh.Runspace.SessionStateProxy.SetVariable('Session', $Session)
-                $command = "$command -WebSession `$Session"
+                $pwsh = [PowerShell]::Create()
+                $pwsh.Runspace.SessionStateProxy.SetVariable('uri', $Uri)
+                if ($Session) {
+                    $pwsh.Runspace.SessionStateProxy.SetVariable('Session', $Session)
+                    $command = "$command -WebSession `$Session"
+                }
+                if ($CaptureSession) {
+                    $command = "$command -SessionVariable Session"
+                }
+                $script = "`$null = $command -Verbose"
+                $pwsh.AddScript($script).Invoke()
+                $session = $pwsh.Runspace.SessionStateProxy.GetVariable('Session')
+
+                $expectedConnRecreatedCount = if ($ExpectConnectionRecreated) { 1 } else { 0 }
+                ($pwsh.Streams.Verbose | Where-Object { $matchConnRecreatedMessage.Matches($_.Message) }).Count | Should -Be $expectedConnRecreatedCount
+
+                $pwsh.Dispose()
+
+                return $session
             }
-            if ($CaptureSession) {
-                $command = "$command -SessionVariable Session"
-            }
-            $script = "`$null = $command -Verbose"
-            $pwsh.AddScript($script).Invoke()
-            $session = $pwsh.Runspace.SessionStateProxy.GetVariable('Session')
-
-            $expectedConnRecreatedCount = if ($ExpectConnectionRecreated) { 1 } else { 0 }
-            ($pwsh.Streams.Verbose | Where-Object { $matchConnRecreatedMessage.Matches($_.Message) }).Count | Should -Be $expectedConnRecreatedCount
-
-            $pwsh.Dispose()
-
-            return $session
         }
 
         It 'Connection persistence maintained' {
@@ -2757,10 +2765,12 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $result.Error.FullyQualifiedErrorId | Should -Be "AmbiguousParameterSet,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
     }
 
-    $testCase = @(
-        @{ proxy_address = (Get-WebListenerUrl).Authority; name = 'HTTP proxy'; protocol = 'http' }
-        @{ proxy_address = (Get-WebListenerUrl -https).Authority; name = 'HTTPS proxy'; protocol = 'https' }
-    )
+    BeforeDiscovery {
+        $testCase = @(
+            @{ proxy_address = (Get-WebListenerUrl).Authority; name = 'HTTP proxy'; protocol = 'http' }
+            @{ proxy_address = (Get-WebListenerUrl -https).Authority; name = 'HTTPS proxy'; protocol = 'https' }
+        )
+    }
 
     It "Validate Invoke-RestMethod with -Proxy option - '<name>'" -TestCases $testCase {
         param($proxy_address, $name, $protocol)
@@ -2798,18 +2808,17 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
     # patch Returns PATCH data.
     # put Returns PUT data.
     # delete Returns DELETE data
-    $testMethods = @("POST", "PATCH", "PUT", "DELETE")
-    $contentTypes = @("text/plain", "application/xml", "application/json")
+    BeforeDiscovery {
+        $testMethods = @("POST", "PATCH", "PUT", "DELETE")
+        $contentTypes = @("text/plain", "application/xml", "application/json")
+    }
 
     foreach ($contentType in $contentTypes) {
         foreach ($method in $testMethods) {
-            # Operation options
-            $uri = Get-WebListenerUrl -Test $method
-            $body = GetTestData -contentType $contentType
-            $command = "Invoke-RestMethod -Uri $uri -Body '$body' -Method $method -ContentType $contentType"
-            $commandNoContentType = "Invoke-RestMethod -Uri $uri -Body '$body' -Method $method"
-
-            It "Invoke-RestMethod -Uri $uri -Method $method -ContentType $contentType -Body [body data]" {
+            It "Invoke-RestMethod -Method <method> -ContentType <contentType> -Body [body data]" -TestCases @{ method = $method; contentType = $contentType } {
+                $uri = Get-WebListenerUrl -Test $method
+                $body = GetTestData -contentType $contentType
+                $command = "Invoke-RestMethod -Uri $uri -Body '$body' -Method $method -ContentType $contentType"
 
                 $result = ExecuteWebCommand -command $command
 
@@ -2821,7 +2830,10 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
                 $result.Output.data | Should -Be $body
             }
 
-            It "Invoke-RestMethod -Uri $uri -Method $method -Body [body data]" {
+            It "Invoke-RestMethod -Method <method> -Body [body data] without -ContentType for <contentType>" -TestCases @{ method = $method; contentType = $contentType } {
+                $uri = Get-WebListenerUrl -Test $method
+                $body = GetTestData -contentType $contentType
+                $commandNoContentType = "Invoke-RestMethod -Uri $uri -Body '$body' -Method $method"
 
                 $result = ExecuteWebCommand -command $commandNoContentType
 
@@ -2854,21 +2866,21 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
     }
 
     # Validate all available user agents for Invoke-RestMethod
-    $agents = @{
-        InternetExplorer = "MSIE 9.0"
-        Chrome           = "Chrome"
-        Opera            = "Opera"
-        Safari           = "Safari"
-        FireFox          = "Firefox"
+    BeforeDiscovery {
+        $agents = @{
+            InternetExplorer = "MSIE 9.0"
+            Chrome           = "Chrome"
+            Opera            = "Opera"
+            Safari           = "Safari"
+            FireFox          = "Firefox"
+        }
     }
 
     foreach ($agentName in $agents.Keys) {
-        $expectedAgent = $agents[$agentName]
-        $uri = Get-WebListenerUrl -Test 'Get'
-        $userAgent = "[Microsoft.PowerShell.Commands.PSUserAgent]::$agentName"
-        $command = "Invoke-RestMethod -Uri $uri -UserAgent ($userAgent) "
-
-        It "Validate Invoke-RestMethod UserAgent. Execute--> $command" {
+        It "Validate Invoke-RestMethod UserAgent for <agentName>" -TestCases @{ agentName = $agentName; expectedAgent = $agents[$agentName] } {
+            $uri = Get-WebListenerUrl -Test 'Get'
+            $userAgent = "[Microsoft.PowerShell.Commands.PSUserAgent]::$agentName"
+            $command = "Invoke-RestMethod -Uri $uri -UserAgent ($userAgent) "
 
             $result = ExecuteWebCommand -command $command
 
@@ -4046,7 +4058,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
     }
 
     Context "Invoke-RestMethod -SslProtocol Test" {
-        BeforeAll {
+        BeforeDiscovery {
             # We put Tls13 tests at pending due to modern OS limitations.
             # Tracking issue https://github.com/PowerShell/PowerShell/issues/13439
 
@@ -4469,32 +4481,34 @@ Describe 'Invoke-WebRequest and Invoke-RestMethod support Cancellation through C
         $ProgressPreference = $oldProgress
     }
 
-    function RunWithCancellation {
-        param(
-            [string]$Command = 'Invoke-WebRequest',
-            [string]$Arguments = '',
-            [uri]$Uri,
-            [int]$DelayBeforeStopSimulationMs = 5000,
-            [switch]$WillComplete
-        )
+    BeforeAll {
+        function RunWithCancellation {
+            param(
+                [string]$Command = 'Invoke-WebRequest',
+                [string]$Arguments = '',
+                [uri]$Uri,
+                [int]$DelayBeforeStopSimulationMs = 5000,
+                [switch]$WillComplete
+            )
 
-        $pwsh = [PowerShell]::Create()
-        $invoke = "`$result = $Command -Uri `"$Uri`" $Arguments"
-        $task = $pwsh.AddScript($invoke).InvokeAsync()
-        $delay = [System.Threading.Tasks.Task]::Delay($DelayBeforeStopSimulationMs)
+            $pwsh = [PowerShell]::Create()
+            $invoke = "`$result = $Command -Uri `"$Uri`" $Arguments"
+            $task = $pwsh.AddScript($invoke).InvokeAsync()
+            $delay = [System.Threading.Tasks.Task]::Delay($DelayBeforeStopSimulationMs)
 
-        # Simulate CTRL-C as soon as the timeout expires or the main task ends
-        $null = [System.Threading.Tasks.Task]::WaitAny($task, $delay)
-        $task.IsCompleted | Should -Be $WillComplete.ToBool()
-        $pwsh.Stop()
+            # Simulate CTRL-C as soon as the timeout expires or the main task ends
+            $null = [System.Threading.Tasks.Task]::WaitAny($task, $delay)
+            $task.IsCompleted | Should -Be $WillComplete.ToBool()
+            $pwsh.Stop()
 
-        # The download stall is normally 30 seconds from the web listener based
-        # on the first slash separated parameter in the -TestValue provided to
-        # Get-WebListenerUrl -test Stall -TestValue duration/content-type.
-        Wait-UntilTrue { [bool]($Task.IsCompleted) } | Should -BeTrue
-        $result = $pwsh.Runspace.SessionStateProxy.GetVariable('result')
-        $pwsh.Dispose()
-        return $result
+            # The download stall is normally 30 seconds from the web listener based
+            # on the first slash separated parameter in the -TestValue provided to
+            # Get-WebListenerUrl -test Stall -TestValue duration/content-type.
+            Wait-UntilTrue { [bool]($Task.IsCompleted) } | Should -BeTrue
+            $result = $pwsh.Runspace.SessionStateProxy.GetVariable('result')
+            $pwsh.Dispose()
+            return $result
+        }
     }
 
     It 'Invoke-WebRequest: CTRL-C Cancels request before request headers received' {
@@ -4654,30 +4668,32 @@ Describe 'Invoke-WebRequest and Invoke-RestMethod support OperationTimeoutSecond
         $ProgressPreference = $oldProgress
     }
 
-    function RunWithNetworkTimeout {
-        param(
-            [ValidateSet('Invoke-WebRequest', 'Invoke-RestMethod')]
-            [string]$Command = 'Invoke-WebRequest',
-            [string]$Arguments = '',
-            [uri]$Uri,
-            [int]$OperationTimeoutSeconds,
-            [switch]$WillTimeout
-        )
+    BeforeAll {
+        function RunWithNetworkTimeout {
+            param(
+                [ValidateSet('Invoke-WebRequest', 'Invoke-RestMethod')]
+                [string]$Command = 'Invoke-WebRequest',
+                [string]$Arguments = '',
+                [uri]$Uri,
+                [int]$OperationTimeoutSeconds,
+                [switch]$WillTimeout
+            )
 
-        $invoke = "$Command -Uri `"$Uri`" $Arguments"
-        if ($PSBoundParameters.ContainsKey('OperationTimeoutSeconds')) {
-            $invoke = "$invoke -OperationTimeoutSeconds $OperationTimeoutSeconds"
-        }
+            $invoke = "$Command -Uri `"$Uri`" $Arguments"
+            if ($PSBoundParameters.ContainsKey('OperationTimeoutSeconds')) {
+                $invoke = "$invoke -OperationTimeoutSeconds $OperationTimeoutSeconds"
+            }
 
-        $result = ExecuteWebCommand -command $invoke
-        if ($WillTimeout) {
-            $result.Error | Should -Not -BeNullOrEmpty
-            $fqErrorClass = if ($Command -eq 'Invoke-WebRequest') { 'InvokeWebRequestCommand'} else { 'InvokeRestMethodCommand'}
-            $result.Error.FullyQualifiedErrorId | Should -Be "OperationTimeoutReached,Microsoft.PowerShell.Commands.$fqErrorClass"
-            $result.Output | Should -BeNullOrEmpty
-        } else {
-            $result.Error | Should -BeNullOrEmpty
-            $result.Output | Should -Not -BeNullOrEmpty
+            $result = ExecuteWebCommand -command $invoke
+            if ($WillTimeout) {
+                $result.Error | Should -Not -BeNullOrEmpty
+                $fqErrorClass = if ($Command -eq 'Invoke-WebRequest') { 'InvokeWebRequestCommand'} else { 'InvokeRestMethodCommand'}
+                $result.Error.FullyQualifiedErrorId | Should -Be "OperationTimeoutReached,Microsoft.PowerShell.Commands.$fqErrorClass"
+                $result.Output | Should -BeNullOrEmpty
+            } else {
+                $result.Error | Should -BeNullOrEmpty
+                $result.Output | Should -Not -BeNullOrEmpty
+            }
         }
     }
 

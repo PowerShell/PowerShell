@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 Describe 'Unit tests for JsonObject' -tags "CI" {
 
-    BeforeAll {
+    BeforeDiscovery {
         $jsonWithEmptyKey = '{"": "Value"}'
         $jsonContainingKeysWithDifferentCasing = '{"key1": "Value1", "Key1": "Value2"}'
 
@@ -14,7 +14,9 @@ Describe 'Unit tests for JsonObject' -tags "CI" {
             @{ Depth = 2000; ReturnHashTable = $true  }
             @{ Depth = 2000; ReturnHashTable = $false }
         )
+    }
 
+    BeforeAll {
         function New-NestedJson {
             Param(
                 [ValidateRange(1, 2048)]

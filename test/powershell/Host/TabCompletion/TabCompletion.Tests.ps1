@@ -1384,7 +1384,7 @@ param([ValidatePattern(
     }
 
     Context 'Get-Verb & Get-Command -Verb parameter completion' {
-        BeforeAll {
+        BeforeDiscovery {
             $allVerbs = 'Add Approve Assert Backup Block Build Checkpoint Clear Close Compare Complete Compress Confirm Connect Convert ConvertFrom ConvertTo Copy Debug Deny Deploy Disable Disconnect Dismount Edit Enable Enter Exit Expand Export Find Format Get Grant Group Hide Import Initialize Install Invoke Join Limit Lock Measure Merge Mount Move New Open Optimize Out Ping Pop Protect Publish Push Read Receive Redo Register Remove Rename Repair Request Reset Resize Resolve Restart Restore Resume Revoke Save Search Select Send Set Show Skip Split Start Step Stop Submit Suspend Switch Sync Test Trace Unblock Undo Uninstall Unlock Unprotect Unpublish Unregister Update Use Wait Watch Write'
             $allVerbsSingleQuote = "'Add' 'Approve' 'Assert' 'Backup' 'Block' 'Build' 'Checkpoint' 'Clear' 'Close' 'Compare' 'Complete' 'Compress' 'Confirm' 'Connect' 'Convert' 'ConvertFrom' 'ConvertTo' 'Copy' 'Debug' 'Deny' 'Deploy' 'Disable' 'Disconnect' 'Dismount' 'Edit' 'Enable' 'Enter' 'Exit' 'Expand' 'Export' 'Find' 'Format' 'Get' 'Grant' 'Group' 'Hide' 'Import' 'Initialize' 'Install' 'Invoke' 'Join' 'Limit' 'Lock' 'Measure' 'Merge' 'Mount' 'Move' 'New' 'Open' 'Optimize' 'Out' 'Ping' 'Pop' 'Protect' 'Publish' 'Push' 'Read' 'Receive' 'Redo' 'Register' 'Remove' 'Rename' 'Repair' 'Request' 'Reset' 'Resize' 'Resolve' 'Restart' 'Restore' 'Resume' 'Revoke' 'Save' 'Search' 'Select' 'Send' 'Set' 'Show' 'Skip' 'Split' 'Start' 'Step' 'Stop' 'Submit' 'Suspend' 'Switch' 'Sync' 'Test' 'Trace' 'Unblock' 'Undo' 'Uninstall' 'Unlock' 'Unprotect' 'Unpublish' 'Unregister' 'Update' 'Use' 'Wait' 'Watch' 'Write'"
             $allVerbsDoubleQuote = """Add"" ""Approve"" ""Assert"" ""Backup"" ""Block"" ""Build"" ""Checkpoint"" ""Clear"" ""Close"" ""Compare"" ""Complete"" ""Compress"" ""Confirm"" ""Connect"" ""Convert"" ""ConvertFrom"" ""ConvertTo"" ""Copy"" ""Debug"" ""Deny"" ""Deploy"" ""Disable"" ""Disconnect"" ""Dismount"" ""Edit"" ""Enable"" ""Enter"" ""Exit"" ""Expand"" ""Export"" ""Find"" ""Format"" ""Get"" ""Grant"" ""Group"" ""Hide"" ""Import"" ""Initialize"" ""Install"" ""Invoke"" ""Join"" ""Limit"" ""Lock"" ""Measure"" ""Merge"" ""Mount"" ""Move"" ""New"" ""Open"" ""Optimize"" ""Out"" ""Ping"" ""Pop"" ""Protect"" ""Publish"" ""Push"" ""Read"" ""Receive"" ""Redo"" ""Register"" ""Remove"" ""Rename"" ""Repair"" ""Request"" ""Reset"" ""Resize"" ""Resolve"" ""Restart"" ""Restore"" ""Resume"" ""Revoke"" ""Save"" ""Search"" ""Select"" ""Send"" ""Set"" ""Show"" ""Skip"" ""Split"" ""Start"" ""Step"" ""Stop"" ""Submit"" ""Suspend"" ""Switch"" ""Sync"" ""Test"" ""Trace"" ""Unblock"" ""Undo"" ""Uninstall"" ""Unlock"" ""Unprotect"" ""Unpublish"" ""Unregister"" ""Update"" ""Use"" ""Wait"" ""Watch"" ""Write"""
@@ -1408,7 +1408,6 @@ param([ValidatePattern(
             $utilityModuleObjectVerbsStartingWithS = 'Select Sort'
             $utilityModuleObjectVerbsStartingWithSSingleQuote = "'Select' 'Sort'"
             $utilityModuleObjectVerbsStartingWithSDoubleQuote = """Select"" ""Sort"""
-            $utilityModuleObjectVerbsStartingWithS
             $coreModuleObjectVerbs = 'ForEach Where'
         }
 
@@ -1453,7 +1452,7 @@ param([ValidatePattern(
     }
 
     Context 'StrictMode Version parameter completion' {
-        BeforeAll {
+        BeforeDiscovery {
             $allStrictModeVersions = '1.0 2.0 3.0 Latest'
             $allStrictModeVersionsSingleQuote = "'1.0' '2.0' '3.0' 'Latest'"
             $allStrictModeVersionsDoubleQuote = """1.0"" ""2.0"" ""3.0"" ""Latest"""
@@ -1485,12 +1484,15 @@ param([ValidatePattern(
     }
 
     Context 'Help Module parameter completion' {
-        BeforeAll {
+        BeforeDiscovery {
             $utilityModule = 'Microsoft.PowerShell.Utility'
             $managementModule = 'Microsoft.PowerShell.Management'
             $allMicrosoftPowerShellModules = (Get-Module -Name Microsoft.PowerShell* -ListAvailable).Name
-            Import-Module -Name $allMicrosoftPowerShellModules -ErrorAction SilentlyContinue
             $allMicrosoftPowerShellModules = ($allMicrosoftPowerShellModules | Sort-Object -Unique) -join ' '
+        }
+
+        BeforeAll {
+            Import-Module -Name (Get-Module -Name Microsoft.PowerShell* -ListAvailable).Name -ErrorAction SilentlyContinue
         }
 
         It "Should complete Module for '<TextInput>'" -TestCases @(
@@ -1511,6 +1513,22 @@ param([ValidatePattern(
     }
 
     Context 'New-ItemProperty -PropertyType parameter completion' {
+        BeforeDiscovery {
+            if ($IsWindows) {
+                $allRegistryValueKinds = 'String ExpandString Binary DWord MultiString QWord Unknown'
+                $allRegistryValueKindsWithQuotes = "'String' 'ExpandString' 'Binary' 'DWord' 'MultiString' 'QWord' 'Unknown'"
+                $dwordValueKind = 'DWord'
+                $qwordValueKind = 'QWord'
+                $binaryValueKind = 'Binary'
+                $multiStringValueKind = 'MultiString'
+                $registryPath = "HKCU:\test1\sub"
+                $registryLiteralPath = "HKCU:\test2\*\sub"
+                $fileSystemPath = "TestDrive:\test1.txt"
+                $fileSystemLiteralPathDir = "TestDrive:\[]"
+                $fileSystemLiteralPath = "$fileSystemLiteralPathDir\test2.txt"
+            }
+        }
+
         BeforeAll {
             if ($IsWindows) {
                 $allRegistryValueKinds = 'String ExpandString Binary DWord MultiString QWord Unknown'
@@ -1599,45 +1617,29 @@ param([ValidatePattern(
     }
 
     Context 'Get-Command -Noun parameter completion' {
-        BeforeAll {
+        BeforeDiscovery {
             function GetModuleCommandNouns(
                 [string]$Module,
                 [string]$Verb,
                 [switch]$SingleQuote,
                 [switch]$DoubleQuote)
             {
-
                 $commandParams = @{}
-
-                if ($PSBoundParameters.ContainsKey('Module')) {
-                    $commandParams['Module'] = $Module
-                }
-
-                if ($PSBoundParameters.ContainsKey('Verb')) {
-                    $commandParams['Verb'] = $Verb
-                }
-
+                if ($PSBoundParameters.ContainsKey('Module')) { $commandParams['Module'] = $Module }
+                if ($PSBoundParameters.ContainsKey('Verb')) { $commandParams['Verb'] = $Verb }
                 $nouns = (Get-Command @commandParams).Noun
-
-                if ($SingleQuote) {
-                    return ($nouns | ForEach-Object { "'$_'" })
-                }
-                elseif ($DoubleQuote) {
-                    return ($nouns | ForEach-Object { """$_""" })
-                }
-
+                if ($SingleQuote) { return ($nouns | ForEach-Object { "'$_'" }) }
+                elseif ($DoubleQuote) { return ($nouns | ForEach-Object { """$_""" }) }
                 return $nouns
             }
 
             $utilityModuleName = 'Microsoft.PowerShell.Utility'
-
             $allUtilityCommandNouns = GetModuleCommandNouns -Module $utilityModuleName
             $allUtilityCommandNounsSingleQuote = GetModuleCommandNouns -Module $utilityModuleName -SingleQuote
             $allUtilityCommandNounsDoubleQuote = GetModuleCommandNouns -Module $utilityModuleName -DoubleQuote
             $utilityCommandNounsStartingWithF = $allUtilityCommandNouns | Where-Object { $_ -like 'F*'}
             $utilityCommandNounsStartingWithFSingleQuote = $allUtilityCommandNounsSingleQuote | Where-Object { $_ -like "'F*"}
             $utilityCommandNounsStartingWithFDoubleQuote = $allUtilityCommandNounsDoubleQuote | Where-Object { $_ -like """F*"}
-
             $allUtilityCommandNounsWithConvertToVerb = GetModuleCommandNouns -Module $utilityModuleName -Verb 'ConvertTo'
             $allUtilityCommandNounsWithConvertToVerbSingleQuote = GetModuleCommandNouns -Module $utilityModuleName -SingleQuote -Verb 'ConvertTo'
             $allUtilityCommandNounsWithConvertToVerbDoubleQuote = GetModuleCommandNouns -Module $utilityModuleName -DoubleQuote -Verb 'ConvertTo'
@@ -1679,17 +1681,11 @@ param([ValidatePattern(
     }
 
     Context "Get-ExperimentalFeature -Name parameter completion" {
-        BeforeAll {
+        BeforeDiscovery {
             function GetExperimentalFeatureNames([switch]$SingleQuote, [switch]$DoubleQuote) {
                 $features = (Get-ExperimentalFeature).Name
-
-                if ($SingleQuote) {
-                    return ($features | ForEach-Object { "'$_'" })
-                }
-                elseif ($DoubleQuote) {
-                    return ($features | ForEach-Object { """$_""" })
-                }
-
+                if ($SingleQuote) { return ($features | ForEach-Object { "'$_'" }) }
+                elseif ($DoubleQuote) { return ($features | ForEach-Object { """$_""" }) }
                 return $features
             }
 
@@ -1717,7 +1713,7 @@ param([ValidatePattern(
     }
 
     Context "Join-String -Separator & -FormatString parameter completion" {
-        BeforeAll {
+        BeforeDiscovery {
             if ($IsWindows) {
                 $allSeparators = "',' ', ' ';' '; ' ""``r``n"" '-' ' '"
                 $allFormatStrings = "'[{0}]' '{0:N2}' ""``r``n    ```${0}"" ""``r``n    [string] ```${0}"""
@@ -1730,10 +1726,8 @@ param([ValidatePattern(
                 $newlineSeparator = """``n"""
                 $newlineFormatStrings = """``n    ```${0}"" ""``n    [string] ```${0}"""
             }
-
             $commaSeparators = "',' ', '"
             $semiColonSeparators = "';' '; '"
-            
             $squareBracketFormatString = "'[{0}]'"
             $curlyBraceFormatString = "'{0:N2}'"
         }
@@ -2140,34 +2134,37 @@ class InheritedClassTest : System.Attribute
     }
 
     Context "Script name completion" {
-        BeforeAll {
-            Setup -f 'install-powershell.ps1' -Content ""
-            Setup -f 'remove-powershell.ps1' -Content ""
-
+        BeforeDiscovery {
             $scriptWithWildcardCases = @(
-                @{
+                @{ name = 'relative wildcard' }
+                @{ name = 'fully qualified wildcard' }
+                @{ name = 'question mark wildcard' }
+                @{ name = 'bracket range wildcard' }
+            )
+        }
+
+        BeforeAll {
+            Set-Content -Path (Join-Path $TestDrive 'install-powershell.ps1') -Value ""
+            Set-Content -Path (Join-Path $TestDrive 'remove-powershell.ps1') -Value ""
+
+            $scriptCaseMap = @{
+                'relative wildcard' = @{
                     command = '.\install-*.ps1'
                     expectedCommand = Join-Path -Path '.' -ChildPath 'install-powershell.ps1'
-                    name = "'$(Join-Path -Path '.' -ChildPath 'install-powershell.ps1')'"
                 }
-                @{
-                    command = (Join-Path ${TestDrive}  -ChildPath 'install-*.ps1')
-                    expectedCommand = (Join-Path ${TestDrive}  -ChildPath 'install-powershell.ps1')
-                    name = "'$(Join-Path -Path '.' -ChildPath 'install-powershell.ps1')' by fully qualified path"
+                'fully qualified wildcard' = @{
+                    command = (Join-Path ${TestDrive} -ChildPath 'install-*.ps1')
+                    expectedCommand = (Join-Path ${TestDrive} -ChildPath 'install-powershell.ps1')
                 }
-                @{
+                'question mark wildcard' = @{
                     command = '.\?emove-powershell.ps1'
                     expectedCommand = Join-Path -Path '.' -ChildPath 'remove-powershell.ps1'
-                    name = "'$(Join-Path -Path '.' -ChildPath '?emove-powershell.ps1')'"
                 }
-                @{
-                    # [] cause the parser to create a new token.
-                    # So, the command must be quoted to tab complete.
+                'bracket range wildcard' = @{
                     command = "'.\[ra]emove-powershell.ps1'"
                     expectedCommand = "'$(Join-Path -Path '.' -ChildPath 'remove-powershell.ps1')'"
-                    name = "'$(Join-Path -Path '.' -ChildPath '[ra]emove-powershell.ps1')'"
                 }
-            )
+            }
 
             Push-Location ${TestDrive}\
         }
@@ -2177,20 +2174,21 @@ class InheritedClassTest : System.Attribute
         }
 
         It "Input <name> should successfully complete" -TestCases $scriptWithWildcardCases {
-            param($command, $expectedCommand)
-            $res = TabExpansion2 -inputScript $command -cursorColumn $command.Length
+            param($name)
+            $case = $scriptCaseMap[$name]
+            $res = TabExpansion2 -inputScript $case.command -cursorColumn $case.command.Length
             $res.CompletionMatches.Count | Should -BeGreaterThan 0
-            $res.CompletionMatches[0].CompletionText | Should -BeExactly $expectedCommand
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly $case.expectedCommand
         }
     }
 
     Context "Script parameter completion" {
         BeforeAll {
-            Setup -File -Path 'ModuleReqTest.ps1' -Content @'
+            Set-Content -Path (Join-Path $TestDrive 'ModuleReqTest.ps1') -Value @'
 #requires -Modules ThisModuleDoesNotExist
 param ($Param1)
 '@
-            Setup -File -Path 'AdminReqTest.ps1' -Content @'
+            Set-Content -Path (Join-Path $TestDrive 'AdminReqTest.ps1') -Value @'
 #requires -RunAsAdministrator
 param ($Param1)
 '@
@@ -2215,18 +2213,8 @@ param ($Param1)
     }
 
     Context "File name completion" {
-        BeforeAll {
-            $tempDir = Join-Path -Path $TestDrive -ChildPath "baseDir"
-            $oneSubDir = Join-Path -Path $tempDir -ChildPath "oneSubDir"
-            $oneSubDirPrime = Join-Path -Path $tempDir -ChildPath "prime"
-            $twoSubDir = Join-Path -Path $oneSubDir -ChildPath "twoSubDir"
-            $caseTestPath = Join-Path $testdrive "CaseTest"
-
-            New-Item -Path $tempDir -ItemType Directory -Force > $null
-            New-Item -Path $oneSubDir -ItemType Directory -Force > $null
-            New-Item -Path $oneSubDirPrime -ItemType Directory -Force > $null
-            New-Item -Path $twoSubDir -ItemType Directory -Force > $null
-
+        BeforeDiscovery {
+            $separator = [System.IO.Path]::DirectorySeparatorChar
             $testCases = @(
                 @{ inputStr = "ab"; name = "abc"; localExpected = ".${separator}abc"; oneSubExpected = "..${separator}abc"; twoSubExpected = "..${separator}..${separator}abc" }
                 @{ inputStr = "asaasas"; name = "asaasas!popee"; localExpected = ".${separator}asaasas!popee"; oneSubExpected = "..${separator}asaasas!popee"; twoSubExpected = "..${separator}..${separator}asaasas!popee" }
@@ -2242,11 +2230,26 @@ param ($Param1)
                 @{ inputStr = "bb"; name = "bb,"; localExpected = "& '.${separator}bb,'"; oneSubExpected = "& '..${separator}bb,'"; twoSubExpected = "& '..${separator}..${separator}bb,'" }
                 @{ inputStr = "b"; name = "b;"; localExpected = "& '.${separator}b;'"; oneSubExpected = "& '..${separator}b;'"; twoSubExpected = "& '..${separator}..${separator}b;'" }
             )
+        }
 
+        BeforeAll {
+            $tempDir = Join-Path -Path $TestDrive -ChildPath "baseDir"
+            $oneSubDir = Join-Path -Path $tempDir -ChildPath "oneSubDir"
+            $oneSubDirPrime = Join-Path -Path $tempDir -ChildPath "prime"
+            $twoSubDir = Join-Path -Path $oneSubDir -ChildPath "twoSubDir"
+            $caseTestPath = Join-Path $testdrive "CaseTest"
+
+            New-Item -Path $tempDir -ItemType Directory -Force > $null
+            New-Item -Path $oneSubDir -ItemType Directory -Force > $null
+            New-Item -Path $oneSubDirPrime -ItemType Directory -Force > $null
+            New-Item -Path $twoSubDir -ItemType Directory -Force > $null
+            $caseTestPath = Join-Path $testdrive "CaseTest"
+
+            $fileNames = @("abc", "asaasas!popee", 'bbbbbbbbbb`', "bbbbbbbbb#", "bbbbbbbb{", "bbbbbbb}", "bbbbbb(", "bbbbb)", 'bbbb$', "bbb'", "bb,", "b;")
             try {
                 Push-Location -Path $tempDir
-                foreach ($entry in $testCases) {
-                    New-Item -Path $tempDir -Name $entry.name -ItemType File -ErrorAction SilentlyContinue > $null
+                foreach ($name in $fileNames) {
+                    New-Item -Path $tempDir -Name $name -ItemType File -ErrorAction SilentlyContinue > $null
                 }
             } finally {
                 Pop-Location
@@ -2521,7 +2524,7 @@ param ($Param1)
     }
 
     Context "Cmdlet name completion" {
-        BeforeAll {
+        BeforeDiscovery {
             $testCases = @(
                 @{ inputStr = "get-ch*item"; expected = "Get-ChildItem" }
                 @{ inputStr = "set-alia?"; expected = "Set-Alias" }
@@ -2551,7 +2554,7 @@ param ($Param1)
     }
 
     Context "Miscellaneous completion tests" {
-        BeforeAll {
+        BeforeDiscovery {
             $testCases = @(
                 @{ inputStr = "get-childitem -"; expected = "-Path"; setup = $null }
                 @{ inputStr = "get-childitem -Fil"; expected = "-Filter"; setup = $null }
@@ -3246,11 +3249,8 @@ dir -Recurse `
     }
 
     Context "Completion on 'comma', 'redirection' and 'minus' tokens" {
-        BeforeAll {
-            $tempDir = Join-Path -Path $TestDrive -ChildPath "CommaTest"
-            New-Item -Path $tempDir -ItemType Directory -Force > $null
-            New-Item -Path "$tempDir\commaA.txt" -ItemType File -Force > $null
-
+        BeforeDiscovery {
+            $separator = [System.IO.Path]::DirectorySeparatorChar
             $redirectionTestCases = @(
                 @{ inputStr = "gps >";  expected = ".${separator}commaA.txt" }
                 @{ inputStr = "gps >>"; expected = ".${separator}commaA.txt" }
@@ -3259,6 +3259,12 @@ dir -Recurse `
                 @{ inputStr = "gps 2>&1>";   expected = ".${separator}commaA.txt" }
                 @{ inputStr = "gps 2>&1>>";  expected = ".${separator}commaA.txt" }
             )
+        }
+
+        BeforeAll {
+            $tempDir = Join-Path -Path $TestDrive -ChildPath "CommaTest"
+            New-Item -Path $tempDir -ItemType Directory -Force > $null
+            New-Item -Path "$tempDir\commaA.txt" -ItemType File -Force > $null
 
             Push-Location -Path $tempDir
         }
@@ -3315,6 +3321,17 @@ dir -Recurse `
     }
 
     Context "Folder/File path tab completion with special characters" {
+        BeforeDiscovery {
+            $testCases = @(
+                @{ name = 'cd My' }
+                @{ name = 'Get-Help relative path' }
+                @{ name = 'redirect My' }
+                @{ name = 'redirect relative path' }
+                @{ name = 'redirect tempDir My' }
+                @{ name = 'redirect tempDir path' }
+            )
+        }
+
         BeforeAll {
             $tempDir = Join-Path -Path $TestDrive -ChildPath "SpecialChar"
             New-Item -Path $tempDir -ItemType Directory -Force > $null
@@ -3323,14 +3340,14 @@ dir -Recurse `
             New-Item -Path "$tempDir\My [Path]\test.ps1" -ItemType File -Force > $null
             New-Item -Path "$tempDir\)file.txt" -ItemType File -Force > $null
 
-            $testCases = @(
-                @{ inputStr = "cd My"; expected = "'.${separator}My ``[Path``]'" }
-                @{ inputStr = "Get-Help '.\My ``[Path``]'\"; expected = "'.${separator}My ``[Path``]${separator}test.ps1'" }
-                @{ inputStr = "Get-Process >My"; expected = "'.${separator}My ``[Path``]'" }
-                @{ inputStr = "Get-Process >'.\My ``[Path``]\'"; expected = "'.${separator}My ``[Path``]${separator}test.ps1'" }
-                @{ inputStr = "Get-Process >${tempDir}\My"; expected = "'${tempDir}${separator}My ``[Path``]'" }
-                @{ inputStr = "Get-Process > '${tempDir}\My ``[Path``]\'"; expected = "'${tempDir}${separator}My ``[Path``]${separator}test.ps1'" }
-            )
+            $caseMap = @{
+                'cd My' = @{ inputStr = "cd My"; expected = "'.${separator}My ``[Path``]'" }
+                'Get-Help relative path' = @{ inputStr = "Get-Help '.\My ``[Path``]'\"; expected = "'.${separator}My ``[Path``]${separator}test.ps1'" }
+                'redirect My' = @{ inputStr = "Get-Process >My"; expected = "'.${separator}My ``[Path``]'" }
+                'redirect relative path' = @{ inputStr = "Get-Process >'.\My ``[Path``]\'"; expected = "'.${separator}My ``[Path``]${separator}test.ps1'" }
+                'redirect tempDir My' = @{ inputStr = "Get-Process >${tempDir}\My"; expected = "'${tempDir}${separator}My ``[Path``]'" }
+                'redirect tempDir path' = @{ inputStr = "Get-Process > '${tempDir}\My ``[Path``]\'"; expected = "'${tempDir}${separator}My ``[Path``]${separator}test.ps1'" }
+            }
 
             Push-Location -Path $tempDir
         }
@@ -3340,12 +3357,12 @@ dir -Recurse `
             Remove-Item -Path $tempDir -Recurse -Force -ErrorAction SilentlyContinue
         }
 
-        It "Complete special relative path '<inputStr>'" -TestCases $testCases {
-            param($inputStr, $expected)
-
-            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+        It "Complete special relative path '<name>'" -TestCases $testCases {
+            param($name)
+            $case = $caseMap[$name]
+            $res = TabExpansion2 -inputScript $case.inputStr -cursorColumn $case.inputStr.Length
             $res.CompletionMatches.Count | Should -BeGreaterThan 0
-            $res.CompletionMatches[0].CompletionText | Should -BeExactly $expected
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly $case.expected
         }
 
         It "Complete file name starting with special char" {
@@ -3357,7 +3374,7 @@ dir -Recurse `
     }
 
     Context "Local tab completion with AST" {
-        BeforeAll {
+        BeforeDiscovery {
             $testCases = @(
                 @{ inputStr = '$p = Get-Process; $p | % ProcessN '; bareWord = 'ProcessN'; expected = 'ProcessName' }
                 @{ inputStr = 'function bar { Get-Ali* }'; bareWord = 'Get-Ali*'; expected = 'Get-Alias' }
@@ -3382,7 +3399,7 @@ dir -Recurse `
     }
 
     Context "No tab completion tests" {
-        BeforeAll {
+        BeforeDiscovery {
             $testCases = @(
                 @{ inputStr = 'function new-' }
                 @{ inputStr = 'filter new-' }
@@ -3406,9 +3423,7 @@ dir -Recurse `
     }
 
     Context "Tab completion error tests" {
-        BeforeAll {
-            $ast = {}.Ast;
-            $tokens = [System.Management.Automation.Language.Token[]]@()
+        BeforeDiscovery {
             $testCases = @(
                 @{ inputStr = {[System.Management.Automation.CommandCompletion]::MapStringInputToParsedInput('$PID.', 7)}; expected = "PSArgumentException" }
                 @{ inputStr = {[System.Management.Automation.CommandCompletion]::CompleteInput($null, $null, $null, $null)}; expected = "PSArgumentNullException" }
@@ -3421,6 +3436,11 @@ dir -Recurse `
                 @{ inputStr = {[System.Management.Automation.CommandCompletion]::CompleteInput($ast, $tokens, $null, $null, $null)}; expected = "PSArgumentNullException" }
                 @{ inputStr = {[System.Management.Automation.CommandCompletion]::CompleteInput($ast, $tokens, $ast.Extent.EndScriptPosition, $null, $null)}; expected = "PSArgumentNullException" }
             )
+        }
+
+        BeforeAll {
+            $ast = {}.Ast;
+            $tokens = [System.Management.Automation.Language.Token[]]@()
         }
 
         It "Input '<inputStr>' should throw in tab completion" -TestCases $testCases {
@@ -3438,7 +3458,7 @@ dir -Recurse `
     }
 
     Context "DSC tab completion tests" {
-        BeforeAll {
+        BeforeDiscovery {
             $testCases = @(
                 @{ inputStr = 'Configura'; expected = 'Configuration' }
                 @{ inputStr = '$extension = New-Object [System.Collections.Generic.List[string]]; $extension.wh'; expected = "Where(" }
@@ -3484,7 +3504,7 @@ dir -Recurse `
     }
 
     Context "CIM cmdlet completion tests" {
-        BeforeAll {
+        BeforeDiscovery {
             $testCases = @(
                 @{ inputStr = "Invoke-CimMethod -ClassName Win32_Process -MethodName Crea"; expected = "Create" }
                 @{ inputStr = "Get-CimInstance -ClassName Win32_Process | Invoke-CimMethod -MethodName AttachDeb"; expected = "AttachDebugger" }
@@ -3735,15 +3755,6 @@ dir -Recurse `
 '@
             }
             @{
-                Intent = 'Complete help keyword EXTERNALHELP argument'
-                Expected = Join-Path $TESTDRIVE "pwsh.xml"
-                TestString = @"
-<#
-.EXTERNALHELP $TESTDRIVE\pwsh.^
-#>
-"@
-            }
-            @{
                 Intent = 'Complete help keyword PARAMETER argument for script'
                 Expected = 'Param1'
                 TestString = @'
@@ -3864,6 +3875,18 @@ function MyFunction ($param1, $param2)
             $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
             $res.CompletionMatches.CompletionText | Should -BeExactly $Expected
         }
+
+        It 'Complete help keyword EXTERNALHELP argument' {
+            $Expected = Join-Path $TESTDRIVE "pwsh.xml"
+            $TestString = @"
+<#
+.EXTERNALHELP $TESTDRIVE\pwsh.^
+#>
+"@
+            $CursorIndex = $TestString.IndexOf('^')
+            $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
+            $res.CompletionMatches.CompletionText | Should -BeExactly $Expected
+        }
     }
 
     It 'Should complete module specification keys in using module statement' {
@@ -3892,6 +3915,20 @@ Describe "TabCompletion elevated tests" -Tags CI, RequireAdminOnWindows {
 }
 
 Describe "Tab completion tests with remote Runspace" -Tags Feature,RequireAdminOnWindows {
+    BeforeDiscovery {
+        $testCases = @(
+            @{ inputStr = 'Get-Proc'; expected = 'Get-Process' }
+            @{ inputStr = 'Get-Process | % ProcessN'; expected = 'ProcessName' }
+            @{ inputStr = 'Get-ChildItem alias: | % { $_.Defini'; expected = 'Definition' }
+        )
+
+        $testCasesWithAst = @(
+            @{ inputStr = '$p = Get-Process; $p | % ProcessN '; bareWord = 'ProcessN'; expected = 'ProcessName' }
+            @{ inputStr = 'function bar { Get-Ali* }'; bareWord = 'Get-Ali*'; expected = 'Get-Alias' }
+            @{ inputStr = 'function baz ([string]$version, [consolecolor]$name){} baz version bl'; bareWord = 'bl'; expected = 'Black' }
+        )
+    }
+
     BeforeAll {
         $skipTest = -not $IsWindows
         $pendingTest = $IsWindows -and (Test-IsWinWow64)
@@ -3900,18 +3937,6 @@ Describe "Tab completion tests with remote Runspace" -Tags Feature,RequireAdminO
             $session = New-RemoteSession
             $powershell = [powershell]::Create()
             $powershell.Runspace = $session.Runspace
-
-            $testCases = @(
-                @{ inputStr = 'Get-Proc'; expected = 'Get-Process' }
-                @{ inputStr = 'Get-Process | % ProcessN'; expected = 'ProcessName' }
-                @{ inputStr = 'Get-ChildItem alias: | % { $_.Defini'; expected = 'Definition' }
-            )
-
-            $testCasesWithAst = @(
-                @{ inputStr = '$p = Get-Process; $p | % ProcessN '; bareWord = 'ProcessN'; expected = 'ProcessName' }
-                @{ inputStr = 'function bar { Get-Ali* }'; bareWord = 'Get-Ali*'; expected = 'Get-Alias' }
-                @{ inputStr = 'function baz ([string]$version, [consolecolor]$name){} baz version bl'; bareWord = 'bl'; expected = 'Black' }
-            )
         } else {
             $defaultParameterValues = $PSDefaultParameterValues.Clone()
 

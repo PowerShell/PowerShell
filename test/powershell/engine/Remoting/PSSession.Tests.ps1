@@ -61,23 +61,25 @@ Describe "SkipCACheck and SkipCNCheck PSSession options are required for New-PSS
         $global:PSDefaultParameterValues = $originalDefaultParameterValues
     }
 
-    $testCases = @(
-        @{
-            Name = 'Verifies expected error when session option is missing'
-            ScriptBlock = { New-PSSession -cn localhost -Credential $cred -Authentication Basic -UseSSL }
-            ExpectedErrorCode = 825
-        },
-        @{
-            Name = 'Verifies expected error when SkipCACheck option is missing'
-            ScriptBlock = { New-PSSession -cn localhost -Credential $cred -Authentication Basic -UseSSL -SessionOption $soSkipCN }
-            ExpectedErrorCode = 825
-        },
-        @{
-            Name = 'Verifies expected error when SkipCNCheck option is missing'
-            ScriptBlock = { New-PSSession -cn localhost -Credential $cred -Authentication Basic -UseSSL -SessionOption $soSkipCA }
-            ExpectedErrorCode = 825
-        }
-    )
+    BeforeDiscovery {
+        $testCases = @(
+            @{
+                Name = 'Verifies expected error when session option is missing'
+                ScriptBlock = { New-PSSession -cn localhost -Credential $cred -Authentication Basic -UseSSL }
+                ExpectedErrorCode = 825
+            },
+            @{
+                Name = 'Verifies expected error when SkipCACheck option is missing'
+                ScriptBlock = { New-PSSession -cn localhost -Credential $cred -Authentication Basic -UseSSL -SessionOption $soSkipCN }
+                ExpectedErrorCode = 825
+            },
+            @{
+                Name = 'Verifies expected error when SkipCNCheck option is missing'
+                ScriptBlock = { New-PSSession -cn localhost -Credential $cred -Authentication Basic -UseSSL -SessionOption $soSkipCA }
+                ExpectedErrorCode = 825
+            }
+        )
+    }
 
     It "<Name>" -TestCases $testCases {
         param ($scriptBlock, $expectedErrorCode)

@@ -20,6 +20,27 @@ try
 
     Describe "Local script debugger is disabled in system lock down mode" -Tags 'CI','RequireAdminOnWindows' {
 
+        BeforeDiscovery {
+            $TestCasesDisableDebugger = @(
+                @{
+                    testName = 'Verifies that Set-PSBreakpoint Line is disabled on locked down system'
+                    scriptText = 'Set-PSBreakpoint -Script {0} -Line 1' -f $scriptFilePath
+                },
+                @{
+                    testName = 'Verifies that Set-PSBreakpoint Statement is disabled on locked down system'
+                    scriptText = 'Set-PSBreakpoint -Script {0} -Line 1 -Column 1' -f $scriptFilePath
+                },
+                @{
+                    testName = 'Verifies that Set-PSBreakpoint Command is disabled on locked down system'
+                    scriptText = 'Set-PSBreakpoint -Command {0}' -f $scriptFilePath
+                },
+                @{
+                    testName = 'Verifies that Set-PSBreakpoint Variable is disabled on locked down system'
+                    scriptText = 'Set-PSBreakpoint -Variable HelloVar'
+                }
+            )
+        }
+
         BeforeAll {
 
             # Debugger test type definition
@@ -68,25 +89,6 @@ try
             # Define debugger test type
             Add-Type -TypeDefinition $debuggerTestTypeDef
 
-            # Test cases
-            $TestCasesDisableDebugger = @(
-                @{
-                    testName = 'Verifies that Set-PSBreakpoint Line is disabled on locked down system'
-                    scriptText = 'Set-PSBreakpoint -Script {0} -Line 1' -f $scriptFilePath
-                },
-                @{
-                    testName = 'Verifies that Set-PSBreakpoint Statement is disabled on locked down system'
-                    scriptText = 'Set-PSBreakpoint -Script {0} -Line 1 -Column 1' -f $scriptFilePath
-                },
-                @{
-                    testName = 'Verifies that Set-PSBreakpoint Command is disabled on locked down system'
-                    scriptText = 'Set-PSBreakpoint -Command {0}' -f $scriptFilePath
-                },
-                @{
-                    testName = 'Verifies that Set-PSBreakpoint Variable is disabled on locked down system'
-                    scriptText = 'Set-PSBreakpoint -Variable HelloVar'
-                }
-            )
         }
 
         AfterAll {

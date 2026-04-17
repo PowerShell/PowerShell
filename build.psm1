@@ -1149,7 +1149,7 @@ function Restore-PSPester
         [ValidateNotNullOrEmpty()]
         [string] $Destination = ([IO.Path]::Combine((Split-Path (Get-PSOptions -DefaultToNew).Output), "Modules"))
     )
-    Save-Module -Name Pester -Path $Destination -Repository PSGallery -MaximumVersion 4.99
+    Save-Module -Name Pester -Path $Destination -Repository PSGallery -RequiredVersion 5.7.1
 }
 
 function Compress-TestContent {
@@ -1737,7 +1737,7 @@ function Start-PSPester {
         Switch-PSNugetConfig -Source Public
     }
 
-    if (-not (Get-Module -ListAvailable -Name $Pester -ErrorAction SilentlyContinue | Where-Object { $_.Version -ge "4.2" } ))
+    if (-not (Get-Module -ListAvailable -Name $Pester -ErrorAction SilentlyContinue | Where-Object { $_.Version -ge "5.0" } ))
     {
         Restore-PSPester
     }
@@ -1838,25 +1838,32 @@ function Start-PSPester {
         }
     }
 
-    $command += "Invoke-Pester "
+    $command += "`$pesterConfig = [PesterConfiguration]@{"
+    $command += " Run = @{ Path = @('" + ($Path -join "','") + "') }"
+    $command += "; TestResult = @{ Enabled = `$true; OutputPath = '${OutputFile}'; OutputFormat = '${OutputFormat}' }"
 
-    $command += "-OutputFormat ${OutputFormat} -OutputFile ${OutputFile} "
     if ($ExcludeTag -and ($ExcludeTag -ne "")) {
-        $command += "-ExcludeTag @('" + (${ExcludeTag} -join "','") + "') "
+        $command += "; Filter = @{ ExcludeTag = @('" + (${ExcludeTag} -join "','") + "')"
+        if ($Tag) {
+            $command += "; Tag = @('" + (${Tag} -join "','") + "')"
+        }
+        $command += " }"
     }
-    if ($Tag) {
-        $command += "-Tag @('" + (${Tag} -join "','") + "') "
+    elseif ($Tag) {
+        $command += "; Filter = @{ Tag = @('" + (${Tag} -join "','") + "') }"
     }
+
     # sometimes we need to eliminate Pester output, especially when we're
     # doing a daily build as the log file is too large
     if ( $Quiet ) {
-        $command += "-Quiet "
-    }
-    if ( $PassThru ) {
-        $command += "-PassThru "
+        $command += "; Output = @{ Verbosity = 'None' }"
     }
 
-    $command += "'" + ($Path -join "','") + "'"
+    if ( $PassThru ) {
+        $command += "; Run = @{ PassThru = `$true; Path = @('" + ($Path -join "','") + "') }"
+    }
+
+    $command += " }; Invoke-Pester -Configuration `$pesterConfig"
     if ($Unelevate)
     {
         $command += " *> $outputBufferFilePath; '__UNELEVATED_TESTS_THE_END__' >> $outputBufferFilePath"

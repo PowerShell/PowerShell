@@ -39,7 +39,8 @@ Describe "Format-Custom DRT basic functionality" -Tags "CI" {
         }
     }
 
-    Add-Type -TypeDefinition @"
+    BeforeAll {
+        Add-Type -TypeDefinition @"
     public abstract class NamedItem
     {
         public string name;
@@ -70,6 +71,7 @@ Describe "Format-Custom DRT basic functionality" -Tags "CI" {
         public string data2;
     }
 "@
+    }
 
     It "Format-Custom with subobject should work" {
         $expectResult1 = "this is the name"
@@ -467,7 +469,11 @@ SelectScriptBlock
         $ps.Streams.Error | Should -BeNullOrEmpty
     }
 
-    Context 'ExcludeProperty parameter' {
+    BeforeDiscovery {
+        $skipExcludeProperty = $null -eq (Get-Command Format-Custom).Parameters['ExcludeProperty']
+    }
+
+    Context 'ExcludeProperty parameter' -Skip:$skipExcludeProperty {
         It 'Should exclude specified properties' {
             $obj = [pscustomobject]@{ Name = 'Test'; Age = 30; City = 'Seattle' }
             $result = $obj | Format-Custom -ExcludeProperty Age | Out-String

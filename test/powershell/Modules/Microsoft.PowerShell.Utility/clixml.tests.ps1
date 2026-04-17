@@ -20,21 +20,6 @@ Describe "CliXml test" -Tags "CI" {
         New-Item -Path $subFilePath -ItemType Directory | Out-Null
         Push-Location $testFilePath
 
-        class TestData
-        {
-            [string] $testName
-            [object] $inputObject
-            [string] $expectedError
-            [string] $testFile
-
-            TestData($name, $file, $inputObj, $errorId)
-            {
-                $this.testName = $name
-                $this.inputObject = $inputObj
-                $this.expectedError = $errorId
-                $this.testFile = $file
-            }
-        }
     }
 
     AfterAll {
@@ -46,23 +31,23 @@ Describe "CliXml test" -Tags "CI" {
             $gpsList = Get-Process pwsh
             $gps = $gpsList | Select-Object -First 1
             $filePath = Join-Path $subFilePath 'gps.xml'
+        }
 
-            $testData = @()
-            $testData += [TestData]::new("with path as Null", [NullString]::Value, $gps, "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.ExportClixmlCommand")
-            $testData += [TestData]::new("with path as Empty string", "", $gps, "ParameterArgumentValidationErrorEmptyStringNotAllowed,Microsoft.PowerShell.Commands.ExportClixmlCommand")
-            $testData += [TestData]::new("with path as non filesystem provider", "env:\", $gps, "ReadWriteFileNotFileSystemProvider,Microsoft.PowerShell.Commands.ExportClixmlCommand")
+        BeforeDiscovery {
+            $testData = @(
+                @{ testName = "with path as Null"; testFile = $null; expectedError = "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.ExportClixmlCommand" }
+                @{ testName = "with path as Empty string"; testFile = ""; expectedError = "ParameterArgumentValidationErrorEmptyStringNotAllowed,Microsoft.PowerShell.Commands.ExportClixmlCommand" }
+                @{ testName = "with path as non filesystem provider"; testFile = "env:\"; expectedError = "ReadWriteFileNotFileSystemProvider,Microsoft.PowerShell.Commands.ExportClixmlCommand" }
+            )
         }
 
         AfterEach {
             Remove-Item $filePath -Force -ErrorAction SilentlyContinue
         }
 
-        $testData | ForEach-Object {
-
-            It "$($_.testName)" {
-                $test = $_
-                { Export-Clixml -Depth 1 -LiteralPath $test.testFile -InputObject $test.inputObject -Force } | Should -Throw -ErrorId $test.expectedError
-            }
+        It "<testName>" -TestCases $testData {
+            param($testName, $testFile, $expectedError)
+            { Export-Clixml -Depth 1 -LiteralPath $testFile -InputObject $gps -Force } | Should -Throw -ErrorId $expectedError
         }
 
         It "can be created with literal path" {
@@ -123,20 +108,19 @@ Describe "CliXml test" -Tags "CI" {
             $gpsList = Get-Process pwsh
             $gps = $gpsList | Select-Object -First 1
             $filePath = Join-Path $subFilePath 'gps.xml'
-
-            $testData = @()
-            $testData += [TestData]::new("with path as Null", [NullString]::Value, $null, "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.ImportClixmlCommand")
-            $testData += [TestData]::new("with path as Empty string", "", $null, "ParameterArgumentValidationErrorEmptyStringNotAllowed,Microsoft.PowerShell.Commands.ImportClixmlCommand")
-            $testData += [TestData]::new("with path as non filesystem provider", "env:\", $null, "ReadWriteFileNotFileSystemProvider,Microsoft.PowerShell.Commands.ImportClixmlCommand")
         }
 
-        $testData | ForEach-Object {
+        BeforeDiscovery {
+            $testData = @(
+                @{ testName = "with path as Null"; testFile = $null; expectedError = "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.ImportClixmlCommand" }
+                @{ testName = "with path as Empty string"; testFile = ""; expectedError = "ParameterArgumentValidationErrorEmptyStringNotAllowed,Microsoft.PowerShell.Commands.ImportClixmlCommand" }
+                @{ testName = "with path as non filesystem provider"; testFile = "env:\"; expectedError = "ReadWriteFileNotFileSystemProvider,Microsoft.PowerShell.Commands.ImportClixmlCommand" }
+            )
+        }
 
-            It "$($_.testName)" {
-                $test = $_
-
-                { Import-Clixml -LiteralPath $test.testFile } | Should -Throw -ErrorId $test.expectedError
-            }
+        It "<testName>" -TestCases $testData {
+            param($testName, $testFile, $expectedError)
+            { Import-Clixml -LiteralPath $testFile } | Should -Throw -ErrorId $expectedError
         }
 
         It "can import from a literal path" {

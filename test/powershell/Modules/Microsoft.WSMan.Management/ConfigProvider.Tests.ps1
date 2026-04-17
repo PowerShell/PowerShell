@@ -1,52 +1,67 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingConvertToSecureStringWithPlainText', '')]
-param()
+BeforeDiscovery {
+    # Detect WinRM plugin availability for skipping plugin-dependent tests
+    $skipWinRM = $true
+    if ($IsWindows) {
+        try {
+            $testXml = [xml](winrm g winrm/config/plugin?name=microsoft.powershell -format:xml 2>$null)
+            if ($null -ne $testXml -and $null -ne $testXml.PlugInConfiguration) {
+                $skipWinRM = $false
+            }
+        } catch {
+            $skipWinRM = $true
+        }
+    }
+}
 
-Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
+Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows -Skip:(!$IsWindows) {
     BeforeAll {
-        #skip all tests on non-windows platform
-        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-        $PSDefaultParameterValues["it:skip"] = !$IsWindows
-
         if ($IsWindows) {
             $badCredentialError = 1326
-            $pluginXml = [xml](winrm g winrm/config/plugin?name=microsoft.powershell -format:xml)
-            $pluginPath = "WSMan:\localhost\Plugin\microsoft.powershell"
-            $testPluginXml = [xml]($pluginXml.OuterXml)
-            $testPluginXml.PlugInConfiguration.Name = "TestPlugin"
-            $testPluginXml.PlugInConfiguration.RemoveAttribute("xml:lang")
-            $testPluginXml.PlugInConfiguration.Resources.Resource.ResourceUri = "http://schemas.microsoft.com/powershell/TestPlugin"
-            $testPluginXml.PlugInConfiguration.Resources.Resource.Security.Uri = "http://schemas.microsoft.com/powershell/TestPlugin"
-            Set-Content $TestDrive\plugin.xml -Value $testPluginXml.OuterXml
-            $null = winrm c winrm/config/plugin?Name=TestPlugin -file:$TestDrive\plugin.xml
-            $testPluginPath = "WSMan:\localhost\Plugin\TestPlugin"
-            $testUser = (Get-Random)
-            $testPass = "Secret123!"
-            $null = net user $testUser $testPass /add
+            $pluginXml = $null
+            try {
+                $pluginXml = [xml](winrm g winrm/config/plugin?name=microsoft.powershell -format:xml 2>$null)
+            } catch {
+                $pluginXml = $null
+            }
+
+            if ($null -ne $pluginXml -and $null -ne $pluginXml.PlugInConfiguration) {
+                $pluginPath = "WSMan:\localhost\Plugin\microsoft.powershell"
+                $testPluginXml = [xml]($pluginXml.OuterXml)
+                $testPluginXml.PlugInConfiguration.Name = "TestPlugin"
+                $testPluginXml.PlugInConfiguration.RemoveAttribute("xml:lang")
+                $testPluginXml.PlugInConfiguration.Resources.Resource.ResourceUri = "http://schemas.microsoft.com/powershell/TestPlugin"
+                $testPluginXml.PlugInConfiguration.Resources.Resource.Security.Uri = "http://schemas.microsoft.com/powershell/TestPlugin"
+                Set-Content $TestDrive\plugin.xml -Value $testPluginXml.OuterXml
+                $null = winrm c winrm/config/plugin?Name=TestPlugin -file:$TestDrive\plugin.xml 2>$null
+                $testPluginPath = "WSMan:\localhost\Plugin\TestPlugin"
+                $testUser = (Get-Random)
+                $testPass = "Secret123!"
+                $null = net user $testUser $testPass /add 2>$null
+            }
+        }
+
+        Function Test-Plugin($plugin, $expectedMissingProperties, $expectedMissingAttributes) {
+            $plugin.PSPath | Should -Exist
+            $testPluginXml = [xml](winrm g winrm/config/plugin?name=$($plugin.Name) -format:xml)
+            $pluginProperties = Get-ChildItem $plugin.PSPath
+            $xmlElementCount = ($testPluginXml.PluginConfiguration | Get-Member -Type Properties).Count + $expectedMissingProperties.Count - $expectedMissingAttributes.Count
+            $pluginProperties.Count | Should -BeExactly $xmlElementCount
+            foreach ($pluginProperty in $pluginProperties) {
+                if ($pluginProperty.Type -eq "System.String") {
+                    $pluginProperty.Value | Should -Be $testPluginXml.PluginConfiguration.$($pluginProperty.Name)
+                    (Get-Item "$($plugin.PSPath)\$($pluginProperty.Name)").Value | Should -Be $testPluginXml.PluginConfiguration.$($pluginProperty.Name)
+                }
+            }
         }
     }
 
     AfterAll {
-        $Global:PSDefaultParameterValues = $originalDefaultParameterValues
         if ($IsWindows) {
-            $null = winrm d winrm/config/plugin?Name=TestPlugin
-            $null = net user $testUser /DELETE
-        }
-    }
-
-    Function Test-Plugin($plugin, $expectedMissingProperties, $expectedMissingAttributes) {
-        $plugin.PSPath | Should -Exist
-        $testPluginXml = [xml](winrm g winrm/config/plugin?name=$($plugin.Name) -format:xml)
-        $pluginProperties = Get-ChildItem $plugin.PSPath
-        $xmlElementCount = ($testPluginXml.PluginConfiguration | Get-Member -Type Properties).Count + $expectedMissingProperties.Count - $expectedMissingAttributes.Count
-        $pluginProperties.Count | Should -BeExactly $xmlElementCount
-        foreach ($pluginProperty in $pluginProperties) {
-            if ($pluginProperty.Type -eq "System.String") {
-                $pluginProperty.Value | Should -Be $testPluginXml.PluginConfiguration.$($pluginProperty.Name)
-                (Get-Item "$($plugin.PSPath)\$($pluginProperty.Name)").Value | Should -Be $testPluginXml.PluginConfiguration.$($pluginProperty.Name)
-            }
+            $null = winrm d winrm/config/plugin?Name=TestPlugin 2>$null
+            $null = net user $testUser /DELETE 2>$null
         }
     }
 
@@ -86,7 +101,7 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
         }
     }
 
-    Context "Get-Item tests" {
+    Context "Get-Item tests" -Skip:$skipWinRM {
 
         It "Plugin has correct properties" {
             $plugin = Get-Item $pluginPath
@@ -167,6 +182,7 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
             }
         }
 
+        Context "Set-Item plugin tests" -Skip:$skipWinRM {
         It "Set-Item on plugin RunAsUser should fail for invalid creds" {
             #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Demo/doc/test secret.")]
             $password = ConvertTo-SecureString "My voice is my passport, verify me" -AsPlainText -Force
@@ -280,9 +296,10 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
             param($property, $value)
             { Set-Item "$testPluginPath\Quotas\$property" $value -WarningAction SilentlyContinue } | Should -Throw -ErrorId "System.InvalidOperationException,Microsoft.PowerShell.Commands.SetItemCommand"
         }
+        }
     }
 
-    Context "Clear-Item tests" {
+    Context "Clear-Item tests" -Skip:$skipWinRM {
         It "Clear-Item on <property> should fail" -TestCases @(
             @{property="Filename"},
             @{property="Quotas\IdleTimeoutms"},
@@ -292,7 +309,7 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
         }
     }
 
-    Context "New-Item and Remove-Item tests" {
+    Context "New-Item and Remove-Item tests" -Skip:$skipWinRM {
         It "New-Item and Remove-Item at root should succeed" -TestCases @(
             @{name=$env:computername;expected=$env:computername},
             @{name="${env:computername}\";expected=$env:computername}

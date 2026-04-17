@@ -23,12 +23,8 @@ Describe "UnixFileSystem additions" -Tag "CI" {
     }
 
     Context "Validation of additional properties on file system objects" {
-        BeforeAll {
-            $PSDefaultParameterValues.Add('It:Skip', $IsWindows)
-
-            $testDir  = "${TestDrive}/TestDir"
+        BeforeDiscovery {
             $testFile = "${testDir}/TestFile"
-
             $testCase = @{ Mode = '000';  Perm = '----------'; Item = "${testFile}" },
                         @{ Mode = '111';  Perm = '---x--x--x'; Item = "${testFile}" },
                         @{ Mode = '222';  Perm = '--w--w--w-'; Item = "${testFile}" },
@@ -43,6 +39,13 @@ Describe "UnixFileSystem additions" -Tag "CI" {
                         @{ Mode = '7644'; Perm = '-rwSr-Sr-T'; Item = "${testFile}" },
                         @{ Mode = '4777'; Perm = '-rwsrwxrwx'; Item = "${testFile}" },
                         @{ Mode = '1777'; Perm = 'drwxrwxrwt'; Item = "${testDir}"  }
+        }
+
+        BeforeAll {
+            $PSDefaultParameterValues.Add('It:Skip', $IsWindows)
+
+            $testDir  = "${TestDrive}/TestDir"
+            $testFile = "${testDir}/TestFile"
         }
 
         AfterAll {
@@ -121,11 +124,10 @@ Describe "UnixFileSystem additions" -Tag "CI" {
             $PSDefaultParameterValues.Remove('It:Skip')
         }
 
-        It "Should have correct values in UnixStat property for '<Title>'" -TestCases $testCases {
-            param ( $Title, $expected, $observed )
-
-            $observed | Should -Be $expected
-
+        It "Should have correct values in UnixStat property" {
+            foreach ($tc in $testCases) {
+                $tc.Observed | Should -Be $tc.Expected -Because $tc.Title
+            }
         }
     }
 

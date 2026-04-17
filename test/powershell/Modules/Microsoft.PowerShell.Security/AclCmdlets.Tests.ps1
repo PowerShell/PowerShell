@@ -66,7 +66,7 @@ Describe "Acl cmdlets are available and operate properly" -Tag CI {
         }
 
         It "Set-Acl can set the ACL of a directory" {
-            Setup -d testdir
+            New-Item -Path (Join-Path $TestDrive 'testdir') -ItemType Directory -Force > $null
             $directory = "$TESTDRIVE/testdir"
             $acl = Get-Acl $directory
             $accessRule = [System.Security.AccessControl.FileSystemAccessRule]::New("Everyone","FullControl","ContainerInherit,ObjectInherit","None","Allow")

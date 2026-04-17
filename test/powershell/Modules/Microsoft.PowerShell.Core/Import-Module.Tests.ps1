@@ -1,8 +1,16 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Import-Module" -Tags "CI" {
-    $moduleName = "Microsoft.PowerShell.Security"
+    BeforeDiscovery {
+        $moduleName = "Microsoft.PowerShell.Security"
+        $testDrivePath = if ($TestDrive) { $TestDrive } else { Join-Path ([System.IO.Path]::GetTempPath()) 'PesterTestDrive' }
+        $trailingSepTestCases = @(
+            @{ modulePath = (Get-Module -ListAvailable $moduleName)[0].ModuleBase + [System.IO.Path]::DirectorySeparatorChar; expectedName = $moduleName }
+            @{ modulePath = Join-Path -Path $testDrivePath -ChildPath "Modules\TestModule\"; expectedName = "TestModule" }
+        )
+    }
     BeforeAll {
+        $moduleName = "Microsoft.PowerShell.Security"
         $originalPSModulePath = $env:PSModulePath
         New-Item -ItemType Directory -Path "$testdrive\Modules\TestModule\1.1" -Force > $null
         New-Item -ItemType Directory -Path "$testdrive\Modules\TestModule\2.0" -Force > $null
@@ -31,10 +39,7 @@ Describe "Import-Module" -Tags "CI" {
         (Get-Module -Name $moduleName).Name | Should -BeExactly $moduleName
     }
 
-    It "should be able to load a module with a trailing directory separator: <modulePath>" -TestCases @(
-        @{ modulePath = (Get-Module -ListAvailable $moduleName)[0].ModuleBase + [System.IO.Path]::DirectorySeparatorChar; expectedName = $moduleName },
-        @{ modulePath = Join-Path -Path $TestDrive -ChildPath "\Modules\TestModule\"; expectedName = "TestModule" }
-    ) {
+    It "should be able to load a module with a trailing directory separator: <modulePath>" -TestCases $trailingSepTestCases {
         param( $modulePath, $expectedName )
         { Import-Module -Name $modulePath -ErrorAction Stop } | Should -Not -Throw
         (Get-Module -Name $expectedName).Name | Should -BeExactly $expectedName
@@ -98,12 +103,14 @@ Describe "Import-Module with ScriptsToProcess" -Tags "CI" {
         Remove-Item out.txt -Force -ErrorAction SilentlyContinue
     }
 
-    $testCases = @(
-            @{ TestNameSuffix = 'for top-level module'; ipmoParms =  @{'Name'='.\module1.psd1'}; Expected = '1' }
-            @{ TestNameSuffix = 'for top-level and nested module'; ipmoParms =  @{'Name'='.\module2.psd1'}; Expected = '21' }
-            @{ TestNameSuffix = 'for top-level module when -Version is specified'; ipmoParms =  @{'Name'='.\module1.psd1'; 'Version'='0.0.1'}; Expected = '1' }
-            @{ TestNameSuffix = 'for top-level and nested module when -Version is specified'; ipmoParms =  @{'Name'='.\module2.psd1'; 'Version'='0.0.1'}; Expected = '21' }
-        )
+    BeforeDiscovery {
+        $testCases = @(
+                @{ TestNameSuffix = 'for top-level module'; ipmoParms =  @{'Name'='.\module1.psd1'}; Expected = '1' }
+                @{ TestNameSuffix = 'for top-level and nested module'; ipmoParms =  @{'Name'='.\module2.psd1'}; Expected = '21' }
+                @{ TestNameSuffix = 'for top-level module when -Version is specified'; ipmoParms =  @{'Name'='.\module1.psd1'; 'Version'='0.0.1'}; Expected = '1' }
+                @{ TestNameSuffix = 'for top-level and nested module when -Version is specified'; ipmoParms =  @{'Name'='.\module2.psd1'; 'Version'='0.0.1'}; Expected = '21' }
+            )
+    }
 
     It "Verify ScriptsToProcess are executed <TestNameSuffix>" -TestCases $testCases {
         param($TestNameSuffix,$ipmoParms,$Expected)
