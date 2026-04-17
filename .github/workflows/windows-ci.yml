@@ -60,7 +60,7 @@ jobs:
       packagingChanged: ${{ steps.filter.outputs.packagingChanged }}
     steps:
       - name: checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Change Detection
         id: filter
@@ -75,7 +75,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 1000
       - name: Build
@@ -89,7 +89,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 1000
       - name: Windows Unelevated CI
@@ -107,7 +107,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 1000
       - name: Windows Elevated CI
@@ -125,7 +125,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 1000
       - name: Windows Unelevated Others
@@ -143,7 +143,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 1000
       - name: Windows Elevated Others
@@ -189,6 +189,6 @@ jobs:
       - analyze
       - windows_packaging
     if: always()
-    uses: PowerShell/compliance/.github/workflows/ready-to-merge.yml@v1.0.0
+    uses: PowerShell/compliance/.github/workflows/ready-to-merge.yml@c8b3ad5819ad7078f3e375519b4f8c6232d1cbdf # v1.0.0
     with:
       needs_context: ${{ toJson(needs) }}
