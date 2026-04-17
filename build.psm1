@@ -1838,8 +1838,13 @@ function Start-PSPester {
         }
     }
 
+    $runProps = "Path = @('" + ($Path -join "','") + "')"
+    if ( $PassThru ) {
+        $runProps += "; PassThru = `$true"
+    }
+
     $command += "`$pesterConfig = [PesterConfiguration]@{"
-    $command += " Run = @{ Path = @('" + ($Path -join "','") + "') }"
+    $command += " Run = @{ ${runProps} }"
     $command += "; TestResult = @{ Enabled = `$true; OutputPath = '${OutputFile}'; OutputFormat = '${OutputFormat}' }"
 
     if ($ExcludeTag -and ($ExcludeTag -ne "")) {
@@ -1857,10 +1862,6 @@ function Start-PSPester {
     # doing a daily build as the log file is too large
     if ( $Quiet ) {
         $command += "; Output = @{ Verbosity = 'None' }"
-    }
-
-    if ( $PassThru ) {
-        $command += "; Run = @{ PassThru = `$true; Path = @('" + ($Path -join "','") + "') }"
     }
 
     $command += " }; Invoke-Pester -Configuration `$pesterConfig"
