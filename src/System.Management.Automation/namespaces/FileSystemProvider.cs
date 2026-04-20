@@ -569,7 +569,7 @@ namespace Microsoft.PowerShell.Commands
             if (driveIsFixed)
             {
                 // Since the drive is fixed, ensure the root is valid.
-                validDrive = IsValidFixedDrive(drive.Root);
+                validDrive = SafeDoesPathExist(drive.Root);
             }
 
             if (validDrive)
