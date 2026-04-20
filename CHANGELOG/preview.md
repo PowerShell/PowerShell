@@ -15,7 +15,6 @@
 - Fix `WSManInstance` COM interface with `ResourceURI` (#26692) (Thanks @jborean93!)
 - Refactor the module path construction code to make it more robust and easier to maintain (#26565)
 - Fix checks for local user config file paths (#26269)
-- Add `CodeQL` suppresion for `NativeCommandProcessor` (#26145)
 
 ### General Cmdlet Updates and Fixes
 
