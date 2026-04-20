@@ -37,3 +37,4 @@ powershell:
     validate: "pwsh ./scripts/update-funding.ps1 -Validate"
     export: "pwsh ./scripts/update-funding.ps1 -Export"
     sync: "pwsh ./scripts/update-funding.ps1 -Sync"
+    
