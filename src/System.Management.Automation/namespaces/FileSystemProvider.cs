@@ -908,7 +908,7 @@ namespace Microsoft.PowerShell.Commands
 
                         if (newDrive.DriveType == DriveType.Fixed)
                         {
-                            if (!IsValidFixedDrive(newDrive.RootDirectory.FullName))
+                            if (!SafeDoesPathExist(newDrive.RootDirectory.FullName))
                             {
                                 continue;
                             }
