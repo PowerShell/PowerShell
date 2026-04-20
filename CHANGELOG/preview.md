@@ -10,6 +10,8 @@
 
 ### Engine Updates and Fixes
 
+- Update `MaxVisitCount` and `MaxHashtableKeyCount` if `VisitorSafeValueContext` indicates `SkipLimitCheck` is true
+(#27308)
 - Enable usage in AppContainers (#27305)
 - Delay update notification for one week to ensure all packages become available (#27095)
 - Fix up default value for parameters with the `in` modifier (#26785) (Thanks @jborean93!)
