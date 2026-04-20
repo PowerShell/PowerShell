@@ -1227,7 +1227,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private static bool IsValidFixedDrive(string rootDirectory)
+        private static bool SafeDoesPathExist(string rootDirectory)
         {
             if (Directory.Exists(rootDirectory))
             {
