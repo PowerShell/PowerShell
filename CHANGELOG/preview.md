@@ -10,6 +10,7 @@
 
 ### Engine Updates and Fixes
 
+- Enable usage in AppContainers (#27305)
 - Fix up default value for parameters with the `in` modifier (#26785) (Thanks @jborean93!)
 - Fix `WSManInstance` COM interface with `ResourceURI` (#26692) (Thanks @jborean93!)
 - Refactor the module path construction code to make it more robust and easier to maintain (#26565)
