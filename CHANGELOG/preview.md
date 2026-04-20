@@ -11,7 +11,6 @@
 ### Engine Updates and Fixes
 
 - Fix up default value for parameters with the `in` modifier (#26785) (Thanks @jborean93!)
-- Add `CodeQL` suppressions for NativeCommandProcessor (#26729)
 - Fix `WSManInstance` COM interface with `ResourceURI` (#26692) (Thanks @jborean93!)
 - Refactor the module path construction code to make it more robust and easier to maintain (#26565)
 - Fix checks for local user config file paths (#26269)
@@ -102,6 +101,7 @@
 <li>Enable CA1853: Unnecessary call to <code>Dictionary.ContainsKey(key)</code> (#26106) (Thanks @xtqqczze!)</li>
 <li>Enable CA1860: Avoid using <code>Enumerable.Any()</code> extension method (#26109) (Thanks @xtqqczze!)</li>
 <li>Enable CA1858: Use <code>StartsWith</code> instead of <code>IndexOf</code> (#26107) (Thanks @xtqqczze!)</li>
+<li>Add <code>CodeQL</code> suppressions for <code>NativeCommandProcessor</code> (#26729)</li>
 </ul>
 
 </details>
