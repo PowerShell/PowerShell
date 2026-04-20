@@ -11,6 +11,7 @@
 ### Engine Updates and Fixes
 
 - Enable usage in AppContainers (#27305)
+- Delay update notification for one week to ensure all packages become available (#27095)
 - Fix up default value for parameters with the `in` modifier (#26785) (Thanks @jborean93!)
 - Fix `WSManInstance` COM interface with `ResourceURI` (#26692) (Thanks @jborean93!)
 - Refactor the module path construction code to make it more robust and easier to maintain (#26565)
@@ -18,7 +19,6 @@
 
 ### General Cmdlet Updates and Fixes
 
-- Delay update notification for one week to ensure all packages become available (#27095)
 - Add verbose message to `Get-Service` when properties cannot be returned (#27109) (Thanks @reabr!)
 - Fix `Remove-Item` confirmation message to use provider path instead (#27123) (Thanks @scuzqy!)
 - PSStyle: validate background index against `BackgroundColorMap` (#27106) (Thanks @cuiweixie!)
