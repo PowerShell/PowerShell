@@ -159,21 +159,21 @@ stages:
         Update and merge the changelog for the release.
         This step is required for creating GitHub draft release.
 
-- stage: PublishGitHubReleaseAndNuget
-  displayName: Publish GitHub and Nuget Release
+- stage: PublishGitHubRelease
+  displayName: Publish GitHub
   dependsOn:
     - setReleaseTagAndChangelog
     - UpdateChangeLog
   variables:
     ob_release_environment: ${{ parameters.releaseEnvironment }}
   jobs:
-  - template: /.pipelines/templates/release-githubNuget.yml@self
+  - template: /.pipelines/templates/release-github.yml@self
     parameters:
       skipPublish: ${{ parameters.SkipPublish }}
 
 - stage: PushGitTagAndMakeDraftPublic
   displayName: Push Git Tag and Make Draft Public
-  dependsOn: PublishGitHubReleaseAndNuget
+  dependsOn: PublishGitHubRelease
   jobs:
   - template: /.pipelines/templates/approvalJob.yml@self
     parameters:
@@ -189,6 +189,18 @@ stages:
       jobName: DraftPublic
       instructions: |
         Make the GitHub Release Draft Public
+
+- stage: PublishNugetRelease
+  displayName: Publish Nuget Release
+  dependsOn:
+    - setReleaseTagAndChangelog
+    - UpdateChangeLog
+  variables:
+    ob_release_environment: ${{ parameters.releaseEnvironment }}
+  jobs:
+  - template: /.pipelines/templates/release-nuget.yml@self
+    parameters:
+      skipPublish: ${{ parameters.SkipPublish }}
 
 - stage: BlobPublic
   displayName: Make Blob Public
