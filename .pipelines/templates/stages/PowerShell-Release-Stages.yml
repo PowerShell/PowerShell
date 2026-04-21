@@ -193,7 +193,7 @@ stages:
 - stage: PublishNugetRelease
   displayName: Publish Nuget Release
   dependsOn:
-    - setReleaseTagAndChangelog
+    - PushGitTagAndMakeDraftPublic
     - UpdateChangeLog
   variables:
     ob_release_environment: ${{ parameters.releaseEnvironment }}
