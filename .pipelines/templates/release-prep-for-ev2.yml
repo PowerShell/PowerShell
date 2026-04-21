@@ -23,7 +23,7 @@ stages:
     - group: 'mscodehub-code-read-akv'
     - group: 'packages.microsoft.com'
     - name: ob_sdl_credscan_suppressionsFile
-      value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+      value: $(Build.SourcesDirectory)/PowerShell/.config/suppress.json
     steps:
     - checkout: self ## the global setting on lfs didn't work
       lfs: false
