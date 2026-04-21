@@ -45,7 +45,7 @@ resources:
     ref: refs/heads/main
 
 variables:
-  - template: ./pipelines/templates/variables/PowerShell-Coordinated_Packages-Variables.yml@self
+  - template: /.pipelines/templates/variables/PowerShell-Coordinated_Packages-Variables.yml@self
     parameters:
       InternalSDKBlobURL: ${{ parameters.InternalSDKBlobURL }}
       ReleaseTagVar: ${{ parameters.ReleaseTagVar }}
@@ -61,6 +61,7 @@ extends:
       LinuxHostVersion:
           Network: KS3
       WindowsHostVersion:
+          Version: 2022
           Network: KS3
       incrementalSDLBinaryAnalysis: true
     globalSdl:
@@ -90,7 +91,7 @@ extends:
       tsaOptionsFile: .config\tsaoptions.json
 
     stages:
-    - template: ./pipelines/templates/stages/PowerShell-Coordinated_Packages-Stages.yml@self
+    - template: /.pipelines/templates/stages/PowerShell-Coordinated_Packages-Stages.yml@self
       parameters:
         RUN_WINDOWS: ${{ parameters.RUN_WINDOWS }}
         RUN_TEST_AND_RELEASE: ${{ parameters.RUN_TEST_AND_RELEASE }}
