@@ -2504,7 +2504,8 @@ namespace System.Management.Automation
                 case "Format-Table":
                 case "Format-Wide":
                     {
-                        if (parameterName.Equals("Property", StringComparison.OrdinalIgnoreCase))
+                        if (parameterName.Equals("Property", StringComparison.OrdinalIgnoreCase)
+                         || parameterName.Equals("ExcludeProperty", StringComparison.OrdinalIgnoreCase))
                         {
                             NativeCompletionMemberName(context, result, commandAst, boundArguments?[parameterName]);
                         }

@@ -71,6 +71,12 @@ Describe "Get-Timezone test cases" -Tags "CI" {
         $oneExpectedOffset | Should -BeIn $observedIdList
     }
 
+    It "Call with -ListAvailable:`$false returns current TimeZoneInfo (not list)" {
+        $result = Get-TimeZone -ListAvailable:$false
+        $result | Should -BeOfType TimeZoneInfo
+        $result.Id | Should -Be ([System.TimeZoneInfo]::Local).Id
+    }
+
     It "Call Get-TimeZone using ID param and single item" {
         $selectedTZ = $TimeZonesAvailable[0]
         (Get-TimeZone -Id $selectedTZ.Id).Id | Should -Be $selectedTZ.Id

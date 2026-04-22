@@ -1,0 +1,117 @@
+parameters:
+  runtime: x64
+
+jobs:
+- job: sign_win_${{ parameters.runtime }}
+  displayName: Sign Windows Packages ${{ parameters.runtime }}
+  condition: succeeded()
+  pool:
+    type: windows
+
+  variables:
+    - name: runCodesignValidationInjection
+      value: false
+    - name: ob_artifactBaseName
+      value: drop_windows_package_package_win_${{ parameters.runtime }}
+    - name: nugetMultiFeedWarnLevel
+      value: none
+    - name: NugetSecurityAnalysisWarningLevel
+      value: none
+    - name: skipNugetSecurityAnalysis
+      value: true
+    - group: DotNetPrivateBuildAccess
+    - group: certificate_logical_to_actual
+    - name: ob_outputDirectory
+      value: '$(Build.ArtifactStagingDirectory)\ONEBRANCH_ARTIFACT'
+    - name: ob_sdl_binskim_enabled
+      value: true
+    - name: ob_sdl_tsa_configFile
+      value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+    - name: ob_sdl_credscan_suppressionsFile
+      value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+    - name: Runtime
+      value: ${{ parameters.runtime }}
+    - group: msixTools
+
+  steps:
+  - checkout: self
+    clean: true
+    env:
+      ob_restore_phase: true
+
+  - template: /.pipelines/templates/SetVersionVariables.yml@self
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+      CreateJson: no
+
+  - template: /.pipelines/templates/shouldSign.yml@self
+
+  - template: /.pipelines/templates/cloneToOfficialPath.yml@self
+    parameters:
+      nativePathRoot: '$(Agent.TempDirectory)'
+
+  # Download unsigned packages from the build stage
+  - download: current
+    artifact: drop_windows_package_${{ parameters.runtime }}
+    displayName: Download unsigned packages
+    env:
+      ob_restore_phase: true
+
+  - pwsh: |
+      Write-Verbose -Verbose "Downloaded unsigned artifacts:"
+      Get-ChildItem "$(Pipeline.Workspace)\drop_windows_package_${{ parameters.runtime }}" -Recurse
+    displayName: 'Capture Downloaded Unsigned Artifacts'
+    continueOnError: true
+    env:
+      ob_restore_phase: true
+
+  - template: /.pipelines/templates/install-dotnet.yml@self
+
+  # Import build.psm1 and bootstrap packaging dependencies
+  - pwsh: |
+      $repoRoot = "$env:REPOROOT"
+      Import-Module "$repoRoot\build.psm1"
+      Import-Module "$repoRoot\tools\packaging"
+      Write-Verbose -Verbose "Modules imported successfully"
+    displayName: 'Import modules'
+    env:
+      ob_restore_phase: true
+
+  # Copy all signed packages to output directory
+  - pwsh: |
+      $runtime = '$(Runtime)'
+      Write-Verbose -Verbose "runtime = '$(Runtime)'"
+
+      $packageTypes = switch ($runtime) {
+        'x64' { @('zip', 'msix') }
+        'x86' { @('zip', 'msix') }
+        'arm64' { @('zip', 'msix') }
+        'fxdependent' { 'fxdependent' }
+        'fxdependentWinDesktop' { 'fxdependent-win-desktop' }
+        'minsize' { 'min-size' }
+      }
+
+      if (-not (Test-Path $(ob_outputDirectory))) {
+        New-Item -ItemType Directory -Path $(ob_outputDirectory) -Force
+      }
+
+      if ($packageTypes -contains 'zip' -or $packageTypes -contains 'fxdependent' -or $packageTypes -contains 'min-size' -or $packageTypes -contains 'fxdependent-win-desktop') {
+        $zipPkgNameFilter = "powershell-*.zip"
+        $zipPkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $zipPkgNameFilter -Recurse -File | Select-Object -ExpandProperty FullName
+        Write-Verbose -Verbose "signed zipPkgPath: $zipPkgPath"
+        Copy-Item -Path $zipPkgPath -Destination '$(ob_outputDirectory)' -Force -Verbose
+      }
+
+      if ($packageTypes -contains 'msix') {
+        $msixPkgNameFilter = "PowerShell*.msix"
+        $msixPkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $msixPkgNameFilter -Recurse -File | Select-Object -ExpandProperty FullName
+        Write-Verbose -Verbose "signed msixPkgPath: $msixPkgPath"
+        Copy-Item -Path $msixPkgPath -Destination '$(ob_outputDirectory)' -Force -Verbose
+      }
+    displayName: Copy signed packages to output directory
+
+  - pwsh: |
+      Get-ChildItem -Path $(ob_outputDirectory) -Recurse
+    displayName: 'List signed artifacts'
+    env:
+      ob_restore_phase: true

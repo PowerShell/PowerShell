@@ -251,8 +251,7 @@ namespace System.Management.Automation
         {
             Tuple<Token, Ast> fileConditionTuple;
 
-            var errorStatement = lastAst as ErrorStatementAst;
-            if (errorStatement != null && errorStatement.Flags != null && errorStatement.Kind != null && tokenBeforeCursor != null &&
+            if (lastAst is ErrorStatementAst errorStatement && errorStatement.Flags is not null && errorStatement.Kind is not null && tokenBeforeCursor is not null &&
                 errorStatement.Kind.Kind.Equals(TokenKind.Switch) && errorStatement.Flags.TryGetValue("file", out fileConditionTuple))
             {
                 // Handle "switch -file <tab>"
@@ -267,17 +266,232 @@ namespace System.Management.Automation
                     return false;
                 }
 
-                errorStatement = pipeline.Parent as ErrorStatementAst;
-                if (errorStatement == null || errorStatement.Kind == null || errorStatement.Flags == null)
+                if (pipeline.Parent is not ErrorStatementAst parentErrorStatement || parentErrorStatement.Kind is null || parentErrorStatement.Flags is null)
                 {
                     return false;
                 }
 
-                return (errorStatement.Kind.Kind.Equals(TokenKind.Switch) &&
-                        errorStatement.Flags.TryGetValue("file", out fileConditionTuple) && fileConditionTuple.Item2 == pipeline);
+                return (parentErrorStatement.Kind.Kind.Equals(TokenKind.Switch) &&
+                        parentErrorStatement.Flags.TryGetValue("file", out fileConditionTuple) && fileConditionTuple.Item2 == pipeline);
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Check if we should complete parameter names for switch cases on $PSBoundParameters.Keys
+        /// </summary>
+        private static List<CompletionResult> CompleteAgainstSwitchCaseCondition(CompletionContext completionContext)
+        {
+            var lastAst = completionContext.RelatedAsts.Last();
+
+            PipelineAst conditionPipeline = null;
+            Ast switchAst = null;
+
+            // Check if we're in a switch statement (complete) or error statement (incomplete switch)
+            if (lastAst.Parent is SwitchStatementAst switchStatementAst)
+            {
+                // Verify that the lastAst is one of the clause conditions (not in the body)
+                bool isClauseCondition = switchStatementAst.Clauses.Any(clause => clause.Item1 == lastAst);
+
+                if (!isClauseCondition)
+                {
+                    return null;
+                }
+
+                conditionPipeline = switchStatementAst.Condition as PipelineAst;
+                switchAst = switchStatementAst;
+            }
+            else
+            {
+                // Check for incomplete switch parsed as ErrorStatementAst
+                if (lastAst.Parent is not ErrorStatementAst errorStatementAst || errorStatementAst.Kind is null ||
+                    errorStatementAst.Kind.Kind != TokenKind.Switch)
+                {
+                    return null;
+                }
+
+                // For ErrorStatementAst, the case value is in Bodies, condition is in Conditions
+                bool isInBodies = errorStatementAst.Bodies != null && errorStatementAst.Bodies.Any(body => body == lastAst);
+
+                if (!isInBodies)
+                {
+                    return null;
+                }
+
+                // Get the condition from ErrorStatementAst.Conditions
+                if (errorStatementAst.Conditions != null && errorStatementAst.Conditions.Count > 0)
+                {
+                    conditionPipeline = errorStatementAst.Conditions[0] as PipelineAst;
+                }
+                switchAst = errorStatementAst;
+            }
+
+            if (conditionPipeline == null || conditionPipeline.PipelineElements.Count != 1)
+            {
+                return null;
+            }
+
+            if (conditionPipeline.PipelineElements[0] is not CommandExpressionAst commandExpressionAst)
+            {
+                return null;
+            }
+
+            // Check if the expression is a member access on $PSBoundParameters.Keys
+            if (commandExpressionAst.Expression is not MemberExpressionAst memberExpressionAst)
+            {
+                return null;
+            }
+
+            // Check if the target is $PSBoundParameters
+            if (memberExpressionAst.Expression is not VariableExpressionAst variableExpressionAst ||
+                !variableExpressionAst.VariablePath.UserPath.Equals("PSBoundParameters", StringComparison.OrdinalIgnoreCase))
+            {
+                return null;
+            }
+
+            // Check if the member is "Keys"
+            if (memberExpressionAst.Member is not StringConstantExpressionAst memberNameAst ||
+                !memberNameAst.Value.Equals("Keys", StringComparison.OrdinalIgnoreCase))
+            {
+                return null;
+            }
+
+            // Find the nearest param block by traversing up the AST
+            var paramBlockAst = FindNearestParamBlock(switchAst.Parent);
+
+            if (paramBlockAst == null || paramBlockAst.Parameters.Count == 0)
+            {
+                return null;
+            }
+
+            // Generate completion results from parameter names
+            var wordToComplete = completionContext.WordToComplete ?? string.Empty;
+            return CreateParameterCompletionResults(paramBlockAst, wordToComplete);
+        }
+
+        /// <summary>
+        /// Check if we should complete parameter names for $PSBoundParameters access patterns
+        /// Supports: $PSBoundParameters.ContainsKey('...'), $PSBoundParameters['...'], $PSBoundParameters.Remove('...')
+        /// </summary>
+        private static List<CompletionResult> CompleteAgainstPSBoundParametersAccess(CompletionContext completionContext)
+        {
+            var lastAst = completionContext.RelatedAsts.Last();
+
+            // Must be a string constant
+            if (lastAst is not StringConstantExpressionAst stringAst)
+            {
+                return null;
+            }
+
+            ExpressionAst targetAst = null;
+
+            // Check for method invocation: $PSBoundParameters.ContainsKey('...') or $PSBoundParameters.Remove('...')
+            if (lastAst.Parent is InvokeMemberExpressionAst invokeMemberAst)
+            {
+                if (invokeMemberAst.Member is StringConstantExpressionAst memberName &&
+                    (memberName.Value.Equals("ContainsKey", StringComparison.OrdinalIgnoreCase) ||
+                     memberName.Value.Equals("Remove", StringComparison.OrdinalIgnoreCase)))
+                {
+                    targetAst = invokeMemberAst.Expression;
+                }
+            }
+            // Check for indexer: $PSBoundParameters['...']
+            else if (lastAst.Parent is IndexExpressionAst indexAst)
+            {
+                targetAst = indexAst.Target;
+            }
+
+            if (targetAst is null)
+            {
+                return null;
+            }
+
+            // Check if target is $PSBoundParameters
+            if (targetAst is not VariableExpressionAst variableAst ||
+                !variableAst.VariablePath.UserPath.Equals("PSBoundParameters", StringComparison.OrdinalIgnoreCase))
+            {
+                return null;
+            }
+
+            // Find the nearest param block
+            var paramBlockAst = FindNearestParamBlock(lastAst.Parent);
+
+            if (paramBlockAst == null || paramBlockAst.Parameters.Count == 0)
+            {
+                return null;
+            }
+
+            // Generate completion results from parameter names
+            var wordToComplete = completionContext.WordToComplete ?? string.Empty;
+
+            // Determine quote style based on the string constant type
+            string quoteChar = string.Empty;
+            if (stringAst.StringConstantType == StringConstantType.SingleQuoted)
+            {
+                quoteChar = "'";
+            }
+            else if (stringAst.StringConstantType == StringConstantType.DoubleQuoted)
+            {
+                quoteChar = "\"";
+            }
+
+            return CreateParameterCompletionResults(paramBlockAst, wordToComplete, quoteChar);
+        }
+
+        /// <summary>
+        /// Finds the nearest ParamBlockAst by traversing up the AST hierarchy.
+        /// </summary>
+        /// <param name="startAst">The AST node to start searching from.</param>
+        /// <returns>The nearest ParamBlockAst if found; otherwise, null.</returns>
+        private static ParamBlockAst FindNearestParamBlock(Ast startAst)
+        {
+            Ast current = startAst;
+            while (current != null)
+            {
+                if (current is FunctionDefinitionAst functionDefinitionAst)
+                {
+                    return functionDefinitionAst.Body?.ParamBlock;
+                }
+                else if (current is ScriptBlockAst scriptBlockAst)
+                {
+                    var paramBlock = scriptBlockAst.ParamBlock;
+                    if (paramBlock != null)
+                    {
+                        return paramBlock;
+                    }
+                }
+
+                current = current.Parent;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Creates completion results from parameter names with optional quote wrapping.
+        /// </summary>
+        /// <param name="paramBlockAst">The parameter block containing parameters to complete.</param>
+        /// <param name="wordToComplete">The partial word to match against parameter names.</param>
+        /// <param name="quoteChar">Optional quote character to wrap completion text (empty string for no quotes).</param>
+        /// <returns>A list of completion results, or null if no matches found.</returns>
+        private static List<CompletionResult> CreateParameterCompletionResults(
+            ParamBlockAst paramBlockAst,
+            string wordToComplete,
+            string quoteChar = "")
+        {
+            var result = paramBlockAst.Parameters
+                .Select(parameter => parameter.Name.VariablePath.UserPath)
+                .Where(parameterName => parameterName.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
+                .Select(parameterName =>
+                    new CompletionResult(
+                        quoteChar + parameterName + quoteChar,
+                        parameterName,
+                        CompletionResultType.ParameterValue,
+                        parameterName))
+                .ToList();
+
+            return result.Count > 0 ? result : null;
         }
 
         private static bool CompleteOperator(Token tokenAtCursor, Ast lastAst)
@@ -516,6 +730,13 @@ namespace System.Management.Automation
                         {
                             // Handles quoted string inside index expression like: $PSVersionTable["<Tab>"]
                             completionContext.WordToComplete = (tokenAtCursor as StringToken).Value;
+                            // Check for $PSBoundParameters indexer first
+                            var psBoundResult = CompleteAgainstPSBoundParametersAccess(completionContext);
+                            if (psBoundResult != null && psBoundResult.Count > 0)
+                            {
+                                return psBoundResult;
+                            }
+
                             return CompletionCompleters.CompleteIndexExpression(completionContext, indexExpressionAst.Target);
                         }
 
@@ -1915,6 +2136,21 @@ namespace System.Management.Automation
 
             string strValue = constantString != null ? constantString.Value : expandableString.Value;
 
+            // Check for switch case completion on $PSBoundParameters.Keys
+            completionContext.WordToComplete = strValue;
+            var switchCaseResult = CompleteAgainstSwitchCaseCondition(completionContext);
+            if (switchCaseResult != null && switchCaseResult.Count > 0)
+            {
+                return switchCaseResult;
+            }
+
+            // Check for $PSBoundParameters access patterns (ContainsKey, indexer, Remove)
+            var psBoundResult = CompleteAgainstPSBoundParametersAccess(completionContext);
+            if (psBoundResult != null && psBoundResult.Count > 0)
+            {
+                return psBoundResult;
+            }
+
             bool shouldContinue;
             List<CompletionResult> result = GetResultForEnumPropertyValueOfDSCResource(completionContext, strValue, ref replacementIndex, ref replacementLength, out shouldContinue);
             if (!shouldContinue || (result != null && result.Count > 0))
@@ -2075,6 +2311,20 @@ namespace System.Management.Automation
 
             var tokenAtCursorText = tokenAtCursor.Text;
             completionContext.WordToComplete = tokenAtCursorText;
+
+            // Check for switch case completion on $PSBoundParameters.Keys
+            var switchCaseResult = CompleteAgainstSwitchCaseCondition(completionContext);
+            if (switchCaseResult != null && switchCaseResult.Count > 0)
+            {
+                return switchCaseResult;
+            }
+
+            // Check for $PSBoundParameters access patterns (ContainsKey, indexer, Remove)
+            var psBoundResult = CompleteAgainstPSBoundParametersAccess(completionContext);
+            if (psBoundResult != null && psBoundResult.Count > 0)
+            {
+                return psBoundResult;
+            }
 
             if (lastAst.Parent is BreakStatementAst || lastAst.Parent is ContinueStatementAst)
             {

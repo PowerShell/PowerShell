@@ -45,17 +45,19 @@ namespace Microsoft.PowerShell.Commands
         public abstract PSObject InputObject { get; set; }
 
         /// <summary>
-        /// IncludeTypeInformation : The #TYPE line should be generated. Default is false. Cannot specify with NoTypeInformation.
+        /// IncludeTypeInformation : The #TYPE line should be generated. Default is false.
         /// </summary>
         [Parameter]
         [Alias("ITI")]
         public SwitchParameter IncludeTypeInformation { get; set; }
 
         /// <summary>
-        /// NoTypeInformation : The #TYPE line should not be generated. Default is true. Cannot specify with IncludeTypeInformation.
+        /// Gets or sets a value indicating whether to suppress the #TYPE line.
+        /// This parameter is obsolete and has no effect. It is retained for backward compatibility only.
         /// </summary>
         [Parameter(DontShow = true)]
         [Alias("NTI")]
+        [Obsolete("This parameter is obsolete and has no effect. The default behavior is to not include type information. Use -IncludeTypeInformation to include type information.")]
         public SwitchParameter NoTypeInformation { get; set; } = true;
 
         /// <summary>
@@ -118,18 +120,6 @@ namespace Microsoft.PowerShell.Commands
                 InvalidOperationException exception = new(CsvCommandStrings.CannotSpecifyQuoteFieldsAndUseQuotes);
                 ErrorRecord errorRecord = new(exception, "CannotSpecifyQuoteFieldsAndUseQuotes", ErrorCategory.InvalidData, null);
                 this.ThrowTerminatingError(errorRecord);
-            }
-
-            if (this.MyInvocation.BoundParameters.ContainsKey(nameof(IncludeTypeInformation)) && this.MyInvocation.BoundParameters.ContainsKey(nameof(NoTypeInformation)))
-            {
-                InvalidOperationException exception = new(CsvCommandStrings.CannotSpecifyIncludeTypeInformationAndNoTypeInformation);
-                ErrorRecord errorRecord = new(exception, "CannotSpecifyIncludeTypeInformationAndNoTypeInformation", ErrorCategory.InvalidData, null);
-                this.ThrowTerminatingError(errorRecord);
-            }
-
-            if (this.MyInvocation.BoundParameters.ContainsKey(nameof(IncludeTypeInformation)))
-            {
-                NoTypeInformation = !IncludeTypeInformation;
             }
 
             Delimiter = ImportExportCSVHelper.SetDelimiter(this, ParameterSetName, Delimiter, UseCulture);
@@ -270,6 +260,14 @@ namespace Microsoft.PowerShell.Commands
                 this.ThrowTerminatingError(errorRecord);
             }
 
+            // Validate that Append and NoHeader are not specified together.
+            if (Append && NoHeader)
+            {
+                InvalidOperationException exception = new(CsvCommandStrings.CannotSpecifyAppendAndNoHeader);
+                ErrorRecord errorRecord = new(exception, "CannotSpecifyBothAppendAndNoHeader", ErrorCategory.InvalidData, null);
+                this.ThrowTerminatingError(errorRecord);
+            }
+
             _shouldProcess = ShouldProcess(Path);
             if (!_shouldProcess)
             {
@@ -309,7 +307,7 @@ namespace Microsoft.PowerShell.Commands
                 // write headers (row1: typename + row2: column names)
                 if (!_isActuallyAppending && !NoHeader.IsPresent)
                 {
-                    if (NoTypeInformation == false)
+                    if (IncludeTypeInformation)
                     {
                         WriteCsvLine(ExportCsvHelper.GetTypeString(InputObject));
                     }
@@ -734,7 +732,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (!NoHeader.IsPresent)
                 {
-                    if (NoTypeInformation == false)
+                    if (IncludeTypeInformation)
                     {
                         WriteCsvLine(ExportCsvHelper.GetTypeString(InputObject));
                     }

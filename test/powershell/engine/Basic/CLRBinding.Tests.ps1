@@ -27,6 +27,12 @@ public class TestClass
     public static string StaticWithOptionalExpected() => StaticWithOptional();
     public static string StaticWithOptional([Optional] string value) => value;
 
+    public static int PrimitiveTypeWithInDefault(in int value = default) => value;
+
+    public static Guid ValueTypeWithInDefault(in Guid value = default) => value;
+
+    public static string RefTypeWithInDefault(in string value = default) => value;
+
     public object InstanceWithDefaultExpected() => InstanceWithDefault();
     public object InstanceWithDefault(object value = null) => value;
 
@@ -99,6 +105,21 @@ public class TestClassCstorWithOptional
         $expected = [CLRBindingTests.TestClass]::StaticWithOptionalExpected()
         $actual = [CLRBindingTests.TestClass]::StaticWithOptional()
         $actual | Should -Be $expected
+    }
+
+    It "Binds to static method with primitive type with in modifier and default argument" {
+        $actual = [CLRBindingTests.TestClass]::PrimitiveTypeWithInDefault()
+        $actual | Should -Be 0
+    }
+
+    It "Binds to static method with value type with in modifier and default argument" {
+        $actual = [CLRBindingTests.TestClass]::ValueTypeWithInDefault()
+        $actual | Should -Be ([Guid]::Empty)
+    }
+
+    It "Binds to static method with ref type with in modifier and default argument" {
+        $actual = [CLRBindingTests.TestClass]::RefTypeWithInDefault()
+        $null -eq $actual | Should -BeTrue
     }
 
     It "Binds to instance method with default argument" {
