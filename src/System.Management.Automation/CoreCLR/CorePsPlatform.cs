@@ -439,15 +439,64 @@ namespace System.Management.Automation
             return null;
         }
 
-        internal static bool NonWindowsCreateSymbolicLink(string path, string target)
+        internal static bool NonWindowsCreateSymbolicLink(string path, string target, bool isDirectory, out int errorCode)
         {
-            // Linux doesn't care if target is a directory or not
-            return Unix.NativeMethods.CreateSymLink(path, target) == 0;
+            errorCode = 0;
+
+            try
+            {
+                if (isDirectory)
+                {
+                    Directory.CreateSymbolicLink(path, target);
+                }
+                else
+                {
+                    File.CreateSymbolicLink(path, target);
+                }
+
+                return true;
+            }
+            catch (Exception ex) when (
+                ex is IOException or
+                UnauthorizedAccessException or
+                NotSupportedException or
+                ArgumentException or
+                PathTooLongException)
+            {
+                errorCode = Marshal.GetLastPInvokeError();
+                if (errorCode == 0)
+                {
+                    errorCode = ex.HResult & 0xFFFF;
+                }
+
+                return false;
+            }
         }
 
-        internal static bool NonWindowsCreateHardLink(string path, string strTargetPath)
+        internal static bool NonWindowsCreateHardLink(string path, string strTargetPath, out int errorCode)
         {
-            return Unix.NativeMethods.CreateHardLink(path, strTargetPath) == 0;
+            errorCode = 0;
+
+            try
+            {
+                File.CreateHardLink(path, strTargetPath);
+                return true;
+            }
+            catch (Exception ex) when (
+                ex is IOException or
+                UnauthorizedAccessException or
+                NotSupportedException or
+                ArgumentException or
+                PathTooLongException)
+            {
+                errorCode = Marshal.GetLastPInvokeError();
+                if (errorCode == 0)
+                {
+                    errorCode = ex.HResult & 0xFFFF;
+                }
+
+                return false;
+            }
         }
 
         internal static unsafe bool NonWindowsSetDate(DateTime dateToUse)
@@ -1015,12 +1064,6 @@ namespace System.Management.Automation
 
                 [LibraryImport(psLib, SetLastError = true)]
                 internal static unsafe partial int SetDate(UnixTm* tm);
-
-                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
-                internal static partial int CreateSymLink(string filePath, string target);
-
-                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
-                internal static partial int CreateHardLink(string filePath, string target);
 
                 [LibraryImport(psLib)]
                 [return: MarshalAs(UnmanagedType.LPStr)]
