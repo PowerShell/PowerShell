@@ -177,15 +177,16 @@ namespace Microsoft.PowerShell.Telemetry
         /// </summary>
         static ApplicationInsightsTelemetry()
         {
-#if UNIX
-            bool osAllowsDataCollection = true;
-#else
-            // PowerShell requires the 'Enhanced' level or above to collect telemetry.
-            bool osAllowsDataCollection = WindowsDataCollectionSetting.CanCollectDiagnostics(PlatformDataCollectionLevel.Enhanced);
-#endif
-            CanSendTelemetry = osAllowsDataCollection
-                && !Utils.GetEnvironmentVariableAsBool(name: _telemetryOptoutEnvVar, defaultValue: false)
+            CanSendTelemetry = !Utils.GetEnvironmentVariableAsBool(name: _telemetryOptoutEnvVar, defaultValue: false)
                 && Platform.TryDeriveFromCache("telemetry.uuid", out s_uuidPath);
+
+#if !UNIX
+            if (CanSendTelemetry)
+            {
+                // Respect the diagnostics and feedback setting in Windows.
+                CanSendTelemetry = WindowsDataCollectionSetting.CanCollectDiagnostics(PlatformDataCollectionLevel.Enhanced);
+            }
+#endif
 
             if (!CanSendTelemetry)
             {

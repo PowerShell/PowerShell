@@ -82,27 +82,45 @@ internal static partial class WindowsDataCollectionSetting
     internal static bool CanCollectDiagnostics(PlatformDataCollectionLevel level)
     {
         const string ClassName = "Windows.System.Profile.PlatformDiagnosticsAndUsageDataSettings";
-        Marshal.ThrowExceptionForHR(
-            WindowsCreateString(ClassName, (uint)ClassName.Length, out IntPtr hstring));
+
+        // When initializing WinRT on the calling thread, use the multi-threaded apartment (MTA).
+        // This is to cover the case where PowerShell gets used in a thread-pool thread.
+        // See the doc at https://learn.microsoft.com/windows/win32/api/roapi/ne-roapi-ro_init_type
+        const int RO_INIT_MULTITHREADED = 1;
+
+        // Return values for 'RoInitialize':
+        //  - S_OK (0)            - we successfully initialized; must call 'RoUninitialize'.
+        //  - S_FALSE (1)         - already initialized with the same apartment type; must still call 'RoUninitialize'.
+        //  - RPC_E_CHANGED_MODE  - already initialized with a different apartment type; WinRT still works, do NOT call 'RoUninitialize'.
+        const int RPC_E_CHANGED_MODE = unchecked((int)0x80010106);
+
+        int initHr = -1;
+        nint hstring = default;
+        nint factoryPtr = default;
 
         try
         {
+            // Initialize WinRT on the calling thread. 'RoGetActivationFactory' requires it.
+            initHr = RoInitialize(RO_INIT_MULTITHREADED);
+            if (initHr < 0 && initHr != RPC_E_CHANGED_MODE)
+            {
+                // The call to initialize the Windows Runtime failed.
+                // Throw an exception with the HRESULT error code to provide more context on the failure.
+                Marshal.ThrowExceptionForHR(initHr);
+            }
+
+            Marshal.ThrowExceptionForHR(
+                WindowsCreateString(ClassName, (uint)ClassName.Length, out hstring));
+
             Guid iid = new("B6E24C1B-7B1C-4B32-8C62-A66597CE723A");
             Marshal.ThrowExceptionForHR(
-                RoGetActivationFactory(hstring, ref iid, out IntPtr factoryPtr));
+                RoGetActivationFactory(hstring, ref iid, out factoryPtr));
 
-            try
-            {
-                var comWrappers = new StrategyBasedComWrappers();
-                var comObject = comWrappers.GetOrCreateObjectForComInstance(factoryPtr, CreateObjectFlags.None);
-                var platformSetting = (IPlatformDiagnosticsAndUsageDataSettingsStatics)comObject;
+            var comWrappers = new StrategyBasedComWrappers();
+            var comObject = comWrappers.GetOrCreateObjectForComInstance(factoryPtr, CreateObjectFlags.None);
+            var platformSetting = (IPlatformDiagnosticsAndUsageDataSettingsStatics)comObject;
 
-                return platformSetting.CanCollectDiagnostics(level) != 0;
-            }
-            finally
-            {
-                Marshal.Release(factoryPtr);
-            }
+            return platformSetting.CanCollectDiagnostics(level) != 0;
         }
         catch (Exception ex)
         {
@@ -121,7 +139,22 @@ internal static partial class WindowsDataCollectionSetting
         }
         finally
         {
-            _ = WindowsDeleteString(hstring);
+            if (factoryPtr != default)
+            {
+                Marshal.Release(factoryPtr);
+            }
+
+            if (hstring != default)
+            {
+                _ = WindowsDeleteString(hstring);
+            }
+
+            // Per COM documentation: Each successful call to 'RoInitialize' (including S_FALSE)
+            // must be balanced by a corresponding call to 'RoUninitialize'.
+            if (initHr >= 0)
+            {
+                RoUninitialize();
+            }
         }
     }
 
@@ -130,15 +163,23 @@ internal static partial class WindowsDataCollectionSetting
     private static partial int WindowsCreateString(
         string sourceString,
         uint length,
-        out IntPtr hstring);
+        out nint hstring);
 
     [LibraryImport("api-ms-win-core-winrt-string-l1-1-0.dll")]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
-    private static partial int WindowsDeleteString(IntPtr hstring);
+    private static partial int WindowsDeleteString(nint hstring);
 
     [LibraryImport("api-ms-win-core-winrt-l1-1-0.dll")]
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
-    private static partial int RoGetActivationFactory(IntPtr activatableClassId, ref Guid iid, out IntPtr factory);
+    private static partial int RoGetActivationFactory(nint activatableClassId, ref Guid iid, out nint factory);
+
+    [LibraryImport("api-ms-win-core-winrt-l1-1-0.dll")]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    private static partial int RoInitialize(int initType);
+
+    [LibraryImport("api-ms-win-core-winrt-l1-1-0.dll")]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    private static partial void RoUninitialize();
 }
 
 #endif
