@@ -805,7 +805,37 @@ namespace System.Management.Automation
             // This is a helper that attempts to map errno into a PowerShell ErrorCategory
             internal static ErrorCategory GetErrorCategory(int errno)
             {
-                return (ErrorCategory)Unix.NativeMethods.GetErrorCategory(errno);
+                return errno switch
+                {
+                    // EPERM, EACCES
+                    1 or 13 => ErrorCategory.PermissionDenied,
+
+                    // ENOENT
+                    2 => ErrorCategory.ObjectNotFound,
+
+                    // EEXIST
+                    17 => ErrorCategory.ResourceExists,
+
+                    // ENOTDIR, EISDIR
+                    20 or 21 => ErrorCategory.InvalidArgument,
+
+                    // ENOSPC
+                    28 => ErrorCategory.ResourceBusy,
+
+                    // EROFS
+                    30 => ErrorCategory.PermissionDenied,
+
+                    // EINVAL
+                    22 => ErrorCategory.InvalidArgument,
+
+                    // EMFILE, ENFILE
+                    24 or 23 => ErrorCategory.OpenError,
+
+                    // ENOTEMPTY
+                    39 => ErrorCategory.WriteError,
+
+                    _ => ErrorCategory.NotSpecified,
+                };
             }
 
             /// <summary>Determine if the item is a hardlink.</summary>
@@ -996,9 +1026,6 @@ namespace System.Management.Automation
 
                 // Ansi is a misnomer, it is hardcoded to UTF-8 on Linux and macOS
                 // C bools are 1 byte and so must be marshalled as I1
-
-                [LibraryImport(psLib)]
-                internal static partial int GetErrorCategory(int errno);
 
                 [LibraryImport(psLib)]
                 internal static partial int GetPPid(int pid);
