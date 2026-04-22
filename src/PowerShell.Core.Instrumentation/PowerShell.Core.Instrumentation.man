@@ -125,7 +125,7 @@
           <event
               channel="C_OPERATIONAL"
               level="win:Error"
-              message="$(string.PS_PROVIDER.event.T_TelemetrySettingError.message)"
+              message="$(string.PS_PROVIDER.event.E_O_TelemetrySettingError.message)"
               opcode="Exception"
               symbol="TelemetrySettingError"
               task="Telemetry"
@@ -5648,7 +5648,7 @@
             value="PowerShell Experimental Features"
             />
         <string
-            id="PS_PROVIDER.event.T_TelemetrySettingError.message"
+            id="PS_PROVIDER.event.E_O_TelemetrySettingError.message"
             value="Failed to retrieve diagnostics and feedback setting from Windows.%n Exception: %1 %n Message: %2 %n StackTrace: %3 %n"
             />
         <string
