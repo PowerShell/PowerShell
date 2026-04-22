@@ -2245,7 +2245,7 @@ namespace System.Management.Automation.Runspaces
                     }
                 }
             }
-            
+
             if (string.IsNullOrEmpty(filePath))
             {
                 throw new CommandNotFoundException(
@@ -2387,7 +2387,26 @@ namespace System.Management.Automation.Runspaces
 
             // block while waiting for process to die
             // shouldn't take long after SIGKILL
-            Platform.NonWindowsWaitPid(pid, false);
+            try
+            {
+                using Process sshProcess = Process.GetProcessById(pid);
+                if (!sshProcess.HasExited)
+                {
+                    sshProcess.WaitForExit();
+                }
+            }
+            catch (ArgumentException)
+            {
+                // Process already exited.
+            }
+            catch (InvalidOperationException)
+            {
+                // Process object is no longer associated with a running process.
+            }
+            catch (Win32Exception)
+            {
+                // Unable to query process state; treat as already terminated.
+            }
         }
 
         #region UNIX Create Process

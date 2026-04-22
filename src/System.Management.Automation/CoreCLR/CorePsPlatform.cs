@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Management.Automation.Internal;
@@ -535,12 +536,19 @@ namespace System.Management.Automation
 
         internal static bool NonWindowsKillProcess(int pid)
         {
-            return Unix.NativeMethods.KillProcess(pid);
-        }
-
-        internal static int NonWindowsWaitPid(int pid, bool nohang)
-        {
-            return Unix.NativeMethods.WaitPid(pid, nohang);
+            try
+            {
+                Process.GetProcessById(pid).Kill();
+                return true;
+            }
+            catch (Exception ex) when (
+                ex is ArgumentException or
+                InvalidOperationException or
+                Win32Exception or
+                NotSupportedException)
+            {
+                return false;
+            }
         }
 
         // Please note that `Win32Exception(Marshal.GetLastWin32Error())`
@@ -1004,13 +1012,6 @@ namespace System.Management.Automation
 
                 [LibraryImport(psLib)]
                 internal static partial uint GetCurrentThreadId();
-
-                [LibraryImport(psLib)]
-                [return: MarshalAs(UnmanagedType.Bool)]
-                internal static partial bool KillProcess(int pid);
-
-                [LibraryImport(psLib)]
-                internal static partial int WaitPid(int pid, [MarshalAs(UnmanagedType.Bool)] bool nohang);
 
                 // This is the struct `private_tm` from setdate.h in libpsl-native.
                 // Packing is set to 4 to match the unmanaged declaration.
