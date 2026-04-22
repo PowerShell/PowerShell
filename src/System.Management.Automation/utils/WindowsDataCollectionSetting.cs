@@ -43,11 +43,11 @@ internal enum PlatformDataCollectionLevel : int
 [Guid("AF86E2E0-B12D-4C6A-9C5A-D7AA65101E90")]
 internal partial interface IInspectable
 {
-    void GetIids();
+    void GetIids(out uint iidCount, out nint iids);
 
-    void GetRuntimeClassName();
+    nint GetRuntimeClassName();
 
-    void GetTrustLevel();
+    int GetTrustLevel();
 }
 
 /// <summary>
