@@ -191,7 +191,8 @@ function RunUpdateHelpTests
     param (
         [string]$tag = "CI",
         [switch]$useSourcePath,
-        [switch]$userscope
+        [switch]$userscope,
+        [switch]$markAsPending
     )
 
     foreach ($moduleName in $modulesInBox)
@@ -214,8 +215,15 @@ function RunUpdateHelpTests
 
             It ('Validate Update-Help for module ''{0}'' in {1}' -F $moduleName, [PSCustomObject] $updateScope) -Skip:(!(Test-CanWriteToPsHome) -and $userscope -eq $false) {
 
+                if ($markAsPending -or ($IsLinux -and $moduleName -eq "PackageManagement")) {
+                    Set-ItResult -Pending -Because "Update-Help from the web has intermittent connectivity issues. See issues #2807 and #6541."
+                    return
+                }
+
                 # Delete the whole help directory
-                Remove-Item ($moduleHelpPath) -Recurse
+                if ($moduleHelpPath) {
+                    Remove-Item ($moduleHelpPath) -Recurse -Force -ErrorAction SilentlyContinue
+                }
 
                 [hashtable] $UICultureParam = $(if ((Get-UICulture).Name -ne $myUICulture) { @{ UICulture = $myUICulture } } else { @{} })
                 [hashtable] $sourcePathParam = $(if ($useSourcePath) { @{ SourcePath = Join-Path $PSScriptRoot assets } } else { @{} })
@@ -246,8 +254,15 @@ function RunSaveHelpTests
         {
             try
             {
-                $saveHelpFolder = Join-Path $TestDrive (Get-Random).ToString()
-                New-Item  $saveHelpFolder -Force -ItemType Directory > $null
+                $saveHelpFolder = if ($TestDrive) {
+                    Join-Path $TestDrive (Get-Random).ToString()
+                } else {
+                    $null
+                }
+                
+                if ($saveHelpFolder) {
+                    New-Item  $saveHelpFolder -Force -ItemType Directory > $null
+                }
 
                 ## Save help has intermittent connectivity issues for downloading PackageManagement help content.
                 ## Hence the test has been marked as Pending.
@@ -283,7 +298,9 @@ function RunSaveHelpTests
             }
             finally
             {
-                Remove-Item $saveHelpFolder -Force -ErrorAction SilentlyContinue -Recurse
+                if ($saveHelpFolder) {
+                    Remove-Item $saveHelpFolder -Force -ErrorAction SilentlyContinue -Recurse
+                }
             }
         }
     }

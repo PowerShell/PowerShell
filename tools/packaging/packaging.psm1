@@ -18,7 +18,7 @@ $AllDistributions = @()
 $AllDistributions += $DebianDistributions
 $AllDistributions += $RedhatDistributions
 $AllDistributions += 'macOs'
-$script:netCoreRuntime = 'net10.0'
+$script:netCoreRuntime = 'net11.0'
 $script:iconFileName = "Powershell_black_64.png"
 $script:iconPath = Join-Path -path $PSScriptRoot -ChildPath "../../assets/$iconFileName" -Resolve
 
@@ -52,7 +52,7 @@ function Start-PSPackage {
         [string]$Name = "powershell",
 
         # Ubuntu, CentOS, Fedora, macOS, and Windows packages are supported
-        [ValidateSet("msix", "deb", "osxpkg", "rpm", "rpm-fxdependent", "rpm-fxdependent-arm64", "msi", "zip", "zip-pdb", "tar", "tar-arm", "tar-arm64", "tar-alpine", "fxdependent", "fxdependent-win-desktop", "min-size", "tar-alpine-fxdependent")]
+        [ValidateSet("msix", "deb", "osxpkg", "rpm", "rpm-fxdependent", "rpm-fxdependent-arm64", "zip", "zip-pdb", "tar", "tar-arm", "tar-arm64", "tar-alpine", "fxdependent", "fxdependent-win-desktop", "min-size", "tar-alpine-fxdependent")]
         [string[]]$Type,
 
         # Generate windows downlevel package
@@ -346,7 +346,7 @@ function Start-PSPackage {
             } elseif ($Environment.IsMacOS) {
                 "osxpkg", "tar"
             } elseif ($Environment.IsWindows) {
-                "msi", "msix"
+                "zip", "msix"
             }
             Write-Warning "-Type was not specified, continuing with $Type!"
         }
@@ -491,34 +491,6 @@ function Start-PSPackage {
                     if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
                         New-TarballPackage @Arguments
                     }
-                }
-            }
-            "msi" {
-                $TargetArchitecture = "x64"
-                $r2rArchitecture = "amd64"
-                if ($Runtime -match "-x86") {
-                    $TargetArchitecture = "x86"
-                    $r2rArchitecture = "i386"
-                }
-                elseif ($Runtime -match "-arm64")
-                {
-                    $TargetArchitecture = "arm64"
-                    $r2rArchitecture = "arm64"
-                }
-
-                Write-Verbose "TargetArchitecture = $TargetArchitecture" -Verbose
-
-                $Arguments = @{
-                    ProductNameSuffix = $NameSuffix
-                    ProductSourcePath = $Source
-                    ProductVersion = $Version
-                    AssetsPath = "$RepoRoot\assets"
-                    ProductTargetArchitecture = $TargetArchitecture
-                    Force = $Force
-            }
-
-                if ($PSCmdlet.ShouldProcess("Create MSI Package")) {
-                    New-MSIPackage @Arguments
                 }
             }
             "msix" {
@@ -1159,11 +1131,15 @@ function New-UnixPackage {
         }
 
         # Determine if the version is a preview version
-        # Only LTS packages get a prefix in the name
-        # Preview versions are identified by the version string itself (e.g., 7.6.0-preview.6)
-        # Rebuild versions are also identified by the version string (e.g., 7.4.13-rebuild.5)
+        $IsPreview = Test-IsPreview -Version $Version -IsLTS:$LTS
+
+        # For deb/rpm packages, use the '-lts' and '-preview' channel suffix variants to match existing names on packages.microsoft.com.
+        # For osxpkg package, only LTS packages get a channel suffix in the name.
         $Name = if($LTS) {
             "powershell-lts"
+        }
+        elseif ($IsPreview -and $Type -ne "osxpkg") {
+            "powershell-preview"
         }
         else {
             "powershell"
@@ -1371,6 +1347,7 @@ function New-UnixPackage {
                         AppsFolder = $AppsFolder
                         HostArchitecture = $HostArchitecture
                         CurrentLocation = $CurrentLocation
+                        LTS = $LTS
                     }
 
                     try {
@@ -1515,7 +1492,12 @@ function New-MacOsDistributionPackage
 
     # Get package ID if not provided
     if (-not $PackageIdentifier) {
-        $PackageIdentifier = Get-MacOSPackageId -IsPreview:$IsPreview.IsPresent
+        if ($IsPreview.IsPresent) {
+            $PackageIdentifier = 'com.microsoft.powershell-preview'
+        }
+        else {
+            $PackageIdentifier = 'com.microsoft.powershell'
+        }
     }
 
     # Minimum OS version
@@ -1984,7 +1966,9 @@ function New-MacOSPackage
         [Parameter(Mandatory)]
         [string]$HostArchitecture,
 
-        [string]$CurrentLocation = (Get-Location)
+        [string]$CurrentLocation = (Get-Location),
+
+        [switch]$LTS
     )
 
     Write-Log "Creating macOS package using pkgbuild and productbuild..."
@@ -2059,8 +2043,10 @@ function New-MacOSPackage
             Copy-Item -Path "$AppsFolder/*" -Destination $appsInPkg -Recurse -Force
         }
 
-        # Build the component package using pkgbuild
-        $pkgIdentifier = Get-MacOSPackageId -IsPreview:($Name -like '*-preview')
+        # Get package identifier info based on version and LTS flag
+        $packageInfo = Get-MacOSPackageIdentifierInfo -Version $Version -LTS:$LTS
+        $IsPreview = $packageInfo.IsPreview
+        $pkgIdentifier = $packageInfo.PackageIdentifier
 
         if ($PSCmdlet.ShouldProcess("Build component package with pkgbuild")) {
             Write-Log "Running pkgbuild to create component package..."
@@ -2085,7 +2071,7 @@ function New-MacOSPackage
             -OutputDirectory $CurrentLocation `
             -HostArchitecture $HostArchitecture `
             -PackageIdentifier $pkgIdentifier `
-            -IsPreview:($Name -like '*-preview')
+            -IsPreview:$IsPreview
 
         return $distributionPackage
     }
@@ -2292,20 +2278,44 @@ function New-ManGzip
     }
 }
 
-# Returns the macOS Package Identifier
-function Get-MacOSPackageId
+<#
+    .SYNOPSIS
+        Determines the package identifier and preview status for macOS packages.
+    .DESCRIPTION
+        This function determines if a package is a preview build based on the version string
+        and LTS flag, then returns the appropriate package identifier.
+    .PARAMETER Version
+        The version string (e.g., "7.6.0-preview.6" or "7.6.0")
+    .PARAMETER LTS
+        Whether this is an LTS build
+    .OUTPUTS
+        Hashtable with IsPreview (boolean) and PackageIdentifier (string) properties
+    .EXAMPLE
+        Get-MacOSPackageIdentifierInfo -Version "7.6.0-preview.6" -LTS:$false
+        Returns @{ IsPreview = $true; PackageIdentifier = "com.microsoft.powershell-preview" }
+#>
+function Get-MacOSPackageIdentifierInfo
 {
     param(
-        [switch]
-        $IsPreview
+        [Parameter(Mandatory)]
+        [string]$Version,
+
+        [switch]$LTS
     )
-    if ($IsPreview.IsPresent)
-    {
-        return 'com.microsoft.powershell-preview'
+
+    $IsPreview = Test-IsPreview -Version $Version -IsLTS:$LTS
+
+    # Determine package identifier based on preview status
+    if ($IsPreview) {
+        $PackageIdentifier = 'com.microsoft.powershell-preview'
     }
-    else
-    {
-        return 'com.microsoft.powershell'
+    else {
+        $PackageIdentifier = 'com.microsoft.powershell'
+    }
+
+    return @{
+        IsPreview = $IsPreview
+        PackageIdentifier = $PackageIdentifier
     }
 }
 
@@ -2319,8 +2329,9 @@ function New-MacOSLauncher
         [switch]$LTS
     )
 
-    $IsPreview = Test-IsPreview -Version $Version -IsLTS:$LTS
-    $packageId = Get-MacOSPackageId -IsPreview:$IsPreview
+    $packageInfo = Get-MacOSPackageIdentifierInfo -Version $Version -LTS:$LTS
+    $IsPreview = $packageInfo.IsPreview
+    $packageId = $packageInfo.PackageIdentifier
 
     # Define folder for launcher application.
     $suffix = if ($IsPreview) { "-preview" } elseif ($LTS) { "-lts" }
@@ -3730,443 +3741,6 @@ function Get-NugetSemanticVersion
     $packageSemanticVersion
 }
 
-# Get the paths to various WiX tools
-function Get-WixPath
-{
-    [CmdletBinding()]
-    param (
-        [bool] $IsProductArchitectureArm = $false
-    )
-
-    $wixToolsetBinPath = $IsProductArchitectureArm ? "${env:ProgramFiles(x86)}\Arm Support WiX Toolset *\bin" : "${env:ProgramFiles(x86)}\WiX Toolset *\bin"
-
-    Write-Verbose -Verbose "Ensure Wix Toolset is present on the machine @ $wixToolsetBinPath"
-    if (-not (Test-Path $wixToolsetBinPath))
-    {
-        if (!$IsProductArchitectureArm)
-        {
-            throw "The latest version of Wix Toolset 3.11 is required to create MSI package. Please install it from https://github.com/wixtoolset/wix3/releases"
-        }
-        else {
-            throw "The latest version of Wix Toolset 3.14 is required to create MSI package for arm. Please install it from https://aka.ms/ps-wix-3-14-zip"
-        }
-    }
-
-    ## Get the latest if multiple versions exist.
-    $wixToolsetBinPath = (Get-ChildItem $wixToolsetBinPath).FullName | Sort-Object -Descending | Select-Object -First 1
-
-    Write-Verbose "Initialize Wix executables..."
-    $wixHeatExePath = Join-Path $wixToolsetBinPath "heat.exe"
-    $wixMeltExePath = Join-Path $wixToolsetBinPath "melt.exe"
-    $wixTorchExePath = Join-Path $wixToolsetBinPath "torch.exe"
-    $wixPyroExePath = Join-Path $wixToolsetBinPath "pyro.exe"
-    $wixCandleExePath = Join-Path $wixToolsetBinPath "Candle.exe"
-    $wixLightExePath = Join-Path $wixToolsetBinPath "Light.exe"
-    $wixInsigniaExePath = Join-Path $wixToolsetBinPath "Insignia.exe"
-
-    return [PSCustomObject] @{
-        WixHeatExePath     = $wixHeatExePath
-        WixMeltExePath     = $wixMeltExePath
-        WixTorchExePath    = $wixTorchExePath
-        WixPyroExePath     = $wixPyroExePath
-        WixCandleExePath   = $wixCandleExePath
-        WixLightExePath    = $wixLightExePath
-        WixInsigniaExePath = $wixInsigniaExePath
-    }
-}
-
-<#
-    .Synopsis
-        Creates a Windows installer MSI package and assumes that the binaries are already built using 'Start-PSBuild'.
-        This only works on a Windows machine due to the usage of WiX.
-    .EXAMPLE
-        # This example shows how to produce a Debug-x64 installer for development purposes.
-        cd $RootPathOfPowerShellRepo
-        Import-Module .\build.psm1; Import-Module .\tools\packaging\packaging.psm1
-        New-MSIPackage -Verbose -ProductSourcePath '.\src\powershell-win-core\bin\Debug\net8.0\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
-#>
-function New-MSIPackage
-{
-    [CmdletBinding()]
-    param (
-
-        # Name of the Product
-        [ValidateNotNullOrEmpty()]
-        [string] $ProductName = 'PowerShell',
-
-        # Suffix of the Name
-        [string] $ProductNameSuffix,
-
-        # Version of the Product
-        [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        [string] $ProductVersion,
-
-        # Source Path to the Product Files - required to package the contents into an MSI
-        [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        [string] $ProductSourcePath,
-
-        # File describing the MSI Package creation semantics
-        [ValidateNotNullOrEmpty()]
-        [ValidateScript( {Test-Path $_})]
-        [string] $ProductWxsPath = "$RepoRoot\assets\wix\Product.wxs",
-
-        # File describing the MSI Package creation semantics
-        [ValidateNotNullOrEmpty()]
-        [ValidateScript({Test-Path $_})]
-        [string] $BundleWxsPath = "$RepoRoot\assets\wix\bundle.wxs",
-
-        # Path to Assets folder containing artifacts such as icons, images
-        [ValidateNotNullOrEmpty()]
-        [ValidateScript( {Test-Path $_})]
-        [string] $AssetsPath = "$RepoRoot\assets",
-
-        # Architecture to use when creating the MSI
-        [Parameter(Mandatory = $true)]
-        [ValidateSet("x86", "x64", "arm64")]
-        [ValidateNotNullOrEmpty()]
-        [string] $ProductTargetArchitecture,
-
-        # Force overwrite of package
-        [Switch] $Force,
-
-        [string] $CurrentLocation = (Get-Location)
-    )
-
-    $wixPaths = Get-WixPath -IsProductArchitectureArm ($ProductTargetArchitecture -eq "arm64")
-
-    $windowsNames = Get-WindowsNames -ProductName $ProductName -ProductNameSuffix $ProductNameSuffix -ProductVersion $ProductVersion
-    $productSemanticVersionWithName = $windowsNames.ProductSemanticVersionWithName
-    $ProductSemanticVersion = $windowsNames.ProductSemanticVersion
-    $packageName = $windowsNames.PackageName
-    $ProductVersion = $windowsNames.ProductVersion
-    Write-Verbose "Create MSI for Product $productSemanticVersionWithName" -Verbose
-    Write-Verbose "ProductSemanticVersion =  $productSemanticVersion" -Verbose
-    Write-Verbose "packageName =  $packageName" -Verbose
-    Write-Verbose "ProductVersion =  $ProductVersion" -Verbose
-
-    $simpleProductVersion = [string]([Version]$ProductVersion).Major
-    $isPreview = Test-IsPreview -Version $ProductSemanticVersion
-    if ($isPreview)
-    {
-        $simpleProductVersion += '-preview'
-    }
-
-    $staging = "$PSScriptRoot/staging"
-    New-StagingFolder -StagingPath $staging -PackageSourcePath $ProductSourcePath
-
-    $assetsInSourcePath = Join-Path $staging 'assets'
-
-    New-Item $assetsInSourcePath -type directory -Force | Write-Verbose
-
-    Write-Verbose "Place dependencies such as icons to $assetsInSourcePath"
-    Copy-Item "$AssetsPath\*.ico" $assetsInSourcePath -Force
-
-
-
-    $fileArchitecture = 'amd64'
-    $ProductProgFilesDir = "ProgramFiles64Folder"
-    if ($ProductTargetArchitecture -eq "x86")
-    {
-        $fileArchitecture = 'x86'
-        $ProductProgFilesDir = "ProgramFilesFolder"
-    }
-    elseif ($ProductTargetArchitecture -eq "arm64")
-    {
-        $fileArchitecture = 'arm64'
-        $ProductProgFilesDir = "ProgramFiles64Folder"
-    }
-
-    $wixFragmentPath = Join-Path $env:Temp "Fragment.wxs"
-
-    # cleanup any garbage on the system
-    Remove-Item -ErrorAction SilentlyContinue $wixFragmentPath -Force
-
-    $msiLocationPath = Join-Path $CurrentLocation "$packageName.msi"
-    $msiPdbLocationPath = Join-Path $CurrentLocation "$packageName.wixpdb"
-
-    if (!$Force.IsPresent -and (Test-Path -Path $msiLocationPath)) {
-        Write-Error -Message "Package already exists, use -Force to overwrite, path:  $msiLocationPath" -ErrorAction Stop
-    }
-
-    Write-Log "Generating wxs file manifest..."
-    $arguments = @{
-        IsPreview              = $isPreview
-        ProductSourcePath      = $staging
-        ProductName            = $ProductName
-        ProductVersion         = $ProductVersion
-        SimpleProductVersion   = $simpleProductVersion
-        ProductSemanticVersion = $ProductSemanticVersion
-        ProductVersionWithName = $productVersionWithName
-        ProductProgFilesDir    = $ProductProgFilesDir
-        FileArchitecture       = $fileArchitecture
-    }
-
-    $buildArguments = New-MsiArgsArray -Argument $arguments
-
-    Test-Bom -Path $staging -BomName windows -Architecture $ProductTargetArchitecture -Verbose
-    Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixHeatExePath dir $staging -dr  VersionFolder -cg ApplicationFiles -ag -sfrag -srd -scom -sreg -out $wixFragmentPath -var var.ProductSourcePath $buildArguments -v}
-
-    Send-AzdoFile -Path $wixFragmentPath
-
-    $wixObjFragmentPath = Join-Path $env:Temp "Fragment.wixobj"
-
-    # cleanup any garbage on the system
-    Remove-Item -ErrorAction SilentlyContinue $wixObjFragmentPath -Force
-
-    Start-MsiBuild -WxsFile $ProductWxsPath, $wixFragmentPath -ProductTargetArchitecture $ProductTargetArchitecture -Argument $arguments -MsiLocationPath $msiLocationPath -MsiPdbLocationPath $msiPdbLocationPath
-
-    Remove-Item -ErrorAction SilentlyContinue $wixFragmentPath -Force
-
-    if ((Test-Path $msiLocationPath) -and (Test-Path $msiPdbLocationPath))
-    {
-        Write-Verbose "You can find the WixPdb @ $msiPdbLocationPath" -Verbose
-        Write-Verbose "You can find the MSI @ $msiLocationPath" -Verbose
-        [pscustomobject]@{
-            msi=$msiLocationPath
-            wixpdb=$msiPdbLocationPath
-        }
-    }
-    else
-    {
-        $errorMessage = "Failed to create $msiLocationPath"
-        throw $errorMessage
-    }
-}
-
-function Get-WindowsNames {
-    param(
-        # Name of the Product
-        [ValidateNotNullOrEmpty()]
-        [string] $ProductName = 'PowerShell',
-
-        # Suffix of the Name
-        [string] $ProductNameSuffix,
-
-        # Version of the Product
-        [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        [string] $ProductVersion
-    )
-
-    Write-Verbose -Message "Getting Windows Names for ProductName: $ProductName; ProductNameSuffix: $ProductNameSuffix; ProductVersion: $ProductVersion" -Verbose
-
-    $ProductSemanticVersion = Get-PackageSemanticVersion -Version $ProductVersion
-    $ProductVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $ProductVersion -IncrementBuildNumber
-
-    $productVersionWithName = $ProductName + '_' + $ProductVersion
-    $productSemanticVersionWithName = $ProductName + '-' + $ProductSemanticVersion
-
-    $packageName = $productSemanticVersionWithName
-    if ($ProductNameSuffix) {
-        $packageName += "-$ProductNameSuffix"
-    }
-
-    return [PSCustomObject]@{
-        PackageName                    = $packageName
-        ProductVersionWithName         = $productVersionWithName
-        ProductSemanticVersion         = $ProductSemanticVersion
-        ProductSemanticVersionWithName = $productSemanticVersionWithName
-        ProductVersion                 = $ProductVersion
-    }
-}
-
-function New-ExePackage {
-    param(
-        # Name of the Product
-        [ValidateNotNullOrEmpty()]
-        [string] $ProductName = 'PowerShell',
-
-        # Version of the Product
-        [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-
-        [string] $ProductVersion,
-
-        # File describing the MSI Package creation semantics
-        [ValidateNotNullOrEmpty()]
-        [ValidateScript({Test-Path $_})]
-        [string] $BundleWxsPath = "$RepoRoot\assets\wix\bundle.wxs",
-
-        # Architecture to use when creating the MSI
-        [Parameter(Mandatory = $true)]
-        [ValidateSet("x86", "x64", "arm64")]
-        [ValidateNotNullOrEmpty()]
-        [string] $ProductTargetArchitecture,
-
-        # Location of the signed MSI
-        [Parameter(Mandatory = $true)]
-        [string]
-        $MsiLocationPath,
-
-        [string] $CurrentLocation = (Get-Location)
-    )
-
-    $productNameSuffix = "win-$ProductTargetArchitecture"
-
-    $windowsNames = Get-WindowsNames -ProductName $ProductName -ProductNameSuffix $productNameSuffix -ProductVersion $ProductVersion
-    $productSemanticVersionWithName = $windowsNames.ProductSemanticVersionWithName
-    $packageName = $windowsNames.PackageName
-    $isPreview = Test-IsPreview -Version $windowsNames.ProductSemanticVersion
-
-    Write-Verbose "Create EXE for Product $productSemanticVersionWithName" -verbose
-    Write-Verbose "packageName =  $packageName" -Verbose
-
-    $exeLocationPath = Join-Path $CurrentLocation "$packageName.exe"
-    $exePdbLocationPath = Join-Path $CurrentLocation "$packageName.exe.wixpdb"
-    $windowsVersion = Get-WindowsVersion -packageName $packageName
-
-    Start-MsiBuild -WxsFile $BundleWxsPath -ProductTargetArchitecture $ProductTargetArchitecture -Argument @{
-        IsPreview      = $isPreview
-        TargetPath     = $MsiLocationPath
-        WindowsVersion = $windowsVersion
-    }  -MsiLocationPath $exeLocationPath -MsiPdbLocationPath $exePdbLocationPath
-
-    return $exeLocationPath
-}
-
-<#
-Allows you to extract the engine of exe package, mainly for signing
-Any existing signature will be removed.
- #>
-function Expand-ExePackageEngine {
-    param(
-        # Location of the unsigned EXE
-        [Parameter(Mandatory = $true)]
-        [string]
-        $ExePath,
-
-        # Location to put the expanded engine.
-        [Parameter(Mandatory = $true)]
-        [string]
-        $EnginePath,
-
-        [Parameter(Mandatory = $true)]
-        [ValidateSet("x86", "x64", "arm64")]
-        [ValidateNotNullOrEmpty()]
-        [string] $ProductTargetArchitecture
-    )
-
-    <#
-    2. detach the engine from TestInstaller.exe:
-    insignia -ib TestInstaller.exe -o engine.exe
-    #>
-
-    $wixPaths = Get-WixPath -IsProductArchitectureArm ($ProductTargetArchitecture -eq "arm64")
-
-    $resolvedExePath = (Resolve-Path -Path $ExePath).ProviderPath
-    $resolvedEnginePath = [System.IO.Path]::GetFullPath($EnginePath)
-
-    Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixInsigniaExePath -ib $resolvedExePath -o $resolvedEnginePath}
-}
-
-<#
-Allows you to replace the engine (installer) in the exe package.
-Used to replace the engine with a signed version
-#>
-function Compress-ExePackageEngine {
-    param(
-        # Location of the unsigned EXE
-        [Parameter(Mandatory = $true)]
-        [string]
-        $ExePath,
-
-        # Location of the signed engine
-        [Parameter(Mandatory = $true)]
-        [string]
-        $EnginePath,
-
-        [Parameter(Mandatory = $true)]
-        [ValidateSet("x86", "x64", "arm64")]
-        [ValidateNotNullOrEmpty()]
-        [string] $ProductTargetArchitecture
-    )
-
-
-    <#
-    4. re-attach the signed engine.exe to the bundle:
-    insignia -ab engine.exe TestInstaller.exe -o TestInstaller.exe
-    #>
-
-    $wixPaths = Get-WixPath -IsProductArchitectureArm ($ProductTargetArchitecture -eq "arm64")
-
-    $resolvedEnginePath = (Resolve-Path -Path $EnginePath).ProviderPath
-    $resolvedExePath = (Resolve-Path -Path $ExePath).ProviderPath
-
-    Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixInsigniaExePath -ab $resolvedEnginePath $resolvedExePath -o $resolvedExePath}
-}
-
-function New-MsiArgsArray {
-    param(
-        [Parameter(Mandatory)]
-        [Hashtable]$Argument
-    )
-
-    $buildArguments = @()
-    foreach ($key in $Argument.Keys) {
-        $buildArguments += "-d$key=$($Argument.$key)"
-    }
-
-    return $buildArguments
-}
-
-function Start-MsiBuild {
-    param(
-        [string[]] $WxsFile,
-        [string[]] $Extension = @('WixUIExtension', 'WixUtilExtension', 'WixBalExtension'),
-        [string] $ProductTargetArchitecture,
-        [Hashtable] $Argument,
-        [string] $MsiLocationPath,
-        [string] $MsiPdbLocationPath
-    )
-
-    $outDir = $env:Temp
-
-    $wixPaths = Get-WixPath -IsProductArchitectureArm ($ProductTargetArchitecture -eq "arm64")
-
-    $extensionArgs = @()
-    foreach ($extensionName in $Extension) {
-        $extensionArgs += '-ext'
-        $extensionArgs += $extensionName
-    }
-
-    $buildArguments = New-MsiArgsArray -Argument $Argument
-
-    $objectPaths = @()
-    foreach ($file in $WxsFile) {
-        $fileName = [system.io.path]::GetFileNameWithoutExtension($file)
-        $objectPaths += Join-Path $outDir -ChildPath "${filename}.wixobj"
-    }
-
-    foreach ($file in $objectPaths) {
-        Remove-Item -ErrorAction SilentlyContinue $file -Force
-        Remove-Item -ErrorAction SilentlyContinue $file -Force
-    }
-
-    $resolvedWxsFiles = @()
-    foreach ($file in $WxsFile) {
-        $resolvedWxsFiles += (Resolve-Path -Path $file).ProviderPath
-    }
-
-    Write-Verbose "$resolvedWxsFiles" -Verbose
-
-    Write-Log "running candle..."
-    Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixCandleExePath $resolvedWxsFiles -out "$outDir\\" $extensionArgs -arch $ProductTargetArchitecture $buildArguments -v}
-
-    Write-Log "running light..."
-    # suppress ICE61, because we allow same version upgrades
-    # suppress ICE57, this suppresses an error caused by our shortcut not being installed per user
-    # suppress ICE40, REINSTALLMODE is defined in the Property table.
-    Start-NativeExecution -VerboseOutputOnError {& $wixPaths.wixLightExePath -sice:ICE61 -sice:ICE40 -sice:ICE57 -out $msiLocationPath -pdbout $msiPdbLocationPath $objectPaths $extensionArgs }
-
-    foreach($file in $objectPaths)
-    {
-        Remove-Item -ErrorAction SilentlyContinue $file -Force
-        Remove-Item -ErrorAction SilentlyContinue $file -Force
-    }
-}
-
 <#
     .Synopsis
         Creates a Windows AppX MSIX package and assumes that the binaries are already built using 'Start-PSBuild'.
@@ -4235,18 +3809,8 @@ function New-MSIXPackage
 
     $makepri = Get-Item (Join-Path $makeappx.Directory "makepri.exe") -ErrorAction Stop
 
+    $displayName = $ProductName
     $ProductSemanticVersion = Get-PackageSemanticVersion -Version $ProductVersion
-    $productSemanticVersionWithName = $ProductName + '-' + $ProductSemanticVersion
-    $packageName = $productSemanticVersionWithName
-    if ($Private) {
-        $ProductNameSuffix = 'Private'
-    }
-
-    if ($ProductNameSuffix) {
-        $packageName += "-$ProductNameSuffix"
-    }
-
-    $displayName = $productName
 
     if ($Private) {
         $ProductName = 'PowerShell-Private'
@@ -4256,11 +3820,18 @@ function New-MSIXPackage
         $displayName += ' Preview'
     } elseif ($LTS) {
         $ProductName += '-LTS'
-        $displayName += '-LTS'
+        $displayName += ' LTS'
     }
 
     Write-Verbose -Verbose "ProductName: $productName"
     Write-Verbose -Verbose "DisplayName: $displayName"
+
+    $packageName = $ProductName + '-' + $ProductSemanticVersion
+
+    # Appends Architecture to the package name
+    if ($ProductNameSuffix) {
+        $packageName += "-$ProductNameSuffix"
+    }
 
     $ProductVersion = Get-WindowsVersion -PackageName $packageName
 
@@ -4278,12 +3849,11 @@ function New-MSIXPackage
         Write-Verbose "Using Preview assets" -Verbose
     } elseif ($LTS) {
         # This is the PhoneProductId for the "Microsoft.PowerShell-LTS" package.
-        $PhoneProductId = "a9af273a-c636-47ac-bc2a-775edf80b2b9"
+        $PhoneProductId = "b7a4b003-3704-47a9-b018-cfcc9801f4fc"
         Write-Verbose "Using LTS assets" -Verbose
     }
 
-    # Appx manifest needs to be in root of source path, but the embedded version needs to be updated
-    # cp-459155 is 'CN=Microsoft Windows Store Publisher (Store EKU), O=Microsoft Corporation, L=Redmond, S=Washington, C=US'
+    # Appx manifest needs to be in root of source path, but the embedded version needs to be updated.
     # authenticodeFormer is 'CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US'
     $releasePublisher = 'CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US'
 
@@ -4325,7 +3895,6 @@ function New-MSIXPackage
         else {
             Copy-Item -Path "$RepoRoot\assets\$_.png" -Destination "$ProductSourcePath\assets\"
         }
-
     }
 
     if ($PSCmdlet.ShouldProcess("Create .msix package?")) {
@@ -4338,6 +3907,7 @@ function New-MSIXPackage
         Write-Verbose "Creating msix package" -Verbose
         Start-NativeExecution -VerboseOutputOnError { & $makeappx pack /o /v /h SHA256 /d $ProductSourcePath /p (Join-Path -Path $CurrentLocation -ChildPath "$packageName.msix") }
         Write-Verbose "Created $packageName.msix" -Verbose
+        Join-Path -Path $CurrentLocation -ChildPath "$packageName.msix"
     }
 }
 
@@ -4881,7 +4451,7 @@ function New-GlobalToolNupkgSource
     }
 
     # Set VSTS environment variable for CGManifest file path.
-    $globalToolCGManifestPFilePath = Join-Path -Path "$env:REPOROOT" -ChildPath "tools\cgmanifest.json"
+    $globalToolCGManifestPFilePath = Join-Path -Path "$env:REPOROOT" -ChildPath "tools/cgmanifest/main/cgmanifest.json"
     $globalToolCGManifestFilePath = Resolve-Path -Path $globalToolCGManifestPFilePath -ErrorAction SilentlyContinue
     if (($null -eq $globalToolCGManifestFilePath) -or (! (Test-Path -Path $globalToolCGManifestFilePath)))
     {

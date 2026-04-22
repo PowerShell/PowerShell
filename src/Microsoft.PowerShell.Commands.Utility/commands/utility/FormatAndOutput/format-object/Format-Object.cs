@@ -32,6 +32,7 @@ namespace Microsoft.PowerShell.Commands
         /// will be determined using property sets, etc.
         /// </summary>
         [Parameter(Position = 0)]
+        [ValidateNotNullOrEmpty]
         public object[] Property
         {
             get { return _props; }

@@ -13,8 +13,6 @@ jobs:
     type: linux
 
   variables:
-    - name: runCodesignValidationInjection
-      value: false
     - name: nugetMultiFeedWarnLevel
       value: none
     - name: NugetSecurityAnalysisWarningLevel
@@ -157,10 +155,6 @@ jobs:
 
       Write-Verbose -Verbose "LTS: $LTS"
 
-      if ($LTS) {
-        Write-Verbose -Message "LTS Release: $LTS"
-      }
-
       if (-not (Test-Path $(ob_outputDirectory))) {
         New-Item -ItemType Directory -Path $(ob_outputDirectory) -Force
       }
@@ -169,6 +163,11 @@ jobs:
       Write-Verbose -Verbose "packageType = $packageType"
 
       Start-PSPackage -Type $packageType -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath
+
+      if ($LTS) {
+        Write-Verbose -Message "LTS Release: $LTS" -Verbose
+        Start-PSPackage -Type $packageType -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath -LTS
+      }
 
       $vstsCommandString = "vso[task.setvariable variable=PackageFilter]$pkgFilter"
       Write-Host ("sending " + $vstsCommandString)

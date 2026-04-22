@@ -386,6 +386,33 @@ export $envVarName='$guid'
         }
     }
 
+    Context "-SettingsFile Commandline switch set 'PSModulePath'" {
+
+        BeforeAll {
+            $CustomSettingsFile = Join-Path -Path $TestDrive -ChildPath 'powershell.test.json'
+            $mPath1 = Join-Path $PSHOME 'Modules'
+            $mPath2 = Join-Path $TestDrive 'NonExist'
+            $pathSep = [System.IO.Path]::PathSeparator
+
+            ## Use multiple paths in the setting.
+            $ModulePath = "${mPath1}${pathSep}${mPath2}".Replace('\', "\\")
+            Set-Content -Path $CustomSettingsfile -Value "{`"Microsoft.PowerShell:ExecutionPolicy`":`"Unrestricted`", `"PSModulePath`": `"$ModulePath`" }" -ErrorAction Stop
+        }
+
+        It "Verify PowerShell PSModulePath should contain paths from config file" {
+            $psModulePath = & $powershell -NoProfile -SettingsFile $CustomSettingsFile -Command '$env:PSModulePath'
+
+            ## $mPath1 already exists in the value of env PSModulePath, so it won't be added again.
+            $index = $psModulePath.IndexOf("${mPath1}${pathSep}", [System.StringComparison]::OrdinalIgnoreCase)
+            $index | Should -BeGreaterThan 0
+            $index += $mPath1.Length
+            $psModulePath.IndexOf($mPath1, $index, [System.StringComparison]::OrdinalIgnoreCase) | Should -BeExactly -1
+
+            ## $mPath2 should be added at the index position 0.
+            $psModulePath.StartsWith("${mPath2}${pathSep}", [System.StringComparison]::OrdinalIgnoreCase) | Should -BeTrue
+        }
+    }
+
     Context "Pipe to/from powershell" {
         BeforeAll {
             if ($null -ne $PSStyle) {
