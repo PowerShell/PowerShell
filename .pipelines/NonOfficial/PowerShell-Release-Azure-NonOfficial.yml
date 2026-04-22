@@ -67,10 +67,16 @@ extends:
         exactToolVersion: 4.4.2
       policheck:
         break: true # always break the build on policheck issues. You can disable it by setting to 'false'
-      tsaOptionsFile: .config\tsaoptions.json
+      tsaOptionsFile: $(Build.SourcesDirectory)\.config\tsaoptions.json
     stages:
       - template: /.pipelines/templates/release-prep-for-ev2.yml@self
         parameters:
           skipPublish: ${{ parameters.skipPublish }}
 
+      # NonOfficial: run the publish stage to verify templateContext artifact download,
+      # but skip the actual Ev2 push to PMC.
       - template: /.pipelines/templates/release-publish-pmc.yml@self
+        parameters:
+          releaseEnvironment: Test
+          stagePrefix: Test
+          skipEv2Push: true

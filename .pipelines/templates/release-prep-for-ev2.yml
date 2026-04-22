@@ -11,6 +11,20 @@ stages:
     displayName: 'Copy EV2 Files to Artifact'
     pool:
       type: linux
+    templateContext:
+      inputs:
+        - input: pipelineArtifact
+          pipeline: PSPackagesOfficial
+          artifactName: drop_linux_package_deb
+        - input: pipelineArtifact
+          pipeline: PSPackagesOfficial
+          artifactName: drop_linux_package_rpm
+        - input: pipelineArtifact
+          pipeline: PSPackagesOfficial
+          artifactName: drop_linux_package_mariner_x64
+        - input: pipelineArtifact
+          pipeline: PSPackagesOfficial
+          artifactName: drop_linux_package_mariner_arm64
     variables:
     - name: ob_outputDirectory
       value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
@@ -24,6 +38,8 @@ stages:
     - group: 'packages.microsoft.com'
     - name: ob_sdl_credscan_suppressionsFile
       value: $(Build.SourcesDirectory)/PowerShell/.config/suppress.json
+    - name: ob_sdl_tsa_configFile
+      value: $(Build.SourcesDirectory)/PowerShell/.config/tsaoptions.json
     steps:
     - checkout: self ## the global setting on lfs didn't work
       lfs: false
@@ -99,39 +115,17 @@ stages:
       env:
         ob_restore_phase: true
 
-    - download: PSPackagesOfficial
-      artifact: 'drop_linux_package_deb'
-      displayName: 'Download artifact containing .deb_amd64.deb file from PSPackagesOfficial triggering pipeline'
-      env:
-        ob_restore_phase: true
-
-    - download: PSPackagesOfficial
-      artifact: 'drop_linux_package_rpm'
-      displayName: 'Download artifact containing .rh.x64_86.rpm file from PSPackagesOfficial triggering pipeline'
-      env:
-        ob_restore_phase: true
-
-    - download: PSPackagesOfficial
-      artifact: 'drop_linux_package_mariner_x64'
-      displayName: 'Download artifact containing .cm.x86_64.rpm file from PSPackagesOfficial triggering pipeline'
-      env:
-        ob_restore_phase: true
-
-    - download: PSPackagesOfficial
-      artifact: 'drop_linux_package_mariner_arm64'
-      displayName: 'Download artifact containing .cm.aarch64.rpm file from PSPackagesOfficial triggering pipeline'
-      env:
-        ob_restore_phase: true
-
     - pwsh: |
         Write-Verbose -Verbose "Copy ESRP signed .deb and .rpm packages"
-        $downloadedPipelineFolder = Join-Path '$(Pipeline.Workspace)' -ChildPath 'PSPackagesOfficial'
+        # templateContext.inputs places the PSPackagesOfficial pipelineArtifact files
+        # directly under $(Pipeline.Workspace), not in per-artifact subfolders.
+        $downloadedPipelineFolder = '$(Pipeline.Workspace)'
         $srcFilesFolder = Join-Path -Path '$(Pipeline.Workspace)' -ChildPath 'SourceFiles'
         New-Item -Path $srcFilesFolder -ItemType Directory
         $packagesFolder = Join-Path -Path $srcFilesFolder -ChildPath 'packages'
         New-Item -Path $packagesFolder -ItemType Directory
 
-        $packageFiles = Get-ChildItem -Path $downloadedPipelineFolder -Recurse -Directory -Filter "drop_*" | Get-ChildItem -File -Include *.deb, *.rpm
+        $packageFiles = Get-ChildItem -Path $downloadedPipelineFolder -File | Where-Object { $_.Extension -in '.deb', '.rpm' }
         foreach ($file in $packageFiles)
         {
           Write-Verbose -Verbose "copying file: $($file.FullName)"
