@@ -440,6 +440,37 @@ namespace System.Management.Automation
             return null;
         }
 
+        private static int GetNonWindowsLinkCreationErrorCode(Exception ex)
+        {
+            if (ex is IOException)
+            {
+                int errorCode = Marshal.GetLastPInvokeError();
+                return errorCode != 0 ? errorCode : 5; // EIO
+            }
+
+            if (ex is UnauthorizedAccessException)
+            {
+                return 13; // EACCES
+            }
+
+            if (ex is NotSupportedException)
+            {
+                return IsMacOS ? 45 : 95; // ENOTSUP
+            }
+
+            if (ex is ArgumentException)
+            {
+                return 22; // EINVAL
+            }
+
+            if (ex is PathTooLongException)
+            {
+                return 36; // ENAMETOOLONG
+            }
+
+            return 5; // EIO
+        }
+
         internal static bool NonWindowsCreateSymbolicLink(string path, string target, bool isDirectory, out int errorCode)
         {
             errorCode = 0;
@@ -464,11 +495,7 @@ namespace System.Management.Automation
                 ArgumentException or
                 PathTooLongException)
             {
-                errorCode = Marshal.GetLastPInvokeError();
-                if (errorCode == 0)
-                {
-                    errorCode = ex.HResult & 0xFFFF;
-                }
+                errorCode = GetNonWindowsLinkCreationErrorCode(ex);
 
                 return false;
             }
@@ -490,11 +517,7 @@ namespace System.Management.Automation
                 ArgumentException or
                 PathTooLongException)
             {
-                errorCode = Marshal.GetLastPInvokeError();
-                if (errorCode == 0)
-                {
-                    errorCode = ex.HResult & 0xFFFF;
-                }
+                errorCode = GetNonWindowsLinkCreationErrorCode(ex);
 
                 return false;
             }
