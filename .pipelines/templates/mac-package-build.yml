@@ -162,6 +162,10 @@ jobs:
 
       foreach($t in $tarPkgPath) {
         $file = $t.FullName
+        $entry = & tar -tzvf $file | Where-Object { $_ -match '\spwsh$' } | Select-Object -First 1
+        if ($entry -notmatch '^-..x') {
+            throw "pwsh is not executable in $file : $entry"
+        }
         Write-Verbose -verbose "Uploading $file to macos-pkgs"
         Write-Host "##vso[artifact.upload containerfolder=macos-pkgs;artifactname=macos-pkgs]$file"
       }
