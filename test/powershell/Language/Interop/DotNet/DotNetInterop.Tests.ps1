@@ -316,3 +316,18 @@ namespace DotNetInterop
         }
     }
 }
+
+Describe "P/Invoke with missing DLL via Add-Type" -Tags "CI" {
+    It "Should report the missing DLL name when the native library does not exist" {
+        Add-Type -TypeDefinition @'
+using System.Runtime.InteropServices;
+public class PInvokeMissingDllTest {
+    [DllImport("NoSuchDllThatDoesNotExist.dll")]
+    public static extern void NoOp();
+}
+'@
+        $err = { [PInvokeMissingDllTest]::NoOp() } | Should -Throw -PassThru
+        $err.Exception.InnerException | Should -BeOfType [System.DllNotFoundException]
+        $err.Exception.InnerException.Message | Should -BeLike "*NoSuchDllThatDoesNotExist*"
+    }
+}
