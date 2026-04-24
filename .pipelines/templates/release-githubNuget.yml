@@ -43,6 +43,13 @@ jobs:
             $exefiles | Remove-Item -Force -Verbose
         }
 
+        # The .msi packages should not be uploaded to GitHub release.
+        $msifiles = Get-ChildItem -Path $Path -Filter *.msi
+        if ($msifiles) {
+            Write-Verbose -Verbose "Remove .msi packages:"
+            $msifiles | Remove-Item -Force -Verbose
+        }
+
         $OutputPath = Join-Path $Path 'hashes.sha256'
         $packages  = Get-ChildItem -Path $Path -Include * -Recurse -File
         $checksums = $packages |
