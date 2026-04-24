@@ -168,12 +168,26 @@ namespace Microsoft.PowerShell.Telemetry
         /// </summary>
         static ApplicationInsightsTelemetry()
         {
-            // If we can't send telemetry, there's no reason to do any of this
-            CanSendTelemetry = !GetEnvironmentVariableAsBool(name: _telemetryOptoutEnvVar, defaultValue: false)
+            CanSendTelemetry = !Utils.GetEnvironmentVariableAsBool(name: _telemetryOptoutEnvVar, defaultValue: false)
                 && Platform.TryDeriveFromCache("telemetry.uuid", out s_uuidPath);
+
+            CanSendTelemetry = !GetEnvironmentVariableAsBool(name: _telemetryOptoutEnvVar, defaultValue: false)
+=======
+            CanSendTelemetry = !Utils.GetEnvironmentVariableAsBool(name: _telemetryOptoutEnvVar, defaultValue: false)
+>>>>>>> 65e6a8055 (Update PowerShell telemetry to respect the diagnostics and feedback setting on Windows (#27328))
+                && Platform.TryDeriveFromCache("telemetry.uuid", out s_uuidPath);
+
+#if !UNIX
+            if (CanSendTelemetry)
+            {
+                // Respect the diagnostics and feedback setting in Windows.
+                CanSendTelemetry = WindowsDataCollectionSetting.CanCollectDiagnostics(PlatformDataCollectionLevel.Enhanced);
+            }
+#endif
 
             if (!CanSendTelemetry)
             {
+                // Avoid the initialization work if we can't send telemetry.
                 return;
             }
 
