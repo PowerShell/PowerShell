@@ -196,6 +196,13 @@ jobs:
       $pkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $pkgFilter -Recurse -File | Select-Object -ExpandProperty FullName
       Write-Verbose -Verbose "pkgPath: $pkgPath"
       Copy-Item -Path $pkgPath -Destination '$(ob_outputDirectory)' -Force -Verbose
+
+      if ($pkgPath -like '*.tar.gz') {
+          $entry = & tar -tzvf $pkgPath | Where-Object { $_ -match '\spwsh$' } | Select-Object -First 1
+          if ($entry -notmatch '^-..x') {
+              throw "pwsh is not executable in $pkgPath : $entry"
+          }
+      }
     displayName: 'Copy artifacts to output directory'
     env:
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
