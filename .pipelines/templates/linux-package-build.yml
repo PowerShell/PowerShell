@@ -3,7 +3,6 @@ parameters:
   signedeDrop: 'drop_linux_sign_linux_x64'
   packageType: deb
   jobName: 'deb'
-  signingProfile: 'CP-450779-pgpdetached'
 
 jobs:
 - job: ${{ parameters.jobName }}
@@ -20,6 +19,7 @@ jobs:
     - name: skipNugetSecurityAnalysis
       value: true
     - group: DotNetPrivateBuildAccess
+    - group: certificate_logical_to_actual
     - name: ob_outputDirectory
       value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
     - name: ob_sdl_binskim_enabled
@@ -34,8 +34,16 @@ jobs:
       value: $(Build.SourcesDirectory)/PowerShell/.config/tsaoptions.json
     - name: ob_sdl_credscan_suppressionsFile
       value: $(Build.SourcesDirectory)/PowerShell/.config/suppress.json
-    - name: SigningProfile
-      value: ${{ parameters.signingProfile }}
+    # PGP signing profile selection: Mariner (Azure Linux) packages ship through
+    # a different distribution channel and must be signed with the Mariner release
+    # key; all other Linux packages use the standard PowerShell Linux key. Both
+    # key codes come from the `certificate_logical_to_actual` variable group.
+    - ${{ if startsWith(parameters.jobName, 'mariner') }}:
+      - name: SigningProfile
+        value: $(pgp_release_cert_id)
+    - ${{ else }}:
+      - name: SigningProfile
+        value: $(pgp_linux_cert_id)
 
   steps:
   - checkout: self

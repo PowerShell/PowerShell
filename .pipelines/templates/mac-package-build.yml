@@ -22,6 +22,7 @@ jobs:
     - name: skipNugetSecurityAnalysis
       value: true
     - group: DotNetPrivateBuildAccess
+    - group: certificate_logical_to_actual
     - name: ob_outputDirectory
       value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
     - name: ob_sdl_binskim_enabled
@@ -187,6 +188,7 @@ jobs:
     type: windows
 
   variables:
+  - group: certificate_logical_to_actual
   - name: ob_outputDirectory
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
   - name: ob_sdl_binskim_enabled
@@ -234,7 +236,7 @@ jobs:
       inline_operation: |
         [
           {
-            "KeyCode": "CP-401337-Apple",
+            "KeyCode": "$(apple_cert_id)",
             "OperationCode": "MacAppDeveloperSign",
             "ToolName": "sign",
             "ToolVersion": "1.0",
@@ -253,7 +255,7 @@ jobs:
       inline_operation: |
         [
           {
-            "KeyCode": "CP-401337-Apple",
+            "KeyCode": "$(apple_cert_id)",
             "OperationCode": "MacAppNotarize",
             "ToolName": "sign",
             "ToolVersion": "1.0",
