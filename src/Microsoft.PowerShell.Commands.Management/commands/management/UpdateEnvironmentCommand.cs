@@ -10,26 +10,39 @@ using System.Management.Automation;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// Implemements the Update-Environment cmdlet.
+    /// Implements the Update-Environment cmdlet.
     /// </summary>
     [Cmdlet(VerbsData.Update, "Environment")]
     public class UpdateEnvironmentCommand : PSCmdlet
     {
+        // A list of variables that should never be overwritten
+        // by static Machine or User registry reads.
+        private static readonly HashSet<string> _ignoredVariables = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "USERNAME", "USERDOMAIN", "USERDNSDOMAIN", "USERPROFILE",
+            "COMPUTERNAME", "LOGONSERVER", "HOMEDRIVE", "HOMEPATH",
+            "HOMESHARE", "APPDATA", "LOCALAPPDATA", "SESSIONNAME",
+            "CLIENTNAME", "PROMPT", "SYSTEMDRIVE", "SYSTEMROOT",
+            "ALLUSERSPROFILE", "PUBLIC", "PROGRAMDATA", "PROGRAMFILES",
+            "PROGRAMW6432", "PROGRAMFILES(X86)", "COMMONPROGRAMFILES",
+            "COMMONPROGRAMFILES(X86)", "COMMONPROGRAMW6432",
+            "PATH", "PSMODULEPATH",
+        };
 
         /// <summary>
-        /// Gets/sets the switch to update machine environment variables.
+        /// Gets or sets the switch to update machine environment variables.
         /// </summary>
         [Parameter]
         public SwitchParameter Machine { get; set; }
 
         /// <summary>
-        /// Gets/sets the switch to update user environment variables.
+        /// Gets or sets the switch to update user environment variables.
         /// </summary>
         [Parameter]
         public SwitchParameter User { get; set; }
 
         /// <summary>
-        /// Executes the environment update logic
+        /// Executes the environment update logic.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -113,20 +126,5 @@ namespace Microsoft.PowerShell.Commands
                 WriteWarning($"Failed to update environment variables from target {target}: {ex.Message}");
             }
         }
-
-        // A list of variables that should never be overwritten 
-        // by static Machine or User registry reads.
-        private static readonly HashSet<string> _ignoredVariables = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
-        {
-            "USERNAME", "USERDOMAIN", "USERDNSDOMAIN", "USERPROFILE",
-            "COMPUTERNAME", "LOGONSERVER", "HOMEDRIVE", "HOMEPATH",
-            "HOMESHARE", "APPDATA", "LOCALAPPDATA", "SESSIONNAME",
-            "CLIENTNAME", "PROMPT", "SYSTEMDRIVE", "SYSTEMROOT",
-            "ALLUSERSPROFILE", "PUBLIC", "PROGRAMDATA", "PROGRAMFILES",
-            "PROGRAMW6432", "PROGRAMFILES(X86)", "COMMONPROGRAMFILES",
-            "COMMONPROGRAMFILES(X86)", "COMMONPROGRAMW6432",
-            "PATH", "PSMODULEPATH"
-        };
     }
-
 }
