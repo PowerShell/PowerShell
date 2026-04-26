@@ -54,7 +54,6 @@ namespace Microsoft.PowerShell.Commands
                 WriteVerbose("Updating Machine environment variables...");
                 UpdateFromTarget(EnvironmentVariableTarget.Machine);
             }
-            
             if (updateAll || User.IsPresent)
             {
                 WriteVerbose("Updating User environment variables...");
