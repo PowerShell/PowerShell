@@ -12,6 +12,7 @@ Here are some statistics about our current test coverage:
     - More than 1200 tests have been created to validate the PowerShell Core cmdlets
 
 ## PowerShell Cmdlets
+
 The follow table represents the test coverage of the PowerShell Core Cmdlets in relation to the delivery platform as of 2016-08-17:
 
 | Name | Linux | Windows | Test Coverage |
