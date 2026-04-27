@@ -569,7 +569,7 @@ namespace Microsoft.PowerShell.Commands
             if (driveIsFixed)
             {
                 // Since the drive is fixed, ensure the root is valid.
-                validDrive = Directory.Exists(drive.Root);
+                validDrive = SafeDoesPathExist(drive.Root);
             }
 
             if (validDrive)
@@ -908,7 +908,7 @@ namespace Microsoft.PowerShell.Commands
 
                         if (newDrive.DriveType == DriveType.Fixed)
                         {
-                            if (!newDrive.RootDirectory.Exists)
+                            if (!SafeDoesPathExist(newDrive.RootDirectory.FullName))
                             {
                                 continue;
                             }
@@ -1224,6 +1224,29 @@ namespace Microsoft.PowerShell.Commands
             catch (UnauthorizedAccessException accessException)
             {
                 WriteError(new ErrorRecord(accessException, "GetItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, path));
+            }
+        }
+
+        private static bool SafeDoesPathExist(string rootDirectory)
+        {
+            if (Directory.Exists(rootDirectory))
+            {
+                return true;
+            }
+
+            try
+            {
+                return (File.GetAttributes(rootDirectory) & FileAttributes.Directory) is not 0;
+            }
+            // In some scenarios (like AppContainers) direct access to the root directory may
+            // be prevented, but more specific paths may be accessible.
+            catch (UnauthorizedAccessException)
+            {
+                return true;
+            }
+            catch
+            {
+                return false;
             }
         }
 

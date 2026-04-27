@@ -130,9 +130,6 @@
   <data name="CannotSpecifyQuoteFieldsAndUseQuotes" xml:space="preserve">
     <value>You must specify either the -UseQuotes or -QuoteFields parameters, but not both.</value>
   </data>
-  <data name="CannotSpecifyIncludeTypeInformationAndNoTypeInformation" xml:space="preserve">
-    <value>You must specify either the -IncludeTypeInformation or -NoTypeInformation parameters, but not both.</value>
-  </data>
   <data name="CannotSpecifyPathAndLiteralPath" xml:space="preserve">
     <value>You must specify either the -Path or -LiteralPath parameters, but not both.</value>
   </data>

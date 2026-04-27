@@ -206,26 +206,11 @@ namespace Microsoft.PowerShell.Commands
         #region "IDisposable Members"
 
         /// <summary>
-        /// Dispose Method.
+        /// Release all resources.
         /// </summary>
         public void Dispose()
         {
-            this.Dispose(true);
-            // Use SuppressFinalize in case a subclass
-            // of this type implements a finalizer.
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Dispose Method.
-        /// </summary>
-        /// <param name="disposing"></param>
-        public void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                _searchProcess?.Dispose();
-            }
+            _searchProcess?.Dispose();
         }
 
         #endregion "IDisposable Members"
