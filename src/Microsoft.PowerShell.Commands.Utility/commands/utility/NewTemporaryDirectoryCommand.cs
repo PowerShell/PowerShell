@@ -21,16 +21,14 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            string baseTempPath = Path.GetTempPath();
-
-            if (ShouldProcess(baseTempPath))
+            string tempDirPath = null;
+            string tempPath = Path.GetTempPath();
+            if (ShouldProcess(tempPath))
             {
-                string tempPath;
                 try
                 {
-                    // Create a unique temporary directory name
-                    tempPath = Path.Combine(baseTempPath, Path.GetRandomFileName());
-                    Directory.CreateDirectory(tempPath);
+                    tempDirPath = Path.Combine(tempPath, Path.GetRandomFileName());
+                    Directory.CreateDirectory(tempDirPath);
                 }
                 catch (IOException ioException)
                 {
@@ -39,12 +37,15 @@ namespace Microsoft.PowerShell.Commands
                             ioException,
                             "NewTemporaryDirectoryError",
                             ErrorCategory.WriteError,
-                            baseTempPath));
+                            tempPath));
                     return;
                 }
 
-                DirectoryInfo directory = new(tempPath);
-                WriteObject(directory);
+                if (!string.IsNullOrEmpty(tempDirPath))
+                {
+                    DirectoryInfo directory = new(tempDirPath);
+                    WriteObject(directory);
+                }
             }
         }
     }
