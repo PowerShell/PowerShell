@@ -155,10 +155,10 @@ namespace System.Management.Automation.Language
 
         #region Operators
 
-        /// <summary>The (unimplemented) operator '&amp;&amp;'.</summary>
+        /// <summary>The pipeline chain operator '&amp;&amp;'.</summary>
         AndAnd = 26,
 
-        /// <summary>The (unimplemented) operator '||'.</summary>
+        /// <summary>The pipeline chain operator '||'.</summary>
         OrOr = 27,
 
         /// <summary>The invocation operator '&amp;'.</summary>
