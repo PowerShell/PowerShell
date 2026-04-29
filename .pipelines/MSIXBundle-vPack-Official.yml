@@ -138,12 +138,6 @@ extends:
             if (-not $matched) {
                 throw "Release tag must be in the format v#.#.#, such as 'v7.4.3'. Current version: $releaseTag"
             }
-
-            # Extract minor version and verify it's even (LTS versions only)
-            $minorVersion = [int]$Matches[1]
-            if($minorVersion % 2 -ne 0) {
-                throw "Only release msixbundle vpack for LTS releases. Current version: $releaseTag"
-            }
           displayName: Stop any preview release
           env:
             ob_restore_phase: true
@@ -278,18 +272,32 @@ extends:
             Restore-PSOptions -PSOptionsPath "$psoptionsFilePath"
             Get-PSOptions | Write-Verbose -Verbose
 
+            $metadata = Get-Content "$repoRoot\tools\metadata.json" -Raw | ConvertFrom-Json
+            Write-Verbose -Verbose "metadata:"
+            $metadata | Out-String | Write-Verbose -Verbose
+
+            $publishLTS = $metadata.LTSRelease.PublishToChannels
+            $publishStable = $metadata.StableRelease.PublishToChannels
+
+            Write-Verbose -Verbose "Publish LTS: $publishLTS"
+            Write-Verbose -Verbose "Publish Stable: $publishStable"
+
             ## Generated packages are placed in the current directory by default.
             Set-Location $repoRoot
-            Start-PSPackage -Type msix -SkipReleaseChecks -WindowsRuntime $runtime -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath -LTS
+            Start-PSPackage -Type msix -SkipReleaseChecks -WindowsRuntime $runtime -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath -LTS:$publishLTS
+
+            if ($publishLTS -and $publishStable) {
+              Write-Verbose -Verbose "Publish to both LTS and Stable channels. Building additional Stable MSIX."
+              Start-PSPackage -Type msix -SkipReleaseChecks -WindowsRuntime $runtime -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath
+            }
 
             $msixPkgNameFilter = "PowerShell*.msix"
-            $msixPkgFile = Get-ChildItem -Path $repoRoot -Filter $msixPkgNameFilter -File
-            $msixPkgPath = $msixPkgFile.FullName
-            Write-Verbose -Verbose "Unsigned msix package: $msixPkgPath"
+            $msixPkgFile = Get-ChildItem -Path $repoRoot -Filter $msixPkgNameFilter -Recurse -File | ForEach-Object FullName
+            Write-Verbose -Verbose "Unsigned msix package(s): $msixPkgFile"
 
             $pkgDir = '$(ob_outputDirectory)\pkgs'
             $null = New-Item -ItemType Directory -Path $pkgDir -Force
-            Copy-Item -Path $msixPkgPath -Destination $pkgDir -Force -Verbose
+            Copy-Item -Path $msixPkgFile -Destination $pkgDir -Force -Verbose
           displayName: 'Build MSIX Package (Unsigned)'
 
         ### END OF Packaging ###
@@ -298,6 +306,11 @@ extends:
             Get-ChildItem -Path '$(ob_outputDirectory)\pkgs' -Recurse
           displayName: 'List Unsigned Package'
 
+        - pwsh: |
+            $signedFilesPath = '$(ob_outputDirectory)\Signed-$(Runtime)'
+            Remove-Item -Path $signedFilesPath -Recurse -Force -Verbose
+          displayName: 'Remove Signed-$(Runtime) folder'
+
     - stage: Pack_MSIXBundle_And_Sign
       displayName: 'Pack and sign MSIXBundle'
       dependsOn: [Build_MSIX_Package]
@@ -305,14 +318,22 @@ extends:
       - job: Bundle
         pool:
           type: windows
+
+        strategy:
+          matrix:
+            lts:
+              Channel: LTS
+            stable:
+              Channel: Stable
+
         variables:
           ArtifactPlatform: 'windows'
           ob_outputDirectory: '$(BUILD.SOURCESDIRECTORY)\out'
-          ob_artifactBaseName: drop_pack_msixbundle
+          ob_artifactBaseName: 'drop_pack_$(Channel)'
           ob_createvpack_enabled: ${{ parameters.createVPack }}
-          ob_createvpack_packagename: 'PowerShell7.Store.app'
+          ob_createvpack_packagename: 'PowerShell7-$(Channel).Store.app'
           ob_createvpack_owneralias: 'dongbow'
-          ob_createvpack_description: 'VPack for the PowerShell 7 Store Application'
+          ob_createvpack_description: 'VPack for the PowerShell 7 Store Application ($(Channel))'
           ob_createvpack_targetDestinationDirectory: '$(Destination)'  ## The value is from the 'CreateVpack' task, used when pulling the generated VPack.
           ob_createvpack_propsFile: false
           ob_createvpack_provData: true
@@ -336,6 +357,21 @@ extends:
 
         - template: /.pipelines/templates/shouldSign.yml@self
 
+        - pwsh: |
+            $metadataJsonPath = Join-Path $env:REPOROOT 'tools' 'metadata.json'
+            $metadataObj = Get-Content $metadataJsonPath -Raw | ConvertFrom-Json
+            $channel = '$(Channel)'
+            $publishToChannel = if ($channel -eq 'LTS') {
+                $metadataObj.LTSRelease.PublishToChannels
+            } else {
+                $metadataObj.StableRelease.PublishToChannels
+            }
+
+            $vstsCommandString = "vso[task.setvariable variable=PublishToChannel]$publishToChannel"
+            Write-Host ("sending " + $vstsCommandString)
+            Write-Host "##$vstsCommandString"
+          displayName: 'Whether publish to $(Channel)'
+
         - task: DownloadPipelineArtifact@2
           inputs:
             artifactName: drop_build_x64
@@ -343,6 +379,7 @@ extends:
               **/*.msix
             targetPath: '$(Build.ArtifactStagingDirectory)\downloads'
           displayName: Download msix for x64
+          condition: and(succeeded(), eq(variables['PublishToChannel'], 'True'))
 
         - task: DownloadPipelineArtifact@2
           inputs:
@@ -351,6 +388,7 @@ extends:
               **/*.msix
             targetPath: '$(Build.ArtifactStagingDirectory)\downloads'
           displayName: Download msix for arm64
+          condition: and(succeeded(), eq(variables['PublishToChannel'], 'True'))
 
         # Finds the makeappx tool on the machine.
         - pwsh: |
@@ -361,8 +399,8 @@ extends:
                 $exePath = $cmd.Source
             } else {
                 $makeappx = Get-ChildItem -Recurse 'C:\Program Files (x86)\Windows Kits\10\makeappx.exe' |
-                  Where-Object { $_.DirectoryName -match 'x64' } |
-                  Select-Object -Last 1
+                    Where-Object { $_.DirectoryName -match 'x64' } |
+                    Select-Object -Last 1
                 $exePath = $makeappx.FullName
                 Write-Verbose -Verbose "makeappx was found: $exePath"
             }
@@ -371,10 +409,35 @@ extends:
             Write-Host "##$vstsCommandString"
           displayName: Find makeappx tool
           retryCountOnTaskFailure: 1
+          condition: and(succeeded(), eq(variables['PublishToChannel'], 'True'))
 
         - pwsh: |
             $sourceDir = '$(Pipeline.Workspace)\releasePipeline\msix'
             $null = New-Item -Path $sourceDir -ItemType Directory -Force
+
+            $channel = '$(Channel)'
+            if ($channel -eq 'LTS') {
+                Write-Verbose -Verbose "LTS channel. Remove Stable MSIX packages"
+                $stablePkgs = Get-ChildItem -Path "$(Build.ArtifactStagingDirectory)\downloads\*.msix" -Recurse |
+                    Where-Object { $_.FullName -notlike '*-LTS-*.msix' } | ForEach-Object FullName
+
+                if ($stablePkgs) {
+                    Remove-Item -Path $stablePkgs -Force -Verbose -ErrorAction Stop
+                } else {
+                    Write-Verbose -Verbose "No Stable MSIX package was found."
+                }
+            }
+            else {
+                Write-Verbose -Verbose "Stable channel. Remove LTS MSIX packages"
+                $ltsPkgs = Get-ChildItem -Path "$(Build.ArtifactStagingDirectory)\downloads\*.msix" -Recurse |
+                    Where-Object { $_.FullName -like '*-LTS-*.msix' } | ForEach-Object FullName
+
+                if ($ltsPkgs) {
+                    Remove-Item -Path $ltsPkgs -Force -Verbose -ErrorAction Stop
+                } else {
+                    Write-Verbose -Verbose "No LTS MSIX package was found."
+                }
+            }
 
             $msixFiles = Get-ChildItem -Path "$(Build.ArtifactStagingDirectory)\downloads\*.msix" -Recurse
             foreach ($msixFile in $msixFiles) {
@@ -400,9 +463,11 @@ extends:
             Write-Host "##$vstsCommandString"
           displayName: Create MsixBundle
           retryCountOnTaskFailure: 1
+          condition: and(succeeded(), eq(variables['PublishToChannel'], 'True'))
 
         - task: onebranch.pipeline.signing@1
           displayName: Sign MsixBundle
+          condition: and(succeeded(), eq(variables['PublishToChannel'], 'True'))
           inputs:
             command: 'sign'
             signing_profile: $(MSIXProfile)
@@ -422,14 +487,22 @@ extends:
                 $null = New-Item '$(ob_outputDirectory)' -ItemType Directory -ErrorAction Stop
             }
 
-            $targetPath = Join-Path '$(ob_outputDirectory)' 'Microsoft.PowerShell-LTS_8wekyb3d8bbwe.msixbundle'
+            $channel = '$(Channel)'
+            $targetFileName = if ($channel -eq 'LTS') {
+                'Microsoft.PowerShell-LTS_8wekyb3d8bbwe.msixbundle'
+            } else {
+                'Microsoft.PowerShell_8wekyb3d8bbwe.msixbundle'
+            }
+            $targetPath = Join-Path '$(ob_outputDirectory)' $targetFileName
             Copy-Item -Verbose -Path $signedBundle.FullName -Destination $targetPath
 
             Write-Verbose -Verbose "Uploaded Bundle:"
             Get-ChildItem -Path $(ob_outputDirectory) | Out-String -Width 200 -Stream | Write-Verbose -Verbose
           displayName: 'Stage msixbundle for VPack'
+          condition: and(succeeded(), eq(variables['PublishToChannel'], 'True'))
 
         - pwsh: |
+            Write-Verbose "VPack Name: $(ob_createvpack_packagename)" -Verbose
             Write-Verbose "VPack Version: $(ob_createvpack_version)" -Verbose
             $vpackFiles = Get-ChildItem -Path '$(ob_outputDirectory)\*' -Recurse
             if($vpackFiles.Count -eq 0) {
@@ -437,7 +510,7 @@ extends:
             }
             $vpackFiles | Out-String -Width 200
           displayName: Debug Output Directory and Version
-          condition: succeededOrFailed()
+          condition: and(succeededOrFailed(), eq(variables['PublishToChannel'], 'True'))
 
     - stage: Publish_Symbols
       displayName: 'Publish Symbols'
