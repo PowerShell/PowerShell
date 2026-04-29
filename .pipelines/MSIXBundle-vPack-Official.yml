@@ -370,6 +370,14 @@ extends:
             $vstsCommandString = "vso[task.setvariable variable=PublishToChannel]$publishToChannel"
             Write-Host ("sending " + $vstsCommandString)
             Write-Host "##$vstsCommandString"
+
+            if (-not $publishToChannel) {
+                Write-Verbose "VPack enabled (before change): $(ob_createvpack_enabled)" -Verbose
+
+                $disableVPackCommand = "vso[task.setvariable variable=ob_createvpack_enabled]false"
+                Write-Host ("sending " + $disableVPackCommand)
+                Write-Host "##$disableVPackCommand"
+            }
           displayName: 'Whether publish to $(Channel)'
 
         - task: DownloadPipelineArtifact@2
@@ -502,15 +510,22 @@ extends:
           condition: and(succeeded(), eq(variables['PublishToChannel'], 'True'))
 
         - pwsh: |
+            Write-Verbose "VPack enabled: $(ob_createvpack_enabled)" -Verbose
             Write-Verbose "VPack Name: $(ob_createvpack_packagename)" -Verbose
             Write-Verbose "VPack Version: $(ob_createvpack_version)" -Verbose
+
+            if ('$(PublishToChannel)' -ne 'True') {
+                Write-Verbose "Nothing to publish." -Verbose
+                return
+            }
+
             $vpackFiles = Get-ChildItem -Path '$(ob_outputDirectory)\*' -Recurse
             if($vpackFiles.Count -eq 0) {
                 throw "No files found in $(ob_outputDirectory)"
             }
             $vpackFiles | Out-String -Width 200
           displayName: Debug Output Directory and Version
-          condition: and(succeededOrFailed(), eq(variables['PublishToChannel'], 'True'))
+          condition: succeededOrFailed()
 
     - stage: Publish_Symbols
       displayName: 'Publish Symbols'
