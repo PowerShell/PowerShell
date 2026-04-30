@@ -1,32 +1,98 @@
 version: 2
 
 updates:
+  # =========================
+  # GitHub Actions (main)
+  # =========================
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "daily"
+      time: "04:00"
     labels:
+      - "dependencies"
       - "CL-BuildPackaging"
+    commit-message:
+      prefix: "ci"
+    open-pull-requests-limit: 5
+    rebase-strategy: "auto"
+    groups:
+      actions:
+        patterns:
+          - "*"
 
+  # =========================
+  # GitHub Actions (release branches)
+  # =========================
   - package-ecosystem: "github-actions"
     directory: "/"
     target-branch: "release/*"
     schedule:
       interval: "daily"
     labels:
+      - "release"
       - "CL-BuildPackaging"
 
+  # =========================
+  # Docker (main)
+  # =========================
   - package-ecosystem: "docker"
-    directory: /
+    directory: "/"
     schedule:
-      interval: daily
+      interval: "daily"
+      time: "05:00"
     labels:
+      - "docker"
       - "CL-BuildPackaging"
+    commit-message:
+      prefix: "docker"
+    open-pull-requests-limit: 3
 
+  # =========================
+  # Docker (release)
+  # =========================
   - package-ecosystem: "docker"
     directory: "/"
     target-branch: "release/*"
     schedule:
-      interval: daily
+      interval: "daily"
     labels:
-      - "CL-BuildPackaging"
+      - "docker"
+      - "release"
+
+  # =========================
+  # 🔐 Security Updates (สำคัญ)
+  # =========================
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    allow:
+      - dependency-type: "direct"
+    labels:
+      - "security"
+      - "urgent"
+
+# =========================
+# 🤖 Integration (Bot / API)
+# =========================
+x-bot-integration:
+  enabled: true
+  auto-fix: true
+  api-endpoint: "http://localhost:3000/fix"
+  auto-merge: false
+  run-tests: true
+
+  workflow:
+    - step: "scan"
+    - step: "fix"
+    - step: "test"
+    - step: "commit"
+
+# =========================
+# ⚙️ PowerShell Hook
+# =========================
+x-powershell:
+  enabled: true
+  script: "scripts/fix-dependabot.ps1"
+  trigger: "post-update"
