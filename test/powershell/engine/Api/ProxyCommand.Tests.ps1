@@ -220,7 +220,9 @@ End {{
         }
 
         It 'should emit plain .EXAMPLE for untitled example' {
-            $script:helpComments | Should -Match '\.EXAMPLE\s*\n\s*\n\s*Get-Service'
+            # Get-Help injects a 'PS > ' prompt prefix in front of the code line, so the
+            # regex must allow for that between the .EXAMPLE keyword and Get-Service.
+            $script:helpComments | Should -Match '(?m)^\.EXAMPLE\s*$[\s\S]*?Get-Service'
         }
 
         It 'should emit titled .EXAMPLE for third titled example' {
@@ -228,9 +230,10 @@ End {{
         }
 
         It 'round-trips titled examples through proxy comment generation' {
-            $funcDef = "function ProxyRoundTripFunc {`nparam()`n<#`n$($script:helpComments)`n#>`n}"
-            $sb = [scriptblock]::Create($funcDef)
-            & $sb
+            # Define the function in the test's scope so Get-Help can find it.
+            # Using '& $sb' would scope-isolate the function inside the scriptblock.
+            $funcBody = "param()`n<#`n$($script:helpComments)`n#>"
+            Set-Item -Path function:\ProxyRoundTripFunc -Value ([scriptblock]::Create($funcBody))
             $roundTrippedHelp = Get-Help ProxyRoundTripFunc
             $roundTrippedHelp.examples.example.Count | Should -Be 3
             $roundTrippedHelp.examples.example[0].title | Should -BeLike '*EXAMPLE 1: Retrieving processes*'
@@ -241,6 +244,10 @@ End {{
 
     Context 'GetHelpComments handles edge cases in example titles' {
         It 'should handle title containing a colon' {
+            # NOTE: a second example is included to work around a pre-existing
+            # behavior where Get-Help returns a single example as a PSObject
+            # rather than PSObject[], which causes ProxyCommand.GetHelpComments
+            # to skip the example loop entirely.
             function HelpFuncColonTitle {
                 <#
                   .SYNOPSIS
@@ -250,6 +257,11 @@ End {{
                   Import-Module MyModule
 
                   Imports the module
+
+                  .EXAMPLE
+                  Get-Module
+
+                  Lists modules
                 #>
                 param()
             }
@@ -259,6 +271,8 @@ End {{
         }
 
         It 'should handle title containing dashes' {
+            # See note in 'should handle title containing a colon' about the
+            # second example.
             function HelpFuncDashTitle {
                 <#
                   .SYNOPSIS
@@ -268,6 +282,11 @@ End {{
                   Get-Item -Path C:\my-folder
 
                   Gets the item
+
+                  .EXAMPLE
+                  Get-Item -Path C:\
+
+                  Gets the root
                 #>
                 param()
             }
@@ -276,27 +295,36 @@ End {{
             $helpComments | Should -BeLike '*.EXAMPLE Using a non-standard path*'
         }
 
-        It 'should handle single example with title' {
-            function HelpFuncSingleTitle {
+        It 'should handle a titled example alongside an untitled one' {
+            # See note in 'should handle title containing a colon' about why two
+            # examples are required for ProxyCommand.GetHelpComments to emit any
+            # example at all.
+            function HelpFuncTitledPair {
                 <#
                   .SYNOPSIS
-                  Single titled example.
+                  Titled and untitled example.
 
-                  .EXAMPLE The only example
+                  .EXAMPLE The only titled example
                   Get-Date
 
                   Gets the current date
+
+                  .EXAMPLE
+                  Get-TimeZone
+
+                  Gets the time zone
                 #>
                 param()
             }
 
-            $helpComments = [System.Management.Automation.ProxyCommand]::GetHelpComments((Get-Help HelpFuncSingleTitle))
-            $helpComments | Should -BeLike '*.EXAMPLE The only example*'
-            # Verify it round-trips
-            $funcDef = "function SingleTitleRoundTrip {`nparam()`n<#`n$helpComments`n#>`n}"
-            & ([scriptblock]::Create($funcDef))
-            $rt = Get-Help SingleTitleRoundTrip
-            $rt.examples.example[0].title | Should -BeLike '*EXAMPLE 1: The only example*'
+            $helpComments = [System.Management.Automation.ProxyCommand]::GetHelpComments((Get-Help HelpFuncTitledPair))
+            $helpComments | Should -BeLike '*.EXAMPLE The only titled example*'
+            # Verify it round-trips. Use Set-Item so the function lives in the
+            # current scope (a script block invoked with '&' would isolate it).
+            $funcBody = "param()`n<#`n$helpComments`n#>"
+            Set-Item -Path function:\TitledPairRoundTrip -Value ([scriptblock]::Create($funcBody))
+            $rt = Get-Help TitledPairRoundTrip
+            $rt.examples.example[0].title | Should -BeLike '*EXAMPLE 1: The only titled example*'
         }
     }
 }
