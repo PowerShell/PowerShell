@@ -116,12 +116,56 @@ Describe 'ProxyCommand Tests' -Tags "CI" {
         $newExamples = @($newHelpObj.examples.example)
         $oldExamples.Length | Should -Be $newExamples.Length
 
-        # Verify example titles are preserved through the round-trip
+        # Verify example titles are preserved exactly through the round-trip
         for ($i = 0; $i -lt $oldExamples.Length; $i++) {
-            if ($oldExamples[$i].title) {
-                $newExamples[$i].title | Should -Not -BeNullOrEmpty -Because "example $($i+1) title should be preserved"
-            }
+            $newExamples[$i].title | Should -Be $oldExamples[$i].title -Because "example $($i+1) title should be preserved exactly"
         }
+    }
+
+    It "ProxyCommand.GetHelpComments preserves custom example titles" {
+        function TitledExampleFunc {
+            <#
+                .SYNOPSIS
+                A function with titled examples.
+
+                .EXAMPLE Retrieving an item
+                Get-Item -Path C:\Temp
+
+                Retrieves the item at C:\Temp.
+
+                .EXAMPLE Listing children
+                Get-ChildItem -Path C:\Temp
+
+                Lists folder contents.
+
+                .EXAMPLE
+                Get-Process
+
+                An untitled example.
+            #>
+            param()
+        }
+
+        $helpObj = Get-Help TitledExampleFunc -Full
+        $helpContent = [System.Management.Automation.ProxyCommand]::GetHelpComments($helpObj)
+        $bodySB = [scriptblock]::Create(@"
+<#
+$helpContent
+#>
+param()
+"@)
+        Set-Item -Path function:\TitledExampleProxy -Value $bodySB
+        $newHelpObj = Get-Help TitledExampleProxy -Full
+
+        $oldExamples = @($helpObj.examples.example)
+        $newExamples = @($newHelpObj.examples.example)
+        $newExamples.Length | Should -Be $oldExamples.Length
+
+        # Titled examples must preserve the custom title portion
+        $newExamples[0].title | Should -BeLike '*Retrieving an item*'
+        $newExamples[1].title | Should -BeLike '*Listing children*'
+        # Untitled example must not gain a spurious colon
+        $newExamples[2].title | Should -Not -BeLike '*:*'
     }
 
     It "Test generate proxy command" {

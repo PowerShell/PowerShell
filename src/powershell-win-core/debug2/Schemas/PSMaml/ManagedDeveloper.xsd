@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="utf-8"?>
+<schema targetNamespace="http://schemas.microsoft.com/maml/2004/4" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:maml="http://schemas.microsoft.com/maml/2004/4" xmlns:doc="http://schemas.microsoft.com/maml/internal" elementFormDefault="qualified" attributeFormDefault="unqualified" blockDefault="#all" xml:lang="en">
+	<!-- Schema documentation -->
+	<annotation>
+		<documentation>
+            This schema describes MAML, the Microsoft Assistance Markup Language.
+            MAML is intended for software documentation. In particular, it is
+            intended to accommodate the needs of Microsoft documentation.
+        </documentation>
+		<documentation>
+            The schema is broken into three main areas: end user, developer and
+            IT Pro. These areas adequately categorize Microsoft
+            documentation.
+        </documentation>
+		<documentation>
+         The namespace uri for this version of MAML is: http://schemas.microsoft.com/maml/2004/4.
+         Each backwards-incompatible revision to MAML will require that the date fields be appropriately
+         incremented in uri of the updated version of the MAML schema.
+        </documentation>
+	</annotation>
+	<annotation>
+		<documentation>
+            This portion of the schema was created by chains in July 2004.
+        </documentation>
+		<documentation>
+            This portion of the schema defines the page types for managed page types.
+        </documentation>
+	</annotation>
+	<include schemaLocation="conditionSet.xsd"/>
+	<include schemaLocation="ManagedDeveloperStructure.xsd"/>
+	<!-- <include schemaLocation="developerReference.xsd"/> -->
+	<!-- ************ Reference Content Type ************ -->
+	<element name="managedClass" type="maml:managedClassType">
+		<annotation>
+			<documentation>
+            This is the root element of a managed class document.
+            </documentation>
+			<appinfo>
+				<doc:localizable>n/a</doc:localizable>
+			</appinfo>
+		</annotation>
+	</element>
+	<complexType name="managedClassType" mixed="false">
+		<sequence>
+			<element ref="maml:title"/>
+			<element ref="maml:introduction"/>
+			<!-- <element ref="maml:implements"/> -->
+			<!-- <element ref="maml:members"/> -->
+			<!-- <element ref="maml:genericParameters"/> -->
+			<!-- <element ref="maml:genericConstraints"/> -->
+			<!-- <element ref="maml:security"/> -->
+			<!-- <element ref="maml:xamlAttributeUsage"/> -->
+			<!-- <element ref="maml:xamlElementUsage"/> -->
+			<element ref="maml:remarks" minOccurs="0" maxOccurs="unbounded"/>
+			<!-- <element ref="maml:derives"/> -->
+			<!-- <element ref="maml:examples"/> -->
+			<!-- <element ref="maml:threadSafety"/> -->
+			<!-- <element ref="maml:requirements"/> -->
+			<!-- <element ref="maml:relatedTopics"/>-->
+		</sequence>
+	</complexType>
+	<element name="managedMethod" type="maml:managedMethodType">
+		<annotation>
+			<documentation>
+            This is the root element of a managed method document.
+            </documentation>
+			<appinfo>
+				<doc:localizable>n/a</doc:localizable>
+			</appinfo>
+		</annotation>
+	</element>
+	<complexType name="managedMethodType" mixed="false">
+		<sequence>
+			<element ref="maml:title"/>
+			<element ref="maml:introduction"/>
+			<!-- <element ref="maml:parameters"/> -->
+			<!-- <element ref="maml:returnValue"/> -->
+			<!-- <element ref="maml:exceptions"/> -->
+			<!-- <element ref="maml:security"/> -->
+			<element ref="maml:remarks" minOccurs="0" maxOccurs="unbounded"/>
+			<!-- <element ref="maml:examples"/> -->
+			<!-- <element ref="maml:threadSafety"/> -->
+			<!-- <element ref="maml:appliesTo"/> -->
+			<!-- <element ref="maml:requirements"/> -->
+			<!-- <element ref="maml:relatedTopics"/>-->
+		</sequence>
+	</complexType>
+	<element name="managedEvent" type="maml:managedEventType">
+		<annotation>
+			<documentation>
+            This is the root element of a managed event document.
+            </documentation>
+			<appinfo>
+				<doc:localizable>n/a</doc:localizable>
+			</appinfo>
+		</annotation>
+	</element>
+	<complexType name="managedEventType" mixed="false">
+		<sequence>
+			<element ref="maml:title"/>
+			<element ref="maml:introduction"/>
+			<!-- <element ref="maml:eventData"/> -->
+			<!-- <element ref="maml:security"/> -->
+			<element ref="maml:remarks" minOccurs="0" maxOccurs="unbounded"/>
+			<!-- <element ref="maml:examples"/> -->
+			<!-- <element ref="maml:threadSafety"/> -->
+			<!-- <element ref="maml:appliesTo"/> -->
+			<!-- <element ref="maml:requirements"/> -->
+			<!-- <element ref="maml:relatedTopics"/>-->
+		</sequence>
+	</complexType>
+	<element name="managedProperty" type="maml:managedPropertyType">
+		<annotation>
+			<documentation>
+            This is the root element of a managed property document.
+            </documentation>
+			<appinfo>
+				<doc:localizable>n/a</doc:localizable>
+			</appinfo>
+		</annotation>
+	</element>
+	<complexType name="managedPropertyType" mixed="false">
+		<sequence>
+			<element ref="maml:title"/>
+			<element ref="maml:introduction"/>
+			<!-- <element ref="maml:implements"/> --> <!-- BUGBUG: This seems wrong -->
+			<!-- <element ref="maml:property"/> -->
+			<!-- <element ref="maml:exceptions"/> -->
+			<!-- <element ref="maml:security"/> -->
+			<!-- <element ref="maml:xamlAttributeValue"/> -->
+			<element ref="maml:remarks" minOccurs="0" maxOccurs="unbounded"/>
+			<!-- <element ref="maml:examples"/> -->
+			<!-- <element ref="maml:threadSafety"/> --> <!-- BUGBUG: This isn't in specification. Why not! -->
+			<!-- <element ref="maml:appliesTo"/> -->
+			<!-- <element ref="maml:requirements"/> -->
+			<!-- <element ref="maml:relatedTopics"/>-->
+		</sequence>
+	</complexType>
+	<element name="managedStructure" type="maml:managedStructureType">
+		<annotation>
+			<documentation>
+            This is the root element of a managed structure document.
+            </documentation>
+			<appinfo>
+				<doc:localizable>n/a</doc:localizable>
+			</appinfo>
+		</annotation>
+	</element>
+	<complexType name="managedStructureType" mixed="false">
+		<sequence>
+			<element ref="maml:title"/>
+			<element ref="maml:introduction"/>
+			<!-- <element ref="maml:members"/> -->
+			<!-- <element ref="maml:genericParameters"/> -->
+			<!-- <element ref="maml:genericConstraints"/> -->
+			<!-- <element ref="maml:security"/> -->
+			<!-- <element ref="maml:xamlAttributeUsage"/> -->
+			<!-- <element ref="maml:xamlElementUsage"/> -->
+			<element ref="maml:remarks" minOccurs="0" maxOccurs="unbounded"/>
+			<!-- <element ref="maml:examples"/> -->
+			<!-- <element ref="maml:threadSafety"/> -->
+			<!-- <element ref="maml:requirements"/> -->
+			<!-- <element ref="maml:relatedTopics"/>-->
+		</sequence>
+	</complexType>
+	<element name="managedNamespace" type="maml:managedNamespaceType">
+		<annotation>
+			<documentation>
+            This is the root element of a managed namespace document.
+            </documentation>
+			<appinfo>
+				<doc:localizable>n/a</doc:localizable>
+			</appinfo>
+		</annotation>
+	</element>
+	<complexType name="managedNamespaceType" mixed="false">
+		<sequence>
+			<element ref="maml:title"/>
+			<element ref="maml:introduction"/>
+			<!-- <element ref="maml:namespace"/> -->
+			<!-- <element ref="maml:classes"/> -->
+			<!-- <element ref="maml:interfaces"/> -->
+			<!-- <element ref="maml:delegates"/> -->
+			<!-- <element ref="maml:enumerations"/> -->
+			<element ref="maml:remarks" minOccurs="0" maxOccurs="unbounded"/>
+			<!-- <element ref="maml:relatedTopics"/>-->
+		</sequence>
+	</complexType>
+	<element name="managedEnumeration" type="maml:managedEnumerationType">
+		<annotation>
+			<documentation>
+            This is the root element of a managed enumeration document.
+            </documentation>
+			<appinfo>
+				<doc:localizable>n/a</doc:localizable>
+			</appinfo>
+		</annotation>
+	</element>
+	<complexType name="managedEnumerationType" mixed="false">
+		<sequence>
+			<element ref="maml:title"/>
+			<element ref="maml:introduction"/>
+			<!-- <element ref="maml:members"/> -->
+			<!-- <element ref="maml:xamlAttributeUsage"/> -->
+			<!-- <element ref="maml:xamlElementUsage"/> -->
+			<element ref="maml:remarks" minOccurs="0" maxOccurs="unbounded"/>
+			<!-- <element ref="maml:examples"/> -->
+			<!-- <element ref="maml:requirements"/> -->
+			<!-- <element ref="maml:relatedTopics"/>-->
+		</sequence>
+	</complexType>
+	<element name="managedInterface" type="maml:managedInterfaceType">
+		<annotation>
+			<documentation>
+            This is the root element of a managed interface document.
+            </documentation>
+			<appinfo>
+				<doc:localizable>n/a</doc:localizable>
+			</appinfo>
+		</annotation>
+	</element>
+	<complexType name="managedInterfaceType" mixed="false">
+		<sequence>
+			<element ref="maml:title"/>
+			<element ref="maml:introduction"/>
+			<!-- <element ref="maml:implementedBy"/> -->
+			<!-- <element ref="maml:members"/> -->
+			<!-- <element ref="maml:genericParameters"/> -->
+			<!-- <element ref="maml:genericConstraints"/> -->
+			<!-- <element ref="maml:security"/> -->
+			<!-- <element ref="maml:xamlAttributeUsage"/> -->
+			<!-- <element ref="maml:xamlElementUsage"/> -->
+			<element ref="maml:remarks" minOccurs="0" maxOccurs="unbounded"/>
+			<!-- <element ref="maml:derives"/> --> <!-- BUGBUG: This isn't in the spec but I think this is needed too. -->
+			<!-- <element ref="maml:examples"/> -->
+			<!-- <element ref="maml:requirements"/> -->
+			<!-- <element ref="maml:relatedTopics"/>-->
+		</sequence>
+	</complexType>
+	<element name="managedDelegate" type="maml:managedDelegateType">
+		<annotation>
+			<documentation>
+            This is the root element of a managed delegate document.
+            </documentation>
+			<appinfo>
+				<doc:localizable>n/a</doc:localizable>
+			</appinfo>
+		</annotation>
+	</element>
+	<complexType name="managedDelegateType" mixed="false">
+		<sequence>
+			<element ref="maml:title"/>
+			<element ref="maml:introduction"/>
+			<!-- <element ref="maml:parameters"/> -->
+			<!-- <element ref="maml:genericParameters"/> -->
+			<!-- <element ref="maml:genericConstraints"/> -->
+			<!-- <element ref="maml:security"/> --> <!-- BUGBUG: This isn't in the spec but I think this is needed too. -->
+			<element ref="maml:remarks" minOccurs="0" maxOccurs="unbounded"/>
+			<!-- <element ref="maml:examples"/> -->
+			<!-- <element ref="maml:requirements"/> -->
+			<!-- <element ref="maml:relatedTopics"/>-->
+		</sequence>
+	</complexType>
+	<element name="managedOperator" type="maml:managedOperatorType">
+		<annotation>
+			<documentation>
+            This is the root element of a managed operator document.
+            </documentation>
+			<appinfo>
+				<doc:localizable>n/a</doc:localizable>
+			</appinfo>
+		</annotation>
+	</element>
+	<complexType name="managedOperatorType" mixed="false">
+		<sequence>
+			<element ref="maml:title"/>
+			<element ref="maml:introduction"/>
+			<!-- <element ref="maml:parameters"/> -->
+			<!-- <element ref="maml:returnValue"/> -->
+			<!-- <element ref="maml:exceptions"/> --> <!-- BUGBUG: This isn't in the spec but I think this is needed too. -->
+			<!-- <element ref="maml:security"/> --> <!-- BUGBUG: This isn't in the spec but I think this is needed too. -->
+			<element ref="maml:remarks" minOccurs="0" maxOccurs="unbounded"/>
+			<!-- <element ref="maml:examples"/> -->
+			<!-- <element ref="maml:threadSafety"/> --> <!-- BUGBUG: This isn't in the spec but I think this is needed too. -->
+			<!-- <element ref="maml:appliesTo"/> --> <!-- BUGBUG: This isn't in the spec but I think this is needed too. -->
+			<!-- <element ref="maml:requirements"/> -->
+			<!-- <element ref="maml:relatedTopics"/>-->
+		</sequence>
+	</complexType>
+	<element name="managedField" type="maml:managedFieldType">
+		<annotation>
+			<documentation>
+            This is the root element of a managed field document.
+            </documentation>
+			<appinfo>
+				<doc:localizable>n/a</doc:localizable>
+			</appinfo>
+		</annotation>
+	</element>
+	<complexType name="managedFieldType" mixed="false">
+		<sequence>
+			<element ref="maml:title"/>
+			<element ref="maml:introduction"/>
+			<!-- <element ref="maml:datatype"/> --> <!-- BUGBUG: This isn't in spec, but we need something to indicate data type -->
+			<element ref="maml:remarks" minOccurs="0" maxOccurs="unbounded"/>
+			<!-- <element ref="maml:examples"/> -->
+			<!-- <element ref="maml:threadSafety"/> --> <!-- BUGBUG: This isn't in specification. Why not! -->
+			<!-- <element ref="maml:appliesTo"/> -->
+			<!-- <element ref="maml:requirements"/> -->
+			<!-- <element ref="maml:relatedTopics"/>-->
+		</sequence>
+	</complexType>
+	<element name="managedOverload" type="maml:managedOverloadType">
+		<annotation>
+			<documentation>
+            This is the root element of a managed overload document.
+            </documentation>
+			<appinfo>
+				<doc:localizable>n/a</doc:localizable>
+			</appinfo>
+		</annotation>
+	</element>
+	<complexType name="managedOverloadType" mixed="false">
+		<sequence>
+			<element ref="maml:title"/>
+			<element ref="maml:introduction"/>
+			<!-- <element ref="maml:overloads"/> -->
+			<element ref="maml:remarks" minOccurs="0" maxOccurs="unbounded"/>
+			<!-- <element ref="maml:examples"/> -->
+			<!-- <element ref="maml:relatedTopics"/>-->
+		</sequence>
+	</complexType>
+	<element name="managedConstructor" type="maml:managedConstructorType">
+		<annotation>
+			<documentation>
+            This is the root element of a managed constructor document.
+            </documentation>
+			<appinfo>
+				<doc:localizable>n/a</doc:localizable>
+			</appinfo>
+		</annotation>
+	</element>
+	<complexType name="managedConstructorType" mixed="false">
+		<sequence>
+			<element ref="maml:title"/>
+			<element ref="maml:introduction"/>
+			<!-- <element ref="maml:parameters"/> -->
+			<!-- <element ref="maml:returnValue"/> -->
+			<!-- <element ref="maml:exceptions"/> -->
+			<!-- <element ref="maml:security"/> -->
+			<element ref="maml:remarks" minOccurs="0" maxOccurs="unbounded"/>
+			<!-- <element ref="maml:examples"/> -->
+			<!-- <element ref="maml:threadSafety"/> -->
+			<!-- <element ref="maml:appliesTo"/> -->
+			<!-- <element ref="maml:requirements"/> -->
+			<!-- <element ref="maml:relatedTopics"/>-->
+		</sequence>
+	</complexType>
+</schema>

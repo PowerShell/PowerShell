@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<schema targetNamespace="http://schemas.microsoft.com/maml/2004/10"
+    xmlns:doc="http://schemas.microsoft.com/maml/internal"
+    xmlns:maml="http://schemas.microsoft.com/maml/2004/10"
+    xmlns="http://www.w3.org/2001/XMLSchema"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified"
+    blockDefault="#all"
+    xml:lang="en">
+  <!-- Schema documentation -->
+  <annotation>
+    <documentation>This schema describes MAML (Microsoft Assistance Markup Language). MAML is intended for software documentation. In particular, MAML is intended to accommodate the needs of Microsoft documentation.</documentation>
+    <documentation>The schema is broken into three main areas: end user, developer and IT Pro. These areas represent the main categories of Microsoft documentation.</documentation>
+    <documentation>The namespace uri for this version of MAML is: http://schemas.microsoft.com/maml/2004/10.</documentation>
+    <documentation>Each backwards-incompatible revision to MAML will require that the date fields be appropriately incremented in uri of the updated version of the MAML schema.</documentation>
+  </annotation>
+  <include schemaLocation="base.xsd"/>
+  <complexType name="programmingLanguageType">
+    <simpleContent>
+      <extension base="maml:devLanguagesType"/>
+    </simpleContent>
+  </complexType>
+  <element name="programmingLanguage" type="maml:programmingLanguageType">
+    <annotation>
+      <documentation>Specifies a programming language.</documentation>
+      <appinfo>
+        <doc:localizable>false</doc:localizable>
+      </appinfo>
+    </annotation>
+  </element>
+  <simpleType name="operatingSystemEnumType">
+    <restriction base="token">
+      <enumeration value="Win95"/>
+      <!--Windows 95-->
+      <enumeration value="Win98"/>
+      <!--Windows 98-->
+      <enumeration value="Win98Se"/>
+      <!--Windows 98 Second Edition-->
+      <enumeration value="WinMe"/>
+      <!--Windows Millennium Edition-->
+      <enumeration value="WinNt4Server"/>
+      <!--Windows NT Server 4.0-->
+      <enumeration value="WinNt4Workstation"/>
+      <!--Windows NT Workstation 4.0-->
+      <enumeration value="Win2kProfessional"/>
+      <!--Windows 2000 Professional-->
+      <enumeration value="Win2kServer"/>
+      <!--Windows 2000 Server-->
+      <enumeration value="Win2kAdvanced"/>
+      <!--Windows 2000 Advanced Server-->
+      <enumeration value="Win2kDatacenter"/>
+      <!--Windows 2000 Datacenter Server-->
+      <enumeration value="Win2kServerApplianceKit"/>
+      <!--Windows 2000 with Server Appliance Kit-->
+      <enumeration value="WinXpHome"/>
+      <!--Windows XP Home Edition-->
+      <enumeration value="WinXpProfessional"/>
+      <!--Windows XP Professional-->
+      <enumeration value="WinXpMediaCenter"/>
+      <!--Windows XP Media Center-->
+      <enumeration value="WinXpTablet"/>
+      <!--Windows XP Tablet PC-->
+      <enumeration value="WinXpEmbedded"/>
+      <!--Windows XP Embedded-->
+      <enumeration value="Win2003Server"/>
+      <!--Windows Server 2003-->
+      <enumeration value="WinCeDotNet"/>
+      <!--Windows CE .NET-->
+    </restriction>
+  </simpleType>
+  <simpleType name="operatingSystemFamiliesEnumType">
+    <restriction base="token">
+      <enumeration value="Win9xFamily"/>
+      <!--Windows 95, Windows 98, Windows 98 Second Edition, Windows Millennium Edition-->
+      <enumeration value="WinNt4Family"/>
+      <!--Windows NT Server 4.0, Windows NT Workstation 4.0-->
+      <enumeration value="Win2kFamily"/>
+      <!--Windows 2000 Professional, Windows 2000 Server, Windows 2000 Advanced Server, Windows 2000 Datacenter Server-->
+      <enumeration value="WinXpFamily"/>
+      <!--Windows XP Home Edition, Windows XP Professional, Windows XP Media Center, Windows XP Tablet PC-->
+      <enumeration value="WinCeFamily"/>
+      <!--Windows CE .NET (and previous versions)-->
+    </restriction>
+  </simpleType>
+  <simpleType name="platformStringType">
+    <union memberTypes="maml:operatingSystemEnumType maml:operatingSystemFamiliesEnumType">
+      <simpleType>
+        <restriction base="token">
+          <enumeration value="EcmaCli"/>
+          <!--Common Language Infrastructure (CLI) Standard-->
+        </restriction>
+      </simpleType>
+    </union>
+  </simpleType>
+  <complexType name="platformType">
+    <simpleContent>
+      <extension base="maml:platformStringType"/>
+    </simpleContent>
+  </complexType>
+  <element name="platform" type="maml:platformType">
+    <annotation>
+      <documentation>Specifies the identifier for a platform (such as an operating system version).</documentation>
+      <appinfo>
+        <doc:localizable>false</doc:localizable>
+      </appinfo>
+    </annotation>
+  </element>
+  <complexType name="platformsType">
+    <sequence>
+      <element ref="maml:platform" minOccurs="0" maxOccurs="unbounded"/>
+    </sequence>
+  </complexType>
+  <element name="platforms" type="maml:platformsType">
+    <annotation>
+      <documentation>Describes a collection of platform elements.</documentation>
+      <appinfo>
+        <doc:localizable>n/a</doc:localizable>
+      </appinfo>
+    </annotation>
+  </element>
+</schema>

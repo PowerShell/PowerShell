@@ -1,0 +1,2686 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.PowerShell.Security</name>
+    </assembly>
+    <members>
+        <member name="T:CertificateCommands">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="M:CertificateCommands.#ctor">
+            <summary>constructor</summary>
+        </member>
+        <member name="P:CertificateCommands.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:CertificateCommands.Culture">
+            <summary>
+              Overrides the current threads CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:CertificateCommands.GetPfxCertPasswordPrompt">
+            <summary>
+              Looks up a localized string similar to 
+               Enter password: 
+             
+            </summary>
+        </member>
+        <member name="P:CertificateCommands.NoneOfTheFilesFound">
+            <summary>
+              Looks up a localized string similar to 
+               Command cannot find any of the specified files.
+             
+            </summary>
+        </member>
+        <member name="P:CertificateCommands.FileNotFound">
+            <summary>
+              Looks up a localized string similar to 
+               The following file could not be found: {0}.
+             
+            </summary>
+        </member>
+        <member name="T:CertificateProviderStrings">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="M:CertificateProviderStrings.#ctor">
+            <summary>constructor</summary>
+        </member>
+        <member name="P:CertificateProviderStrings.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:CertificateProviderStrings.Culture">
+            <summary>
+              Overrides the current threads CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:CertificateProviderStrings.CertProvidername">
+            <summary>
+              Looks up a localized string similar to 
+               X509 Certificate Provider
+             
+            </summary>
+        </member>
+        <member name="P:CertificateProviderStrings.CertificateNotFound">
+            <summary>
+              Looks up a localized string similar to 
+               Cannot find the X509 certificate at path {0}.
+             
+            </summary>
+        </member>
+        <member name="P:CertificateProviderStrings.CertificateStoreNotFound">
+            <summary>
+              Looks up a localized string similar to 
+               Cannot find the X509 certificate store at path {0}.
+             
+            </summary>
+        </member>
+        <member name="P:CertificateProviderStrings.CertificateStoreLocationNotFound">
+            <summary>
+              Looks up a localized string similar to 
+               Cannot find the certificate store because the specified X509 store location {0} is not valid.
+             
+            </summary>
+        </member>
+        <member name="P:CertificateProviderStrings.InvalidPath">
+            <summary>
+              Looks up a localized string similar to 
+               Cannot process the path because path {0} is not a valid certificate provider path.
+             
+            </summary>
+        </member>
+        <member name="P:CertificateProviderStrings.Action_Move">
+            <summary>
+              Looks up a localized string similar to 
+               Move certificate
+             
+            </summary>
+        </member>
+        <member name="P:CertificateProviderStrings.Action_Remove">
+            <summary>
+              Looks up a localized string similar to 
+               Remove certificate
+             
+            </summary>
+        </member>
+        <member name="P:CertificateProviderStrings.Action_RemoveAndDeleteKey">
+            <summary>
+              Looks up a localized string similar to 
+               Remove certificate and its private key.
+             
+            </summary>
+        </member>
+        <member name="P:CertificateProviderStrings.Action_Invoke">
+            <summary>
+              Looks up a localized string similar to 
+               Invoke Certificate Manager
+             
+            </summary>
+        </member>
+        <member name="P:CertificateProviderStrings.MoveItemTemplate">
+            <summary>
+              Looks up a localized string similar to 
+                 Item: {0} Destination: {1} 
+             
+            </summary>
+        </member>
+        <member name="P:CertificateProviderStrings.CannotMoveContainer">
+            <summary>
+              Looks up a localized string similar to 
+                 You cannot move a certificate container. 
+             
+            </summary>
+        </member>
+        <member name="P:CertificateProviderStrings.CannotMoveCrossContext">
+            <summary>
+              Looks up a localized string similar to 
+                 You cannot move a certificate from user store to or from machine. 
+             
+            </summary>
+        </member>
+        <member name="P:CertificateProviderStrings.CannotMoveToSameStore">
+            <summary>
+              Looks up a localized string similar to 
+               You cannot move a certificate to the same store. 
+             
+            </summary>
+        </member>
+        <member name="P:CertificateProviderStrings.CannotCreateItem">
+            <summary>
+              Looks up a localized string similar to 
+               You cannot create an item other than certificate store. 
+             
+            </summary>
+        </member>
+        <member name="P:CertificateProviderStrings.CannotCreateUserStore">
+            <summary>
+              Looks up a localized string similar to 
+               Creating certificate stores under CurrentUser is not supported. 
+             
+            </summary>
+        </member>
+        <member name="P:CertificateProviderStrings.CannotDeleteUserStore">
+            <summary>
+              Looks up a localized string similar to 
+               Deleting certificate stores under CurrentUser is not supported. 
+             
+            </summary>
+        </member>
+        <member name="P:CertificateProviderStrings.InvalidDestStore">
+            <summary>
+              Looks up a localized string similar to 
+               The destination is not a valid store. 
+             
+            </summary>
+        </member>
+        <member name="P:CertificateProviderStrings.RemoveItemTemplate">
+            <summary>
+              Looks up a localized string similar to 
+               Item: {0} 
+             
+            </summary>
+        </member>
+        <member name="P:CertificateProviderStrings.RemoveStoreTemplate">
+            <summary>
+              Looks up a localized string similar to 
+               The store {0} is a built-in system store and cannot be deleted.
+             
+            </summary>
+        </member>
+        <member name="P:CertificateProviderStrings.CannotRemoveContainer">
+            <summary>
+              Looks up a localized string similar to 
+               You cannot remove a certificate container. 
+             
+            </summary>
+        </member>
+        <member name="P:CertificateProviderStrings.VerboseNoPrivateKey">
+            <summary>
+              Looks up a localized string similar to 
+               Private key skipped. The certificate has no private key association. 
+             
+            </summary>
+        </member>
+        <member name="P:CertificateProviderStrings.UINotAllowed">
+            <summary>
+              Looks up a localized string similar to 
+               The operation is on user root store and UI is not allowed. 
+             
+            </summary>
+        </member>
+        <member name="P:CertificateProviderStrings.RemoteErrorMessage">
+            <summary>
+              Looks up a localized string similar to 
+               . The following error may be a result of user credentials required on the remote machine. See Enable-WSManCredSSP Cmdlet help on how to enable and use CredSSP for delegation with PowerShell remoting. 
+             
+            </summary>
+        </member>
+        <member name="T:CmsCommands">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="M:CmsCommands.#ctor">
+            <summary>constructor</summary>
+        </member>
+        <member name="P:CmsCommands.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:CmsCommands.Culture">
+            <summary>
+              Overrides the current threads CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:CmsCommands.FilePathMustBeFileSystemPath">
+            <summary>
+              Looks up a localized string similar to 
+               The path '{0}' must refer to a single file system path.
+             
+            </summary>
+        </member>
+        <member name="P:CmsCommands.InputContainedNoEncryptedContent">
+            <summary>
+              Looks up a localized string similar to 
+               Cannot unprotect message. The input contained no encrypted content.
+             
+            </summary>
+        </member>
+        <member name="P:CmsCommands.InputContainedNoEncryptedContentIncludeContext">
+            <summary>
+              Looks up a localized string similar to 
+               Cannot unprotect message. The input contained no encrypted content. Specify the '{0}' parameter if you wish to output the original content when no encrypted content is detected.
+             
+            </summary>
+        </member>
+        <member name="T:ExecutionPolicyCommands">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="M:ExecutionPolicyCommands.#ctor">
+            <summary>constructor</summary>
+        </member>
+        <member name="P:ExecutionPolicyCommands.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:ExecutionPolicyCommands.Culture">
+            <summary>
+              Overrides the current threads CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:ExecutionPolicyCommands.ExecutionPolicyOverridden">
+            <summary>
+              Looks up a localized string similar to 
+               PowerShell updated your execution policy successfully, but the setting is overridden by a policy defined at a more specific scope.  Due to the override, your shell will retain its current effective execution policy of {0}. Type "Get-ExecutionPolicy -List" to view your execution policy settings. For more information please see "Get-Help Set-ExecutionPolicy".
+             
+            </summary>
+        </member>
+        <member name="P:ExecutionPolicyCommands.ExecutionPolicyOverriddenRecommendedAction">
+            <summary>
+              Looks up a localized string similar to 
+               Contact your system administrator.
+             
+            </summary>
+        </member>
+        <member name="P:ExecutionPolicyCommands.ListAndScopeSpecified">
+            <summary>
+              Looks up a localized string similar to 
+               Cannot get execution policy. Specify only the List or Scope parameters.
+             
+            </summary>
+        </member>
+        <member name="P:ExecutionPolicyCommands.CantSetGroupPolicy">
+            <summary>
+              Looks up a localized string similar to 
+               Cannot set execution policy. Execution policies at the MachinePolicy or UserPolicy scopes must be set through Group Policy.
+             
+            </summary>
+        </member>
+        <member name="P:ExecutionPolicyCommands.SetExecutionPolicyCaption">
+            <summary>
+              Looks up a localized string similar to 
+               Execution Policy Change
+             
+            </summary>
+        </member>
+        <member name="P:ExecutionPolicyCommands.SetExecutionPolicyQuery">
+            <summary>
+              Looks up a localized string similar to 
+               The execution policy helps protect you from scripts that you do not trust. Changing the execution policy might expose you to the security risks described in the about_Execution_Policies help topic at https://go.microsoft.com/fwlink/?LinkID=135170. Do you want to change the execution policy?
+             
+            </summary>
+        </member>
+        <member name="P:ExecutionPolicyCommands.SetExecutionPolicyAccessDeniedError">
+             <summary>
+               Looks up a localized string similar to 
+                {0}
+            To change the execution policy for the default (LocalMachine) scope, start PowerShell with the "Run as administrator" option. To change the execution policy for the current user, run "Set-ExecutionPolicy -Scope CurrentUser".
+              
+             </summary>
+        </member>
+        <member name="T:SecureStringCommands">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="M:SecureStringCommands.#ctor">
+            <summary>constructor</summary>
+        </member>
+        <member name="P:SecureStringCommands.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:SecureStringCommands.Culture">
+            <summary>
+              Overrides the current threads CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:SecureStringCommands.NewSecureString_Prompt">
+            <summary>
+              Looks up a localized string similar to 
+               Enter secret: 
+             
+            </summary>
+        </member>
+        <member name="P:SecureStringCommands.ForceRequired">
+            <summary>
+              Looks up a localized string similar to 
+               The system cannot protect plain text input. To suppress this warning and convert the plain text to a SecureString, reissue the command specifying the Force parameter. For more information, type: get-help ConvertTo-SecureString.
+             
+            </summary>
+        </member>
+        <member name="T:SignatureCommands">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="M:SignatureCommands.#ctor">
+            <summary>constructor</summary>
+        </member>
+        <member name="P:SignatureCommands.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:SignatureCommands.Culture">
+            <summary>
+              Overrides the current threads CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:SignatureCommands.CertNotGoodForSigning">
+            <summary>
+              Looks up a localized string similar to 
+               Cannot sign code. The specified certificate is not suitable for code signing.
+             
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "P:SignatureCommands.TimeStampUrlRequired" -->
+        <member name="P:SignatureCommands.CannotRetrieveFromContainer">
+            <summary>
+              Looks up a localized string similar to 
+               The Get-AuthenticodeSignature cmdlet does not support directories. Supply a path to a file and retry.
+             
+            </summary>
+        </member>
+        <member name="P:SignatureCommands.FileNotFound">
+            <summary>
+              Looks up a localized string similar to 
+               File {0} was not found.
+             
+            </summary>
+        </member>
+        <member name="T:UtilsStrings">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="M:UtilsStrings.#ctor">
+            <summary>constructor</summary>
+        </member>
+        <member name="P:UtilsStrings.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:UtilsStrings.Culture">
+            <summary>
+              Overrides the current threads CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:UtilsStrings.FileSmallerThan4Bytes">
+            <summary>
+              Looks up a localized string similar to 
+               Cannot digitally sign file because file {0} is smaller than 4 bytes in size. Files must be at least 4 bytes in order to be digitally signed.
+             
+            </summary>
+        </member>
+        <member name="P:UtilsStrings.OperationNotSupportedOnPath">
+            <summary>
+              Looks up a localized string similar to 
+               Cannot perform the operation because it is not supported on the object found in path {0}.
+             
+            </summary>
+        </member>
+        <member name="P:UtilsStrings.GetMethodNotFound">
+            <summary>
+              Looks up a localized string similar to 
+               Cannot get the ACL because the necessary method, GetSecurityDescriptor, does not exist.
+             
+            </summary>
+        </member>
+        <member name="P:UtilsStrings.SetMethodNotFound">
+            <summary>
+              Looks up a localized string similar to 
+               Cannot set the ACL because the method that it needs to invoke, SetSecurityDescriptor, does not exist.
+             
+            </summary>
+        </member>
+        <member name="P:UtilsStrings.MethodInvokeFail">
+            <summary>
+              Looks up a localized string similar to 
+               Could not perform operation because an exception was thrown during method invoke.
+             
+            </summary>
+        </member>
+        <member name="P:UtilsStrings.GetSaclWithCapIdFail">
+            <summary>
+              Looks up a localized string similar to 
+               Could not create a SACL with the specified central access policy.
+             
+            </summary>
+        </member>
+        <member name="P:UtilsStrings.GetEmptySaclFail">
+            <summary>
+              Looks up a localized string similar to 
+               Could not create an empty SACL.
+             
+            </summary>
+        </member>
+        <member name="P:UtilsStrings.GetTokenWithEnabledPrivilegeFail">
+            <summary>
+              Looks up a localized string similar to 
+               Could not enable SeSecurityPrivilege.
+             
+            </summary>
+        </member>
+        <member name="P:UtilsStrings.SetCentralAccessPolicyFail">
+            <summary>
+              Looks up a localized string similar to 
+               Could not set central access policy.
+             
+            </summary>
+        </member>
+        <member name="P:UtilsStrings.InvalidCentralAccessPolicyParameters">
+            <summary>
+              Looks up a localized string similar to 
+               ClearCentralAccessPolicy and CentralAccessPolicy parameters cannot be used at the same time.
+             
+            </summary>
+        </member>
+        <member name="P:UtilsStrings.InvalidCentralAccessPolicyIdentifier">
+            <summary>
+              Looks up a localized string similar to 
+               Central Access Policy identifier or name is not valid. If specifying an identifier, it must begin with S-1-17. If specifying a name, the policy must be applied on the target machine.
+             
+            </summary>
+        </member>
+        <member name="P:UtilsStrings.PromptForCredential_DefaultCaption">
+            <summary>
+              Looks up a localized string similar to 
+               PowerShell credential request
+             
+            </summary>
+        </member>
+        <member name="P:UtilsStrings.PromptForCredential_DefaultMessage">
+            <summary>
+              Looks up a localized string similar to 
+               Enter your credentials.
+             
+            </summary>
+        </member>
+        <member name="T:Microsoft.PowerShell.Commands.SecurityDescriptorCommandsBase">
+            <summary>
+            Defines the base class from which all Security Descriptor commands
+            are derived.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.SecurityDescriptorCommandsBase.Filter">
+            <summary>
+            Gets or sets the filter property.  The filter
+            property allows for provider-specific filtering of results.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.SecurityDescriptorCommandsBase.Include">
+            <summary>
+            Gets or sets the include property.  The include property
+            specifies the items on which the command will act.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.SecurityDescriptorCommandsBase.Exclude">
+            <summary>
+            Gets or sets the exclude property.  The exclude property
+            specifies the items on which the command will not act.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.SecurityDescriptorCommandsBase.CmdletProviderContext">
+            <summary>
+            The context for the command that is passed to the core command providers.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.SecurityDescriptorCommandsBase.AddBrokeredProperties(System.Collections.ObjectModel.Collection{System.Management.Automation.PSObject},System.Boolean,System.Boolean)">
+            <summary>
+            Add brokered properties for easy access to important properties
+            of security descriptor.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.SecurityDescriptorCommandsBase.GetPath(System.Management.Automation.PSObject)">
+            <summary>
+            Gets the Path of the provided PSObject.
+            </summary>
+            <param name="instance">
+            The PSObject for which to obtain the path.
+            </param>
+            <returns>
+            The path of the provided PSObject.
+            </returns>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.SecurityDescriptorCommandsBase.GetOwner(System.Management.Automation.PSObject)">
+            <summary>
+            Gets the Owner of the provided PSObject.
+            </summary>
+            <param name="instance">
+            The PSObject for which to obtain the Owner.
+            </param>
+            <returns>
+            The Owner of the provided PSObject.
+            </returns>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.SecurityDescriptorCommandsBase.GetGroup(System.Management.Automation.PSObject)">
+            <summary>
+            Gets the Group of the provided PSObject.
+            </summary>
+            <param name="instance">
+            The PSObject for which to obtain the Group.
+            </param>
+            <returns>
+            The Group of the provided PSObject.
+            </returns>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.SecurityDescriptorCommandsBase.GetAccess(System.Management.Automation.PSObject)">
+            <summary>
+            Gets the access rules of the provided PSObject.
+            </summary>
+            <param name="instance">
+            The PSObject for which to obtain the access rules.
+            </param>
+            <returns>
+            The access rules of the provided PSObject.
+            </returns>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.SecurityDescriptorCommandsBase.GetAudit(System.Management.Automation.PSObject)">
+            <summary>
+            Gets the audit rules of the provided PSObject.
+            </summary>
+            <param name="instance">
+            The PSObject for which to obtain the audit rules.
+            </param>
+            <returns>
+            The audit rules of the provided PSObject.
+            </returns>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.SecurityDescriptorCommandsBase.GetCentralAccessPolicyId(System.Management.Automation.PSObject)">
+            <summary>
+            Gets the central access policy ID of the provided PSObject.
+            </summary>
+            <param name="instance">
+            The PSObject for which to obtain the central access policy ID.
+            </param>
+            <returns>
+            The central access policy ID of the provided PSObject.
+            </returns>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.SecurityDescriptorCommandsBase.GetSddl(System.Management.Automation.PSObject)">
+            <summary>
+            Gets the security descriptor (in SDDL form) of the
+            provided PSObject.  SDDL form is the Security Descriptor
+            Definition Language.
+            </summary>
+            <param name="instance">
+            The PSObject for which to obtain the security descriptor.
+            </param>
+            <returns>
+            The security descriptor of the provided PSObject, in SDDL form.
+            </returns>
+        </member>
+        <member name="F:Microsoft.PowerShell.Commands.SecurityDescriptorCommandsBase._filter">
+            <summary>
+            The filter to be used to when globbing to get the item.
+            </summary>
+        </member>
+        <member name="F:Microsoft.PowerShell.Commands.SecurityDescriptorCommandsBase._include">
+            <summary>
+            The glob string used to determine which items are included.
+            </summary>
+        </member>
+        <member name="F:Microsoft.PowerShell.Commands.SecurityDescriptorCommandsBase._exclude">
+            <summary>
+            The glob string used to determine which items are excluded.
+            </summary>
+        </member>
+        <member name="T:Microsoft.PowerShell.Commands.GetAclCommand">
+            <summary>
+            Defines the implementation of the 'get-acl' cmdlet.
+            This cmdlet gets the security descriptor of an item at the specified path.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.GetAclCommand.#ctor">
+            <summary>
+            Initializes a new instance of the GetAclCommand
+            class.  Sets the default path to the current location.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.GetAclCommand.Path">
+            <summary>
+            Gets or sets the path of the item for which to obtain the
+            security descriptor.  Default is the current location.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.GetAclCommand.InputObject">
+            <summary>
+            InputObject Parameter
+            Gets or sets the inputObject for which to obtain the security descriptor.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.GetAclCommand.LiteralPath">
+            <summary>
+            Gets or sets the literal path of the item for which to obtain the
+            security descriptor.  Default is the current location.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.GetAclCommand.Audit">
+            <summary>
+            Gets or sets the audit flag of the command.  This flag
+            determines if audit rules should also be retrieved.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.GetAclCommand.AllCentralAccessPolicies">
+            <summary>
+            Parameter '-AllCentralAccessPolicies' is not supported in OneCore powershell,
+            because function 'LsaQueryCAPs' is not available in OneCoreUAP and NanoServer.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.GetAclCommand.ProcessRecord">
+            <summary>
+            Processes records from the input pipeline.
+            For each input file, the command retrieves its
+            corresponding security descriptor.
+            </summary>
+        </member>
+        <member name="T:Microsoft.PowerShell.Commands.SetAclCommand">
+            <summary>
+            Defines the implementation of the 'set-acl' cmdlet.
+            This cmdlet sets the security descriptor of an item at the specified path.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.SetAclCommand.Path">
+            <summary>
+            Gets or sets the path of the item for which to set the
+            security descriptor.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.SetAclCommand.InputObject">
+            <summary>
+            InputObject Parameter
+            Gets or sets the inputObject for which to set the security descriptor.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.SetAclCommand.LiteralPath">
+            <summary>
+            Gets or sets the literal path of the item for which to set the
+            security descriptor.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.SetAclCommand.AclObject">
+            <summary>
+            Gets or sets the security descriptor object to be
+            set on the target item(s).
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.SetAclCommand.CentralAccessPolicy">
+            <summary>
+            Parameter '-CentralAccessPolicy' is not supported in OneCore powershell,
+            because function 'LsaQueryCAPs' is not available in OneCoreUAP and NanoServer.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.SetAclCommand.ClearCentralAccessPolicy">
+            <summary>
+            Clears the central access policy applied on the target item(s).
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.SetAclCommand.Passthru">
+            <summary>
+            Gets or sets the Passthru flag for the operation.
+            If true, the security descriptor is also passed
+            down the output pipeline.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.SetAclCommand.GetEmptySacl">
+            <summary>
+            Returns a newly allocated SACL with no ACEs in it.
+            Free the returned SACL by calling Marshal.FreeHGlobal.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.SetAclCommand.GetSaclWithCapId(System.String)">
+            <summary>
+            Returns a newly allocated SACL with the supplied CAPID in it.
+            Free the returned SACL by calling Marshal.FreeHGlobal.
+            </summary>
+            <remarks>
+            Function 'LsaQueryCAPs' is not available in OneCoreUAP and NanoServer.
+            So the parameter "-CentralAccessPolicy" is not supported on OneCore powershell,
+            and thus this method won't be hit in OneCore powershell.
+            </remarks>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.SetAclCommand.GetTokenWithEnabledPrivilege(System.String,System.Management.Automation.Security.NativeMethods.TOKEN_PRIVILEGE)">
+            <summary>
+            Returns the current thread or process token with the specified privilege enabled
+            and the previous state of this privilege. Free the returned token
+            by calling NativeMethods.CloseHandle.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.SetAclCommand.ProcessRecord">
+            Processes records from the input pipeline.
+            For each input file, the command sets its
+            security descriptor to the specified
+            Access Control List (ACL).
+        </member>
+        <member name="T:Microsoft.PowerShell.Commands.CatalogCommandsBase">
+            <summary>
+            Defines the base class from which all catalog commands are derived.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.CatalogCommandsBase.CatalogFilePath">
+            <summary>
+            Path of folder/file to generate or validate the catalog file.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.CatalogCommandsBase.Path">
+            <summary>
+            Path of folder/file to generate or validate the catalog file.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CatalogCommandsBase.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the CatalogCommandsBase class,
+            using the given command name.
+            </summary>
+            <param name="name">
+            The name of the command.
+            </param>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CatalogCommandsBase.ProcessRecord">
+            <summary>
+            Processes records from the input pipeline.
+            For each input object, the command either generate the Catalog or
+            Validates the existing Catalog.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CatalogCommandsBase.PerformAction(System.Collections.ObjectModel.Collection{System.String},System.String)">
+            <summary>
+            Performs the action i.e. Generate or Validate the Windows Catalog File.
+            </summary>
+            <param name="path">
+            The name of the Folder or file on which to perform the action.
+            </param>
+            <param name="catalogFilePath">
+            Path to Catalog
+            </param>
+        </member>
+        <member name="T:Microsoft.PowerShell.Commands.NewFileCatalogCommand">
+            <summary>
+            Defines the implementation of the 'New-FileCatalog' cmdlet.
+            This cmdlet generates the catalog for File or Folder.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.NewFileCatalogCommand.#ctor">
+            <summary>
+            Initializes a new instance of the New-FileCatalog class.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.NewFileCatalogCommand.CatalogVersion">
+            <summary>
+            Catalog version.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.NewFileCatalogCommand.PerformAction(System.Collections.ObjectModel.Collection{System.String},System.String)">
+            <summary>
+            Generate the Catalog for the Path.
+            </summary>
+            <param name="path">
+            File or Folder Path
+            </param>
+            <param name="catalogFilePath">
+            Path to Catalog
+            </param>
+            <returns>
+            True if able to Create Catalog or else False
+            </returns>
+        </member>
+        <member name="T:Microsoft.PowerShell.Commands.TestFileCatalogCommand">
+            <summary>
+            Defines the implementation of the 'Test-FileCatalog' cmdlet.
+            This cmdlet validates the Integrity of catalog.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.TestFileCatalogCommand.#ctor">
+            <summary>
+            Initializes a new instance of the New-FileCatalog class.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.TestFileCatalogCommand.Detailed">
+            <summary>
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.TestFileCatalogCommand.FilesToSkip">
+            <summary>
+            Patterns used to exclude files from DiskPaths and Catalog.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.TestFileCatalogCommand.PerformAction(System.Collections.ObjectModel.Collection{System.String},System.String)">
+            <summary>
+            Validate the Integrity of given Catalog.
+            </summary>
+            <param name="path">
+            File or Folder Path
+            </param>
+            <param name="catalogFilePath">
+            Path to Catalog
+            </param>
+            <returns>
+            True if able to Validate the Catalog and its not tampered or else False
+            </returns>
+        </member>
+        <member name="T:Microsoft.PowerShell.Commands.GetPfxCertificateCommand">
+            <summary>
+            Defines the implementation of the get-pfxcertificate cmdlet.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.GetPfxCertificateCommand.FilePath">
+            <summary>
+            Gets or sets the path of the item for which to obtain the
+            certificate.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.GetPfxCertificateCommand.LiteralPath">
+            <summary>
+            Gets or sets the literal path of the item for which to obtain the
+            certificate.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.GetPfxCertificateCommand.Password">
+            <summary>
+            Gets or sets the password for unlocking the certificate.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.GetPfxCertificateCommand.NoPromptForPassword">
+            <summary>
+            Do not prompt for password if not given.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.GetPfxCertificateCommand.#ctor">
+            <summary>
+            Initializes a new instance of the GetPfxCertificateCommand
+            class.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.GetPfxCertificateCommand.ProcessRecord">
+            <summary>
+            Processes records from the input pipeline.
+            For each input file, the command retrieves its
+            corresponding certificate.
+            </summary>
+        </member>
+        <member name="T:Microsoft.PowerShell.Commands.CertificateProviderDynamicParameters">
+            <summary>
+            Defines the Certificate Provider dynamic parameters.
+            We only support one dynamic parameter for Win 7 and earlier:
+            CodeSigningCert
+            If provided, we only return certificates valid for signing code or
+            scripts.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.CertificateProviderDynamicParameters.CodeSigningCert">
+            <summary>
+            Gets or sets a switch that controls whether we only return
+            code signing certs.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.CertificateProviderDynamicParameters.DocumentEncryptionCert">
+            <summary>
+            Gets or sets a filter that controls whether we only return
+            data encipherment certs.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.CertificateProviderDynamicParameters.SSLServerAuthentication">
+            <summary>
+            Gets or sets a filter that controls whether we only return
+            server authentication certs.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.CertificateProviderDynamicParameters.DnsName">
+            <summary>
+            Gets or sets a filter by DNSName.
+            Expected content is a single DNS Name that may start and/or end
+            with '*': "contoso.com" or "*toso.c*".
+            All WildcardPattern class features supported.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.CertificateProviderDynamicParameters.Eku">
+            <summary>
+            Gets or sets a filter by EKU.
+            Expected content is one or more OID strings:
+            "1.3.6.1.5.5.7.3.1", "*Server*", etc.
+            For a cert to match, it must be valid for all listed OIDs.
+            All WildcardPattern class features supported.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.CertificateProviderDynamicParameters.ExpiringInDays">
+            <summary>
+            Gets or sets a filter by the number of valid days.
+            Expected content is a non-negative integer.
+            "0" matches all certs that have already expired.
+            "1" matches all certs that are currently valid and will expire
+            by next day (local time).
+            </summary>
+        </member>
+        <member name="T:Microsoft.PowerShell.Commands.DnsNameRepresentation">
+            <summary>
+            Defines the type of DNS string
+            The structure contains punycode name and unicode name.
+            </summary>
+        </member>
+        <member name="F:Microsoft.PowerShell.Commands.DnsNameRepresentation._punycodeName">
+            <summary>
+            Punycode version of DNS name.
+            </summary>
+        </member>
+        <member name="F:Microsoft.PowerShell.Commands.DnsNameRepresentation._unicodeName">
+            <summary>
+            Unicode version of DNS name.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.DnsNameRepresentation.#ctor(System.String)">
+            <summary>
+            Ambiguous constructor of a DnsNameRepresentation.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.DnsNameRepresentation.#ctor(System.String,System.String)">
+            <summary>
+            Specific constructor of a DnsNameRepresentation.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.DnsNameRepresentation.Equals(Microsoft.PowerShell.Commands.DnsNameRepresentation)">
+            <summary>
+            Value comparison.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.DnsNameRepresentation.Punycode">
+            <summary>
+            Get property of Punycode.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.DnsNameRepresentation.Unicode">
+            <summary>
+            Get property of Unicode.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.DnsNameRepresentation.ToString">
+            <summary>
+            Get display string.
+            </summary>
+        </member>
+        <member name="T:Microsoft.PowerShell.Commands.ProviderRemoveItemDynamicParameters">
+             <summary>
+             Defines the Certificate Provider remove-item dynamic parameters.
+            
+             Currently, we only support one dynamic parameter: DeleteKey
+             If provided, we will delete the private key when we remove a certificate.
+             </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.ProviderRemoveItemDynamicParameters.DeleteKey">
+            <summary>
+            Switch that controls whether we should delete private key
+            when remove a certificate.
+            </summary>
+        </member>
+        <member name="T:Microsoft.PowerShell.Commands.CertificateStoreHandle">
+            <summary>
+            Defines the safe handle class for native cert store handles,
+            HCERTSTORE.
+            </summary>
+        </member>
+        <member name="T:Microsoft.PowerShell.Commands.X509NativeStore">
+            <summary>
+            Defines the Certificate Provider store handle class.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.X509NativeStore.#ctor(Microsoft.PowerShell.Commands.X509StoreLocation,System.String)">
+            <summary>
+            Initializes a new instance of the X509NativeStore class.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.X509NativeStore.StoreHandle">
+            <summary>
+            Native IntPtr store handle.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.X509NativeStore.Location">
+            <summary>
+            X509StoreLocation store location.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.X509NativeStore.StoreName">
+            <summary>
+            String store name.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.X509NativeStore.Valid">
+            <summary>
+            True if a real store is open.
+            </summary>
+        </member>
+        <member name="T:Microsoft.PowerShell.Commands.CertificateProviderItem">
+            <summary>
+            Defines the types of items
+            supported by the certificate provider.
+            </summary>
+        </member>
+        <member name="F:Microsoft.PowerShell.Commands.CertificateProviderItem.Unknown">
+            <summary>
+            An unknown item.
+            </summary>
+        </member>
+        <member name="F:Microsoft.PowerShell.Commands.CertificateProviderItem.Certificate">
+            <summary>
+            An X509 Certificate.
+            </summary>
+        </member>
+        <member name="F:Microsoft.PowerShell.Commands.CertificateProviderItem.Store">
+            <summary>
+            A certificate store location.
+            For example, cert:\CurrentUser.
+            </summary>
+        </member>
+        <member name="F:Microsoft.PowerShell.Commands.CertificateProviderItem.StoreLocation">
+            <summary>
+            A certificate store.
+            For example, cert:\CurrentUser\My.
+            </summary>
+        </member>
+        <member name="T:Microsoft.PowerShell.Commands.CertificateProvider">
+            <summary>
+            Defines the implementation of a Certificate Store Provider.  This provider
+            allows for stateless namespace navigation of the computer's certificate
+            store.
+            </summary>
+        </member>
+        <member name="F:Microsoft.PowerShell.Commands.CertificateProvider.s_tracer">
+            <summary>
+            Tracer for certificate provider.
+            </summary>
+        </member>
+        <member name="F:Microsoft.PowerShell.Commands.CertificateProvider._hasAttemptedToLoadPkiModule">
+            <summary>
+            Indicate if we already have attempted to load the PKI module.
+            </summary>
+        </member>
+        <member name="F:Microsoft.PowerShell.Commands.CertificateProvider.s_staticLock">
+            <summary>
+            Lock that guards access to the following static members
+            -- storeLocations
+            -- pathCache.
+            </summary>
+        </member>
+        <member name="F:Microsoft.PowerShell.Commands.CertificateProvider.s_storeLocations">
+             <summary>
+             List of store locations. They do not change once initialized.
+            
+             Synchronized on staticLock.
+             </summary>
+        </member>
+        <member name="F:Microsoft.PowerShell.Commands.CertificateProvider.s_pathCache">
+             <summary>
+             Cache that stores paths and their associated objects.
+            
+             key is full path to store-location/store/certificate
+             value is X509StoreLocation/X509NativeStore/X509Certificate2 object
+            
+             Synchronized on staticLock.
+             </summary>
+        </member>
+        <member name="F:Microsoft.PowerShell.Commands.CertificateProvider.s_pathSeparators">
+            <summary>
+            We allow either / or \ to be the path separator.
+            </summary>
+        </member>
+        <member name="F:Microsoft.PowerShell.Commands.CertificateProvider.certPathPattern">
+            <summary>
+            Regex pattern that defines a valid cert path.
+            </summary>
+        </member>
+        <member name="F:Microsoft.PowerShell.Commands.CertificateProvider.s_storeCache">
+            <summary>
+            Cache the store handle to avoid repeated CertOpenStore calls.
+            </summary>
+        </member>
+        <member name="F:Microsoft.PowerShell.Commands.CertificateProvider.s_certPathRegex">
+            <summary>
+            On demand create the Regex to avoid a hit to startup perf.
+            </summary>
+            <remarks>
+            Note, its OK that staticLock is being used here because only
+            IsValidPath is calling this static property so we shouldn't
+            have any deadlocks due to other locked static members calling
+            this property.
+            </remarks>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateProvider.#ctor">
+            <summary>
+            Initializes a new instance of the CertificateProvider class.
+            This initializes the default certificate store locations.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateProvider.RemoveItem(System.String,System.Boolean)">
+            <summary>
+            Removes an item at the specified path.
+            </summary>
+            <param name="path">
+            The path of the item to remove.
+            </param>
+            <param name="recurse">
+            Recursively remove.
+            </param>
+            <returns>
+            Nothing.
+            </returns>
+            <exception cref="T:System.ArgumentException">
+                path is null or empty.
+                destination is null or empty.
+            </exception>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateProvider.RemoveItemDynamicParameters(System.String,System.Boolean)">
+            <summary>
+            Gets the dynamic parameters for remove-item on the Certificate
+            Provider.  We currently only support one dynamic parameter,
+            "DeleteKey," that delete private key when we delete a certificate.
+            </summary>
+            <param name="path">
+            If the path was specified on the command line, this is the path
+            to the item for which to get the dynamic parameters.
+            </param>
+            <param name="recurse">
+            Ignored.
+            </param>
+            <returns>
+            An object that has properties and fields decorated with
+            parsing attributes similar to a cmdlet class.
+            </returns>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateProvider.MoveItem(System.String,System.String)">
+            <summary>
+            Moves an item at the specified path to the given destination.
+            </summary>
+            <param name="path">
+            The path of the item to move.
+            </param>
+            <param name="destination">
+            The path of the destination.
+            </param>
+            <returns>
+            Nothing.  Moved items are written to the context's pipeline.
+            </returns>
+            <exception cref="T:System.ArgumentException">
+                path is null or empty.
+                destination is null or empty.
+            </exception>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateProvider.NewItem(System.String,System.String,System.Object)">
+            <summary>
+            Creates a certificate store with the given path.
+            </summary>
+            <remarks>
+            New-Item doesn't go through the method "ItemExists". But for the
+            CertificateProvider, New-Item can create an X509Store and return
+            it, and the user can access the certificates within the store via its
+            property "Certificates". We want the extra new properties of the
+            X509Certificate2 objects to be shown to the user, so we also need
+            to import the PKI module in this method, if we haven't tried it yet.
+            </remarks>
+            <param name="path">
+            The path of the certificate store to create.
+            </param>
+            <param name="type">
+            Ignored.
+            Only support store.
+            </param>
+            <param name="value">
+            Ignored
+            </param>
+            <returns>
+            Nothing.  The new certificate store object is
+            written to the context's pipeline.
+            </returns>
+            <exception cref="T:System.ArgumentException">
+                path is null or empty.
+            </exception>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateProvider.InitializeDefaultDrives">
+            <summary>
+            Initializes the cert: drive.
+            </summary>
+            <returns>
+            A collection that contains the PSDriveInfo object
+            that represents the cert: drive.
+            </returns>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateProvider.HasChildItems(System.String)">
+            <summary>
+            Determines if the item at the given path is a store-location
+            or store with items in it.
+            </summary>
+            <param name="path">
+            The full path to the item.
+            </param>
+            <returns>
+            True if the path refers to a store location, or store that contains
+            certificates.  False otherwise.
+            </returns>
+            <exception cref="T:System.ArgumentNullException">
+            Path is null
+            </exception>
+            <exception cref="T:System.Security.Cryptography.CryptographicException">
+            This exception can be thrown if any cryptographic error occurs.
+            It is not possible to know exactly what went wrong.
+            This is because of the way CryptographicException is designed.
+            Some example reasons include:
+             -- certificate is invalid
+             -- certificate has no private key
+             -- certificate password mismatch
+            </exception>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateProvider.IsValidPath(System.String)">
+            <summary>
+            Determines if the specified path is syntactically and semantically valid.
+            An example path looks like this:
+                cert:\CurrentUser\My\5F98EBBFE735CDDAE00E33E0FD69050EF9220254.
+            </summary>
+            <param name="path">
+            The path of the item to check.
+            </param>
+            <returns>
+            True if the path is valid, false otherwise.
+            </returns>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateProvider.ItemExists(System.String)">
+            <summary>
+            Determines if the store location, store, or certificate exists
+            at the specified path.
+            </summary>
+            <remarks>
+            The method ItemExists will be hit by all built-in cmdlets that interact
+            with the CertificateProvider except for the New-Item. They are:
+                Get-ChildItem
+                Set-Location
+                Push-Location
+                Pop-Location
+                Move-Item
+                Invoke-Item
+                Get-Item
+                Remove-Item
+            So we import the PKI module in this method if we haven't tried yet.
+            </remarks>
+            <param name="path">
+            The path of the item to check.
+            </param>
+            <returns>
+            True if a the store location, store, or certificate exists
+            at the specified path.  False otherwise.
+            </returns>
+            <exception cref="T:System.ArgumentNullException">
+            Path is null
+            </exception>
+            <exception cref="T:System.Security.Cryptography.CryptographicException">
+            This exception can be thrown if any cryptographic error occurs.
+            It is not possible to know exactly what went wrong.
+            This is because of the way CryptographicException is designed.
+            Possible reasons:
+             -- certificate is invalid
+             -- certificate has no private key
+             -- certificate password mismatch
+             -- etc
+            </exception>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateProvider.GetItem(System.String)">
+            <summary>
+            Gets the store location, store, or certificate
+            at the specified path.
+            </summary>
+            <param name="path">
+            The path of the item to retrieve.
+            </param>
+            <exception cref="T:System.ArgumentNullException">
+            Path is null
+            </exception>
+            <exception cref="T:System.Security.Cryptography.CryptographicException">
+            This exception can be thrown if any cryptographic error occurs.
+            It is not possible to know exactly what went wrong.
+            This is because of the way CryptographicException is designed.
+            Possible reasons:
+             -- certificate is invalid
+             -- certificate has no private key
+             -- certificate password mismatch
+             -- etc
+            </exception>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateProvider.GetParentPath(System.String,System.String)">
+            <summary>
+            Gets the parent of the given path.
+            </summary>
+            <param name="path">
+            The path of which to get the parent.
+            </param>
+            <param name="root">
+            The root of the drive.
+            </param>
+            <returns>
+            The parent of the given path.
+            </returns>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateProvider.GetChildName(System.String)">
+            <summary>
+            Gets the name of the leaf element of the specified path.
+            </summary>
+            <param name="path">
+            The fully qualified path to the item.
+            </param>
+            <returns>
+            The leaf element of the specified path.
+            </returns>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateProvider.AttemptToImportPkiModule">
+            <summary>
+            We want to import the PKI module explicitly because a type for X509Certificate
+            is defined in the PKI module that add new properties to the X509Certificate2
+            objects. We want to show those new properties to the user without requiring
+            someone to force the loading of this module.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateProvider.InvokeDefaultAction(System.String)">
+            <summary>
+            Invokes the certificate management UI (certmgr.msc)
+            for any path.
+            </summary>
+            <param name="path">
+            Ignored.
+            </param>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateProvider.DoDeleteKey(System.IntPtr)">
+            <summary>
+            Delete private key.
+            </summary>
+            <param name="pProvInfo">Key prov info.</param>
+            <returns>No return.</returns>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateProvider.RemoveCertStore(System.String,System.Boolean,System.String)">
+            <summary>
+            Delete the cert store; if -DeleteKey is specified, we also delete
+            the associated private key.
+            </summary>
+            <param name="storeName">The store name.</param>
+            <param name="fDeleteKey">Boolean to specify whether or not to delete private key.</param>
+            <param name = "sourcePath">Source path.</param>
+            <returns>No return.</returns>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateProvider.RemoveCertItem(System.Security.Cryptography.X509Certificates.X509Certificate2,System.Boolean,System.Boolean,System.String)">
+            <summary>
+            Delete the a single cert from the store; if -DeleteKey is specified, we also delete
+            the associated private key.
+            </summary>
+            <param name="cert">An X509Certificate2 object.</param>
+            <param name="fDeleteKey">Boolean to specify whether or not to delete private key.</param>
+            <param name="fMachine">Machine context or user.</param>
+            <param name = "sourcePath">Source path.</param>
+            <returns>No return.</returns>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateProvider.DoRemove(System.Security.Cryptography.X509Certificates.X509Certificate2,System.Boolean,System.Boolean,System.String)">
+            <summary>
+            Delete the cert from the store; if -DeleteKey is specified, we also delete
+            the associated private key.
+            </summary>
+            <param name="cert">An X509Certificate2 object.</param>
+            <param name="fDeleteKey">Boolean to specify whether or not to delete private key.</param>
+            <param name="fMachine">Machine context or user.</param>
+            <param name = "sourcePath">Source path.</param>
+            <returns>No return.</returns>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateProvider.CommitUserDS(System.IntPtr)">
+            <summary>
+            Commit store for UserDS store.
+            </summary>
+            <param name="storeHandle">An IntPtr for store handle.</param>
+            <returns>No return.</returns>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateProvider.DoMove(System.String,System.Security.Cryptography.X509Certificates.X509Certificate2,Microsoft.PowerShell.Commands.X509NativeStore,System.String)">
+            <summary>
+            Delete the cert from the original store and add to the destination store.
+            </summary>
+            <param name="destination">Destination path.</param>
+            <param name="cert">An X509Certificate2.</param>
+            <param name="store">An X509NativeStore.</param>
+            <param name="sourcePath">Source path.</param>
+            <returns>No return.</returns>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateProvider.GetItemAtPath(System.String,System.Boolean,System.Boolean@)">
+            <summary>
+            Fetches the store-location/store/certificate at the
+            specified path.
+            </summary>
+            <param name="path">Path to the item.</param>
+            <param name="test">True if this is to only for an ItemExists call. Returns True / False.</param>
+            <param name="isContainer">Set to true if item exists and is a container.</param>
+            <returns>Item at the path.</returns>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateProvider.GetChildItems(System.String,System.Boolean)">
+            <summary>
+            Gets the child items of a given store, or location.
+            </summary>
+            <param name="path">
+            The full path of the store or location to enumerate.
+            </param>
+            <param name="recurse">
+            If true, recursively enumerates the child items as well.
+            </param>
+            <exception cref="T:System.ArgumentNullException">
+            Path is null or empty.
+            </exception>
+            <exception cref="T:System.Security.Cryptography.CryptographicException">
+            This exception can be thrown if any cryptographic error occurs.
+            It is not possible to know exactly what went wrong.
+            This is because of the way CryptographicException is designed.
+            Possible reasons:
+             -- certificate is invalid
+             -- certificate has no private key
+             -- certificate password mismatch
+             -- etc
+            </exception>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateProvider.GetChildNames(System.String,System.Management.Automation.ReturnContainers)">
+            <summary>
+            Gets the child names of a given store, or location.
+            </summary>
+            <param name="path">
+            The full path of the store or location to enumerate.
+            </param>
+            <param name="returnContainers">
+            Determines if all containers should be returned or only those containers that match the
+            filter(s).
+            </param>
+            <exception cref="T:System.ArgumentNullException">
+            Path is null or empty.
+            </exception>
+            <exception cref="T:System.Security.Cryptography.CryptographicException">
+            This exception can be thrown if any cryptographic error occurs.
+            It is not possible to know exactly what went wrong.
+            This is because of the way CryptographicException is designed.
+            Possible reasons:
+             -- certificate is invalid
+             -- certificate has no private key
+             -- certificate password mismatch
+             -- etc
+            </exception>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateProvider.IsItemContainer(System.String)">
+            <summary>
+            Determines if the item at the specified path is a store
+            or location.
+            </summary>
+            <returns>
+            True if the item at the specified path is a store or location.
+            False otherwise.
+            </returns>
+            <exception cref="T:System.ArgumentNullException">
+            Path is null or empty.
+            </exception>
+            <exception cref="T:System.Security.Cryptography.CryptographicException">
+            This exception can be thrown if any cryptographic error occurs.
+            It is not possible to know exactly what went wrong.
+            This is because of the way CryptographicException is designed.
+            Possible reasons:
+             -- certificate is invalid
+             -- certificate has no private key
+             -- certificate password mismatch
+             -- etc
+            </exception>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateProvider.GetItemDynamicParameters(System.String)">
+            <summary>
+            Gets the dynamic parameters for get-item on the Certificate
+            Provider.  We currently support the following dynamic parameters:
+            "CodeSigning," that returns only certificates good for signing
+            code or scripts.
+            </summary>
+            <param name="path">
+            If the path was specified on the command line, this is the path
+            to the item for which to get the dynamic parameters.
+            </param>
+            <returns>
+            An object that has properties and fields decorated with
+            parsing attributes similar to a cmdlet class.
+            </returns>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateProvider.GetChildItemsDynamicParameters(System.String,System.Boolean)">
+            <summary>
+            Gets the dynamic parameters for get-childitem on the Certificate
+            Provider.  We currently only support one dynamic parameter,
+            "CodeSigning," that returns only certificates good for signing
+            code or scripts.
+            </summary>
+            <param name="path">
+            If the path was specified on the command line, this is the path
+            to the item for which to get the dynamic parameters.
+            </param>
+            <param name="recurse">
+            Ignored.
+            </param>
+            <returns>
+            An object that has properties and fields decorated with
+            parsing attributes similar to a cmdlet class.
+            </returns>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateProvider.GetChildItemsOrNames(System.String,System.Boolean,System.Management.Automation.ReturnContainers,System.Boolean,System.Management.Automation.Internal.CertificateFilterInfo)">
+            <summary>
+            Helper function to get store-location/store/cert at
+            the specified path.
+            </summary>
+            <param name="path">Path to the item.</param>
+            <param name="recurse">Whether we need to recursively find all.</param>
+            <param name="returnContainers">
+            Determines if all containers should be returned or only those containers that match the
+            filter(s).
+            </param>
+            <param name="returnNames">Whether we only need the names.</param>
+            <param name="filter">Filter info.</param>
+            <returns> Does not return a value.</returns>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateProvider.GetCertName(System.Security.Cryptography.X509Certificates.X509Certificate2)">
+            <summary>
+            Get the name of the specified certificate.
+            </summary>
+            <param name="cert"></param>
+            <returns>Cert name .</returns>
+            <remarks> we use Thumbprint as the name  </remarks>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateProvider.GetCertificatesOrNames(System.String,System.String[],System.Boolean,System.Management.Automation.Internal.CertificateFilterInfo)">
+            <summary>
+            Get cert objects or their name at the specified path.
+            </summary>
+            <param name="path">Path to cert.</param>
+            <param name="pathElements">Path elements.</param>
+            <param name="returnNames">Whether we should return only the names (instead of objects).</param>
+            <param name="filter">Filter info.</param>
+            <returns>Does not return a value.</returns>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateProvider.GetStoreLocation(System.String)">
+            <summary>
+            Get X509StoreLocation object at path.
+            </summary>
+            <param name="path"></param>
+            <returns>X509StoreLocation object.</returns>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateProvider.GetStore(System.String,System.Boolean,System.String[])">
+            <summary>
+            Get the X509NativeStore object at path.
+            </summary>
+            <param name="path">Path to store.</param>
+            <param name="test">True if this should be a test for path existence. Returns True or False.</param>
+            <param name="pathElements">Path elements.</param>
+            <returns>X509NativeStore object.</returns>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateProvider.GetStore(System.String,System.String,Microsoft.PowerShell.Commands.X509StoreLocation)">
+            <summary>
+            Gets the X509NativeStore at the specified path.
+            Adds to cache if not already there.
+            </summary>
+            <param name="storePath">Path to the store.</param>
+            <param name="storeName">Name of store (path leaf element).</param>
+            <param name="storeLocation">Location of store (CurrentUser or LocalMachine).</param>
+            <returns>X509NativeStore object.</returns>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateProvider.GetStoresOrNames(System.String,System.Boolean,System.Boolean,System.Management.Automation.Internal.CertificateFilterInfo)">
+            <summary>
+            Gets X509NativeStore objects or their name at the specified path.
+            </summary>
+            <param name="path">Path to the store.</param>
+            <param name="recurse">Recursively return all items if true.</param>
+            <param name="returnNames"></param>
+            <param name="filter">Filter info.</param>
+            <returns> Does not return a value.</returns>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateProvider.CertContainsName(System.Security.Cryptography.X509Certificates.X509Certificate2,System.Management.Automation.WildcardPattern)">
+            <summary>
+            Check if the specified certificate has the name in DNS name list.
+            </summary>
+            <param name="cert">Certificate object.</param>
+            <param name="pattern">Wildcard pattern for DNS name to search.</param>
+            <returns>True on success, false otherwise.</returns>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateProvider.CertIsSSLServerAuthentication(System.Security.Cryptography.X509Certificates.X509Certificate2)">
+            <summary>
+            Check if the specified certificate is a server authentication certificate.
+            </summary>
+            <param name="cert">Certificate object.</param>
+            <returns>True on success, false otherwise.</returns>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateProvider.CertContainsEku(System.Security.Cryptography.X509Certificates.X509Certificate2,System.Collections.Generic.List{System.Management.Automation.WildcardPattern})">
+            <summary>
+            Check if the specified certificate contains EKU matching all of these patterns.
+            </summary>
+            <param name="cert">Certificate object.</param>
+            <param name="ekuPatterns">EKU patterns.</param>
+            <returns>True on success, false otherwise.</returns>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateProvider.System#Management#Automation#Provider#ICmdletProviderSupportsHelp#GetHelpMaml(System.String,System.String)">
+            <summary>
+            Get provider-specific help.
+            </summary>
+            <param name="helpItemName">
+            Name of help item or cmdlet for which user has requested help
+            </param>
+            <param name = "path">
+            Path to the current location or path to the location of the property that the user needs
+            help about.
+            </param>
+            <returns>
+            Provider specific MAML help content string
+            </returns>
+        </member>
+        <member name="T:Microsoft.PowerShell.Commands.X509StoreLocation">
+            <summary>
+            Defines a class to represent a store location in the certificate
+            provider.  The two possible store locations are CurrentUser and
+            LocalMachine.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.X509StoreLocation.LocationName">
+            <summary>
+            Gets the location, as a string.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.X509StoreLocation.Location">
+            <summary>
+            Gets the location as a
+            <see cref="T:System.Security.Cryptography.X509Certificates.StoreLocation"/>
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.X509StoreLocation.StoreNames">
+            <summary>
+            Gets the list of stores at this location.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.X509StoreLocation.#ctor(System.Security.Cryptography.X509Certificates.StoreLocation)">
+            <summary>
+            Initializes a new instance of the X509StoreLocation class.
+            </summary>
+        </member>
+        <member name="T:Microsoft.PowerShell.Commands.EnhancedKeyUsageRepresentation">
+            <summary>
+            Defines the type of EKU string
+            The structure contains friendly name and EKU oid.
+            </summary>
+        </member>
+        <member name="F:Microsoft.PowerShell.Commands.EnhancedKeyUsageRepresentation._friendlyName">
+            <summary>
+            Localized friendly name of EKU.
+            </summary>
+        </member>
+        <member name="F:Microsoft.PowerShell.Commands.EnhancedKeyUsageRepresentation._oid">
+            <summary>
+            OID of EKU.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.EnhancedKeyUsageRepresentation.#ctor(System.String,System.String)">
+            <summary>
+            Constructor of an EnhancedKeyUsageRepresentation.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.EnhancedKeyUsageRepresentation.Equals(Microsoft.PowerShell.Commands.EnhancedKeyUsageRepresentation)">
+            <summary>
+            Value comparison.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.EnhancedKeyUsageRepresentation.FriendlyName">
+            <summary>
+            Get property of friendlyName.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.EnhancedKeyUsageRepresentation.ObjectId">
+            <summary>
+            Get property of oid.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.EnhancedKeyUsageRepresentation.ToString">
+            <summary>
+            Get display string.
+            </summary>
+        </member>
+        <member name="T:Microsoft.PowerShell.Commands.SendAsTrustedIssuerProperty">
+            <summary>
+            Class for SendAsTrustedIssuer.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.SendAsTrustedIssuerProperty.ReadSendAsTrustedIssuerProperty(System.Security.Cryptography.X509Certificates.X509Certificate2)">
+            <summary>
+            Get property of SendAsTrustedIssuer.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.SendAsTrustedIssuerProperty.WriteSendAsTrustedIssuerProperty(System.Security.Cryptography.X509Certificates.X509Certificate2,System.String,System.Boolean)">
+            <summary>
+            Set property of SendAsTrustedIssuer.
+            </summary>
+        </member>
+        <member name="T:Microsoft.PowerShell.Commands.EnhancedKeyUsageProperty">
+            <summary>
+            Class for ekulist.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.EnhancedKeyUsageProperty.EnhancedKeyUsageList">
+            <summary>
+            Get property of EKUList.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.EnhancedKeyUsageProperty.#ctor(System.Security.Cryptography.X509Certificates.X509Certificate2)">
+            <summary>
+            Constructor for EnhancedKeyUsageProperty.
+            </summary>
+        </member>
+        <member name="T:Microsoft.PowerShell.Commands.DnsNameProperty">
+            <summary>
+            Class for DNSNameList.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.DnsNameProperty.DnsNameList">
+            <summary>
+            Get property of DnsNameList.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.DnsNameProperty.#ctor(System.Security.Cryptography.X509Certificates.X509Certificate2)">
+            <summary>
+            Constructor for DnsNameProperty.
+            </summary>
+        </member>
+        <member name="T:Microsoft.PowerShell.Commands.DownLevelHelper">
+            <summary>
+            Downlevel helper function to determine if the OS is WIN8 and above.
+            </summary>
+        </member>
+        <member name="T:Microsoft.PowerShell.Commands.DetectUIHelper">
+            <summary>
+            Check in UI is allowed.
+            </summary>
+        </member>
+        <member name="T:Microsoft.PowerShell.Commands.Crypt32Helpers">
+            <summary>
+            Container for helper functions that use pinvoke into crypt32.dll.
+            </summary>
+        </member>
+        <member name="F:Microsoft.PowerShell.Commands.Crypt32Helpers.s_staticLock">
+            <summary>
+            Lock that guards access to the following static members
+            -- storeNames.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.Crypt32Helpers.GetStoreNamesAtLocation(System.Security.Cryptography.X509Certificates.StoreLocation)">
+            <summary>
+            Get a list of store names at the specified location.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.Crypt32Helpers.CertEnumSystemStoreCallBack(System.String,System.UInt32,System.IntPtr,System.IntPtr,System.IntPtr)">
+             <summary>
+             Call back function used by CertEnumSystemStore
+            
+             Currently, there is no managed support for enumerating store
+             names on a machine. We use the win32 function CertEnumSystemStore()
+             to get a list of stores for a given context.
+            
+             Each time this callback is called, we add the passed store name
+             to the list of stores.
+             </summary>
+        </member>
+        <member name="T:Microsoft.PowerShell.Commands.CertificateProviderItemNotFoundException">
+            <summary>
+            Defines the base class for exceptions thrown by the
+            certificate provider when the specified item cannot be located.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateProviderItemNotFoundException.#ctor">
+            <summary>
+            Initializes a new instance of the CertificateProviderItemNotFoundException
+            class with the default message.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateProviderItemNotFoundException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the CertificateProviderItemNotFoundException
+            class with the specified message.
+            </summary>
+            <param name="message">
+            The message to be included in the exception.
+            </param>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateProviderItemNotFoundException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the CertificateProviderItemNotFoundException
+            class with the specified message, and inner exception.
+            </summary>
+            <param name="message">
+            The message to be included in the exception.
+            </param>
+            <param name="innerException">
+            The inner exception to be included in the exception.
+            </param>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateProviderItemNotFoundException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Initializes a new instance of the CertificateProviderItemNotFoundException
+            class with the specified serialization information, and context.
+            </summary>
+            <param name="info">
+            The serialization information.
+            </param>
+            <param name="context">
+            The streaming context.
+            </param>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateProviderItemNotFoundException.#ctor(System.Exception)">
+            <summary>
+            Initializes a new instance of the CertificateProviderItemNotFoundException
+            class with the specified inner exception.
+            </summary>
+            <param name="innerException">
+            The inner exception to be included in the exception.
+            </param>
+        </member>
+        <member name="T:Microsoft.PowerShell.Commands.CertificateNotFoundException">
+            <summary>
+            Defines the exception thrown by the certificate provider
+            when the specified X509 certificate cannot be located.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateNotFoundException.#ctor">
+            <summary>
+            Initializes a new instance of the CertificateNotFoundException
+            class with the default message.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateNotFoundException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the CertificateNotFoundException
+            class with the specified message.
+            </summary>
+            <param name="message">
+            The message to be included in the exception.
+            </param>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateNotFoundException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the CertificateNotFoundException
+            class with the specified message, and inner exception.
+            </summary>
+            <param name="message">
+            The message to be included in the exception.
+            </param>
+            <param name="innerException">
+            The inner exception to be included in the exception.
+            </param>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateNotFoundException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Initializes a new instance of the CertificateNotFoundException
+            class with the specified serialization information, and context.
+            </summary>
+            <param name="info">
+            The serialization information.
+            </param>
+            <param name="context">
+            The streaming context.
+            </param>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateNotFoundException.#ctor(System.Exception)">
+            <summary>
+            Initializes a new instance of the CertificateNotFoundException
+            class with the specified inner exception.
+            </summary>
+            <param name="innerException">
+            The inner exception to be included in the exception.
+            </param>
+        </member>
+        <member name="T:Microsoft.PowerShell.Commands.CertificateStoreNotFoundException">
+            <summary>
+            Defines the exception thrown by the certificate provider
+            when the specified X509 store cannot be located.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateStoreNotFoundException.#ctor">
+            <summary>
+            Initializes a new instance of the CertificateStoreNotFoundException
+            class with the default message.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateStoreNotFoundException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Initializes a new instance of the CertificateStoreNotFoundException
+            class with the specified serialization information, and context.
+            </summary>
+            <param name="info">
+            The serialization information.
+            </param>
+            <param name="context">
+            The streaming context.
+            </param>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateStoreNotFoundException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the CertificateStoreNotFoundException
+            class with the specified message.
+            </summary>
+            <param name="message">
+            The message to be included in the exception.
+            </param>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateStoreNotFoundException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the CertificateStoreNotFoundException
+            class with the specified message, and inner exception.
+            </summary>
+            <param name="message">
+            The message to be included in the exception.
+            </param>
+            <param name="innerException">
+            The inner exception to be included in the exception.
+            </param>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateStoreNotFoundException.#ctor(System.Exception)">
+            <summary>
+            Initializes a new instance of the CertificateStoreNotFoundException
+            class with the specified inner exception.
+            </summary>
+            <param name="innerException">
+            The inner exception to be included in the exception.
+            </param>
+        </member>
+        <member name="T:Microsoft.PowerShell.Commands.CertificateStoreLocationNotFoundException">
+            <summary>
+            Defines the exception thrown by the certificate provider
+            when the specified X509 store location cannot be located.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateStoreLocationNotFoundException.#ctor">
+            <summary>
+            Initializes a new instance of the CertificateStoreLocationNotFoundException
+            class with the default message.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateStoreLocationNotFoundException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Initializes a new instance of the CertificateStoreLocationNotFoundException
+            class with the specified serialization information, and context.
+            </summary>
+            <param name="info">
+            The serialization information.
+            </param>
+            <param name="context">
+            The streaming context.
+            </param>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateStoreLocationNotFoundException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the CertificateStoreLocationNotFoundException
+            class with the specified message.
+            </summary>
+            <param name="message">
+            The message to be included in the exception.
+            </param>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateStoreLocationNotFoundException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the CertificateStoreLocationNotFoundException
+            class with the specified message, and inner exception.
+            </summary>
+            <param name="message">
+            The message to be included in the exception.
+            </param>
+            <param name="innerException">
+            The inner exception to be included in the exception.
+            </param>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.CertificateStoreLocationNotFoundException.#ctor(System.Exception)">
+            <summary>
+            Initializes a new instance of the CertificateStoreLocationNotFoundException
+            class with the specified inner exception.
+            </summary>
+            <param name="innerException">
+            The inner exception to be included in the exception.
+            </param>
+        </member>
+        <member name="T:Microsoft.PowerShell.Commands.ProtectCmsMessageCommand">
+             <summary>
+             Defines the implementation of the 'Protect-CmsMessage' cmdlet.
+            
+             This cmdlet generates a new encrypted CMS message given the
+             recipient and content supplied.
+             </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.ProtectCmsMessageCommand.To">
+            <summary>
+            Gets or sets the recipient of the CMS Message.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.ProtectCmsMessageCommand.Content">
+            <summary>
+            Gets or sets the content of the CMS Message.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.ProtectCmsMessageCommand.Path">
+            <summary>
+            Gets or sets the content of the CMS Message by path.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.ProtectCmsMessageCommand.LiteralPath">
+            <summary>
+            Gets or sets the content of the CMS Message by literal path.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.ProtectCmsMessageCommand.OutFile">
+            <summary>
+            Emits the protected message to a file path.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.ProtectCmsMessageCommand.BeginProcessing">
+            <summary>
+            Validate / convert arguments.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.ProtectCmsMessageCommand.ProcessRecord">
+            <summary>
+            Processes records from the input pipeline.
+            For each input object, the command encrypts
+            and exports the object.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.ProtectCmsMessageCommand.EndProcessing">
+            <summary>
+            Encrypts and outputs the message.
+            </summary>
+        </member>
+        <member name="T:Microsoft.PowerShell.Commands.GetCmsMessageCommand">
+             <summary>
+             Defines the implementation of the 'Get-CmsMessage' cmdlet.
+            
+             This cmdlet retrieves information about an encrypted CMS
+             message.
+             </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.GetCmsMessageCommand.Content">
+            <summary>
+            Gets or sets the content of the CMS Message.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.GetCmsMessageCommand.Path">
+            <summary>
+            Gets or sets the CMS Message by path.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.GetCmsMessageCommand.LiteralPath">
+            <summary>
+            Gets or sets the CMS Message by literal path.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.GetCmsMessageCommand.BeginProcessing">
+            <summary>
+            Validate / convert arguments.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.GetCmsMessageCommand.ProcessRecord">
+            <summary>
+            Processes records from the input pipeline.
+            For each input object, the command gets the information
+            about the protected message and exports the object.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.GetCmsMessageCommand.EndProcessing">
+            <summary>
+            Gets the CMS Message object.
+            </summary>
+        </member>
+        <member name="T:Microsoft.PowerShell.Commands.UnprotectCmsMessageCommand">
+             <summary>
+             Defines the implementation of the 'Unprotect-CmsMessage' cmdlet.
+            
+             This cmdlet retrieves the clear text content of an encrypted CMS
+             message.
+             </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.UnprotectCmsMessageCommand.Content">
+            <summary>
+            Gets or sets the content of the CMS Message.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.UnprotectCmsMessageCommand.EventLogRecord">
+            <summary>
+            Gets or sets the Windows Event Log Message with contents to be decrypted.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.UnprotectCmsMessageCommand.Path">
+            <summary>
+            Gets or sets the CMS Message by path.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.UnprotectCmsMessageCommand.LiteralPath">
+            <summary>
+            Gets or sets the CMS Message by literal path.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.UnprotectCmsMessageCommand.IncludeContext">
+            <summary>
+            Determines whether to include the decrypted content in its original context,
+            rather than just output the decrypted content itself.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.UnprotectCmsMessageCommand.To">
+            <summary>
+            Gets or sets the recipient of the CMS Message.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.UnprotectCmsMessageCommand.BeginProcessing">
+            <summary>
+            Validate / convert arguments.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.UnprotectCmsMessageCommand.ProcessRecord">
+            <summary>
+            Processes records from the input pipeline.
+            For each input object, the command gets the information
+            about the protected message and exports the object.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.UnprotectCmsMessageCommand.EndProcessing">
+            <summary>
+            Processes records from the input pipeline.
+            For each input object, the command gets the information
+            about the protected message and exports the object.
+            </summary>
+        </member>
+        <member name="T:Microsoft.PowerShell.Commands.GetCredentialCommand">
+            <summary>
+            Defines the implementation of the 'get-credential' cmdlet.
+            The get-credential Cmdlet establishes a credential object called a
+            PSCredential, by pairing a given username with
+            a prompted password. That credential object can then be used for other
+            operations involving security.
+            </summary>
+        </member>
+        <member name="F:Microsoft.PowerShell.Commands.GetCredentialCommand.credentialSet">
+            <summary>
+            The Credential parameter set name.
+            </summary>
+        </member>
+        <member name="F:Microsoft.PowerShell.Commands.GetCredentialCommand.messageSet">
+            <summary>
+            The Message parameter set name.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.GetCredentialCommand.Credential">
+            <summary>
+            Gets or sets the underlying PSCredential of
+            the instance.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.GetCredentialCommand.Message">
+            <summary>
+            Gets and sets the user supplied message providing description about which script/function is
+            requesting the PSCredential from the user.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.GetCredentialCommand.UserName">
+            <summary>
+            Gets and sets the user supplied username to be used while creating the PSCredential.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.GetCredentialCommand.Title">
+            <summary>
+            Gets and sets the title on the window prompt.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.GetCredentialCommand.#ctor">
+            <summary>
+            Initializes a new instance of the GetCredentialCommand
+            class.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.GetCredentialCommand.BeginProcessing">
+            <summary>
+            The command outputs the stored PSCredential.
+            </summary>
+        </member>
+        <member name="T:Microsoft.PowerShell.Commands.GetExecutionPolicyCommand">
+             <summary>
+             Defines the implementation of the 'Get-ExecutionPolicy' cmdlet.
+             This cmdlet gets the effective execution policy of the shell.
+            
+             In priority-order (highest priority first,) these come from:
+                - Machine-wide Group Policy
+                - Current-user Group Policy
+                - Current session preference
+                - Current user machine preference
+                - Local machine preference.
+             </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.GetExecutionPolicyCommand.Scope">
+            <summary>
+            Gets or sets the scope of the execution policy.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.GetExecutionPolicyCommand.List">
+            <summary>
+            Gets or sets the List parameter, which lists all scopes and their execution
+            policies.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.GetExecutionPolicyCommand.BeginProcessing">
+            <summary>
+            Outputs the execution policy.
+            </summary>
+        </member>
+        <member name="T:Microsoft.PowerShell.Commands.SetExecutionPolicyCommand">
+             <summary>
+             Defines the implementation of the 'Set-ExecutionPolicy' cmdlet.
+             This cmdlet sets the local preference for the execution policy of the
+             shell.
+            
+             The execution policy may be overridden by settings in Group Policy.
+             If the Group Policy setting overrides the desired behaviour, the Cmdlet
+             generates a terminating error.
+             </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.SetExecutionPolicyCommand.ExecutionPolicy">
+            <summary>
+            Gets or sets the execution policy that the user requests.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.SetExecutionPolicyCommand.Scope">
+            <summary>
+            Gets or sets the scope of the execution policy.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.SetExecutionPolicyCommand.Force">
+            <summary>
+            Specifies whether to force the execution policy change.
+            </summary>
+            <value></value>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.SetExecutionPolicyCommand.BeginProcessing">
+            <summary>
+            Sets the execution policy (validation).
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.SetExecutionPolicyCommand.ProcessRecord">
+            <summary>
+            Set the desired execution policy.
+            </summary>
+        </member>
+        <member name="T:Microsoft.PowerShell.Commands.SecureStringCommandBase">
+            <summary>
+            Defines the base class from which all SecureString commands
+            are derived.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.SecureStringCommandBase.SecureStringData">
+            <summary>
+            Gets or sets the secure string to be used by the get- and set-
+            commands.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.SecureStringCommandBase.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the SecureStringCommandBase
+            class.
+            </summary>
+            <param name="name">
+            The command name deriving from this class
+            </param>
+        </member>
+        <member name="T:Microsoft.PowerShell.Commands.ConvertFromToSecureStringCommandBase">
+            <summary>
+            Defines the base class from which all SecureString import and
+            export commands are derived.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.ConvertFromToSecureStringCommandBase.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the ConvertFromToSecureStringCommandBase
+            class.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.ConvertFromToSecureStringCommandBase.SecureKey">
+            <summary>
+            Gets or sets the SecureString version of the encryption
+            key used by the SecureString cmdlets.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.ConvertFromToSecureStringCommandBase.Key">
+            <summary>
+            Gets or sets the byte version of the encryption
+            key used by the SecureString cmdlets.
+            </summary>
+        </member>
+        <member name="T:Microsoft.PowerShell.Commands.ConvertFromSecureStringCommand">
+            <summary>
+            Defines the implementation of the 'ConvertFrom-SecureString' cmdlet.
+            This cmdlet exports a new SecureString -- one that represents
+            text that should be kept confidential. The text is encrypted
+            for privacy when being used, and deleted from computer memory
+            when no longer needed.  When no key is specified, the command
+            uses the DPAPI to encrypt the string. When a key is specified, the
+            command uses the AES algorithm to encrypt the string.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.ConvertFromSecureStringCommand.#ctor">
+            <summary>
+            Initializes a new instance of the ExportSecureStringCommand class.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.ConvertFromSecureStringCommand.SecureString">
+            <summary>
+            Gets or sets the secure string to be exported.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.ConvertFromSecureStringCommand.AsPlainText">
+            <summary>
+            Gets or sets a switch to get the secure string as plain text.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.ConvertFromSecureStringCommand.ProcessRecord">
+            <summary>
+            Processes records from the input pipeline.
+            For each input object, the command encrypts
+            and exports the object.
+            </summary>
+        </member>
+        <member name="T:Microsoft.PowerShell.Commands.ConvertToSecureStringCommand">
+            <summary>
+            Defines the implementation of the 'ConvertTo-SecureString' cmdlet.
+            This cmdlet imports a new SecureString from encrypted data --
+            one that represents text that should be kept confidential.
+            The text is encrypted for privacy when being used, and deleted
+            from computer memory when no longer needed.  When no key is
+            specified, the command uses the DPAPI to decrypt the data.
+            When a key is specified, the command uses the AES algorithm
+            to decrypt the data.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.ConvertToSecureStringCommand.#ctor">
+            <summary>
+            Initializes a new instance of the ImportSecureStringCommand class.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.ConvertToSecureStringCommand.String">
+            <summary>
+            Gets or sets the unsecured string to be imported.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.ConvertToSecureStringCommand.AsPlainText">
+            <summary>
+            Gets or sets the flag that marks the unsecured string as a plain
+            text string.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.ConvertToSecureStringCommand.Force">
+            <summary>
+            Gets or sets the flag that will force the import of a plaintext
+            unsecured string.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.ConvertToSecureStringCommand.ProcessRecord">
+            <summary>
+            Processes records from the input pipeline.
+            For each input object, the command decrypts the data,
+            then exports a new SecureString created from the object.
+            </summary>
+        </member>
+        <member name="T:Microsoft.PowerShell.Commands.SignatureCommandsBase">
+            <summary>
+            Defines the base class from which all signature commands
+            are derived.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.SignatureCommandsBase.FilePath">
+            <summary>
+            Gets or sets the path to the file for which to get or set the
+            digital signature.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.SignatureCommandsBase.LiteralPath">
+            <summary>
+            Gets or sets the literal path to the file for which to get or set the
+            digital signature.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.SignatureCommandsBase.Signature">
+            <summary>
+            Gets or sets the digital signature to be written to
+            the output pipeline.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.SignatureCommandsBase.SourcePathOrExtension">
+            <summary>
+            Gets or sets the file type of the byte array containing the content with
+            digital signature.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.SignatureCommandsBase.Content">
+            <summary>
+            File contents as a byte array.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.SignatureCommandsBase.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the SignatureCommandsBase class,
+            using the given command name.
+            </summary>
+            <param name="name">
+            The name of the command.
+            </param>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.SignatureCommandsBase.ProcessRecord">
+            <summary>
+            Processes records from the input pipeline.
+            For each input object, the command gets or
+            sets the digital signature on the object, and
+            and exports the object.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.SignatureCommandsBase.PerformAction(System.String)">
+            <summary>
+            Performs the action (ie: get signature, or set signature)
+            on the specified file.
+            </summary>
+            <param name="filePath">
+            The name of the file on which to perform the action.
+            </param>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.SignatureCommandsBase.PerformAction(System.String,System.Byte[])">
+            <summary>
+            Performs the action (ie: get signature, or set signature)
+            on the specified contents.
+            </summary>
+            <param name="fileName">
+            The filename used for type if content is specified.
+            </param>
+            <param name="content">
+            The file contents on which to perform the action.
+            </param>
+        </member>
+        <member name="T:Microsoft.PowerShell.Commands.GetAuthenticodeSignatureCommand">
+            <summary>
+            Defines the implementation of the 'get-AuthenticodeSignature' cmdlet.
+            This cmdlet extracts the digital signature from the given file.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.GetAuthenticodeSignatureCommand.#ctor">
+            <summary>
+            Initializes a new instance of the GetSignatureCommand class.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.GetAuthenticodeSignatureCommand.PerformAction(System.String)">
+            <summary>
+            Gets the signature from the specified file.
+            </summary>
+            <param name="filePath">
+            The name of the file on which to perform the action.
+            </param>
+            <returns>
+            The signature on the specified file.
+            </returns>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.GetAuthenticodeSignatureCommand.PerformAction(System.String,System.Byte[])">
+            <summary>
+            Gets the signature from the specified file contents.
+            </summary>
+            <param name="sourcePathOrExtension">The file type associated with the contents.</param>
+            <param name="content">
+            The contents of the file on which to perform the action.
+            </param>
+            <returns>
+            The signature on the specified file contents.
+            </returns>
+        </member>
+        <member name="T:Microsoft.PowerShell.Commands.SetAuthenticodeSignatureCommand">
+            <summary>
+            Defines the implementation of the 'set-AuthenticodeSignature' cmdlet.
+            This cmdlet sets the digital signature on a given file.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.SetAuthenticodeSignatureCommand.#ctor">
+            <summary>
+            Initializes a new instance of the SetAuthenticodeSignatureCommand class.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.SetAuthenticodeSignatureCommand.Certificate">
+            <summary>
+            Gets or sets the certificate with which to sign the
+            file.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.SetAuthenticodeSignatureCommand.IncludeChain">
+             <summary>
+             Gets or sets the additional certificates to
+             include in the digital signature.
+             Use 'signer' to include only the signer's certificate.
+             Use 'notroot' to include all certificates in the certificate
+                chain, except for the root authority.
+             Use 'all' to include all certificates in the certificate chain.
+            
+             Defaults to 'notroot'.
+             </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.SetAuthenticodeSignatureCommand.TimestampServer">
+            <summary>
+            Gets or sets the Url of the time stamping server.
+            The time stamping server certifies the exact time
+            that the certificate was added to the file.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.SetAuthenticodeSignatureCommand.HashAlgorithm">
+            <summary>
+            Gets or sets the hash algorithm used for signing.
+            This string value must represent the name of a Cryptographic Algorithm
+            Identifier supported by Windows.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.SetAuthenticodeSignatureCommand.Force">
+            <summary>
+            Property that sets force parameter.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.SetAuthenticodeSignatureCommand.PerformAction(System.String)">
+            <summary>
+            Sets the digital signature on the specified file.
+            </summary>
+            <param name="filePath">
+            The name of the file on which to perform the action.
+            </param>
+            <returns>
+            The signature on the specified file.
+            </returns>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.SetAuthenticodeSignatureCommand.PerformAction(System.String,System.Byte[])">
+            <summary>
+            Not implemented.
+            </summary>
+        </member>
+        <member name="F:Microsoft.PowerShell.Commands.SetAuthenticodeSignatureCommand.s_sigOptionInfo">
+            <summary>
+            Association between SigningOption.* values and the
+            corresponding string names.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.SetAuthenticodeSignatureCommand.GetSigningOption(System.String)">
+            <summary>
+            Get SigningOption value corresponding to a string name.
+            </summary>
+            <param name="optionName">Name of option.</param>
+            <returns>SigningOption.</returns>
+        </member>
+        <member name="M:Microsoft.PowerShell.SecurityUtils.GetFileSize(System.String)">
+            <summary>
+            Gets the size of a file.
+            </summary>
+            <param name="filePath">Path to file.</param>
+            <returns>File size.</returns>
+        </member>
+        <member name="M:Microsoft.PowerShell.SecurityUtils.PromptForSecureString(System.Management.Automation.Host.PSHostUserInterface,System.String)">
+            <summary>
+            Present a prompt for a SecureString data.
+            </summary>
+            <param name="hostUI">Ref to host ui interface.</param>
+            <param name="prompt">Prompt text.</param>
+            <returns> user input as secure string.</returns>
+        </member>
+        <member name="M:Microsoft.PowerShell.SecurityUtils.CreateFileNotFoundErrorRecord(System.String,System.String,System.Object[])">
+            <summary>
+            </summary>
+            <param name="resourceStr">Resource string.</param>
+            <param name="errorId">Error identifier.</param>
+            <param name="args">Replacement params for resource string formatting.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.PowerShell.SecurityUtils.CreatePathNotFoundErrorRecord(System.String,System.String)">
+            <summary>
+            </summary>
+            <param name="path">Path that was not found.</param>
+            <param name="errorId">Error identifier.</param>
+            <returns>ErrorRecord instance.</returns>
+        </member>
+        <member name="M:Microsoft.PowerShell.SecurityUtils.CreateNotSupportedErrorRecord(System.String,System.String,System.Object[])">
+            <summary>
+            Create an error record for 'operation not supported' condition.
+            </summary>
+            <param name="resourceStr">Resource string.</param>
+            <param name="errorId">Error identifier.</param>
+            <param name="args">Replacement params for resource string formatting.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.PowerShell.SecurityUtils.CreateInvalidArgumentErrorRecord(System.Exception,System.String)">
+            <summary>
+            Create an error record for 'operation not supported' condition.
+            </summary>
+            <param name="e">Exception to include in ErrorRecord.</param>
+            <param name="errorId">Error identifier.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.PowerShell.SecurityUtils.GetFilePathOfExistingFile(System.Management.Automation.PSCmdlet,System.String)">
+            <summary>
+            Convert the specified provider path to a provider path
+            and make sure that all of the following is true:
+            -- it represents a FileSystem path
+            -- it points to a file
+            -- the file exists.
+            </summary>
+            <param name="cmdlet">Cmdlet instance.</param>
+            <param name="path">Provider path.</param>
+            <returns>
+            filesystem path if all conditions are true,
+            null otherwise
+            </returns>
+        </member>
+    </members>
+</doc>

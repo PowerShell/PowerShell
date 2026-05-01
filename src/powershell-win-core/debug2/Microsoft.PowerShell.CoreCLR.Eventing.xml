@@ -1,0 +1,200 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.PowerShell.CoreCLR.Eventing</name>
+    </assembly>
+    <members>
+        <member name="M:System.Diagnostics.Eventing.EventProvider.#ctor(System.Guid)">
+            <summary>
+            Constructor for EventProvider class.
+            </summary>
+            <param name="providerGuid">
+            Unique GUID among all trace sources running on a system
+            </param>
+        </member>
+        <member name="M:System.Diagnostics.Eventing.EventProvider.EtwRegister">
+            <summary>
+            This method registers the controlGuid of this class with ETW.
+            We need to be running on Vista or above. If not an
+            PlatformNotSupported exception will be thrown.
+            If for some reason the ETW EtwRegister call failed
+            a NotSupported exception will be thrown.
+            </summary>
+        </member>
+        <member name="M:System.Diagnostics.Eventing.EventProvider.Close">
+            <summary>
+            This method deregisters the controlGuid of this class with ETW.
+            </summary>
+        </member>
+        <member name="M:System.Diagnostics.Eventing.EventProvider.Deregister">
+            <summary>
+            This method un-registers from ETW.
+            </summary>
+        </member>
+        <member name="M:System.Diagnostics.Eventing.EventProvider.IsEnabled">
+            <summary>
+            IsEnabled, method used to test if provider is enabled.
+            </summary>
+        </member>
+        <member name="M:System.Diagnostics.Eventing.EventProvider.IsEnabled(System.Byte,System.Int64)">
+            <summary>
+            IsEnabled, method used to test if event is enabled.
+            </summary>
+            <param name="level">
+            Level to test
+            </param>
+            <param name="keywords">
+            Keyword to test
+            </param>
+        </member>
+        <member name="M:System.Diagnostics.Eventing.EventProvider.WriteMessageEvent(System.String,System.Byte,System.Int64)">
+            <summary>
+            WriteMessageEvent, method to write a string with level and Keyword.
+            The activity ID will be propagated only if the call stays on the same native thread as SetActivityId().
+            </summary>
+            <param name="eventMessage">
+            Message to write
+            </param>
+            <param name="eventLevel">
+            Level to test
+            </param>
+            <param name="eventKeywords">
+            Keyword to test
+            </param>
+        </member>
+        <member name="M:System.Diagnostics.Eventing.EventProvider.WriteMessageEvent(System.String)">
+            <summary>
+            WriteMessageEvent, method to write a string with level=0 and Keyword=0
+            The activity ID will be propagated only if the call stays on the same native thread as SetActivityId().
+            </summary>
+            <param name="eventMessage">
+            Message to log
+            </param>
+        </member>
+        <member name="M:System.Diagnostics.Eventing.EventProvider.WriteEvent(System.Diagnostics.Eventing.EventDescriptor@,System.Object[])">
+            <summary>
+            WriteEvent method to write parameters with event schema properties.
+            </summary>
+            <param name="eventDescriptor">
+            Event Descriptor for this event.
+            </param>
+            <param name="eventPayload">
+            </param>
+        </member>
+        <member name="M:System.Diagnostics.Eventing.EventProvider.WriteEvent(System.Diagnostics.Eventing.EventDescriptor@,System.String)">
+            <summary>
+            WriteEvent, method to write a string with event schema properties.
+            </summary>
+            <param name="eventDescriptor">
+            Event Descriptor for this event.
+            </param>
+            <param name="data">
+            string to log.
+            </param>
+        </member>
+        <member name="M:System.Diagnostics.Eventing.EventProvider.WriteEvent(System.Diagnostics.Eventing.EventDescriptor@,System.Int32,System.IntPtr)">
+            <summary>
+            WriteEvent, method to be used by generated code on a derived class.
+            </summary>
+            <param name="eventDescriptor">
+            Event Descriptor for this event.
+            </param>
+            <param name="dataCount">
+            number of event descriptors
+            </param>
+            <param name="data">
+            pointer do the event data
+            </param>
+        </member>
+        <member name="M:System.Diagnostics.Eventing.EventProvider.WriteTransferEvent(System.Diagnostics.Eventing.EventDescriptor@,System.Guid,System.Object[])">
+            <summary>
+            WriteTransferEvent, method to write a parameters with event schema properties.
+            </summary>
+            <param name="eventDescriptor">
+            Event Descriptor for this event.
+            </param>
+            <param name="relatedActivityId">
+            </param>
+            <param name="eventPayload">
+            </param>
+        </member>
+        <member name="M:System.Diagnostics.Eventing.EventProviderTraceListener.#ctor(System.String)">
+            <summary>
+            This method creates an instance of the ETW provider.
+            The guid argument must be a valid GUID or a format exception will be
+            thrown when creating an instance of the ControlGuid.
+            We need to be running on Vista or above. If not an
+            PlatformNotSupported exception will be thrown by the EventProvider.
+            </summary>
+        </member>
+        <member name="T:System.Diagnostics.Eventing.UnsafeNativeMethods.EvtVariantType">
+            <summary>
+            Evt Variant types.
+            </summary>
+        </member>
+        <member name="T:System.Diagnostics.Eventing.UnsafeNativeMethods.EvtQueryPropertyId">
+            <summary>
+            The query flags to get information about query.
+            </summary>
+        </member>
+        <member name="T:System.Diagnostics.Eventing.UnsafeNativeMethods.EvtPublisherMetadataPropertyId">
+            <summary>
+            Publisher Metadata properties.
+            </summary>
+        </member>
+        <member name="T:DotNetEventingStrings">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="M:DotNetEventingStrings.#ctor">
+            <summary>constructor</summary>
+        </member>
+        <member name="P:DotNetEventingStrings.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:DotNetEventingStrings.Culture">
+            <summary>
+              Overrides the current threads CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:DotNetEventingStrings.ArgumentOutOfRange_NeedNonNegNum">
+            <summary>
+              Looks up a localized string similar to 
+               Non negative number is required.
+             
+            </summary>
+        </member>
+        <member name="P:DotNetEventingStrings.ArgumentOutOfRange_NeedValidId">
+            <summary>
+              Looks up a localized string similar to 
+               The ID parameter must be in the range {0} through {1}.
+             
+            </summary>
+        </member>
+        <member name="P:DotNetEventingStrings.ArgumentOutOfRange_MaxArgExceeded">
+            <summary>
+              Looks up a localized string similar to 
+               The total number of parameters must not exceed {0}.
+             
+            </summary>
+        </member>
+        <member name="P:DotNetEventingStrings.ArgumentOutOfRange_MaxStringsExceeded">
+            <summary>
+              Looks up a localized string similar to 
+               The number of String parameters must not exceed {0}.
+             
+            </summary>
+        </member>
+        <member name="P:DotNetEventingStrings.Argument_NeedNonemptyDelimiter">
+            <summary>
+              Looks up a localized string similar to 
+               Delimiter cannot be an empty string.
+             
+            </summary>
+        </member>
+    </members>
+</doc>

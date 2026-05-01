@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<schema targetNamespace="http://schemas.microsoft.com/maml/dev/managed/2004/10" xmlns:doc="http://schemas.microsoft.com/maml/internal" xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:managed="http://schemas.microsoft.com/maml/dev/managed/2004/10" xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified" blockDefault="#all" xml:lang="en">
+  <!-- Schema documentation -->
+  <annotation>
+    <documentation>This schema describes MAML (Microsoft Assistance Markup Language). MAML is intended for software documentation. In particular, MAML is intended to accommodate the needs of Microsoft documentation.</documentation>
+    <documentation>The schema is broken into three main areas: end user, developer and IT Pro. These areas represent the main categories of Microsoft documentation.</documentation>
+    <documentation>The namespace uri for this version of MAML is: http://schemas.microsoft.com/maml/2004/10.</documentation>
+    <documentation>Each backwards-incompatible revision to MAML will require that the date fields be appropriately incremented in uri of the updated version of the MAML schema.</documentation>
+  </annotation>
+  <annotation>
+    <documentation>This portion of the schema was created by chains in Dec 2004.</documentation>
+  </annotation>
+  <import schemaLocation="maml.xsd" namespace="http://schemas.microsoft.com/maml/2004/10"/>
+  <import schemaLocation="developer.xsd" namespace="http://schemas.microsoft.com/maml/dev/2004/10"/>
+  <include schemaLocation="developerManagedClass.xsd"/>
+  <include schemaLocation="developerManagedMethod.xsd"/>
+  <include schemaLocation="developerManagedEvent.xsd"/>
+  <include schemaLocation="developerManagedProperty.xsd"/>
+  <include schemaLocation="developerManagedStructure.xsd"/>
+  <include schemaLocation="developerManagedNamespace.xsd"/>
+  <include schemaLocation="developerManagedEnumeration.xsd"/>
+  <include schemaLocation="developerManagedInterface.xsd"/>
+  <include schemaLocation="developerManagedDelegate.xsd"/>
+  <include schemaLocation="developerManagedOperator.xsd"/>
+  <include schemaLocation="developerManagedField.xsd"/>
+  <include schemaLocation="developerManagedOverload.xsd"/>
+  <include schemaLocation="developerManagedConstructor.xsd"/>
+  <!-- ***************************************************************** -->
+  <element name="member" substitutionGroup="dev:member" type="managed:memberType"/>
+  <complexType name="memberType">
+    <sequence>
+      <element ref="maml:name"/>
+      <element ref="maml:uri"/>
+      <element ref="maml:description"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+    <attributeGroup ref="managed:standardModifiersGroup"/>
+    <attribute name="type" use="optional">
+      <simpleType>
+        <restriction base="token">
+          <enumeration value="class"/>
+          <enumeration value="constructor"/>
+          <enumeration value="delegate"/>
+          <enumeration value="enumeration"/>
+          <enumeration value="event"/>
+          <enumeration value="field"/>
+          <enumeration value="interface"/>
+          <enumeration value="method"/>
+          <enumeration value="operator"/>
+          <enumeration value="property"/>
+          <enumeration value="structure"/>
+        </restriction>
+      </simpleType>
+    </attribute>
+  </complexType>
+  <attributeGroup name="standardModifiersGroup">
+    <attribute name="access" type="managed:accessType"/>
+    <attribute name="polymorphic" type="managed:polymorphicType"/>
+    <attribute name="inherited" type="boolean"/>
+    <attribute name="static" type="boolean"/>
+  </attributeGroup>
+  <simpleType name="accessType">
+    <restriction base="token">
+      <enumeration value="public"/>
+      <enumeration value="private"/>
+      <enumeration value="internal"/>
+      <enumeration value="protected"/>
+      <enumeration value="protectedInternal"/>
+    </restriction>
+  </simpleType>
+  <simpleType name="polymorphicType">
+    <restriction base="token">
+      <enumeration value="abstract"/>
+      <enumeration value="virtual"/>
+      <enumeration value="override"/>
+      <enumeration value="sealed"/>
+    </restriction>
+  </simpleType>
+  <element name="specifications" type="managed:specificationsType"/>
+  <complexType name="specificationsType">
+    <sequence>
+      <element ref="maml:name"/>
+      <element ref="dev:defaultValue"/>
+      <element ref="dev:type"/>
+    </sequence>
+    <attributeGroup ref="managed:standardModifiersGroup"/>
+  </complexType>
+  <element name="genericParameters" type="managed:genericParametersType"/>
+  <complexType name="genericParametersType">
+    <sequence>
+      <element ref="managed:genericParameter" maxOccurs="unbounded"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <element name="genericParameter" type="managed:genericParameterType"/>
+  <complexType name="genericParameterType">
+    <sequence>
+      <element ref="maml:name"/>
+      <element ref="maml:description"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <element name="genericConstraints" type="managed:genericConstraintsType"/>
+  <complexType name="genericConstraintsType">
+    <sequence>
+      <element ref="managed:genericConstraint" maxOccurs="unbounded"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <element name="genericConstraint" type="managed:genericConstraintType"/>
+  <complexType name="genericConstraintType">
+    <sequence>
+      <element ref="dev:type"/>
+      <element ref="maml:name"/>
+      <element ref="maml:description"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <element name="security" type="managed:securityType"/>
+  <complexType name="securityType">
+    <sequence>
+      <element ref="managed:permission" maxOccurs="unbounded"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <element name="permission" type="managed:permissionType"/>
+  <complexType name="permissionType">
+    <sequence>
+      <element ref="maml:name"/>
+      <element ref="maml:uri"/>
+      <element ref="managed:actions"/>
+      <element ref="dev:associatedData"/>
+      <element ref="dev:condition"/>
+      <element ref="managed:frameworks"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <element name="actions" type="managed:actionsType"/>
+  <complexType name="actionsType">
+    <sequence>
+      <element ref="managed:action" maxOccurs="unbounded"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <element name="action" type="managed:actionType"/>
+  <complexType name="actionType">
+    <sequence>
+      <element name="name" maxOccurs="unbounded">
+        <complexType mixed="true">
+          <complexContent>
+            <extension base="maml:nameType">
+              <attribute name="type">
+                <simpleType>
+                  <restriction base="token">
+                    <enumeration value="type"/>
+                    <enumeration value="member"/>
+                  </restriction>
+                </simpleType>
+              </attribute>
+            </extension>
+          </complexContent>
+        </complexType>
+      </element>
+      <element ref="maml:description"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <element name="frameworks" type="managed:frameworksType"/>
+  <complexType name="frameworksType">
+    <sequence>
+      <element ref="managed:framework" minOccurs="1" maxOccurs="unbounded"/>
+    </sequence>
+  </complexType>
+  <element name="framework" type="managed:frameworkType"/>
+  <complexType name="frameworkType">
+    <sequence>
+      <element ref="dev:version"/>
+      <element ref="maml:uri"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+    <attribute name="compatibility" type="managed:compatibilityType"/>
+  </complexType>
+  <simpleType name="compatibilityType">
+    <restriction base="token">
+      <enumeration value="supported"/>
+      <enumeration value="deprecated"/>
+      <enumeration value="obsolete"/>
+    </restriction>
+  </simpleType>
+  <element name="requirements" type="managed:requirementsType"/>
+  <complexType name="requirementsType">
+    <complexContent>
+      <extension base="dev:requirementsType">
+        <sequence>
+          <element ref="managed:assembly"/>
+          <element ref="managed:frameworks"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <element name="assembly" type="maml:textType"/>
+  <element name="possibleValue" substitutionGroup="dev:possibleValue" type="managed:possibleValueType"/>
+  <complexType name="possibleValueType">
+    <complexContent>
+      <extension base="dev:possibleValueType">
+        <sequence>
+          <element ref="managed:frameworks"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <element name="parameter" substitutionGroup="dev:parameter" type="managed:parameterType"/>
+  <complexType name="parameterType">
+    <complexContent>
+      <extension base="dev:parameterType">
+        <attribute name="byref" use="optional">
+          <simpleType>
+            <restriction base="token">
+              <enumeration value="ref"/>
+              <enumeration value="out"/>
+            </restriction>
+          </simpleType>
+        </attribute>
+        <attribute name="array" type="positiveInteger" use="optional"/>
+        <attribute name="parameterArray" type="boolean" use="optional"/>
+      </extension>
+    </complexContent>
+  </complexType>
+</schema>

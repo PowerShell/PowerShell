@@ -1,0 +1,24 @@
+{
+  "runtimeOptions": {
+    "tfm": "net11.0",
+    "includedFrameworks": [
+      {
+        "name": "Microsoft.NETCore.App",
+        "version": "11.0.0-preview.3.26207.106"
+      },
+      {
+        "name": "Microsoft.WindowsDesktop.App",
+        "version": "11.0.0-preview.3.26207.106"
+      }
+    ],
+    "rollForwardOnNoCandidateFx": 1,
+    "configProperties": {
+      "System.Runtime.Serialization.EnableUnsafeBinaryFormatterSerialization": false,
+      "System.Runtime.TieredCompilation": true,
+      "System.Runtime.TieredCompilation.QuickJit": true,
+      "System.Runtime.TieredCompilation.QuickJitForLoops": true,
+      "System.Runtime.Loader.UseRidGraph": true,
+      "CSWINRT_USE_WINDOWS_UI_XAML_PROJECTIONS": false
+    }
+  }
+}

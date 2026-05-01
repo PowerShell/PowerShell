@@ -1,0 +1,562 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.PowerShell.Commands.Diagnostics</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.PowerShell.Commands.GetCounterCommand">
+            <summary>
+            Class that implements the Get-Counter cmdlet.
+            </summary>
+        </member>
+        <member name="T:Microsoft.PowerShell.Commands.GetWinEventCommand">
+            <summary>
+            Class that implements the Get-WinEvent cmdlet.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.GetWinEventCommand.ListLog">
+            <summary>
+            ListLog parameter.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.GetWinEventCommand.LogName">
+            <summary>
+            GetLog parameter.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.GetWinEventCommand.ListProvider">
+            <summary>
+            ListProvider parameter.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.GetWinEventCommand.ProviderName">
+            <summary>
+            ProviderName parameter.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.GetWinEventCommand.Path">
+            <summary>
+            Path parameter.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.GetWinEventCommand.MaxEvents">
+            <summary>
+            MaxEvents parameter.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.GetWinEventCommand.ComputerName">
+            <summary>
+            ComputerName parameter.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.GetWinEventCommand.Credential">
+            <summary>
+            Credential parameter.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.GetWinEventCommand.FilterXPath">
+            <summary>
+            FilterXPath parameter.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.GetWinEventCommand.FilterXml">
+            <summary>
+            FilterXml parameter.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.GetWinEventCommand.FilterHashtable">
+            <summary>
+            FilterHashtable parameter.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.GetWinEventCommand.Force">
+            <summary>
+            Force switch.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.GetWinEventCommand.Oldest">
+            <summary>
+            Oldest switch.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.GetWinEventCommand.BeginProcessing">
+            <summary>
+            BeginProcessing() is invoked once per pipeline: we will load System.Core.dll here.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.GetWinEventCommand.EndProcessing">
+            <summary>
+            EndProcessing() is invoked once per pipeline.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.GetWinEventCommand.ProcessRecord">
+            <summary>
+            ProcessRecord() override.
+            This is the main entry point for the cmdlet.
+            </summary>
+        </member>
+        <member name="T:Microsoft.PowerShell.Commands.NewWinEventCommand">
+            <summary>
+            Class that implements the New-WinEvent cmdlet.
+            This cmdlet writes a new Etw event using the provider specified in parameter.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.NewWinEventCommand.ProviderName">
+            <summary>
+            ProviderName.
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.NewWinEventCommand.Id">
+            <summary>
+            Id (EventId defined in manifest file)
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.NewWinEventCommand.Version">
+            <summary>
+            Version (event version)
+            </summary>
+        </member>
+        <member name="P:Microsoft.PowerShell.Commands.NewWinEventCommand.Payload">
+            <summary>
+            Event Payload.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.NewWinEventCommand.BeginProcessing">
+            <summary>
+            BeginProcessing.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.NewWinEventCommand.ProcessRecord">
+            <summary>
+            ProcessRecord.
+            </summary>
+        </member>
+        <member name="M:Microsoft.PowerShell.Commands.NewWinEventCommand.EndProcessing">
+            <summary>
+            EndProcessing.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Powershell.Commands.GetCounter.PdhNative.PdhHelper.ReadPdhMultiString(System.IntPtr@,System.Int32,System.Collections.Specialized.StringCollection@)">
+            <summary>
+            A helper reading in a Unicode string with embedded NULLs and splitting it into a StringCollection.
+            </summary>
+            <param name="strNative"></param>
+            <param name="strSize"></param>
+            <param name="strColl"></param>
+        </member>
+        <member name="M:Microsoft.Powershell.Commands.GetCounter.PdhNative.PdhHelper.ConnectToDataSource(System.String)">
+            <summary>
+            Connects to a single named datasource, initializing m_hDataSource variable.
+            </summary>
+            <param name="dataSourceName"></param>
+            <returns></returns>
+        </member>
+        <member name="T:GetEventResources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="M:GetEventResources.#ctor">
+            <summary>constructor</summary>
+        </member>
+        <member name="P:GetEventResources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:GetEventResources.Culture">
+            <summary>
+              Overrides the current threads CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:GetEventResources.CounterNotALogFile">
+            <summary>
+              Looks up a localized string similar to 
+               The {0} file does not have the expected file name extension. Specify only .blg, .csv, or .tsv files when you use the Path parameter.
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.CounterApiError">
+            <summary>
+              Looks up a localized string similar to 
+               Internal performance counter API call failed. Error: {0:x8}.
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.LogProviderOrPathNeeded">
+            <summary>
+              Looks up a localized string similar to 
+               You must specify at least one Log, Provider or Path key-value pair.
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.NoMatchingProvidersFound">
+            <summary>
+              Looks up a localized string similar to 
+               There is not an event provider on the {0} computer that matches "{1}".
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.NullNotAllowedInHashtable">
+            <summary>
+              Looks up a localized string similar to 
+               A null value was encountered in the {0} hash table key. Null values are not permitted.
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.QueryTrace">
+             <summary>
+               Looks up a localized string similar to 
+                Constructed structured query:
+            {0}.
+              
+             </summary>
+        </member>
+        <member name="P:GetEventResources.ProviderLogLink">
+            <summary>
+              Looks up a localized string similar to 
+               The {0} provider writes events to the {1} log.
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.CounterInvalidDateRange">
+            <summary>
+              Looks up a localized string similar to 
+               The value of the StartTime parameter must be less than the value of the EndTime parameter.
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.NoMatchingLogsFound">
+            <summary>
+              Looks up a localized string similar to 
+               There is not an event log on the {0} computer that matches "{1}".
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.Vendor">
+            <summary>
+              Looks up a localized string similar to 
+               Microsoft
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.CounterCircularNoMaxSize">
+            <summary>
+              Looks up a localized string similar to 
+               The Circular parameter will be ignored unless the MaxSize parameter is also specified.
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.FileOpenFailed">
+            <summary>
+              Looks up a localized string similar to 
+               Unable to open the {0} file for writing.
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.KeywordLongExpected">
+            <summary>
+              Looks up a localized string similar to 
+               Invalid value '{0}' specified for keyword.
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.CounterExportSampleNotInInitialSet">
+            <summary>
+              Looks up a localized string similar to 
+               The {0} performance counter cannot be exported to the {1} file because it was not part of the first sample set.
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.NoMatchingEventsFound">
+            <summary>
+              Looks up a localized string similar to 
+               No events were found that match the specified selection criteria.
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.CounterPathTranslationFailed">
+            <summary>
+              Looks up a localized string similar to 
+               The default values for this command failed. Error: {0:x8}.
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.CounterNoMixedLogTypes">
+            <summary>
+              Looks up a localized string similar to 
+               You cannot import different types of performance log files in the same command.  Specify only one type of file in the Path parameter.
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.NotAFileSystemPath">
+            <summary>
+              Looks up a localized string similar to 
+               The {0} path does not appear to be a valid log file path. Specify a valid file system path.
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.EventIdNotSpecified">
+            <summary>
+              Looks up a localized string similar to 
+               A valid Event Id must be specified.
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.ProviderMetadataUnavailable">
+            <summary>
+              Looks up a localized string similar to 
+               Could not retrieve information about the {0} provider. Error: {1}.
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.SpecifyOldestForLog">
+            <summary>
+              Looks up a localized string similar to 
+               The {0} event log can be read only in the forward chronological order because it is an analytical or a debug log. To see events from the {0} event log, use the Oldest parameter in the command.
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.ExportDestPathAmbiguous">
+            <summary>
+              Looks up a localized string similar to 
+               The following export destination path is ambiguous: {0}.
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.CounterPathIsInvalid">
+            <summary>
+              Looks up a localized string similar to 
+               The {0} performance counter path is not valid.
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.CounterSampleDataInvalid">
+            <summary>
+              Looks up a localized string similar to 
+               The data in one of the performance counter samples is not valid. View the Status property for each PerformanceCounterSample object to make sure it contains valid data.
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.PayloadMismatch">
+             <summary>
+               Looks up a localized string similar to 
+                Provided payload does not match with the template that was defined for event id {0}.
+            The defined template is following:
+            {1}
+              
+             </summary>
+        </member>
+        <member name="P:GetEventResources.NoMatchingCounterSetsFound">
+            <summary>
+              Looks up a localized string similar to 
+               Cannot find any performance counter sets on the {0} computer that match the following: {1}.
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.CounterPathsInFilesInvalid">
+            <summary>
+              Looks up a localized string similar to 
+               No valid counter paths were found in the files.
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.FileCreateFailed">
+            <summary>
+              Looks up a localized string similar to 
+               Unable to create the {0} file. Verify that the path is valid.
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.NoCounterSetsOnComputer">
+            <summary>
+              Looks up a localized string similar to 
+               Could not find any performance counter sets on the {0} computer: error {1:x8}. Verify that the {0} computer exists, that it is discoverable, and that you have sufficient privileges to view performance counter data on that computer.
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.IncorrectEventId">
+            <summary>
+              Looks up a localized string similar to 
+               Event cannot be written because there are no events defined with id {0} for the provider {1}.  Please correct the event id and try again.
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.InvalidContext">
+            <summary>
+              Looks up a localized string similar to 
+               The {0} Context key-value is not a valid SID or NT account name.
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.IncorrectEventVersion">
+            <summary>
+              Looks up a localized string similar to 
+               Event cannot be written because the specified version {0} for event {1} is not defined for the provider {2}.  Please correct the version and try again.
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.Counter32FileLimit">
+            <summary>
+              Looks up a localized string similar to 
+               You cannot import more than 32 .blg counter log files in each command.
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.SpecifiedProvidersDontWriteToLog">
+            <summary>
+              Looks up a localized string similar to 
+               The specified providers do not write events to the {0} log. This log will be ignored.
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.InvalidSIDFormat">
+            <summary>
+              Looks up a localized string similar to 
+               The following value is not in a valid security identifier (SID) format: {0}. Enter a valid SID, such as S-1-5-32-544.
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.NoProviderFound">
+            <summary>
+              Looks up a localized string similar to 
+               No provider found with name {0}.
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.CounterSetEnumAccessDenied">
+            <summary>
+              Looks up a localized string similar to 
+               Cannot retrieve information about the {0} performance counter set because access was denied.
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.VersionNotSpecified">
+            <summary>
+              Looks up a localized string similar to 
+               Event cannot be written because multiple events with id {0} have been defined for provider {1}.  Please provide a version for the event and try again.
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.SpecifyOldestForEtlEvt">
+            <summary>
+              Looks up a localized string similar to 
+               The {0} event log file can be read only in the forward chronological order because it is an .etl or an .evt file. To see events from the {0} event log, use the Oldest parameter in the command.
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.ProviderNotSpecified">
+            <summary>
+              Looks up a localized string similar to 
+               Provider name must be specified.
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.NotALogFile">
+            <summary>
+              Looks up a localized string similar to 
+               The {0} file does not appear to be a valid log file. Specify only .evtx, .etl, or .evt files as values of the Path parameter.
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.CounterPathInvalidOrNotInFile">
+            <summary>
+              Looks up a localized string similar to 
+               The {0} performance counter path is either not valid or it is not present in the following files: {1}.
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.Timestamp">
+            <summary>
+              Looks up a localized string similar to 
+               Timestamp
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.DateTimeExpected">
+            <summary>
+              Looks up a localized string similar to 
+               The following value is not in a valid DateTime format: {0}.
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.LogInfoUnavailable">
+            <summary>
+              Looks up a localized string similar to 
+               To access the '{0}' log start PowerShell with elevated user rights.  Error: {1}
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.NoEventMessage">
+            <summary>
+              Looks up a localized string similar to 
+               Cannot retrieve event message text.
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.CounterFileExists">
+            <summary>
+              Looks up a localized string similar to 
+               The {0} file already exists. To overwrite this file, use the Force parameter in the Export-Counter command.
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.CounterContinuousOrMaxSamples">
+            <summary>
+              Looks up a localized string similar to 
+               The Continuous parameter and the MaxSamples parameter cannot be used in the same command.
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.ExportCtrWin7Required">
+            <summary>
+              Looks up a localized string similar to 
+               This cmdlet can be run only on Microsoft Windows 7 and above.
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.Description">
+            <summary>
+              Looks up a localized string similar to 
+               This PowerShell snap-in contains Windows Eventing and Performance Counter cmdlets.
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.NoMatchingCounterSetsInFile">
+            <summary>
+              Looks up a localized string similar to 
+               Cannot find any performance counter sets in the {0} files that match the following: {1}.
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.LogsAndProvidersDontOverlap">
+            <summary>
+              Looks up a localized string similar to 
+               The specified providers do not write events to any of the specified logs.
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.CookedValues">
+            <summary>
+              Looks up a localized string similar to 
+               Cooked Values
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.Counter1FileLimit">
+            <summary>
+              Looks up a localized string similar to 
+               You cannot import more than one comma-separated (.csv) or tab-separated (.tsv) performance counter file in each command.
+             
+            </summary>
+        </member>
+        <member name="P:GetEventResources.LogCountLimitExceeded">
+            <summary>
+              Looks up a localized string similar to 
+               Log count ({0}) is exceeded Windows Event Log API limit ({1}). Adjust filter to return less log names.
+             
+            </summary>
+        </member>
+    </members>
+</doc>

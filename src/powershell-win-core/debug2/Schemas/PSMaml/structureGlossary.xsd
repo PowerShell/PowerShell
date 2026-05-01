@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<schema targetNamespace="http://schemas.microsoft.com/maml/2004/10" xmlns:doc="http://schemas.microsoft.com/maml/internal" xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified" blockDefault="#all" xml:lang="en">
+  <!-- Schema documentation -->
+  <annotation>
+    <documentation>This schema definition defines question and answer types for the Content Studio Schema. This schema is part of the base layer.</documentation>
+  </annotation>
+  <element name="glossaryEntry">
+    <annotation>
+      <documentation>Describes a term, and set of associated definitions in a glossary.</documentation>
+    </annotation>
+    <complexType>
+      <sequence>
+        <element ref="maml:terms"/>
+        <element ref="maml:definition"/>
+        <element name="relatedEntries" minOccurs="0" maxOccurs="unbounded">
+          <annotation>
+            <documentation>Contains one or more links to related glossary entries.</documentation>
+          </annotation>
+          <complexType>
+            <sequence>
+              <element ref="maml:navigationLink" maxOccurs="unbounded"/>
+            </sequence>
+          </complexType>
+        </element>
+      </sequence>
+      <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+      <attribute name="platform" type="string" use="optional">
+        <annotation>
+          <documentation>Specifies the applicable platform for the term.</documentation>
+        </annotation>
+      </attribute>
+      <attribute name="product" type="string" use="optional">
+        <annotation>
+          <documentation>Specifies the applicable product for the term.</documentation>
+        </annotation>
+      </attribute>
+    </complexType>
+  </element>
+  <element name="terms">
+    <annotation>
+      <documentation>Contains one or more term elements for a glossary entry.</documentation>
+    </annotation>
+    <complexType>
+      <sequence maxOccurs="unbounded">
+        <element ref="maml:term"/>
+      </sequence>
+    </complexType>
+  </element>
+  <element name="term">
+    <annotation>
+      <documentation>Describes a word or phrase in a glossary entry.</documentation>
+    </annotation>
+    <complexType mixed="true">
+      <sequence minOccurs="0">
+        <element name="rubyText" type="string">
+          <annotation>
+            <documentation>Specifies equivalent text in a different encoding for sorting purposes. Use the rubyText element to sort terms presented in languages that cannot be sorted alphabetically.</documentation>
+          </annotation>
+        </element>
+      </sequence>
+      <attribute name="termClass" type="string" use="optional">
+        <annotation>
+          <documentation>Specifies an arbitrary class for the term.</documentation>
+        </annotation>
+      </attribute>
+      <attribute name="partOfSpeech" type="string" use="optional" default="noun">
+        <annotation>
+          <documentation>Specifies the part of speech used by the term.</documentation>
+        </annotation>
+      </attribute>
+      <attribute name="geographicalUsage" type="string" use="optional">
+        <annotation>
+          <documentation>Specifies a specific geographical usage for the term.</documentation>
+        </annotation>
+      </attribute>
+      <attribute name="language" type="string" use="optional">
+        <annotation>
+          <documentation>Specifies the applicable language for the term.</documentation>
+        </annotation>
+      </attribute>
+      <attribute name="address" type="string" use="optional">
+        <annotation>
+          <documentation>Describes the attached content with a unique ID/GUID/URI to reference for purposes such as sharing and hyperlinking.</documentation>
+        </annotation>
+      </attribute>
+    </complexType>
+  </element>
+  <element name="definition" type="maml:structureSimpleType">
+    <annotation>
+      <documentation>Explains the meaning of a term for a glossary entry.</documentation>
+    </annotation>
+  </element>
+</schema>

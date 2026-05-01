@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<schema targetNamespace="http://schemas.microsoft.com/maml/2004/10" xmlns:doc="http://schemas.microsoft.com/maml/internal" xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified" blockDefault="#all" xml:lang="en">
+  <!-- Schema documentation -->
+  <annotation>
+    <documentation>This schema aggregates inline elements from other inline schemas.</documentation>
+  </annotation>
+  <!-- include and import declarations -->
+  <include schemaLocation="inlineCommon.xsd"/>
+  <include schemaLocation="inlineUi.xsd"/>
+  <include schemaLocation="inlineSoftware.xsd"/>
+  <include schemaLocation="base.xsd"/>
+  <import schemaLocation="developerCommand.xsd" namespace="http://schemas.microsoft.com/maml/dev/command/2004/10"/>
+  <group name="inlineBasicGroup">
+    <choice>
+      <group ref="maml:inlineCommonGroup"/>
+    </choice>
+  </group>
+  <element name="glossaryEntryLink" type="maml:navigationLinkType"/>
+  <annotation>
+    <documentation>Describes a link from one glossary entry to another related glossary entry.</documentation>
+  </annotation>
+  <group name="inlineGroup">
+    <choice>
+      <group ref="maml:inlineBasicGroup"/>
+      <group ref="maml:inlineUiGroup"/>
+      <group ref="maml:inlineSoftwareGroup"/>
+      <element ref="maml:glossaryEntryLink"/>
+      <element ref="command:parameterNameInline"/>
+      <element ref="command:parameterValueInline"/>
+    </choice>
+  </group>
+  <!-- complexType declarations -->
+  <complexType name="inlineType" mixed="true">
+    <annotation>
+      <documentation>Describes a simple inline-only content model. It provides both text and elements with similarly simple content models.</documentation>
+    </annotation>
+    <choice minOccurs="0" maxOccurs="unbounded">
+      <group ref="maml:inlineGroup"/>
+    </choice>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <complexType name="contentParameterType" mixed="true">
+    <choice minOccurs="0" maxOccurs="unbounded">
+      <group ref="maml:inlineGroup"/>
+    </choice>
+    <attribute name="name" type="token"/>
+  </complexType>
+  <element name="contentParameter" type="maml:contentParameterType">
+    <annotation>
+      <documentation>Deprecated; do not use.</documentation>
+      <appinfo>
+        <doc:localizable>true</doc:localizable>
+      </appinfo>
+    </annotation>
+  </element>
+  <complexType name="parameterizedContentType">
+    <sequence>
+      <element ref="maml:contentParameter" maxOccurs="unbounded"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <element name="parameterizedContent" type="maml:parameterizedContentType">
+    <annotation>
+      <documentation>Deprecated; do not use.</documentation>
+      <appinfo>
+        <doc:localizable>n/a</doc:localizable>
+      </appinfo>
+    </annotation>
+  </element>
+  <element name="summary" type="maml:textType"/>
+  <annotation>
+    <documentation>Contains summary text that provides further information about a link.</documentation>
+  </annotation>
+  <complexType name="linkType">
+    <annotation>
+      <documentation>Abstracts href attribute and linkText and summary elements.</documentation>
+    </annotation>
+    <sequence>
+      <element ref="maml:summary" minOccurs="0"/>
+    </sequence>
+    <attributeGroup ref="maml:linkingAttributeGroup"/>
+  </complexType>
+  <element name="objectParameter">
+    <annotation>
+      <documentation>Defines one or more name/value pairs that contain parameter data to pass to the target.</documentation>
+    </annotation>
+    <complexType>
+      <attribute name="name" type="string">
+        <annotation>
+          <documentation>Specifies the name of the parameter.</documentation>
+        </annotation>
+      </attribute>
+      <attribute name="value" type="string">
+        <annotation>
+          <documentation>Specifies the value of the parameter.</documentation>
+        </annotation>
+      </attribute>
+    </complexType>
+  </element>
+  <element name="objectParameters">
+    <annotation>
+      <documentation>Describes a collection of objectParameter elements.</documentation>
+    </annotation>
+    <complexType mixed="true">
+      <sequence>
+        <element ref="maml:objectParameter" minOccurs="0" maxOccurs="unbounded"/>
+      </sequence>
+    </complexType>
+  </element>
+  <complexType name="objectUriType">
+    <sequence>
+      <element ref="maml:objectParameters" minOccurs="0"/>
+      <element ref="maml:summary" minOccurs="0"/>
+    </sequence>
+    <attribute name="href" type="anyURI"/>
+    <attribute name="mimeType" type="token"/>
+    <attribute name="class" type="token"/>
+  </complexType>
+  <complexType name="embedObjectType">
+    <annotation>
+      <documentation>Provides a hosting environment for the appropriate multimedia player.</documentation>
+    </annotation>
+    <sequence>
+      <element name="caption" type="maml:textType" minOccurs="0">
+        <annotation>
+          <documentation>Specifies caption text for the object.</documentation>
+        </annotation>
+      </element>
+      <element name="objectUri" type="maml:objectUriType">
+        <annotation>
+          <documentation>Specifies the URI path to the object.</documentation>
+        </annotation>
+      </element>
+      <element name="previewObjectUri" type="maml:objectUriType" minOccurs="0">
+        <annotation>
+          <documentation>Specifies the URI path to a preview object, such as a thumbnail image.</documentation>
+        </annotation>
+      </element>
+    </sequence>
+    <attribute name="targetVerification" type="boolean" default="false">
+      <annotation>
+        <documentation>Specifies whether target verification should be used.</documentation>
+      </annotation>
+    </attribute>
+  </complexType>
+  <element name="linkText">
+    <annotation>
+      <documentation>Contains descriptive text for a link.</documentation>
+    </annotation>
+    <complexType mixed="true">
+      <sequence minOccurs="0" maxOccurs="unbounded">
+        <choice>
+          <element ref="maml:notLocalizable"/>
+          <element ref="maml:embedObject"/>
+        </choice>
+      </sequence>
+    </complexType>
+  </element>
+  <complexType name="navigationLinkType">
+    <annotation>
+      <documentation>The navigationLink element is the navigational link in MAML, intended to produce a jump-type link in the help pane. Glossary links are navigation links.</documentation>
+    </annotation>
+    <sequence>
+      <element ref="maml:linkText"/>
+      <element ref="maml:uri"/>
+    </sequence>
+    <attribute name="targetVerification" type="boolean" default="false"/>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <element name="uri" type="maml:textType">
+    <annotation>
+      <documentation>Specifies the URI for a navigation link.</documentation>
+    </annotation>
+  </element>
+  <element name="navigationLink" type="maml:navigationLinkType"/>
+  <element name="embedObject" type="maml:embedObjectType"/>
+  <element name="newTerm" type="maml:textType">
+    <annotation>
+      <documentation>Denotes the first instance of a new term within a document. Use the newTerm element to introduce terms that the user may be unfamiliar with.</documentation>
+    </annotation>
+  </element>
+</schema>

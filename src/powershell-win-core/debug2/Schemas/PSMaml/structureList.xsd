@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<schema targetNamespace="http://schemas.microsoft.com/maml/2004/10"
+    xmlns:doc="http://schemas.microsoft.com/maml/internal"
+    xmlns:maml="http://schemas.microsoft.com/maml/2004/10"
+    xmlns="http://www.w3.org/2001/XMLSchema"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified"
+    blockDefault="#all"
+    xml:lang="en">
+  <!-- Schema documentation -->
+  <annotation>
+    <documentation>This schema definition defines common structure types for the Content Studio Schema. This schema is part of the base layer.</documentation>
+  </annotation>
+  <!-- include and import declarations -->
+  <include schemaLocation="base.xsd"/>
+  <!-- element declarations -->
+  <element name="list">
+    <annotation>
+      <documentation>Describes a span of content to present in a list format.</documentation>
+    </annotation>
+    <complexType>
+      <sequence>
+        <element ref="maml:listItem" maxOccurs="unbounded"/>
+      </sequence>
+      <attribute name="class" default="unordered">
+        <annotation>
+          <documentation>Specifies the type of list to create.</documentation>
+        </annotation>
+        <simpleType>
+          <restriction base="string">
+            <enumeration value="unordered"/>
+            <enumeration value="ordered"/>
+            <enumeration value="multiSelect"/>
+            <enumeration value="singleSelect"/>
+          </restriction>
+        </simpleType>
+      </attribute>
+      <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+    </complexType>
+  </element>
+  <element name="listItem">
+    <annotation>
+      <documentation>Describes an item within a list element. The content of the listItem element is treated as a unit.</documentation>
+    </annotation>
+    <complexType>
+      <complexContent>
+        <extension base="maml:structureType">
+          <attribute name="selectionDefault" use="optional">
+            <annotation>
+              <documentation>Indicates whether the list item, if selectable, is selected in a default rendering.</documentation>
+            </annotation>
+            <simpleType>
+              <restriction base="string">
+                <enumeration value="selected"/>
+                <enumeration value="unselected"/>
+              </restriction>
+            </simpleType>
+          </attribute>
+        </extension>
+      </complexContent>
+    </complexType>
+  </element>
+  <element name="alert">
+    <annotation>
+      <documentation>Specifies content of elevated importance or otherwise that needs to be called out. The alert element is a single-level alert structure.</documentation>
+    </annotation>
+    <complexType>
+      <group ref="maml:structureGroup" maxOccurs="unbounded"/>
+      <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+    </complexType>
+  </element>
+  <element name="alertSet">
+    <annotation>
+      <documentation>Contains a collection of alert elements. An alertSet element can have one or more alert elements as children. Use the alertSet element for more than one alert item of the same type. For example, if a topic had three items for the notes section, an alertSet could be used to combine them.</documentation>
+    </annotation>
+    <complexType>
+      <sequence>
+        <element ref="maml:title" minOccurs="0"/>
+        <element ref="maml:alert" maxOccurs="unbounded"/>
+      </sequence>
+      <attribute name="class" type="maml:alertTypesEnumType" default="note">
+        <annotation>
+          <documentation>Specifies the type of alert.</documentation>
+        </annotation>
+      </attribute>
+      <attributeGroup ref="maml:expandCollapseGroup"/>
+      <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+    </complexType>
+  </element>
+  <!-- group declarations -->
+  <group name="structureListGroup">
+    <annotation>
+      <documentation>Describes the common lists that can be used to describe list data.</documentation>
+    </annotation>
+    <sequence>
+      <element ref="maml:list"/>
+    </sequence>
+  </group>
+</schema>

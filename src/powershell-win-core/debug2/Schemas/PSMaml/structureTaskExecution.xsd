@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<schema targetNamespace="http://schemas.microsoft.com/automatedTaskExecutionBlock/2004/10"
+    xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:exeBlock="http://schemas.microsoft.com/automatedTaskExecutionBlock/2004/10"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified">
+  <complexType name="taskAutomationType">
+    <annotation>
+      <documentation>Holds Windows UI Automation information. Gets referred to by ActionRef and ElementRef tags.</documentation>
+    </annotation>
+    <sequence>
+      <element name="uiAction" type="exeBlock:uiActionType" minOccurs="0" maxOccurs="unbounded"/>
+    </sequence>
+  </complexType>
+  <complexType name="uiActionType">
+    <sequence>
+      <element name="uiActionDescription" minOccurs="0">
+        <complexType mixed="true">
+          <sequence minOccurs="0" maxOccurs="unbounded">
+            <element name="ui"/>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="executionMethods" type="exeBlock:executionMethodType"/>
+      <element name="uiElement" type="exeBlock:uiElementType"/>
+      <element name="windowsAffected" type="exeBlock:windowsAffectedType" minOccurs="0"/>
+    </sequence>
+    <attribute name="actionId" type="ID"/>
+    <attribute name="hasNoSideEffects" type="boolean" default="false"/>
+  </complexType>
+  <complexType name="executionMethodType">
+    <sequence maxOccurs="unbounded">
+      <choice>
+        <element name="controlPatternAction">
+          <complexType>
+            <sequence>
+              <element name="controlPattern" type="exeBlock:controlPatternMethodType"/>
+              <element name="methodParameter" type="string" minOccurs="0" maxOccurs="unbounded"/>
+            </sequence>
+          </complexType>
+        </element>
+        <element name="userAction"/>
+        <element name="userHighlight"/>
+        <element name="mouseAction" type="exeBlock:mouseActionEnumType"/>
+        <element name="keyboardAction" type="exeBlock:keyboardActionType"/>
+      </choice>
+    </sequence>
+  </complexType>
+  <complexType name="mouseActionEnumType">
+    <sequence>
+      <element name="clickType">
+        <simpleType>
+          <restriction base="string">
+            <enumeration value="Click"/>
+            <enumeration value="DoubleClick"/>
+          </restriction>
+        </simpleType>
+      </element>
+      <element name="mouseButton">
+        <simpleType>
+          <restriction base="string">
+            <enumeration value="Left"/>
+            <enumeration value="Right"/>
+            <enumeration value="Middle"/>
+            <enumeration value="X1"/>
+            <enumeration value="X2"/>
+          </restriction>
+        </simpleType>
+      </element>
+      <element name="mouseKey" maxOccurs="unbounded">
+        <simpleType>
+          <restriction base="string">
+            <enumeration value="Ctrl"/>
+            <enumeration value="Alt"/>
+            <enumeration value="Shft"/>
+            <enumeration value="None"/>
+          </restriction>
+        </simpleType>
+      </element>
+    </sequence>
+  </complexType>
+  <complexType name="keyboardActionType">
+    <sequence>
+      <element name="keyboardKey" type="string" maxOccurs="unbounded"/>
+    </sequence>
+  </complexType>
+  <simpleType name="controlPatternMethodType">
+    <restriction base="string">
+      <enumeration value="Expand"/>
+      <enumeration value="Collapse"/>
+      <enumeration value="Invoke"/>
+      <enumeration value="SetValue"/>
+      <enumeration value="AddToSelection"/>
+      <enumeration value="RemoveFromSelection"/>
+      <enumeration value="ContextMenu"/>
+      <enumeration value="Toggle"/>
+    </restriction>
+  </simpleType>
+  <complexType name="uiElementPropertiesType">
+    <sequence>
+      <element name="persistentId">
+        <complexType>
+          <simpleContent>
+            <extension base="string">
+              <attribute name="isLocaleIndependent" type="boolean" use="required"/>
+            </extension>
+          </simpleContent>
+        </complexType>
+      </element>
+      <element ref="maml:name"/>
+      <element name="className" type="string"/>
+      <element name="controlType" type="string"/>
+      <element name="numChildren" type="integer"/>
+      <element name="providerId" type="string"/>
+      <element name="elementId" type="string"/>
+      <element name="boundingRectangle" type="string"/>
+    </sequence>
+  </complexType>
+  <complexType name="imageType">
+    <simpleContent>
+      <extension base="base64Binary">
+        <attribute name="type" default="image/jpeg"/>
+      </extension>
+    </simpleContent>
+  </complexType>
+  <complexType name="uiElementType">
+    <sequence>
+      <choice>
+        <element name="properties" type="exeBlock:uiElementPropertiesType"/>
+        <element name="windowProperties" type="exeBlock:windowPropertiesType"/>
+      </choice>
+      <element name="topLevelWindow" type="exeBlock:topLevelWindowType"/>
+      <element name="pathToTopLevelWindow">
+        <complexType>
+          <sequence minOccurs="0" maxOccurs="unbounded">
+            <choice>
+              <element name="windowAncestor" type="exeBlock:windowPropertiesType"/>
+              <element name="elementAncestor" type="exeBlock:uiElementPropertiesType"/>
+            </choice>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="image" type="exeBlock:imageType" minOccurs="0"/>
+    </sequence>
+  </complexType>
+  <complexType name="topLevelWindowType">
+    <sequence>
+      <element name="windowProperties" type="exeBlock:windowPropertiesType"/>
+      <element name="image" type="exeBlock:imageType" minOccurs="0"/>
+    </sequence>
+  </complexType>
+  <complexType name="windowsAffectedType">
+    <choice minOccurs="0" maxOccurs="unbounded">
+      <element name="opensWindowWithId" type="string"/>
+      <element name="closesWindowWithId" type="string"/>
+    </choice>
+  </complexType>
+  <complexType name="windowPropertiesType">
+    <complexContent>
+      <extension base="exeBlock:uiElementPropertiesType">
+        <sequence>
+          <element name="isModal">
+            <simpleType>
+              <restriction base="string">
+                <enumeration value="True"/>
+                <enumeration value="False"/>
+                <enumeration value="true"/>
+                <enumeration value="false"/>
+              </restriction>
+            </simpleType>
+          </element>
+          <element name="moduleName" type="string"/>
+          <element name="processName" type="string"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+</schema>

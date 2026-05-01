@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<schema targetNamespace="http://schemas.microsoft.com/maml/2004/10" xmlns:doc="http://schemas.microsoft.com/maml/internal" xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified" blockDefault="#all" xml:lang="en">
+  <!-- Schema documentation -->
+  <annotation>
+    <documentation>This schema definition defines the common reference types within the Content Studio schema.</documentation>
+  </annotation>
+  <!-- include and import declarations -->
+  <include schemaLocation="base.xsd"/>
+  <!-- element declarations -->
+  <element name="application" type="maml:textType">
+    <annotation>
+      <documentation>Identifies the name of an application, such as Microsoft Windows or Notepad, within a body of text.</documentation>
+    </annotation>
+  </element>
+  <element name="database" type="maml:textType">
+    <annotation>
+      <documentation>Identifies the name of a database within a body of text.</documentation>
+    </annotation>
+  </element>
+  <element name="internetUri">
+    <annotation>
+      <documentation>Identifies an Internet address, such as a Web URL or an e-mail address, within a body of text.</documentation>
+    </annotation>
+    <complexType mixed="true">
+      <complexContent>
+        <extension base="maml:textType">
+          <attribute name="type">
+            <annotation>
+              <documentation>Indicates the type of URI to use.</documentation>
+            </annotation>
+            <simpleType>
+              <restriction base="token">
+                <enumeration value="email"/>
+                <enumeration value="web"/>
+                <enumeration value="ftp"/>
+              </restriction>
+            </simpleType>
+          </attribute>
+        </extension>
+      </complexContent>
+    </complexType>
+  </element>
+  <element name="localUri">
+    <annotation>
+      <documentation>Specifies a path to a local resource.</documentation>
+    </annotation>
+    <complexType mixed="true">
+      <sequence minOccurs="0">
+        <element ref="maml:replaceable"/>
+      </sequence>
+      <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+      <attribute name="type">
+        <annotation>
+          <documentation>Indicates the type of URI to use.</documentation>
+        </annotation>
+        <simpleType>
+          <restriction base="token">
+            <enumeration value="absolutePath"/>
+            <enumeration value="relativePath"/>
+            <enumeration value="registryKey"/>
+            <enumeration value="allUsersDocAndSettings"/>
+            <enumeration value="currentUserDocAndSettings"/>
+            <enumeration value="programFiles"/>
+            <enumeration value="Windows"/>
+            <enumeration value="mshelp"/>
+          </restriction>
+        </simpleType>
+      </attribute>
+    </complexType>
+  </element>
+  <element name="environmentVariable" type="maml:textType">
+    <annotation>
+      <documentation>Identifies an operating system environment variable within a body of text.</documentation>
+    </annotation>
+  </element>
+  <element name="errorInline" type="maml:textType">
+    <annotation>
+      <documentation>Identifies a string of error text within a body of text.</documentation>
+    </annotation>
+  </element>
+  <element name="hardware" type="maml:textType">
+    <annotation>
+      <documentation>Identifies the name of a computer hardware component or peripheral device, within a body of text.</documentation>
+    </annotation>
+  </element>
+  <element name="literal" type="maml:textType">
+    <annotation>
+      <documentation>Identifies a literal value within a body of text.</documentation>
+    </annotation>
+  </element>
+  <element name="markup" type="maml:textType">
+    <annotation>
+      <documentation>Identifies a string of markup, such as XML or TeX, within a body of text.</documentation>
+    </annotation>
+  </element>
+  <element name="commandInline">
+    <annotation>
+      <documentation>Identifies the name of an executable or other software application.</documentation>
+    </annotation>
+    <complexType mixed="true">
+      <choice minOccurs="0" maxOccurs="unbounded">
+        <element ref="maml:replaceable"/>
+      </choice>
+    </complexType>
+  </element>
+  <element name="replaceable" type="maml:textType">
+    <annotation>
+      <documentation>Identifies a span of text representing part of a command or function that the user replaces.</documentation>
+    </annotation>
+  </element>
+  <element name="token" type="maml:textType">
+    <annotation>
+      <documentation>Identifies a symbol within a body of text that represents a grammatical construct, or is a link to something else. Similar to the literal element.</documentation>
+    </annotation>
+  </element>
+  <element name="codeInline" type="maml:textType">
+    <annotation>
+      <documentation>Identifies a string of code, within a body of text.</documentation>
+    </annotation>
+  </element>
+  <element name="computerOutputInline" type="maml:textType">
+    <annotation>
+      <documentation>Identifies textual content associated with a user interface or console output, within a body of text.</documentation>
+    </annotation>
+  </element>
+  <element name="prompt" type="maml:textType">
+    <annotation>
+      <documentation>Identifies a string that represents a command prompt or user interface input field, within a body of text.</documentation>
+    </annotation>
+  </element>
+  <element name="ui" type="maml:textType">
+    <annotation>
+      <documentation>Identifies text representing a user interface element, within a body of text.</documentation>
+    </annotation>
+  </element>
+  <element name="registryEntryInline">
+    <annotation>
+      <documentation>Identifies a registry entry, within a body of text.</documentation>
+    </annotation>
+    <complexType>
+      <sequence>
+        <element ref="maml:name">
+          <annotation>
+            <documentation>Specifies the name of the registry entry.</documentation>
+          </annotation>
+        </element>
+        <element name="key" type="string">
+          <annotation>
+            <documentation>Specifies the key value of the registry entry.</documentation>
+          </annotation>
+        </element>
+        <element name="value" type="string" maxOccurs="unbounded">
+          <annotation>
+            <documentation>Specifies the value of the registry entry.</documentation>
+          </annotation>
+        </element>
+      </sequence>
+      <attribute name="type" default="string">
+        <annotation>
+          <documentation>Specifies the type of registry entry.</documentation>
+        </annotation>
+        <simpleType>
+          <restriction base="string">
+            <enumeration value="string"/>
+            <enumeration value="expandableString"/>
+            <enumeration value="binary"/>
+            <enumeration value="dWord"/>
+            <enumeration value="multiString"/>
+          </restriction>
+        </simpleType>
+      </attribute>
+    </complexType>
+  </element>
+  <!-- group declarations -->
+  <group name="inlineSoftwareGroup">
+    <choice>
+      <element ref="maml:application"/>
+      <element ref="maml:database"/>
+      <element ref="maml:internetUri"/>
+      <element ref="maml:localUri"/>
+      <element ref="maml:environmentVariable"/>
+      <element ref="maml:errorInline"/>
+      <element ref="maml:hardware"/>
+      <element ref="maml:literal"/>
+      <element ref="maml:markup"/>
+      <element ref="maml:commandInline"/>
+      <element ref="maml:token"/>
+      <element ref="maml:codeInline"/>
+      <element ref="maml:computerOutputInline"/>
+      <element ref="maml:prompt"/>
+      <element ref="maml:ui"/>
+      <element ref="maml:registryEntryInline"/>
+    </choice>
+  </group>
+</schema>

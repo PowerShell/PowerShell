@@ -1,0 +1,108 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.WSMan.Runtime</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.WSMan.Management.SessionOption">
+            <summary>
+            Session option class.
+            </summary>
+        </member>
+        <member name="P:Microsoft.WSMan.Management.SessionOption.SkipCACheck">
+            <summary>
+            Property.
+            </summary>
+        </member>
+        <member name="P:Microsoft.WSMan.Management.SessionOption.SkipCNCheck">
+            <summary>
+            Property.
+            </summary>
+        </member>
+        <member name="P:Microsoft.WSMan.Management.SessionOption.SkipRevocationCheck">
+            <summary>
+            Property.
+            </summary>
+        </member>
+        <member name="P:Microsoft.WSMan.Management.SessionOption.UseEncryption">
+            <summary>
+            Property.
+            </summary>
+        </member>
+        <member name="P:Microsoft.WSMan.Management.SessionOption.UseUtf16">
+            <summary>
+            Property.
+            </summary>
+        </member>
+        <member name="P:Microsoft.WSMan.Management.SessionOption.ProxyAuthentication">
+            <summary>
+            Property.
+            </summary>
+        </member>
+        <member name="P:Microsoft.WSMan.Management.SessionOption.SPNPort">
+            <summary>
+            Property.
+            </summary>
+        </member>
+        <member name="P:Microsoft.WSMan.Management.SessionOption.OperationTimeout">
+            <summary>
+            Property.
+            </summary>
+        </member>
+        <member name="P:Microsoft.WSMan.Management.SessionOption.ProxyCredential">
+            <summary>
+            Property.
+            </summary>
+        </member>
+        <member name="P:Microsoft.WSMan.Management.SessionOption.ProxyAccessType">
+            <summary>
+            Property.
+            </summary>
+        </member>
+        <member name="T:Microsoft.WSMan.Management.ProxyAccessType">
+            <summary>
+            Property.
+            </summary>
+        </member>
+        <member name="F:Microsoft.WSMan.Management.ProxyAccessType.ProxyIEConfig">
+            <summary>
+            Property.
+            </summary>
+        </member>
+        <member name="F:Microsoft.WSMan.Management.ProxyAccessType.ProxyWinHttpConfig">
+            <summary>
+            Property.
+            </summary>
+        </member>
+        <member name="F:Microsoft.WSMan.Management.ProxyAccessType.ProxyAutoDetect">
+            <summary>
+            Property.
+            </summary>
+        </member>
+        <member name="F:Microsoft.WSMan.Management.ProxyAccessType.ProxyNoProxyServer">
+            <summary>
+            Property.
+            </summary>
+        </member>
+        <member name="T:Microsoft.WSMan.Management.ProxyAuthentication">
+            <summary>
+            Property.
+            </summary>
+        </member>
+        <member name="F:Microsoft.WSMan.Management.ProxyAuthentication.Negotiate">
+            <summary>
+            Property.
+            </summary>
+        </member>
+        <member name="F:Microsoft.WSMan.Management.ProxyAuthentication.Basic">
+            <summary>
+            Property.
+            </summary>
+        </member>
+        <member name="F:Microsoft.WSMan.Management.ProxyAuthentication.Digest">
+            <summary>
+            Property.
+            </summary>
+        </member>
+    </members>
+</doc>

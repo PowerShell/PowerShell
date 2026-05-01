@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<schema targetNamespace="http://schemas.microsoft.com/maml/2004/10"
+    xmlns:doc="http://schemas.microsoft.com/maml/internal"
+    xmlns:maml="http://schemas.microsoft.com/maml/2004/10"
+    xmlns="http://www.w3.org/2001/XMLSchema"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified"
+    blockDefault="#all"
+    xml:lang="en">
+  <!-- Schema documentation -->
+  <annotation>
+    <documentation>This schema definition defines common hierarchy types for the Content Studio Schema. This schema is part of the base layer.</documentation>
+  </annotation>
+  <!-- include and import declarations -->
+  <include schemaLocation="block.xsd"/>
+  <!-- element declarations -->
+  <element name="table">
+    <annotation>
+      <documentation>Describes a table structure. The table element is the parent of all elements within a table structure. The MAML table model conforms to the Computer-Aided Acquisition and Logistic Support group (CALS) table model (a standard formatting type designed by the Department of Defense).</documentation>
+    </annotation>
+    <complexType>
+      <sequence>
+        <element ref="maml:title" minOccurs="0"/>
+        <element ref="maml:summary" minOccurs="0"/>
+        <element ref="maml:introduction" minOccurs="0"/>
+        <element ref="maml:tableHeader" minOccurs="0"/>
+        <element ref="maml:row" minOccurs="1" maxOccurs="unbounded"/>
+        <element ref="maml:tableFooter" minOccurs="0"/>
+        <element ref="maml:alertSet" minOccurs="0"/>
+      </sequence>
+      <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+    </complexType>
+  </element>
+  <complexType name="entryType">
+    <annotation>
+      <documentation>Describes an entry within a table.</documentation>
+    </annotation>
+    <choice minOccurs="0">
+      <group ref="maml:structureGroup" maxOccurs="unbounded"/>
+    </choice>
+    <attributeGroup ref="maml:tableEntryAttributeGroup"/>
+  </complexType>
+  <element name="entry" type="maml:entryType">
+    <annotation>
+      <documentation>Describes a table entry, which is equivalent to a cell within a table row.</documentation>
+    </annotation>
+  </element>
+  <element name="headerEntry" type="maml:entryType">
+    <annotation>
+      <documentation>Describes a table entry, which is equivalent to a cell within a table row. Use the headerEntry element for text or other content related to a tableHeader.</documentation>
+    </annotation>
+  </element>
+  <element name="footerEntry" type="maml:entryType">
+    <annotation>
+      <documentation>Describes a table entry, which is equivalent to a cell within a table row. Use the footerEntry element for text or other content related to a tableFooter.</documentation>
+    </annotation>
+  </element>
+  <element name="row">
+    <annotation>
+      <documentation>Describes a row within a standard table structure. Each row can contain one or more entries.</documentation>
+    </annotation>
+    <complexType>
+      <choice minOccurs="1" maxOccurs="unbounded">
+        <element ref="maml:headerEntry"/>
+        <element ref="maml:entry"/>
+        <element ref="maml:footerEntry"/>
+      </choice>
+    </complexType>
+  </element>
+  <element name="tableHeader" type="maml:tableBodyType">
+  	<annotation>
+		<documentation>Describes a table header, typically the first row in a table.</documentation>
+	</annotation>
+  </element>
+  <element name="tableFooter" type="maml:tableBodyType">
+  	<annotation>
+		<documentation><b>Describes a table footer, typically the last row in a table.</b></documentation>
+	</annotation>
+  </element>
+  <!-- complexType declarations -->
+  <complexType name="tableBodyType">
+    <annotation>
+      <documentation>This type is intended for use as the children of table elements.</documentation>
+    </annotation>
+    <sequence>
+      <element ref="maml:row" maxOccurs="unbounded"/>
+    </sequence>
+  </complexType>
+  <!-- attribute declarations -->
+  <attributeGroup name="tableEntryAttributeGroup">
+    <annotation>
+      <documentation>This type describes the attributes for table Entry.</documentation>
+      <documentation>The attributes used are not from docbook, but are modeled off of XHTML v1.1.</documentation>
+    </annotation>
+    <attribute name="rowSpan" type="positiveInteger">
+      <annotation>
+        <documentation>Specifies the number of additional rows that the current entry (cell) should span. Similar in concept to the HTML rowspan attribute. This value should be a positive integer.</documentation>
+      </annotation>
+    </attribute>
+    <attribute name="columnSpan" type="positiveInteger">
+      <annotation>
+        <documentation>Specifies the number of additional columns that the current entry (cell) should span. Similar in concept to the HTML colspan attribute. This value should be a positive integer.</documentation>
+      </annotation>
+    </attribute>
+  </attributeGroup>
+  <!-- Definition Table -->
+  <complexType name="definitionListItemType">
+    <sequence>
+      <element ref="maml:term"/>
+      <element ref="maml:definition"/>
+      <element ref="maml:uri" minOccurs="0"/>
+    </sequence>
+  </complexType>
+  <complexType name="definitionListType">
+    <sequence>
+      <element name="definitionListItem" type="maml:definitionListItemType" maxOccurs="unbounded">
+        <annotation>
+          <documentation>Describes an entry in a definitionList. Each entry consists of a term/definition pair, and an optional URI. </documentation>
+        </annotation>
+      </element>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <element name="definitionList" type="maml:definitionListType">
+    <annotation>
+      <documentation>Defines a two column table with no header or footer. The first column contains the definition term, the second column contains the definition.</documentation>
+      <appinfo>
+        <doc:localizable>n/a</doc:localizable>
+      </appinfo>
+    </annotation>
+  </element>
+</schema>

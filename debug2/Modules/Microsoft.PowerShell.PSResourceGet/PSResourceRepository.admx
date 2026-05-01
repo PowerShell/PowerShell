@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--  (c) 2006 Microsoft Corporation  -->
+<policyDefinitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" revision="1.0" schemaVersion="1.0" xmlns="http://schemas.microsoft.com/GroupPolicy/2006/07/PolicyDefinitions">
+
+  <policyNamespaces>
+    <target prefix="PSResourceRepository" namespace="Microsoft.PoliciesContentPSResourceRepository" />
+    <using prefix="windows" namespace="Microsoft.Policies.Windows" />
+    <using prefix="products" namespace="Microsoft.Policies.Products" />
+  </policyNamespaces>
+
+  <resources minRequiredRevision="1.0" />
+
+  <supportedOn>
+    <definitions>
+      <definition name="SUPPORTED_Windows11" displayName="$(string.SUPPORTED_Windows11)">
+        <or>
+          <reference ref="windows:SUPPORTED_Windows11"/>
+        </or>
+      </definition>
+    </definitions>
+  </supportedOn>
+
+  <categories>
+    <category name="PSResourceGetRepository" displayName="$(string.PSResourceGetRepository_Cat)">
+      <parentCategory ref="windows:WindowsComponents" />
+    </category>
+  </categories>
+
+  <policies>
+
+    <policy name="PSResourceGetRepository" 
+            class="User" 
+            displayName="$(string.PSResourceGetRepository)" 
+            explainText="$(string.PSResourceGetRepository_Help)" 
+            presentation="$(presentation.PSResourceGetRepository)" 
+            key="SOFTWARE\Policies\Microsoft\PSResourceGetRepository">
+        <parentCategory ref="PSResourceGetRepository"/>
+        <supportedOn ref="windows:SUPPORTED_Windows11" />
+        <elements>
+            <list id="PSResourceGetRepository_Listbox" key="SOFTWARE\Policies\Microsoft\PSResourceGetRepository" valuePrefix=""/>
+        </elements>
+    </policy>
+
+  </policies>
+</policyDefinitions>

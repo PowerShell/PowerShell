@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<policyDefinitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" revision="1.0" schemaVersion="1.0" xmlns="http://www.microsoft.com/GroupPolicy/PolicyDefinitions">
+  <policyNamespaces>
+    <target prefix="powershellexecutionpolicy" namespace="Microsoft.Policies.PowerShellCore" />
+    <using prefix="windows" namespace="Microsoft.Policies.Windows" />
+  </policyNamespaces>
+  <resources minRequiredRevision="1.0" />
+  <supportedOn>
+    <definitions>
+      <definition name="SUPPORTED_WIN7" displayName="$(string.SUPPORTED_WIN7)" />
+    </definitions>
+  </supportedOn>
+  <categories>
+    <category name="PowerShell" displayName="$(string.PowerShell)">
+    </category>
+  </categories>
+  <policies>
+    <policy name="EnableScripts" class="Both" displayName="$(string.EnableScripts)" explainText="$(string.EnableScripts_Explain)" presentation="$(presentation.EnableScripts)" key="Software\Policies\Microsoft\PowerShellCore" valueName="EnableScripts">
+      <parentCategory ref="PowerShell" />
+      <supportedOn ref="SUPPORTED_WIN7" />
+      <enabledValue>
+        <decimal value="1" />
+      </enabledValue>
+      <disabledValue>
+        <decimal value="0" />
+      </disabledValue>
+      <elements>
+        <boolean id="UseWindowsPowerShellPolicySetting" valueName="UseWindowsPowerShellPolicySetting" />
+        <enum id="ExecutionPolicy" valueName="ExecutionPolicy" required="true">
+          <item displayName="$(string.AllScriptsSigned)">
+            <value>
+              <string>AllSigned</string>
+            </value>
+          </item>
+          <item displayName="$(string.RemoteSignedScripts)">
+            <value>
+              <string>RemoteSigned</string>
+            </value>
+          </item>
+          <item displayName="$(string.AllScripts)">
+            <value>
+              <string>Unrestricted</string>
+            </value>
+          </item>
+        </enum>
+      </elements>
+    </policy>
+    <policy name="EnableModuleLogging" class="Both" displayName="$(string.EnableModuleLogging)" explainText="$(string.EnableModuleLogging_Explain)" presentation="$(presentation.EnableModuleLogging)" key="Software\Policies\Microsoft\PowerShellCore\ModuleLogging" valueName="EnableModuleLogging">
+      <parentCategory ref="PowerShell" />
+      <supportedOn ref="SUPPORTED_WIN7" />
+      <enabledValue>
+        <decimal value="1" />
+      </enabledValue>
+      <disabledValue>
+        <decimal value="0" />
+      </disabledValue>
+      <elements>
+        <boolean id="UseWindowsPowerShellPolicySetting" valueName="UseWindowsPowerShellPolicySetting" />
+        <list id="Listbox_ModuleNames" key="Software\Policies\Microsoft\PowerShellCore\ModuleLogging\ModuleNames" />
+      </elements>
+    </policy>
+    <policy name="EnableTranscripting" class="Both" displayName="$(string.EnableTranscripting)" explainText="$(string.EnableTranscripting_Explain)" presentation="$(presentation.EnableTranscripting)" key="Software\Policies\Microsoft\PowerShellCore\Transcription" valueName="EnableTranscripting">
+      <parentCategory ref="PowerShell" />
+      <supportedOn ref="SUPPORTED_WIN7" />
+      <enabledValue>
+        <decimal value="1" />
+      </enabledValue>
+      <disabledValue>
+        <decimal value="0" />
+      </disabledValue>
+      <elements>
+        <boolean id="UseWindowsPowerShellPolicySetting" valueName="UseWindowsPowerShellPolicySetting" />
+        <text id="OutputDirectory" valueName="OutputDirectory" />
+        <boolean id="EnableInvocationHeader" valueName="EnableInvocationHeader" />
+      </elements>
+    </policy>
+    <policy name="EnableScriptBlockLogging" class="Both" displayName="$(string.EnableScriptBlockLogging)" explainText="$(string.EnableScriptBlockLogging_Explain)" presentation="$(presentation.EnableScriptBlockLogging)" key="Software\Policies\Microsoft\PowerShellCore\ScriptBlockLogging" valueName="EnableScriptBlockLogging">
+      <parentCategory ref="PowerShell" />
+      <supportedOn ref="SUPPORTED_WIN7" />
+      <enabledValue>
+        <decimal value="1" />
+      </enabledValue>
+      <disabledValue>
+        <decimal value="0" />
+      </disabledValue>
+      <elements>
+        <boolean id="UseWindowsPowerShellPolicySetting" valueName="UseWindowsPowerShellPolicySetting" />
+        <boolean id="EnableScriptBlockInvocationLogging" valueName="EnableScriptBlockInvocationLogging" />
+      </elements>
+    </policy>    
+    <policy name="EnableUpdateHelpDefaultSourcePath" class="Both" displayName="$(string.EnableUpdateHelpDefaultSourcePath)" explainText="$(string.EnableUpdateHelpDefaultSourcePath_Explain)" presentation="$(presentation.EnableUpdateHelpDefaultSourcePath)" key="Software\Policies\Microsoft\PowerShellCore\UpdatableHelp" valueName="EnableUpdateHelpDefaultSourcePath">
+      <parentCategory ref="PowerShell" />
+      <supportedOn ref="SUPPORTED_WIN7" />
+      <enabledValue>
+        <decimal value="1" />
+      </enabledValue>
+      <disabledValue>
+        <decimal value="0" />
+      </disabledValue>
+      <elements>
+        <boolean id="UseWindowsPowerShellPolicySetting" valueName="UseWindowsPowerShellPolicySetting" />
+        <text id="SourcePathForUpdateHelp" valueName="DefaultSourcePath" required="true"/>
+      </elements>
+    </policy>
+    <policy name="ConsoleSessionConfiguration" class="Both" displayName="$(string.ConsoleSessionConfiguration)" explainText="$(string.ConsoleSessionConfiguration_Explain)" presentation="$(presentation.ConsoleSessionConfiguration)" key="Software\Policies\Microsoft\PowerShellCore\ConsoleSessionConfiguration" valueName="EnableConsoleSessionConfiguration">
+      <parentCategory ref="PowerShell" />
+      <supportedOn ref="SUPPORTED_WIN7" />
+      <enabledValue>
+        <decimal value="1" />
+      </enabledValue>
+      <disabledValue>
+        <decimal value="0" />
+      </disabledValue>
+      <elements>
+        <text id="ConsoleSessionConfigurationName" valueName="ConsoleSessionConfigurationName" required="true"/>
+      </elements>
+    </policy>
+  </policies>
+</policyDefinitions>

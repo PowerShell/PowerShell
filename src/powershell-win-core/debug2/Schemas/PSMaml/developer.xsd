@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<schema targetNamespace="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:doc="http://schemas.microsoft.com/maml/internal" xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified" blockDefault="#all" xml:lang="en">
+  <!-- Schema documentation -->
+  <annotation>
+    <documentation>This schema describes MAML (Microsoft Assistance Markup Language). MAML is intended for software documentation. In particular, MAML is intended to accommodate the needs of Microsoft documentation.</documentation>
+    <documentation>The schema is broken into three main areas: end user, developer and IT Pro. These areas represent the main categories of Microsoft documentation.</documentation>
+    <documentation>The namespace uri for this version of MAML is: http://schemas.microsoft.com/maml/2004/10.</documentation>
+    <documentation>Each backwards-incompatible revision to MAML will require that the date fields be appropriately incremented in uri of the updated version of the MAML schema.</documentation>
+  </annotation>
+  <import schemaLocation="maml.xsd" namespace="http://schemas.microsoft.com/maml/2004/10"/>
+  <import schemaLocation="developerManaged.xsd" namespace="http://schemas.microsoft.com/maml/dev/managed/2004/10"/>
+  <import schemaLocation="developerCommand.xsd" namespace="http://schemas.microsoft.com/maml/dev/command/2004/10"/>
+  <import schemaLocation="developerDscResource.xsd" namespace="http://schemas.microsoft.com/maml/dev/dscResource/2004/10"/>
+  <!-- ***************************************************************** -->
+  <element name="remarks" type="maml:structureType">
+    <annotation>
+      <documentation>Contains a detailed discussion of the current item.</documentation>
+      <appinfo>
+        <doc:localizable>n/a</doc:localizable>
+      </appinfo>
+    </annotation>
+  </element>
+  <element name="buildInstructions" type="maml:structureType">
+    <annotation>
+      <documentation>Contains instructions for building a code example.</documentation>
+      <appinfo>
+        <doc:localizable>n/a</doc:localizable>
+      </appinfo>
+    </annotation>
+  </element>
+  <element name="robustProgramming" type="maml:structureType">
+    <annotation>
+      <documentation>Contains a discussion of error handling and other related issues.</documentation>
+      <appinfo>
+        <doc:localizable>n/a</doc:localizable>
+      </appinfo>
+    </annotation>
+  </element>
+  <element name="security" type="maml:structureType">
+    <annotation>
+      <documentation>Contains a discussion of security issues.</documentation>
+      <appinfo>
+        <doc:localizable>n/a</doc:localizable>
+      </appinfo>
+    </annotation>
+  </element>
+  <element name="members" type="dev:membersType"/>
+  <complexType name="membersType">
+    <sequence>
+      <element ref="dev:member" minOccurs="1" maxOccurs="unbounded"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <element name="member" abstract="true"/>
+  <element name="implements" type="dev:implementsType"/>
+  <complexType name="implementsType">
+    <sequence>
+      <element ref="dev:interface" maxOccurs="unbounded"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <element name="interface" type="dev:interfaceType"/>
+  <complexType name="interfaceType">
+    <sequence>
+      <element ref="maml:name"/>
+      <element ref="maml:uri"/>
+      <element ref="maml:description"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <element name="examples" type="dev:examplesType"/>
+  <complexType name="examplesType">
+    <sequence>
+      <element ref="dev:example" maxOccurs="unbounded"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <element name="example" type="dev:exampleType"/>
+  <complexType name="exampleType">
+    <sequence>
+      <element ref="maml:title" minOccurs="0"/>
+      <element ref="maml:introduction" minOccurs="0"/>
+      <group ref="dev:codeGroup"/>
+      <element ref="dev:buildInstructions" minOccurs="0"/>
+      <element ref="dev:robustProgramming" minOccurs="0"/>
+      <element ref="dev:security" minOccurs="0"/>
+      <element ref="dev:results" minOccurs="0"/>
+      <element ref="dev:remarks" minOccurs="0"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <group name="codeGroup">
+    <choice>
+      <element ref="dev:code"/>
+      <element ref="dev:codeReference"/>
+    </choice>
+  </group>
+  <element name="code" type="dev:codeType">
+    <annotation>
+      <documentation>Describes a block of example code text.</documentation>
+    </annotation>
+  </element>
+  <complexType name="codeType" mixed="true">
+    <simpleContent>
+      <extension base="string">
+        <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+        <attribute name="language" type="maml:devLanguagesType">
+          <annotation>
+            <documentation>Specifies the programming language used in a code example or some other programmatic structure.</documentation>
+          </annotation>
+        </attribute>
+      </extension>
+    </simpleContent>
+  </complexType>
+  <element name="results" type="dev:resultsType"/>
+  <complexType name="resultsType" mixed="true">
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <element name="threadSafety" type="dev:threadSafetyType"/>
+  <complexType name="threadSafetyType">
+    <sequence>
+      <element ref="maml:para" maxOccurs="unbounded"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <element name="requirements" type="dev:requirementsType"/>
+  <complexType name="requirementsType">
+    <sequence>
+      <element ref="dev:products"/>
+      <element ref="dev:development"/>
+      <element ref="dev:target"/>
+      <element ref="dev:standards"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <element name="products" type="dev:productsType"/>
+  <complexType name="productsType">
+    <sequence>
+      <element ref="dev:product" maxOccurs="unbounded"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <element name="product" type="maml:textType"/>
+  <element name="platform" type="maml:textType"/>
+  <element name="development" type="dev:developmentType"/>
+  <element name="target" type="dev:developmentType"/>
+  <complexType name="developmentType">
+    <sequence>
+      <element ref="dev:platform" maxOccurs="unbounded"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <element name="standards" type="dev:standardsType"/>
+  <complexType name="standardsType">
+    <sequence>
+      <element ref="maml:para" maxOccurs="unbounded"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <simpleType name="codeReferenceStringType">
+    <restriction base="token"/>
+  </simpleType>
+  <complexType name="codeReferenceType">
+    <simpleContent>
+      <extension base="dev:codeReferenceStringType">
+        <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+      </extension>
+    </simpleContent>
+  </complexType>
+  <element name="codeReference" type="dev:codeReferenceType">
+    <annotation>
+      <documentation>Specifies a reference to a block of code.</documentation>
+      <appinfo>
+        <doc:localizable>false</doc:localizable>
+      </appinfo>
+    </annotation>
+  </element>
+  <element name="exceptions" type="dev:exceptionsType"/>
+  <complexType name="exceptionsType">
+    <sequence>
+      <element ref="dev:exception" maxOccurs="unbounded"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <element name="exception" type="dev:exceptionType"/>
+  <complexType name="exceptionType">
+    <sequence>
+      <element ref="dev:type"/>
+      <element ref="dev:condition"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <element name="associatedData" type="dev:associatedDataType"/>
+  <element name="condition" type="maml:structureType"/>
+  <complexType name="associatedDataType">
+    <sequence>
+      <element ref="maml:para" maxOccurs="unbounded"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <element name="appliesTo" type="dev:appliesToType"/>
+  <complexType name="appliesToType">
+    <sequence>
+      <element ref="dev:type" maxOccurs="unbounded"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <element name="returnValue" type="dev:returnValueType"/>
+  <complexType name="returnValueType">
+    <sequence minOccurs="0">
+      <group ref="dev:parameterRetvalBaseGroup"/>
+    </sequence>
+  </complexType>
+  <element name="parameters" type="dev:parametersType"/>
+  <complexType name="parametersType">
+    <sequence>
+      <element ref="dev:parameter" minOccurs="0" maxOccurs="unbounded"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <element name="parameter" type="dev:parameterType"/>
+  <complexType name="parameterType">
+    <sequence>
+      <element ref="maml:name"/>
+      <group ref="dev:parameterRetvalBaseGroup"/>
+    </sequence>
+  </complexType>
+  <group name="parameterRetvalBaseGroup">
+    <sequence>
+      <element ref="dev:type"/>
+      <element ref="maml:description"/>
+      <element ref="dev:possibleValues" minOccurs="0"/>
+    </sequence>
+  </group>
+  <element name="type" type="dev:typeType"/>
+  <complexType name="typeType">
+    <sequence>
+      <element ref="maml:name" minOccurs="0"/>
+      <element ref="maml:uri"/>
+      <element ref="maml:description" minOccurs="0"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <element name="possibleValues" type="dev:possibleValuesType"/>
+  <complexType name="possibleValuesType">
+    <sequence>
+      <element ref="dev:possibleValue" maxOccurs="unbounded"/>
+    </sequence>
+  </complexType>
+  <element name="possibleValue" type="dev:possibleValueType"/>
+  <complexType name="possibleValueType">
+    <sequence>
+      <element name="value" type="maml:textType"/>
+      <element ref="maml:description" minOccurs="0" maxOccurs="1"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+    <attribute name="default" type="boolean" use="optional"/>
+  </complexType>
+  <element name="defaultValue" type="maml:textType"/>
+  <element name="version" type="maml:textType"/>
+</schema>

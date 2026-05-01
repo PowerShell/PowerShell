@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="utf-8"?>
+<schema targetNamespace="http://schemas.microsoft.com/maml/2004/10"
+    xmlns:doc="http://schemas.microsoft.com/maml/internal"
+    xmlns:maml="http://schemas.microsoft.com/maml/2004/10"
+    xmlns="http://www.w3.org/2001/XMLSchema"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified"
+    blockDefault="#all"
+    xml:lang="en">
+  <!-- Schema documentation -->
+  <annotation>
+    <documentation>This schema describes MAML (Microsoft Assistance Markup Language). MAML is intended for software documentation. In particular, MAML is intended to accommodate the needs of Microsoft documentation.</documentation>
+    <documentation>The schema is broken into three main areas: end user, developer and IT Pro. These areas represent the main categories of Microsoft documentation.</documentation>
+    <documentation>The namespace uri for this version of MAML is: http://schemas.microsoft.com/maml/2004/10.</documentation>
+    <documentation>Each backwards-incompatible revision to MAML will require that the date fields be appropriately incremented in uri of the updated version of the MAML schema.</documentation>
+  </annotation>
+  <include schemaLocation="baseConditional.xsd"/>
+  <include schemaLocation="inline.xsd"/>
+  <include schemaLocation="block.xsd"/>
+  <include schemaLocation="structure.xsd"/>
+  <include schemaLocation="developerStructure.xsd"/>
+  <!-- ************ Start of assembly ************ -->
+  <element name="assemblyName" type="token">
+    <annotation>
+      <documentation>Identifies the name of an assembly.</documentation>
+      <appinfo>
+        <doc:localizable>false</doc:localizable>
+      </appinfo>
+    </annotation>
+  </element>
+  <element name="assemblyVersion" type="token">
+    <annotation>
+      <documentation>Identifies the version of an assembly.</documentation>
+      <appinfo>
+        <doc:localizable>false</doc:localizable>
+      </appinfo>
+    </annotation>
+  </element>
+  <element name="assemblyCulture" type="token">
+    <annotation>
+      <documentation>Identifies the culture of an assembly.</documentation>
+      <appinfo>
+        <doc:localizable>false</doc:localizable>
+      </appinfo>
+    </annotation>
+  </element>
+  <element name="assemblyPublicKey" type="token">
+    <annotation>
+      <documentation>Identifies the public key for an assembly.</documentation>
+      <appinfo>
+        <doc:localizable>false</doc:localizable>
+      </appinfo>
+    </annotation>
+  </element>
+  <element name="assemblyHash" type="token">
+    <annotation>
+      <documentation>Identifies the hash for an assembly.</documentation>
+      <appinfo>
+        <doc:localizable>false</doc:localizable>
+      </appinfo>
+    </annotation>
+  </element>
+  <complexType name="assemblyType" mixed="false">
+    <sequence>
+      <element ref="maml:assemblyName"/>
+      <element ref="maml:assemblyVersion" minOccurs="0"/>
+      <element ref="maml:assemblyCulture" minOccurs="0"/>
+      <element ref="maml:assemblyPublicKey" minOccurs="0"/>
+      <element ref="maml:assemblyHash" minOccurs="0"/>
+    </sequence>
+  </complexType>
+  <element name="assembly" type="maml:assemblyType">
+    <annotation>
+      <documentation>Describes a collection of information for an assembly.</documentation>
+      <appinfo>
+        <doc:localizable>n/a</doc:localizable>
+      </appinfo>
+    </annotation>
+  </element>
+  <!-- ************ End of assembly ************ -->
+  <element name="internalOnly" type="maml:emptyType">
+    <annotation>
+      <documentation>Reserved for internal use.</documentation>
+      <appinfo>
+        <doc:localizable>n/a</doc:localizable>
+      </appinfo>
+    </annotation>
+  </element>
+  <element name="returnValue" type="maml:sectionContentType">
+    <annotation>
+      <documentation>Specifies the return value of a function or property.</documentation>
+      <appinfo>
+        <doc:localizable>n/a</doc:localizable>
+      </appinfo>
+    </annotation>
+  </element>
+  <element name="threadSafety" type="maml:sectionContentType">
+    <annotation>
+      <documentation>Contains a discussion of the thread safety characteristics of the current item.</documentation>
+      <appinfo>
+        <doc:localizable>n/a</doc:localizable>
+      </appinfo>
+    </annotation>
+  </element>
+  <element name="notesForImplementers" type="maml:sectionContentType">
+    <annotation>
+      <documentation>Contains information that is only relevant to implementers of the current item.</documentation>
+      <appinfo>
+        <doc:localizable>n/a</doc:localizable>
+      </appinfo>
+    </annotation>
+  </element>
+  <element name="notesForCallers" type="maml:sectionContentType">
+    <annotation>
+      <documentation>Contains information that is only relevant to callers of the current item.</documentation>
+      <appinfo>
+        <doc:localizable>n/a</doc:localizable>
+      </appinfo>
+    </annotation>
+  </element>
+  <element name="notesForInheritors" type="maml:sectionContentType">
+    <annotation>
+      <documentation>Contains information that is only relevant to inheritors of the current item.</documentation>
+      <appinfo>
+        <doc:localizable>n/a</doc:localizable>
+      </appinfo>
+    </annotation>
+  </element>
+  <complexType name="codeReferenceDescriptionType" mixed="false">
+    <sequence>
+      <element ref="maml:codeEntityReference"/>
+      <element ref="maml:content"/>
+    </sequence>
+  </complexType>
+  <element name="clsCompliantAlternative" type="maml:codeReferenceDescriptionType">
+    <annotation>
+      <documentation>Refers to another code entity that performs a function similar to that of the current code entity. Unlike the current entity, the target of the reference is CLS-compliant.</documentation>
+      <appinfo>
+        <doc:localizable>n/a</doc:localizable>
+      </appinfo>
+    </annotation>
+  </element>
+  <element name="equivalentCodeEntity" type="maml:codeReferenceDescriptionType">
+    <annotation>
+      <documentation>Refers to another code entity that performs the same function as the current code entity. It is typically used for mapping from an operator to the equivalent function (such as from op_Equality to Equals) or from an obsolete item to its replacement.</documentation>
+      <appinfo>
+        <doc:localizable>n/a</doc:localizable>
+      </appinfo>
+    </annotation>
+  </element>
+  <element name="genericParameter" type="maml:codeReferenceDescriptionType">
+    <annotation>
+      <documentation>Contains a description of a generic or template parameter.</documentation>
+      <appinfo>
+        <doc:localizable>n/a</doc:localizable>
+      </appinfo>
+    </annotation>
+  </element>
+  <complexType name="genericParametersType" mixed="false">
+    <sequence>
+      <element ref="maml:genericParameter" minOccurs="0" maxOccurs="unbounded"/>
+    </sequence>
+  </complexType>
+  <element name="genericParameters" type="maml:genericParametersType">
+    <annotation>
+      <documentation>Contains a collection of genericParameter elements.</documentation>
+      <appinfo>
+        <doc:localizable>n/a</doc:localizable>
+      </appinfo>
+    </annotation>
+  </element>
+  <element name="parameter" type="maml:codeReferenceDescriptionType">
+    <annotation>
+      <documentation>Contains a description of a functional parameter.</documentation>
+      <appinfo>
+        <doc:localizable>n/a</doc:localizable>
+      </appinfo>
+    </annotation>
+  </element>
+  <complexType name="parametersType" mixed="false">
+    <sequence>
+      <element ref="maml:parameter" minOccurs="0" maxOccurs="unbounded"/>
+    </sequence>
+  </complexType>
+  <element name="parameters" type="maml:parametersType">
+    <annotation>
+      <documentation>Describes a collection of parameter elements.</documentation>
+      <appinfo>
+        <doc:localizable>n/a</doc:localizable>
+      </appinfo>
+    </annotation>
+  </element>
+  <element name="exception" type="maml:codeReferenceDescriptionType">
+    <annotation>
+      <documentation>Contains a description of one type of exception.</documentation>
+      <appinfo>
+        <doc:localizable>n/a</doc:localizable>
+      </appinfo>
+    </annotation>
+  </element>
+  <complexType name="exceptionsType" mixed="false">
+    <sequence>
+      <element ref="maml:exception" minOccurs="0" maxOccurs="unbounded"/>
+    </sequence>
+  </complexType>
+  <element name="exceptions" type="maml:exceptionsType">
+    <annotation>
+      <documentation>Contains a collection of exception elements.</documentation>
+      <appinfo>
+        <doc:localizable>n/a</doc:localizable>
+      </appinfo>
+    </annotation>
+  </element>
+  <element name="permission" type="maml:codeReferenceDescriptionType">
+    <annotation>
+      <documentation>Contains a discussion of a particular permission required to use the current code element.</documentation>
+      <appinfo>
+        <doc:localizable>n/a</doc:localizable>
+      </appinfo>
+    </annotation>
+  </element>
+  <complexType name="permissionsType" mixed="false">
+    <sequence>
+      <element ref="maml:permission" minOccurs="0" maxOccurs="unbounded"/>
+    </sequence>
+  </complexType>
+  <element name="permissions" type="maml:permissionsType">
+    <annotation>
+      <documentation>Contains a collection of permission elements.</documentation>
+      <appinfo>
+        <doc:localizable>n/a</doc:localizable>
+      </appinfo>
+    </annotation>
+  </element>
+  <complexType name="platformNoteType" mixed="false">
+    <sequence>
+      <element ref="maml:platforms"/>
+      <element ref="maml:content"/>
+    </sequence>
+  </complexType>
+  <element name="platformNote" type="maml:platformNoteType">
+    <annotation>
+      <documentation>Contains a collection of platforms along with a discussion of the behavior of the current code entity on those platforms.</documentation>
+      <appinfo>
+        <doc:localizable>n/a</doc:localizable>
+      </appinfo>
+    </annotation>
+  </element>
+  <complexType name="platformNotesType" mixed="false">
+    <sequence>
+      <element ref="maml:platformNote" minOccurs="0" maxOccurs="unbounded"/>
+    </sequence>
+  </complexType>
+  <element name="platformNotes" type="maml:platformNotesType">
+    <annotation>
+      <documentation>Contains a collection of platformNote elements.</documentation>
+      <appinfo>
+        <doc:localizable>n/a</doc:localizable>
+      </appinfo>
+    </annotation>
+  </element>
+  <complexType name="codeEntityType" mixed="false">
+    <sequence>
+      <element ref="maml:codeEntityReference"/>
+      <element ref="maml:internalOnly" minOccurs="0"/>
+      <element ref="maml:clsCompliantAlternative" minOccurs="0"/>
+      <element ref="maml:equivalentCodeEntity" minOccurs="0"/>
+      <element ref="maml:introduction" minOccurs="0"/>
+      <element ref="maml:genericParameters" minOccurs="0"/>
+      <element ref="maml:parameters" minOccurs="0"/>
+      <element ref="maml:returnValue" minOccurs="0"/>
+      <element ref="maml:exceptions" minOccurs="0"/>
+      <element ref="maml:threadSafety" minOccurs="0"/>
+      <element ref="maml:remarks" minOccurs="0"/>
+      <element ref="maml:notesForImplementers" minOccurs="0"/>
+      <element ref="maml:notesForCallers" minOccurs="0"/>
+      <element ref="maml:notesForInheritors" minOccurs="0"/>
+      <element ref="maml:platformNotes" minOccurs="0"/>
+      <element ref="maml:codeExamples" minOccurs="0"/>
+      <element ref="maml:permissions" minOccurs="0"/>
+      <element ref="maml:relatedLinks" minOccurs="0"/>
+    </sequence>
+  </complexType>
+  <element name="codeEntity" type="maml:codeEntityType">
+    <annotation>
+      <documentation>Contains the documentation for a single code entity. A code entity is a type, member, or overload-set. The code entity is identified by a single codeEntityReference element, that is a child of this element.</documentation>
+      <appinfo>
+        <doc:localizable>n/a</doc:localizable>
+      </appinfo>
+    </annotation>
+  </element>
+  <complexType name="codeEntitiesType" mixed="false">
+    <sequence>
+      <element ref="maml:codeEntity" minOccurs="0" maxOccurs="unbounded"/>
+    </sequence>
+  </complexType>
+  <element name="codeEntities" type="maml:codeEntitiesType">
+    <annotation>
+      <documentation>Contains a simple collection of codeEntity elements.</documentation>
+      <appinfo>
+        <doc:localizable>n/a</doc:localizable>
+      </appinfo>
+    </annotation>
+  </element>
+</schema>

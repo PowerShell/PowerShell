@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<schema targetNamespace="http://schemas.microsoft.com/maml/2004/10" xmlns:doc="http://schemas.microsoft.com/maml/internal" xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified" blockDefault="#all" xml:lang="en">
+  <!-- Schema documentation -->
+  <annotation>
+    <documentation>This schema definition defines common hierarchy types for the Content Studio Schema. This schema is part of the base layer.</documentation>
+  </annotation>
+  <!-- include and import declarations -->
+  <include schemaLocation="structure.xsd"/>
+  <element name="reusableContent">
+    <annotation>
+      <documentation>Describes the content model for the reusableContent content type. A typical reusableContent topic consists of a collection of content that can be shared among multiple documents. Each entry has a unique ID, which facilitates linking. An entry can contain a wide variety of content, ranging from a string to an entire section of a document.</documentation>
+    </annotation>
+    <complexType>
+      <choice minOccurs="0" maxOccurs="unbounded">
+        <element name="reusableContentEntry">
+          <annotation>
+            <documentation>Provides a general container for any MAML content. This content must be in the MAML namespace and conform to the rules specified in the schema. Strict validation is performed on MAML parts.</documentation>
+          </annotation>
+          <complexType>
+            <choice maxOccurs="unbounded">
+              <any namespace="##targetNamespace" processContents="strict"/>
+            </choice>
+            <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+          </complexType>
+        </element>
+        <element name="helpBehavior">
+          <annotation>
+            <documentation>Contains a block of data that defines a Help behavior. The helpBehavior element allows authors to extend standard help behaviors with custom code in the form of .NET assemblies.</documentation>
+          </annotation>
+          <complexType>
+            <sequence>
+              <element name="source" minOccurs="0">
+                <annotation>
+                  <documentation>Specifies a qualified name identifying the assembly to be called.</documentation>
+                </annotation>
+                <complexType>
+                  <attribute name="name" type="string" use="required">
+                    <annotation>
+                      <documentation>Specifies the name of the assembly.</documentation>
+                    </annotation>
+                  </attribute>
+                </complexType>
+              </element>
+              <element name="class" minOccurs="0">
+                <annotation>
+                  <documentation>Identifies the name of the helpBehavior object to invoke the method on.</documentation>
+                </annotation>
+                <complexType>
+                  <attribute name="name" type="string" use="required">
+                    <annotation>
+                      <documentation>Specifies the name of the class to invoke.</documentation>
+                    </annotation>
+                  </attribute>
+                </complexType>
+              </element>
+              <element name="method" minOccurs="0">
+                <annotation>
+                  <documentation>Specifies the name of the assembly method to call, if any.</documentation>
+                </annotation>
+                <complexType>
+                  <attribute name="name" type="string" use="required">
+                    <annotation>
+                      <documentation>Name of the assembly method to call.</documentation>
+                    </annotation>
+                  </attribute>
+                </complexType>
+              </element>
+              <element name="params" minOccurs="0">
+                <annotation>
+                  <documentation>Defines a list of parameters to pass to the target behavior.</documentation>
+                </annotation>
+                <complexType mixed="true">
+                  <choice maxOccurs="unbounded">
+                    <annotation>
+                      <documentation>Allows the inclusion of XML fragments from any other namespace.</documentation>
+                    </annotation>
+                    <any namespace="##other" processContents="lax"/>
+                  </choice>
+                </complexType>
+              </element>
+            </sequence>
+            <attribute name="address" type="ID" use="required">
+              <annotation>
+                <documentation>Describes the attached content with a unique ID/GUID/URI to reference for purposes such as sharing and hyperlinking.</documentation>
+              </annotation>
+            </attribute>
+            <attribute name="class" type="token">
+              <annotation>
+                <documentation>Specifies the class of helpBehavior.</documentation>
+              </annotation>
+            </attribute>
+          </complexType>
+        </element>
+      </choice>
+      <attribute name="contentType" type="token">
+        <annotation>
+          <documentation>Specifies the type of content for the document.</documentation>
+        </annotation>
+      </attribute>
+    </complexType>
+  </element>
+  <complexType name="sectionContentType">
+    <choice minOccurs="0" maxOccurs="unbounded">
+      <group ref="maml:structureGroup"/>
+    </choice>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <complexType name="sectionType">
+    <sequence>
+      <element ref="maml:title"/>
+      <element ref="maml:subTitle" minOccurs="0"/>
+      <element ref="maml:introduction" minOccurs="0"/>
+      <group ref="maml:structureGroup" minOccurs="0" maxOccurs="unbounded"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <element name="section">
+    <annotation>
+      <documentation>Describes a section within a document. The section element supports recursion (in other words, an instance of a section element can have one or more section elements as children). The section element defines the hierarchy of sections within a topic through nesting. Each section corresponds to a heading level in the final, rendered document. For example, the top section is equivalent to the first heading level and a child section of that element would be the second level.</documentation>
+    </annotation>
+    <complexType>
+      <complexContent>
+        <extension base="maml:sectionType">
+          <sequence>
+            <element ref="maml:relatedLinks" minOccurs="0"/>
+          </sequence>
+          <attributeGroup ref="maml:expandCollapseGroup"/>
+        </extension>
+      </complexContent>
+    </complexType>
+  </element>
+  <complexType name="sectionsType">
+    <choice minOccurs="1" maxOccurs="unbounded">
+      <element ref="maml:section"/>
+      <element ref="maml:sidebar"/>
+      <element ref="maml:pullQuote"/>
+    </choice>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <element name="sections" type="maml:sectionsType">
+    <annotation>
+      <documentation>Contains a collection of section elements. The sections element encloses the major body of the document.</documentation>
+    </annotation>
+  </element>
+  <element name="content">
+    <annotation>
+      <documentation>Describes a span of authored content.</documentation>
+      <appinfo>
+        <doc:localizable>n/a</doc:localizable>
+      </appinfo>
+    </annotation>
+    <complexType>
+      <group ref="maml:structureGroup" minOccurs="0" maxOccurs="unbounded"/>
+      <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+    </complexType>
+  </element>
+  <complexType name="relatedLinksType">
+    <sequence>
+      <element ref="maml:title" minOccurs="0"/>
+      <element ref="maml:navigationLink" maxOccurs="unbounded"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+    <attribute name="type" use="optional" default="seeAlso" type="maml:relatedLinksTypeType"/>
+  </complexType>
+  <simpleType name="relatedLinksTypeType">
+    <restriction base="token">
+      <enumeration value="seeAlso"/>
+      <enumeration value="relatedFiles"/>
+      <enumeration value="samples"/>
+      <enumeration value="other"/>
+    </restriction>
+  </simpleType>
+  <element name="relatedLinks" type="maml:relatedLinksType">
+    <annotation>
+      <documentation>Describes a collection of links, typically used for the "Related Topics" section of a document. The purpose of this element is to provide links to topics that may be of further interest to the user.</documentation>
+      <appinfo>
+        <doc:localizable>n/a</doc:localizable>
+      </appinfo>
+    </annotation>
+  </element>
+  <element name="copyright">
+    <annotation>
+      <documentation>Describes copyright information for a document.</documentation>
+    </annotation>
+    <complexType>
+      <sequence maxOccurs="unbounded">
+        <element ref="maml:para"/>
+      </sequence>
+      <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+    </complexType>
+  </element>
+  <!-- complexType declarations -->
+  <complexType name="contentTypeType">
+    <sequence>
+      <element ref="maml:title"/>
+      <element ref="maml:subTitle" minOccurs="0"/>
+      <element ref="maml:introduction" minOccurs="0"/>
+      <element ref="maml:content"/>
+      <element ref="maml:alertSet" minOccurs="0"/>
+      <element ref="maml:relatedLinks" minOccurs="0"/>
+      <element ref="maml:reusableContent" minOccurs="0"/>
+      <element ref="maml:copyright" minOccurs="0"/>
+    </sequence>
+    <attribute name="contentType" type="token"/>
+  </complexType>
+</schema>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--  (c) 2006 Microsoft Corporation  -->
+<policyDefinitionResources xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" revision="1.0" schemaVersion="1.0" xmlns="http://schemas.microsoft.com/GroupPolicy/2006/07/PolicyDefinitions">
+    <displayName>PSResourceGet Repository Policy</displayName>
+    <description>This creates an allow list of repositories for PSResourceGet.</description>
+    <resources>
+        <stringTable>
+            <string id="SUPPORTED_Windows11">At least Windows 11*</string>
+            <string id="PSResourceGetRepository">PSResourceGet Repository Policy</string>
+            <string id="PSResourceGetRepository_Help">This creates an allow list of repositories for PSResourceGet.</string>
+            <string id="PSResourceGetRepository_Cat">PSResourceGet Repository Policies</string>
+        </stringTable>
+        <presentationTable>
+            <presentation id="PSResourceGetRepository">
+              <text>Please create an allow list of repositories using a name value pair like following: Name=PSGallery;Uri=https://www.powershellgallery.com/api/v2</text>
+              <listBox refId="PSResourceGetRepository_Listbox"/>
+            </presentation>
+        </presentationTable>
+    </resources>
+</policyDefinitionResources>

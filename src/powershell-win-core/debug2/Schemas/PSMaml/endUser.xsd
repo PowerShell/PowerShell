@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<schema targetNamespace="http://schemas.microsoft.com/maml/2004/10"
+    xmlns:doc="http://schemas.microsoft.com/maml/internal"
+    xmlns:maml="http://schemas.microsoft.com/maml/2004/10"
+    xmlns="http://www.w3.org/2001/XMLSchema"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified"
+    blockDefault="#all"
+    xml:lang="en">
+  <!-- Schema documentation -->
+  <annotation>
+    <documentation>Describes the end user content types of MAML. These content types represent schema structures that are used to create documentation for end-users. End user structures are pervasive in Windows XP and Office XP documentation. </documentation>
+  </annotation>
+  <!-- end user content types are:
+    - conceptual
+    - procedural
+    - faq
+    - troubleshootingCt
+   -->
+  <!-- include and import declarations -->
+  <include schemaLocation="hierarchy.xsd"/>
+  <include schemaLocation="troubleshooting.xsd"/>
+  <include schemaLocation="task.xsd"/>
+  <include schemaLocation="shellExecute.xsd"/>
+  <!-- element declarations -->
+  <element name="conceptual" type="maml:contentTypeType">
+    <annotation>
+      <documentation>Describes the content model for the conceptual content type. Conceptual topics provide a high-level overview of particular technology areas.</documentation>
+    </annotation>
+  </element>
+  <element name="tutorial" type="maml:contentTypeType">
+    <annotation>
+      <documentation>Describes the content model for the tutorial content type. Tutorial topics are used to provide instructions for performing tasks that are broader in scope than simply one procedure. Typically, a tutorial will encompass two or more shorter procedures.</documentation>
+    </annotation>
+  </element>
+  <element name="procedural" type="maml:contentTypeType">
+    <annotation>
+      <documentation>Describes the content model for the procedural content type. Procedural topics describe some process or set of processes that explain how to accomplish a specific task, such as installing a printer.</documentation>
+    </annotation>
+  </element>
+</schema>

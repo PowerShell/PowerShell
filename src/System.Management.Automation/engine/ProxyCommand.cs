@@ -519,7 +519,7 @@ namespace System.Management.Automation
         ///   "-------------------------- EXAMPLE N: Title --------------------------" (titled)
         /// On localized builds, "EXAMPLE" is replaced by the localized
         /// <see cref="HelpDisplayStrings.ExampleUpperCase"/> string. To stay culture-agnostic,
-        /// this method anchors on the surrounding dashes and the ": " separator rather than
+        /// this method anchors on the surrounding dashes and the ":" separator rather than
         /// the literal word "EXAMPLE".
         /// Returns the trimmed user title, or null if the title is missing or untitled.
         /// </summary>

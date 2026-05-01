@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<schema targetNamespace="http://schemas.microsoft.com/maml/2004/10"
+    xmlns:doc="http://schemas.microsoft.com/maml/internal"
+    xmlns:maml="http://schemas.microsoft.com/maml/2004/10"
+    xmlns="http://www.w3.org/2001/XMLSchema"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified"
+    blockDefault="#all"
+    xml:lang="en">
+  <!-- Schema documentation -->
+  <annotation>
+    <documentation>This schema definition defines the troubleshooting base type within the Content Studio schema.</documentation>
+  </annotation>
+  <!-- include and import declarations -->
+  <include schemaLocation="hierarchy.xsd"/>
+  <include schemaLocation="base.xsd"/>
+  <!-- element declarations -->
+  <element name="troubleshooting">
+    <annotation>
+      <documentation>Describes the content model for the troubleshooting content type, which is used to create topics that guide users through solving problems.</documentation>
+    </annotation>
+    <complexType>
+      <sequence>
+        <element ref="maml:title"/>
+        <element ref="maml:subTitle" minOccurs="0"/>
+        <element ref="maml:introduction" minOccurs="0"/>
+        <group ref="maml:structureSimpleGroup" minOccurs="0" maxOccurs="unbounded"/>
+        <element ref="maml:problem" maxOccurs="unbounded"/>
+        <element ref="maml:alertSet" minOccurs="0"/>
+        <element ref="maml:relatedLinks" minOccurs="0"/>
+        <element ref="maml:reusableContent" minOccurs="0"/>
+        <element ref="maml:copyright" minOccurs="0"/>
+      </sequence>
+      <attribute name="contentType" type="token">
+        <annotation>
+          <documentation>Specifies the type of content for the document.</documentation>
+        </annotation>
+      </attribute>
+    </complexType>
+  </element>
+  <element name="problem">
+    <annotation>
+      <documentation>Describes a problem sequence in a troubleshooting list.</documentation>
+    </annotation>
+    <complexType>
+      <sequence>
+        <element ref="maml:symptom"/>
+        <sequence minOccurs="1" maxOccurs="unbounded">
+          <element ref="maml:cause" minOccurs="0" maxOccurs="1"/>
+          <element ref="maml:solution" minOccurs="1" maxOccurs="1"/>
+        </sequence>
+      </sequence>
+      <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+    </complexType>
+  </element>
+  <element name="symptom" type="maml:textType">
+    <annotation>
+      <documentation>Describes a symptom in a problem sequence.</documentation>
+    </annotation>
+  </element>
+  <element name="cause" type="maml:textType">
+    <annotation>
+      <documentation>Describes the cause of a symptom in a problem sequence.</documentation>
+    </annotation>
+  </element>
+  <element name="solution">
+    <annotation>
+      <documentation>Describes the solution for a problem in a problem sequence.</documentation>
+    </annotation>
+    <complexType>
+      <choice maxOccurs="unbounded">
+        <group ref="maml:structureSimpleGroup"/>
+        <element ref="maml:procedure"/>
+      </choice>
+      <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+    </complexType>
+  </element>
+</schema>
