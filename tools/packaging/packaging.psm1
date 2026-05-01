@@ -776,6 +776,18 @@ function New-TarballPackage {
     $Staging = "$PSScriptRoot/staging"
     New-StagingFolder -StagingPath $Staging -PackageSourcePath $PackageSourcePath -R2RVerification $R2RVerification
 
+    # Ensure PowerShell executable has correct permissions in tarball
+    $pwshInStaging = Join-Path $Staging 'pwsh'
+    if (Test-Path -LiteralPath $pwshInStaging) {
+        Start-NativeExecution { chmod 755 $pwshInStaging }
+    }
+
+    # Included .NET executable for producing crash dumps
+    $createdumpInStaging = Join-Path $Staging 'createdump'
+    if (Test-Path -LiteralPath $createdumpInStaging) {
+        Start-NativeExecution { chmod 755 $createdumpInStaging }
+    }
+
     if (Get-Command -Name tar -CommandType Application -ErrorAction Ignore) {
         if ($Force -or $PSCmdlet.ShouldProcess("Create tarball package")) {
             $options = "-czf"
@@ -1194,7 +1206,11 @@ function New-UnixPackage {
                 find $Staging -type f | xargs chmod 644
                 chmod 644 $ManGzipInfo.GzipFile
                 # refers to executable, does not vary by channel
-                chmod 755 "$Staging/pwsh" #only the executable file should be granted the execution permission
+                chmod 755 "$Staging/pwsh" # only the executable file should be granted the execution permission
+                # Included .NET executable for producing crash dumps
+                if (Test-Path "$Staging/createdump") {
+                    chmod 755 "$Staging/createdump"
+                }
             }
         }
 
@@ -1872,6 +1888,12 @@ $(if ($extendedDescription) { $extendedDescription + "`n" })
         $pwshPath = "$targetPath/pwsh"
         if (Test-Path $pwshPath) {
             Start-NativeExecution { chmod 755 $pwshPath }
+        }
+
+        # Included .NET executable for producing crash dumps
+        $createdumpPath = "$targetPath/createdump"
+        if (Test-Path $createdumpPath) {
+            Start-NativeExecution { chmod 755 $createdumpPath }
         }
 
         # Calculate md5sums for all files in data directory (excluding symlinks)
