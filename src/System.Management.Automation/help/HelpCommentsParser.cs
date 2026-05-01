@@ -55,7 +55,8 @@ namespace System.Management.Automation
 
         private readonly Language.CommentHelpInfo _sections = new Language.CommentHelpInfo();
         private readonly Dictionary<string, string> _parameters = new Dictionary<string, string>();
-        private readonly List<KeyValuePair<string, string>> _examples = new List<KeyValuePair<string, string>>();
+        private readonly List<string> _examples = new List<string>();
+        private readonly List<string> _exampleTitles = new List<string>();
         private readonly List<string> _inputs = new List<string>();
         private readonly List<string> _outputs = new List<string>();
         private readonly List<string> _links = new List<string>();
@@ -355,10 +356,10 @@ namespace System.Management.Automation
             {
                 XmlElement examples = _doc.CreateElement("command:examples", commandURI);
                 int count = 1;
-                foreach (KeyValuePair<string, string> exampleEntry in _examples)
+                for (int exampleIndex = 0; exampleIndex < _examples.Count; exampleIndex++)
                 {
-                    string exampleTitle = exampleEntry.Key;
-                    string exampleBody = exampleEntry.Value;
+                    string exampleBody = _examples[exampleIndex];
+                    string exampleTitle = exampleIndex < _exampleTitles.Count ? _exampleTitles[exampleIndex] : null;
                     XmlElement example_node = _doc.CreateElement("command:example", commandURI);
 
                     // The title is automatically generated, with an optional custom title appended
@@ -741,9 +742,8 @@ namespace System.Management.Automation
                                     break;
                                 }
                             case "EXAMPLE":
-                                _examples.Add(new KeyValuePair<string, string>(
-                                    match.Groups[3].Value.Trim(),
-                                    GetSection(commentLines, ref i)));
+                                _exampleTitles.Add(match.Groups[3].Value.Trim());
+                                _examples.Add(GetSection(commentLines, ref i));
                                 break;
                             case "FORWARDHELPTARGETNAME":
                                 _sections.ForwardHelpTargetName = match.Groups[3].Value.Trim();
@@ -779,9 +779,8 @@ namespace System.Management.Automation
                                 _links.Add(GetSection(commentLines, ref i).Trim());
                                 break;
                             case "EXAMPLE":
-                                _examples.Add(new KeyValuePair<string, string>(
-                                    string.Empty,
-                                    GetSection(commentLines, ref i)));
+                                _exampleTitles.Add(string.Empty);
+                                _examples.Add(GetSection(commentLines, ref i));
                                 break;
                             case "INPUTS":
                                 _inputs.Add(GetSection(commentLines, ref i));
@@ -809,7 +808,8 @@ namespace System.Management.Automation
                 }
             }
 
-            _sections.Examples = new ReadOnlyCollection<KeyValuePair<string, string>>(_examples);
+            _sections.Examples = new ReadOnlyCollection<string>(_examples);
+            _sections.ExampleTitles = new ReadOnlyCollection<string>(_exampleTitles);
             _sections.Inputs = new ReadOnlyCollection<string>(_inputs);
             _sections.Outputs = new ReadOnlyCollection<string>(_outputs);
             _sections.Links = new ReadOnlyCollection<string>(_links);

@@ -228,7 +228,7 @@ End {{
         }
 
         It 'round-trips titled examples through proxy comment generation' {
-            $funcDef = "function ProxyRoundTripFunc {\nparam()\n<#\n$($script:helpComments)\n#>\n}"
+            $funcDef = "function ProxyRoundTripFunc {`nparam()`n<#`n$($script:helpComments)`n#>`n}"
             $sb = [scriptblock]::Create($funcDef)
             & $sb
             $roundTrippedHelp = Get-Help ProxyRoundTripFunc
@@ -293,7 +293,7 @@ End {{
             $helpComments = [System.Management.Automation.ProxyCommand]::GetHelpComments((Get-Help HelpFuncSingleTitle))
             $helpComments | Should -BeLike '*.EXAMPLE The only example*'
             # Verify it round-trips
-            $funcDef = "function SingleTitleRoundTrip {\nparam()\n<#\n$helpComments\n#>\n}"
+            $funcDef = "function SingleTitleRoundTrip {`nparam()`n<#`n$helpComments`n#>`n}"
             & ([scriptblock]::Create($funcDef))
             $rt = Get-Help SingleTitleRoundTrip
             $rt.examples.example[0].title | Should -BeLike '*EXAMPLE 1: The only example*'

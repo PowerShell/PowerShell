@@ -515,7 +515,11 @@ namespace System.Management.Automation
         /// MAML titles have the format:
         ///   "-------------------------- EXAMPLE N --------------------------" (untitled)
         ///   "-------------------------- EXAMPLE N: Title --------------------------" (titled)
-        /// This method returns just the user title portion, or null if untitled.
+        /// On localized builds, "EXAMPLE" is replaced by the localized
+        /// <see cref="HelpDisplayStrings.ExampleUpperCase"/> string. To stay culture-agnostic,
+        /// this method anchors on the surrounding dashes and the ": " separator rather than
+        /// the literal word "EXAMPLE".
+        /// Returns the trimmed user title, or null if the title is missing or untitled.
         /// </summary>
         private static string ExtractExampleTitle(string decoratedTitle)
         {
@@ -524,18 +528,21 @@ namespace System.Management.Automation
                 return null;
             }
 
-            // Match patterns like "EXAMPLE <number>: <title>" within the dashes
-            Match match = Regex.Match(decoratedTitle, @"EXAMPLE\s+\d+\s*:\s*(.+?)(?:\s*-+\s*$|\s*$)");
-            if (match.Success)
+            // Strip the leading and trailing dashes (and any surrounding whitespace) that
+            // BuildXmlFromComments adds around the title. The inner text is of the form
+            // "<localized-EXAMPLE> N" or "<localized-EXAMPLE> N: <user-title>".
+            Match match = Regex.Match(decoratedTitle, @"^\s*-+\s*(?<inner>.*?)\s*-+\s*$");
+            string inner = match.Success ? match.Groups["inner"].Value : decoratedTitle.Trim();
+
+            // The user title (if any) is everything after the first ": " in the inner text.
+            int colonIndex = inner.IndexOf(':');
+            if (colonIndex < 0)
             {
-                string title = match.Groups[1].Value.Trim();
-                if (!string.IsNullOrEmpty(title))
-                {
-                    return title;
-                }
+                return null;
             }
 
-            return null;
+            string title = inner.Substring(colonIndex + 1).Trim();
+            return string.IsNullOrEmpty(title) ? null : title;
         }
 
         #endregion

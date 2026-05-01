@@ -805,13 +805,13 @@ function TestFunc {
 '@, [ref]$null, [ref]$null)
 
             $helpInfo = $ast.FindAll({ $args[0] -is [System.Management.Automation.Language.FunctionDefinitionAst] }, $true)[0].GetHelpContent()
-            $helpInfo.Examples[0].Key | Should -BeExactly 'Example Title'
-            $helpInfo.Examples[0].Value | Should -BeLike '*Get-Process*'
+            $helpInfo.ExampleTitles[0] | Should -BeExactly 'Example Title'
+            $helpInfo.Examples[0] | Should -BeLike '*Get-Process*'
             $commentBlock = $helpInfo.GetCommentBlock()
             $commentBlock | Should -BeLike '*.EXAMPLE Example Title*'
         }
 
-        It 'untitled example should have empty Key' {
+        It 'untitled example should have empty title' {
             $ast = [System.Management.Automation.Language.Parser]::ParseInput(@'
 function TestFunc {
 <#
@@ -826,8 +826,8 @@ function TestFunc {
 
             $helpInfo = $ast.FindAll({ $args[0] -is [System.Management.Automation.Language.FunctionDefinitionAst] }, $true)[0].GetHelpContent()
             $helpInfo.Examples.Count | Should -Be 1
-            $helpInfo.Examples[0].Key | Should -BeExactly ''
-            $helpInfo.Examples[0].Value | Should -BeLike '*Get-Process*'
+            $helpInfo.ExampleTitles[0] | Should -BeExactly ''
+            $helpInfo.Examples[0] | Should -BeLike '*Get-Process*'
         }
 
         It 'GetCommentBlock for untitled example should emit .EXAMPLE without title' {
@@ -850,7 +850,7 @@ function TestFunc {
             $commentBlock | Should -Not -Match '\.EXAMPLE [^\r\n]'
         }
 
-        It 'mixed titled and untitled examples preserve Key/Value in order' {
+        It 'mixed titled and untitled examples preserve titles in order' {
             $ast = [System.Management.Automation.Language.Parser]::ParseInput(@'
 function TestFunc {
 <#
@@ -875,12 +875,12 @@ function TestFunc {
 
             $helpInfo = $ast.FindAll({ $args[0] -is [System.Management.Automation.Language.FunctionDefinitionAst] }, $true)[0].GetHelpContent()
             $helpInfo.Examples.Count | Should -Be 3
-            $helpInfo.Examples[0].Key | Should -BeExactly ''
-            $helpInfo.Examples[0].Value | Should -BeLike '*Get-Process*'
-            $helpInfo.Examples[1].Key | Should -BeExactly 'Second Example Title'
-            $helpInfo.Examples[1].Value | Should -BeLike '*Get-Service*'
-            $helpInfo.Examples[2].Key | Should -BeExactly ''
-            $helpInfo.Examples[2].Value | Should -BeLike '*Get-Item*'
+            $helpInfo.ExampleTitles[0] | Should -BeExactly ''
+            $helpInfo.Examples[0] | Should -BeLike '*Get-Process*'
+            $helpInfo.ExampleTitles[1] | Should -BeExactly 'Second Example Title'
+            $helpInfo.Examples[1] | Should -BeLike '*Get-Service*'
+            $helpInfo.ExampleTitles[2] | Should -BeExactly ''
+            $helpInfo.Examples[2] | Should -BeLike '*Get-Item*'
         }
 
         It 'GetCommentBlock round-trips mixed titled and untitled examples' {
@@ -910,8 +910,8 @@ function TestFunc {
                 "function TestFunc2 {`n$commentBlock`nparam()`n}", [ref]$null, [ref]$null)
             $helpInfo2 = $ast2.FindAll({ $args[0] -is [System.Management.Automation.Language.FunctionDefinitionAst] }, $true)[0].GetHelpContent()
             $helpInfo2.Examples.Count | Should -Be 2
-            $helpInfo2.Examples[0].Key | Should -BeExactly ''
-            $helpInfo2.Examples[1].Key | Should -BeExactly 'My Custom Title'
+            $helpInfo2.ExampleTitles[0] | Should -BeExactly ''
+            $helpInfo2.ExampleTitles[1] | Should -BeExactly 'My Custom Title'
         }
 
         It 'multiple titled examples preserve each title' {
@@ -939,12 +939,97 @@ function TestFunc {
 
             $helpInfo = $ast.FindAll({ $args[0] -is [System.Management.Automation.Language.FunctionDefinitionAst] }, $true)[0].GetHelpContent()
             $helpInfo.Examples.Count | Should -Be 3
-            $helpInfo.Examples[0].Key | Should -BeExactly 'First Title'
-            $helpInfo.Examples[1].Key | Should -BeExactly 'Second Title'
-            $helpInfo.Examples[2].Key | Should -BeExactly 'Third Title'
-            $helpInfo.Examples[0].Value | Should -BeLike '*Get-Process*'
-            $helpInfo.Examples[1].Value | Should -BeLike '*Get-Service*'
-            $helpInfo.Examples[2].Value | Should -BeLike '*Get-Item*'
+            $helpInfo.ExampleTitles[0] | Should -BeExactly 'First Title'
+            $helpInfo.ExampleTitles[1] | Should -BeExactly 'Second Title'
+            $helpInfo.ExampleTitles[2] | Should -BeExactly 'Third Title'
+            $helpInfo.Examples[0] | Should -BeLike '*Get-Process*'
+            $helpInfo.Examples[1] | Should -BeLike '*Get-Service*'
+            $helpInfo.Examples[2] | Should -BeLike '*Get-Item*'
+        }
+
+        It 'ExampleTitles count matches Examples count for all-untitled help' {
+            $ast = [System.Management.Automation.Language.Parser]::ParseInput(@'
+function TestFunc {
+<#
+    .EXAMPLE
+    Get-Process
+
+    .EXAMPLE
+    Get-Service
+#>
+    param()
+}
+'@, [ref]$null, [ref]$null)
+
+            $helpInfo = $ast.FindAll({ $args[0] -is [System.Management.Automation.Language.FunctionDefinitionAst] }, $true)[0].GetHelpContent()
+            $helpInfo.Examples.Count | Should -Be 2
+            $helpInfo.ExampleTitles.Count | Should -Be $helpInfo.Examples.Count
+            $helpInfo.ExampleTitles[0] | Should -BeExactly ''
+            $helpInfo.ExampleTitles[1] | Should -BeExactly ''
+        }
+
+        It 'line-comment style supports titled .EXAMPLE' {
+            $ast = [System.Management.Automation.Language.Parser]::ParseInput(@'
+function TestFunc {
+    # .SYNOPSIS
+    #   Line-comment titled example.
+    #
+    # .EXAMPLE Line comment title
+    #   Get-Process
+    #
+    #   Gets all processes
+    param()
+}
+'@, [ref]$null, [ref]$null)
+
+            $helpInfo = $ast.FindAll({ $args[0] -is [System.Management.Automation.Language.FunctionDefinitionAst] }, $true)[0].GetHelpContent()
+            $helpInfo.Examples.Count | Should -Be 1
+            $helpInfo.ExampleTitles[0] | Should -BeExactly 'Line comment title'
+            $helpInfo.Examples[0] | Should -BeLike '*Get-Process*'
+        }
+
+        It 'preserves a title that ends with a dash character' {
+            $ast = [System.Management.Automation.Language.Parser]::ParseInput(@'
+function TestFunc {
+<#
+    .EXAMPLE Step 1 -
+    Get-Process
+
+    Gets processes
+#>
+    param()
+}
+'@, [ref]$null, [ref]$null)
+
+            $helpInfo = $ast.FindAll({ $args[0] -is [System.Management.Automation.Language.FunctionDefinitionAst] }, $true)[0].GetHelpContent()
+            $helpInfo.ExampleTitles[0] | Should -BeExactly 'Step 1 -'
+            $helpInfo.GetCommentBlock() | Should -BeLike '*.EXAMPLE Step 1 -*'
+        }
+    }
+
+    Context 'backward-compatibility for untitled .EXAMPLE help' {
+        function helpFuncUntitledRegression {
+            <#
+              .SYNOPSIS
+              Regression check for untitled examples.
+
+              .EXAMPLE
+              Get-Item -Path C:\Temp
+
+              Retrieves the item at C:\Temp
+            #>
+            param()
+        }
+
+        $x = Get-Help helpFuncUntitledRegression
+        It 'untitled example title contains no colon (unchanged from before)' {
+            $x.examples.example[0].title | Should -Not -BeLike '*:*'
+        }
+        It 'untitled example title still contains EXAMPLE 1' {
+            $x.examples.example[0].title | Should -BeLike '*EXAMPLE 1*'
+        }
+        It 'untitled example code is unchanged' {
+            $x.examples.example[0].code | Should -BeExactly 'Get-Item -Path C:\Temp'
         }
     }
 }

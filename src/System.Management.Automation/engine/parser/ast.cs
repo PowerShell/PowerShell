@@ -10684,10 +10684,18 @@ namespace System.Management.Automation.Language
 
         /// <summary>
         /// The help content from all of the specified .EXAMPLE sections.
-        /// The key is the optional example title (empty string if untitled),
-        /// and the value is the example body.
         /// </summary>
-        public ReadOnlyCollection<KeyValuePair<string, string>> Examples { get; internal set; }
+        public ReadOnlyCollection<string> Examples { get; internal set; }
+
+        /// <summary>
+        /// The optional titles of each .EXAMPLE section, parallel to <see cref="Examples"/>.
+        /// Each entry corresponds to the example body at the same index. An entry is an empty
+        /// string when the example was declared without a title (the historical form
+        /// <c>.EXAMPLE</c> on its own line). When the inline form
+        /// <c>.EXAMPLE &lt;Title&gt;</c> is used, the trimmed title text is stored at the
+        /// matching index.
+        /// </summary>
+        public ReadOnlyCollection<string> ExampleTitles { get; internal set; }
 
         /// <summary>
         /// The help content from all of the specified .INPUT sections.
@@ -10782,19 +10790,23 @@ namespace System.Management.Automation.Language
                 sb.AppendLine(Notes);
             }
 
-            foreach (var example in Examples)
+            for (int index = 0; index < Examples.Count; index++)
             {
-                if (!string.IsNullOrEmpty(example.Key))
+                string title = (ExampleTitles != null && index < ExampleTitles.Count)
+                    ? ExampleTitles[index]
+                    : null;
+
+                if (!string.IsNullOrEmpty(title))
                 {
                     sb.Append(".EXAMPLE ");
-                    sb.AppendLine(example.Key);
+                    sb.AppendLine(title);
                 }
                 else
                 {
                     sb.AppendLine(".EXAMPLE");
                 }
 
-                sb.AppendLine(example.Value);
+                sb.AppendLine(Examples[index]);
             }
 
             for (int index = 0; index < Links.Count; index++)
