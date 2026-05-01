@@ -536,7 +536,9 @@ namespace System.Management.Automation
             Match match = Regex.Match(decoratedTitle, @"^\s*-+\s*(?<inner>.*?)\s*-+\s*$");
             string inner = match.Success ? match.Groups["inner"].Value : decoratedTitle.Trim();
 
-            // The user title (if any) is everything after the first ": " in the inner text.
+            // The user title (if any) is everything after the first ":" in the inner text.
+            // Given "EXAMPLE N: My Title", colonIndex points to ':', and the substring
+            // after it is " My Title" which is then trimmed.
             int colonIndex = inner.IndexOf(':');
             if (colonIndex < 0)
             {
