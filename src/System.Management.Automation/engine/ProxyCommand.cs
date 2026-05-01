@@ -462,7 +462,9 @@ namespace System.Management.Automation
 
                     if (exsb.Length > 0)
                     {
-                        string exampleTitle = ExtractExampleTitle(GetProperty<string>(ex, "title"));
+                        // The title property value may be stored as a PSObject wrapping a string,
+                        // so use ToString() on the raw Value rather than 'Value as string'.
+                        string exampleTitle = ExtractExampleTitle(ex.Properties["title"]?.Value?.ToString());
                         if (!string.IsNullOrEmpty(exampleTitle))
                         {
                             sb.Append("\n\n.EXAMPLE ");
