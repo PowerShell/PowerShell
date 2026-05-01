@@ -2702,20 +2702,29 @@ namespace System.Management.Automation
                 return false;
             }
 
+            int initialCount = result.Count;
+
             foreach (var customResult in customResults)
             {
-                var resultAsCompletion = customResult.BaseObject as CompletionResult;
-                if (resultAsCompletion != null)
+                if (customResult is null)
+                {
+                    continue;
+                }
+
+                if (customResult.BaseObject is CompletionResult resultAsCompletion)
                 {
                     result.Add(resultAsCompletion);
                     continue;
                 }
 
                 var resultAsString = customResult.ToString();
-                result.Add(new CompletionResult(resultAsString));
+                if (!string.IsNullOrEmpty(resultAsString))
+                {
+                    result.Add(new CompletionResult(resultAsString));
+                }
             }
 
-            return true;
+            return result.Count > initialCount;
         }
 
         // All the methods for native command argument completion will add a null instance of the type CompletionResult to the end of the
