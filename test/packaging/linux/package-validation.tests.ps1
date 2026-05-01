@@ -61,6 +61,7 @@ Describe "Linux Package Name Validation" {
             # - powershell-preview_7.6.0-preview.6-1.deb_amd64.deb
             # - powershell-lts_7.4.13-1.deb_amd64.deb
             # - powershell_7.4.13-1.deb_amd64.deb
+            # - powershell_7.6.0-1.deb_arm64.deb
             # Breakdown:
             # ^powershell            : Starts with 'powershell'
             # (-preview|-lts)?       : Optionally '-preview' or '-lts'

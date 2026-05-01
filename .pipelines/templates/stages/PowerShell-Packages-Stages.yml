@@ -89,6 +89,13 @@ stages:
 
   - template: /.pipelines/templates/linux-package-build.yml@self
     parameters:
+      unsignedDrop: 'drop_linux_build_linux_arm64'
+      signedDrop: 'drop_linux_sign_linux_arm64'
+      packageType: deb-arm64
+      jobName: deb_arm64
+
+  - template: /.pipelines/templates/linux-package-build.yml@self
+    parameters:
       unsignedDrop: 'drop_linux_build_linux_fxd_x64_mariner'
       signedDrop: 'drop_linux_sign_linux_fxd_x64_mariner'
       packageType: rpm-fxdependent  #mariner-x64
