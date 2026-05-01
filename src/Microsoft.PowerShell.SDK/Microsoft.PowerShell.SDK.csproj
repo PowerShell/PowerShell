@@ -16,19 +16,19 @@
 
   <ItemGroup>
     <!-- This section is to force the version of non-direct dependencies -->
-    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="11.0.0-preview.2.26159.112" />
-    <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="11.0.0-preview.2.26159.112" />
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="11.0.0-preview.3.26207.106" />
+    <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="11.0.0-preview.3.26207.106" />
     <!-- the following package(s) are from https://github.com/dotnet/fxdac -->
     <PackageReference Include="System.Data.SqlClient" Version="4.9.1" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
-    <PackageReference Include="System.IO.Packaging" Version="11.0.0-preview.2.26159.112" />
-    <PackageReference Include="System.Net.Http.WinHttpHandler" Version="11.0.0-preview.2.26159.112" />
+    <PackageReference Include="System.IO.Packaging" Version="11.0.0-preview.3.26207.106" />
+    <PackageReference Include="System.Net.Http.WinHttpHandler" Version="11.0.0-preview.3.26207.106" />
     <!-- the following package(s) are from https://github.com/dotnet/wcf -->
     <PackageReference Include="System.ServiceModel.Http" Version="10.0.652802" />
     <PackageReference Include="System.ServiceModel.NetTcp" Version="10.0.652802" />
     <PackageReference Include="System.ServiceModel.Primitives" Version="10.0.652802" />
     <!-- the source could not be found for the following package(s) -->
-    <PackageReference Include="Microsoft.Windows.Compatibility" Version="11.0.0-preview.2.26159.112" />
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="11.0.0-preview.3.26207.106" />
   </ItemGroup>
 
   <!--

@@ -4,7 +4,7 @@
     "quality": "daily",
     "qualityFallback": "preview",
     "packageVersionPattern": "9.0.0-preview.6",
-    "sdkImageVersion": "11.0.100-preview.1.26104.118",
+    "sdkImageVersion": "11.0.100-preview.3.26207.106",
     "nextChannel": "9.0.0-preview.7",
     "azureFeed": "",
     "sdkImageOverride": ""
