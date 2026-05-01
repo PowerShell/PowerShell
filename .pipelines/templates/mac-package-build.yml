@@ -77,6 +77,14 @@ jobs:
     continueOnError: true
 
   - pwsh: |
+      $signedDir = "$(Pipeline.Workspace)/CoOrdinatedBuildPipeline/drop_macos_sign_${{ parameters.buildArchitecture }}/Signed-${{ parameters.buildArchitecture }}"
+      Get-ChildItem $signedDir -Recurse -Include 'pwsh', '*.dylib' | ForEach-Object {
+        codesign --verify --deep --strict --verbose=4 $_.FullName
+        if ($LASTEXITCODE -ne 0) { throw "codesign verification failed for $($_.FullName)" }
+      }
+    displayName: 'Verify Apple codesign on signed binaries'
+
+  - pwsh: |
       # Add -SkipReleaseChecks as a mitigation to unblock release.
       # macos-10.15 does not allow creating a folder under root. Hence, moving the folder.
 
@@ -158,7 +166,12 @@ jobs:
         Write-Host "##vso[artifact.upload containerfolder=macos-pkgs;artifactname=macos-pkgs]$file"
       }
 
+      $packageInfo = Get-MacOSPackageIdentifierInfo -Version '$(Version)' -LTS:$LTS
+      Write-Verbose -Verbose "BundleId: $($packageInfo.PackageIdentifier)"
+      Write-Host "##vso[task.setvariable variable=BundleId;isOutput=true]$($packageInfo.PackageIdentifier)"
+
     displayName: 'Package ${{ parameters.buildArchitecture}}'
+    name: packageStep
     env:
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
@@ -178,7 +191,8 @@ jobs:
     value: $(Build.SourcesDirectory)/PowerShell/.config/suppress.json
   - name: BuildArch
     value: ${{ parameters.buildArchitecture }}
-  - group: mscodehub-macos-package-signing
+  - name: BundleId
+    value: $[ dependencies.package_macOS_${{ parameters.buildArchitecture }}.outputs['packageStep.BundleId'] ]
 
   steps:
   - download: current
@@ -216,32 +230,59 @@ jobs:
       inline_operation: |
         [
           {
-            "KeyCode": "$(KeyCode)",
+            "KeyCode": "CP-401337-Apple",
             "OperationCode": "MacAppDeveloperSign",
             "ToolName": "sign",
             "ToolVersion": "1.0",
             "Parameters": {
-              "Hardening": "Enable",
-              "OpusInfo": "http://microsoft.com"
+              "Hardening": "--options=runtime"
             }
           }
         ]
 
+  - task: onebranch.pipeline.signing@1
+    displayName: 'OneBranch Notarize Package'
+    inputs:
+      command: 'sign'
+      files_to_sign: '**/*-osx-*.zip'
+      search_root: '$(Pipeline.Workspace)'
+      inline_operation: |
+        [
+          {
+            "KeyCode": "CP-401337-Apple",
+            "OperationCode": "MacAppNotarize",
+            "ToolName": "sign",
+            "ToolVersion": "1.0",
+            "Parameters": {
+              "BundleId": "$(BundleId)"
+            }
+          }
+        ]
+    timeoutInMinutes: 120
+
   - pwsh: |
       $signedPkg = Get-ChildItem -Path $(Pipeline.Workspace) -Filter "*osx*.zip" -File
 
+      if (-not (Test-Path $(ob_outputDirectory))) {
+        $null = New-Item -Path $(ob_outputDirectory) -ItemType Directory
+      }
+
+      $expandDir = "$(Pipeline.Workspace)/pkgExpand"
+      $null = New-Item -Path $expandDir -ItemType Directory -Force
+
       $signedPkg | ForEach-Object {
         Write-Verbose -Verbose "Signed package zip: $_"
+        Expand-Archive -Path $_ -DestinationPath $expandDir -Verbose
+      }
 
-        if (-not (Test-Path $_)) {
-          throw "Package not found: $_"
-        }
+      # ESRP's signing pipeline nests the PKG inside a '<hash>.zip.unzipped' subfolder
+      $pkgFile = Get-ChildItem -Path $expandDir -Filter '*.pkg' -Recurse -File
+      if (-not $pkgFile) {
+        throw "Package not found in: $signedPkg"
+      }
 
-        if (-not (Test-Path $(ob_outputDirectory))) {
-          $null = New-Item -Path $(ob_outputDirectory) -ItemType Directory
-        }
-
-        Expand-Archive -Path $_ -DestinationPath $(ob_outputDirectory) -Verbose
+      $pkgFile | ForEach-Object {
+        Move-Item -Path $_ -Destination $(ob_outputDirectory) -Verbose
       }
 
       Write-Verbose -Verbose "Expanded pkg file:"
