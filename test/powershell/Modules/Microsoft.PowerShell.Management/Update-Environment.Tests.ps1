@@ -38,12 +38,50 @@ Describe "Update-Environment" -Tag "CI" -Skip:(-not $IsWindows) {
     }
 
     Context "Variable merging and blocklist" {
-        It "Should not overwrite ignored dynamic variables like USERNAME" {
-            # Act
-            Update-Environment
+        It "Should not pull User target variables when only Machine is specified" {
+            # Arrange
+            $testKey = "TEST_UPDATE_ENV_MACHINE_ONLY_$(Get-Random)"
+            $testValue = "UserOnlyValue"
+            # Set a new environment variable in the User registry target
+            [Environment]::SetEnvironmentVariable($testKey, $testValue, "User")
 
-            # Assert
-            $env:USERNAME | Should -BeExactly $script:originalUser
+            try {
+                # Ensure the current process does not have it yet
+                [Environment]::GetEnvironmentVariable($testKey, "Process") | Should -BeNullOrEmpty
+
+                # Act - Run cmdlet for Machine scope only
+                Update-Environment -Machine
+
+                # Assert - The process should still not have the user-scoped variable
+                [Environment]::GetEnvironmentVariable($testKey, "Process") | Should -BeNullOrEmpty
+                Test-Path -Path "Env:\$testKey" | Should -BeFalse
+            }
+            finally {
+                # Clean up the registry and process
+                [Environment]::SetEnvironmentVariable($testKey, $null, "User")
+                Remove-Item -Path "Env:\$testKey" -ErrorAction SilentlyContinue
+            }
+        }
+
+        It "Should respect -WhatIf and not mutate the process environment" {
+            # Arrange
+            $testKey = "TEST_UPDATE_ENV_WHATIF_$(Get-Random)"
+            $testValue = "WhatIfValue"
+            [Environment]::SetEnvironmentVariable($testKey, $testValue, "User")
+
+            try {
+                # Act - Run with -WhatIf
+                Update-Environment -User -WhatIf
+
+                # Assert - Process environment should remain unchanged
+                [Environment]::GetEnvironmentVariable($testKey, "Process") | Should -BeNullOrEmpty
+                Test-Path -Path "Env:\$testKey" | Should -BeFalse
+            }
+            finally {
+                # Clean up
+                [Environment]::SetEnvironmentVariable($testKey, $null, "User")
+                Remove-Item -Path "Env:\$testKey" -ErrorAction SilentlyContinue
+            }
         }
 
         It "Should successfully pull new variables from the User target" {

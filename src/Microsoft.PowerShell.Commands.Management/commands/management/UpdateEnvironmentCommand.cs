@@ -128,6 +128,12 @@ namespace Microsoft.PowerShell.Commands
 
             string mergedValue = string.Join(Path.PathSeparator.ToString(), mergedSegments);
 
+            // Short-circuit if there are no segments and the original was null or empty
+            if (mergedSegments.Count == 0 && string.IsNullOrEmpty(processVal))
+            {
+                return;
+            }
+
             if (!string.Equals(mergedValue, processVal, StringComparison.OrdinalIgnoreCase))
             {
                 // Verify the user confirms the action if -Confirm or -WhatIf was supplied
