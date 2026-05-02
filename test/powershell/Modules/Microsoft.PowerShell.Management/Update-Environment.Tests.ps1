@@ -1,18 +1,28 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+if (-not $IsWindows){
+    return
+}
+
 Describe "Update-Environment" -Tag "CI" {
+    # Snapshot the CI runner's environment to restore after all tests execute
+    BeforeAll {
+        $script:originalPath = $env:PATH
+        $script:originalUser = $env:USERNAME
+    }
+
+    AfterAll {
+        $env:PATH = $script:originalPath
+        $env:USERNAME = $script:originalUser
+    }
     Context "Variable merging and blocklist" {
-
         It "Should not overwrite ignored dynamic variables like USERNAME" {
-            # Arrange
-            $originalUsername = $env:USERNAME
-
             # Act
             Update-Environment
 
             # Assert
-            $env:USERNAME | Should -BeExactly $originalUsername
+            $env:USERNAME | Should -BeExactly $script:originalUser
         }
 
         It "Should successfully pull new variables from the User target" {

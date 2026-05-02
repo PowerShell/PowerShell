@@ -15,9 +15,11 @@ namespace Microsoft.PowerShell.Commands
     [Cmdlet(VerbsData.Update, "Environment")]
     public class UpdateEnvironmentCommand : PSCmdlet
     {
+
+#if !UNIX
         // A list of variables that should never be overwritten
         // by static Machine or User registry reads.
-        private static readonly HashSet<string> _ignoredVariables = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        private static readonly HashSet<string> s_ignoredVariables = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
             "USERNAME", "USERDOMAIN", "USERDNSDOMAIN", "USERPROFILE",
             "COMPUTERNAME", "LOGONSERVER", "HOMEDRIVE", "HOMEPATH",
@@ -28,7 +30,7 @@ namespace Microsoft.PowerShell.Commands
             "COMMONPROGRAMFILES(X86)", "COMMONPROGRAMW6432",
             "PATH", "PSMODULEPATH",
         };
-
+#endif
         /// <summary>
         /// Gets or sets the switch to update machine environment variables.
         /// </summary>
@@ -46,42 +48,96 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            // If neither switch is specified, will default to updating both.
+#if !UNIX
             bool updateAll = !Machine.IsPresent && !User.IsPresent;
+            bool updateMachine = updateAll || Machine.IsPresent;
+            bool updateUser = updateAll || User.IsPresent;
 
-            if (updateAll || Machine.IsPresent)
+            if (updateMachine)
             {
                 WriteVerbose("Updating Machine environment variables...");
                 UpdateFromTarget(EnvironmentVariableTarget.Machine);
             }
 
-            if (updateAll || User.IsPresent)
+            if (updateUser)
             {
                 WriteVerbose("Updating User environment variables...");
                 UpdateFromTarget(EnvironmentVariableTarget.User);
             }
 
-            if (updateAll || (Machine.IsPresent && User.IsPresent))
+            if (updateMachine || updateUser)
             {
-                FixListVariable("Path");
-                FixListVariable("PSModulePath");
+                FixListVariable("Path", updateMachine, updateUser);
+                FixListVariable("PSModulePath", updateMachine, updateUser);
+            }
+#else
+            WriteWarning("The Update-Environment cmdlet is currently only supported on Windows.");
+#endif
+        }
+
+#if !UNIX
+        private void FixListVariable(string variableName, bool includeMachine, bool includeUser)
+        {
+            string processVal = Environment.GetEnvironmentVariable(variableName, EnvironmentVariableTarget.Process);
+            List<string> mergedSegments = new List<string>();
+            HashSet<string> seenSegments = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            if (includeMachine)
+            {
+                string machineVal = Environment.GetEnvironmentVariable(variableName, EnvironmentVariableTarget.Machine);
+                AppendUniqueListSegments(mergedSegments, seenSegments, machineVal);
+            }
+
+            if (includeUser)
+            {
+                string userVal = Environment.GetEnvironmentVariable(variableName, EnvironmentVariableTarget.User);
+                AppendUniqueListSegments(mergedSegments, seenSegments, userVal);
+            }
+
+            int registrySegmentCount = mergedSegments.Count;
+
+            // Preserve entries that exist only in the current process value
+            AppendUniqueListSegments(mergedSegments, seenSegments, processVal);
+
+            string mergedValue = string.Join(Path.PathSeparator.ToString(), mergedSegments);
+
+            if (!string.Equals(mergedValue, processVal, StringComparison.OrdinalIgnoreCase))
+            {
+                Environment.SetEnvironmentVariable(variableName, mergedValue, EnvironmentVariableTarget.Process);
+                if (mergedSegments.Count > registrySegmentCount)
+                {
+                    WriteVerbose($"Merged selected environment targets for {variableName} and preserved process-only entries");
+                }
+                else
+                {
+                    WriteVerbose($"Merged selected environment targets for {variableName}");
+                }
             }
         }
 
-        private void FixListVariable(string variableName)
+        private static void AppendUniqueListSegments(List<string> destination, HashSet<string> seenSegments, string variableValue)
         {
-            string machineVal = Environment.GetEnvironmentVariable(variableName, EnvironmentVariableTarget.Machine);
-            string userVal = Environment.GetEnvironmentVariable(variableName, EnvironmentVariableTarget.User);
-
-            if (!string.IsNullOrEmpty(machineVal) && !string.IsNullOrEmpty(userVal))
+            foreach (string segment in SplitListVariable(variableValue))
             {
-                string combinedValue = machineVal + Path.PathSeparator + userVal;
-                string processVal = Environment.GetEnvironmentVariable(variableName, EnvironmentVariableTarget.Process);
-
-                if (!string.Equals(combinedValue, processVal, StringComparison.OrdinalIgnoreCase))
+                if (seenSegments.Add(segment))
                 {
-                    Environment.SetEnvironmentVariable(variableName, combinedValue, EnvironmentVariableTarget.Process);
-                    WriteVerbose($"Merged User and Machine values for {variableName}");
+                    destination.Add(segment);
+                }
+            }
+        }
+
+        private static IEnumerable<string> SplitListVariable(string variableValue)
+        {
+            if (string.IsNullOrEmpty(variableValue))
+            {
+                yield break;
+            }
+
+            foreach (string segment in variableValue.Split(Path.PathSeparator))
+            {
+                if (!string.IsNullOrWhiteSpace(segment))
+                {
+                    yield return segment;
                 }
             }
         }
@@ -97,7 +153,7 @@ namespace Microsoft.PowerShell.Commands
                     string key = (string)entry.Key;
                     string value = (string)entry.Value;
 
-                    if (_ignoredVariables.Contains(key))
+                    if (s_ignoredVariables.Contains(key))
                     {
                         continue;
                     }
@@ -109,11 +165,11 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (currentValue == null)
                         {
-                            WriteVerbose($"Added {target} variable: {key} = '{value}'");
+                            WriteVerbose($"Added {target} variable: {key}");
                         }
                         else
                         {
-                            WriteVerbose($"Updated {target} variable: {key} from '{currentValue}' to '{value}'");
+                            WriteVerbose($"Updated {target} variable: {key}");
                         }
 
                         // Update the environment variable for the current process.
@@ -126,5 +182,6 @@ namespace Microsoft.PowerShell.Commands
                 WriteWarning($"Failed to update environment variables from target {target}: {ex.Message}");
             }
         }
+#endif
     }
 }
