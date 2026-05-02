@@ -12,7 +12,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implements the Update-Environment cmdlet.
     /// </summary>
-    [Cmdlet(VerbsData.Update, "Environment")]
+    [Cmdlet(VerbsData.Update, "Environment", SupportsShouldProcess = true)]
     public class UpdateEnvironmentCommand : PSCmdlet
     {
 #if !UNIX
@@ -42,35 +42,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         public SwitchParameter User { get; set; }
-
-#if !UNIX
-        private static void AppendUniqueListSegments(List<string> destination, HashSet<string> seenSegments, string variableValue)
-        {
-            foreach (string segment in SplitListVariable(variableValue))
-            {
-                if (seenSegments.Add(segment))
-                {
-                    destination.Add(segment);
-                }
-            }
-        }
-
-        private static IEnumerable<string> SplitListVariable(string variableValue)
-        {
-            if (string.IsNullOrEmpty(variableValue))
-            {
-                yield break;
-            }
-
-            foreach (string segment in variableValue.Split(Path.PathSeparator))
-            {
-                if (!string.IsNullOrWhiteSpace(segment))
-                {
-                    yield return segment;
-                }
-            }
-        }
-#endif
 
         /// <summary>
         /// Executes the environment update logic.
@@ -105,6 +76,33 @@ namespace Microsoft.PowerShell.Commands
         }
 
 #if !UNIX
+        private static void AppendUniqueListSegments(List<string> destination, HashSet<string> seenSegments, string variableValue)
+        {
+            foreach (string segment in SplitListVariable(variableValue))
+            {
+                if (seenSegments.Add(segment))
+                {
+                    destination.Add(segment);
+                }
+            }
+        }
+
+        private static IEnumerable<string> SplitListVariable(string variableValue)
+        {
+            if (string.IsNullOrEmpty(variableValue))
+            {
+                yield break;
+            }
+
+            foreach (string segment in variableValue.Split(Path.PathSeparator))
+            {
+                if (!string.IsNullOrWhiteSpace(segment))
+                {
+                    yield return segment;
+                }
+            }
+        }
+
         private void FixListVariable(string variableName, bool includeMachine, bool includeUser)
         {
             string processVal = Environment.GetEnvironmentVariable(variableName, EnvironmentVariableTarget.Process);
@@ -132,14 +130,18 @@ namespace Microsoft.PowerShell.Commands
 
             if (!string.Equals(mergedValue, processVal, StringComparison.OrdinalIgnoreCase))
             {
-                Environment.SetEnvironmentVariable(variableName, mergedValue, EnvironmentVariableTarget.Process);
-                if (mergedSegments.Count > registrySegmentCount)
+                // Verify the user confirms the action if -Confirm or -WhatIf was supplied
+                if (ShouldProcess($"Environment Variable: {variableName}", $"Update to: {mergedValue}"))
                 {
-                    WriteVerbose($"Merged selected environment targets for {variableName} and preserved process-only entries");
-                }
-                else
-                {
-                    WriteVerbose($"Merged selected environment targets for {variableName}");
+                    Environment.SetEnvironmentVariable(variableName, mergedValue, EnvironmentVariableTarget.Process);
+                    if (mergedSegments.Count > registrySegmentCount)
+                    {
+                        WriteVerbose($"Merged selected environment targets for {variableName} and preserved process-only entries");
+                    }
+                    else
+                    {
+                        WriteVerbose($"Merged selected environment targets for {variableName}");
+                    }
                 }
             }
         }
@@ -165,23 +167,32 @@ namespace Microsoft.PowerShell.Commands
                     // Log if the variable is new or value has been changed.
                     if (currentValue != value)
                     {
-                        if (currentValue == null)
+                        // Verify the user confirms the action if -Confirm or -WhatIf was supplied
+                        if (ShouldProcess($"Environment Variable: {key}", $"Update to: {value}"))
                         {
-                            WriteVerbose($"Added {target} variable: {key}");
-                        }
-                        else
-                        {
-                            WriteVerbose($"Updated {target} variable: {key}");
-                        }
+                            if (currentValue == null)
+                            {
+                                WriteVerbose($"Added {target} variable: {key}");
+                            }
+                            else
+                            {
+                                WriteVerbose($"Updated {target} variable: {key}");
+                            }
 
-                        // Update the environment variable for the current process.
-                        Environment.SetEnvironmentVariable(key, value, EnvironmentVariableTarget.Process);
+                            // Update the environment variable for the current process.
+                            Environment.SetEnvironmentVariable(key, value, EnvironmentVariableTarget.Process);
+                        }
                     }
                 }
             }
             catch (Exception ex)
             {
-                WriteWarning($"Failed to update environment variables from target {target}: {ex.Message}");
+                var errorRecord = new ErrorRecord(
+                    ex,
+                    "UpdateEnvironmentFromTargetFailed",
+                    ErrorCategory.InvalidOperation,
+                    target);
+                WriteError(errorRecord);
             }
         }
 #endif

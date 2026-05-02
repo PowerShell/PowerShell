@@ -1,21 +1,42 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-if (-not $IsWindows){
-    return
-}
+Describe "Update-Environment" -Tag "CI" -Skip:(-not $IsWindows) {
 
-Describe "Update-Environment" -Tag "CI" {
-    # Snapshot the CI runner's environment to restore after all tests execute
     BeforeAll {
-        $script:originalPath = $env:PATH
         $script:originalUser = $env:USERNAME
+
+        function Get-ProcessEnvironmentSnapshot {
+            $environmentSnapshot = @{}
+            foreach ($environmentEntry in Get-ChildItem -Path Env:) {
+                $environmentSnapshot[$environmentEntry.Name] = $environmentEntry.Value
+            }
+            return $environmentSnapshot
+        }
+
+        function Restore-ProcessEnvironment {
+            param(
+                [hashtable]$EnvironmentSnapshot
+            )
+            foreach ($environmentEntry in Get-ChildItem -Path Env:) {
+                if (-not $EnvironmentSnapshot.ContainsKey($environmentEntry.Name)) {
+                    Remove-Item -Path "Env:\$($environmentEntry.Name)" -ErrorAction SilentlyContinue
+                }
+            }
+            foreach ($environmentName in $EnvironmentSnapshot.Keys) {
+                [Environment]::SetEnvironmentVariable($environmentName, $EnvironmentSnapshot[$environmentName], "Process")
+            }
+        }
     }
 
-    AfterAll {
-        $env:PATH = $script:originalPath
-        $env:USERNAME = $script:originalUser
+    BeforeEach {
+        $script:processEnvironmentSnapshot = Get-ProcessEnvironmentSnapshot
     }
+
+    AfterEach {
+        Restore-ProcessEnvironment -EnvironmentSnapshot $script:processEnvironmentSnapshot
+    }
+
     Context "Variable merging and blocklist" {
         It "Should not overwrite ignored dynamic variables like USERNAME" {
             # Act
