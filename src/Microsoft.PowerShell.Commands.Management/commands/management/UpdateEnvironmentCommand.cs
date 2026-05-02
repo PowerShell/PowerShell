@@ -29,7 +29,21 @@ namespace Microsoft.PowerShell.Commands
             "COMMONPROGRAMFILES(X86)", "COMMONPROGRAMW6432",
             "PATH", "PSMODULEPATH",
         };
-        
+#endif
+
+        /// <summary>
+        /// Gets or sets the switch to update machine environment variables.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter Machine { get; set; }
+
+        /// <summary>
+        /// Gets or sets the switch to update user environment variables.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter User { get; set; }
+
+#if !UNIX
         private static void AppendUniqueListSegments(List<string> destination, HashSet<string> seenSegments, string variableValue)
         {
             foreach (string segment in SplitListVariable(variableValue))
@@ -57,16 +71,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 #endif
-        /// <summary>
-        /// Gets or sets the switch to update machine environment variables.
-        /// </summary>
-        [Parameter]
-        public SwitchParameter Machine { get; set; }
-        /// <summary>
-        /// Gets or sets the switch to update user environment variables.
-        /// </summary>
-        [Parameter]
-        public SwitchParameter User { get; set; }
+
         /// <summary>
         /// Executes the environment update logic.
         /// </summary>
