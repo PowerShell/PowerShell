@@ -4,8 +4,6 @@
 Describe "Update-Environment" -Tag "CI" -Skip:(-not $IsWindows) {
 
     BeforeAll {
-        $script:originalUser = $env:USERNAME
-
         function Get-ProcessEnvironmentSnapshot {
             $environmentSnapshot = @{}
             foreach ($environmentEntry in Get-ChildItem -Path Env:) {
@@ -38,6 +36,42 @@ Describe "Update-Environment" -Tag "CI" -Skip:(-not $IsWindows) {
     }
 
     Context "Variable merging and blocklist" {
+        It "Should not overwrite ignored dynamic variables like USERNAME" {
+            # Arrange
+            $originalUser = $env:USERNAME
+
+            # Act
+            Update-Environment
+
+            # Assert
+            $env:USERNAME | Should -BeExactly $originalUser
+        }
+
+        It "Should successfully pull new variables from the User target" {
+            # Arrange
+            $testKey = "TEST_UPDATE_ENV_VAR_$(Get-Random)"
+            $testValue = "HelloWorld"
+
+            # Set a new environment variable in the User registry target
+            [Environment]::SetEnvironmentVariable($testKey, $testValue, "User")
+
+            try {
+                # Ensure the current process does not have it yet
+                [Environment]::GetEnvironmentVariable($testKey, "Process") | Should -BeNullOrEmpty
+
+                # Act - Run cmdlet
+                Update-Environment -User
+
+                # Assert - The process should now have the variable
+                (Get-Item -Path "Env:\$testKey").Value | Should -BeExactly $testValue
+            }
+            finally {
+                # Clean up the registry and process
+                [Environment]::SetEnvironmentVariable($testKey, $null, "User")
+                Remove-Item -Path "Env:\$testKey" -ErrorAction SilentlyContinue
+            }
+        }
+
         It "Should not pull User target variables when only Machine is specified" {
             # Arrange
             $testKey = "TEST_UPDATE_ENV_MACHINE_ONLY_$(Get-Random)"
@@ -79,31 +113,6 @@ Describe "Update-Environment" -Tag "CI" -Skip:(-not $IsWindows) {
             }
             finally {
                 # Clean up
-                [Environment]::SetEnvironmentVariable($testKey, $null, "User")
-                Remove-Item -Path "Env:\$testKey" -ErrorAction SilentlyContinue
-            }
-        }
-
-        It "Should successfully pull new variables from the User target" {
-            # Arrange
-            $testKey = "TEST_UPDATE_ENV_VAR_$(Get-Random)"
-            $testValue = "HelloWorld"
-
-            # Set a new environment variable in the User registry target
-            [Environment]::SetEnvironmentVariable($testKey, $testValue, "User")
-
-            try {
-                # Ensure the current process does not have it yet
-                [Environment]::GetEnvironmentVariable($testKey, "Process") | Should -BeNullOrEmpty
-
-                # Act - Run cmdlet
-                Update-Environment -User
-
-                # Assert - The process should now have the variable
-                (Get-Item -Path "Env:\$testKey").Value | Should -BeExactly $testValue
-            }
-            finally {
-                # Clean up the registry and process
                 [Environment]::SetEnvironmentVariable($testKey, $null, "User")
                 Remove-Item -Path "Env:\$testKey" -ErrorAction SilentlyContinue
             }

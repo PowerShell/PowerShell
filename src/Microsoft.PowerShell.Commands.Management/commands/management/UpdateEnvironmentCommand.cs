@@ -9,13 +9,13 @@ using System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
 {
+#if !UNIX
     /// <summary>
     /// Implements the Update-Environment cmdlet.
     /// </summary>
     [Cmdlet(VerbsData.Update, "Environment", SupportsShouldProcess = true)]
     public class UpdateEnvironmentCommand : PSCmdlet
     {
-#if !UNIX
         // A list of variables that should never be overwritten
         // by static Machine or User registry reads.
         private static readonly HashSet<string> s_ignoredVariables = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
@@ -29,7 +29,6 @@ namespace Microsoft.PowerShell.Commands
             "COMMONPROGRAMFILES(X86)", "COMMONPROGRAMW6432",
             "PATH", "PSMODULEPATH",
         };
-#endif
 
         /// <summary>
         /// Gets or sets the switch to update machine environment variables.
@@ -48,7 +47,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-#if !UNIX
             bool updateAll = !Machine.IsPresent && !User.IsPresent;
             bool updateMachine = updateAll || Machine.IsPresent;
             bool updateUser = updateAll || User.IsPresent;
@@ -70,12 +68,8 @@ namespace Microsoft.PowerShell.Commands
                 FixListVariable("Path", updateMachine, updateUser);
                 FixListVariable("PSModulePath", updateMachine, updateUser);
             }
-#else
-            WriteWarning("The Update-Environment cmdlet is currently only supported on Windows.");
-#endif
         }
 
-#if !UNIX
         private static void AppendUniqueListSegments(List<string> destination, HashSet<string> seenSegments, string variableValue)
         {
             foreach (string segment in SplitListVariable(variableValue))
@@ -137,7 +131,8 @@ namespace Microsoft.PowerShell.Commands
             if (!string.Equals(mergedValue, processVal, StringComparison.OrdinalIgnoreCase))
             {
                 // Verify the user confirms the action if -Confirm or -WhatIf was supplied
-                if (ShouldProcess($"Environment Variable: {variableName}", $"Update to: {mergedValue}"))
+                // Do not expose the value itself in case it is a secret
+                if (ShouldProcess($"Environment Variable: {variableName}", "Update in process environment"))
                 {
                     Environment.SetEnvironmentVariable(variableName, mergedValue, EnvironmentVariableTarget.Process);
                     if (mergedSegments.Count > registrySegmentCount)
@@ -174,7 +169,8 @@ namespace Microsoft.PowerShell.Commands
                     if (currentValue != value)
                     {
                         // Verify the user confirms the action if -Confirm or -WhatIf was supplied
-                        if (ShouldProcess($"Environment Variable: {key}", $"Update to: {value}"))
+                        // Do not expose the value itself in case it is a secret
+                        if (ShouldProcess($"Environment Variable: {key}", "Update in process environment"))
                         {
                             if (currentValue == null)
                             {
@@ -201,6 +197,6 @@ namespace Microsoft.PowerShell.Commands
                 WriteError(errorRecord);
             }
         }
-#endif
     }
+#endif
 }
