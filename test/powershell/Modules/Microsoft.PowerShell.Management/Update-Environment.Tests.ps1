@@ -1,7 +1,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-Describe "Update-Environment" -Tag "CI" -Skip:(-not $IsWindows) {
+if (-not $IsWindows) {
+    return
+}
+
+Describe "Update-Environment" -Tag "CI" {
 
     BeforeAll {
         function Get-ProcessEnvironmentSnapshot {
