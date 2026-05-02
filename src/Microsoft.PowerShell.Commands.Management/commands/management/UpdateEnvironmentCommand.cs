@@ -15,7 +15,6 @@ namespace Microsoft.PowerShell.Commands
     [Cmdlet(VerbsData.Update, "Environment")]
     public class UpdateEnvironmentCommand : PSCmdlet
     {
-
 #if !UNIX
         // A list of variables that should never be overwritten
         // by static Machine or User registry reads.
@@ -30,19 +29,44 @@ namespace Microsoft.PowerShell.Commands
             "COMMONPROGRAMFILES(X86)", "COMMONPROGRAMW6432",
             "PATH", "PSMODULEPATH",
         };
+        
+        private static void AppendUniqueListSegments(List<string> destination, HashSet<string> seenSegments, string variableValue)
+        {
+            foreach (string segment in SplitListVariable(variableValue))
+            {
+                if (seenSegments.Add(segment))
+                {
+                    destination.Add(segment);
+                }
+            }
+        }
+
+        private static IEnumerable<string> SplitListVariable(string variableValue)
+        {
+            if (string.IsNullOrEmpty(variableValue))
+            {
+                yield break;
+            }
+
+            foreach (string segment in variableValue.Split(Path.PathSeparator))
+            {
+                if (!string.IsNullOrWhiteSpace(segment))
+                {
+                    yield return segment;
+                }
+            }
+        }
 #endif
         /// <summary>
         /// Gets or sets the switch to update machine environment variables.
         /// </summary>
         [Parameter]
         public SwitchParameter Machine { get; set; }
-
         /// <summary>
         /// Gets or sets the switch to update user environment variables.
         /// </summary>
         [Parameter]
         public SwitchParameter User { get; set; }
-
         /// <summary>
         /// Executes the environment update logic.
         /// </summary>
@@ -111,33 +135,6 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     WriteVerbose($"Merged selected environment targets for {variableName}");
-                }
-            }
-        }
-
-        private static void AppendUniqueListSegments(List<string> destination, HashSet<string> seenSegments, string variableValue)
-        {
-            foreach (string segment in SplitListVariable(variableValue))
-            {
-                if (seenSegments.Add(segment))
-                {
-                    destination.Add(segment);
-                }
-            }
-        }
-
-        private static IEnumerable<string> SplitListVariable(string variableValue)
-        {
-            if (string.IsNullOrEmpty(variableValue))
-            {
-                yield break;
-            }
-
-            foreach (string segment in variableValue.Split(Path.PathSeparator))
-            {
-                if (!string.IsNullOrWhiteSpace(segment))
-                {
-                    yield return segment;
                 }
             }
         }
