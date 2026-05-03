@@ -55,7 +55,7 @@ updates:
     directory: "/"
     target-branch: "release/*"
     schedule:
-      interval: "daily"
+      interval: "daily" 
     labels:
       - "docker"
       - "release"
