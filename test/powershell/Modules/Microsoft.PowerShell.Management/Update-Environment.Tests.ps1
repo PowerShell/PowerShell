@@ -122,14 +122,43 @@ Describe "Update-Environment" -Tag "CI" {
             }
         }
 
-        It "Should maintain the Path variable without destroying it" {
-            # Act
-            Update-Environment
+        It "Should merge Path entries from User scope while preserving process-only segments" {
+            # Arrange
+            $originalUserPath = [Environment]::GetEnvironmentVariable("Path", "User")
+            $userPathSegment = "C:\UpdateEnvironmentUserPath_$([guid]::NewGuid().Guid)"
+            $processOnlyPathSegment = "C:\UpdateEnvironmentProcessOnlyPath_$([guid]::NewGuid().Guid)"
+            $pathSeparator = [IO.Path]::PathSeparator
 
-            # Assert
-            $env:PATH | Should -Not -BeNullOrEmpty
-            # Ensure it still contains typical systemic paths after the merge
-            $env:PATH.Length | Should -BeGreaterThan 0
+            # Inject artificial process segment
+            $env:PATH = "$processOnlyPathSegment$pathSeparator$env:PATH"
+
+            # Inject User target segment
+            if ([string]::IsNullOrEmpty($originalUserPath)) {
+                [Environment]::SetEnvironmentVariable("Path", $userPathSegment, "User")
+            }
+            else {
+                [Environment]::SetEnvironmentVariable("Path", "$originalUserPath$pathSeparator$userPathSegment", "User")
+            }
+
+            try {
+                # Sanity checks before the merge
+                $processPathBeforeUpdate = [Environment]::GetEnvironmentVariable("Path", "Process") -split [string]$pathSeparator
+                $processPathBeforeUpdate | Should -Contain $processOnlyPathSegment
+                $processPathBeforeUpdate | Should -Not -Contain $userPathSegment
+
+                # Act
+                Update-Environment -User
+
+                # Assert
+                $processPathAfterUpdate = [Environment]::GetEnvironmentVariable("Path", "Process") -split [string]$pathSeparator
+                # The user segment should have been pulled in
+                $processPathAfterUpdate | Should -Contain $userPathSegment
+                # The process segment should NOT have been erased
+                $processPathAfterUpdate | Should -Contain $processOnlyPathSegment
+            }
+            finally {
+                [Environment]::SetEnvironmentVariable("Path", $originalUserPath, "User")
+            }
         }
     }
 }
