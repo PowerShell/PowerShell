@@ -24,4 +24,4 @@ async function fixCode(file) {
   console.log("✔ Fixed:", file);
 }
 
-fixCode("./app.js");
+fixCode("./app.js"); 
