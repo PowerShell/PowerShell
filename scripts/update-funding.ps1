@@ -42,4 +42,4 @@ pwsh ./scripts/update-funding.ps1 -Export
 
 # ซิงค์ข้อมูล (ต่อยอด API ได้)
 pwsh ./scripts/update-funding.ps1 -Sync
-
+ 
