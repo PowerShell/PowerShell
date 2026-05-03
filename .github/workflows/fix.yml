@@ -42,6 +42,29 @@ jobs:
           git config user.email "bot@github.com"
           git add .
           git commit -m "🤖 auto fix code" || echo "no changes"
+          git push
+          
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  fix:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run PowerShell Bot
+        run: pwsh ./bot/fix-code.ps1
+
+      - name: Commit changes
+        run: |
+          git config user.name "fix-bot"
+          git config user.email "bot@github.com"
+          git add .
+          git commit -m "🤖 auto fix code" || echo "no changes"
 name: Auto Fix Code
 
 on:
