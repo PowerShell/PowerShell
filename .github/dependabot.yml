@@ -37,7 +37,7 @@ updates:
   # Docker (main)
   # =========================
   - package-ecosystem: "docker"
-    directory: "/"
+    directory: "/" 
     schedule:
       interval: "daily"
       time: "05:00"
