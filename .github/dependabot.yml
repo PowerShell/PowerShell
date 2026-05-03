@@ -57,7 +57,7 @@ updates:
     schedule:
       interval: "daily" 
     labels:
-      - "docker"
+      - "docker" 
       - "release"
 
   # =========================
