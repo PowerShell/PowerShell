@@ -77,3 +77,42 @@ powershell:
     export: "pwsh ./scripts/update-funding.ps1 -Export"
     sync: "pwsh ./scripts/update-funding.ps1 -Sync"
      
+
+# =========================
+# GitHub Sponsors Config
+# =========================
+github:
+  - your-github-username
+  - org-name
+
+patreon: your-patreon-username
+open_collective: your-open-collective
+ko_fi: your-kofi-username
+tidelift: npm/package-name
+community_bridge: project-name
+liberapay: your-liberapay
+issuehunt: your-issuehunt
+lfx_crowdfunding: project-name
+polar: your-polar-username
+buy_me_a_coffee: your-bmc-username
+thanks_dev: your-thanks-dev
+
+custom:
+  - https://yourdomain.com/donate
+  - https://yourdomain.com/sponsor
+
+# =========================
+# PowerShell Integration
+# =========================
+powershell:
+  enabled: true
+  script_path: scripts/update-funding.ps1
+  auto_validate: true
+  export_json: funding-data.json
+  schedule: "daily"
+
+  commands:
+    validate: "pwsh ./scripts/update-funding.ps1 -Validate"
+    export: "pwsh ./scripts/update-funding.ps1 -Export"
+    sync: "pwsh ./scripts/update-funding.ps1 -Sync"
+     
