@@ -3591,7 +3591,12 @@ function Publish-NugetToMyGet
 
     Get-ChildItem $PackagePath | ForEach-Object {
         Write-Log "Pushing $_ to PowerShell Myget"
-        Start-NativeExecution { nuget push $_.FullName -Source 'https://powershell.myget.org/F/powershell-core/api/v2/package' -ApiKey $ApiKey } > $null
+        $env:NUGET_PUSH_API_KEY = $ApiKey
+        try {
+            Start-NativeExecution { nuget push $_.FullName -Source 'https://powershell.myget.org/F/powershell-core/api/v2/package' -ApiKey $env:NUGET_PUSH_API_KEY } > $null
+        } finally {
+            Remove-Item env:NUGET_PUSH_API_KEY -ErrorAction SilentlyContinue
+        }
     }
 }
 
