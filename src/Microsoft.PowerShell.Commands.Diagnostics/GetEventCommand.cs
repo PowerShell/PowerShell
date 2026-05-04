@@ -543,7 +543,7 @@ namespace Microsoft.PowerShell.Commands
                                 string exceptionMsg = string.Format(CultureInfo.InvariantCulture, GetEventResources.LogInfoNoAccess, logName);
                                 var newExc = new UnauthorizedAccessException(exceptionMsg, exc);
 
-                                string recommendationMsg = string.Format(CultureInfo.InvariantCulture, GetEventResources.SuggestElevation);
+                                string recommendationMsg = GetEventResources.SuggestElevation;
                                 var eRecord = new ErrorRecord(newExc, "LogInfoNoAccess", ErrorCategory.PermissionDenied, logName)
                                 {
                                     ErrorDetails = new ErrorDetails(string.Empty)
