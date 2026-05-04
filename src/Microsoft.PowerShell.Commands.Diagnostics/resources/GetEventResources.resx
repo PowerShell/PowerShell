@@ -255,6 +255,12 @@ The defined template is following:
   <data name="LogInfoUnavailable" xml:space="preserve">
     <value>To access the '{0}' log start PowerShell with elevated user rights.  Error: {1}</value>
   </data>
+  <data name="LogInfoNoAccess" xml:space="preserve">
+    <value>Access denied for log: '{0}'.</value>
+  </data>
+  <data name="SuggestElevation" xml:space="preserve">
+    <value>Launch PowerShell with elevated user rights.</value>
+  </data>
   <data name="NoEventMessage" xml:space="preserve">
     <value>Cannot retrieve event message text.</value>
   </data>
