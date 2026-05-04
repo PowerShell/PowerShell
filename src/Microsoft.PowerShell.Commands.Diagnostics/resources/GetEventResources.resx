@@ -304,6 +304,6 @@ The defined template is following:
     <value>Specifies the maximum number of events that are returned.</value>
   </data>
   <data name="ComputerNameParamHelp" xml:space="preserve">
-    <value>Specifies the name of the computer that this cmdlet gets events from the event logs.</value>
+    <value>Specifies the name of the computer from which this cmdlet gets data.</value>
   </data>
 </root>
