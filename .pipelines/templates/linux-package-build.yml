@@ -124,6 +124,7 @@ jobs:
         'tar' { 'Signed-linux-x64', 'powershell*.tar.gz' }
         'tar-alpine-fxdependent' { 'Signed-fxdependent-noopt-linux-musl-x64', 'powershell*.tar.gz' }
         'deb' { 'Signed-linux-x64', 'powershell*.deb' }
+        'deb-arm64' { 'Signed-linux-arm64', 'powershell*.deb' }
         'rpm-fxdependent' { 'Signed-fxdependent-linux-x64', 'powershell*.rpm' }
         'rpm-fxdependent-arm64' { 'Signed-fxdependent-linux-arm64', 'powershell*.rpm' }
         'rpm' { 'Signed-linux-x64', 'powershell*.rpm' }
