@@ -2702,7 +2702,7 @@ namespace System.Management.Automation
                 return false;
             }
 
-            if (customResults.Count is 1 && customResults[0] is { BaseObject: "" or null })
+            if (customResults.Count is 1 && customResults[0] is { BaseObject: "" } or null)
             {
                 // If the script block returns a single empty string or a null value, we will treat it as if it has
                 // completed successfully but has no results to return.
