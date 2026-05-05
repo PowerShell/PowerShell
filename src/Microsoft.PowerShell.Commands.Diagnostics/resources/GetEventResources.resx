@@ -289,7 +289,7 @@ The defined template is following:
     <value>Specifies the event logs. Wildcards are permitted.</value>
   </data>
   <data name="GetLogParamHelp" xml:space="preserve">
-    <value>Specifies the event logs that this cmdlet get events from. Wildcards are permitted.</value>
+    <value>Specifies the event logs that this cmdlet gets events from. Wildcards are permitted.</value>
   </data>
   <data name="ListProviderParamHelp" xml:space="preserve">
     <value>Specifies the event log providers that this cmdlet gets.</value>
@@ -298,7 +298,7 @@ The defined template is following:
     <value>Specifies the event log providers from which this cmdlet gets events.</value>
   </data>
   <data name="PathParamHelp" xml:space="preserve">
-    <value>Specifies the path to the event log files that this cmdlet get events from.</value>
+    <value>Specifies the path to the event log files that this cmdlet gets events from.</value>
   </data>
   <data name="MaxEventsParamHelp" xml:space="preserve">
     <value>Specifies the maximum number of events that are returned.</value>
