@@ -47,7 +47,9 @@
     <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0" />
     <!-- the following package(s) are from the powershell org -->
     <PackageReference Include="Microsoft.Management.Infrastructure" Version="3.0.0" />
-    <PackageReference Include="Microsoft.PowerShell.Native" Version="7.4.0" />
+<<<<<<< HEAD
+    <PackageReference Include="Microsoft.PowerShell.Native" Version="700.0.0" />
+>>>>>>> faf1e0e4f (Update `Microsoft.PowerShell.Native` to the latest GA version (#27400))
     <!-- Signing APIs -->
     <PackageReference Include="Microsoft.Security.Extensions" Version="1.4.0" />
   </ItemGroup>
