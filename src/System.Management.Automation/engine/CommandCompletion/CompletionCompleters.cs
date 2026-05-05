@@ -2702,10 +2702,10 @@ namespace System.Management.Automation
                 return false;
             }
 
-            if (customResults.Count is 1 && customResults[0] is { BaseObject: "" })
+            if (customResults.Count is 1 && customResults[0] is { BaseObject: "" or null })
             {
-                // If the script block returns a single empty string, we will treat it as if it has completed successfully
-                // but has no results to return.
+                // If the script block returns a single empty string or a null value, we will treat it as if it has
+                // completed successfully but has no results to return.
                 // This allows a custom completer to suppress the default completions that we may fall back otherwise.
                 return true;
             }
