@@ -18,7 +18,6 @@
         'New-ILNugetPackageFromSource'
         'New-PSBuildZip'
         'New-PSSignedBuildZip'
-        'Publish-NugetToMyGet'
         'Start-PSPackage'
         'Test-PackageManifest'
         'Update-PSSignedBuildFolder'
