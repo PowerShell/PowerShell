@@ -121,6 +121,9 @@ function Start-PSPackage {
         elseif ($Type.Count -eq 1 -and $Type[0] -eq "tar-alpine-fxdependent") {
             New-PSOptions -Configuration "Release" -Runtime 'fxdependent-noopt-linux-musl-x64' -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         }
+        elseif ($Type.Count -eq 1 -and $Type[0] -eq "deb-arm64") {
+            New-PSOptions -Configuration "Release" -Runtime 'linux-arm64' -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
+        }
         else {
             New-PSOptions -Configuration "Release" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         }
