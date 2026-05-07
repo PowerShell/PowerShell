@@ -22,6 +22,7 @@ jobs:
     - name: skipNugetSecurityAnalysis
       value: true
     - group: DotNetPrivateBuildAccess
+    - group: certificate_logical_to_actual
     - name: ob_outputDirectory
       value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
     - name: ob_sdl_binskim_enabled
@@ -162,6 +163,10 @@ jobs:
 
       foreach($t in $tarPkgPath) {
         $file = $t.FullName
+        $entry = & tar -tzvf $file | Where-Object { $_ -match '\spwsh$' } | Select-Object -First 1
+        if ($entry -notmatch '^-..x') {
+            throw "pwsh is not executable in $file : $entry"
+        }
         Write-Verbose -verbose "Uploading $file to macos-pkgs"
         Write-Host "##vso[artifact.upload containerfolder=macos-pkgs;artifactname=macos-pkgs]$file"
       }
@@ -183,6 +188,7 @@ jobs:
     type: windows
 
   variables:
+  - group: certificate_logical_to_actual
   - name: ob_outputDirectory
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
   - name: ob_sdl_binskim_enabled
@@ -230,7 +236,7 @@ jobs:
       inline_operation: |
         [
           {
-            "KeyCode": "CP-401337-Apple",
+            "KeyCode": "$(apple_cert_id)",
             "OperationCode": "MacAppDeveloperSign",
             "ToolName": "sign",
             "ToolVersion": "1.0",
@@ -249,7 +255,7 @@ jobs:
       inline_operation: |
         [
           {
-            "KeyCode": "CP-401337-Apple",
+            "KeyCode": "$(apple_cert_id)",
             "OperationCode": "MacAppNotarize",
             "ToolName": "sign",
             "ToolVersion": "1.0",
