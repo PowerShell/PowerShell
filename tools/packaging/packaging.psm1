@@ -52,7 +52,7 @@ function Start-PSPackage {
         [string]$Name = "powershell",
 
         # Ubuntu, CentOS, Fedora, macOS, and Windows packages are supported
-        [ValidateSet("msix", "deb", "osxpkg", "rpm", "rpm-fxdependent", "rpm-fxdependent-arm64", "zip", "zip-pdb", "tar", "tar-arm", "tar-arm64", "tar-alpine", "fxdependent", "fxdependent-win-desktop", "min-size", "tar-alpine-fxdependent")]
+        [ValidateSet("msix", "deb", "deb-arm64", "osxpkg", "rpm", "rpm-fxdependent", "rpm-fxdependent-arm64", "zip", "zip-pdb", "tar", "tar-arm", "tar-arm64", "tar-alpine", "fxdependent", "fxdependent-win-desktop", "min-size", "tar-alpine-fxdependent")]
         [string[]]$Type,
 
         # Generate windows downlevel package
@@ -120,6 +120,9 @@ function Start-PSPackage {
         }
         elseif ($Type.Count -eq 1 -and $Type[0] -eq "tar-alpine-fxdependent") {
             New-PSOptions -Configuration "Release" -Runtime 'fxdependent-noopt-linux-musl-x64' -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
+        }
+        elseif ($Type.Count -eq 1 -and $Type[0] -eq "deb-arm64") {
+            New-PSOptions -Configuration "Release" -Runtime 'linux-arm64' -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         }
         else {
             New-PSOptions -Configuration "Release" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
@@ -613,6 +616,24 @@ function Start-PSPackage {
                     }
                 }
             }
+            'deb-arm64' {
+                $Arguments = @{
+                    Type = 'deb'
+                    PackageSourcePath = $Source
+                    Name = $Name
+                    Version = $Version
+                    Force = $Force
+                    NoSudo = $NoSudo
+                    LTS = $LTS
+                    HostArchitecture = "arm64"
+                }
+                foreach ($Distro in $Script:DebianDistributions) {
+                    $Arguments["Distribution"] = $Distro
+                    if ($PSCmdlet.ShouldProcess("Create DEB Package for $Distro")) {
+                        New-UnixPackage @Arguments
+                    }
+                }
+            }
             'rpm' {
                 $Arguments = @{
                     Type = 'rpm'
@@ -775,6 +796,18 @@ function New-TarballPackage {
 
     $Staging = "$PSScriptRoot/staging"
     New-StagingFolder -StagingPath $Staging -PackageSourcePath $PackageSourcePath -R2RVerification $R2RVerification
+
+    # Ensure PowerShell executable has correct permissions in tarball
+    $pwshInStaging = Join-Path $Staging 'pwsh'
+    if (Test-Path -LiteralPath $pwshInStaging) {
+        Start-NativeExecution { chmod 755 $pwshInStaging }
+    }
+
+    # Included .NET executable for producing crash dumps
+    $createdumpInStaging = Join-Path $Staging 'createdump'
+    if (Test-Path -LiteralPath $createdumpInStaging) {
+        Start-NativeExecution { chmod 755 $createdumpInStaging }
+    }
 
     if (Get-Command -Name tar -CommandType Application -ErrorAction Ignore) {
         if ($Force -or $PSCmdlet.ShouldProcess("Create tarball package")) {
@@ -1032,7 +1065,7 @@ function New-UnixPackage {
         # This is a string because strings are appended to it
         [string]$Iteration = "1",
 
-        # Host architecture values allowed for deb type packages: amd64
+        # Host architecture values allowed for deb type packages: amd64, arm64
         # Host architecture values allowed for rpm type packages include: x86_64, aarch64, native, all, noarch, any
         # Host architecture values allowed for osxpkg type packages include: x86_64, arm64
         [string]
@@ -1194,7 +1227,11 @@ function New-UnixPackage {
                 find $Staging -type f | xargs chmod 644
                 chmod 644 $ManGzipInfo.GzipFile
                 # refers to executable, does not vary by channel
-                chmod 755 "$Staging/pwsh" #only the executable file should be granted the execution permission
+                chmod 755 "$Staging/pwsh" # only the executable file should be granted the execution permission
+                # Included .NET executable for producing crash dumps
+                if (Test-Path "$Staging/createdump") {
+                    chmod 755 "$Staging/createdump"
+                }
             }
         }
 
@@ -1872,6 +1909,12 @@ $(if ($extendedDescription) { $extendedDescription + "`n" })
         $pwshPath = "$targetPath/pwsh"
         if (Test-Path $pwshPath) {
             Start-NativeExecution { chmod 755 $pwshPath }
+        }
+
+        # Included .NET executable for producing crash dumps
+        $createdumpPath = "$targetPath/createdump"
+        if (Test-Path $createdumpPath) {
+            Start-NativeExecution { chmod 755 $createdumpPath }
         }
 
         # Calculate md5sums for all files in data directory (excluding symlinks)

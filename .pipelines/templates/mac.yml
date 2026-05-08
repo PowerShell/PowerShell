@@ -69,6 +69,14 @@ jobs:
       $psOptPath = "$(OB_OUTPUTDIRECTORY)/psoptions.json"
       Save-PSOptions -PSOptionsPath $psOptPath
 
+      $entitlements = "$(PowerShellRoot)/assets/macos-entitlements.plist"
+      $pwshBin = "$(OB_OUTPUTDIRECTORY)/pwsh"
+      Write-Verbose -Verbose "Applying entitlements to $pwshBin"
+      codesign --sign - --force --options runtime --entitlements $entitlements $pwshBin
+      if ($LASTEXITCODE -ne 0) {
+        throw "codesign failed with exit code $LASTEXITCODE"
+      }
+
       # Since we are using custom pool for macOS, we need to use artifact.upload to publish the artifacts
       Write-Host "##vso[artifact.upload containerfolder=$artifactName;artifactname=$artifactName]$(OB_OUTPUTDIRECTORY)"
 
@@ -143,5 +151,37 @@ jobs:
     parameters:
       binPath: $(DropRootPath)
       OfficialBuild: $(ps_official_build)
+
+  # Apple-sign the Mach-O binaries inside the signed output.
+  - pwsh: |
+      $signedDir = "$(ob_outputDirectory)/Signed-$(Runtime)"
+      $zipFile = "$(Pipeline.Workspace)/macho-$(BuildArchitecture).zip"
+      Compress-Archive -Path "$signedDir/*" -DestinationPath $zipFile -Force
+    displayName: Compress signed folder for Apple signing
+
+  - task: onebranch.pipeline.signing@1
+    displayName: Apple CodeSign Mach-O binaries
+    inputs:
+      command: 'sign'
+      files_to_sign: 'macho-$(BuildArchitecture).zip'
+      search_root: '$(Pipeline.Workspace)'
+      inline_operation: |
+        [
+          {
+            "KeyCode": "$(apple_cert_id)",
+            "OperationCode": "MacAppDeveloperSign",
+            "ToolName": "sign",
+            "ToolVersion": "1.0",
+            "Parameters": {
+              "Hardening": "--options=runtime"
+            }
+          }
+        ]
+
+  - pwsh: |
+      $signedDir = "$(ob_outputDirectory)/Signed-$(Runtime)"
+      $zipFile = "$(Pipeline.Workspace)/macho-$(BuildArchitecture).zip"
+      Expand-Archive -Path $zipFile -DestinationPath $signedDir -Force -Verbose
+    displayName: Expand Apple-signed Mach-O binaries into signed output
 
   - template: /.pipelines/templates/step/finalize.yml@self
