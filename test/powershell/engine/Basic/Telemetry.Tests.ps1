@@ -5,8 +5,53 @@
 # these tests aren't going to check that telemetry is being sent
 # only that we're not treating the telemetry.uuid file correctly
 
+function Get-OSTelemetryLevel {
+    <#
+    .SYNOPSIS
+        Returns the effective Windows Telemetry level (0-3).
+        Logic: Checks GPO overrides, then System preferences, then defaults to 1.
+    #>
+
+    $gpoPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection"
+    $sysPath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\DataCollection"
+    $valueName = "AllowTelemetry"
+
+    # 1. Check the "Managed" Policy (Group Policy)
+    if (Test-Path $gpoPath) {
+        $gpoValue = Get-ItemProperty -Path $gpoPath -Name $valueName -ErrorAction SilentlyContinue
+        if ($gpoValue -and $gpoValue.$valueName) {
+            return [int]$gpoValue.$valueName
+        }
+    }
+
+    # 2. Check the "User/System" Preference (Settings App)
+    if (Test-Path $sysPath) {
+        $sysValue = Get-ItemProperty -Path $sysPath -Name $valueName -ErrorAction SilentlyContinue
+        if ($sysValue -and $sysValue.$valueName) {
+            return [int]$sysValue.$valueName
+        }
+    }
+
+    # 3. Fallback to OS Default (Basic/Required)
+    return 1
+}
+
 Describe "Telemetry for shell startup" -Tag CI {
     BeforeAll {
+        $skipTelemetryTests = $false
+
+        if ($IsWindows) {
+            ## Skip telemetry tests if the OS telemetry level is less than 2 (Enhanced) -- PS telemetry is disabled in this case.
+            $osTelemetryLevel = Get-OSTelemetryLevel
+            $skipTelemetryTests = $osTelemetryLevel -lt 2
+        }
+
+        if ($skipTelemetryTests) {
+            $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+            $PSDefaultParameterValues["it:skip"] = $true
+            return
+        }
+
         # if the telemetry file exists, move it out of the way
         # the member is internal, but we can retrieve it via reflection
         $cacheDir = [System.Management.Automation.Platform].GetField("CacheDirectory","NonPublic,Static").GetValue($null)
@@ -23,6 +68,11 @@ Describe "Telemetry for shell startup" -Tag CI {
     }
 
     AfterAll {
+        if ($skipTelemetryTests) {
+            $global:PSDefaultParameterValues = $originalDefaultParameterValues
+            return
+        }
+
         # check and reset the telemetry.uuid file
         if ( $uuidFileExists ) {
             if ( Test-Path -Path "${uuidPath}.original" ) {

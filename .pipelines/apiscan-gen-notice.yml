@@ -8,9 +8,6 @@ parameters:
     displayName: Debugging - Enable CodeQL and set cadence to 1 hour
     type: boolean
     default: false
-  - name: SkipVerifyPackages
-    type: boolean
-    default: false
 
 variables:
   # PAT permissions NOTE: Declare a SymbolServerPAT variable in this group with a 'microsoft' organizanization scoped PAT with 'Symbols' Read permission.
@@ -112,4 +109,3 @@ extends:
           - template: /.pipelines/templates/compliance/generateNotice.yml@self
             parameters:
               parentJobs: []
-              SkipVerifyPackages: ${{ parameters.SkipVerifyPackages }}
