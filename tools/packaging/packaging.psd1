@@ -26,6 +26,7 @@
         'Test-PackageManifest'
         'Update-PSSignedBuildFolder'
         'Test-Bom'
+        'Get-MacOSPackageIdentifierInfo'
     )
     RootModule        = "packaging.psm1"
     RequiredModules   = @("build")
