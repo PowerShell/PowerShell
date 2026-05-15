@@ -23,6 +23,7 @@ jobs:
     - group: mscodehub-feed-read-general
     - group: mscodehub-feed-read-akv
     - group: DotNetPrivateBuildAccess
+    - group: certificate_logical_to_actual
 
   steps:
   - checkout: self
@@ -208,7 +209,7 @@ jobs:
     displayName: Sign nupkg files
     inputs:
       command: 'sign'
-      cp_code: 'CP-401405'
+      cp_code: '$(nuget_cert_id)'
       files_to_sign: '**\*.nupkg'
       search_root: '$(Pipeline.Workspace)\nupkg'
 
@@ -268,7 +269,7 @@ jobs:
     displayName: Sign nupkg files
     inputs:
       command: 'sign'
-      cp_code: 'CP-401405'
+      cp_code: '$(nuget_cert_id)'
       files_to_sign: '**\*.nupkg'
       search_root: '$(Pipeline.Workspace)\globaltools'
 
