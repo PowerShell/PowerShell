@@ -1221,11 +1221,17 @@ namespace System.Management.Automation
                         string tempDir = directory.TrimStart();
                         if (tempDir.EqualsOrdinalIgnoreCase("~"))
                         {
-                            tempDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                            tempDir = Environment.GetFolderPath(
+                                Environment.SpecialFolder.UserProfile,
+                                Environment.SpecialFolderOption.DoNotVerify);
                         }
                         else if (tempDir.StartsWith("~" + Path.DirectorySeparatorChar))
                         {
-                            tempDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + Path.DirectorySeparatorChar + tempDir.Substring(2);
+                            tempDir = Environment.GetFolderPath(
+                                Environment.SpecialFolder.UserProfile,
+                                Environment.SpecialFolderOption.DoNotVerify)
+                                + Path.DirectorySeparatorChar
+                                + tempDir.Substring(2);
                         }
 
                         _cachedPath.Add(tempDir);
