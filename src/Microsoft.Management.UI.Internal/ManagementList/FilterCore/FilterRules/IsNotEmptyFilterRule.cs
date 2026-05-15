@@ -14,11 +14,20 @@ namespace Microsoft.Management.UI.Internal
     public class IsNotEmptyFilterRule : IsEmptyFilterRule
     {
         /// <summary>
-        /// Initializes a new instance of the IsNotEmptyFilterRule class.
+        /// Initializes a new instance of the <see cref="IsNotEmptyFilterRule"/> class.
         /// </summary>
         public IsNotEmptyFilterRule()
         {
             this.DisplayName = UICultureResources.FilterRule_IsNotEmpty;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IsNotEmptyFilterRule"/> class.
+        /// </summary>
+        /// <param name="source">The source to initialize from.</param>
+        public IsNotEmptyFilterRule(IsNotEmptyFilterRule source)
+            : base(source)
+        {
         }
 
         /// <summary>

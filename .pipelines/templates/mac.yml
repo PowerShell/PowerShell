@@ -69,6 +69,14 @@ jobs:
       $psOptPath = "$(OB_OUTPUTDIRECTORY)/psoptions.json"
       Save-PSOptions -PSOptionsPath $psOptPath
 
+      $entitlements = "$(PowerShellRoot)/assets/macos-entitlements.plist"
+      $pwshBin = "$(OB_OUTPUTDIRECTORY)/pwsh"
+      Write-Verbose -Verbose "Applying entitlements to $pwshBin"
+      codesign --sign - --force --options runtime --entitlements $entitlements $pwshBin
+      if ($LASTEXITCODE -ne 0) {
+        throw "codesign failed with exit code $LASTEXITCODE"
+      }
+
       # Since we are using custom pool for macOS, we need to use artifact.upload to publish the artifacts
       Write-Host "##vso[artifact.upload containerfolder=$artifactName;artifactname=$artifactName]$(OB_OUTPUTDIRECTORY)"
 
