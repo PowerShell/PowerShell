@@ -168,13 +168,7 @@ namespace Microsoft.PowerShell.Telemetry
         /// </summary>
         static ApplicationInsightsTelemetry()
         {
-            CanSendTelemetry = !Utils.GetEnvironmentVariableAsBool(name: _telemetryOptoutEnvVar, defaultValue: false)
-                && Platform.TryDeriveFromCache("telemetry.uuid", out s_uuidPath);
-
             CanSendTelemetry = !GetEnvironmentVariableAsBool(name: _telemetryOptoutEnvVar, defaultValue: false)
-=======
-            CanSendTelemetry = !Utils.GetEnvironmentVariableAsBool(name: _telemetryOptoutEnvVar, defaultValue: false)
->>>>>>> 65e6a8055 (Update PowerShell telemetry to respect the diagnostics and feedback setting on Windows (#27328))
                 && Platform.TryDeriveFromCache("telemetry.uuid", out s_uuidPath);
 
 #if !UNIX
