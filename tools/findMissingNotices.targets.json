@@ -1,5 +1,5 @@
 {
-  "dotnetTargetName": "net11.0",
+  "dotnetTargetName": "net9.0",
   "windowsTargetNames": [
   ]
 }
