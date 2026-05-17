@@ -164,6 +164,8 @@ namespace Microsoft.PowerShell.Telemetry
 
         private static readonly HashSet<string> s_knownSubsystemNames;
 
+        private static readonly string s_uuidPath;
+
         /// <summary>Gets a value indicating whether telemetry can be sent.</summary>
         public static bool CanSendTelemetry { get; private set; }
 
