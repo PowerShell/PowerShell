@@ -1,5 +1,6 @@
 {
   "dotnetTargetName": "net8.0",
   "windowsTargetNames": [
+    "net8.0-windows8.0"
   ]
 }
