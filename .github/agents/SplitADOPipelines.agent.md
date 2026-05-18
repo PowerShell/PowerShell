@@ -6,7 +6,7 @@ tools: ['vscode', 'execute', 'read', 'agent', 'edit', 'search', 'todo']
 
 This agent will implement and restructure the repository's existing ADO pipelines into Official and NonOfficial pipelines. 
 
-A repository will have under the ./pipelines directory a series of yaml files that define the ADO pipelines for the repository.
+A repository will have under the .pipelines directory a series of yaml files that define the ADO pipelines for the repository.
 
 First confirm if the pipelines are using a toggle switch for Official and NonOfficial. This will look something like this
 
@@ -25,15 +25,31 @@ extends:
 
 This is an indicator that this work needs to be done. This toggle switch is no longer allowed and the templates need to be hard coded.
 
+## Template Reference Convention (MUST follow)
+
+All `- template:` references to files **inside this repo** must use the **absolute** form anchored at the repo root, with the `@self` suffix:
+
+```yaml
+- template: /.pipelines/templates/<path>/<file>.yml@self
+```
+
+Do **not** use relative paths such as `templates/...`, `../templates/...`, or bare filenames. Rationale:
+
+- Absolute paths resolve identically regardless of where the referring file lives, so moving a pipeline file between directories (for example, into `.pipelines/NonOfficial/`) does not silently break includes.
+- Relative paths are resolved by Azure DevOps against the directory of the referring file, which has caused real outages in this repo when a relative include was composed into a nonexistent nested path like `.pipelines/templates/stages/.pipelines/templates/...`.
+- The majority of existing includes already use the absolute form; keeping new work consistent reduces review burden.
+
+The only acceptable non-absolute references are to external repositories resolved via the `resources.repositories` block, for example `v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates`.
+
 ## Refactoring Steps
 
 ### Step 1: Extract Shared Templates
 
-For each pipeline file that uses the toggle switch pattern (e.g., `PowerShell-Packages.yml`):
+For each pipeline file that uses the toggle switch pattern (e.g., `PowerShell-Packages-Official.yml`):
 
-1. Create a `./pipelines/templates` directory if it doesn't exist
-2. Extract the **variables section** into `./pipelines/templates/PowerShell-Packages-Variables.yml`
-3. Extract the **stages section** into `./pipelines/templates/PowerShell-Packages-Stages.yml`
+1. Create the `.pipelines/templates/variables` and `.pipelines/templates/stages` directories if they don't exist
+2. Extract the **variables section** into `.pipelines/templates/variables/PowerShell-Packages-Variables.yml`
+3. Extract the **stages section** into `.pipelines/templates/stages/PowerShell-Packages-Stages.yml`
 
 **IMPORTANT**: Only extract the `variables:` and `stages:` sections. All other sections (parameters, resources, extends, etc.) remain in the pipeline files.
 
@@ -41,7 +57,7 @@ For each pipeline file that uses the toggle switch pattern (e.g., `PowerShell-Pa
 
 The original toggle-based file becomes the Official pipeline:
 
-1. **Keep the file in its original location** (e.g., `./pipelines/PowerShell-Packages.yml` stays where it is)
+1. **Keep the file in its original location** (e.g., `.pipelines/PowerShell-Packages-Official.yml` stays where it is)
 2. Remove the toggle switch parameter (`templateFile` parameter)
 3. Hard-code the Official template reference:
    ```yaml
@@ -51,18 +67,18 @@ The original toggle-based file becomes the Official pipeline:
 4. Replace the `variables:` section with a template reference:
    ```yaml
    variables:
-     - template: templates/PowerShell-Packages-Variables.yml
+     - template: /.pipelines/templates/variables/PowerShell-Packages-Variables.yml@self
    ```
 5. Replace the `stages:` section with a template reference:
    ```yaml
    stages:
-     - template: templates/PowerShell-Packages-Stages.yml
+     - template: /.pipelines/templates/stages/PowerShell-Packages-Stages.yml@self
    ```
 
 ### Step 3: Create NonOfficial Pipeline
 
-1. Create `./pipelines/NonOfficial` directory if it doesn't exist
-2. Create the NonOfficial pipeline file (e.g., `./pipelines/NonOfficial/PowerShell-Packages-NonOfficial.yml`)
+1. Create `.pipelines/NonOfficial` directory if it doesn't exist
+2. Create the NonOfficial pipeline file (e.g., `.pipelines/NonOfficial/PowerShell-Packages-NonOfficial.yml`)
 3. Copy the structure from the refactored Official pipeline
 4. Hard-code the NonOfficial template reference:
    ```yaml
@@ -72,13 +88,13 @@ The original toggle-based file becomes the Official pipeline:
 5. Reference the same shared templates:
    ```yaml
    variables:
-     - template: ../templates/PowerShell-Packages-Variables.yml
+     - template: /.pipelines/templates/variables/PowerShell-Packages-Variables.yml@self
    
    stages:
-     - template: ../templates/PowerShell-Packages-Stages.yml
+     - template: /.pipelines/templates/stages/PowerShell-Packages-Stages.yml@self
    ```
 
-**Note**: The NonOfficial pipeline uses `../templates/` because it's one directory deeper than the Official pipeline.
+**Note**: Always use **absolute** template paths of the form `/.pipelines/templates/...@self`. Do not use relative paths like `templates/...` or `../templates/...`. Absolute paths are anchored at the repo root and resolve consistently from any referring file, preventing breakage when files are moved between directories.
 
 ### Step 4: Link NonOfficial Pipelines to NonOfficial Dependencies
 
@@ -124,29 +140,29 @@ Then you must configure the `ob_release_environment` parameter when referencing 
 
 #### Official Pipeline Configuration
 
-In the Official pipeline (e.g., `./pipelines/PowerShell-Packages.yml`):
+In the Official pipeline (e.g., `.pipelines/PowerShell-Packages-Official.yml`):
 
 ```yaml
 stages:
-  - template: templates/PowerShell-Packages-Stages.yml
+  - template: /.pipelines/templates/stages/PowerShell-Packages-Stages.yml@self
     parameters:
       ob_release_environment: Production
 ```
 
 #### NonOfficial Pipeline Configuration
 
-In the NonOfficial pipeline (e.g., `./pipelines/NonOfficial/PowerShell-Packages-NonOfficial.yml`):
+In the NonOfficial pipeline (e.g., `.pipelines/NonOfficial/PowerShell-Packages-NonOfficial.yml`):
 
 ```yaml
 stages:
-  - template: ../templates/PowerShell-Packages-Stages.yml
+  - template: /.pipelines/templates/stages/PowerShell-Packages-Stages.yml@self
     parameters:
       ob_release_environment: Test
 ```
 
 #### Update Stages Template to Accept Parameter
 
-The extracted stages template (e.g., `./pipelines/templates/PowerShell-Packages-Stages.yml`) must declare the parameter at the top:
+The extracted stages template (e.g., `.pipelines/templates/stages/PowerShell-Packages-Stages.yml`) must declare the parameter at the top:
 
 ```yaml
 parameters:
