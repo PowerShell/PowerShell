@@ -1,14 +1,14 @@
 [
   {
-    "Pattern": "_manifest\\spdx_2.2\\bsi.json",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "_manifest\\spdx_2.2\\manifest.cat",
-    "FileType": "NonProduct"
-  },
-  {
     "Pattern": "Accessibility.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "build.manifest",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "build.manifest.sig",
     "FileType": "NonProduct"
   },
   {
