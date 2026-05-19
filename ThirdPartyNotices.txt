@@ -1762,7 +1762,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Data.SqlClient 4.9.0 - MIT
+System.Data.SqlClient 4.9.1 - MIT
 
 
 (c) Microsoft Corporation
@@ -2297,7 +2297,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Drawing.Common 8.0.22 - MIT
+System.Drawing.Common 8.0.24 - MIT
 
 
 (c) Microsoft Corporation
