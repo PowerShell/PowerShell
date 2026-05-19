@@ -182,8 +182,17 @@ namespace Microsoft.PowerShell.Telemetry
             CanSendTelemetry = !GetEnvironmentVariableAsBool(name: _telemetryOptoutEnvVar, defaultValue: false)
                 && Platform.TryDeriveFromCache("telemetry.uuid", out s_uuidPath);
 
+#if !UNIX
+            if (CanSendTelemetry)
+            {
+                // Respect the diagnostics and feedback setting in Windows.
+                CanSendTelemetry = WindowsDataCollectionSetting.CanCollectDiagnostics(PlatformDataCollectionLevel.Enhanced);
+            }
+#endif
+
             if (!CanSendTelemetry)
             {
+                // Avoid the initialization work if we can't send telemetry.
                 return;
             }
 
