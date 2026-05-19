@@ -64,7 +64,9 @@ function guessCategory(name = '') {
    API — camada de dados
    ══════════════════════════════════════════════════════════ */
 const API = {
-  BACKEND     : 'http://localhost:3001',
+  /* Quando servido pelo Express (porta 3001) usa URL relativa.
+     Quando aberto como arquivo direto, aponta para localhost:3001. */
+  BACKEND: window.location.port === '3001' ? '' : 'http://localhost:3001',
   backendOnline: false,
 
   /** Verifica se o backend local está rodando */

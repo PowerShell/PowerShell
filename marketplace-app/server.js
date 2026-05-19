@@ -15,16 +15,25 @@
  *   GET /api/search/amazon?q=<t>&limit=<n>
  */
 
-import express from 'express';
-import cors    from 'cors';
-import axios   from 'axios';
+import express  from 'express';
+import cors     from 'cors';
+import axios    from 'axios';
 import * as cheerio from 'cheerio';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname  = dirname(__filename);
 
 const app  = express();
 const PORT = 3001;
 
 app.use(cors({ origin: '*' }));
 app.use(express.json());
+
+/* Serve os arquivos do frontend (index.html, style.css, script.js)
+   para que http://localhost:3001 abra o app direto. */
+app.use(express.static(__dirname));
 
 /* ══════════════════════════════════════════════════════════
    SHARED UTILS
@@ -394,12 +403,13 @@ app.get('/api/search', async (req, res) => {
    START
    ══════════════════════════════════════════════════════════ */
 app.listen(PORT, () => {
-  console.log(`\n🔥 PromoHunt backend rodando em http://localhost:${PORT}`);
-  console.log('   Endpoints disponíveis:');
-  console.log(`   GET http://localhost:${PORT}/health`);
-  console.log(`   GET http://localhost:${PORT}/api/search?q=samsung`);
-  console.log(`   GET http://localhost:${PORT}/api/search/mercadolivre?q=samsung`);
-  console.log(`   GET http://localhost:${PORT}/api/search/shopee?q=samsung`);
-  console.log(`   GET http://localhost:${PORT}/api/search/magalu?q=samsung`);
-  console.log(`   GET http://localhost:${PORT}/api/search/amazon?q=samsung\n`);
+  console.log(`\n🔥 PromoHunt rodando em http://localhost:${PORT}`);
+  console.log(`   Abra http://localhost:${PORT} no navegador para usar o app.`);
+  console.log('\n   API endpoints:');
+  console.log(`   GET /health`);
+  console.log(`   GET /api/search?q=samsung`);
+  console.log(`   GET /api/search/mercadolivre?q=samsung`);
+  console.log(`   GET /api/search/shopee?q=samsung`);
+  console.log(`   GET /api/search/magalu?q=samsung`);
+  console.log(`   GET /api/search/amazon?q=samsung\n`);
 });
