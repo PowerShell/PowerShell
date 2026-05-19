@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PromoHunt — Melhores Ofertas do Brasil</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <!-- ── Top Nav ─────────────────────────────────────────── -->
+  <header class="navbar">
+    <div class="navbar__inner">
+      <a href="#" class="navbar__logo">
+        <span class="logo-icon">🔥</span>
+        <span class="logo-text">PromoHunt</span>
+      </a>
+
+      <nav class="navbar__links">
+        <a href="#" class="nav-link active">Ofertas</a>
+        <a href="#" class="nav-link">Favoritos <span class="fav-count" id="navFavCount">0</span></a>
+        <a href="#" class="nav-link">Cupons</a>
+        <a href="#" class="nav-link">Categorias</a>
+      </nav>
+
+      <div class="navbar__actions">
+        <button class="btn-icon" id="themeToggle" title="Alternar tema" aria-label="Alternar tema">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        </button>
+        <button class="btn-primary" onclick="openFavoritesPanel()">❤️ Favoritos</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Hero / Search ──────────────────────────────────── -->
+  <section class="hero">
+    <div class="hero__inner">
+      <h1 class="hero__title">
+        Encontre as melhores <span class="gradient-text">promoções</span><br>
+        de todos os marketplaces
+      </h1>
+      <p class="hero__subtitle">Shopee · Mercado Livre · Amazon · Magazine Luiza — tudo em um lugar</p>
+
+      <div class="search-wrapper" id="searchWrapper">
+        <div class="search-box">
+          <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input
+            type="text"
+            id="searchInput"
+            class="search-input"
+            placeholder="Buscar produtos, marcas, categorias…"
+            autocomplete="off"
+            aria-label="Buscar produtos"
+          />
+          <button class="search-clear" id="searchClear" aria-label="Limpar busca">✕</button>
+          <button class="search-btn" id="searchBtn">Buscar</button>
+        </div>
+        <ul class="autocomplete-list" id="autocompleteList" role="listbox" aria-label="Sugestões"></ul>
+      </div>
+
+      <!-- Categories pill bar -->
+      <div class="categories-bar" id="categoriesBar">
+        <button class="cat-pill active" data-category="all">🛍️ Todos</button>
+        <button class="cat-pill" data-category="eletronicos">📱 Eletrônicos</button>
+        <button class="cat-pill" data-category="celulares">📞 Celulares</button>
+        <button class="cat-pill" data-category="informatica">💻 Informática</button>
+        <button class="cat-pill" data-category="games">🎮 Games</button>
+        <button class="cat-pill" data-category="moda">👗 Moda</button>
+        <button class="cat-pill" data-category="casa">🏠 Casa</button>
+        <button class="cat-pill" data-category="beleza">💄 Beleza</button>
+        <button class="cat-pill" data-category="esportes">⚽ Esportes</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Filters bar ─────────────────────────────────────── -->
+  <div class="filters-bar" id="filtersBar">
+    <div class="filters-inner">
+      <span class="filters-label">Filtrar:</span>
+
+      <div class="filter-group">
+        <label class="filter-label">Ordenar por</label>
+        <select id="sortSelect" class="filter-select" aria-label="Ordenar por">
+          <option value="relevance">Relevância</option>
+          <option value="price_asc">Menor Preço</option>
+          <option value="price_desc">Maior Preço</option>
+          <option value="discount">Maior Desconto</option>
+          <option value="newest">Mais Recentes</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">Marketplace</label>
+        <div class="marketplace-filters" id="marketplaceFilters">
+          <button class="mkt-filter active" data-marketplace="all">Todos</button>
+          <button class="mkt-filter shopee" data-marketplace="shopee">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Shopee.svg/512px-Shopee.svg.png" alt="Shopee" class="mkt-icon" onerror="this.style.display='none';this.nextSibling.style.display='inline'"/><span style="display:none">🛒</span> Shopee
+          </button>
+          <button class="mkt-filter mercadolivre" data-marketplace="mercadolivre">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Mercado_Livre_-_2016.svg/320px-Mercado_Livre_-_2016.svg.png" alt="Mercado Livre" class="mkt-icon" onerror="this.style.display='none';this.nextSibling.style.display='inline'"/><span style="display:none">🛒</span> Mercado Livre
+          </button>
+          <button class="mkt-filter amazon" data-marketplace="amazon">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Amazon_logo.svg/320px-Amazon_logo.svg.png" alt="Amazon" class="mkt-icon" onerror="this.style.display='none';this.nextSibling.style.display='inline'"/><span style="display:none">🛒</span> Amazon
+          </button>
+          <button class="mkt-filter magalu" data-marketplace="magalu">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Magazine_Luiza_logo_%282023%29.svg/320px-Magazine_Luiza_logo_%282023%29.svg.png" alt="Magalu" class="mkt-icon" onerror="this.style.display='none';this.nextSibling.style.display='inline'"/><span style="display:none">🛒</span> Magalu
+          </button>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">Desconto mín.</label>
+        <select id="discountFilter" class="filter-select" aria-label="Desconto mínimo">
+          <option value="0">Qualquer</option>
+          <option value="10">10%+</option>
+          <option value="20">20%+</option>
+          <option value="30">30%+</option>
+          <option value="50">50%+</option>
+          <option value="70">70%+</option>
+        </select>
+      </div>
+
+      <div class="filter-group price-range-group">
+        <label class="filter-label">Faixa de preço</label>
+        <div class="price-range">
+          <input type="number" id="priceMin" class="price-input" placeholder="R$ Mín" min="0" aria-label="Preço mínimo" />
+          <span class="price-sep">–</span>
+          <input type="number" id="priceMax" class="price-input" placeholder="R$ Máx" min="0" aria-label="Preço máximo" />
+        </div>
+      </div>
+
+      <button class="btn-reset" id="resetFilters">↺ Limpar</button>
+    </div>
+  </div>
+
+  <!-- ── Main content ──────────────────────────────────────  -->
+  <main class="main-content" id="mainContent">
+    <!-- Results header -->
+    <div class="results-header" id="resultsHeader">
+      <p class="results-count" id="resultsCount">Carregando ofertas…</p>
+      <div class="view-toggle">
+        <button class="view-btn active" id="viewGrid" aria-label="Grade" title="Grade">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        </button>
+        <button class="view-btn" id="viewList" aria-label="Lista" title="Lista">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Product grid -->
+    <div class="products-grid" id="productsGrid" role="list"></div>
+
+    <!-- Infinite scroll sentinel -->
+    <div class="scroll-sentinel" id="scrollSentinel"></div>
+
+    <!-- Load more (fallback) -->
+    <div class="load-more-wrapper" id="loadMoreWrapper" style="display:none">
+      <button class="btn-load-more" id="loadMoreBtn">Carregar mais ofertas</button>
+    </div>
+
+    <!-- Empty state -->
+    <div class="empty-state" id="emptyState" style="display:none">
+      <div class="empty-icon">🔍</div>
+      <h3>Nenhuma oferta encontrada</h3>
+      <p>Tente outros termos ou remova alguns filtros.</p>
+      <button class="btn-primary" onclick="resetAll()">Ver todas as ofertas</button>
+    </div>
+  </main>
+
+  <!-- ── Favorites Side Panel ──────────────────────────────── -->
+  <aside class="fav-panel" id="favPanel" aria-label="Favoritos">
+    <div class="fav-panel__header">
+      <h2>❤️ Favoritos</h2>
+      <button class="btn-icon" onclick="closeFavoritesPanel()" aria-label="Fechar favoritos">✕</button>
+    </div>
+    <div class="fav-panel__body" id="favPanelBody">
+      <p class="fav-empty">Nenhum favorito ainda.<br>Clique no ❤️ dos cards para salvar.</p>
+    </div>
+  </aside>
+  <div class="overlay" id="overlay" onclick="closeFavoritesPanel()"></div>
+
+  <!-- ── Toast notification ─────────────────────────────────── -->
+  <div class="toast" id="toast" role="alert" aria-live="polite"></div>
+
+  <footer class="footer">
+    <p>© 2024 PromoHunt · Preços e disponibilidade sujeitos a alteração · <a href="#">Termos</a> · <a href="#">Privacidade</a></p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
