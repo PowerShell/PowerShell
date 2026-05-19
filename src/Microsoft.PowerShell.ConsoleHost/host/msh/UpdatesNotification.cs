@@ -60,12 +60,12 @@ namespace Microsoft.PowerShell
         static UpdatesNotification()
         {
             s_notificationType = GetNotificationType();
-            CanNotifyUpdates = s_notificationType != NotificationType.Off
-                && Platform.TryDeriveFromCache(PSVersionInfo.GitCommitId, out s_cacheDirectory);
+            CanNotifyUpdates = s_notificationType != NotificationType.Off;
 
             if (CanNotifyUpdates)
             {
                 s_enumOptions = new EnumerationOptions();
+                s_cacheDirectory = Path.Combine(Platform.CacheDirectory, PSVersionInfo.GitCommitId);
 
                 // Build the template/pattern strings for the configured notification type.
                 string typeNum = ((int)s_notificationType).ToString();

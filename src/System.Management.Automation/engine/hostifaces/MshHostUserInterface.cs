@@ -1156,11 +1156,6 @@ namespace System.Management.Automation.Host
                 }
             }
 
-            if (string.IsNullOrEmpty(baseDirectory))
-            {
-                return string.Empty;
-            }
-
             if (includeDate)
             {
                 baseDirectory = Path.Combine(baseDirectory, DateTime.Now.ToString("yyyyMMdd", CultureInfo.InvariantCulture));
