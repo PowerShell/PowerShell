@@ -1,0 +1,15 @@
+[
+  {
+    "ChangeType": "NonSecurity",
+    "Branch": "release/v7.5.7",
+    "PackageId": ".NET SDK",
+    "FromVersion": "9.0.313",
+    "ToVersion": "9.0.314",
+    "VulnerabilityId": [],
+    "Severity": [],
+    "VulnerableRanges": [],
+    "AdvisoryUrls": [],
+    "Justification": "Updated .NET SDK. Building with the latest SDK is required.",
+    "TimestampUtc": "2026-05-19T19:07:18.0523394Z"
+  }
+]
