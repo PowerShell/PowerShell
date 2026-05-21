@@ -757,11 +757,11 @@ namespace System.Management.Automation.Remoting
             PSEtwLog.LogAnalyticVerbose(
                 PSEventId.SentRemotingFragment, PSOpcode.Send, PSTask.None,
                 PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
-                (Int64)(_currentFragment.ObjectId),
-                (Int64)(_currentFragment.FragmentId),
+                (long)(_currentFragment.ObjectId),
+                (long)(_currentFragment.FragmentId),
                 _currentFragment.IsStartFragment ? 1 : 0,
                 _currentFragment.IsEndFragment ? 1 : 0,
-                (UInt32)(_currentFragment.BlobLength),
+                (uint)(_currentFragment.BlobLength),
                 new PSETWBinaryBlob(_currentFragment.Blob, 0, _currentFragment.BlobLength));
 
             // finally write into memory stream
