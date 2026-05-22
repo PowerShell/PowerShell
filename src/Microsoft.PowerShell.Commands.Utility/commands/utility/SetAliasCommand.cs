@@ -52,6 +52,7 @@ namespace Microsoft.PowerShell.Commands
                             e));
                     return;
                 }
+
                 try
                 {
                     if (string.IsNullOrEmpty(Scope))
