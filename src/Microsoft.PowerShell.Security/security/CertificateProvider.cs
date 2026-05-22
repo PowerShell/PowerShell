@@ -3424,7 +3424,6 @@ namespace Microsoft.PowerShell.Commands
             return IntPtr.Zero;
         }
 #else
-        [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
         private static IntPtr hWnd = IntPtr.Zero;
         private static bool firstRun = true;
 
@@ -3459,8 +3458,7 @@ namespace Microsoft.PowerShell.Commands
                 return false;
 
             uint SessionId;
-            uint ProcessId = (uint)System.Diagnostics.Process.GetCurrentProcess().Id;
-            if (!SMASecurity.NativeMethods.ProcessIdToSessionId(ProcessId, out SessionId))
+            if (!SMASecurity.NativeMethods.ProcessIdToSessionId((uint)Environment.ProcessId, out SessionId))
                 return false;
 
             if (SessionId == 0)

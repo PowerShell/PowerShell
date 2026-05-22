@@ -1,9 +1,8 @@
 parameters:
   unsignedDrop: 'drop_linux_build_linux_x64'
-  signedeDrop: 'drop_linux_sign_linux_x64'
+  signedDrop: 'drop_linux_sign_linux_x64'
   packageType: deb
   jobName: 'deb'
-  signingProfile: 'CP-450779-pgpdetached'
 
 jobs:
 - job: ${{ parameters.jobName }}
@@ -13,8 +12,6 @@ jobs:
     type: linux
 
   variables:
-    - name: runCodesignValidationInjection
-      value: false
     - name: nugetMultiFeedWarnLevel
       value: none
     - name: NugetSecurityAnalysisWarningLevel
@@ -22,6 +19,7 @@ jobs:
     - name: skipNugetSecurityAnalysis
       value: true
     - group: DotNetPrivateBuildAccess
+    - group: certificate_logical_to_actual
     - name: ob_outputDirectory
       value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
     - name: ob_sdl_binskim_enabled
@@ -36,8 +34,16 @@ jobs:
       value: $(Build.SourcesDirectory)/PowerShell/.config/tsaoptions.json
     - name: ob_sdl_credscan_suppressionsFile
       value: $(Build.SourcesDirectory)/PowerShell/.config/suppress.json
-    - name: SigningProfile
-      value: ${{ parameters.signingProfile }}
+    # PGP signing profile selection: Mariner (Azure Linux) packages ship through
+    # a different distribution channel and must be signed with the Mariner release
+    # key; all other Linux packages use the standard PowerShell Linux key. Both
+    # key codes come from the `certificate_logical_to_actual` variable group.
+    - ${{ if startsWith(parameters.jobName, 'mariner') }}:
+      - name: SigningProfile
+        value: $(pgp_release_cert_id)
+    - ${{ else }}:
+      - name: SigningProfile
+        value: $(pgp_linux_cert_id)
 
   steps:
   - checkout: self
@@ -54,14 +60,15 @@ jobs:
   - template: SetVersionVariables.yml@self
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
-      CreateJson: yes
-      UseJson: no
+      CreateJson: no
 
   - template: shouldSign.yml
 
   - template: cloneToOfficialPath.yml
     parameters:
       nativePathRoot: '$(Agent.TempDirectory)'
+
+  - template: rebuild-branch-check.yml@self
 
   - download: CoOrdinatedBuildPipeline
     artifact: ${{ parameters.unsignedDrop }}
@@ -125,6 +132,7 @@ jobs:
         'tar' { 'Signed-linux-x64', 'powershell*.tar.gz' }
         'tar-alpine-fxdependent' { 'Signed-fxdependent-noopt-linux-musl-x64', 'powershell*.tar.gz' }
         'deb' { 'Signed-linux-x64', 'powershell*.deb' }
+        'deb-arm64' { 'Signed-linux-arm64', 'powershell*.deb' }
         'rpm-fxdependent' { 'Signed-fxdependent-linux-x64', 'powershell*.rpm' }
         'rpm-fxdependent-arm64' { 'Signed-fxdependent-linux-arm64', 'powershell*.rpm' }
         'rpm' { 'Signed-linux-x64', 'powershell*.rpm' }
@@ -140,11 +148,21 @@ jobs:
       }
 
       $metadata = Get-Content "$repoRoot/tools/metadata.json" -Raw | ConvertFrom-Json
-      $LTS = $metadata.LTSRelease.Package
 
-      if ($LTS) {
-        Write-Verbose -Message "LTS Release: $LTS"
+      Write-Verbose -Verbose "metadata:"
+      $metadata | Out-String | Write-Verbose -Verbose
+
+      # Use the rebuild branch check from the template
+      $isRebuildBranch = '$(RebuildBranchCheck.IsRebuildBranch)' -eq 'true'
+
+      # Don't build LTS packages for rebuild branches
+      $LTS = $metadata.LTSRelease.Package -and -not $isRebuildBranch
+
+      if ($isRebuildBranch) {
+        Write-Verbose -Message "Rebuild branch detected, skipping LTS package build" -Verbose
       }
+
+      Write-Verbose -Verbose "LTS: $LTS"
 
       if (-not (Test-Path $(ob_outputDirectory))) {
         New-Item -ItemType Directory -Path $(ob_outputDirectory) -Force
@@ -154,6 +172,11 @@ jobs:
       Write-Verbose -Verbose "packageType = $packageType"
 
       Start-PSPackage -Type $packageType -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath
+
+      if ($LTS) {
+        Write-Verbose -Message "LTS Release: $LTS" -Verbose
+        Start-PSPackage -Type $packageType -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath -LTS
+      }
 
       $vstsCommandString = "vso[task.setvariable variable=PackageFilter]$pkgFilter"
       Write-Host ("sending " + $vstsCommandString)
@@ -178,6 +201,13 @@ jobs:
       $pkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $pkgFilter -Recurse -File | Select-Object -ExpandProperty FullName
       Write-Verbose -Verbose "pkgPath: $pkgPath"
       Copy-Item -Path $pkgPath -Destination '$(ob_outputDirectory)' -Force -Verbose
+
+      if ($pkgPath -like '*.tar.gz') {
+          $entry = & tar -tzvf $pkgPath | Where-Object { $_ -match '\spwsh$' } | Select-Object -First 1
+          if ($entry -notmatch '^-..x') {
+              throw "pwsh is not executable in $pkgPath : $entry"
+          }
+      }
     displayName: 'Copy artifacts to output directory'
     env:
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)

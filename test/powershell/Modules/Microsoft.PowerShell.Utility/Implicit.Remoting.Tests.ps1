@@ -1901,7 +1901,7 @@ try
                 Export-PSSession -Session $session -OutputModule $tempdir\Diag -CommandName New-Guid -AllowClobber > $null
 
                 # Only the snapin Microsoft.PowerShell.Core is loaded
-                $iss = [System.Management.Automation.Runspaces.InitialSessionState]::CreateDefault2()
+                $iss = [initialsessionstate]::CreateDefault2()
                 $ps = [PowerShell]::Create($iss)
                 $result = $ps.AddScript(" & $tempdir\TestBug450687.ps1").Invoke()
 

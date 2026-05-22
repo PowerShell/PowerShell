@@ -849,7 +849,7 @@ Note that 'Start-Job' is not supported by design in scenarios where PowerShell i
     <value>The WriteEvents parameter cannot be used without the Wait parameter.</value>
   </data>
   <data name="PowerShellVersionNotSupported" xml:space="preserve">
-    <value>PowerShell remoting endpoint versioning is not supported on PowerShell Core.</value>
+    <value>PowerShell remoting endpoint versioning is not supported on PowerShell 7+.</value>
   </data>
   <data name="JobManagerRegistrationConstructorError" xml:space="preserve">
     <value>The following type cannot be instantiated because its constructor is not public: {0}.</value>

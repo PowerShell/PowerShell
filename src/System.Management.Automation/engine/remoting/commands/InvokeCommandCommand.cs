@@ -226,7 +226,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = InvokeCommandCommand.ComputerNameParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathComputerNameParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
-        [ValidateRange((int)1, (int)UInt16.MaxValue)]
+        [ValidateRange((int)1, (int)ushort.MaxValue)]
         public override int Port
         {
             get
@@ -1050,7 +1050,7 @@ namespace Microsoft.PowerShell.Commands
                 // create collection of input writers here
                 foreach (IThrottleOperation operation in Operations)
                 {
-                    if (!(operation is ExecutionCmdletHelperRunspace ecHelper))
+                    if (operation is not ExecutionCmdletHelperRunspace ecHelper)
                     {
                         // either all the operations will be of type ExecutionCmdletHelperRunspace
                         // or not...there is no mix.

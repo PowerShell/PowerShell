@@ -5,7 +5,6 @@ Describe 'Native Windows tilde expansion tests' -tags "CI" {
     BeforeAll {
         $originalDefaultParams = $PSDefaultParameterValues.Clone()
         $PSDefaultParameterValues["it:skip"] = -Not $IsWindows
-        $EnabledExperimentalFeatures.Contains('PSNativeWindowsTildeExpansion') | Should -BeTrue
     }
 
     AfterAll {
@@ -21,12 +20,13 @@ Describe 'Native Windows tilde expansion tests' -tags "CI" {
         cmd /c echo ~/foo | Should -BeExactly "$($ExecutionContext.SessionState.Provider.Get("FileSystem").Home)/foo"
         cmd /c echo ~\foo | Should -BeExactly "$($ExecutionContext.SessionState.Provider.Get("FileSystem").Home)\foo"
     }
-	It '~ should not be replaced when quoted' {
-		cmd /c echo '~' | Should -BeExactly '~'
-		cmd /c echo "~" | Should -BeExactly '~'
-		cmd /c echo '~/foo' | Should -BeExactly '~/foo'
-		cmd /c echo "~/foo" | Should -BeExactly '~/foo'
+
+    It '~ should not be replaced when quoted' {
+        cmd /c echo '~' | Should -BeExactly '~'
+        cmd /c echo "~" | Should -BeExactly '~'
+        cmd /c echo '~/foo' | Should -BeExactly '~/foo'
+        cmd /c echo "~/foo" | Should -BeExactly '~/foo'
         cmd /c echo '~\foo' | Should -BeExactly '~\foo'
-		cmd /c echo "~\foo" | Should -BeExactly '~\foo'
-	}
+        cmd /c echo "~\foo" | Should -BeExactly '~\foo'
+    }
 }

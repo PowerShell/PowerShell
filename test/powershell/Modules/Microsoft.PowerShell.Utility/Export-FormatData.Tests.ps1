@@ -16,7 +16,7 @@ Describe "Export-FormatData" -Tags "CI" {
         {
             $fd | Export-FormatData -Path $TESTDRIVE\allformat.ps1xml -IncludeScriptBlock
 
-            $sessionState = [System.Management.Automation.Runspaces.InitialSessionState]::CreateDefault()
+            $sessionState = [initialsessionstate]::CreateDefault()
             $sessionState.Formats.Clear()
             $sessionState.Types.Clear()
 
@@ -135,7 +135,7 @@ Describe "Export-FormatData" -Tags "CI" {
             $testfile = Join-Path -Path $TestDrive -ChildPath "$testfilename.ps1xml"
             Set-Content -Path $testfile -Value $xmlContent
 
-            $sessionState = [System.Management.Automation.Runspaces.InitialSessionState]::CreateDefault()
+            $sessionState = [initialsessionstate]::CreateDefault()
             $sessionState.Formats.Clear()
             $sessionState.Types.Clear()
 

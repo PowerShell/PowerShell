@@ -2,13 +2,31 @@ steps:
 - pwsh: |
     # Determine LTS, Preview, or Stable
     $metadata = Get-Content "$(Build.SourcesDirectory)/PowerShell/tools/metadata.json" -Raw | ConvertFrom-Json
-    $LTS = $metadata.LTSRelease.Latest
-    $Stable = $metadata.StableRelease.Latest
-    $isPreview = '$(OutputReleaseTag.releaseTag)' -match '-'
 
-    $IsLTS = [bool]$LTS
-    $IsStable = [bool]$Stable
-    $IsPreview = [bool]$isPreview
+    $LTS = $metadata.LTSRelease.PublishToChannels
+    $Stable = $metadata.StableRelease.PublishToChannels
+    $isPreview = '$(OutputReleaseTag.releaseTag)' -match '-'
+    $releaseTag = '$(OutputReleaseTag.releaseTag)'
+
+    # Rebuild branches should be treated as preview builds
+    # NOTE: The following regex is duplicated from rebuild-branch-check.yml.
+    # This duplication is necessary because channelSelection.yml does not call rebuild-branch-check.yml,
+    # and is used in contexts where that check may not have run.
+    # If you update this regex, also update it in rebuild-branch-check.yml to keep them in sync.
+    $isRebuildBranch = '$(Build.SourceBranch)' -match 'refs/heads/rebuild/.*-rebuild\.'
+
+    # If this is a rebuild branch, force preview mode and ignore LTS metadata
+    if ($isRebuildBranch) {
+        $IsLTS = $false
+        $IsStable = $false
+        $IsPreview = $true
+        Write-Verbose -Message "Rebuild branch detected, forcing Preview channel" -Verbose
+    }
+    else {
+        $IsLTS = [bool]$LTS
+        $IsStable = [bool]$Stable
+        $IsPreview = [bool]$isPreview
+    }
 
     $channelVars = @{
         IsLTS     = $IsLTS
