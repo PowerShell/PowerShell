@@ -14,18 +14,21 @@ on:
         required: false
         default: testResults-xunit
 
+permissions:
+  contents: read
+
 jobs:
   xunit:
     name: Run xUnit Tests
     runs-on: ${{ inputs.runner_os }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 1000
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7 # v5.2.0
         with:
           global-json-file: ./global.json
 
@@ -46,7 +49,7 @@ jobs:
           Write-Host "Completed xUnit test run."
 
       - name: Upload xUnit results
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         if: always()
         with:
           name: ${{ inputs.test_results_artifact_name }}

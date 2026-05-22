@@ -136,12 +136,14 @@ jobs:
 
       # Don't build LTS packages for rebuild branches
       $LTS = $metadata.LTSRelease.Package -and -not $isRebuildBranch
+      $Stable = [bool]$metadata.StableRelease.Package
 
       if ($isRebuildBranch) {
         Write-Verbose -Message "Rebuild branch detected, skipping LTS package build" -Verbose
       }
 
       Write-Verbose -Verbose "LTS: $LTS"
+      Write-Verbose -Verbose "Stable: $Stable"
 
       if ($LTS) {
         Write-Verbose -Message "LTS Release: $LTS"
@@ -159,9 +161,9 @@ jobs:
       }
 
       $packageTypes = switch ($runtime) {
-        'x64' { @('msi', 'zip', 'msix') }
-        'x86' { @('msi', 'zip', 'msix') }
-        'arm64' { @('msi', 'zip', 'msix') }
+        'x64' { @('zip', 'msix') }
+        'x86' { @('zip', 'msix') }
+        'arm64' { @('zip', 'msix') }
         'fxdependent' { 'fxdependent' }
         'fxdependentWinDesktop' { 'fxdependent-win-desktop' }
         'minsize' { 'min-size' }
@@ -175,6 +177,12 @@ jobs:
 
       Start-PSPackage -Type $packageTypes -SkipReleaseChecks -WindowsRuntime $WindowsRuntime -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath -LTS:$LTS
 
+      # When both LTS and Stable are requested, also build the Stable MSIX
+      if ($packageTypes -contains 'msix' -and $LTS -and $Stable) {
+        Write-Verbose -Verbose "Both LTS and Stable packages requested. Building additional Stable MSIX."
+        Start-PSPackage -Type msix -SkipReleaseChecks -WindowsRuntime $WindowsRuntime -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath
+      }
+
     displayName: 'Build Packages (Unsigned)'
     env:
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
@@ -185,9 +193,9 @@ jobs:
       Write-Verbose -Verbose "runtime = '$(Runtime)'"
 
       $packageTypes = switch ($runtime) {
-        'x64' { @('msi', 'zip', 'msix') }
-        'x86' { @('msi', 'zip', 'msix') }
-        'arm64' { @('msi', 'zip', 'msix') }
+        'x64' { @('zip', 'msix') }
+        'x86' { @('zip', 'msix') }
+        'arm64' { @('zip', 'msix') }
         'fxdependent' { 'fxdependent' }
         'fxdependentWinDesktop' { 'fxdependent-win-desktop' }
         'minsize' { 'min-size' }
@@ -195,13 +203,6 @@ jobs:
 
       if (-not (Test-Path $(ob_outputDirectory))) {
         New-Item -ItemType Directory -Path $(ob_outputDirectory) -Force
-      }
-
-      if ($packageTypes -contains 'msi') {
-        $msiPkgNameFilter = "powershell-*.msi"
-        $msiPkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $msiPkgNameFilter -Recurse -File | Select-Object -ExpandProperty FullName
-        Write-Verbose -Verbose "unsigned msiPkgPath: $msiPkgPath"
-        Copy-Item -Path $msiPkgPath -Destination '$(ob_outputDirectory)' -Force -Verbose
       }
 
       if ($packageTypes -contains 'zip' -or $packageTypes -contains 'fxdependent' -or $packageTypes -contains 'min-size' -or $packageTypes -contains 'fxdependent-win-desktop') {
@@ -212,7 +213,7 @@ jobs:
       }
 
       if ($packageTypes -contains 'msix') {
-        $msixPkgNameFilter = "powershell-*.msix"
+        $msixPkgNameFilter = "PowerShell*.msix"
         $msixPkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $msixPkgNameFilter -Recurse -File | Select-Object -ExpandProperty FullName
         Write-Verbose -Verbose "unsigned msixPkgPath: $msixPkgPath"
         Copy-Item -Path $msixPkgPath -Destination '$(ob_outputDirectory)' -Force -Verbose

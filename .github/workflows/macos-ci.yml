@@ -54,9 +54,10 @@ jobs:
     outputs:
       source: ${{ steps.filter.outputs.source }}
       buildModuleChanged: ${{ steps.filter.outputs.buildModuleChanged }}
+      packagingChanged: ${{ steps.filter.outputs.packagingChanged }}
     steps:
       - name: checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Change Detection
         id: filter
@@ -71,7 +72,7 @@ jobs:
     if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
     steps:
       - name: checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 1000
       - name: Build
@@ -85,7 +86,7 @@ jobs:
     runs-on: macos-15-large
     steps:
       - name: checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 1000
       - name: macOS Unelevated CI
@@ -103,7 +104,7 @@ jobs:
     runs-on: macos-15-large
     steps:
       - name: checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 1000
       - name: macOS Elevated CI
@@ -121,7 +122,7 @@ jobs:
     runs-on: macos-15-large
     steps:
       - name: checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 1000
       - name: macOS Unelevated Others
@@ -139,7 +140,7 @@ jobs:
     runs-on: macos-15-large
     steps:
       - name: checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 1000
       - name: macOS Elevated Others
@@ -161,15 +162,15 @@ jobs:
     name: macOS packaging and testing
     needs:
       - changes
-    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
+    if: ${{ needs.changes.outputs.packagingChanged == 'true' }}
     runs-on:
       - macos-15-large
     steps:
     - name: checkout
-      uses: actions/checkout@v6
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       with:
         fetch-depth: 1000
-    - uses: actions/setup-dotnet@v5
+    - uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7 # v5.2.0
       with:
         global-json-file: ./global.json
     - name: Bootstrap packaging
@@ -228,7 +229,7 @@ jobs:
         testResultsFolder: "${{ runner.workspace }}/testResults"
     - name: Upload package artifact
       if: always()
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
       with:
         name: macos-package
         path: "*.pkg"
@@ -242,6 +243,6 @@ jobs:
       - macos_test_unelevated_ci
       - macos_test_unelevated_others
     if: always()
-    uses: PowerShell/compliance/.github/workflows/ready-to-merge.yml@v1.0.0
+    uses: PowerShell/compliance/.github/workflows/ready-to-merge.yml@c8b3ad5819ad7078f3e375519b4f8c6232d1cbdf # v1.0.0
     with:
       needs_context: ${{ toJson(needs) }}
