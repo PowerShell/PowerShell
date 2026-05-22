@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 
@@ -82,6 +83,15 @@ namespace Microsoft.PowerShell.Commands
 
                 AliasInfo result = null;
 
+                if (string.Equals(newAlias.Name, newAlias.Definition, StringComparison.OrdinalIgnoreCase))
+                {
+                    PSArgumentException e = PSTraceSource.NewArgumentException("Value", NewObjectStrings.InvalidValue, newAlias.Name);
+                    WriteError(
+                        new ErrorRecord(
+                            e.ErrorRecord,
+                            e));
+                    return;
+                }
                 try
                 {
                     if (string.IsNullOrEmpty(Scope))
