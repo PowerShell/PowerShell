@@ -60,20 +60,6 @@ stages:
         ob_restore_phase: true
 
     - pwsh: |
-        $branch = 'mirror-target'
-        $gitArgs = "clone",
-        "--verbose",
-        "--branch",
-        "$branch",
-        "https://$(mscodehubCodeReadPat)@mscodehub.visualstudio.com/PowerShellCore/_git/Internal-PowerShellTeam-Tools",
-        '$(Pipeline.Workspace)/tools'
-        $gitArgs | Write-Verbose -Verbose
-        git $gitArgs
-      displayName: Clone Internal-PowerShellTeam-Tools from MSCodeHub
-      env:
-        ob_restore_phase: true
-
-    - pwsh: |
         Get-ChildItem Env: | Out-String -Stream | write-Verbose -Verbose
       displayName: 'Capture Environment Variables'
       env:
