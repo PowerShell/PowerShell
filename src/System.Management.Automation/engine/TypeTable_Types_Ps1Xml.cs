@@ -1156,7 +1156,7 @@ namespace System.Management.Automation.Runspaces
                             (Get-CimInstance Win32_Process -Filter ""ProcessId = $($this.Id)"").CommandLine
                         } elseif ($IsLinux) {
                             $rawCmd = Get-Content -Raw -LiteralPath ""/proc/$($this.Id)/cmdline""
-                            if ($rawCmd.Length -gt 1) {
+                            if ($rawCmd.Length -gt 0) {
                                 $rawCmd.Substring(0, $rawCmd.Length - 1) -replace ""`0"", "" ""
                             }
                         }
