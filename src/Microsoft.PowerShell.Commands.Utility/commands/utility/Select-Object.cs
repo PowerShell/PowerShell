@@ -396,7 +396,7 @@ namespace Microsoft.PowerShell.Commands
 
             PSPropertyExpression ex = p.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
             List<PSPropertyExpressionResult> expressionResults = new();
-            foreach (PSPropertyExpression resolvedName in ex.ResolveNames(inputObject))
+            foreach (PSPropertyExpression resolvedName in ResolvePropertyNames(ex, inputObject))
             {
                 if (_exclusionFilter == null || !_exclusionFilter.IsMatch(resolvedName))
                 {
@@ -470,7 +470,7 @@ namespace Microsoft.PowerShell.Commands
             List<PSNoteProperty> matchedProperties)
         {
             PSPropertyExpression ex = p.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
-            List<PSPropertyExpressionResult> expressionResults = ex.GetValues(inputObject);
+            List<PSPropertyExpressionResult> expressionResults = GetPropertyValues(ex, inputObject);
 
             if (expressionResults.Count == 0)
             {
@@ -544,6 +544,35 @@ namespace Microsoft.PowerShell.Commands
                     inputObject);
                 throw new SelectObjectException(errorRecord);
             }
+        }
+
+        private static List<PSPropertyExpression> ResolvePropertyNames(PSPropertyExpression expression, PSObject inputObject)
+        {
+            PSPropertyExpression literalExpression = GetLiteralPropertyExpression(expression, inputObject);
+            return literalExpression is null
+                ? expression.ResolveNames(inputObject)
+                : new List<PSPropertyExpression> { literalExpression };
+        }
+
+        private static List<PSPropertyExpressionResult> GetPropertyValues(PSPropertyExpression expression, PSObject inputObject)
+        {
+            PSPropertyExpression literalExpression = GetLiteralPropertyExpression(expression, inputObject);
+            return literalExpression is null
+                ? expression.GetValues(inputObject)
+                : literalExpression.GetValues(inputObject);
+        }
+
+        private static PSPropertyExpression GetLiteralPropertyExpression(PSPropertyExpression expression, PSObject inputObject)
+        {
+            if (expression.Script is not null)
+            {
+                return null;
+            }
+
+            string propertyName = WildcardPattern.Unescape(expression.ToString());
+            return inputObject.Properties[propertyName] is null
+                ? null
+                : new PSPropertyExpression(propertyName, isResolved: true);
         }
 
         private void AddNoteProperties(PSObject expandedObject, PSObject inputObject, IEnumerable<PSNoteProperty> matchedProperties)

@@ -84,6 +84,41 @@ Describe "Select-Object" -Tags "CI" {
         $result[0].Mode | Should -BeNullOrEmpty
     }
 
+    It "Should select literal property names that contain wildcard characters" {
+        $inputObject = [pscustomobject]@{
+            'Foo[]' = 'brackets'
+            'Foo1' = 'wildcard'
+        }
+
+        $result = $inputObject | Select-Object -Property ([WildcardPattern]::Escape('Foo[]'))
+
+        $result.PSObject.Properties.Name | Should -BeExactly 'Foo[]'
+        $result.'Foo[]' | Should -BeExactly 'brackets'
+    }
+
+    It "Should prefer an exact property name before wildcard expansion" {
+        $inputObject = [pscustomobject]@{
+            'Foo*' = 'literal'
+            'Foo1' = 'wildcard'
+        }
+
+        $result = $inputObject | Select-Object -Property 'Foo*'
+
+        $result.PSObject.Properties.Name | Should -BeExactly 'Foo*'
+        $result.'Foo*' | Should -BeExactly 'literal'
+    }
+
+    It "Should expand literal property names that contain wildcard characters" {
+        $inputObject = [pscustomobject]@{
+            'Foo[]' = 'brackets'
+            'Foo1' = 'wildcard'
+        }
+
+        $result = $inputObject | Select-Object -ExpandProperty ([WildcardPattern]::Escape('Foo[]'))
+
+        $result | Should -BeExactly 'brackets'
+    }
+
     It "Should send output to pipe properly" {
         { $dirObject | Select-Object -Unique | pipelineConsume } | Should -Not -Throw
     }
