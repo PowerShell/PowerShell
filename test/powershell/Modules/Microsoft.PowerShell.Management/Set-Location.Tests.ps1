@@ -160,6 +160,21 @@ Describe "Set-Location" -Tags "CI" {
             (Get-Location).Path | Should -Be $initialLocation
         }
 
+        It 'Should navigate history paths with wildcard characters literally' {
+            $literalPath = Join-Path $TestDrive 'foo - bar(123-456)[foo]'
+            $null = [System.IO.Directory]::CreateDirectory($literalPath)
+
+            Set-Location $TestDrive
+            Set-Location -LiteralPath $literalPath
+            Set-Location $TestDrive
+
+            Set-Location -
+            (Get-Location).Path | Should -BeExactly $literalPath
+
+            Set-Location +
+            (Get-Location).Path | Should -BeExactly $TestDrive.ToString()
+        }
+
         It 'Location History is limited' {
             $initialLocation = (Get-Location).Path
             $maximumLocationHistory = 20

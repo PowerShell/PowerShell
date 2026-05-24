@@ -244,6 +244,7 @@ namespace System.Management.Automation
             string driveName = null;
             ProviderInfo provider = null;
             string providerId = null;
+            bool suppressWildcardExpansion = literalPath;
 
             switch (originalPath)
             {
@@ -254,6 +255,7 @@ namespace System.Management.Automation
                     }
 
                     path = _setLocationHistory.Undo(this.CurrentLocation).Path;
+                    suppressWildcardExpansion = true;
                     break;
                 case string originalPathSwitch when !literalPath && originalPathSwitch.Equals("+", StringComparison.Ordinal):
                     if (_setLocationHistory.RedoCount <= 0)
@@ -262,6 +264,7 @@ namespace System.Management.Automation
                     }
 
                     path = _setLocationHistory.Redo(this.CurrentLocation).Path;
+                    suppressWildcardExpansion = true;
                     break;
                 default:
                     var pushPathInfo = GetNewPushPathInfo();
@@ -317,6 +320,8 @@ namespace System.Management.Automation
             }
 
             context ??= new CmdletProviderContext(this.ExecutionContext);
+
+            context.SuppressWildcardExpansion |= suppressWildcardExpansion;
 
             if (CurrentDrive != null)
             {
