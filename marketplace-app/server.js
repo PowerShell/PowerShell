@@ -119,54 +119,77 @@ async function searchMercadoLivre(query, limit = 20) {
 }
 
 /* ══════════════════════════════════════════════════════════
-   SHOPEE — API interna (não documentada publicamente)
-   Pode exigir cookies de sessão para queries mais complexas.
+   SHOPEE — API interna
+   Nota: Shopee exige cookies de sessão reais. Sem eles, a API
+   retorna 403. A solução definitiva é usar o Shopee Open Platform
+   (affiliate.shopee.com.br) com credenciais de parceiro.
+   Por enquanto, tentamos simular um browser com headers completos.
    ══════════════════════════════════════════════════════════ */
 async function searchShopee(query, limit = 20) {
-  const url = [
-    'https://shopee.com.br/api/v4/search/search_items',
-    `?by=relevancy&keyword=${encodeURIComponent(query)}`,
-    `&limit=${limit}&newest=0&order=desc`,
-    '&page_type=search&scenario=PAGE_GLOBAL_SEARCH&version=2',
-  ].join('');
+  const kw = encodeURIComponent(query);
+  /* Tenta v4 primeiro, depois v2 como fallback */
+  const endpoints = [
+    `https://shopee.com.br/api/v4/search/search_items?by=relevancy&keyword=${kw}&limit=${limit}&newest=0&order=desc&page_type=search&scenario=PAGE_GLOBAL_SEARCH&version=2`,
+    `https://shopee.com.br/api/v2/search_items/?keyword=${kw}&limit=${limit}&newest=0&order=desc&by=relevancy`,
+  ];
 
-  const { data } = await http.get(url, {
-    headers: {
-      ...BROWSER_HEADERS,
-      'Accept'         : 'application/json',
-      'Referer'        : 'https://shopee.com.br/',
-      'X-API-SOURCE'   : 'pc',
-      'X-Shopee-Language': 'pt-BR',
-    },
-  });
+  for (const url of endpoints) {
+    try {
+      const { data } = await http.get(url, {
+        headers: {
+          ...BROWSER_HEADERS,
+          'Accept'             : 'application/json, text/plain, */*',
+          'Referer'            : `https://shopee.com.br/search?keyword=${kw}`,
+          'Origin'             : 'https://shopee.com.br',
+          'X-API-SOURCE'       : 'pc',
+          'X-Shopee-Language'  : 'pt-BR',
+          'sec-ch-ua'          : '"Chromium";v="124","Google Chrome";v="124","Not-A.Brand";v="99"',
+          'sec-ch-ua-mobile'   : '?0',
+          'sec-ch-ua-platform' : '"Windows"',
+          'Sec-Fetch-Dest'     : 'empty',
+          'Sec-Fetch-Mode'     : 'cors',
+          'Sec-Fetch-Site'     : 'same-origin',
+        },
+      });
+      if (data?.items?.length) {
+        return data.items.map(({ item_basic: it }) => normalizeShopeeItem(it));
+      }
+    } catch (err) {
+      if (err.response?.status === 403 || err.response?.status === 429) {
+        console.warn(`[shopee] ${err.response.status} em ${url} — tentando próximo endpoint`);
+        continue;
+      }
+      throw err;
+    }
+  }
+  return []; /* retorna vazio se todos os endpoints falharam */
+}
 
-  if (!data?.items?.length) return [];
-
-  return data.items.map(({ item_basic: it }) => {
-    const price    = (it.price || 0) / 100000;
-    const priceOld = it.price_before_discount ? it.price_before_discount / 100000 : null;
-    const discount = it.raw_discount || calcDiscount(priceOld, price);
-    return {
-      id           : `sp_${it.itemid}`,
-      name         : it.name || '',
-      category     : guessCategory(it.name || ''),
-      marketplace  : 'shopee',
-      image        : `https://cf.shopee.com.br/file/${it.image}`,
-      priceOld,
-      priceCurrent : price,
-      pixPrice     : null,
-      discount,
-      installments : null,
-      rating       : Number((it.item_rating?.rating_star || 4.5).toFixed(1)),
-      reviews      : it.sold || 0,
-      badges       : [
-        ...(discount >= 30 ? ['hot'] : []),
-        ...(it.is_official_shop ? ['new'] : []),
-      ],
-      url          : `https://shopee.com.br/product/${it.shopid}/${it.itemid}`,
-      addedAt      : new Date().toISOString(),
-    };
-  });
+function normalizeShopeeItem(it) {
+  if (!it?.itemid) return null;
+  const price    = (it.price || 0) / 100000;
+  const priceOld = it.price_before_discount ? it.price_before_discount / 100000 : null;
+  const discount = it.raw_discount || calcDiscount(priceOld, price);
+  return {
+    id           : `sp_${it.itemid}`,
+    name         : it.name || '',
+    category     : guessCategory(it.name || ''),
+    marketplace  : 'shopee',
+    image        : `https://cf.shopee.com.br/file/${it.image}`,
+    priceOld,
+    priceCurrent : price,
+    pixPrice     : null,
+    discount,
+    installments : null,
+    rating       : Number((it.item_rating?.rating_star || 4.5).toFixed(1)),
+    reviews      : it.sold || 0,
+    badges       : [
+      ...(discount >= 30 ? ['hot'] : []),
+      ...(it.is_official_shop ? ['new'] : []),
+    ],
+    url     : `https://shopee.com.br/product/${it.shopid}/${it.itemid}`,
+    addedAt : new Date().toISOString(),
+  };
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -348,6 +371,46 @@ async function searchAmazon(query, limit = 20) {
    ══════════════════════════════════════════════════════════ */
 app.get('/health', (_, res) => res.json({ ok: true, ts: Date.now() }));
 
+/* ── Feed de ofertas do dia (múltiplas categorias do ML) ───── */
+const DEAL_QUERIES = [
+  { q: 'smartphone 5g desconto',    limit: 8 },
+  { q: 'notebook gamer promoção',   limit: 6 },
+  { q: 'smart tv 4k 55 polegadas',  limit: 6 },
+  { q: 'fone ouvido bluetooth',     limit: 6 },
+  { q: 'airfryer fritadeira',       limit: 6 },
+  { q: 'perfume importado oferta',  limit: 6 },
+  { q: 'tênis nike adidas',         limit: 6 },
+  { q: 'câmera fotográfica',        limit: 6 },
+  { q: 'monitor gamer',             limit: 6 },
+  { q: 'aspirador robô',            limit: 6 },
+];
+
+app.get('/api/deals', async (req, res) => {
+  try {
+    /* Busca todas as categorias em paralelo; erros individuais não derrubam o feed */
+    const fetches  = DEAL_QUERIES.map(({ q, limit }) => searchMercadoLivre(q, limit).catch(() => []));
+    const batches  = await Promise.all(fetches);
+
+    const seen     = new Set();
+    const products = [];
+    for (const batch of batches) {
+      for (const p of batch) {
+        if (!seen.has(p.id)) {
+          seen.add(p.id);
+          /* Prioriza produtos que têm desconto real */
+          products.push(p);
+        }
+      }
+    }
+
+    products.sort((a, b) => b.discount - a.discount);
+    res.json({ ok: true, count: products.length, products });
+  } catch (err) {
+    console.error('[/api/deals]', err.message);
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
 /* Rota individual por marketplace */
 const scrapers = {
   mercadolivre : searchMercadoLivre,
@@ -365,6 +428,14 @@ for (const [name, fn] of Object.entries(scrapers)) {
       const products = await fn(q, limit);
       res.json({ ok: true, marketplace: name, count: products.length, products });
     } catch (err) {
+      /* 403/429 = site bloqueou o scraper — retorna 200 com array vazio
+         para não aparecer como erro vermelho no F12 do browser. */
+      const status = err.response?.status;
+      if (status === 403 || status === 429) {
+        console.warn(`[${name}] Bloqueado pelo site (HTTP ${status}) — retornando vazio`);
+        return res.json({ ok: true, marketplace: name, count: 0, products: [],
+          warning: `${name} temporariamente indisponível (${status})` });
+      }
       console.error(`[${name}]`, err.message);
       res.status(502).json({ ok: false, marketplace: name, error: err.message });
     }
