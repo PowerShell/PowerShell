@@ -31,10 +31,10 @@ Describe "Get-Command Feature tests" -Tag Feature {
         }
 
         It "Should respect CommandType when fuzzy matching" {
-            function Invoke-ZzqFuzzyCommandTypeThing { }
-            Set-Alias -Name Invoke-ZzqFuzzyCommandTypeThang -Value Invoke-ZzqFuzzyCommandTypeThing
-
             try {
+                function Invoke-ZzqFuzzyCommandTypeThing { }
+                Set-Alias -Name Invoke-ZzqFuzzyCommandTypeThang -Value Invoke-ZzqFuzzyCommandTypeThing -Force
+
                 $cmds = Get-Command Invoke-ZzqFuzzyCommandTypeThng -UseFuzzyMatching -CommandType Function
 
                 $cmds.Name | Should -Contain 'Invoke-ZzqFuzzyCommandTypeThing'

@@ -898,18 +898,9 @@ namespace Microsoft.PowerShell.Commands
                                     {
                                         CommandInfo current = commandScore.Command;
 
-                                        if (IsCommandMatch(ref current, out isDuplicate) && (!IsCommandInResult(current)) && IsParameterMatch(current))
+                                        if (TryAddCommandToResults(ref current, commandScore.Score, ref count, out isDuplicate))
                                         {
-                                            _accumulatedResults.Add(current);
-                                            _commandScores.Add(new CommandScore(current, commandScore.Score));
-
-                                            // Make sure we don't exceed the TotalCount parameter
-                                            ++count;
-
-                                            if (TotalCount >= 0 && count >= TotalCount)
-                                            {
-                                                break;
-                                            }
+                                            break;
                                         }
                                     }
                                 }
@@ -928,17 +919,9 @@ namespace Microsoft.PowerShell.Commands
                                         // Cannot pass in "command" by ref (foreach iteration variable)
                                         CommandInfo current = command;
 
-                                        if (IsCommandMatch(ref current, out isDuplicate) && (!IsCommandInResult(current)) && IsParameterMatch(current))
+                                        if (TryAddCommandToResults(ref current, null, ref count, out isDuplicate))
                                         {
-                                            _accumulatedResults.Add(current);
-
-                                            // Make sure we don't exceed the TotalCount parameter
-                                            ++count;
-
-                                            if (TotalCount >= 0 && count >= TotalCount)
-                                            {
-                                                break;
-                                            }
+                                            break;
                                         }
                                     }
                                 }
@@ -975,6 +958,28 @@ namespace Microsoft.PowerShell.Commands
                             exception));
                 }
             }
+        }
+
+        private bool TryAddCommandToResults(ref CommandInfo current, int? fuzzyScore, ref int currentCount, out bool isDuplicate)
+        {
+            if (IsCommandMatch(ref current, out isDuplicate) && (!IsCommandInResult(current)) && IsParameterMatch(current))
+            {
+                _accumulatedResults.Add(current);
+                if (fuzzyScore is int score)
+                {
+                    _commandScores.Add(new CommandScore(current, score));
+                }
+
+                // Make sure we don't exceed the TotalCount parameter
+                ++currentCount;
+
+                if (TotalCount >= 0 && currentCount >= TotalCount)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private bool FindCommandForName(SearchResolutionOptions options, string commandName, bool isPattern, bool emitErrors, ref int currentCount, out bool isDuplicate)
