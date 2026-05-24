@@ -3667,11 +3667,14 @@ namespace System.Management.Automation
             }
 
             string originalLength = value.Length.ToString(CultureInfo.InvariantCulture);
-            return string.Concat(
-                value.AsSpan(0, MaxLoggedArgumentStringLength),
+            string truncationMarker = string.Concat(
                 "...<truncated; original length: ".AsSpan(),
                 originalLength.AsSpan(),
                 ">".AsSpan());
+            int prefixLength = MaxLoggedArgumentStringLength - truncationMarker.Length;
+            return string.Concat(
+                value.AsSpan(0, prefixLength),
+                truncationMarker.AsSpan());
         }
 
         private static string ArgumentToString(object arg)

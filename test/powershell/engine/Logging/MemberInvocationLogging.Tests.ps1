@@ -7,6 +7,9 @@ Describe 'Member invocation logging' -Tags 'CI' {
         $argumentToString = $type.GetMethod(
             'ArgumentToString',
             [System.Reflection.BindingFlags]'NonPublic, Static')
+        $maxLoggedArgumentStringLength = [int]$type.GetField(
+            'MaxLoggedArgumentStringLength',
+            [System.Reflection.BindingFlags]'NonPublic, Static').GetRawConstantValue()
     }
 
     It 'Keeps short string arguments unchanged' {
@@ -15,13 +18,33 @@ Describe 'Member invocation logging' -Tags 'CI' {
         $argumentToString.Invoke($null, [object[]]@($value)) | Should -BeExactly $value
     }
 
+    It 'Keeps string arguments at the maximum length unchanged' {
+        $value = 'a' * $maxLoggedArgumentStringLength
+
+        $argumentToString.Invoke($null, [object[]]@($value)) | Should -BeExactly $value
+    }
+
     It 'Limits long string arguments' {
-        $value = 'a' * 5000
+        $originalLength = $maxLoggedArgumentStringLength + 904
+        $value = 'a' * $originalLength
+
+        $result = $argumentToString.Invoke($null, [object[]]@($value))
+        $truncationMarker = "...<truncated; original length: $originalLength>"
+        $expectedPrefixLength = $maxLoggedArgumentStringLength - $truncationMarker.Length
+
+        $result.Length | Should -Be $maxLoggedArgumentStringLength
+        $result.StartsWith(('a' * $expectedPrefixLength), [System.StringComparison]::Ordinal) | Should -BeTrue
+        $result | Should -Match $truncationMarker
+    }
+
+    It 'Limits string arguments just over the maximum length' {
+        $originalLength = $maxLoggedArgumentStringLength + 1
+        $value = 'a' * $originalLength
 
         $result = $argumentToString.Invoke($null, [object[]]@($value))
 
+        $result.Length | Should -Be $maxLoggedArgumentStringLength
         $result.Length | Should -BeLessThan $value.Length
-        $result.StartsWith(('a' * 4096), [System.StringComparison]::Ordinal) | Should -BeTrue
-        $result | Should -Match '<truncated; original length: 5000>'
+        $result | Should -Match "<truncated; original length: $originalLength>"
     }
 }
