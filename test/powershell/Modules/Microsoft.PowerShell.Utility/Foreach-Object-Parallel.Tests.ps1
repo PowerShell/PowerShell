@@ -511,11 +511,8 @@ $job | Wait-Job -Timeout 30 | Out-Null
 $job | Remove-Job -Force
 '@
 
-        $powershell = Join-Path -Path $PSHOME -ChildPath "pwsh"
-        if ($IsWindows) {
-            $powershell += ".exe"
-        }
-
+        $powershellName = if ($IsWindows) { "pwsh.exe" } else { "pwsh" }
+        $powershell = Join-Path -Path $PSHOME -ChildPath $powershellName
         $process = Start-Process -FilePath $powershell -ArgumentList @(
             '-NoLogo'
             '-NoProfile'
