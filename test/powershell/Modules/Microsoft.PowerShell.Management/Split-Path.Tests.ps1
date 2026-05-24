@@ -96,6 +96,26 @@ Describe "Split-Path" -Tags "CI" {
 	Split-Path -Parent "\\server1\share1"        | Should -BeExactly "${dirSep}${dirSep}server1"
     }
 
+    It "Should support parsing switches with LiteralPath" {
+        $literalDir = Join-Path -Path $TestDrive -ChildPath 'parent[dir]'
+        $literalPath = Join-Path -Path $literalDir -ChildPath 'child[file].txt'
+        $null = New-Item -ItemType Directory -Path $literalDir
+        $null = New-Item -ItemType File -Path $literalPath
+
+        Split-Path -LiteralPath $literalPath -Parent | Should -BeExactly $literalDir
+        Split-Path -LiteralPath $literalPath -Leaf | Should -BeExactly 'child[file].txt'
+        Split-Path -LiteralPath $literalPath -LeafBase | Should -BeExactly 'child[file]'
+        Split-Path -LiteralPath $literalPath -Extension | Should -BeExactly '.txt'
+        Split-Path -LiteralPath $literalPath -Qualifier | Should -BeExactly (Split-Path -Path $literalPath -Qualifier)
+        Split-Path -LiteralPath $literalPath -NoQualifier | Should -BeExactly (Split-Path -Path $literalPath -NoQualifier)
+        Split-Path -LiteralPath $literalPath -IsAbsolute | Should -BeTrue
+    }
+
+    It "Should reject conflicting parsing switches with LiteralPath" {
+        { Split-Path -LiteralPath TestDrive:\file.txt -Parent -Leaf -ErrorAction Stop } |
+            Should -Throw -ErrorId 'AmbiguousParameterSet,Microsoft.PowerShell.Commands.SplitPathCommand'
+    }
+
     It 'Does not split a drive letter' {
         Split-Path -Path 'C:\' | Should -BeNullOrEmpty
     }
