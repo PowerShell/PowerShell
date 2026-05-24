@@ -64,8 +64,29 @@ function guessCategory(name = '') {
    API — camada de dados
    ══════════════════════════════════════════════════════════ */
 const API = {
-  BACKEND     : 'http://localhost:3001',
+  BACKEND     : window.location.port === '3001' ? '' : 'http://localhost:3001',
   backendOnline: false,
+
+  /** Busca featured deals do ML diretamente pelo browser (sem backend) */
+  async fetchFeaturedML() {
+    const queries = [
+      'smartphone 5g', 'notebook gamer', 'smart tv 4k',
+      'fone bluetooth', 'airfryer', 'perfume importado',
+      'tênis nike', 'câmera fotográfica',
+    ];
+    const results = await Promise.allSettled(
+      queries.map(q => this._fetchML(q, 8))
+    );
+    const seen     = new Set();
+    const products = [];
+    for (const r of results) {
+      if (r.status !== 'fulfilled') continue;
+      for (const p of r.value) {
+        if (!seen.has(p.id)) { seen.add(p.id); products.push(p); }
+      }
+    }
+    return products.sort((a, b) => b.discount - a.discount);
+  },
 
   /** Verifica se o backend local está rodando */
   async checkBackend() {
@@ -109,8 +130,8 @@ const API = {
   },
 
   /** Chama a API pública do Mercado Livre diretamente do browser */
-  async _fetchML(query) {
-    const url = `https://api.mercadolibre.com/sites/MLB/search?q=${encodeURIComponent(query)}&limit=24&sort=relevance`;
+  async _fetchML(query, limit = 24) {
+    const url = `https://api.mercadolibre.com/sites/MLB/search?q=${encodeURIComponent(query)}&limit=${limit}&sort=relevance`;
     const res  = await fetch(url, { signal: AbortSignal.timeout(10000) });
     if (!res.ok) throw new Error(`ML API: ${res.status}`);
     const data = await res.json();
@@ -295,13 +316,20 @@ function renderProductCard(product) {
             : ''}
         </div>
 
-        <button class="btn-offer" onclick="openOffer(event, ${safeId})">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-            <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
-          </svg>
-          Ver oferta
-        </button>
+        <div class="card-actions">
+          <button class="btn-offer" onclick="openOffer(event, ${safeId})">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+              <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+            </svg>
+            Ver oferta
+          </button>
+          <button class="btn-copy" onclick="copyLink(event, ${safeId})" title="Copiar link" aria-label="Copiar link para afiliado">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+          </button>
+        </div>
       </div>
     </article>
   `;
@@ -447,6 +475,70 @@ function openOffer(event, productId) {
                || [...state.favorites.values()].find(p => p.id === productId);
   if (!product?.url) return;
   window.open(product.url, '_blank', 'noopener,noreferrer');
+}
+
+async function copyLink(event, productId) {
+  if (event) event.stopPropagation();
+  const product = state.allProducts.find(p => p.id === productId)
+               || [...state.favorites.values()].find(p => p.id === productId);
+  if (!product?.url) return;
+
+  try {
+    await navigator.clipboard.writeText(product.url);
+  } catch {
+    /* fallback para browsers sem suporte à Clipboard API */
+    const el = Object.assign(document.createElement('textarea'), { value: product.url });
+    document.body.appendChild(el); el.select(); document.execCommand('copy');
+    document.body.removeChild(el);
+  }
+
+  /* Feedback visual no botão */
+  const card = document.querySelector(`.product-card[data-id="${CSS.escape(productId)}"]`);
+  const btn  = card?.querySelector('.btn-copy');
+  if (btn) {
+    btn.classList.add('copied');
+    btn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>';
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+    }, 2000);
+  }
+
+  showToast('📋 Link copiado! Cole na sua plataforma de afiliados.');
+}
+
+/* ── Carrega feed de promoções automático (sem precisar buscar) ── */
+async function loadDeals() {
+  if (state.loading) return;
+  state.loading = true;
+  state.page    = 1;
+
+  document.getElementById('productsGrid').innerHTML = renderSkeletons(12);
+  document.getElementById('emptyState').style.display      = 'none';
+  document.getElementById('loadMoreWrapper').style.display  = 'none';
+  document.getElementById('resultsCount').innerHTML         = 'Carregando ofertas do dia…';
+
+  try {
+    let products;
+    if (API.backendOnline) {
+      const res  = await fetch(`${API.BACKEND}/api/deals`, { signal: AbortSignal.timeout(15000) });
+      const data = await res.json();
+      products   = data.products || [];
+    } else {
+      products = await API.fetchFeaturedML();
+    }
+    state.allProducts = products;
+    state.query       = '';
+    applyFilters();
+    renderProducts();
+  } catch (err) {
+    console.error('[loadDeals]', err);
+    showToast('❌ Erro ao carregar ofertas. Verifique a conexão.');
+    document.getElementById('productsGrid').innerHTML = '';
+    document.getElementById('emptyState').style.display = 'block';
+  } finally {
+    state.loading = false;
+  }
 }
 
 function handleCardClick(event, productId) {
@@ -611,7 +703,7 @@ function wireEvents() {
     searchClear.classList.remove('visible');
     acList.classList.remove('open');
     state.query = '';
-    runSearch();
+    loadDeals(); /* volta ao feed automático ao limpar a busca */
   });
 
   document.addEventListener('click', e => {
@@ -749,16 +841,16 @@ async function init() {
   injectStatusBar();
   wireEvents();
 
-  /* Verifica backend em paralelo com a primeira busca */
+  /* Verifica o backend; se vier online depois do carregamento inicial
+     e só há resultados de ML, recarrega para incluir todos os marketplaces. */
   API.checkBackend().then(() => {
-    /* Se backend mudou de estado durante a busca inicial, recarrega */
     if (API.backendOnline && state.allProducts.every(p => p.marketplace === 'mercadolivre')) {
-      runSearch();
+      loadDeals();
     }
   });
 
-  /* Busca inicial com "smartphone" para mostrar produtos imediatamente */
-  await runSearch();
+  /* Carrega o feed de promoções do dia imediatamente (sem precisar buscar) */
+  await loadDeals();
 }
 
 document.addEventListener('DOMContentLoaded', init);

@@ -719,10 +719,15 @@ body.light-theme .navbar {
   color: var(--text-muted);
 }
 
-/* CTA button */
-.btn-offer {
+/* CTA buttons row */
+.card-actions {
+  display: flex;
+  gap: 8px;
   margin-top: 12px;
-  width: 100%;
+}
+
+.btn-offer {
+  flex: 1;
   padding: 10px;
   border-radius: var(--radius-sm);
   background: var(--accent-grd);
@@ -735,8 +740,33 @@ body.light-theme .navbar {
   align-items: center;
   justify-content: center;
   gap: 6px;
+  white-space: nowrap;
 }
 .btn-offer:hover { opacity: .88; transform: translateY(-1px); }
+
+.btn-copy {
+  width: 42px;
+  flex-shrink: 0;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border);
+  background: var(--bg-input);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--t-fast) var(--ease);
+  position: relative;
+}
+.btn-copy:hover {
+  border-color: var(--accent-1);
+  color: var(--accent-1);
+  background: rgba(138,99,255,.1);
+}
+.btn-copy.copied {
+  border-color: #4ade80;
+  color: #4ade80;
+  background: rgba(74,222,128,.1);
+}
 .btn-offer:active { transform: translateY(0); }
 
 /* ── Skeleton ─────────────────────────────────────────────── */
