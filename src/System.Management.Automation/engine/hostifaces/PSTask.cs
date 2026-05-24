@@ -4,7 +4,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Management.Automation.Host;
 using System.Management.Automation.Language;
 using System.Management.Automation.Remoting.Internal;
@@ -999,6 +998,8 @@ namespace System.Management.Automation.PSTasks
         #region Members
 
         private readonly PSTaskPool _taskPool;
+        private readonly object _syncObject = new();
+        private readonly List<PSTaskChildJob> _taskChildJobs = new();
         private bool _isOpen;
         private bool _stopSignaled;
 
@@ -1057,11 +1058,14 @@ namespace System.Management.Automation.PSTasks
         {
             get
             {
-                foreach (var childJob in ChildJobs.ToArray())
+                lock (_syncObject)
                 {
-                    if (childJob.HasMoreData)
+                    foreach (PSTaskChildJob childJob in _taskChildJobs)
                     {
-                        return true;
+                        if (childJob.HasMoreData)
+                        {
+                            return true;
+                        }
                     }
                 }
 
@@ -1114,13 +1118,17 @@ namespace System.Management.Automation.PSTasks
         /// <returns>True when child job is successfully added.</returns>
         internal bool AddJob(PSTaskChildJob childJob)
         {
-            if (!_isOpen)
+            lock (_syncObject)
             {
-                return false;
-            }
+                if (!_isOpen)
+                {
+                    return false;
+                }
 
-            ChildJobs.Add(childJob);
-            return true;
+                ChildJobs.Add(childJob);
+                _taskChildJobs.Add(childJob);
+                return true;
+            }
         }
 
         /// <summary>
@@ -1129,7 +1137,13 @@ namespace System.Management.Automation.PSTasks
         /// </summary>
         internal void Start()
         {
-            _isOpen = false;
+            PSTaskChildJob[] childJobs;
+            lock (_syncObject)
+            {
+                _isOpen = false;
+                childJobs = _taskChildJobs.ToArray();
+            }
+
             SetJobState(JobState.Running);
 
             // Submit jobs to the task pool, blocking when throttle limit is reached.
@@ -1138,7 +1152,7 @@ namespace System.Management.Automation.PSTasks
             System.Threading.ThreadPool.QueueUserWorkItem(
                 (_) =>
                 {
-                    foreach (PSTaskChildJob childJob in ChildJobs.ToArray())
+                    foreach (PSTaskChildJob childJob in childJobs)
                     {
                         _taskPool.Add(childJob);
                     }
@@ -1163,12 +1177,15 @@ namespace System.Management.Automation.PSTasks
 
                 // Final state will be 'Complete', only if all child jobs completed successfully.
                 JobState finalState = JobState.Completed;
-                foreach (var childJob in ChildJobs.ToArray())
+                lock (_syncObject)
                 {
-                    if (childJob.JobStateInfo.State != JobState.Completed)
+                    foreach (PSTaskChildJob childJob in _taskChildJobs)
                     {
-                        finalState = JobState.Failed;
-                        break;
+                        if (childJob.JobStateInfo.State != JobState.Completed)
+                        {
+                            finalState = JobState.Failed;
+                            break;
+                        }
                     }
                 }
 

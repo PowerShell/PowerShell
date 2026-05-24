@@ -496,7 +496,6 @@ $job = 0..20 | ForEach-Object -AsJob -Parallel {
     $_
 } -ThrottleLimit 2
 
-Start-Sleep -Milliseconds 100
 $deadline = [DateTime]::UtcNow.AddSeconds(30)
 while ($job.ChildJobs.Count -le 15 -and [DateTime]::UtcNow -lt $deadline) {
     Start-Sleep -Milliseconds 100
@@ -513,14 +512,30 @@ $job | Remove-Job -Force
 '@
 
         $powershell = Join-Path -Path $PSHOME -ChildPath "pwsh"
+        if ($IsWindows) {
+            $powershell += ".exe"
+        }
+
         $process = Start-Process -FilePath $powershell -ArgumentList @(
             '-NoLogo'
             '-NoProfile'
             '-NonInteractive'
             '-File'
             $testScript
-        ) -RedirectStandardOutput $stdoutPath -RedirectStandardError $stderrPath -Wait -PassThru
+        ) -RedirectStandardOutput $stdoutPath -RedirectStandardError $stderrPath -PassThru
 
+        try {
+            $process | Wait-Process -Timeout 60 -ErrorAction Stop
+        }
+        catch {
+            if (-not $process.HasExited) {
+                $process | Stop-Process -Force
+            }
+
+            throw
+        }
+
+        $process.Refresh()
         $process.ExitCode | Should -Be 0
     }
 
