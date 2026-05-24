@@ -886,10 +886,9 @@ namespace Microsoft.PowerShell.Commands
                         {
                             if (TotalCount < 0 || count < TotalCount)
                             {
-                                IEnumerable<CommandInfo> commands;
                                 if (UseFuzzyMatching)
                                 {
-                                    foreach (var commandScore in ModuleUtils.GetFuzzyMatchingCommands(
+                                    foreach (CommandScore commandScore in ModuleUtils.GetFuzzyMatchingCommands(
                                         plainCommandName,
                                         Context,
                                         MyInvocation.CommandOrigin,
@@ -897,37 +896,49 @@ namespace Microsoft.PowerShell.Commands
                                         rediscoverImportedModules: true,
                                         moduleVersionRequired: _isFullyQualifiedModuleSpecified))
                                     {
-                                        _commandScores.Add(commandScore);
-                                    }
+                                        CommandInfo current = commandScore.Command;
 
-                                    commands = _commandScores.Select(static x => x.Command);
+                                        if (IsCommandMatch(ref current, out isDuplicate) && (!IsCommandInResult(current)) && IsParameterMatch(current))
+                                        {
+                                            _accumulatedResults.Add(current);
+                                            _commandScores.Add(new CommandScore(current, commandScore.Score));
+
+                                            // Make sure we don't exceed the TotalCount parameter
+                                            ++count;
+
+                                            if (TotalCount >= 0 && count >= TotalCount)
+                                            {
+                                                break;
+                                            }
+                                        }
+                                    }
                                 }
                                 else
                                 {
-                                    commands = ModuleUtils.GetMatchingCommands(
+                                    IEnumerable<CommandInfo> commands = ModuleUtils.GetMatchingCommands(
                                         plainCommandName,
                                         Context,
                                         MyInvocation.CommandOrigin,
                                         rediscoverImportedModules: true,
                                         moduleVersionRequired: _isFullyQualifiedModuleSpecified,
                                         useAbbreviationExpansion: UseAbbreviationExpansion);
-                                }
 
-                                foreach (CommandInfo command in commands)
-                                {
-                                    // Cannot pass in "command" by ref (foreach iteration variable)
-                                    CommandInfo current = command;
-
-                                    if (IsCommandMatch(ref current, out isDuplicate) && (!IsCommandInResult(current)) && IsParameterMatch(current))
+                                    foreach (CommandInfo command in commands)
                                     {
-                                        _accumulatedResults.Add(current);
+                                        // Cannot pass in "command" by ref (foreach iteration variable)
+                                        CommandInfo current = command;
 
-                                        // Make sure we don't exceed the TotalCount parameter
-                                        ++count;
-
-                                        if (TotalCount >= 0 && count >= TotalCount)
+                                        if (IsCommandMatch(ref current, out isDuplicate) && (!IsCommandInResult(current)) && IsParameterMatch(current))
                                         {
-                                            break;
+                                            _accumulatedResults.Add(current);
+
+                                            // Make sure we don't exceed the TotalCount parameter
+                                            ++count;
+
+                                            if (TotalCount >= 0 && count >= TotalCount)
+                                            {
+                                                break;
+                                            }
                                         }
                                     }
                                 }

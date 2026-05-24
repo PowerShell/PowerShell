@@ -29,6 +29,23 @@ Describe "Get-Command Feature tests" -Tag Feature {
                 $cmd.Score | Should -BeLessOrEqual 3
             }
         }
+
+        It "Should respect CommandType when fuzzy matching" {
+            function Invoke-ZzqFuzzyCommandTypeThing { }
+            Set-Alias -Name Invoke-ZzqFuzzyCommandTypeThang -Value Invoke-ZzqFuzzyCommandTypeThing
+
+            try {
+                $cmds = Get-Command Invoke-ZzqFuzzyCommandTypeThng -UseFuzzyMatching -CommandType Function
+
+                $cmds.Name | Should -Contain 'Invoke-ZzqFuzzyCommandTypeThing'
+                $cmds.Name | Should -Not -Contain 'Invoke-ZzqFuzzyCommandTypeThang'
+                $cmds.CommandType | Should -Not -Contain ([System.Management.Automation.CommandTypes]::Alias)
+            }
+            finally {
+                Remove-Item -Path Function:\Invoke-ZzqFuzzyCommandTypeThing -ErrorAction SilentlyContinue
+                Remove-Item -Path Alias:\Invoke-ZzqFuzzyCommandTypeThang -ErrorAction SilentlyContinue
+            }
+        }
     }
 
     Context "-UseAbbreviationExpansion tests" {
