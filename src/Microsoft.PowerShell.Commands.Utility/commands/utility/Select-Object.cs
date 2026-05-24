@@ -303,6 +303,45 @@ namespace Microsoft.PowerShell.Commands
 
         private List<UniquePSObjectHelper> _uniques = null;
 
+        private static List<PSPropertyExpression> ResolvePropertyNames(PSPropertyExpression expression, PSObject inputObject)
+        {
+            PSPropertyExpression literalExpression = ResolveEscapedLiteralPropertyName(expression, inputObject);
+            return literalExpression is null
+                ? expression.ResolveNames(inputObject)
+                : new List<PSPropertyExpression> { literalExpression };
+        }
+
+        private static List<PSPropertyExpressionResult> GetPropertyValues(PSPropertyExpression expression, PSObject inputObject)
+        {
+            List<PSPropertyExpressionResult> expressionResults = new();
+            foreach (PSPropertyExpression resolvedName in ResolvePropertyNames(expression, inputObject))
+            {
+                expressionResults.AddRange(resolvedName.GetValues(inputObject));
+            }
+
+            return expressionResults;
+        }
+
+        private static PSPropertyExpression ResolveEscapedLiteralPropertyName(PSPropertyExpression expression, PSObject inputObject)
+        {
+            if (expression.Script is not null || expression.HasWildCardCharacters)
+            {
+                return null;
+            }
+
+            string expressionText = expression.ToString();
+            string propertyName = WildcardPattern.Unescape(expressionText);
+            if (string.Equals(propertyName, expressionText, StringComparison.Ordinal))
+            {
+                return null;
+            }
+
+            PSPropertyInfo member = inputObject.Properties[propertyName];
+            return member is null
+                ? null
+                : new PSPropertyExpression(member.Name, isResolved: true);
+        }
+
         private void ProcessExpressionParameter()
         {
             TerminatingErrorContext invocationContext = new(this);
@@ -544,35 +583,6 @@ namespace Microsoft.PowerShell.Commands
                     inputObject);
                 throw new SelectObjectException(errorRecord);
             }
-        }
-
-        private static List<PSPropertyExpression> ResolvePropertyNames(PSPropertyExpression expression, PSObject inputObject)
-        {
-            PSPropertyExpression literalExpression = GetLiteralPropertyExpression(expression, inputObject);
-            return literalExpression is null
-                ? expression.ResolveNames(inputObject)
-                : new List<PSPropertyExpression> { literalExpression };
-        }
-
-        private static List<PSPropertyExpressionResult> GetPropertyValues(PSPropertyExpression expression, PSObject inputObject)
-        {
-            PSPropertyExpression literalExpression = GetLiteralPropertyExpression(expression, inputObject);
-            return literalExpression is null
-                ? expression.GetValues(inputObject)
-                : literalExpression.GetValues(inputObject);
-        }
-
-        private static PSPropertyExpression GetLiteralPropertyExpression(PSPropertyExpression expression, PSObject inputObject)
-        {
-            if (expression.Script is not null)
-            {
-                return null;
-            }
-
-            string propertyName = WildcardPattern.Unescape(expression.ToString());
-            return inputObject.Properties[propertyName] is null
-                ? null
-                : new PSPropertyExpression(propertyName, isResolved: true);
         }
 
         private void AddNoteProperties(PSObject expandedObject, PSObject inputObject, IEnumerable<PSNoteProperty> matchedProperties)

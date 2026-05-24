@@ -96,7 +96,18 @@ Describe "Select-Object" -Tags "CI" {
         $result.'Foo[]' | Should -BeExactly 'brackets'
     }
 
-    It "Should prefer an exact property name before wildcard expansion" {
+    It "Should preserve matched member casing for escaped wildcard property names" {
+        $inputObject = [pscustomobject]@{
+            'Foo[]' = 'brackets'
+        }
+
+        $result = $inputObject | Select-Object -Property ([WildcardPattern]::Escape('foo[]'))
+
+        $result.PSObject.Properties.Name | Should -BeExactly 'Foo[]'
+        $result.'Foo[]' | Should -BeExactly 'brackets'
+    }
+
+    It "Should preserve wildcard expansion when an exact wildcard-pattern property exists" {
         $inputObject = [pscustomobject]@{
             'Foo*' = 'literal'
             'Foo1' = 'wildcard'
@@ -104,8 +115,10 @@ Describe "Select-Object" -Tags "CI" {
 
         $result = $inputObject | Select-Object -Property 'Foo*'
 
-        $result.PSObject.Properties.Name | Should -BeExactly 'Foo*'
+        $result.PSObject.Properties.Name | Should -Contain 'Foo*'
+        $result.PSObject.Properties.Name | Should -Contain 'Foo1'
         $result.'Foo*' | Should -BeExactly 'literal'
+        $result.Foo1 | Should -BeExactly 'wildcard'
     }
 
     It "Should expand literal property names that contain wildcard characters" {
