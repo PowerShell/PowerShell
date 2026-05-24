@@ -497,6 +497,15 @@ $job = 0..20 | ForEach-Object -AsJob -Parallel {
 } -ThrottleLimit 2
 
 Start-Sleep -Milliseconds 100
+$deadline = [DateTime]::UtcNow.AddSeconds(30)
+while ($job.ChildJobs.Count -le 15 -and [DateTime]::UtcNow -lt $deadline) {
+    Start-Sleep -Milliseconds 100
+}
+
+if ($job.ChildJobs.Count -le 15) {
+    throw "Timed out waiting for child jobs to be created."
+}
+
 $job.ChildJobs.RemoveAt(15)
 
 $job | Wait-Job -Timeout 30 | Out-Null

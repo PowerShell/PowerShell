@@ -4,6 +4,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Management.Automation.Host;
 using System.Management.Automation.Language;
 using System.Management.Automation.Remoting.Internal;
@@ -998,7 +999,6 @@ namespace System.Management.Automation.PSTasks
         #region Members
 
         private readonly PSTaskPool _taskPool;
-        private readonly List<PSTaskChildJob> _taskChildJobs;
         private bool _isOpen;
         private bool _stopSignaled;
 
@@ -1032,7 +1032,6 @@ namespace System.Management.Automation.PSTasks
             bool useNewRunspace) : base(command, string.Empty)
         {
             _taskPool = new PSTaskPool(throttleLimit, useNewRunspace);
-            _taskChildJobs = new List<PSTaskChildJob>();
             _isOpen = true;
             PSJobTypeName = nameof(PSTaskJob);
 
@@ -1058,7 +1057,7 @@ namespace System.Management.Automation.PSTasks
         {
             get
             {
-                foreach (var childJob in _taskChildJobs)
+                foreach (var childJob in ChildJobs.ToArray())
                 {
                     if (childJob.HasMoreData)
                     {
@@ -1121,7 +1120,6 @@ namespace System.Management.Automation.PSTasks
             }
 
             ChildJobs.Add(childJob);
-            _taskChildJobs.Add(childJob);
             return true;
         }
 
@@ -1140,7 +1138,7 @@ namespace System.Management.Automation.PSTasks
             System.Threading.ThreadPool.QueueUserWorkItem(
                 (_) =>
                 {
-                    foreach (var childJob in _taskChildJobs)
+                    foreach (PSTaskChildJob childJob in ChildJobs.ToArray())
                     {
                         _taskPool.Add(childJob);
                     }
@@ -1165,7 +1163,7 @@ namespace System.Management.Automation.PSTasks
 
                 // Final state will be 'Complete', only if all child jobs completed successfully.
                 JobState finalState = JobState.Completed;
-                foreach (var childJob in _taskChildJobs)
+                foreach (var childJob in ChildJobs.ToArray())
                 {
                     if (childJob.JobStateInfo.State != JobState.Completed)
                     {
