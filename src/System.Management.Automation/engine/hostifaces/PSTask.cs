@@ -998,6 +998,7 @@ namespace System.Management.Automation.PSTasks
         #region Members
 
         private readonly PSTaskPool _taskPool;
+        private readonly List<PSTaskChildJob> _taskChildJobs;
         private bool _isOpen;
         private bool _stopSignaled;
 
@@ -1031,6 +1032,7 @@ namespace System.Management.Automation.PSTasks
             bool useNewRunspace) : base(command, string.Empty)
         {
             _taskPool = new PSTaskPool(throttleLimit, useNewRunspace);
+            _taskChildJobs = new List<PSTaskChildJob>();
             _isOpen = true;
             PSJobTypeName = nameof(PSTaskJob);
 
@@ -1056,7 +1058,7 @@ namespace System.Management.Automation.PSTasks
         {
             get
             {
-                foreach (var childJob in ChildJobs)
+                foreach (var childJob in _taskChildJobs)
                 {
                     if (childJob.HasMoreData)
                     {
@@ -1119,6 +1121,7 @@ namespace System.Management.Automation.PSTasks
             }
 
             ChildJobs.Add(childJob);
+            _taskChildJobs.Add(childJob);
             return true;
         }
 
@@ -1137,9 +1140,9 @@ namespace System.Management.Automation.PSTasks
             System.Threading.ThreadPool.QueueUserWorkItem(
                 (_) =>
                 {
-                    foreach (var childJob in ChildJobs)
+                    foreach (var childJob in _taskChildJobs)
                     {
-                        _taskPool.Add((PSTaskChildJob)childJob);
+                        _taskPool.Add(childJob);
                     }
 
                     _taskPool.Close();
@@ -1162,7 +1165,7 @@ namespace System.Management.Automation.PSTasks
 
                 // Final state will be 'Complete', only if all child jobs completed successfully.
                 JobState finalState = JobState.Completed;
-                foreach (var childJob in ChildJobs)
+                foreach (var childJob in _taskChildJobs)
                 {
                     if (childJob.JobStateInfo.State != JobState.Completed)
                     {

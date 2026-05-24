@@ -486,6 +486,35 @@ Describe 'ForEach-Object -Parallel -AsJob Basic Tests' -Tags 'CI' {
         $job | Wait-Job | Remove-Job
     }
 
+    It 'Does not crash when the ChildJobs collection is mutated while a parallel job starts' {
+        $testScript = Join-Path $TestDrive 'Mutate-ChildJobs.ps1'
+        $stdoutPath = Join-Path $TestDrive 'stdout.txt'
+        $stderrPath = Join-Path $TestDrive 'stderr.txt'
+        Set-Content -LiteralPath $testScript -Value @'
+$job = 0..20 | ForEach-Object -AsJob -Parallel {
+    Start-Sleep -Milliseconds 300
+    $_
+} -ThrottleLimit 2
+
+Start-Sleep -Milliseconds 100
+$job.ChildJobs.RemoveAt(15)
+
+$job | Wait-Job -Timeout 30 | Out-Null
+$job | Remove-Job -Force
+'@
+
+        $powershell = Join-Path -Path $PSHOME -ChildPath "pwsh"
+        $process = Start-Process -FilePath $powershell -ArgumentList @(
+            '-NoLogo'
+            '-NoProfile'
+            '-NonInteractive'
+            '-File'
+            $testScript
+        ) -RedirectStandardOutput $stdoutPath -RedirectStandardError $stderrPath -Wait -PassThru
+
+        $process.ExitCode | Should -Be 0
+    }
+
     It 'Verifies dollar underbar variable' {
 
         $expected = 1..10
