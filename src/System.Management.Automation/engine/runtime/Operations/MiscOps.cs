@@ -3657,6 +3657,23 @@ namespace System.Management.Automation
         );
 #endif
 
+        private const int MaxLoggedArgumentStringLength = 4096;
+
+        private static string LimitLoggedArgumentString(string value)
+        {
+            if (value is null || value.Length <= MaxLoggedArgumentStringLength)
+            {
+                return value;
+            }
+
+            string originalLength = value.Length.ToString(CultureInfo.InvariantCulture);
+            return string.Concat(
+                value.AsSpan(0, MaxLoggedArgumentStringLength),
+                "...<truncated; original length: ".AsSpan(),
+                originalLength.AsSpan(),
+                ">".AsSpan());
+        }
+
         private static string ArgumentToString(object arg)
         {
             object baseObj = PSObject.Base(arg);
@@ -3669,7 +3686,7 @@ namespace System.Management.Automation
             // The comparisons below are ordered by the likelihood of arguments being of those types.
             if (baseObj is string str)
             {
-                return str;
+                return LimitLoggedArgumentString(str);
             }
 
             // Special case some types to call 'ToString' on the object. For the rest, we return its
@@ -3683,7 +3700,7 @@ namespace System.Management.Automation
                 || baseType == typeof(BigInteger)
                 || baseType == typeof(decimal))
             {
-                return baseObj.ToString();
+                return LimitLoggedArgumentString(baseObj.ToString());
             }
 
             return baseType.FullName;
