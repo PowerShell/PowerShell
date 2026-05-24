@@ -67,33 +67,15 @@ const API = {
   BACKEND     : window.location.port === '3001' ? '' : 'http://localhost:3001',
   backendOnline: false,
 
-  /** Busca featured deals do ML diretamente pelo browser (sem backend) */
-  async fetchFeaturedML() {
-    const queries = [
-      'smartphone 5g', 'notebook gamer', 'smart tv 4k',
-      'fone bluetooth', 'airfryer', 'perfume importado',
-      'tênis nike', 'câmera fotográfica',
-    ];
-    const results = await Promise.allSettled(
-      queries.map(q => this._fetchML(q, 8))
-    );
-    const seen     = new Set();
-    const products = [];
-    for (const r of results) {
-      if (r.status !== 'fulfilled') continue;
-      for (const p of r.value) {
-        if (!seen.has(p.id)) { seen.add(p.id); products.push(p); }
-      }
-    }
-    return products.sort((a, b) => b.discount - a.discount);
-  },
+  /* ── ML é SEMPRE chamado direto do browser (CORS aberto, IP do usuário)
+        O backend nunca é usado para ML — evita bloqueio por IP de servidor. ── */
 
   /** Verifica se o backend local está rodando */
   async checkBackend() {
     try {
-      const ctrl = new AbortController();
+      const ctrl  = new AbortController();
       const timer = setTimeout(() => ctrl.abort(), 1800);
-      const res = await fetch(`${this.BACKEND}/health`, { signal: ctrl.signal });
+      const res   = await fetch(`${this.BACKEND}/health`, { signal: ctrl.signal });
       clearTimeout(timer);
       this.backendOnline = res.ok;
     } catch {
@@ -103,30 +85,68 @@ const API = {
     return this.backendOnline;
   },
 
-  /** Busca produtos. Se backend online → usa rota combinada.
-   *  Se offline → usa apenas Mercado Livre direto do browser. */
+  /** Busca: ML direto do browser + outros via backend (em paralelo) */
   async search(query) {
     const q = (query || '').trim() || 'smartphone';
 
-    if (this.backendOnline) {
-      try {
-        const res  = await fetch(
-          `${this.BACKEND}/api/search?q=${encodeURIComponent(q)}&limit=24`,
-          { signal: AbortSignal.timeout(15000) }
-        );
-        const data = await res.json();
-        this._reportErrors(data.errors);
-        return data.products || [];
-      } catch (err) {
-        console.warn('[API] Backend falhou, usando fallback ML direto:', err.message);
-        this.backendOnline = false;
-        this._updateStatusBar();
-      }
-    }
+    /* ML: sempre direto do browser */
+    const mlPromise = this._fetchML(q, 24).catch(err => {
+      console.warn('[ML direto]', err.message);
+      return [];
+    });
 
-    /* Fallback: Mercado Livre diretamente (CORS habilitado na API deles) */
-    showToast('ℹ️ Backend offline — exibindo apenas Mercado Livre');
-    return this._fetchML(q);
+    /* Shopee/Amazon/Magalu: via backend (opcional, se estiver rodando) */
+    const backendPromise = this.backendOnline
+      ? fetch(`${this.BACKEND}/api/search?q=${encodeURIComponent(q)}&limit=20`,
+              { signal: AbortSignal.timeout(15000) })
+          .then(r => r.json())
+          .then(d => { this._reportErrors(d.errors); return d.products || []; })
+          .catch(() => [])
+      : Promise.resolve([]);
+
+    const [mlProducts, backendProducts] = await Promise.all([mlPromise, backendPromise]);
+    return this._merge(mlProducts, backendProducts);
+  },
+
+  /** Feed de deals: ML featured direto + Shopee flash deals via backend */
+  async fetchDeals() {
+    /* ML: 4 categorias em série (não paralelo) pra evitar rate-limit */
+    const mlPromise = this.fetchFeaturedML();
+
+    /* Backend: endpoint /api/deals retorna Shopee flash + outros */
+    const backendPromise = this.backendOnline
+      ? fetch(`${this.BACKEND}/api/deals`, { signal: AbortSignal.timeout(15000) })
+          .then(r => r.json())
+          .then(d => d.products || [])
+          .catch(() => [])
+      : Promise.resolve([]);
+
+    const [ml, backend] = await Promise.all([mlPromise, backendPromise]);
+    return this._merge(ml, backend).sort((a, b) => b.discount - a.discount);
+  },
+
+  /** Busca ML featured em série (evita rate-limit com 8 paralelas) */
+  async fetchFeaturedML() {
+    const queries = [
+      'smartphone desconto',
+      'notebook gamer promoção',
+      'smart tv 4k oferta',
+      'fone bluetooth',
+      'airfryer',
+    ];
+    const seen     = new Set();
+    const products = [];
+    /* Série com pequena pausa entre requisições */
+    for (const q of queries) {
+      try {
+        const items = await this._fetchML(q, 10);
+        for (const p of items) {
+          if (!seen.has(p.id)) { seen.add(p.id); products.push(p); }
+        }
+        await new Promise(r => setTimeout(r, 120)); /* 120ms entre calls */
+      } catch { /* ignora falha individual */ }
+    }
+    return products;
   },
 
   /** Chama a API pública do Mercado Livre diretamente do browser */
@@ -166,6 +186,18 @@ const API = {
       url      : item.permalink,
       addedAt  : new Date().toISOString(),
     };
+  },
+
+  /** Combina dois arrays de produtos removendo duplicatas por ID */
+  _merge(...arrays) {
+    const seen = new Set();
+    const out  = [];
+    for (const arr of arrays) {
+      for (const p of arr) {
+        if (p && !seen.has(p.id)) { seen.add(p.id); out.push(p); }
+      }
+    }
+    return out;
   },
 
   _reportErrors(errors = {}) {
@@ -519,14 +551,7 @@ async function loadDeals() {
   document.getElementById('resultsCount').innerHTML         = 'Carregando ofertas do dia…';
 
   try {
-    let products;
-    if (API.backendOnline) {
-      const res  = await fetch(`${API.BACKEND}/api/deals`, { signal: AbortSignal.timeout(15000) });
-      const data = await res.json();
-      products   = data.products || [];
-    } else {
-      products = await API.fetchFeaturedML();
-    }
+    const products    = await API.fetchDeals();
     state.allProducts = products;
     state.query       = '';
     applyFilters();
