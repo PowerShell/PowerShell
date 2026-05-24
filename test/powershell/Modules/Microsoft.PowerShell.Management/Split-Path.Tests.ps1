@@ -99,16 +99,16 @@ Describe "Split-Path" -Tags "CI" {
     It "Should support parsing switches with LiteralPath" {
         $literalDir = Join-Path -Path $TestDrive -ChildPath 'parent[dir]'
         $literalPath = Join-Path -Path $literalDir -ChildPath 'child[file].txt'
-        $null = New-Item -ItemType Directory -Path $literalDir
-        $null = New-Item -ItemType File -Path $literalPath
+        [void][System.IO.Directory]::CreateDirectory($literalDir)
+        [System.IO.File]::WriteAllText($literalPath, '')
 
         Split-Path -LiteralPath $literalPath -Parent | Should -BeExactly $literalDir
         Split-Path -LiteralPath $literalPath -Leaf | Should -BeExactly 'child[file].txt'
         Split-Path -LiteralPath $literalPath -LeafBase | Should -BeExactly 'child[file]'
         Split-Path -LiteralPath $literalPath -Extension | Should -BeExactly '.txt'
-        Split-Path -LiteralPath $literalPath -Qualifier | Should -BeExactly (Split-Path -Path $literalPath -Qualifier)
-        Split-Path -LiteralPath $literalPath -NoQualifier | Should -BeExactly (Split-Path -Path $literalPath -NoQualifier)
         Split-Path -LiteralPath $literalPath -IsAbsolute | Should -BeTrue
+        Split-Path -LiteralPath env:PATH -Qualifier | Should -BeExactly 'env:'
+        Split-Path -LiteralPath env:PATH -NoQualifier | Should -BeExactly 'PATH'
     }
 
     It "Should reject conflicting parsing switches with LiteralPath" {

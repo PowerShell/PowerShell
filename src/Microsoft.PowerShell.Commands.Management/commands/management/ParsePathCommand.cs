@@ -95,7 +95,7 @@ namespace Microsoft.PowerShell.Commands
         private const string LiteralPathQualifierSet = "LiteralPathQualifierSet";
 
         /// <summary>
-        /// The parameter set name to get the noqualifier set for LiteralPath.
+        /// The parameter set name to return the path without the qualifier for LiteralPath.
         /// </summary>
         private const string LiteralPathNoQualifierSet = "LiteralPathNoQualifierSet";
 
