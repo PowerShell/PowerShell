@@ -149,6 +149,24 @@ Describe "Set-Location" -Tags "CI" {
             (Get-Location).Path | Should -Be $initialLocation
         }
 
+        It 'Should go through locations with wildcard characters when specifying minus and plus as paths' {
+            $testPath = Join-Path $TestDrive 'foo - bar(123-456)[foo]'
+            $otherPath = Join-Path $TestDrive 'other'
+            $null = New-Item -ItemType Directory -Path $testPath
+            $null = New-Item -ItemType Directory -Path $otherPath
+
+            Set-Location $TestDrive
+            $testDrivePath = (Get-Location).Path
+            Set-Location -LiteralPath $testPath
+            Set-Location -LiteralPath $otherPath
+            Set-Location -
+            (Get-Location).Path | Should -BeExactly $testPath
+            Set-Location -
+            (Get-Location).Path | Should -BeExactly $testDrivePath
+            Set-Location +
+            (Get-Location).Path | Should -BeExactly $testPath
+        }
+
         It 'Should go back to previous locations when specifying minus twice' {
             $initialLocation = (Get-Location).Path
             Set-Location ([System.IO.Path]::GetTempPath())
