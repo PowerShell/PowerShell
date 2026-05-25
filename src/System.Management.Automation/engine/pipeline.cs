@@ -162,6 +162,9 @@ namespace System.Management.Automation.Internal
 
         internal void LogExecutionException(Exception exception)
         {
+            if (exception is FlowControlException)
+                return;
+
             _executionFailed = true;
 
             // Only log one terminating error for pipeline execution.

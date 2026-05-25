@@ -161,6 +161,28 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         $transcriptFilePath | Should -FileContentMatch "PowerShell transcript end"
     }
 
+    It "Transcription should not record a terminating error when an advanced function exits" {
+        $scriptFilePath = Join-Path $TestDrive "exit-script.ps1"
+        $exitTranscriptFilePath = Join-Path $TestDrive "exit-transcript.txt"
+
+        @"
+Start-Transcript -Path '$exitTranscriptFilePath'
+function Exit-Script {
+    [CmdletBinding()]
+    param()
+    exit 255
+}
+
+Exit-Script
+"@ | Set-Content -Path $scriptFilePath
+
+        & "$PSHOME/pwsh" -NoProfile -File $scriptFilePath *> $null
+
+        $LASTEXITCODE | Should -Be 255
+        $exitTranscriptFilePath | Should -Exist
+        Get-Content -Path $exitTranscriptFilePath -Raw | Should -Not -Match 'TerminatingError\(\): "System error\."'
+    }
+
     It "Transcription should record native command output" {
         $script = {
             Start-Transcript -Path $transcriptFilePath
