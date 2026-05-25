@@ -35,6 +35,12 @@ Describe "CliXml test" -Tags "CI" {
                 $this.testFile = $file
             }
         }
+
+        function Get-ExtendedMemberName {
+            param([object] $InputObject)
+
+            @($InputObject | Get-Member -View Extended | Select-Object -ExpandProperty Name)
+        }
     }
 
     AfterAll {
@@ -184,6 +190,18 @@ Describe "CliXml test" -Tags "CI" {
             $cred.UserName | Should -BeExactly "Foo"
             $cred.Password | Should -BeOfType System.Security.SecureString
         }
+
+        It "does not add remoting serialization members to ErrorRecord input" {
+            $filePath = Join-Path $subFilePath 'error.xml'
+            Write-Error foo 2>$null
+            $errorRecord = $Error[0]
+            $before = Get-ExtendedMemberName $errorRecord
+
+            $errorRecord | Export-Clixml -Path $filePath
+
+            $after = Get-ExtendedMemberName $errorRecord
+            @($after | Where-Object { $_ -notin $before }) | Should -BeNullOrEmpty
+        }
     }
 
     Context "ConvertTo-CliXml"{
@@ -231,6 +249,17 @@ Describe "CliXml test" -Tags "CI" {
             }
 
             $isExisted | Should -BeTrue
+        }
+
+        It "does not add remoting serialization members to ErrorRecord input" {
+            Write-Error foo 2>$null
+            $errorRecord = $Error[0]
+            $before = Get-ExtendedMemberName $errorRecord
+
+            $null = $errorRecord | ConvertTo-CliXml
+
+            $after = Get-ExtendedMemberName $errorRecord
+            @($after | Where-Object { $_ -notin $before }) | Should -BeNullOrEmpty
         }
     }
 
