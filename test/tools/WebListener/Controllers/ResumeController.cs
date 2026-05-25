@@ -74,6 +74,22 @@ namespace mvc.Controllers
             await Response.Body.WriteAsync(FileBytes, 0, FileBytes.Length);
         }
 
+        public async void MissingContentRange()
+        {
+            SetResumeResponseHeaders();
+            string rangeHeader;
+            if (TryGetRangeHeader(out rangeHeader))
+            {
+                Response.StatusCode = StatusCodes.Status416RequestedRangeNotSatisfiable;
+                return;
+            }
+
+            Response.ContentType = MediaTypeNames.Application.Octet;
+            Response.ContentLength = FileBytes.Length;
+            Response.StatusCode = StatusCodes.Status200OK;
+            await Response.Body.WriteAsync(FileBytes, 0, FileBytes.Length);
+        }
+
         public async void Bytes(int NumberBytes)
         {
             if (NumberBytes > FileBytes.Length || NumberBytes < 0)
