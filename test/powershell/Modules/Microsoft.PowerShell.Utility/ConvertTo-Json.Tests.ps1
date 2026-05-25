@@ -134,10 +134,9 @@ Describe 'ConvertTo-Json' -tags "CI" {
 
     It 'Should not serialize ETS properties added to DateTime' {
         $date = "2021-06-24T15:54:06.796999-07:00"
-        $d = [DateTime]::Parse($date)
+        $d = [DateTimeOffset]::Parse($date).UtcDateTime
 
-        # need to use wildcard here due to some systems may be configured with different culture setting showing time in different format
-        $d | ConvertTo-Json -Compress | Should -BeLike '"2021-06-24T*'
+        $d | ConvertTo-Json -Compress | Should -BeExactly '"2021-06-24T22:54:06.796999Z"'
         $d | ConvertTo-Json | ConvertFrom-Json | Should -Be $d
     }
 
