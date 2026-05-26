@@ -37,7 +37,11 @@ Describe "Get-PowerShellConfiguration Tests" -Tags "CI" {
         $config.Path | Should -BeLike "*powershell.config.json"
         $config.Path | Should -Not -BeLike "*ProgramData*"
         if (-not $IsWindows) {
-            $config.Path | Should -BeLike "*/.config/powershell/*"
+            $expectedBase = $env:XDG_CONFIG_HOME
+            if (-not $expectedBase) {
+                $expectedBase = Join-Path $HOME ".config"
+            }
+            $config.Path | Should -BeLike "$expectedBase/powershell/*"
         }
     }
 

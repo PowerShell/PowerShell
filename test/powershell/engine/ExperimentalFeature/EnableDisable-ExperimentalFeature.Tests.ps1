@@ -3,22 +3,32 @@
 
 Import-Module HelpersCommon
 
+function Test-CanWriteToSystemConfigDir {
+    $dir = Split-Path (Get-PowerShellConfiguration -Scope AllUsers).Path
+    if (!(Test-Path $dir)) {
+        try {
+            $null = New-Item -ItemType Directory -Path $dir -Force -ErrorAction Stop
+            return $true
+        } catch {
+            return $false
+        }
+    }
+    try {
+        $testFile = Join-Path $dir ".pester-write-test"
+        Set-Content -Path $testFile -Value '' -ErrorAction Stop
+        Remove-Item $testFile -Force -ErrorAction SilentlyContinue
+        return $true
+    } catch {
+        return $false
+    }
+}
+
 Describe "Enable-ExperimentalFeature and Disable-ExperimentalFeature tests" -tags "Feature","RequireAdminOnWindows" {
 
     BeforeAll {
         $pwsh = "$PSHOME/pwsh"
-        if ($IsWindows) {
-            $systemConfigPath = Join-Path $env:ProgramData "Microsoft\PowerShell\powershell.config.json"
-        }
-        else {
-            $systemConfigPath = "/etc/powershell/powershell.config.json"
-        }
-        if ($IsWindows) {
-            $userConfigPath = "~/Documents/powershell/powershell.config.json"
-        }
-        else {
-            $userConfigPath = "~/.config/powershell/powershell.config.json"
-        }
+        $systemConfigPath = (Get-PowerShellConfiguration -Scope AllUsers).Path
+        $userConfigPath = (Get-PowerShellConfiguration -Scope CurrentUser).Path
 
         $systemConfigDir = Split-Path $systemConfigPath
         if (!(Test-Path $systemConfigDir)) {
@@ -65,7 +75,7 @@ Describe "Enable-ExperimentalFeature and Disable-ExperimentalFeature tests" -tag
     ) {
         param ($scope)
 
-        if (!(Test-CanWriteToPsHome) -and $scope -eq "AllUsers") {
+        if (!(Test-CanWriteToSystemConfigDir) -and $scope -eq "AllUsers") {
             return
         }
 
@@ -83,7 +93,7 @@ Describe "Enable-ExperimentalFeature and Disable-ExperimentalFeature tests" -tag
     ) {
         param ($scope, $configPath)
 
-        if (!(Test-CanWriteToPsHome) -and $scope -eq "AllUsers") {
+        if (!(Test-CanWriteToSystemConfigDir) -and $scope -eq "AllUsers") {
             return
         }
 
