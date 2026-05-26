@@ -87,8 +87,6 @@ namespace Microsoft.PowerShell.Commands
         private bool _force;
         #endregion Parameters
 
-        #region  Methods
-
         /// <summary>
         /// Validates the alias name is not the same as the value.
         /// </summary>
@@ -102,6 +100,5 @@ namespace Microsoft.PowerShell.Commands
                     nameof(Name));
             }
         }
-        #endregion
     }
 }
