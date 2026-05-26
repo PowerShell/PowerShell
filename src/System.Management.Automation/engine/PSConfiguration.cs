@@ -61,6 +61,10 @@ namespace System.Management.Automation.Configuration
         private string systemWideConfigFile;
         private string systemWideConfigDirectory;
 
+        // Legacy system-wide config file path in $PSHOME, used for fallback reads.
+        private readonly string legacySystemWideConfigFile;
+        private bool systemConfigOverridden;
+
         // The json file containing the per-user configuration settings.
         private readonly string perUserConfigFile;
         private readonly string perUserConfigDirectory;
@@ -81,14 +85,17 @@ namespace System.Management.Automation.Configuration
 
         private PowerShellConfig()
         {
-            // Sets the system-wide configuration file.
-            systemWideConfigDirectory = Utils.DefaultPowerShellAppBase;
+            // Sets the system-wide configuration file to the new platform-specific location.
+            // On Unix: /etc/powershell/powershell.config.json
+            // On Windows: %ProgramData%\Microsoft\PowerShell\powershell.config.json
+            systemWideConfigDirectory = InternalTestHooks.TestAllUsersConfigDirectory ?? Platform.SystemConfigDirectory;
             systemWideConfigFile = Path.Combine(systemWideConfigDirectory, ConfigFileName);
+            legacySystemWideConfigFile = Path.Combine(Utils.DefaultPowerShellAppBase, ConfigFileName);
 
             // Sets the per-user configuration directory
             // Note: This directory may or may not exist depending upon the execution scenario.
             // Writes will attempt to create the directory if it does not already exist.
-            perUserConfigDirectory = Platform.ConfigDirectory;
+            perUserConfigDirectory = Platform.UserConfigDirectory;
             if (!string.IsNullOrEmpty(perUserConfigDirectory))
             {
                 perUserConfigFile = Path.Combine(perUserConfigDirectory, ConfigFileName);
@@ -105,6 +112,35 @@ namespace System.Management.Automation.Configuration
         {
             return (scope == ConfigScope.CurrentUser) ? perUserConfigFile : systemWideConfigFile;
         }
+
+        private string GetConfigFilePathForRead(ConfigScope scope)
+        {
+            return (scope == ConfigScope.CurrentUser) ? perUserConfigFile : GetEffectiveSystemWideConfigFile();
+        }
+
+        private string GetEffectiveSystemWideConfigFile()
+        {
+            if (systemConfigOverridden)
+            {
+                return systemWideConfigFile;
+            }
+
+            if (File.Exists(systemWideConfigFile))
+            {
+                return systemWideConfigFile;
+            }
+
+            if (!string.IsNullOrEmpty(legacySystemWideConfigFile) && File.Exists(legacySystemWideConfigFile))
+            {
+                return legacySystemWideConfigFile;
+            }
+
+            return systemWideConfigFile;
+        }
+
+        internal string AllUsersConfigFilePath => systemWideConfigFile;
+
+        internal string CurrentUserConfigFilePath => perUserConfigFile;
 
         /// <summary>
         /// Sets the system wide configuration file path.
@@ -124,6 +160,7 @@ namespace System.Management.Automation.Configuration
             FileInfo info = new FileInfo(value);
             systemWideConfigFile = info.FullName;
             systemWideConfigDirectory = info.Directory.FullName;
+            systemConfigOverridden = true;
         }
 
         /// <summary>
@@ -389,7 +426,7 @@ namespace System.Management.Automation.Configuration
         /// <param name="defaultValue">The default value to return if the key is not present.</param>
         private T ReadValueFromFile<T>(ConfigScope scope, string key, T defaultValue = default)
         {
-            string fileName = GetConfigFilePath(scope);
+            string fileName = GetConfigFilePathForRead(scope);
             if (string.IsNullOrEmpty(fileName))
             {
                 return defaultValue;
@@ -578,6 +615,10 @@ namespace System.Management.Automation.Configuration
             if (scope == ConfigScope.CurrentUser && !Directory.Exists(perUserConfigDirectory))
             {
                 Directory.CreateDirectory(perUserConfigDirectory);
+            }
+            else if (scope == ConfigScope.AllUsers && !Directory.Exists(systemWideConfigDirectory))
+            {
+                Directory.CreateDirectory(systemWideConfigDirectory);
             }
 
             UpdateValueInFile<T>(scope, key, value, true);

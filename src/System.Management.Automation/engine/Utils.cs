@@ -1677,6 +1677,9 @@ namespace System.Management.Automation.Internal
         // Test out smaller connection buffer size when calling WNetGetConnection.
         internal static int WNetGetConnectionBufferSize = -1;
 
+        // Override the AllUsers config directory for testing config path fallback logic.
+        internal static string TestAllUsersConfigDirectory;
+
         /// <summary>This member is used for internal test purposes.</summary>
         public static void SetTestHook(string property, object value)
         {

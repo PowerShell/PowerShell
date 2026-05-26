@@ -11,6 +11,8 @@ if [ ! -f /etc/shells ] ; then
 else
     grep -q "^{0}$" /etc/shells || echo "{0}" >> /etc/shells
 fi
+mkdir -p /etc/powershell
+chmod 755 /etc/powershell
 if [ -f /lib64/libssl.so.1.1 ] ; then
     ln -f -s /lib64/libssl.so.1.1 {1}/libssl.so.1.0.0
     ln -f -s /lib64/libcrypto.so.1.1.1 {1}/libcrypto.so.1.0.0
@@ -39,6 +41,8 @@ set -e
 case "$1" in
     (configure)
         add-shell "{0}"
+        mkdir -p /etc/powershell
+        chmod 755 /etc/powershell
     ;;
     (abort-upgrade|abort-remove|abort-deconfigure)
         exit 0
@@ -82,6 +86,8 @@ if [ ! -f /etc/shells ] ; then
 else
     grep -q "^{0}$" /etc/shells || echo "{0}" >> /etc/shells
 fi
+mkdir -p /etc/powershell
+chmod 755 /etc/powershell
 '@
 
     MacOSLauncherScript = @'

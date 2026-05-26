@@ -164,16 +164,24 @@ namespace System.Management.Automation
 #if UNIX
         // Gets the location for cache and config folders.
         internal static readonly string CacheDirectory = Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE);
-        internal static readonly string ConfigDirectory = Platform.SelectProductNameForDirectory(Platform.XDG_Type.CONFIG);
+        internal static readonly string UserConfigDirectory = Platform.SelectProductNameForDirectory(Platform.XDG_Type.CONFIG);
+
+        // System-wide configuration directory for AllUsers scope.
+        internal static readonly string SystemConfigDirectory = Platform.SelectProductNameForDirectory(Platform.XDG_Type.SYSTEM_CONFIG);
 #else
         // Gets the location for cache and config folders.
         internal static readonly string CacheDirectory = SafeDeriveFromSpecialFolder(
             Environment.SpecialFolder.LocalApplicationData,
             @"Microsoft\PowerShell");
 
-        internal static readonly string ConfigDirectory = SafeDeriveFromSpecialFolder(
+        internal static readonly string UserConfigDirectory = SafeDeriveFromSpecialFolder(
             Environment.SpecialFolder.Personal,
             @"PowerShell");
+
+        // System-wide configuration directory for AllUsers scope.
+        internal static readonly string SystemConfigDirectory = SafeDeriveFromSpecialFolder(
+            Environment.SpecialFolder.CommonApplicationData,
+            @"Microsoft\PowerShell");
 
         private static readonly Lazy<bool> _isStaSupported = new Lazy<bool>(() =>
         {
@@ -307,6 +315,8 @@ namespace System.Management.Automation
             USER_MODULES,
             /// <summary> /usr/local/share/powershell/Modules </summary>
             SHARED_MODULES,
+            /// <summary> /etc/powershell </summary>
+            SYSTEM_CONFIG,
             /// <summary> XDG_CONFIG_HOME/powershell </summary>
             DEFAULT
         }
@@ -359,6 +369,9 @@ namespace System.Management.Automation
 
                     case XDG_Type.SHARED_MODULES:
                         return "/usr/local/share/powershell/Modules";
+
+                    case XDG_Type.SYSTEM_CONFIG:
+                        return "/etc/powershell";
 
                     case XDG_Type.CACHE:
                         // Use 'XDG_CACHE_HOME' if it's set, otherwise use the default path.

@@ -7,12 +7,22 @@ Describe "Get-ExperimentalFeature Tests" -tags "Feature","RequireAdminOnWindows"
 
     BeforeAll {
         $pwsh = "$PSHOME/pwsh"
-        $systemConfigPath = "$PSHOME/powershell.config.json"
+        if ($IsWindows) {
+            $systemConfigPath = Join-Path $env:ProgramData "Microsoft\PowerShell\powershell.config.json"
+        }
+        else {
+            $systemConfigPath = "/etc/powershell/powershell.config.json"
+        }
         if ($IsWindows) {
             $userConfigPath = "~/Documents/powershell/powershell.config.json"
         }
         else {
             $userConfigPath = "~/.config/powershell/powershell.config.json"
+        }
+
+        $systemConfigDir = Split-Path $systemConfigPath
+        if (!(Test-Path $systemConfigDir)) {
+            $null = New-Item -ItemType Directory -Path $systemConfigDir -Force -ErrorAction SilentlyContinue
         }
 
         $systemConfigExists = $false

@@ -38,8 +38,8 @@ namespace PSTests.Sequential
 
         public PowerShellPolicyFixture()
         {
-            systemWideConfigDirectory = Utils.DefaultPowerShellAppBase;
-            currentUserConfigDirectory = Platform.ConfigDirectory;
+            systemWideConfigDirectory = Platform.SystemConfigDirectory;
+            currentUserConfigDirectory = Platform.UserConfigDirectory;
 
             if (!Directory.Exists(currentUserConfigDirectory))
             {

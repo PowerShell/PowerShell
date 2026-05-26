@@ -5479,6 +5479,7 @@ end {
                 { "Get-PSHostProcessInfo",             new SessionStateCmdletEntry("Get-PSHostProcessInfo", typeof(GetPSHostProcessInfoCommand), helpFile) },
                 { "Get-PSSession",                     new SessionStateCmdletEntry("Get-PSSession", typeof(GetPSSessionCommand), helpFile) },
                 { "Get-PSSubsystem",                   new SessionStateCmdletEntry("Get-PSSubsystem", typeof(Subsystem.GetPSSubsystemCommand), helpFile) },
+                { "Get-PowerShellConfiguration",       new SessionStateCmdletEntry("Get-PowerShellConfiguration", typeof(GetPowerShellConfigurationCommand), helpFile) },
                 { "Import-Module",                     new SessionStateCmdletEntry("Import-Module", typeof(ImportModuleCommand), helpFile) },
                 { "Invoke-Command",                    new SessionStateCmdletEntry("Invoke-Command", typeof(InvokeCommandCommand), helpFile) },
                 { "Invoke-History",                    new SessionStateCmdletEntry("Invoke-History", typeof(InvokeHistoryCommand), helpFile) },
