@@ -36,7 +36,7 @@
 
 ### Tools
 
-- Add Instruction to ensure Copyright header is present at start of script and module files (#27408)
+- Add an instruction file to ensure the Copyright header is present at the start of script and module files (#27408)
 
 ### Build and Packaging Improvements
 
