@@ -44,8 +44,7 @@
 
 <summary>
 
-<p>We thank the following contributors!</p>
-<p>@andyleejordan</p>
+<p>Update to .NET SDK 11.0.100-preview.4</p>
 
 </summary>
 
