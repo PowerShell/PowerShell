@@ -56,7 +56,7 @@
 <li>Remove unused step that clones <code>Internal-PowerShellTeam-Tools</code> repo in PMC publish pipeline (#27495)</li>
 <li>Update Microsoft.PowerShell.PSResourceGet version to 1.3.0-preview1 (#27487)</li>
 <li>Verify Apple codesign immediately after ESRP signing (#27486) (Thanks @andyleejordan!)</li>
-<li>Add <code>appLicensing</code> capability to Appx manifest to allow it run without acquiring a Store license (#27412)</li>
+<li>Add <code>appLicensing</code> capability to Appx manifest to allow it to run without acquiring a Store license (#27412)</li>
 <li>Bump actions/dependency-review-action from 4.9.0 to 5.0.0 (#27411)</li>
 <li>Bump github/codeql-action from 4.35.3 to 4.35.4 (#27404)</li>
 <li>Specify <code>linux-arm64</code> runtime if package type is <code>deb-arm64</code> in <code>packaging.psm1</code> (#27401)</li>
