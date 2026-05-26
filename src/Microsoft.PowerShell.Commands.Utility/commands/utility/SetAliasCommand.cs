@@ -31,6 +31,7 @@ namespace Microsoft.PowerShell.Commands
                     Option);
 
             aliasToSet.Description = Description;
+            ValidateAliasName();
 
             string action = AliasCommandStrings.SetAliasAction;
 
@@ -42,16 +43,6 @@ namespace Microsoft.PowerShell.Commands
                 // current scope.
 
                 AliasInfo result = null;
-
-                if (string.Equals(aliasToSet.Name, aliasToSet.Definition, StringComparison.OrdinalIgnoreCase))
-                {
-                    PSArgumentException e = PSTraceSource.NewArgumentException("Value", NewObjectStrings.InvalidValue, aliasToSet.Name);
-                    WriteError(
-                        new ErrorRecord(
-                            e.ErrorRecord,
-                            e));
-                    return;
-                }
 
                 try
                 {

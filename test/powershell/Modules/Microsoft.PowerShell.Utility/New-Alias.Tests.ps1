@@ -34,6 +34,11 @@ Describe "New-Alias DRT Unit Tests" -Tags "CI" {
 			$result.Description | Should -BeExactly "test description"
 			$result.Options | Should -BeExactly "None"
 	}
+
+	It "New-Alias Should throw an error when the alias name and value are the same" {
+		{ New-Alias -Name ABCD -Value ABCD -Scope "0" -ErrorAction Stop } |
+            Should -Throw -ErrorId "System.ArgumentException,Microsoft.PowerShell.Commands.NewAliasCommand"
+    }
 }
 
 Describe "New-Alias" -Tags "CI" {

@@ -59,6 +59,8 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
+            ValidateAliasName();
+
             // Create the alias info
 
             AliasInfo newAlias =
@@ -82,16 +84,6 @@ namespace Microsoft.PowerShell.Commands
                 // current scope.
 
                 AliasInfo result = null;
-
-                if (string.Equals(newAlias.Name, newAlias.Definition, StringComparison.OrdinalIgnoreCase))
-                {
-                    PSArgumentException e = PSTraceSource.NewArgumentException("Value", NewObjectStrings.InvalidValue, newAlias.Name);
-                    WriteError(
-                        new ErrorRecord(
-                            e.ErrorRecord,
-                            e));
-                    return;
-                }
 
                 try
                 {
