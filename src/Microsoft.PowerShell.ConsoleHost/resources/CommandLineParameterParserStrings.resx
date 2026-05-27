@@ -231,4 +231,7 @@ Valid formats are:
   <data name="FileOnlyEntryRequired" xml:space="preserve">
     <value>The parameter "-File" is required by policy.</value>
   </data>
+  <data name="FileOnlyEntryNoExitDisabled" xml:space="preserve">
+    <value>The parameter "-NoExit" is disallowed by policy.</value>
+  </data>
 </root>

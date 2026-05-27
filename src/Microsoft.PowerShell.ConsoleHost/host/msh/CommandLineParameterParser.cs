@@ -948,7 +948,7 @@ namespace Microsoft.PowerShell
 
                     if (IsFileOnlyEntryEnabled)
                     {
-                        SetCommandLineError(CommandLineParameterParserStrings.FileOnlyEntryRequired);
+                        SetCommandLineError(CommandLineParameterParserStrings.FileOnlyEntryNoExitDisabled);
                         break;
                     }
                 }
