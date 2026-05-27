@@ -345,6 +345,37 @@ function Test-CanWriteToPsHome
     $script:CanWriteToPsHome
 }
 
+$script:CanWriteToSystemConfigDir = $null
+function Test-CanWriteToSystemConfigDir {
+    [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingEmptyCatchBlock', '', Justification = "an error message is not appropriate for this function")]
+    param ()
+    if ($null -ne $script:CanWriteToSystemConfigDir) {
+        return $script:CanWriteToSystemConfigDir
+    }
+
+    $script:CanWriteToSystemConfigDir = $false
+    $dir = Split-Path (Get-PowerShellConfiguration -Scope AllUsers).Path
+    if (!(Test-Path $dir)) {
+        try {
+            $null = New-Item -ItemType Directory -Path $dir -Force -ErrorAction Stop
+            $script:CanWriteToSystemConfigDir = $true
+        } catch {
+            ; # do nothing
+        }
+    } else {
+        try {
+            $testFile = Join-Path $dir ".pester-write-test"
+            Set-Content -Path $testFile -Value '' -ErrorAction Stop
+            Remove-Item $testFile -Force -ErrorAction SilentlyContinue
+            $script:CanWriteToSystemConfigDir = $true
+        } catch {
+            ; # do nothing
+        }
+    }
+
+    $script:CanWriteToSystemConfigDir
+}
+
 # Creates a password meeting Windows complexity rules
 function New-ComplexPassword
 {

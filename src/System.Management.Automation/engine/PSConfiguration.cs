@@ -63,7 +63,6 @@ namespace System.Management.Automation.Configuration
 
         // Legacy system-wide config file path in $PSHOME, used for fallback reads.
         private readonly string legacySystemWideConfigFile;
-        private bool systemConfigOverridden;
 
         // The json file containing the per-user configuration settings.
         private readonly string perUserConfigFile;
@@ -108,7 +107,9 @@ namespace System.Management.Automation.Configuration
             fileLock = new ReaderWriterLockSlim();
         }
 
-        private string GetConfigFilePath(ConfigScope scope)
+        // Writes always target the new platform-specific location (systemWideConfigFile).
+        // Reads may fall back to the legacy $PSHOME location via GetEffectiveSystemWideConfigFile().
+        private string GetConfigFilePathForWrite(ConfigScope scope)
         {
             return (scope == ConfigScope.CurrentUser) ? perUserConfigFile : systemWideConfigFile;
         }
@@ -120,11 +121,6 @@ namespace System.Management.Automation.Configuration
 
         private string GetEffectiveSystemWideConfigFile()
         {
-            if (systemConfigOverridden)
-            {
-                return systemWideConfigFile;
-            }
-
             if (File.Exists(systemWideConfigFile))
             {
                 return systemWideConfigFile;
@@ -138,7 +134,7 @@ namespace System.Management.Automation.Configuration
             return systemWideConfigFile;
         }
 
-        internal string AllUsersConfigFilePath => systemWideConfigFile;
+        internal string AllUsersConfigFilePath => GetEffectiveSystemWideConfigFile();
 
         internal string CurrentUserConfigFilePath => perUserConfigFile;
 
@@ -160,7 +156,6 @@ namespace System.Management.Automation.Configuration
             FileInfo info = new FileInfo(value);
             systemWideConfigFile = info.FullName;
             systemWideConfigDirectory = info.Directory.FullName;
-            systemConfigOverridden = true;
         }
 
         /// <summary>
@@ -513,7 +508,7 @@ namespace System.Management.Automation.Configuration
         {
             try
             {
-                string fileName = GetConfigFilePath(scope);
+                string fileName = GetConfigFilePathForWrite(scope);
                 fileLock.EnterWriteLock();
 
                 // Since multiple properties can be in a single file, replacement is required instead of overwrite if a file already exists.
@@ -632,7 +627,7 @@ namespace System.Management.Automation.Configuration
         /// <param name="key">The string key of the value.</param>
         private void RemoveValueFromFile<T>(ConfigScope scope, string key)
         {
-            string fileName = GetConfigFilePath(scope);
+            string fileName = GetConfigFilePathForWrite(scope);
             // Optimization: If the file doesn't exist, there is nothing to remove
             if (File.Exists(fileName))
             {

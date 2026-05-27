@@ -3,26 +3,6 @@
 
 Import-Module HelpersCommon
 
-function Test-CanWriteToSystemConfigDir {
-    $dir = Split-Path (Get-PowerShellConfiguration -Scope AllUsers).Path
-    if (!(Test-Path $dir)) {
-        try {
-            $null = New-Item -ItemType Directory -Path $dir -Force -ErrorAction Stop
-            return $true
-        } catch {
-            return $false
-        }
-    }
-    try {
-        $testFile = Join-Path $dir ".pester-write-test"
-        Set-Content -Path $testFile -Value '' -ErrorAction Stop
-        Remove-Item $testFile -Force -ErrorAction SilentlyContinue
-        return $true
-    } catch {
-        return $false
-    }
-}
-
 Describe "Enable-ExperimentalFeature and Disable-ExperimentalFeature tests" -tags "Feature","RequireAdminOnWindows" {
 
     BeforeAll {

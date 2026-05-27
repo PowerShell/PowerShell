@@ -34,6 +34,7 @@ namespace PSTests.Sequential
         private readonly PowerShellPolicies currentUserPolicies;
 
         private readonly bool originalTestHookValue;
+        private readonly string originalTestAllUsersConfigDirectory;
         private readonly string originalSingletonSystemConfigDir;
         private readonly string originalSingletonSystemConfigFile;
 
@@ -43,6 +44,7 @@ namespace PSTests.Sequential
             // to /etc/powershell (Unix) or %ProgramData%\Microsoft\PowerShell (Windows) in CI
             systemWideConfigDirectory = Path.Combine(Path.GetTempPath(), "PSTestSystemConfig_" + Guid.NewGuid().ToString("N"));
             Directory.CreateDirectory(systemWideConfigDirectory);
+            originalTestAllUsersConfigDirectory = InternalTestHooks.TestAllUsersConfigDirectory;
             InternalTestHooks.TestAllUsersConfigDirectory = systemWideConfigDirectory;
 
             currentUserConfigDirectory = Platform.UserConfigDirectory;
@@ -58,12 +60,10 @@ namespace PSTests.Sequential
             // Redirect the PowerShellConfig singleton to use the temp system config directory
             var sysConfigDirField = typeof(PowerShellConfig).GetField("systemWideConfigDirectory", BindingFlags.NonPublic | BindingFlags.Instance);
             var sysConfigFileField = typeof(PowerShellConfig).GetField("systemWideConfigFile", BindingFlags.NonPublic | BindingFlags.Instance);
-            var overriddenField = typeof(PowerShellConfig).GetField("systemConfigOverridden", BindingFlags.NonPublic | BindingFlags.Instance);
             originalSingletonSystemConfigDir = (string)sysConfigDirField.GetValue(PowerShellConfig.Instance);
             originalSingletonSystemConfigFile = (string)sysConfigFileField.GetValue(PowerShellConfig.Instance);
             sysConfigDirField.SetValue(PowerShellConfig.Instance, systemWideConfigDirectory);
             sysConfigFileField.SetValue(PowerShellConfig.Instance, systemWideConfigFile);
-            overriddenField.SetValue(PowerShellConfig.Instance, true);
 
             if (File.Exists(currentUserConfigFile))
             {
@@ -124,11 +124,9 @@ namespace PSTests.Sequential
                 // Restore the PowerShellConfig singleton to the original system config paths
                 var sysConfigDirField = typeof(PowerShellConfig).GetField("systemWideConfigDirectory", BindingFlags.NonPublic | BindingFlags.Instance);
                 var sysConfigFileField = typeof(PowerShellConfig).GetField("systemWideConfigFile", BindingFlags.NonPublic | BindingFlags.Instance);
-                var overriddenField = typeof(PowerShellConfig).GetField("systemConfigOverridden", BindingFlags.NonPublic | BindingFlags.Instance);
                 sysConfigDirField.SetValue(PowerShellConfig.Instance, originalSingletonSystemConfigDir);
                 sysConfigFileField.SetValue(PowerShellConfig.Instance, originalSingletonSystemConfigFile);
-                overriddenField.SetValue(PowerShellConfig.Instance, false);
-                InternalTestHooks.TestAllUsersConfigDirectory = null;
+                InternalTestHooks.TestAllUsersConfigDirectory = originalTestAllUsersConfigDirectory;
 
                 if (Directory.Exists(systemWideConfigDirectory))
                 {

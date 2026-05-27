@@ -29,6 +29,7 @@ FunctionsToExport = @(
         'Set-TesthookResult'
         'Start-NativeExecution'
         'Test-CanWriteToPsHome'
+        'Test-CanWriteToSystemConfigDir'
         'Test-IsElevated'
         'Test-IsPreview',
         'Test-IsReleaseCandidate'

@@ -306,19 +306,19 @@ namespace System.Management.Automation
         public enum XDG_Type
         {
             /// <summary> XDG_CONFIG_HOME/powershell </summary>
-            CONFIG,
+            CONFIG = 0,
             /// <summary> XDG_CACHE_HOME/powershell </summary>
-            CACHE,
+            CACHE = 1,
             /// <summary> XDG_DATA_HOME/powershell </summary>
-            DATA,
+            DATA = 2,
             /// <summary> XDG_DATA_HOME/powershell/Modules </summary>
-            USER_MODULES,
+            USER_MODULES = 3,
             /// <summary> /usr/local/share/powershell/Modules </summary>
-            SHARED_MODULES,
-            /// <summary> /etc/powershell </summary>
-            SYSTEM_CONFIG,
+            SHARED_MODULES = 4,
             /// <summary> XDG_CONFIG_HOME/powershell </summary>
-            DEFAULT
+            DEFAULT = 5,
+            /// <summary> /etc/powershell </summary>
+            SYSTEM_CONFIG = 6,
         }
 
         /// <summary>

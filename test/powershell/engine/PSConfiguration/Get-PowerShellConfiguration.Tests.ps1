@@ -22,13 +22,31 @@ Describe "Get-PowerShellConfiguration Tests" -Tags "CI" {
         $config.Scope | Should -Be "CurrentUser"
     }
 
-    It "AllUsers path points to platform-specific system config directory" {
+    It "AllUsers path points to system config directory or legacy PSHOME location" {
         $config = Get-PowerShellConfiguration -Scope AllUsers
+        $config.Path | Should -BeLike "*powershell.config.json"
         if ($IsWindows) {
-            $config.Path | Should -BeLike "*ProgramData*Microsoft*PowerShell*powershell.config.json"
+            $isNewPath = $config.Path -like "*ProgramData*Microsoft*PowerShell*"
+            $isLegacyPath = $config.Path -like "$PSHOME*"
+            ($isNewPath -or $isLegacyPath) | Should -BeTrue
         }
         else {
-            $config.Path | Should -Be "/etc/powershell/powershell.config.json"
+            $isNewPath = $config.Path -eq "/etc/powershell/powershell.config.json"
+            $isLegacyPath = $config.Path -like "$PSHOME*"
+            ($isNewPath -or $isLegacyPath) | Should -BeTrue
+        }
+    }
+
+    It "AllUsers path prefers new location over PSHOME when config exists there" {
+        $config = Get-PowerShellConfiguration -Scope AllUsers
+        if ($IsWindows) {
+            $newPath = Join-Path $env:ProgramData "Microsoft\PowerShell\powershell.config.json"
+        }
+        else {
+            $newPath = "/etc/powershell/powershell.config.json"
+        }
+        if (Test-Path $newPath) {
+            $config.Path | Should -Be $newPath
         }
     }
 
@@ -43,11 +61,6 @@ Describe "Get-PowerShellConfiguration Tests" -Tags "CI" {
             }
             $config.Path | Should -BeLike "$expectedBase/powershell/*"
         }
-    }
-
-    It "AllUsers path does not point to PSHOME" {
-        $config = Get-PowerShellConfiguration -Scope AllUsers
-        $config.Path | Should -Not -BeLike "$PSHOME*"
     }
 
     It "Output type is PowerShellConfigurationInfo" {
