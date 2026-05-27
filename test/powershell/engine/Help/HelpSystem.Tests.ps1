@@ -16,6 +16,7 @@ $script:cmdletsToSkip = @(
     "Get-ExperimentalFeature",
     "Enable-ExperimentalFeature",
     "Disable-ExperimentalFeature",
+    "Get-PowerShellConfiguration",
     "Get-PSSubsystem",
     "Switch-Process"
 )
