@@ -10,24 +10,35 @@ Describe "Enable-ExperimentalFeature and Disable-ExperimentalFeature tests" -tag
         $systemConfigPath = (Get-PowerShellConfiguration -Scope AllUsers).Path
         $userConfigPath = (Get-PowerShellConfiguration -Scope CurrentUser).Path
 
-        # The legacy $PSHOME config may exist (e.g., preview builds).
-        # Back it up so tests start clean. Also track it separately because
-        # writes go to the new platform location, not the legacy path.
-        $legacyConfigPath = Join-Path $PSHOME "powershell.config.json"
-        $legacyConfigExists = $false
-        if (($legacyConfigPath -ne $systemConfigPath) -and (Test-Path $legacyConfigPath)) {
-            $legacyConfigExists = $true
-            Move-Item $legacyConfigPath "$legacyConfigPath.backup" -Force -ErrorAction SilentlyContinue
+        # Enable/Disable-ExperimentalFeature always writes to the new platform
+        # location via GetConfigFilePathForWrite(), even when the effective read
+        # path (from Get-PowerShellConfiguration) points to legacy $PSHOME.
+        # Track both so AfterEach can clean up writes that land at a different path.
+        if ($IsWindows) {
+            $systemWritePath = Join-Path $env:ProgramData "Microsoft\PowerShell\powershell.config.json"
+        } else {
+            $systemWritePath = "/etc/powershell/powershell.config.json"
+        }
+
+        $systemWriteDir = Split-Path $systemWritePath
+        if (!(Test-Path $systemWriteDir)) {
+            $null = New-Item -ItemType Directory -Path $systemWriteDir -Force -ErrorAction SilentlyContinue
         }
 
         $systemConfigDir = Split-Path $systemConfigPath
-        if (!(Test-Path $systemConfigDir)) {
+        if (($systemConfigDir -ne $systemWriteDir) -and !(Test-Path $systemConfigDir)) {
             $null = New-Item -ItemType Directory -Path $systemConfigDir -Force -ErrorAction SilentlyContinue
         }
 
         $userConfigDir = Split-Path $userConfigPath
         if (!(Test-Path $userConfigDir)) {
             $null = New-Item -ItemType Directory -Path $userConfigDir -Force -ErrorAction SilentlyContinue
+        }
+
+        $systemWriteExists = $false
+        if (($systemWritePath -ne $systemConfigPath) -and (Test-Path $systemWritePath)) {
+            $systemWriteExists = $true
+            Move-Item $systemWritePath "$systemWritePath.backup" -Force -ErrorAction SilentlyContinue
         }
 
         $systemConfigExists = $false
@@ -48,8 +59,8 @@ Describe "Enable-ExperimentalFeature and Disable-ExperimentalFeature tests" -tag
     }
 
     AfterAll {
-        if ($legacyConfigExists) {
-            Move-Item "$legacyConfigPath.backup" $legacyConfigPath -Force -ErrorAction SilentlyContinue
+        if ($systemWriteExists) {
+            Move-Item "$systemWritePath.backup" $systemWritePath -Force -ErrorAction SilentlyContinue
         }
 
         if ($systemConfigExists) {
@@ -66,8 +77,8 @@ Describe "Enable-ExperimentalFeature and Disable-ExperimentalFeature tests" -tag
     AfterEach {
         Remove-Item $systemConfigPath -Force -ErrorAction SilentlyContinue
         Remove-Item $userConfigPath -Force -ErrorAction SilentlyContinue
-        if ($legacyConfigPath -ne $systemConfigPath) {
-            Remove-Item $legacyConfigPath -Force -ErrorAction SilentlyContinue
+        if ($systemWritePath -ne $systemConfigPath) {
+            Remove-Item $systemWritePath -Force -ErrorAction SilentlyContinue
         }
     }
 
