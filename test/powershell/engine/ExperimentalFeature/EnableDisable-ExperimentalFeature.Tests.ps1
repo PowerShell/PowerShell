@@ -10,9 +10,24 @@ Describe "Enable-ExperimentalFeature and Disable-ExperimentalFeature tests" -tag
         $systemConfigPath = (Get-PowerShellConfiguration -Scope AllUsers).Path
         $userConfigPath = (Get-PowerShellConfiguration -Scope CurrentUser).Path
 
+        # The legacy $PSHOME config may exist (e.g., preview builds).
+        # Back it up so tests start clean. Also track it separately because
+        # writes go to the new platform location, not the legacy path.
+        $legacyConfigPath = Join-Path $PSHOME "powershell.config.json"
+        $legacyConfigExists = $false
+        if (($legacyConfigPath -ne $systemConfigPath) -and (Test-Path $legacyConfigPath)) {
+            $legacyConfigExists = $true
+            Move-Item $legacyConfigPath "$legacyConfigPath.backup" -Force -ErrorAction SilentlyContinue
+        }
+
         $systemConfigDir = Split-Path $systemConfigPath
         if (!(Test-Path $systemConfigDir)) {
             $null = New-Item -ItemType Directory -Path $systemConfigDir -Force -ErrorAction SilentlyContinue
+        }
+
+        $userConfigDir = Split-Path $userConfigPath
+        if (!(Test-Path $userConfigDir)) {
+            $null = New-Item -ItemType Directory -Path $userConfigDir -Force -ErrorAction SilentlyContinue
         }
 
         $systemConfigExists = $false
@@ -33,6 +48,10 @@ Describe "Enable-ExperimentalFeature and Disable-ExperimentalFeature tests" -tag
     }
 
     AfterAll {
+        if ($legacyConfigExists) {
+            Move-Item "$legacyConfigPath.backup" $legacyConfigPath -Force -ErrorAction SilentlyContinue
+        }
+
         if ($systemConfigExists) {
             Move-Item "$systemConfigPath.backup" $systemConfigPath -Force -ErrorAction SilentlyContinue
         }
@@ -47,6 +66,9 @@ Describe "Enable-ExperimentalFeature and Disable-ExperimentalFeature tests" -tag
     AfterEach {
         Remove-Item $systemConfigPath -Force -ErrorAction SilentlyContinue
         Remove-Item $userConfigPath -Force -ErrorAction SilentlyContinue
+        if ($legacyConfigPath -ne $systemConfigPath) {
+            Remove-Item $legacyConfigPath -Force -ErrorAction SilentlyContinue
+        }
     }
 
     It "Enable-ExperimentalFeature will enable Experimental Feature for scope: <scope>" -TestCases @(

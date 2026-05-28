@@ -10,9 +10,21 @@ Describe "Get-ExperimentalFeature Tests" -tags "Feature","RequireAdminOnWindows"
         $systemConfigPath = (Get-PowerShellConfiguration -Scope AllUsers).Path
         $userConfigPath = (Get-PowerShellConfiguration -Scope CurrentUser).Path
 
+        $legacyConfigPath = Join-Path $PSHOME "powershell.config.json"
+        $legacyConfigExists = $false
+        if (($legacyConfigPath -ne $systemConfigPath) -and (Test-Path $legacyConfigPath)) {
+            $legacyConfigExists = $true
+            Move-Item $legacyConfigPath "$legacyConfigPath.backup" -Force -ErrorAction SilentlyContinue
+        }
+
         $systemConfigDir = Split-Path $systemConfigPath
         if (!(Test-Path $systemConfigDir)) {
             $null = New-Item -ItemType Directory -Path $systemConfigDir -Force -ErrorAction SilentlyContinue
+        }
+
+        $userConfigDir = Split-Path $userConfigPath
+        if (!(Test-Path $userConfigDir)) {
+            $null = New-Item -ItemType Directory -Path $userConfigDir -Force -ErrorAction SilentlyContinue
         }
 
         $systemConfigExists = $false
@@ -34,6 +46,10 @@ Describe "Get-ExperimentalFeature Tests" -tags "Feature","RequireAdminOnWindows"
     }
 
     AfterAll {
+        if ($legacyConfigExists) {
+            Move-Item "$legacyConfigPath.backup" $legacyConfigPath -Force -ErrorAction SilentlyContinue
+        }
+
         if ($systemConfigExists -and (Test-CanWriteToSystemConfigDir)) {
             Move-Item "$systemConfigPath.backup" $systemConfigPath -Force -ErrorAction SilentlyContinue
         }
@@ -51,6 +67,9 @@ Describe "Get-ExperimentalFeature Tests" -tags "Feature","RequireAdminOnWindows"
         }
 
         Remove-Item $userConfigPath -Force -ErrorAction SilentlyContinue
+        if ($legacyConfigPath -ne $systemConfigPath) {
+            Remove-Item $legacyConfigPath -Force -ErrorAction SilentlyContinue
+        }
     }
 
     Context "Feature disabled tests" {

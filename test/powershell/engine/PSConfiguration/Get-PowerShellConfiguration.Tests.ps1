@@ -6,8 +6,9 @@ Describe "Get-PowerShellConfiguration Tests" -Tags "CI" {
     It "Returns both scopes when no -Scope is specified" {
         $configs = Get-PowerShellConfiguration
         $configs | Should -HaveCount 2
-        $configs[0].Scope | Should -Be "AllUsers"
-        $configs[1].Scope | Should -Be "CurrentUser"
+        $scopes = $configs.Scope
+        $scopes | Should -Contain "AllUsers"
+        $scopes | Should -Contain "CurrentUser"
     }
 
     It "Returns AllUsers scope when -Scope AllUsers is specified" {

@@ -355,22 +355,28 @@ function Test-CanWriteToSystemConfigDir {
 
     $script:CanWriteToSystemConfigDir = $false
     $dir = Split-Path (Get-PowerShellConfiguration -Scope AllUsers).Path
+    $createdDir = $false
     if (!(Test-Path $dir)) {
         try {
             $null = New-Item -ItemType Directory -Path $dir -Force -ErrorAction Stop
+            $createdDir = $true
             $script:CanWriteToSystemConfigDir = $true
         } catch {
             ; # do nothing
         }
     } else {
         try {
-            $testFile = Join-Path $dir ".pester-write-test"
-            Set-Content -Path $testFile -Value '' -ErrorAction Stop
-            Remove-Item $testFile -Force -ErrorAction SilentlyContinue
+            $testFileName = Join-Path $dir (New-Guid).Guid
+            $null = New-Item -ItemType File -Path $testFileName -ErrorAction Stop
             $script:CanWriteToSystemConfigDir = $true
+            Remove-Item -Path $testFileName -ErrorAction SilentlyContinue
         } catch {
             ; # do nothing
         }
+    }
+
+    if ($createdDir) {
+        Remove-Item $dir -Force -ErrorAction SilentlyContinue
     }
 
     $script:CanWriteToSystemConfigDir
