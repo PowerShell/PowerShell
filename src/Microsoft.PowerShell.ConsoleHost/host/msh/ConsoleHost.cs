@@ -223,6 +223,14 @@ namespace Microsoft.PowerShell
                     return ExitCodeBadCommandLineParameter;
                 }
 
+                if (serverModeCount is 1 && CommandLineParameterParser.IsFileOnlyEntryEnabled)
+                {
+                    s_tracer.TraceError("Server mode cannot be specified when FileOnlyEntry policy is in place.");
+                    s_theConsoleHost?.ui.WriteErrorLine(ConsoleHostStrings.FileOnlyEntryServerMode);
+
+                    return ExitCodeBadCommandLineParameter;
+                }
+
 #if !UNIX
                 TaskbarJumpList.CreateRunAsAdministratorJumpList();
 #endif

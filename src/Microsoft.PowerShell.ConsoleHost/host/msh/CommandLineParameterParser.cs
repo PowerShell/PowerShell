@@ -879,7 +879,7 @@ namespace Microsoft.PowerShell
             ParseHelper(args);
         }
 
-        private static bool IsFileOnlyEntryEnabled
+        internal static bool IsFileOnlyEntryEnabled
         {
             get
             {
