@@ -165,8 +165,6 @@ namespace Microsoft.PowerShell
                 // improve startup performance.
             }
 
-            uint exitCode = ExitCodeSuccess;
-
             Thread.CurrentThread.Name = "ConsoleHost main thread";
 
             try
@@ -192,7 +190,7 @@ namespace Microsoft.PowerShell
                     // or start up the engine and retrieve the information via $psversiontable.GitCommitId
                     // but this returns the semantic version and avoids executing a script
                     s_theConsoleHost.UI.WriteLine($"PowerShell {PSVersionInfo.GitCommitId}");
-                    return 0;
+                    return ExitCodeSuccess;
                 }
 
                 // Servermode parameter validation check.
@@ -245,9 +243,10 @@ namespace Microsoft.PowerShell
                         configurationName: null,
                         configurationFile: s_cpp.ConfigurationFile,
                         combineErrOutStream: false);
-                    exitCode = 0;
+                    return ExitCodeSuccess;
                 }
-                else if (s_cpp.SSHServerMode)
+
+                if (s_cpp.SSHServerMode)
                 {
                     ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("SSHServer", s_cpp.ParametersUsedAsDouble);
                     ProfileOptimization.StartProfile("StartupProfileData-SSHServerMode");
@@ -257,18 +256,20 @@ namespace Microsoft.PowerShell
                         configurationName: null,
                         configurationFile: s_cpp.ConfigurationFile,
                         combineErrOutStream: true);
-                    exitCode = 0;
+                    return ExitCodeSuccess;
                 }
-                else if (s_cpp.NamedPipeServerMode)
+
+                if (s_cpp.NamedPipeServerMode)
                 {
                     ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("NamedPipe", s_cpp.ParametersUsedAsDouble);
                     ProfileOptimization.StartProfile("StartupProfileData-NamedPipeServerMode");
                     RemoteSessionNamedPipeServer.RunServerMode(
                         configurationName: s_cpp.ConfigurationName);
-                    exitCode = 0;
+                    return ExitCodeSuccess;
                 }
 #if !UNIX
-                else if (s_cpp.V2SocketServerMode)
+
+                if (s_cpp.V2SocketServerMode)
                 {
                     if (s_cpp.Token == null)
                     {
@@ -292,50 +293,49 @@ namespace Microsoft.PowerShell
                         token: s_cpp.Token,
                         tokenCreationTime: s_cpp.UTCTimestamp.Value);
 
-                    exitCode = 0;
+                    return ExitCodeSuccess;
                 }
 #endif
-                else if (s_cpp.SocketServerMode)
+
+                if (s_cpp.SocketServerMode)
                 {
                     ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("SocketServerMode", s_cpp.ParametersUsedAsDouble);
                     ProfileOptimization.StartProfile("StartupProfileData-SocketServerMode");
                     HyperVSocketMediator.Run(
                         initialCommand: s_cpp.InitialCommand,
                         configurationName: s_cpp.ConfigurationName);
-                    exitCode = 0;
+                    return ExitCodeSuccess;
+                }
+
+                // Run PowerShell in normal console mode.
+                if (hostException != null)
+                {
+                    // Unable to create console host.
+                    throw hostException;
+                }
+
+                if (LoadPSReadline())
+                {
+                    ProfileOptimization.StartProfile("StartupProfileData-Interactive");
+
+                    if (UpdatesNotification.CanNotifyUpdates)
+                    {
+                        // Start a task in the background to check for the update release.
+                        _ = UpdatesNotification.CheckForUpdates();
+                    }
                 }
                 else
                 {
-                    // Run PowerShell in normal console mode.
-                    if (hostException != null)
-                    {
-                        // Unable to create console host.
-                        throw hostException;
-                    }
-
-                    if (LoadPSReadline())
-                    {
-                        ProfileOptimization.StartProfile("StartupProfileData-Interactive");
-
-                        if (UpdatesNotification.CanNotifyUpdates)
-                        {
-                            // Start a task in the background to check for the update release.
-                            _ = UpdatesNotification.CheckForUpdates();
-                        }
-                    }
-                    else
-                    {
-                        ProfileOptimization.StartProfile("StartupProfileData-NonInteractive");
-                    }
-
-                    s_theConsoleHost.BindBreakHandler();
-                    PSHost.IsStdOutputRedirected = Console.IsOutputRedirected;
-
-                    // Send startup telemetry for ConsoleHost startup
-                    ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("Normal", s_cpp.ParametersUsedAsDouble);
-
-                    exitCode = s_theConsoleHost.Run(s_cpp, false);
+                    ProfileOptimization.StartProfile("StartupProfileData-NonInteractive");
                 }
+
+                s_theConsoleHost.BindBreakHandler();
+                PSHost.IsStdOutputRedirected = Console.IsOutputRedirected;
+
+                // Send startup telemetry for ConsoleHost startup
+                ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("Normal", s_cpp.ParametersUsedAsDouble);
+
+                return unchecked((int)s_theConsoleHost.Run(s_cpp, false));
             }
             finally
             {
@@ -356,11 +356,6 @@ namespace Microsoft.PowerShell
                     s_theConsoleHost.Dispose();
                 }
 #pragma warning restore IDE0031
-            }
-
-            unchecked
-            {
-                return (int)exitCode;
             }
         }
 
