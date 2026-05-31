@@ -1493,7 +1493,7 @@ namespace System.Management.Automation
             {
                 if (!member.IsHidden)
                 {
-                    target.Members.Add(member);
+                    target.InstanceMembers.Add(member.Copy());
                 }
             }
 
