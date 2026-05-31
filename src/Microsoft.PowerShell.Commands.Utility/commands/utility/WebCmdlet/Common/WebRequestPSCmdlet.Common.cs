@@ -579,14 +579,16 @@ namespace Microsoft.PowerShell.Commands
                             bool _isSuccess = response.IsSuccessStatusCode;
 
                             // Check if the Resume range was not satisfiable because the file already completed downloading.
-                            // This happens when the local file is the same size as the remote file.
-                            if (IsResumeRangeAlreadyComplete(response))
+                            if (IsResumeRangeAlreadyComplete(response, out bool isMissingContentRange))
                             {
                                 _isSuccess = true;
-                                WriteVerbose(string.Format(
+                                string skippedMessage = string.Format(
                                     CultureInfo.CurrentCulture,
-                                    WebCmdletStrings.OutFileWritingSkipped,
-                                    OutFile));
+                                    isMissingContentRange
+                                        ? WebCmdletStrings.OutFileWritingSkippedWithoutContentRange
+                                        : WebCmdletStrings.OutFileWritingSkipped,
+                                    OutFile);
+                                WriteVerbose(skippedMessage);
 
                                 // Disable writing to the OutFile.
                                 OutFile = null;
@@ -1730,18 +1732,24 @@ namespace Microsoft.PowerShell.Commands
 
         private bool IsPersistentSession() => MyInvocation.BoundParameters.ContainsKey(nameof(WebSession)) || MyInvocation.BoundParameters.ContainsKey(nameof(SessionVariable));
 
-        private bool IsResumeRangeAlreadyComplete(HttpResponseMessage response)
+        private bool IsResumeRangeAlreadyComplete(HttpResponseMessage response, out bool isMissingContentRange)
         {
+            isMissingContentRange = false;
             if (!Resume.IsPresent || response.StatusCode != HttpStatusCode.RequestedRangeNotSatisfiable)
             {
                 return false;
             }
 
             ContentRangeHeaderValue contentRange = response.Content.Headers.ContentRange;
-
             // RFC 9110 only says 416 responses SHOULD include Content-Range. Treat a missing
             // header as an already-complete resume instead of failing with a null reference.
-            return contentRange is null || (contentRange.HasLength && contentRange.Length == _resumeFileSize);
+            if (contentRange is null)
+            {
+                isMissingContentRange = true;
+                return true;
+            }
+
+            return contentRange.HasLength && contentRange.Length == _resumeFileSize;
         }
 
         private bool ShouldRetryWithoutResumeRange(HttpResponseMessage response)

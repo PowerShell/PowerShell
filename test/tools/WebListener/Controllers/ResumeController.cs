@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Net.Mime;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
@@ -74,11 +75,10 @@ namespace mvc.Controllers
             await Response.Body.WriteAsync(FileBytes, 0, FileBytes.Length);
         }
 
-        public async void MissingContentRange()
+        public async Task MissingContentRange()
         {
             SetResumeResponseHeaders();
-            string rangeHeader;
-            if (TryGetRangeHeader(out rangeHeader))
+            if (TryGetRangeHeader(out _))
             {
                 Response.StatusCode = StatusCodes.Status416RequestedRangeNotSatisfiable;
                 return;
