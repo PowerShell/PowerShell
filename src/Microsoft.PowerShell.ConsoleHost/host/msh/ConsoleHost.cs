@@ -223,9 +223,9 @@ namespace Microsoft.PowerShell
 
                 if (serverModeCount is 1 && CommandLineParameterParser.IsFileOnlyEntryEnabled)
                 {
+                    // User facing error message should already be written by the parser,
+                    // so just trace and exit.
                     s_tracer.TraceError("Server mode cannot be specified when FileOnlyEntry policy is in place.");
-                    s_theConsoleHost?.ui.WriteErrorLine(ConsoleHostStrings.FileOnlyEntryServerMode);
-
                     return ExitCodeBadCommandLineParameter;
                 }
 

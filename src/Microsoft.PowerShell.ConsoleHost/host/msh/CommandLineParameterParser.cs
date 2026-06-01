@@ -972,6 +972,11 @@ namespace Microsoft.PowerShell
                     _socketServerMode = true;
                     _showBanner = false;
                     ParametersUsed |= ParameterBitmap.SocketServerMode;
+                    if (IsFileOnlyEntryEnabled)
+                    {
+                        SetCommandLineError(CommandLineParameterParserStrings.FileOnlyEntryServerMode);
+                        break;
+                    }
                 }
 #if !UNIX
                 else if (MatchSwitch(switchKey, "v2socketservermode", "v2so"))
@@ -979,6 +984,11 @@ namespace Microsoft.PowerShell
                     _v2SocketServerMode = true;
                     _showBanner = false;
                     ParametersUsed |= ParameterBitmap.V2SocketServerMode;
+                    if (IsFileOnlyEntryEnabled)
+                    {
+                        SetCommandLineError(CommandLineParameterParserStrings.FileOnlyEntryServerMode);
+                        break;
+                    }
                 }
 #endif
                 else if (MatchSwitch(switchKey, "servermode", "s"))
@@ -986,18 +996,33 @@ namespace Microsoft.PowerShell
                     _serverMode = true;
                     _showBanner = false;
                     ParametersUsed |= ParameterBitmap.ServerMode;
+                    if (IsFileOnlyEntryEnabled)
+                    {
+                        SetCommandLineError(CommandLineParameterParserStrings.FileOnlyEntryServerMode);
+                        break;
+                    }
                 }
                 else if (MatchSwitch(switchKey, "namedpipeservermode", "nam"))
                 {
                     _namedPipeServerMode = true;
                     _showBanner = false;
                     ParametersUsed |= ParameterBitmap.NamedPipeServerMode;
+                    if (IsFileOnlyEntryEnabled)
+                    {
+                        SetCommandLineError(CommandLineParameterParserStrings.FileOnlyEntryServerMode);
+                        break;
+                    }
                 }
                 else if (MatchSwitch(switchKey, "sshservermode", "sshs"))
                 {
                     _sshServerMode = true;
                     _showBanner = false;
                     ParametersUsed |= ParameterBitmap.SSHServerMode;
+                    if (IsFileOnlyEntryEnabled)
+                    {
+                        SetCommandLineError(CommandLineParameterParserStrings.FileOnlyEntryServerMode);
+                        break;
+                    }
                 }
                 else if (MatchSwitch(switchKey, "noprofileloadtime", "noprofileloadtime"))
                 {
