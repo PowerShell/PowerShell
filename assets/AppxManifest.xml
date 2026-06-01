@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<Package IgnorableNamespaces="uap mp rescap desktop6"
+<Package IgnorableNamespaces="uap mp rescap desktop6 desktop8"
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
   xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
   xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
   xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
   xmlns:desktop6="http://schemas.microsoft.com/appx/manifest/desktop/windows10/6"
+  xmlns:desktop8="http://schemas.microsoft.com/appx/manifest/desktop/windows10/8"
   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities">
 
   <Identity Name="Microsoft.$PRODUCTNAME$" ProcessorArchitecture="$ARCH$" Publisher="$PUBLISHER$" Version="$VERSION$" />
@@ -20,7 +21,7 @@
   </Properties>
 
   <Dependencies>
-    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.17763.0" MaxVersionTested="10.0.18362.0" />
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.22000.0" MaxVersionTested="10.0.26100.0" />
   </Dependencies>
 
   <Resources>
@@ -41,12 +42,21 @@
     </Application>
   </Applications>
 
+  <Extensions>
+    <desktop8:Extension Category="windows.mutablePackageDirectories">
+      <desktop8:MutablePackageDirectories>
+        <desktop8:MutablePackageDirectory Target="$(package.mutableroot)\$PRODUCTNAME$" />
+      </desktop8:MutablePackageDirectories>
+    </desktop8:Extension>
+  </Extensions>
+
   <Capabilities>
     <Capability Name="internetClient" />
     <rescap:Capability Name="runFullTrust" />
     <rescap:Capability Name="unvirtualizedResources" />
     <rescap:Capability Name="packageManagement" />
     <rescap:Capability Name="packageQuery" />
+    <rescap:Capability Name="modifiableApp" />
   </Capabilities>
   <mp:PhoneIdentity PhoneProductId="$PHONEPRODUCTID$" PhonePublisherId="95d94207-0c7c-47ed-82db-d75c81153c35" />
 </Package>
