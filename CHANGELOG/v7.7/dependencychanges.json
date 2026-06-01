@@ -1,0 +1,28 @@
+[
+  {
+    "ChangeType": "NonSecurity",
+    "Branch": "master",
+    "PackageId": ".NET SDK",
+    "FromVersion": "11.0.100-preview.2.26159.112",
+    "ToVersion": "11.0.100-preview.3.26207.106",
+    "VulnerabilityId": [],
+    "Severity": [],
+    "VulnerableRanges": [],
+    "AdvisoryUrls": [],
+    "Justification": "Updated .NET SDK. Building with the latest SDK is required.",
+    "TimestampUtc": "2026-04-17T17:16:15.7099916Z"
+  },
+  {
+    "ChangeType": "NonSecurity",
+    "Branch": "master",
+    "PackageId": ".NET SDK",
+    "FromVersion": "11.0.100-preview.3.26207.106",
+    "ToVersion": "11.0.100-preview.4.26230.115",
+    "VulnerabilityId": [],
+    "Severity": [],
+    "VulnerableRanges": [],
+    "AdvisoryUrls": [],
+    "Justification": "Updated .NET SDK. Building with the latest SDK is required.",
+    "TimestampUtc": "2026-05-22T18:15:20.6826051Z"
+  }
+]

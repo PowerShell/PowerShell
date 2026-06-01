@@ -64,7 +64,7 @@ function Get-MappedRepositoryIds {
                     $repoIds.AddRange(([string[]]$repos.id))
                 }
                 else {
-                    Write-Failure "Could not find repo for $urlGlob"
+                    throw "Could not find repo for $urlGlob"
                 }
 
                 if ($repoIds.Count -gt 0) {
