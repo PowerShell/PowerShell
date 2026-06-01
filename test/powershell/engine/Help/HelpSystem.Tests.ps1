@@ -416,6 +416,32 @@ Describe "Get-Help should find pattern alias" -Tags "CI" {
 }
 
 Describe "help function uses full view by default" -Tags "CI" {
+    BeforeAll {
+        $script:helpFullViewCultureState = @{
+            CurrentCulture = [System.Globalization.CultureInfo]::CurrentCulture
+            CurrentUICulture = [System.Globalization.CultureInfo]::CurrentUICulture
+            Changed = $false
+        }
+
+        if ($script:helpFullViewCultureState.CurrentCulture.LCID -eq 127 -or
+            $script:helpFullViewCultureState.CurrentUICulture.LCID -eq 127) {
+            # The full help content used by these assertions is localized for en-US.
+            $enUSCulture = [System.Globalization.CultureInfo]::GetCultureInfo('en-US')
+            [System.Globalization.CultureInfo]::CurrentCulture = $enUSCulture
+            [System.Globalization.CultureInfo]::CurrentUICulture = $enUSCulture
+            $script:helpFullViewCultureState.Changed = $true
+        }
+    }
+
+    AfterAll {
+        if ($script:helpFullViewCultureState.Changed) {
+            [System.Globalization.CultureInfo]::CurrentCulture = $script:helpFullViewCultureState.CurrentCulture
+            [System.Globalization.CultureInfo]::CurrentUICulture = $script:helpFullViewCultureState.CurrentUICulture
+        }
+
+        $script:helpFullViewCultureState = $null
+    }
+
     It "help should return full view without -Full switch" {
         if (Test-IsWindowsArm64) {
             Set-ItResult -Pending -Because "IOException: The handle is invalid."
