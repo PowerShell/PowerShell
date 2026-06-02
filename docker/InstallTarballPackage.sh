@@ -44,7 +44,9 @@ case "$POWERSHELL_PACKAGE" in
         ;;
 esac
 
-POWERSHELL_LINKFILE=/usr/bin/pwsh
+POWERSHELL_LINKFILE=${POWERSHELL_LINKFILE:-/usr/bin/pwsh}
+POWERSHELL_INSTALL_ROOT=${POWERSHELL_INSTALL_ROOT:-/opt/microsoft/powershell}
+SHELLS_FILE=${SHELLS_FILE:-/etc/shells}
 TEMP_DIR=$(mktemp -d)
 cleanup() {
     if [ -n "$TEMP_DIR" ] && [ -d "$TEMP_DIR" ]; then
@@ -56,8 +58,9 @@ PACKAGE_PATH="$TEMP_DIR/powershell.tar.gz"
 HASHES_PATH="$TEMP_DIR/hashes.sha256"
 DOWNLOAD_URL="https://github.com/PowerShell/PowerShell/releases/download/v${POWERSHELL_VERSION}/${POWERSHELL_PACKAGE}"
 HASHES_URL="https://github.com/PowerShell/PowerShell/releases/download/v${POWERSHELL_VERSION}/hashes.sha256"
-INSTALL_DIR="/opt/microsoft/powershell/$POWERSHELL_VERSION"
+INSTALL_DIR="$POWERSHELL_INSTALL_ROOT/$POWERSHELL_VERSION"
 
+# Print the SHA-256 hash for the file path passed as the first argument.
 get_file_sha256() {
     if command -v sha256sum >/dev/null 2>&1; then
         sha256sum "$1" | awk '{ print $1 }'
@@ -102,11 +105,24 @@ mkdir -p "$INSTALL_DIR"
 # Expand powershell to the target folder
 tar zxf "$PACKAGE_PATH" -C "$INSTALL_DIR"
 
-# Create the symbolic link that points to powershell
-ln -sfn "$INSTALL_DIR/pwsh" "$POWERSHELL_LINKFILE"
-# Add the symbolic link path to /etc/shells
-if [ ! -f /etc/shells ]; then
-    echo "$POWERSHELL_LINKFILE" > /etc/shells ;
+# Create or update the symbolic link that points to powershell without clobbering non-symlink files.
+POWERSHELL_TARGET="$INSTALL_DIR/pwsh"
+if [ -L "$POWERSHELL_LINKFILE" ]; then
+    current_target=$(readlink "$POWERSHELL_LINKFILE")
+    if [ "$current_target" != "$POWERSHELL_TARGET" ]; then
+        rm -- "$POWERSHELL_LINKFILE"
+        ln -s "$POWERSHELL_TARGET" "$POWERSHELL_LINKFILE"
+    fi
+elif [ -e "$POWERSHELL_LINKFILE" ]; then
+    echo "$POWERSHELL_LINKFILE already exists and is not a symbolic link; refusing to replace it." >&2
+    exit 1
 else
-    grep -q "^${POWERSHELL_LINKFILE}$" /etc/shells || echo "$POWERSHELL_LINKFILE" >> /etc/shells ;
+    ln -s "$POWERSHELL_TARGET" "$POWERSHELL_LINKFILE"
+fi
+
+# Add the symbolic link path to /etc/shells
+if [ ! -f "$SHELLS_FILE" ]; then
+    echo "$POWERSHELL_LINKFILE" > "$SHELLS_FILE" ;
+else
+    grep -q "^${POWERSHELL_LINKFILE}$" "$SHELLS_FILE" || echo "$POWERSHELL_LINKFILE" >> "$SHELLS_FILE" ;
 fi
