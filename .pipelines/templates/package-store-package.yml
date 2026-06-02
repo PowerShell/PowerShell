@@ -88,6 +88,11 @@ jobs:
           Write-Host "##vso[task.setvariable variable=LTS]false"
           Write-Host "##vso[task.setvariable variable=STABLE]false"
           Write-Host "##vso[task.setvariable variable=PREVIEW]false"
+          # Ensure the output directory exists so downstream artifact publishing does not fail.
+          $outputDirectory = "$(ob_outputDirectory)"
+          if (-not (Test-Path -LiteralPath $outputDirectory)) {
+            New-Item -ItemType Directory -Path $outputDirectory -Force | Out-Null
+          }
           return
         }
 

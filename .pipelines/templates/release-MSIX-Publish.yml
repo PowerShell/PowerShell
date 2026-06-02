@@ -34,6 +34,7 @@ jobs:
     displayName: 'Capture ReleaseTag and Downloaded Packages'
 
   - task: PowerShell@2
+    condition: or(eq(variables['LTS'], 'true'), eq(variables['STABLE'], 'true'), eq(variables['PREVIEW'], 'true'))
     inputs:
       targetType: inline
       script: |
@@ -70,12 +71,13 @@ jobs:
     displayName: 'Add Changelog Link and Version Number to SBJSON'
 
   - task: PowerShell@2
+    condition: or(eq(variables['LTS'], 'true'), eq(variables['STABLE'], 'true'), eq(variables['PREVIEW'], 'true'))
     inputs:
       targetType: inline
       script: |
         # Convert ADO variables to PowerShell boolean variables
         $IsLTS = '$(LTS)' -eq 'true'
-        $IsStable = '$(STABLE)' -eq 'true' 
+        $IsStable = '$(STABLE)' -eq 'true'
         $IsPreview = '$(PREVIEW)' -eq 'true'
 
         Write-Verbose -Verbose "Channel Selection - LTS: $(LTS), Stable: $(STABLE), Preview: $(PREVIEW)"
