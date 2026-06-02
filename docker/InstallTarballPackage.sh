@@ -53,7 +53,8 @@ cleanup() {
         rm -rf -- "$TEMP_DIR"
     fi
 }
-trap cleanup EXIT HUP INT TERM
+trap cleanup EXIT
+trap 'cleanup; exit 1' HUP INT TERM
 PACKAGE_PATH="$TEMP_DIR/powershell.tar.gz"
 HASHES_PATH="$TEMP_DIR/hashes.sha256"
 DOWNLOAD_URL="https://github.com/PowerShell/PowerShell/releases/download/v${POWERSHELL_VERSION}/${POWERSHELL_PACKAGE}"
@@ -122,7 +123,7 @@ fi
 
 # Add the symbolic link path to /etc/shells
 if [ ! -f "$SHELLS_FILE" ]; then
-    echo "$POWERSHELL_LINKFILE" > "$SHELLS_FILE" ;
+    printf '%s\n' "$POWERSHELL_LINKFILE" > "$SHELLS_FILE" ;
 else
-    grep -q "^${POWERSHELL_LINKFILE}$" "$SHELLS_FILE" || echo "$POWERSHELL_LINKFILE" >> "$SHELLS_FILE" ;
+    grep -Fqx -- "$POWERSHELL_LINKFILE" "$SHELLS_FILE" || printf '%s\n' "$POWERSHELL_LINKFILE" >> "$SHELLS_FILE" ;
 fi
