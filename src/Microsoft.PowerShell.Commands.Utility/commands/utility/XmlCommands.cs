@@ -331,13 +331,12 @@ namespace Microsoft.PowerShell.Commands
         private bool _disposed = false;
 
         /// <summary>
-        /// Public dispose method.
+        /// Release all resources.
         /// </summary>
         public void Dispose()
         {
             if (!_disposed)
             {
-                GC.SuppressFinalize(this);
                 if (_helper != null)
                 {
                     _helper.Dispose();

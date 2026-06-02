@@ -57,17 +57,13 @@ It **requires** that PowerShell Core has been built via `Start-PSBuild` from the
 
 #### Windows
 
-The `Start-PSPackage` function delegates to `New-MSIPackage` which creates a Windows Installer Package of PowerShell.
+`Start-PSPackage` supports creating ZIP and MSIX packages for Windows.
+When called without `-Type` on Windows, it defaults to creating both ZIP and MSIX packages.
 The packages *must* be published in release mode,
 so make sure `-Configuration Release` is specified when running `Start-PSBuild`.
 
-It uses the Windows Installer XML Toolset (WiX) to generate a MSI package,
-which copies the output of the published PowerShell files to a version-specific folder in Program Files,
-and installs a shortcut in the Start Menu.
-It can be uninstalled through `Programs and Features`.
-
 Note that PowerShell is always self-contained, thus using it does not require installing it.
-The output of `Start-PSBuild` includes a `powershell.exe` executable which can simply be launched.
+The output of `Start-PSBuild` includes a `pwsh.exe` executable which can simply be launched.
 
 #### Linux / macOS
 
@@ -169,8 +165,8 @@ Start-PSBuild -Clean -CrossGen -PSModuleRestore -Runtime win7-x64 -Configuration
 ```powershell
 # Create packages for v6.0.0-beta.1 release targeting Windows universal package.
 # 'win7-x64' / 'win7-x86' should be used for -WindowsRuntime.
-Start-PSPackage -Type msi -ReleaseTag v6.0.0-beta.1 -WindowsRuntime 'win7-x64'
 Start-PSPackage -Type zip -ReleaseTag v6.0.0-beta.1 -WindowsRuntime 'win7-x64'
+Start-PSPackage -Type msix -ReleaseTag v6.0.0-beta.1 -WindowsRuntime 'win7-x64'
 ```
 
 ## NuGet Packages

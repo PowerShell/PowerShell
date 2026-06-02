@@ -2124,7 +2124,7 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        private HashSet<string> _startupScripts = new HashSet<string>();
+        private HashSet<string> _startupScripts;
 
         private readonly object _syncObject = new object();
 
