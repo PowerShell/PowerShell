@@ -22,7 +22,7 @@ if [ -z "$POWERSHELL_PACKAGE" ]; then
 fi
 
 case "$POWERSHELL_VERSION" in
-    *[!0-9A-Za-z._-]* | .* | *..* | *- | "")
+    *[!0-9A-Za-z._+-]* | .* | *..* | *- | "")
         echo "Invalid PowerShell version: $POWERSHELL_VERSION" >&2
         usage
         ;;
@@ -47,7 +47,9 @@ esac
 POWERSHELL_LINKFILE=/usr/bin/pwsh
 TEMP_DIR=$(mktemp -d)
 cleanup() {
-    rm -rf "$TEMP_DIR"
+    if [ -n "$TEMP_DIR" ] && [ -d "$TEMP_DIR" ]; then
+        rm -rf -- "$TEMP_DIR"
+    fi
 }
 trap cleanup EXIT HUP INT TERM
 PACKAGE_PATH="$TEMP_DIR/powershell.tar.gz"
@@ -63,7 +65,7 @@ mkdir -p "$INSTALL_DIR"
 tar zxf "$PACKAGE_PATH" -C "$INSTALL_DIR"
 
 # Create the symbolic link that points to powershell
-ln -s "$INSTALL_DIR/pwsh" "$POWERSHELL_LINKFILE"
+ln -sfn "$INSTALL_DIR/pwsh" "$POWERSHELL_LINKFILE"
 # Add the symbolic link path to /etc/shells
 if [ ! -f /etc/shells ]; then
     echo "$POWERSHELL_LINKFILE" > /etc/shells ;
