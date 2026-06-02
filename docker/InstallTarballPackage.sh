@@ -4,7 +4,7 @@
 set -eu
 
 # Example use:
-#     ./InstallTarballPackage.sh "6.0.0-beta.9" "powershell-6.0.0-beta.9-linux-x64.tar.gz"
+#     ./InstallTarballPackage.sh "7.6.2" "powershell-7.6.2-linux-x64.tar.gz"
 
 usage() {
     echo "usage: $0 <powershell version> <powershell package name>"
@@ -53,11 +53,49 @@ cleanup() {
 }
 trap cleanup EXIT HUP INT TERM
 PACKAGE_PATH="$TEMP_DIR/powershell.tar.gz"
+HASHES_PATH="$TEMP_DIR/hashes.sha256"
 DOWNLOAD_URL="https://github.com/PowerShell/PowerShell/releases/download/v${POWERSHELL_VERSION}/${POWERSHELL_PACKAGE}"
+HASHES_URL="https://github.com/PowerShell/PowerShell/releases/download/v${POWERSHELL_VERSION}/hashes.sha256"
 INSTALL_DIR="/opt/microsoft/powershell/$POWERSHELL_VERSION"
 
-# Download the powershell .tar.gz package
+get_file_sha256() {
+    if command -v sha256sum >/dev/null 2>&1; then
+        sha256sum "$1" | awk '{ print $1 }'
+    elif command -v shasum >/dev/null 2>&1; then
+        shasum -a 256 "$1" | awk '{ print $1 }'
+    else
+        echo "Unable to verify package integrity: sha256sum or shasum is required." >&2
+        return 1
+    fi
+}
+
+# Download the powershell .tar.gz package and release checksum file.
 curl --fail --location --show-error --proto '=https' --tlsv1.2 -o "$PACKAGE_PATH" "$DOWNLOAD_URL"
+curl --fail --location --show-error --proto '=https' --tlsv1.2 -o "$HASHES_PATH" "$HASHES_URL"
+
+expected_hash=$(tr -d '\000\r' < "$HASHES_PATH" | awk -v package="$POWERSHELL_PACKAGE" '
+    {
+        filename = $2
+        sub(/^\*/, "", filename)
+        if (filename == package) {
+            print $1
+            found = 1
+            exit
+        }
+    }
+    END { if (!found) { exit 1 } }
+') || {
+    echo "Unable to find SHA-256 checksum for $POWERSHELL_PACKAGE in hashes.sha256." >&2
+    exit 1
+}
+
+actual_hash=$(get_file_sha256 "$PACKAGE_PATH")
+if [ "$actual_hash" != "$expected_hash" ]; then
+    echo "SHA-256 checksum verification failed for $POWERSHELL_PACKAGE." >&2
+    echo "Expected: $expected_hash" >&2
+    echo "Actual:   $actual_hash" >&2
+    exit 1
+fi
 
 # Create the target folder where powershell will be placed
 mkdir -p "$INSTALL_DIR"
